@@ -53,6 +53,7 @@ void EmbedderTestEnvironment::SetUp() {
 #endif  // PDF_ENABLE_V8
 
       .m_RendererType = renderer_type_,
+      .m_FontLibraryType = FPDF_FONTBACKENDTYPE_FREETYPE,
   };
 
   FPDF_InitLibraryWithConfig(&config);

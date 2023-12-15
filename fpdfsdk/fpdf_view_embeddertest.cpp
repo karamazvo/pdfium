@@ -2097,6 +2097,7 @@ TEST_F(FPDFViewEmbedderTest, Bug2087) {
         .m_v8EmbedderSlot = 0,
         .m_pPlatform = nullptr,
         .m_RendererType = FPDF_RENDERERTYPE_AGG,
+        .m_FontLibraryType = FPDF_FONTBACKENDTYPE_FREETYPE,
     };
     FPDF_InitLibraryWithConfig(&config);
 
