@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 
+#include <array>
 #include <memory>
 #include <optional>
 #include <vector>
@@ -40,6 +41,7 @@ class CPDF_Color {
   uint32_t ComponentCount() const;
   bool IsColorSpaceRGB() const;
   std::optional<FX_COLORREF> GetColorRef() const;
+  std::optional<std::array<float, 3>> GetRGB() const;
 
   // Should only be called if IsPattern() returns true.
   RetainPtr<CPDF_Pattern> GetPattern() const;

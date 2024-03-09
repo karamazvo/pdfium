@@ -92,6 +92,19 @@ std::optional<FX_COLORREF> CPDF_Color::GetColorRef() const {
   return std::nullopt;
 }
 
+std::optional<std::array<float, 3>> CPDF_Color::GetRGB() const {
+  if (IsPatternInternal()) {
+    if (m_pValue) {
+      return m_pCS->AsPatternCS()->GetPatternRGB(*m_pValue);
+    }
+  } else {
+    if (!m_Buffer.empty()) {
+      return m_pCS->GetRGB(m_Buffer);
+    }
+  }
+  return std::nullopt;
+}
+
 RetainPtr<CPDF_Pattern> CPDF_Color::GetPattern() const {
   DCHECK(IsPattern());
   return m_pValue ? m_pValue->GetPattern() : nullptr;

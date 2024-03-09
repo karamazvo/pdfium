@@ -35,6 +35,8 @@ class CPDF_PatternCS final : public CPDF_BasedCS {
 
   std::optional<FX_COLORREF> GetPatternColorRef(
       const PatternValue& value) const;
+  std::optional<std::array<float, 3>> GetPatternRGB(
+      const PatternValue& value) const;
 
  private:
   CPDF_PatternCS();

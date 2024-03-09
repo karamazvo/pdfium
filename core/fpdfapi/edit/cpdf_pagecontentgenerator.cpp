@@ -58,15 +58,12 @@ bool WriteColorToStream(fxcrt::ostringstream& buf, const CPDF_Color* color) {
     return false;
   }
 
-  std::optional<FX_COLORREF> colors = color->GetColorRef();
-  if (!colors.has_value()) {
+  std::optional<std::array<float, 3>> rgb = color->GetRGB();
+  if (!rgb.has_value()) {
     return false;
   }
 
-  // TODO(thestig): Remove float to int to float conversion.
-  buf << FXSYS_GetRValue(colors.value()) / 255.0f << " "
-      << FXSYS_GetGValue(colors.value()) / 255.0f << " "
-      << FXSYS_GetBValue(colors.value()) / 255.0f;
+  buf << rgb[0] << " " << rgb[1] << " " << rgb[2];
   return true;
 }
 
