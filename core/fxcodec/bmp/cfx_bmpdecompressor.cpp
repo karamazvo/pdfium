@@ -289,8 +289,7 @@ BmpDecoder::Status CFX_BmpDecompressor::ReadBmpPalette() {
     palette_.resize(palette_entries);
     if (pal_type_ == PalType::kOld) {
       auto src_pal_data =
-          fxcrt::truncating_reinterpret_span<FX_BGR_STRUCT<uint8_t>, uint8_t>(
-              src_pal);
+          fxcrt::truncating_reinterpret_span<FX_BGR_STRUCT, uint8_t>(src_pal);
       for (auto& dest : palette_) {
         const auto& entry = src_pal_data.front();
         dest = ArgbEncode(0x00, entry.red, entry.green, entry.blue);
@@ -298,8 +297,7 @@ BmpDecoder::Status CFX_BmpDecompressor::ReadBmpPalette() {
       }
     } else {
       auto src_pal_data =
-          fxcrt::truncating_reinterpret_span<FX_BGRA_STRUCT<uint8_t>, uint8_t>(
-              src_pal);
+          fxcrt::truncating_reinterpret_span<FX_BGRA_STRUCT, uint8_t>(src_pal);
       for (auto& dest : palette_) {
         const auto& entry = src_pal_data.front();
         dest = ArgbEncode(entry.alpha, entry.red, entry.green, entry.blue);

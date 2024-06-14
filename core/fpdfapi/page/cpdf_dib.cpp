@@ -759,12 +759,10 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
       m_JpxInlineData.height = image_info.height;
       m_JpxInlineData.data.reserve(image_info.width * image_info.height);
       for (uint32_t row = 0; row < image_info.height; ++row) {
-        auto src =
-            result_bitmap->GetScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(
-                image_info.width);
-        auto dest =
-            rgb_bitmap->GetWritableScanlineAs<FX_BGR_STRUCT<uint8_t>>(row)
-                .first(image_info.width);
+        auto src = result_bitmap->GetScanlineAs<FX_BGRA_STRUCT>(row).first(
+            image_info.width);
+        auto dest = rgb_bitmap->GetWritableScanlineAs<FX_BGR_STRUCT>(row).first(
+            image_info.width);
         for (const auto& input : src) {
           auto& output = dest.front();
           m_JpxInlineData.data.push_back(input.alpha);
@@ -778,12 +776,10 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
     } else {
       // TODO(thestig): Is there existing code that does this already?
       for (uint32_t row = 0; row < image_info.height; ++row) {
-        auto src =
-            result_bitmap->GetScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(
-                image_info.width);
-        auto dest =
-            rgb_bitmap->GetWritableScanlineAs<FX_BGR_STRUCT<uint8_t>>(row)
-                .first(image_info.width);
+        auto src = result_bitmap->GetScanlineAs<FX_BGRA_STRUCT>(row).first(
+            image_info.width);
+        auto dest = rgb_bitmap->GetWritableScanlineAs<FX_BGR_STRUCT>(row).first(
+            image_info.width);
         for (const auto& input : src) {
           auto& output = dest.front();
           output.green = input.green;

@@ -94,8 +94,7 @@ void CPDF_DeviceCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
                                        int image_width,
                                        int image_height,
                                        bool bTransMask) const {
-  auto rgb_out =
-      fxcrt::truncating_reinterpret_span<FX_RGB_STRUCT<uint8_t>>(dest_span);
+  auto rgb_out = fxcrt::truncating_reinterpret_span<FX_RGB_STRUCT>(dest_span);
   switch (GetFamily()) {
     case Family::kDeviceGray:
       CHECK(!bTransMask);  // bTransMask only allowed for CMYK colorspaces.
@@ -114,8 +113,7 @@ void CPDF_DeviceCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
       break;
     case Family::kDeviceCMYK: {
       auto cmyk_in =
-          fxcrt::truncating_reinterpret_span<const FX_CMYK_STRUCT<uint8_t>>(
-              src_span);
+          fxcrt::truncating_reinterpret_span<const FX_CMYK_STRUCT>(src_span);
       if (bTransMask) {
         // Compiler can't conclude src/dest don't overlap, avoid interleaved
         // loads and stores by not using an auto& reference here.
@@ -142,7 +140,7 @@ void CPDF_DeviceCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
       }
       for (const auto& cmyk : cmyk_in.first(pixels)) {
         // TODO(tsepez): maybe this is a FX_BGR_STRUCT in reality?
-        FX_RGB_STRUCT<uint8_t> rgb =
+        FX_RGB_STRUCT rgb =
             AdobeCMYK_to_sRGB1(cmyk.cyan, cmyk.magenta, cmyk.yellow, cmyk.key);
         rgb_out.front().red = rgb.blue;
         rgb_out.front().green = rgb.green;

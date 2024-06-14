@@ -309,8 +309,7 @@ void CFX_DIBitmap::SetRedFromAlpha() {
   CHECK(m_pBuffer);
 
   for (int row = 0; row < m_Height; row++) {
-    auto scanline =
-        GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(m_Width);
+    auto scanline = GetWritableScanlineAs<FX_BGRA_STRUCT>(row).first(m_Width);
     for (auto& pixel : scanline) {
       pixel.red = pixel.alpha;
     }
@@ -324,8 +323,7 @@ bool CFX_DIBitmap::SetUniformOpaqueAlpha() {
     return false;
 
   for (int row = 0; row < m_Height; row++) {
-    auto scanline =
-        GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(m_Width);
+    auto scanline = GetWritableScanlineAs<FX_BGRA_STRUCT>(row).first(m_Width);
     for (auto& pixel : scanline) {
       pixel.alpha = 0xff;
     }
@@ -346,7 +344,7 @@ bool CFX_DIBitmap::MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) {
 
     for (int row = 0; row < m_Height; row++) {
       auto dest_scan =
-          GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(m_Width);
+          GetWritableScanlineAs<FX_BGRA_STRUCT>(row).first(m_Width);
       auto mask_scan = mask->GetScanline(row).first(m_Width);
       for (int col = 0; col < m_Width; col++) {
         // Since the `dest_scan` value always starts out as 255 in this case,
@@ -359,8 +357,7 @@ bool CFX_DIBitmap::MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) {
 
   CHECK_EQ(GetFormat(), FXDIB_Format::kArgb);
   for (int row = 0; row < m_Height; row++) {
-    auto dest_scan =
-        GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(m_Width);
+    auto dest_scan = GetWritableScanlineAs<FX_BGRA_STRUCT>(row).first(m_Width);
     auto mask_scan = mask->GetScanline(row).first(m_Width);
     for (int col = 0; col < m_Width; col++) {
       dest_scan[col].alpha = dest_scan[col].alpha * mask_scan[col] / 255;
@@ -388,8 +385,7 @@ bool CFX_DIBitmap::MultiplyAlpha(float alpha) {
 
   const int bitmap_alpha = static_cast<int>(alpha * 255.0f);
   for (int row = 0; row < m_Height; row++) {
-    auto dest_scan =
-        GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(m_Width);
+    auto dest_scan = GetWritableScanlineAs<FX_BGRA_STRUCT>(row).first(m_Width);
     for (auto& pixel : dest_scan) {
       pixel.alpha = pixel.alpha * bitmap_alpha / 255;
     }

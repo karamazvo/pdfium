@@ -39,21 +39,21 @@ using FX_CMYK = uint32_t;  // C in high bits, ..., K in low bits.
 using FX_COLORREF = uint32_t;
 
 // Endian-independent, name-ordered by increasing address.
-template <typename T>
+template <typename T = uint8_t>
 struct FX_RGB_STRUCT {
   T red = 0;
   T green = 0;
   T blue = 0;
 };
 
-template <typename T>
+template <typename T = uint8_t>
 struct FX_BGR_STRUCT {
   T blue = 0;
   T green = 0;
   T red = 0;
 };
 
-template <typename T>
+template <typename T = uint8_t>
 struct FX_ARGB_STRUCT {
   T alpha = 0;
   T red = 0;
@@ -61,7 +61,7 @@ struct FX_ARGB_STRUCT {
   T blue = 0;
 };
 
-template <typename T>
+template <typename T = uint8_t>
 struct FX_ABGR_STRUCT {
   T alpha = 0;
   T blue = 0;
@@ -69,7 +69,7 @@ struct FX_ABGR_STRUCT {
   T red = 0;
 };
 
-template <typename T>
+template <typename T = uint8_t>
 struct FX_RGBA_STRUCT {
   T red = 0;
   T green = 0;
@@ -77,7 +77,7 @@ struct FX_RGBA_STRUCT {
   T alpha = 0;
 };
 
-template <typename T>
+template <typename T = uint8_t>
 struct FX_BGRA_STRUCT {
   T blue = 0;
   T green = 0;
@@ -85,7 +85,7 @@ struct FX_BGRA_STRUCT {
   T alpha = 0;
 };
 
-template <typename T>
+template <typename T = uint8_t>
 struct FX_CMYK_STRUCT {
   T cyan = 0;
   T magenta = 0;
