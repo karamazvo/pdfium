@@ -659,24 +659,25 @@ void CPDF_ColorSpace::TranslateImageLine(pdfium::span<uint8_t> dest_span,
   // generic base implementation are CMYK.
   CHECK(!bTransMask);
 
-  uint8_t* dest_buf = dest_span.data();
-  const uint8_t* src_buf = src_span.data();
   std::vector<float> src(m_nComponents);
-  float R;
-  float G;
-  float B;
   const int divisor = m_Family != Family::kIndexed ? 255 : 1;
-  UNSAFE_TODO({
-    for (int i = 0; i < pixels; i++) {
-      for (uint32_t j = 0; j < m_nComponents; j++) {
-        src[j] = static_cast<float>(*src_buf++) / divisor;
-      }
-      GetRGB(src, &R, &G, &B);
-      *dest_buf++ = static_cast<int32_t>(B * 255);
-      *dest_buf++ = static_cast<int32_t>(G * 255);
-      *dest_buf++ = static_cast<int32_t>(R * 255);
+  auto bgr_span =
+      fxcrt::truncating_reinterpret_span<FX_BGR_STRUCT<uint8_t>>(dest_span);
+  for (int i = 0; i < pixels; i++) {
+    for (uint32_t j = 0; j < m_nComponents; j++) {
+      src[j] = static_cast<float>(src_span[j]) / divisor;
     }
-  });
+    float R;
+    float G;
+    float B;
+    GetRGB(src, &R, &G, &B);
+    auto& bgr_pix = bgr_span.front();
+    bgr_pix.blue = static_cast<int32_t>(B * 255);
+    bgr_pix.green = static_cast<int32_t>(G * 255);
+    bgr_pix.red = static_cast<int32_t>(R * 255);
+    bgr_span = bgr_span.subspan(1);
+    src_span = src_span.subspan(m_nComponents);
+  }
 }
 
 void CPDF_ColorSpace::EnableStdConversion(bool bEnabled) {
@@ -748,18 +749,15 @@ void CPDF_CalGray::TranslateImageLine(pdfium::span<uint8_t> dest_span,
                                       int image_height,
                                       bool bTransMask) const {
   CHECK(!bTransMask);  // Only applies to CMYK colorspaces.
-
-  uint8_t* pDestBuf = dest_span.data();
-  const uint8_t* pSrcBuf = src_span.data();
-  UNSAFE_TODO({
-    for (int i = 0; i < pixels; i++) {
-      // Compiler can not conclude that src/dest don't overlap.
-      const uint8_t pix = pSrcBuf[i];
-      *pDestBuf++ = pix;
-      *pDestBuf++ = pix;
-      *pDestBuf++ = pix;
-    }
-  });
+  auto rgb_span =
+      fxcrt::truncating_reinterpret_span<FX_RGB_STRUCT<uint8_t>>(dest_span);
+  for (uint8_t pix : src_span.first(pixels)) {
+    auto& rgb_pix = rgb_span.front();
+    rgb_pix.red = pix;
+    rgb_pix.green = pix;
+    rgb_pix.blue = pix;
+    rgb_span = rgb_span.subspan(1);
+  }
 }
 
 CPDF_CalRGB::CPDF_CalRGB() : CPDF_ColorSpace(Family::kCalRGB) {}
@@ -800,31 +798,28 @@ bool CPDF_CalRGB::GetRGB(pdfium::span<const float> pBuf,
                          float* R,
                          float* G,
                          float* B) const {
-  UNSAFE_TODO({
-    float A_ = pBuf[0];
-    float B_ = pBuf[1];
-    float C_ = pBuf[2];
-    if (m_bHasGamma) {
-      A_ = powf(A_, m_Gamma[0]);
-      B_ = powf(B_, m_Gamma[1]);
-      C_ = powf(C_, m_Gamma[2]);
-    }
-
-    float X;
-    float Y;
-    float Z;
-    if (m_bHasMatrix) {
-      X = m_Matrix[0] * A_ + m_Matrix[3] * B_ + m_Matrix[6] * C_;
-      Y = m_Matrix[1] * A_ + m_Matrix[4] * B_ + m_Matrix[7] * C_;
-      Z = m_Matrix[2] * A_ + m_Matrix[5] * B_ + m_Matrix[8] * C_;
-    } else {
-      X = A_;
-      Y = B_;
-      Z = C_;
-    }
-    XYZ_to_sRGB_WhitePoint(X, Y, Z, m_WhitePoint[0], m_WhitePoint[1],
-                           m_WhitePoint[2], R, G, B);
-  });
+  float A_ = pBuf[0];
+  float B_ = pBuf[1];
+  float C_ = pBuf[2];
+  if (m_bHasGamma) {
+    A_ = powf(A_, m_Gamma[0]);
+    B_ = powf(B_, m_Gamma[1]);
+    C_ = powf(C_, m_Gamma[2]);
+  }
+  float X;
+  float Y;
+  float Z;
+  if (m_bHasMatrix) {
+    X = m_Matrix[0] * A_ + m_Matrix[3] * B_ + m_Matrix[6] * C_;
+    Y = m_Matrix[1] * A_ + m_Matrix[4] * B_ + m_Matrix[7] * C_;
+    Z = m_Matrix[2] * A_ + m_Matrix[5] * B_ + m_Matrix[8] * C_;
+  } else {
+    X = A_;
+    Y = B_;
+    Z = C_;
+  }
+  XYZ_to_sRGB_WhitePoint(X, Y, Z, m_WhitePoint[0], m_WhitePoint[1],
+                         m_WhitePoint[2], R, G, B);
   return true;
 }
 
@@ -889,29 +884,17 @@ bool CPDF_LabCS::GetRGB(pdfium::span<const float> pBuf,
                         float* R,
                         float* G,
                         float* B) const {
-  float Lstar = pBuf[0];
-  float astar = pBuf[1];
-  float bstar = pBuf[2];
-  float M = (Lstar + 16.0f) / 116.0f;
-  float L = M + astar / 500.0f;
-  float N = M - bstar / 200.0f;
-  float X;
-  float Y;
-  float Z;
-  if (L < 0.2069f)
-    X = 0.957f * 0.12842f * (L - 0.1379f);
-  else
-    X = 0.957f * L * L * L;
-
-  if (M < 0.2069f)
-    Y = 0.12842f * (M - 0.1379f);
-  else
-    Y = M * M * M;
-
-  if (N < 0.2069f)
-    Z = 1.0889f * 0.12842f * (N - 0.1379f);
-  else
-    Z = 1.0889f * N * N * N;
+  auto lab_span =
+      fxcrt::truncating_reinterpret_span<const FX_LAB_STRUCT<float>>(pBuf);
+  const auto& lab_pix = lab_span.front();
+  float M = (lab_pix.l_star + 16.0f) / 116.0f;
+  float L = M + lab_pix.a_star / 500.0f;
+  float N = M - lab_pix.b_star / 200.0f;
+  float X =
+      L < 0.2069f ? 0.957f * 0.12842f * (L - 0.1379f) : 0.957f * L * L * L;
+  float Y = M < 0.2069f ? 0.12842f * (M - 0.1379f) : M * M * M;
+  float Z =
+      N < 0.2069f ? 1.0889f * 0.12842f * (N - 0.1379f) : 1.0889f * N * N * N;
 
   XYZ_to_sRGB(X, Y, Z, R, G, B);
   return true;
