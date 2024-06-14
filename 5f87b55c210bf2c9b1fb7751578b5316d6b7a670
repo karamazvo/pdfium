@@ -51,6 +51,24 @@
       "message": "G-account approval",
       "revId": "5f87b55c210bf2c9b1fb7751578b5316d6b7a670",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0af26e30_7a5deff3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-14T21:50:53Z",
+      "side": 1,
+      "message": "Maybe a GN variable to hold a list of namespace to check, or class names, considering absl::Span is capitalized.",
+      "parentUuid": "6fdb12ed_a98d51dd",
+      "revId": "5f87b55c210bf2c9b1fb7751578b5316d6b7a670",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ],
   "submitRequirementResults": [
