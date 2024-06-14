@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "972d42a0_9405b3e0",
+        "filename": "core/fxcodec/gif/cfx_gifcontext_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-14T16:19:08Z",
+      "side": 1,
+      "message": "Done, as in const uint8_t, but oddly making it constexpr is mucking up the call to make_span(). Will follow-up on that someday.",
+      "parentUuid": "c2524aab_9b4c3653",
+      "revId": "45c0b1e59144d33b1106d1db01636ea36b825e8f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7205c71a_9a30ca5f",
@@ -41,6 +59,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fabb54ac_5498f45d",
+        "filename": "core/fxcodec/gif/cfx_gifcontext_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-14T16:19:08Z",
+      "side": 1,
+      "message": "Or for now. Done.",
+      "parentUuid": "7205c71a_9a30ca5f",
+      "range": {
+        "startLine": 62,
+        "startChar": 34,
+        "endLine": 62,
+        "endChar": 40
+      },
+      "revId": "45c0b1e59144d33b1106d1db01636ea36b825e8f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e6a2e5bf_9f64b600",
@@ -54,6 +96,24 @@
       "writtenOn": "2024-06-13T23:37:54Z",
       "side": 1,
       "message": "IWYU",
+      "revId": "45c0b1e59144d33b1106d1db01636ea36b825e8f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5c19b00c_7ae65a51",
+        "filename": "core/fxcodec/gif/lzw_decompressor_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-14T16:19:08Z",
+      "side": 1,
+      "message": "we really oughta have a presbumit for this puppy. Done.",
+      "parentUuid": "e6a2e5bf_9f64b600",
       "revId": "45c0b1e59144d33b1106d1db01636ea36b825e8f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
