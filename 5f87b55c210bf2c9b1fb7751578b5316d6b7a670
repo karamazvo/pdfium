@@ -16,6 +16,24 @@
       "message": "This includes crrev.com/1312275, but I think the span check only works for base::span, and not pdfium::span.",
       "revId": "5f87b55c210bf2c9b1fb7751578b5316d6b7a670",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6fdb12ed_a98d51dd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-14T21:48:04Z",
+      "side": 1,
+      "message": "Right, that is is the case and I mentioned this to Dana. Not sure about resolution. \nFor a standalone build, there might be some #define pdfium base trick ...",
+      "parentUuid": "4c85b3ef_b3d204cb",
+      "revId": "5f87b55c210bf2c9b1fb7751578b5316d6b7a670",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
