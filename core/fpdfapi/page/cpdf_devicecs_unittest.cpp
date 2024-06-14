@@ -18,7 +18,8 @@ TEST(CPDF_DeviceCSTest, GetRGBFromGray) {
 
   // Test normal values. For gray, only first value from buf should be used.
   float buf[3] = {0.43f, 0.11f, 0.34f};
-  ASSERT_TRUE(device_gray->GetRGB(buf, &R, &G, &B));
+  auto maybe_rgb = device_gray->GetRGB(buf);
+  ASSERT_TRUE(maybe_rgb.has_value());
   EXPECT_FLOAT_EQ(0.43f, R);
   EXPECT_FLOAT_EQ(0.43f, G);
   EXPECT_FLOAT_EQ(0.43f, B);
