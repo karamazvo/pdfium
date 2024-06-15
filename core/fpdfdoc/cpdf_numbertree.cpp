@@ -6,6 +6,7 @@
 
 #include "core/fpdfdoc/cpdf_numbertree.h"
 
+#include <optional>
 #include <utility>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -53,6 +54,58 @@ RetainPtr<const CPDF_Object> FindNumberNode(const CPDF_Dictionary* node_dict,
   return nullptr;
 }
 
+std::optional<CPDF_NumberTree::LowerBound> FindLowerBound(
+    const CPDF_Dictionary* node_dict,
+    int num) {
+  RetainPtr<const CPDF_Array> limits_array = node_dict->GetArrayFor("Limits");
+  if (limits_array) {
+    if (num < limits_array->GetIntegerAt(0)) {
+      return std::nullopt;
+    }
+    int max_value = limits_array->GetIntegerAt(1);
+    if (num >= max_value) {
+      return CPDF_NumberTree::LowerBound(max_value,
+                                         FindNumberNode(node_dict, max_value));
+    }
+  }
+
+  RetainPtr<const CPDF_Array> numbers_array = node_dict->GetArrayFor("Nums");
+  if (numbers_array) {
+    size_t count = numbers_array->size() / 2;
+    for (size_t i = count; i > 0; --i) {
+      size_t actual_index = (i - 1) * 2;
+      int key = numbers_array->GetIntegerAt(actual_index);
+      if (key <= num) {
+        return CPDF_NumberTree::LowerBound(
+            key, numbers_array->GetDirectObjectAt(actual_index + 1));
+      }
+    }
+    return std::nullopt;
+  }
+
+  RetainPtr<const CPDF_Array> kids_array = node_dict->GetArrayFor("Kids");
+  if (!kids_array) {
+    return std::nullopt;
+  }
+
+  std::optional<CPDF_NumberTree::LowerBound> best_result;
+  for (size_t i = 0; i < kids_array->size(); i++) {
+    RetainPtr<const CPDF_Dictionary> kid_dict = kids_array->GetDictAt(i);
+    if (!kid_dict) {
+      continue;
+    }
+
+    std::optional<CPDF_NumberTree::LowerBound> result =
+        FindLowerBound(kid_dict.Get(), num);
+    if (!result.has_value()) {
+      break;
+    }
+
+    best_result = std::move(result);
+  }
+  return best_result;
+}
+
 }  // namespace
 
 CPDF_NumberTree::CPDF_NumberTree(RetainPtr<const CPDF_Dictionary> root)
@@ -63,3 +116,20 @@ CPDF_NumberTree::~CPDF_NumberTree() = default;
 RetainPtr<const CPDF_Object> CPDF_NumberTree::LookupValue(int num) const {
   return FindNumberNode(root_.Get(), num);
 }
+
+std::optional<CPDF_NumberTree::LowerBound> CPDF_NumberTree::GetLowerBound(
+    int num) const {
+  return FindLowerBound(root_.Get(), num);
+}
+
+CPDF_NumberTree::LowerBound::LowerBound(int key,
+                                        RetainPtr<const CPDF_Object> value)
+    : key(key), value(std::move(value)) {}
+
+CPDF_NumberTree::LowerBound::LowerBound(
+    CPDF_NumberTree::LowerBound&&) noexcept = default;
+
+CPDF_NumberTree::LowerBound& CPDF_NumberTree::LowerBound::operator=(
+    CPDF_NumberTree::LowerBound&&) noexcept = default;
+
+CPDF_NumberTree::LowerBound::~LowerBound() = default;
