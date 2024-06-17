@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "204d15d9_babff937",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-17T18:20:11Z",
+      "side": 1,
+      "message": "This stomps out potentially uninit variables. Maybe worth a mention.",
+      "revId": "19a9d71d2e8708edd6ac1c1ef40a66f5891b4a04",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
