@@ -1,6 +1,40 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3e1459de_2106d52f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-06-17T22:42:51Z",
+      "side": 1,
+      "message": "LGTM for logic",
+      "revId": "e376f11e2e2fd4e1820ab8a053cf6369af882c45",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e7a653cf_673f6f9f",
+        "filename": "core/fpdfdoc/cpdf_numbertree.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-06-17T22:42:51Z",
+      "side": 1,
+      "message": "The existing code is pretty sparse for comments, and this CL continues that pattern.  Perhaps a blurb is worth adding, that GetLowerBound() performs an optimized search for looking up a value?  It might also be worthwhile to indicate when the pre-existing LookupValue() should still be used.",
+      "revId": "e376f11e2e2fd4e1820ab8a053cf6369af882c45",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e1d43e04_3485448f",
@@ -38,6 +72,30 @@
       "side": 1,
       "message": "Then `label_value` will be null. When `label_value` is null, `label_dict` will be null. Thus code execution never reaches this line.",
       "parentUuid": "e1d43e04_3485448f",
+      "range": {
+        "startLine": 136,
+        "startChar": 19,
+        "endLine": 136,
+        "endChar": 30
+      },
+      "revId": "e376f11e2e2fd4e1820ab8a053cf6369af882c45",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dcda5cf6_1f420538",
+        "filename": "core/fpdfdoc/cpdf_pagelabel.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-06-17T22:42:51Z",
+      "side": 1,
+      "message": "Ah, yes - thanks, I missed spotting that first time around.",
+      "parentUuid": "0d459df0_d48c933c",
       "range": {
         "startLine": 136,
         "startChar": 19,
