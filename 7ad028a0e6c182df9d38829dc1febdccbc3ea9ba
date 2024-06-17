@@ -16,6 +16,24 @@
       "message": "Ok, at some point I wonder if its better to make this an embedder test and just load a document rather than cobbling this together withe code.",
       "revId": "7ad028a0e6c182df9d38829dc1febdccbc3ea9ba",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c2d1cd6d_60299ba1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-17T22:39:05Z",
+      "side": 1,
+      "message": "As mentioned in the CL description, writing the actual PDF is cumbersome in its own way. I actually did write one, but the .in file is 900 KB, and it comes out to 85 KB with stream object compression. It\u0027s attached to crbug.com/347197923.",
+      "parentUuid": "5ee5d2a3_0c0d5cc9",
+      "revId": "7ad028a0e6c182df9d38829dc1febdccbc3ea9ba",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
