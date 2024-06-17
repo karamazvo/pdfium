@@ -73,6 +73,30 @@
       },
       "revId": "65bf9b0e83412375a579d539ae3e8ab6e4733bb3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "897f0bed_f99c9961",
+        "filename": "generated/luci-notify.cfg",
+        "patchSetId": 1
+      },
+      "lineNbr": 806,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-17T21:49:21Z",
+      "side": 1,
+      "message": "Prepended CL. Please review again.",
+      "parentUuid": "a6a9cf05_9cff889c",
+      "range": {
+        "startLine": 805,
+        "startChar": 3,
+        "endLine": 806,
+        "endChar": 37
+      },
+      "revId": "65bf9b0e83412375a579d539ae3e8ab6e4733bb3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
