@@ -470,8 +470,10 @@ CPDF_SyntaxParser::WordResult CPDF_SyntaxParser::GetNextWord() {
   CPDF_ReadValidator::ScopedSession read_session(GetValidator());
   WordType word_type = GetNextWordInternal();
   ByteString word;
-  if (!GetValidator()->has_read_problems())
-    word = UNSAFE_TODO(ByteString::Create(m_WordBuffer.data(), m_WordSize));
+  if (!GetValidator()->has_read_problems()) {
+    word = ByteString(
+        ByteStringView(pdfium::make_span(m_WordBuffer).first(m_WordSize)));
+  }
   return {word, word_type == WordType::kNumber};
 }
 
@@ -753,8 +755,8 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
   if (len >= 0) {
     CPDF_ReadValidator::ScopedSession read_session(GetValidator());
     m_Pos += ReadEOLMarkers(GetPos());
-    UNSAFE_TODO(
-        FXSYS_memset(m_WordBuffer.data(), 0, kEndStreamStr.GetLength() + 1));
+    const size_t zap_length = kEndStreamStr.GetLength() + 1;
+    fxcrt::Fill(pdfium::make_span(m_WordBuffer).first(zap_length), 0);
     GetNextWordInternal();
     if (GetValidator()->has_read_problems())
       return nullptr;
@@ -813,7 +815,8 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
     stream = pdfium::MakeRetain<CPDF_Stream>(std::move(pDict));
   }
   const FX_FILESIZE end_stream_offset = GetPos();
-  UNSAFE_TODO(FXSYS_memset(m_WordBuffer.data(), 0, kEndObjStr.GetLength() + 1));
+  const size_t zap_length = kEndObjStr.GetLength() + 1;
+  fxcrt::Fill(pdfium::make_span(m_WordBuffer).first(zap_length), 0);
   GetNextWordInternal();
 
   // Allow whitespace after endstream and before a newline.
