@@ -88,12 +88,13 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
 
  private:
   struct HashIccProfileKey {
-    HashIccProfileKey(ByteString digest, uint32_t components);
+    HashIccProfileKey(DataVector<uint8_t> digest, uint32_t components);
+    HashIccProfileKey(const HashIccProfileKey& that);
     ~HashIccProfileKey();
 
     bool operator<(const HashIccProfileKey& other) const;
 
-    ByteString digest;
+    DataVector<uint8_t> digest;
     uint32_t components;
   };
 
