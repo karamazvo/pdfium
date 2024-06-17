@@ -22,6 +22,30 @@
       },
       "revId": "e376f11e2e2fd4e1820ab8a053cf6369af882c45",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0d459df0_d48c933c",
+        "filename": "core/fpdfdoc/cpdf_pagelabel.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-17T21:19:10Z",
+      "side": 1,
+      "message": "Then `label_value` will be null. When `label_value` is null, `label_dict` will be null. Thus code execution never reaches this line.",
+      "parentUuid": "e1d43e04_3485448f",
+      "range": {
+        "startLine": 136,
+        "startChar": 19,
+        "endLine": 136,
+        "endChar": 30
+      },
+      "revId": "e376f11e2e2fd4e1820ab8a053cf6369af882c45",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
