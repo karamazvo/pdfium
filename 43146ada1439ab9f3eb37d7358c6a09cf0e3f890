@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "82d510fb_8d511558",
+        "filename": "core/fpdfapi/page/cpdf_docpagedata.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-17T21:47:29Z",
+      "side": 1,
+      "message": "IWYU",
+      "revId": "43146ada1439ab9f3eb37d7358c6a09cf0e3f890",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "83a94a79_31e99eb7",
+        "filename": "core/fpdfapi/parser/cpdf_stream_acc.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-17T21:47:29Z",
+      "side": 1,
+      "message": "No std::array in this header.",
+      "revId": "43146ada1439ab9f3eb37d7358c6a09cf0e3f890",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
