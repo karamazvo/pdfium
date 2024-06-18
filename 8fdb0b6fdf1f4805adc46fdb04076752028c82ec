@@ -16,6 +16,24 @@
       "message": "For clarity, maybe it would be better to write `charcode` into a ByteString or a fixed 2 byte buffer. WDYT?",
       "revId": "8fdb0b6fdf1f4805adc46fdb04076752028c82ec",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2fcd24e5_6071882c",
+        "filename": "core/fpdfapi/font/cpdf_cidfont.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-18T18:22:46Z",
+      "side": 1,
+      "message": "Done, pls. check that I have the byte order correct.",
+      "parentUuid": "a166ba74_fe0e9a58",
+      "revId": "8fdb0b6fdf1f4805adc46fdb04076752028c82ec",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
