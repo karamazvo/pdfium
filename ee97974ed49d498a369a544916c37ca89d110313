@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3bd3bf19_9e05f0d7",
+        "filename": "core/fpdfapi/parser/cpdf_syntax_parser.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 758,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-18T17:40:07Z",
+      "side": 1,
+      "message": "BTW, is spanclr() going to eventually go away then?",
+      "revId": "ee97974ed49d498a369a544916c37ca89d110313",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
