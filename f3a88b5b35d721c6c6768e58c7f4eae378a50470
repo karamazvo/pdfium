@@ -35,6 +35,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8227b346_0468a840",
+        "filename": "core/fpdfapi/page/cpdf_color.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-18T17:47:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fea36df4_b476a2ff",
+      "revId": "f3a88b5b35d721c6c6768e58c7f4eae378a50470",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "498cbfb7_3a5b1bd6",
@@ -58,6 +76,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a3f0a600_06eb80b0",
+        "filename": "core/fpdfapi/page/cpdf_color.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-18T17:47:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "498cbfb7_3a5b1bd6",
+      "range": {
+        "startLine": 44,
+        "startChar": 30,
+        "endLine": 44,
+        "endChar": 39
+      },
+      "revId": "f3a88b5b35d721c6c6768e58c7f4eae378a50470",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cba4bc37_1b773f7f",
@@ -71,6 +113,30 @@
       "writtenOn": "2024-06-18T14:56:22Z",
       "side": 1,
       "message": "nit: are 8-bit fields within an unsigned integer.",
+      "range": {
+        "startLine": 45,
+        "startChar": 16,
+        "endLine": 45,
+        "endChar": 29
+      },
+      "revId": "f3a88b5b35d721c6c6768e58c7f4eae378a50470",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9abc81e2_9ed9269a",
+        "filename": "core/fpdfapi/page/cpdf_color.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-18T17:47:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cba4bc37_1b773f7f",
       "range": {
         "startLine": 45,
         "startChar": 16,
