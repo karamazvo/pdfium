@@ -28,6 +28,7 @@
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 
 namespace {
 
@@ -39,49 +40,50 @@ const uint8_t kDefaultPasscode[32] = {
 void GetPassCode(const ByteString& password, pdfium::span<uint8_t> output) {
   DCHECK_EQ(sizeof(kDefaultPasscode), output.size());
   size_t len = std::min(password.GetLength(), output.size());
-  size_t remaining = output.size() - len;
-  UNSAFE_TODO({
-    FXSYS_memcpy(output.data(), password.unsigned_str(), len);
-    if (remaining) {
-      FXSYS_memcpy(&output[len], kDefaultPasscode, remaining);
-    }
-  });
+  auto remaining = fxcrt::spancpy(output, password.unsigned_span().first(len));
+  if (!remaining.empty()) {
+    auto default_span = pdfium::make_span(kDefaultPasscode);
+    fxcrt::spancpy(remaining, default_span.first(remaining.size()));
+  }
 }
 
 void CalcEncryptKey(const CPDF_Dictionary* pEncrypt,
                     const ByteString& password,
-                    uint8_t* key,
-                    size_t keylen,
+                    pdfium::span<uint8_t> key,
                     bool ignore_metadata,
                     const ByteString& file_id) {
+  fxcrt::Fill(key, 0);
+
   uint8_t passcode[32];
   GetPassCode(password, passcode);
+
   CRYPT_md5_context md5 = CRYPT_MD5Start();
   CRYPT_MD5Update(&md5, passcode);
+
   ByteString okey = pEncrypt->GetByteStringFor("O");
   CRYPT_MD5Update(&md5, okey.unsigned_span());
+
   uint32_t perm = pEncrypt->GetIntegerFor("P");
   CRYPT_MD5Update(&md5, pdfium::as_bytes(pdfium::span_from_ref(perm)));
-  if (!file_id.IsEmpty())
+  if (!file_id.IsEmpty()) {
     CRYPT_MD5Update(&md5, file_id.unsigned_span());
+  }
   const bool is_revision_3_or_greater = pEncrypt->GetIntegerFor("R") >= 3;
   if (!ignore_metadata && is_revision_3_or_greater &&
       !pEncrypt->GetBooleanFor("EncryptMetadata", true)) {
     constexpr uint32_t tag = 0xFFFFFFFF;
-    CRYPT_MD5Update(&md5, pdfium::as_bytes(pdfium::span_from_ref(tag)));
+    CRYPT_MD5Update(&md5, pdfium::byte_span_from_ref(tag));
   }
   uint8_t digest[16];
   CRYPT_MD5Finish(&md5, digest);
-  size_t copy_len = std::min(keylen, sizeof(digest));
+  size_t copy_len = std::min(key.size(), sizeof(digest));
+  auto digest_span = pdfium::make_span(digest).first(copy_len);
   if (is_revision_3_or_greater) {
     for (int i = 0; i < 50; i++) {
-      CRYPT_MD5Generate(pdfium::make_span(digest).first(copy_len), digest);
+      CRYPT_MD5Generate(digest_span, digest);
     }
   }
-  UNSAFE_TODO({
-    FXSYS_memset(key, 0, keylen);
-    FXSYS_memcpy(key, digest, copy_len);
-  });
+  fxcrt::spancpy(key, digest_span);
 }
 
 bool IsValidKeyLengthForCipher(CPDF_CryptoHandler::Cipher cipher,
@@ -447,7 +449,8 @@ bool CPDF_SecurityHandler::CheckPasswordImpl(const ByteString& password,
 
 bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
                                              bool bIgnoreEncryptMeta) {
-  CalcEncryptKey(m_pEncryptDict.Get(), password, m_EncryptKey.data(), m_KeyLen,
+  CalcEncryptKey(m_pEncryptDict.Get(), password,
+                 pdfium::make_span(m_EncryptKey).first(m_KeyLen),
                  bIgnoreEncryptMeta, m_FileId);
   ByteString ukey =
       m_pEncryptDict ? m_pEncryptDict->GetByteStringFor("U") : ByteString();
@@ -582,8 +585,9 @@ void CPDF_SecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict,
   if (pIdArray)
     file_id = pIdArray->GetByteStringAt(0);
 
-  CalcEncryptKey(m_pEncryptDict.Get(), password, m_EncryptKey.data(), key_len,
-                 false, file_id);
+  CalcEncryptKey(m_pEncryptDict.Get(), password,
+                 pdfium::make_span(m_EncryptKey).first(key_len), false,
+                 file_id);
   if (m_Revision < 3) {
     uint8_t tempbuf[32];
     UNSAFE_TODO(
