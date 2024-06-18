@@ -3,6 +3,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d362709c_49245683",
+        "filename": "core/fxge/cfx_glyphcache.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-18T18:47:02Z",
+      "side": 1,
+      "message": "Still needed?",
+      "revId": "bb00fa1c00b2f7f4b129071a1fd69c598319a657",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "aacb2bfd_0790cd76",
         "filename": "core/fxge/cfx_glyphcache.cpp",
         "patchSetId": 4
@@ -14,6 +31,46 @@
       "writtenOn": "2024-06-18T18:42:40Z",
       "side": 1,
       "message": "Might as well make this a real class and encapsulate?",
+      "revId": "bb00fa1c00b2f7f4b129071a1fd69c598319a657",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cf5818a2_2958999b",
+        "filename": "core/fxge/cfx_glyphcache.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-18T18:47:02Z",
+      "side": 1,
+      "message": "Then maybe store an array of uint32_t, and have span() call as_bytes()?",
+      "revId": "bb00fa1c00b2f7f4b129071a1fd69c598319a657",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6dc56d19_c6ed17f3",
+        "filename": "core/fxge/cfx_glyphcache.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-18T18:47:02Z",
+      "side": 1,
+      "message": "Separately, maybe this be a return value.",
+      "range": {
+        "startLine": 67,
+        "startChar": 12,
+        "endLine": 67,
+        "endChar": 34
+      },
       "revId": "bb00fa1c00b2f7f4b129071a1fd69c598319a657",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
