@@ -16,6 +16,24 @@
       "message": "BTW, is spanclr() going to eventually go away then?",
       "revId": "ee97974ed49d498a369a544916c37ca89d110313",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4ae3ed16_07a33ec7",
+        "filename": "core/fpdfapi/parser/cpdf_syntax_parser.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 758,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-18T18:02:50Z",
+      "side": 1,
+      "message": "Seems reasonable to envision that.  std::ranges::fill() is the C++20 vocabulary we\u0027d like to move everyone to.",
+      "parentUuid": "3bd3bf19_9e05f0d7",
+      "revId": "ee97974ed49d498a369a544916c37ca89d110313",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
