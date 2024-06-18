@@ -97,6 +97,30 @@
       },
       "revId": "65bf9b0e83412375a579d539ae3e8ab6e4733bb3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a902e146_fe8b985c",
+        "filename": "generated/luci-notify.cfg",
+        "patchSetId": 1
+      },
+      "lineNbr": 806,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-18T21:59:38Z",
+      "side": 1,
+      "message": "^",
+      "parentUuid": "897f0bed_f99c9961",
+      "range": {
+        "startLine": 805,
+        "startChar": 3,
+        "endLine": 806,
+        "endChar": 37
+      },
+      "revId": "65bf9b0e83412375a579d539ae3e8ab6e4733bb3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
