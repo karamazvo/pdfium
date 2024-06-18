@@ -64,8 +64,9 @@ void CPDF_CrossRefTable::AddNormal(uint32_t obj_num,
   CHECK_LT(obj_num, CPDF_Parser::kMaxObjectNumber);
 
   auto& info = objects_info_[obj_num];
-  if (info.gennum > gen_num)
+  if (info.type != ObjectType::kFree && info.gennum > gen_num) {
     return;
+  }
 
   info.type = ObjectType::kNormal;
   info.is_object_stream_flag |= is_object_stream;
