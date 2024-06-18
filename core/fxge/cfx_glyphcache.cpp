@@ -8,13 +8,14 @@
 
 #include <stdarg.h>
 
+#include <initializer_list>
 #include <memory>
 #include <utility>
 
 #include "build/build_config.h"
-#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
+#include "core/fxcrt/span.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_glyphbitmap.h"
@@ -44,21 +45,23 @@ namespace {
 constexpr uint32_t kInvalidGlyphIndex = static_cast<uint32_t>(-1);
 
 struct UniqueKeyGen {
-  void Generate(int count, ...);
+  void Generate(std::initializer_list<const int> args);
+  pdfium::span<const uint8_t> span() const;
 
-  int key_len_;
-  char key_[128];
+  size_t key_len_;
+  uint8_t key_[128];
 };
 
-void UniqueKeyGen::Generate(int count, ...) {
-  va_list argList;
-  va_start(argList, count);
-  for (int i = 0; i < count; i++) {
-    int p = va_arg(argList, int);
-    UNSAFE_TODO(reinterpret_cast<uint32_t*>(key_)[i] = p);
+void UniqueKeyGen::Generate(std::initializer_list<const int32_t> args) {
+  auto remaining = pdfium::make_span(key_);
+  for (const auto& arg : args) {
+    remaining = fxcrt::spancpy(remaining, pdfium::byte_span_from_ref(arg));
   }
-  va_end(argList);
-  key_len_ = count * sizeof(uint32_t);
+  key_len_ = args.size() * sizeof(uint32_t);
+}
+
+pdfium::span<const uint8_t> UniqueKeyGen::span() const {
+  return pdfium::make_span(key_).first(key_len_);
 }
 
 void GenKey(UniqueKeyGen* pKeyGen,
@@ -75,13 +78,13 @@ void GenKey(UniqueKeyGen* pKeyGen,
 #if BUILDFLAG(IS_APPLE)
   if (bNative) {
     if (pFont->GetSubstFont()) {
-      pKeyGen->Generate(10, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
-                        anti_alias, pFont->GetSubstFont()->m_Weight,
-                        pFont->GetSubstFont()->m_ItalicAngle,
-                        pFont->IsVertical(), 3);
+      pKeyGen->Generate({nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
+                         anti_alias, pFont->GetSubstFont()->m_Weight,
+                         pFont->GetSubstFont()->m_ItalicAngle,
+                         pFont->IsVertical(), 3});
     } else {
-      pKeyGen->Generate(7, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
-                        anti_alias, 3);
+      pKeyGen->Generate(
+          {nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width, anti_alias, 3});
     }
     return;
   }
@@ -90,13 +93,13 @@ void GenKey(UniqueKeyGen* pKeyGen,
 #endif
 
   if (pFont->GetSubstFont()) {
-    pKeyGen->Generate(9, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
-                      anti_alias, pFont->GetSubstFont()->m_Weight,
-                      pFont->GetSubstFont()->m_ItalicAngle,
-                      pFont->IsVertical());
+    pKeyGen->Generate({nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
+                       anti_alias, pFont->GetSubstFont()->m_Weight,
+                       pFont->GetSubstFont()->m_ItalicAngle,
+                       pFont->IsVertical()});
   } else {
-    pKeyGen->Generate(6, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
-                      anti_alias);
+    pKeyGen->Generate(
+        {nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width, anti_alias});
   }
 }
 
@@ -161,8 +164,7 @@ const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(
   const bool bNative = false;
 #endif
   GenKey(&keygen, pFont, matrix, dest_width, anti_alias, bNative);
-  auto FaceGlyphsKey =
-      UNSAFE_TODO(ByteString::Create(keygen.key_, keygen.key_len_));
+  auto FaceGlyphsKey = ByteString(ByteStringView(keygen.span()));
 
 #if BUILDFLAG(IS_APPLE)
   const bool bDoLookUp =
@@ -207,8 +209,7 @@ const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(
     }
   }
   GenKey(&keygen, pFont, matrix, dest_width, anti_alias, /*bNative=*/false);
-  auto FaceGlyphsKey2 =
-      UNSAFE_TODO(ByteString::Create(keygen.key_, keygen.key_len_));
+  auto FaceGlyphsKey2 = ByteString(ByteStringView(keygen.span()));
   text_options->native_text = false;
   return LookUpGlyphBitmap(pFont, matrix, FaceGlyphsKey2, glyph_index,
                            bFontStyle, dest_width, anti_alias);

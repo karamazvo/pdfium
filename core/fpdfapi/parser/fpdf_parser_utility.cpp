@@ -244,7 +244,7 @@ std::ostream& operator<<(std::ostream& buf, const CPDF_Object* pObj) {
       buf << p->GetDict().Get() << "stream\r\n";
       auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(p));
       pAcc->LoadAllDataRaw();
-      auto span = fxcrt::reinterpret_span<const char>(pAcc->GetSpan());
+      auto span = pdfium::as_chars(pAcc->GetSpan());
       buf.write(span.data(), span.size());
       buf << "\r\nendstream";
       break;
