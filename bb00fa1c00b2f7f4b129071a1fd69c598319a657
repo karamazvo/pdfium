@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fd423ad8_b472ba74",
+        "filename": "core/fxge/cfx_glyphcache.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-18T20:04:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d362709c_49245683",
+      "revId": "bb00fa1c00b2f7f4b129071a1fd69c598319a657",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "aacb2bfd_0790cd76",
@@ -31,6 +49,24 @@
       "writtenOn": "2024-06-18T18:42:40Z",
       "side": 1,
       "message": "Might as well make this a real class and encapsulate?",
+      "revId": "bb00fa1c00b2f7f4b129071a1fd69c598319a657",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "14a11a96_8fc626e4",
+        "filename": "core/fxge/cfx_glyphcache.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-18T20:04:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aacb2bfd_0790cd76",
       "revId": "bb00fa1c00b2f7f4b129071a1fd69c598319a657",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -52,6 +88,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7453e522_b40f3933",
+        "filename": "core/fxge/cfx_glyphcache.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-18T20:04:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cf5818a2_2958999b",
+      "revId": "bb00fa1c00b2f7f4b129071a1fd69c598319a657",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6dc56d19_c6ed17f3",
@@ -65,6 +119,30 @@
       "writtenOn": "2024-06-18T18:47:02Z",
       "side": 1,
       "message": "Separately, maybe this be a return value.",
+      "range": {
+        "startLine": 67,
+        "startChar": 12,
+        "endLine": 67,
+        "endChar": 34
+      },
+      "revId": "bb00fa1c00b2f7f4b129071a1fd69c598319a657",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bc591045_7fa34278",
+        "filename": "core/fxge/cfx_glyphcache.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-18T20:04:58Z",
+      "side": 1,
+      "message": "Actually, this is the constructor.",
+      "parentUuid": "6dc56d19_c6ed17f3",
       "range": {
         "startLine": 67,
         "startChar": 12,
