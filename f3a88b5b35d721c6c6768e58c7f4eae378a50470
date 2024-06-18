@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "74745280_de38655f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-18T14:56:22Z",
+      "side": 1,
+      "message": "LG w/nits.",
+      "revId": "f3a88b5b35d721c6c6768e58c7f4eae378a50470",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fea36df4_b476a2ff",
+        "filename": "core/fpdfapi/page/cpdf_color.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-18T14:56:22Z",
+      "side": 1,
+      "message": "nit: 255.0f perhaps for clarity.",
+      "revId": "f3a88b5b35d721c6c6768e58c7f4eae378a50470",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "498cbfb7_3a5b1bd6",
+        "filename": "core/fpdfapi/page/cpdf_color.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-18T14:56:22Z",
+      "side": 1,
+      "message": "nit: clamped",
+      "range": {
+        "startLine": 44,
+        "startChar": 30,
+        "endLine": 44,
+        "endChar": 39
+      },
+      "revId": "f3a88b5b35d721c6c6768e58c7f4eae378a50470",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cba4bc37_1b773f7f",
+        "filename": "core/fpdfapi/page/cpdf_color.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-18T14:56:22Z",
+      "side": 1,
+      "message": "nit: are 8-bit fields within an unsigned integer.",
+      "range": {
+        "startLine": 45,
+        "startChar": 16,
+        "endLine": 45,
+        "endChar": 29
+      },
+      "revId": "f3a88b5b35d721c6c6768e58c7f4eae378a50470",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
