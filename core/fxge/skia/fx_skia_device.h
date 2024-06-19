@@ -18,6 +18,7 @@
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/renderdevicedriver_iface.h"
+#include "third_party/skia/include/core/SkColorType.h"
 #include "third_party/skia/include/core/SkPoint.h"
 #include "third_party/skia/include/core/SkRSXform.h"
 #include "third_party/skia/include/core/SkRefCnt.h"
@@ -212,6 +213,8 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
                        const CFX_Matrix& matrix,
                        const FXDIB_ResampleOptions& options,
                        BlendMode blend_type);
+  void InitializeSurfaceAndCanvas(SkColorType color_type);
+  bool ConvertToArgbBitmap();
 
   RetainPtr<CFX_DIBitmap> m_pBitmap;
   RetainPtr<CFX_DIBitmap> m_pBackdropBitmap;

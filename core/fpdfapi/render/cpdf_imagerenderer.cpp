@@ -325,7 +325,7 @@ bool CPDF_ImageRenderer::DrawPatternImage() {
     return true;
   }
 
-  bitmap_device.GetBitmap()->MultiplyAlphaMask(std::move(mask_bitmap));
+  bitmap_device.MultiplyAlphaMask(std::move(mask_bitmap));
   m_pRenderStatus->GetRenderDevice()->SetDIBitsWithBlend(
       bitmap_device.GetBitmap(), rect.left, rect.top, m_BlendType);
   return false;
@@ -372,8 +372,8 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
     return false;
   }
 #endif
-  bitmap_device.GetBitmap()->MultiplyAlphaMask(std::move(mask_bitmap));
-  bitmap_device.GetBitmap()->MultiplyAlpha(m_Alpha);
+  bitmap_device.MultiplyAlphaMask(std::move(mask_bitmap));
+  bitmap_device.MultiplyAlpha(m_Alpha);
   m_pRenderStatus->GetRenderDevice()->SetDIBitsWithBlend(
       bitmap_device.GetBitmap(), rect.left, rect.top, m_BlendType);
   return false;
