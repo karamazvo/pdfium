@@ -16,6 +16,24 @@
       "message": "A bit late, as we already marked the API as stable, but I would have changed the out-parameters to a FS_POINTF*",
       "revId": "fe7b1f4f8fdf6e0e4545f77dc3352811cecab597",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "35547190_97aefc04",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 926,
+      "author": {
+        "id": 6835
+      },
+      "writtenOn": "2024-06-20T12:24:21Z",
+      "side": 1,
+      "message": "Sorry, for some reason I totally missed this comment. If you would still suggest to do this, I don\u0027t mind putting up a change for review that does this. Thanks.",
+      "parentUuid": "b8c79615_6749c610",
+      "revId": "fe7b1f4f8fdf6e0e4545f77dc3352811cecab597",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
