@@ -171,14 +171,14 @@ void Revision6_Hash(const ByteString& password,
         break;
     }
     inter_digest.resize(block_size);
-    input = inter_digest.data();
     if (iHash == 0) {
-      CRYPT_SHA256Generate(encrypted_output_span, inter_digest);
+      inter_digest = CRYPT_SHA256Generate(encrypted_output_span);
     } else if (iHash == 1) {
-      CRYPT_SHA384Generate(encrypted_output_span, inter_digest);
+      inter_digest = CRYPT_SHA384Generate(encrypted_output_span);
     } else if (iHash == 2) {
-      CRYPT_SHA512Generate(encrypted_output_span, inter_digest);
+      inter_digest = CRYPT_SHA512Generate(encrypted_output_span);
     }
+    input = inter_digest.data();
     key = input;
     iv = UNSAFE_TODO(input + 16);
     ++i;
