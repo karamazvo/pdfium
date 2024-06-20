@@ -16,6 +16,24 @@
       "message": "Sure, but does the speed limit apply to other projects using the machine pool?",
       "revId": "c604a30927f0f908ba48f43611ba958a178a0ba0",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4d57def6_e49372b6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-20T17:00:46Z",
+      "side": 1,
+      "message": "It applies only to PDFium. So if I start a burst of try jobs across many PDFium CLs, they won\u0027t unfairly block your PDFium CLs.",
+      "parentUuid": "731ea347_f39aafc9",
+      "revId": "c604a30927f0f908ba48f43611ba958a178a0ba0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
