@@ -34,6 +34,24 @@
       "parentUuid": "b8c79615_6749c610",
       "revId": "fe7b1f4f8fdf6e0e4545f77dc3352811cecab597",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7d9ca537_7233f6d6",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 926,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-20T17:23:02Z",
+      "side": 1,
+      "message": "No worries. Except since the API has been marked stable, we would want to add a replacement and deprecate this.",
+      "parentUuid": "35547190_97aefc04",
+      "revId": "fe7b1f4f8fdf6e0e4545f77dc3352811cecab597",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
