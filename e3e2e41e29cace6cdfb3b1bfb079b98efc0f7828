@@ -16,6 +16,97 @@
       "message": "Lei: could you please review this when you have time? Thanks.",
       "revId": "e3e2e41e29cace6cdfb3b1bfb079b98efc0f7828",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f468f0b1_5594d546",
+        "filename": "fpdfsdk/fpdf_annot.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1379,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-20T18:44:04Z",
+      "side": 1,
+      "message": "A large portion of this function is copy+pasted code. I uploaded https://pdfium-review.googlesource.com/120791 to create a helper function for this code to call.",
+      "revId": "e3e2e41e29cace6cdfb3b1bfb079b98efc0f7828",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1c738f6a_0a571349",
+        "filename": "fpdfsdk/fpdf_annot_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2815,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-20T18:44:04Z",
+      "side": 1,
+      "message": "One declaration per line please.",
+      "revId": "e3e2e41e29cace6cdfb3b1bfb079b98efc0f7828",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "87e15edb_175b9938",
+        "filename": "public/fpdf_annot.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 854,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-20T18:44:04Z",
+      "side": 1,
+      "message": "The dash is not lined up with the previous lines.",
+      "revId": "e3e2e41e29cace6cdfb3b1bfb079b98efc0f7828",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b05c8ca5_715ba777",
+        "filename": "testing/resources/text_form_color.in",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-20T18:44:04Z",
+      "side": 1,
+      "message": "No spaces inside the brackets. e.g. `[4 0 R]` or `[4 0 R 9 0 R]`.",
+      "range": {
+        "startLine": 6,
+        "startChar": 12,
+        "endLine": 6,
+        "endChar": 21
+      },
+      "revId": "e3e2e41e29cace6cdfb3b1bfb079b98efc0f7828",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b933ed43_24239290",
+        "filename": "testing/resources/text_form_color.in",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-20T18:44:04Z",
+      "side": 1,
+      "message": "If the test file only needs the AcroForm, then can it just omit the page contents?",
+      "revId": "e3e2e41e29cace6cdfb3b1bfb079b98efc0f7828",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
