@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "731ea347_f39aafc9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5645
+      },
+      "writtenOn": "2024-06-20T16:57:30Z",
+      "side": 1,
+      "message": "Sure, but does the speed limit apply to other projects using the machine pool?",
+      "revId": "c604a30927f0f908ba48f43611ba958a178a0ba0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
