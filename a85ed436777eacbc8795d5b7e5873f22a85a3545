@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2f57e521_a04aa551",
+        "filename": "fxjs/xfa/cjx_object.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-20T17:48:41Z",
+      "side": 1,
+      "message": "I guess having 1 WideString -\u003e WideStringView -\u003e WideString copy is not that bad.",
+      "revId": "a85ed436777eacbc8795d5b7e5873f22a85a3545",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
