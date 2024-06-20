@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "14502694_714969c5",
+        "filename": "fpdfsdk/fpdf_annot.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-20T20:22:54Z",
+      "side": 1,
+      "message": "yeah, ok, was trying to think if there was some way to call this as\n`GetWidgetOfTypes(handle, annot, {CPDF_FormField::kCheckBox,  CPDF_FormField::kRadioButton));` but passing, say, std::initializer_list\u003c\u003e is kinda ick.",
+      "range": {
+        "startLine": 342,
+        "startChar": 10,
+        "endLine": 342,
+        "endChar": 55
+      },
+      "revId": "2a7820f0f58b11db4c08deac2ba9d9394e40c0b8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
