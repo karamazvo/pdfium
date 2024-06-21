@@ -47,8 +47,7 @@ class GifDecoder {
   static Status ReadHeader(ProgressiveDecoderIface::Context* context,
                            int* width,
                            int* height,
-                           int* pal_num,
-                           CFX_GifPalette** pal_pp,
+                           pdfium::span<CFX_GifPalette>* pal_pp,
                            int* bg_index);
   static std::pair<Status, size_t> LoadFrameInfo(
       ProgressiveDecoderIface::Context* context);

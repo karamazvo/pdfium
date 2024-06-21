@@ -264,8 +264,7 @@ class ProgressiveDecoder final :
   size_t m_FrameCur = 0;
 #ifdef PDF_ENABLE_XFA_GIF
   int m_GifBgIndex = 0;
-  UNOWNED_PTR_EXCLUSION CFX_GifPalette* m_pGifPalette = nullptr;
-  int32_t m_GifPltNumber = 0;
+  pdfium::span<CFX_GifPalette> m_GifPalette;
   int m_GifTransIndex = -1;
   FX_RECT m_GifFrameRect;
 #endif  // PDF_ENABLE_XFA_GIF

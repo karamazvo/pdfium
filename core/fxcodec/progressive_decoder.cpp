@@ -393,10 +393,11 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(uint32_t rcd_pos,
   if (pal_num != 0 && pal_ptr) {
     pPalette = pal_ptr;
   } else {
-    if (!m_pGifPalette)
+    if (m_GifPalette.empty()) {
       return false;
-    pal_num = m_GifPltNumber;
-    pPalette = m_pGifPalette;
+    }
+    pal_num = (int)m_GifPalette.size();
+    pPalette = m_GifPalette.data();
   }
   m_SrcPalette.resize(pal_num);
   UNSAFE_TODO({
@@ -790,7 +791,7 @@ bool ProgressiveDecoder::GifDetectImageTypeInBuffer() {
   m_SrcComponents = 1;
   GifDecoder::Status readResult =
       GifDecoder::ReadHeader(m_pGifContext.get(), &m_SrcWidth, &m_SrcHeight,
-                             &m_GifPltNumber, &m_pGifPalette, &m_GifBgIndex);
+                             &m_GifPalette, &m_GifBgIndex);
   while (readResult == GifDecoder::Status::kUnfinished) {
     FXCODEC_STATUS error_status = FXCODEC_STATUS::kError;
     if (!GifReadMoreData(&error_status)) {
@@ -800,7 +801,7 @@ bool ProgressiveDecoder::GifDetectImageTypeInBuffer() {
     }
     readResult =
         GifDecoder::ReadHeader(m_pGifContext.get(), &m_SrcWidth, &m_SrcHeight,
-                               &m_GifPltNumber, &m_pGifPalette, &m_GifBgIndex);
+                               &m_GifPalette, &m_GifBgIndex);
   }
   if (readResult == GifDecoder::Status::kSuccess) {
     m_SrcBPC = 8;
