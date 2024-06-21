@@ -24,6 +24,7 @@
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/dib/cfx_cmyk_to_srgb.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
@@ -376,12 +377,12 @@ uint32_t ProgressiveDecoder::GifCurrentPosition() const {
   return m_offSet - remain_size;
 }
 
-bool ProgressiveDecoder::GifInputRecordPositionBuf(uint32_t rcd_pos,
-                                                   const FX_RECT& img_rc,
-                                                   int32_t pal_num,
-                                                   CFX_GifPalette* pal_ptr,
-                                                   int32_t trans_index,
-                                                   bool interlace) {
+bool ProgressiveDecoder::GifInputRecordPositionBuf(
+    uint32_t rcd_pos,
+    const FX_RECT& img_rc,
+    pdfium::span<CFX_GifPalette> pal_span,
+    int32_t trans_index,
+    bool interlace) {
   m_offSet = rcd_pos;
 
   FXCODEC_STATUS error_status = FXCODEC_STATUS::kError;
@@ -389,27 +390,23 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(uint32_t rcd_pos,
   if (!GifReadMoreData(&error_status))
     return false;
 
-  CFX_GifPalette* pPalette = nullptr;
-  if (pal_num != 0 && pal_ptr) {
-    pPalette = pal_ptr;
-  } else {
-    if (!m_pGifPalette)
-      return false;
-    pal_num = m_GifPltNumber;
-    pPalette = m_pGifPalette;
+  if (pal_span.empty()) {
+    pal_span = m_GifPalette;
   }
-  m_SrcPalette.resize(pal_num);
-  UNSAFE_TODO({
-    for (int i = 0; i < pal_num; i++) {
-      m_SrcPalette[i] =
-          ArgbEncode(0xff, pPalette[i].r, pPalette[i].g, pPalette[i].b);
-    }
+  if (pal_span.empty()) {
+    return false;
+  }
+  m_SrcPalette.resize(pal_span.size());
+  for (size_t i = 0; i < pal_span.size(); i++) {
+    m_SrcPalette[i] =
+        ArgbEncode(0xff, pal_span[i].r, pal_span[i].g, pal_span[i].b);
+  }
     m_GifTransIndex = trans_index;
     m_GifFrameRect = img_rc;
     m_SrcPassNumber = interlace ? 4 : 1;
     int32_t pal_index = m_GifBgIndex;
     RetainPtr<CFX_DIBitmap> pDevice = m_pDeviceBitmap;
-    if (trans_index >= pal_num) {
+    if (trans_index >= static_cast<int>(pal_span.size())) {
       trans_index = -1;
     }
     if (trans_index != -1) {
@@ -418,10 +415,9 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(uint32_t rcd_pos,
         pal_index = trans_index;
       }
     }
-    if (pal_index >= pal_num) {
+    if (pal_index >= static_cast<int>(pal_span.size())) {
       return false;
     }
-
     int startX = m_startX;
     int startY = m_startY;
     int sizeX = m_sizeX;
@@ -429,36 +425,39 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(uint32_t rcd_pos,
     int Bpp = pDevice->GetBPP() / 8;
     FX_ARGB argb = m_SrcPalette[pal_index];
     for (int row = 0; row < sizeY; row++) {
-      uint8_t* pScanline = pDevice->GetWritableScanline(row + startY)
-                               .subspan(startX * Bpp)
-                               .data();
+      pdfium::span<uint8_t> scan_span =
+          pDevice->GetWritableScanline(row + startY).subspan(startX * Bpp);
       switch (m_TransMethod) {
         case 3: {
-          uint8_t gray =
-              FXRGB2GRAY(FXARGB_R(argb), FXARGB_G(argb), FXARGB_B(argb));
-          FXSYS_memset(pScanline, gray, sizeX);
+          fxcrt::Fill(scan_span, FXRGB2GRAY(FXARGB_R(argb), FXARGB_G(argb),
+                                            FXARGB_B(argb)));
           break;
         }
         case 8: {
-          for (int col = 0; col < sizeX; col++) {
-            *pScanline++ = FXARGB_B(argb);
-            *pScanline++ = FXARGB_G(argb);
-            *pScanline++ = FXARGB_R(argb);
-            pScanline += Bpp - 3;
-          }
+          uint8_t* pScanline = scan_span.data();
+          UNSAFE_TODO({
+            for (int col = 0; col < sizeX; col++) {
+              *pScanline++ = FXARGB_B(argb);
+              *pScanline++ = FXARGB_G(argb);
+              *pScanline++ = FXARGB_R(argb);
+              pScanline += Bpp - 3;
+            }
+          });
           break;
         }
         case 12: {
-          for (int col = 0; col < sizeX; col++) {
-            FXARGB_SetDIB(pScanline, argb);
-            pScanline += 4;
-          }
+          uint8_t* pScanline = scan_span.data();
+          UNSAFE_TODO({
+            for (int col = 0; col < sizeX; col++) {
+              FXARGB_SetDIB(pScanline, argb);
+              pScanline += 4;
+            }
+          });
           break;
         }
       }
     }
-  });
-  return true;
+    return true;
 }
 
 void ProgressiveDecoder::GifReadScanline(int32_t row_num,
@@ -790,7 +789,7 @@ bool ProgressiveDecoder::GifDetectImageTypeInBuffer() {
   m_SrcComponents = 1;
   GifDecoder::Status readResult =
       GifDecoder::ReadHeader(m_pGifContext.get(), &m_SrcWidth, &m_SrcHeight,
-                             &m_GifPltNumber, &m_pGifPalette, &m_GifBgIndex);
+                             &m_GifPalette, &m_GifBgIndex);
   while (readResult == GifDecoder::Status::kUnfinished) {
     FXCODEC_STATUS error_status = FXCODEC_STATUS::kError;
     if (!GifReadMoreData(&error_status)) {
@@ -800,7 +799,7 @@ bool ProgressiveDecoder::GifDetectImageTypeInBuffer() {
     }
     readResult =
         GifDecoder::ReadHeader(m_pGifContext.get(), &m_SrcWidth, &m_SrcHeight,
-                               &m_GifPltNumber, &m_pGifPalette, &m_GifBgIndex);
+                               &m_GifPalette, &m_GifBgIndex);
   }
   if (readResult == GifDecoder::Status::kSuccess) {
     m_SrcBPC = 8;
