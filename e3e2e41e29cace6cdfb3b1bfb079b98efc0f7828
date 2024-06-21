@@ -53,6 +53,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c0f57535_4d874a18",
+        "filename": "fpdfsdk/fpdf_annot.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1379,
+      "author": {
+        "id": 6835
+      },
+      "writtenOn": "2024-06-21T07:00:06Z",
+      "side": 1,
+      "message": "Ah indeed, I should have extracted those duplicated lines, thanks for doing that for me. :-)",
+      "parentUuid": "3ef127f8_405e7a7d",
+      "revId": "e3e2e41e29cace6cdfb3b1bfb079b98efc0f7828",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1c738f6a_0a571349",
@@ -70,6 +88,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1dcb036e_c97b2c40",
+        "filename": "fpdfsdk/fpdf_annot_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2815,
+      "author": {
+        "id": 6835
+      },
+      "writtenOn": "2024-06-21T07:00:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1c738f6a_0a571349",
+      "revId": "e3e2e41e29cace6cdfb3b1bfb079b98efc0f7828",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "87e15edb_175b9938",
@@ -83,6 +119,24 @@
       "writtenOn": "2024-06-20T18:44:04Z",
       "side": 1,
       "message": "The dash is not lined up with the previous lines.",
+      "revId": "e3e2e41e29cace6cdfb3b1bfb079b98efc0f7828",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "642f07cb_c56a4543",
+        "filename": "public/fpdf_annot.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 854,
+      "author": {
+        "id": 6835
+      },
+      "writtenOn": "2024-06-21T07:00:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87e15edb_175b9938",
       "revId": "e3e2e41e29cace6cdfb3b1bfb079b98efc0f7828",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -110,6 +164,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b8abae41_95f36ab1",
+        "filename": "testing/resources/text_form_color.in",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 6835
+      },
+      "writtenOn": "2024-06-21T07:00:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b05c8ca5_715ba777",
+      "range": {
+        "startLine": 6,
+        "startChar": 12,
+        "endLine": 6,
+        "endChar": 21
+      },
+      "revId": "e3e2e41e29cace6cdfb3b1bfb079b98efc0f7828",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b933ed43_24239290",
@@ -123,6 +201,24 @@
       "writtenOn": "2024-06-20T18:44:04Z",
       "side": 1,
       "message": "If the test file only needs the AcroForm, then can it just omit the page contents?",
+      "revId": "e3e2e41e29cace6cdfb3b1bfb079b98efc0f7828",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a93a909b_0927021c",
+        "filename": "testing/resources/text_form_color.in",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 6835
+      },
+      "writtenOn": "2024-06-21T07:00:06Z",
+      "side": 1,
+      "message": "Aha, the PDF spec 7.7.3.3 Page Objects says /Contents is indeed optional, I remove it now.",
+      "parentUuid": "b933ed43_24239290",
       "revId": "e3e2e41e29cace6cdfb3b1bfb079b98efc0f7828",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
