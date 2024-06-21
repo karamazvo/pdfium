@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bcab0ee4_ef781974",
+        "filename": "core/fpdfapi/parser/cpdf_security_handler.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-21T21:21:23Z",
+      "side": 1,
+      "message": "Probably can be `inter_digest.size()` soonish.",
+      "revId": "807ba30e1be456d33d4d1f83930133ac80ac56dc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
