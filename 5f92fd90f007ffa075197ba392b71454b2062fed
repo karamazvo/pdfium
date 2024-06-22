@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f3f2dc0f_570fd80e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3293871
+      },
+      "writtenOn": "2024-06-22T19:34:04Z",
+      "side": 1,
+      "message": "Lei, PTAL",
+      "revId": "5f92fd90f007ffa075197ba392b71454b2062fed",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
