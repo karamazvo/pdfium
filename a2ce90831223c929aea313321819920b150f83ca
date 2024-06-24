@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3d7bc8e8_f1d1465e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-24T18:51:35Z",
+      "side": 1,
+      "message": "Should we do this? Or just file a bug upstream and ask OpenJPEG to improve their own fuzzers? Then OSSFuzz will report the bugs instead.",
+      "revId": "a2ce90831223c929aea313321819920b150f83ca",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
