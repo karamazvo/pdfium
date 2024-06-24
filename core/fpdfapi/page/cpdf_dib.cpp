@@ -39,7 +39,7 @@
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/calculate_pitch.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 
@@ -1182,15 +1182,14 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
       pSrcLine = remaining_bytes.first(src_pitch_value);
     } else {
       temp_buffer = DataVector<uint8_t>(src_pitch_value);
-      pdfium::span<uint8_t> result = temp_buffer;
-      fxcrt::spancpy(result, remaining_bytes);
-      pSrcLine = result;
+      fxcrt::Copy(remaining_bytes, temp_buffer);
+      pSrcLine = temp_buffer;
     }
   }
 
   if (pSrcLine.empty()) {
     pdfium::span<uint8_t> result = !m_MaskBuf.empty() ? m_MaskBuf : m_LineBuf;
-    fxcrt::spanset(result, 0);
+    fxcrt::Fill(result, 0);
     return result;
   }
   if (m_bpc * m_nComponents == 1) {
@@ -1202,9 +1201,8 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
       return pdfium::make_span(m_LineBuf).first(src_pitch_value);
     }
     if (!m_bColorKey) {
-      pdfium::span<uint8_t> result = m_LineBuf;
-      fxcrt::spancpy(result, pSrcLine.first(src_pitch_value));
-      return result.first(src_pitch_value);
+      fxcrt::Copy(pSrcLine.first(src_pitch_value), m_LineBuf);
+      return pdfium::span<uint8_t>(m_LineBuf).first(src_pitch_value);
     }
     uint32_t reset_argb = Get1BitResetValue();
     uint32_t set_argb = Get1BitSetValue();
@@ -1219,7 +1217,7 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
   if (m_bpc * m_nComponents <= 8) {
     pdfium::span<uint8_t> result = m_LineBuf;
     if (m_bpc == 8) {
-      fxcrt::spancpy(result, pSrcLine.first(src_pitch_value));
+      fxcrt::Copy(pSrcLine.first(src_pitch_value), result);
       result = result.first(src_pitch_value);
     } else {
       uint64_t src_bit_pos = 0;
@@ -1275,7 +1273,7 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
         }
       });
     } else {
-      fxcrt::spanset(pdfium::make_span(m_MaskBuf), 0xFF);
+      fxcrt::Fill(m_MaskBuf, 0xFF);
     }
   }
   if (m_pColorSpace) {
