@@ -34,6 +34,24 @@
       "parentUuid": "9ca7c459_0a381c71",
       "revId": "0f8049839f97497d979f4431f3309b29f374cd86",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "93db4cbb_02dda29a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 7361
+      },
+      "writtenOn": "2024-06-24T19:45:51Z",
+      "side": 1,
+      "message": "I think you need something like http://cl/621835758, but applied to http://google3/devtools/gerritcodereview/hosted_sites/pdfium/gerrit.gcl",
+      "parentUuid": "551e3f6d_e10f4778",
+      "revId": "0f8049839f97497d979f4431f3309b29f374cd86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
