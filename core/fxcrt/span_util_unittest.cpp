@@ -24,7 +24,7 @@ TEST(Spancpy, FitsWithin) {
   std::vector<char> src(2, 'A');
   std::vector<char> dst(4, 'B');
   // Also show that a const src argument is acceptable.
-  auto remain = fxcrt::spancpy(pdfium::make_span(dst).subspan(1),
+  auto remain = fxcrt::spancpy(pdfium::make_span(dst).subspan<1>(),
                                pdfium::span<const char>(src));
   EXPECT_EQ(dst[0], 'B');
   EXPECT_EQ(dst[1], 'A');
@@ -38,7 +38,7 @@ TEST(Spancpy, EmptyCopyWithin) {
   std::vector<char> src(2, 'A');
   std::vector<char> dst(4, 'B');
   auto remain = fxcrt::spancpy(pdfium::make_span(dst).subspan(1),
-                               pdfium::make_span(src).subspan(2));
+                               pdfium::make_span(src).subspan<2>());
   EXPECT_EQ(dst[0], 'B');
   EXPECT_EQ(dst[1], 'B');
   EXPECT_EQ(dst[2], 'B');
@@ -50,8 +50,8 @@ TEST(Spancpy, EmptyCopyWithin) {
 TEST(Spancpy, EmptyCopyToEmpty) {
   std::vector<char> src(2, 'A');
   std::vector<char> dst(4, 'B');
-  auto remain = fxcrt::spancpy(pdfium::make_span(dst).subspan(4),
-                               pdfium::make_span(src).subspan(2));
+  auto remain = fxcrt::spancpy(pdfium::make_span(dst).subspan<4>(),
+                               pdfium::make_span(src).subspan<2>());
   EXPECT_EQ(dst[0], 'B');
   EXPECT_EQ(dst[1], 'B');
   EXPECT_EQ(dst[2], 'B');
@@ -108,7 +108,7 @@ TEST(Spanmove, TryFitsEntirely) {
 TEST(Spanmove, TrySelfIntersect) {
   {
     std::vector<char> vec = {'A', 'B', 'C', 'D'};
-    EXPECT_TRUE(fxcrt::try_spanmove(pdfium::make_span(vec).first(3),
+    EXPECT_TRUE(fxcrt::try_spanmove(pdfium::make_span(vec).first<3>(),
                                     pdfium::make_span(vec).last(3)));
     EXPECT_EQ(vec[0], 'B');
     EXPECT_EQ(vec[1], 'C');
@@ -117,7 +117,7 @@ TEST(Spanmove, TrySelfIntersect) {
   }
   {
     std::vector<char> vec = {'A', 'B', 'C', 'D'};
-    EXPECT_TRUE(fxcrt::try_spanmove(pdfium::make_span(vec).last(3),
+    EXPECT_TRUE(fxcrt::try_spanmove(pdfium::make_span(vec).last<3>(),
                                     pdfium::make_span(vec).first(3)));
     EXPECT_EQ(vec[0], 'A');
     EXPECT_EQ(vec[1], 'A');
@@ -165,7 +165,7 @@ TEST(SpanEquals, NonEmpty) {
 TEST(Span, AssignOverOnePastEnd) {
   std::vector<char> src(2, 'A');
   pdfium::span<char> span = pdfium::make_span(src);
-  span = span.subspan(2);
+  span = span.subspan<2>();
   span = pdfium::make_span(src);
   EXPECT_EQ(span.size(), 2u);
 }
