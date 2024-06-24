@@ -289,6 +289,12 @@ class TRIVIAL_ABI GSL_POINTER span {
   constexpr bool empty() const noexcept { return size_ == 0; }
 
   // [span.elem], span element access
+  template <size_t X>
+  T& at() const noexcept {
+    static_assert(Extent != dynamic_extent && X < Extent);
+    return UNSAFE_BUFFERS(static_cast<T*>(data_)[X]);
+  }
+
   T& operator[](size_t index) const noexcept {
     CHECK(index < size_);
     return UNSAFE_BUFFERS(static_cast<T*>(data_)[index]);
