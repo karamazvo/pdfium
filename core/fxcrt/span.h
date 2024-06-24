@@ -19,7 +19,11 @@
 #include "core/fxcrt/unowned_ptr_exclusion.h"
 
 // SAFETY: TODO(crbug.com/pdfium/2085): this entire file is to be replaced
-// with the fully annotated one that is being prepared in base/.
+// with the fully annotated one that is being prepared in Chromium (PDFium
+// is still holding the line at C++17, and Chromium's uses C++20 features).
+
+// This is also simplied from Chromiums as there is always a size_ member,
+// even for fixed spans, to avoid having a second distinct template.
 
 namespace pdfium {
 
@@ -171,9 +175,6 @@ using EnableIfConstSpanCompatibleContainer =
 // - no constructor from a pointer range
 //
 // Differences from [span.sub]:
-// - no templated first()
-// - no templated last()
-// - no templated subspan()
 // - using size_t instead of ptrdiff_t for indexing
 //
 // Differences from [span.obs]:
@@ -265,9 +266,23 @@ class TRIVIAL_ABI GSL_POINTER span {
   ~span() noexcept = default;
 
   // [span.sub], span subviews
+  template <size_t Count>
+  constexpr span<T, Count> first() const noexcept {
+    static_assert(Extent == dynamic_extent || Count <= Extent);
+    CHECK(Extent != dynamic_extent || Count <= size_);
+    return UNSAFE_BUFFERS(span<T, Count>(data(), Count));
+  }
+
   const span first(size_t count) const {
     CHECK(count <= size_);
     return span(static_cast<T*>(data_), count);
+  }
+
+  template <size_t Count>
+  constexpr span<T, Count> last() const noexcept {
+    static_assert(Extent == dynamic_extent || Count < Extent);
+    CHECK(Extent != dynamic_extent || Count <= size_);
+    return UNSAFE_BUFFERS(span<T, Count>(data() + (size_ - Count), Count));
   }
 
   const span last(size_t count) const {
@@ -276,11 +291,23 @@ class TRIVIAL_ABI GSL_POINTER span {
         span(static_cast<T*>(data_) + (size_ - count), count));
   }
 
-  const span subspan(size_t pos, size_t count = dynamic_extent) const {
-    CHECK(pos <= size_);
-    CHECK(count == dynamic_extent || count <= size_ - pos);
-    return span(UNSAFE_BUFFERS(static_cast<T*>(data_) + pos),
-                count == dynamic_extent ? size_ - pos : count);
+  template <size_t Offset, size_t Count = dynamic_extent>
+  constexpr auto subspan() const noexcept {
+    static_assert(Extent == dynamic_extent || Offset <= Extent);
+    static_assert(Extent == dynamic_extent || Count == dynamic_extent ||
+                  Count <= Extent - Offset);
+    CHECK(Extent != dynamic_extent || Offset <= size_);
+    CHECK(Extent != dynamic_extent || Count == dynamic_extent ||
+          Count <= size_ - Offset);
+    return span(UNSAFE_BUFFERS(static_cast<T*>(data_) + Offset),
+                Count == dynamic_extent ? size_ - Offset : Count);
+  }
+
+  const span subspan(size_t offset, size_t count = dynamic_extent) const {
+    CHECK(offset <= size_);
+    CHECK(count == dynamic_extent || count <= size_ - offset);
+    return span(UNSAFE_BUFFERS(static_cast<T*>(data_) + offset),
+                count == dynamic_extent ? size_ - offset : count);
   }
 
   // [span.obs], span observers
