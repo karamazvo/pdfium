@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f23d5abb_74376e25",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-24T21:59:14Z",
+      "side": 1,
+      "message": "Just use: 42270790",
+      "range": {
+        "startLine": 14,
+        "startChar": 5,
+        "endLine": 14,
+        "endChar": 48
+      },
+      "revId": "ce5d1a42efe84b81141c688cb031ac390dee1e6b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c09c86cd_c9b53af2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-24T21:59:14Z",
+      "side": 1,
+      "message": "Thanks for working on this.",
+      "revId": "ce5d1a42efe84b81141c688cb031ac390dee1e6b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "89535909_58b3df45",
+        "filename": "fpdfsdk/fpdf_doc_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-24T21:59:14Z",
+      "side": 1,
+      "message": "No need for the \"Test\" suffix. As in, FPDFDocEmbedderTest.Bug1506FirstTest has \"Test\" twice.",
+      "range": {
+        "startLine": 212,
+        "startChar": 40,
+        "endLine": 212,
+        "endChar": 44
+      },
+      "revId": "ce5d1a42efe84b81141c688cb031ac390dee1e6b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
