@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "61a57b29_937563fb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8941
+      },
+      "writtenOn": "2024-06-24T07:16:10Z",
+      "side": 1,
+      "message": "Would you review this CL?\n\nc.f. chromium now uses raw-ptr plugin for raw-ptr check:\nhttps://source.chromium.org/chromium/chromium/src/+/main:build/config/clang/BUILD.gn\n(find-bad-construct plugin still has raw-ptr check code, but I will remove the check code in the future.)",
+      "revId": "37a6e942259c7d1451952d487d0cf9ccf46d02fb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
