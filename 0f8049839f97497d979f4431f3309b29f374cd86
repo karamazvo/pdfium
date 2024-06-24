@@ -16,6 +16,24 @@
       "message": "There don\u0027t auto-link correctly. Do you know what\u0027s up with that? Maybe these 2 lines can be `Bug: 40044764, 40044820`?",
       "revId": "0f8049839f97497d979f4431f3309b29f374cd86",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "551e3f6d_e10f4778",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 7361
+      },
+      "writtenOn": "2024-06-24T19:42:05Z",
+      "side": 1,
+      "message": "That fixed it. This is an issue with the gerrit regex that does bug links. We hit something similar in skia (and I think it\u0027s configured per-repo?). The older regexs had a maximum number of digits (eg `\\d[4,7]` or something similar).",
+      "parentUuid": "9ca7c459_0a381c71",
+      "revId": "0f8049839f97497d979f4431f3309b29f374cd86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
