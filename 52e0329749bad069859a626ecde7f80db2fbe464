@@ -1,6 +1,52 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "55550ac8_e017b04a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-25T04:16:49Z",
+      "side": 1,
+      "message": "extra space",
+      "range": {
+        "startLine": 11,
+        "startChar": 23,
+        "endLine": 11,
+        "endChar": 25
+      },
+      "revId": "52e0329749bad069859a626ecde7f80db2fbe464",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1728e527_9a4c248d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-25T04:16:49Z",
+      "side": 1,
+      "message": "\"these\"",
+      "range": {
+        "startLine": 11,
+        "startChar": 7,
+        "endLine": 11,
+        "endChar": 9
+      },
+      "revId": "52e0329749bad069859a626ecde7f80db2fbe464",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "4cc7844f_04bd33d6",
@@ -14,6 +60,29 @@
       "writtenOn": "2024-06-25T02:16:42Z",
       "side": 1,
       "message": "This is just sugar at the moment, in that none of the checks are circumvented based upon the Extent template argument (doing so will require caution, particularly when making one kind of span from the other).",
+      "revId": "52e0329749bad069859a626ecde7f80db2fbe464",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e54c5c3e_ed4fa70a",
+        "filename": "core/fxge/cfx_folderfontinfo.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-25T04:16:49Z",
+      "side": 1,
+      "message": "4u",
+      "range": {
+        "startLine": 196,
+        "startChar": 76,
+        "endLine": 196,
+        "endChar": 77
+      },
       "revId": "52e0329749bad069859a626ecde7f80db2fbe464",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
