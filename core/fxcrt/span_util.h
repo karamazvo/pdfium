@@ -168,6 +168,41 @@ inline pdfium::span<T> reinterpret_span(pdfium::span<U> s) noexcept {
   return truncating_reinterpret_span<T, U>(s);
 }
 
+// Helpers for extracting subspans from containters that are implicitly
+// convertible to span.
+
+template <size_t Count, typename T>
+auto First(T&& container) {
+  return pdfium::make_span(container).first(Count);
+}
+
+template <typename T>
+auto First(T&& container, size_t count) {
+  return pdfium::make_span(container).first(count);
+}
+
+template <size_t Count, typename T>
+auto Last(T&& container) {
+  return pdfium::make_span(container).last(Count);
+}
+
+template <typename T>
+auto Last(T&& container, size_t count) {
+  return pdfium::make_span(container).last(count);
+}
+
+template <size_t Count, size_t Offset = pdfium::dynamic_extent, typename T>
+auto Subspan(T&& container) {
+  return pdfium::make_span(container).subspan(Count, Offset);
+}
+
+template <typename T>
+auto Subspan(T&& container,
+             size_t offset,
+             size_t count = pdfium::dynamic_extent) {
+  return pdfium::make_span(container).subspan(offset, count);
+}
+
 }  // namespace fxcrt
 
 #endif  // CORE_FXCRT_SPAN_UTIL_H_
