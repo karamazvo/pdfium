@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "49d040b2_b1ec825d",
+        "filename": "core/fpdfapi/page/cpdf_dib.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 1207,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-25T20:13:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dacebd53_dc1e922b",
+      "range": {
+        "startLine": 1207,
+        "startChar": 13,
+        "endLine": 1207,
+        "endChar": 34
+      },
+      "revId": "d996689a29b6377743974a3e02706296a1161106",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "178542ed_48a88fe2",
@@ -37,6 +61,24 @@
       "writtenOn": "2024-06-25T19:12:34Z",
       "side": 1,
       "message": "Maybe merge into next line?",
+      "revId": "d996689a29b6377743974a3e02706296a1161106",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "68844f7e_f3a6ce8f",
+        "filename": "core/fxcodec/basic/basicmodule.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-25T20:13:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "178542ed_48a88fe2",
       "revId": "d996689a29b6377743974a3e02706296a1161106",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
