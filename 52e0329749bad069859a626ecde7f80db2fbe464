@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4cc7844f_04bd33d6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-25T02:16:42Z",
+      "side": 1,
+      "message": "This is just sugar at the moment, in that none of the checks are circumvented based upon the Extent template argument (doing so will require caution, particularly when making one kind of span from the other).",
+      "revId": "52e0329749bad069859a626ecde7f80db2fbe464",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
