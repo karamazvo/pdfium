@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a8318715_552eb5f1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-06-25T16:52:37Z",
+      "side": 1,
+      "message": "LGTM",
+      "revId": "f281846a0d89a4095d2da79c92eabd3beb314232",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2c8872b1_b585e085",
+        "filename": "fpdfsdk/fpdf_flatten_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-06-25T16:52:37Z",
+      "side": 1,
+      "message": "I know that TODO style is still under active discussion, after the move to Buganizer, but it would be good if new additions would at least be clickable in Code Search.  Having just the number does not appear to be currently supported as clickable.",
+      "range": {
+        "startLine": 56,
+        "startChar": 10,
+        "endLine": 56,
+        "endChar": 19
+      },
+      "revId": "f281846a0d89a4095d2da79c92eabd3beb314232",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
