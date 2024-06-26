@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0af07cff_d93587b9",
+        "filename": "core/fpdfapi/parser/cpdf_crypto_handler.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-26T21:30:15Z",
+      "side": 1,
+      "message": "Alternatively, don\u0027t even bother calling EncryptGetSize()... Maybe next CL, so this is more of a refactor?",
+      "revId": "2494f46c2024562cbfb53bbd05f8ff6123e944ae",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
