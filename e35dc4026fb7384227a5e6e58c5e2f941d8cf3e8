@@ -39,6 +39,30 @@
       },
       "revId": "e35dc4026fb7384227a5e6e58c5e2f941d8cf3e8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "48b69fb9_60614bf4",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-26T17:12:19Z",
+      "side": 1,
+      "message": "I was thinking if there are more entries to sanitize later, then this won\u0027t need more churn.",
+      "parentUuid": "92c8c922_620d3af2",
+      "range": {
+        "startLine": 264,
+        "startChar": 2,
+        "endLine": 264,
+        "endChar": 22
+      },
+      "revId": "e35dc4026fb7384227a5e6e58c5e2f941d8cf3e8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
