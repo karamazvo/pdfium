@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "92c8c922_620d3af2",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-26T17:09:22Z",
+      "side": 1,
+      "message": "nit: invert and early return?",
+      "range": {
+        "startLine": 264,
+        "startChar": 2,
+        "endLine": 264,
+        "endChar": 22
+      },
+      "revId": "e35dc4026fb7384227a5e6e58c5e2f941d8cf3e8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
