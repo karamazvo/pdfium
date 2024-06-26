@@ -16,6 +16,24 @@
       "message": "Oh, this should switch to fxcrt::Copy().",
       "revId": "b73c06994722e788af796436d27e3717376506c4",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5f5b158d_b97dbcc9",
+        "filename": "core/fpdfapi/parser/cpdf_crypto_handler.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-26T16:28:50Z",
+      "side": 1,
+      "message": "Done, missed in merge first time (several places).",
+      "parentUuid": "84b53297_fb898692",
+      "revId": "b73c06994722e788af796436d27e3717376506c4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
