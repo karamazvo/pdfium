@@ -22,6 +22,30 @@
       },
       "revId": "bd102fe2ad0ef8a2ac4075ada2e87b55d435987e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c7c6f251_098b3312",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-26T01:09:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "119148b0_81072fe6",
+      "range": {
+        "startLine": 203,
+        "startChar": 40,
+        "endLine": 203,
+        "endChar": 69
+      },
+      "revId": "bd102fe2ad0ef8a2ac4075ada2e87b55d435987e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
