@@ -36,6 +36,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "24b2832d_b770ed5e",
+        "filename": "core/fpdfapi/parser/cpdf_crypto_handler.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-26T22:33:21Z",
+      "side": 1,
+      "message": "I\u0027ll follow-up.",
+      "parentUuid": "b8baddef_1f2ae62d",
+      "revId": "2494f46c2024562cbfb53bbd05f8ff6123e944ae",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "10a19571_5d615d60",
@@ -49,6 +67,30 @@
       "writtenOn": "2024-06-26T21:43:18Z",
       "side": 1,
       "message": "nit: you can probably drop the nodiscard, as the intention was to make sure the caller was only using the valid portion of `dest` based on return value.  The result is now self-describing, skirting the issue.",
+      "range": {
+        "startLine": 43,
+        "startChar": 2,
+        "endLine": 43,
+        "endChar": 16
+      },
+      "revId": "2494f46c2024562cbfb53bbd05f8ff6123e944ae",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3461290d_74cd1f8f",
+        "filename": "core/fpdfapi/parser/cpdf_crypto_handler.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-26T22:33:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "10a19571_5d615d60",
       "range": {
         "startLine": 43,
         "startChar": 2,
