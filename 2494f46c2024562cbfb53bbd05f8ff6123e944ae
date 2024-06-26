@@ -16,6 +16,47 @@
       "message": "Alternatively, don\u0027t even bother calling EncryptGetSize()... Maybe next CL, so this is more of a refactor?",
       "revId": "2494f46c2024562cbfb53bbd05f8ff6123e944ae",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b8baddef_1f2ae62d",
+        "filename": "core/fpdfapi/parser/cpdf_crypto_handler.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-26T21:43:18Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "0af07cff_d93587b9",
+      "revId": "2494f46c2024562cbfb53bbd05f8ff6123e944ae",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "10a19571_5d615d60",
+        "filename": "core/fpdfapi/parser/cpdf_crypto_handler.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-26T21:43:18Z",
+      "side": 1,
+      "message": "nit: you can probably drop the nodiscard, as the intention was to make sure the caller was only using the valid portion of `dest` based on return value.  The result is now self-describing, skirting the issue.",
+      "range": {
+        "startLine": 43,
+        "startChar": 2,
+        "endLine": 43,
+        "endChar": 16
+      },
+      "revId": "2494f46c2024562cbfb53bbd05f8ff6123e944ae",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
