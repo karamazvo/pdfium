@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e488443b_94a26502",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-26T16:13:51Z",
+      "side": 1,
+      "message": "PS3 passed trybots, PS4 rolls back DEPS.",
+      "revId": "9c82d0d52a0af0ac73ae4965e3e5efcdcd25eb90",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
