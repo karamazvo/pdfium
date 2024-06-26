@@ -7,8 +7,6 @@
 #ifndef CORE_FPDFDOC_CPDF_NUMBERTREE_H_
 #define CORE_FPDFDOC_CPDF_NUMBERTREE_H_
 
-#include <optional>
-
 #include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Dictionary;
@@ -19,6 +17,7 @@ class CPDF_Object;
 class CPDF_NumberTree {
  public:
   struct KeyValue {
+    KeyValue();
     KeyValue(int key, RetainPtr<const CPDF_Object> value);
     KeyValue(KeyValue&) = delete;
     KeyValue& operator=(KeyValue&) = delete;
@@ -38,11 +37,12 @@ class CPDF_NumberTree {
   RetainPtr<const CPDF_Object> LookupValue(int num) const;
 
   // Finds the object in the number tree with the largest key, such that
-  // `num` >= key. Returns the key/value pair if such a key exists, or
-  // std::nullopt otherwise.
+  // `num` >= key. Returns true and write the key/value pair to the out
+  // parameter, if such a key exists, or false otherwise otherwise.
   // Note that this is similar to, but not exactly the same as
   // std::lower_bound().
-  std::optional<KeyValue> GetLowerBound(int num) const;
+  // TODO(crbug.com/42270941): Return std::optional<KeyValue>.
+  bool GetLowerBound(int num, KeyValue& result) const;
 
  protected:
   RetainPtr<const CPDF_Dictionary> const root_;
