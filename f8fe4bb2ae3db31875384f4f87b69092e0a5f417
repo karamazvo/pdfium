@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ffddb8a8_388bbf68",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-06-26T22:17:57Z",
+      "side": 1,
+      "message": "Partial roll, since the next commit relies on clang.\n\nhttps://chromium.googlesource.com/chromium/src/build.git/+/b9d7a70ab49e26d7b8953e34e37a78733ece7585",
+      "revId": "f8fe4bb2ae3db31875384f4f87b69092e0a5f417",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
