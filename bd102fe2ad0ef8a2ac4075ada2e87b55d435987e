@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "119148b0_81072fe6",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-26T00:42:01Z",
+      "side": 1,
+      "message": "would like to see a test where we call this with a bad index.",
+      "range": {
+        "startLine": 203,
+        "startChar": 40,
+        "endLine": 203,
+        "endChar": 69
+      },
+      "revId": "bd102fe2ad0ef8a2ac4075ada2e87b55d435987e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
