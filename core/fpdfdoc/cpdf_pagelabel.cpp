@@ -114,10 +114,9 @@ std::optional<WideString> CPDF_PageLabel::GetLabel(int page_index) const {
 
   CPDF_NumberTree number_tree(std::move(labels_dict));
   RetainPtr<const CPDF_Object> label_value;
-  std::optional<CPDF_NumberTree::KeyValue> lower_bound =
-      number_tree.GetLowerBound(page_index);
-  if (lower_bound.has_value()) {
-    label_value = lower_bound.value().value;
+  CPDF_NumberTree::KeyValue lower_bound;
+  if (number_tree.GetLowerBound(page_index, lower_bound)) {
+    label_value = lower_bound.value;
   }
 
   const CPDF_Dictionary* label_dict =
@@ -133,7 +132,7 @@ std::optional<WideString> CPDF_PageLabel::GetLabel(int page_index) const {
 
   ByteString style = label_dict->GetByteStringFor("S", ByteString());
   int label_number =
-      page_index - lower_bound.value().key + label_dict->GetIntegerFor("St", 1);
+      page_index - lower_bound.key + label_dict->GetIntegerFor("St", 1);
   label += GetLabelNumPortion(label_number, style);
   return label;
 }
