@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "71685a96_27813db5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-26T20:56:49Z",
+      "side": 1,
+      "message": "FreeType\u0027s README file needs updating?",
+      "revId": "39aa563c6dda815e426062794da5afb0d59bddd0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
