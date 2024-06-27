@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "674ef07e_861809c1",
+        "filename": "core/fpdfapi/parser/cpdf_crypto_handler.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-27T18:17:44Z",
+      "side": 1,
+      "message": "std::array\u003cuint8_t, kPaddingSize\u003e",
+      "range": {
+        "startLine": 93,
+        "startChar": 3,
+        "endLine": 93,
+        "endChar": 33
+      },
+      "revId": "e6684a0eef30848019a4df407b6a067a3e549b89",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d587eff6_3f75a101",
+        "filename": "core/fpdfapi/parser/cpdf_crypto_handler.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-27T18:17:44Z",
+      "side": 1,
+      "message": "We can remove this local ...",
+      "range": {
+        "startLine": 94,
+        "startChar": 5,
+        "endLine": 94,
+        "endChar": 51
+      },
+      "revId": "e6684a0eef30848019a4df407b6a067a3e549b89",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "267cc62b_21bc3763",
+        "filename": "core/fpdfapi/parser/cpdf_crypto_handler.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-27T18:17:44Z",
+      "side": 1,
+      "message": "... and just fxcrt::Copy(..., padding); directly.",
+      "range": {
+        "startLine": 96,
+        "startChar": 16,
+        "endLine": 96,
+        "endChar": 29
+      },
+      "revId": "e6684a0eef30848019a4df407b6a067a3e549b89",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b55b6f27_f1b8ba44",
+        "filename": "core/fpdfapi/parser/cpdf_crypto_handler.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-27T18:17:44Z",
+      "side": 1,
+      "message": "But would need make_span() here.",
+      "range": {
+        "startLine": 97,
+        "startChar": 16,
+        "endLine": 97,
+        "endChar": 28
+      },
+      "revId": "e6684a0eef30848019a4df407b6a067a3e549b89",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4e38b768_e3d96546",
+        "filename": "core/fpdfapi/parser/cpdf_crypto_handler.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-27T18:17:44Z",
+      "side": 1,
+      "message": "should be able to pass padding directly here, too.",
+      "range": {
+        "startLine": 99,
+        "startChar": 61,
+        "endLine": 99,
+        "endChar": 74
+      },
+      "revId": "e6684a0eef30848019a4df407b6a067a3e549b89",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
