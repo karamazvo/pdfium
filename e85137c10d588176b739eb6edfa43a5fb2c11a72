@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2b368296_c544c131",
+        "filename": "core/fxcrt/span.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-27T22:23:34Z",
+      "side": 1,
+      "message": "Needn\u0027t worry about overflow since we are writing these constants in our code and won\u0027t use bad big numbers.",
+      "range": {
+        "startLine": 306,
+        "startChar": 17,
+        "endLine": 306,
+        "endChar": 33
+      },
+      "revId": "e85137c10d588176b739eb6edfa43a5fb2c11a72",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
