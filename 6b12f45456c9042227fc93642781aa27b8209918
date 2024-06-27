@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "805492d0_8dbe6d2c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-27T18:29:01Z",
+      "side": 1,
+      "message": "Chromium\u0027s base::span",
+      "range": {
+        "startLine": 9,
+        "startChar": 45,
+        "endLine": 9,
+        "endChar": 49
+      },
+      "revId": "6b12f45456c9042227fc93642781aa27b8209918",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "36a36ae1_c7d78942",
+        "filename": "core/fxcrt/pdfium_span_unittest.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-27T18:29:01Z",
+      "side": 1,
+      "message": "Will these need to be 0u in the future?",
+      "range": {
+        "startLine": 26,
+        "startChar": 58,
+        "endLine": 26,
+        "endChar": 59
+      },
+      "revId": "6b12f45456c9042227fc93642781aa27b8209918",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
