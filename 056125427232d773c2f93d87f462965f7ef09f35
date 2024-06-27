@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2e4e5868_1bbbd688",
+        "filename": "core/fpdfapi/parser/cpdf_security_handler.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 476,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-27T17:35:39Z",
+      "side": 1,
+      "message": "Do we want to use 16u in case the compiler gets picky later?",
+      "range": {
+        "startLine": 476,
+        "startChar": 57,
+        "endLine": 476,
+        "endChar": 59
+      },
+      "revId": "056125427232d773c2f93d87f462965f7ef09f35",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
