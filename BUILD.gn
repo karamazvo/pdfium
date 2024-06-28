@@ -594,9 +594,9 @@ group("pdfium_all") {
     deps += [ "testing/tools:test_runner_py" ]
   }
   if (enable_rust) {
-    # Until there's actual Rust code to use, include the rust_build_tests in the
-    # all group to verify the language keeps working here.
-    deps += [ ":rust_build_tests" ]
+    if (pdf_use_skia) {
+      deps += [ "//skia:bridge_rust_side_deps" ]
+    }
   }
 }
 
@@ -610,12 +610,5 @@ group("gn_check") {
   # available.
   if (defined(checkout_skia) && checkout_skia && !is_android) {
     deps += [ "//skia" ]
-  }
-}
-
-if (enable_rust) {
-  group("rust_build_tests") {
-    testonly = true
-    deps = [ "//build/rust/tests" ]
   }
 }
