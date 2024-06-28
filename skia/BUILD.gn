@@ -9,7 +9,10 @@ import("//testing/test.gni")
 import("//third_party/skia/gn/codec.gni")
 import("//third_party/skia/gn/shared_sources.gni")
 import("//third_party/skia/modules/skcms/skcms.gni")
+import("../pdfium.gni")
 import("features.gni")
+
+assert(pdf_use_skia)
 
 if (current_cpu == "arm") {
   import("//build/config/arm.gni")
