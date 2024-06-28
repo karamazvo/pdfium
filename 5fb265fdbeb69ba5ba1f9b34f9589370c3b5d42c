@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "28378667_428c45fd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-28T18:46:54Z",
+      "side": 1,
+      "message": "Yes, prior to C++17, see https://en.cppreference.com/w/cpp/language/class_template_argument_deduction\n\nUpdated CL description.",
+      "parentUuid": "754ebfd1_0912d571",
+      "revId": "5fb265fdbeb69ba5ba1f9b34f9589370c3b5d42c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d6b7ee4e_051eccb6",
@@ -65,6 +83,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "98931d8a_b746333d",
+        "filename": "core/fpdfapi/parser/cpdf_security_handler.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 624,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-28T18:46:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "64d3abad_4b91be1b",
+      "range": {
+        "startLine": 624,
+        "startChar": 61,
+        "endLine": 624,
+        "endChar": 62
+      },
+      "revId": "5fb265fdbeb69ba5ba1f9b34f9589370c3b5d42c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3b1150d7_7b1a5747",
@@ -78,6 +120,24 @@
       "writtenOn": "2024-06-28T18:34:27Z",
       "side": 1,
       "message": "Maybe merge with line 829?",
+      "revId": "5fb265fdbeb69ba5ba1f9b34f9589370c3b5d42c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "31ab4815_68e40475",
+        "filename": "core/fxcodec/fax/faxmodule.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 826,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-06-28T18:46:54Z",
+      "side": 1,
+      "message": "Good idea. Done",
+      "parentUuid": "3b1150d7_7b1a5747",
       "revId": "5fb265fdbeb69ba5ba1f9b34f9589370c3b5d42c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
