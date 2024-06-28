@@ -16,6 +16,23 @@
       "message": "LGTM FWIW",
       "revId": "54f5c5c291ec76a031e75c99d27eb8e22f776719",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "668d639d_fba72b7d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5645
+      },
+      "writtenOn": "2024-06-28T16:34:36Z",
+      "side": 1,
+      "message": "G-account approval",
+      "revId": "54f5c5c291ec76a031e75c99d27eb8e22f776719",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
