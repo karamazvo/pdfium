@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "754ebfd1_0912d571",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-28T18:34:27Z",
+      "side": 1,
+      "message": "They may have been a time when it couldn\u0027t be done implicitly.",
+      "revId": "5fb265fdbeb69ba5ba1f9b34f9589370c3b5d42c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d6b7ee4e_051eccb6",
+        "filename": "core/fpdfapi/parser/cpdf_security_handler.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 624,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-28T18:34:27Z",
+      "side": 1,
+      "message": "5u",
+      "range": {
+        "startLine": 624,
+        "startChar": 61,
+        "endLine": 624,
+        "endChar": 62
+      },
+      "revId": "5fb265fdbeb69ba5ba1f9b34f9589370c3b5d42c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3b1150d7_7b1a5747",
+        "filename": "core/fxcodec/fax/faxmodule.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 826,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-28T18:34:27Z",
+      "side": 1,
+      "message": "Maybe merge with line 829?",
+      "revId": "5fb265fdbeb69ba5ba1f9b34f9589370c3b5d42c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
