@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "074049f4_21ddd0f2",
+        "filename": "core/fxcodec/jbig2/jbig2_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-06-28T00:30:40Z",
+      "side": 1,
+      "message": "The convention is to also use MAYBE_ here. e.g. This is MAYBE_Bug631912. That way, it is more obvious to the eye that there\u0027s something special here. After the preprocessor evaluates the #define, Googletest will never see the \"MAYBE_\".",
+      "range": {
+        "startLine": 13,
+        "startChar": 8,
+        "endLine": 13,
+        "endChar": 13
+      },
+      "revId": "baf421a9ee5d157050d32e57f157f2ff455152dc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
