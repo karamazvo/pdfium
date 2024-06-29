@@ -84,6 +84,7 @@ void RgbByteOrderCompositeRect(const RetainPtr<CFX_DIBitmap>& pBitmap,
         if (Bpp == 4) {
           std::fill_n(reinterpret_cast<uint32_t*>(dest_scan), width, dib_argb);
         } else {
+          CHECK(false);
           for (int col = 0; col < width; col++) {
             *dest_scan++ = src_r;
             *dest_scan++ = src_g;
