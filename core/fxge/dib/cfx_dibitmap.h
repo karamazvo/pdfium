@@ -155,7 +155,7 @@ class CFX_DIBitmap final : public CFX_DIBBase {
 
  protected:
 #if defined(PDF_USE_SKIA)
-  FRIEND_TEST(CFXDIBitmapTest, UnPreMultiplyFromCleared);
+  FRIEND_TEST(CFXDIBitmapTest, UnPreMultiplyFromDefaultUnPreMultiplied);
   FRIEND_TEST(CFXDIBitmapTest, UnPreMultiplyFromPreMultiplied);
   FRIEND_TEST(CFXDIBitmapTest, UnPreMultiplyFromUnPreMultiplied);
 
@@ -164,10 +164,6 @@ class CFX_DIBitmap final : public CFX_DIBBase {
 
  private:
   enum class Channel : uint8_t { kRed, kAlpha };
-
-#if defined(PDF_USE_SKIA)
-  enum class Format { kCleared, kPreMultiplied, kUnPreMultiplied };
-#endif
 
   CFX_DIBitmap();
   CFX_DIBitmap(const CFX_DIBitmap& src);
@@ -199,7 +195,7 @@ class CFX_DIBitmap final : public CFX_DIBBase {
 
   MaybeOwned<uint8_t, FxFreeDeleter> m_pBuffer;
 #if defined(PDF_USE_SKIA)
-  Format m_nFormat = Format::kCleared;
+  bool m_IsPreMultiplied = false;
 #endif
 };
 

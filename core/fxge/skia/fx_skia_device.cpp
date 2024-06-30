@@ -1464,7 +1464,7 @@ bool CFX_SkiaDeviceDriver::ContinueDIBits(CFX_ImageRenderer* handle,
 }
 
 void CFX_DIBitmap::UnPreMultiply() {
-  if (m_nFormat == Format::kUnPreMultiplied || GetBPP() != 32) {
+  if (!m_IsPreMultiplied || m_Format != FXDIB_Format::kArgb) {
     return;
   }
 
@@ -1473,7 +1473,7 @@ void CFX_DIBitmap::UnPreMultiply() {
     return;
   }
 
-  m_nFormat = Format::kUnPreMultiplied;
+  m_IsPreMultiplied = false;
   int height = GetHeight();
   int width = GetWidth();
   int row_bytes = GetPitch();
@@ -1487,11 +1487,12 @@ void CFX_DIBitmap::UnPreMultiply() {
 }
 
 void CFX_DIBitmap::ForcePreMultiply() {
-  m_nFormat = Format::kPreMultiplied;
+  CHECK_EQ(m_Format, FXDIB_Format::kArgb);
+  m_IsPreMultiplied = true;
 }
 
 bool CFX_DIBitmap::IsPremultiplied() const {
-  return m_nFormat == Format::kPreMultiplied;
+  return m_IsPreMultiplied;
 }
 
 bool CFX_SkiaDeviceDriver::DrawBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
