@@ -317,12 +317,6 @@ FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   if (!renderer.GetResult())
     return nullptr;
 
-#if defined(PDF_USE_SKIA)
-  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-    result_bitmap->UnPreMultiply();
-  }
-#endif
-
   // Caller takes ownership.
   return FPDFBitmapFromCFXDIBitmap(result_bitmap.Leak());
 }

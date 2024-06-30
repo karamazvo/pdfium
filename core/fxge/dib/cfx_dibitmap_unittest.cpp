@@ -117,34 +117,3 @@ TEST(CFX_DIBitmap, CalculatePitchAndSizeBoundary) {
   EXPECT_FALSE(CFX_DIBitmap::CalculatePitchAndSize(68174085, 63,
                                                    FXDIB_Format::k8bppRgb, 0));
 }
-
-#if defined(PDF_USE_SKIA)
-TEST(CFX_DIBitmap, UnPreMultiply_FromCleared) {
-  auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kArgb));
-  UNSAFE_TODO(FXARGB_SetDIB(bitmap->GetWritableBuffer().data(), 0x7f'7f'7f'7f));
-
-  bitmap->UnPreMultiply();
-  EXPECT_THAT(bitmap->GetBuffer(), ElementsAre(0xff, 0xff, 0xff, 0x7f));
-}
-
-TEST(CFX_DIBitmap, UnPreMultiply_FromPreMultiplied) {
-  auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kArgb));
-  bitmap->ForcePreMultiply();
-  UNSAFE_TODO(FXARGB_SetDIB(bitmap->GetWritableBuffer().data(), 0x7f'7f'7f'7f));
-
-  bitmap->UnPreMultiply();
-  EXPECT_THAT(bitmap->GetBuffer(), ElementsAre(0xff, 0xff, 0xff, 0x7f));
-}
-
-TEST(CFX_DIBitmap, UnPreMultiply_FromUnPreMultiplied) {
-  auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kArgb));
-  bitmap->UnPreMultiply();
-  UNSAFE_TODO(FXARGB_SetDIB(bitmap->GetWritableBuffer().data(), 0x7f'ff'ff'ff));
-
-  bitmap->UnPreMultiply();
-  EXPECT_THAT(bitmap->GetBuffer(), ElementsAre(0xff, 0xff, 0xff, 0x7f));
-}
-#endif  // defined(PDF_USE_SKIA)

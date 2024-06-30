@@ -233,15 +233,10 @@ sk_sp<SkImage> CFX_DIBBase::RealizeSkImage() const {
           });
 
     case 32:
-      return CreateSkiaImageFromDib(
-          this, kBGRA_8888_SkColorType,
-          IsPremultiplied() ? kPremul_SkAlphaType : kUnpremul_SkAlphaType);
+      return CreateSkiaImageFromDib(this, kBGRA_8888_SkColorType,
+                                    kUnpremul_SkAlphaType);
 
     default:
       NOTREACHED_NORETURN();
   }
-}
-
-bool CFX_DIBBase::IsPremultiplied() const {
-  return false;
 }

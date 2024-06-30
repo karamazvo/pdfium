@@ -126,11 +126,6 @@ class CFX_DIBBase : public Retainable {
       int src_left,
       int src_top);
 
-#if defined(PDF_USE_SKIA)
-  // Whether alpha is premultiplied (if `IsAlphaFormat()`).
-  virtual bool IsPremultiplied() const;
-#endif  // defined(PDF_USE_SKIA)
-
   RetainPtr<CFX_DIBitmap> ClipToInternal(const FX_RECT* pClip) const;
   void BuildPalette();
   int FindPalette(uint32_t color) const;
