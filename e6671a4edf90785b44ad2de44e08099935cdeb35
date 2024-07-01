@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d052855c_af87a9fe",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-07-01T19:03:41Z",
+      "side": 1,
+      "message": "LGTM",
+      "revId": "e6671a4edf90785b44ad2de44e08099935cdeb35",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0412c4b6_f3eaea81",
+        "filename": "main.star",
+        "patchSetId": 2
+      },
+      "lineNbr": 486,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-07-01T19:03:41Z",
+      "side": 1,
+      "message": "Why is this bot skipping CI builds?",
+      "range": {
+        "startLine": 486,
+        "startChar": 95,
+        "endLine": 486,
+        "endChar": 117
+      },
+      "revId": "e6671a4edf90785b44ad2de44e08099935cdeb35",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
