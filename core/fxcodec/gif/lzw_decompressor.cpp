@@ -40,45 +40,40 @@ LZWDecompressor::LZWDecompressor(uint8_t color_exp, uint8_t code_exp)
 
 LZWDecompressor::~LZWDecompressor() = default;
 
-LZWDecompressor::Status LZWDecompressor::Decode(uint8_t* dest_buf,
-                                                uint32_t* dest_size) {
-  if (!dest_buf || !dest_size) {
-    return Status::kError;
-  }
-
+LZWDecompressor::DecodeResult LZWDecompressor::Decode(
+    pdfium::span<uint8_t> dest_buf) {
   if (avail_input_.empty()) {
-    return Status::kUnfinished;
+    return {Status::kUnfinished};
+  }
+  if (dest_buf.empty()) {
+    return {Status::kInsufficientDestSize};
   }
 
-  if (*dest_size == 0)
-    return Status::kInsufficientDestSize;
-
-  FX_SAFE_UINT32 i = 0;
+  FX_SAFE_UINT32 total_extracted = 0;
   if (decompressed_next_ != 0) {
-    size_t extracted_size =
-        ExtractData(UNSAFE_TODO(pdfium::make_span(dest_buf, *dest_size)));
-    if (decompressed_next_ != 0)
-      return Status::kInsufficientDestSize;
-
-    UNSAFE_TODO(dest_buf += extracted_size);
-    i += extracted_size;
+    size_t extracted_size = ExtractData(dest_buf);
+    total_extracted += extracted_size;
+    if (decompressed_next_ != 0) {
+      return {Status::kInsufficientDestSize, total_extracted.ValueOrDie()};
+    }
+    dest_buf = dest_buf.subspan(extracted_size);
   }
 
-  while (i.ValueOrDie() <= *dest_size &&
+  while (!dest_buf.empty() &&
          (!avail_input_.empty() || bits_left_ >= code_size_cur_)) {
-    if (code_size_cur_ > GIF_MAX_LZW_EXP)
-      return Status::kError;
-
+    if (code_size_cur_ > GIF_MAX_LZW_EXP) {
+      return {Status::kError};
+    }
     if (!avail_input_.empty()) {
-      if (bits_left_ > 31)
-        return Status::kError;
-
+      if (bits_left_ > 31) {
+        return {Status::kError};
+      }
       FX_SAFE_UINT32 safe_code = avail_input_.front();
       safe_code <<= bits_left_;
       safe_code |= code_store_;
-      if (!safe_code.IsValid())
-        return Status::kError;
-
+      if (!safe_code.IsValid()) {
+        return {Status::kError};
+      }
       code_store_ = safe_code.ValueOrDie();
       avail_input_ = avail_input_.subspan(1u);
       bits_left_ += 8;
@@ -94,47 +89,43 @@ LZWDecompressor::Status LZWDecompressor::Decode(uint8_t* dest_buf,
         continue;
       }
       if (code == code_end_) {
-        *dest_size = i.ValueOrDie();
-        return Status::kSuccess;
+        return {Status::kSuccess, total_extracted.ValueOrDie()};
       }
-
       if (code_old_ != static_cast<uint16_t>(-1)) {
         if (code_next_ < GIF_MAX_LZW_CODE) {
           if (code == code_next_) {
             AddCode(code_old_, code_first_);
-            if (!DecodeString(code))
-              return Status::kError;
+            if (!DecodeString(code)) {
+              return {Status::kError};
+            }
           } else if (code > code_next_) {
-            return Status::kError;
+            return {Status::kError};
           } else {
-            if (!DecodeString(code))
-              return Status::kError;
-
+            if (!DecodeString(code)) {
+              return {Status::kError};
+            }
             uint8_t append_char = decompressed_[decompressed_next_ - 1];
             AddCode(code_old_, append_char);
           }
         }
       } else {
-        if (!DecodeString(code))
-          return Status::kError;
+        if (!DecodeString(code)) {
+          return {Status::kError};
+        }
       }
-
       code_old_ = code;
-      size_t extracted_size = ExtractData(UNSAFE_TODO(
-          pdfium::make_span(dest_buf, (*dest_size - i).ValueOrDie())));
+      size_t extracted_size = ExtractData(dest_buf);
+      dest_buf = dest_buf.subspan(extracted_size);
+      total_extracted += extracted_size;
       if (decompressed_next_ != 0) {
-        return Status::kInsufficientDestSize;
+        return {Status::kInsufficientDestSize, total_extracted.ValueOrDie()};
       }
-      UNSAFE_TODO(dest_buf += extracted_size);
-      i += extracted_size;
     }
   }
-
   if (!avail_input_.empty()) {
-    return Status::kError;
+    return {Status::kError};
   }
-  *dest_size = i.ValueOrDie();
-  return Status::kUnfinished;
+  return {Status::kUnfinished, total_extracted.ValueOrDie()};
 }
 
 void LZWDecompressor::ClearTable() {

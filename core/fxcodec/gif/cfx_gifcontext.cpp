@@ -202,7 +202,6 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
     }
 
     img_row_offset_ = 0;
-    img_row_avail_size_ = 0;
     img_pass_num_ = 0;
     gif_image->row_num = 0;
     SaveDecodingStatus(GIF_D_STATUS_IMG_DATA);
@@ -235,26 +234,23 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
       lzw_decompressor_->SetSource(img_data);
 
       SaveDecodingStatus(GIF_D_STATUS_IMG_DATA);
-      img_row_offset_ += img_row_avail_size_;
-      img_row_avail_size_ = gif_img_row_bytes - img_row_offset_;
-      auto img_row_span = pdfium::make_span(gif_image->row_buffer)
-                              .subspan(img_row_offset_, img_row_avail_size_);
-      LZWDecompressor::Status ret = UNSAFE_TODO(
-          lzw_decompressor_->Decode(img_row_span.data(), &img_row_avail_size_));
-      if (ret == LZWDecompressor::Status::kError) {
+      auto img_row_span =
+          pdfium::make_span(gif_image->row_buffer).subspan(img_row_offset_);
+      auto result = lzw_decompressor_->Decode(img_row_span);
+      img_row_offset_ += result.extracted_bytes;
+      if (result.status == LZWDecompressor::Status::kError) {
         DecodingFailureAtTailCleanup(gif_image);
         return GifDecoder::Status::kError;
       }
-
-      while (ret != LZWDecompressor::Status::kError) {
-        if (ret == LZWDecompressor::Status::kSuccess) {
+      while (result.status != LZWDecompressor::Status::kError) {
+        if (result.status == LZWDecompressor::Status::kSuccess) {
           ReadScanline(gif_image->row_num, gif_image->row_buffer);
           gif_image->row_buffer.clear();
           SaveDecodingStatus(GIF_D_STATUS_TAIL);
           return GifDecoder::Status::kSuccess;
         }
 
-        if (ret == LZWDecompressor::Status::kUnfinished) {
+        if (result.status == LZWDecompressor::Status::kUnfinished) {
           read_marker = input_buffer_->GetPosition();
           if (!ReadAllOrNone(pdfium::byte_span_from_ref(img_data_size))) {
             return GifDecoder::Status::kUnfinished;
@@ -268,16 +264,13 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
             lzw_decompressor_->SetSource(img_data);
 
             SaveDecodingStatus(GIF_D_STATUS_IMG_DATA);
-            img_row_offset_ += img_row_avail_size_;
-            img_row_avail_size_ = gif_img_row_bytes - img_row_offset_;
             img_row_span = pdfium::make_span(gif_image->row_buffer)
-                               .subspan(img_row_offset_, img_row_avail_size_);
-            ret = UNSAFE_TODO(lzw_decompressor_->Decode(img_row_span.data(),
-                                                        &img_row_avail_size_));
+                               .subspan(img_row_offset_);
+            result = lzw_decompressor_->Decode(img_row_span);
           }
         }
 
-        if (ret == LZWDecompressor::Status::kInsufficientDestSize) {
+        if (result.status == LZWDecompressor::Status::kInsufficientDestSize) {
           if (gif_image->image_info.local_flags.interlace) {
             ReadScanline(gif_image->row_num, gif_image->row_buffer);
             gif_image->row_num += kGifInterlaceStep[img_pass_num_];
@@ -295,14 +288,12 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
           }
 
           img_row_offset_ = 0;
-          img_row_avail_size_ = gif_img_row_bytes;
-          img_row_span = pdfium::make_span(gif_image->row_buffer)
-                             .subspan(img_row_offset_, img_row_avail_size_);
-          ret = UNSAFE_TODO(lzw_decompressor_->Decode(img_row_span.data(),
-                                                      &img_row_avail_size_));
+          img_row_span =
+              pdfium::make_span(gif_image->row_buffer).subspan(img_row_offset_);
+          result = lzw_decompressor_->Decode(img_row_span);
         }
 
-        if (ret == LZWDecompressor::Status::kError) {
+        if (result.status == LZWDecompressor::Status::kError) {
           DecodingFailureAtTailCleanup(gif_image);
           return GifDecoder::Status::kError;
         }

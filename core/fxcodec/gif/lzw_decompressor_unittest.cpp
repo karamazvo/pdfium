@@ -89,26 +89,23 @@ TEST(LZWDecompressor, ExtractData) {
 TEST(LZWDecompressor, DecodeBadParams) {
   uint8_t palette_exp = 0x0;
   uint8_t code_exp = 0x2;
+  uint8_t image_data[10];
+  uint8_t output_data[10];
+
   auto decompressor = LZWDecompressor::Create(palette_exp, code_exp);
   ASSERT_NE(nullptr, decompressor);
 
-  uint8_t image_data[10];
-  uint8_t output_data[10];
-  uint32_t output_size = std::size(output_data);
-
-  decompressor->SetSource(pdfium::span<uint8_t>());
+  decompressor->SetSource({});
   EXPECT_EQ(LZWDecompressor::Status::kUnfinished,
-            UNSAFE_TODO(decompressor->Decode(output_data, &output_size)));
+            decompressor->Decode({}).status);
+  EXPECT_EQ(LZWDecompressor::Status::kUnfinished,
+            decompressor->Decode(output_data).status);
 
   decompressor->SetSource(image_data);
-  EXPECT_EQ(LZWDecompressor::Status::kError,
-            UNSAFE_TODO(decompressor->Decode(nullptr, &output_size)));
-  EXPECT_EQ(LZWDecompressor::Status::kError,
-            UNSAFE_TODO(decompressor->Decode(output_data, nullptr)));
-
-  output_size = 0;
   EXPECT_EQ(LZWDecompressor::Status::kInsufficientDestSize,
-            UNSAFE_TODO(decompressor->Decode(output_data, &output_size)));
+            decompressor->Decode({}).status);
+  EXPECT_EQ(LZWDecompressor::Status::kError,
+            decompressor->Decode(output_data).status);
 }
 
 TEST(LZWDecompressor, Decode1x1SingleColour) {
@@ -120,14 +117,12 @@ TEST(LZWDecompressor, Decode1x1SingleColour) {
   uint8_t image_data[] = {0x44, 0x01};
   uint8_t expected_data[] = {0x00};
   uint8_t output_data[std::size(expected_data)] = {};
-  uint32_t output_size = std::size(output_data);
 
   decompressor->SetSource(image_data);
-  EXPECT_EQ(LZWDecompressor::Status::kSuccess,
-            UNSAFE_TODO(decompressor->Decode(output_data, &output_size)));
-
-  EXPECT_EQ(std::size(output_data), output_size);
-  EXPECT_TRUE(0 == memcmp(expected_data, output_data, sizeof(expected_data)));
+  auto result = decompressor->Decode(output_data);
+  EXPECT_EQ(LZWDecompressor::Status::kSuccess, result.status);
+  EXPECT_EQ(std::size(output_data), result.extracted_bytes);
+  EXPECT_THAT(output_data, ElementsAreArray(output_data));
 }
 
 TEST(LZWDecompressor, Decode10x10SingleColour) {
@@ -149,14 +144,12 @@ TEST(LZWDecompressor, Decode10x10SingleColour) {
       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
       0x00, 0x00, 0x00, 0x00};
   uint8_t output_data[std::size(kExpectedData)] = {};
-  uint32_t output_size = std::size(output_data);
 
   decompressor->SetSource(kImageData);
-  EXPECT_EQ(LZWDecompressor::Status::kSuccess,
-            UNSAFE_TODO(decompressor->Decode(output_data, &output_size)));
-
-  EXPECT_EQ(std::size(output_data), output_size);
-  EXPECT_TRUE(0 == memcmp(kExpectedData, output_data, sizeof(kExpectedData)));
+  auto result = decompressor->Decode(output_data);
+  EXPECT_EQ(LZWDecompressor::Status::kSuccess, result.status);
+  EXPECT_EQ(std::size(output_data), result.extracted_bytes);
+  EXPECT_THAT(output_data, ElementsAreArray(kExpectedData));
 }
 
 TEST(LZWDecompressor, Decode10x10MultipleColour) {
@@ -179,14 +172,12 @@ TEST(LZWDecompressor, Decode10x10MultipleColour) {
       0x02, 0x01, 0x01, 0x01, 0x01, 0x01, 0x02, 0x02, 0x02, 0x02, 0x02, 0x01,
       0x01, 0x01, 0x01, 0x01};
   uint8_t output_data[std::size(kExpectedData)] = {};
-  uint32_t output_size = std::size(output_data);
 
   decompressor->SetSource(kImageData);
-  EXPECT_EQ(LZWDecompressor::Status::kSuccess,
-            UNSAFE_TODO(decompressor->Decode(output_data, &output_size)));
-
-  EXPECT_EQ(std::size(output_data), output_size);
-  EXPECT_TRUE(0 == memcmp(kExpectedData, output_data, sizeof(kExpectedData)));
+  auto result = decompressor->Decode(output_data);
+  EXPECT_EQ(LZWDecompressor::Status::kSuccess, result.status);
+  EXPECT_EQ(std::size(output_data), result.extracted_bytes);
+  EXPECT_THAT(output_data, ElementsAreArray(kExpectedData));
 }
 
 TEST(LZWDecompressor, MultipleDecodes) {
@@ -199,17 +190,15 @@ TEST(LZWDecompressor, MultipleDecodes) {
   static constexpr uint8_t kExpectedScanline[] = {0x00, 0x00, 0x00, 0x00};
   uint8_t output_data[std::size(kExpectedScanline)];
   fxcrt::Fill(output_data, 0xff);
-  uint32_t output_size = std::size(output_data);
-  EXPECT_EQ(LZWDecompressor::Status::kInsufficientDestSize,
-            UNSAFE_TODO(decompressor->Decode(output_data, &output_size)));
-  EXPECT_EQ(std::size(kExpectedScanline), output_size);
+  auto result = decompressor->Decode(output_data);
+  EXPECT_EQ(LZWDecompressor::Status::kInsufficientDestSize, result.status);
+  EXPECT_EQ(std::size(output_data), result.extracted_bytes);
   EXPECT_THAT(output_data, ElementsAreArray(kExpectedScanline));
 
   fxcrt::Fill(output_data, 0xff);
-  output_size = std::size(output_data);
-  EXPECT_EQ(LZWDecompressor::Status::kSuccess,
-            UNSAFE_TODO(decompressor->Decode(output_data, &output_size)));
-  EXPECT_EQ(std::size(kExpectedScanline), output_size);
+  result = decompressor->Decode(output_data);
+  EXPECT_EQ(LZWDecompressor::Status::kSuccess, result.status);
+  EXPECT_EQ(std::size(output_data), result.extracted_bytes);
   EXPECT_THAT(output_data, ElementsAreArray(kExpectedScanline));
 }
 
@@ -226,9 +215,8 @@ TEST(LZWDecompressor, HandleColourCodeOutOfPalette) {
       0xE2, 0xBE, 0xB0, 0x20, 0xCF, 0x74, 0x61, 0xDF, 0x78, 0x04};
 
   uint8_t output_data[100] = {};  // The uncompressed data is for a 10x10 image
-  uint32_t output_size = std::size(output_data);
 
   decompressor->SetSource(kImageData);
   EXPECT_EQ(LZWDecompressor::Status::kError,
-            UNSAFE_TODO(decompressor->Decode(output_data, &output_size)));
+            decompressor->Decode(output_data).status);
 }
