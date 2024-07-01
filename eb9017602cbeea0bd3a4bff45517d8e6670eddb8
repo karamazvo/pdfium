@@ -16,6 +16,23 @@
       "message": "Did I do that? My bad.",
       "revId": "eb9017602cbeea0bd3a4bff45517d8e6670eddb8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "56dfc262_e98cab8b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-01T15:43:31Z",
+      "side": 1,
+      "message": "Anyway, probably functionally the same given short-circuit not required and both sides are reduced to the set {0,1}, right?",
+      "revId": "eb9017602cbeea0bd3a4bff45517d8e6670eddb8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
