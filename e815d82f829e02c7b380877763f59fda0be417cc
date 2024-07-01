@@ -41,6 +41,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7e781adb_0b6e26a1",
+        "filename": "core/fxge/agg/fx_agg_driver.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-01T17:34:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b0557cf0_e0fee726",
+      "range": {
+        "startLine": 89,
+        "startChar": 0,
+        "endLine": 89,
+        "endChar": 12
+      },
+      "revId": "e815d82f829e02c7b380877763f59fda0be417cc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c17d99a9_5045907d",
@@ -64,6 +88,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c783c821_72fb4863",
+        "filename": "core/fxge/agg/fx_agg_driver.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-01T17:34:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c17d99a9_5045907d",
+      "range": {
+        "startLine": 129,
+        "startChar": 0,
+        "endLine": 129,
+        "endChar": 5
+      },
+      "revId": "e815d82f829e02c7b380877763f59fda0be417cc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4aad31c5_651ac83b",
@@ -77,6 +125,30 @@
       "writtenOn": "2024-07-01T16:08:00Z",
       "side": 1,
       "message": "nit: ditto",
+      "range": {
+        "startLine": 193,
+        "startChar": 0,
+        "endLine": 193,
+        "endChar": 6
+      },
+      "revId": "e815d82f829e02c7b380877763f59fda0be417cc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "17c3b0d6_2003833b",
+        "filename": "core/fxge/agg/fx_agg_driver.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-01T17:34:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4aad31c5_651ac83b",
       "range": {
         "startLine": 193,
         "startChar": 0,
