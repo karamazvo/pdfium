@@ -39,6 +39,30 @@
       },
       "revId": "e6671a4edf90785b44ad2de44e08099935cdeb35",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1a70d65f_b3ab345a",
+        "filename": "main.star",
+        "patchSetId": 2
+      },
+      "lineNbr": 486,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-01T19:51:43Z",
+      "side": 1,
+      "message": "It is not clear if the bot is going to work out of the box. Until it is known to work, it would be good to keep it off the CI tree. Otherwise, if it fails, the tree closes.",
+      "parentUuid": "0412c4b6_f3eaea81",
+      "range": {
+        "startLine": 486,
+        "startChar": 95,
+        "endLine": 486,
+        "endChar": 117
+      },
+      "revId": "e6671a4edf90785b44ad2de44e08099935cdeb35",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
