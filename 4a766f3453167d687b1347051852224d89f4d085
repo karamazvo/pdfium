@@ -33,6 +33,24 @@
       "message": "LG but redbots",
       "revId": "4a766f3453167d687b1347051852224d89f4d085",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "14968e53_303b1adf",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-01T20:56:15Z",
+      "side": 1,
+      "message": "I was just useing this CL to try out the newly deployed Mac ARM bot.",
+      "parentUuid": "bbb64590_07806347",
+      "revId": "4a766f3453167d687b1347051852224d89f4d085",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
