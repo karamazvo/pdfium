@@ -51,6 +51,64 @@
       "message": "The way this works is one edits main.star, which is written in Starlark. Then run the script and it generates the LUCI configs.",
       "revId": "c7cf477ffcd78ff534cbf0697156735f8e5f30d0",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8b5d31c8_824da04d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-07-01T18:36:13Z",
+      "side": 1,
+      "message": "LGTM.",
+      "revId": "c7cf477ffcd78ff534cbf0697156735f8e5f30d0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "690d6ace_c2363b6e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-07-01T18:36:13Z",
+      "side": 1,
+      "message": "Ack, thanks.",
+      "parentUuid": "5efd3507_9e3590b0",
+      "revId": "c7cf477ffcd78ff534cbf0697156735f8e5f30d0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "56bbfef3_c199d65c",
+        "filename": "main.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-07-01T18:36:13Z",
+      "side": 1,
+      "message": "Will Intel Mac bots also ever receive an update?",
+      "range": {
+        "startLine": 37,
+        "startChar": 11,
+        "endLine": 37,
+        "endChar": 17
+      },
+      "revId": "c7cf477ffcd78ff534cbf0697156735f8e5f30d0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
