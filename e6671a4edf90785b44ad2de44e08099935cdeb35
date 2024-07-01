@@ -63,6 +63,30 @@
       },
       "revId": "e6671a4edf90785b44ad2de44e08099935cdeb35",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "86de9536_95e90663",
+        "filename": "main.star",
+        "patchSetId": 2
+      },
+      "lineNbr": 486,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-01T21:27:18Z",
+      "side": 1,
+      "message": "e.g. https://ci.chromium.org/ui/p/pdfium/builders/try/linux_skia_rust/1/overview did not get very far and will need a bit more tweaking.",
+      "parentUuid": "1a70d65f_b3ab345a",
+      "range": {
+        "startLine": 486,
+        "startChar": 95,
+        "endLine": 486,
+        "endChar": 117
+      },
+      "revId": "e6671a4edf90785b44ad2de44e08099935cdeb35",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ],
   "submitRequirementResults": [
