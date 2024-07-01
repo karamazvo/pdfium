@@ -83,6 +83,10 @@ CFX_ImageStretcher::CFX_ImageStretcher(ScanlineComposerIface* pDest,
       m_ClipRect(bitmap_rect),
       m_DestFormat(GetStretchedFormat(*m_pSource)) {
   DCHECK(m_ClipRect.Valid());
+#if defined(PDF_USE_SKIA)
+  // TODO(crbug.com/42271020): Add support.
+  CHECK(!m_pSource->IsPremultiplied());
+#endif
 }
 
 CFX_ImageStretcher::~CFX_ImageStretcher() = default;

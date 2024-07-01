@@ -20,7 +20,6 @@
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/fx_dib.h"
-#include "testing/gtest/include/gtest/gtest_prod.h"  // nogncheck
 
 class CFX_DIBitmap final : public CFX_DIBBase {
  public:
@@ -153,21 +152,8 @@ class CFX_DIBitmap final : public CFX_DIBBase {
   void ForcePreMultiply();
 #endif
 
- protected:
-#if defined(PDF_USE_SKIA)
-  FRIEND_TEST(CFXDIBitmapTest, UnPreMultiplyFromCleared);
-  FRIEND_TEST(CFXDIBitmapTest, UnPreMultiplyFromPreMultiplied);
-  FRIEND_TEST(CFXDIBitmapTest, UnPreMultiplyFromUnPreMultiplied);
-
-  bool IsPremultiplied() const override;
-#endif  // defined(PDF_USE_SKIA)
-
  private:
   enum class Channel : uint8_t { kRed, kAlpha };
-
-#if defined(PDF_USE_SKIA)
-  enum class Format { kCleared, kPreMultiplied, kUnPreMultiplied };
-#endif
 
   CFX_DIBitmap();
   CFX_DIBitmap(const CFX_DIBitmap& src);
@@ -198,9 +184,6 @@ class CFX_DIBitmap final : public CFX_DIBBase {
                                   int src_top);
 
   MaybeOwned<uint8_t, FxFreeDeleter> m_pBuffer;
-#if defined(PDF_USE_SKIA)
-  Format m_nFormat = Format::kCleared;
-#endif
 };
 
 #endif  // CORE_FXGE_DIB_CFX_DIBITMAP_H_

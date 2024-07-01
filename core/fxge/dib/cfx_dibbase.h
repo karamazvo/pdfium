@@ -18,6 +18,7 @@
 #include "core/fxge/dib/fx_dib.h"
 
 #if defined(PDF_USE_SKIA)
+#include "third_party/skia/include/core/SkAlphaType.h"  // nogncheck
 #include "third_party/skia/include/core/SkRefCnt.h"  // nogncheck
 #endif
 
@@ -40,6 +41,11 @@ class CFX_DIBBase : public Retainable {
 #else   // BUILDFLAG(IS_APPLE)
   static constexpr FXDIB_Format kPlatformRGBFormat = FXDIB_Format::kRgb;
 #endif  // BUILDFLAG(IS_APPLE)
+
+#if defined(PDF_USE_SKIA)
+  enum class AlphaType{kUninitalized, kOpaque, kPreMultiplied,
+                       kUnPreMultiplied};
+#endif
 
   static constexpr uint32_t kPaletteSize = 256;
 
@@ -109,6 +115,14 @@ class CFX_DIBBase : public Retainable {
   // This may share the underlying pixels, in which case, this DIB should not be
   // modified during the lifetime of the `SkImage`.
   virtual sk_sp<SkImage> RealizeSkImage() const;
+
+  // Whether alpha is premultiplied (if `IsAlphaFormat()`).
+  bool IsPremultiplied() const;
+
+  AlphaType GetAlphaType() const { return m_nAlphaType; }
+  SkAlphaType GetSkiaAlphaType() const;
+
+  static AlphaType GetDefaultAlphaTypeForFormat(FXDIB_Format format);
 #endif  // defined(PDF_USE_SKIA)
 
  protected:
@@ -126,16 +140,14 @@ class CFX_DIBBase : public Retainable {
       int src_left,
       int src_top);
 
-#if defined(PDF_USE_SKIA)
-  // Whether alpha is premultiplied (if `IsAlphaFormat()`).
-  virtual bool IsPremultiplied() const;
-#endif  // defined(PDF_USE_SKIA)
-
   RetainPtr<CFX_DIBitmap> ClipToInternal(const FX_RECT* pClip) const;
   void BuildPalette();
   int FindPalette(uint32_t color) const;
 
   FXDIB_Format m_Format = FXDIB_Format::kInvalid;
+#if defined(PDF_USE_SKIA)
+  AlphaType m_nAlphaType = AlphaType::kUninitalized;
+#endif
   int m_Width = 0;
   int m_Height = 0;
   uint32_t m_Pitch = 0;

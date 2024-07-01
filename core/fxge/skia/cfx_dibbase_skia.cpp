@@ -43,8 +43,7 @@ void ReleaseRetainedHeldBySkImage(const void* /*pixels*/,
 
 // Creates an `SkImage` from a `CFX_DIBBase`.
 sk_sp<SkImage> CreateSkiaImageFromDib(const CFX_DIBBase* source,
-                                      SkColorType color_type,
-                                      SkAlphaType alpha_type) {
+                                      SkColorType color_type) {
   // Make sure the DIB is backed by a buffer.
   RetainPtr<const CFX_DIBitmap> realized_bitmap = source->RealizeIfNeeded();
   if (!realized_bitmap) {
@@ -56,7 +55,7 @@ sk_sp<SkImage> CreateSkiaImageFromDib(const CFX_DIBBase* source,
   // ReleaseRetainedHeldBySkImage().
   const CFX_DIBitmap* bitmap = realized_bitmap.Leak();
   SkImageInfo info = SkImageInfo::Make(bitmap->GetWidth(), bitmap->GetHeight(),
-                                       color_type, alpha_type);
+                                       color_type, bitmap->GetSkiaAlphaType());
   auto result = SkImages::RasterFromPixmap(
       SkPixmap(info, bitmap->GetBuffer().data(), bitmap->GetPitch()),
       /*rasterReleaseProc=*/ReleaseRetainedHeldBySkImage,
@@ -128,7 +127,6 @@ template <size_t source_bits_per_pixel, typename PixelTransform>
 sk_sp<SkImage> CreateSkiaImageFromTransformedDib(
     const CFX_DIBBase& source,
     SkColorType color_type,
-    SkAlphaType alpha_type,
     PixelTransform&& pixel_transform) {
   using Traits = PixelTransformTraits<source_bits_per_pixel, PixelTransform>;
   using Result = typename Traits::Result;
@@ -136,7 +134,8 @@ sk_sp<SkImage> CreateSkiaImageFromTransformedDib(
   // Allocate output buffer.
   const int width = source.GetWidth();
   const int height = source.GetHeight();
-  SkImageInfo info = SkImageInfo::Make(width, height, color_type, alpha_type);
+  SkImageInfo info =
+      SkImageInfo::Make(width, height, color_type, source.GetSkiaAlphaType());
   DCHECK_EQ(info.minRowBytes(), width * sizeof(Result));
 
   size_t output_size = Fx2DSizeOrDie(info.minRowBytes(), height);
@@ -192,7 +191,7 @@ sk_sp<SkImage> CFX_DIBBase::RealizeSkImage() const {
                                IsRGBColorGrayScale(palette_color1);
         if (!use_gray_colors) {
           return CreateSkiaImageFromTransformedDib</*source_bits_per_pixel=*/1>(
-              *this, kBGRA_8888_SkColorType, kPremul_SkAlphaType,
+              *this, kBGRA_8888_SkColorType,
               [palette_color0, palette_color1](bool bit) {
                 return bit ? palette_color1 : palette_color0;
               });
@@ -204,7 +203,6 @@ sk_sp<SkImage> CFX_DIBBase::RealizeSkImage() const {
 
       return CreateSkiaImageFromTransformedDib</*source_bits_per_pixel=*/1>(
           *this, IsMaskFormat() ? kAlpha_8_SkColorType : kGray_8_SkColorType,
-          kPremul_SkAlphaType,
           [color0, color1](bool bit) { return bit ? color1 : color0; });
     }
 
@@ -212,7 +210,7 @@ sk_sp<SkImage> CFX_DIBBase::RealizeSkImage() const {
       // we upscale ctables to 32bit.
       if (HasPalette()) {
         return CreateSkiaImageFromTransformedDib</*source_bits_per_pixel=*/8>(
-            *this, kBGRA_8888_SkColorType, kPremul_SkAlphaType,
+            *this, kBGRA_8888_SkColorType,
             [palette = GetPaletteSpan().first(GetRequiredPaletteSize())](
                 uint8_t index) {
               if (index >= palette.size()) {
@@ -222,20 +220,17 @@ sk_sp<SkImage> CFX_DIBBase::RealizeSkImage() const {
             });
       }
       return CreateSkiaImageFromDib(
-          this, IsMaskFormat() ? kAlpha_8_SkColorType : kGray_8_SkColorType,
-          kPremul_SkAlphaType);
+          this, IsMaskFormat() ? kAlpha_8_SkColorType : kGray_8_SkColorType);
 
     case 24:
       return CreateSkiaImageFromTransformedDib</*source_bits_per_pixel=*/24>(
-          *this, kBGRA_8888_SkColorType, kOpaque_SkAlphaType,
+          *this, kBGRA_8888_SkColorType,
           [](uint8_t red, uint8_t green, uint8_t blue) {
             return SkPackARGB32(0xFF, red, green, blue);
           });
 
     case 32:
-      return CreateSkiaImageFromDib(
-          this, kBGRA_8888_SkColorType,
-          IsPremultiplied() ? kPremul_SkAlphaType : kUnpremul_SkAlphaType);
+      return CreateSkiaImageFromDib(this, kBGRA_8888_SkColorType);
 
     default:
       NOTREACHED_NORETURN();
@@ -243,5 +238,36 @@ sk_sp<SkImage> CFX_DIBBase::RealizeSkImage() const {
 }
 
 bool CFX_DIBBase::IsPremultiplied() const {
-  return false;
+  return m_nAlphaType == AlphaType::kPreMultiplied;
+}
+
+SkAlphaType CFX_DIBBase::GetSkiaAlphaType() const {
+  static_assert(static_cast<int>(CFX_DIBBase::AlphaType::kUninitalized) ==
+                kUnknown_SkAlphaType);
+  static_assert(static_cast<int>(CFX_DIBBase::AlphaType::kOpaque) ==
+                kOpaque_SkAlphaType);
+  static_assert(static_cast<int>(CFX_DIBBase::AlphaType::kPreMultiplied) ==
+                kPremul_SkAlphaType);
+  static_assert(static_cast<int>(CFX_DIBBase::AlphaType::kUnPreMultiplied) ==
+                kUnpremul_SkAlphaType);
+
+  return static_cast<SkAlphaType>(GetAlphaType());
+}
+
+// static
+CFX_DIBBase::AlphaType CFX_DIBBase::GetDefaultAlphaTypeForFormat(
+    FXDIB_Format format) {
+  switch (format) {
+    case FXDIB_Format::kInvalid:
+      return AlphaType::kUninitalized;
+    case FXDIB_Format::k1bppRgb:
+    case FXDIB_Format::k8bppRgb:
+    case FXDIB_Format::kRgb:
+    case FXDIB_Format::kRgb32:
+      return AlphaType::kOpaque;
+    case FXDIB_Format::k1bppMask:
+    case FXDIB_Format::k8bppMask:
+    case FXDIB_Format::kArgb:
+      return AlphaType::kUnPreMultiplied;
+  }
 }

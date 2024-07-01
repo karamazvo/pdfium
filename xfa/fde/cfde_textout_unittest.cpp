@@ -134,7 +134,7 @@ class CFDETextOutLargeBitmapTest : public CFDETextOutTest {
 
   const char* GetLargeTextBlobChecksum() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-      return "cd357c6afbf17bb2ac48817df5d9eaad";
+      return "6181929583fd7651169306852397806f";
     }
     return "268b71a8660b51e31c6bf30fc7ff1e08";
   }

@@ -40,6 +40,9 @@ bool CFX_DIBitmap::Create(int width,
                           uint32_t pitch) {
   m_pBuffer = nullptr;
   m_Format = format;
+#if defined(PDF_USE_SKIA)
+  m_nAlphaType = GetDefaultAlphaTypeForFormat(m_Format);
+#endif  // defined(PDF_USE_SKIA)
   m_Width = 0;
   m_Height = 0;
   m_Pitch = 0;
@@ -75,6 +78,12 @@ bool CFX_DIBitmap::Copy(RetainPtr<const CFX_DIBBase> source) {
   if (!Create(source->GetWidth(), source->GetHeight(), source->GetFormat())) {
     return false;
   }
+
+#if defined(PDF_USE_SKIA)
+  if (source->IsPremultiplied()) {
+    ForcePreMultiply();
+  }
+#endif
 
   SetPalette(source->GetPaletteSpan());
   for (int row = 0; row < source->GetHeight(); row++) {
@@ -125,6 +134,9 @@ void CFX_DIBitmap::TakeOver(RetainPtr<CFX_DIBitmap>&& pSrcBitmap) {
   m_palette = std::move(pSrcBitmap->m_palette);
   pSrcBitmap->m_pBuffer = nullptr;
   m_Format = pSrcBitmap->m_Format;
+#if defined(PDF_USE_SKIA)
+  m_nAlphaType = pSrcBitmap->m_nAlphaType;
+#endif
   m_Width = pSrcBitmap->m_Width;
   m_Height = pSrcBitmap->m_Height;
   m_Pitch = pSrcBitmap->m_Pitch;
@@ -267,6 +279,12 @@ void CFX_DIBitmap::TransferWithMultipleBPP(int dest_left,
                                            RetainPtr<const CFX_DIBBase> source,
                                            int src_left,
                                            int src_top) {
+#if defined(PDF_USE_SKIA)
+  if (source->IsPremultiplied()) {
+    ForcePreMultiply();
+  }
+#endif
+
   int Bpp = GetBPP() / 8;
   UNSAFE_TODO({
     for (int row = 0; row < height; ++row) {
@@ -843,10 +861,18 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
   if (dest_format == FXDIB_Format::k8bppMask &&
       m_Format == FXDIB_Format::k8bppRgb && !HasPalette()) {
     m_Format = FXDIB_Format::k8bppMask;
+#if defined(PDF_USE_SKIA)
+    m_nAlphaType = AlphaType::kOpaque;
+#endif
     return true;
   }
   if (dest_format == FXDIB_Format::kArgb && m_Format == FXDIB_Format::kRgb32) {
     m_Format = FXDIB_Format::kArgb;
+#if defined(PDF_USE_SKIA)
+    m_nAlphaType = AlphaType::kUnPreMultiplied;
+    // TODO(crbug.com/42271020): Add support for converting to
+    // `AlphaType::kPreMultiplied`?
+#endif
     UNSAFE_TODO({
       for (int row = 0; row < m_Height; row++) {
         uint8_t* scanline = m_pBuffer.Get() + row * m_Pitch + 3;
@@ -877,6 +903,9 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
       dest_pitch, m_Width, m_Height, holder, /*src_left=*/0, /*src_top=*/0);
   m_pBuffer = std::move(dest_buf);
   m_Format = dest_format;
+#if defined(PDF_USE_SKIA)
+  m_nAlphaType = GetDefaultAlphaTypeForFormat(m_Format);
+#endif
   m_Pitch = dest_pitch;
   return true;
 }

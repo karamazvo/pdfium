@@ -753,6 +753,10 @@ bool CFX_RenderDevice::DrawFillStrokePath(
     uint32_t stroke_color,
     const CFX_FillRenderOptions& fill_options,
     BlendMode blend_type) {
+#if defined(PDF_USE_SKIA)
+  CHECK(!CFX_DefaultRenderDevice::UseSkiaRenderer());
+#endif
+
   if (!(m_RenderCaps & FXRC_GET_BITS))
     return false;
   CFX_FloatRect bbox;
