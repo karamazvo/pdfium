@@ -16,6 +16,24 @@
       "message": "The CL description say .2, but here it\u0027s .1.",
       "revId": "a5351778504fc300778e8e030f7d67de3fc1ffe5",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2095d303_73c2ed9c",
+        "filename": "DEPS",
+        "patchSetId": 3
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-07-01T20:40:03Z",
+      "side": 1,
+      "message": "Ah, didn\u0027t save properly. Updated to \".2\".",
+      "parentUuid": "30e3c141_41fe0dde",
+      "revId": "a5351778504fc300778e8e030f7d67de3fc1ffe5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
