@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "68f94689_4ad5670b",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1012,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-01T16:03:59Z",
+      "side": 1,
+      "message": "nit: maybe short-circuit on null, then ...",
+      "range": {
+        "startLine": 1010,
+        "startChar": 2,
+        "endLine": 1012,
+        "endChar": 3
+      },
+      "revId": "e6aec11b50ee62fee0ce731ac1143b065945fd96",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2623221e_30133aea",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1021,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-01T16:03:59Z",
+      "side": 1,
+      "message": "nit: ... me want switch().",
+      "range": {
+        "startLine": 1014,
+        "startChar": 3,
+        "endLine": 1021,
+        "endChar": 48
+      },
+      "revId": "e6aec11b50ee62fee0ce731ac1143b065945fd96",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
