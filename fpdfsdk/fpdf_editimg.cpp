@@ -6,6 +6,7 @@
 
 #include "public/fpdf_edit.h"
 
+#include <iostream>
 #include <memory>
 #include <utility>
 
@@ -286,12 +287,27 @@ FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
 
   // Create |result_bitmap|.
   const CFX_Matrix& image_matrix = image->matrix();
-  int output_width = image_matrix.a;
-  int output_height = image_matrix.d;
+
+  double rotation = atan2(-image_matrix.c, image_matrix.a) / M_PI * 180;
+  double x_scale = sqrt(pow(image_matrix.a, 2.0) + pow(image_matrix.c, 2.0));
+  double y_scale = sqrt(pow(image_matrix.b, 2.0) + pow(image_matrix.d, 2.0));
+
+  std::cerr << "\nMATRIX:\n"
+            << "\t" << image_matrix.a << "\t" << image_matrix.b << "\t0\n"
+            << "\t" << image_matrix.c << "\t" << image_matrix.d << "\t0\n"
+            << "\t" << image_matrix.e << "\t" << image_matrix.f << "\t1\n"
+            << "ANGLE: " << rotation << "\t" << M_PI << "\n"
+            << "SCALE: " << x_scale << " x " << y_scale << "\n"
+            << "PIXEL SIZE: " << image->GetImage()->GetPixelWidth() << " x "
+            << image->GetImage()->GetPixelHeight() << "\n";
+
+  int output_width = static_cast<int>(std::ceil(x_scale));
+  int output_height = static_cast<int>(std::ceil(y_scale));
   auto result_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!result_bitmap->Create(output_width, output_height, FXDIB_Format::kArgb))
     return nullptr;
 
+  std::cerr << "\n\n----->Bitmap created.\n";
   // Set up all the rendering code.
   RetainPtr<CPDF_Dictionary> page_resources =
       optional_page ? optional_page->GetMutablePageResources() : nullptr;
