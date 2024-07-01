@@ -3,6 +3,23 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "744f2d0a_a5a79d26",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-01T15:54:02Z",
+      "side": 1,
+      "message": "LG W/suggestion.",
+      "revId": "c7660a59d9653a2d195422c0d473e74c830059e0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "9acc94e7_02c3a0d0",
         "filename": "core/fxge/dib/cfx_dibitmap.h",
         "patchSetId": 1
@@ -14,6 +31,29 @@
       "writtenOn": "2024-07-01T15:10:18Z",
       "side": 1,
       "message": "Same as in Chromium //base.",
+      "revId": "c7660a59d9653a2d195422c0d473e74c830059e0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "84400a87_4235423a",
+        "filename": "core/fxge/dib/cfx_dibitmap.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-01T15:54:02Z",
+      "side": 1,
+      "message": "I\u0027d just make this public, since UnPreMultiply() and ForcePreMultiply() are far more dangerous and are already public.",
+      "range": {
+        "startLine": 162,
+        "startChar": 0,
+        "endLine": 162,
+        "endChar": 40
+      },
       "revId": "c7660a59d9653a2d195422c0d473e74c830059e0",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
