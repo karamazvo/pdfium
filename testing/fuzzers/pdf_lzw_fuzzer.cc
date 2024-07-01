@@ -32,11 +32,10 @@ void LZWFuzz(pdfium::span<const uint8_t> src_buf,
        compressions_ratio <= kMaxCompressionRatio; compressions_ratio++) {
     FX_SAFE_UINT32 safe_dest_size = src_buf.size();
     safe_dest_size *= compressions_ratio;
-    uint32_t dest_size = safe_dest_size.ValueOrDie();
-    std::vector<uint8_t> dest_buf(dest_size);
+    std::vector<uint8_t> dest_buf(safe_dest_size.ValueOrDie());
     decompressor->SetSource(src_buf);
     if (LZWDecompressor::Status::kInsufficientDestSize !=
-        decompressor->Decode(dest_buf.data(), &dest_size)) {
+        decompressor->Decode(dest_buf).status) {
       return;
     }
   }

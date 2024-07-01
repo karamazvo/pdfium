@@ -47,7 +47,6 @@ class CFX_GifContext : public ProgressiveDecoderIface::Context {
   std::vector<CFX_GifPalette> global_palette_;
   uint8_t global_palette_exp_ = 0;
   uint32_t img_row_offset_ = 0;
-  uint32_t img_row_avail_size_ = 0;
   int32_t decode_status_ = GIF_D_STATUS_SIG;
   std::unique_ptr<CFX_GifGraphicControlExtension> graphic_control_extension_;
   std::vector<std::unique_ptr<CFX_GifImage>> images_;

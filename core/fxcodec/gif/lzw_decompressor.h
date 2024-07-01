@@ -14,7 +14,6 @@
 #include <memory>
 
 #include "core/fxcodec/gif/cfx_gif.h"
-#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/span.h"
 
@@ -29,9 +28,9 @@ class LZWDecompressor {
     kInsufficientDestSize,
   };
 
-  struct CodeEntry {
-    uint16_t prefix;
-    uint8_t suffix;
+  struct DecodeResult {
+    Status status;
+    size_t extracted_bytes = 0;
   };
 
   // Returns nullptr on error
@@ -42,7 +41,7 @@ class LZWDecompressor {
   void SetSource(pdfium::span<const uint8_t> src_buf) {
     avail_input_ = src_buf;
   }
-  UNSAFE_BUFFER_USAGE Status Decode(uint8_t* dest_buf, uint32_t* dest_size);
+  DecodeResult Decode(pdfium::span<uint8_t> dest_buf);
 
   // Used by unittests, should not be called in production code.
   size_t ExtractDataForTest(pdfium::span<uint8_t> dest_buf) {
@@ -53,6 +52,11 @@ class LZWDecompressor {
   size_t* DecompressedNextForTest() { return &decompressed_next_; }
 
  private:
+  struct CodeEntry {
+    uint16_t prefix;
+    uint8_t suffix;
+  };
+
   // Use Create() instead.
   LZWDecompressor(uint8_t color_exp, uint8_t code_exp);
 
