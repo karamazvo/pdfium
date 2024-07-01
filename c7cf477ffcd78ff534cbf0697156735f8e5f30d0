@@ -34,6 +34,23 @@
       "parentUuid": "3d758ced_9c41f851",
       "revId": "c7cf477ffcd78ff534cbf0697156735f8e5f30d0",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5efd3507_9e3590b0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-01T18:26:45Z",
+      "side": 1,
+      "message": "The way this works is one edits main.star, which is written in Starlark. Then run the script and it generates the LUCI configs.",
+      "revId": "c7cf477ffcd78ff534cbf0697156735f8e5f30d0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
