@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "30e3c141_41fe0dde",
+        "filename": "DEPS",
+        "patchSetId": 3
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-01T19:24:29Z",
+      "side": 1,
+      "message": "The CL description say .2, but here it\u0027s .1.",
+      "revId": "a5351778504fc300778e8e030f7d67de3fc1ffe5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
