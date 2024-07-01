@@ -32,6 +32,11 @@ CPDF_TransferFuncDIB::CPDF_TransferFuncDIB(
   m_Width = m_pSrc->GetWidth();
   m_Height = m_pSrc->GetHeight();
   m_Format = GetDestFormat();
+#if defined(PDF_USE_SKIA)
+  m_nAlphaType = GetDefaultAlphaTypeForFormat(m_Format);
+  // TODO(crbug.com/42271020): Add support.
+  CHECK(!m_pSrc->IsPremultiplied());
+#endif
   m_Pitch = fxge::CalculatePitch32OrDie(GetBppFromFormat(m_Format), m_Width);
   m_Scanline.resize(m_Pitch);
   DCHECK(m_palette.empty());

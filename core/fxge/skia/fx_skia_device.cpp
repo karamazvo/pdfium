@@ -733,7 +733,7 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
 
   SkImageInfo imageInfo =
       SkImageInfo::Make(m_pBitmap->GetWidth(), m_pBitmap->GetHeight(),
-                        color_type, kPremul_SkAlphaType);
+                        color_type, m_pBitmap->GetSkiaAlphaType());
   surface_ = SkSurfaces::WrapPixels(
       imageInfo, m_pBitmap->GetWritableBuffer().data(), m_pBitmap->GetPitch());
   m_pCanvas = surface_->getCanvas();
@@ -1375,16 +1375,16 @@ bool CFX_SkiaDeviceDriver::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
   uint8_t* output_buffer = bitmap->GetWritableBuffer().data();
   DCHECK(output_buffer);
 
-  SkImageInfo input_info =
-      SkImageInfo::Make(m_pBitmap->GetWidth(), m_pBitmap->GetHeight(),
-                        SkColorType::kN32_SkColorType, kPremul_SkAlphaType);
+  SkImageInfo input_info = SkImageInfo::Make(
+      m_pBitmap->GetWidth(), m_pBitmap->GetHeight(),
+      SkColorType::kN32_SkColorType, m_pBitmap->GetSkiaAlphaType());
   sk_sp<SkImage> input = SkImages::RasterFromPixmap(
       SkPixmap(input_info, input_buffer, m_pBitmap->GetPitch()),
       /*rasterReleaseProc=*/nullptr, /*releaseContext=*/nullptr);
 
   SkImageInfo output_info = SkImageInfo::Make(
       bitmap->GetWidth(), bitmap->GetHeight(),
-      Get32BitSkColorType(m_bRgbByteOrder), kPremul_SkAlphaType);
+      Get32BitSkColorType(m_bRgbByteOrder), bitmap->GetSkiaAlphaType());
   sk_sp<SkSurface> output =
       SkSurfaces::WrapPixels(output_info, output_buffer, bitmap->GetPitch());
 
@@ -1464,7 +1464,7 @@ bool CFX_SkiaDeviceDriver::ContinueDIBits(CFX_ImageRenderer* handle,
 }
 
 void CFX_DIBitmap::UnPreMultiply() {
-  if (m_nFormat == Format::kUnPreMultiplied || GetBPP() != 32) {
+  if (m_nAlphaType != AlphaType::kPreMultiplied) {
     return;
   }
 
@@ -1473,7 +1473,8 @@ void CFX_DIBitmap::UnPreMultiply() {
     return;
   }
 
-  m_nFormat = Format::kUnPreMultiplied;
+  CHECK_EQ(m_Format, FXDIB_Format::kArgb);
+  m_nAlphaType = AlphaType::kUnPreMultiplied;
   int height = GetHeight();
   int width = GetWidth();
   int row_bytes = GetPitch();
@@ -1487,11 +1488,8 @@ void CFX_DIBitmap::UnPreMultiply() {
 }
 
 void CFX_DIBitmap::ForcePreMultiply() {
-  m_nFormat = Format::kPreMultiplied;
-}
-
-bool CFX_DIBitmap::IsPremultiplied() const {
-  return m_nFormat == Format::kPreMultiplied;
+  CHECK_EQ(m_Format, FXDIB_Format::kArgb);
+  m_nAlphaType = AlphaType::kPreMultiplied;
 }
 
 bool CFX_SkiaDeviceDriver::DrawBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,

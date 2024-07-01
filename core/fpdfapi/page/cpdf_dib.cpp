@@ -271,6 +271,9 @@ bool CPDF_DIB::ContinueInternal() {
       return false;
 
     m_Format = MakeRGBFormat(CalculateBitsPerPixel(m_bpc, m_nComponents));
+#if defined(PDF_USE_SKIA)
+    m_nAlphaType = GetDefaultAlphaTypeForFormat(m_Format);
+#endif
   }
 
   std::optional<uint32_t> pitch =
@@ -282,6 +285,9 @@ bool CPDF_DIB::ContinueInternal() {
   LoadPalette();
   if (m_bColorKey) {
     m_Format = FXDIB_Format::kArgb;
+#if defined(PDF_USE_SKIA)
+    m_nAlphaType = AlphaType::kUnPreMultiplied;
+#endif
     pitch = fxge::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
     if (!pitch.has_value())
       return false;
@@ -1317,6 +1323,9 @@ void CPDF_DIB::SetMaskProperties() {
   m_bpc = 1;
   m_nComponents = 1;
   m_Format = FXDIB_Format::k1bppMask;
+#if defined(PDF_USE_SKIA)
+  m_nAlphaType = AlphaType::kOpaque;
+#endif
 }
 
 uint32_t CPDF_DIB::Get1BitSetValue() const {

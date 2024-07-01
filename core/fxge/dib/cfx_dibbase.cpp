@@ -681,6 +681,12 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::ClipToInternal(
   if (!pNewBitmap->Create(rect.Width(), rect.Height(), GetFormat()))
     return nullptr;
 
+#if defined(PDF_USE_SKIA)
+  if (IsPremultiplied()) {
+    pNewBitmap->ForcePreMultiply();
+  }
+#endif
+
   pNewBitmap->SetPalette(GetPaletteSpan());
   if (GetBPP() == 1 && rect.left % 8 != 0) {
     int left_shift = rect.left % 32;
@@ -922,6 +928,12 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
   if (!pFlipped->Create(m_Width, m_Height, GetFormat()))
     return nullptr;
 
+#if defined(PDF_USE_SKIA)
+  if (IsPremultiplied()) {
+    pFlipped->ForcePreMultiply();
+  }
+#endif
+
   pFlipped->SetPalette(GetPaletteSpan());
   int Bpp = GetBppFromFormat(m_Format) / 8;
   UNSAFE_TODO({
@@ -1005,6 +1017,12 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
   const int result_width = dest_clip.Width();
   if (!pTransBitmap->Create(result_width, result_height, GetFormat()))
     return nullptr;
+
+#if defined(PDF_USE_SKIA)
+  if (IsPremultiplied()) {
+    pTransBitmap->ForcePreMultiply();
+  }
+#endif
 
   pTransBitmap->SetPalette(GetPaletteSpan());
   const int dest_pitch = pTransBitmap->GetPitch();
@@ -1130,6 +1148,10 @@ DataVector<uint32_t> CFX_DIBBase::ConvertBuffer(
     const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
     int src_left,
     int src_top) {
+#if defined(PDF_USE_SKIA)
+  // TODO(crbug.com/42271020): Add support.
+  CHECK(!pSrcBitmap->IsPremultiplied());
+#endif
   FXDIB_Format src_format = pSrcBitmap->GetFormat();
   const int src_bpp = GetBppFromFormat(src_format);
   switch (dest_format) {
