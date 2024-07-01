@@ -52,6 +52,9 @@ class CachedImage final : public CFX_DIBBase {
   explicit CachedImage(RetainPtr<CFX_DIBBase> image)
       : image_(std::move(image)) {
     m_Format = image_->GetFormat();
+#if defined(PDF_USE_SKIA)
+    m_nAlphaType = GetDefaultAlphaTypeForFormat(m_Format);
+#endif
     m_Width = image_->GetWidth();
     m_Height = image_->GetHeight();
     m_Pitch = image_->GetPitch();

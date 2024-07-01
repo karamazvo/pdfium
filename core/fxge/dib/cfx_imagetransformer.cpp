@@ -261,10 +261,15 @@ void CFX_ImageTransformer::ContinueOther(PauseIndicatorIface* pPause) {
     CalcAlpha(calc_data);
   } else {
     int Bpp = m_Storer.GetBitmap()->GetBPP() / 8;
-    if (Bpp == 1)
+    if (Bpp == 1) {
       CalcMono(calc_data);
-    else
+    } else {
+#if defined(PDF_USE_SKIA)
+      // TODO(crbug.com/42271020): Add support.
+      CHECK(!m_Storer.GetBitmap()->IsPremultiplied());
+#endif
       CalcColor(calc_data, format, Bpp);
+    }
   }
   m_Storer.Replace(std::move(pTransformed));
 }
