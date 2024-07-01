@@ -20,6 +20,7 @@
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/fx_dib.h"
+#include "testing/gtest/include/gtest/gtest_prod.h"  // nogncheck
 
 class CFX_DIBitmap final : public CFX_DIBBase {
  public:
@@ -148,12 +149,16 @@ class CFX_DIBitmap final : public CFX_DIBBase {
   void UnPreMultiply();
 
   // Forces pre-multiplied alpha without conversion.
-  // TODO(crbug.com/pdfium/2011): Remove the need for this.
+  // TODO(crbug.com/42271020): Remove the need for this.
   void ForcePreMultiply();
 #endif
 
  protected:
 #if defined(PDF_USE_SKIA)
+  FRIEND_TEST(CFXDIBitmapTest, UnPreMultiplyFromCleared);
+  FRIEND_TEST(CFXDIBitmapTest, UnPreMultiplyFromPreMultiplied);
+  FRIEND_TEST(CFXDIBitmapTest, UnPreMultiplyFromUnPreMultiplied);
+
   bool IsPremultiplied() const override;
 #endif  // defined(PDF_USE_SKIA)
 
