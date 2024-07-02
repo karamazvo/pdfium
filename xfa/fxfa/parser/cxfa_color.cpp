@@ -110,11 +110,7 @@ FX_ARGB CXFA_Color::GetValueOrDefault(FX_ARGB defaultValue) const {
 }
 
 void CXFA_Color::SetValue(FX_ARGB color) {
-  int a;
-  int r;
-  int g;
-  int b;
-  std::tie(a, r, g, b) = ArgbDecode(color);
+  auto [a, r, g, b] = ArgbDecode(color);
   JSObject()->SetCData(XFA_Attribute::Value,
                        WideString::Format(L"%d,%d,%d", r, g, b));
 }
