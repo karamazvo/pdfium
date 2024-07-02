@@ -258,13 +258,10 @@ void CPWL_Edit::OnKillFocus() {
 }
 
 CPVT_WordRange CPWL_Edit::GetSelectWordRange() const {
-  if (!m_pEditImpl->IsSelected())
+  if (!m_pEditImpl->IsSelected()) {
     return CPVT_WordRange();
-
-  int32_t nStart;
-  int32_t nEnd;
-  std::tie(nStart, nEnd) = m_pEditImpl->GetSelection();
-
+  }
+  auto [nStart, nEnd] = m_pEditImpl->GetSelection();
   CPVT_WordPlace wpStart = m_pEditImpl->WordIndexToWordPlace(nStart);
   CPVT_WordPlace wpEnd = m_pEditImpl->WordIndexToWordPlace(nEnd);
   return CPVT_WordRange(wpStart, wpEnd);
@@ -336,9 +333,7 @@ bool CPWL_Edit::OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag) {
   if (nKeyCode == FWL_VKEY_Delete) {
     WideString strChange;
     WideString strChangeEx;
-    int nSelStart;
-    int nSelEnd;
-    std::tie(nSelStart, nSelEnd) = this_observed->GetSelection();
+    auto [nSelStart, nSelEnd] = this_observed->GetSelection();
     if (nSelStart == nSelEnd) {
       nSelEnd = nSelStart + 1;
     }

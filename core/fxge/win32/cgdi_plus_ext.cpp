@@ -728,9 +728,7 @@ bool CGdiplusExt::DrawPath(HDC hDC,
   if (points.size() == 4 && !pGraphState) {
     auto indices = IsSmallTriangle(gp_points, pObject2Device);
     if (indices.has_value()) {
-      size_t v1;
-      size_t v2;
-      std::tie(v1, v2) = indices.value();
+      auto [v1, v2] = indices.value();
       Gdiplus::GpPen* pPen = nullptr;
       CallFunc(GdipCreatePen1)(fill_argb, 1.0f, Gdiplus::UnitPixel, &pPen);
       CallFunc(GdipDrawLineI)(pGraphics, pPen, FXSYS_roundf(gp_points[v1].X),

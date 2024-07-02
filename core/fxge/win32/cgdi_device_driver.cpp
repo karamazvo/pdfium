@@ -710,18 +710,16 @@ bool CGdiDeviceDriver::DrawPath(const CFX_Path& path,
 bool CGdiDeviceDriver::FillRectWithBlend(const FX_RECT& rect,
                                          uint32_t fill_color,
                                          BlendMode blend_type) {
-  if (blend_type != BlendMode::kNormal)
+  if (blend_type != BlendMode::kNormal) {
     return false;
-
-  int alpha;
-  FX_COLORREF colorref;
-  std::tie(alpha, colorref) = ArgbToAlphaAndColorRef(fill_color);
-  if (alpha == 0)
+  }
+  auto [alpha, colorref] = ArgbToAlphaAndColorRef(fill_color);
+  if (alpha == 0) {
     return true;
-
-  if (alpha < 255)
+  }
+  if (alpha < 255) {
     return false;
-
+  }
   HBRUSH hBrush = CreateSolidBrush(colorref);
   const RECT* pRect = reinterpret_cast<const RECT*>(&rect);
   ::FillRect(m_hDC, pRect, hBrush);
@@ -772,15 +770,13 @@ bool CGdiDeviceDriver::DrawCosmeticLine(const CFX_PointF& ptMoveTo,
                                         const CFX_PointF& ptLineTo,
                                         uint32_t color,
                                         BlendMode blend_type) {
-  if (blend_type != BlendMode::kNormal)
+  if (blend_type != BlendMode::kNormal) {
     return false;
-
-  int alpha;
-  FX_COLORREF colorref;
-  std::tie(alpha, colorref) = ArgbToAlphaAndColorRef(color);
-  if (alpha == 0)
+  }
+  auto [alpha, colorref] = ArgbToAlphaAndColorRef(color);
+  if (alpha == 0) {
     return true;
-
+  }
   HPEN hPen = CreatePen(PS_SOLID, 1, colorref);
   hPen = (HPEN)SelectObject(m_hDC, hPen);
   MoveToEx(m_hDC, FXSYS_roundf(ptMoveTo.x), FXSYS_roundf(ptMoveTo.y), nullptr);

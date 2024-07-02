@@ -142,9 +142,7 @@ NupPageSettings NupState::CalculateNewPagePosition(const CFX_SizeF& pagesize) {
   if (m_subPageIndex >= m_nPagesPerSheet)
     m_subPageIndex = 0;
 
-  size_t iSubX;
-  size_t iSubY;
-  std::tie(iSubX, iSubY) = ConvertPageOrder();
+  auto [iSubX, iSubY] = ConvertPageOrder();
   ++m_subPageIndex;
   return CalculatePageEdit(iSubX, iSubY, pagesize);
 }

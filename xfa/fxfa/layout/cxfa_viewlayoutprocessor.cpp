@@ -1945,13 +1945,11 @@ void CXFA_ViewLayoutProcessor::PrepareLayout() {
 void CXFA_ViewLayoutProcessor::ProcessSimplexOrDuplexPageSets(
     CXFA_ViewLayoutItem* pPageSetLayoutItem,
     bool bIsSimplex) {
-  size_t nPageAreaCount;
-  CXFA_LayoutItem* pLastPageAreaLayoutItem;
-  std::tie(nPageAreaCount, pLastPageAreaLayoutItem) =
+  auto [nPageAreaCount, pLastPageAreaLayoutItem] =
       GetPageAreaCountAndLastPageAreaFromPageSet(pPageSetLayoutItem);
-  if (!pLastPageAreaLayoutItem)
+  if (!pLastPageAreaLayoutItem) {
     return;
-
+  }
   if (!FindPageAreaFromPageSet_SimplexDuplex(
           pPageSetLayoutItem->GetFormNode(), nullptr, nullptr, nullptr, true,
           true,

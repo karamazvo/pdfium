@@ -94,11 +94,10 @@ void CXFA_FFTextEdit::UpdateWidgetProperty() {
     dwExtendedStyle |= FWL_STYLEEXT_EDT_MultiLine;
   }
 
-  XFA_Element eType;
-  int32_t iMaxChars;
-  std::tie(eType, iMaxChars) = m_pNode->GetMaxChars();
-  if (eType == XFA_Element::ExData)
+  auto [eType, iMaxChars] = m_pNode->GetMaxChars();
+  if (eType == XFA_Element::ExData) {
     iMaxChars = 0;
+  }
 
   std::optional<int32_t> numCells = m_pNode->GetNumberOfCells();
   if (!numCells.has_value()) {
@@ -281,9 +280,7 @@ bool CXFA_FFTextEdit::UpdateFWLData() {
   bool bUpdate = false;
   if (m_pNode->GetFFWidgetType() == XFA_FFWidgetType::kTextEdit &&
       !m_pNode->GetNumberOfCells().has_value()) {
-    XFA_Element elementType;
-    int32_t iMaxChars;
-    std::tie(elementType, iMaxChars) = m_pNode->GetMaxChars();
+    auto [elementType, iMaxChars] = m_pNode->GetMaxChars();
     if (elementType == XFA_Element::ExData)
       iMaxChars = eType == XFA_ValuePicture::kEdit ? iMaxChars : 0;
     if (pEdit->GetLimit() != iMaxChars) {
