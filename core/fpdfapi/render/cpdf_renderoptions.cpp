@@ -31,16 +31,13 @@ CPDF_RenderOptions::CPDF_RenderOptions(const CPDF_RenderOptions& rhs) = default;
 CPDF_RenderOptions::~CPDF_RenderOptions() = default;
 
 FX_ARGB CPDF_RenderOptions::TranslateColor(FX_ARGB argb) const {
-  if (ColorModeIs(kNormal))
+  if (ColorModeIs(kNormal)) {
     return argb;
-  if (ColorModeIs(kAlpha))
+  }
+  if (ColorModeIs(kAlpha)) {
     return argb;
-
-  int a;
-  int r;
-  int g;
-  int b;
-  std::tie(a, r, g, b) = ArgbDecode(argb);
+  }
+  int[a, r, g, b] = ArgbDecode(argb);
   int gray = FXRGB2GRAY(r, g, b);
   return ArgbEncode(a, gray, gray, gray);
 }

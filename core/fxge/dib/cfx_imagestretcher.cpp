@@ -44,16 +44,8 @@ DataVector<uint32_t> BuildPaletteFrom1BppSource(
   DCHECK_EQ(FXDIB_Format::k1bppRgb, source->GetFormat());
   DCHECK(source->HasPalette());
 
-  int a0;
-  int r0;
-  int g0;
-  int b0;
-  std::tie(a0, r0, g0, b0) = ArgbDecode(source->GetPaletteArgb(0));
-  int a1;
-  int r1;
-  int g1;
-  int b1;
-  std::tie(a1, r1, g1, b1) = ArgbDecode(source->GetPaletteArgb(1));
+  int[a0, r0, g0, b0] = ArgbDecode(source->GetPaletteArgb(0));
+  int[a1, r1, g1, b1] = ArgbDecode(source->GetPaletteArgb(1));
   DCHECK_EQ(255, a0);
   DCHECK_EQ(255, a1);
 
