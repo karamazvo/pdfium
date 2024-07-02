@@ -83,11 +83,7 @@ bool CQuartz2D::DrawGraphicsString(void* graphics,
   CGContextSetFont(context, (CGFontRef)font);
   CGContextSetFontSize(context, fontSize);
 
-  int32_t a;
-  int32_t r;
-  int32_t g;
-  int32_t b;
-  std::tie(a, r, g, b) = ArgbDecode(argb);
+  auto [a, r, g, b] = ArgbDecode(argb);
   CGContextSetRGBFillColor(context, r / 255.f, g / 255.f, b / 255.f, a / 255.f);
   CGContextSaveGState(context);
 #if CGFLOAT_IS_DOUBLE

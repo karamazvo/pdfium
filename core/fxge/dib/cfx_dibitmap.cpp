@@ -155,11 +155,7 @@ void CFX_DIBitmap::Clear(uint32_t color) {
         break;
       }
       case FXDIB_Format::kRgb: {
-        int a;
-        int r;
-        int g;
-        int b;
-        std::tie(a, r, g, b) = ArgbDecode(color);
+        auto [a, r, g, b] = ArgbDecode(color);
         if (r == g && g == b) {
           FXSYS_memset(pBuffer, r, m_Pitch * m_Height);
         } else {
