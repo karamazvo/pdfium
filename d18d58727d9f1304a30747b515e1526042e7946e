@@ -164,6 +164,30 @@
       },
       "revId": "d18d58727d9f1304a30747b515e1526042e7946e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "76bf34c8_f3a9176f",
+        "filename": "core/fxge/dib/cfx_dibitmap.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-02T22:27:52Z",
+      "side": 1,
+      "message": "Similary, if the bitmap is 1x2, but has a stride of 6, then we\u0027d want:\n\nRGBAxxRGBAxx\n\nand not:\n\nRGBARGBARGBA",
+      "parentUuid": "8ab530ea_d9e75b5e",
+      "range": {
+        "startLine": 175,
+        "startChar": 0,
+        "endLine": 175,
+        "endChar": 65
+      },
+      "revId": "d18d58727d9f1304a30747b515e1526042e7946e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
