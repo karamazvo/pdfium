@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2c98f133_4dd80b2a",
+        "filename": "core/fxcrt/zip.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-02T17:35:21Z",
+      "side": 1,
+      "message": "Yeah, it should use variadic templates. But that would be hard.",
+      "parentUuid": "c31fed6f_3578e32a",
+      "revId": "77b00f58d8af95068bbc3783d55adbd94e2b5086",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1cc599a3_f94636d8",
@@ -35,6 +53,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d8f240ff_2736e916",
+        "filename": "core/fxcrt/zip.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-02T17:35:21Z",
+      "side": 1,
+      "message": "Yeah, should be essentially a no-op when optimized or a copy of two values perhaps",
+      "parentUuid": "1cc599a3_f94636d8",
+      "revId": "77b00f58d8af95068bbc3783d55adbd94e2b5086",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "512cd191_a47542b0",
@@ -48,6 +84,24 @@
       "writtenOn": "2024-07-02T17:08:34Z",
       "side": 1,
       "message": "Need to change the names here? Or delete the comment entirely?",
+      "revId": "77b00f58d8af95068bbc3783d55adbd94e2b5086",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "affdaa11_72c17dc4",
+        "filename": "core/fxcrt/zip_unittest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-02T17:35:21Z",
+      "side": 1,
+      "message": "Gah, Gah. Gah.  Done.",
+      "parentUuid": "512cd191_a47542b0",
       "revId": "77b00f58d8af95068bbc3783d55adbd94e2b5086",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
