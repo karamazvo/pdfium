@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "143991a9_8039108c",
+        "filename": "core/fxge/dib/cfx_scanlinecompositor.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 2557,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-02T16:20:51Z",
+      "side": 1,
+      "message": "nit: document this new CHECK() in CL description?",
+      "range": {
+        "startLine": 2557,
+        "startChar": 0,
+        "endLine": 2557,
+        "endChar": 49
+      },
+      "revId": "8a26fcd607c180354c97fd3626d49a04d44261bb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0fc59ca8_bc0b689b",
+        "filename": "core/fxge/dib/cfx_scanlinecompositor.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 2612,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-02T16:20:51Z",
+      "side": 1,
+      "message": "nit: Document this new check, too, in CL description.",
+      "range": {
+        "startLine": 2612,
+        "startChar": 0,
+        "endLine": 2612,
+        "endChar": 49
+      },
+      "revId": "8a26fcd607c180354c97fd3626d49a04d44261bb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
