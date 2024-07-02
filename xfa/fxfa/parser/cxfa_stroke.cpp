@@ -122,14 +122,10 @@ FX_ARGB CXFA_Stroke::GetColor() const {
 void CXFA_Stroke::SetColor(FX_ARGB argb) {
   CXFA_Color* pNode =
       JSObject()->GetOrCreateProperty<CXFA_Color>(0, XFA_Element::Color);
-  if (!pNode)
+  if (!pNode) {
     return;
-
-  int a;
-  int r;
-  int g;
-  int b;
-  std::tie(a, r, g, b) = ArgbDecode(argb);
+  }
+  auto [a, r, g, b] = ArgbDecode(argb);
   pNode->JSObject()->SetCData(XFA_Attribute::Value,
                               WideString::Format(L"%d,%d,%d", r, g, b));
 }
