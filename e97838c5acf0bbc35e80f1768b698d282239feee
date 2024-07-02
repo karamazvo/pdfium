@@ -104,6 +104,30 @@
       },
       "revId": "e97838c5acf0bbc35e80f1768b698d282239feee",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "88081486_643a485a",
+        "filename": "core/fxge/dib/cfx_scanlinecompositor.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 2348,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-02T21:37:12Z",
+      "side": 1,
+      "message": "https://crbug.com/350785837",
+      "parentUuid": "36593ee1_a0279ec0",
+      "range": {
+        "startLine": 2348,
+        "startChar": 13,
+        "endLine": 2348,
+        "endChar": 28
+      },
+      "revId": "e97838c5acf0bbc35e80f1768b698d282239feee",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
