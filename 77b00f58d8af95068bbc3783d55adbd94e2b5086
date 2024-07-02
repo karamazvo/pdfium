@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c31fed6f_3578e32a",
+        "filename": "core/fxcrt/zip.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-02T17:08:34Z",
+      "side": 1,
+      "message": "Would an input + input version be useful? Maybe add it later when needed? Or (N inputs + 1 output)",
+      "revId": "77b00f58d8af95068bbc3783d55adbd94e2b5086",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1cc599a3_f94636d8",
+        "filename": "core/fxcrt/zip.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-02T17:08:34Z",
+      "side": 1,
+      "message": "What if the caller is passing in spans already? I guess creating 2 more spans is cheap enough?",
+      "revId": "77b00f58d8af95068bbc3783d55adbd94e2b5086",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "512cd191_a47542b0",
+        "filename": "core/fxcrt/zip_unittest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-02T17:08:34Z",
+      "side": 1,
+      "message": "Need to change the names here? Or delete the comment entirely?",
+      "revId": "77b00f58d8af95068bbc3783d55adbd94e2b5086",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
