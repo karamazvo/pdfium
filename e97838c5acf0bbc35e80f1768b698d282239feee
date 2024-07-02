@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9ef7673d_a9e67bce",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-02T19:04:11Z",
+      "side": 1,
+      "message": "Sorry the diff is hard to read. At least within every method, the functions it calls have consistent-ish naming.",
+      "revId": "e97838c5acf0bbc35e80f1768b698d282239feee",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
