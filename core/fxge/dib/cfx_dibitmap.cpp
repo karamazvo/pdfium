@@ -22,6 +22,7 @@
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/calculate_pitch.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
@@ -69,17 +70,16 @@ bool CFX_DIBitmap::Create(int width,
 }
 
 bool CFX_DIBitmap::Copy(RetainPtr<const CFX_DIBBase> source) {
-  if (m_pBuffer)
+  if (m_pBuffer) {
     return false;
-
+  }
   if (!Create(source->GetWidth(), source->GetHeight(), source->GetFormat())) {
     return false;
   }
-
   SetPalette(source->GetPaletteSpan());
   for (int row = 0; row < source->GetHeight(); row++) {
-    UNSAFE_TODO(FXSYS_memcpy(m_pBuffer.Get() + row * m_Pitch,
-                             source->GetScanline(row).data(), m_Pitch));
+    fxcrt::Copy(source->GetScanline(row).first(m_Pitch),
+                GetWritableScanline(row));
   }
   return true;
 }
@@ -131,70 +131,58 @@ void CFX_DIBitmap::TakeOver(RetainPtr<CFX_DIBitmap>&& pSrcBitmap) {
 }
 
 void CFX_DIBitmap::Clear(uint32_t color) {
-  if (!m_pBuffer)
+  auto buffer = GetWritableBuffer();
+  if (buffer.empty()) {
     return;
-
-  uint8_t* pBuffer = m_pBuffer.Get();
-  UNSAFE_TODO({
-    switch (GetFormat()) {
-      case FXDIB_Format::kInvalid:
-        break;
-      case FXDIB_Format::k1bppMask:
-        FXSYS_memset(pBuffer, (color & 0xff000000) ? 0xff : 0,
-                     m_Pitch * m_Height);
-        break;
-      case FXDIB_Format::k1bppRgb: {
-        int index = FindPalette(color);
-        FXSYS_memset(pBuffer, index ? 0xff : 0, m_Pitch * m_Height);
-        break;
-      }
-      case FXDIB_Format::k8bppMask:
-        FXSYS_memset(pBuffer, color >> 24, m_Pitch * m_Height);
-        break;
-      case FXDIB_Format::k8bppRgb: {
-        int index = FindPalette(color);
-        FXSYS_memset(pBuffer, index, m_Pitch * m_Height);
-        break;
-      }
-      case FXDIB_Format::kRgb: {
-        int a;
-        int r;
-        int g;
-        int b;
-        std::tie(a, r, g, b) = ArgbDecode(color);
-        if (r == g && g == b) {
-          FXSYS_memset(pBuffer, r, m_Pitch * m_Height);
-        } else {
-          int byte_pos = 0;
-          for (int col = 0; col < m_Width; col++) {
-            pBuffer[byte_pos++] = b;
-            pBuffer[byte_pos++] = g;
-            pBuffer[byte_pos++] = r;
-          }
-          for (int row = 1; row < m_Height; row++) {
-            FXSYS_memcpy(pBuffer + row * m_Pitch, pBuffer, m_Pitch);
-          }
-        }
-        break;
-      }
-      case FXDIB_Format::kRgb32:
-      case FXDIB_Format::kArgb: {
-        if (CFX_DefaultRenderDevice::UseSkiaRenderer() &&
-            FXDIB_Format::kRgb32 == GetFormat()) {
-          // TODO(crbug.com/pdfium/2016): This is not reliable because alpha may
-          // be modified outside of this operation.
-          color |= 0xFF000000;
-        }
-        for (int i = 0; i < m_Width; i++) {
-          reinterpret_cast<uint32_t*>(pBuffer)[i] = color;
+  }
+  switch (GetFormat()) {
+    case FXDIB_Format::k1bppMask:
+      fxcrt::Fill(buffer, (color & 0xff000000) ? 0xff : 0);
+      break;
+    case FXDIB_Format::k1bppRgb:
+      fxcrt::Fill(buffer, FindPalette(color) ? 0xff : 0);
+      break;
+    case FXDIB_Format::k8bppMask:
+      fxcrt::Fill(buffer, color >> 24);
+      break;
+    case FXDIB_Format::k8bppRgb:
+      fxcrt::Fill(buffer, FindPalette(color));
+      break;
+    case FXDIB_Format::kRgb: {
+      auto [a, r, g, b] = ArgbDecode(color);
+      if (r == g && g == b) {
+        fxcrt::Fill(buffer, r);
+      } else {
+        auto bgr_line =
+            fxcrt::truncating_reinterpret_span<FX_BGR_STRUCT<uint8_t>>(
+                buffer.first(m_Pitch));
+        for (auto& bgr : bgr_line) {
+          bgr.blue = b;
+          bgr.green = g;
+          bgr.red = r;
         }
         for (int row = 1; row < m_Height; row++) {
-          FXSYS_memcpy(pBuffer + row * m_Pitch, pBuffer, m_Pitch);
+          fxcrt::Copy(buffer.first(m_Pitch), buffer.subspan(row * m_Pitch));
         }
-        break;
       }
+      break;
     }
-  });
+    case FXDIB_Format::kRgb32:
+      if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+        // TODO(crbug.com/pdfium/2016): This is not reliable because alpha may
+        // be modified outside of this operation.
+        color |= 0xFF000000;
+      }
+      [[fallthrough]];
+    case FXDIB_Format::kArgb:
+      fxcrt::Fill(buffer.first(m_Width), color);
+      for (int row = 1; row < m_Height; row++) {
+        fxcrt::Copy(buffer.first(m_Pitch), buffer.subspan(row * m_Pitch));
+      }
+      break;
+    default:
+      break;
+  }
 }
 
 bool CFX_DIBitmap::TransferBitmap(int dest_left,
@@ -268,15 +256,12 @@ void CFX_DIBitmap::TransferWithMultipleBPP(int dest_left,
                                            int src_left,
                                            int src_top) {
   int Bpp = GetBPP() / 8;
-  UNSAFE_TODO({
-    for (int row = 0; row < height; ++row) {
-      uint8_t* dest_scan =
-          m_pBuffer.Get() + (dest_top + row) * m_Pitch + dest_left * Bpp;
-      const uint8_t* src_scan =
-          source->GetScanline(src_top + row).subspan(src_left * Bpp).data();
-      FXSYS_memcpy(dest_scan, src_scan, width * Bpp);
-    }
-  });
+  for (int row = 0; row < height; ++row) {
+    auto src_scan = source->GetScanline(src_top + row);
+    auto dest_scan = GetWritableScanline(dest_top + row);
+    fxcrt::Copy(src_scan.subspan(src_left * Bpp, width * Bpp),
+                dest_scan.subspan(dest_left * Bpp));
+  }
 }
 
 void CFX_DIBitmap::TransferEqualFormatsOneBPP(
