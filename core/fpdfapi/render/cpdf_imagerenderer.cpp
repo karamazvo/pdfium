@@ -31,9 +31,9 @@
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fxcrt/check.h"
-#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/maybe_owned.h"
+#include "core/fxcrt/zip.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_path.h"
@@ -254,23 +254,20 @@ RetainPtr<const CFX_DIBitmap> CPDF_ImageRenderer::CalculateDrawImage(
       int matte_g = FXARGB_G(m_pLoader->MatteColor());
       int matte_b = FXARGB_B(m_pLoader->MatteColor());
       for (int row = 0; row < rect.Height(); row++) {
-        uint8_t* dest_scan =
-            bitmap_device.GetBitmap()->GetWritableScanline(row).data();
-        const uint8_t* mask_scan =
-            mask_device.GetBitmap()->GetScanline(row).data();
-        for (int col = 0; col < rect.Width(); col++) {
-          int alpha = UNSAFE_TODO(*mask_scan++);
-          if (!alpha) {
-            UNSAFE_TODO(dest_scan += 4);
+        auto dest_scan = fxcrt::reinterpret_span<FX_BGRA_STRUCT<uint8_t>>(
+            bitmap_device.GetBitmap()->GetWritableScanline(row));
+        auto mask_scan =
+            mask_device.GetBitmap()->GetScanline(row).first(rect.Width());
+        for (auto [input, output] : fxcrt::Zip(mask_scan, dest_scan)) {
+          if (!input) {
             continue;
           }
-          int orig = (*dest_scan - matte_b) * 255 / alpha + matte_b;
-          UNSAFE_TODO(*dest_scan++) = std::clamp(orig, 0, 255);
-          orig = (*dest_scan - matte_g) * 255 / alpha + matte_g;
-          UNSAFE_TODO(*dest_scan++) = std::clamp(orig, 0, 255);
-          orig = (*dest_scan - matte_r) * 255 / alpha + matte_r;
-          UNSAFE_TODO(*dest_scan++) = std::clamp(orig, 0, 255);
-          UNSAFE_TODO(dest_scan++);
+          int orig = (output.blue - matte_b) * 255 / input + matte_b;
+          output.blue = std::clamp(orig, 0, 255);
+          orig = (output.green - matte_g) * 255 / input + matte_g;
+          output.green = std::clamp(orig, 0, 255);
+          orig = (output.red - matte_r) * 255 / input + matte_r;
+          output.red = std::clamp(orig, 0, 255);
         }
       }
     }
