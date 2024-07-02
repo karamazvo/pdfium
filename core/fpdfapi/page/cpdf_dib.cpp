@@ -40,6 +40,7 @@
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/stl_util.h"
+#include "core/fxcrt/zip.h"
 #include "core/fxge/calculate_pitch.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 
@@ -765,16 +766,14 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
             result_bitmap->GetScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(
                 image_info.width);
         auto dest =
-            rgb_bitmap->GetWritableScanlineAs<FX_BGR_STRUCT<uint8_t>>(row)
-                .first(image_info.width);
-        for (const auto& input : src) {
-          auto& output = dest.front();
-          m_JpxInlineData.data.push_back(input.alpha);
-          const uint8_t na = 255 - input.alpha;
-          output.blue = (input.blue * input.alpha + 255 * na) / 255;
-          output.green = (input.green * input.alpha + 255 * na) / 255;
-          output.red = (input.red * input.alpha + 255 * na) / 255;
-          dest = dest.subspan(1);
+            rgb_bitmap->GetWritableScanlineAs<FX_BGR_STRUCT<uint8_t>>(row);
+        for (auto it : fxcrt::Zip(src, dest)) {
+          const uint8_t alpha = it.first.alpha;
+          const uint8_t na = 255 - it.first.alpha;
+          m_JpxInlineData.data.push_back(alpha);
+          it.second.blue = (it.first.blue * alpha + 255 * na) / 255;
+          it.second.green = (it.first.green * alpha + 255 * na) / 255;
+          it.second.red = (it.first.red * alpha + 255 * na) / 255;
         }
       }
     } else {
@@ -784,14 +783,11 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
             result_bitmap->GetScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(
                 image_info.width);
         auto dest =
-            rgb_bitmap->GetWritableScanlineAs<FX_BGR_STRUCT<uint8_t>>(row)
-                .first(image_info.width);
-        for (const auto& input : src) {
-          auto& output = dest.front();
-          output.green = input.green;
-          output.red = input.red;
-          output.blue = input.blue;
-          dest = dest.subspan(1);
+            rgb_bitmap->GetWritableScanlineAs<FX_BGR_STRUCT<uint8_t>>(row);
+        for (auto it : fxcrt::Zip(src, dest)) {
+          it.second.green = it.first.green;
+          it.second.red = it.first.red;
+          it.second.blue = it.first.blue;
         }
       }
     }
