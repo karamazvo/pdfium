@@ -16,6 +16,24 @@
       "message": "Can we add `input` and `output` as aliases for `it.first` and `it.second`, respectively? Then most of this block can stay as it was, which is easier to read. Same below.",
       "revId": "2039685e1cf0c148ed4d3df339ffcb7c5430bb0f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "803ef79e_06f3dab5",
+        "filename": "core/fpdfapi/page/cpdf_dib.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 771,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-02T17:58:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c1ba81fb_64ff2fe4",
+      "revId": "2039685e1cf0c148ed4d3df339ffcb7c5430bb0f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
