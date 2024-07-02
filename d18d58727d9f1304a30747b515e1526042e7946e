@@ -48,6 +48,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f3ea35c3_70f2a5e2",
+        "filename": "core/fxge/dib/cfx_dibitmap.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-02T22:22:11Z",
+      "side": 1,
+      "message": "I\u0027m not sure if the suggestion works for the RGB case. In a 1x2 RGB bitmap with a pitch of 4, the bytes are:\n\nRGBxRGBx\n\nIf I fill the entire buffer, it\u0027s going be filled as:\n\nRGBRGBxx",
+      "parentUuid": "41bc233d_6f0be41c",
+      "range": {
+        "startLine": 161,
+        "startChar": 8,
+        "endLine": 161,
+        "endChar": 78
+      },
+      "revId": "d18d58727d9f1304a30747b515e1526042e7946e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b6552a54_de499d9b",
