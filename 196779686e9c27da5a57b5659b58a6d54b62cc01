@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6a80f618_fa14597c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-02T20:56:48Z",
+      "side": 1,
+      "message": "WDYT of replacing ArgbDecode() with `FX_RGB_STRUCT\u003cuint8_t\u003e ArgbToRGBAStruct(FX_ARGB argb)` and some other variants?",
+      "revId": "196779686e9c27da5a57b5659b58a6d54b62cc01",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
