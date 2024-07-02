@@ -1091,11 +1091,7 @@ void CJX_Object::ScriptSomFontColor(v8::Isolate* pIsolate,
     return;
   }
 
-  int32_t a;
-  int32_t r;
-  int32_t g;
-  int32_t b;
-  std::tie(a, r, g, b) = ArgbDecode(font->GetColor());
+  int32_t[a, r, g, b] = ArgbDecode(font->GetColor());
   *pValue = fxv8::NewStringHelper(
       pIsolate, ByteString::Format("%d,%d,%d", r, g, b).AsStringView());
 }
@@ -1121,11 +1117,7 @@ void CJX_Object::ScriptSomFillColor(v8::Isolate* pIsolate,
   }
 
   FX_ARGB color = borderfill->GetFillColor();
-  int32_t a;
-  int32_t r;
-  int32_t g;
-  int32_t b;
-  std::tie(a, r, g, b) = ArgbDecode(color);
+  int32_t[a, r, g, b] = ArgbDecode(color);
   *pValue = fxv8::NewStringHelper(
       pIsolate, ByteString::Format("%d,%d,%d", r, g, b).AsStringView());
 }
@@ -1154,11 +1146,7 @@ void CJX_Object::ScriptSomBorderColor(v8::Isolate* pIsolate,
 
   CXFA_Edge* edge = border->GetEdgeIfExists(0);
   FX_ARGB color = edge ? edge->GetColor() : CXFA_Edge::kDefaultColor;
-  int32_t a;
-  int32_t r;
-  int32_t g;
-  int32_t b;
-  std::tie(a, r, g, b) = ArgbDecode(color);
+  int32_t[a, r, g, b] = ArgbDecode(color);
   *pValue = fxv8::NewStringHelper(
       pIsolate, ByteString::Format("%d,%d,%d", r, g, b).AsStringView());
 }
