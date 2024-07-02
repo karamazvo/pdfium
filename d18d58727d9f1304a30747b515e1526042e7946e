@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c3b982ac_cefdc54c",
+        "filename": "core/fxge/dib/cfx_dibitmap.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-02T22:02:04Z",
+      "side": 1,
+      "message": "maybe this is the only line we need, omitting the r \u003d\u003d g \u003d\u003d b special case, and filling the entire buffer rather than line-byline.",
+      "range": {
+        "startLine": 161,
+        "startChar": 8,
+        "endLine": 161,
+        "endChar": 78
+      },
+      "revId": "d18d58727d9f1304a30747b515e1526042e7946e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b6552a54_de499d9b",
+        "filename": "core/fxge/dib/cfx_dibitmap.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-02T22:02:04Z",
+      "side": 1,
+      "message": "nit: move this logic up to the krgb32: label then [[fallthrough]]",
+      "range": {
+        "startLine": 169,
+        "startChar": 9,
+        "endLine": 169,
+        "endChar": 48
+      },
+      "revId": "d18d58727d9f1304a30747b515e1526042e7946e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aa932980_ff47f895",
+        "filename": "core/fxge/dib/cfx_dibitmap.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-02T22:02:04Z",
+      "side": 1,
+      "message": "same below.",
+      "range": {
+        "startLine": 175,
+        "startChar": 0,
+        "endLine": 175,
+        "endChar": 65
+      },
+      "revId": "d18d58727d9f1304a30747b515e1526042e7946e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
