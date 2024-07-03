@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e5c639d8_e845572c",
+        "filename": "core/fpdfapi/page/cpdf_image.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-03T16:01:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "17a73c0b_d6b0c52b",
+      "range": {
+        "startLine": 202,
+        "startChar": 19,
+        "endLine": 202,
+        "endChar": 43
+      },
+      "revId": "4118f031e6004f508dee8bfc4a85bd4578e0dbb5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ae6e1b94_2caf3ae7",
@@ -37,6 +61,30 @@
       "writtenOn": "2024-07-03T15:30:16Z",
       "side": 1,
       "message": "nit: local doesn\u0027t seem to buy us much",
+      "range": {
+        "startLine": 669,
+        "startChar": 0,
+        "endLine": 669,
+        "endChar": 26
+      },
+      "revId": "4118f031e6004f508dee8bfc4a85bd4578e0dbb5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "23bca363_d143c21e",
+        "filename": "core/fxge/agg/fx_agg_driver.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 669,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-03T16:01:37Z",
+      "side": 1,
+      "message": "It sets up the next CL in the chain to have less churn. Not sure how expensive it is to access an absl::variant inside inner-loops.",
+      "parentUuid": "ae6e1b94_2caf3ae7",
       "range": {
         "startLine": 669,
         "startChar": 0,
@@ -70,6 +118,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2711493d_a379a435",
+        "filename": "core/fxge/agg/fx_agg_driver.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 812,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-03T16:01:37Z",
+      "side": 1,
+      "message": "Ack. Since this is all inside UNSAFE_TODO, it\u0027ll get rewritten at some point anyway.",
+      "parentUuid": "18b983c1_bf772799",
+      "range": {
+        "startLine": 812,
+        "startChar": 11,
+        "endLine": 812,
+        "endChar": 20
+      },
+      "revId": "4118f031e6004f508dee8bfc4a85bd4578e0dbb5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5a869380_4ede955f",
@@ -83,6 +155,30 @@
       "writtenOn": "2024-07-03T15:30:16Z",
       "side": 1,
       "message": "not needed per above.",
+      "range": {
+        "startLine": 1175,
+        "startChar": 0,
+        "endLine": 1175,
+        "endChar": 24
+      },
+      "revId": "4118f031e6004f508dee8bfc4a85bd4578e0dbb5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "81c13127_73d27905",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 1175,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-03T16:01:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a869380_4ede955f",
       "range": {
         "startLine": 1175,
         "startChar": 0,
@@ -116,6 +212,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c95684b1_163d8565",
+        "filename": "xfa/fxfa/parser/cxfa_color.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-03T16:01:37Z",
+      "side": 1,
+      "message": "I\u0027ll move the ByteString version in a follow-up and do ByteString to WideString conversion here.",
+      "parentUuid": "0234eeeb_e6f2ac42",
+      "range": {
+        "startLine": 116,
+        "startChar": 0,
+        "endLine": 116,
+        "endChar": 69
+      },
+      "revId": "4118f031e6004f508dee8bfc4a85bd4578e0dbb5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4e5e33de_4d84051f",
@@ -129,6 +249,30 @@
       "writtenOn": "2024-07-03T15:30:16Z",
       "side": 1,
       "message": "follow-up: and here.",
+      "range": {
+        "startLine": 131,
+        "startChar": 0,
+        "endLine": 131,
+        "endChar": 69
+      },
+      "revId": "4118f031e6004f508dee8bfc4a85bd4578e0dbb5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8cf66fde_1a60b044",
+        "filename": "xfa/fxfa/parser/cxfa_stroke.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-03T16:01:37Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "4e5e33de_4d84051f",
       "range": {
         "startLine": 131,
         "startChar": 0,
