@@ -95,6 +95,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d93c3273_9d499228",
+        "filename": "core/fxge/agg/fx_agg_driver.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 669,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-03T16:10:17Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "23bca363_d143c21e",
+      "range": {
+        "startLine": 669,
+        "startChar": 0,
+        "endLine": 669,
+        "endChar": 26
+      },
+      "revId": "4118f031e6004f508dee8bfc4a85bd4578e0dbb5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "18b983c1_bf772799",
