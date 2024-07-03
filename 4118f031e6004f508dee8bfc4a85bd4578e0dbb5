@@ -260,6 +260,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ddebfad0_fbfa8d97",
+        "filename": "xfa/fxfa/parser/cxfa_color.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-03T16:25:38Z",
+      "side": 1,
+      "message": "https://pdfium-review.googlesource.com/121570",
+      "parentUuid": "c95684b1_163d8565",
+      "range": {
+        "startLine": 116,
+        "startChar": 0,
+        "endLine": 116,
+        "endChar": 69
+      },
+      "revId": "4118f031e6004f508dee8bfc4a85bd4578e0dbb5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4e5e33de_4d84051f",
