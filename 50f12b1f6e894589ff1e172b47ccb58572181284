@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "db89c102_50969891",
+        "filename": "core/fxge/agg/fx_agg_driver.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 857,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-03T15:57:08Z",
+      "side": 1,
+      "message": "Otherwise, MSAN should have spotted uninit data usage.",
+      "revId": "50f12b1f6e894589ff1e172b47ccb58572181284",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
