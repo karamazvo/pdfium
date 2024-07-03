@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "17a73c0b_d6b0c52b",
+        "filename": "core/fpdfapi/page/cpdf_image.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-03T15:30:16Z",
+      "side": 1,
+      "message": "Not needed, inline default initializers to 0 for FX_*_STRUCT members.",
+      "range": {
+        "startLine": 202,
+        "startChar": 19,
+        "endLine": 202,
+        "endChar": 43
+      },
+      "revId": "4118f031e6004f508dee8bfc4a85bd4578e0dbb5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ae6e1b94_2caf3ae7",
+        "filename": "core/fxge/agg/fx_agg_driver.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 669,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-03T15:30:16Z",
+      "side": 1,
+      "message": "nit: local doesn\u0027t seem to buy us much",
+      "range": {
+        "startLine": 669,
+        "startChar": 0,
+        "endLine": 669,
+        "endChar": 26
+      },
+      "revId": "4118f031e6004f508dee8bfc4a85bd4578e0dbb5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "18b983c1_bf772799",
+        "filename": "core/fxge/agg/fx_agg_driver.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 812,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-03T15:30:16Z",
+      "side": 1,
+      "message": "/me wonders if this store to a uint8_t forces a re-load of bgr members in which case holding bgr by value rather than reference might avoid redundant loads (ponder for another day).",
+      "range": {
+        "startLine": 812,
+        "startChar": 11,
+        "endLine": 812,
+        "endChar": 20
+      },
+      "revId": "4118f031e6004f508dee8bfc4a85bd4578e0dbb5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5a869380_4ede955f",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 1175,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-03T15:30:16Z",
+      "side": 1,
+      "message": "not needed per above.",
+      "range": {
+        "startLine": 1175,
+        "startChar": 0,
+        "endLine": 1175,
+        "endChar": 24
+      },
+      "revId": "4118f031e6004f508dee8bfc4a85bd4578e0dbb5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0234eeeb_e6f2ac42",
+        "filename": "xfa/fxfa/parser/cxfa_color.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-03T15:30:16Z",
+      "side": 1,
+      "message": "follow-up: maybe the helper should be a public function.",
+      "range": {
+        "startLine": 116,
+        "startChar": 0,
+        "endLine": 116,
+        "endChar": 69
+      },
+      "revId": "4118f031e6004f508dee8bfc4a85bd4578e0dbb5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4e5e33de_4d84051f",
+        "filename": "xfa/fxfa/parser/cxfa_stroke.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-03T15:30:16Z",
+      "side": 1,
+      "message": "follow-up: and here.",
+      "range": {
+        "startLine": 131,
+        "startChar": 0,
+        "endLine": 131,
+        "endChar": 69
+      },
+      "revId": "4118f031e6004f508dee8bfc4a85bd4578e0dbb5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
