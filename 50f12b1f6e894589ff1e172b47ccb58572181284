@@ -34,6 +34,24 @@
       "parentUuid": "db89c102_50969891",
       "revId": "50f12b1f6e894589ff1e172b47ccb58572181284",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aab3f945_63aff735",
+        "filename": "core/fxge/agg/fx_agg_driver.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 857,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-03T16:16:36Z",
+      "side": 1,
+      "message": "I meant the prior `m_Red` POD and friends would have been uninitialized if code execution did not reach this spot. So their usage, if any, would have triggered MSAN.",
+      "parentUuid": "7364b830_f7918f1e",
+      "revId": "50f12b1f6e894589ff1e172b47ccb58572181284",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
