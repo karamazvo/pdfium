@@ -42,23 +42,20 @@ CFGAS_GEShading::CFGAS_GEShading(const CFX_PointF& beginPoint,
 
 CFGAS_GEShading::~CFGAS_GEShading() = default;
 
-void CFGAS_GEShading::InitArgbArray(FX_ARGB beginArgb, FX_ARGB endArgb) {
-  auto [a1, r1, g1, b1] = ArgbDecode(beginArgb);
-  auto [a2, r2, g2, b2] = ArgbDecode(endArgb);
+void CFGAS_GEShading::InitArgbArray(FX_ARGB begin_argb, FX_ARGB end_argb) {
+  FX_RGBA_STRUCT<uint8_t> rgba0 = ArgbToRGBAStruct(begin_argb);
+  FX_RGBA_STRUCT<uint8_t> rgba1 = ArgbToRGBAStruct(end_argb);
 
-  float f = static_cast<float>(kSteps - 1);
-  float aScale = 1.0 * (a2 - a1) / f;
-  float rScale = 1.0 * (r2 - r1) / f;
-  float gScale = 1.0 * (g2 - g1) / f;
-  float bScale = 1.0 * (b2 - b1) / f;
+  constexpr float f = static_cast<float>(kSteps - 1);
+  const float a_scale = 1.0 * (rgba1.alpha - rgba0.alpha) / f;
+  const float r_scale = 1.0 * (rgba1.red - rgba0.red) / f;
+  const float g_scale = 1.0 * (rgba1.green - rgba0.green) / f;
+  const float b_scale = 1.0 * (rgba1.blue - rgba0.blue) / f;
 
   for (size_t i = 0; i < kSteps; i++) {
-    int32_t a3 = static_cast<int32_t>(i * aScale);
-    int32_t r3 = static_cast<int32_t>(i * rScale);
-    int32_t g3 = static_cast<int32_t>(i * gScale);
-    int32_t b3 = static_cast<int32_t>(i * bScale);
-
-    // TODO(dsinclair): Add overloads for FX_ARGB. pdfium:437
-    m_argbArray[i] = ArgbEncode(a1 + a3, r1 + r3, g1 + g3, b1 + b3);
+    m_argbArray[i] = ArgbEncode(static_cast<int32_t>(i * a_scale) + rgba0.alpha,
+                                static_cast<int32_t>(i * r_scale) + rgba0.red,
+                                static_cast<int32_t>(i * g_scale) + rgba0.green,
+                                static_cast<int32_t>(i * b_scale) + rgba0.blue);
   }
 }
