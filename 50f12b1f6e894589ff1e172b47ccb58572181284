@@ -16,6 +16,24 @@
       "message": "Otherwise, MSAN should have spotted uninit data usage.",
       "revId": "50f12b1f6e894589ff1e172b47ccb58572181284",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7364b830_f7918f1e",
+        "filename": "core/fxge/agg/fx_agg_driver.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 857,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-03T16:02:20Z",
+      "side": 1,
+      "message": "Maybe not.  The variant\u0027s first alternative is FX_BGR_STRUCT, which has `\u003d 0` intializers for its members, so I\u0027d expect that doing nothing results in  BGR alternate initialzied to 0.",
+      "parentUuid": "db89c102_50969891",
+      "revId": "50f12b1f6e894589ff1e172b47ccb58572181284",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
