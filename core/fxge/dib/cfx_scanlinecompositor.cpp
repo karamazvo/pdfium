@@ -17,6 +17,10 @@
 #include "core/fxge/dib/blend.h"
 #include "core/fxge/dib/fx_dib.h"
 
+#if defined(PDF_USE_SKIA)
+#include "core/fxge/cfx_defaultrenderdevice.h"
+#endif
+
 using fxge::Blend;
 
 #define FXDIB_ALPHA_UNION(dest, src) ((dest) + (src) - (dest) * (src) / 255)
@@ -2326,7 +2330,14 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
     CompositeRgbBitmapLineSrcRgbx(dest_scan, src_scan, width, clip_scan);
     return;
   }
-  CompositeRgbBitmapLineSrcArgb(dest_scan, src_scan, width, clip_scan);
+  if (m_SrcFormat == FXDIB_Format::kArgb) {
+    CompositeRgbBitmapLineSrcArgb(dest_scan, src_scan, width, clip_scan);
+    return;
+  }
+#if defined(PDF_USE_SKIA)
+  CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+  CompositeRgbBitmapLineSrcArgbPre(dest_scan, src_scan, width, clip_scan);
+#endif
 }
 
 void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcRgbx(
@@ -2440,6 +2451,14 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcRgbx(
                                          m_BlendType, src_Bpp);
       return;
     }
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul: {
+      CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+      // TODO(thestig): Support premultiplied alpha.
+      CHECK(false);
+      return;
+    }
+#endif
   }
 }
 
@@ -2500,8 +2519,81 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcArgb(
                              clip_scan);
       return;
     }
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul: {
+      CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+      // TODO(thestig): Support premultiplied alpha.
+      CHECK(false);
+      return;
+    }
+#endif
   }
 }
+
+#if defined(PDF_USE_SKIA)
+void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcArgbPre(
+    pdfium::span<uint8_t> dest_scan,
+    pdfium::span<const uint8_t> src_scan,
+    int width,
+    pdfium::span<const uint8_t> clip_scan) const {
+  CHECK_EQ(m_SrcFormat, FXDIB_Format::kArgbPremul);
+
+  switch (m_DestFormat) {
+    case FXDIB_Format::kInvalid:
+    case FXDIB_Format::k1bppRgb:
+    case FXDIB_Format::k1bppMask: {
+      NOTREACHED_NORETURN();  // Disallowed by Init().
+    }
+    case FXDIB_Format::k8bppRgb: {
+      CHECK(!m_bRgbByteOrder);  // Disallowed by Init();
+      CHECK(false);
+      return;
+    }
+    case FXDIB_Format::k8bppMask: {
+      CHECK(!m_bRgbByteOrder);  // Disallowed by Init();
+      CHECK(false);
+      return;
+    }
+    case FXDIB_Format::kRgb:
+    case FXDIB_Format::kRgb32: {
+      // const int dest_Bpp = GetCompsFromFormat(m_DestFormat);
+      if (m_bRgbByteOrder) {
+        if (m_BlendType == BlendMode::kNormal) {
+          CHECK(false);
+          return;
+        }
+        CHECK(false);
+        return;
+      }
+
+      if (m_BlendType == BlendMode::kNormal) {
+        CHECK(false);
+        return;
+      }
+      CHECK(false);
+      return;
+    }
+    case FXDIB_Format::kArgb:
+      if (m_bRgbByteOrder) {
+        CHECK(false);
+        return;
+      }
+      CHECK(false);
+      return;
+    case FXDIB_Format::kArgbPremul: {
+      // TODO(thestig): Support premultiplied alpha.
+      if (m_bRgbByteOrder) {
+        CompositeRow_Argb2Argb_RgbByteOrder(dest_scan, src_scan, width,
+                                            m_BlendType, clip_scan);
+        return;
+      }
+      CompositeRow_Argb2Argb(dest_scan, src_scan, width, m_BlendType,
+                             clip_scan);
+      return;
+    }
+  }
+}
+#endif  // defined(PDF_USE_SKIA)
 
 void CFX_ScanlineCompositor::CompositePalBitmapLine(
     pdfium::span<uint8_t> dest_scan,
@@ -2569,6 +2661,14 @@ void CFX_ScanlineCompositor::CompositePalBitmapLineSrcBpp1(
                                         clip_scan);
       return;
     }
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul: {
+      CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+      // TODO(thestig): Support premultiplied alpha.
+      CHECK(false);
+      return;
+    }
+#endif
   }
 }
 
@@ -2623,6 +2723,14 @@ void CFX_ScanlineCompositor::CompositePalBitmapLineSrcBpp8(
                                         clip_scan);
       return;
     }
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul: {
+      CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+      // TODO(thestig): Support premultiplied alpha.
+      CHECK(false);
+      return;
+    }
+#endif
   }
 }
 
@@ -2677,6 +2785,22 @@ void CFX_ScanlineCompositor::CompositeByteMaskLine(
                                  clip_scan);
       return;
     }
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul: {
+      CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+      // TODO(thestig): Support premultiplied alpha.
+      if (m_bRgbByteOrder) {
+        CompositeRow_ByteMask2Argb_RgbByteOrder(
+            dest_scan, src_scan, m_MaskAlpha, m_MaskRed, m_MaskGreen,
+            m_MaskBlue, width, m_BlendType, clip_scan);
+        return;
+      }
+      CompositeRow_ByteMask2Argb(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
+                                 m_MaskGreen, m_MaskBlue, width, m_BlendType,
+                                 clip_scan);
+      return;
+    }
+#endif
   }
 }
 
@@ -2733,6 +2857,14 @@ void CFX_ScanlineCompositor::CompositeBitMaskLine(
                                 m_BlendType, clip_scan);
       return;
     }
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul: {
+      CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+      // TODO(thestig): Support premultiplied alpha.
+      CHECK(false);
+      return;
+    }
+#endif
   }
 }
 

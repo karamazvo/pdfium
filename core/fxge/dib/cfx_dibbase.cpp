@@ -29,6 +29,10 @@
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/dib/cfx_imagetransformer.h"
 
+#if defined(PDF_USE_SKIA)
+#include "core/fxge/cfx_defaultrenderdevice.h"
+#endif
+
 namespace {
 
 void ColorDecode(uint32_t pal_v, uint8_t* r, uint8_t* g, uint8_t* b) {
@@ -899,6 +903,7 @@ void CFX_DIBBase::TakePalette(DataVector<uint32_t> src_palette) {
 }
 
 RetainPtr<CFX_DIBitmap> CFX_DIBBase::CloneAlphaMask() const {
+  // TODO(thestig): Support premultiplied alpha.
   DCHECK_EQ(GetFormat(), FXDIB_Format::kArgb);
   auto pMask = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pMask->Create(m_Width, m_Height, FXDIB_Format::k8bppMask))
@@ -981,6 +986,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::ConvertTo(FXDIB_Format dest_format) const {
   if (!pClone->Create(m_Width, m_Height, dest_format))
     return nullptr;
 
+  // TODO(thestig): Support premultiplied alpha.
   if (dest_format == FXDIB_Format::kArgb) {
     pClone->SetUniformOpaqueAlpha();
   }
@@ -1165,5 +1171,13 @@ DataVector<uint32_t> CFX_DIBBase::ConvertBuffer(
                          height, pSrcBitmap, src_left, src_top);
       return {};
     }
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul:
+      CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+      // TODO(thestig): Support premultiplied alpha.
+      ConvertBuffer_Argb(src_bpp, dest_format, dest_buf, dest_pitch, width,
+                         height, pSrcBitmap, src_left, src_top);
+      return {};
+#endif
   }
 }

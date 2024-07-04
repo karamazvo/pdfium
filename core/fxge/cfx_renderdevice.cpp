@@ -216,6 +216,7 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
                           bool normalize,
                           int x_subpixel,
                           const FX_BGRA_STRUCT<uint8_t>& bgra) {
+  // TODO(thestig): Support premultiplied alpha.
   const bool has_alpha = bitmap->GetFormat() == FXDIB_Format::kArgb;
   const int Bpp = has_alpha ? 4 : bitmap->GetBPP() / 8;
   for (int row = 0; row < nrows; ++row) {
@@ -472,7 +473,7 @@ FXDIB_Format GetCreateCompatibleBitmapFormat(int render_caps) {
   if (render_caps & FXRC_BYTEMASK_OUTPUT)
     return FXDIB_Format::k8bppMask;
   if (render_caps & FXRC_ALPHA_OUTPUT)
-    return FXDIB_Format::kArgb;
+    return GetDefaultArgbFormat();
   return CFX_DIBBase::kPlatformRGBFormat;
 }
 

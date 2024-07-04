@@ -202,10 +202,7 @@ CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
       m_DestHeight(dest_height),
       m_DestClip(clip_rect) {
   if (m_bHasAlpha) {
-    DCHECK_EQ(m_DestFormat, FXDIB_Format::kArgb);
-    DCHECK_EQ(m_DestBpp, GetBppFromFormat(FXDIB_Format::kArgb));
-    DCHECK_EQ(m_pSource->GetFormat(), FXDIB_Format::kArgb);
-    DCHECK_EQ(m_SrcBpp, GetBppFromFormat(FXDIB_Format::kArgb));
+    CHECK_EQ(m_DestFormat, m_pSource->GetFormat());
   }
 
   std::optional<uint32_t> maybe_size =
@@ -397,6 +394,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
           break;
         }
         case TransformMethod::kManyBpptoManyBppWithAlpha: {
+          // TODO(thestig): Support premultiplied alpha.
           DCHECK(m_bHasAlpha);
           for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
             PixelWeight* pWeights = m_WeightTable.GetPixelWeight(col);
@@ -486,6 +484,7 @@ void CStretchEngine::StretchVert() {
           break;
         }
         case TransformMethod::kManyBpptoManyBppWithAlpha: {
+          // TODO(thestig): Support premultiplied alpha.
           DCHECK(m_bHasAlpha);
           for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
             pdfium::span<const uint8_t> src_span =

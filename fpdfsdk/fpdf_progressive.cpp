@@ -61,6 +61,12 @@ FPDF_RenderPageBitmapWithColorScheme_Start(FPDF_BITMAP bitmap,
   pPage->SetRenderContext(std::move(owned_context));
 
   RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap));
+#if defined(PDF_USE_SKIA)
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+    pBitmap->PreMultiply();
+  }
+#endif  // defined(PDF_USE_SKIA)
+
   auto device = std::make_unique<CFX_DefaultRenderDevice>();
   device->AttachWithRgbByteOrder(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER));
   context->m_pDevice = std::move(device);
@@ -70,17 +76,18 @@ FPDF_RenderPageBitmapWithColorScheme_Start(FPDF_BITMAP bitmap,
                                 size_y, rotate, flags, color_scheme,
                                 /*need_to_restore=*/false, &pause_adapter);
 
-#if defined(PDF_USE_SKIA)
-  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-    pBitmap->UnPreMultiply();
-  }
-#endif  // defined(PDF_USE_SKIA)
-
   if (!context->m_pRenderer) {
     return FPDF_RENDER_FAILED;
   }
 
-  return ToFPDFStatus(context->m_pRenderer->GetStatus());
+  int status = ToFPDFStatus(context->m_pRenderer->GetStatus());
+#if defined(PDF_USE_SKIA)
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer() &&
+      status != FPDF_RENDER_TOBECONTINUED) {
+    pBitmap->UnPreMultiply();
+  }
+#endif  // defined(PDF_USE_SKIA)
+  return status;
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
@@ -114,12 +121,14 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPage_Continue(FPDF_PAGE page,
   CPDFSDK_PauseAdapter pause_adapter(pause);
   pContext->m_pRenderer->Continue(&pause_adapter);
 
+  int status = ToFPDFStatus(pContext->m_pRenderer->GetStatus());
 #if defined(PDF_USE_SKIA)
-  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer() &&
+      status != FPDF_RENDER_TOBECONTINUED) {
     pContext->m_pDevice->GetBitmap()->UnPreMultiply();
   }
 #endif  // defined(PDF_USE_SKIA)
-  return ToFPDFStatus(pContext->m_pRenderer->GetStatus());
+  return status;
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage_Close(FPDF_PAGE page) {

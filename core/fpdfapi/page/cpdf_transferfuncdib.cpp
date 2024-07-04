@@ -15,6 +15,10 @@
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxge/calculate_pitch.h"
 
+#if defined(PDF_USE_SKIA)
+#include "core/fxge/cfx_defaultrenderdevice.h"
+#endif
+
 #if BUILDFLAG(IS_APPLE)
 #define INCR_ON_APPLE(x) ++x
 #else
@@ -159,6 +163,12 @@ void CPDF_TransferFuncDIB::TranslateScanline(
       });
       break;
     }
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul:
+      CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+      CHECK(false);
+      break;
+#endif
   }
 }
 

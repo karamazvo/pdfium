@@ -63,7 +63,7 @@ class CFX_DIBBase : public Retainable {
   FXDIB_Format GetFormat() const { return m_Format; }
   int GetBPP() const { return GetBppFromFormat(m_Format); }
   bool IsMaskFormat() const { return GetIsMaskFromFormat(m_Format); }
-  bool IsAlphaFormat() const { return m_Format == FXDIB_Format::kArgb; }
+  bool IsAlphaFormat() const { return GetIsAlphaFromFormat(m_Format); }
   bool IsOpaqueImage() const { return !IsMaskFormat() && !IsAlphaFormat(); }
 
   bool HasPalette() const { return !m_palette.empty(); }
@@ -111,8 +111,15 @@ class CFX_DIBBase : public Retainable {
   virtual sk_sp<SkImage> RealizeSkImage() const;
 
   // Whether alpha is premultiplied (if `IsAlphaFormat()`).
-  virtual bool IsPremultiplied() const;
 #endif  // defined(PDF_USE_SKIA)
+
+  bool IsPremultiplied() const {
+#if defined(PDF_USE_SKIA)
+    return m_Format == FXDIB_Format::kArgbPremul;
+#else
+    return false;
+#endif
+  }
 
  protected:
   CFX_DIBBase();

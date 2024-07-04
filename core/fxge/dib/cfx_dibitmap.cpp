@@ -175,6 +175,17 @@ void CFX_DIBitmap::Clear(uint32_t color) {
         fxcrt::Fill(GetWritableScanlineAs<uint32_t>(row), color);
       }
       break;
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul: {
+      CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+      const FX_BGRA_STRUCT<uint8_t> bgra =
+          PreMultiplyColor(ArgbToBGRAStruct(color));
+      for (int row = 0; row < m_Height; row++) {
+        fxcrt::Fill(GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row), bgra);
+      }
+      break;
+    }
+#endif
   }
 }
 
@@ -286,6 +297,7 @@ void CFX_DIBitmap::TransferEqualFormatsOneBPP(
 }
 
 void CFX_DIBitmap::SetRedFromAlpha() {
+  // TODO(thestig): Support premultiplied alpha?
   CHECK_EQ(FXDIB_Format::kArgb, GetFormat());
   CHECK(m_pBuffer);
 
@@ -299,6 +311,7 @@ void CFX_DIBitmap::SetRedFromAlpha() {
 }
 
 void CFX_DIBitmap::SetUniformOpaqueAlpha() {
+  // TODO(thestig): Support premultiplied alpha?
   CHECK_EQ(FXDIB_Format::kArgb, GetFormat());
   CHECK(m_pBuffer);
 
@@ -317,34 +330,55 @@ bool CFX_DIBitmap::MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) {
   CHECK_EQ(FXDIB_Format::k8bppMask, mask->GetFormat());
   CHECK(m_pBuffer);
 
-  if (GetFormat() == FXDIB_Format::kRgb32) {
-    if (!ConvertFormat(FXDIB_Format::kArgb)) {
-      return false;
-    }
-
-    for (int row = 0; row < m_Height; row++) {
-      auto dest_scan =
-          GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(m_Width);
-      auto mask_scan = mask->GetScanline(row).first(m_Width);
-      for (int col = 0; col < m_Width; col++) {
-        // Since the `dest_scan` value always starts out as 255 in this case,
-        // simplify 255 * x / 255.
-        dest_scan[col].alpha = mask_scan[col];
+  switch (GetFormat()) {
+    case FXDIB_Format::kInvalid:
+    case FXDIB_Format::k1bppMask:
+    case FXDIB_Format::k1bppRgb:
+    case FXDIB_Format::k8bppMask:
+    case FXDIB_Format::k8bppRgb:
+    case FXDIB_Format::kRgb:
+      return true;
+    case FXDIB_Format::kRgb32:
+      if (!ConvertFormat(FXDIB_Format::kArgb)) {
+        return false;
       }
-    }
-    return true;
-  }
 
-  CHECK_EQ(GetFormat(), FXDIB_Format::kArgb);
-  for (int row = 0; row < m_Height; row++) {
-    auto dest_scan =
-        GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(m_Width);
-    auto mask_scan = mask->GetScanline(row).first(m_Width);
-    for (int col = 0; col < m_Width; col++) {
-      dest_scan[col].alpha = dest_scan[col].alpha * mask_scan[col] / 255;
-    }
+      for (int row = 0; row < m_Height; row++) {
+        auto dest_scan =
+            GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(m_Width);
+        auto mask_scan = mask->GetScanline(row).first(m_Width);
+        for (int col = 0; col < m_Width; col++) {
+          // Since the `dest_scan` value always starts out as 255 in this case,
+          // simplify 255 * x / 255.
+          dest_scan[col].alpha = mask_scan[col];
+        }
+      }
+      return true;
+    case FXDIB_Format::kArgb:
+      for (int row = 0; row < m_Height; row++) {
+        auto dest_scan =
+            GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(m_Width);
+        auto mask_scan = mask->GetScanline(row).first(m_Width);
+        for (int col = 0; col < m_Width; col++) {
+          dest_scan[col].alpha = dest_scan[col].alpha * mask_scan[col] / 255;
+        }
+      }
+      return true;
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul:
+      CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+      // TODO(thestig): Support premultiplied alpha.
+      for (int row = 0; row < m_Height; row++) {
+        auto dest_scan =
+            GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(m_Width);
+        auto mask_scan = mask->GetScanline(row).first(m_Width);
+        for (int col = 0; col < m_Width; col++) {
+          dest_scan[col].alpha = dest_scan[col].alpha * mask_scan[col] / 255;
+        }
+      }
+      return true;
+#endif
   }
-  return true;
 }
 
 bool CFX_DIBitmap::MultiplyAlpha(float alpha) {
@@ -360,6 +394,7 @@ bool CFX_DIBitmap::MultiplyAlpha(float alpha) {
     return false;
   }
 
+  // TODO(thestig): Support premultiplied alpha.
   if (!ConvertFormat(FXDIB_Format::kArgb)) {
     return false;
   }
@@ -413,6 +448,11 @@ uint32_t CFX_DIBitmap::GetPixelForTesting(int x, int y) const {
       return UNSAFE_TODO(FXARGB_GetDIB(pos) | 0xff000000);
     case FXDIB_Format::kArgb:
       return UNSAFE_TODO(FXARGB_GetDIB(pos));
+    case FXDIB_Format::kArgbPremul:
+      CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+      // TODO(thestig): Support premultiplied alpha.
+      CHECK(false);
+      break;
   }
 }
 #endif  // defined(PDF_USE_SKIA)
@@ -751,6 +791,7 @@ bool CFX_DIBitmap::CompositeRect(int left,
     const bool bAlpha = IsAlphaFormat();
     if (bAlpha) {
       // Other formats with alpha have already been handled above.
+      // TODO(thestig): Support premultiplied alpha.
       DCHECK_EQ(GetFormat(), FXDIB_Format::kArgb);
     }
     if (src_alpha == 255) {
@@ -812,8 +853,12 @@ bool CFX_DIBitmap::CompositeRect(int left,
 }
 
 bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
+  // TODO(thestig): Support premultiplied alpha.
   DCHECK(dest_format == FXDIB_Format::k8bppMask ||
          dest_format == FXDIB_Format::kArgb ||
+#if defined(PDF_USE_SKIA)
+         dest_format == FXDIB_Format::kArgbPremul ||
+#endif
          dest_format == FXDIB_Format::kRgb32 ||
          dest_format == FXDIB_Format::kRgb);
 
@@ -825,8 +870,14 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
     m_Format = FXDIB_Format::k8bppMask;
     return true;
   }
-  if (dest_format == FXDIB_Format::kArgb && m_Format == FXDIB_Format::kRgb32) {
-    m_Format = FXDIB_Format::kArgb;
+
+  bool argb_dest = dest_format == FXDIB_Format::kArgb;
+#if defined(PDF_USE_SKIA)
+  CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+  argb_dest |= dest_format == FXDIB_Format::kArgbPremul;
+#endif
+  if (argb_dest && m_Format == FXDIB_Format::kRgb32) {
+    m_Format = dest_format;
     UNSAFE_TODO({
       for (int row = 0; row < m_Height; row++) {
         uint8_t* scanline = m_pBuffer.Get() + row * m_Pitch + 3;
@@ -838,6 +889,20 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
     });
     return true;
   }
+
+#if defined(PDF_USE_SKIA)
+  if (dest_format == FXDIB_Format::kArgbPremul &&
+      m_Format == FXDIB_Format::kArgb) {
+    PreMultiply();
+    return true;
+  }
+  if (dest_format == FXDIB_Format::kArgb &&
+      m_Format == FXDIB_Format::kArgbPremul) {
+    UnPreMultiply();
+    return true;
+  }
+#endif
+
   int dest_bpp = GetBppFromFormat(dest_format);
   int dest_pitch = fxge::CalculatePitch32OrDie(dest_bpp, m_Width);
   const size_t dest_buf_size = dest_pitch * m_Height + 4;
@@ -846,7 +911,7 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
   if (!dest_buf)
     return false;
 
-  if (dest_format == FXDIB_Format::kArgb) {
+  if (argb_dest) {
     UNSAFE_TODO(FXSYS_memset(dest_buf.get(), 0xff, dest_buf_size));
   }
   RetainPtr<CFX_DIBBase> holder(this);

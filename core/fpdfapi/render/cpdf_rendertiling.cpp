@@ -35,7 +35,7 @@ RetainPtr<CFX_DIBitmap> DrawPatternBitmap(
     const CPDF_RenderOptions::Options& draw_options) {
   auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pBitmap->Create(width, height,
-                       pPattern->colored() ? FXDIB_Format::kArgb
+                       pPattern->colored() ? GetDefaultArgbFormat()
                                            : FXDIB_Format::k8bppMask)) {
     return nullptr;
   }
@@ -61,11 +61,6 @@ RetainPtr<CFX_DIBitmap> DrawPatternBitmap(
   context.AppendLayer(pPatternForm, mtPattern2Bitmap);
   context.Render(&bitmap_device, nullptr, &options, nullptr);
 
-#if defined(PDF_USE_SKIA)
-  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-    pBitmap->UnPreMultiply();
-  }
-#endif  // defined(PDF_USE_SKIA)
   return pBitmap;
 }
 
@@ -197,8 +192,9 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderTiling::Draw(
   int clip_width = clip_box.right - clip_box.left;
   int clip_height = clip_box.bottom - clip_box.top;
   auto pScreen = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!pScreen->Create(clip_width, clip_height, FXDIB_Format::kArgb))
+  if (!pScreen->Create(clip_width, clip_height, GetDefaultArgbFormat())) {
     return nullptr;
+  }
 
   pdfium::span<const uint8_t> src_buf = pPatternBitmap->GetBuffer();
   for (int col = min_col; col <= max_col; col++) {

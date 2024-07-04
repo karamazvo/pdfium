@@ -247,6 +247,14 @@ FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object) {
     case FXDIB_Format::kInvalid: {
       NOTREACHED_NORETURN();
     }
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul: {
+      CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+      // TODO(thestig): Support premultiplied alpha.
+      CHECK(false);
+      break;
+    }
+#endif
   }
 
   RetainPtr<CFX_DIBitmap> pBitmap;
@@ -289,8 +297,10 @@ FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   int output_width = image_matrix.a;
   int output_height = image_matrix.d;
   auto result_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!result_bitmap->Create(output_width, output_height, FXDIB_Format::kArgb))
+  if (!result_bitmap->Create(output_width, output_height,
+                             GetDefaultArgbFormat())) {
     return nullptr;
+  }
 
   // Set up all the rendering code.
   RetainPtr<CPDF_Dictionary> page_resources =
