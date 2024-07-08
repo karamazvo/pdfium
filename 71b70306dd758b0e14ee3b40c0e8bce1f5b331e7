@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "754f79f8_5e8eba5a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-08T18:47:58Z",
+      "side": 1,
+      "message": "Otherwise, this CL would check in the correct test expectation, and suppress the bad result.",
+      "revId": "71b70306dd758b0e14ee3b40c0e8bce1f5b331e7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
