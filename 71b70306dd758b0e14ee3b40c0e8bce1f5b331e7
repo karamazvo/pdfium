@@ -33,6 +33,23 @@
       "message": "Should the macOS filename have some indication that it\u0027s incorrect? Is that possible?",
       "revId": "71b70306dd758b0e14ee3b40c0e8bce1f5b331e7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "73649106_428db72d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-07-08T19:25:20Z",
+      "side": 1,
+      "message": "LGTM with a question.",
+      "revId": "71b70306dd758b0e14ee3b40c0e8bce1f5b331e7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
