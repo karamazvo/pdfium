@@ -50,6 +50,24 @@
       "message": "LGTM with a question.",
       "revId": "71b70306dd758b0e14ee3b40c0e8bce1f5b331e7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c1ffc24e_887d84cd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-08T19:30:36Z",
+      "side": 1,
+      "message": "I suppose it is possible to change the test script to do that, but usually having the bug open is good enough.",
+      "parentUuid": "28d468cc_58c3a590",
+      "revId": "71b70306dd758b0e14ee3b40c0e8bce1f5b331e7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
