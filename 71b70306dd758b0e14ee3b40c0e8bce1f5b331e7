@@ -68,6 +68,24 @@
       "parentUuid": "28d468cc_58c3a590",
       "revId": "71b70306dd758b0e14ee3b40c0e8bce1f5b331e7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2a4582bc_172bedfa",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-07-08T19:32:39Z",
+      "side": 1,
+      "message": "If this case doesn\u0027t occur often, then an open bug report is fine, too.",
+      "parentUuid": "c1ffc24e_887d84cd",
+      "revId": "71b70306dd758b0e14ee3b40c0e8bce1f5b331e7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
