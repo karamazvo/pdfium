@@ -16,6 +16,24 @@
       "message": "Wrong bug number here? I think this line and the next one can be combined into `Fixed: 350782910`.",
       "revId": "67beb900c9b95e9ea946c734ea356d6084dada1a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b64a0b78_4605012d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 9121
+      },
+      "writtenOn": "2024-07-09T21:06:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "03650ce6_89c77514",
+      "revId": "67beb900c9b95e9ea946c734ea356d6084dada1a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
