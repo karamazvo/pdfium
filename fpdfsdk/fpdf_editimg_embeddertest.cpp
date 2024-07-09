@@ -290,3 +290,27 @@ TEST_F(PDFEditImgTest, GetAndSetMatrixForFormWithImage) {
 
   VerifySavedDocument(kExpectedWidth, kExpectedHeight, kExpectedChecksum);
 }
+
+TEST_F(PDFEditImgTest, GetRotatedRenderedBitmap) {
+  OpenDocument("orientation.pdf");
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page, 1);
+  ASSERT_EQ(FPDFPageObj_GetType(page_object), FPDF_PAGEOBJ_IMAGE);
+
+  unsigned int width;
+  unsigned int height;
+  ASSERT_TRUE(FPDFImageObj_GetImagePixelSize(page_object, &width, &height));
+  ASSERT_EQ(width, 636u);
+  ASSERT_EQ(height, 79u);
+
+  ScopedFPDFBitmap bitmap(
+      FPDFImageObj_GetRenderedBitmap(document(), page, page_object));
+  ASSERT_NE(bitmap, nullptr);
+
+  ASSERT_EQ(FPDFBitmap_GetWidth(bitmap.get()), 457);
+  ASSERT_EQ(FPDFBitmap_GetHeight(bitmap.get()), 5);
+
+  UnloadPage(page);
+}
