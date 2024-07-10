@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c5bcc595_62f94995",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3513082
+      },
+      "writtenOn": "2024-07-10T08:57:12Z",
+      "side": 1,
+      "message": "Lei,\n\nI added a test with a synthetic image. I think since this test is only focusing on image rendering, it\u0027s sufficient. What do you think?",
+      "revId": "4f518d43cd5946e005b0067e2e2701f44f64d72d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
