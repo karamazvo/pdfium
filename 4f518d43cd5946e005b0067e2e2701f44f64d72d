@@ -16,6 +16,114 @@
       "message": "Lei,\n\nI added a test with a synthetic image. I think since this test is only focusing on image rendering, it\u0027s sufficient. What do you think?",
       "revId": "4f518d43cd5946e005b0067e2e2701f44f64d72d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aeecd10a_d9c306f6",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-10T17:49:29Z",
+      "side": 1,
+      "message": "Use FXSYS_sqrt2() ?",
+      "revId": "4f518d43cd5946e005b0067e2e2701f44f64d72d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eb0a6c82_18ca5650",
+        "filename": "fpdfsdk/fpdf_editimg_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-10T17:49:29Z",
+      "side": 1,
+      "message": "The existing tests for FPDFImageObj_GetRenderedBitmap() are all in fpdfsdk/fpdf_edit_embeddertest.cpp. Can this test be grouped with those?",
+      "revId": "4f518d43cd5946e005b0067e2e2701f44f64d72d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1becfa97_36627a53",
+        "filename": "fpdfsdk/fpdf_editimg_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 304,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-10T17:49:29Z",
+      "side": 1,
+      "message": "Probably not needed, as one can be fairly certain that FPDFBitmap_Create() is going to create bitmaps with the right dimensions.",
+      "revId": "4f518d43cd5946e005b0067e2e2701f44f64d72d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "71073175_0ee77ba0",
+        "filename": "fpdfsdk/fpdf_editimg_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-10T17:49:29Z",
+      "side": 1,
+      "message": "Why if there a non-empty `pages_array`, but the number of entries in the array is set to 0? Just pass in nullptr instead?",
+      "revId": "4f518d43cd5946e005b0067e2e2701f44f64d72d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "24ece57d_cd71cdf6",
+        "filename": "fpdfsdk/fpdf_editimg_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-10T17:49:29Z",
+      "side": 1,
+      "message": "constexpr",
+      "range": {
+        "startLine": 313,
+        "startChar": 2,
+        "endLine": 313,
+        "endChar": 7
+      },
+      "revId": "4f518d43cd5946e005b0067e2e2701f44f64d72d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fdc1d000_81e8163e",
+        "filename": "fpdfsdk/fpdf_editimg_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-10T17:49:29Z",
+      "side": 1,
+      "message": "ASSERT_TRUE(extracted_bitmap);\n\nASSERT_NE() is not going to give a better diagnostic on failure.",
+      "revId": "4f518d43cd5946e005b0067e2e2701f44f64d72d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
