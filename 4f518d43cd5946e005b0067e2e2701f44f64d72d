@@ -55,6 +55,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "c4c7f956_7f718598",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-10T23:33:36Z",
+      "side": 1,
+      "message": "hypotf(), rather.",
+      "parentUuid": "4a2b7fee_879e1aa1",
+      "revId": "4f518d43cd5946e005b0067e2e2701f44f64d72d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "eb0a6c82_18ca5650",
         "filename": "fpdfsdk/fpdf_editimg_embeddertest.cpp",
         "patchSetId": 6
