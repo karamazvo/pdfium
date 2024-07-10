@@ -290,3 +290,42 @@ TEST_F(PDFEditImgTest, GetAndSetMatrixForFormWithImage) {
 
   VerifySavedDocument(kExpectedWidth, kExpectedHeight, kExpectedChecksum);
 }
+
+TEST_F(PDFEditImgTest, GetRotatedRenderedBitmap) {
+  ScopedFPDFDocument doc(FPDF_CreateNewDocument());
+  ScopedFPDFPage page(FPDFPage_New(doc.get(), 0, 100, 100));
+  EXPECT_EQ(0, FPDFPage_CountObjects(page.get()));
+
+  constexpr int kBitmapWidth = 50;
+  constexpr int kBitmapHeight = 100;
+  ScopedFPDFBitmap bitmap(FPDFBitmap_Create(kBitmapWidth, kBitmapHeight, 0));
+  FPDFBitmap_FillRect(bitmap.get(), 0, 0, kBitmapWidth, kBitmapHeight,
+                      0x00000000);
+  EXPECT_EQ(kBitmapWidth, FPDFBitmap_GetWidth(bitmap.get()));
+  EXPECT_EQ(kBitmapHeight, FPDFBitmap_GetHeight(bitmap.get()));
+
+  ScopedFPDFPageObject page_image(FPDFPageObj_NewImageObj(doc.get()));
+  FPDF_PAGE pages_array[] = {page.get()};
+  ASSERT_TRUE(
+      FPDFImageObj_SetBitmap(pages_array, 0, page_image.get(), bitmap.get()));
+
+  // Set bitmap matrix with scaling and 90 degrees rotation.
+  const int kScaleX = 2;
+  const int kScaleY = 3;
+  static constexpr FS_MATRIX kBitmapMatrix{
+      0, kScaleX * kBitmapWidth, -1 * kScaleY * kBitmapHeight, 0, 0, 0};
+  ASSERT_TRUE(FPDFPageObj_SetMatrix(page_image.get(), &kBitmapMatrix));
+  FPDFPage_InsertObject(page.get(), page_image.release());
+  EXPECT_EQ(1, FPDFPage_CountObjects(page.get()));
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+
+  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page.get(), 0);
+  ScopedFPDFBitmap extracted_bitmap(
+      FPDFImageObj_GetRenderedBitmap(doc.get(), page.get(), page_object));
+  ASSERT_NE(extracted_bitmap, nullptr);
+
+  ASSERT_EQ(FPDFBitmap_GetWidth(extracted_bitmap.get()),
+            kScaleY * kBitmapHeight);
+  ASSERT_EQ(FPDFBitmap_GetHeight(extracted_bitmap.get()),
+            kScaleX * kBitmapWidth);
+}
