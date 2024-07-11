@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "70691f05_55163fbb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-07-11T16:51:40Z",
+      "side": 1,
+      "message": "Are you swapping all other calls too, such as in fpdf_annot_embeddertest.cpp?",
+      "range": {
+        "startLine": 14,
+        "startChar": 2,
+        "endLine": 14,
+        "endChar": 65
+      },
+      "revId": "784e30a9598c3fdb3cc17b8a9a3911a46d0511ea",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "397a9f2b_e8ce25b8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-07-11T16:51:40Z",
+      "side": 1,
+      "message": "Nit: unnecessary extra `calls`.",
+      "range": {
+        "startLine": 14,
+        "startChar": 30,
+        "endLine": 14,
+        "endChar": 35
+      },
+      "revId": "784e30a9598c3fdb3cc17b8a9a3911a46d0511ea",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
