@@ -65,6 +65,7 @@ class CPDF_RenderStatus {
   void SetTransparency(const CPDF_Transparency& transparency) {
     m_Transparency = transparency;
   }
+  void SetInGroup(bool bInGroup) { m_bInGroup = bInGroup; }
 
   void Initialize(const CPDF_RenderStatus* pParentStatus,
                   const CPDF_GraphicStates* pInitialStates);
@@ -203,6 +204,7 @@ class CPDF_RenderStatus {
   CPDF_ColorSpace::Family m_GroupFamily = CPDF_ColorSpace::Family::kUnknown;
   FX_ARGB m_T3FillColor = 0;
   BlendMode m_curBlend = BlendMode::kNormal;
+  bool m_bInGroup = false;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_RENDERSTATUS_H_
