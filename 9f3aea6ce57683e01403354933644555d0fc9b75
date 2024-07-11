@@ -16,6 +16,52 @@
       "message": "Thank you, comments addressed, PTAL.",
       "revId": "9f3aea6ce57683e01403354933644555d0fc9b75",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a115ae11_6e619740",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 5213,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-11T06:16:44Z",
+      "side": 1,
+      "message": "`-kScaleX`?",
+      "range": {
+        "startLine": 5213,
+        "startChar": 8,
+        "endLine": 5213,
+        "endChar": 21
+      },
+      "revId": "9f3aea6ce57683e01403354933644555d0fc9b75",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "91439db1_dfd4b8e1",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-11T06:16:44Z",
+      "side": 1,
+      "message": "IWYU: \u003cmath.h\u003e",
+      "range": {
+        "startLine": 290,
+        "startChar": 0,
+        "endLine": 290,
+        "endChar": 73
+      },
+      "revId": "9f3aea6ce57683e01403354933644555d0fc9b75",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
