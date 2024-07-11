@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "93ab816c_9d96e7fd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3428039
+      },
+      "writtenOn": "2024-07-11T10:06:17Z",
+      "side": 1,
+      "message": "hi, i am trying to fix the bug 346598551. can you review this patch",
+      "revId": "f7d6bed4c989d35a50c8223de49c096737681d85",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
