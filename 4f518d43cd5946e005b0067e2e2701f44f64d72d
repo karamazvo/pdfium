@@ -71,6 +71,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4f49f4ab_85e7e8cb",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 3513082
+      },
+      "writtenOn": "2024-07-11T06:07:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c4c7f956_7f718598",
+      "revId": "4f518d43cd5946e005b0067e2e2701f44f64d72d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "eb0a6c82_18ca5650",
@@ -84,6 +102,24 @@
       "writtenOn": "2024-07-10T17:49:29Z",
       "side": 1,
       "message": "The existing tests for FPDFImageObj_GetRenderedBitmap() are all in fpdfsdk/fpdf_edit_embeddertest.cpp. Can this test be grouped with those?",
+      "revId": "4f518d43cd5946e005b0067e2e2701f44f64d72d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6cde7d23_a91f2eab",
+        "filename": "fpdfsdk/fpdf_editimg_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 3513082
+      },
+      "writtenOn": "2024-07-11T06:07:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eb0a6c82_18ca5650",
       "revId": "4f518d43cd5946e005b0067e2e2701f44f64d72d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -105,6 +141,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ba5ddcb7_66e34680",
+        "filename": "fpdfsdk/fpdf_editimg_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 304,
+      "author": {
+        "id": 3513082
+      },
+      "writtenOn": "2024-07-11T06:07:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1becfa97_36627a53",
+      "revId": "4f518d43cd5946e005b0067e2e2701f44f64d72d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "71073175_0ee77ba0",
@@ -118,6 +172,24 @@
       "writtenOn": "2024-07-10T17:49:29Z",
       "side": 1,
       "message": "Why if there a non-empty `pages_array`, but the number of entries in the array is set to 0? Just pass in nullptr instead?",
+      "revId": "4f518d43cd5946e005b0067e2e2701f44f64d72d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6c92eca7_071c7586",
+        "filename": "fpdfsdk/fpdf_editimg_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 3513082
+      },
+      "writtenOn": "2024-07-11T06:07:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "71073175_0ee77ba0",
       "revId": "4f518d43cd5946e005b0067e2e2701f44f64d72d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -145,6 +217,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b1868ab0_e640ca0b",
+        "filename": "fpdfsdk/fpdf_editimg_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 3513082
+      },
+      "writtenOn": "2024-07-11T06:07:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "24ece57d_cd71cdf6",
+      "range": {
+        "startLine": 313,
+        "startChar": 2,
+        "endLine": 313,
+        "endChar": 7
+      },
+      "revId": "4f518d43cd5946e005b0067e2e2701f44f64d72d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fdc1d000_81e8163e",
@@ -158,6 +254,24 @@
       "writtenOn": "2024-07-10T17:49:29Z",
       "side": 1,
       "message": "ASSERT_TRUE(extracted_bitmap);\n\nASSERT_NE() is not going to give a better diagnostic on failure.",
+      "revId": "4f518d43cd5946e005b0067e2e2701f44f64d72d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6d2f4f38_2a9b6d0d",
+        "filename": "fpdfsdk/fpdf_editimg_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 3513082
+      },
+      "writtenOn": "2024-07-11T06:07:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fdc1d000_81e8163e",
       "revId": "4f518d43cd5946e005b0067e2e2701f44f64d72d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
