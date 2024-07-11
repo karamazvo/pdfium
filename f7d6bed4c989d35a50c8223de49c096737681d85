@@ -33,6 +33,63 @@
       "message": "hi, i am trying to fix the bug 346598551. can you review this patch",
       "revId": "f7d6bed4c989d35a50c8223de49c096737681d85",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "104dd4cc_e3816dde",
+        "filename": "core/fpdfapi/render/cpdf_renderstatus.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 700,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-11T17:20:14Z",
+      "side": 1,
+      "message": "Can you explain why this uses `m_bInGroup` and not `transparency.IsGroup()`?",
+      "range": {
+        "startLine": 700,
+        "startChar": 32,
+        "endLine": 700,
+        "endChar": 42
+      },
+      "revId": "f7d6bed4c989d35a50c8223de49c096737681d85",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dbdc48ce_9ea627d6",
+        "filename": "core/fpdfapi/render/cpdf_renderstatus.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-11T17:20:14Z",
+      "side": 1,
+      "message": "Does this need to be called in all the places that instantiate CPDF_RenderStatus?",
+      "revId": "f7d6bed4c989d35a50c8223de49c096737681d85",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "261beac3_33977f47",
+        "filename": "core/fpdfapi/render/cpdf_renderstatus.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-11T17:20:14Z",
+      "side": 1,
+      "message": "nit: Group with the other bools above.",
+      "revId": "f7d6bed4c989d35a50c8223de49c096737681d85",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
