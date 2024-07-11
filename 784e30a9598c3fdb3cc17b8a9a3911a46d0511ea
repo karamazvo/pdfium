@@ -93,6 +93,30 @@
       },
       "revId": "784e30a9598c3fdb3cc17b8a9a3911a46d0511ea",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "be3a9e9f_710f4676",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-07-11T17:06:21Z",
+      "side": 1,
+      "message": "Ack, LGTM",
+      "parentUuid": "80d8b1a7_90476d49",
+      "range": {
+        "startLine": 14,
+        "startChar": 2,
+        "endLine": 14,
+        "endChar": 65
+      },
+      "revId": "784e30a9598c3fdb3cc17b8a9a3911a46d0511ea",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
