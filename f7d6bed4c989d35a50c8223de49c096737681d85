@@ -60,6 +60,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "df9568ef_c64020f4",
+        "filename": "core/fpdfapi/render/cpdf_renderstatus.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 700,
+      "author": {
+        "id": 3428039
+      },
+      "writtenOn": "2024-07-12T14:53:45Z",
+      "side": 1,
+      "message": "if we define an object A with group transparency and alpha value is 0.5, and an object B inside A.\nfor object A the initial_alpha is 0, and transparency.IsGroup() \u003d\u003d true\nfor object B the initial_alpha is 0.5, and transparency.IsGroup() \u003d\u003d false\nso I use m_bInGroup to let object B known it is affected by group transparency.",
+      "parentUuid": "104dd4cc_e3816dde",
+      "range": {
+        "startLine": 700,
+        "startChar": 32,
+        "endLine": 700,
+        "endChar": 42
+      },
+      "revId": "f7d6bed4c989d35a50c8223de49c096737681d85",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "dbdc48ce_9ea627d6",
         "filename": "core/fpdfapi/render/cpdf_renderstatus.h",
         "patchSetId": 4
@@ -77,6 +101,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "542eab78_4bef0597",
+        "filename": "core/fpdfapi/render/cpdf_renderstatus.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 3428039
+      },
+      "writtenOn": "2024-07-12T14:53:45Z",
+      "side": 1,
+      "message": "I think we only need to set this flag when CPDF_RenderStatus is instantiated in ProcessObjectNoClip, since CPDF_RenderStatus::ProcessObjectNoClip can be called in ProcessTransparency, and we need to let subobject know it is affected by group transparency",
+      "parentUuid": "dbdc48ce_9ea627d6",
+      "revId": "f7d6bed4c989d35a50c8223de49c096737681d85",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "261beac3_33977f47",
         "filename": "core/fpdfapi/render/cpdf_renderstatus.h",
         "patchSetId": 4
@@ -88,6 +130,24 @@
       "writtenOn": "2024-07-11T17:20:14Z",
       "side": 1,
       "message": "nit: Group with the other bools above.",
+      "revId": "f7d6bed4c989d35a50c8223de49c096737681d85",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1c2a4e2d_77f6f69a",
+        "filename": "core/fpdfapi/render/cpdf_renderstatus.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 3428039
+      },
+      "writtenOn": "2024-07-12T14:53:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "261beac3_33977f47",
       "revId": "f7d6bed4c989d35a50c8223de49c096737681d85",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
