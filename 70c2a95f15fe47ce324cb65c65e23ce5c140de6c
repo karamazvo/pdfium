@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d61a0eb7_01fd57ce",
+        "filename": "core/fxge/dib/cfx_dibbase.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-07-12T20:25:53Z",
+      "side": 0,
+      "message": "Is `src_palette` guaranteed to have a size of 256 here, or was that why it was unsafe?",
+      "range": {
+        "startLine": 219,
+        "startChar": 31,
+        "endLine": 219,
+        "endChar": 42
+      },
+      "revId": "70c2a95f15fe47ce324cb65c65e23ce5c140de6c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
