@@ -22,6 +22,30 @@
       },
       "revId": "70c2a95f15fe47ce324cb65c65e23ce5c140de6c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "88cd3a51_f8110e5a",
+        "filename": "core/fxge/dib/cfx_dibbase.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-12T20:33:01Z",
+      "side": 0,
+      "message": "ConvertBuffer_8bppPlt2Gray() only has 1 caller: ConvertBuffer_8bppMask(). There, one can see there has to be a palette. From the name, and from the only caller to ConvertBuffer_8bppMask(), one can see the GetBpp() value is 8.\n\nSeparately, in CFX_DIBBase::BuildPalette(), it builds a palette of size 256 when the BPP is 8.\n\nOne can take this code and remove the UNSAFE_TODO() to see what the compiler is complaining about. I believe it\u0027s actually accessing `gray` that is unsafe, because `gray` is a C-array, whose operator[] does not check bounds. Whereas `src_palette` is a pdfium::span, and pdfium::span::operator[] does check.",
+      "parentUuid": "d61a0eb7_01fd57ce",
+      "range": {
+        "startLine": 219,
+        "startChar": 31,
+        "endLine": 219,
+        "endChar": 42
+      },
+      "revId": "70c2a95f15fe47ce324cb65c65e23ce5c140de6c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
