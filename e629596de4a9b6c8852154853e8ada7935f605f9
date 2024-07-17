@@ -16,6 +16,29 @@
       "message": "LGTM",
       "revId": "e629596de4a9b6c8852154853e8ada7935f605f9",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f60eaec3_198da138",
+        "filename": "core/fpdfapi/page/cpdf_transferfuncdib.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-17T20:53:07Z",
+      "side": 1,
+      "message": "Technically, not needed, since the struct is an aggregate, and aggregate initialization will set to 0 the rest of the struct when too few initializers present. Even better is that the FX_*_STRUCTS have inline \u003d 0 initializers which take priority.",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 4
+      },
+      "revId": "e629596de4a9b6c8852154853e8ada7935f605f9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
