@@ -33,6 +33,29 @@
       "message": "LGTM",
       "revId": "90e0e425f11e33eea41aa605bada602089e90be5",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cd58c699_b2ce6d49",
+        "filename": "core/fxge/linux/fx_linux_impl.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-17T16:54:02Z",
+      "side": 1,
+      "message": "nit: prefer the name kFooColumnCount.",
+      "range": {
+        "startLine": 36,
+        "startChar": 29,
+        "endLine": 36,
+        "endChar": 38
+      },
+      "revId": "90e0e425f11e33eea41aa605bada602089e90be5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
