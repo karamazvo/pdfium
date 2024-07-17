@@ -631,14 +631,14 @@ RetainPtr<CPDF_Stream> CPDF_NPageToOneExporter::MakeXObjectFromPageRaw(
         RetainPtr<const CPDF_Stream> pStream = pSrcContentArray->GetStreamAt(i);
         auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(pStream));
         pAcc->LoadAllDataFiltered();
-        bsSrcContentStream += ByteString(pAcc->GetSpan());
+        bsSrcContentStream += ByteString(ByteStringView(pAcc->GetSpan()));
         bsSrcContentStream += "\n";
       }
     } else {
       RetainPtr<const CPDF_Stream> pStream(pSrcContentObj->AsStream());
       auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(pStream));
       pAcc->LoadAllDataFiltered();
-      bsSrcContentStream = ByteString(pAcc->GetSpan());
+      bsSrcContentStream = ByteString(ByteStringView(pAcc->GetSpan()));
     }
     pNewXObject->SetDataAndRemoveFilter(bsSrcContentStream.unsigned_span());
   }
