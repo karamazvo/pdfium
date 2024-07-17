@@ -41,6 +41,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "57a6f492_62a6e211",
+        "filename": "core/fxge/dib/cfx_dibbase.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 452,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-17T17:52:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "96f741c5_61d15175",
+      "range": {
+        "startLine": 452,
+        "startChar": 1,
+        "endLine": 452,
+        "endChar": 17
+      },
+      "revId": "2501c3d2e41e0e48ffebc052c7494368dcfa112d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5a67dd80_de20b97c",
@@ -54,6 +78,30 @@
       "writtenOn": "2024-07-17T16:51:12Z",
       "side": 1,
       "message": "nit: braces not required.",
+      "range": {
+        "startLine": 759,
+        "startChar": 14,
+        "endLine": 759,
+        "endChar": 63
+      },
+      "revId": "2501c3d2e41e0e48ffebc052c7494368dcfa112d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0dca83fb_873c0c54",
+        "filename": "core/fxge/dib/cfx_dibitmap.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 759,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-17T17:52:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a67dd80_de20b97c",
       "range": {
         "startLine": 759,
         "startChar": 14,
