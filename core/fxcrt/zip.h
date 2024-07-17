@@ -7,6 +7,7 @@
 
 #include <stdint.h>
 
+#include <tuple>
 #include <utility>
 
 #include "core/fxcrt/check_op.h"
@@ -39,44 +40,53 @@ namespace fxcrt {
 // - Only those methods required to support use in a range-based for-loop
 //   are provided.
 
-template <typename T, typename U>
+template <typename... Ts>
 class ZipView {
  public:
   struct Iter {
-    bool operator==(const Iter& that) const { return first == that.first; }
-
-    bool operator!=(const Iter& that) const { return first != that.first; }
+    bool operator==(const Iter& that) const {
+      return std::get<0>(iterators) == std::get<0>(that.iterators);
+    }
+    bool operator!=(const Iter& that) const {
+      return std::get<0>(iterators) != std::get<0>(that.iterators);
+    }
 
     UNSAFE_BUFFER_USAGE Iter& operator++() {
-      // SAFETY: required from caller, enforced by UNSAFE_BUFFER_USAGE.
-      UNSAFE_BUFFERS(++first);
-      UNSAFE_BUFFERS(++second);
+      // SAFETY: required from caller.
+      UNSAFE_BUFFERS(PlusPlusHelper(std::make_index_sequence<sizeof...(Ts)>()));
       return *this;
     }
 
-    std::pair<typename T::reference, typename U::reference> operator*() const {
-      return {*first, *second};
+    std::tuple<typename Ts::reference...> operator*() const {
+      return {*(std::get<0>(iterators)), *(std::get<1>(iterators))};
     }
 
-    T::iterator first;
-    U::iterator second;
+    template <size_t... Ns>
+    UNSAFE_BUFFER_USAGE void PlusPlusHelper(std::index_sequence<Ns...>) {
+      UNSAFE_BUFFERS({ (++std::get<Ns>(iterators), ...); });
+    }
+
+    std::tuple<typename Ts::iterator...> iterators;
   };
 
-  ZipView(T first, U second) : first_(first), second_(second) {
-    CHECK_LE(first.size(), second.size());
+  explicit ZipView(Ts... spans) : spans_(spans...) {
+    CHECK_LE(std::get<0>(spans_).size(), std::get<1>(spans_).size());
   }
 
-  Iter begin() { return {first_.begin(), second_.begin()}; }
-  Iter end() { return {first_.end(), second_.end()}; }
+  Iter begin() const {
+    return {{std::get<0>(spans_).begin(), std::get<1>(spans_).begin()}};
+  }
+  Iter end() const {
+    return {{std::get<0>(spans_).end(), std::get<1>(spans_).end()}};
+  }
 
  private:
-  T first_;
-  U second_;
+  std::tuple<Ts...> spans_;
 };
 
-template <typename T, typename U>
-auto Zip(const T& first, U&& second) {
-  return ZipView(pdfium::span(first), pdfium::span(second));
+template <typename... Ts>
+auto Zip(Ts&&... args) {
+  return ZipView(pdfium::span(args)...);
 }
 
 }  // namespace fxcrt
