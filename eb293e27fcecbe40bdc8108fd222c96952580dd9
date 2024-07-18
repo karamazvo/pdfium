@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "78edb691_2ceea5ae",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-07-18T22:02:58Z",
+      "side": 1,
+      "message": "I\u0027m asssuming that cases in other embedder test files will be in separate follow-up CLs.",
+      "range": {
+        "startLine": 11,
+        "startChar": 14,
+        "endLine": 11,
+        "endChar": 59
+      },
+      "revId": "eb293e27fcecbe40bdc8108fd222c96952580dd9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f0556247_3b947f6a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-07-18T22:02:58Z",
+      "side": 1,
+      "message": "\"due to\"?",
+      "range": {
+        "startLine": 17,
+        "startChar": 14,
+        "endLine": 17,
+        "endChar": 16
+      },
+      "revId": "eb293e27fcecbe40bdc8108fd222c96952580dd9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ce73f7a7_8d037546",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-07-18T22:02:58Z",
+      "side": 1,
+      "message": "LGTM",
+      "revId": "eb293e27fcecbe40bdc8108fd222c96952580dd9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
