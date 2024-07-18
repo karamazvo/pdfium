@@ -258,6 +258,8 @@ WideStringFromFPDFWideString(FPDF_WIDESTRING wide_string);
 UNSAFE_BUFFER_USAGE pdfium::span<char> SpanFromFPDFApiArgs(
     void* buffer,
     unsigned long buflen);
+UNSAFE_BUFFER_USAGE pdfium::span<char> SpanFromFPDFApiArgs(void* buffer,
+                                                           size_t buflen);
 
 #ifdef PDF_ENABLE_XFA
 // Layering prevents fxcrt from knowing about FPDF_FILEHANDLER, so this can't

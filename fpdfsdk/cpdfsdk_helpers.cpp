@@ -243,6 +243,16 @@ pdfium::span<char> SpanFromFPDFApiArgs(void* buffer, unsigned long buflen) {
     return pdfium::span<char>();
   }
   // SAFETY: required from caller, enforced by UNSAFE_BUFFER_USAGE in header.
+  return UNSAFE_BUFFERS(pdfium::make_span(static_cast<char*>(buffer),
+                                          pdfium::checked_cast<size_t>(buflen));
+}
+
+pdfium::span<char> SpanFromFPDFApiArgs(void* buffer, size_t buflen) {
+  if (!buffer) {
+    // API convention is to ignore `buflen` arg when `buffer` is NULL.
+    return pdfium::span<char>();
+  }
+  // SAFETY: required from caller, enforced by UNSAFE_BUFFER_USAGE in header.
   return UNSAFE_BUFFERS(pdfium::make_span(static_cast<char*>(buffer), buflen));
 }
 

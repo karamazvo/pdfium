@@ -849,8 +849,9 @@ FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFTextObj_GetFont(FPDF_PAGEOBJECT text) {
   return FPDFFontFromCPDFFont(pTextObj->GetFont());
 }
 
-FPDF_EXPORT unsigned long FPDF_CALLCONV
-FPDFFont_GetFamilyName(FPDF_FONT font, char* buffer, unsigned long length) {
+FPDF_EXPORT size_t FPDF_CALLCONV FPDFFont_GetFamilyName(FPDF_FONT font,
+                                                        char* buffer,
+                                                        size_t length) {
   auto* cfont = CPDFFontFromFPDFFont(font);
   if (!cfont) {
     return 0;
@@ -861,7 +862,7 @@ FPDFFont_GetFamilyName(FPDF_FONT font, char* buffer, unsigned long length) {
   ByteString name = cfont->GetFont()->GetFamilyName();
   pdfium::span<const char> name_span = name.span_with_terminator();
   fxcrt::try_spancpy(result_span, name_span);
-  return static_cast<unsigned long>(name_span.size());
+  return name_span.size();
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetFontData(FPDF_FONT font,
@@ -873,8 +874,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetFontData(FPDF_FONT font,
     return false;
 
   // SAFETY: required from caller.
-  auto result_span = UNSAFE_BUFFERS(
-      SpanFromFPDFApiArgs(buffer, pdfium::checked_cast<unsigned long>(buflen)));
+  auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen));
   pdfium::span<const uint8_t> data = cfont->GetFont()->GetFontSpan();
   fxcrt::try_spancpy(result_span, data);
   *out_buflen = data.size();
