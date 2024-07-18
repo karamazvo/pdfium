@@ -46,6 +46,7 @@
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/scoped_set_insertion.h"
 #include "core/fxcrt/stl_util.h"
+#include "core/fxcrt/zip.h"
 #include "core/fxge/dib/fx_dib.h"
 
 namespace {
@@ -872,23 +873,21 @@ void CPDF_LabCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
                                     bool bTransMask) const {
   CHECK(!bTransMask);  // Only applies to CMYK colorspaces.
 
-  uint8_t* pDestBuf = dest_span.data();
-  const uint8_t* pSrcBuf = src_span.data();
-  UNSAFE_TODO({
-    for (int i = 0; i < pixels; i++) {
-      const float lab[3] = {
-          static_cast<float>(pSrcBuf[0] * 100) / 255.0f,
-          static_cast<float>(pSrcBuf[1] - 128),
-          static_cast<float>(pSrcBuf[2] - 128),
-      };
-      auto rgb = GetRGBOrZerosOnError(lab);
-      pDestBuf[0] = static_cast<int32_t>(rgb.blue * 255);
-      pDestBuf[1] = static_cast<int32_t>(rgb.green * 255);
-      pDestBuf[2] = static_cast<int32_t>(rgb.red * 255);
-      pDestBuf += 3;
-      pSrcBuf += 3;
-    }
-  });
+  auto bgr_span = fxcrt::reinterpret_span<FX_BGR_STRUCT<uint8_t>>(dest_span);
+  auto lab_span =
+      fxcrt::reinterpret_span<const FX_LAB_STRUCT<uint8_t>>(src_span).first(
+          pixels);
+  for (auto [lab_pix, bgr_pix] : fxcrt::Zip(lab_span, bgr_span)) {
+    const float lab[3] = {
+        static_cast<float>(lab_pix.lightness_star * 100) / 255.0f,
+        static_cast<float>(lab_pix.a_star - 128),
+        static_cast<float>(lab_pix.b_star - 128),
+    };
+    FX_RGB_STRUCT<float> rgb = GetRGBOrZerosOnError(lab);
+    bgr_pix.blue = static_cast<int32_t>(rgb.blue * 255);
+    bgr_pix.green = static_cast<int32_t>(rgb.green * 255);
+    bgr_pix.red = static_cast<int32_t>(rgb.red * 255);
+  }
 }
 
 CPDF_ICCBasedCS::CPDF_ICCBasedCS() : CPDF_BasedCS(Family::kICCBased) {}
