@@ -16,6 +16,24 @@
       "message": "There\u0027s no need to create a ByteString here either, just to then pass it as a span. `src_content_stream` can move to line 656, and maybe become a vector.",
       "revId": "eee6bb0c9be814f0a8c62548c563ef7bf3ed7fde",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d5d68e04_838c3706",
+        "filename": "fpdfsdk/fpdf_ppo.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 668,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-18T17:53:11Z",
+      "side": 1,
+      "message": "Done. Also inverted tests and added early returns to avoid else-clauses.",
+      "parentUuid": "d000b996_e2016039",
+      "revId": "eee6bb0c9be814f0a8c62548c563ef7bf3ed7fde",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
