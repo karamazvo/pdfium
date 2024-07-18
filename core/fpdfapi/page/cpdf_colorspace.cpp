@@ -632,7 +632,10 @@ void CPDF_ColorSpace::TranslateImageLine(pdfium::span<uint8_t> dest_span,
       for (uint32_t j = 0; j < m_nComponents; j++) {
         src[j] = static_cast<float>(*src_buf++) / divisor;
       }
-      auto rgb = GetRGBOrZerosOnError(src);
+      // Better code than the equivalent GetRGBOrZerosOnError() since that
+      // is implemented in a base class and can't devirtualize the GetRGB()
+      // call despite this class being marked final.
+      auto rgb = GetRGB(src).value_or(FX_RGB_STRUCT<float>{});
       *dest_buf++ = static_cast<int32_t>(rgb.blue * 255);
       *dest_buf++ = static_cast<int32_t>(rgb.green * 255);
       *dest_buf++ = static_cast<int32_t>(rgb.red * 255);
@@ -881,7 +884,10 @@ void CPDF_LabCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
         static_cast<float>(lab_ref.a_star - 128),
         static_cast<float>(lab_ref.b_star - 128),
     };
-    FX_RGB_STRUCT<float> rgb = GetRGBOrZerosOnError(lab);
+    // Better code than the equivalent GetRGBOrZerosOnError() since that
+    // is implemented in a base class and can't devirtualize the GetRGB()
+    // call despite this class being marked final.
+    auto rgb = GetRGB(src).value_or(FX_RGB_STRUCT<float>{});
     bgr_ref.blue = static_cast<int32_t>(rgb.blue * 255);
     bgr_ref.green = static_cast<int32_t>(rgb.green * 255);
     bgr_ref.red = static_cast<int32_t>(rgb.red * 255);
