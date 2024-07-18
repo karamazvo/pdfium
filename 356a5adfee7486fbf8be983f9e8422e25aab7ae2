@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ff46d9de_0a56a8f4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-18T21:25:44Z",
+      "side": 1,
+      "message": "Hi, noticed this while trying to prove that the inner loops across zipped spans are free from CHECKS().  Only one place affected as far as I can tell.",
+      "revId": "356a5adfee7486fbf8be983f9e8422e25aab7ae2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
