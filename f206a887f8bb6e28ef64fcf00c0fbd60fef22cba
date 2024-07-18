@@ -63,6 +63,30 @@
       },
       "revId": "f206a887f8bb6e28ef64fcf00c0fbd60fef22cba",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fa3aebf5_16cdcffb",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1429,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-18T20:59:24Z",
+      "side": 1,
+      "message": "I don\u0027t know why it took so long to fix that long standing issue. Anyway, this test now uses LoadScopedPage().",
+      "parentUuid": "f89d8c29_de7cf77f",
+      "range": {
+        "startLine": 1429,
+        "startChar": 0,
+        "endLine": 1429,
+        "endChar": 31
+      },
+      "revId": "f206a887f8bb6e28ef64fcf00c0fbd60fef22cba",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
