@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "64944d7a_94eb4ffb",
+        "filename": "core/fxge/renderdevicedriver_iface.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-19T22:51:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6c8858c4_202aeca9",
+      "range": {
+        "startLine": 38,
+        "startChar": 7,
+        "endLine": 38,
+        "endChar": 24
+      },
+      "revId": "12cd89196046c347df0227289037c265b344ca19",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a42ef6ab_f971251e",
@@ -37,6 +61,30 @@
       "writtenOn": "2024-07-19T22:07:07Z",
       "side": 1,
       "message": "nit: local not needed?",
+      "range": {
+        "startLine": 1454,
+        "startChar": 16,
+        "endLine": 1454,
+        "endChar": 31
+      },
+      "revId": "12cd89196046c347df0227289037c265b344ca19",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "af7aa17e_46b5a596",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1454,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-19T22:51:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a42ef6ab_f971251e",
       "range": {
         "startLine": 1454,
         "startChar": 16,
@@ -70,6 +118,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b6d34b19_5b2ecdc3",
+        "filename": "core/fxge/win32/cgdi_printer_driver.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-19T22:51:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ce22b6a0_2866a864",
+      "range": {
+        "startLine": 162,
+        "startChar": 0,
+        "endLine": 162,
+        "endChar": 15
+      },
+      "revId": "12cd89196046c347df0227289037c265b344ca19",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8bbd808d_ce146d81",
@@ -83,6 +155,30 @@
       "writtenOn": "2024-07-19T22:07:07Z",
       "side": 1,
       "message": "nit: ditto",
+      "range": {
+        "startLine": 197,
+        "startChar": 7,
+        "endLine": 197,
+        "endChar": 13
+      },
+      "revId": "12cd89196046c347df0227289037c265b344ca19",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c983fbdc_5d6a9cdc",
+        "filename": "core/fxge/win32/cps_printer_driver.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-19T22:51:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8bbd808d_ce146d81",
       "range": {
         "startLine": 197,
         "startChar": 7,
