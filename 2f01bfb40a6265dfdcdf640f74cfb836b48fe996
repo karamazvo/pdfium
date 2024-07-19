@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a005070a_175296aa",
+        "filename": "core/fxge/agg/fx_agg_driver.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-19T20:31:18Z",
+      "side": 1,
+      "message": "What would it take for this to be returned in place of the bool?",
+      "range": {
+        "startLine": 90,
+        "startChar": 55,
+        "endLine": 90,
+        "endChar": 61
+      },
+      "revId": "2f01bfb40a6265dfdcdf640f74cfb836b48fe996",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
