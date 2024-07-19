@@ -188,13 +188,12 @@ bool CPSPrinterDriver::StartDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                                    uint32_t color,
                                    const CFX_Matrix& matrix,
                                    const FXDIB_ResampleOptions& options,
-                                   std::unique_ptr<CFX_ImageRenderer>* handle,
+                                   std::unique_ptr<CFX_ImageRenderer>& handle,
                                    BlendMode blend_type) {
   if (blend_type != BlendMode::kNormal || alpha != 1.0f) {
     return false;
   }
 
-  *handle = nullptr;
   return m_PSRenderer.DrawDIBits(std::move(bitmap), color, matrix, options);
 }
 

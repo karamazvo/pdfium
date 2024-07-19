@@ -990,7 +990,7 @@ bool CFX_RenderDevice::StartDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                                    uint32_t argb,
                                    const CFX_Matrix& matrix,
                                    const FXDIB_ResampleOptions& options,
-                                   std::unique_ptr<CFX_ImageRenderer>* handle) {
+                                   std::unique_ptr<CFX_ImageRenderer>& handle) {
   return StartDIBitsWithBlend(std::move(bitmap), alpha, argb, matrix, options,
                               handle, BlendMode::kNormal);
 }
@@ -1001,7 +1001,7 @@ bool CFX_RenderDevice::StartDIBitsWithBlend(
     uint32_t argb,
     const CFX_Matrix& matrix,
     const FXDIB_ResampleOptions& options,
-    std::unique_ptr<CFX_ImageRenderer>* handle,
+    std::unique_ptr<CFX_ImageRenderer>& handle,
     BlendMode blend_mode) {
   return m_pDeviceDriver->StartDIBits(std::move(bitmap), alpha, argb, matrix,
                                       options, handle, blend_mode);

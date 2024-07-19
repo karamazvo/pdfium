@@ -87,12 +87,14 @@ class RenderDeviceDriverIface {
                              const FX_RECT* pClipRect,
                              const FXDIB_ResampleOptions& options,
                              BlendMode blend_type) = 0;
+  // Note that `handle` is AGG-only. The caller must pass in an empty
+  // std::unique_ptr, and the implementation may fill it.
   virtual bool StartDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                            float alpha,
                            uint32_t color,
                            const CFX_Matrix& matrix,
                            const FXDIB_ResampleOptions& options,
-                           std::unique_ptr<CFX_ImageRenderer>* handle,
+                           std::unique_ptr<CFX_ImageRenderer>& handle,
                            BlendMode blend_type) = 0;
   virtual bool ContinueDIBits(CFX_ImageRenderer* handle,
                               PauseIndicatorIface* pPause);
