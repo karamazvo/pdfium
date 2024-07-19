@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dc0f00fc_dd865f6a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-19T07:21:11Z",
+      "side": 1,
+      "message": "BTW, while this CL fixed the associated bug in that it stopped the crash, I don\u0027t think the FPDFImageObj_GetRenderedBitmap() output is always correct.\n\nIt turns out I knew of this class of problems, wrote this test: https://pdfium-review.googlesource.com/94611, and then got distracted and forgot about it. That CL still patches in cleanly. While the test output has changed due to this CL, the output doesn\u0027t look correct. One can see the generated output from that test by running `pdfium_embeddertests --gtest_filter\u003dFPDFEditEmbedderTest.GetRenderedBitmapWithRotatedImage --write-pngs` with the CL applied, and the expected bitmap dimensions updated to 50x50.",
+      "revId": "a08da34685b1ed4ce878f72fe5c666ac8df547af",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
