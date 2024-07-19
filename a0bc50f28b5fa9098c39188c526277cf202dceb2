@@ -22,6 +22,30 @@
       },
       "revId": "a0bc50f28b5fa9098c39188c526277cf202dceb2",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "672cf541_2550b9c1",
+        "filename": "core/fxge/agg/cfx_imagerenderer.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-19T22:57:25Z",
+      "side": 1,
+      "message": "Will append more CLs to this CL chain to rename separately.",
+      "parentUuid": "daa01239_ac8016a6",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 36
+      },
+      "revId": "a0bc50f28b5fa9098c39188c526277cf202dceb2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
