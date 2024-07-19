@@ -86,6 +86,24 @@
       "message": "Hmm, it looks like some tests are very sensitive to float operations and rounding errors. Do you want to try undeleting FXSYS_sqrt2() for now, and reverting the change that is causing, say, `pdfium_embeddertests --gtest_filter\u003dFPDFAnnotEmbedderTest.AddAndModifyText` to fail? I suspect doing that would likely fix many, if not all the failing tests. Hopefully that still allows most FXSYS_sqrt2() calls to be removed here.",
       "revId": "e432029cec7d44c0fd55f5332b3f9d0b493302e0",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "add12c86_48b41f58",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3541084
+      },
+      "writtenOn": "2024-07-19T08:15:23Z",
+      "side": 1,
+      "message": "Hmm..\n\nI don\u0027t have try bot permissions. \nI performed the tests you suggested (`pdfium_embeddertests --gtest_filter\u003dFPDFAnnotEmbedderTest.AddAndModifyText`) on my local PC, but the same failures occurred regardless of whether this patch was applied. \n\nShould I create a revert patch and update the patchset to upload it? \n\nI would appreciate your comments on how to proceed.",
+      "parentUuid": "bde6c1a0_572386bb",
+      "revId": "e432029cec7d44c0fd55f5332b3f9d0b493302e0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
