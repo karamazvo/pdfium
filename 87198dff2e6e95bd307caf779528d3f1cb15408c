@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "64e3fcfd_1367f682",
+        "filename": "core/fxcrt/fixed_size_data_vector_unittest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-19T23:36:10Z",
+      "side": 1,
+      "message": "Maybe initialize `vec1` with some data, and then check `vec2` still has the remaining portion?",
+      "revId": "87198dff2e6e95bd307caf779528d3f1cb15408c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
