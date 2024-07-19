@@ -46,6 +46,30 @@
       },
       "revId": "a0bc50f28b5fa9098c39188c526277cf202dceb2",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "80936655_d07fe67f",
+        "filename": "core/fxge/agg/cfx_imagerenderer.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-19T23:06:15Z",
+      "side": 1,
+      "message": "Renamed to cfx_agg_imagerenderer.h here. If I rename the class at the same time, git may get confused and think this is an add/delete instead of a move.",
+      "parentUuid": "672cf541_2550b9c1",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 36
+      },
+      "revId": "a0bc50f28b5fa9098c39188c526277cf202dceb2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
