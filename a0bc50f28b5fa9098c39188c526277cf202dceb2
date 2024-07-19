@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "daa01239_ac8016a6",
+        "filename": "core/fxge/agg/cfx_imagerenderer.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-19T20:34:51Z",
+      "side": 1,
+      "message": "can we also rename these to core/fxge/agg/cfx_agg_imagerenderer.* as all both of the other files in this dir have `_agg_` names?",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 36
+      },
+      "revId": "a0bc50f28b5fa9098c39188c526277cf202dceb2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
