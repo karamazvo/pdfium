@@ -10,6 +10,7 @@
 #include <memory>
 #include <utility>
 
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/span.h"
@@ -69,6 +70,17 @@ class FixedSizeDataVector {
     // SAFETY: same `size` value passed to FX_TryAlloc() above as
     // passed to ctor when the ptr is non-null.
     return UNSAFE_BUFFERS(FixedSizeDataVector(ptr, ptr ? size : 0u));
+  }
+
+  static FixedSizeDataVector TruncatedFrom(FixedSizeDataVector&& that,
+                                           size_t new_size) {
+    CHECK_LE(new_size, that.size_);
+    that.size_ = 0;
+
+    FixedSizeDataVector result;
+    result.data_ = std::move(that.data_);
+    result.size_ = new_size;
+    return result;
   }
 
   FixedSizeDataVector(const FixedSizeDataVector&) = delete;
