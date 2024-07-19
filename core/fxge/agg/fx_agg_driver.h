@@ -87,7 +87,7 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
                    uint32_t argb,
                    const CFX_Matrix& matrix,
                    const FXDIB_ResampleOptions& options,
-                   std::unique_ptr<CFX_ImageRenderer>* handle,
+                   std::unique_ptr<CFX_ImageRenderer>& handle,
                    BlendMode blend_type) override;
   bool ContinueDIBits(CFX_ImageRenderer* handle,
                       PauseIndicatorIface* pPause) override;

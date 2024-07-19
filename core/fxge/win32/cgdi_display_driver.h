@@ -50,7 +50,7 @@ class CGdiDisplayDriver final : public CGdiDeviceDriver {
                    uint32_t color,
                    const CFX_Matrix& matrix,
                    const FXDIB_ResampleOptions& options,
-                   std::unique_ptr<CFX_ImageRenderer>* handle,
+                   std::unique_ptr<CFX_ImageRenderer>& handle,
                    BlendMode blend_type) override;
 
   bool UseFoxitStretchEngine(RetainPtr<const CFX_DIBBase> bitmap,

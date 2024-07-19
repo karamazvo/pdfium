@@ -1431,12 +1431,13 @@ bool CFX_AggDeviceDriver::StartDIBits(
     uint32_t argb,
     const CFX_Matrix& matrix,
     const FXDIB_ResampleOptions& options,
-    std::unique_ptr<CFX_ImageRenderer>* handle,
+    std::unique_ptr<CFX_ImageRenderer>& handle,
     BlendMode blend_type) {
-  if (m_pBitmap->GetBuffer().empty())
+  if (m_pBitmap->GetBuffer().empty()) {
     return true;
+  }
 
-  *handle = std::make_unique<CFX_ImageRenderer>(
+  handle = std::make_unique<CFX_ImageRenderer>(
       m_pBitmap, m_pClipRgn.get(), std::move(bitmap), alpha, argb, matrix,
       options, m_bRgbByteOrder);
   return true;

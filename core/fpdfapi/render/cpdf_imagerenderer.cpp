@@ -392,9 +392,10 @@ bool CPDF_ImageRenderer::StartDIBBase() {
       m_ResampleOptions.bInterpolateBilinear = true;
     }
   }
+  m_DeviceHandle.reset();
   if (m_pRenderStatus->GetRenderDevice()->StartDIBitsWithBlend(
           m_pDIBBase, m_Alpha, m_FillArgb, m_ImageMatrix, m_ResampleOptions,
-          &m_DeviceHandle, m_BlendType)) {
+          m_DeviceHandle, m_BlendType)) {
     if (m_DeviceHandle) {
       m_Mode = Mode::kBlend;
       return true;
