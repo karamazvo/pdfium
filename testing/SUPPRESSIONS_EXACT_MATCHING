@@ -23,6 +23,21 @@
 # Corpus tests
 #
 
+# ARM vs. Intel differences on macOS.
+FRC_10_8.2.4_View_C.pdf mac * * *
+FRC_4.5.3_DeviceGray_g.pdf mac * * *
+FRC_4.5.4_CalGray_gamma.pdf mac * * *
+FRC_4.5.4_CalGray_whitepoint.pdf mac * * *
+FRC_4.5.4_CalRGB_gamma.pdf mac * * *
+FRC_4.5.4_CalRGB_matrix.pdf mac * * *
+FRC_4.5.4_CalRGB_whitepoint.pdf mac * * *
+FRC_4.5.4_RI_Relative.pdf mac * * *
+FRC_4.5.4_RI_Saturation.pdf mac * * *
+FRC_4.5.4_Separation.pdf mac * * *
+FRC_4.5.5_Pattern_tiling.pdf mac * * *
+FRC_8.5_Screen_Rendition.pdf mac * * *
+
 # Device-specific ColorBurn differences (see pdfium:1959).
 xfermodes2.pdf * * * skia
 xfermodes3.pdf * * * skia
+
