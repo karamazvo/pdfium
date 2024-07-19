@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "88c293cd_5e4d25e3",
+        "filename": "third_party/googletest/README.pdfium",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-19T07:26:17Z",
+      "side": 1,
+      "message": "The Version field is wrong. Does it make sense to propagate the wrong data?\n\nEven if this CL fixes it, there is the ongoing question of how to keep it up to date and reducing the friction for doing so.",
+      "revId": "4ff692c0719a9b1076414c015bb9cf99fd2ea33a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
