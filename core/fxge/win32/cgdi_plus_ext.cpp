@@ -32,6 +32,10 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/win32/cwin32_platform.h"
 
+#if defined(PDF_USE_SKIA)
+#include "core/fxge/cfx_defaultrenderdevice.h"
+#endif
+
 // Has to come before gdiplus.h
 namespace Gdiplus {
 using std::max;
@@ -278,6 +282,13 @@ void OutputImage(Gdiplus::GpGraphics* pGraphics,
     case FXDIB_Format::k1bppMask:
     case FXDIB_Format::k8bppMask:
       NOTREACHED_NORETURN();
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul:
+      CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+      // TODO(thestig): Support premultiplied alpha.
+      CHECK(false);
+      break;
+#endif
   }
   if (dest_height < 0) {
     dest_height--;

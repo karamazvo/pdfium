@@ -236,6 +236,11 @@ FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object) {
                                  : ConversionOp::kConvertTo8bppRgb;
       break;
     }
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul:
+      CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+      [[fallthrough]];
+#endif
     case FXDIB_Format::k8bppRgb:
     case FXDIB_Format::kArgb:
     case FXDIB_Format::kRgb:
@@ -265,6 +270,9 @@ FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object) {
   }
   if (pBitmap) {
     CHECK(!pBitmap->HasPalette());
+#if defined(PDF_USE_SKIA)
+    pBitmap->UnPreMultiply();
+#endif
   }
 
   return FPDFBitmapFromCFXDIBitmap(pBitmap.Leak());
@@ -293,7 +301,7 @@ FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   auto result_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!result_bitmap->Create(static_cast<int>(output_width),
                              static_cast<int>(output_height),
-                             FXDIB_Format::kArgb)) {
+                             GetDefaultArgbFormat())) {
     return nullptr;
   }
 

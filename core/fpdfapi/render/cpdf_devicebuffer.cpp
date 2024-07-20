@@ -70,7 +70,7 @@ RetainPtr<CFX_DIBitmap> CPDF_DeviceBuffer::Initialize() {
   FX_RECT bitmap_rect =
       m_Matrix.TransformRect(CFX_FloatRect(m_Rect)).GetOuterRect();
   if (!m_pBitmap->Create(bitmap_rect.Width(), bitmap_rect.Height(),
-                         FXDIB_Format::kArgb)) {
+                         GetDefaultArgbFormat())) {
     return nullptr;
   }
   return m_pBitmap;

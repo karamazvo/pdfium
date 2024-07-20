@@ -16,6 +16,10 @@
 #include <windows.h>
 #endif
 
+#if defined(PDF_USE_SKIA)
+#include "core/fxge/cfx_defaultrenderdevice.h"
+#endif
+
 #if BUILDFLAG(IS_WIN)
 static_assert(sizeof(FX_COLORREF) == sizeof(COLORREF),
               "FX_COLORREF vs. COLORREF mismatch");
@@ -38,6 +42,15 @@ static_assert(std::is_aggregate_v<FX_ABGR_STRUCT<float>>);
 static_assert(std::is_aggregate_v<FX_RGBA_STRUCT<float>>);
 static_assert(std::is_aggregate_v<FX_BGRA_STRUCT<float>>);
 static_assert(std::is_aggregate_v<FX_CMYK_STRUCT<float>>);
+
+FXDIB_Format GetDefaultArgbFormat() {
+#if defined(PDF_USE_SKIA)
+  return CFX_DefaultRenderDevice::UseSkiaRenderer() ? FXDIB_Format::kArgbPremul
+                                                    : FXDIB_Format::kArgb;
+#else
+  return FXDIB_Format::kArgb;
+#endif
+}
 
 FXDIB_ResampleOptions::FXDIB_ResampleOptions() = default;
 

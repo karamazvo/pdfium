@@ -14,6 +14,10 @@
 #include "core/fxcrt/zip.h"
 #include "core/fxge/calculate_pitch.h"
 
+#if defined(PDF_USE_SKIA)
+#include "core/fxge/cfx_defaultrenderdevice.h"
+#endif
+
 namespace {
 
 CFX_DIBBase::kPlatformRGBStruct MakePlatformRGBStruct(uint8_t red,
@@ -53,7 +57,7 @@ FXDIB_Format CPDF_TransferFuncDIB::GetDestFormat() const {
   }
 
   if (src_->IsAlphaFormat()) {
-    return FXDIB_Format::kArgb;
+    return src_->GetFormat();
   }
 
   return CFX_DIBBase::kPlatformRGBFormat;
@@ -135,6 +139,11 @@ void CPDF_TransferFuncDIB::TranslateScanline(
       }
       break;
     }
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul:
+      CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+      [[fallthrough]];
+#endif
     case FXDIB_Format::kArgb: {
       auto src =
           fxcrt::reinterpret_span<const FX_BGRA_STRUCT<uint8_t>>(src_span);

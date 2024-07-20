@@ -38,6 +38,10 @@
 #include "core/fxge/text_char_pos.h"
 #include "core/fxge/win32/cfx_psfonttracker.h"
 
+#if defined(PDF_USE_SKIA)
+#include "core/fxge/cfx_defaultrenderdevice.h"
+#endif
+
 namespace {
 
 std::optional<ByteString> GenerateType42SfntData(
@@ -573,6 +577,13 @@ bool CFX_PSRenderer::DrawDIBits(RetainPtr<const CFX_DIBBase> bitmap,
       case FXDIB_Format::kRgb:
       case FXDIB_Format::kArgb:
         break;
+#if defined(PDF_USE_SKIA)
+      case FXDIB_Format::kArgbPremul:
+        CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+        // TODO(thestig): Support premultiplied alpha.
+        CHECK(false);
+        break;
+#endif
     }
     if (!bitmap) {
       WriteString("\nQ\n");

@@ -759,8 +759,10 @@ FPDFTextObj_GetRenderedBitmap(FPDF_DOCUMENT document,
     return nullptr;
 
   auto result_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!result_bitmap->Create(rect.Width(), rect.Height(), FXDIB_Format::kArgb))
+  if (!result_bitmap->Create(rect.Width(), rect.Height(),
+                             GetDefaultArgbFormat())) {
     return nullptr;
+  }
 
   auto render_context = std::make_unique<CPDF_PageRenderContext>();
   CPDF_PageRenderContext* render_context_ptr = render_context.get();
@@ -788,6 +790,12 @@ FPDFTextObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   CFX_Matrix render_matrix(1, 0, 0, -1, -text_rect.left, text_rect.top);
   render_matrix *= scale_matrix;
   status.RenderSingleObject(text, render_matrix);
+
+#if defined(PDF_USE_SKIA)
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+    result_bitmap->UnPreMultiply();
+  }
+#endif
 
   // Caller takes ownership.
   return FPDFBitmapFromCFXDIBitmap(result_bitmap.Leak());

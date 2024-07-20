@@ -242,6 +242,7 @@ void CFX_ImageTransformer::ContinueOther(PauseIndicatorIface* pPause) {
   if (!m_Storer.GetBitmap())
     return;
 
+  // TODO(thestig): Support premultiplied alpha.
   auto pTransformed = pdfium::MakeRetain<CFX_DIBitmap>();
   FXDIB_Format format = m_Stretcher->source()->IsMaskFormat()
                             ? FXDIB_Format::k8bppMask
@@ -302,6 +303,7 @@ void CFX_ImageTransformer::CalcMono(const CalcData& calc_data) {
 void CFX_ImageTransformer::CalcColor(const CalcData& calc_data,
                                      FXDIB_Format format,
                                      int Bpp) {
+  // TODO(thestig): Support premultiplied alpha.
   DCHECK(format == FXDIB_Format::k8bppMask || format == FXDIB_Format::kArgb);
   const int destBpp = calc_data.bitmap->GetBPP() / 8;
   if (!m_Storer.GetBitmap()->IsAlphaFormat()) {
