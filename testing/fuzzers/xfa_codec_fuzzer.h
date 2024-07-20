@@ -53,8 +53,8 @@ class XFACodecFuzzer {
     if (status != FXCODEC_STATUS::kDecodeReady || frames == 0)
       return 0;
 
-    status = decoder->StartDecode(bitmap, 0, 0, bitmap->GetWidth(),
-                                  bitmap->GetHeight());
+    status =
+        decoder->StartDecode(bitmap, bitmap->GetWidth(), bitmap->GetHeight());
     while (status == FXCODEC_STATUS::kDecodeToBeContinued)
       status = decoder->ContinueDecode();
 
