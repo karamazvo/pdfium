@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ac09030c_8e933618",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-22T17:42:51Z",
+      "side": 1,
+      "message": "Here\u0027s another long CL chain.",
+      "revId": "7be451c73cdb997dffaca5d7eeeb6582a7da5f68",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
