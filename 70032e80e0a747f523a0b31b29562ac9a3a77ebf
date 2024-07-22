@@ -3,6 +3,29 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "6e563ac0_17fa332e",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1352,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-22T23:16:31Z",
+      "side": 1,
+      "message": "HEADS-up: these are really hard to spanify when bpp is not a constant.  I suspect that we may want to expand the cartesian product of the inputs/outputs in TransformMethod down the road.",
+      "range": {
+        "startLine": 1352,
+        "startChar": 22,
+        "endLine": 1352,
+        "endChar": 48
+      },
+      "revId": "70032e80e0a747f523a0b31b29562ac9a3a77ebf",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "0ee7af1d_f92060f7",
         "filename": "core/fxcodec/progressive_decoder.h",
         "patchSetId": 1
@@ -14,6 +37,24 @@
       "writtenOn": "2024-07-22T22:58:41Z",
       "side": 1,
       "message": "Got better suggestions?",
+      "revId": "70032e80e0a747f523a0b31b29562ac9a3a77ebf",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "72ee3643_e80d3bc5",
+        "filename": "core/fxcodec/progressive_decoder.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-22T23:16:31Z",
+      "side": 1,
+      "message": "AllRGB -\u003e RbgMaybeAlpha\nXRGB - \u003e RgbNoAlpha",
+      "parentUuid": "0ee7af1d_f92060f7",
       "revId": "70032e80e0a747f523a0b31b29562ac9a3a77ebf",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
