@@ -35,6 +35,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1b3e41d4_8b3b4625",
+        "filename": "core/fxcodec/progressive_decoder_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-22T18:22:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f033c113_58c35992",
+      "revId": "7be451c73cdb997dffaca5d7eeeb6582a7da5f68",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1254bcd0_bd2015f6",
@@ -52,6 +70,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "232fbb8b_1b08c65d",
+        "filename": "testing/fuzzers/xfa_codec_fuzzer.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-22T18:22:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1254bcd0_bd2015f6",
+      "revId": "7be451c73cdb997dffaca5d7eeeb6582a7da5f68",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4b473908_efb50628",
@@ -65,6 +101,24 @@
       "writtenOn": "2024-07-22T18:07:00Z",
       "side": 1,
       "message": "nit: ditto ditto and line 195.",
+      "revId": "7be451c73cdb997dffaca5d7eeeb6582a7da5f68",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2aae4333_eb0b442a",
+        "filename": "xfa/fxfa/cxfa_ffwidget.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-22T18:22:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4b473908_efb50628",
       "revId": "7be451c73cdb997dffaca5d7eeeb6582a7da5f68",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
