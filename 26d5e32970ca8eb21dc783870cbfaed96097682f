@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "37a8dbfb_a1a7e9f5",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1534,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-22T20:40:01Z",
+      "side": 1,
+      "message": "follow-on: can we get an enum for these values?",
+      "range": {
+        "startLine": 1534,
+        "startChar": 26,
+        "endLine": 1534,
+        "endChar": 28
+      },
+      "revId": "26d5e32970ca8eb21dc783870cbfaed96097682f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
