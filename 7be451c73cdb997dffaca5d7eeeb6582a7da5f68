@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9249c0ff_f5103d57",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2175,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-22T17:43:05Z",
+      "side": 0,
+      "message": "Always 0.",
+      "revId": "7be451c73cdb997dffaca5d7eeeb6582a7da5f68",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c1cad34a_19c08139",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2177,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-22T17:43:05Z",
+      "side": 0,
+      "message": "Intersecting itself.",
+      "revId": "7be451c73cdb997dffaca5d7eeeb6582a7da5f68",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "eb0ffa68_6a0cef0f",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2196,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-22T17:43:05Z",
+      "side": 0,
+      "message": "`m_clipBox` no longer changes, and it was already checked above.",
+      "revId": "7be451c73cdb997dffaca5d7eeeb6582a7da5f68",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
