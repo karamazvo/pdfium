@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b272be8c_7e9cbc8b",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 916,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-22T22:47:51Z",
+      "side": 1,
+      "message": "nit: add parens around bitwise and just because (even though it is correct as written).",
+      "range": {
+        "startLine": 916,
+        "startChar": 6,
+        "endLine": 916,
+        "endChar": 61
+      },
+      "revId": "3cce4dc074efc59d5b5baedd76e68e66635799d8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0994b88c_04b9381b",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1338,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-22T22:47:51Z",
+      "side": 1,
+      "message": "nit: maybe merge into existing ifdef-skia block at 1013 to group as in header.",
+      "range": {
+        "startLine": 1338,
+        "startChar": 1,
+        "endLine": 1338,
+        "endChar": 3
+      },
+      "revId": "3cce4dc074efc59d5b5baedd76e68e66635799d8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
