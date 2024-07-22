@@ -16,6 +16,46 @@
       "message": "Cleaning that up in the next CL in the chain.",
       "revId": "843bd5efe23816b407fab4966264a3c2790923f4",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ed12bb04_835a4d9c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-22T21:39:53Z",
+      "side": 1,
+      "message": "LG w/nit",
+      "revId": "843bd5efe23816b407fab4966264a3c2790923f4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e709ef1f_774791c4",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1392,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-22T21:39:53Z",
+      "side": 1,
+      "message": "nit: one assignment per line.",
+      "range": {
+        "startLine": 1392,
+        "startChar": 0,
+        "endLine": 1392,
+        "endChar": 31
+      },
+      "revId": "843bd5efe23816b407fab4966264a3c2790923f4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
