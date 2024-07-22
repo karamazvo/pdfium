@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8c2738f6_f767beb6",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1597,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-22T17:45:03Z",
+      "side": 1,
+      "message": "Aside from -1 meaning error, I have no idea what the original author intended for these values to mean. I\u0027m just going to leave them for now.",
+      "revId": "66af5864ddc1674ccbeb355e143bfe2680c83c32",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
