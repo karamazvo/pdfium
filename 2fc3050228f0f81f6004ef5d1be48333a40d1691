@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "18d82d7c_c6b25c20",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-22T17:54:32Z",
+      "side": 0,
+      "message": "`width` is the same as `m_SrcWidth`. See line 208 ^",
+      "range": {
+        "startLine": 230,
+        "startChar": 30,
+        "endLine": 230,
+        "endChar": 35
+      },
+      "revId": "2fc3050228f0f81f6004ef5d1be48333a40d1691",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "db150a48_384c2b54",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1423,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-22T17:54:32Z",
+      "side": 0,
+      "message": "`m_clipBox` dimensions are 0, but so are `m_SrcWidth` and `m_SrcHeight`. ^^",
+      "revId": "2fc3050228f0f81f6004ef5d1be48333a40d1691",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

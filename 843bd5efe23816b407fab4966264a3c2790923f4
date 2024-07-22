@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7471b335_82c694b5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-22T17:54:32Z",
+      "side": 1,
+      "message": "Cleaning that up in the next CL in the chain.",
+      "revId": "843bd5efe23816b407fab4966264a3c2790923f4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
