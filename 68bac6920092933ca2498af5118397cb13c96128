@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "800f4326_ac3ee502",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1893,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-22T17:48:58Z",
+      "side": 1,
+      "message": "On second look, the fuzzer may trigger this. I\u0027ll probably put this back before landing.",
+      "revId": "68bac6920092933ca2498af5118397cb13c96128",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
