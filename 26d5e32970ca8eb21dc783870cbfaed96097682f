@@ -22,6 +22,30 @@
       },
       "revId": "26d5e32970ca8eb21dc783870cbfaed96097682f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ecd6bddf_23b006e6",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1534,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-22T21:41:10Z",
+      "side": 1,
+      "message": "Will tack onto the end of the CL chain once the dust settles.",
+      "parentUuid": "37a8dbfb_a1a7e9f5",
+      "range": {
+        "startLine": 1534,
+        "startChar": 26,
+        "endLine": 1534,
+        "endChar": 28
+      },
+      "revId": "26d5e32970ca8eb21dc783870cbfaed96097682f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
