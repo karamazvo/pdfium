@@ -118,6 +118,18 @@ class ProgressiveDecoder final :
   using WeightTable = CStretchEngine::WeightTable;
   using PixelWeight = CStretchEngine::PixelWeight;
 
+  // AllRgb = Rgb, Rgb32, Argb
+  // XRgb = Rgb, Rgb32
+  enum class TransformMethod : uint8_t {
+    kInvalid,
+    k8BppGrayToAllRgb,
+    k8BppRgbToXRgb,
+    k8BppRgbToArgb,
+    kAllRgbToAllRgb,
+    kCmykToAllRgb,
+    kArgbToArgb,
+  };
+
   class HorzTable {
    public:
     HorzTable();
@@ -215,7 +227,7 @@ class ProgressiveDecoder final :
   int m_SrcHeight = 0;
   int m_SrcComponents = 0;
   int m_SrcBPC = 0;
-  int m_TransMethod = -1;
+  TransformMethod m_TransMethod;
   int m_SrcRow = 0;
   FXCodec_Format m_SrcFormat = FXCodec_Invalid;
   int m_SrcPassNumber = 0;

@@ -314,7 +314,7 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(
     pdfium::span<uint8_t> scan_span =
         pDevice->GetWritableScanline(row + startY).subspan(startX * Bpp);
     switch (m_TransMethod) {
-      case 8: {
+      case TransformMethod::k8BppRgbToXRgb: {
         uint8_t* pScanline = scan_span.data();
         UNSAFE_TODO({
           for (int col = 0; col < sizeX; col++) {
@@ -326,7 +326,7 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(
         });
         break;
       }
-      case 12: {
+      case TransformMethod::k8BppRgbToArgb: {
         uint8_t* pScanline = scan_span.data();
         UNSAFE_TODO({
           for (int col = 0; col < sizeX; col++) {
@@ -336,6 +336,8 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(
         });
         break;
       }
+      default:
+        break;
     }
   }
   return true;
@@ -1160,21 +1162,21 @@ void ProgressiveDecoder::SetTransMethod() {
     case FXDIB_Format::kRgb: {
       switch (m_SrcFormat) {
         case FXCodec_Invalid:
-          m_TransMethod = -1;
+          m_TransMethod = TransformMethod::kInvalid;
           break;
         case FXCodec_8bppGray:
-          m_TransMethod = 7;
+          m_TransMethod = TransformMethod::k8BppGrayToAllRgb;
           break;
         case FXCodec_8bppRgb:
-          m_TransMethod = 8;
+          m_TransMethod = TransformMethod::k8BppRgbToXRgb;
           break;
         case FXCodec_Rgb:
         case FXCodec_Rgb32:
         case FXCodec_Argb:
-          m_TransMethod = 9;
+          m_TransMethod = TransformMethod::kAllRgbToAllRgb;
           break;
         case FXCodec_Cmyk:
-          m_TransMethod = 10;
+          m_TransMethod = TransformMethod::kCmykToAllRgb;
           break;
       }
       break;
@@ -1183,27 +1185,27 @@ void ProgressiveDecoder::SetTransMethod() {
     case FXDIB_Format::kArgb: {
       switch (m_SrcFormat) {
         case FXCodec_Invalid:
-          m_TransMethod = -1;
+          m_TransMethod = TransformMethod::kInvalid;
           break;
         case FXCodec_8bppGray:
-          m_TransMethod = 7;
+          m_TransMethod = TransformMethod::k8BppGrayToAllRgb;
           break;
         case FXCodec_8bppRgb:
           if (m_pDeviceBitmap->GetFormat() == FXDIB_Format::kArgb) {
-            m_TransMethod = 12;
+            m_TransMethod = TransformMethod::k8BppRgbToArgb;
           } else {
-            m_TransMethod = 8;
+            m_TransMethod = TransformMethod::k8BppRgbToXRgb;
           }
           break;
         case FXCodec_Rgb:
         case FXCodec_Rgb32:
-          m_TransMethod = 9;
+          m_TransMethod = TransformMethod::kAllRgbToAllRgb;
           break;
         case FXCodec_Cmyk:
-          m_TransMethod = 10;
+          m_TransMethod = TransformMethod::kCmykToAllRgb;
           break;
         case FXCodec_Argb:
-          m_TransMethod = 11;
+          m_TransMethod = TransformMethod::kArgbToArgb;
           break;
       }
       break;
@@ -1223,9 +1225,9 @@ void ProgressiveDecoder::ResampleScanline(
   for (int dest_col = 0; dest_col < m_SrcWidth; dest_col++) {
     PixelWeight* pPixelWeights = m_WeightHorz.GetPixelWeight(dest_col);
     switch (m_TransMethod) {
-      case -1:
+      case TransformMethod::kInvalid:
         return;
-      case 7: {
+      case TransformMethod::k8BppGrayToAllRgb: {
         UNSAFE_TODO({
           uint32_t dest_g = 0;
           for (int j = pPixelWeights->m_SrcStart; j <= pPixelWeights->m_SrcEnd;
@@ -1239,7 +1241,7 @@ void ProgressiveDecoder::ResampleScanline(
           break;
         });
       }
-      case 8: {
+      case TransformMethod::k8BppRgbToXRgb: {
         UNSAFE_TODO({
           uint32_t dest_r = 0;
           uint32_t dest_g = 0;
@@ -1260,7 +1262,7 @@ void ProgressiveDecoder::ResampleScanline(
           break;
         });
       }
-      case 12: {
+      case TransformMethod::k8BppRgbToArgb: {
 #ifdef PDF_ENABLE_XFA_BMP
         if (m_pBmpContext) {
           UNSAFE_TODO({
@@ -1306,7 +1308,7 @@ void ProgressiveDecoder::ResampleScanline(
           break;
         });
       }
-      case 9: {
+      case TransformMethod::kAllRgbToAllRgb: {
         UNSAFE_TODO({
           uint32_t dest_b = 0;
           uint32_t dest_g = 0;
@@ -1327,7 +1329,7 @@ void ProgressiveDecoder::ResampleScanline(
           break;
         });
       }
-      case 10: {
+      case TransformMethod::kCmykToAllRgb: {
         UNSAFE_TODO({
           uint32_t dest_b = 0;
           uint32_t dest_g = 0;
@@ -1351,7 +1353,7 @@ void ProgressiveDecoder::ResampleScanline(
           break;
         });
       }
-      case 11: {
+      case TransformMethod::kArgbToArgb: {
         UNSAFE_TODO({
           uint32_t dest_alpha = 0;
           uint32_t dest_r = 0;
@@ -1375,8 +1377,6 @@ void ProgressiveDecoder::ResampleScanline(
           break;
         });
       }
-      default:
-        NOTREACHED_NORETURN();
     }
   }
 }
