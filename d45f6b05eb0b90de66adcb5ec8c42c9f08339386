@@ -16,6 +16,24 @@
       "message": "Will clean these up further down the chain.",
       "revId": "d45f6b05eb0b90de66adcb5ec8c42c9f08339386",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7ebee3cb_6a089bbd",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1825,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-22T17:50:25Z",
+      "side": 1,
+      "message": "In https://pdfium-review.googlesource.com/c/pdfium/+/122292",
+      "parentUuid": "33af3f19_74a4392c",
+      "revId": "d45f6b05eb0b90de66adcb5ec8c42c9f08339386",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
