@@ -16,6 +16,24 @@
       "message": "This looks a bit wonky, but this entire method is going to be deleted in https://pdfium-review.googlesource.com/c/pdfium/+/122311",
       "revId": "2fc3050228f0f81f6004ef5d1be48333a40d1691",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e04041b6_735ac3ed",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1689,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-22T21:36:02Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "d04970cb_52b7b004",
+      "revId": "2fc3050228f0f81f6004ef5d1be48333a40d1691",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
