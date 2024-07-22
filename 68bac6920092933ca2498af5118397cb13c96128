@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "baf9de75_aa942f36",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-22T21:30:21Z",
+      "side": 1,
+      "message": "LG modulo one reversion.",
+      "revId": "68bac6920092933ca2498af5118397cb13c96128",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "800f4326_ac3ee502",
@@ -14,6 +31,24 @@
       "writtenOn": "2024-07-22T17:48:58Z",
       "side": 1,
       "message": "On second look, the fuzzer may trigger this. I\u0027ll probably put this back before landing.",
+      "revId": "68bac6920092933ca2498af5118397cb13c96128",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e2bbe9cb_8d4b9343",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1893,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-22T21:30:21Z",
+      "side": 1,
+      "message": "yea, let\u0027s revert this for now.",
+      "parentUuid": "800f4326_ac3ee502",
       "revId": "68bac6920092933ca2498af5118397cb13c96128",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
