@@ -255,7 +255,3 @@ uint32_t FXSYS_GetLastError() {
   return g_last_error;
 }
 #endif  // BUILDFLAG(IS_WIN)
-
-float FXSYS_sqrt2(float a, float b) {
-  return sqrtf(a * a + b * b);
-}

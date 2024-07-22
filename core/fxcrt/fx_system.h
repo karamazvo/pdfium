@@ -77,7 +77,6 @@ uint32_t FXSYS_GetLastError();
 const char* FXSYS_i64toa(int64_t value, char* str, int radix);
 int FXSYS_roundf(float f);
 int FXSYS_round(double d);
-float FXSYS_sqrt2(float a, float b);
 
 #ifdef __cplusplus
 }  // extern "C"
