@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8ba9c6f6_d424a8d9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-23T04:48:08Z",
+      "side": 1,
+      "message": "The alternative is to fix core/fpdfapi/page/cpdf_transferfuncdib.cpp to not default initialize the alpha channel to 0. Then transfer_function.in would also render correctly. But as mentioned in the CL description, that is only one known usage that is incompatible with CFX_SkiaDeviceDriver.",
+      "revId": "743bc71e33e9d3411a32b503b3f4d8bfc5c6ffea",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
