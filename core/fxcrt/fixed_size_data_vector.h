@@ -7,6 +7,7 @@
 
 #include <stddef.h>
 
+#include <initializer_list>
 #include <memory>
 #include <utility>
 
@@ -14,6 +15,7 @@
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/span.h"
+#include "core/fxcrt/stl_util.h"
 
 namespace fxcrt {
 
@@ -29,6 +31,18 @@ template <typename T,
 class FixedSizeDataVector {
  public:
   FixedSizeDataVector() = default;
+
+  // Allocate vector with specified initial contents, mainly used for
+  // testing pursposes.
+  static FixedSizeDataVector FromInitializerList(
+      const std::initializer_list<T>& list) {
+    auto result = FixedSizeDataVector<T>::Uninit(std::size(list));
+    // SAFETY: std::data() is valid for std::size() elements.
+    fxcrt::Copy(
+        UNSAFE_BUFFERS(pdfium::make_span(std::data(list), std::size(list))),
+        result.span());
+    return result;
+  }
 
   // Allocates a vector of the given size with uninitialized memory.
   // A CHECK() failure occurs when insufficient memory.

@@ -20,6 +20,11 @@ TEST(FixedSizedDataVector, NoData) {
   EXPECT_TRUE(vec.span().empty());
 }
 
+TEST(FixedSizedDataVector, InitializerList) {
+  auto vec = FixedSizeDataVector<uint8_t>::FromInitializerList({1, 2, 3});
+  EXPECT_THAT(vec.span(), testing::ElementsAre(1, 2, 3));
+}
+
 TEST(FixedSizeDataVector, UninitData) {
   auto vec = FixedSizeDataVector<int>::Uninit(4);
   EXPECT_FALSE(vec.empty());
