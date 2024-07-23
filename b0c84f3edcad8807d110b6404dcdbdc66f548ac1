@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c27206b5_a52af682",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-23T00:07:21Z",
+      "side": 1,
+      "message": "Had a bad rebase and lost the CR+1s.",
+      "revId": "b0c84f3edcad8807d110b6404dcdbdc66f548ac1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
