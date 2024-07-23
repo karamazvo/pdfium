@@ -24,10 +24,10 @@ TEST(fxcodec, A85EmptyInput) {
 TEST(fxcodec, A85Basic) {
   // Make sure really big values don't break.
   const uint8_t src_buf[] = {1, 2, 3, 4, 255, 255, 255, 255};
-  DataVector<uint8_t> dest_buf = BasicModule::A85Encode(src_buf);
+  auto dest_buf = BasicModule::A85Encode(src_buf);
 
   // Should have 5 chars for each set of 4 and 2 terminators.
-  EXPECT_THAT(dest_buf,
+  EXPECT_THAT(dest_buf.span(),
               ElementsAre(33, 60, 78, 63, 43, 115, 56, 87, 45, 33, 126, 62));
 }
 
@@ -36,25 +36,26 @@ TEST(fxcodec, A85LeftoverBytes) {
   {
     // 1 Leftover Byte:
     const uint8_t src_buf_1leftover[] = {1, 2, 3, 4, 255};
-    DataVector<uint8_t> dest_buf = BasicModule::A85Encode(src_buf_1leftover);
+    auto dest_buf = BasicModule::A85Encode(src_buf_1leftover);
 
     // 5 chars for first symbol + 2 + 2 terminators.
-    EXPECT_THAT(dest_buf, ElementsAre(33, 60, 78, 63, 43, 114, 114, 126, 62));
+    EXPECT_THAT(dest_buf.span(),
+                ElementsAre(33, 60, 78, 63, 43, 114, 114, 126, 62));
   }
   {
     // 2 Leftover bytes:
     const uint8_t src_buf_2leftover[] = {1, 2, 3, 4, 255, 254};
-    DataVector<uint8_t> dest_buf = BasicModule::A85Encode(src_buf_2leftover);
+    auto dest_buf = BasicModule::A85Encode(src_buf_2leftover);
     // 5 chars for first symbol + 3 + 2 terminators.
-    EXPECT_THAT(dest_buf,
+    EXPECT_THAT(dest_buf.span(),
                 ElementsAre(33, 60, 78, 63, 43, 115, 56, 68, 126, 62));
   }
   {
     // 3 Leftover bytes:
     const uint8_t src_buf_3leftover[] = {1, 2, 3, 4, 255, 254, 253};
-    DataVector<uint8_t> dest_buf = BasicModule::A85Encode(src_buf_3leftover);
+    auto dest_buf = BasicModule::A85Encode(src_buf_3leftover);
     // 5 chars for first symbol + 4 + 2 terminators.
-    EXPECT_THAT(dest_buf,
+    EXPECT_THAT(dest_buf.span(),
                 ElementsAre(33, 60, 78, 63, 43, 115, 56, 77, 114, 126, 62));
   }
 }
@@ -64,26 +65,27 @@ TEST(fxcodec, A85Zeros) {
   {
     // Make sure really big values don't break.
     const uint8_t src_buf[] = {1, 2, 3, 4, 0, 0, 0, 0};
-    DataVector<uint8_t> dest_buf = BasicModule::A85Encode(src_buf);
+    auto dest_buf = BasicModule::A85Encode(src_buf);
 
     // Should have 5 chars for first set of 4 + 1 for z + 2 terminators.
-    EXPECT_THAT(dest_buf, ElementsAre(33, 60, 78, 63, 43, 122, 126, 62));
+    EXPECT_THAT(dest_buf.span(), ElementsAre(33, 60, 78, 63, 43, 122, 126, 62));
   }
   {
     // Should also work if it is at the start:
     const uint8_t src_buf_2[] = {0, 0, 0, 0, 1, 2, 3, 4};
-    DataVector<uint8_t> dest_buf = BasicModule::A85Encode(src_buf_2);
+    auto dest_buf = BasicModule::A85Encode(src_buf_2);
 
     // Should have 5 chars for set of 4 + 1 for z + 2 terminators.
-    EXPECT_THAT(dest_buf, ElementsAre(122, 33, 60, 78, 63, 43, 126, 62));
+    EXPECT_THAT(dest_buf.span(), ElementsAre(122, 33, 60, 78, 63, 43, 126, 62));
   }
   {
     // Try with 2 leftover zero bytes. Make sure we don't get a "z".
     const uint8_t src_buf_3[] = {1, 2, 3, 4, 0, 0};
-    DataVector<uint8_t> dest_buf = BasicModule::A85Encode(src_buf_3);
+    auto dest_buf = BasicModule::A85Encode(src_buf_3);
 
     // Should have 5 chars for set of 4 + 3 for last 2 + 2 terminators.
-    EXPECT_THAT(dest_buf, ElementsAre(33, 60, 78, 63, 43, 33, 33, 33, 126, 62));
+    EXPECT_THAT(dest_buf.span(),
+                ElementsAre(33, 60, 78, 63, 43, 33, 33, 33, 126, 62));
   }
 }
 
@@ -107,16 +109,17 @@ TEST(fxcodec, A85LineBreaks) {
   }
 
   // Should succeed.
-  DataVector<uint8_t> dest_buf = BasicModule::A85Encode(src_buf);
+  auto dest_buf = BasicModule::A85Encode(src_buf);
+  auto dest_span = dest_buf.span();
 
   // Should have 75 chars in the first row plus 2 char return,
   // 76 chars in the second row plus 2 char return,
   // and 9 chars in the last row with 2 terminators.
-  ASSERT_EQ(166u, dest_buf.size());
+  ASSERT_EQ(166u, dest_span.size());
 
   // Check for the returns.
-  EXPECT_EQ(13, dest_buf[75]);
-  EXPECT_EQ(10, dest_buf[76]);
-  EXPECT_EQ(13, dest_buf[153]);
-  EXPECT_EQ(10, dest_buf[154]);
+  EXPECT_EQ(13, dest_span[75]);
+  EXPECT_EQ(10, dest_span[76]);
+  EXPECT_EQ(13, dest_span[153]);
+  EXPECT_EQ(10, dest_span[154]);
 }

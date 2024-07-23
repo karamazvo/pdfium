@@ -228,14 +228,20 @@ std::unique_ptr<ScanlineDecoder> BasicModule::CreateRunLengthDecoder(
 }
 
 // static
-DataVector<uint8_t> BasicModule::RunLengthEncode(
+FixedSizeDataVector<uint8_t> BasicModule::RunLengthEncode(
     pdfium::span<const uint8_t> src_span) {
-  if (src_span.empty())
-    return {};
+  if (src_span.empty()) {
+    return FixedSizeDataVector<uint8_t>();
+  }
 
   // Handle edge case.
-  if (src_span.size() == 1)
-    return {0, src_span[0], 128};
+  if (src_span.size() == 1) {
+    auto result = FixedSizeDataVector<uint8_t>::Uninit(3u);
+    result.span()[0] = 0;
+    result.span()[1] = src_span[0];
+    result.span()[2] = 128;
+    return result;
+  }
 
   // Worst case: 1 nonmatch, 2 match, 1 nonmatch, 2 match, etc. This becomes
   // 4 output chars for every 3 input, plus up to 4 more for the 1-2 chars
@@ -245,10 +251,14 @@ DataVector<uint8_t> BasicModule::RunLengthEncode(
   estimated_size /= 3;
   estimated_size *= 4;
   estimated_size += 1;
-  DataVector<uint8_t> result(estimated_size.ValueOrDie());
+  auto result =
+      FixedSizeDataVector<uint8_t>::Uninit(estimated_size.ValueOrDie());
+  if (result.empty()) {
+    return result;
+  }
 
   // Set up span and counts.
-  auto result_span = pdfium::make_span(result);
+  auto result_span = result.span();
   uint32_t run_start = 0;
   uint32_t run_end = 1;
   uint8_t x = src_span[run_start];
@@ -300,17 +310,16 @@ DataVector<uint8_t> BasicModule::RunLengthEncode(
   }
   result_span[0] = 128;
   size_t new_size = 1 + result.size() - result_span.size();
-  CHECK_LE(new_size, result.size());
-  result.resize(new_size);
-  return result;
+  return FixedSizeDataVector<uint8_t>::TruncatedFrom(std::move(result),
+                                                     new_size);
 }
 
 // static
-DataVector<uint8_t> BasicModule::A85Encode(
+FixedSizeDataVector<uint8_t> BasicModule::A85Encode(
     pdfium::span<const uint8_t> src_span) {
-  DataVector<uint8_t> result;
-  if (src_span.empty())
-    return result;
+  if (src_span.empty()) {
+    return FixedSizeDataVector<uint8_t>();
+  }
 
   // Worst case: 5 output for each 4 input (plus up to 4 from leftover), plus
   // 2 character new lines each 75 output chars plus 2 termination chars. May
@@ -321,10 +330,14 @@ DataVector<uint8_t> BasicModule::A85Encode(
   estimated_size += 4;
   estimated_size += src_span.size() / 30;
   estimated_size += 2;
-  result.resize(estimated_size.ValueOrDie());
+  auto result =
+      FixedSizeDataVector<uint8_t>::Uninit(estimated_size.ValueOrDie());
+  if (result.empty()) {
+    return result;
+  }
 
   // Set up span and counts.
-  auto result_span = pdfium::make_span(result);
+  auto result_span = result.span();
   uint32_t pos = 0;
   uint32_t line_length = 0;
   while (src_span.size() >= 4 && pos < src_span.size() - 3) {
@@ -370,9 +383,8 @@ DataVector<uint8_t> BasicModule::A85Encode(
   result_span[0] = '~';
   result_span[1] = '>';
   size_t new_size = 2 + result.size() - result_span.size();
-  CHECK_LE(new_size, result.size());
-  result.resize(new_size);
-  return result;
+  return FixedSizeDataVector<uint8_t>::TruncatedFrom(std::move(result),
+                                                     new_size);
 }
 
 }  // namespace fxcodec
