@@ -58,8 +58,6 @@ class ProgressiveDecoder final :
  public:
   enum FXCodec_Format {
     FXCodec_Invalid = 0,
-    FXCodec_1bppGray = 0x101,
-    FXCodec_1bppRgb = 0x001,
     FXCodec_8bppGray = 0x108,
     FXCodec_8bppRgb = 0x008,
     FXCodec_Rgb = 0x018,
@@ -80,14 +78,9 @@ class ProgressiveDecoder final :
   int32_t GetWidth() const { return m_SrcWidth; }
   int32_t GetHeight() const { return m_SrcHeight; }
   int32_t GetBitsPerPixel() const { return m_SrcComponents * m_SrcBPC; }
-  void SetClipBox(FX_RECT* clip);
 
   std::pair<FXCODEC_STATUS, size_t> GetFrames();
-  FXCODEC_STATUS StartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
-                             int start_x,
-                             int start_y,
-                             int size_x,
-                             int size_y);
+  FXCODEC_STATUS StartDecode(RetainPtr<CFX_DIBitmap> bitmap);
 
   FXCODEC_STATUS ContinueDecode();
 
@@ -194,7 +187,7 @@ class ProgressiveDecoder final :
 
   bool JpegReadMoreData(FXCODEC_STATUS* err_status);
   bool JpegDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
-  FXCODEC_STATUS JpegStartDecode(FXDIB_Format format);
+  FXCODEC_STATUS JpegStartDecode();
   FXCODEC_STATUS JpegContinueDecode();
 
   bool DetectImageType(FXCODEC_IMAGE_TYPE imageType,
@@ -204,7 +197,7 @@ class ProgressiveDecoder final :
                     FXCODEC_STATUS* err_status);
 
   int GetDownScale();
-  void GetTransMethod(FXDIB_Format dest_format, FXCodec_Format src_format);
+  void SetTransMethod();
 
   void ResampleScanline(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
                         int32_t dest_line,
@@ -251,8 +244,6 @@ class ProgressiveDecoder final :
   int m_SrcComponents = 0;
   int m_SrcBPC = 0;
   FX_RECT m_clipBox;
-  int m_startX = 0;
-  int m_startY = 0;
   int m_sizeX = 0;
   int m_sizeY = 0;
   int m_TransMethod = -1;
