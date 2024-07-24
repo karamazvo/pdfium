@@ -882,16 +882,19 @@ bool ProgressiveDecoder::TiffDetectImageTypeFromFile(
     m_status = FXCODEC_STATUS::kError;
     return false;
   }
-  int32_t dummy_bpc;
-  bool ret = TiffDecoder::LoadFrameInfo(m_pTiffContext.get(), 0, &m_SrcWidth,
-                                        &m_SrcHeight, &m_SrcComponents,
-                                        &dummy_bpc, pAttribute);
-  m_SrcComponents = 4;
-  if (!ret) {
+
+  std::optional<TiffDecoder::FrameInfo> frame_info =
+      TiffDecoder::LoadFirstFrameInfo(m_pTiffContext.get());
+  if (!frame_info.has_value()) {
     m_pTiffContext.reset();
     m_status = FXCODEC_STATUS::kError;
     return false;
   }
+
+  m_SrcWidth = frame_info.value().width;
+  m_SrcHeight = frame_info.value().height;
+  *pAttribute = frame_info.value().attributes;
+  m_SrcComponents = 4;
   return true;
 }
 

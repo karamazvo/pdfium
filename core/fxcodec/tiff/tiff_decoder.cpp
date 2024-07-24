@@ -48,12 +48,7 @@ class CTiffContext final : public ProgressiveDecoderIface::Context {
   ~CTiffContext() override = default;
 
   bool InitDecoder(const RetainPtr<IFX_SeekableReadStream>& file_ptr);
-  bool LoadFrameInfo(int32_t frame,
-                     int32_t* width,
-                     int32_t* height,
-                     int32_t* comps,
-                     int32_t* bpc,
-                     CFX_DIBAttribute* pAttribute);
+  std::optional<TiffDecoder::FrameInfo> LoadFirstFrameInfo();
   bool Decode(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
 
   RetainPtr<IFX_SeekableReadStream> io_in() const { return m_io_in; }
@@ -213,58 +208,52 @@ bool CTiffContext::InitDecoder(
   return !!m_tif_ctx;
 }
 
-bool CTiffContext::LoadFrameInfo(int32_t frame,
-                                 int32_t* width,
-                                 int32_t* height,
-                                 int32_t* comps,
-                                 int32_t* bpc,
-                                 CFX_DIBAttribute* pAttribute) {
-  if (!TIFFSetDirectory(m_tif_ctx.get(), (uint16_t)frame))
-    return false;
+std::optional<TiffDecoder::FrameInfo> CTiffContext::LoadFirstFrameInfo() {
+  if (!TIFFSetDirectory(m_tif_ctx.get(), /*dirn=*/0)) {
+    return std::nullopt;
+  }
 
   uint32_t tif_width = 0;
   uint32_t tif_height = 0;
-  uint16_t tif_comps = 0;
-  uint16_t tif_bpc = 0;
-  uint32_t tif_rps = 0;
   TIFFGetField(m_tif_ctx.get(), TIFFTAG_IMAGEWIDTH, &tif_width);
   TIFFGetField(m_tif_ctx.get(), TIFFTAG_IMAGELENGTH, &tif_height);
-  TIFFGetField(m_tif_ctx.get(), TIFFTAG_SAMPLESPERPIXEL, &tif_comps);
-  TIFFGetField(m_tif_ctx.get(), TIFFTAG_BITSPERSAMPLE, &tif_bpc);
-  TIFFGetField(m_tif_ctx.get(), TIFFTAG_ROWSPERSTRIP, &tif_rps);
 
+  FX_SAFE_INT32 checked_width = tif_width;
+  FX_SAFE_INT32 checked_height = tif_height;
+  if (!checked_width.IsValid() || !checked_height.IsValid()) {
+    return std::nullopt;
+  }
+
+  uint32_t tif_rps = 0;
+  TIFFGetField(m_tif_ctx.get(), TIFFTAG_ROWSPERSTRIP, &tif_rps);
+  if (tif_rps > tif_height) {
+    TIFFSetField(m_tif_ctx.get(), TIFFTAG_ROWSPERSTRIP, tif_height);
+  }
+
+  TiffDecoder::FrameInfo result;
   uint16_t tif_resunit = 0;
   if (TIFFGetField(m_tif_ctx.get(), TIFFTAG_RESOLUTIONUNIT, &tif_resunit)) {
-    pAttribute->m_wDPIUnit =
+    result.attributes.m_wDPIUnit =
         static_cast<CFX_DIBAttribute::ResUnit>(tif_resunit - 1);
   } else {
-    pAttribute->m_wDPIUnit = CFX_DIBAttribute::kResUnitInch;
+    result.attributes.m_wDPIUnit = CFX_DIBAttribute::kResUnitInch;
   }
 
   float tif_xdpi = 0.0f;
   TIFFGetField(m_tif_ctx.get(), TIFFTAG_XRESOLUTION, &tif_xdpi);
-  if (tif_xdpi)
-    pAttribute->m_nXDPI = static_cast<int32_t>(tif_xdpi + 0.5f);
+  if (tif_xdpi) {
+    result.attributes.m_nXDPI = static_cast<int32_t>(tif_xdpi + 0.5f);
+  }
 
   float tif_ydpi = 0.0f;
   TIFFGetField(m_tif_ctx.get(), TIFFTAG_YRESOLUTION, &tif_ydpi);
-  if (tif_ydpi)
-    pAttribute->m_nYDPI = static_cast<int32_t>(tif_ydpi + 0.5f);
-
-  FX_SAFE_INT32 checked_width = tif_width;
-  FX_SAFE_INT32 checked_height = tif_height;
-  if (!checked_width.IsValid() || !checked_height.IsValid())
-    return false;
-
-  *width = checked_width.ValueOrDie();
-  *height = checked_height.ValueOrDie();
-  *comps = tif_comps;
-  *bpc = tif_bpc;
-  if (tif_rps > tif_height) {
-    tif_rps = tif_height;
-    TIFFSetField(m_tif_ctx.get(), TIFFTAG_ROWSPERSTRIP, tif_rps);
+  if (tif_ydpi) {
+    result.attributes.m_nYDPI = static_cast<int32_t>(tif_ydpi + 0.5f);
   }
-  return true;
+
+  result.width = checked_width.ValueOrDie();
+  result.height = checked_height.ValueOrDie();
+  return result;
 }
 
 bool CTiffContext::IsSupport(const RetainPtr<CFX_DIBitmap>& pDIBitmap) const {
@@ -474,17 +463,10 @@ std::unique_ptr<ProgressiveDecoderIface::Context> TiffDecoder::CreateDecoder(
 }
 
 // static
-bool TiffDecoder::LoadFrameInfo(ProgressiveDecoderIface::Context* pContext,
-                                int32_t frame,
-                                int32_t* width,
-                                int32_t* height,
-                                int32_t* comps,
-                                int32_t* bpc,
-                                CFX_DIBAttribute* pAttribute) {
-  DCHECK(pAttribute);
-
+std::optional<TiffDecoder::FrameInfo> TiffDecoder::LoadFirstFrameInfo(
+    ProgressiveDecoderIface::Context* pContext) {
   auto* ctx = static_cast<CTiffContext*>(pContext);
-  return ctx->LoadFrameInfo(frame, width, height, comps, bpc, pAttribute);
+  return ctx->LoadFirstFrameInfo();
 }
 
 // static

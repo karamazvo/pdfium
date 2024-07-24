@@ -7,8 +7,12 @@
 #ifndef CORE_FXCODEC_TIFF_TIFF_DECODER_H_
 #define CORE_FXCODEC_TIFF_TIFF_DECODER_H_
 
-#include <memory>
+#include <stdint.h>
 
+#include <memory>
+#include <optional>
+
+#include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/progressive_decoder_iface.h"
 #include "core/fxcrt/retain_ptr.h"
 
@@ -21,20 +25,19 @@ class IFX_SeekableReadStream;
 
 namespace fxcodec {
 
-class CFX_DIBAttribute;
-
 class TiffDecoder {
  public:
+  struct FrameInfo {
+    int32_t width;
+    int32_t height;
+    CFX_DIBAttribute attributes;
+  };
+
   static std::unique_ptr<ProgressiveDecoderIface::Context> CreateDecoder(
       const RetainPtr<IFX_SeekableReadStream>& file_ptr);
 
-  static bool LoadFrameInfo(ProgressiveDecoderIface::Context* ctx,
-                            int32_t frame,
-                            int32_t* width,
-                            int32_t* height,
-                            int32_t* comps,
-                            int32_t* bpc,
-                            CFX_DIBAttribute* pAttribute);
+  static std::optional<FrameInfo> LoadFirstFrameInfo(
+      ProgressiveDecoderIface::Context* ctx);
   static bool Decode(ProgressiveDecoderIface::Context* ctx,
                      const RetainPtr<CFX_DIBitmap>& pDIBitmap);
 
