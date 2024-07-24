@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "78a2fb10_5fef240e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-24T21:04:16Z",
+      "side": 1,
+      "message": "I think this is needlessly strong, I\u0027m afraid. The assumption should be that unsigned long fits into a size_t, but not necessarily the other way around.\n\nHow many public APIs return size_t vs. unsigned long?  Can we just convert all of these at the API layer with an appology to devs?",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 71
+      },
+      "revId": "cde18403b3bb506401f87d1fd259456856309c61",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
