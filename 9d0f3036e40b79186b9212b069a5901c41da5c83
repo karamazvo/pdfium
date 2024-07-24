@@ -16,6 +16,52 @@
       "message": "\"Why can\u0027t I reach this code on Linux?\"",
       "revId": "9d0f3036e40b79186b9212b069a5901c41da5c83",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9d2c7379_7795af4f",
+        "filename": "core/fpdfapi/render/cpdf_imagerenderer.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-24T18:21:32Z",
+      "side": 1,
+      "message": "Should this be called IsPrinting() to stay with the positive logic and the other naming throughout?",
+      "range": {
+        "startLine": 68,
+        "startChar": 0,
+        "endLine": 68,
+        "endChar": 26
+      },
+      "revId": "9d0f3036e40b79186b9212b069a5901c41da5c83",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "837a11e3_8a070ce0",
+        "filename": "core/fpdfapi/render/cpdf_imagerenderer.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-24T18:21:32Z",
+      "side": 1,
+      "message": "nit: can we put this in the ifdef at line 68 just to have fewer ifdefs?  Or combine right before the member declarations?",
+      "range": {
+        "startLine": 80,
+        "startChar": 0,
+        "endLine": 80,
+        "endChar": 23
+      },
+      "revId": "9d0f3036e40b79186b9212b069a5901c41da5c83",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
