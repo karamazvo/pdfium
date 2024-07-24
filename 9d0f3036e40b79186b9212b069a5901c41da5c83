@@ -150,6 +150,30 @@
       },
       "revId": "9d0f3036e40b79186b9212b069a5901c41da5c83",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a769f4f3_d41e92b0",
+        "filename": "core/fxge/renderdevicedriver_iface.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-24T19:16:26Z",
+      "side": 1,
+      "message": "Acknowledged. As you like. Though it seems if this is the case, the whole type should be ifdef\u0027d out.",
+      "parentUuid": "ba81932f_0441ae73",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 21
+      },
+      "revId": "9d0f3036e40b79186b9212b069a5901c41da5c83",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
