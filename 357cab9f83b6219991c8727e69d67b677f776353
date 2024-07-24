@@ -16,6 +16,46 @@
       "message": "TIL of `std::enable_if_t`. LGTM",
       "revId": "357cab9f83b6219991c8727e69d67b677f776353",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "444b3752_f465b3de",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-24T17:42:51Z",
+      "side": 1,
+      "message": "Alternatively, I might be happier if the arg was always a size_t, and the callers did the checked cast, (e.g. strict_numeric size_t).",
+      "revId": "357cab9f83b6219991c8727e69d67b677f776353",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "06cbb8d4_b7e545d0",
+        "filename": "fpdfsdk/cpdfsdk_helpers.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-24T17:42:51Z",
+      "side": 1,
+      "message": "nit: need comment here about how callers are all inconsistent about types used for length in order to justify templating.",
+      "range": {
+        "startLine": 259,
+        "startChar": 0,
+        "endLine": 259,
+        "endChar": 48
+      },
+      "revId": "357cab9f83b6219991c8727e69d67b677f776353",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
