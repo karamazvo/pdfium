@@ -387,8 +387,12 @@ pdfium::span<uint8_t> CFX_Face::GetData() const {
       pdfium::make_span(GetRec()->stream->base, GetRec()->stream->size));
 }
 
+// Assume the unsigned long parameters in FT_Load_Sfnt_Table() below are just
+// size_t.
+static_assert(sizeof(size_t) == sizeof(unsigned long));
+
 size_t CFX_Face::GetSfntTable(uint32_t table, pdfium::span<uint8_t> buffer) {
-  unsigned long length = pdfium::checked_cast<unsigned long>(buffer.size());
+  size_t length = buffer.size();
   if (length) {
     int error = FT_Load_Sfnt_Table(GetRec(), table, 0, buffer.data(), &length);
     if (error || length != buffer.size()) {

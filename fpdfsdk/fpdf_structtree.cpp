@@ -447,7 +447,7 @@ FPDF_StructElement_Attr_GetBlobValue(FPDF_STRUCTELEMENT_ATTR_VALUE value,
   auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen));
   ByteString blob_value = obj->GetString();
   fxcrt::try_spancpy(result_span, blob_value.span());
-  *out_buflen = pdfium::checked_cast<unsigned long>(blob_value.span().size());
+  *out_buflen = blob_value.span().size();
   return true;
 }
 

@@ -861,7 +861,7 @@ FPDFFont_GetFamilyName(FPDF_FONT font, char* buffer, unsigned long length) {
   ByteString name = cfont->GetFont()->GetFamilyName();
   pdfium::span<const char> name_span = name.span_with_terminator();
   fxcrt::try_spancpy(result_span, name_span);
-  return static_cast<unsigned long>(name_span.size());
+  return name_span.size();
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetFontData(FPDF_FONT font,
