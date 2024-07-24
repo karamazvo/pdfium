@@ -18,6 +18,23 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ba8fff62_afeb5a62",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-24T18:26:21Z",
+      "side": 1,
+      "message": "Do we want a feature-specific ifdef so that if another platform were to support this, we wouldn\u0027t have to guess where to add || defined(PLATFORM) ?",
+      "revId": "9d0f3036e40b79186b9212b069a5901c41da5c83",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9d2c7379_7795af4f",
@@ -59,6 +76,29 @@
         "startChar": 0,
         "endLine": 80,
         "endChar": 23
+      },
+      "revId": "9d0f3036e40b79186b9212b069a5901c41da5c83",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "caf08adf_ea54d9d2",
+        "filename": "core/fxge/renderdevicedriver_iface.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-24T18:26:21Z",
+      "side": 1,
+      "message": "meh, maybe leave it.",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 21
       },
       "revId": "9d0f3036e40b79186b9212b069a5901c41da5c83",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
