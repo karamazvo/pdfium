@@ -16,6 +16,24 @@
       "message": "The more I look at this, the less it seems necessary, as I don\u0027t think we have a platform where unsigned long can\u0027t convert to size_t without a loss of precision. In particular, if we make the non-template arg type be StrictNumeric\u003csize_t\u003e \neverything builds as far as I can tell.",
       "revId": "4d4453173ecf652139e8c6193862d40604831e5d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f257606d_124f523d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-24T20:29:44Z",
+      "side": 1,
+      "message": "OK, how about just reducing unsigned long usage below the public API surface? https://pdfium-review.googlesource.com/122471",
+      "parentUuid": "3625a779_02ca481e",
+      "revId": "4d4453173ecf652139e8c6193862d40604831e5d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
