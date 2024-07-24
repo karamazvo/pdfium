@@ -57,22 +57,23 @@ bool DocHasXFA(const CPDF_Document* doc) {
   return form && form->GetArrayFor("XFA");
 }
 
-unsigned long GetStreamMaybeCopyAndReturnLengthImpl(
+size_t GetStreamMaybeCopyAndReturnLengthImpl(
     RetainPtr<const CPDF_Stream> stream,
     pdfium::span<uint8_t> buffer,
     bool decode) {
   DCHECK(stream);
   auto stream_acc = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(stream));
-  if (decode)
+  if (decode) {
     stream_acc->LoadAllDataFiltered();
-  else
+  } else {
     stream_acc->LoadAllDataRaw();
+  }
 
   pdfium::span<const uint8_t> stream_data_span = stream_acc->GetSpan();
   if (!buffer.empty() && buffer.size() <= stream_data_span.size()) {
     fxcrt::Copy(stream_data_span, buffer);
   }
-  return pdfium::checked_cast<unsigned long>(stream_data_span.size());
+  return stream_data_span.size();
 }
 
 // TODO(tsepez): should be UNSAFE_BUFFER_USAGE.
@@ -237,6 +238,15 @@ WideString WideStringFromFPDFWideString(FPDF_WIDESTRING wide_string) {
                         FPDFWideStringLength(wide_string) * 2)));
 }
 
+pdfium::span<char> SpanFromFPDFApiArgs(void* buffer, size_t buflen) {
+  if (!buffer) {
+    // API convention is to ignore `buflen` arg when `buffer` is NULL.
+    return pdfium::span<char>();
+  }
+  // SAFETY: required from caller, enforced by UNSAFE_BUFFER_USAGE in header.
+  return UNSAFE_BUFFERS(pdfium::make_span(static_cast<char*>(buffer), buflen));
+}
+
 #ifdef PDF_ENABLE_XFA
 RetainPtr<IFX_SeekableStream> MakeSeekableStream(
     FPDF_FILEHANDLER* pFilehandler) {
@@ -304,33 +314,29 @@ FS_MATRIX FSMatrixFromCFXMatrix(const CFX_Matrix& matrix) {
   return {matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f};
 }
 
-unsigned long NulTerminateMaybeCopyAndReturnLength(
-    const ByteString& text,
-    pdfium::span<char> result_span) {
+size_t NulTerminateMaybeCopyAndReturnLength(const ByteString& text,
+                                            pdfium::span<char> result_span) {
   pdfium::span<const char> text_span = text.span_with_terminator();
   fxcrt::try_spancpy(result_span, text_span);
-  return pdfium::checked_cast<unsigned long>(text_span.size());
+  return text_span.size();
 }
 
-unsigned long Utf16EncodeMaybeCopyAndReturnLength(
-    const WideString& text,
-    pdfium::span<char> result_span) {
+size_t Utf16EncodeMaybeCopyAndReturnLength(const WideString& text,
+                                           pdfium::span<char> result_span) {
   ByteString encoded_text = text.ToUTF16LE();
   pdfium::span<const char> encoded_text_span = encoded_text.span();
   fxcrt::try_spancpy(result_span, encoded_text_span);
-  return pdfium::checked_cast<unsigned long>(encoded_text_span.size());
+  return encoded_text_span.size();
 }
 
-unsigned long GetRawStreamMaybeCopyAndReturnLength(
-    RetainPtr<const CPDF_Stream> stream,
-    pdfium::span<uint8_t> buffer) {
+size_t GetRawStreamMaybeCopyAndReturnLength(RetainPtr<const CPDF_Stream> stream,
+                                            pdfium::span<uint8_t> buffer) {
   return GetStreamMaybeCopyAndReturnLengthImpl(std::move(stream), buffer,
                                                /*decode=*/false);
 }
 
-unsigned long DecodeStreamMaybeCopyAndReturnLength(
-    RetainPtr<const CPDF_Stream> stream,
-    pdfium::span<uint8_t> buffer) {
+size_t DecodeStreamMaybeCopyAndReturnLength(RetainPtr<const CPDF_Stream> stream,
+                                            pdfium::span<uint8_t> buffer) {
   return GetStreamMaybeCopyAndReturnLengthImpl(std::move(stream), buffer,
                                                /*decode=*/true);
 }

@@ -67,15 +67,17 @@ uint32_t FlateGetPossiblyTruncatedTotalIn(z_stream* context) {
   return pdfium::saturated_cast<uint32_t>(context->total_in);
 }
 
+// Assume the unsigned long parameters in compress() below are just size_t.
+static_assert(sizeof(size_t) == sizeof(unsigned long));
+
 size_t FlateCompress(pdfium::span<const uint8_t> src_span,
                      pdfium::span<uint8_t> dest_span) {
-  const auto src_size = pdfium::checked_cast<unsigned long>(src_span.size());
-  auto dest_size = pdfium::checked_cast<unsigned long>(dest_span.size());
-  if (compress(dest_span.data(), &dest_size, src_span.data(), src_size) !=
-      Z_OK) {
+  size_t dest_size = dest_span.size();
+  if (compress(dest_span.data(), &dest_size, src_span.data(),
+               src_span.size()) != Z_OK) {
     return 0;
   }
-  return pdfium::checked_cast<size_t>(dest_size);
+  return dest_size;
 }
 
 z_stream* FlateInit() {
