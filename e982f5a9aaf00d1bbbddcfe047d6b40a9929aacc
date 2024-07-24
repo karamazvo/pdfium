@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5ce1d6c9_e4c46c52",
+        "filename": "xfa/fgas/layout/cfgas_txtbreak.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-24T17:52:50Z",
+      "side": 1,
+      "message": "Swap for span.h.",
+      "revId": "e982f5a9aaf00d1bbbddcfe047d6b40a9929aacc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
