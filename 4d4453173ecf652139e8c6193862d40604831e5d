@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3625a779_02ca481e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-24T19:56:54Z",
+      "side": 1,
+      "message": "The more I look at this, the less it seems necessary, as I don\u0027t think we have a platform where unsigned long can\u0027t convert to size_t without a loss of precision. In particular, if we make the non-template arg type be StrictNumeric\u003csize_t\u003e \neverything builds as far as I can tell.",
+      "revId": "4d4453173ecf652139e8c6193862d40604831e5d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
