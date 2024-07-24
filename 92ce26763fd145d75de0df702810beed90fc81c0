@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "88fab83c_bce4a4e8",
+        "filename": "fpdfsdk/cpdfsdk_renderpage.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-24T18:16:41Z",
+      "side": 1,
+      "message": "nit: const?",
+      "range": {
+        "startLine": 71,
+        "startChar": 4,
+        "endLine": 71,
+        "endChar": 8
+      },
+      "revId": "92ce26763fd145d75de0df702810beed90fc81c0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
