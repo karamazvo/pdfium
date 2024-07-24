@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "553448f3_ad192ede",
+        "filename": "core/fxge/win32/cgdi_plus_ext.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-24T17:58:56Z",
+      "side": 1,
+      "message": "Appears unused, but is really is used as unbound reference in CallFunc().  Callfunc itself is, uh, a bad idea as it avoids all type safety. \n\nFollow-up: change CallFunc() to CALL_FUNC() and make it take an explicit gdi ext argument.",
+      "range": {
+        "startLine": 211,
+        "startChar": 21,
+        "endLine": 211,
+        "endChar": 31
+      },
+      "revId": "e82666909a1152f1efe5e5256e5c109c77f520e4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "daf4dbbf_2cea11a9",
+        "filename": "core/fxge/win32/cgdi_plus_ext.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-24T17:58:56Z",
+      "side": 1,
+      "message": "nit: local not needed, only used once below?",
+      "range": {
+        "startLine": 218,
+        "startChar": 0,
+        "endLine": 218,
+        "endChar": 52
+      },
+      "revId": "e82666909a1152f1efe5e5256e5c109c77f520e4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
