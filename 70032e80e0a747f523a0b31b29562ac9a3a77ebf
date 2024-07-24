@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "ae44586e_d4a7d54b",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1352,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-24T18:55:24Z",
+      "side": 1,
+      "message": "Ack. I\u0027ll look at this file again and see if there is more dead code to remove first.",
+      "parentUuid": "6e563ac0_17fa332e",
+      "range": {
+        "startLine": 1352,
+        "startChar": 22,
+        "endLine": 1352,
+        "endChar": 48
+      },
+      "revId": "70032e80e0a747f523a0b31b29562ac9a3a77ebf",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "0ee7af1d_f92060f7",
         "filename": "core/fxcodec/progressive_decoder.h",
         "patchSetId": 1
@@ -55,6 +79,24 @@
       "side": 1,
       "message": "AllRGB -\u003e RbgMaybeAlpha\nXRGB - \u003e RgbNoAlpha",
       "parentUuid": "0ee7af1d_f92060f7",
+      "revId": "70032e80e0a747f523a0b31b29562ac9a3a77ebf",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bb8d3f32_ba937f73",
+        "filename": "core/fxcodec/progressive_decoder.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-24T18:55:24Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "72ee3643_e80d3bc5",
       "revId": "70032e80e0a747f523a0b31b29562ac9a3a77ebf",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
