@@ -1,5 +1,29 @@
 {
-  "comments": [],
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a7e59f35_3d0c5f25",
+        "filename": "core/fxge/win32/cgdi_plus_ext.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 5645
+      },
+      "writtenOn": "2024-07-24T21:56:00Z",
+      "side": 1,
+      "message": "In the spirit of endless tinkering, this could be variadic, and avoid the ()() below when invoking. Also CALL_FUNC(), but eh.",
+      "range": {
+        "startLine": 181,
+        "startChar": 8,
+        "endLine": 181,
+        "endChar": 42
+      },
+      "revId": "f91d6f662cd386170cdfda31ab8707300a33f9e3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ],
   "submitRequirementResults": [
     {
       "submitRequirement": {
