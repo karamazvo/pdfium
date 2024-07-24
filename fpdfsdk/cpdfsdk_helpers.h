@@ -45,6 +45,10 @@ class CFX_DIBitmap;
 struct CPDF_JavaScript;
 struct XObjectContext;
 
+// Assumes unsigned long, which is oftentimes used by public APIs, is the same
+// as size_t. Thus the rest of this file does not use unsigned long.
+static_assert(sizeof(size_t) == sizeof(unsigned long));
+
 // Conversions to/from underlying types.
 IPDF_Page* IPDFPageFromFPDFPage(FPDF_PAGE page);
 FPDF_PAGE FPDFPageFromIPDFPage(IPDF_Page* page);
@@ -256,22 +260,8 @@ ByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string);
 UNSAFE_BUFFER_USAGE WideString
 WideStringFromFPDFWideString(FPDF_WIDESTRING wide_string);
 
-// Public APIs are not consistent w.r.t. the type used to represent buffer
-// length, while internal code generally expects size_t. To get consistent
-// behavior regardless of size type, templatize SpanFromFPDFApiArgs().
-//
-// TODO(crbug.com/42270941): Switch to concepts.
-template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
 UNSAFE_BUFFER_USAGE pdfium::span<char> SpanFromFPDFApiArgs(void* buffer,
-                                                           T buflen) {
-  if (!buffer) {
-    // API convention is to ignore `buflen` arg when `buffer` is NULL.
-    return pdfium::span<char>();
-  }
-  // SAFETY: required from caller, enforced by UNSAFE_BUFFER_USAGE in header.
-  return UNSAFE_BUFFERS(pdfium::make_span(
-      static_cast<char*>(buffer), pdfium::checked_cast<size_t>(buflen)));
-}
+                                                           size_t buflen);
 
 #ifdef PDF_ENABLE_XFA
 // Layering prevents fxcrt from knowing about FPDF_FILEHANDLER, so this can't
@@ -298,29 +288,25 @@ FS_RECTF FSRectFFromCFXFloatRect(const CFX_FloatRect& rect);
 CFX_Matrix CFXMatrixFromFSMatrix(const FS_MATRIX& matrix);
 FS_MATRIX FSMatrixFromCFXMatrix(const CFX_Matrix& matrix);
 
-unsigned long NulTerminateMaybeCopyAndReturnLength(
-    const ByteString& text,
-    pdfium::span<char> result_span);
+size_t NulTerminateMaybeCopyAndReturnLength(const ByteString& text,
+                                            pdfium::span<char> result_span);
 
-unsigned long Utf16EncodeMaybeCopyAndReturnLength(
-    const WideString& text,
-    pdfium::span<char> result_span);
+size_t Utf16EncodeMaybeCopyAndReturnLength(const WideString& text,
+                                           pdfium::span<char> result_span);
 
 // Returns the length of the raw stream data from |stream|. The raw data is the
 // stream's data as stored in the PDF without applying any filters. If |buffer|
 // is non-empty and its length is large enough to contain the raw data, then
 // the raw data is copied into |buffer|.
-unsigned long GetRawStreamMaybeCopyAndReturnLength(
-    RetainPtr<const CPDF_Stream> stream,
-    pdfium::span<uint8_t> buffer);
+size_t GetRawStreamMaybeCopyAndReturnLength(RetainPtr<const CPDF_Stream> stream,
+                                            pdfium::span<uint8_t> buffer);
 
 // Return the length of the decoded stream data of |stream|. The decoded data is
 // the uncompressed stream data, i.e. the raw stream data after having all
 // filters applied. If |buffer| is non-empty and its length is large enough to
 // contain the decoded data, then the decoded data is copied into |buffer|.
-unsigned long DecodeStreamMaybeCopyAndReturnLength(
-    RetainPtr<const CPDF_Stream> stream,
-    pdfium::span<uint8_t> buffer);
+size_t DecodeStreamMaybeCopyAndReturnLength(RetainPtr<const CPDF_Stream> stream,
+                                            pdfium::span<uint8_t> buffer);
 
 void SetPDFSandboxPolicy(FPDF_DWORD policy, FPDF_BOOL enable);
 FPDF_BOOL IsPDFSandboxPolicyEnabled(FPDF_DWORD policy);

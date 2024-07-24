@@ -245,7 +245,7 @@ FPDFAction_GetURIPath(FPDF_DOCUMENT document,
   CPDF_Action cAction(pdfium::WrapRetain(CPDFDictionaryFromFPDFAction(action)));
   ByteString path = cAction.GetURI(pDoc);
   fxcrt::try_spancpy(result_span, path.span_with_terminator());
-  return static_cast<unsigned long>(path.span_with_terminator().size());
+  return path.span_with_terminator().size();
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFDest_GetDestPageIndex(FPDF_DOCUMENT document,
@@ -268,11 +268,9 @@ FPDFDest_GetView(FPDF_DEST dest, unsigned long* pNumParams, FS_FLOAT* pParams) {
     return 0;
   }
   CPDF_Dest destination(pdfium::WrapRetain(CPDFArrayFromFPDFDest(dest)));
-  const unsigned long nParams =
-      pdfium::checked_cast<unsigned long>(destination.GetNumParams());
-  DCHECK(nParams <= 4);
-  *pNumParams = nParams;
-  for (unsigned long i = 0; i < nParams; ++i) {
+  *pNumParams = destination.GetNumParams();
+  CHECK_LE(*pNumParams, 4u);
+  for (unsigned long i = 0; i < *pNumParams; ++i) {
     UNSAFE_TODO(pParams[i]) = destination.GetParam(i);
   }
   return destination.GetZoomMode();
