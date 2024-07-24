@@ -22,6 +22,30 @@
       },
       "revId": "92ce26763fd145d75de0df702810beed90fc81c0",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "39b66ac9_56b2efd2",
+        "filename": "fpdfsdk/cpdfsdk_renderpage.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-24T18:19:37Z",
+      "side": 1,
+      "message": "Well, it soon won\u0027t be: https://pdfium-review.googlesource.com/c/pdfium/+/122373/2/fpdfsdk/cpdfsdk_renderpage.cpp, unless this gets more #ifs.",
+      "parentUuid": "88fab83c_bce4a4e8",
+      "range": {
+        "startLine": 71,
+        "startChar": 4,
+        "endLine": 71,
+        "endChar": 8
+      },
+      "revId": "92ce26763fd145d75de0df702810beed90fc81c0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
