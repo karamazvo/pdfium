@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "69271cf4_01781416",
+        "filename": "xfa/fxfa/cxfa_imagerenderer.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-25T15:30:06Z",
+      "side": 0,
+      "message": "AGG StartDIBits() never fails. Skia StartDIBits() can fail, but it indicates an error has occurred, rather than StartDIBits() is not supported. As such, just fail and be done, rather than executing this fallback code.",
+      "revId": "ba49b29cb6990afb2bfb91f5d0d79e9078adb1a7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
