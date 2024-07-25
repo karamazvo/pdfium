@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fae5c5ce_10e01804",
+        "filename": "xfa/fxfa/cxfa_ffwidget.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-25T16:29:50Z",
+      "side": 1,
+      "message": "nit: segv for free on next line when NULL, but ok.",
+      "range": {
+        "startLine": 71,
+        "startChar": 0,
+        "endLine": 71,
+        "endChar": 16
+      },
+      "revId": "4124a7b8d6b5d102cc9c9a2724125d1339cc0a83",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
