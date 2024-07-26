@@ -122,6 +122,24 @@
       "parentUuid": "add12c86_48b41f58",
       "revId": "e432029cec7d44c0fd55f5332b3f9d0b493302e0",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b379759a_07c8ea98",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3541084
+      },
+      "writtenOn": "2024-07-26T01:07:35Z",
+      "side": 1,
+      "message": "Thank you so much for your review.\nAs you mentioned, I reverted a specific file.\nCould you please run the try job?",
+      "parentUuid": "388ba40b_c44a816f",
+      "revId": "e432029cec7d44c0fd55f5332b3f9d0b493302e0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
