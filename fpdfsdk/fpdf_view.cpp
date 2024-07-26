@@ -533,7 +533,7 @@ RetainPtr<CFX_DIBitmap> GetMaskBitmap(CPDF_Page* pPage,
   // Create a new bitmap to transfer part of the page bitmap to.
   RetainPtr<CFX_DIBitmap> pDst = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pDst->Create(bitmap_area->Width(), bitmap_area->Height(),
-                    FXDIB_Format::kArgb)) {
+                    GetDefaultArgbFormat())) {
     return nullptr;
   }
   pDst->Clear(0x00ffffff);
@@ -610,7 +610,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   }
 
   RetainPtr<CFX_DIBitmap> pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  CHECK(pBitmap->Create(size_x, size_y, FXDIB_Format::kArgb));
+  CHECK(pBitmap->Create(size_x, size_y, GetDefaultArgbFormat()));
   if (!CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     // Not needed by Skia. Call it for AGG to preserve pre-existing behavior.
     pBitmap->Clear(0x00ffffff);
@@ -716,6 +716,12 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
   pPage->SetRenderContext(std::move(owned_context));
 
   RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap));
+#if defined(PDF_USE_SKIA)
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+    pBitmap->PreMultiply();
+  }
+#endif
+
   auto device = std::make_unique<CFX_DefaultRenderDevice>();
   device->AttachWithRgbByteOrder(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER));
   context->m_pDevice = std::move(device);

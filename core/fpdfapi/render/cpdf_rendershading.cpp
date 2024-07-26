@@ -68,6 +68,7 @@ std::array<FX_ARGB, kShadingSteps> GetShadingSteps(
     const RetainPtr<CPDF_ColorSpace>& pCS,
     int alpha,
     size_t results_count) {
+  // TODO(thestig): Support premultiplied alpha.
   CHECK_GE(results_count, CountOutputsFromFunctions(funcs));
   CHECK_GE(results_count, pCS->ComponentCount());
   std::array<FX_ARGB, kShadingSteps> shading_steps;
@@ -98,7 +99,7 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
                       const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
                       const RetainPtr<CPDF_ColorSpace>& pCS,
                       int alpha) {
-  DCHECK_EQ(pBitmap->GetFormat(), FXDIB_Format::kArgb);
+  CHECK(pBitmap->IsAlphaFormat());
 
   const uint32_t total_results = GetValidatedOutputsCount(funcs, pCS);
   if (total_results == 0)
@@ -132,6 +133,7 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   std::array<FX_ARGB, kShadingSteps> shading_steps =
       GetShadingSteps(t_min, t_max, funcs, pCS, alpha, total_results);
 
+  // TODO(thestig): Support premultiplied alpha.
   CFX_Matrix matrix = mtObject2Bitmap.GetInverse();
   for (int row = 0; row < height; row++) {
     auto dest_buf = pBitmap->GetWritableScanlineAs<uint32_t>(row).first(width);
@@ -166,7 +168,7 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
                        const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
                        const RetainPtr<CPDF_ColorSpace>& pCS,
                        int alpha) {
-  DCHECK_EQ(pBitmap->GetFormat(), FXDIB_Format::kArgb);
+  CHECK(pBitmap->IsAlphaFormat());
 
   const uint32_t total_results = GetValidatedOutputsCount(funcs, pCS);
   if (total_results == 0)
@@ -206,6 +208,7 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   int height = pBitmap->GetHeight();
   bool bDecreasing = dr < 0 && static_cast<int>(FXSYS_sqrt2(dx, dy)) < -dr;
 
+  // TODO(thestig): Support premultiplied alpha.
   CFX_Matrix matrix = mtObject2Bitmap.GetInverse();
   for (int row = 0; row < height; row++) {
     auto dest_buf = pBitmap->GetWritableScanlineAs<uint32_t>(row).first(width);
@@ -265,7 +268,7 @@ void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
                      const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
                      const RetainPtr<CPDF_ColorSpace>& pCS,
                      int alpha) {
-  DCHECK_EQ(pBitmap->GetFormat(), FXDIB_Format::kArgb);
+  CHECK(pBitmap->IsAlphaFormat());
 
   const uint32_t total_results = GetValidatedOutputsCount(funcs, pCS);
   if (total_results == 0)
@@ -288,6 +291,7 @@ void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   int width = pBitmap->GetWidth();
   int height = pBitmap->GetHeight();
 
+  // TODO(thestig): Support premultiplied alpha.
   CHECK_GE(total_results, CountOutputsFromFunctions(funcs));
   CHECK_GE(total_results, pCS->ComponentCount());
   std::vector<float> result_array(total_results);
@@ -407,6 +411,7 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
     pdfium::span<uint8_t> dib_span =
         pBitmap->GetWritableScanline(y).subspan(start_x * 4);
 
+    // TODO(thestig): Support premultiplied alpha.
     for (int x = start_x; x < end_x; x++) {
       r_result += r_unit;
       g_result += g_unit;
@@ -427,7 +432,7 @@ void DrawFreeGouraudShading(
     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
     RetainPtr<CPDF_ColorSpace> pCS,
     int alpha) {
-  DCHECK_EQ(pBitmap->GetFormat(), FXDIB_Format::kArgb);
+  CHECK(pBitmap->IsAlphaFormat());
 
   CPDF_MeshStream stream(kFreeFormGouraudTriangleMeshShading, funcs,
                          std::move(pShadingStream), std::move(pCS));
@@ -466,7 +471,7 @@ void DrawLatticeGouraudShading(
     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
     RetainPtr<CPDF_ColorSpace> pCS,
     int alpha) {
-  DCHECK_EQ(pBitmap->GetFormat(), FXDIB_Format::kArgb);
+  CHECK(pBitmap->IsAlphaFormat());
 
   int row_verts = pShadingStream->GetDict()->GetIntegerFor("VerticesPerRow");
   if (row_verts < 2)
@@ -793,7 +798,7 @@ void DrawCoonPatchMeshes(
     RetainPtr<CPDF_ColorSpace> pCS,
     bool bNoPathSmooth,
     int alpha) {
-  DCHECK_EQ(pBitmap->GetFormat(), FXDIB_Format::kArgb);
+  CHECK(pBitmap->IsAlphaFormat());
   DCHECK(type == kCoonsPatchMeshShading ||
          type == kTensorProductPatchMeshShading);
 

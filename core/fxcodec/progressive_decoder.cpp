@@ -40,6 +40,10 @@
 #include "core/fxcodec/tiff/tiff_decoder.h"
 #endif  // PDF_ENABLE_XFA_TIFF
 
+#if defined(PDF_USE_SKIA)
+#include "core/fxge/cfx_defaultrenderdevice.h"
+#endif
+
 namespace fxcodec {
 
 namespace {
@@ -180,6 +184,13 @@ bool ProgressiveDecoder::PngReadHeader(int width,
     case FXDIB_Format::kArgb:
       *color_type = 6;
       break;
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul:
+      CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+      // TODO(thestig): Support premultiplied alpha.
+      CHECK(false);
+      break;
+#endif
   }
   *gamma = kPngGamma;
   return true;
@@ -243,6 +254,13 @@ bool ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t** pSrcBuf) {
           *pDes = dest_a;
         }
         return true;
+#if defined(PDF_USE_SKIA)
+      case FXDIB_Format::kArgbPremul:
+        CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+        // TODO(thestig): Support premultiplied alpha.
+        CHECK(false);
+        break;
+#endif
     }
   });
 }
@@ -767,6 +785,13 @@ void ProgressiveDecoder::PngOneOneMapResampleHorz(
           *dest_scan++ = CStretchEngine::PixelFromFixed(dest_a);
         }
         break;
+#if defined(PDF_USE_SKIA)
+      case FXDIB_Format::kArgbPremul:
+        CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+        // TODO(thestig): Support premultiplied alpha.
+        CHECK(false);
+        break;
+#endif
     }
   });
 }
@@ -830,6 +855,13 @@ FXCODEC_STATUS ProgressiveDecoder::PngStartDecode() {
       m_SrcComponents = 4;
       m_SrcFormat = FXCodec_Argb;
       break;
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul:
+      CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+      // TODO(thestig): Support premultiplied alpha.
+      CHECK(false);
+      break;
+#endif
   }
   SetTransMethod();
   int scanline_size = FxAlignToBoundary<4>(m_SrcWidth * m_SrcComponents);
@@ -910,7 +942,7 @@ FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
   }
 
   auto pDIBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!pDIBitmap->Create(m_SrcWidth, m_SrcHeight, FXDIB_Format::kArgb)) {
+  if (!pDIBitmap->Create(m_SrcWidth, m_SrcHeight, GetDefaultArgbFormat())) {
     m_pDeviceBitmap = nullptr;
     m_pFile = nullptr;
     m_status = FXCODEC_STATUS::kError;
@@ -946,6 +978,13 @@ FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
       pFormatBitmap = pDIBitmap;
       created_format_bitmap = true;
       break;
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul:
+      CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+      // TODO(thestig): Support premultiplied alpha.
+      CHECK(false);
+      break;
+#endif
   }
   if (!created_format_bitmap) {
     m_pDeviceBitmap = nullptr;
@@ -985,6 +1024,13 @@ FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
       }
       case FXDIB_Format::kArgb:
         break;
+#if defined(PDF_USE_SKIA)
+      case FXDIB_Format::kArgbPremul:
+        CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+        // TODO(thestig): Support premultiplied alpha.
+        CHECK(false);
+        break;
+#endif
     }
   });
   FXDIB_ResampleOptions options;
@@ -1210,6 +1256,13 @@ void ProgressiveDecoder::SetTransMethod() {
       }
       break;
     }
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul:
+      CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+      // TODO(thestig): Support premultiplied alpha.
+      CHECK(false);
+      break;
+#endif
   }
 }
 

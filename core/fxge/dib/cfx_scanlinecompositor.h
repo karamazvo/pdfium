@@ -90,6 +90,13 @@ class CFX_ScanlineCompositor {
       pdfium::span<const uint8_t> src_scan,
       int width,
       pdfium::span<const uint8_t> clip_scan) const;
+#if defined(PDF_USE_SKIA)
+  void CompositeRgbBitmapLineSrcArgbPre(
+      pdfium::span<uint8_t> dest_scan,
+      pdfium::span<const uint8_t> src_scan,
+      int width,
+      pdfium::span<const uint8_t> clip_scan) const;
+#endif
 
   void CompositePalBitmapLineSrcBpp1(
       pdfium::span<uint8_t> dest_scan,

@@ -264,7 +264,3 @@ sk_sp<SkImage> CFX_DIBBase::RealizeSkImage() const {
       NOTREACHED_NORETURN();
   }
 }
-
-bool CFX_DIBBase::IsPremultiplied() const {
-  return false;
-}

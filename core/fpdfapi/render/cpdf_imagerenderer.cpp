@@ -321,7 +321,8 @@ bool CPDF_ImageRenderer::DrawPatternImage() {
 
   CFX_Matrix new_matrix = GetDrawMatrix(rect);
   CFX_DefaultRenderDevice bitmap_device;
-  if (!bitmap_device.Create(rect.Width(), rect.Height(), FXDIB_Format::kArgb)) {
+  if (!bitmap_device.Create(rect.Width(), rect.Height(),
+                            GetDefaultArgbFormat())) {
     return true;
   }
 

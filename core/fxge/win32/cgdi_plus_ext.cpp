@@ -32,6 +32,10 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/win32/cwin32_platform.h"
 
+#if defined(PDF_USE_SKIA)
+#include "core/fxge/cfx_defaultrenderdevice.h"
+#endif
+
 // Has to come before gdiplus.h
 namespace Gdiplus {
 using std::max;
