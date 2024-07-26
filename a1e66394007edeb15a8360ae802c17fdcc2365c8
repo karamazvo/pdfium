@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "be73918a_307fa21c",
+        "filename": "xfa/fgas/layout/cfgas_txtbreak.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 813,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-26T19:35:59Z",
+      "side": 1,
+      "message": "Take a reference to the front element, and use that instead of calling front() repeatedly?",
+      "revId": "a1e66394007edeb15a8360ae802c17fdcc2365c8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "99eb0d9d_ef09dcbd",
+        "filename": "xfa/fgas/layout/cfgas_txtbreak.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 863,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-26T19:35:59Z",
+      "side": 1,
+      "message": "Use `*\u003d`?",
+      "revId": "a1e66394007edeb15a8360ae802c17fdcc2365c8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
