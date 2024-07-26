@@ -57,6 +57,9 @@ class CPDF_ImageRenderer {
 
   bool StartBitmapAlpha();
   bool StartDIBBase();
+#if BUILDFLAG(IS_WIN)
+  bool StartDIBBaseFallback();
+#endif
   bool StartRenderDIBBase();
   bool StartLoadDIBBase();
   bool ContinueDefault(PauseIndicatorIface* pPause);
