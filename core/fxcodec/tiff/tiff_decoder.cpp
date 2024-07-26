@@ -432,8 +432,9 @@ bool CTiffContext::Decode(const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
   if (pDIBitmap->GetBPP() == 32) {
     uint16_t rotation = ORIENTATION_TOPLEFT;
     TIFFGetField(m_tif_ctx.get(), TIFFTAG_ORIENTATION, &rotation);
-    uint32_t* data = const_cast<uint32_t*>(
-        reinterpret_cast<const uint32_t*>(pDIBitmap->GetBuffer().data()));
+    uint32_t* data =
+        fxcrt::reinterpret_span<uint32_t>(pDIBitmap->GetWritableBuffer())
+            .data();
     if (TIFFReadRGBAImageOriented(m_tif_ctx.get(), img_width, img_height, data,
                                   rotation, 1)) {
       for (uint32_t row = 0; row < img_height; row++) {
