@@ -128,7 +128,7 @@ bool ProgressiveDecoder::PngReadHeader(int width,
 
 bool ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t** pSrcBuf) {
   if (line < 0 || line >= m_SrcHeight) {
-    return true;
+    return false;
   }
 
   CHECK_EQ(m_pDeviceBitmap->GetFormat(), FXDIB_Format::kArgb);
