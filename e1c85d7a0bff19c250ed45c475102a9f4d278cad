@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "396947df_030dc952",
+        "filename": "core/fpdfapi/render/cpdf_renderstatus.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1260,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-26T22:00:18Z",
+      "side": 1,
+      "message": "This can probably be `auto\u0026 bgra \u003d reinterpret_cast\u003cFX_BGRA_STRUCT\u003cuint8_t\u003e\u0026\u003e(fill_argb);` to avoid having to use `\u0026` to get a pointer.",
+      "revId": "e1c85d7a0bff19c250ed45c475102a9f4d278cad",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
