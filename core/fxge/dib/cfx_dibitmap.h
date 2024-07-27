@@ -77,8 +77,10 @@ class CFX_DIBitmap final : public CFX_DIBBase {
   // Requires `this` to be of format `FXDIB_Format::kArgb`.
   void SetRedFromAlpha();
 
+#if BUILDFLAG(IS_WIN)
   // Requires `this` to be of format `FXDIB_Format::kArgb`.
   void SetUniformOpaqueAlpha();
+#endif
 
   // TODO(crbug.com/pdfium/2007): Migrate callers to `CFX_RenderDevice`.
   bool MultiplyAlpha(float alpha);

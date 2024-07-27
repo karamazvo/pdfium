@@ -301,6 +301,7 @@ void CFX_DIBitmap::SetRedFromAlpha() {
   }
 }
 
+#if BUILDFLAG(IS_WIN)
 void CFX_DIBitmap::SetUniformOpaqueAlpha() {
   CHECK_EQ(FXDIB_Format::kArgb, GetFormat());
   CHECK(m_pBuffer);
@@ -313,6 +314,7 @@ void CFX_DIBitmap::SetUniformOpaqueAlpha() {
     }
   }
 }
+#endif  // BUILDFLAG(IS_WIN)
 
 bool CFX_DIBitmap::MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) {
   CHECK_EQ(GetWidth(), mask->GetWidth());
