@@ -11,6 +11,7 @@
 
 #include <array>
 #include <memory>
+#include <vector>
 
 #include "core/fxcodec/jbig2/JBig2_ArithDecoder.h"
 #include "core/fxcrt/span.h"
@@ -44,7 +45,7 @@ class CJBig2_SDDProc {
   uint32_t SDNUMINSYMS;
   uint32_t SDNUMNEWSYMS;
   uint32_t SDNUMEXSYMS;
-  UNOWNED_PTR_EXCLUSION CJBig2_Image** SDINSYMS;
+  std::vector<UnownedPtr<CJBig2_Image>> SDINSYMS;
   UnownedPtr<const CJBig2_HuffmanTable> SDHUFFDH;
   UnownedPtr<const CJBig2_HuffmanTable> SDHUFFDW;
   UnownedPtr<const CJBig2_HuffmanTable> SDHUFFBMSIZE;
