@@ -1,0 +1,45 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d109a04d_0a89e685",
+        "filename": "core/fxge/dib/cfx_dibitmap.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5645
+      },
+      "writtenOn": "2024-07-29T23:08:47Z",
+      "side": 1,
+      "message": "Should this be a strict_numeric\u003cuint32_t\u003e to prevent someone from passing in a size_t  and truncating?  Or is that warning enabled by clang?",
+      "range": {
+        "startLine": 33,
+        "startChar": 26,
+        "endLine": 33,
+        "endChar": 34
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "04b4d0d5_d0ffc9ca",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxge/dib/cfx_dibitmap.cpp",
+              "range": {
+                "startLine": 33,
+                "startChar": 0,
+                "endLine": 34,
+                "endChar": 0
+              },
+              "replacement": "size_t GetAllocSizeOrZero(size_t size) {\n"
+            }
+          ]
+        }
+      ],
+      "revId": "2d40b1abacd20e2ecc718bbb5a78d6892174cfd0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
