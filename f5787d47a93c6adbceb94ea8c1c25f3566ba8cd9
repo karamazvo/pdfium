@@ -3,6 +3,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "90729708_5cd6a382",
+        "filename": "core/fxcodec/jbig2/jbig2_decoder.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-30T16:44:57Z",
+      "side": 1,
+      "message": "Also remove.",
+      "revId": "f5787d47a93c6adbceb94ea8c1c25f3566ba8cd9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "ddb3769d_8f178ca0",
         "filename": "core/fxcodec/jbig2/jbig2_decoder.h",
         "patchSetId": 2
