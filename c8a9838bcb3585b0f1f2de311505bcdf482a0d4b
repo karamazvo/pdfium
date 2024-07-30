@@ -16,6 +16,24 @@
       "message": "nit: self-contained means what?  that it does the same work as the dtor inside itself? Maybe explain this better.",
       "revId": "c8a9838bcb3585b0f1f2de311505bcdf482a0d4b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6a26ec42_02f4cca4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-30T18:16:34Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "61f789cd_99d0ca79",
+      "revId": "c8a9838bcb3585b0f1f2de311505bcdf482a0d4b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
