@@ -275,7 +275,7 @@ class FPDFViewEmbedderTest : public EmbedderTest {
     EXPECT_EQ(bitmap_height, static_cast<int>(FPDF_GetPageHeight(page)));
     FPDFBitmap_FillRect(bitmap, 0, 0, bitmap_width, bitmap_height, 0xFFFFFFFF);
     FPDF_RenderPageBitmap(bitmap, page, 0, 0, bitmap_width, bitmap_height, 0,
-                          0);
+                          FPDF_ANNOT);
     CompareBitmap(bitmap, bitmap_width, bitmap_height, expected_checksum);
   }
 };
@@ -2173,4 +2173,20 @@ TEST_F(FPDFViewEmbedderTest, Bug2112) {
   ScopedFPDFBitmap bitmap(FPDFBitmap_CreateEx(kWidth, kHeight, FPDFBitmap_BGR,
                                               vec.data(), kStride));
   EXPECT_EQ(FPDFBitmap_BGR, FPDFBitmap_GetFormat(bitmap.get()));
+}
+
+TEST_F(FPDFViewEmbedderTest, RenderAnnotsGrayScale) {
+  ASSERT_TRUE(OpenDocument("annotation_highlight_square_with_ap.pdf"));
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  const char* const gray_checksum = []() {
+    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+      return "b73df08d5252615ad6ed2fe7d6c73883";
+    }
+    return "c02f449666bf2633d06b909c76bc1c1d";
+  }();
+
+  TestRenderPageBitmapWithInternalMemory(page.get(), FPDFBitmap_Gray,
+                                         gray_checksum);
 }
