@@ -305,7 +305,7 @@ void CFGAS_GEGraphics::FillPathWithShading(
       float y_span = end_y - start_y;
       float axis_len_square = (x_span * x_span) + (y_span * y_span);
       for (int32_t row = 0; row < height; row++) {
-        uint32_t* dib_buf = bmp->GetWritableScanlineAs<uint32_t>(row).data();
+        auto dib_buf = bmp->GetWritableScanlineAs<uint32_t>(row);
         for (int32_t column = 0; column < width; column++) {
           float scale = 0.0f;
           if (axis_len_square) {
@@ -323,8 +323,7 @@ void CFGAS_GEGraphics::FillPathWithShading(
               scale = 1.0f;
             }
           }
-          UNSAFE_TODO(dib_buf[column]) =
-              m_info.fillColor.GetShading()->GetArgb(scale);
+          dib_buf[column] = m_info.fillColor.GetShading()->GetArgb(scale);
         }
       }
       result = true;
