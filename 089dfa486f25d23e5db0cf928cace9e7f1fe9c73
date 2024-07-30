@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "10d61d4f_db5f3c12",
+        "filename": "core/fxge/freetype/fx_freetype.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-30T19:23:45Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "45b3e5e8_a8a58671",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 3
+      },
+      "revId": "089dfa486f25d23e5db0cf928cace9e7f1fe9c73",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "e3b6ee4b_03a8d915",
         "filename": "core/fxge/freetype/fx_freetype.cpp",
         "patchSetId": 3
@@ -43,6 +67,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "48e3a067_3aee20ea",
+        "filename": "core/fxge/freetype/fx_freetype.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-30T19:23:45Z",
+      "side": 1,
+      "message": "Deferred to follow-up.",
+      "parentUuid": "e3b6ee4b_03a8d915",
+      "revId": "089dfa486f25d23e5db0cf928cace9e7f1fe9c73",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "e95a0d7f_607cf365",
         "filename": "core/fxge/freetype/fx_freetype.cpp",
         "patchSetId": 3
@@ -54,6 +96,24 @@
       "writtenOn": "2024-07-30T19:16:31Z",
       "side": 1,
       "message": "Probably not needed. Code flow will naturally bypass the for-loop.",
+      "revId": "089dfa486f25d23e5db0cf928cace9e7f1fe9c73",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e17131e4_bc796494",
+        "filename": "core/fxge/freetype/fx_freetype.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-30T19:23:45Z",
+      "side": 1,
+      "message": "Removed.",
+      "parentUuid": "e95a0d7f_607cf365",
       "revId": "089dfa486f25d23e5db0cf928cace9e7f1fe9c73",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -95,6 +155,30 @@
       "side": 1,
       "message": "Doesn\u0027t hurt.",
       "parentUuid": "ee849a44_8d427f71",
+      "range": {
+        "startLine": 217,
+        "startChar": 8,
+        "endLine": 217,
+        "endChar": 18
+      },
+      "revId": "089dfa486f25d23e5db0cf928cace9e7f1fe9c73",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "00499469_705bd386",
+        "filename": "core/fxge/freetype/fx_freetype.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-30T19:23:45Z",
+      "side": 1,
+      "message": "Implemented.",
+      "parentUuid": "2394b330_1180ec84",
       "range": {
         "startLine": 217,
         "startChar": 8,
