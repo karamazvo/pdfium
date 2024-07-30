@@ -40,6 +40,30 @@
       ],
       "revId": "2d40b1abacd20e2ecc718bbb5a78d6892174cfd0",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "48b1ac8e_9630b21c",
+        "filename": "core/fxge/dib/cfx_dibitmap.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-30T19:26:50Z",
+      "side": 1,
+      "message": "`-Wshorten-64-to-32` fires here.",
+      "parentUuid": "d109a04d_0a89e685",
+      "range": {
+        "startLine": 33,
+        "startChar": 26,
+        "endLine": 33,
+        "endChar": 34
+      },
+      "revId": "2d40b1abacd20e2ecc718bbb5a78d6892174cfd0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
