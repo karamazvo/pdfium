@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "823d6d09_b1ce1530",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 735,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-30T16:32:56Z",
+      "side": 0,
+      "message": "The two Decode() calls both pass in 32 BPP bitmaps.",
+      "range": {
+        "startLine": 735,
+        "startChar": 23,
+        "endLine": 735,
+        "endChar": 29
+      },
+      "revId": "b45382075137b6d2f194cf42a08eea2b7caec619",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b48eb21a_6009c23e",
+        "filename": "core/fxcodec/tiff/tiff_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-30T16:32:56Z",
+      "side": 0,
+      "message": "There\u0027s another TIFFReadRGBAImageOriented() call in the libwebp code, and they don\u0027t bother with the fallback.",
+      "revId": "b45382075137b6d2f194cf42a08eea2b7caec619",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
