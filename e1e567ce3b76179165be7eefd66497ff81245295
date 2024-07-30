@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a14ddc60_4b228a08",
+        "filename": "xfa/fgas/graphics/cfgas_gegraphics.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 385,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-30T19:45:51Z",
+      "side": 1,
+      "message": "Gah, missed one. Will do the same.",
+      "range": {
+        "startLine": 385,
+        "startChar": 0,
+        "endLine": 385,
+        "endChar": 40
+      },
+      "revId": "e1e567ce3b76179165be7eefd66497ff81245295",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
