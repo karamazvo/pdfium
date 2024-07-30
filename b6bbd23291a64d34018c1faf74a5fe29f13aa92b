@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "55889c99_ae1398cd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8631
+      },
+      "writtenOn": "2024-07-30T20:28:39Z",
+      "side": 1,
+      "message": "Can you trigger the CQ for me? Turns out I don\u0027t have permissions to do that in this repo.",
+      "revId": "b6bbd23291a64d34018c1faf74a5fe29f13aa92b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
