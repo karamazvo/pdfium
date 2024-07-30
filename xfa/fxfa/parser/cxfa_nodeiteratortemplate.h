@@ -9,10 +9,14 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "v8/include/cppgc/macros.h"
+#include "v8/include/cppgc/type-traits.h"
 
 template <class NodeType,
           class TraverseStrategy,
-          typename HolderType = UnownedPtr<NodeType>>
+          typename HolderType = std::conditional_t<
+              cppgc::IsGarbageCollectedOrMixinTypeV<NodeType>,
+              NodeType*,
+              UnownedPtr<NodeType>>>
 class CXFA_NodeIteratorTemplate {
   CPPGC_STACK_ALLOCATED();  // Allows Raw/Unowned |HolderType|.
 
