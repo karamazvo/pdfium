@@ -867,10 +867,11 @@ bool CFX_DIBitmap::CompositeRect(int left,
 }
 
 bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
-  // TODO(crbug.com/42271020): Consider adding support for
-  // `FXDIB_Format::kArgbPremul`
   DCHECK(dest_format == FXDIB_Format::k8bppMask ||
          dest_format == FXDIB_Format::kArgb ||
+#if defined(PDF_USE_SKIA)
+         dest_format == FXDIB_Format::kArgbPremul ||
+#endif
          dest_format == FXDIB_Format::kRgb);
 
   if (dest_format == GetFormat()) {
@@ -889,6 +890,26 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
     SetUniformOpaqueAlpha();
     return true;
   }
+
+#if defined(PDF_USE_SKIA)
+  if (dest_format == FXDIB_Format::kArgbPremul &&
+      GetFormat() == FXDIB_Format::kRgb32) {
+    SetFormat(FXDIB_Format::kArgbPremul);
+    SetUniformOpaqueAlpha();
+    return true;
+  }
+
+  if (dest_format == FXDIB_Format::kArgbPremul &&
+      GetFormat() == FXDIB_Format::kArgb) {
+    PreMultiply();
+    return true;
+  }
+  if (dest_format == FXDIB_Format::kArgb &&
+      GetFormat() == FXDIB_Format::kArgbPremul) {
+    UnPreMultiply();
+    return true;
+  }
+#endif  // defined(PDF_USE_SKIA)
 
   std::optional<PitchAndSize> pitch_size =
       CalculatePitchAndSize(GetWidth(), GetHeight(), dest_format, /*pitch=*/0);
