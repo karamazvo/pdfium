@@ -319,7 +319,6 @@ TEST(CFX_FloatRect, ScaleFromCenterPointEmpty) {
   EXPECT_FLOAT_EQ(0.0f, rect.top);
 }
 
-#ifndef NDEBUG
 TEST(CFX_FloatRect, Print) {
   std::ostringstream os;
   CFX_FloatRect rect;
@@ -353,7 +352,6 @@ TEST(CFX_RectF, Print) {
   os << rect;
   EXPECT_EQ("rect[w 4.25 x h 3.25 (left 10.5, top 20.5)]", os.str());
 }
-#endif  // NDEBUG
 
 TEST(CFX_Matrix, ReverseIdentity) {
   CFX_Matrix rev = CFX_Matrix().GetInverse();
