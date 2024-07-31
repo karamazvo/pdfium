@@ -33,6 +33,24 @@
       "message": "Sure but also see https://en.cppreference.com/w/cpp/io/ios_base/setf as we might want to apply std::fixed on all our streams as a fallback.",
       "revId": "0889a134309d5404fd303859d253ab3973da8690",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "85c6121b_179e26ce",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-07-31T21:37:32Z",
+      "side": 1,
+      "message": "I have some CL stashed locally that audited all the ostreamstream usage. I\u0027ll try to dig that up at some point and finish fixing this issue.",
+      "parentUuid": "c0d06706_9bcaf15f",
+      "revId": "0889a134309d5404fd303859d253ab3973da8690",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
