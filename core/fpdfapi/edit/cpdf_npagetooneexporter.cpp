@@ -196,15 +196,10 @@ bool CPDF_NPageToOneExporter::ExportNPagesToOne(
   return true;
 }
 
-ByteString CPDF_NPageToOneExporter::AddSubPage(
-    const RetainPtr<CPDF_Page>& src_page,
+// static
+ByteString CPDF_NPageToOneExporter::GenerateSubPageContentStream(
+    const ByteString& xobject_name,
     const NupPageSettings& settings) {
-  uint32_t src_page_obj_num = src_page->GetDict()->GetObjNum();
-  const auto it = src_page_xobject_map_.find(src_page_obj_num);
-  ByteString xobject_name = it != src_page_xobject_map_.end()
-                                ? it->second
-                                : MakeXObjectFromPage(src_page);
-
   CFX_Matrix matrix;
   matrix.Scale(settings.scale, settings.scale);
   matrix.Translate(settings.sub_page_start_point.x,
@@ -216,6 +211,17 @@ ByteString CPDF_NPageToOneExporter::AddSubPage(
                 << matrix.d << " " << matrix.e << " " << matrix.f << " cm\n"
                 << "/" << xobject_name << " Do Q\n";
   return ByteString(contentStream);
+}
+
+ByteString CPDF_NPageToOneExporter::AddSubPage(
+    const RetainPtr<CPDF_Page>& src_page,
+    const NupPageSettings& settings) {
+  uint32_t src_page_obj_num = src_page->GetDict()->GetObjNum();
+  const auto it = src_page_xobject_map_.find(src_page_obj_num);
+  ByteString xobject_name = it != src_page_xobject_map_.end()
+                                ? it->second
+                                : MakeXObjectFromPage(src_page);
+  return GenerateSubPageContentStream(xobject_name, settings);
 }
 
 RetainPtr<CPDF_Stream> CPDF_NPageToOneExporter::MakeXObjectFromPageRaw(
