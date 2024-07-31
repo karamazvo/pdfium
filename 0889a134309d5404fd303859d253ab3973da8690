@@ -16,6 +16,23 @@
       "message": "LGTM",
       "revId": "0889a134309d5404fd303859d253ab3973da8690",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c0d06706_9bcaf15f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-07-31T16:54:04Z",
+      "side": 1,
+      "message": "Sure but also see https://en.cppreference.com/w/cpp/io/ios_base/setf as we might want to apply std::fixed on all our streams as a fallback.",
+      "revId": "0889a134309d5404fd303859d253ab3973da8690",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
