@@ -276,9 +276,10 @@ class CFX_FloatRect {
   float top = 0.0f;
 };
 
-#ifndef NDEBUG
+// This is declared here for use in tests, but is defined in the
+// //core/fxcrt:unit_test_support target. Depend on that to use this in unit
+// tests. This should not be used in production code.
 std::ostream& operator<<(std::ostream& os, const CFX_FloatRect& rect);
-#endif
 
 // LTWH rectangles (y-axis runs downwards).
 class CFX_RectF {
@@ -439,9 +440,10 @@ class CFX_RectF {
   float height = 0.0f;
 };
 
-#ifndef NDEBUG
+// This is declared here for use in tests, but is defined in the
+// //core/fxcrt:unit_test_support target. Depend on that to use this in unit
+// tests. This should not be used in production code.
 std::ostream& operator<<(std::ostream& os, const CFX_RectF& rect);
-#endif  // NDEBUG
 
 // The matrix is of the form:
 // | a  b  0 |
