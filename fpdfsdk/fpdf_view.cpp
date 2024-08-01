@@ -716,6 +716,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
   pPage->SetRenderContext(std::move(owned_context));
 
   RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap));
+  CHECK(!pBitmap->IsPremultiplied());
+
   auto device = std::make_unique<CFX_DefaultRenderDevice>();
   device->AttachWithRgbByteOrder(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER));
   context->m_pDevice = std::move(device);
@@ -751,6 +753,8 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
   pPage->SetRenderContext(std::move(owned_context));
 
   RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap));
+  CHECK(!pBitmap->IsPremultiplied());
+
   auto device = std::make_unique<CFX_DefaultRenderDevice>();
   device->AttachWithRgbByteOrder(std::move(pBitmap),
                                  !!(flags & FPDF_REVERSE_BYTE_ORDER));
@@ -882,6 +886,10 @@ FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV FPDFBitmap_Create(int width,
                        alpha ? FXDIB_Format::kArgb : FXDIB_Format::kRgb32)) {
     return nullptr;
   }
+
+  CHECK(!pBitmap->IsPremultiplied());
+
+  // Caller takes ownership.
   return FPDFBitmapFromCFXDIBitmap(pBitmap.Leak());
 }
 
@@ -911,9 +919,13 @@ FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV FPDFBitmap_CreateEx(int width,
   // Ensure external memory is good at least for the duration of this call.
   UnownedPtr<uint8_t> pChecker(static_cast<uint8_t*>(first_scan));
   auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!pBitmap->Create(width, height, fx_format, pChecker, stride))
+  if (!pBitmap->Create(width, height, fx_format, pChecker, stride)) {
     return nullptr;
+  }
 
+  CHECK(!pBitmap->IsPremultiplied());
+
+  // Caller takes ownership.
   return FPDFBitmapFromCFXDIBitmap(pBitmap.Leak());
 }
 
@@ -946,8 +958,10 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
   if (!bitmap)
     return;
 
-  CFX_DefaultRenderDevice device;
   RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap));
+  CHECK(!pBitmap->IsPremultiplied());
+
+  CFX_DefaultRenderDevice device;
   device.Attach(pBitmap);
   if (!pBitmap->IsAlphaFormat())
     color |= 0xFF000000;
