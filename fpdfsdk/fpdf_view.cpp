@@ -946,13 +946,37 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
   if (!bitmap)
     return;
 
-  CFX_DefaultRenderDevice device;
+  FX_RECT fill_rect(left, top, left + width, top + height);
   RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap));
-  device.Attach(pBitmap);
-  if (!pBitmap->IsAlphaFormat())
+  if (!pBitmap->IsAlphaFormat()) {
     color |= 0xFF000000;
-  device.FillRect(FX_RECT(left, top, left + width, top + height),
-                  static_cast<uint32_t>(color));
+  }
+  // Handle filling 32-bit bitmaps separately. When CFX_DefaultRenderDevice is
+  // using Skia, this avoids extra work to change `pBitmap` to be premultiplied
+  // and back.
+  if (pBitmap->GetBPP() == 32) {
+#if defined(PDF_USE_SKIA)
+    CHECK(!pBitmap->IsPremultiplied());
+#endif
+
+    fill_rect.Intersect(
+        FX_RECT(0, 0, pBitmap->GetWidth(), pBitmap->GetHeight()));
+    if (fill_rect.IsEmpty()) {
+      return;
+    }
+
+    for (int row = 0; row < fill_rect.Height(); ++row) {
+      auto span32 =
+          pBitmap->GetWritableScanlineAs<uint32_t>(row + fill_rect.top)
+              .subspan(fill_rect.left, fill_rect.Width());
+      fxcrt::Fill(span32, static_cast<uint32_t>(color));
+    }
+    return;
+  }
+
+  CFX_DefaultRenderDevice device;
+  device.Attach(std::move(pBitmap));
+  device.FillRect(fill_rect, static_cast<uint32_t>(color));
 }
 
 FPDF_EXPORT void* FPDF_CALLCONV FPDFBitmap_GetBuffer(FPDF_BITMAP bitmap) {
