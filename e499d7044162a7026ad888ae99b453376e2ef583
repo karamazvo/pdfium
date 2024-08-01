@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "30350024_88238df5",
+        "filename": "fpdfsdk/cpdfsdk_helpers.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-01T19:50:19Z",
+      "side": 1,
+      "message": "These usually come in pairs.  Is there a cast to FPDF_ type that should be converted to the (missing) inverse helper method?\n\nThese exist largely because I\u0027d imagined that in the future, we\u0027d might add memory tags for certain object to flag callers passing bad pointers arcoss the public API, but meh.",
+      "range": {
+        "startLine": 91,
+        "startChar": 0,
+        "endLine": 91,
+        "endChar": 70
+      },
+      "revId": "e499d7044162a7026ad888ae99b453376e2ef583",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
