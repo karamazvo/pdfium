@@ -471,9 +471,12 @@ FXDIB_Format GetCreateCompatibleBitmapFormat(int render_caps) {
   if (render_caps & FXRC_BYTEMASK_OUTPUT) {
     return FXDIB_Format::k8bppMask;
   }
+#if defined(PDF_USE_SKIA)
+  if (render_caps & FXRC_PREMULTIPLIED_ALPHA) {
+    return FXDIB_Format::kArgbPremul;
+  }
+#endif
   if (render_caps & FXRC_ALPHA_OUTPUT) {
-    // TODO(crbug.com/42271020): Consider adding support for
-    // `FXDIB_Format::kArgbPremul`
     return FXDIB_Format::kArgb;
   }
   return CFX_DIBBase::kPlatformRGBFormat;
