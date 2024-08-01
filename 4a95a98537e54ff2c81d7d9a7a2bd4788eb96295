@@ -43,6 +43,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "f1ca9afb_4c79f127",
+        "filename": "fpdfsdk/fpdf_formfill.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-01T18:17:51Z",
+      "side": 1,
+      "message": "Gah. Let me prepend a CL to rework this.",
+      "parentUuid": "110aa415_a3309b5f",
+      "range": {
+        "startLine": 210,
+        "startChar": 9,
+        "endLine": 210,
+        "endChar": 15
+      },
+      "revId": "4a95a98537e54ff2c81d7d9a7a2bd4788eb96295",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "5bd234ad_8e40f959",
         "filename": "fpdfsdk/fpdf_progressive.cpp",
         "patchSetId": 1
@@ -54,6 +78,30 @@
       "writtenOn": "2024-08-01T17:30:53Z",
       "side": 1,
       "message": "Is \u0027pBitmap` known to be non-NULL?",
+      "range": {
+        "startLine": 64,
+        "startChar": 9,
+        "endLine": 64,
+        "endChar": 16
+      },
+      "revId": "4a95a98537e54ff2c81d7d9a7a2bd4788eb96295",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "93bc949d_ca853050",
+        "filename": "fpdfsdk/fpdf_progressive.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-01T18:17:51Z",
+      "side": 1,
+      "message": "Line 52 checked `bitmap`.",
+      "parentUuid": "5bd234ad_8e40f959",
       "range": {
         "startLine": 64,
         "startChar": 9,
@@ -87,6 +135,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "305c2687_fd63b3bc",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 719,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-01T18:17:51Z",
+      "side": 1,
+      "message": "Line 706 checked `bitmap`.",
+      "parentUuid": "f3fb406b_2f9c951c",
+      "range": {
+        "startLine": 719,
+        "startChar": 9,
+        "endLine": 719,
+        "endChar": 16
+      },
+      "revId": "4a95a98537e54ff2c81d7d9a7a2bd4788eb96295",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "76d74197_efd3e484",
@@ -100,6 +172,30 @@
       "writtenOn": "2024-08-01T17:30:53Z",
       "side": 1,
       "message": "ditto",
+      "range": {
+        "startLine": 756,
+        "startChar": 9,
+        "endLine": 756,
+        "endChar": 16
+      },
+      "revId": "4a95a98537e54ff2c81d7d9a7a2bd4788eb96295",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a78378d6_a7023e78",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 756,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-01T18:17:51Z",
+      "side": 1,
+      "message": "Line 743 checked `bitmap`.",
+      "parentUuid": "76d74197_efd3e484",
       "range": {
         "startLine": 756,
         "startChar": 9,
