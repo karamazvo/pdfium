@@ -33,6 +33,16 @@ bool CFX_DefaultRenderDevice::UseSkiaRenderer() {
 #endif
 }
 
+// static
+FXDIB_Format CFX_DefaultRenderDevice::GetDefaultArgbFormat() {
+#if defined(PDF_USE_SKIA)
+  if (UseSkiaRenderer()) {
+    return FXDIB_Format::kArgbPremul;
+  }
+#endif
+  return FXDIB_Format::kArgb;
+}
+
 #if defined(PDF_USE_SKIA)
 // static
 void CFX_DefaultRenderDevice::SetRendererType(RendererType renderer_type) {

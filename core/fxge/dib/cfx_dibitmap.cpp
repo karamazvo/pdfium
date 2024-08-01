@@ -14,6 +14,7 @@
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
@@ -867,11 +868,15 @@ bool CFX_DIBitmap::CompositeRect(int left,
 }
 
 bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
-  // TODO(crbug.com/42271020): Consider adding support for
-  // `FXDIB_Format::kArgbPremul`
-  DCHECK(dest_format == FXDIB_Format::k8bppMask ||
-         dest_format == FXDIB_Format::kArgb ||
-         dest_format == FXDIB_Format::kRgb);
+  static constexpr FXDIB_Format kAllowedFormats[] = {
+      FXDIB_Format::k8bppMask,
+      FXDIB_Format::kArgb,
+#if defined(PDF_USE_SKIA)
+      FXDIB_Format::kArgbPremul,
+#endif
+      FXDIB_Format::kRgb,
+  };
+  CHECK((pdfium::Contains(kAllowedFormats, dest_format)));
 
   if (dest_format == GetFormat()) {
     return true;
@@ -889,6 +894,26 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
     SetUniformOpaqueAlpha();
     return true;
   }
+
+#if defined(PDF_USE_SKIA)
+  if (dest_format == FXDIB_Format::kArgbPremul &&
+      GetFormat() == FXDIB_Format::kRgb32) {
+    SetFormat(FXDIB_Format::kArgbPremul);
+    SetUniformOpaqueAlpha();
+    return true;
+  }
+
+  if (dest_format == FXDIB_Format::kArgbPremul &&
+      GetFormat() == FXDIB_Format::kArgb) {
+    PreMultiply();
+    return true;
+  }
+  if (dest_format == FXDIB_Format::kArgb &&
+      GetFormat() == FXDIB_Format::kArgbPremul) {
+    UnPreMultiply();
+    return true;
+  }
+#endif  // defined(PDF_USE_SKIA)
 
   std::optional<PitchAndSize> pitch_size =
       CalculatePitchAndSize(GetWidth(), GetHeight(), dest_format, /*pitch=*/0);
@@ -924,3 +949,22 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
   SetPitch(dest_pitch);
   return true;
 }
+
+#if defined(PDF_USE_SKIA)
+CFX_DIBitmap::ScopedPremultiplier::ScopedPremultiplier(
+    RetainPtr<CFX_DIBitmap> bitmap,
+    bool skia_active)
+    : bitmap_(std::move(bitmap)), skia_active_(skia_active) {
+  CHECK(!bitmap_->IsPremultiplied());
+  if (skia_active_) {
+    bitmap_->PreMultiply();
+  }
+}
+
+CFX_DIBitmap::ScopedPremultiplier::~ScopedPremultiplier() {
+  if (skia_active_) {
+    bitmap_->UnPreMultiply();
+  }
+  CHECK(!bitmap_->IsPremultiplied());
+}
+#endif  // defined(PDF_USE_SKIA)

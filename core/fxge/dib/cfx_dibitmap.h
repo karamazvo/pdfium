@@ -28,6 +28,22 @@ class CFX_DIBitmap final : public CFX_DIBBase {
     uint32_t size;
   };
 
+#if defined(PDF_USE_SKIA)
+  // Scoper that pre-multiplies a bitmap in the ctor and un-premultiplies in the
+  // dtor.
+  class ScopedPremultiplier {
+   public:
+    // `bitmap` must start out un-premultiplied.
+    // ScopedPremultiplier is a no-op if `skia_active` is false.
+    ScopedPremultiplier(RetainPtr<CFX_DIBitmap> bitmap, bool skia_active);
+    ~ScopedPremultiplier();
+
+   private:
+    RetainPtr<CFX_DIBitmap> const bitmap_;
+    const bool skia_active_;
+  };
+#endif  // defined(PDF_USE_SKIA)
+
   CONSTRUCT_VIA_MAKE_RETAIN;
 
   [[nodiscard]] bool Create(int width, int height, FXDIB_Format format);
@@ -142,23 +158,13 @@ class CFX_DIBitmap final : public CFX_DIBBase {
                                                            uint32_t pitch);
 
 #if defined(PDF_USE_SKIA)
-  // Converts to un-pre-multiplied alpha if necessary.
+  // Converts from/to un-pre-multiplied alpha if necessary.
+  void PreMultiply();
   void UnPreMultiply();
-
-  // Forces pre-multiplied alpha without conversion.
-  // TODO(crbug.com/42271020): Remove the need for this.
-  void ForcePreMultiply();
-
-  // CFX_DIBBase:
-  bool IsPremultiplied() const override;
 #endif  // defined(PDF_USE_SKIA)
 
  private:
   enum class Channel : uint8_t { kRed, kAlpha };
-
-#if defined(PDF_USE_SKIA)
-  enum class Format { kCleared, kPreMultiplied, kUnPreMultiplied };
-#endif
 
   CFX_DIBitmap();
   CFX_DIBitmap(const CFX_DIBitmap& src);
@@ -189,9 +195,6 @@ class CFX_DIBitmap final : public CFX_DIBBase {
                                   int src_top);
 
   MaybeOwned<uint8_t, FxFreeDeleter> m_pBuffer;
-#if defined(PDF_USE_SKIA)
-  Format m_nFormat = Format::kCleared;
-#endif
 };
 
 #endif  // CORE_FXGE_DIB_CFX_DIBITMAP_H_
