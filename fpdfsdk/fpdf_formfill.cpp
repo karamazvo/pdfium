@@ -34,10 +34,6 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
 #endif  // PDF_ENABLE_XFA
 
-#if defined(PDF_USE_SKIA)
-class SkCanvas;
-#endif  // defined(PDF_USE_SKIA)
-
 #ifdef PDF_ENABLE_XFA
 static_assert(static_cast<int>(AlertButton::kDefault) ==
                   JSPLATFORM_ALERT_BUTTON_DEFAULT,
@@ -202,7 +198,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
   auto pDevice = std::make_unique<CFX_DefaultRenderDevice>();
 #if defined(PDF_USE_SKIA)
   if (CFX_DefaultRenderDevice::UseSkiaRenderer() && canvas) {
-    pDevice->AttachCanvas(reinterpret_cast<SkCanvas*>(canvas));
+    pDevice->AttachCanvas(SkCanvasFromFPDFSkiaCanvas(canvas));
   }
 #endif
 
