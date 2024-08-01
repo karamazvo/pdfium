@@ -2183,11 +2183,11 @@ TEST_F(FPDFViewEmbedderTest, RenderAnnotsGrayScale) {
   const char* const gray_checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-      return "c18c1b7ee995f16dfb18e6da73a3c2d3";
+      return "f698e8869e3ec6f89f4897063ebf5499";
 #elif BUILDFLAG(IS_APPLE)
       return "92e96cad5e6b93fee3e2017ea27e2497";
 #else
-      return "b73df08d5252615ad6ed2fe7d6c73883";
+      return "fc1668a73de869b85b8345d6b49678df";
 #endif
     }
     return "c02f449666bf2633d06b909c76bc1c1d";
