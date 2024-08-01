@@ -924,3 +924,22 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
   SetPitch(dest_pitch);
   return true;
 }
+
+#if defined(PDF_USE_SKIA)
+CFX_DIBitmap::ScopedPremultiplier::ScopedPremultiplier(
+    RetainPtr<CFX_DIBitmap> bitmap,
+    bool skia_active)
+    : bitmap_(std::move(bitmap)), skia_active_(skia_active) {
+  CHECK(!bitmap_->IsPremultiplied());
+  if (skia_active_) {
+    bitmap_->PreMultiply();
+  }
+}
+
+CFX_DIBitmap::ScopedPremultiplier::~ScopedPremultiplier() {
+  if (skia_active_) {
+    bitmap_->UnPreMultiply();
+  }
+  CHECK(!bitmap_->IsPremultiplied());
+}
+#endif  // defined(PDF_USE_SKIA)
