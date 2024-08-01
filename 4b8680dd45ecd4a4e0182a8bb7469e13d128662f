@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "517c1724_c91b08d4",
+        "filename": "core/fxge/dib/cfx_dibitmap.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-01T16:57:40Z",
+      "side": 1,
+      "message": "This is to avoid having to wrap ScopedPremultiplier in a std::unique_ptr.",
+      "revId": "4b8680dd45ecd4a4e0182a8bb7469e13d128662f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "07a9a14e_84777db4",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1465,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-01T16:57:40Z",
+      "side": 1,
+      "message": "Implemented in the next CL in the chain.",
+      "revId": "4b8680dd45ecd4a4e0182a8bb7469e13d128662f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
