@@ -556,7 +556,7 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractInkMultiple) {
 #if BUILDFLAG(IS_WIN)
         return "b4698da8e2f9e8cb82b7bbb6e7d559a9";
 #elif BUILDFLAG(IS_APPLE)
-        return "e3da57011a3d66238d15be1bedcb6696";
+        return "89db2b17d605549eadad62c696c28d7c";
 #else
         return "c2404a7a9a86ee78487cd1993949c56d";
 #endif
@@ -784,7 +784,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndSaveUnderlineAnnotation) {
 #if BUILDFLAG(IS_WIN)
       return "c50012ab122cd3706d39f371ca7462ee";
 #elif BUILDFLAG(IS_APPLE)
-      return "24994ad69aa612a66d183eaf9a92aa06";
+      return "899387ae792390cd0d83cf7e2bbebfb5";
 #else
       return "798fa41303381c9ba6d99092f5cd4d2b";
 #endif
@@ -907,11 +907,11 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
   const char* md5_original = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-      return "3867f6e34e801abad4e98811f6d7b887";
+      return "ba7f9344d805bdf5942a6970516cdedb";
 #elif BUILDFLAG(IS_APPLE)
-      return "32cd26430a31752e612475bf881cc597";
+      return "9307293625d794d9ed192843e14624c5";
 #else
-      return "2a9d1df839d5ec81a49f982347d9656c";
+      return "09164ffbdbb75770163bfb2bf2d0faa4";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
@@ -923,11 +923,11 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
   const char* md5_modified_highlight = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-      return "a6f6df562dcf96b3670d40fa2999a582";
+      return "06b5e27acadd17f75f03c4701927f66a";
 #elif BUILDFLAG(IS_APPLE)
       return "9a969b7089f49c029b10cf8c208b40dd";
 #else
-      return "0fb1653db0e8e8f7ce5d726bb0074bb5";
+      return "023b35694559a54e124a1a8dc043c219";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
@@ -943,7 +943,7 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
 #elif BUILDFLAG(IS_APPLE)
       return "613102f8b6d74d6d9f95c8eacd17b756";
 #else
-      return "879c77a2cb9f79ba65ffe0bbdd720ce3";
+      return "50c48f19ebbac7675e63b6fcfda60e9f";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)

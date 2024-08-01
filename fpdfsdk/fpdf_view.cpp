@@ -629,12 +629,6 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
                                 /*need_to_restore=*/true,
                                 /*pause=*/nullptr);
 
-#if defined(PDF_USE_SKIA)
-  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-    pBitmap->UnPreMultiply();
-  }
-#endif
-
   if (!bHasMask) {
     CPDF_WindowsRenderDevice win_dc(dc, render_data->GetPSFontTracker());
     bool bitsStretched = false;
@@ -718,20 +712,19 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
   RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap));
   CHECK(!pBitmap->IsPremultiplied());
 
+#if defined(PDF_USE_SKIA)
+  CFX_DIBitmap::ScopedPremultiplier scoped_premultiplier(
+      pBitmap, CFX_DefaultRenderDevice::UseSkiaRenderer());
+#endif
   auto device = std::make_unique<CFX_DefaultRenderDevice>();
-  device->AttachWithRgbByteOrder(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER));
+  device->AttachWithRgbByteOrder(std::move(pBitmap),
+                                 !!(flags & FPDF_REVERSE_BYTE_ORDER));
   context->m_pDevice = std::move(device);
 
   CPDFSDK_RenderPageWithContext(context, pPage, start_x, start_y, size_x,
                                 size_y, rotate, flags, /*color_scheme=*/nullptr,
                                 /*need_to_restore=*/true,
                                 /*pause=*/nullptr);
-
-#if defined(PDF_USE_SKIA)
-  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-    pBitmap->UnPreMultiply();
-  }
-#endif
 }
 
 FPDF_EXPORT void FPDF_CALLCONV
@@ -755,6 +748,10 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
   RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap));
   CHECK(!pBitmap->IsPremultiplied());
 
+#if defined(PDF_USE_SKIA)
+  CFX_DIBitmap::ScopedPremultiplier scoped_premultiplier(
+      pBitmap, CFX_DefaultRenderDevice::UseSkiaRenderer());
+#endif
   auto device = std::make_unique<CFX_DefaultRenderDevice>();
   device->AttachWithRgbByteOrder(std::move(pBitmap),
                                  !!(flags & FPDF_REVERSE_BYTE_ORDER));
