@@ -20,6 +20,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "236fcb6a_8dfadcf9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 14
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-01T21:46:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9f5a6ec7_743f7692",
+      "revId": "f0a290ec2e90411133f8f1f59aa8c96bcd72e26b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "0e7aa500_7930e9b8",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 14
@@ -128,6 +146,30 @@
       "writtenOn": "2024-08-01T18:26:16Z",
       "side": 1,
       "message": "Use scoped-whatever from previous CL?",
+      "range": {
+        "startLine": 67,
+        "startChar": 0,
+        "endLine": 67,
+        "endChar": 51
+      },
+      "revId": "f0a290ec2e90411133f8f1f59aa8c96bcd72e26b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "236b924b_e72d2092",
+        "filename": "fpdfsdk/fpdf_progressive.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-01T21:46:34Z",
+      "side": 1,
+      "message": "In the `FPDF_RENDER_TOBECONTINUED` exit path, the bitmap is not un-premultiplied. As `page` is indirectly retaining it, and it is expected for the embedder to call FPDF_RenderPage_Continue() to eventually finish rendering. The scoper can\u0027t do this. When FPDF_RenderPage_Continue() is done, it calls UnPreMultiply().\n\nThis avoids an extra round of (un)pre-multiplication with every FPDF_RenderPage_Continue() call. Technically, this is giving the embedder an FPDF_BITMAP that is pre-multiplied, but I would argue that the bitmap\u0027s state between FPDF_RenderPageBitmapWithColorScheme_Start() / FPDF_RenderPage_Continue() where PDFium is not done rendering is an indeterminate state.",
+      "parentUuid": "766194dd_2f14d9b5",
       "range": {
         "startLine": 67,
         "startChar": 0,
