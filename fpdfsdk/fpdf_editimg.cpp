@@ -168,11 +168,15 @@ FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
                        FPDF_PAGEOBJECT image_object,
                        FPDF_BITMAP bitmap) {
   CPDF_ImageObject* pImgObj = CPDFImageObjectFromFPDFPageObject(image_object);
-  if (!pImgObj)
+  if (!pImgObj) {
     return false;
+  }
 
-  if (!bitmap)
+  RetainPtr<CFX_DIBitmap> holder(CFXDIBitmapFromFPDFBitmap(bitmap));
+  if (!holder) {
     return false;
+  }
+  CHECK(!holder->IsPremultiplied());
 
   if (pages) {
     for (int index = 0; index < count; index++) {
@@ -183,7 +187,6 @@ FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
     }
   }
 
-  RetainPtr<CFX_DIBitmap> holder(CFXDIBitmapFromFPDFBitmap(bitmap));
   pImgObj->GetImage()->SetImage(holder);
   pImgObj->CalcBoundingBox();
   pImgObj->SetDirty(true);
@@ -270,10 +273,14 @@ FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object) {
       pBitmap = pSource->ConvertTo(FXDIB_Format::kRgb);
       break;
   }
-  if (pBitmap) {
-    CHECK(!pBitmap->HasPalette());
+  if (!pBitmap) {
+    return nullptr;
   }
 
+  CHECK(!pBitmap->HasPalette());
+  CHECK(!pBitmap->IsPremultiplied());
+
+  // Caller takes ownership.
   return FPDFBitmapFromCFXDIBitmap(pBitmap.Leak());
 }
 
