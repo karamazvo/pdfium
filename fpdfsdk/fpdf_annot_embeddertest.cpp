@@ -1391,7 +1391,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
 #elif BUILDFLAG(IS_APPLE)
       return "fab7e76a223f7fd4f2f9da88b2ced171";
 #else
-      return "5efd7ff61ff87e5a615a546c55450c7d";
+      return "92d2c4d7d8e56edd972f7f092c815bb0";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
