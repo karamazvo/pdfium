@@ -272,6 +272,7 @@ FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object) {
   }
   if (pBitmap) {
     CHECK(!pBitmap->HasPalette());
+    CHECK(!pBitmap->IsPremultiplied());
   }
 
   return FPDFBitmapFromCFXDIBitmap(pBitmap.Leak());

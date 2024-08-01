@@ -42,6 +42,9 @@ class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
   // Runtime check to see if Skia is the renderer variant in use.
   static bool UseSkiaRenderer();
 
+  // Returns the format preferred by the default renderer.
+  static FXDIB_Format GetDefaultArgbFormat();
+
 #if defined(PDF_USE_SKIA)
   // This internal definition of renderer types must stay updated with respect
   // to the public definition of `FPDF_RENDERER_TYPE`, so that all public

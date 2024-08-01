@@ -115,8 +115,15 @@ class CFX_DIBBase : public Retainable {
   virtual sk_sp<SkImage> RealizeSkImage() const;
 
   // Whether alpha is premultiplied (if `IsAlphaFormat()`).
-  virtual bool IsPremultiplied() const;
 #endif  // defined(PDF_USE_SKIA)
+
+  bool IsPremultiplied() const {
+#if defined(PDF_USE_SKIA)
+    return GetFormat() == FXDIB_Format::kArgbPremul;
+#else
+    return false;
+#endif
+  }
 
  protected:
   CFX_DIBBase();
