@@ -203,12 +203,18 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
 #if defined(PDF_USE_SKIA)
   SkCanvas* sk_canvas = SkCanvasFromFPDFSkiaCanvas(canvas);
   if (sk_canvas && CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-    pDevice->AttachCanvas(sk_canvas);
+    if (!pDevice->AttachCanvas(*sk_canvas)) {
+      return;
+    }
   }
 #endif
 
   RetainPtr<CFX_DIBitmap> holder(CFXDIBitmapFromFPDFBitmap(bitmap));
-  pDevice->AttachWithRgbByteOrder(holder, !!(flags & FPDF_REVERSE_BYTE_ORDER));
+  if (!pDevice->AttachWithRgbByteOrder(holder,
+                                       !!(flags & FPDF_REVERSE_BYTE_ORDER))) {
+    return;
+  }
+
   {
     CFX_RenderDevice::StateRestorer restorer(pDevice.get());
     pDevice->SetClip_Rect(rect);
