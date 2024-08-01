@@ -967,12 +967,25 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
   }
   CHECK(!pBitmap->IsPremultiplied());
 
+  FX_SAFE_INT32 right = left;
+  right += width;
+  if (!right.IsValid()) {
+    return;
+  }
+
+  FX_SAFE_INT32 bottom = top;
+  bottom += height;
+  if (!bottom.IsValid()) {
+    return;
+  }
+
+  FX_RECT fill_rect(left, top, right.ValueOrDie(), bottom.ValueOrDie());
+
   CFX_DefaultRenderDevice device;
   device.Attach(pBitmap);
   if (!pBitmap->IsAlphaFormat())
     color |= 0xFF000000;
-  device.FillRect(FX_RECT(left, top, left + width, top + height),
-                  static_cast<uint32_t>(color));
+  device.FillRect(fill_rect, static_cast<uint32_t>(color));
 }
 
 FPDF_EXPORT void* FPDF_CALLCONV FPDFBitmap_GetBuffer(FPDF_BITMAP bitmap) {
