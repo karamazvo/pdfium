@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "110aa415_a3309b5f",
+        "filename": "fpdfsdk/fpdf_formfill.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-01T17:30:53Z",
+      "side": 1,
+      "message": "is `holder` known to be non-NULL?",
+      "range": {
+        "startLine": 210,
+        "startChar": 9,
+        "endLine": 210,
+        "endChar": 15
+      },
+      "revId": "4a95a98537e54ff2c81d7d9a7a2bd4788eb96295",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5bd234ad_8e40f959",
+        "filename": "fpdfsdk/fpdf_progressive.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-01T17:30:53Z",
+      "side": 1,
+      "message": "Is \u0027pBitmap` known to be non-NULL?",
+      "range": {
+        "startLine": 64,
+        "startChar": 9,
+        "endLine": 64,
+        "endChar": 16
+      },
+      "revId": "4a95a98537e54ff2c81d7d9a7a2bd4788eb96295",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f3fb406b_2f9c951c",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 719,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-01T17:30:53Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 719,
+        "startChar": 9,
+        "endLine": 719,
+        "endChar": 16
+      },
+      "revId": "4a95a98537e54ff2c81d7d9a7a2bd4788eb96295",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "76d74197_efd3e484",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 756,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-01T17:30:53Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 756,
+        "startChar": 9,
+        "endLine": 756,
+        "endChar": 16
+      },
+      "revId": "4a95a98537e54ff2c81d7d9a7a2bd4788eb96295",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
