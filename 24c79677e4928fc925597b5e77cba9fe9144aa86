@@ -56,6 +56,30 @@
       },
       "revId": "24c79677e4928fc925597b5e77cba9fe9144aa86",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b6f6a2c2_b1614977",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 958,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-02T18:24:23Z",
+      "side": 1,
+      "message": "I feel like we\u0027ve snuck in a return type into some other stable API in the past. Can look into that separately.",
+      "parentUuid": "f05b1568_860be5c6",
+      "range": {
+        "startLine": 958,
+        "startChar": 12,
+        "endLine": 958,
+        "endChar": 16
+      },
+      "revId": "24c79677e4928fc925597b5e77cba9fe9144aa86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
