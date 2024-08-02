@@ -16,6 +16,24 @@
       "message": "Maybe the inside of this block can be split into a separate function, and shared with the `clip_span.empty()` block above?",
       "revId": "8dfd83ff30ffdb869433572b02bc9badeb8c1d98",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f5b3711c_0d300d44",
+        "filename": "core/fxge/dib/cfx_scanlinecompositor.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 499,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-02T21:11:53Z",
+      "side": 1,
+      "message": "Ya, I think I will do that. 1 sec.",
+      "parentUuid": "5426966f_1788262e",
+      "revId": "8dfd83ff30ffdb869433572b02bc9badeb8c1d98",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
