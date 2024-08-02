@@ -67,3 +67,23 @@ TEST_F(PDFCatalogTest, IsTagged) {
   markInfoDict->SetNewFor<CPDF_Number>("Marked", 1);
   EXPECT_TRUE(FPDFCatalog_IsTagged(m_pDoc.get()));
 }
+
+TEST_F(PDFCatalogTest, SetLanguage) {
+  // Document cannot be nullptr.
+  EXPECT_FALSE(FPDFCatalog_SetLanguage(nullptr, "en-US"));
+
+  CPDF_TestDocument* test_document = static_cast<CPDF_TestDocument*>(
+      CPDFDocumentFromFPDFDocument((m_pDoc.get())));
+
+  // Catalog cannot be nullptr.
+  test_document->SetRoot(nullptr);
+  EXPECT_FALSE(FPDFCatalog_SetLanguage(m_pDoc.get(), "en-US"));
+
+  test_document->SetRoot(m_pRootObj);
+  EXPECT_TRUE(FPDFCatalog_SetLanguage(m_pDoc.get(), "en-US"));
+
+  RetainPtr<const CPDF_String> result_language =
+      m_pRootObj->GetStringFor("Lang");
+  ASSERT_TRUE(result_language);
+  EXPECT_EQ("en-US", result_language->GetString());
+}
