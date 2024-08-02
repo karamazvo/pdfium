@@ -492,7 +492,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::ClipToInternal(
     int right_shift = 32 - left_shift;
     int dword_count = pNewBitmap->GetPitch() / 4;
     for (int row = rect.top; row < rect.bottom; ++row) {
-      auto src_span = GetScanlineAs<const uint32_t>(row);
+      auto src_span = GetScanlineAs<uint32_t>(row);
       auto dst_span =
           pNewBitmap->GetWritableScanlineAs<uint32_t>(row - rect.top);
       // Bounds check for free with first/subspan.
@@ -943,7 +943,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
       size_t dest_offset = Fx2DSizeOrDie(dest_col, nBytes);
       uint8_t* dest_scan = dest_span.subspan(dest_offset).data();
       const uint32_t* src_scan =
-          GetScanlineAs<const uint32_t>(row).subspan(col_start).data();
+          GetScanlineAs<uint32_t>(row).subspan(col_start).data();
       for (int col = col_start; col < col_end; ++col) {
         uint32_t* dest_scan32 = reinterpret_cast<uint32_t*>(dest_scan);
         *dest_scan32 = *src_scan++;
