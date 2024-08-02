@@ -80,6 +80,30 @@
       },
       "revId": "24c79677e4928fc925597b5e77cba9fe9144aa86",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "732bd119_fa18c774",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 958,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-02T18:30:19Z",
+      "side": 1,
+      "message": "I was thinking of https://pdfium-review.googlesource.com/c/pdfium/+/17370/6/public/fpdfview.h and I don\u0027t remember anyone complaining.",
+      "parentUuid": "b6f6a2c2_b1614977",
+      "range": {
+        "startLine": 958,
+        "startChar": 12,
+        "endLine": 958,
+        "endChar": 16
+      },
+      "revId": "24c79677e4928fc925597b5e77cba9fe9144aa86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ],
   "submitRequirementResults": [
