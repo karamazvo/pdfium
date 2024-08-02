@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "74e6d48a_d8656302",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-02T17:09:07Z",
+      "side": 1,
+      "message": "Still LG, just one observation for future work.",
+      "revId": "a49535b0b188cf1dc1bc1af5b786c82b3d5234a4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "40141462_6ab6bf04",
+        "filename": "core/fxge/dib/cfx_dibbase.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-02T17:09:07Z",
+      "side": 1,
+      "message": "nit: it dawns on me that GetScanlineAs\u003c\u003e() (as opposed to GetWritableScanlineas\u003c\u003e()) automatically const-qualifies T for us, so we might be able to omit the const in the \u003c\u003e above.",
+      "range": {
+        "startLine": 48,
+        "startChar": 20,
+        "endLine": 48,
+        "endChar": 33
+      },
+      "revId": "a49535b0b188cf1dc1bc1af5b786c82b3d5234a4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
