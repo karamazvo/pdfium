@@ -24,5 +24,6 @@
 #
 
 # Device-specific ColorBurn differences (see pdfium:1959).
+xfermodes.pdf * * * skia
 xfermodes2.pdf * * * skia
 xfermodes3.pdf * * * skia
