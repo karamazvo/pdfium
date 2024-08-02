@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f05b1568_860be5c6",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 958,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-02T17:17:51Z",
+      "side": 1,
+      "message": "should this return a FPDF_BOOL indicating success?  Existing callers can willfully ignore it without changing any code.",
+      "range": {
+        "startLine": 958,
+        "startChar": 12,
+        "endLine": 958,
+        "endChar": 16
+      },
+      "revId": "24c79677e4928fc925597b5e77cba9fe9144aa86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
