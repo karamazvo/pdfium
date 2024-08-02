@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e99c138c_20278716",
+        "filename": "fpdfsdk/fpdf_formfill_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 686,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-02T19:33:16Z",
+      "side": 1,
+      "message": "Not sure how else to rename this. If the bug has more context on what\u0027s different about this PDF, I don\u0027t have access to it.",
+      "range": {
+        "startLine": 686,
+        "startChar": 33,
+        "endLine": 686,
+        "endChar": 47
+      },
+      "revId": "905e65f7ac69465e72fbb4edff1f7696ddca2f05",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
