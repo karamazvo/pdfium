@@ -73,6 +73,30 @@
       },
       "revId": "f8344c14d6c549190eb28186ff01c4af8173a288",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ffbdd118_45e95f24",
+        "filename": "core/fxcrt/zip.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-02T20:57:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "89cdde50_0bc1340c",
+      "range": {
+        "startLine": 47,
+        "startChar": 6,
+        "endLine": 47,
+        "endChar": 13
+      },
+      "revId": "f8344c14d6c549190eb28186ff01c4af8173a288",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
