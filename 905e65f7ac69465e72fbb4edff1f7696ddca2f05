@@ -20,6 +20,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "62c24f9e_8449231e",
+        "filename": "fpdfsdk/cpdfsdk_baannot_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-02T20:12:14Z",
+      "side": 1,
+      "message": "Re-added prefixes.",
+      "parentUuid": "c4fc0746_1f948cdf",
+      "revId": "905e65f7ac69465e72fbb4edff1f7696ddca2f05",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "e99c138c_20278716",
         "filename": "fpdfsdk/fpdf_formfill_embeddertest.cpp",
         "patchSetId": 1
@@ -55,6 +73,30 @@
       "side": 1,
       "message": "Maybe Bug901654Case1 and Bug901654Case2?",
       "parentUuid": "e99c138c_20278716",
+      "range": {
+        "startLine": 686,
+        "startChar": 33,
+        "endLine": 686,
+        "endChar": 47
+      },
+      "revId": "905e65f7ac69465e72fbb4edff1f7696ddca2f05",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1ad57f58_9700956a",
+        "filename": "fpdfsdk/fpdf_formfill_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 686,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-02T20:12:14Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "b0162d76_4cdac3b2",
       "range": {
         "startLine": 686,
         "startChar": 33,
