@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d7745f3d_2656b0f4",
+        "filename": "fpdfsdk/fpdf_catalog.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-03T00:30:59Z",
+      "side": 1,
+      "message": "Can new code use Google C++ style naming?",
+      "range": {
+        "startLine": 29,
+        "startChar": 17,
+        "endLine": 29,
+        "endChar": 21
+      },
+      "revId": "7bf39d06b8ac13ffa2af4f5b6549d823d904f313",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "239d0e01_8830ac4d",
+        "filename": "fpdfsdk/fpdf_catalog.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-03T00:30:59Z",
+      "side": 1,
+      "message": "This code path should be easy to test.",
+      "revId": "7bf39d06b8ac13ffa2af4f5b6549d823d904f313",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2d7fde55_cb5bca7a",
+        "filename": "fpdfsdk/fpdf_catalog.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-03T00:30:59Z",
+      "side": 1,
+      "message": "Not sure off the top of my head if there\u0027s a broken PDF soemwhere that would allow this path to be reached in a test.",
+      "revId": "7bf39d06b8ac13ffa2af4f5b6549d823d904f313",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
