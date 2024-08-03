@@ -16,6 +16,24 @@
       "message": "Still lg",
       "revId": "0fa745622fe79f8a6f11645b442dc8febef34096",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b3e5ccbf_17393e0c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 22
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-03T00:34:14Z",
+      "side": 1,
+      "message": "Except I started chaining another CL to this one, so transparency handling code will use `kArgbPremul` more, instead of converting back and forth. Then some of the test expectation changes from this CL reverted back to the values prior to this CL. So I\u0027m trying to work that out to avoid the churn.",
+      "parentUuid": "cb7f1571_bed9ef46",
+      "revId": "0fa745622fe79f8a6f11645b442dc8febef34096",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
