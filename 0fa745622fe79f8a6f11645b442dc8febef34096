@@ -34,6 +34,24 @@
       "parentUuid": "cb7f1571_bed9ef46",
       "revId": "0fa745622fe79f8a6f11645b442dc8febef34096",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3103b2a9_6e257323",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 22
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-03T06:30:29Z",
+      "side": 1,
+      "message": "So between patch set 16 and 23:\n\n- Reverted most embedder test result changes.\n- Added a couple more tests to testing/SUPPRESSIONS_EXACT_MATCHING.\n- Added ScopedPremultiplier use in FPDF_FFLDraw().\n- Deleted CFX_DefaultRenderDevice::GetDefaultArgbFormat(), which had no callers.\n- Added CPDF_RenderStatus::GetCompatibleArgbFormat().\n- Updated corpus test results again. https://pdfium-review.googlesource.com/123052",
+      "parentUuid": "b3e5ccbf_17393e0c",
+      "revId": "0fa745622fe79f8a6f11645b442dc8febef34096",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
