@@ -119,8 +119,7 @@ void RgbByteOrderCompositeRect(const RetainPtr<CFX_DIBitmap>& bitmap,
           continue;
         }
 
-        const uint8_t dest_alpha =
-            rgba.alpha + src_alpha - rgba.alpha * src_alpha / 255;
+        const uint8_t dest_alpha = AlphaUnion(rgba.alpha, src_alpha);
         const int alpha_ratio = src_alpha * 255 / dest_alpha;
         DoAlphaMerge(rgba, src_r, src_g, src_b, alpha_ratio);
       }
@@ -508,8 +507,7 @@ void CFX_AggRenderer::CompositeSpan(uint8_t* dest_scan,
       if (Bpp == 4 && bDestAlpha) {
         for (int col = col_start; col < col_end; col++) {
           int src_alpha = GetSrcAlpha(clip_scan, col);
-          uint8_t dest_alpha =
-              backdrop_scan[3] + src_alpha - backdrop_scan[3] * src_alpha / 255;
+          uint8_t dest_alpha = AlphaUnion(backdrop_scan[3], src_alpha);
           dest_scan[3] = dest_alpha;
           int alpha_ratio = src_alpha * 255 / dest_alpha;
           if (m_bFullCover) {
@@ -700,8 +698,7 @@ void CFX_AggRenderer::CompositeSpanARGB(uint8_t* dest_scan,
           if (src_alpha == 255) {
             *(reinterpret_cast<uint32_t*>(dest_scan)) = m_Color;
           } else {
-            uint8_t dest_alpha =
-                dest_scan[3] + src_alpha - dest_scan[3] * src_alpha / 255;
+            uint8_t dest_alpha = AlphaUnion(dest_scan[3], src_alpha);
             dest_scan[3] = dest_alpha;
             int alpha_ratio = src_alpha * 255 / dest_alpha;
             *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, bgr.red, alpha_ratio);
@@ -732,8 +729,7 @@ void CFX_AggRenderer::CompositeSpanARGB(uint8_t* dest_scan,
             dest_scan += 2;
             continue;
           }
-          uint8_t dest_alpha =
-              dest_scan[3] + src_alpha - dest_scan[3] * src_alpha / 255;
+          uint8_t dest_alpha = AlphaUnion(dest_scan[3], src_alpha);
           dest_scan[3] = dest_alpha;
           int alpha_ratio = src_alpha * 255 / dest_alpha;
           *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, bgr.blue, alpha_ratio);
