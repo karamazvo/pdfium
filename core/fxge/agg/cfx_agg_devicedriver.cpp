@@ -375,46 +375,36 @@ class CFX_AggRenderer {
                                                       int,
                                                       int,
                                                       const uint8_t*,
-                                                      int,
-                                                      int,
                                                       const uint8_t*);
 
   void CompositeSpan(uint8_t* dest_scan,
                      const uint8_t* backdrop_scan,
                      int Bpp,
                      bool bDestAlpha,
-                     int span_left,
-                     int span_len,
+                     int col_start,
+                     int col_end,
                      const uint8_t* cover_scan,
-                     int clip_left,
-                     int clip_right,
                      const uint8_t* clip_scan);
 
   void CompositeSpanGray(uint8_t* dest_scan,
                          int Bpp,
-                         int span_left,
-                         int span_len,
+                         int col_start,
+                         int col_end,
                          const uint8_t* cover_scan,
-                         int clip_left,
-                         int clip_right,
                          const uint8_t* clip_scan);
 
   void CompositeSpanARGB(uint8_t* dest_scan,
                          int Bpp,
-                         int span_left,
-                         int span_len,
+                         int col_start,
+                         int col_end,
                          const uint8_t* cover_scan,
-                         int clip_left,
-                         int clip_right,
                          const uint8_t* clip_scan);
 
   void CompositeSpanRGB(uint8_t* dest_scan,
                         int Bpp,
-                        int span_left,
-                        int span_len,
+                        int col_start,
+                        int col_end,
                         const uint8_t* cover_scan,
-                        int clip_left,
-                        int clip_right,
                         const uint8_t* clip_scan);
 
   static CompositeSpanFunc GetCompositeSpanFunc(
@@ -442,11 +432,11 @@ class CFX_AggRenderer {
                                  : m_Alpha * cover_scan[col] / 255);
   }
 
-  inline int GetColStart(int span_left, int clip_left) const {
+  static int GetColStart(int span_left, int clip_left) const {
     return span_left < clip_left ? clip_left - span_left : 0;
   }
 
-  inline int GetColEnd(int span_left, int span_len, int clip_right) const {
+  static int GetColEnd(int span_left, int span_len, int clip_right) const {
     return span_left + span_len < clip_right ? span_len
                                              : clip_right - span_left;
   }
@@ -473,15 +463,11 @@ void CFX_AggRenderer::CompositeSpan(uint8_t* dest_scan,
                                     const uint8_t* backdrop_scan,
                                     int Bpp,
                                     bool bDestAlpha,
-                                    int span_left,
-                                    int span_len,
+                                    int col_start,
+                                    int col_end,
                                     const uint8_t* cover_scan,
-                                    int clip_left,
-                                    int clip_right,
                                     const uint8_t* clip_scan) {
   CHECK(Bpp);
-  int col_start = GetColStart(span_left, clip_left);
-  int col_end = GetColEnd(span_left, span_len, clip_right);
   const auto& bgr = GetBGR();
   UNSAFE_TODO({
     dest_scan += col_start * Bpp;
@@ -613,15 +599,11 @@ void CFX_AggRenderer::CompositeSpan(uint8_t* dest_scan,
 
 void CFX_AggRenderer::CompositeSpanGray(uint8_t* dest_scan,
                                         int Bpp,
-                                        int span_left,
-                                        int span_len,
+                                        int col_start,
+                                        int col_end,
                                         const uint8_t* cover_scan,
-                                        int clip_left,
-                                        int clip_right,
                                         const uint8_t* clip_scan) {
   DCHECK(!m_bRgbByteOrder);
-  int col_start = GetColStart(span_left, clip_left);
-  int col_end = GetColEnd(span_left, span_len, clip_right);
   const int gray = GetGray();
   UNSAFE_TODO({
     dest_scan += col_start;
@@ -641,14 +623,10 @@ void CFX_AggRenderer::CompositeSpanGray(uint8_t* dest_scan,
 
 void CFX_AggRenderer::CompositeSpanARGB(uint8_t* dest_scan,
                                         int Bpp,
-                                        int span_left,
-                                        int span_len,
+                                        int col_start,
+                                        int col_end,
                                         const uint8_t* cover_scan,
-                                        int clip_left,
-                                        int clip_right,
                                         const uint8_t* clip_scan) {
-  int col_start = GetColStart(span_left, clip_left);
-  int col_end = GetColEnd(span_left, span_len, clip_right);
   const auto& bgr = GetBGR();
   UNSAFE_TODO({
     dest_scan += col_start * Bpp;
@@ -713,14 +691,10 @@ void CFX_AggRenderer::CompositeSpanARGB(uint8_t* dest_scan,
 
 void CFX_AggRenderer::CompositeSpanRGB(uint8_t* dest_scan,
                                        int Bpp,
-                                       int span_left,
-                                       int span_len,
+                                       int col_start,
+                                       int col_end,
                                        const uint8_t* cover_scan,
-                                       int clip_left,
-                                       int clip_right,
                                        const uint8_t* clip_scan) {
-  int col_start = GetColStart(span_left, clip_left);
-  int col_end = GetColEnd(span_left, span_len, clip_right);
   const auto& bgr = GetBGR();
   UNSAFE_TODO({
     dest_scan += col_start * Bpp;
@@ -845,12 +819,14 @@ void CFX_AggRenderer::render(const Scanline& sl) {
                    (y - m_ClipBox.top) * m_pClipMask->GetPitch() + x -
                    m_ClipBox.left;
       }
+      int col_start = GetColStart(x, m_ClipBox.left);
+      int col_end = GetColEnd(x, span->len, m_ClipBox.right);
       if (backdrop_pos) {
-        CompositeSpan(dest_pos, backdrop_pos, Bpp, bDestAlpha, x, span->len,
-                      span->covers, m_ClipBox.left, m_ClipBox.right, clip_pos);
+        CompositeSpan(dest_pos, backdrop_pos, Bpp, bDestAlpha, col_start,
+                      col_end, span->covers, clip_pos);
       } else {
-        (this->*m_CompositeSpanFunc)(dest_pos, Bpp, x, span->len, span->covers,
-                                     m_ClipBox.left, m_ClipBox.right, clip_pos);
+        (this->*m_CompositeSpanFunc)(dest_pos, Bpp, col_start, col_end,
+                                     span->covers, clip_pos);
       }
       if (--num_spans == 0) {
         break;
