@@ -127,10 +127,6 @@ int AverageRgb(const uint8_t* src) {
   return UNSAFE_TODO((src[0] + src[1] + src[2]) / 3);
 }
 
-uint8_t CalculateDestAlpha(uint8_t back_alpha, int src_alpha) {
-  return back_alpha + src_alpha - back_alpha * src_alpha / 255;
-}
-
 void ApplyAlpha(uint8_t* dest, const FX_BGRA_STRUCT<uint8_t>& bgra, int alpha) {
   UNSAFE_TODO({
     dest[0] = FXDIB_ALPHA_MERGE(dest[0], bgra.blue, alpha);
@@ -143,7 +139,7 @@ void ApplyDestAlpha(uint8_t back_alpha,
                     int src_alpha,
                     const FX_BGRA_STRUCT<uint8_t>& bgra,
                     uint8_t* dest) {
-  uint8_t dest_alpha = CalculateDestAlpha(back_alpha, src_alpha);
+  uint8_t dest_alpha = AlphaUnion(back_alpha, src_alpha);
   ApplyAlpha(dest, bgra, src_alpha * 255 / dest_alpha);
   UNSAFE_TODO(dest[3] = dest_alpha);
 }

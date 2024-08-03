@@ -242,6 +242,10 @@ UNSAFE_BUFFER_USAGE inline void ReverseCopy3Bytes(uint8_t* dest,
   UNSAFE_BUFFERS(dest[0] = src[2]);
 }
 
+uint8_t AlphaUnion(uint8_t dest, uint8_t src) {
+  return dest + src - dest * src / 255;
+}
+
 #if defined(PDF_USE_SKIA)
 template <typename T>
 T PreMultiplyColor(const T& input) {
