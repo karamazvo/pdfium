@@ -85,6 +85,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d17d1cfb_583908aa",
+        "filename": "fpdfsdk/fpdf_catalog.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-03T01:11:06Z",
+      "side": 1,
+      "message": "Not sure how I missed it, but I really think fpdf_catalog_unittest.cpp should be merged into fpdf_catalog_embeddertest.cpp. Otherwise, what is the difference? Why split API testing into two test suites?",
+      "parentUuid": "7cb565ce_755aff42",
+      "revId": "7bf39d06b8ac13ffa2af4f5b6549d823d904f313",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "2d7fde55_cb5bca7a",
         "filename": "fpdfsdk/fpdf_catalog.cpp",
         "patchSetId": 1
