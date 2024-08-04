@@ -156,11 +156,11 @@ void CompositePixelArgb2Mask(const FX_BGRA_STRUCT<uint8_t>& input,
                              uint8_t clip,
                              uint8_t& output) {
   const uint8_t src_alpha = input.alpha * clip / 255;
-  if (output == 0) {
-    output = src_alpha;
+  if (src_alpha == 0) {
     return;
   }
-  if (src_alpha == 0) {
+  if (output == 0) {
+    output = src_alpha;
     return;
   }
   output = AlphaUnion(output, src_alpha);
@@ -472,13 +472,13 @@ void CompositePixelArgb2RgbNoBlend(const FX_BGRA_STRUCT<uint8_t>& input,
                                    uint8_t clip,
                                    DestPixelStruct& output) {
   const uint8_t src_alpha = input.alpha * clip / 255;
+  if (src_alpha == 0) {
+    return;
+  }
   if (src_alpha == 255) {
     output.blue = input.blue;
     output.green = input.green;
     output.red = input.red;
-    return;
-  }
-  if (src_alpha == 0) {
     return;
   }
   AlphaMerge(input, output, src_alpha);
@@ -537,11 +537,11 @@ void CompositePixelArgb2ArgbNonSeparableBlend(
     DestPixelStruct& output,
     BlendMode blend_type) {
   const uint8_t src_alpha = input.alpha * clip / 255;
-  if (output.alpha == 0) {
-    CopyInputAndAlpha(input, src_alpha, output);
+  if (src_alpha == 0) {
     return;
   }
-  if (src_alpha == 0) {
+  if (output.alpha == 0) {
+    CopyInputAndAlpha(input, src_alpha, output);
     return;
   }
 
@@ -559,11 +559,11 @@ void CompositePixelArgb2ArgbBlend(const FX_BGRA_STRUCT<uint8_t>& input,
                                   DestPixelStruct& output,
                                   BlendMode blend_type) {
   const uint8_t src_alpha = input.alpha * clip / 255;
-  if (output.alpha == 0) {
-    CopyInputAndAlpha(input, src_alpha, output);
+  if (src_alpha == 0) {
     return;
   }
-  if (src_alpha == 0) {
+  if (output.alpha == 0) {
+    CopyInputAndAlpha(input, src_alpha, output);
     return;
   }
 
@@ -584,11 +584,11 @@ void CompositePixelArgb2ArgbNoBlend(const FX_BGRA_STRUCT<uint8_t>& input,
                                     uint8_t clip,
                                     DestPixelStruct& output) {
   const uint8_t src_alpha = input.alpha * clip / 255;
-  if (output.alpha == 0) {
-    CopyInputAndAlpha(input, src_alpha, output);
+  if (src_alpha == 0) {
     return;
   }
-  if (src_alpha == 0) {
+  if (output.alpha == 0) {
+    CopyInputAndAlpha(input, src_alpha, output);
     return;
   }
 
