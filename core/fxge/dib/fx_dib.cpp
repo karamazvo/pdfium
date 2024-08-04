@@ -66,6 +66,10 @@ FX_ARGB AlphaAndColorRefToArgb(int a, FX_COLORREF colorref) {
                     FXSYS_GetBValue(colorref));
 }
 
+uint8_t AlphaMerge(uint8_t dest, uint8_t src, int src_alpha) {
+  return (dest * (255 - src_alpha) + src * src_alpha) / 255;
+}
+
 uint8_t AlphaUnion(uint8_t dest, uint8_t src) {
   return dest + src - dest * src / 255;
 }

@@ -201,8 +201,6 @@ constexpr FX_CMYK CmykEncode(uint32_t c, uint32_t m, uint32_t y, uint32_t k) {
   (((((argb) >> 24) * (alpha) / 255) << 24) | ((argb)&0xffffff))
 
 #define FXRGB2GRAY(r, g, b) (((b)*11 + (g)*59 + (r)*30) / 100)
-#define FXDIB_ALPHA_MERGE(backdrop, source, source_alpha) \
-  (((backdrop) * (255 - (source_alpha)) + (source) * (source_alpha)) / 255)
 
 #define FXCMYK_TODIB(cmyk)                                    \
   ((uint8_t)((cmyk) >> 24) | ((uint8_t)((cmyk) >> 16)) << 8 | \
@@ -241,6 +239,8 @@ UNSAFE_BUFFER_USAGE inline void ReverseCopy3Bytes(uint8_t* dest,
   UNSAFE_BUFFERS(dest[1] = src[1]);
   UNSAFE_BUFFERS(dest[0] = src[2]);
 }
+
+uint8_t AlphaMerge(uint8_t dest, uint8_t src, int src_alpha);
 
 uint8_t AlphaUnion(uint8_t dest, uint8_t src);
 
