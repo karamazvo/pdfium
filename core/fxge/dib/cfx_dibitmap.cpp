@@ -832,8 +832,7 @@ bool CFX_DIBitmap::CompositeRect(int left,
             dest_scan += 4;
             continue;
           }
-          uint8_t dest_alpha =
-              back_alpha + src_alpha - back_alpha * src_alpha / 255;
+          uint8_t dest_alpha = AlphaUnion(back_alpha, src_alpha);
           int alpha_ratio = src_alpha * 255 / dest_alpha;
           *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, color_p[0], alpha_ratio);
           dest_scan++;

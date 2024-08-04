@@ -65,3 +65,7 @@ FX_ARGB AlphaAndColorRefToArgb(int a, FX_COLORREF colorref) {
   return ArgbEncode(a, FXSYS_GetRValue(colorref), FXSYS_GetGValue(colorref),
                     FXSYS_GetBValue(colorref));
 }
+
+uint8_t AlphaUnion(uint8_t dest, uint8_t src) {
+  return dest + src - dest * src / 255;
+}

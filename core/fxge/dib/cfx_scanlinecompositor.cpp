@@ -23,10 +23,6 @@ using fxge::Blend;
 
 namespace {
 
-uint8_t AlphaUnion(uint8_t dest, uint8_t src) {
-  return dest + src - dest * src / 255;
-}
-
 template <typename T, typename U>
 void CopyInputAndAlpha(const T& input, uint8_t alpha, U& output) {
   output.blue = input.blue;
