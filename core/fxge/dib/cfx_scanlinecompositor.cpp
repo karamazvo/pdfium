@@ -80,6 +80,37 @@ FX_RGB_STRUCT<int> SetSat(FX_RGB_STRUCT<int> color, int s) {
 }
 
 template <typename T, typename U>
+<<<<<<< PATCH SET (f830ce Make type parameter explicit in cfx_scanlinecompositor.cpp)
+FX_RGB_STRUCT<int> RgbBlend(BlendMode blend_type, const T& src_in,
+                            const U& back_in) {
+  FX_RGB_STRUCT<int> src = {
+      .red = src_in.red, .green = src_in.green, .blue = src_in.blue};
+  FX_RGB_STRUCT<int> back = {
+      .red = back_in.red, .green = back_in.green, .blue = back_in.blue};
+  FX_RGB_STRUCT<int> result;
+  switch (blend_type) {
+    case BlendMode::kHue:
+      result = SetLum(SetSat(src, Sat(back)), Lum(back));
+      break;
+    case BlendMode::kSaturation:
+      result = SetLum(SetSat(back, Sat(src)), Lum(back));
+      break;
+    case BlendMode::kColor:
+      result = SetLum(src, Lum(back));
+      break;
+    case BlendMode::kLuminosity:
+      result = SetLum(back, Lum(src));
+      break;
+    default:
+      break;
+  }
+  return result;
+}
+
+// Prefer RgbBlend() above in new code.
+void RGB_Blend(BlendMode blend_mode, const uint8_t* src_scan,
+               const uint8_t* dest_scan, int results[3]) {
+=======
 FX_RGB_STRUCT<int> RgbBlend(BlendMode blend_type,
                             const T& src_in,
                             const U& back_in) {
@@ -112,6 +143,7 @@ void RGB_Blend(BlendMode blend_mode,
                const uint8_t* src_scan,
                const uint8_t* dest_scan,
                int results[3]) {
+>>>>>>> BASE      (61fd49 Get rid of UNSAFE_TODOs in ARGB to 8 BPP CompositeRow functi)
   UNSAFE_TODO({
     FX_BGR_STRUCT<uint8_t> src = {
         .blue = src_scan[0], .green = src_scan[1], .red = src_scan[2]};
@@ -154,8 +186,12 @@ void AlphaMergeToSource(const T& input, U& output, uint8_t alpha) {
   output.red = FXDIB_ALPHA_MERGE(input.red, output.red, alpha);
 }
 
+<<<<<<< PATCH SET (f830ce Make type parameter explicit in cfx_scanlinecompositor.cpp)
+void CompositePixelArgb2Mask(const FX_BGRA_STRUCT<uint8_t>& input, uint8_t clip,
+=======
 void CompositePixelArgb2Mask(const FX_BGRA_STRUCT<uint8_t>& input,
                              uint8_t clip,
+>>>>>>> BASE      (61fd49 Get rid of UNSAFE_TODOs in ARGB to 8 BPP CompositeRow functi)
                              uint8_t& output) {
   const uint8_t src_alpha = input.alpha * clip / 255;
   if (output == 0) {
@@ -215,8 +251,12 @@ bool IsNonSeparableBlendMode(BlendMode mode) {
 }
 
 template <typename T>
+<<<<<<< PATCH SET (f830ce Make type parameter explicit in cfx_scanlinecompositor.cpp)
+uint8_t GetGrayWithBlend(const T& input, uint8_t output_value,
+=======
 uint8_t GetGrayWithBlend(const T& input,
                          uint8_t output_value,
+>>>>>>> BASE      (61fd49 Get rid of UNSAFE_TODOs in ARGB to 8 BPP CompositeRow functi)
                          BlendMode blend_type) {
   uint8_t gray = FXRGB2GRAY(input.red, input.green, input.blue);
   if (IsNonSeparableBlendMode(blend_type)) {
@@ -228,10 +268,15 @@ uint8_t GetGrayWithBlend(const T& input,
   return gray;
 }
 
+<<<<<<< PATCH SET (f830ce Make type parameter explicit in cfx_scanlinecompositor.cpp)
+void CompositePixelArgb2Gray(const FX_BGRA_STRUCT<uint8_t>& input, uint8_t clip,
+                             uint8_t& output, BlendMode blend_type) {
+=======
 void CompositePixelArgb2Gray(const FX_BGRA_STRUCT<uint8_t>& input,
                              uint8_t clip,
                              uint8_t& output,
                              BlendMode blend_type) {
+>>>>>>> BASE      (61fd49 Get rid of UNSAFE_TODOs in ARGB to 8 BPP CompositeRow functi)
   const uint8_t src_alpha = input.alpha * clip / 255;
   if (src_alpha == 0) {
     return;
@@ -269,7 +314,11 @@ void CompositeRow_Rgb2Gray(pdfium::span<uint8_t> dest_span,
   const uint8_t* clip_scan = clip_span.data();
   UNSAFE_TODO({
     for (int col = 0; col < pixel_count; ++col) {
+<<<<<<< PATCH SET (f830ce Make type parameter explicit in cfx_scanlinecompositor.cpp)
+      FX_BGR_STRUCT<uint8_t> input = {
+=======
       FX_BGR_STRUCT input = {
+>>>>>>> BASE      (61fd49 Get rid of UNSAFE_TODOs in ARGB to 8 BPP CompositeRow functi)
           .blue = src_scan[0], .green = src_scan[1], .red = src_scan[2]};
       uint8_t gray = GetGrayWithBlend(input, *dest_scan, blend_type);
       if (clip_scan && clip_scan[col] < 255) {
@@ -440,9 +489,13 @@ void CompositeRow_Rgb2Argb_NoBlend_NoClip(pdfium::span<uint8_t> dest_span,
 
 template <typename DestPixelStruct>
 void CompositePixelArgb2RgbNonSeparableBlend(
+<<<<<<< PATCH SET (f830ce Make type parameter explicit in cfx_scanlinecompositor.cpp)
+    const FX_BGRA_STRUCT<uint8_t>& input, uint8_t clip, DestPixelStruct& output,
+=======
     const FX_BGRA_STRUCT<uint8_t>& input,
     uint8_t clip,
     DestPixelStruct& output,
+>>>>>>> BASE      (61fd49 Get rid of UNSAFE_TODOs in ARGB to 8 BPP CompositeRow functi)
     BlendMode blend_type) {
   const uint8_t src_alpha = input.alpha * clip / 255;
   if (src_alpha == 0) {
@@ -455,6 +508,26 @@ void CompositePixelArgb2RgbNonSeparableBlend(
 
 template <typename DestPixelStruct>
 void CompositePixelArgb2RgbBlend(const FX_BGRA_STRUCT<uint8_t>& input,
+<<<<<<< PATCH SET (f830ce Make type parameter explicit in cfx_scanlinecompositor.cpp)
+                                 uint8_t clip, DestPixelStruct& output,
+                                 BlendMode blend_type) {
+  const uint8_t src_alpha = input.alpha * clip / 255;
+  if (src_alpha == 0) {
+    return;
+  }
+
+  FX_RGB_STRUCT<int> blended_color = {
+      .red = Blend(blend_type, output.red, input.red),
+      .green = Blend(blend_type, output.green, input.green),
+      .blue = Blend(blend_type, output.blue, input.blue),
+  };
+  AlphaMerge(blended_color, output, src_alpha);
+}
+
+template <typename DestPixelStruct>
+void CompositePixelArgb2RgbNoBlend(const FX_BGRA_STRUCT<uint8_t>& input,
+                                   uint8_t clip, DestPixelStruct& output) {
+=======
                                  uint8_t clip,
                                  DestPixelStruct& output,
                                  BlendMode blend_type) {
@@ -475,6 +548,7 @@ template <typename DestPixelStruct>
 void CompositePixelArgb2RgbNoBlend(const FX_BGRA_STRUCT<uint8_t>& input,
                                    uint8_t clip,
                                    DestPixelStruct& output) {
+>>>>>>> BASE      (61fd49 Get rid of UNSAFE_TODOs in ARGB to 8 BPP CompositeRow functi)
   const uint8_t src_alpha = input.alpha * clip / 255;
   if (src_alpha == 255) {
     output.blue = input.blue;
@@ -536,6 +610,55 @@ void CompositeRowArgb2Rgb(pdfium::span<const FX_BGRA_STRUCT<uint8_t>> src_span,
 
 template <typename DestPixelStruct>
 void CompositePixelArgb2ArgbNonSeparableBlend(
+<<<<<<< PATCH SET (f830ce Make type parameter explicit in cfx_scanlinecompositor.cpp)
+    const FX_BGRA_STRUCT<uint8_t>& input, uint8_t clip, DestPixelStruct& output,
+    BlendMode blend_type) {
+  const uint8_t src_alpha = input.alpha * clip / 255;
+  if (output.alpha == 0) {
+    CopyInputAndAlpha(input, src_alpha, output);
+    return;
+  }
+  if (src_alpha == 0) {
+    return;
+  }
+
+  const uint8_t dest_alpha = FXDIB_ALPHA_UNION(output.alpha, src_alpha);
+  const int alpha_ratio = src_alpha * 255 / dest_alpha;
+  FX_RGB_STRUCT<int> blended_color = RgbBlend(blend_type, input, output);
+  AlphaMergeToSource(input, blended_color, output.alpha);
+  AlphaMerge(blended_color, output, alpha_ratio);
+  output.alpha = dest_alpha;
+}
+
+template <typename DestPixelStruct>
+void CompositePixelArgb2ArgbBlend(const FX_BGRA_STRUCT<uint8_t>& input,
+                                  uint8_t clip, DestPixelStruct& output,
+                                  BlendMode blend_type) {
+  const uint8_t src_alpha = input.alpha * clip / 255;
+  if (output.alpha == 0) {
+    CopyInputAndAlpha(input, src_alpha, output);
+    return;
+  }
+  if (src_alpha == 0) {
+    return;
+  }
+
+  const uint8_t dest_alpha = FXDIB_ALPHA_UNION(output.alpha, src_alpha);
+  const int alpha_ratio = src_alpha * 255 / dest_alpha;
+  FX_RGB_STRUCT<int> blended_color = {
+      .red = Blend(blend_type, output.red, input.red),
+      .green = Blend(blend_type, output.green, input.green),
+      .blue = Blend(blend_type, output.blue, input.blue),
+  };
+  AlphaMergeToSource(input, blended_color, output.alpha);
+  AlphaMerge(blended_color, output, alpha_ratio);
+  output.alpha = dest_alpha;
+}
+
+template <typename DestPixelStruct>
+void CompositePixelArgb2ArgbNoBlend(const FX_BGRA_STRUCT<uint8_t>& input,
+                                    uint8_t clip, DestPixelStruct& output) {
+=======
     const FX_BGRA_STRUCT<uint8_t>& input,
     uint8_t clip,
     DestPixelStruct& output,
@@ -587,6 +710,7 @@ template <typename DestPixelStruct>
 void CompositePixelArgb2ArgbNoBlend(const FX_BGRA_STRUCT<uint8_t>& input,
                                     uint8_t clip,
                                     DestPixelStruct& output) {
+>>>>>>> BASE      (61fd49 Get rid of UNSAFE_TODOs in ARGB to 8 BPP CompositeRow functi)
   const uint8_t src_alpha = input.alpha * clip / 255;
   if (output.alpha == 0) {
     CopyInputAndAlpha(input, src_alpha, output);
