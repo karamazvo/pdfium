@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dc426437_b39460a8",
+        "filename": "core/fxge/dib/cfx_scanlinecompositor.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 6910
+      },
+      "writtenOn": "2024-08-05T14:53:03Z",
+      "side": 1,
+      "message": "This is causing issues internally. For whatever reason, our compiler can\u0027t infer that the types are the same for all of the array members. Maybe specifying the template parameter explicitly would work?\n\n```\ncore/fxge/dib/cfx_scanlinecompositor.cpp:272:21: error: no viable constructor or deduction guide for deduction of template arguments of \u0027FX_BGR_STRUCT\u0027\n  272 |       FX_BGR_STRUCT input \u003d {\n      |                     ^\ncore/fxge/dib/fx_dib.h:53:8: note: candidate function template not viable: requires 1 argument, but 3 were provided\n   53 | struct FX_BGR_STRUCT {\n      |        ^~~~~~~~~~~~~\ncore/fxge/dib/fx_dib.h:53:8: note: candidate function template not viable: requires 0 arguments, but 3 were provided\n1 error generated.\n```",
+      "range": {
+        "startLine": 272,
+        "startChar": 0,
+        "endLine": 273,
+        "endChar": 73
+      },
+      "revId": "61fd495569fff9044900ae0c309eee1b6f04adb1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
