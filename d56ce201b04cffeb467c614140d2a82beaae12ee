@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0b4c58c5_b1ffa144",
+        "filename": "DEPS",
+        "patchSetId": 23
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-05T16:00:43Z",
+      "side": 1,
+      "message": "I submitted the corresponding pdfium_tests CL, so this can become a real version now.",
+      "range": {
+        "startLine": 177,
+        "startChar": 29,
+        "endLine": 177,
+        "endChar": 52
+      },
+      "revId": "d56ce201b04cffeb467c614140d2a82beaae12ee",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
