@@ -103,6 +103,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "b6dff8ce_159100eb",
+        "filename": "fpdfsdk/fpdf_catalog.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-05T17:35:04Z",
+      "side": 1,
+      "message": "For this CL, the embeddertests and unittests are split so that embeddertests use actual documents, while unittests uses test documents.\n\nThe unit test uses a TestCPDFDocument that can set the root to nullptr for testing. Otherwise, we\u0027ll have to find another way to test the nullptr catalog codepath.",
+      "parentUuid": "d17d1cfb_583908aa",
+      "revId": "7bf39d06b8ac13ffa2af4f5b6549d823d904f313",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "2d7fde55_cb5bca7a",
         "filename": "fpdfsdk/fpdf_catalog.cpp",
         "patchSetId": 1
