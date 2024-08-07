@@ -139,7 +139,7 @@ int GetAlphaWithSrc(uint8_t src_alpha,
 }
 
 template <typename T, typename U>
-void AlphaMerge(const T& input, U& output, uint8_t alpha) {
+void AlphaMergeToDest(const T& input, U& output, uint8_t alpha) {
   output.blue = FXDIB_ALPHA_MERGE(output.blue, input.blue, alpha);
   output.green = FXDIB_ALPHA_MERGE(output.green, input.green, alpha);
   output.red = FXDIB_ALPHA_MERGE(output.red, input.red, alpha);
@@ -446,7 +446,7 @@ void CompositePixelArgb2RgbNonSeparableBlend(
   }
 
   FX_RGB_STRUCT<int> blended_color = RgbBlend(blend_type, input, output);
-  AlphaMerge(blended_color, output, src_alpha);
+  AlphaMergeToDest(blended_color, output, src_alpha);
 }
 
 template <typename DestPixelStruct>
@@ -464,7 +464,7 @@ void CompositePixelArgb2RgbBlend(const FX_BGRA_STRUCT<uint8_t>& input,
       .green = Blend(blend_type, output.green, input.green),
       .blue = Blend(blend_type, output.blue, input.blue),
   };
-  AlphaMerge(blended_color, output, src_alpha);
+  AlphaMergeToDest(blended_color, output, src_alpha);
 }
 
 template <typename DestPixelStruct>
@@ -481,7 +481,7 @@ void CompositePixelArgb2RgbNoBlend(const FX_BGRA_STRUCT<uint8_t>& input,
   if (src_alpha == 0) {
     return;
   }
-  AlphaMerge(input, output, src_alpha);
+  AlphaMergeToDest(input, output, src_alpha);
 }
 
 template <typename DestPixelStruct>
@@ -549,7 +549,7 @@ void CompositePixelArgb2ArgbNonSeparableBlend(
   const int alpha_ratio = src_alpha * 255 / dest_alpha;
   FX_RGB_STRUCT<int> blended_color = RgbBlend(blend_type, input, output);
   AlphaMergeToSource(input, blended_color, output.alpha);
-  AlphaMerge(blended_color, output, alpha_ratio);
+  AlphaMergeToDest(blended_color, output, alpha_ratio);
   output.alpha = dest_alpha;
 }
 
@@ -575,7 +575,7 @@ void CompositePixelArgb2ArgbBlend(const FX_BGRA_STRUCT<uint8_t>& input,
       .blue = Blend(blend_type, output.blue, input.blue),
   };
   AlphaMergeToSource(input, blended_color, output.alpha);
-  AlphaMerge(blended_color, output, alpha_ratio);
+  AlphaMergeToDest(blended_color, output, alpha_ratio);
   output.alpha = dest_alpha;
 }
 
@@ -594,7 +594,7 @@ void CompositePixelArgb2ArgbNoBlend(const FX_BGRA_STRUCT<uint8_t>& input,
 
   const uint8_t dest_alpha = AlphaUnion(output.alpha, src_alpha);
   const int alpha_ratio = src_alpha * 255 / dest_alpha;
-  AlphaMerge(input, output, alpha_ratio);
+  AlphaMergeToDest(input, output, alpha_ratio);
   output.alpha = dest_alpha;
 }
 
