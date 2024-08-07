@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d068dc5b_b1e8cd62",
+        "filename": "core/fxge/agg/cfx_agg_devicedriver.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 515,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-07T17:54:29Z",
+      "side": 0,
+      "message": "nit: e.g. here.",
+      "range": {
+        "startLine": 515,
+        "startChar": 34,
+        "endLine": 515,
+        "endChar": 50
+      },
+      "revId": "6177610bae70381ce0365d99d7f51f5b522ace61",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
