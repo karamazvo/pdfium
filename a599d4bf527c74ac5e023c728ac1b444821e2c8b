@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "be1b8aff_7c49e5b1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-07T17:43:37Z",
+      "side": 1,
+      "message": "LG/nit.",
+      "revId": "a599d4bf527c74ac5e023c728ac1b444821e2c8b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c7a5e784_4e816997",
+        "filename": "core/fxge/agg/cfx_agg_devicedriver.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 823,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-07T17:43:37Z",
+      "side": 1,
+      "message": "nit: const?  Or not.",
+      "range": {
+        "startLine": 823,
+        "startChar": 6,
+        "endLine": 823,
+        "endChar": 9
+      },
+      "revId": "a599d4bf527c74ac5e023c728ac1b444821e2c8b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
