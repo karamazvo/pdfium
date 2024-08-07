@@ -20,6 +20,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "9b874e74_f1607fd3",
+        "filename": "core/fxcrt/fx_coordinates.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-07T17:38:49Z",
+      "side": 1,
+      "message": "Note to self: Fix.",
+      "revId": "29dca5fd01a9e1a7764e7a08152bc153fba309ff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "d1ee7be7_e45d4f74",
         "filename": "core/fxcrt/fx_coordinates.h",
         "patchSetId": 2
@@ -31,6 +48,30 @@
       "writtenOn": "2024-08-07T16:51:02Z",
       "side": 1,
       "message": "this needs to be in fx_coordinates_test_support.h",
+      "range": {
+        "startLine": 279,
+        "startChar": 1,
+        "endLine": 283,
+        "endChar": 0
+      },
+      "revId": "29dca5fd01a9e1a7764e7a08152bc153fba309ff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8c1645fb_6d4fce6d",
+        "filename": "core/fxcrt/fx_coordinates.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-07T17:38:49Z",
+      "side": 1,
+      "message": "This is structured the same way as Chromium //ui/gfx/geometry code. e.g. in rect.h. Do you see this as a reasonable balance between convenience and strictly pairing .h and .cpp files?",
+      "parentUuid": "d1ee7be7_e45d4f74",
       "range": {
         "startLine": 279,
         "startChar": 1,
