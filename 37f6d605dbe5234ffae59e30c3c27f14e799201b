@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "89183498_c61168c2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-07T17:48:22Z",
+      "side": 1,
+      "message": "LG/w comment.",
+      "revId": "37f6d605dbe5234ffae59e30c3c27f14e799201b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0a270e24_ae0424ec",
+        "filename": "core/fxge/dib/fx_dib.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-07T17:48:22Z",
+      "side": 1,
+      "message": "nit: maybe declares as \"inline\" and put definition here. Also, worry about collisions as we\u0027re in global namespace, reasonable name for others to come up with, no FX_ prefixes, and common argument types.",
+      "range": {
+        "startLine": 245,
+        "startChar": 0,
+        "endLine": 245,
+        "endChar": 46
+      },
+      "revId": "37f6d605dbe5234ffae59e30c3c27f14e799201b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
