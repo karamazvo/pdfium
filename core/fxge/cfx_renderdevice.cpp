@@ -109,8 +109,7 @@ int CalcAlpha(int src, int alpha) {
 }
 
 void MergeGammaAdjust(uint8_t src, int channel, int alpha, uint8_t* dest) {
-  *dest =
-      FXDIB_ALPHA_MERGE(*dest, channel, CalcAlpha(TextGammaAdjust(src), alpha));
+  *dest = AlphaMerge(*dest, channel, CalcAlpha(TextGammaAdjust(src), alpha));
 }
 
 void MergeGammaAdjustRgb(const uint8_t* src,
@@ -129,9 +128,9 @@ int AverageRgb(const uint8_t* src) {
 
 void ApplyAlpha(uint8_t* dest, const FX_BGRA_STRUCT<uint8_t>& bgra, int alpha) {
   UNSAFE_TODO({
-    dest[0] = FXDIB_ALPHA_MERGE(dest[0], bgra.blue, alpha);
-    dest[1] = FXDIB_ALPHA_MERGE(dest[1], bgra.green, alpha);
-    dest[2] = FXDIB_ALPHA_MERGE(dest[2], bgra.red, alpha);
+    dest[0] = AlphaMerge(dest[0], bgra.blue, alpha);
+    dest[1] = AlphaMerge(dest[1], bgra.green, alpha);
+    dest[2] = AlphaMerge(dest[2], bgra.red, alpha);
   });
 }
 
