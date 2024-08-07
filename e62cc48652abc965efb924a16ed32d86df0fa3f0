@@ -1,6 +1,75 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "f084b17d_83356767",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-07T18:14:18Z",
+      "side": 1,
+      "message": "nit: This should continue on line 10 as it is part of the previous paragraph.",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 4
+      },
+      "revId": "e62cc48652abc965efb924a16ed32d86df0fa3f0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a2b1567a_a7ea2167",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-07T18:14:18Z",
+      "side": 1,
+      "message": "nit: blank line before this sentence.",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 12
+      },
+      "revId": "e62cc48652abc965efb924a16ed32d86df0fa3f0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9efb99f5_5c697cf7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-07T18:14:18Z",
+      "side": 1,
+      "message": "nit: space after colon to match our style.",
+      "range": {
+        "startLine": 16,
+        "startChar": 3,
+        "endLine": 16,
+        "endChar": 4
+      },
+      "revId": "e62cc48652abc965efb924a16ed32d86df0fa3f0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "637756ed_90681c87",
@@ -14,6 +83,115 @@
       "writtenOn": "2024-08-07T18:00:39Z",
       "side": 1,
       "message": "Welcome. This is quite good. I\u0027m going to suggest a few minor, minor edits to match some of the style we use in PDFium (please don\u0027t hate us :) ) while we see what the bots think.",
+      "revId": "e62cc48652abc965efb924a16ed32d86df0fa3f0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "560cae92_194733c6",
+        "filename": "core/fpdfapi/page/cpdf_color.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-07T18:14:18Z",
+      "side": 1,
+      "message": "nit: we try to avoid assignment in conditionals (although it is perfectly valid code, just a preference for reading). Several places throughout.\n\nAs below, generally perfer holds_alternative followed by straight get.",
+      "range": {
+        "startLine": 62,
+        "startChar": 6,
+        "endLine": 62,
+        "endChar": 27
+      },
+      "revId": "e62cc48652abc965efb924a16ed32d86df0fa3f0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a755ff35_7bc90d07",
+        "filename": "core/fpdfapi/page/cpdf_color.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-07T18:14:18Z",
+      "side": 1,
+      "message": "can use straight get() here without testing.",
+      "range": {
+        "startLine": 81,
+        "startChar": 18,
+        "endLine": 81,
+        "endChar": 24
+      },
+      "revId": "e62cc48652abc965efb924a16ed32d86df0fa3f0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8b9867ab_a63f91b2",
+        "filename": "core/fpdfapi/page/cpdf_color.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-07T18:14:18Z",
+      "side": 1,
+      "message": "nit: absl::holds_alternative() followed by straight absl::get() reads better and avoids another layer of indirection through pointers.",
+      "range": {
+        "startLine": 120,
+        "startChar": 3,
+        "endLine": 120,
+        "endChar": 35
+      },
+      "revId": "e62cc48652abc965efb924a16ed32d86df0fa3f0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fe7e5fb9_db663e61",
+        "filename": "core/fpdfapi/page/cpdf_color.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-07T18:14:18Z",
+      "side": 1,
+      "message": "here I\u0027d advocate for an inverted test and early return, something along the lines of\n\n  if (!holds_alternative...) {\n    return nullptr;\n  }",
+      "range": {
+        "startLine": 134,
+        "startChar": 1,
+        "endLine": 136,
+        "endChar": 71
+      },
+      "revId": "e62cc48652abc965efb924a16ed32d86df0fa3f0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "37ff94a5_13b635ec",
+        "filename": "core/fpdfapi/page/cpdf_color.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-07T18:14:18Z",
+      "side": 1,
+      "message": "nit: can we copy over the comments from the old code?",
       "revId": "e62cc48652abc965efb924a16ed32d86df0fa3f0",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
