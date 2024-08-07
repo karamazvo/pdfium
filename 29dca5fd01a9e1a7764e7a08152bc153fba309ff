@@ -84,6 +84,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "5d56d5ee_998eef70",
+        "filename": "core/fxcrt/fx_coordinates.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-07T17:39:49Z",
+      "side": 1,
+      "message": "I think geometry is doing it wrong as well. Sorry.",
+      "parentUuid": "8c1645fb_6d4fce6d",
+      "range": {
+        "startLine": 279,
+        "startChar": 1,
+        "endLine": 283,
+        "endChar": 0
+      },
+      "revId": "29dca5fd01a9e1a7764e7a08152bc153fba309ff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "01b05cbd_bf265e57",
         "filename": "core/fxcrt/fx_coordinates.h",
         "patchSetId": 2
