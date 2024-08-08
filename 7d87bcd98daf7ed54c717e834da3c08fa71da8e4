@@ -1,0 +1,118 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5cff8217_5edc08b9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-08T16:55:51Z",
+      "side": 1,
+      "message": "I see patch set 9 responsed to comments in patch set 4. The usual workflow in Gerrit is to mark the comments as \"done\" via the web interface, and then send out the draft replies to let code reviewers know about that.",
+      "revId": "7d87bcd98daf7ed54c717e834da3c08fa71da8e4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dcab569b_12df7558",
+        "filename": "core/fpdfapi/page/cpdf_color.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-08T16:55:51Z",
+      "side": 1,
+      "message": "Does absl::variant with absl::monostate already start out as absl::monostate without explicit initialization? i.e. Can this go back to being `\u003d default;`?",
+      "range": {
+        "startLine": 16,
+        "startChar": 27,
+        "endLine": 16,
+        "endChar": 57
+      },
+      "revId": "7d87bcd98daf7ed54c717e834da3c08fa71da8e4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eeb594a6_f88e5f2d",
+        "filename": "core/fpdfapi/page/cpdf_color.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-08T16:55:51Z",
+      "side": 1,
+      "message": "Given lines 57-60, should this be always true?",
+      "revId": "7d87bcd98daf7ed54c717e834da3c08fa71da8e4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7368f180_ced6fa06",
+        "filename": "core/fpdfapi/page/cpdf_color.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-08T16:55:51Z",
+      "side": 1,
+      "message": "Does `color_data_ \u003d that.color_data_;` work here for the non-PatternValue cases?",
+      "revId": "7d87bcd98daf7ed54c717e834da3c08fa71da8e4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d269ceae_0e72762b",
+        "filename": "core/fpdfapi/page/cpdf_color.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-08T16:55:51Z",
+      "side": 1,
+      "message": "Given line 134, should this always evaluate to false?",
+      "revId": "7d87bcd98daf7ed54c717e834da3c08fa71da8e4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "05d7d10c_d1e7153d",
+        "filename": "core/fpdfapi/page/cpdf_color.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-08T16:55:51Z",
+      "side": 1,
+      "message": "- Over-parenthesized.\n- Given line 134, should `pattern_value` always be non-null? I wonder if the pre-existing code was doing a useless check here. Maybe leave it as is and figure that out separately.",
+      "range": {
+        "startLine": 142,
+        "startChar": 9,
+        "endLine": 142,
+        "endChar": 24
+      },
+      "revId": "7d87bcd98daf7ed54c717e834da3c08fa71da8e4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
