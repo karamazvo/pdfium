@@ -56,6 +56,30 @@
       },
       "revId": "a599d4bf527c74ac5e023c728ac1b444821e2c8b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4399283d_60aefa29",
+        "filename": "core/fxge/agg/cfx_agg_devicedriver.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 823,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-08T16:01:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7a5e784_4e816997",
+      "range": {
+        "startLine": 823,
+        "startChar": 6,
+        "endLine": 823,
+        "endChar": 9
+      },
+      "revId": "a599d4bf527c74ac5e023c728ac1b444821e2c8b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
