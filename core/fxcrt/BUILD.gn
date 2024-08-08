@@ -185,7 +185,11 @@ source_set("fxcrt") {
 
 source_set("test_support") {
   testonly = true
-  sources = [ "string_test_support.cpp" ]
+  sources = [
+    "fx_coordinates_test_support.cpp",
+    "fx_coordinates_test_support.h",
+    "string_test_support.cpp",
+  ]
   configs += [ "../../:pdfium_strict_config" ]
   deps = [ ":fxcrt" ]
 }
