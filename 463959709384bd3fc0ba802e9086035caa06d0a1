@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ed5c7b27_7e9ad182",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-09T18:48:58Z",
+      "side": 1,
+      "message": "LG/W nit.",
+      "revId": "463959709384bd3fc0ba802e9086035caa06d0a1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b509c9c4_55debee2",
+        "filename": "core/fpdfapi/render/cpdf_scaledrenderbuffer.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-09T18:48:58Z",
+      "side": 1,
+      "message": "nit: logically not const?",
+      "range": {
+        "startLine": 31,
+        "startChar": 2,
+        "endLine": 31,
+        "endChar": 25
+      },
+      "revId": "463959709384bd3fc0ba802e9086035caa06d0a1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
