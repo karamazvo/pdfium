@@ -137,6 +137,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b6ddf65e_e4a40c82",
+        "filename": "fpdfsdk/fpdf_catalog.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-09T22:55:23Z",
+      "side": 1,
+      "message": "After some GN file changes, I can move the test to embedder test. Done.",
+      "parentUuid": "a368e1d8_36401e3d",
+      "revId": "7bf39d06b8ac13ffa2af4f5b6549d823d904f313",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2d7fde55_cb5bca7a",
@@ -168,6 +186,24 @@
       "side": 1,
       "message": "Also reached in the unit test?",
       "parentUuid": "2d7fde55_cb5bca7a",
+      "revId": "7bf39d06b8ac13ffa2af4f5b6549d823d904f313",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2a72f099_2e9eb416",
+        "filename": "fpdfsdk/fpdf_catalog.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-09T22:55:23Z",
+      "side": 1,
+      "message": "Marking as resolved.",
+      "parentUuid": "eacd3a88_bf777958",
       "revId": "7bf39d06b8ac13ffa2af4f5b6549d823d904f313",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
