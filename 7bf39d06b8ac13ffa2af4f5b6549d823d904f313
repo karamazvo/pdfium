@@ -155,6 +155,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "09c66953_c52b3092",
+        "filename": "fpdfsdk/fpdf_catalog.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-09T23:23:04Z",
+      "side": 1,
+      "message": "Would it be less churn to just expose SetRootForTesting() as public? Then the test can call FPDF_CreateNewDocument(), grab a CPDF_Document pointer, and call SetRootForTesting().",
+      "parentUuid": "b6ddf65e_e4a40c82",
+      "revId": "7bf39d06b8ac13ffa2af4f5b6549d823d904f313",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2d7fde55_cb5bca7a",
