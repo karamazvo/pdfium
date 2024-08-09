@@ -115,7 +115,7 @@ pdfium_unittest_source_set("unittests") {
     "../fpdfapi/page",
     "../fpdfapi/page:unit_test_support",
     "../fpdfapi/parser",
-    "../fpdfapi/parser:unit_test_support",
+    "../fpdfapi/parser:test_support",
     "../fpdfapi/render",
   ]
   pdfium_root_dir = "../../"

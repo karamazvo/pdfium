@@ -98,7 +98,7 @@ source_set("parser") {
   }
 }
 
-source_set("unit_test_support") {
+source_set("test_support") {
   testonly = true
   sources = [
     "cpdf_test_document.cpp",
@@ -135,7 +135,7 @@ pdfium_unittest_source_set("unittests") {
   ]
   deps = [
     ":parser",
-    ":unit_test_support",
+    ":test_support",
     "../../../constants",
     "../../fxcodec",
     "../page",
