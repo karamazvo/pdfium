@@ -114,7 +114,7 @@ pdfium_unittest_source_set("unittests") {
     "../constants",
     "../core/fpdfapi/page:unit_test_support",
     "../core/fpdfapi/parser",
-    "../core/fpdfapi/parser:unit_test_support",
+    "../core/fpdfapi/parser:test_support",
     "../core/fpdfapi/render",
     "../core/fpdfdoc",
   ]
@@ -127,6 +127,7 @@ pdfium_embeddertest_source_set("embeddertests") {
     "cpdfsdk_baannot_embeddertest.cpp",
     "fpdf_annot_embeddertest.cpp",
     "fpdf_attachment_embeddertest.cpp",
+    "fpdf_catalog_embeddertest.cpp",
     "fpdf_dataavail_embeddertest.cpp",
     "fpdf_doc_embeddertest.cpp",
     "fpdf_edit_embeddertest.cpp",
@@ -156,6 +157,7 @@ pdfium_embeddertest_source_set("embeddertests") {
     "../core/fpdfapi/font",
     "../core/fpdfapi/page",
     "../core/fpdfapi/parser",
+    "../core/fpdfapi/parser:test_support",
     "../core/fxcrt:test_support",
     "../core/fxge",
   ]
