@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8ea950be_276e11cd",
+        "filename": "core/fpdfapi/parser/cpdf_security_handler.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-09T20:34:11Z",
+      "side": 1,
+      "message": "Add has_value() for consistency.",
+      "revId": "fa1e582433cbf80553a014e7b5a137433a335fad",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "38badece_97db6371",
+        "filename": "core/fpdfapi/parser/cpdf_security_handler.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-09T20:34:11Z",
+      "side": 1,
+      "message": "Create these 2 spans outside of the for-loop?",
+      "revId": "fa1e582433cbf80553a014e7b5a137433a335fad",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "64fc07cc_0ef885fd",
+        "filename": "core/fpdfapi/parser/cpdf_security_handler.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 356,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-09T20:34:11Z",
+      "side": 1,
+      "message": "Save the result from line 340 and use that here?",
+      "revId": "fa1e582433cbf80553a014e7b5a137433a335fad",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
