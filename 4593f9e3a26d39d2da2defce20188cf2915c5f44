@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b9b5ce98_6e9e09da",
+        "filename": "fpdfsdk/fpdf_catalog.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-10T00:23:42Z",
+      "side": 1,
+      "message": "nit: allow this to be NULL and return false like other silly APIs?",
+      "range": {
+        "startLine": 28,
+        "startChar": 64,
+        "endLine": 28,
+        "endChar": 72
+      },
+      "revId": "4593f9e3a26d39d2da2defce20188cf2915c5f44",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ad367bba_3d8b1d1b",
+        "filename": "fpdfsdk/fpdf_catalog_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-10T00:23:42Z",
+      "side": 1,
+      "message": "nit: then test passing valid document but NULL string?",
+      "range": {
+        "startLine": 17,
+        "startChar": 6,
+        "endLine": 17,
+        "endChar": 31
+      },
+      "revId": "4593f9e3a26d39d2da2defce20188cf2915c5f44",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
