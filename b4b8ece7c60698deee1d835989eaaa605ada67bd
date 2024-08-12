@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7621610b_771f4462",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 6295
+      },
+      "writtenOn": "2024-08-12T17:13:44Z",
+      "side": 1,
+      "message": "nit: capitalize first word. No need to mention the AUTHORS change I think",
+      "revId": "b4b8ece7c60698deee1d835989eaaa605ada67bd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2002a430_a8ced34a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 6295
+      },
+      "writtenOn": "2024-08-12T17:13:44Z",
+      "side": 1,
+      "message": "Bug: 352359909",
+      "revId": "b4b8ece7c60698deee1d835989eaaa605ada67bd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "26a70d4f_097093a2",
+        "filename": "AUTHORS",
+        "patchSetId": 6
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 6295
+      },
+      "writtenOn": "2024-08-12T17:13:44Z",
+      "side": 1,
+      "message": "Place in correct location alphabetically.",
+      "revId": "b4b8ece7c60698deee1d835989eaaa605ada67bd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cfc67e30_392f2df8",
+        "filename": "third_party/agg23/agg_math.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 6295
+      },
+      "writtenOn": "2024-08-12T17:13:44Z",
+      "side": 1,
+      "message": "Oh this is in third_party so you might need to add a patch file to document the change like in https://pdfium-review.googlesource.com/c/pdfium/+/110010. The more current owners can confirm this",
+      "revId": "b4b8ece7c60698deee1d835989eaaa605ada67bd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
