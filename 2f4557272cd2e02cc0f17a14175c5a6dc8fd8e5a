@@ -16,6 +16,24 @@
       "message": "The issue is asking to use the function from math.h, not to rename the existing function. And once you do that then you can remove the FXSYS_sqrt2 function entirely. Maybe give it another try?",
       "revId": "2f4557272cd2e02cc0f17a14175c5a6dc8fd8e5a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0aa0cd1c_e3a1ca61",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3556020
+      },
+      "writtenOn": "2024-08-12T17:01:42Z",
+      "side": 1,
+      "message": "@npm@chromium.org many thanks for this hint , i give it another try \nand replaced the calling of FXSYS_sqrt2 with hypotf() function then removed the FXSYS_sqrt() definition from fx_system.h and the body from fx_system.cpp \nif there are any more edits , i am open for it \u003c3",
+      "parentUuid": "d559bffb_342bb428",
+      "revId": "2f4557272cd2e02cc0f17a14175c5a6dc8fd8e5a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
