@@ -256,6 +256,6 @@ uint32_t FXSYS_GetLastError() {
 }
 #endif  // BUILDFLAG(IS_WIN)
 
-float FXSYS_sqrt2(float a, float b) {
+float hypotf(float a, float b) {
   return sqrtf(a * a + b * b);
 }
