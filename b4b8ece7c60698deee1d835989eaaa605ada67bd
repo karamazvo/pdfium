@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b68c8441_650c96e9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 3556020
+      },
+      "writtenOn": "2024-08-12T19:01:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7621610b_771f4462",
+      "revId": "b4b8ece7c60698deee1d835989eaaa605ada67bd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2002a430_a8ced34a",
@@ -31,6 +49,24 @@
       "writtenOn": "2024-08-12T17:13:44Z",
       "side": 1,
       "message": "Bug: 352359909",
+      "revId": "b4b8ece7c60698deee1d835989eaaa605ada67bd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b7482e15_6351794d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 3556020
+      },
+      "writtenOn": "2024-08-12T19:01:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2002a430_a8ced34a",
       "revId": "b4b8ece7c60698deee1d835989eaaa605ada67bd",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -52,6 +88,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c4c61f43_8b26c6dc",
+        "filename": "AUTHORS",
+        "patchSetId": 6
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 3556020
+      },
+      "writtenOn": "2024-08-12T19:01:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "26a70d4f_097093a2",
+      "revId": "b4b8ece7c60698deee1d835989eaaa605ada67bd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cfc67e30_392f2df8",
@@ -65,6 +119,24 @@
       "writtenOn": "2024-08-12T17:13:44Z",
       "side": 1,
       "message": "Oh this is in third_party so you might need to add a patch file to document the change like in https://pdfium-review.googlesource.com/c/pdfium/+/110010. The more current owners can confirm this",
+      "revId": "b4b8ece7c60698deee1d835989eaaa605ada67bd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "858c1f16_7545d71e",
+        "filename": "third_party/agg23/agg_math.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 3556020
+      },
+      "writtenOn": "2024-08-12T19:01:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cfc67e30_392f2df8",
       "revId": "b4b8ece7c60698deee1d835989eaaa605ada67bd",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
