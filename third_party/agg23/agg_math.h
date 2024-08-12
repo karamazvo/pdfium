@@ -19,6 +19,7 @@
 #ifndef AGG_MATH_INCLUDED
 #define AGG_MATH_INCLUDED
 #include "agg_basics.h"
+#include "third_party/angle/third_party/llvm/src/libc/src/math/hypotf.h"
 namespace pdfium
 {
 namespace agg
@@ -34,7 +35,7 @@ AGG_INLINE float calc_distance(float x1, float y1, float x2, float y2)
 {
     float dx = x2 - x1;
     float dy = y2 - y1;
-    return FXSYS_sqrt2(dx, dy);
+    return hypotf(dx, dy);
 }
 AGG_INLINE float calc_line_point_distance(float x1, float y1,
         float x2, float y2,
@@ -42,7 +43,7 @@ AGG_INLINE float calc_line_point_distance(float x1, float y1,
 {
     float dx = x2 - x1;
     float dy = y2 - y1;
-    float d = FXSYS_sqrt2(dx, dy);
+    float d = hypotf(dx, dy);
     if(d < intersection_epsilon) {
         return calc_distance(x1, y1, x, y);
     }
