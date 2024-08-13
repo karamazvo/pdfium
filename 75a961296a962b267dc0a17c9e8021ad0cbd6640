@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "271100e8_690e00c2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 3556020
+      },
+      "writtenOn": "2024-08-13T20:16:46Z",
+      "side": 1,
+      "message": "@npm@google.com Ah, I get. I did not realize that \"Bug\" is a Gerrit keyword, so I was not very clear on that. I appreciate your help!",
+      "parentUuid": "77928faf_07f5b224",
+      "revId": "75a961296a962b267dc0a17c9e8021ad0cbd6640",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c09bc29b_adbad5fd",
         "filename": "third_party/agg23/agg_math.h",
         "patchSetId": 10
@@ -31,6 +49,24 @@
       "writtenOn": "2024-08-13T14:32:45Z",
       "side": 1,
       "message": "Include what you use",
+      "revId": "75a961296a962b267dc0a17c9e8021ad0cbd6640",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "74aafccc_c76ed9b4",
+        "filename": "third_party/agg23/agg_math.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 3556020
+      },
+      "writtenOn": "2024-08-13T20:16:46Z",
+      "side": 1,
+      "message": "@npm@google.com done , could you please take another look?",
+      "parentUuid": "c09bc29b_adbad5fd",
       "revId": "75a961296a962b267dc0a17c9e8021ad0cbd6640",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
