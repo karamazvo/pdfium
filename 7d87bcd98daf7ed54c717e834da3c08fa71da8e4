@@ -41,6 +41,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e894a290_dcda2fcf",
+        "filename": "core/fpdfapi/page/cpdf_color.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 3568627
+      },
+      "writtenOn": "2024-08-13T00:43:37Z",
+      "side": 1,
+      "message": "Yes, we can safely revert to using `\u003d default;` since `absl::variant` will default to holding the value of its first alternative type, which in this case is `absl::monostate`.",
+      "parentUuid": "dcab569b_12df7558",
+      "range": {
+        "startLine": 16,
+        "startChar": 27,
+        "endLine": 16,
+        "endChar": 57
+      },
+      "revId": "7d87bcd98daf7ed54c717e834da3c08fa71da8e4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "eeb594a6_f88e5f2d",
@@ -54,6 +78,24 @@
       "writtenOn": "2024-08-08T16:55:51Z",
       "side": 1,
       "message": "Given lines 57-60, should this be always true?",
+      "revId": "7d87bcd98daf7ed54c717e834da3c08fa71da8e4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "92398061_bc033273",
+        "filename": "core/fpdfapi/page/cpdf_color.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 3568627
+      },
+      "writtenOn": "2024-08-13T00:43:37Z",
+      "side": 1,
+      "message": "Yes, I will remove this unnecessary condition.",
+      "parentUuid": "eeb594a6_f88e5f2d",
       "revId": "7d87bcd98daf7ed54c717e834da3c08fa71da8e4",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -75,6 +117,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ada20f0c_0752c464",
+        "filename": "core/fpdfapi/page/cpdf_color.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 3568627
+      },
+      "writtenOn": "2024-08-13T00:43:37Z",
+      "side": 1,
+      "message": "The assignment `color_data_ \u003d that.color_data_;` is not feasible because `color_data_` contains a non-copyable type, specifically std::unique_ptr\u003cPatternValue\u003e. Instead, I am managing each case based on the type held by the variant, which is the appropriate approach for handling assignment in the presence of non-copyable types.",
+      "parentUuid": "7368f180_ced6fa06",
+      "revId": "7d87bcd98daf7ed54c717e834da3c08fa71da8e4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d269ceae_0e72762b",
@@ -92,6 +152,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8f68be27_309cb467",
+        "filename": "core/fpdfapi/page/cpdf_color.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 3568627
+      },
+      "writtenOn": "2024-08-13T00:43:37Z",
+      "side": 1,
+      "message": "Yes, I will remove this unnecessary condition.",
+      "parentUuid": "d269ceae_0e72762b",
+      "revId": "7d87bcd98daf7ed54c717e834da3c08fa71da8e4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "05d7d10c_d1e7153d",
@@ -105,6 +183,30 @@
       "writtenOn": "2024-08-08T16:55:51Z",
       "side": 1,
       "message": "- Over-parenthesized.\n- Given line 134, should `pattern_value` always be non-null? I wonder if the pre-existing code was doing a useless check here. Maybe leave it as is and figure that out separately.",
+      "range": {
+        "startLine": 142,
+        "startChar": 9,
+        "endLine": 142,
+        "endChar": 24
+      },
+      "revId": "7d87bcd98daf7ed54c717e834da3c08fa71da8e4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "385f79cf_954c8c62",
+        "filename": "core/fpdfapi/page/cpdf_color.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 3568627
+      },
+      "writtenOn": "2024-08-13T00:43:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "05d7d10c_d1e7153d",
       "range": {
         "startLine": 142,
         "startChar": 9,
