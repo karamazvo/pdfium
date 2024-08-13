@@ -20,6 +20,23 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "dc3cdd4c_975f31d8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-13T20:11:05Z",
+      "side": 1,
+      "message": "LG/nit.",
+      "revId": "f0c2a410e8b2bd6d99c01d964fb09959a068f43a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "3215562c_09cdb814",
         "filename": "core/fpdfapi/parser/cpdf_simple_parser_unittest.cpp",
         "patchSetId": 1
@@ -31,6 +48,29 @@
       "writtenOn": "2024-08-13T18:29:10Z",
       "side": 1,
       "message": "EXPECT_EQ() gets confused without the explicit ByteStringView construction.",
+      "revId": "f0c2a410e8b2bd6d99c01d964fb09959a068f43a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b937b303_abe16bcf",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-13T20:11:05Z",
+      "side": 1,
+      "message": "I\u0027d expect we can make a ByteStringView from just kWrongResult withoug going through span.",
+      "range": {
+        "startLine": 76,
+        "startChar": 44,
+        "endLine": 76,
+        "endChar": 75
+      },
       "revId": "f0c2a410e8b2bd6d99c01d964fb09959a068f43a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
