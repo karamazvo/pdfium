@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "77928faf_07f5b224",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 6355
+      },
+      "writtenOn": "2024-08-13T14:32:45Z",
+      "side": 1,
+      "message": "\u0027Bug: 352359909\u0027 as it does not seem to link the issue with the space before the \u0027:\u0027",
+      "revId": "75a961296a962b267dc0a17c9e8021ad0cbd6640",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c09bc29b_adbad5fd",
+        "filename": "third_party/agg23/agg_math.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 6355
+      },
+      "writtenOn": "2024-08-13T14:32:45Z",
+      "side": 1,
+      "message": "Include what you use",
+      "revId": "75a961296a962b267dc0a17c9e8021ad0cbd6640",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
