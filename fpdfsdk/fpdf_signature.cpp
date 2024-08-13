@@ -11,7 +11,6 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
-#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
@@ -113,8 +112,10 @@ FPDFSignatureObj_GetByteRange(FPDF_SIGNATURE signature,
   const unsigned long byte_range_len =
       fxcrt::CollectionSize<unsigned long>(*byte_range);
   if (buffer && length >= byte_range_len) {
+    // SAFETY: required from caller.
+    auto buffer_span = UNSAFE_BUFFERS(pdfium::make_span(buffer, length));
     for (size_t i = 0; i < byte_range_len; ++i) {
-      UNSAFE_TODO(buffer[i]) = byte_range->GetIntegerAt(i);
+      buffer_span[i] = byte_range->GetIntegerAt(i);
     }
   }
   return byte_range_len;
