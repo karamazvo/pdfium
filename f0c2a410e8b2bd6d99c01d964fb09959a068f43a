@@ -3,6 +3,23 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "c20cba55_5f527bce",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-13T19:11:30Z",
+      "side": 1,
+      "message": "LGTM",
+      "revId": "f0c2a410e8b2bd6d99c01d964fb09959a068f43a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "3215562c_09cdb814",
         "filename": "core/fpdfapi/parser/cpdf_simple_parser_unittest.cpp",
         "patchSetId": 1
