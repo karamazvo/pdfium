@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3215562c_09cdb814",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-13T18:29:10Z",
+      "side": 1,
+      "message": "EXPECT_EQ() gets confused without the explicit ByteStringView construction.",
+      "revId": "f0c2a410e8b2bd6d99c01d964fb09959a068f43a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
