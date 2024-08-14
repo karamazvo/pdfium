@@ -19,11 +19,13 @@ class CPDF_SimpleParser {
 
   ByteStringView GetWord();
 
-  void SetCurPos(uint32_t pos) { cur_pos_ = pos; }
-  uint32_t GetCurPos() const { return cur_pos_; }
+  void SetCurrentPosition(uint32_t position) { cur_pos_ = position; }
+  uint32_t GetCurrentPosition() const { return cur_pos_; }
 
  private:
   const pdfium::span<const uint8_t> data_;
+
+  // The current unread position.
   uint32_t cur_pos_ = 0;
 };
 

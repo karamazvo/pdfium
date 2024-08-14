@@ -55,7 +55,7 @@ TEST(CPDFDefaultAppearanceTest, FindTagParamFromStart) {
               CPDF_DefaultAppearance::FindTagParamFromStartForTesting(
                   &parser, item.token, item.num_params))
         << " for case " << item.input;
-    EXPECT_EQ(item.result_pos, parser.GetCurPos())
+    EXPECT_EQ(item.result_pos, parser.GetCurrentPosition())
         << " for case " << item.input;
   }
 }
