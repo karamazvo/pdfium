@@ -48,7 +48,6 @@ ByteStringView CPDF_SimpleParser::GetWord() {
     }
   }
 
-  uint8_t size = 0;
   uint32_t start_pos = cur_pos_ - 1;
   if (PDFCharIsDelimiter(cur_char)) {
     // Find names
@@ -61,22 +60,18 @@ ByteStringView CPDF_SimpleParser::GetWord() {
         cur_char = data_[cur_pos_++];
         if (!PDFCharIsOther(cur_char) && !PDFCharIsNumeric(cur_char)) {
           cur_pos_--;
-          size = cur_pos_ - start_pos;
           break;
         }
       }
-      return ByteStringView(data_.subspan(start_pos, size));
+      return ByteStringView(data_.subspan(start_pos, cur_pos_ - start_pos));
     }
 
-    size = 1;
     if (cur_char == '<') {
       if (cur_pos_ >= data_.size()) {
-        return ByteStringView(data_.subspan(start_pos, size));
+        return ByteStringView(data_.subspan(start_pos, cur_pos_ - start_pos));
       }
       cur_char = data_[cur_pos_++];
-      if (cur_char == '<') {
-        size = 2;
-      } else {
+      if (cur_char != '<') {
         while (cur_pos_ < data_.size() && data_[cur_pos_] != '>') {
           cur_pos_++;
         }
@@ -84,17 +79,13 @@ ByteStringView CPDF_SimpleParser::GetWord() {
         if (cur_pos_ < data_.size()) {
           cur_pos_++;
         }
-
-        size = cur_pos_ - start_pos;
       }
     } else if (cur_char == '>') {
       if (cur_pos_ >= data_.size()) {
-        return ByteStringView(data_.subspan(start_pos, size));
+        return ByteStringView(data_.subspan(start_pos, cur_pos_ - start_pos));
       }
       cur_char = data_[cur_pos_++];
-      if (cur_char == '>') {
-        size = 2;
-      } else {
+      if (cur_char != '>') {
         cur_pos_--;
       }
     } else if (cur_char == '(') {
@@ -124,13 +115,10 @@ ByteStringView CPDF_SimpleParser::GetWord() {
       if (cur_pos_ < data_.size()) {
         cur_pos_++;
       }
-
-      size = cur_pos_ - start_pos;
     }
-    return ByteStringView(data_.subspan(start_pos, size));
+    return ByteStringView(data_.subspan(start_pos, cur_pos_ - start_pos));
   }
 
-  size = 1;
   while (cur_pos_ < data_.size()) {
     cur_char = data_[cur_pos_++];
 
@@ -138,7 +126,6 @@ ByteStringView CPDF_SimpleParser::GetWord() {
       cur_pos_--;
       break;
     }
-    size++;
   }
-  return ByteStringView(data_.subspan(start_pos, size));
+  return ByteStringView(data_.subspan(start_pos, cur_pos_ - start_pos));
 }
