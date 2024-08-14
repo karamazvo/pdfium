@@ -87,13 +87,12 @@ ByteStringView CPDF_SimpleParser::HandleDelimiter(uint8_t delimiter) {
   }
 
   if (delimiter == '<') {
-    if (data_[cur_pos_++] != '<') {
-      while (cur_pos_ < data_.size() && data_[cur_pos_] != '>') {
-        cur_pos_++;
-      }
-
-      if (cur_pos_ < data_.size()) {
-        cur_pos_++;
+    // Stop parsing if the string has "<<".
+    uint8_t cur_char = data_[cur_pos_++];
+    if (cur_char != '<') {
+      // Find the closing bracket or end of string.
+      while (cur_char != '>' && cur_pos_ < data_.size()) {
+        cur_char = data_[cur_pos_++];
       }
     }
   } else if (delimiter == '>') {
