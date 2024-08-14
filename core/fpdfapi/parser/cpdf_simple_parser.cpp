@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"
 
+#include <cstdint>
+
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 
 CPDF_SimpleParser::CPDF_SimpleParser(pdfium::span<const uint8_t> input)
@@ -14,60 +16,60 @@ CPDF_SimpleParser::CPDF_SimpleParser(pdfium::span<const uint8_t> input)
 CPDF_SimpleParser::~CPDF_SimpleParser() = default;
 
 ByteStringView CPDF_SimpleParser::GetWord() {
-  uint8_t ch;
+  uint8_t cur_char;
 
   // Skip whitespace and comment lines.
   while (true) {
     if (data_.size() <= cur_pos_)
       return ByteStringView();
 
-    ch = data_[cur_pos_++];
-    while (PDFCharIsWhitespace(ch)) {
+    cur_char = data_[cur_pos_++];
+    while (PDFCharIsWhitespace(cur_char)) {
       if (data_.size() <= cur_pos_)
         return ByteStringView();
-      ch = data_[cur_pos_++];
+      cur_char = data_[cur_pos_++];
     }
 
-    if (ch != '%')
+    if (cur_char != '%')
       break;
 
     while (true) {
       if (data_.size() <= cur_pos_)
         return ByteStringView();
 
-      ch = data_[cur_pos_++];
-      if (PDFCharIsLineEnding(ch))
+      cur_char = data_[cur_pos_++];
+      if (PDFCharIsLineEnding(cur_char))
         break;
     }
   }
 
-  uint8_t dwSize = 0;
+  uint8_t size = 0;
   uint32_t start_pos = cur_pos_ - 1;
-  if (PDFCharIsDelimiter(ch)) {
+  if (PDFCharIsDelimiter(cur_char)) {
     // Find names
-    if (ch == '/') {
+    if (cur_char == '/') {
       while (true) {
         if (data_.size() <= cur_pos_)
           break;
 
-        ch = data_[cur_pos_++];
-        if (!PDFCharIsOther(ch) && !PDFCharIsNumeric(ch)) {
+        cur_char = data_[cur_pos_++];
+        if (!PDFCharIsOther(cur_char) && !PDFCharIsNumeric(cur_char)) {
           cur_pos_--;
-          dwSize = cur_pos_ - start_pos;
+          size = cur_pos_ - start_pos;
           break;
         }
       }
-      return ByteStringView(data_.subspan(start_pos, dwSize));
+      return ByteStringView(data_.subspan(start_pos, size));
     }
 
-    dwSize = 1;
-    if (ch == '<') {
+    size = 1;
+    if (cur_char == '<') {
       if (data_.size() <= cur_pos_) {
-        return ByteStringView(data_.subspan(start_pos, dwSize));
+        return ByteStringView(data_.subspan(start_pos, size));
       }
-      ch = data_[cur_pos_++];
-      if (ch == '<') {
-        dwSize = 2;
+      cur_char = data_[cur_pos_++];
+      if (cur_char == '<') {
+        size = 2;
       } else {
         while (cur_pos_ < data_.size() && data_[cur_pos_] != '>')
           cur_pos_++;
@@ -75,18 +77,18 @@ ByteStringView CPDF_SimpleParser::GetWord() {
         if (cur_pos_ < data_.size())
           cur_pos_++;
 
-        dwSize = cur_pos_ - start_pos;
+        size = cur_pos_ - start_pos;
       }
-    } else if (ch == '>') {
+    } else if (cur_char == '>') {
       if (data_.size() <= cur_pos_) {
-        return ByteStringView(data_.subspan(start_pos, dwSize));
+        return ByteStringView(data_.subspan(start_pos, size));
       }
-      ch = data_[cur_pos_++];
-      if (ch == '>')
-        dwSize = 2;
+      cur_char = data_[cur_pos_++];
+      if (cur_char == '>')
+        size = 2;
       else
         cur_pos_--;
-    } else if (ch == '(') {
+    } else if (cur_char == '(') {
       int level = 1;
       while (cur_pos_ < data_.size()) {
         if (data_[cur_pos_] == ')') {
@@ -111,20 +113,20 @@ ByteStringView CPDF_SimpleParser::GetWord() {
       if (cur_pos_ < data_.size())
         cur_pos_++;
 
-      dwSize = cur_pos_ - start_pos;
+      size = cur_pos_ - start_pos;
     }
-    return ByteStringView(data_.subspan(start_pos, dwSize));
+    return ByteStringView(data_.subspan(start_pos, size));
   }
 
-  dwSize = 1;
+  size = 1;
   while (cur_pos_ < data_.size()) {
-    ch = data_[cur_pos_++];
+    cur_char = data_[cur_pos_++];
 
-    if (PDFCharIsDelimiter(ch) || PDFCharIsWhitespace(ch)) {
+    if (PDFCharIsDelimiter(cur_char) || PDFCharIsWhitespace(cur_char)) {
       cur_pos_--;
       break;
     }
-    dwSize++;
+    size++;
   }
-  return ByteStringView(data_.subspan(start_pos, dwSize));
+  return ByteStringView(data_.subspan(start_pos, size));
 }
