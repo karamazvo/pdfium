@@ -3,6 +3,46 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "f3d1a910_25628d4c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-14T22:34:54Z",
+      "side": 1,
+      "message": "nit: member variable",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 15
+      },
+      "revId": "b4fc755a34f59af8309372406f6280c2ae968aa2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9be58e79_77598f17",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-14T22:34:54Z",
+      "side": 1,
+      "message": "As you like, but I\u0027m not sure this needs to be clearer, though getting rid of the dwSize is nice,",
+      "revId": "b4fc755a34f59af8309372406f6280c2ae968aa2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "9c9d3385_bbecc5ca",
         "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
         "patchSetId": 1
@@ -14,6 +54,29 @@
       "writtenOn": "2024-08-14T22:18:39Z",
       "side": 1,
       "message": "Be consistent with the header and use stdint.h. The code uses uint8_t, and not std::uint8_t.",
+      "revId": "b4fc755a34f59af8309372406f6280c2ae968aa2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "254b70a6_fb392c07",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-14T22:34:54Z",
+      "side": 1,
+      "message": "nit: maybe word_size",
+      "range": {
+        "startLine": 46,
+        "startChar": 10,
+        "endLine": 46,
+        "endChar": 14
+      },
       "revId": "b4fc755a34f59af8309372406f6280c2ae968aa2",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
