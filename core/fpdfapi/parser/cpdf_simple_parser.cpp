@@ -82,10 +82,11 @@ ByteStringView CPDF_SimpleParser::HandleDelimiter(uint8_t delimiter) {
   CHECK_EQ(data_[cur_pos_ - 1], delimiter);
   uint32_t start_pos = cur_pos_ - 1;
 
+  if (cur_pos_ >= data_.size()) {
+    return ByteStringView(data_.subspan(start_pos, 1));
+  }
+
   if (delimiter == '<') {
-    if (cur_pos_ >= data_.size()) {
-      return ByteStringView(data_.subspan(start_pos, cur_pos_ - start_pos));
-    }
     if (data_[cur_pos_++] != '<') {
       while (cur_pos_ < data_.size() && data_[cur_pos_] != '>') {
         cur_pos_++;
@@ -96,38 +97,18 @@ ByteStringView CPDF_SimpleParser::HandleDelimiter(uint8_t delimiter) {
       }
     }
   } else if (delimiter == '>') {
-    if (cur_pos_ >= data_.size()) {
-      return ByteStringView(data_.subspan(start_pos, cur_pos_ - start_pos));
-    }
-    if (data_[cur_pos_++] != '>') {
-      cur_pos_--;
+    if (data_[cur_pos_] == '>') {
+      cur_pos_++;
     }
   } else if (delimiter == '(') {
     int level = 1;
-    while (cur_pos_ < data_.size()) {
-      if (data_[cur_pos_] == ')') {
-        level--;
-        if (level == 0)
-          break;
-      }
-
-      if (data_[cur_pos_] == '\\') {
-        if (cur_pos_ >= data_.size()) {
-          break;
-        }
-
-        cur_pos_++;
-      } else if (data_[cur_pos_] == '(') {
+    while (cur_pos_ < data_.size() && level > 0) {
+      uint8_t cur_char = data_[cur_pos_++];
+      if (cur_char == '(') {
         level++;
+      } else if (cur_char == ')') {
+        level--;
       }
-      if (cur_pos_ >= data_.size()) {
-        break;
-      }
-
-      cur_pos_++;
-    }
-    if (cur_pos_ < data_.size()) {
-      cur_pos_++;
     }
   }
   return ByteStringView(data_.subspan(start_pos, cur_pos_ - start_pos));
