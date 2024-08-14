@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0fdf1694_e689f5de",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-14T22:30:35Z",
+      "side": 1,
+      "message": "I only got to here and found this test case now differs:\n\nIn SimpleParserTest.GetWord, add:\n\nSTR_IN_OUT_CASE(\"/\", \"\")\n\nNow it returns \"/\".",
+      "revId": "27b49b301582f0d10ae01907d5c46b38169a4d63",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
