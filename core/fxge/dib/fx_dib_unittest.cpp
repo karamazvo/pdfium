@@ -8,6 +8,26 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 
+TEST(FxDibTest, ArgbToBGRAStruct) {
+  FX_BGRA_STRUCT<uint8_t> white = ArgbToBGRAStruct(0xffffffff);
+  EXPECT_EQ(255, white.blue);
+  EXPECT_EQ(255, white.green);
+  EXPECT_EQ(255, white.red);
+  EXPECT_EQ(255, white.alpha);
+
+  FX_BGRA_STRUCT<uint8_t> black = ArgbToBGRAStruct(0xff000000);
+  EXPECT_EQ(0, black.blue);
+  EXPECT_EQ(0, black.green);
+  EXPECT_EQ(0, black.red);
+  EXPECT_EQ(255, black.alpha);
+
+  FX_BGRA_STRUCT<uint8_t> abeebead = ArgbToBGRAStruct(0xabeebead);
+  EXPECT_EQ(173, abeebead.blue);
+  EXPECT_EQ(190, abeebead.green);
+  EXPECT_EQ(238, abeebead.red);
+  EXPECT_EQ(171, abeebead.alpha);
+}
+
 #if defined(PDF_USE_SKIA)
 TEST(PreMultiplyTest, PreMultiplyColor) {
   FX_ABGR_STRUCT<uint8_t> result = PreMultiplyColor(FX_ABGR_STRUCT<uint8_t>{
