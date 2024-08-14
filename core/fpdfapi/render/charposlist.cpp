@@ -23,8 +23,13 @@ bool ShouldUseExistingFont(const CPDF_Font* font,
   if (glyph_id == static_cast<uint32_t>(-1))
     return false;
 
-  if (!font->IsTrueTypeFont())
+  if (font->IsEmbedded()) {
     return true;
+  }
+
+  if (!font->IsTrueTypeFont()) {
+    return true;
+  }
 
   // For TrueType fonts, a glyph ID of 0 may be invalid.
   //
