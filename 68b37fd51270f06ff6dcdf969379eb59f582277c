@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b34363d4_1f27f956",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-14T22:18:39Z",
+      "side": 0,
+      "message": "FWIW, \"FooPos()\" is not uncommon. e.g. Chromium\u0027s base::ReadAtCurrentPos(). But ok.",
+      "range": {
+        "startLine": 22,
+        "startChar": 7,
+        "endLine": 22,
+        "endChar": 16
+      },
+      "revId": "68b37fd51270f06ff6dcdf969379eb59f582277c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

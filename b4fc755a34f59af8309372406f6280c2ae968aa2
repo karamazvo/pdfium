@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9c9d3385_bbecc5ca",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-14T22:18:39Z",
+      "side": 1,
+      "message": "Be consistent with the header and use stdint.h. The code uses uint8_t, and not std::uint8_t.",
+      "revId": "b4fc755a34f59af8309372406f6280c2ae968aa2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cc5a777e_4af87076",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-14T22:18:39Z",
+      "side": 1,
+      "message": "Given line 22, should this become \"cur_position_\" \"current_position_\" then? I don\u0027t have a strong pref either way, but consistency would be good.",
+      "range": {
+        "startLine": 29,
+        "startChar": 11,
+        "endLine": 29,
+        "endChar": 19
+      },
+      "revId": "b4fc755a34f59af8309372406f6280c2ae968aa2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "00bf9ae1_fd914597",
+        "filename": "core/fpdfdoc/cpdf_defaultappearance_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-14T22:18:39Z",
+      "side": 1,
+      "message": "Or \"result_position\"?",
+      "range": {
+        "startLine": 27,
+        "startChar": 15,
+        "endLine": 27,
+        "endChar": 25
+      },
+      "revId": "b4fc755a34f59af8309372406f6280c2ae968aa2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
