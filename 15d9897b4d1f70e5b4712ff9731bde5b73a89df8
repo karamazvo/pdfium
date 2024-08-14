@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "24f70bae_29872750",
+        "filename": "core/fxge/dib/fx_dib_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-14T23:42:40Z",
+      "side": 1,
+      "message": "nit: maybe write these in hex for clarity. esp with the abeebeads below",
+      "range": {
+        "startLine": 13,
+        "startChar": 12,
+        "endLine": 13,
+        "endChar": 15
+      },
+      "revId": "15d9897b4d1f70e5b4712ff9731bde5b73a89df8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
