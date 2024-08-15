@@ -22,6 +22,8 @@ TEST(SimpleParserTest, GetWord) {
       STR_IN_OUT_CASE("%this is a test case\r\n%2nd line", ""),
       // Mixed whitespaces and comments.
       STR_IN_OUT_CASE(" \t \0%try()%haha\n %another line \aa", ""),
+      // Forward slash.
+      STR_IN_OUT_CASE("/", ""),
       // Name.
       STR_IN_OUT_CASE(" /Tester ", "/Tester"),
       // String.
