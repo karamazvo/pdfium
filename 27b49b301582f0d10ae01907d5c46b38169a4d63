@@ -52,6 +52,24 @@
       "parentUuid": "832c8bd5_0137cc4a",
       "revId": "27b49b301582f0d10ae01907d5c46b38169a4d63",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b30bb444_02573ab2",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-15T17:27:18Z",
+      "side": 1,
+      "message": "Added test case and fixed.",
+      "parentUuid": "e98c2fcb_2095a8e8",
+      "revId": "27b49b301582f0d10ae01907d5c46b38169a4d63",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
