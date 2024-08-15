@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c8dc5715_e6ea6c60",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-15T18:22:24Z",
+      "side": 1,
+      "message": "s/usually always/usually/",
+      "range": {
+        "startLine": 9,
+        "startChar": 35,
+        "endLine": 9,
+        "endChar": 49
+      },
+      "revId": "d6565d5809aed9178d0fa766d8c1f4f929283e48",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6d1f1e7c_b0659ab8",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-15T18:22:24Z",
+      "side": 1,
+      "message": "Both this code and line 57 reads like double negatives. In core/fpdfapi/parser/fpdf_parser_utility.cpp, the comments explain the 4 categories of characters. An equivalent conditional would be: `PDFCharIsWhitespace(cur_char) || PDFCharIsDelimiter(cur_char))`. With this in mind, can the comment avoid the double negative?",
+      "revId": "d6565d5809aed9178d0fa766d8c1f4f929283e48",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "13c99036_4ec4bdda",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-15T18:22:24Z",
+      "side": 1,
+      "message": "Same as previously mentioned pattern - avoid decrementing.",
+      "revId": "d6565d5809aed9178d0fa766d8c1f4f929283e48",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
