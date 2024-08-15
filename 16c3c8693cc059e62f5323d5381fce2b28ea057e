@@ -37,6 +37,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "24f59daf_94d1ae61",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-15T17:26:47Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "e8e5b6f3_82d29d0d",
+      "revId": "16c3c8693cc059e62f5323d5381fce2b28ea057e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "647aa553_3142ee73",
         "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
         "patchSetId": 3
@@ -48,6 +66,24 @@
       "writtenOn": "2024-08-15T04:46:02Z",
       "side": 0,
       "message": "No test coverage.",
+      "revId": "16c3c8693cc059e62f5323d5381fce2b28ea057e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e91fcd0e_b7425997",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-15T17:26:47Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "647aa553_3142ee73",
       "revId": "16c3c8693cc059e62f5323d5381fce2b28ea057e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -71,6 +107,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "c3a641d6_b2b35a1d",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-15T17:26:47Z",
+      "side": 0,
+      "message": "I think this is unreachable? The `while` condition is `cur_position_ \u003c data_.size()`.\n\n(It will get removed in https://pdfium-review.googlesource.com/c/pdfium/+/123414)",
+      "parentUuid": "4c071349_d9c52b69",
+      "revId": "16c3c8693cc059e62f5323d5381fce2b28ea057e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "4405fb24_4d2847ce",
         "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
         "patchSetId": 3
@@ -82,6 +136,24 @@
       "writtenOn": "2024-08-15T04:46:02Z",
       "side": 0,
       "message": "No test coverage.",
+      "revId": "16c3c8693cc059e62f5323d5381fce2b28ea057e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b35273b1_4e5ca4e2",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-15T17:26:47Z",
+      "side": 0,
+      "message": "Added test case in https://pdfium-review.googlesource.com/c/pdfium/+/123332.",
+      "parentUuid": "4405fb24_4d2847ce",
       "revId": "16c3c8693cc059e62f5323d5381fce2b28ea057e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7d1bd10c_1cc99d77",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-15T17:26:47Z",
+      "side": 1,
+      "message": "Refactored this based on the other pattern comment. Hopefully this also makes it easier to understand.",
+      "revId": "9f1360b2397af48899270512279e664f590f98c4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
