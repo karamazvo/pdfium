@@ -16,6 +16,24 @@
       "message": "I only got to here and found this test case now differs:\n\nIn SimpleParserTest.GetWord, add:\n\nSTR_IN_OUT_CASE(\"/\", \"\")\n\nNow it returns \"/\".",
       "revId": "27b49b301582f0d10ae01907d5c46b38169a4d63",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "832c8bd5_0137cc4a",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-15T00:14:41Z",
+      "side": 1,
+      "message": "Good catch. Handling the edge case now.\n\n(This will also change slightly in https://pdfium-review.googlesource.com/c/pdfium/+/123414.)\n\nOther than that case, I think `cur_position_` increments the same as `size` should?",
+      "parentUuid": "0fdf1694_e689f5de",
+      "revId": "27b49b301582f0d10ae01907d5c46b38169a4d63",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
