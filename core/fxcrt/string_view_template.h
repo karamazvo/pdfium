@@ -48,7 +48,7 @@ class StringViewTemplate {
 
   // Deliberately implicit to avoid calling on every string literal.
   // NOLINTNEXTLINE(runtime/explicit)
-  StringViewTemplate(const CharType* ptr) noexcept
+  constexpr StringViewTemplate(const CharType* ptr) noexcept
       // SAFETY: from length() function.
       : m_Span(UNSAFE_BUFFERS(pdfium::make_span(
             reinterpret_cast<const UnsignedType*>(ptr),
