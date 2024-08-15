@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "50c112cd_4a82e354",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-15T03:43:48Z",
+      "side": 1,
+      "message": "If you want to remove \"Current\" and \"cur_\" from all the names here, that would be fine too. At least here in the header, there are no other positions to differentiate from.",
+      "revId": "6337a0f155cf646a61ef9801125fe38c7d3a35f0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
