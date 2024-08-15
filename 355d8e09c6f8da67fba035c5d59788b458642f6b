@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d6b2ac2b_26cb485f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-15T04:23:24Z",
+      "side": 1,
+      "message": "HandleDelimiter() is still quite bit. Idea for further splitting here: https://pdfium-review.googlesource.com/c/pdfium/+/123412/comments/488c5887_9dd22907",
+      "revId": "355d8e09c6f8da67fba035c5d59788b458642f6b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
