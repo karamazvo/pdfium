@@ -16,6 +16,29 @@
       "message": "Trying to start at the leaf nodes in the dependency tree and working towards the root.",
       "revId": "54b43302f8fdb360686a676d90055d25800cc70e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4251aac8_d0a816b0",
+        "filename": "xfa/fde/cfde_texteditengine.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-15T19:43:32Z",
+      "side": 1,
+      "message": "make_span probably needs to remain prefixed with pdfium to defeat ADL for the std::span::make_span() that is undoubtedly pulled in by some libc++ headers.\n\n(Did I miss this before on the earlier CL?)",
+      "range": {
+        "startLine": 291,
+        "startChar": 28,
+        "endLine": 291,
+        "endChar": 47
+      },
+      "revId": "54b43302f8fdb360686a676d90055d25800cc70e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
