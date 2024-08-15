@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a4552cc0_bb8d5d34",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5645
+      },
+      "writtenOn": "2024-08-15T17:22:28Z",
+      "side": 1,
+      "message": "Actually clicking +1 this time.",
+      "revId": "5183c0b896f41d1abd83e232fd61b2d1f25d39e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
