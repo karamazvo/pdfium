@@ -22,6 +22,10 @@ TEST(SimpleParserTest, GetWord) {
       STR_IN_OUT_CASE("%this is a test case\r\n%2nd line", ""),
       // Mixed whitespaces and comments.
       STR_IN_OUT_CASE(" \t \0%try()%haha\n %another line \aa", ""),
+      // Forward slash.
+      STR_IN_OUT_CASE("/", ""),
+      STR_IN_OUT_CASE("/99", ""),
+      STR_IN_OUT_CASE("/99}", "/99"),
       // Name.
       STR_IN_OUT_CASE(" /Tester ", "/Tester"),
       // String.
@@ -31,12 +35,17 @@ TEST(SimpleParserTest, GetWord) {
       // String with escaped chars.
       STR_IN_OUT_CASE("\t(It is a \\(long\\) day!)hi\n ",
                       "(It is a \\(long\\) day!)"),
+      // Angled brackets.
+      STR_IN_OUT_CASE("<", "<"),
+      STR_IN_OUT_CASE(">", ">"),
       // Hex string.
       STR_IN_OUT_CASE(" \n<4545acdfedertt>abc ", "<4545acdfedertt>"),
       STR_IN_OUT_CASE(" \n<4545a<ed>ertt>abc ", "<4545a<ed>"),
       // Dictionary.
       STR_IN_OUT_CASE("<</oc 234 /color 2 3 R>>", "<<"),
       STR_IN_OUT_CASE("\t\t<< /abc>>", "<<"),
+      // Parantheses.
+      STR_IN_OUT_CASE("(\\", "(\\"),
       // Handling ending delimiters.
       STR_IN_OUT_CASE("> little bear", ">"),
       STR_IN_OUT_CASE(") another bear", ")"),
