@@ -56,6 +56,30 @@
       },
       "revId": "f97ccf144e10c85ffded7f9de041a2c4820e608e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a9daf290_829e1e4b",
+        "filename": "fpdfsdk/cpdfsdk_helpers.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-15T19:01:36Z",
+      "side": 1,
+      "message": "WriteBlock() above calls out to the embedder, which inspires no confidence. Will fix is a follow-up.",
+      "parentUuid": "9a59fb9b_6653df18",
+      "range": {
+        "startLine": 185,
+        "startChar": 14,
+        "endLine": 185,
+        "endChar": 40
+      },
+      "revId": "f97ccf144e10c85ffded7f9de041a2c4820e608e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
