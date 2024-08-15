@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f8b736f2_22a2bb79",
+        "filename": "xfa/fwl/cfwl_edit.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 351,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-15T19:55:30Z",
+      "side": 1,
+      "message": "These are probably OK ADL-wise, as we\u0027re not going to pull in base\u0027s base.",
+      "range": {
+        "startLine": 351,
+        "startChar": 8,
+        "endLine": 351,
+        "endChar": 20
+      },
+      "revId": "6d932d50c731ad23481cd88104283bb1e85042a0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "549d5fd5_e13ddab8",
+        "filename": "xfa/fwl/cfwl_monthcalendar.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 469,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-15T19:55:30Z",
+      "side": 1,
+      "message": "This should be OK, too, no base header with base::Contains().",
+      "range": {
+        "startLine": 469,
+        "startChar": 27,
+        "endLine": 469,
+        "endChar": 35
+      },
+      "revId": "6d932d50c731ad23481cd88104283bb1e85042a0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
