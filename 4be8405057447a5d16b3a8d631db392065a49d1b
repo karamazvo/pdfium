@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "47440874_13b4ccff",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-15T19:49:57Z",
+      "side": 1,
+      "message": "This one looks OK, no ADL conflicts.",
+      "revId": "4be8405057447a5d16b3a8d631db392065a49d1b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
