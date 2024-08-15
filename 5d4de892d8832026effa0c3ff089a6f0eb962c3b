@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "488c5887_9dd22907",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-15T04:17:16Z",
+      "side": 1,
+      "message": "I think part of the issue with the current GetWord() method is that it is a bit too big at ~117 lines long. It may be helpful to break it up into smaller pieces:\n\n- SkipSpacesAndComments()\n- HandleNonDelimiter()\n- HandleName()\n- HandleOpenAngleBracket()\n\netc... Then each smaller method is easier to think about.",
+      "revId": "5d4de892d8832026effa0c3ff089a6f0eb962c3b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
