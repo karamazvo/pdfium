@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d8c7c910_71be4daa",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-15T17:36:02Z",
+      "side": 1,
+      "message": "Thanks for adding more test cases. Still LGTM.",
+      "revId": "cef5b87e8aae9e0b3f70183eafb77daad7bc657c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ef86d277_43268b34",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser_unittest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-15T17:36:02Z",
+      "side": 1,
+      "message": "Covered by \"Name\" on line 29?",
+      "revId": "cef5b87e8aae9e0b3f70183eafb77daad7bc657c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
