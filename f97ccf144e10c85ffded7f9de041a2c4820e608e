@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "80dc8159_3c07cb1a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-15T16:36:42Z",
+      "side": 1,
+      "message": "LG but one question",
+      "revId": "f97ccf144e10c85ffded7f9de041a2c4820e608e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9a59fb9b_6653df18",
+        "filename": "fpdfsdk/cpdfsdk_helpers.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-15T16:36:42Z",
+      "side": 1,
+      "message": "pre-existing: is this safe because we\u0027d return false on overflow above?",
+      "range": {
+        "startLine": 185,
+        "startChar": 14,
+        "endLine": 185,
+        "endChar": 40
+      },
+      "revId": "f97ccf144e10c85ffded7f9de041a2c4820e608e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
