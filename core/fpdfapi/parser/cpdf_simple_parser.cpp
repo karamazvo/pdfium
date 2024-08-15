@@ -48,35 +48,29 @@ ByteStringView CPDF_SimpleParser::GetWord() {
     }
   }
 
-  uint8_t size = 0;
   uint32_t start_position = cur_position_ - 1;
   if (PDFCharIsDelimiter(cur_char)) {
     // Find names
     if (cur_char == '/') {
-      while (true) {
-        if (cur_position_ >= data_.size()) {
-          break;
-        }
-
-        cur_char = data_[cur_position_++];
+      while (cur_position_ < data_.size()) {
+        cur_char = data_[cur_position_];
+        // Don't include characters that aren't other nor numeric.
         if (!PDFCharIsOther(cur_char) && !PDFCharIsNumeric(cur_char)) {
-          cur_position_--;
-          size = cur_position_ - start_position;
-          break;
+          return ByteStringView(
+              data_.subspan(start_position, cur_position_ - start_position));
         }
+        ++cur_position_;
       }
-      return ByteStringView(data_.subspan(start_position, size));
+      return ByteStringView();
     }
 
-    size = 1;
     if (cur_char == '<') {
       if (cur_position_ >= data_.size()) {
-        return ByteStringView(data_.subspan(start_position, size));
+        return ByteStringView(
+            data_.subspan(start_position, cur_position_ - start_position));
       }
       cur_char = data_[cur_position_++];
-      if (cur_char == '<') {
-        size = 2;
-      } else {
+      if (cur_char != '<') {
         while (cur_position_ < data_.size() && data_[cur_position_] != '>') {
           cur_position_++;
         }
@@ -84,17 +78,14 @@ ByteStringView CPDF_SimpleParser::GetWord() {
         if (cur_position_ < data_.size()) {
           cur_position_++;
         }
-
-        size = cur_position_ - start_position;
       }
     } else if (cur_char == '>') {
       if (cur_position_ >= data_.size()) {
-        return ByteStringView(data_.subspan(start_position, size));
+        return ByteStringView(
+            data_.subspan(start_position, cur_position_ - start_position));
       }
       cur_char = data_[cur_position_++];
-      if (cur_char == '>') {
-        size = 2;
-      } else {
+      if (cur_char != '>') {
         cur_position_--;
       }
     } else if (cur_char == '(') {
@@ -124,13 +115,11 @@ ByteStringView CPDF_SimpleParser::GetWord() {
       if (cur_position_ < data_.size()) {
         cur_position_++;
       }
-
-      size = cur_position_ - start_position;
     }
-    return ByteStringView(data_.subspan(start_position, size));
+    return ByteStringView(
+        data_.subspan(start_position, cur_position_ - start_position));
   }
 
-  size = 1;
   while (cur_position_ < data_.size()) {
     cur_char = data_[cur_position_++];
 
@@ -138,7 +127,7 @@ ByteStringView CPDF_SimpleParser::GetWord() {
       cur_position_--;
       break;
     }
-    size++;
   }
-  return ByteStringView(data_.subspan(start_position, size));
+  return ByteStringView(
+      data_.subspan(start_position, cur_position_ - start_position));
 }
