@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "d2d40e16_e1390692",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-15T00:07:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f3d1a910_25628d4c",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 15
+      },
+      "revId": "b4fc755a34f59af8309372406f6280c2ae968aa2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "9be58e79_77598f17",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1
@@ -58,6 +82,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d0360c0b_df96d52d",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-15T00:07:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9c9d3385_bbecc5ca",
+      "revId": "b4fc755a34f59af8309372406f6280c2ae968aa2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "254b70a6_fb392c07",
@@ -71,6 +113,30 @@
       "writtenOn": "2024-08-14T22:34:54Z",
       "side": 1,
       "message": "nit: maybe word_size",
+      "range": {
+        "startLine": 46,
+        "startChar": 10,
+        "endLine": 46,
+        "endChar": 14
+      },
+      "revId": "b4fc755a34f59af8309372406f6280c2ae968aa2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3d9ab303_62f42f65",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-15T00:07:14Z",
+      "side": 1,
+      "message": "I plan on removing this variable later in the chain, in https://pdfium-review.googlesource.com/c/pdfium/+/123412.",
+      "parentUuid": "254b70a6_fb392c07",
       "range": {
         "startLine": 46,
         "startChar": 10,
@@ -104,6 +170,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "33aa65fa_d2e93bb7",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-15T00:07:14Z",
+      "side": 1,
+      "message": "Changed to `cur_position_`.",
+      "parentUuid": "cc5a777e_4af87076",
+      "range": {
+        "startLine": 29,
+        "startChar": 11,
+        "endLine": 29,
+        "endChar": 19
+      },
+      "revId": "b4fc755a34f59af8309372406f6280c2ae968aa2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "00bf9ae1_fd914597",
@@ -117,6 +207,30 @@
       "writtenOn": "2024-08-14T22:18:39Z",
       "side": 1,
       "message": "Or \"result_position\"?",
+      "range": {
+        "startLine": 27,
+        "startChar": 15,
+        "endLine": 27,
+        "endChar": 25
+      },
+      "revId": "b4fc755a34f59af8309372406f6280c2ae968aa2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3464d10e_84471c0d",
+        "filename": "core/fpdfdoc/cpdf_defaultappearance_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-15T00:07:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "00bf9ae1_fd914597",
       "range": {
         "startLine": 27,
         "startChar": 15,
