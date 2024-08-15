@@ -32,7 +32,16 @@ class CFX_CRTFileStream final : public IFX_SeekableStream {
     if (m_pFile->SetPosition(GetSize()) == static_cast<FX_FILESIZE>(-1)) {
       return false;
     }
-    return !!m_pFile->Write(buffer);
+
+    while (!buffer.empty()) {
+      const size_t bytes_written = m_pFile->Write(buffer);
+      if (bytes_written == 0) {
+        return false;
+      }
+
+      buffer = buffer.subspan(bytes_written);
+    }
+    return true;
   }
   bool Flush() override { return m_pFile->Flush(); }
 
