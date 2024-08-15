@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3a07e837_de37f3ac",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-15T16:31:56Z",
+      "side": 1,
+      "message": "I tried this before and failed. And I want to store this as unsigned char, so when constructing it from char ...",
+      "revId": "dad8cd36ca33eb034cf5e548ea30e7bf20090d98",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9a39750e_292257b1",
+        "filename": "core/fxcrt/string_view_template.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-15T16:31:56Z",
+      "side": 1,
+      "message": "reinterpret cast can\u0027t be used in constexpr for reasons beyond my comprehension.",
+      "range": {
+        "startLine": 54,
+        "startChar": 11,
+        "endLine": 54,
+        "endChar": 55
+      },
+      "revId": "dad8cd36ca33eb034cf5e548ea30e7bf20090d98",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
