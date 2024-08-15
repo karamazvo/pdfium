@@ -23,6 +23,8 @@ class CPDF_SimpleParser {
   uint32_t GetCurrentPosition() const { return cur_position_; }
 
  private:
+  ByteStringView HandleDelimiter(uint8_t delimiter);
+
   const pdfium::span<const uint8_t> data_;
 
   // The current unread position.
