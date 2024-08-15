@@ -70,6 +70,11 @@ ByteStringView CPDF_SimpleParser::HandleDelimiter(uint8_t delimiter) {
   CHECK_EQ(data_[cur_position_ - 1], delimiter);
   uint32_t start_position = cur_position_ - 1;
 
+  if (cur_position_ >= data_.size()) {
+    return ByteStringView(
+        data_.subspan(start_position, delimiter == '/' ? 0 : 1));
+  }
+
   if (delimiter == '/') {
     // Find names.
     while (cur_position_ < data_.size()) {
@@ -83,10 +88,6 @@ ByteStringView CPDF_SimpleParser::HandleDelimiter(uint8_t delimiter) {
     }
     return ByteStringView();
   } else if (delimiter == '<') {
-    if (cur_position_ >= data_.size()) {
-      return ByteStringView(
-          data_.subspan(start_position, cur_position_ - start_position));
-    }
     if (data_[cur_position_++] != '<') {
       while (cur_position_ < data_.size() && data_[cur_position_] != '>') {
         cur_position_++;
@@ -97,40 +98,18 @@ ByteStringView CPDF_SimpleParser::HandleDelimiter(uint8_t delimiter) {
       }
     }
   } else if (delimiter == '>') {
-    if (cur_position_ >= data_.size()) {
-      return ByteStringView(
-          data_.subspan(start_position, cur_position_ - start_position));
-    }
-    if (data_[cur_position_++] != '>') {
-      cur_position_--;
+    if (data_[cur_position_] == '>') {
+      cur_position_++;
     }
   } else if (delimiter == '(') {
     int level = 1;
-    while (cur_position_ < data_.size()) {
-      if (data_[cur_position_] == ')') {
-        level--;
-        if (level == 0) {
-          break;
-        }
-      }
-
-      if (data_[cur_position_] == '\\') {
-        if (cur_position_ >= data_.size()) {
-          break;
-        }
-
-        cur_position_++;
-      } else if (data_[cur_position_] == '(') {
+    while (cur_position_ < data_.size() && level > 0) {
+      uint8_t cur_char = data_[cur_position_++];
+      if (cur_char == '(') {
         level++;
+      } else if (cur_char == ')') {
+        level--;
       }
-      if (cur_position_ >= data_.size()) {
-        break;
-      }
-
-      cur_position_++;
-    }
-    if (cur_position_ < data_.size()) {
-      cur_position_++;
     }
   }
   return ByteStringView(
