@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "959ea951_ea4a33d5",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-15T04:46:02Z",
+      "side": 0,
+      "message": "It turns out this case had no prior test coverage. Of course that is prone to breakage. Thanks for adding the test case.",
+      "revId": "16c3c8693cc059e62f5323d5381fce2b28ea057e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e8e5b6f3_82d29d0d",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-15T04:46:02Z",
+      "side": 0,
+      "message": "No test coverage.",
+      "revId": "16c3c8693cc059e62f5323d5381fce2b28ea057e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "647aa553_3142ee73",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-15T04:46:02Z",
+      "side": 0,
+      "message": "No test coverage.",
+      "revId": "16c3c8693cc059e62f5323d5381fce2b28ea057e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4c071349_d9c52b69",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-15T04:46:02Z",
+      "side": 0,
+      "message": "No test coverage.",
+      "revId": "16c3c8693cc059e62f5323d5381fce2b28ea057e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4405fb24_4d2847ce",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-15T04:46:02Z",
+      "side": 0,
+      "message": "No test coverage.",
+      "revId": "16c3c8693cc059e62f5323d5381fce2b28ea057e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
