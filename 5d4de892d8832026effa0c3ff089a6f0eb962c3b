@@ -16,6 +16,23 @@
       "message": "I think part of the issue with the current GetWord() method is that it is a bit too big at ~117 lines long. It may be helpful to break it up into smaller pieces:\n\n- SkipSpacesAndComments()\n- HandleNonDelimiter()\n- HandleName()\n- HandleOpenAngleBracket()\n\netc... Then each smaller method is easier to think about.",
       "revId": "5d4de892d8832026effa0c3ff089a6f0eb962c3b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "380a6622_216fd1b3",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-15T04:20:45Z",
+      "side": 1,
+      "message": "I\"m also mildly annoyed by this pattern - whoops, advanced too far, back up!\n\nInstead, the code can be written as:\n\n```\ncur_char \u003d data_[cur_position_];  // Don\u0027t advance yet.\nif (cond) {\n  break;  // No need to go backwards. Avoid 2 changes to cur_position_.\n}\n++cur_position_;  // Now advance.\n```",
+      "revId": "5d4de892d8832026effa0c3ff089a6f0eb962c3b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
