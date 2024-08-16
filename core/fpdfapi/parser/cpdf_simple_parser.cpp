@@ -50,7 +50,7 @@ bool CPDF_SimpleParser::SkipSpacesAndComments() {
       }
     }
 
-    if (data_[cur_position_-1] != '%') {
+    if (data_[cur_position_ - 1] != '%') {
       return true;
     }
 
@@ -88,13 +88,13 @@ ByteStringView CPDF_SimpleParser::HandleAngleBrackets(uint32_t start_position) {
 
   uint8_t start_char = data_[start_position];
   if (start_char == '<') {
-    if (data_[cur_position_++] != '<') {
-      while (cur_position_ < data_.size() && data_[cur_position_] != '>') {
-        ++cur_position_;
-      }
-
-      if (cur_position_ < data_.size()) {
-        ++cur_position_;
+    // Stop parsing if encountering "<<".
+    uint8_t cur_char = data_[cur_position_++];
+    if (cur_char != '<') {
+      // Continue parsing until encountering the closing bracket or end of
+      // `data_`.
+      while (cur_char != '>' && cur_position_ < data_.size()) {
+        cur_char = data_[cur_position_++];
       }
     }
   } else if (start_char == '>' && data_[cur_position_] == '>') {
