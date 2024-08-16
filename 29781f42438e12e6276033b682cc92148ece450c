@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "45058164_53cfd084",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-16T23:24:53Z",
+      "side": 1,
+      "message": "BTW, I think HandleEndAngleBracket() can be further simplified to:\n\n```\nif (cur_position_ \u003c data_.size() \u0026\u0026 data_[cur_position_] \u003d\u003d \u0027\u003e\u0027) {\n  ++cur_position_;\n}\nreturn ...\n```",
+      "revId": "29781f42438e12e6276033b682cc92148ece450c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2f95d4f2_627683b5",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.h",
+        "patchSetId": 16
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-16T23:24:53Z",
+      "side": 1,
+      "message": "Maybe use a name that better describes at a higher level what this is suppose to do?",
+      "range": {
+        "startLine": 30,
+        "startChar": 17,
+        "endLine": 30,
+        "endChar": 40
+      },
+      "revId": "29781f42438e12e6276033b682cc92148ece450c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
