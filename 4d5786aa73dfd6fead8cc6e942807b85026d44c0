@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3b2f9396_712d910c",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-16T22:48:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a3382ea4_77978c72",
+      "revId": "4d5786aa73dfd6fead8cc6e942807b85026d44c0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e1ae6dc6_5516e3ea",
@@ -31,6 +49,24 @@
       "writtenOn": "2024-08-16T22:36:41Z",
       "side": 1,
       "message": "Actually, what do you think about splitting HandleAngleBrackets() into HandleBeginAngleBracket() and HandleEndAngleBracket()?",
+      "revId": "4d5786aa73dfd6fead8cc6e942807b85026d44c0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f2306b74_9d96134d",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-16T22:48:43Z",
+      "side": 1,
+      "message": "Sure, done.",
+      "parentUuid": "e1ae6dc6_5516e3ea",
       "revId": "4d5786aa73dfd6fead8cc6e942807b85026d44c0",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -52,6 +88,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8d56ebae_e828fefe",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-16T22:48:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "daff54b5_bf20ec5e",
+      "revId": "4d5786aa73dfd6fead8cc6e942807b85026d44c0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2f1e2a27_df59d4f0",
@@ -65,6 +119,30 @@
       "writtenOn": "2024-08-16T22:36:41Z",
       "side": 1,
       "message": "nullopt",
+      "range": {
+        "startLine": 29,
+        "startChar": 37,
+        "endLine": 29,
+        "endChar": 42
+      },
+      "revId": "4d5786aa73dfd6fead8cc6e942807b85026d44c0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2aad95fa_5b5e1fe6",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.h",
+        "patchSetId": 11
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-16T22:48:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2f1e2a27_df59d4f0",
       "range": {
         "startLine": 29,
         "startChar": 37,
