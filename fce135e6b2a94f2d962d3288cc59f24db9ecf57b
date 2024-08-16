@@ -52,6 +52,24 @@
       "parentUuid": "76e7af72_e45d93e1",
       "revId": "fce135e6b2a94f2d962d3288cc59f24db9ecf57b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "69914513_93ce553c",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-16T22:46:51Z",
+      "side": 1,
+      "message": "ASSERT_TRUE(scoped_page) should work fine due to https://en.cppreference.com/w/cpp/memory/unique_ptr/operator_bool\n\nHowever, FPDF_Foo(FPDF_PAGE page) needs scoped_page.get() and can\u0027t take scoped_page.",
+      "parentUuid": "b6e83488_ff1b51c6",
+      "revId": "fce135e6b2a94f2d962d3288cc59f24db9ecf57b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
