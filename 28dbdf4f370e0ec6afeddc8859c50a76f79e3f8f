@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "958621d5_08b20422",
+        "filename": "fpdfsdk/cpdfsdk_annotiterator_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-16T21:40:49Z",
+      "side": 1,
+      "message": "`ASSERT_TRUE(page0);`, as it was before, works just fine. Same for other tests.",
+      "revId": "28dbdf4f370e0ec6afeddc8859c50a76f79e3f8f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
