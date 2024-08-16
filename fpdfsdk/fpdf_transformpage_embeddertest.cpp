@@ -33,7 +33,7 @@ TEST_F(FPDFTransformEmbedderTest, GetBoundingBoxes) {
   ASSERT_EQ(4, FPDF_GetPageCount(document()));
 
   {
-    FPDF_PAGE page = LoadPage(1);
+    ScopedEmbedderTestPage page = LoadScopedPage(1);
     ASSERT_TRUE(page);
 
     FS_RECTF mediabox;
@@ -75,12 +75,10 @@ TEST_F(FPDFTransformEmbedderTest, GetBoundingBoxes) {
     EXPECT_EQ(60, artbox.bottom);
     EXPECT_EQ(135, artbox.right);
     EXPECT_EQ(140, artbox.top);
-
-    UnloadPage(page);
   }
 
   {
-    FPDF_PAGE page = LoadPage(3);
+    ScopedEmbedderTestPage page = LoadScopedPage(3);
     ASSERT_TRUE(page);
 
     FS_RECTF mediabox;
@@ -132,8 +130,6 @@ TEST_F(FPDFTransformEmbedderTest, GetBoundingBoxes) {
     EXPECT_EQ(145, artbox.bottom);
     EXPECT_EQ(65, artbox.right);
     EXPECT_EQ(70, artbox.top);
-
-    UnloadPage(page);
   }
 }
 
@@ -141,7 +137,7 @@ TEST_F(FPDFTransformEmbedderTest, NoCropBox) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   ASSERT_EQ(1, FPDF_GetPageCount(document()));
 
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   FS_RECTF cropbox = {-1.0f, 0.0f, 3.0f, -2.0f};
@@ -151,15 +147,13 @@ TEST_F(FPDFTransformEmbedderTest, NoCropBox) {
   EXPECT_EQ(-2.0f, cropbox.bottom);
   EXPECT_EQ(3.0f, cropbox.right);
   EXPECT_EQ(0.0f, cropbox.top);
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFTransformEmbedderTest, NoBleedBox) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   ASSERT_EQ(1, FPDF_GetPageCount(document()));
 
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   FS_RECTF bleedbox = {-1.0f, 10.f, 3.0f, -1.0f};
@@ -169,15 +163,13 @@ TEST_F(FPDFTransformEmbedderTest, NoBleedBox) {
   EXPECT_EQ(-1.0f, bleedbox.bottom);
   EXPECT_EQ(3.0f, bleedbox.right);
   EXPECT_EQ(10.0f, bleedbox.top);
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFTransformEmbedderTest, NoTrimBox) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   ASSERT_EQ(1, FPDF_GetPageCount(document()));
 
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   FS_RECTF trimbox = {-11.0f, 0.0f, 3.0f, -10.0f};
@@ -187,15 +179,13 @@ TEST_F(FPDFTransformEmbedderTest, NoTrimBox) {
   EXPECT_EQ(-10.0f, trimbox.bottom);
   EXPECT_EQ(3.0f, trimbox.right);
   EXPECT_EQ(0.0f, trimbox.top);
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFTransformEmbedderTest, NoArtBox) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   ASSERT_EQ(1, FPDF_GetPageCount(document()));
 
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   FS_RECTF artbox = {-1.0f, 0.0f, 3.0f, -1.0f};
@@ -205,8 +195,6 @@ TEST_F(FPDFTransformEmbedderTest, NoArtBox) {
   EXPECT_EQ(-1.0f, artbox.bottom);
   EXPECT_EQ(3.0f, artbox.right);
   EXPECT_EQ(0.0f, artbox.top);
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFTransformEmbedderTest, SetCropBox) {
@@ -218,7 +206,7 @@ TEST_F(FPDFTransformEmbedderTest, SetCropBox) {
   }();
   {
     ASSERT_TRUE(OpenDocument("rectangles.pdf"));
-    FPDF_PAGE page = LoadPage(0);
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
     ASSERT_TRUE(page);
 
     {
@@ -255,8 +243,6 @@ TEST_F(FPDFTransformEmbedderTest, SetCropBox) {
       ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
       CompareBitmap(bitmap.get(), page_width, page_height, cropped_checksum);
     }
-
-    UnloadPage(page);
   }
 
   {
@@ -296,7 +282,7 @@ TEST_F(FPDFTransformEmbedderTest, SetMediaBox) {
 
   {
     ASSERT_TRUE(OpenDocument("rectangles.pdf"));
-    FPDF_PAGE page = LoadPage(0);
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
     ASSERT_TRUE(page);
 
     {
@@ -334,8 +320,6 @@ TEST_F(FPDFTransformEmbedderTest, SetMediaBox) {
       CompareBitmap(bitmap.get(), page_width, page_height,
                     shrunk_checksum_set_media_box);
     }
-
-    UnloadPage(page);
   }
 
   {
@@ -370,23 +354,19 @@ TEST_F(FPDFTransformEmbedderTest, SetMediaBox) {
 TEST_F(FPDFTransformEmbedderTest, ClipPath) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
 
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  {
-    ScopedFPDFClipPath clip(FPDF_CreateClipPath(10.0f, 10.0f, 90.0f, 90.0f));
-    EXPECT_TRUE(clip);
+  ScopedFPDFClipPath clip(FPDF_CreateClipPath(10.0f, 10.0f, 90.0f, 90.0f));
+  EXPECT_TRUE(clip);
 
-    // NULL arg call is a no-op.
-    FPDFPage_InsertClipPath(nullptr, clip.get());
+  // NULL arg call is a no-op.
+  FPDFPage_InsertClipPath(nullptr, clip.get());
 
-    // Do actual work.
-    FPDFPage_InsertClipPath(page, clip.get());
+  // Do actual work.
+  FPDFPage_InsertClipPath(page, clip.get());
 
-    // TODO(tsepez): test how inserting path affects page rendering.
-  }
-
-  UnloadPage(page);
+  // TODO(tsepez): test how inserting path affects page rendering.
 }
 
 TEST_F(FPDFTransformEmbedderTest, TransFormWithClip) {
@@ -395,7 +375,7 @@ TEST_F(FPDFTransformEmbedderTest, TransFormWithClip) {
 
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
 
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   EXPECT_FALSE(FPDFPage_TransFormWithClip(nullptr, nullptr, nullptr));
@@ -406,8 +386,6 @@ TEST_F(FPDFTransformEmbedderTest, TransFormWithClip) {
   EXPECT_TRUE(FPDFPage_TransFormWithClip(page, &half_matrix, nullptr));
   EXPECT_TRUE(FPDFPage_TransFormWithClip(page, nullptr, &clip_rect));
   EXPECT_TRUE(FPDFPage_TransFormWithClip(page, &half_matrix, &clip_rect));
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFTransformEmbedderTest, TransFormWithClipWithPatterns) {
@@ -416,20 +394,18 @@ TEST_F(FPDFTransformEmbedderTest, TransFormWithClipWithPatterns) {
 
   ASSERT_TRUE(OpenDocument("bug_547706.pdf"));
 
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   EXPECT_TRUE(FPDFPage_TransFormWithClip(page, &half_matrix, nullptr));
   EXPECT_TRUE(FPDFPage_TransFormWithClip(page, nullptr, &clip_rect));
   EXPECT_TRUE(FPDFPage_TransFormWithClip(page, &half_matrix, &clip_rect));
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFTransformEmbedderTest, TransFormWithClipAndSave) {
   {
     ASSERT_TRUE(OpenDocument("rectangles.pdf"));
-    FPDF_PAGE page = LoadPage(0);
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
     ASSERT_TRUE(page);
 
     {
@@ -459,8 +435,6 @@ TEST_F(FPDFTransformEmbedderTest, TransFormWithClipAndSave) {
       CompareBitmap(bitmap.get(), page_width, page_height,
                     RectanglesChecksum());
     }
-
-    UnloadPage(page);
   }
 
   {
@@ -489,7 +463,7 @@ TEST_F(FPDFTransformEmbedderTest, TransFormWithClipAndSaveWithLocale) {
 
   {
     ASSERT_TRUE(OpenDocument("rectangles.pdf"));
-    FPDF_PAGE page = LoadPage(0);
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
     ASSERT_TRUE(page);
 
     {
@@ -519,8 +493,6 @@ TEST_F(FPDFTransformEmbedderTest, TransFormWithClipAndSaveWithLocale) {
       CompareBitmap(bitmap.get(), page_width, page_height,
                     RectanglesChecksum());
     }
-
-    UnloadPage(page);
   }
 
   {
