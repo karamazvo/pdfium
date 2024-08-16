@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7dc74383_eae8ae1a",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-16T23:46:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "45058164_53cfd084",
+      "revId": "29781f42438e12e6276033b682cc92148ece450c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2f95d4f2_627683b5",
@@ -31,6 +49,30 @@
       "writtenOn": "2024-08-16T23:24:53Z",
       "side": 1,
       "message": "Maybe use a name that better describes at a higher level what this is suppose to do?",
+      "range": {
+        "startLine": 30,
+        "startChar": 17,
+        "endLine": 30,
+        "endChar": 40
+      },
+      "revId": "29781f42438e12e6276033b682cc92148ece450c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d1b67e9d_8eba394f",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.h",
+        "patchSetId": 16
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-16T23:46:58Z",
+      "side": 1,
+      "message": "Maybe GetSubspanStringView()?",
+      "parentUuid": "2f95d4f2_627683b5",
       "range": {
         "startLine": 30,
         "startChar": 17,
