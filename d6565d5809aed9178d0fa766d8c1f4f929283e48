@@ -83,6 +83,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "181ea14b_40c7c6ba",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-16T20:12:52Z",
+      "side": 1,
+      "message": "The comment is much easier to understand now. What is this \"other\" character anyway?",
+      "parentUuid": "cf4734bb_25f6c927",
+      "revId": "d6565d5809aed9178d0fa766d8c1f4f929283e48",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "13c99036_4ec4bdda",
