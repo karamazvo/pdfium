@@ -81,6 +81,30 @@
       },
       "revId": "29781f42438e12e6276033b682cc92148ece450c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d0929056_5ba5f9ac",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.h",
+        "patchSetId": 16
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-16T23:51:25Z",
+      "side": 1,
+      "message": "GetDataToCurrentPosition() ?\n\nThe question for a reader that sees this in the .cpp file isn\u0027t so much what the return type is, which they can see from the HandleFoo() method signature, but rather what the content is.",
+      "parentUuid": "d1b67e9d_8eba394f",
+      "range": {
+        "startLine": 30,
+        "startChar": 17,
+        "endLine": 30,
+        "endChar": 40
+      },
+      "revId": "29781f42438e12e6276033b682cc92148ece450c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
