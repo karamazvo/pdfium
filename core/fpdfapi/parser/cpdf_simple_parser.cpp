@@ -100,19 +100,17 @@ ByteStringView CPDF_SimpleParser::HandleAngleBrackets() {
   }
 
   uint8_t start_char = data_[start_position];
-  uint8_t next_char = data_[cur_position_];
   if (start_char == '<') {
-    ++cur_position_;
-    if (next_char != '<') {
-      while (cur_position_ < data_.size() && data_[cur_position_] != '>') {
-        ++cur_position_;
-      }
-
-      if (cur_position_ < data_.size()) {
-        ++cur_position_;
+    uint8_t cur_char = data_[cur_position_++];
+    // Stop parsing if encountering "<<".
+    if (cur_char != '<') {
+      // Continue parsing until encountering the closing bracket or end of
+      // `data_`.
+      while (cur_char != '>' && cur_position_ < data_.size()) {
+        cur_char = data_[cur_position_++];
       }
     }
-  } else if (next_char == '>') {
+  } else if (data_[cur_position_] == '>') {
     ++cur_position_;
   }
   return ByteStringView(
