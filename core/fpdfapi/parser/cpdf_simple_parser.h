@@ -23,6 +23,14 @@ class CPDF_SimpleParser {
   uint32_t GetCurrentPosition() const { return cur_position_; }
 
  private:
+  // Skips whitespace and comment lines. Returns true if `data_` can still be
+  // parsed, false otherwise.
+  bool SkipSpacesAndComments();
+  ByteStringView HandleName(uint32_t start_position);
+  ByteStringView HandleAngleBrackets(uint32_t start_position);
+  ByteStringView HandleParentheses(uint32_t start_position);
+  ByteStringView HandleNonDelimiter(uint32_t start_position);
+
   const pdfium::span<const uint8_t> data_;
 
   // The current unread position.
