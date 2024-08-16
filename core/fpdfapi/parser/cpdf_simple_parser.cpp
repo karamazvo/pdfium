@@ -51,6 +51,7 @@ std::optional<uint8_t> CPDF_SimpleParser::SkipSpacesAndComments() {
       return std::nullopt;
     }
 
+    // Skip whitespaces.
     uint8_t cur_char = data_[cur_position_++];
     while (PDFCharIsWhitespace(cur_char)) {
       if (cur_position_ >= data_.size()) {
@@ -63,6 +64,7 @@ std::optional<uint8_t> CPDF_SimpleParser::SkipSpacesAndComments() {
       return cur_char;
     }
 
+    // Skip comments.
     while (true) {
       if (cur_position_ >= data_.size()) {
         return std::nullopt;
@@ -92,30 +94,26 @@ ByteStringView CPDF_SimpleParser::HandleName() {
 
 ByteStringView CPDF_SimpleParser::HandleAngleBrackets() {
   uint32_t start_position = cur_position_ - 1;
+  if (cur_position_ >= data_.size()) {
+    return ByteStringView(
+        data_.subspan(start_position, cur_position_ - start_position));
+  }
+
   uint8_t start_char = data_[start_position];
+  uint8_t next_char = data_[cur_position_];
   if (start_char == '<') {
-    if (cur_position_ >= data_.size()) {
-      return ByteStringView(
-          data_.subspan(start_position, cur_position_ - start_position));
-    }
-    uint8_t cur_char = data_[cur_position_++];
-    if (cur_char != '<') {
+    ++cur_position_;
+    if (next_char != '<') {
       while (cur_position_ < data_.size() && data_[cur_position_] != '>') {
-        cur_position_++;
+        ++cur_position_;
       }
 
       if (cur_position_ < data_.size()) {
-        cur_position_++;
+        ++cur_position_;
       }
     }
-  } else {
-    if (cur_position_ >= data_.size()) {
-      return ByteStringView(
-          data_.subspan(start_position, cur_position_ - start_position));
-    }
-    if (data_[cur_position_] == '>') {
-      ++cur_position_;
-    }
+  } else if (next_char == '>') {
+    ++cur_position_;
   }
   return ByteStringView(
       data_.subspan(start_position, cur_position_ - start_position));
@@ -124,31 +122,13 @@ ByteStringView CPDF_SimpleParser::HandleAngleBrackets() {
 ByteStringView CPDF_SimpleParser::HandleParentheses() {
   uint32_t start_position = cur_position_ - 1;
   int level = 1;
-  while (cur_position_ < data_.size()) {
-    if (data_[cur_position_] == ')') {
-      level--;
-      if (level == 0) {
-        break;
-      }
+  while (cur_position_ < data_.size() && level > 0) {
+    uint8_t cur_char = data_[cur_position_++];
+    if (cur_char == '(') {
+      ++level;
+    } else if (cur_char == ')') {
+      --level;
     }
-
-    if (data_[cur_position_] == '\\') {
-      if (cur_position_ >= data_.size()) {
-        break;
-      }
-
-      cur_position_++;
-    } else if (data_[cur_position_] == '(') {
-      level++;
-    }
-    if (cur_position_ >= data_.size()) {
-      break;
-    }
-
-    cur_position_++;
-  }
-  if (cur_position_ < data_.size()) {
-    cur_position_++;
   }
   return ByteStringView(
       data_.subspan(start_position, cur_position_ - start_position));
