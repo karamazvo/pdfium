@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6b5bae20_564ff81f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-16T22:23:52Z",
+      "side": 1,
+      "message": "Oops, accidentally messed up one of the cases. Fixed and added a test in patchset 10.",
+      "parentUuid": "2916f567_b5c4aeb2",
+      "revId": "7483fad466504c79f63eeca5317f0ab8cf3fa876",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2d6b3c5c_90ad3ba0",
@@ -31,6 +49,24 @@
       "writtenOn": "2024-08-16T20:26:10Z",
       "side": 1,
       "message": "Just let the HandleFoo() methods get this value for themselves?",
+      "revId": "7483fad466504c79f63eeca5317f0ab8cf3fa876",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0af07fe7_43a44c0c",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-16T22:23:52Z",
+      "side": 1,
+      "message": "I wanted to make it a little more clear that the start position was the same for all following helper methods, but sure, done.",
+      "parentUuid": "2d6b3c5c_90ad3ba0",
       "revId": "7483fad466504c79f63eeca5317f0ab8cf3fa876",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -52,6 +88,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "90745e6a_bdec381e",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-16T22:23:52Z",
+      "side": 1,
+      "message": "Sure, done.",
+      "parentUuid": "10da8a3a_edd5437f",
+      "revId": "7483fad466504c79f63eeca5317f0ab8cf3fa876",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d33c364c_82ff93a2",
@@ -65,6 +119,24 @@
       "writtenOn": "2024-08-16T20:26:10Z",
       "side": 1,
       "message": "Use a switch statement?",
+      "revId": "7483fad466504c79f63eeca5317f0ab8cf3fa876",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ab1a6dac_e7bdb7d3",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-16T22:23:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d33c364c_82ff93a2",
       "revId": "7483fad466504c79f63eeca5317f0ab8cf3fa876",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -86,6 +158,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7bb8ab2d_c3578fac",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-16T22:23:52Z",
+      "side": 1,
+      "message": "Sure. I\u0027ll mark as resolved for now and re-open after.",
+      "parentUuid": "bc3dffa2_a9f12731",
+      "revId": "7483fad466504c79f63eeca5317f0ab8cf3fa876",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "eea7fe8d_10c814cc",
@@ -103,6 +193,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6ae49aad_3f16e15f",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-16T22:23:52Z",
+      "side": 1,
+      "message": "Yeah, removed.",
+      "parentUuid": "eea7fe8d_10c814cc",
+      "revId": "7483fad466504c79f63eeca5317f0ab8cf3fa876",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c14028df_26649743",
@@ -116,6 +224,24 @@
       "writtenOn": "2024-08-16T20:26:10Z",
       "side": 1,
       "message": "Newine after this. That would help readers see the comment only applies to this method.",
+      "revId": "7483fad466504c79f63eeca5317f0ab8cf3fa876",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "07a034cf_19984848",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-16T22:23:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c14028df_26649743",
       "revId": "7483fad466504c79f63eeca5317f0ab8cf3fa876",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
