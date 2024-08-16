@@ -34,6 +34,8 @@ class CPDF_SimpleParser {
   ByteStringView HandleParentheses();
   ByteStringView HandleNonDelimiter();
 
+  ByteStringView SubspanToByteStringView(uint32_t start_position) const;
+
   const pdfium::span<const uint8_t> data_;
 
   // The current unread position.
