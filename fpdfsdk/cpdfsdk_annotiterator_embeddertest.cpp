@@ -27,12 +27,12 @@ class CPDFSDKAnnotIteratorTest : public EmbedderTest {};
 
 TEST_F(CPDFSDKAnnotIteratorTest, AnnotIterator) {
   ASSERT_TRUE(OpenDocument("annotiter.pdf"));
-  FPDF_PAGE page0 = LoadPage(0);
-  FPDF_PAGE page1 = LoadPage(1);
-  FPDF_PAGE page2 = LoadPage(2);
-  ASSERT_TRUE(page0);
-  ASSERT_TRUE(page1);
-  ASSERT_TRUE(page2);
+  ScopedEmbedderTestPage page0 = LoadScopedPage(0);
+  ScopedEmbedderTestPage page1 = LoadScopedPage(1);
+  ScopedEmbedderTestPage page2 = LoadScopedPage(2);
+  ASSERT_TRUE(page0.get());
+  ASSERT_TRUE(page1.get());
+  ASSERT_TRUE(page2.get());
 
   CFX_FloatRect LeftBottom(200, 200, 220, 220);
   CFX_FloatRect RightBottom(400, 201, 420, 221);
@@ -120,7 +120,4 @@ TEST_F(CPDFSDKAnnotIteratorTest, AnnotIterator) {
     pAnnot = iter.GetPrevAnnot(pAnnot);
     EXPECT_FALSE(pAnnot);
   }
-  UnloadPage(page2);
-  UnloadPage(page1);
-  UnloadPage(page0);
 }
