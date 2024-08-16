@@ -176,6 +176,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5d2d2e72_392406dd",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-08-16T23:12:37Z",
+      "side": 1,
+      "message": "Done in https://pdfium-review.googlesource.com/c/pdfium/+/123414.",
+      "parentUuid": "7bb8ab2d_c3578fac",
+      "revId": "7483fad466504c79f63eeca5317f0ab8cf3fa876",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "eea7fe8d_10c814cc",
