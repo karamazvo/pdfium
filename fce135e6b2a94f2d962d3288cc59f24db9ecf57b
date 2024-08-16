@@ -34,6 +34,24 @@
       "parentUuid": "3f5718a2_09505343",
       "revId": "fce135e6b2a94f2d962d3288cc59f24db9ecf57b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b6e83488_ff1b51c6",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 3487896
+      },
+      "writtenOn": "2024-08-16T22:37:46Z",
+      "side": 1,
+      "message": "I noticed that when ASSERT_TRUE and such calls a function we have to pass FPDF_PAGE thus use page.get() otherwise it won\u0027t compile. I will modify the code send a follow-up",
+      "parentUuid": "76e7af72_e45d93e1",
+      "revId": "fce135e6b2a94f2d962d3288cc59f24db9ecf57b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
