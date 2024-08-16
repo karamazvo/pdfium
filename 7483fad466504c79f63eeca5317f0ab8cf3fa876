@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2d6b3c5c_90ad3ba0",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-16T20:26:10Z",
+      "side": 1,
+      "message": "Just let the HandleFoo() methods get this value for themselves?",
+      "revId": "7483fad466504c79f63eeca5317f0ab8cf3fa876",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "10da8a3a_edd5437f",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-16T20:26:10Z",
+      "side": 1,
+      "message": "SkipSpacesAndComments(O) can also just return this value, or nullopt.",
+      "revId": "7483fad466504c79f63eeca5317f0ab8cf3fa876",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d33c364c_82ff93a2",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-16T20:26:10Z",
+      "side": 1,
+      "message": "Use a switch statement?",
+      "revId": "7483fad466504c79f63eeca5317f0ab8cf3fa876",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bc3dffa2_a9f12731",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-16T20:26:10Z",
+      "side": 1,
+      "message": "I also see lines 76-77 repeated quite a bit. Maybe make that a helper method later?",
+      "revId": "7483fad466504c79f63eeca5317f0ab8cf3fa876",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eea7fe8d_10c814cc",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-16T20:26:10Z",
+      "side": 1,
+      "message": "Isn\u0027t this conditional always true?",
+      "revId": "7483fad466504c79f63eeca5317f0ab8cf3fa876",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c14028df_26649743",
+        "filename": "core/fpdfapi/parser/cpdf_simple_parser.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-16T20:26:10Z",
+      "side": 1,
+      "message": "Newine after this. That would help readers see the comment only applies to this method.",
+      "revId": "7483fad466504c79f63eeca5317f0ab8cf3fa876",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
