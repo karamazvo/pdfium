@@ -287,7 +287,8 @@ FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object) {
 FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV
 FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
                                FPDF_PAGE page,
-                               FPDF_PAGEOBJECT image_object) {
+                               FPDF_PAGEOBJECT image_object,
+                               int bitmap_format) {
   CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
   if (!doc)
     return nullptr;
@@ -301,13 +302,24 @@ FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
     return nullptr;
 
   // Create |result_bitmap|.
+  FXDIB_Format format;
+  if (bitmap_format == FPDFBitmap_Gray) {
+    format = FXDIB_Format::k8bppRgb;
+  } else if (bitmap_format == FPDFBitmap_BGR) {
+    format = FXDIB_Format::kBgr;
+  } else if (bitmap_format == FPDFBitmap_BGRx) {
+    format = FXDIB_Format::kBgrx;
+  } else if (bitmap_format == FPDFBitmap_BGRA) {
+    format = FXDIB_Format::kBgra;
+  } else {
+    return nullptr;
+  }
   const CFX_Matrix& image_matrix = image->matrix();
   float output_width = std::ceil(hypotf(image_matrix.a, image_matrix.c));
   float output_height = std::ceil(hypotf(image_matrix.b, image_matrix.d));
   auto result_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!result_bitmap->Create(static_cast<int>(output_width),
-                             static_cast<int>(output_height),
-                             FXDIB_Format::kBgra)) {
+                             static_cast<int>(output_height), format)) {
     return nullptr;
   }
 
@@ -319,6 +331,11 @@ FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   CFX_DefaultRenderDevice device;
   device.Attach(result_bitmap);
   CPDF_RenderStatus status(&context, &device);
+  CPDF_RenderOptions options;
+  if (bitmap_format == FPDFBitmap_Gray) {
+    options.SetColorMode(CPDF_RenderOptions::Type::kGray);
+    status.SetOptions(options);
+  }
   CPDF_ImageRenderer renderer(&status);
 
   // Need to first flip the image, as expected by |renderer|.
