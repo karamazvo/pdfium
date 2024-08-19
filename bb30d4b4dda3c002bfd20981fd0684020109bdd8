@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "29bd82be_bd681807",
+        "filename": "core/fxge/dib/cfx_scanlinecompositor_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-19T20:11:15Z",
+      "side": 1,
+      "message": "nit: is possible to write something like\n`EXPECT_EQ(dest_scan[0], {.blue \u003d 255, .green \u003d 100, .red \u003d 0, .alpha \u003d 0});`",
+      "range": {
+        "startLine": 76,
+        "startChar": 4,
+        "endLine": 76,
+        "endChar": 38
+      },
+      "revId": "bb30d4b4dda3c002bfd20981fd0684020109bdd8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
