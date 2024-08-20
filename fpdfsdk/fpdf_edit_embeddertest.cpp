@@ -1464,7 +1464,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkedObjectsPrime) {
 #ifdef ARCH_CPU_ARM64
       return "401858d37db450bfd3f9458ac490eb08";
 #else
-      return "966579fb98206858ce2f0a1f94a74d05";
+      return "67d10656436d208aa0f0825e49d96ff1";
 #endif  // ARCH_CPU_ARM64
 #else
       return "3d5a3de53d5866044c2b6bf339742c97";
@@ -1521,7 +1521,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkedObjectsPrime) {
 #ifdef ARCH_CPU_ARM64
     return "6a1e31ffe451997946e449250b97d5b2";
 #else
-    return "6e19a4dd674b522cd39cf41956559bd6";
+    return "4ff651b2dee79849f52e31c474390b01";
 #endif  // ARCH_CPU_ARM64
 #else
     return "bc8623c052f12376c3d8dd09a6cd27df";
@@ -1541,7 +1541,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkedObjectsPrime) {
 #ifdef ARCH_CPU_ARM64
     return "d250bee3658c74e5d74729a09cbd80cd";
 #else
-    return "3cb35c681f8fb5a43a49146ac7caa818";
+    return "bdfa968230a2f1bbad74a157c6e76dbe";
 #endif  // ARCH_CPU_ARM64
 #else
     return "bc8623c052f12376c3d8dd09a6cd27df";
@@ -2001,7 +2001,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveAllFromStream) {
 #if ARCH_CPU_ARM64
     return "a47297bbcfa01e27891eeb52375b6f9e";
 #else
-    return "3cdc75af44c15bed80998facd6e674c9";
+    return "20575437af8d3bcc92f888cabeccc01d";
 #endif  // ARCH_CPU_ARM64
 #else
     return "b474826df1acedb05c7b82e1e49e64a6";
@@ -5155,7 +5155,7 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForColorText) {
   ASSERT_TRUE(bitmap);
   const char* checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-      return "2a45a0034911f21b528621bebe0aab4b";
+      return "9199f0c27c8a61a57189b1b044941e5e";
     }
     return "e8154fa8ededf4d9b8b35b5260897b6c";
   }();
