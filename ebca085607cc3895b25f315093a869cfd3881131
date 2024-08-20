@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "df93b97d_979b4cc2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-08-20T22:54:22Z",
+      "side": 1,
+      "message": "The first hurdle in rolling Skia DEP for this month.",
+      "revId": "ebca085607cc3895b25f315093a869cfd3881131",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
