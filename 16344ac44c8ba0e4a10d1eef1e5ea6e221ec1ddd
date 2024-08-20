@@ -58,6 +58,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0d8320bf_5c37fd4d",
+        "filename": "core/fxge/dib/cfx_scanlinecompositor.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 671,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-20T17:38:23Z",
+      "side": 1,
+      "message": "This is copy/paste/edited from line 540. I\u0027ll update both.",
+      "parentUuid": "a022c071_662784c1",
+      "range": {
+        "startLine": 671,
+        "startChar": 33,
+        "endLine": 671,
+        "endChar": 38
+      },
+      "revId": "16344ac44c8ba0e4a10d1eef1e5ea6e221ec1ddd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7aafebf1_a4a5579b",
@@ -71,6 +95,30 @@
       "writtenOn": "2024-08-20T17:27:44Z",
       "side": 1,
       "message": "nit: might deliberately overparenthesize as `(input.blue * output.alpha) / 255` just to help those who are mistakenly reading it as (alpha/255). Or we  could just assume readers know how C++ works.",
+      "range": {
+        "startLine": 698,
+        "startChar": 25,
+        "endLine": 698,
+        "endChar": 50
+      },
+      "revId": "16344ac44c8ba0e4a10d1eef1e5ea6e221ec1ddd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "89adc9c7_b14f82b7",
+        "filename": "core/fxge/dib/cfx_scanlinecompositor.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 698,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-20T17:38:23Z",
+      "side": 1,
+      "message": "I\"m going to leave these as-is and count on readers knowing operator precedence for multiply and division.",
+      "parentUuid": "7aafebf1_a4a5579b",
       "range": {
         "startLine": 698,
         "startChar": 25,
