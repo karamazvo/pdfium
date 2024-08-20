@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b8a64c1f_fe0b71e1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-20T18:15:47Z",
+      "side": 1,
+      "message": "Maybe mention https://crrev.com/1333126 in the CL description?",
+      "revId": "b51c95f17993e418c3a9693b89f6896c347a8069",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
