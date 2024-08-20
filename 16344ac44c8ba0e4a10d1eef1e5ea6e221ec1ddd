@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "127e3a09_ee6b6c56",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-20T17:27:44Z",
+      "side": 1,
+      "message": "LG w/nits.",
+      "revId": "16344ac44c8ba0e4a10d1eef1e5ea6e221ec1ddd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a022c071_662784c1",
+        "filename": "core/fxge/dib/cfx_scanlinecompositor.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 671,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-20T17:27:44Z",
+      "side": 1,
+      "message": "nit: what kind of work? could you please explain?",
+      "range": {
+        "startLine": 671,
+        "startChar": 33,
+        "endLine": 671,
+        "endChar": 38
+      },
+      "revId": "16344ac44c8ba0e4a10d1eef1e5ea6e221ec1ddd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7aafebf1_a4a5579b",
+        "filename": "core/fxge/dib/cfx_scanlinecompositor.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 698,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-20T17:27:44Z",
+      "side": 1,
+      "message": "nit: might deliberately overparenthesize as `(input.blue * output.alpha) / 255` just to help those who are mistakenly reading it as (alpha/255). Or we  could just assume readers know how C++ works.",
+      "range": {
+        "startLine": 698,
+        "startChar": 25,
+        "endLine": 698,
+        "endChar": 50
+      },
+      "revId": "16344ac44c8ba0e4a10d1eef1e5ea6e221ec1ddd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
