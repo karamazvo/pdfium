@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fd34369b_e3eb61b9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-20T17:14:00Z",
+      "side": 1,
+      "message": "nice. lgtm++",
+      "revId": "5cbd206c8debaf7927a38a65c798652c7be392c2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "439160ea_90706d08",
+        "filename": "core/fxge/dib/cfx_scanlinecompositor_unittest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-20T17:14:00Z",
+      "side": 1,
+      "message": "yea, looks like we don\u0027t get `operator\u003d\u003d() \u003d default;` until c++20.",
+      "range": {
+        "startLine": 75,
+        "startChar": 12,
+        "endLine": 75,
+        "endChar": 20
+      },
+      "revId": "5cbd206c8debaf7927a38a65c798652c7be392c2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
