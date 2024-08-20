@@ -39,6 +39,30 @@
       },
       "revId": "bb30d4b4dda3c002bfd20981fd0684020109bdd8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f87ef9a0_369907cd",
+        "filename": "core/fxge/dib/cfx_scanlinecompositor_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-20T05:35:16Z",
+      "side": 1,
+      "message": "Needs operator\u003d\u003d. Test file now half the size.",
+      "parentUuid": "29bd82be_bd681807",
+      "range": {
+        "startLine": 76,
+        "startChar": 4,
+        "endLine": 76,
+        "endChar": 38
+      },
+      "revId": "bb30d4b4dda3c002bfd20981fd0684020109bdd8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
