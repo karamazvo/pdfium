@@ -714,11 +714,23 @@ FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object);
 // The returned bitmap will be owned by the caller, and FPDFBitmap_Destroy()
 // must be called on the returned bitmap when it is no longer needed.
 //
-//   document     - handle to a document associated with |image_object|.
-//   page         - handle to an optional page associated with |image_object|.
-//   image_object - handle to an image object.
+//   document      - handle to a document associated with |image_object|.
+//   page          - handle to an optional page associated with |image_object|.
+//   image_object  - handle to an image object.
+//   bitmap_format - bitmap format based on values in public/fpdfview.h, which
+//                   are FPDFBitmap_Gray,FPDFBitmap_BGR, FPDFBitmap_BGRx, and
+//                   FPDFBitmap_BGRA.
 //
 // Returns the bitmap or NULL on failure.
+FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV
+FPDFImageObj_GetRenderedBitmapWithImageFormat(FPDF_DOCUMENT document,
+                                              FPDF_PAGE page,
+                                              FPDF_PAGEOBJECT image_object,
+                                              int bitmap_format);
+
+// Experimental API.
+// Same as above, but `bitmap_format` set to FPDFBitmap_BGRA for backward
+// compatibility.
 FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV
 FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
                                FPDF_PAGE page,

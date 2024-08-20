@@ -5277,6 +5277,42 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForRotatedImage) {
             kScaleX * kBitmapWidth);
 }
 
+TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapGray) {
+  ScopedFPDFDocument doc(FPDF_CreateNewDocument());
+  ScopedFPDFPage page(FPDFPage_New(doc.get(), 0, 100, 100));
+  EXPECT_EQ(0, FPDFPage_CountObjects(page.get()));
+
+  constexpr int kBitmapWidth = 50;
+  constexpr int kBitmapHeight = 50;
+  ScopedFPDFBitmap bitmap(FPDFBitmap_Create(kBitmapWidth, kBitmapHeight, 0));
+  ASSERT_TRUE(FPDFBitmap_FillRect(bitmap.get(), 0, 0, kBitmapWidth,
+                                  kBitmapHeight, 0x00102030));
+  ScopedFPDFPageObject page_image(FPDFPageObj_NewImageObj(doc.get()));
+  ASSERT_TRUE(
+      FPDFImageObj_SetBitmap(nullptr, 0, page_image.get(), bitmap.get()));
+
+  static constexpr FS_MATRIX kMatrix{50, 0, 0, 50, 0, 0};
+  ASSERT_TRUE(FPDFPageObj_SetMatrix(page_image.get(), &kMatrix));
+  FPDFPage_InsertObject(page.get(), page_image.release());
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+
+  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page.get(), 0);
+  ScopedFPDFBitmap extracted_bitmap(
+      FPDFImageObj_GetRenderedBitmapWithImageFormat(
+          doc.get(), page.get(), page_object, FPDFBitmap_Gray));
+  ASSERT_TRUE(extracted_bitmap);
+
+  const char* checksum = []() {
+    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+      return "2a45a0034911f21b528621bebe0aab4b";
+    }
+    return "69c4b0defc4d2179f441724f258c3cd8";
+  }();
+  // WriteBitmapToPng(extracted_bitmap.get(),
+  //                  "/tmp/csai_visual_annotations_rendered_bitmap.png");
+  CompareBitmap(extracted_bitmap.get(), 50, 50, checksum);
+}
+
 TEST_F(FPDFEditEmbedderTest, MultipleGraphicsStates) {
   ASSERT_TRUE(OpenDocument("multiple_graphics_states.pdf"));
   FPDF_PAGE page = LoadPage(0);
