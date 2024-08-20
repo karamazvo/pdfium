@@ -1145,7 +1145,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
   const char* md5_modified_path = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-      return "1eb67fb3fe9fc95ea5ab6d13864d315f";
+      return "c8ae5b9ebd9982d9fde526f50f936971";
 #elif BUILDFLAG(IS_APPLE)
       return "67c988aecab490c14534218ca9b68e8c";
 #else
@@ -1161,7 +1161,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
   const char* md5_two_paths = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-      return "afb7e4ef5902a38a55cbb5d06bbbe1c0";
+      return "d29d4258bd9344abf20bb55e6679c065";
 #elif BUILDFLAG(IS_APPLE)
       return "c91aa247ca6ecbf2beb2e2a26c8fe9b5";
 #else
@@ -1177,7 +1177,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
   const char* md5_new_annot = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-      return "a0bf617f9f6d74612ab71af8d569c402";
+      return "2fb4dde3342a5bec5acb2999bf3add15";
 #elif BUILDFLAG(IS_APPLE)
       return "096a1795645e7c40d8eb7758cc0054f4";
 #else
@@ -1387,7 +1387,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
   const char* md5_new_image = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-      return "256f4673854c0f4399d4768c7df73922";
+      return "3515dee02973f010516e4c6c774ee281";
 #elif BUILDFLAG(IS_APPLE)
       return "57a55882da9caf4d0feb2de68fac2f94";
 #else
@@ -1403,7 +1403,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
   const char* md5_modified_image = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-      return "1dc2280e655fa0e07a88afacd545d750";
+      return "1c9c1d10d541a40bf65ea4df514d21aa";
 #elif BUILDFLAG(IS_APPLE)
       return "b83bc4cf8c57a43d6ce7db5fb7f8d3d1";
 #else
@@ -1492,7 +1492,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
   const char* md5_new_text = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-      return "3a1167fc810b9543172e51206cca91d5";
+      return "9fbad802120d58b2b8b7edd043eeaf55";
 #elif BUILDFLAG(IS_APPLE)
       return "ae5b5a852270734ac1c700603a9457c2";
 #else
@@ -1510,7 +1510,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
   const char* md5_modified_text = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-      return "5e53ec58ba65f62e02a9024935ad6178";
+      return "850564e273ad58f651af09d880103e82";
 #elif BUILDFLAG(IS_APPLE)
       return "779928e3e4102a6236fadacb2b6a518c";
 #else
@@ -1655,7 +1655,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
   const char* md5 = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-      return "77d710600408a9502941933d6b4e3a1c";
+      return "3b64690a2b112f79513a2229c684f3c2";
 #elif BUILDFLAG(IS_APPLE)
       return "4e85da6d69851834d85e669eccbd9e99";
 #else
