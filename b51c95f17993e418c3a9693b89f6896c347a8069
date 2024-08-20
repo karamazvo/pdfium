@@ -16,6 +16,24 @@
       "message": "Maybe mention https://crrev.com/1333126 in the CL description?",
       "revId": "b51c95f17993e418c3a9693b89f6896c347a8069",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "051aa28b_e88b9347",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-08-20T18:21:08Z",
+      "side": 1,
+      "message": "I think more than that would be needed to fully account for what\u0027s in the roll, as that CL updated from `h9HeidXTeHQ-oskldbqCZx26-7VrVvXpLfqOI87uy4QC`.  So there was likely at least one more CL, given that this CL is rolling from `wpJvg81kuXdMM66r_l9Doa-pLfR6S26Jd1x40LpwWEoC`.",
+      "parentUuid": "b8a64c1f_fe0b71e1",
+      "revId": "b51c95f17993e418c3a9693b89f6896c347a8069",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
