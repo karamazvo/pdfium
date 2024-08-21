@@ -132,6 +132,12 @@ struct FPDFEditMoveEmbedderTestCase {
   const char* const name;
 };
 
+struct GetRenderedBitmapWithBitmapFormatTestCase {
+  int bitmap_format;
+  const char* checksum_with_skia;
+  const char* checksum_without_skia;
+};
+
 std::ostream& operator<<(std::ostream& os,
                          const FPDFEditMoveEmbedderTestCase& t) {
   os << t.name << ": Indices are {";
@@ -5275,6 +5281,63 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForRotatedImage) {
             kScaleY * kBitmapHeight);
   ASSERT_EQ(FPDFBitmap_GetHeight(extracted_bitmap.get()),
             kScaleX * kBitmapWidth);
+}
+
+TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapWithBitmapFormat) {
+  static const GetRenderedBitmapWithBitmapFormatTestCase kTestCases[] = {
+      {FPDFBitmap_Gray, "8f1445bafe2c2095044af7789462f475",
+       "8f1445bafe2c2095044af7789462f475"},
+      {FPDFBitmap_BGR, "cf5c03b01cf67f6cbb431b4dee19d27d",
+       "cf5c03b01cf67f6cbb431b4dee19d27d"},
+      {FPDFBitmap_BGRx, "c563d07586e5d709d4dfd27f1ddae6a4",
+       "c563d07586e5d709d4dfd27f1ddae6a4"},
+      {FPDFBitmap_BGRA, "eeef633cf5fb400e8918b06cb5871357",
+       "eeef633cf5fb400e8918b06cb5871357"}};
+
+  ScopedFPDFDocument doc(FPDF_CreateNewDocument());
+  ScopedFPDFPage page(FPDFPage_New(doc.get(), 0, 256, 256));
+  EXPECT_EQ(0, FPDFPage_CountObjects(page.get()));
+
+  constexpr int kBitmapWidth = 256;
+  constexpr int kBitmapHeight = 256;
+  ScopedFPDFBitmap bitmap(FPDFBitmap_Create(kBitmapWidth, kBitmapHeight, 0));
+  for (int g = 0; g < 256; g++) {
+    ASSERT_TRUE(FPDFBitmap_FillRect(bitmap.get(), g, 0, kBitmapWidth - g,
+                                    kBitmapHeight, g * 0x010101));
+  }
+  ScopedFPDFPageObject page_image(FPDFPageObj_NewImageObj(doc.get()));
+  ASSERT_TRUE(
+      FPDFImageObj_SetBitmap(nullptr, 0, page_image.get(), bitmap.get()));
+
+  static constexpr FS_MATRIX kMatrix{256, 0, 0, 256, 0, 0};
+  ASSERT_TRUE(FPDFPageObj_SetMatrix(page_image.get(), &kMatrix));
+  FPDFPage_InsertObject(page.get(), page_image.release());
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+
+  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page.get(), 0);
+
+  for (const GetRenderedBitmapWithBitmapFormatTestCase& tc : kTestCases) {
+    ScopedFPDFBitmap extracted_bitmap(
+        FPDFImageObj_GetRenderedBitmapWithBitmapFormat(
+            doc.get(), page.get(), page_object, tc.bitmap_format));
+    ASSERT_TRUE(extracted_bitmap);
+    EXPECT_EQ(tc.bitmap_format, FPDFBitmap_GetFormat(extracted_bitmap.get()));
+    // TODO: Simplify if SKIA has the same checksum.
+    const char* checksum;
+    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+#if BUILDFLAG(IS_WIN)
+      checksum = tc.checksum_with_skia;
+#elif BUILDFLAG(IS_APPLE)
+      checksum = tc.checksum_with_skia;
+#else
+      checksum = tc.checksum_with_skia;
+#endif
+    } else {
+      checksum = tc.checksum_without_skia;
+    }
+
+    CompareBitmap(extracted_bitmap.get(), 256, 256, checksum);
+  }
 }
 
 TEST_F(FPDFEditEmbedderTest, MultipleGraphicsStates) {
