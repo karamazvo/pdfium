@@ -809,7 +809,8 @@ void WriteRenderedImages(FPDF_DOCUMENT doc,
       continue;
     }
 
-    ScopedFPDFBitmap bitmap(FPDFImageObj_GetRenderedBitmap(doc, page, obj));
+    ScopedFPDFBitmap bitmap(
+        FPDFImageObj_GetRenderedBitmap(doc, page, obj, FPDFBitmap_BGRA));
     if (!bitmap) {
       fprintf(stderr, "Image object #%d on page #%d has an empty bitmap.\n",
               i + 1, page_num + 1);
