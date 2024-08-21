@@ -287,7 +287,8 @@ FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object) {
 FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV
 FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
                                FPDF_PAGE page,
-                               FPDF_PAGEOBJECT image_object) {
+                               FPDF_PAGEOBJECT image_object,
+                               int bitmap_format) {
   CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
   if (!doc)
     return nullptr;
@@ -304,10 +305,12 @@ FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   const CFX_Matrix& image_matrix = image->matrix();
   float output_width = std::ceil(hypotf(image_matrix.a, image_matrix.c));
   float output_height = std::ceil(hypotf(image_matrix.b, image_matrix.d));
-  auto result_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!result_bitmap->Create(static_cast<int>(output_width),
-                             static_cast<int>(output_height),
-                             FXDIB_Format::kBgra)) {
+  FPDF_BITMAP result_bitmap =
+      FPDFBitmap_CreateEx(static_cast<int>(output_width),
+                          static_cast<int>(output_height), bitmap_format,
+                          /*first_scan=*/nullptr,
+                          /*stride=*/0);
+  if (!result_bitmap) {
     return nullptr;
   }
 
@@ -317,8 +320,15 @@ FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   CPDF_RenderContext context(doc, std::move(page_resources),
                              /*pPageCache=*/nullptr);
   CFX_DefaultRenderDevice device;
-  device.Attach(result_bitmap);
+  auto cfx_dibitmap = pdfium::WrapRetain<CFX_DIBitmap>(
+      CFXDIBitmapFromFPDFBitmap(result_bitmap));
+  device.Attach(cfx_dibitmap);
   CPDF_RenderStatus status(&context, &device);
+  if (bitmap_format == FPDFBitmap_Gray) {
+    CPDF_RenderOptions options;
+    options.SetColorMode(CPDF_RenderOptions::Type::kGray);
+    status.SetOptions(options);
+  }
   CPDF_ImageRenderer renderer(&status);
 
   // Need to first flip the image, as expected by |renderer|.
@@ -338,10 +348,10 @@ FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   if (!renderer.GetResult())
     return nullptr;
 
-  CHECK(!result_bitmap->IsPremultiplied());
+  CHECK(!cfx_dibitmap->IsPremultiplied());
 
   // Caller takes ownership.
-  return FPDFBitmapFromCFXDIBitmap(result_bitmap.Leak());
+  return result_bitmap;
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV

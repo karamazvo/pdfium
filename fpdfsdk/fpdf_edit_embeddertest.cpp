@@ -132,6 +132,12 @@ struct FPDFEditMoveEmbedderTestCase {
   const char* const name;
 };
 
+struct GetRenderedBitmapWithBitmapFormatTestCase {
+  int bitmap_format;
+  const char* checksum_with_skia;
+  const char* checksum_without_skia;
+};
+
 std::ostream& operator<<(std::ostream& os,
                          const FPDFEditMoveEmbedderTestCase& t) {
   os << t.name << ": Indices are {";
@@ -4573,7 +4579,7 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapHandlesSetMatrix) {
   {
     // Render `obj` as is.
     ScopedFPDFBitmap bitmap(
-        FPDFImageObj_GetRenderedBitmap(document(), page, obj));
+        FPDFImageObj_GetRenderedBitmap(document(), page, obj, FPDFBitmap_BGRA));
     EXPECT_EQ(FPDFBitmap_BGRA, FPDFBitmap_GetFormat(bitmap.get()));
     const char* checksum = []() {
       if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
@@ -4611,7 +4617,7 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapHandlesSetMatrix) {
     // Render `obj` again. Note that the FPDFPageObj_SetMatrix() call has an
     // effect.
     ScopedFPDFBitmap bitmap(
-        FPDFImageObj_GetRenderedBitmap(document(), page, obj));
+        FPDFImageObj_GetRenderedBitmap(document(), page, obj, FPDFBitmap_BGRA));
     EXPECT_EQ(FPDFBitmap_BGRA, FPDFBitmap_GetFormat(bitmap.get()));
     const char* checksum = []() {
       if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
@@ -4650,7 +4656,7 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapHandlesSMask) {
     FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page, i);
     ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
     ScopedFPDFBitmap bitmap(
-        FPDFImageObj_GetRenderedBitmap(document(), page, obj));
+        FPDFImageObj_GetRenderedBitmap(document(), page, obj, FPDFBitmap_BGRA));
     ASSERT_TRUE(bitmap);
     EXPECT_EQ(FPDFBitmap_BGRA, FPDFBitmap_GetFormat(bitmap.get()));
     if (i == 0)
@@ -4671,16 +4677,23 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapBadParams) {
   ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
 
   // Test various null parameters.
-  EXPECT_FALSE(FPDFImageObj_GetRenderedBitmap(nullptr, nullptr, nullptr));
-  EXPECT_FALSE(FPDFImageObj_GetRenderedBitmap(document(), nullptr, nullptr));
-  EXPECT_FALSE(FPDFImageObj_GetRenderedBitmap(nullptr, page, nullptr));
-  EXPECT_FALSE(FPDFImageObj_GetRenderedBitmap(nullptr, nullptr, obj));
-  EXPECT_FALSE(FPDFImageObj_GetRenderedBitmap(document(), page, nullptr));
-  EXPECT_FALSE(FPDFImageObj_GetRenderedBitmap(nullptr, page, obj));
+  EXPECT_FALSE(FPDFImageObj_GetRenderedBitmap(nullptr, nullptr, nullptr,
+                                              FPDFBitmap_BGRA));
+  EXPECT_FALSE(FPDFImageObj_GetRenderedBitmap(document(), nullptr, nullptr,
+                                              FPDFBitmap_BGRA));
+  EXPECT_FALSE(
+      FPDFImageObj_GetRenderedBitmap(nullptr, page, nullptr, FPDFBitmap_BGRA));
+  EXPECT_FALSE(
+      FPDFImageObj_GetRenderedBitmap(nullptr, nullptr, obj, FPDFBitmap_BGRA));
+  EXPECT_FALSE(FPDFImageObj_GetRenderedBitmap(document(), page, nullptr,
+                                              FPDFBitmap_BGRA));
+  EXPECT_FALSE(
+      FPDFImageObj_GetRenderedBitmap(nullptr, page, obj, FPDFBitmap_BGRA));
 
   // Test mismatch between document and page parameters.
   ScopedFPDFDocument new_document(FPDF_CreateNewDocument());
-  EXPECT_FALSE(FPDFImageObj_GetRenderedBitmap(new_document.get(), page, obj));
+  EXPECT_FALSE(FPDFImageObj_GetRenderedBitmap(new_document.get(), page, obj,
+                                              FPDFBitmap_BGRA));
 
   UnloadPage(page);
 }
@@ -5267,14 +5280,46 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForRotatedImage) {
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
 
   FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page.get(), 0);
-  ScopedFPDFBitmap extracted_bitmap(
-      FPDFImageObj_GetRenderedBitmap(doc.get(), page.get(), page_object));
+  ScopedFPDFBitmap extracted_bitmap(FPDFImageObj_GetRenderedBitmap(
+      doc.get(), page.get(), page_object, FPDFBitmap_BGRA));
   ASSERT_TRUE(extracted_bitmap);
 
   ASSERT_EQ(FPDFBitmap_GetWidth(extracted_bitmap.get()),
             kScaleY * kBitmapHeight);
   ASSERT_EQ(FPDFBitmap_GetHeight(extracted_bitmap.get()),
             kScaleX * kBitmapWidth);
+}
+
+TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapWithDifferentBitmapFormats) {
+  static const GetRenderedBitmapWithBitmapFormatTestCase kTestCases[] = {
+      {FPDFBitmap_Gray, "977cc97529c949fb5581d22693470cd0",
+       "977cc97529c949fb5581d22693470cd0"},
+      {FPDFBitmap_BGR, "02c77c20aca7d050cf1b40ea494429da",
+       "02c77c20aca7d050cf1b40ea494429da"},
+      {FPDFBitmap_BGRx, "b2ba8986f336c545309eb5a839970366",
+       "b2ba8986f336c545309eb5a839970366"},
+      {FPDFBitmap_BGRA, "91c207bf892e918458f9d97ba8f0e745",
+       "91c207bf892e918458f9d97ba8f0e745"}};
+
+  ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page, 38);
+  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+
+  for (const GetRenderedBitmapWithBitmapFormatTestCase& tc : kTestCases) {
+    ScopedFPDFBitmap extracted_bitmap(FPDFImageObj_GetRenderedBitmap(
+        document(), page, obj, tc.bitmap_format));
+    ASSERT_TRUE(extracted_bitmap);
+    EXPECT_EQ(tc.bitmap_format, FPDFBitmap_GetFormat(extracted_bitmap.get()));
+    CompareBitmap(extracted_bitmap.get(), 71, 44,
+                  CFX_DefaultRenderDevice::UseSkiaRenderer()
+                      ? tc.checksum_with_skia
+                      : tc.checksum_without_skia);
+  }
+
+  UnloadPage(page);
 }
 
 TEST_F(FPDFEditEmbedderTest, MultipleGraphicsStates) {
