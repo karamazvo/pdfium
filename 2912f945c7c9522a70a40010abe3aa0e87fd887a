@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6541fc34_be968601",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 15
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3513082
+      },
+      "writtenOn": "2024-08-22T15:51:08Z",
+      "side": 1,
+      "message": "I did some benchmarking and it seems that switching to grayscale improves OCR speed for only 5%, while we lose the color labels that can be sometimes helpful.\nSo we decided not switch to grayscale for OCR. Do you think this CL is still worth landing, or should I abandon it?",
+      "revId": "2912f945c7c9522a70a40010abe3aa0e87fd887a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
