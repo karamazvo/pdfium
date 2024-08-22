@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fc52667a_3989059c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 3513082
+      },
+      "writtenOn": "2024-08-22T06:42:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a34f9735_ef6e4c1e",
+      "revId": "df4e184c66161186c6c0d45dcffa71593e42b9e3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b853c167_d5d0941c",
@@ -31,6 +49,24 @@
       "writtenOn": "2024-08-21T09:00:07Z",
       "side": 1,
       "message": "This only mentions the \"what\" but not the \"why\". Since the associated bug isn\u0027t public, many readers cannot gain any context from it. So it would be beneficial to explain here.",
+      "revId": "df4e184c66161186c6c0d45dcffa71593e42b9e3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3c7ae760_d4ab86ef",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 3513082
+      },
+      "writtenOn": "2024-08-22T06:42:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b853c167_d5d0941c",
       "revId": "df4e184c66161186c6c0d45dcffa71593e42b9e3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -71,6 +107,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "823c8d0a_ff7ce1c7",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 5293,
+      "author": {
+        "id": 3513082
+      },
+      "writtenOn": "2024-08-22T06:42:14Z",
+      "side": 1,
+      "message": "I didn\u0027t look into it. My assumption was that since the 4th byte is not used, the two approaches initialize it to different values.\nBut now all test cases have different SKIA and non-SKIA checksums. Does it need looking into?",
+      "parentUuid": "1c936706_ae6f7c33",
+      "revId": "df4e184c66161186c6c0d45dcffa71593e42b9e3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8acbbfbd_dc44da6c",
         "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
         "patchSetId": 7
@@ -82,6 +136,24 @@
       "writtenOn": "2024-08-21T08:53:56Z",
       "side": 1,
       "message": "Why not just render an existing doc?",
+      "revId": "df4e184c66161186c6c0d45dcffa71593e42b9e3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d03a5614_57c21de0",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 5297,
+      "author": {
+        "id": 3513082
+      },
+      "writtenOn": "2024-08-22T06:42:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8acbbfbd_dc44da6c",
       "revId": "df4e184c66161186c6c0d45dcffa71593e42b9e3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -103,6 +175,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "557d73d5_60cb069f",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 314,
+      "author": {
+        "id": 3513082
+      },
+      "writtenOn": "2024-08-22T06:42:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d249c11a_9e64ee36",
+      "revId": "df4e184c66161186c6c0d45dcffa71593e42b9e3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5710b329_fd8e0ed4",
@@ -116,6 +206,24 @@
       "writtenOn": "2024-08-21T08:53:56Z",
       "side": 1,
       "message": "Variable scope is too wide?",
+      "revId": "df4e184c66161186c6c0d45dcffa71593e42b9e3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "132945ce_c6d6cc2b",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 3513082
+      },
+      "writtenOn": "2024-08-22T06:42:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5710b329_fd8e0ed4",
       "revId": "df4e184c66161186c6c0d45dcffa71593e42b9e3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -137,6 +245,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "921aa2a7_344d1139",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 7
+      },
+      "lineNbr": 721,
+      "author": {
+        "id": 3513082
+      },
+      "writtenOn": "2024-08-22T06:42:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "40707d8f_51e07c9b",
+      "revId": "df4e184c66161186c6c0d45dcffa71593e42b9e3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e88863b7_537fb653",
@@ -150,6 +276,24 @@
       "writtenOn": "2024-08-21T08:53:56Z",
       "side": 1,
       "message": "Why not just add one more parameter to the existing API, which is experimental and can be changed? Updating callers is trivial. Manual PDFium DEPS roll is not hard.",
+      "revId": "df4e184c66161186c6c0d45dcffa71593e42b9e3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "674cb105_59893d6d",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 7
+      },
+      "lineNbr": 732,
+      "author": {
+        "id": 3513082
+      },
+      "writtenOn": "2024-08-22T06:42:14Z",
+      "side": 1,
+      "message": "Thank you, didn\u0027t know that.",
+      "parentUuid": "e88863b7_537fb653",
       "revId": "df4e184c66161186c6c0d45dcffa71593e42b9e3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
