@@ -16,6 +16,24 @@
       "message": "Isn\u0027t it fine for this to be here? This header is the `SK_USER_CONFIG_HEADER` in Pdfium (see `skia/BUILD.gn` here in pdfium).",
       "revId": "9d0b1da2fb97ebaadea50d9d66af78b176117438",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bd01f060_9745903c",
+        "filename": "skia/config/SkPdfiumUserConfig.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2024-08-23T15:29:33Z",
+      "side": 0,
+      "message": "Ah, I see, the idea is to put whatever is in this file directly into the user configuration header. In which case we should `#define GR_GL_CHECK_ERROR_START 0` here?",
+      "parentUuid": "e45dfcdb_a05c13e5",
+      "revId": "9d0b1da2fb97ebaadea50d9d66af78b176117438",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
