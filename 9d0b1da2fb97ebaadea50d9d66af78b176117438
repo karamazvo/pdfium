@@ -34,6 +34,24 @@
       "parentUuid": "e45dfcdb_a05c13e5",
       "revId": "9d0b1da2fb97ebaadea50d9d66af78b176117438",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "565c9e3f_661adb68",
+        "filename": "skia/config/SkPdfiumUserConfig.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2024-08-23T15:33:20Z",
+      "side": 0,
+      "message": "Like in the [Chromium side change](https://chromium.googlesource.com/chromium/src/+/b173e6015db2f485f08a078e1615fa577448e8cb).",
+      "parentUuid": "bd01f060_9745903c",
+      "revId": "9d0b1da2fb97ebaadea50d9d66af78b176117438",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
