@@ -53,6 +53,46 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2088fea1_b25f3b70",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 5295,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-23T01:34:01Z",
+      "side": 1,
+      "message": "The others may be rounding errors? Not sure, but they look relatively close. Though it\u0027s not 1 pixel, but rather an entire line.",
+      "revId": "2912f945c7c9522a70a40010abe3aa0e87fd887a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4f3b3d91_9ed0e932",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 5300,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-23T01:34:01Z",
+      "side": 1,
+      "message": "Renders blank. AGG bug?",
+      "range": {
+        "startLine": 5300,
+        "startChar": 8,
+        "endLine": 5300,
+        "endChar": 40
+      },
+      "revId": "2912f945c7c9522a70a40010abe3aa0e87fd887a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a859a939_08477ba9",
