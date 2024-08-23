@@ -34,6 +34,57 @@
       "parentUuid": "6541fc34_be968601",
       "revId": "2912f945c7c9522a70a40010abe3aa0e87fd887a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f1dbfa8b_426b1be2",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 4679,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-23T01:01:41Z",
+      "side": 1,
+      "message": "Also test `FPDFBitmap_Unknown` now.",
+      "revId": "2912f945c7c9522a70a40010abe3aa0e87fd887a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a859a939_08477ba9",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-23T01:01:41Z",
+      "side": 1,
+      "message": "It would be preferable to not have public APIs call other public APIs. Thus the suggestion to refactor existing code to be shared.",
+      "revId": "2912f945c7c9522a70a40010abe3aa0e87fd887a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "572a4f52_8fc02c51",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 324,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-23T01:01:41Z",
+      "side": 1,
+      "message": "i.e. No need to do CPDF to FPDF to CPDF conversions.",
+      "revId": "2912f945c7c9522a70a40010abe3aa0e87fd887a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
