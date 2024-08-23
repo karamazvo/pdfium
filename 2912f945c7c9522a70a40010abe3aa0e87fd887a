@@ -38,6 +38,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "8698ebab_07a40bf6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 15
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3513082
+      },
+      "writtenOn": "2024-08-23T05:15:33Z",
+      "side": 1,
+      "message": "Then let\u0027s continue, it doesn\u0027t have negative effect on current usage and can be useful later.",
+      "parentUuid": "731ed35c_7f0214ee",
+      "revId": "2912f945c7c9522a70a40010abe3aa0e87fd887a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "f1dbfa8b_426b1be2",
         "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
         "patchSetId": 15
@@ -49,6 +67,24 @@
       "writtenOn": "2024-08-23T01:01:41Z",
       "side": 1,
       "message": "Also test `FPDFBitmap_Unknown` now.",
+      "revId": "2912f945c7c9522a70a40010abe3aa0e87fd887a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6df192bf_d4b6d157",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 4679,
+      "author": {
+        "id": 3513082
+      },
+      "writtenOn": "2024-08-23T05:15:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f1dbfa8b_426b1be2",
       "revId": "2912f945c7c9522a70a40010abe3aa0e87fd887a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -106,6 +142,24 @@
       "writtenOn": "2024-08-23T01:01:41Z",
       "side": 1,
       "message": "It would be preferable to not have public APIs call other public APIs. Thus the suggestion to refactor existing code to be shared.",
+      "revId": "2912f945c7c9522a70a40010abe3aa0e87fd887a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "399be28e_e734212c",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 3513082
+      },
+      "writtenOn": "2024-08-23T05:15:33Z",
+      "side": 1,
+      "message": "Where do you suggest putting the shared code? I didn\u0027t find a good place for it.",
+      "parentUuid": "a859a939_08477ba9",
       "revId": "2912f945c7c9522a70a40010abe3aa0e87fd887a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
