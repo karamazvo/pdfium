@@ -70,6 +70,30 @@
       },
       "revId": "dde8e5d311046fa642cb52836fc20a0eddaad666",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6be826a8_40a6b11c",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 877,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-26T23:19:46Z",
+      "side": 0,
+      "message": "In other words, you have to prove these are always all overwritten.  Is that the case?",
+      "parentUuid": "c2d58e7e_1620a4aa",
+      "range": {
+        "startLine": 877,
+        "startChar": 0,
+        "endLine": 877,
+        "endChar": 22
+      },
+      "revId": "dde8e5d311046fa642cb52836fc20a0eddaad666",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
