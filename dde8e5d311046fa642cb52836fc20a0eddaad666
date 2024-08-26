@@ -46,6 +46,30 @@
       },
       "revId": "dde8e5d311046fa642cb52836fc20a0eddaad666",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c2d58e7e_1620a4aa",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 877,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-26T23:18:18Z",
+      "side": 0,
+      "message": "Right, but this used to happen in both cases. The !rsx case is fine, but imagine for rsx case it has 5 currrent elements and we want to resize to 8.\n\nOld : [XXXXX] -\u003e [] -\u003e [00000000]\nNew : [XXXXX] -\u003e [XXXXX000]",
+      "parentUuid": "286b2cae_c8d32515",
+      "range": {
+        "startLine": 877,
+        "startChar": 0,
+        "endLine": 877,
+        "endChar": 22
+      },
+      "revId": "dde8e5d311046fa642cb52836fc20a0eddaad666",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
