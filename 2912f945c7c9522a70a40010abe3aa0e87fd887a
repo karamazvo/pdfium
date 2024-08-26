@@ -147,6 +147,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a59938a8_54099749",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 5300,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-26T23:43:00Z",
+      "side": 1,
+      "message": "Image renders with a CFX_DIBitmap::Clear() call to set the alpha byte to 0xFF. I tried 0xFF000000, and then I noticed the Skia rendering has a black border on the top and right edge.",
+      "parentUuid": "4f3b3d91_9ed0e932",
+      "range": {
+        "startLine": 5300,
+        "startChar": 8,
+        "endLine": 5300,
+        "endChar": 40
+      },
+      "revId": "2912f945c7c9522a70a40010abe3aa0e87fd887a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a859a939_08477ba9",
