@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3dee3fe8_46a9b8fa",
+        "filename": "core/fxge/win32/cgdi_device_driver.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 717,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-27T17:12:14Z",
+      "side": 1,
+      "message": "pre: what about greater than 255? yeah can\u0027t happen but if Argb...() returned a uint8_t instead of an int ... someday.",
+      "range": {
+        "startLine": 717,
+        "startChar": 0,
+        "endLine": 717,
+        "endChar": 20
+      },
+      "revId": "c21d58e0abc9be53db8bba0d40b1e38bc9680114",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
