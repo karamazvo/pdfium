@@ -39,6 +39,30 @@
       },
       "revId": "36029b533dfd450c47cbc8540fefe66a09029e74",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3890ee7c_b4370b3d",
+        "filename": "core/fxge/win32/cgdi_device_driver.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 775,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-27T17:29:17Z",
+      "side": 1,
+      "message": "Will do in separate CL.",
+      "parentUuid": "61cf3b10_780356ef",
+      "range": {
+        "startLine": 773,
+        "startChar": 2,
+        "endLine": 775,
+        "endChar": 27
+      },
+      "revId": "36029b533dfd450c47cbc8540fefe66a09029e74",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
