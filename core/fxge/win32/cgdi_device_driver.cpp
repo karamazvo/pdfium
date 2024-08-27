@@ -712,9 +712,7 @@ bool CGdiDeviceDriver::FillRectWithBlend(const FX_RECT& rect,
   if (blend_type != BlendMode::kNormal)
     return false;
 
-  int alpha;
-  FX_COLORREF colorref;
-  std::tie(alpha, colorref) = ArgbToAlphaAndColorRef(fill_color);
+  auto [alpha, colorref] = ArgbToAlphaAndColorRef(fill_color);
   if (alpha == 0)
     return true;
 
@@ -770,9 +768,7 @@ bool CGdiDeviceDriver::SetClip_PathStroke(
 bool CGdiDeviceDriver::DrawCosmeticLine(const CFX_PointF& ptMoveTo,
                                         const CFX_PointF& ptLineTo,
                                         uint32_t color) {
-  int alpha;
-  FX_COLORREF colorref;
-  std::tie(alpha, colorref) = ArgbToAlphaAndColorRef(color);
+  auto [alpha, colorref] = ArgbToAlphaAndColorRef(color);
   if (alpha == 0) {
     return true;
   }
