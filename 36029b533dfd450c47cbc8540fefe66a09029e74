@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "61cf3b10_780356ef",
+        "filename": "core/fxge/win32/cgdi_device_driver.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 775,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-27T17:06:52Z",
+      "side": 1,
+      "message": "pre: can write `auto [alpha, colorref] \u003d ` to avoid std::tie() use and standalone decls.",
+      "range": {
+        "startLine": 773,
+        "startChar": 2,
+        "endLine": 775,
+        "endChar": 27
+      },
+      "revId": "36029b533dfd450c47cbc8540fefe66a09029e74",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
