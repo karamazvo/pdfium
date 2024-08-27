@@ -94,6 +94,30 @@
       },
       "revId": "dde8e5d311046fa642cb52836fc20a0eddaad666",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8fadd758_babb9ab4",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 877,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-27T00:00:26Z",
+      "side": 0,
+      "message": "Yes, they are always overwritten. From here to line 901, there are no exit paths. Then then loop there overwrites the entire array. For reference, SkRSXform only has 4 fields.",
+      "parentUuid": "6be826a8_40a6b11c",
+      "range": {
+        "startLine": 877,
+        "startChar": 0,
+        "endLine": 877,
+        "endChar": 22
+      },
+      "revId": "dde8e5d311046fa642cb52836fc20a0eddaad666",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
