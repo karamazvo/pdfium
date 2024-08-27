@@ -22,6 +22,30 @@
       },
       "revId": "a229424c8a06df4918097ebe098e9a9acbadbe12",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6b6098bc_beeb3418",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1164,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-27T17:48:01Z",
+      "side": 0,
+      "message": "BlendMode::kNormal maps to SkBlendMode::kSrcOver. SkPaint::setBlendMode() will call setBlender(nullptr) for that value. That is a no-op, as `spaint` just got created 3 lines above, and its `fBlender` value starts out as null.",
+      "parentUuid": "91af259c_532fecbe",
+      "range": {
+        "startLine": 1164,
+        "startChar": 0,
+        "endLine": 1164,
+        "endChar": 52
+      },
+      "revId": "a229424c8a06df4918097ebe098e9a9acbadbe12",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
