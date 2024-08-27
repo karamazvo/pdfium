@@ -39,6 +39,23 @@
       "message": "LG/W nit.",
       "revId": "6cf527abbea03465c37d67839c62ac44b0ae5d5e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d687cabc_fc2be0e0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5645
+      },
+      "writtenOn": "2024-08-27T16:49:33Z",
+      "side": 1,
+      "message": "Review-Enforced",
+      "revId": "6cf527abbea03465c37d67839c62ac44b0ae5d5e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
