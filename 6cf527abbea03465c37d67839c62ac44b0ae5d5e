@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "844fc7b7_68c4df28",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-27T16:49:15Z",
+      "side": 1,
+      "message": "nit: maybe add `(only Skia and Agg provide this)` to explain why we\u0027re not just removing the constant entirely.",
+      "range": {
+        "startLine": 10,
+        "startChar": 10,
+        "endLine": 10,
+        "endChar": 11
+      },
+      "revId": "6cf527abbea03465c37d67839c62ac44b0ae5d5e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c15e8d05_153cb178",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-08-27T16:49:15Z",
+      "side": 1,
+      "message": "LG/W nit.",
+      "revId": "6cf527abbea03465c37d67839c62ac44b0ae5d5e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
