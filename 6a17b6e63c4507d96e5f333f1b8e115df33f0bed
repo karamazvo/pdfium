@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c104acf2_9ce00c9f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-28T18:59:48Z",
+      "side": 1,
+      "message": "This doesn\u0027t match the DEPS file.",
+      "revId": "6a17b6e63c4507d96e5f333f1b8e115df33f0bed",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "be8ed367_42433158",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-08-28T18:59:48Z",
+      "side": 1,
+      "message": "Neither does this. I didn\u0027t check the other entries below.",
+      "revId": "6a17b6e63c4507d96e5f333f1b8e115df33f0bed",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
