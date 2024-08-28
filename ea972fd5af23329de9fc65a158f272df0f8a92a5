@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5c0f9e98_28182df1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-08-28T18:04:38Z",
+      "side": 1,
+      "message": "Yes, because the next Skia commit causes other problems for rolling.  https://pdfium-review.googlesource.com/c/pdfium/+/123870 addresses that.",
+      "parentUuid": "cd9ab342_92d39e62",
+      "range": {
+        "startLine": 7,
+        "startChar": 34,
+        "endLine": 7,
+        "endChar": 43
+      },
+      "revId": "ea972fd5af23329de9fc65a158f272df0f8a92a5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f0d9c208_b698457b",
@@ -37,6 +61,30 @@
       "writtenOn": "2024-08-27T18:53:21Z",
       "side": 1,
       "message": "Update this to final value after https://pdfium-review.googlesource.com/c/pdfium_tests/+/123613 lands.",
+      "range": {
+        "startLine": 177,
+        "startChar": 28,
+        "endLine": 177,
+        "endChar": 68
+      },
+      "revId": "ea972fd5af23329de9fc65a158f272df0f8a92a5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "213f8ad4_1e437f4f",
+        "filename": "DEPS",
+        "patchSetId": 7
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-08-28T18:04:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f0d9c208_b698457b",
       "range": {
         "startLine": 177,
         "startChar": 28,
