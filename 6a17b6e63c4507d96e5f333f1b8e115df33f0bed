@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "67752a8e_1dad80e0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-08-28T20:55:02Z",
+      "side": 1,
+      "message": "Gah, I guess I forgot to update those after the adjustments I had to make as this got further along.  😞  Updated now.",
+      "parentUuid": "c104acf2_9ce00c9f",
+      "revId": "6a17b6e63c4507d96e5f333f1b8e115df33f0bed",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "be8ed367_42433158",
@@ -31,6 +49,24 @@
       "writtenOn": "2024-08-28T18:59:48Z",
       "side": 1,
       "message": "Neither does this. I didn\u0027t check the other entries below.",
+      "revId": "6a17b6e63c4507d96e5f333f1b8e115df33f0bed",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b2e96133_3459b9c6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-08-28T20:55:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "be8ed367_42433158",
       "revId": "6a17b6e63c4507d96e5f333f1b8e115df33f0bed",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
