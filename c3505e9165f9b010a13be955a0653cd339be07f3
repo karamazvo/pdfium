@@ -35,6 +35,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3d33131d_67c32a6d",
+        "filename": "core/fxge/skia/fx_skia_device_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-03T21:30:53Z",
+      "side": 1,
+      "message": "ohhh i had pdf_use_skia \u003d false somehow, just followed the pdfium \"howto build\".",
+      "parentUuid": "b9be886d_651fa793",
+      "revId": "c3505e9165f9b010a13be955a0653cd339be07f3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "020a29ac_a83c8ac8",
@@ -72,6 +90,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "920f9d7a_24f71053",
+        "filename": "fpdfsdk/pwl/cpwl_combo_box_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-03T21:30:53Z",
+      "side": 1,
+      "message": "ok - thanks, tried it with setting it to nullptr on TearDown, sadly i cannot run bots in this repo - could you start them?",
+      "parentUuid": "c126b145_a2e402ad",
+      "revId": "c3505e9165f9b010a13be955a0653cd339be07f3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "12e646c6_abe680fe",
         "filename": "xfa/fxfa/parser/cxfa_document_builder_embeddertest.cpp",
         "patchSetId": 1
@@ -83,6 +119,24 @@
       "writtenOn": "2024-09-03T20:30:31Z",
       "side": 1,
       "message": "`EXPECT_TRUE(page);` as it was works, since the scoped pointer class has an `operator bool`.",
+      "revId": "c3505e9165f9b010a13be955a0653cd339be07f3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "df5ac70c_4dd52def",
+        "filename": "xfa/fxfa/parser/cxfa_document_builder_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-03T21:30:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "12e646c6_abe680fe",
       "revId": "c3505e9165f9b010a13be955a0653cd339be07f3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
