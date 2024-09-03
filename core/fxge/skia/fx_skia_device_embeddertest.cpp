@@ -168,7 +168,7 @@ void RenderPageToSkCanvas(FPDF_PAGE page,
                           int size_x,
                           int size_y,
                           SkCanvas& canvas) {
-  CPDF_Page* cpdf_page = CPDFPageFromFPDFPage(page);
+  CPDF_Page* cpdf_page = CPDFPageFromFPDFPage(page.get());
 
   auto context = std::make_unique<CPDF_PageRenderContext>();
   CPDF_PageRenderContext* unowned_context = context.get();
@@ -263,8 +263,8 @@ TEST_F(FxgeSkiaEmbedderTest, RenderBigImageTwice) {
   }
 
   ASSERT_TRUE(OpenDocument("bug_2034.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
 
   std::set<int> image_ids;
   NiceMock<MockCanvas> canvas(kPageWidth, kPageHeight / 2);
@@ -281,14 +281,13 @@ TEST_F(FxgeSkiaEmbedderTest, RenderBigImageTwice) {
       }));
 
   // Render top half.
-  RenderPageToSkCanvas(page, /*start_x=*/0, /*start_y=*/0,
+  RenderPageToSkCanvas(page.get(), /*start_x=*/0, /*start_y=*/0,
                        /*size_x=*/kPageWidth, /*size_y=*/kPageHeight, canvas);
 
   // Render bottom half.
-  RenderPageToSkCanvas(page, /*start_x=*/0, /*start_y=*/-kPageHeight / 2,
+  RenderPageToSkCanvas(page.get(), /*start_x=*/0, /*start_y=*/-kPageHeight / 2,
                        /*size_x=*/kPageWidth, /*size_y=*/kPageHeight, canvas);
 
   EXPECT_THAT(image_ids, SizeIs(1));
 
-  UnloadPage(page);
 }

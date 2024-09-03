@@ -24,14 +24,13 @@ class CPWLEditEmbedderTest : public EmbedderTest {
   }
 
   void TearDown() override {
-    UnloadPage(GetPage());
     EmbedderTest::TearDown();
   }
 
   void CreateAndInitializeFormPDF() {
-    ASSERT_TRUE(OpenDocument("text_form_multiple.pdf"));
-    m_page = LoadPage(0);
-    ASSERT_TRUE(m_page);
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ASSERT_TRUE(page.get());
+    m_page = page.get();
 
     m_pFormFillEnv =
         CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());

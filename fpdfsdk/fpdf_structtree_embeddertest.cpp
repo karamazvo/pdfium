@@ -16,11 +16,11 @@ class FPDFStructTreeEmbedderTest : public EmbedderTest {};
 
 TEST_F(FPDFStructTreeEmbedderTest, GetAltText) {
   ASSERT_TRUE(OpenDocument("tagged_alt_text.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
 
   {
-    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page.get()));
     ASSERT_TRUE(struct_tree);
     ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
 
@@ -74,16 +74,15 @@ TEST_F(FPDFStructTreeEmbedderTest, GetAltText) {
     EXPECT_FALSE(ggchild_element);
   }
 
-  UnloadPage(page);
 }
 
 TEST_F(FPDFStructTreeEmbedderTest, GetActualText) {
   ASSERT_TRUE(OpenDocument("tagged_actual_text.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
 
   {
-    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page.get()));
     ASSERT_TRUE(struct_tree);
     ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
 
@@ -119,16 +118,15 @@ TEST_F(FPDFStructTreeEmbedderTest, GetActualText) {
     EXPECT_EQ(L"Actual Text", GetPlatformWString(buffer));
   }
 
-  UnloadPage(page);
 }
 
 TEST_F(FPDFStructTreeEmbedderTest, GetStringAttribute) {
   ASSERT_TRUE(OpenDocument("tagged_table.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
 
   {
-    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page.get()));
     ASSERT_TRUE(struct_tree);
     ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
 
@@ -182,16 +180,15 @@ TEST_F(FPDFStructTreeEmbedderTest, GetStringAttribute) {
                                                         buffer, kBufLen));
   }
 
-  UnloadPage(page);
 }
 
 TEST_F(FPDFStructTreeEmbedderTest, GetStringAttributeBadStructElement) {
   ASSERT_TRUE(OpenDocument("tagged_table_bad_elem.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
 
   {
-    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page.get()));
     ASSERT_TRUE(struct_tree);
     ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
 
@@ -222,16 +219,15 @@ TEST_F(FPDFStructTreeEmbedderTest, GetStringAttributeBadStructElement) {
     EXPECT_TRUE(row);
   }
 
-  UnloadPage(page);
 }
 
 TEST_F(FPDFStructTreeEmbedderTest, GetID) {
   ASSERT_TRUE(OpenDocument("tagged_table.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
 
   {
-    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page.get()));
     ASSERT_TRUE(struct_tree);
     ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
 
@@ -267,16 +263,15 @@ TEST_F(FPDFStructTreeEmbedderTest, GetID) {
     EXPECT_EQ(2U, FPDF_StructElement_GetID(row, buffer, kBufLen));
   }
 
-  UnloadPage(page);
 }
 
 TEST_F(FPDFStructTreeEmbedderTest, GetLang) {
   ASSERT_TRUE(OpenDocument("tagged_table.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
 
   {
-    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page.get()));
     ASSERT_TRUE(struct_tree);
     ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
 
@@ -315,18 +310,17 @@ TEST_F(FPDFStructTreeEmbedderTest, GetLang) {
     EXPECT_EQ(0U, FPDF_StructElement_GetLang(row, buffer, kBufLen));
   }
 
-  UnloadPage(page);
 }
 
 // See also FPDFEditEmbedderTest.TraverseMarkedContentID, which traverses the
 // marked contents using FPDFPageObj_GetMark() and related API.
 TEST_F(FPDFStructTreeEmbedderTest, GetMarkedContentID) {
   ASSERT_TRUE(OpenDocument("marked_content_id.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
 
   {
-    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page.get()));
     ASSERT_TRUE(struct_tree);
     ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
 
@@ -335,16 +329,15 @@ TEST_F(FPDFStructTreeEmbedderTest, GetMarkedContentID) {
     EXPECT_EQ(0, FPDF_StructElement_GetMarkedContentID(element));
   }
 
-  UnloadPage(page);
 }
 
 TEST_F(FPDFStructTreeEmbedderTest, GetMarkedContentIdAtIndex) {
   ASSERT_TRUE(OpenDocument("tagged_marked_content.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
 
   {
-    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page.get()));
     ASSERT_TRUE(struct_tree);
     ASSERT_EQ(4, FPDF_StructTree_CountChildren(struct_tree.get()));
 
@@ -389,7 +382,6 @@ TEST_F(FPDFStructTreeEmbedderTest, GetMarkedContentIdAtIndex) {
     EXPECT_EQ(-1, FPDF_StructElement_GetMarkedContentIdAtIndex(child4, 0));
   }
 
-  UnloadPage(page);
 }
 
 TEST_F(FPDFStructTreeEmbedderTest, GetChildMarkedContentID) {
@@ -397,9 +389,9 @@ TEST_F(FPDFStructTreeEmbedderTest, GetChildMarkedContentID) {
 
   // Using the loop to make difference clear
   for (int page_i : {0, 1}) {
-    FPDF_PAGE page = LoadPage(page_i);
-    ASSERT_TRUE(page);
-    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ScopedEmbedderTestPage page = LoadScopedPage(page_i);
+    ASSERT_TRUE(page.get());
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page.get()));
     ASSERT_TRUE(struct_tree);
     ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
 
@@ -435,17 +427,16 @@ TEST_F(FPDFStructTreeEmbedderTest, GetChildMarkedContentID) {
     EXPECT_EQ(-1, FPDF_StructElement_GetChildMarkedContentID(struct_doc, 2));
     // Invalid element
     EXPECT_EQ(-1, FPDF_StructElement_GetChildMarkedContentID(nullptr, 0));
-    UnloadPage(page);
   }
 }
 
 TEST_F(FPDFStructTreeEmbedderTest, GetType) {
   ASSERT_TRUE(OpenDocument("tagged_alt_text.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
 
   {
-    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page.get()));
     ASSERT_TRUE(struct_tree);
     ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
 
@@ -470,16 +461,15 @@ TEST_F(FPDFStructTreeEmbedderTest, GetType) {
     EXPECT_EQ(L"Document", GetPlatformWString(buffer));
   }
 
-  UnloadPage(page);
 }
 
 TEST_F(FPDFStructTreeEmbedderTest, GetObjType) {
   ASSERT_TRUE(OpenDocument("tagged_table_bad_elem.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
 
   {
-    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page.get()));
     ASSERT_TRUE(struct_tree);
     ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
 
@@ -523,16 +513,15 @@ TEST_F(FPDFStructTreeEmbedderTest, GetObjType) {
     EXPECT_EQ(L"NotStructElem", GetPlatformWString(buffer));
   }
 
-  UnloadPage(page);
 }
 
 TEST_F(FPDFStructTreeEmbedderTest, GetParent) {
   ASSERT_TRUE(OpenDocument("tagged_alt_text.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
 
   {
-    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page.get()));
     ASSERT_TRUE(struct_tree);
     ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
 
@@ -555,16 +544,15 @@ TEST_F(FPDFStructTreeEmbedderTest, GetParent) {
     ASSERT_EQ(nullptr, FPDF_StructElement_GetParent(parent));
   }
 
-  UnloadPage(page);
 }
 
 TEST_F(FPDFStructTreeEmbedderTest, GetTitle) {
   ASSERT_TRUE(OpenDocument("tagged_alt_text.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
 
   {
-    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page.get()));
     ASSERT_TRUE(struct_tree);
     ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
 
@@ -600,16 +588,15 @@ TEST_F(FPDFStructTreeEmbedderTest, GetTitle) {
     EXPECT_EQ(L"symbol: 100k", GetPlatformWString(buffer));
   }
 
-  UnloadPage(page);
 }
 
 TEST_F(FPDFStructTreeEmbedderTest, GetAttributes) {
   ASSERT_TRUE(OpenDocument("tagged_table.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
 
   {
-    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page.get()));
     ASSERT_TRUE(struct_tree);
     ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
 
@@ -787,16 +774,15 @@ TEST_F(FPDFStructTreeEmbedderTest, GetAttributes) {
     }
   }
 
-  UnloadPage(page);
 }
 
 TEST_F(FPDFStructTreeEmbedderTest, GetAttributesFromChildAttributes) {
   ASSERT_TRUE(OpenDocument("tagged_actual_text.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
 
   {
-    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page.get()));
     ASSERT_TRUE(struct_tree);
     ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
 
@@ -871,29 +857,27 @@ TEST_F(FPDFStructTreeEmbedderTest, GetAttributesFromChildAttributes) {
               FPDF_StructElement_Attr_GetType(nested_attr_value3));
   }
 
-  UnloadPage(page);
 }
 
 TEST_F(FPDFStructTreeEmbedderTest, GetStructTreeForNestedTaggedPDF) {
   ASSERT_TRUE(OpenDocument("tagged_nested.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
 
   {
     // This call should not crash. https://crbug.com/pdfium/1480
-    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page.get()));
     ASSERT_TRUE(struct_tree);
   }
-  UnloadPage(page);
 }
 
 TEST_F(FPDFStructTreeEmbedderTest, MarkedContentReferenceAndObjectReference) {
   ASSERT_TRUE(OpenDocument("tagged_mcr_objr.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
 
   {
-    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page.get()));
     ASSERT_TRUE(struct_tree);
     ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
 
@@ -970,16 +954,15 @@ TEST_F(FPDFStructTreeEmbedderTest, MarkedContentReferenceAndObjectReference) {
     EXPECT_FALSE(FPDF_StructElement_GetChildAtIndex(object15, 0));
   }
 
-  UnloadPage(page);
 }
 
 TEST_F(FPDFStructTreeEmbedderTest, Bug1768) {
   ASSERT_TRUE(OpenDocument("bug_1768.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
 
   {
-    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page.get()));
     ASSERT_TRUE(struct_tree);
     ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
 
@@ -989,36 +972,33 @@ TEST_F(FPDFStructTreeEmbedderTest, Bug1768) {
     EXPECT_FALSE(FPDF_StructTree_GetChildAtIndex(struct_tree.get(), 0));
   }
 
-  UnloadPage(page);
 }
 
 TEST_F(FPDFStructTreeEmbedderTest, Bug1296920) {
   ASSERT_TRUE(OpenDocument("bug_1296920.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
 
   {
-    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page.get()));
     ASSERT_TRUE(struct_tree);
     ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
 
     // Destroying this tree should not crash.
   }
 
-  UnloadPage(page);
 }
 
 TEST_F(FPDFStructTreeEmbedderTest, Bug1443100) {
   ASSERT_TRUE(OpenDocument("tagged_table_bad_parent.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
 
   {
     // Calling these APIs should not trigger a dangling pointer.
-    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page.get()));
     ASSERT_TRUE(struct_tree);
     ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
   }
 
-  UnloadPage(page);
 }
