@@ -42,15 +42,15 @@ class CFWLEditEmbedderTest : public XFAJSEmbedderTest {
     // TODO(crbug.com/pdfium/11): A page might not have been loaded if a test
     // is skipped at runtime. This check for a non-null page should be able to
     // removed once none of the tests are being skipped for Skia.
-    if (page())
-      UnloadPage(page());
     EmbedderTest::TearDown();
   }
 
   void CreateAndInitializeFormPDF(const char* filename) {
     ASSERT_TRUE(OpenDocument(filename));
-    page_ = LoadPage(0);
-    ASSERT_TRUE(page_);
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ASSERT_TRUE(page.get());
+
+    page_ = page.get();
   }
 
   FPDF_PAGE page() const { return page_; }
