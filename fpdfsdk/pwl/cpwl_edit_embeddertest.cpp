@@ -4,6 +4,7 @@
 
 #include "fpdfsdk/pwl/cpwl_edit.h"
 
+#include <memory>
 #include <utility>
 
 #include "fpdfsdk/cpdfsdk_annotiterator.h"
@@ -17,21 +18,25 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 class CPWLEditEmbedderTest : public EmbedderTest {
+ public:
+  CPWLEditEmbedderTest() = default;
+  ~CPWLEditEmbedderTest() override = default;
+
  protected:
   void SetUp() override {
     EmbedderTest::SetUp();
+    m_page = std::make_unique<ScopedEmbedderTestPage>(LoadScopedPage(0));
+
     CreateAndInitializeFormPDF();
   }
 
   void TearDown() override {
-    UnloadPage(GetPage());
+    m_page.reset();
     EmbedderTest::TearDown();
   }
 
   void CreateAndInitializeFormPDF() {
-    ASSERT_TRUE(OpenDocument("text_form_multiple.pdf"));
-    m_page = LoadPage(0);
-    ASSERT_TRUE(m_page);
+    ASSERT_TRUE(m_page->get());
 
     m_pFormFillEnv =
         CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
@@ -82,14 +87,14 @@ class CPWLEditEmbedderTest : public EmbedderTest {
     }
   }
 
-  FPDF_PAGE GetPage() { return m_page; }
+  FPDF_PAGE GetPage() { return m_page ? m_page->get() : nullptr; }
   CPWL_Edit* GetCPWLEdit() { return m_pEdit; }
   CFFL_FormField* GetCFFLFormFiller() { return m_pFormFiller; }
   CPDFSDK_Widget* GetCPDFSDKAnnot() { return m_pAnnot; }
   CPDFSDK_Widget* GetCPDFSDKAnnotCharLimit() { return m_pAnnotCharLimit; }
 
  private:
-  FPDF_PAGE m_page;
+  std::unique_ptr<ScopedEmbedderTestPage> m_page;
   CPWL_Edit* m_pEdit;
   CFFL_FormField* m_pFormFiller;
   CPDFSDK_Widget* m_pAnnot;
