@@ -21,15 +21,16 @@ void CPWLComboBoxEmbedderTest::SetUp() {
 }
 
 void CPWLComboBoxEmbedderTest::TearDown() {
-  UnloadPage(GetPage());
+  m_page = nullptr;
   EmbedderTest::TearDown();
 }
 
 void CPWLComboBoxEmbedderTest::CreateAndInitializeFormComboboxPDF() {
-  ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
-  m_page = LoadPage(0);
-  ASSERT_TRUE(m_page);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
+  m_page = page.get();
 
+  ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
   m_pFormFillEnv = CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
   m_pPageView = m_pFormFillEnv->GetPageViewAtIndex(0);
   CPDFSDK_AnnotIterator iter(m_pPageView, {CPDF_Annot::Subtype::WIDGET});
@@ -50,6 +51,10 @@ void CPWLComboBoxEmbedderTest::CreateAndInitializeFormComboboxPDF() {
 
 void CPWLComboBoxEmbedderTest::FormFillerAndWindowSetup(
     CPDFSDK_Widget* pAnnotCombobox) {
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
+  m_page = page.get();
+
   CFFL_InteractiveFormFiller* pInteractiveFormFiller =
       m_pFormFillEnv->GetInteractiveFormFiller();
   {

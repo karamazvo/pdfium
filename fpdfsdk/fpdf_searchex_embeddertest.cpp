@@ -10,11 +10,11 @@ class FPDFSearchExEmbedderTest : public EmbedderTest {};
 
 TEST_F(FPDFSearchExEmbedderTest, GetCharIndexFromTextIndex) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
 
   {
-    ScopedFPDFTextPage textpage(FPDFText_LoadPage(page));
+    ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
     ASSERT_TRUE(textpage);
 
     EXPECT_EQ(-2, FPDFText_GetCharIndexFromTextIndex(textpage.get(), -2));
@@ -28,17 +28,16 @@ TEST_F(FPDFSearchExEmbedderTest, GetCharIndexFromTextIndex) {
     EXPECT_EQ(-1, FPDFText_GetCharIndexFromTextIndex(textpage.get(), 30));
   }
 
-  UnloadPage(page);
 }
 
 TEST_F(FPDFSearchExEmbedderTest,
        GetCharIndexFromTextIndexWithNonPrintableChar) {
   ASSERT_TRUE(OpenDocument("bug_1139.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
 
   {
-    ScopedFPDFTextPage textpage(FPDFText_LoadPage(page));
+    ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
     ASSERT_TRUE(textpage);
 
     EXPECT_EQ(-1, FPDFText_GetCharIndexFromTextIndex(textpage.get(), -2));
@@ -53,7 +52,6 @@ TEST_F(FPDFSearchExEmbedderTest,
     EXPECT_EQ(-1, FPDFText_GetCharIndexFromTextIndex(textpage.get(), 31));
   }
 
-  UnloadPage(page);
 }
 
 TEST_F(FPDFSearchExEmbedderTest, GetCharIndexFromTextIndexInvalid) {
@@ -66,11 +64,11 @@ TEST_F(FPDFSearchExEmbedderTest, GetCharIndexFromTextIndexInvalid) {
 
 TEST_F(FPDFSearchExEmbedderTest, GetTextIndexFromCharIndex) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
 
   {
-    ScopedFPDFTextPage textpage(FPDFText_LoadPage(page));
+    ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
     ASSERT_TRUE(textpage);
 
     EXPECT_EQ(-1, FPDFText_GetTextIndexFromCharIndex(textpage.get(), -2));
@@ -84,17 +82,16 @@ TEST_F(FPDFSearchExEmbedderTest, GetTextIndexFromCharIndex) {
     EXPECT_EQ(-1, FPDFText_GetTextIndexFromCharIndex(textpage.get(), 30));
   }
 
-  UnloadPage(page);
 }
 
 TEST_F(FPDFSearchExEmbedderTest,
        GetTextIndexFromCharIndexWithNonPrintableChar) {
   ASSERT_TRUE(OpenDocument("bug_1139.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page.get());
 
   {
-    ScopedFPDFTextPage textpage(FPDFText_LoadPage(page));
+    ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
     ASSERT_TRUE(textpage);
 
     EXPECT_EQ(-1, FPDFText_GetTextIndexFromCharIndex(textpage.get(), -2));
@@ -109,7 +106,6 @@ TEST_F(FPDFSearchExEmbedderTest,
     EXPECT_EQ(-1, FPDFText_GetTextIndexFromCharIndex(textpage.get(), 31));
   }
 
-  UnloadPage(page);
 }
 
 TEST_F(FPDFSearchExEmbedderTest, GetTextIndexFromCharIndexInvalid) {

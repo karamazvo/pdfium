@@ -19,15 +19,16 @@ class CPWLSpecialButtonEmbedderTest : public EmbedderTest {
   }
 
   void TearDown() override {
-    UnloadPage(page_);
+    page_ = nullptr;
     EmbedderTest::TearDown();
   }
 
   void CreateAndInitializeFormPDF() {
     ASSERT_TRUE(OpenDocument("click_form.pdf"));
 
-    page_ = LoadPage(0);
-    ASSERT_TRUE(page_);
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ASSERT_TRUE(page.get());
+    page_ = page.get();
 
     formfill_env_ = CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
     CPDFSDK_AnnotIterator it(formfill_env_->GetPageViewAtIndex(0),
