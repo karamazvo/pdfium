@@ -126,6 +126,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "94a02830_38c30399",
+        "filename": "fpdfsdk/pwl/cpwl_combo_box_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-03T22:53:10Z",
+      "side": 1,
+      "message": "just uploaded a new PS - enabled various dangling ptr settings, but not really sure if the args are correct, test\u0027s pass locally - can you please dry run it again?",
+      "parentUuid": "cc286a5d_4873472d",
+      "revId": "c3505e9165f9b010a13be955a0653cd339be07f3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "12e646c6_abe680fe",
         "filename": "xfa/fxfa/parser/cxfa_document_builder_embeddertest.cpp",
         "patchSetId": 1
@@ -173,6 +191,24 @@
       "side": 1,
       "message": "Needs to be applied to the rest of the CL. I don\u0027t think there\u0027s any `EXPECT_TRUE(page.get())` code prior to this CL, so hopefully those can be mostly search and replaced.",
       "parentUuid": "df5ac70c_4dd52def",
+      "revId": "c3505e9165f9b010a13be955a0653cd339be07f3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4651428c_1472f772",
+        "filename": "xfa/fxfa/parser/cxfa_document_builder_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-03T22:53:10Z",
+      "side": 1,
+      "message": "thx, also did the ASSERT_TRUE one\u0027s",
+      "parentUuid": "3aedddda_1e667bd7",
       "revId": "c3505e9165f9b010a13be955a0653cd339be07f3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
