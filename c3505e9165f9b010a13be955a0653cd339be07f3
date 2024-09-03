@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8d8755e0_bc411e7c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-03T20:30:31Z",
+      "side": 1,
+      "message": "Try bots show the compile failed, but for some reason, there is no build log to show what the error was.",
+      "revId": "c3505e9165f9b010a13be955a0653cd339be07f3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "020a29ac_a83c8ac8",
+        "filename": "fpdfsdk/pwl/cpwl_combo_box_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-03T20:30:31Z",
+      "side": 1,
+      "message": "Just eyeballing here, but I think this leaves `m_page` as a dangling pointer.",
+      "revId": "c3505e9165f9b010a13be955a0653cd339be07f3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "12e646c6_abe680fe",
+        "filename": "xfa/fxfa/parser/cxfa_document_builder_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-03T20:30:31Z",
+      "side": 1,
+      "message": "`EXPECT_TRUE(page);` as it was works, since the scoped pointer class has an `operator bool`.",
+      "revId": "c3505e9165f9b010a13be955a0653cd339be07f3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
