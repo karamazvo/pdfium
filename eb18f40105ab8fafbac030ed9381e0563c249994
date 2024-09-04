@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6713c2c6_9187f0da",
+        "filename": "fpdfsdk/fpdf_doc_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-04T06:51:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a5274243_633ef01e",
+      "revId": "eb18f40105ab8fafbac030ed9381e0563c249994",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "939ded68_507aa763",
@@ -31,6 +49,24 @@
       "writtenOn": "2024-09-04T01:17:29Z",
       "side": 1,
       "message": "No need for blank line before the end curly brace. (Many instances of this.)",
+      "revId": "eb18f40105ab8fafbac030ed9381e0563c249994",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7550dcd2_f0ec188a",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 4737,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-04T06:51:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "939ded68_507aa763",
       "revId": "eb18f40105ab8fafbac030ed9381e0563c249994",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -52,6 +88,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a9e6202b_59082316",
+        "filename": "fpdfsdk/pwl/cpwl_combo_box_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-04T06:51:26Z",
+      "side": 1,
+      "message": "done in the other CL",
+      "parentUuid": "f2c3b316_822209c0",
+      "revId": "eb18f40105ab8fafbac030ed9381e0563c249994",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "eeeed9df_2b11828d",
@@ -65,6 +119,24 @@
       "writtenOn": "2024-09-04T01:17:29Z",
       "side": 1,
       "message": "This variable is unused.",
+      "revId": "eb18f40105ab8fafbac030ed9381e0563c249994",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6834dd53_fbb48893",
+        "filename": "fpdfsdk/pwl/cpwl_combo_box_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-04T06:51:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eeeed9df_2b11828d",
       "revId": "eb18f40105ab8fafbac030ed9381e0563c249994",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
