@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <memory>
+
 #include "fpdfsdk/cpdfsdk_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
@@ -12,6 +14,10 @@
 #include "testing/embedder_test.h"
 
 class CPWLSpecialButtonEmbedderTest : public EmbedderTest {
+ public:
+  CPWLSpecialButtonEmbedderTest() = default;
+  ~CPWLSpecialButtonEmbedderTest() override = default;
+
  protected:
   void SetUp() override {
     EmbedderTest::SetUp();
@@ -19,15 +25,15 @@ class CPWLSpecialButtonEmbedderTest : public EmbedderTest {
   }
 
   void TearDown() override {
-    UnloadPage(page_);
+    page_.reset();
     EmbedderTest::TearDown();
   }
 
   void CreateAndInitializeFormPDF() {
     ASSERT_TRUE(OpenDocument("click_form.pdf"));
 
-    page_ = LoadPage(0);
-    ASSERT_TRUE(page_);
+    page_ = std::make_unique<ScopedEmbedderTestPage>(LoadScopedPage(0));
+    ASSERT_TRUE(page_->get());
 
     formfill_env_ = CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
     CPDFSDK_AnnotIterator it(formfill_env_->GetPageViewAtIndex(0),
@@ -98,7 +104,7 @@ class CPWLSpecialButtonEmbedderTest : public EmbedderTest {
   CPWL_Wnd* GetWindow() const { return window_; }
 
  private:
-  FPDF_PAGE page_;
+  std::unique_ptr<ScopedEmbedderTestPage> page_;
   CFFL_FormField* form_filler_;
   CPDFSDK_Widget* widget_checkbox_;
   CPDFSDK_Widget* widget_readonly_checkbox_;

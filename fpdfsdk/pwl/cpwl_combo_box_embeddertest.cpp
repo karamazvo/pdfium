@@ -4,6 +4,8 @@
 
 #include "fpdfsdk/pwl/cpwl_combo_box_embeddertest.h"
 
+#include <memory>
+
 #include "fpdfsdk/cpdfsdk_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
@@ -15,21 +17,24 @@
 #include "public/fpdf_fwlevent.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
+CPWLComboBoxEmbedderTest::CPWLComboBoxEmbedderTest() = default;
+CPWLComboBoxEmbedderTest::~CPWLComboBoxEmbedderTest() = default;
+
 void CPWLComboBoxEmbedderTest::SetUp() {
   EmbedderTest::SetUp();
+  m_page = std::make_unique<ScopedEmbedderTestPage>(LoadScopedPage(0));
   CreateAndInitializeFormComboboxPDF();
 }
 
 void CPWLComboBoxEmbedderTest::TearDown() {
-  UnloadPage(GetPage());
+  m_page.reset();
   EmbedderTest::TearDown();
 }
 
 void CPWLComboBoxEmbedderTest::CreateAndInitializeFormComboboxPDF() {
-  ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
-  m_page = LoadPage(0);
   ASSERT_TRUE(m_page);
 
+  ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
   m_pFormFillEnv = CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
   m_pPageView = m_pFormFillEnv->GetPageViewAtIndex(0);
   CPDFSDK_AnnotIterator iter(m_pPageView, {CPDF_Annot::Subtype::WIDGET});
@@ -50,6 +55,9 @@ void CPWLComboBoxEmbedderTest::CreateAndInitializeFormComboboxPDF() {
 
 void CPWLComboBoxEmbedderTest::FormFillerAndWindowSetup(
     CPDFSDK_Widget* pAnnotCombobox) {
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(m_page);
+
   CFFL_InteractiveFormFiller* pInteractiveFormFiller =
       m_pFormFillEnv->GetInteractiveFormFiller();
   {
