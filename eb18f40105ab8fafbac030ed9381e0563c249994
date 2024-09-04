@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a5274243_633ef01e",
+        "filename": "fpdfsdk/fpdf_doc_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-04T01:17:29Z",
+      "side": 1,
+      "message": "The object lifetime isn\u0027t correct here. `pages` need to be a vector of scoped objects, so they all get destroyed at the end. (Several instances of this.)",
+      "revId": "eb18f40105ab8fafbac030ed9381e0563c249994",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "939ded68_507aa763",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 4737,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-04T01:17:29Z",
+      "side": 1,
+      "message": "No need for blank line before the end curly brace. (Many instances of this.)",
+      "revId": "eb18f40105ab8fafbac030ed9381e0563c249994",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f2c3b316_822209c0",
+        "filename": "fpdfsdk/pwl/cpwl_combo_box_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-04T01:17:29Z",
+      "side": 1,
+      "message": "Loading a page here before opening the document in CreateAndInitializeFormComboboxPDF() doesn\u0027t make sense.",
+      "revId": "eb18f40105ab8fafbac030ed9381e0563c249994",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eeeed9df_2b11828d",
+        "filename": "fpdfsdk/pwl/cpwl_combo_box_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-04T01:17:29Z",
+      "side": 1,
+      "message": "This variable is unused.",
+      "revId": "eb18f40105ab8fafbac030ed9381e0563c249994",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
