@@ -16,6 +16,24 @@
       "message": "thanks for your review and feedback.\nmoved the non-mechanical things to this: https://pdfium-review.googlesource.com/c/pdfium/+/124030\n\ncan you run the bots?\nalso on the other one - would be nice to see if the dangling pointers are done now.\n(any chance i can get try-bot access granted on this repo too?)",
       "revId": "273b1c42549cb4d7e9611c98acd7f17f773c55af",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7e1a4ebd_4d01f56b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-05T18:08:01Z",
+      "side": 1,
+      "message": "Bots still came back red. In a local build with GN `is_asan\u003dtrue` enabled, pdfium_embeddertests fail very quickly with this CL applied.\n\nFor try bot access - do you plan on contributing more in PDFium?",
+      "parentUuid": "0b9e9805_55eabc75",
+      "revId": "273b1c42549cb4d7e9611c98acd7f17f773c55af",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
