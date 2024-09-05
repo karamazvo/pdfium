@@ -34,6 +34,23 @@
       "parentUuid": "0b9e9805_55eabc75",
       "revId": "273b1c42549cb4d7e9611c98acd7f17f773c55af",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ddbbb1dd_d8d22f94",
+        "filename": "fpdfsdk/fpdf_doc_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-05T18:44:02Z",
+      "side": 1,
+      "message": "Oh dear, this is copying the scoper. Let me make that not compile: https://pdfium-review.googlesource.com/124050\n\nSeparately, this can be `pages.push_back(LoadScopedPage(i));`. There\u0027s no need for the very short-lived `page` variable.",
+      "revId": "273b1c42549cb4d7e9611c98acd7f17f773c55af",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
