@@ -421,15 +421,15 @@ TEST_F(FPDFAnnotEmbedderTest, RenderMultilineMarkupAnnotWithoutAP) {
 TEST_F(FPDFAnnotEmbedderTest, ExtractHighlightLongContent) {
   // Open a file with one annotation and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_long_content.pdf"));
-  FPDF_PAGE page = LoadPageNoEvents(0);
+  ScopedEmbedderTestPage page = LoadScopedPageNoEvents(0);
   ASSERT_TRUE(page);
 
   // Check that there is a total of 1 annotation on its first page.
-  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
+  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page.get()));
 
   // Check that the annotation is of type "highlight".
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
     EXPECT_EQ(FPDF_ANNOT_HIGHLIGHT, FPDFAnnot_GetSubtype(annot.get()));
 
@@ -499,7 +499,6 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractHighlightLongContent) {
     EXPECT_EQ(157.211182f, quadpoints.x4);
     EXPECT_EQ(706.264465f, quadpoints.y4);
   }
-  UnloadPageNoEvents(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, ExtractInkMultiple) {
