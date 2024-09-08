@@ -11,6 +11,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "build/build_config.h"
@@ -89,17 +90,56 @@ class EmbedderTest : public ::testing::Test,
                                                  int modifiers) {}
   };
 
+  class ScopedEmbedderTestDocument {
+   public:
+    ScopedEmbedderTestDocument(EmbedderTest* test, FPDF_DOCUMENT document);
+    ScopedEmbedderTestDocument(const ScopedEmbedderTestDocument&) = delete;
+    ScopedEmbedderTestDocument& operator=(const ScopedEmbedderTestDocument&) =
+        delete;
+    ScopedEmbedderTestDocument(ScopedEmbedderTestDocument&& that) noexcept;
+    ScopedEmbedderTestDocument& operator=(
+        ScopedEmbedderTestDocument&& that) noexcept;
+    ~ScopedEmbedderTestDocument();
+
+    FPDF_DOCUMENT get() const { return document_; }
+    explicit operator bool() const { return !!document_; }
+
+   private:
+    UnownedPtr<EmbedderTest> test_;
+    FPDF_DOCUMENT document_;
+  };
+
   class ScopedEmbedderTestPage {
    public:
-    ScopedEmbedderTestPage(EmbedderTest* test, int page_index);
+    ScopedEmbedderTestPage(EmbedderTest* test,
+                           int page_index,
+                           bool with_events);
     ScopedEmbedderTestPage(const ScopedEmbedderTestPage&) = delete;
     ScopedEmbedderTestPage& operator=(const ScopedEmbedderTestPage&) = delete;
-    ScopedEmbedderTestPage(ScopedEmbedderTestPage&&) noexcept;
-    ScopedEmbedderTestPage& operator=(ScopedEmbedderTestPage&&) noexcept;
+    ScopedEmbedderTestPage(ScopedEmbedderTestPage&& that) noexcept;
+    ScopedEmbedderTestPage& operator=(ScopedEmbedderTestPage&& that) noexcept;
     ~ScopedEmbedderTestPage();
 
     FPDF_PAGE get() { return page_; }
+    explicit operator bool() const { return !!page_; }
 
+   private:
+    UnownedPtr<EmbedderTest> test_;
+    FPDF_PAGE page_;
+  };
+
+  class ScopedEmbedderTestSavedPage {
+   public:
+    ScopedEmbedderTestSavedPage(EmbedderTest* test, int page_index);
+    ScopedEmbedderTestSavedPage(const ScopedEmbedderTestSavedPage&) = delete;
+    ScopedEmbedderTestSavedPage& operator=(const ScopedEmbedderTestSavedPage&) =
+        delete;
+    ScopedEmbedderTestSavedPage(ScopedEmbedderTestSavedPage&& that) noexcept;
+    ScopedEmbedderTestSavedPage& operator=(
+        ScopedEmbedderTestSavedPage&& that) noexcept;
+    ~ScopedEmbedderTestSavedPage();
+
+    FPDF_PAGE get() { return page_; }
     explicit operator bool() const { return !!page_; }
 
    private:
@@ -178,6 +218,8 @@ class EmbedderTest : public ::testing::Test,
   // The caller cannot call this for a `page_index` if it already obtained and
   // holds the page handle for that page.
   ScopedEmbedderTestPage LoadScopedPage(int page_index);
+  ScopedEmbedderTestSavedPage LoadScopedSavedPage(int page_index);
+  ScopedEmbedderTestPage LoadScopedPageNoEvents(int page_index);
 
   // Prefer LoadScopedPage() above.
   //
@@ -285,6 +327,16 @@ class EmbedderTest : public ::testing::Test,
   // See comments in the respective non-Saved versions of these methods.
   FPDF_DOCUMENT OpenSavedDocument();
   FPDF_DOCUMENT OpenSavedDocumentWithPassword(const char* password);
+
+  ScopedEmbedderTestDocument OpenScopedSavedDocument();
+  ScopedEmbedderTestDocument OpenScopedSavedDocumentWithPassword(
+      const char* password);
+  ScopedEmbedderTestDocument OpenScopedDocument(const std::string& filename);
+  ScopedEmbedderTestDocument OpenScopedDocumentWithoutJavaScript(
+      const std::string& filename);
+  ScopedEmbedderTestDocument OpenScopedDocumentLinearized(
+      const std::string& filename);
+
   void CloseSavedDocument();
   FPDF_PAGE LoadSavedPage(int page_index);
   void CloseSavedPage(FPDF_PAGE page);

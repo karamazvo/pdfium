@@ -49,19 +49,15 @@ class CPDFSecurityHandlerEmbedderTest : public EmbedderTest {
   }
 
   void VerifySavedHelloWorldDocumentWithPassword(const char* password) {
-    ASSERT_TRUE(OpenSavedDocumentWithPassword(password));
-    FPDF_PAGE page = LoadSavedPage(0);
-    VerifyHelloWorldPage(page);
-    CloseSavedPage(page);
-    CloseSavedDocument();
+    ASSERT_TRUE(OpenScopedSavedDocumentWithPassword(password));
+    ScopedEmbedderTestSavedPage page = LoadScopedSavedPage(0);
+    VerifyHelloWorldPage(page.get());
   }
 
   void VerifySavedModifiedHelloWorldDocumentWithPassword(const char* password) {
-    ASSERT_TRUE(OpenSavedDocumentWithPassword(password));
-    FPDF_PAGE page = LoadSavedPage(0);
-    VerifyModifiedHelloWorldPage(page);
-    CloseSavedPage(page);
-    CloseSavedDocument();
+    ASSERT_TRUE(OpenScopedSavedDocumentWithPassword(password));
+    ScopedEmbedderTestSavedPage page = LoadScopedSavedPage(0);
+    VerifyModifiedHelloWorldPage(page.get());
   }
 
   void RemoveTrailerIdFromDocument() {
@@ -187,14 +183,11 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, PasswordAfterGenerateSave) {
   } tests[] = {{"1234", 0xFFFFF2C0}, {"5678", 0xFFFFFFFC}};
 
   for (const auto& test : tests) {
-    ASSERT_TRUE(OpenSavedDocumentWithPassword(test.password));
-    FPDF_PAGE page = LoadSavedPage(0);
+    ASSERT_TRUE(OpenScopedSavedDocumentWithPassword(test.password));
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
     ASSERT_TRUE(page);
-    VerifySavedRendering(page, 612, 792, checksum);
+    VerifySavedRendering(page.get(), 612, 792, checksum);
     EXPECT_EQ(test.permissions, FPDF_GetDocPermissions(saved_document()));
-
-    CloseSavedPage(page);
-    CloseSavedDocument();
   }
 }
 

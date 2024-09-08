@@ -511,7 +511,17 @@ int EmbedderTest::GetPageCount() {
 
 EmbedderTest::ScopedEmbedderTestPage EmbedderTest::LoadScopedPage(
     int page_index) {
-  return ScopedEmbedderTestPage(this, page_index);
+  return ScopedEmbedderTestPage(this, page_index, true);
+}
+
+EmbedderTest::ScopedEmbedderTestPage EmbedderTest::LoadScopedPageNoEvents(
+    int page_index) {
+  return ScopedEmbedderTestPage(this, page_index, false);
+}
+
+EmbedderTest::ScopedEmbedderTestSavedPage EmbedderTest::LoadScopedSavedPage(
+    int page_index) {
+  return ScopedEmbedderTestSavedPage(this, page_index);
 }
 
 FPDF_PAGE EmbedderTest::LoadPage(int page_index) {
@@ -890,8 +900,11 @@ void EmbedderTest::ClosePDFFileForWrite() {
 #endif
 
 EmbedderTest::ScopedEmbedderTestPage::ScopedEmbedderTestPage(EmbedderTest* test,
-                                                             int page_index)
-    : test_(test), page_(test->LoadPage(page_index)) {}
+                                                             int page_index,
+                                                             bool with_events)
+    : test_(test),
+      page_(with_events ? test->LoadPage(page_index)
+                        : test->LoadPageNoEvents(page_index)) {}
 
 EmbedderTest::ScopedEmbedderTestPage::ScopedEmbedderTestPage(
     EmbedderTest::ScopedEmbedderTestPage&& that) noexcept
@@ -909,4 +922,86 @@ EmbedderTest::ScopedEmbedderTestPage::~ScopedEmbedderTestPage() {
   if (page_) {
     test_->UnloadPage(page_);
   }
+}
+
+EmbedderTest::ScopedEmbedderTestSavedPage::ScopedEmbedderTestSavedPage(
+    EmbedderTest* test,
+    int page_index)
+    : test_(test), page_(test->LoadSavedPage(page_index)) {}
+
+EmbedderTest::ScopedEmbedderTestSavedPage::ScopedEmbedderTestSavedPage(
+    ScopedEmbedderTestSavedPage&& that) noexcept
+    : test_(std::move(that.test_)), page_(std::exchange(that.page_, nullptr)) {}
+
+EmbedderTest::ScopedEmbedderTestSavedPage&
+EmbedderTest::ScopedEmbedderTestSavedPage::operator=(
+    ScopedEmbedderTestSavedPage&& that) noexcept {
+  test_ = std::move(that.test_);
+  page_ = std::exchange(that.page_, nullptr);
+  return *this;
+}
+
+EmbedderTest::ScopedEmbedderTestSavedPage::~ScopedEmbedderTestSavedPage() {
+  if (page_) {
+    test_->CloseSavedPage(page_);
+  }
+}
+
+EmbedderTest::ScopedEmbedderTestDocument::ScopedEmbedderTestDocument(
+    EmbedderTest* test,
+    FPDF_DOCUMENT document)
+    : test_(test), document_(document) {}
+
+EmbedderTest::ScopedEmbedderTestDocument::ScopedEmbedderTestDocument(
+    ScopedEmbedderTestDocument&& that) noexcept
+    : test_(std::move(that.test_)),
+      document_(std::exchange(that.document_, nullptr)) {}
+
+EmbedderTest::ScopedEmbedderTestDocument&
+EmbedderTest::ScopedEmbedderTestDocument::operator=(
+    ScopedEmbedderTestDocument&& that) noexcept {
+  test_ = std::move(that.test_);
+  document_ = std::exchange(that.document_, nullptr);
+  return *this;
+}
+
+EmbedderTest::ScopedEmbedderTestDocument::~ScopedEmbedderTestDocument() {
+  if (document_) {
+    test_->CloseDocument();
+  }
+}
+
+EmbedderTest::ScopedEmbedderTestDocument
+EmbedderTest::OpenScopedSavedDocument() {
+  return ScopedEmbedderTestDocument(this, OpenSavedDocument());
+}
+
+EmbedderTest::ScopedEmbedderTestDocument
+EmbedderTest::OpenScopedSavedDocumentWithPassword(const char* password) {
+  return ScopedEmbedderTestDocument(this,
+                                    OpenSavedDocumentWithPassword(password));
+}
+
+EmbedderTest::ScopedEmbedderTestDocument EmbedderTest::OpenScopedDocument(
+    const std::string& filename) {
+  if (!OpenDocument(filename)) {
+    return ScopedEmbedderTestDocument(this, nullptr);
+  }
+  return ScopedEmbedderTestDocument(this, document());
+}
+
+EmbedderTest::ScopedEmbedderTestDocument
+EmbedderTest::OpenScopedDocumentWithoutJavaScript(const std::string& filename) {
+  if (!OpenDocumentWithoutJavaScript(filename)) {
+    return ScopedEmbedderTestDocument(this, nullptr);
+  }
+  return ScopedEmbedderTestDocument(this, document());
+}
+
+EmbedderTest::ScopedEmbedderTestDocument
+EmbedderTest::OpenScopedDocumentLinearized(const std::string& filename) {
+  if (!OpenDocumentLinearized(filename)) {
+    return ScopedEmbedderTestDocument(this, nullptr);
+  }
+  return ScopedEmbedderTestDocument(this, document());
 }
