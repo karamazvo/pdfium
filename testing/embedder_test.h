@@ -11,6 +11,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "build/build_config.h"
@@ -91,15 +92,57 @@ class EmbedderTest : public ::testing::Test,
 
   class ScopedEmbedderTestPage {
    public:
-    ScopedEmbedderTestPage(EmbedderTest* test, int page_index);
+    ScopedEmbedderTestPage(EmbedderTest* test, int page_index, bool with_events)
+        : test_(test),
+          page_(with_events ? test->LoadPage(page_index)
+                            : test->LoadPageNoEvents(page_index)) {}
     ScopedEmbedderTestPage(const ScopedEmbedderTestPage&) = delete;
     ScopedEmbedderTestPage& operator=(const ScopedEmbedderTestPage&) = delete;
-    ScopedEmbedderTestPage(ScopedEmbedderTestPage&&) noexcept;
-    ScopedEmbedderTestPage& operator=(ScopedEmbedderTestPage&&) noexcept;
-    ~ScopedEmbedderTestPage();
+    ScopedEmbedderTestPage(ScopedEmbedderTestPage&& that) noexcept
+        : test_(std::move(that.test_)),
+          page_(std::exchange(that.page_, nullptr)) {}
+    ScopedEmbedderTestPage& operator=(ScopedEmbedderTestPage&& that) noexcept {
+      test_ = std::move(that.test_);
+      page_ = std::exchange(that.page_, nullptr);
+      return *this;
+    }
+    ~ScopedEmbedderTestPage() {
+      if (page_) {
+        test_->UnloadPage(page_);
+      }
+    }
 
     FPDF_PAGE get() { return page_; }
+    explicit operator bool() const { return !!page_; }
 
+   private:
+    UnownedPtr<EmbedderTest> test_;
+    FPDF_PAGE page_;
+  };
+
+  class ScopedEmbedderTestSavedPage {
+   public:
+    ScopedEmbedderTestSavedPage(EmbedderTest* test, int page_index)
+        : test_(test), page_(test->LoadSavedPage(page_index)) {}
+    ScopedEmbedderTestSavedPage(const ScopedEmbedderTestSavedPage&) = delete;
+    ScopedEmbedderTestSavedPage& operator=(const ScopedEmbedderTestSavedPage&) =
+        delete;
+    ScopedEmbedderTestSavedPage(ScopedEmbedderTestSavedPage&& that) noexcept
+        : test_(std::move(that.test_)),
+          page_(std::exchange(that.page_, nullptr)) {}
+    ScopedEmbedderTestSavedPage& operator=(
+        ScopedEmbedderTestSavedPage&& that) noexcept {
+      test_ = std::move(that.test_);
+      page_ = std::exchange(that.page_, nullptr);
+      return *this;
+    }
+    ~ScopedEmbedderTestSavedPage() {
+      if (page_) {
+        test_->CloseSavedPage(page_);
+      }
+    }
+
+    FPDF_PAGE get() { return page_; }
     explicit operator bool() const { return !!page_; }
 
    private:
@@ -178,6 +221,8 @@ class EmbedderTest : public ::testing::Test,
   // The caller cannot call this for a `page_index` if it already obtained and
   // holds the page handle for that page.
   ScopedEmbedderTestPage LoadScopedPage(int page_index);
+  ScopedEmbedderTestSavedPage LoadScopedSavedPage(int page_index);
+  ScopedEmbedderTestPage LoadScopedPageNoEvents(int page_index);
 
   // Prefer LoadScopedPage() above.
   //
