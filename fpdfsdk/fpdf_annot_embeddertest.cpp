@@ -421,15 +421,15 @@ TEST_F(FPDFAnnotEmbedderTest, RenderMultilineMarkupAnnotWithoutAP) {
 TEST_F(FPDFAnnotEmbedderTest, ExtractHighlightLongContent) {
   // Open a file with one annotation and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_long_content.pdf"));
-  FPDF_PAGE page = LoadPageNoEvents(0);
+  ScopedEmbedderTestPage page = LoadScopedPageNoEvents(0);
   ASSERT_TRUE(page);
 
   // Check that there is a total of 1 annotation on its first page.
-  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
+  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page.get()));
 
   // Check that the annotation is of type "highlight".
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
     EXPECT_EQ(FPDF_ANNOT_HIGHLIGHT, FPDFAnnot_GetSubtype(annot.get()));
 
@@ -499,7 +499,6 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractHighlightLongContent) {
     EXPECT_EQ(157.211182f, quadpoints.x4);
     EXPECT_EQ(706.264465f, quadpoints.y4);
   }
-  UnloadPageNoEvents(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, ExtractInkMultiple) {
@@ -657,7 +656,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddFirstTextAnnotation) {
 }
 
 TEST_F(FPDFAnnotEmbedderTest, AddAndSaveLinkAnnotation) {
-  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  ASSERT_TRUE(OpenScopedDocument("hello_world.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   {
@@ -717,22 +716,21 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndSaveLinkAnnotation) {
   // Reopen the document and make sure it still renders the same. Since the link
   // does not have a border, it does not affect the rendering.
   ASSERT_TRUE(OpenSavedDocument());
-  FPDF_PAGE saved_page = LoadSavedPage(0);
+  ScopedEmbedderTestSavedPage saved_page = LoadScopedSavedPage(0);
   ASSERT_TRUE(saved_page);
-  VerifySavedRendering(saved_page, 200, 200, pdfium::HelloWorldChecksum());
-  EXPECT_EQ(1, FPDFPage_GetAnnotCount(saved_page));
+  VerifySavedRendering(saved_page.get(), 200, 200,
+                       pdfium::HelloWorldChecksum());
+  EXPECT_EQ(1, FPDFPage_GetAnnotCount(saved_page.get()));
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(saved_page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(saved_page.get(), 0));
     ASSERT_TRUE(annot);
     EXPECT_EQ(FPDF_ANNOT_LINK, FPDFAnnot_GetSubtype(annot.get()));
     VerifyUriActionInLink(document(), FPDFAnnot_GetLink(annot.get()), kUri);
-    VerifyUriActionInLink(
-        document(), FPDFLink_GetLinkAtPoint(saved_page, 40.0, 50.0), kUri);
+    VerifyUriActionInLink(document(),
+                          FPDFLink_GetLinkAtPoint(saved_page.get(), 40.0, 50.0),
+                          kUri);
   }
-
-  CloseSavedPage(saved_page);
-  CloseSavedDocument();
 }
 
 TEST_F(FPDFAnnotEmbedderTest, AddAndSaveUnderlineAnnotation) {
@@ -782,18 +780,18 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndSaveUnderlineAnnotation) {
     return "dba153419f67b7c0c0e3d22d3e8910d5";
   }();
 
-  ASSERT_TRUE(OpenSavedDocument());
-  FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(OpenScopedSavedDocument());
+  ScopedEmbedderTestSavedPage saved_page = LoadScopedSavedPage(0);
   ASSERT_TRUE(saved_page);
-  VerifySavedRendering(saved_page, 612, 792, checksum);
+  VerifySavedRendering(saved_page.get(), 612, 792, checksum);
 
   // Check that the saved document has 2 annotations on the first page
-  EXPECT_EQ(2, FPDFPage_GetAnnotCount(saved_page));
+  EXPECT_EQ(2, FPDFPage_GetAnnotCount(saved_page.get()));
 
   {
     // Check that the second annotation is an underline annotation and verify
     // its quadpoints.
-    ScopedFPDFAnnotation new_annot(FPDFPage_GetAnnot(saved_page, 1));
+    ScopedFPDFAnnotation new_annot(FPDFPage_GetAnnot(saved_page.get(), 1));
     ASSERT_TRUE(new_annot);
     EXPECT_EQ(FPDF_ANNOT_UNDERLINE, FPDFAnnot_GetSubtype(new_annot.get()));
     FS_QUADPOINTSF new_quadpoints;
@@ -804,9 +802,6 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndSaveUnderlineAnnotation) {
     EXPECT_NEAR(quadpoints.x4, new_quadpoints.x4, 0.001f);
     EXPECT_NEAR(quadpoints.y4, new_quadpoints.y4, 0.001f);
   }
-
-  CloseSavedPage(saved_page);
-  CloseSavedDocument();
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetAndSetQuadPoints) {
@@ -1285,16 +1280,16 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
   // Open the saved document.
-  ASSERT_TRUE(OpenSavedDocument());
-  FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(OpenScopedSavedDocument());
+  ScopedEmbedderTestSavedPage saved_page = LoadScopedSavedPage(0);
   ASSERT_TRUE(saved_page);
-  VerifySavedRendering(saved_page, 595, 842, md5_new_annot);
+  VerifySavedRendering(saved_page.get(), 595, 842, md5_new_annot);
 
   // Check that the document has a correct count of annotations and objects.
-  EXPECT_EQ(3, FPDFPage_GetAnnotCount(saved_page));
+  EXPECT_EQ(3, FPDFPage_GetAnnotCount(saved_page.get()));
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(saved_page, 2));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(saved_page.get(), 2));
     ASSERT_TRUE(annot);
     EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot.get()));
 
@@ -1306,9 +1301,6 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
     EXPECT_EQ(rect.right, new_rect.right);
     EXPECT_EQ(rect.top, new_rect.top);
   }
-
-  CloseSavedPage(saved_page);
-  CloseSavedDocument();
 }
 
 TEST_F(FPDFAnnotEmbedderTest, ModifyAnnotationFlags) {
@@ -1659,12 +1651,12 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
   }();
 
   // Open the saved annotation.
-  ASSERT_TRUE(OpenSavedDocument());
-  FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(OpenScopedSavedDocument());
+  ScopedEmbedderTestSavedPage saved_page = LoadScopedSavedPage(0);
   ASSERT_TRUE(saved_page);
-  VerifySavedRendering(saved_page, 595, 842, md5);
+  VerifySavedRendering(saved_page.get(), 595, 842, md5);
   {
-    ScopedFPDFAnnotation new_annot(FPDFPage_GetAnnot(saved_page, 0));
+    ScopedFPDFAnnotation new_annot(FPDFPage_GetAnnot(saved_page.get(), 0));
 
     // Check that the string value of the modified date is the newly-set
     // value.
@@ -1679,9 +1671,6 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
                                        buf.data(), length_bytes));
     EXPECT_EQ(kNewDate, GetPlatformWString(buf.data()));
   }
-
-  CloseSavedPage(saved_page);
-  CloseSavedDocument();
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetNumberValue) {
@@ -1814,11 +1803,11 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetAP) {
   // Save the modified document, then reopen it.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
-  ASSERT_TRUE(OpenSavedDocument());
-  FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(OpenScopedSavedDocument());
+  ScopedEmbedderTestSavedPage saved_page = LoadScopedSavedPage(0);
   ASSERT_TRUE(page);
   {
-    ScopedFPDFAnnotation new_annot(FPDFPage_GetAnnot(saved_page, 0));
+    ScopedFPDFAnnotation new_annot(FPDFPage_GetAnnot(saved_page.get(), 0));
 
     // Check that the new annotation value is equal to the value we set before
     // saving.
@@ -1833,9 +1822,6 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetAP) {
     EXPECT_EQ(L"new test ap", GetPlatformWString(buf.data()));
   }
 
-  // Close saved document.
-  CloseSavedPage(saved_page);
-  CloseSavedDocument();
 }
 
 TEST_F(FPDFAnnotEmbedderTest, RemoveOptionalAP) {
@@ -2263,13 +2249,13 @@ TEST_F(FPDFAnnotEmbedderTest, Bug1212) {
     // Save a copy, open the copy, and check the annotation again.
     // Note that it renders the rotation.
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-    ASSERT_TRUE(OpenSavedDocument());
-    FPDF_PAGE saved_page = LoadSavedPage(0);
+    ASSERT_TRUE(OpenScopedSavedDocument());
+    ScopedEmbedderTestSavedPage saved_page = LoadScopedSavedPage(0);
     ASSERT_TRUE(saved_page);
 
-    EXPECT_EQ(2, FPDFPage_GetAnnotCount(saved_page));
+    EXPECT_EQ(2, FPDFPage_GetAnnotCount(saved_page.get()));
     {
-      ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(saved_page, 0));
+      ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(saved_page.get(), 0));
       ASSERT_TRUE(annot);
       EXPECT_EQ(FPDF_ANNOT_TEXT, FPDFAnnot_GetSubtype(annot.get()));
 
@@ -2280,7 +2266,7 @@ TEST_F(FPDFAnnotEmbedderTest, Bug1212) {
     }
 
     {
-      ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(saved_page, 0));
+      ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(saved_page.get(), 0));
       ASSERT_TRUE(annot);
       // TODO(thestig): This return FPDF_ANNOT_UNKNOWN for some reason.
       // EXPECT_EQ(FPDF_ANNOT_TEXT, FPDFAnnot_GetSubtype(annot.get()));
@@ -2291,8 +2277,6 @@ TEST_F(FPDFAnnotEmbedderTest, Bug1212) {
       EXPECT_EQ(kData, GetPlatformWString(buf.data()));
     }
 
-    CloseSavedPage(saved_page);
-    CloseSavedDocument();
   }
 }
 
@@ -3688,7 +3672,7 @@ TEST_F(FPDFAnnotEmbedderTest, FormFieldAlternateName) {
 // actually render the line annotations inside line_annot.pdf. For now, use a
 // square annotation in annots.pdf for testing.
 TEST_F(FPDFAnnotEmbedderTest, AnnotationBorderRendering) {
-  ASSERT_TRUE(OpenDocument("annots.pdf"));
+  ASSERT_TRUE(OpenScopedDocument("annots.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(1);
   ASSERT_TRUE(page);
   EXPECT_EQ(3, FPDFPage_GetAnnotCount(page.get()));
@@ -3752,12 +3736,9 @@ TEST_F(FPDFAnnotEmbedderTest, AnnotationBorderRendering) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
   ASSERT_TRUE(OpenSavedDocument());
-  FPDF_PAGE saved_page = LoadSavedPage(1);
+  ScopedEmbedderTestSavedPage saved_page = LoadScopedSavedPage(1);
   ASSERT_TRUE(saved_page);
-  VerifySavedRendering(saved_page, 612, 792, modified_checksum);
-
-  CloseSavedPage(saved_page);
-  CloseSavedDocument();
+  VerifySavedRendering(saved_page.get(), 612, 792, modified_checksum);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetAndAddFileAttachmentAnnotation) {
