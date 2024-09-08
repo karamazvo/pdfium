@@ -11,6 +11,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "build/build_config.h"
@@ -91,15 +92,35 @@ class EmbedderTest : public ::testing::Test,
 
   class ScopedEmbedderTestPage {
    public:
-    ScopedEmbedderTestPage(EmbedderTest* test, int page_index);
+    ScopedEmbedderTestPage(EmbedderTest* test,
+                           int page_index,
+                           bool with_events);
     ScopedEmbedderTestPage(const ScopedEmbedderTestPage&) = delete;
     ScopedEmbedderTestPage& operator=(const ScopedEmbedderTestPage&) = delete;
-    ScopedEmbedderTestPage(ScopedEmbedderTestPage&&) noexcept;
-    ScopedEmbedderTestPage& operator=(ScopedEmbedderTestPage&&) noexcept;
+    ScopedEmbedderTestPage(ScopedEmbedderTestPage&& that) noexcept;
+    ScopedEmbedderTestPage& operator=(ScopedEmbedderTestPage&& that) noexcept;
     ~ScopedEmbedderTestPage();
 
     FPDF_PAGE get() { return page_; }
+    explicit operator bool() const { return !!page_; }
 
+   private:
+    UnownedPtr<EmbedderTest> test_;
+    FPDF_PAGE page_;
+  };
+
+  class ScopedEmbedderTestSavedPage {
+   public:
+    ScopedEmbedderTestSavedPage(EmbedderTest* test, int page_index);
+    ScopedEmbedderTestSavedPage(const ScopedEmbedderTestSavedPage&) = delete;
+    ScopedEmbedderTestSavedPage& operator=(const ScopedEmbedderTestSavedPage&) =
+        delete;
+    ScopedEmbedderTestSavedPage(ScopedEmbedderTestSavedPage&& that) noexcept;
+    ScopedEmbedderTestSavedPage& operator=(
+        ScopedEmbedderTestSavedPage&& that) noexcept;
+    ~ScopedEmbedderTestSavedPage();
+
+    FPDF_PAGE get() { return page_; }
     explicit operator bool() const { return !!page_; }
 
    private:
@@ -178,6 +199,8 @@ class EmbedderTest : public ::testing::Test,
   // The caller cannot call this for a `page_index` if it already obtained and
   // holds the page handle for that page.
   ScopedEmbedderTestPage LoadScopedPage(int page_index);
+  ScopedEmbedderTestSavedPage LoadScopedSavedPage(int page_index);
+  ScopedEmbedderTestPage LoadScopedPageNoEvents(int page_index);
 
   // Prefer LoadScopedPage() above.
   //

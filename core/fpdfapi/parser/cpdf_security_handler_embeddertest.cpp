@@ -50,9 +50,8 @@ class CPDFSecurityHandlerEmbedderTest : public EmbedderTest {
 
   void VerifySavedHelloWorldDocumentWithPassword(const char* password) {
     ASSERT_TRUE(OpenSavedDocumentWithPassword(password));
-    FPDF_PAGE page = LoadSavedPage(0);
-    VerifyHelloWorldPage(page);
-    CloseSavedPage(page);
+    ScopedEmbedderTestSavedPage page = LoadScopedSavedPage(0);
+    VerifyHelloWorldPage(page.get());
     CloseSavedDocument();
   }
 
