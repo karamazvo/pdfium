@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "adac8c72_f6108f9f",
+        "filename": "fpdfsdk/cpdfsdk_baannot_embeddertest.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-09T21:07:47Z",
+      "side": 1,
+      "message": "🤦 i was using the wrong binary `pdfium_unittests`, thank you! - and sorry for wasting your time with such things,  got all tests pass locally now.",
+      "parentUuid": "48e03c5c_79535ba6",
+      "revId": "f6f7ea6acbd2ff2580b18b2ac1be76d5f04dff62",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e9f6fe24_a6c69420",
@@ -35,6 +53,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3a2dfb89_bba3590a",
+        "filename": "fpdfsdk/fpdf_editpage_embeddertest.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-09T21:07:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e9f6fe24_a6c69420",
+      "revId": "f6f7ea6acbd2ff2580b18b2ac1be76d5f04dff62",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "09e214ab_52ae1b16",
@@ -48,6 +84,42 @@
       "writtenOn": "2024-09-09T19:08:22Z",
       "side": 1,
       "message": "This doesn\u0027t work as discussed in other review comments regarding object lifetime. As soon as CreateAndInitializeFormPDF() finishes, `page` gets destroyed and `page_` becomes a dangling pointer.",
+      "revId": "f6f7ea6acbd2ff2580b18b2ac1be76d5f04dff62",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b537191f_f8d4811b",
+        "filename": "xfa/fwl/cfwl_edit_embeddertest.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-09T21:07:47Z",
+      "side": 1,
+      "message": "going to checkout main again and do the lifetime ones in a follow up.",
+      "parentUuid": "09e214ab_52ae1b16",
+      "revId": "f6f7ea6acbd2ff2580b18b2ac1be76d5f04dff62",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5cea5109_1db195ff",
+        "filename": "xfa/fwl/cfwl_edit_embeddertest.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-09T21:07:47Z",
+      "side": 1,
+      "message": "i\u0027d like to split it into multiple CL\u0027s. handling those with lifetime issues separately - reverted this file",
+      "parentUuid": "09e214ab_52ae1b16",
       "revId": "f6f7ea6acbd2ff2580b18b2ac1be76d5f04dff62",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
