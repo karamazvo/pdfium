@@ -570,7 +570,7 @@ void RenderBitmap(CFX_RenderDevice* device,
 
 }  // namespace
 
-FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
+FPDF_EXPORT bool FPDF_CALLCONV FPDF_RenderPage(HDC dc,
                                                FPDF_PAGE page,
                                                int start_x,
                                                int start_y,
@@ -580,7 +580,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
                                                int flags) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage)
-    return;
+    return false;
 
   auto owned_context = std::make_unique<CPDF_PageRenderContext>();
   CPDF_PageRenderContext* context = owned_context.get();
@@ -602,15 +602,16 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   if (!bNewBitmap && !bHasMask) {
     context->m_pDevice = std::make_unique<CPDF_WindowsRenderDevice>(
         dc, render_data->GetPSFontTracker());
-    CPDFSDK_RenderPageWithContext(context, pPage, start_x, start_y, size_x,
-                                  size_y, rotate, flags,
-                                  /*color_scheme=*/nullptr,
-                                  /*need_to_restore=*/true, /*pause=*/nullptr);
-    return;
+    return CPDFSDK_RenderPageWithContext(
+        context, pPage, start_x, start_y, size_x, size_y, rotate, flags,
+        /*color_scheme=*/nullptr,
+        /*need_to_restore=*/true, /*pause=*/nullptr);
   }
 
   RetainPtr<CFX_DIBitmap> pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  CHECK(pBitmap->Create(size_x, size_y, FXDIB_Format::kBgra));
+  if (!pBitmap->Create(size_x, size_y, FXDIB_Format::kBgra)) {
+    return false;
+  }
   if (!CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     // Not needed by Skia. Call it for AGG to preserve pre-existing behavior.
     pBitmap->Clear(0x00ffffff);
@@ -624,10 +625,14 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
     context->m_pOptions->GetOptions().bBreakForMasks = true;
   }
 
-  CPDFSDK_RenderPageWithContext(context, pPage, start_x, start_y, size_x,
-                                size_y, rotate, flags, /*color_scheme=*/nullptr,
-                                /*need_to_restore=*/true,
-                                /*pause=*/nullptr);
+  bool renderResult = CPDFSDK_RenderPageWithContext(
+      context, pPage, start_x, start_y, size_x, size_y, rotate, flags,
+      /*color_scheme=*/nullptr,
+      /*need_to_restore=*/true,
+      /*pause=*/nullptr);
+  if (!renderResult) {
+    return false;
+  }
 
   if (!bHasMask) {
     CPDF_WindowsRenderDevice win_dc(dc, render_data->GetPSFontTracker());
@@ -646,7 +651,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
     }
     if (!bitsStretched)
       win_dc.SetDIBits(std::move(pBitmap), 0, 0);
-    return;
+    return false;
   }
 
   // Finish rendering the page to bitmap and copy the correct segments
@@ -657,7 +662,9 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   for (size_t i = 0; i < mask_boxes.size(); i++) {
     bitmaps[i] = GetMaskBitmap(pPage, start_x, start_y, size_x, size_y, rotate,
                                pBitmap, mask_boxes[i], &bitmap_areas[i]);
-    context->m_pRenderer->Continue(nullptr);
+    if (!context->m_pRenderer->Continue(nullptr)) {
+      return false;
+    }
   }
 
   // Begin rendering to the printer. Add flag to indicate the renderer should
@@ -671,10 +678,14 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   context->m_pOptions = std::make_unique<CPDF_RenderOptions>();
   context->m_pOptions->GetOptions().bBreakForMasks = true;
 
-  CPDFSDK_RenderPageWithContext(context, pPage, start_x, start_y, size_x,
-                                size_y, rotate, flags, /*color_scheme=*/nullptr,
-                                /*need_to_restore=*/true,
-                                /*pause=*/nullptr);
+  renderResult = CPDFSDK_RenderPageWithContext(context, pPage, start_x, start_y,
+                                               size_x, size_y, rotate, flags,
+                                               /*color_scheme=*/nullptr,
+                                               /*need_to_restore=*/true,
+                                               /*pause=*/nullptr);
+  if (!renderResult) {
+    return false;
+  }
 
   // Render masks
   for (size_t i = 0; i < mask_boxes.size(); i++) {
@@ -684,8 +695,12 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
                    bitmap_areas[i]);
     }
     // Render the next portion of page.
-    context->m_pRenderer->Continue(nullptr);
+    if (!context->m_pRenderer->Continue(nullptr)) {
+      return false;
+    }
   }
+
+  return true;
 }
 #endif  // BUILDFLAG(IS_WIN)
 
