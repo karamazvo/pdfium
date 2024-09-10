@@ -34,6 +34,24 @@
       "parentUuid": "0cf7f8e5_b02d217a",
       "revId": "f521aea2bd5cbe04023a87794e5665de08fb504a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4675b910_77a962ea",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 2074,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-10T12:58:03Z",
+      "side": 1,
+      "message": "ok few more hours in - i think i understand it 😅 - new PS uploaded\ndo you see any chance that the scoped unloading can check if document is gone?",
+      "parentUuid": "832dd013_2dd8ae03",
+      "revId": "f521aea2bd5cbe04023a87794e5665de08fb504a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
