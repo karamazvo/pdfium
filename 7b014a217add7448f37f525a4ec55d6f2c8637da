@@ -82,6 +82,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "610a10e1_cb7398b9",
+        "filename": "third_party/agg23/copying",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-10T18:26:47Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "04c9d9ab_77a0bfd8",
+      "range": {
+        "startLine": 5,
+        "startChar": 33,
+        "endLine": 5,
+        "endChar": 34
+      },
+      "revId": "7b014a217add7448f37f525a4ec55d6f2c8637da",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "351109ea_b6568eca",
