@@ -148,6 +148,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "7632e99b_dfb86108",
+        "filename": "third_party/libopenjpeg/LICENSE",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-10T18:34:56Z",
+      "side": 1,
+      "message": "I\u0027m sticking with my position that we shouldn\u0027t bother trying to fix third party\u0027s files when it comes to style.",
+      "parentUuid": "351109ea_b6568eca",
+      "range": {
+        "startLine": 1,
+        "startChar": 1,
+        "endLine": 1,
+        "endChar": 2
+      },
+      "revId": "7b014a217add7448f37f525a4ec55d6f2c8637da",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "4836ad4a_16f6ddc8",
         "filename": "third_party/libopenjpeg/LICENSE",
         "patchSetId": 1
