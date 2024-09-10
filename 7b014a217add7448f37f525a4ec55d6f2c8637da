@@ -150,6 +150,30 @@
       },
       "revId": "7b014a217add7448f37f525a4ec55d6f2c8637da",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a0236236_4baefd09",
+        "filename": "third_party/libopenjpeg/LICENSE",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-10T18:27:54Z",
+      "side": 1,
+      "message": "NO, per above. Acknowledged",
+      "parentUuid": "4836ad4a_16f6ddc8",
+      "range": {
+        "startLine": 3,
+        "startChar": 75,
+        "endLine": 3,
+        "endChar": 76
+      },
+      "revId": "7b014a217add7448f37f525a4ec55d6f2c8637da",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
