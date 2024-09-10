@@ -57,31 +57,52 @@ TEST(CPDFNumber, WriteToFloat) {
     ByteStringArchiveStream output_stream;
     auto number = pdfium::MakeRetain<CPDF_Number>(38.895285f);
     ASSERT_TRUE(number->WriteTo(&output_stream, /*encryptor=*/nullptr));
-    // TODO(crbug.com/352496170): Can the output have more precision?
-    EXPECT_EQ(" 38.8953", output_stream.str());
+    EXPECT_EQ(" 38.895287", output_stream.str());
   }
   {
     ByteStringArchiveStream output_stream;
     auto number = pdfium::MakeRetain<CPDF_Number>(-77.037232f);
     ASSERT_TRUE(number->WriteTo(&output_stream, /*encryptor=*/nullptr));
-    // TODO(crbug.com/352496170): Can the output have more precision?
-    EXPECT_EQ(" -77.0372", output_stream.str());
+    EXPECT_EQ(" -77.037231", output_stream.str());
   }
   {
     ByteStringArchiveStream output_stream;
     auto number =
         pdfium::MakeRetain<CPDF_Number>(std::numeric_limits<float>::max());
     ASSERT_TRUE(number->WriteTo(&output_stream, /*encryptor=*/nullptr));
-    // TODO(crbug.com/352496170): This should be much bigger than INT_MAX.
-    EXPECT_EQ(" 2147483647", output_stream.str());
+    EXPECT_EQ(" 340282350000000000000000000000000000000", output_stream.str());
   }
   {
     ByteStringArchiveStream output_stream;
     auto number =
         pdfium::MakeRetain<CPDF_Number>(std::numeric_limits<float>::min());
     ASSERT_TRUE(number->WriteTo(&output_stream, /*encryptor=*/nullptr));
-    // TODO(crbug.com/352496170): This should not be 0.
-    EXPECT_EQ(" 0", output_stream.str());
+    EXPECT_EQ(" .0000000000000000000000000000000000000117549435",
+              output_stream.str());
+  }
+  {
+    ByteStringArchiveStream output_stream;
+    auto number = pdfium::MakeRetain<CPDF_Number>(9.00345f);
+    ASSERT_TRUE(number->WriteTo(&output_stream, /*encryptor=*/nullptr));
+    // WIP: actual is 9.0034504
+    EXPECT_EQ(" 9.00345",
+              output_stream.str());
+  }
+  {
+    ByteStringArchiveStream output_stream;
+    auto number = pdfium::MakeRetain<CPDF_Number>(0.23f);
+    ASSERT_TRUE(number->WriteTo(&output_stream, /*encryptor=*/nullptr));
+    // WIP: actual is .23
+    EXPECT_EQ(" 0.23",
+              output_stream.str());
+  }
+  {
+    ByteStringArchiveStream output_stream;
+    auto number = pdfium::MakeRetain<CPDF_Number>(0.0345f);
+    ASSERT_TRUE(number->WriteTo(&output_stream, /*encryptor=*/nullptr));
+    // WIP: actual is .034499999
+    EXPECT_EQ(" 0.0345",
+              output_stream.str());
   }
 }
 
