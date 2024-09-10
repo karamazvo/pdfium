@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "06250221_b37f378b",
+        "filename": "fpdfsdk/fpdf_annot_embeddertest.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 714,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-10T22:45:09Z",
+      "side": 1,
+      "message": "Comment out of date.",
+      "revId": "e10bc33e59e8c77239b324e08867a8ad79ee438a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "883a1872_e6233157",
+        "filename": "fpdfsdk/fpdf_annot_embeddertest.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 768,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-10T22:45:09Z",
+      "side": 1,
+      "message": "Same here.",
+      "revId": "e10bc33e59e8c77239b324e08867a8ad79ee438a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bccce491_8750da62",
+        "filename": "fpdfsdk/fpdf_annot_embeddertest.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 1284,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-10T22:45:09Z",
+      "side": 1,
+      "message": "Same.",
+      "revId": "e10bc33e59e8c77239b324e08867a8ad79ee438a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "56604fe0_54c5f30a",
+        "filename": "fpdfsdk/fpdf_doc_embeddertest.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 671,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-10T22:45:09Z",
+      "side": 1,
+      "message": "Please revert this line. The comment was fine as it was.",
+      "revId": "e10bc33e59e8c77239b324e08867a8ad79ee438a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "763ebef8_c0a999d2",
+        "filename": "xfa/fxfa/layout/cxfa_layoutitem_embeddertest.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-10T22:45:09Z",
+      "side": 1,
+      "message": "This is no longer changing the page that\u0027s being loaded as the loop iterates.",
+      "revId": "e10bc33e59e8c77239b324e08867a8ad79ee438a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
