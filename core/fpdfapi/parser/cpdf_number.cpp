@@ -6,7 +6,21 @@
 
 #include "core/fpdfapi/parser/cpdf_number.h"
 
+#include <sstream>
+
+#include "core/fpdfapi/edit/cpdf_contentstream_write_utils.h"
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/fx_string_wrappers.h"
+
+namespace {
+
+ByteString FloatToString(float value) {
+  fxcrt::ostringstream sstream;
+  WriteFloat(sstream, value);
+  return ByteString(sstream);
+}
+
+}  // namespace
 
 CPDF_Number::CPDF_Number() = default;
 
@@ -45,8 +59,8 @@ void CPDF_Number::SetString(const ByteString& str) {
 }
 
 ByteString CPDF_Number::GetString() const {
-  return number_.IsInteger() ? ByteString::FormatInteger(number_.GetSigned())
-                             : ByteString::FormatFloat(number_.GetFloat());
+  return number_.IsInteger() ? ByteString::FormatInteger(GetInteger())
+                             : FloatToString(GetNumber());
 }
 
 bool CPDF_Number::WriteTo(IFX_ArchiveStream* archive,

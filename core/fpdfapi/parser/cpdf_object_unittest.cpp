@@ -204,6 +204,7 @@ TEST_F(PDFObjectsTest, GetString) {
        "", "", ""});
   // Check for direct objects.
   for (size_t i = 0; i < m_DirectObjs.size(); ++i) {
+    // WIP Expected: "9.00345" Actual: "9.0034504"
     EXPECT_EQ(direct_obj_results[i], m_DirectObjs[i]->GetString());
   }
 
@@ -291,6 +292,7 @@ TEST_F(PDFObjectsTest, GetNameFor) {
 
   EXPECT_EQ("", m_DictObj->GetByteStringFor("invalid"));
   EXPECT_EQ("false", m_DictObj->GetByteStringFor("bool"));
+  // WIP Expected: "0.23" Actual: ".23"
   EXPECT_EQ("0.23", m_DictObj->GetByteStringFor("num"));
   EXPECT_EQ("ium", m_DictObj->GetByteStringFor("string"));
   EXPECT_EQ("Pdf", m_DictObj->GetByteStringFor("name"));
@@ -540,6 +542,8 @@ TEST(PDFArrayTest, GetTypeAt) {
     for (size_t i = 0; i < vals.size(); ++i) {
       arr->InsertNewAt<CPDF_Number>(i, vals[i]);
     }
+    // WIP Expected: "0.0345" Actual: ".034499999"
+    // WIP Expected: "897.34" Actual: "897.34003"
     constexpr auto expected_str = fxcrt::ToArray<const char*>(
         {"0", "0", "10", "10", "0.0345", "897.34", "-2.5", "-1", "-345", "0"});
     for (size_t i = 0; i < vals.size(); ++i) {
@@ -714,6 +718,7 @@ TEST(PDFArrayTest, GetTypeAt) {
         DataVector<uint8_t>(std::begin(kData), std::end(kData)), stream_dict);
     arr->InsertNewAt<CPDF_Reference>(13, &object_holder,
                                      stream_val->GetObjNum());
+    // WIP Expected: "0.05" Actual: ".050000001"
     constexpr auto expected_str = fxcrt::ToArray<const char*>(
         {"true", "false", "0", "-1234", "2345", "0.05", "", "It is a test!",
          "NAME", "test", "", "", "", ""});
