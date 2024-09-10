@@ -16,6 +16,24 @@
       "message": "`page` is outliving the CloseDocument() call here and below.",
       "revId": "f521aea2bd5cbe04023a87794e5665de08fb504a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "832dd013_2dd8ae03",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 2074,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-10T06:52:14Z",
+      "side": 1,
+      "message": "is that because CloseDocument() happens before page goes out of the scope?\n(not calling closedocument when a page is still open?)\n\n```\n  ASSERT_TRUE(OpenDocument(\"rectangles.pdf\"));\n  {\n    ScopedEmbedderTestPage page \u003d LoadScopedPage(0);\n    ScopedFPDFBitmap bitmap \u003d RenderPage(page.get());\n    skia_checksum \u003d HashBitmap(bitmap.get());\n  }\n  CloseDocument();\n```",
+      "parentUuid": "0cf7f8e5_b02d217a",
+      "revId": "f521aea2bd5cbe04023a87794e5665de08fb504a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
