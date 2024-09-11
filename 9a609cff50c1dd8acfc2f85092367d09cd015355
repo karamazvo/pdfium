@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b02f95d0_476587bb",
+        "filename": "fpdfsdk/fpdf_annot_embeddertest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 1184,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-09-11T23:57:38Z",
+      "side": 1,
+      "message": "I manually checked the PNGs of the PDFs in these tests and saw no visible difference between the PDFs before and after this change.",
+      "range": {
+        "startLine": 1184,
+        "startChar": 14,
+        "endLine": 1184,
+        "endChar": 46
+      },
+      "revId": "9a609cff50c1dd8acfc2f85092367d09cd015355",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
