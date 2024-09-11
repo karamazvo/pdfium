@@ -1187,7 +1187,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
 #if BUILDFLAG(IS_APPLE)
     return "55dab4f158fdc284e439b88c4306373c";
 #else
-    return "cc08493b1f079803930388ecc703be9d";
+    return "2e567a33390cd2ebad9dc33d82a8b054";
 #endif
   }();
 
@@ -1413,7 +1413,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
 #if BUILDFLAG(IS_APPLE)
     return "ce68959f74242d588af7fb82be5ba0ab";
 #else
-    return "425646a517a23104b9ef22881a19b3e2";
+    return "dcb492d8e32528dd81bb60fa5bc900f8";
 #endif
   }();
 
@@ -1665,7 +1665,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
 #if BUILDFLAG(IS_APPLE)
     return "52e93c54796f7f7167edf64e81d12bd7";
 #else
-    return "5143f9a98beb7b00ff40b89110a1089f";
+    return "5f19ddad9d48f5b7b87ee7d92f577db6";
 #endif
   }();
 
