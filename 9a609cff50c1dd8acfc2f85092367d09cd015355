@@ -1,6 +1,63 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "0fef5261_1941ebcb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-12T00:11:17Z",
+      "side": 1,
+      "message": "differently, or better?",
+      "range": {
+        "startLine": 7,
+        "startChar": 25,
+        "endLine": 7,
+        "endChar": 36
+      },
+      "revId": "9a609cff50c1dd8acfc2f85092367d09cd015355",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a87c486e_697c3847",
+        "filename": "core/fpdfapi/edit/BUILD.gn",
+        "patchSetId": 7
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-12T00:11:17Z",
+      "side": 1,
+      "message": "CL description didn\u0027t mention this. Why split it out?",
+      "revId": "9a609cff50c1dd8acfc2f85092367d09cd015355",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "512a7d4b_c966cc4f",
+        "filename": "core/fpdfapi/parser/cpdf_number.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-12T00:11:17Z",
+      "side": 1,
+      "message": "Is there a benefit to keeping this, instead of plugging in FloatToString() from line 17 (and not core/fxcrt/fx_string.h) here?",
+      "revId": "9a609cff50c1dd8acfc2f85092367d09cd015355",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "b02f95d0_476587bb",
@@ -20,6 +77,40 @@
         "endLine": 1184,
         "endChar": 46
       },
+      "revId": "9a609cff50c1dd8acfc2f85092367d09cd015355",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f610aa69_2095f257",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 597,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-12T00:11:17Z",
+      "side": 1,
+      "message": "Reduce the scope of this variable.",
+      "revId": "9a609cff50c1dd8acfc2f85092367d09cd015355",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9c875acf_55172fde",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 613,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-12T00:11:17Z",
+      "side": 1,
+      "message": "Is the output deterministic? It would be an improvement to check the value rather than passing in nullptr.",
       "revId": "9a609cff50c1dd8acfc2f85092367d09cd015355",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
