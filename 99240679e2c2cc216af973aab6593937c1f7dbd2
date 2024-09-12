@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9527cf4b_0e6f7265",
+        "filename": "core/fpdfapi/edit/cpdf_contentstream_write_utils.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-12T18:50:17Z",
+      "side": 1,
+      "message": "In plain English, this would be something like \"in a form suitable for use in a PDF content stream\".",
+      "range": {
+        "startLine": 12,
+        "startChar": 50,
+        "endLine": 13,
+        "endChar": 26
+      },
+      "revId": "99240679e2c2cc216af973aab6593937c1f7dbd2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
