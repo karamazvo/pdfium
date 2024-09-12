@@ -88,6 +88,24 @@
       "parentUuid": "58a73279_c496f159",
       "revId": "f521aea2bd5cbe04023a87794e5665de08fb504a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d24c6066_c0280ef9",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 2074,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-12T21:52:57Z",
+      "side": 1,
+      "message": "no problem with doing it separately - but i\u0027d like to understand it.\n```\nASSERT_TRUE(OpenDocument(\"rectangles.pdf\")); ----------\u003e document starts to exist\n  {\n    ScopedEmbedderTestPage page \u003d LoadScopedPage(0); ----------\u003e scoped page starts inside scope\n    ScopedFPDFBitmap bitmap \u003d RenderPage(page.get());\n    agg_checksum \u003d HashBitmap(bitmap.get());\n  } ----\u003e page goes out of scope -\u003e it is freed\nCloseDocument(); ---------\u003e document gets out of scope and gets freed\n```\n\nisn\u0027t the order correct?",
+      "parentUuid": "d17ef190_68e70ba7",
+      "revId": "f521aea2bd5cbe04023a87794e5665de08fb504a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
