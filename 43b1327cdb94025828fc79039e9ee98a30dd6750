@@ -3,6 +3,52 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "73fe52e3_5a2ffec9",
+        "filename": "core/fpdfapi/edit/BUILD.gn",
+        "patchSetId": 9
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-12T01:14:48Z",
+      "side": 1,
+      "message": "Can this target be named \"contentstream_write_utils\"? It\u0027s a bit verbose, but it better explains what it is.",
+      "range": {
+        "startLine": 40,
+        "startChar": 12,
+        "endLine": 40,
+        "endChar": 16
+      },
+      "revId": "43b1327cdb94025828fc79039e9ee98a30dd6750",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2ca39cdf_7ad6f268",
+        "filename": "core/fpdfapi/parser/cpdf_number.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-12T01:14:48Z",
+      "side": 1,
+      "message": "\"differently\" is also a bit vague here. It may be better if:\n\n1) core/fpdfapi/edit/cpdf_contentstream_write_utils.h had more documentation to explain what it does and why one would want to use it. (pre-existing, but obvious in hindsight.)\n2) This comment can just mention it uses functions from cpdf_contentstream_write_utils.h because it is writing out to file. Readers can read the documentation in (1) to connect the dots.",
+      "range": {
+        "startLine": 68,
+        "startChar": 25,
+        "endLine": 68,
+        "endChar": 36
+      },
+      "revId": "43b1327cdb94025828fc79039e9ee98a30dd6750",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "874f92a2_779f63bb",
         "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
         "patchSetId": 9
@@ -14,6 +60,30 @@
       "writtenOn": "2024-09-12T00:56:07Z",
       "side": 1,
       "message": "Is there a reason not to make this a ternary operator? Besides maybe some consistency with other similar code snippets? Line 5306 is the only instance of using a ternary operator, but line 2375 is another example that could also use a ternary operator.",
+      "range": {
+        "startLine": 598,
+        "startChar": 37,
+        "endLine": 603,
+        "endChar": 8
+      },
+      "revId": "43b1327cdb94025828fc79039e9ee98a30dd6750",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "af133fe6_a89815d2",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 603,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-12T01:14:48Z",
+      "side": 1,
+      "message": "I\u0027m ok either way.",
+      "parentUuid": "874f92a2_779f63bb",
       "range": {
         "startLine": 598,
         "startChar": 37,
