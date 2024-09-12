@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "81910f44_7a9d5a51",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-09-12T00:56:07Z",
+      "side": 1,
+      "message": "Changed to better.",
+      "parentUuid": "0fef5261_1941ebcb",
+      "range": {
+        "startLine": 7,
+        "startChar": 25,
+        "endLine": 7,
+        "endChar": 36
+      },
+      "revId": "9a609cff50c1dd8acfc2f85092367d09cd015355",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a87c486e_697c3847",
@@ -41,6 +65,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ccda25cf_c1c50f4b",
+        "filename": "core/fpdfapi/edit/BUILD.gn",
+        "patchSetId": 7
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-09-12T00:56:07Z",
+      "side": 1,
+      "message": "Added to description (avoids circular dependency).",
+      "parentUuid": "a87c486e_697c3847",
+      "revId": "9a609cff50c1dd8acfc2f85092367d09cd015355",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "512a7d4b_c966cc4f",
@@ -54,6 +96,24 @@
       "writtenOn": "2024-09-12T00:11:17Z",
       "side": 1,
       "message": "Is there a benefit to keeping this, instead of plugging in FloatToString() from line 17 (and not core/fxcrt/fx_string.h) here?",
+      "revId": "9a609cff50c1dd8acfc2f85092367d09cd015355",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "05b25a9a_a0bf28ef",
+        "filename": "core/fpdfapi/parser/cpdf_number.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-09-12T00:56:07Z",
+      "side": 1,
+      "message": "We discussed online earlier, but I\u0027m not sure if this will cause any regressions or impact.\n\nMaybe worth trying in a follow-up CL?",
+      "parentUuid": "512a7d4b_c966cc4f",
       "revId": "9a609cff50c1dd8acfc2f85092367d09cd015355",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -98,6 +158,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "eb3e3c81_160932c2",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 597,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-09-12T00:56:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f610aa69_2095f257",
+      "revId": "9a609cff50c1dd8acfc2f85092367d09cd015355",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9c875acf_55172fde",
@@ -111,6 +189,24 @@
       "writtenOn": "2024-09-12T00:11:17Z",
       "side": 1,
       "message": "Is the output deterministic? It would be an improvement to check the value rather than passing in nullptr.",
+      "revId": "9a609cff50c1dd8acfc2f85092367d09cd015355",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4fc309e6_de6648c4",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 613,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-09-12T00:56:07Z",
+      "side": 1,
+      "message": "Yes, checking value.",
+      "parentUuid": "9c875acf_55172fde",
       "revId": "9a609cff50c1dd8acfc2f85092367d09cd015355",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }

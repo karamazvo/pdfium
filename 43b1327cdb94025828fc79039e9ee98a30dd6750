@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "874f92a2_779f63bb",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 603,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-09-12T00:56:07Z",
+      "side": 1,
+      "message": "Is there a reason not to make this a ternary operator? Besides maybe some consistency with other similar code snippets? Line 5306 is the only instance of using a ternary operator, but line 2375 is another example that could also use a ternary operator.",
+      "range": {
+        "startLine": 598,
+        "startChar": 37,
+        "endLine": 603,
+        "endChar": 8
+      },
+      "revId": "43b1327cdb94025828fc79039e9ee98a30dd6750",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
