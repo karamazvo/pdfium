@@ -67,6 +67,23 @@
       "message": "nit: Can this be consistent with line 1414?",
       "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "22541ff1_6309fea9",
+        "filename": "fpdfsdk/fpdf_formfill_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 1365,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-13T00:25:31Z",
+      "side": 1,
+      "message": "Remove this line and blank line above.",
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
