@@ -35,6 +35,138 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c58d6a37_2d85046d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 13
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "I\u0027m going to stop reviewing at this point until we decide if the lifetime issues are significant.  One suggestion is that you might split the patch into two.  The first one would just make the changes where the Unload() used to occur as the last statement in the block, which we know to be equivalent with the scoped usage. We could land that without fear of a revert if the lifetime/ordering issues turn out to matter.",
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7aa28797_b96e29ec",
+        "filename": "core/fpdfapi/parser/cpdf_parser_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "nit: could probably be `EXPECT_TRUE(LoadScopedPage(0));` when we immediately unload the page without additional actions, in a few places throughout.",
+      "range": {
+        "startLine": 20,
+        "startChar": 3,
+        "endLine": 21,
+        "endChar": 20
+      },
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "61bac32f_4de3fcc6",
+        "filename": "fpdfsdk/fpdf_annot_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 715,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "Can we nest this in {} so that `page` goes out-of-scope at the same point as it used to be unloaded?",
+      "range": {
+        "startLine": 661,
+        "startChar": 33,
+        "endLine": 715,
+        "endChar": 0
+      },
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "91b4208b_5b6f0488",
+        "filename": "fpdfsdk/fpdf_annot_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 767,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "can we nest this in {} so`page` goes out-of-scope at the same point as it used to be unloaded?",
+      "range": {
+        "startLine": 740,
+        "startChar": 30,
+        "endLine": 767,
+        "endChar": 52
+      },
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8f1980e2_45934d0f",
+        "filename": "fpdfsdk/fpdf_annot_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 1041,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 1041,
+        "startChar": 0,
+        "endLine": 1041,
+        "endChar": 50
+      },
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "58f3a06d_007cfb1e",
+        "filename": "fpdfsdk/fpdf_annot_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 1282,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "ditto, page lifetime ended here before.",
+      "range": {
+        "startLine": 1282,
+        "startChar": 0,
+        "endLine": 1282,
+        "endChar": 52
+      },
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "151dbe98_06ba6b90",
@@ -65,6 +197,494 @@
       "writtenOn": "2024-09-13T00:14:17Z",
       "side": 1,
       "message": "nit: Can this be consistent with line 1414?",
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a175388f_afced9bd",
+        "filename": "fpdfsdk/fpdf_annot_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 1473,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "ditto, page lifetime ends here?",
+      "range": {
+        "startLine": 1473,
+        "startChar": 0,
+        "endLine": 1473,
+        "endChar": 35
+      },
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ac2aa5c3_fc776b02",
+        "filename": "fpdfsdk/fpdf_annot_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 1639,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 1639,
+        "startChar": 0,
+        "endLine": 1639,
+        "endChar": 52
+      },
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f5f43e9f_87dae446",
+        "filename": "fpdfsdk/fpdf_annot_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 1812,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "ditto, page lifetime.",
+      "range": {
+        "startLine": 1812,
+        "startChar": 0,
+        "endLine": 1812,
+        "endChar": 52
+      },
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "450daef3_f79e3260",
+        "filename": "fpdfsdk/fpdf_annot_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 2256,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "ditto, page lifetime used to end here.",
+      "range": {
+        "startLine": 2256,
+        "startChar": 0,
+        "endLine": 2256,
+        "endChar": 3
+      },
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "72cbdb8f_215ced61",
+        "filename": "fpdfsdk/fpdf_annot_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 3749,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 3749,
+        "startChar": 0,
+        "endLine": 3749,
+        "endChar": 52
+      },
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "00c1191a_b007c710",
+        "filename": "fpdfsdk/fpdf_doc_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "There\u0027s a small difference here in that we used to delete pages in order of creation,  but vector will delete them in inverse order of creation.  I doubt it matters.",
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c441029e_481b5937",
+        "filename": "fpdfsdk/fpdf_doc_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 950,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 950,
+        "startChar": 0,
+        "endLine": 950,
+        "endChar": 51
+      },
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2fd02b21_a85b47e6",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 770,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 770,
+        "startChar": 0,
+        "endLine": 770,
+        "endChar": 52
+      },
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d8d04a15_9da5195e",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 816,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "ditto",
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d347dbf7_0907cc83",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 907,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 907,
+        "startChar": 0,
+        "endLine": 907,
+        "endChar": 52
+      },
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "62e0b12e_6c346078",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 972,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "dittor",
+      "range": {
+        "startLine": 972,
+        "startChar": 0,
+        "endLine": 972,
+        "endChar": 52
+      },
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bfaf2057_b7d6677a",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 1042,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 1042,
+        "startChar": 0,
+        "endLine": 1042,
+        "endChar": 52
+      },
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a6454473_e24d7f77",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 1177,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "Again, pages will be deleted in inverse order here as the locals go out of scope in inverse order of their appearance.  Doubt it matters.",
+      "range": {
+        "startLine": 1177,
+        "startChar": 0,
+        "endLine": 1177,
+        "endChar": 78
+      },
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9a6f77f1_7fee5a78",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 1233,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "ditto (order of deletion).",
+      "range": {
+        "startLine": 1233,
+        "startChar": 0,
+        "endLine": 1233,
+        "endChar": 23
+      },
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f7f276a6_639e7f57",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 1288,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "ditto (order of deletion)",
+      "range": {
+        "startLine": 1288,
+        "startChar": 2,
+        "endLine": 1288,
+        "endChar": 20
+      },
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4c53d928_bb15ca59",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 1532,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "ditto, lifetime.",
+      "range": {
+        "startLine": 1532,
+        "startChar": 0,
+        "endLine": 1532,
+        "endChar": 52
+      },
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c7a2340e_f7835da4",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 1589,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "ditto, lifetime.",
+      "range": {
+        "startLine": 1589,
+        "startChar": 0,
+        "endLine": 1589,
+        "endChar": 52
+      },
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1e8e8f5d_23a9ad2a",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 1645,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "ditto, lifetime.",
+      "range": {
+        "startLine": 1645,
+        "startChar": 0,
+        "endLine": 1645,
+        "endChar": 52
+      },
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c73719a5_25c9e263",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 1704,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "ditto, lifetime.",
+      "range": {
+        "startLine": 1704,
+        "startChar": 0,
+        "endLine": 1704,
+        "endChar": 52
+      },
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d788942b_069fab0c",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 1735,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "ditto, lifetime.",
+      "range": {
+        "startLine": 1735,
+        "startChar": 0,
+        "endLine": 1735,
+        "endChar": 52
+      },
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "609c3ac9_aa18ca5d",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 1765,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "ditto. lifetime.",
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "85598808_3f94ac30",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 1815,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-13T17:21:21Z",
+      "side": 1,
+      "message": "ditto, lifetme.",
+      "range": {
+        "startLine": 1815,
+        "startChar": 0,
+        "endLine": 1815,
+        "endChar": 52
+      },
       "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
