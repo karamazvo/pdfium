@@ -124,6 +124,24 @@
       "parentUuid": "d24c6066_c0280ef9",
       "revId": "f521aea2bd5cbe04023a87794e5665de08fb504a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3dd21d9d_1e49d5b4",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 2074,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-13T00:14:17Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "7a9254a4_0a782376",
+      "revId": "f521aea2bd5cbe04023a87794e5665de08fb504a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
