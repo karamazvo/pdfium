@@ -70,6 +70,23 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f693c4ad_d93378bd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 13
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-15T22:01:33Z",
+      "side": 1,
+      "message": "adressed some of the comments.\ni am not sure how to proceed now - tests pass locally.\n\ni tried to scope here and there with `{}` so that it re-builds the original `UnloadPage` behaviour. but it requires alot of variables to be moved around too - and i am not sure if the result is what was meant to be from the bug.",
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7aa28797_b96e29ec",
@@ -83,6 +100,30 @@
       "writtenOn": "2024-09-13T17:21:21Z",
       "side": 1,
       "message": "nit: could probably be `EXPECT_TRUE(LoadScopedPage(0));` when we immediately unload the page without additional actions, in a few places throughout.",
+      "range": {
+        "startLine": 20,
+        "startChar": 3,
+        "endLine": 21,
+        "endChar": 20
+      },
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3494e051_fa11e197",
+        "filename": "core/fpdfapi/parser/cpdf_parser_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-15T22:01:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7aa28797_b96e29ec",
       "range": {
         "startLine": 20,
         "startChar": 3,
@@ -202,6 +243,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b578d41f_649831dc",
+        "filename": "fpdfsdk/fpdf_annot_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 1425,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-15T22:01:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "151dbe98_06ba6b90",
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a8e90cbe_3d3e929b",
@@ -215,6 +274,24 @@
       "writtenOn": "2024-09-13T00:14:17Z",
       "side": 1,
       "message": "nit: Can this be consistent with line 1414?",
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2b43ee71_5402c637",
+        "filename": "fpdfsdk/fpdf_annot_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 1458,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-15T22:01:33Z",
+      "side": 1,
+      "message": "you mean using page.get() instead of page0 on `FPDFPage_GetAnnot` ?",
+      "parentUuid": "a8e90cbe_3d3e929b",
       "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -347,6 +424,24 @@
       "writtenOn": "2024-09-13T17:21:21Z",
       "side": 1,
       "message": "There\u0027s a small difference here in that we used to delete pages in order of creation,  but vector will delete them in inverse order of creation.  I doubt it matters.",
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8dfb8c28_b27a6e69",
+        "filename": "fpdfsdk/fpdf_doc_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-15T22:01:33Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "00c1191a_b007c710",
       "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -496,6 +591,30 @@
       "writtenOn": "2024-09-13T17:21:21Z",
       "side": 1,
       "message": "Again, pages will be deleted in inverse order here as the locals go out of scope in inverse order of their appearance.  Doubt it matters.",
+      "range": {
+        "startLine": 1177,
+        "startChar": 0,
+        "endLine": 1177,
+        "endChar": 78
+      },
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "60ed0a02_1909840f",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 1177,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-15T22:01:33Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "a6454473_e24d7f77",
       "range": {
         "startLine": 1177,
         "startChar": 0,
@@ -720,6 +839,24 @@
       "writtenOn": "2024-09-13T00:25:31Z",
       "side": 1,
       "message": "Remove this line and blank line above.",
+      "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "df48315a_dec30d3c",
+        "filename": "fpdfsdk/fpdf_formfill_embeddertest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 1365,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-15T22:01:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "22541ff1_6309fea9",
       "revId": "8f09a177b1b9f315cbc1a2fcc4d685e8a9732891",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
