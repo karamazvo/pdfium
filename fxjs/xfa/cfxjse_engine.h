@@ -62,8 +62,13 @@ class CFXJSE_Engine final : public CFX_V8 {
     };
 
     ResolveResult();
-    ResolveResult(const ResolveResult& that);
-    ResolveResult& operator=(const ResolveResult& that);
+    ResolveResult(ResolveResult&& that);
+    ResolveResult& operator=(ResolveResult&& that);
+
+    // Move-only type.
+    ResolveResult(const ResolveResult& that) = delete;
+    ResolveResult& operator=(const ResolveResult& that) = delete;
+
     ~ResolveResult();
 
     Type type = Type::kNodes;
