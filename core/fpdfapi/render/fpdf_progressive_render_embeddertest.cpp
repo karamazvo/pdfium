@@ -457,7 +457,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderInkWithColorScheme) {
 #elif BUILDFLAG(IS_APPLE)
       return "0ef02da77fc1e08455148ecadd257e06";
 #else
-      return "bd9d457356dba5fcf33ec9afdaefcab8";
+      return "32678124d0789c09aa61028de3a8cbcf";
 #endif
     }
     return "797bce7dc6c50ee86b095405df9fe5aa";
@@ -479,7 +479,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderStampWithColorScheme) {
 #elif BUILDFLAG(IS_APPLE)
       return "bb302d8808633fede3b6e2e39ac8aaa7";
 #else
-      return "1bd68054628cf193b399a16638ecb5f9";
+      return "4e42fb3e87ff8276a549d7a755997766";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)

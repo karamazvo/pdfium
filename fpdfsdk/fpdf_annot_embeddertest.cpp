@@ -504,8 +504,8 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractHighlightLongContent) {
     ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(annot.get(), 0, &quadpoints));
     EXPECT_EQ(115.802643f, quadpoints.x1);
     EXPECT_EQ(718.913940f, quadpoints.y1);
-    EXPECT_EQ(157.211182f, quadpoints.x4);
-    EXPECT_EQ(706.264465f, quadpoints.y4);
+    EXPECT_EQ(157.211166f, quadpoints.x4);
+    EXPECT_EQ(706.264404f, quadpoints.y4);
   }
   UnloadPageNoEvents(page);
 }
@@ -545,9 +545,9 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractInkMultiple) {
     // Note that upon rendering, the rectangle coordinates will be adjusted.
     FS_RECTF rect;
     ASSERT_TRUE(FPDFAnnot_GetRect(annot.get(), &rect));
-    EXPECT_EQ(351.820404f, rect.left);
-    EXPECT_EQ(583.830688f, rect.bottom);
-    EXPECT_EQ(475.336090f, rect.right);
+    EXPECT_EQ(351.820435f, rect.left);
+    EXPECT_EQ(583.830750f, rect.bottom);
+    EXPECT_EQ(475.336121f, rect.right);
     EXPECT_EQ(681.535034f, rect.top);
   }
   {
@@ -558,7 +558,7 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractInkMultiple) {
 #elif BUILDFLAG(IS_APPLE)
         return "e3da57011a3d66238d15be1bedcb6696";
 #else
-        return "c2404a7a9a86ee78487cd1993949c56d";
+        return "d02d468d9022ddf35014daa50191a895";
 #endif
       }
       return "354002e1c4386d38fdde29ef8d61074a";
@@ -760,8 +760,8 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndSaveUnderlineAnnotation) {
     ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(annot.get(), 0, &quadpoints));
     EXPECT_EQ(115.802643f, quadpoints.x1);
     EXPECT_EQ(718.913940f, quadpoints.y1);
-    EXPECT_EQ(157.211182f, quadpoints.x4);
-    EXPECT_EQ(706.264465f, quadpoints.y4);
+    EXPECT_EQ(157.211166f, quadpoints.x4);
+    EXPECT_EQ(706.264404f, quadpoints.y4);
   }
 
   // Add an underline annotation to the page and set its quadpoints.
@@ -943,7 +943,7 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
 #elif BUILDFLAG(IS_APPLE)
       return "613102f8b6d74d6d9f95c8eacd17b756";
 #else
-      return "879c77a2cb9f79ba65ffe0bbdd720ce3";
+      return "4f66924b2d246f9e8a1b926e956b615b";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
@@ -1149,7 +1149,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
 #elif BUILDFLAG(IS_APPLE)
       return "3adf48360ca55e8794a9fc9f1ea87df1";
 #else
-      return "94f7f4568385c16498604ddc46f18be9";
+      return "4a3a53f2b1b0cb40e9a32305eef9197a";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
@@ -1165,7 +1165,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
 #elif BUILDFLAG(IS_APPLE)
       return "5f7d44d3a4ffaadb6bf20b4f1ac2a1f0";
 #else
-      return "1052cd0fe1c3e73865fc842525245551";
+      return "db4c609adaa0dcfba213450bbd62264e";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
@@ -1181,7 +1181,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
 #elif BUILDFLAG(IS_APPLE)
       return "71c8fb8eee9720c19851c48745dde152";
 #else
-      return "f522e1262f487cc1976bb3fc585ef469";
+      return "d4d1b116d5f23dfec894e25db4c5ebdb";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
@@ -1391,7 +1391,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
 #elif BUILDFLAG(IS_APPLE)
       return "f740480598ff3732fb31871634509eec";
 #else
-      return "77bf1781c60370bfcd8d81cf91ab7b09";
+      return "5526f05092a0253d56a0e79e0e104f71";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
@@ -1407,7 +1407,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
 #elif BUILDFLAG(IS_APPLE)
       return "5beae8949ee6b5c99fe17475e90aea02";
 #else
-      return "cfa8aa132250a1c0fec505bd13c15916";
+      return "e3f115b37181ce0ffd02c7b5288ea99a";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
@@ -1496,7 +1496,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
 #elif BUILDFLAG(IS_APPLE)
       return "eefdf26393df536e7f125816e7d967ff";
 #else
-      return "f89c413c7155ae9b4a0b7c8e4013613e";
+      return "6b1cfec7e9c89da93dc14172afffc5db";
 #endif
     }
 #if BUILDFLAG(IS_APPLE) && defined(ARCH_CPU_ARM64)
@@ -1514,7 +1514,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
 #elif BUILDFLAG(IS_APPLE)
       return "25c03a641c8a7cac9845f8d38e54f90b";
 #else
-      return "707320c806ed846c73ca2be8b2328bcd";
+      return "007960dd422d0999f71a9de0faa29b07";
 #endif
     }
 #if BUILDFLAG(IS_APPLE) && defined(ARCH_CPU_ARM64)
@@ -1659,13 +1659,13 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
 #elif BUILDFLAG(IS_APPLE)
       return "0f6501f8e22441630bdd535363c93e59";
 #else
-      return "1814140b1a9a9776546af7894e21d17f";
+      return "8b8618de537ec6aee1f3fc53fedfbcfc";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
     return "0521eaa52fe2aa43aafd3e4495f63f0b";
 #else
-    return "5f19ddad9d48f5b7b87ee7d92f577db6";
+    return "8b8618de537ec6aee1f3fc53fedfbcfc";
 #endif
   }();
 
