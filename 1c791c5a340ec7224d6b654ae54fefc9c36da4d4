@@ -33,6 +33,23 @@
       "message": "Review-Enforcement +1.",
       "revId": "1c791c5a340ec7224d6b654ae54fefc9c36da4d4",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f065d8ef_df3f218f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 14
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-09-17T16:50:36Z",
+      "side": 1,
+      "message": "Closing stale lifetime comments.",
+      "revId": "1c791c5a340ec7224d6b654ae54fefc9c36da4d4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
