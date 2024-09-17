@@ -79,11 +79,10 @@ const char kFormCalcRuntime[] = "pfm_rt";
 
 CFXJSE_Engine::ResolveResult::ResolveResult() = default;
 
-CFXJSE_Engine::ResolveResult::ResolveResult(const ResolveResult& that) =
-    default;
+CFXJSE_Engine::ResolveResult::ResolveResult(ResolveResult&& that) = default;
 
 CFXJSE_Engine::ResolveResult& CFXJSE_Engine::ResolveResult::operator=(
-    const ResolveResult& that) = default;
+    ResolveResult&& that) = default;
 
 CFXJSE_Engine::ResolveResult::~ResolveResult() = default;
 
