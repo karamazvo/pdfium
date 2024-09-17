@@ -615,9 +615,9 @@ TEST_F(FPDFEditEmbedderTest, AddPaths) {
   {
     const char* last_checksum = []() {
       if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-        return "423b20c18c177e78c93d8b67594e49f1";
+        return "ed14c60702b1489c597c7d46ece7f86d";
       }
-      return "111c38e9bf9e2ba0a57b875cca596fff";
+      return "9823e1a21bd9b72b6a442ba4f12af946";
     }();
     VerifySavedDocument(612, 792, last_checksum);
   }
@@ -1473,7 +1473,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkedObjectsPrime) {
 #ifdef ARCH_CPU_ARM64
       return "401858d37db450bfd3f9458ac490eb08";
 #else
-      return "966579fb98206858ce2f0a1f94a74d05";
+      return "6275396f29951f92f8f5e145f0eff03a";
 #endif  // ARCH_CPU_ARM64
 #else
       return "3d5a3de53d5866044c2b6bf339742c97";
@@ -2010,7 +2010,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveAllFromStream) {
 #if ARCH_CPU_ARM64
     return "a47297bbcfa01e27891eeb52375b6f9e";
 #else
-    return "3cdc75af44c15bed80998facd6e674c9";
+    return "1c1d478b59e3e63813f0f56124564f48";
 #endif  // ARCH_CPU_ARM64
 #else
     return "b474826df1acedb05c7b82e1e49e64a6";
