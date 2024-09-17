@@ -77,7 +77,7 @@ TEST(fxstring, ByteStringToFloat) {
   EXPECT_FLOAT_EQ(0.25f, StringToFloat(L"+0.25"));
 
   // TODO(crbug.com/367395351): Scientific notation should not be allowed.
-  EXPECT_FLOAT_EQ(1.2034, StringToFloat("1.2e34"));
+  EXPECT_FLOAT_EQ(1.2, StringToFloat("1.2e34"));
 
   EXPECT_FLOAT_EQ(std::numeric_limits<float>::infinity(),
                   StringToFloat("999999999999999999999999999999999999999"));
@@ -87,8 +87,7 @@ TEST(fxstring, ByteStringToFloat) {
   EXPECT_FLOAT_EQ(0.0f, StringToFloat("invalid"));
 
   // Test the exact float value.
-  // TODO(crbug.com/366309453): Should round to 38.89528656005859375f.
-  EXPECT_EQ(38.895282745361328125f, StringToFloat("38.895285"));
+  EXPECT_EQ(38.89528656005859375f, StringToFloat("38.895285"));
 }
 
 TEST(fxstring, WideStringToFloat) {
@@ -116,7 +115,7 @@ TEST(fxstring, WideStringToFloat) {
   EXPECT_FLOAT_EQ(0.25f, StringToFloat(L"+0.25"));
 
   // TODO(crbug.com/367395351): Scientific notation should not be allowed.
-  EXPECT_FLOAT_EQ(1.2034, StringToFloat(L"1.2e34"));
+  EXPECT_FLOAT_EQ(1.2, StringToFloat(L"1.2e34"));
 
   EXPECT_FLOAT_EQ(std::numeric_limits<float>::infinity(),
                   StringToFloat(L"999999999999999999999999999999999999999"));
@@ -126,8 +125,7 @@ TEST(fxstring, WideStringToFloat) {
   EXPECT_FLOAT_EQ(0.0f, StringToFloat(L"invalid"));
 
   // Test the exact float value.
-  // TODO(crbug.com/366309453): Should round to 38.89528656005859375f.
-  EXPECT_EQ(38.895282745361328125f, StringToFloat(L"38.895285"));
+  EXPECT_EQ(38.89528656005859375f, StringToFloat(L"38.895285"));
 }
 
 TEST(fxstring, ByteStringToDouble) {
@@ -155,7 +153,7 @@ TEST(fxstring, ByteStringToDouble) {
   EXPECT_DOUBLE_EQ(0.25, StringToDouble("+0.25"));
 
   // TODO(crbug.com/367395351): Scientific notation should not be allowed.
-  EXPECT_DOUBLE_EQ(1.2034, StringToDouble("1.2e34"));
+  EXPECT_DOUBLE_EQ(1.2, StringToDouble("1.2e34"));
 
   EXPECT_DOUBLE_EQ(
       std::numeric_limits<double>::infinity(),
@@ -177,8 +175,7 @@ TEST(fxstring, ByteStringToDouble) {
   EXPECT_DOUBLE_EQ(0.0, StringToDouble("invalid"));
 
   // Test the exact double value.
-  // TODO(crbug.com/366309453): Should round to 1.9998779296892903.
-  EXPECT_EQ(1.9998779296800002, StringToDouble("1.99987792968929034"));
+  EXPECT_EQ(1.9998779296892903, StringToDouble("1.99987792968929034"));
 }
 
 TEST(fxstring, WideStringToDouble) {
@@ -206,7 +203,7 @@ TEST(fxstring, WideStringToDouble) {
   EXPECT_DOUBLE_EQ(0.25, StringToDouble(L"+0.25"));
 
   // TODO(crbug.com/367395351): Scientific notation should not be allowed.
-  EXPECT_DOUBLE_EQ(1.2034, StringToDouble(L"1.2e34"));
+  EXPECT_DOUBLE_EQ(1.2, StringToDouble(L"1.2e34"));
 
   EXPECT_DOUBLE_EQ(
       std::numeric_limits<double>::infinity(),
@@ -228,8 +225,7 @@ TEST(fxstring, WideStringToDouble) {
   EXPECT_DOUBLE_EQ(0.0, StringToDouble(L"invalid"));
 
   // Test the exact double value.
-  // TODO(crbug.com/366309453): Should round to 1.9998779296892903.
-  EXPECT_EQ(1.9998779296800002, StringToDouble(L"1.99987792968929034"));
+  EXPECT_EQ(1.9998779296892903, StringToDouble(L"1.99987792968929034"));
 }
 
 TEST(fxstring, SplitByteString) {
