@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "39298592_013d9e02",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 15
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-19T14:32:33Z",
+      "side": 1,
+      "message": "thank you both for review, patience and your guidance.!\nas i am not a commiter i cannot CQ+2 - can one of you submit it?",
+      "revId": "6c9592df29b29ac7b3fab4f497690099389961d4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
