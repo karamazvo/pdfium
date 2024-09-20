@@ -23,7 +23,6 @@ class CPWLComboBoxEmbedderTest : public EmbedderTest {
   void CreateAndInitializeFormComboboxPDF();
   void FormFillerAndWindowSetup(CPDFSDK_Widget* pAnnotCombobox);
   void TypeTextIntoTextField(int num_chars);
-  FPDF_PAGE GetPage() const { return m_page; }
   CPWL_ComboBox* GetCPWLComboBox() const { return m_pComboBox; }
   CFFL_FormField* GetCFFLFormField() const { return m_pFormField; }
   CPDFSDK_Widget* GetCPDFSDKAnnotNormal() const { return m_pAnnotNormal; }
@@ -36,7 +35,6 @@ class CPWLComboBoxEmbedderTest : public EmbedderTest {
   CPDFSDK_PageView* GetPageView() const { return m_pPageView; }
 
  private:
-  FPDF_PAGE m_page;
   CPWL_ComboBox* m_pComboBox = nullptr;
   CFFL_FormField* m_pFormField = nullptr;
   CPDFSDK_Widget* m_pAnnotNormal = nullptr;
