@@ -10,6 +10,9 @@
 class CFFLComboBoxEmbedderTest : public CPWLComboBoxEmbedderTest {};
 
 TEST_F(CFFLComboBoxEmbedderTest, GetActionData) {
+  std::optional<ScopedEmbedderTestPage> page =
+      CreateAndInitializeFormComboboxPDF();
+  ASSERT_TRUE(page.has_value());
   FormFillerAndWindowSetup(GetCPDFSDKAnnotNormal());
   {
     CFFL_FieldAction result;
@@ -35,6 +38,9 @@ TEST_F(CFFLComboBoxEmbedderTest, GetActionData) {
 }
 
 TEST_F(CFFLComboBoxEmbedderTest, SetActionData) {
+  std::optional<ScopedEmbedderTestPage> page =
+      CreateAndInitializeFormComboboxPDF();
+  ASSERT_TRUE(page.has_value());
   FormFillerAndWindowSetup(GetCPDFSDKAnnotNormal());
   CFFL_FieldAction input_fa;
   input_fa.nSelStart = 2;
