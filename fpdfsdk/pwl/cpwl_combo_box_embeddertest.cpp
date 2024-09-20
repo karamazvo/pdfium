@@ -17,19 +17,10 @@
 
 void CPWLComboBoxEmbedderTest::SetUp() {
   EmbedderTest::SetUp();
-  CreateAndInitializeFormComboboxPDF();
-}
-
-void CPWLComboBoxEmbedderTest::TearDown() {
-  UnloadPage(GetPage());
-  EmbedderTest::TearDown();
+  ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
 }
 
 void CPWLComboBoxEmbedderTest::CreateAndInitializeFormComboboxPDF() {
-  ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
-  m_page = LoadPage(0);
-  ASSERT_TRUE(m_page);
-
   m_pFormFillEnv = CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
   m_pPageView = m_pFormFillEnv->GetPageViewAtIndex(0);
   CPDFSDK_AnnotIterator iter(m_pPageView, {CPDF_Annot::Subtype::WIDGET});
