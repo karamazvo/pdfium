@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "58cd5625_8e675651",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-20T20:23:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "167387d2_98d88a70",
+      "range": {
+        "startLine": 7,
+        "startChar": 27,
+        "endLine": 7,
+        "endChar": 38
+      },
+      "revId": "6f7cfc5e87095a514060e9405f5522740d87b073",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "820f9b8a_52d49f8c",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1
@@ -58,6 +82,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6b0ede84_414c97a5",
+        "filename": "fpdfsdk/cpdfsdk_baannot_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-20T20:23:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f7ede9f9_f982a6ab",
+      "revId": "6f7cfc5e87095a514060e9405f5522740d87b073",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ec11454d_a5e7966f",
@@ -71,6 +113,24 @@
       "writtenOn": "2024-09-20T17:14:52Z",
       "side": 1,
       "message": "Same here. Just delete this override if the UnloadPage() call is gone.",
+      "revId": "6f7cfc5e87095a514060e9405f5522740d87b073",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c36bae5a_d994842c",
+        "filename": "fpdfsdk/pwl/cpwl_combo_box_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-20T20:23:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ec11454d_a5e7966f",
       "revId": "6f7cfc5e87095a514060e9405f5522740d87b073",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -92,6 +152,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0fef9ba7_43637f00",
+        "filename": "fpdfsdk/pwl/cpwl_combo_box_embeddertest.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-20T20:23:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "77b0bb6e_22e4087a",
+      "revId": "6f7cfc5e87095a514060e9405f5522740d87b073",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "275c93ee_d73b768a",
@@ -109,6 +187,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "174b7a31_3421ad62",
+        "filename": "fpdfsdk/pwl/cpwl_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-20T20:23:49Z",
+      "side": 1,
+      "message": "ohhh wow TIL, thank you, i didn\u0027t expect that to work.\n\ni thought:\n\n```\n  ScopedEmbedderTestPage CreateAndInitializeFormPDF() {\n    ScopedEmbedderTestPage page \u003d LoadScopedPage(0);\n    ... SOME CODE ...\n    return page; // ----\u003e that it goes out of scope here\n```",
+      "parentUuid": "275c93ee_d73b768a",
+      "revId": "6f7cfc5e87095a514060e9405f5522740d87b073",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b164d592_5bedc32c",
@@ -122,6 +218,24 @@
       "writtenOn": "2024-09-20T17:14:52Z",
       "side": 1,
       "message": "Please delete this and line 87.",
+      "revId": "6f7cfc5e87095a514060e9405f5522740d87b073",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e29af323_6685c0d2",
+        "filename": "fpdfsdk/pwl/cpwl_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-20T20:23:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b164d592_5bedc32c",
       "revId": "6f7cfc5e87095a514060e9405f5522740d87b073",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
