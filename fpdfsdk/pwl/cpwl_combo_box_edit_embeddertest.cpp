@@ -4,6 +4,8 @@
 
 #include "fpdfsdk/pwl/cpwl_combo_box_embeddertest.h"
 
+#include <optional>
+
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
@@ -18,6 +20,10 @@
 class CPWLComboBoxEditEmbedderTest : public CPWLComboBoxEmbedderTest {};
 
 TEST_F(CPWLComboBoxEditEmbedderTest, GetSelectedTextEmptyAndBasicNormal) {
+  std::optional<ScopedEmbedderTestPage> page =
+      CreateAndInitializeFormComboboxPDF();
+  ASSERT_TRUE(page.has_value());
+
   FormFillerAndWindowSetup(GetCPDFSDKAnnotNormal());
 
   // Automatically pre-filled with "Banana".
@@ -40,6 +46,10 @@ TEST_F(CPWLComboBoxEditEmbedderTest, GetSelectedTextEmptyAndBasicNormal) {
 }
 
 TEST_F(CPWLComboBoxEditEmbedderTest, GetSelectedTextFragmentsNormal) {
+  std::optional<ScopedEmbedderTestPage> page =
+      CreateAndInitializeFormComboboxPDF();
+  ASSERT_TRUE(page.has_value());
+
   FormFillerAndWindowSetup(GetCPDFSDKAnnotNormal());
   EXPECT_EQ(L"Banana", GetCPWLComboBox()->GetText());
 
@@ -66,6 +76,10 @@ TEST_F(CPWLComboBoxEditEmbedderTest, GetSelectedTextFragmentsNormal) {
 }
 
 TEST_F(CPWLComboBoxEditEmbedderTest, GetSelectedTextEmptyAndBasicEditable) {
+  std::optional<ScopedEmbedderTestPage> page =
+      CreateAndInitializeFormComboboxPDF();
+  ASSERT_TRUE(page.has_value());
+
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   EXPECT_TRUE(GetCPWLComboBox()->GetText().IsEmpty());
 
@@ -95,6 +109,10 @@ TEST_F(CPWLComboBoxEditEmbedderTest, GetSelectedTextEmptyAndBasicEditable) {
 }
 
 TEST_F(CPWLComboBoxEditEmbedderTest, GetSelectedTextFragmentsEditable) {
+  std::optional<ScopedEmbedderTestPage> page =
+      CreateAndInitializeFormComboboxPDF();
+  ASSERT_TRUE(page.has_value());
+
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(50);
 
@@ -125,6 +143,10 @@ TEST_F(CPWLComboBoxEditEmbedderTest, GetSelectedTextFragmentsEditable) {
 }
 
 TEST_F(CPWLComboBoxEditEmbedderTest, DeleteEntireTextSelection) {
+  std::optional<ScopedEmbedderTestPage> page =
+      CreateAndInitializeFormComboboxPDF();
+  ASSERT_TRUE(page.has_value());
+
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(50);
 
@@ -137,6 +159,10 @@ TEST_F(CPWLComboBoxEditEmbedderTest, DeleteEntireTextSelection) {
 }
 
 TEST_F(CPWLComboBoxEditEmbedderTest, DeleteTextSelectionMiddle) {
+  std::optional<ScopedEmbedderTestPage> page =
+      CreateAndInitializeFormComboboxPDF();
+  ASSERT_TRUE(page.has_value());
+
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(50);
 
@@ -149,6 +175,10 @@ TEST_F(CPWLComboBoxEditEmbedderTest, DeleteTextSelectionMiddle) {
 }
 
 TEST_F(CPWLComboBoxEditEmbedderTest, DeleteTextSelectionLeft) {
+  std::optional<ScopedEmbedderTestPage> page =
+      CreateAndInitializeFormComboboxPDF();
+  ASSERT_TRUE(page.has_value());
+
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(50);
 
@@ -161,6 +191,10 @@ TEST_F(CPWLComboBoxEditEmbedderTest, DeleteTextSelectionLeft) {
 }
 
 TEST_F(CPWLComboBoxEditEmbedderTest, DeleteTextSelectionRight) {
+  std::optional<ScopedEmbedderTestPage> page =
+      CreateAndInitializeFormComboboxPDF();
+  ASSERT_TRUE(page.has_value());
+
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(50);
 
@@ -173,6 +207,10 @@ TEST_F(CPWLComboBoxEditEmbedderTest, DeleteTextSelectionRight) {
 }
 
 TEST_F(CPWLComboBoxEditEmbedderTest, DeleteEmptyTextSelection) {
+  std::optional<ScopedEmbedderTestPage> page =
+      CreateAndInitializeFormComboboxPDF();
+  ASSERT_TRUE(page.has_value());
+
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(50);
 
@@ -182,6 +220,10 @@ TEST_F(CPWLComboBoxEditEmbedderTest, DeleteEmptyTextSelection) {
 }
 
 TEST_F(CPWLComboBoxEditEmbedderTest, InsertTextInEmptyEditableComboBox) {
+  std::optional<ScopedEmbedderTestPage> page =
+      CreateAndInitializeFormComboboxPDF();
+  ASSERT_TRUE(page.has_value());
+
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   GetCPWLComboBox()->ReplaceSelection(L"Hello");
   EXPECT_EQ(L"Hello", GetCPWLComboBox()->GetText());
@@ -189,6 +231,10 @@ TEST_F(CPWLComboBoxEditEmbedderTest, InsertTextInEmptyEditableComboBox) {
 
 TEST_F(CPWLComboBoxEditEmbedderTest,
        InsertTextInPopulatedEditableComboBoxLeft) {
+  std::optional<ScopedEmbedderTestPage> page =
+      CreateAndInitializeFormComboboxPDF();
+  ASSERT_TRUE(page.has_value());
+
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(10);
 
@@ -201,6 +247,10 @@ TEST_F(CPWLComboBoxEditEmbedderTest,
 
 TEST_F(CPWLComboBoxEditEmbedderTest,
        InsertTextInPopulatedEditableComboBoxMiddle) {
+  std::optional<ScopedEmbedderTestPage> page =
+      CreateAndInitializeFormComboboxPDF();
+  ASSERT_TRUE(page.has_value());
+
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(10);
 
@@ -215,6 +265,10 @@ TEST_F(CPWLComboBoxEditEmbedderTest,
 
 TEST_F(CPWLComboBoxEditEmbedderTest,
        InsertTextInPopulatedEditableComboBoxRight) {
+  std::optional<ScopedEmbedderTestPage> page =
+      CreateAndInitializeFormComboboxPDF();
+  ASSERT_TRUE(page.has_value());
+
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(10);
 
@@ -224,6 +278,10 @@ TEST_F(CPWLComboBoxEditEmbedderTest,
 
 TEST_F(CPWLComboBoxEditEmbedderTest,
        InsertTextAndReplaceSelectionInPopulatedEditableComboBoxWhole) {
+  std::optional<ScopedEmbedderTestPage> page =
+      CreateAndInitializeFormComboboxPDF();
+  ASSERT_TRUE(page.has_value());
+
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(10);
 
@@ -235,6 +293,10 @@ TEST_F(CPWLComboBoxEditEmbedderTest,
 
 TEST_F(CPWLComboBoxEditEmbedderTest,
        InsertTextAndReplaceSelectionInPopulatedEditableComboBoxLeft) {
+  std::optional<ScopedEmbedderTestPage> page =
+      CreateAndInitializeFormComboboxPDF();
+  ASSERT_TRUE(page.has_value());
+
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(10);
 
@@ -246,6 +308,10 @@ TEST_F(CPWLComboBoxEditEmbedderTest,
 
 TEST_F(CPWLComboBoxEditEmbedderTest,
        InsertTextAndReplaceSelectionInPopulatedEditableComboBoxMiddle) {
+  std::optional<ScopedEmbedderTestPage> page =
+      CreateAndInitializeFormComboboxPDF();
+  ASSERT_TRUE(page.has_value());
+
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(10);
 
@@ -257,6 +323,10 @@ TEST_F(CPWLComboBoxEditEmbedderTest,
 
 TEST_F(CPWLComboBoxEditEmbedderTest,
        InsertTextAndReplaceSelectionInPopulatedEditableComboBoxRight) {
+  std::optional<ScopedEmbedderTestPage> page =
+      CreateAndInitializeFormComboboxPDF();
+  ASSERT_TRUE(page.has_value());
+
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(10);
 
@@ -267,6 +337,10 @@ TEST_F(CPWLComboBoxEditEmbedderTest,
 }
 
 TEST_F(CPWLComboBoxEditEmbedderTest, ReplaceAndKeepSelection) {
+  std::optional<ScopedEmbedderTestPage> page =
+      CreateAndInitializeFormComboboxPDF();
+  ASSERT_TRUE(page.has_value());
+
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(10);
 

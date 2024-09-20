@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <cstddef>
+#include <optional>
 #include <vector>
 
 #include "core/fxcrt/check.h"
@@ -17,25 +19,27 @@ class CPDFSDKBAAnnotTest : public EmbedderTest {
  public:
   void SetUp() override {
     EmbedderTest::SetUp();
-    SetUpBAAnnot();
-  }
-
-  void TearDown() override {
-    UnloadPage(m_page);
-    EmbedderTest::TearDown();
-  }
-
-  void SetUpBAAnnot() {
     ASSERT_TRUE(OpenDocument("links_highlights_annots.pdf"));
-    m_page = LoadPage(0);
-    ASSERT_TRUE(m_page);
+  }
 
+  std::optional<ScopedEmbedderTestPage> SetUpBAAnnot() {
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
     m_pFormFillEnv =
         CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
-    ASSERT_TRUE(m_pFormFillEnv);
+    if (!m_pFormFillEnv) {
+      EXPECT_TRUE(m_pFormFillEnv);
+      return page;
+    }
+
     m_pPageView =
-        m_pFormFillEnv->GetOrCreatePageView(IPDFPageFromFPDFPage(m_page));
-    ASSERT_TRUE(m_pPageView);
+        m_pFormFillEnv->GetOrCreatePageView(IPDFPageFromFPDFPage(page.get()));
+
+    if (!m_pPageView) {
+      EXPECT_TRUE(m_pPageView);
+      return page;
+    }
+
+    return page;
   }
 
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const { return m_pFormFillEnv; }
@@ -57,12 +61,14 @@ class CPDFSDKBAAnnotTest : public EmbedderTest {
   }
 
  private:
-  FPDF_PAGE m_page = nullptr;
   CPDFSDK_PageView* m_pPageView = nullptr;
   CPDFSDK_FormFillEnvironment* m_pFormFillEnv = nullptr;
 };
 
 TEST_F(CPDFSDKBAAnnotTest, TabToLinkOrHighlightAnnot) {
+  std::optional<ScopedEmbedderTestPage> page = SetUpBAAnnot();
+  ASSERT_TRUE(page.has_value());
+
   std::vector<CPDF_Annot::Subtype> focusable_annot_types = {
       CPDF_Annot::Subtype::WIDGET, CPDF_Annot::Subtype::LINK,
       CPDF_Annot::Subtype::HIGHLIGHT};
