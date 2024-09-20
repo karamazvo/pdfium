@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eeb76c88_88d09d47",
+        "filename": "fpdfsdk/cpdfsdk_baannot_embeddertest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-20T23:31:20Z",
+      "side": 1,
+      "message": "Need to check if `page` is valid and return early if it is not.",
+      "revId": "e1cdbc4ac9688acdab399951370c0220df864f33",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "939a3507_03ebd3b4",
+        "filename": "fpdfsdk/cpdfsdk_baannot_embeddertest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-20T23:31:20Z",
+      "side": 1,
+      "message": "Instead of sort of repeating the previous line, call ADD_FAILURE().",
+      "revId": "e1cdbc4ac9688acdab399951370c0220df864f33",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
