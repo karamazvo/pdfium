@@ -1,6 +1,29 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "167387d2_98d88a70",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-20T17:14:52Z",
+      "side": 1,
+      "message": "\"in //fpdfsdk/pwl\"",
+      "range": {
+        "startLine": 7,
+        "startChar": 27,
+        "endLine": 7,
+        "endChar": 38
+      },
+      "revId": "6f7cfc5e87095a514060e9405f5522740d87b073",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "820f9b8a_52d49f8c",
@@ -14,6 +37,91 @@
       "writtenOn": "2024-09-20T13:32:19Z",
       "side": 1,
       "message": "here is another try on the leftovers from the LoadScopedPage change.\n\ni am not 100% sure if this is the expected outcome you imagined with the bug.\ndecided against some unique_ptr\u0027s and went the way in adding \"more\" code but reaching the scoping this way.\n\nlet me know what you think.\n\n\nafter this CL, there would be only 2 more calls in `/fpdfsdk/fpdf_formfill_embeddertest.cpp` left (but tackling this, would require touching ALOT tests)\n\ni am not sure if we should keep LoadPage there, or just modify all; wanted to know the overall feedback first.",
+      "revId": "6f7cfc5e87095a514060e9405f5522740d87b073",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f7ede9f9_f982a6ab",
+        "filename": "fpdfsdk/cpdfsdk_baannot_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-20T17:14:52Z",
+      "side": 1,
+      "message": "Since the only thing CPDFSDKBAAnnotTest::TearDown() does now is call TearDown() on its parent class, it can be removed entirely.",
+      "revId": "6f7cfc5e87095a514060e9405f5522740d87b073",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ec11454d_a5e7966f",
+        "filename": "fpdfsdk/pwl/cpwl_combo_box_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-20T17:14:52Z",
+      "side": 1,
+      "message": "Same here. Just delete this override if the UnloadPage() call is gone.",
+      "revId": "6f7cfc5e87095a514060e9405f5522740d87b073",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "77b0bb6e_22e4087a",
+        "filename": "fpdfsdk/pwl/cpwl_combo_box_embeddertest.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-20T17:14:52Z",
+      "side": 1,
+      "message": "I think this can be removed, since \"FPDF\" no longer appears in this file.",
+      "revId": "6f7cfc5e87095a514060e9405f5522740d87b073",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "275c93ee_d73b768a",
+        "filename": "fpdfsdk/pwl/cpwl_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-20T17:14:52Z",
+      "side": 1,
+      "message": "Maybe CreateAndInitializeFormComboboxPDF() can call LoadScopedPage(0), and return the ScopedEmbedderTestPage object? Then all the test cases can just make a single calls instead of 2.",
+      "revId": "6f7cfc5e87095a514060e9405f5522740d87b073",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b164d592_5bedc32c",
+        "filename": "fpdfsdk/pwl/cpwl_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-20T17:14:52Z",
+      "side": 1,
+      "message": "Please delete this and line 87.",
       "revId": "6f7cfc5e87095a514060e9405f5522740d87b073",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
