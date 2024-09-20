@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "523ef0ec_f855c93c",
+        "filename": "fpdfsdk/cpdfsdk_baannot_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-20T20:57:37Z",
+      "side": 1,
+      "message": "Can also return a scoper.",
+      "revId": "9e3283f0171d462e34df8f7fb3bbd805607d9024",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4caadab3_0ae560ac",
+        "filename": "fpdfsdk/pwl/cpwl_combo_box_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-20T20:57:37Z",
+      "side": 1,
+      "message": "Can also return a scoper.",
+      "revId": "9e3283f0171d462e34df8f7fb3bbd805607d9024",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "89542fc1_01fe2725",
+        "filename": "fpdfsdk/pwl/cpwl_edit_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-20T20:57:37Z",
+      "side": 1,
+      "message": "Yes, ASSERT_TRUE() no longer works, but EXPECT_TRUE() is not quite the same. As an example, previously ASSERT_TRUE() would have caused CreateAndInitializeFormPDF() to return, but now the next line runs and can crash if this check fails.\n\nInstead, all these branches need to return nullptr, and the CreateAndInitializeFormPDF() callers should check they got a non-null page.",
+      "revId": "9e3283f0171d462e34df8f7fb3bbd805607d9024",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
