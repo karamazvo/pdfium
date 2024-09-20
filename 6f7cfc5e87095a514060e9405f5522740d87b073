@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "820f9b8a_52d49f8c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-20T13:32:19Z",
+      "side": 1,
+      "message": "here is another try on the leftovers from the LoadScopedPage change.\n\ni am not 100% sure if this is the expected outcome you imagined with the bug.\ndecided against some unique_ptr\u0027s and went the way in adding \"more\" code but reaching the scoping this way.\n\nlet me know what you think.\n\n\nafter this CL, there would be only 2 more calls in `/fpdfsdk/fpdf_formfill_embeddertest.cpp` left (but tackling this, would require touching ALOT tests)\n\ni am not sure if we should keep LoadPage there, or just modify all; wanted to know the overall feedback first.",
+      "revId": "6f7cfc5e87095a514060e9405f5522740d87b073",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
