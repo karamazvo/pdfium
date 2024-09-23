@@ -16,6 +16,24 @@
       "message": "I think this bot could be helpful in showing developers what changes need to happen as an FYI, but I don\u0027t think the bot will succeed very often. Using https://crrev.com/1348507 as the most recent examle, the Clang DEPS roll needs to also update Abseil and //tools/rust.\n\nIn practice, this means PDFium has to do the following all at once:\n1) Update GCS DEPS entries.\n2) Roll //tools/clang\n3) Roll //tools/rust\n4) Roll //third_party/abseil",
       "revId": "711564077e0be60aa896c97cdfc3cf7590b73b83",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a1c1a989_c23e3d1a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8426
+      },
+      "writtenOn": "2024-09-23T21:28:43Z",
+      "side": 1,
+      "message": "My understanding was that in chromium/src //tools/clang and //tools/rust are rolled (producing that example CL) producing new GCS deps versions for src/third_party/llvm-build/Release+Asserts and src/third_party/rust-toolchain. Then, pdfium would want to update the pdfium DEPS file to match the new versions in the src DEPS. I\u0027m thinking that this builder would run once a day and it would catch when the src DEPS are changed and sync as appropriate. Am I missing something?\n\nAs for third_party/abseil, I\u0027m not familiar with how it relates to the clang and rust rolls.",
+      "parentUuid": "60e3a96c_29701ad5",
+      "revId": "711564077e0be60aa896c97cdfc3cf7590b73b83",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
