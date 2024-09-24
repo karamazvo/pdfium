@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4dc7b7b3_f5f02706",
+        "filename": "fpdfsdk/cpdfsdk_baannot_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-24T21:23:18Z",
+      "side": 1,
+      "message": "No longer needed. Same in fpdfsdk/pwl/cpwl_combo_box_edit_embeddertest.cpp.",
+      "revId": "a1bf2ad84d9f7c7ed8b0da361452dbf4ce36bc71",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4970943e_b1972965",
+        "filename": "fpdfsdk/pwl/cpwl_edit_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-24T21:23:18Z",
+      "side": 1,
+      "message": "More ADD_FAILURE() here.",
+      "revId": "a1bf2ad84d9f7c7ed8b0da361452dbf4ce36bc71",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cd2cc78d_381ec43a",
+        "filename": "testing/embedder_test.h",
+        "patchSetId": 9
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-24T21:23:18Z",
+      "side": 1,
+      "message": "1) Move the 0-param ctor above the 2-param ctor to sort the ctors list.\n2) Can the definition be in the .cpp file?",
+      "revId": "a1bf2ad84d9f7c7ed8b0da361452dbf4ce36bc71",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

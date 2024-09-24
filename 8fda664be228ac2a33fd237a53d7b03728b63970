@@ -36,6 +36,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "be8721b0_cfc230f5",
+        "filename": "fpdfsdk/cpdfsdk_baannot_embeddertest.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-24T21:23:18Z",
+      "side": 1,
+      "message": "Yep!",
+      "parentUuid": "e0bc17b1_9915614d",
+      "revId": "8fda664be228ac2a33fd237a53d7b03728b63970",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c42db802_ac8ff95a",
