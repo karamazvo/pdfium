@@ -92,6 +92,7 @@ class EmbedderTest : public ::testing::Test,
   class ScopedEmbedderTestPage {
    public:
     ScopedEmbedderTestPage(EmbedderTest* test, int page_index);
+    ScopedEmbedderTestPage() : test_(nullptr), page_(nullptr) {}
     ScopedEmbedderTestPage(const ScopedEmbedderTestPage&) = delete;
     ScopedEmbedderTestPage& operator=(const ScopedEmbedderTestPage&) = delete;
     ScopedEmbedderTestPage(ScopedEmbedderTestPage&&) noexcept;
