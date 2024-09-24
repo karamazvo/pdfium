@@ -34,6 +34,24 @@
       "parentUuid": "60e3a96c_29701ad5",
       "revId": "711564077e0be60aa896c97cdfc3cf7590b73b83",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b944b5fe_e9786a26",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-24T00:39:06Z",
+      "side": 1,
+      "message": "Yes, that is generally what PDFium wants to do. However, from experience, the Chromium Clang rolls oftentimes involve more than just purely updating //tools/clang and the GCS DEPS entries. Which is why I\u0027m saying the auto-roller won\u0027t actually succeed. What can happen is a PDFium developer can clone the auto-roller\u0027s failed CL to get a head start, and then patch that up with all the other bits, .e.g third_party/abseil, to make a CL that will pass try bots.",
+      "parentUuid": "a1c1a989_c23e3d1a",
+      "revId": "711564077e0be60aa896c97cdfc3cf7590b73b83",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
