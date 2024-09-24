@@ -70,6 +70,24 @@
       "parentUuid": "b944b5fe_e9786a26",
       "revId": "711564077e0be60aa896c97cdfc3cf7590b73b83",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fed64c4c_039395f3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-24T16:38:54Z",
+      "side": 1,
+      "message": "Yes, we can. Even if the CLs it creates fails, PDFium developers can take the failed CL and run with it. The builder should have longer (~2 week cooldown) since PDFium only syncs Chromium DEPS about once a month.",
+      "parentUuid": "cd19c3db_6943cbaa",
+      "revId": "711564077e0be60aa896c97cdfc3cf7590b73b83",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
