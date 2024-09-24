@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7a580a4c_e041a670",
+        "filename": "fpdfsdk/cpdfsdk_baannot_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-24T21:30:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4dc7b7b3_f5f02706",
+      "revId": "a1bf2ad84d9f7c7ed8b0da361452dbf4ce36bc71",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4970943e_b1972965",
@@ -35,6 +53,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7d54871c_05647e51",
+        "filename": "fpdfsdk/pwl/cpwl_edit_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-24T21:30:44Z",
+      "side": 1,
+      "message": "adding more failure is my kind of thing 😂",
+      "parentUuid": "4970943e_b1972965",
+      "revId": "a1bf2ad84d9f7c7ed8b0da361452dbf4ce36bc71",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cd2cc78d_381ec43a",
@@ -48,6 +84,24 @@
       "writtenOn": "2024-09-24T21:23:18Z",
       "side": 1,
       "message": "1) Move the 0-param ctor above the 2-param ctor to sort the ctors list.\n2) Can the definition be in the .cpp file?",
+      "revId": "a1bf2ad84d9f7c7ed8b0da361452dbf4ce36bc71",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d73e0e36_8d5fe78e",
+        "filename": "testing/embedder_test.h",
+        "patchSetId": 9
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-24T21:30:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cd2cc78d_381ec43a",
       "revId": "a1bf2ad84d9f7c7ed8b0da361452dbf4ce36bc71",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
