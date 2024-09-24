@@ -52,6 +52,24 @@
       "parentUuid": "a1c1a989_c23e3d1a",
       "revId": "711564077e0be60aa896c97cdfc3cf7590b73b83",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cd19c3db_6943cbaa",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8426
+      },
+      "writtenOn": "2024-09-24T16:26:38Z",
+      "side": 1,
+      "message": "I see. Would you still want this builder set up then? I just wanted to get one builder started to serve as an example for other repos. No worries if you\u0027d rather pass on setting this up,",
+      "parentUuid": "b944b5fe_e9786a26",
+      "revId": "711564077e0be60aa896c97cdfc3cf7590b73b83",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
