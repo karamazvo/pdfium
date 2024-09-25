@@ -16,6 +16,87 @@
       "message": "is `pdfium_unittests`  the right test target? if so - they all pass.\nhappy to address any given feedback, how strict is backward compatibility of the methods?",
       "revId": "d7ca1ee4149e1be673f564da2ee8ad7522a94efb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fae81e3c_3c2757e7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-25T19:13:31Z",
+      "side": 1,
+      "message": "Probably need to run pixel / corpus tests with the GDI flag on Windows to exercise the code. But then again, this should be ok as long as it compiles.\n\nPDFium has added a return value to a few public APIs that returned void previously. So far, no complaints.",
+      "parentUuid": "ce6aabae_d3c2d569",
+      "revId": "d7ca1ee4149e1be673f564da2ee8ad7522a94efb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ecb4528f_d8ba6341",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 628,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-25T19:13:31Z",
+      "side": 1,
+      "message": "style: render_result",
+      "range": {
+        "startLine": 628,
+        "startChar": 7,
+        "endLine": 628,
+        "endChar": 19
+      },
+      "revId": "d7ca1ee4149e1be673f564da2ee8ad7522a94efb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "59894801_581f5193",
+        "filename": "public/fpdfview.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 853,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-25T19:13:31Z",
+      "side": 1,
+      "message": "This doesn\u0027t add any information belong what\u0027s on the next line. A generic \"Returns true if ... else false.\" comment will suffice.",
+      "revId": "d7ca1ee4149e1be673f564da2ee8ad7522a94efb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "18444fc2_ca60b824",
+        "filename": "public/fpdfview.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 854,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-25T19:13:31Z",
+      "side": 1,
+      "message": "Please use FPDF_BOOL.",
+      "range": {
+        "startLine": 854,
+        "startChar": 12,
+        "endLine": 854,
+        "endChar": 16
+      },
+      "revId": "d7ca1ee4149e1be673f564da2ee8ad7522a94efb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
