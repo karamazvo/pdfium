@@ -36,6 +36,23 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8ebbd7bb_30a2f8df",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-25T19:36:35Z",
+      "side": 1,
+      "message": "feedback addressed, can you run the bots?",
+      "revId": "d7ca1ee4149e1be673f564da2ee8ad7522a94efb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ecb4528f_d8ba6341",
@@ -49,6 +66,30 @@
       "writtenOn": "2024-09-25T19:13:31Z",
       "side": 1,
       "message": "style: render_result",
+      "range": {
+        "startLine": 628,
+        "startChar": 7,
+        "endLine": 628,
+        "endChar": 19
+      },
+      "revId": "d7ca1ee4149e1be673f564da2ee8ad7522a94efb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7ddff9ad_c1d98ba8",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 628,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-25T19:36:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ecb4528f_d8ba6341",
       "range": {
         "startLine": 628,
         "startChar": 7,
@@ -76,6 +117,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "37506008_48e9bd25",
+        "filename": "public/fpdfview.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 853,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-25T19:36:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "59894801_581f5193",
+      "revId": "d7ca1ee4149e1be673f564da2ee8ad7522a94efb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "18444fc2_ca60b824",
@@ -89,6 +148,30 @@
       "writtenOn": "2024-09-25T19:13:31Z",
       "side": 1,
       "message": "Please use FPDF_BOOL.",
+      "range": {
+        "startLine": 854,
+        "startChar": 12,
+        "endLine": 854,
+        "endChar": 16
+      },
+      "revId": "d7ca1ee4149e1be673f564da2ee8ad7522a94efb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f4cca189_6477f055",
+        "filename": "public/fpdfview.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 854,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-25T19:36:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "18444fc2_ca60b824",
       "range": {
         "startLine": 854,
         "startChar": 12,
