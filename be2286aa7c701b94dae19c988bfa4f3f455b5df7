@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bdb0cfec_d51c49d9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2024-09-25T15:52:16Z",
+      "side": 1,
+      "message": "This would be my first contribution to chromium. Thank you for the help in figuring out where to place the code.",
+      "revId": "be2286aa7c701b94dae19c988bfa4f3f455b5df7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
