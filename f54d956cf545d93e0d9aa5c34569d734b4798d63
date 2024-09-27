@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2798fa5a_4cb1a906",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-27T13:25:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "02e847b8_c8a686fd",
+      "revId": "f54d956cf545d93e0d9aa5c34569d734b4798d63",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "909b0335_332ca212",
@@ -35,6 +53,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ccd6ece5_c63eaa5b",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 665,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-27T13:25:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "909b0335_332ca212",
+      "revId": "f54d956cf545d93e0d9aa5c34569d734b4798d63",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "04a60e78_48137a81",
@@ -48,6 +84,24 @@
       "writtenOn": "2024-09-25T19:46:11Z",
       "side": 1,
       "message": "Not gonna compile.",
+      "revId": "f54d956cf545d93e0d9aa5c34569d734b4798d63",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e71017ef_a8987042",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 681,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-09-27T13:25:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "04a60e78_48137a81",
       "revId": "f54d956cf545d93e0d9aa5c34569d734b4798d63",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
