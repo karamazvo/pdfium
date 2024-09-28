@@ -20,7 +20,7 @@
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
-
+#include "testing/helpers/compare_coordinates.h"
 using ::testing::ElementsAreArray;
 
 namespace {
@@ -31,8 +31,9 @@ constexpr int kHelloGoodbyeTextSize = std::size(kHelloGoodbyeText);
 bool check_unsigned_shorts(const char* expected,
                            const unsigned short* actual,
                            size_t length) {
-  if (length > strlen(expected) + 1)
+  if (length > strlen(expected) + 1) {
     return false;
+  }
 
   for (size_t i = 0; i < length; ++i) {
     if (UNSAFE_TODO(actual[i]) !=
@@ -976,8 +977,9 @@ TEST_F(FPDFTextEmbedderTest, GetFontInfo) {
   EXPECT_EQ(sizeof(kExpectedFontName1),
             FPDFText_GetFontInfo(textpage, 0, font_name.data(),
                                  font_name.size(), nullptr));
-  for (char a : font_name)
+  for (char a : font_name) {
     EXPECT_EQ('a', a);
+  }
 
   // The text is "Hello, world!\r\nGoodbye, world!", so the next two characters
   // do not have any font information.
@@ -1414,10 +1416,8 @@ TEST_F(FPDFTextEmbedderTest, CroppedText) {
 
     FS_RECTF box;
     EXPECT_TRUE(FPDF_GetPageBoundingBox(page.get(), &box));
-    EXPECT_EQ(kBoxes[i].left, box.left);
-    EXPECT_EQ(kBoxes[i].top, box.top);
-    EXPECT_EQ(kBoxes[i].right, box.right);
-    EXPECT_EQ(kBoxes[i].bottom, box.bottom);
+    Compare_FS_RECTF(kBoxes[i], box);  // runs EXPECT_FLOAT_EQ() calls on all
+                                       // the fields of the two objects
 
     ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
     ASSERT_TRUE(textpage);

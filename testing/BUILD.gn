@@ -254,6 +254,8 @@ config("pdfium_test_config") {
 executable("pdfium_test") {
   testonly = true
   sources = [
+    "helpers/compare_coordinates.cc",
+    "helpers/compare_coordinates.h",
     "helpers/dump.cc",
     "helpers/dump.h",
     "helpers/event.cc",

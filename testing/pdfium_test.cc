@@ -40,6 +40,7 @@
 #include "testing/command_line_helpers.h"
 #include "testing/font_renamer.h"
 #include "testing/fx_string_testhelpers.h"
+#include "testing/helpers/compare_coordinates.h"
 #include "testing/helpers/dump.h"
 #include "testing/helpers/event.h"
 #include "testing/helpers/page_renderer.h"
