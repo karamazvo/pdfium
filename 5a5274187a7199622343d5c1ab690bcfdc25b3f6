@@ -35,6 +35,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "86b106ed_8f969144",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2024-09-28T11:45:30Z",
+      "side": 1,
+      "message": "used it in one of the originally mentioned file in the issue",
+      "parentUuid": "56c3f549_fb462a28",
+      "revId": "5a5274187a7199622343d5c1ab690bcfdc25b3f6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "63fd62f7_283b8346",
@@ -48,6 +66,24 @@
       "writtenOn": "2024-09-25T17:53:30Z",
       "side": 1,
       "message": "FS_RECTF declares its members as left/top/right/bottom. Can this compare the members in that order?",
+      "revId": "5a5274187a7199622343d5c1ab690bcfdc25b3f6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "834e1a41_cd7ca78c",
+        "filename": "testing/helpers/compare_rectf.cc",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2024-09-28T11:45:30Z",
+      "side": 1,
+      "message": "now comparing through a bunch of EXPECT_FLOAT_EQ() calls just to avoid unexpected behaviour",
+      "parentUuid": "63fd62f7_283b8346",
       "revId": "5a5274187a7199622343d5c1ab690bcfdc25b3f6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
