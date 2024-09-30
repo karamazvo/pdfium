@@ -16,6 +16,23 @@
       "message": "hope it compiles now on windows. this time i just touched the places where it already had a return. overall there is a few places where void return could be improved.",
       "revId": "1757a5ea08c2ec5331667ebd8118161d064de576",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b60618ca_ae923c89",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 609,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-30T18:49:33Z",
+      "side": 1,
+      "message": "There are several rendering paths in this function, like this line, line 652, and line 693. Taking one of the alternate paths aside from line 693 should not be considered a failure.",
+      "revId": "1757a5ea08c2ec5331667ebd8118161d064de576",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
