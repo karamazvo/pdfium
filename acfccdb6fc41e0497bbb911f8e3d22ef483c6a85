@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a509a216_add07db1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-09-30T20:40:08Z",
+      "side": 1,
+      "message": "Partial roll. Build fails because of https://chromium.googlesource.com/chromium/src/buildtools.git/+/233c5798f9cb0d13ac0a552d57b912fa45c48f4b.\n\nFixed once https://pdfium-review.googlesource.com/c/pdfium/+/124776 lands.",
+      "revId": "acfccdb6fc41e0497bbb911f8e3d22ef483c6a85",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
