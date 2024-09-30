@@ -88,6 +88,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "3889713e_5e366761",
+        "filename": "testing/BUILD.gn",
+        "patchSetId": 3
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-30T19:37:32Z",
+      "side": 1,
+      "message": "These are in the wrong target. They should go into \"embedder_test_support\" above, as the helpers are used for pdfium_embeddertests.",
+      "revId": "a2aaf66c33860fa504e5c482fbf193e6691b89b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "230b6c26_e92ca95b",
         "filename": "testing/helpers/compare_coordinates.cc",
         "patchSetId": 3
