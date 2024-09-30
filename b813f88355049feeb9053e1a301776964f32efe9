@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f7326ab1_69362ac7",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1247,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-30T17:48:27Z",
+      "side": 1,
+      "message": "Moved line 1041 from the existing code here. I think I saved all the funny business for subsequent CLs.",
+      "revId": "b813f88355049feeb9053e1a301776964f32efe9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
