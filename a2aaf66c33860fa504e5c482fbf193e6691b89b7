@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "91e6a27a_56cd9f6e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-30T18:35:47Z",
+      "side": 1,
+      "message": "As newer patchsets make progress, please keep the commit message up to date.",
+      "revId": "a2aaf66c33860fa504e5c482fbf193e6691b89b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "8477cb14_69f37578",
@@ -14,6 +31,148 @@
       "writtenOn": "2024-09-28T11:45:30Z",
       "side": 1,
       "message": "Resolved the previous issues. Please review .",
+      "revId": "a2aaf66c33860fa504e5c482fbf193e6691b89b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "edb8f13f_e1960cac",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-30T18:35:47Z",
+      "side": 1,
+      "message": "Add a newline after the #includes sections, like the way the code had it before.",
+      "revId": "a2aaf66c33860fa504e5c482fbf193e6691b89b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "355177c5_842a630f",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1419,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-30T18:35:47Z",
+      "side": 1,
+      "message": "If the helper function has an intuitive name, then the code becomes more self-explanatory. Then there is no need to add a comment to explain what it does.",
+      "revId": "a2aaf66c33860fa504e5c482fbf193e6691b89b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f0e21d8e_1cfcf26d",
+        "filename": "testing/.BUILD.gn.swp",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-30T18:35:47Z",
+      "side": 1,
+      "message": "Please don\u0027t check in this file.\n\nMore generally, after uploading a patch set to Gerrit, it would be good to self-review the patch set to make sure it looks ok.",
+      "revId": "a2aaf66c33860fa504e5c482fbf193e6691b89b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "230b6c26_e92ca95b",
+        "filename": "testing/helpers/compare_coordinates.cc",
+        "patchSetId": 3
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-30T18:35:47Z",
+      "side": 1,
+      "message": "Newline after the foo.h include inside foo.cc. https://google.github.io/styleguide/cppguide.html#Names_and_Order_of_Includes",
+      "revId": "a2aaf66c33860fa504e5c482fbf193e6691b89b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f54f564b_a1209801",
+        "filename": "testing/helpers/compare_coordinates.cc",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-30T18:35:47Z",
+      "side": 1,
+      "message": "Same here. Newline after #includes.",
+      "revId": "a2aaf66c33860fa504e5c482fbf193e6691b89b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e2543b8a_c4947265",
+        "filename": "testing/helpers/compare_coordinates.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-30T18:35:47Z",
+      "side": 1,
+      "message": "Please use Google C++ style naming in new code. https://google.github.io/styleguide/cppguide.html#Function_Names",
+      "revId": "a2aaf66c33860fa504e5c482fbf193e6691b89b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ecb34d7c_13efda5e",
+        "filename": "testing/helpers/compare_coordinates.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-30T18:35:47Z",
+      "side": 1,
+      "message": "Instead of \"model\" and \"subject\", how about using the same naming as the parameters to EXPECT_FLOAT_EQ()?",
+      "range": {
+        "startLine": 10,
+        "startChar": 38,
+        "endLine": 10,
+        "endChar": 43
+      },
+      "revId": "a2aaf66c33860fa504e5c482fbf193e6691b89b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5cf80d47_75de82fc",
+        "filename": "testing/pdfium_test.cc",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-30T18:35:47Z",
+      "side": 1,
+      "message": "The header has been included here, but no other changes have been made to this file. Please either revert this, or use the new helper in thisl file.",
       "revId": "a2aaf66c33860fa504e5c482fbf193e6691b89b7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }

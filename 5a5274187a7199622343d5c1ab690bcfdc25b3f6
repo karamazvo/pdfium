@@ -105,6 +105,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c2ec6ce9_c294a021",
+        "filename": "testing/helpers/compare_rectf.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-30T18:35:47Z",
+      "side": 1,
+      "message": "It looks like patch set 3 renamed the file to compare_coordinates.h, as suggested. In which case, please mark this as \"done\" in the Gerrit UI next time.",
+      "parentUuid": "f4785e00_dee6c0f3",
+      "revId": "5a5274187a7199622343d5c1ab690bcfdc25b3f6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cf01008c_3f425c7f",
@@ -118,6 +136,30 @@
       "writtenOn": "2024-09-25T17:53:30Z",
       "side": 1,
       "message": "Can the parameters be marked as const?",
+      "range": {
+        "startLine": 10,
+        "startChar": 21,
+        "endLine": 10,
+        "endChar": 55
+      },
+      "revId": "5a5274187a7199622343d5c1ab690bcfdc25b3f6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fdfdb4c4_d2c32341",
+        "filename": "testing/helpers/compare_rectf.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-09-30T18:35:47Z",
+      "side": 1,
+      "message": "Same here. (Mark as done.)",
+      "parentUuid": "cf01008c_3f425c7f",
       "range": {
         "startLine": 10,
         "startChar": 21,
