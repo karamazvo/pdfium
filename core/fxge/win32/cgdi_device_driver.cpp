@@ -55,12 +55,12 @@ HPEN CreateExtPen(const CFX_GraphStateData* pGraphState,
     scale = fabs(pMatrix->a) > fabs(pMatrix->b) ? fabs(pMatrix->a)
                                                 : fabs(pMatrix->b);
   }
-  float width = std::max(scale * pGraphState->m_LineWidth, 1.0f);
+  float width = std::max(scale * pGraphState->line_width(), 1.0f);
 
   const std::vector<float>& dash_array = pGraphState->dash_array();
   uint32_t pen_style = dash_array.empty() ? PS_SOLID : PS_USERSTYLE;
 
-  switch (pGraphState->m_LineCap) {
+  switch (pGraphState->line_cap()) {
     case CFX_GraphStateData::LineCap::kButt:
       pen_style |= PS_ENDCAP_FLAT;
       break;
@@ -71,7 +71,7 @@ HPEN CreateExtPen(const CFX_GraphStateData* pGraphState,
       pen_style |= PS_ENDCAP_SQUARE;
       break;
   }
-  switch (pGraphState->m_LineJoin) {
+  switch (pGraphState->line_join()) {
     case CFX_GraphStateData::LineJoin::kMiter:
       pen_style |= PS_JOIN_MITER;
       break;
@@ -636,7 +636,7 @@ bool CGdiDeviceDriver::DrawPath(const CFX_Path& path,
         ((m_DeviceType != DeviceType::kPrinter && !fill_options.full_cover) ||
          (pGraphState && !pGraphState->dash_array().empty()))) {
       if (!((!pMatrix || !pMatrix->WillScale()) && pGraphState &&
-            pGraphState->m_LineWidth == 1.0f && path.IsRect())) {
+            pGraphState->line_width() == 1.0f && path.IsRect())) {
         if (pPlatform->m_GdiplusExt.DrawPath(m_hDC, path, pMatrix, pGraphState,
                                              fill_color, stroke_color,
                                              fill_options)) {
@@ -650,7 +650,7 @@ bool CGdiDeviceDriver::DrawPath(const CFX_Path& path,
   HPEN hPen = nullptr;
   HBRUSH hBrush = nullptr;
   if (pGraphState && stroke_alpha) {
-    SetMiterLimit(m_hDC, pGraphState->m_MiterLimit, nullptr);
+    SetMiterLimit(m_hDC, pGraphState->miter_limit(), nullptr);
     hPen = CreateExtPen(pGraphState, pMatrix, stroke_color);
     hPen = (HPEN)SelectObject(m_hDC, hPen);
   }
