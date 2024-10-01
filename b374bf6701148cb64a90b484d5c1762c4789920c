@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d6017365_49e70abc",
+        "filename": "core/fxge/cfx_drawutils.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-10-01T21:50:55Z",
+      "side": 1,
+      "message": "tis a pity it isn\u0027t an aggregate for designated initializers, darn you chrome-style !!!",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 38
+      },
+      "revId": "b374bf6701148cb64a90b484d5c1762c4789920c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
