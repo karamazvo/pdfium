@@ -22,6 +22,30 @@
       },
       "revId": "56132ea66f92583cc513c0496b80546dfb766b10",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e013929e_93485d0d",
+        "filename": "core/fxge/win32/cgdi_device_driver.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-10-01T23:06:24Z",
+      "side": 0,
+      "message": "Oh, I misread `|\u003d` for `\u003d`. That probably explains why the bots are red.",
+      "parentUuid": "36dc27df_2c3db32b",
+      "range": {
+        "startLine": 60,
+        "startChar": 22,
+        "endLine": 60,
+        "endChar": 34
+      },
+      "revId": "56132ea66f92583cc513c0496b80546dfb766b10",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
