@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "788e0840_8ca8d140",
+        "filename": "xfa/fxfa/parser/cxfa_stroke.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-10-01T21:56:44Z",
+      "side": 1,
+      "message": "nit: now that there are {}, blank line not needed and below.",
+      "revId": "56132ea66f92583cc513c0496b80546dfb766b10",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
