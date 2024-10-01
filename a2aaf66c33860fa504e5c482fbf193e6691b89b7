@@ -20,6 +20,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "c9ac6321_bdbf2bb9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2024-10-01T15:38:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "91e6a27a_56cd9f6e",
+      "revId": "a2aaf66c33860fa504e5c482fbf193e6691b89b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "8477cb14_69f37578",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 3
@@ -52,6 +70,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "53784085_582c1fd2",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2024-10-01T15:38:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "edb8f13f_e1960cac",
+      "revId": "a2aaf66c33860fa504e5c482fbf193e6691b89b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "355177c5_842a630f",
@@ -65,6 +101,24 @@
       "writtenOn": "2024-09-30T18:35:47Z",
       "side": 1,
       "message": "If the helper function has an intuitive name, then the code becomes more self-explanatory. Then there is no need to add a comment to explain what it does.",
+      "revId": "a2aaf66c33860fa504e5c482fbf193e6691b89b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "29119a53_d7f9c3e2",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1419,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2024-10-01T15:38:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "355177c5_842a630f",
       "revId": "a2aaf66c33860fa504e5c482fbf193e6691b89b7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -86,6 +140,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2d8a7e38_580339dd",
+        "filename": "testing/.BUILD.gn.swp",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2024-10-01T15:38:23Z",
+      "side": 1,
+      "message": "I did\u0027nt directly interact with that file ...but should have been more wary while staging the changes. Will take care next time.",
+      "parentUuid": "f0e21d8e_1cfcf26d",
+      "revId": "a2aaf66c33860fa504e5c482fbf193e6691b89b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3889713e_5e366761",
@@ -99,6 +171,24 @@
       "writtenOn": "2024-09-30T19:37:32Z",
       "side": 1,
       "message": "These are in the wrong target. They should go into \"embedder_test_support\" above, as the helpers are used for pdfium_embeddertests.",
+      "revId": "a2aaf66c33860fa504e5c482fbf193e6691b89b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "60e4a59d_04826ee7",
+        "filename": "testing/BUILD.gn",
+        "patchSetId": 3
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2024-10-01T15:38:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3889713e_5e366761",
       "revId": "a2aaf66c33860fa504e5c482fbf193e6691b89b7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -120,6 +210,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a16c4e7d_0bda53df",
+        "filename": "testing/helpers/compare_coordinates.cc",
+        "patchSetId": 3
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2024-10-01T15:38:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "230b6c26_e92ca95b",
+      "revId": "a2aaf66c33860fa504e5c482fbf193e6691b89b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f54f564b_a1209801",
@@ -133,6 +241,24 @@
       "writtenOn": "2024-09-30T18:35:47Z",
       "side": 1,
       "message": "Same here. Newline after #includes.",
+      "revId": "a2aaf66c33860fa504e5c482fbf193e6691b89b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c6aaaffe_ec449d03",
+        "filename": "testing/helpers/compare_coordinates.cc",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2024-10-01T15:38:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f54f564b_a1209801",
       "revId": "a2aaf66c33860fa504e5c482fbf193e6691b89b7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -177,6 +303,48 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0f735a4c_86d3b31b",
+        "filename": "testing/helpers/compare_coordinates.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2024-10-01T15:38:23Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "e2543b8a_c4947265",
+      "revId": "a2aaf66c33860fa504e5c482fbf193e6691b89b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "24ae8ad7_02b7bb32",
+        "filename": "testing/helpers/compare_coordinates.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2024-10-01T15:38:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ecb34d7c_13efda5e",
+      "range": {
+        "startLine": 10,
+        "startChar": 38,
+        "endLine": 10,
+        "endChar": 43
+      },
+      "revId": "a2aaf66c33860fa504e5c482fbf193e6691b89b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5cf80d47_75de82fc",
@@ -208,6 +376,24 @@
       "side": 1,
       "message": "s/thisl/this/",
       "parentUuid": "5cf80d47_75de82fc",
+      "revId": "a2aaf66c33860fa504e5c482fbf193e6691b89b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1abc09e3_d7312985",
+        "filename": "testing/pdfium_test.cc",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2024-10-01T15:38:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7c92f313_e5e4b6d3",
       "revId": "a2aaf66c33860fa504e5c482fbf193e6691b89b7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
