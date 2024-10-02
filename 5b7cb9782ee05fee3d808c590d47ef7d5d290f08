@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "10fd5f32_afc47646",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-10-02T21:43:37Z",
+      "side": 1,
+      "message": "nit: maybe compare with 0.0f (not fond of floating negations).",
+      "range": {
+        "startLine": 62,
+        "startChar": 6,
+        "endLine": 62,
+        "endChar": 18
+      },
+      "revId": "5b7cb9782ee05fee3d808c590d47ef7d5d290f08",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a5df3ab5_37080e6a",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 945,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-10-02T21:43:37Z",
+      "side": 1,
+      "message": "meh, might prevent a std::move(font) if someone were to someday write it.",
+      "range": {
+        "startLine": 945,
+        "startChar": 23,
+        "endLine": 945,
+        "endChar": 28
+      },
+      "revId": "5b7cb9782ee05fee3d808c590d47ef7d5d290f08",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
