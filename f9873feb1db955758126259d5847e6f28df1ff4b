@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e4eccc9b_a0a90cea",
+        "filename": "fpdfsdk/pwl/cpwl_wnd.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-10-02T17:26:44Z",
+      "side": 1,
+      "message": "kill this as well, and make it a pure aggregate.",
+      "range": {
+        "startLine": 62,
+        "startChar": 1,
+        "endLine": 64,
+        "endChar": 0
+      },
+      "revId": "f9873feb1db955758126259d5847e6f28df1ff4b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
