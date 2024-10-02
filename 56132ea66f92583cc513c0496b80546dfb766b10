@@ -33,6 +33,24 @@
       "message": "nit: now that there are {}, blank line not needed and below.",
       "revId": "56132ea66f92583cc513c0496b80546dfb766b10",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "26783d3a_aa1007c2",
+        "filename": "xfa/fxfa/parser/cxfa_stroke.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-10-02T00:22:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "788e0840_8ca8d140",
+      "revId": "56132ea66f92583cc513c0496b80546dfb766b10",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
