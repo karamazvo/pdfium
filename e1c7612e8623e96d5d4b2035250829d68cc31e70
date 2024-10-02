@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bbd138a8_f1bcf802",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-10-02T21:04:25Z",
+      "side": 1,
+      "message": "\"Make FPDF_RenderPage() return a bool\"\n\n- Capitalize\n- Make it cleaner FPDF_RenderPage() is a function and not a class.",
+      "revId": "e1c7612e8623e96d5d4b2035250829d68cc31e70",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6397d340_93afeac3",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 631,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-10-02T21:04:25Z",
+      "side": 1,
+      "message": "Is this change necessary? Same for line 679.",
+      "revId": "e1c7612e8623e96d5d4b2035250829d68cc31e70",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
