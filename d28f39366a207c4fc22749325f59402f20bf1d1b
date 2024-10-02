@@ -16,6 +16,23 @@
       "message": "+tsepez I think I need a second reviewer because i\u0027m not a pdfium committer",
       "revId": "d28f39366a207c4fc22749325f59402f20bf1d1b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b1083361_19087ad6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-10-02T07:24:16Z",
+      "side": 1,
+      "message": "Since PDFium Gerrit is a separate Gerrit instance, your may not be set up in the same way as Chromium Gerrit. I imagine you are not contributing to PDFium too often, so it would be easiest to CR+1 this CL with your @google.com account as well.",
+      "revId": "d28f39366a207c4fc22749325f59402f20bf1d1b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
