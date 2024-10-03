@@ -180,6 +180,8 @@ source_set("embedder_test_support") {
     "embedder_test_timer_handling_delegate.h",
     "fake_file_access.cpp",
     "fake_file_access.h",
+    "helpers/compare_coordinates.cc",
+    "helpers/compare_coordinates.h",
     "range_set.cpp",
     "range_set.h",
   ]
