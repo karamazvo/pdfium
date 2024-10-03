@@ -16,6 +16,24 @@
       "message": "Made the commit message with the changes in each patchset listed. Hope that it is ok now. Thank you and please review.",
       "revId": "f48206d2c0ece977156bdaeb819b6f5f41927c63",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "233d9c5c_3088f9bb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-10-03T05:55:43Z",
+      "side": 1,
+      "message": "The CL description doesn\u0027t need to list the CL\u0027s progression. It just has to accurately reflect the latest patchset.",
+      "parentUuid": "6bad92eb_de73ac1e",
+      "revId": "f48206d2c0ece977156bdaeb819b6f5f41927c63",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }

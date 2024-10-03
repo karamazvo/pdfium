@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4c00702c_23d2f5ff",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-10-03T05:55:43Z",
+      "side": 1,
+      "message": "This is a bad conflict resolution result. The function has been deleted. Please don\u0027t add it back.",
+      "revId": "813bff95771cf4a84ac7efa1b5af48dc7a574912",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
