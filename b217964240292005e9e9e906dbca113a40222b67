@@ -94,6 +94,30 @@
       },
       "revId": "b217964240292005e9e9e906dbca113a40222b67",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c07600e9_966b41d8",
+        "filename": "core/fpdftext/cpdf_textpage.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-10-03T19:46:19Z",
+      "side": 1,
+      "message": "Gah. That would do it.",
+      "parentUuid": "b1c355ba_a7ceaf1e",
+      "range": {
+        "startLine": 79,
+        "startChar": 0,
+        "endLine": 79,
+        "endChar": 28
+      },
+      "revId": "b217964240292005e9e9e906dbca113a40222b67",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
