@@ -22,6 +22,30 @@
       },
       "revId": "b217964240292005e9e9e906dbca113a40222b67",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e291a465_8e3ddfe4",
+        "filename": "core/fpdftext/cpdf_textpage.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-10-03T19:23:03Z",
+      "side": 1,
+      "message": "There\u0027s a copy ctor.",
+      "parentUuid": "7beee293_08838824",
+      "range": {
+        "startLine": 79,
+        "startChar": 0,
+        "endLine": 79,
+        "endChar": 28
+      },
+      "revId": "b217964240292005e9e9e906dbca113a40222b67",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
