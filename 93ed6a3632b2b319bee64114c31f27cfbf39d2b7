@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b825ec33_da0eb0b0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 9461
+      },
+      "writtenOn": "2024-10-03T18:52:32Z",
+      "side": 1,
+      "message": "will be deprecated by EoY",
+      "range": {
+        "startLine": 12,
+        "startChar": 17,
+        "endLine": 12,
+        "endChar": 30
+      },
+      "revId": "93ed6a3632b2b319bee64114c31f27cfbf39d2b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
