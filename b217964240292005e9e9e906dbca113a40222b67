@@ -46,6 +46,30 @@
       },
       "revId": "b217964240292005e9e9e906dbca113a40222b67",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "17e035fb_13964a71",
+        "filename": "core/fpdftext/cpdf_textpage.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-10-03T19:32:34Z",
+      "side": 1,
+      "message": "That should be OK so long as there isn\u0027t move or copy-assign, I\u0027d think.",
+      "parentUuid": "e291a465_8e3ddfe4",
+      "range": {
+        "startLine": 79,
+        "startChar": 0,
+        "endLine": 79,
+        "endChar": 28
+      },
+      "revId": "b217964240292005e9e9e906dbca113a40222b67",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
