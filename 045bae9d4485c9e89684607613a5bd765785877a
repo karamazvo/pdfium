@@ -70,6 +70,24 @@
       "parentUuid": "adef996f_21a02648",
       "revId": "045bae9d4485c9e89684607613a5bd765785877a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e0246bfa_6a1ce61d",
+        "filename": "infra/inclusive_language_presubmit_exempt_dirs.txt",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3667574
+      },
+      "writtenOn": "2024-10-04T21:10:06Z",
+      "side": 1,
+      "message": "Done. Please take a look.",
+      "parentUuid": "52bf25de_d3761a6a",
+      "revId": "045bae9d4485c9e89684607613a5bd765785877a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
