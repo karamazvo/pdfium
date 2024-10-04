@@ -1,0 +1,5 @@
+# List of directories exempt from the inclusive language checks in PRESUBMIT.py.
+#
+# Note: Subdirectories are NOT included in the exemption. Only files directly
+# within these directories will be skipped.
+third_party
