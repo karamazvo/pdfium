@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "adefee23_cf71d157",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-10-04T19:32:22Z",
+      "side": 1,
+      "message": "And CPDF_AllStates::SetLineDash()?",
+      "revId": "c75426bae1597cd5f6eb46b27883c0b15be1e814",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "20eb9670_2712477a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-10-04T19:32:22Z",
+      "side": 1,
+      "message": "LGTM",
+      "revId": "c75426bae1597cd5f6eb46b27883c0b15be1e814",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
