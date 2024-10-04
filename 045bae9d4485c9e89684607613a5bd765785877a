@@ -16,6 +16,42 @@
       "message": "Does the tool that read this file understand \u0027#\u0027 as the start of a comment? If so, can there be some comments to explain what this file is used for? After this CL lands, if someone searches for \"inclusive_language_presubmit_exempt_dirs\" in the repo, they won\u0027t get any results, so it may not be obvious why this is here.",
       "revId": "045bae9d4485c9e89684607613a5bd765785877a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "adef996f_21a02648",
+        "filename": "infra/inclusive_language_presubmit_exempt_dirs.txt",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3667574
+      },
+      "writtenOn": "2024-10-04T20:01:07Z",
+      "side": 1,
+      "message": "No, it does not.",
+      "parentUuid": "f9a5ba8f_0601dbd0",
+      "revId": "045bae9d4485c9e89684607613a5bd765785877a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1bd3e177_53e3cc23",
+        "filename": "infra/inclusive_language_presubmit_exempt_dirs.txt",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3667574
+      },
+      "writtenOn": "2024-10-04T20:01:07Z",
+      "side": 1,
+      "message": "It doesn\u0027t, but I wrote https://chromium-review.googlesource.com/c/chromium/tools/depot_tools/+/5906016 to add the support.\n\nOnce the CL is submitted, and I can update this CL with the comment, I will resolve this comment.",
+      "parentUuid": "f9a5ba8f_0601dbd0",
+      "revId": "045bae9d4485c9e89684607613a5bd765785877a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
