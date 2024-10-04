@@ -52,6 +52,24 @@
       "parentUuid": "f9a5ba8f_0601dbd0",
       "revId": "045bae9d4485c9e89684607613a5bd765785877a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "52bf25de_d3761a6a",
+        "filename": "infra/inclusive_language_presubmit_exempt_dirs.txt",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-10-04T20:08:42Z",
+      "side": 1,
+      "message": "Great. Thanks for taking this suggestion. Glad we are doing this now and not in December.",
+      "parentUuid": "adef996f_21a02648",
+      "revId": "045bae9d4485c9e89684607613a5bd765785877a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
