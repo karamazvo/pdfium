@@ -34,6 +34,24 @@
       "parentUuid": "0c0e8876_cb151dde",
       "revId": "7b08ba1975aedfbaec856b5cc34e35db39341506",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8cf68f00_ced66e2f",
+        "filename": "infra/inclusive_language_presubmit_exempt_dirs.txt",
+        "patchSetId": 6
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-10-04T21:40:34Z",
+      "side": 1,
+      "message": "Sure. No entries, just the comments.",
+      "parentUuid": "904d7e39_845ee2ea",
+      "revId": "7b08ba1975aedfbaec856b5cc34e35db39341506",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
