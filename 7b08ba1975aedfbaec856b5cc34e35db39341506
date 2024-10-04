@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0c0e8876_cb151dde",
+        "filename": "infra/inclusive_language_presubmit_exempt_dirs.txt",
+        "patchSetId": 6
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-10-04T21:13:15Z",
+      "side": 1,
+      "message": "If this is the case, then looking at https://pdfium.googlesource.com/pdfium/+/refs/heads/main/third_party, the exemption only applies to third_party/BUILD.gn and third_party/DEPS. But those 2 files are really first party files. So this exemption isn\u0027t that helpful.",
+      "revId": "7b08ba1975aedfbaec856b5cc34e35db39341506",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
