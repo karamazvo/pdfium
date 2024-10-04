@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f9a5ba8f_0601dbd0",
+        "filename": "infra/inclusive_language_presubmit_exempt_dirs.txt",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-10-04T19:10:27Z",
+      "side": 1,
+      "message": "Does the tool that read this file understand \u0027#\u0027 as the start of a comment? If so, can there be some comments to explain what this file is used for? After this CL lands, if someone searches for \"inclusive_language_presubmit_exempt_dirs\" in the repo, they won\u0027t get any results, so it may not be obvious why this is here.",
+      "revId": "045bae9d4485c9e89684607613a5bd765785877a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
