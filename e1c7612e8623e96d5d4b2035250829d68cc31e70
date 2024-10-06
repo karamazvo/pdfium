@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "54c9f703_d49432ed",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-10-06T20:11:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bbd138a8_f1bcf802",
+      "revId": "e1c7612e8623e96d5d4b2035250829d68cc31e70",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6397d340_93afeac3",
@@ -31,6 +49,24 @@
       "writtenOn": "2024-10-02T21:04:25Z",
       "side": 1,
       "message": "Is this change necessary? Same for line 679.",
+      "revId": "e1c7612e8623e96d5d4b2035250829d68cc31e70",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "375fabed_858535eb",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 631,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-10-06T20:11:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6397d340_93afeac3",
       "revId": "e1c7612e8623e96d5d4b2035250829d68cc31e70",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
