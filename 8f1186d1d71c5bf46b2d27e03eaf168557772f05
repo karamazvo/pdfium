@@ -16,6 +16,24 @@
       "message": "Lei, can we use EXPECT_*() (or other gtest macros) in testing/helpers ? I didn\u0027t see any pre-existing includes of gtest/",
       "revId": "8f1186d1d71c5bf46b2d27e03eaf168557772f05",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8c8b243f_789575ad",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 20
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-10-07T20:39:34Z",
+      "side": 1,
+      "message": "Oh, maybe the new utility function should go in testing/utility instead.",
+      "parentUuid": "bf848914_b7dc8166",
+      "revId": "8f1186d1d71c5bf46b2d27e03eaf168557772f05",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
