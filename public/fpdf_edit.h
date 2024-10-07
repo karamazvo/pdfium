@@ -427,14 +427,15 @@ FPDFPageObj_RemoveMark(FPDF_PAGEOBJECT page_object, FPDF_PAGEOBJECTMARK mark);
 //                modified if |buflen| is longer than the length of the name.
 //                Optional, pass null to just retrieve the size of the buffer
 //                needed.
-//   buflen     - length of the buffer.
+//   buflen     - length of the buffer in bytes.
 //   out_buflen - pointer to variable that will receive the minimum buffer size
-//                to contain the name. Not filled if FALSE is returned.
+//                in bytes to contain the name. This is a required parameter.
+//                Not filled if FALSE is returned.
 //
 // Returns TRUE if the operation succeeded, FALSE if it failed.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObjMark_GetName(FPDF_PAGEOBJECTMARK mark,
-                        void* buffer,
+                        FPDF_WCHAR* buffer,
                         unsigned long buflen,
                         unsigned long* out_buflen);
 
@@ -457,15 +458,16 @@ FPDFPageObjMark_CountParams(FPDF_PAGEOBJECTMARK mark);
 //                modified if |buflen| is longer than the length of the key.
 //                Optional, pass null to just retrieve the size of the buffer
 //                needed.
-//   buflen     - length of the buffer.
+//   buflen     - length of the buffer in bytes.
 //   out_buflen - pointer to variable that will receive the minimum buffer size
-//                to contain the key. Not filled if FALSE is returned.
+//                in bytes to contain the name. This is a required parameter.
+//                Not filled if FALSE is returned.
 //
 // Returns TRUE if the operation was successful, FALSE otherwise.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObjMark_GetParamKey(FPDF_PAGEOBJECTMARK mark,
                             unsigned long index,
-                            void* buffer,
+                            FPDF_WCHAR* buffer,
                             unsigned long buflen,
                             unsigned long* out_buflen);
 
@@ -506,15 +508,16 @@ FPDFPageObjMark_GetParamIntValue(FPDF_PAGEOBJECTMARK mark,
 //                value.
 //                Optional, pass null to just retrieve the size of the buffer
 //                needed.
-//   buflen     - length of the buffer.
+//   buflen     - length of the buffer in bytes.
 //   out_buflen - pointer to variable that will receive the minimum buffer size
-//                to contain the value. Not filled if FALSE is returned.
+//                in bytes to contain the name. This is a required parameter.
+//                Not filled if FALSE is returned.
 //
 // Returns TRUE if the key maps to a string/blob value, FALSE otherwise.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObjMark_GetParamStringValue(FPDF_PAGEOBJECTMARK mark,
                                     FPDF_BYTESTRING key,
-                                    void* buffer,
+                                    FPDF_WCHAR* buffer,
                                     unsigned long buflen,
                                     unsigned long* out_buflen);
 
@@ -527,15 +530,16 @@ FPDFPageObjMark_GetParamStringValue(FPDF_PAGEOBJECTMARK mark,
 //                if |buflen| is at least as long as the length of the value.
 //                Optional, pass null to just retrieve the size of the buffer
 //                needed.
-//   buflen     - length of the buffer.
+//   buflen     - length of the buffer in bytes.
 //   out_buflen - pointer to variable that will receive the minimum buffer size
-//                to contain the value. Not filled if FALSE is returned.
+//                in bytes to contain the name. This is a required parameter.
+//                Not filled if FALSE is returned.
 //
 // Returns TRUE if the key maps to a string/blob value, FALSE otherwise.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObjMark_GetParamBlobValue(FPDF_PAGEOBJECTMARK mark,
                                   FPDF_BYTESTRING key,
-                                  void* buffer,
+                                  unsigned char* buffer,
                                   unsigned long buflen,
                                   unsigned long* out_buflen);
 
@@ -595,7 +599,7 @@ FPDFPageObjMark_SetBlobParam(FPDF_DOCUMENT document,
                              FPDF_PAGEOBJECT page_object,
                              FPDF_PAGEOBJECTMARK mark,
                              FPDF_BYTESTRING key,
-                             void* value,
+                             const unsigned char* value,
                              unsigned long value_len);
 
 // Experimental API.
