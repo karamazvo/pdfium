@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1cb656ac_928aa05a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-10-07T18:35:41Z",
+      "side": 1,
+      "message": "Looking good, but nobody is checking the return value. Can this CL make FPDF_RenderPage() callers, such as the one in testing/embedder_test.cpp, check the return value?",
+      "revId": "713d8830b6023b794d5781736f9d77efb0b1428a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
