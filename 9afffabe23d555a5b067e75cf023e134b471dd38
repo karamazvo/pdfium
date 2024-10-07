@@ -1,6 +1,69 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "07b4df37_c3fc9b16",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 17
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-10-07T19:23:22Z",
+      "side": 1,
+      "message": "Space after period.",
+      "revId": "9afffabe23d555a5b067e75cf023e134b471dd38",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6760d490_38d1b5d1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 17
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-10-07T19:23:22Z",
+      "side": 1,
+      "message": "\"The test\" really refers to the utility function. Please rephrase to clarify. Right now it reads like \"the test has been used in a test to show ...\", which is a bit confusing.",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 8
+      },
+      "revId": "9afffabe23d555a5b067e75cf023e134b471dd38",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f6e81634_1141ed7c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 17
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-10-07T19:23:22Z",
+      "side": 1,
+      "message": "Test cases have names, so just mention the utility function is being used in FPDFTextEmbedderTest.CroppedText.",
+      "range": {
+        "startLine": 20,
+        "startChar": 13,
+        "endLine": 20,
+        "endChar": 65
+      },
+      "revId": "9afffabe23d555a5b067e75cf023e134b471dd38",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "e36708c1_4e050334",
