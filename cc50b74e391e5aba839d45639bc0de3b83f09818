@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ef19a27b_0df6598e",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1324,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-10-07T22:17:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c38074e7_a02e358b",
+      "range": {
+        "startLine": 1324,
+        "startChar": 6,
+        "endLine": 1324,
+        "endChar": 14
+      },
+      "revId": "cc50b74e391e5aba839d45639bc0de3b83f09818",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0d4807be_6b07a944",
@@ -37,6 +61,30 @@
       "writtenOn": "2024-10-07T21:56:58Z",
       "side": 1,
       "message": "want to mention what happens if buflen isn\u0027t a mutliple of sizeof(FPDF_WCHAR) ?",
+      "range": {
+        "startLine": 433,
+        "startChar": 0,
+        "endLine": 433,
+        "endChar": 50
+      },
+      "revId": "cc50b74e391e5aba839d45639bc0de3b83f09818",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9c3c3464_63585f13",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 433,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-10-07T22:17:41Z",
+      "side": 1,
+      "message": "I rephrased the existing `buffer` documentation to be clearer. Is that sufficient?",
+      "parentUuid": "0d4807be_6b07a944",
       "range": {
         "startLine": 433,
         "startChar": 0,
