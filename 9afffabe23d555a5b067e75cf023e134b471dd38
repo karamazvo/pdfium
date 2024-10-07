@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8b4105e3_60dee120",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 17
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2024-10-07T19:31:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07b4df37_c3fc9b16",
+      "revId": "9afffabe23d555a5b067e75cf023e134b471dd38",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6760d490_38d1b5d1",
@@ -41,6 +59,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6db3905e_8f65d0f6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 17
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2024-10-07T19:31:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6760d490_38d1b5d1",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 8
+      },
+      "revId": "9afffabe23d555a5b067e75cf023e134b471dd38",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f6e81634_1141ed7c",
@@ -54,6 +96,30 @@
       "writtenOn": "2024-10-07T19:23:22Z",
       "side": 1,
       "message": "Test cases have names, so just mention the utility function is being used in FPDFTextEmbedderTest.CroppedText.",
+      "range": {
+        "startLine": 20,
+        "startChar": 13,
+        "endLine": 20,
+        "endChar": 65
+      },
+      "revId": "9afffabe23d555a5b067e75cf023e134b471dd38",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e6b4742f_5660d50c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 17
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2024-10-07T19:31:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f6e81634_1141ed7c",
       "range": {
         "startLine": 20,
         "startChar": 13,
