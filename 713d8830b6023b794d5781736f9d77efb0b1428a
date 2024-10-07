@@ -16,6 +16,24 @@
       "message": "Looking good, but nobody is checking the return value. Can this CL make FPDF_RenderPage() callers, such as the one in testing/embedder_test.cpp, check the return value?",
       "revId": "713d8830b6023b794d5781736f9d77efb0b1428a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "519f2c85_8911b64e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2024-10-07T21:10:49Z",
+      "side": 1,
+      "message": "added CHECK() arround but not sure if it is correct, could you run the bots?",
+      "parentUuid": "1cb656ac_928aa05a",
+      "revId": "713d8830b6023b794d5781736f9d77efb0b1428a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
