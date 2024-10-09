@@ -33,6 +33,23 @@
       "message": "Satisfying review-enforcement from official account.",
       "revId": "a1748f7aaf9d39cc45485fddca8479460bdadcb3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "55345ebc_141b5418",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 22
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-10-09T21:06:53Z",
+      "side": 1,
+      "message": "Ping Lei to re-add +1.",
+      "revId": "a1748f7aaf9d39cc45485fddca8479460bdadcb3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
