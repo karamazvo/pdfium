@@ -116,6 +116,30 @@
       },
       "revId": "8f1186d1d71c5bf46b2d27e03eaf168557772f05",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3a02d67d_5dc1a86e",
+        "filename": "testing/BUILD.gn",
+        "patchSetId": 20
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-10-09T15:27:44Z",
+      "side": 1,
+      "message": "Thanks for taking the time to do this.\n\nEither way is OK for now. You are correct that it is only being called in embedder tests, but there isn\u0027t any reason it couldn\u0027t be used in unit tests as well.\n(By the way, the difference is that a unittests are run in an environment with very little pre-initialization, but the embedder tests are run with a library set-up/tear down performed before the test). And comparing fs_rects doesn\u0027t require full environment set-up.\n\nLet\u0027s land this as-is, otherwise we could tinker all day.",
+      "parentUuid": "c3d74798_1ed658e8",
+      "range": {
+        "startLine": 183,
+        "startChar": 0,
+        "endLine": 183,
+        "endChar": 37
+      },
+      "revId": "8f1186d1d71c5bf46b2d27e03eaf168557772f05",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
