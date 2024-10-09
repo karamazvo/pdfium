@@ -53,6 +53,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f81fb220_c1e57a7d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 20
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2024-10-09T07:03:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8c8b243f_789575ad",
+      "revId": "8f1186d1d71c5bf46b2d27e03eaf168557772f05",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ab8b79d4_f29dfc78",
@@ -66,6 +84,30 @@
       "writtenOn": "2024-10-07T20:43:50Z",
       "side": 1,
       "message": "The other files in the (poorly-named) helpers/ directory only link into the pdfium_test executable which isn\u0027t a gtest-based test.\n\nI think your new files belong in the testing/util directory, and that they should join the other util/ files at line 35 or so.",
+      "range": {
+        "startLine": 183,
+        "startChar": 0,
+        "endLine": 183,
+        "endChar": 37
+      },
+      "revId": "8f1186d1d71c5bf46b2d27e03eaf168557772f05",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c3d74798_1ed658e8",
+        "filename": "testing/BUILD.gn",
+        "patchSetId": 20
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2024-10-09T07:03:46Z",
+      "side": 1,
+      "message": "I am done with the relocation but since these files are being used in the embedder tests, I think they are more suited in the embedder_test_support target.\nPlease let me know if I\u0027m wrong. Thank you for the review.",
+      "parentUuid": "ab8b79d4_f29dfc78",
       "range": {
         "startLine": 183,
         "startChar": 0,
