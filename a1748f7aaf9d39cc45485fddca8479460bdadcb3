@@ -91,6 +91,30 @@
       },
       "revId": "a1748f7aaf9d39cc45485fddca8479460bdadcb3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fd6f1dd2_5dbcfd98",
+        "filename": "testing/utils/compare_coordinates.h",
+        "patchSetId": 22
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2024-10-13T06:46:20Z",
+      "side": 1,
+      "message": "This is resolved. Please check. Thank You.",
+      "parentUuid": "60415942_9533dce3",
+      "range": {
+        "startLine": 12,
+        "startChar": 11,
+        "endLine": 12,
+        "endChar": 48
+      },
+      "revId": "a1748f7aaf9d39cc45485fddca8479460bdadcb3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
