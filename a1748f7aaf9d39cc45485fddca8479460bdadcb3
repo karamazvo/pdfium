@@ -115,6 +115,30 @@
       },
       "revId": "a1748f7aaf9d39cc45485fddca8479460bdadcb3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bf9ab04e_8e54a915",
+        "filename": "testing/utils/compare_coordinates.h",
+        "patchSetId": 22
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-10-14T17:56:39Z",
+      "side": 1,
+      "message": "It\u0027s missing the trailing underscore. Compare lines 5, 6, and 12.",
+      "parentUuid": "fd6f1dd2_5dbcfd98",
+      "range": {
+        "startLine": 12,
+        "startChar": 11,
+        "endLine": 12,
+        "endChar": 48
+      },
+      "revId": "a1748f7aaf9d39cc45485fddca8479460bdadcb3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
