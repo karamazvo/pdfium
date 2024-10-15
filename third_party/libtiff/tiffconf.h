@@ -136,12 +136,10 @@
 #if defined(ARCH_CPU_64_BITS)
 #define TIFF_SSIZE_T int64_t
 #define TIFF_SSIZE_FORMAT PRId64
-#define TIFF_SSIZE_T_MAX INT64_MAX
 #define SIZEOF_SIZE_T 8
 #else
 #define TIFF_SSIZE_T int32_t
 #define TIFF_SSIZE_FORMAT PRId32
-#define TIFF_SSIZE_T_MAX INT32_MAX
 #define SIZEOF_SIZE_T 4
 #endif
 
@@ -175,11 +173,7 @@
 
 /* Native cpu byte order: 1 if big-endian (Motorola) or 0 if little-endian
    (Intel) */
-#if _FX_ENDIAN_ == _FX_BIG_ENDIAN_
-# define HOST_BIGENDIAN 1
-#else
-# define HOST_BIGENDIAN 0
-#endif
+#define HOST_BIGENDIAN 0
 
 /* Support CCITT Group 3 & 4 algorithms */
 #define CCITT_SUPPORT 1
@@ -213,7 +207,7 @@
 /* #undef ZIP_SUPPORT */
 
 /* Support strip chopping (whether or not to convert single-strip uncompressed
-   images to mutiple strips of ~8Kb to reduce memory usage) */
+   images to multiple strips of ~8Kb to reduce memory usage) */
 #define STRIPCHOP_DEFAULT TIFF_STRIPCHOP
 
 /* Enable SubIFD tag (330) support */
