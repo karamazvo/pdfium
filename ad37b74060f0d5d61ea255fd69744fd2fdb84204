@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "289af375_dddef3c6",
+        "filename": "third_party/libtiff/0000-build-config.patch",
+        "patchSetId": 8
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-10-15T17:37:31Z",
+      "side": 0,
+      "message": "Remove, or switch to checking `ARCH_CPU_LITTLE_ENDIAN` / `ARCH_CPU_BIG_ENDIAN`?",
+      "revId": "ad37b74060f0d5d61ea255fd69744fd2fdb84204",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
