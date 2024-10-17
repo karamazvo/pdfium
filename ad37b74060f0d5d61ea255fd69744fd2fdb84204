@@ -16,6 +16,24 @@
       "message": "Remove, or switch to checking `ARCH_CPU_LITTLE_ENDIAN` / `ARCH_CPU_BIG_ENDIAN`?",
       "revId": "ad37b74060f0d5d61ea255fd69744fd2fdb84204",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "49105d69_ce006293",
+        "filename": "third_party/libtiff/0000-build-config.patch",
+        "patchSetId": 8
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-10-17T20:09:37Z",
+      "side": 0,
+      "message": "I\u0027d just leave as-is. Probably a smaller diff long-term",
+      "parentUuid": "289af375_dddef3c6",
+      "revId": "ad37b74060f0d5d61ea255fd69744fd2fdb84204",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
