@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5df164dc_9293f868",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6835
+      },
+      "writtenOn": "2024-10-18T13:58:30Z",
+      "side": 1,
+      "message": "Lei: could you please review this? Thanks.\n\nI didn\u0027t bisect this, but 6656 was fine with clang-15 and 6764 breaks at least. I assume if it\u0027s this easy to restore building with this toolchain, then it is worth the trouble.",
+      "revId": "3ae1f4ce98698ae7d920fadaf89dc277c181d3a9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
