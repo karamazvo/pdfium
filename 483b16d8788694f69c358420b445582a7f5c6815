@@ -92,6 +92,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "25d5b4c7_e41675cf",
+        "filename": "core/fpdfapi/page/cpdf_streamcontentparser_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 3686837
+      },
+      "writtenOn": "2024-10-19T05:13:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4b4aac62_716ab9ba",
+      "range": {
+        "startLine": 8,
+        "startChar": 34,
+        "endLine": 8,
+        "endChar": 57
+      },
+      "revId": "483b16d8788694f69c358420b445582a7f5c6815",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "feb6485c_d722836d",
@@ -115,6 +139,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fa2f200b_58f28312",
+        "filename": "core/fpdfapi/page/cpdf_streamcontentparser_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 3686837
+      },
+      "writtenOn": "2024-10-19T05:13:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "feb6485c_d722836d",
+      "range": {
+        "startLine": 27,
+        "startChar": 34,
+        "endLine": 27,
+        "endChar": 59
+      },
+      "revId": "483b16d8788694f69c358420b445582a7f5c6815",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2527e7d1_33371011",
@@ -128,6 +176,30 @@
       "writtenOn": "2024-10-18T18:19:59Z",
       "side": 1,
       "message": "Underscore. More below in this file.",
+      "range": {
+        "startLine": 14,
+        "startChar": 32,
+        "endLine": 14,
+        "endChar": 41
+      },
+      "revId": "483b16d8788694f69c358420b445582a7f5c6815",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "86d4afb0_d91b200a",
+        "filename": "core/fxcrt/css/cfx_cssvaluelistparser_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 3686837
+      },
+      "writtenOn": "2024-10-19T05:13:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2527e7d1_33371011",
       "range": {
         "startLine": 14,
         "startChar": 32,
