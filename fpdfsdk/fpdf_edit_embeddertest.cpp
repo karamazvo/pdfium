@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include <stdint.h>
-
 #include <limits>
 #include <memory>
 #include <ostream>
@@ -25,7 +23,6 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/span_util.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/fx_font.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
@@ -38,6 +35,7 @@
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gmock/include/gmock/gmock-matchers.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "testing/utils/compare_coordinates.h"
 #include "testing/utils/file_util.h"
 #include "testing/utils/hash.h"
 #include "testing/utils/path_service.h"
@@ -197,8 +195,9 @@ class FPDFEditEmbedderTest : public EmbedderTest {
     EXPECT_TRUE(font_desc->KeyExist("StemV"));
     ByteString present("FontFile");
     ByteString absent("FontFile2");
-    if (font_type == FPDF_FONT_TRUETYPE)
+    if (font_type == FPDF_FONT_TRUETYPE) {
       std::swap(present, absent);
+    }
     EXPECT_TRUE(font_desc->KeyExist(present));
     EXPECT_FALSE(font_desc->KeyExist(absent));
 
@@ -213,8 +212,9 @@ class FPDFEditEmbedderTest : public EmbedderTest {
     }
 
     pdfium::span<const uint8_t> stream_data = streamAcc->GetSpan();
-    for (size_t j = 0; j < span.size(); j++)
+    for (size_t j = 0; j < span.size(); j++) {
       EXPECT_EQ(span[j], stream_data[j]) << " at byte " << j;
+    }
   }
 
   void CheckCompositeFontWidths(const CPDF_Array* widths_array,
@@ -464,13 +464,11 @@ TEST_F(FPDFEditEmbedderTest, AddPaths) {
   EXPECT_TRUE(FPDFPageObj_SetMatrix(red_rect, &kMatrix));
 
   FS_MATRIX matrix;
+  FS_MATRIX expected_matrix;
+
   EXPECT_TRUE(FPDFPageObj_GetMatrix(red_rect, &matrix));
-  EXPECT_FLOAT_EQ(1.0f, matrix.a);
-  EXPECT_FLOAT_EQ(2.0f, matrix.b);
-  EXPECT_FLOAT_EQ(3.0f, matrix.c);
-  EXPECT_FLOAT_EQ(4.0f, matrix.d);
-  EXPECT_FLOAT_EQ(5.0f, matrix.e);
-  EXPECT_FLOAT_EQ(6.0f, matrix.f);
+  expected_matrix = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
+  CompareFS_MATRIX(expected_matrix, matrix);
 
   // Set back the identity matrix.
   matrix = {1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
@@ -826,7 +824,6 @@ TEST_F(FPDFEditEmbedderTest, SetText) {
   // Now save the result.
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-
 
   // Re-open the file and check the changes were kept in the saved .pdf.
   ASSERT_TRUE(OpenSavedDocument());
@@ -1321,13 +1318,14 @@ void CheckMarkCounts(FPDF_PAGE page,
     for (int j = 0; j < mark_count; ++j) {
       FPDF_PAGEOBJECTMARK mark = FPDFPageObj_GetMark(page_object, j);
 
-      FPDF_WCHAR buffer[128];
+      char buffer[256];
       unsigned long name_len = 999u;
       ASSERT_TRUE(
           FPDFPageObjMark_GetName(mark, buffer, sizeof(buffer), &name_len));
       EXPECT_GT(name_len, 0u);
       EXPECT_NE(999u, name_len);
-      std::wstring name = GetPlatformWString(buffer);
+      std::wstring name =
+          GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
       if (name == L"Prime") {
         prime_count++;
       } else if (name == L"Square") {
@@ -1339,7 +1337,8 @@ void CheckMarkCounts(FPDF_PAGE page,
         ASSERT_TRUE(FPDFPageObjMark_GetParamKey(mark, 0, buffer, sizeof(buffer),
                                                 &get_param_key_return));
         EXPECT_EQ((6u + 1u) * 2u, get_param_key_return);
-        std::wstring key = GetPlatformWString(buffer);
+        std::wstring key =
+            GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
         EXPECT_EQ(L"Factor", key);
 
         EXPECT_EQ(FPDF_OBJECT_NUMBER,
@@ -1358,7 +1357,8 @@ void CheckMarkCounts(FPDF_PAGE page,
         ASSERT_TRUE(FPDFPageObjMark_GetParamKey(mark, 0, buffer, sizeof(buffer),
                                                 &get_param_key_return));
         EXPECT_EQ((8u + 1u) * 2u, get_param_key_return);
-        std::wstring key = GetPlatformWString(buffer);
+        std::wstring key =
+            GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
         EXPECT_EQ(L"Position", key);
 
         EXPECT_EQ(FPDF_OBJECT_STRING,
@@ -1367,7 +1367,8 @@ void CheckMarkCounts(FPDF_PAGE page,
         EXPECT_TRUE(FPDFPageObjMark_GetParamStringValue(
             mark, "Position", buffer, sizeof(buffer), &length));
         ASSERT_GT(length, 0u);
-        std::wstring value = GetPlatformWString(buffer);
+        std::wstring value =
+            GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
 
         // "Position" can be "First", "Last", or "End".
         if (i == 0) {
@@ -1469,13 +1470,14 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkedObjectsPrime) {
     for (int j = 0; j < mark_count; ++j) {
       FPDF_PAGEOBJECTMARK mark = FPDFPageObj_GetMark(page_object, j);
 
-      FPDF_WCHAR buffer[128];
+      char buffer[256];
       unsigned long name_len = 999u;
       ASSERT_TRUE(
           FPDFPageObjMark_GetName(mark, buffer, sizeof(buffer), &name_len));
       EXPECT_GT(name_len, 0u);
       EXPECT_NE(999u, name_len);
-      std::wstring name = GetPlatformWString(buffer);
+      std::wstring name =
+          GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
       if (name == L"Prime") {
         primes.push_back(page_object);
       }
@@ -1570,13 +1572,14 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarks) {
     for (int j = mark_count - 1; j >= 0; --j) {
       FPDF_PAGEOBJECTMARK mark = FPDFPageObj_GetMark(page_object, j);
 
-      FPDF_WCHAR buffer[128];
+      char buffer[256];
       unsigned long name_len = 999u;
       ASSERT_TRUE(
           FPDFPageObjMark_GetName(mark, buffer, sizeof(buffer), &name_len));
       EXPECT_GT(name_len, 0u);
       EXPECT_NE(999u, name_len);
-      std::wstring name = GetPlatformWString(buffer);
+      std::wstring name =
+          GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
       if (name == L"Prime") {
         // Remove mark.
         EXPECT_TRUE(FPDFPageObj_RemoveMark(page_object, mark));
@@ -1622,13 +1625,14 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkParam) {
     for (int j = 0; j < mark_count; ++j) {
       FPDF_PAGEOBJECTMARK mark = FPDFPageObj_GetMark(page_object, j);
 
-      FPDF_WCHAR buffer[128];
+      char buffer[256];
       unsigned long name_len = 999u;
       ASSERT_TRUE(
           FPDFPageObjMark_GetName(mark, buffer, sizeof(buffer), &name_len));
       EXPECT_GT(name_len, 0u);
       EXPECT_NE(999u, name_len);
-      std::wstring name = GetPlatformWString(buffer);
+      std::wstring name =
+          GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
       if (name == L"Square") {
         // Show the mark has a "Factor" parameter.
         int out_value;
@@ -1662,13 +1666,14 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkParam) {
     for (int j = 0; j < mark_count; ++j) {
       FPDF_PAGEOBJECTMARK mark = FPDFPageObj_GetMark(page_object, j);
 
-      FPDF_WCHAR buffer[128];
+      char buffer[256];
       unsigned long name_len = 999u;
       ASSERT_TRUE(
           FPDFPageObjMark_GetName(mark, buffer, sizeof(buffer), &name_len));
       EXPECT_GT(name_len, 0u);
       EXPECT_NE(999u, name_len);
-      std::wstring name = GetPlatformWString(buffer);
+      std::wstring name =
+          GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
       if (name == L"Square") {
         // Verify the "Factor" parameter is still gone.
         int out_value;
@@ -1707,7 +1712,6 @@ TEST_F(FPDFEditEmbedderTest, MaintainMarkedObjects) {
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
-
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
   ASSERT_TRUE(saved_page);
@@ -1737,7 +1741,6 @@ TEST_F(FPDFEditEmbedderTest, MaintainIndirectMarkedObjects) {
 
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-
 
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
@@ -1889,12 +1892,13 @@ TEST_F(FPDFEditEmbedderTest, GetContentStream) {
     ASSERT_TRUE(page_object);
     CPDF_PageObject* cpdf_page_object =
         CPDFPageObjectFromFPDFPageObject(page_object);
-    if (i < 15)
+    if (i < 15) {
       EXPECT_EQ(0, cpdf_page_object->GetContentStream()) << i;
-    else if (i < 18)
+    } else if (i < 18) {
       EXPECT_EQ(1, cpdf_page_object->GetContentStream()) << i;
-    else
+    } else {
       EXPECT_EQ(2, cpdf_page_object->GetContentStream()) << i;
+    }
   }
 }
 
@@ -1932,10 +1936,11 @@ TEST_F(FPDFEditEmbedderTest, RemoveAllFromStream) {
     ASSERT_TRUE(page_object);
     CPDF_PageObject* cpdf_page_object =
         CPDFPageObjectFromFPDFPageObject(page_object);
-    if (i < 15)
+    if (i < 15) {
       EXPECT_EQ(0, cpdf_page_object->GetContentStream()) << i;
-    else
+    } else {
       EXPECT_EQ(2, cpdf_page_object->GetContentStream()) << i;
+    }
   }
 
   // Generate contents should remove the empty stream and update the page
@@ -1950,10 +1955,11 @@ TEST_F(FPDFEditEmbedderTest, RemoveAllFromStream) {
     ASSERT_TRUE(page_object);
     CPDF_PageObject* cpdf_page_object =
         CPDFPageObjectFromFPDFPageObject(page_object);
-    if (i < 15)
+    if (i < 15) {
       EXPECT_EQ(0, cpdf_page_object->GetContentStream()) << i;
-    else
+    } else {
       EXPECT_EQ(1, cpdf_page_object->GetContentStream()) << i;
+    }
   }
 
   const char* stream1_removed_checksum = []() {
@@ -1998,10 +2004,11 @@ TEST_F(FPDFEditEmbedderTest, RemoveAllFromStream) {
     ASSERT_TRUE(page_object);
     CPDF_PageObject* cpdf_page_object =
         CPDFPageObjectFromFPDFPageObject(page_object);
-    if (i < 15)
+    if (i < 15) {
       EXPECT_EQ(0, cpdf_page_object->GetContentStream()) << i;
-    else
+    } else {
       EXPECT_EQ(1, cpdf_page_object->GetContentStream()) << i;
+    }
   }
 
   {
@@ -2726,13 +2733,11 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText) {
   }
 
   FS_MATRIX matrix;
+  FS_MATRIX expected_matrix;
+
   EXPECT_TRUE(FPDFPageObj_GetMatrix(text_object3, &matrix));
-  EXPECT_FLOAT_EQ(1.0f, matrix.a);
-  EXPECT_FLOAT_EQ(1.5f, matrix.b);
-  EXPECT_FLOAT_EQ(2.0f, matrix.c);
-  EXPECT_FLOAT_EQ(0.5f, matrix.d);
-  EXPECT_FLOAT_EQ(200.0f, matrix.e);
-  EXPECT_FLOAT_EQ(200.0f, matrix.f);
+  expected_matrix = {1.0f, 1.5f, 2.0f, 0.5f, 200.0f, 200.0f};
+  CompareFS_MATRIX(expected_matrix, matrix);
 
   EXPECT_FALSE(FPDFTextObj_GetFontSize(nullptr, nullptr));
   float size = 55;
@@ -2854,7 +2859,6 @@ TEST_F(FPDFEditEmbedderTest, SetTextRenderMode) {
     // Save a copy.
     EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-
   }
 
   {
@@ -3158,12 +3162,7 @@ TEST_F(FPDFEditEmbedderTest, FormGetObjects) {
 
   FS_MATRIX matrix;
   EXPECT_TRUE(FPDFPageObj_GetMatrix(form, &matrix));
-  EXPECT_FLOAT_EQ(kMatrix.a, matrix.a);
-  EXPECT_FLOAT_EQ(kMatrix.b, matrix.b);
-  EXPECT_FLOAT_EQ(kMatrix.c, matrix.c);
-  EXPECT_FLOAT_EQ(kMatrix.d, matrix.d);
-  EXPECT_FLOAT_EQ(kMatrix.e, matrix.e);
-  EXPECT_FLOAT_EQ(kMatrix.f, matrix.f);
+  CompareFS_MATRIX(kMatrix, matrix);
 
   // FPDFPageObj_GetMatrix() negative testing for forms.
   EXPECT_FALSE(FPDFPageObj_GetMatrix(form, nullptr));
@@ -3952,15 +3951,17 @@ TEST_F(FPDFEditEmbedderTest, SetMarkParam) {
   FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page.get(), 18);
   FPDF_PAGEOBJECTMARK mark = FPDFPageObj_GetMark(page_object, 1);
   ASSERT_TRUE(mark);
-  FPDF_WCHAR buffer[128];
+  char buffer[256];
   unsigned long name_len = 999u;
   ASSERT_TRUE(FPDFPageObjMark_GetName(mark, buffer, sizeof(buffer), &name_len));
   EXPECT_EQ((6u + 1u) * 2u, name_len);
-  ASSERT_EQ(L"Bounds", GetPlatformWString(buffer));
+  ASSERT_EQ(L"Bounds",
+            GetPlatformWString(reinterpret_cast<unsigned short*>(buffer)));
   unsigned long out_buffer_len;
   ASSERT_TRUE(FPDFPageObjMark_GetParamStringValue(
       mark, "Position", buffer, sizeof(buffer), &out_buffer_len));
-  ASSERT_EQ(L"Last", GetPlatformWString(buffer));
+  ASSERT_EQ(L"Last",
+            GetPlatformWString(reinterpret_cast<unsigned short*>(buffer)));
 
   // Set is to "End".
   EXPECT_TRUE(FPDFPageObjMark_SetStringParam(document(), page_object, mark,
@@ -3977,7 +3978,8 @@ TEST_F(FPDFEditEmbedderTest, SetMarkParam) {
   // Verify "Position" now maps to "End".
   EXPECT_TRUE(FPDFPageObjMark_GetParamStringValue(
       mark, "Position", buffer, sizeof(buffer), &out_buffer_len));
-  EXPECT_EQ(L"End", GetPlatformWString(buffer));
+  EXPECT_EQ(L"End",
+            GetPlatformWString(reinterpret_cast<unsigned short*>(buffer)));
 
   // Save the file
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
@@ -3993,7 +3995,8 @@ TEST_F(FPDFEditEmbedderTest, SetMarkParam) {
   mark = FPDFPageObj_GetMark(page_object, 1);
   EXPECT_TRUE(FPDFPageObjMark_GetParamStringValue(
       mark, "Position", buffer, sizeof(buffer), &out_buffer_len));
-  EXPECT_EQ(L"End", GetPlatformWString(buffer));
+  EXPECT_EQ(L"End",
+            GetPlatformWString(reinterpret_cast<unsigned short*>(buffer)));
 
   CloseSavedPage(saved_page);
   CloseSavedDocument();
@@ -4026,27 +4029,29 @@ TEST_F(FPDFEditEmbedderTest, AddMarkedText) {
   EXPECT_TRUE(mark);
   EXPECT_EQ(1, FPDFPageObj_CountMarks(text_object));
   EXPECT_EQ(mark, FPDFPageObj_GetMark(text_object, 0));
-  FPDF_WCHAR buffer[128];
+  char buffer[256];
   unsigned long name_len = 999u;
   ASSERT_TRUE(FPDFPageObjMark_GetName(mark, buffer, sizeof(buffer), &name_len));
   EXPECT_EQ((14u + 1u) * 2, name_len);
-  std::wstring name = GetPlatformWString(buffer);
+  std::wstring name =
+      GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
   EXPECT_EQ(L"Test Mark Name", name);
 
   // Add parameters:
   // - int "IntKey" : 42
   // - string "StringKey": "StringValue"
   // - blob "BlobKey": "\x01\x02\x03\0BlobValue1\0\0\0BlobValue2\0"
-  //
-  // Note that the trailing NUL is in `kBlobData` implicitly.
-  constexpr uint8_t kBlobData[] = "\x01\x02\x03\0BlobValue1\0\0\0BlobValue2";
+  constexpr size_t kBlobLen = 28;
+  char block_value[kBlobLen];
+  UNSAFE_TODO(FXSYS_memcpy(
+      block_value, "\x01\x02\x03\0BlobValue1\0\0\0BlobValue2\0", kBlobLen));
   EXPECT_EQ(0, FPDFPageObjMark_CountParams(mark));
   EXPECT_TRUE(
       FPDFPageObjMark_SetIntParam(document(), text_object, mark, "IntKey", 42));
   EXPECT_TRUE(FPDFPageObjMark_SetStringParam(document(), text_object, mark,
                                              "StringKey", "StringValue"));
-  EXPECT_TRUE(FPDFPageObjMark_SetBlobParam(
-      document(), text_object, mark, "BlobKey", kBlobData, sizeof(kBlobData)));
+  EXPECT_TRUE(FPDFPageObjMark_SetBlobParam(document(), text_object, mark,
+                                           "BlobKey", block_value, kBlobLen));
   EXPECT_EQ(3, FPDFPageObjMark_CountParams(mark));
 
   // Check the two parameters can be retrieved.
@@ -4063,19 +4068,16 @@ TEST_F(FPDFEditEmbedderTest, AddMarkedText) {
       mark, "StringKey", buffer, sizeof(buffer), &out_buffer_len));
   EXPECT_GT(out_buffer_len, 0u);
   EXPECT_NE(999u, out_buffer_len);
-  name = GetPlatformWString(buffer);
+  name = GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
   EXPECT_EQ(L"StringValue", name);
 
   EXPECT_EQ(FPDF_OBJECT_STRING,
             FPDFPageObjMark_GetParamValueType(mark, "BlobKey"));
   out_buffer_len = 0;
-  constexpr size_t kBlobLen = 28;
-  unsigned char blob_buffer[kBlobLen];
   EXPECT_TRUE(FPDFPageObjMark_GetParamBlobValue(
-      mark, "BlobKey", blob_buffer, sizeof(blob_buffer), &out_buffer_len));
+      mark, "BlobKey", buffer, sizeof(buffer), &out_buffer_len));
   EXPECT_EQ(kBlobLen, out_buffer_len);
-  EXPECT_TRUE(fxcrt::span_equals(pdfium::make_span(kBlobData),
-                                 pdfium::make_span(blob_buffer)));
+  EXPECT_EQ(0, memcmp(block_value, buffer, kBlobLen));
 
   // Render and check the bitmap is the expected one.
   {
@@ -4105,7 +4107,7 @@ TEST_F(FPDFEditEmbedderTest, AddMarkedText) {
   name_len = 999u;
   ASSERT_TRUE(FPDFPageObjMark_GetName(mark, buffer, sizeof(buffer), &name_len));
   EXPECT_EQ((14u + 1u) * 2, name_len);
-  name = GetPlatformWString(buffer);
+  name = GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
   EXPECT_EQ(L"Test Mark Name", name);
 
   CloseSavedPage(saved_page);
@@ -4120,7 +4122,7 @@ TEST_F(FPDFEditEmbedderTest, MarkGetName) {
   FPDF_PAGEOBJECTMARK mark = FPDFPageObj_GetMark(page_object, 1);
   ASSERT_TRUE(mark);
 
-  FPDF_WCHAR buffer[128];
+  char buffer[256];
   unsigned long out_len;
 
   // Show the positive cases of FPDFPageObjMark_GetName.
@@ -4130,7 +4132,8 @@ TEST_F(FPDFEditEmbedderTest, MarkGetName) {
 
   out_len = 999u;
   EXPECT_TRUE(FPDFPageObjMark_GetName(mark, buffer, sizeof(buffer), &out_len));
-  EXPECT_EQ(L"Bounds", GetPlatformWString(buffer));
+  EXPECT_EQ(L"Bounds",
+            GetPlatformWString(reinterpret_cast<unsigned short*>(buffer)));
   EXPECT_EQ((6u + 1u) * 2u, out_len);
 
   // Show the negative cases of FPDFPageObjMark_GetName.
@@ -4150,7 +4153,7 @@ TEST_F(FPDFEditEmbedderTest, MarkGetParamKey) {
   FPDF_PAGEOBJECTMARK mark = FPDFPageObj_GetMark(page_object, 1);
   ASSERT_TRUE(mark);
 
-  FPDF_WCHAR buffer[128];
+  char buffer[256];
   unsigned long out_len;
 
   // Show the positive cases of FPDFPageObjMark_GetParamKey.
@@ -4161,7 +4164,8 @@ TEST_F(FPDFEditEmbedderTest, MarkGetParamKey) {
   out_len = 999u;
   EXPECT_TRUE(
       FPDFPageObjMark_GetParamKey(mark, 0, buffer, sizeof(buffer), &out_len));
-  EXPECT_EQ(L"Position", GetPlatformWString(buffer));
+  EXPECT_EQ(L"Position",
+            GetPlatformWString(reinterpret_cast<unsigned short*>(buffer)));
   EXPECT_EQ((8u + 1u) * 2u, out_len);
 
   // Show the negative cases of FPDFPageObjMark_GetParamKey.
@@ -4221,7 +4225,7 @@ TEST_F(FPDFEditEmbedderTest, MarkGetStringParam) {
   FPDF_PAGEOBJECTMARK mark = FPDFPageObj_GetMark(page_object, 1);
   ASSERT_TRUE(mark);
 
-  FPDF_WCHAR buffer[128];
+  char buffer[256];
   unsigned long out_len;
 
   // Show the positive cases of FPDFPageObjMark_GetParamStringValue.
@@ -4233,7 +4237,8 @@ TEST_F(FPDFEditEmbedderTest, MarkGetStringParam) {
   out_len = 999u;
   EXPECT_TRUE(FPDFPageObjMark_GetParamStringValue(mark, "Position", buffer,
                                                   sizeof(buffer), &out_len));
-  EXPECT_EQ(L"Last", GetPlatformWString(buffer));
+  EXPECT_EQ(L"Last",
+            GetPlatformWString(reinterpret_cast<unsigned short*>(buffer)));
   EXPECT_EQ((4u + 1u) * 2u, out_len);
 
   // Show the negative cases of FPDFPageObjMark_GetParamStringValue.
@@ -4394,13 +4399,11 @@ TEST_F(FPDFEditEmbedderTest, GetBitmapIgnoresSetMatrix) {
 
   // Check the matrix for |obj|.
   FS_MATRIX matrix;
+  FS_MATRIX expected_matrix;
+
   EXPECT_TRUE(FPDFPageObj_GetMatrix(obj, &matrix));
-  EXPECT_FLOAT_EQ(53.0f, matrix.a);
-  EXPECT_FLOAT_EQ(0.0f, matrix.b);
-  EXPECT_FLOAT_EQ(0.0f, matrix.c);
-  EXPECT_FLOAT_EQ(43.0f, matrix.d);
-  EXPECT_FLOAT_EQ(72.0f, matrix.e);
-  EXPECT_FLOAT_EQ(646.510009765625f, matrix.f);
+  expected_matrix = {53.0f, 0.0f, 0.0f, 43.0f, 72.0f, 646.510009765625f};
+  CompareFS_MATRIX(expected_matrix, matrix);
 
   // Modify the matrix for |obj|.
   matrix.a = 120.0;
@@ -4408,12 +4411,8 @@ TEST_F(FPDFEditEmbedderTest, GetBitmapIgnoresSetMatrix) {
 
   // Make sure the matrix modification took place.
   EXPECT_TRUE(FPDFPageObj_GetMatrix(obj, &matrix));
-  EXPECT_FLOAT_EQ(120.0f, matrix.a);
-  EXPECT_FLOAT_EQ(0.0f, matrix.b);
-  EXPECT_FLOAT_EQ(0.0f, matrix.c);
-  EXPECT_FLOAT_EQ(43.0f, matrix.d);
-  EXPECT_FLOAT_EQ(72.0f, matrix.e);
-  EXPECT_FLOAT_EQ(646.510009765625f, matrix.f);
+  expected_matrix = {120.0f, 0.0f, 0.0f, 43.0f, 72.0f, 646.510009765625f};
+  CompareFS_MATRIX(expected_matrix, matrix);
 
   {
     // Render |obj| again. Note that the FPDFPageObj_SetMatrix() call has no
@@ -4500,26 +4499,20 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapHandlesSetMatrix) {
 
   // Check the matrix for `obj`.
   FS_MATRIX matrix;
-  EXPECT_TRUE(FPDFPageObj_GetMatrix(obj, &matrix));
-  EXPECT_FLOAT_EQ(53.0f, matrix.a);
-  EXPECT_FLOAT_EQ(0.0f, matrix.b);
-  EXPECT_FLOAT_EQ(0.0f, matrix.c);
-  EXPECT_FLOAT_EQ(43.0f, matrix.d);
-  EXPECT_FLOAT_EQ(72.0f, matrix.e);
-  EXPECT_FLOAT_EQ(646.510009765625f, matrix.f);
+  FS_MATRIX expected_matrix;
 
-  // Modify the matrix for `obj`.
+  EXPECT_TRUE(FPDFPageObj_GetMatrix(obj, &matrix));
+  expected_matrix = {53.0f, 0.0f, 0.0f, 43.0f, 72.0f, 646.510009765625f};
+  CompareFS_MATRIX(expected_matrix, matrix);
+
+  // Modify the matrix for |obj|.
   matrix.a = 120.0;
   EXPECT_TRUE(FPDFPageObj_SetMatrix(obj, &matrix));
 
   // Make sure the matrix modification took place.
   EXPECT_TRUE(FPDFPageObj_GetMatrix(obj, &matrix));
-  EXPECT_FLOAT_EQ(120.0f, matrix.a);
-  EXPECT_FLOAT_EQ(0.0f, matrix.b);
-  EXPECT_FLOAT_EQ(0.0f, matrix.c);
-  EXPECT_FLOAT_EQ(43.0f, matrix.d);
-  EXPECT_FLOAT_EQ(72.0f, matrix.e);
-  EXPECT_FLOAT_EQ(646.510009765625f, matrix.f);
+  expected_matrix = {120.0f, 0.0f, 0.0f, 43.0f, 72.0f, 646.510009765625f};
+  CompareFS_MATRIX(expected_matrix, matrix);
 
   {
     // Render `obj` again. Note that the FPDFPageObj_SetMatrix() call has an
@@ -4565,10 +4558,11 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapHandlesSMask) {
         FPDFImageObj_GetRenderedBitmap(document(), page.get(), obj));
     ASSERT_TRUE(bitmap);
     EXPECT_EQ(FPDFBitmap_BGRA, FPDFBitmap_GetFormat(bitmap.get()));
-    if (i == 0)
+    if (i == 0) {
       CompareBitmap(bitmap.get(), 40, 60, smask_checksum);
-    else
+    } else {
       CompareBitmap(bitmap.get(), 40, 60, no_smask_checksum);
+    }
   }
 }
 
@@ -4646,223 +4640,319 @@ TEST_F(FPDFEditEmbedderTest, GetImageMatrix) {
 
   FPDF_PAGEOBJECT obj;
   FS_MATRIX matrix;
+  FS_MATRIX expected_matrix;
 
   obj = FPDFPage_GetObject(page.get(), 33);
   ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
   EXPECT_TRUE(FPDFPageObj_GetMatrix(obj, &matrix));
-  EXPECT_FLOAT_EQ(53.0f, matrix.a);
-  EXPECT_FLOAT_EQ(0.0f, matrix.b);
-  EXPECT_FLOAT_EQ(0.0f, matrix.c);
-  EXPECT_FLOAT_EQ(43.0f, matrix.d);
-  EXPECT_FLOAT_EQ(72.0f, matrix.e);
-  EXPECT_FLOAT_EQ(646.510009765625f, matrix.f);
+  expected_matrix = {53.0f, 0.0f, 0.0f, 43.0f, 72.0f, 646.510009765625f};
+  CompareFS_MATRIX(expected_matrix, matrix);
 
   obj = FPDFPage_GetObject(page.get(), 34);
   ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
   EXPECT_TRUE(FPDFPageObj_GetMatrix(obj, &matrix));
-  EXPECT_FLOAT_EQ(70.0f, matrix.a);
-  EXPECT_FLOAT_EQ(0.0f, matrix.b);
-  EXPECT_FLOAT_EQ(0.0f, matrix.c);
-  EXPECT_FLOAT_EQ(51.0f, matrix.d);
-  EXPECT_FLOAT_EQ(216.0f, matrix.e);
-  EXPECT_FLOAT_EQ(646.510009765625f, matrix.f);
+  expected_matrix = {70.0f, 0.0f, 0.0f, 51.0f, 216.0f, 646.510009765625f};
+  CompareFS_MATRIX(expected_matrix, matrix);
 
   obj = FPDFPage_GetObject(page.get(), 35);
   ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
   EXPECT_TRUE(FPDFPageObj_GetMatrix(obj, &matrix));
-  EXPECT_FLOAT_EQ(69.0f, matrix.a);
-  EXPECT_FLOAT_EQ(0.0f, matrix.b);
-  EXPECT_FLOAT_EQ(0.0f, matrix.c);
-  EXPECT_FLOAT_EQ(51.0f, matrix.d);
-  EXPECT_FLOAT_EQ(360.0f, matrix.e);
-  EXPECT_FLOAT_EQ(646.510009765625f, matrix.f);
+  expected_matrix = {69.0f, 0.0f, 0.0f, 51.0f, 360.0f, 646.510009765625f};
+  CompareFS_MATRIX(expected_matrix, matrix);
 
   obj = FPDFPage_GetObject(page.get(), 36);
   ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
   EXPECT_TRUE(FPDFPageObj_GetMatrix(obj, &matrix));
-  EXPECT_FLOAT_EQ(59.0f, matrix.a);
-  EXPECT_FLOAT_EQ(0.0f, matrix.b);
-  EXPECT_FLOAT_EQ(0.0f, matrix.c);
-  EXPECT_FLOAT_EQ(45.0f, matrix.d);
-  EXPECT_FLOAT_EQ(72.0f, matrix.e);
-  EXPECT_FLOAT_EQ(553.510009765625f, matrix.f);
+  expected_matrix = {59.0f, 0.0f, 0.0f, 45.0f, 72.0f, 553.510009765625f};
+  CompareFS_MATRIX(expected_matrix, matrix);
 
   obj = FPDFPage_GetObject(page.get(), 37);
   ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
   EXPECT_TRUE(FPDFPageObj_GetMatrix(obj, &matrix));
-  EXPECT_FLOAT_EQ(55.94000244140625f, matrix.a);
-  EXPECT_FLOAT_EQ(0.0f, matrix.b);
-  EXPECT_FLOAT_EQ(0.0f, matrix.c);
-  EXPECT_FLOAT_EQ(46.950000762939453f, matrix.d);
-  EXPECT_FLOAT_EQ(216.0f, matrix.e);
-  EXPECT_FLOAT_EQ(552.510009765625f, matrix.f);
+  expected_matrix = {55.94000244140625f,  0.0f,   0.0f,
+                     46.950000762939453f, 216.0f, 552.510009765625f};
+  CompareFS_MATRIX(expected_matrix, matrix);
 
   obj = FPDFPage_GetObject(page.get(), 38);
   ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
   EXPECT_TRUE(FPDFPageObj_GetMatrix(obj, &matrix));
-  EXPECT_FLOAT_EQ(70.528999328613281f, matrix.a);
-  EXPECT_FLOAT_EQ(0.0f, matrix.b);
-  EXPECT_FLOAT_EQ(0.0f, matrix.c);
-  EXPECT_FLOAT_EQ(43.149997711181641f, matrix.d);
-  EXPECT_FLOAT_EQ(360.0f, matrix.e);
-  EXPECT_FLOAT_EQ(553.3599853515625f, matrix.f);
-}
+  expected_matrix = {70.528999328613281f, 0.0f,   0.0f,
+                     43.149997711181641f, 360.0f, 553.3599853515625f};
+  CompareFS_MATRIX(expected_matrix, matrix);
 
-TEST_F(FPDFEditEmbedderTest, DestroyPageObject) {
-  FPDF_PAGEOBJECT rect = FPDFPageObj_CreateNewRect(10, 10, 20, 20);
-  ASSERT_TRUE(rect);
+  TEST_F(FPDFEditEmbedderTest, DestroyPageObject) {
+    FPDF_PAGEOBJECT rect = FPDFPageObj_CreateNewRect(10, 10, 20, 20);
+    ASSERT_TRUE(rect);
 
-  // There should be no memory leaks with a call to FPDFPageObj_Destroy().
-  FPDFPageObj_Destroy(rect);
-}
+    // There should be no memory leaks with a call to FPDFPageObj_Destroy().
+    FPDFPageObj_Destroy(rect);
+  }
 
-TEST_F(FPDFEditEmbedderTest, GetImageFilters) {
-  ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
-  ASSERT_TRUE(page);
+  TEST_F(FPDFEditEmbedderTest, GetImageFilters) {
+    ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ASSERT_TRUE(page);
 
-  // Verify that retrieving the filter of a non-image object would fail.
-  FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page.get(), 32);
-  ASSERT_NE(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
-  ASSERT_EQ(0, FPDFImageObj_GetImageFilterCount(obj));
-  EXPECT_EQ(0u, FPDFImageObj_GetImageFilter(obj, 0, nullptr, 0));
+    // Verify that retrieving the filter of a non-image object would fail.
+    FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page.get(), 32);
+    ASSERT_NE(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+    ASSERT_EQ(0, FPDFImageObj_GetImageFilterCount(obj));
+    EXPECT_EQ(0u, FPDFImageObj_GetImageFilter(obj, 0, nullptr, 0));
 
-  // Verify the returned filter string for an image object with a single filter.
-  obj = FPDFPage_GetObject(page.get(), 33);
-  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
-  ASSERT_EQ(1, FPDFImageObj_GetImageFilterCount(obj));
-  unsigned long len = FPDFImageObj_GetImageFilter(obj, 0, nullptr, 0);
-  std::vector<char> buf(len);
-  static constexpr char kFlateDecode[] = "FlateDecode";
-  EXPECT_EQ(sizeof(kFlateDecode),
-            FPDFImageObj_GetImageFilter(obj, 0, buf.data(), len));
-  EXPECT_STREQ(kFlateDecode, buf.data());
-  EXPECT_EQ(0u, FPDFImageObj_GetImageFilter(obj, 1, nullptr, 0));
+    // Verify the returned filter string for an image object with a single
+    // filter.
+    obj = FPDFPage_GetObject(page.get(), 33);
+    ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+    ASSERT_EQ(1, FPDFImageObj_GetImageFilterCount(obj));
+    unsigned long len = FPDFImageObj_GetImageFilter(obj, 0, nullptr, 0);
+    std::vector<char> buf(len);
+    static constexpr char kFlateDecode[] = "FlateDecode";
+    EXPECT_EQ(sizeof(kFlateDecode),
+              FPDFImageObj_GetImageFilter(obj, 0, buf.data(), len));
+    EXPECT_STREQ(kFlateDecode, buf.data());
+    EXPECT_EQ(0u, FPDFImageObj_GetImageFilter(obj, 1, nullptr, 0));
 
-  // Verify all the filters for an image object with a list of filters.
-  obj = FPDFPage_GetObject(page.get(), 38);
-  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
-  ASSERT_EQ(2, FPDFImageObj_GetImageFilterCount(obj));
-  len = FPDFImageObj_GetImageFilter(obj, 0, nullptr, 0);
-  buf.clear();
-  buf.resize(len);
-  static constexpr char kASCIIHexDecode[] = "ASCIIHexDecode";
-  EXPECT_EQ(sizeof(kASCIIHexDecode),
-            FPDFImageObj_GetImageFilter(obj, 0, buf.data(), len));
-  EXPECT_STREQ(kASCIIHexDecode, buf.data());
+    // Verify all the filters for an image object with a list of filters.
+    obj = FPDFPage_GetObject(page.get(), 38);
+    ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+    ASSERT_EQ(2, FPDFImageObj_GetImageFilterCount(obj));
+    len = FPDFImageObj_GetImageFilter(obj, 0, nullptr, 0);
+    buf.clear();
+    buf.resize(len);
+    static constexpr char kASCIIHexDecode[] = "ASCIIHexDecode";
+    EXPECT_EQ(sizeof(kASCIIHexDecode),
+              FPDFImageObj_GetImageFilter(obj, 0, buf.data(), len));
+    EXPECT_STREQ(kASCIIHexDecode, buf.data());
 
-  len = FPDFImageObj_GetImageFilter(obj, 1, nullptr, 0);
-  buf.clear();
-  buf.resize(len);
-  static constexpr char kDCTDecode[] = "DCTDecode";
-  EXPECT_EQ(sizeof(kDCTDecode),
-            FPDFImageObj_GetImageFilter(obj, 1, buf.data(), len));
-  EXPECT_STREQ(kDCTDecode, buf.data());
-}
+    len = FPDFImageObj_GetImageFilter(obj, 1, nullptr, 0);
+    buf.clear();
+    buf.resize(len);
+    static constexpr char kDCTDecode[] = "DCTDecode";
+    EXPECT_EQ(sizeof(kDCTDecode),
+              FPDFImageObj_GetImageFilter(obj, 1, buf.data(), len));
+    EXPECT_STREQ(kDCTDecode, buf.data());
+  }
 
-TEST_F(FPDFEditEmbedderTest, GetImageMetadata) {
-  ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
-  ASSERT_TRUE(page);
+  TEST_F(FPDFEditEmbedderTest, GetImageMetadata) {
+    ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ASSERT_TRUE(page);
 
-  // Check that getting the metadata of a null object would fail.
-  FPDF_IMAGEOBJ_METADATA metadata;
-  EXPECT_FALSE(FPDFImageObj_GetImageMetadata(nullptr, page.get(), &metadata));
+    // Check that getting the metadata of a null object would fail.
+    FPDF_IMAGEOBJ_METADATA metadata;
+    EXPECT_FALSE(FPDFImageObj_GetImageMetadata(nullptr, page.get(), &metadata));
 
-  // Check that receiving the metadata with a null metadata object would fail.
-  FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page.get(), 35);
-  EXPECT_FALSE(FPDFImageObj_GetImageMetadata(obj, page.get(), nullptr));
+    // Check that receiving the metadata with a null metadata object would fail.
+    FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page.get(), 35);
+    EXPECT_FALSE(FPDFImageObj_GetImageMetadata(obj, page.get(), nullptr));
 
-  // Check that when retrieving an image object's metadata without passing in
-  // |page|, all values are correct, with the last two being default values.
-  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
-  ASSERT_TRUE(FPDFImageObj_GetImageMetadata(obj, nullptr, &metadata));
-  EXPECT_EQ(7, metadata.marked_content_id);
-  EXPECT_EQ(92u, metadata.width);
-  EXPECT_EQ(68u, metadata.height);
-  EXPECT_FLOAT_EQ(96.0f, metadata.horizontal_dpi);
-  EXPECT_FLOAT_EQ(96.0f, metadata.vertical_dpi);
-  EXPECT_EQ(0u, metadata.bits_per_pixel);
-  EXPECT_EQ(FPDF_COLORSPACE_UNKNOWN, metadata.colorspace);
+    // Check that when retrieving an image object's metadata without passing in
+    // |page|, all values are correct, with the last two being default values.
+    ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+    ASSERT_TRUE(FPDFImageObj_GetImageMetadata(obj, nullptr, &metadata));
+    EXPECT_EQ(7, metadata.marked_content_id);
+    EXPECT_EQ(92u, metadata.width);
+    EXPECT_EQ(68u, metadata.height);
+    EXPECT_FLOAT_EQ(96.0f, metadata.horizontal_dpi);
+    EXPECT_FLOAT_EQ(96.0f, metadata.vertical_dpi);
+    EXPECT_EQ(0u, metadata.bits_per_pixel);
+    EXPECT_EQ(FPDF_COLORSPACE_UNKNOWN, metadata.colorspace);
 
-  // Verify the metadata of a bitmap image with indexed colorspace.
-  ASSERT_TRUE(FPDFImageObj_GetImageMetadata(obj, page.get(), &metadata));
-  EXPECT_EQ(7, metadata.marked_content_id);
-  EXPECT_EQ(92u, metadata.width);
-  EXPECT_EQ(68u, metadata.height);
-  EXPECT_FLOAT_EQ(96.0f, metadata.horizontal_dpi);
-  EXPECT_FLOAT_EQ(96.0f, metadata.vertical_dpi);
-  EXPECT_EQ(1u, metadata.bits_per_pixel);
-  EXPECT_EQ(FPDF_COLORSPACE_INDEXED, metadata.colorspace);
+    // Verify the metadata of a bitmap image with indexed colorspace.
+    ASSERT_TRUE(FPDFImageObj_GetImageMetadata(obj, page.get(), &metadata));
+    EXPECT_EQ(7, metadata.marked_content_id);
+    EXPECT_EQ(92u, metadata.width);
+    EXPECT_EQ(68u, metadata.height);
+    EXPECT_FLOAT_EQ(96.0f, metadata.horizontal_dpi);
+    EXPECT_FLOAT_EQ(96.0f, metadata.vertical_dpi);
+    EXPECT_EQ(1u, metadata.bits_per_pixel);
+    EXPECT_EQ(FPDF_COLORSPACE_INDEXED, metadata.colorspace);
 
-  // Verify the metadata of an image with RGB colorspace.
-  obj = FPDFPage_GetObject(page.get(), 37);
-  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
-  ASSERT_TRUE(FPDFImageObj_GetImageMetadata(obj, page.get(), &metadata));
-  EXPECT_EQ(9, metadata.marked_content_id);
-  EXPECT_EQ(126u, metadata.width);
-  EXPECT_EQ(106u, metadata.height);
-  EXPECT_FLOAT_EQ(162.173752f, metadata.horizontal_dpi);
-  EXPECT_FLOAT_EQ(162.555878f, metadata.vertical_dpi);
-  EXPECT_EQ(24u, metadata.bits_per_pixel);
-  EXPECT_EQ(FPDF_COLORSPACE_DEVICERGB, metadata.colorspace);
-}
+    // Verify the metadata of an image with RGB colorspace.
+    obj = FPDFPage_GetObject(page.get(), 37);
+    ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+    ASSERT_TRUE(FPDFImageObj_GetImageMetadata(obj, page.get(), &metadata));
+    EXPECT_EQ(9, metadata.marked_content_id);
+    EXPECT_EQ(126u, metadata.width);
+    EXPECT_EQ(106u, metadata.height);
+    EXPECT_FLOAT_EQ(162.173752f, metadata.horizontal_dpi);
+    EXPECT_FLOAT_EQ(162.555878f, metadata.vertical_dpi);
+    EXPECT_EQ(24u, metadata.bits_per_pixel);
+    EXPECT_EQ(FPDF_COLORSPACE_DEVICERGB, metadata.colorspace);
+  }
 
-TEST_F(FPDFEditEmbedderTest, GetImageMetadataJpxLzw) {
-  ASSERT_TRUE(OpenDocument("jpx_lzw.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
-  ASSERT_TRUE(page);
+  TEST_F(FPDFEditEmbedderTest, GetImageMetadataJpxLzw) {
+    ASSERT_TRUE(OpenDocument("jpx_lzw.pdf"));
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ASSERT_TRUE(page);
 
-  FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page.get(), 0);
-  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+    FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page.get(), 0);
+    ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
 
-  FPDF_IMAGEOBJ_METADATA metadata;
-  ASSERT_TRUE(FPDFImageObj_GetImageMetadata(obj, page.get(), &metadata));
-  EXPECT_EQ(-1, metadata.marked_content_id);
-  EXPECT_EQ(612u, metadata.width);
-  EXPECT_EQ(792u, metadata.height);
-  EXPECT_FLOAT_EQ(72.0f, metadata.horizontal_dpi);
-  EXPECT_FLOAT_EQ(72.0f, metadata.vertical_dpi);
-  EXPECT_EQ(24u, metadata.bits_per_pixel);
-  EXPECT_EQ(FPDF_COLORSPACE_UNKNOWN, metadata.colorspace);
-}
+    FPDF_IMAGEOBJ_METADATA metadata;
+    ASSERT_TRUE(FPDFImageObj_GetImageMetadata(obj, page.get(), &metadata));
+    EXPECT_EQ(-1, metadata.marked_content_id);
+    EXPECT_EQ(612u, metadata.width);
+    EXPECT_EQ(792u, metadata.height);
+    EXPECT_FLOAT_EQ(72.0f, metadata.horizontal_dpi);
+    EXPECT_FLOAT_EQ(72.0f, metadata.vertical_dpi);
+    EXPECT_EQ(24u, metadata.bits_per_pixel);
+    EXPECT_EQ(FPDF_COLORSPACE_UNKNOWN, metadata.colorspace);
+  }
 
-TEST_F(FPDFEditEmbedderTest, GetImagePixelSize) {
-  ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
-  ASSERT_TRUE(page);
+  TEST_F(FPDFEditEmbedderTest, GetImagePixelSize) {
+    ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ASSERT_TRUE(page);
 
-  // Check that getting the size of a null object would fail.
-  unsigned int width = 0;
-  unsigned int height = 0;
-  EXPECT_FALSE(FPDFImageObj_GetImagePixelSize(nullptr, &width, &height));
+    // Check that getting the size of a null object would fail.
+    unsigned int width = 0;
+    unsigned int height = 0;
+    EXPECT_FALSE(FPDFImageObj_GetImagePixelSize(nullptr, &width, &height));
 
-  // Check that receiving the size with a null width and height pointers would
-  // fail.
-  FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page.get(), 35);
-  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
-  EXPECT_FALSE(FPDFImageObj_GetImagePixelSize(obj, nullptr, nullptr));
-  EXPECT_FALSE(FPDFImageObj_GetImagePixelSize(obj, nullptr, &height));
-  EXPECT_FALSE(FPDFImageObj_GetImagePixelSize(obj, &width, nullptr));
+    // Check that receiving the size with a null width and height pointers would
+    // fail.
+    FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page.get(), 35);
+    ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+    EXPECT_FALSE(FPDFImageObj_GetImagePixelSize(obj, nullptr, nullptr));
+    EXPECT_FALSE(FPDFImageObj_GetImagePixelSize(obj, nullptr, &height));
+    EXPECT_FALSE(FPDFImageObj_GetImagePixelSize(obj, &width, nullptr));
 
-  // Verify the pixel size of image.
-  ASSERT_TRUE(FPDFImageObj_GetImagePixelSize(obj, &width, &height));
-  EXPECT_EQ(92u, width);
-  EXPECT_EQ(68u, height);
+    // Verify the pixel size of image.
+    ASSERT_TRUE(FPDFImageObj_GetImagePixelSize(obj, &width, &height));
+    EXPECT_EQ(92u, width);
+    EXPECT_EQ(68u, height);
 
-  obj = FPDFPage_GetObject(page.get(), 37);
-  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
-  ASSERT_TRUE(FPDFImageObj_GetImagePixelSize(obj, &width, &height));
-  EXPECT_EQ(126u, width);
-  EXPECT_EQ(106u, height);
-}
+    obj = FPDFPage_GetObject(page.get(), 37);
+    ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+    ASSERT_TRUE(FPDFImageObj_GetImagePixelSize(obj, &width, &height));
+    EXPECT_EQ(126u, width);
+    EXPECT_EQ(106u, height);
+  }
 
-TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForHelloWorldText) {
-  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
-  ASSERT_TRUE(page);
+  TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForHelloWorldText) {
+    ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ASSERT_TRUE(page);
 
-  {
+    {
+      FPDF_PAGEOBJECT text_object = FPDFPage_GetObject(page.get(), 0);
+      ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(text_object));
+
+      ScopedFPDFBitmap bitmap(FPDFTextObj_GetRenderedBitmap(
+          document(), page.get(), text_object, 1));
+      ASSERT_TRUE(bitmap);
+      const char* checksum = []() {
+        if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+#if BUILDFLAG(IS_WIN)
+          return "764e3503960ef0b176796faa3543b9c7";
+#elif BUILDFLAG(IS_APPLE)
+          return "9e7774173acee966fcaa72e599eb9a93";
+#else
+          return "b17801afe8a36d6aad6c2239b88f2a73";
+#endif
+        }
+        return "bb0abe1accca1cfeaaf78afa35762350";
+      }();
+      CompareBitmap(bitmap.get(), 64, 11, checksum);
+
+      ScopedFPDFBitmap x2_bitmap(FPDFTextObj_GetRenderedBitmap(
+          document(), page.get(), text_object, 2.4f));
+      ASSERT_TRUE(x2_bitmap);
+      const char* x2_checksum = []() {
+        if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+#if BUILDFLAG(IS_WIN)
+          return "3cea4255285df04659e3c7477287bdb1";
+#elif BUILDFLAG(IS_APPLE)
+          return "2b34bddd2a1471e245cf72603c6799b4";
+#else
+          return "33af8b151ab26ebce5a71b39eedea6b1";
+#endif
+        }
+        return "80db528ec7146d92247f2339a8f10ba5";
+      }();
+      CompareBitmap(x2_bitmap.get(), 153, 25, x2_checksum);
+
+      ScopedFPDFBitmap x10_bitmap(FPDFTextObj_GetRenderedBitmap(
+          document(), page.get(), text_object, 10));
+      ASSERT_TRUE(x10_bitmap);
+      const char* x10_checksum = []() {
+        if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+#if BUILDFLAG(IS_WIN)
+          return "1cc617da9ed5922eeac2414108509ef5";
+#elif BUILDFLAG(IS_APPLE)
+          return "0450d576560274a7df31cb93d040e721";
+#else
+          return "93dd7ad07bdaaba9ecd268350cb91596";
+#endif
+        }
+        return "149f63de758ab01d3b75605cdfd4c176";
+      }();
+      CompareBitmap(x10_bitmap.get(), 631, 103, x10_checksum);
+    }
+
+    {
+      FPDF_PAGEOBJECT text_object = FPDFPage_GetObject(page.get(), 1);
+      ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(text_object));
+
+      ScopedFPDFBitmap bitmap(FPDFTextObj_GetRenderedBitmap(
+          document(), page.get(), text_object, 1));
+      ASSERT_TRUE(bitmap);
+      const char* checksum = []() {
+        if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+#if BUILDFLAG(IS_WIN)
+          return "4cdba7492317bcae2643bd4090e18812";
+#elif BUILDFLAG(IS_APPLE)
+          return "0b9efedcb8f5aa9246c52e90811cb046";
+#else
+          return "63fd059d984a5bea10f27ba026420202";
+#endif
+        }
+        return "3fc1101b2408c5484adc24ba0a11ff3d";
+      }();
+      CompareBitmap(bitmap.get(), 116, 16, checksum);
+
+      ScopedFPDFBitmap x2_bitmap(FPDFTextObj_GetRenderedBitmap(
+          document(), page.get(), text_object, 2.4f));
+      ASSERT_TRUE(x2_bitmap);
+      const char* x2_checksum = []() {
+        if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+#if BUILDFLAG(IS_WIN)
+          return "c5cecc5553843a4dd4fff3ceb4855a82";
+#elif BUILDFLAG(IS_APPLE)
+          return "10f4d9528a5471ab0b235984f0354dd4";
+#else
+          return "fc45021e3ea3ebd406fe6ffaa8c5c5b7";
+#endif
+        }
+        return "429960ae7b822f0c630432535e637465";
+      }();
+      CompareBitmap(x2_bitmap.get(), 276, 36, x2_checksum);
+
+      ScopedFPDFBitmap x10_bitmap(FPDFTextObj_GetRenderedBitmap(
+          document(), page.get(), text_object, 10));
+      ASSERT_TRUE(x10_bitmap);
+      const char* x10_checksum = []() {
+        if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+#if BUILDFLAG(IS_WIN)
+          return "cff29dcbe77092ec7f73e46766a289c7";
+#elif BUILDFLAG(IS_APPLE)
+          return "9e87791ffdf4cca0a0f118be245970c8";
+#else
+          return "61476636eaa0da0b93d8b1937cf22b75";
+#endif
+        }
+        return "f5f93bf64de579b59e775d7076ca0a5a";
+      }();
+      CompareBitmap(x10_bitmap.get(), 1143, 150, x10_checksum);
+    }
+  }
+
+  TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForRotatedText) {
+    ASSERT_TRUE(OpenDocument("rotated_text.pdf"));
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ASSERT_TRUE(page);
+
     FPDF_PAGEOBJECT text_object = FPDFPage_GetObject(page.get(), 0);
     ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(text_object));
 
@@ -4872,16 +4962,16 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForHelloWorldText) {
     const char* checksum = []() {
       if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-        return "764e3503960ef0b176796faa3543b9c7";
+        return "ba5322a4e6b0f79dca42be88f3007708";
 #elif BUILDFLAG(IS_APPLE)
-        return "9e7774173acee966fcaa72e599eb9a93";
+        return "22cf71716a7059f481a63e32b6088c8c";
 #else
-        return "b17801afe8a36d6aad6c2239b88f2a73";
+        return "f515a7209d7892065d3716ec462f5c10";
 #endif
       }
-      return "bb0abe1accca1cfeaaf78afa35762350";
+      return "08ada0802f780d3fefb161dc6fb45977";
     }();
-    CompareBitmap(bitmap.get(), 64, 11, checksum);
+    CompareBitmap(bitmap.get(), 29, 28, checksum);
 
     ScopedFPDFBitmap x2_bitmap(FPDFTextObj_GetRenderedBitmap(
         document(), page.get(), text_object, 2.4f));
@@ -4889,16 +4979,16 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForHelloWorldText) {
     const char* x2_checksum = []() {
       if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-        return "3cea4255285df04659e3c7477287bdb1";
+        return "e8fb0a707b2924726757a2ed32d6f28d";
 #elif BUILDFLAG(IS_APPLE)
-        return "2b34bddd2a1471e245cf72603c6799b4";
+        return "5d4be6808bdcec3f6ee7352122dd986d";
 #else
-        return "33af8b151ab26ebce5a71b39eedea6b1";
+        return "c69bbe5318ec149f63228e276e708612";
 #endif
       }
-      return "80db528ec7146d92247f2339a8f10ba5";
+      return "09d7ddb647b8653cb59aede349a0c3e1";
     }();
-    CompareBitmap(x2_bitmap.get(), 153, 25, x2_checksum);
+    CompareBitmap(x2_bitmap.get(), 67, 67, x2_checksum);
 
     ScopedFPDFBitmap x10_bitmap(
         FPDFTextObj_GetRenderedBitmap(document(), page.get(), text_object, 10));
@@ -4906,451 +4996,335 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForHelloWorldText) {
     const char* x10_checksum = []() {
       if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-        return "1cc617da9ed5922eeac2414108509ef5";
+        return "eb0cbf56707d1c39ce0ab89a9b43d6a8";
 #elif BUILDFLAG(IS_APPLE)
-        return "0450d576560274a7df31cb93d040e721";
+        return "98757f865abde60c7f7f60c74435cb85";
 #else
-        return "93dd7ad07bdaaba9ecd268350cb91596";
+        return "bb7c2ec575f27cf882dcd38f2563c00f";
 #endif
       }
-      return "149f63de758ab01d3b75605cdfd4c176";
+      return "bbd3842a4b50dbfcbce4eee2b067a297";
     }();
-    CompareBitmap(x10_bitmap.get(), 631, 103, x10_checksum);
+    CompareBitmap(x10_bitmap.get(), 275, 275, x10_checksum);
   }
 
-  {
-    FPDF_PAGEOBJECT text_object = FPDFPage_GetObject(page.get(), 1);
+  TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForColorText) {
+    ASSERT_TRUE(OpenDocument("text_color.pdf"));
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ASSERT_TRUE(page);
+
+    FPDF_PAGEOBJECT text_object = FPDFPage_GetObject(page.get(), 0);
     ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(text_object));
 
-    ScopedFPDFBitmap bitmap(
-        FPDFTextObj_GetRenderedBitmap(document(), page.get(), text_object, 1));
+    ScopedFPDFBitmap bitmap(FPDFTextObj_GetRenderedBitmap(
+        document(), page.get(), text_object, 7.3f));
+    ASSERT_TRUE(bitmap);
+    const char* checksum = []() {
+      if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+        return "9199f0c27c8a61a57189b1b044941e5e";
+      }
+      return "e8154fa8ededf4d9b8b35b5260897b6c";
+    }();
+    CompareBitmap(bitmap.get(), 120, 186, checksum);
+  }
+
+  TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForNewlyCreatedText) {
+    // Start with a blank document.
+    ASSERT_TRUE(CreateNewDocument());
+
+    // Create a new text object.
+    ScopedFPDFPageObject text_object(
+        FPDFPageObj_NewTextObj(document(), "Arial", 12.0f));
+    ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(text_object.get()));
+    ScopedFPDFWideString text = GetFPDFWideString(kBottomText);
+    EXPECT_TRUE(FPDFText_SetText(text_object.get(), text.get()));
+
+    ScopedFPDFBitmap bitmap(FPDFTextObj_GetRenderedBitmap(
+        document(), nullptr, text_object.get(), 1));
     ASSERT_TRUE(bitmap);
     const char* checksum = []() {
       if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-        return "4cdba7492317bcae2643bd4090e18812";
+        return "6d88537a49fa2dccfa0f58ac325c5b75";
 #elif BUILDFLAG(IS_APPLE)
-        return "0b9efedcb8f5aa9246c52e90811cb046";
+        return "a637d62f2e8ae10c3267b2ff5fcc2246";
 #else
-        return "63fd059d984a5bea10f27ba026420202";
+        return "574ae982d02e653ab6a8f23a6cdf4085";
 #endif
       }
-      return "3fc1101b2408c5484adc24ba0a11ff3d";
+      return "fa947759dab76d68a07ccf6f97b2d9c2";
     }();
-    CompareBitmap(bitmap.get(), 116, 16, checksum);
-
-    ScopedFPDFBitmap x2_bitmap(FPDFTextObj_GetRenderedBitmap(
-        document(), page.get(), text_object, 2.4f));
-    ASSERT_TRUE(x2_bitmap);
-    const char* x2_checksum = []() {
-      if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-#if BUILDFLAG(IS_WIN)
-        return "c5cecc5553843a4dd4fff3ceb4855a82";
-#elif BUILDFLAG(IS_APPLE)
-        return "10f4d9528a5471ab0b235984f0354dd4";
-#else
-        return "fc45021e3ea3ebd406fe6ffaa8c5c5b7";
-#endif
-      }
-      return "429960ae7b822f0c630432535e637465";
-    }();
-    CompareBitmap(x2_bitmap.get(), 276, 36, x2_checksum);
-
-    ScopedFPDFBitmap x10_bitmap(
-        FPDFTextObj_GetRenderedBitmap(document(), page.get(), text_object, 10));
-    ASSERT_TRUE(x10_bitmap);
-    const char* x10_checksum = []() {
-      if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-#if BUILDFLAG(IS_WIN)
-        return "cff29dcbe77092ec7f73e46766a289c7";
-#elif BUILDFLAG(IS_APPLE)
-        return "9e87791ffdf4cca0a0f118be245970c8";
-#else
-        return "61476636eaa0da0b93d8b1937cf22b75";
-#endif
-      }
-      return "f5f93bf64de579b59e775d7076ca0a5a";
-    }();
-    CompareBitmap(x10_bitmap.get(), 1143, 150, x10_checksum);
-  }
-}
-
-TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForRotatedText) {
-  ASSERT_TRUE(OpenDocument("rotated_text.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
-  ASSERT_TRUE(page);
-
-  FPDF_PAGEOBJECT text_object = FPDFPage_GetObject(page.get(), 0);
-  ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(text_object));
-
-  ScopedFPDFBitmap bitmap(
-      FPDFTextObj_GetRenderedBitmap(document(), page.get(), text_object, 1));
-  ASSERT_TRUE(bitmap);
-  const char* checksum = []() {
-    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-#if BUILDFLAG(IS_WIN)
-      return "ba5322a4e6b0f79dca42be88f3007708";
-#elif BUILDFLAG(IS_APPLE)
-      return "22cf71716a7059f481a63e32b6088c8c";
-#else
-      return "f515a7209d7892065d3716ec462f5c10";
-#endif
-    }
-    return "08ada0802f780d3fefb161dc6fb45977";
-  }();
-  CompareBitmap(bitmap.get(), 29, 28, checksum);
-
-  ScopedFPDFBitmap x2_bitmap(
-      FPDFTextObj_GetRenderedBitmap(document(), page.get(), text_object, 2.4f));
-  ASSERT_TRUE(x2_bitmap);
-  const char* x2_checksum = []() {
-    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-#if BUILDFLAG(IS_WIN)
-      return "e8fb0a707b2924726757a2ed32d6f28d";
-#elif BUILDFLAG(IS_APPLE)
-      return "5d4be6808bdcec3f6ee7352122dd986d";
-#else
-      return "c69bbe5318ec149f63228e276e708612";
-#endif
-    }
-    return "09d7ddb647b8653cb59aede349a0c3e1";
-  }();
-  CompareBitmap(x2_bitmap.get(), 67, 67, x2_checksum);
-
-  ScopedFPDFBitmap x10_bitmap(
-      FPDFTextObj_GetRenderedBitmap(document(), page.get(), text_object, 10));
-  ASSERT_TRUE(x10_bitmap);
-  const char* x10_checksum = []() {
-    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-#if BUILDFLAG(IS_WIN)
-      return "eb0cbf56707d1c39ce0ab89a9b43d6a8";
-#elif BUILDFLAG(IS_APPLE)
-      return "98757f865abde60c7f7f60c74435cb85";
-#else
-      return "bb7c2ec575f27cf882dcd38f2563c00f";
-#endif
-    }
-    return "bbd3842a4b50dbfcbce4eee2b067a297";
-  }();
-  CompareBitmap(x10_bitmap.get(), 275, 275, x10_checksum);
-}
-
-TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForColorText) {
-  ASSERT_TRUE(OpenDocument("text_color.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
-  ASSERT_TRUE(page);
-
-  FPDF_PAGEOBJECT text_object = FPDFPage_GetObject(page.get(), 0);
-  ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(text_object));
-
-  ScopedFPDFBitmap bitmap(
-      FPDFTextObj_GetRenderedBitmap(document(), page.get(), text_object, 7.3f));
-  ASSERT_TRUE(bitmap);
-  const char* checksum = []() {
-    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-      return "9199f0c27c8a61a57189b1b044941e5e";
-    }
-    return "e8154fa8ededf4d9b8b35b5260897b6c";
-  }();
-  CompareBitmap(bitmap.get(), 120, 186, checksum);
-}
-
-TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForNewlyCreatedText) {
-  // Start with a blank document.
-  ASSERT_TRUE(CreateNewDocument());
-
-  // Create a new text object.
-  ScopedFPDFPageObject text_object(
-      FPDFPageObj_NewTextObj(document(), "Arial", 12.0f));
-  ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(text_object.get()));
-  ScopedFPDFWideString text = GetFPDFWideString(kBottomText);
-  EXPECT_TRUE(FPDFText_SetText(text_object.get(), text.get()));
-
-  ScopedFPDFBitmap bitmap(
-      FPDFTextObj_GetRenderedBitmap(document(), nullptr, text_object.get(), 1));
-  ASSERT_TRUE(bitmap);
-  const char* checksum = []() {
-    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-#if BUILDFLAG(IS_WIN)
-      return "6d88537a49fa2dccfa0f58ac325c5b75";
-#elif BUILDFLAG(IS_APPLE)
-      return "a637d62f2e8ae10c3267b2ff5fcc2246";
-#else
-      return "574ae982d02e653ab6a8f23a6cdf4085";
-#endif
-    }
-    return "fa947759dab76d68a07ccf6f97b2d9c2";
-  }();
-  CompareBitmap(bitmap.get(), 151, 12, checksum);
-}
-
-TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForTextWithBadParameters) {
-  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
-  ASSERT_TRUE(page);
-
-  FPDF_PAGEOBJECT text_object = FPDFPage_GetObject(page.get(), 0);
-  ASSERT_TRUE(text_object);
-
-  // Simple bad parameters testing.
-  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(nullptr, nullptr, nullptr, 0));
-  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(document(), nullptr, nullptr, 0));
-  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(nullptr, page.get(), nullptr, 0));
-  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(nullptr, nullptr, text_object, 0));
-  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(nullptr, nullptr, nullptr, 1));
-  EXPECT_FALSE(
-      FPDFTextObj_GetRenderedBitmap(document(), page.get(), nullptr, 0));
-  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(document(), nullptr, nullptr, 1));
-  EXPECT_FALSE(
-      FPDFTextObj_GetRenderedBitmap(nullptr, page.get(), text_object, 0));
-  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(nullptr, page.get(), nullptr, 1));
-  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(nullptr, nullptr, text_object, 1));
-  EXPECT_FALSE(
-      FPDFTextObj_GetRenderedBitmap(document(), page.get(), nullptr, 1));
-  EXPECT_FALSE(
-      FPDFTextObj_GetRenderedBitmap(nullptr, page.get(), text_object, 1));
-
-  // Test bad scale values.
-  EXPECT_FALSE(
-      FPDFTextObj_GetRenderedBitmap(document(), page.get(), text_object, 0));
-  EXPECT_FALSE(
-      FPDFTextObj_GetRenderedBitmap(document(), page.get(), text_object, -1));
-  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(document(), page.get(),
-                                             text_object, 10000));
-  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(
-      document(), page.get(), text_object, std::numeric_limits<float>::max()));
-  EXPECT_FALSE(
-      FPDFTextObj_GetRenderedBitmap(document(), page.get(), text_object,
-                                    std::numeric_limits<float>::infinity()));
-
-  {
-    // `text_object` will render without `page`, but may not render correctly
-    // without the resources from `page`. Although it does in this simple case.
-    ScopedFPDFBitmap bitmap(
-        FPDFTextObj_GetRenderedBitmap(document(), nullptr, text_object, 1));
-    EXPECT_TRUE(bitmap);
+    CompareBitmap(bitmap.get(), 151, 12, checksum);
   }
 
-  // Mismatch between the document and the page fails too.
-  ScopedFPDFDocument empty_document(FPDF_CreateNewDocument());
-  EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(empty_document.get(), page.get(),
-                                             text_object, 1));
-}
+  TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForTextWithBadParameters) {
+    ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ASSERT_TRUE(page);
 
-TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForRotatedImage) {
-  ScopedFPDFDocument doc(FPDF_CreateNewDocument());
-  ScopedFPDFPage page(FPDFPage_New(doc.get(), 0, 100, 100));
-  EXPECT_EQ(0, FPDFPage_CountObjects(page.get()));
+    FPDF_PAGEOBJECT text_object = FPDFPage_GetObject(page.get(), 0);
+    ASSERT_TRUE(text_object);
 
-  constexpr int kBitmapWidth = 50;
-  constexpr int kBitmapHeight = 100;
-  ScopedFPDFBitmap bitmap(FPDFBitmap_Create(kBitmapWidth, kBitmapHeight, 0));
-  ASSERT_TRUE(FPDFBitmap_FillRect(bitmap.get(), 0, 0, kBitmapWidth,
-                                  kBitmapHeight, 0x00000000));
-  ScopedFPDFPageObject page_image(FPDFPageObj_NewImageObj(doc.get()));
-  ASSERT_TRUE(
-      FPDFImageObj_SetBitmap(nullptr, 0, page_image.get(), bitmap.get()));
+    // Simple bad parameters testing.
+    EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(nullptr, nullptr, nullptr, 0));
+    EXPECT_FALSE(
+        FPDFTextObj_GetRenderedBitmap(document(), nullptr, nullptr, 0));
+    EXPECT_FALSE(
+        FPDFTextObj_GetRenderedBitmap(nullptr, page.get(), nullptr, 0));
+    EXPECT_FALSE(
+        FPDFTextObj_GetRenderedBitmap(nullptr, nullptr, text_object, 0));
+    EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(nullptr, nullptr, nullptr, 1));
+    EXPECT_FALSE(
+        FPDFTextObj_GetRenderedBitmap(document(), page.get(), nullptr, 0));
+    EXPECT_FALSE(
+        FPDFTextObj_GetRenderedBitmap(document(), nullptr, nullptr, 1));
+    EXPECT_FALSE(
+        FPDFTextObj_GetRenderedBitmap(nullptr, page.get(), text_object, 0));
+    EXPECT_FALSE(
+        FPDFTextObj_GetRenderedBitmap(nullptr, page.get(), nullptr, 1));
+    EXPECT_FALSE(
+        FPDFTextObj_GetRenderedBitmap(nullptr, nullptr, text_object, 1));
+    EXPECT_FALSE(
+        FPDFTextObj_GetRenderedBitmap(document(), page.get(), nullptr, 1));
+    EXPECT_FALSE(
+        FPDFTextObj_GetRenderedBitmap(nullptr, page.get(), text_object, 1));
 
-  // Set bitmap matrix with scaling and 90 degrees clockwise rotation.
-  constexpr int kScaleX = 2;
-  constexpr int kScaleY = 3;
-  static constexpr FS_MATRIX kBitmapMatrix{
-      0, -kScaleX * kBitmapWidth, kScaleY * kBitmapHeight, 0, 0, 0};
-  ASSERT_TRUE(FPDFPageObj_SetMatrix(page_image.get(), &kBitmapMatrix));
-  FPDFPage_InsertObject(page.get(), page_image.release());
-  EXPECT_EQ(1, FPDFPage_CountObjects(page.get()));
-  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+    // Test bad scale values.
+    EXPECT_FALSE(
+        FPDFTextObj_GetRenderedBitmap(document(), page.get(), text_object, 0));
+    EXPECT_FALSE(
+        FPDFTextObj_GetRenderedBitmap(document(), page.get(), text_object, -1));
+    EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(document(), page.get(),
+                                               text_object, 10000));
+    EXPECT_FALSE(
+        FPDFTextObj_GetRenderedBitmap(document(), page.get(), text_object,
+                                      std::numeric_limits<float>::max()));
+    EXPECT_FALSE(
+        FPDFTextObj_GetRenderedBitmap(document(), page.get(), text_object,
+                                      std::numeric_limits<float>::infinity()));
 
-  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page.get(), 0);
-  ScopedFPDFBitmap extracted_bitmap(
-      FPDFImageObj_GetRenderedBitmap(doc.get(), page.get(), page_object));
-  ASSERT_TRUE(extracted_bitmap);
+    {
+      // `text_object` will render without `page`, but may not render correctly
+      // without the resources from `page`. Although it does in this simple
+      // case.
+      ScopedFPDFBitmap bitmap(
+          FPDFTextObj_GetRenderedBitmap(document(), nullptr, text_object, 1));
+      EXPECT_TRUE(bitmap);
+    }
 
-  ASSERT_EQ(FPDFBitmap_GetWidth(extracted_bitmap.get()),
-            kScaleY * kBitmapHeight);
-  ASSERT_EQ(FPDFBitmap_GetHeight(extracted_bitmap.get()),
-            kScaleX * kBitmapWidth);
-}
+    // Mismatch between the document and the page fails too.
+    ScopedFPDFDocument empty_document(FPDF_CreateNewDocument());
+    EXPECT_FALSE(FPDFTextObj_GetRenderedBitmap(empty_document.get(), page.get(),
+                                               text_object, 1));
+  }
 
-TEST_F(FPDFEditEmbedderTest, MultipleGraphicsStates) {
-  ASSERT_TRUE(OpenDocument("multiple_graphics_states.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
-  ASSERT_TRUE(page);
+  TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForRotatedImage) {
+    ScopedFPDFDocument doc(FPDF_CreateNewDocument());
+    ScopedFPDFPage page(FPDFPage_New(doc.get(), 0, 100, 100));
+    EXPECT_EQ(0, FPDFPage_CountObjects(page.get()));
 
-  {
-    ScopedFPDFPageObject path(FPDFPageObj_CreateNewPath(400, 100));
-    EXPECT_TRUE(FPDFPageObj_SetFillColor(path.get(), 255, 0, 0, 255));
-    EXPECT_TRUE(FPDFPath_SetDrawMode(path.get(), FPDF_FILLMODE_ALTERNATE, 0));
-    EXPECT_TRUE(FPDFPath_MoveTo(path.get(), 100, 100));
-    EXPECT_TRUE(FPDFPath_LineTo(path.get(), 100, 125));
-    EXPECT_TRUE(FPDFPath_Close(path.get()));
+    constexpr int kBitmapWidth = 50;
+    constexpr int kBitmapHeight = 100;
+    ScopedFPDFBitmap bitmap(FPDFBitmap_Create(kBitmapWidth, kBitmapHeight, 0));
+    ASSERT_TRUE(FPDFBitmap_FillRect(bitmap.get(), 0, 0, kBitmapWidth,
+                                    kBitmapHeight, 0x00000000));
+    ScopedFPDFPageObject page_image(FPDFPageObj_NewImageObj(doc.get()));
+    ASSERT_TRUE(
+        FPDFImageObj_SetBitmap(nullptr, 0, page_image.get(), bitmap.get()));
 
-    FPDFPage_InsertObject(page.get(), path.release());
+    // Set bitmap matrix with scaling and 90 degrees clockwise rotation.
+    constexpr int kScaleX = 2;
+    constexpr int kScaleY = 3;
+    static constexpr FS_MATRIX kBitmapMatrix{
+        0, -kScaleX * kBitmapWidth, kScaleY * kBitmapHeight, 0, 0, 0};
+    ASSERT_TRUE(FPDFPageObj_SetMatrix(page_image.get(), &kBitmapMatrix));
+    FPDFPage_InsertObject(page.get(), page_image.release());
+    EXPECT_EQ(1, FPDFPage_CountObjects(page.get()));
     EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+
+    FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page.get(), 0);
+    ScopedFPDFBitmap extracted_bitmap(
+        FPDFImageObj_GetRenderedBitmap(doc.get(), page.get(), page_object));
+    ASSERT_TRUE(extracted_bitmap);
+
+    ASSERT_EQ(FPDFBitmap_GetWidth(extracted_bitmap.get()),
+              kScaleY * kBitmapHeight);
+    ASSERT_EQ(FPDFBitmap_GetHeight(extracted_bitmap.get()),
+              kScaleX * kBitmapWidth);
   }
 
-  const char* checksum = CFX_DefaultRenderDevice::UseSkiaRenderer()
-                             ? "7ebec75d95c64b522999a710de76c52c"
-                             : "f4b36616a7fea81a4f06cc7b01a55ac1";
+  TEST_F(FPDFEditEmbedderTest, MultipleGraphicsStates) {
+    ASSERT_TRUE(OpenDocument("multiple_graphics_states.pdf"));
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ASSERT_TRUE(page);
 
-  ScopedFPDFBitmap bitmap = RenderPage(page.get());
-  CompareBitmap(bitmap.get(), 200, 300, checksum);
+    {
+      ScopedFPDFPageObject path(FPDFPageObj_CreateNewPath(400, 100));
+      EXPECT_TRUE(FPDFPageObj_SetFillColor(path.get(), 255, 0, 0, 255));
+      EXPECT_TRUE(FPDFPath_SetDrawMode(path.get(), FPDF_FILLMODE_ALTERNATE, 0));
+      EXPECT_TRUE(FPDFPath_MoveTo(path.get(), 100, 100));
+      EXPECT_TRUE(FPDFPath_LineTo(path.get(), 100, 125));
+      EXPECT_TRUE(FPDFPath_Close(path.get()));
 
-  ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  VerifySavedDocument(200, 300, checksum);
-}
-
-TEST_F(FPDFEditEmbedderTest, GetAndSetMatrixForFormWithText) {
-  constexpr int kExpectedWidth = 200;
-  constexpr int kExpectedHeight = 200;
-
-  OpenDocument("form_object_with_text.pdf");
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
-  ASSERT_TRUE(page);
-
-  {
-    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
-    CompareBitmap(bitmap.get(), kExpectedWidth, kExpectedHeight,
-                  HelloWorldChecksum());
-  }
-
-  FPDF_PAGEOBJECT form = FPDFPage_GetObject(page.get(), 0);
-  ASSERT_TRUE(form);
-  ASSERT_EQ(FPDF_PAGEOBJ_FORM, FPDFPageObj_GetType(form));
-
-  FS_MATRIX matrix;
-  ASSERT_TRUE(FPDFPageObj_GetMatrix(form, &matrix));
-  EXPECT_FLOAT_EQ(2.0f, matrix.a);
-  EXPECT_FLOAT_EQ(0.0f, matrix.b);
-  EXPECT_FLOAT_EQ(0.0f, matrix.c);
-  EXPECT_FLOAT_EQ(-1.0f, matrix.d);
-  EXPECT_FLOAT_EQ(0.0f, matrix.e);
-  EXPECT_FLOAT_EQ(200.0f, matrix.f);
-
-  ASSERT_TRUE(FPDFPageObj_SetMatrix(form, &matrix));
-  {
-    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
-    CompareBitmap(bitmap.get(), kExpectedWidth, kExpectedHeight,
-                  HelloWorldChecksum());
-  }
-
-  FPDF_PAGEOBJECT text = FPDFFormObj_GetObject(form, 0);
-  ASSERT_TRUE(text);
-  ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(text));
-
-  ASSERT_TRUE(FPDFPageObj_GetMatrix(text, &matrix));
-  EXPECT_FLOAT_EQ(0.5f, matrix.a);
-  EXPECT_FLOAT_EQ(0.0f, matrix.b);
-  EXPECT_FLOAT_EQ(0.0f, matrix.c);
-  EXPECT_FLOAT_EQ(-1.0f, matrix.d);
-  EXPECT_FLOAT_EQ(10.0f, matrix.e);
-  EXPECT_FLOAT_EQ(150.0f, matrix.f);
-
-  ASSERT_TRUE(FPDFPageObj_SetMatrix(text, &matrix));
-  {
-    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
-    CompareBitmap(bitmap.get(), kExpectedWidth, kExpectedHeight,
-                  HelloWorldChecksum());
-  }
-
-  ASSERT_TRUE(FPDFPage_GenerateContent(page.get()));
-  ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-
-  {
-    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
-    CompareBitmap(bitmap.get(), kExpectedWidth, kExpectedHeight,
-                  HelloWorldChecksum());
-  }
-
-
-  VerifySavedDocument(kExpectedWidth, kExpectedHeight, HelloWorldChecksum());
-}
-
-TEST_F(FPDFEditEmbedderTest, PageObjTransformFWithBadParameters) {
-  ScopedFPDFDocument doc(FPDF_CreateNewDocument());
-  ScopedFPDFPageObject image(FPDFPageObj_NewImageObj(doc.get()));
-  ASSERT_TRUE(image);
-
-  const FS_MATRIX matrix{1, 2, 3, 4, 5, 6};
-  EXPECT_FALSE(FPDFPageObj_TransformF(nullptr, nullptr));
-  EXPECT_FALSE(FPDFPageObj_TransformF(image.get(), nullptr));
-  EXPECT_FALSE(FPDFPageObj_TransformF(nullptr, &matrix));
-}
-
-class FPDFEditMoveEmbedderTest : public EmbedderTest {
- protected:
-  std::vector<std::string> HashesForDocument(int page_count) {
-    std::vector<std::string> hashes;
-    hashes.reserve(page_count);
-    for (int i = 0; i < page_count; ++i) {
-      hashes.push_back(HashForPage(i));
+      FPDFPage_InsertObject(page.get(), path.release());
+      EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
     }
-    return hashes;
+
+    const char* checksum = CFX_DefaultRenderDevice::UseSkiaRenderer()
+                               ? "7ebec75d95c64b522999a710de76c52c"
+                               : "f4b36616a7fea81a4f06cc7b01a55ac1";
+
+    ScopedFPDFBitmap bitmap = RenderPage(page.get());
+    CompareBitmap(bitmap.get(), 200, 300, checksum);
+
+    ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+    VerifySavedDocument(200, 300, checksum);
   }
 
- private:
-  std::string HashForPage(int page_index) {
-    ScopedEmbedderTestPage page = LoadScopedPage(page_index);
-    EXPECT_TRUE(page);
-    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
-    std::string hash = HashBitmap(bitmap.get());
-    return hash;
-  }
-};
+  TEST_F(FPDFEditEmbedderTest, GetAndSetMatrixForFormWithText) {
+    constexpr int kExpectedWidth = 200;
+    constexpr int kExpectedHeight = 200;
 
-TEST_F(FPDFEditMoveEmbedderTest, MovePagesTest) {
-  static const FPDFEditMoveEmbedderTestCase kTestCases[] = {
-      {{0, 1, 2, 3, 4}, 5, 0, true, {0, 1, 2, 3, 4}, "no change"},
-      {{0, 4, 2, 1, 3}, 5, 0, true, {0, 4, 2, 1, 3}, "reorder all pages"},
-      {{0, 2, 4, 3}, 4, 1, true, {1, 0, 2, 4, 3}, "reorder 4 pages"},
-      {{1, 4, 2}, 3, 2, true, {0, 3, 1, 4, 2}, "reorder 3 pages"},
-      {{3, 2}, 2, 3, true, {0, 1, 4, 3, 2}, "reorder 2 pages"},
-      {{3}, 1, 4, true, {0, 1, 2, 4, 3}, "reorder 1 page"},
-      {{1, 1}, 2, 2, false, {}, "duplicate index"},
-      {{5, 3, 2}, 3, 0, false, {}, "out of range index"},
-      {{3}, 0, 0, false, {}, "page_indices_len needs to be in range [1, 5]"},
-      {{4, 3, 2, 1, 0}, 6, 0, false, {}, "page_indices_len is too big"},
-      {{3}, 0, 5, false, {}, "dest_page_index is out of range"},
-      {{3, 1, 4}, 0, -1, false, {}, "dest_page_index is out of range"},
+    OpenDocument("form_object_with_text.pdf");
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ASSERT_TRUE(page);
+
+    {
+      ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
+      CompareBitmap(bitmap.get(), kExpectedWidth, kExpectedHeight,
+                    HelloWorldChecksum());
+    }
+
+    FPDF_PAGEOBJECT form = FPDFPage_GetObject(page.get(), 0);
+    ASSERT_TRUE(form);
+    ASSERT_EQ(FPDF_PAGEOBJ_FORM, FPDFPageObj_GetType(form));
+
+    FS_MATRIX matrix;
+    FS_MATRIX expected_matrix;
+
+    ASSERT_TRUE(FPDFPageObj_GetMatrix(form, &matrix));
+    expected_matrix = {2.0f, 0.0f, 0.0f, -1.0f, 0.0f, 200.0f};
+    CompareFS_MATRIX(expected_matrix, matrix);
+
+    ASSERT_TRUE(FPDFPageObj_SetMatrix(form, &matrix));
+    {
+      ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
+      CompareBitmap(bitmap.get(), kExpectedWidth, kExpectedHeight,
+                    HelloWorldChecksum());
+    }
+
+    FPDF_PAGEOBJECT text = FPDFFormObj_GetObject(form, 0);
+    ASSERT_TRUE(text);
+    ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(text));
+
+    ASSERT_TRUE(FPDFPageObj_GetMatrix(text, &matrix));
+    expected_matrix = {0.5f, 0.0f, 0.0f, -1.0f, 10.0f, 150.0f};
+    CompareFS_MATRIX(expected_matrix, matrix);
+
+    ASSERT_TRUE(FPDFPageObj_SetMatrix(text, &matrix));
+    {
+      ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
+      CompareBitmap(bitmap.get(), kExpectedWidth, kExpectedHeight,
+                    HelloWorldChecksum());
+    }
+
+    ASSERT_TRUE(FPDFPage_GenerateContent(page.get()));
+    ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+
+    {
+      ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
+      CompareBitmap(bitmap.get(), kExpectedWidth, kExpectedHeight,
+                    HelloWorldChecksum());
+    }
+
+    VerifySavedDocument(kExpectedWidth, kExpectedHeight, HelloWorldChecksum());
+  }
+
+  TEST_F(FPDFEditEmbedderTest, PageObjTransformFWithBadParameters) {
+    ScopedFPDFDocument doc(FPDF_CreateNewDocument());
+    ScopedFPDFPageObject image(FPDFPageObj_NewImageObj(doc.get()));
+    ASSERT_TRUE(image);
+
+    const FS_MATRIX matrix{1, 2, 3, 4, 5, 6};
+    EXPECT_FALSE(FPDFPageObj_TransformF(nullptr, nullptr));
+    EXPECT_FALSE(FPDFPageObj_TransformF(image.get(), nullptr));
+    EXPECT_FALSE(FPDFPageObj_TransformF(nullptr, &matrix));
+  }
+
+  class FPDFEditMoveEmbedderTest : public EmbedderTest {
+   protected:
+    std::vector<std::string> HashesForDocument(int page_count) {
+      std::vector<std::string> hashes;
+      hashes.reserve(page_count);
+      for (int i = 0; i < page_count; ++i) {
+        hashes.push_back(HashForPage(i));
+      }
+      return hashes;
+    }
+
+   private:
+    std::string HashForPage(int page_index) {
+      ScopedEmbedderTestPage page = LoadScopedPage(page_index);
+      EXPECT_TRUE(page);
+      ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
+      std::string hash = HashBitmap(bitmap.get());
+      return hash;
+    }
   };
 
-  // Try all test cases with a freshly opened document that has 5 pages.
-  for (const FPDFEditMoveEmbedderTestCase& tc : kTestCases) {
-    ASSERT_TRUE(OpenDocument("rectangles_multi_pages.pdf"));
-    const int page_count = GetPageCount();
-    ASSERT_EQ(page_count, 5);
-    // Check that the test case has correctly formed expected result.
-    if (tc.expected_result) {
-      ASSERT_THAT(tc.expected_order, testing::SizeIs(page_count));
-    } else {
-      ASSERT_THAT(tc.expected_order, testing::SizeIs(0));
-    }
+  TEST_F(FPDFEditMoveEmbedderTest, MovePagesTest) {
+    static const FPDFEditMoveEmbedderTestCase kTestCases[] = {
+        {{0, 1, 2, 3, 4}, 5, 0, true, {0, 1, 2, 3, 4}, "no change"},
+        {{0, 4, 2, 1, 3}, 5, 0, true, {0, 4, 2, 1, 3}, "reorder all pages"},
+        {{0, 2, 4, 3}, 4, 1, true, {1, 0, 2, 4, 3}, "reorder 4 pages"},
+        {{1, 4, 2}, 3, 2, true, {0, 3, 1, 4, 2}, "reorder 3 pages"},
+        {{3, 2}, 2, 3, true, {0, 1, 4, 3, 2}, "reorder 2 pages"},
+        {{3}, 1, 4, true, {0, 1, 2, 4, 3}, "reorder 1 page"},
+        {{1, 1}, 2, 2, false, {}, "duplicate index"},
+        {{5, 3, 2}, 3, 0, false, {}, "out of range index"},
+        {{3}, 0, 0, false, {}, "page_indices_len needs to be in range [1, 5]"},
+        {{4, 3, 2, 1, 0}, 6, 0, false, {}, "page_indices_len is too big"},
+        {{3}, 0, 5, false, {}, "dest_page_index is out of range"},
+        {{3, 1, 4}, 0, -1, false, {}, "dest_page_index is out of range"},
+    };
 
-    // Cache the original pages' hashes.
-    std::vector<std::string> orig_hashes = HashesForDocument(page_count);
-    ASSERT_THAT(orig_hashes, testing::SizeIs(page_count));
-
-    EXPECT_EQ(FPDF_MovePages(document(), &tc.page_indices[0],
-                             tc.page_indices_len, tc.dest_page_index),
-              tc.expected_result)
-        << tc;
-
-    if (tc.expected_result) {
-      // Check for updated page order.
-      std::vector<std::string> new_hashes = HashesForDocument(page_count);
-      std::vector<std::string> expected_hashes;
-      expected_hashes.reserve(page_count);
-      for (int i = 0; i < page_count; ++i) {
-        expected_hashes.push_back(orig_hashes[tc.expected_order[i]]);
+    // Try all test cases with a freshly opened document that has 5 pages.
+    for (const FPDFEditMoveEmbedderTestCase& tc : kTestCases) {
+      ASSERT_TRUE(OpenDocument("rectangles_multi_pages.pdf"));
+      const int page_count = GetPageCount();
+      ASSERT_EQ(page_count, 5);
+      // Check that the test case has correctly formed expected result.
+      if (tc.expected_result) {
+        ASSERT_THAT(tc.expected_order, testing::SizeIs(page_count));
+      } else {
+        ASSERT_THAT(tc.expected_order, testing::SizeIs(0));
       }
-      EXPECT_THAT(new_hashes, testing::ContainerEq(expected_hashes)) << tc;
-    } else {
-      // Check that pages are unchanged.
-      EXPECT_THAT(HashesForDocument(page_count),
-                  testing::ContainerEq(orig_hashes))
-          << tc;
-    }
 
-    CloseDocument();
+      // Cache the original pages' hashes.
+      std::vector<std::string> orig_hashes = HashesForDocument(page_count);
+      ASSERT_THAT(orig_hashes, testing::SizeIs(page_count));
+
+      EXPECT_EQ(FPDF_MovePages(document(), &tc.page_indices[0],
+                               tc.page_indices_len, tc.dest_page_index),
+                tc.expected_result)
+          << tc;
+
+      if (tc.expected_result) {
+        // Check for updated page order.
+        std::vector<std::string> new_hashes = HashesForDocument(page_count);
+        std::vector<std::string> expected_hashes;
+        expected_hashes.reserve(page_count);
+        for (int i = 0; i < page_count; ++i) {
+          expected_hashes.push_back(orig_hashes[tc.expected_order[i]]);
+        }
+        EXPECT_THAT(new_hashes, testing::ContainerEq(expected_hashes)) << tc;
+      } else {
+        // Check that pages are unchanged.
+        EXPECT_THAT(HashesForDocument(page_count),
+                    testing::ContainerEq(orig_hashes))
+            << tc;
+      }
+
+      CloseDocument();
+    }
   }
-}
