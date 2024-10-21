@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a59e31ad_bd3382de",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 830,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-10-21T18:47:42Z",
+      "side": 0,
+      "message": "It would be preferable to not auto-format the entire file, such that it creates changes like this that are not related to the task at hand.",
+      "revId": "4467963f67102181c41a1579e627a9748b954d74",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
