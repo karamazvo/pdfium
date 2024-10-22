@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "85669a17_cd524ae7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3686837
+      },
+      "writtenOn": "2024-10-22T06:38:21Z",
+      "side": 1,
+      "message": "PTAL\n\nAlso, is it possible to grant me the tryjobs permission? Thanks!",
+      "revId": "87a05533d912344289582899f851f8c89498ca12",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
