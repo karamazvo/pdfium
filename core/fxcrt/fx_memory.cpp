@@ -9,6 +9,7 @@
 #include <stdint.h>  // For uintptr_t.
 #include <stdlib.h>  // For abort().
 
+#include <bit>
 #include <iterator>
 #include <limits>
 #include <type_traits>
@@ -28,17 +29,10 @@
 namespace {
 
 #if DCHECK_IS_ON()
-// TODO(thestig): When C++20 is required, replace with std::has_single_bit().
-// Returns true iff |value| is a power of 2.
-template <typename T, typename = std::enable_if<std::is_integral<T>::value>>
+// Checks if the given value is a power of 2 using C++20's std::has_single_bit.
+template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
 constexpr inline bool IsPowerOfTwo(T value) {
-  // From "Hacker's Delight": Section 2.1 Manipulating Rightmost Bits.
-  //
-  // Only positive integers with a single bit set are powers of two. If only one
-  // bit is set in x (e.g. 0b00000100000000) then |x-1| will have that bit set
-  // to zero and all bits to its right set to 1 (e.g. 0b00000011111111). Hence
-  // |x & (x-1)| is 0 iff x is a power of two.
-  return value > 0 && (value & (value - 1)) == 0;
+  return value > 0 && std::has_single_bit(value);
 }
 
 #ifdef __has_builtin
