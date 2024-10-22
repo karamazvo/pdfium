@@ -56,6 +56,24 @@
       "message": "Thanks for putting this together, but PDFium\u0027s not quite ready for C++20 yet. i.e. This needs to wait until crbug.com/42270941 gets closed.",
       "revId": "93fc9fd726db672991ddc4ee09c382c1f26101b3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "12272d8b_711304cd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3686837
+      },
+      "writtenOn": "2024-10-22T23:58:43Z",
+      "side": 1,
+      "message": "Thank you for your review and help, I will continue to follow the progress of C++20 on PDFium.",
+      "parentUuid": "b0711cbe_c0dd4893",
+      "revId": "93fc9fd726db672991ddc4ee09c382c1f26101b3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
