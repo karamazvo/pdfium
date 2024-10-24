@@ -16,6 +16,23 @@
       "message": "PTAL\n\nThis CL does not include any functional changes. Also, if this renaming is appropriate, should we announce it on the PDFium mailing list?",
       "revId": "979557ecf82a52b347e93162aeb667a7567f5b86",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c0cd0943_fd167f2a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-10-24T16:43:17Z",
+      "side": 1,
+      "message": "We\u0027ve thought about doing this in the past, but even with a header to keep old callers consistent, but decided it wasn\u0027t worth the effort to update the myriad documentation that may be present around the world.  Per the comment\n\nNOTE: External docs refer to this file as \"fpdfview.h\", so do not rename\ndespite lack of consistency with other public files.\n\nBut thanks for the effort nonetheless.",
+      "revId": "979557ecf82a52b347e93162aeb667a7567f5b86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
