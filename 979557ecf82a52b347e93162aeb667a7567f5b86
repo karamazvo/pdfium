@@ -33,6 +33,24 @@
       "message": "We\u0027ve thought about doing this in the past, but even with a header to keep old callers consistent, but decided it wasn\u0027t worth the effort to update the myriad documentation that may be present around the world.  Per the comment\n\nNOTE: External docs refer to this file as \"fpdfview.h\", so do not rename\ndespite lack of consistency with other public files.\n\nBut thanks for the effort nonetheless.",
       "revId": "979557ecf82a52b347e93162aeb667a7567f5b86",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "affa12d3_16ee7b1a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-10-24T23:00:13Z",
+      "side": 1,
+      "message": "We can potentially do this, and insert \u0027#error \"use fpdf_view.h\"` into fpdfview.h to force embedders to switch.\n\nWe have deprecated and remove stable APIs in the past. Outdated documentation about those APIs are probably still in the wild somewhere.",
+      "parentUuid": "c0cd0943_fd167f2a",
+      "revId": "979557ecf82a52b347e93162aeb667a7567f5b86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
