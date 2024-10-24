@@ -475,7 +475,7 @@ int CheckPDFiumCApi() {
     CHK(FPDF_CreateClipPath);
     CHK(FPDF_DestroyClipPath);
 
-    // fpdfview.h
+    // fpdf_view.h
     CHK(FPDFBitmap_Create);
     CHK(FPDFBitmap_CreateEx);
     CHK(FPDFBitmap_Destroy);
