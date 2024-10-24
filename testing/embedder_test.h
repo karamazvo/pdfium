@@ -210,7 +210,7 @@ class EmbedderTest : public ::testing::Test,
   // Convert |page| loaded via LoadPage() into a bitmap with the specified page
   // rendering |flags|.
   //
-  // See public/fpdfview.h for a list of page rendering flags.
+  // See public/fpdf_view.h for a list of page rendering flags.
   ScopedFPDFBitmap RenderLoadedPageWithFlags(FPDF_PAGE page, int flags);
 
   // RenderSavedPageWithFlags() with no flags.
@@ -219,14 +219,14 @@ class EmbedderTest : public ::testing::Test,
   // Convert |page| loaded via LoadSavedPage() into a bitmap with the specified
   // page rendering |flags|.
   //
-  // See public/fpdfview.h for a list of page rendering flags.
+  // See public/fpdf_view.h for a list of page rendering flags.
   ScopedFPDFBitmap RenderSavedPageWithFlags(FPDF_PAGE page, int flags);
 
   // Convert |page| into a bitmap with the specified page rendering |flags|.
   // The form handle associated with |page| should be passed in via |handle|.
   // If |handle| is nullptr, then forms on the page will not be rendered.
   //
-  // See public/fpdfview.h for a list of page rendering flags.
+  // See public/fpdf_view.h for a list of page rendering flags.
   // If none of the above Render methods are appropriate, then use this one.
   static ScopedFPDFBitmap RenderPageWithFlags(FPDF_PAGE page,
                                               FPDF_FORMHANDLE handle,

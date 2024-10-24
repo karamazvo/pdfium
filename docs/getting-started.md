@@ -25,7 +25,7 @@ PDFium's API has been broken up over several headers. You only need to include
 the headers for functionality you use in your application. The full set of
 headers can be found in the [public/ folder of the repository][pdfium-public].
 
-In all cases you'll need to include `fpdfview.h` as it defines the needed
+In all cases you'll need to include `fpdf_view.h` as it defines the needed
 methods for initialization and destruction of the library.
 
 ## Initializing PDFium
@@ -36,7 +36,7 @@ initializing the library, provide the `FPDF_LIBRARY_CONFIG` parameters to
 `FPDF_InitLibraryWithConfig()`.
 
 ```c
-#include <fpdfview.h>
+#include <fpdf_view.h>
 
 int main() {
   FPDF_LIBRARY_CONFIG config;
@@ -122,7 +122,7 @@ document or that the file was not found.
 You can use `FPDF_GetLastError` to determine what went wrong.
 
 ```c
-#include <fpdfview.h>
+#include <fpdf_view.h>
 #include <unistd.h>
 #include <stdio.h>
 
