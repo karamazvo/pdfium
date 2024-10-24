@@ -33,6 +33,24 @@
       "message": "nit:  mayge comment // 1.5 GB",
       "revId": "67ecc3fa181331afe6200e0e940f01718141de6b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "960a2892_7382ca00",
+        "filename": "core/fxcodec/tiff/tiff_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-10-24T17:13:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8c8d2b99_5642b8e1",
+      "revId": "67ecc3fa181331afe6200e0e940f01718141de6b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
