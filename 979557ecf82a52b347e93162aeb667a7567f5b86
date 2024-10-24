@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e0b99386_f929b028",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3686837
+      },
+      "writtenOn": "2024-10-24T15:06:01Z",
+      "side": 1,
+      "message": "PTAL\n\nThis CL does not include any functional changes. Also, if this renaming is appropriate, should we announce it on the PDFium mailing list?",
+      "revId": "979557ecf82a52b347e93162aeb667a7567f5b86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
