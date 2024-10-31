@@ -7,7 +7,7 @@
 
 #include <string>
 
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_fonts.h"
 

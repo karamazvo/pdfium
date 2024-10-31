@@ -13,7 +13,7 @@
 #include "public/fpdf_structtree.h"
 #include "public/fpdf_text.h"
 #include "public/fpdf_transformpage.h"
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 
 // Custom deleters for using FPDF_* types with std::unique_ptr<>.
 

@@ -27,7 +27,7 @@
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 #include "third_party/abseil-cpp/absl/types/variant.h"
 
 #ifdef PDF_ENABLE_XFA

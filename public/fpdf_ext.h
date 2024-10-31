@@ -10,7 +10,7 @@
 #include <time.h>
 
 // NOLINTNEXTLINE(build/include)
-#include "fpdfview.h"
+#include "fpdf_view.h"
 
 #ifdef __cplusplus
 extern "C" {

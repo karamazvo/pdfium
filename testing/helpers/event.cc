@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "public/fpdf_fwlevent.h"
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 #include "testing/fx_string_testhelpers.h"
 
 namespace {

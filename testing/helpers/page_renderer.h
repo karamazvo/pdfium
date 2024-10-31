@@ -7,7 +7,7 @@
 
 #include <string>
 
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 
 // Renderer for a single page.
 class PageRenderer {

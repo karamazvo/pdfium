@@ -9,7 +9,7 @@
 
 // clang-format off
 // NOLINTNEXTLINE(build/include_directory)
-#include "fpdfview.h"
+#include "fpdf_view.h"
 
 // These values are return values for a public API, so should not be changed
 // other than the count when adding new values.

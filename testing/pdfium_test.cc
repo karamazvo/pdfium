@@ -36,7 +36,7 @@
 #include "public/fpdf_progressive.h"
 #include "public/fpdf_structtree.h"
 #include "public/fpdf_text.h"
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 #include "testing/command_line_helpers.h"
 #include "testing/font_renamer.h"
 #include "testing/fx_string_testhelpers.h"

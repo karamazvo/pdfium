@@ -6,7 +6,7 @@
 #define PUBLIC_FPDF_SIGNATURE_H_
 
 // NOLINTNEXTLINE(build/include)
-#include "fpdfview.h"
+#include "fpdf_view.h"
 
 #ifdef __cplusplus
 extern "C" {

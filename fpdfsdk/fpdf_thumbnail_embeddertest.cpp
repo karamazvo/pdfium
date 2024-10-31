@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "public/fpdf_thumbnail.h"
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 #include "testing/embedder_test.h"
 #include "testing/utils/hash.h"
 

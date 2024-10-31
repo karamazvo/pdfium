@@ -20,7 +20,7 @@
 #include "core/fxge/dib/fx_dib.h"
 #include "public/fpdf_doc.h"
 #include "public/fpdf_ext.h"
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "core/fxcrt/fx_stream.h"

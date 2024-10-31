@@ -5,7 +5,7 @@
 #ifndef TESTING_UTILS_COMPARE_COORDINATES_H_
 #define TESTING_UTILS_COMPARE_COORDINATES_H_
 
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 
 void CompareFS_RECTF(const FS_RECTF& val1, const FS_RECTF& val2);
 

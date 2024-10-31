@@ -7,7 +7,7 @@
 
 #include <string>
 
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 
 // Extract the value from a keyed command line argument.
 // `arg` is expected to be "--key=value", and `key` is "--key=".

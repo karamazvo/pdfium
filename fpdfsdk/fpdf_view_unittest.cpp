@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 #ifdef PDF_ENABLE_XFA

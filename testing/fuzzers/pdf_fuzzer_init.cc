@@ -4,7 +4,7 @@
 
 #include <string.h>
 
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 
 // Initialize the library once for all runs of the fuzzer.
 struct TestCase {

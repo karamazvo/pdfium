@@ -8,7 +8,7 @@
 #include <memory>
 #include <string>
 
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 
 #ifdef PDF_ENABLE_SKIA
 class SkPicture;
