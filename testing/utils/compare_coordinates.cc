@@ -4,7 +4,7 @@
 
 #include "testing/utils/compare_coordinates.h"
 
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 void CompareFS_RECTF(const FS_RECTF& val1, const FS_RECTF& val2) {

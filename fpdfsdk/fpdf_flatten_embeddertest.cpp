@@ -5,7 +5,7 @@
 #include "build/build_config.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "public/fpdf_flatten.h"
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 #include "testing/embedder_test.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"

@@ -9,7 +9,7 @@
 #include <string>
 
 #include "public/fpdf_formfill.h"
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 
 void SendPageEvents(FPDF_FORMHANDLE form,
                     FPDF_PAGE page,

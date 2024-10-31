@@ -8,7 +8,7 @@
 #define PUBLIC_FPDF_FLATTEN_H_
 
 // NOLINTNEXTLINE(build/include)
-#include "fpdfview.h"
+#include "fpdf_view.h"
 
 // Flatten operation failed.
 #define FLATTEN_FAIL 0

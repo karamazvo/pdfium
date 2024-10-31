@@ -4,7 +4,7 @@
 
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_edit.h"
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 
 static constexpr size_t kMaxFuzzBytes = 1024 * 1024 * 1024;  // 1 GB.
 

@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 #include "testing/free_deleter.h"
 
 class CFX_DateTime;

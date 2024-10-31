@@ -11,7 +11,7 @@
 
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 #include "testing/utils/file_util.h"
 #include "testing/utils/path_service.h"
 #include "v8/include/libplatform/libplatform.h"

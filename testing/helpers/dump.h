@@ -5,7 +5,7 @@
 #ifndef TESTING_HELPERS_DUMP_H_
 #define TESTING_HELPERS_DUMP_H_
 
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 
 void DumpChildStructure(FPDF_STRUCTELEMENT child, int indent);
 void DumpPageInfo(FPDF_PAGE page, int page_idx);

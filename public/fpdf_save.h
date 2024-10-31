@@ -9,7 +9,7 @@
 
 // clang-format off
 // NOLINTNEXTLINE(build/include)
-#include "fpdfview.h"
+#include "fpdf_view.h"
 
 #ifdef __cplusplus
 extern "C" {

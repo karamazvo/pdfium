@@ -8,7 +8,7 @@
 #include <stddef.h>
 
 // NOLINTNEXTLINE(build/include)
-#include "fpdfview.h"
+#include "fpdf_view.h"
 
 // NOLINTNEXTLINE(build/include)
 #include "fpdf_formfill.h"

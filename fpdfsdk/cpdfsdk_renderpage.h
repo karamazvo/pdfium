@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_CPDFSDK_RENDERPAGE_H_
 #define FPDFSDK_CPDFSDK_RENDERPAGE_H_
 
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 
 class CFX_Matrix;
 class CPDFSDK_PauseAdapter;

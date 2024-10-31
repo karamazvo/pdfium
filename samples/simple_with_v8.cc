@@ -10,7 +10,7 @@
 
 #include "public/fpdf_edit.h"
 #include "public/fpdf_formfill.h"
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 #include "v8/include/libplatform/libplatform.h"
 #include "v8/include/v8-array-buffer.h"
 #include "v8/include/v8-initialization.h"

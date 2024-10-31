@@ -5,7 +5,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 
 // This template is used in component builds to forward to the real fuzzers
 // which are exported from the PDFium shared library.

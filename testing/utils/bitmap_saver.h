@@ -7,7 +7,7 @@
 
 #include <string>
 
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 
 class CFX_DIBitmap;
 

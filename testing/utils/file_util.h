@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 
 // Reads the entire contents of a file into a vector. Returns an empty vector on
 // failure. Note that this function assumes reading an empty file is not a valid

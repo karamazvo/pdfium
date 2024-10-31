@@ -229,7 +229,7 @@ template("pdfium_fuzzer") {
     }
     configs += [ ":fuzzer_config" ]
     if (is_component_build) {
-      # |export| should be consistent with FPDF_EXPORT In public/fpdfview.h.
+      # |export| should be consistent with FPDF_EXPORT In public/fpdf_view.h.
       if (is_win) {
         export = "__declspec(dllexport)"
       } else {

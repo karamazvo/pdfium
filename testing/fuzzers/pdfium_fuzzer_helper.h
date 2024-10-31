@@ -7,7 +7,7 @@
 
 #include <stdint.h>
 
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 
 class PDFiumFuzzerHelper {
  public:

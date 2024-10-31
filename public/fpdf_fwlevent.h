@@ -8,7 +8,7 @@
 #define PUBLIC_FPDF_FWLEVENT_H_
 
 // NOLINTNEXTLINE(build/include)
-#include "fpdfview.h"
+#include "fpdf_view.h"
 
 #ifdef __cplusplus
 extern "C" {

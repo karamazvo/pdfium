@@ -7,7 +7,7 @@
 
 #include <stdint.h>
 
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 
 // Returns an integer from the first 4 bytes of |data|.
 int GetInteger(const uint8_t* data);
