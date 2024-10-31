@@ -16,6 +16,23 @@
       "message": "Is this the right fix, or is there an underlying issue that should be fixed instead?",
       "revId": "39ef791ca323c7edf2fdeb1553bdeed90394da0a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "797df0f5_ae29b747",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-10-31T17:46:10Z",
+      "side": 1,
+      "message": "Yes, this is fine, I suspect that no legit document does this and this this goes back a long ways. But can you confirm that this isn\u0027t a recent breakage caused by a v8 roll, though?",
+      "revId": "39ef791ca323c7edf2fdeb1553bdeed90394da0a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
