@@ -30,7 +30,7 @@
 #include "public/fpdf_text.h"
 #include "public/fpdf_thumbnail.h"
 #include "public/fpdf_transformpage.h"
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 
 // Scheme for avoiding LTO out of existence, warnings, etc.
 typedef void (*fnptr)(void);  // Legal generic function type for casts.
@@ -475,7 +475,7 @@ int CheckPDFiumCApi() {
     CHK(FPDF_CreateClipPath);
     CHK(FPDF_DestroyClipPath);
 
-    // fpdfview.h
+    // fpdf_view.h
     CHK(FPDFBitmap_Create);
     CHK(FPDFBitmap_CreateEx);
     CHK(FPDFBitmap_Destroy);

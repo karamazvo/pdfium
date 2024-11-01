@@ -11,7 +11,7 @@
 #include "core/fxcrt/cfx_datetime.h"
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_string.h"
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 #include "testing/fuzzers/pdfium_fuzzer_util.h"
 #include "testing/fuzzers/xfa_process_state.h"
 #include "v8/include/cppgc/heap.h"

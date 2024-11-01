@@ -10,7 +10,7 @@
 #include <stdint.h>
 
 // NOLINTNEXTLINE(build/include)
-#include "fpdfview.h"
+#include "fpdf_view.h"
 
 #define FPDF_ARGB(a, r, g, b)                                      \
   ((uint32_t)(((uint32_t)(b)&0xff) | (((uint32_t)(g)&0xff) << 8) | \

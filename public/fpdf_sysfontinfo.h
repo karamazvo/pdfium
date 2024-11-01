@@ -11,7 +11,7 @@
 
 // clang-format off
 // NOLINTNEXTLINE(build/include)
-#include "fpdfview.h"
+#include "fpdf_view.h"
 
 // Character sets for the font
 #define FXFONT_ANSI_CHARSET 0

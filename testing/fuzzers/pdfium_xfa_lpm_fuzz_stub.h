@@ -5,7 +5,7 @@
 #ifndef TESTING_FUZZERS_PDFIUM_XFA_LPM_FUZZ_STUB_H_
 #define TESTING_FUZZERS_PDFIUM_XFA_LPM_FUZZ_STUB_H_
 
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 
 // LPM defines LLVMFuzzerTestOneInput, this function should be used by the LPM
 // harness to pass the deserialized proto to PDFium.

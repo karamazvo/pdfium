@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "public/fpdf_dataavail.h"
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 #include "testing/range_set.h"
 
 class DownloadHintsImpl;

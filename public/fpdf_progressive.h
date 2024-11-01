@@ -9,7 +9,7 @@
 
 // clang-format off
 // NOLINTNEXTLINE(build/include)
-#include "fpdfview.h"
+#include "fpdf_view.h"
 
 // Flags for progressive process status.
 #define FPDF_RENDER_READY 0
@@ -63,7 +63,7 @@ typedef struct _IFSDK_PAUSE {
 //                           degrees clockwise), 2 (rotated 180 degrees),
 //                           3 (rotated 90 degrees counter-clockwise).
 //          flags        -   0 for normal display, or combination of flags
-//                           defined in fpdfview.h. With FPDF_ANNOT flag, it
+//                           defined in fpdf_view.h. With FPDF_ANNOT flag, it
 //                           renders all annotations that does not require
 //                           user-interaction, which are all annotations except
 //                           widget and popup annotations.
@@ -105,7 +105,7 @@ FPDF_RenderPageBitmapWithColorScheme_Start(FPDF_BITMAP bitmap,
 //                          clockwise), 2 (rotated 180 degrees), 3 (rotated 90
 //                          degrees counter-clockwise).
 //          flags       -   0 for normal display, or combination of flags
-//                          defined in fpdfview.h. With FPDF_ANNOT flag, it
+//                          defined in fpdf_view.h. With FPDF_ANNOT flag, it
 //                          renders all annotations that does not require
 //                          user-interaction, which are all annotations except
 //                          widget and popup annotations.

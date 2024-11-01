@@ -9,7 +9,7 @@
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_annot.h"
 #include "public/fpdf_edit.h"
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 #include "testing/embedder_test.h"
 #include "testing/fake_file_access.h"
 #include "testing/gmock/include/gmock/gmock-matchers.h"

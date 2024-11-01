@@ -14,7 +14,7 @@
 #include "public/fpdf_doc.h"
 #include "public/fpdf_text.h"
 #include "public/fpdf_transformpage.h"
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 #include "testing/embedder_test.h"
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gmock/include/gmock/gmock.h"

@@ -22,7 +22,7 @@
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdf_text.h"
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 #include "testing/embedder_test_environment.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/test_loader.h"

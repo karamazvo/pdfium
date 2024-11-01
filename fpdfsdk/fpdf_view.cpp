@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 
 #include <memory>
 #include <utility>

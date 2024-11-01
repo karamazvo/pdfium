@@ -10,7 +10,7 @@
 
 #include "public/fpdf_edit.h"
 #include "public/fpdf_formfill.h"
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 
 int main(int argc, const char* argv[]) {
   // The PDF library must be initialized before creating a document.

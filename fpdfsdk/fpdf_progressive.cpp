@@ -17,7 +17,7 @@
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/cpdfsdk_pauseadapter.h"
 #include "fpdfsdk/cpdfsdk_renderpage.h"
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 
 // These checks are here because core/ and public/ cannot depend on each other.
 static_assert(CPDF_ProgressiveRenderer::kReady == FPDF_RENDER_READY,

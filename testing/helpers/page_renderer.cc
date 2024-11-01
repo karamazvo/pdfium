@@ -4,7 +4,7 @@
 
 #include "testing/helpers/page_renderer.h"
 
-#include "public/fpdfview.h"
+#include "public/fpdf_view.h"
 
 PageRenderer::PageRenderer(FPDF_PAGE page, int width, int height, int flags)
     : page_(page), width_(width), height_(height), flags_(flags) {}
