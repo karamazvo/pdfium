@@ -90,6 +90,13 @@ void CPDF_PageObject::CopyData(const CPDF_PageObject* pSrc) {
   m_bDirty = true;
 }
 
+void CPDF_PageObject::SetIsUsed(bool value) {
+  if (m_bIsUSed != value) {
+    m_bIsUsed = value;
+    m_bDirty = true;
+  }
+}
+
 void CPDF_PageObject::TransformClipPath(const CFX_Matrix& matrix) {
   CPDF_ClipPath& clip_path = mutable_clip_path();
   if (!clip_path.HasRef()) {
