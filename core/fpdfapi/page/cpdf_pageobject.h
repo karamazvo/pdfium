@@ -62,6 +62,8 @@ class CPDF_PageObject {
 
   void SetDirty(bool value) { m_bDirty = value; }
   bool IsDirty() const { return m_bDirty; }
+  void SetIsUsed(bool value);
+  bool IsUsed() const { return m_bIsUsed; }
   void TransformClipPath(const CFX_Matrix& matrix);
 
   void SetOriginalRect(const CFX_FloatRect& rect) { m_OriginalRect = rect; }
@@ -142,6 +144,7 @@ class CPDF_PageObject {
   CFX_FloatRect m_OriginalRect;
   CPDF_ContentMarks m_ContentMarks;
   bool m_bDirty = false;
+  bool m_bIsUsed = true;
   int32_t m_ContentStream;
   // The resource name for this object.
   ByteString m_ResourceName;

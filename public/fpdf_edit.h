@@ -260,6 +260,19 @@ FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT page_object);
 // error.
 FPDF_EXPORT int FPDF_CALLCONV FPDFPageObj_GetType(FPDF_PAGEOBJECT page_object);
 
+// Experimental API.
+// Sets if |page_object| should be used within page.
+//
+//   page_object - handle to a page object.
+//   used        - a boolean specifying if the object should be used or not.
+//
+// Returns TRUE on success.
+//
+// When |used| is false, this makes the |page_object| be ignored for rendering.
+// It is also excluded when generating the contents of the page.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObj_SetIsUsed(FPDF_PAGEOBJECT page_object, FPDF_BOOL used);
+
 // Transform |page_object| by the given matrix.
 //
 //   page_object - handle to a page object.

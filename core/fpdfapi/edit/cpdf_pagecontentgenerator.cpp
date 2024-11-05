@@ -195,6 +195,10 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
 
   // Process the page objects, write into each dirty stream.
   for (auto& pPageObj : m_pageObjects) {
+    if (!pPageObj->IsUsed()) {
+      continue;
+    }
+
     int stream_index = pPageObj->GetContentStream();
     auto it = streams.find(stream_index);
     if (it == streams.end())
