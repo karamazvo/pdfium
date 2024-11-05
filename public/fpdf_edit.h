@@ -260,6 +260,15 @@ FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT page_object);
 // error.
 FPDF_EXPORT int FPDF_CALLCONV FPDFPageObj_GetType(FPDF_PAGEOBJECT page_object);
 
+// Experimental API.
+// Sets if |page_object| should be ignored.
+//
+//   page_object - handle to a page object.
+//
+// Returns TRUE on success.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObj_SetIgnored(FPDF_PAGEOBJECT page_object, bool ignored);
+
 // Transform |page_object| by the given matrix.
 //
 //   page_object - handle to a page object.
