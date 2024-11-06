@@ -55,6 +55,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "cec25140_049b3aee",
+        "filename": "core/fpdfapi/edit/cpdf_pagecontentgenerator.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-06T19:51:49Z",
+      "side": 1,
+      "message": "As an example, CPDF_Form::CalcBoundingBox() does bounds calculations by merging the bounds of all objects. If an object is unused, shouldn\u0027t it be excluded there?",
+      "parentUuid": "428b1ca7_d5bc8379",
+      "revId": "4c8e64ebfc553eb31a34ef4464bac69967ae32a8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "e7eb677b_ade7665b",
         "filename": "core/fpdfapi/page/cpdf_pageobject.h",
         "patchSetId": 6
@@ -83,6 +101,23 @@
       "writtenOn": "2024-11-06T19:47:21Z",
       "side": 1,
       "message": "Many tests don\u0027t bother with this. Instead, they make sure `page` is valid. See this CL\u0027s fpdfsdk/fpdf_editpage_embeddertest.cpp changes for comparison.",
+      "revId": "4c8e64ebfc553eb31a34ef4464bac69967ae32a8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4fe0e52f_69107cb8",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-06T19:51:49Z",
+      "side": 1,
+      "message": "Should there be a corresponding getter, so embedders can query the used state? That can be a follow-up CL.",
       "revId": "4c8e64ebfc553eb31a34ef4464bac69967ae32a8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
