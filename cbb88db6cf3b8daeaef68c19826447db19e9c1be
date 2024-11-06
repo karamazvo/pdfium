@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c98bc28b_1c4cb2f6",
+        "filename": "core/fpdfapi/edit/cpdf_pagecontentgenerator.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-06T22:13:18Z",
+      "side": 1,
+      "message": "Can the comment explain why?\n\nI don\u0027t understand. If the object is inactive, shouldn\u0027t it be treated as though it doesn\u0027t exist?",
+      "revId": "cbb88db6cf3b8daeaef68c19826447db19e9c1be",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e20915a4_7a5e64f8",
+        "filename": "core/fpdfapi/render/fpdf_progressive_render_embeddertest.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 384,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-06T22:13:18Z",
+      "side": 1,
+      "message": "\"inactive\"",
+      "range": {
+        "startLine": 384,
+        "startChar": 69,
+        "endLine": 384,
+        "endChar": 75
+      },
+      "revId": "cbb88db6cf3b8daeaef68c19826447db19e9c1be",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4a3c5cb6_fcba558f",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 274,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-06T22:13:18Z",
+      "side": 1,
+      "message": "I\u0027m concerned that the audit of all uses of the page object is incomplete, and limiting the API to only affect rendering / saving will create weird schizophrenia situations in PDFium where some part of the code believes the page object is there, while other parts believe it is not there.\n\nMaybe this is ok since the API is marked as experimental, but even for the most immediate use, I worry that this may cause weird problems.",
+      "revId": "cbb88db6cf3b8daeaef68c19826447db19e9c1be",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
