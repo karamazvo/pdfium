@@ -199,6 +199,24 @@
       "parentUuid": "4a3c5cb6_fcba558f",
       "revId": "cbb88db6cf3b8daeaef68c19826447db19e9c1be",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1bde5fda_88dc3e92",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 274,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-06T22:45:52Z",
+      "side": 1,
+      "message": "I would feel better about the API if it consistently skipped inactive objects. With only ~8 call sites, checking for inactive objects and skipping them shouldn\u0027t take that much time. If that works and tests still pass, it would be less work overall vs. deferring the work to later.",
+      "parentUuid": "ec26800d_ed29eda0",
+      "revId": "cbb88db6cf3b8daeaef68c19826447db19e9c1be",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
