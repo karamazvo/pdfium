@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4f3404d9_120e0698",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-06T21:19:42Z",
+      "side": 1,
+      "message": "Added a PDFium-specific bug for this.",
+      "parentUuid": "72a945bc_1f9d69a5",
+      "revId": "4c8e64ebfc553eb31a34ef4464bac69967ae32a8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "90811008_425c5d8d",
@@ -73,6 +91,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "7dbbc8b0_12fcee26",
+        "filename": "core/fpdfapi/edit/cpdf_pagecontentgenerator.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-06T21:19:42Z",
+      "side": 1,
+      "message": "I\u0027ve updated other spots in cpdf_pagecontentgenerator.cpp around this.\n\nDo you think optimizations in other spots (like CPDF_Form) have to be done in this initial patchset?  Or can they also be in follow-up CLs?",
+      "parentUuid": "cec25140_049b3aee",
+      "revId": "4c8e64ebfc553eb31a34ef4464bac69967ae32a8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "e7eb677b_ade7665b",
         "filename": "core/fpdfapi/page/cpdf_pageobject.h",
         "patchSetId": 6
@@ -84,6 +120,24 @@
       "writtenOn": "2024-11-06T19:47:21Z",
       "side": 1,
       "message": "Probably need a comment to explain how `m_bDirty` and `m_bIsUsed` interact. Are all 4 states in the truth table possible?",
+      "revId": "4c8e64ebfc553eb31a34ef4464bac69967ae32a8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7945537d_68c52c2d",
+        "filename": "core/fpdfapi/page/cpdf_pageobject.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-06T21:19:42Z",
+      "side": 1,
+      "message": "Sure, all 4 states are possible.  Comment added.",
+      "parentUuid": "e7eb677b_ade7665b",
       "revId": "4c8e64ebfc553eb31a34ef4464bac69967ae32a8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -101,6 +155,24 @@
       "writtenOn": "2024-11-06T19:47:21Z",
       "side": 1,
       "message": "Many tests don\u0027t bother with this. Instead, they make sure `page` is valid. See this CL\u0027s fpdfsdk/fpdf_editpage_embeddertest.cpp changes for comparison.",
+      "revId": "4c8e64ebfc553eb31a34ef4464bac69967ae32a8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c83ef282_7a4a7b9c",
+        "filename": "core/fpdfapi/render/fpdf_progressive_render_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 399,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-06T21:19:42Z",
+      "side": 1,
+      "message": "Updated.",
+      "parentUuid": "44bccabb_b33d68ca",
       "revId": "4c8e64ebfc553eb31a34ef4464bac69967ae32a8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -124,6 +196,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "f23566fa_7160b7ab",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-06T21:19:42Z",
+      "side": 1,
+      "message": "Ack for follow-up CL.",
+      "parentUuid": "4fe0e52f_69107cb8",
+      "revId": "4c8e64ebfc553eb31a34ef4464bac69967ae32a8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "e8e705ff_a2ddf97f",
         "filename": "public/fpdf_edit.h",
         "patchSetId": 6
@@ -135,6 +225,24 @@
       "writtenOn": "2024-11-06T20:18:57Z",
       "side": 1,
       "message": "It will be helpful to mention that unless this gets called, page objects start in the used state.",
+      "revId": "4c8e64ebfc553eb31a34ef4464bac69967ae32a8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f2c36939_fee238ce",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-06T21:19:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e8e705ff_a2ddf97f",
       "revId": "4c8e64ebfc553eb31a34ef4464bac69967ae32a8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -152,6 +260,24 @@
       "writtenOn": "2024-11-06T20:18:57Z",
       "side": 1,
       "message": "An earlier CL had \"active\" in the implementation. Do you think that terminology would be clearer here? Considering \"used\" can also mean:\n\n1) Something is no longer new. Are used page objects as good as new page objects?\n2) Something is used up. Are used (\u003dtrue) page objects no good anymore?",
+      "revId": "4c8e64ebfc553eb31a34ef4464bac69967ae32a8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "871d48bf_83070172",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 274,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-06T21:19:42Z",
+      "side": 1,
+      "message": "Updated",
+      "parentUuid": "8d983e44_5d838dd8",
       "revId": "4c8e64ebfc553eb31a34ef4464bac69967ae32a8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
