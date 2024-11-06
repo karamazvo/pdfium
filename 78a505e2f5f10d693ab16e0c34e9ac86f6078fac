@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "992625c8_d50ae879",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 608,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-06T23:26:01Z",
+      "side": 1,
+      "message": "DCHECK not needed; FindTextlineFlowOrientation() is a private method with only one caller, which already returns early if there are no page objects.",
+      "range": {
+        "startLine": 608,
+        "startChar": 2,
+        "endLine": 608,
+        "endChar": 11
+      },
+      "revId": "78a505e2f5f10d693ab16e0c34e9ac86f6078fac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
