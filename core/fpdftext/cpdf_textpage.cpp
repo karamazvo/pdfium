@@ -605,8 +605,6 @@ bool CPDF_TextPage::GetRect(int rectIndex, CFX_FloatRect* pRect) const {
 
 CPDF_TextPage::TextOrientation CPDF_TextPage::FindTextlineFlowOrientation()
     const {
-  DCHECK_NE(m_pPage->GetPageObjectCount(), 0u);
-
   const int32_t nPageWidth = static_cast<int32_t>(m_pPage->GetPageWidth());
   const int32_t nPageHeight = static_cast<int32_t>(m_pPage->GetPageHeight());
   if (nPageWidth <= 0 || nPageHeight <= 0)
@@ -683,12 +681,16 @@ void CPDF_TextPage::AppendGeneratedCharacter(wchar_t unicode,
 }
 
 void CPDF_TextPage::ProcessObject() {
-  if (m_pPage->GetPageObjectCount() == 0)
+  if (m_pPage->GetActivePageObjectCount() == 0) {
     return;
+  }
 
   m_TextlineDir = FindTextlineFlowOrientation();
   for (auto it = m_pPage->begin(); it != m_pPage->end(); ++it) {
     CPDF_PageObject* pObj = it->get();
+    if (!pObj->IsActive()) {
+      continue;
+    }
     if (pObj->IsText()) {
       ProcessTextObject(pObj->AsText(), CFX_Matrix(), m_pPage, it);
     } else if (pObj->IsForm()) {
