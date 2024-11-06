@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "920289c9_7023d03b",
+        "filename": "core/fpdfapi/page/cpdf_form.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-06T23:32:26Z",
+      "side": 1,
+      "message": "Should this be GetActivePageObjectCount() ?",
+      "range": {
+        "startLine": 124,
+        "startChar": 6,
+        "endLine": 124,
+        "endChar": 24
+      },
+      "revId": "7c6876839759c99c5457731e88fdc2e42704bf7e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f0f438af_98d2bb4d",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 621,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-06T23:32:26Z",
+      "side": 1,
+      "message": "Skip inactive objects here?",
+      "revId": "7c6876839759c99c5457731e88fdc2e42704bf7e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
