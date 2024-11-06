@@ -125,6 +125,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "79a83994_08e9f2a6",
+        "filename": "core/fpdfapi/edit/cpdf_pagecontentgenerator.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-06T23:48:32Z",
+      "side": 1,
+      "message": "Resolving since this is actively being worked on per other comment.",
+      "parentUuid": "3e528dd8_3d8d6c1e",
+      "revId": "4c8e64ebfc553eb31a34ef4464bac69967ae32a8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e7eb677b_ade7665b",
