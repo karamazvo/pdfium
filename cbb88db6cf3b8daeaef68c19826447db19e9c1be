@@ -97,6 +97,24 @@
       "message": "I\u0027m concerned that the audit of all uses of the page object is incomplete, and limiting the API to only affect rendering / saving will create weird schizophrenia situations in PDFium where some part of the code believes the page object is there, while other parts believe it is not there.\n\nMaybe this is ok since the API is marked as experimental, but even for the most immediate use, I worry that this may cause weird problems.",
       "revId": "cbb88db6cf3b8daeaef68c19826447db19e9c1be",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "51549c17_f272d609",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 274,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-06T22:27:18Z",
+      "side": 1,
+      "message": "I would recommend doing the audit, and then updating the documentation here to explain this has stronger effects rather than just limited effects.\n\nThere are only ~8 call sites and most of them probably should skip inactive page objects. Only cpdf_pagecontentmanager.cpp requires a closer look.",
+      "parentUuid": "4a3c5cb6_fcba558f",
+      "revId": "cbb88db6cf3b8daeaef68c19826447db19e9c1be",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
