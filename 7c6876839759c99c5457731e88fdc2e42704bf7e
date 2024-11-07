@@ -48,6 +48,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5a5c174f_f9d34ebe",
+        "filename": "core/fpdfapi/page/cpdf_form.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-07T01:45:03Z",
+      "side": 1,
+      "message": "I intentionally didn\u0027t change this one:\n- GetActivePageObjectCount() is O(n) to get the count, whereas GetPageObjectCount() is O(1)\n- This method isn\u0027t interested in an exact count anyway; it only wants to know if it is exactly 1 or not.\n\nSo all the work for getting the particular number of objects is overkill.  It is cheaper to use GetPageObjectCount() as before, plus a local explicit check for IsActive() instead.\n\nAdded a comment to that regard.",
+      "parentUuid": "f3cf8d7a_45d2cb40",
+      "range": {
+        "startLine": 124,
+        "startChar": 6,
+        "endLine": 124,
+        "endChar": 24
+      },
+      "revId": "7c6876839759c99c5457731e88fdc2e42704bf7e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f0f438af_98d2bb4d",
@@ -61,6 +85,24 @@
       "writtenOn": "2024-11-06T23:32:26Z",
       "side": 1,
       "message": "Skip inactive objects here?",
+      "revId": "7c6876839759c99c5457731e88fdc2e42704bf7e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "143179f0_48c480b2",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 621,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-07T01:45:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f0f438af_98d2bb4d",
       "revId": "7c6876839759c99c5457731e88fdc2e42704bf7e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
