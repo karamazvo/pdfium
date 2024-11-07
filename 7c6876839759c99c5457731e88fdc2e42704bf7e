@@ -170,6 +170,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "6e6b16b4_bdc1ca29",
+        "filename": "core/fpdfapi/page/cpdf_form.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-07T02:32:06Z",
+      "side": 1,
+      "message": "If there are 2 objects inside the form, with only 1 active, then is that one active object the sole object of the form?\n\nWDYT about giving this method a slight rename?  If this was changed to `GetBitmapAndMatrixFromSoleActiveImageOfForm()`, then it would be clear that this should be using GetActivePageObjectCount(), and callers could also be clear about the expectations here.",
+      "parentUuid": "5b625b24_d61e4202",
+      "range": {
+        "startLine": 124,
+        "startChar": 6,
+        "endLine": 124,
+        "endChar": 24
+      },
+      "revId": "7c6876839759c99c5457731e88fdc2e42704bf7e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "f0f438af_98d2bb4d",
         "filename": "core/fpdftext/cpdf_textpage.cpp",
         "patchSetId": 10
