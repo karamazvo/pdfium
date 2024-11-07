@@ -216,6 +216,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7719c74b_7e0a7821",
+        "filename": "core/fpdfapi/page/cpdf_form.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-07T03:57:52Z",
+      "side": 1,
+      "message": "Ack.  Okay, I\u0027ve switched it to GetActivePageObjectCount(), with a TODO reminder to consider if there might be a problem if there are inactive objects along with a single active one.",
+      "parentUuid": "fb45b562_d2174338",
+      "range": {
+        "startLine": 124,
+        "startChar": 6,
+        "endLine": 124,
+        "endChar": 24
+      },
+      "revId": "7c6876839759c99c5457731e88fdc2e42704bf7e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f0f438af_98d2bb4d",
