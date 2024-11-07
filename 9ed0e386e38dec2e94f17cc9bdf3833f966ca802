@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e50bd816_6a6ed591",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 12
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-07T07:57:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "feebbcbf_d6814f39",
+      "revId": "9ed0e386e38dec2e94f17cc9bdf3833f966ca802",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8aba8573_cb23031a",
@@ -31,6 +49,24 @@
       "writtenOn": "2024-11-07T05:08:38Z",
       "side": 1,
       "message": "Although this is the use case you care about the most, it probably should not be emphasized in the API documentation. It may make readers think this is the only effect the API has. To keep the sentence, it would be helpful to prepend \"For instance\" to help readers understand this is just one sample use case.",
+      "revId": "9ed0e386e38dec2e94f17cc9bdf3833f966ca802",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d9716a1f_1a56bb84",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 12
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-07T07:57:14Z",
+      "side": 1,
+      "message": "Fair point.  Other APIs here don\u0027t seem to have this kind of \"for instance\" on behavior.  It is probably better to keep this more general.",
+      "parentUuid": "8aba8573_cb23031a",
       "revId": "9ed0e386e38dec2e94f17cc9bdf3833f966ca802",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
