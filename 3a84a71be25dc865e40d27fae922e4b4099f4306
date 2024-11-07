@@ -115,6 +115,24 @@
       "parentUuid": "d06b9c35_7473b750",
       "revId": "3a84a71be25dc865e40d27fae922e4b4099f4306",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "01e3f4c9_6c1723b5",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2734,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-07T02:02:50Z",
+      "side": 1,
+      "message": "Between lines 2731 and 2746, the variable is:\n\n- declared once\n- initialized once\n- used once\n\nSo here, it is not used multiple times. In test cases below like GetBitmapIgnoresSetMatrix, declare multiple constants with unique names, instead of reassigning to the same one repeatedly.",
+      "parentUuid": "cc83bd40_63d50b91",
+      "revId": "3a84a71be25dc865e40d27fae922e4b4099f4306",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
