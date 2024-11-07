@@ -98,6 +98,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d53cc71d_5b80469c",
+        "filename": "core/fpdfapi/page/cpdf_form.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-07T02:05:07Z",
+      "side": 1,
+      "message": "This method is rather explicitly named:  `GetBitmapAndMatrixFromSoleImageOfForm()`.  If the form has 2 objects, then wouldn\u0027t it already have violated what this method is expecting for \"sole image of form\"?\n\nI.e., the fact that one of those two might be inactive doesn\u0027t seem relative, it already has violated the \"sole\" part by there being more than one page object.",
+      "parentUuid": "3ab10f91_599fc0c1",
+      "range": {
+        "startLine": 124,
+        "startChar": 6,
+        "endLine": 124,
+        "endChar": 24
+      },
+      "revId": "7c6876839759c99c5457731e88fdc2e42704bf7e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "f0f438af_98d2bb4d",
         "filename": "core/fpdftext/cpdf_textpage.cpp",
         "patchSetId": 10
