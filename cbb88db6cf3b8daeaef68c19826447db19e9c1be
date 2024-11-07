@@ -343,6 +343,24 @@
       "parentUuid": "d20528ed_7a7c7b23",
       "revId": "cbb88db6cf3b8daeaef68c19826447db19e9c1be",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "36a90839_e06ac9d2",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 274,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-07T01:57:32Z",
+      "side": 1,
+      "message": "And then update the comments here in fpdf_edit.h to generalize what \"inactive\" means.",
+      "parentUuid": "c87e8e95_a115711b",
+      "revId": "cbb88db6cf3b8daeaef68c19826447db19e9c1be",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
