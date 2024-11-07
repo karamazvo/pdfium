@@ -74,6 +74,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "3ab10f91_599fc0c1",
+        "filename": "core/fpdfapi/page/cpdf_form.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-07T01:51:30Z",
+      "side": 1,
+      "message": "What if the object count is 2, with 1 active and 1 not active?\n\nIf you agree this is a potential issue that the current code does not handle correctly, then can you add a TODO for making a pass at this later?",
+      "parentUuid": "5a5c174f_f9d34ebe",
+      "range": {
+        "startLine": 124,
+        "startChar": 6,
+        "endLine": 124,
+        "endChar": 24
+      },
+      "revId": "7c6876839759c99c5457731e88fdc2e42704bf7e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "f0f438af_98d2bb4d",
         "filename": "core/fpdftext/cpdf_textpage.cpp",
         "patchSetId": 10
