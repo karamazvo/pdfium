@@ -146,6 +146,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "0e238d42_fbc46544",
+        "filename": "core/fpdfapi/page/cpdf_form.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-07T02:28:49Z",
+      "side": 1,
+      "message": "Another way to think about this is that this new API is an optimization. Without it, a PDFium embedder could instead take all N page objects out of page, insert an object, and then put the N page objects back in. But that\u0027s a lot of shuffling and this new API lets the PDFium embedder avoid that work, by simply treating the page object as though it is not there.\n\nSo if there are 2 objects, and only 1 is active, then shouldn\u0027t the inactive object be treated as though it is not there? Thus making the object count 1, right?\n\nBTW, testing/corpus/pdfium/bug_651304.pdf is an example where the page object count is 2. That can be the basis for a test case in the future to test this out with FPDFPageObj_SetIsActive().",
+      "parentUuid": "5b625b24_d61e4202",
+      "range": {
+        "startLine": 124,
+        "startChar": 6,
+        "endLine": 124,
+        "endChar": 24
+      },
+      "revId": "7c6876839759c99c5457731e88fdc2e42704bf7e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "f0f438af_98d2bb4d",
         "filename": "core/fpdftext/cpdf_textpage.cpp",
         "patchSetId": 10
