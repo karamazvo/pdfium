@@ -194,6 +194,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "fb45b562_d2174338",
+        "filename": "core/fpdfapi/page/cpdf_form.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-07T02:38:02Z",
+      "side": 1,
+      "message": "My mental model is to treat the inactive object as though it is not there. Which is why I do not think the code as-is is 100% correct, but I\u0027m ok with that and have been pushing for adding a TODO here to deal with this later.\n\nI would prefer not to rename the function. For consistency, then a lot of code should also be renamed. e.g. Maybe CPDF_PageContentGenerator::ProcessPageObjects() should become CPDF_PageContentGenerator::ProcessActivePageObjects(). Can this CL not goe down that rabbit hole?",
+      "parentUuid": "6e6b16b4_bdc1ca29",
+      "range": {
+        "startLine": 124,
+        "startChar": 6,
+        "endLine": 124,
+        "endChar": 24
+      },
+      "revId": "7c6876839759c99c5457731e88fdc2e42704bf7e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "f0f438af_98d2bb4d",
         "filename": "core/fpdftext/cpdf_textpage.cpp",
         "patchSetId": 10
