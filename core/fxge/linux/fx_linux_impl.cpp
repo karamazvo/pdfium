@@ -20,7 +20,8 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/systemfontinfo_iface.h"
 
-#if !BUILDFLAG(IS_LINUX) && !BUILDFLAG(IS_CHROMEOS) && !defined(OS_ASMJS)
+#if !BUILDFLAG(IS_LINUX) && !BUILDFLAG(IS_CHROMEOS) && \
+    !BUILDFLAG(IS_ANDROID) && !defined(OS_ASMJS)
 #error "Included on the wrong platform"
 #endif
 
@@ -161,8 +162,6 @@ bool CFX_LinuxFontInfo::ParseFontCfg(const char** pUserPaths) {
   return true;
 }
 
-}  // namespace
-
 class CLinuxPlatform : public CFX_GEModule::PlatformIface {
  public:
   CLinuxPlatform() = default;
@@ -173,14 +172,20 @@ class CLinuxPlatform : public CFX_GEModule::PlatformIface {
   std::unique_ptr<SystemFontInfoIface> CreateDefaultSystemFontInfo() override {
     auto pInfo = std::make_unique<CFX_LinuxFontInfo>();
     if (!pInfo->ParseFontCfg(CFX_GEModule::Get()->GetUserFontPaths())) {
+#if BUILDFLAG(IS_ANDROID)
+      pInfo->AddPath("/system/fonts");
+#else
       pInfo->AddPath("/usr/share/fonts");
       pInfo->AddPath("/usr/share/X11/fonts/Type1");
       pInfo->AddPath("/usr/share/X11/fonts/TTF");
       pInfo->AddPath("/usr/local/share/fonts");
+#endif
     }
     return pInfo;
   }
 };
+
+}  // namespace
 
 // static
 std::unique_ptr<CFX_GEModule::PlatformIface>
