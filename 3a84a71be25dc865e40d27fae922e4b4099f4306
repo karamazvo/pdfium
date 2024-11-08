@@ -82,6 +82,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5c49a292_52fdae1d",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 473,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2024-11-08T06:45:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "52801cf6_1dc3deda",
+      "revId": "3a84a71be25dc865e40d27fae922e4b4099f4306",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d06b9c35_7473b750",
@@ -131,6 +149,24 @@
       "side": 1,
       "message": "Between lines 2731 and 2746, the variable is:\n\n- declared once\n- initialized once\n- used once\n\nSo here, it is not used multiple times. In test cases below like GetBitmapIgnoresSetMatrix, declare multiple constants with unique names, instead of reassigning to the same one repeatedly.",
       "parentUuid": "cc83bd40_63d50b91",
+      "revId": "3a84a71be25dc865e40d27fae922e4b4099f4306",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "54bba09d_762220be",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2734,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2024-11-08T06:45:03Z",
+      "side": 1,
+      "message": "Made the changes with each constant having the name kExpectedMatrix followed by a number suffix starting from 1 and progressing higher (kExpectedMatrix2,kExpectedMatrix3..so on) within each test...please take a look. Thanks.",
+      "parentUuid": "01e3f4c9_6c1723b5",
       "revId": "3a84a71be25dc865e40d27fae922e4b4099f4306",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
