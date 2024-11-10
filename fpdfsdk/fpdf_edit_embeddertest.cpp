@@ -5354,3 +5354,41 @@ TEST_F(FPDFEditMoveEmbedderTest, MovePagesTest) {
     CloseDocument();
   }
 }
+
+TEST_F(FPDFEditEmbedderTest, Bug377948405) {
+  CreateEmptyDocument();
+  ScopedFPDFPage page(FPDFPage_New(document(), 0, 400, 400));
+  std::string font_path = PathService::GetTestFilePath("fonts/bug_377948405.ttf");
+  ASSERT_FALSE(font_path.empty());
+
+  std::vector<uint8_t> font_data = GetFileContents(font_path.c_str());
+  ASSERT_FALSE(font_data.empty());
+
+  ScopedFPDFFont font(FPDFText_LoadFont(document(), font_data.data(), font_data.size(),
+                                        FPDF_FONT_TRUETYPE, 1));
+  ASSERT_TRUE(font);
+  CPDF_Font* typed_font = CPDFFontFromFPDFFont(font.get());
+  EXPECT_TRUE(typed_font->IsCIDFont());
+
+  // Get font descendant
+  RetainPtr<const CPDF_Dictionary> font_dict = typed_font->GetFontDict();
+  ASSERT_TRUE(font_dict);
+  RetainPtr<const CPDF_Array> descendant_array =
+      font_dict->GetArrayFor("DescendantFonts");
+  ASSERT_TRUE(descendant_array);
+  EXPECT_EQ(1u, descendant_array->size());
+
+  // Check the CIDFontDict width array
+  RetainPtr<const CPDF_Dictionary> cidfont_dict =
+      descendant_array->GetDictAt(0);
+  ASSERT_TRUE(cidfont_dict);
+  RetainPtr<const CPDF_Array> widths_array = cidfont_dict->GetArrayFor("W");
+  ASSERT_TRUE(widths_array);
+
+  EXPECT_EQ(widths_array->GetIntegerAt(0), 1);
+  EXPECT_EQ(widths_array->GetIntegerAt(2), 17);
+  EXPECT_EQ(widths_array->GetIntegerAt(4), 22);
+  ASSERT_EQ(widths_array->GetIntegerAt(6), 24);
+  ASSERT_EQ(widths_array->GetIntegerAt(8), 40);
+  ASSERT_EQ(widths_array->GetIntegerAt(9), 41);
+}
