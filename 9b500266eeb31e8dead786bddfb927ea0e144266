@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d1de98b3_ec7eb7f0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3715425
+      },
+      "writtenOn": "2024-11-10T10:22:42Z",
+      "side": 1,
+      "message": "Fix issue CID Font Create /W Dictionary error\nhttps://issues.chromium.org/issues/377948405",
+      "revId": "9b500266eeb31e8dead786bddfb927ea0e144266",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
