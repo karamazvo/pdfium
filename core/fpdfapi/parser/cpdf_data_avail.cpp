@@ -1026,10 +1026,7 @@ CPDF_DataAvail::ParseDocument(
       document->LoadLinearizedDoc(GetValidator(), password);
 
   // Additional check, that all ok.
-  if (GetValidator()->has_read_problems()) {
-    NOTREACHED();
-    return std::make_pair(CPDF_Parser::HANDLER_ERROR, nullptr);
-  }
+  CHECK(!GetValidator()->has_read_problems());
 
   if (error != CPDF_Parser::SUCCESS)
     return std::make_pair(error, nullptr);
