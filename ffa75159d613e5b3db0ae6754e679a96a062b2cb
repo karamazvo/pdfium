@@ -3,6 +3,23 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "52d1fdc0_dc0aaa9b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-11T23:55:31Z",
+      "side": 1,
+      "message": "Though I\u0027m running `pdf_unittests --gtest_filter\u003dPDFiumEngineExportsTest.GetPDFDocInfo` locally with and without this CL. It is slightly slower with this CL. Do you see that locally as well?",
+      "revId": "ffa75159d613e5b3db0ae6754e679a96a062b2cb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "4ccaefc6_5764079b",
         "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
         "patchSetId": 7
