@@ -546,22 +546,9 @@ RetainPtr<CFX_Face> LoadFace(
 
 bool VerifyUnicodeForFontDescriptor(CFGAS_FontDescriptor* pDesc,
                                     wchar_t wcUnicode) {
-  RetainPtr<IFX_SeekableReadStream> pFileRead =
-      CreateFontStream(pDesc->m_wsFaceName.ToUTF8());
-  if (!pFileRead)
-    return false;
-
-  RetainPtr<CFX_Face> pFace = LoadFace(pFileRead, pDesc->m_nFaceIndex);
-  if (!pFace)
-    return false;
-
-  bool select_charmap_result =
-      pFace->SelectCharMap(fxge::FontEncoding::kUnicode);
-  int ret_index = pFace->GetCharIndex(wcUnicode);
-
-  pFace->ClearExternalStream();
-
-  return select_charmap_result && ret_index;
+  return pDesc->m_pFace &&
+         pDesc->m_pFace->SelectCharMap(fxge::FontEncoding::kUnicode) &&
+         pDesc->m_pFace->GetCharIndex(wcUnicode);
 }
 
 bool IsPartName(const WideString& name1, const WideString& name2) {
@@ -778,6 +765,7 @@ void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> pFace,
   pFont->m_wsFaceName = wsFaceName;
   pFont->m_nFaceIndex =
       pdfium::checked_cast<int32_t>(pFace->GetRec()->face_index);
+  pFont->m_pFace = std::move(pFace);
   m_InstalledFonts.push_back(std::move(pFont));
 }
 
