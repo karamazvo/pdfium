@@ -22,6 +22,29 @@
       },
       "revId": "8638d13e102fdf5cd95ba2c90dfb840228b6e1c6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "780ae35c_71a11bcd",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 554,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-11T21:06:04Z",
+      "side": 0,
+      "message": "We never actually use this face to render anything.  Just to check. So at worst we might to use something that doesn\u0027t match the fontmapper.",
+      "range": {
+        "startLine": 554,
+        "startChar": 30,
+        "endLine": 554,
+        "endChar": 45
+      },
+      "revId": "8638d13e102fdf5cd95ba2c90dfb840228b6e1c6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
