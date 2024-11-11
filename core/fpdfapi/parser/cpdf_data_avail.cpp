@@ -1027,7 +1027,8 @@ CPDF_DataAvail::ParseDocument(
 
   // Additional check, that all ok.
   if (GetValidator()->has_read_problems()) {
-    NOTREACHED();
+    // TODO(crbug.com/pdfium/2008): Figure out if this should be CHECKy.
+    DCHECK(false);
     return std::make_pair(CPDF_Parser::HANDLER_ERROR, nullptr);
   }
 
