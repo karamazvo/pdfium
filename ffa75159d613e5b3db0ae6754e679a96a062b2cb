@@ -16,6 +16,24 @@
       "message": "This is state changing. Still trying to justtify. .",
       "revId": "ffa75159d613e5b3db0ae6754e679a96a062b2cb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "caf923f9_6ef913ca",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 550,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-11T21:24:47Z",
+      "side": 1,
+      "message": "\u003e This is state changing. Still trying to justtify. Would expect that this is called as a pre-conditon everywhere it matters.",
+      "parentUuid": "4ccaefc6_5764079b",
+      "revId": "ffa75159d613e5b3db0ae6754e679a96a062b2cb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
