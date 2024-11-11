@@ -16,6 +16,52 @@
       "message": "PTAL! :)",
       "revId": "7ccc3ae163e04b61e975e9735a4f54c3aa0a8215",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "243db767_1b86cb9c",
+        "filename": "core/fpdfapi/parser/cpdf_data_avail.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1029,
+      "author": {
+        "id": 7564
+      },
+      "writtenOn": "2024-11-11T23:25:14Z",
+      "side": 1,
+      "message": "Not no-op.",
+      "range": {
+        "startLine": 1029,
+        "startChar": 0,
+        "endLine": 1029,
+        "endChar": 2
+      },
+      "revId": "7ccc3ae163e04b61e975e9735a4f54c3aa0a8215",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "070ef1e0_98814e9b",
+        "filename": "core/fpdfapi/parser/cpdf_read_validator.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 7564
+      },
+      "writtenOn": "2024-11-11T23:25:14Z",
+      "side": 1,
+      "message": "Not no-op (and below).",
+      "range": {
+        "startLine": 59,
+        "startChar": 2,
+        "endLine": 59,
+        "endChar": 7
+      },
+      "revId": "7ccc3ae163e04b61e975e9735a4f54c3aa0a8215",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
