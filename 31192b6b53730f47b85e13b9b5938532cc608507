@@ -16,6 +16,52 @@
       "message": "Also, would it be possible to get a test for this at the same time?",
       "revId": "31192b6b53730f47b85e13b9b5938532cc608507",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d8a891d4_0d482879",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-11T22:28:34Z",
+      "side": 1,
+      "message": "this might make it \u003d\u003d end(), at which point std::next() is invalid to call.",
+      "range": {
+        "startLine": 200,
+        "startChar": 0,
+        "endLine": 200,
+        "endChar": 13
+      },
+      "revId": "31192b6b53730f47b85e13b9b5938532cc608507",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c0d108d0_da8ed11f",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-11T22:28:34Z",
+      "side": 1,
+      "message": "same",
+      "range": {
+        "startLine": 219,
+        "startChar": 6,
+        "endLine": 219,
+        "endChar": 30
+      },
+      "revId": "31192b6b53730f47b85e13b9b5938532cc608507",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
