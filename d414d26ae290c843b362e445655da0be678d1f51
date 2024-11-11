@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "151e71e9_0c066ae6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-11T20:52:23Z",
+      "side": 1,
+      "message": "My recollection is we did just the opposite to reduce bloat in the past, but I can\u0027t find any CL as evidence.  I\u0027m also not 100% on whether the logic for why this is functionally equivalent is sound.",
+      "revId": "d414d26ae290c843b362e445655da0be678d1f51",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ad510d53_fe5f6323",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 552,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-11T20:52:23Z",
+      "side": 1,
+      "message": "What we need to prove to show correctness is that an equivalent LoadFace() has already occurred below (where we cache it).",
+      "range": {
+        "startLine": 549,
+        "startChar": 3,
+        "endLine": 552,
+        "endChar": 0
+      },
+      "revId": "d414d26ae290c843b362e445655da0be678d1f51",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7061eedc_af87ca13",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 651,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-11T20:52:23Z",
+      "side": 1,
+      "message": "here we get the name from the font mapper. This would have been passed back into it in the deleted section.",
+      "range": {
+        "startLine": 651,
+        "startChar": 32,
+        "endLine": 651,
+        "endChar": 58
+      },
+      "revId": "d414d26ae290c843b362e445655da0be678d1f51",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5bf6a567_5e351b20",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 730,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-11T20:52:23Z",
+      "side": 1,
+      "message": "This is the only place we make CFGAS_FontDescriptors. So if a FontDescriptor exists, it had to come through here,  And 726 would crash if pFace didn\u0027t exist.",
+      "range": {
+        "startLine": 730,
+        "startChar": 16,
+        "endLine": 730,
+        "endChar": 56
+      },
+      "revId": "d414d26ae290c843b362e445655da0be678d1f51",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "69d5a19c_1903e4fd",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 778,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-11T20:52:23Z",
+      "side": 1,
+      "message": "This is where the load face occurs for all possible indices. What we need to show is that pFontStream is the same as would be created during verify.",
+      "range": {
+        "startLine": 778,
+        "startChar": 25,
+        "endLine": 778,
+        "endChar": 63
+      },
+      "revId": "d414d26ae290c843b362e445655da0be678d1f51",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

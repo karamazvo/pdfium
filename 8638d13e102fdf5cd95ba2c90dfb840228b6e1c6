@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b63f00f1_cbc964a7",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 551,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-11T20:52:23Z",
+      "side": 0,
+      "message": "This version searches the font mapper for a name it already knows, and uses the data associated with it to re-create a stream.",
+      "range": {
+        "startLine": 550,
+        "startChar": 5,
+        "endLine": 551,
+        "endChar": 17
+      },
+      "revId": "8638d13e102fdf5cd95ba2c90dfb840228b6e1c6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
