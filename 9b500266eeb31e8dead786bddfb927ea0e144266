@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "b9ef979c_173ed5e3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-11T17:35:54Z",
+      "side": 1,
+      "message": "Put in a meaningful description here.",
+      "revId": "9b500266eeb31e8dead786bddfb927ea0e144266",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "d1de98b3_ec7eb7f0",
@@ -14,6 +31,74 @@
       "writtenOn": "2024-11-10T10:22:42Z",
       "side": 1,
       "message": "Fix issue CID Font Create /W Dictionary error\nhttps://issues.chromium.org/issues/377948405",
+      "revId": "9b500266eeb31e8dead786bddfb927ea0e144266",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c12784db_ad0aa6e8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-11T17:35:54Z",
+      "side": 1,
+      "message": "Please follow the instructions here and make sure the CLA-related administrative work is in order. Then please add yourself to the AUTHORS file.\n\nhttps://pdfium.googlesource.com/pdfium/+/main/CONTRIBUTING.md#cla",
+      "revId": "9b500266eeb31e8dead786bddfb927ea0e144266",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ae307b0a_1f1875ef",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-11T17:35:54Z",
+      "side": 1,
+      "message": "Don\u0027t leave random trailing spaces.",
+      "revId": "9b500266eeb31e8dead786bddfb927ea0e144266",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8f28f67a_effab1e2",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-11T17:35:54Z",
+      "side": 1,
+      "message": "Don\u0027t leave commented out code. Just delete it.",
+      "revId": "9b500266eeb31e8dead786bddfb927ea0e144266",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b97d382c_525e1d2c",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-11T17:35:54Z",
+      "side": 1,
+      "message": "Don\u0027t go over 80 columns per line. `git cl format`, which is a clang-format wrapper, can help.",
       "revId": "9b500266eeb31e8dead786bddfb927ea0e144266",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
