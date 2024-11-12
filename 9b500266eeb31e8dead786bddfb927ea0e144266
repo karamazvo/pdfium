@@ -142,6 +142,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "6c207397_53a29171",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-12T21:42:57Z",
+      "side": 1,
+      "message": "There are still some in the CL. They show up in the Gerrit UI as pink blobs.\n\nAgain, please run `git cl format` to help tidy the code. I\u0027m not sure what your workflow is, but `git cl upload` is suppose to run some presubmits locally and warn about things like this.",
+      "parentUuid": "4f03315c_d9b6d7e2",
+      "revId": "9b500266eeb31e8dead786bddfb927ea0e144266",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8f28f67a_effab1e2",
         "filename": "fpdfsdk/fpdf_edittext.cpp",
         "patchSetId": 2

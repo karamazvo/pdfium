@@ -1,0 +1,78 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1ecd486d_7c30f7b7",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 5374,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-12T21:42:57Z",
+      "side": 1,
+      "message": "Add `ASSERT_TRUE(font_dict);` before dereferencing the pointer on line 5376. Similar to line 5377 for `descendant_array`.",
+      "revId": "b9f31f5686866004f2e4aceaefe71e2d951543e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5b54a494_d8c6fc71",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 5387,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-12T21:42:57Z",
+      "side": 1,
+      "message": "These can be `EXPECT_EQ()`. If one of these checks fail, it is not a fatal condition, so the test can continue and check the other values.",
+      "range": {
+        "startLine": 5387,
+        "startChar": 2,
+        "endLine": 5387,
+        "endChar": 11
+      },
+      "revId": "b9f31f5686866004f2e4aceaefe71e2d951543e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "44fd8d90_90418e74",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-12T21:42:57Z",
+      "side": 1,
+      "message": "No blank lines at the start of functions please. https://google.github.io/styleguide/cppguide.html#Vertical_Whitespace",
+      "revId": "b9f31f5686866004f2e4aceaefe71e2d951543e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6dd0d056_2a88911c",
+        "filename": "testing/resources/fonts/bug_377948405.ttf",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-12T21:42:57Z",
+      "side": 1,
+      "message": "Can the CL description explain what are the steps to create this subsetted font?\n\nIf it comes from a copyrighted font from some random party, it would be best to avoid that. Instead, subset a Noto font. IINAL, but my general understanding is that Google can license its own fonts to its own projects.",
+      "revId": "b9f31f5686866004f2e4aceaefe71e2d951543e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
