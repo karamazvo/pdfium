@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "adb36741_cfe5df03",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-12T01:09:04Z",
+      "side": 1,
+      "message": "Out of date.",
+      "revId": "f703608cc8cd8a5c0bf250ca42fd35ac0f8c3ddf",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f833da05_88c5ca3f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-12T01:09:04Z",
+      "side": 1,
+      "message": "Need to chain to https://pdfium-review.googlesource.com/125870, or wait for that to land and rebase, so these 2 CLs don\u0027t collide.",
+      "revId": "f703608cc8cd8a5c0bf250ca42fd35ac0f8c3ddf",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
