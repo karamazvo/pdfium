@@ -1,0 +1,78 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8bcd0d6f_d72aaad4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-12T00:56:38Z",
+      "side": 1,
+      "message": "`Bug: 40580068, 42271016`",
+      "revId": "1b9ec3cc139f14e4f2dfa837fb0503d05412228d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "53e62eeb_76d43074",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-12T00:56:38Z",
+      "side": 1,
+      "message": "I think if one CL gets rid of NOTREACHED() first, and then the second CL renames NOTREACHED_NORETURN(), that would be much easier to review.",
+      "revId": "1b9ec3cc139f14e4f2dfa837fb0503d05412228d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "714db01e_46c085a7",
+        "filename": "core/fpdfapi/parser/cpdf_data_avail.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1030,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-12T00:56:38Z",
+      "side": 1,
+      "message": "Buganizer migration finished already. Swap to new URL?",
+      "revId": "1b9ec3cc139f14e4f2dfa837fb0503d05412228d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "515b34a4_eca0d2c4",
+        "filename": "core/fpdfapi/parser/cpdf_data_avail.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1030,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-12T00:56:38Z",
+      "side": 1,
+      "message": "s/Checky/CHECK()/ ?",
+      "range": {
+        "startLine": 1030,
+        "startChar": 65,
+        "endLine": 1030,
+        "endChar": 71
+      },
+      "revId": "1b9ec3cc139f14e4f2dfa837fb0503d05412228d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
