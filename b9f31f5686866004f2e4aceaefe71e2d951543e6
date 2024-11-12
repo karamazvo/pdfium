@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c61f8938_e16ac1b8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-12T22:28:16Z",
+      "side": 1,
+      "message": "Aside from the comments, generally looks ok.",
+      "revId": "b9f31f5686866004f2e4aceaefe71e2d951543e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1ecd486d_7c30f7b7",
@@ -54,6 +71,40 @@
       "writtenOn": "2024-11-12T21:42:57Z",
       "side": 1,
       "message": "No blank lines at the start of functions please. https://google.github.io/styleguide/cppguide.html#Vertical_Whitespace",
+      "revId": "b9f31f5686866004f2e4aceaefe71e2d951543e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6d69bd89_a8f5c855",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-12T22:28:16Z",
+      "side": 1,
+      "message": "Write this out as a complete sentence.\n\n`A group may contain only a single item. e.g. c[w]`",
+      "revId": "b9f31f5686866004f2e4aceaefe71e2d951543e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d48c229f_9709dd29",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-12T22:28:16Z",
+      "side": 1,
+      "message": "No blank line here either please. Same for line 194 above. i.e. Preserve the original vertical spacing.",
       "revId": "b9f31f5686866004f2e4aceaefe71e2d951543e6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
