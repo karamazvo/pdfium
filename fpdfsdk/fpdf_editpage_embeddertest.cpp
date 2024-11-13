@@ -539,11 +539,22 @@ TEST_F(FPDFEditPageEmbedderTest, PageObjectIsActive) {
   }
 
   // Mark one of the page objects as inactive.  It is still present in the page.
+  FPDF_BOOL page_obj_is_active;
   FPDF_PAGEOBJECT page_obj = FPDFPage_GetObject(page.get(), 4);
   ASSERT_TRUE(page_obj);
+
+  // Negative testing.
+  EXPECT_FALSE(FPDFPageObj_GetIsActive(page_obj, nullptr));
+  EXPECT_FALSE(FPDFPageObj_GetIsActive(nullptr, &page_obj_is_active));
+
+  // Positive testing.
+  EXPECT_TRUE(FPDFPageObj_GetIsActive(page_obj, &page_obj_is_active));
+  EXPECT_TRUE(page_obj_is_active);
   ASSERT_TRUE(FPDFPageObj_SetIsActive(page_obj, /*active=*/false));
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
   EXPECT_EQ(8, FPDFPage_CountObjects(page.get()));
+  EXPECT_TRUE(FPDFPageObj_GetIsActive(page_obj, &page_obj_is_active));
+  EXPECT_FALSE(page_obj_is_active);
 
   {
     // Save a copy, open the copy, and render it.
