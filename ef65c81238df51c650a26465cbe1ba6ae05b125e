@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c25686b9_687f23fa",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 634,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-13T21:04:27Z",
+      "side": 1,
+      "message": "Updated.",
+      "parentUuid": "19f5ef2f_f0cc149f",
+      "revId": "ef65c81238df51c650a26465cbe1ba6ae05b125e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f022a3e3_84fb5b13",
@@ -31,6 +49,24 @@
       "writtenOn": "2024-11-13T20:05:17Z",
       "side": 1,
       "message": "Testing the wrong API?",
+      "revId": "ef65c81238df51c650a26465cbe1ba6ae05b125e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "83ccad06_df9fe488",
+        "filename": "fpdfsdk/fpdf_editpage_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 549,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-13T21:04:27Z",
+      "side": 1,
+      "message": "Ah, yes - removed.",
+      "parentUuid": "f022a3e3_84fb5b13",
       "revId": "ef65c81238df51c650a26465cbe1ba6ae05b125e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
