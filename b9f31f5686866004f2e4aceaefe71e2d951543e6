@@ -274,6 +274,24 @@
       "parentUuid": "172daf9f_fc29043a",
       "revId": "b9f31f5686866004f2e4aceaefe71e2d951543e6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "592829f5_0ffeb2f3",
+        "filename": "testing/resources/fonts/bug_377948405.ttf",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3715425
+      },
+      "writtenOn": "2024-11-13T18:03:15Z",
+      "side": 1,
+      "message": "I used freshly downloaded NotoSans-Regular.ttf, its version is 2.014\nhb-subset 6.0 both on lin (deb 12) and win (11) outputs identical files with size of 2140 bytes \nhb-subset from 9.0.0 to 10.0.1 output a bit smaller file with size of 2084 bytes\n\nYep, glyphs and gaps between them are the same.",
+      "parentUuid": "daa510fb_d7be7bc3",
+      "revId": "b9f31f5686866004f2e4aceaefe71e2d951543e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
