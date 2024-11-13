@@ -1,0 +1,78 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "820c40b4_11fdea2c",
+        "filename": "fpdfsdk/fpdf_editpage_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 499,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-13T21:39:28Z",
+      "side": 1,
+      "message": "Can this use an update? Strangely, this name sounds like it is for the getter, yet this CL is just now adding the getter code.",
+      "range": {
+        "startLine": 499,
+        "startChar": 33,
+        "endLine": 499,
+        "endChar": 51
+      },
+      "revId": "e43306b6b47680c6f0d5f916b7358c3653b22f8b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "795af37b_51b9ce87",
+        "filename": "fpdfsdk/fpdf_editpage_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 542,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-13T21:39:28Z",
+      "side": 1,
+      "message": "Put this closer to where first used.",
+      "revId": "e43306b6b47680c6f0d5f916b7358c3653b22f8b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8287962a_2f609efe",
+        "filename": "fpdfsdk/fpdf_editpage_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 548,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-13T21:39:28Z",
+      "side": 1,
+      "message": "Test with (nullptr, nullptr) to complete the negative testing?",
+      "revId": "e43306b6b47680c6f0d5f916b7358c3653b22f8b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bfb7f241_c8f45f71",
+        "filename": "fpdfsdk/fpdf_editpage_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 552,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-13T21:39:28Z",
+      "side": 1,
+      "message": "First set `page_obj_is_active` to false, so the test can see a false -\u003e true transition is actually happening due to FPDFPageObj_GetIsActive()?",
+      "revId": "e43306b6b47680c6f0d5f916b7358c3653b22f8b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
