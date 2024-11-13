@@ -158,6 +158,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "405919e4_c4fcafcf",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 3715425
+      },
+      "writtenOn": "2024-11-13T06:04:24Z",
+      "side": 1,
+      "message": "Sorry, I edited this code in Gerrit UI\nI had to turn on trailing whitespace rendering in preferences. My fault.",
+      "parentUuid": "6c207397_53a29171",
+      "revId": "9b500266eeb31e8dead786bddfb927ea0e144266",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8f28f67a_effab1e2",
