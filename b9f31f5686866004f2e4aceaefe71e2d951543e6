@@ -238,6 +238,24 @@
       "parentUuid": "6dd0d056_2a88911c",
       "revId": "b9f31f5686866004f2e4aceaefe71e2d951543e6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "172daf9f_fc29043a",
+        "filename": "testing/resources/fonts/bug_377948405.ttf",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3715425
+      },
+      "writtenOn": "2024-11-13T09:53:48Z",
+      "side": 1,
+      "message": "- testing/resources/fonts/bug_377948405.ttf is subset of NotoSans-Regular.ttf now\n- added font subset creation description in fpdfsdk/fpdf_edit_embeddertest.cpp\n- git cl format was eventually runned",
+      "parentUuid": "1c567a41_46f139a8",
+      "revId": "b9f31f5686866004f2e4aceaefe71e2d951543e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
