@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e820915f_748553da",
+        "filename": "fpdfsdk/fpdf_editpage_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 499,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-14T17:36:04Z",
+      "side": 1,
+      "message": "Updated",
+      "parentUuid": "820c40b4_11fdea2c",
+      "range": {
+        "startLine": 499,
+        "startChar": 33,
+        "endLine": 499,
+        "endChar": 51
+      },
+      "revId": "e43306b6b47680c6f0d5f916b7358c3653b22f8b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "795af37b_51b9ce87",
@@ -37,6 +61,24 @@
       "writtenOn": "2024-11-13T21:39:28Z",
       "side": 1,
       "message": "Put this closer to where first used.",
+      "revId": "e43306b6b47680c6f0d5f916b7358c3653b22f8b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e434aeac_e7c99fe0",
+        "filename": "fpdfsdk/fpdf_editpage_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 542,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-14T17:36:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "795af37b_51b9ce87",
       "revId": "e43306b6b47680c6f0d5f916b7358c3653b22f8b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -58,6 +100,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2a15b77c_9e0bed4f",
+        "filename": "fpdfsdk/fpdf_editpage_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 548,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-14T17:36:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8287962a_2f609efe",
+      "revId": "e43306b6b47680c6f0d5f916b7358c3653b22f8b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bfb7f241_c8f45f71",
@@ -71,6 +131,24 @@
       "writtenOn": "2024-11-13T21:39:28Z",
       "side": 1,
       "message": "First set `page_obj_is_active` to false, so the test can see a false -\u003e true transition is actually happening due to FPDFPageObj_GetIsActive()?",
+      "revId": "e43306b6b47680c6f0d5f916b7358c3653b22f8b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "98c729d4_2d4cf0a3",
+        "filename": "fpdfsdk/fpdf_editpage_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 552,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-14T17:36:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bfb7f241_c8f45f71",
       "revId": "e43306b6b47680c6f0d5f916b7358c3653b22f8b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
