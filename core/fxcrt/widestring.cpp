@@ -20,6 +20,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/numerics/safe_math.h"
 #include "core/fxcrt/span_util.h"
@@ -59,42 +60,47 @@ constexpr wchar_t kWideTrimChars[] = L"\x09\x0a\x0b\x0c\x0d\x20";
 std::optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
                                             va_list argList) {
   size_t nMaxLen = 0;
+  // TODO(thestig): Remove UNSAFE_TODO() before landing this CL.
   UNSAFE_TODO({
-    for (const wchar_t* pStr = pFormat; *pStr != 0; pStr++) {
-      if (*pStr != '%' || *(pStr = pStr + 1) == '%') {
+    for (WideStringView view(pFormat); !view.IsEmpty();
+         view = view.Substr(1u)) {
+      if (view.Front() != '%' ||
+          (view.GetLength() > 1 && view.CharAt(1u) == '%')) {
         ++nMaxLen;
         continue;
       }
       int iWidth = 0;
-      for (; *pStr != 0; pStr++) {
-        if (*pStr == '#') {
+      for (; !view.IsEmpty(); view = view.Substr(1u)) {
+        const wchar_t c = view.Front();
+        if (c == '#') {
           nMaxLen += 2;
-        } else if (*pStr == '*') {
+        } else if (c == '*') {
           iWidth = va_arg(argList, int);
-        } else if (*pStr != '-' && *pStr != '+' && *pStr != '0' &&
-                   *pStr != ' ') {
+        } else if (c != '-' && c != '+' && c != '0' && c != ' ') {
           break;
         }
+        view = view.Substr(1u);
       }
       if (iWidth == 0) {
-        iWidth = FXSYS_wtoi(pStr);
-        while (FXSYS_IsDecimalDigit(*pStr))
-          ++pStr;
+        iWidth = StringToInt(view);
+        while (FXSYS_IsDecimalDigit(static_cast<wchar_t>(view.Front()))) {
+          view = view.Substr(1u);
+        }
       }
       if (iWidth < 0 || iWidth > 128 * 1024) {
         return std::nullopt;
       }
       uint32_t nWidth = static_cast<uint32_t>(iWidth);
       int iPrecision = 0;
-      if (*pStr == '.') {
-        pStr++;
-        if (*pStr == '*') {
+      if (view.Front() == '.') {
+        view = view.Substr(1u);
+        if (view.Front() == '*') {
           iPrecision = va_arg(argList, int);
-          pStr++;
+          view = view.Substr(1u);
         } else {
-          iPrecision = FXSYS_wtoi(pStr);
-          while (FXSYS_IsDecimalDigit(*pStr)) {
-            ++pStr;
+          iPrecision = StringToInt(view);
+          while (FXSYS_IsDecimalDigit(static_cast<wchar_t>(view.Front()))) {
+            view = view.Substr(1u);
           }
         }
       }
@@ -103,28 +109,28 @@ std::optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
       }
       uint32_t nPrecision = static_cast<uint32_t>(iPrecision);
       int nModifier = 0;
-      if (*pStr == L'I' && *(pStr + 1) == L'6' && *(pStr + 2) == L'4') {
-        pStr += 3;
+      if (view.First(3u) == L"I64") {
+        view = view.Substr(3u);
         nModifier = FORCE_INT64;
       } else {
-        switch (*pStr) {
+        switch (view.Front()) {
           case 'h':
             nModifier = FORCE_ANSI;
-            pStr++;
+            view = view.Substr(1u);
             break;
           case 'l':
             nModifier = FORCE_UNICODE;
-            pStr++;
+            view = view.Substr(1u);
             break;
           case 'F':
           case 'N':
           case 'L':
-            pStr++;
+            view = view.Substr(1u);
             break;
         }
       }
       size_t nItemLen = 0;
-      switch (*pStr | nModifier) {
+      switch (view.Front() | nModifier) {
         case 'c':
         case 'C':
           nItemLen = 2;
@@ -195,7 +201,7 @@ std::optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
           nItemLen = nWidth;
         }
       } else {
-        switch (*pStr) {
+        switch (view.Front()) {
           case 'd':
           case 'i':
           case 'u':
