@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0550201b_6777ecf2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-14T22:15:52Z",
+      "side": 1,
+      "message": "Minimized the diff to hopefully make the review easier.",
+      "revId": "a64bb329f42cfc52c753ca78d5e8ebf2b532659f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
