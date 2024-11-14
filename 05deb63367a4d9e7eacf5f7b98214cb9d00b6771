@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "23d1f40c_0ee885a0",
+        "filename": "core/fpdfapi/font/cpdf_tounicodemap.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-14T18:49:02Z",
+      "side": 1,
+      "message": "strictly speaking, this should be static_cast\u003csize_t\u003e but see comment about new size-t var below.",
+      "range": {
+        "startLine": 191,
+        "startChar": 23,
+        "endLine": 191,
+        "endChar": 37
+      },
+      "revId": "05deb63367a4d9e7eacf5f7b98214cb9d00b6771",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cc71c741_7e42bcea",
+        "filename": "core/fpdfapi/font/cpdf_tounicodemap.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-14T18:49:02Z",
+      "side": 1,
+      "message": "might make `const size_t expected_size \u003d is_valid ? static_cast\u003csize_t(expected_count) : 0;` at line 190 and the comment is no longer required in two places since the validity of the cast is obvious.",
+      "range": {
+        "startLine": 214,
+        "startChar": 28,
+        "endLine": 214,
+        "endChar": 63
+      },
+      "revId": "05deb63367a4d9e7eacf5f7b98214cb9d00b6771",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1e1035e1_5f5010b7",
+        "filename": "core/fpdfapi/font/cpdf_tounicodemap.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-14T18:49:02Z",
+      "side": 1,
+      "message": "same idea here with size_t expected_size.",
+      "range": {
+        "startLine": 249,
+        "startChar": 0,
+        "endLine": 249,
+        "endChar": 2
+      },
+      "revId": "05deb63367a4d9e7eacf5f7b98214cb9d00b6771",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a98cf43f_155ab6dc",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-14T18:49:02Z",
+      "side": 1,
+      "message": "nit: CHECK(it !\u003d map.end())",
+      "range": {
+        "startLine": 368,
+        "startChar": 0,
+        "endLine": 368,
+        "endChar": 8
+      },
+      "revId": "05deb63367a4d9e7eacf5f7b98214cb9d00b6771",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6dc68ad3_65f5557e",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 375,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-14T18:49:02Z",
+      "side": 1,
+      "message": "note: non-contiguous ranges would help here in c++ future version.",
+      "range": {
+        "startLine": 375,
+        "startChar": 0,
+        "endLine": 375,
+        "endChar": 46
+      },
+      "revId": "05deb63367a4d9e7eacf5f7b98214cb9d00b6771",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "90e9b39f_e021de12",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-14T18:49:02Z",
+      "side": 1,
+      "message": "CHECK(it !\u003d end())",
+      "range": {
+        "startLine": 389,
+        "startChar": 0,
+        "endLine": 389,
+        "endChar": 8
+      },
+      "revId": "05deb63367a4d9e7eacf5f7b98214cb9d00b6771",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "68a21f11_3a6f3de2",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 400,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-14T18:49:02Z",
+      "side": 1,
+      "message": "nit: maybe range-based for loop, with bool tracking first iteration, and adding space before AddUnicode if !first iteration.",
+      "range": {
+        "startLine": 394,
+        "startChar": 7,
+        "endLine": 400,
+        "endChar": 9
+      },
+      "revId": "05deb63367a4d9e7eacf5f7b98214cb9d00b6771",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e9a39ded_06e00c6a",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 418,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-14T18:49:02Z",
+      "side": 1,
+      "message": "CHECK(it !\u003d end())",
+      "range": {
+        "startLine": 418,
+        "startChar": 0,
+        "endLine": 418,
+        "endChar": 8
+      },
+      "revId": "05deb63367a4d9e7eacf5f7b98214cb9d00b6771",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
