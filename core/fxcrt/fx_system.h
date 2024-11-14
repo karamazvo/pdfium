@@ -83,6 +83,8 @@ float FXSYS_sqrt2(float a, float b);
 }  // extern "C"
 
 // C++-only section to allow future use of TerminatedPtr<>.
+// Also consider using / implementing equivalent functions that take string
+// views in core/fxcrt/fx_string.h instead.
 int FXSYS_stricmp(const char* str1, const char* str2);
 int FXSYS_wcsicmp(const wchar_t* str1, const wchar_t* str2);
 int32_t FXSYS_atoi(const char* str);
