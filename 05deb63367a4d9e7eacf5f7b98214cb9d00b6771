@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9c1be115_156a3fb3",
+        "filename": "core/fpdfapi/font/cpdf_tounicodemap.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-14T21:52:10Z",
+      "side": 1,
+      "message": "Done. I renamed the signed `expected_count` to `raw_count`. and added `size_t expected_count \u003d ...;`",
+      "parentUuid": "23d1f40c_0ee885a0",
+      "range": {
+        "startLine": 191,
+        "startChar": 23,
+        "endLine": 191,
+        "endChar": 37
+      },
+      "revId": "05deb63367a4d9e7eacf5f7b98214cb9d00b6771",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cc71c741_7e42bcea",
@@ -37,6 +61,30 @@
       "writtenOn": "2024-11-14T18:49:02Z",
       "side": 1,
       "message": "might make `const size_t expected_size \u003d is_valid ? static_cast\u003csize_t(expected_count) : 0;` at line 190 and the comment is no longer required in two places since the validity of the cast is obvious.",
+      "range": {
+        "startLine": 214,
+        "startChar": 28,
+        "endLine": 214,
+        "endChar": 63
+      },
+      "revId": "05deb63367a4d9e7eacf5f7b98214cb9d00b6771",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5c12519a_2d1b5303",
+        "filename": "core/fpdfapi/font/cpdf_tounicodemap.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-14T21:52:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cc71c741_7e42bcea",
       "range": {
         "startLine": 214,
         "startChar": 28,
@@ -70,6 +118,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "06ee0ff9_52ad3d38",
+        "filename": "core/fpdfapi/font/cpdf_tounicodemap.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-14T21:52:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1e1035e1_5f5010b7",
+      "range": {
+        "startLine": 249,
+        "startChar": 0,
+        "endLine": 249,
+        "endChar": 2
+      },
+      "revId": "05deb63367a4d9e7eacf5f7b98214cb9d00b6771",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a98cf43f_155ab6dc",
@@ -83,6 +155,30 @@
       "writtenOn": "2024-11-14T18:49:02Z",
       "side": 1,
       "message": "nit: CHECK(it !\u003d map.end())",
+      "range": {
+        "startLine": 368,
+        "startChar": 0,
+        "endLine": 368,
+        "endChar": 8
+      },
+      "revId": "05deb63367a4d9e7eacf5f7b98214cb9d00b6771",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "47b7675b_10f82581",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-14T21:52:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a98cf43f_155ab6dc",
       "range": {
         "startLine": 368,
         "startChar": 0,
@@ -139,6 +235,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d1f49d2d_f273dbb5",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-14T21:52:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "90e9b39f_e021de12",
+      "range": {
+        "startLine": 389,
+        "startChar": 0,
+        "endLine": 389,
+        "endChar": 8
+      },
+      "revId": "05deb63367a4d9e7eacf5f7b98214cb9d00b6771",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "68a21f11_3a6f3de2",
@@ -162,6 +282,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "826c61c2_be3d3c19",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 400,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-14T21:52:10Z",
+      "side": 1,
+      "message": "Did something like that.",
+      "parentUuid": "68a21f11_3a6f3de2",
+      "range": {
+        "startLine": 394,
+        "startChar": 7,
+        "endLine": 400,
+        "endChar": 9
+      },
+      "revId": "05deb63367a4d9e7eacf5f7b98214cb9d00b6771",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e9a39ded_06e00c6a",
@@ -175,6 +319,30 @@
       "writtenOn": "2024-11-14T18:49:02Z",
       "side": 1,
       "message": "CHECK(it !\u003d end())",
+      "range": {
+        "startLine": 418,
+        "startChar": 0,
+        "endLine": 418,
+        "endChar": 8
+      },
+      "revId": "05deb63367a4d9e7eacf5f7b98214cb9d00b6771",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "71d11356_ce646f0f",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 418,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-14T21:52:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e9a39ded_06e00c6a",
       "range": {
         "startLine": 418,
         "startChar": 0,
