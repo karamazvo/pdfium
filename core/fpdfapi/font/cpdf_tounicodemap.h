@@ -38,8 +38,13 @@ class CPDF_ToUnicodeMap {
   static WideString StringToWideString(ByteStringView str);
 
   void Load(RetainPtr<const CPDF_Stream> pStream);
-  void HandleBeginBFChar(CPDF_SimpleParser* pParser);
-  void HandleBeginBFRange(CPDF_SimpleParser* pParser);
+
+  // Returns the last word `parser` encountered.
+  ByteStringView HandleBeginBFChar(CPDF_SimpleParser& parser,
+                                   ByteStringView previous_word);
+  ByteStringView HandleBeginBFRange(CPDF_SimpleParser& parser,
+                                    ByteStringView previous_word);
+
   uint32_t GetMultiCharIndexIndicator() const;
   void SetCode(uint32_t srccode, WideString destcode);
 
