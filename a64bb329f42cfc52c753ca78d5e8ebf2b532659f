@@ -18,6 +18,23 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "52cbda62_d16b215d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-15T22:50:41Z",
+      "side": 1,
+      "message": "So totally safe?",
+      "revId": "a64bb329f42cfc52c753ca78d5e8ebf2b532659f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "354b2e2a_bbaaba7c",
@@ -78,6 +95,30 @@
       "side": 1,
       "message": "UNSAFE_TODO() not needed. The 1-param WideStringView ctor calculates the string length using `std::char_traits\u003cwchar_t\u003e::length(pFormat)`.",
       "parentUuid": "dc38a602_851cf594",
+      "range": {
+        "startLine": 65,
+        "startChar": 9,
+        "endLine": 65,
+        "endChar": 38
+      },
+      "revId": "a64bb329f42cfc52c753ca78d5e8ebf2b532659f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dedbe48d_c00e08d5",
+        "filename": "core/fxcrt/widestring.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-15T22:50:41Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "5f15aa49_e6de94d5",
       "range": {
         "startLine": 65,
         "startChar": 9,
