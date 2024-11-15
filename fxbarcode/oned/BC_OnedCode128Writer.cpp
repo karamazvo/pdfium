@@ -22,12 +22,11 @@
 
 #include "fxbarcode/oned/BC_OnedCode128Writer.h"
 
-#include <ctype.h>
-
 #include <array>
 #include <memory>
 
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/fx_extension.h"
 #include "fxbarcode/BC_Writer.h"
 #include "fxbarcode/oned/BC_OneDimWriter.h"
 
@@ -172,13 +171,15 @@ int32_t CBC_OnedCode128Writer::Encode128C(const ByteString& contents,
   while (position < contents.GetLength()) {
     int32_t patternIndex;
     char ch = contents[position];
-    if (isdigit(ch)) {
+    if (FXSYS_IsDecimalDigit(ch)) {
       patternIndex = FXSYS_atoi(
           contents.Substr(position, contents.IsValidIndex(position + 1) ? 2 : 1)
               .c_str());
       ++position;
-      if (position < contents.GetLength() && isdigit(contents[position]))
+      if (position < contents.GetLength() &&
+          FXSYS_IsDecimalDigit(contents[position])) {
         ++position;
+      }
     } else {
       patternIndex = static_cast<int32_t>(ch);
       ++position;
