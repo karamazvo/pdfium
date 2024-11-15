@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "05089e21_178ede26",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-15T19:06:33Z",
+      "side": 1,
+      "message": "nit: explain why.",
+      "range": {
+        "startLine": 9,
+        "startChar": 42,
+        "endLine": 9,
+        "endChar": 58
+      },
+      "revId": "be5ba904676ec02d0b7f58ce523b23a534b3138a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b8f02b3b_2145d5ca",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-15T19:06:33Z",
+      "side": 1,
+      "message": "Mechanically fine, but why? (I think its a good idea, but let\u0027s justify it).",
+      "revId": "be5ba904676ec02d0b7f58ce523b23a534b3138a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
