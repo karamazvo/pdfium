@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "63303d81_14151148",
+        "filename": "testing/utils/compare_coordinates.cc",
+        "patchSetId": 4
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-15T18:32:53Z",
+      "side": 1,
+      "message": "follow-up:  If you\u0027d like to write a trivial follow-up CL, calling these EXPECT_FS_RECTF_FLOAT_EQ() and EXPECT_FS_MATRIX_FLOAT_EQ() might be more descriptive, since calling something Compare suggests that it would return the result of the comparision (even though I\u0027m probably the one that came up with the original name).",
+      "range": {
+        "startLine": 10,
+        "startChar": 5,
+        "endLine": 10,
+        "endChar": 20
+      },
+      "revId": "4a88cb2416a65250290bd772d842c49b9f664db4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
