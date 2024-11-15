@@ -153,7 +153,8 @@ uint32_t CPDF_CMapParser::GetCode(ByteStringView word) {
     return num.ValueOrDie();
   }
 
-  for (size_t i = 0; i < word.GetLength() && isdigit(word[i]); ++i) {
+  for (size_t i = 0; i < word.GetLength() && FXSYS_IsDecimalDigit(word[i]);
+       ++i) {
     num = num * 10 + FXSYS_DecimalCharToInt(static_cast<wchar_t>(word[i]));
     if (!num.IsValid())
       return 0;

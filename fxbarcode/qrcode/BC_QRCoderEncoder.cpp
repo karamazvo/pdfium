@@ -282,7 +282,7 @@ CBC_QRCoderMode* ChooseMode(const ByteString& content) {
   bool hasNumeric = false;
   bool hasAlphaNumeric = false;
   for (size_t i = 0; i < content.GetLength(); i++) {
-    if (isdigit(content[i])) {
+    if (FXSYS_IsDecimalDigit(content[i])) {
       hasNumeric = true;
     } else if (GetAlphaNumericCode(content[i]) != -1) {
       hasAlphaNumeric = true;

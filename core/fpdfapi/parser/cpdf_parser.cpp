@@ -208,14 +208,16 @@ bool CPDF_Parser::ParseFileVersion() {
   if (!m_pSyntax->GetCharAt(5, ch))
     return false;
 
-  if (isdigit(ch))
+  if (FXSYS_IsDecimalDigit(ch)) {
     m_FileVersion = FXSYS_DecimalCharToInt(static_cast<wchar_t>(ch)) * 10;
+  }
 
   if (!m_pSyntax->GetCharAt(7, ch))
     return false;
 
-  if (isdigit(ch))
+  if (FXSYS_IsDecimalDigit(ch)) {
     m_FileVersion += FXSYS_DecimalCharToInt(static_cast<wchar_t>(ch));
+  }
   return true;
 }
 
@@ -559,8 +561,9 @@ bool CPDF_Parser::ParseAndAppendCrossRefSubsectionData(
 
         if (offset.ValueOrDie() == 0) {
           for (int32_t c = 0; c < 10; c++) {
-            if (!isdigit(pEntry[c]))
+            if (!FXSYS_IsDecimalDigit(pEntry[c])) {
               return false;
+            }
           }
         }
 
