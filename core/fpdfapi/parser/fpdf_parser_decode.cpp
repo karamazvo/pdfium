@@ -225,7 +225,7 @@ DataAndBytesConsumed HexDecode(pdfium::span<const uint8_t> src_span) {
       ++i;
       break;
     }
-    if (!isxdigit(ch)) {
+    if (!FXSYS_IsHexDigit(ch)) {
       continue;
     }
 

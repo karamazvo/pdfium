@@ -145,7 +145,7 @@ uint32_t CPDF_CMapParser::GetCode(ByteStringView word) {
 
   FX_SAFE_UINT32 num = 0;
   if (word[0] == '<') {
-    for (size_t i = 1; i < word.GetLength() && isxdigit(word[i]); ++i) {
+    for (size_t i = 1; i < word.GetLength() && FXSYS_IsHexDigit(word[i]); ++i) {
       num = num * 16 + FXSYS_HexCharToInt(word[i]);
       if (!num.IsValid())
         return 0;

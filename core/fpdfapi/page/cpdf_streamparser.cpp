@@ -561,8 +561,9 @@ DataVector<uint8_t> CPDF_StreamParser::ReadHexString() {
     if (ch == '>')
       break;
 
-    if (!isxdigit(ch))
+    if (!FXSYS_IsHexDigit(ch)) {
       continue;
+    }
 
     int val = FXSYS_HexCharToInt(ch);
     if (bFirst) {
