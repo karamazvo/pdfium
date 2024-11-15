@@ -12,6 +12,7 @@
 #include "core/fpdfdoc/cpvt_variabletext.h"
 #include "core/fpdfdoc/cpvt_wordinfo.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/stl_util.h"
 
 namespace {
