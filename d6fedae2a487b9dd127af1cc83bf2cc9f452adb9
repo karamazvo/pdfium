@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3890bcdd_5c54f6c1",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-15T22:27:28Z",
+      "side": 1,
+      "message": "follow-up: I wish my name was range_to_vector_map",
+      "range": {
+        "startLine": 279,
+        "startChar": 6,
+        "endLine": 279,
+        "endChar": 22
+      },
+      "revId": "d6fedae2a487b9dd127af1cc83bf2cc9f452adb9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
