@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "acb33705_4742fba1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-15T18:37:57Z",
+      "side": 1,
+      "message": "one last comment.",
+      "revId": "18224b93d36e3c55f7781be19c5e59a5075a8b4c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4a34cf4c_3216e8f8",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 381,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-15T18:37:57Z",
+      "side": 1,
+      "message": "do we know this is not empty?",
+      "range": {
+        "startLine": 381,
+        "startChar": 27,
+        "endLine": 381,
+        "endChar": 35
+      },
+      "revId": "18224b93d36e3c55f7781be19c5e59a5075a8b4c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
