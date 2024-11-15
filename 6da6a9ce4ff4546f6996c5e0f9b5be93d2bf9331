@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a24aad7a_8f055f67",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-15T19:07:50Z",
+      "side": 1,
+      "message": "nit: explain why",
+      "range": {
+        "startLine": 9,
+        "startChar": 41,
+        "endLine": 9,
+        "endChar": 61
+      },
+      "revId": "6da6a9ce4ff4546f6996c5e0f9b5be93d2bf9331",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d1576bda_0b079969",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-15T19:07:50Z",
+      "side": 1,
+      "message": "Again, mechanically fine, but need to justify (and I think its a good idea) but document reason.",
+      "revId": "6da6a9ce4ff4546f6996c5e0f9b5be93d2bf9331",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
