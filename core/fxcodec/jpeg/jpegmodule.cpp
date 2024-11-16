@@ -76,9 +76,11 @@ static bool JpegLoadInfo(pdfium::span<const uint8_t> src_span,
   cinfo.err = &jerr;
   jmp_buf mark;
   cinfo.client_data = &mark;
-  if (setjmp(mark) == -1)
+  if (setjmp(mark) == -1) {
     return false;
+  }
 
+  // Warning: Do not do any work between the setjmp() above and here.
   jpeg_create_decompress(&cinfo);
   jpeg_source_mgr src;
   src.init_source = src_do_nothing;
@@ -93,6 +95,8 @@ static bool JpegLoadInfo(pdfium::span<const uint8_t> src_span,
     jpeg_destroy_decompress(&cinfo);
     return false;
   }
+
+  // Warning: Do not do any work between the setjmp() above and here.
   int ret = jpeg_read_header(&cinfo, TRUE);
   if (ret != JPEG_HEADER_OK) {
     jpeg_destroy_decompress(&cinfo);
@@ -184,11 +188,15 @@ JpegDecoder::~JpegDecoder() {
 bool JpegDecoder::InitDecode(bool bAcceptKnownBadHeader) {
   m_Cinfo.err = &m_Jerr;
   m_Cinfo.client_data = &m_JmpBuf;
-  if (setjmp(m_JmpBuf) == -1)
+  if (setjmp(m_JmpBuf) == -1) {
     return false;
+  }
 
+  // Warning: Do not do any work between the setjmp() above and here.
   jpeg_create_decompress(&m_Cinfo);
   InitDecompressSrc();
+  m_Cinfo.image_width = m_OrigWidth;
+  m_Cinfo.image_height = m_OrigHeight;
   m_bInited = true;
 
   if (setjmp(m_JmpBuf) == -1) {
@@ -211,9 +219,11 @@ bool JpegDecoder::InitDecode(bool bAcceptKnownBadHeader) {
 
     jpeg_create_decompress(&m_Cinfo);
     InitDecompressSrc();
+    m_Cinfo.image_width = m_OrigWidth;
+    m_Cinfo.image_height = m_OrigHeight;
   }
-  m_Cinfo.image_width = m_OrigWidth;
-  m_Cinfo.image_height = m_OrigHeight;
+
+  // Warning: Do not do any work between the setjmp() above and here.
   int ret = jpeg_read_header(&m_Cinfo, TRUE);
   if (ret != JPEG_HEADER_OK)
     return false;
@@ -280,12 +290,15 @@ bool JpegDecoder::Rewind() {
       return false;
     }
   }
-  if (setjmp(m_JmpBuf) == -1) {
-    return false;
-  }
+
   m_Cinfo.scale_denom = m_nDefaultScaleDenom;
   m_OutputWidth = m_OrigWidth;
   m_OutputHeight = m_OrigHeight;
+  if (setjmp(m_JmpBuf) == -1) {
+    return false;
+  }
+
+  // Warning: Do not do any work between the setjmp() above and here.
   if (!jpeg_start_decompress(&m_Cinfo)) {
     jpeg_destroy_decompress(&m_Cinfo);
     return false;
@@ -296,10 +309,12 @@ bool JpegDecoder::Rewind() {
 }
 
 pdfium::span<uint8_t> JpegDecoder::GetNextLine() {
-  if (setjmp(m_JmpBuf) == -1)
-    return pdfium::span<uint8_t>();
-
   uint8_t* row_array[] = {m_ScanlineBuf.data()};
+  if (setjmp(m_JmpBuf) == -1) {
+    return pdfium::span<uint8_t>();
+  }
+
+  // Warning: Do not do any work between the setjmp() above and here.
   int nlines = jpeg_read_scanlines(&m_Cinfo, row_array, 1);
   if (nlines <= 0)
     return pdfium::span<uint8_t>();
