@@ -35,6 +35,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1049ac94_6277a8db",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-16T00:43:25Z",
+      "side": 1,
+      "message": "In terms of UNSAFE_TODO() removal, ya.",
+      "parentUuid": "52cbda62_d16b215d",
+      "revId": "a64bb329f42cfc52c753ca78d5e8ebf2b532659f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "354b2e2a_bbaaba7c",
