@@ -16,6 +16,24 @@
       "message": "Want to switch to Google C++ style in this struct? i.e. `jmp_buf` here.",
       "revId": "46067308a244b12ad6500c8e8602b3ef89909ec8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "863ccb3d_689de60e",
+        "filename": "core/fxcodec/jpeg/jpeg_common.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-18T21:01:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dd1a3d8e_0818a166",
+      "revId": "46067308a244b12ad6500c8e8602b3ef89909ec8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
