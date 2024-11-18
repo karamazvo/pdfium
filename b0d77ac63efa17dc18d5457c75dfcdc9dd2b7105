@@ -16,6 +16,46 @@
       "message": "Don\u0027t have a CL to chain to this one yet, but wanted to get this out for review since it can stand on its own.",
       "revId": "b0d77ac63efa17dc18d5457c75dfcdc9dd2b7105",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2521825d_f7d379ca",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-18T23:34:29Z",
+      "side": 1,
+      "message": "LGTM, just one nit.",
+      "revId": "b0d77ac63efa17dc18d5457c75dfcdc9dd2b7105",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "11e0929e_f62d5b17",
+        "filename": "fpdfsdk/fpdf_editpage_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 668,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-18T23:34:29Z",
+      "side": 1,
+      "message": "Should this test have a check before this about the number of objects before adding the new path?",
+      "range": {
+        "startLine": 668,
+        "startChar": 14,
+        "endLine": 668,
+        "endChar": 37
+      },
+      "revId": "b0d77ac63efa17dc18d5457c75dfcdc9dd2b7105",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
