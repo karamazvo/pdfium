@@ -44,12 +44,15 @@ struct JpegCommon {
 };
 typedef struct JpegCommon JpegCommon;
 
-void src_do_nothing(j_decompress_ptr cinfo);
-boolean src_fill_buffer(j_decompress_ptr cinfo);
-boolean src_resync(j_decompress_ptr cinfo, int desired);
-void error_do_nothing(j_common_ptr cinfo);
-void error_do_nothing_int(j_common_ptr cinfo, int arg);
-void error_do_nothing_char(j_common_ptr cinfo, char* arg);
+boolean jpeg_common_create_decompress(JpegCommon* jpeg_common);
+
+//  Callbacks.
+void jpeg_common_src_do_nothing(j_decompress_ptr cinfo);
+boolean jpeg_common_src_fill_buffer(j_decompress_ptr cinfo);
+boolean jpeg_common_src_resync(j_decompress_ptr cinfo, int desired);
+void jpeg_common_error_do_nothing(j_common_ptr cinfo);
+void jpeg_common_error_do_nothing_int(j_common_ptr cinfo, int arg);
+void jpeg_common_error_do_nothing_char(j_common_ptr cinfo, char* arg);
 
 #ifdef __cplusplus
 }  // extern "C"
