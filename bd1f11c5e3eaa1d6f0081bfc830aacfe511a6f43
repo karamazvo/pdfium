@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5219bc31_9196143e",
+        "filename": "core/fxcodec/jpeg/jpegmodule.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-18T17:51:10Z",
+      "side": 1,
+      "message": "nit: this might right before the return false above, and say something like (do no do any work before returing). and below.",
+      "range": {
+        "startLine": 83,
+        "startChar": 2,
+        "endLine": 83,
+        "endChar": 69
+      },
+      "revId": "bd1f11c5e3eaa1d6f0081bfc830aacfe511a6f43",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f90fce25_9e6a30d2",
+        "filename": "core/fxcodec/jpeg/jpegmodule.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-18T17:51:10Z",
+      "side": 1,
+      "message": "can we invert and early return?",
+      "range": {
+        "startLine": 202,
+        "startChar": 0,
+        "endLine": 202,
+        "endChar": 31
+      },
+      "revId": "bd1f11c5e3eaa1d6f0081bfc830aacfe511a6f43",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
