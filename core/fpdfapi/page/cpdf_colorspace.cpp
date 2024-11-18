@@ -217,6 +217,7 @@ class CPDF_ICCBasedCS final : public CPDF_BasedCS {
   // CPDF_ColorSpace:
   std::optional<FX_RGB_STRUCT<float>> GetRGB(
       pdfium::span<const float> pBuf) const override;
+  RetainPtr<CPDF_IccProfile> GetIccProfile() const override;
   void TranslateImageLine(pdfium::span<uint8_t> dest_span,
                           pdfium::span<const uint8_t> src_span,
                           int pixels,
@@ -952,6 +953,10 @@ std::optional<FX_RGB_STRUCT<float>> CPDF_ICCBasedCS::GetRGB(
     return m_pBaseCS->GetRGB(pBuf);
   }
   return FX_RGB_STRUCT<float>{};
+}
+
+RetainPtr<CPDF_IccProfile> GetIccProfile() const {
+  return profile_;
 }
 
 void CPDF_ICCBasedCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
