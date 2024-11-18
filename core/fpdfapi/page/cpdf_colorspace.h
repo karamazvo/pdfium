@@ -110,6 +110,8 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   virtual std::optional<FX_RGB_STRUCT<float>> GetRGB(
       pdfium::span<const float> pBuf) const = 0;
 
+  virtual RetainPtr<CPDF_IccProfile> GetIccProfile() const;
+
   virtual void GetDefaultValue(int iComponent,
                                float* value,
                                float* min,
