@@ -175,7 +175,7 @@ JpegDecoder::~JpegDecoder() {
 }
 
 bool JpegDecoder::InitDecode(bool bAcceptKnownBadHeader) {
-  m_Common.m_Cinfo.err = &m_Common.m_Jerr;
+  m_Common.m_Cinfo.err = &m_Common.m_ErrMgr;
   m_Common.m_Cinfo.client_data = &m_Common.m_JmpBuf;
   if (setjmp(m_Common.m_JmpBuf) == -1) {
     return false;
@@ -239,16 +239,16 @@ bool JpegDecoder::Create(pdfium::span<const uint8_t> src_span,
 
   PatchUpTrailer();
 
-  m_Common.m_Jerr.error_exit = error_fatal;
-  m_Common.m_Jerr.emit_message = error_do_nothing_int;
-  m_Common.m_Jerr.output_message = error_do_nothing;
-  m_Common.m_Jerr.format_message = error_do_nothing_char;
-  m_Common.m_Jerr.reset_error_mgr = error_do_nothing;
-  m_Common.m_Src.init_source = src_do_nothing;
-  m_Common.m_Src.term_source = src_do_nothing;
-  m_Common.m_Src.skip_input_data = src_skip_data;
-  m_Common.m_Src.fill_input_buffer = src_fill_buffer;
-  m_Common.m_Src.resync_to_restart = src_resync;
+  m_Common.m_ErrMgr.error_exit = error_fatal;
+  m_Common.m_ErrMgr.emit_message = error_do_nothing_int;
+  m_Common.m_ErrMgr.output_message = error_do_nothing;
+  m_Common.m_ErrMgr.format_message = error_do_nothing_char;
+  m_Common.m_ErrMgr.reset_error_mgr = error_do_nothing;
+  m_Common.m_SrcMgr.init_source = src_do_nothing;
+  m_Common.m_SrcMgr.term_source = src_do_nothing;
+  m_Common.m_SrcMgr.skip_input_data = src_skip_data;
+  m_Common.m_SrcMgr.fill_input_buffer = src_fill_buffer;
+  m_Common.m_SrcMgr.resync_to_restart = src_resync;
   m_bJpegTransform = ColorTransform;
   m_OutputWidth = m_OrigWidth = width;
   m_OutputHeight = m_OrigHeight = height;
@@ -308,7 +308,7 @@ pdfium::span<uint8_t> JpegDecoder::GetNextLine() {
 
 uint32_t JpegDecoder::GetSrcOffset() {
   return static_cast<uint32_t>(m_SrcSpan.size() -
-                               m_Common.m_Src.bytes_in_buffer);
+                               m_Common.m_SrcMgr.bytes_in_buffer);
 }
 
 void JpegDecoder::CalcPitch() {
@@ -320,9 +320,9 @@ void JpegDecoder::CalcPitch() {
 }
 
 void JpegDecoder::InitDecompressSrc() {
-  m_Common.m_Cinfo.src = &m_Common.m_Src;
-  m_Common.m_Src.bytes_in_buffer = m_SrcSpan.size();
-  m_Common.m_Src.next_input_byte = m_SrcSpan.data();
+  m_Common.m_Cinfo.src = &m_Common.m_SrcMgr;
+  m_Common.m_SrcMgr.bytes_in_buffer = m_SrcSpan.size();
+  m_Common.m_SrcMgr.next_input_byte = m_SrcSpan.data();
 }
 
 bool JpegDecoder::HasKnownBadHeaderWithInvalidHeight(

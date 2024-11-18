@@ -39,8 +39,8 @@ extern "C" {
 struct JpegCommon {
   jmp_buf m_JmpBuf;
   struct jpeg_decompress_struct m_Cinfo;
-  struct jpeg_error_mgr m_Jerr;
-  struct jpeg_source_mgr m_Src;
+  struct jpeg_error_mgr m_ErrMgr;
+  struct jpeg_source_mgr m_SrcMgr;
 };
 typedef struct JpegCommon JpegCommon;
 
