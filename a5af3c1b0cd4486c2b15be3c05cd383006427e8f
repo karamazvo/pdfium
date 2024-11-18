@@ -16,6 +16,24 @@
       "message": "Hi. I am now planning to add `FPDFImageObj_GetICCProfile` in `fpdf_edit` as a public API to expose ICC profile metadata. But I\u0027m confused about should we use a structure, a buffer, or another approach to return raw data?",
       "revId": "a5af3c1b0cd4486c2b15be3c05cd383006427e8f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e34825ad_c7a20c49",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-18T20:27:44Z",
+      "side": 1,
+      "message": "If the goal is to get the raw bytes for the ICC stream, or the decoded stream, then it is probably best to just write into a buffer. For writing into a struct, what would the struct look like?\n\nAs an exercise, you can run `testing/tools/fixup_pdf_template.py testing/resources/pixel/bug_1479436.in` to create bug_1479436.pdf. Then move the file to testing/resources/bug_1479436.pdf. Now add a test case to call the new API in fpdfsdk/fpdf_edit_embeddertest.cpp. What should the API return? Write into out-parameters? It would be good to do this anyway, to prove the API works.",
+      "parentUuid": "12c24d46_10fdc51f",
+      "revId": "a5af3c1b0cd4486c2b15be3c05cd383006427e8f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
