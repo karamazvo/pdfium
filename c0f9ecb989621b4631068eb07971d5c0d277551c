@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "23941de7_b984f8cb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-19T00:56:40Z",
+      "side": 1,
+      "message": "The new round of red bots looks similar to what is reported in https://crbug.com/376278207.",
+      "revId": "c0f9ecb989621b4631068eb07971d5c0d277551c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
