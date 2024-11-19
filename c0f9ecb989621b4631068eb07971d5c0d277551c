@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "2660b77c_41b87dec",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-19T06:21:44Z",
+      "side": 1,
+      "message": "While the symptoms looks similar, is the underlying cause the same? Are PDFium bots running some script with `--package\u003dcoverage_tool`?\n\nDoes the issue repro locally?",
+      "parentUuid": "23941de7_b984f8cb",
+      "revId": "c0f9ecb989621b4631068eb07971d5c0d277551c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "638961d3_670e7b32",
         "filename": "DEPS",
         "patchSetId": 5
