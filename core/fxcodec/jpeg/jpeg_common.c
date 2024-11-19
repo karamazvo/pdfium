@@ -6,19 +6,37 @@
 
 #include "core/fxcodec/jpeg/jpeg_common.h"
 
-void src_do_nothing(j_decompress_ptr cinfo) {}
+boolean jpeg_common_create_decompress(JpegCommon* jpeg_common) {
+  if (setjmp(jpeg_common->jmpbuf) == -1) {
+    return FALSE;
+  }
+  jpeg_create_decompress(&jpeg_common->cinfo);
+  return TRUE;
+}
 
-boolean src_fill_buffer(j_decompress_ptr cinfo) {
+void jpeg_common_destroy_decompress(JpegCommon* jpeg_common) {
+  jpeg_destroy_decompress(&jpeg_common->cinfo);
+}
+
+int jpeg_common_read_header(JpegCommon* jpeg_common, boolean flag) {
+  if (setjmp(jpeg_common->jmpbuf) == -1) {
+    return -1;
+  }
+  return jpeg_read_header(&jpeg_common->cinfo, flag);
+}
+
+void jpeg_common_src_do_nothing(j_decompress_ptr cinfo) {}
+
+boolean jpeg_common_src_fill_buffer(j_decompress_ptr cinfo) {
   return FALSE;
 }
 
-boolean src_resync(j_decompress_ptr cinfo, int desired) {
+boolean jpeg_common_src_resync(j_decompress_ptr cinfo, int desired) {
   return FALSE;
 }
 
-void error_do_nothing(j_common_ptr cinfo) {}
+void jpeg_common_error_do_nothing(j_common_ptr cinfo) {}
 
-void error_do_nothing_int(j_common_ptr cinfo, int arg) {}
+void jpeg_common_error_do_nothing_int(j_common_ptr cinfo, int arg) {}
 
-void error_do_nothing_char(j_common_ptr cinfo, char* arg) {}
-
+void jpeg_common_error_do_nothing_char(j_common_ptr cinfo, char* arg) {}
