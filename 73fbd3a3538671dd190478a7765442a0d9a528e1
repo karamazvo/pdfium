@@ -124,6 +124,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "586aebf3_d4220fa4",
+        "filename": "DEPS",
+        "patchSetId": 4
+      },
+      "lineNbr": 414,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-19T06:04:25Z",
+      "side": 1,
+      "message": "A retry after it had a chance to settle down shows it is still unhappy. 😞",
+      "parentUuid": "2ad2433e_f89cd2f0",
+      "revId": "73fbd3a3538671dd190478a7765442a0d9a528e1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "48c8fec9_1062f4c4",
