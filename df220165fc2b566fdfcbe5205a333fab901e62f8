@@ -16,6 +16,24 @@
       "message": "Lei, wanna try a local repro to validate my \u0027Fixed\u0027 claim?",
       "revId": "df220165fc2b566fdfcbe5205a333fab901e62f8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9026bfb7_169317db",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-19T21:58:45Z",
+      "side": 1,
+      "message": "The crash went from wild-addr-read to null-deref. As in, SEGV on unknown address 0x000000000001.\n\n```\n#0  __memset_evex_unaligned_erms () at ../sysdeps/x86_64/multiarch/memset-vec-unaligned-erms.S:244\n#1  in JpegLoadInfo () at ../../third_party/pdfium/core/fxcodec/jpeg/jpegmodule.cpp:100\n#2  LoadInfo() () at ../../third_party/pdfium/core/fxcodec/jpeg/jpegmodule.cpp:387\n```\n\nWhere line 100 holds the end curly brace for JpegLoadInfo().",
+      "parentUuid": "af05b52b_c1006efc",
+      "revId": "df220165fc2b566fdfcbe5205a333fab901e62f8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
