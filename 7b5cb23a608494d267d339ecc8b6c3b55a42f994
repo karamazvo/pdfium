@@ -16,6 +16,24 @@
       "message": "need re-review somehow.",
       "revId": "7b5cb23a608494d267d339ecc8b6c3b55a42f994",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "edb05626_e28e9b44",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-19T01:04:36Z",
+      "side": 1,
+      "message": "File set changed. Look for \"outdated\" in the CL comments.",
+      "parentUuid": "a9d3b3e5_86a9e8cd",
+      "revId": "7b5cb23a608494d267d339ecc8b6c3b55a42f994",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
