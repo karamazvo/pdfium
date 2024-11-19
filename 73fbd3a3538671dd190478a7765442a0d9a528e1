@@ -106,6 +106,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2ad2433e_f89cd2f0",
+        "filename": "DEPS",
+        "patchSetId": 4
+      },
+      "lineNbr": 414,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-19T01:12:54Z",
+      "side": 1,
+      "message": "I wonder if this revert somehow caused the bots to go red? Or are they just having a case of the Mondays?",
+      "parentUuid": "750e8fe7_01ead458",
+      "revId": "73fbd3a3538671dd190478a7765442a0d9a528e1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "48c8fec9_1062f4c4",
@@ -137,6 +155,24 @@
       "side": 1,
       "message": "Without this, with the updated toolchain DEPS I see the following:\n\n```\n../../core/fxge/win32/cps_printer_driver.cpp(76,24): error: unsafe invocation of \u0027data\u0027 [-Werror,-Wunsafe-buffer-usage]\n   76 |       RGNDATA* pData \u003d reinterpret_cast\u003cRGNDATA*\u003e(buffer.data());\n      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n../../core/fxge/win32/cps_printer_driver.cpp(76,24): note: See //docs/unsafe_buffers.md for help.\n```",
       "parentUuid": "48c8fec9_1062f4c4",
+      "revId": "73fbd3a3538671dd190478a7765442a0d9a528e1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0623c566_4869a536",
+        "filename": "core/fxge/win32/cps_printer_driver.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-19T01:12:54Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "76a3b192_5537bf95",
       "revId": "73fbd3a3538671dd190478a7765442a0d9a528e1",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
