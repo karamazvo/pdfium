@@ -56,6 +56,30 @@
       },
       "revId": "b0d77ac63efa17dc18d5457c75dfcdc9dd2b7105",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fd75318e_1cece02b",
+        "filename": "fpdfsdk/fpdf_editpage_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 668,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-19T05:37:03Z",
+      "side": 1,
+      "message": "Done, among other things.",
+      "parentUuid": "11e0929e_f62d5b17",
+      "range": {
+        "startLine": 668,
+        "startChar": 14,
+        "endLine": 668,
+        "endChar": 37
+      },
+      "revId": "b0d77ac63efa17dc18d5457c75dfcdc9dd2b7105",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
