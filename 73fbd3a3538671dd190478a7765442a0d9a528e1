@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bc6cdf29_6ddd8a66",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-19T00:05:00Z",
+      "side": 1,
+      "message": "Still relevant?",
+      "revId": "73fbd3a3538671dd190478a7765442a0d9a528e1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dd737c05_c7a45537",
+        "filename": "DEPS",
+        "patchSetId": 4
+      },
+      "lineNbr": 388,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-19T00:05:00Z",
+      "side": 1,
+      "message": "Keep the list in order.",
+      "revId": "73fbd3a3538671dd190478a7765442a0d9a528e1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f8000be7_b73533f7",
+        "filename": "DEPS",
+        "patchSetId": 4
+      },
+      "lineNbr": 414,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-19T00:05:00Z",
+      "side": 1,
+      "message": "Why add packages that PDFium does not use?",
+      "revId": "73fbd3a3538671dd190478a7765442a0d9a528e1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "48c8fec9_1062f4c4",
+        "filename": "core/fxge/win32/cps_printer_driver.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-19T00:05:00Z",
+      "side": 1,
+      "message": "Why is this considered unsafe?",
+      "revId": "73fbd3a3538671dd190478a7765442a0d9a528e1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
