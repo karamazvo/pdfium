@@ -11,6 +11,7 @@
 
 #include <memory>
 
+#include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
 
@@ -35,6 +36,9 @@ class CPDF_IccProfile final : public Retainable {
   void TranslateScanline(pdfium::span<uint8_t> pDest,
                          pdfium::span<const uint8_t> pSrc,
                          int pixels);
+  RetainPtr<const CPDF_StreamAcc> GetStreamAcc() const {
+    return this->m_pStreamAcc;
+  }
 
  private:
   CPDF_IccProfile(RetainPtr<const CPDF_StreamAcc> stream_acc,
