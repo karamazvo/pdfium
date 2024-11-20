@@ -510,3 +510,52 @@ FPDFImageObj_GetImagePixelSize(FPDF_PAGEOBJECT image_object,
   *height = pImg->GetPixelHeight();
   return true;
 }
+
+FPDF_BOOL FPDF_CALLCONV
+FPDFImageObj_GetIccProfileDataRaw(FPDF_PAGEOBJECT image_object,
+                                  FPDF_PAGE page,
+                                  void* buffer,
+                                  unsigned long buflen,
+                                  unsigned long* out_buflen) {
+  CPDF_ImageObject* pImgObj = CPDFImageObjectFromFPDFPageObject(image_object);
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  if (!pImgObj || !pPage || !out_buflen) {
+    return false;
+  }
+
+  RetainPtr<CPDF_Image> pImg = pImgObj->GetImage();
+  if (!pImg) {
+    return false;
+  }
+
+  RetainPtr<CPDF_DIB> pSource = pImg->CreateNewDIB();
+  CPDF_DIB::LoadState ret = pSource->StartLoadDIBBase(
+      false, nullptr, CPDFPageFromFPDFPage(page)->GetPageResources().Get(),
+      false, CPDF_ColorSpace::Family::kUnknown, false, {0, 0});
+  if (ret == CPDF_DIB::LoadState::kFail) {
+    return false;
+  }
+
+  RetainPtr<CPDF_ColorSpace> pColorSpace = pSource->GetColorSpace();
+  if (!pColorSpace ||
+      pColorSpace->GetFamily() != CPDF_ColorSpace::Family::kICCBased) {
+    return false;
+  }
+
+  RetainPtr<CPDF_IccProfile> iccProfile = pColorSpace->GetIccProfile();
+  if (!iccProfile || !iccProfile->IsValid()) {
+    return false;
+  }
+
+  RetainPtr<const CPDF_StreamAcc> streamAcc = iccProfile->GetStreamAcc();
+  if (!streamAcc) {
+    return false;
+  }
+
+  // SAFETY: required from caller.
+  auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen));
+  pdfium::span<const uint8_t> data = streamAcc->GetSpan();
+  fxcrt::try_spancpy(result_span, data);
+  *out_buflen = streamAcc->GetSize();
+  return true;
+}

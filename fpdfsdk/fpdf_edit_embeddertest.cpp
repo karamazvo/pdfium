@@ -4812,6 +4812,65 @@ TEST_F(FPDFEditEmbedderTest, GetImagePixelSize) {
   EXPECT_EQ(106u, height);
 }
 
+TEST_F(FPDFEditEmbedderTest, GetIccProfileDataRaw) {
+  ASSERT_TRUE(OpenDocument("bug_42270471.pdf"));
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  EXPECT_EQ(1, FPDFPage_CountObjects(page.get()));
+
+  // Retrieve the image object and validate its type.
+  FPDF_PAGEOBJECT image_obj = FPDFPage_GetObject(page.get(), 0);
+  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(image_obj));
+
+  // Validate failure cases for null parameters.
+  unsigned long icc_length = 0;
+  FPDF_WCHAR buffer[128];
+  EXPECT_FALSE(FPDFImageObj_GetIccProfileDataRaw(nullptr, page.get(), buffer,
+                                                 sizeof(buffer), &icc_length));
+  EXPECT_FALSE(FPDFImageObj_GetIccProfileDataRaw(image_obj, page.get(), buffer,
+                                                 sizeof(buffer), nullptr));
+  EXPECT_FALSE(FPDFImageObj_GetIccProfileDataRaw(image_obj, nullptr, buffer,
+                                                 sizeof(buffer), &icc_length));
+
+  // Validate success case and check the ICC profile length.
+  EXPECT_TRUE(FPDFImageObj_GetIccProfileDataRaw(image_obj, page.get(), buffer,
+                                                sizeof(buffer), &icc_length));
+  EXPECT_EQ(525u, icc_length);
+
+  // Verify the raw ICC profile data length and hash.
+  std::vector<uint8_t> icc_data(icc_length);
+  EXPECT_TRUE(FPDFImageObj_GetIccProfileDataRaw(
+      image_obj, page.get(), icc_data.data(), icc_length, &icc_length));
+  EXPECT_EQ(icc_data.size(), icc_length);
+  EXPECT_EQ(525u, icc_length);
+  EXPECT_EQ("6f10cf8865bf3ae7e49aa766f78bfba8", GenerateMD5Base16(icc_data));
+}
+
+TEST_F(FPDFEditEmbedderTest, GetIccProfileDataRaw_NoIccProfile) {
+  ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  // Retrieve the image object without an ICC profile.
+  FPDF_PAGEOBJECT image_obj = FPDFPage_GetObject(page.get(), 37);
+  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(image_obj));
+
+  // Validate failure cases for null parameters.
+  unsigned long icc_length = 0;
+  FPDF_WCHAR buffer[128];
+  EXPECT_FALSE(FPDFImageObj_GetIccProfileDataRaw(nullptr, page.get(), buffer,
+                                                 sizeof(buffer), &icc_length));
+  EXPECT_FALSE(FPDFImageObj_GetIccProfileDataRaw(image_obj, page.get(), buffer,
+                                                 sizeof(buffer), nullptr));
+  EXPECT_FALSE(FPDFImageObj_GetIccProfileDataRaw(image_obj, nullptr, buffer,
+                                                 sizeof(buffer), &icc_length));
+
+  EXPECT_FALSE(FPDFImageObj_GetIccProfileDataRaw(image_obj, page.get(), buffer,
+                                                 sizeof(buffer), &icc_length));
+  EXPECT_EQ(0u, icc_length);
+}
+
 TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForHelloWorldText) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(0);
