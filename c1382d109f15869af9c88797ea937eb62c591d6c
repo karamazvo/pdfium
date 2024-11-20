@@ -1,0 +1,78 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eb6a16f4_6e643041",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-20T19:12:49Z",
+      "side": 1,
+      "message": "that are already",
+      "range": {
+        "startLine": 24,
+        "startChar": 44,
+        "endLine": 24,
+        "endChar": 56
+      },
+      "revId": "c1382d109f15869af9c88797ea937eb62c591d6c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "79a3ffa3_076791a5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-20T19:12:49Z",
+      "side": 1,
+      "message": "LGTM",
+      "revId": "c1382d109f15869af9c88797ea937eb62c591d6c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cebdc09c_18bf8053",
+        "filename": "core/fpdfapi/edit/cpdf_pagecontentgenerator.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 439,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-20T19:12:49Z",
+      "side": 1,
+      "message": "Maybe include a simple one-liner comment here, that this is about skipping over the saved resource of an inactive object?",
+      "revId": "c1382d109f15869af9c88797ea937eb62c591d6c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0ff8aa06_7d17e59c",
+        "filename": "fpdfsdk/fpdf_editpage_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 744,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2024-11-20T19:12:49Z",
+      "side": 1,
+      "message": "Other tests like FPDFEditEmbedderTest.Bug1549 already cover the case for ensuring `FPDFPage_RemoveObject()` still works properly after these changes.",
+      "revId": "c1382d109f15869af9c88797ea937eb62c591d6c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
