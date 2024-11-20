@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "266cafa3_b8054c77",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-20T22:33:59Z",
+      "side": 1,
+      "message": "Thank you for your feedback!\n\nI\u0027ve updated the API `FPDFImageObj_GetIccProfileDataRaw` to retrieve raw ICC profile data and write it to an output buffer. \nI add two tests in `fpdf_edit_embeddertest.cpp`: one for valid ICC profile extraction and the other for handling images without ICC profiles. I add `bug_1479436.pdf` to `testing/resources/` and rename it to `bug_42270471.pdf`. And I updated the commit message as you instructed.",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
