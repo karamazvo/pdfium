@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "7bb92618_b0d0fcc7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-20T19:34:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eb6a16f4_6e643041",
+      "range": {
+        "startLine": 24,
+        "startChar": 44,
+        "endLine": 24,
+        "endChar": 56
+      },
+      "revId": "c1382d109f15869af9c88797ea937eb62c591d6c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "79a3ffa3_076791a5",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1
@@ -54,6 +78,24 @@
       "writtenOn": "2024-11-20T19:12:49Z",
       "side": 1,
       "message": "Maybe include a simple one-liner comment here, that this is about skipping over the saved resource of an inactive object?",
+      "revId": "c1382d109f15869af9c88797ea937eb62c591d6c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fe1fa849_4313be66",
+        "filename": "core/fpdfapi/edit/cpdf_pagecontentgenerator.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 439,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-20T19:34:37Z",
+      "side": 1,
+      "message": "Added more comments.",
+      "parentUuid": "cebdc09c_18bf8053",
       "revId": "c1382d109f15869af9c88797ea937eb62c591d6c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
