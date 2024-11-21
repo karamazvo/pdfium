@@ -16,6 +16,23 @@
       "message": "Aha, passes finally.",
       "revId": "7f303f4cda7088b6e4b4f96c0efed7829b26b8f1",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "875ccbd8_5325d9ca",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-21T21:09:33Z",
+      "side": 1,
+      "message": "So anyways, I\u0027d expect this is more correct in an actual build even if the fuzzer builds remain borked.",
+      "revId": "7f303f4cda7088b6e4b4f96c0efed7829b26b8f1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
