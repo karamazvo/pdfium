@@ -563,6 +563,10 @@ TEST_F(FPDFEditPageEmbedderTest, PageObjectSetIsActive) {
     CloseSavedPage(saved_page);
     CloseSavedDocument();
   }
+
+  // Negative testing.
+  EXPECT_FALSE(FPDFPageObj_SetIsActive(nullptr, false));
+  EXPECT_FALSE(FPDFPageObj_SetIsActive(nullptr, true));
 }
 
 TEST_F(FPDFEditPageEmbedderTest, Bug378120423) {
