@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d393cf96_56e3ca88",
+        "filename": "core/fxcodec/jpeg/jpeg_progressive_decoder.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-21T21:36:41Z",
+      "side": 1,
+      "message": "No longer needed.",
+      "revId": "d22ad1ed4c0c7fffe64489e0167cbff625388d74",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a6eface6_49de2877",
+        "filename": "core/fxcodec/jpeg/jpegmodule.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-21T21:36:41Z",
+      "side": 1,
+      "message": "Want to switch over to jpeg_common_destroy_decompress() everywhere?",
+      "revId": "d22ad1ed4c0c7fffe64489e0167cbff625388d74",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
