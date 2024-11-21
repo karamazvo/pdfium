@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "491e371f_e0a2fa6f",
+        "filename": "core/fpdfapi/edit/cpdf_pagecontentgenerator.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-21T01:07:06Z",
+      "side": 1,
+      "message": "Not sure this actually moves given that removed_resources_map is a const-ref, so that const iterators would be used in the range-based for-loop, leading to const entries. If we really want the map to contain moved-from objects at the end of the call, it would need to be non-const ref arg.",
+      "range": {
+        "startLine": 117,
+        "startChar": 39,
+        "endLine": 117,
+        "endChar": 62
+      },
+      "revId": "13707253cc247c1e09217c3c9ca52564007fd099",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
