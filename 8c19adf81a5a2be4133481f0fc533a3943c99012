@@ -1,6 +1,29 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "bd6968ec_05b34b5c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-21T20:00:04Z",
+      "side": 1,
+      "message": "\"public API\"\n\n- Make it clear it\u0027s a public API and not an internal API.\n- API is an acronym, thus capitalize.",
+      "range": {
+        "startLine": 10,
+        "startChar": 47,
+        "endLine": 10,
+        "endChar": 50
+      },
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "266cafa3_b8054c77",
@@ -14,6 +37,325 @@
       "writtenOn": "2024-11-20T22:33:59Z",
       "side": 1,
       "message": "Thank you for your feedback!\n\nI\u0027ve updated the API `FPDFImageObj_GetIccProfileDataRaw` to retrieve raw ICC profile data and write it to an output buffer. \nI add two tests in `fpdf_edit_embeddertest.cpp`: one for valid ICC profile extraction and the other for handling images without ICC profiles. I add `bug_1479436.pdf` to `testing/resources/` and rename it to `bug_42270471.pdf`. And I updated the commit message as you instructed.",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9983417a_9aaaa609",
+        "filename": "core/fpdfapi/page/cpdf_colorspace.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 607,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-21T20:00:04Z",
+      "side": 1,
+      "message": "Add a brief comment to explain why this returns nullptr. Maybe mention `CPDF_ICCBasedCS`.",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "11ea9eeb_e77f0af5",
+        "filename": "core/fpdfapi/page/cpdf_colorspace.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-21T20:00:04Z",
+      "side": 1,
+      "message": "Is a forward declaration sufficient? https://chromium.googlesource.com/chromium/src/+/main/styleguide/c++/c++.md#forward-declarations-vs_includes",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e77548a2_a0408b5b",
+        "filename": "core/fpdfapi/page/cpdf_iccprofile.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-21T20:00:04Z",
+      "side": 1,
+      "message": "Is this needed given line 18?",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9263f5e7_4c00ba84",
+        "filename": "core/fpdfapi/page/cpdf_iccprofile.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-21T20:00:04Z",
+      "side": 1,
+      "message": "Is the `this-\u003e` portion necessary?",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b859f486_81f85089",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 4828,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-21T20:00:04Z",
+      "side": 1,
+      "message": "It looks weird to pass in a buffer of type `FPDF_WCHAR` when the API is operating on bytes.",
+      "range": {
+        "startLine": 4828,
+        "startChar": 2,
+        "endLine": 4828,
+        "endChar": 12
+      },
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "950b3558_c61f576b",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 4844,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-21T20:00:04Z",
+      "side": 1,
+      "message": "Use `iccU_data.size()` here.",
+      "range": {
+        "startLine": 4844,
+        "startChar": 46,
+        "endLine": 4844,
+        "endChar": 56
+      },
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "75d21990_a26cee6e",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 4846,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-21T20:00:04Z",
+      "side": 1,
+      "message": "Reset the value of this variable before the call on line 4843. Otherwise, how can the test know if the API wrote into the variable, or left it alone?",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9b10c65c_cac42bd6",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 4850,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-21T20:00:04Z",
+      "side": 1,
+      "message": "No underscores please. https://google.github.io/googletest/faq.html#why-should-test-suite-names-and-test-names-not-contain-underscore",
+      "range": {
+        "startLine": 4850,
+        "startChar": 29,
+        "endLine": 4850,
+        "endChar": 62
+      },
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "22954468_e5a1f29f",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 4859,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-21T20:00:04Z",
+      "side": 1,
+      "message": "Redundant?",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eb544536_d7926d0d",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 520,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-21T20:00:04Z",
+      "side": 1,
+      "message": "Please try to use Google C++ style variable names in new code.",
+      "range": {
+        "startLine": 520,
+        "startChar": 20,
+        "endLine": 520,
+        "endChar": 27
+      },
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c4e6aa08_5b7ffa67",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 531,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-21T20:00:04Z",
+      "side": 1,
+      "message": "Is it possible to get the colorspace without doing all the image loading work? Look inside CPDF_ImageRenderer::StartRenderDIBBase(), which has some colorspace handling code.",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "34522b2c_1bb7fee1",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 533,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-21T20:00:04Z",
+      "side": 1,
+      "message": "Reuse the variable from line 521.",
+      "range": {
+        "startLine": 533,
+        "startChar": 22,
+        "endLine": 533,
+        "endChar": 48
+      },
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "66e25711_96bbea1a",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 835,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-21T20:00:04Z",
+      "side": 1,
+      "message": "Please add some comments to explain if this can be NULL or not. Also what happens if it too small to hold the ICC data.",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8cf61b51_fc27c429",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 837,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-21T20:00:04Z",
+      "side": 1,
+      "message": "Add comments to explain if this can be NULL or not.",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a28aeb24_9b3ce68c",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 840,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-21T20:00:04Z",
+      "side": 1,
+      "message": "\"Successful\" needs to be better defined. The implementation may not fill the buffer if it is too small, yet still return true.",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aa20a47a_eab20a5f",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 844,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-21T20:00:04Z",
+      "side": 1,
+      "message": "Use the proper type instead of `void*`, so the compiler can help with type checking.",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ec6f1097_676de17b",
+        "filename": "testing/resources/bug_42270471.pdf",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-21T20:00:04Z",
+      "side": 1,
+      "message": "Please also include testing/resources/bug_42270471.in, so developers can easily modify bug_42270471.in and regenerate bug_42270471.pdf if needed.",
       "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
