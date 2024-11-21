@@ -90,9 +90,7 @@ TEST_F(FPDFPPOEmbedderTest, ViewerPreferences) {
 
 TEST_F(FPDFPPOEmbedderTest, ImportPagesByIndex) {
   ASSERT_TRUE(OpenDocument("viewer_ref.pdf"));
-
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
-  EXPECT_TRUE(page);
+  EXPECT_EQ(5, FPDF_GetPageCount(document()));
 
   ScopedFPDFDocument output_doc(FPDF_CreateNewDocument());
   ASSERT_TRUE(output_doc);
@@ -106,9 +104,7 @@ TEST_F(FPDFPPOEmbedderTest, ImportPagesByIndex) {
 
 TEST_F(FPDFPPOEmbedderTest, ImportPages) {
   ASSERT_TRUE(OpenDocument("viewer_ref.pdf"));
-
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
-  EXPECT_TRUE(page);
+  EXPECT_EQ(5, FPDF_GetPageCount(document()));
 
   ScopedFPDFDocument output_doc(FPDF_CreateNewDocument());
   ASSERT_TRUE(output_doc);
@@ -450,9 +446,7 @@ TEST_F(FPDFPPOEmbedderTest, CopyViewerPrefTypes) {
 
 TEST_F(FPDFPPOEmbedderTest, BadIndices) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
-
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
-  EXPECT_TRUE(page);
+  EXPECT_EQ(1, FPDF_GetPageCount(document()));
 
   ScopedFPDFDocument output_doc(FPDF_CreateNewDocument());
   EXPECT_TRUE(output_doc);
@@ -476,9 +470,7 @@ TEST_F(FPDFPPOEmbedderTest, BadIndices) {
 
 TEST_F(FPDFPPOEmbedderTest, GoodIndices) {
   ASSERT_TRUE(OpenDocument("viewer_ref.pdf"));
-
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
-  EXPECT_TRUE(page);
+  EXPECT_EQ(5, FPDF_GetPageCount(document()));
 
   ScopedFPDFDocument output_doc(FPDF_CreateNewDocument());
   EXPECT_TRUE(output_doc);
@@ -515,9 +507,7 @@ TEST_F(FPDFPPOEmbedderTest, GoodIndices) {
 
 TEST_F(FPDFPPOEmbedderTest, BadRanges) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
-
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
-  EXPECT_TRUE(page);
+  EXPECT_EQ(1, FPDF_GetPageCount(document()));
 
   ScopedFPDFDocument output_doc(FPDF_CreateNewDocument());
   EXPECT_TRUE(output_doc);
@@ -535,9 +525,7 @@ TEST_F(FPDFPPOEmbedderTest, BadRanges) {
 
 TEST_F(FPDFPPOEmbedderTest, GoodRanges) {
   ASSERT_TRUE(OpenDocument("viewer_ref.pdf"));
-
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
-  EXPECT_TRUE(page);
+  EXPECT_EQ(5, FPDF_GetPageCount(document()));
 
   ScopedFPDFDocument output_doc(FPDF_CreateNewDocument());
   EXPECT_TRUE(output_doc);
@@ -554,9 +542,7 @@ TEST_F(FPDFPPOEmbedderTest, GoodRanges) {
 
 TEST_F(FPDFPPOEmbedderTest, Bug664284) {
   ASSERT_TRUE(OpenDocument("bug_664284.pdf"));
-
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
-  ASSERT_NE(nullptr, page.get());
+  EXPECT_EQ(1, FPDF_GetPageCount(document()));
 
   ScopedFPDFDocument output_doc(FPDF_CreateNewDocument());
   EXPECT_TRUE(output_doc);
