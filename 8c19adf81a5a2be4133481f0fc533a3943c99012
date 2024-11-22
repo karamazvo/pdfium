@@ -177,6 +177,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1fcfc271_ce86127e",
+        "filename": "core/fpdfapi/page/cpdf_colorspace.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-22T21:19:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "645ed437_9ea2e23c",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e77548a2_a0408b5b",
@@ -519,6 +537,30 @@
       "side": 1,
       "message": "It would be preferable to use Google C++ style variable names in new code because that means less work to do in the future to rename them. While consistency is a factor to consider, the code base is already in an inconsistent state. So developers already have to deal with this anyway.",
       "parentUuid": "bc28ca8c_631062b8",
+      "range": {
+        "startLine": 520,
+        "startChar": 20,
+        "endLine": 520,
+        "endChar": 27
+      },
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b14523f4_067388d6",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 520,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-22T21:19:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a00f564a_738089fd",
       "range": {
         "startLine": 520,
         "startChar": 20,

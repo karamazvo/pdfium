@@ -58,6 +58,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "78bb7b4c_dd0f4e34",
+        "filename": "core/fpdfapi/page/cpdf_colorspace.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 606,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-22T21:19:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "766d3df6_b8235be3",
+      "range": {
+        "startLine": 606,
+        "startChar": 32,
+        "endLine": 606,
+        "endChar": 58
+      },
+      "revId": "0ec572fb4dfc1ad898334c32d5f8a4032acc1e35",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3ddb6dd4_5e07bd7b",
@@ -71,6 +95,24 @@
       "writtenOn": "2024-11-22T20:07:54Z",
       "side": 1,
       "message": "Redundant with the line above. Keep the line above, as that is the stronger test assertion.",
+      "revId": "0ec572fb4dfc1ad898334c32d5f8a4032acc1e35",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1d4965c0_ec713ec7",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 4864,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-22T21:19:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3ddb6dd4_5e07bd7b",
       "revId": "0ec572fb4dfc1ad898334c32d5f8a4032acc1e35",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
