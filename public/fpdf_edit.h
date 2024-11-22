@@ -826,6 +826,31 @@ FPDFImageObj_GetImagePixelSize(FPDF_PAGEOBJECT image_object,
                                unsigned int* width,
                                unsigned int* height);
 
+// Experimental API.
+// Get ICC profile raw data of |image_object|. If the |image_object| is not an
+// image object or if it does not have an image, then the return value will be
+// false. It also returns false if the |image_object| has no ICC profile.
+// |buffer| is only modified if ICC profile exists and |buflen| is longer than
+// the length of the ICC profile raw data.
+//
+//   image_object - handle to an image object; must not be NULL.
+//   page         - handle to the page containing |image_object|; must not be
+//                  NULL. Required for retrieving the image's colorspace.
+//   buffer       - Buffer to receive ICC profile data; may be NULL if querying
+//                  required size via |out_buflen|.
+//   buflen       - Length of the buffer in bytes. Ignored if |buffer| is NULL.
+//   out_buflen   - Pointer to receive the ICC profile data size in bytes; must
+//                  not be NULL. Will be set if |buffer| is NULL or too small.
+//
+// Returns true if |out_buflen| is not null and an ICC profile exists for the
+// given |image_object|.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFImageObj_GetIccProfileDataRaw(FPDF_PAGEOBJECT image_object,
+                                  FPDF_PAGE page,
+                                  uint8_t* buffer,
+                                  unsigned long buflen,
+                                  unsigned long* out_buflen);
+
 // Create a new path object at an initial position.
 //
 //   x - initial horizontal position.

@@ -16,6 +16,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fpdfapi/page/cpdf_iccprofile.h"
 #include "core/fpdfapi/page/cpdf_pattern.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
@@ -109,6 +110,8 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   // Use CPDF_Pattern::GetPatternColorRef() instead of GetRGB() for patterns.
   virtual std::optional<FX_RGB_STRUCT<float>> GetRGB(
       pdfium::span<const float> pBuf) const = 0;
+
+  virtual RetainPtr<CPDF_IccProfile> GetIccProfile() const;
 
   virtual void GetDefaultValue(int iComponent,
                                float* value,

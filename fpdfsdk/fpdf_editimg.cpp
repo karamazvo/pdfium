@@ -12,6 +12,7 @@
 #include <utility>
 
 #include "core/fpdfapi/page/cpdf_dib.h"
+#include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_imageobject.h"
 #include "core/fpdfapi/page/cpdf_page.h"
@@ -508,5 +509,84 @@ FPDFImageObj_GetImagePixelSize(FPDF_PAGEOBJECT image_object,
 
   *width = pImg->GetPixelWidth();
   *height = pImg->GetPixelHeight();
+  return true;
+}
+
+FPDF_BOOL FPDF_CALLCONV
+FPDFImageObj_GetIccProfileDataRaw(FPDF_PAGEOBJECT image_object,
+                                  FPDF_PAGE page,
+                                  uint8_t* buffer,
+                                  unsigned long buflen,
+                                  unsigned long* out_buflen) {
+  CPDF_ImageObject* pImgObj = CPDFImageObjectFromFPDFPageObject(image_object);
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  if (!pImgObj || !pPage || !out_buflen) {
+    return false;
+  }
+
+  RetainPtr<CPDF_Image> pImg = pImgObj->GetImage();
+  if (!pImg) {
+    return false;
+  }
+
+  const CPDF_Stream* pStream = pImg->GetStream();
+  if (!pStream) {
+    return false;
+  }
+
+  RetainPtr<const CPDF_Dictionary> pStreamDict = pStream->GetDict();
+  if (!pStreamDict) {
+    return false;
+  }
+
+  RetainPtr<const CPDF_Object> pCSObj =
+      pStreamDict->GetDirectObjectFor("ColorSpace");
+  RetainPtr<const CPDF_Dictionary> pPageResources = pPage->GetPageResources();
+  if (!pPageResources) {
+    return false;
+  }
+
+  CPDF_Document* pDocument = nullptr;
+  if (pPage) {
+    pDocument = pPage->GetDocument();
+  } else if (pImg) {
+    pDocument = pImg->GetDocument();
+  }
+
+  if (!pDocument) {
+    return false;
+  }
+
+  auto* pData = CPDF_DocPageData::FromDocument(pDocument);
+  if (!pData) {
+    return true;
+  }
+
+  RetainPtr<CPDF_ColorSpace> pColorSpace =
+      pData->GetColorSpace(pCSObj.Get(), pPageResources);
+  if (!pColorSpace ||
+      pColorSpace->GetFamily() != CPDF_ColorSpace::Family::kICCBased) {
+    return false;
+  }
+
+  RetainPtr<CPDF_IccProfile> iccProfile = pColorSpace->GetIccProfile();
+  if (!iccProfile || !iccProfile->IsValid()) {
+    return false;
+  }
+
+  RetainPtr<const CPDF_StreamAcc> streamAcc = iccProfile->GetStreamAcc();
+  if (!streamAcc) {
+    return false;
+  }
+
+  *out_buflen = streamAcc->GetSize();
+  if (!buffer || buflen < *out_buflen) {
+    return true;
+  }
+
+  // SAFETY: required from caller.
+  auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen));
+  pdfium::span<const uint8_t> data = streamAcc->GetSpan();
+  fxcrt::try_spancpy(result_span, data);
   return true;
 }
