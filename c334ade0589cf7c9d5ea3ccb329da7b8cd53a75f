@@ -51,6 +51,24 @@
       "parentUuid": "480d70b6_7a492d9e",
       "revId": "c334ade0589cf7c9d5ea3ccb329da7b8cd53a75f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c793e4cd_2cc76c9c",
+        "filename": "core/fxcrt/compiler_specific.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-22T22:10:32Z",
+      "side": 1,
+      "message": "Maybe just add a one-off for use in the JPEG code, instead of putting it in core/fxcrt/compiler_specific.h?",
+      "parentUuid": "76158e07_3f70ed47",
+      "revId": "c334ade0589cf7c9d5ea3ccb329da7b8cd53a75f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
