@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1f8a400a_2f2c134b",
+        "filename": "core/fxcodec/jpeg/jpeg_progressive_decoder.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-22T00:13:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d393cf96_56e3ca88",
+      "revId": "d22ad1ed4c0c7fffe64489e0167cbff625388d74",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a6eface6_49de2877",
@@ -31,6 +49,24 @@
       "writtenOn": "2024-11-21T21:36:41Z",
       "side": 1,
       "message": "Want to switch over to jpeg_common_destroy_decompress() everywhere?",
+      "revId": "d22ad1ed4c0c7fffe64489e0167cbff625388d74",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7f524347_ab8face7",
+        "filename": "core/fxcodec/jpeg/jpegmodule.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-22T00:13:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a6eface6_49de2877",
       "revId": "d22ad1ed4c0c7fffe64489e0167cbff625388d74",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
