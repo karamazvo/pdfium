@@ -16,6 +16,23 @@
       "message": "this no work somehow.",
       "revId": "c334ade0589cf7c9d5ea3ccb329da7b8cd53a75f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "480d70b6_7a492d9e",
+        "filename": "core/fxcrt/compiler_specific.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-22T22:03:56Z",
+      "side": 1,
+      "message": "This already exists in Chromium\u0027s compiler_specific.h as NO_SANITIZE. Copy that over instead?",
+      "revId": "c334ade0589cf7c9d5ea3ccb329da7b8cd53a75f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
