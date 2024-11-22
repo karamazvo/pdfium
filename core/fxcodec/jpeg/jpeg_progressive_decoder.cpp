@@ -141,7 +141,7 @@ bool JpegProgressiveDecoder::StartScanline(Context* pContext) {
 bool JpegProgressiveDecoder::ReadScanline(Context* pContext,
                                           unsigned char* dest_buf) {
   auto* ctx = static_cast<CJpegContext*>(pContext);
-  unsigned int nlines = jpeg_read_scanlines(&ctx->m_Common.cinfo, &dest_buf, 1);
+  int nlines = jpeg_common_read_scanlines(&ctx->m_Common, &dest_buf, 1);
   return nlines == 1;
 }
 
