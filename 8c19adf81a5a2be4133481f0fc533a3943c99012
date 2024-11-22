@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "812acab2_a4744e76",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-22T19:46:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bd6968ec_05b34b5c",
+      "range": {
+        "startLine": 10,
+        "startChar": 47,
+        "endLine": 10,
+        "endChar": 50
+      },
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "266cafa3_b8054c77",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 5
@@ -58,6 +82,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9132fc1b_451c0fb2",
+        "filename": "core/fpdfapi/page/cpdf_colorspace.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 607,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-22T19:46:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9983417a_9aaaa609",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "11ea9eeb_e77f0af5",
@@ -71,6 +113,24 @@
       "writtenOn": "2024-11-21T20:00:04Z",
       "side": 1,
       "message": "Is a forward declaration sufficient? https://chromium.googlesource.com/chromium/src/+/main/styleguide/c++/c++.md#forward-declarations-vs_includes",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2d70395b_865ee85c",
+        "filename": "core/fpdfapi/page/cpdf_colorspace.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-22T19:46:11Z",
+      "side": 1,
+      "message": "I tried using only forward declaration for `CPDF_IccProfile`, but I encountered compilation errors when building. The `RetainPtr` template invokes `ptr-\u003eRelease()` in its deleter, which I think requires the full definition of `CPDF_IccProfile` at compile time. \nThe `RetainPtr\u003cconst CPDF_Array\u003e m_pArray;` case on line 163, also includes `#include \"core/fpdfapi/parser/cpdf_array.h\"`. to ensure the full class definition of CPDF_Array is available.",
+      "parentUuid": "11ea9eeb_e77f0af5",
       "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -92,6 +152,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "53c9f325_c526e314",
+        "filename": "core/fpdfapi/page/cpdf_iccprofile.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-22T19:46:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e77548a2_a0408b5b",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9263f5e7_4c00ba84",
@@ -109,6 +187,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e7687256_6f2b4211",
+        "filename": "core/fpdfapi/page/cpdf_iccprofile.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-22T19:46:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9263f5e7_4c00ba84",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b859f486_81f85089",
@@ -122,6 +218,30 @@
       "writtenOn": "2024-11-21T20:00:04Z",
       "side": 1,
       "message": "It looks weird to pass in a buffer of type `FPDF_WCHAR` when the API is operating on bytes.",
+      "range": {
+        "startLine": 4828,
+        "startChar": 2,
+        "endLine": 4828,
+        "endChar": 12
+      },
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0b0ac83d_cd0232b1",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 4828,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-22T19:46:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b859f486_81f85089",
       "range": {
         "startLine": 4828,
         "startChar": 2,
@@ -155,6 +275,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "187ac126_1db255b9",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 4844,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-22T19:46:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "950b3558_c61f576b",
+      "range": {
+        "startLine": 4844,
+        "startChar": 46,
+        "endLine": 4844,
+        "endChar": 56
+      },
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "75d21990_a26cee6e",
@@ -168,6 +312,24 @@
       "writtenOn": "2024-11-21T20:00:04Z",
       "side": 1,
       "message": "Reset the value of this variable before the call on line 4843. Otherwise, how can the test know if the API wrote into the variable, or left it alone?",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3973c638_4158bf2e",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 4846,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-22T19:46:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "75d21990_a26cee6e",
       "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -195,6 +357,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "36c39077_d940a5c6",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 4850,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-22T19:46:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9b10c65c_cac42bd6",
+      "range": {
+        "startLine": 4850,
+        "startChar": 29,
+        "endLine": 4850,
+        "endChar": 62
+      },
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "22954468_e5a1f29f",
@@ -208,6 +394,24 @@
       "writtenOn": "2024-11-21T20:00:04Z",
       "side": 1,
       "message": "Redundant?",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fa6db16a_10390e42",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 4859,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-22T19:46:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "22954468_e5a1f29f",
       "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -237,6 +441,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "bc28ca8c_631062b8",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 520,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-22T19:46:11Z",
+      "side": 1,
+      "message": "Thank you for the feedback! I wanted to clarify my approach to variable naming in this implementation. I based the names (e.g., `pImgObj`) on the existing naming used in this repo, like `FPDFImageObj_GetImageMetadata` and `FPDFFont_GetFontData`. Could you help clarify whether the priority should be Google C++ style or maintaining consistency with the established naming style? Once I know the preferred approach, I will make the changes!",
+      "parentUuid": "eb544536_d7926d0d",
+      "range": {
+        "startLine": 520,
+        "startChar": 20,
+        "endLine": 520,
+        "endChar": 27
+      },
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c4e6aa08_5b7ffa67",
         "filename": "fpdfsdk/fpdf_editimg.cpp",
         "patchSetId": 5
@@ -248,6 +476,24 @@
       "writtenOn": "2024-11-21T20:00:04Z",
       "side": 1,
       "message": "Is it possible to get the colorspace without doing all the image loading work? Look inside CPDF_ImageRenderer::StartRenderDIBBase(), which has some colorspace handling code.",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d6c5212a_dc8dde79",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 531,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-22T19:46:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c4e6aa08_5b7ffa67",
       "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -275,6 +521,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ace50cd2_bb318483",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 533,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-22T19:46:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "34522b2c_1bb7fee1",
+      "range": {
+        "startLine": 533,
+        "startChar": 22,
+        "endLine": 533,
+        "endChar": 48
+      },
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "66e25711_96bbea1a",
@@ -288,6 +558,24 @@
       "writtenOn": "2024-11-21T20:00:04Z",
       "side": 1,
       "message": "Please add some comments to explain if this can be NULL or not. Also what happens if it too small to hold the ICC data.",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fe2ebe43_78e72b32",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 835,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-22T19:46:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "66e25711_96bbea1a",
       "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -309,6 +597,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "04d63af5_42c77b66",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 837,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-22T19:46:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8cf61b51_fc27c429",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a28aeb24_9b3ce68c",
@@ -322,6 +628,24 @@
       "writtenOn": "2024-11-21T20:00:04Z",
       "side": 1,
       "message": "\"Successful\" needs to be better defined. The implementation may not fill the buffer if it is too small, yet still return true.",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c59e10f1_855e6b57",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 840,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-22T19:46:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a28aeb24_9b3ce68c",
       "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -343,6 +667,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "781d1ce6_be36abc0",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 844,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-22T19:46:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aa20a47a_eab20a5f",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ec6f1097_676de17b",
@@ -356,6 +698,24 @@
       "writtenOn": "2024-11-21T20:00:04Z",
       "side": 1,
       "message": "Please also include testing/resources/bug_42270471.in, so developers can easily modify bug_42270471.in and regenerate bug_42270471.pdf if needed.",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "19a60c2f_bd674246",
+        "filename": "testing/resources/bug_42270471.pdf",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-22T19:46:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ec6f1097_676de17b",
       "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
