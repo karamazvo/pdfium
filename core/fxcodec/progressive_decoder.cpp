@@ -564,28 +564,18 @@ FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode() {
 }
 
 FXCODEC_STATUS ProgressiveDecoder::JpegContinueDecode() {
-  // JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
-  // Setting jump marker before calling ReadScanLine, since a longjmp to
-  // the marker indicates a fatal error.
-  if (setjmp(JpegProgressiveDecoder::GetJumpMark(m_pJpegContext.get())) == -1) {
-    m_pJpegContext.reset();
-    m_status = FXCODEC_STATUS::kError;
-    return FXCODEC_STATUS::kError;
-  }
-
   while (true) {
-    bool readRes = JpegProgressiveDecoder::ReadScanline(m_pJpegContext.get(),
-                                                        m_DecodeBuf.data());
-    while (!readRes) {
+    if (!JpegProgressiveDecoder::ReadScanline(m_pJpegContext.get(),
+                                              m_DecodeBuf.data())) {
+      // Maybe it needs more data.
       FXCODEC_STATUS error_status = FXCODEC_STATUS::kDecodeFinished;
-      if (!JpegReadMoreData(&error_status)) {
-        m_pDeviceBitmap = nullptr;
-        m_pFile = nullptr;
-        m_status = error_status;
-        return m_status;
+      if (JpegReadMoreData(&error_status)) {
+        continue;
       }
-      readRes = JpegProgressiveDecoder::ReadScanline(m_pJpegContext.get(),
-                                                     m_DecodeBuf.data());
+      m_pDeviceBitmap = nullptr;
+      m_pFile = nullptr;
+      m_status = error_status;
+      return m_status;
     }
     if (m_SrcFormat == FXCodec_Rgb) {
       RGB2BGR(UNSAFE_TODO(m_DecodeBuf.data()), m_SrcWidth);
