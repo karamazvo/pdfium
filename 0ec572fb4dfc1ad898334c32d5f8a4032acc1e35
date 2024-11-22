@@ -16,6 +16,63 @@
       "message": "Hi, Lei. Thank you for your feedback! I have updated the code following your instruction. But I encountered two issues during implementation.\n1. Using only forward declaration for `CPDF_IccProfile` in `cpdf_iccprofile.h` seems to lead to compilation errors, so I included the header file.\n2.  I followed the existing naming conventions in the file, I’d appreciate clarification on whether to prioritize file consistency.",
       "revId": "0ec572fb4dfc1ad898334c32d5f8a4032acc1e35",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cae9cea4_adb7d94f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-22T20:07:54Z",
+      "side": 1,
+      "message": "Didn\u0027t fully review the latest patch set. Just trying to reply to the open comments a bit faster.",
+      "revId": "0ec572fb4dfc1ad898334c32d5f8a4032acc1e35",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "766d3df6_b8235be3",
+        "filename": "core/fpdfapi/page/cpdf_colorspace.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 606,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-22T20:07:54Z",
+      "side": 1,
+      "message": "rephrase: \"the CPDF_ICCBasedCS subclass\"",
+      "range": {
+        "startLine": 606,
+        "startChar": 32,
+        "endLine": 606,
+        "endChar": 58
+      },
+      "revId": "0ec572fb4dfc1ad898334c32d5f8a4032acc1e35",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3ddb6dd4_5e07bd7b",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 4864,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-22T20:07:54Z",
+      "side": 1,
+      "message": "Redundant with the line above. Keep the line above, as that is the stronger test assertion.",
+      "revId": "0ec572fb4dfc1ad898334c32d5f8a4032acc1e35",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }

@@ -50,6 +50,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "e3d5c475_83c36609",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-22T20:07:54Z",
+      "side": 1,
+      "message": "I suspect you only did this in your local git tree. :) Please change it in the Gerrit web interface, or try running `git cl description` locally and editing there.",
+      "parentUuid": "812acab2_a4744e76",
+      "range": {
+        "startLine": 10,
+        "startChar": 47,
+        "endLine": 10,
+        "endChar": 50
+      },
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "266cafa3_b8054c77",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 5
@@ -131,6 +155,24 @@
       "side": 1,
       "message": "I tried using only forward declaration for `CPDF_IccProfile`, but I encountered compilation errors when building. The `RetainPtr` template invokes `ptr-\u003eRelease()` in its deleter, which I think requires the full definition of `CPDF_IccProfile` at compile time. \nThe `RetainPtr\u003cconst CPDF_Array\u003e m_pArray;` case on line 163, also includes `#include \"core/fpdfapi/parser/cpdf_array.h\"`. to ensure the full class definition of CPDF_Array is available.",
       "parentUuid": "11ea9eeb_e77f0af5",
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "645ed437_9ea2e23c",
+        "filename": "core/fpdfapi/page/cpdf_colorspace.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-22T20:07:54Z",
+      "side": 1,
+      "message": "It should work. If you forward declare, build, look at the failure, and try to decipher the compiler output gibberish, you should see that the issue is the include is missing in fpdfsdk/fpdf_editimg.cpp.",
+      "parentUuid": "2d70395b_865ee85c",
       "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -453,6 +495,30 @@
       "side": 1,
       "message": "Thank you for the feedback! I wanted to clarify my approach to variable naming in this implementation. I based the names (e.g., `pImgObj`) on the existing naming used in this repo, like `FPDFImageObj_GetImageMetadata` and `FPDFFont_GetFontData`. Could you help clarify whether the priority should be Google C++ style or maintaining consistency with the established naming style? Once I know the preferred approach, I will make the changes!",
       "parentUuid": "eb544536_d7926d0d",
+      "range": {
+        "startLine": 520,
+        "startChar": 20,
+        "endLine": 520,
+        "endChar": 27
+      },
+      "revId": "8c19adf81a5a2be4133481f0fc533a3943c99012",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a00f564a_738089fd",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 520,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-22T20:07:54Z",
+      "side": 1,
+      "message": "It would be preferable to use Google C++ style variable names in new code because that means less work to do in the future to rename them. While consistency is a factor to consider, the code base is already in an inconsistent state. So developers already have to deal with this anyway.",
+      "parentUuid": "bc28ca8c_631062b8",
       "range": {
         "startLine": 520,
         "startChar": 20,
