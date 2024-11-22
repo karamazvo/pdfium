@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dd89d849_53c10a3b",
+        "filename": "core/fxcodec/jpeg/jpeg_progressive_decoder.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-22T21:48:49Z",
+      "side": 1,
+      "message": "Should these be an enum class?",
+      "revId": "292ee1008bb5035d416a08babf9235053a53d366",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cf7bcdbe_0c4125f2",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 509,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-22T21:48:49Z",
+      "side": 1,
+      "message": "Fix the variable style this while we\u0027re here?",
+      "range": {
+        "startLine": 509,
+        "startChar": 8,
+        "endLine": 509,
+        "endChar": 18
+      },
+      "revId": "292ee1008bb5035d416a08babf9235053a53d366",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
