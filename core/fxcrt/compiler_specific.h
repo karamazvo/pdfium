@@ -101,4 +101,13 @@
 // TODO(crbug.com/pdfium/2155): remove all usage.
 #define UNSAFE_TODO(...) UNSAFE_BUFFERS(__VA_ARGS__)
 
+// Disables a function from being instrumented by ASAN. Usage should be
+// generally rare, but provides an "out" for fuzzers during times when
+// ASAN's instrumentation is buggy and is causing crashes.
+#if defined(__clang__) && HAS_ATTRIBUTE(no_sanitize)
+#define NOASAN __attribute__((no_sanitize("address")))
+#else
+#define NOASAN
+#endif
+
 #endif  // CORE_FXCRT_COMPILER_SPECIFIC_H_

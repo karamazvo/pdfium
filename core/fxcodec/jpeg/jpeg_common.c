@@ -10,7 +10,8 @@
 // This is a thin C wrapper around the JPEG API to avoid calling setjmp() from
 // C++ code.
 
-boolean jpeg_common_create_decompress(JpegCommon* jpeg_common) {
+// TODO(crbug.com/379259821): re-enable ASAN when correct to do so.
+NOASAN boolean jpeg_common_create_decompress(JpegCommon* jpeg_common) {
   if (setjmp(jpeg_common->jmpbuf) == -1) {
     return FALSE;
   }
@@ -22,21 +23,24 @@ void jpeg_common_destroy_decompress(JpegCommon* jpeg_common) {
   jpeg_destroy_decompress(&jpeg_common->cinfo);
 }
 
-boolean jpeg_common_start_decompress(JpegCommon* jpeg_common) {
+// TODO(crbug.com/379259821): re-enable ASAN when correct to do so.
+NOASAN boolean jpeg_common_start_decompress(JpegCommon* jpeg_common) {
   if (setjmp(jpeg_common->jmpbuf) == -1) {
     return FALSE;
   }
   return jpeg_start_decompress(&jpeg_common->cinfo);
 }
 
-int jpeg_common_read_header(JpegCommon* jpeg_common, boolean flag) {
+// TODO(crbug.com/379259821): re-enable ASAN when correct to do so.
+NOASAN int jpeg_common_read_header(JpegCommon* jpeg_common, boolean flag) {
   if (setjmp(jpeg_common->jmpbuf) == -1) {
     return -1;
   }
   return jpeg_read_header(&jpeg_common->cinfo, flag);
 }
 
-int jpeg_common_read_scanlines(JpegCommon* jpeg_common,
+// TODO(crbug.com/379259821): re-enable ASAN when correct to do so.
+NOASAN int jpeg_common_read_scanlines(JpegCommon* jpeg_common,
                                void* buf,
                                unsigned int count) {
   if (setjmp(jpeg_common->jmpbuf) == -1) {
