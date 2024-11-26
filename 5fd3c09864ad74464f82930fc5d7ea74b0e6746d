@@ -43,6 +43,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "8b57b72b_5f358b9f",
+        "filename": "core/fpdfdoc/cpdf_generateap.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-26T00:48:31Z",
+      "side": 1,
+      "message": "Next CL in the chain.",
+      "parentUuid": "a6279cdf_07f66115",
+      "range": {
+        "startLine": 317,
+        "startChar": 52,
+        "endLine": 317,
+        "endChar": 62
+      },
+      "revId": "5fd3c09864ad74464f82930fc5d7ea74b0e6746d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "d83e51be_9b9d6222",
         "filename": "core/fpdfdoc/cpdf_generateap.cpp",
         "patchSetId": 2
