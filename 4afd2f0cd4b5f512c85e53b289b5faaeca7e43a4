@@ -73,6 +73,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "a9e1efee_a315fae8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-26T22:39:50Z",
+      "side": 1,
+      "message": "I couldn\u0027t nudge GuessSizeForVSWPrintf() into failing, and I don\u0027t want to try writing a test that somehow observes how many attempts FormatV() loops internally.",
+      "parentUuid": "5c97de42_5bd8acae",
+      "revId": "4afd2f0cd4b5f512c85e53b289b5faaeca7e43a4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "51620716_cc7ee3ee",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1
