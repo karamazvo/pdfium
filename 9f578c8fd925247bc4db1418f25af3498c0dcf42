@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "14981dbb_167120e2",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 571,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-26T22:20:22Z",
+      "side": 1,
+      "message": "Keep these 2 lines from the existing code?\n\n```\nm_pJpegContext.reset();\nm_status \u003d FXCODEC_STATUS::kError;\n```",
+      "revId": "9f578c8fd925247bc4db1418f25af3498c0dcf42",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
