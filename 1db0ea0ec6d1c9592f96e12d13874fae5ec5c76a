@@ -34,6 +34,24 @@
       "parentUuid": "664ba082_e5288ed7",
       "revId": "1db0ea0ec6d1c9592f96e12d13874fae5ec5c76a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f864118f_6c1dfde5",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 570,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-26T21:48:24Z",
+      "side": 1,
+      "message": "jpeg_common_read_header() already adds -1 as a return value beyond what libjpeg returns, so it should be ok to be able to express the fact that setjmp() got called here too.",
+      "parentUuid": "98a1d100_9f965df4",
+      "revId": "1db0ea0ec6d1c9592f96e12d13874fae5ec5c76a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
