@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "19e97227_cf01220d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-26T22:02:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ed2330af_0af656c4",
+      "revId": "4afd2f0cd4b5f512c85e53b289b5faaeca7e43a4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f83418fa_52f018a4",
@@ -31,6 +49,24 @@
       "writtenOn": "2024-11-26T20:20:17Z",
       "side": 1,
       "message": "crbug: ?",
+      "revId": "4afd2f0cd4b5f512c85e53b289b5faaeca7e43a4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5c97de42_5bd8acae",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-26T22:02:54Z",
+      "side": 1,
+      "message": "None. Unless GuessSizeForVSWPrintf() returns std::nullopt, a bad guess just means WideString::FormatV() works a little harder. I\u0027ll try and see if I can add a test case for this.",
+      "parentUuid": "f83418fa_52f018a4",
       "revId": "4afd2f0cd4b5f512c85e53b289b5faaeca7e43a4",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
