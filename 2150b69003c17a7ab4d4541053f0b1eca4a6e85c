@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "176f4797_3c762d8d",
+        "filename": "core/fxcrt/widestring.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-26T18:37:45Z",
+      "side": 0,
+      "message": "Missed this assignment.",
+      "range": {
+        "startLine": 64,
+        "startChar": 28,
+        "endLine": 64,
+        "endChar": 43
+      },
+      "revId": "2150b69003c17a7ab4d4541053f0b1eca4a6e85c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d425dbaa_e7ce911f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-26T18:37:45Z",
+      "side": 1,
+      "message": "Somehow I botched this CL but tests still passed. Fixing this up in https://pdfium-review.googlesource.com/126591.",
+      "revId": "919994245b7f8c1743ddd2d17efbbb8cb65c5514",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
