@@ -16,6 +16,154 @@
       "message": "I’ve completed the requested modifications. The changes are ready for your review whenever you have time. Wish you a happy weekend!",
       "revId": "0955e10ac9165561af1ca1403d78b26dd1e521b9",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "69f87526_41b676b6",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 4876,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-26T21:53:08Z",
+      "side": 1,
+      "message": "This comment looks like a copy of line 4829. It should be updated to mention what this test case is about.",
+      "revId": "0955e10ac9165561af1ca1403d78b26dd1e521b9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ce42bc28_bff24d71",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 4877,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-26T21:53:08Z",
+      "side": 1,
+      "message": "Initialize to a non-zero value, so line 4881 shows the API actually did something. As-is, maybe the API set it to 0, or maybe the API didn\u0027t write into this variable. The test case can\u0027t prove which possibility actually happened.",
+      "revId": "0955e10ac9165561af1ca1403d78b26dd1e521b9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "852ea9d0_f0b2f642",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 4878,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-26T21:53:08Z",
+      "side": 1,
+      "message": "Just omit this and pass in nullptr and 0.",
+      "revId": "0955e10ac9165561af1ca1403d78b26dd1e521b9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dab850a2_61976ee5",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 4882,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-26T21:53:08Z",
+      "side": 1,
+      "message": "This check is not useful, as the API cannot manipulate the size of the vector.",
+      "revId": "0955e10ac9165561af1ca1403d78b26dd1e521b9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ad0d66d0_8bcf9bce",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 552,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-26T21:53:08Z",
+      "side": 1,
+      "message": "This always evaluates to true, given the check on line 524.",
+      "revId": "0955e10ac9165561af1ca1403d78b26dd1e521b9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f92c42a6_38bd011d",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 830,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-26T21:53:08Z",
+      "side": 1,
+      "message": "Actually, this API returns the decoded data. The raw data is literally the stream data in the PDF, while the decoded data is the raw data with the filters applied. See FPDFImageObj_GetImageDataRaw() vs. FPDFImageObj_GetImageDataDecoded() above.\n\nGiven the decoded data is what is most useful to callers, please update the API name and description to match its actual behavior.",
+      "range": {
+        "startLine": 830,
+        "startChar": 3,
+        "endLine": 830,
+        "endChar": 27
+      },
+      "revId": "0955e10ac9165561af1ca1403d78b26dd1e521b9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6031a952_41733e3b",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 843,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-26T21:53:08Z",
+      "side": 1,
+      "message": "A reader could interpret this as \"if |buffer| is non-null and big enough, then this out-parameter will not be set.\"\n\nIt will be clearer to say \"Will be set if this API returns true.\"",
+      "range": {
+        "startLine": 843,
+        "startChar": 33,
+        "endLine": 843,
+        "endChar": 78
+      },
+      "revId": "0955e10ac9165561af1ca1403d78b26dd1e521b9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bb936dc4_289ba510",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 851,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-26T21:53:08Z",
+      "side": 1,
+      "message": "Similar to how `buffer` has been modernized to be `uint8_t*`, let\u0027s use size_t for the 2 buffer lengths.",
+      "revId": "0955e10ac9165561af1ca1403d78b26dd1e521b9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
