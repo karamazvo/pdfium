@@ -50,6 +50,23 @@
       "message": "LG with comments about commit message.",
       "revId": "4afd2f0cd4b5f512c85e53b289b5faaeca7e43a4",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d66eb389_079e7fdd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5645
+      },
+      "writtenOn": "2024-11-26T20:20:43Z",
+      "side": 1,
+      "message": "Review-enforced assuming commit message fixed up.",
+      "revId": "4afd2f0cd4b5f512c85e53b289b5faaeca7e43a4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
