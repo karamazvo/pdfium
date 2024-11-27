@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a98a70fb_15ad03b2",
+        "filename": "core/fpdfdoc/cpdf_generateap.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-27T17:19:02Z",
+      "side": 1,
+      "message": "can this be\n```\n  if (!font_resource_dict) {\n  ￼ font_resource_dict \u003d resources_dict-\u003eSetNewFor\u003cCPDF_Dictionary\u003e(\"Font\");\n  } else if (!ValidateFontResourceDict(font_resource_dict.Get())) {\n      return false;\n  }\n```\n\nor even\n```\n  if (!font_resource_dict) {\n  ￼ font_resource_dict \u003d resources_dict-\u003eSetNewFor\u003cCPDF_Dictionary\u003e(\"Font\");\n  }\n  if (!ValidateFontResourceDict(font_resource_dict.Get())) {\n      return false;\n  }\n```\nif validating the new dict is cheap enough since it would be a shame if somehow the newly-created one flunks validation.",
+      "range": {
+        "startLine": 274,
+        "startChar": 1,
+        "endLine": 281,
+        "endChar": 0
+      },
+      "revId": "512bfbe6e18f93c2787f582dbb37c99463b51a11",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "74b47321_258db413",
+        "filename": "core/fpdfdoc/cpdf_generateap.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1417,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-27T17:19:02Z",
+      "side": 1,
+      "message": "ignoring return code?",
+      "range": {
+        "startLine": 1417,
+        "startChar": 2,
+        "endLine": 1417,
+        "endChar": 31
+      },
+      "revId": "512bfbe6e18f93c2787f582dbb37c99463b51a11",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
