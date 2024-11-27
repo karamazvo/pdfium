@@ -35,6 +35,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "85767c23_38553caa",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 4876,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-27T18:00:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "69f87526_41b676b6",
+      "revId": "0955e10ac9165561af1ca1403d78b26dd1e521b9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ce42bc28_bff24d71",
@@ -48,6 +66,24 @@
       "writtenOn": "2024-11-26T21:53:08Z",
       "side": 1,
       "message": "Initialize to a non-zero value, so line 4881 shows the API actually did something. As-is, maybe the API set it to 0, or maybe the API didn\u0027t write into this variable. The test case can\u0027t prove which possibility actually happened.",
+      "revId": "0955e10ac9165561af1ca1403d78b26dd1e521b9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e6f192d7_d3006b87",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 4877,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-27T18:00:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ce42bc28_bff24d71",
       "revId": "0955e10ac9165561af1ca1403d78b26dd1e521b9",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -69,6 +105,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cc3abfc3_4550d591",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 4878,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-27T18:00:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "852ea9d0_f0b2f642",
+      "revId": "0955e10ac9165561af1ca1403d78b26dd1e521b9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "dab850a2_61976ee5",
@@ -82,6 +136,24 @@
       "writtenOn": "2024-11-26T21:53:08Z",
       "side": 1,
       "message": "This check is not useful, as the API cannot manipulate the size of the vector.",
+      "revId": "0955e10ac9165561af1ca1403d78b26dd1e521b9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "168d8886_be012999",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 4882,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-27T18:00:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dab850a2_61976ee5",
       "revId": "0955e10ac9165561af1ca1403d78b26dd1e521b9",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -103,6 +175,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1267d2a4_e6a73bb6",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 552,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-27T18:00:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ad0d66d0_8bcf9bce",
+      "revId": "0955e10ac9165561af1ca1403d78b26dd1e521b9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f92c42a6_38bd011d",
@@ -116,6 +206,30 @@
       "writtenOn": "2024-11-26T21:53:08Z",
       "side": 1,
       "message": "Actually, this API returns the decoded data. The raw data is literally the stream data in the PDF, while the decoded data is the raw data with the filters applied. See FPDFImageObj_GetImageDataRaw() vs. FPDFImageObj_GetImageDataDecoded() above.\n\nGiven the decoded data is what is most useful to callers, please update the API name and description to match its actual behavior.",
+      "range": {
+        "startLine": 830,
+        "startChar": 3,
+        "endLine": 830,
+        "endChar": 27
+      },
+      "revId": "0955e10ac9165561af1ca1403d78b26dd1e521b9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ed4a6490_8707f57d",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 830,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-27T18:00:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f92c42a6_38bd011d",
       "range": {
         "startLine": 830,
         "startChar": 3,
@@ -149,6 +263,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bb3bed34_7edf96fc",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 843,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-27T18:00:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6031a952_41733e3b",
+      "range": {
+        "startLine": 843,
+        "startChar": 33,
+        "endLine": 843,
+        "endChar": 78
+      },
+      "revId": "0955e10ac9165561af1ca1403d78b26dd1e521b9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bb936dc4_289ba510",
@@ -162,6 +300,24 @@
       "writtenOn": "2024-11-26T21:53:08Z",
       "side": 1,
       "message": "Similar to how `buffer` has been modernized to be `uint8_t*`, let\u0027s use size_t for the 2 buffer lengths.",
+      "revId": "0955e10ac9165561af1ca1403d78b26dd1e521b9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "09eff77f_533d0118",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 851,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-11-27T18:00:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bb936dc4_289ba510",
       "revId": "0955e10ac9165561af1ca1403d78b26dd1e521b9",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
