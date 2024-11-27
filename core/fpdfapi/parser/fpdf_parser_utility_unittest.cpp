@@ -53,7 +53,7 @@ TEST(ParserUtilityTest, ValidateDictType) {
 }
 
 TEST(ParserUtilityTest, ValidateDictAllResourcesOfType) {
-  CPDF_PageModule::Create();
+  InitializePageModule();
 
   {
     // Direct dictionary.
@@ -102,7 +102,7 @@ TEST(ParserUtilityTest, ValidateDictAllResourcesOfType) {
     EXPECT_FALSE(ValidateDictAllResourcesOfType(dict.Get(), "bar"));
   }
 
-  CPDF_PageModule::Destroy();
+  DestroyPageModule();
 }
 
 TEST(ParserUtilityTest, ValidateDictOptionalType) {

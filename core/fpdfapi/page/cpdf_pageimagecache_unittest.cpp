@@ -25,7 +25,7 @@ TEST(CPDFPageImageCache, RenderBug1924) {
   // render it full-size, you should get a larger image - the image cache will
   // be regenerate.
 
-  CPDF_PageModule::Create();
+  InitializePageModule();
   {
     std::string file_path = PathService::GetTestFilePath("jpx_lzw.pdf");
     ASSERT_FALSE(file_path.empty());
@@ -77,5 +77,5 @@ TEST(CPDFPageImageCache, RenderBug1924) {
     ASSERT_TRUE(page->AsPDFPage());
     page->AsPDFPage()->ClearView();
   }
-  CPDF_PageModule::Destroy();
+  DestroyPageModule();
 }
