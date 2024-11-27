@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "aec651a4_31ffc61a",
+        "filename": "core/fpdfdoc/cpdf_generateap.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-27T20:09:06Z",
+      "side": 1,
+      "message": "Yes, validation will pass and it is cheap enough.",
+      "parentUuid": "a98a70fb_15ad03b2",
+      "range": {
+        "startLine": 274,
+        "startChar": 1,
+        "endLine": 281,
+        "endChar": 0
+      },
+      "revId": "512bfbe6e18f93c2787f582dbb37c99463b51a11",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "74b47321_258db413",
@@ -37,6 +61,30 @@
       "writtenOn": "2024-11-27T17:19:02Z",
       "side": 1,
       "message": "ignoring return code?",
+      "range": {
+        "startLine": 1417,
+        "startChar": 2,
+        "endLine": 1417,
+        "endChar": 31
+      },
+      "revId": "512bfbe6e18f93c2787f582dbb37c99463b51a11",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "360e0155_e88c4106",
+        "filename": "core/fpdfdoc/cpdf_generateap.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1417,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-27T20:09:06Z",
+      "side": 1,
+      "message": "Regardless of the return value, this function is at the end and will return.",
+      "parentUuid": "74b47321_258db413",
       "range": {
         "startLine": 1417,
         "startChar": 2,
