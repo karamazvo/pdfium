@@ -74,6 +74,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "071a959c_2cddf63f",
+        "filename": "core/fpdfdoc/cpdf_generateap.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-27T23:59:50Z",
+      "side": 1,
+      "message": "Hrm. I did in patch set 2 and managed to undo it in patch set 3.",
+      "parentUuid": "b3356941_9affc278",
+      "range": {
+        "startLine": 274,
+        "startChar": 1,
+        "endLine": 281,
+        "endChar": 0
+      },
+      "revId": "512bfbe6e18f93c2787f582dbb37c99463b51a11",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "74b47321_258db413",
         "filename": "core/fpdfdoc/cpdf_generateap.cpp",
         "patchSetId": 1
