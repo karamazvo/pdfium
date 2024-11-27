@@ -50,6 +50,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "b3356941_9affc278",
+        "filename": "core/fpdfdoc/cpdf_generateap.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-11-27T23:48:38Z",
+      "side": 1,
+      "message": "Update code as suggested?",
+      "parentUuid": "aec651a4_31ffc61a",
+      "range": {
+        "startLine": 274,
+        "startChar": 1,
+        "endLine": 281,
+        "endChar": 0
+      },
+      "revId": "512bfbe6e18f93c2787f582dbb37c99463b51a11",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "74b47321_258db413",
         "filename": "core/fpdfdoc/cpdf_generateap.cpp",
         "patchSetId": 1
