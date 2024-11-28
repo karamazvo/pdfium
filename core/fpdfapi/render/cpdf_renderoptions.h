@@ -21,20 +21,31 @@ class CPDF_RenderOptions {
   enum Type : uint8_t { kNormal = 0, kGray, kAlpha, kForcedColor };
 
   struct Options {
-    Options();
-    Options(const Options& rhs);
-    Options& operator=(const Options& rhs);
+    constexpr Options()
+        : bClearType(true),
+          bNoNativeText(false),
+          bForceHalftone(false),
+          bRectAA(false),
+          bBreakForMasks(false),
+          bNoTextSmooth(false),
+          bNoPathSmooth(false),
+          bNoImageSmooth(false),
+          bLimitedImageCache(false),
+          bConvertFillToStroke(false) {}
 
-    bool bClearType = false;
-    bool bNoNativeText = false;
-    bool bForceHalftone = false;
-    bool bRectAA = false;
-    bool bBreakForMasks = false;
-    bool bNoTextSmooth = false;
-    bool bNoPathSmooth = false;
-    bool bNoImageSmooth = false;
-    bool bLimitedImageCache = false;
-    bool bConvertFillToStroke = false;
+    constexpr Options(const Options& rhs) = default;
+    constexpr Options& operator=(const Options& rhs) = default;
+
+    bool bClearType;
+    bool bNoNativeText;
+    bool bForceHalftone;
+    bool bRectAA;
+    bool bBreakForMasks;
+    bool bNoTextSmooth;
+    bool bNoPathSmooth;
+    bool bNoImageSmooth;
+    bool bLimitedImageCache;
+    bool bConvertFillToStroke;
   };
 
   struct ColorScheme {
