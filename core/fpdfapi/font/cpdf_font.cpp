@@ -416,10 +416,14 @@ bool CPDF_Font::UseTTCharmap(const RetainPtr<CFX_Face>& face,
 }
 
 int CPDF_Font::GetFontWeight() const {
-  FX_SAFE_INT32 safeStemV(m_StemV);
-  if (m_StemV < 140)
-    safeStemV *= 5;
-  else
-    safeStemV = safeStemV * 4 + 140;
-  return safeStemV.ValueOrDefault(FXFONT_FW_NORMAL);
+  FX_SAFE_INT32 safe_stem_v(m_StemV);
+  if (m_StemV < 140) {
+    safe_stem_v *= 5;
+  } else {
+    safe_stem_v = safe_stem_v * 4 + 140;
+  }
+
+  const int weight = safe_stem_v.ValueOrDefault(FXFONT_FW_NORMAL);
+  const bool is_in_range = weight >= 100 && weight <= FXFONT_FW_BOLD_BOLD;
+  return is_in_range ? weight : FXFONT_FW_NORMAL;
 }
