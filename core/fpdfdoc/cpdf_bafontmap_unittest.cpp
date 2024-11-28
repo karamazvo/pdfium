@@ -22,7 +22,7 @@ TEST_F(BAFontMapTest, DefaultFont) {
   CPDF_TestDocument doc;
 
   auto annot_dict = pdfium::MakeRetain<CPDF_Dictionary>();
-  annot_dict->SetNewFor<CPDF_Name>(pdfium::annotation::kSubtype, "Widget");
+  annot_dict->SetNewFor<CPDF_Name>(pdfium::kSubtype, "Widget");
   annot_dict->SetNewFor<CPDF_String>("DA", "0 0 0 rg /F1 12 Tf");
 
   CPDF_BAFontMap font_map(&doc, std::move(annot_dict), "N");
@@ -49,7 +49,7 @@ TEST_F(BAFontMapTest, Bug853238) {
   doc.SetRoot(root_dict);
 
   auto annot_dict = pdfium::MakeRetain<CPDF_Dictionary>();
-  annot_dict->SetNewFor<CPDF_Name>(pdfium::annotation::kSubtype, "Widget");
+  annot_dict->SetNewFor<CPDF_Name>(pdfium::kSubtype, "Widget");
   annot_dict->SetNewFor<CPDF_String>("DA", "0 0 0 rg /F1 12 Tf");
 
   CPDF_BAFontMap font_map(&doc, std::move(annot_dict), "N");

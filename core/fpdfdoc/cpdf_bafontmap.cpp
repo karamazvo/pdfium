@@ -173,8 +173,9 @@ FX_Charset CPDF_BAFontMap::GetNativeCharset() {
 
 RetainPtr<CPDF_Font> CPDF_BAFontMap::FindFontSameCharset(ByteString* sFontAlias,
                                                          FX_Charset nCharset) {
-  if (m_pAnnotDict->GetNameFor(pdfium::annotation::kSubtype) != "Widget")
+  if (m_pAnnotDict->GetNameFor(pdfium::kSubtype) != "Widget") {
     return nullptr;
+  }
 
   const CPDF_Dictionary* pRootDict = m_pDocument->GetRoot();
   if (!pRootDict)
@@ -228,8 +229,7 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::FindResFontSameCharset(
 
 RetainPtr<CPDF_Font> CPDF_BAFontMap::GetAnnotDefaultFont(ByteString* sAlias) {
   RetainPtr<CPDF_Dictionary> pAcroFormDict;
-  const bool bWidget =
-      (m_pAnnotDict->GetNameFor(pdfium::annotation::kSubtype) == "Widget");
+  const bool bWidget = (m_pAnnotDict->GetNameFor(pdfium::kSubtype) == "Widget");
   if (bWidget) {
     RetainPtr<CPDF_Dictionary> pRootDict = m_pDocument->GetMutableRoot();
     if (pRootDict)
@@ -258,7 +258,7 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::GetAnnotDefaultFont(ByteString* sAlias) {
 
   RetainPtr<CPDF_Dictionary> pFontDict;
   if (RetainPtr<CPDF_Dictionary> pAPDict =
-          m_pAnnotDict->GetMutableDictFor(pdfium::annotation::kAP)) {
+          m_pAnnotDict->GetMutableDictFor(pdfium::kAP)) {
     if (RetainPtr<CPDF_Dictionary> pNormalDict =
             pAPDict->GetMutableDictFor("N")) {
       if (RetainPtr<CPDF_Dictionary> pNormalResDict =
@@ -291,7 +291,7 @@ void CPDF_BAFontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
     return;
 
   RetainPtr<CPDF_Dictionary> pAPDict =
-      m_pAnnotDict->GetOrCreateDictFor(pdfium::annotation::kAP);
+      m_pAnnotDict->GetOrCreateDictFor(pdfium::kAP);
 
   // to avoid checkbox and radiobutton
   if (ToDictionary(pAPDict->GetObjectFor(m_sAPType)))

@@ -48,8 +48,8 @@ class CPDFAnnotListTest : public TestWithPageModule {
   void AddTextAnnotation(const ByteString& contents) {
     RetainPtr<CPDF_Dictionary> annotation =
         page_->GetOrCreateAnnotsArray()->AppendNew<CPDF_Dictionary>();
-    annotation->SetNewFor<CPDF_Name>(pdfium::annotation::kSubtype, "Text");
-    annotation->SetNewFor<CPDF_String>(pdfium::annotation::kContents, contents);
+    annotation->SetNewFor<CPDF_Name>(pdfium::kSubtype, "Text");
+    annotation->SetNewFor<CPDF_String>(pdfium::kContents, contents);
   }
 
   std::unique_ptr<CPDF_TestDocument> document_;
@@ -62,13 +62,11 @@ ByteString MakeByteString(std::initializer_list<uint8_t> bytes) {
 }
 
 ByteString GetRawContents(const CPDF_Annot* annotation) {
-  return annotation->GetAnnotDict()->GetByteStringFor(
-      pdfium::annotation::kContents);
+  return annotation->GetAnnotDict()->GetByteStringFor(pdfium::kContents);
 }
 
 WideString GetDecodedContents(const CPDF_Annot* annotation) {
-  return annotation->GetAnnotDict()->GetUnicodeTextFor(
-      pdfium::annotation::kContents);
+  return annotation->GetAnnotDict()->GetUnicodeTextFor(pdfium::kContents);
 }
 
 }  // namespace

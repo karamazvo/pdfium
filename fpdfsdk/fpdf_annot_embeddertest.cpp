@@ -144,7 +144,7 @@ TEST_F(FPDFAnnotEmbedderTest, SetAP) {
   const CPDF_Dictionary* annot_dict = context->GetAnnotDict();
   ASSERT_TRUE(annot_dict);
   RetainPtr<const CPDF_Dictionary> ap_dict =
-      annot_dict->GetDictFor(pdfium::annotation::kAP);
+      annot_dict->GetDictFor(pdfium::kAP);
   ASSERT_TRUE(ap_dict);
   RetainPtr<const CPDF_Dictionary> stream_dict = ap_dict->GetDictFor("N");
   ASSERT_TRUE(stream_dict);
@@ -152,10 +152,9 @@ TEST_F(FPDFAnnotEmbedderTest, SetAP) {
   RetainPtr<const CPDF_Dictionary> resources_dict =
       stream_dict->GetDictFor("Resources");
   ASSERT_FALSE(resources_dict);
-  ByteString type = stream_dict->GetByteStringFor(pdfium::annotation::kType);
+  ByteString type = stream_dict->GetByteStringFor(pdfium::kType);
   EXPECT_EQ("XObject", type);
-  ByteString sub_type =
-      stream_dict->GetByteStringFor(pdfium::annotation::kSubtype);
+  ByteString sub_type = stream_dict->GetByteStringFor(pdfium::kSubtype);
   EXPECT_EQ("Form", sub_type);
 
   // Check that the appearance stream is same as we just set.
@@ -195,7 +194,7 @@ TEST_F(FPDFAnnotEmbedderTest, SetAPWithOpacity) {
   const CPDF_Dictionary* annot_dict = context->GetAnnotDict();
   ASSERT_TRUE(annot_dict);
   RetainPtr<const CPDF_Dictionary> ap_dict =
-      annot_dict->GetDictFor(pdfium::annotation::kAP);
+      annot_dict->GetDictFor(pdfium::kAP);
   ASSERT_TRUE(ap_dict);
   RetainPtr<const CPDF_Dictionary> stream_dict = ap_dict->GetDictFor("N");
   ASSERT_TRUE(stream_dict);
@@ -207,7 +206,7 @@ TEST_F(FPDFAnnotEmbedderTest, SetAPWithOpacity) {
   ASSERT_TRUE(extGState_dict);
   RetainPtr<const CPDF_Dictionary> gs_dict = extGState_dict->GetDictFor("GS");
   ASSERT_TRUE(gs_dict);
-  ByteString type = gs_dict->GetByteStringFor(pdfium::annotation::kType);
+  ByteString type = gs_dict->GetByteStringFor(pdfium::kType);
   EXPECT_EQ("ExtGState", type);
   float opacity = gs_dict->GetFloatFor("CA");
   // Opacity value of 102 is represented as 0.4f (=104/255) in /CA entry.
@@ -458,15 +457,13 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractHighlightLongContent) {
     EXPECT_EQ(L"Jae Hyun Park", GetPlatformWString(buf.data()));
 
     // Check that the content is correct.
-    EXPECT_EQ(
-        FPDF_OBJECT_STRING,
-        FPDFAnnot_GetValueType(annot.get(), pdfium::annotation::kContents));
-    length_bytes = FPDFAnnot_GetStringValue(
-        annot.get(), pdfium::annotation::kContents, nullptr, 0);
+    EXPECT_EQ(FPDF_OBJECT_STRING,
+              FPDFAnnot_GetValueType(annot.get(), pdfium::kContents));
+    length_bytes =
+        FPDFAnnot_GetStringValue(annot.get(), pdfium::kContents, nullptr, 0);
     ASSERT_EQ(2690u, length_bytes);
     buf = GetFPDFWideStringBuffer(length_bytes);
-    EXPECT_EQ(2690u, FPDFAnnot_GetStringValue(annot.get(),
-                                              pdfium::annotation::kContents,
+    EXPECT_EQ(2690u, FPDFAnnot_GetStringValue(annot.get(), pdfium::kContents,
                                               buf.data(), length_bytes));
     static const wchar_t kContents[] =
         L"This is a note for that highlight annotation. Very long highlight "
@@ -530,8 +527,8 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractInkMultiple) {
     EXPECT_EQ(76u, A);
 
     // Check that there is no content.
-    EXPECT_EQ(2u, FPDFAnnot_GetStringValue(
-                      annot.get(), pdfium::annotation::kContents, nullptr, 0));
+    EXPECT_EQ(2u, FPDFAnnot_GetStringValue(annot.get(), pdfium::kContents,
+                                           nullptr, 0));
 
     // Check that the rectangle coordinates are correct.
     // Note that upon rendering, the rectangle coordinates will be adjusted.
@@ -642,15 +639,14 @@ TEST_F(FPDFAnnotEmbedderTest, AddFirstTextAnnotation) {
     // Set the content of the annotation.
     static const wchar_t kContents[] = L"Hello! This is a customized content.";
     ScopedFPDFWideString text = GetFPDFWideString(kContents);
-    ASSERT_TRUE(FPDFAnnot_SetStringValue(
-        annot.get(), pdfium::annotation::kContents, text.get()));
+    ASSERT_TRUE(
+        FPDFAnnot_SetStringValue(annot.get(), pdfium::kContents, text.get()));
     // Check that the content has been set correctly.
-    unsigned long length_bytes = FPDFAnnot_GetStringValue(
-        annot.get(), pdfium::annotation::kContents, nullptr, 0);
+    unsigned long length_bytes =
+        FPDFAnnot_GetStringValue(annot.get(), pdfium::kContents, nullptr, 0);
     ASSERT_EQ(74u, length_bytes);
     std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(length_bytes);
-    EXPECT_EQ(74u, FPDFAnnot_GetStringValue(annot.get(),
-                                            pdfium::annotation::kContents,
+    EXPECT_EQ(74u, FPDFAnnot_GetStringValue(annot.get(), pdfium::kContents,
                                             buf.data(), length_bytes));
     EXPECT_EQ(kContents, GetPlatformWString(buf.data()));
   }
@@ -1602,11 +1598,11 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
     EXPECT_FALSE(FPDFAnnot_HasKey(annot.get(), "none"));
 
     // Check that the string value of a non-string dictionary entry is empty.
-    EXPECT_TRUE(FPDFAnnot_HasKey(annot.get(), pdfium::annotation::kAP));
+    EXPECT_TRUE(FPDFAnnot_HasKey(annot.get(), pdfium::kAP));
     EXPECT_EQ(FPDF_OBJECT_REFERENCE,
-              FPDFAnnot_GetValueType(annot.get(), pdfium::annotation::kAP));
-    EXPECT_EQ(2u, FPDFAnnot_GetStringValue(annot.get(), pdfium::annotation::kAP,
-                                           nullptr, 0));
+              FPDFAnnot_GetValueType(annot.get(), pdfium::kAP));
+    EXPECT_EQ(2u,
+              FPDFAnnot_GetStringValue(annot.get(), pdfium::kAP, nullptr, 0));
 
     // Check that the string value of the hash is correct.
     static const char kHashKey[] = "AAPL:Hash";
@@ -1622,18 +1618,17 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
 
     // Check that the string value of the modified date is correct.
     EXPECT_EQ(FPDF_OBJECT_NAME, FPDFAnnot_GetValueType(annot.get(), kHashKey));
-    length_bytes = FPDFAnnot_GetStringValue(annot.get(), pdfium::annotation::kM,
-                                            nullptr, 0);
+    length_bytes =
+        FPDFAnnot_GetStringValue(annot.get(), pdfium::kM, nullptr, 0);
     ASSERT_EQ(44u, length_bytes);
     buf = GetFPDFWideStringBuffer(length_bytes);
-    EXPECT_EQ(44u, FPDFAnnot_GetStringValue(annot.get(), pdfium::annotation::kM,
-                                            buf.data(), length_bytes));
+    EXPECT_EQ(44u, FPDFAnnot_GetStringValue(annot.get(), pdfium::kM, buf.data(),
+                                            length_bytes));
     EXPECT_EQ(L"D:201706071721Z00'00'", GetPlatformWString(buf.data()));
 
     // Update the date entry for the annotation.
     ScopedFPDFWideString text = GetFPDFWideString(kNewDate);
-    EXPECT_TRUE(FPDFAnnot_SetStringValue(annot.get(), pdfium::annotation::kM,
-                                         text.get()));
+    EXPECT_TRUE(FPDFAnnot_SetStringValue(annot.get(), pdfium::kM, text.get()));
   }
 
   // Save the document and close the page.
@@ -1667,14 +1662,13 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
     // Check that the string value of the modified date is the newly-set
     // value.
     EXPECT_EQ(FPDF_OBJECT_STRING,
-              FPDFAnnot_GetValueType(new_annot.get(), pdfium::annotation::kM));
-    unsigned long length_bytes = FPDFAnnot_GetStringValue(
-        new_annot.get(), pdfium::annotation::kM, nullptr, 0);
+              FPDFAnnot_GetValueType(new_annot.get(), pdfium::kM));
+    unsigned long length_bytes =
+        FPDFAnnot_GetStringValue(new_annot.get(), pdfium::kM, nullptr, 0);
     ASSERT_EQ(44u, length_bytes);
     std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(length_bytes);
-    EXPECT_EQ(44u,
-              FPDFAnnot_GetStringValue(new_annot.get(), pdfium::annotation::kM,
-                                       buf.data(), length_bytes));
+    EXPECT_EQ(44u, FPDFAnnot_GetStringValue(new_annot.get(), pdfium::kM,
+                                            buf.data(), length_bytes));
     EXPECT_EQ(kNewDate, GetPlatformWString(buf.data()));
   }
 
@@ -1937,10 +1931,10 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractLinkedAnnotations) {
 
     // Attempting to retrieve |annot|'s parent dictionary as an annotation
     // would fail, since its parent is not an annotation.
-    ASSERT_TRUE(FPDFAnnot_HasKey(annot.get(), pdfium::annotation::kP));
+    ASSERT_TRUE(FPDFAnnot_HasKey(annot.get(), pdfium::kP));
     EXPECT_EQ(FPDF_OBJECT_REFERENCE,
-              FPDFAnnot_GetValueType(annot.get(), pdfium::annotation::kP));
-    EXPECT_FALSE(FPDFAnnot_GetLinkedAnnot(annot.get(), pdfium::annotation::kP));
+              FPDFAnnot_GetValueType(annot.get(), pdfium::kP));
+    EXPECT_FALSE(FPDFAnnot_GetLinkedAnnot(annot.get(), pdfium::kP));
   }
 }
 

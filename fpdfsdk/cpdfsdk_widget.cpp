@@ -341,7 +341,7 @@ bool CPDFSDK_Widget::HandleXFAAAction(
 bool CPDFSDK_Widget::IsWidgetAppearanceValid(
     CPDF_Annot::AppearanceMode mode) const {
   RetainPtr<const CPDF_Dictionary> pAP =
-      GetAnnotDict()->GetDictFor(pdfium::annotation::kAP);
+      GetAnnotDict()->GetDictFor(pdfium::kAP);
   if (!pAP)
     return false;
 
@@ -390,7 +390,7 @@ FormFieldType CPDFSDK_Widget::GetFieldType() const {
 void CPDFSDK_Widget::SetRect(const CFX_FloatRect& rect) {
   DCHECK(rect.right - rect.left >= 1.0f);
   DCHECK(rect.top - rect.bottom >= 1.0f);
-  GetMutableAnnotDict()->SetRectFor(pdfium::annotation::kRect, rect);
+  GetMutableAnnotDict()->SetRectFor(pdfium::kRect, rect);
 }
 
 bool CPDFSDK_Widget::IsAppearanceValid() {

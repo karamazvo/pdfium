@@ -81,21 +81,20 @@ std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Document* pDocument,
 
   // TODO(crbug.com/pdfium/1098): Determine if we really need to check if
   // /Contents is empty or not. If so, optimize decoding for empty check.
-  ByteString contents =
-      pParentDict->GetByteStringFor(pdfium::annotation::kContents);
+  ByteString contents = pParentDict->GetByteStringFor(pdfium::kContents);
   if (PDF_DecodeText(contents.unsigned_span()).IsEmpty()) {
     return nullptr;
   }
 
   auto pAnnotDict = pDocument->New<CPDF_Dictionary>();
-  pAnnotDict->SetNewFor<CPDF_Name>(pdfium::annotation::kType, "Annot");
-  pAnnotDict->SetNewFor<CPDF_Name>(pdfium::annotation::kSubtype, "Popup");
+  pAnnotDict->SetNewFor<CPDF_Name>(pdfium::kType, "Annot");
+  pAnnotDict->SetNewFor<CPDF_Name>(pdfium::kSubtype, "Popup");
   pAnnotDict->SetNewFor<CPDF_String>(
       pdfium::form_fields::kT,
       pParentDict->GetByteStringFor(pdfium::form_fields::kT));
-  pAnnotDict->SetNewFor<CPDF_String>(pdfium::annotation::kContents, contents);
+  pAnnotDict->SetNewFor<CPDF_String>(pdfium::kContents, contents);
 
-  CFX_FloatRect rect = pParentDict->GetRectFor(pdfium::annotation::kRect);
+  CFX_FloatRect rect = pParentDict->GetRectFor(pdfium::kRect);
   rect.Normalize();
   CFX_FloatRect popupRect(0, 0, 200, 200);
   // Note that if the popup can set its own dimensions, then we will need to
@@ -113,8 +112,8 @@ std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Document* pDocument,
         std::max(rect.bottom - popupRect.Height(), 0.f));
   }
 
-  pAnnotDict->SetRectFor(pdfium::annotation::kRect, popupRect);
-  pAnnotDict->SetNewFor<CPDF_Number>(pdfium::annotation::kF, 0);
+  pAnnotDict->SetRectFor(pdfium::kRect, popupRect);
+  pAnnotDict->SetNewFor<CPDF_Number>(pdfium::kF, 0);
 
   auto pPopupAnnot =
       std::make_unique<CPDF_Annot>(std::move(pAnnotDict), pDocument);
@@ -124,7 +123,7 @@ std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Document* pDocument,
 
 void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   if (!pAnnotDict ||
-      pAnnotDict->GetByteStringFor(pdfium::annotation::kSubtype) != "Widget") {
+      pAnnotDict->GetByteStringFor(pdfium::kSubtype) != "Widget") {
     return;
   }
 
@@ -155,17 +154,18 @@ void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
     return;
   if (flags & pdfium::form_flags::kButtonPushbutton)
     return;
-  if (pAnnotDict->KeyExist(pdfium::annotation::kAS))
+  if (pAnnotDict->KeyExist(pdfium::kAS)) {
     return;
+  }
 
   RetainPtr<const CPDF_Dictionary> pParentDict =
       pAnnotDict->GetDictFor(pdfium::form_fields::kParent);
-  if (!pParentDict || !pParentDict->KeyExist(pdfium::annotation::kAS))
+  if (!pParentDict || !pParentDict->KeyExist(pdfium::kAS)) {
     return;
+  }
 
   pAnnotDict->SetNewFor<CPDF_String>(
-      pdfium::annotation::kAS,
-      pParentDict->GetByteStringFor(pdfium::annotation::kAS));
+      pdfium::kAS, pParentDict->GetByteStringFor(pdfium::kAS));
 }
 
 }  // namespace
@@ -185,8 +185,7 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
         ToDictionary(pAnnots->GetMutableDirectObjectAt(i));
     if (!pDict)
       continue;
-    const ByteString subtype =
-        pDict->GetByteStringFor(pdfium::annotation::kSubtype);
+    const ByteString subtype = pDict->GetByteStringFor(pdfium::kSubtype);
     if (subtype == "Popup") {
       // Skip creating Popup annotations in the PDF document since PDFium
       // provides its own Popup annotations.
@@ -196,7 +195,7 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
     m_AnnotList.push_back(std::make_unique<CPDF_Annot>(pDict, m_pDocument));
     if (bRegenerateAP && subtype == "Widget" &&
         CPDF_InteractiveForm::IsUpdateAPEnabled() &&
-        !pDict->GetDictFor(pdfium::annotation::kAP)) {
+        !pDict->GetDictFor(pdfium::kAP)) {
       GenerateAP(m_pDocument, pDict.Get());
     }
   }

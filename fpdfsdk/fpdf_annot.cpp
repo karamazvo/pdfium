@@ -348,8 +348,7 @@ RetainPtr<const CPDF_Array> GetInkList(FPDF_ANNOTATION annot) {
     return nullptr;
 
   const CPDF_Dictionary* annot_dict = GetAnnotDictFromFPDFAnnotation(annot);
-  return annot_dict ? annot_dict->GetArrayFor(pdfium::annotation::kInkList)
-                    : nullptr;
+  return annot_dict ? annot_dict->GetArrayFor(pdfium::kInkList) : nullptr;
 }
 
 }  // namespace
@@ -384,8 +383,8 @@ FPDFPage_CreateAnnot(FPDF_PAGE page, FPDF_ANNOTATION_SUBTYPE subtype) {
     return nullptr;
 
   auto pDict = pPage->GetDocument()->New<CPDF_Dictionary>();
-  pDict->SetNewFor<CPDF_Name>(pdfium::annotation::kType, "Annot");
-  pDict->SetNewFor<CPDF_Name>(pdfium::annotation::kSubtype,
+  pDict->SetNewFor<CPDF_Name>(pdfium::kType, "Annot");
+  pDict->SetNewFor<CPDF_Name>(pdfium::kSubtype,
                               CPDF_Annot::AnnotSubtypeToString(
                                   static_cast<CPDF_Annot::Subtype>(subtype)));
   auto pNewAnnot =
@@ -480,7 +479,7 @@ FPDFAnnot_GetSubtype(FPDF_ANNOTATION annot) {
     return FPDF_ANNOT_UNKNOWN;
 
   return static_cast<FPDF_ANNOTATION_SUBTYPE>(CPDF_Annot::StringToAnnotSubtype(
-      pAnnotDict->GetNameFor(pdfium::annotation::kSubtype)));
+      pAnnotDict->GetNameFor(pdfium::kSubtype)));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -723,7 +722,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetColor(FPDF_ANNOTATION annot,
     // Use default color. The default colors must be consistent with the ones
     // used to generate AP. See calls to GetColorStringWithDefault() in
     // CPDF_GenerateAP::Generate*AP().
-    if (pAnnotDict->GetNameFor(pdfium::annotation::kSubtype) == "Highlight") {
+    if (pAnnotDict->GetNameFor(pdfium::kSubtype) == "Highlight") {
       *R = 255;
       *G = 255;
       *B = 0;
@@ -847,7 +846,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetRect(FPDF_ANNOTATION annot,
   CFX_FloatRect newRect = CFXFloatRectFromFSRectF(*rect);
 
   // Update the "Rect" entry in the annotation dictionary.
-  pAnnotDict->SetRectFor(pdfium::annotation::kRect, newRect);
+  pAnnotDict->SetRectFor(pdfium::kRect, newRect);
 
   // If the annotation's appearance stream is defined, the annotation is of a
   // type that does not have quadpoints, and the new rectangle is bigger than
@@ -870,8 +869,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetRect(FPDF_ANNOTATION annot,
   if (!pAnnotDict || !rect)
     return false;
 
-  *rect = FSRectFFromCFXFloatRect(
-      pAnnotDict->GetRectFor(pdfium::annotation::kRect));
+  *rect = FSRectFFromCFXFloatRect(pAnnotDict->GetRectFor(pdfium::kRect));
   return true;
 }
 
@@ -888,7 +886,7 @@ FPDFAnnot_GetVertices(FPDF_ANNOTATION annot,
     return 0;
 
   RetainPtr<const CPDF_Array> vertices =
-      annot_dict->GetArrayFor(pdfium::annotation::kVertices);
+      annot_dict->GetArrayFor(pdfium::kVertices);
   if (!vertices)
     return 0;
 
@@ -953,8 +951,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetLine(FPDF_ANNOTATION annot,
   if (!annot_dict)
     return false;
 
-  RetainPtr<const CPDF_Array> line =
-      annot_dict->GetArrayFor(pdfium::annotation::kL);
+  RetainPtr<const CPDF_Array> line = annot_dict->GetArrayFor(pdfium::kL);
   if (!line || line->size() < 4)
     return false;
 
@@ -976,9 +973,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetBorder(FPDF_ANNOTATION annot,
 
   // Remove the appearance stream. Otherwise PDF viewers will render that and
   // not use the border values.
-  annot_dict->RemoveFor(pdfium::annotation::kAP);
+  annot_dict->RemoveFor(pdfium::kAP);
 
-  auto border = annot_dict->SetNewFor<CPDF_Array>(pdfium::annotation::kBorder);
+  auto border = annot_dict->SetNewFor<CPDF_Array>(pdfium::kBorder);
   border->AppendNew<CPDF_Number>(horizontal_radius);
   border->AppendNew<CPDF_Number>(vertical_radius);
   border->AppendNew<CPDF_Number>(border_width);
@@ -997,8 +994,7 @@ FPDFAnnot_GetBorder(FPDF_ANNOTATION annot,
   if (!annot_dict)
     return false;
 
-  RetainPtr<const CPDF_Array> border =
-      annot_dict->GetArrayFor(pdfium::annotation::kBorder);
+  RetainPtr<const CPDF_Array> border = annot_dict->GetArrayFor(pdfium::kBorder);
   if (!border || border->size() < 3)
     return false;
 
@@ -1094,13 +1090,13 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
   const char* mode_key = kModeKeyForMode[appearanceMode];
 
   RetainPtr<CPDF_Dictionary> pApDict =
-      pAnnotDict->GetMutableDictFor(pdfium::annotation::kAP);
+      pAnnotDict->GetMutableDictFor(pdfium::kAP);
 
   // If `value` is null, then the action is to remove.
   if (!value) {
     if (pApDict) {
       if (appearanceMode == FPDF_ANNOT_APPEARANCEMODE_NORMAL) {
-        pAnnotDict->RemoveFor(pdfium::annotation::kAP);
+        pAnnotDict->RemoveFor(pdfium::kAP);
       } else {
         pApDict->RemoveFor(mode_key);
       }
@@ -1112,7 +1108,7 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
   //
   // Annotation object's non-empty bounding rect will be used as the /BBox
   // for the associated /XObject object
-  CFX_FloatRect rect = pAnnotDict->GetRectFor(pdfium::annotation::kRect);
+  CFX_FloatRect rect = pAnnotDict->GetRectFor(pdfium::kRect);
   static constexpr float kMinSize = 0.000001f;
   if (rect.Width() < kMinSize || rect.Height() < kMinSize) {
     return false;
@@ -1126,8 +1122,8 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
   }
 
   auto stream_dict = pdfium::MakeRetain<CPDF_Dictionary>();
-  stream_dict->SetNewFor<CPDF_Name>(pdfium::annotation::kType, "XObject");
-  stream_dict->SetNewFor<CPDF_Name>(pdfium::annotation::kSubtype, "Form");
+  stream_dict->SetNewFor<CPDF_Name>(pdfium::kType, "XObject");
+  stream_dict->SetNewFor<CPDF_Name>(pdfium::kSubtype, "Form");
   stream_dict->SetRectFor("BBox", rect);
   // Transparency values are specified in range [0.0f, 1.0f]. We are strictly
   // checking for value < 1 and not <= 1 so that the output PDF size does not
@@ -1145,7 +1141,7 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
 
   // Storing reference to indirect object in annotation's AP
   if (!pApDict) {
-    pApDict = pAnnotDict->SetNewFor<CPDF_Dictionary>(pdfium::annotation::kAP);
+    pApDict = pAnnotDict->SetNewFor<CPDF_Dictionary>(pdfium::kAP);
   }
   pApDict->SetNewFor<CPDF_Reference>(mode_key, pDoc, new_stream->GetObjNum());
 
@@ -1195,7 +1191,7 @@ FPDFAnnot_GetLinkedAnnot(FPDF_ANNOTATION annot, FPDF_BYTESTRING key) {
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_GetFlags(FPDF_ANNOTATION annot) {
   const CPDF_Dictionary* pAnnotDict = GetAnnotDictFromFPDFAnnotation(annot);
-  return pAnnotDict ? pAnnotDict->GetIntegerFor(pdfium::annotation::kF)
+  return pAnnotDict ? pAnnotDict->GetIntegerFor(pdfium::kF)
                     : FPDF_ANNOT_FLAG_NONE;
 }
 
@@ -1206,7 +1202,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetFlags(FPDF_ANNOTATION annot,
   if (!pAnnotDict)
     return false;
 
-  pAnnotDict->SetNewFor<CPDF_Number>(pdfium::annotation::kF, flags);
+  pAnnotDict->SetNewFor<CPDF_Number>(pdfium::kF, flags);
   return true;
 }
 

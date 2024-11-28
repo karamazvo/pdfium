@@ -6,7 +6,6 @@
 #define CONSTANTS_ANNOTATION_COMMON_H_
 
 namespace pdfium {
-namespace annotation {
 
 extern const char kType[];
 extern const char kSubtype[];
@@ -29,7 +28,6 @@ extern const char kInkList[];
 
 extern const char kL[];
 
-}  // namespace annotation
 }  // namespace pdfium
 
 #endif  // CONSTANTS_ANNOTATION_COMMON_H_
