@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2ac6bd14_8f1d5958",
+        "filename": "core/fpdfapi/parser/fpdf_parser_utility_unittest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-11-28T02:20:15Z",
+      "side": 1,
+      "message": "Is it possible to just put all the code in pdfium namespace in this file, like in core/fpdfapi/page/cpdf_pageimagecache_unittest.cpp?",
+      "revId": "f1951140fdf2316c76932b6f47f9a2c3796f8731",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
