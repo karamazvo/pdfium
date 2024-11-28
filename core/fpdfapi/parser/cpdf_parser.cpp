@@ -196,8 +196,8 @@ bool CPDF_Parser::InitSyntaxParser(RetainPtr<CPDF_ReadValidator> validator) {
   if (validator->GetSize() < header_offset.value() + kPDFHeaderSize)
     return false;
 
-  m_pSyntax = std::make_unique<CPDF_SyntaxParser>(std::move(validator),
-                                                  header_offset.value());
+  m_pSyntax = std::make_unique<CPDF_SyntaxParser>(
+      std::move(validator), header_offset.value(), m_pObjectsHolder);
   return ParseFileVersion();
 }
 
@@ -731,7 +731,7 @@ bool CPDF_Parser::RebuildCrossRef() {
     } else if (word == "<") {
       m_pSyntax->ReadHexString();
     } else if (word == "trailer") {
-      RetainPtr<CPDF_Object> pTrailer = m_pSyntax->GetObjectBody(nullptr);
+      RetainPtr<CPDF_Object> pTrailer = m_pSyntax->GetObjectBody();
       if (pTrailer) {
         CPDF_Stream* stream_trailer = pTrailer->AsMutableStream();
         // Grab the object number from `pTrailer` before potentially calling
@@ -751,8 +751,8 @@ bool CPDF_Parser::RebuildCrossRef() {
       const uint32_t gen_num = numbers[1].first;
 
       m_pSyntax->SetPos(obj_pos);
-      RetainPtr<CPDF_Stream> pStream = ToStream(m_pSyntax->GetIndirectObject(
-          nullptr, CPDF_SyntaxParser::ParseType::kStrict));
+      RetainPtr<CPDF_Stream> pStream = ToStream(
+          m_pSyntax->GetIndirectObject(CPDF_SyntaxParser::ParseType::kStrict));
 
       if (pStream && pStream->GetDict()->GetNameFor("Type") == "XRef") {
         cross_ref_table = CPDF_CrossRefTable::MergeUp(
@@ -766,7 +766,7 @@ bool CPDF_Parser::RebuildCrossRef() {
         cross_ref_table->AddNormal(obj_num, gen_num, /*is_object_stream=*/false,
                                    obj_pos);
         const auto object_stream =
-            CPDF_ObjectStream::Create(std::move(pStream));
+            CPDF_ObjectStream::Create(std::move(pStream), m_pObjectsHolder);
         if (object_stream) {
           const auto& object_info = object_stream->object_info();
           for (size_t i = 0; i < object_info.size(); ++i) {
@@ -1034,8 +1034,7 @@ RetainPtr<CPDF_Object> CPDF_Parser::ParseIndirectObject(uint32_t objnum) {
       if (!obj_stream) {
         return nullptr;
       }
-      return obj_stream->ParseObject(m_pObjectsHolder, objnum,
-                                     info->archive.obj_index);
+      return obj_stream->ParseObject(objnum, info->archive.obj_index);
     }
   }
 }
@@ -1067,7 +1066,7 @@ const CPDF_ObjectStream* CPDF_Parser::GetObjectStream(uint32_t object_number) {
     return nullptr;
 
   std::unique_ptr<CPDF_ObjectStream> objs_stream =
-      CPDF_ObjectStream::Create(ToStream(object));
+      CPDF_ObjectStream::Create(ToStream(object), m_pObjectsHolder);
   const CPDF_ObjectStream* result = objs_stream.get();
   m_ObjectStreamMap[object_number] = std::move(objs_stream);
 
@@ -1079,8 +1078,8 @@ RetainPtr<CPDF_Object> CPDF_Parser::ParseIndirectObjectAt(FX_FILESIZE pos,
   const FX_FILESIZE saved_pos = m_pSyntax->GetPos();
   m_pSyntax->SetPos(pos);
 
-  auto result = m_pSyntax->GetIndirectObject(
-      m_pObjectsHolder, CPDF_SyntaxParser::ParseType::kLoose);
+  auto result =
+      m_pSyntax->GetIndirectObject(CPDF_SyntaxParser::ParseType::kLoose);
   m_pSyntax->SetPos(saved_pos);
   if (result && objnum && result->GetObjNum() != objnum)
     return nullptr;
@@ -1112,7 +1111,7 @@ RetainPtr<CPDF_Dictionary> CPDF_Parser::LoadTrailer() {
   if (m_pSyntax->GetKeyword() != "trailer")
     return nullptr;
 
-  return ToDictionary(m_pSyntax->GetObjectBody(m_pObjectsHolder));
+  return ToDictionary(m_pSyntax->GetObjectBody());
 }
 
 uint32_t CPDF_Parser::GetPermissions(bool get_owner_perms) const {
@@ -1280,13 +1279,13 @@ std::vector<unsigned int> CPDF_Parser::GetTrailerEnds() {
       if (word_result.word != "obj")
         break;
 
-      m_pSyntax->GetObjectBody(nullptr);
+      m_pSyntax->GetObjectBody();
 
       word_result = m_pSyntax->GetNextWord();
       if (word_result.word != "endobj")
         break;
     } else if (word_result.word == "trailer") {
-      m_pSyntax->GetObjectBody(nullptr);
+      m_pSyntax->GetObjectBody();
     } else if (word_result.word == "startxref") {
       m_pSyntax->GetNextWord();
     } else if (word_result.word == "xref") {

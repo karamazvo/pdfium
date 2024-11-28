@@ -166,6 +166,7 @@ class CPDF_DataAvail final : public Observable::ObserverIface {
   CPDF_SyntaxParser* GetSyntaxParser() const;
 
   RetainPtr<CPDF_ReadValidator> m_pFileRead;
+  CPDF_IndirectObjectHolder tmp_objects_holder_;
   CPDF_Parser m_parser;
   RetainPtr<CPDF_Dictionary> m_pRoot;
   std::unique_ptr<CPDF_LinearizedHeader> m_pLinearized;

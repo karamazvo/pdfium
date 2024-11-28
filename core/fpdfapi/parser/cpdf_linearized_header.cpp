@@ -62,7 +62,7 @@ std::unique_ptr<CPDF_LinearizedHeader> CPDF_LinearizedHeader::Parse(
   parser->SetPos(kLinearizedHeaderOffset);
 
   const auto pDict = ToDictionary(
-      parser->GetIndirectObject(nullptr, CPDF_SyntaxParser::ParseType::kLoose));
+      parser->GetIndirectObject(CPDF_SyntaxParser::ParseType::kLoose));
 
   if (!pDict || !pDict->KeyExist("Linearized") ||
       !IsValidNumericDictionaryValue<FX_FILESIZE>(pDict.Get(), "L", 1) ||

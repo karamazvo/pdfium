@@ -129,8 +129,7 @@ bool CPDF_CrossRefAvail::CheckCrossRefTableItem() {
 bool CPDF_CrossRefAvail::CheckCrossRefTableTrailer() {
   parser_->SetPos(offset_);
 
-  RetainPtr<CPDF_Dictionary> trailer =
-      ToDictionary(parser_->GetObjectBody(nullptr));
+  RetainPtr<CPDF_Dictionary> trailer = ToDictionary(parser_->GetObjectBody());
   if (CheckReadProblems())
     return false;
 
@@ -164,7 +163,7 @@ bool CPDF_CrossRefAvail::CheckCrossRefTableTrailer() {
 
 bool CPDF_CrossRefAvail::CheckCrossRefStream() {
   auto cross_ref =
-      parser_->GetIndirectObject(nullptr, CPDF_SyntaxParser::ParseType::kLoose);
+      parser_->GetIndirectObject(CPDF_SyntaxParser::ParseType::kLoose);
   if (CheckReadProblems())
     return false;
 

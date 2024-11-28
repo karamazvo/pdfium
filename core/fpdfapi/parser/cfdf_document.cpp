@@ -40,7 +40,7 @@ std::unique_ptr<CFDF_Document> CFDF_Document::ParseMemory(
 
 void CFDF_Document::ParseStream(RetainPtr<IFX_SeekableReadStream> pFile) {
   m_pFile = std::move(pFile);
-  CPDF_SyntaxParser parser(m_pFile);
+  CPDF_SyntaxParser parser(m_pFile, this);
   while (true) {
     CPDF_SyntaxParser::WordResult word_result = parser.GetNextWord();
     if (word_result.is_number) {
@@ -56,7 +56,7 @@ void CFDF_Document::ParseStream(RetainPtr<IFX_SeekableReadStream> pFile) {
       if (word_result.word != "obj")
         break;
 
-      RetainPtr<CPDF_Object> pObj = parser.GetObjectBody(this);
+      RetainPtr<CPDF_Object> pObj = parser.GetObjectBody();
       if (!pObj)
         break;
 
@@ -69,7 +69,7 @@ void CFDF_Document::ParseStream(RetainPtr<IFX_SeekableReadStream> pFile) {
         break;
 
       RetainPtr<CPDF_Dictionary> pMainDict =
-          ToDictionary(parser.GetObjectBody(this));
+          ToDictionary(parser.GetObjectBody());
       if (pMainDict)
         m_pRootDict = pMainDict->GetMutableDictFor("Root");
 
