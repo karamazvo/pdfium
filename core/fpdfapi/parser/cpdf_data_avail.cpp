@@ -467,7 +467,7 @@ RetainPtr<CPDF_Object> CPDF_DataAvail::ParseIndirectObjectAt(
   const FX_FILESIZE SavedPos = GetSyntaxParser()->GetPos();
   GetSyntaxParser()->SetPos(pos);
   RetainPtr<CPDF_Object> result = GetSyntaxParser()->GetIndirectObject(
-      pObjList, CPDF_SyntaxParser::ParseType::kLoose);
+      CPDF_SyntaxParser::ParseType::kLoose);
   GetSyntaxParser()->SetPos(SavedPos);
   return (result && (!objnum || result->GetObjNum() == objnum))
              ? std::move(result)
@@ -499,7 +499,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckHeaderAndLinearized() {
     return kDataError;
 
   m_parser.m_pSyntax = std::make_unique<CPDF_SyntaxParser>(
-      GetValidator(), header_offset.value());
+      GetValidator(), header_offset.value(), m_parser.m_pObjectsHolder);
   m_pLinearized = m_parser.ParseLinearizedHeader();
   if (GetValidator()->has_read_problems())
     return kDataNotAvailable;

@@ -38,13 +38,11 @@ class CPDF_SyntaxParser {
     bool is_number;
   };
 
-  static std::unique_ptr<CPDF_SyntaxParser> CreateForTesting(
-      RetainPtr<IFX_SeekableReadStream> pFileAccess,
-      FX_FILESIZE HeaderOffset);
-
-  explicit CPDF_SyntaxParser(RetainPtr<IFX_SeekableReadStream> pFileAccess);
+  CPDF_SyntaxParser(RetainPtr<IFX_SeekableReadStream> pFileAccess,
+                    CPDF_IndirectObjectHolder* m_pObjList);
   CPDF_SyntaxParser(RetainPtr<CPDF_ReadValidator> pValidator,
-                    FX_FILESIZE HeaderOffset);
+                    FX_FILESIZE HeaderOffset,
+                    CPDF_IndirectObjectHolder* m_pObjList);
   ~CPDF_SyntaxParser();
 
   void SetReadBufferSize(uint32_t read_buffer_size) {
@@ -54,9 +52,8 @@ class CPDF_SyntaxParser {
   FX_FILESIZE GetPos() const { return m_Pos; }
   void SetPos(FX_FILESIZE pos);
 
-  RetainPtr<CPDF_Object> GetObjectBody(CPDF_IndirectObjectHolder* pObjList);
-  RetainPtr<CPDF_Object> GetIndirectObject(CPDF_IndirectObjectHolder* pObjList,
-                                           ParseType parse_type);
+  RetainPtr<CPDF_Object> GetObjectBody();
+  RetainPtr<CPDF_Object> GetIndirectObject(ParseType parse_type);
 
   ByteString GetKeyword();
   void ToNextLine();
@@ -113,7 +110,6 @@ class CPDF_SyntaxParser {
   bool IsPositionRead(FX_FILESIZE pos) const;
 
   RetainPtr<CPDF_Object> GetObjectBodyInternal(
-      CPDF_IndirectObjectHolder* pObjList,
       ParseType parse_type);
 
   RetainPtr<CPDF_ReadValidator> m_pFileAccess;
@@ -122,8 +118,10 @@ class CPDF_SyntaxParser {
   // ignore this stuff.
   const FX_FILESIZE m_HeaderOffset;
   const FX_FILESIZE m_FileLen;
+  // Used only for direct access to object By references.
+  // See CPDF_Reference::GetDirectInternal
+  UnownedPtr<CPDF_IndirectObjectHolder> m_pObjList;
   FX_FILESIZE m_Pos = 0;
-  WeakPtr<ByteStringPool> m_pPool;
   DataVector<uint8_t> m_pFileBuf;
   FX_FILESIZE m_BufOffset = 0;
   uint32_t m_WordSize = 0;

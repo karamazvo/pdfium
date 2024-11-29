@@ -14,7 +14,7 @@
 class CPDF_IndirectObjectHolder;
 class CPDF_Stream;
 class CPDF_StreamAcc;
-class IFX_SeekableReadStream;
+class CPDF_SyntaxParser;
 
 // Implementation of logic of PDF "Object Streams".
 // See ISO 32000-1:2008 spec, section 7.5.7.
@@ -33,26 +33,25 @@ class CPDF_ObjectStream {
   };
 
   static std::unique_ptr<CPDF_ObjectStream> Create(
-      RetainPtr<const CPDF_Stream> stream);
+      RetainPtr<const CPDF_Stream> stream,
+      CPDF_IndirectObjectHolder* pObjList);
 
   ~CPDF_ObjectStream();
 
-  RetainPtr<CPDF_Object> ParseObject(CPDF_IndirectObjectHolder* pObjList,
-                                     uint32_t obj_number,
+  RetainPtr<CPDF_Object> ParseObject(uint32_t obj_number,
                                      uint32_t archive_obj_index) const;
   const std::vector<ObjectInfo>& object_info() const { return object_info_; }
 
  private:
-  explicit CPDF_ObjectStream(RetainPtr<const CPDF_Stream> stream);
+  CPDF_ObjectStream(RetainPtr<const CPDF_Stream> stream,
+                    CPDF_IndirectObjectHolder* pObjList);
 
-  void Init(const CPDF_Stream* stream);
-  RetainPtr<CPDF_Object> ParseObjectAtOffset(
-      CPDF_IndirectObjectHolder* pObjList,
-      uint32_t object_offset) const;
+  void Init(const CPDF_Stream* stream, CPDF_IndirectObjectHolder* pObjList);
+  RetainPtr<CPDF_Object> ParseObjectAtOffset(uint32_t object_offset) const;
 
-  // Must outlive `data_stream_`.
+  // Must outlive `syntax_parser_`.
   RetainPtr<CPDF_StreamAcc> const stream_acc_;
-  RetainPtr<IFX_SeekableReadStream> data_stream_;
+  std::unique_ptr<CPDF_SyntaxParser> syntax_parser_;
   int first_object_offset_ = 0;
   std::vector<ObjectInfo> object_info_;
 };

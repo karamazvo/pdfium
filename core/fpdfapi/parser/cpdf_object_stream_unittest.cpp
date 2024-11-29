@@ -40,7 +40,8 @@ TEST(ObjectStreamTest, StreamDictNormal) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream));
+  CPDF_IndirectObjectHolder holder;
+  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream), &holder);
   ASSERT_TRUE(obj_stream);
 
   EXPECT_THAT(obj_stream->object_info(),
@@ -49,35 +50,34 @@ TEST(ObjectStreamTest, StreamDictNormal) {
                           CPDF_ObjectStream::ObjectInfo(12, 21)));
 
   // Check expected indices.
-  CPDF_IndirectObjectHolder holder;
-  RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(&holder, 10, 0);
+  RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(10, 0);
   ASSERT_TRUE(obj10);
   EXPECT_EQ(10u, obj10->GetObjNum());
   EXPECT_EQ(0u, obj10->GetGenNum());
   EXPECT_TRUE(obj10->IsDictionary());
 
-  RetainPtr<CPDF_Object> obj11 = obj_stream->ParseObject(&holder, 11, 1);
+  RetainPtr<CPDF_Object> obj11 = obj_stream->ParseObject(11, 1);
   ASSERT_TRUE(obj11);
   EXPECT_EQ(11u, obj11->GetObjNum());
   EXPECT_EQ(0u, obj11->GetGenNum());
   EXPECT_TRUE(obj11->IsArray());
 
-  RetainPtr<CPDF_Object> obj12 = obj_stream->ParseObject(&holder, 12, 2);
+  RetainPtr<CPDF_Object> obj12 = obj_stream->ParseObject(12, 2);
   ASSERT_TRUE(obj12);
   EXPECT_EQ(12u, obj12->GetObjNum());
   EXPECT_EQ(0u, obj12->GetGenNum());
   EXPECT_TRUE(obj12->IsNumber());
 
   // Check bad indices.
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 10, 1));
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 10, 2));
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 10, 3));
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 11, 0));
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 11, 2));
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 11, 3));
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 12, 0));
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 12, 1));
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 12, 3));
+  EXPECT_FALSE(obj_stream->ParseObject(10, 1));
+  EXPECT_FALSE(obj_stream->ParseObject(10, 2));
+  EXPECT_FALSE(obj_stream->ParseObject(10, 3));
+  EXPECT_FALSE(obj_stream->ParseObject(11, 0));
+  EXPECT_FALSE(obj_stream->ParseObject(11, 2));
+  EXPECT_FALSE(obj_stream->ParseObject(11, 3));
+  EXPECT_FALSE(obj_stream->ParseObject(12, 0));
+  EXPECT_FALSE(obj_stream->ParseObject(12, 1));
+  EXPECT_FALSE(obj_stream->ParseObject(12, 3));
 }
 
 TEST(ObjectStreamTest, StreamEmptyDict) {
@@ -85,7 +85,8 @@ TEST(ObjectStreamTest, StreamEmptyDict) {
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()),
       pdfium::MakeRetain<CPDF_Dictionary>());
-  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream)));
+  CPDF_IndirectObjectHolder holder;
+  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream), &holder));
 }
 
 TEST(ObjectStreamTest, StreamDictNoType) {
@@ -96,7 +97,8 @@ TEST(ObjectStreamTest, StreamDictNoType) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream)));
+  CPDF_IndirectObjectHolder holder;
+  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream), &holder));
 }
 
 TEST(ObjectStreamTest, StreamDictWrongType) {
@@ -108,7 +110,8 @@ TEST(ObjectStreamTest, StreamDictWrongType) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream)));
+  CPDF_IndirectObjectHolder holder;
+  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream), &holder));
 }
 
 TEST(ObjectStreamTest, StreamDictWrongTypeValue) {
@@ -120,7 +123,8 @@ TEST(ObjectStreamTest, StreamDictWrongTypeValue) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream)));
+  CPDF_IndirectObjectHolder holder;
+  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream), &holder));
 }
 
 TEST(ObjectStreamTest, StreamDictNoCount) {
@@ -131,7 +135,8 @@ TEST(ObjectStreamTest, StreamDictNoCount) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream)));
+  CPDF_IndirectObjectHolder holder;
+  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream), &holder));
 }
 
 TEST(ObjectStreamTest, StreamDictFloatCount) {
@@ -143,7 +148,8 @@ TEST(ObjectStreamTest, StreamDictFloatCount) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream)));
+  CPDF_IndirectObjectHolder holder;
+  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream), &holder));
 }
 
 TEST(ObjectStreamTest, StreamDictNegativeCount) {
@@ -155,7 +161,8 @@ TEST(ObjectStreamTest, StreamDictNegativeCount) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream)));
+  CPDF_IndirectObjectHolder holder;
+  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream), &holder));
 }
 
 TEST(ObjectStreamTest, StreamDictCountTooBig) {
@@ -167,7 +174,8 @@ TEST(ObjectStreamTest, StreamDictCountTooBig) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream)));
+  CPDF_IndirectObjectHolder holder;
+  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream), &holder));
 }
 
 TEST(ObjectStreamTest, StreamDictNoOffset) {
@@ -178,7 +186,8 @@ TEST(ObjectStreamTest, StreamDictNoOffset) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream)));
+  CPDF_IndirectObjectHolder holder;
+  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream), &holder));
 }
 
 TEST(ObjectStreamTest, StreamDictFloatOffset) {
@@ -190,7 +199,8 @@ TEST(ObjectStreamTest, StreamDictFloatOffset) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream)));
+  CPDF_IndirectObjectHolder holder;
+  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream), &holder));
 }
 
 TEST(ObjectStreamTest, StreamDictNegativeOffset) {
@@ -202,7 +212,8 @@ TEST(ObjectStreamTest, StreamDictNegativeOffset) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream)));
+  CPDF_IndirectObjectHolder holder;
+  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream), &holder));
 }
 
 TEST(ObjectStreamTest, StreamDictOffsetTooBig) {
@@ -215,7 +226,8 @@ TEST(ObjectStreamTest, StreamDictOffsetTooBig) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream));
+  CPDF_IndirectObjectHolder holder;
+  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream), &holder);
   ASSERT_TRUE(obj_stream);
 
   EXPECT_THAT(obj_stream->object_info(),
@@ -223,10 +235,9 @@ TEST(ObjectStreamTest, StreamDictOffsetTooBig) {
                           CPDF_ObjectStream::ObjectInfo(11, 14),
                           CPDF_ObjectStream::ObjectInfo(12, 21)));
 
-  CPDF_IndirectObjectHolder holder;
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 10, 0));
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 11, 1));
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 12, 2));
+  EXPECT_FALSE(obj_stream->ParseObject(10, 0));
+  EXPECT_FALSE(obj_stream->ParseObject(11, 1));
+  EXPECT_FALSE(obj_stream->ParseObject(12, 2));
 }
 
 TEST(ObjectStreamTest, StreamDictTooFewCount) {
@@ -238,27 +249,27 @@ TEST(ObjectStreamTest, StreamDictTooFewCount) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream));
+  CPDF_IndirectObjectHolder holder;
+  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream), &holder);
   ASSERT_TRUE(obj_stream);
 
   EXPECT_THAT(obj_stream->object_info(),
               ElementsAre(CPDF_ObjectStream::ObjectInfo(10, 0),
                           CPDF_ObjectStream::ObjectInfo(11, 14)));
 
-  CPDF_IndirectObjectHolder holder;
-  RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(&holder, 10, 0);
+  RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(10, 0);
   ASSERT_TRUE(obj10);
   EXPECT_EQ(10u, obj10->GetObjNum());
   EXPECT_EQ(0u, obj10->GetGenNum());
   EXPECT_TRUE(obj10->IsDictionary());
 
-  RetainPtr<CPDF_Object> obj11 = obj_stream->ParseObject(&holder, 11, 1);
+  RetainPtr<CPDF_Object> obj11 = obj_stream->ParseObject(11, 1);
   ASSERT_TRUE(obj11);
   EXPECT_EQ(11u, obj11->GetObjNum());
   EXPECT_EQ(0u, obj11->GetGenNum());
   EXPECT_TRUE(obj11->IsArray());
 
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 12, 2));
+  EXPECT_FALSE(obj_stream->ParseObject(12, 2));
 }
 
 TEST(ObjectStreamTest, StreamDictTooManyObject) {
@@ -270,7 +281,8 @@ TEST(ObjectStreamTest, StreamDictTooManyObject) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream));
+  CPDF_IndirectObjectHolder holder;
+  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream), &holder);
   ASSERT_TRUE(obj_stream);
 
   // TODO(thestig): Can this avoid finding object 2?
@@ -280,12 +292,11 @@ TEST(ObjectStreamTest, StreamDictTooManyObject) {
                           CPDF_ObjectStream::ObjectInfo(12, 21),
                           CPDF_ObjectStream::ObjectInfo(2, 3)));
 
-  CPDF_IndirectObjectHolder holder;
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 2, 0));
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 2, 1));
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 2, 2));
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 2, 3));
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 2, 4));
+  EXPECT_FALSE(obj_stream->ParseObject(2, 0));
+  EXPECT_FALSE(obj_stream->ParseObject(2, 1));
+  EXPECT_FALSE(obj_stream->ParseObject(2, 2));
+  EXPECT_FALSE(obj_stream->ParseObject(2, 3));
+  EXPECT_FALSE(obj_stream->ParseObject(2, 4));
 }
 
 TEST(ObjectStreamTest, StreamDictGarbageObjNum) {
@@ -298,7 +309,8 @@ TEST(ObjectStreamTest, StreamDictGarbageObjNum) {
   ByteStringView contents_view(kStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream));
+  CPDF_IndirectObjectHolder holder;
+  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream), &holder);
   ASSERT_TRUE(obj_stream);
 
   EXPECT_THAT(obj_stream->object_info(),
@@ -316,7 +328,8 @@ TEST(ObjectStreamTest, StreamDictGarbageObjectOffset) {
   ByteStringView contents_view(kStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream));
+  CPDF_IndirectObjectHolder holder;
+  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream), &holder);
   ASSERT_TRUE(obj_stream);
 
   // TODO(thestig): Should object 11 be rejected?
@@ -325,14 +338,13 @@ TEST(ObjectStreamTest, StreamDictGarbageObjectOffset) {
                           CPDF_ObjectStream::ObjectInfo(11, 0),
                           CPDF_ObjectStream::ObjectInfo(12, 21)));
 
-  CPDF_IndirectObjectHolder holder;
-  RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(&holder, 10, 0);
+  RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(10, 0);
   ASSERT_TRUE(obj10);
   EXPECT_EQ(10u, obj10->GetObjNum());
   EXPECT_EQ(0u, obj10->GetGenNum());
   EXPECT_TRUE(obj10->IsDictionary());
 
-  RetainPtr<CPDF_Object> obj11 = obj_stream->ParseObject(&holder, 11, 1);
+  RetainPtr<CPDF_Object> obj11 = obj_stream->ParseObject(11, 1);
   ASSERT_TRUE(obj11);
   EXPECT_EQ(11u, obj11->GetObjNum());
   EXPECT_EQ(0u, obj11->GetGenNum());
@@ -349,7 +361,8 @@ TEST(ObjectStreamTest, StreamDictNegativeObjectOffset) {
   ByteStringView contents_view(kStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream));
+  CPDF_IndirectObjectHolder holder;
+  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream), &holder);
   ASSERT_TRUE(obj_stream);
 
   // TODO(thestig): Should object 11 be rejected?
@@ -358,8 +371,7 @@ TEST(ObjectStreamTest, StreamDictNegativeObjectOffset) {
                           CPDF_ObjectStream::ObjectInfo(11, 4294967295),
                           CPDF_ObjectStream::ObjectInfo(12, 21)));
 
-  CPDF_IndirectObjectHolder holder;
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 11, 1));
+  EXPECT_FALSE(obj_stream->ParseObject(11, 1));
 }
 
 TEST(ObjectStreamTest, StreamDictObjectOffsetTooBig) {
@@ -372,7 +384,8 @@ TEST(ObjectStreamTest, StreamDictObjectOffsetTooBig) {
   ByteStringView contents_view(kStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream));
+  CPDF_IndirectObjectHolder holder;
+  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream), &holder);
   ASSERT_TRUE(obj_stream);
 
   // TODO(thestig): Should object 11 be rejected?
@@ -381,8 +394,7 @@ TEST(ObjectStreamTest, StreamDictObjectOffsetTooBig) {
                           CPDF_ObjectStream::ObjectInfo(11, 999),
                           CPDF_ObjectStream::ObjectInfo(12, 21)));
 
-  CPDF_IndirectObjectHolder holder;
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 11, 1));
+  EXPECT_FALSE(obj_stream->ParseObject(11, 1));
 }
 
 TEST(ObjectStreamTest, StreamDictDuplicateObjNum) {
@@ -395,7 +407,8 @@ TEST(ObjectStreamTest, StreamDictDuplicateObjNum) {
   ByteStringView contents_view(kStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream));
+  CPDF_IndirectObjectHolder holder;
+  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream), &holder);
   ASSERT_TRUE(obj_stream);
 
   EXPECT_THAT(obj_stream->object_info(),
@@ -403,23 +416,22 @@ TEST(ObjectStreamTest, StreamDictDuplicateObjNum) {
                           CPDF_ObjectStream::ObjectInfo(10, 14),
                           CPDF_ObjectStream::ObjectInfo(12, 21)));
 
-  CPDF_IndirectObjectHolder holder;
-  RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(&holder, 10, 0);
+  RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(10, 0);
   ASSERT_TRUE(obj10);
   EXPECT_EQ(10u, obj10->GetObjNum());
   EXPECT_EQ(0u, obj10->GetGenNum());
   EXPECT_TRUE(obj10->IsDictionary());
 
-  obj10 = obj_stream->ParseObject(&holder, 10, 1);
+  obj10 = obj_stream->ParseObject(10, 1);
   ASSERT_TRUE(obj10);
   EXPECT_EQ(10u, obj10->GetObjNum());
   EXPECT_EQ(0u, obj10->GetGenNum());
   EXPECT_TRUE(obj10->IsArray());
 
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 10, 2));
-  EXPECT_FALSE(obj_stream->ParseObject(&holder, 10, 3));
+  EXPECT_FALSE(obj_stream->ParseObject(10, 2));
+  EXPECT_FALSE(obj_stream->ParseObject(10, 3));
 
-  RetainPtr<CPDF_Object> obj12 = obj_stream->ParseObject(&holder, 12, 2);
+  RetainPtr<CPDF_Object> obj12 = obj_stream->ParseObject(12, 2);
   ASSERT_TRUE(obj12);
   EXPECT_EQ(12u, obj12->GetObjNum());
   EXPECT_EQ(0u, obj12->GetGenNum());
@@ -438,7 +450,8 @@ TEST(ObjectStreamTest, StreamDictUnorderedObjectNumbers) {
   ByteStringView contents_view(kStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream));
+  CPDF_IndirectObjectHolder holder;
+  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream), &holder);
   ASSERT_TRUE(obj_stream);
 
   EXPECT_THAT(obj_stream->object_info(),
@@ -446,20 +459,19 @@ TEST(ObjectStreamTest, StreamDictUnorderedObjectNumbers) {
                           CPDF_ObjectStream::ObjectInfo(12, 14),
                           CPDF_ObjectStream::ObjectInfo(10, 21)));
 
-  CPDF_IndirectObjectHolder holder;
-  RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(&holder, 10, 2);
+  RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(10, 2);
   ASSERT_TRUE(obj10);
   EXPECT_EQ(10u, obj10->GetObjNum());
   EXPECT_EQ(0u, obj10->GetGenNum());
   EXPECT_TRUE(obj10->IsNumber());
 
-  RetainPtr<CPDF_Object> obj11 = obj_stream->ParseObject(&holder, 11, 0);
+  RetainPtr<CPDF_Object> obj11 = obj_stream->ParseObject(11, 0);
   ASSERT_TRUE(obj11);
   EXPECT_EQ(11u, obj11->GetObjNum());
   EXPECT_EQ(0u, obj11->GetGenNum());
   EXPECT_TRUE(obj11->IsDictionary());
 
-  RetainPtr<CPDF_Object> obj12 = obj_stream->ParseObject(&holder, 12, 1);
+  RetainPtr<CPDF_Object> obj12 = obj_stream->ParseObject(12, 1);
   ASSERT_TRUE(obj12);
   EXPECT_EQ(12u, obj12->GetObjNum());
   EXPECT_EQ(0u, obj12->GetGenNum());
@@ -480,7 +492,8 @@ TEST(ObjectStreamTest, StreamDictUnorderedObjectOffsets) {
   ByteStringView contents_view(kStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream));
+  CPDF_IndirectObjectHolder holder;
+  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream), &holder);
   ASSERT_TRUE(obj_stream);
 
   EXPECT_THAT(obj_stream->object_info(),
@@ -488,20 +501,19 @@ TEST(ObjectStreamTest, StreamDictUnorderedObjectOffsets) {
                           CPDF_ObjectStream::ObjectInfo(11, 0),
                           CPDF_ObjectStream::ObjectInfo(12, 14)));
 
-  CPDF_IndirectObjectHolder holder;
-  RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(&holder, 10, 0);
+  RetainPtr<CPDF_Object> obj10 = obj_stream->ParseObject(10, 0);
   ASSERT_TRUE(obj10);
   EXPECT_EQ(10u, obj10->GetObjNum());
   EXPECT_EQ(0u, obj10->GetGenNum());
   EXPECT_TRUE(obj10->IsNumber());
 
-  RetainPtr<CPDF_Object> obj11 = obj_stream->ParseObject(&holder, 11, 1);
+  RetainPtr<CPDF_Object> obj11 = obj_stream->ParseObject(11, 1);
   ASSERT_TRUE(obj11);
   EXPECT_EQ(11u, obj11->GetObjNum());
   EXPECT_EQ(0u, obj11->GetGenNum());
   EXPECT_TRUE(obj11->IsDictionary());
 
-  RetainPtr<CPDF_Object> obj12 = obj_stream->ParseObject(&holder, 12, 2);
+  RetainPtr<CPDF_Object> obj12 = obj_stream->ParseObject(12, 2);
   ASSERT_TRUE(obj12);
   EXPECT_EQ(12u, obj12->GetObjNum());
   EXPECT_EQ(0u, obj12->GetGenNum());

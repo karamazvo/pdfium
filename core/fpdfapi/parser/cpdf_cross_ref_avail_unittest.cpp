@@ -7,16 +7,24 @@
 #include <memory>
 #include <string>
 
+#include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fxcrt/cfx_read_only_span_stream.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
 
+class TestSyntaxParser : public CPDF_IndirectObjectHolder,
+                         public CPDF_SyntaxParser {
+ public:
+  explicit TestSyntaxParser(pdfium::span<const uint8_t> buffer)
+      : CPDF_SyntaxParser(pdfium::MakeRetain<CFX_ReadOnlySpanStream>(buffer),
+                          this) {}
+};
+
 std::unique_ptr<CPDF_SyntaxParser> MakeParserForBuffer(
     pdfium::span<const uint8_t> buffer) {
-  return std::make_unique<CPDF_SyntaxParser>(
-      pdfium::MakeRetain<CFX_ReadOnlySpanStream>(buffer));
+  return std::make_unique<TestSyntaxParser>(buffer);
 }
 
 }  // namespace

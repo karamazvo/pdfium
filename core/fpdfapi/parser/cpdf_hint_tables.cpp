@@ -61,8 +61,8 @@ std::unique_ptr<CPDF_HintTables> CPDF_HintTables::Parse(
   }
 
   parser->SetPos(szHintStart);
-  RetainPtr<CPDF_Stream> hints_stream = ToStream(
-      parser->GetIndirectObject(nullptr, CPDF_SyntaxParser::ParseType::kLoose));
+  RetainPtr<CPDF_Stream> hints_stream =
+      ToStream(parser->GetIndirectObject(CPDF_SyntaxParser::ParseType::kLoose));
 
   if (!hints_stream)
     return nullptr;
