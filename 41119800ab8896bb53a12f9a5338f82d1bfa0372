@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "865df241_a0ca9495",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1146,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-12-02T17:38:44Z",
+      "side": 1,
+      "message": "will implicit conversion work here instead of the explicit make_span?",
+      "range": {
+        "startLine": 1146,
+        "startChar": 28,
+        "endLine": 1146,
+        "endChar": 46
+      },
+      "revId": "41119800ab8896bb53a12f9a5338f82d1bfa0372",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
