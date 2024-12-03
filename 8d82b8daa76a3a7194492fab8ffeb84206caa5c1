@@ -16,6 +16,24 @@
       "message": "Have you tried rolling to `0ae7e60`? Just wanted to rule out this wasn\u0027t also affected by a few of the previous changes.",
       "revId": "8d82b8daa76a3a7194492fab8ffeb84206caa5c1",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "29ad9c5e_97bdd0ec",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-03T21:44:21Z",
+      "side": 1,
+      "message": "`0ae7e60` works locally. I can certainly roll to that for now.",
+      "parentUuid": "d9efe6d2_23b49b75",
+      "revId": "8d82b8daa76a3a7194492fab8ffeb84206caa5c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
