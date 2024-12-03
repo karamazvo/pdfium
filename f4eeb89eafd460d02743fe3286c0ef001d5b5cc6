@@ -33,6 +33,24 @@
       "message": "Lei, let me know what you think. I\u0027ve not been a fan of nested namespaces, but we may get collisions down the road.  If its OK with you, then I\u0027ll approve as well.",
       "revId": "f4eeb89eafd460d02743fe3286c0ef001d5b5cc6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "16c5bb06_913d2c55",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-03T03:12:40Z",
+      "side": 1,
+      "message": "pdfium::page_object::kType is going to conflict in the near future if we go down this path. We\u0027ll need to think this though before changing these.",
+      "parentUuid": "eea2b95f_c14c9eeb",
+      "revId": "f4eeb89eafd460d02743fe3286c0ef001d5b5cc6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
