@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "6655fe98_2afbaa4b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-03T23:27:16Z",
+      "side": 1,
+      "message": "There\u0027s room on the previous line for this. Combine? Mayeb also lines 10 and 11.",
+      "revId": "9c92d020ad5091a47fa5016fd0166ddba3e74ccc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "d842da57_f31d0b69",
@@ -14,6 +31,46 @@
       "writtenOn": "2024-12-03T14:06:54Z",
       "side": 1,
       "message": "Lei@\n\nCan u take a look?\n\nThanks!",
+      "revId": "9c92d020ad5091a47fa5016fd0166ddba3e74ccc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d6b48dab_afe8aa88",
+        "filename": "core/fpdfapi/parser/cpdf_flateencoder.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-03T23:27:16Z",
+      "side": 1,
+      "message": "Please use Google C++ style in new code, like when adding this variable here.",
+      "range": {
+        "startLine": 42,
+        "startChar": 7,
+        "endLine": 42,
+        "endChar": 18
+      },
+      "revId": "9c92d020ad5091a47fa5016fd0166ddba3e74ccc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c3284aed_02f61dc0",
+        "filename": "core/fpdfapi/parser/cpdf_flateencoder.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-03T23:27:16Z",
+      "side": 1,
+      "message": "Please keep in mind that I added the TODO 8+ years ago. Looking at this in a fresh light, I wonder if FlateModule::Encode() can actually fail and return an empty result. Looking around, in Chromium\u0027s gpu/command_buffer/service/memory_program_cache.cc, their code also returns an empty vector on compression failure, but the comment there says it should never happen.",
       "revId": "9c92d020ad5091a47fa5016fd0166ddba3e74ccc",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
