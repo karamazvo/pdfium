@@ -39,6 +39,30 @@
       },
       "revId": "bb1a2d50b1392a0471c7bf3d03751ab47f661f09",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3c187977_c9a66b21",
+        "filename": "core/fpdfapi/font/cpdf_simplefont.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-03T01:48:47Z",
+      "side": 1,
+      "message": "I\u0027ll chain a CL to fix this separately.",
+      "parentUuid": "ff49f9a2_4b763264",
+      "range": {
+        "startLine": 288,
+        "startChar": 15,
+        "endLine": 288,
+        "endChar": 18
+      },
+      "revId": "bb1a2d50b1392a0471c7bf3d03751ab47f661f09",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
