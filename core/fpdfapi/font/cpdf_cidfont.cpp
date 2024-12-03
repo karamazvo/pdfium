@@ -810,10 +810,10 @@ bool CPDF_CIDFont::IsUnicodeCompatible() const {
 }
 
 void CPDF_CIDFont::LoadSubstFont() {
-  FX_SAFE_INT32 safeStemV(m_StemV);
-  safeStemV *= 5;
+  FX_SAFE_INT32 stem_v(m_StemV);
+  stem_v *= 5;
   m_Font.LoadSubst(m_BaseFontName, m_FontType == CIDFontType::kTrueType,
-                   m_Flags, safeStemV.ValueOrDefault(FXFONT_FW_NORMAL),
+                   m_Flags, stem_v.ValueOrDefault(pdfium::FontWeight::kNormal),
                    m_ItalicAngle, kCharsetCodePages[m_Charset],
                    IsVertWriting());
 }

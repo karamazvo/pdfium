@@ -151,7 +151,8 @@ RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::CreateRootStyle(
     pStyle->SetColor(font->GetColor());
     pStyle->SetFontStyle(font->IsItalic() ? CFX_CSSFontStyle::Italic
                                           : CFX_CSSFontStyle::Normal);
-    pStyle->SetFontWeight(font->IsBold() ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL);
+    pStyle->SetFontWeight(font->IsBold() ? pdfium::FontWeight::kBold
+                                         : pdfium::FontWeight::kNormal);
     pStyle->SetNumberVerticalAlign(-font->GetBaselineShift());
     fFontSize = font->GetFontSize();
     CFX_CSSLength letterSpacing;
@@ -351,14 +352,17 @@ RetainPtr<CFGAS_GEFont> CXFA_TextParser::GetFont(
 
   if (pStyle) {
     std::optional<WideString> last_family = pStyle->GetLastFontFamily();
-    if (last_family.has_value())
+    if (last_family.has_value()) {
       wsFamily = last_family.value();
+    }
 
     dwStyle = 0;
-    if (pStyle->GetFontWeight() > FXFONT_FW_NORMAL)
+    if (pStyle->GetFontWeight() > pdfium::FontWeight::kNormal) {
       dwStyle |= FXFONT_FORCE_BOLD;
-    if (pStyle->GetFontStyle() == CFX_CSSFontStyle::Italic)
+    }
+    if (pStyle->GetFontStyle() == CFX_CSSFontStyle::Italic) {
       dwStyle |= FXFONT_ITALIC;
+    }
   }
 
   CXFA_FontMgr* pFontMgr = doc->GetApp()->GetXFAFontMgr();
