@@ -16,6 +16,24 @@
       "message": "Hello Lei!\n\nI am trying to solve a TODO set by you, but I got the following error\n\n```\nerror: [chromium-style] Complex constructor has an inlined body.\n```\n\nCan you provide some guidance?\n\nAlso, maybe we can use C++17 here? If using C++17 is feasible, what direction should we move towards?",
       "revId": "87348b154f9d0480fe32163f60bfbe0e404aaefd",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "32883d19_7d56e556",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-03T03:10:11Z",
+      "side": 1,
+      "message": "Thanks for putting together this CL. I don\u0027t have a good definitive answer for you. Otherwise I would have fixed this TODO already. Maybe Chromium\u0027s clang plugin will loosen up someday, but this is a very minor issue and it\u0027s not worth picking a fight with it today. 😊",
+      "parentUuid": "4b2f0494_11d17f01",
+      "revId": "87348b154f9d0480fe32163f60bfbe0e404aaefd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ],
   "submitRequirementResults": [
