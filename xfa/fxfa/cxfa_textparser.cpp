@@ -345,9 +345,9 @@ RetainPtr<CFGAS_GEFont> CXFA_TextParser::GetFont(
   if (font) {
     wsFamily = font->GetTypeface();
     if (font->IsBold())
-      dwStyle |= FXFONT_FORCE_BOLD;
+      dwStyle |= pdfium::FontStyle::kForceBold;
     if (font->IsItalic())
-      dwStyle |= FXFONT_FORCE_BOLD;
+      dwStyle |= pdfium::FontStyle::kForceBold;
   }
 
   if (pStyle) {
@@ -358,10 +358,10 @@ RetainPtr<CFGAS_GEFont> CXFA_TextParser::GetFont(
 
     dwStyle = 0;
     if (pStyle->GetFontWeight() > pdfium::FontWeight::kNormal) {
-      dwStyle |= FXFONT_FORCE_BOLD;
+      dwStyle |= pdfium::FontStyle::kForceBold;
     }
     if (pStyle->GetFontStyle() == CFX_CSSFontStyle::Italic) {
-      dwStyle |= FXFONT_ITALIC;
+      dwStyle |= pdfium::FontStyle::kItalic;
     }
   }
 

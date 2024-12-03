@@ -288,11 +288,11 @@ void CFX_FolderFontInfo::ReportFace(const ByteString& path,
   pInfo->m_Charsets |= CHARSET_FLAG_ANSI;
   pInfo->m_Styles = 0;
   if (style.Contains("Bold"))
-    pInfo->m_Styles |= FXFONT_FORCE_BOLD;
+    pInfo->m_Styles |= pdfium::FontStyle::kForceBold;
   if (style.Contains("Italic") || style.Contains("Oblique"))
-    pInfo->m_Styles |= FXFONT_ITALIC;
+    pInfo->m_Styles |= pdfium::FontStyle::kItalic;
   if (facename.Contains("Serif"))
-    pInfo->m_Styles |= FXFONT_SERIF;
+    pInfo->m_Styles |= pdfium::FontStyle::kSerif;
 
   m_FontList[facename] = std::move(pInfo);
 }

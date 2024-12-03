@@ -33,10 +33,10 @@ RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetFont(
   uint32_t dwStyle = 0;
   // TODO(dsinclair): Why doesn't this check the other flags?
   if (FontStyleIsForceBold(dwFontStyles)) {
-    dwStyle |= FXFONT_FORCE_BOLD;
+    dwStyle |= pdfium::FontStyle::kForceBold;
   }
   if (FontStyleIsItalic(dwFontStyles)) {
-    dwStyle |= FXFONT_ITALIC;
+    dwStyle |= pdfium::FontStyle::kItalic;
   }
   ByteStringView replace_view(pCurFont->pReplaceFont);
   while (!replace_view.IsEmpty()) {

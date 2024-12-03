@@ -164,14 +164,14 @@ const FX_FONTDESCRIPTOR* MatchDefaultFont(
 uint32_t GetGdiFontStyles(const LOGFONTW& lf) {
   uint32_t dwStyles = 0;
   if ((lf.lfPitchAndFamily & 0x03) == FIXED_PITCH)
-    dwStyles |= FXFONT_FIXED_PITCH;
+    dwStyles |= pdfium::FontStyle::kFixedPitch;
   uint8_t nFamilies = lf.lfPitchAndFamily & 0xF0;
   if (nFamilies == FF_ROMAN)
-    dwStyles |= FXFONT_SERIF;
+    dwStyles |= pdfium::FontStyle::kSerif;
   if (nFamilies == FF_SCRIPT)
-    dwStyles |= FXFONT_SCRIPT;
+    dwStyles |= pdfium::FontStyle::kScript;
   if (lf.lfCharSet == SYMBOL_CHARSET)
-    dwStyles |= FXFONT_SYMBOLIC;
+    dwStyles |= pdfium::FontStyle::kSymbolic;
   return dwStyles;
 }
 
@@ -458,26 +458,26 @@ std::vector<WideString> GetNames(pdfium::span<const uint8_t> name_table) {
 uint32_t GetFlags(const RetainPtr<CFX_Face>& face) {
   uint32_t flags = 0;
   if (face->IsBold()) {
-    flags |= FXFONT_FORCE_BOLD;
+    flags |= pdfium::FontStyle::kForceBold;
   }
   if (face->IsItalic()) {
-    flags |= FXFONT_ITALIC;
+    flags |= pdfium::FontStyle::kItalic;
   }
   if (face->IsFixedWidth()) {
-    flags |= FXFONT_FIXED_PITCH;
+    flags |= pdfium::FontStyle::kFixedPitch;
   }
 
   std::optional<std::array<uint32_t, 2>> code_page_range =
       face->GetOs2CodePageRange();
   if (code_page_range.has_value() && (code_page_range.value()[0] & (1 << 31))) {
-    flags |= FXFONT_SYMBOLIC;
+    flags |= pdfium::FontStyle::kSymbolic;
   }
 
   std::optional<std::array<uint8_t, 2>> panose = face->GetOs2Panose();
   if (panose.has_value() && panose.value()[0] == 2) {
     uint8_t serif = panose.value()[1];
     if ((serif > 1 && serif < 10) || serif > 13) {
-      flags |= FXFONT_SERIF;
+      flags |= pdfium::FontStyle::kSerif;
     }
   }
   return flags;

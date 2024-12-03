@@ -41,15 +41,15 @@ void* CFX_AndroidFontInfo::MapFont(int weight,
 
   uint32_t dwStyle = 0;
   if (weight >= 700)
-    dwStyle |= FXFONT_FORCE_BOLD;
+    dwStyle |= pdfium::FontStyle::kForceBold;
   if (bItalic)
-    dwStyle |= FXFONT_ITALIC;
+    dwStyle |= pdfium::FontStyle::kItalic;
   if (FontFamilyIsFixedPitch(pitch_family))
-    dwStyle |= FXFONT_FIXED_PITCH;
+    dwStyle |= pdfium::FontStyle::kFixedPitch;
   if (FontFamilyIsScript(pitch_family))
-    dwStyle |= FXFONT_SCRIPT;
+    dwStyle |= pdfium::FontStyle::kScript;
   if (FontFamilyIsRoman(pitch_family))
-    dwStyle |= FXFONT_SERIF;
+    dwStyle |= pdfium::FontStyle::kSerif;
   return m_pFontMgr->CreateFont(face.AsStringView(), charset, dwStyle);
 }
 

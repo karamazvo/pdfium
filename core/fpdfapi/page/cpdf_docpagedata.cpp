@@ -106,19 +106,19 @@ int CalculateFlags(bool bold,
                    bool symbolic) {
   int flags = 0;
   if (bold)
-    flags |= FXFONT_FORCE_BOLD;
+    flags |= pdfium::FontStyle::kForceBold;
   if (italic)
-    flags |= FXFONT_ITALIC;
+    flags |= pdfium::FontStyle::kItalic;
   if (fixedPitch)
-    flags |= FXFONT_FIXED_PITCH;
+    flags |= pdfium::FontStyle::kFixedPitch;
   if (serif)
-    flags |= FXFONT_SERIF;
+    flags |= pdfium::FontStyle::kSerif;
   if (script)
-    flags |= FXFONT_SCRIPT;
+    flags |= pdfium::FontStyle::kScript;
   if (symbolic)
-    flags |= FXFONT_SYMBOLIC;
+    flags |= pdfium::FontStyle::kSymbolic;
   else
-    flags |= FXFONT_NONSYMBOLIC;
+    flags |= pdfium::FontStyle::kNonSymbolic;
   return flags;
 }
 
