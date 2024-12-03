@@ -1,6 +1,6 @@
 // Copyright 2016 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+// found in the LICENSE file.f
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
@@ -768,27 +768,21 @@ void CPVT_VariableText::Rearrange(const CPVT_WordRange& PlaceRange) {
 }
 
 float CPVT_VariableText::GetAutoFontSize() {
-  int32_t nTotal = sizeof(kFontSizeSteps) / sizeof(uint8_t);
-  if (IsMultiLine())
+  int32_t nTotal = kFontSizeSteps.size();
+  if (IsMultiLine()) {
     nTotal /= 4;
-  if (nTotal <= 0)
-    return 0;
-  if (GetPlateWidth() <= 0)
-    return 0;
-
-  // TODO(tsepez): replace with std::lower_bound().
-  int32_t nLeft = 0;
-  int32_t nRight = nTotal - 1;
-  int32_t nMid = nTotal / 2;
-  while (nLeft <= nRight) {
-    if (IsBigger(kFontSizeSteps[nMid])) {
-      nRight = nMid - 1;
-    } else {
-      nLeft = nMid + 1;
-    }
-    nMid = (nLeft + nRight) / 2;
   }
-  return static_cast<float>(kFontSizeSteps[nMid]);
+  if (nTotal <= 0 || GetPlateWidth() <= 0) {
+    return 0;
+  }
+  auto it =
+      std::lower_bound(kFontSizeSteps.begin(), kFontSizeSteps.begin() + nTotal,
+                       GetPlateWidth(), [](uint8_t fontSize, float plateWidth) {
+                         return static_cast<float>(fontSize) < plateWidth;
+                       });
+  return it == kFontSizeSteps.begin() + nTotal
+             ? static_cast<float>(kFontSizeSteps[nTotal - 1])
+             : static_cast<float>(*it);
 }
 
 bool CPVT_VariableText::IsBigger(float fFontSize) const {
