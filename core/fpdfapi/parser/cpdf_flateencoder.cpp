@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/parser/cpdf_flateencoder.h"
 
+#include <utility>
+
 #include "constants/stream_dict_common.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
@@ -21,7 +23,11 @@ CPDF_FlateEncoder::CPDF_FlateEncoder(RetainPtr<const CPDF_Stream> pStream,
                                      bool bFlateEncode)
     : m_pAcc(pdfium::MakeRetain<CPDF_StreamAcc>(pStream)) {
   m_pAcc->LoadAllDataRaw();
+  Init(pStream, bFlateEncode);
+}
 
+void CPDF_FlateEncoder::Init(RetainPtr<const CPDF_Stream> pStream,
+                             bool bFlateEncode) {
   bool bHasFilter = pStream->HasFilter();
   if (bHasFilter && !bFlateEncode) {
     auto pDestAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
@@ -33,15 +39,15 @@ CPDF_FlateEncoder::CPDF_FlateEncoder(RetainPtr<const CPDF_Stream> pStream,
     DCHECK(!m_pDict);
     return;
   }
-  if (bHasFilter || !bFlateEncode) {
+  auto EncodedData = FlateModule::Encode(m_pAcc->GetSpan());
+  if (bHasFilter || !bFlateEncode || EncodedData.empty()) {
     m_Data = m_pAcc->GetSpan();
     m_pDict = pStream->GetDict();
     DCHECK(!m_pClonedDict);
     return;
   }
 
-  // TODO(thestig): Move to Init() and check for empty return value?
-  m_Data = FlateModule::Encode(m_pAcc->GetSpan());
+  m_Data = std::move(EncodedData);
   m_pClonedDict = ToDictionary(pStream->GetDict()->Clone());
   m_pClonedDict->SetNewFor<CPDF_Number>(
       "Length", pdfium::checked_cast<int>(GetSpan().size()));

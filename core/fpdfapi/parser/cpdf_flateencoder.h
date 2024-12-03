@@ -40,6 +40,8 @@ class CPDF_FlateEncoder {
   // Returns |m_pClonedDict| if it is valid. Otherwise returns |m_pDict|.
   const CPDF_Dictionary* GetDict() const;
 
+  void Init(RetainPtr<const CPDF_Stream> pStream, bool bFlateEncode);
+
   // Must outlive `m_Data`.
   RetainPtr<CPDF_StreamAcc> const m_pAcc;
 
