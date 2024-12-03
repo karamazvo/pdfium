@@ -34,6 +34,24 @@
       "parentUuid": "d9efe6d2_23b49b75",
       "revId": "8d82b8daa76a3a7194492fab8ffeb84206caa5c1",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0f796e11_57031ed2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2024-12-03T22:01:48Z",
+      "side": 1,
+      "message": "It looks like the leaked alloc is from the call to `sfnt-\u003eload_face`. It looks like the issue is that then calling `sfnt-\u003eload_cmap` just sets things and assumes that the cmap hasn\u0027t already been loaded.",
+      "parentUuid": "d9efe6d2_23b49b75",
+      "revId": "8d82b8daa76a3a7194492fab8ffeb84206caa5c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
