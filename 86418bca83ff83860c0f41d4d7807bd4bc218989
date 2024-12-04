@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9c59ef34_264da169",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-04T19:06:42Z",
+      "side": 1,
+      "message": "Please try to use common git commit description formatting.\n\n```\nSubject line\n[blank line here]\nDetailed description. Wrap at 72 columns when possible.\n```",
+      "revId": "86418bca83ff83860c0f41d4d7807bd4bc218989",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "252719dc_10601b2c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-04T19:06:42Z",
+      "side": 1,
+      "message": "\"refactoring\"",
+      "range": {
+        "startLine": 10,
+        "startChar": 22,
+        "endLine": 10,
+        "endChar": 31
+      },
+      "revId": "86418bca83ff83860c0f41d4d7807bd4bc218989",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c72ee091_0d4d0172",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-04T19:06:42Z",
+      "side": 1,
+      "message": "Welcome back to PDFium!",
+      "revId": "86418bca83ff83860c0f41d4d7807bd4bc218989",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
