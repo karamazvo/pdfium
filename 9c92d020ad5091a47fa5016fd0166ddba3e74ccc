@@ -133,6 +133,30 @@
       },
       "revId": "9c92d020ad5091a47fa5016fd0166ddba3e74ccc",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5f4d5b38_4c4354bc",
+        "filename": "core/fpdfapi/parser/cpdf_flateencoder.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-04T02:40:55Z",
+      "side": 1,
+      "message": "Yes. The goal is to eventually switch away from Hungarian notation. Thus the suggestion to not add more.",
+      "parentUuid": "6e8d2cbf_226e322c",
+      "range": {
+        "startLine": 42,
+        "startChar": 7,
+        "endLine": 42,
+        "endChar": 18
+      },
+      "revId": "9c92d020ad5091a47fa5016fd0166ddba3e74ccc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ],
   "submitRequirementResults": [
