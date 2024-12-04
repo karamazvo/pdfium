@@ -70,6 +70,24 @@
       "parentUuid": "0f796e11_57031ed2",
       "revId": "8d82b8daa76a3a7194492fab8ffeb84206caa5c1",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "00bd07d0_f6f0e8b4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2024-12-04T01:16:46Z",
+      "side": 1,
+      "message": "Reproduced with https://skia-review.googlesource.com/c/skia/+/926597 and it appears there are fuzzer bugs found for this, like b/377736119 but they haven\u0027t been routed. Not sure why there isn\u0027t a Chromium bot that hasn\u0027t picked up on this (`linux_chromium_asan_rel_ng` and `Linux ASan LSan Tests (1)` appear to be passing). I will take a look at how to get this fixed upstream.",
+      "parentUuid": "7f34af25_7359e311",
+      "revId": "8d82b8daa76a3a7194492fab8ffeb84206caa5c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
