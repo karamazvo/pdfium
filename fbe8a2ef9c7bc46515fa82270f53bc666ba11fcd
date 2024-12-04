@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e1b3e768_21159e71",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 4829,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-04T22:16:57Z",
+      "side": 1,
+      "message": "It would be clearer to pass in `nullptr` directly in some of the cases here as well. Is std::vector::data() actually nullptr, when size() is 0? Probably? But one would probably need to look up the C++ STL documentation or manually test to confirm, and that\u0027s more work than necessary.",
+      "revId": "fbe8a2ef9c7bc46515fa82270f53bc666ba11fcd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "738f0751_1b7f8811",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 4832,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-04T22:16:57Z",
+      "side": 1,
+      "message": "These are similarly not useful, as the API does not have the capability to change the vector size at all.",
+      "revId": "fbe8a2ef9c7bc46515fa82270f53bc666ba11fcd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "41e42609_d779bf14",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 4833,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-04T22:16:57Z",
+      "side": 1,
+      "message": "Maybe also use 12345 or some other arbitrary value to test the API did not touch this variable?",
+      "revId": "fbe8a2ef9c7bc46515fa82270f53bc666ba11fcd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "16b75e22_e2b7b7cf",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 564,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-04T22:16:57Z",
+      "side": 1,
+      "message": "It\u0027s probably fine to skip this part of the check, as GetIccProfile() would fail anyway.",
+      "revId": "fbe8a2ef9c7bc46515fa82270f53bc666ba11fcd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ab473487_4ea8fc67",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 574,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-04T22:16:57Z",
+      "side": 1,
+      "message": "Looking at CPDF_IccProfile, I don\u0027t think it can return nullptr. Thus this conditional never evaluates to true.",
+      "revId": "fbe8a2ef9c7bc46515fa82270f53bc666ba11fcd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4bc250a9_e54c1ea3",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 578,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-04T22:16:57Z",
+      "side": 1,
+      "message": "Just move line 585 above this line, and use the span\u0027s size here.\n\nCPDF_StreamAcc::GetSize() internally calls GetSpan() and destroys the span right after. Although span creation is cheap, taking this suggestion saves a span creation.",
+      "revId": "fbe8a2ef9c7bc46515fa82270f53bc666ba11fcd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
