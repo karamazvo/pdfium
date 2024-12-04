@@ -30,24 +30,23 @@ CPDF_FlateEncoder::CPDF_FlateEncoder(RetainPtr<const CPDF_Stream> pStream,
     m_Data = m_pAcc->GetSpan();
     m_pClonedDict = ToDictionary(pStream->GetDict()->Clone());
     m_pClonedDict->RemoveFor("Filter");
-    DCHECK(!m_pDict);
+    CHECK(!m_pDict);
     return;
   }
   if (bHasFilter || !bFlateEncode) {
     m_Data = m_pAcc->GetSpan();
     m_pDict = pStream->GetDict();
-    DCHECK(!m_pClonedDict);
+    CHECK(!m_pClonedDict);
     return;
   }
 
-  // TODO(thestig): Move to Init() and check for empty return value?
   m_Data = FlateModule::Encode(m_pAcc->GetSpan());
   m_pClonedDict = ToDictionary(pStream->GetDict()->Clone());
   m_pClonedDict->SetNewFor<CPDF_Number>(
       "Length", pdfium::checked_cast<int>(GetSpan().size()));
   m_pClonedDict->SetNewFor<CPDF_Name>("Filter", "FlateDecode");
   m_pClonedDict->RemoveFor(pdfium::stream::kDecodeParms);
-  DCHECK(!m_pDict);
+  CHECK(!m_pDict);
 }
 
 CPDF_FlateEncoder::~CPDF_FlateEncoder() = default;
@@ -60,8 +59,8 @@ void CPDF_FlateEncoder::UpdateLength(size_t size) {
     m_pClonedDict = ToDictionary(m_pDict->Clone());
     m_pDict.Reset();
   }
-  DCHECK(m_pClonedDict);
-  DCHECK(!m_pDict);
+  CHECK(m_pClonedDict);
+  CHECK(!m_pDict);
   m_pClonedDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(size));
 }
 
@@ -72,7 +71,7 @@ bool CPDF_FlateEncoder::WriteDictTo(IFX_ArchiveStream* archive,
 
 const CPDF_Dictionary* CPDF_FlateEncoder::GetDict() const {
   if (m_pClonedDict) {
-    DCHECK(!m_pDict);
+    CHECK(!m_pDict);
     return m_pClonedDict.Get();
   }
   return m_pDict.Get();
