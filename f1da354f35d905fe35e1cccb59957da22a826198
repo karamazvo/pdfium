@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "881f00a3_31160e2e",
+        "filename": "xfa/fxfa/cxfa_textparser.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 350,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-04T18:56:24Z",
+      "side": 0,
+      "message": "I wonder if this should be `FXFONT_ITALIC`. A question for another day.",
+      "revId": "f1da354f35d905fe35e1cccb59957da22a826198",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
