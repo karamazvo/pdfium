@@ -16,6 +16,24 @@
       "message": "I think you misunderstood my comment. I was suggest `CHECK(!m_Data.empty();` here. Not upgrade DCHECK() to CHECK().",
       "revId": "cf5058771fdc88d0237f0bb73f0d1349bc75f71e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0cd2354c_d49fb289",
+        "filename": "core/fpdfapi/parser/cpdf_flateencoder.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 3686837
+      },
+      "writtenOn": "2024-12-04T03:27:55Z",
+      "side": 1,
+      "message": "I noticed that\n```\nabsl::variant\u003cpdfium::raw_span\u003cconst uint8_t\u003e, DataVector\u003cuint8_t\u003e\u003e m_Data;\n```\n\nIs the following the right direction?\n\n```\n  m_Data \u003d FlateModule::Encode(m_pAcc-\u003eGetSpan());\n  if (auto* span \u003d absl::get_if\u003cpdfium::raw_span\u003cconst uint8_t\u003e\u003e(\u0026m_Data)) {\n    CHECK(!span-\u003eempty());\n  } else if (auto* vector \u003d absl::get_if\u003cDataVector\u003cuint8_t\u003e\u003e(\u0026m_Data)) {\n    CHECK(!vector-\u003eempty());\n  }\n```",
+      "parentUuid": "99b15918_8c6d5a3b",
+      "revId": "cf5058771fdc88d0237f0bb73f0d1349bc75f71e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
