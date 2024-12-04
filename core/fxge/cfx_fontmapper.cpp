@@ -262,9 +262,9 @@ bool ParseStyles(const ByteString& style_str,
     if (FontStyleIsForceBold(parsed_style)) {
       // If we're already bold, then we're double bold, use special weight.
       if (FontStyleIsForceBold(*style)) {
-        *weight = FXFONT_FW_BOLD_BOLD;
+        *weight = pdfium::kFontWeightExtraBold;
       } else {
-        *weight = FXFONT_FW_BOLD;
+        *weight = pdfium::kFontWeightBold;
         *style |= FXFONT_FORCE_BOLD;
       }
 
@@ -552,7 +552,8 @@ RetainPtr<CFX_Face> CFX_FontMapper::UseExternalSubst(
 
   subst_font->m_Family = face_name;
   subst_font->m_Charset = charset;
-  int face_weight = face->IsBold() ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL;
+  int face_weight =
+      face->IsBold() ? pdfium::kFontWeightBold : pdfium::kFontWeightNormal;
   if (weight != face_weight)
     subst_font->m_Weight = weight;
   if (is_italic && !face->IsItalic()) {
@@ -573,10 +574,10 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
                                                   FX_CodePage code_page,
                                                   CFX_SubstFont* subst_font) {
   if (weight == 0)
-    weight = FXFONT_FW_NORMAL;
+    weight = pdfium::kFontWeightNormal;
 
   if (!(flags & FXFONT_USEEXTERNATTR)) {
-    weight = FXFONT_FW_NORMAL;
+    weight = pdfium::kFontWeightNormal;
     italic_angle = 0;
   }
   const ByteString subst_name = GetSubstName(name, is_truetype);
@@ -640,8 +641,9 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
   }
 
   const int old_weight = weight;
-  if (FontStyleIsForceBold(nStyle))
-    weight = FXFONT_FW_BOLD;
+  if (FontStyleIsForceBold(nStyle)) {
+    weight = pdfium::kFontWeightBold;
+  }
 
   if (ParseStyles(style, &is_style_available, &weight, &nStyle)) {
     family = subst_name;
@@ -678,14 +680,14 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
     } else {
       subst_font->m_bSubstCJK = true;
       if (nStyle)
-        subst_font->m_WeightCJK = nStyle ? weight : FXFONT_FW_NORMAL;
+        subst_font->m_WeightCJK = nStyle ? weight : pdfium::kFontWeightNormal;
       if (FontStyleIsItalic(nStyle))
         subst_font->m_bItalicCJK = true;
     }
   } else {
     italic_angle = 0;
     if (nStyle == FXFONT_NORMAL)
-      weight = FXFONT_FW_NORMAL;
+      weight = pdfium::kFontWeightNormal;
   }
 
   if (!match.IsEmpty() || base_font < kNumStandardFonts) {
