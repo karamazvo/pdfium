@@ -20,6 +20,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "aa819b38_b1ab318d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 3686837
+      },
+      "writtenOn": "2024-12-04T02:29:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6655fe98_2afbaa4b",
+      "revId": "9c92d020ad5091a47fa5016fd0166ddba3e74ccc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "d842da57_f31d0b69",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 2
@@ -71,6 +89,48 @@
       "writtenOn": "2024-12-03T23:27:16Z",
       "side": 1,
       "message": "Please keep in mind that I added the TODO 8+ years ago. Looking at this in a fresh light, I wonder if FlateModule::Encode() can actually fail and return an empty result. Looking around, in Chromium\u0027s gpu/command_buffer/service/memory_program_cache.cc, their code also returns an empty vector on compression failure, but the comment there says it should never happen.",
+      "revId": "9c92d020ad5091a47fa5016fd0166ddba3e74ccc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ba8451d3_b028c9f6",
+        "filename": "core/fpdfapi/parser/cpdf_flateencoder.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 3686837
+      },
+      "writtenOn": "2024-12-04T02:29:14Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "c3284aed_02f61dc0",
+      "revId": "9c92d020ad5091a47fa5016fd0166ddba3e74ccc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6e8d2cbf_226e322c",
+        "filename": "core/fpdfapi/parser/cpdf_flateencoder.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 3686837
+      },
+      "writtenOn": "2024-12-04T02:29:14Z",
+      "side": 1,
+      "message": "I see a lot of code still using Hungarian notation, I may try to modify them in subsequent CLs.",
+      "parentUuid": "d6b48dab_afe8aa88",
+      "range": {
+        "startLine": 42,
+        "startChar": 7,
+        "endLine": 42,
+        "endChar": 18
+      },
       "revId": "9c92d020ad5091a47fa5016fd0166ddba3e74ccc",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
