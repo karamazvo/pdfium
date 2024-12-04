@@ -34,6 +34,24 @@
       "parentUuid": "881f00a3_31160e2e",
       "revId": "f1da354f35d905fe35e1cccb59957da22a826198",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3368d5ea_db3d1f3a",
+        "filename": "xfa/fxfa/cxfa_textparser.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 350,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-04T22:48:39Z",
+      "side": 0,
+      "message": "I\u0027ll fix this in a follow-up. See https://pdfium-review.googlesource.com/c/pdfium/+/15071/5/xfa/fxfa/cxfa_textparser.cpp",
+      "parentUuid": "906397fc_c6ac775a",
+      "revId": "f1da354f35d905fe35e1cccb59957da22a826198",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
