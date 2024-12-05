@@ -16,6 +16,24 @@
       "message": "Also test FPDFImageObj_GetIccProfileDataDecoded() will all nullptrs, just to cover that case fails too.",
       "revId": "371ea965c28d691662d1472b71d14b07b916f8b7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "15cbc943_06363d1e",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 4830,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-12-05T19:18:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ea73f4e9_31a96eb2",
+      "revId": "371ea965c28d691662d1472b71d14b07b916f8b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
