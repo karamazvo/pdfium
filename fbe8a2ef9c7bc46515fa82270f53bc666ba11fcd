@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d54026db_9b9a1cb7",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 4829,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-12-05T02:11:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e1b3e768_21159e71",
+      "revId": "fbe8a2ef9c7bc46515fa82270f53bc666ba11fcd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "738f0751_1b7f8811",
@@ -31,6 +49,24 @@
       "writtenOn": "2024-12-04T22:16:57Z",
       "side": 1,
       "message": "These are similarly not useful, as the API does not have the capability to change the vector size at all.",
+      "revId": "fbe8a2ef9c7bc46515fa82270f53bc666ba11fcd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "727fe00d_3348c7cc",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 4832,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-12-05T02:11:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "738f0751_1b7f8811",
       "revId": "fbe8a2ef9c7bc46515fa82270f53bc666ba11fcd",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -52,6 +88,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b656bc97_e7a5000a",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 4833,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-12-05T02:11:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "41e42609_d779bf14",
+      "revId": "fbe8a2ef9c7bc46515fa82270f53bc666ba11fcd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "16b75e22_e2b7b7cf",
@@ -65,6 +119,24 @@
       "writtenOn": "2024-12-04T22:16:57Z",
       "side": 1,
       "message": "It\u0027s probably fine to skip this part of the check, as GetIccProfile() would fail anyway.",
+      "revId": "fbe8a2ef9c7bc46515fa82270f53bc666ba11fcd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3eb84275_efa3cff7",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 564,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-12-05T02:11:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "16b75e22_e2b7b7cf",
       "revId": "fbe8a2ef9c7bc46515fa82270f53bc666ba11fcd",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -86,6 +158,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0582b169_a6bf31a3",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 574,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-12-05T02:11:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ab473487_4ea8fc67",
+      "revId": "fbe8a2ef9c7bc46515fa82270f53bc666ba11fcd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4bc250a9_e54c1ea3",
@@ -99,6 +189,24 @@
       "writtenOn": "2024-12-04T22:16:57Z",
       "side": 1,
       "message": "Just move line 585 above this line, and use the span\u0027s size here.\n\nCPDF_StreamAcc::GetSize() internally calls GetSpan() and destroys the span right after. Although span creation is cheap, taking this suggestion saves a span creation.",
+      "revId": "fbe8a2ef9c7bc46515fa82270f53bc666ba11fcd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dab1025c_8e4cbe5e",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 578,
+      "author": {
+        "id": 3737650
+      },
+      "writtenOn": "2024-12-05T02:11:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4bc250a9_e54c1ea3",
       "revId": "fbe8a2ef9c7bc46515fa82270f53bc666ba11fcd",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
