@@ -41,6 +41,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ec22236a_32152d82",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 576,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-06T18:47:00Z",
+      "side": 1,
+      "message": "Ideally, the API returns optional\u003csize_t\u003e, but this is C. So here we are.",
+      "parentUuid": "cba0c7eb_ce1052b3",
+      "range": {
+        "startLine": 576,
+        "startChar": 16,
+        "endLine": 576,
+        "endChar": 37
+      },
+      "revId": "5252ff81e05ead98769ae84081ca8353f04414ea",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3acec126_81455939",
