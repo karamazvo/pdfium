@@ -460,9 +460,6 @@ static OPJ_BOOL opj_pi_next_rpcl(opj_pi_iterator_t * pi)
                                                  ((OPJ_UINT64)comp->dy << levelno)), res->pdy)
                            - opj_uint_floordivpow2(try0, res->pdy);
                     pi->precno = prci + prcj * res->pw;
-                    if (pi->precno >= res->pw * res->ph) {
-                      return OPJ_FALSE;
-                    }
                     for (pi->layno = pi->poc.layno0; pi->layno < pi->poc.layno1; pi->layno++) {
                         index = pi->layno * pi->step_l + pi->resno * pi->step_r + pi->compno *
                                 pi->step_c + pi->precno * pi->step_p;
@@ -597,9 +594,6 @@ static OPJ_BOOL opj_pi_next_pcrl(opj_pi_iterator_t * pi)
                                                  ((OPJ_UINT64)comp->dy << levelno)), res->pdy)
                            - opj_uint_floordivpow2(try0, res->pdy);
                     pi->precno = prci + prcj * res->pw;
-                    if (pi->precno >= res->pw * res->ph) {
-                      return OPJ_FALSE;
-                    }
                     for (pi->layno = pi->poc.layno0; pi->layno < pi->poc.layno1; pi->layno++) {
                         index = pi->layno * pi->step_l + pi->resno * pi->step_r + pi->compno *
                                 pi->step_c + pi->precno * pi->step_p;
@@ -732,9 +726,6 @@ static OPJ_BOOL opj_pi_next_cprl(opj_pi_iterator_t * pi)
                                                  ((OPJ_UINT64)comp->dy << levelno)), res->pdy)
                            - opj_uint_floordivpow2(try0, res->pdy);
                     pi->precno = (OPJ_UINT32)(prci + prcj * res->pw);
-                    if (pi->precno >= res->pw * res->ph) {
-                      return OPJ_FALSE;
-                    }
                     for (pi->layno = pi->poc.layno0; pi->layno < pi->poc.layno1; pi->layno++) {
                         index = pi->layno * pi->step_l + pi->resno * pi->step_r + pi->compno *
                                 pi->step_c + pi->precno * pi->step_p;
