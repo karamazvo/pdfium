@@ -243,7 +243,7 @@ void opj_tcd_rateallocate_fixed(opj_tcd_t *tcd)
 /* ----------------------------------------------------------------------- */
 
 /** Returns OPJ_TRUE if the layer allocation is unchanged w.r.t to the previous
- * invokation with a different threshold */
+ * invocation with a different threshold */
 static
 OPJ_BOOL opj_tcd_makelayer(opj_tcd_t *tcd,
                            OPJ_UINT32 layno,
@@ -1162,9 +1162,6 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
                     l_current_precinct->ch = (OPJ_UINT32)((brcblkyend - tlcblkystart) >>
                                                           cblkheightexpn);
 
-                    if (l_current_precinct->cw && ((OPJ_UINT32)-1) / l_current_precinct->cw < l_current_precinct->ch) {
-                        return OPJ_FALSE;
-                    }
                     l_nb_code_blocks = l_current_precinct->cw * l_current_precinct->ch;
                     /*fprintf(stderr, "\t\t\t\t precinct_cw = %d x recinct_ch = %d\n",l_current_precinct->cw, l_current_precinct->ch);      */
                     if ((((OPJ_UINT32) - 1) / (OPJ_UINT32)sizeof_block) <
@@ -2869,12 +2866,12 @@ OPJ_BOOL opj_tcd_is_subband_area_of_interest(opj_tcd_t *tcd,
     return intersects;
 }
 
-/** Returns whether a tile componenent is fully decoded, taking into account
+/** Returns whether a tile component is fully decoded, taking into account
  * p_tcd->win_* members.
  *
  * @param p_tcd    TCD handle.
  * @param compno Component number
- * @return OPJ_TRUE whether the tile componenent is fully decoded
+ * @return OPJ_TRUE whether the tile component is fully decoded
  */
 static OPJ_BOOL opj_tcd_is_whole_tilecomp_decoding(opj_tcd_t *p_tcd,
         OPJ_UINT32 compno)
