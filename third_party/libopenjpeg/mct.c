@@ -37,15 +37,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(__SSE__) && !defined(_M_IX86) && !defined(__i386)
-#define USE_SSE
+#ifdef __SSE__
 #include <xmmintrin.h>
 #endif
-#if defined(__SSE2__) && !defined(_M_IX86) && !defined(__i386)
-#define USE_SSE2
+#ifdef __SSE2__
 #include <emmintrin.h>
 #endif
-#if defined(__SSE4_1__) && !defined(_M_IX86) && !defined(__i386)
+#ifdef __SSE4_1__
 #include <smmintrin.h>
 #endif
 
@@ -74,7 +72,7 @@ const OPJ_FLOAT64 * opj_mct_get_mct_norms_real()
 /* <summary> */
 /* Forward reversible MCT. */
 /* </summary> */
-#ifdef USE_SSE2
+#ifdef __SSE2__
 void opj_mct_encode(
     OPJ_INT32* OPJ_RESTRICT c0,
     OPJ_INT32* OPJ_RESTRICT c1,
@@ -143,7 +141,7 @@ void opj_mct_encode(
 /* <summary> */
 /* Inverse reversible MCT. */
 /* </summary> */
-#ifdef USE_SSE2
+#ifdef __SSE2__
 void opj_mct_decode(
     OPJ_INT32* OPJ_RESTRICT c0,
     OPJ_INT32* OPJ_RESTRICT c1,
@@ -218,7 +216,7 @@ void opj_mct_encode_real(
     OPJ_SIZE_T n)
 {
     OPJ_SIZE_T i;
-#ifdef USE_SSE
+#ifdef __SSE__
     const __m128 YR = _mm_set1_ps(0.299f);
     const __m128 YG = _mm_set1_ps(0.587f);
     const __m128 YB = _mm_set1_ps(0.114f);
@@ -288,7 +286,7 @@ void opj_mct_decode_real(
     OPJ_SIZE_T n)
 {
     OPJ_SIZE_T i;
-#ifdef USE_SSE
+#ifdef __SSE__
     __m128 vrv, vgu, vgv, vbu;
     vrv = _mm_set1_ps(1.402f);
     vgu = _mm_set1_ps(0.34413f);
