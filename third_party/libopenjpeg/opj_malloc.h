@@ -33,11 +33,6 @@
 #define OPJ_MALLOC_H
 
 #include <stddef.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
 @file opj_malloc.h
 @brief Internal functions
@@ -73,6 +68,7 @@ Allocate memory aligned to a 16 byte boundary
 @return Returns a void pointer to the allocated space, or NULL if there is insufficient memory available
 */
 void * opj_aligned_malloc(size_t size);
+void * opj_aligned_realloc(void *ptr, size_t size);
 void opj_aligned_free(void* ptr);
 
 /**
@@ -81,6 +77,7 @@ Allocate memory aligned to a 32 byte boundary
 @return Returns a void pointer to the allocated space, or NULL if there is insufficient memory available
 */
 void * opj_aligned_32_malloc(size_t size);
+void * opj_aligned_32_realloc(void *ptr, size_t size);
 
 /**
 Reallocate memory blocks.
@@ -105,8 +102,5 @@ void opj_free(void * m);
 
 /*@}*/
 
-#ifdef __cplusplus
-}  // extern "C"
-#endif
-
 #endif /* OPJ_MALLOC_H */
+
