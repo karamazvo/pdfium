@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7eecac25_85d40db7",
+        "filename": "core/fxcrt/retain_ptr.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-10T19:01:27Z",
+      "side": 1,
+      "message": "Can this be stddef.h instead to match stdint.h?",
+      "revId": "cd67146c22b2d55cf439c9007d4487475a24adaa",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
