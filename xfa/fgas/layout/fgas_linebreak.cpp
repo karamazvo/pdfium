@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fgas/layout/fgas_linebreak.h"
+#include <stddef.h>
 
 #include <array>
 #include <iterator>
@@ -12,6 +12,7 @@
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_unicode.h"
+#include "xfa/fgas/layout/fgas_linebreak.h"
 
 namespace {
 
