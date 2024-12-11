@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fa4fa2f7_acf190af",
+        "filename": "third_party/agg23/agg_vcgen_dash.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-12-11T23:47:50Z",
+      "side": 1,
+      "message": "Should we handle overflow?",
+      "range": {
+        "startLine": 66,
+        "startChar": 10,
+        "endLine": 66,
+        "endChar": 30
+      },
+      "revId": "71c95f3d25d9f5284bc17a3962c6e717f6890ab5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
