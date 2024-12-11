@@ -35,3 +35,4 @@ shadow variable.
 0014-ubsan-render-line.patch: Fix some integer overflows in
 outline_aa::render_line().
 0015-include-string-h.patch: IWYU for <string.h>
+0016-refactor-calc-dash-start.patch: Refactor agg:vcgen_dash::calc_dash_start().

@@ -41,7 +41,7 @@ public:
     vcgen_dash();
     void remove_all_dashes();
     void add_dash(float dash_len, float gap_len);
-    void dash_start(float ds);
+    void dash_start(float dash_start);
     void shorten(float s)
     {
         m_shorten = s;
@@ -57,7 +57,7 @@ public:
 private:
     vcgen_dash(const vcgen_dash&);
     const vcgen_dash& operator = (const vcgen_dash&);
-    void calc_dash_start(float ds);
+    void calc_dash_start(float dash_start);
     float     m_dashes[max_dashes];
     float		m_total_dash_len;
     unsigned        m_num_dashes;

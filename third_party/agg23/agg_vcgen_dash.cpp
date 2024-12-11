@@ -56,30 +56,27 @@ void vcgen_dash::add_dash(float dash_len, float gap_len)
         m_dashes[m_num_dashes++] = gap_len;
     }
 }
-void vcgen_dash::dash_start(float ds)
+void vcgen_dash::dash_start(float dash_start)
 {
-    m_dash_start = ds;
-    calc_dash_start(fabs(ds));
+  m_dash_start = dash_start;
+  calc_dash_start(fabs(dash_start));
 }
-void vcgen_dash::calc_dash_start(float ds)
+void vcgen_dash::calc_dash_start(float dash_start)
 {
-    DCHECK_GT(m_total_dash_len, 0);
-    ds -= floor(ds / m_total_dash_len) * m_total_dash_len;
-    m_curr_dash = 0;
-    m_curr_dash_start = 0;
-    while(ds > 0) {
-        if(ds > m_dashes[m_curr_dash]) {
-            ds -= m_dashes[m_curr_dash];
-            ++m_curr_dash;
-            m_curr_dash_start = 0;
-            if(m_curr_dash >= m_num_dashes) {
-                m_curr_dash = 0;
-            }
-        } else {
-            m_curr_dash_start = ds;
-            ds = 0;
-        }
-    }
+  CHECK_GE(dash_start, 0);
+  DCHECK_GT(m_total_dash_len, 0);
+
+  m_curr_dash = 0;
+
+  dash_start -= floor(dash_start / m_total_dash_len) * m_total_dash_len;
+  float curr_dash_len = m_dashes[m_curr_dash];
+  while (dash_start > curr_dash_len) {
+    dash_start -= curr_dash_len;
+    m_curr_dash = (m_curr_dash + 1) % m_num_dashes;
+    curr_dash_len = m_dashes[m_curr_dash];
+  }
+  CHECK_GE(dash_start, 0);
+  m_curr_dash_start = dash_start;
 }
 void vcgen_dash::remove_all()
 {
