@@ -274,6 +274,7 @@ void RasterizeStroke(agg::rasterizer_scanline_aa* rasterizer,
                      const CFX_GraphStateData* pGraphState,
                      float scale,
                      bool bTextMode) {
+  CHECK_GE(scale, 0);
   agg::line_cap_e cap;
   switch (pGraphState->line_cap()) {
     case CFX_GraphStateData::LineCap::kRound:
