@@ -16,6 +16,24 @@
       "message": "Can this be stddef.h instead to match stdint.h?",
       "revId": "cd67146c22b2d55cf439c9007d4487475a24adaa",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aee0f62e_73da72cc",
+        "filename": "core/fxcrt/retain_ptr.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 6365
+      },
+      "writtenOn": "2024-12-11T02:58:23Z",
+      "side": 1,
+      "message": "No, because this is for std::nullptr_t.",
+      "parentUuid": "7eecac25_85d40db7",
+      "revId": "cd67146c22b2d55cf439c9007d4487475a24adaa",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
