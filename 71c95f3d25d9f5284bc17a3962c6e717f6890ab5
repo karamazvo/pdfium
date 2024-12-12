@@ -63,6 +63,48 @@
       },
       "revId": "71c95f3d25d9f5284bc17a3962c6e717f6890ab5",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0985fe1b_62a18726",
+        "filename": "third_party/agg23/agg_vcgen_dash.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-12-12T00:47:30Z",
+      "side": 1,
+      "message": "Ah, yes. Updated to a solution similar to the CL linked. (The reverse for adding.)",
+      "parentUuid": "e72bdf8c_39be6277",
+      "revId": "71c95f3d25d9f5284bc17a3962c6e717f6890ab5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5917ef23_30fc153b",
+        "filename": "third_party/agg23/agg_vcgen_dash.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2024-12-12T00:47:30Z",
+      "side": 1,
+      "message": "Ack.",
+      "parentUuid": "cb6a0d72_97624a48",
+      "range": {
+        "startLine": 66,
+        "startChar": 10,
+        "endLine": 66,
+        "endChar": 30
+      },
+      "revId": "71c95f3d25d9f5284bc17a3962c6e717f6890ab5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
