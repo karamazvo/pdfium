@@ -8,6 +8,7 @@
 
 #include <math.h>
 #include <stdint.h>
+#include <iostream>
 
 #include <algorithm>
 #include <utility>
@@ -317,6 +318,9 @@ void RasterizeStroke(agg::rasterizer_scanline_aa* rasterizer,
       float off = i * 2 + 1 == dash_array.size() ? on : dash_array[i * 2 + 1];
       off = std::max(off, 0.0f);
       dash.add_dash(on * scale, off * scale);
+      // -0.1 -1
+      std::cout << " dash added: " << (on * scale) << " , " << (off * scale)
+                << std::endl;
     }
     dash.dash_start(pGraphState->dash_phase() * scale);
     using DashStroke = agg::conv_stroke<DashConverter>;
@@ -1163,14 +1167,39 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_Path& path,
   }
   CFX_Matrix matrix1;
   CFX_Matrix matrix2;
+  float scale = 1.0f;
   if (pObject2Device) {
-    matrix1.a = std::max(fabs(pObject2Device->a), fabs(pObject2Device->b));
-    matrix1.d = matrix1.a;
-    matrix2 = CFX_Matrix(
-        pObject2Device->a / matrix1.a, pObject2Device->b / matrix1.a,
-        pObject2Device->c / matrix1.d, pObject2Device->d / matrix1.d, 0, 0);
+    scale = std::max(fabs(pObject2Device->a), fabs(pObject2Device->b));
+    matrix2 =
+        CFX_Matrix(pObject2Device->a / scale, pObject2Device->b / scale,
+                   pObject2Device->c / scale, pObject2Device->d / scale, 0, 0);
 
     matrix1 = *pObject2Device * matrix2.GetInverse();
+    std::cerr << __func__ << std::endl;
+
+    std::cerr << " scale=" << scale << std::endl;
+
+    // [-1 1 -1 1 0 200 ]
+    std::cerr << " matrix1=[" << matrix1.a << ", " << matrix1.b << ", "
+              << matrix1.c << ", " << matrix1.d << ", " << matrix1.e << ", "
+              << matrix1.f << "]" << std::endl;
+
+    // [-1 1 -1 1 0 0]
+    std::cerr << " matrix2=[" << matrix2.a << ", " << matrix2.b << ", "
+              << matrix2.c << ", " << matrix2.d << ", " << matrix2.e << ", "
+              << matrix2.f << "]" << std::endl;
+
+    // [1 0 0 1 0 0] (does not have inverse)
+    CFX_Matrix matrix_inv = matrix2.GetInverse();
+    std::cerr << " matrix_inv=[" << matrix_inv.a << ", " << matrix_inv.b << ", "
+              << matrix_inv.c << ", " << matrix_inv.d << ", " << matrix_inv.e
+              << ", " << matrix_inv.f << "]" << std::endl;
+
+    // [-1 1 -1 1 0 200]
+    std::cerr << " pObject2Device=[" << pObject2Device->a << ", "
+              << pObject2Device->b << ", " << pObject2Device->c << ", "
+              << pObject2Device->d << ", " << pObject2Device->e << ", "
+              << pObject2Device->f << "]" << std::endl;
   }
 
   agg::path_storage path_data = BuildAggPath(path, &matrix1);
