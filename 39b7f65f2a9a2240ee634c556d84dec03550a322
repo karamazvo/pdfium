@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a81dccec_f82d9d31",
+        "filename": "core/fpdftext/cpdf_linkextract.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-13T21:37:20Z",
+      "side": 1,
+      "message": "Can these remain static?",
+      "revId": "39b7f65f2a9a2240ee634c556d84dec03550a322",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8422cce6_1a540913",
+        "filename": "core/fxcrt/bytestring.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-13T21:37:20Z",
+      "side": 1,
+      "message": "Add TODO(...) here and below?",
+      "revId": "39b7f65f2a9a2240ee634c556d84dec03550a322",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3a353d2f_eb78a9ed",
+        "filename": "core/fxcrt/bytestring.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-13T21:37:20Z",
+      "side": 1,
+      "message": "Wrap variables in backticks.",
+      "revId": "39b7f65f2a9a2240ee634c556d84dec03550a322",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a0eaf720_e7a34164",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1236,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-13T21:37:20Z",
+      "side": 1,
+      "message": "Probably can\u0027t expose for public API.",
+      "revId": "39b7f65f2a9a2240ee634c556d84dec03550a322",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
