@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <array>
+#include <iostream>
 #include <map>
 #include <memory>
 #include <utility>
@@ -1538,6 +1539,11 @@ void CPDF_StreamContentParser::AddPathObject(
 
   CFX_Matrix matrix =
       m_pCurStates->current_transformation_matrix() * m_mtContentToUser;
+  std::cerr << __func__ << std::endl;
+  // [-34.8678, 34.8678, -12.0207, 12.0207, 509.007, -697400]
+  std::cerr << " matrix= [" << matrix.a << ", " << matrix.b << ", " << matrix.c
+            << ", " << matrix.d << ", " << matrix.e << ", " << matrix.f << "]"
+            << std::endl;
   bool bStroke = render_type == RenderType::kStroke;
   if (bStroke || fill_type != CFX_FillRenderOptions::FillType::kNoFill) {
     auto pPathObj = std::make_unique<CPDF_PathObject>(GetCurrentStreamIndex());

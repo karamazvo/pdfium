@@ -51,9 +51,11 @@ void vcgen_dash::remove_all_dashes()
 void vcgen_dash::add_dash(float dash_len, float gap_len)
 {
     if(m_num_dashes < max_dashes) {
-        m_total_dash_len += dash_len + gap_len;
-        m_dashes[m_num_dashes++] = dash_len;
-        m_dashes[m_num_dashes++] = gap_len;
+      // Does not expect to handle negative dash/gap lens! negative total dash
+      // len.
+      m_total_dash_len += dash_len + gap_len;
+      m_dashes[m_num_dashes++] = dash_len;
+      m_dashes[m_num_dashes++] = gap_len;
     }
 }
 void vcgen_dash::dash_start(float ds)
