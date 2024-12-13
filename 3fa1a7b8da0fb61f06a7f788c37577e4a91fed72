@@ -1,0 +1,52 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "113975bf_3ed7fe00",
+        "filename": "core/fpdfapi/parser/fpdf_parser_utility.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-12-13T23:16:59Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "00d67411_b69bd450",
+      "range": {
+        "startLine": 86,
+        "startChar": 42,
+        "endLine": 86,
+        "endChar": 52
+      },
+      "revId": "3fa1a7b8da0fb61f06a7f788c37577e4a91fed72",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3aca7eea_a3307243",
+        "filename": "core/fxcrt/widestring.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-12-13T23:16:59Z",
+      "side": 1,
+      "message": "\u003e \"accomodates\" is a possible misspelling of \"accommodates\".\n\nDone.",
+      "parentUuid": "9a3784f5_c73036b6",
+      "range": {
+        "startLine": 363,
+        "startChar": 22,
+        "endLine": 363,
+        "endChar": 33
+      },
+      "revId": "3fa1a7b8da0fb61f06a7f788c37577e4a91fed72",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
