@@ -1850,6 +1850,22 @@ TEST_F(FPDFTextEmbedderTest, Bug1769) {
               ElementsAreArray(kNeedsImprovementResult));
 }
 
+TEST_F(FPDFTextEmbedderTest, Bug384770169) {
+  ASSERT_TRUE(OpenDocument("bug_384770169.pdf"));
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+
+  unsigned short buffer[256] = {};
+  // TODO(issues.chromium.org/issues/384770169): Marked content not visible
+  constexpr char result[] = "Aangifte inkomstenbelasting";
+  ASSERT_EQ(217, FPDFText_GetText(textpage.get(), 0, 256, buffer));
+  EXPECT_THAT(pdfium::make_span(buffer).first(27u),
+              ElementsAreArray(pdfium::make_span(result).subspan(0u, 27u)));
+}
+
 TEST_F(FPDFTextEmbedderTest, TextObjectSetIsActive) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(0);
