@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f8c039c1_58f7a533",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2024-12-19T06:36:59Z",
+      "side": 1,
+      "message": "fixes newly-introduced bug which fails to extract marked text (text with \"/ActualText\" dictionary entry) a la https://issues.chromium.org/issues/384770169",
+      "revId": "8622c2bbe47336accfea6c3b3379220668b1a828",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
