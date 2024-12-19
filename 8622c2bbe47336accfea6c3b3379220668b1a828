@@ -33,6 +33,24 @@
       "message": "Thanks for reporting the issue and taking a stab at fixing it.  It sure looks like this was introduced by https://pdfium-review.googlesource.com/c/pdfium/+/124850\n\nI think the culprit is the early return at https://source.chromium.org/chromium/chromium/src/+/main:third_party/pdfium/core/fpdftext/cpdf_textpage.cpp;drc\u003d9047dd7346f0587ae6f04730b2d5bc82b828d7c8;l\u003d671\n\nand the right thing to do is to always push the character into the appropriate buf before doing the early return.  Lei?",
       "revId": "8622c2bbe47336accfea6c3b3379220668b1a828",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5838fc66_49beebba",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-12-19T22:33:50Z",
+      "side": 1,
+      "message": "In other words, does this solve the issue?\n\n```\nvoid CPDF_TextPage::AppendGeneratedCharacter(wchar_t unicode,\n                                             const CFX_Matrix\u0026 form_matrix,\n                                             bool use_temp_buffer) {  \n  if (use_temp_buffer) {\n    m_TempTextBuf.AppendChar(unicode);\n  } else {\n    m_TextBuf.AppendChar(unicode);\n  }\n  std::optional\u003cCharInfo\u003e charinfo \u003d GenerateCharInfo(unicode, form_matrix);\n  if (!charinfo.has_value()) {\n    return;\n  }\n  if (use_temp_buffer) {\n    m_TempCharList.push_back(charinfo.value());\n  } else {\n    m_CharList.push_back(charinfo.value());\n  }\n}\n```",
+      "parentUuid": "74a07287_aaece8ba",
+      "revId": "8622c2bbe47336accfea6c3b3379220668b1a828",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
