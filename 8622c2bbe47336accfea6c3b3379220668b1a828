@@ -16,6 +16,23 @@
       "message": "fixes newly-introduced bug which fails to extract marked text (text with \"/ActualText\" dictionary entry) a la https://issues.chromium.org/issues/384770169",
       "revId": "8622c2bbe47336accfea6c3b3379220668b1a828",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "74a07287_aaece8ba",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-12-19T20:56:13Z",
+      "side": 1,
+      "message": "Thanks for reporting the issue and taking a stab at fixing it.  It sure looks like this was introduced by https://pdfium-review.googlesource.com/c/pdfium/+/124850\n\nI think the culprit is the early return at https://source.chromium.org/chromium/chromium/src/+/main:third_party/pdfium/core/fpdftext/cpdf_textpage.cpp;drc\u003d9047dd7346f0587ae6f04730b2d5bc82b828d7c8;l\u003d671\n\nand the right thing to do is to always push the character into the appropriate buf before doing the early return.  Lei?",
+      "revId": "8622c2bbe47336accfea6c3b3379220668b1a828",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
