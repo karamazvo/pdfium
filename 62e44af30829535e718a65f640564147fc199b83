@@ -16,6 +16,23 @@
       "message": "Not sure if the GDI result is actual expectation or not, but crbug.com/384009729 can explore that?",
       "revId": "62e44af30829535e718a65f640564147fc199b83",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5cfcb02b_c7382abd",
+        "filename": "testing/resources/pixel/dashed_line_negative_len.in",
+        "patchSetId": 5
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-19T23:28:25Z",
+      "side": 1,
+      "message": "Should the file be named \"dashed_line_negative_scale.in\"? Considering the values here are positive, and it\u0027s actually the `cm` operator on the line above that has negative values. While some code internal to PDFium is getting negative values, it\u0027s hard to see the connection from this far away.",
+      "revId": "62e44af30829535e718a65f640564147fc199b83",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
