@@ -38,6 +38,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e5cbb8e4_ee8267a6",
+        "filename": "testing/resources/pixel/dashed_line_negative_len.in",
+        "patchSetId": 5
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2024-12-20T01:24:21Z",
+      "side": 1,
+      "message": "This is the only matrix where this issue happens, right? I only did some quick checks, but it looks like any input coordinate will be transformed to a point. e.g. Try:\n\n```\n-1 -1 -1.1 -1 3 3 cm\n1 0 0 rg\n0 0 200 200 re f\n```\n\nand then decrease the matrix\u0027s c, e, and f values.\n\nOr everything gets transformed to points on a line:\n\n```\n-1 -1 -1 -1 0 0 cm\n1 0 0 rg\n-999 -999 999 999 re f\n```",
+      "revId": "62e44af30829535e718a65f640564147fc199b83",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "5cfcb02b_c7382abd",
         "filename": "testing/resources/pixel/dashed_line_negative_len.in",
         "patchSetId": 5
