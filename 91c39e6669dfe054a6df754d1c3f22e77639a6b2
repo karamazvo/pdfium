@@ -16,6 +16,23 @@
       "message": "Diff between patch sets show progression.",
       "revId": "91c39e6669dfe054a6df754d1c3f22e77639a6b2",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ed3f3b0a_50d4952d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 23
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2024-12-20T00:40:10Z",
+      "side": 1,
+      "message": "1000 thank-yous for going one patch at a time.",
+      "revId": "91c39e6669dfe054a6df754d1c3f22e77639a6b2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
