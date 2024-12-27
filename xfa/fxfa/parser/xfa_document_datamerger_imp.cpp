@@ -75,6 +75,9 @@ CXFA_Node* XFA_NodeMerge_CloneOrMergeContainer(
   }
 
   CXFA_Node* pNewNode = pTemplateNode->CloneTemplateToForm(false);
+  if (!pNewNode) {
+    return nullptr;
+  }
   pFormParent->InsertChildAndNotify(pNewNode, nullptr);
   if (bRecursive) {
     for (CXFA_Node* pTemplateChild = pTemplateNode->GetFirstChild();

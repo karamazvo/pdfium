@@ -1275,12 +1275,14 @@ CXFA_Node* CXFA_Node::CreateSamePacketNode(XFA_Element eType) {
 }
 
 CXFA_Node* CXFA_Node::CloneTemplateToForm(bool bRecursive) {
-  DCHECK_EQ(m_ePacket, XFA_PacketType::Template);
+  if (m_ePacket != XFA_PacketType::Template) {
+    return nullptr;
+  }
   CXFA_Node* pClone =
       m_pDocument->CreateNode(XFA_PacketType::Form, m_elementType);
-  if (!pClone)
+  if (!pClone) {
     return nullptr;
-
+  }
   pClone->SetTemplateNode(this);
   pClone->UpdateNameHash();
   pClone->SetXMLMappingNode(GetXMLMappingNode());
