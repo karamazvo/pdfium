@@ -36,6 +36,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2b2eda20_dc0ddfc3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-01-03T23:18:27Z",
+      "side": 1,
+      "message": "Acrobat has a popup, \"A drawing error has occurred\". The rendered PDF is blank.\n\nI checked one of the PDFs in https://crbug.com/370299908 and there\u0027s a similar popup, but the rest of the PDF renders.",
+      "parentUuid": "81030a2a_80456086",
+      "revId": "62e44af30829535e718a65f640564147fc199b83",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e5cbb8e4_ee8267a6",
@@ -55,6 +73,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e2c4edd6_b1b75837",
+        "filename": "testing/resources/pixel/dashed_line_negative_len.in",
+        "patchSetId": 5
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-01-03T23:18:27Z",
+      "side": 1,
+      "message": "The PDFs in https://crbug.com/370299908 have different matrices that produces the issue. I simplified one of them at https://pdfium-review.googlesource.com/c/pdfium/+/127310/2, which has:\n```\n0.7071 -07071 -0.7071 0.7071 0.0 0.0 cm\n049.311 0 17 98.566 -621.285 cm\n```\nand that reproduces the issue.",
+      "parentUuid": "e5cbb8e4_ee8267a6",
+      "revId": "62e44af30829535e718a65f640564147fc199b83",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "5cfcb02b_c7382abd",
         "filename": "testing/resources/pixel/dashed_line_negative_len.in",
         "patchSetId": 5
@@ -66,6 +102,24 @@
       "writtenOn": "2024-12-19T23:28:25Z",
       "side": 1,
       "message": "Should the file be named \"dashed_line_negative_scale.in\"? Considering the values here are positive, and it\u0027s actually the `cm` operator on the line above that has negative values. While some code internal to PDFium is getting negative values, it\u0027s hard to see the connection from this far away.",
+      "revId": "62e44af30829535e718a65f640564147fc199b83",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d7a56dab_e5b3c382",
+        "filename": "testing/resources/pixel/dashed_line_negative_len.in",
+        "patchSetId": 5
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-01-03T23:18:27Z",
+      "side": 1,
+      "message": "Sure, done.",
+      "parentUuid": "5cfcb02b_c7382abd",
       "revId": "62e44af30829535e718a65f640564147fc199b83",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
