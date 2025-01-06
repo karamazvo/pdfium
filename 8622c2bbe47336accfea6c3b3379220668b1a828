@@ -51,6 +51,41 @@
       "parentUuid": "74a07287_aaece8ba",
       "revId": "8622c2bbe47336accfea6c3b3379220668b1a828",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b3d2ab9b_5acc87d1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-01-06T03:31:18Z",
+      "side": 1,
+      "message": "as far as I can tell, the bug I\u0027m reporting shows up specifically with \"marked content\" aka content that has the \"/ActualText\" tag\n\n\nI\u0027m not sure how your proposed change and my proposed change overlap\n\nLet me swap in your proposed change in place of mine and see what the results are locally",
+      "parentUuid": "5838fc66_49beebba",
+      "revId": "8622c2bbe47336accfea6c3b3379220668b1a828",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "198f7cd8_31dc054f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-01-06T03:31:18Z",
+      "side": 1,
+      "message": "I will run some tests locally",
+      "revId": "8622c2bbe47336accfea6c3b3379220668b1a828",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
