@@ -1,6 +1,46 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "77950fbd_ae42e37f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-07T22:37:17Z",
+      "side": 1,
+      "message": "Maybe we can also use this library in PDFium someday.",
+      "revId": "fd506685deb82e0a3be8ed8e3861cba1cb287872",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "18e5fad4_8dc416af",
+        "filename": "DEPS",
+        "patchSetId": 2
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-07T22:37:17Z",
+      "side": 1,
+      "message": "Unlike Chromium, PDFium doesn\u0027t concatenate the \u0027@\u0027.",
+      "range": {
+        "startLine": 366,
+        "startChar": 66,
+        "endLine": 366,
+        "endChar": 75
+      },
+      "revId": "fd506685deb82e0a3be8ed8e3861cba1cb287872",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c21256b7_1fbca8f4",
@@ -20,6 +60,70 @@
         "endLine": 1,
         "endChar": 16
       },
+      "revId": "fd506685deb82e0a3be8ed8e3861cba1cb287872",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e423f19f_bb473093",
+        "filename": "third_party/highway/BUILD.gn",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-07T22:37:17Z",
+      "side": 1,
+      "message": "2025, and PDFium AUTHORS, since this is in the PDFium repo.",
+      "parentUuid": "c21256b7_1fbca8f4",
+      "range": {
+        "startLine": 1,
+        "startChar": 12,
+        "endLine": 1,
+        "endChar": 16
+      },
+      "revId": "fd506685deb82e0a3be8ed8e3861cba1cb287872",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0a4c4536_0cf2aafb",
+        "filename": "third_party/highway/README.pdfium",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-07T22:37:17Z",
+      "side": 1,
+      "message": "Out of sync with the hash in //DEPS.\n\nThough the 2 files going out of sync over time is a general problem that needs to be solved for all README files.",
+      "range": {
+        "startLine": 6,
+        "startChar": 10,
+        "endLine": 6,
+        "endChar": 50
+      },
+      "revId": "fd506685deb82e0a3be8ed8e3861cba1cb287872",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "68a31f76_ad3adc4d",
+        "filename": "third_party/highway/README.pdfium",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-07T22:37:17Z",
+      "side": 1,
+      "message": "Wrap at 80 columns?",
       "revId": "fd506685deb82e0a3be8ed8e3861cba1cb287872",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
