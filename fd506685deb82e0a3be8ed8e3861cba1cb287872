@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c21256b7_1fbca8f4",
+        "filename": "third_party/highway/BUILD.gn",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-01-07T22:23:20Z",
+      "side": 1,
+      "message": "2020 to match Chromium/v8 or 2025?",
+      "range": {
+        "startLine": 1,
+        "startChar": 12,
+        "endLine": 1,
+        "endChar": 16
+      },
+      "revId": "fd506685deb82e0a3be8ed8e3861cba1cb287872",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
