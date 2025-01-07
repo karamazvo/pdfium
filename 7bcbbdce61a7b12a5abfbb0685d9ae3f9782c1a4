@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1657cab2_a869557f",
+        "filename": "xfa/fxfa/parser/cxfa_node.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1278,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-01-07T20:24:33Z",
+      "side": 1,
+      "message": "Converted to check in callers.",
+      "parentUuid": "d3a7da8e_ede58b4b",
+      "revId": "7bcbbdce61a7b12a5abfbb0685d9ae3f9782c1a4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a78c768d_e4321671",
@@ -35,6 +53,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c6d96622_9ce9b68d",
+        "filename": "xfa/fxfa/parser/xfa_document_datamerger_imp.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-01-07T20:24:33Z",
+      "side": 1,
+      "message": "Implemented early check.  Then unnested logic a bit.",
+      "parentUuid": "a78c768d_e4321671",
+      "revId": "7bcbbdce61a7b12a5abfbb0685d9ae3f9782c1a4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f5761bdc_4eb64902",
@@ -48,6 +84,24 @@
       "writtenOn": "2025-01-07T19:26:27Z",
       "side": 1,
       "message": "What about here? I\u0027m not sure if the children of `pTemplateNode` are all templates.",
+      "revId": "7bcbbdce61a7b12a5abfbb0685d9ae3f9782c1a4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a44b9c7c_1bbd6489",
+        "filename": "xfa/fxfa/parser/xfa_document_datamerger_imp.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-01-07T20:24:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f5761bdc_4eb64902",
       "revId": "7bcbbdce61a7b12a5abfbb0685d9ae3f9782c1a4",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
