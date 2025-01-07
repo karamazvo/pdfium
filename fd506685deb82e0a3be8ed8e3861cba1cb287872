@@ -41,6 +41,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e493af82_7b27c860",
+        "filename": "DEPS",
+        "patchSetId": 2
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-01-07T22:48:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "18e5fad4_8dc416af",
+      "range": {
+        "startLine": 366,
+        "startChar": 66,
+        "endLine": 366,
+        "endChar": 75
+      },
+      "revId": "fd506685deb82e0a3be8ed8e3861cba1cb287872",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c21256b7_1fbca8f4",
@@ -88,6 +112,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cbabfa8c_6cd5e3ad",
+        "filename": "third_party/highway/BUILD.gn",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-01-07T22:48:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e423f19f_bb473093",
+      "range": {
+        "startLine": 1,
+        "startChar": 12,
+        "endLine": 1,
+        "endChar": 16
+      },
+      "revId": "fd506685deb82e0a3be8ed8e3861cba1cb287872",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0a4c4536_0cf2aafb",
@@ -111,6 +159,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "55b6f9c2_5ed52ae6",
+        "filename": "third_party/highway/README.pdfium",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-01-07T22:48:54Z",
+      "side": 1,
+      "message": "Fixed. Also updated date.",
+      "parentUuid": "0a4c4536_0cf2aafb",
+      "range": {
+        "startLine": 6,
+        "startChar": 10,
+        "endLine": 6,
+        "endChar": 50
+      },
+      "revId": "fd506685deb82e0a3be8ed8e3861cba1cb287872",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "68a31f76_ad3adc4d",
@@ -124,6 +196,24 @@
       "writtenOn": "2025-01-07T22:37:17Z",
       "side": 1,
       "message": "Wrap at 80 columns?",
+      "revId": "fd506685deb82e0a3be8ed8e3861cba1cb287872",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "384643dc_7413a5e7",
+        "filename": "third_party/highway/README.pdfium",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-01-07T22:48:54Z",
+      "side": 1,
+      "message": "Existing in README.chromium, but done.",
+      "parentUuid": "68a31f76_ad3adc4d",
       "revId": "fd506685deb82e0a3be8ed8e3861cba1cb287872",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
