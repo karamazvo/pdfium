@@ -216,6 +216,24 @@
       "parentUuid": "68a31f76_ad3adc4d",
       "revId": "fd506685deb82e0a3be8ed8e3861cba1cb287872",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "caed9026_dc0eb303",
+        "filename": "third_party/highway/README.pdfium",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-07T23:51:34Z",
+      "side": 1,
+      "message": "Thanks. FWIW, it may be good to update this to mention v8 instead of libjxl, since there is no libjxl use in PDFium.\n\nThere\u0027s currently no libjxl in Chromium either, but there\u0027s still discussion re: JPEG XL on the bug tracker.",
+      "parentUuid": "384643dc_7413a5e7",
+      "revId": "fd506685deb82e0a3be8ed8e3861cba1cb287872",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
