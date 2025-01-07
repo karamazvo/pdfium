@@ -103,6 +103,23 @@
       "message": "Hey, @Tom, I have confirmed that your proposed changes unfortunately do not fix the reported issue.\n\n1) the test provided in this CL fails with those proposed changes\nand\n2) a similar local test on proprietary code also fails\n\nI suggest moving forward with the existing proposed change, which ensures that marked text is added to the temporary text buffer and seems to agree with the new test while hopefully not regressing any existing behavior :P",
       "revId": "8622c2bbe47336accfea6c3b3379220668b1a828",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "81fdf9c7_97c99ba4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-01-07T17:52:21Z",
+      "side": 1,
+      "message": "Thanks for verifying.",
+      "revId": "8622c2bbe47336accfea6c3b3379220668b1a828",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
