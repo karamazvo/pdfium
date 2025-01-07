@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0cdbdec2_495f83f4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-07T17:44:44Z",
+      "side": 1,
+      "message": "Presumably third_party/rust has to be rolled at the same time?",
+      "revId": "a6415b692ca710d84a019adc2d00b31e8a9cc038",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
