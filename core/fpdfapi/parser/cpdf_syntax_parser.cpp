@@ -666,6 +666,7 @@ unsigned int CPDF_SyntaxParser::ReadEOLMarkers(FX_FILESIZE pos) {
 FX_FILESIZE CPDF_SyntaxParser::FindWordPos(ByteStringView word) {
   AutoRestorer<FX_FILESIZE> pos_restorer(&m_Pos);
   FX_FILESIZE end_offset = FindTag(word);
+
   while (end_offset >= 0) {
     // Stop searching when word is found.
     if (IsWholeWord(GetPos() - word.GetLength(), m_FileLen, word, true))
@@ -915,19 +916,29 @@ FX_FILESIZE CPDF_SyntaxParser::FindTag(ByteStringView tag) {
   const int32_t taglen = tag.GetLength();
   DCHECK_GT(taglen, 0);
 
-  int32_t match = 0;
   while (true) {
-    uint8_t ch;
-    if (!GetNextChar(ch))
-      return -1;
+    const FX_FILESIZE matchStartPos = GetPos();
+    bool matchFound = true;
 
-    if (ch == tag[match]) {
-      match++;
-      if (match == taglen)
-        return GetPos() - startpos - taglen;
-    } else {
-      match = ch == tag[0] ? 1 : 0;
+    for (int32_t i = 0; i < taglen; i++) {
+      uint8_t ch;
+      if (!GetNextChar(ch)) {
+        return -1;
+      }
+
+      if (ch != tag[i]) {
+        matchFound = false;
+        break;
+      }
     }
+
+    if (matchFound) {
+      return matchStartPos - startpos;
+    }
+
+    // If we didn't find a match, reset to just after where we started this
+    // attempt
+    SetPos(matchStartPos + 1);
   }
 }
 
