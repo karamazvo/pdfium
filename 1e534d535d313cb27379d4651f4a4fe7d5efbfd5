@@ -22,6 +22,30 @@
       },
       "revId": "1e534d535d313cb27379d4651f4a4fe7d5efbfd5",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8d168d0a_6848b15a",
+        "filename": "core/fpdfapi/parser/cpdf_syntax_parser.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 941,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2025-01-08T20:32:00Z",
+      "side": 1,
+      "message": "Before the getnextchar reaches EOF, the function should have had matched the tag, otherwise it\u0027s a miss and we can terminate. \nI don\u0027t see the problem, could you please clarify ?",
+      "parentUuid": "945ff345_a8ee362d",
+      "range": {
+        "startLine": 941,
+        "startChar": 0,
+        "endLine": 941,
+        "endChar": 30
+      },
+      "revId": "1e534d535d313cb27379d4651f4a4fe7d5efbfd5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
