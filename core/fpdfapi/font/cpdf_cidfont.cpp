@@ -474,7 +474,10 @@ bool CPDF_CIDFont::Load() {
       UseCIDCharmap(face, m_pCMap->GetCoding());
     }
   }
-  m_DefaultWidth = pCIDFontDict->GetIntegerFor("DW", 1000);
+  if (pCIDFontDict->KeyExist("DW")) {
+    m_bDefaultWidthProvided = true;
+    m_DefaultWidth = pCIDFontDict->GetIntegerFor("DW", 1000);
+  }
   RetainPtr<const CPDF_Array> pWidthArray = pCIDFontDict->GetArrayFor("W");
   if (pWidthArray)
     LoadMetricsArray(std::move(pWidthArray), &m_WidthList, 1);
@@ -558,7 +561,13 @@ int CPDF_CIDFont::GetCharWidthF(uint32_t charcode) {
       return lhv.val;
     }
   }
-  return m_DefaultWidth;
+
+  if (m_bDefaultWidthProvided) {
+    return m_DefaultWidth;
+  }
+
+  auto rect = GetCharBBox(charcode);
+  return rect.right - rect.left;
 }
 
 int16_t CPDF_CIDFont::GetVertWidth(uint16_t cid) const {
