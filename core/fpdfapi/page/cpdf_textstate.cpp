@@ -110,7 +110,11 @@ CPDF_TextState::TextData::TextData(const TextData& that)
   }
 }
 
-CPDF_TextState::TextData::~TextData() = default;
+CPDF_TextState::TextData::~TextData()
+{
+    if (m_pFont.Get() != nullptr)
+        m_pFont.Get()->ClearCacheData();
+}
 
 RetainPtr<CPDF_TextState::TextData> CPDF_TextState::TextData::Clone() const {
   return pdfium::MakeRetain<CPDF_TextState::TextData>(*this);

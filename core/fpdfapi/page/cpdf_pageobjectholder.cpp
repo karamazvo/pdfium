@@ -46,7 +46,14 @@ CPDF_PageObjectHolder::CPDF_PageObjectHolder(
   DCHECK(m_pDict);
 }
 
-CPDF_PageObjectHolder::~CPDF_PageObjectHolder() = default;
+CPDF_PageObjectHolder::~CPDF_PageObjectHolder()
+{
+    for (auto it = m_PageObjectList.begin(); it != m_PageObjectList.end(); ++it)
+    {
+        it->reset();
+    }
+    m_PageObjectList.clear();
+}
 
 bool CPDF_PageObjectHolder::IsPage() const {
   return false;

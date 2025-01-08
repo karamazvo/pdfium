@@ -144,6 +144,12 @@ uint32_t CPDF_Font::CharCodeFromUnicode(wchar_t unicode) const {
   return m_pToUnicodeMap ? m_pToUnicodeMap->ReverseLookup(unicode) : 0;
 }
 
+void CPDF_Font::ClearCacheData()
+{
+    m_pToUnicodeMap.reset();
+    m_bToUnicodeLoaded = false;
+}
+
 bool CPDF_Font::HasFontWidths() const {
   return true;
 }

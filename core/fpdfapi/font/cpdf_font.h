@@ -94,6 +94,7 @@ class CPDF_Font : public Retainable, public Observable {
   virtual WideString UnicodeFromCharCode(uint32_t charcode) const;
   virtual uint32_t CharCodeFromUnicode(wchar_t Unicode) const;
   virtual bool HasFontWidths() const;
+  virtual void ClearCacheData();
 
   ByteString GetBaseFontName() const { return m_BaseFontName; }
   std::optional<FX_Charset> GetSubstFontCharset() const;
