@@ -34,6 +34,24 @@
       "parentUuid": "c39cbd58_b8adf90c",
       "revId": "cd8c87feb8c8e313a381240f055a412e30888164",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f083c5a2_864ac321",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-08T19:54:31Z",
+      "side": 1,
+      "message": "Prepend \"Roll clang+rust \" to give it more context / be more consistent with the commits in the tools/clang changelog. Similar to how V8 rolls mention \"Version 13.3.217\" and not just \"13.3.217\".",
+      "parentUuid": "a6cedde8_e8df36b6",
+      "revId": "cd8c87feb8c8e313a381240f055a412e30888164",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
