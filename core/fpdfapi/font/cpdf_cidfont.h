@@ -97,6 +97,7 @@ class CPDF_CIDFont final : public CPDF_Font {
   bool m_bAdobeCourierStd = false;
   CIDSet m_Charset = CIDSET_UNKNOWN;
   int16_t m_DefaultWidth = 1000;
+  bool m_bDefaultWidthProvided = false;
   int16_t m_DefaultVY = 880;
   int16_t m_DefaultW1 = -1000;
   std::vector<int> m_WidthList;
