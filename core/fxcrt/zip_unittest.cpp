@@ -12,6 +12,19 @@
 using ::testing::ElementsAreArray;
 
 namespace fxcrt {
+namespace {
+
+struct NoCopyNoMove {
+  NoCopyNoMove(int val) : value(val) {}
+  NoCopyNoMove(const NoCopyNoMove&) = delete;
+  NoCopyNoMove(NoCopyNoMove&&) = delete;
+  NoCopyNoMove& operator=(const NoCopyNoMove&) = delete;
+  NoCopyNoMove& operator=(NoCopyNoMove&&) = delete;
+
+  int value;
+};
+
+}  // namespace
 
 TEST(Zip, EmptyZip) {
   pdfium::span<const int> nothing;
@@ -84,6 +97,25 @@ TEST(Zip, ActualZip3) {
       out = in1 + in2;
     }
     EXPECT_THAT(output, ElementsAreArray(expected));
+  }
+}
+
+TEST(Zip, NoCopy) {
+  // Test that copies do not silently happen when zipping.
+  const NoCopyNoMove stuff1[] = {{1}, {2}, {3}};
+  const NoCopyNoMove expected[] = {{1}, {2}, {3}};
+  for (auto [in1, exp] : Zip(stuff1, expected)) {
+    EXPECT_EQ(exp.value, in1.value);
+  }
+}
+
+TEST(Zip, NoCopy3) {
+  // Test that copies do not silently happen when zipping.
+  const NoCopyNoMove stuff1[] = {{1}, {2}, {3}};
+  const NoCopyNoMove stuff2[] = {{4}, {5}, {6}};
+  const NoCopyNoMove expected[] = {{5}, {7}, {9}};
+  for (auto [in1, in2, exp] : Zip(stuff1, stuff2, expected)) {
+    EXPECT_EQ(exp.value, in1.value + in2.value);
   }
 }
 
