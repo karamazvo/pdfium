@@ -155,6 +155,57 @@
       "parentUuid": "3ddcb9ef_b5571cef",
       "revId": "8622c2bbe47336accfea6c3b3379220668b1a828",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dcb07ad2_bd314db5",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 984,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-09T02:14:14Z",
+      "side": 1,
+      "message": "Umm, ya, looks like I was slightly too trigger happy with the delete key.",
+      "revId": "8622c2bbe47336accfea6c3b3379220668b1a828",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a22537dc_0e7a1e9d",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1862,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-09T02:14:14Z",
+      "side": 1,
+      "message": "Is the TODO still relevant?",
+      "revId": "8622c2bbe47336accfea6c3b3379220668b1a828",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a774865d_e1e322cf",
+        "filename": "testing/resources/bug_384770169.pdf",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-09T02:14:14Z",
+      "side": 1,
+      "message": "It would be preferable to not check in PDFs that are binary blobs. Do you want to handcraft a PDF? Should I?",
+      "revId": "8622c2bbe47336accfea6c3b3379220668b1a828",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
