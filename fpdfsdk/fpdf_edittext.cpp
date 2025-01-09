@@ -536,7 +536,8 @@ RetainPtr<CPDF_Font> LoadCustomCompositeFont(
     std::unique_ptr<CFX_Font> font,
     pdfium::span<const uint8_t> font_span,
     const char* to_unicode_cmap,
-    pdfium::span<const uint8_t> cid_to_gid_map_span) {
+    pdfium::span<const uint8_t> cid_to_gid_map_span,
+    int32_t default_width) {
   // If it doesn't have a single char, just fail.
   RetainPtr<CFX_Face> face = font->GetFace();
   if (face->GetGlyphCount() <= 0) {
@@ -569,6 +570,8 @@ RetainPtr<CPDF_Font> LoadCustomCompositeFont(
   }
   RetainPtr<CPDF_Array> widths_array = CreateWidthsArray(doc, widths);
   cid_font_dict->SetNewFor<CPDF_Reference>("W", doc, widths_array->GetObjNum());
+
+  cid_font_dict->SetNewFor<CPDF_Number>("DW", default_width);
 
   auto cid_to_gid_map = doc->NewIndirect<CPDF_Stream>(cid_to_gid_map_span);
   cid_font_dict->SetNewFor<CPDF_Reference>("CIDToGIDMap", doc,
@@ -700,7 +703,8 @@ FPDFText_LoadCidType2Font(FPDF_DOCUMENT document,
                           uint32_t font_data_size,
                           FPDF_BYTESTRING to_unicode_cmap,
                           const uint8_t* cid_to_gid_map_data,
-                          uint32_t cid_to_gid_map_data_size) {
+                          uint32_t cid_to_gid_map_data_size,
+                          int32_t default_width) {
   CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
   if (!doc || !font_data || font_data_size == 0 || !to_unicode_cmap ||
       !cid_to_gid_map_data || cid_to_gid_map_data_size == 0) {
@@ -728,7 +732,8 @@ FPDFText_LoadCidType2Font(FPDF_DOCUMENT document,
       LoadCustomCompositeFont(
           doc, std::move(font), font_span, to_unicode_cmap,
           UNSAFE_BUFFERS(
-              pdfium::make_span(cid_to_gid_map_data, cid_to_gid_map_data_size)))
+              pdfium::make_span(cid_to_gid_map_data, cid_to_gid_map_data_size)),
+          default_width)
           .Leak());
 }
 

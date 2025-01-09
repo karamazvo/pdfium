@@ -475,6 +475,7 @@ bool CPDF_CIDFont::Load() {
     }
   }
   m_DefaultWidth = pCIDFontDict->GetIntegerFor("DW", 1000);
+
   RetainPtr<const CPDF_Array> pWidthArray = pCIDFontDict->GetArrayFor("W");
   if (pWidthArray)
     LoadMetricsArray(std::move(pWidthArray), &m_WidthList, 1);
