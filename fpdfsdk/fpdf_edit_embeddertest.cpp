@@ -3764,7 +3764,7 @@ end
 
   ScopedFPDFFont font(FPDFText_LoadCidType2Font(
       document(), font_data.data(), font_data.size(), kToUnicodeCMap,
-      cid_to_gid_map.data(), cid_to_gid_map.size()));
+      cid_to_gid_map.data(), cid_to_gid_map.size(), 1000));
   ASSERT_TRUE(font);
 
   FPDF_PAGEOBJECT text_object =
@@ -3792,27 +3792,28 @@ TEST_F(FPDFEditEmbedderTest, LoadCidType2FontWithBadParameters) {
 
   const std::vector<uint8_t> dummy_vec(3);
   const char kDummyString[] = "dummy";
-  EXPECT_FALSE(FPDFText_LoadCidType2Font(nullptr, dummy_vec.data(),
-                                         dummy_vec.size(), kDummyString,
-                                         dummy_vec.data(), dummy_vec.size()));
+  uint32_t kDefaultWidth = 500;
+  EXPECT_FALSE(FPDFText_LoadCidType2Font(
+      nullptr, dummy_vec.data(), dummy_vec.size(), kDummyString,
+      dummy_vec.data(), dummy_vec.size(), kDefaultWidth));
   EXPECT_FALSE(FPDFText_LoadCidType2Font(document(), nullptr, dummy_vec.size(),
                                          kDummyString, dummy_vec.data(),
-                                         dummy_vec.size()));
+                                         dummy_vec.size(), kDefaultWidth));
   EXPECT_FALSE(FPDFText_LoadCidType2Font(document(), dummy_vec.data(), 0,
                                          kDummyString, dummy_vec.data(),
-                                         dummy_vec.size()));
-  EXPECT_FALSE(FPDFText_LoadCidType2Font(document(), dummy_vec.data(),
-                                         dummy_vec.size(), nullptr,
-                                         dummy_vec.data(), dummy_vec.size()));
+                                         dummy_vec.size(), kDefaultWidth));
+  EXPECT_FALSE(FPDFText_LoadCidType2Font(
+      document(), dummy_vec.data(), dummy_vec.size(), nullptr, dummy_vec.data(),
+      dummy_vec.size(), kDefaultWidth));
   EXPECT_FALSE(FPDFText_LoadCidType2Font(document(), dummy_vec.data(),
                                          dummy_vec.size(), "", dummy_vec.data(),
-                                         dummy_vec.size()));
+                                         dummy_vec.size(), kDefaultWidth));
+  EXPECT_FALSE(FPDFText_LoadCidType2Font(
+      document(), dummy_vec.data(), dummy_vec.size(), kDummyString, nullptr,
+      dummy_vec.size(), kDefaultWidth));
   EXPECT_FALSE(FPDFText_LoadCidType2Font(document(), dummy_vec.data(),
                                          dummy_vec.size(), kDummyString,
-                                         nullptr, dummy_vec.size()));
-  EXPECT_FALSE(FPDFText_LoadCidType2Font(document(), dummy_vec.data(),
-                                         dummy_vec.size(), kDummyString,
-                                         dummy_vec.data(), 0));
+                                         dummy_vec.data(), 0, kDefaultWidth));
 }
 
 TEST_F(FPDFEditEmbedderTest, SaveAndRender) {
