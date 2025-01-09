@@ -1318,6 +1318,7 @@ FPDFText_LoadStandardFont(FPDF_DOCUMENT document, FPDF_BYTESTRING font);
 // to_unicode_cmap          - the ToUnicode data.
 // cid_to_gid_map_data      - the stream of CIDToGIDMap data.
 // cid_to_gid_map_data_size - the size of the CIDToGIDMap data, in bytes.
+// default_width            - the default width of the characters.
 //
 // The loaded font can be closed using FPDFFont_Close().
 //
@@ -1328,7 +1329,8 @@ FPDFText_LoadCidType2Font(FPDF_DOCUMENT document,
                           uint32_t font_data_size,
                           FPDF_BYTESTRING to_unicode_cmap,
                           const uint8_t* cid_to_gid_map_data,
-                          uint32_t cid_to_gid_map_data_size);
+                          uint32_t cid_to_gid_map_data_size,
+                          int32_t default_width);
 
 // Get the font size of a text object.
 //
