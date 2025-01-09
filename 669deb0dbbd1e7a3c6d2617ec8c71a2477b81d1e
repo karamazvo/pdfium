@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d4698a93_e914de79",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-09T18:52:44Z",
+      "side": 1,
+      "message": "Wrap at 72 columns.",
+      "revId": "669deb0dbbd1e7a3c6d2617ec8c71a2477b81d1e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "34e697a1_8517019a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-09T18:52:44Z",
+      "side": 1,
+      "message": "Just nits:",
+      "revId": "669deb0dbbd1e7a3c6d2617ec8c71a2477b81d1e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2dae06b3_e5281b0f",
+        "filename": "core/fpdfapi/parser/cpdf_syntax_parser.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 939,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-09T18:52:44Z",
+      "side": 1,
+      "message": "Add a comma after \"mismatch\" to fix the run-on sentence.",
+      "range": {
+        "startLine": 939,
+        "startChar": 25,
+        "endLine": 939,
+        "endChar": 33
+      },
+      "revId": "669deb0dbbd1e7a3c6d2617ec8c71a2477b81d1e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
