@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1e7c235a_3bdeb1df",
+        "filename": "core/fxcrt/zip_unittest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-01-09T21:29:16Z",
+      "side": 1,
+      "message": "gives error: chosen constructor is explicit in copy-initialization for `const NoCopyNoMove stuff1[] \u003d {{1}, {2}, {3}};`",
+      "parentUuid": "58c1008f_23c3c136",
+      "revId": "60fb1644da97d455d8a7211c851a7133ec86442c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "771f9785_395a37e4",
@@ -31,6 +49,24 @@
       "writtenOn": "2025-01-09T21:09:04Z",
       "side": 1,
       "message": "What if the copy ctor exists and contains NOTREACHED()?",
+      "revId": "60fb1644da97d455d8a7211c851a7133ec86442c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6b17c58c_8ba850e5",
+        "filename": "core/fxcrt/zip_unittest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-01-09T21:29:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "771f9785_395a37e4",
       "revId": "60fb1644da97d455d8a7211c851a7133ec86442c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
