@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "26e0ab9f_7b58828a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2025-01-09T04:51:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "198857ea_288674d7",
+      "range": {
+        "startLine": 12,
+        "startChar": 24,
+        "endLine": 12,
+        "endChar": 26
+      },
+      "revId": "1e534d535d313cb27379d4651f4a4fe7d5efbfd5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "208f05b5_249acac7",
@@ -37,6 +61,30 @@
       "writtenOn": "2025-01-08T23:03:39Z",
       "side": 1,
       "message": "typo",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 8
+      },
+      "revId": "1e534d535d313cb27379d4651f4a4fe7d5efbfd5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cf4946b2_83cac744",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2025-01-09T04:51:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "208f05b5_249acac7",
       "range": {
         "startLine": 13,
         "startChar": 0,
@@ -81,6 +129,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f62c2aa8_19bb16b6",
+        "filename": "core/fpdfapi/parser/cpdf_syntax_parser.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 669,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2025-01-09T04:51:36Z",
+      "side": 1,
+      "message": "My bad, accidentally did that while i was inspecting the code.",
+      "parentUuid": "d099c224_88c6ca13",
+      "revId": "1e534d535d313cb27379d4651f4a4fe7d5efbfd5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2137ee34_6c62cbdb",
@@ -94,6 +160,30 @@
       "writtenOn": "2025-01-08T23:03:39Z",
       "side": 1,
       "message": "Can new code using Google C++ style? i.e. snake_case for local variables.",
+      "range": {
+        "startLine": 920,
+        "startChar": 22,
+        "endLine": 920,
+        "endChar": 35
+      },
+      "revId": "1e534d535d313cb27379d4651f4a4fe7d5efbfd5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f07eb1ef_9fb8fae3",
+        "filename": "core/fpdfapi/parser/cpdf_syntax_parser.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 920,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2025-01-09T04:51:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2137ee34_6c62cbdb",
       "range": {
         "startLine": 920,
         "startChar": 22,
