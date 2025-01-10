@@ -3,7 +3,9 @@
 // found in the LICENSE file.
 
 #include "build/build_config.h"
+#include "core/fpdfapi/page/cpdf_annotcontext.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
+#include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdf_flatten.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
@@ -64,6 +66,66 @@ TEST_F(FPDFFlattenEmbedderTest, FlatWithFontNoBaseEncoding) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
   EXPECT_THAT(GetString(), HasSubstr("/Differences"));
+}
+
+TEST_F(FPDFFlattenEmbedderTest, Bug387312214) {
+  ASSERT_TRUE(OpenDocument("bug_387312214.pdf"));
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    // Document has a MediaBox specified incorrectly with the page tree node,
+    // instead of with the page object.
+    FS_RECTF mediabox;
+    EXPECT_FALSE(FPDFPage_GetMediaBox(page.get(), &mediabox.left,
+                                      &mediabox.bottom, &mediabox.right,
+                                      &mediabox.top));
+  }
+
+  // The page dimensions still match what was specified in the MediaBox that
+  // was incorrectly located in the page tree node.
+  constexpr int kOriginalPageWidth = 375;
+  constexpr int kOriginalPageHeight = 445;
+  EXPECT_EQ(kOriginalPageWidth, FPDF_GetPageWidthF(page.get()));
+  EXPECT_EQ(kOriginalPageHeight, FPDF_GetPageHeightF(page.get()));
+
+  // Add an ink annotation.
+  ScopedFPDFAnnotation ink_annot(
+      FPDFPage_CreateAnnot(page.get(), FPDF_ANNOT_INK));
+  ASSERT_TRUE(ink_annot);
+  CPDF_AnnotContext* context =
+      CPDFAnnotContextFromFPDFAnnotation(ink_annot.get());
+  ASSERT_TRUE(context);
+  const CPDF_Dictionary* annot_dict = context->GetAnnotDict();
+  ASSERT_TRUE(annot_dict);
+
+  static constexpr FS_POINTF kStroke[] = {{80.0f, 90.0f}, {81.0f, 91.0f},
+                                          {82.0f, 92.0f}, {83.0f, 93.0f},
+                                          {84.0f, 94.0f}, {85.0f, 95.0f}};
+  EXPECT_EQ(
+      0, FPDFAnnot_AddInkStroke(ink_annot.get(), kStroke, std::size(kStroke)));
+
+  // Flatten and save a copy of the document.
+  EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page.get(), FLAT_PRINT));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+
+  // Verify that page dimensions are unchanged after flattening.
+  EXPECT_EQ(kOriginalPageWidth, FPDF_GetPageWidthF(page.get()));
+  EXPECT_EQ(kOriginalPageHeight, FPDF_GetPageHeightF(page.get()));
+
+  {
+    // The saved document result now has a non-empty MediaBox entry.
+    FS_RECTF mediabox;
+    EXPECT_TRUE(FPDFPage_GetMediaBox(page.get(), &mediabox.left,
+                                     &mediabox.bottom, &mediabox.right,
+                                     &mediabox.top));
+    EXPECT_EQ(0, mediabox.left);
+    EXPECT_EQ(0, mediabox.bottom);
+    // TODO(crbug.com/387312214): Media box `right` and `top` should match the
+    // original page's dimensions from before flattening.
+    EXPECT_EQ(612, mediabox.right);
+    EXPECT_EQ(792, mediabox.top);
+  }
 }
 
 TEST_F(FPDFFlattenEmbedderTest, Bug861842) {
