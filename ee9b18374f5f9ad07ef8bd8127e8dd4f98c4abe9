@@ -33,6 +33,24 @@
       "message": "From the description, `default_width` is an optional argument. But the current code seems to require the argument?",
       "revId": "ee9b18374f5f9ad07ef8bd8127e8dd4f98c4abe9",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5debb555_488ff6f7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3513082
+      },
+      "writtenOn": "2025-01-10T16:41:19Z",
+      "side": 1,
+      "message": "`CPDF_CIDFont::Load` which reads this value assumes it to be 1000 when it\u0027s not provided. The function modified in this CL is experimental and is only used to load PDF Searchify Font. I think we can make this optional in future if it\u0027s needed, but keep it simple now.",
+      "parentUuid": "f13ec4aa_dbdaf149",
+      "revId": "ee9b18374f5f9ad07ef8bd8127e8dd4f98c4abe9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
