@@ -20,6 +20,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "88bec5d8_0046cef9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2025-01-10T06:37:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d4698a93_e914de79",
+      "revId": "669deb0dbbd1e7a3c6d2617ec8c71a2477b81d1e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "34e697a1_8517019a",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 5
@@ -48,6 +66,30 @@
       "writtenOn": "2025-01-09T18:52:44Z",
       "side": 1,
       "message": "Add a comma after \"mismatch\" to fix the run-on sentence.",
+      "range": {
+        "startLine": 939,
+        "startChar": 25,
+        "endLine": 939,
+        "endChar": 33
+      },
+      "revId": "669deb0dbbd1e7a3c6d2617ec8c71a2477b81d1e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "94d5a97b_6de6efdf",
+        "filename": "core/fpdfapi/parser/cpdf_syntax_parser.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 939,
+      "author": {
+        "id": 3638202
+      },
+      "writtenOn": "2025-01-10T06:37:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2dae06b3_e5281b0f",
       "range": {
         "startLine": 939,
         "startChar": 25,
