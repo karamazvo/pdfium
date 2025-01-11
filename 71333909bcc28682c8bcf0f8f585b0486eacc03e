@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b8832ff6_00d8b1da",
+        "filename": "testing/resources/pixel/dashed_line_negative_scale.in",
+        "patchSetId": 7
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-11T05:11:28Z",
+      "side": 1,
+      "message": "Not needed since this is the default.",
+      "revId": "71333909bcc28682c8bcf0f8f585b0486eacc03e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
