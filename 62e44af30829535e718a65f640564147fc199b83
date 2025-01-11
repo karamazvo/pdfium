@@ -54,6 +54,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b7fd0ef7_60ae3c91",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-11T05:02:39Z",
+      "side": 1,
+      "message": "I didn\u0027t see that popup, but it rendered blank regardless.",
+      "parentUuid": "2b2eda20_dc0ddfc3",
+      "revId": "62e44af30829535e718a65f640564147fc199b83",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e5cbb8e4_ee8267a6",
@@ -89,6 +107,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9e8f48e0_7daf8380",
+        "filename": "testing/resources/pixel/dashed_line_negative_len.in",
+        "patchSetId": 5
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-11T05:02:39Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "e2c4edd6_b1b75837",
+      "revId": "62e44af30829535e718a65f640564147fc199b83",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5cfcb02b_c7382abd",
@@ -120,6 +156,24 @@
       "side": 1,
       "message": "Sure, done.",
       "parentUuid": "5cfcb02b_c7382abd",
+      "revId": "62e44af30829535e718a65f640564147fc199b83",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b738e47b_8bf3192f",
+        "filename": "testing/resources/pixel/dashed_line_negative_len.in",
+        "patchSetId": 5
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-11T05:02:39Z",
+      "side": 1,
+      "message": "Update CL description as well.",
+      "parentUuid": "d7a56dab_e5b3c382",
       "revId": "62e44af30829535e718a65f640564147fc199b83",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
