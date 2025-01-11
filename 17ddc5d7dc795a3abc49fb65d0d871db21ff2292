@@ -1,0 +1,158 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d1e5ece0_8d74bc5c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-11T05:25:45Z",
+      "side": 1,
+      "message": "\"causing OOM\"",
+      "range": {
+        "startLine": 9,
+        "startChar": 122,
+        "endLine": 9,
+        "endChar": 143
+      },
+      "revId": "17ddc5d7dc795a3abc49fb65d0d871db21ff2292",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5efb52ce_4aa1ef4e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-11T05:25:45Z",
+      "side": 1,
+      "message": "2 words",
+      "range": {
+        "startLine": 9,
+        "startChar": 33,
+        "endLine": 9,
+        "endChar": 43
+      },
+      "revId": "17ddc5d7dc795a3abc49fb65d0d871db21ff2292",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "52d44cf1_c53d7a94",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-11T05:25:45Z",
+      "side": 1,
+      "message": "Wrap the commit message at 72 columns when possible.",
+      "revId": "17ddc5d7dc795a3abc49fb65d0d871db21ff2292",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2025079d_79281705",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-11T05:25:45Z",
+      "side": 1,
+      "message": "OK, but PDFium doesn\u0027t use this field. Instead, add:\n\nBug: 381955035",
+      "revId": "17ddc5d7dc795a3abc49fb65d0d871db21ff2292",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3c46d311_5e1c2194",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-11T05:25:45Z",
+      "side": 1,
+      "message": "Gerrit shows the branch for this is \"chromium/2025\", which is more than a decade old. Please upload the CL properly, so it is on the main branch.",
+      "revId": "17ddc5d7dc795a3abc49fb65d0d871db21ff2292",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2fa1c40d_a9af57aa",
+        "filename": "core/fpdfapi/page/cpdf_pageobjectholder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-11T05:25:45Z",
+      "side": 1,
+      "message": "Why is this change necessary? Wouldn\u0027t the default destructor do this anyway?",
+      "revId": "17ddc5d7dc795a3abc49fb65d0d871db21ff2292",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b2370a23_da8dfbe2",
+        "filename": "core/fpdfapi/page/cpdf_textstate.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-11T05:25:45Z",
+      "side": 1,
+      "message": "Please use Google C++ style formatting. Run `git cl format` to do this automatically.",
+      "revId": "17ddc5d7dc795a3abc49fb65d0d871db21ff2292",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b21d2f25_d4da268d",
+        "filename": "core/fpdfapi/page/cpdf_textstate.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-11T05:25:45Z",
+      "side": 1,
+      "message": "This variable doesn\u0027t exist with this name anymore. This code doesn\u0027t compile.",
+      "range": {
+        "startLine": 115,
+        "startChar": 8,
+        "endLine": 115,
+        "endChar": 15
+      },
+      "revId": "17ddc5d7dc795a3abc49fb65d0d871db21ff2292",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
