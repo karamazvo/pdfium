@@ -1,0 +1,153 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8304e227_539f2010",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-11T02:58:06Z",
+      "side": 1,
+      "message": "Just omit this part. The line after the subject line should be blank anyway.",
+      "revId": "ef70a89fbea68bd9c12733a3d113702562151b86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8c1cabd9_9a97af6a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-11T02:58:06Z",
+      "side": 1,
+      "message": "GetAutoFontSize() - for consistency with the subject line.",
+      "range": {
+        "startLine": 10,
+        "startChar": 40,
+        "endLine": 10,
+        "endChar": 55
+      },
+      "revId": "ef70a89fbea68bd9c12733a3d113702562151b86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f3b3cde4_b898e711",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-11T02:58:06Z",
+      "side": 1,
+      "message": "Similiarly, since this is a function, write lower_bound() here and abive.",
+      "range": {
+        "startLine": 11,
+        "startChar": 11,
+        "endLine": 11,
+        "endChar": 22
+      },
+      "revId": "ef70a89fbea68bd9c12733a3d113702562151b86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aface460_f7fa60af",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-11T02:58:06Z",
+      "side": 1,
+      "message": "Missing a space before.",
+      "range": {
+        "startLine": 11,
+        "startChar": 23,
+        "endLine": 11,
+        "endChar": 26
+      },
+      "revId": "ef70a89fbea68bd9c12733a3d113702562151b86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "14ab9b0b_78bddb49",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-11T02:58:06Z",
+      "side": 1,
+      "message": "Space before.",
+      "range": {
+        "startLine": 13,
+        "startChar": 4,
+        "endLine": 13,
+        "endChar": 13
+      },
+      "revId": "ef70a89fbea68bd9c12733a3d113702562151b86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fce5a373_e2e4ae63",
+        "filename": "core/fpdfdoc/cpvt_variabletext.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 780,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-11T02:58:06Z",
+      "side": 1,
+      "message": "Add a constant named \"kUnusedValue\" and put that here to make this self-documenting.",
+      "range": {
+        "startLine": 780,
+        "startChar": 52,
+        "endLine": 780,
+        "endChar": 56
+      },
+      "revId": "ef70a89fbea68bd9c12733a3d113702562151b86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "76ae40ec_a5d0893b",
+        "filename": "core/fpdfdoc/cpvt_variabletext.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 784,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-11T02:58:06Z",
+      "side": 1,
+      "message": "Does the code work without the static_cast()?",
+      "revId": "ef70a89fbea68bd9c12733a3d113702562151b86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
