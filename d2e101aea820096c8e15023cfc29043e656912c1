@@ -16,6 +16,23 @@
       "message": "Looks like we\u0027re done :). Thank you.",
       "revId": "d2e101aea820096c8e15023cfc29043e656912c1",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "051eb7a8_05c75705",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5645
+      },
+      "writtenOn": "2025-01-13T17:38:23Z",
+      "side": 1,
+      "message": "Review-enforcement applied",
+      "revId": "d2e101aea820096c8e15023cfc29043e656912c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
