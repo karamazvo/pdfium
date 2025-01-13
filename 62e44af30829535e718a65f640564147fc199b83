@@ -176,6 +176,24 @@
       "parentUuid": "d7a56dab_e5b3c382",
       "revId": "62e44af30829535e718a65f640564147fc199b83",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d83b756b_0baf8034",
+        "filename": "testing/resources/pixel/dashed_line_negative_len.in",
+        "patchSetId": 5
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-01-13T21:48:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b738e47b_8bf3192f",
+      "revId": "62e44af30829535e718a65f640564147fc199b83",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
