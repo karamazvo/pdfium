@@ -100,6 +100,46 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "4594a666_647f261f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-13T17:27:11Z",
+      "side": 1,
+      "message": "This approach may be too agressive at clearing font data and is not a good balance between performance and memory usage. e.g. CPDF_TextState::TextData::~TextData() gets called for every `Q` operator in a content stream.",
+      "revId": "17ddc5d7dc795a3abc49fb65d0d871db21ff2292",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "94dba531_9da51542",
+        "filename": "core/fpdfapi/font/cpdf_font.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-13T17:27:11Z",
+      "side": 1,
+      "message": "Why make this method virtual, when there are no overrides?",
+      "range": {
+        "startLine": 97,
+        "startChar": 2,
+        "endLine": 97,
+        "endChar": 9
+      },
+      "revId": "17ddc5d7dc795a3abc49fb65d0d871db21ff2292",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "2fa1c40d_a9af57aa",
         "filename": "core/fpdfapi/page/cpdf_pageobjectholder.cpp",
         "patchSetId": 1
