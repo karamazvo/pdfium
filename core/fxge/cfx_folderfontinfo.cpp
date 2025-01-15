@@ -16,6 +16,7 @@
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/containers/contains.h"
+#include "core/fxcrt/debug/alias.h"
 #include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
@@ -430,6 +431,14 @@ size_t CFX_FolderFontInfo::GetFontData(void* hFont,
   if (fseek(pFile.get(), offset, SEEK_SET) < 0) {
     return 0;
   }
+
+  // TODO(crbug.com/376633555): Remove debugging data after fixing the bug.
+  pdfium::Alias(&datasize);
+  char buf[256] = {};
+  pdfium::Alias(&buf);
+  ByteStringView font_path = pFont->m_FilePath.AsStringView();
+  fxcrt::spancpy(pdfium::span(buf), font_path.Last(256).span());
+
   if (UNSAFE_TODO(fread(buffer.data(), datasize, 1, pFile.get())) != 1) {
     return 0;
   }
