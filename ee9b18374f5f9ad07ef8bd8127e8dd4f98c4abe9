@@ -68,6 +68,24 @@
       "message": "Does https://pdfium-review.googlesource.com/127950 fix the issue without requiring the caller to specify the default width?\n\nRegardless of the fix, it would be good to first add some tests to demonstrate the issue.",
       "revId": "ee9b18374f5f9ad07ef8bd8127e8dd4f98c4abe9",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "92a41910_4a109c3c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3513082
+      },
+      "writtenOn": "2025-01-15T16:55:10Z",
+      "side": 1,
+      "message": "No, I tried it locally and it did not work.\n\nThe only test that I can think of is loading the font as it is now, and using it in a PDF, and showing that if we get the width of a character, the default value (1000) is returned for it. But I am not sure it\u0027s a good test.",
+      "parentUuid": "188104d7_46a0bb0d",
+      "revId": "ee9b18374f5f9ad07ef8bd8127e8dd4f98c4abe9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
