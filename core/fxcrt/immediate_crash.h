@@ -89,31 +89,6 @@
 
 #endif  // ARCH_CPU_*
 
-#elif defined(COMPILER_MSVC)
-
-#if !defined(__clang__)
-
-// MSVC x64 doesn't support inline asm, so use the MSVC intrinsic.
-#define TRAP_SEQUENCE1_() __debugbreak()
-#define TRAP_SEQUENCE2_()
-
-#elif defined(ARCH_CPU_ARM64)
-
-// Windows ARM64 uses "BRK #F000" as its breakpoint instruction, and
-// __debugbreak() generates that in both VC++ and clang.
-#define TRAP_SEQUENCE1_() __debugbreak()
-// Intentionally empty: __builtin_unreachable() is always part of the sequence
-// (see IMMEDIATE_CRASH below) and already emits a ud2 on Win64,
-// https://crbug.com/958373
-#define TRAP_SEQUENCE2_() __asm volatile("")
-
-#else
-
-#define TRAP_SEQUENCE1_() asm volatile("int3")
-#define TRAP_SEQUENCE2_() asm volatile("ud2")
-
-#endif  // __clang__
-
 #else
 
 #error No supported trap sequence!
@@ -132,8 +107,6 @@
 // base/compiler_specific.h.
 #if defined(COMPILER_GCC)
 #define IMMEDIATE_CRASH_ALWAYS_INLINE inline __attribute__((__always_inline__))
-#elif defined(COMPILER_MSVC)
-#define IMMEDIATE_CRASH_ALWAYS_INLINE __forceinline
 #else
 #define IMMEDIATE_CRASH_ALWAYS_INLINE inline
 #endif

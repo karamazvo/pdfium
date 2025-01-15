@@ -102,9 +102,7 @@ void* FX_AlignedAlloc(size_t size, size_t alignment) {
   DCHECK(IsPowerOfTwo(alignment));
   DCHECK_EQ(alignment % sizeof(void*), 0u);
   void* ptr = nullptr;
-#if defined(COMPILER_MSVC)
-  ptr = _aligned_malloc(size, alignment);
-#elif BUILDFLAG(IS_ANDROID)
+#if BUILDFLAG(IS_ANDROID)
   // Android technically supports posix_memalign(), but does not expose it in
   // the current version of the library headers used by Chrome.  Luckily,
   // memalign() on Android returns pointers which can safely be used with
