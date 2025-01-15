@@ -776,19 +776,15 @@ float CPVT_VariableText::GetAutoFontSize() {
   if (GetPlateWidth() <= 0)
     return 0;
 
-  // TODO(tsepez): replace with std::lower_bound().
-  int32_t nLeft = 0;
-  int32_t nRight = nTotal - 1;
-  int32_t nMid = nTotal / 2;
-  while (nLeft <= nRight) {
-    if (IsBigger(kFontSizeSteps[nMid])) {
-      nRight = nMid - 1;
-    } else {
-      nLeft = nMid + 1;
-    }
-    nMid = (nLeft + nRight) / 2;
+  const bool kUnusedValue = true;
+  auto it = std::lower_bound(
+      kFontSizeSteps.begin(), kFontSizeSteps.end(), kUnusedValue,
+      [this](const uint8_t& value, bool) { return !IsBigger(value); });
+
+  if (it != kFontSizeSteps.begin()) {
+    --it;
   }
-  return static_cast<float>(kFontSizeSteps[nMid]);
+  return static_cast<float>(*it);
 }
 
 bool CPVT_VariableText::IsBigger(float fFontSize) const {
