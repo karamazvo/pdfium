@@ -22,6 +22,30 @@
       },
       "revId": "44f1beb489dd5a4ffd91e4f9668ea4c73dd1f182",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a3bbc472_3ac55333",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 564,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-15T22:13:36Z",
+      "side": 1,
+      "message": "It is indeed always 1 in this patch set. Not sure how it can never be called. Wouldn\u0027t it be called once?\n\nAnyway, patch set 2 should hopefully be better.",
+      "parentUuid": "07cf2d71_4f380b47",
+      "range": {
+        "startLine": 564,
+        "startChar": 6,
+        "endLine": 564,
+        "endChar": 61
+      },
+      "revId": "44f1beb489dd5a4ffd91e4f9668ea4c73dd1f182",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
