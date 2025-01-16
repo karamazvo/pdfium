@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7d5abab2_6d65ace9",
+        "filename": "core/fpdfdoc/cpvt_variabletext.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 779,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-16T06:34:49Z",
+      "side": 1,
+      "message": "`constexpr`",
+      "range": {
+        "startLine": 779,
+        "startChar": 2,
+        "endLine": 779,
+        "endChar": 7
+      },
+      "revId": "c31818168439895a74bac2ef59a34a2dcf28ad19",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6de00117_8c484030",
+        "filename": "core/fpdfdoc/cpvt_variabletext.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 781,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-16T06:34:49Z",
+      "side": 1,
+      "message": "In the existing code, the range of values in `kFontSizeSteps` to search depends on `IsMultiLine()` on line 772. Now, the code no longer takes that into consideration.",
+      "range": {
+        "startLine": 781,
+        "startChar": 30,
+        "endLine": 781,
+        "endChar": 50
+      },
+      "revId": "c31818168439895a74bac2ef59a34a2dcf28ad19",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
