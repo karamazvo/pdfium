@@ -16,6 +16,23 @@
       "message": "Thanks!",
       "revId": "50f71c45b9ba504572955b7a48b53156c000cdc6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6ea69311_167d9efb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-16T06:11:13Z",
+      "side": 1,
+      "message": "Oh, since pdfium-review.googlesource.com is a different Gerrit instance, you\u0027ll either need to link your chromium.org and google.com accounts, or separately CR+1 from the google.com account as well.",
+      "revId": "50f71c45b9ba504572955b7a48b53156c000cdc6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
