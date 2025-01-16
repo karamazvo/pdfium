@@ -3870,9 +3870,7 @@ end
   RetainPtr<const CPDF_Array> widths_array =
       GetWidthsArrayForCidFont(typed_font);
   ASSERT_TRUE(widths_array);
-  // TODO(crbug.com/376781381): Reduce `widths_array` size, given the smaller
-  // `cid_to_gid_map`.
-  CheckCompositeFontWidths(widths_array, typed_font, testing::Eq(9));
+  CheckCompositeFontWidths(widths_array, typed_font, testing::Eq(5));
 }
 
 TEST_F(FPDFEditEmbedderTest, LoadCidType2FontWithBadParameters) {
