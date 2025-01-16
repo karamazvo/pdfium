@@ -249,7 +249,8 @@ class FPDFEditEmbedderTest : public EmbedderTest {
   }
 
   void CheckCompositeFontWidths(const CPDF_Array* widths_array,
-                                CPDF_Font* typed_font) {
+                                CPDF_Font* typed_font,
+                                testing::Matcher<int> matcher) {
     // Check that W array is in a format that conforms to PDF spec 1.7 section
     // "Glyph Metrics in CIDFonts" (these checks are not
     // implementation-specific).
@@ -285,9 +286,10 @@ class FPDFEditEmbedderTest : public EmbedderTest {
       }
       num_cids_checked += last_cid - cid + 1;
     }
-    // Make sure we have a good amount of cids described
-    EXPECT_GT(num_cids_checked, 200);
+    // Check the CID count.
+    EXPECT_THAT(num_cids_checked, matcher);
   }
+
   CPDF_Document* cpdf_doc() { return cpdf_doc_; }
 
  private:
@@ -3557,7 +3559,7 @@ TEST_F(FPDFEditEmbedderTest, LoadCIDType0Font) {
   RetainPtr<const CPDF_Array> widths_array = cidfont_dict->GetArrayFor("W");
   ASSERT_TRUE(widths_array);
   EXPECT_GT(widths_array->size(), 1u);
-  CheckCompositeFontWidths(widths_array.Get(), typed_font);
+  CheckCompositeFontWidths(widths_array, typed_font, testing::Ge(201));
 }
 
 TEST_F(FPDFEditEmbedderTest, LoadCIDType2Font) {
@@ -3600,7 +3602,7 @@ TEST_F(FPDFEditEmbedderTest, LoadCIDType2Font) {
   // Check widths
   RetainPtr<const CPDF_Array> widths_array = cidfont_dict->GetArrayFor("W");
   ASSERT_TRUE(widths_array);
-  CheckCompositeFontWidths(widths_array.Get(), typed_font);
+  CheckCompositeFontWidths(widths_array, typed_font, testing::Ge(201));
 }
 
 TEST_F(FPDFEditEmbedderTest, NormalizeNegativeRotation) {
@@ -3795,6 +3797,11 @@ end
       document(), font_data.data(), font_data.size(), kToUnicodeCMap,
       cid_to_gid_map.data(), cid_to_gid_map.size()));
   ASSERT_TRUE(font);
+  CPDF_Font* typed_font = CPDFFontFromFPDFFont(font.get());
+  RetainPtr<const CPDF_Array> widths_array =
+      GetWidthsArrayForCidFont(typed_font);
+  ASSERT_TRUE(widths_array);
+  CheckCompositeFontWidths(widths_array, typed_font, testing::Eq(9));
 
   FPDF_PAGEOBJECT text_object =
       FPDFPageObj_CreateTextObj(document(), font.get(), 20.0f);
@@ -3814,6 +3821,58 @@ end
 
   ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedDocument(400, 400, NotoSansSCChecksum());
+}
+
+TEST_F(FPDFEditEmbedderTest, LoadCidType2FontCustomGeneratedWidths) {
+  // This is the same test as FPDFEditEmbedderTest.EmbedNotoSansSCFont, but some
+  // of the font data is provided by the caller, instead of being generated.
+  CreateEmptyDocument();
+  ScopedFPDFPage page(FPDFPage_New(document(), 0, 400, 400));
+  std::string font_path;
+  ASSERT_TRUE(PathService::GetThirdPartyFilePath(
+      "NotoSansCJK/NotoSansSC-Regular.subset.otf", &font_path));
+
+  std::vector<uint8_t> font_data = GetFileContents(font_path.c_str());
+  ASSERT_FALSE(font_data.empty());
+
+  static const char kToUnicodeCMap[] = R"(
+/CIDInit /ProcSet findresource begin
+12 dict begin
+begincmap
+/CIDSystemInfo <<
+  /Registry (Adobe)
+  /Ordering (Identity)
+  /Supplement 0
+>> def
+/CMapName /Adobe-Identity-H def
+/CMapType 2 def
+1 begincodespacerange
+<0000> <FFFF>
+endcodespacerange
+3 beginbfrange
+<0002> <0003> [<3002> <2F00>]
+<0003> <0004> [<4E00> <2F06>]
+<0004> <0005> [<4E8C> <53E5>]
+endbfrange
+endcmap
+CMapName currentdict /CMap defineresource pop
+end
+end
+)";
+
+  const std::vector<uint8_t> cid_to_gid_map = {0, 0, 0, 1, 0, 2, 0, 3, 0, 4};
+
+  ScopedFPDFFont font(FPDFText_LoadCidType2Font(
+      document(), font_data.data(), font_data.size(), kToUnicodeCMap,
+      cid_to_gid_map.data(), cid_to_gid_map.size()));
+  ASSERT_TRUE(font);
+  CPDF_Font* typed_font = CPDFFontFromFPDFFont(font.get());
+  RetainPtr<const CPDF_Array> widths_array =
+      GetWidthsArrayForCidFont(typed_font);
+  ASSERT_TRUE(widths_array);
+  // TODO(crbug.com/376781381): Reduce `widths_array` size, given the smaller
+  // `cid_to_gid_map`.
+  CheckCompositeFontWidths(widths_array, typed_font, testing::Eq(9));
 }
 
 TEST_F(FPDFEditEmbedderTest, LoadCidType2FontWithBadParameters) {
