@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <array>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -947,10 +948,11 @@ TEST_F(FPDFTextEmbedderTest, GetFontInfo) {
   ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
   std::vector<char> font_name;
-  size_t num_chars1 = strlen("Hello, world!");
-  const char kExpectedFontName1[] = "Times-Roman";
+  static constexpr size_t kNumChars1 =
+      std::char_traits<char>::length("Hello, world!");
+  static constexpr char kExpectedFontName1[] = "Times-Roman";
 
-  for (size_t i = 0; i < num_chars1; i++) {
+  for (size_t i = 0; i < kNumChars1; i++) {
     int flags = -1;
     unsigned long length =
         FPDFText_GetFontInfo(textpage.get(), i, nullptr, 0, &flags);
@@ -980,15 +982,16 @@ TEST_F(FPDFTextEmbedderTest, GetFontInfo) {
   // The text is "Hello, world!\r\nGoodbye, world!", so the next two characters
   // do not have any font information.
   EXPECT_EQ(0u,
-            FPDFText_GetFontInfo(textpage.get(), num_chars1, font_name.data(),
+            FPDFText_GetFontInfo(textpage.get(), kNumChars1, font_name.data(),
                                  font_name.size(), nullptr));
   EXPECT_EQ(
-      0u, FPDFText_GetFontInfo(textpage.get(), num_chars1 + 1, font_name.data(),
+      0u, FPDFText_GetFontInfo(textpage.get(), kNumChars1 + 1, font_name.data(),
                                font_name.size(), nullptr));
 
-  size_t num_chars2 = strlen("Goodbye, world!");
+  static constexpr size_t kNumChars2 =
+      std::char_traits<char>::length("Goodbye, world!");
   const char kExpectedFontName2[] = "Helvetica";
-  for (size_t i = num_chars1 + 2; i < num_chars1 + num_chars2 + 2; i++) {
+  for (size_t i = kNumChars1 + 2; i < kNumChars1 + kNumChars2 + 2; i++) {
     int flags = -1;
     unsigned long length =
         FPDFText_GetFontInfo(textpage.get(), i, nullptr, 0, &flags);
@@ -1282,8 +1285,9 @@ TEST_F(FPDFTextEmbedderTest, CountRects) {
   }
 
   // Now test FPDFText_CountRects().
-  static const int kHelloWorldEnd = strlen("Hello, world!");
-  static const int kGoodbyeWorldStart = kHelloWorldEnd + 2;  // "\r\n"
+  static constexpr int kHelloWorldEnd =
+      std::char_traits<char>::length("Hello, world!");
+  static constexpr int kGoodbyeWorldStart = kHelloWorldEnd + 2;  // "\r\n"
   for (int start = 0; start < kHelloWorldEnd; ++start) {
     // Always grab some part of "hello world" and some part of "goodbye world"
     // Since -1 means "all".
@@ -1313,7 +1317,8 @@ TEST_F(FPDFTextEmbedderTest, CountRects) {
   }
 
   // Now test larger start values.
-  const int kExpectedLength = UNSAFE_TODO(strlen(kHelloGoodbyeText));
+  static constexpr int kExpectedLength =
+      std::char_traits<char>::length(kHelloGoodbyeText);
   for (int start = kGoodbyeWorldStart + 1; start < kExpectedLength; ++start) {
     EXPECT_EQ(1, FPDFText_CountRects(textpage.get(), start, -1));
     EXPECT_EQ(0, FPDFText_CountRects(textpage.get(), start, 0));

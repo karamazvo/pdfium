@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <optional>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -295,8 +296,9 @@ CPDF_Parser::Error CPDF_Parser::StartParseInternal() {
 
 FX_FILESIZE CPDF_Parser::ParseStartXRef() {
   static constexpr char kStartXRefKeyword[] = "startxref";
-  m_pSyntax->SetPos(m_pSyntax->GetDocumentSize() -
-                    UNSAFE_TODO(strlen(kStartXRefKeyword)));
+  static constexpr size_t kStartXRefKeywordLen =
+      std::char_traits<char>::length(kStartXRefKeyword);
+  m_pSyntax->SetPos(m_pSyntax->GetDocumentSize() - kStartXRefKeywordLen);
   if (!m_pSyntax->BackwardsSearchToWord(kStartXRefKeyword, 4096))
     return 0;
 

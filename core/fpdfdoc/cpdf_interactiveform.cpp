@@ -7,6 +7,7 @@
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 
 #include <optional>
+#include <string>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -132,7 +133,9 @@ ByteString GetNativeFontName(FX_Charset charSet, void* pLogFont) {
 
 ByteString GenerateNewFontResourceName(const CPDF_Dictionary* pResDict,
                                        const ByteString& csPrefix) {
-  static const char kDummyFontName[] = "ZiTi";
+  static constexpr char kDummyFontName[] = "ZiTi";
+  static constexpr size_t kDummyFontNameLen =
+      std::char_traits<char>::length(kDummyFontName);
   ByteString csStr = csPrefix;
   if (csStr.IsEmpty())
     csStr = kDummyFontName;
@@ -140,10 +143,10 @@ ByteString GenerateNewFontResourceName(const CPDF_Dictionary* pResDict,
   const size_t szCount = csStr.GetLength();
   size_t m = 0;
   ByteString csTmp;
-  while (m < UNSAFE_TODO(strlen(kDummyFontName)) && m < szCount) {
+  while (m < kDummyFontNameLen && m < szCount) {
     csTmp += csStr[m++];
   }
-  while (m < UNSAFE_TODO(strlen(kDummyFontName))) {
+  while (m < kDummyFontNameLen) {
     csTmp += '0' + m % 10;
     m++;
   }

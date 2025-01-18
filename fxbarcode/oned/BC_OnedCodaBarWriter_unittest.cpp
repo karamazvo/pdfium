@@ -4,7 +4,7 @@
 
 #include "fxbarcode/oned/BC_OnedCodaBarWriter.h"
 
-#include <string.h>
+#include <string>
 
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/data_vector.h"
@@ -15,26 +15,30 @@ namespace {
 TEST(OnedCodaBarWriterTest, Encode) {
   CBC_OnedCodaBarWriter writer;
 
-  static const char kExpected1[] =
+  static constexpr char kExpected1[] =
       "# ##  #  # "  // A Start
       "#  #  # ##";  // B End
+  static constexpr size_t kExpected1Len =
+      std::char_traits<char>::length(kExpected1);
   DataVector<uint8_t> encoded = writer.Encode("");
-  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected1)), encoded.size());
-  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected1)); i++) {
+  ASSERT_EQ(kExpected1Len, encoded.size());
+  for (size_t i = 0; i < kExpected1Len; i++) {
     UNSAFE_TODO(EXPECT_EQ(kExpected1[i] != ' ', !!encoded[i])) << i;
   }
-  static const char kExpected2[] =
+  static constexpr char kExpected2[] =
       "# ##  #  # "  // A Start
       "# # ##  # "   // 1
       "# #  # ## "   // 2
       "##  # # # "   // 3
       "#  #  # ##";  // B End
+  static constexpr size_t kExpected2Len =
+      std::char_traits<char>::length(kExpected2);
   encoded = writer.Encode("123");
-  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected2)), encoded.size());
-  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected2)); i++) {
+  ASSERT_EQ(kExpected2Len, encoded.size());
+  for (size_t i = 0; i < kExpected2Len; i++) {
     UNSAFE_TODO(EXPECT_EQ(kExpected2[i] != ' ', !!encoded[i])) << i;
   }
-  static const char kExpected3[] =
+  static constexpr char kExpected3[] =
       "# ##  #  # "  // A Start
       "# #  ## # "   // -
       "# ##  # # "   // $
@@ -43,12 +47,14 @@ TEST(OnedCodaBarWriterTest, Encode) {
       "## # ## ## "  // :
       "# ## ## ## "  // +
       "#  #  # ##";  // B End
+  static constexpr size_t kExpected3Len =
+      std::char_traits<char>::length(kExpected3);
   encoded = writer.Encode("-$./:+");
-  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected3)), encoded.size());
-  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected3)); i++) {
+  ASSERT_EQ(kExpected3Len, encoded.size());
+  for (size_t i = 0; i < kExpected3Len; i++) {
     UNSAFE_TODO(EXPECT_EQ(kExpected3[i] != ' ', !!encoded[i])) << i;
   }
-  static const char kExpected4[] =
+  static constexpr char kExpected4[] =
       "# ##  #  # "  // A Start
       "# ## #  # "   // 4
       "## # #  # "   // 5
@@ -68,9 +74,11 @@ TEST(OnedCodaBarWriterTest, Encode) {
       "# # #  ## "   // 0
       "# # ##  # "   // 1
       "#  #  # ##";  // B End
+  static constexpr size_t kExpected4Len =
+      std::char_traits<char>::length(kExpected4);
   encoded = writer.Encode("456.987987987/001");
-  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected4)), encoded.size());
-  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected4)); i++) {
+  ASSERT_EQ(kExpected4Len, encoded.size());
+  for (size_t i = 0; i < kExpected4Len; i++) {
     UNSAFE_TODO(EXPECT_EQ(kExpected4[i] != ' ', !!encoded[i])) << i;
   }
 }
@@ -107,15 +115,17 @@ TEST(OnedCodaBarWriterTest, SetDelimiters) {
   writer.SetStartChar('N');
   writer.SetEndChar('*');
 
-  static const char kExpected[] =
+  static constexpr char kExpected[] =
       "#  #  # ## "  // N (same as B) Start
       "## #  # # "   // 9
       "#  ## # # "   // 8
       "#  # ## # "   // 7
       "# #  #  ##";  // * (same as C) End
+  static constexpr size_t kExpectedLen =
+      std::char_traits<char>::length(kExpected);
   DataVector<uint8_t> encoded = writer.Encode("987");
-  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected)), encoded.size());
-  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected)); i++) {
+  ASSERT_EQ(kExpectedLen, encoded.size());
+  for (size_t i = 0; i < kExpectedLen; i++) {
     UNSAFE_TODO(EXPECT_EQ(kExpected[i] != ' ', !!encoded[i])) << i;
   }
 }

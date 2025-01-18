@@ -521,10 +521,10 @@ TEST(FXCRYPT, Sha384Test) {
 
 // Verified against echo -n "..." | openssl sha384
 TEST(FXCRYPT, Sha384Pad112) {
-  static const char kInput[] =
+  static constexpr char kInput[] =
       "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
       "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-  EXPECT_EQ(112u, UNSAFE_TODO(strlen(kInput)));
+  static_assert(std::char_traits<char>::length(kInput) == 112);
   DataVector<uint8_t> actual =
       CRYPT_SHA384Generate(ByteStringView(kInput).unsigned_span());
   EXPECT_THAT(
@@ -570,10 +570,10 @@ TEST(FXCRYPT, Sha512Test) {
 
 // Verified against echo -n "..." | openssl sha512
 TEST(FXCRYPT, Sha512Pad112) {
-  static const char kInput[] =
+  static constexpr char kInput[] =
       "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
       "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-  EXPECT_EQ(112u, UNSAFE_TODO(strlen(kInput)));
+  static_assert(std::char_traits<char>::length(kInput) == 112);
   DataVector<uint8_t> actual =
       CRYPT_SHA512Generate(ByteStringView(kInput).unsigned_span());
   EXPECT_THAT(

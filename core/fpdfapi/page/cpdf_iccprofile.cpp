@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/page/cpdf_iccprofile.h"
 
+#include <string>
 #include <utility>
 
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
@@ -15,10 +16,11 @@
 namespace {
 
 bool DetectSRGB(pdfium::span<const uint8_t> span) {
-  static const char kSRGB[] = "sRGB IEC61966-2.1";
+  static constexpr char kSRGB[] = "sRGB IEC61966-2.1";
+  static constexpr size_t kSRGBLen = std::char_traits<char>::length(kSRGB);
   // SAFETY: size checked on LHS of &&-expression.
   return span.size() == 3144 &&
-         UNSAFE_BUFFERS(memcmp(&span[400], kSRGB, strlen(kSRGB))) == 0;
+         UNSAFE_BUFFERS(memcmp(&span[400], kSRGB, kSRGBLen)) == 0;
 }
 
 }  // namespace

@@ -50,14 +50,16 @@ TEST_F(CPDFCreatorEmbedderTest, Bug873) {
 
   // Cannot match second part of the ID since it is randomly generated.
   std::string saved_data = GetString();
-  const char kTrailerBeforeSecondID[] =
+  static constexpr char kTrailerBeforeSecondID[] =
       "trailer\r\n<</Info 9 0 R /Root 11 0 R /Size "
       "36/ID[<D889EB6B9ADF88E5EDA7DC08FE85978B><";
+  static constexpr size_t kTrailerBeforeSecondIDLen =
+      std::char_traits<char>::length(kTrailerBeforeSecondID);
   ASSERT_THAT(saved_data, testing::HasSubstr(kTrailerBeforeSecondID));
   size_t trailer_start = saved_data.find(kTrailerBeforeSecondID);
   static constexpr size_t kIdLen = 32;
   size_t trailer_continuation =
-      trailer_start + UNSAFE_TODO(strlen(kTrailerBeforeSecondID)) + kIdLen;
+      trailer_start + kTrailerBeforeSecondIDLen + kIdLen;
   std::string data_after_second_id = saved_data.substr(trailer_continuation);
   EXPECT_THAT(data_after_second_id, testing::StartsWith(">]>>\r\n"));
 }
