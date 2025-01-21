@@ -16,6 +16,24 @@
       "message": "The alternative is to use ByteStringView and let the compiler deduce the length.",
       "revId": "748122cd7ad72da5165180718c76417d13d40edb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f6c9e6d9_1567cb4c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-21T19:26:08Z",
+      "side": 1,
+      "message": "ByteStringView\u0027s (StringViewTemplate\u0027s, really) ctor that deduces length has a reinterpret_cast(), which the compiler disallows in constexpr code. I think to avoid that, StringViewTemplate will need to change its storage from UnsignedType to CharType.",
+      "parentUuid": "9b6a5ecd_1c912dcb",
+      "revId": "748122cd7ad72da5165180718c76417d13d40edb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
