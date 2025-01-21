@@ -34,6 +34,24 @@
       "parentUuid": "9b6a5ecd_1c912dcb",
       "revId": "748122cd7ad72da5165180718c76417d13d40edb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7bff2cfa_aca52d0d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5645
+      },
+      "writtenOn": "2025-01-21T19:28:08Z",
+      "side": 1,
+      "message": "Well, the kConstant can be constexpr char[], and we just introduce a const ByteStringView local(kConstant) and use local.size().",
+      "parentUuid": "f6c9e6d9_1567cb4c",
+      "revId": "748122cd7ad72da5165180718c76417d13d40edb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
