@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9b6a5ecd_1c912dcb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-01-21T18:56:52Z",
+      "side": 1,
+      "message": "The alternative is to use ByteStringView and let the compiler deduce the length.",
+      "revId": "748122cd7ad72da5165180718c76417d13d40edb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
