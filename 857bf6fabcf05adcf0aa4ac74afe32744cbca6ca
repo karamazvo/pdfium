@@ -22,6 +22,30 @@
       },
       "revId": "857bf6fabcf05adcf0aa4ac74afe32744cbca6ca",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4c1a0fd8_d2ca5ad4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-21T22:06:58Z",
+      "side": 1,
+      "message": "Just being OCD.",
+      "parentUuid": "5f1524d8_feef38f1",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 46
+      },
+      "revId": "857bf6fabcf05adcf0aa4ac74afe32744cbca6ca",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
