@@ -16,6 +16,24 @@
       "message": "Before doing this, and getting unexplaned breakage, maybe put a #error line in compiler_specific.h for the MSVC case ?",
       "revId": "e1af63110307b9ff663711e5e1a8c3f42b39959f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "67e00ab0_2834114f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-21T20:26:06Z",
+      "side": 1,
+      "message": "Added the #error in byteorder.h instead.",
+      "parentUuid": "8a7f95c4_95f77963",
+      "revId": "e1af63110307b9ff663711e5e1a8c3f42b39959f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
