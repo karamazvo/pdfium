@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8a7f95c4_95f77963",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-01-21T18:44:21Z",
+      "side": 1,
+      "message": "Before doing this, and getting unexplaned breakage, maybe put a #error line in compiler_specific.h for the MSVC case ?",
+      "revId": "e1af63110307b9ff663711e5e1a8c3f42b39959f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
