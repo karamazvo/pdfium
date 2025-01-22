@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "b5685d1f_6700c9ff",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-22T17:40:13Z",
+      "side": 1,
+      "message": "I usually just mark it fixed manually. Or wait for ClusterFuzz in some cases.",
+      "parentUuid": "a6296d4a_d9317af7",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 3
+      },
+      "revId": "148f9eed656646b76a7d318413211f853723a1c7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "a76b9ca0_bf52973d",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1
