@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b7cce473_f5841fab",
+        "filename": "README.md",
+        "patchSetId": 5
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 6665
+      },
+      "writtenOn": "2025-01-23T02:05:24Z",
+      "side": 1,
+      "message": "Chromium and v8 support \"community supported gcc\" (i.e. no bots, but patches to support it accepted). Is that something you accept too? Or no gcc either?",
+      "revId": "a78c76720328124c3e23b20cd1026661b5c04d50",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
