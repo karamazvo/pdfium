@@ -34,6 +34,24 @@
       "parentUuid": "b7cce473_f5841fab",
       "revId": "a78c76720328124c3e23b20cd1026661b5c04d50",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "58cc4b75_4c76c422",
+        "filename": "README.md",
+        "patchSetId": 5
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 6665
+      },
+      "writtenOn": "2025-01-23T14:17:41Z",
+      "side": 1,
+      "message": "\u003e Do you have a link to the documentation re: gcc support? PDFium can certainly stay consistent with Chromium.\n\nHm, I think it\u0027s not currently in docs/. It should be! But here\u0027s a few email threads:\n\nhttps://groups.google.com/a/chromium.org/g/chromium-dev/c/fuVUxe1q6EA (msvc unsupported)\n\nhttps://groups.google.com/g/v8-users/c/J8Q6VrX9e4M/m/hfkYA4u6AAAJ (v8 version of that)\n\nhttps://groups.google.com/g/v8-users/c/5mWdq6ebhLo/m/k8r82iTuBQAJ (v8 users building v8 with clang-cl and the rest of their stuff with cl.exe, apparently successfully)\n\nhttps://groups.google.com/a/chromium.org/g/chromium-dev/c/5haWEDpUK6Y/m/LkM8f4CrDAAJ (gcc community supported)\n\nhttps://groups.google.com/g/v8-users/c/-vbS2agi1Kw (v8 version)\n\n\u003e Also to be clear, MSVC is not community supported, right?\n\nRight.",
+      "parentUuid": "015b7db2_7d9b9181",
+      "revId": "a78c76720328124c3e23b20cd1026661b5c04d50",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
