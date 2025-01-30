@@ -190,12 +190,14 @@ bool IsArrayWithTraversedObject(const CPDF_Array* array,
   return false;
 }
 
-// Search for |csName| in the tree with root |pNode|. If successful, return the
-// value that |csName| points to; |nIndex| will be the index of |csName|,
-// |ppFind| will be the leaf array that |csName| is found in, and |pFindIndex|
-// will be the index of |csName| in |ppFind|. If |csName| is not found, |ppFind|
-// will be the leaf array that |csName| should be added to, and |pFindIndex|
-// will be the index that it should be added at.
+// Search for `csName` in the tree with root `pNode`. If successful, return the
+// value that `csName` points to; `nIndex` will be the index of `csName`. If
+// `ppFind` is non-nullptr, then on a successful search, `ppFind` will be the
+// leaf array that `csName` is found in, but on fail, `ppFind` will be the leaf
+// array that `csName` should be added to. If `pFindIndex` is non-nullptr, then
+// on a successful search, `pFindIndex` will be the index of `csName` in
+// `ppFind`, but on fail, `pFindIndex` will be the index that it should be added
+// at in `ppFind`.
 RetainPtr<const CPDF_Object> SearchNameNodeByNameInternal(
     const RetainPtr<CPDF_Dictionary>& pNode,
     const WideString& csName,
@@ -204,6 +206,7 @@ RetainPtr<const CPDF_Object> SearchNameNodeByNameInternal(
     RetainPtr<CPDF_Array>* ppFind,
     int* pFindIndex,
     std::set<uint32_t>* seen_obj_nums) {
+  CHECK_EQ(ppFind == nullptr, pFindIndex == nullptr);
   if (nLevel > kNameTreeMaxRecursion)
     return nullptr;
 
@@ -223,10 +226,10 @@ RetainPtr<const CPDF_Object> SearchNameNodeByNameInternal(
     // Skip this node if the name to look for is greater than its higher limit,
     // and the node itself is a leaf node.
     if (csName.Compare(csRight) > 0 && pNames) {
-      if (ppFind)
+      if (ppFind) {
         *ppFind = pNames;
-      if (pFindIndex)
         *pFindIndex = fxcrt::CollectionSize<int32_t>(*pNames) / 2 - 1;
+      }
       return nullptr;
     }
   }
@@ -239,10 +242,10 @@ RetainPtr<const CPDF_Object> SearchNameNodeByNameInternal(
       int32_t iCompare = csValue.Compare(csName);
       if (iCompare > 0)
         break;
-      if (ppFind)
+      if (ppFind) {
         *ppFind = pNames;
-      if (pFindIndex)
         *pFindIndex = pdfium::checked_cast<int32_t>(i);
+      }
       if (iCompare < 0)
         continue;
 
