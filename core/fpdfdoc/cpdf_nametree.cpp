@@ -220,17 +220,24 @@ RetainPtr<const CPDF_Object> SearchNameNodeByNameInternal(
   if (pLimits) {
     auto [csLeft, csRight] = GetNodeLimitsAndSanitize(pLimits.Get());
     // Skip this node if the name to look for is smaller than its lower limit.
-    if (csName.Compare(csLeft) < 0)
+    if (csName.Compare(csLeft) < 0) {
       return nullptr;
+    }
 
-    // Skip this node if the name to look for is greater than its higher limit,
-    // and the node itself is a leaf node.
-    if (csName.Compare(csRight) > 0 && pNames) {
-      if (ppFind) {
+    if (csName.Compare(csRight) > 0) {
+      // If only trying to find the name node, and not where the name should be
+      // added, skip this node.
+      if (!ppFind) {
+        return nullptr;
+      }
+
+      // If the node itself is a leaf node, set `pNames` as the array `csName`
+      // should be added to.
+      if (pNames) {
         *ppFind = pNames;
         *pFindIndex = fxcrt::CollectionSize<int32_t>(*pNames) / 2 - 1;
+        return nullptr;
       }
-      return nullptr;
     }
   }
 
