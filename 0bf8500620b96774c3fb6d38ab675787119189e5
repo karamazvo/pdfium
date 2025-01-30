@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3e7ddb5c_eef4581d",
+        "filename": "core/fpdfdoc/cpdf_nametree.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-30T21:39:33Z",
+      "side": 1,
+      "message": "How about combining the two fields into a struct, then there\u0027s naturally no way to get this wrong?",
+      "revId": "0bf8500620b96774c3fb6d38ab675787119189e5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
