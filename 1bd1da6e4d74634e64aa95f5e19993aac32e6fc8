@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "86dbbf22_bfb9e7f2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-31T03:54:11Z",
+      "side": 1,
+      "message": "Update CL description to match.",
+      "revId": "1bd1da6e4d74634e64aa95f5e19993aac32e6fc8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "f5bbae9a_c5d6211f",
@@ -14,6 +31,24 @@
       "writtenOn": "2025-01-31T03:44:19Z",
       "side": 1,
       "message": "@thestig@chromium.org I have done as you recommended",
+      "revId": "1bd1da6e4d74634e64aa95f5e19993aac32e6fc8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5a7fc318_2f521b3f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-01-31T03:54:11Z",
+      "side": 1,
+      "message": "Thanks!",
+      "parentUuid": "f5bbae9a_c5d6211f",
       "revId": "1bd1da6e4d74634e64aa95f5e19993aac32e6fc8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
