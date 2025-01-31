@@ -193,6 +193,59 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "c3aa1aa6_64c3bb08",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-01-31T03:16:51Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "2dcf1609_9e60189d",
+      "revId": "8622c2bbe47336accfea6c3b3379220668b1a828",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "72b78881_cbfb84f5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-01-31T03:16:51Z",
+      "side": 1,
+      "message": "yes",
+      "parentUuid": "45262c28_b150eb96",
+      "revId": "8622c2bbe47336accfea6c3b3379220668b1a828",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "50e8c24a_eda6d95a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-01-31T03:16:51Z",
+      "side": 1,
+      "message": "i will remove the test and put that in a separate CL",
+      "revId": "8622c2bbe47336accfea6c3b3379220668b1a828",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "dcb07ad2_bd314db5",
         "filename": "core/fpdftext/cpdf_textpage.cpp",
         "patchSetId": 1
@@ -225,6 +278,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "76aaeed8_58fefb8f",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1862,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-01-31T03:16:51Z",
+      "side": 1,
+      "message": "todo not relevant",
+      "parentUuid": "a22537dc_0e7a1e9d",
+      "revId": "8622c2bbe47336accfea6c3b3379220668b1a828",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a774865d_e1e322cf",
@@ -238,6 +309,24 @@
       "writtenOn": "2025-01-09T02:14:14Z",
       "side": 1,
       "message": "It would be preferable to not check in PDFs that are binary blobs. Do you want to handcraft a PDF? Should I?",
+      "revId": "8622c2bbe47336accfea6c3b3379220668b1a828",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d8b96c68_564deef5",
+        "filename": "testing/resources/bug_384770169.pdf",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-01-31T03:16:51Z",
+      "side": 1,
+      "message": "oh shoot I can try to make one",
+      "parentUuid": "a774865d_e1e322cf",
       "revId": "8622c2bbe47336accfea6c3b3379220668b1a828",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
