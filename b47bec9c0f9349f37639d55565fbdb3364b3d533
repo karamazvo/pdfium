@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a3dbcf06_1d48c053",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-02-03T23:45:16Z",
+      "side": 1,
+      "message": "Tag with: Bug: 389951208",
+      "revId": "b47bec9c0f9349f37639d55565fbdb3364b3d533",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
