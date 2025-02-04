@@ -7,7 +7,6 @@
 
 #include <stdint.h>
 
-#include <fstream>
 #include <map>
 #include <memory>
 #include <string>
@@ -298,15 +297,6 @@ class EmbedderTest : public ::testing::Test,
 
   void SetWholeFileAvailable();
 
-#ifndef NDEBUG
-  // For debugging purposes.
-  // While open, write any data that gets passed to WriteBlockCallback() to
-  // |filename|. This is typically used to capture data from FPDF_SaveAsCopy()
-  // calls.
-  void OpenPDFFileForWrite(const std::string& filename);
-  void ClosePDFFileForWrite();
-#endif
-
  private:
   static int WriteBlockCallback(FPDF_FILEWRITE* pFileWrite,
                                 const void* data,
@@ -354,7 +344,6 @@ class EmbedderTest : public ::testing::Test,
 
   std::string data_string_;
   std::string saved_document_file_data_;
-  std::ofstream filestream_;
 };
 
 #endif  // TESTING_EMBEDDER_TEST_H_
