@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e80773e0_bcbff2fa",
+        "filename": "testing/resources/pixel/jpxdecode_indexed_expected.pdf.0.png",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-02-04T19:29:49Z",
+      "side": 1,
+      "message": "FWIW, I actually started with red/green/white/blue in the 4 quadrants, but I guess ImageMagick somehow lost a color in the grayscale conversion. No matter, the output is sufficient to reproduce the bug.",
+      "revId": "fd74c981b2f69118cd5cc414e837e3a61035c507",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
