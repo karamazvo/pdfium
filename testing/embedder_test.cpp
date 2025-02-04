@@ -833,12 +833,7 @@ int EmbedderTest::WriteBlockCallback(FPDF_FILEWRITE* pFileWrite,
                                      const void* data,
                                      unsigned long size) {
   EmbedderTest* pThis = static_cast<EmbedderTest*>(pFileWrite);
-
   pThis->data_string_.append(static_cast<const char*>(data), size);
-
-  if (pThis->filestream_.is_open())
-    pThis->filestream_.write(static_cast<const char*>(data), size);
-
   return 1;
 }
 
@@ -878,16 +873,6 @@ int EmbedderTest::GetPageNumberForLoadedPage(FPDF_PAGE page) const {
 int EmbedderTest::GetPageNumberForSavedPage(FPDF_PAGE page) const {
   return GetPageNumberForPage(saved_page_map_, page);
 }
-
-#ifndef NDEBUG
-void EmbedderTest::OpenPDFFileForWrite(const std::string& filename) {
-  filestream_.open(filename, std::ios_base::binary);
-}
-
-void EmbedderTest::ClosePDFFileForWrite() {
-  filestream_.close();
-}
-#endif
 
 EmbedderTest::ScopedEmbedderTestPage::ScopedEmbedderTestPage()
     : test_(nullptr), page_(nullptr) {}
