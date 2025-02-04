@@ -8,6 +8,7 @@
 #define CORE_FXCRT_FX_MEMORY_H_
 
 #include <stddef.h>
+#include <stdlib.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,12 +24,6 @@ void FXMEM_DefaultFree(void* pointer);
 }  // extern "C"
 
 #include "core/fxcrt/compiler_specific.h"
-
-#if defined(COMPILER_MSVC)
-#include <malloc.h>
-#else
-#include <stdlib.h>
-#endif
 
 void FX_InitializeMemoryAllocators();
 void FX_DestroyMemoryAllocators();
@@ -95,11 +90,7 @@ void FX_ArrayBufferFree(void* data);
 void* FX_AlignedAlloc(size_t size, size_t alignment);
 
 inline void FX_AlignedFree(void* ptr) {
-#if defined(COMPILER_MSVC)
-  _aligned_free(ptr);
-#else
   free(ptr);
-#endif
 }
 
 namespace pdfium {
