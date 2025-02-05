@@ -35,9 +35,13 @@ struct tm* (*g_localtime_func)(const time_t*) = DefaultLocaltimeFunction;
 
 float FXSYS_wcstof(WideStringView pwsStr, size_t* pUsedLen) {
   // TODO(thestig): Consolidate code duplication with StringToFloatImpl().
+  const size_t len = pwsStr.GetLength();
+  if (len == 0) {
+    return 0;
+  }
+
   // Skip leading whitespaces.
   size_t start = 0;
-  size_t len = pwsStr.GetLength();
   while (start < len && pwsStr[start] == ' ') {
     ++start;
   }

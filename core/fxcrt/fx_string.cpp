@@ -103,9 +103,13 @@ IntType StringToIntImpl(StringViewType str) {
 // `InputType` is ByteStringView or WideStringView.
 template <class ReturnType, class InputType>
 ReturnType StringToFloatImpl(InputType strc) {
+  const size_t len = strc.GetLength();
+  if (len == 0) {
+    return 0;
+  }
+
   // Skip leading whitespaces.
   size_t start = 0;
-  size_t len = strc.GetLength();
   while (start < len && strc[start] == ' ') {
     ++start;
   }
