@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1522060e_097b9960",
+        "filename": "pdfium.gni",
+        "patchSetId": 4
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-02-05T15:46:43Z",
+      "side": 0,
+      "message": "I\u0027m assuming you removed uses of this already :)",
+      "revId": "c5a1750519dcc540a7bbd5ccc133ef9e5b9facb5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
