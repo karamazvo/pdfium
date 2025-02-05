@@ -3176,141 +3176,136 @@ void CFXJSE_FormCalcContext::UnitValue(
   }
 
   ByteString bsUnitspan = ValueToUTF8String(info.GetIsolate(), unitspanValue);
-  const char* pData = bsUnitspan.c_str();
-  if (!pData) {
+  const size_t unit_span_length = bsUnitspan.GetLength();
+  if (unit_span_length == 0) {
     info.GetReturnValue().Set(0);
     return;
   }
 
-  UNSAFE_TODO({
-    size_t u = 0;
-    while (IsWhitespace(pData[u])) {
-      ++u;
+  size_t u = 0;
+  while (IsWhitespace(bsUnitspan[u])) {
+    ++u;
+  }
+
+  while (u < unit_span_length) {
+    if (!IsPartOfNumber(bsUnitspan[u])) {
+      break;
+    }
+    ++u;
+  }
+
+  double dFirstNumber = StringToDouble(bsUnitspan.AsStringView());
+  while (IsWhitespace(bsUnitspan[u])) {
+    ++u;
+  }
+
+  ByteString bsFirstUnit;
+  while (u < unit_span_length) {
+    if (bsUnitspan[u] == ' ') {
+      break;
     }
 
-    while (u < bsUnitspan.GetLength()) {
-      if (!IsPartOfNumber(pData[u])) {
+    bsFirstUnit += bsUnitspan[u];
+    ++u;
+  }
+  bsFirstUnit.MakeLower();
+
+  ByteString bsUnit;
+  if (argc > 1) {
+    v8::Local<v8::Value> unitValue = GetSimpleValue(info, 1);
+    ByteString bsUnitTemp = ValueToUTF8String(info.GetIsolate(), unitValue);
+    size_t uVal = 0;
+    while (IsWhitespace(bsUnitTemp[uVal])) {
+      ++uVal;
+    }
+
+    const size_t unit_temp_length = bsUnitTemp.GetLength();
+    while (uVal < unit_temp_length) {
+      if (!FXSYS_IsDecimalDigit(bsUnitTemp[uVal]) && bsUnitTemp[uVal] != '.') {
         break;
       }
-      ++u;
+      ++uVal;
+    }
+    while (IsWhitespace(bsUnitTemp[uVal])) {
+      ++uVal;
     }
 
-    char* pTemp = nullptr;
-    double dFirstNumber = strtod(pData, &pTemp);
-    while (IsWhitespace(pData[u])) {
-      ++u;
-    }
-
-    size_t uLen = bsUnitspan.GetLength();
-    ByteString bsFirstUnit;
-    while (u < uLen) {
-      if (pData[u] == ' ') {
+    while (uVal < unit_temp_length) {
+      if (bsUnitTemp[uVal] == ' ') {
         break;
       }
 
-      bsFirstUnit += pData[u];
-      ++u;
+      bsUnit += bsUnitTemp[uVal];
+      ++uVal;
     }
-    bsFirstUnit.MakeLower();
+    bsUnit.MakeLower();
+  } else {
+    bsUnit = bsFirstUnit;
+  }
 
-    ByteString bsUnit;
-    if (argc > 1) {
-      v8::Local<v8::Value> unitValue = GetSimpleValue(info, 1);
-      ByteString bsUnitTemp = ValueToUTF8String(info.GetIsolate(), unitValue);
-      const char* pChar = bsUnitTemp.c_str();
-      size_t uVal = 0;
-      while (IsWhitespace(pChar[uVal])) {
-        ++uVal;
-      }
-
-      while (uVal < bsUnitTemp.GetLength()) {
-        if (!FXSYS_IsDecimalDigit(pChar[uVal]) && pChar[uVal] != '.') {
-          break;
-        }
-        ++uVal;
-      }
-      while (IsWhitespace(pChar[uVal])) {
-        ++uVal;
-      }
-
-      size_t uValLen = bsUnitTemp.GetLength();
-      while (uVal < uValLen) {
-        if (pChar[uVal] == ' ') {
-          break;
-        }
-
-        bsUnit += pChar[uVal];
-        ++uVal;
-      }
-      bsUnit.MakeLower();
+  double dResult = 0;
+  if (bsFirstUnit == "in" || bsFirstUnit == "inches") {
+    if (bsUnit == "mm" || bsUnit == "millimeters") {
+      dResult = dFirstNumber * 25.4;
+    } else if (bsUnit == "cm" || bsUnit == "centimeters") {
+      dResult = dFirstNumber * 2.54;
+    } else if (bsUnit == "pt" || bsUnit == "points") {
+      dResult = dFirstNumber / 72;
+    } else if (bsUnit == "mp" || bsUnit == "millipoints") {
+      dResult = dFirstNumber / 72000;
     } else {
-      bsUnit = bsFirstUnit;
+      dResult = dFirstNumber;
     }
-
-    double dResult = 0;
-    if (bsFirstUnit == "in" || bsFirstUnit == "inches") {
-      if (bsUnit == "mm" || bsUnit == "millimeters") {
-        dResult = dFirstNumber * 25.4;
-      } else if (bsUnit == "cm" || bsUnit == "centimeters") {
-        dResult = dFirstNumber * 2.54;
-      } else if (bsUnit == "pt" || bsUnit == "points") {
-        dResult = dFirstNumber / 72;
-      } else if (bsUnit == "mp" || bsUnit == "millipoints") {
-        dResult = dFirstNumber / 72000;
-      } else {
-        dResult = dFirstNumber;
-      }
-    } else if (bsFirstUnit == "mm" || bsFirstUnit == "millimeters") {
-      if (bsUnit == "mm" || bsUnit == "millimeters") {
-        dResult = dFirstNumber;
-      } else if (bsUnit == "cm" || bsUnit == "centimeters") {
-        dResult = dFirstNumber / 10;
-      } else if (bsUnit == "pt" || bsUnit == "points") {
-        dResult = dFirstNumber / 25.4 / 72;
-      } else if (bsUnit == "mp" || bsUnit == "millipoints") {
-        dResult = dFirstNumber / 25.4 / 72000;
-      } else {
-        dResult = dFirstNumber / 25.4;
-      }
-    } else if (bsFirstUnit == "cm" || bsFirstUnit == "centimeters") {
-      if (bsUnit == "mm" || bsUnit == "millimeters") {
-        dResult = dFirstNumber * 10;
-      } else if (bsUnit == "cm" || bsUnit == "centimeters") {
-        dResult = dFirstNumber;
-      } else if (bsUnit == "pt" || bsUnit == "points") {
-        dResult = dFirstNumber / 2.54 / 72;
-      } else if (bsUnit == "mp" || bsUnit == "millipoints") {
-        dResult = dFirstNumber / 2.54 / 72000;
-      } else {
-        dResult = dFirstNumber / 2.54;
-      }
-    } else if (bsFirstUnit == "pt" || bsFirstUnit == "points") {
-      if (bsUnit == "mm" || bsUnit == "millimeters") {
-        dResult = dFirstNumber / 72 * 25.4;
-      } else if (bsUnit == "cm" || bsUnit == "centimeters") {
-        dResult = dFirstNumber / 72 * 2.54;
-      } else if (bsUnit == "pt" || bsUnit == "points") {
-        dResult = dFirstNumber;
-      } else if (bsUnit == "mp" || bsUnit == "millipoints") {
-        dResult = dFirstNumber * 1000;
-      } else {
-        dResult = dFirstNumber / 72;
-      }
-    } else if (bsFirstUnit == "mp" || bsFirstUnit == "millipoints") {
-      if (bsUnit == "mm" || bsUnit == "millimeters") {
-        dResult = dFirstNumber / 72000 * 25.4;
-      } else if (bsUnit == "cm" || bsUnit == "centimeters") {
-        dResult = dFirstNumber / 72000 * 2.54;
-      } else if (bsUnit == "pt" || bsUnit == "points") {
-        dResult = dFirstNumber / 1000;
-      } else if (bsUnit == "mp" || bsUnit == "millipoints") {
-        dResult = dFirstNumber;
-      } else {
-        dResult = dFirstNumber / 72000;
-      }
+  } else if (bsFirstUnit == "mm" || bsFirstUnit == "millimeters") {
+    if (bsUnit == "mm" || bsUnit == "millimeters") {
+      dResult = dFirstNumber;
+    } else if (bsUnit == "cm" || bsUnit == "centimeters") {
+      dResult = dFirstNumber / 10;
+    } else if (bsUnit == "pt" || bsUnit == "points") {
+      dResult = dFirstNumber / 25.4 / 72;
+    } else if (bsUnit == "mp" || bsUnit == "millipoints") {
+      dResult = dFirstNumber / 25.4 / 72000;
+    } else {
+      dResult = dFirstNumber / 25.4;
     }
-    info.GetReturnValue().Set(dResult);
-  });
+  } else if (bsFirstUnit == "cm" || bsFirstUnit == "centimeters") {
+    if (bsUnit == "mm" || bsUnit == "millimeters") {
+      dResult = dFirstNumber * 10;
+    } else if (bsUnit == "cm" || bsUnit == "centimeters") {
+      dResult = dFirstNumber;
+    } else if (bsUnit == "pt" || bsUnit == "points") {
+      dResult = dFirstNumber / 2.54 / 72;
+    } else if (bsUnit == "mp" || bsUnit == "millipoints") {
+      dResult = dFirstNumber / 2.54 / 72000;
+    } else {
+      dResult = dFirstNumber / 2.54;
+    }
+  } else if (bsFirstUnit == "pt" || bsFirstUnit == "points") {
+    if (bsUnit == "mm" || bsUnit == "millimeters") {
+      dResult = dFirstNumber / 72 * 25.4;
+    } else if (bsUnit == "cm" || bsUnit == "centimeters") {
+      dResult = dFirstNumber / 72 * 2.54;
+    } else if (bsUnit == "pt" || bsUnit == "points") {
+      dResult = dFirstNumber;
+    } else if (bsUnit == "mp" || bsUnit == "millipoints") {
+      dResult = dFirstNumber * 1000;
+    } else {
+      dResult = dFirstNumber / 72;
+    }
+  } else if (bsFirstUnit == "mp" || bsFirstUnit == "millipoints") {
+    if (bsUnit == "mm" || bsUnit == "millimeters") {
+      dResult = dFirstNumber / 72000 * 25.4;
+    } else if (bsUnit == "cm" || bsUnit == "centimeters") {
+      dResult = dFirstNumber / 72000 * 2.54;
+    } else if (bsUnit == "pt" || bsUnit == "points") {
+      dResult = dFirstNumber / 1000;
+    } else if (bsUnit == "mp" || bsUnit == "millipoints") {
+      dResult = dFirstNumber;
+    } else {
+      dResult = dFirstNumber / 72000;
+    }
+  }
+  info.GetReturnValue().Set(dResult);
 }
 
 // static
