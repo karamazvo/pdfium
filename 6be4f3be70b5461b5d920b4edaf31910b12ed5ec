@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2455cfd9_7730f2da",
+        "filename": "core/fxcrt/fx_memory.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-02-05T23:01:29Z",
+      "side": 0,
+      "message": "Change reverted from this CL.",
+      "parentUuid": "e94f8bea_0dad8648",
+      "revId": "6be4f3be70b5461b5d920b4edaf31910b12ed5ec",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4762fe30_778c0ff3",
