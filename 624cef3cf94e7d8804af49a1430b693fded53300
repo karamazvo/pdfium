@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e3401841_aabb4965",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-02-06T21:10:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5900f2e2_61fe4305",
+      "range": {
+        "startLine": 7,
+        "startChar": 26,
+        "endLine": 7,
+        "endChar": 33
+      },
+      "revId": "624cef3cf94e7d8804af49a1430b693fded53300",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "96b63e07_d94f2de2",
@@ -43,6 +67,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e9fa2abe_1eb38b6d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-02-06T21:10:29Z",
+      "side": 1,
+      "message": "Google C++ style probably allows trailing newlines in the input files for a compiler, say 😊\n\nThe second I did look a bit into, that\u0027s what the description here tries to describe. Do you want more?\n\nI\u0027ll look into the first one and report back.",
+      "parentUuid": "96b63e07_d94f2de2",
+      "revId": "624cef3cf94e7d8804af49a1430b693fded53300",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "09425230_71912c2a",
         "filename": "/COMMIT_MSG",
         "patchSetId": 3
@@ -54,6 +96,30 @@
       "writtenOn": "2025-02-06T19:52:37Z",
       "side": 1,
       "message": "Shorten to https://pdfium-review.googlesource.com/102930 so this fits better?",
+      "range": {
+        "startLine": 25,
+        "startChar": 24,
+        "endLine": 25,
+        "endChar": 80
+      },
+      "revId": "624cef3cf94e7d8804af49a1430b693fded53300",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "88eda340_70e55f9a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-02-06T21:10:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "09425230_71912c2a",
       "range": {
         "startLine": 25,
         "startChar": 24,
@@ -94,6 +160,24 @@
       "writtenOn": "2025-02-06T19:52:37Z",
       "side": 1,
       "message": "Not sure if this needs to be `-\u003d 2` if the stream is `{stream_content}\\r\\nendstream`. May happen when running this script on Windows.",
+      "revId": "624cef3cf94e7d8804af49a1430b693fded53300",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a0da27af_5388623e",
+        "filename": "testing/tools/fixup_pdf_template.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-02-06T21:10:29Z",
+      "side": 1,
+      "message": "Oh, good point. I added a check for this.\n\n(The main case where this is interesting is without /ASCIIHexDecode, and those are usually used with `{{include ...}`, which always appends `UNIX_LINE_ENDING`, so it probably doesn\u0027t matter super much. But we\u0027ll see what the bots say.)",
+      "parentUuid": "74e7579c_22045594",
       "revId": "624cef3cf94e7d8804af49a1430b693fded53300",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
