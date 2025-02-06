@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bdc7d89a_e835f23e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-02-06T15:56:11Z",
+      "side": 1,
+      "message": "Sorry, I had to minorly tweak the test and now need another stamp.",
+      "revId": "6aa5ee3012ca15cba77802717fa8a6687982ed6e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
