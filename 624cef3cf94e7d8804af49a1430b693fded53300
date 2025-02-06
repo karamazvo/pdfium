@@ -1,0 +1,101 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5900f2e2_61fe4305",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-02-06T19:52:37Z",
+      "side": 1,
+      "message": "\"count\" may be slightly more intuitive to readers.",
+      "range": {
+        "startLine": 7,
+        "startChar": 26,
+        "endLine": 7,
+        "endChar": 33
+      },
+      "revId": "624cef3cf94e7d8804af49a1430b693fded53300",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "96b63e07_d94f2de2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-02-06T19:52:37Z",
+      "side": 1,
+      "message": "Do you mind if I take a look at these 2 issues first? When I write the .in files, I generally don\u0027t leave trailing blank lines in the streams, similar to how Google C++ style discourages:\n\n```\n{\n  // Newline below that causes cpplint to complain.\n\n}",
+      "revId": "624cef3cf94e7d8804af49a1430b693fded53300",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "09425230_71912c2a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-02-06T19:52:37Z",
+      "side": 1,
+      "message": "Shorten to https://pdfium-review.googlesource.com/102930 so this fits better?",
+      "range": {
+        "startLine": 25,
+        "startChar": 24,
+        "endLine": 25,
+        "endChar": 80
+      },
+      "revId": "624cef3cf94e7d8804af49a1430b693fded53300",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3c66a74f_948064b9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-02-06T19:52:37Z",
+      "side": 1,
+      "message": "Yes, this generates better PDFs, per PDF 32000-1:2008 section 7.3.8.2. The spec allows for an EOL marker right before `endstream`, but that should not be counted as part of `/Length`.",
+      "revId": "624cef3cf94e7d8804af49a1430b693fded53300",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "74e7579c_22045594",
+        "filename": "testing/tools/fixup_pdf_template.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-02-06T19:52:37Z",
+      "side": 1,
+      "message": "Not sure if this needs to be `-\u003d 2` if the stream is `{stream_content}\\r\\nendstream`. May happen when running this script on Windows.",
+      "revId": "624cef3cf94e7d8804af49a1430b693fded53300",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
