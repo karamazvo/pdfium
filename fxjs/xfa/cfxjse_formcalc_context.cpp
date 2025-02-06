@@ -3176,39 +3176,37 @@ void CFXJSE_FormCalcContext::UnitValue(
   }
 
   ByteString bsUnitspan = ValueToUTF8String(info.GetIsolate(), unitspanValue);
-  const char* pData = bsUnitspan.c_str();
-  if (!pData) {
+  const size_t unit_span_length = bsUnitspan.GetLength();
+  if (unit_span_length == 0) {
     info.GetReturnValue().Set(0);
     return;
   }
 
   UNSAFE_TODO({
     size_t u = 0;
-    while (IsWhitespace(pData[u])) {
+    while (IsWhitespace(bsUnitspan[u])) {
       ++u;
     }
 
     while (u < bsUnitspan.GetLength()) {
-      if (!IsPartOfNumber(pData[u])) {
+      if (!IsPartOfNumber(bsUnitspan[u])) {
         break;
       }
       ++u;
     }
 
-    char* pTemp = nullptr;
-    double dFirstNumber = strtod(pData, &pTemp);
-    while (IsWhitespace(pData[u])) {
+    double dFirstNumber = StringToDouble(bsUnitspan.AsStringView());
+    while (IsWhitespace(bsUnitspan[u])) {
       ++u;
     }
 
-    size_t uLen = bsUnitspan.GetLength();
     ByteString bsFirstUnit;
-    while (u < uLen) {
-      if (pData[u] == ' ') {
+    while (u < unit_span_length) {
+      if (bsUnitspan[u] == ' ') {
         break;
       }
 
-      bsFirstUnit += pData[u];
+      bsFirstUnit += bsUnitspan[u];
       ++u;
     }
     bsFirstUnit.MakeLower();
@@ -3217,29 +3215,29 @@ void CFXJSE_FormCalcContext::UnitValue(
     if (argc > 1) {
       v8::Local<v8::Value> unitValue = GetSimpleValue(info, 1);
       ByteString bsUnitTemp = ValueToUTF8String(info.GetIsolate(), unitValue);
-      const char* pChar = bsUnitTemp.c_str();
       size_t uVal = 0;
-      while (IsWhitespace(pChar[uVal])) {
+      while (IsWhitespace(bsUnitTemp[uVal])) {
         ++uVal;
       }
 
-      while (uVal < bsUnitTemp.GetLength()) {
-        if (!FXSYS_IsDecimalDigit(pChar[uVal]) && pChar[uVal] != '.') {
+      const size_t unit_temp_length = bsUnitTemp.GetLength();
+      while (uVal < unit_temp_length) {
+        if (!FXSYS_IsDecimalDigit(bsUnitTemp[uVal]) &&
+            bsUnitTemp[uVal] != '.') {
           break;
         }
         ++uVal;
       }
-      while (IsWhitespace(pChar[uVal])) {
+      while (IsWhitespace(bsUnitTemp[uVal])) {
         ++uVal;
       }
 
-      size_t uValLen = bsUnitTemp.GetLength();
-      while (uVal < uValLen) {
-        if (pChar[uVal] == ' ') {
+      while (uVal < unit_temp_length) {
+        if (bsUnitTemp[uVal] == ' ') {
           break;
         }
 
-        bsUnit += pChar[uVal];
+        bsUnit += bsUnitTemp[uVal];
         ++uVal;
       }
       bsUnit.MakeLower();
