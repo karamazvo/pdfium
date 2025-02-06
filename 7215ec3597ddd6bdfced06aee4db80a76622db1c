@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2a140aaf_e3ffcb57",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-02-06T00:57:35Z",
+      "side": 1,
+      "message": "For ease of review, could you generate an intermediate patch that still has the UNSAFE_TODO({ }) to preserve the indentation, and then a final one that just removes it without any code changes?",
+      "revId": "7215ec3597ddd6bdfced06aee4db80a76622db1c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
