@@ -36,6 +36,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fdbe5852_c5a15cdc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-02-06T18:24:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d1f5031c_19deb6b3",
+      "revId": "7215ec3597ddd6bdfced06aee4db80a76622db1c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7ccba941_245062c8",
@@ -49,6 +67,30 @@
       "writtenOn": "2025-02-06T01:04:54Z",
       "side": 1,
       "message": "This smells like it might go out of range since an all-whitespace string would formerly terminate the lopp when NUL is not whitespace. Now we don\u0027t have the NUL.",
+      "range": {
+        "startLine": 3186,
+        "startChar": 10,
+        "endLine": 3186,
+        "endChar": 21
+      },
+      "revId": "7215ec3597ddd6bdfced06aee4db80a76622db1c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ca737e1e_9c972296",
+        "filename": "fxjs/xfa/cfxjse_formcalc_context.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 3186,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-02-06T18:24:48Z",
+      "side": 1,
+      "message": "Unintuitively, `bsUnitspan` is a ByteString and not a ByteStringView.",
+      "parentUuid": "7ccba941_245062c8",
       "range": {
         "startLine": 3186,
         "startChar": 10,
