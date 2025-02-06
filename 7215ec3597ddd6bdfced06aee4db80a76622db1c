@@ -34,6 +34,98 @@
       "parentUuid": "2a140aaf_e3ffcb57",
       "revId": "7215ec3597ddd6bdfced06aee4db80a76622db1c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7ccba941_245062c8",
+        "filename": "fxjs/xfa/cfxjse_formcalc_context.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 3186,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-02-06T01:04:54Z",
+      "side": 1,
+      "message": "This smells like it might go out of range since an all-whitespace string would formerly terminate the lopp when NUL is not whitespace. Now we don\u0027t have the NUL.",
+      "range": {
+        "startLine": 3186,
+        "startChar": 10,
+        "endLine": 3186,
+        "endChar": 21
+      },
+      "revId": "7215ec3597ddd6bdfced06aee4db80a76622db1c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b70510a5_2f76eda9",
+        "filename": "fxjs/xfa/cfxjse_formcalc_context.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 3188,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-02-06T01:04:54Z",
+      "side": 1,
+      "message": "Follow-on: this should be converted into something like\n```\n  while (!bsUnintSpan.empty()) {\n    if (!IsWhiteSpace(bsUnitSpan.front())) {\n       break;\n    }\n    bsUnintSpan \u003d bsUnitSpan.subspan(1);\n  }\n```\n\nor maybe some string trim hooey.",
+      "range": {
+        "startLine": 3187,
+        "startChar": 2,
+        "endLine": 3188,
+        "endChar": 3
+      },
+      "revId": "7215ec3597ddd6bdfced06aee4db80a76622db1c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "98742084_fd2b21ad",
+        "filename": "fxjs/xfa/cfxjse_formcalc_context.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 3195,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-02-06T01:04:54Z",
+      "side": 1,
+      "message": "follow-onLmaybe string split?",
+      "range": {
+        "startLine": 3190,
+        "startChar": 2,
+        "endLine": 3195,
+        "endChar": 3
+      },
+      "revId": "7215ec3597ddd6bdfced06aee4db80a76622db1c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bc0a4bd4_c48ee9f6",
+        "filename": "fxjs/xfa/cfxjse_formcalc_context.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 3197,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-02-06T01:04:54Z",
+      "side": 1,
+      "message": "pity this doesn\u0027t return the length.",
+      "range": {
+        "startLine": 3197,
+        "startChar": 24,
+        "endLine": 3197,
+        "endChar": 39
+      },
+      "revId": "7215ec3597ddd6bdfced06aee4db80a76622db1c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
