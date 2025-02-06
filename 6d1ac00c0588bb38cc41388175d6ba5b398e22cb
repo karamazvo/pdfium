@@ -16,6 +16,29 @@
       "message": "(I was confused about where the build.gn changes went -- they already landed at https://pdfium-review.googlesource.com/c/pdfium/+/128350)",
       "revId": "6d1ac00c0588bb38cc41388175d6ba5b398e22cb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4c134fca_2b464733",
+        "filename": "core/fxcrt/fx_memory_wrappers.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-02-06T00:07:07Z",
+      "side": 1,
+      "message": "follow-on: I think we can get rid of this, too and just always assert.",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 19
+      },
+      "revId": "6d1ac00c0588bb38cc41388175d6ba5b398e22cb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
