@@ -1,0 +1,45 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8c1f848f_a9823d02",
+        "filename": "fxjs/xfa/cfxjse_formcalc_context.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 3187,
+      "author": {
+        "id": 5645
+      },
+      "writtenOn": "2025-02-06T18:29:48Z",
+      "side": 1,
+      "message": "Indexing the NUL of a bytestring isn\u0027t still isnt allowed, tho.",
+      "range": {
+        "startLine": 3187,
+        "startChar": 24,
+        "endLine": 3187,
+        "endChar": 36
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "236ef5ce_bb91ca1f",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "fxjs/xfa/cfxjse_formcalc_context.cpp",
+              "range": {
+                "startLine": 3187,
+                "startChar": 0,
+                "endLine": 3188,
+                "endChar": 0
+              },
+              "replacement": "    while (u \u003c unit_span_length \u0026\u0026 IsWhitespace(bsUnitspan[u])) {\n"
+            }
+          ]
+        }
+      ],
+      "revId": "27731491a084318dab9173bfe066a738dcfaf33d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
