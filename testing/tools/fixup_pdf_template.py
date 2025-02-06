@@ -109,6 +109,11 @@ class TemplateProcessor:
     if self.streamlen_state == StreamLenState.FIND_ENDSTREAM:
       if line.rstrip() == b'endstream':
         self.streamlen_state = StreamLenState.START
+        # Don't count final newline.
+        if line.endswith('\r\n'):
+          self.streamlens[-1] -= 2
+        else:
+          self.streamlens[-1] -= 1
       else:
         self.streamlens[-1] += len(line)
 
