@@ -234,6 +234,24 @@
       "parentUuid": "10eba819_6dbdc1df",
       "revId": "624cef3cf94e7d8804af49a1430b693fded53300",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "22d1ccf8_1b642e08",
+        "filename": "testing/tools/fixup_pdf_template.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-02-07T14:31:06Z",
+      "side": 1,
+      "message": "(...because if the \\r comes from the file, we do want to include it in the data, we just don\u0027t want an assert about it)",
+      "parentUuid": "5dedfbff_41acc87c",
+      "revId": "624cef3cf94e7d8804af49a1430b693fded53300",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
