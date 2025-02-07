@@ -85,6 +85,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "4d1f8630_be35afaf",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-02-07T02:27:09Z",
+      "side": 1,
+      "message": "Thanks. One of the design issues before PDF 2.0 is the lack of length for inline images. PDF 2.0 added a length keyword, but I\u0027m not sure if anyone is using that. As a result, PDF parsers have a harder time knowing how far forward to read.",
+      "parentUuid": "e9fa2abe_1eb38b6d",
+      "revId": "624cef3cf94e7d8804af49a1430b693fded53300",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "09425230_71912c2a",
         "filename": "/COMMIT_MSG",
         "patchSetId": 3
@@ -178,6 +196,24 @@
       "side": 1,
       "message": "Oh, good point. I added a check for this.\n\n(The main case where this is interesting is without /ASCIIHexDecode, and those are usually used with `{{include ...}`, which always appends `UNIX_LINE_ENDING`, so it probably doesn\u0027t matter super much. But we\u0027ll see what the bots say.)",
       "parentUuid": "74e7579c_22045594",
+      "revId": "624cef3cf94e7d8804af49a1430b693fded53300",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "10eba819_6dbdc1df",
+        "filename": "testing/tools/fixup_pdf_template.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-02-07T02:27:09Z",
+      "side": 1,
+      "message": "I looked a bit more, and it looks like insert_includes() will convert everything to UNIX line endings. Maybe just assert() `line` does not have a Windows line ending?",
+      "parentUuid": "a0da27af_5388623e",
       "revId": "624cef3cf94e7d8804af49a1430b693fded53300",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
