@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0c806c25_82b88c21",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-02-07T23:42:31Z",
+      "side": 1,
+      "message": "So we should nuke StringViewTemplate::TrimmedRight(char ch) and replace it with TrimmedFront() that just trims whitespace.",
+      "revId": "27731491a084318dab9173bfe066a738dcfaf33d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8c1f848f_a9823d02",
