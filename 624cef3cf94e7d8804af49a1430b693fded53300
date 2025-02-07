@@ -216,6 +216,24 @@
       "parentUuid": "a0da27af_5388623e",
       "revId": "624cef3cf94e7d8804af49a1430b693fded53300",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5dedfbff_41acc87c",
+        "filename": "testing/tools/fixup_pdf_template.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-02-07T14:30:34Z",
+      "side": 1,
+      "message": "Oh, well spotted. However, if {{include ...}} includes a file that ends with `\\r`, the assert will fire. So just back to how it was originally, I suppose?",
+      "parentUuid": "10eba819_6dbdc1df",
+      "revId": "624cef3cf94e7d8804af49a1430b693fded53300",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
