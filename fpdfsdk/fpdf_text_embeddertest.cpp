@@ -2059,6 +2059,22 @@ TEST_F(FPDFTextEmbedderTest, Bug1769) {
               ElementsAreArray(kNeedsImprovementResult));
 }
 
+TEST_F(FPDFTextEmbedderTest, Bug384770169) {
+  ASSERT_TRUE(OpenDocument("bug_384770169.pdf"));
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+
+  unsigned short buffer[256] = {};
+  static constexpr char kExpected[] = "What is my favorite food?";
+  EXPECT_EQ(sizeof(kExpected),
+            FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer));
+  EXPECT_THAT(pdfium::make_span(buffer).first(sizeof(kExpected)),
+              ElementsAreArray(kExpected));
+}
+
 TEST_F(FPDFTextEmbedderTest, TextObjectSetIsActive) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(0);
