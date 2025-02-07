@@ -329,6 +329,24 @@
       "parentUuid": "a774865d_e1e322cf",
       "revId": "8622c2bbe47336accfea6c3b3379220668b1a828",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d32b5e91_b13f7e62",
+        "filename": "testing/resources/bug_384770169.pdf",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-02-07T01:25:39Z",
+      "side": 1,
+      "message": "I added a test case here: https://pdfium-review.googlesource.com/c/pdfium/+/128591",
+      "parentUuid": "d8b96c68_564deef5",
+      "revId": "8622c2bbe47336accfea6c3b3379220668b1a828",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
