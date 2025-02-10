@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bab6a1d0_daa81fe6",
+        "filename": "core/fpdfapi/font/cpdf_tounicodemap.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-02-10T17:31:13Z",
+      "side": 1,
+      "message": "wouldn\u0027t this be limited to 65536 or are multiple planes allowed?",
+      "range": {
+        "startLine": 30,
+        "startChar": 34,
+        "endLine": 30,
+        "endChar": 40
+      },
+      "revId": "00f7b3e96bd893dd389cbf48fc9de03edf197400",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
