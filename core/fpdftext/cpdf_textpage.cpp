@@ -301,7 +301,9 @@ CFX_FloatRect GetLooseBounds(const CPDF_TextPage::CharInfo& charinfo) {
       float bottom = original_origin.y + descent * font_scale;
       float top = original_origin.y + ascent * font_scale;
       CFX_FloatRect char_box(left, bottom, right, top);
-      return charinfo.matrix().TransformRect(char_box);
+      char_box = charinfo.matrix().TransformRect(char_box);
+      char_box.Union(charinfo.char_box());
+      return char_box;
     }
   }
 
