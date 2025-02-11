@@ -78,11 +78,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling build
   # and whatever else without interference from each other.
-  'build_revision': '4aba7b76ec765b0fe78cf6341887aaa80832f8c6',
+  'build_revision': '83b1ef89e3f7682afd2550f86170d31713aa9ce4',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling buildtools
   # and whatever else without interference from each other.
-  'buildtools_revision': '469b4146c5017c7a863dc795dd71d91b92326a57',
+  'buildtools_revision': 'b9a893ee2be7d4c4c0a463deb0c9cffeb8e7b943',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling catapult
   # and whatever else without interference from each other.
@@ -94,7 +94,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling clang
   # and whatever else without interference from each other.
-  'clang_revision': 'bf9a3411372f2d5eed8b3d27ee8bd8cf6c17135f',
+  'clang_revision': '9746a0d964230330e50d42172c3e6cb3b39d71f2',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling code_coverage
   # and whatever else without interference from each other.
@@ -156,7 +156,7 @@ vars = {
   # and whatever else without interference from each other.
   # If you change this, also update the libc++ revision in
   # //buildtools/deps_revisions.gni.
-  'libcxx_revision': '74dd760826063f15ce4d373b31bc34d1c65e41c2',
+  'libcxx_revision': '492ff432ef34d75d5c9f2bfc4b5b70944c208c16',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libc++abi
   # and whatever else without interference from each other.
@@ -172,7 +172,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling llvm-libc
   # and whatever else without interference from each other.
-  'llvm_libc_revision': '60b7db20ace1cb750f8e9e06e7e9c7c6585ace42',
+  'llvm_libc_revision': '5333472378a666cca9d0fcf6551b4d768c70a55c',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling markupsafe
   # and whatever else without interference from each other.
@@ -406,45 +406,45 @@ deps = {
     'bucket': 'chromium-browser-clang',
     'objects': [
       {
-        'object_name': 'Linux_x64/clang-llvmorg-20-init-16062-g091448e3-1.tar.xz',
-        'sha256sum': '312f81ba0a77fb66f077f4af105fed1ae3f7068c63127b79c560336befd7e957',
-        'size_bytes': 54162056,
-        'generation': 1734710928554494,
+        'object_name': 'Linux_x64/clang-llvmorg-21-init-853-gba476d0b-1.tar.xz',
+        'sha256sum': 'd9ae518c9e077fe36aa654d424902cc6140852aec8e3f30cf4e81d66b68cd8f9',
+        'size_bytes': 54666268,
+        'generation': 1738850733738004,
         'condition': '(host_os == "linux" or checkout_android) and non_git_source',
       },
       {
-        'object_name': 'Mac/clang-llvmorg-20-init-16062-g091448e3-1.tar.xz',
-        'sha256sum': 'a87e78f91148b227e2791606f1d6491e65a3343e488a5d9afb28739e89b892b9',
-        'size_bytes': 49075240,
-        'generation': 1734710930234741,
+        'object_name': 'Mac/clang-llvmorg-21-init-853-gba476d0b-1.tar.xz',
+        'sha256sum': '31e82646829fcd5087fed5d537501e586802d199a8659381fcb816e948eb7817',
+        'size_bytes': 48581396,
+        'generation': 1738850736259102,
         'condition': 'host_os == "mac" and host_cpu == "x64"',
       },
       {
-        'object_name': 'Mac/clang-mac-runtime-library-llvmorg-20-init-16062-g091448e3-1.tar.xz',
-        'sha256sum': '6126aa8fb58ac245aa3fcc3da7500aa218943a062a66b10facf9034dff50b837',
-        'size_bytes': 973872,
-        'generation': 1734710937791397,
+        'object_name': 'Mac/clang-mac-runtime-library-llvmorg-21-init-853-gba476d0b-1.tar.xz',
+        'sha256sum': 'c4234f1396d04158744f281ded45c59fe0fdf0507b675f4f78f0a83759e5ebd8',
+        'size_bytes': 978784,
+        'generation': 1738850756264052,
         'condition': 'checkout_mac and not host_os == "mac"',
       },
       {
-        'object_name': 'Mac_arm64/clang-llvmorg-20-init-16062-g091448e3-1.tar.xz',
-        'sha256sum': '7783806795f320f06abf77f8066e64448a101a1a40695ba6252b9c6315b7fdf2',
-        'size_bytes': 43083188,
-        'generation': 1734710939037981,
+        'object_name': 'Mac_arm64/clang-llvmorg-21-init-853-gba476d0b-1.tar.xz',
+        'sha256sum': 'b99b2f5fcb60c3c70ece5898c3a34a64c9275426ebc58e5e50df8951ce3d5518',
+        'size_bytes': 43488164,
+        'generation': 1738850757665559,
         'condition': 'host_os == "mac" and host_cpu == "arm64"',
       },
       {
-        'object_name': 'Win/clang-llvmorg-20-init-16062-g091448e3-1.tar.xz',
-        'sha256sum': '1b197f968fdc7e5a9a4ce3c76f8490d5b35877fca755771510a9e9292275128f',
-        'size_bytes': 46308816,
-        'generation': 1734710948582253,
+        'object_name': 'Win/clang-llvmorg-21-init-853-gba476d0b-1.tar.xz',
+        'sha256sum': 'a76bd85df536b3d9014a30f44440dce956b4d3124a8d73d3c92267e5f8315a01',
+        'size_bytes': 46611340,
+        'generation': 1738850778584684,
         'condition': 'host_os == "win"',
       },
       {
-        'object_name': 'Win/clang-win-runtime-library-llvmorg-20-init-16062-g091448e3-1.tar.xz',
-        'sha256sum': 'b0db5463446fdc218f4ae998c6f78d275c274fe023dd2f9d78941c01827dcd46',
-        'size_bytes': 2457348,
-        'generation': 1734710956415612,
+        'object_name': 'Win/clang-win-runtime-library-llvmorg-21-init-853-gba476d0b-1.tar.xz',
+        'sha256sum': '1b50b865543952fdf03c0a4e01487554a6373450c184c421d40d0325dca9190b',
+        'size_bytes': 2463572,
+        'generation': 1738850798060913,
         'condition': 'checkout_win and not host_os == "win"',
       },
     ]
