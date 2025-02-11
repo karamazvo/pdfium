@@ -301,6 +301,23 @@ TEST_F(FPDFTextEmbedderTest, TextVertical) {
   EXPECT_NEAR(8.668, x, 0.001);
   EXPECT_NEAR(160.492, y, 0.001);
 
+  double left;
+  double right;
+  double bottom;
+  double top;
+  EXPECT_TRUE(
+      FPDFText_GetCharBox(textpage.get(), 1, &left, &right, &bottom, &top));
+  EXPECT_NEAR(7.276, left, 0.001);
+  EXPECT_NEAR(12.808, right, 0.001);
+  EXPECT_NEAR(171.364, bottom, 0.001);
+  EXPECT_NEAR(178.288, top, 0.001);
+  EXPECT_TRUE(
+      FPDFText_GetCharBox(textpage.get(), 2, &left, &right, &bottom, &top));
+  EXPECT_NEAR(9.772, left, 0.001);
+  EXPECT_NEAR(11.56, right, 0.001);
+  EXPECT_NEAR(160.348, bottom, 0.001);
+  EXPECT_NEAR(170.188, top, 0.001);
+
   FS_RECTF rect;
   EXPECT_TRUE(FPDFText_GetLooseCharBox(textpage.get(), 1, &rect));
   EXPECT_NEAR(4, rect.left, 0.001);
