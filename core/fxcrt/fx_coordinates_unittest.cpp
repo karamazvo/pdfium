@@ -424,11 +424,11 @@ TEST(CFXMatrixTest, GetInverseCR702041) {
   EXPECT_FLOAT_EQ(-9.7875698e+10f, rev.e);
   EXPECT_FLOAT_EQ(-1.0045138e+11f, rev.f);
 
-  // Should be 2, 3
-  CFX_PointF expected(0, 0);
   CFX_PointF result = rev.Transform(m.Transform(CFX_PointF(2, 3)));
-  EXPECT_FLOAT_EQ(expected.x, result.x);
-  EXPECT_FLOAT_EQ(expected.y, result.y);
+  // Should be 2.
+  EXPECT_FLOAT_EQ(0.0f, result.x);
+  // Should be 3.
+  EXPECT_FLOAT_EQ(0.0f, result.y);
 }
 
 TEST(CFXMatrixTest, GetInverseCR714187) {
@@ -444,11 +444,23 @@ TEST(CFXMatrixTest, GetInverseCR714187) {
   EXPECT_FLOAT_EQ(-4930083.5f, rev.e);
   EXPECT_FLOAT_EQ(3702098.2f, rev.f);
 
-  // Should be 3 ....
-  CFX_PointF expected(2, 2.75);
   CFX_PointF result = rev.Transform(m.Transform(CFX_PointF(2, 3)));
-  EXPECT_FLOAT_EQ(expected.x, result.x);
-  EXPECT_FLOAT_EQ(expected.y, result.y);
+  EXPECT_FLOAT_EQ(2.0f, result.x);
+  // Should be 3.
+  EXPECT_FLOAT_EQ(2.75f, result.y);
+}
+
+TEST(CFXMatrixTest, GetInverseRounding) {
+  static constexpr CFX_Matrix m(0.75f, 0.0f, 0.0f, 0.75f, 35.0f, 739.75f);
+  CFX_Matrix rev = m.GetInverse();
+
+  CFX_PointF intermediate_result = m.Transform(CFX_PointF(0, 0));
+  EXPECT_FLOAT_EQ(35.0f, intermediate_result.x);
+  EXPECT_FLOAT_EQ(739.75f, intermediate_result.y);
+  CFX_PointF result = rev.Transform(intermediate_result);
+  EXPECT_FLOAT_EQ(0.0f, result.x);
+  // Should be 0;
+  EXPECT_FLOAT_EQ(0.00006103516f, result.y);
 }
 
 #define EXPECT_NEAR_FIVE_PLACES(a, b) EXPECT_NEAR((a), (b), 1e-5)
