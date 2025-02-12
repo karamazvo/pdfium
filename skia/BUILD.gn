@@ -303,6 +303,13 @@ component("skia") {
       "//third_party/skia/src/ports/SkFontMgr_custom.cpp",
       "//third_party/skia/src/ports/SkFontMgr_custom_empty.cpp",
     ]
+
+    if (is_component_build) {
+      sources += [
+        "//third_party/skia/src/ports/SkTypeface_proxy.cpp",
+        "//third_party/skia/src/ports/SkTypeface_proxy.h",
+      ]
+    }
   }
 
   if (is_android) {
