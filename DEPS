@@ -204,6 +204,10 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling skia
   # and whatever else without interference from each other.
+  'simdutf_revision': '5a9a2134b280c1b956ad68a0643797fe26dd1c94',
+  # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling skia
+  # and whatever else without interference from each other.
   'skia_revision': '975788ea90f24519aa8740085378d1a8db05f5d2',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling test_fonts
@@ -224,7 +228,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling v8
   # and whatever else without interference from each other.
-  'v8_revision': '75be3dcb5330aa3ebcf79031e7123bc3f0f07179',
+  'v8_revision': 'd531122746ec7dfe7a49023e42a687fa0bdfc01e',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling zlib
   # and whatever else without interference from each other.
@@ -512,6 +516,12 @@ deps = {
         'condition': 'host_os == "win"',
       },
     ],
+  },
+
+  'third_party/simdutf': {
+    'url': Var('chromium_git') + '/chromium/src/third_party/simdutf@' +
+        Var('simdutf_revision'),
+    'condition': 'checkout_v8',
   },
 
   'third_party/skia': {
