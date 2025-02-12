@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3c4856b6_7c841a74",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2025-02-12T17:13:40Z",
+      "side": 1,
+      "message": "Looks like this month\u0027s build roll did not need https://pdfium-review.googlesource.com/c/pdfium/+/127870/1/.gn in the end.",
+      "revId": "82e2dbc2a7273567204473e4f01dbff8651092b9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
