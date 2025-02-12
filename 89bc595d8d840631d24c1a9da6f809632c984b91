@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e9ab1aa4_c7228816",
+        "filename": "DEPS",
+        "patchSetId": 5
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-02-12T17:21:35Z",
+      "side": 1,
+      "message": "For next time: I don\u0027t think this has to be rolled together with the other DEPS entries. See the last 2 rolls:\n\nhttps://pdfium-review.googlesource.com/c/pdfium/+/127517\nhttps://pdfium-review.googlesource.com/c/pdfium/+/127011",
+      "revId": "89bc595d8d840631d24c1a9da6f809632c984b91",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
