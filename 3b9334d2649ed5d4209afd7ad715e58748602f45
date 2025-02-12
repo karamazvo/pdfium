@@ -70,6 +70,24 @@
       "parentUuid": "abfc77d5_5b9afa9d",
       "revId": "3b9334d2649ed5d4209afd7ad715e58748602f45",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3d3e438e_e31f78cd",
+        "filename": "skia/BUILD.gn",
+        "patchSetId": 1
+      },
+      "lineNbr": 305,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2025-02-12T19:38:35Z",
+      "side": 1,
+      "message": "I prepended CL https://pdfium-review.googlesource.com/c/pdfium/+/128830 as a general cleanup to use the gni filegroups for the Skia port files.  Then this CL just adds the newly needed `skia_ports_typeface_proxy_sources`.",
+      "parentUuid": "06b24825_03b1d683",
+      "revId": "3b9334d2649ed5d4209afd7ad715e58748602f45",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
