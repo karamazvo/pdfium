@@ -16,6 +16,24 @@
       "message": "Note that this is and many others are not exactly 1:1, as the GN variables are already out of sync with the lists here. Sometimes the difference is just a header or two, and sometimes the GN var contains extra .cpp files. It may be worth mentioning this, as well as why this CL is helpful, in the CL description.",
       "revId": "ae69e3abdabf94db1e99f8cf97d5c50723b87bd4",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "60c0c96f_84e9c18e",
+        "filename": "skia/BUILD.gn",
+        "patchSetId": 1
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2025-02-12T21:20:03Z",
+      "side": 0,
+      "message": "Updated.",
+      "parentUuid": "94d5ab48_ddadeec9",
+      "revId": "ae69e3abdabf94db1e99f8cf97d5c50723b87bd4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
