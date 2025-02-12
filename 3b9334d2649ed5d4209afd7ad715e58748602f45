@@ -16,6 +16,24 @@
       "message": "Not needed? My local build succeeded without these.",
       "revId": "3b9334d2649ed5d4209afd7ad715e58748602f45",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d985d991_0c7dcaf1",
+        "filename": "skia/BUILD.gn",
+        "patchSetId": 1
+      },
+      "lineNbr": 305,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2025-02-12T17:45:20Z",
+      "side": 1,
+      "message": "I had found this was needed earlier, before I discovered that I had to roll Rust before I could roll Skia.\n\nApparently that need went away in the short interim after that - agreed, it is no longer needed.  Removed.",
+      "parentUuid": "aa4f9bdc_7aaf68ef",
+      "revId": "3b9334d2649ed5d4209afd7ad715e58748602f45",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
