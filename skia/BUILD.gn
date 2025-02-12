@@ -302,6 +302,8 @@ component("skia") {
       "//third_party/skia/src/ports/SkFontMgr_FontConfigInterface.cpp",
       "//third_party/skia/src/ports/SkFontMgr_custom.cpp",
       "//third_party/skia/src/ports/SkFontMgr_custom_empty.cpp",
+      "//third_party/skia/src/ports/SkTypeface_proxy.cpp",
+      "//third_party/skia/src/ports/SkTypeface_proxy.h",
     ]
   }
 
