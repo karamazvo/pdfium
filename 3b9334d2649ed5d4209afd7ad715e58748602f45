@@ -52,6 +52,24 @@
       "parentUuid": "d985d991_0c7dcaf1",
       "revId": "3b9334d2649ed5d4209afd7ad715e58748602f45",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "06b24825_03b1d683",
+        "filename": "skia/BUILD.gn",
+        "patchSetId": 1
+      },
+      "lineNbr": 305,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-02-12T19:14:15Z",
+      "side": 1,
+      "message": "Maybe switch to using `skia_ports_typeface_proxy_sources` like https://crrev.com/1390576 ? Then if the list in that GN variable changes, PDFium picks up the new file list automatically. Listing the files directly means more future maintenance.",
+      "parentUuid": "abfc77d5_5b9afa9d",
+      "revId": "3b9334d2649ed5d4209afd7ad715e58748602f45",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
