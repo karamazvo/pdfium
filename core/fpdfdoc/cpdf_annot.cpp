@@ -124,8 +124,7 @@ CPDF_Annot::CPDF_Annot(RetainPtr<CPDF_Dictionary> pDict,
       m_nSubtype(StringToAnnotSubtype(
           m_pAnnotDict->GetByteStringFor(pdfium::annotation::kSubtype))),
       m_bIsTextMarkupAnnotation(IsTextMarkupAnnotation(m_nSubtype)),
-      m_bHasGeneratedAP(
-          m_pAnnotDict->GetBooleanFor(kPDFiumKey_HasGeneratedAP, false)) {
+      m_bHasGeneratedAP(DictHasGeneratedAp(m_pAnnotDict)) {
   GenerateAPIfNeeded();
 }
 
@@ -408,6 +407,11 @@ ByteString CPDF_Annot::AnnotSubtypeToString(CPDF_Annot::Subtype nSubtype) {
 // static
 size_t CPDF_Annot::QuadPointCount(const CPDF_Array* pArray) {
   return pArray->size() / 8;
+}
+
+// static
+bool CPDF_Annot::DictHasGeneratedAp(const CPDF_Dictionary* annot_dict) {
+  return annot_dict->GetBooleanFor(kPDFiumKey_HasGeneratedAP, false);
 }
 
 bool CPDF_Annot::DrawAppearance(CPDF_Page* pPage,

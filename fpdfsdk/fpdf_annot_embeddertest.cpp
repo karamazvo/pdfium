@@ -438,15 +438,12 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractHighlightLongContent) {
     unsigned int G;
     unsigned int B;
     unsigned int A;
-    // TODO(crbug.com/396056603): Make this succeed and check the colors again.
-    ASSERT_FALSE(FPDFAnnot_GetColor(annot.get(), FPDFANNOT_COLORTYPE_Color, &R,
-                                    &G, &B, &A));
-#if 0
+    ASSERT_TRUE(FPDFAnnot_GetColor(annot.get(), FPDFANNOT_COLORTYPE_Color, &R,
+                                   &G, &B, &A));
     EXPECT_EQ(255u, R);
     EXPECT_EQ(255u, G);
     EXPECT_EQ(0u, B);
     EXPECT_EQ(255u, A);
-#endif
 
     // Check that the author is correct.
     static const char kAuthorKey[] = "T";
@@ -524,15 +521,12 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractInkMultiple) {
     unsigned int G;
     unsigned int B;
     unsigned int A;
-    // TODO(crbug.com/396056603): Make this succeed and check the colors again.
-    ASSERT_FALSE(FPDFAnnot_GetColor(annot.get(), FPDFANNOT_COLORTYPE_Color, &R,
-                                    &G, &B, &A));
-#if 0
+    ASSERT_TRUE(FPDFAnnot_GetColor(annot.get(), FPDFANNOT_COLORTYPE_Color, &R,
+                                   &G, &B, &A));
     EXPECT_EQ(0u, R);
     EXPECT_EQ(0u, G);
     EXPECT_EQ(255u, B);
     EXPECT_EQ(76u, A);
-#endif
 
     // Check that there is no content.
     EXPECT_EQ(2u, FPDFAnnot_GetStringValue(

@@ -73,6 +73,7 @@ class CPDF_Annot {
   static CFX_FloatRect RectFromQuadPoints(const CPDF_Dictionary* pAnnotDict,
                                           size_t nIndex);
   static size_t QuadPointCount(const CPDF_Array* pArray);
+  static bool DictHasGeneratedAp(const CPDF_Dictionary* annot_dict);
 
   CPDF_Annot(RetainPtr<CPDF_Dictionary> pDict, CPDF_Document* pDocument);
   ~CPDF_Annot();
