@@ -412,6 +412,12 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetRect(FPDF_ANNOTATION annot,
 //   rect   - receives the rectangle; must not be NULL.
 //
 // Returns true if successful.
+//
+// Note that if the annotation does not have an appearance stream, then PDFium
+// may generate one during form loading. In which case, the returned result may
+// be different from the values originally specified in the annotation, as
+// PDFium may need to adjust the rectangle to make the appearance stream
+// rendering better match the annotation.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetRect(FPDF_ANNOTATION annot,
                                                       FS_RECTF* rect);
 
