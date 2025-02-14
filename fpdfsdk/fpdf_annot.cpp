@@ -706,15 +706,18 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetColor(FPDF_ANNOTATION annot,
                                                        unsigned int* A) {
   RetainPtr<CPDF_Dictionary> pAnnotDict =
       GetMutableAnnotDictFromFPDFAnnotation(annot);
-
-  if (!pAnnotDict || !R || !G || !B || !A)
+  if (!pAnnotDict || !R || !G || !B || !A) {
     return false;
+  }
 
-  // For annotations with their appearance streams already defined, the path
-  // stream's own color definitions take priority over the annotation color
-  // definitions retrieved by this method, hence this method will simply fail.
-  if (HasAPStream(pAnnotDict.Get()))
+  // For annotations with their appearance streams already defined where the
+  // appearance stream was not defined by PDFium itself, the appearance stream's
+  // own color definitions take priority over the annotation color definitions
+  // retrieved by this method, hence this method will simply fail.
+  if (!CPDF_Annot::DictHasGeneratedAp(pAnnotDict.Get()) &&
+      HasAPStream(pAnnotDict.Get())) {
     return false;
+  }
 
   RetainPtr<const CPDF_Array> pColor = pAnnotDict->GetArrayFor(
       type == FPDFANNOT_COLORTYPE_InteriorColor ? "IC" : "C");
