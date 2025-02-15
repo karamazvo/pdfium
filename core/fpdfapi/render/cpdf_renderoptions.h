@@ -21,10 +21,6 @@ class CPDF_RenderOptions {
   enum Type : uint8_t { kNormal = 0, kGray, kAlpha, kForcedColor };
 
   struct Options {
-    Options();
-    Options(const Options& rhs);
-    Options& operator=(const Options& rhs);
-
     bool bClearType = false;
     bool bNoNativeText = false;
     bool bForceHalftone = false;
@@ -44,7 +40,7 @@ class CPDF_RenderOptions {
     FX_ARGB text_stroke_color;
   };
 
-  CPDF_RenderOptions();
+  constexpr CPDF_RenderOptions() : m_Options{true} {}
   CPDF_RenderOptions(const CPDF_RenderOptions& rhs);
   ~CPDF_RenderOptions();
 
