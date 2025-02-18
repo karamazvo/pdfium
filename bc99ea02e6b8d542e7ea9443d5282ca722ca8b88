@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e49f97c0_517d1578",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2025-02-18T16:41:16Z",
+      "side": 1,
+      "message": "75 chars but then a hard break? (Supposed to be 72.)",
+      "revId": "bc99ea02e6b8d542e7ea9443d5282ca722ca8b88",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
