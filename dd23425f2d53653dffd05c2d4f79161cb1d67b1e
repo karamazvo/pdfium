@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "999dc0b9_a4e1d670",
+        "filename": "fpdfsdk/cpdfsdk_helpers.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-02-19T19:28:48Z",
+      "side": 1,
+      "message": "nit: hand out?",
+      "range": {
+        "startLine": 267,
+        "startChar": 72,
+        "endLine": 267,
+        "endChar": 78
+      },
+      "revId": "dd23425f2d53653dffd05c2d4f79161cb1d67b1e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f8b77ffc_97c33617",
+        "filename": "fpdfsdk/cpdfsdk_helpers.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-02-19T19:28:48Z",
+      "side": 1,
+      "message": "nit: maybe \"CHECK() that\" if you want to keep the checking behaviour, but if it is taking images from the embedder, a check is kinda rude way to fail.",
+      "range": {
+        "startLine": 267,
+        "startChar": 3,
+        "endLine": 267,
+        "endChar": 12
+      },
+      "revId": "dd23425f2d53653dffd05c2d4f79161cb1d67b1e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dec8a1f6_d55777b2",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-02-19T19:28:48Z",
+      "side": 1,
+      "message": "This probably should have been a return false?",
+      "range": {
+        "startLine": 181,
+        "startChar": 2,
+        "endLine": 181,
+        "endChar": 41
+      },
+      "revId": "dd23425f2d53653dffd05c2d4f79161cb1d67b1e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
