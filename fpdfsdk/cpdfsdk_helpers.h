@@ -264,6 +264,10 @@ inline XObjectContext* XObjectContextFromFPDFXObject(FPDF_XOBJECT xobject) {
 
 FXDIB_Format FXDIBFormatFromFPDFFormat(int format);
 
+// Make sure `bitmap` is not pre-multiplied, as PDFium does not take or handle
+// out pre-multiplied bitmaps to the embedder.
+void ValidateBitmapPremultiplyState(CFX_DIBitmap* bitmap);
+
 CPDFSDK_InteractiveForm* FormHandleToInteractiveForm(FPDF_FORMHANDLE hHandle);
 
 UNSAFE_BUFFER_USAGE ByteString
