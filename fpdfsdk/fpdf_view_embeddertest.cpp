@@ -1632,6 +1632,18 @@ TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithAndWithoutExternalMemory) {
                                          ManyRectanglesChecksum());
   TestRenderPageBitmapWithExternalMemoryAndNoStride(page.get(), FPDFBitmap_BGRA,
                                                     ManyRectanglesChecksum());
+
+#if defined(PDF_USE_SKIA)
+  TestRenderPageBitmapWithInternalMemory(page.get(), FPDFBitmap_BGRA_Premul,
+                                         ManyRectanglesChecksum());
+  TestRenderPageBitmapWithInternalMemoryAndStride(
+      page.get(), FPDFBitmap_BGRA_Premul, kBgrxStride,
+      ManyRectanglesChecksum());
+  TestRenderPageBitmapWithExternalMemory(page.get(), FPDFBitmap_BGRA_Premul,
+                                         ManyRectanglesChecksum());
+  TestRenderPageBitmapWithExternalMemoryAndNoStride(
+      page.get(), FPDFBitmap_BGRA_Premul, ManyRectanglesChecksum());
+#endif
 }
 
 TEST_F(FPDFViewEmbedderTest, RenderHelloWorldWithFlags) {
