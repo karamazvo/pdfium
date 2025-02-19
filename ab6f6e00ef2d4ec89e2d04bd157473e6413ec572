@@ -35,6 +35,23 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9cf80a22_0d29266c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-02-19T00:39:19Z",
+      "side": 1,
+      "message": "Ah, this is more involved than it looks. The error is\n```\n./../core/fpdfapi/render/cpdf_renderoptions.h:23:3: error: [chromium-style] Complex class/struct needs an explicit out-of-line constructor.\n   23 |   struct Options {\n```\n   \nThere\u0027s a rule about large structs that this trips over (even though its not that large) which chrome\u0027s compilers enforce (and everyone hates). Til we re-write the compiler plugin we may not be able to land this, which may be why it wasn\u0027t constexpr in the first place.",
+      "revId": "ab6f6e00ef2d4ec89e2d04bd157473e6413ec572",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2593c134_eabfa5a2",
