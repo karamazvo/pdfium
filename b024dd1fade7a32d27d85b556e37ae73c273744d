@@ -16,6 +16,24 @@
       "message": "I don\u0027t have permission to kick off try jobs, please click the button for me.",
       "revId": "b024dd1fade7a32d27d85b556e37ae73c273744d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2a63484b_f87cc418",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-02-20T22:40:38Z",
+      "side": 1,
+      "message": "Done and gave you permission.",
+      "parentUuid": "37393ce2_e1ee8213",
+      "revId": "b024dd1fade7a32d27d85b556e37ae73c273744d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
