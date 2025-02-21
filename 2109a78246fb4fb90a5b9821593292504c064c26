@@ -63,6 +63,30 @@
       },
       "revId": "2109a78246fb4fb90a5b9821593292504c064c26",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3488c10a_2ce4a651",
+        "filename": "core/fxge/dib/cfx_dibitmap.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 967,
+      "author": {
+        "id": 5645
+      },
+      "writtenOn": "2025-02-21T00:33:12Z",
+      "side": 1,
+      "message": "Ack.  Land it.",
+      "parentUuid": "0c6e2754_460ba8d1",
+      "range": {
+        "startLine": 967,
+        "startChar": 34,
+        "endLine": 967,
+        "endChar": 49
+      },
+      "revId": "2109a78246fb4fb90a5b9821593292504c064c26",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
