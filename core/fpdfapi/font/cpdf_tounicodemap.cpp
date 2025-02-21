@@ -15,6 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
+#include "core/fxcrt/containers/adapters.h"
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -37,12 +38,12 @@ WideString StringDataAdd(const WideString& str) {
   // The code really wants to insert at the front, but that results in poor
   // performance. Get the same result faster by inserting at the back, and then
   // reversing the string.
-  for (size_t i = str.GetLength(); i > 0; --i) {
-    wchar_t ch = str[i - 1] + value;
-    if (ch < str[i - 1]) {
+  for (wchar_t ch : pdfium::Reversed(str)) {
+    wchar_t ch_v = ch + value;
+    if (ch_v < ch) {
       ret.InsertAtBack(0);
     } else {
-      ret.InsertAtBack(ch);
+      ret.InsertAtBack(ch_v);
       value = 0;
     }
   }
