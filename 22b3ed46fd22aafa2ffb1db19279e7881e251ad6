@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b2789ffb_be79660f",
+        "filename": "core/fpdfapi/font/cpdf_tounicodemap.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 335,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-02-21T22:34:36Z",
+      "side": 1,
+      "message": "NOTE: this has got to be O(N^2) with the copies involved, there must be a smarter way to make these strings.",
+      "range": {
+        "startLine": 335,
+        "startChar": 0,
+        "endLine": 335,
+        "endChar": 66
+      },
+      "revId": "22b3ed46fd22aafa2ffb1db19279e7881e251ad6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
