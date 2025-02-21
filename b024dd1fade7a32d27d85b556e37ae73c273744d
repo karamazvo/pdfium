@@ -52,6 +52,23 @@
       "parentUuid": "2a63484b_f87cc418",
       "revId": "b024dd1fade7a32d27d85b556e37ae73c273744d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "43f5a47d_e4ed58c4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-02-21T16:58:43Z",
+      "side": 1,
+      "message": "Needs a second CR+1, or some account linking. Note that account linking has to be done separately on every Gerrit instance.",
+      "revId": "b024dd1fade7a32d27d85b556e37ae73c273744d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
