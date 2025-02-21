@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6fc2e48f_d1d9f971",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-02-21T22:03:01Z",
+      "side": 1,
+      "message": "LG/ but add code comment.",
+      "revId": "2923cb1d11a96b751835ee10535caab305e93f79",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cefc7286_a3cecadd",
+        "filename": "core/fpdfapi/font/cpdf_tounicodemap.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-02-21T22:03:01Z",
+      "side": 1,
+      "message": "nit: needs comment that inserting at back followed by reverse is a trick to avoid costs of inserting at front.",
+      "range": {
+        "startLine": 37,
+        "startChar": 2,
+        "endLine": 37,
+        "endChar": 5
+      },
+      "revId": "2923cb1d11a96b751835ee10535caab305e93f79",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
