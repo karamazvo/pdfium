@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/font/cpdf_tounicodemap.h"
 
+#include <algorithm>
 #include <set>
 #include <utility>
 
@@ -29,20 +30,26 @@ constexpr uint32_t kCidLimit = 0xffff;
 // but not too high to prevent fuzzers from slowing down fuzzing.
 constexpr int kOutOfSpecBFLimit = 160000;
 
-WideString StringDataAdd(WideString str) {
+WideString StringDataAdd(const WideString& str) {
   WideString ret;
+  ret.Reserve(str.GetLength() + 1);
   wchar_t value = 1;
+  // The code really wants to insert at the front, but that results in poor
+  // performance. Get the same result faster by inserting at the back, and then
+  // reversing the string.
   for (size_t i = str.GetLength(); i > 0; --i) {
     wchar_t ch = str[i - 1] + value;
     if (ch < str[i - 1]) {
-      ret.InsertAtFront(0);
+      ret.InsertAtBack(0);
     } else {
-      ret.InsertAtFront(ch);
+      ret.InsertAtBack(ch);
       value = 0;
     }
   }
-  if (value)
-    ret.InsertAtFront(value);
+  if (value) {
+    ret.InsertAtBack(value);
+  }
+  std::reverse(ret.begin(), ret.end());
   return ret;
 }
 
