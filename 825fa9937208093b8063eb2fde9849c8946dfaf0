@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4936ae39_0cee74b0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 8
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-03-03T19:30:17Z",
+      "side": 1,
+      "message": "This is slightly over 72 columns. I would suggest just shortening this to \"Also remove\".",
+      "range": {
+        "startLine": 9,
+        "startChar": 45,
+        "endLine": 9,
+        "endChar": 62
+      },
+      "revId": "825fa9937208093b8063eb2fde9849c8946dfaf0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "02a6145d_c582cc82",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-03-03T19:30:17Z",
+      "side": 1,
+      "message": "Does std::clamp() work here?",
+      "revId": "825fa9937208093b8063eb2fde9849c8946dfaf0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "27818cf0_7a038049",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 404,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-03-03T19:30:17Z",
+      "side": 1,
+      "message": "Needs formatting.",
+      "revId": "825fa9937208093b8063eb2fde9849c8946dfaf0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
