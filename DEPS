@@ -166,10 +166,6 @@ vars = {
   # and whatever else without interference from each other.
   'libpng_revision': '28213bcabe2117da81588720575e5599bafa18da',
   # Three lines of non-changing comments so that
-  # the commit queue can handle CLs rolling libunwind
-  # and whatever else without interference from each other.
-  'libunwind_revision': 'e55d8cf51c6db1fdd4bb56c158945ec59772c8ee',
-  # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling llvm-libc
   # and whatever else without interference from each other.
   'llvm_libc_revision': 'a02de4d0d992b110c8b180fdec91258e7b60265f',
@@ -391,11 +387,6 @@ deps = {
     Var('chromium_git') +
         '/external/github.com/llvm/llvm-project/libcxxabi.git@' +
         Var('libcxxabi_revision'),
-
-  'third_party/libunwind/src':
-    Var('chromium_git') +
-        '/external/github.com/llvm/llvm-project/libunwind.git@' +
-        Var('libunwind_revision'),
 
   'third_party/libjpeg_turbo':
     Var('chromium_git') + '/chromium/deps/libjpeg_turbo.git@' +
