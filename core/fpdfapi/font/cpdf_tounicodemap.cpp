@@ -276,9 +276,30 @@ ByteStringView CPDF_ToUnicodeMap::HandleBeginBFRange(
       continue;
     }
 
-    uint32_t lowcode = lowcode_opt.value();
-    uint32_t highcode = (lowcode & 0xffffff00) | (highcode_opt.value() & 0xff);
-    if (lowcode > kCidLimit || highcode > kCidLimit || lowcode > highcode) {
+    const uint32_t lowcode = lowcode_opt.value();
+    if (lowcode > kCidLimit) {
+      is_valid = false;
+      continue;
+    }
+
+    static constexpr uint32_t kFirstByteMask = 0xffffff00;
+    const uint32_t lowcode_first_byte = lowcode & kFirstByteMask;
+    const uint32_t highcode_first_byte = highcode_opt.value() & kFirstByteMask;
+    if (lowcode_first_byte > highcode_first_byte) {
+      is_valid = false;
+      continue;
+    }
+
+    uint32_t highcode = lowcode_first_byte | (highcode_opt.value() & 0xff);
+    if (lowcode_first_byte < highcode_first_byte) {
+      // Per spec, `lowcode_first_byte` and `highcode_first_byte` should be
+      // equal. Some PDFs violate this part of the spec and some PDF parsers
+      // tolerate that. Tolerate it here too, to make the PDF data more
+      // accessible.
+      highcode += (highcode_first_byte - lowcode_first_byte);
+    }
+
+    if (highcode > kCidLimit || lowcode > highcode) {
       is_valid = false;
       continue;
     }
