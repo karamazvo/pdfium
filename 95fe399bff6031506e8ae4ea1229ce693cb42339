@@ -33,6 +33,23 @@
       "message": "+tsepez@ for review enforcement.",
       "revId": "95fe399bff6031506e8ae4ea1229ce693cb42339",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "77575701_595f2a95",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5645
+      },
+      "writtenOn": "2025-03-12T18:00:40Z",
+      "side": 1,
+      "message": "Review-enforcement +1.\n\nFollow-on: do you think Rewind() should be declared [[nodiscard]] ?",
+      "revId": "95fe399bff6031506e8ae4ea1229ce693cb42339",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
