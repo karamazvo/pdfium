@@ -50,6 +50,24 @@
       "message": "Review-enforcement +1.\n\nFollow-on: do you think Rewind() should be declared [[nodiscard]] ?",
       "revId": "95fe399bff6031506e8ae4ea1229ce693cb42339",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "51d392c0_3e3ef9ee",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6995
+      },
+      "writtenOn": "2025-03-12T18:09:27Z",
+      "side": 1,
+      "message": "Yeah, that would make sense.\n\nAlso, I think `Rewind()` should do more when destroying the context to ensure its internal state reflects the jpeg state.  At a first glance maybe reset `m_bDecompressCreated`?",
+      "parentUuid": "77575701_595f2a95",
+      "revId": "95fe399bff6031506e8ae4ea1229ce693cb42339",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
