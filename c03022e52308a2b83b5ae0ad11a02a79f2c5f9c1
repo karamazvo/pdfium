@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "32cc34b3_509cf14f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6995
+      },
+      "writtenOn": "2025-03-12T17:20:10Z",
+      "side": 1,
+      "message": "Chromium and Skia have already rolled to the latest.",
+      "revId": "c03022e52308a2b83b5ae0ad11a02a79f2c5f9c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
