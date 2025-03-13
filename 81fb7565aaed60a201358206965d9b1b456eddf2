@@ -1,0 +1,366 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bd34ac95_a4833fd9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-03-13T22:19:00Z",
+      "side": 1,
+      "message": "a",
+      "revId": "81fb7565aaed60a201358206965d9b1b456eddf2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e1887eba_ec90be24",
+        "filename": "core/fpdfapi/font/cpdf_cidfont.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 472,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-03-13T22:19:00Z",
+      "side": 1,
+      "message": "should error out?",
+      "range": {
+        "startLine": 472,
+        "startChar": 0,
+        "endLine": 472,
+        "endChar": 62
+      },
+      "revId": "81fb7565aaed60a201358206965d9b1b456eddf2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "39a859dc_a5b1230c",
+        "filename": "core/fpdfapi/font/cpdf_type1font.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-03-13T22:19:00Z",
+      "side": 1,
+      "message": "should error out?",
+      "range": {
+        "startLine": 177,
+        "startChar": 0,
+        "endLine": 177,
+        "endChar": 60
+      },
+      "revId": "81fb7565aaed60a201358206965d9b1b456eddf2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ba8b0a2f_fda78c27",
+        "filename": "core/fpdfapi/page/cpdf_psengine.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-03-13T22:19:00Z",
+      "side": 1,
+      "message": "wrong, revert.",
+      "range": {
+        "startLine": 168,
+        "startChar": 0,
+        "endLine": 168,
+        "endChar": 42
+      },
+      "revId": "81fb7565aaed60a201358206965d9b1b456eddf2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cefb1ae0_928f2c31",
+        "filename": "core/fpdfapi/page/cpdf_psfunc.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-03-13T22:19:00Z",
+      "side": 1,
+      "message": "probably want this though stack size not likely to be set on error and tested below",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 24
+      },
+      "revId": "81fb7565aaed60a201358206965d9b1b456eddf2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "622f1b89_0407bec9",
+        "filename": "core/fpdfapi/parser/cfdf_document.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-03-13T22:19:00Z",
+      "side": 1,
+      "message": "likely don\u0027t care about result.",
+      "range": {
+        "startLine": 63,
+        "startChar": 12,
+        "endLine": 63,
+        "endChar": 51
+      },
+      "revId": "81fb7565aaed60a201358206965d9b1b456eddf2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8177b7bf_8d4b64a6",
+        "filename": "core/fpdfapi/parser/cpdf_crypto_handler.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-03-13T22:19:00Z",
+      "side": 1,
+      "message": "probably should return \"\" on error.",
+      "range": {
+        "startLine": 227,
+        "startChar": 3,
+        "endLine": 228,
+        "endChar": 41
+      },
+      "revId": "81fb7565aaed60a201358206965d9b1b456eddf2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "01e1f4a1_16da01c0",
+        "filename": "core/fpdfapi/parser/cpdf_data_avail.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 847,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-03-13T22:19:00Z",
+      "side": 1,
+      "message": "Would this be a valid failure?",
+      "range": {
+        "startLine": 847,
+        "startChar": 4,
+        "endLine": 847,
+        "endChar": 56
+      },
+      "revId": "81fb7565aaed60a201358206965d9b1b456eddf2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "876d5f9c_e131a081",
+        "filename": "core/fpdfapi/parser/cpdf_data_avail.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 951,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-03-13T22:19:00Z",
+      "side": 1,
+      "message": "probably don\u0027t care about result.",
+      "range": {
+        "startLine": 951,
+        "startChar": 0,
+        "endLine": 951,
+        "endChar": 63
+      },
+      "revId": "81fb7565aaed60a201358206965d9b1b456eddf2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9041be25_74fcd419",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 274,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-03-13T22:19:00Z",
+      "side": 1,
+      "message": "weird, it may have failed above.",
+      "range": {
+        "startLine": 274,
+        "startChar": 0,
+        "endLine": 274,
+        "endChar": 38
+      },
+      "revId": "81fb7565aaed60a201358206965d9b1b456eddf2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b4b3b9d6_8f6f0991",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 687,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-03-13T22:19:00Z",
+      "side": 1,
+      "message": "is this a valid failure?",
+      "range": {
+        "startLine": 687,
+        "startChar": 0,
+        "endLine": 687,
+        "endChar": 58
+      },
+      "revId": "81fb7565aaed60a201358206965d9b1b456eddf2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "71476e16_613e4784",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1192,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-03-13T22:19:00Z",
+      "side": 1,
+      "message": "probably leads to getroot failing on next line",
+      "range": {
+        "startLine": 1192,
+        "startChar": 0,
+        "endLine": 1192,
+        "endChar": 38
+      },
+      "revId": "81fb7565aaed60a201358206965d9b1b456eddf2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "82bffbaa_734633cc",
+        "filename": "core/fpdfapi/parser/cpdf_syntax_parser.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 655,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-03-13T22:19:00Z",
+      "side": 1,
+      "message": "probably relies on outparm not modified on error",
+      "range": {
+        "startLine": 655,
+        "startChar": 0,
+        "endLine": 655,
+        "endChar": 2
+      },
+      "revId": "81fb7565aaed60a201358206965d9b1b456eddf2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7b50a134_faa8a66d",
+        "filename": "core/fpdfapi/render/cpdf_devicebuffer.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-03-13T22:19:00Z",
+      "side": 1,
+      "message": "not sure what we\u0027d do",
+      "range": {
+        "startLine": 92,
+        "startChar": 0,
+        "endLine": 92,
+        "endChar": 69
+      },
+      "revId": "81fb7565aaed60a201358206965d9b1b456eddf2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "188b2aec_5a042d3b",
+        "filename": "core/fpdfapi/render/cpdf_imagerenderer.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-03-13T22:19:00Z",
+      "side": 1,
+      "message": "return false maybe?",
+      "range": {
+        "startLine": 121,
+        "startChar": 0,
+        "endLine": 121,
+        "endChar": 49
+      },
+      "revId": "81fb7565aaed60a201358206965d9b1b456eddf2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "214917fd_01e97808",
+        "filename": "core/fpdfapi/render/cpdf_imagerenderer.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-03-13T22:19:00Z",
+      "side": 1,
+      "message": "prolly should be while loop.",
+      "range": {
+        "startLine": 278,
+        "startChar": 0,
+        "endLine": 278,
+        "endChar": 44
+      },
+      "revId": "81fb7565aaed60a201358206965d9b1b456eddf2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
