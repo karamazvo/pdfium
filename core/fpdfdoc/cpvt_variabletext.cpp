@@ -768,27 +768,27 @@ void CPVT_VariableText::Rearrange(const CPVT_WordRange& PlaceRange) {
 }
 
 float CPVT_VariableText::GetAutoFontSize() {
-  int32_t nTotal = sizeof(kFontSizeSteps) / sizeof(uint8_t);
+  size_t nTotal = kFontSizeSteps.size();
   if (IsMultiLine())
     nTotal /= 4;
-  if (nTotal <= 0)
+  if (nTotal == 0 || GetPlateWidth() <= 0) {
     return 0;
-  if (GetPlateWidth() <= 0)
-    return 0;
-
-  // TODO(tsepez): replace with std::lower_bound().
-  int32_t nLeft = 0;
-  int32_t nRight = nTotal - 1;
-  int32_t nMid = nTotal / 2;
-  while (nLeft <= nRight) {
-    if (IsBigger(kFontSizeSteps[nMid])) {
-      nRight = nMid - 1;
-    } else {
-      nLeft = nMid + 1;
-    }
-    nMid = (nLeft + nRight) / 2;
   }
-  return static_cast<float>(kFontSizeSteps[nMid]);
+
+  std::array<const uint8_t, 25>::const_iterator begin = kFontSizeSteps.begin();
+  std::array<const uint8_t, 25>::const_iterator end =
+      kFontSizeSteps.begin() + nTotal;
+  std::array<const uint8_t, 25>::const_iterator it = std::lower_bound(
+      begin, end, true,
+      [this](uint8_t fontSize, bool) { return !IsBigger(fontSize); });
+
+  if (it == end) {
+    return static_cast<float>(*(end - 1));
+  }
+  if (it == begin) {
+    return static_cast<float>(*it);
+  }
+  return static_cast<float>(*(it - 1));
 }
 
 bool CPVT_VariableText::IsBigger(float fFontSize) const {
