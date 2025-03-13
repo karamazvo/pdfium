@@ -60,15 +60,15 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
     if (!obj)
       break;
 
-    name_tree->AddValueAndName(std::move(obj), name);
+    (void)name_tree->AddValueAndName(std::move(obj), name);
   }
 
   if (params.delete_backwards) {
     for (size_t i = params.count; i > 0; --i)
-      name_tree->DeleteValueAndName(i);
+      (void)name_tree->DeleteValueAndName(i);
   } else {
     for (size_t i = 0; i < params.count; ++i)
-      name_tree->DeleteValueAndName(0);
+      (void)name_tree->DeleteValueAndName(0);
   }
   return 0;
 }

@@ -62,7 +62,7 @@ bool CFFL_CheckBox::OnChar(CPDFSDK_Widget* pWidget,
         return true;
       }
 
-      CFFL_FormField::OnChar(pWidget, nChar, nFlags);
+      (void)CFFL_FormField::OnChar(pWidget, nChar, nFlags);
 
       CPWL_CheckBox* pWnd = CreateOrUpdatePWLCheckBox(pPageView);
       if (pWnd && !pWnd->IsReadOnly()) {
@@ -83,7 +83,7 @@ bool CFFL_CheckBox::OnLButtonUp(CPDFSDK_PageView* pPageView,
                                 CPDFSDK_Widget* pWidget,
                                 Mask<FWL_EVENTFLAG> nFlags,
                                 const CFX_PointF& point) {
-  CFFL_Button::OnLButtonUp(pPageView, pWidget, nFlags, point);
+  (void)CFFL_Button::OnLButtonUp(pPageView, pWidget, nFlags, point);
   if (!IsValid()) {
     return true;
   }

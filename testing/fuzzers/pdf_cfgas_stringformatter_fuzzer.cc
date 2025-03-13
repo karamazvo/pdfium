@@ -55,54 +55,54 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   CFX_DateTime dt;
   switch (test_selector) {
     case 0:
-      fmt->FormatText(value, &result);
+      (void)fmt->FormatText(value, &result);
       break;
     case 1: {
       auto* mgr = cppgc::MakeGarbageCollected<CXFA_LocaleMgr>(
           heap->GetAllocationHandle(), heap, nullptr,
           kLocales[locale_selector]);
-      fmt->FormatNum(mgr, value, &result);
+      (void)fmt->FormatNum(mgr, value, &result);
       break;
     }
     case 2: {
       auto* mgr = cppgc::MakeGarbageCollected<CXFA_LocaleMgr>(
           heap->GetAllocationHandle(), heap, nullptr,
           kLocales[locale_selector]);
-      fmt->FormatDateTime(mgr, value, kTypes[type_selector], &result);
+      (void)fmt->FormatDateTime(mgr, value, kTypes[type_selector], &result);
       break;
     }
     case 3: {
-      fmt->FormatNull(&result);
+      (void)fmt->FormatNull(&result);
       break;
     }
     case 4: {
-      fmt->FormatZero(&result);
+      (void)fmt->FormatZero(&result);
       break;
     }
     case 5: {
-      fmt->ParseText(value, &result);
+      (void)fmt->ParseText(value, &result);
       break;
     }
     case 6: {
       auto* mgr = cppgc::MakeGarbageCollected<CXFA_LocaleMgr>(
           heap->GetAllocationHandle(), heap, nullptr,
           kLocales[locale_selector]);
-      fmt->ParseNum(mgr, value, &result);
+      (void)fmt->ParseNum(mgr, value, &result);
       break;
     }
     case 7: {
       auto* mgr = cppgc::MakeGarbageCollected<CXFA_LocaleMgr>(
           heap->GetAllocationHandle(), heap, nullptr,
           kLocales[locale_selector]);
-      fmt->ParseDateTime(mgr, value, kTypes[type_selector], &dt);
+      (void)fmt->ParseDateTime(mgr, value, kTypes[type_selector], &dt);
       break;
     }
     case 8: {
-      fmt->ParseNull(value);
+      (void)fmt->ParseNull(value);
       break;
     }
     case 9: {
-      fmt->ParseZero(value);
+      (void)fmt->ParseZero(value);
       break;
     }
   }

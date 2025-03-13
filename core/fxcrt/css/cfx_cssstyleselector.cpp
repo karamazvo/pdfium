@@ -225,8 +225,9 @@ void CFX_CSSStyleSelector::ApplyProperty(CFX_CSSProperty eProperty,
       }
       break;
     case CFX_CSSProperty::TextIndent:
-      SetLengthWithPercent(pComputedStyle->m_InheritedData.m_TextIndent, eType,
-                           pValue, pComputedStyle->m_InheritedData.m_fFontSize);
+      (void)SetLengthWithPercent(pComputedStyle->m_InheritedData.m_TextIndent,
+                                 eType, pValue,
+                                 pComputedStyle->m_InheritedData.m_fFontSize);
       break;
     case CFX_CSSProperty::FontWeight:
       if (eType == CFX_CSSValue::PrimitiveType::kEnum) {
@@ -365,9 +366,9 @@ void CFX_CSSStyleSelector::ApplyProperty(CFX_CSSProperty eProperty,
           break;
         }
 
-        SetLengthWithPercent(pComputedStyle->m_InheritedData.m_LetterSpacing,
-                             eType, pValue,
-                             pComputedStyle->m_InheritedData.m_fFontSize);
+        (void)SetLengthWithPercent(
+            pComputedStyle->m_InheritedData.m_LetterSpacing, eType, pValue,
+            pComputedStyle->m_InheritedData.m_fFontSize);
       }
       break;
     case CFX_CSSProperty::WordSpacing:
@@ -379,26 +380,30 @@ void CFX_CSSStyleSelector::ApplyProperty(CFX_CSSProperty eProperty,
             CFX_CSSNumber::Unit::kPercent) {
           break;
         }
-        SetLengthWithPercent(pComputedStyle->m_InheritedData.m_WordSpacing,
-                             eType, pValue,
-                             pComputedStyle->m_InheritedData.m_fFontSize);
+        (void)SetLengthWithPercent(
+            pComputedStyle->m_InheritedData.m_WordSpacing, eType, pValue,
+            pComputedStyle->m_InheritedData.m_fFontSize);
       }
       break;
     case CFX_CSSProperty::Top:
-      SetLengthWithPercent(pComputedStyle->m_NonInheritedData.m_Top, eType,
-                           pValue, pComputedStyle->m_InheritedData.m_fFontSize);
+      (void)SetLengthWithPercent(pComputedStyle->m_NonInheritedData.m_Top,
+                                 eType, pValue,
+                                 pComputedStyle->m_InheritedData.m_fFontSize);
       break;
     case CFX_CSSProperty::Bottom:
-      SetLengthWithPercent(pComputedStyle->m_NonInheritedData.m_Bottom, eType,
-                           pValue, pComputedStyle->m_InheritedData.m_fFontSize);
+      (void)SetLengthWithPercent(pComputedStyle->m_NonInheritedData.m_Bottom,
+                                 eType, pValue,
+                                 pComputedStyle->m_InheritedData.m_fFontSize);
       break;
     case CFX_CSSProperty::Left:
-      SetLengthWithPercent(pComputedStyle->m_NonInheritedData.m_Left, eType,
-                           pValue, pComputedStyle->m_InheritedData.m_fFontSize);
+      (void)SetLengthWithPercent(pComputedStyle->m_NonInheritedData.m_Left,
+                                 eType, pValue,
+                                 pComputedStyle->m_InheritedData.m_fFontSize);
       break;
     case CFX_CSSProperty::Right:
-      SetLengthWithPercent(pComputedStyle->m_NonInheritedData.m_Right, eType,
-                           pValue, pComputedStyle->m_InheritedData.m_fFontSize);
+      (void)SetLengthWithPercent(pComputedStyle->m_NonInheritedData.m_Right,
+                                 eType, pValue,
+                                 pComputedStyle->m_InheritedData.m_fFontSize);
       break;
     default:
       break;

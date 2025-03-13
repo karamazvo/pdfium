@@ -71,7 +71,7 @@ CJS_Field* CJS_EventContext::SourceField() {
 
   auto* pJSField = static_cast<CJS_Field*>(
       CFXJS_Engine::GetBinding(m_pRuntime->GetIsolate(), pFieldObj));
-  pJSField->AttachField(pJSDocument, SourceName());
+  (void)pJSField->AttachField(pJSDocument, SourceName());
   return pJSField;
 }
 
@@ -93,7 +93,7 @@ CJS_Field* CJS_EventContext::TargetField() {
 
   auto* pJSField = static_cast<CJS_Field*>(
       CFXJS_Engine::GetBinding(m_pRuntime->GetIsolate(), pFieldObj));
-  pJSField->AttachField(pJSDocument, TargetName());
+  (void)pJSField->AttachField(pJSDocument, TargetName());
   return pJSField;
 }
 

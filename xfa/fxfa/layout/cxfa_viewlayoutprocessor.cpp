@@ -541,7 +541,7 @@ void CXFA_ViewLayoutProcessor::SubmitContentItem(
   if (eStatus != CXFA_ContentLayoutProcessor::Result::kDone) {
     if (eStatus == CXFA_ContentLayoutProcessor::Result::kPageFullBreak &&
         m_CurrentViewRecordIter == GetTailPosition()) {
-      AppendNewPage(false);
+      (void)AppendNewPage(false);
     }
     m_CurrentViewRecordIter = GetTailPosition();
     m_pCurPageArea = GetCurrentViewRecord()->pCurPageArea->GetFormNode();
@@ -963,12 +963,12 @@ bool CXFA_ViewLayoutProcessor::BreakOverflow(const CXFA_Node* pOverflowNode,
         m_bCreateOverFlowPage = true;
         switch (pTarget->GetElementType()) {
           case XFA_Element::PageArea:
-            RunBreak(XFA_Element::Overflow, XFA_AttributeValue::PageArea,
-                     pTarget, true);
+            (void)RunBreak(XFA_Element::Overflow, XFA_AttributeValue::PageArea,
+                           pTarget, true);
             break;
           case XFA_Element::ContentArea:
-            RunBreak(XFA_Element::Overflow, XFA_AttributeValue::ContentArea,
-                     pTarget, true);
+            (void)RunBreak(XFA_Element::Overflow,
+                           XFA_AttributeValue::ContentArea, pTarget, true);
             break;
           default:
             break;
@@ -996,12 +996,12 @@ bool CXFA_ViewLayoutProcessor::BreakOverflow(const CXFA_Node* pOverflowNode,
       m_bCreateOverFlowPage = true;
       switch (pTarget->GetElementType()) {
         case XFA_Element::PageArea:
-          RunBreak(XFA_Element::Overflow, XFA_AttributeValue::PageArea, pTarget,
-                   true);
+          (void)RunBreak(XFA_Element::Overflow, XFA_AttributeValue::PageArea,
+                         pTarget, true);
           break;
         case XFA_Element::ContentArea:
-          RunBreak(XFA_Element::Overflow, XFA_AttributeValue::ContentArea,
-                   pTarget, true);
+          (void)RunBreak(XFA_Element::Overflow, XFA_AttributeValue::ContentArea,
+                         pTarget, true);
           break;
         default:
           break;
@@ -1315,8 +1315,8 @@ CXFA_Node* CXFA_ViewLayoutProcessor::GetNextAvailPageArea(
     bool bNewPage,
     bool bQuery) {
   if (!m_pCurPageArea) {
-    FindPageAreaFromPageSet(m_pPageSetNode, nullptr, pTargetPageArea,
-                            pTargetContentArea, bNewPage, bQuery);
+    (void)FindPageAreaFromPageSet(m_pPageSetNode, nullptr, pTargetPageArea,
+                                  pTargetContentArea, bNewPage, bQuery);
     return m_pCurPageArea;
   }
 

@@ -33,7 +33,7 @@ void CFX_DrawUtils::DrawFocusRect(CFX_RenderDevice* render_device,
   CFX_GraphStateData graph_state_data;
   graph_state_data.set_dash_array({1.0f});
 
-  render_device->DrawPath(path, &user_to_device, &graph_state_data, 0,
-                          ArgbEncode(255, 0, 0, 0),
-                          CFX_FillRenderOptions::EvenOddOptions());
+  (void)render_device->DrawPath(path, &user_to_device, &graph_state_data, 0,
+                                ArgbEncode(255, 0, 0, 0),
+                                CFX_FillRenderOptions::EvenOddOptions());
 }

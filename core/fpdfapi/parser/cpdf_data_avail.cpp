@@ -844,7 +844,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
     if (!m_bMainXRefLoadedOK) {
       if (!LoadAllFile())
         return kDataNotAvailable;
-      m_pDocument->GetParser()->RebuildCrossRef();
+      (void)m_pDocument->GetParser()->RebuildCrossRef();
       ResetFirstCheck(dwPage);
       return kDataAvailable;
     }
@@ -948,7 +948,7 @@ RetainPtr<const CPDF_Dictionary> CPDF_DataAvail::GetPageDictionary(
   m_pDocument->SetPageObjNum(index, dwObjNum);
   // Page object already can be parsed in document.
   if (!m_pDocument->GetIndirectObject(dwObjNum)) {
-    m_pDocument->ReplaceIndirectObjectIfHigherGeneration(
+    (void)m_pDocument->ReplaceIndirectObjectIfHigherGeneration(
         dwObjNum, ParseIndirectObjectAt(szPageStartPos, dwObjNum, m_pDocument));
   }
   if (!ValidatePage(index))

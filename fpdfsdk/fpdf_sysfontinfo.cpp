@@ -162,7 +162,7 @@ FPDF_SetSystemFontInfo(FPDF_SYSFONTINFO* pFontInfoExt) {
       std::make_unique<CFX_ExternalFontInfo>(pFontInfoExt));
 
 #ifdef PDF_ENABLE_XFA
-  CFGAS_GEModule::Get()->GetFontMgr()->EnumFonts();
+  (void)CFGAS_GEModule::Get()->GetFontMgr()->EnumFonts();
 #endif
 }
 
@@ -195,7 +195,8 @@ static void DefaultRelease(struct _FPDF_SYSFONTINFO* pThis) {
 
 static void DefaultEnumFonts(struct _FPDF_SYSFONTINFO* pThis, void* pMapper) {
   auto* pDefault = static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pThis);
-  pDefault->m_pFontInfo->EnumFontList(static_cast<CFX_FontMapper*>(pMapper));
+  (void)pDefault->m_pFontInfo->EnumFontList(
+      static_cast<CFX_FontMapper*>(pMapper));
 }
 
 static void* DefaultMapFont(struct _FPDF_SYSFONTINFO* pThis,

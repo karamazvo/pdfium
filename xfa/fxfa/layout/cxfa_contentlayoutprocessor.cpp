@@ -1495,7 +1495,7 @@ void CXFA_ContentLayoutProcessor::ProcessUnUseBinds(CXFA_Node* pFormNode) {
     if (pNode->IsContainerNode()) {
       CXFA_Node* pBindNode = pNode->GetBindData();
       if (pBindNode) {
-        pBindNode->RemoveBindItem(pNode);
+        (void)pBindNode->RemoveBindItem(pNode);
         pNode->SetBindingNode(nullptr);
       }
     }
@@ -1717,7 +1717,7 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
           }
           if (!bCreatePage) {
             if (JudgeLeaderOrTrailerForOccur(pLeaderNode)) {
-              CalculateRowChildPosition(
+              (void)CalculateRowChildPosition(
                   rgCurLineLayoutItems, eFlowStrategy, bContainerHeightAutoSize,
                   bContainerWidthAutoSize, &calculated_size.width,
                   &calculated_size.height, &fContentCurRowY,
@@ -1874,11 +1874,11 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
       break;
     }
 
-    CalculateRowChildPosition(rgCurLineLayoutItems, eFlowStrategy,
-                              bContainerHeightAutoSize, bContainerWidthAutoSize,
-                              &calculated_size.width, &calculated_size.height,
-                              &fContentCurRowY, fContentCurRowHeight,
-                              fContentWidthLimit, bRootForceTb);
+    (void)CalculateRowChildPosition(
+        rgCurLineLayoutItems, eFlowStrategy, bContainerHeightAutoSize,
+        bContainerWidthAutoSize, &calculated_size.width,
+        &calculated_size.height, &fContentCurRowY, fContentCurRowHeight,
+        fContentWidthLimit, bRootForceTb);
     m_fWidthLimit = fContentCurRowAvailWidth;
     if (bForceEndPage)
       break;

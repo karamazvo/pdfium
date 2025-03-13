@@ -81,30 +81,30 @@ void CFX_XMLElement::Save(
     const RetainPtr<IFX_RetainableWriteStream>& pXMLStream) {
   ByteString bsNameEncoded = name_.ToUTF8();
 
-  pXMLStream->WriteString("<");
-  pXMLStream->WriteString(bsNameEncoded.AsStringView());
+  (void)pXMLStream->WriteString("<");
+  (void)pXMLStream->WriteString(bsNameEncoded.AsStringView());
 
   for (const auto& it : attrs_) {
     // Note, the space between attributes is added by AttributeToString which
     // writes a blank as the first character.
-    pXMLStream->WriteString(
+    (void)pXMLStream->WriteString(
         AttributeToString(it.first, it.second).ToUTF8().AsStringView());
   }
 
   if (!GetFirstChild()) {
-    pXMLStream->WriteString(" />\n");
+    (void)pXMLStream->WriteString(" />\n");
     return;
   }
 
-  pXMLStream->WriteString(">\n");
+  (void)pXMLStream->WriteString(">\n");
 
   for (CFX_XMLNode* pChild = GetFirstChild(); pChild;
        pChild = pChild->GetNextSibling()) {
     pChild->Save(pXMLStream);
   }
-  pXMLStream->WriteString("</");
-  pXMLStream->WriteString(bsNameEncoded.AsStringView());
-  pXMLStream->WriteString(">\n");
+  (void)pXMLStream->WriteString("</");
+  (void)pXMLStream->WriteString(bsNameEncoded.AsStringView());
+  (void)pXMLStream->WriteString(">\n");
 }
 
 CFX_XMLElement* CFX_XMLElement::GetFirstChildNamed(WideStringView name) const {

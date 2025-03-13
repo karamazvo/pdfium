@@ -190,11 +190,11 @@ void CXFA_FFDateTimeEdit::OnSelectChanged(CFWL_Widget* pWidget,
   WideString wsPicture = m_pNode->GetPictureContent(XFA_ValuePicture::kEdit);
   CXFA_LocaleValue date(CXFA_LocaleValue::ValueType::kDate,
                         GetDoc()->GetXFADoc()->GetLocaleMgr());
-  date.SetDate(CFX_DateTime(iYear, iMonth, iDay, 0, 0, 0, 0));
+  (void)date.SetDate(CFX_DateTime(iYear, iMonth, iDay, 0, 0, 0, 0));
 
   WideString wsDate;
-  date.FormatPatterns(wsDate, wsPicture, m_pNode->GetLocale(),
-                      XFA_ValuePicture::kEdit);
+  (void)date.FormatPatterns(wsDate, wsPicture, m_pNode->GetLocale(),
+                            XFA_ValuePicture::kEdit);
 
   CFWL_DateTimePicker* pPicker = GetPickerWidget();
   pPicker->SetEditText(wsDate);

@@ -51,9 +51,9 @@ bool CXFA_FFImageEdit::LoadWidget() {
   m_pOldDelegate = pPictureBox->GetDelegate();
   pPictureBox->SetDelegate(this);
 
-  CXFA_FFField::LoadWidget();
+  (void)CXFA_FFField::LoadWidget();
   if (!m_pNode->GetEditImage())
-    UpdateFWLData();
+    (void)UpdateFWLData();
 
   return true;
 }
@@ -137,7 +137,7 @@ bool CXFA_FFImageEdit::CommitData() {
 
 bool CXFA_FFImageEdit::UpdateFWLData() {
   m_pNode->SetEditImage(nullptr);
-  m_pNode->LoadEditImage(GetDoc());
+  (void)m_pNode->LoadEditImage(GetDoc());
   return true;
 }
 

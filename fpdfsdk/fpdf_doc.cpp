@@ -244,7 +244,7 @@ FPDFAction_GetURIPath(FPDF_DOCUMENT document,
   auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen));
   CPDF_Action cAction(pdfium::WrapRetain(CPDFDictionaryFromFPDFAction(action)));
   ByteString path = cAction.GetURI(pDoc);
-  fxcrt::try_spancpy(result_span, path.span_with_terminator());
+  (void)fxcrt::try_spancpy(result_span, path.span_with_terminator());
   return static_cast<unsigned long>(path.span_with_terminator().size());
 }
 

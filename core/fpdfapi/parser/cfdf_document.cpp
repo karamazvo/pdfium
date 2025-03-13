@@ -60,7 +60,7 @@ void CFDF_Document::ParseStream(RetainPtr<IFX_SeekableReadStream> pFile) {
       if (!pObj)
         break;
 
-      ReplaceIndirectObjectIfHigherGeneration(objnum, std::move(pObj));
+      (void)ReplaceIndirectObjectIfHigherGeneration(objnum, std::move(pObj));
       word_result = parser.GetNextWord();
       if (word_result.word != "endobj")
         break;

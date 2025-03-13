@@ -173,7 +173,7 @@ bool DoDocSave(FPDF_DOCUMENT document,
   CPDF_Creator fileMaker(
       pPDFDoc, pdfium::MakeRetain<CPDFSDK_FileWriteAdapter>(pFileWrite));
   if (version.has_value())
-    fileMaker.SetFileVersion(version.value());
+    (void)fileMaker.SetFileVersion(version.value());
   if (flags == FPDF_REMOVE_SECURITY) {
     flags = 0;
     fileMaker.RemoveSecurity();

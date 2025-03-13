@@ -48,7 +48,7 @@ void CFWL_Barcode::DrawWidget(CFGAS_GEGraphics* pGraphics,
     mt.Concat(matrix);
 
     // TODO(tsepez): Curious as to why |mt| is unused?
-    m_pBarcodeEngine->RenderDevice(pGraphics->GetRenderDevice(), matrix);
+    (void)m_pBarcodeEngine->RenderDevice(pGraphics->GetRenderDevice(), matrix);
     return;
   }
   CFWL_Edit::DrawWidget(pGraphics, matrix);
@@ -146,32 +146,32 @@ void CFWL_Barcode::GenerateBarcodeImageCache() {
   CFWL_ThemePart part(CFWL_ThemePart::Part::kNone, this);
   if (RetainPtr<CFGAS_GEFont> pFont = pTheme->GetFont(part)) {
     if (CFX_Font* pCXFont = pFont->GetDevFont())
-      m_pBarcodeEngine->SetFont(pCXFont);
+      (void)m_pBarcodeEngine->SetFont(pCXFont);
   }
-  m_pBarcodeEngine->SetFontSize(pTheme->GetFontSize(part));
-  m_pBarcodeEngine->SetFontColor(pTheme->GetTextColor(part));
+  (void)m_pBarcodeEngine->SetFontSize(pTheme->GetFontSize(part));
+  (void)m_pBarcodeEngine->SetFontColor(pTheme->GetTextColor(part));
   m_pBarcodeEngine->SetHeight(int32_t(GetRTClient().height));
   m_pBarcodeEngine->SetWidth(int32_t(GetRTClient().width));
   if (m_nModuleHeight.has_value())
-    m_pBarcodeEngine->SetModuleHeight(m_nModuleHeight.value());
+    (void)m_pBarcodeEngine->SetModuleHeight(m_nModuleHeight.value());
   if (m_nModuleWidth.has_value())
-    m_pBarcodeEngine->SetModuleWidth(m_nModuleWidth.value());
+    (void)m_pBarcodeEngine->SetModuleWidth(m_nModuleWidth.value());
   if (m_nDataLength.has_value())
-    m_pBarcodeEngine->SetDataLength(m_nDataLength.value());
+    (void)m_pBarcodeEngine->SetDataLength(m_nDataLength.value());
   if (m_bCalChecksum.has_value())
-    m_pBarcodeEngine->SetCalChecksum(m_bCalChecksum.value());
+    (void)m_pBarcodeEngine->SetCalChecksum(m_bCalChecksum.value());
   if (m_bPrintChecksum.has_value())
-    m_pBarcodeEngine->SetPrintChecksum(m_bPrintChecksum.value());
+    (void)m_pBarcodeEngine->SetPrintChecksum(m_bPrintChecksum.value());
   if (m_eTextLocation.has_value())
     m_pBarcodeEngine->SetTextLocation(m_eTextLocation.value());
   if (m_nWideNarrowRatio.has_value())
-    m_pBarcodeEngine->SetWideNarrowRatio(m_nWideNarrowRatio.value());
+    (void)m_pBarcodeEngine->SetWideNarrowRatio(m_nWideNarrowRatio.value());
   if (m_cStartChar.has_value())
-    m_pBarcodeEngine->SetStartChar(m_cStartChar.value());
+    (void)m_pBarcodeEngine->SetStartChar(m_cStartChar.value());
   if (m_cEndChar.has_value())
-    m_pBarcodeEngine->SetEndChar(m_cEndChar.value());
+    (void)m_pBarcodeEngine->SetEndChar(m_cEndChar.value());
   if (m_nECLevel.has_value())
-    m_pBarcodeEngine->SetErrorCorrectionLevel(m_nECLevel.value());
+    (void)m_pBarcodeEngine->SetErrorCorrectionLevel(m_nECLevel.value());
 
   m_eStatus = m_pBarcodeEngine->Encode(GetText().AsStringView())
                   ? Status::kEncodeSuccess

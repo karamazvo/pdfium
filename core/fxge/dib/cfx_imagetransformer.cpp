@@ -159,7 +159,7 @@ CFX_ImageTransformer::CFX_ImageTransformer(RetainPtr<const CFX_DIBBase> source,
     m_Stretcher = std::make_unique<CFX_ImageStretcher>(
         &m_Storer, m_pSrc, dest_height, dest_width, result_clip,
         m_ResampleOptions);
-    m_Stretcher->Start();
+    (void)m_Stretcher->Start();
     m_type = StretchType::kRotate;
     return;
   }
@@ -172,7 +172,7 @@ CFX_ImageTransformer::CFX_ImageTransformer(RetainPtr<const CFX_DIBBase> source,
     m_Stretcher = std::make_unique<CFX_ImageStretcher>(
         &m_Storer, m_pSrc, dest_width, dest_height, result_clip,
         m_ResampleOptions);
-    m_Stretcher->Start();
+    (void)m_Stretcher->Start();
     m_type = StretchType::kNormal;
     return;
   }
@@ -208,7 +208,7 @@ CFX_ImageTransformer::CFX_ImageTransformer(RetainPtr<const CFX_DIBBase> source,
   m_Stretcher = std::make_unique<CFX_ImageStretcher>(
       &m_Storer, m_pSrc, stretch_width, stretch_height, m_StretchClip,
       m_ResampleOptions);
-  m_Stretcher->Start();
+  (void)m_Stretcher->Start();
   m_type = StretchType::kOther;
 }
 

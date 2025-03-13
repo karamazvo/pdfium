@@ -139,7 +139,7 @@ void CXFA_FFWidgetHandler::PasteText(CXFA_FFWidget* widget,
   if (!widget->CanPaste())
     return;
 
-  widget->Paste(text);
+  (void)widget->Paste(text);
 }
 
 bool CXFA_FFWidgetHandler::SelectAllText(CXFA_FFWidget* widget) {

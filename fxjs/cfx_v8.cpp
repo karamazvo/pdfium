@@ -28,8 +28,8 @@ std::vector<WideString> CFX_V8::GetObjectPropertyNames(
 void CFX_V8::PutObjectProperty(v8::Local<v8::Object> pObj,
                                ByteStringView bsUTF8PropertyName,
                                v8::Local<v8::Value> pPut) {
-  fxv8::ReentrantPutObjectPropertyHelper(GetIsolate(), pObj, bsUTF8PropertyName,
-                                         pPut);
+  (void)fxv8::ReentrantPutObjectPropertyHelper(GetIsolate(), pObj,
+                                               bsUTF8PropertyName, pPut);
 }
 
 void CFX_V8::DisposeIsolate() {
@@ -48,7 +48,8 @@ v8::Local<v8::Object> CFX_V8::NewObject() {
 void CFX_V8::PutArrayElement(v8::Local<v8::Array> pArray,
                              size_t index,
                              v8::Local<v8::Value> pValue) {
-  fxv8::ReentrantPutArrayElementHelper(GetIsolate(), pArray, index, pValue);
+  (void)fxv8::ReentrantPutArrayElementHelper(GetIsolate(), pArray, index,
+                                             pValue);
 }
 
 v8::Local<v8::Value> CFX_V8::GetArrayElement(v8::Local<v8::Array> pArray,

@@ -274,26 +274,26 @@ float CFWL_ScrollBar::GetTrackPointPos(const CFX_PointF& point) {
 
 bool CFWL_ScrollBar::SendEvent() {
   if (m_iMinButtonState == CFWL_PartState::kPressed) {
-    DoScroll(CFWL_EventScroll::Code::StepBackward, m_fTrackPos);
+    (void)DoScroll(CFWL_EventScroll::Code::StepBackward, m_fTrackPos);
     return false;
   }
   if (m_iMaxButtonState == CFWL_PartState::kPressed) {
-    DoScroll(CFWL_EventScroll::Code::StepForward, m_fTrackPos);
+    (void)DoScroll(CFWL_EventScroll::Code::StepForward, m_fTrackPos);
     return false;
   }
   if (m_iMinTrackState == CFWL_PartState::kPressed) {
-    DoScroll(CFWL_EventScroll::Code::PageBackward, m_fTrackPos);
+    (void)DoScroll(CFWL_EventScroll::Code::PageBackward, m_fTrackPos);
     return m_ThumbRect.Contains(m_cpTrackPoint);
   }
   if (m_iMaxTrackState == CFWL_PartState::kPressed) {
-    DoScroll(CFWL_EventScroll::Code::PageForward, m_fTrackPos);
+    (void)DoScroll(CFWL_EventScroll::Code::PageForward, m_fTrackPos);
     return m_ThumbRect.Contains(m_cpTrackPoint);
   }
   if (m_iMouseWheel) {
     CFWL_EventScroll::Code dwCode = m_iMouseWheel < 0
                                         ? CFWL_EventScroll::Code::StepForward
                                         : CFWL_EventScroll::Code::StepBackward;
-    DoScroll(dwCode, m_fTrackPos);
+    (void)DoScroll(dwCode, m_fTrackPos);
   }
   return true;
 }
@@ -390,7 +390,7 @@ void CFWL_ScrollBar::OnMouseLeave() {
 
 void CFWL_ScrollBar::OnMouseWheel(const CFX_Vector& delta) {
   m_iMouseWheel = delta.y;
-  SendEvent();
+  (void)SendEvent();
   m_iMouseWheel = 0;
 }
 
@@ -418,7 +418,7 @@ void CFWL_ScrollBar::DoMouseUp(int32_t iItem,
 
   *pState = iNewState;
   RepaintRect(rtItem);
-  OnScroll(CFWL_EventScroll::Code::EndScroll, m_fTrackPos);
+  (void)OnScroll(CFWL_EventScroll::Code::EndScroll, m_fTrackPos);
 }
 
 void CFWL_ScrollBar::DoMouseMove(int32_t iItem,
@@ -436,7 +436,7 @@ void CFWL_ScrollBar::DoMouseMove(int32_t iItem,
   } else if ((2 == iItem) &&
              (m_iThumbButtonState == CFWL_PartState::kPressed)) {
     m_fTrackPos = GetTrackPointPos(point);
-    OnScroll(CFWL_EventScroll::Code::TrackPos, m_fTrackPos);
+    (void)OnScroll(CFWL_EventScroll::Code::TrackPos, m_fTrackPos);
   }
 }
 
