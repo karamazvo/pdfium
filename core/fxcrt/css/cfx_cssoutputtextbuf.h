@@ -16,7 +16,7 @@ class CFX_CSSOutputTextBuf {
   ~CFX_CSSOutputTextBuf();
 
   void Clear() { m_Buffer.clear(); }
-  bool IsEmpty() const { return m_Buffer.empty(); }
+  [[nodiscard]] bool IsEmpty() const { return m_Buffer.empty(); }
   void AppendCharIfNotLeadingBlank(wchar_t wch);
   WideStringView GetTrailingBlankTrimmedString() const;
 

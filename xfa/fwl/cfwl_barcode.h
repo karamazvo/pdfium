@@ -36,7 +36,7 @@ class CFWL_Barcode final : public CFWL_Edit {
   void SetTextSkipNotify(const WideString& wsText) override;
 
   void SetType(BC_TYPE type);
-  bool IsProtectedType() const;
+  [[nodiscard]] bool IsProtectedType() const;
 
   void SetModuleHeight(int32_t height);
   void SetModuleWidth(int32_t width);

@@ -86,12 +86,12 @@ class ProgressiveDecoder final :
 
 #ifdef PDF_ENABLE_XFA_PNG
   // PngDecoder::Delegate
-  bool PngReadHeader(int width,
-                     int height,
-                     int bpc,
-                     int pass,
-                     int* color_type,
-                     double* gamma) override;
+  [[nodiscard]] bool PngReadHeader(int width,
+                                   int height,
+                                   int bpc,
+                                   int pass,
+                                   int* color_type,
+                                   double* gamma) override;
   uint8_t* PngAskScanlineBuf(int line) override;
   void PngFillScanlineBufCompleted(int pass, int line) override;
 #endif  // PDF_ENABLE_XFA_PNG
@@ -99,17 +99,18 @@ class ProgressiveDecoder final :
 #ifdef PDF_ENABLE_XFA_GIF
   // GifDecoder::Delegate
   uint32_t GifCurrentPosition() const override;
-  bool GifInputRecordPositionBuf(uint32_t rcd_pos,
-                                 const FX_RECT& img_rc,
-                                 pdfium::span<CFX_GifPalette> pal_span,
-                                 int32_t trans_index,
-                                 bool interlace) override;
+  [[nodiscard]] bool GifInputRecordPositionBuf(
+      uint32_t rcd_pos,
+      const FX_RECT& img_rc,
+      pdfium::span<CFX_GifPalette> pal_span,
+      int32_t trans_index,
+      bool interlace) override;
   void GifReadScanline(int32_t row_num, pdfium::span<uint8_t> row_buf) override;
 #endif  // PDF_ENABLE_XFA_GIF
 
 #ifdef PDF_ENABLE_XFA_BMP
   // BmpDecoder::Delegate
-  bool BmpInputImagePositionBuf(uint32_t rcd_pos) override;
+  [[nodiscard]] bool BmpInputImagePositionBuf(uint32_t rcd_pos) override;
   void BmpReadScanline(uint32_t row_num,
                        pdfium::span<const uint8_t> row_buf) override;
 #endif  // PDF_ENABLE_XFA_BMP
@@ -128,43 +129,44 @@ class ProgressiveDecoder final :
   };
 
 #ifdef PDF_ENABLE_XFA_BMP
-  bool BmpReadMoreData(ProgressiveDecoderIface::Context* pBmpContext,
-                       FXCODEC_STATUS* err_status);
-  bool BmpDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
+  [[nodiscard]] bool BmpReadMoreData(
+      ProgressiveDecoderIface::Context* pBmpContext,
+      FXCODEC_STATUS* err_status);
+  [[nodiscard]] bool BmpDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
   FXCODEC_STATUS BmpStartDecode();
   FXCODEC_STATUS BmpContinueDecode();
 #endif  // PDF_ENABLE_XFA_BMP
 
 #ifdef PDF_ENABLE_XFA_GIF
-  bool GifReadMoreData(FXCODEC_STATUS* err_status);
-  bool GifDetectImageTypeInBuffer();
+  [[nodiscard]] bool GifReadMoreData(FXCODEC_STATUS* err_status);
+  [[nodiscard]] bool GifDetectImageTypeInBuffer();
   FXCODEC_STATUS GifStartDecode();
   FXCODEC_STATUS GifContinueDecode();
 #endif  // PDF_ENABLE_XFA_GIF
 
 #ifdef PDF_ENABLE_XFA_PNG
-  bool PngDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
+  [[nodiscard]] bool PngDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
   FXCODEC_STATUS PngStartDecode();
   FXCODEC_STATUS PngContinueDecode();
 #endif  // PDF_ENABLE_XFA_PNG
 
 #ifdef PDF_ENABLE_XFA_TIFF
-  bool TiffDetectImageTypeFromFile(CFX_DIBAttribute* pAttribute);
+  [[nodiscard]] bool TiffDetectImageTypeFromFile(CFX_DIBAttribute* pAttribute);
   FXCODEC_STATUS TiffContinueDecode();
 #endif  // PDF_ENABLE_XFA_TIFF
 
-  bool JpegReadMoreData(FXCODEC_STATUS* err_status);
-  bool JpegDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
+  [[nodiscard]] bool JpegReadMoreData(FXCODEC_STATUS* err_status);
+  [[nodiscard]] bool JpegDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
   FXCODEC_STATUS JpegStartDecode();
   FXCODEC_STATUS JpegContinueDecode();
 
   int32_t GetBitsPerPixel() const { return m_SrcComponents * m_SrcBPC; }
 
-  bool DetectImageType(FXCODEC_IMAGE_TYPE imageType,
-                       CFX_DIBAttribute* pAttribute);
-  bool ReadMoreData(ProgressiveDecoderIface* pModule,
-                    ProgressiveDecoderIface::Context* pContext,
-                    FXCODEC_STATUS* err_status);
+  [[nodiscard]] bool DetectImageType(FXCODEC_IMAGE_TYPE imageType,
+                                     CFX_DIBAttribute* pAttribute);
+  [[nodiscard]] bool ReadMoreData(ProgressiveDecoderIface* pModule,
+                                  ProgressiveDecoderIface::Context* pContext,
+                                  FXCODEC_STATUS* err_status);
 
   void SetTransMethod();
 

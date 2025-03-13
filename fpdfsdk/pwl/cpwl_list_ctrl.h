@@ -33,7 +33,8 @@ class CPWL_ListCtrl {
     virtual void OnSetScrollPosY(float fy) = 0;
 
     // Returns true if `this` is still allocated.
-    [[nodiscard]] virtual bool OnInvalidateRect(const CFX_FloatRect& rect) = 0;
+    [[nodiscard]] [[nodiscard]] virtual bool OnInvalidateRect(
+        const CFX_FloatRect& rect) = 0;
   };
 
   CPWL_ListCtrl();
@@ -48,7 +49,7 @@ class CPWL_ListCtrl {
   void OnVK_RIGHT(bool bShift, bool bCtrl);
   void OnVK_HOME(bool bShift, bool bCtrl);
   void OnVK_END(bool bShift, bool bCtrl);
-  bool OnChar(uint16_t nChar, bool bShift, bool bCtrl);
+  [[nodiscard]] bool OnChar(uint16_t nChar, bool bShift, bool bCtrl);
 
   void SetScrollPos(const CFX_PointF& point);
   void ScrollToListItem(int32_t nItemIndex);
@@ -74,10 +75,10 @@ class CPWL_ListCtrl {
   float GetFontSize() const { return m_fFontSize; }
   CPWL_EditImpl* GetItemEdit(int32_t nIndex) const;
   int32_t GetCount() const;
-  bool IsItemSelected(int32_t nIndex) const;
+  [[nodiscard]] bool IsItemSelected(int32_t nIndex) const;
   float GetFirstHeight() const;
   void SetMultipleSel(bool bMultiple) { m_bMultiple = bMultiple; }
-  bool IsMultipleSel() const { return m_bMultiple; }
+  [[nodiscard]] bool IsMultipleSel() const { return m_bMultiple; }
   int32_t FindNext(int32_t nIndex, wchar_t nChar) const;
   int32_t GetFirstSelected() const;
 
@@ -97,7 +98,7 @@ class CPWL_ListCtrl {
     WideString GetText() const;
 
     CFX_FloatRect GetRect() const { return m_rcListItem; }
-    bool IsSelected() const { return m_bSelected; }
+    [[nodiscard]] bool IsSelected() const { return m_bSelected; }
     float GetItemHeight() const;
     uint16_t GetFirstChar() const;
 
@@ -142,7 +143,7 @@ class CPWL_ListCtrl {
   CFX_FloatRect OuterToInner(const CFX_FloatRect& rect) const;
 
   void OnVK(int32_t nItemIndex, bool bShift, bool bCtrl);
-  bool IsValid(int32_t nItemIndex) const;
+  [[nodiscard]] bool IsValid(int32_t nItemIndex) const;
 
   void ReArrange(int32_t nItemIndex);
   CFX_FloatRect GetItemRectInternal(int32_t nIndex) const;
@@ -151,7 +152,7 @@ class CPWL_ListCtrl {
   void SetSingleSelect(int32_t nItemIndex);
   void InvalidateItem(int32_t nItemIndex);
   void SelectItems();
-  bool IsItemVisible(int32_t nItemIndex) const;
+  [[nodiscard]] bool IsItemVisible(int32_t nItemIndex) const;
   void SetScrollInfo();
   void SetScrollPosY(float fy);
   void AddItem(const WideString& str);

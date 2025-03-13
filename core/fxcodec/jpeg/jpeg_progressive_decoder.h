@@ -34,13 +34,13 @@ class JpegProgressiveDecoder final : public ProgressiveDecoderIface {
                         int* nComps,
                         CFX_DIBAttribute* pAttribute);
 
-  static bool StartScanline(Context* pContext);
+  [[nodiscard]] static bool StartScanline(Context* pContext);
   static int ReadScanline(Context* pContext, uint8_t* dest_buf);
 
   // ProgressiveDecoderIface:
   FX_FILESIZE GetAvailInput(Context* pContext) const override;
-  bool Input(Context* pContext,
-             RetainPtr<CFX_CodecMemory> codec_memory) override;
+  [[nodiscard]] bool Input(Context* pContext,
+                           RetainPtr<CFX_CodecMemory> codec_memory) override;
 
  private:
   JpegProgressiveDecoder();

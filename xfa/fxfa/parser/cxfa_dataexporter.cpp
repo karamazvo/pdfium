@@ -25,13 +25,13 @@ bool CXFA_DataExporter::Export(const RetainPtr<IFX_SeekableStream>& pStream,
   if (pNode->IsModelNode()) {
     switch (pNode->GetPacketType()) {
       case XFA_PacketType::Xdp: {
-        pStream->WriteString(
+        (void)pStream->WriteString(
             "<xdp:xdp xmlns:xdp=\"http://ns.adobe.com/xdp/\">");
         for (CXFA_Node* pChild = pNode->GetFirstChild(); pChild;
              pChild = pChild->GetNextSibling()) {
-          Export(pStream, pChild);
+          (void)Export(pStream, pChild);
         }
-        pStream->WriteString("</xdp:xdp>\n");
+        (void)pStream->WriteString("</xdp:xdp>\n");
         break;
       }
       case XFA_PacketType::Datasets: {

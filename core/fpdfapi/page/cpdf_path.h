@@ -19,7 +19,7 @@ class CPDF_Path {
   ~CPDF_Path();
 
   void Emplace() { m_Ref.Emplace(); }
-  bool HasRef() const { return !!m_Ref; }
+  [[nodiscard]] bool HasRef() const { return !!m_Ref; }
 
   const std::vector<CFX_Path::Point>& GetPoints() const;
   void ClosePath();
@@ -29,7 +29,7 @@ class CPDF_Path {
   CFX_FloatRect GetBoundingBoxForStrokePath(float line_width,
                                             float miter_limit) const;
 
-  bool IsRect() const;
+  [[nodiscard]] bool IsRect() const;
   void Transform(const CFX_Matrix& matrix);
 
   void Append(const CFX_Path& path, const CFX_Matrix* pMatrix);

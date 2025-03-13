@@ -29,7 +29,7 @@ class CXFA_NodeIteratorTemplate {
   NodeType* GetCurrent() const { return static_cast<NodeType*>(m_pCurrent); }
 
   void Reset() { m_pCurrent = m_pRoot; }
-  bool SetCurrent(NodeType* pNode) {
+  [[nodiscard]] bool SetCurrent(NodeType* pNode) {
     if (!RootReachableFromNode(pNode)) {
       m_pCurrent = nullptr;
       return false;
@@ -86,7 +86,7 @@ class CXFA_NodeIteratorTemplate {
   }
 
  private:
-  bool RootReachableFromNode(NodeType* pNode) {
+  [[nodiscard]] bool RootReachableFromNode(NodeType* pNode) {
     return pNode && (pNode == m_pRoot ||
                      RootReachableFromNode(TraverseStrategy::GetParent(pNode)));
   }

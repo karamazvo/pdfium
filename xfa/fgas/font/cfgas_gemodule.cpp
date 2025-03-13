@@ -17,7 +17,7 @@ CFGAS_GEModule* g_module = nullptr;
 void CFGAS_GEModule::Create() {
   DCHECK(!g_module);
   g_module = new CFGAS_GEModule();
-  g_module->GetFontMgr()->EnumFonts();
+  (void)g_module->GetFontMgr()->EnumFonts();
 }
 
 // static

@@ -19,7 +19,7 @@ class CXFA_Line final : public CXFA_Node {
   ~CXFA_Line() override;
 
   XFA_AttributeValue GetHand();
-  bool GetSlope();
+  [[nodiscard]] bool GetSlope();
   CXFA_Edge* GetEdgeIfExists();
 
  private:

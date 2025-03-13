@@ -33,27 +33,29 @@ class CPDF_TextRenderer {
                              FX_ARGB fill_argb,
                              const CPDF_RenderOptions& options);
 
-  static bool DrawTextPath(CFX_RenderDevice* pDevice,
-                           pdfium::span<const uint32_t> char_codes,
-                           pdfium::span<const float> char_pos,
-                           CPDF_Font* pFont,
-                           float font_size,
-                           const CFX_Matrix& mtText2User,
-                           const CFX_Matrix* pUser2Device,
-                           const CFX_GraphStateData* pGraphState,
-                           FX_ARGB fill_argb,
-                           FX_ARGB stroke_argb,
-                           CFX_Path* pClippingPath,
-                           const CFX_FillRenderOptions& fill_options);
+  [[nodiscard]] static bool DrawTextPath(
+      CFX_RenderDevice* pDevice,
+      pdfium::span<const uint32_t> char_codes,
+      pdfium::span<const float> char_pos,
+      CPDF_Font* pFont,
+      float font_size,
+      const CFX_Matrix& mtText2User,
+      const CFX_Matrix* pUser2Device,
+      const CFX_GraphStateData* pGraphState,
+      FX_ARGB fill_argb,
+      FX_ARGB stroke_argb,
+      CFX_Path* pClippingPath,
+      const CFX_FillRenderOptions& fill_options);
 
-  static bool DrawNormalText(CFX_RenderDevice* pDevice,
-                             pdfium::span<const uint32_t> char_codes,
-                             pdfium::span<const float> char_pos,
-                             CPDF_Font* pFont,
-                             float font_size,
-                             const CFX_Matrix& mtText2Device,
-                             FX_ARGB fill_argb,
-                             const CPDF_RenderOptions& options);
+  [[nodiscard]] static bool DrawNormalText(
+      CFX_RenderDevice* pDevice,
+      pdfium::span<const uint32_t> char_codes,
+      pdfium::span<const float> char_pos,
+      CPDF_Font* pFont,
+      float font_size,
+      const CFX_Matrix& mtText2Device,
+      FX_ARGB fill_argb,
+      const CPDF_RenderOptions& options);
 
   CPDF_TextRenderer() = delete;
   CPDF_TextRenderer(const CPDF_TextRenderer&) = delete;

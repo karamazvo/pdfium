@@ -18,7 +18,7 @@ class CJX_Model : public CJX_Node {
   ~CJX_Model() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   JSE_METHOD(clearErrorList);
   JSE_METHOD(createNode);

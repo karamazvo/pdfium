@@ -47,17 +47,17 @@ class CPDF_Action {
   CPDF_Action(const CPDF_Action& that);
   ~CPDF_Action();
 
-  bool HasDict() const { return !!m_pDict; }
+  [[nodiscard]] bool HasDict() const { return !!m_pDict; }
   const CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
 
   Type GetType() const;
   CPDF_Dest GetDest(CPDF_Document* pDoc) const;
   WideString GetFilePath() const;
   ByteString GetURI(const CPDF_Document* pDoc) const;
-  bool GetHideStatus() const;
+  [[nodiscard]] bool GetHideStatus() const;
   ByteString GetNamedAction() const;
   uint32_t GetFlags() const;
-  bool HasFields() const;
+  [[nodiscard]] bool HasFields() const;
 
   std::vector<RetainPtr<const CPDF_Object>> GetAllFields() const;
 

@@ -87,8 +87,8 @@ class CJS_Global final : public CJS_Object {
   void PutObjectProperty(v8::Local<v8::Object> obj, CFX_KeyValue* pData);
   CJS_Result setPersistent(CJS_Runtime* pRuntime,
                            pdfium::span<v8::Local<v8::Value>> params);
-  bool HasProperty(const ByteString& propname);
-  bool DelProperty(const ByteString& propname);
+  [[nodiscard]] bool HasProperty(const ByteString& propname);
+  [[nodiscard]] bool DelProperty(const ByteString& propname);
   CJS_Result GetProperty(CJS_Runtime* pRuntime, const ByteString& propname);
   CJS_Result SetProperty(CJS_Runtime* pRuntime,
                          const ByteString& propname,

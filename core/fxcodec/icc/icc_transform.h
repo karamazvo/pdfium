@@ -36,9 +36,9 @@ class IccTransform {
                          int pixels);
 
   int components() const { return m_nSrcComponents; }
-  bool IsNormal() const { return m_bNormal; }
+  [[nodiscard]] bool IsNormal() const { return m_bNormal; }
 
-  static bool IsValidIccComponents(int components);
+  [[nodiscard]] static bool IsValidIccComponents(int components);
 
  private:
   IccTransform(cmsHTRANSFORM transform,

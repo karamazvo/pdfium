@@ -25,19 +25,20 @@ class CPDF_OCContext final : public Retainable {
 
   CONSTRUCT_VIA_MAKE_RETAIN;
 
-  bool CheckOCGDictVisible(const CPDF_Dictionary* pOCGDict) const;
-  bool CheckPageObjectVisible(const CPDF_PageObject* pObj) const;
+  [[nodiscard]] bool CheckOCGDictVisible(const CPDF_Dictionary* pOCGDict) const;
+  [[nodiscard]] bool CheckPageObjectVisible(const CPDF_PageObject* pObj) const;
 
  private:
   CPDF_OCContext(CPDF_Document* pDoc, UsageType eUsageType);
   ~CPDF_OCContext() override;
 
-  bool LoadOCGStateFromConfig(const ByteString& csConfig,
-                              const CPDF_Dictionary* pOCGDict) const;
-  bool LoadOCGState(const CPDF_Dictionary* pOCGDict) const;
-  bool GetOCGVisible(const CPDF_Dictionary* pOCGDict) const;
-  bool GetOCGVE(const CPDF_Array* pExpression, int nLevel) const;
-  bool LoadOCMDState(const CPDF_Dictionary* pOCMDDict) const;
+  [[nodiscard]] bool LoadOCGStateFromConfig(
+      const ByteString& csConfig,
+      const CPDF_Dictionary* pOCGDict) const;
+  [[nodiscard]] bool LoadOCGState(const CPDF_Dictionary* pOCGDict) const;
+  [[nodiscard]] bool GetOCGVisible(const CPDF_Dictionary* pOCGDict) const;
+  [[nodiscard]] bool GetOCGVE(const CPDF_Array* pExpression, int nLevel) const;
+  [[nodiscard]] bool LoadOCMDState(const CPDF_Dictionary* pOCMDDict) const;
 
   UnownedPtr<CPDF_Document> const m_pDocument;
   const UsageType m_eUsageType;

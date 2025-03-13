@@ -10,7 +10,7 @@ class CXFA_FMToJavaScriptDepth {
   CXFA_FMToJavaScriptDepth() { depth_++; }
   ~CXFA_FMToJavaScriptDepth() { depth_--; }
 
-  bool IsWithinMaxDepth() const { return depth_ <= kMaxDepth; }
+  [[nodiscard]] bool IsWithinMaxDepth() const { return depth_ <= kMaxDepth; }
 
   static void Reset();
 

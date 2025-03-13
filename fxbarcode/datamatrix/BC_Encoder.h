@@ -17,7 +17,7 @@ class CBC_Encoder {
   virtual ~CBC_Encoder();
 
   virtual CBC_HighLevelEncoder::Encoding GetEncodingMode() = 0;
-  virtual bool Encode(CBC_EncoderContext* context) = 0;
+  [[nodiscard]] virtual bool Encode(CBC_EncoderContext* context) = 0;
 };
 
 #endif  // FXBARCODE_DATAMATRIX_BC_ENCODER_H_

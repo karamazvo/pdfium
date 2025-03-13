@@ -28,7 +28,7 @@ class CPDF_Type3Font final : public CPDF_SimpleFont {
   ~CPDF_Type3Font() override;
 
   // CPDF_Font:
-  bool IsType3Font() const override;
+  [[nodiscard]] bool IsType3Font() const override;
   const CPDF_Type3Font* AsType3Font() const override;
   CPDF_Type3Font* AsType3Font() override;
   void WillBeDestroyed() override;
@@ -49,7 +49,7 @@ class CPDF_Type3Font final : public CPDF_SimpleFont {
                  FormFactoryIface* pFormFactory);
 
   // CPDF_Font:
-  bool Load() override;
+  [[nodiscard]] bool Load() override;
 
   // CPDF_SimpleFont:
   void LoadGlyphMap() override;

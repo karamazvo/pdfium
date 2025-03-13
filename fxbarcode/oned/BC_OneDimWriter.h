@@ -31,14 +31,14 @@ class CBC_OneDimWriter : public CBC_Writer {
   static constexpr CFX_TextRenderOptions GetTextRenderOptions() {
     return CFX_TextRenderOptions(CFX_TextRenderOptions::kLcd);
   }
-  static bool HasValidContentSize(WideStringView contents);
+  [[nodiscard]] static bool HasValidContentSize(WideStringView contents);
 
   CBC_OneDimWriter();
   ~CBC_OneDimWriter() override;
 
-  virtual bool RenderResult(WideStringView contents,
-                            pdfium::span<const uint8_t> code);
-  virtual bool CheckContentValidity(WideStringView contents) = 0;
+  [[nodiscard]] virtual bool RenderResult(WideStringView contents,
+                                          pdfium::span<const uint8_t> code);
+  [[nodiscard]] virtual bool CheckContentValidity(WideStringView contents) = 0;
   virtual WideString FilterContents(WideStringView contents) = 0;
   virtual void SetDataLength(int32_t length);
 
@@ -49,16 +49,16 @@ class CBC_OneDimWriter : public CBC_Writer {
   void SetFontColor(FX_ARGB color);
 
   virtual DataVector<uint8_t> Encode(const ByteString& contents) = 0;
-  bool RenderDeviceResult(CFX_RenderDevice* device,
-                          const CFX_Matrix& matrix,
-                          WideStringView contents);
-  bool SetFont(CFX_Font* cFont);
+  [[nodiscard]] bool RenderDeviceResult(CFX_RenderDevice* device,
+                                        const CFX_Matrix& matrix,
+                                        WideStringView contents);
+  [[nodiscard]] bool SetFont(CFX_Font* cFont);
 
  protected:
-  virtual bool ShowChars(WideStringView contents,
-                         CFX_RenderDevice* device,
-                         const CFX_Matrix& matrix,
-                         int32_t barWidth);
+  [[nodiscard]] virtual bool ShowChars(WideStringView contents,
+                                       CFX_RenderDevice* device,
+                                       const CFX_Matrix& matrix,
+                                       int32_t barWidth);
   void ShowDeviceChars(CFX_RenderDevice* device,
                        const CFX_Matrix& matrix,
                        const ByteString str,

@@ -42,7 +42,7 @@ class CPDF_Font : public Retainable, public Observable {
     virtual ~FormIface() = default;
 
     virtual void ParseContentForType3Char(CPDF_Type3Char* pChar) = 0;
-    virtual bool HasPageObjects() const = 0;
+    [[nodiscard]] virtual bool HasPageObjects() const = 0;
     virtual CFX_FloatRect CalcBoundingBox() const = 0;
     virtual std::optional<std::pair<RetainPtr<CFX_DIBitmap>, CFX_Matrix>>
     GetBitmapAndMatrixFromSoleImageOfForm() const = 0;
@@ -68,10 +68,10 @@ class CPDF_Font : public Retainable, public Observable {
   static RetainPtr<CPDF_Font> GetStockFont(CPDF_Document* pDoc,
                                            ByteStringView fontname);
 
-  virtual bool IsType1Font() const;
-  virtual bool IsTrueTypeFont() const;
-  virtual bool IsType3Font() const;
-  virtual bool IsCIDFont() const;
+  [[nodiscard]] virtual bool IsType1Font() const;
+  [[nodiscard]] virtual bool IsTrueTypeFont() const;
+  [[nodiscard]] virtual bool IsType3Font() const;
+  [[nodiscard]] virtual bool IsCIDFont() const;
   virtual const CPDF_Type1Font* AsType1Font() const;
   virtual CPDF_Type1Font* AsType1Font();
   virtual const CPDF_TrueTypeFont* AsTrueTypeFont() const;
@@ -82,8 +82,8 @@ class CPDF_Font : public Retainable, public Observable {
   virtual CPDF_CIDFont* AsCIDFont();
 
   virtual void WillBeDestroyed();
-  virtual bool IsVertWriting() const;
-  virtual bool IsUnicodeCompatible() const = 0;
+  [[nodiscard]] virtual bool IsVertWriting() const;
+  [[nodiscard]] virtual bool IsUnicodeCompatible() const = 0;
   virtual uint32_t GetNextChar(ByteStringView pString, size_t* pOffset) const;
   virtual size_t CountChar(ByteStringView pString) const;
   virtual void AppendChar(ByteString* buf, uint32_t charcode) const;
@@ -93,20 +93,22 @@ class CPDF_Font : public Retainable, public Observable {
 #endif
   virtual WideString UnicodeFromCharCode(uint32_t charcode) const;
   virtual uint32_t CharCodeFromUnicode(wchar_t Unicode) const;
-  virtual bool HasFontWidths() const;
+  [[nodiscard]] virtual bool HasFontWidths() const;
 
   ByteString GetBaseFontName() const { return m_BaseFontName; }
   std::optional<FX_Charset> GetSubstFontCharset() const;
-  bool IsEmbedded() const { return IsType3Font() || m_pFontFile != nullptr; }
+  [[nodiscard]] bool IsEmbedded() const {
+    return IsType3Font() || m_pFontFile != nullptr;
+  }
   RetainPtr<CPDF_Dictionary> GetMutableFontDict() { return m_pFontDict; }
   RetainPtr<const CPDF_Dictionary> GetFontDict() const { return m_pFontDict; }
   uint32_t GetFontDictObjNum() const { return m_pFontDict->GetObjNum(); }
-  bool FontDictIs(const CPDF_Dictionary* pThat) const {
+  [[nodiscard]] bool FontDictIs(const CPDF_Dictionary* pThat) const {
     return m_pFontDict == pThat;
   }
   void ClearFontDict() { m_pFontDict = nullptr; }
-  bool IsStandardFont() const;
-  bool HasFace() const { return !!m_Font.GetFace(); }
+  [[nodiscard]] bool IsStandardFont() const;
+  [[nodiscard]] bool HasFace() const { return !!m_Font.GetFace(); }
 
   const FX_RECT& GetFontBBox() const { return m_FontBBox; }
   int GetTypeAscent() const { return m_Ascent; }
@@ -141,24 +143,27 @@ class CPDF_Font : public Retainable, public Observable {
   ~CPDF_Font() override;
 
   // Commonly used wrappers for UseTTCharmap().
-  static bool UseTTCharmapMSUnicode(const RetainPtr<CFX_Face>& face) {
+  [[nodiscard]] static bool UseTTCharmapMSUnicode(
+      const RetainPtr<CFX_Face>& face) {
     return UseTTCharmap(face, 3, 1);
   }
-  static bool UseTTCharmapMSSymbol(const RetainPtr<CFX_Face>& face) {
+  [[nodiscard]] static bool UseTTCharmapMSSymbol(
+      const RetainPtr<CFX_Face>& face) {
     return UseTTCharmap(face, 3, 0);
   }
-  static bool UseTTCharmapMacRoman(const RetainPtr<CFX_Face>& face) {
+  [[nodiscard]] static bool UseTTCharmapMacRoman(
+      const RetainPtr<CFX_Face>& face) {
     return UseTTCharmap(face, 1, 0);
   }
-  static bool UseTTCharmap(const RetainPtr<CFX_Face>& face,
-                           int platform_id,
-                           int encoding_id);
+  [[nodiscard]] static bool UseTTCharmap(const RetainPtr<CFX_Face>& face,
+                                         int platform_id,
+                                         int encoding_id);
 
   static const char* GetAdobeCharName(FontEncoding base_encoding,
                                       const std::vector<ByteString>& charnames,
                                       uint32_t charcode);
 
-  virtual bool Load() = 0;
+  [[nodiscard]] virtual bool Load() = 0;
 
   void LoadUnicodeMap() const;  // logically const only.
   void LoadFontDescriptor(const CPDF_Dictionary* pFontDesc);

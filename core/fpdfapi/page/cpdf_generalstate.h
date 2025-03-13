@@ -28,7 +28,7 @@ class CPDF_GeneralState {
   ~CPDF_GeneralState();
 
   void Emplace() { m_Ref.Emplace(); }
-  bool HasRef() const { return !!m_Ref; }
+  [[nodiscard]] bool HasRef() const { return !!m_Ref; }
 
   void SetRenderIntent(const ByteString& ri);
 
@@ -57,10 +57,10 @@ class CPDF_GeneralState {
   const CFX_Matrix* GetSMaskMatrix() const;
   void SetSMaskMatrix(const CFX_Matrix& matrix);
 
-  bool GetFillOP() const;
+  [[nodiscard]] bool GetFillOP() const;
   void SetFillOP(bool op);
 
-  bool GetStrokeOP() const;
+  [[nodiscard]] bool GetStrokeOP() const;
   void SetStrokeOP(bool op);
 
   int GetOPMode() const;
@@ -73,7 +73,7 @@ class CPDF_GeneralState {
   void SetFlatness(float flatness);
   void SetSmoothness(float smoothness);
 
-  bool GetStrokeAdjust() const;
+  [[nodiscard]] bool GetStrokeAdjust() const;
   void SetStrokeAdjust(bool adjust);
 
   void SetAlphaSource(bool source);

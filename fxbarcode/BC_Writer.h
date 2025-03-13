@@ -15,16 +15,16 @@ class CBC_Writer {
   CBC_Writer();
   virtual ~CBC_Writer();
 
-  bool SetModuleHeight(int32_t moduleHeight);
-  bool SetModuleWidth(int32_t moduleWidth);
+  [[nodiscard]] bool SetModuleHeight(int32_t moduleHeight);
+  [[nodiscard]] bool SetModuleWidth(int32_t moduleWidth);
   void SetHeight(int32_t height);
   void SetWidth(int32_t width);
 
   virtual void SetTextLocation(BC_TEXT_LOC location);
-  virtual bool SetWideNarrowRatio(int8_t ratio);
-  virtual bool SetStartChar(char start);
-  virtual bool SetEndChar(char end);
-  virtual bool SetErrorCorrectionLevel(int32_t level);
+  [[nodiscard]] virtual bool SetWideNarrowRatio(int8_t ratio);
+  [[nodiscard]] virtual bool SetStartChar(char start);
+  [[nodiscard]] virtual bool SetEndChar(char end);
+  [[nodiscard]] virtual bool SetErrorCorrectionLevel(int32_t level);
 
  protected:
   static const FX_ARGB kBarColor = 0xff000000;

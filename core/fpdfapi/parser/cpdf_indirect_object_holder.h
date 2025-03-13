@@ -59,8 +59,9 @@ class CPDF_IndirectObjectHolder {
   uint32_t AddIndirectObject(RetainPtr<CPDF_Object> pObj);
 
   // If higher generation number, retains |pObj| and returns true.
-  bool ReplaceIndirectObjectIfHigherGeneration(uint32_t objnum,
-                                               RetainPtr<CPDF_Object> pObj);
+  [[nodiscard]] bool ReplaceIndirectObjectIfHigherGeneration(
+      uint32_t objnum,
+      RetainPtr<CPDF_Object> pObj);
 
   uint32_t GetLastObjNum() const { return m_LastObjNum; }
   void SetLastObjNum(uint32_t objnum) { m_LastObjNum = objnum; }

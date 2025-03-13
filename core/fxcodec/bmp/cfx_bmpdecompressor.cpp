@@ -332,8 +332,8 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeImage() {
     // the data offset would point into the header.
     data_offset_ = std::max(header_offset_, data_offset_);
 
-    input_buffer_->Seek(input_buffer_->GetSize());
-    if (!GetDataPosition(data_offset_)) {
+    if (!input_buffer_->Seek(input_buffer_->GetSize()) ||
+        !GetDataPosition(data_offset_)) {
       decode_status_ = DecodeStatus::kTail;
       return BmpDecoder::Status::kFail;
     }
@@ -661,7 +661,7 @@ bool CFX_BmpDecompressor::ReadAllOrNone(pdfium::span<uint8_t> buf) {
   size_t original_position = input_buffer_->GetPosition();
   size_t read = input_buffer_->ReadBlock(buf);
   if (read < buf.size()) {
-    input_buffer_->Seek(original_position);
+    (void)input_buffer_->Seek(original_position);
     return false;
   }
 

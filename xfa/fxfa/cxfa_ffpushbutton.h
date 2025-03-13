@@ -29,8 +29,8 @@ class CXFA_FFPushButton final : public CXFA_FFField {
   void RenderWidget(CFGAS_GEGraphics* pGS,
                     const CFX_Matrix& matrix,
                     HighlightOption highlight) override;
-  bool LoadWidget() override;
-  bool PerformLayout() override;
+  [[nodiscard]] bool LoadWidget() override;
+  [[nodiscard]] bool PerformLayout() override;
   void UpdateWidgetProperty() override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(pdfium::CFWL_Event* pEvent) override;

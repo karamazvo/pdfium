@@ -23,15 +23,15 @@ class CPDF_ImageLoader {
   CPDF_ImageLoader();
   ~CPDF_ImageLoader();
 
-  bool Start(const CPDF_ImageObject* pImage,
-             CPDF_PageImageCache* pPageImageCache,
-             const CPDF_Dictionary* pFormResource,
-             const CPDF_Dictionary* pPageResource,
-             bool bStdCS,
-             CPDF_ColorSpace::Family eFamily,
-             bool bLoadMask,
-             const CFX_Size& max_size_required);
-  bool Continue(PauseIndicatorIface* pPause);
+  [[nodiscard]] bool Start(const CPDF_ImageObject* pImage,
+                           CPDF_PageImageCache* pPageImageCache,
+                           const CPDF_Dictionary* pFormResource,
+                           const CPDF_Dictionary* pPageResource,
+                           bool bStdCS,
+                           CPDF_ColorSpace::Family eFamily,
+                           bool bLoadMask,
+                           const CFX_Size& max_size_required);
+  [[nodiscard]] bool Continue(PauseIndicatorIface* pPause);
 
   RetainPtr<CFX_DIBBase> TranslateImage(
       RetainPtr<CPDF_TransferFunc> pTransferFunc);

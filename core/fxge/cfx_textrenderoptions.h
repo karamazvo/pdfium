@@ -28,7 +28,7 @@ struct CFX_TextRenderOptions {
       default;
 
   // Indicates whether anti-aliasing is enabled.
-  bool IsSmooth() const {
+  [[nodiscard]] bool IsSmooth() const {
     return aliasing_type == kAntiAliasing || aliasing_type == kLcd;
   }
 

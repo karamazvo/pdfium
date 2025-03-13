@@ -31,7 +31,7 @@ class CPDF_ApSettings {
   CPDF_ApSettings(const CPDF_ApSettings& that);
   ~CPDF_ApSettings();
 
-  bool HasMKEntry(const ByteString& csEntry) const;
+  [[nodiscard]] bool HasMKEntry(const ByteString& csEntry) const;
   int GetRotation() const;
 
   CPDF_IconFit GetIconFit() const;

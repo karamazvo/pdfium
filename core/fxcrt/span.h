@@ -325,7 +325,7 @@ class TRIVIAL_ABI GSL_POINTER span {
   // [span.obs], span observers
   constexpr size_t size() const noexcept { return size_; }
   constexpr size_t size_bytes() const noexcept { return size() * sizeof(T); }
-  constexpr bool empty() const noexcept { return size_ == 0; }
+  [[nodiscard]] constexpr bool empty() const noexcept { return size_ == 0; }
 
   // [span.elem], span element access
   T& operator[](size_t index) const noexcept {

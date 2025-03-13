@@ -18,7 +18,7 @@ class CFGAS_GEPath final {
   const CFX_Path& GetPath() const { return path_; }
 
   void Clear();
-  bool IsEmpty() const { return path_.GetPoints().empty(); }
+  [[nodiscard]] bool IsEmpty() const { return path_.GetPoints().empty(); }
   void TransformBy(const CFX_Matrix& mt);
 
   void Close();

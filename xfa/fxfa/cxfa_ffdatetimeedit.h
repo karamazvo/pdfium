@@ -22,7 +22,7 @@ class CXFA_FFDateTimeEdit final : public CXFA_FFTextEdit {
 
   // CXFA_FFTextEdit
   CFX_RectF GetBBox(FocusOption focus) override;
-  bool LoadWidget() override;
+  [[nodiscard]] bool LoadWidget() override;
   void UpdateWidgetProperty() override;
   void OnProcessEvent(pdfium::CFWL_Event* pEvent) override;
 
@@ -32,27 +32,27 @@ class CXFA_FFDateTimeEdit final : public CXFA_FFTextEdit {
                        int32_t iDay);
 
   // CXFA_FFWidget
-  bool CanUndo() override;
-  bool CanRedo() override;
-  bool CanCopy() override;
-  bool CanCut() override;
-  bool CanPaste() override;
-  bool CanSelectAll() override;
-  bool Undo() override;
-  bool Redo() override;
+  [[nodiscard]] bool CanUndo() override;
+  [[nodiscard]] bool CanRedo() override;
+  [[nodiscard]] bool CanCopy() override;
+  [[nodiscard]] bool CanCut() override;
+  [[nodiscard]] bool CanPaste() override;
+  [[nodiscard]] bool CanSelectAll() override;
+  [[nodiscard]] bool Undo() override;
+  [[nodiscard]] bool Redo() override;
   std::optional<WideString> Copy() override;
   std::optional<WideString> Cut() override;
-  bool Paste(const WideString& wsPaste) override;
+  [[nodiscard]] bool Paste(const WideString& wsPaste) override;
   void SelectAll() override;
   void Delete() override;
   void DeSelect() override;
   WideString GetText() override;
 
  private:
-  bool PtInActiveRect(const CFX_PointF& point) override;
-  bool CommitData() override;
-  bool UpdateFWLData() override;
-  bool IsDataChanged() override;
+  [[nodiscard]] bool PtInActiveRect(const CFX_PointF& point) override;
+  [[nodiscard]] bool CommitData() override;
+  [[nodiscard]] bool UpdateFWLData() override;
+  [[nodiscard]] bool IsDataChanged() override;
 
   pdfium::CFWL_DateTimePicker* GetPickerWidget();
 

@@ -29,14 +29,14 @@ class CFX_ImageStretcher {
                      const FXDIB_ResampleOptions& options);
   ~CFX_ImageStretcher();
 
-  bool Start();
-  bool Continue(PauseIndicatorIface* pPause);
+  [[nodiscard]] bool Start();
+  [[nodiscard]] bool Continue(PauseIndicatorIface* pPause);
 
   RetainPtr<const CFX_DIBBase> source();
 
  private:
-  bool StartStretch();
-  bool ContinueStretch(PauseIndicatorIface* pPause);
+  [[nodiscard]] bool StartStretch();
+  [[nodiscard]] bool ContinueStretch(PauseIndicatorIface* pPause);
 
   UnownedPtr<ScanlineComposerIface> const m_pDest;
   RetainPtr<const CFX_DIBBase> const m_pSource;

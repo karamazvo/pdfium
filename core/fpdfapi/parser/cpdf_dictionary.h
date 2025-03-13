@@ -37,10 +37,10 @@ class CPDF_Dictionary final : public CPDF_Object {
   Type GetType() const override;
   RetainPtr<CPDF_Object> Clone() const override;
   CPDF_Dictionary* AsMutableDictionary() override;
-  bool WriteTo(IFX_ArchiveStream* archive,
-               const CPDF_Encryptor* encryptor) const override;
+  [[nodiscard]] bool WriteTo(IFX_ArchiveStream* archive,
+                             const CPDF_Encryptor* encryptor) const override;
 
-  bool IsLocked() const { return !!m_LockCount; }
+  [[nodiscard]] bool IsLocked() const { return !!m_LockCount; }
 
   size_t size() const { return m_Map.size(); }
   RetainPtr<const CPDF_Object> GetObjectFor(const ByteString& key) const;
@@ -61,7 +61,7 @@ class CPDF_Dictionary final : public CPDF_Object {
   // type name. i.e. /Foo and not (Foo).
   ByteString GetNameFor(const ByteString& key) const;
 
-  bool GetBooleanFor(const ByteString& key, bool bDefault) const;
+  [[nodiscard]] bool GetBooleanFor(const ByteString& key, bool bDefault) const;
   int GetIntegerFor(const ByteString& key) const;
   int GetIntegerFor(const ByteString& key, int default_int) const;
   int GetDirectIntegerFor(const ByteString& key) const;
@@ -79,7 +79,7 @@ class CPDF_Dictionary final : public CPDF_Object {
   CFX_FloatRect GetRectFor(const ByteString& key) const;
   CFX_Matrix GetMatrixFor(const ByteString& key) const;
 
-  bool KeyExist(const ByteString& key) const;
+  [[nodiscard]] bool KeyExist(const ByteString& key) const;
   std::vector<ByteString> GetKeys() const;
 
   // Creates a new object owned by the dictionary and returns an unowned

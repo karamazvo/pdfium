@@ -23,8 +23,8 @@ class CPDF_Name final : public CPDF_Object {
   WideString GetUnicodeText() const override;
   void SetString(const ByteString& str) override;
   CPDF_Name* AsMutableName() override;
-  bool WriteTo(IFX_ArchiveStream* archive,
-               const CPDF_Encryptor* encryptor) const override;
+  [[nodiscard]] bool WriteTo(IFX_ArchiveStream* archive,
+                             const CPDF_Encryptor* encryptor) const override;
 
  private:
   CPDF_Name(WeakPtr<ByteStringPool> pPool, const ByteString& str);

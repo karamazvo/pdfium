@@ -31,7 +31,7 @@ class CPDF_TransferFunc final : public Retainable, public Observable {
   pdfium::span<const uint8_t> GetSamplesG() const;
   pdfium::span<const uint8_t> GetSamplesB() const;
 
-  bool GetIdentity() const { return m_bIdentity; }
+  [[nodiscard]] bool GetIdentity() const { return m_bIdentity; }
 
  private:
   CPDF_TransferFunc(bool bIdentify,

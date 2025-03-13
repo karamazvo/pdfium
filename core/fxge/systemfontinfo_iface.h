@@ -22,7 +22,7 @@ class SystemFontInfoIface {
  public:
   virtual ~SystemFontInfoIface() = default;
 
-  virtual bool EnumFontList(CFX_FontMapper* pMapper) = 0;
+  [[nodiscard]] virtual bool EnumFontList(CFX_FontMapper* pMapper) = 0;
   virtual void* MapFont(int weight,
                         bool bItalic,
                         FX_Charset charset,
@@ -32,8 +32,9 @@ class SystemFontInfoIface {
   virtual size_t GetFontData(void* hFont,
                              uint32_t table,
                              pdfium::span<uint8_t> buffer) = 0;
-  virtual bool GetFaceName(void* hFont, ByteString* name) = 0;
-  virtual bool GetFontCharset(void* hFont, FX_Charset* charset) = 0;
+  [[nodiscard]] virtual bool GetFaceName(void* hFont, ByteString* name) = 0;
+  [[nodiscard]] virtual bool GetFontCharset(void* hFont,
+                                            FX_Charset* charset) = 0;
   virtual void DeleteFont(void* hFont) = 0;
 };
 

@@ -24,13 +24,13 @@ class CPDF_SimpleFont : public CPDF_Font {
   int GetCharWidthF(uint32_t charcode) override;
   FX_RECT GetCharBBox(uint32_t charcode) override;
   int GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) override;
-  bool IsUnicodeCompatible() const override;
+  [[nodiscard]] bool IsUnicodeCompatible() const override;
   WideString UnicodeFromCharCode(uint32_t charcode) const override;
   uint32_t CharCodeFromUnicode(wchar_t Unicode) const override;
 
   const CPDF_FontEncoding* GetEncoding() const { return &m_Encoding; }
 
-  bool HasFontWidths() const override;
+  [[nodiscard]] bool HasFontWidths() const override;
 
  protected:
   static constexpr size_t kInternalTableSize = 256;
@@ -40,7 +40,7 @@ class CPDF_SimpleFont : public CPDF_Font {
 
   virtual void LoadGlyphMap() = 0;
 
-  bool LoadCommon();
+  [[nodiscard]] bool LoadCommon();
   void LoadSubstFont();
   void LoadCharMetrics(int charcode);
   void LoadCharWidths(const CPDF_Dictionary* font_desc);

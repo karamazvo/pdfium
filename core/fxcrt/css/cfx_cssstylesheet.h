@@ -20,7 +20,7 @@ class CFX_CSSStyleSheet {
   CFX_CSSStyleSheet();
   ~CFX_CSSStyleSheet();
 
-  bool LoadBuffer(WideStringView buffer);
+  [[nodiscard]] bool LoadBuffer(WideStringView buffer);
   size_t CountRules() const;
   CFX_CSSStyleRule* GetRule(size_t index) const;
 

@@ -24,8 +24,8 @@ class CFX_XMLInstruction final : public CFX_XMLNode {
   CFX_XMLNode* Clone(CFX_XMLDocument* doc) override;
   void Save(const RetainPtr<IFX_RetainableWriteStream>& pXMLStream) override;
 
-  bool IsOriginalXFAVersion() const;
-  bool IsAcrobat() const;
+  [[nodiscard]] bool IsOriginalXFAVersion() const;
+  [[nodiscard]] bool IsAcrobat() const;
 
   const std::vector<WideString>& GetTargetData() const { return target_data_; }
   void AppendData(const WideString& wsData);

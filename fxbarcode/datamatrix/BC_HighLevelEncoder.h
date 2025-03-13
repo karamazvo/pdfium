@@ -31,7 +31,7 @@ class CBC_HighLevelEncoder {
   static Encoding LookAheadTest(const WideString& msg,
                                 size_t startpos,
                                 Encoding currentMode);
-  static bool IsExtendedASCII(wchar_t ch);
+  [[nodiscard]] static bool IsExtendedASCII(wchar_t ch);
 
   static const wchar_t LATCH_TO_C40 = 230;
   static const wchar_t LATCH_TO_BASE256 = 231;

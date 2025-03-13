@@ -25,8 +25,8 @@ class CXFA_ImageRenderer {
   ~CXFA_ImageRenderer();
 
   // Returns whether to continue or not.
-  bool Start();
-  bool Continue();
+  [[nodiscard]] bool Start();
+  [[nodiscard]] bool Continue();
 
  private:
   enum class State : bool { kInitial = 0, kStarted };

@@ -22,7 +22,8 @@ class CFX_GlobalData {
    public:
     virtual ~Delegate() = default;
 
-    virtual bool StoreBuffer(pdfium::span<const uint8_t> pBuffer) = 0;
+    [[nodiscard]] virtual bool StoreBuffer(
+        pdfium::span<const uint8_t> pBuffer) = 0;
     virtual std::optional<pdfium::span<uint8_t>> LoadBuffer() = 0;
     virtual void BufferDone() = 0;
   };
@@ -37,7 +38,7 @@ class CFX_GlobalData {
   };
 
   static CFX_GlobalData* GetRetainedInstance(Delegate* pDelegate);
-  bool Release();
+  [[nodiscard]] bool Release();
 
   void SetGlobalVariableNumber(ByteString propname, double dData);
   void SetGlobalVariableBoolean(ByteString propname, bool bData);
@@ -46,8 +47,9 @@ class CFX_GlobalData {
       ByteString propname,
       std::vector<std::unique_ptr<CFX_KeyValue>> array);
   void SetGlobalVariableNull(ByteString propname);
-  bool SetGlobalVariablePersistent(ByteString propname, bool bPersistent);
-  bool DeleteGlobalVariable(ByteString propname);
+  [[nodiscard]] bool SetGlobalVariablePersistent(ByteString propname,
+                                                 bool bPersistent);
+  [[nodiscard]] bool DeleteGlobalVariable(ByteString propname);
 
   int32_t GetSize() const;
   Element* GetAt(int index);
@@ -61,9 +63,10 @@ class CFX_GlobalData {
   explicit CFX_GlobalData(Delegate* pDelegate);
   ~CFX_GlobalData();
 
-  bool LoadGlobalPersistentVariables();
-  bool LoadGlobalPersistentVariablesFromBuffer(pdfium::span<uint8_t> buffer);
-  bool SaveGlobalPersisitentVariables();
+  [[nodiscard]] bool LoadGlobalPersistentVariables();
+  [[nodiscard]] bool LoadGlobalPersistentVariablesFromBuffer(
+      pdfium::span<uint8_t> buffer);
+  [[nodiscard]] bool SaveGlobalPersisitentVariables();
   iterator FindGlobalVariable(const ByteString& sPropname);
 
   size_t m_RefCount = 0;

@@ -21,7 +21,7 @@ class CFX_SubstFont {
   void UseChromeSerif();
 
   void SetIsBuiltInGenericFont() { m_bFlagMM = true; }
-  bool IsBuiltInGenericFont() const { return m_bFlagMM; }
+  [[nodiscard]] bool IsBuiltInGenericFont() const { return m_bFlagMM; }
 
   ByteString m_Family;
   FX_Charset m_Charset = FX_Charset::kANSI;

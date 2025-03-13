@@ -20,7 +20,7 @@ class CPSOutput final : public IFX_RetainableWriteStream {
   ~CPSOutput() override;
 
   // IFX_Writestream:
-  bool WriteBlock(pdfium::span<const uint8_t> input) override;
+  [[nodiscard]] bool WriteBlock(pdfium::span<const uint8_t> input) override;
 
  private:
   const HDC m_hDC;

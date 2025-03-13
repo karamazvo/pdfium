@@ -111,7 +111,7 @@ class CPDF_TextPage {
   WideString GetAllPageText() const { return GetPageText(0, CountChars()); }
 
   int CountRects(int start, int nCount);
-  bool GetRect(int rectIndex, CFX_FloatRect* pRect) const;
+  [[nodiscard]] bool GetRect(int rectIndex, CFX_FloatRect* pRect) const;
 
  private:
   enum class TextOrientation {
@@ -139,7 +139,7 @@ class CPDF_TextPage {
   };
 
   void Init();
-  bool IsHyphen(wchar_t curChar) const;
+  [[nodiscard]] bool IsHyphen(wchar_t curChar) const;
   void ProcessObject();
   void ProcessFormObject(CPDF_FormObject* pFormObj,
                          const CFX_Matrix& form_matrix);
@@ -151,20 +151,22 @@ class CPDF_TextPage {
   GenerateCharacter ProcessInsertObject(const CPDF_TextObject* pObj,
                                         const CFX_Matrix& form_matrix);
   // Returns whether to continue or not.
-  bool ProcessGenerateCharacter(GenerateCharacter type,
-                                const CPDF_TextObject* text_object,
-                                const CFX_Matrix& form_matrix);
+  [[nodiscard]] bool ProcessGenerateCharacter(
+      GenerateCharacter type,
+      const CPDF_TextObject* text_object,
+      const CFX_Matrix& form_matrix);
   void ProcessTextObjectItems(CPDF_TextObject* text_object,
                               const CFX_Matrix& form_matrix,
                               const CFX_Matrix& matrix);
   const CharInfo* GetPrevCharInfo() const;
   std::optional<CharInfo> GenerateCharInfo(wchar_t unicode,
                                            const CFX_Matrix& form_matrix);
-  bool IsSameAsPreTextObject(CPDF_TextObject* pTextObj,
-                             const CPDF_PageObjectHolder* pObjList,
-                             CPDF_PageObjectHolder::const_iterator iter) const;
-  bool IsSameTextObject(CPDF_TextObject* pTextObj1,
-                        CPDF_TextObject* pTextObj2) const;
+  [[nodiscard]] bool IsSameAsPreTextObject(
+      CPDF_TextObject* pTextObj,
+      const CPDF_PageObjectHolder* pObjList,
+      CPDF_PageObjectHolder::const_iterator iter) const;
+  [[nodiscard]] bool IsSameTextObject(CPDF_TextObject* pTextObj1,
+                                      CPDF_TextObject* pTextObj2) const;
   void CloseTempLine();
   MarkedContentState PreMarkedContent(const CPDF_TextObject* pTextObj);
   void ProcessMarkedContent(const TransformedTextObject& obj);

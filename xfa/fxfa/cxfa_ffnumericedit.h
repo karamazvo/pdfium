@@ -20,12 +20,12 @@ class CXFA_FFNumericEdit final : public CXFA_FFTextEdit {
   ~CXFA_FFNumericEdit() override;
 
   // CXFA_FFTextEdit
-  bool LoadWidget() override;
+  [[nodiscard]] bool LoadWidget() override;
   void UpdateWidgetProperty() override;
   void OnProcessEvent(pdfium::CFWL_Event* pEvent) override;
 
  private:
-  bool OnValidate(CFWL_Widget* pWidget, const WideString& wsText);
+  [[nodiscard]] bool OnValidate(CFWL_Widget* pWidget, const WideString& wsText);
 };
 
 #endif  // XFA_FXFA_CXFA_FFNUMERICEDIT_H_

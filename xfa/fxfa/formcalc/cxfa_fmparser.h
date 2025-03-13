@@ -27,16 +27,16 @@ class CXFA_FMParser {
 
   // Returned object is owned by cppgc heap.
   CXFA_FMAST* Parse();
-  bool HasError() const;
+  [[nodiscard]] bool HasError() const;
 
   void SetMaxParseDepthForTest(unsigned long max_depth) {
     m_max_parse_depth = max_depth;
   }
 
  private:
-  bool NextToken();
-  bool CheckThenNext(XFA_FM_TOKEN op);
-  bool IncrementParseDepthAndCheck();
+  [[nodiscard]] bool NextToken();
+  [[nodiscard]] bool CheckThenNext(XFA_FM_TOKEN op);
+  [[nodiscard]] bool IncrementParseDepthAndCheck();
 
   std::vector<cppgc::Member<CXFA_FMExpression>> ParseExpressionList();
   CXFA_FMExpression* ParseFunction();

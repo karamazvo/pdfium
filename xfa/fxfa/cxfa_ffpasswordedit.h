@@ -22,7 +22,7 @@ class CXFA_FFPasswordEdit final : public CXFA_FFTextEdit {
   void Trace(cppgc::Visitor* visitor) const override;
 
   // CXFA_FFTextEdit
-  bool LoadWidget() override;
+  [[nodiscard]] bool LoadWidget() override;
   void UpdateWidgetProperty() override;
 
  private:

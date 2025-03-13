@@ -50,7 +50,7 @@ class CBC_SymbolInfo {
  private:
   int32_t GetHorizontalDataRegions() const;
   int32_t GetVerticalDataRegions() const;
-  bool is_rectangular() const {
+  [[nodiscard]] bool is_rectangular() const {
     return data_->matrix_width != data_->matrix_height;
   }
 

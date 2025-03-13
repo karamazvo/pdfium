@@ -284,7 +284,7 @@ void CFXJSE_Engine::GlobalPropertySetter(v8::Isolate* pIsolate,
     return;
 
   IJS_Runtime::ScopedEventContext pContext(pCJSRuntime);
-  pCJSRuntime->SetValueByNameInGlobalObject(szPropName, pValue);
+  (void)pCJSRuntime->SetValueByNameInGlobalObject(szPropName, pValue);
 }
 
 // static
@@ -501,7 +501,7 @@ void CFXJSE_Engine::NormalPropertySetter(v8::Isolate* pIsolate,
   CXFA_Object* pScriptObject =
       pScriptContext->GetVariablesScript(pOriginalObject);
   if (pScriptObject) {
-    pScriptContext->UpdateVariableValue(
+    (void)pScriptContext->UpdateVariableValue(
         CXFA_Script::FromNode(pScriptObject->AsNode()), szPropName, pValue);
   }
 }
@@ -670,8 +670,8 @@ bool CFXJSE_Engine::UpdateVariableValue(CXFA_Script* pScriptNode,
     return false;
 
   v8::Local<v8::Object> pObject = pVariableContext->GetGlobalObject();
-  fxv8::ReentrantSetObjectOwnPropertyHelper(GetIsolate(), pObject, szPropName,
-                                            pValue);
+  (void)fxv8::ReentrantSetObjectOwnPropertyHelper(GetIsolate(), pObject,
+                                                  szPropName, pValue);
   return true;
 }
 
@@ -846,7 +846,7 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
     if (m_NodeHelper->m_pCreateParent)
       result.objects.emplace_back(m_NodeHelper->m_pCreateParent.Get());
     else
-      m_NodeHelper->CreateNodeForCondition(rndFind.m_wsCondition);
+      (void)m_NodeHelper->CreateNodeForCondition(rndFind.m_wsCondition);
 
     result.type = m_NodeHelper->m_iCreateFlag;
     if (result.type == ResolveResult::Type::kCreateNodeOne) {

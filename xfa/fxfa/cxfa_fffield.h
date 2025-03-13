@@ -31,37 +31,40 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   void RenderWidget(CFGAS_GEGraphics* pGS,
                     const CFX_Matrix& matrix,
                     HighlightOption highlight) override;
-  bool IsLoaded() override;
-  bool LoadWidget() override;
-  bool PerformLayout() override;
-  bool AcceptsFocusOnButtonDown(
+  [[nodiscard]] bool IsLoaded() override;
+  [[nodiscard]] bool LoadWidget() override;
+  [[nodiscard]] bool PerformLayout() override;
+  [[nodiscard]] bool AcceptsFocusOnButtonDown(
       Mask<XFA_FWL_KeyFlag> dwFlags,
       const CFX_PointF& point,
       CFWL_MessageMouse::MouseCommand command) override;
-  bool OnMouseEnter() override;
-  bool OnMouseExit() override;
-  bool OnLButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
-                     const CFX_PointF& point) override;
-  bool OnLButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
-                   const CFX_PointF& point) override;
-  bool OnLButtonDblClk(Mask<XFA_FWL_KeyFlag> dwFlags,
-                       const CFX_PointF& point) override;
-  bool OnMouseMove(Mask<XFA_FWL_KeyFlag> dwFlags,
-                   const CFX_PointF& point) override;
-  bool OnMouseWheel(Mask<XFA_FWL_KeyFlag> dwFlags,
-                    const CFX_PointF& point,
-                    const CFX_Vector& delta) override;
-  bool OnRButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
-                     const CFX_PointF& point) override;
-  bool OnRButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
-                   const CFX_PointF& point) override;
-  bool OnRButtonDblClk(Mask<XFA_FWL_KeyFlag> dwFlags,
-                       const CFX_PointF& point) override;
-  [[nodiscard]] bool OnSetFocus(CXFA_FFWidget* pOldWidget) override;
-  [[nodiscard]] bool OnKillFocus(CXFA_FFWidget* pNewWidget) override;
-  bool OnKeyDown(XFA_FWL_VKEYCODE dwKeyCode,
-                 Mask<XFA_FWL_KeyFlag> dwFlags) override;
-  bool OnChar(uint32_t dwChar, Mask<XFA_FWL_KeyFlag> dwFlags) override;
+  [[nodiscard]] bool OnMouseEnter() override;
+  [[nodiscard]] bool OnMouseExit() override;
+  [[nodiscard]] bool OnLButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
+                                   const CFX_PointF& point) override;
+  [[nodiscard]] bool OnLButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
+                                 const CFX_PointF& point) override;
+  [[nodiscard]] bool OnLButtonDblClk(Mask<XFA_FWL_KeyFlag> dwFlags,
+                                     const CFX_PointF& point) override;
+  [[nodiscard]] bool OnMouseMove(Mask<XFA_FWL_KeyFlag> dwFlags,
+                                 const CFX_PointF& point) override;
+  [[nodiscard]] bool OnMouseWheel(Mask<XFA_FWL_KeyFlag> dwFlags,
+                                  const CFX_PointF& point,
+                                  const CFX_Vector& delta) override;
+  [[nodiscard]] bool OnRButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
+                                   const CFX_PointF& point) override;
+  [[nodiscard]] bool OnRButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
+                                 const CFX_PointF& point) override;
+  [[nodiscard]] bool OnRButtonDblClk(Mask<XFA_FWL_KeyFlag> dwFlags,
+                                     const CFX_PointF& point) override;
+  [[nodiscard]] [[nodiscard]] bool OnSetFocus(
+      CXFA_FFWidget* pOldWidget) override;
+  [[nodiscard]] [[nodiscard]] bool OnKillFocus(
+      CXFA_FFWidget* pNewWidget) override;
+  [[nodiscard]] bool OnKeyDown(XFA_FWL_VKEYCODE dwKeyCode,
+                               Mask<XFA_FWL_KeyFlag> dwFlags) override;
+  [[nodiscard]] bool OnChar(uint32_t dwChar,
+                            Mask<XFA_FWL_KeyFlag> dwFlags) override;
   FWL_WidgetHit HitTest(const CFX_PointF& point) override;
 
   // IFWL_WidgetDelegate:
@@ -76,11 +79,11 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
  protected:
   explicit CXFA_FFField(CXFA_Node* pNode);
 
-  bool PtInActiveRect(const CFX_PointF& point) override;
+  [[nodiscard]] bool PtInActiveRect(const CFX_PointF& point) override;
 
   virtual void SetFWLRect();
-  virtual bool CommitData();
-  virtual bool IsDataChanged();
+  [[nodiscard]] virtual bool CommitData();
+  [[nodiscard]] virtual bool IsDataChanged();
 
   CFWL_Widget* GetNormalWidget();
   const CFWL_Widget* GetNormalWidget() const;
@@ -91,7 +94,7 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
 
   int32_t CalculateOverride();
   int32_t CalculateNode(CXFA_Node* pNode);
-  bool ProcessCommittedData();
+  [[nodiscard]] bool ProcessCommittedData();
   void DrawHighlight(CFGAS_GEGraphics* pGS,
                      const CFX_Matrix& pMatrix,
                      HighlightOption highlight,

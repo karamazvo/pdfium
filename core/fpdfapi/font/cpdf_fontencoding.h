@@ -46,7 +46,7 @@ class CPDF_FontEncoding {
 
   explicit CPDF_FontEncoding(FontEncoding predefined_encoding);
 
-  bool IsIdentical(const CPDF_FontEncoding* pAnother) const;
+  [[nodiscard]] bool IsIdentical(const CPDF_FontEncoding* pAnother) const;
 
   wchar_t UnicodeFromCharCode(uint8_t charcode) const {
     return m_Unicodes[charcode];

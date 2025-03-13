@@ -14,7 +14,7 @@ class CFX_CSSInputTextBuf {
   explicit CFX_CSSInputTextBuf(WideStringView str);
   ~CFX_CSSInputTextBuf();
 
-  bool IsEOF() const { return m_iPos >= m_Buffer.GetLength(); }
+  [[nodiscard]] bool IsEOF() const { return m_iPos >= m_Buffer.GetLength(); }
   void MoveNext() { m_iPos++; }
   wchar_t GetChar() const { return m_Buffer[m_iPos]; }
   wchar_t GetNextChar() const {

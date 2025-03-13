@@ -35,7 +35,7 @@ class CFX_V8 {
   v8::Local<v8::Date> NewDate(double d);
 
   int ToInt32(v8::Local<v8::Value> pValue);
-  bool ToBoolean(v8::Local<v8::Value> pValue);
+  [[nodiscard]] bool ToBoolean(v8::Local<v8::Value> pValue);
   double ToDouble(v8::Local<v8::Value> pValue);
   WideString ToWideString(v8::Local<v8::Value> pValue);
   ByteString ToByteString(v8::Local<v8::Value> pValue);

@@ -37,7 +37,7 @@ class CJBig2_Image {
   CJBig2_Image(const CJBig2_Image& other);
   ~CJBig2_Image();
 
-  static bool IsValidImageSize(int32_t w, int32_t h);
+  [[nodiscard]] static bool IsValidImageSize(int32_t w, int32_t h);
 
   int32_t width() const { return m_nWidth; }
   int32_t height() const { return m_nHeight; }
@@ -62,12 +62,15 @@ class CJBig2_Image {
   void CopyLine(int32_t hTo, int32_t hFrom);
   void Fill(bool v);
 
-  bool ComposeFrom(int32_t x, int32_t y, CJBig2_Image* pSrc, JBig2ComposeOp op);
-  bool ComposeFromWithRect(int32_t x,
-                           int32_t y,
-                           CJBig2_Image* pSrc,
-                           const FX_RECT& rtSrc,
-                           JBig2ComposeOp op);
+  [[nodiscard]] bool ComposeFrom(int32_t x,
+                                 int32_t y,
+                                 CJBig2_Image* pSrc,
+                                 JBig2ComposeOp op);
+  [[nodiscard]] bool ComposeFromWithRect(int32_t x,
+                                         int32_t y,
+                                         CJBig2_Image* pSrc,
+                                         const FX_RECT& rtSrc,
+                                         JBig2ComposeOp op);
 
   std::unique_ptr<CJBig2_Image> SubImage(int32_t x,
                                          int32_t y,
@@ -75,12 +78,15 @@ class CJBig2_Image {
                                          int32_t h);
   void Expand(int32_t h, bool v);
 
-  bool ComposeTo(CJBig2_Image* pDst, int32_t x, int32_t y, JBig2ComposeOp op);
-  bool ComposeToWithRect(CJBig2_Image* pDst,
-                         int32_t x,
-                         int32_t y,
-                         const FX_RECT& rtSrc,
-                         JBig2ComposeOp op);
+  [[nodiscard]] bool ComposeTo(CJBig2_Image* pDst,
+                               int32_t x,
+                               int32_t y,
+                               JBig2ComposeOp op);
+  [[nodiscard]] bool ComposeToWithRect(CJBig2_Image* pDst,
+                                       int32_t x,
+                                       int32_t y,
+                                       const FX_RECT& rtSrc,
+                                       JBig2ComposeOp op);
 
  private:
   void SubImageFast(int32_t x,
@@ -93,11 +99,11 @@ class CJBig2_Image {
                     int32_t w,
                     int32_t h,
                     CJBig2_Image* pImage);
-  bool ComposeToInternal(CJBig2_Image* pDst,
-                         int32_t x,
-                         int32_t y,
-                         JBig2ComposeOp op,
-                         const FX_RECT& rtSrc);
+  [[nodiscard]] bool ComposeToInternal(CJBig2_Image* pDst,
+                                       int32_t x,
+                                       int32_t y,
+                                       JBig2ComposeOp op,
+                                       const FX_RECT& rtSrc);
 
   MaybeOwned<uint8_t, FxFreeDeleter> m_pData;
   int32_t m_nWidth = 0;   // 1-bit pixels

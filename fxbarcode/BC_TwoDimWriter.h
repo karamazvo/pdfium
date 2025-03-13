@@ -21,9 +21,9 @@ class CBC_TwoDimWriter : public CBC_Writer {
   explicit CBC_TwoDimWriter(bool bFixedSize);
   ~CBC_TwoDimWriter() override;
 
-  bool RenderResult(pdfium::span<const uint8_t> code,
-                    int32_t codeWidth,
-                    int32_t codeHeight);
+  [[nodiscard]] bool RenderResult(pdfium::span<const uint8_t> code,
+                                  int32_t codeWidth,
+                                  int32_t codeHeight);
   void RenderDeviceResult(CFX_RenderDevice* device, const CFX_Matrix& matrix);
 
   int32_t error_correction_level() const { return m_iCorrectionLevel; }

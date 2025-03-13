@@ -24,8 +24,8 @@ class GifProgressiveDecoder final : public ProgressiveDecoderIface {
 
   // ProgressiveDecoderIface:
   FX_FILESIZE GetAvailInput(Context* context) const override;
-  bool Input(Context* context,
-             RetainPtr<CFX_CodecMemory> codec_memory) override;
+  [[nodiscard]] bool Input(Context* context,
+                           RetainPtr<CFX_CodecMemory> codec_memory) override;
 
  private:
   GifProgressiveDecoder();

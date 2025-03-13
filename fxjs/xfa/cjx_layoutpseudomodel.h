@@ -23,7 +23,7 @@ class CJX_LayoutPseudoModel final : public CJX_Object {
   ~CJX_LayoutPseudoModel() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   JSE_METHOD(absPage);
   JSE_METHOD(absPageCount);

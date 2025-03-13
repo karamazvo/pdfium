@@ -51,7 +51,7 @@ class CFDE_TextEditEngine final : public CFGAS_TxtBreak::Engine {
     wchar_t GetChar() const;
     void SetAt(size_t nIndex);
     size_t FindNextBreakPos(bool bPrev);
-    bool IsEOF(bool bPrev) const;
+    [[nodiscard]] bool IsEOF(bool bPrev) const;
 
    private:
     UnownedPtr<const CFDE_TextEditEngine> const engine_;
@@ -81,7 +81,7 @@ class CFDE_TextEditEngine final : public CFGAS_TxtBreak::Engine {
     virtual void OnTextWillChange(TextChange* change) = 0;
     virtual void OnTextChanged() = 0;
     virtual void OnSelChanged() = 0;
-    virtual bool OnValidate(const WideString& wsText) = 0;
+    [[nodiscard]] virtual bool OnValidate(const WideString& wsText) = 0;
     virtual void SetScrollOffset(float fScrollOffset) = 0;
   };
 
@@ -135,10 +135,10 @@ class CFDE_TextEditEngine final : public CFGAS_TxtBreak::Engine {
   void LimitHorizontalScroll(bool val);
   void LimitVerticalScroll(bool val);
 
-  bool CanUndo() const;
-  bool CanRedo() const;
-  bool Redo();
-  bool Undo();
+  [[nodiscard]] bool CanUndo() const;
+  [[nodiscard]] bool CanRedo() const;
+  [[nodiscard]] bool Redo();
+  [[nodiscard]] bool Undo();
   void ClearOperationRecords();
 
   size_t GetIndexLeft(size_t pos) const;
@@ -151,7 +151,7 @@ class CFDE_TextEditEngine final : public CFGAS_TxtBreak::Engine {
   void SelectAll();
   void SetSelection(size_t start_idx, size_t count);
   void ClearSelection();
-  bool HasSelection() const { return has_selection_; }
+  [[nodiscard]] bool HasSelection() const { return has_selection_; }
   // Returns <start_idx, count> of the selection.
   std::pair<size_t, size_t> GetSelection() const {
     return {selection_.start_idx, selection_.count};
@@ -170,7 +170,9 @@ class CFDE_TextEditEngine final : public CFGAS_TxtBreak::Engine {
 
   // Note that if CanGenerateCharacterInfo() returns false, then
   // GetCharacterInfo() cannot be called.
-  bool CanGenerateCharacterInfo() const { return text_length_ > 0 && font_; }
+  [[nodiscard]] bool CanGenerateCharacterInfo() const {
+    return text_length_ > 0 && font_;
+  }
 
   // Returns <bidi level, character rect>
   std::pair<int32_t, CFX_RectF> GetCharacterInfo(int32_t start_idx);
@@ -203,11 +205,11 @@ class CFDE_TextEditEngine final : public CFGAS_TxtBreak::Engine {
   size_t CountCharsExceedingSize(const WideString& str, size_t num_to_check);
   void AddOperationRecord(std::unique_ptr<Operation> op);
 
-  bool IsAlignedRight() const {
+  [[nodiscard]] bool IsAlignedRight() const {
     return !!(character_alignment_ & CFX_TxtLineAlignment_Right);
   }
 
-  bool IsAlignedCenter() const {
+  [[nodiscard]] bool IsAlignedCenter() const {
     return !!(character_alignment_ & CFX_TxtLineAlignment_Center);
   }
   std::vector<CFX_RectF> GetCharRects(const FDE_TEXTEDITPIECE& piece);

@@ -35,8 +35,8 @@ class CPDF_StructElement final : public Retainable {
   size_t CountKids() const;
   CPDF_StructElement* GetKidIfElement(size_t index) const;
   int GetKidContentId(size_t index) const;
-  bool UpdateKidIfElement(const CPDF_Dictionary* pDict,
-                          CPDF_StructElement* pElement);
+  [[nodiscard]] bool UpdateKidIfElement(const CPDF_Dictionary* pDict,
+                                        CPDF_StructElement* pElement);
 
   CPDF_StructElement* GetParent() const { return m_pParentElement; }
   void SetParent(CPDF_StructElement* pParentElement) {

@@ -62,7 +62,7 @@ class CXFA_FFNotify : public cppgc::GarbageCollected<CXFA_FFNotify> {
   void StartFieldDrawLayout(CXFA_Node* pItem,
                             float* pCalcWidth,
                             float* pCalcHeight);
-  bool RunScript(CXFA_Script* pScript, CXFA_Node* pFormItem);
+  [[nodiscard]] bool RunScript(CXFA_Script* pScript, CXFA_Node* pFormItem);
   XFA_EventError ExecEventByDeepFirst(CXFA_Node* pFormNode,
                                       XFA_EVENTTYPE eEventType,
                                       bool bIsFormReady,

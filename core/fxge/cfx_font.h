@@ -69,9 +69,9 @@ class CFX_Font {
                  FX_CodePage code_page,
                  bool bVertical);
 
-  bool LoadEmbedded(pdfium::span<const uint8_t> src_span,
-                    bool force_vertical,
-                    uint64_t object_tag);
+  [[nodiscard]] bool LoadEmbedded(pdfium::span<const uint8_t> src_span,
+                                  bool force_vertical,
+                                  uint64_t object_tag);
   RetainPtr<CFX_Face> GetFace() const { return m_Face; }
   FXFT_FaceRec* GetFaceRec() const {
     return m_Face ? m_Face->GetRec() : nullptr;
@@ -80,7 +80,8 @@ class CFX_Font {
   int GetSubstFontItalicAngle() const;
 
 #if defined(PDF_ENABLE_XFA)
-  bool LoadFile(RetainPtr<IFX_SeekableReadStream> pFile, int nFaceIndex);
+  [[nodiscard]] bool LoadFile(RetainPtr<IFX_SeekableReadStream> pFile,
+                              int nFaceIndex);
 
 #if !BUILDFLAG(IS_WIN)
   void SetFace(RetainPtr<CFX_Face> face);
@@ -102,14 +103,14 @@ class CFX_Font {
   int GetAscent() const;
   int GetDescent() const;
   std::optional<FX_RECT> GetGlyphBBox(uint32_t glyph_index);
-  bool IsItalic() const;
-  bool IsBold() const;
-  bool IsFixedWidth() const;
-  bool IsVertical() const { return m_bVertical; }
+  [[nodiscard]] bool IsItalic() const;
+  [[nodiscard]] bool IsBold() const;
+  [[nodiscard]] bool IsFixedWidth() const;
+  [[nodiscard]] bool IsVertical() const { return m_bVertical; }
   ByteString GetPsName() const;
   ByteString GetFamilyName() const;
   ByteString GetBaseFontName() const;
-  bool IsTTFont() const;
+  [[nodiscard]] bool IsTTFont() const;
 
   // Raw bounding box.
   std::optional<FX_RECT> GetRawBBox() const;
@@ -127,7 +128,7 @@ class CFX_Font {
 
 #if defined(PDF_USE_SKIA)
   CFX_TypeFace* GetDeviceCache() const;
-  bool IsSubstFontBold() const;
+  [[nodiscard]] bool IsSubstFontBold() const;
 #endif
 
 #if BUILDFLAG(IS_APPLE)

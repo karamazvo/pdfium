@@ -15,7 +15,7 @@ class CPDF_PageObjectAvail final : public CPDF_ObjectAvail {
   ~CPDF_PageObjectAvail() override;
 
  private:
-  bool ExcludeObject(const CPDF_Object* object) const override;
+  [[nodiscard]] bool ExcludeObject(const CPDF_Object* object) const override;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_PAGE_OBJECT_AVAIL_H_

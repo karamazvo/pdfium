@@ -61,7 +61,9 @@ class CFWL_ScrollBar final : public CFWL_Widget,
                  const Properties& properties,
                  CFWL_Widget* pOuter);
 
-  bool IsVertical() const { return !!(GetStyleExts() & FWL_STYLEEXT_SCB_Vert); }
+  [[nodiscard]] bool IsVertical() const {
+    return !!(GetStyleExts() & FWL_STYLEEXT_SCB_Vert);
+  }
   void DrawUpperTrack(CFGAS_GEGraphics* pGraphics, const CFX_Matrix& mtMatrix);
   void DrawLowerTrack(CFGAS_GEGraphics* pGraphics, const CFX_Matrix& mtMatrix);
   void DrawMaxArrowBtn(CFGAS_GEGraphics* pGraphics, const CFX_Matrix& mtMatrix);
@@ -76,14 +78,14 @@ class CFWL_ScrollBar final : public CFWL_Widget,
   CFX_RectF CalcMaxTrackRect(const CFX_RectF& rtMaxRect);
   float GetTrackPointPos(const CFX_PointF& point);
 
-  bool SendEvent();
-  bool OnScroll(CFWL_EventScroll::Code dwCode, float fPos);
+  [[nodiscard]] bool SendEvent();
+  [[nodiscard]] bool OnScroll(CFWL_EventScroll::Code dwCode, float fPos);
   void OnLButtonDown(const CFX_PointF& point);
   void OnLButtonUp(const CFX_PointF& point);
   void OnMouseMove(const CFX_PointF& point);
   void OnMouseLeave();
   void OnMouseWheel(const CFX_Vector& delta);
-  bool DoScroll(CFWL_EventScroll::Code dwCode, float fPos);
+  [[nodiscard]] bool DoScroll(CFWL_EventScroll::Code dwCode, float fPos);
   void DoMouseDown(int32_t iItem,
                    const CFX_RectF& rtItem,
                    CFWL_PartState* pState,

@@ -30,15 +30,15 @@ class CPDF_ObjectAvail {
   CPDF_DataAvail::DocAvailStatus CheckAvail();
 
  protected:
-  virtual bool ExcludeObject(const CPDF_Object* object) const;
+  [[nodiscard]] virtual bool ExcludeObject(const CPDF_Object* object) const;
 
  private:
-  bool LoadRootObject();
-  bool CheckObjects();
-  bool AppendObjectSubRefs(RetainPtr<const CPDF_Object> object,
-                           std::stack<uint32_t>* refs) const;
+  [[nodiscard]] bool LoadRootObject();
+  [[nodiscard]] bool CheckObjects();
+  [[nodiscard]] bool AppendObjectSubRefs(RetainPtr<const CPDF_Object> object,
+                                         std::stack<uint32_t>* refs) const;
   void CleanMemory();
-  bool HasObjectParsed(uint32_t obj_num) const;
+  [[nodiscard]] bool HasObjectParsed(uint32_t obj_num) const;
 
   RetainPtr<CPDF_ReadValidator> const validator_;
   UnownedPtr<CPDF_IndirectObjectHolder> const holder_;

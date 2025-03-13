@@ -44,7 +44,7 @@ class CPDF_ContentParser {
   CPDF_PageObjectHolder::CTMMap TakeAllCTMs();
 
   // Returns whether to continue or not.
-  bool Continue(PauseIndicatorIface* pPause);
+  [[nodiscard]] bool Continue(PauseIndicatorIface* pPause);
 
  private:
   enum class Stage : uint8_t {
@@ -61,10 +61,10 @@ class CPDF_ContentParser {
   Stage CheckClip();
 
   void HandlePageContentStream(const CPDF_Stream* pStream);
-  bool HandlePageContentArray(const CPDF_Array* pArray);
+  [[nodiscard]] bool HandlePageContentArray(const CPDF_Array* pArray);
   void HandlePageContentFailure();
 
-  bool is_owned() const {
+  [[nodiscard]] bool is_owned() const {
     return absl::holds_alternative<FixedSizeDataVector<uint8_t>>(m_Data);
   }
   pdfium::span<const uint8_t> GetData() const;

@@ -23,7 +23,7 @@ class CPDF_AnnotContext {
   ~CPDF_AnnotContext();
 
   void SetForm(RetainPtr<CPDF_Stream> pStream);
-  bool HasForm() const { return !!m_pAnnotForm; }
+  [[nodiscard]] bool HasForm() const { return !!m_pAnnotForm; }
   CPDF_Form* GetForm() const { return m_pAnnotForm.get(); }
 
   // Never nullptr.

@@ -102,7 +102,7 @@ bool CPDF_PSOP::Parse(CPDF_SimpleParser* parser, int depth) {
 
 void CPDF_PSOP::Execute(CPDF_PSEngine* pEngine) {
   CHECK_EQ(m_op, PSOP_PROC);
-  m_proc->Execute(pEngine);
+  (void)m_proc->Execute(pEngine);
 }
 
 float CPDF_PSOP::GetFloatValue() const {
@@ -165,8 +165,8 @@ bool CPDF_PSProc::Execute(CPDF_PSEngine* pEngine) {
       }
       size_t offset = pEngine->PopInt() ? 2 : 1;
       m_Operators[i - offset]->Execute(pEngine);
-    } else {
-      pEngine->DoOperator(op);
+    } else if (!pEngine->DoOperator(op)) {
+      return false;
     }
   }
   return true;

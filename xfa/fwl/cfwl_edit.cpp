@@ -376,7 +376,7 @@ void CFWL_Edit::RenderText(CFX_RenderDevice* pRenderDev,
   if (!font)
     return;
 
-  pRenderDev->SetClip_Rect(clipRect.GetOuterRect());
+  (void)pRenderDev->SetClip_Rect(clipRect.GetOuterRect());
 
   CFX_RectF rtDocClip = clipRect;
   if (rtDocClip.IsEmpty()) {
@@ -396,8 +396,9 @@ void CFWL_Edit::RenderText(CFX_RenderDevice* pRenderDev,
     if (char_pos.empty())
       continue;
 
-    CFDE_TextOut::DrawString(pRenderDev, m_pEditEngine->GetFontColor(), font,
-                             char_pos, m_pEditEngine->GetFontSize(), mt);
+    (void)CFDE_TextOut::DrawString(pRenderDev, m_pEditEngine->GetFontColor(),
+                                   font, char_pos, m_pEditEngine->GetFontSize(),
+                                   mt);
   }
 }
 
@@ -835,8 +836,8 @@ void CFWL_Edit::OnProcessEvent(CFWL_Event* pEvent) {
   CFWL_Widget* pSrcTarget = pEvent->GetSrcTarget();
   if ((pSrcTarget == m_pVertScrollBar && m_pVertScrollBar)) {
     CFWL_EventScroll* pScrollEvent = static_cast<CFWL_EventScroll*>(pEvent);
-    OnScroll(static_cast<CFWL_ScrollBar*>(pSrcTarget),
-             pScrollEvent->GetScrollCode(), pScrollEvent->GetPos());
+    (void)OnScroll(static_cast<CFWL_ScrollBar*>(pSrcTarget),
+                   pScrollEvent->GetScrollCode(), pScrollEvent->GetPos());
   }
 }
 
@@ -853,7 +854,7 @@ void CFWL_Edit::DoRButtonDown(CFWL_MessageMouse* pMsg) {
 void CFWL_Edit::OnFocusGained() {
   m_Properties.m_dwStates |= FWL_STATE_WGT_Focused;
   UpdateVAlignment();
-  UpdateOffset();
+  (void)UpdateOffset();
   UpdateCaret();
   LayoutScrollBar();
 }
@@ -867,7 +868,7 @@ void CFWL_Edit::OnFocusLost() {
       ClearSelection();
       bRepaint = true;
     }
-    UpdateOffset();
+    (void)UpdateOffset();
   }
   LayoutScrollBar();
   if (!bRepaint)
@@ -1103,7 +1104,7 @@ bool CFWL_Edit::OnScroll(CFWL_ScrollBar* pScrollBar,
 
   pScrollBar->SetPos(fPos);
   pScrollBar->SetTrackPos(fPos);
-  UpdateOffset(pScrollBar, fPos - iCurPos);
+  (void)UpdateOffset(pScrollBar, fPos - iCurPos);
   UpdateCaret();
 
   CFX_RectF rect = GetWidgetRect();

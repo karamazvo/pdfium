@@ -18,7 +18,7 @@ class CJX_Delta final : public CJX_Object {
   ~CJX_Delta() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   JSE_METHOD(restore);
 

@@ -20,7 +20,7 @@ class CFX_PSFontTracker {
   ~CFX_PSFontTracker();
 
   void AddFontObject(const CFX_Font* font);
-  bool SeenFontObject(const CFX_Font* font) const;
+  [[nodiscard]] bool SeenFontObject(const CFX_Font* font) const;
 
  private:
   // Tracks font objects via tags, so if two CFX_Font instances are for the same

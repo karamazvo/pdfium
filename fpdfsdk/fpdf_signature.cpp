@@ -88,7 +88,7 @@ FPDFSignatureObj_GetContents(FPDF_SIGNATURE signature,
   // SAFETY: required from caller.
   auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, length));
   ByteString contents = value_dict->GetByteStringFor("Contents");
-  fxcrt::try_spancpy(result_span, contents.span());
+  (void)fxcrt::try_spancpy(result_span, contents.span());
   return pdfium::checked_cast<unsigned long>(contents.span().size());
 }
 

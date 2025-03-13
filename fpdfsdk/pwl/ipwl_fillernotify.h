@@ -45,7 +45,7 @@ class IPWL_FillerNotify {
                               const CFX_FloatRect& rect) = 0;
   virtual void OutputSelectedRect(PerWindowData* pWidgetData,
                                   const CFX_FloatRect& rect) = 0;
-  virtual bool IsSelectionImplemented() const = 0;
+  [[nodiscard]] virtual bool IsSelectionImplemented() const = 0;
   virtual void SetCursor(CursorStyle nCursorStyle) = 0;
 
   // Must write to |bBottom| and |fPopupRet|.
@@ -64,11 +64,11 @@ class IPWL_FillerNotify {
       bool bKeyDown,
       Mask<FWL_EVENTFLAG> nFlag) = 0;
 
-  virtual bool OnPopupPreOpen(const PerWindowData* pAttached,
-                              Mask<FWL_EVENTFLAG> nFlag) = 0;
+  [[nodiscard]] virtual bool OnPopupPreOpen(const PerWindowData* pAttached,
+                                            Mask<FWL_EVENTFLAG> nFlag) = 0;
 
-  virtual bool OnPopupPostOpen(const PerWindowData* pAttached,
-                               Mask<FWL_EVENTFLAG> nFlag) = 0;
+  [[nodiscard]] virtual bool OnPopupPostOpen(const PerWindowData* pAttached,
+                                             Mask<FWL_EVENTFLAG> nFlag) = 0;
 };
 
 #endif  // FPDFSDK_PWL_IPWL_FILLERNOTIFY_H_

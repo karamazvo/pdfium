@@ -45,7 +45,7 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
   explicit CPDFXFA_Context(CPDF_Document* pPDFDoc);
   ~CPDFXFA_Context() override;
 
-  bool LoadXFADoc();
+  [[nodiscard]] bool LoadXFADoc();
   LoadStatus GetLoadStatus() const { return m_nLoadStatus; }
   FormType GetFormType() const { return m_FormType; }
   int GetOriginalPageCount() const { return m_nPageCount; }
@@ -70,9 +70,9 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
   // CPDF_Document::Extension:
   int GetPageCount() const override;
   uint32_t DeletePage(int page_index) override;
-  bool ContainsExtensionForm() const override;
-  bool ContainsExtensionFullForm() const override;
-  bool ContainsExtensionForegroundForm() const override;
+  [[nodiscard]] bool ContainsExtensionForm() const override;
+  [[nodiscard]] bool ContainsExtensionFullForm() const override;
+  [[nodiscard]] bool ContainsExtensionForegroundForm() const override;
 
   // CXFA_FFApp::CallbackIface:
   WideString GetLanguage() override;
@@ -90,28 +90,30 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
                       bool bMark) override;
   RetainPtr<IFX_SeekableReadStream> DownloadURL(
       const WideString& wsURL) override;
-  bool PostRequestURL(const WideString& wsURL,
-                      const WideString& wsData,
-                      const WideString& wsContentType,
-                      const WideString& wsEncode,
-                      const WideString& wsHeader,
-                      WideString& wsResponse) override;
-  bool PutRequestURL(const WideString& wsURL,
-                     const WideString& wsData,
-                     const WideString& wsEncode) override;
+  [[nodiscard]] bool PostRequestURL(const WideString& wsURL,
+                                    const WideString& wsData,
+                                    const WideString& wsContentType,
+                                    const WideString& wsEncode,
+                                    const WideString& wsHeader,
+                                    WideString& wsResponse) override;
+  [[nodiscard]] bool PutRequestURL(const WideString& wsURL,
+                                   const WideString& wsData,
+                                   const WideString& wsEncode) override;
   CFX_Timer::HandlerIface* GetTimerHandler() const override;
   cppgc::Heap* GetGCHeap() const override;
 
-  bool SaveDatasetsPackage(const RetainPtr<IFX_SeekableStream>& pStream);
-  bool SaveFormPackage(const RetainPtr<IFX_SeekableStream>& pStream);
+  [[nodiscard]] bool SaveDatasetsPackage(
+      const RetainPtr<IFX_SeekableStream>& pStream);
+  [[nodiscard]] bool SaveFormPackage(
+      const RetainPtr<IFX_SeekableStream>& pStream);
   void SendPostSaveToXFADoc();
   void SendPreSaveToXFADoc(
       std::vector<RetainPtr<IFX_SeekableStream>>* fileList);
 
  private:
   CJS_Runtime* GetCJSRuntime() const;
-  bool SavePackage(const RetainPtr<IFX_SeekableStream>& pStream,
-                   XFA_HashCode code);
+  [[nodiscard]] bool SavePackage(const RetainPtr<IFX_SeekableStream>& pStream,
+                                 XFA_HashCode code);
 
   FormType m_FormType = FormType::kNone;
   LoadStatus m_nLoadStatus = LoadStatus::kPreload;

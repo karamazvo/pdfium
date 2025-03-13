@@ -150,9 +150,9 @@ struct FX_RECT {
 
   int Width() const { return right - left; }
   int Height() const { return bottom - top; }
-  bool IsEmpty() const { return right <= left || bottom <= top; }
+  [[nodiscard]] bool IsEmpty() const { return right <= left || bottom <= top; }
 
-  bool Valid() const;
+  [[nodiscard]] bool Valid() const;
 
   void Normalize();
   void Intersect(const FX_RECT& src);
@@ -171,7 +171,7 @@ struct FX_RECT {
            bottom == src.bottom;
   }
 
-  bool Contains(int x, int y) const {
+  [[nodiscard]] bool Contains(int x, int y) const {
     return x >= left && x < right && y >= top && y < bottom;
   }
 
@@ -197,9 +197,9 @@ class CFX_FloatRect {
 
   void Normalize();
 
-  bool IsEmpty() const { return left >= right || bottom >= top; }
-  bool Contains(const CFX_PointF& point) const;
-  bool Contains(const CFX_FloatRect& other_rect) const;
+  [[nodiscard]] bool IsEmpty() const { return left >= right || bottom >= top; }
+  [[nodiscard]] bool Contains(const CFX_PointF& point) const;
+  [[nodiscard]] bool Contains(const CFX_FloatRect& other_rect) const;
 
   void Intersect(const CFX_FloatRect& other_rect);
   void Union(const CFX_FloatRect& other_rect);
@@ -366,16 +366,16 @@ class CFX_RectF {
   void Deflate(const CFX_RectF& rt) {
     Deflate(rt.left, rt.top, rt.top + rt.width, rt.top + rt.height);
   }
-  bool IsEmpty() const { return width <= 0 || height <= 0; }
-  bool IsEmpty(float fEpsilon) const {
+  [[nodiscard]] bool IsEmpty() const { return width <= 0 || height <= 0; }
+  [[nodiscard]] bool IsEmpty(float fEpsilon) const {
     return width <= fEpsilon || height <= fEpsilon;
   }
   void Empty() { width = height = 0; }
-  bool Contains(const PointType& p) const {
+  [[nodiscard]] bool Contains(const PointType& p) const {
     return p.x >= left && p.x < left + width && p.y >= top &&
            p.y < top + height;
   }
-  bool Contains(const CFX_RectF& rt) const {
+  [[nodiscard]] bool Contains(const CFX_RectF& rt) const {
     return rt.left >= left && rt.right() <= right() && rt.top >= top &&
            rt.bottom() <= bottom();
   }
@@ -397,12 +397,12 @@ class CFX_RectF {
   void Union(const PointType& p) { Union(p.x, p.y); }
   void Union(const CFX_RectF& rt);
   void Intersect(const CFX_RectF& rt);
-  bool IntersectWith(const CFX_RectF& rt) const {
+  [[nodiscard]] bool IntersectWith(const CFX_RectF& rt) const {
     CFX_RectF rect = rt;
     rect.Intersect(*this);
     return !rect.IsEmpty();
   }
-  bool IntersectWith(const CFX_RectF& rt, float fEpsilon) const {
+  [[nodiscard]] bool IntersectWith(const CFX_RectF& rt, float fEpsilon) const {
     CFX_RectF rect = rt;
     rect.Intersect(*this);
     return !rect.IsEmpty(fEpsilon);
@@ -470,12 +470,14 @@ class CFX_Matrix {
     return *this;
   }
 
-  bool IsIdentity() const { return *this == CFX_Matrix(); }
+  [[nodiscard]] bool IsIdentity() const { return *this == CFX_Matrix(); }
   CFX_Matrix GetInverse() const;
 
-  bool Is90Rotated() const;
-  bool IsScaled() const;
-  bool WillScale() const { return a != 1.0f || b != 0 || c != 0 || d != 1.0f; }
+  [[nodiscard]] bool Is90Rotated() const;
+  [[nodiscard]] bool IsScaled() const;
+  [[nodiscard]] bool WillScale() const {
+    return a != 1.0f || b != 0 || c != 0 || d != 1.0f;
+  }
 
   void Concat(const CFX_Matrix& right) { *this *= right; }
   void Translate(float x, float y);

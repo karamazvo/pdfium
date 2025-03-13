@@ -34,15 +34,15 @@ class CPDF_PageImageCache {
   uint32_t GetTimeCount() const { return m_nTimeCount; }
   CPDF_Page* GetPage() const { return m_pPage; }
 
-  bool StartGetCachedBitmap(RetainPtr<CPDF_Image> pImage,
-                            const CPDF_Dictionary* pFormResources,
-                            const CPDF_Dictionary* pPageResources,
-                            bool bStdCS,
-                            CPDF_ColorSpace::Family eFamily,
-                            bool bLoadMask,
-                            const CFX_Size& max_size_required);
+  [[nodiscard]] bool StartGetCachedBitmap(RetainPtr<CPDF_Image> pImage,
+                                          const CPDF_Dictionary* pFormResources,
+                                          const CPDF_Dictionary* pPageResources,
+                                          bool bStdCS,
+                                          CPDF_ColorSpace::Family eFamily,
+                                          bool bLoadMask,
+                                          const CFX_Size& max_size_required);
 
-  bool Continue(PauseIndicatorIface* pPause);
+  [[nodiscard]] bool Continue(PauseIndicatorIface* pPause);
 
   uint32_t GetCurMatteColor() const;
   RetainPtr<CFX_DIBBase> DetachCurBitmap();
@@ -71,8 +71,8 @@ class CPDF_PageImageCache {
         const CFX_Size& max_size_required);
 
     // Returns whether to Continue() or not.
-    bool Continue(PauseIndicatorIface* pPause,
-                  CPDF_PageImageCache* pPageImageCache);
+    [[nodiscard]] bool Continue(PauseIndicatorIface* pPause,
+                                CPDF_PageImageCache* pPageImageCache);
 
     RetainPtr<CFX_DIBBase> DetachBitmap();
     RetainPtr<CFX_DIBBase> DetachMask();
@@ -80,7 +80,7 @@ class CPDF_PageImageCache {
    private:
     void ContinueGetCachedBitmap(CPDF_PageImageCache* pPageImageCache);
     void CalcSize();
-    bool IsCacheValid(const CFX_Size& max_size_required) const;
+    [[nodiscard]] bool IsCacheValid(const CFX_Size& max_size_required) const;
 
     uint32_t m_dwTimeCount = 0;
     uint32_t m_MatteColor = 0;

@@ -18,7 +18,7 @@ class CJX_Draw final : public CJX_Container {
   ~CJX_Draw() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   JSE_PROP(defaultValue); /* {default} */
   JSE_PROP(rawValue);

@@ -39,10 +39,10 @@ class CJS_Result {
   CJS_Result(const CJS_Result&);
   ~CJS_Result();
 
-  bool HasError() const { return error_.has_value(); }
+  [[nodiscard]] bool HasError() const { return error_.has_value(); }
   const WideString& Error() const { return error_.value(); }
 
-  bool HasReturn() const { return !return_.IsEmpty(); }
+  [[nodiscard]] bool HasReturn() const { return !return_.IsEmpty(); }
   v8::Local<v8::Value> Return() const { return return_; }
 
  private:

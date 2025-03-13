@@ -94,7 +94,7 @@ class FixedSizeDataVector {
 
   ~FixedSizeDataVector() = default;
 
-  bool empty() const { return size_ == 0; }
+  [[nodiscard]] bool empty() const { return size_ == 0; }
   size_t size() const { return size_; }
 
   // Implicit access to data via span.

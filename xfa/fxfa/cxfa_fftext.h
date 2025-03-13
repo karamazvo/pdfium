@@ -15,22 +15,22 @@ class CXFA_FFText final : public CXFA_FFWidget {
   ~CXFA_FFText() override;
 
   // CXFA_FFWidget
-  bool AcceptsFocusOnButtonDown(
+  [[nodiscard]] bool AcceptsFocusOnButtonDown(
       Mask<XFA_FWL_KeyFlag> dwFlags,
       const CFX_PointF& point,
       CFWL_MessageMouse::MouseCommand command) override;
-  bool OnLButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
-                     const CFX_PointF& point) override;
-  bool OnLButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
-                   const CFX_PointF& point) override;
-  bool OnMouseMove(Mask<XFA_FWL_KeyFlag> dwFlags,
-                   const CFX_PointF& point) override;
+  [[nodiscard]] bool OnLButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
+                                   const CFX_PointF& point) override;
+  [[nodiscard]] bool OnLButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
+                                 const CFX_PointF& point) override;
+  [[nodiscard]] bool OnMouseMove(Mask<XFA_FWL_KeyFlag> dwFlags,
+                                 const CFX_PointF& point) override;
   FWL_WidgetHit HitTest(const CFX_PointF& point) override;
   void RenderWidget(CFGAS_GEGraphics* pGS,
                     const CFX_Matrix& matrix,
                     HighlightOption highlight) override;
-  bool IsLoaded() override;
-  bool PerformLayout() override;
+  [[nodiscard]] bool IsLoaded() override;
+  [[nodiscard]] bool PerformLayout() override;
 
  private:
   explicit CXFA_FFText(CXFA_Node* pNode);

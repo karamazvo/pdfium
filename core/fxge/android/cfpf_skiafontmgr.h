@@ -30,7 +30,7 @@ class CFPF_SkiaFontMgr {
                             FX_Charset charset,
                             uint32_t style);
 
-  bool InitFTLibrary();
+  [[nodiscard]] bool InitFTLibrary();
   RetainPtr<CFX_Face> GetFontFace(ByteStringView path, int32_t face_index);
 
  private:

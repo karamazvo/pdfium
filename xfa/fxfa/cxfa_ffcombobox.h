@@ -24,22 +24,23 @@ class CXFA_FFComboBox final : public CXFA_FFDropDown {
 
   // CXFA_FFField
   CFX_RectF GetBBox(FocusOption focus) override;
-  bool LoadWidget() override;
+  [[nodiscard]] bool LoadWidget() override;
   void UpdateWidgetProperty() override;
-  bool OnRButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
-                   const CFX_PointF& point) override;
-  [[nodiscard]] bool OnKillFocus(CXFA_FFWidget* pNewWidget) override;
-  bool CanUndo() override;
-  bool CanRedo() override;
-  bool CanCopy() override;
-  bool CanCut() override;
-  bool CanPaste() override;
-  bool CanSelectAll() override;
-  bool Undo() override;
-  bool Redo() override;
+  [[nodiscard]] bool OnRButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
+                                 const CFX_PointF& point) override;
+  [[nodiscard]] [[nodiscard]] bool OnKillFocus(
+      CXFA_FFWidget* pNewWidget) override;
+  [[nodiscard]] bool CanUndo() override;
+  [[nodiscard]] bool CanRedo() override;
+  [[nodiscard]] bool CanCopy() override;
+  [[nodiscard]] bool CanCut() override;
+  [[nodiscard]] bool CanPaste() override;
+  [[nodiscard]] bool CanSelectAll() override;
+  [[nodiscard]] bool Undo() override;
+  [[nodiscard]] bool Redo() override;
   std::optional<WideString> Copy() override;
   std::optional<WideString> Cut() override;
-  bool Paste(const WideString& wsPaste) override;
+  [[nodiscard]] bool Paste(const WideString& wsPaste) override;
   void SelectAll() override;
   void Delete() override;
   void DeSelect() override;
@@ -68,10 +69,10 @@ class CXFA_FFComboBox final : public CXFA_FFDropDown {
   explicit CXFA_FFComboBox(CXFA_Node* pNode);
 
   // CXFA_FFField:
-  bool PtInActiveRect(const CFX_PointF& point) override;
-  bool CommitData() override;
-  bool UpdateFWLData() override;
-  bool IsDataChanged() override;
+  [[nodiscard]] bool PtInActiveRect(const CFX_PointF& point) override;
+  [[nodiscard]] bool CommitData() override;
+  [[nodiscard]] bool UpdateFWLData() override;
+  [[nodiscard]] bool IsDataChanged() override;
 
   uint32_t GetAlignment();
   void FWLEventSelChange(CXFA_EventParam* pParam);

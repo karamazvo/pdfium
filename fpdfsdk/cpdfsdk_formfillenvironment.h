@@ -71,7 +71,7 @@ class CPDFSDK_FormFillEnvironment final
                       const CFX_FloatRect& rect) override;
   void OutputSelectedRect(CFFL_FormField* pFormField,
                           const CFX_FloatRect& rect) override;
-  bool IsSelectionImplemented() const override;
+  [[nodiscard]] bool IsSelectionImplemented() const override;
   void SetCursor(IPWL_FillerNotify::CursorStyle nCursorType) override;
   void OnSetFieldInputFocus(const WideString& text) override;
   void OnCalculate(ObservedPtr<CPDFSDK_Annot>& pAnnot) override;
@@ -81,25 +81,25 @@ class CPDFSDK_FormFillEnvironment final
   CPDFSDK_PageView* GetPageView(IPDF_Page* pUnderlyingPage) override;
   CFX_Timer::HandlerIface* GetTimerHandler() override;
   CPDFSDK_Annot* GetFocusAnnot() const override;
-  bool SetFocusAnnot(ObservedPtr<CPDFSDK_Annot>& pAnnot) override;
-  bool HasPermissions(uint32_t flags) const override;
+  [[nodiscard]] bool SetFocusAnnot(ObservedPtr<CPDFSDK_Annot>& pAnnot) override;
+  [[nodiscard]] bool HasPermissions(uint32_t flags) const override;
   void OnChange() override;
 
   CPDFSDK_PageView* GetPageViewAtIndex(int nIndex);
   void RemovePageView(IPDF_Page* pUnderlyingPage);
   void UpdateAllViews(CPDFSDK_Annot* pAnnot);
 
-  bool KillFocusAnnot(Mask<FWL_EVENTFLAG> nFlags);
+  [[nodiscard]] bool KillFocusAnnot(Mask<FWL_EVENTFLAG> nFlags);
   void ClearAllFocusedAnnots();
 
   int GetPageCount() const;
 
-  bool GetChangeMark() const { return m_bChangeMask; }
+  [[nodiscard]] bool GetChangeMark() const { return m_bChangeMask; }
   void SetChangeMark() { m_bChangeMask = true; }
   void ClearChangeMark() { m_bChangeMask = false; }
 
   void ProcJavascriptAction();
-  bool ProcOpenAction();
+  [[nodiscard]] bool ProcOpenAction();
 
   void ExecuteNamedAction(const ByteString& namedAction);
   void DoURIAction(const ByteString& bsURI, Mask<FWL_EVENTFLAG> modifiers);
@@ -112,36 +112,40 @@ class CPDFSDK_FormFillEnvironment final
     return m_pCPDFDoc->GetExtension();
   }
 
-  bool IsJSPlatformPresent() const { return m_pInfo && m_pInfo->m_pJsPlatform; }
+  [[nodiscard]] bool IsJSPlatformPresent() const {
+    return m_pInfo && m_pInfo->m_pJsPlatform;
+  }
   IPDF_JSPLATFORM* GetJSPlatform() const {
     return m_pInfo ? m_pInfo->m_pJsPlatform : nullptr;
   }
 
   // Actions.
-  bool DoActionDocOpen(const CPDF_Action& action);
-  bool DoActionJavaScript(const CPDF_Action& JsAction, WideString csJSName);
-  bool DoActionPage(const CPDF_Action& action, CPDF_AAction::AActionType eType);
-  bool DoActionDocument(const CPDF_Action& action,
-                        CPDF_AAction::AActionType eType);
-  bool DoActionField(const CPDF_Action& action,
-                     CPDF_AAction::AActionType type,
-                     CPDF_FormField* pFormField,
-                     CFFL_FieldAction* data);
-  bool DoActionFieldJavaScript(const CPDF_Action& JsAction,
-                               CPDF_AAction::AActionType type,
-                               CPDF_FormField* pFormField,
-                               CFFL_FieldAction* data);
-  bool DoActionLink(const CPDF_Action& action,
-                    CPDF_AAction::AActionType type,
-                    Mask<FWL_EVENTFLAG> modifiers);
-  bool DoActionDestination(const CPDF_Dest& dest);
+  [[nodiscard]] bool DoActionDocOpen(const CPDF_Action& action);
+  [[nodiscard]] bool DoActionJavaScript(const CPDF_Action& JsAction,
+                                        WideString csJSName);
+  [[nodiscard]] bool DoActionPage(const CPDF_Action& action,
+                                  CPDF_AAction::AActionType eType);
+  [[nodiscard]] bool DoActionDocument(const CPDF_Action& action,
+                                      CPDF_AAction::AActionType eType);
+  [[nodiscard]] bool DoActionField(const CPDF_Action& action,
+                                   CPDF_AAction::AActionType type,
+                                   CPDF_FormField* pFormField,
+                                   CFFL_FieldAction* data);
+  [[nodiscard]] bool DoActionFieldJavaScript(const CPDF_Action& JsAction,
+                                             CPDF_AAction::AActionType type,
+                                             CPDF_FormField* pFormField,
+                                             CFFL_FieldAction* data);
+  [[nodiscard]] bool DoActionLink(const CPDF_Action& action,
+                                  CPDF_AAction::AActionType type,
+                                  Mask<FWL_EVENTFLAG> modifiers);
+  [[nodiscard]] bool DoActionDestination(const CPDF_Dest& dest);
   void DoActionNoJs(const CPDF_Action& action, CPDF_AAction::AActionType type);
   void DoActionGoTo(const CPDF_Action& action);
   void DoActionLaunch(const CPDF_Action& action);
   void DoActionURI(const CPDF_Action& action, Mask<FWL_EVENTFLAG> modifiers);
   void DoActionNamed(const CPDF_Action& action);
-  bool DoActionHide(const CPDF_Action& action);
-  bool DoActionSubmitForm(const CPDF_Action& action);
+  [[nodiscard]] bool DoActionHide(const CPDF_Action& action);
+  [[nodiscard]] bool DoActionSubmitForm(const CPDF_Action& action);
   void DoActionResetForm(const CPDF_Action& action);
 
 #ifdef PDF_ENABLE_V8
@@ -197,7 +201,9 @@ class CPDFSDK_FormFillEnvironment final
 
   void GotoURL(const WideString& wsURL);
   FS_RECTF GetPageViewRect(IPDF_Page* page);
-  bool PopupMenu(IPDF_Page* page, int menuFlag, const CFX_PointF& pt);
+  [[nodiscard]] bool PopupMenu(IPDF_Page* page,
+                               int menuFlag,
+                               const CFX_PointF& pt);
   void EmailTo(FPDF_FILEHANDLER* fileHandler,
                FPDF_WIDESTRING pTo,
                FPDF_WIDESTRING pSubject,
@@ -254,16 +260,19 @@ class CPDFSDK_FormFillEnvironment final
 
   // Support methods for Actions.
   void RunScript(const WideString& script, const RunScriptCallback& cb);
-  bool ExecuteDocumentOpenAction(const CPDF_Action& action,
-                                 std::set<const CPDF_Dictionary*>* visited);
-  bool ExecuteDocumentPageAction(const CPDF_Action& action,
-                                 CPDF_AAction::AActionType type,
-                                 std::set<const CPDF_Dictionary*>* visited);
-  bool ExecuteFieldAction(const CPDF_Action& action,
-                          CPDF_AAction::AActionType type,
-                          CPDF_FormField* pFormField,
-                          CFFL_FieldAction* data,
-                          std::set<const CPDF_Dictionary*>* visited);
+  [[nodiscard]] bool ExecuteDocumentOpenAction(
+      const CPDF_Action& action,
+      std::set<const CPDF_Dictionary*>* visited);
+  [[nodiscard]] bool ExecuteDocumentPageAction(
+      const CPDF_Action& action,
+      CPDF_AAction::AActionType type,
+      std::set<const CPDF_Dictionary*>* visited);
+  [[nodiscard]] bool ExecuteFieldAction(
+      const CPDF_Action& action,
+      CPDF_AAction::AActionType type,
+      CPDF_FormField* pFormField,
+      CFFL_FieldAction* data,
+      std::set<const CPDF_Dictionary*>* visited);
   void RunDocumentPageJavaScript(CPDF_AAction::AActionType type,
                                  const WideString& script);
   void RunDocumentOpenJavaScript(const WideString& sScriptName,
@@ -272,7 +281,7 @@ class CPDFSDK_FormFillEnvironment final
                           CPDF_AAction::AActionType type,
                           CFFL_FieldAction* data,
                           const WideString& script);
-  bool IsValidField(const CPDF_Dictionary* pFieldDict);
+  [[nodiscard]] bool IsValidField(const CPDF_Dictionary* pFieldDict);
 
   UnownedPtr<FPDF_FORMFILLINFO> const m_pInfo;
   std::unique_ptr<IJS_Runtime> m_pIJSRuntime;

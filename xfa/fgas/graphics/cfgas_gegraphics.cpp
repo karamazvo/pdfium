@@ -196,7 +196,7 @@ CFX_RectF CFGAS_GEGraphics::GetClipRect() const {
 }
 
 void CFGAS_GEGraphics::SetClipRect(const CFX_RectF& rect) {
-  m_renderDevice->SetClip_Rect(
+  (void)m_renderDevice->SetClip_Rect(
       FX_RECT(FXSYS_roundf(rect.left), FXSYS_roundf(rect.top),
               FXSYS_roundf(rect.right()), FXSYS_roundf(rect.bottom())));
 }
@@ -212,9 +212,9 @@ void CFGAS_GEGraphics::RenderDeviceStrokePath(const CFGAS_GEPath& path,
 
   CFX_Matrix m = m_info.CTM;
   m.Concat(matrix);
-  m_renderDevice->DrawPath(path.GetPath(), &m, &m_info.graphState, 0x0,
-                           m_info.strokeColor.GetArgb(),
-                           CFX_FillRenderOptions());
+  (void)m_renderDevice->DrawPath(path.GetPath(), &m, &m_info.graphState, 0x0,
+                                 m_info.strokeColor.GetArgb(),
+                                 CFX_FillRenderOptions());
 }
 
 void CFGAS_GEGraphics::RenderDeviceFillPath(
@@ -227,8 +227,9 @@ void CFGAS_GEGraphics::RenderDeviceFillPath(
   const CFX_FillRenderOptions fill_options(fill_type);
   switch (m_info.fillColor.GetType()) {
     case CFGAS_GEColor::Solid:
-      m_renderDevice->DrawPath(path.GetPath(), &m, &m_info.graphState,
-                               m_info.fillColor.GetArgb(), 0x0, fill_options);
+      (void)m_renderDevice->DrawPath(path.GetPath(), &m, &m_info.graphState,
+                                     m_info.fillColor.GetArgb(), 0x0,
+                                     fill_options);
       return;
     case CFGAS_GEColor::Pattern:
       FillPathWithPattern(path, fill_options, m);
@@ -252,7 +253,7 @@ void CFGAS_GEGraphics::FillPathWithPattern(
   // TODO(crbug.com/355630556): Consider adding support for
   // `FXDIB_Format::kBgraPremul`
   CHECK(bmp->Create(width, height, FXDIB_Format::kBgra));
-  m_renderDevice->GetDIBits(bmp, 0, 0);
+  (void)m_renderDevice->GetDIBits(bmp, 0, 0);
 
   CFGAS_GEPattern::HatchStyle hatchStyle =
       m_info.fillColor.GetPattern()->GetHatchStyle();
@@ -269,16 +270,16 @@ void CFGAS_GEGraphics::FillPathWithPattern(
   const FX_RECT rect = rectf.ToRoundedFxRect();
 
   CFX_DefaultRenderDevice device;
-  device.Attach(bmp);
-  device.FillRect(rect, m_info.fillColor.GetPattern()->GetBackArgb());
+  (void)device.Attach(bmp);
+  (void)device.FillRect(rect, m_info.fillColor.GetPattern()->GetBackArgb());
   for (int32_t j = rect.bottom; j < rect.top; j += mask->GetHeight()) {
     for (int32_t i = rect.left; i < rect.right; i += mask->GetWidth()) {
-      device.SetBitMask(mask, i, j,
-                        m_info.fillColor.GetPattern()->GetForeArgb());
+      (void)device.SetBitMask(mask, i, j,
+                              m_info.fillColor.GetPattern()->GetForeArgb());
     }
   }
   CFX_RenderDevice::StateRestorer restorer(m_renderDevice);
-  m_renderDevice->SetClip_PathFill(path.GetPath(), &matrix, fill_options);
+  (void)m_renderDevice->SetClip_PathFill(path.GetPath(), &matrix, fill_options);
   SetDIBitsWithMatrix(std::move(bmp), CFX_Matrix());
 }
 
@@ -297,7 +298,7 @@ void CFGAS_GEGraphics::FillPathWithShading(
   // TODO(crbug.com/355630556): Consider adding support for
   // `FXDIB_Format::kBgraPremul`
   CHECK(bmp->Create(width, height, FXDIB_Format::kBgra));
-  m_renderDevice->GetDIBits(bmp, 0, 0);
+  (void)m_renderDevice->GetDIBits(bmp, 0, 0);
   bool result = false;
   switch (m_info.fillColor.GetShading()->GetType()) {
     case CFGAS_GEShading::Type::kAxial: {
@@ -391,7 +392,8 @@ void CFGAS_GEGraphics::FillPathWithShading(
   }
   if (result) {
     CFX_RenderDevice::StateRestorer restorer(m_renderDevice);
-    m_renderDevice->SetClip_PathFill(path.GetPath(), &matrix, fill_options);
+    (void)m_renderDevice->SetClip_PathFill(path.GetPath(), &matrix,
+                                           fill_options);
     SetDIBitsWithMatrix(std::move(bmp), matrix);
   }
 }
@@ -399,7 +401,7 @@ void CFGAS_GEGraphics::FillPathWithShading(
 void CFGAS_GEGraphics::SetDIBitsWithMatrix(RetainPtr<CFX_DIBBase> source,
                                            const CFX_Matrix& matrix) {
   if (matrix.IsIdentity()) {
-    m_renderDevice->SetDIBits(source, 0, 0);
+    (void)m_renderDevice->SetDIBits(source, 0, 0);
   } else {
     CFX_Matrix m((float)source->GetWidth(), 0, 0, (float)source->GetHeight(), 0,
                  0);
@@ -408,7 +410,7 @@ void CFGAS_GEGraphics::SetDIBitsWithMatrix(RetainPtr<CFX_DIBBase> source,
     int32_t top;
     RetainPtr<CFX_DIBitmap> bmp1 = source->FlipImage(false, true);
     RetainPtr<CFX_DIBitmap> bmp2 = bmp1->TransformTo(m, &left, &top);
-    m_renderDevice->SetDIBits(bmp2, left, top);
+    (void)m_renderDevice->SetDIBits(bmp2, left, top);
   }
 }
 

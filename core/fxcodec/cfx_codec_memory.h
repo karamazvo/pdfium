@@ -27,14 +27,14 @@ class CFX_CodecMemory final : public Retainable {
   }
   size_t GetSize() const { return size_; }
   size_t GetPosition() const { return pos_; }
-  bool IsEOF() const { return pos_ >= size_; }
+  [[nodiscard]] bool IsEOF() const { return pos_ >= size_; }
   size_t ReadBlock(pdfium::span<uint8_t> buffer);
 
   // Sets the cursor position to |pos| if possible.
-  bool Seek(size_t pos);
+  [[nodiscard]] bool Seek(size_t pos);
 
   // Try to change the size of the buffer, keep the old one on failure.
-  bool TryResize(size_t new_buffer_size);
+  [[nodiscard]] bool TryResize(size_t new_buffer_size);
 
   // Schlep the bytes down the buffer.
   void Consume(size_t consumed);

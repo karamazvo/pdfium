@@ -92,8 +92,9 @@ class CPDF_TextState {
   SharedCopyOnWrite<TextData> m_Ref;
 };
 
-bool SetTextRenderingModeFromInt(int iMode, TextRenderingMode* mode);
-bool TextRenderingModeIsClipMode(const TextRenderingMode& mode);
-bool TextRenderingModeIsStrokeMode(const TextRenderingMode& mode);
+[[nodiscard]] bool SetTextRenderingModeFromInt(int iMode,
+                                               TextRenderingMode* mode);
+[[nodiscard]] bool TextRenderingModeIsClipMode(const TextRenderingMode& mode);
+[[nodiscard]] bool TextRenderingModeIsStrokeMode(const TextRenderingMode& mode);
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_TEXTSTATE_H_

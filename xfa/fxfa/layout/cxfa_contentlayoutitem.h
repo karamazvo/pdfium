@@ -38,7 +38,7 @@ class CXFA_ContentLayoutItem final : public CXFA_LayoutItem {
   void ClearStatusBits(Mask<XFA_WidgetStatus> val) { m_dwStatus &= ~val; }
 
   // TRUE if all (not any) bits set in |val| are set in |m_dwStatus|.
-  bool TestStatusBits(Mask<XFA_WidgetStatus> val) const {
+  [[nodiscard]] bool TestStatusBits(Mask<XFA_WidgetStatus> val) const {
     return m_dwStatus.TestAll(val);
   }
 

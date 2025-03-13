@@ -29,7 +29,7 @@ class CJS_PublicMethods final : public CJS_Object {
   // Exposed for testing.
   static WideString PrintDateUsingFormat(double dDate,
                                          const WideString& format);
-  static bool IsNumber(const WideString& str);
+  [[nodiscard]] static bool IsNumber(const WideString& str);
 
   static CJS_Result AFNumber_Format(CJS_Runtime* pRuntime,
                                     pdfium::span<v8::Local<v8::Value>> params);
@@ -127,8 +127,8 @@ class CJS_PublicMethods final : public CJS_Object {
   static void AFExtractNums_static(
       const v8::FunctionCallbackInfo<v8::Value>& info);
 
-  static bool MaskSatisfied(wchar_t c_Change, wchar_t c_Mask);
-  static bool IsReservedMaskChar(wchar_t ch);
+  [[nodiscard]] static bool MaskSatisfied(wchar_t c_Change, wchar_t c_Mask);
+  [[nodiscard]] static bool IsReservedMaskChar(wchar_t ch);
   static v8::Local<v8::Array> AF_MakeArrayFromList(CJS_Runtime* pRuntime,
                                                    v8::Local<v8::Value> val);
 

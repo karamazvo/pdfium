@@ -28,7 +28,7 @@ class CPDF_TilingPattern final : public CPDF_Pattern {
 
   std::unique_ptr<CPDF_Form> Load(CPDF_PageObject* pPageObj);
 
-  bool colored() const { return m_bColored; }
+  [[nodiscard]] bool colored() const { return m_bColored; }
   const CFX_FloatRect& bbox() const { return m_BBox; }
   float x_step() const { return m_XStep; }
   float y_step() const { return m_YStep; }

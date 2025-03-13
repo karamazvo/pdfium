@@ -18,7 +18,7 @@ class CJX_Script final : public CJX_Node {
   ~CJX_Script() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   JSE_PROP(stateless);
 

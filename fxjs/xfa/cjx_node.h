@@ -20,7 +20,7 @@ class CJX_Node : public CJX_Tree {
   ~CJX_Node() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   JSE_METHOD(applyXSL);
   JSE_METHOD(assignNode);

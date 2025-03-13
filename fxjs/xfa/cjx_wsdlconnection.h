@@ -18,7 +18,7 @@ class CJX_WsdlConnection final : public CJX_Node {
   ~CJX_WsdlConnection() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   JSE_METHOD(execute);
 

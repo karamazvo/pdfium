@@ -5304,7 +5304,7 @@ TEST_F(FPDFEditEmbedderTest, GetAndSetMatrixForFormWithText) {
   static constexpr int kExpectedWidth = 200;
   static constexpr int kExpectedHeight = 200;
 
-  OpenDocument("form_object_with_text.pdf");
+  (void)OpenDocument("form_object_with_text.pdf");
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 

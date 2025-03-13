@@ -74,13 +74,13 @@ class CXFA_FFDoc : public cppgc::GarbageCollected<CXFA_FFDoc> {
                               bool bVisible,
                               const CFX_RectF* pRtAnchor) = 0;
 
-    virtual bool GetPopupPos(CXFA_FFWidget* hWidget,
-                             float fMinPopup,
-                             float fMaxPopup,
-                             const CFX_RectF& rtAnchor,
-                             CFX_RectF* pPopupRect) = 0;
-    virtual bool PopupMenu(CXFA_FFWidget* hWidget,
-                           const CFX_PointF& ptPopup) = 0;
+    [[nodiscard]] virtual bool GetPopupPos(CXFA_FFWidget* hWidget,
+                                           float fMinPopup,
+                                           float fMaxPopup,
+                                           const CFX_RectF& rtAnchor,
+                                           CFX_RectF* pPopupRect) = 0;
+    [[nodiscard]] virtual bool PopupMenu(CXFA_FFWidget* hWidget,
+                                         const CFX_PointF& ptPopup) = 0;
 
     virtual void OnPageViewEvent(CXFA_FFPageView* pPageView,
                                  PageViewEvent eEvent) = 0;
@@ -92,7 +92,8 @@ class CXFA_FFDoc : public cppgc::GarbageCollected<CXFA_FFDoc> {
     virtual int32_t CountPages(const CXFA_FFDoc* hDoc) const = 0;
     virtual int32_t GetCurrentPage(const CXFA_FFDoc* hDoc) const = 0;
     virtual void SetCurrentPage(CXFA_FFDoc* hDoc, int32_t iCurPage) = 0;
-    virtual bool IsCalculationsEnabled(const CXFA_FFDoc* hDoc) const = 0;
+    [[nodiscard]] virtual bool IsCalculationsEnabled(
+        const CXFA_FFDoc* hDoc) const = 0;
     virtual void SetCalculationsEnabled(CXFA_FFDoc* hDoc, bool bEnabled) = 0;
     virtual WideString GetTitle(const CXFA_FFDoc* hDoc) const = 0;
     virtual void SetTitle(CXFA_FFDoc* hDoc, const WideString& wsTitle) = 0;
@@ -100,7 +101,8 @@ class CXFA_FFDoc : public cppgc::GarbageCollected<CXFA_FFDoc> {
                             const WideString& wsFilePath,
                             bool bXDP) = 0;
     virtual void GotoURL(CXFA_FFDoc* hDoc, const WideString& bsURL) = 0;
-    virtual bool IsValidationsEnabled(const CXFA_FFDoc* hDoc) const = 0;
+    [[nodiscard]] virtual bool IsValidationsEnabled(
+        const CXFA_FFDoc* hDoc) const = 0;
     virtual void SetValidationsEnabled(CXFA_FFDoc* hDoc, bool bEnabled) = 0;
     virtual void SetFocusWidget(CXFA_FFDoc* hDoc, CXFA_FFWidget* hWidget) = 0;
     virtual void Print(CXFA_FFDoc* hDoc,
@@ -115,7 +117,8 @@ class CXFA_FFDoc : public cppgc::GarbageCollected<CXFA_FFDoc> {
         const WideString& wsLink) = 0;
 
 #ifdef PDF_XFA_ELEMENT_SUBMIT_ENABLED
-    virtual bool Submit(CXFA_FFDoc* hDoc, CXFA_Submit* submit) = 0;
+    [[nodiscard]] virtual bool Submit(CXFA_FFDoc* hDoc,
+                                      CXFA_Submit* submit) = 0;
 #endif  // PDF_XFA_ELEMENT_SUBMIT_ENABLED
   };
 
@@ -125,32 +128,33 @@ class CXFA_FFDoc : public cppgc::GarbageCollected<CXFA_FFDoc> {
   void PreFinalize();
   void Trace(cppgc::Visitor* visitor) const;
 
-  bool OpenDoc(CFX_XMLDocument* pXML);
+  [[nodiscard]] bool OpenDoc(CFX_XMLDocument* pXML);
 
   void SetChangeMark();
   void InvalidateRect(CXFA_FFPageView* pPageView, const CFX_RectF& rt);
   void DisplayCaret(CXFA_FFWidget* hWidget,
                     bool bVisible,
                     const CFX_RectF* pRtAnchor);
-  bool GetPopupPos(CXFA_FFWidget* hWidget,
-                   float fMinPopup,
-                   float fMaxPopup,
-                   const CFX_RectF& rtAnchor,
-                   CFX_RectF* pPopupRect) const;
-  bool PopupMenu(CXFA_FFWidget* hWidget, const CFX_PointF& ptPopup);
+  [[nodiscard]] bool GetPopupPos(CXFA_FFWidget* hWidget,
+                                 float fMinPopup,
+                                 float fMaxPopup,
+                                 const CFX_RectF& rtAnchor,
+                                 CFX_RectF* pPopupRect) const;
+  [[nodiscard]] bool PopupMenu(CXFA_FFWidget* hWidget,
+                               const CFX_PointF& ptPopup);
   void OnPageViewEvent(CXFA_FFPageView* pPageView, PageViewEvent eEvent);
   void WidgetPostAdd(CXFA_FFWidget* hWidget);
   void WidgetPreRemove(CXFA_FFWidget* hWidget);
   int32_t CountPages() const;
   int32_t GetCurrentPage() const;
   void SetCurrentPage(int32_t iCurPage);
-  bool IsCalculationsEnabled() const;
+  [[nodiscard]] bool IsCalculationsEnabled() const;
   void SetCalculationsEnabled(bool bEnabled);
   WideString GetTitle() const;
   void SetTitle(const WideString& wsTitle);
   void ExportData(const WideString& wsFilePath, bool bXDP);
   void GotoURL(const WideString& bsURL);
-  bool IsValidationsEnabled() const;
+  [[nodiscard]] bool IsValidationsEnabled() const;
   void SetValidationsEnabled(bool bEnabled);
   void SetFocusWidget(CXFA_FFWidget* hWidget);
   void Print(int32_t nStartPage,
@@ -176,15 +180,15 @@ class CXFA_FFDoc : public cppgc::GarbageCollected<CXFA_FFDoc> {
                                            int32_t& iImageXDpi,
                                            int32_t& iImageYDpi);
 
-  bool SavePackage(CXFA_Node* pNode,
-                   const RetainPtr<IFX_SeekableStream>& pFile);
+  [[nodiscard]] bool SavePackage(CXFA_Node* pNode,
+                                 const RetainPtr<IFX_SeekableStream>& pFile);
 
  private:
   CXFA_FFDoc(CXFA_FFApp* pApp,
              CallbackIface* pDocEnvironment,
              CPDF_Document* pPDFDoc,
              cppgc::Heap* pHeap);
-  bool BuildDoc(CFX_XMLDocument* pXML);
+  [[nodiscard]] bool BuildDoc(CFX_XMLDocument* pXML);
 
   UnownedPtr<CallbackIface> const m_pDocEnvironment;
   UnownedPtr<CPDF_Document> const m_pPDFDoc;

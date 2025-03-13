@@ -27,24 +27,24 @@ class CGdiDisplayDriver final : public CGdiDeviceDriver {
  private:
   // CGdiDisplayDriver:
   int GetDeviceCaps(int caps_id) const override;
-  bool GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
-                 int left,
-                 int top) const override;
-  bool SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
-                 uint32_t color,
-                 const FX_RECT& src_rect,
-                 int left,
-                 int top,
-                 BlendMode blend_type) override;
-  bool StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
-                     uint32_t color,
-                     int dest_left,
-                     int dest_top,
-                     int dest_width,
-                     int dest_height,
-                     const FX_RECT* pClipRect,
-                     const FXDIB_ResampleOptions& options,
-                     BlendMode blend_type) override;
+  [[nodiscard]] bool GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
+                               int left,
+                               int top) const override;
+  [[nodiscard]] bool SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
+                               uint32_t color,
+                               const FX_RECT& src_rect,
+                               int left,
+                               int top,
+                               BlendMode blend_type) override;
+  [[nodiscard]] bool StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
+                                   uint32_t color,
+                                   int dest_left,
+                                   int dest_top,
+                                   int dest_width,
+                                   int dest_height,
+                                   const FX_RECT* pClipRect,
+                                   const FXDIB_ResampleOptions& options,
+                                   BlendMode blend_type) override;
   StartResult StartDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                           float alpha,
                           uint32_t color,
@@ -52,14 +52,15 @@ class CGdiDisplayDriver final : public CGdiDeviceDriver {
                           const FXDIB_ResampleOptions& options,
                           BlendMode blend_type) override;
 
-  bool UseFoxitStretchEngine(RetainPtr<const CFX_DIBBase> bitmap,
-                             uint32_t color,
-                             int dest_left,
-                             int dest_top,
-                             int dest_width,
-                             int dest_height,
-                             const FX_RECT* pClipRect,
-                             const FXDIB_ResampleOptions& options);
+  [[nodiscard]] bool UseFoxitStretchEngine(
+      RetainPtr<const CFX_DIBBase> bitmap,
+      uint32_t color,
+      int dest_left,
+      int dest_top,
+      int dest_width,
+      int dest_height,
+      const FX_RECT* pClipRect,
+      const FXDIB_ResampleOptions& options);
 };
 
 #endif  // CORE_FXGE_WIN32_CGDI_DISPLAY_DRIVER_H_

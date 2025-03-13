@@ -12,7 +12,7 @@ namespace pdfium {
 // of these calls to be disabled which can cause undefined behaviour such as
 // crashes. This function can be used to guard areas of code using these calls
 // and provide a fallback path if necessary.
-bool IsUser32AndGdi32Available();
+[[nodiscard]] bool IsUser32AndGdi32Available();
 
 }  // namespace pdfium
 

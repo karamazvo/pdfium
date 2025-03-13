@@ -54,13 +54,13 @@ class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
 
   CFX_SizeF CalcSize(const CFX_SizeF& minSize, const CFX_SizeF& maxSize);
   void ItemBlocks(const CFX_RectF& rtText, size_t szBlockIndex);
-  bool DrawString(CFX_RenderDevice* pFxDevice,
-                  const CFX_Matrix& mtDoc2Device,
-                  const CFX_RectF& rtClip,
-                  size_t szBlockIndex);
-  bool IsLoaded() const { return !m_pieceLines.empty(); }
+  [[nodiscard]] bool DrawString(CFX_RenderDevice* pFxDevice,
+                                const CFX_Matrix& mtDoc2Device,
+                                const CFX_RectF& rtClip,
+                                size_t szBlockIndex);
+  [[nodiscard]] bool IsLoaded() const { return !m_pieceLines.empty(); }
   void Unload();
-  bool HasBlock() const { return m_bHasBlock; }
+  [[nodiscard]] bool HasBlock() const { return m_bHasBlock; }
   void ClearBlocks() { m_Blocks.clear(); }
   void ResetHasBlock() { m_bHasBlock = false; }
 
@@ -137,25 +137,25 @@ class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
                 float textWidth,
                 float* pLinePos,
                 bool bSavePieces);
-  bool LoadRichText(const CFX_XMLNode* pXMLNode,
-                    float textWidth,
-                    float* pLinePos,
-                    RetainPtr<CFX_CSSComputedStyle> pParentStyle,
-                    bool bSavePieces,
-                    RetainPtr<CFGAS_LinkUserData> pLinkData,
-                    bool bEndBreak,
-                    bool bIsOl,
-                    int32_t iLiCount);
-  bool AppendChar(const WideString& wsText,
-                  float* pLinePos,
-                  float fSpaceAbove,
-                  bool bSavePieces);
+  [[nodiscard]] bool LoadRichText(const CFX_XMLNode* pXMLNode,
+                                  float textWidth,
+                                  float* pLinePos,
+                                  RetainPtr<CFX_CSSComputedStyle> pParentStyle,
+                                  bool bSavePieces,
+                                  RetainPtr<CFGAS_LinkUserData> pLinkData,
+                                  bool bEndBreak,
+                                  bool bIsOl,
+                                  int32_t iLiCount);
+  [[nodiscard]] bool AppendChar(const WideString& wsText,
+                                float* pLinePos,
+                                float fSpaceAbove,
+                                bool bSavePieces);
   void AppendTextLine(CFGAS_Char::BreakType dwStatus,
                       float* pLinePos,
                       bool bSavePieces,
                       bool bEndBreak);
   void EndBreak(CFGAS_Char::BreakType dwStatus, float* pLinePos, bool bDefault);
-  bool IsEnd(bool bSavePieces);
+  [[nodiscard]] bool IsEnd(bool bSavePieces);
   void UpdateAlign(float fHeight, float fBottom);
   void RenderString(CFX_RenderDevice* pDevice,
                     PieceLine* pPieceLine,
@@ -170,7 +170,7 @@ class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
   size_t GetDisplayPos(const TextPiece* pPiece,
                        pdfium::span<TextCharPos> pCharPos);
   void DoTabstops(CFX_CSSComputedStyle* pStyle, PieceLine* pPieceLine);
-  bool LayoutInternal(size_t szBlockIndex);
+  [[nodiscard]] bool LayoutInternal(size_t szBlockIndex);
   size_t CountBlocks() const;
   size_t GetNextIndexFromLastBlockData() const;
   void UpdateLoaderHeight(float fTextHeight);

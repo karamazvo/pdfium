@@ -21,7 +21,7 @@ class CBC_QRCoder final {
   CBC_QRCoder();
   ~CBC_QRCoder();
 
-  static bool IsValidMaskPattern(int32_t maskPattern);
+  [[nodiscard]] static bool IsValidMaskPattern(int32_t maskPattern);
 
   const CBC_QRCoderErrorCorrectionLevel* GetECLevel() const;
   int32_t GetVersion() const;
@@ -32,7 +32,7 @@ class CBC_QRCoder final {
   int32_t GetNumRSBlocks() const;
   std::unique_ptr<CBC_CommonByteMatrix> TakeMatrix();
 
-  bool IsValid() const;
+  [[nodiscard]] bool IsValid() const;
 
   void SetECLevel(const CBC_QRCoderErrorCorrectionLevel* ecLevel);
   void SetVersion(int32_t version);

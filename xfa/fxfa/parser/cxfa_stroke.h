@@ -29,9 +29,11 @@ class CXFA_Stroke : public CXFA_Node {
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Stroke() override;
 
-  bool IsCorner() const { return GetElementType() == XFA_Element::Corner; }
-  bool IsVisible();
-  bool IsInverted();
+  [[nodiscard]] bool IsCorner() const {
+    return GetElementType() == XFA_Element::Corner;
+  }
+  [[nodiscard]] bool IsVisible();
+  [[nodiscard]] bool IsInverted();
 
   XFA_AttributeValue GetCapType();
   XFA_AttributeValue GetStrokeType();
@@ -45,7 +47,8 @@ class CXFA_Stroke : public CXFA_Node {
   FX_ARGB GetColor() const;
   void SetColor(FX_ARGB argb);
 
-  bool SameStyles(CXFA_Stroke* stroke, Mask<SameStyleOption> dwFlags);
+  [[nodiscard]] bool SameStyles(CXFA_Stroke* stroke,
+                                Mask<SameStyleOption> dwFlags);
 
   void Stroke(CFGAS_GEGraphics* pGS,
               const CFGAS_GEPath& pPath,

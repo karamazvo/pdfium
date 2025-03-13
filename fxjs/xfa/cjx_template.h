@@ -18,7 +18,7 @@ class CJX_Template final : public CJX_Model {
   ~CJX_Template() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   /* The docs list a |createNode| method on Template but that method already
    * exists on Model, also the |createNode| docs say it exists on Model not

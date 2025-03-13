@@ -107,11 +107,11 @@ class WideString : public StringTemplate<wchar_t> {
 
   int GetInteger() const;
 
-  bool IsASCII() const { return AsStringView().IsASCII(); }
-  bool EqualsASCII(ByteStringView that) const {
+  [[nodiscard]] bool IsASCII() const { return AsStringView().IsASCII(); }
+  [[nodiscard]] bool EqualsASCII(ByteStringView that) const {
     return AsStringView().EqualsASCII(that);
   }
-  bool EqualsASCIINoCase(ByteStringView that) const {
+  [[nodiscard]] bool EqualsASCIINoCase(ByteStringView that) const {
     return AsStringView().EqualsASCIINoCase(that);
   }
 

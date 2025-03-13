@@ -30,7 +30,7 @@ class CFXJSE_MapModule {
   std::optional<int32_t> GetValue(uint32_t key) const;
   std::optional<WideString> GetString(uint32_t key) const;
   std::optional<CXFA_Measurement> GetMeasurement(uint32_t key) const;
-  bool HasKey(uint32_t key) const;
+  [[nodiscard]] bool HasKey(uint32_t key) const;
   void RemoveKey(uint32_t key);
   void MergeDataFrom(const CFXJSE_MapModule* pSrc);
 

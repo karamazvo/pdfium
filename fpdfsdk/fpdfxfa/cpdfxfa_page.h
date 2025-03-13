@@ -42,7 +42,7 @@ class CPDFXFA_Page final : public IPDF_Page {
       int rotate,
       const CFX_PointF& page_point) const override;
 
-  bool LoadPage();
+  [[nodiscard]] bool LoadPage();
   void LoadPDFPageFromDict(RetainPtr<CPDF_Dictionary> pPageDict);
   int GetPageIndex() const { return m_iPageIndex; }
   void SetXFAPageViewIndex(int index) { m_iPageIndex = index; }
@@ -62,7 +62,7 @@ class CPDFXFA_Page final : public IPDF_Page {
   CPDFXFA_Page(CPDF_Document* pDocument, int page_index);
   ~CPDFXFA_Page() override;
 
-  bool LoadPDFPage();
+  [[nodiscard]] bool LoadPDFPage();
 
   RetainPtr<CPDF_Page> m_pPDFPage;  // Backing page, if any.
   UnownedPtr<CPDF_Document> const m_pDocument;

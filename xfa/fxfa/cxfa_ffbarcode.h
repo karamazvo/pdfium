@@ -25,12 +25,12 @@ class CXFA_FFBarcode final : public CXFA_FFTextEdit {
   void Trace(cppgc::Visitor* visitor) const override;
 
   // CXFA_FFTextEdit
-  bool LoadWidget() override;
+  [[nodiscard]] bool LoadWidget() override;
   void RenderWidget(CFGAS_GEGraphics* pGS,
                     const CFX_Matrix& matrix,
                     HighlightOption highlight) override;
   void UpdateWidgetProperty() override;
-  bool AcceptsFocusOnButtonDown(
+  [[nodiscard]] bool AcceptsFocusOnButtonDown(
       Mask<XFA_FWL_KeyFlag> dwFlags,
       const CFX_PointF& point,
       CFWL_MessageMouse::MouseCommand command) override;

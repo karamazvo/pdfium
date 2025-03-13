@@ -28,7 +28,7 @@ class CXFA_Radial final : public CXFA_Node {
  private:
   CXFA_Radial(CXFA_Document* doc, XFA_PacketType packet);
 
-  bool IsToEdge();
+  [[nodiscard]] bool IsToEdge();
   CXFA_Color* GetColorIfExists();
 };
 

@@ -46,14 +46,16 @@ class CFX_DIBitmap final : public CFX_DIBBase {
 
   CONSTRUCT_VIA_MAKE_RETAIN;
 
-  [[nodiscard]] bool Create(int width, int height, FXDIB_Format format);
-  [[nodiscard]] bool Create(int width,
-                            int height,
-                            FXDIB_Format format,
-                            uint8_t* pBuffer,
-                            uint32_t pitch);
+  [[nodiscard]] [[nodiscard]] bool Create(int width,
+                                          int height,
+                                          FXDIB_Format format);
+  [[nodiscard]] [[nodiscard]] bool Create(int width,
+                                          int height,
+                                          FXDIB_Format format,
+                                          uint8_t* pBuffer,
+                                          uint32_t pitch);
 
-  bool Copy(RetainPtr<const CFX_DIBBase> source);
+  [[nodiscard]] bool Copy(RetainPtr<const CFX_DIBBase> source);
 
   // CFX_DIBBase
   pdfium::span<const uint8_t> GetScanline(int line) const override;
@@ -87,7 +89,7 @@ class CFX_DIBitmap final : public CFX_DIBBase {
   }
 
   void TakeOver(RetainPtr<CFX_DIBitmap>&& pSrcBitmap);
-  bool ConvertFormat(FXDIB_Format format);
+  [[nodiscard]] bool ConvertFormat(FXDIB_Format format);
   void Clear(uint32_t color);
 
 #if defined(PDF_USE_SKIA)
@@ -101,37 +103,37 @@ class CFX_DIBitmap final : public CFX_DIBBase {
   void SetUniformOpaqueAlpha();
 
   // TODO(crbug.com/pdfium/2007): Migrate callers to `CFX_RenderDevice`.
-  bool MultiplyAlpha(float alpha);
-  bool MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask);
+  [[nodiscard]] bool MultiplyAlpha(float alpha);
+  [[nodiscard]] bool MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask);
 
-  bool TransferBitmap(int width,
-                      int height,
-                      RetainPtr<const CFX_DIBBase> source,
-                      int src_left,
-                      int src_top);
+  [[nodiscard]] bool TransferBitmap(int width,
+                                    int height,
+                                    RetainPtr<const CFX_DIBBase> source,
+                                    int src_left,
+                                    int src_top);
 
-  bool CompositeBitmap(int dest_left,
-                       int dest_top,
-                       int width,
-                       int height,
-                       RetainPtr<const CFX_DIBBase> source,
-                       int src_left,
-                       int src_top,
-                       BlendMode blend_type,
-                       const CFX_AggClipRgn* pClipRgn,
-                       bool bRgbByteOrder);
+  [[nodiscard]] bool CompositeBitmap(int dest_left,
+                                     int dest_top,
+                                     int width,
+                                     int height,
+                                     RetainPtr<const CFX_DIBBase> source,
+                                     int src_left,
+                                     int src_top,
+                                     BlendMode blend_type,
+                                     const CFX_AggClipRgn* pClipRgn,
+                                     bool bRgbByteOrder);
 
-  bool CompositeMask(int dest_left,
-                     int dest_top,
-                     int width,
-                     int height,
-                     RetainPtr<const CFX_DIBBase> pMask,
-                     uint32_t color,
-                     int src_left,
-                     int src_top,
-                     BlendMode blend_type,
-                     const CFX_AggClipRgn* pClipRgn,
-                     bool bRgbByteOrder);
+  [[nodiscard]] bool CompositeMask(int dest_left,
+                                   int dest_top,
+                                   int width,
+                                   int height,
+                                   RetainPtr<const CFX_DIBBase> pMask,
+                                   uint32_t color,
+                                   int src_left,
+                                   int src_top,
+                                   BlendMode blend_type,
+                                   const CFX_AggClipRgn* pClipRgn,
+                                   bool bRgbByteOrder);
 
   void CompositeOneBPPMask(int dest_left,
                            int dest_top,
@@ -141,13 +143,13 @@ class CFX_DIBitmap final : public CFX_DIBBase {
                            int src_left,
                            int src_top);
 
-  bool CompositeRect(int dest_left,
-                     int dest_top,
-                     int width,
-                     int height,
-                     uint32_t color);
+  [[nodiscard]] bool CompositeRect(int dest_left,
+                                   int dest_top,
+                                   int width,
+                                   int height,
+                                   uint32_t color);
 
-  bool ConvertColorScale(uint32_t forecolor, uint32_t backcolor);
+  [[nodiscard]] bool ConvertColorScale(uint32_t forecolor, uint32_t backcolor);
 
   // |width| and |height| must be greater than 0.
   // |format| must have a valid bits per pixel count.
@@ -175,14 +177,15 @@ class CFX_DIBitmap final : public CFX_DIBBase {
   ~CFX_DIBitmap() override;
 
   void ConvertBGRColorScale(uint32_t forecolor, uint32_t backcolor);
-  bool TransferWithUnequalFormats(FXDIB_Format dest_format,
-                                  int dest_left,
-                                  int dest_top,
-                                  int width,
-                                  int height,
-                                  RetainPtr<const CFX_DIBBase> source,
-                                  int src_left,
-                                  int src_top);
+  [[nodiscard]] bool TransferWithUnequalFormats(
+      FXDIB_Format dest_format,
+      int dest_left,
+      int dest_top,
+      int width,
+      int height,
+      RetainPtr<const CFX_DIBBase> source,
+      int src_left,
+      int src_top);
   void TransferWithMultipleBPP(int dest_left,
                                int dest_top,
                                int width,

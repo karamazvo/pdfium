@@ -118,7 +118,7 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
     if (!pClone)
       return false;
 
-    pClone->ConvertColorScale(0xffffff, 0);
+    (void)pClone->ConvertColorScale(0xffffff, 0);
     m_pDIBBase = pClone;
   }
   m_ResampleOptions = FXDIB_ResampleOptions();
@@ -275,7 +275,7 @@ RetainPtr<const CFX_DIBitmap> CPDF_ImageRenderer::CalculateDrawImage(
     CPDF_ImageRenderer mask_renderer(&mask_status);
     if (mask_renderer.Start(std::move(pDIBBase), 0xffffffff, mtNewMatrix,
                             m_ResampleOptions, true)) {
-      mask_renderer.Continue(nullptr);
+      (void)mask_renderer.Continue(nullptr);
     }
     if (m_pLoader->MatteColor() != 0xffffffff) {
       const int matte_r = FXARGB_R(m_pLoader->MatteColor());
@@ -301,7 +301,7 @@ RetainPtr<const CFX_DIBitmap> CPDF_ImageRenderer::CalculateDrawImage(
     }
   }
   CHECK(!mask_bitmap->HasPalette());
-  mask_bitmap->ConvertFormat(FXDIB_Format::k8bppMask);
+  (void)mask_bitmap->ConvertFormat(FXDIB_Format::k8bppMask);
   return mask_bitmap;
 }
 
@@ -351,8 +351,8 @@ bool CPDF_ImageRenderer::DrawPatternImage() {
     return true;
   }
 
-  bitmap_device.GetBitmap()->MultiplyAlphaMask(std::move(mask_bitmap));
-  m_pRenderStatus->GetRenderDevice()->SetDIBitsWithBlend(
+  (void)bitmap_device.GetBitmap()->MultiplyAlphaMask(std::move(mask_bitmap));
+  (void)m_pRenderStatus->GetRenderDevice()->SetDIBitsWithBlend(
       bitmap_device.GetBitmap(), rect.left, rect.top, m_BlendType);
   return false;
 }
@@ -383,7 +383,7 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
   CPDF_ImageRenderer bitmap_renderer(&bitmap_status);
   if (bitmap_renderer.Start(m_pDIBBase, 0, new_matrix, m_ResampleOptions,
                             true)) {
-    bitmap_renderer.Continue(nullptr);
+    (void)bitmap_renderer.Continue(nullptr);
   }
   RetainPtr<const CFX_DIBitmap> mask_bitmap =
       CalculateDrawImage(bitmap_device, m_pLoader->GetMask(), new_matrix, rect);
@@ -399,9 +399,9 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
     return false;
   }
 #endif
-  bitmap_device.GetBitmap()->MultiplyAlphaMask(std::move(mask_bitmap));
-  bitmap_device.GetBitmap()->MultiplyAlpha(m_Alpha);
-  m_pRenderStatus->GetRenderDevice()->SetDIBitsWithBlend(
+  (void)bitmap_device.GetBitmap()->MultiplyAlphaMask(std::move(mask_bitmap));
+  (void)bitmap_device.GetBitmap()->MultiplyAlpha(m_Alpha);
+  (void)m_pRenderStatus->GetRenderDevice()->SetDIBitsWithBlend(
       bitmap_device.GetBitmap(), rect.left, rect.top, m_BlendType);
   return false;
 }
@@ -526,7 +526,7 @@ bool CPDF_ImageRenderer::StartBitmapAlpha() {
     const int bitmap_alpha = FXSYS_roundf(m_Alpha * 255);
     uint32_t fill_color =
         ArgbEncode(0xff, bitmap_alpha, bitmap_alpha, bitmap_alpha);
-    m_pRenderStatus->GetRenderDevice()->DrawPath(
+    (void)m_pRenderStatus->GetRenderDevice()->DrawPath(
         path, nullptr, nullptr, fill_color, 0,
         CFX_FillRenderOptions::WindingOptions());
     return false;
@@ -543,7 +543,7 @@ bool CPDF_ImageRenderer::StartBitmapAlpha() {
     }
 
     const int bitmap_alpha = FXSYS_roundf(m_Alpha * 255);
-    m_pRenderStatus->GetRenderDevice()->SetBitMask(
+    (void)m_pRenderStatus->GetRenderDevice()->SetBitMask(
         std::move(alpha_mask), left, top,
         ArgbEncode(0xff, bitmap_alpha, bitmap_alpha, bitmap_alpha));
     return false;
@@ -563,7 +563,7 @@ bool CPDF_ImageRenderer::StartBitmapAlpha() {
   }
 
   const int bitmap_alpha = FXSYS_roundf(m_Alpha * 255);
-  m_pRenderStatus->GetRenderDevice()->StretchBitMask(
+  (void)m_pRenderStatus->GetRenderDevice()->StretchBitMask(
       std::move(alpha_mask), left, top, dest_width, dest_height,
       ArgbEncode(0xff, bitmap_alpha, bitmap_alpha, bitmap_alpha));
   return false;

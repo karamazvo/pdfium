@@ -33,20 +33,23 @@ class CPDF_ReadValidator : public IFX_SeekableReadStream {
   void SetDownloadHints(CPDF_DataAvail::DownloadHints* hints) {
     hints_ = hints;
   }
-  bool read_error() const { return read_error_; }
-  bool has_unavailable_data() const { return has_unavailable_data_; }
-  bool has_read_problems() const {
+  [[nodiscard]] bool read_error() const { return read_error_; }
+  [[nodiscard]] bool has_unavailable_data() const {
+    return has_unavailable_data_;
+  }
+  [[nodiscard]] bool has_read_problems() const {
     return read_error() || has_unavailable_data();
   }
 
   void ResetErrors();
-  bool IsWholeFileAvailable();
-  bool CheckDataRangeAndRequestIfUnavailable(FX_FILESIZE offset, size_t size);
-  bool CheckWholeFileAndRequestIfUnavailable();
+  [[nodiscard]] bool IsWholeFileAvailable();
+  [[nodiscard]] bool CheckDataRangeAndRequestIfUnavailable(FX_FILESIZE offset,
+                                                           size_t size);
+  [[nodiscard]] bool CheckWholeFileAndRequestIfUnavailable();
 
   // IFX_SeekableReadStream overrides:
-  bool ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
-                         FX_FILESIZE offset) override;
+  [[nodiscard]] bool ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
+                                       FX_FILESIZE offset) override;
   FX_FILESIZE GetSize() override;
 
  protected:
@@ -56,7 +59,8 @@ class CPDF_ReadValidator : public IFX_SeekableReadStream {
 
  private:
   void ScheduleDownload(FX_FILESIZE offset, size_t size);
-  bool IsDataRangeAvailable(FX_FILESIZE offset, size_t size) const;
+  [[nodiscard]] bool IsDataRangeAvailable(FX_FILESIZE offset,
+                                          size_t size) const;
 
   RetainPtr<IFX_SeekableReadStream> const file_read_;
   UnownedPtr<CPDF_DataAvail::FileAvail> const file_avail_;

@@ -18,7 +18,7 @@ class CJX_Manifest final : public CJX_Node {
   ~CJX_Manifest() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   JSE_METHOD(evaluate);
 

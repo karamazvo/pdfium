@@ -19,7 +19,7 @@ class CXFA_Fill final : public CXFA_Node {
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Fill() override;
 
-  bool IsVisible();
+  [[nodiscard]] bool IsVisible();
 
   FX_ARGB GetFillColor() const;
   FX_ARGB GetTextColor() const;

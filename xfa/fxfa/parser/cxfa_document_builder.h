@@ -25,7 +25,8 @@ class CXFA_DocumentBuilder {
   ~CXFA_DocumentBuilder();
 
   CFX_XMLNode* Build(CFX_XMLDocument* pXML);
-  bool BuildDocument(CFX_XMLDocument* pXML, XFA_PacketType ePacketID);
+  [[nodiscard]] bool BuildDocument(CFX_XMLDocument* pXML,
+                                   XFA_PacketType ePacketID);
   void ConstructXFANode(CXFA_Node* pXFANode, CFX_XMLNode* pXMLNode);
   CXFA_Node* GetRootNode() const;
 

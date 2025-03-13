@@ -38,7 +38,8 @@ class CJS_Field final : public CJS_Object {
   CJS_Field(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
   ~CJS_Field() override;
 
-  bool AttachField(CJS_Document* pDocument, const WideString& csFieldName);
+  [[nodiscard]] bool AttachField(CJS_Document* pDocument,
+                                 const WideString& csFieldName);
 
   JS_STATIC_PROP(alignment, alignment, CJS_Field)
   JS_STATIC_PROP(borderStyle, border_style, CJS_Field)

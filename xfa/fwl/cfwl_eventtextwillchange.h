@@ -25,7 +25,7 @@ class CFWL_EventTextWillChange final : public CFWL_Event {
   WideString GetPreviousText() const { return previous_text_; }
   size_t GetSelectionStart() const { return selection_start_; }
   size_t GetSelectionEnd() const { return selection_end_; }
-  bool GetCancelled() const { return cancelled_; }
+  [[nodiscard]] bool GetCancelled() const { return cancelled_; }
 
   void SetChangeText(const WideString& change_text) {
     change_text_ = change_text;

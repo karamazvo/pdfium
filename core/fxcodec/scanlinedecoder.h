@@ -29,7 +29,7 @@ class ScanlineDecoder {
   virtual ~ScanlineDecoder();
 
   pdfium::span<const uint8_t> GetScanline(int line);
-  bool SkipToScanline(int line, PauseIndicatorIface* pPause);
+  [[nodiscard]] bool SkipToScanline(int line, PauseIndicatorIface* pPause);
 
   int GetWidth() const { return m_OutputWidth; }
   int GetHeight() const { return m_OutputHeight; }
@@ -39,7 +39,7 @@ class ScanlineDecoder {
   virtual uint32_t GetSrcOffset() = 0;
 
  protected:
-  virtual bool Rewind() = 0;
+  [[nodiscard]] [[nodiscard]] virtual bool Rewind() = 0;
   virtual pdfium::span<uint8_t> GetNextLine() = 0;
 
   int m_OrigWidth;

@@ -74,7 +74,7 @@ class CPDF_PageObjectHolder {
                         RetainPtr<CPDF_Dictionary> pResources);
   virtual ~CPDF_PageObjectHolder();
 
-  virtual bool IsPage() const;
+  [[nodiscard]] virtual bool IsPage() const;
 
   void StartParse(std::unique_ptr<CPDF_ContentParser> pParser);
   void ContinueParse(PauseIndicatorIface* pPause);
@@ -101,7 +101,7 @@ class CPDF_PageObjectHolder {
 
   // Remove `pPageObj` if present, and transfer ownership to the caller.
   std::unique_ptr<CPDF_PageObject> RemovePageObject(CPDF_PageObject* pPageObj);
-  bool ErasePageObjectAtIndex(size_t index);
+  [[nodiscard]] bool ErasePageObjectAtIndex(size_t index);
 
   iterator begin() { return m_PageObjectList.begin(); }
   const_iterator begin() const { return m_PageObjectList.begin(); }
@@ -112,17 +112,21 @@ class CPDF_PageObjectHolder {
   const CFX_FloatRect& GetBBox() const { return m_BBox; }
 
   const CPDF_Transparency& GetTransparency() const { return m_Transparency; }
-  bool BackgroundAlphaNeeded() const { return m_bBackgroundAlphaNeeded; }
+  [[nodiscard]] bool BackgroundAlphaNeeded() const {
+    return m_bBackgroundAlphaNeeded;
+  }
   void SetBackgroundAlphaNeeded(bool needed) {
     m_bBackgroundAlphaNeeded = needed;
   }
 
-  bool HasImageMask() const { return !m_MaskBoundingBoxes.empty(); }
+  [[nodiscard]] bool HasImageMask() const {
+    return !m_MaskBoundingBoxes.empty();
+  }
   const std::vector<CFX_FloatRect>& GetMaskBoundingBoxes() const {
     return m_MaskBoundingBoxes;
   }
   void AddImageMaskBoundingBox(const CFX_FloatRect& box);
-  bool HasDirtyStreams() const { return !m_DirtyStreams.empty(); }
+  [[nodiscard]] bool HasDirtyStreams() const { return !m_DirtyStreams.empty(); }
   std::set<int32_t> TakeDirtyStreams();
 
   std::optional<ByteString> GraphicsMapSearch(const GraphicsData& gd);

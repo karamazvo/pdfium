@@ -61,11 +61,12 @@ class CPDF_Function {
   static std::unique_ptr<CPDF_Function> Load(
       RetainPtr<const CPDF_Object> pFuncObj,
       VisitedSet* pVisited);
-  bool Init(const CPDF_Object* pObj, VisitedSet* pVisited);
+  [[nodiscard]] bool Init(const CPDF_Object* pObj, VisitedSet* pVisited);
   // `pObj` is guaranteed to be either a dictionary or a stream.
-  virtual bool v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) = 0;
-  virtual bool v_Call(pdfium::span<const float> inputs,
-                      pdfium::span<float> results) const = 0;
+  [[nodiscard]] virtual bool v_Init(const CPDF_Object* pObj,
+                                    VisitedSet* pVisited) = 0;
+  [[nodiscard]] virtual bool v_Call(pdfium::span<const float> inputs,
+                                    pdfium::span<float> results) const = 0;
 
   const Type m_Type;
   uint32_t m_nInputs = 0;

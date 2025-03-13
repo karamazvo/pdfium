@@ -26,7 +26,7 @@ class CFX_Path {
     Point(const Point& other);
     ~Point();
 
-    bool IsTypeAndOpen(Type type) const {
+    [[nodiscard]] bool IsTypeAndOpen(Type type) const {
       return m_Type == type && !m_CloseFigure;
     }
 
@@ -43,7 +43,7 @@ class CFX_Path {
   void Clear();
 
   Point::Type GetType(size_t index) const { return m_Points[index].m_Type; }
-  bool IsClosingFigure(size_t index) const {
+  [[nodiscard]] bool IsClosingFigure(size_t index) const {
     return m_Points[index].m_CloseFigure;
   }
   CFX_PointF GetPoint(size_t index) const { return m_Points[index].m_Point; }
@@ -55,7 +55,7 @@ class CFX_Path {
                                             float miter_limit) const;
 
   void Transform(const CFX_Matrix& matrix);
-  bool IsRect() const;
+  [[nodiscard]] bool IsRect() const;
   std::optional<CFX_FloatRect> GetRect(const CFX_Matrix* matrix) const;
 
   void Append(const CFX_Path& src, const CFX_Matrix* matrix);

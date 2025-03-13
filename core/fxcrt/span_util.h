@@ -70,8 +70,8 @@ template <typename T1,
           typename = std::enable_if_t<sizeof(T1) == sizeof(T2) &&
                                       std::is_trivially_copyable_v<T1> &&
                                       std::is_trivially_copyable_v<T2>>>
-inline bool try_spancpy(pdfium::span<T1, N1, P1> dst,
-                        pdfium::span<T2, N2, P2> src) {
+[[nodiscard]] inline bool try_spancpy(pdfium::span<T1, N1, P1> dst,
+                                      pdfium::span<T2, N2, P2> src) {
   if (dst.size() < src.size()) {
     return false;
   }
@@ -94,8 +94,8 @@ template <typename T1,
           typename = std::enable_if_t<sizeof(T1) == sizeof(T2) &&
                                       std::is_trivially_copyable_v<T1> &&
                                       std::is_trivially_copyable_v<T2>>>
-inline bool try_spanmove(pdfium::span<T1, N1, P1> dst,
-                         pdfium::span<T2, N2, P2> src) {
+[[nodiscard]] inline bool try_spanmove(pdfium::span<T1, N1, P1> dst,
+                                       pdfium::span<T2, N2, P2> src) {
   if (dst.size() < src.size()) {
     return false;
   }
@@ -117,7 +117,8 @@ template <typename T1,
           typename = std::enable_if_t<sizeof(T1) == sizeof(T2) &&
                                       std::is_trivially_copyable_v<T1> &&
                                       std::is_trivially_copyable_v<T2>>>
-bool span_equals(pdfium::span<T1, N1, P1> s1, pdfium::span<T2, N2, P2> s2) {
+[[nodiscard]] bool span_equals(pdfium::span<T1, N1, P1> s1,
+                               pdfium::span<T2, N2, P2> s2) {
   // SAFETY: For both `s1` and `s2`, there are `size_bytes()` valid bytes at
   // the corresponding `data()`, and the sizes are the same.
   return s1.size_bytes() == s2.size_bytes() &&

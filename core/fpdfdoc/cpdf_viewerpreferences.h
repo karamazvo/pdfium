@@ -24,8 +24,8 @@ class CPDF_ViewerPreferences {
   explicit CPDF_ViewerPreferences(const CPDF_Document* pDoc);
   ~CPDF_ViewerPreferences();
 
-  bool IsDirectionR2L() const;
-  bool PrintScaling() const;
+  [[nodiscard]] bool IsDirectionR2L() const;
+  [[nodiscard]] bool PrintScaling() const;
   int32_t NumCopies() const;
   RetainPtr<const CPDF_Array> PrintPageRange() const;
   ByteString Duplex() const;

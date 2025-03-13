@@ -39,7 +39,7 @@ class CFX_BmpDecompressor {
   uint32_t width() const { return width_; }
   uint32_t height() const { return height_; }
   int32_t components() const { return components_; }
-  bool img_tb_flag() const { return img_tb_flag_; }
+  [[nodiscard]] bool img_tb_flag() const { return img_tb_flag_; }
   int32_t dpi_x() const { return dpi_x_; }
   int32_t dpi_y() const { return dpi_y_; }
 
@@ -59,16 +59,16 @@ class CFX_BmpDecompressor {
   BmpDecoder::Status ReadBmpHeaderDimensions();
   BmpDecoder::Status ReadBmpBitfields();
   BmpDecoder::Status ReadBmpPalette();
-  bool GetDataPosition(uint32_t cur_pos);
+  [[nodiscard]] bool GetDataPosition(uint32_t cur_pos);
   void ReadNextScanline();
   BmpDecoder::Status DecodeRGB();
   BmpDecoder::Status DecodeRLE8();
   BmpDecoder::Status DecodeRLE4();
-  bool ReadAllOrNone(pdfium::span<uint8_t> buf);
+  [[nodiscard]] bool ReadAllOrNone(pdfium::span<uint8_t> buf);
   void SaveDecodingStatus(DecodeStatus status);
-  bool ValidateColorIndex(uint8_t val) const;
-  bool ValidateFlag() const;
-  bool SetHeight(int32_t signed_height);
+  [[nodiscard]] bool ValidateColorIndex(uint8_t val) const;
+  [[nodiscard]] bool ValidateFlag() const;
+  [[nodiscard]] bool SetHeight(int32_t signed_height);
   int PaletteChannelCount() const { return pal_type_ == PalType::kNew ? 4 : 3; }
 
   UnownedPtr<const CFX_BmpContext> const context_;

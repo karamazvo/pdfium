@@ -18,7 +18,7 @@ class CJX_Xfa final : public CJX_Model {
   ~CJX_Xfa() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   JSE_PROP(thisValue); /* this */
 

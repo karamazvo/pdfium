@@ -25,13 +25,13 @@ class CXFA_FFImageEdit final : public CXFA_FFField {
   void RenderWidget(CFGAS_GEGraphics* pGS,
                     const CFX_Matrix& matrix,
                     HighlightOption highlight) override;
-  bool LoadWidget() override;
-  bool AcceptsFocusOnButtonDown(
+  [[nodiscard]] bool LoadWidget() override;
+  [[nodiscard]] bool AcceptsFocusOnButtonDown(
       Mask<XFA_FWL_KeyFlag> dwFlags,
       const CFX_PointF& point,
       CFWL_MessageMouse::MouseCommand command) override;
-  bool OnLButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
-                     const CFX_PointF& point) override;
+  [[nodiscard]] bool OnLButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
+                                   const CFX_PointF& point) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(pdfium::CFWL_Event* pEvent) override;
   void OnDrawWidget(CFGAS_GEGraphics* pGraphics,
@@ -42,8 +42,8 @@ class CXFA_FFImageEdit final : public CXFA_FFField {
   explicit CXFA_FFImageEdit(CXFA_Node* pNode);
 
   void SetFWLRect() override;
-  bool UpdateFWLData() override;
-  bool CommitData() override;
+  [[nodiscard]] bool UpdateFWLData() override;
+  [[nodiscard]] bool CommitData() override;
 
   cppgc::Member<IFWL_WidgetDelegate> m_pOldDelegate;
 };

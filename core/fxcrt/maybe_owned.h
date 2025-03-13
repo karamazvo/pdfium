@@ -39,7 +39,9 @@ class MaybeOwned {
   void Reset(T* ptr = nullptr) { ptr_ = UnownedType(ptr); }
   void Reset(OwnedType ptr) { ptr_ = std::move(ptr); }
 
-  bool IsOwned() const { return absl::holds_alternative<OwnedType>(ptr_); }
+  [[nodiscard]] bool IsOwned() const {
+    return absl::holds_alternative<OwnedType>(ptr_);
+  }
 
   // Helpful for untangling a collection of intertwined MaybeOwned<>.
   void ResetIfUnowned() {

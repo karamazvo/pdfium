@@ -18,7 +18,7 @@ class CJX_SignaturePseudoModel final : public CJX_Object {
   ~CJX_SignaturePseudoModel() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   JSE_METHOD(verifySignature /*verify*/);
   JSE_METHOD(sign);

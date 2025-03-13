@@ -43,8 +43,8 @@ class CFGAS_GEShading final {
   CFX_PointF GetEndPoint() const { return m_endPoint; }
   float GetBeginRadius() const { return m_beginRadius; }
   float GetEndRadius() const { return m_endRadius; }
-  bool IsExtendedBegin() const { return m_isExtendedBegin; }
-  bool IsExtendedEnd() const { return m_isExtendedEnd; }
+  [[nodiscard]] bool IsExtendedBegin() const { return m_isExtendedBegin; }
+  [[nodiscard]] bool IsExtendedEnd() const { return m_isExtendedEnd; }
   FX_ARGB GetArgb(float value) const {
     return m_argbArray[static_cast<size_t>(value * (kSteps - 1))];
   }

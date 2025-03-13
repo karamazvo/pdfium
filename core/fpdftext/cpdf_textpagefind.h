@@ -35,8 +35,8 @@ class CPDF_TextPageFind {
 
   ~CPDF_TextPageFind();
 
-  bool FindNext();
-  bool FindPrev();
+  [[nodiscard]] bool FindNext();
+  [[nodiscard]] bool FindPrev();
   int GetCurOrder() const;
   int GetMatchedCount() const;
 
@@ -47,7 +47,7 @@ class CPDF_TextPageFind {
                     std::optional<size_t> startPos);
 
   // Should be called immediately after construction.
-  bool FindFirst();
+  [[nodiscard]] bool FindFirst();
 
   int GetCharIndex(int index) const;
 

@@ -77,7 +77,7 @@ class CFX_CTTGSUBTable {
     SubTables sub_tables;
   };
 
-  bool LoadGSUBTable(pdfium::span<const uint8_t> gsub);
+  [[nodiscard]] bool LoadGSUBTable(pdfium::span<const uint8_t> gsub);
   void Parse(pdfium::span<const uint8_t> scriptlist,
              pdfium::span<const uint8_t> featurelist,
              pdfium::span<const uint8_t> lookuplist);

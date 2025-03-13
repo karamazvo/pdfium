@@ -42,37 +42,38 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
   virtual void OnMouseEnter(CPDFSDK_PageView* pPageView);
   virtual void OnMouseExit(CPDFSDK_PageView* pPageView);
 
-  virtual bool OnLButtonDown(CPDFSDK_PageView* pPageView,
-                             CPDFSDK_Widget* pAnnot,
-                             Mask<FWL_EVENTFLAG> nFlags,
-                             const CFX_PointF& point);
-  virtual bool OnLButtonUp(CPDFSDK_PageView* pPageView,
-                           CPDFSDK_Widget* pAnnot,
-                           Mask<FWL_EVENTFLAG> nFlags,
-                           const CFX_PointF& point);
-  virtual bool OnLButtonDblClk(CPDFSDK_PageView* pPageView,
-                               Mask<FWL_EVENTFLAG> nFlags,
-                               const CFX_PointF& point);
-  virtual bool OnMouseMove(CPDFSDK_PageView* pPageView,
-                           Mask<FWL_EVENTFLAG> nFlags,
-                           const CFX_PointF& point);
-  virtual bool OnMouseWheel(CPDFSDK_PageView* pPageView,
-                            Mask<FWL_EVENTFLAG> nFlags,
-                            const CFX_PointF& point,
-                            const CFX_Vector& delta);
-  virtual bool OnRButtonDown(CPDFSDK_PageView* pPageView,
-                             Mask<FWL_EVENTFLAG> nFlags,
-                             const CFX_PointF& point);
-  virtual bool OnRButtonUp(CPDFSDK_PageView* pPageView,
-                           Mask<FWL_EVENTFLAG> nFlags,
-                           const CFX_PointF& point);
+  [[nodiscard]] virtual bool OnLButtonDown(CPDFSDK_PageView* pPageView,
+                                           CPDFSDK_Widget* pAnnot,
+                                           Mask<FWL_EVENTFLAG> nFlags,
+                                           const CFX_PointF& point);
+  [[nodiscard]] virtual bool OnLButtonUp(CPDFSDK_PageView* pPageView,
+                                         CPDFSDK_Widget* pAnnot,
+                                         Mask<FWL_EVENTFLAG> nFlags,
+                                         const CFX_PointF& point);
+  [[nodiscard]] virtual bool OnLButtonDblClk(CPDFSDK_PageView* pPageView,
+                                             Mask<FWL_EVENTFLAG> nFlags,
+                                             const CFX_PointF& point);
+  [[nodiscard]] virtual bool OnMouseMove(CPDFSDK_PageView* pPageView,
+                                         Mask<FWL_EVENTFLAG> nFlags,
+                                         const CFX_PointF& point);
+  [[nodiscard]] virtual bool OnMouseWheel(CPDFSDK_PageView* pPageView,
+                                          Mask<FWL_EVENTFLAG> nFlags,
+                                          const CFX_PointF& point,
+                                          const CFX_Vector& delta);
+  [[nodiscard]] virtual bool OnRButtonDown(CPDFSDK_PageView* pPageView,
+                                           Mask<FWL_EVENTFLAG> nFlags,
+                                           const CFX_PointF& point);
+  [[nodiscard]] virtual bool OnRButtonUp(CPDFSDK_PageView* pPageView,
+                                         Mask<FWL_EVENTFLAG> nFlags,
+                                         const CFX_PointF& point);
 
-  virtual bool OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlags);
-  virtual bool OnChar(CPDFSDK_Widget* pAnnot,
-                      uint32_t nChar,
-                      Mask<FWL_EVENTFLAG> nFlags);
-  virtual bool SetIndexSelected(int index, bool selected);
-  virtual bool IsIndexSelected(int index);
+  [[nodiscard]] virtual bool OnKeyDown(FWL_VKEYCODE nKeyCode,
+                                       Mask<FWL_EVENTFLAG> nFlags);
+  [[nodiscard]] virtual bool OnChar(CPDFSDK_Widget* pAnnot,
+                                    uint32_t nChar,
+                                    Mask<FWL_EVENTFLAG> nFlags);
+  [[nodiscard]] virtual bool SetIndexSelected(int index, bool selected);
+  [[nodiscard]] virtual bool IsIndexSelected(int index);
 
   FX_RECT GetViewBBox(const CPDFSDK_PageView* pPageView);
 
@@ -80,12 +81,12 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
   WideString GetSelectedText();
   void ReplaceAndKeepSelection(const WideString& text);
   void ReplaceSelection(const WideString& text);
-  bool SelectAllText();
+  [[nodiscard]] bool SelectAllText();
 
-  bool CanUndo();
-  bool CanRedo();
-  bool Undo();
-  bool Redo();
+  [[nodiscard]] bool CanUndo();
+  [[nodiscard]] bool CanRedo();
+  [[nodiscard]] bool Undo();
+  [[nodiscard]] bool Redo();
 
   void SetFocusForAnnot(CPDFSDK_Widget* pWidget, Mask<FWL_EVENTFLAG> nFlag);
   void KillFocusForAnnot(Mask<FWL_EVENTFLAG> nFlag);
@@ -111,10 +112,10 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
   virtual void SavePWLWindowState(const CPDFSDK_PageView* pPageView);
   virtual void RecreatePWLWindowFromSavedState(
       const CPDFSDK_PageView* pPageView);
-  virtual bool IsDataChanged(const CPDFSDK_PageView* pPageView);
+  [[nodiscard]] virtual bool IsDataChanged(const CPDFSDK_PageView* pPageView);
   virtual void SaveData(const CPDFSDK_PageView* pPageView);
 #ifdef PDF_ENABLE_XFA
-  virtual bool IsFieldFull(const CPDFSDK_PageView* pPageView);
+  [[nodiscard]] virtual bool IsFieldFull(const CPDFSDK_PageView* pPageView);
 #endif  // PDF_ENABLE_XFA
 
   CFX_Matrix GetCurMatrix();
@@ -123,11 +124,12 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
   CFX_FloatRect PWLtoFFL(const CFX_FloatRect& rect);
   CFX_PointF FFLtoPWL(const CFX_PointF& point);
   CFX_PointF PWLtoFFL(const CFX_PointF& point);
-  bool CommitData(const CPDFSDK_PageView* pPageView, Mask<FWL_EVENTFLAG> nFlag);
+  [[nodiscard]] bool CommitData(const CPDFSDK_PageView* pPageView,
+                                Mask<FWL_EVENTFLAG> nFlag);
   void DestroyPWLWindow(const CPDFSDK_PageView* pPageView);
   void EscapeFiller(CPDFSDK_PageView* pPageView, bool bDestroyPWLWindow);
 
-  bool IsValid() const;
+  [[nodiscard]] bool IsValid() const;
   CFX_FloatRect GetPDFAnnotRect() const;
 
   CPDFSDK_PageView* GetCurPageView();

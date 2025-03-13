@@ -18,33 +18,34 @@ class CXFA_FFSignature final : public CXFA_FFField {
   void RenderWidget(CFGAS_GEGraphics* pGS,
                     const CFX_Matrix& matrix,
                     HighlightOption highlight) override;
-  bool LoadWidget() override;
-  bool AcceptsFocusOnButtonDown(
+  [[nodiscard]] bool LoadWidget() override;
+  [[nodiscard]] bool AcceptsFocusOnButtonDown(
       Mask<XFA_FWL_KeyFlag> dwFlags,
       const CFX_PointF& point,
       CFWL_MessageMouse::MouseCommand command) override;
-  bool OnMouseEnter() override;
-  bool OnMouseExit() override;
-  bool OnLButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
-                     const CFX_PointF& point) override;
-  bool OnLButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
-                   const CFX_PointF& point) override;
-  bool OnLButtonDblClk(Mask<XFA_FWL_KeyFlag> dwFlags,
-                       const CFX_PointF& point) override;
-  bool OnMouseMove(Mask<XFA_FWL_KeyFlag> dwFlags,
-                   const CFX_PointF& point) override;
-  bool OnMouseWheel(Mask<XFA_FWL_KeyFlag> dwFlags,
-                    const CFX_PointF& point,
-                    const CFX_Vector& delta) override;
-  bool OnRButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
-                     const CFX_PointF& point) override;
-  bool OnRButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
-                   const CFX_PointF& point) override;
-  bool OnRButtonDblClk(Mask<XFA_FWL_KeyFlag> dwFlags,
-                       const CFX_PointF& point) override;
-  bool OnKeyDown(XFA_FWL_VKEYCODE dwKeyCode,
-                 Mask<XFA_FWL_KeyFlag> dwFlags) override;
-  bool OnChar(uint32_t dwChar, Mask<XFA_FWL_KeyFlag> dwFlags) override;
+  [[nodiscard]] bool OnMouseEnter() override;
+  [[nodiscard]] bool OnMouseExit() override;
+  [[nodiscard]] bool OnLButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
+                                   const CFX_PointF& point) override;
+  [[nodiscard]] bool OnLButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
+                                 const CFX_PointF& point) override;
+  [[nodiscard]] bool OnLButtonDblClk(Mask<XFA_FWL_KeyFlag> dwFlags,
+                                     const CFX_PointF& point) override;
+  [[nodiscard]] bool OnMouseMove(Mask<XFA_FWL_KeyFlag> dwFlags,
+                                 const CFX_PointF& point) override;
+  [[nodiscard]] bool OnMouseWheel(Mask<XFA_FWL_KeyFlag> dwFlags,
+                                  const CFX_PointF& point,
+                                  const CFX_Vector& delta) override;
+  [[nodiscard]] bool OnRButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
+                                   const CFX_PointF& point) override;
+  [[nodiscard]] bool OnRButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
+                                 const CFX_PointF& point) override;
+  [[nodiscard]] bool OnRButtonDblClk(Mask<XFA_FWL_KeyFlag> dwFlags,
+                                     const CFX_PointF& point) override;
+  [[nodiscard]] bool OnKeyDown(XFA_FWL_VKEYCODE dwKeyCode,
+                               Mask<XFA_FWL_KeyFlag> dwFlags) override;
+  [[nodiscard]] bool OnChar(uint32_t dwChar,
+                            Mask<XFA_FWL_KeyFlag> dwFlags) override;
   FWL_WidgetHit HitTest(const CFX_PointF& point) override;
   FormFieldType GetFormFieldType() override;
 

@@ -33,7 +33,7 @@ class CFWL_ComboList final : public CFWL_ListBox {
   void OnDropListMouseMove(CFWL_MessageMouse* pMsg);
   void OnDropListLButtonDown(CFWL_MessageMouse* pMsg);
   void OnDropListLButtonUp(CFWL_MessageMouse* pMsg);
-  bool OnDropListKey(CFWL_MessageKey* pKey);
+  [[nodiscard]] bool OnDropListKey(CFWL_MessageKey* pKey);
   void OnDropListKeyDown(CFWL_MessageKey* pKey);
 
   bool m_bNotifyOwner = true;

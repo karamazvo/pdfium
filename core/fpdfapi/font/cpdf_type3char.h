@@ -26,14 +26,14 @@ class CPDF_Type3Char {
   static float TextUnitToGlyphUnit(float fTextUnit);
   static void TextUnitRectToGlyphUnitRect(CFX_FloatRect* pRect);
 
-  bool LoadBitmapFromSoleImageOfForm();
+  [[nodiscard]] bool LoadBitmapFromSoleImageOfForm();
   void InitializeFromStreamData(bool bColored, pdfium::span<const float> pData);
   void Transform(CPDF_Font::FormIface* pForm, const CFX_Matrix& matrix);
   void WillBeDestroyed();
 
   RetainPtr<CFX_DIBitmap> GetBitmap();
 
-  bool colored() const { return m_bColored; }
+  [[nodiscard]] bool colored() const { return m_bColored; }
   int width() const { return m_Width; }
   const CFX_Matrix& matrix() const { return m_ImageMatrix; }
   const FX_RECT& bbox() const { return m_BBox; }

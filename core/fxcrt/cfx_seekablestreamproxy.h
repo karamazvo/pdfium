@@ -21,7 +21,7 @@ class CFX_SeekableStreamProxy final : public Retainable {
   CONSTRUCT_VIA_MAKE_RETAIN;
 
   FX_FILESIZE GetSize() const;  // Estimate under worst possible expansion.
-  bool IsEOF() const;
+  [[nodiscard]] bool IsEOF() const;
 
   // Returns number of wchar_t elements placed into `buffer`.
   size_t ReadBlock(pdfium::span<wchar_t> buffer);

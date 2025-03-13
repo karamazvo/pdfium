@@ -52,7 +52,7 @@ class CPDF_CIDFont final : public CPDF_Font {
   static float CIDTransformToFloat(uint8_t ch);
 
   // CPDF_Font:
-  bool IsCIDFont() const override;
+  [[nodiscard]] bool IsCIDFont() const override;
   const CPDF_CIDFont* AsCIDFont() const override;
   CPDF_CIDFont* AsCIDFont() override;
   int GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) override;
@@ -61,9 +61,9 @@ class CPDF_CIDFont final : public CPDF_Font {
   uint32_t GetNextChar(ByteStringView pString, size_t* pOffset) const override;
   size_t CountChar(ByteStringView pString) const override;
   void AppendChar(ByteString* str, uint32_t charcode) const override;
-  bool IsVertWriting() const override;
-  bool IsUnicodeCompatible() const override;
-  bool Load() override;
+  [[nodiscard]] bool IsVertWriting() const override;
+  [[nodiscard]] bool IsUnicodeCompatible() const override;
+  [[nodiscard]] bool Load() override;
   WideString UnicodeFromCharCode(uint32_t charcode) const override;
   uint32_t CharCodeFromUnicode(wchar_t Unicode) const override;
 

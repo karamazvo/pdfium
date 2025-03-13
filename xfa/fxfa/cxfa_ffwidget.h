@@ -80,7 +80,7 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
     virtual CXFA_FFWidget* MoveToNext() = 0;
     virtual CXFA_FFWidget* MoveToPrevious() = 0;
     virtual CXFA_FFWidget* GetCurrentWidget() = 0;
-    virtual bool SetCurrentWidget(CXFA_FFWidget* hWidget) = 0;
+    [[nodiscard]] virtual bool SetCurrentWidget(CXFA_FFWidget* hWidget) = 0;
   };
 
   static CXFA_FFWidget* FromLayoutItem(CXFA_LayoutItem* pLayoutItem);
@@ -100,58 +100,70 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
   virtual void RenderWidget(CFGAS_GEGraphics* pGS,
                             const CFX_Matrix& matrix,
                             HighlightOption highlight);
-  virtual bool IsLoaded();
-  virtual bool LoadWidget();
-  virtual bool PerformLayout();
-  virtual bool UpdateFWLData();
+  [[nodiscard]] virtual bool IsLoaded();
+  [[nodiscard]] virtual bool LoadWidget();
+  [[nodiscard]] virtual bool PerformLayout();
+  [[nodiscard]] virtual bool UpdateFWLData();
   virtual void UpdateWidgetProperty();
   // |command| must be LeftButtonDown or RightButtonDown.
-  virtual bool AcceptsFocusOnButtonDown(
+  [[nodiscard]] virtual bool AcceptsFocusOnButtonDown(
       Mask<XFA_FWL_KeyFlag> dwFlags,
       const CFX_PointF& point,
       CFWL_MessageMouse::MouseCommand command);
 
   // Caution: Returning false from an On* method may mean |this| is destroyed.
-  [[nodiscard]] virtual bool OnMouseEnter();
-  [[nodiscard]] virtual bool OnMouseExit();
-  [[nodiscard]] virtual bool OnLButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
-                                           const CFX_PointF& point);
-  [[nodiscard]] virtual bool OnLButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
-                                         const CFX_PointF& point);
-  [[nodiscard]] virtual bool OnLButtonDblClk(Mask<XFA_FWL_KeyFlag> dwFlags,
-                                             const CFX_PointF& point);
-  [[nodiscard]] virtual bool OnMouseMove(Mask<XFA_FWL_KeyFlag> dwFlags,
-                                         const CFX_PointF& point);
-  [[nodiscard]] virtual bool OnMouseWheel(Mask<XFA_FWL_KeyFlag> dwFlags,
-                                          const CFX_PointF& point,
-                                          const CFX_Vector& delta);
-  [[nodiscard]] virtual bool OnRButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
-                                           const CFX_PointF& point);
-  [[nodiscard]] virtual bool OnRButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
-                                         const CFX_PointF& point);
-  [[nodiscard]] virtual bool OnRButtonDblClk(Mask<XFA_FWL_KeyFlag> dwFlags,
-                                             const CFX_PointF& point);
-  [[nodiscard]] virtual bool OnSetFocus(CXFA_FFWidget* pOldWidget);
-  [[nodiscard]] virtual bool OnKillFocus(CXFA_FFWidget* pNewWidget);
-  [[nodiscard]] virtual bool OnKeyDown(XFA_FWL_VKEYCODE dwKeyCode,
-                                       Mask<XFA_FWL_KeyFlag> dwFlags);
-  [[nodiscard]] virtual bool OnChar(uint32_t dwChar,
-                                    Mask<XFA_FWL_KeyFlag> dwFlags);
+  [[nodiscard]] [[nodiscard]] virtual bool OnMouseEnter();
+  [[nodiscard]] [[nodiscard]] virtual bool OnMouseExit();
+  [[nodiscard]] [[nodiscard]] virtual bool OnLButtonDown(
+      Mask<XFA_FWL_KeyFlag> dwFlags,
+      const CFX_PointF& point);
+  [[nodiscard]] [[nodiscard]] virtual bool OnLButtonUp(
+      Mask<XFA_FWL_KeyFlag> dwFlags,
+      const CFX_PointF& point);
+  [[nodiscard]] [[nodiscard]] virtual bool OnLButtonDblClk(
+      Mask<XFA_FWL_KeyFlag> dwFlags,
+      const CFX_PointF& point);
+  [[nodiscard]] [[nodiscard]] virtual bool OnMouseMove(
+      Mask<XFA_FWL_KeyFlag> dwFlags,
+      const CFX_PointF& point);
+  [[nodiscard]] [[nodiscard]] virtual bool OnMouseWheel(
+      Mask<XFA_FWL_KeyFlag> dwFlags,
+      const CFX_PointF& point,
+      const CFX_Vector& delta);
+  [[nodiscard]] [[nodiscard]] virtual bool OnRButtonDown(
+      Mask<XFA_FWL_KeyFlag> dwFlags,
+      const CFX_PointF& point);
+  [[nodiscard]] [[nodiscard]] virtual bool OnRButtonUp(
+      Mask<XFA_FWL_KeyFlag> dwFlags,
+      const CFX_PointF& point);
+  [[nodiscard]] [[nodiscard]] virtual bool OnRButtonDblClk(
+      Mask<XFA_FWL_KeyFlag> dwFlags,
+      const CFX_PointF& point);
+  [[nodiscard]] [[nodiscard]] virtual bool OnSetFocus(
+      CXFA_FFWidget* pOldWidget);
+  [[nodiscard]] [[nodiscard]] virtual bool OnKillFocus(
+      CXFA_FFWidget* pNewWidget);
+  [[nodiscard]] [[nodiscard]] virtual bool OnKeyDown(
+      XFA_FWL_VKEYCODE dwKeyCode,
+      Mask<XFA_FWL_KeyFlag> dwFlags);
+  [[nodiscard]] [[nodiscard]] virtual bool OnChar(
+      uint32_t dwChar,
+      Mask<XFA_FWL_KeyFlag> dwFlags);
 
   virtual pdfium::FWL_WidgetHit HitTest(const CFX_PointF& point);
-  virtual bool CanUndo();
-  virtual bool CanRedo();
-  virtual bool CanCopy();
-  virtual bool CanCut();
-  virtual bool CanPaste();
-  virtual bool CanSelectAll();
-  virtual bool CanDelete();
-  virtual bool CanDeSelect();
-  virtual bool Undo();
-  virtual bool Redo();
+  [[nodiscard]] virtual bool CanUndo();
+  [[nodiscard]] virtual bool CanRedo();
+  [[nodiscard]] virtual bool CanCopy();
+  [[nodiscard]] virtual bool CanCut();
+  [[nodiscard]] virtual bool CanPaste();
+  [[nodiscard]] virtual bool CanSelectAll();
+  [[nodiscard]] virtual bool CanDelete();
+  [[nodiscard]] virtual bool CanDeSelect();
+  [[nodiscard]] virtual bool Undo();
+  [[nodiscard]] virtual bool Redo();
   virtual std::optional<WideString> Copy();
   virtual std::optional<WideString> Cut();
-  virtual bool Paste(const WideString& wsPaste);
+  [[nodiscard]] virtual bool Paste(const WideString& wsPaste);
   virtual void SelectAll();
   virtual void Delete();
   virtual void DeSelect();
@@ -177,21 +189,21 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
   CXFA_FFApp::CallbackIface* GetAppProvider();
   CFWL_App* GetFWLApp() const;
   void InvalidateRect();
-  bool IsFocused() const {
+  [[nodiscard]] bool IsFocused() const {
     return GetLayoutItem()->TestStatusBits(XFA_WidgetStatus::kFocused);
   }
   CFX_PointF Rotate2Normal(const CFX_PointF& point);
-  bool IsLayoutRectEmpty();
+  [[nodiscard]] bool IsLayoutRectEmpty();
   CXFA_LayoutItem* GetParent();
-  bool IsAncestorOf(CXFA_FFWidget* pWidget);
-  bool HasEventUnderHandler(XFA_EVENTTYPE eEventType,
-                            CXFA_FFWidgetHandler* pHandler);
-  bool ProcessEventUnderHandler(CXFA_EventParam* params,
-                                CXFA_FFWidgetHandler* pHandler);
+  [[nodiscard]] bool IsAncestorOf(CXFA_FFWidget* pWidget);
+  [[nodiscard]] bool HasEventUnderHandler(XFA_EVENTTYPE eEventType,
+                                          CXFA_FFWidgetHandler* pHandler);
+  [[nodiscard]] bool ProcessEventUnderHandler(CXFA_EventParam* params,
+                                              CXFA_FFWidgetHandler* pHandler);
 
  protected:
   explicit CXFA_FFWidget(CXFA_Node* pNode);
-  virtual bool PtInActiveRect(const CFX_PointF& point);
+  [[nodiscard]] virtual bool PtInActiveRect(const CFX_PointF& point);
 
   void DrawBorder(CFGAS_GEGraphics* pGS,
                   CXFA_Box* box,
@@ -204,9 +216,9 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
                           bool forceRound);
 
   CFX_RectF GetRectWithoutRotate();
-  bool HasVisibleStatus() const;
+  [[nodiscard]] bool HasVisibleStatus() const;
   void EventKillFocus();
-  bool IsButtonDown();
+  [[nodiscard]] bool IsButtonDown();
   void SetButtonDown(bool bSet);
 
   cppgc::Member<CXFA_ContentLayoutItem> m_pLayoutItem;

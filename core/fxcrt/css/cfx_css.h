@@ -114,7 +114,7 @@ class CFX_CSSLength {
   CFX_CSSLengthUnit GetUnit() const { return m_unit; }
 
   float GetValue() const { return m_fValue; }
-  bool NonZero() const { return static_cast<int>(m_fValue) != 0; }
+  [[nodiscard]] bool NonZero() const { return static_cast<int>(m_fValue) != 0; }
 
  private:
   CFX_CSSLengthUnit m_unit;

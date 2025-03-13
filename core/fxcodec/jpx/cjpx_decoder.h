@@ -54,7 +54,7 @@ class CJPX_Decoder {
   ~CJPX_Decoder();
 
   JpxImageInfo GetInfo() const;
-  bool StartDecode();
+  [[nodiscard]] bool StartDecode();
 
   // `swap_rgb` can only be set when an image's color space type contains at
   // least 3 color components. Note that this `component_count` is not
@@ -67,10 +67,10 @@ class CJPX_Decoder {
   // component count for this color space is 3, and the channel count of its
   // JpxImageInfo can be 4. This is because the extra channel might contain
   // extra information, such as the transparency level of the image.
-  bool Decode(pdfium::span<uint8_t> dest_buf,
-              uint32_t pitch,
-              bool swap_rgb,
-              uint32_t component_count);
+  [[nodiscard]] bool Decode(pdfium::span<uint8_t> dest_buf,
+                            uint32_t pitch,
+                            bool swap_rgb,
+                            uint32_t component_count);
 
  private:
   struct CodecDeleter {
@@ -90,9 +90,9 @@ class CJPX_Decoder {
 
   // TODO(crbug.com/42270564): Remove `strict_mode` once all the bugs have been
   // worked out in OpenJPEG.
-  bool Init(pdfium::span<const uint8_t> src_data,
-            uint8_t resolution_levels_to_skip,
-            bool strict_mode);
+  [[nodiscard]] bool Init(pdfium::span<const uint8_t> src_data,
+                          uint8_t resolution_levels_to_skip,
+                          bool strict_mode);
 
   const ColorSpaceOption m_ColorSpaceOption;
   pdfium::raw_span<const uint8_t> m_SrcData;

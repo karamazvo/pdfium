@@ -21,9 +21,9 @@ class CBC_Code128 final : public CBC_OneCode {
 
   // CBC_OneCode:
   BC_TYPE GetType() override;
-  bool Encode(WideStringView contents) override;
-  bool RenderDevice(CFX_RenderDevice* device,
-                    const CFX_Matrix& matrix) override;
+  [[nodiscard]] bool Encode(WideStringView contents) override;
+  [[nodiscard]] bool RenderDevice(CFX_RenderDevice* device,
+                                  const CFX_Matrix& matrix) override;
 
  private:
   CBC_OnedCode128Writer* GetOnedCode128Writer();

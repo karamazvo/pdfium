@@ -104,7 +104,7 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
   void Trace(cppgc::Visitor* visitor) const override;
 
   virtual FWL_Type GetClassID() const = 0;
-  virtual bool IsForm() const;
+  [[nodiscard]] virtual bool IsForm() const;
   virtual CFX_RectF GetAutosizedWidgetRect();
   virtual CFX_RectF GetWidgetRect();
   virtual CFX_RectF GetClientRect();
@@ -124,10 +124,10 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
   void InflateWidgetRect(CFX_RectF& rect);
   void SetWidgetRect(const CFX_RectF& rect);
 
-  bool IsVisible() const;
-  bool IsOverLapper() const;
-  bool IsPopup() const;
-  bool IsChild() const;
+  [[nodiscard]] bool IsVisible() const;
+  [[nodiscard]] bool IsOverLapper() const;
+  [[nodiscard]] bool IsPopup() const;
+  [[nodiscard]] bool IsChild() const;
 
   CFWL_WidgetMgr* GetWidgetMgr() const { return m_pWidgetMgr; }
   CFWL_Widget* GetOuter() const { return m_pOuter; }
@@ -159,9 +159,9 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
  protected:
   CFWL_Widget(CFWL_App* app, const Properties& properties, CFWL_Widget* pOuter);
 
-  bool IsEnabled() const;
-  bool IsLocked() const { return m_iLock > 0; }
-  bool HasBorder() const;
+  [[nodiscard]] bool IsEnabled() const;
+  [[nodiscard]] bool IsLocked() const { return m_iLock > 0; }
+  [[nodiscard]] bool HasBorder() const;
   CFX_RectF GetEdgeRect() const;
   float GetCXBorderSize() const;
   float GetCYBorderSize() const;
@@ -194,7 +194,7 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
                       CFWL_ThemePart::Part iPartBk,
                       const CFX_Matrix& mtMatrix);
   void NotifyDriver();
-  bool IsParent(CFWL_Widget* pParent);
+  [[nodiscard]] bool IsParent(CFWL_Widget* pParent);
 
   int32_t m_iLock = 0;
   uint64_t m_nEventKey = 0;

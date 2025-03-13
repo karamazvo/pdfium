@@ -23,8 +23,9 @@ class CXFA_AttachNodeList final : public CXFA_TreeList {
 
   // CXFA_TreeList:
   size_t GetLength() override;
-  bool Append(CXFA_Node* pNode) override;
-  bool Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) override;
+  [[nodiscard]] bool Append(CXFA_Node* pNode) override;
+  [[nodiscard]] bool Insert(CXFA_Node* pNewNode,
+                            CXFA_Node* pBeforeNode) override;
   void Remove(CXFA_Node* pNode) override;
   CXFA_Node* Item(size_t iIndex) override;
 

@@ -37,7 +37,7 @@ class StringTemplate {
   using const_iterator = T*;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
-  bool IsEmpty() const { return !GetLength(); }
+  [[nodiscard]] bool IsEmpty() const { return !GetLength(); }
   size_t GetLength() const { return m_pData ? m_pData->m_nDataLength : 0; }
 
   // Return length as determined by the position of the first NUL.
@@ -112,8 +112,12 @@ class StringTemplate {
     return const_reverse_iterator(begin());
   }
 
-  bool IsValidIndex(size_t index) const { return index < GetLength(); }
-  bool IsValidLength(size_t length) const { return length <= GetLength(); }
+  [[nodiscard]] bool IsValidIndex(size_t index) const {
+    return index < GetLength();
+  }
+  [[nodiscard]] bool IsValidLength(size_t length) const {
+    return length <= GetLength();
+  }
 
   // CHECK() if index is out of range (via span's operator[]).
   CharType operator[](const size_t index) const {
@@ -160,10 +164,10 @@ class StringTemplate {
   std::optional<size_t> Find(T ch, size_t start = 0) const;
   std::optional<size_t> ReverseFind(T ch) const;
 
-  bool Contains(StringView str, size_t start = 0) const {
+  [[nodiscard]] bool Contains(StringView str, size_t start = 0) const {
     return Find(str, start).has_value();
   }
-  bool Contains(T ch, size_t start = 0) const {
+  [[nodiscard]] bool Contains(T ch, size_t start = 0) const {
     return Find(ch, start).has_value();
   }
 

@@ -53,7 +53,7 @@ class CPDF_StreamParser {
   void GetNextWord(bool& bIsNumber);
   ByteString ReadString();
   DataVector<uint8_t> ReadHexString();
-  bool PositionIsInBounds() const;
+  [[nodiscard]] bool PositionIsInBounds() const;
 
   uint32_t m_Pos = 0;       // Current byte position within |m_pBuf|.
   uint32_t m_WordSize = 0;  // Current byte position within |m_WordBuffer|.

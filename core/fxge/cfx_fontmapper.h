@@ -53,9 +53,9 @@ class CFX_FontMapper {
   ~CFX_FontMapper();
 
   static std::optional<StandardFont> GetStandardFontName(ByteString* name);
-  static bool IsStandardFontName(const ByteString& name);
-  static bool IsSymbolicFont(StandardFont font);
-  static bool IsFixedFont(StandardFont font);
+  [[nodiscard]] static bool IsStandardFontName(const ByteString& name);
+  [[nodiscard]] static bool IsSymbolicFont(StandardFont font);
+  [[nodiscard]] static bool IsFixedFont(StandardFont font);
   static constexpr uint32_t MakeTag(char c1, char c2, char c3, char c4) {
     return static_cast<uint8_t>(c1) << 24 | static_cast<uint8_t>(c2) << 16 |
            static_cast<uint8_t>(c3) << 8 | static_cast<uint8_t>(c4);
@@ -77,8 +77,8 @@ class CFX_FontMapper {
   size_t GetFaceSize() const;
   // `index` must be less than GetFaceSize().
   ByteString GetFaceName(size_t index) const;
-  bool HasInstalledFont(ByteStringView name) const;
-  bool HasLocalizedFont(ByteStringView name) const;
+  [[nodiscard]] bool HasInstalledFont(ByteStringView name) const;
+  [[nodiscard]] bool HasLocalizedFont(ByteStringView name) const;
 
 #if BUILDFLAG(IS_WIN)
   std::optional<ByteString> InstalledFontNameStartingWith(

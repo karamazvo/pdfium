@@ -44,11 +44,11 @@ class CPDF_PageObject {
 
   virtual Type GetType() const = 0;
   virtual void Transform(const CFX_Matrix& matrix) = 0;
-  virtual bool IsText() const;
-  virtual bool IsPath() const;
-  virtual bool IsImage() const;
-  virtual bool IsShading() const;
-  virtual bool IsForm() const;
+  [[nodiscard]] virtual bool IsText() const;
+  [[nodiscard]] virtual bool IsPath() const;
+  [[nodiscard]] virtual bool IsImage() const;
+  [[nodiscard]] virtual bool IsShading() const;
+  [[nodiscard]] virtual bool IsForm() const;
   virtual CPDF_TextObject* AsText();
   virtual const CPDF_TextObject* AsText() const;
   virtual CPDF_PathObject* AsPath();
@@ -61,9 +61,9 @@ class CPDF_PageObject {
   virtual const CPDF_FormObject* AsForm() const;
 
   void SetDirty(bool value) { m_bDirty = value; }
-  bool IsDirty() const { return m_bDirty; }
+  [[nodiscard]] bool IsDirty() const { return m_bDirty; }
   void SetIsActive(bool value);
-  bool IsActive() const { return m_bIsActive; }
+  [[nodiscard]] bool IsActive() const { return m_bIsActive; }
   void TransformClipPath(const CFX_Matrix& matrix);
 
   void SetOriginalRect(const CFX_FloatRect& rect) { m_OriginalRect = rect; }

@@ -219,8 +219,9 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
   static void notequality_operator(
       CFXJSE_HostObject* pThis,
       const v8::FunctionCallbackInfo<v8::Value>& info);
-  static bool fm_ref_equal(CFXJSE_HostObject* pThis,
-                           const v8::FunctionCallbackInfo<v8::Value>& info);
+  [[nodiscard]] static bool fm_ref_equal(
+      CFXJSE_HostObject* pThis,
+      const v8::FunctionCallbackInfo<v8::Value>& info);
   static void less_operator(CFXJSE_HostObject* pThis,
                             const v8::FunctionCallbackInfo<v8::Value>& info);
   static void lessequal_operator(
@@ -289,28 +290,29 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
                                 const v8::FunctionCallbackInfo<v8::Value>& info,
                                 bool bDotAccessor);
 
-  static bool IsIsoDateTimeFormat(ByteStringView bsData,
-                                  int32_t* pYear,
-                                  int32_t* pMonth,
-                                  int32_t* pDay);
+  [[nodiscard]] static bool IsIsoDateTimeFormat(ByteStringView bsData,
+                                                int32_t* pYear,
+                                                int32_t* pMonth,
+                                                int32_t* pDay);
 
-  static bool IsIsoDateFormat(ByteStringView bsData,
-                              int32_t* pYear,
-                              int32_t* pMonth,
-                              int32_t* pDay);
+  [[nodiscard]] static bool IsIsoDateFormat(ByteStringView bsData,
+                                            int32_t* pYear,
+                                            int32_t* pMonth,
+                                            int32_t* pDay);
 
-  static bool IsIsoTimeFormat(ByteStringView bsData);
+  [[nodiscard]] static bool IsIsoTimeFormat(ByteStringView bsData);
 
   static int32_t DateString2Num(ByteStringView bsDate);
 
-  bool ApplyToExpansion(
+  [[nodiscard]] bool ApplyToExpansion(
       std::function<void(v8::Isolate*, v8::Local<v8::Value>)> fn,
       const v8::FunctionCallbackInfo<v8::Value>& info,
       bool bStrict);
 
-  bool ApplyToArray(v8::Isolate* pIsolate,
-                    std::function<void(v8::Isolate*, v8::Local<v8::Value>)> fn,
-                    v8::Local<v8::Array> pArray);
+  [[nodiscard]] bool ApplyToArray(
+      v8::Isolate* pIsolate,
+      std::function<void(v8::Isolate*, v8::Local<v8::Value>)> fn,
+      v8::Local<v8::Array> pArray);
 
   void ApplyToObject(v8::Isolate* pIsolate,
                      std::function<void(v8::Isolate*, v8::Local<v8::Value>)> fn,

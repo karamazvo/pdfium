@@ -70,18 +70,20 @@ std::vector<float> ReadArrayElementsToVector(const CPDF_Array* pArray,
 
 // Returns true if |dict| is non-null and has a /Type name entry that matches
 // |type|.
-bool ValidateDictType(const CPDF_Dictionary* dict, ByteStringView type);
+[[nodiscard]] bool ValidateDictType(const CPDF_Dictionary* dict,
+                                    ByteStringView type);
 
 // Returns true if |dict| is non-null and all entries in |dict| are dictionaries
 // of |type|.
-bool ValidateDictAllResourcesOfType(const CPDF_Dictionary* dict,
-                                    ByteStringView type);
+[[nodiscard]] bool ValidateDictAllResourcesOfType(const CPDF_Dictionary* dict,
+                                                  ByteStringView type);
 
 // Shorthand for ValidateDictAllResourcesOfType(dict, "Font").
-bool ValidateFontResourceDict(const CPDF_Dictionary* dict);
+[[nodiscard]] bool ValidateFontResourceDict(const CPDF_Dictionary* dict);
 
 // Like ValidateDictType(), but /Type can also not exist.
-bool ValidateDictOptionalType(const CPDF_Dictionary* dict, ByteStringView type);
+[[nodiscard]] bool ValidateDictOptionalType(const CPDF_Dictionary* dict,
+                                            ByteStringView type);
 
 std::ostream& operator<<(std::ostream& buf, const CPDF_Object* pObj);
 

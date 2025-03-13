@@ -16,8 +16,9 @@ class CBC_X12Encoder final : public CBC_C40Encoder {
 
   // CBC_C40Encoder
   CBC_HighLevelEncoder::Encoding GetEncodingMode() override;
-  bool Encode(CBC_EncoderContext* context) override;
-  bool HandleEOD(CBC_EncoderContext* context, WideString* buffer) override;
+  [[nodiscard]] bool Encode(CBC_EncoderContext* context) override;
+  [[nodiscard]] bool HandleEOD(CBC_EncoderContext* context,
+                               WideString* buffer) override;
   int32_t EncodeChar(wchar_t c, WideString* sb) override;
 };
 

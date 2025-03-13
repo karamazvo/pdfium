@@ -127,13 +127,13 @@ pdfium::span<const char> FXSYS_ToUTF16BE(uint32_t unicode,
 // Strict order over floating types where NaNs may be present.
 // All NaNs are treated as equal to each other and greater than infinity.
 template <typename T>
-bool FXSYS_SafeEQ(const T& lhs, const T& rhs) {
+[[nodiscard]] bool FXSYS_SafeEQ(const T& lhs, const T& rhs) {
   return (isnan(lhs) && isnan(rhs)) ||
          (!isnan(lhs) && !isnan(rhs) && lhs == rhs);
 }
 
 template <typename T>
-bool FXSYS_SafeLT(const T& lhs, const T& rhs) {
+[[nodiscard]] bool FXSYS_SafeLT(const T& lhs, const T& rhs) {
   if (isnan(lhs) && isnan(rhs))
     return false;
   if (isnan(lhs) || isnan(rhs))

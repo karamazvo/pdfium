@@ -10,7 +10,7 @@
 class PauseIndicatorIface {
  public:
   virtual ~PauseIndicatorIface() = default;
-  virtual bool NeedToPauseNow() = 0;
+  [[nodiscard]] virtual bool NeedToPauseNow() = 0;
 };
 
 #endif  // CORE_FXCRT_PAUSEINDICATOR_IFACE_H_

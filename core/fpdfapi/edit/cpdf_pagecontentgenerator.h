@@ -33,7 +33,7 @@ class CPDF_PageContentGenerator {
   ~CPDF_PageContentGenerator();
 
   void GenerateContent();
-  bool ProcessPageObjects(fxcrt::ostringstream* buf);
+  [[nodiscard]] bool ProcessPageObjects(fxcrt::ostringstream* buf);
 
  private:
   friend class CPDFPageContentGeneratorTest;

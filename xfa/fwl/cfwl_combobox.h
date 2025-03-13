@@ -63,20 +63,24 @@ class CFWL_ComboBox final : public CFWL_Widget {
   void SetEditText(const WideString& wsText);
   WideString GetEditText() const;
 
-  bool EditCanUndo() const { return m_pEdit->CanUndo(); }
-  bool EditCanRedo() const { return m_pEdit->CanRedo(); }
-  bool EditUndo() { return m_pEdit->Undo(); }
-  bool EditRedo() { return m_pEdit->Redo(); }
-  bool EditCanCopy() const { return m_pEdit->HasSelection(); }
-  bool EditCanCut() const {
+  [[nodiscard]] bool EditCanUndo() const { return m_pEdit->CanUndo(); }
+  [[nodiscard]] bool EditCanRedo() const { return m_pEdit->CanRedo(); }
+  [[nodiscard]] bool EditUndo() { return m_pEdit->Undo(); }
+  [[nodiscard]] bool EditRedo() { return m_pEdit->Redo(); }
+  [[nodiscard]] bool EditCanCopy() const { return m_pEdit->HasSelection(); }
+  [[nodiscard]] bool EditCanCut() const {
     if (m_pEdit->GetStyleExts() & FWL_STYLEEXT_EDT_ReadOnly)
       return false;
     return EditCanCopy();
   }
-  bool EditCanSelectAll() const { return m_pEdit->GetTextLength() > 0; }
+  [[nodiscard]] bool EditCanSelectAll() const {
+    return m_pEdit->GetTextLength() > 0;
+  }
   std::optional<WideString> EditCopy() const { return m_pEdit->Copy(); }
   std::optional<WideString> EditCut() { return m_pEdit->Cut(); }
-  bool EditPaste(const WideString& wsPaste) { return m_pEdit->Paste(wsPaste); }
+  [[nodiscard]] bool EditPaste(const WideString& wsPaste) {
+    return m_pEdit->Paste(wsPaste);
+  }
   void EditSelectAll() { m_pEdit->SelectAll(); }
   void EditDelete() { m_pEdit->ClearText(); }
   void EditDeSelect() { m_pEdit->ClearSelection(); }
@@ -95,7 +99,7 @@ class CFWL_ComboBox final : public CFWL_Widget {
  private:
   explicit CFWL_ComboBox(CFWL_App* pApp);
 
-  bool IsDropDownStyle() const {
+  [[nodiscard]] bool IsDropDownStyle() const {
     return !!(GetStyleExts() & FWL_STYLEEXT_CMB_DropDown);
   }
   void MatchEditText();
@@ -108,7 +112,9 @@ class CFWL_ComboBox final : public CFWL_Widget {
                    const CFX_RectF& rtAnchor,
                    CFX_RectF* pPopupRect);
   void OnLButtonUp(CFWL_MessageMouse* pMsg);
-  bool IsDropListVisible() const { return m_pListBox->IsVisible(); }
+  [[nodiscard]] bool IsDropListVisible() const {
+    return m_pListBox->IsVisible();
+  }
   void OnLButtonDown(CFWL_MessageMouse* pMsg);
   void OnFocusGained();
   void OnFocusLost();

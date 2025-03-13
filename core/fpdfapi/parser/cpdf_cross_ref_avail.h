@@ -32,12 +32,12 @@ class CPDF_CrossRefAvail {
     kDone,
   };
 
-  bool CheckReadProblems();
-  bool CheckCrossRef();
-  bool CheckCrossRefTable();
-  bool CheckCrossRefTableItem();
-  bool CheckCrossRefTableTrailer();
-  bool CheckCrossRefStream();
+  [[nodiscard]] bool CheckReadProblems();
+  [[nodiscard]] bool CheckCrossRef();
+  [[nodiscard]] bool CheckCrossRefTable();
+  [[nodiscard]] bool CheckCrossRefTableItem();
+  [[nodiscard]] bool CheckCrossRefTableTrailer();
+  [[nodiscard]] bool CheckCrossRefStream();
 
   void AddCrossRefForCheck(FX_FILESIZE crossref_offset);
 

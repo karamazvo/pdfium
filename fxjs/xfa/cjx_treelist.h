@@ -18,7 +18,7 @@ class CJX_TreeList final : public CJX_List {
   ~CJX_TreeList() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   JSE_METHOD(namedItem);
 

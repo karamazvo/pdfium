@@ -27,12 +27,13 @@ class CPDFXFA_DocEnvironment final : public CXFA_FFDoc::CallbackIface {
   void DisplayCaret(CXFA_FFWidget* hWidget,
                     bool bVisible,
                     const CFX_RectF* pRtAnchor) override;
-  bool GetPopupPos(CXFA_FFWidget* hWidget,
-                   float fMinPopup,
-                   float fMaxPopup,
-                   const CFX_RectF& rtAnchor,
-                   CFX_RectF* pPopupRect) override;
-  bool PopupMenu(CXFA_FFWidget* hWidget, const CFX_PointF& ptPopup) override;
+  [[nodiscard]] bool GetPopupPos(CXFA_FFWidget* hWidget,
+                                 float fMinPopup,
+                                 float fMaxPopup,
+                                 const CFX_RectF& rtAnchor,
+                                 CFX_RectF* pPopupRect) override;
+  [[nodiscard]] bool PopupMenu(CXFA_FFWidget* hWidget,
+                               const CFX_PointF& ptPopup) override;
   void OnPageViewEvent(CXFA_FFPageView* pPageView,
                        CXFA_FFDoc::PageViewEvent eEvent) override;
   void WidgetPostAdd(CXFA_FFWidget* hWidget) override;
@@ -40,7 +41,8 @@ class CPDFXFA_DocEnvironment final : public CXFA_FFDoc::CallbackIface {
   int32_t CountPages(const CXFA_FFDoc* hDoc) const override;
   int32_t GetCurrentPage(const CXFA_FFDoc* hDoc) const override;
   void SetCurrentPage(CXFA_FFDoc* hDoc, int32_t iCurPage) override;
-  bool IsCalculationsEnabled(const CXFA_FFDoc* hDoc) const override;
+  [[nodiscard]] bool IsCalculationsEnabled(
+      const CXFA_FFDoc* hDoc) const override;
   void SetCalculationsEnabled(CXFA_FFDoc* hDoc, bool bEnabled) override;
   WideString GetTitle(const CXFA_FFDoc* hDoc) const override;
   void SetTitle(CXFA_FFDoc* hDoc, const WideString& wsTitle) override;
@@ -48,7 +50,8 @@ class CPDFXFA_DocEnvironment final : public CXFA_FFDoc::CallbackIface {
                   const WideString& wsFilePath,
                   bool bXDP) override;
   void GotoURL(CXFA_FFDoc* hDoc, const WideString& bsURL) override;
-  bool IsValidationsEnabled(const CXFA_FFDoc* hDoc) const override;
+  [[nodiscard]] bool IsValidationsEnabled(
+      const CXFA_FFDoc* hDoc) const override;
   void SetValidationsEnabled(CXFA_FFDoc* hDoc, bool bEnabled) override;
   void SetFocusWidget(CXFA_FFDoc* hDoc, CXFA_FFWidget* hWidget) override;
   void Print(CXFA_FFDoc* hDoc,
@@ -63,25 +66,25 @@ class CPDFXFA_DocEnvironment final : public CXFA_FFDoc::CallbackIface {
       const WideString& wsLink) override;
 
 #ifdef PDF_XFA_ELEMENT_SUBMIT_ENABLED
-  bool Submit(CXFA_FFDoc* hDoc, CXFA_Submit* submit) override;
+  [[nodiscard]] bool Submit(CXFA_FFDoc* hDoc, CXFA_Submit* submit) override;
 #endif  // PDF_XFA_ELEMENT_SUBMIT_ENABLED
 
  private:
 #ifdef PDF_XFA_ELEMENT_SUBMIT_ENABLED
-  bool MailToInfo(WideString& csURL,
-                  WideString& csToAddress,
-                  WideString& csCCAddress,
-                  WideString& csBCCAddress,
-                  WideString& csSubject,
-                  WideString& csMsg);
-  bool ExportSubmitFile(FPDF_FILEHANDLER* ppFileHandler,
-                        int fileType,
-                        FPDF_DWORD encodeType,
-                        FPDF_DWORD flag);
+  [[nodiscard]] bool MailToInfo(WideString& csURL,
+                                WideString& csToAddress,
+                                WideString& csCCAddress,
+                                WideString& csBCCAddress,
+                                WideString& csSubject,
+                                WideString& csMsg);
+  [[nodiscard]] bool ExportSubmitFile(FPDF_FILEHANDLER* ppFileHandler,
+                                      int fileType,
+                                      FPDF_DWORD encodeType,
+                                      FPDF_DWORD flag);
   void ToXFAContentFlags(WideString csSrcContent, FPDF_DWORD& flag);
-  bool OnBeforeNotifySubmit();
+  [[nodiscard]] bool OnBeforeNotifySubmit();
   void OnAfterNotifySubmit();
-  bool SubmitInternal(CXFA_FFDoc* hDoc, CXFA_Submit* submit);
+  [[nodiscard]] bool SubmitInternal(CXFA_FFDoc* hDoc, CXFA_Submit* submit);
 #endif  // PDF_XFA_ELEMENT_SUBMIT_ENABLED
 
   UnownedPtr<CPDFXFA_Context> const m_pContext;

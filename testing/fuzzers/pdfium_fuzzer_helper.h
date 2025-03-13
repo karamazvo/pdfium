@@ -14,7 +14,7 @@ class PDFiumFuzzerHelper {
   void RenderPdf(const char* data, size_t len);
 
   virtual int GetFormCallbackVersion() const = 0;
-  virtual bool OnFormFillEnvLoaded(FPDF_DOCUMENT doc);
+  [[nodiscard]] virtual bool OnFormFillEnvLoaded(FPDF_DOCUMENT doc);
   virtual void OnRenderFinished(FPDF_DOCUMENT doc) {}
   virtual void FormActionHandler(FPDF_FORMHANDLE form,
                                  FPDF_DOCUMENT doc,
@@ -25,11 +25,11 @@ class PDFiumFuzzerHelper {
   virtual ~PDFiumFuzzerHelper();
 
  private:
-  bool RenderPage(FPDF_DOCUMENT doc,
-                  FPDF_FORMHANDLE form,
-                  int page_index,
-                  int render_flags,
-                  int form_flags);
+  [[nodiscard]] bool RenderPage(FPDF_DOCUMENT doc,
+                                FPDF_FORMHANDLE form,
+                                int page_index,
+                                int render_flags,
+                                int form_flags);
 };
 
 #endif  // TESTING_FUZZERS_PDFIUM_FUZZER_HELPER_H_

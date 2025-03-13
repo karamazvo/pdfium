@@ -70,33 +70,33 @@ class CFX_PSRenderer {
                           const CFX_Matrix* pObject2Device,
                           const CFX_GraphStateData* pGraphState);
   FX_RECT GetClipBox() const { return m_ClipBox; }
-  bool DrawPath(const CFX_Path& path,
-                const CFX_Matrix* pObject2Device,
-                const CFX_GraphStateData* pGraphState,
-                uint32_t fill_color,
-                uint32_t stroke_color,
-                const CFX_FillRenderOptions& fill_options);
-  bool SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
-                 uint32_t color,
-                 int dest_left,
-                 int dest_top);
-  bool StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
-                     uint32_t color,
-                     int dest_left,
-                     int dest_top,
-                     int dest_width,
-                     int dest_height,
-                     const FXDIB_ResampleOptions& options);
-  bool DrawDIBits(RetainPtr<const CFX_DIBBase> bitmap,
-                  uint32_t color,
-                  const CFX_Matrix& matrix,
-                  const FXDIB_ResampleOptions& options);
-  bool DrawText(int nChars,
-                const TextCharPos* pCharPos,
-                CFX_Font* pFont,
-                const CFX_Matrix& mtObject2Device,
-                float font_size,
-                uint32_t color);
+  [[nodiscard]] bool DrawPath(const CFX_Path& path,
+                              const CFX_Matrix* pObject2Device,
+                              const CFX_GraphStateData* pGraphState,
+                              uint32_t fill_color,
+                              uint32_t stroke_color,
+                              const CFX_FillRenderOptions& fill_options);
+  [[nodiscard]] bool SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
+                               uint32_t color,
+                               int dest_left,
+                               int dest_top);
+  [[nodiscard]] bool StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
+                                   uint32_t color,
+                                   int dest_left,
+                                   int dest_top,
+                                   int dest_width,
+                                   int dest_height,
+                                   const FXDIB_ResampleOptions& options);
+  [[nodiscard]] bool DrawDIBits(RetainPtr<const CFX_DIBBase> bitmap,
+                                uint32_t color,
+                                const CFX_Matrix& matrix,
+                                const FXDIB_ResampleOptions& options);
+  [[nodiscard]] bool DrawText(int nChars,
+                              const TextCharPos* pCharPos,
+                              CFX_Font* pFont,
+                              const CFX_Matrix& mtObject2Device,
+                              float font_size,
+                              uint32_t color);
 
   static std::optional<ByteString> GenerateType42SfntDataForTesting(
       const ByteString& psname,
@@ -150,11 +150,11 @@ class CFX_PSRenderer {
                            CFX_Font* font,
                            float font_size,
                            fxcrt::ostringstream& buf);
-  bool DrawTextAsType42Font(int char_count,
-                            const TextCharPos* char_pos,
-                            CFX_Font* font,
-                            float font_size,
-                            fxcrt::ostringstream& buf);
+  [[nodiscard]] bool DrawTextAsType42Font(int char_count,
+                                          const TextCharPos* char_pos,
+                                          CFX_Font* font,
+                                          float font_size,
+                                          fxcrt::ostringstream& buf);
   FaxCompressResult FaxCompressData(RetainPtr<const CFX_DIBBase> src) const;
   std::optional<PSCompressResult> PSCompressData(
       pdfium::span<const uint8_t> src_span) const;

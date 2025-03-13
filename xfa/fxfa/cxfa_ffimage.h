@@ -23,8 +23,8 @@ class CXFA_FFImage final : public CXFA_FFWidget {
   void RenderWidget(CFGAS_GEGraphics* pGS,
                     const CFX_Matrix& matrix,
                     HighlightOption highlight) override;
-  bool IsLoaded() override;
-  bool LoadWidget() override;
+  [[nodiscard]] bool IsLoaded() override;
+  [[nodiscard]] bool LoadWidget() override;
 
  private:
   explicit CXFA_FFImage(CXFA_Node* pNode);

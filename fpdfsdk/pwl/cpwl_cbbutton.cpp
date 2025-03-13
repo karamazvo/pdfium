@@ -55,14 +55,14 @@ void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
   path.AppendPoint(pt3, CFX_Path::Point::Type::kLine);
   path.AppendPoint(pt1, CFX_Path::Point::Type::kLine);
 
-  pDevice->DrawPath(path, &mtUser2Device, nullptr,
-                    kDefaultBlackColor.ToFXColor(GetTransparency()), 0,
-                    CFX_FillRenderOptions::EvenOddOptions());
+  (void)pDevice->DrawPath(path, &mtUser2Device, nullptr,
+                          kDefaultBlackColor.ToFXColor(GetTransparency()), 0,
+                          CFX_FillRenderOptions::EvenOddOptions());
 }
 
 bool CPWL_CBButton::OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
                                   const CFX_PointF& point) {
-  CPWL_Wnd::OnLButtonDown(nFlag, point);
+  (void)CPWL_Wnd::OnLButtonDown(nFlag, point);
 
   SetCapture();
   CPWL_Wnd* pParent = GetParentWindow();
@@ -74,7 +74,7 @@ bool CPWL_CBButton::OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
 
 bool CPWL_CBButton::OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag,
                                 const CFX_PointF& point) {
-  CPWL_Wnd::OnLButtonUp(nFlag, point);
+  (void)CPWL_Wnd::OnLButtonUp(nFlag, point);
 
   ReleaseCapture();
   return true;

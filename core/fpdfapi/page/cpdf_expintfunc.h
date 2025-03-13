@@ -20,9 +20,10 @@ class CPDF_ExpIntFunc final : public CPDF_Function {
   ~CPDF_ExpIntFunc() override;
 
   // CPDF_Function:
-  bool v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) override;
-  bool v_Call(pdfium::span<const float> inputs,
-              pdfium::span<float> results) const override;
+  [[nodiscard]] bool v_Init(const CPDF_Object* pObj,
+                            VisitedSet* pVisited) override;
+  [[nodiscard]] bool v_Call(pdfium::span<const float> inputs,
+                            pdfium::span<float> results) const override;
 
   uint32_t GetOrigOutputs() const { return m_nOrigOutputs; }
   float GetExponent() const { return m_Exponent; }

@@ -106,7 +106,7 @@ struct FX_LAB_STRUCT {
 struct FXDIB_ResampleOptions {
   FXDIB_ResampleOptions();
 
-  bool HasAnyOptions() const;
+  [[nodiscard]] bool HasAnyOptions() const;
 
   bool bInterpolateBilinear = false;
   bool bHalftone = false;

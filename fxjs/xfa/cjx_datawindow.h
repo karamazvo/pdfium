@@ -19,7 +19,7 @@ class CJX_DataWindow final : public CJX_Object {
   ~CJX_DataWindow() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   JSE_METHOD(gotoRecord);
   JSE_METHOD(isRecordGroup);

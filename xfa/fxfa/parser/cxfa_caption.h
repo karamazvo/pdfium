@@ -21,8 +21,8 @@ class CXFA_Caption final : public CXFA_Node {
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Caption() override;
 
-  bool IsVisible();
-  bool IsHidden();
+  [[nodiscard]] bool IsVisible();
+  [[nodiscard]] bool IsHidden();
   XFA_AttributeValue GetPlacementType();
   float GetReserve() const;
   CXFA_Margin* GetMarginIfExists();

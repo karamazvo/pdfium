@@ -24,7 +24,8 @@ class CXFA_FMExpression : public cppgc::GarbageCollected<CXFA_FMExpression> {
   virtual ~CXFA_FMExpression();
   virtual void Trace(cppgc::Visitor* visitor) const;
 
-  virtual bool ToJavaScript(WideTextBuffer* js, ReturnType type) const = 0;
+  [[nodiscard]] virtual bool ToJavaScript(WideTextBuffer* js,
+                                          ReturnType type) const = 0;
 
  protected:
   CXFA_FMExpression();
@@ -66,7 +67,8 @@ class CXFA_FMNullExpression final : public CXFA_FMSimpleExpression {
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMNullExpression() override;
 
-  bool ToJavaScript(WideTextBuffer* js, ReturnType type) const override;
+  [[nodiscard]] bool ToJavaScript(WideTextBuffer* js,
+                                  ReturnType type) const override;
 
  private:
   CXFA_FMNullExpression();
@@ -77,7 +79,8 @@ class CXFA_FMNumberExpression final : public CXFA_FMSimpleExpression {
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMNumberExpression() override;
 
-  bool ToJavaScript(WideTextBuffer* js, ReturnType type) const override;
+  [[nodiscard]] bool ToJavaScript(WideTextBuffer* js,
+                                  ReturnType type) const override;
 
  private:
   explicit CXFA_FMNumberExpression(WideString wsNumber);
@@ -90,7 +93,8 @@ class CXFA_FMStringExpression final : public CXFA_FMSimpleExpression {
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMStringExpression() override;
 
-  bool ToJavaScript(WideTextBuffer* js, ReturnType type) const override;
+  [[nodiscard]] bool ToJavaScript(WideTextBuffer* js,
+                                  ReturnType type) const override;
 
  private:
   explicit CXFA_FMStringExpression(WideString wsString);
@@ -103,7 +107,8 @@ class CXFA_FMIdentifierExpression final : public CXFA_FMSimpleExpression {
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMIdentifierExpression() override;
 
-  bool ToJavaScript(WideTextBuffer* js, ReturnType type) const override;
+  [[nodiscard]] bool ToJavaScript(WideTextBuffer* js,
+                                  ReturnType type) const override;
 
  private:
   explicit CXFA_FMIdentifierExpression(WideString wsIdentifier);
@@ -116,7 +121,8 @@ class CXFA_FMAssignExpression final : public CXFA_FMChainableExpression {
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMAssignExpression() override;
 
-  bool ToJavaScript(WideTextBuffer* js, ReturnType type) const override;
+  [[nodiscard]] bool ToJavaScript(WideTextBuffer* js,
+                                  ReturnType type) const override;
 
  private:
   CXFA_FMAssignExpression(XFA_FM_TOKEN op,
@@ -128,7 +134,8 @@ class CXFA_FMBinExpression : public CXFA_FMChainableExpression {
  public:
   ~CXFA_FMBinExpression() override;
 
-  bool ToJavaScript(WideTextBuffer* js, ReturnType type) const override;
+  [[nodiscard]] bool ToJavaScript(WideTextBuffer* js,
+                                  ReturnType type) const override;
 
  protected:
   CXFA_FMBinExpression(const WideString& opName,
@@ -277,7 +284,8 @@ class CXFA_FMUnaryExpression : public CXFA_FMSimpleExpression {
   ~CXFA_FMUnaryExpression() override;
 
   void Trace(cppgc::Visitor* visitor) const override;
-  bool ToJavaScript(WideTextBuffer* js, ReturnType type) const override;
+  [[nodiscard]] bool ToJavaScript(WideTextBuffer* js,
+                                  ReturnType type) const override;
 
  protected:
   CXFA_FMUnaryExpression(const WideString& opName,
@@ -322,9 +330,10 @@ class CXFA_FMCallExpression final : public CXFA_FMSimpleExpression {
   ~CXFA_FMCallExpression() override;
 
   void Trace(cppgc::Visitor* visitor) const override;
-  bool ToJavaScript(WideTextBuffer* js, ReturnType type) const override;
+  [[nodiscard]] bool ToJavaScript(WideTextBuffer* js,
+                                  ReturnType type) const override;
 
-  bool IsBuiltInFunc(WideTextBuffer* funcName) const;
+  [[nodiscard]] bool IsBuiltInFunc(WideTextBuffer* funcName) const;
   uint32_t IsMethodWithObjParam(const WideString& methodName) const;
 
  private:
@@ -343,7 +352,8 @@ class CXFA_FMDotAccessorExpression final : public CXFA_FMChainableExpression {
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMDotAccessorExpression() override;
 
-  bool ToJavaScript(WideTextBuffer* js, ReturnType type) const override;
+  [[nodiscard]] bool ToJavaScript(WideTextBuffer* js,
+                                  ReturnType type) const override;
 
  private:
   CXFA_FMDotAccessorExpression(CXFA_FMSimpleExpression* pAccessor,
@@ -367,7 +377,8 @@ class CXFA_FMIndexExpression final : public CXFA_FMSimpleExpression {
   ~CXFA_FMIndexExpression() override;
 
   void Trace(cppgc::Visitor* visitor) const override;
-  bool ToJavaScript(WideTextBuffer* js, ReturnType type) const override;
+  [[nodiscard]] bool ToJavaScript(WideTextBuffer* js,
+                                  ReturnType type) const override;
 
  private:
   CXFA_FMIndexExpression(AccessorIndex accessorIndex,
@@ -385,7 +396,8 @@ class CXFA_FMDotDotAccessorExpression final
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMDotDotAccessorExpression() override;
 
-  bool ToJavaScript(WideTextBuffer* js, ReturnType type) const override;
+  [[nodiscard]] bool ToJavaScript(WideTextBuffer* js,
+                                  ReturnType type) const override;
 
  private:
   CXFA_FMDotDotAccessorExpression(CXFA_FMSimpleExpression* pAccessor,
@@ -401,7 +413,8 @@ class CXFA_FMMethodCallExpression final : public CXFA_FMChainableExpression {
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMMethodCallExpression() override;
 
-  bool ToJavaScript(WideTextBuffer* js, ReturnType type) const override;
+  [[nodiscard]] bool ToJavaScript(WideTextBuffer* js,
+                                  ReturnType type) const override;
 
  private:
   CXFA_FMMethodCallExpression(CXFA_FMSimpleExpression* pAccessorExp1,
@@ -414,7 +427,8 @@ class CXFA_FMFunctionDefinition final : public CXFA_FMExpression {
   ~CXFA_FMFunctionDefinition() override;
 
   void Trace(cppgc::Visitor* visitor) const override;
-  bool ToJavaScript(WideTextBuffer* js, ReturnType type) const override;
+  [[nodiscard]] bool ToJavaScript(WideTextBuffer* js,
+                                  ReturnType type) const override;
 
  private:
   CXFA_FMFunctionDefinition(
@@ -433,7 +447,8 @@ class CXFA_FMVarExpression final : public CXFA_FMExpression {
   ~CXFA_FMVarExpression() override;
 
   void Trace(cppgc::Visitor* visitor) const override;
-  bool ToJavaScript(WideTextBuffer* js, ReturnType type) const override;
+  [[nodiscard]] bool ToJavaScript(WideTextBuffer* js,
+                                  ReturnType type) const override;
 
  private:
   CXFA_FMVarExpression(WideString wsName, CXFA_FMSimpleExpression* pInit);
@@ -448,7 +463,8 @@ class CXFA_FMExpExpression final : public CXFA_FMExpression {
   ~CXFA_FMExpExpression() override;
 
   void Trace(cppgc::Visitor* visitor) const override;
-  bool ToJavaScript(WideTextBuffer* js, ReturnType type) const override;
+  [[nodiscard]] bool ToJavaScript(WideTextBuffer* js,
+                                  ReturnType type) const override;
 
  private:
   explicit CXFA_FMExpExpression(CXFA_FMSimpleExpression* pExpression);
@@ -462,7 +478,8 @@ class CXFA_FMBlockExpression final : public CXFA_FMExpression {
   ~CXFA_FMBlockExpression() override;
 
   void Trace(cppgc::Visitor* visitor) const override;
-  bool ToJavaScript(WideTextBuffer* js, ReturnType type) const override;
+  [[nodiscard]] bool ToJavaScript(WideTextBuffer* js,
+                                  ReturnType type) const override;
 
  private:
   CXFA_FMBlockExpression(
@@ -477,7 +494,8 @@ class CXFA_FMDoExpression final : public CXFA_FMExpression {
   ~CXFA_FMDoExpression() override;
 
   void Trace(cppgc::Visitor* visitor) const override;
-  bool ToJavaScript(WideTextBuffer* js, ReturnType type) const override;
+  [[nodiscard]] bool ToJavaScript(WideTextBuffer* js,
+                                  ReturnType type) const override;
 
  private:
   explicit CXFA_FMDoExpression(CXFA_FMExpression* pList);
@@ -491,7 +509,8 @@ class CXFA_FMIfExpression final : public CXFA_FMExpression {
   ~CXFA_FMIfExpression() override;
 
   void Trace(cppgc::Visitor* visitor) const override;
-  bool ToJavaScript(WideTextBuffer* js, ReturnType type) const override;
+  [[nodiscard]] bool ToJavaScript(WideTextBuffer* js,
+                                  ReturnType type) const override;
 
  private:
   CXFA_FMIfExpression(
@@ -512,7 +531,8 @@ class CXFA_FMWhileExpression final : public CXFA_FMExpression {
   ~CXFA_FMWhileExpression() override;
 
   void Trace(cppgc::Visitor* visitor) const override;
-  bool ToJavaScript(WideTextBuffer* js, ReturnType type) const override;
+  [[nodiscard]] bool ToJavaScript(WideTextBuffer* js,
+                                  ReturnType type) const override;
 
  private:
   CXFA_FMWhileExpression(CXFA_FMSimpleExpression* pCodition,
@@ -527,7 +547,8 @@ class CXFA_FMBreakExpression final : public CXFA_FMExpression {
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMBreakExpression() override;
 
-  bool ToJavaScript(WideTextBuffer* js, ReturnType type) const override;
+  [[nodiscard]] bool ToJavaScript(WideTextBuffer* js,
+                                  ReturnType type) const override;
 
  private:
   CXFA_FMBreakExpression();
@@ -538,7 +559,8 @@ class CXFA_FMContinueExpression final : public CXFA_FMExpression {
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_FMContinueExpression() override;
 
-  bool ToJavaScript(WideTextBuffer* js, ReturnType type) const override;
+  [[nodiscard]] bool ToJavaScript(WideTextBuffer* js,
+                                  ReturnType type) const override;
 
  private:
   CXFA_FMContinueExpression();
@@ -550,7 +572,8 @@ class CXFA_FMForExpression final : public CXFA_FMExpression {
   ~CXFA_FMForExpression() override;
 
   void Trace(cppgc::Visitor* visitor) const override;
-  bool ToJavaScript(WideTextBuffer* js, ReturnType type) const override;
+  [[nodiscard]] bool ToJavaScript(WideTextBuffer* js,
+                                  ReturnType type) const override;
 
  private:
   CXFA_FMForExpression(WideString wsVariant,
@@ -574,7 +597,8 @@ class CXFA_FMForeachExpression final : public CXFA_FMExpression {
   ~CXFA_FMForeachExpression() override;
 
   void Trace(cppgc::Visitor* visitor) const override;
-  bool ToJavaScript(WideTextBuffer* js, ReturnType type) const override;
+  [[nodiscard]] bool ToJavaScript(WideTextBuffer* js,
+                                  ReturnType type) const override;
 
  private:
   // Takes ownership of |pAccessors|.
@@ -603,6 +627,6 @@ class CXFA_FMAST : public cppgc::GarbageCollected<CXFA_FMAST> {
   std::vector<cppgc::Member<CXFA_FMExpression>> const expressions_;
 };
 
-bool CXFA_IsTooBig(const WideTextBuffer& js);
+[[nodiscard]] bool CXFA_IsTooBig(const WideTextBuffer& js);
 
 #endif  // XFA_FXFA_FORMCALC_CXFA_FMEXPRESSION_H_

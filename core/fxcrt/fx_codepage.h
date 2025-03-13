@@ -114,7 +114,7 @@ FX_CodePage FX_GetACP();
 FX_CodePage FX_GetCodePageFromCharset(FX_Charset charset);
 FX_Charset FX_GetCharsetFromCodePage(FX_CodePage codepage);
 FX_Charset FX_GetCharsetFromInt(int value);
-bool FX_CharSetIsCJK(FX_Charset uCharset);
+[[nodiscard]] bool FX_CharSetIsCJK(FX_Charset uCharset);
 size_t FX_WideCharToMultiByte(FX_CodePage codepage,
                               WideStringView wstr,
                               pdfium::span<char> buf);

@@ -30,7 +30,7 @@ class BinaryBuffer {
 
   pdfium::span<uint8_t> GetMutableSpan();
   pdfium::span<const uint8_t> GetSpan() const;
-  bool IsEmpty() const { return GetLength() == 0; }
+  [[nodiscard]] bool IsEmpty() const { return GetLength() == 0; }
   size_t GetSize() const { return m_DataSize; }  // In bytes.
   virtual size_t GetLength() const;              // In subclass-specific units.
 

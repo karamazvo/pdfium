@@ -22,18 +22,18 @@ class CJBig2_HuffmanTable {
   explicit CJBig2_HuffmanTable(CJBig2_BitStream* pStream);
   ~CJBig2_HuffmanTable();
 
-  bool IsHTOOB() const { return HTOOB; }
+  [[nodiscard]] bool IsHTOOB() const { return HTOOB; }
   uint32_t Size() const { return NTEMP; }
   const std::vector<JBig2HuffmanCode>& GetCODES() const { return CODES; }
   const std::vector<int>& GetRANGELEN() const { return RANGELEN; }
   const std::vector<int>& GetRANGELOW() const { return RANGELOW; }
-  bool IsOK() const { return m_bOK; }
+  [[nodiscard]] bool IsOK() const { return m_bOK; }
 
   static constexpr size_t kNumHuffmanTables = 16;
 
  private:
-  bool ParseFromStandardTable(size_t table_idx);
-  bool ParseFromCodedBuffer(CJBig2_BitStream* pStream);
+  [[nodiscard]] bool ParseFromStandardTable(size_t table_idx);
+  [[nodiscard]] bool ParseFromCodedBuffer(CJBig2_BitStream* pStream);
   void ExtendBuffers(bool increment);
 
   bool m_bOK;

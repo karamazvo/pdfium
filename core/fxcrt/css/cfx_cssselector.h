@@ -18,7 +18,7 @@ class CFX_CSSSelector {
   CFX_CSSSelector(WideStringView str, std::unique_ptr<CFX_CSSSelector> next);
   ~CFX_CSSSelector();
 
-  bool is_descendant() const { return is_descendant_; }
+  [[nodiscard]] bool is_descendant() const { return is_descendant_; }
   uint32_t name_hash() const { return name_hash_; }
   const CFX_CSSSelector* next_selector() const { return next_.get(); }
 

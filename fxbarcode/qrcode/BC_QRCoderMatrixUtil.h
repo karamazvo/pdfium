@@ -18,11 +18,12 @@ class CBC_QRCoderMatrixUtil {
   CBC_QRCoderMatrixUtil() = delete;
   ~CBC_QRCoderMatrixUtil() = delete;
 
-  static bool BuildMatrix(CBC_QRCoderBitVector* dataBits,
-                          const CBC_QRCoderErrorCorrectionLevel* ecLevel,
-                          int32_t version,
-                          int32_t maskPattern,
-                          CBC_CommonByteMatrix* matrix);
+  [[nodiscard]] static bool BuildMatrix(
+      CBC_QRCoderBitVector* dataBits,
+      const CBC_QRCoderErrorCorrectionLevel* ecLevel,
+      int32_t version,
+      int32_t maskPattern,
+      CBC_CommonByteMatrix* matrix);
 };
 
 #endif  // FXBARCODE_QRCODE_BC_QRCODERMATRIXUTIL_H_

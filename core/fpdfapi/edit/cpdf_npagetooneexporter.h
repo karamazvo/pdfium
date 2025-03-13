@@ -56,10 +56,11 @@ class CPDF_NPageToOneExporter final : public CPDF_PageOrganizer {
   // PDF "user space" units.
   // `pages_on_x_axis` and `nPagesOnXAxis` together defines how many source
   // pages fit on one destination page.
-  bool ExportNPagesToOne(pdfium::span<const uint32_t> page_indices,
-                         const CFX_SizeF& dest_page_size,
-                         size_t pages_on_x_axis,
-                         size_t pages_on_y_axis);
+  [[nodiscard]] bool ExportNPagesToOne(
+      pdfium::span<const uint32_t> page_indices,
+      const CFX_SizeF& dest_page_size,
+      size_t pages_on_x_axis,
+      size_t pages_on_y_axis);
 
   std::unique_ptr<XObjectContext> CreateXObjectContextFromPage(
       int src_page_index);

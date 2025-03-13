@@ -22,16 +22,16 @@
 namespace fxv8 {
 
 // These first check for empty locals.
-bool IsUndefined(v8::Local<v8::Value> value);
-bool IsNull(v8::Local<v8::Value> value);
-bool IsBoolean(v8::Local<v8::Value> value);
-bool IsString(v8::Local<v8::Value> value);
-bool IsNumber(v8::Local<v8::Value> value);
-bool IsInteger(v8::Local<v8::Value> value);
-bool IsObject(v8::Local<v8::Value> value);
-bool IsArray(v8::Local<v8::Value> value);
-bool IsDate(v8::Local<v8::Value> value);
-bool IsFunction(v8::Local<v8::Value> value);
+[[nodiscard]] bool IsUndefined(v8::Local<v8::Value> value);
+[[nodiscard]] bool IsNull(v8::Local<v8::Value> value);
+[[nodiscard]] bool IsBoolean(v8::Local<v8::Value> value);
+[[nodiscard]] bool IsString(v8::Local<v8::Value> value);
+[[nodiscard]] bool IsNumber(v8::Local<v8::Value> value);
+[[nodiscard]] bool IsInteger(v8::Local<v8::Value> value);
+[[nodiscard]] bool IsObject(v8::Local<v8::Value> value);
+[[nodiscard]] bool IsArray(v8::Local<v8::Value> value);
+[[nodiscard]] bool IsDate(v8::Local<v8::Value> value);
+[[nodiscard]] bool IsFunction(v8::Local<v8::Value> value);
 
 v8::Local<v8::Value> NewNullHelper(v8::Isolate* pIsolate);
 v8::Local<v8::Value> NewUndefinedHelper(v8::Isolate* pIsolate);
@@ -56,8 +56,8 @@ ByteString ToByteString(v8::Isolate* pIsolate, v8::Local<v8::String> pValue);
 // Conversion to PDFium type with possible re-entry for coercion.
 int32_t ReentrantToInt32Helper(v8::Isolate* pIsolate,
                                v8::Local<v8::Value> pValue);
-bool ReentrantToBooleanHelper(v8::Isolate* pIsolate,
-                              v8::Local<v8::Value> pValue);
+[[nodiscard]] bool ReentrantToBooleanHelper(v8::Isolate* pIsolate,
+                                            v8::Local<v8::Value> pValue);
 float ReentrantToFloatHelper(v8::Isolate* pIsolate,
                              v8::Local<v8::Value> pValue);
 double ReentrantToDoubleHelper(v8::Isolate* pIsolate,
@@ -78,25 +78,28 @@ v8::Local<v8::Value> ReentrantGetObjectPropertyHelper(
 std::vector<WideString> ReentrantGetObjectPropertyNamesHelper(
     v8::Isolate* pIsolate,
     v8::Local<v8::Object> pObj);
-bool ReentrantHasObjectOwnPropertyHelper(v8::Isolate* pIsolate,
-                                         v8::Local<v8::Object> pObj,
-                                         ByteStringView bsUTF8PropertyName);
-bool ReentrantSetObjectOwnPropertyHelper(v8::Isolate* pIsolate,
-                                         v8::Local<v8::Object> pObj,
-                                         ByteStringView bsUTF8PropertyName,
-                                         v8::Local<v8::Value> pValue);
-bool ReentrantPutObjectPropertyHelper(v8::Isolate* pIsolate,
-                                      v8::Local<v8::Object> pObj,
-                                      ByteStringView bsUTF8PropertyName,
-                                      v8::Local<v8::Value> pPut);
+[[nodiscard]] bool ReentrantHasObjectOwnPropertyHelper(
+    v8::Isolate* pIsolate,
+    v8::Local<v8::Object> pObj,
+    ByteStringView bsUTF8PropertyName);
+[[nodiscard]] bool ReentrantSetObjectOwnPropertyHelper(
+    v8::Isolate* pIsolate,
+    v8::Local<v8::Object> pObj,
+    ByteStringView bsUTF8PropertyName,
+    v8::Local<v8::Value> pValue);
+[[nodiscard]] bool ReentrantPutObjectPropertyHelper(
+    v8::Isolate* pIsolate,
+    v8::Local<v8::Object> pObj,
+    ByteStringView bsUTF8PropertyName,
+    v8::Local<v8::Value> pPut);
 void ReentrantDeleteObjectPropertyHelper(v8::Isolate* pIsolate,
                                          v8::Local<v8::Object> pObj,
                                          ByteStringView bsUTF8PropertyName);
 
-bool ReentrantPutArrayElementHelper(v8::Isolate* pIsolate,
-                                    v8::Local<v8::Array> pArray,
-                                    size_t index,
-                                    v8::Local<v8::Value> pValue);
+[[nodiscard]] bool ReentrantPutArrayElementHelper(v8::Isolate* pIsolate,
+                                                  v8::Local<v8::Array> pArray,
+                                                  size_t index,
+                                                  v8::Local<v8::Value> pValue);
 v8::Local<v8::Value> ReentrantGetArrayElementHelper(v8::Isolate* pIsolate,
                                                     v8::Local<v8::Array> pArray,
                                                     size_t index);

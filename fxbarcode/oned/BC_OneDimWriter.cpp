@@ -163,13 +163,13 @@ void CBC_OneDimWriter::ShowDeviceChars(CFX_RenderDevice* device,
     rect.right -= 1;
   }
   FX_RECT re = matrix.TransformRect(rect).GetOuterRect();
-  device->FillRect(re, kBackgroundColor);
+  (void)device->FillRect(re, kBackgroundColor);
   CFX_Matrix affine_matrix(1.0, 0.0, 0.0, -1.0, (float)locX,
                            (float)(locY + iFontSize));
   affine_matrix.Concat(matrix);
-  device->DrawNormalText(pCharPos.first(str.GetLength()), m_pFont,
-                         static_cast<float>(iFontSize), affine_matrix,
-                         m_fontColor, GetTextRenderOptions());
+  (void)device->DrawNormalText(pCharPos.first(str.GetLength()), m_pFont,
+                               static_cast<float>(iFontSize), affine_matrix,
+                               m_fontColor, GetTextRenderOptions());
 }
 
 bool CBC_OneDimWriter::ShowChars(WideStringView contents,
@@ -236,15 +236,16 @@ bool CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
   CFX_Path path;
   path.AppendRect(0, 0, static_cast<float>(m_Width),
                   static_cast<float>(m_Height));
-  device->DrawPath(path, &matrix, &stateData, kBackgroundColor,
-                   kBackgroundColor, CFX_FillRenderOptions::EvenOddOptions());
+  (void)device->DrawPath(path, &matrix, &stateData, kBackgroundColor,
+                         kBackgroundColor,
+                         CFX_FillRenderOptions::EvenOddOptions());
   CFX_Matrix scaledMatrix(m_outputHScale, 0.0, 0.0,
                           static_cast<float>(m_Height), 0.0, 0.0);
   scaledMatrix.Concat(matrix);
   for (const auto& rect : m_output) {
     CFX_GraphStateData data;
-    device->DrawPath(rect, &scaledMatrix, &data, kBarColor, 0,
-                     CFX_FillRenderOptions::WindingOptions());
+    (void)device->DrawPath(rect, &scaledMatrix, &data, kBarColor, 0,
+                           CFX_FillRenderOptions::WindingOptions());
   }
 
   return m_locTextLoc == BC_TEXT_LOC::kNone || !contents.Contains(' ') ||

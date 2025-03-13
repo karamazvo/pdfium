@@ -31,8 +31,8 @@ class CPDF_Stream final : public CPDF_Object {
   RetainPtr<CPDF_Object> Clone() const override;
   WideString GetUnicodeText() const override;
   CPDF_Stream* AsMutableStream() override;
-  bool WriteTo(IFX_ArchiveStream* archive,
-               const CPDF_Encryptor* encryptor) const override;
+  [[nodiscard]] bool WriteTo(IFX_ArchiveStream* archive,
+                             const CPDF_Encryptor* encryptor) const override;
 
   size_t GetRawSize() const;
   // Can only be called when stream is memory-based.
@@ -56,13 +56,13 @@ class CPDF_Stream final : public CPDF_Object {
   // Can only be called when a stream is not memory-based.
   DataVector<uint8_t> ReadAllRawData() const;
 
-  bool IsFileBased() const {
+  [[nodiscard]] bool IsFileBased() const {
     return absl::holds_alternative<RetainPtr<IFX_SeekableReadStream>>(data_);
   }
-  bool IsMemoryBased() const {
+  [[nodiscard]] bool IsMemoryBased() const {
     return absl::holds_alternative<DataVector<uint8_t>>(data_);
   }
-  bool HasFilter() const;
+  [[nodiscard]] bool HasFilter() const;
 
  private:
   friend class CPDF_Dictionary;

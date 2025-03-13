@@ -41,15 +41,16 @@ class CJBig2_Context {
 
   ~CJBig2_Context();
 
-  static bool HuffmanAssignCode(pdfium::span<JBig2HuffmanCode> symcodes);
+  [[nodiscard]] static bool HuffmanAssignCode(
+      pdfium::span<JBig2HuffmanCode> symcodes);
 
-  bool GetFirstPage(pdfium::span<uint8_t> pBuf,
-                    int32_t width,
-                    int32_t height,
-                    int32_t stride,
-                    PauseIndicatorIface* pPause);
+  [[nodiscard]] bool GetFirstPage(pdfium::span<uint8_t> pBuf,
+                                  int32_t width,
+                                  int32_t height,
+                                  int32_t stride,
+                                  PauseIndicatorIface* pPause);
 
-  bool Continue(PauseIndicatorIface* pPause);
+  [[nodiscard]] bool Continue(PauseIndicatorIface* pPause);
   FXCODEC_STATUS GetProcessingStatus() const { return m_ProcessingStatus; }
 
  private:

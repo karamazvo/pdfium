@@ -26,9 +26,9 @@ class CPDF_PageOrganizer {
   ~CPDF_PageOrganizer();
 
   // Must be called after construction before doing anything else.
-  bool Init();
+  [[nodiscard]] bool Init();
 
-  bool UpdateReference(RetainPtr<CPDF_Object> obj);
+  [[nodiscard]] bool UpdateReference(RetainPtr<CPDF_Object> obj);
 
   CPDF_Document* dest() { return dest_doc_; }
   const CPDF_Document* dest() const { return dest_doc_; }
@@ -42,16 +42,17 @@ class CPDF_PageOrganizer {
 
   void ClearObjectNumberMap() { object_number_map_.clear(); }
 
-  static bool CopyInheritable(RetainPtr<CPDF_Dictionary> dest_page_dict,
-                              RetainPtr<const CPDF_Dictionary> src_page_dict,
-                              const ByteString& key);
+  [[nodiscard]] static bool CopyInheritable(
+      RetainPtr<CPDF_Dictionary> dest_page_dict,
+      RetainPtr<const CPDF_Dictionary> src_page_dict,
+      const ByteString& key);
 
   static RetainPtr<const CPDF_Object> PageDictGetInheritableTag(
       RetainPtr<const CPDF_Dictionary> dict,
       const ByteString& src_tag);
 
  private:
-  bool InitDestDoc();
+  [[nodiscard]] bool InitDestDoc();
 
   uint32_t GetNewObjId(CPDF_Reference* ref);
 

@@ -26,13 +26,13 @@ class CBC_EncoderContext {
   size_t getCodewordCount();
   void SignalEncoderChange(CBC_HighLevelEncoder::Encoding encoding);
   void ResetEncoderSignal();
-  bool hasMoreCharacters();
+  [[nodiscard]] bool hasMoreCharacters();
   size_t getRemainingCharacters();
-  bool UpdateSymbolInfo();
-  bool UpdateSymbolInfo(size_t len);
+  [[nodiscard]] bool UpdateSymbolInfo();
+  [[nodiscard]] bool UpdateSymbolInfo(size_t len);
   void resetSymbolInfo();
 
-  bool HasCharactersOutsideISO88591Encoding() const {
+  [[nodiscard]] bool HasCharactersOutsideISO88591Encoding() const {
     return m_bHasCharactersOutsideISO88591Encoding;
   }
 

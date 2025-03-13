@@ -29,12 +29,13 @@ class CPWL_ComboBox final : public CPWL_Wnd {
 
   // CPWL_Wnd:
   void OnDestroy() override;
-  bool OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag) override;
-  bool OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) override;
+  [[nodiscard]] bool OnKeyDown(FWL_VKEYCODE nKeyCode,
+                               Mask<FWL_EVENTFLAG> nFlag) override;
+  [[nodiscard]] bool OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) override;
   void NotifyLButtonDown(CPWL_Wnd* child, const CFX_PointF& pos) override;
   void NotifyLButtonUp(CPWL_Wnd* child, const CFX_PointF& pos) override;
   void CreateChildWnd(const CreateParams& cp) override;
-  bool RepositionChildWnd() override;
+  [[nodiscard]] bool RepositionChildWnd() override;
   CFX_FloatRect GetFocusRect() const override;
   void SetFocus() override;
   void KillFocus() override;
@@ -42,11 +43,11 @@ class CPWL_ComboBox final : public CPWL_Wnd {
   WideString GetSelectedText() override;
   void ReplaceAndKeepSelection(const WideString& text) override;
   void ReplaceSelection(const WideString& text) override;
-  bool SelectAllText() override;
-  bool CanUndo() override;
-  bool CanRedo() override;
-  bool Undo() override;
-  bool Redo() override;
+  [[nodiscard]] bool SelectAllText() override;
+  [[nodiscard]] bool CanUndo() override;
+  [[nodiscard]] bool CanRedo() override;
+  [[nodiscard]] bool Undo() override;
+  [[nodiscard]] bool Redo() override;
 
   void SetText(const WideString& text);
   void AddString(const WideString& str);
@@ -56,7 +57,7 @@ class CPWL_ComboBox final : public CPWL_Wnd {
   void SetEditSelection(int32_t nStartChar, int32_t nEndChar);
   void ClearSelection();
   void SelectAll();
-  bool IsPopup() const;
+  [[nodiscard]] bool IsPopup() const;
   void SetSelectText();
 
  private:
@@ -65,7 +66,7 @@ class CPWL_ComboBox final : public CPWL_Wnd {
   void CreateListBox(const CreateParams& cp);
 
   // Returns |true| iff this instance is still allocated.
-  [[nodiscard]] bool SetPopup(bool bPopup);
+  [[nodiscard]] [[nodiscard]] bool SetPopup(bool bPopup);
 
   UnownedPtr<CPWL_Edit> m_pEdit;
   UnownedPtr<CPWL_CBButton> m_pButton;

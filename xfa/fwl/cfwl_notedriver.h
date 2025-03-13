@@ -45,8 +45,8 @@ class CFWL_NoteDriver final : public cppgc::GarbageCollected<CFWL_NoteDriver> {
 
     void Trace(cppgc::Visitor* visitor) const;
     void SetEventSource(CFWL_Widget* pSource);
-    bool ProcessEvent(CFWL_Event* pEvent);
-    bool IsValid() const { return m_bValid; }
+    [[nodiscard]] bool ProcessEvent(CFWL_Event* pEvent);
+    [[nodiscard]] bool IsValid() const { return m_bValid; }
     void Invalidate() { m_bValid = false; }
 
    private:
@@ -57,13 +57,14 @@ class CFWL_NoteDriver final : public cppgc::GarbageCollected<CFWL_NoteDriver> {
 
   explicit CFWL_NoteDriver(CFWL_App* pApp);
 
-  bool DispatchMessage(CFWL_Message* pMessage, CFWL_Widget* pMessageForm);
-  bool DoSetFocus(CFWL_Message* pMsg, CFWL_Widget* pMessageForm);
-  bool DoKillFocus(CFWL_Message* pMsg, CFWL_Widget* pMessageForm);
-  bool DoKey(CFWL_Message* pMsg, CFWL_Widget* pMessageForm);
-  bool DoMouse(CFWL_Message* pMsg, CFWL_Widget* pMessageForm);
-  bool DoWheel(CFWL_Message* pMsg, CFWL_Widget* pMessageForm);
-  bool DoMouseEx(CFWL_Message* pMsg, CFWL_Widget* pMessageForm);
+  [[nodiscard]] bool DispatchMessage(CFWL_Message* pMessage,
+                                     CFWL_Widget* pMessageForm);
+  [[nodiscard]] bool DoSetFocus(CFWL_Message* pMsg, CFWL_Widget* pMessageForm);
+  [[nodiscard]] bool DoKillFocus(CFWL_Message* pMsg, CFWL_Widget* pMessageForm);
+  [[nodiscard]] bool DoKey(CFWL_Message* pMsg, CFWL_Widget* pMessageForm);
+  [[nodiscard]] bool DoMouse(CFWL_Message* pMsg, CFWL_Widget* pMessageForm);
+  [[nodiscard]] bool DoWheel(CFWL_Message* pMsg, CFWL_Widget* pMessageForm);
+  [[nodiscard]] bool DoMouseEx(CFWL_Message* pMsg, CFWL_Widget* pMessageForm);
   void MouseSecondary(CFWL_Message* pMsg);
 
   cppgc::Member<CFWL_App> m_pApp;

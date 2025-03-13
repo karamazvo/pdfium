@@ -18,7 +18,7 @@ class CJX_Encrypt final : public CJX_Node {
   ~CJX_Encrypt() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   JSE_PROP(format);
 

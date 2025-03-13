@@ -66,7 +66,7 @@ template <typename Container,
               !internal::HasFindWithNpos<Container, Value>::value &&
               !internal::HasFindWithEnd<Container, Value>::value &&
               !internal::HasContains<Container, Value>::value>* = nullptr>
-bool Contains(const Container& container, const Value& value) {
+[[nodiscard]] bool Contains(const Container& container, const Value& value) {
   static_assert(
       !internal::HasKeyType<Container>::value,
       "Error: About to perform linear search on an associative container. "
@@ -84,7 +84,7 @@ template <typename Container,
           std::enable_if_t<internal::HasFindWithNpos<Container, Value>::value &&
                            !internal::HasContains<Container, Value>::value>* =
               nullptr>
-bool Contains(const Container& container, const Value& value) {
+[[nodiscard]] bool Contains(const Container& container, const Value& value) {
   return container.find(value) != Container::npos;
 }
 
@@ -95,7 +95,7 @@ template <typename Container,
           std::enable_if_t<internal::HasFindWithEnd<Container, Value>::value &&
                            !internal::HasContains<Container, Value>::value>* =
               nullptr>
-bool Contains(const Container& container, const Value& value) {
+[[nodiscard]] bool Contains(const Container& container, const Value& value) {
   return container.find(value) != container.end();
 }
 
@@ -105,7 +105,7 @@ template <
     typename Container,
     typename Value,
     std::enable_if_t<internal::HasContains<Container, Value>::value>* = nullptr>
-bool Contains(const Container& container, const Value& value) {
+[[nodiscard]] bool Contains(const Container& container, const Value& value) {
   return container.contains(value);
 }
 

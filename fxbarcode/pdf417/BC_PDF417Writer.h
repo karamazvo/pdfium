@@ -31,7 +31,7 @@ class CBC_PDF417Writer final : public CBC_TwoDimWriter {
   EncodeResult Encode(WideStringView contents) const;
 
   // CBC_TwoDimWriter
-  bool SetErrorCorrectionLevel(int32_t level) override;
+  [[nodiscard]] bool SetErrorCorrectionLevel(int32_t level) override;
 };
 
 #endif  // FXBARCODE_PDF417_BC_PDF417WRITER_H_

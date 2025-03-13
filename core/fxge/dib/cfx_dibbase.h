@@ -47,7 +47,8 @@ class CFX_DIBBase : public Retainable {
 
   // Note that the returned scanline includes unused space at the end, if any.
   virtual pdfium::span<const uint8_t> GetScanline(int line) const = 0;
-  virtual bool SkipToScanline(int line, PauseIndicatorIface* pPause) const;
+  [[nodiscard]] virtual bool SkipToScanline(int line,
+                                            PauseIndicatorIface* pPause) const;
   virtual size_t GetEstimatedImageMemoryBurden() const;
 #if BUILDFLAG(IS_WIN) || defined(PDF_USE_SKIA)
   // Calls Realize() if needed. Otherwise, return `this`.
@@ -71,11 +72,17 @@ class CFX_DIBBase : public Retainable {
   // Bits per pixel, not bytes.
   int GetBPP() const { return GetBppFromFormat(GetFormat()); }
 
-  bool IsMaskFormat() const { return GetIsMaskFromFormat(GetFormat()); }
-  bool IsAlphaFormat() const { return GetIsAlphaFromFormat(GetFormat()); }
-  bool IsOpaqueImage() const { return !IsMaskFormat() && !IsAlphaFormat(); }
+  [[nodiscard]] bool IsMaskFormat() const {
+    return GetIsMaskFromFormat(GetFormat());
+  }
+  [[nodiscard]] bool IsAlphaFormat() const {
+    return GetIsAlphaFromFormat(GetFormat());
+  }
+  [[nodiscard]] bool IsOpaqueImage() const {
+    return !IsMaskFormat() && !IsAlphaFormat();
+  }
 
-  bool HasPalette() const { return !palette_.empty(); }
+  [[nodiscard]] bool HasPalette() const { return !palette_.empty(); }
   pdfium::span<const uint32_t> GetPaletteSpan() const { return palette_; }
   size_t GetRequiredPaletteSize() const;
   uint32_t GetPaletteArgb(int index) const;
@@ -104,17 +111,17 @@ class CFX_DIBBase : public Retainable {
 
   RetainPtr<CFX_DIBitmap> CloneAlphaMask() const;
 
-  bool GetOverlapRect(int& dest_left,
-                      int& dest_top,
-                      int& width,
-                      int& height,
-                      int src_width,
-                      int src_height,
-                      int& src_left,
-                      int& src_top,
-                      const CFX_AggClipRgn* pClipRgn) const;
+  [[nodiscard]] bool GetOverlapRect(int& dest_left,
+                                    int& dest_top,
+                                    int& width,
+                                    int& height,
+                                    int src_width,
+                                    int src_height,
+                                    int& src_left,
+                                    int& src_top,
+                                    const CFX_AggClipRgn* pClipRgn) const;
 
-  bool IsPremultiplied() const {
+  [[nodiscard]] bool IsPremultiplied() const {
 #if defined(PDF_USE_SKIA)
     return GetFormat() == FXDIB_Format::kBgraPremul;
 #else

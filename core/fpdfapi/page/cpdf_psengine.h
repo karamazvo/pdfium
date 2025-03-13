@@ -74,7 +74,7 @@ class CPDF_PSOP {
   explicit CPDF_PSOP(float value);
   ~CPDF_PSOP();
 
-  bool Parse(CPDF_SimpleParser* parser, int depth);
+  [[nodiscard]] bool Parse(CPDF_SimpleParser* parser, int depth);
   void Execute(CPDF_PSEngine* pEngine);
   float GetFloatValue() const;
   PDF_PSOP GetOp() const { return m_op; }
@@ -90,8 +90,8 @@ class CPDF_PSProc {
   CPDF_PSProc();
   ~CPDF_PSProc();
 
-  bool Parse(CPDF_SimpleParser* parser, int depth);
-  bool Execute(CPDF_PSEngine* pEngine);
+  [[nodiscard]] bool Parse(CPDF_SimpleParser* parser, int depth);
+  [[nodiscard]] bool Execute(CPDF_PSEngine* pEngine);
 
   // These methods are exposed for testing.
   void AddOperatorForTesting(ByteStringView word);
@@ -112,9 +112,9 @@ class CPDF_PSEngine {
   CPDF_PSEngine();
   ~CPDF_PSEngine();
 
-  bool Parse(pdfium::span<const uint8_t> input);
-  bool Execute();
-  bool DoOperator(PDF_PSOP op);
+  [[nodiscard]] bool Parse(pdfium::span<const uint8_t> input);
+  [[nodiscard]] bool Execute();
+  [[nodiscard]] bool DoOperator(PDF_PSOP op);
   void Reset() { m_StackCount = 0; }
   void Push(float value);
   float Pop();

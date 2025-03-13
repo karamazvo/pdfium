@@ -221,7 +221,7 @@ void CFWL_ComboList::OnDropListKeyDown(CFWL_MessageKey* pKey) {
         break;
 
       SetSelection(hItem, hItem, true);
-      ScrollToVisible(hItem);
+      (void)ScrollToVisible(hItem);
       RepaintRect(CFX_RectF(0, 0, m_WidgetRect.width, m_WidgetRect.height));
       break;
     }

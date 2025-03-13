@@ -18,12 +18,12 @@
 class IFX_WriteStream {
  public:
   // When `size` is 0, treat it as a no-op and return true.
-  virtual bool WriteBlock(pdfium::span<const uint8_t> data) = 0;
+  [[nodiscard]] virtual bool WriteBlock(pdfium::span<const uint8_t> data) = 0;
 
-  bool WriteString(ByteStringView str);
-  bool WriteByte(uint8_t byte);
-  bool WriteDWord(uint32_t i);
-  bool WriteFilesize(FX_FILESIZE size);
+  [[nodiscard]] bool WriteString(ByteStringView str);
+  [[nodiscard]] bool WriteByte(uint8_t byte);
+  [[nodiscard]] bool WriteDWord(uint32_t i);
+  [[nodiscard]] bool WriteFilesize(FX_FILESIZE size);
 
  protected:
   virtual ~IFX_WriteStream() = default;
@@ -45,7 +45,7 @@ class IFX_RetainableWriteStream : virtual public Retainable,
 class IFX_SeekableWriteStream : virtual public IFX_StreamWithSize,
                                 public IFX_RetainableWriteStream {
  public:
-  virtual bool Flush() = 0;
+  [[nodiscard]] virtual bool Flush() = 0;
 };
 
 class IFX_SeekableReadStream : virtual public Retainable,
@@ -54,10 +54,11 @@ class IFX_SeekableReadStream : virtual public Retainable,
   static RetainPtr<IFX_SeekableReadStream> CreateFromFilename(
       const char* filename);
 
-  virtual bool IsEOF();
+  [[nodiscard]] virtual bool IsEOF();
   virtual FX_FILESIZE GetPosition();
-  [[nodiscard]] virtual bool ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
-                                               FX_FILESIZE offset) = 0;
+  [[nodiscard]] [[nodiscard]] virtual bool ReadBlockAtOffset(
+      pdfium::span<uint8_t> buffer,
+      FX_FILESIZE offset) = 0;
 };
 
 class IFX_SeekableStream : public IFX_SeekableReadStream,

@@ -36,18 +36,18 @@ class CPDF_ImageRenderer {
   explicit CPDF_ImageRenderer(CPDF_RenderStatus* pStatus);
   ~CPDF_ImageRenderer();
 
-  bool Start(CPDF_ImageObject* pImageObject,
-             const CFX_Matrix& mtObj2Device,
-             bool bStdCS);
+  [[nodiscard]] bool Start(CPDF_ImageObject* pImageObject,
+                           const CFX_Matrix& mtObj2Device,
+                           bool bStdCS);
 
-  bool Start(RetainPtr<CFX_DIBBase> pDIBBase,
-             FX_ARGB bitmap_argb,
-             const CFX_Matrix& mtImage2Device,
-             const FXDIB_ResampleOptions& options,
-             bool bStdCS);
+  [[nodiscard]] bool Start(RetainPtr<CFX_DIBBase> pDIBBase,
+                           FX_ARGB bitmap_argb,
+                           const CFX_Matrix& mtImage2Device,
+                           const FXDIB_ResampleOptions& options,
+                           bool bStdCS);
 
-  bool Continue(PauseIndicatorIface* pPause);
-  bool GetResult() const { return m_Result; }
+  [[nodiscard]] bool Continue(PauseIndicatorIface* pPause);
+  [[nodiscard]] bool GetResult() const { return m_Result; }
 
  private:
   enum class Mode {
@@ -59,18 +59,18 @@ class CPDF_ImageRenderer {
 #endif
   };
 
-  bool StartBitmapAlpha();
-  bool StartDIBBase();
-  bool StartRenderDIBBase();
-  bool StartLoadDIBBase();
-  bool ContinueDefault(PauseIndicatorIface* pPause);
-  bool ContinueBlend(PauseIndicatorIface* pPause);
-  bool DrawMaskedImage();
-  bool DrawPatternImage();
+  [[nodiscard]] bool StartBitmapAlpha();
+  [[nodiscard]] bool StartDIBBase();
+  [[nodiscard]] bool StartRenderDIBBase();
+  [[nodiscard]] bool StartLoadDIBBase();
+  [[nodiscard]] bool ContinueDefault(PauseIndicatorIface* pPause);
+  [[nodiscard]] bool ContinueBlend(PauseIndicatorIface* pPause);
+  [[nodiscard]] bool DrawMaskedImage();
+  [[nodiscard]] bool DrawPatternImage();
 #if BUILDFLAG(IS_WIN)
-  bool StartDIBBaseFallback();
-  bool ContinueTransform(PauseIndicatorIface* pPause);
-  bool IsPrinting() const;
+  [[nodiscard]] bool StartDIBBaseFallback();
+  [[nodiscard]] bool ContinueTransform(PauseIndicatorIface* pPause);
+  [[nodiscard]] bool IsPrinting() const;
   void HandleFilters();
 #endif
   FX_RECT GetDrawRect() const;
@@ -83,11 +83,11 @@ class CPDF_ImageRenderer {
       const FX_RECT& rect) const;
   const CPDF_RenderOptions& GetRenderOptions() const;
   std::optional<FX_RECT> GetUnitRect() const;
-  bool GetDimensionsFromUnitRect(const FX_RECT& rect,
-                                 int* left,
-                                 int* top,
-                                 int* width,
-                                 int* height) const;
+  [[nodiscard]] bool GetDimensionsFromUnitRect(const FX_RECT& rect,
+                                               int* left,
+                                               int* top,
+                                               int* width,
+                                               int* height) const;
 
   UnownedPtr<CPDF_RenderStatus> const m_pRenderStatus;
   UnownedPtr<CPDF_ImageObject> m_pImageObject;

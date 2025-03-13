@@ -44,16 +44,16 @@ class CPDF_ShadingPattern final : public CPDF_Pattern {
   // CPDF_Pattern:
   CPDF_ShadingPattern* AsShadingPattern() override;
 
-  bool IsMeshShading() const {
+  [[nodiscard]] bool IsMeshShading() const {
     return m_ShadingType == kFreeFormGouraudTriangleMeshShading ||
            m_ShadingType == kLatticeFormGouraudTriangleMeshShading ||
            m_ShadingType == kCoonsPatchMeshShading ||
            m_ShadingType == kTensorProductPatchMeshShading;
   }
-  bool Load();
+  [[nodiscard]] bool Load();
 
   ShadingType GetShadingType() const { return m_ShadingType; }
-  bool IsShadingObject() const { return m_bShading; }
+  [[nodiscard]] bool IsShadingObject() const { return m_bShading; }
   RetainPtr<const CPDF_Object> GetShadingObject() const;
   RetainPtr<CPDF_ColorSpace> GetCS() const { return m_pCS; }
   const std::vector<std::unique_ptr<CPDF_Function>>& GetFuncs() const {
@@ -69,10 +69,10 @@ class CPDF_ShadingPattern final : public CPDF_Pattern {
   CPDF_ShadingPattern& operator=(const CPDF_ShadingPattern&) = delete;
 
   // Constraints in PDF 1.7 spec, 4.6.3 Shading Patterns, pages 308-331.
-  bool Validate() const;
-  bool ValidateFunctions(uint32_t nExpectedNumFunctions,
-                         uint32_t nExpectedNumInputs,
-                         uint32_t nExpectedNumOutputs) const;
+  [[nodiscard]] bool Validate() const;
+  [[nodiscard]] bool ValidateFunctions(uint32_t nExpectedNumFunctions,
+                                       uint32_t nExpectedNumInputs,
+                                       uint32_t nExpectedNumOutputs) const;
 
   ShadingType m_ShadingType = kInvalidShading;
   const bool m_bShading;

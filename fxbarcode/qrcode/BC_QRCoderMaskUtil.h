@@ -16,7 +16,9 @@ class CBC_QRCoderMaskUtil {
   CBC_QRCoderMaskUtil() = delete;
   ~CBC_QRCoderMaskUtil() = delete;
 
-  static bool GetDataMaskBit(int32_t maskPattern, int32_t x, int32_t y);
+  [[nodiscard]] static bool GetDataMaskBit(int32_t maskPattern,
+                                           int32_t x,
+                                           int32_t y);
 
   static int32_t ApplyMaskPenaltyRule1(CBC_CommonByteMatrix* matrix);
   static int32_t ApplyMaskPenaltyRule2(CBC_CommonByteMatrix* matrix);

@@ -24,9 +24,9 @@ class CPDF_SecurityHandler final : public Retainable {
  public:
   CONSTRUCT_VIA_MAKE_RETAIN;
 
-  bool OnInit(const CPDF_Dictionary* pEncryptDict,
-              RetainPtr<const CPDF_Array> pIdArray,
-              const ByteString& password);
+  [[nodiscard]] bool OnInit(const CPDF_Dictionary* pEncryptDict,
+                            RetainPtr<const CPDF_Array> pIdArray,
+                            const ByteString& password);
   void OnCreate(CPDF_Dictionary* pEncryptDict,
                 const CPDF_Array* pIdArray,
                 const ByteString& password);
@@ -34,7 +34,7 @@ class CPDF_SecurityHandler final : public Retainable {
   // When `get_owner_perms` is true, returns full permissions if unlocked by
   // owner.
   uint32_t GetPermissions(bool get_owner_perms) const;
-  bool IsMetadataEncrypted() const;
+  [[nodiscard]] bool IsMetadataEncrypted() const;
 
   CPDF_CryptoHandler* GetCryptoHandler() const {
     return m_pCryptoHandler.get();
@@ -55,21 +55,24 @@ class CPDF_SecurityHandler final : public Retainable {
   CPDF_SecurityHandler();
   ~CPDF_SecurityHandler() override;
 
-  bool LoadDict(const CPDF_Dictionary* pEncryptDict);
-  bool LoadDict(const CPDF_Dictionary* pEncryptDict,
-                CPDF_CryptoHandler::Cipher* cipher,
-                size_t* key_len);
+  [[nodiscard]] bool LoadDict(const CPDF_Dictionary* pEncryptDict);
+  [[nodiscard]] bool LoadDict(const CPDF_Dictionary* pEncryptDict,
+                              CPDF_CryptoHandler::Cipher* cipher,
+                              size_t* key_len);
 
   ByteString GetUserPassword(const ByteString& owner_password) const;
-  bool CheckPassword(const ByteString& user_password, bool bOwner);
-  bool CheckPasswordImpl(const ByteString& password, bool bOwner);
-  bool CheckUserPassword(const ByteString& password, bool bIgnoreEncryptMeta);
-  bool CheckOwnerPassword(const ByteString& password);
-  bool AES256_CheckPassword(const ByteString& password, bool bOwner);
+  [[nodiscard]] bool CheckPassword(const ByteString& user_password,
+                                   bool bOwner);
+  [[nodiscard]] bool CheckPasswordImpl(const ByteString& password, bool bOwner);
+  [[nodiscard]] bool CheckUserPassword(const ByteString& password,
+                                       bool bIgnoreEncryptMeta);
+  [[nodiscard]] bool CheckOwnerPassword(const ByteString& password);
+  [[nodiscard]] bool AES256_CheckPassword(const ByteString& password,
+                                          bool bOwner);
   void AES256_SetPassword(CPDF_Dictionary* pEncryptDict,
                           const ByteString& password);
   void AES256_SetPerms(CPDF_Dictionary* pEncryptDict);
-  bool CheckSecurity(const ByteString& password);
+  [[nodiscard]] bool CheckSecurity(const ByteString& password);
 
   void InitCryptoHandler();
 

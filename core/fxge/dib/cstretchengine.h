@@ -38,11 +38,12 @@ class CStretchEngine {
 
   // Indicates whether to manually set interpolate bilinear option to true to
   // achieve a smoother rendering results.
-  static bool UseInterpolateBilinear(const FXDIB_ResampleOptions& options,
-                                     int dest_width,
-                                     int dest_height,
-                                     int src_width,
-                                     int src_height);
+  [[nodiscard]] static bool UseInterpolateBilinear(
+      const FXDIB_ResampleOptions& options,
+      int dest_width,
+      int dest_height,
+      int src_width,
+      int src_height);
 
   struct PixelWeight {
     void SetStartEnd(int src_start, int src_end, size_t weight_count) {
@@ -86,13 +87,13 @@ class CStretchEngine {
 
     // Accepts a negative `dest_len` argument, producing a "mirror
     // image" of the result if `dest_len` is negative.
-    bool CalculateWeights(int dest_len,
-                          int dest_min,
-                          int dest_max,
-                          int src_len,
-                          int src_min,
-                          int src_max,
-                          const FXDIB_ResampleOptions& options);
+    [[nodiscard]] bool CalculateWeights(int dest_len,
+                                        int dest_min,
+                                        int dest_max,
+                                        int src_len,
+                                        int src_min,
+                                        int src_max,
+                                        const FXDIB_ResampleOptions& options);
 
     const PixelWeight* GetPixelWeight(int pixel) const;
     PixelWeight* GetPixelWeight(int pixel);
@@ -113,9 +114,9 @@ class CStretchEngine {
                  const FXDIB_ResampleOptions& options);
   ~CStretchEngine();
 
-  bool Continue(PauseIndicatorIface* pPause);
-  bool StartStretchHorz();
-  bool ContinueStretchHorz(PauseIndicatorIface* pPause);
+  [[nodiscard]] bool Continue(PauseIndicatorIface* pPause);
+  [[nodiscard]] bool StartStretchHorz();
+  [[nodiscard]] bool ContinueStretchHorz(PauseIndicatorIface* pPause);
   void StretchVert();
 
   const FXDIB_ResampleOptions& GetResampleOptionsForTest() const {

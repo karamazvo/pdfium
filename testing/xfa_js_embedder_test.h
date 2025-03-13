@@ -24,20 +24,21 @@ class XFAJSEmbedderTest : public JSEmbedderTest {
   // EmbedderTest:
   void SetUp() override;
   void TearDown() override;
-  bool OpenDocumentWithOptions(const std::string& filename,
-                               const char* password,
-                               LinearizeOption linearize_option,
-                               JavaScriptOption javascript_option) override;
+  [[nodiscard]] bool OpenDocumentWithOptions(
+      const std::string& filename,
+      const char* password,
+      LinearizeOption linearize_option,
+      JavaScriptOption javascript_option) override;
 
   CXFA_Document* GetXFADocument() const;
   CFXJSE_Engine* GetScriptContext() const { return script_context_; }
   v8::Local<v8::Value> GetValue() const;
 
-  bool Execute(ByteStringView input);
-  bool ExecuteSilenceFailure(ByteStringView input);
+  [[nodiscard]] bool Execute(ByteStringView input);
+  [[nodiscard]] bool ExecuteSilenceFailure(ByteStringView input);
 
  private:
-  bool ExecuteHelper(ByteStringView input);
+  [[nodiscard]] bool ExecuteHelper(ByteStringView input);
 
   v8::Global<v8::Value> value_;
   CFXJSE_Engine* script_context_ = nullptr;

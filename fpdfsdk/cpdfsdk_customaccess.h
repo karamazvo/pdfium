@@ -17,8 +17,8 @@ class CPDFSDK_CustomAccess final : public IFX_SeekableReadStream {
 
   // IFX_SeekableReadStream
   FX_FILESIZE GetSize() override;
-  bool ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
-                         FX_FILESIZE offset) override;
+  [[nodiscard]] bool ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
+                                       FX_FILESIZE offset) override;
 
  private:
   explicit CPDFSDK_CustomAccess(FPDF_FILEACCESS* pFileAccess);

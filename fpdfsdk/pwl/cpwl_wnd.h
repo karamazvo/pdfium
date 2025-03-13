@@ -117,35 +117,40 @@ class CPWL_Wnd : public Observable {
         IPWL_FillerNotify::CursorStyle::kArrow;
   };
 
-  static bool IsSHIFTKeyDown(Mask<FWL_EVENTFLAG> nFlag);
-  static bool IsCTRLKeyDown(Mask<FWL_EVENTFLAG> nFlag);
-  static bool IsALTKeyDown(Mask<FWL_EVENTFLAG> nFlag);
-  static bool IsMETAKeyDown(Mask<FWL_EVENTFLAG> nFlag);
+  [[nodiscard]] static bool IsSHIFTKeyDown(Mask<FWL_EVENTFLAG> nFlag);
+  [[nodiscard]] static bool IsCTRLKeyDown(Mask<FWL_EVENTFLAG> nFlag);
+  [[nodiscard]] static bool IsALTKeyDown(Mask<FWL_EVENTFLAG> nFlag);
+  [[nodiscard]] static bool IsMETAKeyDown(Mask<FWL_EVENTFLAG> nFlag);
 
   // Selects between IsCTRLKeyDown() and IsMETAKeyDown() depending on platform.
-  static bool IsPlatformShortcutKey(Mask<FWL_EVENTFLAG> nFlag);
+  [[nodiscard]] static bool IsPlatformShortcutKey(Mask<FWL_EVENTFLAG> nFlag);
 
   CPWL_Wnd(const CreateParams& cp,
            std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData);
   virtual ~CPWL_Wnd();
 
   // Returns |true| iff this instance is still allocated.
-  [[nodiscard]] virtual bool InvalidateRect(const CFX_FloatRect* pRect);
+  [[nodiscard]] [[nodiscard]] virtual bool InvalidateRect(
+      const CFX_FloatRect* pRect);
 
-  virtual bool OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag);
-  virtual bool OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag);
-  virtual bool OnLButtonDblClk(Mask<FWL_EVENTFLAG> nFlag,
-                               const CFX_PointF& point);
-  virtual bool OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
-                             const CFX_PointF& point);
-  virtual bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point);
-  virtual bool OnRButtonDown(Mask<FWL_EVENTFLAG> nFlag,
-                             const CFX_PointF& point);
-  virtual bool OnRButtonUp(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point);
-  virtual bool OnMouseMove(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point);
-  virtual bool OnMouseWheel(Mask<FWL_EVENTFLAG> nFlag,
-                            const CFX_PointF& point,
-                            const CFX_Vector& delta);
+  [[nodiscard]] virtual bool OnKeyDown(FWL_VKEYCODE nKeyCode,
+                                       Mask<FWL_EVENTFLAG> nFlag);
+  [[nodiscard]] virtual bool OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag);
+  [[nodiscard]] virtual bool OnLButtonDblClk(Mask<FWL_EVENTFLAG> nFlag,
+                                             const CFX_PointF& point);
+  [[nodiscard]] virtual bool OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
+                                           const CFX_PointF& point);
+  [[nodiscard]] virtual bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag,
+                                         const CFX_PointF& point);
+  [[nodiscard]] virtual bool OnRButtonDown(Mask<FWL_EVENTFLAG> nFlag,
+                                           const CFX_PointF& point);
+  [[nodiscard]] virtual bool OnRButtonUp(Mask<FWL_EVENTFLAG> nFlag,
+                                         const CFX_PointF& point);
+  [[nodiscard]] virtual bool OnMouseMove(Mask<FWL_EVENTFLAG> nFlag,
+                                         const CFX_PointF& point);
+  [[nodiscard]] virtual bool OnMouseWheel(Mask<FWL_EVENTFLAG> nFlag,
+                                          const CFX_PointF& point,
+                                          const CFX_Vector& delta);
   virtual void SetScrollInfo(const PWL_SCROLL_INFO& info);
   virtual void SetScrollPosition(float pos);
   virtual void ScrollWindowVertically(float pos);
@@ -157,7 +162,7 @@ class CPWL_Wnd : public Observable {
   virtual void SetCursor();
 
   // Returns |true| iff this instance is still allocated.
-  [[nodiscard]] virtual bool SetVisible(bool bVisible);
+  [[nodiscard]] [[nodiscard]] virtual bool SetVisible(bool bVisible);
   virtual void SetFontSize(float fFontSize);
   virtual float GetFontSize() const;
 
@@ -165,12 +170,12 @@ class CPWL_Wnd : public Observable {
   virtual WideString GetSelectedText();
   virtual void ReplaceAndKeepSelection(const WideString& text);
   virtual void ReplaceSelection(const WideString& text);
-  virtual bool SelectAllText();
+  [[nodiscard]] virtual bool SelectAllText();
 
-  virtual bool CanUndo();
-  virtual bool CanRedo();
-  virtual bool Undo();
-  virtual bool Redo();
+  [[nodiscard]] virtual bool CanUndo();
+  [[nodiscard]] virtual bool CanRedo();
+  [[nodiscard]] virtual bool Undo();
+  [[nodiscard]] virtual bool Redo();
 
   virtual CFX_FloatRect GetFocusRect() const;
   virtual CFX_FloatRect GetClientRect() const;
@@ -182,7 +187,9 @@ class CPWL_Wnd : public Observable {
   void RemoveChild(CPWL_Wnd* pWnd);
   void Realize();
   void Destroy();
-  bool Move(const CFX_FloatRect& rcNew, bool bReset, bool bRefresh);
+  [[nodiscard]] bool Move(const CFX_FloatRect& rcNew,
+                          bool bReset,
+                          bool bRefresh);
 
   void InvalidateProvider(ProviderIface* provider);
   void DrawAppearance(CFX_RenderDevice* pDevice,
@@ -191,8 +198,8 @@ class CPWL_Wnd : public Observable {
   int32_t GetBorderWidth() const;
   CFX_FloatRect GetWindowRect() const;
 
-  bool IsVisible() const { return m_bVisible; }
-  bool HasFlag(uint32_t dwFlags) const;
+  [[nodiscard]] bool IsVisible() const { return m_bVisible; }
+  [[nodiscard]] bool HasFlag(uint32_t dwFlags) const;
   void RemoveFlag(uint32_t dwFlags);
   void SetClipRect(const CFX_FloatRect& rect);
 
@@ -202,12 +209,12 @@ class CPWL_Wnd : public Observable {
   std::unique_ptr<IPWL_FillerNotify::PerWindowData> CloneAttachedData() const;
   std::vector<UnownedPtr<CPWL_Wnd>> GetAncestors();
 
-  bool WndHitTest(const CFX_PointF& point) const;
-  bool ClientHitTest(const CFX_PointF& point) const;
-  bool IsCaptureMouse() const;
+  [[nodiscard]] bool WndHitTest(const CFX_PointF& point) const;
+  [[nodiscard]] bool ClientHitTest(const CFX_PointF& point) const;
+  [[nodiscard]] bool IsCaptureMouse() const;
 
-  bool IsFocused() const;
-  bool IsReadOnly() const;
+  [[nodiscard]] bool IsFocused() const;
+  [[nodiscard]] bool IsReadOnly() const;
 
   void SetTransparency(int32_t nTransparency);
   CFX_Matrix GetWindowMatrix() const;
@@ -216,7 +223,7 @@ class CPWL_Wnd : public Observable {
   virtual void CreateChildWnd(const CreateParams& cp);
 
   // Returns |true| iff this instance is still allocated.
-  [[nodiscard]] virtual bool RepositionChildWnd();
+  [[nodiscard]] [[nodiscard]] virtual bool RepositionChildWnd();
 
   virtual void DrawThisAppearance(CFX_RenderDevice* pDevice,
                                   const CFX_Matrix& mtUser2Device);
@@ -224,7 +231,7 @@ class CPWL_Wnd : public Observable {
   virtual void OnCreated();
   virtual void OnDestroy();
 
-  bool IsValid() const { return m_bCreated; }
+  [[nodiscard]] bool IsValid() const { return m_bCreated; }
   CreateParams* GetCreationParams() { return &m_CreationParams; }
   ProviderIface* GetProvider() const {
     return m_CreationParams.pProvider.Get();
@@ -240,13 +247,14 @@ class CPWL_Wnd : public Observable {
   CPWL_ScrollBar* GetVScrollBar() const;
 
   // Returns |true| iff this instance is still allocated.
-  [[nodiscard]] bool InvalidateRectMove(const CFX_FloatRect& rcOld,
-                                        const CFX_FloatRect& rcNew);
+  [[nodiscard]] [[nodiscard]] bool InvalidateRectMove(
+      const CFX_FloatRect& rcOld,
+      const CFX_FloatRect& rcNew);
 
   void SetCapture();
   void ReleaseCapture();
-  bool IsWndCaptureMouse(const CPWL_Wnd* pWnd) const;
-  bool IsWndCaptureKeyboard(const CPWL_Wnd* pWnd) const;
+  [[nodiscard]] bool IsWndCaptureMouse(const CPWL_Wnd* pWnd) const;
+  [[nodiscard]] bool IsWndCaptureKeyboard(const CPWL_Wnd* pWnd) const;
 
   CFX_Color GetBackgroundColor() const;
   CFX_Color GetBorderColor() const;

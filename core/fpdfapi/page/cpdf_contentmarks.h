@@ -25,7 +25,7 @@ class CPDF_ContentMarks {
   std::unique_ptr<CPDF_ContentMarks> Clone();
   int GetMarkedContentID() const;
   size_t CountItems() const;
-  bool ContainsItem(const CPDF_ContentMarkItem* pItem) const;
+  [[nodiscard]] bool ContainsItem(const CPDF_ContentMarkItem* pItem) const;
 
   // The returned pointer is never null.
   CPDF_ContentMarkItem* GetItem(size_t index);
@@ -36,7 +36,7 @@ class CPDF_ContentMarks {
   void AddMarkWithPropertiesHolder(const ByteString& name,
                                    RetainPtr<CPDF_Dictionary> pDict,
                                    const ByteString& property_name);
-  bool RemoveMark(CPDF_ContentMarkItem* pMarkItem);
+  [[nodiscard]] bool RemoveMark(CPDF_ContentMarkItem* pMarkItem);
   size_t FindFirstDifference(const CPDF_ContentMarks* other) const;
 
  private:
@@ -45,7 +45,7 @@ class CPDF_ContentMarks {
     CONSTRUCT_VIA_MAKE_RETAIN;
 
     size_t CountItems() const;
-    bool ContainsItem(const CPDF_ContentMarkItem* pItem) const;
+    [[nodiscard]] bool ContainsItem(const CPDF_ContentMarkItem* pItem) const;
     CPDF_ContentMarkItem* GetItem(size_t index);
     const CPDF_ContentMarkItem* GetItem(size_t index) const;
 
@@ -56,7 +56,7 @@ class CPDF_ContentMarks {
     void AddMarkWithPropertiesHolder(const ByteString& name,
                                      RetainPtr<CPDF_Dictionary> pDict,
                                      const ByteString& property_name);
-    bool RemoveMark(CPDF_ContentMarkItem* pMarkItem);
+    [[nodiscard]] bool RemoveMark(CPDF_ContentMarkItem* pMarkItem);
 
    private:
     MarkData();

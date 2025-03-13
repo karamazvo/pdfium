@@ -20,9 +20,9 @@ class CBC_QRCode final : public CBC_CodeBase {
   ~CBC_QRCode() override;
 
   // CBC_CodeBase:
-  bool Encode(WideStringView contents) override;
-  bool RenderDevice(CFX_RenderDevice* device,
-                    const CFX_Matrix& matrix) override;
+  [[nodiscard]] bool Encode(WideStringView contents) override;
+  [[nodiscard]] bool RenderDevice(CFX_RenderDevice* device,
+                                  const CFX_Matrix& matrix) override;
   BC_TYPE GetType() override;
 
  private:

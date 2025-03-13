@@ -38,7 +38,7 @@ class CJX_EventPseudoModel final : public CJX_Object {
   ~CJX_EventPseudoModel() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   JSE_METHOD(emit);
   JSE_METHOD(reset);

@@ -76,14 +76,14 @@ class CPDF_HintTables {
                   const CPDF_LinearizedHeader* pLinearized);
   virtual ~CPDF_HintTables();
 
-  bool GetPagePos(uint32_t index,
-                  FX_FILESIZE* szPageStartPos,
-                  FX_FILESIZE* szPageLength,
-                  uint32_t* dwObjNum) const;
+  [[nodiscard]] bool GetPagePos(uint32_t index,
+                                FX_FILESIZE* szPageStartPos,
+                                FX_FILESIZE* szPageLength,
+                                uint32_t* dwObjNum) const;
 
   CPDF_DataAvail::DocAvailStatus CheckPage(uint32_t index);
 
-  bool LoadHintStream(CPDF_Stream* pHintStream);
+  [[nodiscard]] bool LoadHintStream(CPDF_Stream* pHintStream);
 
   const std::vector<PageInfo>& PageInfos() const { return m_PageInfos; }
   const std::vector<SharedObjGroupInfo>& SharedGroupInfos() const {
@@ -93,8 +93,9 @@ class CPDF_HintTables {
   FX_FILESIZE GetFirstPageObjOffset() const { return m_szFirstPageObjOffset; }
 
  protected:
-  bool ReadPageHintTable(CFX_BitStream* hStream);
-  bool ReadSharedObjHintTable(CFX_BitStream* hStream, uint32_t offset);
+  [[nodiscard]] bool ReadPageHintTable(CFX_BitStream* hStream);
+  [[nodiscard]] bool ReadSharedObjHintTable(CFX_BitStream* hStream,
+                                            uint32_t offset);
 
  private:
   FX_FILESIZE HintsOffsetToFileOffset(uint32_t hints_offset) const;

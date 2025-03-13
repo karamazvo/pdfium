@@ -168,7 +168,7 @@ void CPDFSDK_PageView::DeleteAnnotForFFWidget(CXFA_FFWidget* pWidget) {
   }
   if (GetFocusAnnot() == pAnnot) {
     // May invoke JS, invalidating pAnnot.
-    m_pFormFillEnv->KillFocusAnnot({});
+    (void)m_pFormFillEnv->KillFocusAnnot({});
   }
   if (pAnnot) {
     auto it = std::find(m_SDKAnnotArray.begin(), m_SDKAnnotArray.end(),
@@ -327,11 +327,11 @@ bool CPDFSDK_PageView::OnFocus(Mask<FWL_EVENTFLAG> nFlags,
                                const CFX_PointF& point) {
   ObservedPtr<CPDFSDK_Annot> pAnnot(GetFXWidgetAtPoint(point));
   if (!pAnnot) {
-    m_pFormFillEnv->KillFocusAnnot(nFlags);
+    (void)m_pFormFillEnv->KillFocusAnnot(nFlags);
     return false;
   }
 
-  m_pFormFillEnv->SetFocusAnnot(pAnnot);
+  (void)m_pFormFillEnv->SetFocusAnnot(pAnnot);
   return true;
 }
 
@@ -339,7 +339,7 @@ bool CPDFSDK_PageView::OnLButtonDown(Mask<FWL_EVENTFLAG> nFlags,
                                      const CFX_PointF& point) {
   ObservedPtr<CPDFSDK_Annot> pAnnot(GetFXWidgetAtPoint(point));
   if (!pAnnot) {
-    m_pFormFillEnv->KillFocusAnnot(nFlags);
+    (void)m_pFormFillEnv->KillFocusAnnot(nFlags);
     return false;
   }
 
@@ -349,7 +349,7 @@ bool CPDFSDK_PageView::OnLButtonDown(Mask<FWL_EVENTFLAG> nFlags,
   if (!pAnnot)
     return false;
 
-  m_pFormFillEnv->SetFocusAnnot(pAnnot);
+  (void)m_pFormFillEnv->SetFocusAnnot(pAnnot);
   return true;
 }
 
@@ -369,7 +369,7 @@ bool CPDFSDK_PageView::OnLButtonDblClk(Mask<FWL_EVENTFLAG> nFlags,
                                        const CFX_PointF& point) {
   ObservedPtr<CPDFSDK_Annot> pAnnot(GetFXWidgetAtPoint(point));
   if (!pAnnot) {
-    m_pFormFillEnv->KillFocusAnnot(nFlags);
+    (void)m_pFormFillEnv->KillFocusAnnot(nFlags);
     return false;
   }
 
@@ -379,7 +379,7 @@ bool CPDFSDK_PageView::OnLButtonDblClk(Mask<FWL_EVENTFLAG> nFlags,
   if (!pAnnot)
     return false;
 
-  m_pFormFillEnv->SetFocusAnnot(pAnnot);
+  (void)m_pFormFillEnv->SetFocusAnnot(pAnnot);
   return true;
 }
 
@@ -394,7 +394,7 @@ bool CPDFSDK_PageView::OnRButtonDown(Mask<FWL_EVENTFLAG> nFlags,
     return false;
 
   if (ok)
-    m_pFormFillEnv->SetFocusAnnot(pAnnot);
+    (void)m_pFormFillEnv->SetFocusAnnot(pAnnot);
 
   return true;
 }
@@ -410,7 +410,7 @@ bool CPDFSDK_PageView::OnRButtonUp(Mask<FWL_EVENTFLAG> nFlags,
     return false;
 
   if (ok)
-    m_pFormFillEnv->SetFocusAnnot(pAnnot);
+    (void)m_pFormFillEnv->SetFocusAnnot(pAnnot);
 
   return true;
 }
@@ -440,7 +440,7 @@ bool CPDFSDK_PageView::OnMouseMove(Mask<FWL_EVENTFLAG> nFlags,
       return true;
     }
   }
-  CPDFSDK_Annot::OnMouseMove(pFXAnnot, nFlags, point);
+  (void)CPDFSDK_Annot::OnMouseMove(pFXAnnot, nFlags, point);
   return true;
 }
 
@@ -524,7 +524,7 @@ bool CPDFSDK_PageView::OnKeyDown(FWL_VKEYCODE nKeyCode,
     if (!pNext)
       return false;
     if (pNext.Get() != pFocusAnnot) {
-      GetFormFillEnv()->SetFocusAnnot(pNext);
+      (void)GetFormFillEnv()->SetFocusAnnot(pNext);
       return true;
     }
   }

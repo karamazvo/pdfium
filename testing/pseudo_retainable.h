@@ -13,7 +13,7 @@ class PseudoRetainable {
     if (++release_count_ == retain_count_)
       alive_ = false;
   }
-  bool alive() const { return alive_; }
+  [[nodiscard]] bool alive() const { return alive_; }
   int retain_count() const { return retain_count_; }
   int release_count() const { return release_count_; }
 

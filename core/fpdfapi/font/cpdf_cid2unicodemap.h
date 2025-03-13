@@ -15,7 +15,7 @@ class CPDF_CID2UnicodeMap {
   explicit CPDF_CID2UnicodeMap(CIDSet charset);
   ~CPDF_CID2UnicodeMap();
 
-  bool IsLoaded() const;
+  [[nodiscard]] bool IsLoaded() const;
   wchar_t UnicodeFromCID(uint16_t cid) const;
 
  private:

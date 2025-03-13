@@ -816,7 +816,7 @@ FPDFTextObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   render_context_ptr->m_pContext = std::make_unique<CPDF_RenderContext>(
       doc, std::move(page_resources), /*pPageCache=*/nullptr);
 
-  device_ptr->Attach(result_bitmap);
+  (void)device_ptr->Attach(result_bitmap);
 
   CFX_Matrix device_matrix(rect.Width(), 0, 0, rect.Height(), 0, 0);
   CPDF_RenderStatus status(render_context_ptr->m_pContext.get(), device_ptr);
@@ -902,7 +902,7 @@ FPDF_EXPORT size_t FPDF_CALLCONV FPDFFont_GetBaseFontName(FPDF_FONT font,
   auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, length));
   ByteString name = cfont->GetBaseFontName();
   pdfium::span<const char> name_span = name.span_with_terminator();
-  fxcrt::try_spancpy(result_span, name_span);
+  (void)fxcrt::try_spancpy(result_span, name_span);
   return name_span.size();
 }
 
@@ -918,7 +918,7 @@ FPDF_EXPORT size_t FPDF_CALLCONV FPDFFont_GetFamilyName(FPDF_FONT font,
   auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, length));
   ByteString name = cfont->GetFont()->GetFamilyName();
   pdfium::span<const char> name_span = name.span_with_terminator();
-  fxcrt::try_spancpy(result_span, name_span);
+  (void)fxcrt::try_spancpy(result_span, name_span);
   return name_span.size();
 }
 
@@ -933,7 +933,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetFontData(FPDF_FONT font,
   // SAFETY: required from caller.
   auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen));
   pdfium::span<const uint8_t> data = cfont->GetFont()->GetFontSpan();
-  fxcrt::try_spancpy(result_span, data);
+  (void)fxcrt::try_spancpy(result_span, data);
   *out_buflen = data.size();
   return true;
 }

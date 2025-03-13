@@ -24,7 +24,7 @@ class CBC_QRCodeWriter final : public CBC_TwoDimWriter {
                              int32_t* pOutHeight);
 
   // CBC_TwoDimWriter
-  bool SetErrorCorrectionLevel(int32_t level) override;
+  [[nodiscard]] bool SetErrorCorrectionLevel(int32_t level) override;
 };
 
 #endif  // FXBARCODE_QRCODE_BC_QRCODEWRITER_H_

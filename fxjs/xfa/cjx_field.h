@@ -18,7 +18,7 @@ class CJX_Field final : public CJX_Container {
   ~CJX_Field() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   JSE_METHOD(addItem);
   JSE_METHOD(boundItem);

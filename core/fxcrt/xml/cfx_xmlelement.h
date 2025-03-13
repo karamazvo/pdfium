@@ -29,7 +29,7 @@ class CFX_XMLElement final : public CFX_XMLNode {
   const std::map<WideString, WideString>& GetAttributes() const {
     return attrs_;
   }
-  bool HasAttribute(const WideString& name) const;
+  [[nodiscard]] bool HasAttribute(const WideString& name) const;
   void SetAttribute(const WideString& name, const WideString& value);
   WideString GetAttribute(const WideString& name) const;
   void RemoveAttribute(const WideString& name);

@@ -23,23 +23,23 @@ class CPDF_PathObject final : public CPDF_PageObject {
   // CPDF_PageObject
   Type GetType() const override;
   void Transform(const CFX_Matrix& matrix) override;
-  bool IsPath() const override;
+  [[nodiscard]] bool IsPath() const override;
   CPDF_PathObject* AsPath() override;
   const CPDF_PathObject* AsPath() const override;
 
   void CalcBoundingBox();
 
-  bool stroke() const { return m_bStroke; }
+  [[nodiscard]] bool stroke() const { return m_bStroke; }
   void set_stroke(bool stroke) { m_bStroke = stroke; }
 
   // Layering, avoid caller knowledge of CFX_FillRenderOptions::FillType values.
-  bool has_no_filltype() const {
+  [[nodiscard]] bool has_no_filltype() const {
     return m_FillType == CFX_FillRenderOptions::FillType::kNoFill;
   }
-  bool has_winding_filltype() const {
+  [[nodiscard]] bool has_winding_filltype() const {
     return m_FillType == CFX_FillRenderOptions::FillType::kWinding;
   }
-  bool has_alternate_filltype() const {
+  [[nodiscard]] bool has_alternate_filltype() const {
     return m_FillType == CFX_FillRenderOptions::FillType::kEvenOdd;
   }
   void set_no_filltype() {

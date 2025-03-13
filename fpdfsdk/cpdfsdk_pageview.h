@@ -47,8 +47,8 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   CPDFSDK_Annot* GetPrevAnnot(CPDFSDK_Annot* pAnnot);
   CPDFSDK_Annot* GetFirstFocusableAnnot();
   CPDFSDK_Annot* GetLastFocusableAnnot();
-  bool IsValidAnnot(const CPDF_Annot* p) const;
-  bool IsValidSDKAnnot(const CPDFSDK_Annot* p) const;
+  [[nodiscard]] bool IsValidAnnot(const CPDF_Annot* p) const;
+  [[nodiscard]] bool IsValidSDKAnnot(const CPDFSDK_Annot* p) const;
 
   std::vector<CPDFSDK_Annot*> GetAnnotList() const;
   CPDFSDK_Annot* GetAnnotByDict(const CPDF_Dictionary* pDict);
@@ -68,28 +68,36 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   WideString GetSelectedText();
   void ReplaceAndKeepSelection(const WideString& text);
   void ReplaceSelection(const WideString& text);
-  bool SelectAllText();
+  [[nodiscard]] bool SelectAllText();
 
-  bool CanUndo();
-  bool CanRedo();
-  bool Undo();
-  bool Redo();
+  [[nodiscard]] bool CanUndo();
+  [[nodiscard]] bool CanRedo();
+  [[nodiscard]] bool Undo();
+  [[nodiscard]] bool Redo();
 
-  bool OnFocus(Mask<FWL_EVENTFLAG> nFlags, const CFX_PointF& point);
-  bool OnLButtonDown(Mask<FWL_EVENTFLAG> nFlags, const CFX_PointF& point);
-  bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlags, const CFX_PointF& point);
-  bool OnLButtonDblClk(Mask<FWL_EVENTFLAG> nFlags, const CFX_PointF& point);
-  bool OnRButtonDown(Mask<FWL_EVENTFLAG> nFlags, const CFX_PointF& point);
-  bool OnRButtonUp(Mask<FWL_EVENTFLAG> nFlags, const CFX_PointF& point);
-  bool OnChar(uint32_t nChar, Mask<FWL_EVENTFLAG> nFlags);
-  bool OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlags);
-  bool OnMouseMove(Mask<FWL_EVENTFLAG> nFlags, const CFX_PointF& point);
-  bool OnMouseWheel(Mask<FWL_EVENTFLAG> nFlags,
-                    const CFX_PointF& point,
-                    const CFX_Vector& delta);
+  [[nodiscard]] bool OnFocus(Mask<FWL_EVENTFLAG> nFlags,
+                             const CFX_PointF& point);
+  [[nodiscard]] bool OnLButtonDown(Mask<FWL_EVENTFLAG> nFlags,
+                                   const CFX_PointF& point);
+  [[nodiscard]] bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlags,
+                                 const CFX_PointF& point);
+  [[nodiscard]] bool OnLButtonDblClk(Mask<FWL_EVENTFLAG> nFlags,
+                                     const CFX_PointF& point);
+  [[nodiscard]] bool OnRButtonDown(Mask<FWL_EVENTFLAG> nFlags,
+                                   const CFX_PointF& point);
+  [[nodiscard]] bool OnRButtonUp(Mask<FWL_EVENTFLAG> nFlags,
+                                 const CFX_PointF& point);
+  [[nodiscard]] bool OnChar(uint32_t nChar, Mask<FWL_EVENTFLAG> nFlags);
+  [[nodiscard]] bool OnKeyDown(FWL_VKEYCODE nKeyCode,
+                               Mask<FWL_EVENTFLAG> nFlags);
+  [[nodiscard]] bool OnMouseMove(Mask<FWL_EVENTFLAG> nFlags,
+                                 const CFX_PointF& point);
+  [[nodiscard]] bool OnMouseWheel(Mask<FWL_EVENTFLAG> nFlags,
+                                  const CFX_PointF& point,
+                                  const CFX_Vector& delta);
 
-  bool SetIndexSelected(int index, bool selected);
-  bool IsIndexSelected(int index);
+  [[nodiscard]] bool SetIndexSelected(int index, bool selected);
+  [[nodiscard]] bool IsIndexSelected(int index);
 
   const CFX_Matrix& GetCurrentMatrix() const { return m_curMatrix; }
   void UpdateRects(const std::vector<CFX_FloatRect>& rects);
@@ -98,10 +106,10 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   int GetPageIndex() const;
 
   void SetValid(bool bValid) { m_bValid = bValid; }
-  bool IsValid() const { return m_bValid; }
-  bool IsLocked() const { return m_bLocked; }
+  [[nodiscard]] bool IsValid() const { return m_bValid; }
+  [[nodiscard]] bool IsLocked() const { return m_bLocked; }
   void SetBeingDestroyed() { m_bBeingDestroyed = true; }
-  bool IsBeingDestroyed() const { return m_bBeingDestroyed; }
+  [[nodiscard]] bool IsBeingDestroyed() const { return m_bBeingDestroyed; }
 
  private:
 #ifdef PDF_ENABLE_XFA

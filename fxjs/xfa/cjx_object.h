@@ -104,7 +104,7 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   CJX_Object* AsCJXObject() override;
 
   virtual void Trace(cppgc::Visitor* visitor) const;
-  virtual bool DynamicTypeIs(TypeTag eType) const;
+  [[nodiscard]] virtual bool DynamicTypeIs(TypeTag eType) const;
 
   JSE_PROP(className);
 
@@ -118,12 +118,12 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   void SetLayoutItem(CXFA_LayoutItem* item) { layout_item_ = item; }
   CXFA_LayoutItem* GetLayoutItem() const { return layout_item_; }
 
-  bool HasMethod(const WideString& func) const;
+  [[nodiscard]] bool HasMethod(const WideString& func) const;
   CJS_Result RunMethod(CFXJSE_Engine* pScriptContext,
                        const WideString& func,
                        pdfium::span<v8::Local<v8::Value>> params);
 
-  bool HasAttribute(XFA_Attribute eAttr) const;
+  [[nodiscard]] bool HasAttribute(XFA_Attribute eAttr) const;
   WideString GetAttributeByString(WideStringView attr) const;
   WideString GetAttributeByEnum(XFA_Attribute attr) const;
   std::optional<WideString> TryAttribute(XFA_Attribute eAttr,
@@ -189,7 +189,7 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
                                             bool bUseDefault) const;
   void SetEnum(XFA_Attribute eAttr, XFA_AttributeValue eValue, bool bNotify);
 
-  bool GetBoolean(XFA_Attribute eAttr) const;
+  [[nodiscard]] bool GetBoolean(XFA_Attribute eAttr) const;
   std::optional<bool> TryBoolean(XFA_Attribute eAttr, bool bUseDefault) const;
   void SetBoolean(XFA_Attribute eAttr, bool bValue, bool bNotify);
 
@@ -269,7 +269,7 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
       uint32_t key) const;
   std::optional<CXFA_Measurement> GetMapModuleMeasurementFollowingChain(
       uint32_t key) const;
-  bool HasMapModuleKey(uint32_t key) const;
+  [[nodiscard]] bool HasMapModuleKey(uint32_t key) const;
   void RemoveMapModuleKey(uint32_t key);
   void MoveBufferMapData(CXFA_Object* pDstObj);
 

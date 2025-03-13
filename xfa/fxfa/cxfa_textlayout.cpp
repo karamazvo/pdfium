@@ -290,7 +290,7 @@ void CXFA_TextLayout::InitBreak(CFX_CSSComputedStyle* pStyle,
     m_pBreak->SetTabWidth(m_pTextParser->GetTabInterval(pStyle));
     if (!m_pTabstopContext)
       m_pTabstopContext = std::make_unique<CXFA_TextTabstopsContext>();
-    m_pTextParser->GetTabstops(pStyle, m_pTabstopContext.get());
+    (void)m_pTextParser->GetTabstops(pStyle, m_pTabstopContext.get());
     for (const auto& stop : m_pTabstopContext->m_tabstops)
       m_pBreak->AddPositionedTab(stop.fTabstops);
   }
@@ -608,12 +608,12 @@ bool CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
     return false;
 
   pFxDevice->SaveState();
-  pFxDevice->SetClip_Rect(rtClip.GetOuterRect());
+  (void)pFxDevice->SetClip_Rect(rtClip.GetOuterRect());
 
   if (m_pieceLines.empty()) {
     size_t szBlockCount = CountBlocks();
     for (size_t i = 0; i < szBlockCount; ++i)
-      LayoutInternal(i);
+      (void)LayoutInternal(i);
     m_pTabstopContext.reset();
     m_pLoader.Clear();
   }
@@ -690,8 +690,8 @@ void CXFA_TextLayout::Loader(float textWidth,
     m_pTextParser->DoParse(pXMLContainer, m_pTextProvider);
 
   auto pRootStyle = m_pTextParser->CreateRootStyle(m_pTextProvider);
-  LoadRichText(pXMLContainer, textWidth, pLinePos, std::move(pRootStyle),
-               bSavePieces, nullptr, true, false, 0);
+  (void)LoadRichText(pXMLContainer, textWidth, pLinePos, std::move(pRootStyle),
+                     bSavePieces, nullptr, true, false, 0);
 }
 
 void CXFA_TextLayout::LoadText(CXFA_Node* pNode,
@@ -1155,9 +1155,9 @@ void CXFA_TextLayout::RenderString(CFX_RenderDevice* pDevice,
   const TextPiece* pPiece = pPieceLine->m_textPieces[szPiece].get();
   size_t szCount = GetDisplayPos(pPiece, pCharPos);
   if (szCount > 0) {
-    CFDE_TextOut::DrawString(pDevice, pPiece->dwColor, pPiece->pFont,
-                             pCharPos.first(szCount), pPiece->fFontSize,
-                             mtDoc2Device);
+    (void)CFDE_TextOut::DrawString(pDevice, pPiece->dwColor, pPiece->pFont,
+                                   pCharPos.first(szCount), pPiece->fFontSize,
+                                   mtDoc2Device);
   }
   pPieceLine->m_charCounts.push_back(szCount);
 }
@@ -1275,8 +1275,8 @@ void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
   }
 
   const CFX_GraphStateData graph_state;
-  pDevice->DrawPath(path, &mtDoc2Device, &graph_state, 0, pPiece->dwColor,
-                    CFX_FillRenderOptions());
+  (void)pDevice->DrawPath(path, &mtDoc2Device, &graph_state, 0, pPiece->dwColor,
+                          CFX_FillRenderOptions());
 }
 
 size_t CXFA_TextLayout::GetDisplayPos(const TextPiece* pPiece,

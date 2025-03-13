@@ -23,7 +23,7 @@ class CBC_ReedSolomonGF256Poly final {
   int32_t GetCoefficients(int32_t degree) const;
   const std::vector<int32_t>& GetCoefficients() const;
   int32_t GetDegree() const;
-  bool IsZero() const;
+  [[nodiscard]] bool IsZero() const;
   std::unique_ptr<CBC_ReedSolomonGF256Poly> AddOrSubtract(
       const CBC_ReedSolomonGF256Poly* other);
   std::unique_ptr<CBC_ReedSolomonGF256Poly> Multiply(

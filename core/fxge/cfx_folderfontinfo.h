@@ -31,7 +31,7 @@ class CFX_FolderFontInfo : public SystemFontInfoIface {
   void AddPath(const ByteString& path);
 
   // SystemFontInfoIface:
-  bool EnumFontList(CFX_FontMapper* pMapper) override;
+  [[nodiscard]] bool EnumFontList(CFX_FontMapper* pMapper) override;
   void* MapFont(int weight,
                 bool bItalic,
                 FX_Charset charset,
@@ -42,8 +42,8 @@ class CFX_FolderFontInfo : public SystemFontInfoIface {
                      uint32_t table,
                      pdfium::span<uint8_t> buffer) override;
   void DeleteFont(void* hFont) override;
-  bool GetFaceName(void* hFont, ByteString* name) override;
-  bool GetFontCharset(void* hFont, FX_Charset* charset) override;
+  [[nodiscard]] bool GetFaceName(void* hFont, ByteString* name) override;
+  [[nodiscard]] bool GetFontCharset(void* hFont, FX_Charset* charset) override;
 
  protected:
   friend class CFXFolderFontInfoTest;
@@ -58,7 +58,8 @@ class CFX_FolderFontInfo : public SystemFontInfoIface {
                  uint32_t fontOffset,
                  uint32_t fileSize);
 
-    bool IsEligibleForFindFont(uint32_t flag, FX_Charset charset) const;
+    [[nodiscard]] bool IsEligibleForFindFont(uint32_t flag,
+                                             FX_Charset charset) const;
     int32_t SimilarityScore(int weight,
                             bool italic,
                             int pitch_family,

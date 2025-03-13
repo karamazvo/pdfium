@@ -22,8 +22,9 @@ class CXFA_FFListBox final : public CXFA_FFDropDown {
 
   // CXFA_FFField:
   void Trace(cppgc::Visitor* visitor) const override;
-  bool LoadWidget() override;
-  [[nodiscard]] bool OnKillFocus(CXFA_FFWidget* pNewWidget) override;
+  [[nodiscard]] bool LoadWidget() override;
+  [[nodiscard]] [[nodiscard]] bool OnKillFocus(
+      CXFA_FFWidget* pNewWidget) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(pdfium::CFWL_Event* pEvent) override;
   void OnDrawWidget(CFGAS_GEGraphics* pGraphics,
@@ -40,9 +41,9 @@ class CXFA_FFListBox final : public CXFA_FFDropDown {
  private:
   explicit CXFA_FFListBox(CXFA_Node* pNode);
 
-  bool CommitData() override;
-  bool UpdateFWLData() override;
-  bool IsDataChanged() override;
+  [[nodiscard]] bool CommitData() override;
+  [[nodiscard]] bool UpdateFWLData() override;
+  [[nodiscard]] bool IsDataChanged() override;
 
   uint32_t GetAlignment();
 

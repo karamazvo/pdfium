@@ -30,9 +30,9 @@ class CPWL_EditImpl {
     Iterator(CPWL_EditImpl* pEdit, CPVT_VariableText::Iterator* pVTIterator);
     ~Iterator();
 
-    bool NextWord();
-    bool GetWord(CPVT_Word& word) const;
-    bool GetLine(CPVT_Line& line) const;
+    [[nodiscard]] bool NextWord();
+    [[nodiscard]] bool GetWord(CPVT_Word& word) const;
+    [[nodiscard]] bool GetLine(CPVT_Line& line) const;
     void SetAt(int32_t nWordIndex);
     void SetAt(const CPVT_WordPlace& place);
     const CPVT_WordPlace& GetAt() const;
@@ -93,16 +93,16 @@ class CPWL_EditImpl {
   void OnVK_HOME(bool bShift, bool bCtrl);
   void OnVK_END(bool bShift, bool bCtrl);
   void SetText(const WideString& sText);
-  bool InsertWord(uint16_t word, FX_Charset charset);
-  bool InsertReturn();
-  bool Backspace();
-  bool Delete();
-  bool ClearSelection();
-  bool InsertText(const WideString& sText, FX_Charset charset);
+  [[nodiscard]] bool InsertWord(uint16_t word, FX_Charset charset);
+  [[nodiscard]] bool InsertReturn();
+  [[nodiscard]] bool Backspace();
+  [[nodiscard]] bool Delete();
+  [[nodiscard]] bool ClearSelection();
+  [[nodiscard]] bool InsertText(const WideString& sText, FX_Charset charset);
   void ReplaceAndKeepSelection(const WideString& text);
   void ReplaceSelection(const WideString& text);
-  bool Redo();
-  bool Undo();
+  [[nodiscard]] bool Redo();
+  [[nodiscard]] bool Undo();
   CPVT_WordPlace WordIndexToWordPlace(int32_t index) const;
   CPVT_WordPlace SearchWordPlace(const CFX_PointF& point) const;
   int32_t GetCaret() const;
@@ -119,16 +119,16 @@ class CPWL_EditImpl {
   std::pair<int32_t, int32_t> GetSelection() const;
   void SelectAll();
   void SelectNone();
-  bool IsSelected() const;
+  [[nodiscard]] bool IsSelected() const;
   void Paint();
   void EnableRefresh(bool bRefresh);
   void RefreshWordRange(const CPVT_WordRange& wr);
   CPVT_WordRange GetWholeWordRange() const;
   CPVT_WordRange GetSelectWordRange() const;
   void EnableUndo(bool bUndo);
-  bool IsTextFull() const;
-  bool CanUndo() const;
-  bool CanRedo() const;
+  [[nodiscard]] bool IsTextFull() const;
+  [[nodiscard]] bool CanUndo() const;
+  [[nodiscard]] bool CanRedo() const;
   CPVT_WordRange GetVisibleWordRange() const;
 
   ByteString GetPDFWordString(int32_t nFontIndex,
@@ -173,7 +173,7 @@ class CPWL_EditImpl {
     void SetEndPos(const CPVT_WordPlace& end);
 
     CPVT_WordRange ConvertToWordRange() const;
-    bool IsEmpty() const;
+    [[nodiscard]] bool IsEmpty() const;
 
     CPVT_WordPlace BeginPos;
     CPVT_WordPlace EndPos;
@@ -213,8 +213,8 @@ class CPWL_EditImpl {
     void AddItem(std::unique_ptr<UndoItemIface> pItem);
     void Undo();
     void Redo();
-    bool CanUndo() const;
-    bool CanRedo() const;
+    [[nodiscard]] bool CanUndo() const;
+    [[nodiscard]] bool CanRedo() const;
     // GetLastAddItem() will never return null, so it can only be called after
     // calling AddItem().
     UndoItemIface* GetLastAddItem();
@@ -237,20 +237,24 @@ class CPWL_EditImpl {
   class UndoInsertWord;
   class UndoReplaceSelection;
 
-  bool IsTextOverflow() const;
-  bool Clear();
+  [[nodiscard]] bool IsTextOverflow() const;
+  [[nodiscard]] bool Clear();
   CPVT_WordPlace DoInsertText(const CPVT_WordPlace& place,
                               const WideString& sText,
                               FX_Charset charset);
   FX_Charset GetCharSetFromUnicode(uint16_t word, FX_Charset nOldCharset);
   int32_t GetTotalLines() const;
   void SetSelection(const CPVT_WordPlace& begin, const CPVT_WordPlace& end);
-  bool Delete(bool bAddUndo);
-  bool Clear(bool bAddUndo);
-  bool InsertText(const WideString& sText, FX_Charset charset, bool bAddUndo);
-  bool InsertWord(uint16_t word, FX_Charset charset, bool bAddUndo);
-  bool InsertReturn(bool bAddUndo);
-  bool Backspace(bool bAddUndo);
+  [[nodiscard]] bool Delete(bool bAddUndo);
+  [[nodiscard]] bool Clear(bool bAddUndo);
+  [[nodiscard]] bool InsertText(const WideString& sText,
+                                FX_Charset charset,
+                                bool bAddUndo);
+  [[nodiscard]] bool InsertWord(uint16_t word,
+                                FX_Charset charset,
+                                bool bAddUndo);
+  [[nodiscard]] bool InsertReturn(bool bAddUndo);
+  [[nodiscard]] bool Backspace(bool bAddUndo);
   void SetCaret(const CPVT_WordPlace& place);
 
   CFX_PointF VTToEdit(const CFX_PointF& point) const;

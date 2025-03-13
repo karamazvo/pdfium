@@ -315,7 +315,7 @@ ByteString GenerateEditAP(IPVT_FontMap* font_map,
               CFX_PointF(word.ptWord.x + offset.x, word.ptWord.y + offset.y);
         } else {
           CPVT_Line line;
-          vt_iterator->GetLine(line);
+          (void)vt_iterator->GetLine(line);
           new_point =
               CFX_PointF(line.ptLine.x + offset.x, line.ptLine.y + offset.y);
         }

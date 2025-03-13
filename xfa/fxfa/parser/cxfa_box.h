@@ -51,7 +51,7 @@ class CXFA_Box : public CXFA_Node {
   XFA_AttributeValue GetHand();
 
  private:
-  bool IsCircular();
+  [[nodiscard]] bool IsCircular();
   std::optional<int32_t> GetStartAngle();
   std::optional<int32_t> GetSweepAngle();
 

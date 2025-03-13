@@ -57,25 +57,25 @@ class CFWL_DateTimePicker final : public CFWL_Widget {
 
   void SelectAll();
   void ClearSelection();
-  bool HasSelection() const { return m_pEdit->HasSelection(); }
+  [[nodiscard]] bool HasSelection() const { return m_pEdit->HasSelection(); }
   // Returns <start, count> of the selection.
   std::pair<size_t, size_t> GetSelection() const {
     return m_pEdit->GetSelection();
   }
   std::optional<WideString> Copy();
   std::optional<WideString> Cut();
-  bool Paste(const WideString& wsPaste);
-  bool Undo();
-  bool Redo();
-  bool CanUndo();
-  bool CanRedo();
+  [[nodiscard]] bool Paste(const WideString& wsPaste);
+  [[nodiscard]] bool Undo();
+  [[nodiscard]] bool Redo();
+  [[nodiscard]] bool CanUndo();
+  [[nodiscard]] bool CanRedo();
 
   CFX_RectF GetBBox() const;
   void SetEditLimit(int32_t nLimit) { m_pEdit->SetLimit(nLimit); }
   void ModifyEditStyleExts(uint32_t dwStyleExtsAdded,
                            uint32_t dwStyleExtsRemoved);
 
-  bool IsMonthCalendarVisible() const;
+  [[nodiscard]] bool IsMonthCalendarVisible() const;
   void ShowMonthCalendar();
   void HideMonthCalendar();
   void ProcessSelChanged(int32_t iYear, int32_t iMonth, int32_t iDay);
@@ -97,7 +97,7 @@ class CFWL_DateTimePicker final : public CFWL_Widget {
   void OnLButtonUp(CFWL_MessageMouse* pMsg);
   void OnMouseMove(CFWL_MessageMouse* pMsg);
   void OnMouseLeave(CFWL_MessageMouse* pMsg);
-  bool NeedsToShowButton() const;
+  [[nodiscard]] bool NeedsToShowButton() const;
   void RepaintInflatedMonthCalRect();
 
   bool m_bLBtnDown = false;

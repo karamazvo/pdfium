@@ -28,12 +28,12 @@ namespace pdfium {
 
 class CFDE_TextOut {
  public:
-  static bool DrawString(CFX_RenderDevice* device,
-                         FX_ARGB color,
-                         const RetainPtr<CFGAS_GEFont>& pFont,
-                         span<TextCharPos> pCharPos,
-                         float fFontSize,
-                         const CFX_Matrix& matrix);
+  [[nodiscard]] static bool DrawString(CFX_RenderDevice* device,
+                                       FX_ARGB color,
+                                       const RetainPtr<CFGAS_GEFont>& pFont,
+                                       span<TextCharPos> pCharPos,
+                                       float fFontSize,
+                                       const CFX_Matrix& matrix);
 
   CFDE_TextOut();
   ~CFDE_TextOut();
@@ -72,7 +72,7 @@ class CFDE_TextOut {
     Line(const Line& that);
     ~Line();
 
-    bool new_reload() const { return new_reload_; }
+    [[nodiscard]] bool new_reload() const { return new_reload_; }
     void set_new_reload(bool reload) { new_reload_ = reload; }
 
     size_t AddPiece(size_t index, const Piece& piece);
@@ -86,19 +86,19 @@ class CFDE_TextOut {
     std::deque<Piece> pieces_;
   };
 
-  bool RetrieveLineWidth(CFGAS_Char::BreakType dwBreakStatus,
-                         float* pStartPos,
-                         float* pWidth,
-                         float* pHeight);
+  [[nodiscard]] bool RetrieveLineWidth(CFGAS_Char::BreakType dwBreakStatus,
+                                       float* pStartPos,
+                                       float* pWidth,
+                                       float* pHeight);
   void LoadText(const WideString& str, const CFX_RectF& rect);
 
   void Reload(const CFX_RectF& rect);
   void ReloadLinePiece(Line* pLine, const CFX_RectF& rect);
-  bool RetrievePieces(CFGAS_Char::BreakType dwBreakStatus,
-                      bool bReload,
-                      const CFX_RectF& rect,
-                      size_t* pStartChar,
-                      int32_t* pPieceWidths);
+  [[nodiscard]] bool RetrievePieces(CFGAS_Char::BreakType dwBreakStatus,
+                                    bool bReload,
+                                    const CFX_RectF& rect,
+                                    size_t* pStartChar,
+                                    int32_t* pPieceWidths);
   void AppendPiece(const Piece& piece, bool bNeedReload, bool bEnd);
   void DoAlignment(const CFX_RectF& rect);
   size_t GetDisplayPos(const Piece* pPiece);

@@ -18,7 +18,7 @@ class CJX_Form final : public CJX_Model {
   ~CJX_Form() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   JSE_METHOD(execCalculate);
   JSE_METHOD(execInitialize);

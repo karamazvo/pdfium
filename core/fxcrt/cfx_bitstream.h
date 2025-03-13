@@ -20,7 +20,7 @@ class CFX_BitStream {
 
   void ByteAlign();
 
-  bool IsEOF() const { return m_BitPos >= m_BitSize; }
+  [[nodiscard]] bool IsEOF() const { return m_BitPos >= m_BitSize; }
   size_t GetPos() const { return m_BitPos; }
   uint32_t GetBits(uint32_t nBits);
 

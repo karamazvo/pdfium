@@ -50,7 +50,7 @@ class CXFA_FWLTheme final : public cppgc::GarbageCollected<CXFA_FWLTheme>,
   FX_COLORREF GetTextColor(const CFWL_ThemePart& pThemePart) const override;
   CFX_SizeF GetSpaceAboveBelow(const CFWL_ThemePart& pThemePart) const override;
 
-  bool LoadCalendarFont(CXFA_FFDoc* doc);
+  [[nodiscard]] bool LoadCalendarFont(CXFA_FFDoc* doc);
 
  private:
   CXFA_FWLTheme(cppgc::Heap* pHeap, CXFA_FFApp* pApp);

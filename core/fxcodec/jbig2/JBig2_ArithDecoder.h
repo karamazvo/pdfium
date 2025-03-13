@@ -45,7 +45,7 @@ class CJBig2_ArithDecoder {
 
   int Decode(JBig2ArithCtx* pCX);
 
-  bool IsComplete() const { return m_Complete; }
+  [[nodiscard]] bool IsComplete() const { return m_Complete; }
 
  private:
   enum class StreamState : uint8_t {

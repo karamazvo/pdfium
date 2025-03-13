@@ -86,7 +86,7 @@ class CPDF_FormField {
 
   RetainPtr<const CPDF_Object> GetFieldAttr(const ByteString& name) const;
   RetainPtr<const CPDF_Dictionary> GetFieldDict() const;
-  bool ResetField();
+  [[nodiscard]] bool ResetField();
 
   int CountControls() const;
   CPDF_FormControl* GetControl(int index) const;
@@ -101,24 +101,25 @@ class CPDF_FormField {
   uint32_t GetFieldFlags() const;
   void SetFieldFlags(uint32_t dwFlags);
 
-  bool IsRequired() const { return m_bRequired; }
-  bool IsNoExport() const { return m_bNoExport; }
+  [[nodiscard]] bool IsRequired() const { return m_bRequired; }
+  [[nodiscard]] bool IsNoExport() const { return m_bNoExport; }
 
   WideString GetValue() const;
   WideString GetDefaultValue() const;
-  bool SetValue(const WideString& value, NotificationOption notify);
+  [[nodiscard]] bool SetValue(const WideString& value,
+                              NotificationOption notify);
 
   int GetMaxLen() const;
   int CountSelectedItems() const;
   int GetSelectedIndex(int index) const;
 
-  bool ClearSelection(NotificationOption notify);
-  bool IsItemSelected(int index) const;
-  bool SetItemSelection(int index, NotificationOption notify);
+  [[nodiscard]] bool ClearSelection(NotificationOption notify);
+  [[nodiscard]] bool IsItemSelected(int index) const;
+  [[nodiscard]] bool SetItemSelection(int index, NotificationOption notify);
 
   int GetDefaultSelectedItem() const;
 
-  bool HasOptField() const;
+  [[nodiscard]] bool HasOptField() const;
 
   // These can only be called if HasOptField() returns true.
   int CountOptions() const;
@@ -126,36 +127,36 @@ class CPDF_FormField {
   WideString GetOptionValue(int index) const;
   int FindOption(const WideString& csOptValue) const;
 
-  bool CheckControl(int iControlIndex,
-                    bool bChecked,
-                    NotificationOption notify);
+  [[nodiscard]] bool CheckControl(int iControlIndex,
+                                  bool bChecked,
+                                  NotificationOption notify);
 
   int GetTopVisibleIndex() const;
   int CountSelectedOptions() const;
   int GetSelectedOptionIndex(int index) const;
-  bool IsSelectedOption(const WideString& wsOptValue) const;
-  bool IsSelectedIndex(int iOptIndex) const;
+  [[nodiscard]] bool IsSelectedOption(const WideString& wsOptValue) const;
+  [[nodiscard]] bool IsSelectedIndex(int iOptIndex) const;
   void SelectOption(int iOptIndex);
 
   // Verifies if there is a valid selected indicies (/I) object and whether its
   // entries are consistent with the value (/V) object.
-  bool UseSelectedIndicesObject() const;
+  [[nodiscard]] bool UseSelectedIndicesObject() const;
 
   WideString GetCheckValue(bool bDefault) const;
 
  private:
   WideString GetValue(bool bDefault) const;
-  bool SetValue(const WideString& value,
-                bool bDefault,
-                NotificationOption notify);
+  [[nodiscard]] bool SetValue(const WideString& value,
+                              bool bDefault,
+                              NotificationOption notify);
   void InitFieldFlags();
   int FindListSel(CPDF_String* str);
   WideString GetOptionText(int index, int sub_index) const;
-  bool SetCheckValue(const WideString& value,
-                     bool bDefault,
-                     NotificationOption notify);
+  [[nodiscard]] bool SetCheckValue(const WideString& value,
+                                   bool bDefault,
+                                   NotificationOption notify);
   void SetItemSelectionSelected(int index, const WideString& opt_value);
-  bool NotifyListOrComboBoxBeforeChange(const WideString& value);
+  [[nodiscard]] bool NotifyListOrComboBoxBeforeChange(const WideString& value);
   void NotifyListOrComboBoxAfterChange();
 
   RetainPtr<const CPDF_Object> GetFieldAttrInternal(

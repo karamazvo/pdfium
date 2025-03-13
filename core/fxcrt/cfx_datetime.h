@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 
-bool FX_IsLeapYear(int32_t iYear);
+[[nodiscard]] bool FX_IsLeapYear(int32_t iYear);
 uint8_t FX_DaysInMonth(int32_t iYear, uint8_t iMonth);
 
 class CFX_DateTime {
@@ -42,7 +42,7 @@ class CFX_DateTime {
     millisecond_ = 0;
   }
 
-  bool IsSet() const {
+  [[nodiscard]] bool IsSet() const {
     return year_ != 0 || month_ != 0 || day_ != 0 || hour_ != 0 ||
            minute_ != 0 || second_ != 0 || millisecond_ != 0;
   }

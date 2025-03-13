@@ -26,7 +26,7 @@ class CBC_QRCoderBitVector {
   void AppendBit(int32_t bit);
   void AppendBits(int32_t value, int32_t numBits);
   void AppendBitVector(const CBC_QRCoderBitVector* bits);
-  bool XOR(const CBC_QRCoderBitVector* other);
+  [[nodiscard]] bool XOR(const CBC_QRCoderBitVector* other);
 
  private:
   void AppendByte(int8_t value);

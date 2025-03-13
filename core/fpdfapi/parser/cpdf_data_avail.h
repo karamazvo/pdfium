@@ -61,7 +61,7 @@ class CPDF_DataAvail final : public Observable::ObserverIface {
   class FileAvail {
    public:
     virtual ~FileAvail();
-    virtual bool IsDataAvail(FX_FILESIZE offset, size_t size) = 0;
+    [[nodiscard]] virtual bool IsDataAvail(FX_FILESIZE offset, size_t size) = 0;
   };
 
   class DownloadHints {
@@ -125,17 +125,17 @@ class CPDF_DataAvail final : public Observable::ObserverIface {
 
   static constexpr int kMaxPageRecursionDepth = 1024;
 
-  bool CheckDocStatus();
-  bool CheckHeader();
-  bool CheckFirstPage();
-  bool CheckHintTables();
-  bool CheckRoot();
-  bool CheckInfo();
-  bool CheckPages();
-  bool CheckPage();
+  [[nodiscard]] bool CheckDocStatus();
+  [[nodiscard]] bool CheckHeader();
+  [[nodiscard]] bool CheckFirstPage();
+  [[nodiscard]] bool CheckHintTables();
+  [[nodiscard]] bool CheckRoot();
+  [[nodiscard]] bool CheckInfo();
+  [[nodiscard]] bool CheckPages();
+  [[nodiscard]] bool CheckPage();
   DocAvailStatus CheckResources(RetainPtr<CPDF_Dictionary> page);
   DocFormStatus CheckAcroForm();
-  bool CheckPageStatus();
+  [[nodiscard]] bool CheckPageStatus();
 
   DocAvailStatus CheckHeaderAndLinearized();
   RetainPtr<CPDF_Object> ParseIndirectObjectAt(
@@ -143,26 +143,27 @@ class CPDF_DataAvail final : public Observable::ObserverIface {
       uint32_t objnum,
       CPDF_IndirectObjectHolder* pObjList) const;
   RetainPtr<CPDF_Object> GetObject(uint32_t objnum, bool* pExistInFile);
-  bool GetPageKids(CPDF_Object* pPages);
-  bool PreparePageItem();
-  bool LoadPages();
-  bool CheckAndLoadAllXref();
-  bool LoadAllFile();
+  [[nodiscard]] bool GetPageKids(CPDF_Object* pPages);
+  [[nodiscard]] bool PreparePageItem();
+  [[nodiscard]] bool LoadPages();
+  [[nodiscard]] bool CheckAndLoadAllXref();
+  [[nodiscard]] bool LoadAllFile();
   DocAvailStatus CheckLinearizedData();
 
-  bool CheckPage(uint32_t dwPage);
-  bool LoadDocPages();
-  bool LoadDocPage(uint32_t dwPage);
-  bool CheckPageNode(const PageNode& pageNode,
-                     int32_t iPage,
-                     int32_t& iCount,
-                     int level);
-  bool CheckUnknownPageNode(uint32_t dwPageNo, PageNode* pPageNode);
-  bool CheckArrayPageNode(uint32_t dwPageNo, PageNode* pPageNode);
-  bool CheckPageCount();
-  bool IsFirstCheck(uint32_t dwPage);
+  [[nodiscard]] bool CheckPage(uint32_t dwPage);
+  [[nodiscard]] bool LoadDocPages();
+  [[nodiscard]] bool LoadDocPage(uint32_t dwPage);
+  [[nodiscard]] bool CheckPageNode(const PageNode& pageNode,
+                                   int32_t iPage,
+                                   int32_t& iCount,
+                                   int level);
+  [[nodiscard]] bool CheckUnknownPageNode(uint32_t dwPageNo,
+                                          PageNode* pPageNode);
+  [[nodiscard]] bool CheckArrayPageNode(uint32_t dwPageNo, PageNode* pPageNode);
+  [[nodiscard]] bool CheckPageCount();
+  [[nodiscard]] bool IsFirstCheck(uint32_t dwPage);
   void ResetFirstCheck(uint32_t dwPage);
-  bool ValidatePage(uint32_t dwPage) const;
+  [[nodiscard]] bool ValidatePage(uint32_t dwPage) const;
   CPDF_SyntaxParser* GetSyntaxParser() const;
 
   RetainPtr<CPDF_ReadValidator> m_pFileRead;

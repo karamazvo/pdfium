@@ -26,7 +26,7 @@ class StringDataTemplate {
   void Retain() { ++m_nRefs; }
   void Release();
 
-  bool CanOperateInPlace(size_t nTotalLen) const {
+  [[nodiscard]] bool CanOperateInPlace(size_t nTotalLen) const {
     return m_nRefs <= 1 && nTotalLen <= m_nAllocLength;
   }
 

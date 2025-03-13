@@ -11,9 +11,9 @@
 
 // Extract the value from a keyed command line argument.
 // `arg` is expected to be "--key=value", and `key` is "--key=".
-bool ParseSwitchKeyValue(const std::string& arg,
-                         const std::string& key,
-                         std::string* value);
+[[nodiscard]] bool ParseSwitchKeyValue(const std::string& arg,
+                                       const std::string& key,
+                                       std::string* value);
 
 // Identifies the compile-time default 2D graphics library to use for rendering
 // to FPDF_BITMAPs. Used as part of support to override the renderer at runtime

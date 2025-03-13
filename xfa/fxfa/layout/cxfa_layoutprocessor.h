@@ -41,7 +41,7 @@ class CXFA_LayoutProcessor final : public CXFA_Document::LayoutProcessorIface {
 
   int32_t StartLayout();
   int32_t DoLayout();
-  bool IncrementLayout();
+  [[nodiscard]] bool IncrementLayout();
   int32_t CountPages() const;
   CXFA_ViewLayoutItem* GetPage(int32_t index) const;
   CXFA_LayoutItem* GetLayoutItem(CXFA_Node* pFormItem);
@@ -56,7 +56,7 @@ class CXFA_LayoutProcessor final : public CXFA_Document::LayoutProcessorIface {
   explicit CXFA_LayoutProcessor(cppgc::Heap* pHeap);
 
   cppgc::Heap* GetHeap() { return m_pHeap; }
-  bool NeedLayout() const;
+  [[nodiscard]] bool NeedLayout() const;
   int32_t RestartLayout();
 
   UnownedPtr<cppgc::Heap> const m_pHeap;

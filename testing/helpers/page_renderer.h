@@ -15,19 +15,21 @@ class PageRenderer {
   virtual ~PageRenderer();
 
   // Returns `true` if the rendered output exists. Must call `Finish()` first.
-  virtual bool HasOutput() const = 0;
+  [[nodiscard]] virtual bool HasOutput() const = 0;
 
   // Starts rendering the page, returning `false` on failure.
-  virtual bool Start() = 0;
+  [[nodiscard]] virtual bool Start() = 0;
 
   // Continues rendering the page, returning `false` when complete.
-  virtual bool Continue();
+  [[nodiscard]] virtual bool Continue();
 
   // Finishes rendering the page.
   virtual void Finish(FPDF_FORMHANDLE form) = 0;
 
   // Writes rendered output to a file, returning `false` on failure.
-  virtual bool Write(const std::string& name, int page_index, bool md5) = 0;
+  [[nodiscard]] virtual bool Write(const std::string& name,
+                                   int page_index,
+                                   bool md5) = 0;
 
  protected:
   PageRenderer(FPDF_PAGE page, int width, int height, int flags);

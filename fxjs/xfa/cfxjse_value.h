@@ -27,17 +27,17 @@ class CFXJSE_Value {
   CFXJSE_Value(v8::Isolate* pIsolate, v8::Local<v8::Value> value);
   ~CFXJSE_Value();
 
-  bool IsEmpty() const;
-  bool IsUndefined(v8::Isolate* pIsolate) const;
-  bool IsNull(v8::Isolate* pIsolate) const;
-  bool IsBoolean(v8::Isolate* pIsolate) const;
-  bool IsString(v8::Isolate* pIsolate) const;
-  bool IsNumber(v8::Isolate* pIsolate) const;
-  bool IsInteger(v8::Isolate* pIsolate) const;
-  bool IsObject(v8::Isolate* pIsolate) const;
-  bool IsArray(v8::Isolate* pIsolate) const;
-  bool IsFunction(v8::Isolate* pIsolate) const;
-  bool ToBoolean(v8::Isolate* pIsolate) const;
+  [[nodiscard]] bool IsEmpty() const;
+  [[nodiscard]] bool IsUndefined(v8::Isolate* pIsolate) const;
+  [[nodiscard]] bool IsNull(v8::Isolate* pIsolate) const;
+  [[nodiscard]] bool IsBoolean(v8::Isolate* pIsolate) const;
+  [[nodiscard]] bool IsString(v8::Isolate* pIsolate) const;
+  [[nodiscard]] bool IsNumber(v8::Isolate* pIsolate) const;
+  [[nodiscard]] bool IsInteger(v8::Isolate* pIsolate) const;
+  [[nodiscard]] bool IsObject(v8::Isolate* pIsolate) const;
+  [[nodiscard]] bool IsArray(v8::Isolate* pIsolate) const;
+  [[nodiscard]] bool IsFunction(v8::Isolate* pIsolate) const;
+  [[nodiscard]] bool ToBoolean(v8::Isolate* pIsolate) const;
   float ToFloat(v8::Isolate* pIsolate) const;
   double ToDouble(v8::Isolate* pIsolate) const;
   int32_t ToInteger(v8::Isolate* pIsolate) const;
@@ -62,19 +62,19 @@ class CFXJSE_Value {
   void SetArray(v8::Isolate* pIsolate,
                 const std::vector<std::unique_ptr<CFXJSE_Value>>& values);
 
-  bool GetObjectProperty(v8::Isolate* pIsolate,
-                         ByteStringView szPropName,
-                         CFXJSE_Value* pPropValue);
-  bool SetObjectProperty(v8::Isolate* pIsolate,
-                         ByteStringView szPropName,
-                         CFXJSE_Value* pPropValue);
-  bool GetObjectPropertyByIdx(v8::Isolate* pIsolate,
-                              uint32_t uPropIdx,
-                              CFXJSE_Value* pPropValue);
+  [[nodiscard]] bool GetObjectProperty(v8::Isolate* pIsolate,
+                                       ByteStringView szPropName,
+                                       CFXJSE_Value* pPropValue);
+  [[nodiscard]] bool SetObjectProperty(v8::Isolate* pIsolate,
+                                       ByteStringView szPropName,
+                                       CFXJSE_Value* pPropValue);
+  [[nodiscard]] bool GetObjectPropertyByIdx(v8::Isolate* pIsolate,
+                                            uint32_t uPropIdx,
+                                            CFXJSE_Value* pPropValue);
   void DeleteObjectProperty(v8::Isolate* pIsolate, ByteStringView szPropName);
-  bool SetObjectOwnProperty(v8::Isolate* pIsolate,
-                            ByteStringView szPropName,
-                            CFXJSE_Value* pPropValue);
+  [[nodiscard]] bool SetObjectOwnProperty(v8::Isolate* pIsolate,
+                                          ByteStringView szPropName,
+                                          CFXJSE_Value* pPropValue);
 
   // Return empty local on error.
   static v8::Local<v8::Function> NewBoundFunction(

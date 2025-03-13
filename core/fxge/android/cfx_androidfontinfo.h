@@ -21,10 +21,10 @@ class CFX_AndroidFontInfo final : public SystemFontInfoIface {
   CFX_AndroidFontInfo();
   ~CFX_AndroidFontInfo() override;
 
-  bool Init(CFPF_SkiaFontMgr* pFontMgr, const char** user_paths);
+  [[nodiscard]] bool Init(CFPF_SkiaFontMgr* pFontMgr, const char** user_paths);
 
   // SystemFontInfoIface:
-  bool EnumFontList(CFX_FontMapper* pMapper) override;
+  [[nodiscard]] bool EnumFontList(CFX_FontMapper* pMapper) override;
   void* MapFont(int weight,
                 bool bItalic,
                 FX_Charset charset,
@@ -34,8 +34,8 @@ class CFX_AndroidFontInfo final : public SystemFontInfoIface {
   size_t GetFontData(void* hFont,
                      uint32_t table,
                      pdfium::span<uint8_t> buffer) override;
-  bool GetFaceName(void* hFont, ByteString* name) override;
-  bool GetFontCharset(void* hFont, FX_Charset* charset) override;
+  [[nodiscard]] bool GetFaceName(void* hFont, ByteString* name) override;
+  [[nodiscard]] bool GetFontCharset(void* hFont, FX_Charset* charset) override;
   void DeleteFont(void* hFont) override;
 
  private:

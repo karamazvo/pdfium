@@ -23,17 +23,17 @@ class CFFL_Button : public CFFL_FormField {
   // CFFL_FormField
   void OnMouseEnter(CPDFSDK_PageView* pPageView) override;
   void OnMouseExit(CPDFSDK_PageView* pPageView) override;
-  bool OnLButtonDown(CPDFSDK_PageView* pPageView,
-                     CPDFSDK_Widget* pWidget,
-                     Mask<FWL_EVENTFLAG> nFlags,
-                     const CFX_PointF& point) override;
-  bool OnLButtonUp(CPDFSDK_PageView* pPageView,
-                   CPDFSDK_Widget* pWidget,
-                   Mask<FWL_EVENTFLAG> nFlags,
-                   const CFX_PointF& point) override;
-  bool OnMouseMove(CPDFSDK_PageView* pPageView,
-                   Mask<FWL_EVENTFLAG> nFlags,
-                   const CFX_PointF& point) override;
+  [[nodiscard]] bool OnLButtonDown(CPDFSDK_PageView* pPageView,
+                                   CPDFSDK_Widget* pWidget,
+                                   Mask<FWL_EVENTFLAG> nFlags,
+                                   const CFX_PointF& point) override;
+  [[nodiscard]] bool OnLButtonUp(CPDFSDK_PageView* pPageView,
+                                 CPDFSDK_Widget* pWidget,
+                                 Mask<FWL_EVENTFLAG> nFlags,
+                                 const CFX_PointF& point) override;
+  [[nodiscard]] bool OnMouseMove(CPDFSDK_PageView* pPageView,
+                                 Mask<FWL_EVENTFLAG> nFlags,
+                                 const CFX_PointF& point) override;
   void OnDraw(CPDFSDK_PageView* pPageView,
               CPDFSDK_Widget* pWidget,
               CFX_RenderDevice* pDevice,

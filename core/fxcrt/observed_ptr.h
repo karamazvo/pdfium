@@ -69,7 +69,7 @@ class ObservedPtr final : public Observable::ObserverIface {
     DCHECK(m_pObservable);
     m_pObservable = nullptr;
   }
-  bool HasObservable() const { return !!m_pObservable; }
+  [[nodiscard]] bool HasObservable() const { return !!m_pObservable; }
   ObservedPtr& operator=(const ObservedPtr& that) {
     Reset(that.Get());
     return *this;

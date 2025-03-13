@@ -18,7 +18,7 @@ class CJX_ExclGroup final : public CJX_Node {
   ~CJX_ExclGroup() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   JSE_METHOD(execCalculate);
   JSE_METHOD(execEvent);

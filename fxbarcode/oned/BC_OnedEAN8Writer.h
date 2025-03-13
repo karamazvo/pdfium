@@ -23,17 +23,17 @@ class CBC_OnedEAN8Writer final : public CBC_OneDimEANWriter {
 
   // CBC_OneDimEANWriter:
   DataVector<uint8_t> Encode(const ByteString& contents) override;
-  bool CheckContentValidity(WideStringView contents) override;
+  [[nodiscard]] bool CheckContentValidity(WideStringView contents) override;
   WideString FilterContents(WideStringView contents) override;
   void SetDataLength(int32_t length) override;
   void SetTextLocation(BC_TEXT_LOC location) override;
   int32_t CalcChecksum(const ByteString& contents) override;
 
  private:
-  bool ShowChars(WideStringView contents,
-                 CFX_RenderDevice* device,
-                 const CFX_Matrix& matrix,
-                 int32_t barWidth) override;
+  [[nodiscard]] bool ShowChars(WideStringView contents,
+                               CFX_RenderDevice* device,
+                               const CFX_Matrix& matrix,
+                               int32_t barWidth) override;
 
   static constexpr int32_t kDefaultCodeWidth = 3 + (7 * 4) + 5 + (7 * 4) + 3;
   int32_t m_codeWidth = kDefaultCodeWidth;

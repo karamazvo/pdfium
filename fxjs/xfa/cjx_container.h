@@ -18,7 +18,7 @@ class CJX_Container : public CJX_Node {
   ~CJX_Container() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   JSE_METHOD(getDelta);
   JSE_METHOD(getDeltas);

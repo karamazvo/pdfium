@@ -34,9 +34,9 @@ class CPDF_Document : public Observable,
     virtual ~Extension() = default;
     virtual int GetPageCount() const = 0;
     virtual uint32_t DeletePage(int page_index) = 0;
-    virtual bool ContainsExtensionForm() const = 0;
-    virtual bool ContainsExtensionFullForm() const = 0;
-    virtual bool ContainsExtensionForegroundForm() const = 0;
+    [[nodiscard]] virtual bool ContainsExtensionForm() const = 0;
+    [[nodiscard]] virtual bool ContainsExtensionFullForm() const = 0;
+    [[nodiscard]] virtual bool ContainsExtensionForegroundForm() const = 0;
   };
 
   class LinkListIface {
@@ -82,7 +82,7 @@ class CPDF_Document : public Observable,
 
   static constexpr int kPageMaxNum = 0xFFFFF;
 
-  static bool IsValidPageObject(const CPDF_Object* obj);
+  [[nodiscard]] static bool IsValidPageObject(const CPDF_Object* obj);
 
   CPDF_Document(std::unique_ptr<RenderDataIface> pRenderData,
                 std::unique_ptr<PageDataIface> pPageData);
@@ -105,10 +105,11 @@ class CPDF_Document : public Observable,
   // and it is no longer used in the page tree, then replace the page object
   // with a null object.
   void SetPageToNullObject(uint32_t page_obj_num);
-  bool MovePages(pdfium::span<const int> page_indices, int dest_page_index);
+  [[nodiscard]] bool MovePages(pdfium::span<const int> page_indices,
+                               int dest_page_index);
 
   int GetPageCount() const;
-  bool IsPageLoaded(int iPage) const;
+  [[nodiscard]] bool IsPageLoaded(int iPage) const;
   RetainPtr<const CPDF_Dictionary> GetPageDictionary(int iPage);
   RetainPtr<CPDF_Dictionary> GetMutablePageDictionary(int iPage);
   int GetPageIndex(uint32_t objnum);
@@ -140,17 +141,17 @@ class CPDF_Document : public Observable,
       RetainPtr<CPDF_Dictionary> dict);
 
   // Returns whether CreateModifiedAPStream() created `stream`.
-  bool IsModifiedAPStream(const CPDF_Stream* stream) const;
+  [[nodiscard]] bool IsModifiedAPStream(const CPDF_Stream* stream) const;
 
   // CPDF_Parser::ParsedObjectsHolder:
-  bool TryInit() override;
+  [[nodiscard]] bool TryInit() override;
   RetainPtr<CPDF_Object> ParseIndirectObject(uint32_t objnum) override;
 
   CPDF_Parser::Error LoadDoc(RetainPtr<IFX_SeekableReadStream> pFileAccess,
                              const ByteString& password);
   CPDF_Parser::Error LoadLinearizedDoc(RetainPtr<CPDF_ReadValidator> validator,
                                        const ByteString& password);
-  bool has_valid_cross_reference_table() const {
+  [[nodiscard]] bool has_valid_cross_reference_table() const {
     return m_bHasValidCrossReferenceTable;
   }
 
@@ -191,13 +192,15 @@ class CPDF_Document : public Observable,
   RetainPtr<const CPDF_Dictionary> GetPagesDict() const;
   RetainPtr<CPDF_Dictionary> GetMutablePagesDict();
 
-  bool InsertDeletePDFPage(RetainPtr<CPDF_Dictionary> pages_dict,
-                           int pages_to_go,
-                           RetainPtr<CPDF_Dictionary> page_dict,
-                           bool is_insert,
-                           std::set<RetainPtr<CPDF_Dictionary>>* visited);
+  [[nodiscard]] bool InsertDeletePDFPage(
+      RetainPtr<CPDF_Dictionary> pages_dict,
+      int pages_to_go,
+      RetainPtr<CPDF_Dictionary> page_dict,
+      bool is_insert,
+      std::set<RetainPtr<CPDF_Dictionary>>* visited);
 
-  bool InsertNewPage(int iPage, RetainPtr<CPDF_Dictionary> pPageDict);
+  [[nodiscard]] bool InsertNewPage(int iPage,
+                                   RetainPtr<CPDF_Dictionary> pPageDict);
   void ResetTraversal();
   CPDF_Parser::Error HandleLoadResult(CPDF_Parser::Error error);
 

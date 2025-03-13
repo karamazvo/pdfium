@@ -40,7 +40,7 @@ class CJBig2_BitStream {
   const uint8_t* getPointer() const;
   uint32_t getByteLeft() const;
   uint64_t getKey() const { return m_Key; }
-  bool IsInBounds() const;
+  [[nodiscard]] bool IsInBounds() const;
 
  private:
   void AdvanceBit();

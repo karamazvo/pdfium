@@ -18,7 +18,7 @@ class CJX_Packet final : public CJX_Node {
   ~CJX_Packet() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   JSE_METHOD(getAttribute);
   JSE_METHOD(removeAttribute);

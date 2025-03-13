@@ -72,11 +72,13 @@ class CFX_FontMgr {
   CFX_FontMapper* GetBuiltinMapper() const { return m_pBuiltinMapper.get(); }
 
   FXFT_LibraryRec* GetFTLibrary() const { return m_FTLibrary.get(); }
-  bool FTLibrarySupportsHinting() const { return m_FTLibrarySupportsHinting; }
+  [[nodiscard]] bool FTLibrarySupportsHinting() const {
+    return m_FTLibrarySupportsHinting;
+  }
 
  private:
-  bool FreeTypeVersionSupportsHinting() const;
-  bool SetLcdFilterMode() const;
+  [[nodiscard]] bool FreeTypeVersionSupportsHinting() const;
+  [[nodiscard]] bool SetLcdFilterMode() const;
 
   // Must come before |m_pBuiltinMapper| and |m_FaceMap|.
   ScopedFXFTLibraryRec const m_FTLibrary;

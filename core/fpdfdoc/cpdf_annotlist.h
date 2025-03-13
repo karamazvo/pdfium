@@ -34,7 +34,7 @@ class CPDF_AnnotList final : public CPDF_PageRenderContext::AnnotListIface {
 
   size_t Count() const { return m_AnnotList.size(); }
   CPDF_Annot* GetAt(size_t index) const { return m_AnnotList[index].get(); }
-  bool Contains(const CPDF_Annot* pAnnot) const;
+  [[nodiscard]] bool Contains(const CPDF_Annot* pAnnot) const;
 
  private:
   void DisplayPass(CPDF_RenderContext* pContext,

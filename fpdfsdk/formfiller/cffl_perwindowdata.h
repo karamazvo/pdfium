@@ -31,7 +31,7 @@ class CFFL_PerWindowData final : public IPWL_FillerNotify::PerWindowData {
 
   CPDFSDK_Widget* GetWidget() const { return m_pWidget.Get(); }
   const CPDFSDK_PageView* GetPageView() const { return m_pPageView; }
-  bool AppearanceAgeEquals(uint32_t age) const {
+  [[nodiscard]] bool AppearanceAgeEquals(uint32_t age) const {
     return age == m_nAppearanceAge;
   }
   uint32_t GetValueAge() const { return m_nValueAge; }

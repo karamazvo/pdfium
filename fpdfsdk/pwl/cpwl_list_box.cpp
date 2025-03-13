@@ -85,7 +85,7 @@ void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
 }
 
 bool CPWL_ListBox::OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag) {
-  CPWL_Wnd::OnKeyDown(nKeyCode, nFlag);
+  (void)CPWL_Wnd::OnKeyDown(nKeyCode, nFlag);
 
   switch (nKeyCode) {
     default:
@@ -121,23 +121,23 @@ bool CPWL_ListBox::OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag) {
     default:
       break;
   }
-  OnNotifySelectionChanged(true, nFlag);
+  (void)OnNotifySelectionChanged(true, nFlag);
   return true;
 }
 
 bool CPWL_ListBox::OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
-  CPWL_Wnd::OnChar(nChar, nFlag);
+  (void)CPWL_Wnd::OnChar(nChar, nFlag);
 
   if (!m_pListCtrl->OnChar(nChar, IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag)))
     return false;
 
-  OnNotifySelectionChanged(true, nFlag);
+  (void)OnNotifySelectionChanged(true, nFlag);
   return true;
 }
 
 bool CPWL_ListBox::OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
                                  const CFX_PointF& point) {
-  CPWL_Wnd::OnLButtonDown(nFlag, point);
+  (void)CPWL_Wnd::OnLButtonDown(nFlag, point);
 
   if (ClientHitTest(point)) {
     m_bMouseDown = true;
@@ -153,13 +153,13 @@ bool CPWL_ListBox::OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
 
 bool CPWL_ListBox::OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag,
                                const CFX_PointF& point) {
-  CPWL_Wnd::OnLButtonUp(nFlag, point);
+  (void)CPWL_Wnd::OnLButtonUp(nFlag, point);
 
   if (m_bMouseDown) {
     ReleaseCapture();
     m_bMouseDown = false;
   }
-  OnNotifySelectionChanged(false, nFlag);
+  (void)OnNotifySelectionChanged(false, nFlag);
   return true;
 }
 
@@ -169,7 +169,7 @@ void CPWL_ListBox::SetHoverSel(bool bHoverSel) {
 
 bool CPWL_ListBox::OnMouseMove(Mask<FWL_EVENTFLAG> nFlag,
                                const CFX_PointF& point) {
-  CPWL_Wnd::OnMouseMove(nFlag, point);
+  (void)CPWL_Wnd::OnMouseMove(nFlag, point);
 
   if (m_bHoverSel && !IsCaptureMouse() && ClientHitTest(point))
     m_pListCtrl->Select(m_pListCtrl->GetItemIndex(point));
@@ -269,12 +269,12 @@ void CPWL_ListBox::OnSetScrollInfoY(float fPlateMin,
       FXSYS_IsFloatEqual(Info.fPlateWidth,
                          Info.fContentMax - Info.fContentMin)) {
     if (pScroll->IsVisible() && pScroll->SetVisible(false)) {
-      RepositionChildWnd();
+      (void)RepositionChildWnd();
     }
     return;
   }
   if (!pScroll->IsVisible() && pScroll->SetVisible(true)) {
-    RepositionChildWnd();
+    (void)RepositionChildWnd();
   }
 }
 
@@ -352,6 +352,6 @@ bool CPWL_ListBox::OnMouseWheel(Mask<FWL_EVENTFLAG> nFlag,
   else
     m_pListCtrl->OnVK_UP(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));
 
-  OnNotifySelectionChanged(false, nFlag);
+  (void)OnNotifySelectionChanged(false, nFlag);
   return true;
 }

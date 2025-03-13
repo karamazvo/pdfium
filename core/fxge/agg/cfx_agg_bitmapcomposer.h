@@ -37,10 +37,10 @@ class CFX_AggBitmapComposer final : public ScanlineComposerIface {
                BlendMode blend_mode);
 
   // ScanlineComposerIface:
-  bool SetInfo(int width,
-               int height,
-               FXDIB_Format src_format,
-               DataVector<uint32_t> src_palette) override;
+  [[nodiscard]] bool SetInfo(int width,
+                             int height,
+                             FXDIB_Format src_format,
+                             DataVector<uint32_t> src_palette) override;
   void ComposeScanline(int line, pdfium::span<const uint8_t> scanline) override;
 
  private:

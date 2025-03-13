@@ -59,17 +59,20 @@ class CPDF_RenderOptions {
   }
 
   void SetColorMode(Type mode) { m_ColorMode = mode; }
-  bool ColorModeIs(Type mode) const { return m_ColorMode == mode; }
+  [[nodiscard]] bool ColorModeIs(Type mode) const {
+    return m_ColorMode == mode;
+  }
 
   const Options& GetOptions() const { return m_Options; }
   Options& GetOptions() { return m_Options; }
 
   uint32_t GetCacheSizeLimit() const;
-  bool CheckOCGDictVisible(const CPDF_Dictionary* pOC) const;
-  bool CheckPageObjectVisible(const CPDF_PageObject* pPageObj) const;
+  [[nodiscard]] bool CheckOCGDictVisible(const CPDF_Dictionary* pOC) const;
+  [[nodiscard]] bool CheckPageObjectVisible(
+      const CPDF_PageObject* pPageObj) const;
 
   void SetDrawAnnots(bool draw) { m_bDrawAnnots = draw; }
-  bool GetDrawAnnots() const { return m_bDrawAnnots; }
+  [[nodiscard]] bool GetDrawAnnots() const { return m_bDrawAnnots; }
 
   void SetOCContext(RetainPtr<CPDF_OCContext> context) {
     m_pOCContext = context;

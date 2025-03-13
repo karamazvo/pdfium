@@ -17,18 +17,18 @@ class RangeSet {
   RangeSet();
   ~RangeSet();
 
-  bool Contains(const Range& range) const;
+  [[nodiscard]] bool Contains(const Range& range) const;
 
   void Union(const Range& range);
 
   void Union(const RangeSet& range_set);
 
-  bool IsEmpty() const { return ranges().empty(); }
+  [[nodiscard]] bool IsEmpty() const { return ranges().empty(); }
 
   void Clear() { ranges_.clear(); }
 
   struct range_compare {
-    bool operator()(const Range& lval, const Range& rval) const {
+    [[nodiscard]] bool operator()(const Range& lval, const Range& rval) const {
       return lval.first < rval.first;
     }
   };
@@ -39,7 +39,7 @@ class RangeSet {
  private:
   Range FixDirection(const Range& range) const;
 
-  bool IsEmptyRange(const Range& range) const;
+  [[nodiscard]] bool IsEmptyRange(const Range& range) const;
 
   RangesContainer ranges_;
 };

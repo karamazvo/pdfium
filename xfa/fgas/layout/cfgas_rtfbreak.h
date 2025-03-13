@@ -53,7 +53,7 @@ class CFGAS_RTFBreak final : public CFGAS_Break {
   CFGAS_Char::BreakType AppendChar_Control(CFGAS_Char* pCurChar);
   CFGAS_Char::BreakType AppendChar_Arabic(CFGAS_Char* pCurChar);
   CFGAS_Char::BreakType AppendChar_Others(CFGAS_Char* pCurChar);
-  bool GetPositionedTab(int32_t* iTabPos) const;
+  [[nodiscard]] bool GetPositionedTab(int32_t* iTabPos) const;
 
   int32_t GetBreakPos(std::vector<CFGAS_Char>& tca,
                       bool bAllChars,
@@ -62,9 +62,9 @@ class CFGAS_RTFBreak final : public CFGAS_Break {
   void SplitTextLine(CFGAS_BreakLine* pCurLine,
                      CFGAS_BreakLine* pNextLine,
                      bool bAllChars);
-  bool EndBreakSplitLine(CFGAS_BreakLine* pNextLine,
-                         bool bAllChars,
-                         CFGAS_Char::BreakType dwStatus);
+  [[nodiscard]] bool EndBreakSplitLine(CFGAS_BreakLine* pNextLine,
+                                       bool bAllChars,
+                                       CFGAS_Char::BreakType dwStatus);
   std::deque<TPO> EndBreakBidiLine(CFGAS_Char::BreakType dwStatus);
   void EndBreakAlignment(const std::deque<TPO>& tpos,
                          bool bAllChars,

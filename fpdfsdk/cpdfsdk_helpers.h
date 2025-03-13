@@ -291,10 +291,11 @@ RetainPtr<const CPDF_Array> GetQuadPointsArrayFromDictionary(
 RetainPtr<CPDF_Array> GetMutableQuadPointsArrayFromDictionary(
     CPDF_Dictionary* dict);
 RetainPtr<CPDF_Array> AddQuadPointsArrayToDictionary(CPDF_Dictionary* dict);
-bool IsValidQuadPointsIndex(const CPDF_Array* array, size_t index);
-bool GetQuadPointsAtIndex(RetainPtr<const CPDF_Array> array,
-                          size_t quad_index,
-                          FS_QUADPOINTSF* quad_points);
+[[nodiscard]] bool IsValidQuadPointsIndex(const CPDF_Array* array,
+                                          size_t index);
+[[nodiscard]] bool GetQuadPointsAtIndex(RetainPtr<const CPDF_Array> array,
+                                        size_t quad_index,
+                                        FS_QUADPOINTSF* quad_points);
 
 CFX_PointF CFXPointFFromFSPointF(const FS_POINTF& point);
 

@@ -19,11 +19,11 @@ class CFXJSE_NodeHelper {
   CFXJSE_NodeHelper();
   ~CFXJSE_NodeHelper();
 
-  bool CreateNode(const WideString& wsName,
-                  const WideString& wsCondition,
-                  bool bLastNode,
-                  CFXJSE_Engine* pScriptContext);
-  bool CreateNodeForCondition(const WideString& wsCondition);
+  [[nodiscard]] bool CreateNode(const WideString& wsName,
+                                const WideString& wsCondition,
+                                bool bLastNode,
+                                CFXJSE_Engine* pScriptContext);
+  [[nodiscard]] bool CreateNodeForCondition(const WideString& wsCondition);
   void SetCreateNodeType(CXFA_Node* refNode);
 
   XFA_Element m_eLastCreateType = XFA_Element::DataValue;

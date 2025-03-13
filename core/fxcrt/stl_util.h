@@ -41,7 +41,8 @@ ResultType CollectionSize(const Collection& collection) {
 // Convenience routine for "int-fected" code, to handle signed indicies. The
 // compiler can deduce the type, making this more convenient than the above.
 template <typename IndexType, typename Collection>
-bool IndexInBounds(const Collection& collection, IndexType index) {
+[[nodiscard]] bool IndexInBounds(const Collection& collection,
+                                 IndexType index) {
   return index >= 0 && index < CollectionSize<IndexType>(collection);
 }
 

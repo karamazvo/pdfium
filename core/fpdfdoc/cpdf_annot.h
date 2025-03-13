@@ -83,16 +83,16 @@ class CPDF_Annot {
   const CPDF_Dictionary* GetAnnotDict() const { return m_pAnnotDict.Get(); }
   RetainPtr<CPDF_Dictionary> GetMutableAnnotDict() { return m_pAnnotDict; }
 
-  bool IsHidden() const;
+  [[nodiscard]] bool IsHidden() const;
 
-  bool DrawAppearance(CPDF_Page* pPage,
-                      CFX_RenderDevice* pDevice,
-                      const CFX_Matrix& mtUser2Device,
-                      AppearanceMode mode);
-  bool DrawInContext(CPDF_Page* pPage,
-                     CPDF_RenderContext* pContext,
-                     const CFX_Matrix& mtUser2Device,
-                     AppearanceMode mode);
+  [[nodiscard]] bool DrawAppearance(CPDF_Page* pPage,
+                                    CFX_RenderDevice* pDevice,
+                                    const CFX_Matrix& mtUser2Device,
+                                    AppearanceMode mode);
+  [[nodiscard]] bool DrawInContext(CPDF_Page* pPage,
+                                   CPDF_RenderContext* pContext,
+                                   const CFX_Matrix& mtUser2Device,
+                                   AppearanceMode mode);
 
   void ClearCachedAP();
   void DrawBorder(CFX_RenderDevice* pDevice, const CFX_Matrix* pUser2Device);
@@ -104,8 +104,8 @@ class CPDF_Annot {
 
  private:
   void GenerateAPIfNeeded();
-  bool ShouldGenerateAP() const;
-  bool ShouldDrawAnnotation() const;
+  [[nodiscard]] bool ShouldGenerateAP() const;
+  [[nodiscard]] bool ShouldDrawAnnotation() const;
 
   CFX_FloatRect RectForDrawing() const;
 

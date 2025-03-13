@@ -14,8 +14,8 @@ class InvalidSeekableReadStream final : public IFX_SeekableReadStream {
   CONSTRUCT_VIA_MAKE_RETAIN;
 
   // IFX_SeekableReadStream overrides:
-  bool ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
-                         FX_FILESIZE offset) override;
+  [[nodiscard]] bool ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
+                                       FX_FILESIZE offset) override;
   FX_FILESIZE GetSize() override;
 
  private:

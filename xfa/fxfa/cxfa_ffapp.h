@@ -108,12 +108,12 @@ class CXFA_FFApp final : public cppgc::GarbageCollected<CXFA_FFApp>,
      * @param[out] wsResponse   decoded response from server.
      * @return true Server permitted the post request, false otherwise.
      */
-    virtual bool PostRequestURL(const WideString& wsURL,
-                                const WideString& wsData,
-                                const WideString& wsContentType,
-                                const WideString& wsEncode,
-                                const WideString& wsHeader,
-                                WideString& wsResponse) = 0;
+    [[nodiscard]] virtual bool PostRequestURL(const WideString& wsURL,
+                                              const WideString& wsData,
+                                              const WideString& wsContentType,
+                                              const WideString& wsEncode,
+                                              const WideString& wsHeader,
+                                              WideString& wsResponse) = 0;
 
     /**
      * PUT data to the given url.
@@ -123,9 +123,9 @@ class CXFA_FFApp final : public cppgc::GarbageCollected<CXFA_FFApp>,
      * ISO8859-1, any recognized [IANA]character encoding
      * @return true Server permitted the post request, false otherwise.
      */
-    virtual bool PutRequestURL(const WideString& wsURL,
-                               const WideString& wsData,
-                               const WideString& wsEncode) = 0;
+    [[nodiscard]] virtual bool PutRequestURL(const WideString& wsURL,
+                                             const WideString& wsData,
+                                             const WideString& wsEncode) = 0;
 
     virtual CFX_Timer::HandlerIface* GetTimerHandler() const = 0;
     virtual cppgc::Heap* GetGCHeap() const = 0;
@@ -141,7 +141,7 @@ class CXFA_FFApp final : public cppgc::GarbageCollected<CXFA_FFApp>,
   pdfium::IFWL_ThemeProvider* GetThemeProvider() override;
   cppgc::Heap* GetHeap() override;
 
-  bool LoadFWLTheme(CXFA_FFDoc* doc);
+  [[nodiscard]] bool LoadFWLTheme(CXFA_FFDoc* doc);
   CFWL_WidgetMgr* GetFWLWidgetMgr() const { return m_pFWLApp->GetWidgetMgr(); }
   CallbackIface* GetAppProvider() const { return m_pProvider; }
   CFWL_App* GetFWLApp() const { return m_pFWLApp; }

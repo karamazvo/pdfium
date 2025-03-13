@@ -17,7 +17,7 @@ class CPDFSDK_FileWriteAdapter final : public IFX_RetainableWriteStream {
   CONSTRUCT_VIA_MAKE_RETAIN;
 
   // IFX_WriteStream:
-  bool WriteBlock(pdfium::span<const uint8_t> buffer) override;
+  [[nodiscard]] bool WriteBlock(pdfium::span<const uint8_t> buffer) override;
 
  private:
   explicit CPDFSDK_FileWriteAdapter(FPDF_FILEWRITE* file_write);

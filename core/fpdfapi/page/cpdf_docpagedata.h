@@ -52,7 +52,7 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
       RetainPtr<CPDF_Dictionary> pPageResources,
       RetainPtr<CPDF_Stream> pFormStream) override;
 
-  bool IsForceClear() const { return m_bForceClear; }
+  [[nodiscard]] bool IsForceClear() const { return m_bForceClear; }
 
   RetainPtr<CPDF_Font> AddFont(std::unique_ptr<CFX_Font> pFont,
                                FX_Charset charset);

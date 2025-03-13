@@ -106,7 +106,9 @@ class CXFA_FMLexer {
   ~CXFA_FMLexer();
 
   Token NextToken();
-  bool IsComplete() const { return m_nCursor >= m_spInput.size(); }
+  [[nodiscard]] bool IsComplete() const {
+    return m_nCursor >= m_spInput.size();
+  }
 
  private:
   Token AdvanceForNumber();

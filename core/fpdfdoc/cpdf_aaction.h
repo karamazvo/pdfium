@@ -43,11 +43,11 @@ class CPDF_AAction {
   CPDF_AAction(const CPDF_AAction& that);
   ~CPDF_AAction();
 
-  bool ActionExist(AActionType eType) const;
+  [[nodiscard]] bool ActionExist(AActionType eType) const;
   CPDF_Action GetAction(AActionType eType) const;
-  bool HasDict() const { return !!m_pDict; }
+  [[nodiscard]] bool HasDict() const { return !!m_pDict; }
 
-  static bool IsUserInput(AActionType type);
+  [[nodiscard]] static bool IsUserInput(AActionType type);
 
  private:
   RetainPtr<const CPDF_Dictionary> const m_pDict;

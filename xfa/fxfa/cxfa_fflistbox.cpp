@@ -85,7 +85,7 @@ bool CXFA_FFListBox::LoadWidget() {
 
 bool CXFA_FFListBox::OnKillFocus(CXFA_FFWidget* pNewFocus) {
   if (!ProcessCommittedData())
-    UpdateFWLData();
+    (void)UpdateFWLData();
 
   return pNewFocus && CXFA_FFField::OnKillFocus(pNewFocus);
 }

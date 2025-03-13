@@ -32,11 +32,12 @@ class GifDecoder {
   class Delegate {
    public:
     virtual uint32_t GifCurrentPosition() const = 0;
-    virtual bool GifInputRecordPositionBuf(uint32_t rcd_pos,
-                                           const FX_RECT& img_rc,
-                                           pdfium::span<CFX_GifPalette> pal_ptr,
-                                           int32_t trans_index,
-                                           bool interlace) = 0;
+    [[nodiscard]] virtual bool GifInputRecordPositionBuf(
+        uint32_t rcd_pos,
+        const FX_RECT& img_rc,
+        pdfium::span<CFX_GifPalette> pal_ptr,
+        int32_t trans_index,
+        bool interlace) = 0;
     virtual void GifReadScanline(int32_t row_num,
                                  pdfium::span<uint8_t> row_buf) = 0;
   };
@@ -53,8 +54,8 @@ class GifDecoder {
   static Status LoadFrame(ProgressiveDecoderIface::Context* context,
                           size_t frame_num);
   static FX_FILESIZE GetAvailInput(ProgressiveDecoderIface::Context* context);
-  static bool Input(ProgressiveDecoderIface::Context* context,
-                    RetainPtr<CFX_CodecMemory> codec_memory);
+  [[nodiscard]] static bool Input(ProgressiveDecoderIface::Context* context,
+                                  RetainPtr<CFX_CodecMemory> codec_memory);
 
   GifDecoder() = delete;
   GifDecoder(const GifDecoder&) = delete;

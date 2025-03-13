@@ -145,17 +145,18 @@ class EmbedderTest : public ::testing::Test,
   // be nullptr if the file is not password protected. If |javascript_opts|
   // is kDisableJavascript, then the document will be given stubs in place
   // of the real JS engine.
-  virtual bool OpenDocumentWithOptions(const std::string& filename,
-                                       const char* password,
-                                       LinearizeOption linearize_option,
-                                       JavaScriptOption javascript_option);
+  [[nodiscard]] virtual bool OpenDocumentWithOptions(
+      const std::string& filename,
+      const char* password,
+      LinearizeOption linearize_option,
+      JavaScriptOption javascript_option);
 
   // Variants provided for convenience.
-  bool OpenDocument(const std::string& filename);
-  bool OpenDocumentLinearized(const std::string& filename);
-  bool OpenDocumentWithPassword(const std::string& filename,
-                                const char* password);
-  bool OpenDocumentWithoutJavaScript(const std::string& filename);
+  [[nodiscard]] bool OpenDocument(const std::string& filename);
+  [[nodiscard]] bool OpenDocumentLinearized(const std::string& filename);
+  [[nodiscard]] bool OpenDocumentWithPassword(const std::string& filename,
+                                              const char* password);
+  [[nodiscard]] bool OpenDocumentWithoutJavaScript(const std::string& filename);
 
   // Close the document from a previous OpenDocument() call. This happens
   // automatically at tear-down, and is usually not explicitly required,
@@ -250,13 +251,13 @@ class EmbedderTest : public ::testing::Test,
  protected:
   using PageNumberToHandleMap = std::map<int, FPDF_PAGE>;
 
-  bool OpenDocumentHelper(const char* password,
-                          LinearizeOption linearize_option,
-                          JavaScriptOption javascript_option,
-                          FakeFileAccess* network_simulator,
-                          ScopedFPDFDocument* document,
-                          ScopedFPDFAvail* avail,
-                          ScopedFPDFFormHandle* form_handle);
+  [[nodiscard]] bool OpenDocumentHelper(const char* password,
+                                        LinearizeOption linearize_option,
+                                        JavaScriptOption javascript_option,
+                                        FakeFileAccess* network_simulator,
+                                        ScopedFPDFDocument* document,
+                                        ScopedFPDFAvail* avail,
+                                        ScopedFPDFFormHandle* form_handle);
 
   FPDF_FORMHANDLE SetupFormFillEnvironment(FPDF_DOCUMENT doc,
                                            JavaScriptOption javascript_option);

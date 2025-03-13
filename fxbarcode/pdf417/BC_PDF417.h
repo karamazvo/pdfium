@@ -21,7 +21,8 @@ class CBC_PDF417 {
   ~CBC_PDF417();
 
   CBC_BarcodeMatrix* getBarcodeMatrix();
-  bool GenerateBarcodeLogic(WideStringView msg, int32_t errorCorrectionLevel);
+  [[nodiscard]] bool GenerateBarcodeLogic(WideStringView msg,
+                                          int32_t errorCorrectionLevel);
   void setDimensions(int32_t maxCols,
                      int32_t minCols,
                      int32_t maxRows,

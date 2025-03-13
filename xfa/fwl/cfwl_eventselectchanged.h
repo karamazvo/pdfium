@@ -22,7 +22,7 @@ class CFWL_EventSelectChanged final : public CFWL_Event {
                           int32_t iDay);
   ~CFWL_EventSelectChanged() override;
 
-  bool GetLButtonUp() const { return m_bLButtonUp; }
+  [[nodiscard]] bool GetLButtonUp() const { return m_bLButtonUp; }
   int32_t GetYear() const { return m_iYear; }
   int32_t GetMonth() const { return m_iMonth; }
   int32_t GetDay() const { return m_iDay; }

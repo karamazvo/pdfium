@@ -20,7 +20,7 @@ class CJX_LogPseudoModel final : public CJX_Object {
   ~CJX_LogPseudoModel() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   JSE_METHOD(message);
   JSE_METHOD(traceEnabled);

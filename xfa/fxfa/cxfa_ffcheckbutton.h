@@ -26,12 +26,12 @@ class CXFA_FFCheckButton final : public CXFA_FFField {
                     const CFX_Matrix& matrix,
                     HighlightOption highlight) override;
 
-  bool LoadWidget() override;
-  bool PerformLayout() override;
-  bool UpdateFWLData() override;
+  [[nodiscard]] bool LoadWidget() override;
+  [[nodiscard]] bool PerformLayout() override;
+  [[nodiscard]] bool UpdateFWLData() override;
   void UpdateWidgetProperty() override;
-  bool OnLButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
-                   const CFX_PointF& point) override;
+  [[nodiscard]] bool OnLButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
+                                 const CFX_PointF& point) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(pdfium::CFWL_Event* pEvent) override;
   void OnDrawWidget(CFGAS_GEGraphics* pGraphics,
@@ -43,8 +43,8 @@ class CXFA_FFCheckButton final : public CXFA_FFField {
  private:
   CXFA_FFCheckButton(CXFA_Node* pNode, CXFA_CheckButton* button);
 
-  bool CommitData() override;
-  bool IsDataChanged() override;
+  [[nodiscard]] bool CommitData() override;
+  [[nodiscard]] bool IsDataChanged() override;
   void CapLeftRightPlacement(const CXFA_Margin* captionMargin);
   void AddUIMargin(XFA_AttributeValue iCapPlacement);
   XFA_CheckState FWLState2XFAState();

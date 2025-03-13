@@ -114,16 +114,16 @@ class CJS_EventContext final : public IJS_EventContext {
   CJS_Field* TargetField();
 
   Kind EventKind() const { return m_eKind; }
-  bool IsValid() const { return m_bValid; }
-  bool IsUserGesture() const;
+  [[nodiscard]] bool IsValid() const { return m_bValid; }
+  [[nodiscard]] bool IsUserGesture() const;
   WideString& Change();
   WideString ChangeEx() const { return m_WideStrChangeEx; }
   WideString SourceName() const { return m_strSourceName; }
   WideString TargetName() const { return m_strTargetName; }
   int CommitKey() const { return m_nCommitKey; }
-  bool FieldFull() const { return m_bFieldFull; }
-  bool KeyDown() const { return m_bKeyDown; }
-  bool Modifier() const { return m_bModifier; }
+  [[nodiscard]] bool FieldFull() const { return m_bFieldFull; }
+  [[nodiscard]] bool KeyDown() const { return m_bKeyDown; }
+  [[nodiscard]] bool Modifier() const { return m_bModifier; }
   ByteStringView Name() const;
   ByteStringView Type() const;
   bool& Rc();
@@ -131,10 +131,10 @@ class CJS_EventContext final : public IJS_EventContext {
   int SelStart() const;
   void SetSelEnd(int value);
   void SetSelStart(int value);
-  bool Shift() const { return m_bShift; }
-  bool HasValue() const { return !!m_pValue; }
+  [[nodiscard]] bool Shift() const { return m_bShift; }
+  [[nodiscard]] bool HasValue() const { return !!m_pValue; }
   WideString& Value() { return *m_pValue; }
-  bool WillCommit() const { return m_bWillCommit; }
+  [[nodiscard]] bool WillCommit() const { return m_bWillCommit; }
 
   void SetValueForTest(WideString* pStr) { m_pValue = pStr; }
   void SetRCForTest(bool* pRC) { m_pbRc = pRC; }

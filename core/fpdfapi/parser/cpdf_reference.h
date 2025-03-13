@@ -26,13 +26,13 @@ class CPDF_Reference final : public CPDF_Object {
   float GetNumber() const override;
   int GetInteger() const override;
   CPDF_Reference* AsMutableReference() override;
-  bool WriteTo(IFX_ArchiveStream* archive,
-               const CPDF_Encryptor* encryptor) const override;
+  [[nodiscard]] bool WriteTo(IFX_ArchiveStream* archive,
+                             const CPDF_Encryptor* encryptor) const override;
   RetainPtr<CPDF_Reference> MakeReference(
       CPDF_IndirectObjectHolder* holder) const override;
 
   uint32_t GetRefObjNum() const { return m_RefObjNum; }
-  bool HasIndirectObjectHolder() const { return !!m_pObjList; }
+  [[nodiscard]] bool HasIndirectObjectHolder() const { return !!m_pObjList; }
   void SetRef(CPDF_IndirectObjectHolder* pDoc, uint32_t objnum);
 
  private:

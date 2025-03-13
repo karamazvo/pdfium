@@ -32,7 +32,7 @@ class CFX_AggImageRenderer {
                        bool bRgbByteOrder);
   ~CFX_AggImageRenderer();
 
-  bool Continue(PauseIndicatorIface* pPause);
+  [[nodiscard]] bool Continue(PauseIndicatorIface* pPause);
 
  private:
   enum class State : uint8_t { kInitial = 0, kStretching, kTransforming };

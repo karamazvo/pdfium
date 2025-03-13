@@ -47,18 +47,18 @@ class CFX_Face final : public Retainable, public Observable {
                                   const FT_Open_Args* args,
                                   FT_Long face_index);
 
-  bool HasGlyphNames() const;
-  bool IsTtOt() const;
-  bool IsTricky() const;
-  bool IsFixedWidth() const;
+  [[nodiscard]] bool HasGlyphNames() const;
+  [[nodiscard]] bool IsTtOt() const;
+  [[nodiscard]] bool IsTricky() const;
+  [[nodiscard]] bool IsFixedWidth() const;
 
 #if defined(PDF_ENABLE_XFA)
-  bool IsScalable() const;
+  [[nodiscard]] bool IsScalable() const;
   void ClearExternalStream();
 #endif
 
-  bool IsItalic() const;
-  bool IsBold() const;
+  [[nodiscard]] bool IsItalic() const;
+  [[nodiscard]] bool IsBold() const;
 
   ByteString GetFamilyName() const;
   ByteString GetStyleName() const;
@@ -112,12 +112,12 @@ class CFX_Face final : public Retainable, public Observable {
   size_t GetCharMapCount() const;
   void SetCharMap(CharMap map);
   void SetCharMapByIndex(size_t index);
-  bool SelectCharMap(fxge::FontEncoding encoding);
+  [[nodiscard]] bool SelectCharMap(fxge::FontEncoding encoding);
 
-  bool SetPixelSize(uint32_t width, uint32_t height);
+  [[nodiscard]] bool SetPixelSize(uint32_t width, uint32_t height);
 
 #if BUILDFLAG(IS_WIN)
-  bool CanEmbed();
+  [[nodiscard]] bool CanEmbed();
 #endif
 
   FXFT_FaceRec* GetRec() { return m_pRec.get(); }

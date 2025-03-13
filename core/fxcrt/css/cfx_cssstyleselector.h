@@ -50,7 +50,8 @@ class CFX_CSSStyleSelector {
       const WideString& tagname);
 
  private:
-  bool MatchSelector(const WideString& tagname, CFX_CSSSelector* pSel);
+  [[nodiscard]] bool MatchSelector(const WideString& tagname,
+                                   CFX_CSSSelector* pSel);
 
   void AppendInlineStyle(CFX_CSSDeclaration* pDecl, const WideString& style);
   void ApplyDeclarations(
@@ -65,10 +66,10 @@ class CFX_CSSStyleSelector {
                      std::vector<const CFX_CSSPropertyHolder*>* normals,
                      std::vector<const CFX_CSSCustomProperty*>* custom);
 
-  bool SetLengthWithPercent(CFX_CSSLength& width,
-                            CFX_CSSValue::PrimitiveType eType,
-                            const RetainPtr<CFX_CSSValue>& pValue,
-                            float fFontSize);
+  [[nodiscard]] bool SetLengthWithPercent(CFX_CSSLength& width,
+                                          CFX_CSSValue::PrimitiveType eType,
+                                          const RetainPtr<CFX_CSSValue>& pValue,
+                                          float fFontSize);
   float ToFontSize(CFX_CSSPropertyValue eValue, float fCurFontSize);
   CFX_CSSDisplay ToDisplay(CFX_CSSPropertyValue eValue);
   CFX_CSSTextAlign ToTextAlign(CFX_CSSPropertyValue eValue);

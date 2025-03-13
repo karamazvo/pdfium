@@ -14,7 +14,7 @@ class CXFA_Ui final : public CXFA_Node {
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Ui() override;
 
-  bool IsAOneOfChild(CXFA_Node* child) const;
+  [[nodiscard]] bool IsAOneOfChild(CXFA_Node* child) const;
 
  private:
   CXFA_Ui(CXFA_Document* doc, XFA_PacketType packet);

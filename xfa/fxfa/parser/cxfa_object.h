@@ -48,11 +48,11 @@ class CXFA_Object : public cppgc::GarbageCollected<CXFA_Object> {
   CXFA_Document* GetDocument() const { return m_pDocument.Get(); }
   XFA_ObjectType GetObjectType() const { return m_objectType; }
 
-  bool IsList() const {
+  [[nodiscard]] bool IsList() const {
     return m_objectType == XFA_ObjectType::List ||
            m_objectType == XFA_ObjectType::TreeList;
   }
-  bool IsNode() const {
+  [[nodiscard]] bool IsNode() const {
     return m_objectType == XFA_ObjectType::Node ||
            m_objectType == XFA_ObjectType::NodeC ||
            m_objectType == XFA_ObjectType::NodeV ||
@@ -62,16 +62,24 @@ class CXFA_Object : public cppgc::GarbageCollected<CXFA_Object> {
            m_objectType == XFA_ObjectType::ContentNode ||
            m_elementType == XFA_Element::Delta;
   }
-  bool IsTreeList() const { return m_objectType == XFA_ObjectType::TreeList; }
-  bool IsContentNode() const {
+  [[nodiscard]] bool IsTreeList() const {
+    return m_objectType == XFA_ObjectType::TreeList;
+  }
+  [[nodiscard]] bool IsContentNode() const {
     return m_objectType == XFA_ObjectType::ContentNode;
   }
-  bool IsContainerNode() const {
+  [[nodiscard]] bool IsContainerNode() const {
     return m_objectType == XFA_ObjectType::ContainerNode;
   }
-  bool IsModelNode() const { return m_objectType == XFA_ObjectType::ModelNode; }
-  bool IsNodeV() const { return m_objectType == XFA_ObjectType::NodeV; }
-  bool IsThisProxy() const { return m_objectType == XFA_ObjectType::ThisProxy; }
+  [[nodiscard]] bool IsModelNode() const {
+    return m_objectType == XFA_ObjectType::ModelNode;
+  }
+  [[nodiscard]] bool IsNodeV() const {
+    return m_objectType == XFA_ObjectType::NodeV;
+  }
+  [[nodiscard]] bool IsThisProxy() const {
+    return m_objectType == XFA_ObjectType::ThisProxy;
+  }
 
   CXFA_List* AsList();
   CXFA_Node* AsNode();
@@ -81,7 +89,7 @@ class CXFA_Object : public cppgc::GarbageCollected<CXFA_Object> {
   CJX_Object* JSObject() { return m_pJSObject; }
   const CJX_Object* JSObject() const { return m_pJSObject; }
 
-  bool HasCreatedUIWidget() const {
+  [[nodiscard]] bool HasCreatedUIWidget() const {
     return m_elementType == XFA_Element::Field ||
            m_elementType == XFA_Element::Draw ||
            m_elementType == XFA_Element::Subform ||

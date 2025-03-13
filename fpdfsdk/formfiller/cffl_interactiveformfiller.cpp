@@ -109,7 +109,7 @@ void CFFL_InteractiveFormFiller::OnMouseEnter(
         CFFL_FieldAction fa;
         fa.bModifier = CPWL_Wnd::IsCTRLKeyDown(nFlag);
         fa.bShift = CPWL_Wnd::IsSHIFTKeyDown(nFlag);
-        pWidget->OnAAction(CPDF_AAction::kCursorEnter, &fa, pPageView);
+        (void)pWidget->OnAAction(CPDF_AAction::kCursorEnter, &fa, pPageView);
       }
       if (!pWidget)
         return;
@@ -142,7 +142,7 @@ void CFFL_InteractiveFormFiller::OnMouseExit(
         CFFL_FieldAction fa;
         fa.bModifier = CPWL_Wnd::IsCTRLKeyDown(nFlag);
         fa.bShift = CPWL_Wnd::IsSHIFTKeyDown(nFlag);
-        pWidget->OnAAction(CPDF_AAction::kCursorExit, &fa, pPageView);
+        (void)pWidget->OnAAction(CPDF_AAction::kCursorExit, &fa, pPageView);
       }
       if (!pWidget)
         return;
@@ -178,7 +178,7 @@ bool CFFL_InteractiveFormFiller::OnLButtonDown(
         CFFL_FieldAction fa;
         fa.bModifier = CPWL_Wnd::IsCTRLKeyDown(nFlags);
         fa.bShift = CPWL_Wnd::IsSHIFTKeyDown(nFlags);
-        pWidget->OnAAction(CPDF_AAction::kButtonDown, &fa, pPageView);
+        (void)pWidget->OnAAction(CPDF_AAction::kButtonDown, &fa, pPageView);
       }
       if (!pWidget)
         return true;
@@ -221,7 +221,7 @@ bool CFFL_InteractiveFormFiller::OnLButtonUp(
   }
   if (bSetFocus) {
     ObservedPtr<CPDFSDK_Annot> pObserved(pWidget.Get());
-    m_pCallbackIface->SetFocusAnnot(pObserved);
+    (void)m_pCallbackIface->SetFocusAnnot(pObserved);
   }
 
   CFFL_FormField* pFormField = GetFormField(pWidget.Get());
@@ -258,7 +258,7 @@ bool CFFL_InteractiveFormFiller::OnButtonUp(
     CFFL_FieldAction fa;
     fa.bModifier = CPWL_Wnd::IsCTRLKeyDown(nFlag);
     fa.bShift = CPWL_Wnd::IsSHIFTKeyDown(nFlag);
-    pWidget->OnAAction(CPDF_AAction::kButtonUp, &fa, pPageView);
+    (void)pWidget->OnAAction(CPDF_AAction::kButtonUp, &fa, pPageView);
   }
   if (!pWidget || !IsValidAnnot(pPageView, pWidget.Get()))
     return true;
@@ -375,7 +375,7 @@ bool CFFL_InteractiveFormFiller::OnSetFocus(
         fa.bModifier = CPWL_Wnd::IsCTRLKeyDown(nFlag);
         fa.bShift = CPWL_Wnd::IsSHIFTKeyDown(nFlag);
         pFormField->GetActionData(pPageView, CPDF_AAction::kGetFocus, fa);
-        pWidget->OnAAction(CPDF_AAction::kGetFocus, &fa, pPageView);
+        (void)pWidget->OnAAction(CPDF_AAction::kGetFocus, &fa, pPageView);
       }
       if (!pWidget)
         return false;
@@ -428,7 +428,7 @@ bool CFFL_InteractiveFormFiller::OnKillFocus(
     fa.bModifier = CPWL_Wnd::IsCTRLKeyDown(nFlag);
     fa.bShift = CPWL_Wnd::IsSHIFTKeyDown(nFlag);
     pFormField->GetActionData(pPageView, CPDF_AAction::kLoseFocus, fa);
-    pWidget->OnAAction(CPDF_AAction::kLoseFocus, &fa, pPageView);
+    (void)pWidget->OnAAction(CPDF_AAction::kLoseFocus, &fa, pPageView);
   }
   return !!pWidget;
 }
@@ -702,7 +702,7 @@ bool CFFL_InteractiveFormFiller::OnKeyStrokeCommit(
   CFFL_FormField* pFormField = GetFormField(pWidget.Get());
   pFormField->GetActionData(pPageView, CPDF_AAction::kKeyStroke, fa);
   pFormField->SavePWLWindowState(pPageView);
-  pWidget->OnAAction(CPDF_AAction::kKeyStroke, &fa, pPageView);
+  (void)pWidget->OnAAction(CPDF_AAction::kKeyStroke, &fa, pPageView);
 
   if (!pWidget)
     return true;
@@ -735,7 +735,7 @@ bool CFFL_InteractiveFormFiller::OnValidate(
   CFFL_FormField* pFormField = GetFormField(pWidget.Get());
   pFormField->GetActionData(pPageView, CPDF_AAction::kValidate, fa);
   pFormField->SavePWLWindowState(pPageView);
-  pWidget->OnAAction(CPDF_AAction::kValidate, &fa, pPageView);
+  (void)pWidget->OnAAction(CPDF_AAction::kValidate, &fa, pPageView);
 
   if (!pWidget)
     return true;
@@ -781,7 +781,7 @@ bool CFFL_InteractiveFormFiller::OnClick(ObservedPtr<CPDFSDK_Widget>& pWidget,
     fa.bModifier = CPWL_Wnd::IsCTRLKeyDown(nFlag);
     fa.bShift = CPWL_Wnd::IsSHIFTKeyDown(nFlag);
 
-    pWidget->OnXFAAAction(PDFSDK_XFA_Click, &fa, pPageView);
+    (void)pWidget->OnXFAAAction(PDFSDK_XFA_Click, &fa, pPageView);
   }
   if (!pWidget || !IsValidAnnot(pPageView, pWidget.Get()))
     return true;
@@ -812,7 +812,7 @@ bool CFFL_InteractiveFormFiller::OnFull(ObservedPtr<CPDFSDK_Widget>& pWidget,
     CFFL_FieldAction fa;
     fa.bModifier = CPWL_Wnd::IsCTRLKeyDown(nFlag);
     fa.bShift = CPWL_Wnd::IsSHIFTKeyDown(nFlag);
-    pWidget->OnXFAAAction(PDFSDK_XFA_Full, &fa, pPageView);
+    (void)pWidget->OnXFAAAction(PDFSDK_XFA_Full, &fa, pPageView);
   }
   if (!pWidget || !IsValidAnnot(pPageView, pWidget.Get()))
     return true;
@@ -843,7 +843,7 @@ bool CFFL_InteractiveFormFiller::OnPreOpen(ObservedPtr<CPDFSDK_Widget>& pWidget,
     CFFL_FieldAction fa;
     fa.bModifier = CPWL_Wnd::IsCTRLKeyDown(nFlag);
     fa.bShift = CPWL_Wnd::IsSHIFTKeyDown(nFlag);
-    pWidget->OnXFAAAction(PDFSDK_XFA_PreOpen, &fa, pPageView);
+    (void)pWidget->OnXFAAAction(PDFSDK_XFA_PreOpen, &fa, pPageView);
   }
   if (!pWidget || !IsValidAnnot(pPageView, pWidget.Get()))
     return true;
@@ -875,7 +875,7 @@ bool CFFL_InteractiveFormFiller::OnPostOpen(
     CFFL_FieldAction fa;
     fa.bModifier = CPWL_Wnd::IsCTRLKeyDown(nFlag);
     fa.bShift = CPWL_Wnd::IsSHIFTKeyDown(nFlag);
-    pWidget->OnXFAAAction(PDFSDK_XFA_PostOpen, &fa, pPageView);
+    (void)pWidget->OnXFAAAction(PDFSDK_XFA_PostOpen, &fa, pPageView);
   }
   if (!pWidget || !IsValidAnnot(pPageView, pWidget.Get()))
     return true;
@@ -972,7 +972,7 @@ CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
   if (m_pCallbackIface->GetFocusAnnot() == pWidget)
     return {false, bExit};
 
-  pFormField->CommitData(pPageView, nFlag);
+  (void)pFormField->CommitData(pPageView, nFlag);
   return {false, true};
 }
 

@@ -36,7 +36,7 @@ class TreeNodeBase {
     return static_cast<const T*>(this)->m_pPrevSibling;
   }
 
-  bool HasChild(const T* child) const {
+  [[nodiscard]] bool HasChild(const T* child) const {
     return child != this && child->GetParent() == this;
   }
 

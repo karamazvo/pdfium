@@ -35,12 +35,12 @@ class CPDF_Dest {
 
   size_t GetNumParams() const;
   float GetParam(size_t index) const;
-  bool GetXYZ(bool* pHasX,
-              bool* pHasY,
-              bool* pHasZoom,
-              float* pX,
-              float* pY,
-              float* pZoom) const;
+  [[nodiscard]] bool GetXYZ(bool* pHasX,
+                            bool* pHasY,
+                            bool* pHasZoom,
+                            float* pX,
+                            float* pY,
+                            float* pZoom) const;
 
  private:
   RetainPtr<const CPDF_Array> const m_pArray;

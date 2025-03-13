@@ -26,7 +26,7 @@ class CFPF_SkiaFont {
                 FX_Charset uCharset);
   ~CFPF_SkiaFont();
 
-  bool IsValid() const { return !!m_Face; }
+  [[nodiscard]] bool IsValid() const { return !!m_Face; }
 
   ByteString GetFamilyName();
   FX_Charset GetCharset() const { return m_uCharset; }

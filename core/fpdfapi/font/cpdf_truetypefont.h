@@ -16,7 +16,7 @@ class CPDF_TrueTypeFont final : public CPDF_SimpleFont {
   ~CPDF_TrueTypeFont() override;
 
   // CPDF_Font:
-  bool IsTrueTypeFont() const override;
+  [[nodiscard]] bool IsTrueTypeFont() const override;
   const CPDF_TrueTypeFont* AsTrueTypeFont() const override;
   CPDF_TrueTypeFont* AsTrueTypeFont() override;
 
@@ -27,12 +27,12 @@ class CPDF_TrueTypeFont final : public CPDF_SimpleFont {
                     RetainPtr<CPDF_Dictionary> pFontDict);
 
   // CPDF_Font:
-  bool Load() override;
+  [[nodiscard]] bool Load() override;
 
   // CPDF_SimpleFont:
   void LoadGlyphMap() override;
 
-  bool HasAnyGlyphIndex() const;
+  [[nodiscard]] bool HasAnyGlyphIndex() const;
   CharmapType DetermineCharmapType() const;
   FontEncoding DetermineEncoding() const;
   void SetGlyphIndicesFromFirstChar();

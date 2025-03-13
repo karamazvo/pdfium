@@ -66,7 +66,7 @@ class CPDF_Object : public Retainable {
   void SetObjNum(uint32_t objnum) { m_ObjNum = objnum; }
   uint32_t GetGenNum() const { return m_GenNum; }
   void SetGenNum(uint32_t gennum) { m_GenNum = gennum; }
-  bool IsInline() const { return m_ObjNum == 0; }
+  [[nodiscard]] bool IsInline() const { return m_ObjNum == 0; }
   uint64_t KeyForCache() const;
 
   virtual Type GetType() const = 0;
@@ -97,8 +97,8 @@ class CPDF_Object : public Retainable {
   virtual CPDF_Stream* AsMutableStream();
   virtual CPDF_String* AsMutableString();
 
-  virtual bool WriteTo(IFX_ArchiveStream* archive,
-                       const CPDF_Encryptor* encryptor) const = 0;
+  [[nodiscard]] virtual bool WriteTo(IFX_ArchiveStream* archive,
+                                     const CPDF_Encryptor* encryptor) const = 0;
 
   // Create a deep copy of the object with the option to either
   // copy a reference object or directly copy the object it refers to
@@ -132,15 +132,15 @@ class CPDF_Object : public Retainable {
   const CPDF_String* AsString() const;
 
   // Type-testing methods merely wrap As*() methods.
-  bool IsArray() const { return !!AsArray(); }
-  bool IsBoolean() const { return !!AsBoolean(); }
-  bool IsDictionary() const { return !!AsDictionary(); }
-  bool IsName() const { return !!AsName(); }
-  bool IsNull() const { return !!AsNull(); }
-  bool IsNumber() const { return !!AsNumber(); }
-  bool IsReference() const { return !!AsReference(); }
-  bool IsStream() const { return !!AsStream(); }
-  bool IsString() const { return !!AsString(); }
+  [[nodiscard]] bool IsArray() const { return !!AsArray(); }
+  [[nodiscard]] bool IsBoolean() const { return !!AsBoolean(); }
+  [[nodiscard]] bool IsDictionary() const { return !!AsDictionary(); }
+  [[nodiscard]] bool IsName() const { return !!AsName(); }
+  [[nodiscard]] bool IsNull() const { return !!AsNull(); }
+  [[nodiscard]] bool IsNumber() const { return !!AsNumber(); }
+  [[nodiscard]] bool IsReference() const { return !!AsReference(); }
+  [[nodiscard]] bool IsStream() const { return !!AsStream(); }
+  [[nodiscard]] bool IsString() const { return !!AsString(); }
 
  protected:
   friend class CPDF_Dictionary;

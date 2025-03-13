@@ -24,7 +24,7 @@ class CFGAS_BreakLine {
 
   void IncrementArabicCharCount();
   void DecrementArabicCharCount();
-  bool HasArabicChar() const { return m_iArabicChars > 0; }
+  [[nodiscard]] bool HasArabicChar() const { return m_iArabicChars > 0; }
 
   std::vector<CFGAS_Char> m_LineChars;
   std::vector<CFGAS_BreakPiece> m_LinePieces;

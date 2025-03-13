@@ -18,7 +18,7 @@ class CJX_Occur final : public CJX_Node {
   ~CJX_Occur() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   JSE_PROP(max);
   JSE_PROP(min);

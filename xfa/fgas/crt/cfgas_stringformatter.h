@@ -17,11 +17,11 @@
 class CFX_DateTime;
 class LocaleMgrIface;
 
-bool FX_DateFromCanonical(pdfium::span<const wchar_t> wsTime,
-                          CFX_DateTime* datetime);
-bool FX_TimeFromCanonical(const LocaleIface* pLocale,
-                          pdfium::span<const wchar_t> wsTime,
-                          CFX_DateTime* datetime);
+[[nodiscard]] bool FX_DateFromCanonical(pdfium::span<const wchar_t> wsTime,
+                                        CFX_DateTime* datetime);
+[[nodiscard]] bool FX_TimeFromCanonical(const LocaleIface* pLocale,
+                                        pdfium::span<const wchar_t> wsTime,
+                                        CFX_DateTime* datetime);
 
 class CFGAS_StringFormatter {
  public:
@@ -51,27 +51,29 @@ class CFGAS_StringFormatter {
 
   Category GetCategory() const;
 
-  bool ParseText(const WideString& wsSrcText, WideString* wsValue) const;
-  bool ParseNum(LocaleMgrIface* pLocaleMgr,
-                const WideString& wsSrcNum,
-                WideString* wsValue) const;
-  bool ParseDateTime(LocaleMgrIface* pLocaleMgr,
-                     const WideString& wsSrcDateTime,
-                     DateTimeType eDateTimeType,
-                     CFX_DateTime* dtValue) const;
-  bool ParseZero(const WideString& wsSrcText) const;
-  bool ParseNull(const WideString& wsSrcText) const;
+  [[nodiscard]] bool ParseText(const WideString& wsSrcText,
+                               WideString* wsValue) const;
+  [[nodiscard]] bool ParseNum(LocaleMgrIface* pLocaleMgr,
+                              const WideString& wsSrcNum,
+                              WideString* wsValue) const;
+  [[nodiscard]] bool ParseDateTime(LocaleMgrIface* pLocaleMgr,
+                                   const WideString& wsSrcDateTime,
+                                   DateTimeType eDateTimeType,
+                                   CFX_DateTime* dtValue) const;
+  [[nodiscard]] bool ParseZero(const WideString& wsSrcText) const;
+  [[nodiscard]] bool ParseNull(const WideString& wsSrcText) const;
 
-  bool FormatText(const WideString& wsSrcText, WideString* wsOutput) const;
-  bool FormatNum(LocaleMgrIface* pLocaleMgr,
-                 const WideString& wsSrcNum,
-                 WideString* wsOutput) const;
-  bool FormatDateTime(LocaleMgrIface* pLocaleMgr,
-                      const WideString& wsSrcDateTime,
-                      DateTimeType eDateTimeType,
-                      WideString* wsOutput) const;
-  bool FormatZero(WideString* wsOutput) const;
-  bool FormatNull(WideString* wsOutput) const;
+  [[nodiscard]] bool FormatText(const WideString& wsSrcText,
+                                WideString* wsOutput) const;
+  [[nodiscard]] bool FormatNum(LocaleMgrIface* pLocaleMgr,
+                               const WideString& wsSrcNum,
+                               WideString* wsOutput) const;
+  [[nodiscard]] bool FormatDateTime(LocaleMgrIface* pLocaleMgr,
+                                    const WideString& wsSrcDateTime,
+                                    DateTimeType eDateTimeType,
+                                    WideString* wsOutput) const;
+  [[nodiscard]] bool FormatZero(WideString* wsOutput) const;
+  [[nodiscard]] bool FormatNull(WideString* wsOutput) const;
 
  private:
   WideString GetTextFormat(WideStringView wsCategory) const;

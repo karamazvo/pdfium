@@ -18,7 +18,7 @@ class CJX_Source final : public CJX_Node {
   ~CJX_Source() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   JSE_METHOD(addNew);
   JSE_METHOD(cancel);

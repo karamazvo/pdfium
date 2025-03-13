@@ -75,23 +75,23 @@ class CPDF_RenderStatus {
                         const CFX_Matrix& mtObj2Device);
   void RenderSingleObject(CPDF_PageObject* pObj,
                           const CFX_Matrix& mtObj2Device);
-  bool ContinueSingleObject(CPDF_PageObject* pObj,
-                            const CFX_Matrix& mtObj2Device,
-                            PauseIndicatorIface* pPause);
+  [[nodiscard]] bool ContinueSingleObject(CPDF_PageObject* pObj,
+                                          const CFX_Matrix& mtObj2Device,
+                                          PauseIndicatorIface* pPause);
   void ProcessClipPath(const CPDF_ClipPath& ClipPath,
                        const CFX_Matrix& mtObj2Device);
 
   CPDF_ColorSpace::Family GetGroupFamily() const { return m_GroupFamily; }
-  bool GetLoadMask() const { return m_bLoadMask; }
-  bool GetDropObjects() const { return m_bDropObjects; }
-  bool IsPrint() const {
+  [[nodiscard]] bool GetLoadMask() const { return m_bLoadMask; }
+  [[nodiscard]] bool GetDropObjects() const { return m_bDropObjects; }
+  [[nodiscard]] bool IsPrint() const {
 #if BUILDFLAG(IS_WIN)
     return m_bPrint;
 #else
     return false;
 #endif
   }
-  bool IsStopped() const { return m_bStopped; }
+  [[nodiscard]] bool IsStopped() const { return m_bStopped; }
   CPDF_RenderContext* GetContext() const { return m_pContext; }
   const CPDF_Dictionary* GetFormResource() const {
     return m_pFormResource.Get();
@@ -130,8 +130,8 @@ class CPDF_RenderStatus {
       bool stroke);
 
  private:
-  bool ProcessTransparency(CPDF_PageObject* PageObj,
-                           const CFX_Matrix& mtObj2Device);
+  [[nodiscard]] bool ProcessTransparency(CPDF_PageObject* PageObj,
+                                         const CFX_Matrix& mtObj2Device);
   void ProcessObjectNoClip(CPDF_PageObject* pObj,
                            const CFX_Matrix& mtObj2Device);
   void DrawObjWithBackground(CPDF_PageObject* pObj,
@@ -140,8 +140,10 @@ class CPDF_RenderStatus {
                                      const CFX_Matrix& object_to_device,
                                      CFX_RenderDevice* device,
                                      const CFX_Matrix& device_matrix);
-  bool DrawObjWithBlend(CPDF_PageObject* pObj, const CFX_Matrix& mtObj2Device);
-  bool ProcessPath(CPDF_PathObject* path_obj, const CFX_Matrix& mtObj2Device);
+  [[nodiscard]] bool DrawObjWithBlend(CPDF_PageObject* pObj,
+                                      const CFX_Matrix& mtObj2Device);
+  [[nodiscard]] bool ProcessPath(CPDF_PathObject* path_obj,
+                                 const CFX_Matrix& mtObj2Device);
   void ProcessPathPattern(CPDF_PathObject* path_obj,
                           const CFX_Matrix& mtObj2Device,
                           CFX_FillRenderOptions::FillType* fill_type,
@@ -150,21 +152,21 @@ class CPDF_RenderStatus {
                            const CFX_Matrix& mtObj2Device,
                            const CPDF_Color* pColor,
                            bool stroke);
-  bool ClipPattern(const CPDF_PageObject* page_obj,
-                   const CFX_Matrix& mtObj2Device,
-                   bool stroke);
-  bool SelectClipPath(const CPDF_PathObject* path_obj,
-                      const CFX_Matrix& mtObj2Device,
-                      bool stroke);
-  bool ProcessImage(CPDF_ImageObject* pImageObj,
-                    const CFX_Matrix& mtObj2Device);
+  [[nodiscard]] bool ClipPattern(const CPDF_PageObject* page_obj,
+                                 const CFX_Matrix& mtObj2Device,
+                                 bool stroke);
+  [[nodiscard]] bool SelectClipPath(const CPDF_PathObject* path_obj,
+                                    const CFX_Matrix& mtObj2Device,
+                                    bool stroke);
+  [[nodiscard]] bool ProcessImage(CPDF_ImageObject* pImageObj,
+                                  const CFX_Matrix& mtObj2Device);
   void ProcessShading(const CPDF_ShadingObject* pShadingObj,
                       const CFX_Matrix& mtObj2Device);
-  bool ProcessType3Text(CPDF_TextObject* textobj,
-                        const CFX_Matrix& mtObj2Device);
-  bool ProcessText(CPDF_TextObject* textobj,
-                   const CFX_Matrix& mtObj2Device,
-                   CFX_Path* clipping_path);
+  [[nodiscard]] bool ProcessType3Text(CPDF_TextObject* textobj,
+                                      const CFX_Matrix& mtObj2Device);
+  [[nodiscard]] bool ProcessText(CPDF_TextObject* textobj,
+                                 const CFX_Matrix& mtObj2Device,
+                                 CFX_Path* clipping_path);
   void DrawTextPathWithPattern(const CPDF_TextObject* textobj,
                                const CFX_Matrix& mtObj2Device,
                                CPDF_Font* pFont,
@@ -172,8 +174,8 @@ class CPDF_RenderStatus {
                                const CFX_Matrix& mtTextMatrix,
                                bool fill,
                                bool stroke);
-  bool ProcessForm(const CPDF_FormObject* pFormObj,
-                   const CFX_Matrix& mtObj2Device);
+  [[nodiscard]] bool ProcessForm(const CPDF_FormObject* pFormObj,
+                                 const CFX_Matrix& mtObj2Device);
   FX_RECT GetClippedBBox(const FX_RECT& rect) const;
   RetainPtr<CFX_DIBitmap> GetBackdrop(const CPDF_PageObject* pObj,
                                       const FX_RECT& bbox,

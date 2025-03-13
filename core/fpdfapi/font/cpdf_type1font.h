@@ -22,27 +22,27 @@ class CPDF_Type1Font final : public CPDF_SimpleFont {
   ~CPDF_Type1Font() override;
 
   // CPDF_Font:
-  bool IsType1Font() const override;
+  [[nodiscard]] bool IsType1Font() const override;
   const CPDF_Type1Font* AsType1Font() const override;
   CPDF_Type1Font* AsType1Font() override;
 #if BUILDFLAG(IS_APPLE)
   int GlyphFromCharCodeExt(uint32_t charcode) override;
 #endif
 
-  bool IsBase14Font() const { return m_Base14Font.has_value(); }
+  [[nodiscard]] bool IsBase14Font() const { return m_Base14Font.has_value(); }
 
  private:
   CPDF_Type1Font(CPDF_Document* pDocument,
                  RetainPtr<CPDF_Dictionary> pFontDict);
 
   // CPDF_Font:
-  bool Load() override;
+  [[nodiscard]] bool Load() override;
 
   // CPDF_SimpleFont:
   void LoadGlyphMap() override;
 
-  bool IsSymbolicFont() const;
-  bool IsFixedFont() const;
+  [[nodiscard]] bool IsSymbolicFont() const;
+  [[nodiscard]] bool IsFixedFont() const;
 
 #if BUILDFLAG(IS_APPLE)
   void SetExtGID(const char* name, uint32_t charcode);

@@ -15,7 +15,7 @@ class CXFA_Submit final : public CXFA_Node {
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
   ~CXFA_Submit() override;
 
-  bool IsSubmitEmbedPDF();
+  [[nodiscard]] bool IsSubmitEmbedPDF();
   XFA_AttributeValue GetSubmitFormat();
   WideString GetSubmitTarget();
   WideString GetSubmitXDPContent();

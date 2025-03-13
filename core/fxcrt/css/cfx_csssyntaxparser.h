@@ -44,7 +44,7 @@ class CFX_CSSSyntaxParser {
   };
 
   void SaveMode(Mode eMode);
-  bool RestoreMode();
+  [[nodiscard]] bool RestoreMode();
 
   bool m_bHasError = false;
   Mode m_eMode = Mode::kRuleSet;

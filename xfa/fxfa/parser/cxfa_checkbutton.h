@@ -18,8 +18,8 @@ class CXFA_CheckButton final : public CXFA_Node {
 
   XFA_FFWidgetType GetDefaultFFWidgetType() const override;
 
-  bool IsRound();
-  bool IsAllowNeutral();
+  [[nodiscard]] bool IsRound();
+  [[nodiscard]] bool IsAllowNeutral();
   XFA_AttributeValue GetMark();
 
  private:

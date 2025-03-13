@@ -31,16 +31,16 @@ class CPDF_Color {
 
   CPDF_Color& operator=(const CPDF_Color& that);
 
-  bool IsNull() const;
-  bool IsPattern() const;
+  [[nodiscard]] bool IsNull() const;
+  [[nodiscard]] bool IsPattern() const;
   void SetColorSpace(RetainPtr<CPDF_ColorSpace> colorspace);
   void SetValueForNonPattern(std::vector<float> values);
   void SetValueForPattern(RetainPtr<CPDF_Pattern> pattern,
                           pdfium::span<float> values);
 
   uint32_t ComponentCount() const;
-  bool IsColorSpaceRGB() const;
-  bool IsColorSpaceGray() const;
+  [[nodiscard]] bool IsColorSpaceRGB() const;
+  [[nodiscard]] bool IsColorSpaceGray() const;
   // Wrapper around GetRGB() that returns the RGB value as FX_COLORREF. The
   // GetRGB() return value is clamped to fit into FX_COLORREF, where the color
   // components are 8-bit fields within an unsigned integer.
@@ -51,7 +51,7 @@ class CPDF_Color {
   RetainPtr<CPDF_Pattern> GetPattern() const;
 
  protected:
-  bool IsPatternInternal() const;
+  [[nodiscard]] bool IsPatternInternal() const;
 
   absl::variant<absl::monostate,
                 std::vector<float>,  // Used for non-pattern colorspaces.

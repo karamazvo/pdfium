@@ -76,7 +76,7 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
 
   void SelectAll();
   void ClearSelection();
-  bool HasSelection() const;
+  [[nodiscard]] bool HasSelection() const;
   // Returns <start, count> of the selection.
   std::pair<size_t, size_t> GetSelection() const;
 
@@ -85,11 +85,11 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   void SetAliasChar(wchar_t wAlias);
   std::optional<WideString> Copy();
   std::optional<WideString> Cut();
-  bool Paste(const WideString& wsPaste);
-  bool Undo();
-  bool Redo();
-  bool CanUndo();
-  bool CanRedo();
+  [[nodiscard]] bool Paste(const WideString& wsPaste);
+  [[nodiscard]] bool Undo();
+  [[nodiscard]] bool Redo();
+  [[nodiscard]] bool CanUndo();
+  [[nodiscard]] bool CanRedo();
 
   // CFDE_TextEditEngine::Delegate
   void NotifyTextFull() override;
@@ -97,7 +97,7 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   void OnTextWillChange(CFDE_TextEditEngine::TextChange* change) override;
   void OnTextChanged() override;
   void OnSelChanged() override;
-  bool OnValidate(const WideString& wsText) override;
+  [[nodiscard]] bool OnValidate(const WideString& wsText) override;
   void SetScrollOffset(float fScrollOffset) override;
 
  protected:
@@ -119,8 +119,9 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   void UpdateEditEngine();
   void UpdateEditParams();
   void UpdateEditLayout();
-  bool UpdateOffset();
-  bool UpdateOffset(CFWL_ScrollBar* pScrollBar, float fPosChanged);
+  [[nodiscard]] bool UpdateOffset();
+  [[nodiscard]] bool UpdateOffset(CFWL_ScrollBar* pScrollBar,
+                                  float fPosChanged);
   void UpdateVAlignment();
   void UpdateCaret();
   CFWL_ScrollBar* UpdateScroll();
@@ -130,8 +131,8 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   void InitVerticalScrollBar();
   void InitEngine();
   void InitCaret();
-  bool IsShowVertScrollBar() const;
-  bool IsContentHeightOverflow() const;
+  [[nodiscard]] bool IsShowVertScrollBar() const;
+  [[nodiscard]] bool IsContentHeightOverflow() const;
   void SetCursorPosition(size_t position);
   void UpdateCursorRect();
 
@@ -144,9 +145,9 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   void OnMouseMove(CFWL_MessageMouse* pMsg);
   void OnKeyDown(CFWL_MessageKey* pMsg);
   void OnChar(CFWL_MessageKey* pMsg);
-  bool OnScroll(CFWL_ScrollBar* pScrollBar,
-                CFWL_EventScroll::Code dwCode,
-                float fPos);
+  [[nodiscard]] bool OnScroll(CFWL_ScrollBar* pScrollBar,
+                              CFWL_EventScroll::Code dwCode,
+                              float fPos);
 
   CFX_RectF m_ClientRect;
   CFX_RectF m_EngineRect;

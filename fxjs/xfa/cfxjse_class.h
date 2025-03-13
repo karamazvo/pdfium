@@ -24,7 +24,9 @@ class CFXJSE_Class {
   explicit CFXJSE_Class(const CFXJSE_Context* pContext);
   ~CFXJSE_Class();
 
-  bool IsName(ByteStringView name) const { return name == m_szClassName; }
+  [[nodiscard]] bool IsName(ByteStringView name) const {
+    return name == m_szClassName;
+  }
   const CFXJSE_Context* GetContext() const { return m_pContext; }
   v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* pIsolate);
 

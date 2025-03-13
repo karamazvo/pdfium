@@ -176,7 +176,7 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(
   m_offSet = rcd_pos;
 
   FXCODEC_STATUS error_status = FXCODEC_STATUS::kError;
-  m_pCodecMemory->Seek(m_pCodecMemory->GetSize());
+  (void)m_pCodecMemory->Seek(m_pCodecMemory->GetSize());
   if (!GifReadMoreData(&error_status))
     return false;
 
@@ -304,7 +304,7 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
     CFX_DIBAttribute* pAttribute) {
   std::unique_ptr<ProgressiveDecoderIface::Context> pBmpContext =
       BmpDecoder::StartDecode(this);
-  BmpDecoder::Input(pBmpContext.get(), m_pCodecMemory);
+  (void)BmpDecoder::Input(pBmpContext.get(), m_pCodecMemory);
 
   pdfium::span<const FX_ARGB> palette;
   BmpDecoder::Status read_result = BmpDecoder::ReadHeader(
@@ -387,8 +387,8 @@ FXCODEC_STATUS ProgressiveDecoder::BmpStartDecode() {
   m_DecodeBuf.resize(m_ScanlineSize);
   FXDIB_ResampleOptions options;
   options.bInterpolateBilinear = true;
-  m_WeightHorz.CalculateWeights(m_SrcWidth, 0, m_SrcWidth, m_SrcWidth, 0,
-                                m_SrcWidth, options);
+  (void)m_WeightHorz.CalculateWeights(m_SrcWidth, 0, m_SrcWidth, m_SrcWidth, 0,
+                                      m_SrcWidth, options);
   m_status = FXCODEC_STATUS::kDecodeToBeContinued;
   return m_status;
 }
@@ -423,7 +423,7 @@ bool ProgressiveDecoder::GifReadMoreData(FXCODEC_STATUS* err_status) {
 
 bool ProgressiveDecoder::GifDetectImageTypeInBuffer() {
   m_pGifContext = GifDecoder::StartDecode(this);
-  GifDecoder::Input(m_pGifContext.get(), m_pCodecMemory);
+  (void)GifDecoder::Input(m_pGifContext.get(), m_pCodecMemory);
   m_SrcComponents = 1;
   GifDecoder::Status readResult =
       GifDecoder::ReadHeader(m_pGifContext.get(), &m_SrcWidth, &m_SrcHeight,
@@ -455,8 +455,8 @@ FXCODEC_STATUS ProgressiveDecoder::GifStartDecode() {
   m_DecodeBuf.resize(scanline_size);
   FXDIB_ResampleOptions options;
   options.bInterpolateBilinear = true;
-  m_WeightHorz.CalculateWeights(m_SrcWidth, 0, m_SrcWidth, m_SrcWidth, 0,
-                                m_SrcWidth, options);
+  (void)m_WeightHorz.CalculateWeights(m_SrcWidth, 0, m_SrcWidth, m_SrcWidth, 0,
+                                      m_SrcWidth, options);
   m_FrameCur = 0;
   m_status = FXCODEC_STATUS::kDecodeToBeContinued;
   return m_status;
@@ -502,8 +502,8 @@ bool ProgressiveDecoder::JpegDetectImageTypeInBuffer(
     m_status = FXCODEC_STATUS::kError;
     return false;
   }
-  JpegProgressiveDecoder::GetInstance()->Input(m_pJpegContext.get(),
-                                               m_pCodecMemory);
+  (void)JpegProgressiveDecoder::GetInstance()->Input(m_pJpegContext.get(),
+                                                     m_pCodecMemory);
 
   while (1) {
     int read_result = JpegProgressiveDecoder::ReadHeader(
@@ -545,8 +545,8 @@ FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode() {
   m_DecodeBuf.resize(FxAlignToBoundary<4>(m_SrcWidth * m_SrcComponents));
   FXDIB_ResampleOptions options;
   options.bInterpolateBilinear = true;
-  m_WeightHorz.CalculateWeights(m_SrcWidth, 0, m_SrcWidth, m_SrcWidth, 0,
-                                m_SrcWidth, options);
+  (void)m_WeightHorz.CalculateWeights(m_SrcWidth, 0, m_SrcWidth, m_SrcWidth, 0,
+                                      m_SrcWidth, options);
   switch (m_SrcComponents) {
     case 1:
       m_SrcFormat = FXCodec_8bppGray;
@@ -797,7 +797,7 @@ bool ProgressiveDecoder::ReadMoreData(
     dwBytesToFetchFromFile = pdfium::checked_cast<uint32_t>(
         std::min<size_t>(dwBytesToFetchFromFile, dwConsumable));
     m_pCodecMemory->Consume(dwBytesToFetchFromFile);
-    m_pCodecMemory->Seek(dwConsumable - dwBytesToFetchFromFile);
+    (void)m_pCodecMemory->Seek(dwConsumable - dwBytesToFetchFromFile);
     dwUnconsumed += m_pCodecMemory->GetPosition();
   }
 

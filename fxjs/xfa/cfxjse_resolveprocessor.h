@@ -39,21 +39,21 @@ class CFXJSE_ResolveProcessor {
   CFXJSE_ResolveProcessor(CFXJSE_Engine* pEngine, CFXJSE_NodeHelper* pHelper);
   ~CFXJSE_ResolveProcessor();
 
-  bool Resolve(v8::Isolate* pIsolate, NodeData& rnd);
+  [[nodiscard]] bool Resolve(v8::Isolate* pIsolate, NodeData& rnd);
   int32_t GetFilter(WideStringView wsExpression, int32_t nStart, NodeData& rnd);
   int32_t IndexForDataBind(const WideString& wsNextCondition, int32_t iCount);
   void SetCurStart(int32_t start) { m_iCurStart = start; }
 
  private:
-  bool ResolveForAttributeRs(CXFA_Object* curNode,
-                             CFXJSE_Engine::ResolveResult* rnd,
-                             WideStringView strAttr);
-  bool ResolveAnyChild(v8::Isolate* pIsolate, NodeData& rnd);
-  bool ResolveDollar(v8::Isolate* pIsolate, NodeData& rnd);
-  bool ResolveExcalmatory(v8::Isolate* pIsolate, NodeData& rnd);
-  bool ResolveNumberSign(v8::Isolate* pIsolate, NodeData& rnd);
-  bool ResolveAsterisk(NodeData& rnd);
-  bool ResolveNormal(v8::Isolate* pIsolate, NodeData& rnd);
+  [[nodiscard]] bool ResolveForAttributeRs(CXFA_Object* curNode,
+                                           CFXJSE_Engine::ResolveResult* rnd,
+                                           WideStringView strAttr);
+  [[nodiscard]] bool ResolveAnyChild(v8::Isolate* pIsolate, NodeData& rnd);
+  [[nodiscard]] bool ResolveDollar(v8::Isolate* pIsolate, NodeData& rnd);
+  [[nodiscard]] bool ResolveExcalmatory(v8::Isolate* pIsolate, NodeData& rnd);
+  [[nodiscard]] bool ResolveNumberSign(v8::Isolate* pIsolate, NodeData& rnd);
+  [[nodiscard]] bool ResolveAsterisk(NodeData& rnd);
+  [[nodiscard]] bool ResolveNormal(v8::Isolate* pIsolate, NodeData& rnd);
   void SetStylesForChild(Mask<XFA_ResolveFlag> dwParentStyles, NodeData& rnd);
 
   void ConditionArray(size_t iCurIndex,

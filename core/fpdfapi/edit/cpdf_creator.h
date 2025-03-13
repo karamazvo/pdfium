@@ -33,8 +33,8 @@ class CPDF_Creator {
   ~CPDF_Creator();
 
   void RemoveSecurity();
-  bool Create(uint32_t flags);
-  bool SetFileVersion(int32_t fileVersion);
+  [[nodiscard]] bool Create(uint32_t flags);
+  [[nodiscard]] bool SetFileVersion(int32_t fileVersion);
 
  private:
   enum class Stage {
@@ -54,7 +54,7 @@ class CPDF_Creator {
     kComplete100 = 100,
   };
 
-  bool Continue();
+  [[nodiscard]] bool Continue();
   void Clear();
 
   void InitNewObjNumOffsets();
@@ -65,10 +65,10 @@ class CPDF_Creator {
   CPDF_Creator::Stage WriteDoc_Stage3();
   CPDF_Creator::Stage WriteDoc_Stage4();
 
-  bool WriteOldIndirectObject(uint32_t objnum);
-  bool WriteOldObjs();
-  bool WriteNewObjs();
-  bool WriteIndirectObj(uint32_t objnum, const CPDF_Object* pObj);
+  [[nodiscard]] bool WriteOldIndirectObject(uint32_t objnum);
+  [[nodiscard]] bool WriteOldObjs();
+  [[nodiscard]] bool WriteNewObjs();
+  [[nodiscard]] bool WriteIndirectObj(uint32_t objnum, const CPDF_Object* pObj);
 
   CPDF_CryptoHandler* GetCryptoHandler();
 

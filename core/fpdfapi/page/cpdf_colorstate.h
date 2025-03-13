@@ -36,11 +36,11 @@ class CPDF_ColorState {
 
   const CPDF_Color* GetFillColor() const;
   CPDF_Color* GetMutableFillColor();
-  bool HasFillColor() const;
+  [[nodiscard]] bool HasFillColor() const;
 
   const CPDF_Color* GetStrokeColor() const;
   CPDF_Color* GetMutableStrokeColor();
-  bool HasStrokeColor() const;
+  [[nodiscard]] bool HasStrokeColor() const;
 
   void SetFillColor(RetainPtr<CPDF_ColorSpace> colorspace,
                     std::vector<float> values);
@@ -51,7 +51,7 @@ class CPDF_ColorState {
   void SetStrokePattern(RetainPtr<CPDF_Pattern> pattern,
                         pdfium::span<float> values);
 
-  bool HasRef() const { return !!m_Ref; }
+  [[nodiscard]] bool HasRef() const { return !!m_Ref; }
 
  private:
   class ColorData final : public Retainable {

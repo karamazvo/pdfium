@@ -16,7 +16,7 @@ class ComFactory final {
   IXpsOMObjectFactory* GetXpsOMObjectFactory();
 
  private:
-  bool Initialize();
+  [[nodiscard]] bool Initialize();
 
   bool initialized_ = false;
   IXpsOMObjectFactory* xps_om_object_factory_ = nullptr;

@@ -33,7 +33,7 @@ v8::LocalVector<v8::Value> ExpandKeywordParams(
     size_t nKeywords,
     ...);
 
-bool IsExpandedParamKnown(v8::Local<v8::Value> value);
+[[nodiscard]] bool IsExpandedParamKnown(v8::Local<v8::Value> value);
 
 // All JS classes have a name, an object defintion ID, and the ability to
 // register themselves with FXJS_V8. We never make a BASE class on its own

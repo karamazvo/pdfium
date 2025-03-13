@@ -33,20 +33,22 @@ class CXFA_FFTextEdit : public CXFA_FFField {
   void Trace(cppgc::Visitor* visitor) const override;
 
   // CXFA_FFField
-  bool LoadWidget() override;
+  [[nodiscard]] bool LoadWidget() override;
   void UpdateWidgetProperty() override;
-  bool AcceptsFocusOnButtonDown(
+  [[nodiscard]] bool AcceptsFocusOnButtonDown(
       Mask<XFA_FWL_KeyFlag> dwFlags,
       const CFX_PointF& point,
       CFWL_MessageMouse::MouseCommand command) override;
-  bool OnLButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
-                     const CFX_PointF& point) override;
-  bool OnRButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
-                     const CFX_PointF& point) override;
-  bool OnRButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
-                   const CFX_PointF& point) override;
-  [[nodiscard]] bool OnSetFocus(CXFA_FFWidget* pOldWidget) override;
-  [[nodiscard]] bool OnKillFocus(CXFA_FFWidget* pNewWidget) override;
+  [[nodiscard]] bool OnLButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
+                                   const CFX_PointF& point) override;
+  [[nodiscard]] bool OnRButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
+                                   const CFX_PointF& point) override;
+  [[nodiscard]] bool OnRButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
+                                 const CFX_PointF& point) override;
+  [[nodiscard]] [[nodiscard]] bool OnSetFocus(
+      CXFA_FFWidget* pOldWidget) override;
+  [[nodiscard]] [[nodiscard]] bool OnKillFocus(
+      CXFA_FFWidget* pNewWidget) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(pdfium::CFWL_Event* pEvent) override;
   void OnDrawWidget(CFGAS_GEGraphics* pGraphics,
@@ -57,17 +59,17 @@ class CXFA_FFTextEdit : public CXFA_FFField {
   void OnTextFull(CFWL_Widget* pWidget);
 
   // CXFA_FFWidget
-  bool CanUndo() override;
-  bool CanRedo() override;
-  bool CanCopy() override;
-  bool CanCut() override;
-  bool CanPaste() override;
-  bool CanSelectAll() override;
-  bool Undo() override;
-  bool Redo() override;
+  [[nodiscard]] bool CanUndo() override;
+  [[nodiscard]] bool CanRedo() override;
+  [[nodiscard]] bool CanCopy() override;
+  [[nodiscard]] bool CanCut() override;
+  [[nodiscard]] bool CanPaste() override;
+  [[nodiscard]] bool CanSelectAll() override;
+  [[nodiscard]] bool Undo() override;
+  [[nodiscard]] bool Redo() override;
   std::optional<WideString> Copy() override;
   std::optional<WideString> Cut() override;
-  bool Paste(const WideString& wsPaste) override;
+  [[nodiscard]] bool Paste(const WideString& wsPaste) override;
   void SelectAll() override;
   void Delete() override;
   void DeSelect() override;
@@ -81,9 +83,9 @@ class CXFA_FFTextEdit : public CXFA_FFField {
   cppgc::Member<IFWL_WidgetDelegate> m_pOldDelegate;
 
  private:
-  bool CommitData() override;
-  bool UpdateFWLData() override;
-  bool IsDataChanged() override;
+  [[nodiscard]] bool CommitData() override;
+  [[nodiscard]] bool UpdateFWLData() override;
+  [[nodiscard]] bool IsDataChanged() override;
   void ValidateNumberField(const WideString& wsText);
 };
 

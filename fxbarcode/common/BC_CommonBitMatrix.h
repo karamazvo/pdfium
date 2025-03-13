@@ -17,7 +17,7 @@ class CBC_CommonBitMatrix {
   CBC_CommonBitMatrix(size_t width, size_t height);
   ~CBC_CommonBitMatrix();
 
-  bool Get(size_t x, size_t y) const;
+  [[nodiscard]] bool Get(size_t x, size_t y) const;
   void Set(size_t x, size_t y);
 
  private:

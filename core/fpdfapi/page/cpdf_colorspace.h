@@ -94,7 +94,7 @@ class CPDF_ColorSpace : public Retainable, public Observable {
 
   uint32_t ComponentCount() const;
   Family GetFamily() const { return m_Family; }
-  bool IsSpecial() const {
+  [[nodiscard]] bool IsSpecial() const {
     return GetFamily() == Family::kSeparation ||
            GetFamily() == Family::kDeviceN || GetFamily() == Family::kIndexed ||
            GetFamily() == Family::kPattern;
@@ -125,7 +125,7 @@ class CPDF_ColorSpace : public Retainable, public Observable {
                                   int image_height,
                                   bool bTransMask) const;
   virtual void EnableStdConversion(bool bEnabled);
-  virtual bool IsNormal() const;
+  [[nodiscard]] virtual bool IsNormal() const;
 
   // Returns `this` as a CPDF_PatternCS* if `this` is a pattern.
   virtual const CPDF_PatternCS* AsPatternCS() const;
@@ -146,8 +146,12 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   // components count.
   void SetComponentsForStockCS(uint32_t nComponents);
 
-  bool IsStdConversionEnabled() const { return m_dwStdConversion != 0; }
-  bool HasSameArray(const CPDF_Object* pObj) const { return m_pArray == pObj; }
+  [[nodiscard]] bool IsStdConversionEnabled() const {
+    return m_dwStdConversion != 0;
+  }
+  [[nodiscard]] bool HasSameArray(const CPDF_Object* pObj) const {
+    return m_pArray == pObj;
+  }
 
  private:
   friend class CPDFCalGrayTest_TranslateImageLine_Test;

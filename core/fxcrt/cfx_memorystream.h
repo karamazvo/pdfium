@@ -19,11 +19,11 @@ class CFX_MemoryStream final : public IFX_SeekableStream {
   // IFX_SeekableStream
   FX_FILESIZE GetSize() override;
   FX_FILESIZE GetPosition() override;
-  bool IsEOF() override;
-  bool ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
-                         FX_FILESIZE offset) override;
-  bool WriteBlock(pdfium::span<const uint8_t> buffer) override;
-  bool Flush() override;
+  [[nodiscard]] bool IsEOF() override;
+  [[nodiscard]] bool ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
+                                       FX_FILESIZE offset) override;
+  [[nodiscard]] bool WriteBlock(pdfium::span<const uint8_t> buffer) override;
+  [[nodiscard]] bool Flush() override;
 
   pdfium::span<const uint8_t> GetSpan() const;
 

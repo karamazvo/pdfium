@@ -27,44 +27,49 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
   void SaveState() override;
   void RestoreState(bool bKeepSaved) override;
   void SetBaseClip(const FX_RECT& rect) override;
-  bool SetClip_PathFill(const CFX_Path& path,
-                        const CFX_Matrix* pObject2Device,
-                        const CFX_FillRenderOptions& fill_options) override;
-  bool SetClip_PathStroke(const CFX_Path& path,
-                          const CFX_Matrix* pObject2Device,
-                          const CFX_GraphStateData* pGraphState) override;
-  bool DrawPath(const CFX_Path& path,
-                const CFX_Matrix* pObject2Device,
-                const CFX_GraphStateData* pGraphState,
-                uint32_t fill_color,
-                uint32_t stroke_color,
-                const CFX_FillRenderOptions& fill_options) override;
-  bool FillRect(const FX_RECT& rect, uint32_t fill_color) override;
-  bool DrawCosmeticLine(const CFX_PointF& ptMoveTo,
-                        const CFX_PointF& ptLineTo,
-                        uint32_t color) override;
+  [[nodiscard]] bool SetClip_PathFill(
+      const CFX_Path& path,
+      const CFX_Matrix* pObject2Device,
+      const CFX_FillRenderOptions& fill_options) override;
+  [[nodiscard]] bool SetClip_PathStroke(
+      const CFX_Path& path,
+      const CFX_Matrix* pObject2Device,
+      const CFX_GraphStateData* pGraphState) override;
+  [[nodiscard]] bool DrawPath(
+      const CFX_Path& path,
+      const CFX_Matrix* pObject2Device,
+      const CFX_GraphStateData* pGraphState,
+      uint32_t fill_color,
+      uint32_t stroke_color,
+      const CFX_FillRenderOptions& fill_options) override;
+  [[nodiscard]] bool FillRect(const FX_RECT& rect,
+                              uint32_t fill_color) override;
+  [[nodiscard]] bool DrawCosmeticLine(const CFX_PointF& ptMoveTo,
+                                      const CFX_PointF& ptLineTo,
+                                      uint32_t color) override;
   FX_RECT GetClipBox() const override;
-  bool MultiplyAlpha(float alpha) override;
-  bool MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) override;
+  [[nodiscard]] bool MultiplyAlpha(float alpha) override;
+  [[nodiscard]] bool MultiplyAlphaMask(
+      RetainPtr<const CFX_DIBitmap> mask) override;
 
   void DrawLine(float x1, float y1, float x2, float y2);
 
-  bool GDI_SetDIBits(RetainPtr<const CFX_DIBBase> source,
-                     const FX_RECT& src_rect,
-                     int left,
-                     int top);
-  bool GDI_StretchDIBits(RetainPtr<const CFX_DIBBase> source,
-                         int dest_left,
-                         int dest_top,
-                         int dest_width,
-                         int dest_height,
-                         const FXDIB_ResampleOptions& options);
-  bool GDI_StretchBitMask(RetainPtr<const CFX_DIBBase> source,
-                          int dest_left,
-                          int dest_top,
-                          int dest_width,
-                          int dest_height,
-                          uint32_t bitmap_color);
+  [[nodiscard]] bool GDI_SetDIBits(RetainPtr<const CFX_DIBBase> source,
+                                   const FX_RECT& src_rect,
+                                   int left,
+                                   int top);
+  [[nodiscard]] bool GDI_StretchDIBits(RetainPtr<const CFX_DIBBase> source,
+                                       int dest_left,
+                                       int dest_top,
+                                       int dest_width,
+                                       int dest_height,
+                                       const FXDIB_ResampleOptions& options);
+  [[nodiscard]] bool GDI_StretchBitMask(RetainPtr<const CFX_DIBBase> source,
+                                        int dest_left,
+                                        int dest_top,
+                                        int dest_width,
+                                        int dest_height,
+                                        uint32_t bitmap_color);
 
   const HDC m_hDC;
   bool m_bMetafileDCType;

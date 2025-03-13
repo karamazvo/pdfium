@@ -22,10 +22,10 @@ class CFX_BitmapStorer final : public ScanlineComposerIface {
 
   // ScanlineComposerIface:
   void ComposeScanline(int line, pdfium::span<const uint8_t> scanline) override;
-  bool SetInfo(int width,
-               int height,
-               FXDIB_Format src_format,
-               DataVector<uint32_t> src_palette) override;
+  [[nodiscard]] bool SetInfo(int width,
+                             int height,
+                             FXDIB_Format src_format,
+                             DataVector<uint32_t> src_palette) override;
 
   RetainPtr<CFX_DIBitmap> GetBitmap() { return m_pBitmap; }
   RetainPtr<CFX_DIBitmap> Detach();

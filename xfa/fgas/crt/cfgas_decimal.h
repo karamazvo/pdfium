@@ -25,7 +25,7 @@ class CFGAS_Decimal {
   CFGAS_Decimal operator*(const CFGAS_Decimal& val) const;
   CFGAS_Decimal operator/(const CFGAS_Decimal& val) const;
 
-  bool IsNotZero() const { return m_uHi || m_uMid || m_uLo; }
+  [[nodiscard]] bool IsNotZero() const { return m_uHi || m_uMid || m_uLo; }
   uint8_t GetScale() const { return m_uScale; }
   void SetScale(uint8_t newScale);
   void SetNegate();

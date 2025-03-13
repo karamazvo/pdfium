@@ -30,11 +30,11 @@ class CFWL_WidgetMgr final : public cppgc::GarbageCollected<CFWL_WidgetMgr> {
    public:
     virtual ~AdapterIface() = default;
     virtual void RepaintWidget(CFWL_Widget* pWidget) = 0;
-    virtual bool GetPopupPos(CFWL_Widget* pWidget,
-                             float fMinHeight,
-                             float fMaxHeight,
-                             const CFX_RectF& rtAnchor,
-                             CFX_RectF* pPopupRect) = 0;
+    [[nodiscard]] virtual bool GetPopupPos(CFWL_Widget* pWidget,
+                                           float fMinHeight,
+                                           float fMaxHeight,
+                                           const CFX_RectF& rtAnchor,
+                                           CFX_RectF* pPopupRect) = 0;
   };
 
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;

@@ -12,8 +12,8 @@ class CPDF_Transparency {
   CPDF_Transparency(const CPDF_Transparency& other);
   CPDF_Transparency& operator=(const CPDF_Transparency& other);
 
-  bool IsGroup() const { return m_bGroup; }
-  bool IsIsolated() const { return m_bIsolated; }
+  [[nodiscard]] bool IsGroup() const { return m_bGroup; }
+  [[nodiscard]] bool IsIsolated() const { return m_bIsolated; }
 
   void SetGroup() { m_bGroup = true; }
   void SetIsolated() { m_bIsolated = true; }

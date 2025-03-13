@@ -37,7 +37,7 @@ class CPDF_LinearizedHeader {
   // Will only return values > 0.
   FX_FILESIZE GetLastXRefOffset() const { return m_szLastXRefOffset; }
 
-  bool HasHintTable() const;
+  [[nodiscard]] bool HasHintTable() const;
   // Will only return values > 0.
   FX_FILESIZE GetHintStart() const { return m_szHintStart; }
   uint32_t GetHintLength() const { return m_HintLength; }

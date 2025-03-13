@@ -22,9 +22,9 @@ class CBC_EANCode : public CBC_OneCode {
   virtual size_t GetMaxLength() const = 0;
 
   // CBC_EANCode:
-  bool Encode(WideStringView contents) override;
-  bool RenderDevice(CFX_RenderDevice* device,
-                    const CFX_Matrix& matrix) override;
+  [[nodiscard]] bool Encode(WideStringView contents) override;
+  [[nodiscard]] bool RenderDevice(CFX_RenderDevice* device,
+                                  const CFX_Matrix& matrix) override;
 
  protected:
   CBC_OneDimEANWriter* GetOneDimEANWriter();

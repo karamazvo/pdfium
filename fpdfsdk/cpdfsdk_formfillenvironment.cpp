@@ -608,7 +608,7 @@ void CPDFSDK_FormFillEnvironment::ClearAllFocusedAnnots() {
   for (auto& it : m_PageMap) {
     if (it.second->IsValidSDKAnnot(GetFocusAnnot())) {
       ObservedPtr<CPDFSDK_PageView> pObserved(it.second.get());
-      KillFocusAnnot({});
+      (void)KillFocusAnnot({});
       if (!pObserved)
         break;
     }
@@ -654,7 +654,7 @@ void CPDFSDK_FormFillEnvironment::ProcJavascriptAction() {
   for (size_t i = 0; i < count; ++i) {
     WideString name;
     CPDF_Action action(ToDictionary(name_tree->LookupValueAndName(i, &name)));
-    DoActionJavaScript(action, name);
+    (void)DoActionJavaScript(action, name);
   }
 }
 
@@ -676,7 +676,7 @@ bool CPDFSDK_FormFillEnvironment::ProcOpenAction() {
   if (!pDict)
     return false;
 
-  DoActionDocOpen(CPDF_Action(std::move(pDict)));
+  (void)DoActionDocOpen(CPDF_Action(std::move(pDict)));
   return true;
 }
 
@@ -699,7 +699,7 @@ void CPDFSDK_FormFillEnvironment::RemovePageView(IPDF_Page* pUnderlyingPage) {
   // be created. We then have two page views pointing to the same page and
   // bad things happen.
   if (pPageView->IsValidSDKAnnot(GetFocusAnnot()))
-    KillFocusAnnot({});
+    (void)KillFocusAnnot({});
 
   // Remove the page from the map to make sure we don't accidentally attempt
   // to use the |pPageView| while we're cleaning it up.
@@ -1031,14 +1031,14 @@ void CPDFSDK_FormFillEnvironment::DoActionNoJs(const CPDF_Action& action,
         DoActionURI(action, Mask<FWL_EVENTFLAG>{});
       break;
     case CPDF_Action::Type::kHide:
-      DoActionHide(action);
+      (void)DoActionHide(action);
       break;
     case CPDF_Action::Type::kNamed:
       DoActionNamed(action);
       break;
     case CPDF_Action::Type::kSubmitForm:
       if (CPDF_AAction::IsUserInput(type))
-        DoActionSubmitForm(action);
+        (void)DoActionSubmitForm(action);
       break;
     case CPDF_Action::Type::kResetForm:
       DoActionResetForm(action);
@@ -1070,7 +1070,7 @@ void CPDFSDK_FormFillEnvironment::DoActionGoTo(const CPDF_Action& action) {
   DCHECK(pPDFDocument);
 
   CPDF_Dest MyDest = action.GetDest(pPDFDocument);
-  DoActionDestination(MyDest);
+  (void)DoActionDestination(MyDest);
 }
 
 void CPDFSDK_FormFillEnvironment::DoActionURI(const CPDF_Action& action,

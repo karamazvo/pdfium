@@ -51,11 +51,11 @@ class CPDF_FormControl {
   ByteString GetCheckedAPState() const;
   WideString GetExportValue() const;
 
-  bool IsChecked() const;
-  bool IsDefaultChecked() const;
+  [[nodiscard]] bool IsChecked() const;
+  [[nodiscard]] bool IsDefaultChecked() const;
 
   HighlightingMode GetHighlightingMode() const;
-  bool HasMKEntry(const ByteString& csEntry) const;
+  [[nodiscard]] bool HasMKEntry(const ByteString& csEntry) const;
   int GetRotation() const;
 
   CFX_Color::TypeAndARGB GetColorARGB(const ByteString& csEntry);

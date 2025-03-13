@@ -20,8 +20,9 @@ class CXFA_List : public CXFA_Object {
   ~CXFA_List() override;
 
   virtual size_t GetLength() = 0;
-  virtual bool Append(CXFA_Node* pNode) = 0;
-  virtual bool Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) = 0;
+  [[nodiscard]] virtual bool Append(CXFA_Node* pNode) = 0;
+  [[nodiscard]] virtual bool Insert(CXFA_Node* pNewNode,
+                                    CXFA_Node* pBeforeNode) = 0;
   virtual void Remove(CXFA_Node* pNode) = 0;
   virtual CXFA_Node* Item(size_t iIndex) = 0;
 

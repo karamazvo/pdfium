@@ -20,10 +20,10 @@ class ScanlineComposerIface {
 
   // `src_format` cannot be `FXDIB_Format::k1bppMask` or
   // `FXDIB_Format::k1bppRgb`.
-  virtual bool SetInfo(int width,
-                       int height,
-                       FXDIB_Format src_format,
-                       DataVector<uint32_t> src_palette) = 0;
+  [[nodiscard]] virtual bool SetInfo(int width,
+                                     int height,
+                                     FXDIB_Format src_format,
+                                     DataVector<uint32_t> src_palette) = 0;
 };
 
 #endif  // CORE_FXGE_DIB_SCANLINECOMPOSER_IFACE_H_

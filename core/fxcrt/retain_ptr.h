@@ -158,7 +158,7 @@ class Retainable {
  public:
   Retainable() = default;
 
-  bool HasOneRef() const { return m_nRefCount == 1; }
+  [[nodiscard]] bool HasOneRef() const { return m_nRefCount == 1; }
 
  protected:
   virtual ~Retainable() = default;

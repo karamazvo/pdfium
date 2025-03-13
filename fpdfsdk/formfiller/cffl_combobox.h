@@ -32,10 +32,10 @@ class CFFL_ComboBox final : public CFFL_TextObject {
   std::unique_ptr<CPWL_Wnd> NewPWLWindow(
       const CPWL_Wnd::CreateParams& cp,
       std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData) override;
-  bool OnChar(CPDFSDK_Widget* pWidget,
-              uint32_t nChar,
-              Mask<FWL_EVENTFLAG> nFlags) override;
-  bool IsDataChanged(const CPDFSDK_PageView* pPageView) override;
+  [[nodiscard]] bool OnChar(CPDFSDK_Widget* pWidget,
+                            uint32_t nChar,
+                            Mask<FWL_EVENTFLAG> nFlags) override;
+  [[nodiscard]] bool IsDataChanged(const CPDFSDK_PageView* pPageView) override;
   void SaveData(const CPDFSDK_PageView* pPageView) override;
   void GetActionData(const CPDFSDK_PageView* pPageView,
                      CPDF_AAction::AActionType type,
@@ -46,10 +46,10 @@ class CFFL_ComboBox final : public CFFL_TextObject {
   void SavePWLWindowState(const CPDFSDK_PageView* pPageView) override;
   void RecreatePWLWindowFromSavedState(
       const CPDFSDK_PageView* pPageView) override;
-  bool SetIndexSelected(int index, bool selected) override;
-  bool IsIndexSelected(int index) override;
+  [[nodiscard]] bool SetIndexSelected(int index, bool selected) override;
+  [[nodiscard]] bool IsIndexSelected(int index) override;
 #ifdef PDF_ENABLE_XFA
-  bool IsFieldFull(const CPDFSDK_PageView* pPageView) override;
+  [[nodiscard]] bool IsFieldFull(const CPDFSDK_PageView* pPageView) override;
 #endif
 
   // CPWL_Wnd::ProviderIface:

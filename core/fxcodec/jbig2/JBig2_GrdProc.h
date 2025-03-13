@@ -60,9 +60,9 @@ class CJBig2_GRDProc {
   std::array<int8_t, 8> GBAT;
 
  private:
-  bool UseTemplate0Opt3() const;
-  bool UseTemplate1Opt3() const;
-  bool UseTemplate23Opt3() const;
+  [[nodiscard]] bool UseTemplate0Opt3() const;
+  [[nodiscard]] bool UseTemplate1Opt3() const;
+  [[nodiscard]] bool UseTemplate23Opt3() const;
 
   FXCODEC_STATUS ProgressiveDecodeArith(ProgressiveArithDecodeState* pState);
   FXCODEC_STATUS ProgressiveDecodeArithTemplate0Opt3(

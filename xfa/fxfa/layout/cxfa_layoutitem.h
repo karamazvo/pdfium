@@ -29,8 +29,12 @@ class CXFA_LayoutItem : public GCedTreeNode<CXFA_LayoutItem> {
   // GCedTreeNode:
   void Trace(cppgc::Visitor* visitor) const override;
 
-  bool IsViewLayoutItem() const { return m_ItemType == kViewItem; }
-  bool IsContentLayoutItem() const { return m_ItemType == kContentItem; }
+  [[nodiscard]] bool IsViewLayoutItem() const {
+    return m_ItemType == kViewItem;
+  }
+  [[nodiscard]] bool IsContentLayoutItem() const {
+    return m_ItemType == kContentItem;
+  }
   CXFA_ViewLayoutItem* AsViewLayoutItem();
   const CXFA_ViewLayoutItem* AsViewLayoutItem() const;
   CXFA_ContentLayoutItem* AsContentLayoutItem();

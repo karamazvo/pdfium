@@ -130,7 +130,7 @@ class StringViewTemplate {
     return !(*this == other);
   }
 
-  bool IsASCII() const {
+  [[nodiscard]] bool IsASCII() const {
     for (auto c : *this) {
       if (c <= 0 || c > 127)  // Questionable signedness of |c|.
         return false;
@@ -138,7 +138,7 @@ class StringViewTemplate {
     return true;
   }
 
-  bool EqualsASCII(const StringViewTemplate<char>& that) const {
+  [[nodiscard]] bool EqualsASCII(const StringViewTemplate<char>& that) const {
     size_t length = GetLength();
     if (length != that.GetLength())
       return false;
@@ -151,7 +151,8 @@ class StringViewTemplate {
     return true;
   }
 
-  bool EqualsASCIINoCase(const StringViewTemplate<char>& that) const {
+  [[nodiscard]] bool EqualsASCIINoCase(
+      const StringViewTemplate<char>& that) const {
     size_t length = GetLength();
     if (length != that.GetLength())
       return false;
@@ -188,9 +189,13 @@ class StringViewTemplate {
   }
 
   size_t GetLength() const { return m_Span.size(); }
-  bool IsEmpty() const { return m_Span.empty(); }
-  bool IsValidIndex(size_t index) const { return index < m_Span.size(); }
-  bool IsValidLength(size_t length) const { return length <= m_Span.size(); }
+  [[nodiscard]] bool IsEmpty() const { return m_Span.empty(); }
+  [[nodiscard]] bool IsValidIndex(size_t index) const {
+    return index < m_Span.size();
+  }
+  [[nodiscard]] bool IsValidLength(size_t length) const {
+    return length <= m_Span.size();
+  }
 
   // CHECK() if index is out of range (via span's operator[]).
   const UnsignedType& operator[](const size_t index) const {
@@ -219,7 +224,9 @@ class StringViewTemplate {
     return found ? std::optional<size_t>(found - m_Span.data()) : std::nullopt;
   }
 
-  bool Contains(CharType ch) const { return Find(ch).has_value(); }
+  [[nodiscard]] bool Contains(CharType ch) const {
+    return Find(ch).has_value();
+  }
 
   StringViewTemplate Substr(size_t offset) const {
     // Unsigned underflow is well-defined and out-of-range is handled by

@@ -158,7 +158,9 @@ class CFXJSE_Engine final : public CFX_V8 {
   void AddNodesOfRunScript(CXFA_Node* pNode);
 
   void SetRunAtType(XFA_AttributeValue eRunAt) { m_eRunAtType = eRunAt; }
-  bool IsRunAtClient() { return m_eRunAtType != XFA_AttributeValue::Server; }
+  [[nodiscard]] bool IsRunAtClient() {
+    return m_eRunAtType != XFA_AttributeValue::Server;
+  }
 
   CXFA_Script::Type GetType();
 
@@ -168,7 +170,7 @@ class CFXJSE_Engine final : public CFX_V8 {
   CXFA_Object* ToXFAObject(v8::Local<v8::Value> obj);
   v8::Local<v8::Object> NewNormalXFAObject(CXFA_Object* obj);
 
-  bool IsResolvingNodes() const { return m_bResolvingNodes; }
+  [[nodiscard]] bool IsResolvingNodes() const { return m_bResolvingNodes; }
 
   CFXJSE_Context* GetJseContextForTest() const { return GetJseContext(); }
 
@@ -177,24 +179,24 @@ class CFXJSE_Engine final : public CFX_V8 {
   CFXJSE_Context* CreateVariablesContext(CXFA_Script* pScriptNode,
                                          CXFA_Node* pSubform);
   void RemoveBuiltInObjs(CFXJSE_Context* pContext);
-  bool QueryNodeByFlag(CXFA_Node* refNode,
-                       WideStringView propname,
-                       v8::Local<v8::Value>* pValue,
-                       Mask<XFA_ResolveFlag> dwFlag);
-  bool UpdateNodeByFlag(CXFA_Node* refNode,
-                        WideStringView propname,
-                        v8::Local<v8::Value> pValue,
-                        Mask<XFA_ResolveFlag> dwFlag);
-  bool IsStrictScopeInJavaScript();
+  [[nodiscard]] bool QueryNodeByFlag(CXFA_Node* refNode,
+                                     WideStringView propname,
+                                     v8::Local<v8::Value>* pValue,
+                                     Mask<XFA_ResolveFlag> dwFlag);
+  [[nodiscard]] bool UpdateNodeByFlag(CXFA_Node* refNode,
+                                      WideStringView propname,
+                                      v8::Local<v8::Value> pValue,
+                                      Mask<XFA_ResolveFlag> dwFlag);
+  [[nodiscard]] bool IsStrictScopeInJavaScript();
   CXFA_Object* GetVariablesThis(CXFA_Object* pObject);
   CXFA_Object* GetVariablesScript(CXFA_Object* pObject);
   CFXJSE_Context* VariablesContextForScriptNode(CXFA_Script* pScriptNode);
-  bool QueryVariableValue(CXFA_Script* pScriptNode,
-                          ByteStringView szPropName,
-                          v8::Local<v8::Value>* pValue);
-  bool UpdateVariableValue(CXFA_Script* pScriptNode,
-                           ByteStringView szPropName,
-                           v8::Local<v8::Value> pValue);
+  [[nodiscard]] bool QueryVariableValue(CXFA_Script* pScriptNode,
+                                        ByteStringView szPropName,
+                                        v8::Local<v8::Value>* pValue);
+  [[nodiscard]] bool UpdateVariableValue(CXFA_Script* pScriptNode,
+                                         ByteStringView szPropName,
+                                         v8::Local<v8::Value> pValue);
   void RunVariablesScript(CXFA_Script* pScriptNode);
 
   UnownedPtr<CJS_Runtime> const m_pSubordinateRuntime;

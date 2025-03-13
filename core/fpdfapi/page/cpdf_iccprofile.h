@@ -24,12 +24,12 @@ class CPDF_IccProfile final : public Retainable {
  public:
   CONSTRUCT_VIA_MAKE_RETAIN;
 
-  bool IsValid() const { return IsSRGB() || IsSupported(); }
-  bool IsSRGB() const { return m_bsRGB; }
-  bool IsSupported() const { return !!m_Transform; }
+  [[nodiscard]] bool IsValid() const { return IsSRGB() || IsSupported(); }
+  [[nodiscard]] bool IsSRGB() const { return m_bsRGB; }
+  [[nodiscard]] bool IsSupported() const { return !!m_Transform; }
   uint32_t GetComponents() const { return m_nSrcComponents; }
 
-  bool IsNormal() const;
+  [[nodiscard]] bool IsNormal() const;
   void Translate(pdfium::span<const float> pSrcValues,
                  pdfium::span<float> pDestValues);
   void TranslateScanline(pdfium::span<uint8_t> pDest,

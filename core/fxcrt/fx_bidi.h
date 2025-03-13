@@ -28,12 +28,12 @@ class CFX_BidiChar {
   // Append a character and classify it as left, left-weak, right, or neutral.
   // Returns true if the character has a different direction than the
   // existing direction to indicate there is a segment to process.
-  bool AppendChar(wchar_t wch);
+  [[nodiscard]] bool AppendChar(wchar_t wch);
 
   // Call this after the last character has been appended. AppendChar()
   // must not be called after this.
   // Returns true if there is still a segment to process.
-  bool EndChar();
+  [[nodiscard]] bool EndChar();
 
   // Call after a change in direction is indicated by the above to get
   // information about the segment to process.

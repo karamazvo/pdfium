@@ -36,9 +36,9 @@ class CFWL_ListBox : public CFWL_Widget {
     explicit Item(const WideString& text);
     ~Item();
 
-    bool IsSelected() const { return m_bIsSelected; }
+    [[nodiscard]] bool IsSelected() const { return m_bIsSelected; }
     void SetSelected(bool enable) { m_bIsSelected = enable; }
-    bool IsFocused() const { return m_bIsFocused; }
+    [[nodiscard]] bool IsFocused() const { return m_bIsFocused; }
     void SetFocused(bool enable) { m_bIsFocused = enable; }
     CFX_RectF GetRect() const { return m_ItemRect; }
     void SetRect(const CFX_RectF& rect) { m_ItemRect = rect; }
@@ -87,17 +87,17 @@ class CFWL_ListBox : public CFWL_Widget {
   Item* GetListItem(Item* hItem, XFA_FWL_VKEYCODE dwKeyCode);
   void SetSelection(Item* hStart, Item* hEnd, bool bSelected);
   Item* GetItemAtPoint(const CFX_PointF& point);
-  bool ScrollToVisible(Item* hItem);
+  [[nodiscard]] bool ScrollToVisible(Item* hItem);
   void InitVerticalScrollBar();
   void InitHorizontalScrollBar();
-  bool IsShowVertScrollBar() const;
-  bool IsShowHorzScrollBar() const;
-  bool ScrollBarPropertiesPresent() const;
+  [[nodiscard]] bool IsShowVertScrollBar() const;
+  [[nodiscard]] bool IsShowHorzScrollBar() const;
+  [[nodiscard]] bool ScrollBarPropertiesPresent() const;
   CFWL_ScrollBar* GetVertScrollBar() const { return m_pVertScrollBar; }
   const CFX_RectF& GetRTClient() const { return m_ClientRect; }
 
  private:
-  bool IsMultiSelection() const;
+  [[nodiscard]] bool IsMultiSelection() const;
   void ClearSelection();
   void SelectAll();
   Item* GetFocusedItem();
@@ -125,9 +125,9 @@ class CFWL_ListBox : public CFWL_Widget {
   void OnMouseWheel(CFWL_MessageMouseWheel* pMsg);
   void OnKeyDown(CFWL_MessageKey* pMsg);
   void OnVK(Item* hItem, bool bShift, bool bCtrl);
-  bool OnScroll(CFWL_ScrollBar* pScrollBar,
-                CFWL_EventScroll::Code dwCode,
-                float fPos);
+  [[nodiscard]] bool OnScroll(CFWL_ScrollBar* pScrollBar,
+                              CFWL_EventScroll::Code dwCode,
+                              float fPos);
 
   CFX_RectF m_ClientRect;
   CFX_RectF m_StaticRect;

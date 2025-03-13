@@ -21,8 +21,8 @@ class CPDF_IconFit {
   ~CPDF_IconFit();
 
   ScaleMethod GetScaleMethod() const;
-  bool IsProportionalScale() const;
-  bool GetFittingBounds() const;
+  [[nodiscard]] bool IsProportionalScale() const;
+  [[nodiscard]] bool GetFittingBounds() const;
   CFX_PointF GetIconBottomLeftPosition() const;
   CFX_VectorF GetScale(const CFX_SizeF& image_size,
                        const CFX_FloatRect& rcPlate) const;

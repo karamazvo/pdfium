@@ -34,10 +34,10 @@ class CPDF_Array final : public CPDF_Object {
   Type GetType() const override;
   RetainPtr<CPDF_Object> Clone() const override;
   CPDF_Array* AsMutableArray() override;
-  bool WriteTo(IFX_ArchiveStream* archive,
-               const CPDF_Encryptor* encryptor) const override;
+  [[nodiscard]] bool WriteTo(IFX_ArchiveStream* archive,
+                             const CPDF_Encryptor* encryptor) const override;
 
-  bool IsEmpty() const { return m_Objects.empty(); }
+  [[nodiscard]] bool IsEmpty() const { return m_Objects.empty(); }
   size_t size() const { return m_Objects.size(); }
 
   // The Get*ObjectAt() methods tolerate out-of-bounds indices and return
@@ -57,7 +57,7 @@ class CPDF_Array final : public CPDF_Object {
   // returning nullptr if the object at the location is of a different type.
   ByteString GetByteStringAt(size_t index) const;
   WideString GetUnicodeTextAt(size_t index) const;
-  bool GetBooleanAt(size_t index, bool bDefault) const;
+  [[nodiscard]] bool GetBooleanAt(size_t index, bool bDefault) const;
   int GetIntegerAt(size_t index) const;
   float GetFloatAt(size_t index) const;
   RetainPtr<CPDF_Dictionary> GetMutableDictAt(size_t index);
@@ -73,7 +73,7 @@ class CPDF_Array final : public CPDF_Object {
   CFX_Matrix GetMatrix() const;
 
   std::optional<size_t> Find(const CPDF_Object* pThat) const;
-  bool Contains(const CPDF_Object* pThat) const;
+  [[nodiscard]] bool Contains(const CPDF_Object* pThat) const;
 
   // Creates object owned by the array, and returns a retained pointer to it.
   // We have special cases for objects that can intern strings from
@@ -147,7 +147,7 @@ class CPDF_Array final : public CPDF_Object {
   void RemoveAt(size_t index);
   void ConvertToIndirectObjectAt(size_t index,
                                  CPDF_IndirectObjectHolder* pHolder);
-  bool IsLocked() const { return !!m_LockCount; }
+  [[nodiscard]] bool IsLocked() const { return !!m_LockCount; }
 
  private:
   friend class CPDF_ArrayLocker;

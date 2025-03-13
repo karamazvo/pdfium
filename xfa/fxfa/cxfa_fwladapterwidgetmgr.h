@@ -23,11 +23,11 @@ class CXFA_FWLAdapterWidgetMgr final
   // CFWL_WidgetMgr::AdapterIface:
   void Trace(cppgc::Visitor* visitor) const override;
   void RepaintWidget(pdfium::CFWL_Widget* pWidget) override;
-  bool GetPopupPos(pdfium::CFWL_Widget* pWidget,
-                   float fMinHeight,
-                   float fMaxHeight,
-                   const CFX_RectF& rtAnchor,
-                   CFX_RectF* pPopupRect) override;
+  [[nodiscard]] bool GetPopupPos(pdfium::CFWL_Widget* pWidget,
+                                 float fMinHeight,
+                                 float fMaxHeight,
+                                 const CFX_RectF& rtAnchor,
+                                 CFX_RectF* pPopupRect) override;
 
  private:
   CXFA_FWLAdapterWidgetMgr();

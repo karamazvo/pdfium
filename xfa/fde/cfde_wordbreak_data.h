@@ -29,8 +29,8 @@ enum class WordBreakProperty : uint8_t {
   kExtendNumLet,
 };
 
-bool FX_CheckStateChangeForWordBreak(WordBreakProperty from,
-                                     WordBreakProperty to);
+[[nodiscard]] bool FX_CheckStateChangeForWordBreak(WordBreakProperty from,
+                                                   WordBreakProperty to);
 WordBreakProperty FX_GetWordBreakProperty(wchar_t wcCodePoint);
 
 }  // namespace pdfium

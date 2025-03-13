@@ -53,29 +53,29 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   // CPDFSDK_BAAnnot:
   void OnLoad() override;
   CPDF_Action GetAAction(CPDF_AAction::AActionType eAAT) override;
-  bool IsAppearanceValid() override;
+  [[nodiscard]] bool IsAppearanceValid() override;
   int GetLayoutOrder() const override;
   void OnDraw(CFX_RenderDevice* pDevice,
               const CFX_Matrix& mtUser2Device,
               bool bDrawAnnots) override;
-  bool DoHitTest(const CFX_PointF& point) override;
+  [[nodiscard]] bool DoHitTest(const CFX_PointF& point) override;
   CFX_FloatRect GetViewBBox() override;
-  bool CanUndo() override;
-  bool CanRedo() override;
-  bool Undo() override;
-  bool Redo() override;
+  [[nodiscard]] bool CanUndo() override;
+  [[nodiscard]] bool CanRedo() override;
+  [[nodiscard]] bool Undo() override;
+  [[nodiscard]] bool Redo() override;
   WideString GetText() override;
   WideString GetSelectedText() override;
   void ReplaceAndKeepSelection(const WideString& text) override;
   void ReplaceSelection(const WideString& text) override;
-  bool SelectAllText() override;
-  bool SetIndexSelected(int index, bool selected) override;
-  bool IsIndexSelected(int index) override;
+  [[nodiscard]] bool SelectAllText() override;
+  [[nodiscard]] bool SetIndexSelected(int index, bool selected) override;
+  [[nodiscard]] bool IsIndexSelected(int index) override;
   void DrawAppearance(CFX_RenderDevice* pDevice,
                       const CFX_Matrix& mtUser2Device,
                       CPDF_Annot::AppearanceMode mode) override;
 
-  bool IsSignatureWidget() const;
+  [[nodiscard]] bool IsSignatureWidget() const;
   void SetRect(const CFX_FloatRect& rect);
   FormFieldType GetFieldType() const;
   int GetFieldFlags() const;
@@ -93,9 +93,9 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   WideString GetSelectExportText(int nIndex) const;
 
   int CountOptions() const;
-  bool IsOptionSelected(int nIndex) const;
+  [[nodiscard]] bool IsOptionSelected(int nIndex) const;
   int GetTopVisibleIndex() const;
-  bool IsChecked() const;
+  [[nodiscard]] bool IsChecked() const;
   int GetAlignment() const;
   int GetMaxLen() const;
 
@@ -107,10 +107,10 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
 
 #ifdef PDF_ENABLE_XFA
   CXFA_FFWidget* GetMixXFAWidget() const;
-  bool HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT) const;
-  bool OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
-                    CFFL_FieldAction* data,
-                    const CPDFSDK_PageView* pPageView);
+  [[nodiscard]] bool HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT) const;
+  [[nodiscard]] bool OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
+                                  CFFL_FieldAction* data,
+                                  const CPDFSDK_PageView* pPageView);
   void Synchronize(bool bSynchronizeElse);
   // TODO(thestig): Figure out if the parameter should be used or removed.
   void ResetXFAAppearance(ValueChanged bValueChanged);
@@ -122,9 +122,9 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   void UpdateField();
   std::optional<WideString> OnFormat();
 
-  bool OnAAction(CPDF_AAction::AActionType type,
-                 CFFL_FieldAction* data,
-                 const CPDFSDK_PageView* pPageView);
+  [[nodiscard]] bool OnAAction(CPDF_AAction::AActionType type,
+                               CFFL_FieldAction* data,
+                               const CPDFSDK_PageView* pPageView);
 
   CPDF_FormField* GetFormField() const;
   CPDF_FormControl* GetFormControl() const;
@@ -133,13 +133,14 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
 
   void SetAppModified();
   void ClearAppModified();
-  bool IsAppModified() const;
+  [[nodiscard]] bool IsAppModified() const;
 
   uint32_t GetAppearanceAge() const { return m_nAppearanceAge; }
   uint32_t GetValueAge() const { return m_nValueAge; }
 
-  bool IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode mode) const;
-  bool IsPushHighlighted() const;
+  [[nodiscard]] bool IsWidgetAppearanceValid(
+      CPDF_Annot::AppearanceMode mode) const;
+  [[nodiscard]] bool IsPushHighlighted() const;
   CFX_Matrix GetMatrix() const;
   CFX_FloatRect GetClientRect() const;
   CFX_FloatRect GetRotatedRect() const;
@@ -151,25 +152,27 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   // CPDFSDK_Annot::UnsafeInputHandlers:
   void OnMouseEnter(Mask<FWL_EVENTFLAG> nFlags) override;
   void OnMouseExit(Mask<FWL_EVENTFLAG> nFlags) override;
-  bool OnLButtonDown(Mask<FWL_EVENTFLAG> nFlags,
-                     const CFX_PointF& point) override;
-  bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlags,
-                   const CFX_PointF& point) override;
-  bool OnLButtonDblClk(Mask<FWL_EVENTFLAG> nFlags,
-                       const CFX_PointF& point) override;
-  bool OnMouseMove(Mask<FWL_EVENTFLAG> nFlags,
-                   const CFX_PointF& point) override;
-  bool OnMouseWheel(Mask<FWL_EVENTFLAG> nFlags,
-                    const CFX_PointF& point,
-                    const CFX_Vector& delta) override;
-  bool OnRButtonDown(Mask<FWL_EVENTFLAG> nFlags,
-                     const CFX_PointF& point) override;
-  bool OnRButtonUp(Mask<FWL_EVENTFLAG> nFlags,
-                   const CFX_PointF& point) override;
-  bool OnChar(uint32_t nChar, Mask<FWL_EVENTFLAG> nFlags) override;
-  bool OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlags) override;
-  bool OnSetFocus(Mask<FWL_EVENTFLAG> nFlags) override;
-  bool OnKillFocus(Mask<FWL_EVENTFLAG> nFlags) override;
+  [[nodiscard]] bool OnLButtonDown(Mask<FWL_EVENTFLAG> nFlags,
+                                   const CFX_PointF& point) override;
+  [[nodiscard]] bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlags,
+                                 const CFX_PointF& point) override;
+  [[nodiscard]] bool OnLButtonDblClk(Mask<FWL_EVENTFLAG> nFlags,
+                                     const CFX_PointF& point) override;
+  [[nodiscard]] bool OnMouseMove(Mask<FWL_EVENTFLAG> nFlags,
+                                 const CFX_PointF& point) override;
+  [[nodiscard]] bool OnMouseWheel(Mask<FWL_EVENTFLAG> nFlags,
+                                  const CFX_PointF& point,
+                                  const CFX_Vector& delta) override;
+  [[nodiscard]] bool OnRButtonDown(Mask<FWL_EVENTFLAG> nFlags,
+                                   const CFX_PointF& point) override;
+  [[nodiscard]] bool OnRButtonUp(Mask<FWL_EVENTFLAG> nFlags,
+                                 const CFX_PointF& point) override;
+  [[nodiscard]] bool OnChar(uint32_t nChar,
+                            Mask<FWL_EVENTFLAG> nFlags) override;
+  [[nodiscard]] bool OnKeyDown(FWL_VKEYCODE nKeyCode,
+                               Mask<FWL_EVENTFLAG> nFlags) override;
+  [[nodiscard]] bool OnSetFocus(Mask<FWL_EVENTFLAG> nFlags) override;
+  [[nodiscard]] bool OnKillFocus(Mask<FWL_EVENTFLAG> nFlags) override;
 
   CFFL_InteractiveFormFiller* GetInteractiveFormFiller();
 
@@ -177,9 +180,10 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   CXFA_FFWidgetHandler* GetXFAWidgetHandler() const;
   CXFA_FFWidget* GetGroupMixXFAWidget() const;
   WideString GetName() const;
-  bool HandleXFAAAction(CPDF_AAction::AActionType type,
-                        CFFL_FieldAction* data,
-                        CPDFSDK_FormFillEnvironment* pFormFillEnv);
+  [[nodiscard]] bool HandleXFAAAction(
+      CPDF_AAction::AActionType type,
+      CFFL_FieldAction* data,
+      CPDFSDK_FormFillEnvironment* pFormFillEnv);
 #endif  // PDF_ENABLE_XFA
 
   UnownedPtr<CPDFSDK_InteractiveForm> const m_pInteractiveForm;

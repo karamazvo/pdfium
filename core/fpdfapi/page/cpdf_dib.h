@@ -46,14 +46,15 @@ class CPDF_DIB final : public CFX_DIBBase {
 
   // CFX_DIBBase:
   pdfium::span<const uint8_t> GetScanline(int line) const override;
-  bool SkipToScanline(int line, PauseIndicatorIface* pPause) const override;
+  [[nodiscard]] bool SkipToScanline(int line,
+                                    PauseIndicatorIface* pPause) const override;
   size_t GetEstimatedImageMemoryBurden() const override;
 
   RetainPtr<CPDF_ColorSpace> GetColorSpace() const { return m_pColorSpace; }
   uint32_t GetMatteColor() const { return m_MatteColor; }
-  bool IsJBigImage() const;
+  [[nodiscard]] bool IsJBigImage() const;
 
-  bool Load();
+  [[nodiscard]] bool Load();
   LoadState StartLoadDIBBase(bool bHasMask,
                              const CPDF_Dictionary* pFormResources,
                              const CPDF_Dictionary* pPageResources,
@@ -77,28 +78,28 @@ class CPDF_DIB final : public CFX_DIBBase {
     DataVector<uint8_t> data;
   };
 
-  bool LoadInternal(const CPDF_Dictionary* pFormResources,
-                    const CPDF_Dictionary* pPageResources);
-  bool ContinueInternal();
+  [[nodiscard]] bool LoadInternal(const CPDF_Dictionary* pFormResources,
+                                  const CPDF_Dictionary* pPageResources);
+  [[nodiscard]] bool ContinueInternal();
   LoadState StartLoadMask();
   LoadState StartLoadMaskDIB(RetainPtr<const CPDF_Stream> mask_stream);
-  bool ContinueToLoadMask();
+  [[nodiscard]] bool ContinueToLoadMask();
   LoadState ContinueLoadMaskDIB(PauseIndicatorIface* pPause);
-  bool LoadColorInfo(const CPDF_Dictionary* pFormResources,
-                     const CPDF_Dictionary* pPageResources);
-  bool GetDecodeAndMaskArray();
+  [[nodiscard]] bool LoadColorInfo(const CPDF_Dictionary* pFormResources,
+                                   const CPDF_Dictionary* pPageResources);
+  [[nodiscard]] bool GetDecodeAndMaskArray();
   RetainPtr<CFX_DIBitmap> LoadJpxBitmap(uint8_t resolution_levels_to_skip);
   void LoadPalette();
   LoadState CreateDecoder(uint8_t resolution_levels_to_skip);
-  bool CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
-                        const CPDF_Dictionary* pParams);
+  [[nodiscard]] bool CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
+                                      const CPDF_Dictionary* pParams);
   void TranslateScanline24bpp(pdfium::span<uint8_t> dest_scan,
                               pdfium::span<const uint8_t> src_scan) const;
-  bool TranslateScanline24bppDefaultDecode(
+  [[nodiscard]] bool TranslateScanline24bppDefaultDecode(
       pdfium::span<uint8_t> dest_scan,
       pdfium::span<const uint8_t> src_scan) const;
-  bool ValidateDictParam(const ByteString& filter);
-  bool TransMask() const;
+  [[nodiscard]] bool ValidateDictParam(const ByteString& filter);
+  [[nodiscard]] bool TransMask() const;
   void SetMaskProperties();
 
   uint32_t Get1BitSetValue() const;

@@ -34,7 +34,7 @@ class CFX_CSSDeclaration {
   RetainPtr<CFX_CSSValue> GetProperty(CFX_CSSProperty eProperty,
                                       bool* bImportant) const;
 
-  bool empty() const { return properties_.empty(); }
+  [[nodiscard]] bool empty() const { return properties_.empty(); }
   const_prop_iterator begin() const { return properties_.begin(); }
   const_prop_iterator end() const { return properties_.end(); }
 

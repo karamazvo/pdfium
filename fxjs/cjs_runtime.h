@@ -41,20 +41,20 @@ class CJS_Runtime final : public IJS_Runtime,
   CFX_Timer::HandlerIface* GetTimerHandler() const;
 
   // Returns true if the event isn't already found in the set.
-  bool AddEventToSet(const FieldEvent& event);
+  [[nodiscard]] bool AddEventToSet(const FieldEvent& event);
   void RemoveEventFromSet(const FieldEvent& event);
 
   void BeginBlock() { m_bBlocking = true; }
   void EndBlock() { m_bBlocking = false; }
-  bool IsBlocking() const { return m_bBlocking; }
+  [[nodiscard]] bool IsBlocking() const { return m_bBlocking; }
 
   // Attempt to convert the |value| into a number. If successful the number
   // value will be returned, otherwise |value| is returned.
   v8::Local<v8::Value> MaybeCoerceToNumber(v8::Local<v8::Value> value);
 
   v8::Local<v8::Value> GetValueByNameFromGlobalObject(ByteStringView utf8Name);
-  bool SetValueByNameInGlobalObject(ByteStringView utf8Name,
-                                    v8::Local<v8::Value> pValue);
+  [[nodiscard]] bool SetValueByNameInGlobalObject(ByteStringView utf8Name,
+                                                  v8::Local<v8::Value> pValue);
 
  private:
   void DefineJSObjects();

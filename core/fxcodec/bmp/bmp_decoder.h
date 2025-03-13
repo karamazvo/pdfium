@@ -27,7 +27,7 @@ class BmpDecoder {
  public:
   class Delegate {
    public:
-    virtual bool BmpInputImagePositionBuf(uint32_t rcd_pos) = 0;
+    [[nodiscard]] virtual bool BmpInputImagePositionBuf(uint32_t rcd_pos) = 0;
     virtual void BmpReadScanline(uint32_t row_num,
                                  pdfium::span<const uint8_t> row_buf) = 0;
   };
@@ -45,8 +45,8 @@ class BmpDecoder {
                            CFX_DIBAttribute* pAttribute);
   static Status LoadImage(ProgressiveDecoderIface::Context* pContext);
   static FX_FILESIZE GetAvailInput(ProgressiveDecoderIface::Context* pContext);
-  static bool Input(ProgressiveDecoderIface::Context* pContext,
-                    RetainPtr<CFX_CodecMemory> codec_memory);
+  [[nodiscard]] static bool Input(ProgressiveDecoderIface::Context* pContext,
+                                  RetainPtr<CFX_CodecMemory> codec_memory);
 
   BmpDecoder() = delete;
   BmpDecoder(const BmpDecoder&) = delete;

@@ -20,7 +20,7 @@ class CJBig2_ArithIntDecoder {
 
   // Returns true on success, and false when an OOB condition occurs. Many
   // callers can tolerate OOB and do not check the return value.
-  bool Decode(CJBig2_ArithDecoder* pArithDecoder, int* nResult);
+  [[nodiscard]] bool Decode(CJBig2_ArithDecoder* pArithDecoder, int* nResult);
 
  private:
   std::vector<JBig2ArithCtx> m_IAx;

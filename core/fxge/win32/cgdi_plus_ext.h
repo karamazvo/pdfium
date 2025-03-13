@@ -27,20 +27,20 @@ class CGdiplusExt {
   ~CGdiplusExt();
 
   void Load();
-  bool IsAvailable() { return !!gdiplus_module_; }
-  bool StretchDIBits(HDC hDC,
-                     RetainPtr<const CFX_DIBBase> source,
-                     int dest_left,
-                     int dest_top,
-                     int dest_width,
-                     int dest_height);
-  bool DrawPath(HDC hDC,
-                const CFX_Path& path,
-                const CFX_Matrix* pObject2Device,
-                const CFX_GraphStateData* pGraphState,
-                uint32_t fill_argb,
-                uint32_t stroke_argb,
-                const CFX_FillRenderOptions& fill_options);
+  [[nodiscard]] bool IsAvailable() { return !!gdiplus_module_; }
+  [[nodiscard]] bool StretchDIBits(HDC hDC,
+                                   RetainPtr<const CFX_DIBBase> source,
+                                   int dest_left,
+                                   int dest_top,
+                                   int dest_width,
+                                   int dest_height);
+  [[nodiscard]] bool DrawPath(HDC hDC,
+                              const CFX_Path& path,
+                              const CFX_Matrix* pObject2Device,
+                              const CFX_GraphStateData* pGraphState,
+                              uint32_t fill_argb,
+                              uint32_t stroke_argb,
+                              const CFX_FillRenderOptions& fill_options);
 
   pdfium::span<const FARPROC> functions() const { return gdiplus_functions_; }
 

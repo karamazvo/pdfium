@@ -43,8 +43,9 @@ class CPDF_StructTree {
       RetainPtr<const CPDF_Dictionary> pDict,
       StructElementMap* map,
       int nLevel);
-  bool AddTopLevelNode(const CPDF_Dictionary* pDict,
-                       const RetainPtr<CPDF_StructElement>& pElement);
+  [[nodiscard]] bool AddTopLevelNode(
+      const CPDF_Dictionary* pDict,
+      const RetainPtr<CPDF_StructElement>& pElement);
 
   RetainPtr<const CPDF_Dictionary> const m_pTreeRoot;
   RetainPtr<const CPDF_Dictionary> const m_pRoleMap;

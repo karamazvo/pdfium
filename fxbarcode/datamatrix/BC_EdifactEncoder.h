@@ -16,7 +16,7 @@ class CBC_EdifactEncoder final : public CBC_Encoder {
 
   // CBC_Encoder
   CBC_HighLevelEncoder::Encoding GetEncodingMode() override;
-  bool Encode(CBC_EncoderContext* context) override;
+  [[nodiscard]] bool Encode(CBC_EncoderContext* context) override;
 };
 
 #endif  // FXBARCODE_DATAMATRIX_BC_EDIFACTENCODER_H_

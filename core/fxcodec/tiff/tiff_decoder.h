@@ -28,16 +28,16 @@ class TiffDecoder {
   static std::unique_ptr<ProgressiveDecoderIface::Context> CreateDecoder(
       const RetainPtr<IFX_SeekableReadStream>& file_ptr);
 
-  static bool LoadFrameInfo(ProgressiveDecoderIface::Context* ctx,
-                            int32_t frame,
-                            int32_t* width,
-                            int32_t* height,
-                            int32_t* comps,
-                            int32_t* bpc,
-                            CFX_DIBAttribute* pAttribute);
+  [[nodiscard]] static bool LoadFrameInfo(ProgressiveDecoderIface::Context* ctx,
+                                          int32_t frame,
+                                          int32_t* width,
+                                          int32_t* height,
+                                          int32_t* comps,
+                                          int32_t* bpc,
+                                          CFX_DIBAttribute* pAttribute);
   // `bitmap` must be `FXDIB_Format::kBgra`.
-  static bool Decode(ProgressiveDecoderIface::Context* ctx,
-                     RetainPtr<CFX_DIBitmap> bitmap);
+  [[nodiscard]] static bool Decode(ProgressiveDecoderIface::Context* ctx,
+                                   RetainPtr<CFX_DIBitmap> bitmap);
 
   TiffDecoder() = delete;
   TiffDecoder(const TiffDecoder&) = delete;

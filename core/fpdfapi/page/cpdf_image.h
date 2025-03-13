@@ -28,8 +28,8 @@ class CPDF_Image final : public Retainable {
  public:
   CONSTRUCT_VIA_MAKE_RETAIN;
 
-  static bool IsValidJpegComponent(int32_t comps);
-  static bool IsValidJpegBitsPerComponent(int32_t bpc);
+  [[nodiscard]] static bool IsValidJpegComponent(int32_t comps);
+  [[nodiscard]] static bool IsValidJpegBitsPerComponent(int32_t bpc);
 
   // Can only be called when `IsInline()` returns true.
   void ConvertStreamToIndirectObject();
@@ -44,9 +44,9 @@ class CPDF_Image final : public Retainable {
   int32_t GetPixelHeight() const { return m_Height; }
   int32_t GetPixelWidth() const { return m_Width; }
   uint32_t GetMatteColor() const { return m_MatteColor; }
-  bool IsInline() const { return m_bIsInline; }
-  bool IsMask() const { return m_bIsMask; }
-  bool IsInterpol() const { return m_bInterpolate; }
+  [[nodiscard]] bool IsInline() const { return m_bIsInline; }
+  [[nodiscard]] bool IsMask() const { return m_bIsMask; }
+  [[nodiscard]] bool IsInterpol() const { return m_bInterpolate; }
 
   RetainPtr<CPDF_DIB> CreateNewDIB() const;
   RetainPtr<CFX_DIBBase> LoadDIBBase() const;
@@ -58,18 +58,18 @@ class CPDF_Image final : public Retainable {
   void ResetCache(CPDF_Page* pPage);
 
   void WillBeDestroyed();
-  bool IsGoingToBeDestroyed() const { return m_bWillBeDestroyed; }
+  [[nodiscard]] bool IsGoingToBeDestroyed() const { return m_bWillBeDestroyed; }
 
   // Returns whether to Continue() or not.
-  bool StartLoadDIBBase(const CPDF_Dictionary* pFormResource,
-                        const CPDF_Dictionary* pPageResource,
-                        bool bStdCS,
-                        CPDF_ColorSpace::Family GroupFamily,
-                        bool bLoadMask,
-                        const CFX_Size& max_size_required);
+  [[nodiscard]] bool StartLoadDIBBase(const CPDF_Dictionary* pFormResource,
+                                      const CPDF_Dictionary* pPageResource,
+                                      bool bStdCS,
+                                      CPDF_ColorSpace::Family GroupFamily,
+                                      bool bLoadMask,
+                                      const CFX_Size& max_size_required);
 
   // Returns whether to Continue() or not.
-  bool Continue(PauseIndicatorIface* pPause);
+  [[nodiscard]] bool Continue(PauseIndicatorIface* pPause);
 
   RetainPtr<CFX_DIBBase> DetachBitmap();
   RetainPtr<CFX_DIBBase> DetachMask();

@@ -95,7 +95,7 @@ class Mask {
   bool operator==(const Mask& that) const { return val_ == that.val_; }
   bool operator!=(const Mask& that) const { return val_ != that.val_; }
 
-  bool TestAll(const Mask& that) const {
+  [[nodiscard]] bool TestAll(const Mask& that) const {
     return (val_ & that.val_) == that.val_;
   }
 

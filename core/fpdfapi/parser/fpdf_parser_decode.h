@@ -32,7 +32,7 @@ class ScanlineDecoder;
 // Indexed by 8-bit char code, contains unicode code points.
 extern const std::array<uint16_t, 256> kPDFDocEncoding;
 
-bool ValidateDecoderPipeline(const CPDF_Array* pDecoders);
+[[nodiscard]] bool ValidateDecoderPipeline(const CPDF_Array* pDecoders);
 
 ByteString PDF_EncodeString(ByteStringView src);
 ByteString PDF_HexEncodeString(ByteStringView src);

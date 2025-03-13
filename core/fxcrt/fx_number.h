@@ -20,8 +20,8 @@ class FX_Number {
   explicit FX_Number(float value);
   explicit FX_Number(ByteStringView str);
 
-  bool IsInteger() const;
-  bool IsSigned() const;
+  [[nodiscard]] bool IsInteger() const;
+  [[nodiscard]] bool IsSigned() const;
 
   int32_t GetSigned() const;  // Underflow/Overflow possible.
   float GetFloat() const;

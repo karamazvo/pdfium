@@ -68,7 +68,7 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
       const CFX_PointF& page_point) const override;
 
   // CPDF_PageObjectHolder:
-  bool IsPage() const override;
+  [[nodiscard]] bool IsPage() const override;
 
   void ParseContent();
   const CFX_SizeF& GetPageSize() const { return m_PageSize; }

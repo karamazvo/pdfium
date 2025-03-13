@@ -17,7 +17,8 @@ class CXFA_DataExporter {
   CXFA_DataExporter();
   ~CXFA_DataExporter();
 
-  bool Export(const RetainPtr<IFX_SeekableStream>& pWrite, CXFA_Node* pNode);
+  [[nodiscard]] bool Export(const RetainPtr<IFX_SeekableStream>& pWrite,
+                            CXFA_Node* pNode);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_DATAEXPORTER_H_

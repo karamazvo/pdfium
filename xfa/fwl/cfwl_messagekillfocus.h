@@ -17,7 +17,7 @@ class CFWL_MessageKillFocus final : public CFWL_Message {
   explicit CFWL_MessageKillFocus(CFWL_Widget* pDstTarget);
   ~CFWL_MessageKillFocus() override;
 
-  bool IsFocusedOnWidget(const CFWL_Widget* pWidget) const {
+  [[nodiscard]] bool IsFocusedOnWidget(const CFWL_Widget* pWidget) const {
     return pWidget == m_pSetFocus;
   }
 

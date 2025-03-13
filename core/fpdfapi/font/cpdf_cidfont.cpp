@@ -469,7 +469,7 @@ bool CPDF_CIDFont::Load() {
   RetainPtr<CFX_Face> face = m_Font.GetFace();
   if (face) {
     if (m_FontType == CIDFontType::kType1) {
-      face->SelectCharMap(fxge::FontEncoding::kUnicode);
+      (void)face->SelectCharMap(fxge::FontEncoding::kUnicode);
     } else {
       UseCIDCharmap(face, m_pCMap->GetCoding());
     }

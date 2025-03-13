@@ -90,7 +90,7 @@ class CFXJS_PerObjectData {
  private:
   CFXJS_PerObjectData(FXJSOBJTYPE eObjType, uint32_t nObjDefnID);
 
-  static bool HasInternalFields(v8::Local<v8::Object> pObj);
+  [[nodiscard]] static bool HasInternalFields(v8::Local<v8::Object> pObj);
   static CFXJS_PerObjectData* ExtractFromObject(v8::Local<v8::Object> pObj);
 
   const FXJSOBJTYPE m_ObjType;
@@ -104,7 +104,7 @@ void FXJS_Release();
 // Gets the global isolate set by FXJS_Initialize(), or makes a new one each
 // time if there is no such isolate. Returns true if a new isolate had to be
 // created.
-bool FXJS_GetIsolate(v8::Isolate** pResultIsolate);
+[[nodiscard]] bool FXJS_GetIsolate(v8::Isolate** pResultIsolate);
 
 // Get the global isolate's ref count.
 size_t FXJS_GlobalIsolateRefCount();

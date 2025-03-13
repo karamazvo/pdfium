@@ -43,22 +43,22 @@ class CPDF_MeshStream {
                   RetainPtr<CPDF_ColorSpace> pCS);
   ~CPDF_MeshStream();
 
-  bool Load();
+  [[nodiscard]] bool Load();
   void SkipBits(uint32_t nbits);
   void ByteAlign();
 
-  bool IsEOF() const;
-  bool CanReadFlag() const;
-  bool CanReadCoords() const;
-  bool CanReadColor() const;
+  [[nodiscard]] bool IsEOF() const;
+  [[nodiscard]] bool CanReadFlag() const;
+  [[nodiscard]] bool CanReadCoords() const;
+  [[nodiscard]] bool CanReadColor() const;
 
   uint32_t ReadFlag() const;
   CFX_PointF ReadCoords() const;
   FX_RGB_STRUCT<float> ReadColor() const;
 
-  bool ReadVertex(const CFX_Matrix& pObject2Bitmap,
-                  CPDF_MeshVertex* vertex,
-                  uint32_t* flag);
+  [[nodiscard]] bool ReadVertex(const CFX_Matrix& pObject2Bitmap,
+                                CPDF_MeshVertex* vertex,
+                                uint32_t* flag);
   std::vector<CPDF_MeshVertex> ReadVertexRow(const CFX_Matrix& pObject2Bitmap,
                                              int count);
 

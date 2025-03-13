@@ -30,10 +30,11 @@ class CPWL_CheckBox final : public CPWL_Button {
   ~CPWL_CheckBox() override;
 
   // CPWL_Button:
-  bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point) override;
-  bool OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) override;
+  [[nodiscard]] bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag,
+                                 const CFX_PointF& point) override;
+  [[nodiscard]] bool OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) override;
 
-  bool IsChecked() const { return m_bChecked; }
+  [[nodiscard]] bool IsChecked() const { return m_bChecked; }
   void SetCheck(bool bCheck) { m_bChecked = bCheck; }
 
  private:
@@ -48,10 +49,11 @@ class CPWL_RadioButton final : public CPWL_Button {
   ~CPWL_RadioButton() override;
 
   // CPWL_Button
-  bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point) override;
-  bool OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) override;
+  [[nodiscard]] bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag,
+                                 const CFX_PointF& point) override;
+  [[nodiscard]] bool OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) override;
 
-  bool IsChecked() const { return m_bChecked; }
+  [[nodiscard]] bool IsChecked() const { return m_bChecked; }
   void SetCheck(bool bCheck) { m_bChecked = bCheck; }
 
  private:

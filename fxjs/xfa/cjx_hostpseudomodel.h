@@ -19,7 +19,7 @@ class CJX_HostPseudoModel final : public CJX_Object {
   ~CJX_HostPseudoModel() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   JSE_METHOD(beep);
   JSE_METHOD(documentCountInBatch);

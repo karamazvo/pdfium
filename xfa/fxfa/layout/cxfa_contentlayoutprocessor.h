@@ -92,24 +92,26 @@ class CXFA_ContentLayoutProcessor
                           Context* pContext);
 
   CFX_SizeF GetCurrentComponentSize();
-  bool HasLayoutItem() const { return !!m_pLayoutItem; }
+  [[nodiscard]] bool HasLayoutItem() const { return !!m_pLayoutItem; }
   void SplitLayoutItem(float fSplitPos);
   float FindSplitPos(float fProposedSplitPos);
-  bool ProcessKeepForSplit(CXFA_ContentLayoutProcessor* pChildProcessor,
-                           Result eRetValue,
-                           ContentLayoutItemVector& rgCurLineLayoutItem,
-                           float* fContentCurRowAvailWidth,
-                           float* fContentCurRowHeight,
-                           float* fContentCurRowY,
-                           bool* bAddedItemInRow,
-                           bool* bForceEndPage,
-                           Result* result);
+  [[nodiscard]] bool ProcessKeepForSplit(
+      CXFA_ContentLayoutProcessor* pChildProcessor,
+      Result eRetValue,
+      ContentLayoutItemVector& rgCurLineLayoutItem,
+      float* fContentCurRowAvailWidth,
+      float* fContentCurRowHeight,
+      float* fContentCurRowY,
+      bool* bAddedItemInRow,
+      bool* bForceEndPage,
+      Result* result);
   void ProcessUnUseOverFlow(CXFA_Node* pLeaderNode,
                             CXFA_Node* pTrailerNode,
                             CXFA_ContentLayoutItem* pTrailerItem,
                             CXFA_Node* pFormNode);
-  bool IsAddNewRowForTrailer(CXFA_ContentLayoutItem* pTrailerItem);
-  bool JudgeLeaderOrTrailerForOccur(CXFA_Node* pFormNode);
+  [[nodiscard]] bool IsAddNewRowForTrailer(
+      CXFA_ContentLayoutItem* pTrailerItem);
+  [[nodiscard]] bool JudgeLeaderOrTrailerForOccur(CXFA_Node* pFormNode);
 
   // Object comes from GCed heap.
   CXFA_ContentLayoutItem* CreateContentLayoutItem(CXFA_Node* pFormNode);
@@ -121,7 +123,7 @@ class CXFA_ContentLayoutProcessor
                        CXFA_ContentLayoutItem* pSecondParent,
                        float fSplitPos);
   float InsertKeepLayoutItems();
-  bool CalculateRowChildPosition(
+  [[nodiscard]] bool CalculateRowChildPosition(
       std::array<ContentLayoutItemVector, 3>& rgCurLineLayoutItems,
       XFA_AttributeValue eFlowStrategy,
       bool bContainerHeightAutoSize,
@@ -133,9 +135,10 @@ class CXFA_ContentLayoutProcessor
       float fContentWidthLimit,
       bool bRootForceTb);
   void ProcessUnUseBinds(CXFA_Node* pFormNode);
-  bool JudgePutNextPage(CXFA_ContentLayoutItem* pParentLayoutItem,
-                        float fChildHeight,
-                        std::vector<CXFA_ContentLayoutItem*>* pKeepItems);
+  [[nodiscard]] bool JudgePutNextPage(
+      CXFA_ContentLayoutItem* pParentLayoutItem,
+      float fChildHeight,
+      std::vector<CXFA_ContentLayoutItem*>* pKeepItems);
 
   void DoLayoutPositionedContainer(Context* pContext);
   void DoLayoutTableContainer(CXFA_Node* pLayoutNode);

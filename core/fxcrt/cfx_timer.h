@@ -43,7 +43,7 @@ class CFX_Timer {
             int32_t nInterval);
   ~CFX_Timer();
 
-  bool HasValidID() const {
+  [[nodiscard]] bool HasValidID() const {
     return m_nTimerID != HandlerIface::kInvalidTimerID;
   }
 

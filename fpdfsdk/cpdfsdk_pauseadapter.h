@@ -16,7 +16,7 @@ class CPDFSDK_PauseAdapter final : public PauseIndicatorIface {
   explicit CPDFSDK_PauseAdapter(IFSDK_PAUSE* IPause);
   ~CPDFSDK_PauseAdapter() override;
 
-  bool NeedToPauseNow() override;
+  [[nodiscard]] bool NeedToPauseNow() override;
 
  private:
   UnownedPtr<IFSDK_PAUSE> const m_IPause;

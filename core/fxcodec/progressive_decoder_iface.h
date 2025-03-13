@@ -31,8 +31,8 @@ class ProgressiveDecoderIface {
   virtual FX_FILESIZE GetAvailInput(Context* pContext) const = 0;
 
   // Provides a new input buffer to the codec. Returns true on success.
-  virtual bool Input(Context* pContext,
-                     RetainPtr<CFX_CodecMemory> codec_memory) = 0;
+  [[nodiscard]] virtual bool Input(Context* pContext,
+                                   RetainPtr<CFX_CodecMemory> codec_memory) = 0;
 };
 
 }  // namespace fxcodec

@@ -58,7 +58,7 @@ class LZWDecompressor {
 
   void ClearTable();
   void AddCode(uint16_t prefix_code, uint8_t append_char);
-  bool DecodeString(uint16_t code);
+  [[nodiscard]] bool DecodeString(uint16_t code);
   size_t ExtractData(pdfium::span<uint8_t> dest_buf);
 
   const uint8_t code_size_;

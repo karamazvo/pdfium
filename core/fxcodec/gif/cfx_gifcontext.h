@@ -28,14 +28,14 @@ class CFX_GifContext : public ProgressiveDecoderIface::Context {
   ~CFX_GifContext() override;
 
   void ReadScanline(int32_t row_num, pdfium::span<uint8_t> row_buf);
-  bool GetRecordPosition(uint32_t cur_pos,
-                         int32_t left,
-                         int32_t top,
-                         int32_t width,
-                         int32_t height,
-                         pdfium::span<CFX_GifPalette> pal,
-                         int32_t trans_index,
-                         bool interlace);
+  [[nodiscard]] bool GetRecordPosition(uint32_t cur_pos,
+                                       int32_t left,
+                                       int32_t top,
+                                       int32_t width,
+                                       int32_t height,
+                                       pdfium::span<CFX_GifPalette> pal,
+                                       int32_t trans_index,
+                                       bool interlace);
   GifDecoder::Status ReadHeader();
   GifDecoder::Status GetFrame();
   GifDecoder::Status LoadFrame(size_t frame_num);
@@ -60,7 +60,7 @@ class CFX_GifContext : public ProgressiveDecoderIface::Context {
   uint8_t img_pass_num_ = 0;
 
  protected:
-  bool ReadAllOrNone(pdfium::span<uint8_t> dest);
+  [[nodiscard]] bool ReadAllOrNone(pdfium::span<uint8_t> dest);
   GifDecoder::Status ReadGifSignature();
   GifDecoder::Status ReadLogicalScreenDescriptor();
 
@@ -71,7 +71,7 @@ class CFX_GifContext : public ProgressiveDecoderIface::Context {
   GifDecoder::Status DecodeExtension();
   GifDecoder::Status DecodeImageInfo();
   void DecodingFailureAtTailCleanup(CFX_GifImage* gif_image);
-  bool ScanForTerminalMarker();
+  [[nodiscard]] bool ScanForTerminalMarker();
   uint8_t GetPaletteExp(CFX_GifImage* gif_image) const;
 };
 

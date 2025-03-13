@@ -25,7 +25,7 @@ class CBC_OneCode : public CBC_CodeBase {
   void SetPrintChecksum(bool checksum);
   void SetDataLength(int32_t length);
   void SetCalChecksum(bool calc);
-  bool SetFont(CFX_Font* cFont);
+  [[nodiscard]] bool SetFont(CFX_Font* cFont);
   void SetFontSize(float size);
   void SetFontStyle(int32_t style);
   void SetFontColor(FX_ARGB color);

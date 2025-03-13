@@ -16,7 +16,7 @@ class StringWriteStream final : public IFX_RetainableWriteStream {
   ~StringWriteStream() override;
 
   // IFX_WriteStream:
-  bool WriteBlock(pdfium::span<const uint8_t> buffer) override;
+  [[nodiscard]] bool WriteBlock(pdfium::span<const uint8_t> buffer) override;
 
   std::string ToString() const { return stream_.str(); }
 

@@ -62,16 +62,17 @@ class CPDF_SyntaxParser {
   void ToNextLine();
   void ToNextWord();
   void RecordingToNextWord();
-  bool BackwardsSearchToWord(ByteStringView word, FX_FILESIZE limit);
+  [[nodiscard]] bool BackwardsSearchToWord(ByteStringView word,
+                                           FX_FILESIZE limit);
   FX_FILESIZE FindTag(ByteStringView tag);
-  bool ReadBlock(pdfium::span<uint8_t> buffer);
-  bool GetCharAt(FX_FILESIZE pos, uint8_t& ch);
+  [[nodiscard]] bool ReadBlock(pdfium::span<uint8_t> buffer);
+  [[nodiscard]] bool GetCharAt(FX_FILESIZE pos, uint8_t& ch);
   WordResult GetNextWord();
   ByteString PeekNextWord();
 
   RetainPtr<CPDF_ReadValidator> GetValidator() const;
   uint32_t GetDirectNum();
-  bool GetNextChar(uint8_t& ch);
+  [[nodiscard]] bool GetNextChar(uint8_t& ch);
 
   // The document size may be smaller than the file size.
   // The syntax parser use position relative to document
@@ -97,20 +98,20 @@ class CPDF_SyntaxParser {
   static constexpr int kParserMaxRecursionDepth = 64;
   static int s_CurrentRecursionDepth;
 
-  bool ReadBlockAt(FX_FILESIZE read_pos);
-  bool GetCharAtBackward(FX_FILESIZE pos, uint8_t* ch);
+  [[nodiscard]] bool ReadBlockAt(FX_FILESIZE read_pos);
+  [[nodiscard]] bool GetCharAtBackward(FX_FILESIZE pos, uint8_t* ch);
   WordType GetNextWordInternal();
-  bool IsWholeWord(FX_FILESIZE startpos,
-                   FX_FILESIZE limit,
-                   ByteStringView tag,
-                   bool checkKeyword);
+  [[nodiscard]] bool IsWholeWord(FX_FILESIZE startpos,
+                                 FX_FILESIZE limit,
+                                 ByteStringView tag,
+                                 bool checkKeyword);
 
   unsigned int ReadEOLMarkers(FX_FILESIZE pos);
   FX_FILESIZE FindWordPos(ByteStringView word);
   FX_FILESIZE FindStreamEndPos();
   RetainPtr<CPDF_Stream> ReadStream(RetainPtr<CPDF_Dictionary> pDict);
 
-  bool IsPositionRead(FX_FILESIZE pos) const;
+  [[nodiscard]] bool IsPositionRead(FX_FILESIZE pos) const;
 
   RetainPtr<CPDF_Object> GetObjectBodyInternal(
       CPDF_IndirectObjectHolder* pObjList,

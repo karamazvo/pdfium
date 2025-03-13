@@ -18,7 +18,8 @@ class FX_Folder {
   virtual ~FX_Folder() = default;
 
   // `filename` and `folder` are required out-parameters.
-  virtual bool GetNextFile(ByteString* filename, bool* bFolder) = 0;
+  [[nodiscard]] virtual bool GetNextFile(ByteString* filename,
+                                         bool* bFolder) = 0;
 };
 
 #endif  // CORE_FXCRT_FX_FOLDER_H_

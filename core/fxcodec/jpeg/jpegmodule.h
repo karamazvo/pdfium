@@ -48,7 +48,7 @@ class JpegModule {
       pdfium::span<const uint8_t> src_span);
 
 #if BUILDFLAG(IS_WIN)
-  UNSAFE_BUFFER_USAGE static bool JpegEncode(
+  UNSAFE_BUFFER_USAGE [[nodiscard]] static bool JpegEncode(
       const RetainPtr<const CFX_DIBBase>& pSource,
       uint8_t** dest_buf,
       size_t* dest_size);

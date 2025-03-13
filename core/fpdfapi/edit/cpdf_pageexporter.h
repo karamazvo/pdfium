@@ -24,7 +24,8 @@ class CPDF_PageExporter final : public CPDF_PageOrganizer {
   // For the pages from the source document with `page_indices` as their page
   // indices, insert them into the destination document at page `index`.
   // `page_indices` and `index` are 0-based.
-  bool ExportPages(pdfium::span<const uint32_t> page_indices, int index);
+  [[nodiscard]] bool ExportPages(pdfium::span<const uint32_t> page_indices,
+                                 int index);
 };
 
 #endif  // CORE_FPDFAPI_EDIT_CPDF_PAGEEXPORTER_H_

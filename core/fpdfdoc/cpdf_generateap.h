@@ -22,9 +22,9 @@ class CPDF_GenerateAP {
 
   static void GenerateEmptyAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
 
-  static bool GenerateAnnotAP(CPDF_Document* pDoc,
-                              CPDF_Dictionary* pAnnotDict,
-                              CPDF_Annot::Subtype subtype);
+  [[nodiscard]] static bool GenerateAnnotAP(CPDF_Document* pDoc,
+                                            CPDF_Dictionary* pAnnotDict,
+                                            CPDF_Annot::Subtype subtype);
 
   CPDF_GenerateAP() = delete;
   CPDF_GenerateAP(const CPDF_GenerateAP&) = delete;

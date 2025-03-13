@@ -58,8 +58,8 @@ class CPDF_CMap final : public Retainable {
 
   CONSTRUCT_VIA_MAKE_RETAIN;
 
-  bool IsLoaded() const { return m_bLoaded; }
-  bool IsVertWriting() const { return m_bVertical; }
+  [[nodiscard]] bool IsLoaded() const { return m_bLoaded; }
+  [[nodiscard]] bool IsVertWriting() const { return m_bVertical; }
 
   uint16_t CIDFromCharCode(uint32_t charcode) const;
 
@@ -81,7 +81,7 @@ class CPDF_CMap final : public Retainable {
   void SetDirectCharcodeToCIDTableRange(uint32_t start_code,
                                         uint32_t end_code,
                                         uint16_t start_cid);
-  bool IsDirectCharcodeToCIDTableIsEmpty() const {
+  [[nodiscard]] bool IsDirectCharcodeToCIDTableIsEmpty() const {
     return m_DirectCharcodeToCIDTable.empty();
   }
 

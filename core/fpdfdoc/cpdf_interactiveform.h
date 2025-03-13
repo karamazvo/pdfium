@@ -38,11 +38,12 @@ class CPDF_InteractiveForm {
    public:
     virtual ~NotifierIface() = default;
 
-    virtual bool BeforeValueChange(CPDF_FormField* pField,
-                                   const WideString& csValue) = 0;
+    [[nodiscard]] virtual bool BeforeValueChange(CPDF_FormField* pField,
+                                                 const WideString& csValue) = 0;
     virtual void AfterValueChange(CPDF_FormField* pField) = 0;
-    virtual bool BeforeSelectionChange(CPDF_FormField* pField,
-                                       const WideString& csValue) = 0;
+    [[nodiscard]] virtual bool BeforeSelectionChange(
+        CPDF_FormField* pField,
+        const WideString& csValue) = 0;
     virtual void AfterSelectionChange(CPDF_FormField* pField) = 0;
     virtual void AfterCheckedStatusChange(CPDF_FormField* pField) = 0;
     virtual void AfterFormReset(CPDF_InteractiveForm* pForm) = 0;
@@ -51,7 +52,7 @@ class CPDF_InteractiveForm {
   explicit CPDF_InteractiveForm(CPDF_Document* pDocument);
   ~CPDF_InteractiveForm();
 
-  static bool IsUpdateAPEnabled();
+  [[nodiscard]] static bool IsUpdateAPEnabled();
   static void SetUpdateAP(bool bUpdateAP);
   static RetainPtr<CPDF_Font> AddNativeInteractiveFormFont(
       CPDF_Document* pDocument,
@@ -66,7 +67,7 @@ class CPDF_InteractiveForm {
                                             int* z_order) const;
   CPDF_FormControl* GetControlByDict(const CPDF_Dictionary* pWidgetDict) const;
 
-  bool NeedConstructAP() const;
+  [[nodiscard]] bool NeedConstructAP() const;
   int CountFieldsInCalculationOrder();
   CPDF_FormField* GetFieldInCalculationOrder(int index);
   int FindFieldInCalculationOrder(const CPDF_FormField* pField);
@@ -76,8 +77,9 @@ class CPDF_InteractiveForm {
       RetainPtr<CPDF_Dictionary> pElement) const;
   CPDF_DefaultAppearance GetDefaultAppearance() const;
   int GetFormAlignment() const;
-  bool CheckRequiredFields(const std::vector<CPDF_FormField*>* fields,
-                           bool bIncludeOrExclude) const;
+  [[nodiscard]] bool CheckRequiredFields(
+      const std::vector<CPDF_FormField*>* fields,
+      bool bIncludeOrExclude) const;
 
   std::unique_ptr<CFDF_Document> ExportToFDF(const WideString& pdf_path) const;
   std::unique_ptr<CFDF_Document> ExportToFDF(
@@ -92,11 +94,11 @@ class CPDF_InteractiveForm {
   void FixPageFields(CPDF_Page* pPage);
 
   // Wrap callbacks thru NotifierIface.
-  bool NotifyBeforeValueChange(CPDF_FormField* pField,
-                               const WideString& csValue);
+  [[nodiscard]] bool NotifyBeforeValueChange(CPDF_FormField* pField,
+                                             const WideString& csValue);
   void NotifyAfterValueChange(CPDF_FormField* pField);
-  bool NotifyBeforeSelectionChange(CPDF_FormField* pField,
-                                   const WideString& csValue);
+  [[nodiscard]] bool NotifyBeforeSelectionChange(CPDF_FormField* pField,
+                                                 const WideString& csValue);
   void NotifyAfterSelectionChange(CPDF_FormField* pField);
   void NotifyAfterCheckedStatusChange(CPDF_FormField* pField);
 

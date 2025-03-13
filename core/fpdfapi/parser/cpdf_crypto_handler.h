@@ -33,27 +33,28 @@ class CPDF_CryptoHandler {
     kAES2 = 3,
   };
 
-  static bool IsSignatureDictionary(const CPDF_Dictionary* dictionary);
+  [[nodiscard]] static bool IsSignatureDictionary(
+      const CPDF_Dictionary* dictionary);
 
   CPDF_CryptoHandler(Cipher cipher, pdfium::span<const uint8_t> key);
   ~CPDF_CryptoHandler();
 
-  bool DecryptObjectTree(RetainPtr<CPDF_Object> object);
+  [[nodiscard]] bool DecryptObjectTree(RetainPtr<CPDF_Object> object);
 
   DataVector<uint8_t> EncryptContent(uint32_t objnum,
                                      uint32_t gennum,
                                      pdfium::span<const uint8_t> source) const;
 
-  bool IsCipherAES() const;
+  [[nodiscard]] bool IsCipherAES() const;
 
  private:
   size_t DecryptGetSize(size_t src_size);
   void* DecryptStart(uint32_t objnum, uint32_t gennum);
   ByteString Decrypt(uint32_t objnum, uint32_t gennum, const ByteString& str);
-  bool DecryptStream(void* context,
-                     pdfium::span<const uint8_t> source,
-                     BinaryBuffer& dest_buf);
-  bool DecryptFinish(void* context, BinaryBuffer& dest_buf);
+  [[nodiscard]] bool DecryptStream(void* context,
+                                   pdfium::span<const uint8_t> source,
+                                   BinaryBuffer& dest_buf);
+  [[nodiscard]] bool DecryptFinish(void* context, BinaryBuffer& dest_buf);
   void PopulateKey(uint32_t objnum, uint32_t gennum, uint8_t* key) const;
 
   const size_t m_KeyLen;

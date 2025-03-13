@@ -26,28 +26,29 @@ class CFX_Barcode {
 
   static std::unique_ptr<CFX_Barcode> Create(BC_TYPE type);
   BC_TYPE GetType();
-  bool Encode(WideStringView contents);
+  [[nodiscard]] bool Encode(WideStringView contents);
 
-  bool RenderDevice(CFX_RenderDevice* device, const CFX_Matrix& matrix);
+  [[nodiscard]] bool RenderDevice(CFX_RenderDevice* device,
+                                  const CFX_Matrix& matrix);
 
-  bool SetModuleHeight(int32_t moduleHeight);
-  bool SetModuleWidth(int32_t moduleWidth);
+  [[nodiscard]] bool SetModuleHeight(int32_t moduleHeight);
+  [[nodiscard]] bool SetModuleWidth(int32_t moduleWidth);
   void SetHeight(int32_t height);
   void SetWidth(int32_t width);
 
-  bool SetPrintChecksum(bool checksum);
-  bool SetDataLength(int32_t length);
-  bool SetCalChecksum(bool state);
+  [[nodiscard]] bool SetPrintChecksum(bool checksum);
+  [[nodiscard]] bool SetDataLength(int32_t length);
+  [[nodiscard]] bool SetCalChecksum(bool state);
 
-  bool SetFont(CFX_Font* pFont);
-  bool SetFontSize(float size);
-  bool SetFontColor(FX_ARGB color);
+  [[nodiscard]] bool SetFont(CFX_Font* pFont);
+  [[nodiscard]] bool SetFontSize(float size);
+  [[nodiscard]] bool SetFontColor(FX_ARGB color);
 
   void SetTextLocation(BC_TEXT_LOC location);
-  bool SetWideNarrowRatio(int8_t ratio);
-  bool SetStartChar(char start);
-  bool SetEndChar(char end);
-  bool SetErrorCorrectionLevel(int32_t level);
+  [[nodiscard]] bool SetWideNarrowRatio(int8_t ratio);
+  [[nodiscard]] bool SetStartChar(char start);
+  [[nodiscard]] bool SetEndChar(char end);
+  [[nodiscard]] bool SetErrorCorrectionLevel(int32_t level);
 
  private:
   CFX_Barcode();

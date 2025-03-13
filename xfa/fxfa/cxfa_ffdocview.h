@@ -55,7 +55,7 @@ class CXFA_FFDocView : public cppgc::GarbageCollected<CXFA_FFDocView> {
   void StopLayout();
 
   void SetLayoutEvent() { m_bLayoutEvent = true; }
-  bool InLayoutStatus() const { return m_bInLayoutStatus; }
+  [[nodiscard]] bool InLayoutStatus() const { return m_bInLayoutStatus; }
   LayoutStatus GetLayoutStatus() const { return m_iStatus; }
 
   void UpdateDocView();
@@ -68,7 +68,7 @@ class CXFA_FFDocView : public cppgc::GarbageCollected<CXFA_FFDocView> {
   CXFA_Node* GetRootSubform();
   CXFA_FFWidgetHandler* GetWidgetHandler();
   CXFA_FFWidget* GetFocusWidget() const { return m_pFocusWidget; }
-  bool SetFocus(CXFA_FFWidget* pNewFocus);
+  [[nodiscard]] bool SetFocus(CXFA_FFWidget* pNewFocus);
   CXFA_FFWidget* GetWidgetForNode(CXFA_Node* node);
   CXFA_FFWidget* GetWidgetByName(const WideString& wsName,
                                  CXFA_FFWidget* pRefWidget);
@@ -88,7 +88,7 @@ class CXFA_FFDocView : public cppgc::GarbageCollected<CXFA_FFDocView> {
   void AddCalculateNodeNotify(CXFA_Node* pNodeChange);
   void AddCalculateNode(CXFA_Node* node);
 
-  bool RunLayout();
+  [[nodiscard]] bool RunLayout();
   void AddNewFormNode(CXFA_Node* pNode);
   void AddIndexChangedSubform(CXFA_Subform* pNode);
   CXFA_Node* GetFocusNode() const { return m_pFocusNode; }
@@ -105,17 +105,17 @@ class CXFA_FFDocView : public cppgc::GarbageCollected<CXFA_FFDocView> {
  private:
   explicit CXFA_FFDocView(CXFA_FFDoc* pDoc);
 
-  bool RunEventLayoutReady();
+  [[nodiscard]] bool RunEventLayoutReady();
   void RunBindItems();
   void InitCalculate(CXFA_Node* pNode);
   void InitLayout(CXFA_Node* pNode);
   size_t RunCalculateRecursive(size_t index);
   void ShowNullTestMsg();
-  bool ResetSingleNodeData(CXFA_Node* pNode);
+  [[nodiscard]] bool ResetSingleNodeData(CXFA_Node* pNode);
 
-  bool IsUpdateLocked() const { return m_iLock > 0; }
-  bool InitValidate(CXFA_Node* pNode);
-  bool RunValidate();
+  [[nodiscard]] bool IsUpdateLocked() const { return m_iLock > 0; }
+  [[nodiscard]] bool InitValidate(CXFA_Node* pNode);
+  [[nodiscard]] bool RunValidate();
   XFA_EventError RunCalculateWidgets();
   void RunSubformIndexChange();
 

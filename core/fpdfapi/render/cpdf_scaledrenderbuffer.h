@@ -23,10 +23,10 @@ class CPDF_ScaledRenderBuffer {
   CPDF_ScaledRenderBuffer(CFX_RenderDevice* device, const FX_RECT& rect);
   ~CPDF_ScaledRenderBuffer();
 
-  bool Initialize(CPDF_RenderContext* pContext,
-                  const CPDF_PageObject* pObj,
-                  const CPDF_RenderOptions& options,
-                  int max_dpi);
+  [[nodiscard]] bool Initialize(CPDF_RenderContext* pContext,
+                                const CPDF_PageObject* pObj,
+                                const CPDF_RenderOptions& options,
+                                int max_dpi);
 
   CFX_DefaultRenderDevice* GetDevice();
   const CFX_Matrix& GetMatrix() const { return matrix_; }

@@ -17,7 +17,7 @@ class CBC_DefaultPlacement final {
   CBC_DefaultPlacement(WideString codewords, int32_t numcols, int32_t numrows);
   ~CBC_DefaultPlacement();
 
-  bool GetBit(int32_t col, int32_t row) const;
+  [[nodiscard]] bool GetBit(int32_t col, int32_t row) const;
 
  private:
   void Init();
@@ -29,7 +29,7 @@ class CBC_DefaultPlacement final {
   void SetCorner4(int32_t pos);
 
   void SetBit(int32_t col, int32_t row, bool bit);
-  bool HasBit(int32_t col, int32_t row) const;
+  [[nodiscard]] bool HasBit(int32_t col, int32_t row) const;
 
   const WideString m_codewords;
   const int32_t m_numrows;

@@ -50,7 +50,7 @@ struct PWL_FLOATRANGE {
 
   void Reset();
   void Set(float min, float max);
-  bool In(float x) const;
+  [[nodiscard]] bool In(float x) const;
   float GetWidth() const;
 
   float fMin = 0.0f;
@@ -75,7 +75,7 @@ struct PWL_SCROLL_PRIVATEDATA {
   void SetClientWidth(float width);
   void SetSmallStep(float step);
   void SetBigStep(float step);
-  bool SetPos(float pos);
+  [[nodiscard]] bool SetPos(float pos);
 
   void AddSmall();
   void SubSmall();
@@ -101,12 +101,13 @@ class CPWL_ScrollBar final : public CPWL_Wnd, public CFX_Timer::CallbackIface {
 
   // CPWL_Wnd:
   void OnDestroy() override;
-  bool RepositionChildWnd() override;
+  [[nodiscard]] bool RepositionChildWnd() override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           const CFX_Matrix& mtUser2Device) override;
-  bool OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
-                     const CFX_PointF& point) override;
-  bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point) override;
+  [[nodiscard]] bool OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
+                                   const CFX_PointF& point) override;
+  [[nodiscard]] bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag,
+                                 const CFX_PointF& point) override;
   void SetScrollInfo(const PWL_SCROLL_INFO& info) override;
   void SetScrollPosition(float pos) override;
   void NotifyLButtonDown(CPWL_Wnd* child, const CFX_PointF& pos) override;
@@ -124,7 +125,7 @@ class CPWL_ScrollBar final : public CPWL_Wnd, public CFX_Timer::CallbackIface {
   void SetScrollPos(float fPos);
 
   // Returns |true| iff this instance is still allocated.
-  [[nodiscard]] bool MovePosButton(bool bRefresh);
+  [[nodiscard]] [[nodiscard]] bool MovePosButton(bool bRefresh);
   void SetScrollStep(float fBigStep, float fSmallStep);
   void NotifyScrollWindow();
   CFX_FloatRect GetScrollArea() const;

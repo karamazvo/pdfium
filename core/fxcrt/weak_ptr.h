@@ -30,7 +30,9 @@ class WeakPtr {
   WeakPtr(std::nullptr_t arg) {}
 
   explicit operator bool() const { return m_pHandle && !!m_pHandle->Get(); }
-  bool HasOneRef() const { return m_pHandle && m_pHandle->HasOneRef(); }
+  [[nodiscard]] bool HasOneRef() const {
+    return m_pHandle && m_pHandle->HasOneRef();
+  }
   T* operator->() { return m_pHandle->Get(); }
   const T* operator->() const { return m_pHandle->Get(); }
   WeakPtr& operator=(const WeakPtr& that) {
@@ -73,7 +75,7 @@ class WeakPtr {
       if (--m_nCount == 0)
         delete this;
     }
-    bool HasOneRef() const { return m_nCount == 1; }
+    [[nodiscard]] bool HasOneRef() const { return m_nCount == 1; }
 
    private:
     ~Handle() = default;

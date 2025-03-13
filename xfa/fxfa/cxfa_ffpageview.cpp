@@ -290,7 +290,7 @@ CXFA_FFWidget* CXFA_FFPageWidgetIterator::MoveToFirst() {
 }
 
 CXFA_FFWidget* CXFA_FFPageWidgetIterator::MoveToLast() {
-  m_sIterator.SetCurrent(nullptr);
+  (void)m_sIterator.SetCurrent(nullptr);
   return MoveToPrevious();
 }
 

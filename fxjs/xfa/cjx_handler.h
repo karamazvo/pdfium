@@ -18,7 +18,7 @@ class CJX_Handler final : public CJX_TextNode {
   ~CJX_Handler() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   JSE_PROP(version);
 

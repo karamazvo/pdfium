@@ -58,13 +58,13 @@ class CFGAS_GEFont final : public Retainable {
   ~CFGAS_GEFont() override;
 
 #if BUILDFLAG(IS_WIN)
-  bool LoadFontInternal(const wchar_t* pszFontFamily,
-                        uint32_t dwFontStyles,
-                        FX_CodePage wCodePage);
+  [[nodiscard]] bool LoadFontInternal(const wchar_t* pszFontFamily,
+                                      uint32_t dwFontStyles,
+                                      FX_CodePage wCodePage);
 #endif
-  bool LoadFontInternal(std::unique_ptr<CFX_Font> pInternalFont);
-  bool LoadFontInternal(RetainPtr<CPDF_Font> pPDFFont);
-  bool InitFont();
+  [[nodiscard]] bool LoadFontInternal(std::unique_ptr<CFX_Font> pInternalFont);
+  [[nodiscard]] bool LoadFontInternal(RetainPtr<CPDF_Font> pPDFFont);
+  [[nodiscard]] bool InitFont();
   std::pair<int32_t, RetainPtr<CFGAS_GEFont>> GetGlyphIndexAndFont(
       wchar_t wUnicode,
       bool bRecursive);

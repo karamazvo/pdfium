@@ -63,7 +63,7 @@ class CXFA_FFPageWidgetIterator final : public CXFA_FFWidget::IteratorIface {
   CXFA_FFWidget* MoveToNext() override;
   CXFA_FFWidget* MoveToPrevious() override;
   CXFA_FFWidget* GetCurrentWidget() override;
-  bool SetCurrentWidget(CXFA_FFWidget* hWidget) override;
+  [[nodiscard]] bool SetCurrentWidget(CXFA_FFWidget* hWidget) override;
 
  private:
   CXFA_LayoutItemIterator m_sIterator;
@@ -86,7 +86,7 @@ class CXFA_FFTabOrderPageWidgetIterator final
   CXFA_FFWidget* MoveToNext() override;
   CXFA_FFWidget* MoveToPrevious() override;
   CXFA_FFWidget* GetCurrentWidget() override;
-  bool SetCurrentWidget(CXFA_FFWidget* hWidget) override;
+  [[nodiscard]] bool SetCurrentWidget(CXFA_FFWidget* hWidget) override;
 
  private:
   CXFA_FFTabOrderPageWidgetIterator(CXFA_FFPageView* pPageView,

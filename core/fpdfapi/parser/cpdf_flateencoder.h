@@ -27,13 +27,13 @@ class CPDF_FlateEncoder {
   ~CPDF_FlateEncoder();
 
   void UpdateLength(size_t size);
-  bool WriteDictTo(IFX_ArchiveStream* archive,
-                   const CPDF_Encryptor* encryptor) const;
+  [[nodiscard]] bool WriteDictTo(IFX_ArchiveStream* archive,
+                                 const CPDF_Encryptor* encryptor) const;
 
   pdfium::span<const uint8_t> GetSpan() const;
 
  private:
-  bool is_owned() const {
+  [[nodiscard]] bool is_owned() const {
     return absl::holds_alternative<DataVector<uint8_t>>(m_Data);
   }
 

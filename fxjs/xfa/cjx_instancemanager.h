@@ -19,7 +19,7 @@ class CJX_InstanceManager final : public CJX_Node {
   ~CJX_InstanceManager() override;
 
   // CJX_Object:
-  bool DynamicTypeIs(TypeTag eType) const override;
+  [[nodiscard]] bool DynamicTypeIs(TypeTag eType) const override;
 
   JSE_METHOD(addInstance);
   JSE_METHOD(insertInstance);

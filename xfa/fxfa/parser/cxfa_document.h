@@ -86,7 +86,7 @@ class CXFA_Document final : public cppgc::GarbageCollected<CXFA_Document> {
 
   void Trace(cppgc::Visitor* visitor) const;
 
-  bool HasScriptContext() const { return !!m_pScriptContext; }
+  [[nodiscard]] bool HasScriptContext() const { return !!m_pScriptContext; }
   CFXJSE_Engine* InitScriptContext(CJS_Runtime* fxjs_runtime);
 
   // Only safe to call in situations where the context is known to exist,
@@ -110,13 +110,13 @@ class CXFA_Document final : public cppgc::GarbageCollected<CXFA_Document> {
   CXFA_Node* GetRoot() const { return m_pRootNode; }
   void SetRoot(CXFA_Node* pNewRoot) { m_pRootNode = pNewRoot; }
 
-  bool is_strict_scoping() const { return m_bStrictScoping; }
+  [[nodiscard]] bool is_strict_scoping() const { return m_bStrictScoping; }
   void set_is_strict_scoping() { m_bStrictScoping = true; }
 
-  bool is_scripting() const { return m_bScripting; }
+  [[nodiscard]] bool is_scripting() const { return m_bScripting; }
   void set_is_scripting() { m_bScripting = true; }
 
-  bool IsInteractive();
+  [[nodiscard]] bool IsInteractive();
   XFA_VERSION GetCurVersionMode() const { return m_eCurVersionMode; }
   XFA_VERSION RecognizeXFAVersionNumber(const WideString& wsTemplateNS);
   FormType GetFormType() const;

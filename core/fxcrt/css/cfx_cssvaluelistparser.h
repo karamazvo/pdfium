@@ -28,7 +28,7 @@ class CFX_CSSValueListParser {
   void UseCommaSeparator() { m_Separator = ','; }
 
  private:
-  bool CharsRemain() const { return !m_Cur.IsEmpty(); }
+  [[nodiscard]] bool CharsRemain() const { return !m_Cur.IsEmpty(); }
 
   // Safe to call even when input exhausted, stays unchanged.
   void Advance() { m_Cur = m_Cur.Substr(1); }

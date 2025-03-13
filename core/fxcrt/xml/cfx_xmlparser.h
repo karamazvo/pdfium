@@ -21,7 +21,7 @@ class IFX_SeekableReadStream;
 
 class CFX_XMLParser final {
  public:
-  static bool IsXMLNameChar(wchar_t ch, bool bFirstChar);
+  [[nodiscard]] static bool IsXMLNameChar(wchar_t ch, bool bFirstChar);
 
   explicit CFX_XMLParser(const RetainPtr<IFX_SeekableReadStream>& pStream);
   ~CFX_XMLParser();
@@ -48,7 +48,7 @@ class CFX_XMLParser final {
     TargetData
   };
 
-  bool DoSyntaxParse(CFX_XMLDocument* doc);
+  [[nodiscard]] bool DoSyntaxParse(CFX_XMLDocument* doc);
   WideString GetTextData();
   void ProcessTextChar(wchar_t ch);
   void ProcessTargetData();

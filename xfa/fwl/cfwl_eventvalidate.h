@@ -18,7 +18,7 @@ class CFWL_EventValidate final : public CFWL_Event {
   ~CFWL_EventValidate() override;
 
   WideString GetInsert() const { return m_wsInsert; }
-  bool GetValidate() const { return m_bValidate; }
+  [[nodiscard]] bool GetValidate() const { return m_bValidate; }
   void SetValidate(bool bValidate) { m_bValidate = bValidate; }
 
  protected:

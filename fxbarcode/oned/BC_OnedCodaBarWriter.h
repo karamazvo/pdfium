@@ -20,15 +20,15 @@ class CBC_OnedCodaBarWriter final : public CBC_OneDimWriter {
 
   // CBC_OneDimWriter:
   DataVector<uint8_t> Encode(const ByteString& contents) override;
-  bool RenderResult(WideStringView contents,
-                    pdfium::span<const uint8_t> code) override;
-  bool CheckContentValidity(WideStringView contents) override;
+  [[nodiscard]] bool RenderResult(WideStringView contents,
+                                  pdfium::span<const uint8_t> code) override;
+  [[nodiscard]] bool CheckContentValidity(WideStringView contents) override;
   WideString FilterContents(WideStringView contents) override;
   void SetDataLength(int32_t length) override;
   void SetTextLocation(BC_TEXT_LOC location) override;
-  bool SetWideNarrowRatio(int8_t ratio) override;
-  bool SetStartChar(char start) override;
-  bool SetEndChar(char end) override;
+  [[nodiscard]] bool SetWideNarrowRatio(int8_t ratio) override;
+  [[nodiscard]] bool SetStartChar(char start) override;
+  [[nodiscard]] bool SetEndChar(char end) override;
 
   WideString encodedContents(WideStringView contents);
 

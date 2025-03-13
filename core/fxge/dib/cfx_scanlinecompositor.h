@@ -21,12 +21,12 @@ class CFX_ScanlineCompositor {
   CFX_ScanlineCompositor();
   ~CFX_ScanlineCompositor();
 
-  bool Init(FXDIB_Format dest_format,
-            FXDIB_Format src_format,
-            pdfium::span<const uint32_t> src_palette,
-            uint32_t mask_color,
-            BlendMode blend_type,
-            bool bRgbByteOrder);
+  [[nodiscard]] bool Init(FXDIB_Format dest_format,
+                          FXDIB_Format src_format,
+                          pdfium::span<const uint32_t> src_palette,
+                          uint32_t mask_color,
+                          BlendMode blend_type,
+                          bool bRgbByteOrder);
 
   void CompositeRgbBitmapLine(pdfium::span<uint8_t> dest_scan,
                               pdfium::span<const uint8_t> src_scan,

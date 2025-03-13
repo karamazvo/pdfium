@@ -34,10 +34,10 @@ class CPVT_VariableText {
     explicit Iterator(CPVT_VariableText* pVT);
     ~Iterator();
 
-    bool NextWord();
-    bool NextLine();
-    bool GetWord(CPVT_Word& word) const;
-    bool GetLine(CPVT_Line& line) const;
+    [[nodiscard]] bool NextWord();
+    [[nodiscard]] bool NextLine();
+    [[nodiscard]] bool GetWord(CPVT_Word& word) const;
+    [[nodiscard]] bool GetLine(CPVT_Line& line) const;
     void SetAt(int32_t nWordIndex);
     void SetAt(const CPVT_WordPlace& place);
     const CPVT_WordPlace& GetWordPlace() const { return m_CurPos; }
@@ -87,7 +87,7 @@ class CPVT_VariableText {
   void SetAutoFontSize(bool bAuto) { m_bAutoFontSize = bAuto; }
   void Initialize();
 
-  bool IsValid() const { return m_bInitialized; }
+  [[nodiscard]] bool IsValid() const { return m_bInitialized; }
 
   void RearrangeAll();
   void RearrangePart(const CPVT_WordRange& PlaceRange);
@@ -106,8 +106,8 @@ class CPVT_VariableText {
   uint16_t GetPasswordChar() const { return GetSubWord(); }
   int32_t GetCharArray() const { return m_nCharArray; }
   int32_t GetLimitChar() const { return m_nLimitChar; }
-  bool IsMultiLine() const { return m_bMultiLine; }
-  bool IsAutoReturn() const { return m_bLimitWidth; }
+  [[nodiscard]] bool IsMultiLine() const { return m_bMultiLine; }
+  [[nodiscard]] bool IsAutoReturn() const { return m_bLimitWidth; }
 
   CPVT_WordPlace GetBeginWordPlace() const;
   CPVT_WordPlace GetEndWordPlace() const;
@@ -172,7 +172,7 @@ class CPVT_VariableText {
 
   void ClearSectionRightWords(const CPVT_WordPlace& place);
 
-  bool ClearEmptySection(const CPVT_WordPlace& place);
+  [[nodiscard]] bool ClearEmptySection(const CPVT_WordPlace& place);
   void ClearEmptySections(const CPVT_WordRange& PlaceRange);
   void LinkLatterSection(const CPVT_WordPlace& place);
   void ClearWords(const CPVT_WordRange& PlaceRange);
@@ -181,7 +181,7 @@ class CPVT_VariableText {
 
   void Rearrange(const CPVT_WordRange& PlaceRange);
   float GetAutoFontSize();
-  bool IsBigger(float fFontSize) const;
+  [[nodiscard]] bool IsBigger(float fFontSize) const;
   CPVT_FloatRect RearrangeSections(const CPVT_WordRange& PlaceRange);
 
   bool m_bInitialized = false;

@@ -56,7 +56,7 @@ class ByteString : public StringTemplate<char> {
   explicit ByteString(const fxcrt::ostringstream& outStream);
 
   int Compare(ByteStringView str) const;
-  bool EqualNoCase(ByteStringView str) const;
+  [[nodiscard]] bool EqualNoCase(ByteStringView str) const;
 
   bool operator==(const char* ptr) const;
   bool operator==(ByteStringView str) const;

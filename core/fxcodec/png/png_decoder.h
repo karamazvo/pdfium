@@ -24,12 +24,12 @@ class PngDecoder {
  public:
   class Delegate {
    public:
-    virtual bool PngReadHeader(int width,
-                               int height,
-                               int bpc,
-                               int pass,
-                               int* color_type,
-                               double* gamma) = 0;
+    [[nodiscard]] virtual bool PngReadHeader(int width,
+                                             int height,
+                                             int bpc,
+                                             int pass,
+                                             int* color_type,
+                                             double* gamma) = 0;
 
     // `line` must be within [0, height].
     virtual uint8_t* PngAskScanlineBuf(int line) = 0;
@@ -40,9 +40,10 @@ class PngDecoder {
   static std::unique_ptr<ProgressiveDecoderIface::Context> StartDecode(
       Delegate* pDelegate);
 
-  static bool ContinueDecode(ProgressiveDecoderIface::Context* pContext,
-                             RetainPtr<CFX_CodecMemory> codec_memory,
-                             CFX_DIBAttribute* pAttribute);
+  [[nodiscard]] static bool ContinueDecode(
+      ProgressiveDecoderIface::Context* pContext,
+      RetainPtr<CFX_CodecMemory> codec_memory,
+      CFX_DIBAttribute* pAttribute);
 
   PngDecoder() = delete;
   PngDecoder(const PngDecoder&) = delete;

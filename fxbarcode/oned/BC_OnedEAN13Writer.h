@@ -22,15 +22,15 @@ class CBC_OnedEAN13Writer final : public CBC_OneDimEANWriter {
 
   // CBC_OneDimEANWriter:
   DataVector<uint8_t> Encode(const ByteString& contents) override;
-  bool CheckContentValidity(WideStringView contents) override;
+  [[nodiscard]] bool CheckContentValidity(WideStringView contents) override;
   WideString FilterContents(WideStringView contents) override;
   int32_t CalcChecksum(const ByteString& contents) override;
 
  private:
-  bool ShowChars(WideStringView contents,
-                 CFX_RenderDevice* device,
-                 const CFX_Matrix& matrix,
-                 int32_t barWidth) override;
+  [[nodiscard]] bool ShowChars(WideStringView contents,
+                               CFX_RenderDevice* device,
+                               const CFX_Matrix& matrix,
+                               int32_t barWidth) override;
 
   int32_t m_codeWidth;
 };

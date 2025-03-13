@@ -20,27 +20,30 @@ class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
   CFX_DefaultRenderDevice();
   ~CFX_DefaultRenderDevice() override;
 
-  bool Attach(RetainPtr<CFX_DIBitmap> pBitmap);
-  bool AttachWithRgbByteOrder(RetainPtr<CFX_DIBitmap> pBitmap,
-                              bool bRgbByteOrder);
-  bool AttachWithBackdropAndGroupKnockout(
+  [[nodiscard]] bool Attach(RetainPtr<CFX_DIBitmap> pBitmap);
+  [[nodiscard]] bool AttachWithRgbByteOrder(RetainPtr<CFX_DIBitmap> pBitmap,
+                                            bool bRgbByteOrder);
+  [[nodiscard]] bool AttachWithBackdropAndGroupKnockout(
       RetainPtr<CFX_DIBitmap> pBitmap,
       RetainPtr<CFX_DIBitmap> pBackdropBitmap,
       bool bGroupKnockout);
 #if defined(PDF_USE_SKIA)
-  [[nodiscard]] bool AttachCanvas(SkCanvas& canvas);
+  [[nodiscard]] [[nodiscard]] bool AttachCanvas(SkCanvas& canvas);
 #endif
 
-  [[nodiscard]] bool Create(int width, int height, FXDIB_Format format);
-  [[nodiscard]] bool CreateWithBackdrop(int width,
-                                        int height,
-                                        FXDIB_Format format,
-                                        RetainPtr<CFX_DIBitmap> backdrop);
+  [[nodiscard]] [[nodiscard]] bool Create(int width,
+                                          int height,
+                                          FXDIB_Format format);
+  [[nodiscard]] [[nodiscard]] bool CreateWithBackdrop(
+      int width,
+      int height,
+      FXDIB_Format format,
+      RetainPtr<CFX_DIBitmap> backdrop);
 
   void Clear(uint32_t color);
 
   // Runtime check to see if Skia is the renderer variant in use.
-  static bool UseSkiaRenderer();
+  [[nodiscard]] static bool UseSkiaRenderer();
 
 #if defined(PDF_USE_SKIA)
   // This internal definition of renderer types must stay updated with respect
@@ -60,31 +63,31 @@ class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
 #endif  // defined(PDF_USE_SKIA)
 
  private:
-  bool AttachImpl(RetainPtr<CFX_DIBitmap> pBitmap,
-                  bool bRgbByteOrder,
-                  RetainPtr<CFX_DIBitmap> pBackdropBitmap,
-                  bool bGroupKnockout);
+  [[nodiscard]] bool AttachImpl(RetainPtr<CFX_DIBitmap> pBitmap,
+                                bool bRgbByteOrder,
+                                RetainPtr<CFX_DIBitmap> pBackdropBitmap,
+                                bool bGroupKnockout);
 
-  bool AttachAggImpl(RetainPtr<CFX_DIBitmap> pBitmap,
-                     bool bRgbByteOrder,
-                     RetainPtr<CFX_DIBitmap> pBackdropBitmap,
-                     bool bGroupKnockout);
+  [[nodiscard]] bool AttachAggImpl(RetainPtr<CFX_DIBitmap> pBitmap,
+                                   bool bRgbByteOrder,
+                                   RetainPtr<CFX_DIBitmap> pBackdropBitmap,
+                                   bool bGroupKnockout);
 
-  bool CreateAgg(int width,
-                 int height,
-                 FXDIB_Format format,
-                 RetainPtr<CFX_DIBitmap> pBackdropBitmap);
+  [[nodiscard]] bool CreateAgg(int width,
+                               int height,
+                               FXDIB_Format format,
+                               RetainPtr<CFX_DIBitmap> pBackdropBitmap);
 
 #if defined(PDF_USE_SKIA)
-  bool AttachSkiaImpl(RetainPtr<CFX_DIBitmap> pBitmap,
-                      bool bRgbByteOrder,
-                      RetainPtr<CFX_DIBitmap> pBackdropBitmap,
-                      bool bGroupKnockout);
+  [[nodiscard]] bool AttachSkiaImpl(RetainPtr<CFX_DIBitmap> pBitmap,
+                                    bool bRgbByteOrder,
+                                    RetainPtr<CFX_DIBitmap> pBackdropBitmap,
+                                    bool bGroupKnockout);
 
-  bool CreateSkia(int width,
-                  int height,
-                  FXDIB_Format format,
-                  RetainPtr<CFX_DIBitmap> pBackdropBitmap);
+  [[nodiscard]] bool CreateSkia(int width,
+                                int height,
+                                FXDIB_Format format,
+                                RetainPtr<CFX_DIBitmap> pBackdropBitmap);
 #endif
 };
 

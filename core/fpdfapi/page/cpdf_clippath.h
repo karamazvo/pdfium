@@ -29,7 +29,7 @@ class CPDF_ClipPath {
   void Emplace() { m_Ref.Emplace(); }
   void SetNull() { m_Ref.SetNull(); }
 
-  bool HasRef() const { return !!m_Ref; }
+  [[nodiscard]] bool HasRef() const { return !!m_Ref; }
   bool operator==(const CPDF_ClipPath& that) const {
     return m_Ref == that.m_Ref;
   }

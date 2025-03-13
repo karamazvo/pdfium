@@ -25,12 +25,12 @@ class CQuartz2D {
   void* CreateFont(pdfium::span<const uint8_t> font_data);
   void DestroyFont(void* font);
   void SetGraphicsTextMatrix(void* graphics, const CFX_Matrix& matrix);
-  bool DrawGraphicsString(void* graphics,
-                          void* font,
-                          float font_size,
-                          pdfium::span<uint16_t> glyph_indices,
-                          pdfium::span<CGPoint> glyph_positions,
-                          FX_ARGB argb);
+  [[nodiscard]] bool DrawGraphicsString(void* graphics,
+                                        void* font,
+                                        float font_size,
+                                        pdfium::span<uint16_t> glyph_indices,
+                                        pdfium::span<CGPoint> glyph_positions,
+                                        FX_ARGB argb);
 };
 
 #endif  // CORE_FXGE_APPLE_FX_QUARTZ_DEVICE_H_

@@ -73,16 +73,16 @@ class CXFA_TextParser : public cppgc::GarbageCollected<CXFA_TextParser> {
       const CFX_XMLNode* pXMLNode,
       RetainPtr<const CFX_CSSComputedStyle> pParentStyle);
 
-  bool IsParsed() const { return m_bParsed; }
+  [[nodiscard]] bool IsParsed() const { return m_bParsed; }
 
   XFA_AttributeValue GetVAlign(CXFA_TextProvider* pTextProvider) const;
 
   float GetTabInterval(const CFX_CSSComputedStyle* pStyle) const;
   int32_t CountTabs(const CFX_CSSComputedStyle* pStyle) const;
 
-  bool IsSpaceRun(const CFX_CSSComputedStyle* pStyle) const;
-  bool GetTabstops(const CFX_CSSComputedStyle* pStyle,
-                   CXFA_TextTabstopsContext* pTabstopContext);
+  [[nodiscard]] bool IsSpaceRun(const CFX_CSSComputedStyle* pStyle) const;
+  [[nodiscard]] bool GetTabstops(const CFX_CSSComputedStyle* pStyle,
+                                 CXFA_TextTabstopsContext* pTabstopContext);
 
   RetainPtr<CFGAS_GEFont> GetFont(CXFA_FFDoc* doc,
                                   CXFA_TextProvider* pTextProvider,
@@ -118,7 +118,7 @@ class CXFA_TextParser : public cppgc::GarbageCollected<CXFA_TextParser> {
  protected:
   CXFA_TextParser();
 
-  bool TagValidate(const WideString& str) const;
+  [[nodiscard]] bool TagValidate(const WideString& str) const;
 
  private:
   class TagProvider {

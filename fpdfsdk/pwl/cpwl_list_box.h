@@ -26,20 +26,23 @@ class CPWL_ListBox : public CPWL_Wnd, public CPWL_ListCtrl::NotifyIface {
   void OnDestroy() override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           const CFX_Matrix& mtUser2Device) override;
-  bool OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag) override;
-  bool OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) override;
-  bool OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
-                     const CFX_PointF& point) override;
-  bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point) override;
-  bool OnMouseMove(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point) override;
-  bool OnMouseWheel(Mask<FWL_EVENTFLAG> nFlag,
-                    const CFX_PointF& point,
-                    const CFX_Vector& delta) override;
+  [[nodiscard]] bool OnKeyDown(FWL_VKEYCODE nKeyCode,
+                               Mask<FWL_EVENTFLAG> nFlag) override;
+  [[nodiscard]] bool OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) override;
+  [[nodiscard]] bool OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
+                                   const CFX_PointF& point) override;
+  [[nodiscard]] bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag,
+                                 const CFX_PointF& point) override;
+  [[nodiscard]] bool OnMouseMove(Mask<FWL_EVENTFLAG> nFlag,
+                                 const CFX_PointF& point) override;
+  [[nodiscard]] bool OnMouseWheel(Mask<FWL_EVENTFLAG> nFlag,
+                                  const CFX_PointF& point,
+                                  const CFX_Vector& delta) override;
   WideString GetText() override;
   void SetScrollInfo(const PWL_SCROLL_INFO& info) override;
   void SetScrollPosition(float pos) override;
   void ScrollWindowVertically(float pos) override;
-  bool RepositionChildWnd() override;
+  [[nodiscard]] bool RepositionChildWnd() override;
   CFX_FloatRect GetFocusRect() const override;
   void SetFontSize(float fFontSize) override;
   float GetFontSize() const override;
@@ -52,9 +55,11 @@ class CPWL_ListBox : public CPWL_Wnd, public CPWL_ListCtrl::NotifyIface {
                         float fSmallStep,
                         float fBigStep) override;
   void OnSetScrollPosY(float fy) override;
-  [[nodiscard]] bool OnInvalidateRect(const CFX_FloatRect& pRect) override;
+  [[nodiscard]] [[nodiscard]] bool OnInvalidateRect(
+      const CFX_FloatRect& pRect) override;
 
-  bool OnNotifySelectionChanged(bool bKeyDown, Mask<FWL_EVENTFLAG> nFlag);
+  [[nodiscard]] bool OnNotifySelectionChanged(bool bKeyDown,
+                                              Mask<FWL_EVENTFLAG> nFlag);
 
   void AddString(const WideString& str);
   void SetTopVisibleIndex(int32_t nItemIndex);
@@ -66,10 +71,10 @@ class CPWL_ListBox : public CPWL_Wnd, public CPWL_ListCtrl::NotifyIface {
   void SetHoverSel(bool bHoverSel);
 
   int32_t GetCount() const;
-  bool IsMultipleSel() const;
+  [[nodiscard]] bool IsMultipleSel() const;
   int32_t GetCaretIndex() const;
   int32_t GetCurSel() const;
-  bool IsItemSelected(int32_t nItemIndex) const;
+  [[nodiscard]] bool IsItemSelected(int32_t nItemIndex) const;
   int32_t GetTopVisibleIndex() const;
   CFX_FloatRect GetContentRect() const;
   float GetFirstHeight() const;
