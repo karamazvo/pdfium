@@ -279,14 +279,14 @@ CPWL_EditImpl::UndoInsertWord::~UndoInsertWord() = default;
 int CPWL_EditImpl::UndoInsertWord::Redo() {
   m_pEdit->SelectNone();
   m_pEdit->SetCaret(m_wpOld);
-  m_pEdit->InsertWord(m_Word, m_nCharset, false);
+  (void)m_pEdit->InsertWord(m_Word, m_nCharset, false);
   return 0;
 }
 
 int CPWL_EditImpl::UndoInsertWord::Undo() {
   m_pEdit->SelectNone();
   m_pEdit->SetCaret(m_wpNew);
-  m_pEdit->Backspace(false);
+  (void)m_pEdit->Backspace(false);
   return 0;
 }
 
@@ -322,14 +322,14 @@ CPWL_EditImpl::UndoInsertReturn::~UndoInsertReturn() = default;
 int CPWL_EditImpl::UndoInsertReturn::Redo() {
   m_pEdit->SelectNone();
   m_pEdit->SetCaret(m_wpOld);
-  m_pEdit->InsertReturn(false);
+  (void)m_pEdit->InsertReturn(false);
   return 0;
 }
 
 int CPWL_EditImpl::UndoInsertReturn::Undo() {
   m_pEdit->SelectNone();
   m_pEdit->SetCaret(m_wpNew);
-  m_pEdit->Backspace(false);
+  (void)m_pEdit->Backspace(false);
   return 0;
 }
 
@@ -422,7 +422,7 @@ CPWL_EditImpl::UndoBackspace::~UndoBackspace() = default;
 int CPWL_EditImpl::UndoBackspace::Redo() {
   m_pEdit->SelectNone();
   m_pEdit->SetCaret(m_wpOld);
-  m_pEdit->Backspace(false);
+  (void)m_pEdit->Backspace(false);
   return 0;
 }
 
@@ -430,9 +430,9 @@ int CPWL_EditImpl::UndoBackspace::Undo() {
   m_pEdit->SelectNone();
   m_pEdit->SetCaret(m_wpNew);
   if (m_wpNew.nSecIndex != m_wpOld.nSecIndex)
-    m_pEdit->InsertReturn(false);
+    (void)m_pEdit->InsertReturn(false);
   else
-    m_pEdit->InsertWord(m_Word, m_nCharset, false);
+    (void)m_pEdit->InsertWord(m_Word, m_nCharset, false);
   return 0;
 }
 
@@ -480,7 +480,7 @@ CPWL_EditImpl::UndoDelete::~UndoDelete() = default;
 int CPWL_EditImpl::UndoDelete::Redo() {
   m_pEdit->SelectNone();
   m_pEdit->SetCaret(m_wpOld);
-  m_pEdit->Delete(false);
+  (void)m_pEdit->Delete(false);
   return 0;
 }
 
@@ -488,9 +488,9 @@ int CPWL_EditImpl::UndoDelete::Undo() {
   m_pEdit->SelectNone();
   m_pEdit->SetCaret(m_wpNew);
   if (m_bSecEnd)
-    m_pEdit->InsertReturn(false);
+    (void)m_pEdit->InsertReturn(false);
   else
-    m_pEdit->InsertWord(m_Word, m_nCharset, false);
+    (void)m_pEdit->InsertWord(m_Word, m_nCharset, false);
   return 0;
 }
 
@@ -524,14 +524,14 @@ CPWL_EditImpl::UndoClear::~UndoClear() = default;
 int CPWL_EditImpl::UndoClear::Redo() {
   m_pEdit->SelectNone();
   m_pEdit->SetSelection(m_wrSel.BeginPos, m_wrSel.EndPos);
-  m_pEdit->Clear(false);
+  (void)m_pEdit->Clear(false);
   return 0;
 }
 
 int CPWL_EditImpl::UndoClear::Undo() {
   m_pEdit->SelectNone();
   m_pEdit->SetCaret(m_wrSel.BeginPos);
-  m_pEdit->InsertText(m_swText, FX_Charset::kDefault, false);
+  (void)m_pEdit->InsertText(m_swText, FX_Charset::kDefault, false);
   m_pEdit->SetSelection(m_wrSel.BeginPos, m_wrSel.EndPos);
   return 0;
 }
@@ -577,14 +577,14 @@ CPWL_EditImpl::UndoInsertText::~UndoInsertText() = default;
 int CPWL_EditImpl::UndoInsertText::Redo() {
   m_pEdit->SelectNone();
   m_pEdit->SetCaret(m_wpOld);
-  m_pEdit->InsertText(m_swText, m_nCharset, false);
+  (void)m_pEdit->InsertText(m_swText, m_nCharset, false);
   return 0;
 }
 
 int CPWL_EditImpl::UndoInsertText::Undo() {
   m_pEdit->SelectNone();
   m_pEdit->SetSelection(m_wpOld, m_wpNew);
-  m_pEdit->Clear(false);
+  (void)m_pEdit->Clear(false);
   return 0;
 }
 
@@ -610,7 +610,7 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
   CFX_PointF ptBT;
   CFX_RenderDevice::StateRestorer restorer(pDevice);
   if (!rcClip.IsEmpty())
-    pDevice->SetClip_Rect(mtUser2Device.TransformRect(rcClip).ToFxRect());
+    (void)pDevice->SetClip_Rect(mtUser2Device.TransformRect(rcClip).ToFxRect());
 
   Iterator* pIterator = GetIterator();
   IPVT_FontMap* pFontMap = GetFontMap();
@@ -641,7 +641,7 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
     if (pIterator->GetWord(word)) {
       if (bSelect) {
         CPVT_Line line;
-        pIterator->GetLine(line);
+        (void)pIterator->GetLine(line);
         if (pFillerNotify->IsSelectionImplemented()) {
           CFX_FloatRect rc(word.ptWord.x, line.ptLine.y + line.fLineDescent,
                            word.ptWord.x + word.fWidth,
@@ -654,8 +654,8 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
                                word.ptWord.x + word.fWidth,
                                line.ptLine.y + line.fLineAscent);
 
-          pDevice->DrawPath(pathSelBK, &mtUser2Device, nullptr, crSelBK, 0,
-                            CFX_FillRenderOptions::WindingOptions());
+          (void)pDevice->DrawPath(pathSelBK, &mtUser2Device, nullptr, crSelBK,
+                                  0, CFX_FillRenderOptions::WindingOptions());
         }
       }
       if (bContinuous) {
@@ -897,7 +897,7 @@ CPVT_WordRange CPWL_EditImpl::GetSelectWordRange() const {
 }
 
 void CPWL_EditImpl::SetText(const WideString& sText) {
-  Clear();
+  (void)Clear();
   DoInsertText(CPVT_WordPlace(0, 0, -1), sText, FX_Charset::kDefault);
 }
 
@@ -1303,8 +1303,8 @@ void CPWL_EditImpl::RefreshWordRange(const CPVT_WordRange& wr) {
     if (place > wrTemp.EndPos)
       break;
 
-    pIterator->GetWord(wordinfo);
-    pIterator->GetLine(lineinfo);
+    (void)pIterator->GetWord(wordinfo);
+    (void)pIterator->GetLine(lineinfo);
     if (place.LineCmp(wrTemp.BeginPos) == 0 ||
         place.LineCmp(wrTemp.EndPos) == 0) {
       CFX_FloatRect rcWord(wordinfo.ptWord.x,
@@ -1339,7 +1339,7 @@ void CPWL_EditImpl::RefreshWordRange(const CPVT_WordRange& wr) {
         }
       }
 
-      pIterator->NextLine();
+      (void)pIterator->NextLine();
     }
   }
 }
@@ -1373,8 +1373,8 @@ void CPWL_EditImpl::SetCaretInfo() {
 
       AutoRestorer<bool> restorer(&m_bNotifyFlag);
       m_bNotifyFlag = true;
-      m_pNotify->SetCaret(m_SelState.IsEmpty(), VTToEdit(ptHead),
-                          VTToEdit(ptFoot));
+      (void)m_pNotify->SetCaret(m_SelState.IsEmpty(), VTToEdit(ptHead),
+                                VTToEdit(ptFoot));
     }
   }
 }
@@ -1667,7 +1667,7 @@ bool CPWL_EditImpl::Backspace(bool bAddUndo) {
   if (bAddUndo) {
     CPVT_VariableText::Iterator* pIterator = m_pVT->GetIterator();
     pIterator->SetAt(m_wpCaret);
-    pIterator->GetWord(word);
+    (void)pIterator->GetWord(word);
   }
   m_pVT->UpdateWordPlace(m_wpCaret);
   SetCaret(m_pVT->BackSpaceWord(m_wpCaret));
@@ -1695,7 +1695,7 @@ bool CPWL_EditImpl::Delete(bool bAddUndo) {
   if (bAddUndo) {
     CPVT_VariableText::Iterator* pIterator = m_pVT->GetIterator();
     pIterator->SetAt(m_pVT->GetNextWordPlace(m_wpCaret));
-    pIterator->GetWord(word);
+    (void)pIterator->GetWord(word);
   }
   m_pVT->UpdateWordPlace(m_wpCaret);
   bool bSecEnd = (m_wpCaret == m_pVT->GetSectionEndPlace(m_wpCaret));
@@ -1790,7 +1790,7 @@ void CPWL_EditImpl::ReplaceAndKeepSelection(const WideString& text) {
   }
   // Select the inserted text.
   CPVT_WordPlace caret_before_insert = m_wpCaret;
-  InsertText(text, FX_Charset::kDefault);
+  (void)InsertText(text, FX_Charset::kDefault);
   CPVT_WordPlace caret_after_insert = m_wpCaret;
   m_SelState.Set(caret_before_insert, caret_after_insert);
 
@@ -1808,7 +1808,7 @@ void CPWL_EditImpl::ReplaceSelection(const WideString& text) {
   if (!is_insert_undo_clear) {
     m_Undo.GetLastAddItem()->set_undo_remaining(2);
   }
-  InsertText(text, FX_Charset::kDefault);
+  (void)InsertText(text, FX_Charset::kDefault);
   AddEditUndoItem(std::make_unique<UndoReplaceSelection>(this, true));
   if (!is_insert_undo_clear) {
     m_Undo.GetLastAddItem()->set_undo_remaining(2);

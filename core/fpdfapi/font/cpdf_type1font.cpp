@@ -174,7 +174,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
         return;
       }
     }
-    face->SelectCharMap(fxge::FontEncoding::kUnicode);
+    (void)face->SelectCharMap(fxge::FontEncoding::kUnicode);
     if (m_BaseEncoding == FontEncoding::kBuiltin)
       m_BaseEncoding = FontEncoding::kStandard;
 

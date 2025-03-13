@@ -497,7 +497,7 @@ FPDFPageObjMark_GetParamBlobValue(FPDF_PAGEOBJECTMARK mark,
   // SAFETY: required from caller.
   auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen));
   ByteString value = pObj->GetString();
-  fxcrt::try_spancpy(result_span, value.span());
+  (void)fxcrt::try_spancpy(result_span, value.span());
   *out_buflen = pdfium::checked_cast<unsigned long>(value.span().size());
   return true;
 }

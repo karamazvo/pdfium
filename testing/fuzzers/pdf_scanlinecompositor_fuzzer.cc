@@ -79,13 +79,13 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   if (is_clip)
     clip_rgn = std::make_unique<CFX_AggClipRgn>(width, height);
   if (src_bitmap->IsMaskFormat()) {
-    dest_bitmap->CompositeMask(dest_left, dest_top, width, height,
-                               std::move(src_bitmap), argb, src_left, src_top,
-                               blend_mode, clip_rgn.get(), is_rgb_byte_order);
+    (void)dest_bitmap->CompositeMask(
+        dest_left, dest_top, width, height, std::move(src_bitmap), argb,
+        src_left, src_top, blend_mode, clip_rgn.get(), is_rgb_byte_order);
   } else {
-    dest_bitmap->CompositeBitmap(dest_left, dest_top, width, height,
-                                 std::move(src_bitmap), src_left, src_top,
-                                 blend_mode, clip_rgn.get(), is_rgb_byte_order);
+    (void)dest_bitmap->CompositeBitmap(
+        dest_left, dest_top, width, height, std::move(src_bitmap), src_left,
+        src_top, blend_mode, clip_rgn.get(), is_rgb_byte_order);
   }
   return 0;
 }

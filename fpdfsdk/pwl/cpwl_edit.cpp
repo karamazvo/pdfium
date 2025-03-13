@@ -53,7 +53,7 @@ bool CPWL_Edit::RepositionChildWnd() {
     CFX_FloatRect rcVScroll =
         CFX_FloatRect(rcWindow.right, rcWindow.bottom,
                       rcWindow.right + CPWL_ScrollBar::kWidth, rcWindow.top);
-    pVSB->Move(rcVScroll, true, false);
+    (void)pVSB->Move(rcVScroll, true, false);
     if (!this_observed) {
       return false;
     }
@@ -101,7 +101,7 @@ bool CPWL_Edit::CanCut() const {
 void CPWL_Edit::CutText() {
   if (!CanCut())
     return;
-  m_pEditImpl->ClearSelection();
+  (void)m_pEditImpl->ClearSelection();
 }
 
 void CPWL_Edit::OnCreated() {
@@ -196,9 +196,9 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
       path.AppendPoint(top, CFX_Path::Point::Type::kLine);
     }
     if (!path.GetPoints().empty()) {
-      pDevice->DrawPath(path, &mtUser2Device, &gsd, 0,
-                        GetBorderColor().ToFXColor(255),
-                        CFX_FillRenderOptions::EvenOddOptions());
+      (void)pDevice->DrawPath(path, &mtUser2Device, &gsd, 0,
+                              GetBorderColor().ToFXColor(255),
+                              CFX_FillRenderOptions::EvenOddOptions());
     }
   }
 
@@ -606,7 +606,7 @@ bool CPWL_Edit::OnCharInternal(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
   if (m_bMouseDown)
     return true;
 
-  CPWL_Wnd::OnChar(nChar, nFlag);
+  (void)CPWL_Wnd::OnChar(nChar, nFlag);
 
   // FILTER
   switch (nChar) {
@@ -635,13 +635,13 @@ bool CPWL_Edit::OnCharInternal(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
         CutText();
         return true;
       case pdfium::ascii::kControlA:
-        SelectAllText();
+        (void)SelectAllText();
         return true;
       case pdfium::ascii::kControlZ:
         if (bShift)
-          Redo();
+          (void)Redo();
         else
-          Undo();
+          (void)Undo();
         return true;
       default:
         if (nChar < 32)
@@ -676,7 +676,7 @@ bool CPWL_Edit::OnCharInternal(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
 
 bool CPWL_Edit::OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
                               const CFX_PointF& point) {
-  CPWL_Wnd::OnLButtonDown(nFlag, point);
+  (void)CPWL_Wnd::OnLButtonDown(nFlag, point);
   if (HasFlag(PES_TEXTOVERFLOW) || ClientHitTest(point)) {
     if (m_bMouseDown && !InvalidateRect(nullptr))
       return true;
@@ -691,7 +691,7 @@ bool CPWL_Edit::OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
 
 bool CPWL_Edit::OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag,
                             const CFX_PointF& point) {
-  CPWL_Wnd::OnLButtonUp(nFlag, point);
+  (void)CPWL_Wnd::OnLButtonUp(nFlag, point);
   if (m_bMouseDown) {
     // can receive keybord message
     if (ClientHitTest(point) && !IsFocused())
@@ -705,7 +705,7 @@ bool CPWL_Edit::OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag,
 
 bool CPWL_Edit::OnLButtonDblClk(Mask<FWL_EVENTFLAG> nFlag,
                                 const CFX_PointF& point) {
-  CPWL_Wnd::OnLButtonDblClk(nFlag, point);
+  (void)CPWL_Wnd::OnLButtonDblClk(nFlag, point);
   if (HasFlag(PES_TEXTOVERFLOW) || ClientHitTest(point))
     m_pEditImpl->SelectAll();
 
@@ -717,7 +717,7 @@ bool CPWL_Edit::OnRButtonUp(Mask<FWL_EVENTFLAG> nFlag,
   if (m_bMouseDown)
     return false;
 
-  CPWL_Wnd::OnRButtonUp(nFlag, point);
+  (void)CPWL_Wnd::OnRButtonUp(nFlag, point);
   if (!HasFlag(PES_TEXTOVERFLOW) && !ClientHitTest(point))
     return true;
 
@@ -727,7 +727,7 @@ bool CPWL_Edit::OnRButtonUp(Mask<FWL_EVENTFLAG> nFlag,
 
 bool CPWL_Edit::OnMouseMove(Mask<FWL_EVENTFLAG> nFlag,
                             const CFX_PointF& point) {
-  CPWL_Wnd::OnMouseMove(nFlag, point);
+  (void)CPWL_Wnd::OnMouseMove(nFlag, point);
 
   if (m_bMouseDown)
     m_pEditImpl->OnMouseMove(point, false, false);
@@ -741,7 +741,7 @@ void CPWL_Edit::SetEditCaret(bool bVisible) {
   if (bVisible)
     GetCaretInfo(&ptHead, &ptFoot);
 
-  SetCaret(bVisible, ptHead, ptFoot);
+  (void)SetCaret(bVisible, ptHead, ptFoot);
   // Note, |this| may no longer be viable at this point. If more work needs to
   // be done, check the return value of SetCaret().
 }
@@ -792,7 +792,7 @@ std::pair<int32_t, int32_t> CPWL_Edit::GetSelection() const {
 
 void CPWL_Edit::ClearSelection() {
   if (!IsReadOnly())
-    m_pEditImpl->ClearSelection();
+    (void)m_pEditImpl->ClearSelection();
 }
 
 void CPWL_Edit::SetScrollPos(const CFX_PointF& point) {
@@ -809,22 +809,22 @@ void CPWL_Edit::PasteText() {}
 
 void CPWL_Edit::InsertWord(uint16_t word, FX_Charset nCharset) {
   if (!IsReadOnly())
-    m_pEditImpl->InsertWord(word, nCharset);
+    (void)m_pEditImpl->InsertWord(word, nCharset);
 }
 
 void CPWL_Edit::InsertReturn() {
   if (!IsReadOnly())
-    m_pEditImpl->InsertReturn();
+    (void)m_pEditImpl->InsertReturn();
 }
 
 void CPWL_Edit::Delete() {
   if (!IsReadOnly())
-    m_pEditImpl->Delete();
+    (void)m_pEditImpl->Delete();
 }
 
 void CPWL_Edit::Backspace() {
   if (!IsReadOnly())
-    m_pEditImpl->Backspace();
+    (void)m_pEditImpl->Backspace();
 }
 
 bool CPWL_Edit::CanUndo() {

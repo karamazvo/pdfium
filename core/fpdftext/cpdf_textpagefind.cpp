@@ -186,7 +186,7 @@ std::unique_ptr<CPDF_TextPageFind> CPDF_TextPageFind::Create(
       ExtractFindWhat(GetStringCase(findwhat, options.bMatchCase));
   auto find = pdfium::WrapUnique(
       new CPDF_TextPageFind(pTextPage, findwhat_array, options, startPos));
-  find->FindFirst();
+  (void)find->FindFirst();
   return find;
 }
 

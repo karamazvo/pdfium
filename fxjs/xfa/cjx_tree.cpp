@@ -222,7 +222,7 @@ v8::Local<v8::Value> CJX_Tree::ResolveNodeList(v8::Isolate* pIsolate,
         CFXJSE_Engine::ResolveResult::Type::kNodes) {
       for (auto& pObject : maybeResult.value().objects) {
         if (pObject->IsNode())
-          pNodeList->Append(pObject->AsNode());
+          (void)pNodeList->Append(pObject->AsNode());
       }
     } else {
       if (maybeResult.value().script_attribute.callback &&
@@ -237,7 +237,7 @@ v8::Local<v8::Value> CJX_Tree::ResolveNodeList(v8::Isolate* pIsolate,
           CXFA_Object* obj =
               CFXJSE_Engine::ToObject(pScriptContext->GetIsolate(), innerValue);
           if (obj->IsNode())
-            pNodeList->Append(obj->AsNode());
+            (void)pNodeList->Append(obj->AsNode());
         }
       }
     }

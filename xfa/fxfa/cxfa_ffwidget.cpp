@@ -98,8 +98,8 @@ void XFA_DrawImage(CFGAS_GEGraphics* pGS,
   CFX_RenderDevice::StateRestorer restorer(device);
   CFX_Path path;
   path.AppendRect(rtImage.left, rtImage.bottom(), rtImage.right(), rtImage.top);
-  device->SetClip_PathFill(path, &matrix,
-                           CFX_FillRenderOptions::WindingOptions());
+  (void)device->SetClip_PathFill(path, &matrix,
+                                 CFX_FillRenderOptions::WindingOptions());
 
   CFX_Matrix image_to_device(1, 0, 0, -1, 0, 1);
   image_to_device.Concat(
@@ -285,7 +285,7 @@ bool CXFA_FFWidget::IsLoaded() {
 }
 
 bool CXFA_FFWidget::LoadWidget() {
-  PerformLayout();
+  (void)PerformLayout();
   return true;
 }
 

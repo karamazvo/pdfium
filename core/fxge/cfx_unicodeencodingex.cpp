@@ -64,7 +64,7 @@ uint32_t CFX_UnicodeEncodingEx::GlyphFromCharCode(uint32_t charcode) {
       return nIndex;
     }
   }
-  face->SelectCharMap(encoding_id_);
+  (void)face->SelectCharMap(encoding_id_);
   return 0;
 }
 

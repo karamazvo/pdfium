@@ -639,7 +639,7 @@ ByteString GetEditAppStream(CPWL_EditImpl* pEdit,
                              word.ptWord.y + ptOffset.y);
         } else {
           CPVT_Line line;
-          pIterator->GetLine(line);
+          (void)pIterator->GetLine(line);
           ptNew = CFX_PointF(line.ptLine.x + ptOffset.x,
                              line.ptLine.y + ptOffset.y);
         }

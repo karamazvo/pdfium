@@ -89,7 +89,7 @@ CFX_AggImageRenderer::CFX_AggImageRenderer(
   m_Stretcher = std::make_unique<CFX_ImageStretcher>(
       &m_Composer, std::move(source), dest_width, dest_height, bitmap_clip,
       options);
-  m_Stretcher->Start();
+  (void)m_Stretcher->Start();
 }
 
 CFX_AggImageRenderer::~CFX_AggImageRenderer() = default;
@@ -110,13 +110,13 @@ bool CFX_AggImageRenderer::Continue(PauseIndicatorIface* pPause) {
     if (m_Alpha != 1.0f) {
       m_MaskColor = FXARGB_MUL_ALPHA(m_MaskColor, FXSYS_roundf(m_Alpha * 255));
     }
-    m_pDevice->CompositeMask(m_pTransformer->result().left,
-                             m_pTransformer->result().top, pBitmap->GetWidth(),
-                             pBitmap->GetHeight(), pBitmap, m_MaskColor, 0, 0,
-                             BlendMode::kNormal, m_pClipRgn, m_bRgbByteOrder);
+    (void)m_pDevice->CompositeMask(
+        m_pTransformer->result().left, m_pTransformer->result().top,
+        pBitmap->GetWidth(), pBitmap->GetHeight(), pBitmap, m_MaskColor, 0, 0,
+        BlendMode::kNormal, m_pClipRgn, m_bRgbByteOrder);
   } else {
-    pBitmap->MultiplyAlpha(m_Alpha);
-    m_pDevice->CompositeBitmap(
+    (void)pBitmap->MultiplyAlpha(m_Alpha);
+    (void)m_pDevice->CompositeBitmap(
         m_pTransformer->result().left, m_pTransformer->result().top,
         pBitmap->GetWidth(), pBitmap->GetHeight(), pBitmap, 0, 0,
         BlendMode::kNormal, m_pClipRgn, m_bRgbByteOrder);

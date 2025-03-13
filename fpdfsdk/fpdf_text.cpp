@@ -148,7 +148,7 @@ FPDFText_GetFontInfo(FPDF_TEXTPAGE text_page,
   auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen));
   ByteString basefont = font->GetBaseFontName();
   auto basefont_span = basefont.span_with_terminator();
-  fxcrt::try_spancpy(result_span, basefont_span);
+  (void)fxcrt::try_spancpy(result_span, basefont_span);
   return pdfium::checked_cast<unsigned long>(basefont_span.size());
 }
 

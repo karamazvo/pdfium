@@ -74,17 +74,17 @@ bool CPDF_PageExporter::ExportPages(pdfium::span<const uint32_t> page_indices,
     }
 
     // 3 CropBox - optional
-    CopyInheritable(dest_page_dict, src_page_dict,
-                    pdfium::page_object::kCropBox);
+    (void)CopyInheritable(dest_page_dict, src_page_dict,
+                          pdfium::page_object::kCropBox);
     // 4 Rotate - optional
-    CopyInheritable(dest_page_dict, src_page_dict,
-                    pdfium::page_object::kRotate);
+    (void)CopyInheritable(dest_page_dict, src_page_dict,
+                          pdfium::page_object::kRotate);
 
     // Update the reference
     uint32_t old_page_obj_num = src_page_dict->GetObjNum();
     uint32_t new_page_obj_num = dest_page_dict->GetObjNum();
     AddObjectMapping(old_page_obj_num, new_page_obj_num);
-    UpdateReference(dest_page_dict);
+    (void)UpdateReference(dest_page_dict);
     ++curpage;
   }
 

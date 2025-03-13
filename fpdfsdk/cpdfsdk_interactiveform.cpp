@@ -283,7 +283,7 @@ void CPDFSDK_InteractiveForm::OnCalculate(CPDF_FormField* pFormField) {
 
     std::optional<IJS_Runtime::JS_Error> err = pContext->RunScript(csJS);
     if (!err.has_value() && bRC && sValue != sOldValue)
-      pField->SetValue(sValue, NotificationOption::kNotify);
+      (void)pField->SetValue(sValue, NotificationOption::kNotify);
   }
 }
 
@@ -360,8 +360,8 @@ bool CPDFSDK_InteractiveForm::OnKeyStrokeCommit(CPDF_FormField* pFormField,
   fa.bModifier = false;
   fa.bShift = false;
   fa.sValue = csValue;
-  m_pFormFillEnv->DoActionFieldJavaScript(action, CPDF_AAction::kKeyStroke,
-                                          pFormField, &fa);
+  (void)m_pFormFillEnv->DoActionFieldJavaScript(
+      action, CPDF_AAction::kKeyStroke, pFormField, &fa);
   return fa.bRC;
 }
 
@@ -379,8 +379,8 @@ bool CPDFSDK_InteractiveForm::OnValidate(CPDF_FormField* pFormField,
   fa.bModifier = false;
   fa.bShift = false;
   fa.sValue = csValue;
-  m_pFormFillEnv->DoActionFieldJavaScript(action, CPDF_AAction::kValidate,
-                                          pFormField, &fa);
+  (void)m_pFormFillEnv->DoActionFieldJavaScript(action, CPDF_AAction::kValidate,
+                                                pFormField, &fa);
   return fa.bRC;
 }
 

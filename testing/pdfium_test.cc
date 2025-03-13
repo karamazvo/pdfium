@@ -1523,7 +1523,7 @@ bool PdfProcessor::ProcessPage(const int page_index) {
     while (renderer->Continue())
       continue;
     renderer->Finish(form());
-    renderer->Write(name(), page_index, /*md5=*/options().md5);
+    (void)renderer->Write(name(), page_index, /*md5=*/options().md5);
   } else {
     fprintf(stderr, "Page was too large to be rendered.\n");
   }

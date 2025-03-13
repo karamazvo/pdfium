@@ -726,7 +726,7 @@ struct PatchDrawer {
       if (bNoPathSmooth) {
         fill_options.aliased_path = true;
       }
-      pDevice->DrawPath(
+      (void)pDevice->DrawPath(
           path, nullptr, nullptr,
           ArgbEncode(alpha, div_colors[0].comp[0], div_colors[0].comp[1],
                      div_colors[0].comp[2]),
@@ -798,7 +798,7 @@ void DrawCoonPatchMeshes(
          type == kTensorProductPatchMeshShading);
 
   CFX_DefaultRenderDevice device;
-  device.Attach(pBitmap);
+  (void)device.Attach(pBitmap);
 
   CPDF_MeshStream stream(type, funcs, std::move(pShadingStream),
                          std::move(pCS));
@@ -985,7 +985,7 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
   if (options.ColorModeIs(CPDF_RenderOptions::kAlpha)) {
     pBitmap->SetRedFromAlpha();
   } else if (options.ColorModeIs(CPDF_RenderOptions::kGray)) {
-    pBitmap->ConvertColorScale(0, 0xffffff);
+    (void)pBitmap->ConvertColorScale(0, 0xffffff);
   }
 
   buffer.OutputToDevice();

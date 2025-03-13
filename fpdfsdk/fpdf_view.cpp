@@ -722,8 +722,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
       pBitmap, CFX_DefaultRenderDevice::UseSkiaRenderer());
 #endif
   auto device = std::make_unique<CFX_DefaultRenderDevice>();
-  device->AttachWithRgbByteOrder(std::move(pBitmap),
-                                 !!(flags & FPDF_REVERSE_BYTE_ORDER));
+  (void)device->AttachWithRgbByteOrder(std::move(pBitmap),
+                                       !!(flags & FPDF_REVERSE_BYTE_ORDER));
   context->m_pDevice = std::move(device);
 
   CPDFSDK_RenderPageWithContext(context, pPage, start_x, start_y, size_x,
@@ -759,8 +759,8 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
       pBitmap, CFX_DefaultRenderDevice::UseSkiaRenderer());
 #endif
   auto device = std::make_unique<CFX_DefaultRenderDevice>();
-  device->AttachWithRgbByteOrder(std::move(pBitmap),
-                                 !!(flags & FPDF_REVERSE_BYTE_ORDER));
+  (void)device->AttachWithRgbByteOrder(std::move(pBitmap),
+                                       !!(flags & FPDF_REVERSE_BYTE_ORDER));
   context->m_pDevice = std::move(device);
 
   CFX_FloatRect clipping_rect;
@@ -977,7 +977,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
   const int bpp = pBitmap->GetBPP();
   if (bpp == 8) {
     CFX_DefaultRenderDevice device;
-    device.Attach(std::move(pBitmap));
+    (void)device.Attach(std::move(pBitmap));
     return device.FillRect(fill_rect, static_cast<uint32_t>(color));
   }
 
