@@ -294,13 +294,13 @@ void RegenerateFormFile_Container(CXFA_Node* pNode,
     RegenerateFormFile_Changed(pNode, buf, bSaveXML);
     size_t nLen = buf.GetLength();
     if (nLen > 0)
-      pStream->WriteString(buf.MakeString().ToUTF8().AsStringView());
+      (void)pStream->WriteString(buf.MakeString().ToUTF8().AsStringView());
     return;
   }
 
   WideString wsElement = WideString::FromASCII(pNode->GetClassName());
-  pStream->WriteString("<");
-  pStream->WriteString(wsElement.ToUTF8().AsStringView());
+  (void)pStream->WriteString("<");
+  (void)pStream->WriteString(wsElement.ToUTF8().AsStringView());
 
   WideString wsOutput =
       SaveAttribute(pNode, XFA_Attribute::Name, L"name", true);
@@ -316,22 +316,22 @@ void RegenerateFormFile_Container(CXFA_Node* pNode,
   }
 
   if (!wsOutput.IsEmpty())
-    pStream->WriteString(wsOutput.ToUTF8().AsStringView());
+    (void)pStream->WriteString(wsOutput.ToUTF8().AsStringView());
 
   CXFA_Node* pChildNode = pNode->GetFirstChild();
   if (!pChildNode) {
-    pStream->WriteString(" />\n");
+    (void)pStream->WriteString(" />\n");
     return;
   }
 
-  pStream->WriteString(">\n");
+  (void)pStream->WriteString(">\n");
   while (pChildNode) {
     RegenerateFormFile_Container(pChildNode, pStream, bSaveXML);
     pChildNode = pChildNode->GetNextSibling();
   }
-  pStream->WriteString("</");
-  pStream->WriteString(wsElement.ToUTF8().AsStringView());
-  pStream->WriteString(">\n");
+  (void)pStream->WriteString("</");
+  (void)pStream->WriteString(wsElement.ToUTF8().AsStringView());
+  (void)pStream->WriteString(">\n");
 }
 
 WideString RecognizeXFAVersionNumber(CXFA_Node* pTemplateRoot) {
@@ -446,8 +446,8 @@ void XFA_DataExporter_RegenerateFormFile(
     const RetainPtr<IFX_SeekableStream>& pStream,
     bool bSaveXML) {
   if (pNode->IsModelNode()) {
-    pStream->WriteString("<form xmlns=\"");
-    pStream->WriteString(kFormNS);
+    (void)pStream->WriteString("<form xmlns=\"");
+    (void)pStream->WriteString(kFormNS);
 
     WideString wsVersionNumber = RecognizeXFAVersionNumber(
         ToNode(pNode->GetDocument()->GetXFAObject(XFA_HASHCODE_Template)));
@@ -455,14 +455,14 @@ void XFA_DataExporter_RegenerateFormFile(
       wsVersionNumber = L"2.8";
 
     wsVersionNumber += L"/\">\n";
-    pStream->WriteString(wsVersionNumber.ToUTF8().AsStringView());
+    (void)pStream->WriteString(wsVersionNumber.ToUTF8().AsStringView());
 
     CXFA_Node* pChildNode = pNode->GetFirstChild();
     while (pChildNode) {
       RegenerateFormFile_Container(pChildNode, pStream, false);
       pChildNode = pChildNode->GetNextSibling();
     }
-    pStream->WriteString("</form>\n");
+    (void)pStream->WriteString("</form>\n");
   } else {
     RegenerateFormFile_Container(pNode, pStream, bSaveXML);
   }

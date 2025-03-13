@@ -264,7 +264,7 @@ CJS_Result CJS_Document::getField(CJS_Runtime* pRuntime,
   if (!pJSField)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  pJSField->AttachField(this, wideName);
+  (void)pJSField->AttachField(this, wideName);
   return CJS_Result::Success(pJSField->ToV8Object());
 }
 
@@ -598,7 +598,7 @@ CJS_Result CJS_Document::submitForm(CJS_Runtime* pRuntime,
   if (pRuntime->GetArrayLength(aFields) == 0 && bEmpty) {
     if (pPDFForm->CheckRequiredFields(nullptr, true)) {
       pRuntime->BeginBlock();
-      GetSDKInteractiveForm()->SubmitForm(strURL);
+      (void)GetSDKInteractiveForm()->SubmitForm(strURL);
       pRuntime->EndBlock();
     }
     return CJS_Result::Success();
@@ -620,7 +620,8 @@ CJS_Result CJS_Document::submitForm(CJS_Runtime* pRuntime,
 
   if (pPDFForm->CheckRequiredFields(&fieldObjects, true)) {
     pRuntime->BeginBlock();
-    GetSDKInteractiveForm()->SubmitFields(strURL, fieldObjects, true, !bFDF);
+    (void)GetSDKInteractiveForm()->SubmitFields(strURL, fieldObjects, true,
+                                                !bFDF);
     pRuntime->EndBlock();
   }
   return CJS_Result::Success();

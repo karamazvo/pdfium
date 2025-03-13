@@ -204,7 +204,7 @@ bool CFX_Font::LoadFile(RetainPtr<IFX_SeekableReadStream> pFile,
 
   m_pOwnedFile = std::move(pFile);
   m_pOwnedStreamRec = std::move(pStreamRec);
-  m_Face->SetPixelSize(0, 64);
+  (void)m_Face->SetPixelSize(0, 64);
   return true;
 }
 

@@ -102,11 +102,11 @@ bool CFX_GlobalData::Release() {
 }
 
 CFX_GlobalData::CFX_GlobalData(Delegate* pDelegate) : m_pDelegate(pDelegate) {
-  LoadGlobalPersistentVariables();
+  (void)LoadGlobalPersistentVariables();
 }
 
 CFX_GlobalData::~CFX_GlobalData() {
-  SaveGlobalPersisitentVariables();
+  (void)SaveGlobalPersisitentVariables();
 }
 
 CFX_GlobalData::iterator CFX_GlobalData::FindGlobalVariable(
@@ -335,14 +335,14 @@ bool CFX_GlobalData::LoadGlobalPersistentVariablesFromBuffer(
             } break;
           }
           SetGlobalVariableNumber(sEntry, dData);
-          SetGlobalVariablePersistent(sEntry, true);
+          (void)SetGlobalVariablePersistent(sEntry, true);
         } break;
         case CFX_Value::DataType::kBoolean: {
           uint16_t wData = 0;
           FXSYS_memcpy(&wData, p, sizeof(uint16_t));
           p += sizeof(uint16_t);
           SetGlobalVariableBoolean(sEntry, (bool)(wData == 1));
-          SetGlobalVariablePersistent(sEntry, true);
+          (void)SetGlobalVariablePersistent(sEntry, true);
         } break;
         case CFX_Value::DataType::kString: {
           uint32_t dwLength = 0;
@@ -352,12 +352,12 @@ bool CFX_GlobalData::LoadGlobalPersistentVariablesFromBuffer(
             break;
           }
           SetGlobalVariableString(sEntry, ByteString(p, dwLength));
-          SetGlobalVariablePersistent(sEntry, true);
+          (void)SetGlobalVariablePersistent(sEntry, true);
           p += sizeof(char) * dwLength;
         } break;
         case CFX_Value::DataType::kNull: {
           SetGlobalVariableNull(sEntry);
-          SetGlobalVariablePersistent(sEntry, true);
+          (void)SetGlobalVariablePersistent(sEntry, true);
         } break;
         case CFX_Value::DataType::kObject:
           // Arrays aren't allowed in these buffers, nor are unrecognized tags.

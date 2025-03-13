@@ -49,13 +49,14 @@ void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
 
   CFX_GraphStateData gsd;
   gsd.set_line_width(m_fWidth);
-  pDevice->DrawPath(path, &mtUser2Device, &gsd, 0, ArgbEncode(255, 0, 0, 0),
-                    CFX_FillRenderOptions::EvenOddOptions());
+  (void)pDevice->DrawPath(path, &mtUser2Device, &gsd, 0,
+                          ArgbEncode(255, 0, 0, 0),
+                          CFX_FillRenderOptions::EvenOddOptions());
 }
 
 void CPWL_Caret::OnTimerFired() {
   m_bFlash = !m_bFlash;
-  InvalidateRect(nullptr);
+  (void)InvalidateRect(nullptr);
   // Note, |this| may no longer be viable at this point. If more work needs
   // to be done, add an observer.
 }
@@ -94,7 +95,7 @@ void CPWL_Caret::SetCaret(bool bVisible,
       return;
 
     m_bFlash = true;
-    Move(m_rcInvalid, false, true);
+    (void)Move(m_rcInvalid, false, true);
     // Note, |this| may no longer be viable at this point. If more work needs
     // to be done, check the return value of Move().
     return;
@@ -106,7 +107,7 @@ void CPWL_Caret::SetCaret(bool bVisible,
   m_ptHead = ptHead;
   m_ptFoot = ptFoot;
   m_bFlash = true;
-  Move(m_rcInvalid, false, true);
+  (void)Move(m_rcInvalid, false, true);
   // Note, |this| may no longer be viable at this point. If more work
   // needs to be done, check the return value of Move().
 }

@@ -292,13 +292,13 @@ CFX_FloatRect CPDFXFA_Widget::GetViewBBox() {
 void CPDFXFA_Widget::OnMouseEnter(Mask<FWL_EVENTFLAG> nFlags) {
   CXFA_FFWidgetHandler* widget_handler = GetWidgetHandler();
   if (widget_handler)
-    widget_handler->OnMouseEnter(GetXFAFFWidget());
+    (void)widget_handler->OnMouseEnter(GetXFAFFWidget());
 }
 
 void CPDFXFA_Widget::OnMouseExit(Mask<FWL_EVENTFLAG> nFlags) {
   CXFA_FFWidgetHandler* widget_handler = GetWidgetHandler();
   if (widget_handler)
-    widget_handler->OnMouseExit(GetXFAFFWidget());
+    (void)widget_handler->OnMouseExit(GetXFAFFWidget());
 }
 
 bool CPDFXFA_Widget::OnLButtonDown(Mask<FWL_EVENTFLAG> nFlags,
@@ -374,7 +374,7 @@ bool CPDFXFA_Widget::OnSetFocus(Mask<FWL_EVENTFLAG> nFlags) {
 bool CPDFXFA_Widget::OnKillFocus(Mask<FWL_EVENTFLAG> nFlags) {
   CXFA_FFDocView* doc_view = GetDocView();
   if (doc_view)
-    doc_view->SetFocus(nullptr);
+    (void)doc_view->SetFocus(nullptr);
   return true;
 }
 

@@ -63,7 +63,7 @@ CXFA_FFWidget::IteratorIface* GCedWidgetIteratorForAnnot(
     return nullptr;
 
   if (pWidgetIterator->GetCurrentWidget() != pXFAWidget->GetXFAFFWidget())
-    pWidgetIterator->SetCurrentWidget(pXFAWidget->GetXFAFFWidget());
+    (void)pWidgetIterator->SetCurrentWidget(pXFAWidget->GetXFAFFWidget());
 
   return pWidgetIterator;
 }

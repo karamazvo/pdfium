@@ -758,7 +758,7 @@ void CPDF_InteractiveForm::ResetForm(pdfium::span<CPDF_FormField*> fields,
       continue;
 
     if (bIncludeOrExclude == pdfium::Contains(fields, pField))
-      pField->ResetField();
+      (void)pField->ResetField();
   }
   if (m_pFormNotify)
     m_pFormNotify->AfterFormReset(this);

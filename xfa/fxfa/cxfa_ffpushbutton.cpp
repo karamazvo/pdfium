@@ -99,7 +99,7 @@ void CXFA_FFPushButton::UpdateWidgetProperty() {
 }
 
 bool CXFA_FFPushButton::PerformLayout() {
-  CXFA_FFWidget::PerformLayout();
+  (void)CXFA_FFWidget::PerformLayout();
   CFX_RectF rtWidget = GetRectWithoutRotate();
 
   m_UIRect = rtWidget;
@@ -198,7 +198,7 @@ void CXFA_FFPushButton::RenderHighlightCaption(CFGAS_GEGraphics* pGS,
   }
 
   if (pCapTextLayout)
-    pCapTextLayout->DrawString(pRenderDevice, mt, rtClip, 0);
+    (void)pCapTextLayout->DrawString(pRenderDevice, mt, rtClip, 0);
 }
 
 void CXFA_FFPushButton::OnProcessMessage(CFWL_Message* pMessage) {

@@ -175,15 +175,15 @@ bool CPDF_FormField::ResetField() {
       // TODO(weili): Check whether anything special needs to be done for
       // |m_bIsUnison|.
       for (int i = 0; i < iCount; i++) {
-        CheckControl(i, GetControl(i)->IsDefaultChecked(),
-                     NotificationOption::kDoNotNotify);
+        (void)CheckControl(i, GetControl(i)->IsDefaultChecked(),
+                           NotificationOption::kDoNotNotify);
       }
       m_pForm->NotifyAfterCheckedStatusChange(this);
       break;
     }
     case kComboBox:
     case kListBox: {
-      ClearSelection(NotificationOption::kDoNotNotify);
+      (void)ClearSelection(NotificationOption::kDoNotNotify);
       WideString csValue;
       int iIndex = GetDefaultSelectedItem();
       if (iIndex >= 0)
@@ -191,7 +191,7 @@ bool CPDF_FormField::ResetField() {
       if (!NotifyListOrComboBoxBeforeChange(csValue)) {
         return false;
       }
-      SetItemSelection(iIndex, NotificationOption::kDoNotNotify);
+      (void)SetItemSelection(iIndex, NotificationOption::kDoNotNotify);
       NotifyListOrComboBoxAfterChange();
       break;
     }
@@ -361,7 +361,7 @@ bool CPDF_FormField::SetValue(const WideString& value,
   switch (GetType()) {
     case kCheckBox:
     case kRadioButton: {
-      SetCheckValue(value, bDefault, notify);
+      (void)SetCheckValue(value, bDefault, notify);
       return true;
     }
     case kFile:
@@ -391,8 +391,8 @@ bool CPDF_FormField::SetValue(const WideString& value,
         m_pDict->RemoveFor("I");
       } else {
         if (!bDefault) {
-          ClearSelection(NotificationOption::kDoNotNotify);
-          SetItemSelection(iIndex, NotificationOption::kDoNotNotify);
+          (void)ClearSelection(NotificationOption::kDoNotNotify);
+          (void)SetItemSelection(iIndex, NotificationOption::kDoNotNotify);
         }
       }
       if (notify == NotificationOption::kNotify)
@@ -412,8 +412,8 @@ bool CPDF_FormField::SetValue(const WideString& value,
         return false;
       }
       if (!bDefault) {
-        ClearSelection(NotificationOption::kDoNotNotify);
-        SetItemSelection(iIndex, NotificationOption::kDoNotNotify);
+        (void)ClearSelection(NotificationOption::kDoNotNotify);
+        (void)SetItemSelection(iIndex, NotificationOption::kDoNotNotify);
       }
       if (notify == NotificationOption::kNotify)
         m_pForm->NotifyAfterSelectionChange(this);
@@ -715,8 +715,8 @@ bool CPDF_FormField::SetCheckValue(const WideString& value,
     WideString csExport = pControl->GetExportValue();
     bool val = csExport == value;
     if (!bDefault) {
-      CheckControl(GetControlIndex(pControl), val,
-                   NotificationOption::kDoNotNotify);
+      (void)CheckControl(GetControlIndex(pControl), val,
+                         NotificationOption::kDoNotNotify);
     }
     if (val)
       break;

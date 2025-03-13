@@ -331,7 +331,7 @@ unsigned long NulTerminateMaybeCopyAndReturnLength(
     const ByteString& text,
     pdfium::span<char> result_span) {
   pdfium::span<const char> text_span = text.span_with_terminator();
-  fxcrt::try_spancpy(result_span, text_span);
+  (void)fxcrt::try_spancpy(result_span, text_span);
   return pdfium::checked_cast<unsigned long>(text_span.size());
 }
 
@@ -340,7 +340,7 @@ unsigned long Utf16EncodeMaybeCopyAndReturnLength(
     pdfium::span<char> result_span) {
   ByteString encoded_text = text.ToUTF16LE();
   pdfium::span<const char> encoded_text_span = encoded_text.span();
-  fxcrt::try_spancpy(result_span, encoded_text_span);
+  (void)fxcrt::try_spancpy(result_span, encoded_text_span);
   return pdfium::checked_cast<unsigned long>(encoded_text_span.size());
 }
 

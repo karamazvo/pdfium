@@ -58,7 +58,7 @@ void RenderPageImpl(CPDF_PageRenderContext* pContext,
 
   pContext->m_pDevice->SaveState();
   pContext->m_pDevice->SetBaseClip(clipping_rect);
-  pContext->m_pDevice->SetClip_Rect(clipping_rect);
+  (void)pContext->m_pDevice->SetClip_Rect(clipping_rect);
   pContext->m_pContext = std::make_unique<CPDF_RenderContext>(
       pPage->GetDocument(), pPage->GetMutablePageResources(),
       pPage->GetPageImageCache());

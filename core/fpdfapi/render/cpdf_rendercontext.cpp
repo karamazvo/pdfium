@@ -39,8 +39,8 @@ void CPDF_RenderContext::GetBackgroundToDevice(
     const CPDF_PageObject* object,
     const CPDF_RenderOptions* options,
     const CFX_Matrix& matrix) {
-  device->FillRect(FX_RECT(0, 0, device->GetWidth(), device->GetHeight()),
-                   0xffffffff);
+  (void)device->FillRect(FX_RECT(0, 0, device->GetWidth(), device->GetHeight()),
+                         0xffffffff);
   Render(device, object, options, &matrix);
 }
 

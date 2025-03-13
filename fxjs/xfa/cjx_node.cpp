@@ -357,7 +357,7 @@ CJS_Result CJX_Node::saveXML(CFXJSE_Engine* runtime,
   }
 
   auto pMemoryStream = pdfium::MakeRetain<CFX_MemoryStream>();
-  pMemoryStream->WriteString(bsXMLHeader.AsStringView());
+  (void)pMemoryStream->WriteString(bsXMLHeader.AsStringView());
 
   if (GetXFANode()->GetPacketType() == XFA_PacketType::Form) {
     XFA_DataExporter_RegenerateFormFile(GetXFANode(), pMemoryStream, true);

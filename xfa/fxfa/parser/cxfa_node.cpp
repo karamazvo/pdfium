@@ -2498,7 +2498,7 @@ XFA_EventError CXFA_Node::ProcessCalculate(CXFA_FFDocView* pDocView) {
     return iRet;
 
   if (GetRawValue() != EventParam.m_wsResult) {
-    SetValue(XFA_ValuePicture::kRaw, EventParam.m_wsResult);
+    (void)SetValue(XFA_ValuePicture::kRaw, EventParam.m_wsResult);
     pDocView->UpdateUIDisplay(this, nullptr);
   }
   return XFA_EventError::kSuccess;
@@ -2804,7 +2804,7 @@ CXFA_Node::BoolScriptResult CXFA_Node::ExecuteBoolScript(
       if (pEventParam->m_eType == XFA_EVENT_InitCalculate) {
         if ((iRet == XFA_EventError::kSuccess) &&
             (GetRawValue() != pEventParam->m_wsResult)) {
-          SetValue(XFA_ValuePicture::kRaw, pEventParam->m_wsResult);
+          (void)SetValue(XFA_ValuePicture::kRaw, pEventParam->m_wsResult);
           pDocView->AddValidateNode(this);
         }
       }
@@ -3086,8 +3086,8 @@ void CXFA_Node::ResetData() {
           CXFA_Value* defValue = pChild->GetDefaultValueIfExists();
           if (defValue) {
             wsValue = defValue->GetChildValueContent();
-            SetValue(XFA_ValuePicture::kRaw, wsValue);
-            pChild->SetValue(XFA_ValuePicture::kRaw, wsValue);
+            (void)SetValue(XFA_ValuePicture::kRaw, wsValue);
+            (void)pChild->SetValue(XFA_ValuePicture::kRaw, wsValue);
             done = true;
           }
         }
@@ -3104,7 +3104,7 @@ void CXFA_Node::ResetData() {
                     ->JSObject()
                     ->GetContent(false);
           }
-          pChild->SetValue(XFA_ValuePicture::kRaw, itemText);
+          (void)pChild->SetValue(XFA_ValuePicture::kRaw, itemText);
         }
         pNextChild = pChild->GetNextContainerSibling();
       }
@@ -3118,7 +3118,7 @@ void CXFA_Node::ResetData() {
       if (defValue)
         wsValue = defValue->GetChildValueContent();
 
-      SetValue(XFA_ValuePicture::kRaw, wsValue);
+      (void)SetValue(XFA_ValuePicture::kRaw, wsValue);
       break;
     }
   }
@@ -3157,7 +3157,7 @@ void CXFA_Node::CalcCaptionSize(CXFA_FFDoc* doc, CFX_SizeF* pszCap) {
   if (!caption || !caption->IsVisible())
     return;
 
-  LoadCaption(doc);
+  (void)LoadCaption(doc);
 
   const float fCapReserve = caption->GetReserve();
   const XFA_AttributeValue iCapPlacement = caption->GetPlacementType();
@@ -3404,7 +3404,7 @@ CFX_SizeF CXFA_Node::CalculateImageSize(float img_width,
 
 bool CXFA_Node::CalculateImageAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
   if (!GetLayoutImage())
-    LoadLayoutImage(doc);
+    (void)LoadLayoutImage(doc);
 
   pSize->clear();
   RetainPtr<CFX_DIBitmap> pBitmap = GetLayoutImage();
@@ -3418,7 +3418,7 @@ bool CXFA_Node::CalculateImageAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
 
 bool CXFA_Node::CalculateImageEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
   if (!GetEditImage())
-    LoadEditImage(doc);
+    (void)LoadEditImage(doc);
 
   pSize->clear();
   RetainPtr<CFX_DIBitmap> pBitmap = GetEditImage();
@@ -3550,32 +3550,32 @@ CFX_SizeF CXFA_Node::CalculateAccWidthAndHeight(CXFA_FFDoc* doc, float fWidth) {
     case XFA_FFWidgetType::kBarcode:
     case XFA_FFWidgetType::kChoiceList:
     case XFA_FFWidgetType::kSignature:
-      CalculateFieldAutoSize(doc, &sz);
+      (void)CalculateFieldAutoSize(doc, &sz);
       break;
     case XFA_FFWidgetType::kImageEdit:
-      CalculateImageEditAutoSize(doc, &sz);
+      (void)CalculateImageEditAutoSize(doc, &sz);
       break;
     case XFA_FFWidgetType::kButton:
-      CalculatePushButtonAutoSize(doc, &sz);
+      (void)CalculatePushButtonAutoSize(doc, &sz);
       break;
     case XFA_FFWidgetType::kCheckButton:
-      CalculateCheckButtonAutoSize(doc, &sz);
+      (void)CalculateCheckButtonAutoSize(doc, &sz);
       break;
     case XFA_FFWidgetType::kDateTimeEdit:
     case XFA_FFWidgetType::kNumericEdit:
     case XFA_FFWidgetType::kPasswordEdit:
     case XFA_FFWidgetType::kTextEdit:
-      CalculateTextEditAutoSize(doc, &sz);
+      (void)CalculateTextEditAutoSize(doc, &sz);
       break;
     case XFA_FFWidgetType::kImage:
-      CalculateImageAutoSize(doc, &sz);
+      (void)CalculateImageAutoSize(doc, &sz);
       break;
     case XFA_FFWidgetType::kArc:
     case XFA_FFWidgetType::kLine:
     case XFA_FFWidgetType::kRectangle:
     case XFA_FFWidgetType::kSubform:
     case XFA_FFWidgetType::kExclGroup:
-      CalculateWidgetAutoSize(&sz);
+      (void)CalculateWidgetAutoSize(&sz);
       break;
     case XFA_FFWidgetType::kText:
     case XFA_FFWidgetType::kNone:
@@ -4876,7 +4876,7 @@ WideString CXFA_Node::GetValue(XFA_ValuePicture eValueType) {
       default:
         break;
     }
-    widgetValue.FormatPatterns(wsValue, wsPicture, pLocale, eValueType);
+    (void)widgetValue.FormatPatterns(wsValue, wsPicture, pLocale, eValueType);
   }
   return wsValue;
 }
@@ -4951,8 +4951,8 @@ WideString CXFA_Node::GetFormatDataValue(const WideString& wsValue) {
       default:
         break;
     }
-    widgetValue.FormatPatterns(wsFormattedValue, wsPicture, pLocale,
-                               XFA_ValuePicture::kDataBind);
+    (void)widgetValue.FormatPatterns(wsFormattedValue, wsPicture, pLocale,
+                                     XFA_ValuePicture::kDataBind);
   }
   return wsFormattedValue;
 }

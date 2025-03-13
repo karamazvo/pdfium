@@ -72,7 +72,7 @@ bool CFXJSE_NodeHelper::CreateNode(const WideString& wsName,
     return false;
 
   if (m_iCreateCount == 0)
-    CreateNodeForCondition(wsCondition);
+    (void)CreateNodeForCondition(wsCondition);
 
   if (bIsClassName) {
     XFA_Element eType = XFA_GetElementByName(wsNameView);

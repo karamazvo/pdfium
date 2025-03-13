@@ -137,8 +137,8 @@ bool CXFA_FFField::IsLoaded() {
 }
 
 bool CXFA_FFField::LoadWidget() {
-  m_pNode->LoadCaption(GetDoc());
-  PerformLayout();
+  (void)m_pNode->LoadCaption(GetDoc());
+  (void)PerformLayout();
   return true;
 }
 
@@ -165,7 +165,7 @@ void CXFA_FFField::SetEditScrollOffset() {
 }
 
 bool CXFA_FFField::PerformLayout() {
-  CXFA_FFWidget::PerformLayout();
+  (void)CXFA_FFWidget::PerformLayout();
   CapPlacement();
   LayoutCaption();
   SetFWLRect();
@@ -604,7 +604,7 @@ void CXFA_FFField::RenderCaption(CFGAS_GEGraphics* pGS,
   CFX_Matrix mt(1, 0, 0, 1, m_CaptionRect.left, m_CaptionRect.top);
   rtClip = pMatrix.TransformRect(rtClip);
   mt.Concat(pMatrix);
-  pCapTextLayout->DrawString(pRenderDevice, mt, rtClip, 0);
+  (void)pCapTextLayout->DrawString(pRenderDevice, mt, rtClip, 0);
 }
 
 bool CXFA_FFField::ProcessCommittedData() {

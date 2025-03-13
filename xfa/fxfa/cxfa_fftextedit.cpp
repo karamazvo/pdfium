@@ -132,7 +132,7 @@ bool CXFA_FFTextEdit::OnLButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
                                     const CFX_PointF& point) {
   if (!IsFocused()) {
     GetLayoutItem()->SetStatusBits(XFA_WidgetStatus::kFocused);
-    UpdateFWLData();
+    (void)UpdateFWLData();
     InvalidateRect();
   }
   SetButtonDown(true);
@@ -147,7 +147,7 @@ bool CXFA_FFTextEdit::OnRButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
                                     const CFX_PointF& point) {
   if (!IsFocused()) {
     GetLayoutItem()->SetStatusBits(XFA_WidgetStatus::kFocused);
-    UpdateFWLData();
+    (void)UpdateFWLData();
     InvalidateRect();
   }
   SetButtonDown(true);
@@ -163,7 +163,7 @@ bool CXFA_FFTextEdit::OnRButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
   if (!CXFA_FFField::OnRButtonUp(dwFlags, point))
     return false;
 
-  GetDoc()->PopupMenu(this, point);
+  (void)GetDoc()->PopupMenu(this, point);
   return true;
 }
 
@@ -171,7 +171,7 @@ bool CXFA_FFTextEdit::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus::kTextEditValueChanged);
   if (!IsFocused()) {
     GetLayoutItem()->SetStatusBits(XFA_WidgetStatus::kFocused);
-    UpdateFWLData();
+    (void)UpdateFWLData();
     InvalidateRect();
   }
   if (!CXFA_FFWidget::OnSetFocus(pOldWidget))
@@ -188,8 +188,8 @@ bool CXFA_FFTextEdit::OnKillFocus(CXFA_FFWidget* pNewWidget) {
 
   GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus::kFocused);
   SetEditScrollOffset();
-  ProcessCommittedData();
-  UpdateFWLData();
+  (void)ProcessCommittedData();
+  (void)UpdateFWLData();
   InvalidateRect();
 
   if (!CXFA_FFWidget::OnKillFocus(pNewWidget))

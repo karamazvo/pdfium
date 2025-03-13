@@ -22,7 +22,7 @@ CPWL_CBListBox::~CPWL_CBListBox() = default;
 
 bool CPWL_CBListBox::OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag,
                                  const CFX_PointF& point) {
-  CPWL_Wnd::OnLButtonUp(nFlag, point);
+  (void)CPWL_Wnd::OnLButtonUp(nFlag, point);
 
   if (!m_bMouseDown)
     return true;
