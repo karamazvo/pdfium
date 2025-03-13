@@ -514,7 +514,7 @@ const CPDF_ContentMarks* CPDF_PageContentGenerator::ProcessContentMarks(
     switch (item->GetParamType()) {
       case CPDF_ContentMarkItem::kDirectDict: {
         CPDF_StringArchiveStream archive_stream(buf);
-        item->GetParam()->WriteTo(&archive_stream, nullptr);
+        (void)item->GetParam()->WriteTo(&archive_stream, nullptr);
         *buf << " ";
         break;
       }

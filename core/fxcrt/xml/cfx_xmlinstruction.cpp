@@ -40,18 +40,19 @@ bool CFX_XMLInstruction::IsAcrobat() const {
 void CFX_XMLInstruction::Save(
     const RetainPtr<IFX_RetainableWriteStream>& pXMLStream) {
   if (name_.EqualsASCIINoCase("xml")) {
-    pXMLStream->WriteString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+    (void)pXMLStream->WriteString(
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
     return;
   }
 
-  pXMLStream->WriteString("<?");
-  pXMLStream->WriteString(name_.ToUTF8().AsStringView());
-  pXMLStream->WriteString(" ");
+  (void)pXMLStream->WriteString("<?");
+  (void)pXMLStream->WriteString(name_.ToUTF8().AsStringView());
+  (void)pXMLStream->WriteString(" ");
 
   for (const WideString& target : target_data_) {
-    pXMLStream->WriteString(target.ToUTF8().AsStringView());
-    pXMLStream->WriteString(" ");
+    (void)pXMLStream->WriteString(target.ToUTF8().AsStringView());
+    (void)pXMLStream->WriteString(" ");
   }
 
-  pXMLStream->WriteString("?>\n");
+  (void)pXMLStream->WriteString("?>\n");
 }

@@ -78,8 +78,8 @@ CPDF_Annot::Subtype CPDFSDK_BAAnnot::GetAnnotSubtype() const {
 void CPDFSDK_BAAnnot::DrawAppearance(CFX_RenderDevice* pDevice,
                                      const CFX_Matrix& mtUser2Device,
                                      CPDF_Annot::AppearanceMode mode) {
-  m_pAnnot->DrawAppearance(GetPageView()->GetPDFPage(), pDevice, mtUser2Device,
-                           mode);
+  (void)m_pAnnot->DrawAppearance(GetPageView()->GetPDFPage(), pDevice,
+                                 mtUser2Device, mode);
 }
 
 bool CPDFSDK_BAAnnot::IsAppearanceValid() {

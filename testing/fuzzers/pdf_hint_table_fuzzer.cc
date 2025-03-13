@@ -39,7 +39,7 @@ class HintTableForFuzzing final : public CPDF_HintTables {
     CFX_BitStream bs(pdfium::make_span(data, size));
     if (!ReadPageHintTable(&bs))
       return;
-    ReadSharedObjHintTable(&bs, shared_hint_table_offset_);
+    (void)ReadSharedObjHintTable(&bs, shared_hint_table_offset_);
   }
 
  private:

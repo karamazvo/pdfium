@@ -319,7 +319,7 @@ FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   CPDF_RenderContext context(doc, std::move(page_resources),
                              /*pPageCache=*/nullptr);
   CFX_DefaultRenderDevice device;
-  device.Attach(result_bitmap);
+  (void)device.Attach(result_bitmap);
   CPDF_RenderStatus status(&context, &device);
   CPDF_ImageRenderer renderer(&status);
 

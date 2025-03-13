@@ -224,13 +224,13 @@ bool CPWL_ComboBox::RepositionChildWnd() {
       rcList.bottom += fOldWindowHeight;
     }
     if (this_observed->m_pButton) {
-      this_observed->m_pButton->Move(rcButton, true, false);
+      (void)this_observed->m_pButton->Move(rcButton, true, false);
       if (!this_observed) {
         return false;
       }
     }
     if (this_observed->m_pEdit) {
-      this_observed->m_pEdit->Move(rcEdit, true, false);
+      (void)this_observed->m_pEdit->Move(rcEdit, true, false);
       if (!this_observed) {
         return false;
       }
@@ -254,7 +254,7 @@ bool CPWL_ComboBox::RepositionChildWnd() {
   CFX_FloatRect rcButton = rcClient;
   rcButton.left = std::max(rcButton.right - kDefaultButtonWidth, rcClient.left);
   if (this_observed->m_pButton) {
-    this_observed->m_pButton->Move(rcButton, true, false);
+    (void)this_observed->m_pButton->Move(rcButton, true, false);
     if (!this_observed) {
       return false;
     }
@@ -263,7 +263,7 @@ bool CPWL_ComboBox::RepositionChildWnd() {
   CFX_FloatRect rcEdit = rcClient;
   rcEdit.right = std::max(rcButton.left - 1.0f, rcEdit.left);
   if (this_observed->m_pEdit) {
-    this_observed->m_pEdit->Move(rcEdit, true, false);
+    (void)this_observed->m_pEdit->Move(rcEdit, true, false);
     if (!this_observed) {
       return false;
     }
@@ -282,7 +282,7 @@ bool CPWL_ComboBox::RepositionChildWnd() {
 
 void CPWL_ComboBox::SelectAll() {
   if (m_pEdit && HasFlag(PCBS_ALLOWCUSTOMTEXT))
-    m_pEdit->SelectAllText();
+    (void)m_pEdit->SelectAllText();
 }
 
 CFX_FloatRect CPWL_ComboBox::GetFocusRect() const {
@@ -338,7 +338,7 @@ bool CPWL_ComboBox::SetPopup(bool bPopup) {
   if (!this_observed->Move(rcWindow, true, true)) {
     return false;
   }
-  this_observed->GetFillerNotify()->OnPopupPostOpen(
+  (void)this_observed->GetFillerNotify()->OnPopupPostOpen(
       this_observed->GetAttachedData(), {});
   return !!this_observed;
 }
@@ -474,7 +474,7 @@ void CPWL_ComboBox::NotifyLButtonUp(CPWL_Wnd* child, const CFX_PointF& pos) {
     return;
 
   SetSelectText();
-  SelectAllText();
+  (void)SelectAllText();
   m_pEdit->SetFocus();
   (void)SetPopup(false);
   // Note, |this| may no longer be viable at this point. If more work needs to
@@ -486,8 +486,8 @@ bool CPWL_ComboBox::IsPopup() const {
 }
 
 void CPWL_ComboBox::SetSelectText() {
-  m_pEdit->SelectAllText();
+  (void)m_pEdit->SelectAllText();
   m_pEdit->ReplaceSelection(m_pList->GetText());
-  m_pEdit->SelectAllText();
+  (void)m_pEdit->SelectAllText();
   m_nSelectItem = m_pList->GetCurSel();
 }

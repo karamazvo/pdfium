@@ -478,7 +478,7 @@ void CFX_FontMapper::LoadInstalledFonts() {
   if (!m_pFontInfo || m_bListLoaded)
     return;
 
-  m_pFontInfo->EnumFontList(this);
+  (void)m_pFontInfo->EnumFontList(this);
   m_bListLoaded = true;
 }
 
@@ -542,9 +542,9 @@ RetainPtr<CFX_Face> CFX_FontMapper::UseExternalSubst(
   DCHECK(font_handle);
 
   ScopedFontDeleter scoped_font(m_pFontInfo.get(), font_handle);
-  m_pFontInfo->GetFaceName(font_handle, &face_name);
+  (void)m_pFontInfo->GetFaceName(font_handle, &face_name);
   if (charset == FX_Charset::kDefault)
-    m_pFontInfo->GetFontCharset(font_handle, &charset);
+    (void)m_pFontInfo->GetFontCharset(font_handle, &charset);
   size_t ttc_size = m_pFontInfo->GetFontData(font_handle, kTableTTCF, {});
   size_t font_size = m_pFontInfo->GetFontData(font_handle, 0, {});
   if (font_size == 0 && ttc_size == 0)

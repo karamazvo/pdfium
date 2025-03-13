@@ -244,7 +244,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
 
   {
     CFX_RenderDevice::StateRestorer restorer(pDevice.get());
-    pDevice->SetClip_Rect(rect);
+    (void)pDevice->SetClip_Rect(rect);
 
     CPDF_RenderOptions options;
     options.GetOptions().bClearType = !!(flags & FPDF_LCD_TEXT);
@@ -831,7 +831,7 @@ FORM_DoDocumentOpenAction(FPDF_FORMHANDLE hHandle) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv =
       CPDFSDKFormFillEnvironmentFromFPDFFormHandle(hHandle);
   if (pFormFillEnv)
-    pFormFillEnv->ProcOpenAction();
+    (void)pFormFillEnv->ProcOpenAction();
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FORM_DoDocumentAAction(FPDF_FORMHANDLE hHandle,
@@ -849,7 +849,7 @@ FPDF_EXPORT void FPDF_CALLCONV FORM_DoDocumentAAction(FPDF_FORMHANDLE hHandle,
   CPDF_AAction aa(pDict->GetDictFor(pdfium::form_fields::kAA));
   auto type = static_cast<CPDF_AAction::AActionType>(aaType);
   if (aa.ActionExist(type))
-    pFormFillEnv->DoActionDocument(aa.GetAction(type), type);
+    (void)pFormFillEnv->DoActionDocument(aa.GetAction(type), type);
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FORM_DoPageAAction(FPDF_PAGE page,
@@ -873,7 +873,7 @@ FPDF_EXPORT void FPDF_CALLCONV FORM_DoPageAAction(FPDF_PAGE page,
                                        ? CPDF_AAction::kOpenPage
                                        : CPDF_AAction::kClosePage;
   if (aa.ActionExist(type))
-    pFormFillEnv->DoActionPage(aa.GetAction(type), type);
+    (void)pFormFillEnv->DoActionPage(aa.GetAction(type), type);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV

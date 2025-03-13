@@ -26,7 +26,7 @@ TEST(OnedCode39WriterTest, SetWideNarrowRatio) {
   EXPECT_FALSE(writer.SetWideNarrowRatio(4));
   EXPECT_FALSE(writer.SetWideNarrowRatio(100));
 
-  writer.SetWideNarrowRatio(3);
+  (void)writer.SetWideNarrowRatio(3);
 
   static const char kExpected1[] =
       "#   # ### ### # "  // * Start
@@ -42,7 +42,7 @@ TEST(OnedCode39WriterTest, SetWideNarrowRatio) {
   for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected1)); i++) {
     UNSAFE_TODO(EXPECT_EQ(kExpected1[i] != ' ', !!encoded[i])) << i;
   }
-  writer.SetWideNarrowRatio(2);
+  (void)writer.SetWideNarrowRatio(2);
 
   static const char kExpected2[] =
       "#  # ## ## # "  // * Start

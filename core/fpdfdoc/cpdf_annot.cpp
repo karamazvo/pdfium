@@ -557,6 +557,6 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
 
   CFX_Path path;
   path.AppendFloatRect(rect);
-  pDevice->DrawPath(path, pUser2Device, &graph_state, argb, argb,
-                    CFX_FillRenderOptions());
+  (void)pDevice->DrawPath(path, pUser2Device, &graph_state, argb, argb,
+                          CFX_FillRenderOptions());
 }

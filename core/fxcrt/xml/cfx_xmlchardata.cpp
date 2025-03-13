@@ -23,7 +23,7 @@ CFX_XMLNode* CFX_XMLCharData::Clone(CFX_XMLDocument* doc) {
 
 void CFX_XMLCharData::Save(
     const RetainPtr<IFX_RetainableWriteStream>& pXMLStream) {
-  pXMLStream->WriteString("<![CDATA[");
-  pXMLStream->WriteString(GetText().ToUTF8().AsStringView());
-  pXMLStream->WriteString("]]>");
+  (void)pXMLStream->WriteString("<![CDATA[");
+  (void)pXMLStream->WriteString(GetText().ToUTF8().AsStringView());
+  (void)pXMLStream->WriteString("]]>");
 }

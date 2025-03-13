@@ -619,7 +619,7 @@ bool CFX_RenderDevice::DrawPath(const CFX_Path& path,
       pos1 = pObject2Device->Transform(pos1);
       pos2 = pObject2Device->Transform(pos2);
     }
-    DrawCosmeticLine(pos1, pos2, fill_color, fill_options);
+    (void)DrawCosmeticLine(pos1, pos2, fill_color, fill_options);
     return true;
   }
 
@@ -775,15 +775,16 @@ bool CFX_RenderDevice::DrawFillStrokePath(
     return false;
 
   if (bitmap->IsAlphaFormat()) {
-    backdrop->Copy(bitmap);
+    (void)backdrop->Copy(bitmap);
   } else {
     if (!m_pDeviceDriver->GetDIBits(bitmap, rect.left, rect.top))
       return false;
-    backdrop->Copy(bitmap);
+    (void)backdrop->Copy(bitmap);
   }
   CFX_DefaultRenderDevice bitmap_device;
-  bitmap_device.AttachWithBackdropAndGroupKnockout(bitmap, std::move(backdrop),
-                                                   /*bGroupKnockout=*/true);
+  (void)bitmap_device.AttachWithBackdropAndGroupKnockout(
+      bitmap, std::move(backdrop),
+      /*bGroupKnockout=*/true);
 
   CFX_Matrix matrix;
   if (pObject2Device)
@@ -821,8 +822,8 @@ bool CFX_RenderDevice::FillRect(const FX_RECT& rect, uint32_t fill_color) {
   }
 
   FX_RECT src_rect(0, 0, rect.Width(), rect.Height());
-  m_pDeviceDriver->SetDIBits(std::move(bitmap), /*color=*/0, src_rect,
-                             rect.left, rect.top, BlendMode::kNormal);
+  (void)m_pDeviceDriver->SetDIBits(std::move(bitmap), /*color=*/0, src_rect,
+                                   rect.left, rect.top, BlendMode::kNormal);
   return true;
 }
 
@@ -875,8 +876,8 @@ void CFX_RenderDevice::DrawZeroAreaPath(
   path_options.zero_area = true;
   path_options.aliased_path = aliased_path;
 
-  m_pDeviceDriver->DrawPath(new_path, new_matrix, &graph_state, 0, stroke_color,
-                            path_options);
+  (void)m_pDeviceDriver->DrawPath(new_path, new_matrix, &graph_state, 0,
+                                  stroke_color, path_options);
 }
 
 bool CFX_RenderDevice::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
@@ -1247,9 +1248,10 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
   }
 
   if (bitmap->IsMaskFormat()) {
-    SetBitMask(std::move(bitmap), bmp_rect.left, bmp_rect.top, fill_color);
+    (void)SetBitMask(std::move(bitmap), bmp_rect.left, bmp_rect.top,
+                     fill_color);
   } else {
-    SetDIBits(std::move(bitmap), bmp_rect.left, bmp_rect.top);
+    (void)SetDIBits(std::move(bitmap), bmp_rect.left, bmp_rect.top);
   }
   return true;
 }
@@ -1300,8 +1302,8 @@ void CFX_RenderDevice::DrawFillRect(const CFX_Matrix* pUser2Device,
                                     const FX_COLORREF& color) {
   CFX_Path path;
   path.AppendFloatRect(rect);
-  DrawPath(path, pUser2Device, nullptr, color, 0,
-           CFX_FillRenderOptions::WindingOptions());
+  (void)DrawPath(path, pUser2Device, nullptr, color, 0,
+                 CFX_FillRenderOptions::WindingOptions());
 }
 
 void CFX_RenderDevice::DrawFillArea(const CFX_Matrix& mtUser2Device,
@@ -1313,8 +1315,8 @@ void CFX_RenderDevice::DrawFillArea(const CFX_Matrix& mtUser2Device,
   for (size_t i = 1; i < points.size(); ++i)
     path.AppendPoint(points[i], CFX_Path::Point::Type::kLine);
 
-  DrawPath(path, &mtUser2Device, nullptr, color, 0,
-           CFX_FillRenderOptions::EvenOddOptions());
+  (void)DrawPath(path, &mtUser2Device, nullptr, color, 0,
+                 CFX_FillRenderOptions::EvenOddOptions());
 }
 
 void CFX_RenderDevice::DrawStrokeRect(const CFX_Matrix& mtUser2Device,
@@ -1326,8 +1328,8 @@ void CFX_RenderDevice::DrawStrokeRect(const CFX_Matrix& mtUser2Device,
 
   CFX_Path path;
   path.AppendFloatRect(rect);
-  DrawPath(path, &mtUser2Device, &gsd, 0, color,
-           CFX_FillRenderOptions::EvenOddOptions());
+  (void)DrawPath(path, &mtUser2Device, &gsd, 0, color,
+                 CFX_FillRenderOptions::EvenOddOptions());
 }
 
 void CFX_RenderDevice::DrawStrokeLine(const CFX_Matrix* pUser2Device,
@@ -1342,8 +1344,8 @@ void CFX_RenderDevice::DrawStrokeLine(const CFX_Matrix* pUser2Device,
   CFX_GraphStateData gsd;
   gsd.set_line_width(fWidth);
 
-  DrawPath(path, pUser2Device, &gsd, 0, color,
-           CFX_FillRenderOptions::EvenOddOptions());
+  (void)DrawPath(path, pUser2Device, &gsd, 0, color,
+                 CFX_FillRenderOptions::EvenOddOptions());
 }
 
 void CFX_RenderDevice::DrawFillRect(const CFX_Matrix* pUser2Device,
@@ -1399,8 +1401,9 @@ void CFX_RenderDevice::DrawBorder(const CFX_Matrix* pUser2Device,
       path.AppendRect(fLeft, fBottom, fRight, fTop);
       path.AppendRect(fLeft + fWidth, fBottom + fWidth, fRight - fWidth,
                       fTop - fWidth);
-      DrawPath(path, pUser2Device, nullptr, color.ToFXColor(nTransparency), 0,
-               CFX_FillRenderOptions::EvenOddOptions());
+      (void)DrawPath(path, pUser2Device, nullptr,
+                     color.ToFXColor(nTransparency), 0,
+                     CFX_FillRenderOptions::EvenOddOptions());
       break;
     }
     case BorderStyle::kDash: {
@@ -1419,8 +1422,9 @@ void CFX_RenderDevice::DrawBorder(const CFX_Matrix* pUser2Device,
                        CFX_Path::Point::Type::kLine);
       path.AppendPoint(CFX_PointF(fLeft + fHalfWidth, fBottom + fHalfWidth),
                        CFX_Path::Point::Type::kLine);
-      DrawPath(path, pUser2Device, &gsd, 0, color.ToFXColor(nTransparency),
-               CFX_FillRenderOptions::WindingOptions());
+      (void)DrawPath(path, pUser2Device, &gsd, 0,
+                     color.ToFXColor(nTransparency),
+                     CFX_FillRenderOptions::WindingOptions());
       break;
     }
     case BorderStyle::kBeveled:
@@ -1447,9 +1451,9 @@ void CFX_RenderDevice::DrawBorder(const CFX_Matrix* pUser2Device,
       path_left_top.AppendPoint(
           CFX_PointF(fLeft + fHalfWidth, fBottom + fHalfWidth),
           CFX_Path::Point::Type::kLine);
-      DrawPath(path_left_top, pUser2Device, &gsd,
-               crLeftTop.ToFXColor(nTransparency), 0,
-               CFX_FillRenderOptions::EvenOddOptions());
+      (void)DrawPath(path_left_top, pUser2Device, &gsd,
+                     crLeftTop.ToFXColor(nTransparency), 0,
+                     CFX_FillRenderOptions::EvenOddOptions());
 
       CFX_Path path_right_bottom;
       path_right_bottom.AppendPoint(
@@ -1472,16 +1476,16 @@ void CFX_RenderDevice::DrawBorder(const CFX_Matrix* pUser2Device,
       path_right_bottom.AppendPoint(
           CFX_PointF(fRight - fHalfWidth, fTop - fHalfWidth),
           CFX_Path::Point::Type::kLine);
-      DrawPath(path_right_bottom, pUser2Device, &gsd,
-               crRightBottom.ToFXColor(nTransparency), 0,
-               CFX_FillRenderOptions::EvenOddOptions());
+      (void)DrawPath(path_right_bottom, pUser2Device, &gsd,
+                     crRightBottom.ToFXColor(nTransparency), 0,
+                     CFX_FillRenderOptions::EvenOddOptions());
 
       CFX_Path path;
       path.AppendRect(fLeft, fBottom, fRight, fTop);
       path.AppendRect(fLeft + fHalfWidth, fBottom + fHalfWidth,
                       fRight - fHalfWidth, fTop - fHalfWidth);
-      DrawPath(path, pUser2Device, &gsd, color.ToFXColor(nTransparency), 0,
-               CFX_FillRenderOptions::EvenOddOptions());
+      (void)DrawPath(path, pUser2Device, &gsd, color.ToFXColor(nTransparency),
+                     0, CFX_FillRenderOptions::EvenOddOptions());
       break;
     }
     case BorderStyle::kUnderline: {
@@ -1493,8 +1497,9 @@ void CFX_RenderDevice::DrawBorder(const CFX_Matrix* pUser2Device,
                        CFX_Path::Point::Type::kMove);
       path.AppendPoint(CFX_PointF(fRight, fBottom + fHalfWidth),
                        CFX_Path::Point::Type::kLine);
-      DrawPath(path, pUser2Device, &gsd, 0, color.ToFXColor(nTransparency),
-               CFX_FillRenderOptions::EvenOddOptions());
+      (void)DrawPath(path, pUser2Device, &gsd, 0,
+                     color.ToFXColor(nTransparency),
+                     CFX_FillRenderOptions::EvenOddOptions());
       break;
     }
   }

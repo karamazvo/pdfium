@@ -1203,16 +1203,17 @@ bool CFX_AggDeviceDriver::FillRect(const FX_RECT& rect, uint32_t fill_color) {
                                 draw_rect.Width(), draw_rect.Height(),
                                 fill_color);
     } else {
-      m_pBitmap->CompositeRect(draw_rect.left, draw_rect.top, draw_rect.Width(),
-                               draw_rect.Height(), fill_color);
+      (void)m_pBitmap->CompositeRect(draw_rect.left, draw_rect.top,
+                                     draw_rect.Width(), draw_rect.Height(),
+                                     fill_color);
     }
     return true;
   }
-  m_pBitmap->CompositeMask(draw_rect.left, draw_rect.top, draw_rect.Width(),
-                           draw_rect.Height(), m_pClipRgn->GetMask(),
-                           fill_color, draw_rect.left - clip_rect.left,
-                           draw_rect.top - clip_rect.top, BlendMode::kNormal,
-                           nullptr, m_bRgbByteOrder);
+  (void)m_pBitmap->CompositeMask(
+      draw_rect.left, draw_rect.top, draw_rect.Width(), draw_rect.Height(),
+      m_pClipRgn->GetMask(), fill_color, draw_rect.left - clip_rect.left,
+      draw_rect.top - clip_rect.top, BlendMode::kNormal, nullptr,
+      m_bRgbByteOrder);
   return true;
 }
 
@@ -1237,8 +1238,9 @@ bool CFX_AggDeviceDriver::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
     if (!pBack)
       return true;
 
-    pBack->CompositeBitmap(0, 0, pBack->GetWidth(), pBack->GetHeight(),
-                           m_pBitmap, 0, 0, BlendMode::kNormal, nullptr, false);
+    (void)pBack->CompositeBitmap(0, 0, pBack->GetWidth(), pBack->GetHeight(),
+                                 m_pBitmap, 0, 0, BlendMode::kNormal, nullptr,
+                                 false);
   } else {
     pBack = m_pBitmap->ClipTo(rect);
     if (!pBack)
@@ -1311,7 +1313,7 @@ bool CFX_AggDeviceDriver::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
   CFX_ImageStretcher stretcher(&composer, std::move(bitmap), dest_width,
                                dest_height, dest_clip, options);
   if (stretcher.Start())
-    stretcher.Continue(nullptr);
+    (void)stretcher.Continue(nullptr);
   return true;
 }
 

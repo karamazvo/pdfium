@@ -549,7 +549,7 @@ RetainPtr<CFX_Face> LoadFace(
     ft_sfree(ftStream);
     return nullptr;
   }
-  pFace->SetPixelSize(0, 64);
+  (void)pFace->SetPixelSize(0, 64);
   return pFace;
 }
 

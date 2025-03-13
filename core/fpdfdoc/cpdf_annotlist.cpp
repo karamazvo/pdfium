@@ -249,8 +249,8 @@ void CPDF_AnnotList::DisplayPass(CPDF_RenderContext* pContext,
     if (!bPrinting && (annot_flags & pdfium::annotation_flags::kNoView))
       continue;
 
-    pAnnot->DrawInContext(m_pPage, pContext, mtMatrix,
-                          CPDF_Annot::AppearanceMode::kNormal);
+    (void)pAnnot->DrawInContext(m_pPage, pContext, mtMatrix,
+                                CPDF_Annot::AppearanceMode::kNormal);
   }
 }
 

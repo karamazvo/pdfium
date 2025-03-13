@@ -102,7 +102,7 @@ v8::Local<v8::Array> NewArrayHelper(v8::Isolate* pIsolate,
                                     pdfium::span<v8::Local<v8::Value>> values) {
   v8::Local<v8::Array> result = NewArrayHelper(pIsolate);
   for (size_t i = 0; i < values.size(); ++i) {
-    fxv8::ReentrantPutArrayElementHelper(
+    (void)fxv8::ReentrantPutArrayElementHelper(
         pIsolate, result, i,
         values[i].IsEmpty() ? fxv8::NewUndefinedHelper(pIsolate) : values[i]);
   }

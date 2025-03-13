@@ -58,8 +58,8 @@ void CXFA_FFText::RenderWidget(CFGAS_GEGraphics* pGS,
   CFX_Matrix mt(1, 0, 0, 1, rtText.left, rtText.top);
   CFX_RectF rtClip = mtRotate.TransformRect(rtText);
   mt.Concat(mtRotate);
-  pTextLayout->DrawString(pRenderDevice, mt, rtClip,
-                          GetLayoutItem()->GetIndex());
+  (void)pTextLayout->DrawString(pRenderDevice, mt, rtClip,
+                                GetLayoutItem()->GetIndex());
 }
 
 bool CXFA_FFText::IsLoaded() {
@@ -68,7 +68,7 @@ bool CXFA_FFText::IsLoaded() {
 }
 
 bool CXFA_FFText::PerformLayout() {
-  CXFA_FFWidget::PerformLayout();
+  (void)CXFA_FFWidget::PerformLayout();
   CXFA_TextLayout* pTextLayout = m_pNode->GetTextLayout();
   if (!pTextLayout)
     return false;

@@ -231,7 +231,7 @@ CFX_DateTime CXFA_LocaleValue::GetDate() const {
     return CFX_DateTime();
 
   CFX_DateTime dt;
-  FX_DateFromCanonical(m_wsValue.span(), &dt);
+  (void)FX_DateFromCanonical(m_wsValue.span(), &dt);
   return dt;
 }
 
@@ -240,7 +240,8 @@ CFX_DateTime CXFA_LocaleValue::GetTime() const {
     return CFX_DateTime();
 
   CFX_DateTime dt;
-  FX_TimeFromCanonical(m_pLocaleMgr->GetDefLocale(), m_wsValue.span(), &dt);
+  (void)FX_TimeFromCanonical(m_pLocaleMgr->GetDefLocale(), m_wsValue.span(),
+                             &dt);
   return dt;
 }
 
@@ -605,7 +606,7 @@ bool CXFA_LocaleValue::ParsePatternValue(const WideString& wsValue,
               &dt);
         }
         if (bRet)
-          SetDate(dt);
+          (void)SetDate(dt);
         break;
       }
       case CFGAS_StringFormatter::Category::kTime: {
@@ -614,7 +615,7 @@ bool CXFA_LocaleValue::ParsePatternValue(const WideString& wsValue,
             m_pLocaleMgr, wsValue, CFGAS_StringFormatter::DateTimeType::kTime,
             &dt);
         if (bRet)
-          SetTime(dt);
+          (void)SetTime(dt);
         break;
       }
       case CFGAS_StringFormatter::Category::kDateTime: {
@@ -623,7 +624,7 @@ bool CXFA_LocaleValue::ParsePatternValue(const WideString& wsValue,
             m_pLocaleMgr, wsValue,
             CFGAS_StringFormatter::DateTimeType::kDateTime, &dt);
         if (bRet)
-          SetDateTime(dt);
+          (void)SetDateTime(dt);
         break;
       }
       default:

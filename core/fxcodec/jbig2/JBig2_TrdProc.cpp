@@ -212,7 +212,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
 
       int32_t SI = CURS.ValueOrDie();
       ComposeData compose = GetComposeData(SI, TI, WI, HI);
-      IBI.Get()->ComposeTo(SBREG.get(), compose.x, compose.y, SBCOMBOP);
+      (void)IBI.Get()->ComposeTo(SBREG.get(), compose.x, compose.y, SBCOMBOP);
       if (compose.increment)
         CURS += compose.increment;
       ++NINSTANCES;
@@ -289,7 +289,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeArith(
     for (;;) {
       if (bFirst) {
         int32_t DFS;
-        pIAFS->Decode(pArithDecoder, &DFS);
+        (void)pIAFS->Decode(pArithDecoder, &DFS);
         FIRSTS += DFS;
         CURS = FIRSTS;
         bFirst = false;
@@ -306,7 +306,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeArith(
 
       int CURT = 0;
       if (SBSTRIPS != 1)
-        pIAIT->Decode(pArithDecoder, &CURT);
+        (void)pIAIT->Decode(pArithDecoder, &CURT);
 
       FX_SAFE_INT32 SAFE_TI = STRIPT + CURT;
       if (!SAFE_TI.IsValid())
@@ -322,7 +322,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeArith(
       if (SBREFINE == 0)
         RI = 0;
       else
-        pIARI->Decode(pArithDecoder, &RI);
+        (void)pIARI->Decode(pArithDecoder, &RI);
 
       MaybeOwned<CJBig2_Image> pIBI;
       if (RI == 0) {
@@ -332,10 +332,10 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeArith(
         int32_t RDHI;
         int32_t RDXI;
         int32_t RDYI;
-        pIARDW->Decode(pArithDecoder, &RDWI);
-        pIARDH->Decode(pArithDecoder, &RDHI);
-        pIARDX->Decode(pArithDecoder, &RDXI);
-        pIARDY->Decode(pArithDecoder, &RDYI);
+        (void)pIARDW->Decode(pArithDecoder, &RDWI);
+        (void)pIARDH->Decode(pArithDecoder, &RDHI);
+        (void)pIARDX->Decode(pArithDecoder, &RDXI);
+        (void)pIARDY->Decode(pArithDecoder, &RDYI);
         CJBig2_Image* IBOI = UNSAFE_TODO(SBSYMS[IDI]);
         if (!IBOI)
           return nullptr;
@@ -383,7 +383,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeArith(
 
       int32_t SI = CURS.ValueOrDie();
       ComposeData compose = GetComposeData(SI, TI, WI, HI);
-      pIBI.Get()->ComposeTo(SBREG.get(), compose.x, compose.y, SBCOMBOP);
+      (void)pIBI.Get()->ComposeTo(SBREG.get(), compose.x, compose.y, SBCOMBOP);
       if (compose.increment)
         CURS += compose.increment;
       ++NINSTANCES;

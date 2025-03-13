@@ -246,7 +246,7 @@ RetainPtr<CPDF_Stream> CPDF_NPageToOneExporter::MakeXObjectFromPageRaw(
   uint32_t src_page_obj_num = src_page_dict->GetObjNum();
   uint32_t new_xobject_obj_num = new_xobject_dict->GetObjNum();
   AddObjectMapping(src_page_obj_num, new_xobject_obj_num);
-  UpdateReference(new_xobject_dict);
+  (void)UpdateReference(new_xobject_dict);
   new_xobject_dict->SetNewFor<CPDF_Name>("Type", "XObject");
   new_xobject_dict->SetNewFor<CPDF_Name>("Subtype", "Form");
   new_xobject_dict->SetNewFor<CPDF_Number>("FormType", 1);

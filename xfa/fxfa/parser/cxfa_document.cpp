@@ -1890,7 +1890,7 @@ void CXFA_Document::SetPendingNodesUnusedAndUnbound() {
       if (pNode->IsContainerNode()) {
         CXFA_Node* pBindNode = pNode->GetBindData();
         if (pBindNode) {
-          pBindNode->RemoveBindItem(pNode);
+          (void)pBindNode->RemoveBindItem(pNode);
           pNode->SetBindingNode(nullptr);
         }
       }
