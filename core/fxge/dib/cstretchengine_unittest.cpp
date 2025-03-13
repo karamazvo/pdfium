@@ -76,7 +76,7 @@ TEST(CStretchEngine, OverflowInCtor) {
   RetainPtr<CPDF_Stream> stream =
       pdfium::MakeRetain<CPDF_Stream>(std::move(dict_obj));
   auto dib_source = pdfium::MakeRetain<CPDF_DIB>(nullptr, stream);
-  dib_source->Load();
+  ASSERT_TRUE(dib_source->Load());
   CStretchEngine engine(nullptr, FXDIB_Format::k8bppRgb, 500, 500, clip_rect,
                         dib_source, FXDIB_ResampleOptions());
   EXPECT_TRUE(engine.GetResampleOptionsForTest().bInterpolateBilinear);
