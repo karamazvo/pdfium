@@ -14,7 +14,7 @@ namespace {
 
 float DoOperator0(CPDF_PSEngine* engine, PDF_PSOP op) {
   EXPECT_EQ(0u, engine->GetStackSize());
-  engine->DoOperator(op);
+  (void)engine->DoOperator(op);
   float ret = engine->Pop();
   EXPECT_EQ(0u, engine->GetStackSize());
   return ret;
@@ -23,7 +23,7 @@ float DoOperator0(CPDF_PSEngine* engine, PDF_PSOP op) {
 float DoOperator1(CPDF_PSEngine* engine, float v1, PDF_PSOP op) {
   EXPECT_EQ(0u, engine->GetStackSize());
   engine->Push(v1);
-  engine->DoOperator(op);
+  (void)engine->DoOperator(op);
   float ret = engine->Pop();
   EXPECT_EQ(0u, engine->GetStackSize());
   return ret;
@@ -33,7 +33,7 @@ float DoOperator2(CPDF_PSEngine* engine, float v1, float v2, PDF_PSOP op) {
   EXPECT_EQ(0u, engine->GetStackSize());
   engine->Push(v1);
   engine->Push(v2);
-  engine->DoOperator(op);
+  (void)engine->DoOperator(op);
   float ret = engine->Pop();
   EXPECT_EQ(0u, engine->GetStackSize());
   return ret;
