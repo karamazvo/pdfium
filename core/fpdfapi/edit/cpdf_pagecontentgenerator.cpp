@@ -450,8 +450,7 @@ ByteString CPDF_PageContentGenerator::RealizeResource(
   }
 }
 
-bool CPDF_PageContentGenerator::ProcessPageObjects(fxcrt::ostringstream* buf) {
-  bool bDirty = false;
+void CPDF_PageContentGenerator::ProcessPageObjects(fxcrt::ostringstream* buf) {
   std::unique_ptr<const CPDF_ContentMarks> empty_content_marks =
       std::make_unique<CPDF_ContentMarks>();
   const CPDF_ContentMarks* content_marks = empty_content_marks.get();
@@ -462,12 +461,10 @@ bool CPDF_PageContentGenerator::ProcessPageObjects(fxcrt::ostringstream* buf) {
       continue;
     }
 
-    bDirty = true;
     content_marks = ProcessContentMarks(buf, pPageObj, content_marks);
     ProcessPageObject(buf, pPageObj);
   }
   FinishMarks(buf, content_marks);
-  return bDirty;
 }
 
 void CPDF_PageContentGenerator::UpdateStreamlessPageObjects(
