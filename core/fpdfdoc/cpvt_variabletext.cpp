@@ -19,6 +19,7 @@
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/stl_util.h"
 
 namespace {
@@ -768,27 +769,38 @@ void CPVT_VariableText::Rearrange(const CPVT_WordRange& PlaceRange) {
 }
 
 float CPVT_VariableText::GetAutoFontSize() {
-  int32_t nTotal = sizeof(kFontSizeSteps) / sizeof(uint8_t);
+  size_t nTotal = kFontSizeSteps.size();
   if (IsMultiLine())
     nTotal /= 4;
-  if (nTotal <= 0)
-    return 0;
-  if (GetPlateWidth() <= 0)
-    return 0;
 
-  // TODO(tsepez): replace with std::lower_bound().
-  int32_t nLeft = 0;
-  int32_t nRight = nTotal - 1;
-  int32_t nMid = nTotal / 2;
-  while (nLeft <= nRight) {
-    if (IsBigger(kFontSizeSteps[nMid])) {
-      nRight = nMid - 1;
-    } else {
-      nLeft = nMid + 1;
-    }
-    nMid = (nLeft + nRight) / 2;
+  // SAFETY: kFontSizeSteps is a fixed-size constexpr array
+  UNSAFE_BUFFERS(auto font_span = pdfium::make_span(kFontSizeSteps.data(),
+                                                    kFontSizeSteps.size())
+                                      .first(nTotal));
+
+  if (font_span.empty() || GetPlateWidth() <= 0) {
+    return 0;
   }
-  return static_cast<float>(kFontSizeSteps[nMid]);
+
+  CHECK(!font_span.empty());
+
+  // SAFETY: Iterators are within font_span bounds
+  UNSAFE_BUFFERS(
+      auto it = std::lower_bound(
+          font_span.begin(), font_span.end(), true,
+          [this](uint8_t fontSize, bool) { return !IsBigger(fontSize); }));
+
+  if (it == font_span.end()) {
+    return static_cast<float>(font_span.back());
+  }
+
+  if (it == font_span.begin()) {
+    return static_cast<float>(*it);
+  }
+
+  // SAFETY: it > begin guaranteed here, use span's safe access
+  UNSAFE_BUFFERS(
+      return static_cast<float>(font_span[it - font_span.begin() - 1]));
 }
 
 bool CPVT_VariableText::IsBigger(float fFontSize) const {
