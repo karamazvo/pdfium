@@ -66,7 +66,7 @@ class RenderDeviceDriverIface {
   virtual void RestoreState(bool bKeepSaved) = 0;
 
   virtual void SetBaseClip(const FX_RECT& rect);
-  virtual bool SetClip_PathFill(const CFX_Path& path,
+  virtual void SetClip_PathFill(const CFX_Path& path,
                                 const CFX_Matrix* pObject2Device,
                                 const CFX_FillRenderOptions& fill_options) = 0;
   virtual bool SetClip_PathStroke(const CFX_Path& path,
