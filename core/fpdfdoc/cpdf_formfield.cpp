@@ -518,15 +518,15 @@ bool CPDF_FormField::IsItemSelected(int index) const {
                                : IsSelectedOption(GetOptionValue(index));
 }
 
-bool CPDF_FormField::SetItemSelection(int index, NotificationOption notify) {
+void CPDF_FormField::SetItemSelection(int index, NotificationOption notify) {
   CHECK(IsComboOrListField(GetType()));
   if (index < 0 || index >= CountOptions()) {
-    return false;
+    return;
   }
   WideString opt_value = GetOptionValue(index);
   if (notify == NotificationOption::kNotify &&
       !NotifyListOrComboBoxBeforeChange(opt_value)) {
-    return false;
+    return;
   }
 
   SetItemSelectionSelected(index, opt_value);
@@ -538,7 +538,6 @@ bool CPDF_FormField::SetItemSelection(int index, NotificationOption notify) {
 
   if (notify == NotificationOption::kNotify)
     NotifyListOrComboBoxAfterChange();
-  return true;
 }
 
 void CPDF_FormField::SetItemSelectionSelected(int index,
