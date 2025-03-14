@@ -410,12 +410,12 @@ size_t CPDF_Annot::QuadPointCount(const CPDF_Array* pArray) {
   return pArray->size() / 8;
 }
 
-bool CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
+void CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
                                 CFX_RenderDevice* pDevice,
                                 const CFX_Matrix& mtUser2Device,
                                 AppearanceMode mode) {
   if (!ShouldDrawAnnotation())
-    return false;
+    return;
 
   // It might happen that by the time this annotation instance was created,
   // it was flagged as "hidden" (e.g. /F 2), and hence CPDF_GenerateAP decided
@@ -427,22 +427,21 @@ bool CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
   CFX_Matrix matrix;
   CPDF_Form* pForm = AnnotGetMatrix(pPage, this, mode, mtUser2Device, &matrix);
   if (!pForm)
-    return false;
+    return;
 
   CPDF_RenderContext context(pPage->GetDocument(),
                              pPage->GetMutablePageResources(),
                              pPage->GetPageImageCache());
   context.AppendLayer(pForm, matrix);
   context.Render(pDevice, nullptr, nullptr, nullptr);
-  return true;
 }
 
-bool CPDF_Annot::DrawInContext(CPDF_Page* pPage,
+void CPDF_Annot::DrawInContext(CPDF_Page* pPage,
                                CPDF_RenderContext* pContext,
                                const CFX_Matrix& mtUser2Device,
                                AppearanceMode mode) {
   if (!ShouldDrawAnnotation())
-    return false;
+    return;
 
   // It might happen that by the time this annotation instance was created,
   // it was flagged as "hidden" (e.g. /F 2), and hence CPDF_GenerateAP decided
@@ -454,10 +453,9 @@ bool CPDF_Annot::DrawInContext(CPDF_Page* pPage,
   CFX_Matrix matrix;
   CPDF_Form* pForm = AnnotGetMatrix(pPage, this, mode, mtUser2Device, &matrix);
   if (!pForm)
-    return false;
+    return;
 
   pContext->AppendLayer(pForm, matrix);
-  return true;
 }
 
 void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,

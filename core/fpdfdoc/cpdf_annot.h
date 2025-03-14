@@ -85,11 +85,11 @@ class CPDF_Annot {
 
   bool IsHidden() const;
 
-  bool DrawAppearance(CPDF_Page* pPage,
+  void DrawAppearance(CPDF_Page* pPage,
                       CFX_RenderDevice* pDevice,
                       const CFX_Matrix& mtUser2Device,
                       AppearanceMode mode);
-  bool DrawInContext(CPDF_Page* pPage,
+  void DrawInContext(CPDF_Page* pPage,
                      CPDF_RenderContext* pContext,
                      const CFX_Matrix& mtUser2Device,
                      AppearanceMode mode);
