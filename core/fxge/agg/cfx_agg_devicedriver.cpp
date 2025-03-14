@@ -1039,7 +1039,7 @@ void CFX_AggDeviceDriver::SetClipMask(agg::rasterizer_scanline_aa& rasterizer) {
                              std::move(pThisLayer));
 }
 
-bool CFX_AggDeviceDriver::SetClip_PathFill(
+void CFX_AggDeviceDriver::SetClip_PathFill(
     const CFX_Path& path,
     const CFX_Matrix* pObject2Device,
     const CFX_FillRenderOptions& fill_options) {
@@ -1058,7 +1058,7 @@ bool CFX_AggDeviceDriver::SetClip_PathFill(
                       static_cast<float>(GetDeviceCaps(FXDC_PIXEL_HEIGHT))));
     FX_RECT rect = rectf.GetOuterRect();
     m_pClipRgn->IntersectRect(rect);
-    return true;
+    return;
   }
   agg::path_storage path_data = BuildAggPath(path, pObject2Device);
   path_data.end_poly();
@@ -1069,7 +1069,7 @@ bool CFX_AggDeviceDriver::SetClip_PathFill(
   rasterizer.add_path(path_data);
   rasterizer.filling_rule(GetAlternateOrWindingFillType(fill_options));
   SetClipMask(rasterizer);
-  return true;
+  return;
 }
 
 bool CFX_AggDeviceDriver::SetClip_PathStroke(

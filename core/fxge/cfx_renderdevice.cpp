@@ -567,9 +567,7 @@ bool CFX_RenderDevice::SetClip_PathFill(
     const CFX_Path& path,
     const CFX_Matrix* pObject2Device,
     const CFX_FillRenderOptions& fill_options) {
-  if (!m_pDeviceDriver->SetClip_PathFill(path, pObject2Device, fill_options))
-    return false;
-
+  m_pDeviceDriver->SetClip_PathFill(path, pObject2Device, fill_options);
   UpdateClipBox();
   return true;
 }

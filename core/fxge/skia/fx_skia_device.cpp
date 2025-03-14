@@ -1035,7 +1035,7 @@ void CFX_SkiaDeviceDriver::RestoreState(bool bKeepSaved) {
   }
 }
 
-bool CFX_SkiaDeviceDriver::SetClip_PathFill(
+void CFX_SkiaDeviceDriver::SetClip_PathFill(
     const CFX_Path& path,              // path info
     const CFX_Matrix* pObject2Device,  // flips object's y-axis
     const CFX_FillRenderOptions& fill_options) {
@@ -1065,7 +1065,6 @@ bool CFX_SkiaDeviceDriver::SetClip_PathFill(
   }
   m_pCanvas->clipPath(skClipPath, SkClipOp::kIntersect, true);
   DebugShowCanvasClip(this, m_pCanvas);
-  return true;
 }
 
 bool CFX_SkiaDeviceDriver::SetClip_PathStroke(
