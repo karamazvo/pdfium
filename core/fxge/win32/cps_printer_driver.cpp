@@ -126,12 +126,11 @@ void CPSPrinterDriver::RestoreState(bool bKeepSaved) {
   m_PSRenderer.RestoreState(bKeepSaved);
 }
 
-bool CPSPrinterDriver::SetClip_PathFill(
+void CPSPrinterDriver::SetClip_PathFill(
     const CFX_Path& path,
     const CFX_Matrix* pObject2Device,
     const CFX_FillRenderOptions& fill_options) {
   m_PSRenderer.SetClip_PathFill(path, pObject2Device, fill_options);
-  return true;
 }
 
 bool CPSPrinterDriver::SetClip_PathStroke(

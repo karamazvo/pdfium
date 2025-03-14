@@ -27,7 +27,7 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
   void SaveState() override;
   void RestoreState(bool bKeepSaved) override;
   void SetBaseClip(const FX_RECT& rect) override;
-  bool SetClip_PathFill(const CFX_Path& path,
+  void SetClip_PathFill(const CFX_Path& path,
                         const CFX_Matrix* pObject2Device,
                         const CFX_FillRenderOptions& fill_options) override;
   bool SetClip_PathStroke(const CFX_Path& path,

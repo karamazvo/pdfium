@@ -719,7 +719,7 @@ void CGdiDeviceDriver::SetBaseClip(const FX_RECT& rect) {
   m_BaseClipBox = rect;
 }
 
-bool CGdiDeviceDriver::SetClip_PathFill(
+void CGdiDeviceDriver::SetClip_PathFill(
     const CFX_Path& path,
     const CFX_Matrix* pMatrix,
     const CFX_FillRenderOptions& fill_options) {
@@ -728,15 +728,15 @@ bool CGdiDeviceDriver::SetClip_PathFill(
     FX_RECT rect = maybe_rectf.value().GetOuterRect();
     // Can easily apply base clip to protect against wildly large rectangular
     // clips. crbug.com/1019026
-    if (m_BaseClipBox.has_value())
+    if (m_BaseClipBox.has_value()) {
       rect.Intersect(m_BaseClipBox.value());
-    return IntersectClipRect(m_hDC, rect.left, rect.top, rect.right,
-                             rect.bottom) != ERROR;
+    }
+    IntersectClipRect(m_hDC, rect.left, rect.top, rect.right, rect.bottom);
+    return;
   }
   SetPathToDC(m_hDC, path, pMatrix);
   SetPolyFillMode(m_hDC, FillTypeToGdiFillType(fill_options.fill_type));
   SelectClipPath(m_hDC, RGN_AND);
-  return true;
 }
 
 bool CGdiDeviceDriver::SetClip_PathStroke(

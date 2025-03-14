@@ -51,7 +51,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
   int GetDeviceCaps(int caps_id) const override;
   void SaveState() override;
   void RestoreState(bool bKeepSaved) override;
-  bool SetClip_PathFill(const CFX_Path& path,
+  void SetClip_PathFill(const CFX_Path& path,
                         const CFX_Matrix* pObject2Device,
                         const CFX_FillRenderOptions& fill_options) override;
   bool SetClip_PathStroke(const CFX_Path& path,
