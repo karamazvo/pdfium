@@ -658,26 +658,25 @@ void CPDFSDK_FormFillEnvironment::ProcJavascriptAction() {
   }
 }
 
-bool CPDFSDK_FormFillEnvironment::ProcOpenAction() {
+void CPDFSDK_FormFillEnvironment::ProcOpenAction() {
   const CPDF_Dictionary* pRoot = m_pCPDFDoc->GetRoot();
   if (!pRoot)
-    return false;
+    return;
 
   RetainPtr<const CPDF_Object> pOpenAction(pRoot->GetDictFor("OpenAction"));
   if (!pOpenAction)
     pOpenAction = pRoot->GetArrayFor("OpenAction");
   if (!pOpenAction)
-    return false;
+    return;
 
   if (pOpenAction->IsArray())
-    return true;
+    return;
 
   RetainPtr<const CPDF_Dictionary> pDict = ToDictionary(pOpenAction);
   if (!pDict)
-    return false;
+    return;
 
   DoActionDocOpen(CPDF_Action(std::move(pDict)));
-  return true;
 }
 
 void CPDFSDK_FormFillEnvironment::RemovePageView(IPDF_Page* pUnderlyingPage) {
@@ -898,18 +897,18 @@ bool CPDFSDK_FormFillEnvironment::DoActionDestination(const CPDF_Dest& dest) {
   return true;
 }
 
-bool CPDFSDK_FormFillEnvironment::DoActionPage(
+void CPDFSDK_FormFillEnvironment::DoActionPage(
     const CPDF_Action& action,
     CPDF_AAction::AActionType eType) {
   std::set<const CPDF_Dictionary*> visited;
-  return ExecuteDocumentPageAction(action, eType, &visited);
+  (void)ExecuteDocumentPageAction(action, eType, &visited);
 }
 
-bool CPDFSDK_FormFillEnvironment::DoActionDocument(
+void CPDFSDK_FormFillEnvironment::DoActionDocument(
     const CPDF_Action& action,
     CPDF_AAction::AActionType eType) {
   std::set<const CPDF_Dictionary*> visited;
-  return ExecuteDocumentPageAction(action, eType, &visited);
+  (void)ExecuteDocumentPageAction(action, eType, &visited);
 }
 
 bool CPDFSDK_FormFillEnvironment::DoActionField(const CPDF_Action& action,

@@ -99,7 +99,7 @@ class CPDFSDK_FormFillEnvironment final
   void ClearChangeMark() { m_bChangeMask = false; }
 
   void ProcJavascriptAction();
-  bool ProcOpenAction();
+  void ProcOpenAction();
 
   void ExecuteNamedAction(const ByteString& namedAction);
   void DoURIAction(const ByteString& bsURI, Mask<FWL_EVENTFLAG> modifiers);
@@ -120,8 +120,8 @@ class CPDFSDK_FormFillEnvironment final
   // Actions.
   bool DoActionDocOpen(const CPDF_Action& action);
   bool DoActionJavaScript(const CPDF_Action& JsAction, WideString csJSName);
-  bool DoActionPage(const CPDF_Action& action, CPDF_AAction::AActionType eType);
-  bool DoActionDocument(const CPDF_Action& action,
+  void DoActionPage(const CPDF_Action& action, CPDF_AAction::AActionType eType);
+  void DoActionDocument(const CPDF_Action& action,
                         CPDF_AAction::AActionType eType);
   bool DoActionField(const CPDF_Action& action,
                      CPDF_AAction::AActionType type,
