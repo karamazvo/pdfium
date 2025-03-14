@@ -62,8 +62,8 @@ class CJBig2_Image {
   void CopyLine(int32_t hTo, int32_t hFrom);
   void Fill(bool v);
 
-  bool ComposeFrom(int32_t x, int32_t y, CJBig2_Image* pSrc, JBig2ComposeOp op);
-  bool ComposeFromWithRect(int32_t x,
+  void ComposeFrom(int32_t x, int32_t y, CJBig2_Image* pSrc, JBig2ComposeOp op);
+  void ComposeFromWithRect(int32_t x,
                            int32_t y,
                            CJBig2_Image* pSrc,
                            const FX_RECT& rtSrc,

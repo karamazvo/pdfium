@@ -179,19 +179,23 @@ bool CJBig2_Image::ComposeToWithRect(CJBig2_Image* pDst,
   return m_pData && ComposeToInternal(pDst, x, y, op, rtSrc);
 }
 
-bool CJBig2_Image::ComposeFrom(int32_t x,
+void CJBig2_Image::ComposeFrom(int32_t x,
                                int32_t y,
                                CJBig2_Image* pSrc,
                                JBig2ComposeOp op) {
-  return m_pData && pSrc->ComposeTo(this, x, y, op);
+  if (m_pData) {
+    pSrc->ComposeTo(this, x, y, op);
+  }
 }
 
-bool CJBig2_Image::ComposeFromWithRect(int32_t x,
+void CJBig2_Image::ComposeFromWithRect(int32_t x,
                                        int32_t y,
                                        CJBig2_Image* pSrc,
                                        const FX_RECT& rtSrc,
                                        JBig2ComposeOp op) {
-  return m_pData && pSrc->ComposeToWithRect(this, x, y, rtSrc, op);
+  if (m_pData) {
+    pSrc->ComposeToWithRect(this, x, y, rtSrc, op);
+  }
 }
 
 std::unique_ptr<CJBig2_Image> CJBig2_Image::SubImage(int32_t x,
