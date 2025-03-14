@@ -518,15 +518,15 @@ bool CPDF_FormField::IsItemSelected(int index) const {
                                : IsSelectedOption(GetOptionValue(index));
 }
 
-bool CPDF_FormField::SetItemSelection(int index, NotificationOption notify) {
+void CPDF_FormField::SetItemSelection(int index, NotificationOption notify) {
   CHECK(IsComboOrListField(GetType()));
   if (index < 0 || index >= CountOptions()) {
-    return false;
+    return;
   }
   WideString opt_value = GetOptionValue(index);
   if (notify == NotificationOption::kNotify &&
       !NotifyListOrComboBoxBeforeChange(opt_value)) {
-    return false;
+    return;
   }
 
   SetItemSelectionSelected(index, opt_value);
@@ -538,7 +538,6 @@ bool CPDF_FormField::SetItemSelection(int index, NotificationOption notify) {
 
   if (notify == NotificationOption::kNotify)
     NotifyListOrComboBoxAfterChange();
-  return true;
 }
 
 void CPDF_FormField::SetItemSelectionSelected(int index,
@@ -635,16 +634,17 @@ int CPDF_FormField::FindOption(const WideString& csOptValue) const {
   return -1;
 }
 
-bool CPDF_FormField::CheckControl(int iControlIndex,
+void CPDF_FormField::CheckControl(int iControlIndex,
                                   bool bChecked,
                                   NotificationOption notify) {
   DCHECK(GetType() == kCheckBox || GetType() == kRadioButton);
   CPDF_FormControl* pControl = GetControl(iControlIndex);
-  if (!pControl)
-    return false;
-  if (!bChecked && pControl->IsChecked() == bChecked)
-    return false;
-
+  if (!pControl) {
+    return;
+  }
+  if (!bChecked && pControl->IsChecked() == bChecked) {
+    return;
+  }
   const WideString csWExport = pControl->GetExportValue();
   int iCount = CountControls();
   for (int i = 0; i < iCount; i++) {
@@ -686,7 +686,6 @@ bool CPDF_FormField::CheckControl(int iControlIndex,
   }
   if (notify == NotificationOption::kNotify)
     m_pForm->NotifyAfterCheckedStatusChange(this);
-  return true;
 }
 
 WideString CPDF_FormField::GetCheckValue(bool bDefault) const {
