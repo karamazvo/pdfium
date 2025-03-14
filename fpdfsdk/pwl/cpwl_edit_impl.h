@@ -95,7 +95,7 @@ class CPWL_EditImpl {
   void SetText(const WideString& sText);
   bool InsertWord(uint16_t word, FX_Charset charset);
   bool InsertReturn();
-  bool Backspace();
+  void Backspace();
   bool Delete();
   bool ClearSelection();
   bool InsertText(const WideString& sText, FX_Charset charset);
@@ -250,7 +250,7 @@ class CPWL_EditImpl {
   bool InsertText(const WideString& sText, FX_Charset charset, bool bAddUndo);
   bool InsertWord(uint16_t word, FX_Charset charset, bool bAddUndo);
   bool InsertReturn(bool bAddUndo);
-  bool Backspace(bool bAddUndo);
+  void Backspace(bool bAddUndo);
   void SetCaret(const CPVT_WordPlace& place);
 
   CFX_PointF VTToEdit(const CFX_PointF& point) const;

@@ -909,8 +909,8 @@ bool CPWL_EditImpl::InsertReturn() {
   return InsertReturn(true);
 }
 
-bool CPWL_EditImpl::Backspace() {
-  return Backspace(true);
+void CPWL_EditImpl::Backspace() {
+  Backspace(true);
 }
 
 bool CPWL_EditImpl::Delete() {
@@ -1659,9 +1659,9 @@ bool CPWL_EditImpl::InsertReturn(bool bAddUndo) {
   return true;
 }
 
-bool CPWL_EditImpl::Backspace(bool bAddUndo) {
+void CPWL_EditImpl::Backspace(bool bAddUndo) {
   if (!m_pVT->IsValid() || m_wpCaret == m_pVT->GetBeginWordPlace())
-    return false;
+    return;
 
   CPVT_Word word;
   if (bAddUndo) {
@@ -1673,7 +1673,7 @@ bool CPWL_EditImpl::Backspace(bool bAddUndo) {
   SetCaret(m_pVT->BackSpaceWord(m_wpCaret));
   m_SelState.Set(m_wpCaret, m_wpCaret);
   if (m_wpCaret == m_wpOldCaret)
-    return false;
+    return;
 
   if (bAddUndo && m_bEnableUndo) {
     AddEditUndoItem(std::make_unique<UndoBackspace>(
@@ -1684,7 +1684,6 @@ bool CPWL_EditImpl::Backspace(bool bAddUndo) {
   Refresh();
   SetCaretOrigin();
   SetCaretInfo();
-  return true;
 }
 
 bool CPWL_EditImpl::Delete(bool bAddUndo) {
