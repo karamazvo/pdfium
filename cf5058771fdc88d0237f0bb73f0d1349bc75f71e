@@ -70,6 +70,24 @@
       "parentUuid": "938cdcb6_d6f07bdc",
       "revId": "cf5058771fdc88d0237f0bb73f0d1349bc75f71e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e1a9fb22_3bba8ae8",
+        "filename": "core/fpdfapi/parser/cpdf_flateencoder.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 3686837
+      },
+      "writtenOn": "2025-03-16T15:13:10Z",
+      "side": 1,
+      "message": "Lei, hello, I tried to pick up this CL again, can you please take a look?\n\nYou suggested me to use `CHECK(!m_Data.empty();` earlier, but I found that the type of `m_Data` is `absl::variant`, which does not seem to contain the .empty() method, so I changed it to `CHECK(!GetSpan().empty());`.\n\n:)",
+      "parentUuid": "652d401c_8d3c7ed8",
+      "revId": "cf5058771fdc88d0237f0bb73f0d1349bc75f71e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
