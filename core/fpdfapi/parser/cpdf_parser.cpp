@@ -271,7 +271,7 @@ CPDF_Parser::Error CPDF_Parser::StartParseInternal() {
     if (eRet != SUCCESS)
       return eRet;
 
-    m_pObjectsHolder->TryInit();
+    (void)m_pObjectsHolder->TryInit();
     if (!GetRoot())
       return FORMAT_ERROR;
   }
@@ -684,7 +684,7 @@ bool CPDF_Parser::FindAllCrossReferenceTablesAndStream(
       // when `is_main_xref` is false. Thus no explicit call here.
     } else {
       // SLOW ...
-      LoadCrossRefTable(xref_offset, /*skip=*/true);
+      (void)LoadCrossRefTable(xref_offset, /*skip=*/true);
 
       RetainPtr<CPDF_Dictionary> trailer_dict = LoadTrailer();
       if (!trailer_dict) {
@@ -1189,7 +1189,7 @@ CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
     if (eRet != SUCCESS)
       return eRet;
 
-    m_pObjectsHolder->TryInit();
+    (void)m_pObjectsHolder->TryInit();
     if (!GetRoot())
       return FORMAT_ERROR;
   }

@@ -456,9 +456,10 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
 
   RetainPtr<IFX_SeekableStream> fileWrite = MakeSeekableStream(pFileHandler);
   if (fileType == FXFA_SAVEAS_XML) {
-    fileWrite->WriteString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n");
+    (void)fileWrite->WriteString(
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n");
     CXFA_FFDoc* ffdoc = m_pContext->GetXFADocView()->GetDoc();
-    ffdoc->SavePackage(
+    (void)ffdoc->SavePackage(
         ToNode(ffdoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Data)), fileWrite);
   } else if (fileType == FXFA_SAVEAS_XDP) {
     if (!m_pContext->GetPDFDoc())
@@ -490,14 +491,14 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
         continue;
       if (pPrePDFObj->GetString() == "form") {
         CXFA_FFDoc* ffdoc = m_pContext->GetXFADocView()->GetDoc();
-        ffdoc->SavePackage(
+        (void)ffdoc->SavePackage(
             ToNode(ffdoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Form)),
             fileWrite);
         continue;
       }
       if (pPrePDFObj->GetString() == "datasets") {
         CXFA_FFDoc* ffdoc = m_pContext->GetXFADocView()->GetDoc();
-        ffdoc->SavePackage(
+        (void)ffdoc->SavePackage(
             ToNode(ffdoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Datasets)),
             fileWrite);
         continue;
@@ -508,14 +509,14 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
         static const char kFormat[] =
             "\n<pdf href=\"%s\" xmlns=\"http://ns.adobe.com/xdp/pdf/\"/>";
         ByteString content = ByteString::Format(kFormat, bPath.c_str());
-        fileWrite->WriteString(content.AsStringView());
+        (void)fileWrite->WriteString(content.AsStringView());
       }
       auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(pStream));
       pAcc->LoadAllDataFiltered();
-      fileWrite->WriteBlock(pAcc->GetSpan());
+      (void)fileWrite->WriteBlock(pAcc->GetSpan());
     }
   }
-  fileWrite->Flush();
+  (void)fileWrite->Flush();
 }
 
 void CPDFXFA_DocEnvironment::GotoURL(CXFA_FFDoc* hDoc,
@@ -558,7 +559,7 @@ void CPDFXFA_DocEnvironment::SetFocusWidget(CXFA_FFDoc* hDoc,
 
   if (!hWidget) {
     ObservedPtr<CPDFSDK_Annot> pNull;
-    m_pContext->GetFormFillEnv()->SetFocusAnnot(pNull);
+    (void)m_pContext->GetFormFillEnv()->SetFocusAnnot(pNull);
     return;
   }
 
@@ -571,7 +572,7 @@ void CPDFXFA_DocEnvironment::SetFocusWidget(CXFA_FFDoc* hDoc,
 
     ObservedPtr<CPDFSDK_Annot> pAnnot(pPageView->GetAnnotForFFWidget(hWidget));
     if (pAnnot) {
-      m_pContext->GetFormFillEnv()->SetFocusAnnot(pAnnot);
+      (void)m_pContext->GetFormFillEnv()->SetFocusAnnot(pAnnot);
       break;
     }
   }

@@ -628,7 +628,7 @@ bool CPWL_Wnd::RepositionChildWnd() {
       CFX_FloatRect(rcContent.right - CPWL_ScrollBar::kWidth, rcContent.bottom,
                     rcContent.right - 1.0f, rcContent.top);
 
-  pVSB->Move(rcVScroll, true, false);
+  (void)pVSB->Move(rcVScroll, true, false);
   return !!this_observed;
 }
 

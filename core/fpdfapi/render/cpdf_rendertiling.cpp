@@ -42,7 +42,7 @@ RetainPtr<CFX_DIBitmap> DrawPatternBitmap(
     return nullptr;
   }
   CFX_DefaultRenderDevice bitmap_device;
-  bitmap_device.AttachWithBackdropAndGroupKnockout(
+  (void)bitmap_device.AttachWithBackdropAndGroupKnockout(
       pBitmap, /*pBackdropBitmap=*/nullptr, /*bGroupKnockout=*/true);
   CFX_FloatRect cell_bbox =
       pPattern->pattern_to_form().TransformRect(pPattern->bbox());
@@ -192,7 +192,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderTiling::Draw(
     return nullptr;
 
   if (options.ColorModeIs(CPDF_RenderOptions::kGray))
-    pPatternBitmap->ConvertColorScale(0, 0xffffff);
+    (void)pPatternBitmap->ConvertColorScale(0, 0xffffff);
 
   FX_ARGB fill_argb = pRenderStatus->GetFillArgb(pPageObj);
   int clip_width = clip_box.right - clip_box.left;
@@ -245,13 +245,13 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderTiling::Draw(
         }
       } else {
         if (pPattern->colored()) {
-          pScreen->CompositeBitmap(start_x, start_y, width, height,
-                                   pPatternBitmap, 0, 0, BlendMode::kNormal,
-                                   nullptr, false);
+          (void)pScreen->CompositeBitmap(start_x, start_y, width, height,
+                                         pPatternBitmap, 0, 0,
+                                         BlendMode::kNormal, nullptr, false);
         } else {
-          pScreen->CompositeMask(start_x, start_y, width, height,
-                                 pPatternBitmap, fill_argb, 0, 0,
-                                 BlendMode::kNormal, nullptr, false);
+          (void)pScreen->CompositeMask(start_x, start_y, width, height,
+                                       pPatternBitmap, fill_argb, 0, 0,
+                                       BlendMode::kNormal, nullptr, false);
         }
       }
     }

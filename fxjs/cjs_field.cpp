@@ -297,14 +297,14 @@ void SetCurrentValueIndices(CPDFSDK_FormFillEnvironment* pFormFillEnv,
       continue;
 
     uint32_t dwFieldFlags = pFormField->GetFieldFlags();
-    pFormField->ClearSelection(NotificationOption::kNotify);
+    (void)pFormField->ClearSelection(NotificationOption::kNotify);
     for (size_t i = 0; i < array.size(); ++i) {
       if (i != 0 && !(dwFieldFlags & pdfium::form_flags::kChoiceMultiSelect))
         break;
       if (array[i] < static_cast<uint32_t>(pFormField->CountOptions()) &&
           !pFormField->IsItemSelected(array[i])) {
-        pFormField->SetItemSelection(array[i],
-                                     NotificationOption::kDoNotNotify);
+        (void)pFormField->SetItemSelection(array[i],
+                                           NotificationOption::kDoNotNotify);
       }
     }
     UpdateFormField(pFormFillEnv, pFormField, true);
@@ -471,14 +471,14 @@ void SetFieldValue(CPDFSDK_FormFillEnvironment* pFormFillEnv,
       case FormFieldType::kTextField:
       case FormFieldType::kComboBox:
         if (pFormField->GetValue() != strArray[0]) {
-          pFormField->SetValue(strArray[0], NotificationOption::kNotify);
+          (void)pFormField->SetValue(strArray[0], NotificationOption::kNotify);
           UpdateFormField(pFormFillEnv, pFormField, false);
         }
         break;
       case FormFieldType::kCheckBox:
       case FormFieldType::kRadioButton:
         if (pFormField->GetValue() != strArray[0]) {
-          pFormField->SetValue(strArray[0], NotificationOption::kNotify);
+          (void)pFormField->SetValue(strArray[0], NotificationOption::kNotify);
           UpdateFormField(pFormFillEnv, pFormField, false);
         }
         break;
@@ -491,11 +491,12 @@ void SetFieldValue(CPDFSDK_FormFillEnvironment* pFormFillEnv,
           }
         }
         if (bModified) {
-          pFormField->ClearSelection(NotificationOption::kNotify);
+          (void)pFormField->ClearSelection(NotificationOption::kNotify);
           for (const auto& str : strArray) {
             int index = pFormField->FindOption(str);
             if (!pFormField->IsItemSelected(index))
-              pFormField->SetItemSelection(index, NotificationOption::kNotify);
+              (void)pFormField->SetItemSelection(index,
+                                                 NotificationOption::kNotify);
           }
           UpdateFormField(pFormFillEnv, pFormField, false);
         }
@@ -2183,7 +2184,7 @@ CJS_Result CJS_Field::browseForFileToSubmit(
       (pFormField->GetFieldType() == FormFieldType::kTextField)) {
     WideString wsFileName = m_pFormFillEnv->JS_fieldBrowse();
     if (!wsFileName.IsEmpty()) {
-      pFormField->SetValue(wsFileName, NotificationOption::kDoNotNotify);
+      (void)pFormField->SetValue(wsFileName, NotificationOption::kDoNotNotify);
       UpdateFormField(m_pFormFillEnv.Get(), pFormField, true);
     }
     return CJS_Result::Success();
@@ -2297,7 +2298,8 @@ CJS_Result CJS_Field::checkThisBox(CJS_Runtime* pRuntime,
 
   // TODO(weili): Check whether anything special needed for radio button.
   // (When pFormField->GetFieldType() == FormFieldType::kRadioButton.)
-  pFormField->CheckControl(nWidget, bCheckit, NotificationOption::kNotify);
+  (void)pFormField->CheckControl(nWidget, bCheckit,
+                                 NotificationOption::kNotify);
   UpdateFormField(m_pFormFillEnv.Get(), pFormField, true);
   return CJS_Result::Success();
 }
@@ -2358,7 +2360,7 @@ CJS_Result CJS_Field::getArray(CJS_Runtime* pRuntime,
 
     auto* pJSField = static_cast<CJS_Field*>(
         CFXJS_Engine::GetBinding(pRuntime->GetIsolate(), pObj));
-    pJSField->AttachField(m_pJSDoc.Get(), *pStr);
+    (void)pJSField->AttachField(m_pJSDoc.Get(), *pStr);
     pRuntime->PutArrayElement(FormFieldArray, j++,
                               pJSField
                                   ? v8::Local<v8::Value>(pJSField->ToV8Object())
@@ -2484,7 +2486,7 @@ CJS_Result CJS_Field::setFocus(CJS_Runtime* pRuntime,
 
   if (pWidget) {
     ObservedPtr<CPDFSDK_Annot> pObserved(pWidget);
-    m_pFormFillEnv->SetFocusAnnot(pObserved);
+    (void)m_pFormFillEnv->SetFocusAnnot(pObserved);
   }
 
   return CJS_Result::Success();

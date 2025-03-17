@@ -48,7 +48,7 @@ CJS_Result CJX_Field::clearItems(CFXJSE_Engine* runtime,
                                  pdfium::span<v8::Local<v8::Value>> params) {
   CXFA_Node* node = GetXFANode();
   if (node->IsWidgetReady())
-    node->DeleteItem(-1, true, false);
+    (void)node->DeleteItem(-1, true, false);
   return CJS_Result::Success();
 }
 
@@ -303,8 +303,8 @@ void CJX_Field::editValue(v8::Isolate* pIsolate,
     return;
 
   if (bSetting) {
-    node->SetValue(XFA_ValuePicture::kEdit,
-                   fxv8::ReentrantToWideStringHelper(pIsolate, *pValue));
+    (void)node->SetValue(XFA_ValuePicture::kEdit,
+                         fxv8::ReentrantToWideStringHelper(pIsolate, *pValue));
     return;
   }
   *pValue = fxv8::NewStringHelper(
@@ -328,8 +328,8 @@ void CJX_Field::formattedValue(v8::Isolate* pIsolate,
     return;
 
   if (bSetting) {
-    node->SetValue(XFA_ValuePicture::kDisplay,
-                   fxv8::ReentrantToWideStringHelper(pIsolate, *pValue));
+    (void)node->SetValue(XFA_ValuePicture::kDisplay,
+                         fxv8::ReentrantToWideStringHelper(pIsolate, *pValue));
     return;
   }
   *pValue = fxv8::NewStringHelper(

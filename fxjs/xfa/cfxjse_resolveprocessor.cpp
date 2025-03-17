@@ -168,7 +168,7 @@ bool CFXJSE_ResolveProcessor::ResolveExcalmatory(v8::Isolate* pIsolate,
   rndFind.m_nLevel = rnd.m_nLevel + 1;
   rndFind.m_dwStyles = XFA_ResolveFlag::kChildren;
   rndFind.m_wsCondition = rnd.m_wsCondition;
-  Resolve(pIsolate, rndFind);
+  (void)Resolve(pIsolate, rndFind);
 
   rnd.m_Result.objects.insert(rnd.m_Result.objects.end(),
                               rndFind.m_Result.objects.begin(),
@@ -194,7 +194,7 @@ bool CFXJSE_ResolveProcessor::ResolveNumberSign(v8::Isolate* pIsolate,
       FX_HashCode_GetW(rndFind.m_wsName.AsStringView()));
   rndFind.m_wsCondition = wsCondition;
   rndFind.m_CurObject = curNode;
-  ResolveNormal(pIsolate, rndFind);
+  (void)ResolveNormal(pIsolate, rndFind);
   if (rndFind.m_Result.objects.empty())
     return false;
 
@@ -268,7 +268,7 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(v8::Isolate* pIsolate,
       rndFind.m_CurObject = pVariablesNode;
       SetStylesForChild(dwStyles, rndFind);
       WideString wsSaveCondition = std::move(rndFind.m_wsCondition);
-      ResolveNormal(pIsolate, rndFind);
+      (void)ResolveNormal(pIsolate, rndFind);
       rndFind.m_wsCondition = std::move(wsSaveCondition);
       rnd.m_Result.objects.insert(rnd.m_Result.objects.end(),
                                   rndFind.m_Result.objects.begin(),
@@ -303,7 +303,7 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(v8::Isolate* pIsolate,
         rndFind.m_CurObject = child;
 
         WideString wsSaveCondition = std::move(rndFind.m_wsCondition);
-        ResolveNormal(pIsolate, rndFind);
+        (void)ResolveNormal(pIsolate, rndFind);
         rndFind.m_wsCondition = std::move(wsSaveCondition);
         rnd.m_Result.objects.insert(rnd.m_Result.objects.end(),
                                     rndFind.m_Result.objects.begin(),
@@ -438,7 +438,7 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(v8::Isolate* pIsolate,
         WideString wsOriginCondition = std::move(rndFind.m_wsCondition);
         Mask<XFA_ResolveFlag> dwOriginStyle = rndFind.m_dwStyles;
         rndFind.m_dwStyles = dwOriginStyle | XFA_ResolveFlag::kALL;
-        ResolveNormal(pIsolate, rndFind);
+        (void)ResolveNormal(pIsolate, rndFind);
         rndFind.m_dwStyles = dwOriginStyle;
         rndFind.m_wsCondition = std::move(wsOriginCondition);
         rnd.m_Result.objects.insert(rnd.m_Result.objects.end(),
@@ -480,7 +480,7 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(v8::Isolate* pIsolate,
     m_pEngine->AddObjectToUpArray(parentNode);
     rndFind.m_dwStyles = dwSubStyles;
     rndFind.m_CurObject = parentNode;
-    ResolveNormal(pIsolate, rndFind);
+    (void)ResolveNormal(pIsolate, rndFind);
     rnd.m_Result.objects.insert(rnd.m_Result.objects.end(),
                                 rndFind.m_Result.objects.begin(),
                                 rndFind.m_Result.objects.end());

@@ -191,7 +191,7 @@ void UpdateContentStream(CPDF_Form* pForm, CPDF_Stream* pStream) {
 
   CPDF_PageContentGenerator generator(pForm);
   fxcrt::ostringstream buf;
-  generator.ProcessPageObjects(&buf);
+  (void)generator.ProcessPageObjects(&buf);
   pStream->SetDataFromStringstreamAndRemoveFilter(&buf);
 }
 

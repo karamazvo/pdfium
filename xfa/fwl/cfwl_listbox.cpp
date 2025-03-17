@@ -634,8 +634,8 @@ void CFWL_ListBox::OnProcessEvent(CFWL_Event* pEvent) {
   if ((pSrcTarget == m_pVertScrollBar && m_pVertScrollBar) ||
       (pSrcTarget == m_pHorzScrollBar && m_pHorzScrollBar)) {
     CFWL_EventScroll* pScrollEvent = static_cast<CFWL_EventScroll*>(pEvent);
-    OnScroll(static_cast<CFWL_ScrollBar*>(pSrcTarget),
-             pScrollEvent->GetScrollCode(), pScrollEvent->GetPos());
+    (void)OnScroll(static_cast<CFWL_ScrollBar*>(pSrcTarget),
+                   pScrollEvent->GetScrollCode(), pScrollEvent->GetPos());
   }
 }
 
@@ -691,7 +691,7 @@ void CFWL_ListBox::OnLButtonDown(CFWL_MessageMouse* pMsg) {
   }
 
   SetFocusItem(pItem);
-  ScrollToVisible(pItem);
+  (void)ScrollToVisible(pItem);
   SetGrab(true);
   RepaintRect(m_ClientRect);
 }
@@ -749,7 +749,7 @@ void CFWL_ListBox::OnVK(Item* pItem, bool bShift, bool bCtrl) {
   }
 
   SetFocusItem(pItem);
-  ScrollToVisible(pItem);
+  (void)ScrollToVisible(pItem);
   RepaintRect(CFX_RectF(0, 0, m_WidgetRect.width, m_WidgetRect.height));
 }
 

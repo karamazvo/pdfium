@@ -434,7 +434,7 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
 
     if (bUpdateProperty)
       pWidget->UpdateWidgetProperty();
-    pWidget->PerformLayout();
+    (void)pWidget->PerformLayout();
     pWidget->InvalidateRect();
   }
 }
@@ -500,9 +500,9 @@ void CXFA_FFNotify::OnLayoutItemAdded(CXFA_LayoutProcessor* pLayout,
   }
   if (pWidget->IsLoaded()) {
     if (pWidget->GetWidgetRect() != pWidget->RecacheWidgetRect())
-      pWidget->PerformLayout();
+      (void)pWidget->PerformLayout();
   } else {
-    pWidget->LoadWidget();
+    (void)pWidget->LoadWidget();
   }
   pWidget->InvalidateRect();
 }

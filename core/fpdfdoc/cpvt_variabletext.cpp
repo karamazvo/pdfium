@@ -678,7 +678,7 @@ void CPVT_VariableText::ClearEmptySections(const CPVT_WordRange& PlaceRange) {
   for (int32_t s = PlaceRange.EndPos.nSecIndex;
        s > PlaceRange.BeginPos.nSecIndex; s--) {
     wordplace.nSecIndex = s;
-    ClearEmptySection(wordplace);
+    (void)ClearEmptySection(wordplace);
   }
 }
 
@@ -720,7 +720,7 @@ CPVT_WordPlace CPVT_VariableText::ClearLeftWord(const CPVT_WordPlace& place) {
 
   if (leftplace.nSecIndex != place.nSecIndex) {
     if (pSection->GetWordArraySize() == 0)
-      ClearEmptySection(place);
+      (void)ClearEmptySection(place);
     else
       LinkLatterSection(leftplace);
   } else {

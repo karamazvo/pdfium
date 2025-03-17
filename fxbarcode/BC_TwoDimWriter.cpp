@@ -87,8 +87,9 @@ void CBC_TwoDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
   CFX_GraphStateData stateData;
   CFX_Path path;
   path.AppendRect(0, 0, m_Width, m_Height);
-  device->DrawPath(path, &matrix, &stateData, kBackgroundColor,
-                   kBackgroundColor, CFX_FillRenderOptions::EvenOddOptions());
+  (void)device->DrawPath(path, &matrix, &stateData, kBackgroundColor,
+                         kBackgroundColor,
+                         CFX_FillRenderOptions::EvenOddOptions());
   int32_t leftPos = m_leftPadding;
   int32_t topPos = m_topPadding;
 
@@ -117,8 +118,8 @@ void CBC_TwoDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
                         topPos + start_y_output * m_multiY,
                         leftPos + end_x_output * m_multiX,
                         topPos + end_y_output * m_multiY);
-        device->DrawPath(rect, &matri, &data, kBarColor, 0,
-                         CFX_FillRenderOptions::WindingOptions());
+        (void)device->DrawPath(rect, &matri, &data, kBarColor, 0,
+                               CFX_FillRenderOptions::WindingOptions());
       }
     }
   }

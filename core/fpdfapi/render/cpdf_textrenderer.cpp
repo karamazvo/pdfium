@@ -125,8 +125,8 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
   CFX_Matrix new_matrix = matrix;
   new_matrix.e = origin_x;
   new_matrix.f = origin_y;
-  DrawNormalText(pDevice, codes, positions, pFont, font_size, new_matrix,
-                 fill_argb, options);
+  (void)DrawNormalText(pDevice, codes, positions, pFont, font_size, new_matrix,
+                       fill_argb, options);
 }
 
 // static

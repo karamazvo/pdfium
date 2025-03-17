@@ -114,13 +114,13 @@ bool CXFA_FFComboBox::OnRButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
   if (!CXFA_FFField::OnRButtonUp(dwFlags, point))
     return false;
 
-  GetDoc()->PopupMenu(this, point);
+  (void)GetDoc()->PopupMenu(this, point);
   return true;
 }
 
 bool CXFA_FFComboBox::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   if (!ProcessCommittedData())
-    UpdateFWLData();
+    (void)UpdateFWLData();
 
   return pNewWidget && CXFA_FFField::OnKillFocus(pNewWidget);
 }

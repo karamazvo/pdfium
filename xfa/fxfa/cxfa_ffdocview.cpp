@@ -127,7 +127,7 @@ int32_t CXFA_FFDocView::StartLayout() {
 
   InitLayout(pRootItem);
   InitCalculate(pRootItem);
-  InitValidate(pRootItem);
+  (void)InitValidate(pRootItem);
 
   ExecEventActivityByDeepFirst(pRootItem, XFA_EVENT_Ready, true, true);
   m_iStatus = LayoutStatus::kStart;
@@ -160,18 +160,18 @@ void CXFA_FFDocView::StopLayout() {
     return;
 
   RunCalculateWidgets();
-  RunValidate();
+  (void)RunValidate();
 
   InitLayout(pPageSetNode);
   InitCalculate(pPageSetNode);
-  InitValidate(pPageSetNode);
+  (void)InitValidate(pPageSetNode);
 
   ExecEventActivityByDeepFirst(pPageSetNode, XFA_EVENT_Ready, true, true);
   ExecEventActivityByDeepFirst(pRootItem, XFA_EVENT_Ready, false, true);
   ExecEventActivityByDeepFirst(pRootItem, XFA_EVENT_DocReady, false, true);
 
   RunCalculateWidgets();
-  RunValidate();
+  (void)RunValidate();
 
   if (RunLayout())
     ExecEventActivityByDeepFirst(pRootItem, XFA_EVENT_Ready, false, true);
@@ -220,18 +220,18 @@ void CXFA_FFDocView::UpdateDocView() {
     CXFA_Node* pNode = m_NewAddedNodes.front();
     m_NewAddedNodes.pop_front();
     InitCalculate(pNode);
-    InitValidate(pNode);
+    (void)InitValidate(pNode);
     ExecEventActivityByDeepFirst(pNode, XFA_EVENT_Ready, true, true);
   }
 
   RunSubformIndexChange();
   RunCalculateWidgets();
-  RunValidate();
+  (void)RunValidate();
 
   ShowNullTestMsg();
 
   if (RunLayout() && m_bLayoutEvent)
-    RunEventLayoutReady();
+    (void)RunEventLayoutReady();
 
   m_bLayoutEvent = false;
   m_CalculateNodes.clear();
@@ -248,7 +248,7 @@ void CXFA_FFDocView::UpdateUIDisplay(CXFA_Node* pNode, CXFA_FFWidget* pExcept) {
          pWidget->IsFocused())) {
       continue;
     }
-    pWidget->UpdateFWLData();
+    (void)pWidget->UpdateFWLData();
     pWidget->InvalidateRect();
   }
 }
@@ -335,7 +335,7 @@ bool CXFA_FFDocView::SetFocus(CXFA_FFWidget* pNewFocus) {
     if (pItem->TestStatusBits(XFA_WidgetStatus::kVisible) &&
         !pItem->TestStatusBits(XFA_WidgetStatus::kFocused)) {
       if (!m_pFocusWidget->IsLoaded())
-        m_pFocusWidget->LoadWidget();
+        (void)m_pFocusWidget->LoadWidget();
       if (!m_pFocusWidget->OnSetFocus(m_pFocusWidget))
         m_pFocusWidget.Clear();
     }
@@ -349,7 +349,7 @@ bool CXFA_FFDocView::SetFocus(CXFA_FFWidget* pNewFocus) {
     if (pNewFocus->GetLayoutItem()->TestStatusBits(
             XFA_WidgetStatus::kVisible)) {
       if (!pNewFocus->IsLoaded())
-        pNewFocus->LoadWidget();
+        (void)pNewFocus->LoadWidget();
       if (!pNewFocus->OnSetFocus(m_pFocusWidget))
         pNewFocus = nullptr;
     }
@@ -614,7 +614,7 @@ void CXFA_FFDocView::ProcessValueChanged(CXFA_Node* node) {
   AddValidateNode(node);
   AddCalculateNode(node);
   RunCalculateWidgets();
-  RunValidate();
+  (void)RunValidate();
 }
 
 void CXFA_FFDocView::InitValidate(CXFA_Node* pNode) {
@@ -644,7 +644,7 @@ bool CXFA_FFDocView::RunEventLayoutReady() {
     return false;
 
   ExecEventActivityByDeepFirst(pRootItem, XFA_EVENT_Ready, false, true);
-  RunLayout();
+  (void)RunLayout();
   return true;
 }
 
@@ -669,7 +669,7 @@ void CXFA_FFDocView::RunBindItems() {
                 XFA_ResolveFlag::kChildren, XFA_ResolveFlag::kProperties,
                 XFA_ResolveFlag::kSiblings, XFA_ResolveFlag::kParent,
                 XFA_ResolveFlag::kALL});
-    pWidgetNode->DeleteItem(-1, false, false);
+    (void)pWidgetNode->DeleteItem(-1, false, false);
     if (!maybeRS.has_value() ||
         maybeRS.value().type != CFXJSE_Engine::ResolveResult::Type::kNodes ||
         maybeRS.value().objects.empty()) {

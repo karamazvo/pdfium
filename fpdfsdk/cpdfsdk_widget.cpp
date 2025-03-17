@@ -271,7 +271,7 @@ void CPDFSDK_Widget::Synchronize(bool bSynchronizeElse) {
       break;
     }
     case FormFieldType::kTextField:
-      node->SetValue(XFA_ValuePicture::kEdit, pFormField->GetValue());
+      (void)node->SetValue(XFA_ValuePicture::kEdit, pFormField->GetValue());
       break;
     case FormFieldType::kComboBox:
     case FormFieldType::kListBox: {
@@ -284,7 +284,7 @@ void CPDFSDK_Widget::Synchronize(bool bSynchronizeElse) {
         }
       }
       if (GetFieldType() == FormFieldType::kComboBox)
-        node->SetValue(XFA_ValuePicture::kEdit, pFormField->GetValue());
+        (void)node->SetValue(XFA_ValuePicture::kEdit, pFormField->GetValue());
       break;
     }
     default:
@@ -581,8 +581,8 @@ int CPDFSDK_Widget::GetMaxLen() const {
 void CPDFSDK_Widget::SetCheck(bool bChecked) {
   CPDF_FormControl* pFormCtrl = GetFormControl();
   CPDF_FormField* pFormField = pFormCtrl->GetField();
-  pFormField->CheckControl(pFormField->GetControlIndex(pFormCtrl), bChecked,
-                           NotificationOption::kDoNotNotify);
+  (void)pFormField->CheckControl(pFormField->GetControlIndex(pFormCtrl),
+                                 bChecked, NotificationOption::kDoNotNotify);
 #ifdef PDF_ENABLE_XFA
   if (!IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode::kNormal))
     ResetXFAAppearance(CPDFSDK_Widget::kValueChanged);
@@ -592,7 +592,7 @@ void CPDFSDK_Widget::SetCheck(bool bChecked) {
 
 void CPDFSDK_Widget::SetValue(const WideString& sValue) {
   CPDF_FormField* pFormField = GetFormField();
-  pFormField->SetValue(sValue, NotificationOption::kDoNotNotify);
+  (void)pFormField->SetValue(sValue, NotificationOption::kDoNotNotify);
 #ifdef PDF_ENABLE_XFA
   Synchronize(true);
 #endif  // PDF_ENABLE_XFA
@@ -600,7 +600,7 @@ void CPDFSDK_Widget::SetValue(const WideString& sValue) {
 
 void CPDFSDK_Widget::SetOptionSelection(int index) {
   CPDF_FormField* pFormField = GetFormField();
-  pFormField->SetItemSelection(index, NotificationOption::kDoNotNotify);
+  (void)pFormField->SetItemSelection(index, NotificationOption::kDoNotNotify);
 #ifdef PDF_ENABLE_XFA
   Synchronize(true);
 #endif  // PDF_ENABLE_XFA
@@ -608,7 +608,7 @@ void CPDFSDK_Widget::SetOptionSelection(int index) {
 
 void CPDFSDK_Widget::ClearSelection() {
   CPDF_FormField* pFormField = GetFormField();
-  pFormField->ClearSelection(NotificationOption::kDoNotNotify);
+  (void)pFormField->ClearSelection(NotificationOption::kDoNotNotify);
 #ifdef PDF_ENABLE_XFA
   Synchronize(true);
 #endif  // PDF_ENABLE_XFA
@@ -920,8 +920,8 @@ void CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice,
 
     CFX_Path path;
     path.AppendFloatRect(GetRect());
-    pDevice->DrawPath(path, &mtUser2Device, &gsd, 0, 0xFFAAAAAA,
-                      CFX_FillRenderOptions::EvenOddOptions());
+    (void)pDevice->DrawPath(path, &mtUser2Device, &gsd, 0, 0xFFAAAAAA,
+                            CFX_FillRenderOptions::EvenOddOptions());
   } else {
     CPDFSDK_BAAnnot::DrawAppearance(pDevice, mtUser2Device, mode);
   }
@@ -951,7 +951,7 @@ void CPDFSDK_Widget::DrawShadow(CFX_RenderDevice* pDevice,
   rcDevice.top = tmp.y;
   rcDevice.Normalize();
 
-  pDevice->FillRect(
+  (void)pDevice->FillRect(
       rcDevice.ToFxRect(),
       AlphaAndColorRefToArgb(
           static_cast<int>(m_pInteractiveForm->GetHighlightAlpha()),
@@ -1048,7 +1048,7 @@ bool CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,
 
   CPDF_Action action = GetAAction(type);
   if (action.GetType() != CPDF_Action::Type::kUnknown) {
-    pFormFillEnv->DoActionField(action, type, GetFormField(), data);
+    (void)pFormFillEnv->DoActionField(action, type, GetFormField(), data);
   }
   return false;
 }

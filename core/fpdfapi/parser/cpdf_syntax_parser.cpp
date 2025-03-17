@@ -316,7 +316,7 @@ ByteString CPDF_SyntaxParser::ReadString() {
       break;
   }
 
-  GetNextChar(ch);
+  (void)GetNextChar(ch);
   return buf;
 }
 
@@ -362,7 +362,7 @@ void CPDF_SyntaxParser::ToNextLine() {
       break;
 
     if (ch == '\r') {
-      GetNextChar(ch);
+      (void)GetNextChar(ch);
       if (ch != '\n')
         --m_Pos;
       break;
@@ -651,8 +651,8 @@ unsigned int CPDF_SyntaxParser::ReadEOLMarkers(FX_FILESIZE pos) {
   unsigned char byte1 = 0;
   unsigned char byte2 = 0;
 
-  GetCharAt(pos, byte1);
-  GetCharAt(pos + 1, byte2);
+  (void)GetCharAt(pos, byte1);
+  (void)GetCharAt(pos + 1, byte2);
 
   if (byte1 == '\r' && byte2 == '\n')
     return 2;

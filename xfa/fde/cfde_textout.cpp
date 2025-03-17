@@ -95,8 +95,8 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
 #else
         font = pFxFont;
 #endif
-        device->DrawNormalText(UNSAFE_TODO(make_span(pCurCP, count)), font,
-                               -fFontSize, matrix, color, kOptions);
+        (void)device->DrawNormalText(UNSAFE_TODO(make_span(pCurCP, count)),
+                                     font, -fFontSize, matrix, color, kOptions);
       }
       pCurFont = pSTFont;
       pCurCP = &pos;
@@ -218,12 +218,12 @@ void CFDE_TextOut::CalcLogicSize(WideStringView str, CFX_RectF* pRect) {
     }
     dwBreakStatus = m_pTxtBreak->AppendChar(wch);
     if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus))
-      RetrieveLineWidth(dwBreakStatus, &fStartPos, &fWidth, &fHeight);
+      (void)RetrieveLineWidth(dwBreakStatus, &fStartPos, &fWidth, &fHeight);
   }
 
   dwBreakStatus = m_pTxtBreak->EndBreak(CFGAS_Char::BreakType::kParagraph);
   if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus))
-    RetrieveLineWidth(dwBreakStatus, &fStartPos, &fWidth, &fHeight);
+    (void)RetrieveLineWidth(dwBreakStatus, &fStartPos, &fWidth, &fHeight);
 
   m_pTxtBreak->Reset();
   float fInc = pRect->Height() - fHeight;
@@ -295,7 +295,7 @@ void CFDE_TextOut::DrawLogicText(CFX_RenderDevice* device,
   CFX_RectF rtClip = m_Matrix.TransformRect(CFX_RectF());
   device->SaveState();
   if (rtClip.Width() > 0.0f && rtClip.Height() > 0.0f)
-    device->SetClip_Rect(rtClip.GetOuterRect());
+    (void)device->SetClip_Rect(rtClip.GetOuterRect());
 
   for (auto& line : m_ttoLines) {
     for (size_t i = 0; i < line.GetSize(); ++i) {
@@ -304,9 +304,9 @@ void CFDE_TextOut::DrawLogicText(CFX_RenderDevice* device,
       if (szCount == 0) {
         continue;
       }
-      CFDE_TextOut::DrawString(device, m_TxtColor, m_pFont,
-                               make_span(m_CharPos).first(szCount), m_fFontSize,
-                               m_Matrix);
+      (void)CFDE_TextOut::DrawString(device, m_TxtColor, m_pFont,
+                                     make_span(m_CharPos).first(szCount),
+                                     m_fFontSize, m_Matrix);
     }
   }
   device->RestoreState(false);
@@ -352,7 +352,8 @@ void CFDE_TextOut::LoadText(const WideString& str, const CFX_RectF& rect) {
 
   dwBreakStatus = m_pTxtBreak->EndBreak(CFGAS_Char::BreakType::kParagraph);
   if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus) && !bRet)
-    RetrievePieces(dwBreakStatus, false, rect, &start_char, &iPieceWidths);
+    (void)RetrievePieces(dwBreakStatus, false, rect, &start_char,
+                         &iPieceWidths);
 
   m_pTxtBreak->ClearBreakPieces();
   m_pTxtBreak->Reset();
@@ -472,13 +473,14 @@ void CFDE_TextOut::ReloadLinePiece(Line* line, const CFX_RectF& rect) {
     for (size_t char_index = start_char; char_index < end; ++char_index) {
       break_status = m_pTxtBreak->AppendChar(text_span[char_index]);
       if (!CFX_BreakTypeNoneOrPiece(break_status))
-        RetrievePieces(break_status, true, rect, &start_char, &piece_widths);
+        (void)RetrievePieces(break_status, true, rect, &start_char,
+                             &piece_widths);
     }
   }
 
   break_status = m_pTxtBreak->EndBreak(CFGAS_Char::BreakType::kParagraph);
   if (!CFX_BreakTypeNoneOrPiece(break_status))
-    RetrievePieces(break_status, true, rect, &start_char, &piece_widths);
+    (void)RetrievePieces(break_status, true, rect, &start_char, &piece_widths);
 
   m_pTxtBreak->Reset();
 }

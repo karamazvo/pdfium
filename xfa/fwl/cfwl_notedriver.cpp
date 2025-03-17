@@ -45,7 +45,7 @@ void CFWL_NoteDriver::Trace(cppgc::Visitor* visitor) const {
 void CFWL_NoteDriver::SendEvent(CFWL_Event* pNote) {
   for (const auto& pair : m_eventTargets) {
     if (pair.second->IsValid())
-      pair.second->ProcessEvent(pNote);
+      (void)pair.second->ProcessEvent(pNote);
   }
 }
 
@@ -238,7 +238,7 @@ void CFWL_NoteDriver::MouseSecondary(CFWL_Message* pMessage) {
         m_pHover.Get(), CFWL_MessageMouse::MouseCommand::kLeave,
         Mask<XFA_FWL_KeyFlag>(),
         pTarget->TransformTo(m_pHover.Get(), pMsg->m_pos));
-    DispatchMessage(&msLeave, nullptr);
+    (void)DispatchMessage(&msLeave, nullptr);
   }
   if (pTarget->GetClassID() == FWL_Type::Form) {
     m_pHover = nullptr;
@@ -248,7 +248,7 @@ void CFWL_NoteDriver::MouseSecondary(CFWL_Message* pMessage) {
 
   CFWL_MessageMouse msHover(pTarget, CFWL_MessageMouse::MouseCommand::kHover,
                             Mask<XFA_FWL_KeyFlag>(), pMsg->m_pos);
-  DispatchMessage(&msHover, nullptr);
+  (void)DispatchMessage(&msHover, nullptr);
 }
 
 CFWL_NoteDriver::Target::Target(CFWL_Widget* pListener)

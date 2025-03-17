@@ -114,26 +114,26 @@ bool CBC_OnedUPCAWriter::ShowChars(WideStringView contents,
                      kLeftPosition + kWidth - 0.5, (float)m_Height);
   matr.Concat(matrix);
   FX_RECT re = matr.TransformRect(rect).GetOuterRect();
-  device->FillRect(re, kBackgroundColor);
+  (void)device->FillRect(re, kBackgroundColor);
   CFX_Matrix matr1(m_outputHScale, 0.0, 0.0, 1.0, 0.0, 0.0);
   CFX_FloatRect rect1(kLeftPosition + 40, (float)(m_Height - iTextHeight),
                       kLeftPosition + 40 + kWidth - 0.5, (float)m_Height);
   matr1.Concat(matrix);
   re = matr1.TransformRect(rect1).GetOuterRect();
-  device->FillRect(re, kBackgroundColor);
+  (void)device->FillRect(re, kBackgroundColor);
   static constexpr float kWidth1 = 7.0f;
   CFX_Matrix matr2(m_outputHScale, 0.0, 0.0, 1.0, 0.0, 0.0);
   CFX_FloatRect rect2(0.0, (float)(m_Height - iTextHeight), kWidth1 - 1,
                       (float)m_Height);
   matr2.Concat(matrix);
   re = matr2.TransformRect(rect2).GetOuterRect();
-  device->FillRect(re, kBackgroundColor);
+  (void)device->FillRect(re, kBackgroundColor);
   CFX_Matrix matr3(m_outputHScale, 0.0, 0.0, 1.0, 0.0, 0.0);
   CFX_FloatRect rect3(kLeftPosition + 85, (float)(m_Height - iTextHeight),
                       kLeftPosition + 85 + kWidth1 - 0.5, (float)m_Height);
   matr3.Concat(matrix);
   re = matr3.TransformRect(rect3).GetOuterRect();
-  device->FillRect(re, kBackgroundColor);
+  (void)device->FillRect(re, kBackgroundColor);
   float strWidth = kWidth * m_outputHScale;
 
   pdfium::span<TextCharPos> charpos_span = pdfium::make_span(charpos);
@@ -144,9 +144,9 @@ bool CBC_OnedUPCAWriter::ShowChars(WideStringView contents,
                               kLeftPosition * m_outputHScale,
                               (float)(m_Height - iTextHeight + iFontSize));
     affine_matrix1.Concat(matrix);
-    device->DrawNormalText(charpos_span.subspan(1, length), m_pFont,
-                           static_cast<float>(iFontSize), affine_matrix1,
-                           m_fontColor, GetTextRenderOptions());
+    (void)device->DrawNormalText(charpos_span.subspan(1, length), m_pFont,
+                                 static_cast<float>(iFontSize), affine_matrix1,
+                                 m_fontColor, GetTextRenderOptions());
   }
   tempStr = str.Substr(6, 5);
   length = tempStr.GetLength();
@@ -157,9 +157,9 @@ bool CBC_OnedUPCAWriter::ShowChars(WideStringView contents,
                               (kLeftPosition + 40) * m_outputHScale,
                               (float)(m_Height - iTextHeight + iFontSize));
     affine_matrix1.Concat(matrix);
-    device->DrawNormalText(charpos_span.subspan(6, length), m_pFont,
-                           static_cast<float>(iFontSize), affine_matrix1,
-                           m_fontColor, GetTextRenderOptions());
+    (void)device->DrawNormalText(charpos_span.subspan(6, length), m_pFont,
+                                 static_cast<float>(iFontSize), affine_matrix1,
+                                 m_fontColor, GetTextRenderOptions());
   }
   tempStr = str.First(1);
   length = tempStr.GetLength();
@@ -170,9 +170,9 @@ bool CBC_OnedUPCAWriter::ShowChars(WideStringView contents,
     CFX_Matrix affine_matrix1(1.0, 0.0, 0.0, -1.0, 0,
                               (float)(m_Height - iTextHeight + iFontSize));
     affine_matrix1.Concat(matrix);
-    device->DrawNormalText(charpos_span.first(length), m_pFont,
-                           static_cast<float>(iFontSize), affine_matrix1,
-                           m_fontColor, GetTextRenderOptions());
+    (void)device->DrawNormalText(charpos_span.first(length), m_pFont,
+                                 static_cast<float>(iFontSize), affine_matrix1,
+                                 m_fontColor, GetTextRenderOptions());
   }
   tempStr = str.Substr(11, 1);
   length = tempStr.GetLength();
@@ -183,9 +183,9 @@ bool CBC_OnedUPCAWriter::ShowChars(WideStringView contents,
                               (kLeftPosition + 85) * m_outputHScale,
                               (float)(m_Height - iTextHeight + iFontSize));
     affine_matrix1.Concat(matrix);
-    device->DrawNormalText(charpos_span.subspan(11, length), m_pFont,
-                           static_cast<float>(iFontSize), affine_matrix1,
-                           m_fontColor, GetTextRenderOptions());
+    (void)device->DrawNormalText(charpos_span.subspan(11, length), m_pFont,
+                                 static_cast<float>(iFontSize), affine_matrix1,
+                                 m_fontColor, GetTextRenderOptions());
   }
   return true;
 }

@@ -58,7 +58,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
   while (NSYMSDECODED < SDNUMNEWSYMS) {
     std::unique_ptr<CJBig2_Image> BS;
     int32_t HCDH;
-    IADH->Decode(pArithDecoder, &HCDH);
+    (void)IADH->Decode(pArithDecoder, &HCDH);
     HCHEIGHT = HCHEIGHT + HCDH;
     if ((int)HCHEIGHT < 0 || (int)HCHEIGHT > kJBig2MaxImageSize)
       return nullptr;
@@ -101,7 +101,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
           return nullptr;
       } else {
         uint32_t REFAGGNINST;
-        IAAI->Decode(pArithDecoder, (int*)&REFAGGNINST);
+        (void)IAAI->Decode(pArithDecoder, (int*)&REFAGGNINST);
         if (REFAGGNINST > 1) {
           // Huffman tables must not outlive |pDecoder|.
           auto SBHUFFFS = std::make_unique<CJBig2_HuffmanTable>(6);
@@ -178,8 +178,8 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
 
           int32_t RDXI;
           int32_t RDYI;
-          IARDX->Decode(pArithDecoder, &RDXI);
-          IARDY->Decode(pArithDecoder, &RDYI);
+          (void)IARDX->Decode(pArithDecoder, &RDXI);
+          (void)IARDY->Decode(pArithDecoder, &RDYI);
 
           auto pGRRD = std::make_unique<CJBig2_GRRDProc>();
           pGRRD->GRW = SYMWIDTH;
@@ -210,7 +210,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
   uint32_t num_ex_syms = 0;
   while (EXINDEX < SDNUMINSYMS + SDNUMNEWSYMS) {
     uint32_t EXRUNLENGTH;
-    IAEX->Decode(pArithDecoder, (int*)&EXRUNLENGTH);
+    (void)IAEX->Decode(pArithDecoder, (int*)&EXRUNLENGTH);
     FX_SAFE_UINT32 new_ex_size = EXINDEX;
     new_ex_size += EXRUNLENGTH;
     if (!new_ex_size.IsValid() ||
