@@ -16,6 +16,24 @@
       "message": "Needs re-stamp for reasons that don\u0027t make sense.",
       "revId": "98775d4424bb982e02b00fdd2f8605af5f1eb824",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "753cdd13_5fadf2f3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-03-17T22:53:38Z",
+      "side": 1,
+      "message": "I think it\u0027s the `uploaderin:trusted-users_gerrit AND has:unchanged-files` logic.",
+      "parentUuid": "10487736_4df776ea",
+      "revId": "98775d4424bb982e02b00fdd2f8605af5f1eb824",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
