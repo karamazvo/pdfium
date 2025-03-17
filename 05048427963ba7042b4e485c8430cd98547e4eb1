@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b2591bd5_a3ffc72f",
+        "filename": "xfa/fxfa/cxfa_ffcheckbutton.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-03-17T22:49:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b095ded3_cad2db1e",
+      "revId": "05048427963ba7042b4e485c8430cd98547e4eb1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c70111a7_7546b0ff",
@@ -31,6 +49,24 @@
       "writtenOn": "2025-03-17T20:54:50Z",
       "side": 1,
       "message": "Combine with line 73 now that the return value doesn\u0027t matter.",
+      "revId": "05048427963ba7042b4e485c8430cd98547e4eb1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "26b1e1c2_9d62e06b",
+        "filename": "xfa/fxfa/cxfa_fftext.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-03-17T22:49:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c70111a7_7546b0ff",
       "revId": "05048427963ba7042b4e485c8430cd98547e4eb1",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
