@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b095ded3_cad2db1e",
+        "filename": "xfa/fxfa/cxfa_ffcheckbutton.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-03-17T20:54:50Z",
+      "side": 1,
+      "message": "Not sure wht the auto-formatter added curly braces in some cases, but not for these.",
+      "revId": "05048427963ba7042b4e485c8430cd98547e4eb1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c70111a7_7546b0ff",
+        "filename": "xfa/fxfa/cxfa_fftext.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-03-17T20:54:50Z",
+      "side": 1,
+      "message": "Combine with line 73 now that the return value doesn\u0027t matter.",
+      "revId": "05048427963ba7042b4e485c8430cd98547e4eb1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
