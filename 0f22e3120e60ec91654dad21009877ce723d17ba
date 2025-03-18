@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "eac88bf9_11af802f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 3946384
+      },
+      "writtenOn": "2025-03-18T21:36:35Z",
+      "side": 1,
+      "message": "Actually, maybe the premise here isn\u0027t true. Pdfium seems to use a different abseil version from the rest of Chromium?\nhttps://source.chromium.org/chromium/chromium/src/+/main:third_party/pdfium/DEPS;l\u003d73;drc\u003d03193a5cc0d11d1d823bb1c95cec4e28bb59e890\n\nI tried to git log that hash in the abseil repo and got \u0027invalid object\u0027. Do you know what\u0027s going on?",
+      "revId": "0f22e3120e60ec91654dad21009877ce723d17ba",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "b7f9e8ec_542e5523",
