@@ -33,6 +33,46 @@
       "message": "friendly ping\n\n:)",
       "revId": "c2fea69abdf98aa36fa3f03c4e0553ae6a42dc46",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a28737e7_3df28cad",
+        "filename": "core/fpdfdoc/cpvt_variabletext.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 781,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-03-18T00:32:37Z",
+      "side": 1,
+      "message": "This never actually evaluates to true. Get rid of `nTotal` and evaluated `kFontSizeSteps.size()` and that size divided by 4 at compile time. Then static_assert() they are not 0.",
+      "range": {
+        "startLine": 781,
+        "startChar": 6,
+        "endLine": 781,
+        "endChar": 23
+      },
+      "revId": "c2fea69abdf98aa36fa3f03c4e0553ae6a42dc46",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "82127346_95594a8a",
+        "filename": "core/fpdfdoc/cpvt_variabletext.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 785,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-03-18T00:32:37Z",
+      "side": 1,
+      "message": "This is redundant with line 781.",
+      "revId": "c2fea69abdf98aa36fa3f03c4e0553ae6a42dc46",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
