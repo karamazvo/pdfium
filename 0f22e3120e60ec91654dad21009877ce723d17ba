@@ -36,6 +36,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "ea0b7a78_03432955",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 3946384
+      },
+      "writtenOn": "2025-03-18T22:38:40Z",
+      "side": 1,
+      "message": "I did `fetch pdfium` then went into `third_party/abseil-cpp` and did `git remote get-url origin`, getting `https://chromium.googlesource.com/chromium/src/third_party/abseil-cpp.git`. So TIL: there is some kind of copybara flow that copies the content of chromium/src/third_party/abseil-cpp into this separate abseil-cpp repo. For instance, my recent [roll in src](https://chromium.googlesource.com/chromium/src//+/b3defd119a78557e3d5d10f0683c2380b635c67e) got mapped into [this commit in the abseil repo](https://chromium.googlesource.com/chromium/src/third_party/abseil-cpp.git/+/4daee9ef870594014855a48e6a700b42cb7ca271)\n\nI\u0027m trying to roll the dep in https://pdfium-review.googlesource.com/c/pdfium/+/129650/1. I\u0027ll add you guys to the attention set again once dry-run is happy",
+      "parentUuid": "32798814_fa9f6d3b",
+      "revId": "0f22e3120e60ec91654dad21009877ce723d17ba",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "b7f9e8ec_542e5523",
