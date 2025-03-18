@@ -1,5 +1,23 @@
 {
-  "comments": [],
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f9204734_bb19937f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-03-18T22:19:26Z",
+      "side": 1,
+      "message": "FYI, I abandoned this one, but it is fishy, as we should be short-circuiting on !dirty I\u0027d think ...",
+      "revId": "566eff9f68d15d1e8c6fbaf862279278269bafd9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ],
   "submitRequirementResults": [
     {
       "submitRequirement": {
