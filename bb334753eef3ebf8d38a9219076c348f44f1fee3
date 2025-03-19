@@ -16,6 +16,24 @@
       "message": "Did I miss the fix? Doesn\u0027t this CL only suppress with UNSAFE_TODO()?",
       "revId": "bb334753eef3ebf8d38a9219076c348f44f1fee3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f94725ef_f1a3187b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-03-19T02:35:22Z",
+      "side": 1,
+      "message": "Re-worded CL description.",
+      "parentUuid": "fbe95a6c_e23d85ee",
+      "revId": "bb334753eef3ebf8d38a9219076c348f44f1fee3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
