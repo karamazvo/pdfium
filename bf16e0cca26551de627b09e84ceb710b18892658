@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "033bb0d8_6e186a2e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-03-20T17:38:48Z",
+      "side": 1,
+      "message": "I feel better about https://chromium.googlesource.com/chromium/src/+/b3defd119a78557e3d5d10f0683c2380b635c67e/third_party/abseil-cpp/absl/types/variant.h#33 being a semi-permanent link, though it can\u0027t highlight a range of lines.",
+      "revId": "bf16e0cca26551de627b09e84ceb710b18892658",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7159975c_3400fc17",
+        "filename": "PRESUBMIT.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-03-20T17:38:48Z",
+      "side": 1,
+      "message": "Not sure this is needed, given the ban in DEPS. Note that nothing else from abseil is banned by this file.",
+      "revId": "bf16e0cca26551de627b09e84ceb710b18892658",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
