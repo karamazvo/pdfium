@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// DO NOT CI
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef CORE_FXCRT_FX_SYSTEM_H_
