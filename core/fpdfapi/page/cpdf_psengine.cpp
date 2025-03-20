@@ -110,8 +110,8 @@ float CPDF_PSOP::GetFloatValue() const {
   return m_value;
 }
 
-bool CPDF_PSEngine::Execute() {
-  return m_MainProc.Execute(this);
+void CPDF_PSEngine::Execute() {
+  m_MainProc.Execute(this);
 }
 
 CPDF_PSProc::CPDF_PSProc() = default;
@@ -141,27 +141,27 @@ bool CPDF_PSProc::Parse(CPDF_SimpleParser* parser, int depth) {
   }
 }
 
-bool CPDF_PSProc::Execute(CPDF_PSEngine* pEngine) {
+void CPDF_PSProc::Execute(CPDF_PSEngine* pEngine) {
   for (size_t i = 0; i < m_Operators.size(); ++i) {
     const PDF_PSOP op = m_Operators[i]->GetOp();
-    if (op == PSOP_PROC)
+    if (op == PSOP_PROC) {
       continue;
-
+    }
     if (op == PSOP_CONST) {
       pEngine->Push(m_Operators[i]->GetFloatValue());
       continue;
     }
-
     if (op == PSOP_IF) {
-      if (i == 0 || m_Operators[i - 1]->GetOp() != PSOP_PROC)
-        return false;
-
-      if (pEngine->PopInt())
+      if (i == 0 || m_Operators[i - 1]->GetOp() != PSOP_PROC) {
+        return;
+      }
+      if (pEngine->PopInt()) {
         m_Operators[i - 1]->Execute(pEngine);
+      }
     } else if (op == PSOP_IFELSE) {
       if (i < 2 || m_Operators[i - 1]->GetOp() != PSOP_PROC ||
           m_Operators[i - 2]->GetOp() != PSOP_PROC) {
-        return false;
+        return;
       }
       size_t offset = pEngine->PopInt() ? 2 : 1;
       m_Operators[i - offset]->Execute(pEngine);
@@ -169,7 +169,6 @@ bool CPDF_PSProc::Execute(CPDF_PSEngine* pEngine) {
       pEngine->DoOperator(op);
     }
   }
-  return true;
 }
 
 void CPDF_PSProc::AddOperatorForTesting(ByteStringView word) {

@@ -91,7 +91,7 @@ class CPDF_PSProc {
   ~CPDF_PSProc();
 
   bool Parse(CPDF_SimpleParser* parser, int depth);
-  bool Execute(CPDF_PSEngine* pEngine);
+  void Execute(CPDF_PSEngine* pEngine);
 
   // These methods are exposed for testing.
   void AddOperatorForTesting(ByteStringView word);
@@ -113,7 +113,7 @@ class CPDF_PSEngine {
   ~CPDF_PSEngine();
 
   bool Parse(pdfium::span<const uint8_t> input);
-  bool Execute();
+  void Execute();
   bool DoOperator(PDF_PSOP op);
   void Reset() { m_StackCount = 0; }
   void Push(float value);
