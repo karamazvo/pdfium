@@ -189,7 +189,7 @@ int32_t CALLBACK GdiFontEnumProc(ENUMLOGFONTEX* lpelfe,
   if (lf.lfFaceName[0] == L'@')
     return 1;
   FX_FONTDESCRIPTOR font = {};  // Aggregate initialization.
-  static_assert(std::is_aggregate_v<decltype(font)>);
+  static_assert(std::is_aggregate_v<FX_FONTDESCRIPTOR>);
   font.uCharSet = FX_GetCharsetFromInt(lf.lfCharSet);
   font.dwFontStyles = GetGdiFontStyles(lf);
   UNSAFE_TODO({
@@ -531,7 +531,8 @@ RetainPtr<CFX_Face> LoadFace(
   // https://bugs.chromium.org/p/pdfium/issues/detail?id=690
   FXFT_StreamRec* ftStream =
       static_cast<FXFT_StreamRec*>(ft_scalloc(sizeof(FXFT_StreamRec), 1));
-  UNSAFE_TODO(FXSYS_memset(ftStream, 0, sizeof(FXFT_StreamRec)));
+  *ftStream = {};  // Aggregate initialization.
+  static_assert(std::is_aggregate_v<FXFT_StreamRec>);
   ftStream->base = nullptr;
   ftStream->descriptor.pointer = static_cast<void*>(pFontStream.Get());
   ftStream->pos = 0;
@@ -540,7 +541,7 @@ RetainPtr<CFX_Face> LoadFace(
   ftStream->close = ftStreamClose;
 
   FT_Open_Args ftArgs = {};  // Aggregate initialization.
-  static_assert(std::is_aggregate_v<decltype(ftArgs)>);
+  static_assert(std::is_aggregate_v<FT_Open_Args>);
   ftArgs.flags |= FT_OPEN_STREAM;
   ftArgs.stream = ftStream;
 
