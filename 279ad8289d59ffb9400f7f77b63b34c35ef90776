@@ -16,6 +16,23 @@
       "message": "Is this a reasonable solution to avoiding the timeout?",
       "revId": "279ad8289d59ffb9400f7f77b63b34c35ef90776",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "66c79ebf_0d47a727",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-03-21T17:29:26Z",
+      "side": 1,
+      "message": "Can we do this for all builds? Otherwise a finding on a release build might not reproduce on the debug build?",
+      "revId": "279ad8289d59ffb9400f7f77b63b34c35ef90776",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
