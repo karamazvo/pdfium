@@ -56,6 +56,52 @@
       },
       "revId": "9de19d1ef665f08e0da485d9d585326345bf59bb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d998a88a_4e2deafe",
+        "filename": "core/fpdfdoc/cpvt_variabletext.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 787,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-03-22T00:09:16Z",
+      "side": 1,
+      "message": "Can you add `kUnusedValue` so readers can easily see this value is meaningless?",
+      "range": {
+        "startLine": 787,
+        "startChar": 42,
+        "endLine": 787,
+        "endChar": 46
+      },
+      "revId": "9de19d1ef665f08e0da485d9d585326345bf59bb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8965a052_6445e839",
+        "filename": "core/fpdfdoc/cpvt_variabletext.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 788,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-03-22T00:09:16Z",
+      "side": 1,
+      "message": "snake_style",
+      "range": {
+        "startLine": 788,
+        "startChar": 21,
+        "endLine": 788,
+        "endChar": 29
+      },
+      "revId": "9de19d1ef665f08e0da485d9d585326345bf59bb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
