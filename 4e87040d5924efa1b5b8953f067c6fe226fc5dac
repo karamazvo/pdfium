@@ -246,6 +246,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "304a30ce_6fc8a085",
+        "filename": "core/fpdfdoc/cpvt_variabletext.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 786,
+      "author": {
+        "id": 3686837
+      },
+      "writtenOn": "2025-03-24T03:51:00Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "79eaebd7_70b06647",
+      "range": {
+        "startLine": 786,
+        "startChar": 32,
+        "endLine": 786,
+        "endChar": 41
+      },
+      "revId": "4e87040d5924efa1b5b8953f067c6fe226fc5dac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "74c98867_b5eb7a63",
@@ -283,6 +307,30 @@
       "side": 1,
       "message": "After modification, here should be a valid element value before the binary search result.",
       "parentUuid": "74c98867_b5eb7a63",
+      "range": {
+        "startLine": 791,
+        "startChar": 0,
+        "endLine": 791,
+        "endChar": 39
+      },
+      "revId": "4e87040d5924efa1b5b8953f067c6fe226fc5dac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b1b9dc21_8d1c441a",
+        "filename": "core/fpdfdoc/cpvt_variabletext.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 791,
+      "author": {
+        "id": 3686837
+      },
+      "writtenOn": "2025-03-24T03:51:00Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "09e68347_e6ce6900",
       "range": {
         "startLine": 791,
         "startChar": 0,

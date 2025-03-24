@@ -58,6 +58,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "11e1f5c4_57d7857c",
+        "filename": "core/fpdfdoc/cpvt_variabletext.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 781,
+      "author": {
+        "id": 3686837
+      },
+      "writtenOn": "2025-03-24T03:51:00Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "a28737e7_3df28cad",
+      "range": {
+        "startLine": 781,
+        "startChar": 6,
+        "endLine": 781,
+        "endChar": 23
+      },
+      "revId": "c2fea69abdf98aa36fa3f03c4e0553ae6a42dc46",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "82127346_95594a8a",
@@ -71,6 +95,24 @@
       "writtenOn": "2025-03-18T00:32:37Z",
       "side": 1,
       "message": "This is redundant with line 781.",
+      "revId": "c2fea69abdf98aa36fa3f03c4e0553ae6a42dc46",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9c240e60_5fe91339",
+        "filename": "core/fpdfdoc/cpvt_variabletext.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 785,
+      "author": {
+        "id": 3686837
+      },
+      "writtenOn": "2025-03-24T03:51:00Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "82127346_95594a8a",
       "revId": "c2fea69abdf98aa36fa3f03c4e0553ae6a42dc46",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
