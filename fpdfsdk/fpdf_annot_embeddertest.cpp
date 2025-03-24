@@ -898,7 +898,7 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
 #elif BUILDFLAG(IS_APPLE)
       return "32cd26430a31752e612475bf881cc597";
 #else
-      return "2a9d1df839d5ec81a49f982347d9656c";
+      return "377ee6496bd87d90056691ba5a13d13f";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
@@ -914,7 +914,7 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
 #elif BUILDFLAG(IS_APPLE)
       return "9a969b7089f49c029b10cf8c208b40dd";
 #else
-      return "0fb1653db0e8e8f7ce5d726bb0074bb5";
+      return "17fc1c964d0252a87ddfcc8db960c69a";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
@@ -930,7 +930,7 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
 #elif BUILDFLAG(IS_APPLE)
       return "8b9df3824179d3757932bda23b95c8ce";
 #else
-      return "4f66924b2d246f9e8a1b926e956b615b";
+      return "e5f192fd7c4711ea1ba9a69674c1aa27";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
@@ -1166,7 +1166,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
 #elif BUILDFLAG(IS_APPLE)
       return "75f8d0866cda9bc7545a9c1162841aad";
 #else
-      return "d4d1b116d5f23dfec894e25db4c5ebdb";
+      return "e0d70cb144cac570b929f0d32671526c";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
@@ -1377,7 +1377,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
 #elif BUILDFLAG(IS_APPLE)
       return "617f9f6f00167f83e9ffb31751624a9e";
 #else
-      return "5526f05092a0253d56a0e79e0e104f71";
+      return "bc49737f97f2119799be8deb347249fe";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
@@ -1393,7 +1393,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
 #elif BUILDFLAG(IS_APPLE)
       return "0bd1b3bbefa3bae4199ce9c8b5bf840b";
 #else
-      return "e3f115b37181ce0ffd02c7b5288ea99a";
+      return "76282c55b2148e784ef0a42348e314b3";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
@@ -1485,7 +1485,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
 #elif BUILDFLAG(IS_APPLE)
       return "f63c9d35c6c19f88ffb92471e97b7e22";
 #else
-      return "6b1cfec7e9c89da93dc14172afffc5db";
+      return "b3f726d5b989385149630cccca359d1c";
 #endif
     }
 #if BUILDFLAG(IS_APPLE) && defined(ARCH_CPU_ARM64)
@@ -1503,7 +1503,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
 #elif BUILDFLAG(IS_APPLE)
       return "76b7f0cb6f0e52aa25a2c1e11c9abd62";
 #else
-      return "007960dd422d0999f71a9de0faa29b07";
+      return "bba9a3ca38d5286631b4a475b81715d0";
 #endif
     }
 #if BUILDFLAG(IS_APPLE) && defined(ARCH_CPU_ARM64)
@@ -3093,7 +3093,7 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotRendering) {
 #elif BUILDFLAG(IS_APPLE)
         return "cd02e06aeb6555ca7d03136cb8f2e336";
 #else
-        return "a08901d205e54530e76f5fc81846eb6a";
+        return "3b48fad8576cf150f17226fb81e020c3";
 #endif
       }
 #if BUILDFLAG(IS_APPLE)
@@ -3128,7 +3128,7 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotRendering) {
 #elif BUILDFLAG(IS_APPLE)
         return "7e85e4675adccb100fc2cf1037f65f4a";
 #else
-        return "de2186f2f36169d0002257a810435648";
+        return "76b6794ca0b3f75ca47c311c5486c229";
 #endif
       }
 #if BUILDFLAG(IS_APPLE)
@@ -3154,7 +3154,7 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotRendering) {
 #elif BUILDFLAG(IS_APPLE)
         return "96f271ee3f1520d174f887f33989bbcb";
 #else
-        return "27bb036f3a507fce66a74a00daf558ec";
+        return "9542f31a1ae26c9da00301c859110427";
 #endif
       }
 #if BUILDFLAG(IS_APPLE)

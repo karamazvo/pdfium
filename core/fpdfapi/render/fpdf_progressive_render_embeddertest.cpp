@@ -438,7 +438,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderHighlightWithColorScheme) {
 #elif BUILDFLAG(IS_APPLE)
       return "fcd4dd021656f692f346780acaa24895";
 #else
-      return "49dcfcfdc38d200bb3d57a2ca3086034";
+      return "c6b3aa2787f557726d6ac0fa7cd4fbfa";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
@@ -472,7 +472,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
 #elif BUILDFLAG(IS_APPLE)
       return "b7039f73f2d8a3ac3e1ef1492e425b99";
 #else
-      return "c609e8810fba2f12db8f8a2b043d97bd";
+      return "12d37e0ae880cf2c5743a69467d19756";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
@@ -521,7 +521,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderStampWithColorScheme) {
 #elif BUILDFLAG(IS_APPLE)
       return "f1f1288805d1afd93397c2f24080b741";
 #else
-      return "4e42fb3e87ff8276a549d7a755997766";
+      return "3e153a54caa24e13178facd47c147679";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)

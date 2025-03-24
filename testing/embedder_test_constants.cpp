@@ -16,7 +16,7 @@ const char* AnnotationStampWithApChecksum() {
 #elif BUILDFLAG(IS_APPLE)
     return "8774ac1779ea66056860290ae7df8f44";
 #else
-    return "8b8618de537ec6aee1f3fc53fedfbcfc";
+    return "50f53c0a869ad33a8dd2b580740a63c8";
 #endif
   }
 #if BUILDFLAG(IS_APPLE)
