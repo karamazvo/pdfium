@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "51869a3d_1532c4dc",
+        "filename": "core/fxcodec/progressive_decoder.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-03-25T16:35:12Z",
+      "side": 1,
+      "message": "I guess all the superclasses are pure virtual without destructors so there isn\u0027t a need for this to be `override`.",
+      "range": {
+        "startLine": 70,
+        "startChar": 23,
+        "endLine": 70,
+        "endChar": 24
+      },
+      "revId": "61f75ed589b4d5bf31563ae961a79da0941bc551",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
