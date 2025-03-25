@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8b419a93_23f445eb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2025-03-25T19:05:41Z",
+      "side": 1,
+      "message": "I\u0027ve seen this generate different stream lengths after the switch to Python 3.12.  E.g., for testing/resources/bug_343075986.in, the generated PDF has new stream lengths that are one less than what is checked in.  I\u0027m not sure what\u0027s up with that.",
+      "revId": "b3f98c2bb744b2b9276241c53bbb5482ac27c930",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "38039bca_999fc689",
+        "filename": "testing/tools/fixup_pdf_template.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2025-03-25T19:05:41Z",
+      "side": 1,
+      "message": "I\u0027ve verified that this still works with Python 3.11, what\u0027s on my Windows machine.",
+      "revId": "b3f98c2bb744b2b9276241c53bbb5482ac27c930",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
