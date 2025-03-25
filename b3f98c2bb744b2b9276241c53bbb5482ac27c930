@@ -71,6 +71,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "6e4f9fa0_8d5d1303",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2025-03-25T21:36:31Z",
+      "side": 1,
+      "message": "I\u0027ve seen the different lengths in the generated PDFs on both Windows and Linux.  If you see it generate the same for those various configurations, then that\u0027s curious.",
+      "parentUuid": "b6f4a7aa_3018c677",
+      "revId": "b3f98c2bb744b2b9276241c53bbb5482ac27c930",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "38039bca_999fc689",
