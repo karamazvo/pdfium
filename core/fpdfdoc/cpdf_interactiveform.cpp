@@ -142,10 +142,10 @@ ByteString GenerateNewFontResourceName(const CPDF_Dictionary* pResDict,
   const size_t szCount = csStr.GetLength();
   size_t m = 0;
   ByteString csTmp;
-  while (m < UNSAFE_TODO(strlen(kDummyFontName)) && m < szCount) {
+  while (m < strlen(kDummyFontName) && m < szCount) {
     csTmp += csStr[m++];
   }
-  while (m < UNSAFE_TODO(strlen(kDummyFontName))) {
+  while (m < strlen(kDummyFontName)) {
     csTmp += '0' + m % 10;
     m++;
   }

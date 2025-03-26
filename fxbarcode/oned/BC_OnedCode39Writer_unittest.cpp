@@ -37,8 +37,8 @@ TEST(OnedCode39WriterTest, SetWideNarrowRatio) {
       "### ### # #   # "  // M
       "#   # ### ### #";  // * End
   DataVector<uint8_t> encoded = writer.Encode("PDFIUM");
-  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected1)), encoded.size());
-  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected1)); i++) {
+  ASSERT_EQ(strlen(kExpected1), encoded.size());
+  for (size_t i = 0; i < strlen(kExpected1); i++) {
     UNSAFE_TODO(EXPECT_EQ(kExpected1[i] != ' ', !!encoded[i])) << i;
   }
   EXPECT_TRUE(writer.SetWideNarrowRatio(2));
@@ -53,8 +53,8 @@ TEST(OnedCode39WriterTest, SetWideNarrowRatio) {
       "## ## # #  # "  // M
       "#  # ## ## #";  // * End
   encoded = writer.Encode("PDFIUM");
-  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected2)), encoded.size());
-  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected2)); i++) {
+  ASSERT_EQ(strlen(kExpected2), encoded.size());
+  for (size_t i = 0; i < strlen(kExpected2); i++) {
     UNSAFE_TODO(EXPECT_EQ(kExpected2[i] != ' ', !!encoded[i])) << i;
   }
 }
@@ -66,8 +66,8 @@ TEST(OnedCode39WriterTest, Encode) {
       "#   # ### ### # "  // * Start
       "#   # ### ### #";  // * End
   DataVector<uint8_t> encoded = writer.Encode("");
-  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected1)), encoded.size());
-  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected1)); i++) {
+  ASSERT_EQ(strlen(kExpected1), encoded.size());
+  for (size_t i = 0; i < strlen(kExpected1); i++) {
     UNSAFE_TODO(EXPECT_EQ(kExpected1[i] != ' ', !!encoded[i])) << i;
   }
 
@@ -78,8 +78,8 @@ TEST(OnedCode39WriterTest, Encode) {
       "### ###   # # # "  // 3
       "#   # ### ### #";  // * End
   encoded = writer.Encode("123");
-  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected2)), encoded.size());
-  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected2)); i++) {
+  ASSERT_EQ(strlen(kExpected2), encoded.size());
+  for (size_t i = 0; i < strlen(kExpected2); i++) {
     UNSAFE_TODO(EXPECT_EQ(kExpected2[i] != ' ', !!encoded[i])) << i;
   }
 
@@ -93,8 +93,8 @@ TEST(OnedCode39WriterTest, Encode) {
       "### ### # #   # "  // M
       "#   # ### ### #";  // * End
   encoded = writer.Encode("PDFIUM");
-  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected3)), encoded.size());
-  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected3)); i++) {
+  ASSERT_EQ(strlen(kExpected3), encoded.size());
+  for (size_t i = 0; i < strlen(kExpected3); i++) {
     UNSAFE_TODO(EXPECT_EQ(kExpected3[i] != ' ', !!encoded[i])) << i;
   }
 
@@ -111,8 +111,8 @@ TEST(OnedCode39WriterTest, Encode) {
       "#   ### ### # # "  // Z
       "#   # ### ### #";  // * End
   encoded = writer.Encode("A -$%./+Z");
-  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected4)), encoded.size());
-  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected4)); i++) {
+  ASSERT_EQ(strlen(kExpected4), encoded.size());
+  for (size_t i = 0; i < strlen(kExpected4); i++) {
     UNSAFE_TODO(EXPECT_EQ(kExpected4[i] != ' ', !!encoded[i])) << i;
   }
 }
@@ -129,8 +129,8 @@ TEST(OnedCode39WriterTest, Checksum) {
       "# ###   ### # # "  // 6 (6 = (1 + 2 + 3) % 43)
       "#   # ### ### #";  // * End
   DataVector<uint8_t> encoded = writer.Encode("123");
-  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected1)), encoded.size());
-  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected1)); i++) {
+  ASSERT_EQ(strlen(kExpected1), encoded.size());
+  for (size_t i = 0; i < strlen(kExpected1); i++) {
     UNSAFE_TODO(EXPECT_EQ(kExpected1[i] != ' ', !!encoded[i])) << i;
   }
 
@@ -145,8 +145,8 @@ TEST(OnedCode39WriterTest, Checksum) {
       "###   # # ### # "  // . (37 = (25 + 13 + 15 + 18 + 30 + 22) % 43)
       "#   # ### ### #";  // * End
   encoded = writer.Encode("PDFIUM");
-  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected2)), encoded.size());
-  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected2)); i++) {
+  ASSERT_EQ(strlen(kExpected2), encoded.size());
+  for (size_t i = 0; i < strlen(kExpected2); i++) {
     UNSAFE_TODO(EXPECT_EQ(kExpected2[i] != ' ', !!encoded[i])) << i;
   }
 }
