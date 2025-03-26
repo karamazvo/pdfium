@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8d9cad35_05739056",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 4546,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-03-26T17:32:27Z",
+      "side": 1,
+      "message": "How much do you care about checking the internals of this PDF using PDFium APIs, vs. having it render correctly? If what you really care about is the latter, then this CL should add a pixel test instead.",
+      "revId": "f3bbcdcf5b9d581e26cb40bd3f902be1a2598701",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "476e2527_ce586b02",
+        "filename": "testing/resources/bug_372749732.in",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-03-26T17:32:27Z",
+      "side": 1,
+      "message": "Can the test PDF demonstrate the issue with a BPC value of 4 or 2? i.e. No need to put in so many 0 values here.",
+      "revId": "f3bbcdcf5b9d581e26cb40bd3f902be1a2598701",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
