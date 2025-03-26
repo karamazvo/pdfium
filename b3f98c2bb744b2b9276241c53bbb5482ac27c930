@@ -109,6 +109,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "da4829db_3e900494",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2025-03-26T16:40:32Z",
+      "side": 1,
+      "message": "I tried both Windows and Linux with a ToT branch that has no other changes, running:\n\n```\npython3 testing\\tools\\fixup_pdf_template.py testing\\resources\\bug_343075986.in\n```\n\nI see it causing bug_343075986.pdf to get updated with 2 stream lengths being smaller by 1, on both platforms.\n\nOkay, so that\u0027s not caused by this CL.  I just got worried because I first noticed it after I made changes to fixup_pdf_template.py.\n\nI\u0027ve captured this discrepancy in https://crbug.com/406470705.",
+      "parentUuid": "d6a0d74c_5a55bf24",
+      "revId": "b3f98c2bb744b2b9276241c53bbb5482ac27c930",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "38039bca_999fc689",
         "filename": "testing/tools/fixup_pdf_template.py",
         "patchSetId": 1
