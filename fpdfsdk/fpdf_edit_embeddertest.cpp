@@ -4543,6 +4543,24 @@ TEST_F(FPDFEditEmbedderTest, GetBitmapWithArgbImageWithPalette) {
   CompareBitmap(bitmap.get(), 4, 4, "49b4d39d3fd81c9853b493b615e475d1");
 }
 
+TEST_F(FPDFEditEmbedderTest, GetBitmapWithRgbImageWithPaletteOutOfRangeHival) {
+  ASSERT_TRUE(OpenDocument("bug_372749732.pdf"));
+
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  static constexpr int kExpectedObjects = 2;
+  ASSERT_EQ(kExpectedObjects, FPDFPage_CountObjects(page.get()));
+  FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page.get(), 1);
+  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+
+  ScopedFPDFBitmap bitmap(FPDFImageObj_GetBitmap(obj));
+  // TODO(crbug.com/372749732): A bitmap with an out-of-range hival for the
+  // indexed palette could still be acquired if the value is clamped
+  // to the valid range, instead of just erroring out.
+  ASSERT_FALSE(bitmap);
+}
+
 TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapHandlesSetMatrix) {
   ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(0);
