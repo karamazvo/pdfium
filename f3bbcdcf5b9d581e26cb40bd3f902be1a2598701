@@ -36,6 +36,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "33152e57_894ebf07",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 4546,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-03-27T18:00:10Z",
+      "side": 1,
+      "message": "The test above is for a bug that is explicitly about FPDFImageObj_GetBitmap() not working. The bug associated with this CL is about the PDF not rendering,",
+      "parentUuid": "01185f05_073cc0af",
+      "revId": "f3bbcdcf5b9d581e26cb40bd3f902be1a2598701",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "476e2527_ce586b02",
