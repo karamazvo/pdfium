@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "01185f05_073cc0af",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 4546,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2025-03-27T17:54:06Z",
+      "side": 1,
+      "message": "I care more here about just the ability to load an image.  The big difference here is that `FPDFImageObj_GetBitmap()` returns false currently, and after the change in https://pdfium-review.googlesource.com/c/pdfium/+/129951 it then returns true.\n\nThe test case here is very similar to what\u0027s used above, in bug_343075986.in.  Getting the same hash for `CompareBitmap()` felt sufficient to me for this.",
+      "parentUuid": "8d9cad35_05739056",
+      "revId": "f3bbcdcf5b9d581e26cb40bd3f902be1a2598701",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "476e2527_ce586b02",
@@ -31,6 +49,24 @@
       "writtenOn": "2025-03-26T17:32:27Z",
       "side": 1,
       "message": "Can the test PDF demonstrate the issue with a BPC value of 4 or 2? i.e. No need to put in so many 0 values here.",
+      "revId": "f3bbcdcf5b9d581e26cb40bd3f902be1a2598701",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "35423337_eaccc6d5",
+        "filename": "testing/resources/bug_372749732.in",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2025-03-27T17:54:06Z",
+      "side": 1,
+      "message": "What I am interested in forcing here is for the `hival` parameter to be explicitly outside the valid range of 0..255.  (Like in the originally provided test case in the bug report.) \n\nI first thought that I had to have the large table with 256 entries, related to the PDF spec\u0027s requirement that the lookup table should be \"m * (hival + 1)\" bytes long.  As it turns out, that\u0027s not explicitly enforced by PDFium.  Also, the other PDF viewers that can display such files are also forgiving about this part of the spec too.\n\nSo -- looks like the table can be smaller, even with the bigger hival.  Updated.",
+      "parentUuid": "476e2527_ce586b02",
       "revId": "f3bbcdcf5b9d581e26cb40bd3f902be1a2598701",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
