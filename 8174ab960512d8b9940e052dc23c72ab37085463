@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "16a60a92_1ce7210d",
+        "filename": "core/fpdfdoc/cpdf_interactiveform.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-03-27T16:52:42Z",
+      "side": 0,
+      "message": "AddNativeFont() always returns nullptr on non-Windows, so `pFont` is oftens times set to nullptr, even though it was initialized to a valid font earlier.",
+      "revId": "8174ab960512d8b9940e052dc23c72ab37085463",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "778bf08f_e8cadaa3",
+        "filename": "core/fpdfdoc/cpdf_interactiveform.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 312,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-03-27T16:52:42Z",
+      "side": 0,
+      "message": "A size of 0 makes CPVT_VariableText auto-size, but then for the pixel test, \"Hello\" is large enough to takes up the entire box. This is not how other PDF implementations treat the same PDF.",
+      "revId": "8174ab960512d8b9940e052dc23c72ab37085463",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

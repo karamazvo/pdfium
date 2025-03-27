@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "14569f9d_02e11b9a",
+        "filename": "core/fpdfdoc/cpdf_interactiveform.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 618,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-03-27T16:52:42Z",
+      "side": 1,
+      "message": "Decided to not move InitDict() here, to make the review easier.",
+      "revId": "02ada1586c49718d4a857f0c92f98f8251bf8f60",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
