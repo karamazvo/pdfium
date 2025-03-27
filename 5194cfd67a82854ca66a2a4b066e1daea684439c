@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "495f0406_eef691d8",
+        "filename": "core/fpdfdoc/cpdf_color_utils.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-03-27T16:20:11Z",
+      "side": 1,
+      "message": "Is there a place this can get folded into as well?  Header for one fn otherwise?",
+      "range": {
+        "startLine": 16,
+        "startChar": 10,
+        "endLine": 16,
+        "endChar": 27
+      },
+      "revId": "5194cfd67a82854ca66a2a4b066e1daea684439c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
