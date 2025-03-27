@@ -286,35 +286,6 @@ FX_Charset GetNativeCharSet() {
   return FX_GetCharsetFromCodePage(FX_GetACP());
 }
 
-RetainPtr<CPDF_Dictionary> InitDict(CPDF_Document* pDocument) {
-  auto pFormDict = pDocument->NewIndirect<CPDF_Dictionary>();
-  pDocument->GetMutableRoot()->SetNewFor<CPDF_Reference>(
-      "AcroForm", pDocument, pFormDict->GetObjNum());
-
-  ByteString csBaseName;
-  FX_Charset charSet = GetNativeCharSet();
-  RetainPtr<CPDF_Font> pFont = AddStandardFont(pDocument);
-  if (pFont) {
-    AddFont(pFormDict.Get(), pDocument, pFont, &csBaseName);
-  }
-  if (charSet != FX_Charset::kANSI) {
-    ByteString csFontName = GetNativeFontName(charSet, nullptr);
-    if (!pFont || csFontName != CFX_Font::kDefaultAnsiFontName) {
-      pFont = AddNativeFont(charSet, pDocument);
-      if (pFont) {
-        csBaseName.clear();
-        AddFont(pFormDict.Get(), pDocument, pFont, &csBaseName);
-      }
-    }
-  }
-  ByteString csDA;
-  if (pFont)
-    csDA = "/" + PDF_NameEncode(csBaseName) + " 0 Tf ";
-  csDA += "0 g";
-  pFormDict->SetNewFor<CPDF_String>("DA", csDA);
-  return pFormDict;
-}
-
 RetainPtr<CPDF_Font> GetNativeFont(const CPDF_Dictionary* pFormDict,
                                    CPDF_Document* pDocument,
                                    FX_Charset charSet,
@@ -608,6 +579,39 @@ RetainPtr<CPDF_Font> CPDF_InteractiveForm::AddNativeInteractiveFormFont(
 
   AddFont(pFormDict.Get(), pDocument, pFont, csNameTag);
   return pFont;
+}
+
+// static
+RetainPtr<CPDF_Dictionary> CPDF_InteractiveForm::InitDict(
+    CPDF_Document* document) {
+  auto form_dict = document->NewIndirect<CPDF_Dictionary>();
+  document->GetMutableRoot()->SetNewFor<CPDF_Reference>("AcroForm", document,
+                                                        form_dict->GetObjNum());
+
+  ByteString base_name;
+  FX_Charset charset = GetNativeCharSet();
+  RetainPtr<CPDF_Font> font = AddStandardFont(document);
+  if (font) {
+    AddFont(form_dict.Get(), document, font, &base_name);
+  }
+  if (charset != FX_Charset::kANSI) {
+    ByteString native_font_name = GetNativeFontName(charset, nullptr);
+    if (!font || native_font_name != CFX_Font::kDefaultAnsiFontName) {
+      RetainPtr<CPDF_Font> native_font = AddNativeFont(charset, document);
+      if (native_font) {
+        base_name.clear();
+        AddFont(form_dict.Get(), document, native_font, &base_name);
+        font = std::move(native_font);
+      }
+    }
+  }
+  ByteString default_appearance;
+  if (font) {
+    default_appearance = "/" + PDF_NameEncode(base_name) + " 12 Tf ";
+  }
+  default_appearance += "0 g";
+  form_dict->SetNewFor<CPDF_String>("DA", std::move(default_appearance));
+  return form_dict;
 }
 
 size_t CPDF_InteractiveForm::CountFields(const WideString& csFieldName) const {
