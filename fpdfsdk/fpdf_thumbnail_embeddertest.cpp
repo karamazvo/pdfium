@@ -26,7 +26,7 @@ TEST_F(FPDFThumbnailEmbedderTest, GetDecodedThumbnailDataFromPageWithFilters) {
     const char kHashedDecodedData[] = "7902d0be831c9024960f4ebd5d7df1f7";
     const unsigned long kExpectedSize = 1138u;
 
-    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ScopedPage page = LoadScopedPage(0);
     ASSERT_TRUE(page);
 
     unsigned long length_bytes =
@@ -44,7 +44,7 @@ TEST_F(FPDFThumbnailEmbedderTest, GetDecodedThumbnailDataFromPageWithFilters) {
     const char kHashedDecodedData[] = "e81123a573378ba1ea80461d25cc41f6";
     const unsigned long kExpectedSize = 1110u;
 
-    ScopedEmbedderTestPage page = LoadScopedPage(1);
+    ScopedPage page = LoadScopedPage(1);
     ASSERT_TRUE(page);
 
     unsigned long length_bytes =
@@ -65,7 +65,7 @@ TEST_F(FPDFThumbnailEmbedderTest,
 
   const unsigned long kExpectedSize = 301u;
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   unsigned long length_bytes =
@@ -82,7 +82,7 @@ TEST_F(FPDFThumbnailEmbedderTest,
        GetDecodedThumbnailDataFromPageWithNoThumbnails) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   EXPECT_EQ(0u, FPDFPage_GetDecodedThumbnailData(page.get(), nullptr, 0));
@@ -98,7 +98,7 @@ TEST_F(FPDFThumbnailEmbedderTest, GetRawThumbnailDataFromPageWithFilters) {
   {
     const unsigned long kExpectedSize = 1851u;
 
-    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ScopedPage page = LoadScopedPage(0);
     ASSERT_TRUE(page);
 
     unsigned long length_bytes =
@@ -116,7 +116,7 @@ TEST_F(FPDFThumbnailEmbedderTest, GetRawThumbnailDataFromPageWithFilters) {
     const char kHashedRawData[] = "c7558a461d5ecfb1d4757218b473afc0";
     const unsigned long kExpectedSize = 1792u;
 
-    ScopedEmbedderTestPage page = LoadScopedPage(1);
+    ScopedPage page = LoadScopedPage(1);
     ASSERT_TRUE(page);
 
     unsigned long length_bytes =
@@ -136,7 +136,7 @@ TEST_F(FPDFThumbnailEmbedderTest, GetRawThumbnailDataFromPageWithNoFilters) {
 
   const unsigned long kExpectedSize = 301u;
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   unsigned long length_bytes =
@@ -152,7 +152,7 @@ TEST_F(FPDFThumbnailEmbedderTest, GetRawThumbnailDataFromPageWithNoFilters) {
 TEST_F(FPDFThumbnailEmbedderTest, GetRawThumbnailDataFromPageWithNoThumbnails) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   EXPECT_EQ(0u, FPDFPage_GetRawThumbnailData(page.get(), nullptr, 0));
@@ -166,7 +166,7 @@ TEST_F(FPDFThumbnailEmbedderTest, GetThumbnailAsBitmapFromPage) {
   ASSERT_TRUE(OpenDocument("simple_thumbnail.pdf"));
 
   {
-    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ScopedPage page = LoadScopedPage(0);
     ASSERT_TRUE(page);
 
     ScopedFPDFBitmap thumb_bitmap(FPDFPage_GetThumbnailAsBitmap(page.get()));
@@ -180,7 +180,7 @@ TEST_F(FPDFThumbnailEmbedderTest, GetThumbnailAsBitmapFromPage) {
   }
 
   {
-    ScopedEmbedderTestPage page = LoadScopedPage(1);
+    ScopedPage page = LoadScopedPage(1);
     ASSERT_TRUE(page);
 
     ScopedFPDFBitmap thumb_bitmap(FPDFPage_GetThumbnailAsBitmap(page.get()));
@@ -198,7 +198,7 @@ TEST_F(FPDFThumbnailEmbedderTest,
        GetThumbnailAsBitmapFromPageWithoutThumbnail) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   ScopedFPDFBitmap thumb_bitmap(FPDFPage_GetThumbnailAsBitmap(page.get()));
@@ -209,7 +209,7 @@ TEST_F(FPDFThumbnailEmbedderTest,
        GetThumbnailAsBitmapFromThumbnailWithEmptyStream) {
   ASSERT_TRUE(OpenDocument("thumbnail_with_empty_stream.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   ScopedFPDFBitmap thumb_bitmap(FPDFPage_GetThumbnailAsBitmap(page.get()));
@@ -220,7 +220,7 @@ TEST_F(FPDFThumbnailEmbedderTest,
        GetThumbnailAsBitmapFromThumbnailWithNoFilters) {
   ASSERT_TRUE(OpenDocument("thumbnail_with_no_filters.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   ScopedFPDFBitmap thumb_bitmap(FPDFPage_GetThumbnailAsBitmap(page.get()));
@@ -236,7 +236,7 @@ TEST_F(FPDFThumbnailEmbedderTest, GetThumbnailDoesNotAlterPage) {
 
   const unsigned long kExpectedRawSize = 1851u;
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // Get the raw data

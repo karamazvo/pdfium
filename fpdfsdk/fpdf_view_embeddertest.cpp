@@ -284,7 +284,7 @@ class FPDFViewEmbedderTest : public EmbedderTest {
 // Test for conversion of a point in device coordinates to page coordinates
 TEST_F(FPDFViewEmbedderTest, DeviceCoordinatesToPageCoordinates) {
   ASSERT_TRUE(OpenDocument("about_blank.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 
   // Error tolerance for floating point comparison
@@ -365,7 +365,7 @@ TEST_F(FPDFViewEmbedderTest, DeviceCoordinatesToPageCoordinates) {
 // Test for conversion of a point in page coordinates to device coordinates.
 TEST_F(FPDFViewEmbedderTest, PageCoordinatesToDeviceCoordinates) {
   ASSERT_TRUE(OpenDocument("about_blank.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 
   // Display bounds in device coordinates
@@ -631,7 +631,7 @@ TEST_F(FPDFViewEmbedderTest, LoadCustomDocumentWithShortLivedFileAccess) {
 
 TEST_F(FPDFViewEmbedderTest, Page) {
   ASSERT_TRUE(OpenDocument("about_blank.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 
   EXPECT_FLOAT_EQ(612.0f, FPDF_GetPageWidthF(page.get()));
@@ -906,7 +906,7 @@ TEST_F(FPDFViewEmbedderTest, Crasher451830) {
 
 TEST_F(FPDFViewEmbedderTest, Crasher452455) {
   ASSERT_TRUE(OpenDocument("bug_452455.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 }
 
@@ -1050,7 +1050,7 @@ TEST_F(FPDFViewEmbedderTest, FPDFRenderPageBitmapWithMatrix) {
       "c901239d17d84ac84cb6f2124da71b0d";
 
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   const float page_width = FPDF_GetPageWidthF(page.get());
   const float page_height = FPDF_GetPageHeightF(page.get());
@@ -1224,7 +1224,7 @@ TEST_F(FPDFViewEmbedderTest, FPDFGetPageSizeByIndexF) {
 #endif  // PDF_ENABLE_XFA
 
   // Double-check against values from when page is actually parsed.
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   EXPECT_FLOAT_EQ(size.width, FPDF_GetPageWidthF(page.get()));
   EXPECT_FLOAT_EQ(size.height, FPDF_GetPageHeightF(page.get()));
@@ -1261,7 +1261,7 @@ TEST_F(FPDFViewEmbedderTest, FPDFGetPageSizeByIndex) {
 #endif  // PDF_ENABLE_XFA
 
   // Double-check against values from when page is actually parsed.
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   EXPECT_EQ(width, FPDF_GetPageWidth(page.get()));
   EXPECT_EQ(height, FPDF_GetPageHeight(page.get()));
@@ -1466,7 +1466,7 @@ TEST_F(FPDFViewEmbedderTest, RenderBug664284WithNoNativeText) {
   static const char kNoNativeTextChecksum[] =
       "288502887ffc63291f35a0573b944375";
   ASSERT_TRUE(OpenDocument("bug_664284.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   TestRenderPageBitmapWithFlags(page.get(), 0, original_checksum);
@@ -1483,7 +1483,7 @@ TEST_F(FPDFViewEmbedderTest, RenderAnnotationWithPrintingFlag) {
   }();
   static const char kPrintingChecksum[] = "3e235b9f88f652f2b97b1fc393924849";
   ASSERT_TRUE(OpenDocument("bug_1658.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // A yellow highlight is rendered with `FPDF_ANNOT` flag.
@@ -1514,7 +1514,7 @@ TEST_F(FPDFViewEmbedderTest, RenderJpxLzwImageWithFlags) {
   static const char kGrayscaleChecksum[] = "fe45ad56efe868ba82285fa5ffedc0cb";
 
   ASSERT_TRUE(OpenDocument("jpx_lzw.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   TestRenderPageBitmapWithFlags(page.get(), 0, kNormalChecksum);
@@ -1551,7 +1551,7 @@ TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithFlags) {
   }();
 
   ASSERT_TRUE(OpenDocument("many_rectangles.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   TestRenderPageBitmapWithFlags(page.get(), 0, ManyRectanglesChecksum());
@@ -1578,7 +1578,7 @@ TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithFlags) {
 
 TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithAndWithoutExternalMemory) {
   ASSERT_TRUE(OpenDocument("many_rectangles.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   const char* bgr_checksum = []() {
@@ -1636,7 +1636,7 @@ TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithAndWithoutExternalMemory) {
 
 TEST_F(FPDFViewEmbedderTest, RenderHelloWorldWithFlags) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   using pdfium::HelloWorldChecksum;
@@ -1710,7 +1710,7 @@ TEST_F(FPDFViewEmbedderTest, MAYBE_LargeImageDoesNotRenderBlank) {
   static const char kChecksum[] = "a6056db6961f4e65c42ab2e246171fe1";
 
   ASSERT_TRUE(OpenDocument("bug_1646.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   static constexpr int kWidth = 40000;
@@ -1723,7 +1723,7 @@ TEST_F(FPDFViewEmbedderTest, MAYBE_LargeImageDoesNotRenderBlank) {
 #if BUILDFLAG(IS_WIN)
 TEST_F(FPDFViewEmbedderTest, FPDFRenderPageEmf) {
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   std::vector<uint8_t> emf_normal = RenderPageWithFlagsToEmf(page.get(), 0);
@@ -1774,7 +1774,7 @@ class PostScriptLevel3EmbedderTest : public PostScriptRenderEmbedderTestBase {
 
 TEST_F(PostScriptLevel2EmbedderTest, Rectangles) {
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   std::vector<uint8_t> emf_normal = RenderPageWithFlagsToEmf(page.get(), 0);
@@ -1789,7 +1789,7 @@ TEST_F(PostScriptLevel2EmbedderTest, Rectangles) {
 
 TEST_F(PostScriptLevel3EmbedderTest, Rectangles) {
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   std::vector<uint8_t> emf_normal = RenderPageWithFlagsToEmf(page.get(), 0);
@@ -1865,7 +1865,7 @@ TEST_F(PostScriptLevel2EmbedderTest, Image) {
       "restore\n";
 
   ASSERT_TRUE(OpenDocument("tagged_alt_text.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   std::vector<uint8_t> emf = RenderPageWithFlagsToEmf(page.get(), 0);
@@ -1907,7 +1907,7 @@ restore
 )";
 
   ASSERT_TRUE(OpenDocument("tagged_alt_text.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   std::vector<uint8_t> emf = RenderPageWithFlagsToEmf(page.get(), 0);
@@ -1917,7 +1917,7 @@ restore
 
 TEST_F(FPDFViewEmbedderTest, ImageMask) {
   ASSERT_TRUE(OpenDocument("bug_674771.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // Render the page with more efficient processing of image masks.
@@ -2019,7 +2019,7 @@ TEST_F(FPDFViewEmbedderTest, GetTrailerEndsWhitespace) {
 TEST_F(FPDFViewEmbedderTest, RenderXfaPage) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // Should always be blank, as we're not testing `FPDF_FFLDraw()` here.
@@ -2035,7 +2035,7 @@ TEST_F(FPDFViewEmbedderTest, RenderPageToSkp) {
 
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   TestRenderPageSkp(page.get(), pdfium::RectanglesChecksum());
@@ -2048,7 +2048,7 @@ TEST_F(FPDFViewEmbedderTest, RenderXfaPageToSkp) {
 
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // Should always be blank, as we're not testing `FPDF_FFLRecord()` here.
@@ -2070,7 +2070,7 @@ TEST_F(FPDFViewEmbedderTest, Bug2087) {
   FPDF_InitLibraryWithConfig(&kAggConfig);
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
   {
-    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ScopedPage page = LoadScopedPage(0);
     ScopedFPDFBitmap bitmap = RenderPage(page.get());
     agg_checksum = HashBitmap(bitmap.get());
   }
@@ -2087,7 +2087,7 @@ TEST_F(FPDFViewEmbedderTest, Bug2087) {
   FPDF_InitLibraryWithConfig(&kSkiaConfig);
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
   {
-    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ScopedPage page = LoadScopedPage(0);
     ScopedFPDFBitmap bitmap = RenderPage(page.get());
     skia_checksum = HashBitmap(bitmap.get());
   }
@@ -2102,7 +2102,7 @@ TEST_F(FPDFViewEmbedderTest, Bug2087) {
 
 TEST_F(FPDFViewEmbedderTest, NoSmoothTextItalicOverlappingGlyphs) {
   ASSERT_TRUE(OpenDocument("bug_1919.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   const char* checksum = []() {
@@ -2124,7 +2124,7 @@ TEST_F(FPDFViewEmbedderTest, NoSmoothTextItalicOverlappingGlyphs) {
 
 TEST_F(FPDFViewEmbedderTest, RenderTransparencyOnWhiteBackground) {
   ASSERT_TRUE(OpenDocument("bug_1302355.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   static constexpr int kWidth = 200;
@@ -2154,7 +2154,7 @@ TEST_F(FPDFViewEmbedderTest, Bug2112) {
 
 TEST_F(FPDFViewEmbedderTest, RenderAnnotsGrayScale) {
   ASSERT_TRUE(OpenDocument("annotation_highlight_square_with_ap.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   const char* const gray_checksum = []() {

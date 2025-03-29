@@ -20,12 +20,12 @@ void CPWLComboBoxEmbedderTest::SetUp() {
   ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
 }
 
-CPWLComboBoxEmbedderTest::ScopedEmbedderTestPage
+CPWLComboBoxEmbedderTest::ScopedPage
 CPWLComboBoxEmbedderTest::CreateAndInitializeFormComboboxPDF() {
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   if (!page) {
     ADD_FAILURE();
-    return ScopedEmbedderTestPage();
+    return ScopedPage();
   }
   m_pFormFillEnv = CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
   m_pPageView = m_pFormFillEnv->GetPageViewAtIndex(0);
@@ -35,14 +35,14 @@ CPWLComboBoxEmbedderTest::CreateAndInitializeFormComboboxPDF() {
   m_pAnnotEditable = ToCPDFSDKWidget(iter.GetFirstAnnot());
   if (!m_pAnnotEditable) {
     ADD_FAILURE();
-    return ScopedEmbedderTestPage();
+    return ScopedPage();
   }
 
   // Normal combobox with pre-selected value.
   m_pAnnotNormal = ToCPDFSDKWidget(iter.GetNextAnnot(m_pAnnotEditable));
   if (!m_pAnnotEditable) {
     ADD_FAILURE();
-    return ScopedEmbedderTestPage();
+    return ScopedPage();
   }
 
   // Read-only combobox.
@@ -50,7 +50,7 @@ CPWLComboBoxEmbedderTest::CreateAndInitializeFormComboboxPDF() {
   CPDFSDK_Annot* pLastAnnot = iter.GetLastAnnot();
   if (pAnnotReadOnly != pLastAnnot) {
     ADD_FAILURE();
-    return ScopedEmbedderTestPage();
+    return ScopedPage();
   }
   return page;
 }
