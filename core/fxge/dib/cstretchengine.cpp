@@ -194,21 +194,21 @@ CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
     : m_DestFormat(dest_format),
       m_DestBpp(GetBppFromFormat(dest_format)),
       m_SrcBpp(pSrcBitmap->GetBPP()),
-      m_bHasAlpha(pSrcBitmap->IsAlphaFormat()),
-      m_pSource(pSrcBitmap),
-      m_pSrcPalette(pSrcBitmap->GetPaletteSpan()),
+      has_alpha_(pSrcBitmap->IsAlphaFormat()),
+      source_(pSrcBitmap),
+      src_palette_(pSrcBitmap->GetPaletteSpan()),
       m_SrcWidth(pSrcBitmap->GetWidth()),
       m_SrcHeight(pSrcBitmap->GetHeight()),
-      m_pDestBitmap(pDestBitmap),
+      dest_bitmap_(pDestBitmap),
       m_DestWidth(dest_width),
       m_DestHeight(dest_height),
       m_DestClip(clip_rect) {
-  if (m_bHasAlpha) {
+  if (has_alpha_) {
     // TODO(crbug.com/42271020): Consider adding support for
     // `FXDIB_Format::kBgraPremul`
     DCHECK_EQ(m_DestFormat, FXDIB_Format::kBgra);
     DCHECK_EQ(m_DestBpp, GetBppFromFormat(FXDIB_Format::kBgra));
-    DCHECK_EQ(m_pSource->GetFormat(), FXDIB_Format::kBgra);
+    DCHECK_EQ(source_->GetFormat(), FXDIB_Format::kBgra);
     DCHECK_EQ(m_SrcBpp, GetBppFromFormat(FXDIB_Format::kBgra));
   }
 
@@ -262,8 +262,8 @@ CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
                                      : TransformMethod::k8BppToManyBpp;
       break;
     default:
-      m_TransMethod = m_bHasAlpha ? TransformMethod::kManyBpptoManyBppWithAlpha
-                                  : TransformMethod::kManyBpptoManyBpp;
+      m_TransMethod = has_alpha_ ? TransformMethod::kManyBpptoManyBppWithAlpha
+                                 : TransformMethod::kManyBpptoManyBpp;
       break;
   }
 }
@@ -308,8 +308,9 @@ bool CStretchEngine::StartStretchHorz() {
 bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
   if (!m_DestWidth)
     return false;
-  if (m_pSource->SkipToScanline(m_CurRow, pPause))
+  if (source_->SkipToScanline(m_CurRow, pPause)) {
     return true;
+  }
 
   int Bpp = m_DestBpp / 8;
   static const int kStrechPauseRows = 10;
@@ -322,7 +323,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
       rows_to_go = kStrechPauseRows;
     }
 
-    const uint8_t* src_scan = m_pSource->GetScanline(m_CurRow).data();
+    const uint8_t* src_scan = source_->GetScanline(m_CurRow).data();
     pdfium::span<uint8_t> dest_span = m_InterBuf.subspan(
         (m_CurRow - m_SrcClip.top) * m_InterPitch, m_InterPitch);
     size_t dest_span_index = 0;
@@ -364,7 +365,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             uint32_t dest_b = 0;
             for (int j = pWeights->m_SrcStart; j <= pWeights->m_SrcEnd; ++j) {
               uint32_t pixel_weight = pWeights->GetWeightForPosition(j);
-              FX_ARGB argb = m_pSrcPalette[src_scan[j]];
+              FX_ARGB argb = src_palette_[src_scan[j]];
               if (m_DestFormat == FXDIB_Format::kBgr) {
                 dest_r += pixel_weight * static_cast<uint8_t>(argb >> 16);
                 dest_g += pixel_weight * static_cast<uint8_t>(argb >> 8);
@@ -402,7 +403,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
           break;
         }
         case TransformMethod::kManyBpptoManyBppWithAlpha: {
-          DCHECK(m_bHasAlpha);
+          DCHECK(has_alpha_);
           for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
             PixelWeight* pWeights = m_WeightTable.GetPixelWeight(col);
             uint32_t dest_a = 0;
@@ -491,7 +492,7 @@ void CStretchEngine::StretchVert() {
           break;
         }
         case TransformMethod::kManyBpptoManyBppWithAlpha: {
-          DCHECK(m_bHasAlpha);
+          DCHECK(has_alpha_);
           for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
             pdfium::span<const uint8_t> src_span =
                 m_InterBuf.subspan((col - m_DestClip.left) * DestBpp);
@@ -523,7 +524,7 @@ void CStretchEngine::StretchVert() {
           break;
         }
       }
-      m_pDestBitmap->ComposeScanline(row - m_DestClip.top, m_DestScanline);
+      dest_bitmap_->ComposeScanline(row - m_DestClip.top, m_DestScanline);
     }
   });
 }

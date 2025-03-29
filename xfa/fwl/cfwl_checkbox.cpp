@@ -68,7 +68,7 @@ void CFWL_CheckBox::DrawWidget(CFGAS_GEGraphics* pGraphics,
   param.m_matrix = matrix;
   param.m_PartRect = m_ClientRect;
   if (m_Properties.m_dwStates & FWL_STATE_WGT_Focused)
-    param.m_pRtData = &m_FocusRect;
+    param.rt_data_ = &m_FocusRect;
   pTheme->DrawBackground(param);
 
   CFWL_ThemeBackground checkParam(CFWL_ThemePart::Part::kCheckBox, this,
@@ -77,14 +77,14 @@ void CFWL_CheckBox::DrawWidget(CFGAS_GEGraphics* pGraphics,
   checkParam.m_matrix = matrix;
   checkParam.m_PartRect = m_BoxRect;
   if (m_Properties.m_dwStates & FWL_STATE_WGT_Focused)
-    checkParam.m_pRtData = &m_FocusRect;
+    checkParam.rt_data_ = &m_FocusRect;
   pTheme->DrawBackground(checkParam);
 
   CFWL_ThemeText textParam(CFWL_ThemePart::Part::kCaption, this, pGraphics);
   textParam.m_dwStates = dwStates;
   textParam.m_matrix = matrix;
   textParam.m_PartRect = m_CaptionRect;
-  textParam.m_wsText = WideString::FromASCII("Check box");
+  textParam.text_ = WideString::FromASCII("Check box");
   textParam.m_dwTTOStyles = m_TTOStyles;
   textParam.m_iTTOAlign = m_iTTOAlign;
   pTheme->DrawText(textParam);
@@ -248,17 +248,18 @@ void CFWL_CheckBox::OnLButtonDown() {
   if (m_Properties.m_dwStates & FWL_STATE_WGT_Disabled)
     return;
 
-  m_bBtnDown = true;
+  btn_down_ = true;
   m_Properties.m_dwStates &= ~FWL_STATE_CKB_Hovered;
   m_Properties.m_dwStates |= FWL_STATE_CKB_Pressed;
   RepaintRect(m_ClientRect);
 }
 
 void CFWL_CheckBox::OnLButtonUp(CFWL_MessageMouse* pMsg) {
-  if (!m_bBtnDown)
+  if (!btn_down_) {
     return;
+  }
 
-  m_bBtnDown = false;
+  btn_down_ = false;
   if (!m_ClientRect.Contains(pMsg->m_pos))
     return;
 
@@ -272,7 +273,7 @@ void CFWL_CheckBox::OnMouseMove(CFWL_MessageMouse* pMsg) {
     return;
 
   bool bRepaint = false;
-  if (m_bBtnDown) {
+  if (btn_down_) {
     if (m_ClientRect.Contains(pMsg->m_pos)) {
       if ((m_Properties.m_dwStates & FWL_STATE_CKB_Pressed) == 0) {
         bRepaint = true;
@@ -305,9 +306,9 @@ void CFWL_CheckBox::OnMouseMove(CFWL_MessageMouse* pMsg) {
 }
 
 void CFWL_CheckBox::OnMouseLeave() {
-  if (m_bBtnDown)
+  if (btn_down_) {
     m_Properties.m_dwStates |= FWL_STATE_CKB_Hovered;
-  else
+  } else
     m_Properties.m_dwStates &= ~FWL_STATE_CKB_Hovered;
 
   RepaintRect(m_BoxRect);

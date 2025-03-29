@@ -106,7 +106,7 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   void ShowCaret(CFX_RectF* pRect);
   void HideCaret(CFX_RectF* pRect);
   const CFX_RectF& GetRTClient() const { return m_ClientRect; }
-  CFDE_TextEditEngine* GetTxtEdtEngine() { return m_pEditEngine.get(); }
+  CFDE_TextEditEngine* GetTxtEdtEngine() { return edit_engine_.get(); }
 
  private:
   void RenderText(CFX_RenderDevice* pRenderDev,
@@ -153,17 +153,17 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   CFX_RectF m_StaticRect;
   CFX_RectF m_CaretRect;
   bool m_bLButtonDown = false;
-  int32_t m_nLimit = -1;
+  int32_t limit_ = -1;
   float m_fVAlignOffset = 0.0f;
   float m_fScrollOffsetX = 0.0f;
   float m_fScrollOffsetY = 0.0f;
   float m_fFontSize = 0.0f;
   size_t m_CursorPosition = 0;
-  std::unique_ptr<CFDE_TextEditEngine> const m_pEditEngine;
-  cppgc::Member<CFWL_ScrollBar> m_pVertScrollBar;
-  cppgc::Member<CFWL_Caret> m_pCaret;
-  WideString m_wsCache;
-  WideString m_wsFont;
+  std::unique_ptr<CFDE_TextEditEngine> const edit_engine_;
+  cppgc::Member<CFWL_ScrollBar> vert_scroll_bar_;
+  cppgc::Member<CFWL_Caret> caret_;
+  WideString cache_;
+  WideString font_;
 };
 
 }  // namespace pdfium

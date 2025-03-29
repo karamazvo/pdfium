@@ -39,14 +39,14 @@ std::unique_ptr<CPDF_StructTree> CPDF_StructTree::LoadPage(
 }
 
 CPDF_StructTree::CPDF_StructTree(const CPDF_Document* pDoc)
-    : m_pTreeRoot(pDoc->GetRoot()->GetDictFor("StructTreeRoot")),
-      m_pRoleMap(m_pTreeRoot ? m_pTreeRoot->GetDictFor("RoleMap") : nullptr) {}
+    : tree_root_(pDoc->GetRoot()->GetDictFor("StructTreeRoot")),
+      role_map_(tree_root_ ? tree_root_->GetDictFor("RoleMap") : nullptr) {}
 
 CPDF_StructTree::~CPDF_StructTree() = default;
 
 ByteString CPDF_StructTree::GetRoleMapNameFor(const ByteString& type) const {
-  if (m_pRoleMap) {
-    ByteString mapped = m_pRoleMap->GetNameFor(type);
+  if (role_map_) {
+    ByteString mapped = role_map_->GetNameFor(type);
     if (!mapped.IsEmpty())
       return mapped;
   }
@@ -54,11 +54,12 @@ ByteString CPDF_StructTree::GetRoleMapNameFor(const ByteString& type) const {
 }
 
 void CPDF_StructTree::LoadPageTree(RetainPtr<const CPDF_Dictionary> pPageDict) {
-  m_pPage = std::move(pPageDict);
-  if (!m_pTreeRoot)
+  page_ = std::move(pPageDict);
+  if (!tree_root_) {
     return;
+  }
 
-  RetainPtr<const CPDF_Object> pKids = m_pTreeRoot->GetDirectObjectFor("K");
+  RetainPtr<const CPDF_Object> pKids = tree_root_->GetDirectObjectFor("K");
   if (!pKids)
     return;
 
@@ -74,12 +75,12 @@ void CPDF_StructTree::LoadPageTree(RetainPtr<const CPDF_Dictionary> pPageDict) {
   m_Kids.resize(kids_count);
 
   RetainPtr<const CPDF_Dictionary> pParentTree =
-      m_pTreeRoot->GetDictFor("ParentTree");
+      tree_root_->GetDictFor("ParentTree");
   if (!pParentTree)
     return;
 
   CPDF_NumberTree parent_tree(std::move(pParentTree));
-  int parents_id = m_pPage->GetIntegerFor("StructParents", -1);
+  int parents_id = page_->GetIntegerFor("StructParents", -1);
   if (parents_id < 0)
     return;
 
@@ -135,7 +136,7 @@ RetainPtr<CPDF_StructElement> CPDF_StructTree::AddPageNode(
 bool CPDF_StructTree::AddTopLevelNode(
     const CPDF_Dictionary* pDict,
     const RetainPtr<CPDF_StructElement>& pElement) {
-  RetainPtr<const CPDF_Object> pObj = m_pTreeRoot->GetDirectObjectFor("K");
+  RetainPtr<const CPDF_Object> pObj = tree_root_->GetDirectObjectFor("K");
   if (!pObj)
     return false;
 

@@ -178,9 +178,9 @@ class CFXJS_ObjDefinition {
                       CFXJS_Engine::Destructor pDestructor)
       : m_ObjName(sObjName),
         m_ObjType(eObjType),
-        m_pConstructor(pConstructor),
-        m_pDestructor(pDestructor),
-        m_pIsolate(isolate) {
+        constructor_(pConstructor),
+        destructor_(pDestructor),
+        isolate_(isolate) {
     v8::Isolate::Scope isolate_scope(isolate);
     v8::HandleScope handle_scope(isolate);
     v8::Local<v8::FunctionTemplate> fn = v8::FunctionTemplate::New(isolate);
@@ -213,7 +213,7 @@ class CFXJS_ObjDefinition {
 
   FXJSOBJTYPE GetObjType() const { return m_ObjType; }
   const char* GetObjName() const { return m_ObjName; }
-  v8::Isolate* GetIsolate() const { return m_pIsolate; }
+  v8::Isolate* GetIsolate() const { return isolate_; }
 
   void DefineConst(const char* sConstName, v8::Local<v8::Value> pDefault) {
     GetInstanceTemplate()->Set(GetIsolate(), sConstName, pDefault);
@@ -259,21 +259,23 @@ class CFXJS_ObjDefinition {
   void RunConstructor(CFXJS_Engine* pEngine,
                       v8::Local<v8::Object> obj,
                       v8::Local<v8::Object> proxy) {
-    if (m_pConstructor)
-      m_pConstructor(pEngine, obj, proxy);
+    if (constructor_) {
+      constructor_(pEngine, obj, proxy);
+    }
   }
 
   void RunDestructor(v8::Local<v8::Object> obj) {
-    if (m_pDestructor)
-      m_pDestructor(obj);
+    if (destructor_) {
+      destructor_(obj);
+    }
   }
 
  private:
   UnownedPtr<const char> const m_ObjName;
   const FXJSOBJTYPE m_ObjType;
-  const CFXJS_Engine::Constructor m_pConstructor;
-  const CFXJS_Engine::Destructor m_pDestructor;
-  UnownedPtr<v8::Isolate> m_pIsolate;
+  const CFXJS_Engine::Constructor constructor_;
+  const CFXJS_Engine::Destructor destructor_;
+  UnownedPtr<v8::Isolate> isolate_;
   v8::Global<v8::FunctionTemplate> m_FunctionTemplate;
   v8::Global<v8::Signature> m_Signature;
 };
@@ -380,7 +382,7 @@ CFXJS_PerIsolateData* CFXJS_PerIsolateData::Get(v8::Isolate* pIsolate) {
 
 CFXJS_PerIsolateData::CFXJS_PerIsolateData(v8::Isolate* pIsolate)
     : m_Tag(kPerIsolateDataTag),
-      m_pDynamicObjsMap(std::make_unique<V8TemplateMap>(pIsolate)) {}
+      dynamic_objs_map_(std::make_unique<V8TemplateMap>(pIsolate)) {}
 
 CFXJS_PerIsolateData::~CFXJS_PerIsolateData() = default;
 

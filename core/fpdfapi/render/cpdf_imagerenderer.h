@@ -89,15 +89,15 @@ class CPDF_ImageRenderer {
                                  int* width,
                                  int* height) const;
 
-  UnownedPtr<CPDF_RenderStatus> const m_pRenderStatus;
-  UnownedPtr<CPDF_ImageObject> m_pImageObject;
-  RetainPtr<CPDF_Pattern> m_pPattern;
+  UnownedPtr<CPDF_RenderStatus> const render_status_;
+  UnownedPtr<CPDF_ImageObject> image_object_;
+  RetainPtr<CPDF_Pattern> pattern_;
   RetainPtr<CFX_DIBBase> m_pDIBBase;
   CFX_Matrix m_mtObj2Device;
   CFX_Matrix m_ImageMatrix;
-  std::unique_ptr<CPDF_ImageLoader> const m_pLoader;
+  std::unique_ptr<CPDF_ImageLoader> const loader_;
 #if BUILDFLAG(IS_WIN)
-  std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
+  std::unique_ptr<CFX_ImageTransformer> transformer_;
 #endif
   std::unique_ptr<CFX_AggImageRenderer> m_DeviceHandle;
   Mode m_Mode = Mode::kNone;
@@ -105,7 +105,7 @@ class CPDF_ImageRenderer {
   BlendMode m_BlendType = BlendMode::kNormal;
   FX_ARGB m_FillArgb = 0;
   FXDIB_ResampleOptions m_ResampleOptions;
-  bool m_bPatternColor = false;
+  bool pattern_color_ = false;
   bool m_bStdCS = false;
   bool m_Result = true;
 };

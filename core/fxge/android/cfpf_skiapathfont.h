@@ -21,16 +21,16 @@ class CFPF_SkiaPathFont {
                     int32_t iGlyphNum);
   ~CFPF_SkiaPathFont();
 
-  const char* path() const { return m_bsPath.c_str(); }
-  const char* family() const { return m_bsFamily.c_str(); }
+  const char* path() const { return path_.c_str(); }
+  const char* family() const { return family_.c_str(); }
   uint32_t style() const { return m_dwStyle; }
   int32_t face_index() const { return m_iFaceIndex; }
   uint32_t charsets() const { return m_dwCharsets; }
   int32_t glyph_num() const { return m_iGlyphNum; }
 
  private:
-  const ByteString m_bsPath;
-  const ByteString m_bsFamily;
+  const ByteString path_;
+  const ByteString family_;
   const uint32_t m_dwStyle;
   const int32_t m_iFaceIndex;
   const uint32_t m_dwCharsets;

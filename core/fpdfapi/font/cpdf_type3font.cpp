@@ -29,7 +29,7 @@ CPDF_Type3Font::CPDF_Type3Font(CPDF_Document* pDocument,
                                RetainPtr<CPDF_Dictionary> pFontDict,
                                FormFactoryIface* pFormFactory)
     : CPDF_SimpleFont(pDocument, std::move(pFontDict)),
-      m_pFormFactory(pFormFactory) {
+      form_factory_(pFormFactory) {
   DCHECK(GetDocument());
 }
 
@@ -48,7 +48,7 @@ CPDF_Type3Font* CPDF_Type3Font::AsType3Font() {
 }
 
 void CPDF_Type3Font::WillBeDestroyed() {
-  m_bWillBeDestroyed = true;
+  will_be_destroyed_ = true;
 
   // Last reference to |this| may be through one of its CPDF_Type3Chars.
   RetainPtr<CPDF_Font> protector(this);
@@ -60,8 +60,8 @@ void CPDF_Type3Font::WillBeDestroyed() {
 }
 
 bool CPDF_Type3Font::Load() {
-  m_pFontResources = m_pFontDict->GetMutableDictFor("Resources");
-  RetainPtr<const CPDF_Array> pMatrix = m_pFontDict->GetArrayFor("FontMatrix");
+  font_resources_ = font_dict_->GetMutableDictFor("Resources");
+  RetainPtr<const CPDF_Array> pMatrix = font_dict_->GetArrayFor("FontMatrix");
   float xscale = 1.0f;
   float yscale = 1.0f;
   if (pMatrix) {
@@ -70,7 +70,7 @@ bool CPDF_Type3Font::Load() {
     yscale = m_FontMatrix.d;
   }
 
-  RetainPtr<const CPDF_Array> pBBox = m_pFontDict->GetArrayFor("FontBBox");
+  RetainPtr<const CPDF_Array> pBBox = font_dict_->GetArrayFor("FontBBox");
   if (pBBox) {
     CFX_FloatRect box(
         pBBox->GetFloatAt(0) * xscale, pBBox->GetFloatAt(1) * yscale,
@@ -80,10 +80,9 @@ bool CPDF_Type3Font::Load() {
   }
 
   const size_t kCharLimit = m_CharWidthL.size();
-  int StartChar = m_pFontDict->GetIntegerFor("FirstChar");
+  int StartChar = font_dict_->GetIntegerFor("FirstChar");
   if (StartChar >= 0 && static_cast<size_t>(StartChar) < kCharLimit) {
-    RetainPtr<const CPDF_Array> pWidthArray =
-        m_pFontDict->GetArrayFor("Widths");
+    RetainPtr<const CPDF_Array> pWidthArray = font_dict_->GetArrayFor("Widths");
     if (pWidthArray) {
       size_t count = std::min(pWidthArray->size(), kCharLimit);
       count = std::min(count, kCharLimit - StartChar);
@@ -94,9 +93,10 @@ bool CPDF_Type3Font::Load() {
       }
     }
   }
-  m_pCharProcs = m_pFontDict->GetMutableDictFor("CharProcs");
-  if (m_pFontDict->GetDirectObjectFor("Encoding"))
+  char_procs_ = font_dict_->GetMutableDictFor("CharProcs");
+  if (font_dict_->GetDirectObjectFor("Encoding")) {
     LoadPDFEncoding(false, false);
+  }
   return true;
 }
 
@@ -118,17 +118,17 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
   if (!name)
     return nullptr;
 
-  if (!m_pCharProcs)
+  if (!char_procs_) {
     return nullptr;
+  }
 
   RetainPtr<CPDF_Stream> pStream =
-      ToStream(m_pCharProcs->GetMutableDirectObjectFor(name));
+      ToStream(char_procs_->GetMutableDirectObjectFor(name));
   if (!pStream)
     return nullptr;
 
-  std::unique_ptr<CPDF_Font::FormIface> pForm = m_pFormFactory->CreateForm(
-      m_pDocument, m_pFontResources ? m_pFontResources : m_pPageResources,
-      pStream);
+  std::unique_ptr<CPDF_Font::FormIface> pForm = form_factory_->CreateForm(
+      document_, font_resources_ ? font_resources_ : page_resources_, pStream);
 
   auto pNewChar = std::make_unique<CPDF_Type3Char>();
 

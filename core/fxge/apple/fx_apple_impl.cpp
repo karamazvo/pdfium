@@ -85,16 +85,16 @@ void CFX_AggDeviceDriver::InitPlatform() {
   CQuartz2D& quartz2d =
       static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatform())
           ->m_quartz2d;
-  m_pPlatformGraphics = quartz2d.CreateGraphics(m_pBitmap);
+  platform_graphics_ = quartz2d.CreateGraphics(bitmap_);
 }
 
 void CFX_AggDeviceDriver::DestroyPlatform() {
   CQuartz2D& quartz2d =
       static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatform())
           ->m_quartz2d;
-  if (m_pPlatformGraphics) {
-    quartz2d.DestroyGraphics(m_pPlatformGraphics);
-    m_pPlatformGraphics = nullptr;
+  if (platform_graphics_) {
+    quartz2d.DestroyGraphics(platform_graphics_);
+    platform_graphics_ = nullptr;
   }
 }
 
@@ -115,10 +115,11 @@ bool CFX_AggDeviceDriver::DrawDeviceText(
     return false;
   }
   for (const auto& cp : pCharPos) {
-    if (cp.m_bGlyphAdjust)
+    if (cp.glyph_adjust_) {
       return false;
+    }
   }
-  CGContextRef ctx = CGContextRef(m_pPlatformGraphics);
+  CGContextRef ctx = CGContextRef(platform_graphics_);
   if (!ctx)
     return false;
 
@@ -126,11 +127,11 @@ bool CFX_AggDeviceDriver::DrawDeviceText(
   CGContextSetTextDrawingMode(ctx, kCGTextFillClip);
   CGRect rect_cg;
   CGImageRef pImageCG = nullptr;
-  if (m_pClipRgn) {
+  if (clip_rgn_) {
     rect_cg =
-        CGRectMake(m_pClipRgn->GetBox().left, m_pClipRgn->GetBox().top,
-                   m_pClipRgn->GetBox().Width(), m_pClipRgn->GetBox().Height());
-    RetainPtr<CFX_DIBitmap> pClipMask = m_pClipRgn->GetMask();
+        CGRectMake(clip_rgn_->GetBox().left, clip_rgn_->GetBox().top,
+                   clip_rgn_->GetBox().Width(), clip_rgn_->GetBox().Height());
+    RetainPtr<CFX_DIBitmap> pClipMask = clip_rgn_->GetMask();
     if (pClipMask) {
       CGDataProviderRef pClipMaskDataProvider = CGDataProviderCreateWithData(
           nullptr, pClipMask->GetBuffer().data(),
@@ -142,7 +143,7 @@ bool CFX_AggDeviceDriver::DrawDeviceText(
       CGDataProviderRelease(pClipMaskDataProvider);
     }
   } else {
-    rect_cg = CGRectMake(0, 0, m_pBitmap->GetWidth(), m_pBitmap->GetHeight());
+    rect_cg = CGRectMake(0, 0, bitmap_->GetWidth(), bitmap_->GetHeight());
   }
   rect_cg = CGContextConvertRectToDeviceSpace(ctx, rect_cg);
   if (pImageCG)
@@ -150,7 +151,7 @@ bool CFX_AggDeviceDriver::DrawDeviceText(
   else
     CGContextClipToRect(ctx, rect_cg);
 
-  if (m_bRgbByteOrder) {
+  if (rgb_byte_order_) {
     uint8_t a = FXARGB_A(color);
     uint8_t r = FXARGB_R(color);
     uint8_t g = FXARGB_G(color);
@@ -177,11 +178,11 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_GlyphCache::RenderGlyph_Nativetext(
 }
 
 void CFX_Font::ReleasePlatformResource() {
-  if (m_pPlatformFont) {
+  if (platform_font_) {
     CQuartz2D& quartz2d =
         static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatform())
             ->m_quartz2d;
-    quartz2d.DestroyFont(m_pPlatformFont);
-    m_pPlatformFont = nullptr;
+    quartz2d.DestroyFont(platform_font_);
+    platform_font_ = nullptr;
   }
 }

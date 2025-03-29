@@ -19,9 +19,9 @@
 CFPF_SkiaFont::CFPF_SkiaFont(CFPF_SkiaFontMgr* pFontMgr,
                              const CFPF_SkiaPathFont* pFont,
                              FX_Charset uCharset)
-    : m_pFontMgr(pFontMgr),
-      m_pFont(pFont),
-      m_Face(m_pFontMgr->GetFontFace(m_pFont->path(), m_pFont->face_index())),
+    : font_mgr_(pFontMgr),
+      font_(pFont),
+      m_Face(font_mgr_->GetFontFace(font_->path(), font_->face_index())),
       m_uCharset(uCharset) {}
 
 CFPF_SkiaFont::~CFPF_SkiaFont() = default;

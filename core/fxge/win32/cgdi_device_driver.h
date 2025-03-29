@@ -70,7 +70,7 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
   bool m_bMetafileDCType;
   int m_Width;
   int m_Height;
-  int m_nBitsPerPixel;
+  int bits_per_pixel_;
   const DeviceType m_DeviceType;
   int m_RenderCaps;
   std::optional<FX_RECT> m_BaseClipBox;

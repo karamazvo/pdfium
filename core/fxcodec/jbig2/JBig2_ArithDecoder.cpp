@@ -56,8 +56,8 @@ int JBig2ArithCtx::DecodeNMPS(const JBig2ArithQe& qe) {
 }
 
 CJBig2_ArithDecoder::CJBig2_ArithDecoder(CJBig2_BitStream* pStream)
-    : m_pStream(pStream) {
-  m_B = m_pStream->getCurByte_arith();
+    : stream_(pStream) {
+  m_B = stream_->getCurByte_arith();
   m_C = (m_B ^ 0xff) << 16;
   BYTEIN();
   m_C = m_C << 7;
@@ -90,7 +90,7 @@ int CJBig2_ArithDecoder::Decode(JBig2ArithCtx* pCX) {
 
 void CJBig2_ArithDecoder::BYTEIN() {
   if (m_B == 0xff) {
-    unsigned char B1 = m_pStream->getNextByte_arith();
+    unsigned char B1 = stream_->getNextByte_arith();
     if (B1 > 0x8f) {
       m_CT = 8;
 
@@ -110,20 +110,21 @@ void CJBig2_ArithDecoder::BYTEIN() {
           break;
       }
     } else {
-      m_pStream->incByteIdx();
+      stream_->incByteIdx();
       m_B = B1;
       m_C = m_C + 0xfe00 - (m_B << 9);
       m_CT = 7;
     }
   } else {
-    m_pStream->incByteIdx();
-    m_B = m_pStream->getCurByte_arith();
+    stream_->incByteIdx();
+    m_B = stream_->getCurByte_arith();
     m_C = m_C + 0xff00 - (m_B << 8);
     m_CT = 8;
   }
 
-  if (!m_pStream->IsInBounds())
+  if (!stream_->IsInBounds()) {
     m_Complete = true;
+  }
 }
 
 void CJBig2_ArithDecoder::ReadValueA() {

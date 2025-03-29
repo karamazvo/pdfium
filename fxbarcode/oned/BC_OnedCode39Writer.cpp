@@ -155,8 +155,9 @@ DataVector<uint8_t> CBC_OnedCode39Writer::Encode(const ByteString& contents) {
   static constexpr int32_t kWideStrideNum = 3;
   static constexpr int32_t kNarrowStrideNum = kArraySize - kWideStrideNum;
   ByteString encodedContents = contents;
-  if (m_bCalcChecksum)
+  if (calc_checksum_) {
     encodedContents += checksum;
+  }
   m_iContentLen = encodedContents.GetLength();
   size_t code_width =
       (kWideStrideNum * m_iWideNarrRatio + kNarrowStrideNum) * 2 + 1 +
@@ -203,7 +204,7 @@ DataVector<uint8_t> CBC_OnedCode39Writer::Encode(const ByteString& contents) {
 bool CBC_OnedCode39Writer::encodedContents(WideStringView contents,
                                            WideString* result) {
   *result = WideString(contents);
-  if (m_bCalcChecksum && m_bPrintChecksum) {
+  if (calc_checksum_ && print_checksum_) {
     WideString checksumContent = FilterContents(contents);
     ByteString str = checksumContent.ToUTF8();
     char checksum;

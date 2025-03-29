@@ -52,7 +52,7 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
       RetainPtr<CPDF_Dictionary> pPageResources,
       RetainPtr<CPDF_Stream> pFormStream) override;
 
-  bool IsForceClear() const { return m_bForceClear; }
+  bool IsForceClear() const { return force_clear_; }
 
   RetainPtr<CPDF_Font> AddFont(std::unique_ptr<CFX_Font> pFont,
                                FX_Charset charset);
@@ -117,7 +117,7 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
       ByteString basefont,
       std::function<void(wchar_t, wchar_t, CPDF_Array*)> Insert);
 
-  bool m_bForceClear = false;
+  bool force_clear_ = false;
 
   // Specific destruction order may be required between maps.
   std::map<HashIccProfileKey, RetainPtr<const CPDF_Stream>> m_HashIccProfileMap;

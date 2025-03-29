@@ -27,7 +27,7 @@ class CPDF_IccProfile final : public Retainable {
   bool IsValid() const { return IsSRGB() || IsSupported(); }
   bool IsSRGB() const { return m_bsRGB; }
   bool IsSupported() const { return !!m_Transform; }
-  uint32_t GetComponents() const { return m_nSrcComponents; }
+  uint32_t GetComponents() const { return src_components_; }
 
   bool IsNormal() const;
   void Translate(pdfium::span<const float> pSrcValues,
@@ -45,11 +45,11 @@ class CPDF_IccProfile final : public Retainable {
 
   // Keeps stream alive for the lifetime of this object, so `m_Transform` can
   // safely access the stream data.
-  RetainPtr<const CPDF_StreamAcc> const m_pStreamAcc;
-  // Uses data from `m_pStreamAcc`.
+  RetainPtr<const CPDF_StreamAcc> const stream_acc_;
+  // Uses data from `stream_acc_`.
   std::unique_ptr<fxcodec::IccTransform> m_Transform;
   const bool m_bsRGB;
-  uint32_t m_nSrcComponents = 0;
+  uint32_t src_components_ = 0;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_ICCPROFILE_H_

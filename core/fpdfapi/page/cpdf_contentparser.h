@@ -70,20 +70,20 @@ class CPDF_ContentParser {
   pdfium::span<const uint8_t> GetData() const;
 
   Stage m_CurrentStage;
-  UnownedPtr<CPDF_PageObjectHolder> const m_pPageObjectHolder;
+  UnownedPtr<CPDF_PageObjectHolder> const page_object_holder_;
   UnownedPtr<CPDF_Type3Char> m_pType3Char;  // Only used when parsing forms.
-  RetainPtr<CPDF_StreamAcc> m_pSingleStream;
+  RetainPtr<CPDF_StreamAcc> single_stream_;
   std::vector<RetainPtr<CPDF_StreamAcc>> m_StreamArray;
   std::vector<uint32_t> m_StreamSegmentOffsets;
   std::variant<pdfium::raw_span<const uint8_t>, FixedSizeDataVector<uint8_t>>
       m_Data;
-  uint32_t m_nStreams = 0;
+  uint32_t streams_ = 0;
   uint32_t m_CurrentOffset = 0;
   // Only used when parsing pages.
   CPDF_Form::RecursionState m_RecursionState;
 
   // Must not outlive |m_RecursionState|.
-  std::unique_ptr<CPDF_StreamContentParser> m_pParser;
+  std::unique_ptr<CPDF_StreamContentParser> parser_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_CONTENTPARSER_H_

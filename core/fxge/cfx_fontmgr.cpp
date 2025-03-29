@@ -52,7 +52,7 @@ FXFT_LibraryRec* FTLibraryInitHelper() {
 }  // namespace
 
 CFX_FontMgr::FontDesc::FontDesc(FixedSizeDataVector<uint8_t> data)
-    : m_pFontData(std::move(data)) {}
+    : font_data_(std::move(data)) {}
 
 CFX_FontMgr::FontDesc::~FontDesc() = default;
 
@@ -68,7 +68,7 @@ CFX_Face* CFX_FontMgr::FontDesc::GetFace(size_t index) const {
 
 CFX_FontMgr::CFX_FontMgr()
     : m_FTLibrary(FTLibraryInitHelper()),
-      m_pBuiltinMapper(std::make_unique<CFX_FontMapper>(this)),
+      builtin_mapper_(std::make_unique<CFX_FontMapper>(this)),
       m_FTLibrarySupportsHinting(SetLcdFilterMode() ||
                                  FreeTypeVersionSupportsHinting()) {}
 

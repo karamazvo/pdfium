@@ -143,16 +143,16 @@ class CXFA_FFApp final : public cppgc::GarbageCollected<CXFA_FFApp>,
 
   bool LoadFWLTheme(CXFA_FFDoc* doc);
   CFWL_WidgetMgr* GetFWLWidgetMgr() const { return m_pFWLApp->GetWidgetMgr(); }
-  CallbackIface* GetAppProvider() const { return m_pProvider; }
+  CallbackIface* GetAppProvider() const { return provider_; }
   CFWL_App* GetFWLApp() const { return m_pFWLApp; }
   CXFA_FontMgr* GetXFAFontMgr() const { return m_pXFAFontMgr; }
 
  private:
   explicit CXFA_FFApp(CallbackIface* pProvider);
 
-  UnownedPtr<CallbackIface> const m_pProvider;
+  UnownedPtr<CallbackIface> const provider_;
   cppgc::Member<CXFA_FontMgr> m_pXFAFontMgr;
-  cppgc::Member<CXFA_FWLAdapterWidgetMgr> m_pAdapterWidgetMgr;
+  cppgc::Member<CXFA_FWLAdapterWidgetMgr> adapter_widget_mgr_;
   cppgc::Member<pdfium::CXFA_FWLTheme> m_pFWLTheme;
   cppgc::Member<CFWL_App> m_pFWLApp;
 };

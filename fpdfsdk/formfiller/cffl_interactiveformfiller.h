@@ -206,9 +206,9 @@ class CFFL_InteractiveFormFiller final : public IPWL_FillerNotify {
   CFFL_FormField* GetOrCreateFormField(CPDFSDK_Widget* pWidget);
   void UnregisterFormField(CPDFSDK_Widget* pWidget);
 
-  UnownedPtr<CallbackIface> const m_pCallbackIface;
+  UnownedPtr<CallbackIface> const callback_iface_;
   WidgetToFormFillerMap m_Map;
-  bool m_bNotifying = false;
+  bool notifying_ = false;
 };
 
 #endif  // FPDFSDK_FORMFILLER_CFFL_INTERACTIVEFORMFILLER_H_

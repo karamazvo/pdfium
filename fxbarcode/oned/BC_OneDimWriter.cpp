@@ -54,7 +54,7 @@ CBC_OneDimWriter::CBC_OneDimWriter() = default;
 CBC_OneDimWriter::~CBC_OneDimWriter() = default;
 
 void CBC_OneDimWriter::SetPrintChecksum(bool checksum) {
-  m_bPrintChecksum = checksum;
+  print_checksum_ = checksum;
 }
 
 void CBC_OneDimWriter::SetDataLength(int32_t length) {
@@ -62,14 +62,14 @@ void CBC_OneDimWriter::SetDataLength(int32_t length) {
 }
 
 void CBC_OneDimWriter::SetCalcChecksum(bool state) {
-  m_bCalcChecksum = state;
+  calc_checksum_ = state;
 }
 
 bool CBC_OneDimWriter::SetFont(CFX_Font* cFont) {
   if (!cFont)
     return false;
 
-  m_pFont = cFont;
+  font_ = cFont;
   return true;
 }
 
@@ -167,7 +167,7 @@ void CBC_OneDimWriter::ShowDeviceChars(CFX_RenderDevice* device,
   CFX_Matrix affine_matrix(1.0, 0.0, 0.0, -1.0, (float)locX,
                            (float)(locY + iFontSize));
   affine_matrix.Concat(matrix);
-  device->DrawNormalText(pCharPos.first(str.GetLength()), m_pFont,
+  device->DrawNormalText(pCharPos.first(str.GetLength()), font_,
                          static_cast<float>(iFontSize), affine_matrix,
                          m_fontColor, GetTextRenderOptions());
 }
@@ -176,8 +176,9 @@ bool CBC_OneDimWriter::ShowChars(WideStringView contents,
                                  CFX_RenderDevice* device,
                                  const CFX_Matrix& matrix,
                                  int32_t barWidth) {
-  if (!device || !m_pFont)
+  if (!device || !font_) {
     return false;
+  }
 
   ByteString str = FX_UTF8Encode(contents);
   std::vector<TextCharPos> charpos(str.GetLength());
@@ -192,7 +193,7 @@ bool CBC_OneDimWriter::ShowChars(WideStringView contents,
   }
   int32_t iFontSize = static_cast<int32_t>(fabs(m_fFontSize));
   int32_t iTextHeight = iFontSize + 1;
-  CalcTextInfo(str, charpos, m_pFont, geWidth, iFontSize, charsLen);
+  CalcTextInfo(str, charpos, font_, geWidth, iFontSize, charsLen);
   if (charsLen < 1)
     return true;
 
@@ -258,8 +259,8 @@ bool CBC_OneDimWriter::RenderResult(WideStringView contents,
 
   m_ModuleHeight = std::max(m_ModuleHeight, 20);
   const size_t original_codelength = code.size();
-  const int32_t leftPadding = m_bLeftPadding ? 7 : 0;
-  const int32_t rightPadding = m_bRightPadding ? 7 : 0;
+  const int32_t leftPadding = left_padding_ ? 7 : 0;
+  const int32_t rightPadding = right_padding_ ? 7 : 0;
   const size_t codelength = code.size() + leftPadding + rightPadding;
   m_outputHScale =
       m_Width > 0 ? static_cast<float>(m_Width) / static_cast<float>(codelength)

@@ -36,19 +36,19 @@ class CFWL_ListBox : public CFWL_Widget {
     explicit Item(const WideString& text);
     ~Item();
 
-    bool IsSelected() const { return m_bIsSelected; }
-    void SetSelected(bool enable) { m_bIsSelected = enable; }
-    bool IsFocused() const { return m_bIsFocused; }
-    void SetFocused(bool enable) { m_bIsFocused = enable; }
+    bool IsSelected() const { return is_selected_; }
+    void SetSelected(bool enable) { is_selected_ = enable; }
+    bool IsFocused() const { return is_focused_; }
+    void SetFocused(bool enable) { is_focused_ = enable; }
     CFX_RectF GetRect() const { return m_ItemRect; }
     void SetRect(const CFX_RectF& rect) { m_ItemRect = rect; }
-    WideString GetText() const { return m_wsText; }
+    WideString GetText() const { return text_; }
 
    private:
-    bool m_bIsSelected = false;
-    bool m_bIsFocused = false;
+    bool is_selected_ = false;
+    bool is_focused_ = false;
     CFX_RectF m_ItemRect;
-    const WideString m_wsText;
+    const WideString text_;
   };
 
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
@@ -93,7 +93,7 @@ class CFWL_ListBox : public CFWL_Widget {
   bool IsShowVertScrollBar() const;
   bool IsShowHorzScrollBar() const;
   bool ScrollBarPropertiesPresent() const;
-  CFWL_ScrollBar* GetVertScrollBar() const { return m_pVertScrollBar; }
+  CFWL_ScrollBar* GetVertScrollBar() const { return vert_scroll_bar_; }
   const CFX_RectF& GetRTClient() const { return m_ClientRect; }
 
  private:
@@ -132,8 +132,8 @@ class CFWL_ListBox : public CFWL_Widget {
   CFX_RectF m_ClientRect;
   CFX_RectF m_StaticRect;
   CFX_RectF m_ContentRect;
-  cppgc::Member<CFWL_ScrollBar> m_pHorzScrollBar;
-  cppgc::Member<CFWL_ScrollBar> m_pVertScrollBar;
+  cppgc::Member<CFWL_ScrollBar> horz_scroll_bar_;
+  cppgc::Member<CFWL_ScrollBar> vert_scroll_bar_;
   FDE_TextStyle m_TTOStyles;
   FDE_TextAlignment m_iTTOAligns = FDE_TextAlignment::kTopLeft;
   bool m_bLButtonDown = false;

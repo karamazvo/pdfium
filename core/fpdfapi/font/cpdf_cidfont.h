@@ -89,12 +89,12 @@ class CPDF_CIDFont final : public CPDF_Font {
 
   RetainPtr<const CPDF_CMap> m_pCMap;
   UnownedPtr<const CPDF_CID2UnicodeMap> m_pCID2UnicodeMap;
-  RetainPtr<CPDF_StreamAcc> m_pStreamAcc;
+  RetainPtr<CPDF_StreamAcc> stream_acc_;
   std::unique_ptr<CFX_CTTGSUBTable> m_pTTGSUBTable;
   CIDFontType m_FontType = CIDFontType::kTrueType;
   bool m_bCIDIsGID = false;
-  bool m_bAnsiWidthsFixed = false;
-  bool m_bAdobeCourierStd = false;
+  bool ansi_widths_fixed_ = false;
+  bool adobe_courier_std_ = false;
   CIDSet m_Charset = CIDSET_UNKNOWN;
   int16_t m_DefaultWidth = 1000;
   int16_t m_DefaultVY = 880;

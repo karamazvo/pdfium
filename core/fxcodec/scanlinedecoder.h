@@ -33,7 +33,7 @@ class ScanlineDecoder {
 
   int GetWidth() const { return m_OutputWidth; }
   int GetHeight() const { return m_OutputHeight; }
-  int CountComps() const { return m_nComps; }
+  int CountComps() const { return comps_; }
   int GetBPC() const { return m_bpc; }
 
   virtual uint32_t GetSrcOffset() = 0;
@@ -46,11 +46,11 @@ class ScanlineDecoder {
   int m_OrigHeight;
   int m_OutputWidth;
   int m_OutputHeight;
-  int m_nComps;
+  int comps_;
   int m_bpc;
   uint32_t m_Pitch;
   int m_NextLine = -1;
-  pdfium::raw_span<uint8_t> m_pLastScanline;
+  pdfium::raw_span<uint8_t> last_scanline_;
 };
 
 }  // namespace fxcodec

@@ -46,7 +46,7 @@ class CBC_EncoderContext {
  private:
   size_t getTotalMessageCharCount();
 
-  bool m_bAllowRectangular = false;  // Force square when false.
+  bool allow_rectangular_ = false;  // Force square when false.
   bool m_bHasCharactersOutsideISO88591Encoding = false;
   size_t m_skipAtEnd = 0;
 };

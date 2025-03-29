@@ -33,8 +33,8 @@ class CFPF_SkiaFont {
   uint32_t GetFontData(uint32_t dwTable, pdfium::span<uint8_t> pBuffer);
 
  private:
-  UnownedPtr<CFPF_SkiaFontMgr> const m_pFontMgr;
-  UnownedPtr<const CFPF_SkiaPathFont> const m_pFont;
+  UnownedPtr<CFPF_SkiaFontMgr> const font_mgr_;
+  UnownedPtr<const CFPF_SkiaPathFont> const font_;
   RetainPtr<CFX_Face> const m_Face;
   const FX_Charset m_uCharset;
 };

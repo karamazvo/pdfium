@@ -65,7 +65,7 @@ class CFX_BidiString {
  private:
   const WideString& m_Str;
   std::vector<CFX_BidiChar::Segment> m_Order;
-  CFX_BidiChar::Direction m_eOverallDirection = CFX_BidiChar::Direction::kLeft;
+  CFX_BidiChar::Direction overall_direction_ = CFX_BidiChar::Direction::kLeft;
 };
 
 #endif  // CORE_FXCRT_FX_BIDI_H_

@@ -27,14 +27,14 @@ class CXFA_ViewLayoutItem final : public CXFA_LayoutItem {
   int32_t GetPageIndex() const;
   CFX_SizeF GetPageSize() const;
   CXFA_Node* GetMasterPage() const;
-  CXFA_Node* GetOldSubform() const { return m_pOldSubform; }
+  CXFA_Node* GetOldSubform() const { return old_subform_; }
   void SetOldSubform(CXFA_Node* pSubform);
 
  private:
   CXFA_ViewLayoutItem(CXFA_Node* pNode, CXFA_FFPageView* pPageView);
 
   cppgc::Member<CXFA_FFPageView> const m_pFFPageView;
-  cppgc::Member<CXFA_Node> m_pOldSubform;
+  cppgc::Member<CXFA_Node> old_subform_;
 };
 
 #endif  // XFA_FXFA_LAYOUT_CXFA_VIEWLAYOUTITEM_H_

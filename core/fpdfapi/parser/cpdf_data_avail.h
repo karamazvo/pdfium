@@ -91,7 +91,7 @@ class CPDF_DataAvail final : public Observable::ObserverIface {
       const ByteString& password);
 
   const CPDF_HintTables* GetHintTablesForTest() const {
-    return m_pHintTables.get();
+    return hint_tables_.get();
   }
 
  private:
@@ -165,32 +165,32 @@ class CPDF_DataAvail final : public Observable::ObserverIface {
   bool ValidatePage(uint32_t dwPage) const;
   CPDF_SyntaxParser* GetSyntaxParser() const;
 
-  RetainPtr<CPDF_ReadValidator> m_pFileRead;
+  RetainPtr<CPDF_ReadValidator> file_read_;
   CPDF_Parser m_parser;
-  RetainPtr<CPDF_Dictionary> m_pRoot;
-  std::unique_ptr<CPDF_LinearizedHeader> m_pLinearized;
-  bool m_bDocAvail = false;
+  RetainPtr<CPDF_Dictionary> root_;
+  std::unique_ptr<CPDF_LinearizedHeader> linearized_;
+  bool doc_avail_ = false;
   InternalStatus m_internalStatus = InternalStatus::kHeader;
-  std::unique_ptr<CPDF_CrossRefAvail> m_pCrossRefAvail;
+  std::unique_ptr<CPDF_CrossRefAvail> cross_ref_avail_;
   const FX_FILESIZE m_dwFileLen;
-  UnownedPtr<CPDF_Document> m_pDocument;
+  UnownedPtr<CPDF_Document> document_;
   std::vector<uint32_t> m_PageObjList;
   std::set<uint32_t> m_SeenPageObjList;
   uint32_t m_PagesObjNum = 0;
   bool m_bLinearedDataOK = false;
   bool m_bMainXRefLoadTried = false;
   bool m_bMainXRefLoadedOK = false;
-  bool m_bPagesTreeLoad = false;
-  bool m_bPagesLoad = false;
-  std::unique_ptr<CPDF_PageObjectAvail> m_pFormAvail;
+  bool pages_tree_load_ = false;
+  bool pages_load_ = false;
+  std::unique_ptr<CPDF_PageObjectAvail> form_avail_;
   std::vector<RetainPtr<CPDF_Object>> m_PagesArray;
-  bool m_bTotalLoadPageTree = false;
+  bool total_load_page_tree_ = false;
   bool m_bCurPageDictLoadOK = false;
-  bool m_bHeaderAvail = false;
+  bool header_avail_ = false;
   PageNode m_PageNode;
   std::set<uint32_t> m_pageMapCheckState;
   std::set<uint32_t> m_pagesLoadState;
-  std::unique_ptr<CPDF_HintTables> m_pHintTables;
+  std::unique_ptr<CPDF_HintTables> hint_tables_;
   std::map<uint32_t, std::unique_ptr<CPDF_PageObjectAvail>> m_PagesObjAvail;
   std::map<RetainPtr<const CPDF_Object>,
            std::unique_ptr<CPDF_PageObjectAvail>,

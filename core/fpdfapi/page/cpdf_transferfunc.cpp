@@ -20,7 +20,7 @@ CPDF_TransferFunc::CPDF_TransferFunc(bool bIdentify,
                                      FixedSizeDataVector<uint8_t> samples_r,
                                      FixedSizeDataVector<uint8_t> samples_g,
                                      FixedSizeDataVector<uint8_t> samples_b)
-    : m_bIdentity(bIdentify),
+    : identity_(bIdentify),
       m_SamplesR(std::move(samples_r)),
       m_SamplesG(std::move(samples_g)),
       m_SamplesB(std::move(samples_b)) {

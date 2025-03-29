@@ -29,8 +29,8 @@ class CPDF_PathObject final : public CPDF_PageObject {
 
   void CalcBoundingBox();
 
-  bool stroke() const { return m_bStroke; }
-  void set_stroke(bool stroke) { m_bStroke = stroke; }
+  bool stroke() const { return stroke_; }
+  void set_stroke(bool stroke) { stroke_ = stroke; }
 
   // Layering, avoid caller knowledge of CFX_FillRenderOptions::FillType values.
   bool has_no_filltype() const {
@@ -64,7 +64,7 @@ class CPDF_PathObject final : public CPDF_PageObject {
   void SetPathMatrix(const CFX_Matrix& matrix);
 
  private:
-  bool m_bStroke = false;
+  bool stroke_ = false;
   CFX_FillRenderOptions::FillType m_FillType =
       CFX_FillRenderOptions::FillType::kNoFill;
   CPDF_Path m_Path;

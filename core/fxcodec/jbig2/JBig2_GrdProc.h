@@ -98,7 +98,7 @@ class CJBig2_GRDProc {
       pdfium::span<JBig2ArithCtx> gbContexts);
 
   uint32_t m_loopIndex = 0;
-  UNOWNED_PTR_EXCLUSION uint8_t* m_pLine = nullptr;
+  UNOWNED_PTR_EXCLUSION uint8_t* line_ = nullptr;
   FXCODEC_STATUS m_ProgressiveStatus;
   uint16_t m_DecodeType = 0;
   int m_LTP = 0;

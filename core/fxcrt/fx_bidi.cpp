@@ -85,14 +85,14 @@ CFX_BidiString::CFX_BidiString(const WideString& str) : m_Str(str) {
 CFX_BidiString::~CFX_BidiString() = default;
 
 CFX_BidiChar::Direction CFX_BidiString::OverallDirection() const {
-  DCHECK_NE(m_eOverallDirection, CFX_BidiChar::Direction::kNeutral);
-  DCHECK_NE(m_eOverallDirection, CFX_BidiChar::Direction::kLeftWeak);
-  return m_eOverallDirection;
+  DCHECK_NE(overall_direction_, CFX_BidiChar::Direction::kNeutral);
+  DCHECK_NE(overall_direction_, CFX_BidiChar::Direction::kLeftWeak);
+  return overall_direction_;
 }
 
 void CFX_BidiString::SetOverallDirectionRight() {
-  if (m_eOverallDirection != CFX_BidiChar::Direction::kRight) {
+  if (overall_direction_ != CFX_BidiChar::Direction::kRight) {
     std::reverse(m_Order.begin(), m_Order.end());
-    m_eOverallDirection = CFX_BidiChar::Direction::kRight;
+    overall_direction_ = CFX_BidiChar::Direction::kRight;
   }
 }

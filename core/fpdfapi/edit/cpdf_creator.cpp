@@ -119,11 +119,11 @@ bool OutputIndex(IFX_ArchiveStream* archive, FX_FILESIZE offset) {
 
 CPDF_Creator::CPDF_Creator(CPDF_Document* pDoc,
                            RetainPtr<IFX_RetainableWriteStream> archive)
-    : m_pDocument(pDoc),
-      m_pParser(pDoc->GetParser()),
-      m_pEncryptDict(m_pParser ? m_pParser->GetEncryptDict() : nullptr),
-      m_pSecurityHandler(m_pParser ? m_pParser->GetSecurityHandler() : nullptr),
-      m_dwLastObjNum(m_pDocument->GetLastObjNum()),
+    : document_(pDoc),
+      parser_(pDoc->GetParser()),
+      encrypt_dict_(parser_ ? parser_->GetEncryptDict() : nullptr),
+      security_handler_(parser_ ? parser_->GetSecurityHandler() : nullptr),
+      m_dwLastObjNum(document_->GetLastObjNum()),
       m_Archive(std::make_unique<CFX_FileBufferArchive>(std::move(archive))) {}
 
 CPDF_Creator::~CPDF_Creator() = default;
@@ -133,8 +133,9 @@ bool CPDF_Creator::WriteIndirectObj(uint32_t objnum, const CPDF_Object* pObj) {
     return false;
 
   std::unique_ptr<CPDF_Encryptor> encryptor;
-  if (GetCryptoHandler() && pObj != m_pEncryptDict)
+  if (GetCryptoHandler() && pObj != encrypt_dict_) {
     encryptor = std::make_unique<CPDF_Encryptor>(GetCryptoHandler(), objnum);
+  }
 
   if (!pObj->WriteTo(m_Archive.get(), encryptor.get()))
     return false;
@@ -143,14 +144,14 @@ bool CPDF_Creator::WriteIndirectObj(uint32_t objnum, const CPDF_Object* pObj) {
 }
 
 bool CPDF_Creator::WriteOldIndirectObject(uint32_t objnum) {
-  if (m_pParser->IsObjectFree(objnum)) {
+  if (parser_->IsObjectFree(objnum)) {
     return true;
   }
 
   m_ObjectOffsets[objnum] = m_Archive->CurrentOffset();
 
-  bool bExistInMap = !!m_pDocument->GetIndirectObject(objnum);
-  RetainPtr<CPDF_Object> pObj = m_pDocument->GetOrParseIndirectObject(objnum);
+  bool bExistInMap = !!document_->GetIndirectObject(objnum);
+  RetainPtr<CPDF_Object> pObj = document_->GetOrParseIndirectObject(objnum);
   if (!pObj) {
     m_ObjectOffsets.erase(objnum);
     return true;
@@ -158,13 +159,13 @@ bool CPDF_Creator::WriteOldIndirectObject(uint32_t objnum) {
   if (!WriteIndirectObj(pObj->GetObjNum(), pObj.Get()))
     return false;
   if (!bExistInMap)
-    m_pDocument->DeleteIndirectObject(objnum);
+    document_->DeleteIndirectObject(objnum);
   return true;
 }
 
 bool CPDF_Creator::WriteOldObjs() {
-  const uint32_t nLastObjNum = m_pParser->GetLastObjNum();
-  if (!m_pParser->IsValidObjectNumber(nLastObjNum)) {
+  const uint32_t nLastObjNum = parser_->GetLastObjNum();
+  if (!parser_->IsValidObjectNumber(nLastObjNum)) {
     return true;
   }
   if (m_CurObjNum > nLastObjNum) {
@@ -172,7 +173,7 @@ bool CPDF_Creator::WriteOldObjs() {
   }
 
   const std::set<uint32_t> objects_with_refs =
-      GetObjectsWithReferences(m_pDocument);
+      GetObjectsWithReferences(document_);
   uint32_t last_object_number_written = 0;
   for (uint32_t objnum = m_CurObjNum; objnum <= nLastObjNum; ++objnum) {
     if (!pdfium::Contains(objects_with_refs, objnum)) {
@@ -194,7 +195,7 @@ bool CPDF_Creator::WriteOldObjs() {
 bool CPDF_Creator::WriteNewObjs() {
   for (size_t i = m_CurObjNum; i < m_NewObjNumArray.size(); ++i) {
     uint32_t objnum = m_NewObjNumArray[i];
-    RetainPtr<const CPDF_Object> pObj = m_pDocument->GetIndirectObject(objnum);
+    RetainPtr<const CPDF_Object> pObj = document_->GetIndirectObject(objnum);
     if (!pObj)
       continue;
 
@@ -206,14 +207,14 @@ bool CPDF_Creator::WriteNewObjs() {
 }
 
 void CPDF_Creator::InitNewObjNumOffsets() {
-  for (const auto& pair : *m_pDocument) {
+  for (const auto& pair : *document_) {
     const uint32_t objnum = pair.first;
     if (m_IsIncremental ||
         pair.second->GetObjNum() == CPDF_Object::kInvalidObjNum) {
       continue;
     }
-    if (m_pParser && m_pParser->IsValidObjectNumber(objnum) &&
-        !m_pParser->IsObjectFree(objnum)) {
+    if (parser_ && parser_->IsValidObjectNumber(objnum) &&
+        !parser_->IsObjectFree(objnum)) {
       continue;
     }
     m_NewObjNumArray.insert(std::lower_bound(m_NewObjNumArray.begin(),
@@ -225,8 +226,9 @@ void CPDF_Creator::InitNewObjNumOffsets() {
 CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage1() {
   DCHECK(m_iStage > Stage::kInvalid || m_iStage < Stage::kInitWriteObjs20);
   if (m_iStage == Stage::kInit0) {
-    if (!m_pParser || (m_bSecurityChanged && m_IsOriginal))
+    if (!parser_ || (security_changed_ && m_IsOriginal)) {
       m_IsIncremental = false;
+    }
 
     m_iStage = Stage::kWriteHeader10;
   }
@@ -238,8 +240,9 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage1() {
       int32_t version = 7;
       if (m_FileVersion)
         version = m_FileVersion;
-      else if (m_pParser)
-        version = m_pParser->GetFileVersion();
+      else if (parser_) {
+        version = parser_->GetFileVersion();
+      }
 
       if (!m_Archive->WriteDWord(version % 10) ||
           !m_Archive->WriteString("\r\n%\xA1\xB3\xC5\xD7\r\n")) {
@@ -247,22 +250,23 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage1() {
       }
       m_iStage = Stage::kInitWriteObjs20;
     } else {
-      m_SavedOffset = m_pParser->GetDocumentSize();
+      m_SavedOffset = parser_->GetDocumentSize();
       m_iStage = Stage::kWriteIncremental15;
     }
   }
   if (m_iStage == Stage::kWriteIncremental15) {
     if (m_IsOriginal && m_SavedOffset > 0) {
-      if (!m_pParser->WriteToArchive(m_Archive.get(), m_SavedOffset))
+      if (!parser_->WriteToArchive(m_Archive.get(), m_SavedOffset)) {
         return Stage::kInvalid;
+      }
     }
-    if (m_IsOriginal && m_pParser->GetLastXRefOffset() == 0) {
-      for (uint32_t num = 0; num <= m_pParser->GetLastObjNum(); ++num) {
-        if (m_pParser->IsObjectFree(num)) {
+    if (m_IsOriginal && parser_->GetLastXRefOffset() == 0) {
+      for (uint32_t num = 0; num <= parser_->GetLastObjNum(); ++num) {
+        if (parser_->IsObjectFree(num)) {
           continue;
         }
 
-        m_ObjectOffsets[num] = m_pParser->GetObjectPositionOrZero(num);
+        m_ObjectOffsets[num] = parser_->GetObjectPositionOrZero(num);
       }
     }
     m_iStage = Stage::kInitWriteObjs20;
@@ -275,7 +279,7 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage2() {
   DCHECK(m_iStage >= Stage::kInitWriteObjs20 ||
          m_iStage < Stage::kInitWriteXRefs80);
   if (m_iStage == Stage::kInitWriteObjs20) {
-    if (!m_IsIncremental && m_pParser) {
+    if (!m_IsIncremental && parser_) {
       m_CurObjNum = 0;
       m_iStage = Stage::kWriteOldObjs21;
     } else {
@@ -299,11 +303,12 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage2() {
     m_iStage = Stage::kWriteEncryptDict27;
   }
   if (m_iStage == Stage::kWriteEncryptDict27) {
-    if (m_pEncryptDict && m_pEncryptDict->IsInline()) {
+    if (encrypt_dict_ && encrypt_dict_->IsInline()) {
       m_dwLastObjNum += 1;
       FX_FILESIZE saveOffset = m_Archive->CurrentOffset();
-      if (!WriteIndirectObj(m_dwLastObjNum, m_pEncryptDict.Get()))
+      if (!WriteIndirectObj(m_dwLastObjNum, encrypt_dict_.Get())) {
         return Stage::kInvalid;
+      }
 
       m_ObjectOffsets[m_dwLastObjNum] = saveOffset;
       if (m_IsIncremental)
@@ -321,8 +326,8 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage3() {
   uint32_t dwLastObjNum = m_dwLastObjNum;
   if (m_iStage == Stage::kInitWriteXRefs80) {
     m_XrefStart = m_Archive->CurrentOffset();
-    if (!m_IsIncremental || !m_pParser->IsXRefStream()) {
-      if (!m_IsIncremental || m_pParser->GetLastXRefOffset() == 0) {
+    if (!m_IsIncremental || !parser_->IsXRefStream()) {
+      if (!m_IsIncremental || parser_->GetLastXRefOffset() == 0) {
         ByteString str;
         str = pdfium::Contains(m_ObjectOffsets, 1)
                   ? "xref\r\n"
@@ -415,19 +420,19 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage3() {
 CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage4() {
   DCHECK(m_iStage >= Stage::kWriteTrailerAndFinish90);
 
-  bool bXRefStream = m_IsIncremental && m_pParser->IsXRefStream();
+  bool bXRefStream = m_IsIncremental && parser_->IsXRefStream();
   if (!bXRefStream) {
     if (!m_Archive->WriteString("trailer\r\n<<"))
       return Stage::kInvalid;
   } else {
-    if (!m_Archive->WriteDWord(m_pDocument->GetLastObjNum() + 1) ||
+    if (!m_Archive->WriteDWord(document_->GetLastObjNum() + 1) ||
         !m_Archive->WriteString(" 0 obj <<")) {
       return Stage::kInvalid;
     }
   }
 
-  if (m_pParser) {
-    CPDF_DictionaryLocker locker(m_pParser->GetCombinedTrailer());
+  if (parser_) {
+    CPDF_DictionaryLocker locker(parser_->GetCombinedTrailer());
     for (const auto& it : locker) {
       const ByteString& key = it.first;
       const RetainPtr<CPDF_Object>& pValue = it.second;
@@ -446,25 +451,25 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage4() {
     }
   } else {
     if (!m_Archive->WriteString("\r\n/Root ") ||
-        !m_Archive->WriteDWord(m_pDocument->GetRoot()->GetObjNum()) ||
+        !m_Archive->WriteDWord(document_->GetRoot()->GetObjNum()) ||
         !m_Archive->WriteString(" 0 R\r\n")) {
       return Stage::kInvalid;
     }
-    if (m_pDocument->GetInfo()) {
+    if (document_->GetInfo()) {
       if (!m_Archive->WriteString("/Info ") ||
-          !m_Archive->WriteDWord(m_pDocument->GetInfo()->GetObjNum()) ||
+          !m_Archive->WriteDWord(document_->GetInfo()->GetObjNum()) ||
           !m_Archive->WriteString(" 0 R\r\n")) {
         return Stage::kInvalid;
       }
     }
   }
-  if (m_pEncryptDict) {
+  if (encrypt_dict_) {
     if (!m_Archive->WriteString("/Encrypt"))
       return Stage::kInvalid;
 
-    uint32_t dwObjNum = m_pEncryptDict->GetObjNum();
+    uint32_t dwObjNum = encrypt_dict_->GetObjNum();
     if (dwObjNum == 0)
-      dwObjNum = m_pDocument->GetLastObjNum() + 1;
+      dwObjNum = document_->GetLastObjNum() + 1;
     if (!m_Archive->WriteString(" ") || !m_Archive->WriteDWord(dwObjNum) ||
         !m_Archive->WriteString(" 0 R ")) {
       return Stage::kInvalid;
@@ -476,7 +481,7 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage4() {
     return Stage::kInvalid;
   }
   if (m_IsIncremental) {
-    FX_FILESIZE prev = m_pParser->GetLastXRefOffset();
+    FX_FILESIZE prev = parser_->GetLastXRefOffset();
     if (prev) {
       if (!m_Archive->WriteString("/Prev ") || !m_Archive->WriteFilesize(prev))
         return Stage::kInvalid;
@@ -494,7 +499,7 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage4() {
   } else {
     if (!m_Archive->WriteString("/W[0 4 1]/Index["))
       return Stage::kInvalid;
-    if (m_IsIncremental && m_pParser && m_pParser->GetLastXRefOffset() == 0) {
+    if (m_IsIncremental && parser_ && parser_->GetLastXRefOffset() == 0) {
       uint32_t i = 0;
       for (i = 0; i < m_dwLastObjNum; i++) {
         if (!pdfium::Contains(m_ObjectOffsets, i))
@@ -552,7 +557,7 @@ bool CPDF_Creator::Create(uint32_t flags) {
   m_IsOriginal = !(flags & FPDFCREATE_NO_ORIGINAL);
 
   m_iStage = Stage::kInit0;
-  m_dwLastObjNum = m_pDocument->GetLastObjNum();
+  m_dwLastObjNum = document_->GetLastObjNum();
   m_ObjectOffsets.clear();
   m_NewObjNumArray.clear();
 
@@ -565,7 +570,7 @@ void CPDF_Creator::InitID() {
 
   m_pIDArray = pdfium::MakeRetain<CPDF_Array>();
   RetainPtr<const CPDF_Array> pOldIDArray =
-      m_pParser ? m_pParser->GetIDArray() : nullptr;
+      parser_ ? parser_->GetIDArray() : nullptr;
   RetainPtr<const CPDF_Object> pID1 =
       pOldIDArray ? pOldIDArray->GetObjectAt(0) : nullptr;
   if (pID1) {
@@ -579,7 +584,7 @@ void CPDF_Creator::InitID() {
 
   if (pOldIDArray) {
     RetainPtr<const CPDF_Object> pID2 = pOldIDArray->GetObjectAt(1);
-    if (m_IsIncremental && m_pEncryptDict && pID2) {
+    if (m_IsIncremental && encrypt_dict_ && pID2) {
       m_pIDArray->Append(pID2->Clone());
       return;
     }
@@ -591,17 +596,17 @@ void CPDF_Creator::InitID() {
   }
 
   m_pIDArray->Append(m_pIDArray->GetObjectAt(0)->Clone());
-  if (m_pEncryptDict) {
-    DCHECK(m_pParser);
-    int revision = m_pEncryptDict->GetIntegerFor("R");
+  if (encrypt_dict_) {
+    DCHECK(parser_);
+    int revision = encrypt_dict_->GetIntegerFor("R");
     if ((revision == 2 || revision == 3) &&
-        m_pEncryptDict->GetByteStringFor("Filter") == "Standard") {
-      m_pNewEncryptDict = ToDictionary(m_pEncryptDict->Clone());
-      m_pEncryptDict = m_pNewEncryptDict;
-      m_pSecurityHandler = pdfium::MakeRetain<CPDF_SecurityHandler>();
-      m_pSecurityHandler->OnCreate(m_pNewEncryptDict.Get(), m_pIDArray.Get(),
-                                   m_pParser->GetEncodedPassword());
-      m_bSecurityChanged = true;
+        encrypt_dict_->GetByteStringFor("Filter") == "Standard") {
+      new_encrypt_dict_ = ToDictionary(encrypt_dict_->Clone());
+      encrypt_dict_ = new_encrypt_dict_;
+      security_handler_ = pdfium::MakeRetain<CPDF_SecurityHandler>();
+      security_handler_->OnCreate(new_encrypt_dict_.Get(), m_pIDArray.Get(),
+                                  parser_->GetEncodedPassword());
+      security_changed_ = true;
     }
   }
 }
@@ -641,12 +646,12 @@ bool CPDF_Creator::SetFileVersion(int32_t fileVersion) {
 }
 
 void CPDF_Creator::RemoveSecurity() {
-  m_pSecurityHandler.Reset();
-  m_bSecurityChanged = true;
-  m_pEncryptDict = nullptr;
-  m_pNewEncryptDict.Reset();
+  security_handler_.Reset();
+  security_changed_ = true;
+  encrypt_dict_ = nullptr;
+  new_encrypt_dict_.Reset();
 }
 
 CPDF_CryptoHandler* CPDF_Creator::GetCryptoHandler() {
-  return m_pSecurityHandler ? m_pSecurityHandler->GetCryptoHandler() : nullptr;
+  return security_handler_ ? security_handler_->GetCryptoHandler() : nullptr;
 }

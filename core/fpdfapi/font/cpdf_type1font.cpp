@@ -31,8 +31,8 @@ namespace {
 
 #if BUILDFLAG(IS_APPLE)
 struct GlyphNameMap {
-  const char* m_pStrAdobe;    // Raw, POD struct.
-  const char* m_pStrUnicode;  // Raw, POD struct.
+  const char* str_adobe_;    // Raw, POD struct.
+  const char* str_unicode_;  // Raw, POD struct.
 };
 
 const GlyphNameMap kGlyphNameSubsts[] = {{"ff", "uniFB00"},
@@ -43,8 +43,9 @@ const GlyphNameMap kGlyphNameSubsts[] = {{"ff", "uniFB00"},
 
 const char* GlyphNameRemap(const char* pStrAdobe) {
   for (const auto& element : kGlyphNameSubsts) {
-    if (!FXSYS_stricmp(element.m_pStrAdobe, pStrAdobe))
-      return element.m_pStrUnicode;
+    if (!FXSYS_stricmp(element.str_adobe_, pStrAdobe)) {
+      return element.str_unicode_;
+    }
   }
   return nullptr;
 }
@@ -98,7 +99,7 @@ bool CPDF_Type1Font::Load() {
     return LoadCommon();
 
   RetainPtr<const CPDF_Dictionary> pFontDesc =
-      m_pFontDict->GetDictFor("FontDescriptor");
+      font_dict_->GetDictFor("FontDescriptor");
   if (pFontDesc && pFontDesc->KeyExist("Flags")) {
     m_Flags = pFontDesc->GetIntegerFor("Flags");
   } else if (IsSymbolicFont()) {

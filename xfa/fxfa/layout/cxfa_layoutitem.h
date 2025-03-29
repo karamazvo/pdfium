@@ -37,7 +37,7 @@ class CXFA_LayoutItem : public GCedTreeNode<CXFA_LayoutItem> {
   const CXFA_ContentLayoutItem* AsContentLayoutItem() const;
 
   const CXFA_ViewLayoutItem* GetPage() const;
-  CXFA_Node* GetFormNode() const { return m_pFormNode; }
+  CXFA_Node* GetFormNode() const { return form_node_; }
   void SetFormNode(CXFA_Node* pNode);
 
  protected:
@@ -46,7 +46,7 @@ class CXFA_LayoutItem : public GCedTreeNode<CXFA_LayoutItem> {
 
  private:
   const ItemType m_ItemType;
-  cppgc::Member<CXFA_Node> m_pFormNode;
+  cppgc::Member<CXFA_Node> form_node_;
 };
 
 inline CXFA_ViewLayoutItem* ToViewLayoutItem(CXFA_LayoutItem* item) {

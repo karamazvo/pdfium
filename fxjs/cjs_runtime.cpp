@@ -45,9 +45,9 @@
 #include "v8/include/v8-isolate.h"
 
 CJS_Runtime::CJS_Runtime(CPDFSDK_FormFillEnvironment* pFormFillEnv)
-    : m_pFormFillEnv(pFormFillEnv) {
+    : form_fill_env_(pFormFillEnv) {
   v8::Isolate* pIsolate = nullptr;
-  IPDF_JSPLATFORM* pPlatform = m_pFormFillEnv->GetFormFillInfo()->m_pJsPlatform;
+  IPDF_JSPLATFORM* pPlatform = form_fill_env_->GetFormFillInfo()->m_pJsPlatform;
   if (pPlatform->version <= 2) {
     // Backwards compatibility - JS now initialized earlier in more modern
     // JSPLATFORM versions.
@@ -142,7 +142,7 @@ CJS_EventContext* CJS_Runtime::GetCurrentEventContext() const {
 }
 
 CFX_Timer::HandlerIface* CJS_Runtime::GetTimerHandler() const {
-  return m_pFormFillEnv ? m_pFormFillEnv->GetTimerHandler() : nullptr;
+  return form_fill_env_ ? form_fill_env_->GetTimerHandler() : nullptr;
 }
 
 void CJS_Runtime::SetFormFillEnvToDocument() {
@@ -159,11 +159,11 @@ void CJS_Runtime::SetFormFillEnvToDocument() {
   if (!pJSDocument)
     return;
 
-  pJSDocument->SetFormFillEnv(m_pFormFillEnv.Get());
+  pJSDocument->SetFormFillEnv(form_fill_env_.Get());
 }
 
 CPDFSDK_FormFillEnvironment* CJS_Runtime::GetFormFillEnv() const {
-  return m_pFormFillEnv.Get();
+  return form_fill_env_.Get();
 }
 
 std::optional<IJS_Runtime::JS_Error> CJS_Runtime::ExecuteScript(

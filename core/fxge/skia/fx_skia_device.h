@@ -181,18 +181,18 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
   // A wrapper around SkCanvas::drawPath() that optionally can show debug data.
   void DrawPathImpl(const SkPath& path, const SkPaint& paint);
 
-  RetainPtr<CFX_DIBitmap> m_pBitmap;
-  RetainPtr<CFX_DIBitmap> m_pBackdropBitmap;
+  RetainPtr<CFX_DIBitmap> bitmap_;
+  RetainPtr<CFX_DIBitmap> backdrop_bitmap_;
 
   // The input bitmap passed by the render device. Only used when the input
   // bitmap is 24 bpp and cannot be directly used as the back of a SkCanvas.
-  RetainPtr<CFX_DIBitmap> m_pOriginalBitmap;
+  RetainPtr<CFX_DIBitmap> original_bitmap_;
 
   sk_sp<SkSurface> surface_;
-  UnownedPtr<SkCanvas> m_pCanvas;
+  UnownedPtr<SkCanvas> canvas_;
   CFX_FillRenderOptions m_FillOptions;
-  const bool m_bRgbByteOrder;
-  bool m_bGroupKnockout;
+  const bool rgb_byte_order_;
+  bool group_knockout_;
 
   CharDetail m_charDetails;
   // accumulator for txt rotate/scale/translate

@@ -71,12 +71,11 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
     }
 
     const CharmapType charmap_type = DetermineCharmapType();
-    bool bToUnicode = m_pFontDict->KeyExist("ToUnicode");
+    bool bToUnicode = font_dict_->KeyExist("ToUnicode");
     for (uint32_t charcode = 0; charcode < 256; charcode++) {
       const char* name = GetAdobeCharName(base_encoding, m_CharNames, charcode);
       if (!name) {
-        m_GlyphIndex[charcode] =
-            m_pFontFile ? face->GetCharIndex(charcode) : -1;
+        m_GlyphIndex[charcode] = font_file_ ? face->GetCharIndex(charcode) : -1;
         continue;
       }
       m_Encoding.SetUnicode(charcode, UnicodeFromAdobeName(name));
@@ -142,14 +141,15 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
       m_GlyphIndex[charcode] = face->GetCharIndex(charcode);
       m_Encoding.SetUnicode(charcode, UnicodeFromAppleRomanCharCode(charcode));
     }
-    if (m_pFontFile || HasAnyGlyphIndex())
+    if (font_file_ || HasAnyGlyphIndex()) {
       return;
+    }
   }
   if (m_Font.GetFace()->SelectCharMap(fxge::FontEncoding::kUnicode)) {
     pdfium::span<const uint16_t> unicodes =
         UnicodesForPredefinedCharSet(base_encoding);
     for (uint32_t charcode = 0; charcode < 256; charcode++) {
-      if (m_pFontFile) {
+      if (font_file_) {
         m_Encoding.SetUnicode(charcode, charcode);
       } else {
         const char* name =
@@ -202,7 +202,7 @@ CPDF_TrueTypeFont::CharmapType CPDF_TrueTypeFont::DetermineCharmapType() const {
 }
 
 FontEncoding CPDF_TrueTypeFont::DetermineEncoding() const {
-  if (!m_pFontFile || !FontStyleIsSymbolic(m_Flags) ||
+  if (!font_file_ || !FontStyleIsSymbolic(m_Flags) ||
       !IsWinAnsiOrMacRomanEncoding(m_BaseEncoding)) {
     return m_BaseEncoding;
   }
@@ -236,7 +236,7 @@ FontEncoding CPDF_TrueTypeFont::DetermineEncoding() const {
 }
 
 void CPDF_TrueTypeFont::SetGlyphIndicesFromFirstChar() {
-  int start_char = m_pFontDict->GetIntegerFor("FirstChar");
+  int start_char = font_dict_->GetIntegerFor("FirstChar");
   if (start_char < 0 || start_char > 255)
     return;
 

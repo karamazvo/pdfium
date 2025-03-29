@@ -46,7 +46,7 @@ class CFX_SeekableStreamProxy final : public Retainable {
   FX_CodePage m_wCodePage = FX_CodePage::kDefANSI;
   size_t m_wBOMLength = 0;
   FX_FILESIZE m_iPosition = 0;
-  RetainPtr<IFX_SeekableReadStream> const m_pStream;
+  RetainPtr<IFX_SeekableReadStream> const stream_;
 };
 
 #endif  // CORE_FXCRT_CFX_SEEKABLESTREAMPROXY_H_

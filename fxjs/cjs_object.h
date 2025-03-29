@@ -50,11 +50,11 @@ class CJS_Object : public CFXJS_PerObjectData::Binding {
   v8::Local<v8::Object> ToV8Object() {
     return m_pV8Object.Get(GetRuntime()->GetIsolate());
   }
-  CJS_Runtime* GetRuntime() const { return m_pRuntime.Get(); }
+  CJS_Runtime* GetRuntime() const { return runtime_.Get(); }
 
  private:
   v8::Global<v8::Object> m_pV8Object;
-  ObservedPtr<CJS_Runtime> m_pRuntime;
+  ObservedPtr<CJS_Runtime> runtime_;
 };
 
 #endif  // FXJS_CJS_OBJECT_H_

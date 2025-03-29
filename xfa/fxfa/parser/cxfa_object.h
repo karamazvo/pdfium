@@ -45,7 +45,7 @@ class CXFA_Object : public cppgc::GarbageCollected<CXFA_Object> {
 
   virtual void Trace(cppgc::Visitor* visitor) const;
 
-  CXFA_Document* GetDocument() const { return m_pDocument.Get(); }
+  CXFA_Document* GetDocument() const { return document_.Get(); }
   XFA_ObjectType GetObjectType() const { return m_objectType; }
 
   bool IsList() const {
@@ -104,7 +104,7 @@ class CXFA_Object : public cppgc::GarbageCollected<CXFA_Object> {
   const XFA_Element m_elementType;
   const ByteStringView m_elementName;
   const uint32_t m_elementNameHash;
-  cppgc::WeakMember<CXFA_Document> m_pDocument;
+  cppgc::WeakMember<CXFA_Document> document_;
   cppgc::Member<CJX_Object> m_pJSObject;
 };
 

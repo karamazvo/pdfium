@@ -32,11 +32,11 @@ class CPDF_RenderContext {
     Layer(const Layer& that);
     ~Layer();
 
-    CPDF_PageObjectHolder* GetObjectHolder() { return m_pObjectHolder; }
+    CPDF_PageObjectHolder* GetObjectHolder() { return object_holder_; }
     const CFX_Matrix& GetMatrix() const { return m_Matrix; }
 
    private:
-    UnownedPtr<CPDF_PageObjectHolder> const m_pObjectHolder;
+    UnownedPtr<CPDF_PageObjectHolder> const object_holder_;
     const CFX_Matrix m_Matrix;
   };
 
@@ -66,19 +66,19 @@ class CPDF_RenderContext {
   size_t CountLayers() const { return m_Layers.size(); }
   Layer* GetLayer(uint32_t index) { return &m_Layers[index]; }
 
-  CPDF_Document* GetDocument() const { return m_pDocument; }
+  CPDF_Document* GetDocument() const { return document_; }
   const CPDF_Dictionary* GetPageResources() const {
-    return m_pPageResources.Get();
+    return page_resources_.Get();
   }
   RetainPtr<CPDF_Dictionary> GetMutablePageResources() {
-    return m_pPageResources;
+    return page_resources_;
   }
-  CPDF_PageImageCache* GetPageCache() const { return m_pPageCache; }
+  CPDF_PageImageCache* GetPageCache() const { return page_cache_; }
 
  private:
-  UnownedPtr<CPDF_Document> const m_pDocument;
-  RetainPtr<CPDF_Dictionary> const m_pPageResources;
-  UnownedPtr<CPDF_PageImageCache> const m_pPageCache;
+  UnownedPtr<CPDF_Document> const document_;
+  RetainPtr<CPDF_Dictionary> const page_resources_;
+  UnownedPtr<CPDF_PageImageCache> const page_cache_;
   std::vector<Layer> m_Layers;
 };
 

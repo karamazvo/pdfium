@@ -95,8 +95,8 @@ void SwapByteOrder(pdfium::span<uint16_t> str) {
 
 CFX_SeekableStreamProxy::CFX_SeekableStreamProxy(
     const RetainPtr<IFX_SeekableReadStream>& stream)
-    : m_pStream(stream) {
-  DCHECK(m_pStream);
+    : stream_(stream) {
+  DCHECK(stream_);
 
   Seek(From::Begin, 0);
 
@@ -127,7 +127,7 @@ CFX_SeekableStreamProxy::CFX_SeekableStreamProxy(
 CFX_SeekableStreamProxy::~CFX_SeekableStreamProxy() = default;
 
 FX_FILESIZE CFX_SeekableStreamProxy::GetSize() const {
-  return m_pStream->GetSize();
+  return stream_->GetSize();
 }
 
 FX_FILESIZE CFX_SeekableStreamProxy::GetPosition() const {
@@ -166,7 +166,7 @@ size_t CFX_SeekableStreamProxy::ReadData(pdfium::span<uint8_t> buffer) {
   if (read_size == 0) {
     return 0;
   }
-  if (!m_pStream->ReadBlockAtOffset(buffer.first(read_size), m_iPosition)) {
+  if (!stream_->ReadBlockAtOffset(buffer.first(read_size), m_iPosition)) {
     return 0;
   }
   FX_SAFE_FILESIZE new_pos = m_iPosition;

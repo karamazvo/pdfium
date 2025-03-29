@@ -28,8 +28,8 @@ class TextCharPos {
   uint32_t m_ExtGID = 0;
 #endif
   int32_t m_FallbackFontPosition = 0;
-  bool m_bGlyphAdjust = false;
-  bool m_bFontStyle = false;
+  bool glyph_adjust_ = false;
+  bool font_style_ = false;
   std::array<float, 4> m_AdjustMatrix = {};
 };
 

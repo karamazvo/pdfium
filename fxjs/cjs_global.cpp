@@ -175,13 +175,13 @@ void CJS_Global::DefineJSObjects(CFXJS_Engine* pEngine) {
 
 CJS_Global::CJS_Global(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
     : CJS_Object(pObject, pRuntime),
-      m_pGlobalData(CFX_GlobalData::GetRetainedInstance(nullptr)) {
+      global_data_(CFX_GlobalData::GetRetainedInstance(nullptr)) {
   UpdateGlobalPersistentVariables();
 }
 
 CJS_Global::~CJS_Global() {
   DestroyGlobalPersisitentVariables();
-  m_pGlobalData.ExtractAsDangling()->Release();
+  global_data_.ExtractAsDangling()->Release();
 }
 
 bool CJS_Global::HasProperty(const ByteString& propname) {
@@ -290,8 +290,8 @@ void CJS_Global::UpdateGlobalPersistentVariables() {
   if (!pRuntime)
     return;
 
-  for (int i = 0, sz = m_pGlobalData->GetSize(); i < sz; i++) {
-    CFX_GlobalData::Element* pData = m_pGlobalData->GetAt(i);
+  for (int i = 0, sz = global_data_->GetSize(); i < sz; i++) {
+    CFX_GlobalData::Element* pData = global_data_->GetAt(i);
     switch (pData->data.nType) {
       case CFX_Value::DataType::kNumber:
         SetGlobalVariables(pData->data.sKey, CFX_Value::DataType::kNumber,
@@ -347,32 +347,32 @@ void CJS_Global::CommitGlobalPersisitentVariables() {
     ByteString name = iter.first;
     JSGlobalData* pData = iter.second.get();
     if (pData->bDeleted) {
-      m_pGlobalData->DeleteGlobalVariable(name);
+      global_data_->DeleteGlobalVariable(name);
       continue;
     }
     switch (pData->nType) {
       case CFX_Value::DataType::kNumber:
-        m_pGlobalData->SetGlobalVariableNumber(name, pData->dData);
-        m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
+        global_data_->SetGlobalVariableNumber(name, pData->dData);
+        global_data_->SetGlobalVariablePersistent(name, pData->bPersistent);
         break;
       case CFX_Value::DataType::kBoolean:
-        m_pGlobalData->SetGlobalVariableBoolean(name, pData->bData);
-        m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
+        global_data_->SetGlobalVariableBoolean(name, pData->bData);
+        global_data_->SetGlobalVariablePersistent(name, pData->bPersistent);
         break;
       case CFX_Value::DataType::kString:
-        m_pGlobalData->SetGlobalVariableString(name, pData->sData);
-        m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
+        global_data_->SetGlobalVariableString(name, pData->sData);
+        global_data_->SetGlobalVariablePersistent(name, pData->bPersistent);
         break;
       case CFX_Value::DataType::kObject: {
         v8::Local<v8::Object> obj =
             v8::Local<v8::Object>::New(pRuntime->GetIsolate(), pData->pData);
-        m_pGlobalData->SetGlobalVariableObject(name,
-                                               ObjectToArray(pRuntime, obj));
-        m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
+        global_data_->SetGlobalVariableObject(name,
+                                              ObjectToArray(pRuntime, obj));
+        global_data_->SetGlobalVariablePersistent(name, pData->bPersistent);
       } break;
       case CFX_Value::DataType::kNull:
-        m_pGlobalData->SetGlobalVariableNull(name);
-        m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
+        global_data_->SetGlobalVariableNull(name);
+        global_data_->SetGlobalVariablePersistent(name, pData->bPersistent);
         break;
     }
   }

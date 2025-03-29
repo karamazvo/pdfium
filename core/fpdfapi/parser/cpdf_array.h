@@ -93,7 +93,7 @@ class CPDF_Array final : public CPDF_Object {
   typename std::enable_if<CanInternStrings<T>::value, RetainPtr<T>>::type
   AppendNew(Args&&... args) {
     return pdfium::WrapRetain(static_cast<T*>(AppendInternal(
-        pdfium::MakeRetain<T>(m_pPool, std::forward<Args>(args)...))));
+        pdfium::MakeRetain<T>(pool_, std::forward<Args>(args)...))));
   }
   template <typename T, typename... Args>
   typename std::enable_if<!CanInternStrings<T>::value, RetainPtr<T>>::type
@@ -108,7 +108,7 @@ class CPDF_Array final : public CPDF_Object {
   typename std::enable_if<CanInternStrings<T>::value, RetainPtr<T>>::type
   SetNewAt(size_t index, Args&&... args) {
     return pdfium::WrapRetain(static_cast<T*>(SetAtInternal(
-        index, pdfium::MakeRetain<T>(m_pPool, std::forward<Args>(args)...))));
+        index, pdfium::MakeRetain<T>(pool_, std::forward<Args>(args)...))));
   }
   template <typename T, typename... Args>
   typename std::enable_if<!CanInternStrings<T>::value, RetainPtr<T>>::type
@@ -123,7 +123,7 @@ class CPDF_Array final : public CPDF_Object {
   typename std::enable_if<CanInternStrings<T>::value, RetainPtr<T>>::type
   InsertNewAt(size_t index, Args&&... args) {
     return pdfium::WrapRetain(static_cast<T*>(InsertAtInternal(
-        index, pdfium::MakeRetain<T>(m_pPool, std::forward<Args>(args)...))));
+        index, pdfium::MakeRetain<T>(pool_, std::forward<Args>(args)...))));
   }
 
   // Adds non-null `object` to the end of the array, growing as appropriate.
@@ -168,7 +168,7 @@ class CPDF_Array final : public CPDF_Object {
       std::set<const CPDF_Object*>* pVisited) const override;
 
   std::vector<RetainPtr<CPDF_Object>> m_Objects;
-  WeakPtr<ByteStringPool> m_pPool;
+  WeakPtr<ByteStringPool> pool_;
   mutable uint32_t m_LockCount = 0;
 };
 
@@ -183,16 +183,16 @@ class CPDF_ArrayLocker {
   ~CPDF_ArrayLocker();
 
   const_iterator begin() const {
-    CHECK(m_pArray->IsLocked());
-    return m_pArray->m_Objects.begin();
+    CHECK(array_->IsLocked());
+    return array_->m_Objects.begin();
   }
   const_iterator end() const {
-    CHECK(m_pArray->IsLocked());
-    return m_pArray->m_Objects.end();
+    CHECK(array_->IsLocked());
+    return array_->m_Objects.end();
   }
 
  private:
-  RetainPtr<const CPDF_Array> const m_pArray;
+  RetainPtr<const CPDF_Array> const array_;
 };
 
 inline CPDF_Array* ToArray(CPDF_Object* obj) {

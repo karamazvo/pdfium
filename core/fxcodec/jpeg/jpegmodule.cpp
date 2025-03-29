@@ -124,21 +124,21 @@ class JpegDecoder final : public ScanlineDecoder {
   JpegCommon m_Common = {};
   pdfium::raw_span<const uint8_t> m_SrcSpan;
   DataVector<uint8_t> m_ScanlineBuf;
-  bool m_bDecompressCreated = false;
-  bool m_bStarted = false;
-  bool m_bJpegTransform = false;
-  uint32_t m_nDefaultScaleDenom = 1;
+  bool decompress_created_ = false;
+  bool started_ = false;
+  bool jpeg_transform_ = false;
+  uint32_t default_scale_denom_ = 1;
 };
 
 JpegDecoder::JpegDecoder() = default;
 
 JpegDecoder::~JpegDecoder() {
-  if (m_bDecompressCreated) {
+  if (decompress_created_) {
     jpeg_common_destroy_decompress(&m_Common);
   }
 
   // Span in superclass can't outlive our buffer.
-  m_pLastScanline = pdfium::span<uint8_t>();
+  last_scanline_ = pdfium::span<uint8_t>();
 }
 
 bool JpegDecoder::InitDecode(bool bAcceptKnownBadHeader) {
@@ -147,7 +147,7 @@ bool JpegDecoder::InitDecode(bool bAcceptKnownBadHeader) {
   if (!jpeg_common_create_decompress(&m_Common)) {
     return false;
   }
-  m_bDecompressCreated = true;
+  decompress_created_ = true;
   m_Common.cinfo.image_width = m_OrigWidth;
   m_Common.cinfo.image_height = m_OrigHeight;
   InitDecompressSrc();
@@ -162,7 +162,7 @@ bool JpegDecoder::InitDecode(bool bAcceptKnownBadHeader) {
       }
     }
     jpeg_common_destroy_decompress(&m_Common);
-    m_bDecompressCreated = false;
+    decompress_created_ = false;
     if (!known_bad_header_offset.has_value()) {
       return false;
     }
@@ -170,21 +170,21 @@ bool JpegDecoder::InitDecode(bool bAcceptKnownBadHeader) {
     if (!jpeg_common_create_decompress(&m_Common)) {
       return false;
     }
-    m_bDecompressCreated = true;
+    decompress_created_ = true;
     m_Common.cinfo.image_width = m_OrigWidth;
     m_Common.cinfo.image_height = m_OrigHeight;
     InitDecompressSrc();
     if (jpeg_common_read_header(&m_Common, TRUE) != JPEG_HEADER_OK) {
       jpeg_common_destroy_decompress(&m_Common);
-      m_bDecompressCreated = false;
+      decompress_created_ = false;
       return false;
     }
   }
   if (m_Common.cinfo.saw_Adobe_marker) {
-    m_bJpegTransform = true;
+    jpeg_transform_ = true;
   }
 
-  if (m_Common.cinfo.num_components == 3 && !m_bJpegTransform) {
+  if (m_Common.cinfo.num_components == 3 && !jpeg_transform_) {
     m_Common.cinfo.out_color_space = m_Common.cinfo.jpeg_color_space;
   }
 
@@ -192,7 +192,7 @@ bool JpegDecoder::InitDecode(bool bAcceptKnownBadHeader) {
   m_OrigHeight = m_Common.cinfo.image_height;
   m_OutputWidth = m_OrigWidth;
   m_OutputHeight = m_OrigHeight;
-  m_nDefaultScaleDenom = m_Common.cinfo.scale_denom;
+  default_scale_denom_ = m_Common.cinfo.scale_denom;
   return true;
 }
 
@@ -217,7 +217,7 @@ bool JpegDecoder::Create(pdfium::span<const uint8_t> src_span,
   m_Common.source_mgr.skip_input_data = jpeg_common_src_skip_data_or_trap;
   m_Common.source_mgr.fill_input_buffer = jpeg_common_src_fill_buffer;
   m_Common.source_mgr.resync_to_restart = jpeg_common_src_resync;
-  m_bJpegTransform = ColorTransform;
+  jpeg_transform_ = ColorTransform;
   m_OutputWidth = m_OrigWidth = width;
   m_OutputHeight = m_OrigHeight = height;
   if (!InitDecode(/*bAcceptKnownBadHeader=*/true))
@@ -233,20 +233,20 @@ bool JpegDecoder::Create(pdfium::span<const uint8_t> src_span,
 
   CalcPitch();
   m_ScanlineBuf = DataVector<uint8_t>(m_Pitch);
-  m_nComps = m_Common.cinfo.num_components;
+  comps_ = m_Common.cinfo.num_components;
   m_bpc = 8;
-  m_bStarted = false;
+  started_ = false;
   return true;
 }
 
 bool JpegDecoder::Rewind() {
-  if (m_bStarted) {
+  if (started_) {
     jpeg_common_destroy_decompress(&m_Common);
     if (!InitDecode(/*bAcceptKnownBadHeader=*/false)) {
       return false;
     }
   }
-  m_Common.cinfo.scale_denom = m_nDefaultScaleDenom;
+  m_Common.cinfo.scale_denom = default_scale_denom_;
   m_OutputWidth = m_OrigWidth;
   m_OutputHeight = m_OrigHeight;
   if (!jpeg_common_start_decompress(&m_Common)) {
@@ -254,7 +254,7 @@ bool JpegDecoder::Rewind() {
     return false;
   }
   CHECK_LE(static_cast<int>(m_Common.cinfo.output_width), m_OrigWidth);
-  m_bStarted = true;
+  started_ = true;
   return true;
 }
 

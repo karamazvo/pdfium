@@ -18,9 +18,9 @@ CPDF_ContentMarkItem::~CPDF_ContentMarkItem() = default;
 RetainPtr<const CPDF_Dictionary> CPDF_ContentMarkItem::GetParam() const {
   switch (m_ParamType) {
     case kPropertiesDict:
-      return m_pPropertiesHolder->GetDictFor(m_PropertyName);
+      return properties_holder_->GetDictFor(m_PropertyName);
     case kDirectDict:
-      return m_pDirectDict;
+      return direct_dict_;
     case kNone:
       return nullptr;
   }
@@ -33,13 +33,13 @@ RetainPtr<CPDF_Dictionary> CPDF_ContentMarkItem::GetParam() {
 
 void CPDF_ContentMarkItem::SetDirectDict(RetainPtr<CPDF_Dictionary> pDict) {
   m_ParamType = kDirectDict;
-  m_pDirectDict = std::move(pDict);
+  direct_dict_ = std::move(pDict);
 }
 
 void CPDF_ContentMarkItem::SetPropertiesHolder(
     RetainPtr<CPDF_Dictionary> pHolder,
     const ByteString& property_name) {
   m_ParamType = kPropertiesDict;
-  m_pPropertiesHolder = std::move(pHolder);
+  properties_holder_ = std::move(pHolder);
   m_PropertyName = property_name;
 }

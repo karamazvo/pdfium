@@ -27,7 +27,7 @@ void CXFA_TextTabstopsContext::RemoveAll() {
 
 void CXFA_TextTabstopsContext::Reset() {
   m_iTabIndex = -1;
-  m_bHasTabstops = false;
+  has_tabstops_ = false;
   m_fTabWidth = 0;
   m_fLeft = 0;
 }

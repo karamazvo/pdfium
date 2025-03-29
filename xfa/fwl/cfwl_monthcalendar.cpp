@@ -111,9 +111,9 @@ void CFWL_MonthCalendar::Update() {
   if (IsLocked())
     return;
 
-  if (!m_bInitialized) {
+  if (!initialized_) {
     InitDate();
-    m_bInitialized = true;
+    initialized_ = true;
   }
   ClearDateItem();
   ResetDateItem();
@@ -187,8 +187,8 @@ void CFWL_MonthCalendar::DrawRButton(CFGAS_GEGraphics* pGraphics,
 void CFWL_MonthCalendar::DrawCaption(CFGAS_GEGraphics* pGraphics,
                                      const CFX_Matrix& mtMatrix) {
   CFWL_ThemeText textParam(CFWL_ThemePart::Part::kCaption, this, pGraphics);
-  textParam.m_wsText = GetHeadText(m_iCurYear, m_iCurMonth);
-  m_HeadSize = CalcTextSize(textParam.m_wsText, false);
+  textParam.text_ = GetHeadText(m_iCurYear, m_iCurMonth);
+  m_HeadSize = CalcTextSize(textParam.text_, false);
   CalcHeadSize();
   textParam.m_PartRect = m_HeadTextRect;
   textParam.m_dwTTOStyles.single_line_ = true;
@@ -247,7 +247,7 @@ void CFWL_MonthCalendar::DrawWeek(CFGAS_GEGraphics* pGraphics,
         m_WeekRect.top, m_CellSize);
 
     params.m_PartRect = rtDayOfWeek;
-    params.m_wsText = GetAbbreviatedDayOfWeek(i);
+    params.text_ = GetAbbreviatedDayOfWeek(i);
     pTheme->DrawText(params);
   }
 }
@@ -256,8 +256,8 @@ void CFWL_MonthCalendar::DrawToday(CFGAS_GEGraphics* pGraphics,
                                    const CFX_Matrix& mtMatrix) {
   CFWL_ThemeText params(CFWL_ThemePart::Part::kToday, this, pGraphics);
   params.m_iTTOAlign = FDE_TextAlignment::kCenterLeft;
-  params.m_wsText = GetTodayText(m_iYear, m_iMonth, m_iDay);
-  m_TodaySize = CalcTextSize(params.m_wsText, false);
+  params.text_ = GetTodayText(m_iYear, m_iMonth, m_iDay);
+  m_TodaySize = CalcTextSize(params.text_, false);
   CalcTodaySize();
   params.m_PartRect = m_TodayRect;
   params.m_dwTTOStyles.single_line_ = true;
@@ -275,7 +275,7 @@ void CFWL_MonthCalendar::DrawDatesIn(CFGAS_GEGraphics* pGraphics,
   int32_t iCount = fxcrt::CollectionSize<int32_t>(m_DateArray);
   for (int32_t j = 0; j < iCount; j++) {
     DATEINFO* pDataInfo = m_DateArray[j].get();
-    params.m_wsText = pDataInfo->wsDay;
+    params.text_ = pDataInfo->wsDay;
     params.m_PartRect = pDataInfo->rect;
     params.m_dwStates = pDataInfo->AsPartStateMask();
     if (j + 1 == m_iHovered)
@@ -352,8 +352,8 @@ CFX_SizeF CFWL_MonthCalendar::CalcSize() {
       m_HeadSize.width + kMonthCalHeaderBtnHMargin * 2 + m_CellSize.width * 2;
   fs.width = std::max(fs.width, fMonthMaxW);
 
-  m_wsToday = GetTodayText(m_iYear, m_iMonth, m_iDay);
-  m_TodaySize = CalcTextSize(m_wsToday, false);
+  today_ = GetTodayText(m_iYear, m_iMonth, m_iDay);
+  m_TodaySize = CalcTextSize(today_, false);
   m_TodaySize.height = (m_TodaySize.height >= m_CellSize.height)
                            ? m_TodaySize.height
                            : m_CellSize.height;
@@ -446,8 +446,8 @@ void CFWL_MonthCalendar::InitDate() {
   m_iCurYear = m_iYear;
   m_iCurMonth = m_iMonth;
 
-  m_wsToday = GetTodayText(m_iYear, m_iMonth, m_iDay);
-  m_wsHead = GetHeadText(m_iCurYear, m_iCurMonth);
+  today_ = GetTodayText(m_iYear, m_iMonth, m_iDay);
+  head_ = GetHeadText(m_iCurYear, m_iCurMonth);
   m_dtMin = DATE(1500, 12, 1);
   m_dtMax = DATE(2200, 1, 1);
 }
@@ -516,7 +516,7 @@ void CFWL_MonthCalendar::ChangeToMonth(int32_t iYear, int32_t iMonth) {
   ClearDateItem();
   ResetDateItem();
   CalDateItem();
-  m_wsHead = GetHeadText(m_iCurYear, m_iCurMonth);
+  head_ = GetHeadText(m_iCurYear, m_iCurMonth);
 }
 
 void CFWL_MonthCalendar::RemoveSelDay() {

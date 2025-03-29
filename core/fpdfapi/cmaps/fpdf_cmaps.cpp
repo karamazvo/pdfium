@@ -58,11 +58,11 @@ uint16_t CIDFromCharCode(const CMap* pMap, uint32_t charcode) {
     return 0;
   }
 
-  while (pMap && pMap->m_pWordMap) {
+  while (pMap && pMap->word_map_) {
     switch (pMap->m_WordMapType) {
       case CMap::Type::kSingle: {
         const auto* begin =
-            reinterpret_cast<const SingleCmap*>(pMap->m_pWordMap);
+            reinterpret_cast<const SingleCmap*>(pMap->word_map_);
         const auto* end = UNSAFE_TODO(begin + pMap->m_WordCount);
         const auto* found = std::lower_bound(
             begin, end, loword, [](const SingleCmap& element, uint16_t code) {
@@ -73,8 +73,7 @@ uint16_t CIDFromCharCode(const CMap* pMap, uint32_t charcode) {
         break;
       }
       case CMap::Type::kRange: {
-        const auto* begin =
-            reinterpret_cast<const RangeCmap*>(pMap->m_pWordMap);
+        const auto* begin = reinterpret_cast<const RangeCmap*>(pMap->word_map_);
         const auto* end = UNSAFE_TODO(begin + pMap->m_WordCount);
         const auto* found = std::lower_bound(
             begin, end, loword, [](const RangeCmap& element, uint16_t code) {
@@ -102,7 +101,7 @@ uint32_t CharCodeFromCID(const CMap* pMap, uint16_t cid) {
     switch (pMap->m_WordMapType) {
       case CMap::Type::kSingle: {
         auto single_span = UNSAFE_TODO(pdfium::make_span(
-            reinterpret_cast<const SingleCmap*>(pMap->m_pWordMap),
+            reinterpret_cast<const SingleCmap*>(pMap->word_map_),
             pMap->m_WordCount));
         for (const auto& single : single_span) {
           if (single.cid == cid) {
@@ -113,7 +112,7 @@ uint32_t CharCodeFromCID(const CMap* pMap, uint16_t cid) {
       }
       case CMap::Type::kRange: {
         auto range_span = UNSAFE_TODO(pdfium::make_span(
-            reinterpret_cast<const RangeCmap*>(pMap->m_pWordMap),
+            reinterpret_cast<const RangeCmap*>(pMap->word_map_),
             pMap->m_WordCount));
         for (const auto& range : range_span) {
           if (cid >= range.cid && cid <= range.cid + range.high - range.low) {

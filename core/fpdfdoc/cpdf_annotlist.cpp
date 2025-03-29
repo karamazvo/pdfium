@@ -171,12 +171,12 @@ void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
 }  // namespace
 
 CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
-    : m_pPage(pPage), m_pDocument(m_pPage->GetDocument()) {
-  RetainPtr<CPDF_Array> pAnnots = m_pPage->GetMutableAnnotsArray();
+    : page_(pPage), document_(page_->GetDocument()) {
+  RetainPtr<CPDF_Array> pAnnots = page_->GetMutableAnnotsArray();
   if (!pAnnots)
     return;
 
-  const CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
+  const CPDF_Dictionary* pRoot = document_->GetRoot();
   RetainPtr<const CPDF_Dictionary> pAcroForm = pRoot->GetDictFor("AcroForm");
   bool bRegenerateAP =
       pAcroForm && pAcroForm->GetBooleanFor("NeedAppearances", false);
@@ -192,19 +192,19 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
       // provides its own Popup annotations.
       continue;
     }
-    pAnnots->ConvertToIndirectObjectAt(i, m_pDocument);
-    m_AnnotList.push_back(std::make_unique<CPDF_Annot>(pDict, m_pDocument));
+    pAnnots->ConvertToIndirectObjectAt(i, document_);
+    m_AnnotList.push_back(std::make_unique<CPDF_Annot>(pDict, document_));
     if (bRegenerateAP && subtype == "Widget" &&
         CPDF_InteractiveForm::IsUpdateAPEnabled() &&
         !pDict->GetDictFor(pdfium::annotation::kAP)) {
-      GenerateAP(m_pDocument, pDict.Get());
+      GenerateAP(document_, pDict.Get());
     }
   }
 
-  m_nAnnotCount = m_AnnotList.size();
-  for (size_t i = 0; i < m_nAnnotCount; ++i) {
+  annot_count_ = m_AnnotList.size();
+  for (size_t i = 0; i < annot_count_; ++i) {
     std::unique_ptr<CPDF_Annot> pPopupAnnot =
-        CreatePopupAnnot(m_pDocument, m_pPage, m_AnnotList[i].get());
+        CreatePopupAnnot(document_, page_, m_AnnotList[i].get());
     if (pPopupAnnot)
       m_AnnotList.push_back(std::move(pPopupAnnot));
   }
@@ -214,10 +214,10 @@ CPDF_AnnotList::~CPDF_AnnotList() {
   // Move the pop-up annotations out of |m_AnnotList| into |popups|. Then
   // destroy |m_AnnotList| first. This prevents dangling pointers to the pop-up
   // annotations.
-  size_t nPopupCount = m_AnnotList.size() - m_nAnnotCount;
+  size_t nPopupCount = m_AnnotList.size() - annot_count_;
   std::vector<std::unique_ptr<CPDF_Annot>> popups(nPopupCount);
   for (size_t i = 0; i < nPopupCount; ++i)
-    popups[i] = std::move(m_AnnotList[m_nAnnotCount + i]);
+    popups[i] = std::move(m_AnnotList[annot_count_ + i]);
   m_AnnotList.clear();
 }
 
@@ -249,7 +249,7 @@ void CPDF_AnnotList::DisplayPass(CPDF_RenderContext* pContext,
     if (!bPrinting && (annot_flags & pdfium::annotation_flags::kNoView))
       continue;
 
-    pAnnot->DrawInContext(m_pPage, pContext, mtMatrix,
+    pAnnot->DrawInContext(page_, pContext, mtMatrix,
                           CPDF_Annot::AppearanceMode::kNormal);
   }
 }

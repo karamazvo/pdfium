@@ -5022,12 +5022,12 @@ std::optional<WideTextBuffer> CFXJSE_FormCalcContext::Translate(
 CFXJSE_FormCalcContext::CFXJSE_FormCalcContext(v8::Isolate* pIsolate,
                                                CFXJSE_Context* pScriptContext,
                                                CXFA_Document* pDoc)
-    : m_pIsolate(pIsolate), m_pDocument(pDoc) {
-  m_Value.Reset(m_pIsolate,
+    : isolate_(pIsolate), document_(pDoc) {
+  m_Value.Reset(isolate_,
                 NewBoundV8Object(
-                    m_pIsolate, CFXJSE_Class::Create(
-                                    pScriptContext, &kFormCalcDescriptor, false)
-                                    ->GetTemplate(m_pIsolate)));
+                    isolate_, CFXJSE_Class::Create(pScriptContext,
+                                                   &kFormCalcDescriptor, false)
+                                  ->GetTemplate(isolate_)));
 }
 
 CFXJSE_FormCalcContext::~CFXJSE_FormCalcContext() = default;
@@ -5037,7 +5037,7 @@ CFXJSE_FormCalcContext* CFXJSE_FormCalcContext::AsFormCalcContext() {
 }
 
 v8::Local<v8::Value> CFXJSE_FormCalcContext::GlobalPropertyGetter() {
-  return v8::Local<v8::Value>::New(m_pIsolate, m_Value);
+  return v8::Local<v8::Value>::New(isolate_, m_Value);
 }
 
 // static

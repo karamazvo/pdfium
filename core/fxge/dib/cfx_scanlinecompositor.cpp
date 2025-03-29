@@ -2311,14 +2311,14 @@ bool CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
   m_SrcFormat = src_format;
   m_DestFormat = dest_format;
   m_BlendType = blend_type;
-  m_bRgbByteOrder = bRgbByteOrder;
+  rgb_byte_order_ = bRgbByteOrder;
   if (m_DestFormat == FXDIB_Format::kInvalid ||
       m_DestFormat == FXDIB_Format::k1bppMask ||
       m_DestFormat == FXDIB_Format::k1bppRgb) {
     return false;
   }
 
-  if (m_bRgbByteOrder && (m_DestFormat == FXDIB_Format::k8bppMask ||
+  if (rgb_byte_order_ && (m_DestFormat == FXDIB_Format::k8bppMask ||
                           m_DestFormat == FXDIB_Format::k8bppRgb)) {
     return false;
   }
@@ -2429,20 +2429,20 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcBgrx(
       NOTREACHED();  // Disallowed by Init().
     }
     case FXDIB_Format::k8bppRgb: {
-      CHECK(!m_bRgbByteOrder);  // Disallowed by Init();
+      CHECK(!rgb_byte_order_);  // Disallowed by Init();
       CompositeRow_Rgb2Gray(dest_scan, src_scan, src_Bpp, width, m_BlendType,
                             clip_scan);
       return;
     }
     case FXDIB_Format::k8bppMask: {
-      CHECK(!m_bRgbByteOrder);  // Disallowed by Init();
+      CHECK(!rgb_byte_order_);  // Disallowed by Init();
       CompositeRow_Rgb2Mask(dest_scan, width, clip_scan);
       return;
     }
     case FXDIB_Format::kBgr:
     case FXDIB_Format::kBgrx: {
       const int dest_Bpp = GetCompsFromFormat(m_DestFormat);
-      if (m_bRgbByteOrder) {
+      if (rgb_byte_order_) {
         if (m_BlendType == BlendMode::kNormal) {
           if (!clip_scan.empty()) {
             CompositeRow_Rgb2Rgb_NoBlend_Clip_RgbByteOrder(
@@ -2484,7 +2484,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcBgrx(
       return;
     }
     case FXDIB_Format::kBgra: {
-      if (m_bRgbByteOrder) {
+      if (rgb_byte_order_) {
         if (m_BlendType == BlendMode::kNormal) {
           if (!clip_scan.empty()) {
             CompositeRow_Bgr2Bgra_NoBlend_Clip_RgbByteOrder(
@@ -2552,17 +2552,17 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcBgra(
       NOTREACHED();  // Disallowed by Init().
     }
     case FXDIB_Format::k8bppRgb: {
-      CHECK(!m_bRgbByteOrder);  // Disallowed by Init();
+      CHECK(!rgb_byte_order_);  // Disallowed by Init();
       CompositeRowBgra2Gray(src_span, clip_scan, dest_scan, m_BlendType);
       return;
     }
     case FXDIB_Format::k8bppMask: {
-      CHECK(!m_bRgbByteOrder);  // Disallowed by Init();
+      CHECK(!rgb_byte_order_);  // Disallowed by Init();
       CompositeRowBgra2Mask(src_span, clip_scan, dest_scan);
       return;
     }
     case FXDIB_Format::kBgr: {
-      if (m_bRgbByteOrder) {
+      if (rgb_byte_order_) {
         auto dest_span =
             fxcrt::reinterpret_span<FX_RGB_STRUCT<uint8_t>>(dest_scan);
         CompositeRowBgra2Bgr(src_span, clip_scan, dest_span, m_BlendType);
@@ -2575,7 +2575,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcBgra(
       return;
     }
     case FXDIB_Format::kBgrx: {
-      if (m_bRgbByteOrder) {
+      if (rgb_byte_order_) {
         auto dest_span =
             fxcrt::reinterpret_span<FX_RGBA_STRUCT<uint8_t>>(dest_scan);
         CompositeRowBgra2Bgr(src_span, clip_scan, dest_span, m_BlendType);
@@ -2588,7 +2588,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcBgra(
       return;
     }
     case FXDIB_Format::kBgra: {
-      if (m_bRgbByteOrder) {
+      if (rgb_byte_order_) {
         auto dest_span =
             fxcrt::reinterpret_span<FX_RGBA_STRUCT<uint8_t>>(dest_scan);
         CompositeRowBgra2Bgra(src_span, clip_scan, dest_span, m_BlendType);
@@ -2627,12 +2627,12 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcBgraPremul(
       NOTREACHED();  // Disallowed by Init().
     }
     case FXDIB_Format::k8bppRgb: {
-      CHECK(!m_bRgbByteOrder);  // Disallowed by Init();
+      CHECK(!rgb_byte_order_);  // Disallowed by Init();
       // TODO(crbug.com/42271020): Consider adding support.
       NOTREACHED();
     }
     case FXDIB_Format::k8bppMask: {
-      CHECK(!m_bRgbByteOrder);  // Disallowed by Init();
+      CHECK(!rgb_byte_order_);  // Disallowed by Init();
       // TODO(crbug.com/42271020): Consider adding support.
       NOTREACHED();
     }
@@ -2643,7 +2643,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcBgraPremul(
       NOTREACHED();
     }
     case FXDIB_Format::kBgraPremul: {
-      if (m_bRgbByteOrder) {
+      if (rgb_byte_order_) {
         auto dest_span =
             fxcrt::reinterpret_span<FX_RGBA_STRUCT<uint8_t>>(dest_scan);
         CompositeRowBgraPremul2BgraPremul(src_span, dest_span, m_BlendType);
@@ -2688,20 +2688,20 @@ void CFX_ScanlineCompositor::CompositePalBitmapLineSrcBpp1(
       NOTREACHED();  // Disallowed by Init().
     }
     case FXDIB_Format::k8bppRgb: {
-      CHECK(!m_bRgbByteOrder);  // Disallowed by Init();
+      CHECK(!rgb_byte_order_);  // Disallowed by Init();
       CompositeRow_1bppPal2Gray(dest_scan, src_scan, src_left,
                                 m_SrcPalette.Get8BitPalette(), width,
                                 m_BlendType, clip_scan);
       return;
     }
     case FXDIB_Format::k8bppMask: {
-      CHECK(!m_bRgbByteOrder);  // Disallowed by Init();
+      CHECK(!rgb_byte_order_);  // Disallowed by Init();
       CompositeRow_Rgb2Mask(dest_scan, width, clip_scan);
       return;
     }
     case FXDIB_Format::kBgr:
     case FXDIB_Format::kBgrx: {
-      if (m_bRgbByteOrder) {
+      if (rgb_byte_order_) {
         CompositeRow_1bppRgb2Rgb_NoBlend_RgbByteOrder(
             dest_scan, src_scan, src_left, m_SrcPalette.Get32BitPalette(),
             width, GetCompsFromFormat(m_DestFormat), clip_scan);
@@ -2713,7 +2713,7 @@ void CFX_ScanlineCompositor::CompositePalBitmapLineSrcBpp1(
       return;
     }
     case FXDIB_Format::kBgra: {
-      if (m_bRgbByteOrder) {
+      if (rgb_byte_order_) {
         CompositeRow_1bppBgr2Bgra_NoBlend_RgbByteOrder(
             dest_scan, src_scan, src_left, width,
             m_SrcPalette.Get32BitPalette(), clip_scan);
@@ -2749,20 +2749,20 @@ void CFX_ScanlineCompositor::CompositePalBitmapLineSrcBpp8(
       NOTREACHED();  // Disallowed by Init().
     }
     case FXDIB_Format::k8bppRgb: {
-      CHECK(!m_bRgbByteOrder);  // Disallowed by Init();
+      CHECK(!rgb_byte_order_);  // Disallowed by Init();
       CompositeRow_8bppPal2Gray(dest_scan, src_scan,
                                 m_SrcPalette.Get8BitPalette(), width,
                                 m_BlendType, clip_scan);
       return;
     }
     case FXDIB_Format::k8bppMask: {
-      CHECK(!m_bRgbByteOrder);  // Disallowed by Init();
+      CHECK(!rgb_byte_order_);  // Disallowed by Init();
       CompositeRow_Rgb2Mask(dest_scan, width, clip_scan);
       return;
     }
     case FXDIB_Format::kBgr:
     case FXDIB_Format::kBgrx: {
-      if (m_bRgbByteOrder) {
+      if (rgb_byte_order_) {
         CompositeRow_8bppRgb2Rgb_NoBlend_RgbByteOrder(
             dest_scan, src_scan, m_SrcPalette.Get32BitPalette().data(), width,
             GetCompsFromFormat(m_DestFormat), clip_scan);
@@ -2774,7 +2774,7 @@ void CFX_ScanlineCompositor::CompositePalBitmapLineSrcBpp8(
       return;
     }
     case FXDIB_Format::kBgra: {
-      if (m_bRgbByteOrder) {
+      if (rgb_byte_order_) {
         CompositeRow_8bppBgr2Bgra_NoBlend_RgbByteOrder(
             dest_scan, src_scan, width, m_SrcPalette.Get32BitPalette().data(),
             clip_scan);
@@ -2809,20 +2809,20 @@ void CFX_ScanlineCompositor::CompositeByteMaskLine(
       NOTREACHED();  // Disallowed by Init().
     }
     case FXDIB_Format::k8bppRgb: {
-      CHECK(!m_bRgbByteOrder);  // Disallowed by Init();
+      CHECK(!rgb_byte_order_);  // Disallowed by Init();
       CompositeRow_ByteMask2Gray(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
                                  width, clip_scan);
       return;
     }
     case FXDIB_Format::k8bppMask: {
-      CHECK(!m_bRgbByteOrder);  // Disallowed by Init();
+      CHECK(!rgb_byte_order_);  // Disallowed by Init();
       CompositeRow_ByteMask2Mask(dest_scan, src_scan, m_MaskAlpha, width,
                                  clip_scan);
       return;
     }
     case FXDIB_Format::kBgr:
     case FXDIB_Format::kBgrx: {
-      if (m_bRgbByteOrder) {
+      if (rgb_byte_order_) {
         CompositeRow_ByteMask2Rgb_RgbByteOrder(
             dest_scan, src_scan, m_MaskAlpha, m_MaskRed, m_MaskGreen,
             m_MaskBlue, width, m_BlendType, GetCompsFromFormat(m_DestFormat),
@@ -2835,7 +2835,7 @@ void CFX_ScanlineCompositor::CompositeByteMaskLine(
       return;
     }
     case FXDIB_Format::kBgra: {
-      if (m_bRgbByteOrder) {
+      if (rgb_byte_order_) {
         CompositeRow_ByteMask2Bgra_RgbByteOrder(
             dest_scan, src_scan, m_MaskAlpha, m_MaskRed, m_MaskGreen,
             m_MaskBlue, width, m_BlendType, clip_scan);
@@ -2871,20 +2871,20 @@ void CFX_ScanlineCompositor::CompositeBitMaskLine(
       NOTREACHED();  // Disallowed by Init().
     }
     case FXDIB_Format::k8bppRgb: {
-      CHECK(!m_bRgbByteOrder);  // Disallowed by Init();
+      CHECK(!rgb_byte_order_);  // Disallowed by Init();
       CompositeRow_BitMask2Gray(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
                                 src_left, width, clip_scan);
       return;
     }
     case FXDIB_Format::k8bppMask: {
-      CHECK(!m_bRgbByteOrder);  // Disallowed by Init();
+      CHECK(!rgb_byte_order_);  // Disallowed by Init();
       CompositeRow_BitMask2Mask(dest_scan, src_scan, m_MaskAlpha, src_left,
                                 width, clip_scan);
       return;
     }
     case FXDIB_Format::kBgr:
     case FXDIB_Format::kBgrx: {
-      if (m_bRgbByteOrder) {
+      if (rgb_byte_order_) {
         CompositeRow_BitMask2Rgb_RgbByteOrder(
             dest_scan, src_scan, m_MaskAlpha, m_MaskRed, m_MaskGreen,
             m_MaskBlue, src_left, width, m_BlendType,
@@ -2898,7 +2898,7 @@ void CFX_ScanlineCompositor::CompositeBitMaskLine(
       return;
     }
     case FXDIB_Format::kBgra: {
-      if (m_bRgbByteOrder) {
+      if (rgb_byte_order_) {
         CompositeRow_BitMask2Bgra_RgbByteOrder(
             dest_scan, src_scan, m_MaskAlpha, m_MaskRed, m_MaskGreen,
             m_MaskBlue, src_left, width, m_BlendType, clip_scan);
@@ -2925,42 +2925,42 @@ CFX_ScanlineCompositor::Palette::~Palette() = default;
 
 void CFX_ScanlineCompositor::Palette::Reset() {
   m_Width = 0;
-  m_nElements = 0;
-  m_pData.reset();
+  elements_ = 0;
+  data_.reset();
 }
 
 pdfium::span<uint8_t> CFX_ScanlineCompositor::Palette::Make8BitPalette(
     size_t nElements) {
   m_Width = sizeof(uint8_t);
-  m_nElements = nElements;
-  m_pData.reset(reinterpret_cast<uint32_t*>(FX_Alloc(uint8_t, m_nElements)));
-  // SAFETY: `m_nElements` passed to FX_Alloc() of type uint8_t.
-  return UNSAFE_BUFFERS(pdfium::make_span(
-      reinterpret_cast<uint8_t*>(m_pData.get()), m_nElements));
+  elements_ = nElements;
+  data_.reset(reinterpret_cast<uint32_t*>(FX_Alloc(uint8_t, elements_)));
+  // SAFETY: `elements_` passed to FX_Alloc() of type uint8_t.
+  return UNSAFE_BUFFERS(
+      pdfium::make_span(reinterpret_cast<uint8_t*>(data_.get()), elements_));
 }
 
 pdfium::span<uint32_t> CFX_ScanlineCompositor::Palette::Make32BitPalette(
     size_t nElements) {
   m_Width = sizeof(uint32_t);
-  m_nElements = nElements;
-  m_pData.reset(FX_Alloc(uint32_t, m_nElements));
-  // SAFETY: `m_nElements` passed to FX_Alloc() of type uint32_t.
-  return UNSAFE_BUFFERS(pdfium::make_span(m_pData.get(), m_nElements));
+  elements_ = nElements;
+  data_.reset(FX_Alloc(uint32_t, elements_));
+  // SAFETY: `elements_` passed to FX_Alloc() of type uint32_t.
+  return UNSAFE_BUFFERS(pdfium::make_span(data_.get(), elements_));
 }
 
 pdfium::span<const uint8_t> CFX_ScanlineCompositor::Palette::Get8BitPalette()
     const {
-  CHECK(!m_pData || m_Width == sizeof(uint8_t));
+  CHECK(!data_ || m_Width == sizeof(uint8_t));
   // SAFETY: `m_Width` only set to sizeof(uint8_t) just prior to passing
-  // `m_nElements` to FX_Alloc() of type uint8_t.
+  // `elements_` to FX_Alloc() of type uint8_t.
   return UNSAFE_BUFFERS(pdfium::make_span(
-      reinterpret_cast<const uint8_t*>(m_pData.get()), m_nElements));
+      reinterpret_cast<const uint8_t*>(data_.get()), elements_));
 }
 
 pdfium::span<const uint32_t> CFX_ScanlineCompositor::Palette::Get32BitPalette()
     const {
-  CHECK(!m_pData || m_Width == sizeof(uint32_t));
+  CHECK(!data_ || m_Width == sizeof(uint32_t));
   // SAFETY: `m_Width` only set to sizeof(uint32_t) just prior to passing
-  // `m_nElements` to FX_Alloc() of type uint32_t.
-  return UNSAFE_BUFFERS(pdfium::make_span(m_pData.get(), m_nElements));
+  // `elements_` to FX_Alloc() of type uint32_t.
+  return UNSAFE_BUFFERS(pdfium::make_span(data_.get(), elements_));
 }

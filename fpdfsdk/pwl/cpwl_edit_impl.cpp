@@ -53,7 +53,7 @@ void DrawTextString(CFX_RenderDevice* pDevice,
 
 CPWL_EditImpl::Iterator::Iterator(CPWL_EditImpl* pEdit,
                                   CPVT_VariableText::Iterator* pVTIterator)
-    : m_pEdit(pEdit), m_pVTIterator(pVTIterator) {}
+    : edit_(pEdit), m_pVTIterator(pVTIterator) {}
 
 CPWL_EditImpl::Iterator::~Iterator() = default;
 
@@ -62,20 +62,20 @@ bool CPWL_EditImpl::Iterator::NextWord() {
 }
 
 bool CPWL_EditImpl::Iterator::GetWord(CPVT_Word& word) const {
-  DCHECK(m_pEdit);
+  DCHECK(edit_);
 
   if (m_pVTIterator->GetWord(word)) {
-    word.ptWord = m_pEdit->VTToEdit(word.ptWord);
+    word.ptWord = edit_->VTToEdit(word.ptWord);
     return true;
   }
   return false;
 }
 
 bool CPWL_EditImpl::Iterator::GetLine(CPVT_Line& line) const {
-  DCHECK(m_pEdit);
+  DCHECK(edit_);
 
   if (m_pVTIterator->GetLine(line)) {
-    line.ptLine = m_pEdit->VTToEdit(line.ptLine);
+    line.ptLine = edit_->VTToEdit(line.ptLine);
     return true;
   }
   return false;
@@ -175,25 +175,25 @@ CPWL_EditImpl::UndoStack::UndoStack() = default;
 CPWL_EditImpl::UndoStack::~UndoStack() = default;
 
 bool CPWL_EditImpl::UndoStack::CanUndo() const {
-  return m_nCurUndoPos > 0;
+  return cur_undo_pos_ > 0;
 }
 
 void CPWL_EditImpl::UndoStack::Undo() {
-  DCHECK(!m_bWorking);
-  m_bWorking = true;
+  DCHECK(!working_);
+  working_ = true;
   int undo_remaining = 1;
   while (CanUndo() && undo_remaining > 0) {
-    undo_remaining += m_UndoItemStack[m_nCurUndoPos - 1]->Undo();
-    m_nCurUndoPos--;
+    undo_remaining += m_UndoItemStack[cur_undo_pos_ - 1]->Undo();
+    cur_undo_pos_--;
     undo_remaining--;
   }
   DCHECK_EQ(undo_remaining, 0);
-  DCHECK(m_bWorking);
-  m_bWorking = false;
+  DCHECK(working_);
+  working_ = false;
 }
 
 bool CPWL_EditImpl::UndoStack::CanRedo() const {
-  return m_nCurUndoPos < m_UndoItemStack.size();
+  return cur_undo_pos_ < m_UndoItemStack.size();
 }
 
 CPWL_EditImpl::UndoItemIface* CPWL_EditImpl::UndoStack::GetLastAddItem() {
@@ -202,21 +202,21 @@ CPWL_EditImpl::UndoItemIface* CPWL_EditImpl::UndoStack::GetLastAddItem() {
 }
 
 void CPWL_EditImpl::UndoStack::Redo() {
-  DCHECK(!m_bWorking);
-  m_bWorking = true;
+  DCHECK(!working_);
+  working_ = true;
   int nRedoRemain = 1;
   while (CanRedo() && nRedoRemain > 0) {
-    nRedoRemain += m_UndoItemStack[m_nCurUndoPos]->Redo();
-    m_nCurUndoPos++;
+    nRedoRemain += m_UndoItemStack[cur_undo_pos_]->Redo();
+    cur_undo_pos_++;
     nRedoRemain--;
   }
   DCHECK_EQ(nRedoRemain, 0);
-  DCHECK(m_bWorking);
-  m_bWorking = false;
+  DCHECK(working_);
+  working_ = false;
 }
 
 void CPWL_EditImpl::UndoStack::AddItem(std::unique_ptr<UndoItemIface> pItem) {
-  DCHECK(!m_bWorking);
+  DCHECK(!working_);
   DCHECK(pItem);
   if (CanRedo())
     RemoveTails();
@@ -225,7 +225,7 @@ void CPWL_EditImpl::UndoStack::AddItem(std::unique_ptr<UndoItemIface> pItem) {
     RemoveHeads();
 
   m_UndoItemStack.push_back(std::move(pItem));
-  m_nCurUndoPos = m_UndoItemStack.size();
+  cur_undo_pos_ = m_UndoItemStack.size();
 }
 
 void CPWL_EditImpl::UndoStack::RemoveHeads() {
@@ -253,12 +253,12 @@ class CPWL_EditImpl::UndoInsertWord final
   int Undo() override;
 
  private:
-  UnownedPtr<CPWL_EditImpl> m_pEdit;
+  UnownedPtr<CPWL_EditImpl> edit_;
 
   CPVT_WordPlace m_wpOld;
   CPVT_WordPlace m_wpNew;
   uint16_t m_Word;
-  FX_Charset m_nCharset;
+  FX_Charset charset_;
 };
 
 CPWL_EditImpl::UndoInsertWord::UndoInsertWord(CPWL_EditImpl* pEdit,
@@ -266,27 +266,27 @@ CPWL_EditImpl::UndoInsertWord::UndoInsertWord(CPWL_EditImpl* pEdit,
                                               const CPVT_WordPlace& wpNewPlace,
                                               uint16_t word,
                                               FX_Charset charset)
-    : m_pEdit(pEdit),
+    : edit_(pEdit),
       m_wpOld(wpOldPlace),
       m_wpNew(wpNewPlace),
       m_Word(word),
-      m_nCharset(charset) {
-  DCHECK(m_pEdit);
+      charset_(charset) {
+  DCHECK(edit_);
 }
 
 CPWL_EditImpl::UndoInsertWord::~UndoInsertWord() = default;
 
 int CPWL_EditImpl::UndoInsertWord::Redo() {
-  m_pEdit->SelectNone();
-  m_pEdit->SetCaret(m_wpOld);
-  m_pEdit->InsertWord(m_Word, m_nCharset, false);
+  edit_->SelectNone();
+  edit_->SetCaret(m_wpOld);
+  edit_->InsertWord(m_Word, charset_, false);
   return 0;
 }
 
 int CPWL_EditImpl::UndoInsertWord::Undo() {
-  m_pEdit->SelectNone();
-  m_pEdit->SetCaret(m_wpNew);
-  m_pEdit->Backspace(false);
+  edit_->SelectNone();
+  edit_->SetCaret(m_wpNew);
+  edit_->Backspace(false);
   return 0;
 }
 
@@ -303,7 +303,7 @@ class CPWL_EditImpl::UndoInsertReturn final
   int Undo() override;
 
  private:
-  UnownedPtr<CPWL_EditImpl> m_pEdit;
+  UnownedPtr<CPWL_EditImpl> edit_;
 
   CPVT_WordPlace m_wpOld;
   CPVT_WordPlace m_wpNew;
@@ -313,23 +313,23 @@ CPWL_EditImpl::UndoInsertReturn::UndoInsertReturn(
     CPWL_EditImpl* pEdit,
     const CPVT_WordPlace& wpOldPlace,
     const CPVT_WordPlace& wpNewPlace)
-    : m_pEdit(pEdit), m_wpOld(wpOldPlace), m_wpNew(wpNewPlace) {
-  DCHECK(m_pEdit);
+    : edit_(pEdit), m_wpOld(wpOldPlace), m_wpNew(wpNewPlace) {
+  DCHECK(edit_);
 }
 
 CPWL_EditImpl::UndoInsertReturn::~UndoInsertReturn() = default;
 
 int CPWL_EditImpl::UndoInsertReturn::Redo() {
-  m_pEdit->SelectNone();
-  m_pEdit->SetCaret(m_wpOld);
-  m_pEdit->InsertReturn(false);
+  edit_->SelectNone();
+  edit_->SetCaret(m_wpOld);
+  edit_->InsertReturn(false);
   return 0;
 }
 
 int CPWL_EditImpl::UndoInsertReturn::Undo() {
-  m_pEdit->SelectNone();
-  m_pEdit->SetCaret(m_wpNew);
-  m_pEdit->Backspace(false);
+  edit_->SelectNone();
+  edit_->SetCaret(m_wpNew);
+  edit_->Backspace(false);
   return 0;
 }
 
@@ -344,16 +344,16 @@ class CPWL_EditImpl::UndoReplaceSelection final
   int Undo() override;
 
  private:
-  bool IsEnd() const { return m_bEnd; }
+  bool IsEnd() const { return end_; }
 
-  UnownedPtr<CPWL_EditImpl> m_pEdit;
-  const bool m_bEnd;  // indicate whether this is the end of replace action
+  UnownedPtr<CPWL_EditImpl> edit_;
+  const bool end_;  // indicate whether this is the end of replace action
 };
 
 CPWL_EditImpl::UndoReplaceSelection::UndoReplaceSelection(CPWL_EditImpl* pEdit,
                                                           bool bIsEnd)
-    : m_pEdit(pEdit), m_bEnd(bIsEnd) {
-  DCHECK(m_pEdit);
+    : edit_(pEdit), end_(bIsEnd) {
+  DCHECK(edit_);
   // Redo ClearSelection, InsertText and ReplaceSelection's end marker
   // Undo InsertText, ClearSelection and ReplaceSelection's beginning
   // marker
@@ -363,7 +363,7 @@ CPWL_EditImpl::UndoReplaceSelection::UndoReplaceSelection(CPWL_EditImpl* pEdit,
 CPWL_EditImpl::UndoReplaceSelection::~UndoReplaceSelection() = default;
 
 int CPWL_EditImpl::UndoReplaceSelection::Redo() {
-  m_pEdit->SelectNone();
+  edit_->SelectNone();
   if (IsEnd()) {
     return 0;
   }
@@ -373,7 +373,7 @@ int CPWL_EditImpl::UndoReplaceSelection::Redo() {
 }
 
 int CPWL_EditImpl::UndoReplaceSelection::Undo() {
-  m_pEdit->SelectNone();
+  edit_->SelectNone();
   if (!IsEnd()) {
     return 0;
   }
@@ -396,12 +396,12 @@ class CPWL_EditImpl::UndoBackspace final : public CPWL_EditImpl::UndoItemIface {
   int Undo() override;
 
  private:
-  UnownedPtr<CPWL_EditImpl> m_pEdit;
+  UnownedPtr<CPWL_EditImpl> edit_;
 
   CPVT_WordPlace m_wpOld;
   CPVT_WordPlace m_wpNew;
   uint16_t m_Word;
-  FX_Charset m_nCharset;
+  FX_Charset charset_;
 };
 
 CPWL_EditImpl::UndoBackspace::UndoBackspace(CPWL_EditImpl* pEdit,
@@ -409,30 +409,30 @@ CPWL_EditImpl::UndoBackspace::UndoBackspace(CPWL_EditImpl* pEdit,
                                             const CPVT_WordPlace& wpNewPlace,
                                             uint16_t word,
                                             FX_Charset charset)
-    : m_pEdit(pEdit),
+    : edit_(pEdit),
       m_wpOld(wpOldPlace),
       m_wpNew(wpNewPlace),
       m_Word(word),
-      m_nCharset(charset) {
-  DCHECK(m_pEdit);
+      charset_(charset) {
+  DCHECK(edit_);
 }
 
 CPWL_EditImpl::UndoBackspace::~UndoBackspace() = default;
 
 int CPWL_EditImpl::UndoBackspace::Redo() {
-  m_pEdit->SelectNone();
-  m_pEdit->SetCaret(m_wpOld);
-  m_pEdit->Backspace(false);
+  edit_->SelectNone();
+  edit_->SetCaret(m_wpOld);
+  edit_->Backspace(false);
   return 0;
 }
 
 int CPWL_EditImpl::UndoBackspace::Undo() {
-  m_pEdit->SelectNone();
-  m_pEdit->SetCaret(m_wpNew);
+  edit_->SelectNone();
+  edit_->SetCaret(m_wpNew);
   if (m_wpNew.nSecIndex != m_wpOld.nSecIndex)
-    m_pEdit->InsertReturn(false);
+    edit_->InsertReturn(false);
   else
-    m_pEdit->InsertWord(m_Word, m_nCharset, false);
+    edit_->InsertWord(m_Word, charset_, false);
   return 0;
 }
 
@@ -451,13 +451,13 @@ class CPWL_EditImpl::UndoDelete final : public CPWL_EditImpl::UndoItemIface {
   int Undo() override;
 
  private:
-  UnownedPtr<CPWL_EditImpl> m_pEdit;
+  UnownedPtr<CPWL_EditImpl> edit_;
 
   CPVT_WordPlace m_wpOld;
   CPVT_WordPlace m_wpNew;
   uint16_t m_Word;
-  FX_Charset m_nCharset;
-  bool m_bSecEnd;
+  FX_Charset charset_;
+  bool sec_end_;
 };
 
 CPWL_EditImpl::UndoDelete::UndoDelete(CPWL_EditImpl* pEdit,
@@ -466,31 +466,31 @@ CPWL_EditImpl::UndoDelete::UndoDelete(CPWL_EditImpl* pEdit,
                                       uint16_t word,
                                       FX_Charset charset,
                                       bool bSecEnd)
-    : m_pEdit(pEdit),
+    : edit_(pEdit),
       m_wpOld(wpOldPlace),
       m_wpNew(wpNewPlace),
       m_Word(word),
-      m_nCharset(charset),
-      m_bSecEnd(bSecEnd) {
-  DCHECK(m_pEdit);
+      charset_(charset),
+      sec_end_(bSecEnd) {
+  DCHECK(edit_);
 }
 
 CPWL_EditImpl::UndoDelete::~UndoDelete() = default;
 
 int CPWL_EditImpl::UndoDelete::Redo() {
-  m_pEdit->SelectNone();
-  m_pEdit->SetCaret(m_wpOld);
-  m_pEdit->Delete(false);
+  edit_->SelectNone();
+  edit_->SetCaret(m_wpOld);
+  edit_->Delete(false);
   return 0;
 }
 
 int CPWL_EditImpl::UndoDelete::Undo() {
-  m_pEdit->SelectNone();
-  m_pEdit->SetCaret(m_wpNew);
-  if (m_bSecEnd)
-    m_pEdit->InsertReturn(false);
-  else
-    m_pEdit->InsertWord(m_Word, m_nCharset, false);
+  edit_->SelectNone();
+  edit_->SetCaret(m_wpNew);
+  if (sec_end_) {
+    edit_->InsertReturn(false);
+  } else
+    edit_->InsertWord(m_Word, charset_, false);
   return 0;
 }
 
@@ -506,7 +506,7 @@ class CPWL_EditImpl::UndoClear final : public CPWL_EditImpl::UndoItemIface {
   int Undo() override;
 
  private:
-  UnownedPtr<CPWL_EditImpl> m_pEdit;
+  UnownedPtr<CPWL_EditImpl> edit_;
 
   CPVT_WordRange m_wrSel;
   WideString m_swText;
@@ -515,24 +515,24 @@ class CPWL_EditImpl::UndoClear final : public CPWL_EditImpl::UndoItemIface {
 CPWL_EditImpl::UndoClear::UndoClear(CPWL_EditImpl* pEdit,
                                     const CPVT_WordRange& wrSel,
                                     const WideString& swText)
-    : m_pEdit(pEdit), m_wrSel(wrSel), m_swText(swText) {
-  DCHECK(m_pEdit);
+    : edit_(pEdit), m_wrSel(wrSel), m_swText(swText) {
+  DCHECK(edit_);
 }
 
 CPWL_EditImpl::UndoClear::~UndoClear() = default;
 
 int CPWL_EditImpl::UndoClear::Redo() {
-  m_pEdit->SelectNone();
-  m_pEdit->SetSelection(m_wrSel.BeginPos, m_wrSel.EndPos);
-  m_pEdit->Clear(false);
+  edit_->SelectNone();
+  edit_->SetSelection(m_wrSel.BeginPos, m_wrSel.EndPos);
+  edit_->Clear(false);
   return 0;
 }
 
 int CPWL_EditImpl::UndoClear::Undo() {
-  m_pEdit->SelectNone();
-  m_pEdit->SetCaret(m_wrSel.BeginPos);
-  m_pEdit->InsertText(m_swText, FX_Charset::kDefault, false);
-  m_pEdit->SetSelection(m_wrSel.BeginPos, m_wrSel.EndPos);
+  edit_->SelectNone();
+  edit_->SetCaret(m_wrSel.BeginPos);
+  edit_->InsertText(m_swText, FX_Charset::kDefault, false);
+  edit_->SetSelection(m_wrSel.BeginPos, m_wrSel.EndPos);
   return 0;
 }
 
@@ -551,12 +551,12 @@ class CPWL_EditImpl::UndoInsertText final
   int Undo() override;
 
  private:
-  UnownedPtr<CPWL_EditImpl> m_pEdit;
+  UnownedPtr<CPWL_EditImpl> edit_;
 
   CPVT_WordPlace m_wpOld;
   CPVT_WordPlace m_wpNew;
   WideString m_swText;
-  FX_Charset m_nCharset;
+  FX_Charset charset_;
 };
 
 CPWL_EditImpl::UndoInsertText::UndoInsertText(CPWL_EditImpl* pEdit,
@@ -564,27 +564,27 @@ CPWL_EditImpl::UndoInsertText::UndoInsertText(CPWL_EditImpl* pEdit,
                                               const CPVT_WordPlace& wpNewPlace,
                                               const WideString& swText,
                                               FX_Charset charset)
-    : m_pEdit(pEdit),
+    : edit_(pEdit),
       m_wpOld(wpOldPlace),
       m_wpNew(wpNewPlace),
       m_swText(swText),
-      m_nCharset(charset) {
-  DCHECK(m_pEdit);
+      charset_(charset) {
+  DCHECK(edit_);
 }
 
 CPWL_EditImpl::UndoInsertText::~UndoInsertText() = default;
 
 int CPWL_EditImpl::UndoInsertText::Redo() {
-  m_pEdit->SelectNone();
-  m_pEdit->SetCaret(m_wpOld);
-  m_pEdit->InsertText(m_swText, m_nCharset, false);
+  edit_->SelectNone();
+  edit_->SetCaret(m_wpOld);
+  edit_->InsertText(m_swText, charset_, false);
   return 0;
 }
 
 int CPWL_EditImpl::UndoInsertText::Undo() {
-  m_pEdit->SelectNone();
-  m_pEdit->SetSelection(m_wpOld, m_wpNew);
-  m_pEdit->Clear(false);
+  edit_->SelectNone();
+  edit_->SetSelection(m_wpOld, m_wpNew);
+  edit_->Clear(false);
   return 0;
 }
 
@@ -709,13 +709,14 @@ void CPWL_EditImpl::SetFontMap(IPVT_FontMap* pFontMap) {
 }
 
 void CPWL_EditImpl::SetNotify(CPWL_Edit* pNotify) {
-  m_pNotify = pNotify;
+  notify_ = pNotify;
 }
 
 CPWL_EditImpl::Iterator* CPWL_EditImpl::GetIterator() {
-  if (!m_pIterator)
-    m_pIterator = std::make_unique<Iterator>(this, m_pVT->GetIterator());
-  return m_pIterator.get();
+  if (!iterator_) {
+    iterator_ = std::make_unique<Iterator>(this, m_pVT->GetIterator());
+  }
+  return iterator_.get();
 }
 
 IPVT_FontMap* CPWL_EditImpl::GetFontMap() {
@@ -732,7 +733,7 @@ void CPWL_EditImpl::SetAlignmentH(int32_t nFormat) {
 }
 
 void CPWL_EditImpl::SetAlignmentV(int32_t nFormat) {
-  m_nAlignment = nFormat;
+  alignment_ = nFormat;
 }
 
 void CPWL_EditImpl::SetPasswordChar(uint16_t wSubWord) {
@@ -764,11 +765,11 @@ void CPWL_EditImpl::SetFontSize(float fFontSize) {
 }
 
 void CPWL_EditImpl::SetAutoScroll(bool bAuto) {
-  m_bEnableScroll = bAuto;
+  enable_scroll_ = bAuto;
 }
 
 void CPWL_EditImpl::SetTextOverflow(bool bAllowed) {
-  m_bEnableOverflow = bAllowed;
+  enable_overflow_ = bAllowed;
 }
 
 void CPWL_EditImpl::SetSelection(int32_t nStartChar, int32_t nEndChar) {
@@ -949,8 +950,9 @@ CPVT_WordRange CPWL_EditImpl::GetWholeWordRange() const {
 }
 
 CPVT_WordRange CPWL_EditImpl::GetVisibleWordRange() const {
-  if (m_bEnableOverflow)
+  if (enable_overflow_) {
     return GetWholeWordRange();
+  }
 
   if (m_pVT->IsValid()) {
     CFX_FloatRect rcPlate = m_pVT->GetPlateRect();
@@ -1005,7 +1007,7 @@ void CPWL_EditImpl::RearrangePart(const CPVT_WordRange& range) {
 }
 
 void CPWL_EditImpl::SetContentChanged() {
-  if (m_pNotify) {
+  if (notify_) {
     CFX_FloatRect rcContent = m_pVT->GetContentRect();
     if (rcContent.Width() != m_rcOldContent.Width() ||
         rcContent.Height() != m_rcOldContent.Height()) {
@@ -1042,7 +1044,7 @@ CFX_PointF CPWL_EditImpl::VTToEdit(const CFX_PointF& point) const {
 
   float fPadding = 0.0f;
 
-  switch (m_nAlignment) {
+  switch (alignment_) {
     case 0:
       fPadding = 0.0f;
       break;
@@ -1064,7 +1066,7 @@ CFX_PointF CPWL_EditImpl::EditToVT(const CFX_PointF& point) const {
 
   float fPadding = 0.0f;
 
-  switch (m_nAlignment) {
+  switch (alignment_) {
     case 0:
       fPadding = 0.0f;
       break;
@@ -1089,16 +1091,18 @@ CFX_FloatRect CPWL_EditImpl::VTToEdit(const CFX_FloatRect& rect) const {
 }
 
 void CPWL_EditImpl::SetScrollInfo() {
-  if (!m_pNotify)
+  if (!notify_) {
     return;
+  }
 
   CFX_FloatRect rcPlate = m_pVT->GetPlateRect();
   CFX_FloatRect rcContent = m_pVT->GetContentRect();
-  if (m_bNotifyFlag)
+  if (notify_flag_) {
     return;
+  }
 
-  AutoRestorer<bool> restorer(&m_bNotifyFlag);
-  m_bNotifyFlag = true;
+  AutoRestorer<bool> restorer(&notify_flag_);
+  notify_flag_ = true;
 
   PWL_SCROLL_INFO Info;
   Info.fPlateWidth = rcPlate.top - rcPlate.bottom;
@@ -1106,12 +1110,13 @@ void CPWL_EditImpl::SetScrollInfo() {
   Info.fContentMax = rcContent.top;
   Info.fSmallStep = rcPlate.Height() / 3;
   Info.fBigStep = rcPlate.Height();
-  m_pNotify->SetScrollInfo(Info);
+  notify_->SetScrollInfo(Info);
 }
 
 void CPWL_EditImpl::SetScrollPosX(float fx) {
-  if (!m_bEnableScroll)
+  if (!enable_scroll_) {
     return;
+  }
 
   if (m_pVT->IsValid()) {
     if (!FXSYS_IsFloatEqual(m_ptScrollPos.x, fx)) {
@@ -1122,19 +1127,20 @@ void CPWL_EditImpl::SetScrollPosX(float fx) {
 }
 
 void CPWL_EditImpl::SetScrollPosY(float fy) {
-  if (!m_bEnableScroll)
+  if (!enable_scroll_) {
     return;
+  }
 
   if (m_pVT->IsValid()) {
     if (!FXSYS_IsFloatEqual(m_ptScrollPos.y, fy)) {
       m_ptScrollPos.y = fy;
       Refresh();
 
-      if (m_pNotify) {
-        if (!m_bNotifyFlag) {
-          AutoRestorer<bool> restorer(&m_bNotifyFlag);
-          m_bNotifyFlag = true;
-          m_pNotify->SetScrollPosition(fy);
+      if (notify_) {
+        if (!notify_flag_) {
+          AutoRestorer<bool> restorer(&notify_flag_);
+          notify_flag_ = true;
+          notify_->SetScrollPosition(fy);
         }
       }
     }
@@ -1233,21 +1239,21 @@ void CPWL_EditImpl::ScrollToCaret() {
 }
 
 void CPWL_EditImpl::Refresh() {
-  if (m_bEnableRefresh && m_pVT->IsValid()) {
+  if (enable_refresh_ && m_pVT->IsValid()) {
     m_Refresh.BeginRefresh();
     RefreshPushLineRects(GetVisibleWordRange());
 
     m_Refresh.NoAnalyse();
     m_ptRefreshScrollPos = m_ptScrollPos;
 
-    if (m_pNotify) {
-      if (!m_bNotifyFlag) {
-        AutoRestorer<bool> restorer(&m_bNotifyFlag);
-        m_bNotifyFlag = true;
+    if (notify_) {
+      if (!notify_flag_) {
+        AutoRestorer<bool> restorer(&notify_flag_);
+        notify_flag_ = true;
         std::vector<CFX_FloatRect>* pRects = m_Refresh.GetRefreshRects();
         for (auto& rect : *pRects) {
-          if (!m_pNotify->InvalidateRect(&rect)) {
-            m_pNotify = nullptr;  // Gone, dangling even.
+          if (!notify_->InvalidateRect(&rect)) {
+            notify_ = nullptr;  // Gone, dangling even.
             break;
           }
         }
@@ -1312,13 +1318,13 @@ void CPWL_EditImpl::RefreshWordRange(const CPVT_WordRange& wr) {
                            wordinfo.ptWord.x + wordinfo.fWidth,
                            lineinfo.ptLine.y + lineinfo.fLineAscent);
 
-      if (m_pNotify) {
-        if (!m_bNotifyFlag) {
-          AutoRestorer<bool> restorer(&m_bNotifyFlag);
-          m_bNotifyFlag = true;
+      if (notify_) {
+        if (!notify_flag_) {
+          AutoRestorer<bool> restorer(&notify_flag_);
+          notify_flag_ = true;
           CFX_FloatRect rcRefresh = VTToEdit(rcWord);
-          if (!m_pNotify->InvalidateRect(&rcRefresh)) {
-            m_pNotify = nullptr;  // Gone, dangling even.
+          if (!notify_->InvalidateRect(&rcRefresh)) {
+            notify_ = nullptr;  // Gone, dangling even.
           }
         }
       }
@@ -1328,13 +1334,13 @@ void CPWL_EditImpl::RefreshWordRange(const CPVT_WordRange& wr) {
                            lineinfo.ptLine.x + lineinfo.fLineWidth,
                            lineinfo.ptLine.y + lineinfo.fLineAscent);
 
-      if (m_pNotify) {
-        if (!m_bNotifyFlag) {
-          AutoRestorer<bool> restorer(&m_bNotifyFlag);
-          m_bNotifyFlag = true;
+      if (notify_) {
+        if (!notify_flag_) {
+          AutoRestorer<bool> restorer(&notify_flag_);
+          notify_flag_ = true;
           CFX_FloatRect rcRefresh = VTToEdit(rcLine);
-          if (!m_pNotify->InvalidateRect(&rcRefresh)) {
-            m_pNotify = nullptr;  // Gone, dangling even.
+          if (!notify_->InvalidateRect(&rcRefresh)) {
+            notify_ = nullptr;  // Gone, dangling even.
           }
         }
       }
@@ -1350,8 +1356,8 @@ void CPWL_EditImpl::SetCaret(const CPVT_WordPlace& place) {
 }
 
 void CPWL_EditImpl::SetCaretInfo() {
-  if (m_pNotify) {
-    if (!m_bNotifyFlag) {
+  if (notify_) {
+    if (!notify_flag_) {
       CPVT_VariableText::Iterator* pIterator = m_pVT->GetIterator();
       pIterator->SetAt(m_wpCaret);
 
@@ -1371,10 +1377,10 @@ void CPWL_EditImpl::SetCaretInfo() {
         ptFoot.y = line.ptLine.y + line.fLineDescent;
       }
 
-      AutoRestorer<bool> restorer(&m_bNotifyFlag);
-      m_bNotifyFlag = true;
-      m_pNotify->SetCaret(m_SelState.IsEmpty(), VTToEdit(ptHead),
-                          VTToEdit(ptFoot));
+      AutoRestorer<bool> restorer(&notify_flag_);
+      notify_flag_ = true;
+      notify_->SetCaret(m_SelState.IsEmpty(), VTToEdit(ptHead),
+                        VTToEdit(ptFoot));
     }
   }
 }
@@ -1629,7 +1635,7 @@ bool CPWL_EditImpl::InsertWord(uint16_t word,
   if (m_wpCaret == m_wpOldCaret)
     return false;
 
-  if (bAddUndo && m_bEnableUndo) {
+  if (bAddUndo && enable_undo_) {
     AddEditUndoItem(std::make_unique<UndoInsertWord>(this, m_wpOldCaret,
                                                      m_wpCaret, word, charset));
   }
@@ -1647,7 +1653,7 @@ void CPWL_EditImpl::InsertReturn(bool bAddUndo) {
   if (m_wpCaret == m_wpOldCaret)
     return;
 
-  if (bAddUndo && m_bEnableUndo) {
+  if (bAddUndo && enable_undo_) {
     AddEditUndoItem(
         std::make_unique<UndoInsertReturn>(this, m_wpOldCaret, m_wpCaret));
   }
@@ -1674,7 +1680,7 @@ void CPWL_EditImpl::Backspace(bool bAddUndo) {
   if (m_wpCaret == m_wpOldCaret)
     return;
 
-  if (bAddUndo && m_bEnableUndo) {
+  if (bAddUndo && enable_undo_) {
     AddEditUndoItem(std::make_unique<UndoBackspace>(
         this, m_wpOldCaret, m_wpCaret, word.Word, word.nCharset));
   }
@@ -1699,7 +1705,7 @@ bool CPWL_EditImpl::Delete(bool bAddUndo) {
   bool bSecEnd = (m_wpCaret == m_pVT->GetSectionEndPlace(m_wpCaret));
   SetCaret(m_pVT->DeleteWord(m_wpCaret));
   m_SelState.Set(m_wpCaret, m_wpCaret);
-  if (bAddUndo && m_bEnableUndo) {
+  if (bAddUndo && enable_undo_) {
     if (bSecEnd) {
       AddEditUndoItem(std::make_unique<UndoDelete>(
           this, m_wpOldCaret, m_wpCaret, word.Word, word.nCharset, bSecEnd));
@@ -1732,7 +1738,7 @@ bool CPWL_EditImpl::Clear(bool bAddUndo) {
     return false;
 
   CPVT_WordRange range = m_SelState.ConvertToWordRange();
-  if (bAddUndo && m_bEnableUndo) {
+  if (bAddUndo && enable_undo_) {
     AddEditUndoItem(
         std::make_unique<UndoClear>(this, range, GetSelectedText()));
   }
@@ -1759,7 +1765,7 @@ void CPWL_EditImpl::InsertText(const WideString& sText,
   if (m_wpCaret == m_wpOldCaret)
     return;
 
-  if (bAddUndo && m_bEnableUndo) {
+  if (bAddUndo && enable_undo_) {
     AddEditUndoItem(std::make_unique<UndoInsertText>(
         this, m_wpOldCaret, m_wpCaret, sText, charset));
   }
@@ -1813,7 +1819,7 @@ void CPWL_EditImpl::ReplaceSelection(const WideString& text) {
 }
 
 bool CPWL_EditImpl::Redo() {
-  if (m_bEnableUndo) {
+  if (enable_undo_) {
     if (m_Undo.CanRedo()) {
       m_Undo.Redo();
       return true;
@@ -1824,7 +1830,7 @@ bool CPWL_EditImpl::Redo() {
 }
 
 bool CPWL_EditImpl::Undo() {
-  if (m_bEnableUndo) {
+  if (enable_undo_) {
     if (m_Undo.CanUndo()) {
       m_Undo.Undo();
       return true;
@@ -1868,7 +1874,7 @@ bool CPWL_EditImpl::IsTextFull() const {
 }
 
 bool CPWL_EditImpl::IsTextOverflow() const {
-  if (!m_bEnableScroll && !m_bEnableOverflow) {
+  if (!enable_scroll_ && !enable_overflow_) {
     CFX_FloatRect rcPlate = m_pVT->GetPlateRect();
     CFX_FloatRect rcContent = m_pVT->GetContentRect();
 
@@ -1885,7 +1891,7 @@ bool CPWL_EditImpl::IsTextOverflow() const {
 }
 
 bool CPWL_EditImpl::CanUndo() const {
-  if (m_bEnableUndo) {
+  if (enable_undo_) {
     return m_Undo.CanUndo();
   }
 
@@ -1893,7 +1899,7 @@ bool CPWL_EditImpl::CanUndo() const {
 }
 
 bool CPWL_EditImpl::CanRedo() const {
-  if (m_bEnableUndo) {
+  if (enable_undo_) {
     return m_Undo.CanRedo();
   }
 
@@ -1901,11 +1907,11 @@ bool CPWL_EditImpl::CanRedo() const {
 }
 
 void CPWL_EditImpl::EnableRefresh(bool bRefresh) {
-  m_bEnableRefresh = bRefresh;
+  enable_refresh_ = bRefresh;
 }
 
 void CPWL_EditImpl::EnableUndo(bool bUndo) {
-  m_bEnableUndo = bUndo;
+  enable_undo_ = bUndo;
 }
 
 CPVT_WordPlace CPWL_EditImpl::DoInsertText(const CPVT_WordPlace& place,

@@ -30,15 +30,15 @@ uint64_t g_next_listener_key = 1;
 
 }  // namespace
 
-CFWL_NoteDriver::CFWL_NoteDriver(CFWL_App* pApp) : m_pApp(pApp) {}
+CFWL_NoteDriver::CFWL_NoteDriver(CFWL_App* pApp) : app_(pApp) {}
 
 CFWL_NoteDriver::~CFWL_NoteDriver() = default;
 
 void CFWL_NoteDriver::Trace(cppgc::Visitor* visitor) const {
-  visitor->Trace(m_pApp);
-  visitor->Trace(m_pHover);
-  visitor->Trace(m_pFocus);
-  visitor->Trace(m_pGrab);
+  visitor->Trace(app_);
+  visitor->Trace(hover_);
+  visitor->Trace(focus_);
+  visitor->Trace(grab_);
   ContainerTrace(visitor, m_eventTargets);
 }
 
@@ -58,7 +58,7 @@ void CFWL_NoteDriver::RegisterEventTarget(CFWL_Widget* pListener,
   }
   if (!m_eventTargets[key]) {
     m_eventTargets[key] = cppgc::MakeGarbageCollected<Target>(
-        m_pApp->GetHeap()->GetAllocationHandle(), pListener);
+        app_->GetHeap()->GetAllocationHandle(), pListener);
   }
   m_eventTargets[key]->SetEventSource(pEventSource);
 }
@@ -74,21 +74,27 @@ void CFWL_NoteDriver::UnregisterEventTarget(CFWL_Widget* pListener) {
 }
 
 void CFWL_NoteDriver::NotifyTargetHide(CFWL_Widget* pNoteTarget) {
-  if (m_pFocus == pNoteTarget)
-    m_pFocus = nullptr;
-  if (m_pHover == pNoteTarget)
-    m_pHover = nullptr;
-  if (m_pGrab == pNoteTarget)
-    m_pGrab = nullptr;
+  if (focus_ == pNoteTarget) {
+    focus_ = nullptr;
+  }
+  if (hover_ == pNoteTarget) {
+    hover_ = nullptr;
+  }
+  if (grab_ == pNoteTarget) {
+    grab_ = nullptr;
+  }
 }
 
 void CFWL_NoteDriver::NotifyTargetDestroy(CFWL_Widget* pNoteTarget) {
-  if (m_pFocus == pNoteTarget)
-    m_pFocus = nullptr;
-  if (m_pHover == pNoteTarget)
-    m_pHover = nullptr;
-  if (m_pGrab == pNoteTarget)
-    m_pGrab = nullptr;
+  if (focus_ == pNoteTarget) {
+    focus_ = nullptr;
+  }
+  if (hover_ == pNoteTarget) {
+    hover_ = nullptr;
+  }
+  if (grab_ == pNoteTarget) {
+    grab_ = nullptr;
+  }
 
   UnregisterEventTarget(pNoteTarget);
 }
@@ -143,14 +149,15 @@ bool CFWL_NoteDriver::DispatchMessage(CFWL_Message* pMessage,
 
 bool CFWL_NoteDriver::DoSetFocus(CFWL_Message* pMessage,
                                  CFWL_Widget* pMessageForm) {
-  m_pFocus = pMessage->GetDstTarget();
+  focus_ = pMessage->GetDstTarget();
   return true;
 }
 
 bool CFWL_NoteDriver::DoKillFocus(CFWL_Message* pMessage,
                                   CFWL_Widget* pMessageForm) {
-  if (m_pFocus == pMessage->GetDstTarget())
-    m_pFocus = nullptr;
+  if (focus_ == pMessage->GetDstTarget()) {
+    focus_ = nullptr;
+  }
   return true;
 }
 
@@ -163,8 +170,8 @@ bool CFWL_NoteDriver::DoKey(CFWL_Message* pMessage, CFWL_Widget* pMessageForm) {
   }
 #endif
 
-  if (m_pFocus) {
-    pMsg->SetDstTarget(m_pFocus.Get());
+  if (focus_) {
+    pMsg->SetDstTarget(focus_.Get());
     return true;
   }
 
@@ -212,8 +219,9 @@ bool CFWL_NoteDriver::DoMouseEx(CFWL_Message* pMessage,
                                 CFWL_Widget* pMessageForm) {
   CFWL_WidgetMgr* pWidgetMgr = pMessageForm->GetFWLApp()->GetWidgetMgr();
   CFWL_Widget* pTarget = nullptr;
-  if (m_pGrab)
-    pTarget = m_pGrab.Get();
+  if (grab_) {
+    pTarget = grab_.Get();
+  }
 
   CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
   if (!pTarget)
@@ -229,22 +237,23 @@ bool CFWL_NoteDriver::DoMouseEx(CFWL_Message* pMessage,
 
 void CFWL_NoteDriver::MouseSecondary(CFWL_Message* pMessage) {
   CFWL_Widget* pTarget = pMessage->GetDstTarget();
-  if (pTarget == m_pHover)
+  if (pTarget == hover_) {
     return;
+  }
 
   CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
-  if (m_pHover) {
-    CFWL_MessageMouse msLeave(
-        m_pHover.Get(), CFWL_MessageMouse::MouseCommand::kLeave,
-        Mask<XFA_FWL_KeyFlag>(),
-        pTarget->TransformTo(m_pHover.Get(), pMsg->m_pos));
+  if (hover_) {
+    CFWL_MessageMouse msLeave(hover_.Get(),
+                              CFWL_MessageMouse::MouseCommand::kLeave,
+                              Mask<XFA_FWL_KeyFlag>(),
+                              pTarget->TransformTo(hover_.Get(), pMsg->m_pos));
     DispatchMessage(&msLeave, nullptr);
   }
   if (pTarget->GetClassID() == FWL_Type::Form) {
-    m_pHover = nullptr;
+    hover_ = nullptr;
     return;
   }
-  m_pHover = pTarget;
+  hover_ = pTarget;
 
   CFWL_MessageMouse msHover(pTarget, CFWL_MessageMouse::MouseCommand::kHover,
                             Mask<XFA_FWL_KeyFlag>(), pMsg->m_pos);
@@ -252,12 +261,12 @@ void CFWL_NoteDriver::MouseSecondary(CFWL_Message* pMessage) {
 }
 
 CFWL_NoteDriver::Target::Target(CFWL_Widget* pListener)
-    : m_pListener(pListener) {}
+    : listener_(pListener) {}
 
 CFWL_NoteDriver::Target::~Target() = default;
 
 void CFWL_NoteDriver::Target::Trace(cppgc::Visitor* visitor) const {
-  visitor->Trace(m_pListener);
+  visitor->Trace(listener_);
   for (auto& widget : m_widgets)
     visitor->Trace(widget);
 }
@@ -268,7 +277,7 @@ void CFWL_NoteDriver::Target::SetEventSource(CFWL_Widget* pSource) {
 }
 
 bool CFWL_NoteDriver::Target::ProcessEvent(CFWL_Event* pEvent) {
-  IFWL_WidgetDelegate* pDelegate = m_pListener->GetDelegate();
+  IFWL_WidgetDelegate* pDelegate = listener_->GetDelegate();
   if (!pDelegate)
     return false;
   if (!m_widgets.empty() && m_widgets.count(pEvent->GetSrcTarget()) == 0)

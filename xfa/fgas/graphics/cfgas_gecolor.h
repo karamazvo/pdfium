@@ -33,11 +33,11 @@ class CFGAS_GEColor {
   }
   CFGAS_GEPattern* GetPattern() const {
     DCHECK_EQ(m_type, Pattern);
-    return m_pPattern;
+    return pattern_;
   }
   CFGAS_GEShading* GetShading() const {
     DCHECK_EQ(m_type, Shading);
-    return m_pShading;
+    return shading_;
   }
 
   CFGAS_GEColor& operator=(const CFGAS_GEColor& that);
@@ -47,8 +47,8 @@ class CFGAS_GEColor {
  private:
   Type m_type = Invalid;
   FX_ARGB m_argb = 0;
-  UnownedPtr<CFGAS_GEPattern> m_pPattern;
-  UnownedPtr<CFGAS_GEShading> m_pShading;
+  UnownedPtr<CFGAS_GEPattern> pattern_;
+  UnownedPtr<CFGAS_GEShading> shading_;
 };
 
 #endif  // XFA_FGAS_GRAPHICS_CFGAS_GECOLOR_H_

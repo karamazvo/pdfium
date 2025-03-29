@@ -30,7 +30,7 @@ class CPDF_StructTree {
 
   size_t CountTopElements() const { return m_Kids.size(); }
   CPDF_StructElement* GetTopElement(size_t i) const { return m_Kids[i].Get(); }
-  uint32_t GetPageObjNum() const { return m_pPage->GetObjNum(); }
+  uint32_t GetPageObjNum() const { return page_->GetObjNum(); }
   ByteString GetRoleMapNameFor(const ByteString& type) const;
 
  private:
@@ -46,9 +46,9 @@ class CPDF_StructTree {
   bool AddTopLevelNode(const CPDF_Dictionary* pDict,
                        const RetainPtr<CPDF_StructElement>& pElement);
 
-  RetainPtr<const CPDF_Dictionary> const m_pTreeRoot;
-  RetainPtr<const CPDF_Dictionary> const m_pRoleMap;
-  RetainPtr<const CPDF_Dictionary> m_pPage;
+  RetainPtr<const CPDF_Dictionary> const tree_root_;
+  RetainPtr<const CPDF_Dictionary> const role_map_;
+  RetainPtr<const CPDF_Dictionary> page_;
   std::vector<RetainPtr<CPDF_StructElement>> m_Kids;
 };
 

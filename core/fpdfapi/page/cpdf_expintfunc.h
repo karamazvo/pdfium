@@ -24,7 +24,7 @@ class CPDF_ExpIntFunc final : public CPDF_Function {
   bool v_Call(pdfium::span<const float> inputs,
               pdfium::span<float> results) const override;
 
-  uint32_t GetOrigOutputs() const { return m_nOrigOutputs; }
+  uint32_t GetOrigOutputs() const { return orig_outputs_; }
   float GetExponent() const { return m_Exponent; }
 
 #if defined(PDF_USE_SKIA)
@@ -33,7 +33,7 @@ class CPDF_ExpIntFunc final : public CPDF_Function {
 #endif
 
  private:
-  uint32_t m_nOrigOutputs = 0;
+  uint32_t orig_outputs_ = 0;
   float m_Exponent = 0.0f;
   DataVector<float> m_BeginValues;
   DataVector<float> m_EndValues;

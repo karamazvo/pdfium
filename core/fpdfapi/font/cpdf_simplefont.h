@@ -52,7 +52,7 @@ class CPDF_SimpleFont : public CPDF_Font {
 
   CPDF_FontEncoding m_Encoding{FontEncoding::kBuiltin};
   FontEncoding m_BaseEncoding = FontEncoding::kBuiltin;
-  bool m_bUseFontWidth = false;
+  bool use_font_width_ = false;
   std::vector<ByteString> m_CharNames;
   std::array<uint16_t, kInternalTableSize> m_GlyphIndex;
   std::array<uint16_t, kInternalTableSize> m_CharWidth;

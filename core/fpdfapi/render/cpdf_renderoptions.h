@@ -68,8 +68,8 @@ class CPDF_RenderOptions {
   bool CheckOCGDictVisible(const CPDF_Dictionary* pOC) const;
   bool CheckPageObjectVisible(const CPDF_PageObject* pPageObj) const;
 
-  void SetDrawAnnots(bool draw) { m_bDrawAnnots = draw; }
-  bool GetDrawAnnots() const { return m_bDrawAnnots; }
+  void SetDrawAnnots(bool draw) { draw_annots_ = draw; }
+  bool GetDrawAnnots() const { return draw_annots_; }
 
   void SetOCContext(RetainPtr<CPDF_OCContext> context) {
     m_pOCContext = context;
@@ -77,7 +77,7 @@ class CPDF_RenderOptions {
 
  private:
   Type m_ColorMode = kNormal;
-  bool m_bDrawAnnots = false;
+  bool draw_annots_ = false;
   Options m_Options;
   ColorScheme m_ColorScheme = {};
   RetainPtr<CPDF_OCContext> m_pOCContext;

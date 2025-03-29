@@ -55,7 +55,7 @@ RLScanlineDecoder::RLScanlineDecoder() = default;
 
 RLScanlineDecoder::~RLScanlineDecoder() {
   // Span in superclass can't outlive our buffer.
-  m_pLastScanline = pdfium::span<uint8_t>();
+  last_scanline_ = pdfium::span<uint8_t>();
 }
 
 bool RLScanlineDecoder::CheckDestSize() {
@@ -81,7 +81,7 @@ bool RLScanlineDecoder::CheckDestSize() {
       break;
     }
   }
-  if (((uint32_t)m_OrigWidth * m_nComps * m_bpc * m_OrigHeight + 7) / 8 >
+  if (((uint32_t)m_OrigWidth * comps_ * m_bpc * m_OrigHeight + 7) / 8 >
       dest_size) {
     return false;
   }
@@ -96,7 +96,7 @@ bool RLScanlineDecoder::Create(pdfium::span<const uint8_t> src_buf,
   m_SrcBuf = src_buf;
   m_OutputWidth = m_OrigWidth = width;
   m_OutputHeight = m_OrigHeight = height;
-  m_nComps = nComps;
+  comps_ = nComps;
   m_bpc = bpc;
   // Aligning the pitch to 4 bytes requires an integer overflow check.
   FX_SAFE_UINT32 pitch = width;

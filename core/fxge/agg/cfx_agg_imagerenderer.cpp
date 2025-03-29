@@ -26,12 +26,12 @@ CFX_AggImageRenderer::CFX_AggImageRenderer(
     const CFX_Matrix& matrix,
     const FXDIB_ResampleOptions& options,
     bool bRgbByteOrder)
-    : m_pDevice(pDevice),
-      m_pClipRgn(pClipRgn),
+    : device_(pDevice),
+      clip_rgn_(pClipRgn),
       m_Matrix(matrix),
       m_Alpha(alpha),
       m_MaskColor(mask_color),
-      m_bRgbByteOrder(bRgbByteOrder) {
+      rgb_byte_order_(bRgbByteOrder) {
   FX_RECT image_rect = m_Matrix.GetUnitRect().GetOuterRect();
   m_ClipBox = pClipRgn
                   ? pClipRgn->GetBox()
@@ -54,7 +54,7 @@ CFX_AggImageRenderer::CFX_AggImageRenderer(
       const bool flip_x = m_Matrix.c > 0;
       const bool flip_y = m_Matrix.b < 0;
       m_Composer.Compose(pDevice, pClipRgn, alpha, mask_color, m_ClipBox,
-                         /*bVertical=*/true, flip_x, flip_y, m_bRgbByteOrder,
+                         /*bVertical=*/true, flip_x, flip_y, rgb_byte_order_,
                          BlendMode::kNormal);
       m_Stretcher = std::make_unique<CFX_ImageStretcher>(
           &m_Composer, std::move(source), dest_height, dest_width, bitmap_clip,
@@ -64,7 +64,7 @@ CFX_AggImageRenderer::CFX_AggImageRenderer(
       return;
     }
     m_State = State::kTransforming;
-    m_pTransformer = std::make_unique<CFX_ImageTransformer>(
+    transformer_ = std::make_unique<CFX_ImageTransformer>(
         std::move(source), m_Matrix, options, &m_ClipBox);
     return;
   }
@@ -84,7 +84,7 @@ CFX_AggImageRenderer::CFX_AggImageRenderer(
   bitmap_clip.Offset(-image_rect.left, -image_rect.top);
   m_Composer.Compose(pDevice, pClipRgn, alpha, mask_color, m_ClipBox,
                      /*bVertical=*/false, /*bFlipX=*/false, /*bFlipY=*/false,
-                     m_bRgbByteOrder, BlendMode::kNormal);
+                     rgb_byte_order_, BlendMode::kNormal);
   m_State = State::kStretching;
   m_Stretcher = std::make_unique<CFX_ImageStretcher>(
       &m_Composer, std::move(source), dest_width, dest_height, bitmap_clip,
@@ -99,10 +99,11 @@ bool CFX_AggImageRenderer::Continue(PauseIndicatorIface* pPause) {
     return m_Stretcher->Continue(pPause);
   if (m_State != State::kTransforming)
     return false;
-  if (m_pTransformer->Continue(pPause))
+  if (transformer_->Continue(pPause)) {
     return true;
+  }
 
-  RetainPtr<CFX_DIBitmap> pBitmap = m_pTransformer->DetachBitmap();
+  RetainPtr<CFX_DIBitmap> pBitmap = transformer_->DetachBitmap();
   if (!pBitmap || pBitmap->GetBuffer().empty())
     return false;
 
@@ -110,16 +111,16 @@ bool CFX_AggImageRenderer::Continue(PauseIndicatorIface* pPause) {
     if (m_Alpha != 1.0f) {
       m_MaskColor = FXARGB_MUL_ALPHA(m_MaskColor, FXSYS_roundf(m_Alpha * 255));
     }
-    m_pDevice->CompositeMask(m_pTransformer->result().left,
-                             m_pTransformer->result().top, pBitmap->GetWidth(),
-                             pBitmap->GetHeight(), pBitmap, m_MaskColor, 0, 0,
-                             BlendMode::kNormal, m_pClipRgn, m_bRgbByteOrder);
+    device_->CompositeMask(transformer_->result().left,
+                           transformer_->result().top, pBitmap->GetWidth(),
+                           pBitmap->GetHeight(), pBitmap, m_MaskColor, 0, 0,
+                           BlendMode::kNormal, clip_rgn_, rgb_byte_order_);
   } else {
     pBitmap->MultiplyAlpha(m_Alpha);
-    m_pDevice->CompositeBitmap(
-        m_pTransformer->result().left, m_pTransformer->result().top,
-        pBitmap->GetWidth(), pBitmap->GetHeight(), pBitmap, 0, 0,
-        BlendMode::kNormal, m_pClipRgn, m_bRgbByteOrder);
+    device_->CompositeBitmap(transformer_->result().left,
+                             transformer_->result().top, pBitmap->GetWidth(),
+                             pBitmap->GetHeight(), pBitmap, 0, 0,
+                             BlendMode::kNormal, clip_rgn_, rgb_byte_order_);
   }
   return false;
 }

@@ -26,12 +26,12 @@ bool CFX_CSSComputedStyle::GetCustomStyle(const WideString& wsName,
 }
 
 std::optional<WideString> CFX_CSSComputedStyle::GetLastFontFamily() const {
-  if (!m_InheritedData.m_pFontFamily ||
-      m_InheritedData.m_pFontFamily->values().empty()) {
+  if (!m_InheritedData.font_family_ ||
+      m_InheritedData.font_family_->values().empty()) {
     return std::nullopt;
   }
 
-  return m_InheritedData.m_pFontFamily->values()
+  return m_InheritedData.font_family_->values()
       .back()
       .AsRaw<CFX_CSSStringValue>()
       ->Value();
@@ -42,11 +42,11 @@ uint16_t CFX_CSSComputedStyle::GetFontWeight() const {
 }
 
 CFX_CSSFontVariant CFX_CSSComputedStyle::GetFontVariant() const {
-  return m_InheritedData.m_eFontVariant;
+  return m_InheritedData.font_variant_;
 }
 
 CFX_CSSFontStyle CFX_CSSComputedStyle::GetFontStyle() const {
-  return m_InheritedData.m_eFontStyle;
+  return m_InheritedData.font_style_;
 }
 
 float CFX_CSSComputedStyle::GetFontSize() const {
@@ -62,11 +62,11 @@ void CFX_CSSComputedStyle::SetFontWeight(uint16_t wFontWeight) {
 }
 
 void CFX_CSSComputedStyle::SetFontVariant(CFX_CSSFontVariant eFontVariant) {
-  m_InheritedData.m_eFontVariant = eFontVariant;
+  m_InheritedData.font_variant_ = eFontVariant;
 }
 
 void CFX_CSSComputedStyle::SetFontStyle(CFX_CSSFontStyle eFontStyle) {
-  m_InheritedData.m_eFontStyle = eFontStyle;
+  m_InheritedData.font_style_ = eFontStyle;
 }
 
 void CFX_CSSComputedStyle::SetFontSize(float fFontSize) {
@@ -78,32 +78,32 @@ void CFX_CSSComputedStyle::SetColor(FX_ARGB dwFontColor) {
 }
 
 const CFX_CSSRect* CFX_CSSComputedStyle::GetBorderWidth() const {
-  return m_NonInheritedData.m_bHasBorder ? &(m_NonInheritedData.m_BorderWidth)
-                                         : nullptr;
+  return m_NonInheritedData.has_border_ ? &(m_NonInheritedData.m_BorderWidth)
+                                        : nullptr;
 }
 
 const CFX_CSSRect* CFX_CSSComputedStyle::GetMarginWidth() const {
-  return m_NonInheritedData.m_bHasMargin ? &(m_NonInheritedData.m_MarginWidth)
-                                         : nullptr;
+  return m_NonInheritedData.has_margin_ ? &(m_NonInheritedData.m_MarginWidth)
+                                        : nullptr;
 }
 
 const CFX_CSSRect* CFX_CSSComputedStyle::GetPaddingWidth() const {
-  return m_NonInheritedData.m_bHasPadding ? &(m_NonInheritedData.m_PaddingWidth)
-                                          : nullptr;
+  return m_NonInheritedData.has_padding_ ? &(m_NonInheritedData.m_PaddingWidth)
+                                         : nullptr;
 }
 
 void CFX_CSSComputedStyle::SetMarginWidth(const CFX_CSSRect& rect) {
   m_NonInheritedData.m_MarginWidth = rect;
-  m_NonInheritedData.m_bHasMargin = true;
+  m_NonInheritedData.has_margin_ = true;
 }
 
 void CFX_CSSComputedStyle::SetPaddingWidth(const CFX_CSSRect& rect) {
   m_NonInheritedData.m_PaddingWidth = rect;
-  m_NonInheritedData.m_bHasPadding = true;
+  m_NonInheritedData.has_padding_ = true;
 }
 
 CFX_CSSDisplay CFX_CSSComputedStyle::GetDisplay() const {
-  return m_NonInheritedData.m_eDisplay;
+  return m_NonInheritedData.display_;
 }
 
 float CFX_CSSComputedStyle::GetLineHeight() const {
@@ -115,11 +115,11 @@ const CFX_CSSLength& CFX_CSSComputedStyle::GetTextIndent() const {
 }
 
 CFX_CSSTextAlign CFX_CSSComputedStyle::GetTextAlign() const {
-  return m_InheritedData.m_eTextAlign;
+  return m_InheritedData.text_align_;
 }
 
 CFX_CSSVerticalAlign CFX_CSSComputedStyle::GetVerticalAlign() const {
-  return m_NonInheritedData.m_eVerticalAlignType;
+  return m_NonInheritedData.vertical_align_type_;
 }
 
 float CFX_CSSComputedStyle::GetNumberVerticalAlign() const {
@@ -143,11 +143,11 @@ void CFX_CSSComputedStyle::SetTextIndent(const CFX_CSSLength& textIndent) {
 }
 
 void CFX_CSSComputedStyle::SetTextAlign(CFX_CSSTextAlign eTextAlign) {
-  m_InheritedData.m_eTextAlign = eTextAlign;
+  m_InheritedData.text_align_ = eTextAlign;
 }
 
 void CFX_CSSComputedStyle::SetNumberVerticalAlign(float fAlign) {
-  m_NonInheritedData.m_eVerticalAlignType = CFX_CSSVerticalAlign::Number,
+  m_NonInheritedData.vertical_align_type_ = CFX_CSSVerticalAlign::Number,
   m_NonInheritedData.m_fVerticalAlign = fAlign;
 }
 

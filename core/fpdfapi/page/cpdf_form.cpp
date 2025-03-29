@@ -53,7 +53,7 @@ CPDF_Form::CPDF_Form(CPDF_Document* pDoc,
                                     .Get(),
                                 pParentResources,
                                 pPageResources.Get()))),
-      m_pFormStream(std::move(pFormStream)) {
+      form_stream_(std::move(pFormStream)) {
   LoadTransparencyInfo();
 }
 
@@ -116,7 +116,7 @@ CFX_FloatRect CPDF_Form::CalcBoundingBox() const {
 }
 
 RetainPtr<const CPDF_Stream> CPDF_Form::GetStream() const {
-  return m_pFormStream;
+  return form_stream_;
 }
 
 std::optional<std::pair<RetainPtr<CFX_DIBitmap>, CFX_Matrix>>

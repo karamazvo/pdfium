@@ -134,7 +134,7 @@ class CPDF_TextPage {
     TransformedTextObject(const TransformedTextObject& that);
     ~TransformedTextObject();
 
-    UnownedPtr<CPDF_TextObject> m_pTextObj;
+    UnownedPtr<CPDF_TextObject> text_obj_;
     CFX_Matrix m_formMatrix;
   };
 
@@ -181,13 +181,13 @@ class CPDF_TextPage {
   WideString GetTextByPredicate(
       const std::function<bool(const CharInfo&)>& predicate) const;
 
-  UnownedPtr<const CPDF_Page> const m_pPage;
+  UnownedPtr<const CPDF_Page> const page_;
   DataVector<TextPageCharSegment> m_CharIndices;
   std::deque<CharInfo> m_CharList;
   std::deque<CharInfo> m_TempCharList;
   WideTextBuffer m_TextBuf;
   WideTextBuffer m_TempTextBuf;
-  UnownedPtr<const CPDF_TextObject> m_pPrevTextObj;
+  UnownedPtr<const CPDF_TextObject> prev_text_obj_;
   CFX_Matrix m_PrevMatrix;
   const bool m_rtl;
   const CFX_Matrix m_DisplayMatrix;

@@ -31,7 +31,7 @@ class CPWL_SBButton final : public CPWL_Wnd {
 
  private:
   const Type m_eSBButtonType;
-  bool m_bMouseDown = false;
+  bool mouse_down_ = false;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_SBBUTTON_H_

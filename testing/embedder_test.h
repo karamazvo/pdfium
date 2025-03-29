@@ -119,8 +119,8 @@ class EmbedderTest : public ::testing::Test,
     delegate_ = delegate ? delegate : default_delegate_.get();
   }
 
-  void SetFormFillInfoVersion(int form_fill_info_version) {
-    form_fill_info_version_ = form_fill_info_version;
+  void SetFormFillInfoVersion(int m_pFormFillInfoversion) {
+    m_pFormFillInfoversion_ = m_pFormFillInfoversion;
   }
 
   void SetDocumentFromAvail();
@@ -329,9 +329,9 @@ class EmbedderTest : public ::testing::Test,
   Delegate* delegate_;
 
 #ifdef PDF_ENABLE_XFA
-  int form_fill_info_version_ = 2;
+  int m_pFormFillInfoversion_ = 2;
 #else   // PDF_ENABLE_XFA
-  int form_fill_info_version_ = 1;
+  int m_pFormFillInfoversion_ = 1;
 #endif  // PDF_ENABLE_XFA
 
   // must outlive `loader_`.

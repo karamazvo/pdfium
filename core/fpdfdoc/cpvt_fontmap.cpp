@@ -22,40 +22,42 @@ CPVT_FontMap::CPVT_FontMap(CPDF_Document* pDoc,
                            RetainPtr<CPDF_Dictionary> pResDict,
                            RetainPtr<CPDF_Font> pDefFont,
                            const ByteString& sDefFontAlias)
-    : m_pDocument(pDoc),
-      m_pResDict(std::move(pResDict)),
-      m_pDefFont(std::move(pDefFont)),
+    : document_(pDoc),
+      res_dict_(std::move(pResDict)),
+      def_font_(std::move(pDefFont)),
       m_sDefFontAlias(sDefFontAlias) {}
 
 CPVT_FontMap::~CPVT_FontMap() = default;
 
 void CPVT_FontMap::SetupAnnotSysPDFFont() {
-  if (!m_pDocument || !m_pResDict)
+  if (!document_ || !res_dict_) {
     return;
+  }
 
   RetainPtr<CPDF_Font> pPDFFont =
-      CPDF_InteractiveForm::AddNativeInteractiveFormFont(m_pDocument,
+      CPDF_InteractiveForm::AddNativeInteractiveFormFont(document_,
                                                          &m_sSysFontAlias);
   if (!pPDFFont)
     return;
 
-  RetainPtr<CPDF_Dictionary> pFontList = m_pResDict->GetMutableDictFor("Font");
+  RetainPtr<CPDF_Dictionary> pFontList = res_dict_->GetMutableDictFor("Font");
   if (ValidateFontResourceDict(pFontList.Get()) &&
       !pFontList->KeyExist(m_sSysFontAlias)) {
-    pFontList->SetNewFor<CPDF_Reference>(m_sSysFontAlias, m_pDocument,
+    pFontList->SetNewFor<CPDF_Reference>(m_sSysFontAlias, document_,
                                          pPDFFont->GetFontDictObjNum());
   }
-  m_pSysFont = std::move(pPDFFont);
+  sys_font_ = std::move(pPDFFont);
 }
 
 RetainPtr<CPDF_Font> CPVT_FontMap::GetPDFFont(int32_t nFontIndex) {
   switch (nFontIndex) {
     case 0:
-      return m_pDefFont;
+      return def_font_;
     case 1:
-      if (!m_pSysFont)
+      if (!sys_font_) {
         SetupAnnotSysPDFFont();
-      return m_pSysFont;
+      }
+      return sys_font_;
     default:
       return nullptr;
   }
@@ -66,8 +68,9 @@ ByteString CPVT_FontMap::GetPDFFontAlias(int32_t nFontIndex) {
     case 0:
       return m_sDefFontAlias;
     case 1:
-      if (!m_pSysFont)
+      if (!sys_font_) {
         SetupAnnotSysPDFFont();
+      }
       return m_sSysFontAlias;
     default:
       return ByteString();

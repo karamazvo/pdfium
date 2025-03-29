@@ -87,13 +87,13 @@ void CPDF_PageObject::SetDefaultStates() {
 void CPDF_PageObject::CopyData(const CPDF_PageObject* pSrc) {
   m_GraphicStates = pSrc->m_GraphicStates;
   m_Rect = pSrc->m_Rect;
-  m_bDirty = true;
+  dirty_ = true;
 }
 
 void CPDF_PageObject::SetIsActive(bool value) {
-  if (m_bIsActive != value) {
-    m_bIsActive = value;
-    m_bDirty = true;
+  if (is_active_ != value) {
+    is_active_ = value;
+    dirty_ = true;
   }
 }
 

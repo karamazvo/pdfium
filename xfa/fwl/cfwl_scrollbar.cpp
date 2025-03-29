@@ -148,9 +148,9 @@ void CFWL_ScrollBar::CalcButtonLen() {
   float fLength = IsVertical() ? m_ClientRect.height : m_ClientRect.width;
   if (fLength < m_fButtonLen * 2) {
     m_fButtonLen = fLength / 2;
-    m_bMinSize = true;
+    min_size_ = true;
   } else {
-    m_bMinSize = false;
+    min_size_ = false;
   }
 }
 
@@ -174,7 +174,7 @@ CFX_RectF CFWL_ScrollBar::CalcThumbButtonRect(const CFX_RectF& rtThumb) {
   if (!IsEnabled())
     return rect;
 
-  if (m_bMinSize) {
+  if (min_size_) {
     rect.left = rtThumb.left;
     rect.top = rtThumb.top;
     return rect;
@@ -222,7 +222,7 @@ CFX_RectF CFWL_ScrollBar::CalcThumbButtonRect(const CFX_RectF& rtThumb) {
 
 CFX_RectF CFWL_ScrollBar::CalcMinTrackRect(const CFX_RectF& rtMinRect) {
   CFX_RectF rect;
-  if (m_bMinSize) {
+  if (min_size_) {
     rect.left = rtMinRect.left;
     rect.top = rtMinRect.top;
     return rect;
@@ -241,8 +241,9 @@ CFX_RectF CFWL_ScrollBar::CalcMinTrackRect(const CFX_RectF& rtMinRect) {
 }
 
 CFX_RectF CFWL_ScrollBar::CalcMaxTrackRect(const CFX_RectF& rtMaxRect) {
-  if (m_bMinSize)
+  if (min_size_) {
     return CFX_RectF(rtMaxRect.TopLeft(), 0, 0);
+  }
 
   if (IsVertical()) {
     float iy = (m_ThumbRect.top + m_ThumbRect.bottom()) / 2;
@@ -339,7 +340,7 @@ void CFWL_ScrollBar::OnLButtonDown(const CFX_PointF& point) {
   if (!IsEnabled())
     return;
 
-  m_bMouseDown = true;
+  mouse_down_ = true;
   SetGrab(true);
 
   m_cpTrackPoint = point;
@@ -356,14 +357,14 @@ void CFWL_ScrollBar::OnLButtonDown(const CFX_PointF& point) {
     DoMouseDown(4, m_MaxTrackRect, &m_iMaxTrackState, point);
 
   if (!SendEvent()) {
-    m_pTimer = std::make_unique<CFX_Timer>(GetFWLApp()->GetTimerHandler(), this,
-                                           kScrollbarElapsedMsecs);
+    timer_ = std::make_unique<CFX_Timer>(GetFWLApp()->GetTimerHandler(), this,
+                                         kScrollbarElapsedMsecs);
   }
 }
 
 void CFWL_ScrollBar::OnLButtonUp(const CFX_PointF& point) {
-  m_pTimer.reset();
-  m_bMouseDown = false;
+  timer_.reset();
+  mouse_down_ = false;
   DoMouseUp(0, m_MinBtnRect, &m_iMinButtonState, point);
   DoMouseUp(1, m_ThumbRect, &m_iThumbButtonState, point);
   DoMouseUp(2, m_MaxBtnRect, &m_iMaxButtonState, point);
@@ -425,7 +426,7 @@ void CFWL_ScrollBar::DoMouseMove(int32_t iItem,
                                  const CFX_RectF& rtItem,
                                  CFWL_PartState* pState,
                                  const CFX_PointF& point) {
-  if (!m_bMouseDown) {
+  if (!mouse_down_) {
     CFWL_PartState iNewState = rtItem.Contains(point) ? CFWL_PartState::kHovered
                                                       : CFWL_PartState::kNormal;
     if (*pState == iNewState)
@@ -461,9 +462,9 @@ void CFWL_ScrollBar::DoMouseHover(int32_t iItem,
 }
 
 void CFWL_ScrollBar::OnTimerFired() {
-  m_pTimer.reset();
+  timer_.reset();
   if (!SendEvent()) {
-    m_pTimer =
+    timer_ =
         std::make_unique<CFX_Timer>(GetFWLApp()->GetTimerHandler(), this, 0);
   }
 }

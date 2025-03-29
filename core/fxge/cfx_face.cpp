@@ -37,7 +37,7 @@
 namespace {
 
 struct OUTLINE_PARAMS {
-  UnownedPtr<CFX_Path> m_pPath;
+  UnownedPtr<CFX_Path> path_;
   FT_Pos m_CurX;
   FT_Pos m_CurY;
   float m_CoordUnit;
@@ -123,7 +123,7 @@ int FTPosToCBoxInt(FT_Pos pos) {
 void Outline_CheckEmptyContour(OUTLINE_PARAMS* param) {
   size_t size;
   {
-    pdfium::span<const CFX_Path::Point> points = param->m_pPath->GetPoints();
+    pdfium::span<const CFX_Path::Point> points = param->path_->GetPoints();
     size = points.size();
 
     if (size >= 2 &&
@@ -141,7 +141,7 @@ void Outline_CheckEmptyContour(OUTLINE_PARAMS* param) {
     }
   }
   // Only safe after |points| has been destroyed.
-  param->m_pPath->GetPoints().resize(size);
+  param->path_->GetPoints().resize(size);
 }
 
 int Outline_MoveTo(const FT_Vector* to, void* user) {
@@ -149,8 +149,8 @@ int Outline_MoveTo(const FT_Vector* to, void* user) {
 
   Outline_CheckEmptyContour(param);
 
-  param->m_pPath->ClosePath();
-  param->m_pPath->AppendPoint(
+  param->path_->ClosePath();
+  param->path_->AppendPoint(
       CFX_PointF(to->x / param->m_CoordUnit, to->y / param->m_CoordUnit),
       CFX_Path::Point::Type::kMove);
 
@@ -162,7 +162,7 @@ int Outline_MoveTo(const FT_Vector* to, void* user) {
 int Outline_LineTo(const FT_Vector* to, void* user) {
   OUTLINE_PARAMS* param = static_cast<OUTLINE_PARAMS*>(user);
 
-  param->m_pPath->AppendPoint(
+  param->path_->AppendPoint(
       CFX_PointF(to->x / param->m_CoordUnit, to->y / param->m_CoordUnit),
       CFX_Path::Point::Type::kLine);
 
@@ -174,19 +174,19 @@ int Outline_LineTo(const FT_Vector* to, void* user) {
 int Outline_ConicTo(const FT_Vector* control, const FT_Vector* to, void* user) {
   OUTLINE_PARAMS* param = static_cast<OUTLINE_PARAMS*>(user);
 
-  param->m_pPath->AppendPoint(
+  param->path_->AppendPoint(
       CFX_PointF((param->m_CurX + (control->x - param->m_CurX) * 2 / 3) /
                      param->m_CoordUnit,
                  (param->m_CurY + (control->y - param->m_CurY) * 2 / 3) /
                      param->m_CoordUnit),
       CFX_Path::Point::Type::kBezier);
 
-  param->m_pPath->AppendPoint(
+  param->path_->AppendPoint(
       CFX_PointF((control->x + (to->x - control->x) / 3) / param->m_CoordUnit,
                  (control->y + (to->y - control->y) / 3) / param->m_CoordUnit),
       CFX_Path::Point::Type::kBezier);
 
-  param->m_pPath->AppendPoint(
+  param->path_->AppendPoint(
       CFX_PointF(to->x / param->m_CoordUnit, to->y / param->m_CoordUnit),
       CFX_Path::Point::Type::kBezier);
 
@@ -201,15 +201,15 @@ int Outline_CubicTo(const FT_Vector* control1,
                     void* user) {
   OUTLINE_PARAMS* param = static_cast<OUTLINE_PARAMS*>(user);
 
-  param->m_pPath->AppendPoint(CFX_PointF(control1->x / param->m_CoordUnit,
-                                         control1->y / param->m_CoordUnit),
-                              CFX_Path::Point::Type::kBezier);
+  param->path_->AppendPoint(CFX_PointF(control1->x / param->m_CoordUnit,
+                                       control1->y / param->m_CoordUnit),
+                            CFX_Path::Point::Type::kBezier);
 
-  param->m_pPath->AppendPoint(CFX_PointF(control2->x / param->m_CoordUnit,
-                                         control2->y / param->m_CoordUnit),
-                              CFX_Path::Point::Type::kBezier);
+  param->path_->AppendPoint(CFX_PointF(control2->x / param->m_CoordUnit,
+                                       control2->y / param->m_CoordUnit),
+                            CFX_Path::Point::Type::kBezier);
 
-  param->m_pPath->AppendPoint(
+  param->path_->AppendPoint(
       CFX_PointF(to->x / param->m_CoordUnit, to->y / param->m_CoordUnit),
       CFX_Path::Point::Type::kBezier);
 
@@ -609,7 +609,7 @@ std::unique_ptr<CFX_Path> CFX_Face::LoadGlyphPath(
 
   auto pPath = std::make_unique<CFX_Path>();
   OUTLINE_PARAMS params;
-  params.m_pPath = pPath.get();
+  params.path_ = pPath.get();
   params.m_CurX = params.m_CurY = 0;
   params.m_CoordUnit = 64 * 64.0;
 
@@ -801,8 +801,8 @@ bool CFX_Face::CanEmbed() {
 #endif
 
 CFX_Face::CFX_Face(FXFT_FaceRec* rec, RetainPtr<Retainable> pDesc)
-    : m_pRec(rec), m_pDesc(std::move(pDesc)) {
-  DCHECK(m_pRec);
+    : rec_(rec), desc_(std::move(pDesc)) {
+  DCHECK(rec_);
 }
 
 CFX_Face::~CFX_Face() = default;

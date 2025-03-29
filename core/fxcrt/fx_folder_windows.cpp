@@ -27,7 +27,7 @@ class FX_WindowsFolder : public FX_Folder {
   FX_WindowsFolder();
 
   HANDLE m_Handle = INVALID_HANDLE_VALUE;
-  bool m_bReachedEnd = false;
+  bool reached_end_ = false;
   WIN32_FIND_DATAA m_FindData;
 };
 
@@ -52,12 +52,13 @@ FX_WindowsFolder::~FX_WindowsFolder() {
 }
 
 bool FX_WindowsFolder::GetNextFile(ByteString* filename, bool* bFolder) {
-  if (m_bReachedEnd)
+  if (reached_end_) {
     return false;
+  }
 
   *filename = m_FindData.cFileName;
   *bFolder = !!(m_FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
   if (!FindNextFileA(m_Handle, &m_FindData))
-    m_bReachedEnd = true;
+    reached_end_ = true;
   return true;
 }

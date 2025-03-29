@@ -106,7 +106,7 @@ class CXFA_FMLexer {
   ~CXFA_FMLexer();
 
   Token NextToken();
-  bool IsComplete() const { return m_nCursor >= m_spInput.size(); }
+  bool IsComplete() const { return cursor_ >= m_spInput.size(); }
 
  private:
   Token AdvanceForNumber();
@@ -114,11 +114,11 @@ class CXFA_FMLexer {
   Token AdvanceForIdentifier();
   void AdvanceForComment();
 
-  void RaiseError() { m_bLexerError = true; }
+  void RaiseError() { lexer_error_ = true; }
 
   pdfium::raw_span<const wchar_t> m_spInput;
-  size_t m_nCursor = 0;
-  bool m_bLexerError = false;
+  size_t cursor_ = 0;
+  bool lexer_error_ = false;
 };
 
 #endif  // XFA_FXFA_FORMCALC_CXFA_FMLEXER_H_

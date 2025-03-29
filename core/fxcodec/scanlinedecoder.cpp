@@ -23,7 +23,7 @@ ScanlineDecoder::ScanlineDecoder(int nOrigWidth,
       m_OrigHeight(nOrigHeight),
       m_OutputWidth(nOutputWidth),
       m_OutputHeight(nOutputHeight),
-      m_nComps(nComps),
+      comps_(nComps),
       m_bpc(nBpc),
       m_Pitch(nPitch) {}
 
@@ -31,7 +31,7 @@ ScanlineDecoder::~ScanlineDecoder() = default;
 
 pdfium::span<const uint8_t> ScanlineDecoder::GetScanline(int line) {
   if (m_NextLine == line + 1)
-    return m_pLastScanline;
+    return last_scanline_;
 
   if (m_NextLine < 0 || m_NextLine > line) {
     if (!Rewind())
@@ -42,9 +42,9 @@ pdfium::span<const uint8_t> ScanlineDecoder::GetScanline(int line) {
     GetNextLine();
     m_NextLine++;
   }
-  m_pLastScanline = GetNextLine();
+  last_scanline_ = GetNextLine();
   m_NextLine++;
-  return m_pLastScanline;
+  return last_scanline_;
 }
 
 bool ScanlineDecoder::SkipToScanline(int line, PauseIndicatorIface* pPause) {
@@ -57,9 +57,9 @@ bool ScanlineDecoder::SkipToScanline(int line, PauseIndicatorIface* pPause) {
     }
     m_NextLine = 0;
   }
-  m_pLastScanline = pdfium::span<uint8_t>();
+  last_scanline_ = pdfium::span<uint8_t>();
   while (m_NextLine < line) {
-    m_pLastScanline = GetNextLine();
+    last_scanline_ = GetNextLine();
     m_NextLine++;
     if (pPause && pPause->NeedToPauseNow()) {
       return true;

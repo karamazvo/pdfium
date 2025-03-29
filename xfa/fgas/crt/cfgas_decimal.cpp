@@ -284,7 +284,7 @@ CFGAS_Decimal::CFGAS_Decimal(uint32_t lo,
     : m_uHi(hi),
       m_uMid(mid),
       m_uLo(lo),
-      m_bNeg(neg && IsNotZero()),
+      neg_(neg && IsNotZero()),
       m_uScale(scale > FXMATH_DECIMAL_SCALELIMIT ? 0 : scale) {}
 
 CFGAS_Decimal::CFGAS_Decimal(int32_t val) {
@@ -321,7 +321,7 @@ CFGAS_Decimal::CFGAS_Decimal(float val, uint8_t scale) {
   m_uHi = static_cast<uint32_t>(phi);
   m_uMid = static_cast<uint32_t>(pmid);
   m_uLo = static_cast<uint32_t>(plo);
-  m_bNeg = val < 0 && IsNotZero();
+  neg_ = val < 0 && IsNotZero();
   m_uScale = scale;
 }
 
@@ -356,7 +356,7 @@ CFGAS_Decimal::CFGAS_Decimal(WideStringView str) {
     }
     str = str.Substr(1);
   }
-  m_bNeg = negmet && IsNotZero();
+  neg_ = negmet && IsNotZero();
   m_uScale = scale;
 }
 
@@ -375,8 +375,9 @@ WideString CFGAS_Decimal::ToWideString() const {
     tmpbuf += '0';
     outputlen++;
   }
-  if (m_bNeg && IsNotZero())
+  if (neg_ && IsNotZero()) {
     retString += '-';
+  }
 
   for (uint8_t idx = 0; idx < outputlen; idx++) {
     if (idx == (outputlen - scale) && scale != 0)
@@ -394,7 +395,7 @@ double CFGAS_Decimal::ToDouble() const {
   double pow = (double)(1 << 16) * (1 << 16);
   double base = static_cast<double>(m_uHi) * pow * pow +
                 static_cast<double>(m_uMid) * pow + static_cast<double>(m_uLo);
-  return (m_bNeg ? -1 : 1) * base * powf(10.0f, -m_uScale);
+  return (neg_ ? -1 : 1) * base * powf(10.0f, -m_uScale);
 }
 
 void CFGAS_Decimal::SetScale(uint8_t newscale) {
@@ -412,7 +413,7 @@ void CFGAS_Decimal::SetScale(uint8_t newscale) {
     m_uHi = static_cast<uint32_t>(phi);
     m_uMid = static_cast<uint32_t>(pmid);
     m_uLo = static_cast<uint32_t>(plo);
-    m_bNeg = m_bNeg && IsNotZero();
+    neg_ = neg_ && IsNotZero();
     m_uScale = newscale;
   } else {
     uint64_t point5_hi = 0;
@@ -431,13 +432,13 @@ void CFGAS_Decimal::SetScale(uint8_t newscale) {
   m_uHi = static_cast<uint32_t>(phi);
   m_uMid = static_cast<uint32_t>(pmid);
   m_uLo = static_cast<uint32_t>(plo);
-  m_bNeg = m_bNeg && IsNotZero();
+  neg_ = neg_ && IsNotZero();
   m_uScale = newscale;
 }
 
 void CFGAS_Decimal::SetNegate() {
   if (IsNotZero())
-    m_bNeg = !m_bNeg;
+    neg_ = !neg_;
 }
 
 CFGAS_Decimal CFGAS_Decimal::operator*(const CFGAS_Decimal& val) const {
@@ -445,7 +446,7 @@ CFGAS_Decimal CFGAS_Decimal::operator*(const CFGAS_Decimal& val) const {
            b[3] = {val.m_uLo, val.m_uMid, val.m_uHi};
   uint64_t c[6];
   decimal_helper_raw_mul(a, 3, b, 3, c, 6);
-  bool neg = m_bNeg ^ val.m_bNeg;
+  bool neg = neg_ ^ val.neg_;
   uint8_t scale = m_uScale + val.m_uScale;
   decimal_helper_shrinkintorange(c, 6, 3, scale);
   return CFGAS_Decimal(static_cast<uint32_t>(c[0]), static_cast<uint32_t>(c[1]),
@@ -456,7 +457,7 @@ CFGAS_Decimal CFGAS_Decimal::operator/(const CFGAS_Decimal& val) const {
   if (!val.IsNotZero())
     return CFGAS_Decimal();
 
-  bool neg = m_bNeg ^ val.m_bNeg;
+  bool neg = neg_ ^ val.neg_;
   uint64_t a[7] = {m_uLo, m_uMid, m_uHi},
            b[3] = {val.m_uLo, val.m_uMid, val.m_uHi}, c[7] = {0};
   uint8_t scale = 0;

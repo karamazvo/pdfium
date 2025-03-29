@@ -44,7 +44,7 @@ class BinaryBuffer {
   void AppendUint32(uint32_t value);
   void AppendDouble(double value);
 
-  // Releases ownership of `m_pBuffer` and returns it.
+  // Releases ownership of `buffer_` and returns it.
   DataVector<uint8_t> DetachBuffer();
 
  protected:

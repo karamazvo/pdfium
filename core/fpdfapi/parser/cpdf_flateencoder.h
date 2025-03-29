@@ -37,17 +37,17 @@ class CPDF_FlateEncoder {
     return std::holds_alternative<DataVector<uint8_t>>(m_Data);
   }
 
-  // Returns |m_pClonedDict| if it is valid. Otherwise returns |m_pDict|.
+  // Returns |cloned_dict_| if it is valid. Otherwise returns |dict_|.
   const CPDF_Dictionary* GetDict() const;
 
   // Must outlive `m_Data`.
-  RetainPtr<CPDF_StreamAcc> const m_pAcc;
+  RetainPtr<CPDF_StreamAcc> const acc_;
 
   std::variant<pdfium::raw_span<const uint8_t>, DataVector<uint8_t>> m_Data;
 
   // Only one of these two pointers is valid at any time.
-  RetainPtr<const CPDF_Dictionary> m_pDict;
-  RetainPtr<CPDF_Dictionary> m_pClonedDict;
+  RetainPtr<const CPDF_Dictionary> dict_;
+  RetainPtr<CPDF_Dictionary> cloned_dict_;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_FLATEENCODER_H_

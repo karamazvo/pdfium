@@ -60,9 +60,9 @@ class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
                   size_t szBlockIndex);
   bool IsLoaded() const { return !m_pieceLines.empty(); }
   void Unload();
-  bool HasBlock() const { return m_bHasBlock; }
+  bool HasBlock() const { return has_block_; }
   void ClearBlocks() { m_Blocks.clear(); }
-  void ResetHasBlock() { m_bHasBlock = false; }
+  void ResetHasBlock() { has_block_ = false; }
 
   // Returns empty string when no link is present.
   WideString GetLinkURLAtPoint(const CFX_PointF& point);
@@ -175,19 +175,19 @@ class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
   size_t GetNextIndexFromLastBlockData() const;
   void UpdateLoaderHeight(float fTextHeight);
 
-  bool m_bHasBlock = false;
-  bool m_bRichText = false;
+  bool has_block_ = false;
+  bool rich_text_ = false;
   int32_t m_iLines = 0;
   float m_fMaxWidth = 0;
   std::vector<BlockData> m_Blocks;
-  cppgc::Member<CXFA_FFDoc> const m_pDoc;
-  cppgc::Member<CXFA_TextProvider> const m_pTextProvider;
-  cppgc::Member<CXFA_Node> m_pTextDataNode;
-  cppgc::Member<CXFA_TextParser> m_pTextParser;
-  cppgc::Member<LoaderContext> m_pLoader;
-  std::unique_ptr<CFGAS_RTFBreak> m_pBreak;
+  cppgc::Member<CXFA_FFDoc> const doc_;
+  cppgc::Member<CXFA_TextProvider> const text_provider_;
+  cppgc::Member<CXFA_Node> text_data_node_;
+  cppgc::Member<CXFA_TextParser> text_parser_;
+  cppgc::Member<LoaderContext> loader_;
+  std::unique_ptr<CFGAS_RTFBreak> break_;
   std::vector<std::unique_ptr<PieceLine>> m_pieceLines;
-  std::unique_ptr<CXFA_TextTabstopsContext> m_pTabstopContext;
+  std::unique_ptr<CXFA_TextTabstopsContext> tabstop_context_;
 };
 
 #endif  // XFA_FXFA_CXFA_TEXTLAYOUT_H_

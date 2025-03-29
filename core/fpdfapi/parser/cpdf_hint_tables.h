@@ -99,12 +99,12 @@ class CPDF_HintTables {
  private:
   FX_FILESIZE HintsOffsetToFileOffset(uint32_t hints_offset) const;
 
-  uint32_t m_nFirstPageSharedObjs = 0;
+  uint32_t first_page_shared_objs_ = 0;
   FX_FILESIZE m_szFirstPageObjOffset = 0;
   std::vector<PageInfo> m_PageInfos;
   std::vector<SharedObjGroupInfo> m_SharedObjGroupInfos;
-  UnownedPtr<CPDF_ReadValidator> m_pValidator;
-  UnownedPtr<const CPDF_LinearizedHeader> const m_pLinearized;
+  UnownedPtr<CPDF_ReadValidator> validator_;
+  UnownedPtr<const CPDF_LinearizedHeader> const linearized_;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_HINT_TABLES_H_

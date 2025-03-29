@@ -37,17 +37,17 @@ class CFX_AggImageRenderer {
  private:
   enum class State : uint8_t { kInitial = 0, kStretching, kTransforming };
 
-  RetainPtr<CFX_DIBitmap> const m_pDevice;
-  UnownedPtr<const CFX_AggClipRgn> const m_pClipRgn;
+  RetainPtr<CFX_DIBitmap> const device_;
+  UnownedPtr<const CFX_AggClipRgn> const clip_rgn_;
   const CFX_Matrix m_Matrix;
-  std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
+  std::unique_ptr<CFX_ImageTransformer> transformer_;
   std::unique_ptr<CFX_ImageStretcher> m_Stretcher;
   CFX_AggBitmapComposer m_Composer;
   FX_RECT m_ClipBox;
   const float m_Alpha;
   uint32_t m_MaskColor;
   State m_State = State::kInitial;
-  const bool m_bRgbByteOrder;
+  const bool rgb_byte_order_;
 };
 
 #endif  // CORE_FXGE_AGG_CFX_AGG_IMAGERENDERER_H_

@@ -47,7 +47,7 @@ class ReadableSubStream final : public IFX_SeekableReadStream {
   ReadableSubStream(RetainPtr<IFX_SeekableReadStream> pFileRead,
                     FX_FILESIZE part_offset,
                     FX_FILESIZE part_size)
-      : m_pFileRead(std::move(pFileRead)),
+      : file_read_(std::move(pFileRead)),
         m_PartOffset(part_offset),
         m_PartSize(part_size) {}
 
@@ -59,17 +59,17 @@ class ReadableSubStream final : public IFX_SeekableReadStream {
     FX_SAFE_FILESIZE safe_end = offset;
     safe_end += buffer.size();
     // Check that requested range is valid, to prevent calling of ReadBlock
-    // of original m_pFileRead with incorrect params.
+    // of original file_read_ with incorrect params.
     if (!safe_end.IsValid() || safe_end.ValueOrDie() > m_PartSize)
       return false;
 
-    return m_pFileRead->ReadBlockAtOffset(buffer, m_PartOffset + offset);
+    return file_read_->ReadBlockAtOffset(buffer, m_PartOffset + offset);
   }
 
   FX_FILESIZE GetSize() override { return m_PartSize; }
 
  private:
-  RetainPtr<IFX_SeekableReadStream> m_pFileRead;
+  RetainPtr<IFX_SeekableReadStream> file_read_;
   FX_FILESIZE m_PartOffset;
   FX_FILESIZE m_PartSize;
 };
@@ -97,9 +97,9 @@ CPDF_SyntaxParser::CPDF_SyntaxParser(
 
 CPDF_SyntaxParser::CPDF_SyntaxParser(RetainPtr<CPDF_ReadValidator> validator,
                                      FX_FILESIZE HeaderOffset)
-    : m_pFileAccess(std::move(validator)),
+    : file_access_(std::move(validator)),
       m_HeaderOffset(HeaderOffset),
-      m_FileLen(m_pFileAccess->GetSize()) {
+      m_FileLen(file_access_->GetSize()) {
   DCHECK(m_HeaderOffset <= m_FileLen);
 }
 
@@ -120,9 +120,9 @@ bool CPDF_SyntaxParser::ReadBlockAt(FX_FILESIZE read_pos) {
   if (!safe_end.IsValid() || safe_end.ValueOrDie() > m_FileLen)
     read_size = m_FileLen - read_pos;
 
-  m_pFileBuf.resize(read_size);
-  if (!m_pFileAccess->ReadBlockAtOffset(m_pFileBuf, read_pos)) {
-    m_pFileBuf.clear();
+  file_buf_.resize(read_size);
+  if (!file_access_->ReadBlockAtOffset(file_buf_, read_pos)) {
+    file_buf_.clear();
     return false;
   }
 
@@ -138,7 +138,7 @@ bool CPDF_SyntaxParser::GetNextChar(uint8_t& ch) {
   if (!IsPositionRead(pos) && !ReadBlockAt(pos))
     return false;
 
-  ch = m_pFileBuf[pos - m_BufOffset];
+  ch = file_buf_[pos - m_BufOffset];
   m_Pos++;
   return true;
 }
@@ -159,13 +159,14 @@ bool CPDF_SyntaxParser::GetCharAtBackward(FX_FILESIZE pos, uint8_t* ch) {
     if (!ReadBlockAt(block_start) || !IsPositionRead(pos))
       return false;
   }
-  *ch = m_pFileBuf[pos - m_BufOffset];
+  *ch = file_buf_[pos - m_BufOffset];
   return true;
 }
 
 bool CPDF_SyntaxParser::ReadBlock(pdfium::span<uint8_t> buffer) {
-  if (!m_pFileAccess->ReadBlockAtOffset(buffer, m_Pos + m_HeaderOffset))
+  if (!file_access_->ReadBlockAtOffset(buffer, m_Pos + m_HeaderOffset)) {
     return false;
+  }
   m_Pos += buffer.size();
   return true;
 }
@@ -535,10 +536,10 @@ RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
     return pdfium::MakeRetain<CPDF_Null>();
 
   if (word == "(") {
-    return pdfium::MakeRetain<CPDF_String>(m_pPool, ReadString());
+    return pdfium::MakeRetain<CPDF_String>(pool_, ReadString());
   }
   if (word == "<") {
-    return pdfium::MakeRetain<CPDF_String>(m_pPool, ReadHexString(),
+    return pdfium::MakeRetain<CPDF_String>(pool_, ReadHexString(),
                                            CPDF_String::DataType::kIsHex);
   }
   if (word == "[") {
@@ -557,11 +558,11 @@ RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
   if (word[0] == '/') {
     auto word_span = pdfium::make_span(m_WordBuffer).first(m_WordSize);
     return pdfium::MakeRetain<CPDF_Name>(
-        m_pPool, PDF_NameDecode(ByteStringView(word_span).Substr(1)));
+        pool_, PDF_NameDecode(ByteStringView(word_span).Substr(1)));
   }
   if (word == "<<") {
     RetainPtr<CPDF_Dictionary> pDict =
-        pdfium::MakeRetain<CPDF_Dictionary>(m_pPool);
+        pdfium::MakeRetain<CPDF_Dictionary>(pool_);
     while (true) {
       WordResult inner_word_result = GetNextWord();
       const ByteString& inner_word = inner_word_result.word;
@@ -845,7 +846,7 @@ uint32_t CPDF_SyntaxParser::GetDirectNum() {
 }
 
 RetainPtr<CPDF_ReadValidator> CPDF_SyntaxParser::GetValidator() const {
-  return m_pFileAccess;
+  return file_access_;
 }
 
 bool CPDF_SyntaxParser::IsWholeWord(FX_FILESIZE startpos,
@@ -943,5 +944,5 @@ FX_FILESIZE CPDF_SyntaxParser::FindTag(ByteStringView tag) {
 
 bool CPDF_SyntaxParser::IsPositionRead(FX_FILESIZE pos) const {
   return m_BufOffset <= pos &&
-         pos < static_cast<FX_FILESIZE>(m_BufOffset + m_pFileBuf.size());
+         pos < static_cast<FX_FILESIZE>(m_BufOffset + file_buf_.size());
 }

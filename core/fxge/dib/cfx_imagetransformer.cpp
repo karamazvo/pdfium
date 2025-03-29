@@ -138,7 +138,7 @@ CFX_ImageTransformer::CFX_ImageTransformer(RetainPtr<const CFX_DIBBase> source,
                                            const CFX_Matrix& matrix,
                                            const FXDIB_ResampleOptions& options,
                                            const FX_RECT* pClip)
-    : m_pSrc(std::move(source)), m_matrix(matrix), m_ResampleOptions(options) {
+    : src_(std::move(source)), m_matrix(matrix), m_ResampleOptions(options) {
   FX_RECT result_rect = m_matrix.GetUnitRect().GetClosestRect();
   FX_RECT result_clip = result_rect;
   if (pClip)
@@ -157,7 +157,7 @@ CFX_ImageTransformer::CFX_ImageTransformer(RetainPtr<const CFX_DIBBase> source,
     result_clip = result_clip.SwappedClipBox(dest_width, dest_height,
                                              m_matrix.c > 0, m_matrix.b < 0);
     m_Stretcher = std::make_unique<CFX_ImageStretcher>(
-        &m_Storer, m_pSrc, dest_height, dest_width, result_clip,
+        &m_Storer, src_, dest_height, dest_width, result_clip,
         m_ResampleOptions);
     m_Stretcher->Start();
     m_type = StretchType::kRotate;
@@ -170,7 +170,7 @@ CFX_ImageTransformer::CFX_ImageTransformer(RetainPtr<const CFX_DIBBase> source,
                                                       : -floor(m_matrix.d));
     result_clip.Offset(-result_rect.left, -result_rect.top);
     m_Stretcher = std::make_unique<CFX_ImageStretcher>(
-        &m_Storer, m_pSrc, dest_width, dest_height, result_clip,
+        &m_Storer, src_, dest_width, dest_height, result_clip,
         m_ResampleOptions);
     m_Stretcher->Start();
     m_type = StretchType::kNormal;
@@ -206,7 +206,7 @@ CFX_ImageTransformer::CFX_ImageTransformer(RetainPtr<const CFX_DIBBase> source,
   m_dest2stretch = dest_to_strech;
   m_StretchClip = stretch_clip;
   m_Stretcher = std::make_unique<CFX_ImageStretcher>(
-      &m_Storer, m_pSrc, stretch_width, stretch_height, m_StretchClip,
+      &m_Storer, src_, stretch_width, stretch_height, m_StretchClip,
       m_ResampleOptions);
   m_Stretcher->Start();
   m_type = StretchType::kOther;

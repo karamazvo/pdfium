@@ -18,41 +18,41 @@
 
 CPWL_ListCtrl::NotifyIface::~NotifyIface() = default;
 
-CPWL_ListCtrl::Item::Item() : m_pEdit(std::make_unique<CPWL_EditImpl>()) {
-  m_pEdit->SetAlignmentV(1);
-  m_pEdit->Initialize();
+CPWL_ListCtrl::Item::Item() : edit_(std::make_unique<CPWL_EditImpl>()) {
+  edit_->SetAlignmentV(1);
+  edit_->Initialize();
 }
 
 CPWL_ListCtrl::Item::~Item() = default;
 
 void CPWL_ListCtrl::Item::SetFontMap(IPVT_FontMap* pFontMap) {
-  m_pEdit->SetFontMap(pFontMap);
+  edit_->SetFontMap(pFontMap);
 }
 
 void CPWL_ListCtrl::Item::SetText(const WideString& text) {
-  m_pEdit->SetText(text);
-  m_pEdit->Paint();
+  edit_->SetText(text);
+  edit_->Paint();
 }
 
 void CPWL_ListCtrl::Item::SetFontSize(float fFontSize) {
-  m_pEdit->SetFontSize(fFontSize);
-  m_pEdit->Paint();
+  edit_->SetFontSize(fFontSize);
+  edit_->Paint();
 }
 
 float CPWL_ListCtrl::Item::GetItemHeight() const {
-  return m_pEdit->GetContentRect().Height();
+  return edit_->GetContentRect().Height();
 }
 
 uint16_t CPWL_ListCtrl::Item::GetFirstChar() const {
   CPVT_Word word;
-  CPWL_EditImpl::Iterator* pIterator = m_pEdit->GetIterator();
+  CPWL_EditImpl::Iterator* pIterator = edit_->GetIterator();
   pIterator->SetAt(1);
   pIterator->GetWord(word);
   return word.Word;
 }
 
 WideString CPWL_ListCtrl::Item::GetText() const {
-  return m_pEdit->GetText();
+  return edit_->GetText();
 }
 
 CPWL_ListCtrl::SelectState::SelectState() = default;
@@ -165,24 +165,24 @@ void CPWL_ListCtrl::OnMouseDown(const CFX_PointF& point,
       if (IsItemSelected(nHitIndex)) {
         m_SelectState.Sub(nHitIndex);
         SelectItems();
-        m_bCtrlSel = false;
+        ctrl_sel_ = false;
       } else {
         m_SelectState.Add(nHitIndex);
         SelectItems();
-        m_bCtrlSel = true;
+        ctrl_sel_ = true;
       }
 
-      m_nFootIndex = nHitIndex;
+      foot_index_ = nHitIndex;
     } else if (bShift) {
       m_SelectState.DeselectAll();
-      m_SelectState.Add(m_nFootIndex, nHitIndex);
+      m_SelectState.Add(foot_index_, nHitIndex);
       SelectItems();
     } else {
       m_SelectState.DeselectAll();
       m_SelectState.Add(nHitIndex);
       SelectItems();
 
-      m_nFootIndex = nHitIndex;
+      foot_index_ = nHitIndex;
     }
 
     SetCaret(nHitIndex);
@@ -201,15 +201,15 @@ void CPWL_ListCtrl::OnMouseMove(const CFX_PointF& point,
 
   if (IsMultipleSel()) {
     if (bCtrl) {
-      if (m_bCtrlSel)
-        m_SelectState.Add(m_nFootIndex, nHitIndex);
-      else
-        m_SelectState.Sub(m_nFootIndex, nHitIndex);
+      if (ctrl_sel_) {
+        m_SelectState.Add(foot_index_, nHitIndex);
+      } else
+        m_SelectState.Sub(foot_index_, nHitIndex);
 
       SelectItems();
     } else {
       m_SelectState.DeselectAll();
-      m_SelectState.Add(m_nFootIndex, nHitIndex);
+      m_SelectState.Add(foot_index_, nHitIndex);
       SelectItems();
     }
 
@@ -228,13 +228,13 @@ void CPWL_ListCtrl::OnVK(int32_t nItemIndex, bool bShift, bool bCtrl) {
       if (bCtrl) {
       } else if (bShift) {
         m_SelectState.DeselectAll();
-        m_SelectState.Add(m_nFootIndex, nItemIndex);
+        m_SelectState.Add(foot_index_, nItemIndex);
         SelectItems();
       } else {
         m_SelectState.DeselectAll();
         m_SelectState.Add(nItemIndex);
         SelectItems();
-        m_nFootIndex = nItemIndex;
+        foot_index_ = nItemIndex;
       }
 
       SetCaret(nItemIndex);
@@ -328,15 +328,15 @@ void CPWL_ListCtrl::SetSingleSelect(int32_t nItemIndex) {
   if (!IsValid(nItemIndex))
     return;
 
-  if (m_nSelItem != nItemIndex) {
-    if (m_nSelItem >= 0) {
-      SetItemSelect(m_nSelItem, false);
-      InvalidateItem(m_nSelItem);
+  if (sel_item_ != nItemIndex) {
+    if (sel_item_ >= 0) {
+      SetItemSelect(sel_item_, false);
+      InvalidateItem(sel_item_);
     }
 
     SetItemSelect(nItemIndex, true);
     InvalidateItem(nItemIndex);
-    m_nSelItem = nItemIndex;
+    sel_item_ = nItemIndex;
   }
 }
 
@@ -345,10 +345,10 @@ void CPWL_ListCtrl::SetCaret(int32_t nItemIndex) {
     return;
 
   if (IsMultipleSel()) {
-    int32_t nOldIndex = m_nCaretIndex;
+    int32_t nOldIndex = caret_index_;
 
     if (nOldIndex != nItemIndex) {
-      m_nCaretIndex = nItemIndex;
+      caret_index_ = nItemIndex;
       InvalidateItem(nOldIndex);
       InvalidateItem(nItemIndex);
     }
@@ -356,30 +356,30 @@ void CPWL_ListCtrl::SetCaret(int32_t nItemIndex) {
 }
 
 void CPWL_ListCtrl::InvalidateItem(int32_t nItemIndex) {
-  if (!m_pNotify) {
+  if (!notify_) {
     return;
   }
   if (nItemIndex == -1) {
-    if (!m_bNotifyFlag) {
-      m_bNotifyFlag = true;
+    if (!notify_flag_) {
+      notify_flag_ = true;
       CFX_FloatRect rcRefresh = m_rcPlate;
-      if (!m_pNotify->OnInvalidateRect(rcRefresh)) {
-        m_pNotify = nullptr;  // Gone, dangling even.
+      if (!notify_->OnInvalidateRect(rcRefresh)) {
+        notify_ = nullptr;  // Gone, dangling even.
       }
-      m_bNotifyFlag = false;
+      notify_flag_ = false;
     }
   } else {
-    if (!m_bNotifyFlag) {
-      m_bNotifyFlag = true;
+    if (!notify_flag_) {
+      notify_flag_ = true;
       CFX_FloatRect rcRefresh = GetItemRect(nItemIndex);
       rcRefresh.left -= 1.0f;
       rcRefresh.right += 1.0f;
       rcRefresh.bottom -= 1.0f;
       rcRefresh.top += 1.0f;
-      if (!m_pNotify->OnInvalidateRect(rcRefresh)) {
-        m_pNotify = nullptr;  // Gone, dangling even.
+      if (!notify_->OnInvalidateRect(rcRefresh)) {
+        notify_ = nullptr;  // Gone, dangling even.
       }
-      m_bNotifyFlag = false;
+      notify_flag_ = false;
     }
   }
 }
@@ -411,7 +411,7 @@ void CPWL_ListCtrl::Deselect(int32_t nItemIndex) {
   SetMultipleSelect(nItemIndex, false);
 
   if (!IsMultipleSel())
-    m_nSelItem = -1;
+    sel_item_ = -1;
 }
 
 bool CPWL_ListCtrl::IsItemVisible(int32_t nItemIndex) const {
@@ -441,16 +441,16 @@ void CPWL_ListCtrl::ScrollToListItem(int32_t nItemIndex) {
 }
 
 void CPWL_ListCtrl::SetScrollInfo() {
-  if (m_pNotify) {
+  if (notify_) {
     CFX_FloatRect rcPlate = m_rcPlate;
     CFX_FloatRect rcContent = GetContentRectInternal();
 
-    if (!m_bNotifyFlag) {
-      m_bNotifyFlag = true;
-      m_pNotify->OnSetScrollInfoY(rcPlate.bottom, rcPlate.top, rcContent.bottom,
-                                  rcContent.top, GetFirstHeight(),
-                                  rcPlate.Height());
-      m_bNotifyFlag = false;
+    if (!notify_flag_) {
+      notify_flag_ = true;
+      notify_->OnSetScrollInfoY(rcPlate.bottom, rcPlate.top, rcContent.bottom,
+                                rcContent.top, GetFirstHeight(),
+                                rcPlate.Height());
+      notify_flag_ = false;
     }
   }
 }
@@ -477,11 +477,11 @@ void CPWL_ListCtrl::SetScrollPosY(float fy) {
     m_ptScrollPos.y = fy;
     InvalidateItem(-1);
 
-    if (m_pNotify) {
-      if (!m_bNotifyFlag) {
-        m_bNotifyFlag = true;
-        m_pNotify->OnSetScrollPosY(fy);
-        m_bNotifyFlag = false;
+    if (notify_) {
+      if (!notify_flag_) {
+        notify_flag_ = true;
+        notify_->OnSetScrollPosY(fy);
+        notify_flag_ = false;
       }
     }
   }
@@ -548,13 +548,13 @@ int32_t CPWL_ListCtrl::GetItemIndex(const CFX_PointF& point) const {
 
 WideString CPWL_ListCtrl::GetText() const {
   if (IsMultipleSel())
-    return GetItemText(m_nCaretIndex);
-  return GetItemText(m_nSelItem);
+    return GetItemText(caret_index_);
+  return GetItemText(sel_item_);
 }
 
 void CPWL_ListCtrl::AddItem(const WideString& str) {
   auto pListItem = std::make_unique<Item>();
-  pListItem->SetFontMap(m_pFontMap);
+  pListItem->SetFontMap(font_map_);
   pListItem->SetFontSize(m_fFontSize);
   pListItem->SetText(str);
   m_ListItems.push_back(std::move(pListItem));

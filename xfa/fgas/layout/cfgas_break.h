@@ -53,7 +53,7 @@ class CFGAS_Break {
   void ClearBreakPieces();
 
   CFGAS_Char* GetLastChar(int32_t index, bool bOmitChar, bool bRichText) const;
-  const CFGAS_BreakLine* GetCurrentLineForTesting() const { return m_pCurLine; }
+  const CFGAS_BreakLine* GetCurrentLineForTesting() const { return cur_line_; }
 
  protected:
   struct TPO {
@@ -73,9 +73,9 @@ class CFGAS_Break {
   bool IsGreaterThanLineWidth(int32_t width) const;
   FX_CHARTYPE GetUnifiedCharType(FX_CHARTYPE dwType) const;
 
-  FX_CHARTYPE m_eCharType = FX_CHARTYPE::kUnknown;
-  bool m_bSingleLine = false;
-  bool m_bCombText = false;
+  FX_CHARTYPE char_type_ = FX_CHARTYPE::kUnknown;
+  bool single_line_ = false;
+  bool comb_text_ = false;
   Mask<LayoutStyle> m_dwLayoutStyles = LayoutStyle::kNone;
   uint32_t m_dwIdentity = 0;
   int32_t m_iLineStart = 0;
@@ -87,10 +87,10 @@ class CFGAS_Break {
   int32_t m_iVerticalScale = 100;
   int32_t m_iTolerance = 0;
   int32_t m_iCharSpace = 0;
-  RetainPtr<CFGAS_GEFont> m_pFont;
+  RetainPtr<CFGAS_GEFont> font_;
   int8_t m_iReadyLineIndex = -1;
   std::array<CFGAS_BreakLine, 2> m_Lines;
-  UnownedPtr<CFGAS_BreakLine> m_pCurLine;
+  UnownedPtr<CFGAS_BreakLine> cur_line_;
 };
 
 #endif  // XFA_FGAS_LAYOUT_CFGAS_BREAK_H_

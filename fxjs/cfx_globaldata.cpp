@@ -101,7 +101,7 @@ bool CFX_GlobalData::Release() {
   return true;
 }
 
-CFX_GlobalData::CFX_GlobalData(Delegate* pDelegate) : m_pDelegate(pDelegate) {
+CFX_GlobalData::CFX_GlobalData(Delegate* pDelegate) : delegate_(pDelegate) {
   LoadGlobalPersistentVariables();
 }
 
@@ -249,19 +249,20 @@ CFX_GlobalData::Element* CFX_GlobalData::GetAt(int index) {
 }
 
 bool CFX_GlobalData::LoadGlobalPersistentVariables() {
-  if (!m_pDelegate)
+  if (!delegate_) {
     return false;
+  }
 
   bool ret;
   {
     // Span can't outlive call to BufferDone().
-    std::optional<pdfium::span<uint8_t>> buffer = m_pDelegate->LoadBuffer();
+    std::optional<pdfium::span<uint8_t>> buffer = delegate_->LoadBuffer();
     if (!buffer.has_value() || buffer.value().empty())
       return false;
 
     ret = LoadGlobalPersistentVariablesFromBuffer(buffer.value());
   }
-  m_pDelegate->BufferDone();
+  delegate_->BufferDone();
   return ret;
 }
 
@@ -369,8 +370,9 @@ bool CFX_GlobalData::LoadGlobalPersistentVariablesFromBuffer(
 }
 
 bool CFX_GlobalData::SaveGlobalPersisitentVariables() {
-  if (!m_pDelegate)
+  if (!delegate_) {
     return false;
+  }
 
   uint32_t nCount = 0;
   BinaryBuffer sData;
@@ -399,7 +401,7 @@ bool CFX_GlobalData::SaveGlobalPersisitentVariables() {
   sFile.AppendSpan(sData.GetSpan());
 
   CRYPT_ArcFourCryptBlock(sFile.GetMutableSpan(), kRC4KEY);
-  return m_pDelegate->StoreBuffer(sFile.GetSpan());
+  return delegate_->StoreBuffer(sFile.GetSpan());
 }
 
 CFX_GlobalData::Element::Element() = default;

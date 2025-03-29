@@ -72,11 +72,11 @@ class CPDF_Creator {
 
   CPDF_CryptoHandler* GetCryptoHandler();
 
-  UnownedPtr<CPDF_Document> const m_pDocument;
-  UnownedPtr<CPDF_Parser> const m_pParser;
-  RetainPtr<const CPDF_Dictionary> m_pEncryptDict;
-  RetainPtr<CPDF_Dictionary> m_pNewEncryptDict;
-  RetainPtr<CPDF_SecurityHandler> m_pSecurityHandler;
+  UnownedPtr<CPDF_Document> const document_;
+  UnownedPtr<CPDF_Parser> const parser_;
+  RetainPtr<const CPDF_Dictionary> encrypt_dict_;
+  RetainPtr<CPDF_Dictionary> new_encrypt_dict_;
+  RetainPtr<CPDF_SecurityHandler> security_handler_;
   uint32_t m_dwLastObjNum;
   std::unique_ptr<IFX_ArchiveStream> m_Archive;
   FX_FILESIZE m_SavedOffset = 0;
@@ -87,7 +87,7 @@ class CPDF_Creator {
   std::vector<uint32_t> m_NewObjNumArray;  // Sorted, ascending.
   RetainPtr<CPDF_Array> m_pIDArray;
   int32_t m_FileVersion = 0;
-  bool m_bSecurityChanged = false;
+  bool security_changed_ = false;
   bool m_IsIncremental = false;
   bool m_IsOriginal = false;
 };

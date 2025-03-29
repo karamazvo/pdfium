@@ -33,15 +33,15 @@ constexpr auto kFontSizeSteps = fxcrt::ToArray<const uint8_t>(
 }  // namespace
 
 CPVT_VariableText::Provider::Provider(IPVT_FontMap* pFontMap)
-    : m_pFontMap(pFontMap) {
-  DCHECK(m_pFontMap);
+    : font_map_(pFontMap) {
+  DCHECK(font_map_);
 }
 
 CPVT_VariableText::Provider::~Provider() = default;
 
 int CPVT_VariableText::Provider::GetCharWidth(int32_t nFontIndex,
                                               uint16_t word) {
-  RetainPtr<CPDF_Font> pPDFFont = m_pFontMap->GetPDFFont(nFontIndex);
+  RetainPtr<CPDF_Font> pPDFFont = font_map_->GetPDFFont(nFontIndex);
   if (!pPDFFont)
     return 0;
 
@@ -53,23 +53,23 @@ int CPVT_VariableText::Provider::GetCharWidth(int32_t nFontIndex,
 }
 
 int32_t CPVT_VariableText::Provider::GetTypeAscent(int32_t nFontIndex) {
-  RetainPtr<CPDF_Font> pPDFFont = m_pFontMap->GetPDFFont(nFontIndex);
+  RetainPtr<CPDF_Font> pPDFFont = font_map_->GetPDFFont(nFontIndex);
   return pPDFFont ? pPDFFont->GetTypeAscent() : 0;
 }
 
 int32_t CPVT_VariableText::Provider::GetTypeDescent(int32_t nFontIndex) {
-  RetainPtr<CPDF_Font> pPDFFont = m_pFontMap->GetPDFFont(nFontIndex);
+  RetainPtr<CPDF_Font> pPDFFont = font_map_->GetPDFFont(nFontIndex);
   return pPDFFont ? pPDFFont->GetTypeDescent() : 0;
 }
 
 int32_t CPVT_VariableText::Provider::GetWordFontIndex(uint16_t word,
                                                       FX_Charset charset,
                                                       int32_t nFontIndex) {
-  if (RetainPtr<CPDF_Font> pDefFont = m_pFontMap->GetPDFFont(0)) {
+  if (RetainPtr<CPDF_Font> pDefFont = font_map_->GetPDFFont(0)) {
     if (pDefFont->CharCodeFromUnicode(word) != CPDF_Font::kInvalidCharCode)
       return 0;
   }
-  if (RetainPtr<CPDF_Font> pSysFont = m_pFontMap->GetPDFFont(1)) {
+  if (RetainPtr<CPDF_Font> pSysFont = font_map_->GetPDFFont(1)) {
     if (pSysFont->CharCodeFromUnicode(word) != CPDF_Font::kInvalidCharCode)
       return 1;
   }
@@ -173,8 +173,9 @@ CPVT_VariableText::CPVT_VariableText(Provider* pProvider)
 CPVT_VariableText::~CPVT_VariableText() = default;
 
 void CPVT_VariableText::Initialize() {
-  if (m_bInitialized)
+  if (initialized_) {
     return;
+  }
 
   CPVT_WordPlace place;
   place.nSecIndex = 0;
@@ -188,17 +189,19 @@ void CPVT_VariableText::Initialize() {
   if (!m_SectionArray.empty())
     m_SectionArray.front()->ResetLinePlace();
 
-  m_bInitialized = true;
+  initialized_ = true;
 }
 
 CPVT_WordPlace CPVT_VariableText::InsertWord(const CPVT_WordPlace& place,
                                              uint16_t word,
                                              FX_Charset charset) {
   int32_t nTotalWords = GetTotalWords();
-  if (m_nLimitChar > 0 && nTotalWords >= m_nLimitChar)
+  if (limit_char_ > 0 && nTotalWords >= limit_char_) {
     return place;
-  if (m_nCharArray > 0 && nTotalWords >= m_nCharArray)
+  }
+  if (char_array_ > 0 && nTotalWords >= char_array_) {
     return place;
+  }
 
   CPVT_WordPlace newplace = place;
   newplace.nWordIndex++;
@@ -210,12 +213,15 @@ CPVT_WordPlace CPVT_VariableText::InsertWord(const CPVT_WordPlace& place,
 
 CPVT_WordPlace CPVT_VariableText::InsertSection(const CPVT_WordPlace& place) {
   int32_t nTotalWords = GetTotalWords();
-  if (m_nLimitChar > 0 && nTotalWords >= m_nLimitChar)
+  if (limit_char_ > 0 && nTotalWords >= limit_char_) {
     return place;
-  if (m_nCharArray > 0 && nTotalWords >= m_nCharArray)
+  }
+  if (char_array_ > 0 && nTotalWords >= char_array_) {
     return place;
-  if (!m_bMultiLine)
+  }
+  if (!multi_line_) {
     return place;
+  }
 
   CPVT_WordPlace wordplace = place;
   UpdateWordPlace(wordplace);
@@ -270,15 +276,17 @@ void CPVT_VariableText::SetText(const WideString& swText) {
 
   FX_SAFE_INT32 nCharCount = 0;
   for (size_t i = 0, sz = swText.GetLength(); i < sz; i++) {
-    if (m_nLimitChar > 0 && nCharCount.ValueOrDie() >= m_nLimitChar)
+    if (limit_char_ > 0 && nCharCount.ValueOrDie() >= limit_char_) {
       break;
-    if (m_nCharArray > 0 && nCharCount.ValueOrDie() >= m_nCharArray)
+    }
+    if (char_array_ > 0 && nCharCount.ValueOrDie() >= char_array_) {
       break;
+    }
 
     uint16_t word = swText[i];
     switch (word) {
       case 0x0D:
-        if (m_bMultiLine) {
+        if (multi_line_) {
           if (i + 1 < sz && swText[i + 1] == 0x0A)
             i++;
           wp.AdvanceSection();
@@ -286,7 +294,7 @@ void CPVT_VariableText::SetText(const WideString& swText) {
         }
         break;
       case 0x0A:
-        if (m_bMultiLine) {
+        if (multi_line_) {
           if (i + 1 < sz && swText[i + 1] == 0x0D)
             i++;
           wp.AdvanceSection();
@@ -364,7 +372,7 @@ CPVT_WordPlace CPVT_VariableText::WordIndexToWordPlace(int32_t index) const {
 }
 
 CPVT_WordPlace CPVT_VariableText::GetBeginWordPlace() const {
-  return m_bInitialized ? CPVT_WordPlace(0, 0, -1) : CPVT_WordPlace();
+  return initialized_ ? CPVT_WordPlace(0, 0, -1) : CPVT_WordPlace();
 }
 
 CPVT_WordPlace CPVT_VariableText::GetEndWordPlace() const {
@@ -526,8 +534,9 @@ int32_t CPVT_VariableText::GetTotalWords() const {
 }
 
 CPVT_WordPlace CPVT_VariableText::AddSection(const CPVT_WordPlace& place) {
-  if (IsValid() && !m_bMultiLine)
+  if (IsValid() && !multi_line_) {
     return place;
+  }
 
   int32_t nSecIndex = std::clamp(
       place.nSecIndex, 0, fxcrt::CollectionSize<int32_t>(m_SectionArray));
@@ -755,7 +764,7 @@ void CPVT_VariableText::RearrangePart(const CPVT_WordRange& PlaceRange) {
 void CPVT_VariableText::Rearrange(const CPVT_WordRange& PlaceRange) {
   CPVT_FloatRect rcRet;
   if (IsValid()) {
-    if (m_bAutoFontSize) {
+    if (auto_font_size_) {
       SetFontSize(GetAutoFontSize());
       rcRet = RearrangeSections(
           CPVT_WordRange(GetBeginWordPlace(), GetEndWordPlace()));

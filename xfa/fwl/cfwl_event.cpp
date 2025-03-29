@@ -11,12 +11,12 @@ namespace pdfium {
 CFWL_Event::CFWL_Event(CFWL_Event::Type type) : m_type(type) {}
 
 CFWL_Event::CFWL_Event(Type type, CFWL_Widget* pSrcTarget)
-    : m_type(type), m_pSrcTarget(pSrcTarget) {}
+    : m_type(type), src_target_(pSrcTarget) {}
 
 CFWL_Event::CFWL_Event(Type type,
                        CFWL_Widget* pSrcTarget,
                        CFWL_Widget* pDstTarget)
-    : m_type(type), m_pSrcTarget(pSrcTarget), m_pDstTarget(pDstTarget) {}
+    : m_type(type), src_target_(pSrcTarget), dst_target_(pDstTarget) {}
 
 CFWL_Event::~CFWL_Event() = default;
 

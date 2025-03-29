@@ -28,10 +28,10 @@ class CFXJSE_ResolveProcessor {
     ~NodeData();
 
     UnownedPtr<CXFA_Object> m_CurObject;  // Ok, stack-only.
-    WideString m_wsName;
-    WideString m_wsCondition;
+    WideString name_;
+    WideString condition_;
     XFA_HashCode m_uHashName = XFA_HASHCODE_None;
-    int32_t m_nLevel = 0;
+    int32_t level_ = 0;
     Mask<XFA_ResolveFlag> m_dwStyles = XFA_ResolveFlag::kChildren;
     CFXJSE_Engine::ResolveResult m_Result;
   };
@@ -69,8 +69,8 @@ class CFXJSE_ResolveProcessor {
                          NodeData* pRnd);
 
   int32_t m_iCurStart = 0;
-  UnownedPtr<CFXJSE_Engine> const m_pEngine;
-  UnownedPtr<CFXJSE_NodeHelper> const m_pNodeHelper;
+  UnownedPtr<CFXJSE_Engine> const engine_;
+  UnownedPtr<CFXJSE_NodeHelper> const node_helper_;
 };
 
 #endif  // FXJS_XFA_CFXJSE_RESOLVEPROCESSOR_H_

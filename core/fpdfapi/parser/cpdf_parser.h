@@ -94,7 +94,7 @@ class CPDF_Parser {
   bool IsValidObjectNumber(uint32_t objnum) const;
   FX_FILESIZE GetObjectPositionOrZero(uint32_t objnum) const;
   const RetainPtr<CPDF_SecurityHandler>& GetSecurityHandler() const {
-    return m_pSecurityHandler;
+    return security_handler_;
   }
   bool IsObjectFree(uint32_t objnum) const;
 
@@ -104,7 +104,7 @@ class CPDF_Parser {
   FX_FILESIZE GetDocumentSize() const;
   uint32_t GetFirstPageNo() const;
   const CPDF_LinearizedHeader* GetLinearizedHeader() const {
-    return m_pLinearized.get();
+    return linearized_.get();
   }
 
   bool xref_table_rebuilt() const { return m_bXRefTableRebuilt; }
@@ -181,21 +181,21 @@ class CPDF_Parser {
   bool ParseFileVersion();
   void SetPassword(const ByteString& password) { m_Password = password; }
 
-  std::unique_ptr<CPDF_SyntaxParser> m_pSyntax;
-  std::unique_ptr<ParsedObjectsHolder> m_pOwnedObjectsHolder;
-  UnownedPtr<ParsedObjectsHolder> m_pObjectsHolder;
+  std::unique_ptr<CPDF_SyntaxParser> syntax_;
+  std::unique_ptr<ParsedObjectsHolder> owned_objects_holder_;
+  UnownedPtr<ParsedObjectsHolder> objects_holder_;
 
-  bool m_bHasParsed = false;
+  bool has_parsed_ = false;
   bool m_bXRefStream = false;
   bool m_bXRefTableRebuilt = false;
   int m_FileVersion = 0;
   uint32_t m_MetadataObjnum = 0;
-  // m_CrossRefTable must be destroyed after m_pSecurityHandler due to the
+  // m_CrossRefTable must be destroyed after security_handler_ due to the
   // ownership of the ID array data.
   std::unique_ptr<CPDF_CrossRefTable> m_CrossRefTable;
   FX_FILESIZE m_LastXRefOffset = 0;
   ByteString m_Password;
-  std::unique_ptr<CPDF_LinearizedHeader> m_pLinearized;
+  std::unique_ptr<CPDF_LinearizedHeader> linearized_;
 
   // A map of object numbers to indirect streams.
   std::map<uint32_t, std::unique_ptr<CPDF_ObjectStream>> m_ObjectStreamMap;
@@ -203,7 +203,7 @@ class CPDF_Parser {
   // All indirect object numbers that are being parsed.
   std::set<uint32_t> m_ParsingObjNums;
 
-  RetainPtr<CPDF_SecurityHandler> m_pSecurityHandler;
+  RetainPtr<CPDF_SecurityHandler> security_handler_;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_PARSER_H_

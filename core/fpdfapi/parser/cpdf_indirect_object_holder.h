@@ -46,7 +46,7 @@ class CPDF_IndirectObjectHolder {
   template <typename T, typename... Args>
   typename std::enable_if<CanInternStrings<T>::value, RetainPtr<T>>::type New(
       Args&&... args) {
-    return pdfium::MakeRetain<T>(m_pByteStringPool,
+    return pdfium::MakeRetain<T>(byte_string_pool_,
                                  std::forward<Args>(args)...);
   }
   template <typename T, typename... Args>
@@ -66,7 +66,7 @@ class CPDF_IndirectObjectHolder {
   void SetLastObjNum(uint32_t objnum) { m_LastObjNum = objnum; }
 
   WeakPtr<ByteStringPool> GetByteStringPool() const {
-    return m_pByteStringPool;
+    return byte_string_pool_;
   }
 
   const_iterator begin() const { return m_IndirectObjs.begin(); }
@@ -83,7 +83,7 @@ class CPDF_IndirectObjectHolder {
 
   uint32_t m_LastObjNum = 0;
   std::map<uint32_t, RetainPtr<CPDF_Object>> m_IndirectObjs;
-  WeakPtr<ByteStringPool> m_pByteStringPool;
+  WeakPtr<ByteStringPool> byte_string_pool_;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_INDIRECT_OBJECT_HOLDER_H_

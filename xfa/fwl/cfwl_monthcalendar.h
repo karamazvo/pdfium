@@ -129,7 +129,7 @@ class CFWL_MonthCalendar final : public CFWL_Widget {
   void OnMouseMove(CFWL_MessageMouse* pMsg);
   void OnMouseLeave(CFWL_MessageMouse* pMsg);
 
-  bool m_bInitialized = false;
+  bool initialized_ = false;
   CFX_RectF m_HeadRect;
   CFX_RectF m_WeekRect;
   CFX_RectF m_LBtnRect;
@@ -139,8 +139,8 @@ class CFWL_MonthCalendar final : public CFWL_Widget {
   CFX_RectF m_HeadTextRect;
   CFX_RectF m_TodayRect;
   CFX_RectF m_TodayFlagRect;
-  WideString m_wsHead;
-  WideString m_wsToday;
+  WideString head_;
+  WideString today_;
   std::vector<std::unique_ptr<DATEINFO>> m_DateArray;
   int32_t m_iCurYear = 2011;
   int32_t m_iCurMonth = 1;

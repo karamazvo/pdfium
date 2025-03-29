@@ -29,7 +29,7 @@ CTextOnlyPrinterDriver::CTextOnlyPrinterDriver(HDC hDC)
       m_VertSize(INT_MAX),
       m_OriginY(0.0f),
       m_SetOrigin(false) {
-  m_nBitsPerPixel = ::GetDeviceCaps(m_hDC, BITSPIXEL);
+  bits_per_pixel_ = ::GetDeviceCaps(m_hDC, BITSPIXEL);
 }
 
 CTextOnlyPrinterDriver::~CTextOnlyPrinterDriver() = default;
@@ -45,7 +45,7 @@ int CTextOnlyPrinterDriver::GetDeviceCaps(int caps_id) const {
     case FXDC_PIXEL_HEIGHT:
       return m_Height;
     case FXDC_BITS_PIXEL:
-      return m_nBitsPerPixel;
+      return bits_per_pixel_;
     case FXDC_RENDER_CAPS:
       return 0;
     case FXDC_HORZ_SIZE:

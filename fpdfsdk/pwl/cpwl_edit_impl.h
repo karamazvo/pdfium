@@ -38,7 +38,7 @@ class CPWL_EditImpl {
     const CPVT_WordPlace& GetAt() const;
 
    private:
-    UnownedPtr<CPWL_EditImpl> m_pEdit;
+    UnownedPtr<CPWL_EditImpl> edit_;
     UnownedPtr<CPVT_VariableText::Iterator> m_pVTIterator;
   };
 
@@ -224,8 +224,8 @@ class CPWL_EditImpl {
     void RemoveTails();
 
     std::deque<std::unique_ptr<UndoItemIface>> m_UndoItemStack;
-    size_t m_nCurUndoPos = 0;
-    bool m_bWorking = false;
+    size_t cur_undo_pos_ = 0;
+    bool working_ = false;
   };
 
   class Provider;
@@ -278,21 +278,21 @@ class CPWL_EditImpl {
 
   void AddEditUndoItem(std::unique_ptr<UndoItemIface> pEditUndoItem);
 
-  bool m_bEnableScroll = false;
-  bool m_bNotifyFlag = false;
-  bool m_bEnableOverflow = false;
-  bool m_bEnableRefresh = true;
-  bool m_bEnableUndo = true;
-  int32_t m_nAlignment = 0;
+  bool enable_scroll_ = false;
+  bool notify_flag_ = false;
+  bool enable_overflow_ = false;
+  bool enable_refresh_ = true;
+  bool enable_undo_ = true;
+  int32_t alignment_ = 0;
   std::unique_ptr<Provider> m_pVTProvider;
   std::unique_ptr<CPVT_VariableText> m_pVT;  // Must outlive |m_pVTProvider|.
-  UnownedPtr<CPWL_Edit> m_pNotify;
+  UnownedPtr<CPWL_Edit> notify_;
   CPVT_WordPlace m_wpCaret;
   CPVT_WordPlace m_wpOldCaret;
   SelectState m_SelState;
   CFX_PointF m_ptScrollPos;
   CFX_PointF m_ptRefreshScrollPos;
-  std::unique_ptr<Iterator> m_pIterator;
+  std::unique_ptr<Iterator> iterator_;
   RefreshState m_Refresh;
   CFX_PointF m_ptCaret;
   UndoStack m_Undo;

@@ -47,14 +47,14 @@ void CFWL_Caret::DrawWidget(CFGAS_GEGraphics* pGraphics,
 }
 
 void CFWL_Caret::ShowCaret() {
-  m_pTimer = std::make_unique<CFX_Timer>(GetFWLApp()->GetTimerHandler(), this,
-                                         kBlinkPeriodMs);
+  timer_ = std::make_unique<CFX_Timer>(GetFWLApp()->GetTimerHandler(), this,
+                                       kBlinkPeriodMs);
   RemoveStates(FWL_STATE_WGT_Invisible);
   SetStates(kStateHighlight);
 }
 
 void CFWL_Caret::HideCaret() {
-  m_pTimer.reset();
+  timer_.reset();
   SetStates(FWL_STATE_WGT_Invisible);
 }
 

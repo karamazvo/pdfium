@@ -77,12 +77,12 @@ class CBC_OneDimWriter : public CBC_Writer {
                                       pdfium::span<const uint8_t> pattern,
                                       bool startColor);
 
-  bool m_bPrintChecksum = true;
-  bool m_bCalcChecksum = false;
-  bool m_bLeftPadding = false;
-  bool m_bRightPadding = false;
+  bool print_checksum_ = true;
+  bool calc_checksum_ = false;
+  bool left_padding_ = false;
+  bool right_padding_ = false;
 
-  UnownedPtr<CFX_Font> m_pFont;
+  UnownedPtr<CFX_Font> font_;
   float m_fFontSize = 10.0f;
   int32_t m_iFontStyle = 0;
   uint32_t m_fontColor = 0xff000000;

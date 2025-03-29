@@ -53,11 +53,11 @@ class CPDF_ShadingPattern final : public CPDF_Pattern {
   bool Load();
 
   ShadingType GetShadingType() const { return m_ShadingType; }
-  bool IsShadingObject() const { return m_bShading; }
+  bool IsShadingObject() const { return shading_; }
   RetainPtr<const CPDF_Object> GetShadingObject() const;
   RetainPtr<CPDF_ColorSpace> GetCS() const { return m_pCS; }
   const std::vector<std::unique_ptr<CPDF_Function>>& GetFuncs() const {
-    return m_pFunctions;
+    return functions_;
   }
 
  private:
@@ -75,9 +75,9 @@ class CPDF_ShadingPattern final : public CPDF_Pattern {
                          uint32_t nExpectedNumOutputs) const;
 
   ShadingType m_ShadingType = kInvalidShading;
-  const bool m_bShading;
+  const bool shading_;
   RetainPtr<CPDF_ColorSpace> m_pCS;
-  std::vector<std::unique_ptr<CPDF_Function>> m_pFunctions;
+  std::vector<std::unique_ptr<CPDF_Function>> functions_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_SHADINGPATTERN_H_

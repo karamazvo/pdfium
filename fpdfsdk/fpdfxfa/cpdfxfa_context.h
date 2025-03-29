@@ -46,11 +46,11 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
   ~CPDFXFA_Context() override;
 
   bool LoadXFADoc();
-  LoadStatus GetLoadStatus() const { return m_nLoadStatus; }
+  LoadStatus GetLoadStatus() const { return load_status_; }
   FormType GetFormType() const { return m_FormType; }
-  int GetOriginalPageCount() const { return m_nPageCount; }
+  int GetOriginalPageCount() const { return page_count_; }
   void SetOriginalPageCount(int count) {
-    m_nPageCount = count;
+    page_count_ = count;
     m_XFAPageList.resize(count);
   }
 
@@ -59,7 +59,7 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
   CXFA_FFDoc* GetXFADoc() { return m_pXFADoc; }
   CXFA_FFDocView* GetXFADocView() const { return m_pXFADocView.Get(); }
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const {
-    return m_pFormFillEnv.Get();
+    return form_fill_env_.Get();
   }
   void SetFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   RetainPtr<CPDFXFA_Page> GetOrCreateXFAPage(int page_index);
@@ -114,17 +114,17 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
                    XFA_HashCode code);
 
   FormType m_FormType = FormType::kNone;
-  LoadStatus m_nLoadStatus = LoadStatus::kPreload;
-  int m_nPageCount = 0;
+  LoadStatus load_status_ = LoadStatus::kPreload;
+  int page_count_ = 0;
 
   // The order in which the following members are destroyed is critical.
   UnownedPtr<CPDF_Document> const m_pPDFDoc;
   std::unique_ptr<CFX_XMLDocument> m_pXML;
-  ObservedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
+  ObservedPtr<CPDFSDK_FormFillEnvironment> form_fill_env_;
   std::vector<RetainPtr<CPDFXFA_Page>> m_XFAPageList;
 
-  // Can't outlive |m_pFormFillEnv|.
-  std::unique_ptr<CPDFXFA_DocEnvironment> m_pDocEnv;
+  // Can't outlive |form_fill_env_|.
+  std::unique_ptr<CPDFXFA_DocEnvironment> doc_env_;
 
   FXGCScopedHeap m_pGCHeap;
   cppgc::Persistent<CXFA_FFApp> m_pXFAApp;          // can't outlive |m_pGCHeap|

@@ -51,7 +51,7 @@ class CPDF_TextPageFind {
 
   int GetCharIndex(int index) const;
 
-  UnownedPtr<const CPDF_TextPage> const m_pTextPage;
+  UnownedPtr<const CPDF_TextPage> const text_page_;
   const WideString m_strText;
   const std::vector<WideString> m_csFindWhatArray;
   std::optional<size_t> m_findNextStart;

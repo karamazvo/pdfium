@@ -41,13 +41,13 @@ class PatternValue {
 
   void SetComps(pdfium::span<const float> comps);
   pdfium::span<const float> GetComps() const { return m_Comps; }
-  RetainPtr<CPDF_Pattern> GetPattern() const { return m_pRetainedPattern; }
+  RetainPtr<CPDF_Pattern> GetPattern() const { return retained_pattern_; }
   void SetPattern(RetainPtr<CPDF_Pattern> pPattern) {
-    m_pRetainedPattern = std::move(pPattern);
+    retained_pattern_ = std::move(pPattern);
   }
 
  private:
-  RetainPtr<CPDF_Pattern> m_pRetainedPattern;
+  RetainPtr<CPDF_Pattern> retained_pattern_;
   std::array<float, kMaxPatternColorComps> m_Comps = {};
 };
 
@@ -147,7 +147,7 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   void SetComponentsForStockCS(uint32_t nComponents);
 
   bool IsStdConversionEnabled() const { return m_dwStdConversion != 0; }
-  bool HasSameArray(const CPDF_Object* pObj) const { return m_pArray == pObj; }
+  bool HasSameArray(const CPDF_Object* pObj) const { return array_ == pObj; }
 
  private:
   friend class CPDFCalGrayTest_TranslateImageLine_Test;
@@ -158,8 +158,8 @@ class CPDF_ColorSpace : public Retainable, public Observable {
 
   const Family m_Family;
   uint32_t m_dwStdConversion = 0;
-  uint32_t m_nComponents = 0;
-  RetainPtr<const CPDF_Array> m_pArray;
+  uint32_t components_ = 0;
+  RetainPtr<const CPDF_Array> array_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_COLORSPACE_H_

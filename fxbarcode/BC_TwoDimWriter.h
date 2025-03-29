@@ -42,7 +42,7 @@ class CBC_TwoDimWriter : public CBC_Writer {
   int32_t m_outputWidth;
   int32_t m_outputHeight;
   int32_t m_iCorrectionLevel = 1;
-  const bool m_bFixedSize;
+  const bool fixed_size_;
 };
 
 #endif  // FXBARCODE_BC_TWODIMWRITER_H_

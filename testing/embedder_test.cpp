@@ -444,7 +444,7 @@ FPDF_FORMHANDLE EmbedderTest::SetupFormFillEnvironment(
 
   FPDF_FORMFILLINFO* formfillinfo = static_cast<FPDF_FORMFILLINFO*>(this);
   *formfillinfo = {};
-  formfillinfo->version = form_fill_info_version_;
+  formfillinfo->version = m_pFormFillInfoversion_;
   formfillinfo->FFI_Invalidate = InvalidateStub;
   formfillinfo->FFI_OutputSelectedRect = OutputSelectedRectStub;
   formfillinfo->FFI_SetCursor = SetCursorStub;

@@ -293,7 +293,7 @@ CFXJSE_Class* CFXJSE_Class::Create(
   v8::Isolate* pIsolate = pContext->GetIsolate();
   auto pClass = std::make_unique<CFXJSE_Class>(pContext);
   pClass->m_szClassName = pClassDescriptor->name;
-  pClass->m_pClassDescriptor = pClassDescriptor;
+  pClass->class_descriptor_ = pClassDescriptor;
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(pIsolate);
   v8::Local<v8::FunctionTemplate> hFunctionTemplate = v8::FunctionTemplate::New(
       pIsolate, bIsJSGlobal ? nullptr : V8ConstructorCallback_Wrapper,
@@ -336,7 +336,7 @@ CFXJSE_Class* CFXJSE_Class::Create(
 }
 
 CFXJSE_Class::CFXJSE_Class(const CFXJSE_Context* pContext)
-    : m_pContext(pContext) {}
+    : context_(pContext) {}
 
 CFXJSE_Class::~CFXJSE_Class() = default;
 

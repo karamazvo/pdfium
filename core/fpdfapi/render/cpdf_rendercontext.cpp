@@ -28,9 +28,9 @@ CPDF_RenderContext::CPDF_RenderContext(
     CPDF_Document* pDoc,
     RetainPtr<CPDF_Dictionary> pPageResources,
     CPDF_PageImageCache* pPageCache)
-    : m_pDocument(pDoc),
-      m_pPageResources(std::move(pPageResources)),
-      m_pPageCache(pPageCache) {}
+    : document_(pDoc),
+      page_resources_(std::move(pPageResources)),
+      page_cache_(pPageCache) {}
 
 CPDF_RenderContext::~CPDF_RenderContext() = default;
 
@@ -78,7 +78,7 @@ void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
     status.Initialize(nullptr, nullptr);
     status.RenderObjectList(layer.GetObjectHolder(), final_matrix);
     if (status.GetRenderOptions().GetOptions().bLimitedImageCache) {
-      m_pPageCache->CacheOptimization(
+      page_cache_->CacheOptimization(
           status.GetRenderOptions().GetCacheSizeLimit());
     }
     if (status.IsStopped())
@@ -88,7 +88,7 @@ void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
 
 CPDF_RenderContext::Layer::Layer(CPDF_PageObjectHolder* pHolder,
                                  const CFX_Matrix& matrix)
-    : m_pObjectHolder(pHolder), m_Matrix(matrix) {}
+    : object_holder_(pHolder), m_Matrix(matrix) {}
 
 CPDF_RenderContext::Layer::Layer(const Layer& that) = default;
 

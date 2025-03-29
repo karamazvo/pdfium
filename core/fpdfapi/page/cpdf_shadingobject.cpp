@@ -14,7 +14,7 @@ CPDF_ShadingObject::CPDF_ShadingObject(int32_t content_stream,
                                        RetainPtr<CPDF_ShadingPattern> pattern,
                                        const CFX_Matrix& matrix)
     : CPDF_PageObject(content_stream),
-      m_pShading(std::move(pattern)),
+      shading_(std::move(pattern)),
       m_Matrix(matrix) {}
 
 CPDF_ShadingObject::~CPDF_ShadingObject() = default;

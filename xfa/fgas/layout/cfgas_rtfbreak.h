@@ -70,10 +70,10 @@ class CFGAS_RTFBreak final : public CFGAS_Break {
                          bool bAllChars,
                          CFGAS_Char::BreakType dwStatus);
 
-  bool m_bPagination = false;
+  bool pagination_ = false;
   LineAlignment m_iAlignment = LineAlignment::Left;
   std::vector<int32_t> m_PositionedTabs;
-  RetainPtr<CFGAS_TextUserData> m_pUserData;
+  RetainPtr<CFGAS_TextUserData> user_data_;
 };
 
 #endif  // XFA_FGAS_LAYOUT_CFGAS_RTFBREAK_H_

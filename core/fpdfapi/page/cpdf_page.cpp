@@ -25,13 +25,13 @@ CPDF_Page::CPDF_Page(CPDF_Document* pDocument,
     : CPDF_PageObjectHolder(pDocument, std::move(pPageDict), nullptr, nullptr),
       m_PageSize(100, 100),
       m_pPDFDocument(pDocument) {
-  // Cannot initialize |m_pResources| and |m_pPageResources| via the
+  // Cannot initialize |resources_| and |page_resources_| via the
   // CPDF_PageObjectHolder ctor because GetPageAttr() requires
   // CPDF_PageObjectHolder to finish initializing first.
   RetainPtr<CPDF_Object> pPageAttr =
       GetMutablePageAttr(pdfium::page_object::kResources);
-  m_pResources = pPageAttr ? pPageAttr->GetMutableDict() : nullptr;
-  m_pPageResources = m_pResources;
+  resources_ = pPageAttr ? pPageAttr->GetMutableDict() : nullptr;
+  page_resources_ = resources_;
 
   UpdateDimensions();
   m_Transparency.SetIsolated();
@@ -197,22 +197,23 @@ RetainPtr<const CPDF_Array> CPDF_Page::GetAnnotsArray() const {
 }
 
 void CPDF_Page::AddPageImageCache() {
-  m_pPageImageCache = std::make_unique<CPDF_PageImageCache>(this);
+  page_image_cache_ = std::make_unique<CPDF_PageImageCache>(this);
 }
 
 void CPDF_Page::SetRenderContext(std::unique_ptr<RenderContextIface> pContext) {
-  DCHECK(!m_pRenderContext);
+  DCHECK(!render_context_);
   DCHECK(pContext);
-  m_pRenderContext = std::move(pContext);
+  render_context_ = std::move(pContext);
 }
 
 void CPDF_Page::ClearRenderContext() {
-  m_pRenderContext.reset();
+  render_context_.reset();
 }
 
 void CPDF_Page::ClearView() {
-  if (m_pView)
-    m_pView->ClearPage(this);
+  if (view_) {
+    view_->ClearPage(this);
+  }
 }
 
 void CPDF_Page::UpdateDimensions() {
@@ -249,9 +250,10 @@ void CPDF_Page::UpdateDimensions() {
 }
 
 CPDF_Page::RenderContextClearer::RenderContextClearer(CPDF_Page* pPage)
-    : m_pPage(pPage) {}
+    : page_(pPage) {}
 
 CPDF_Page::RenderContextClearer::~RenderContextClearer() {
-  if (m_pPage)
-    m_pPage->ClearRenderContext();
+  if (page_) {
+    page_->ClearRenderContext();
+  }
 }

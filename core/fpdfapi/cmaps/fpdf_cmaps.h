@@ -24,7 +24,7 @@ struct CMap {
   enum class Type : bool { kSingle, kRange };
 
   UNOWNED_PTR_EXCLUSION const char* m_Name;              // POD struct.
-  UNOWNED_PTR_EXCLUSION const uint16_t* m_pWordMap;      // POD struct.
+  UNOWNED_PTR_EXCLUSION const uint16_t* word_map_;       // POD struct.
   UNOWNED_PTR_EXCLUSION const DWordCIDMap* m_pDWordMap;  // POD struct.
   uint16_t m_WordCount;
   uint16_t m_DWordCount;

@@ -77,18 +77,18 @@ std::unique_ptr<CPDF_HintTables> CPDF_HintTables::Parse(
 
 CPDF_HintTables::CPDF_HintTables(CPDF_ReadValidator* pValidator,
                                  const CPDF_LinearizedHeader* pLinearized)
-    : m_pValidator(pValidator), m_pLinearized(pLinearized) {
-  DCHECK(m_pLinearized);
+    : validator_(pValidator), linearized_(pLinearized) {
+  DCHECK(linearized_);
 }
 
 CPDF_HintTables::~CPDF_HintTables() = default;
 
 bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
-  const uint32_t nPages = m_pLinearized->GetPageCount();
+  const uint32_t nPages = linearized_->GetPageCount();
   if (nPages < 1 || nPages >= CPDF_Document::kPageMaxNum)
     return false;
 
-  const uint32_t nFirstPageNum = m_pLinearized->GetFirstPageNo();
+  const uint32_t nFirstPageNum = linearized_->GetFirstPageNo();
   if (nFirstPageNum >= nPages)
     return false;
 
@@ -162,7 +162,7 @@ bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
 
   m_PageInfos = std::vector<PageInfo>(nPages);
   m_PageInfos[nFirstPageNum].set_start_obj_num(
-      m_pLinearized->GetFirstPageObjNum());
+      linearized_->GetFirstPageObjNum());
   // The object number of remaining pages starts from 1.
   FX_SAFE_UINT32 dwStartObjNum = 1;
   for (uint32_t i = 0; i < nPages; ++i) {
@@ -197,7 +197,7 @@ bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
 
   DCHECK(m_szFirstPageObjOffset);
   m_PageInfos[nFirstPageNum].set_page_offset(m_szFirstPageObjOffset);
-  FX_FILESIZE prev_page_end = m_pLinearized->GetFirstPageEndOffset();
+  FX_FILESIZE prev_page_end = linearized_->GetFirstPageEndOffset();
   for (uint32_t i = 0; i < nPages; ++i) {
     if (i == nFirstPageNum)
       continue;
@@ -279,7 +279,7 @@ bool CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
     return false;
 
   // Item 3: The number of shared object entries for the first page.
-  m_nFirstPageSharedObjs = hStream->GetBits(32);
+  first_page_shared_objs_ = hStream->GetBits(32);
 
   // Item 4: The number of shared object entries for the shared objects
   // section, including the number of shared object entries for the first page.
@@ -304,7 +304,7 @@ bool CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
     return false;
 
   if (dwFirstSharedObjNum >= CPDF_Parser::kMaxObjectNumber ||
-      m_nFirstPageSharedObjs >= CPDF_Parser::kMaxObjectNumber ||
+      first_page_shared_objs_ >= CPDF_Parser::kMaxObjectNumber ||
       dwSharedObjTotal >= CPDF_Parser::kMaxObjectNumber) {
     return false;
   }
@@ -316,9 +316,9 @@ bool CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
 
   if (dwSharedObjTotal > 0) {
     uint32_t dwLastSharedObj = dwSharedObjTotal - 1;
-    if (dwLastSharedObj > m_nFirstPageSharedObjs) {
+    if (dwLastSharedObj > first_page_shared_objs_) {
       FX_SAFE_UINT32 safeObjNum = dwFirstSharedObjNum;
-      safeObjNum += dwLastSharedObj - m_nFirstPageSharedObjs;
+      safeObjNum += dwLastSharedObj - first_page_shared_objs_;
       if (!safeObjNum.IsValid())
         return false;
     }
@@ -330,8 +330,9 @@ bool CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
   // group length.
   FX_SAFE_FILESIZE prev_shared_group_end_offset = m_szFirstPageObjOffset;
   for (uint32_t i = 0; i < dwSharedObjTotal; ++i) {
-    if (i == m_nFirstPageSharedObjs)
+    if (i == first_page_shared_objs_) {
       prev_shared_group_end_offset = szFirstSharedObjLoc;
+    }
 
     FX_SAFE_UINT32 safeObjLen = hStream->GetBits(dwDeltaGroupLen);
     safeObjLen += dwGroupLeastLen;
@@ -369,10 +370,11 @@ bool CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
     }
   }
   // Item 4: A number equal to 1 less than the number of objects in the group.
-  FX_SAFE_UINT32 cur_obj_num = m_pLinearized->GetFirstPageObjNum();
+  FX_SAFE_UINT32 cur_obj_num = linearized_->GetFirstPageObjNum();
   for (uint32_t i = 0; i < dwSharedObjTotal; ++i) {
-    if (i == m_nFirstPageSharedObjs)
+    if (i == first_page_shared_objs_) {
       cur_obj_num = dwFirstSharedObjNum;
+    }
 
     FX_SAFE_UINT32 obj_count =
         dwSharedObjNumBits ? hStream->GetBits(dwSharedObjNumBits) : 0;
@@ -397,8 +399,9 @@ bool CPDF_HintTables::GetPagePos(uint32_t index,
                                  FX_FILESIZE* szPageStartPos,
                                  FX_FILESIZE* szPageLength,
                                  uint32_t* dwObjNum) const {
-  if (index >= m_pLinearized->GetPageCount())
+  if (index >= linearized_->GetPageCount()) {
     return false;
+  }
 
   *szPageStartPos = m_PageInfos[index].page_offset();
   *szPageLength = m_PageInfos[index].page_length();
@@ -407,17 +410,19 @@ bool CPDF_HintTables::GetPagePos(uint32_t index,
 }
 
 CPDF_DataAvail::DocAvailStatus CPDF_HintTables::CheckPage(uint32_t index) {
-  if (index == m_pLinearized->GetFirstPageNo())
+  if (index == linearized_->GetFirstPageNo()) {
     return CPDF_DataAvail::kDataAvailable;
+  }
 
-  if (index >= m_pLinearized->GetPageCount())
+  if (index >= linearized_->GetPageCount()) {
     return CPDF_DataAvail::kDataError;
+  }
 
   const uint32_t dwLength = m_PageInfos[index].page_length();
   if (!dwLength)
     return CPDF_DataAvail::kDataError;
 
-  if (!m_pValidator->CheckDataRangeAndRequestIfUnavailable(
+  if (!validator_->CheckDataRangeAndRequestIfUnavailable(
           m_PageInfos[index].page_offset(), dwLength)) {
     return CPDF_DataAvail::kDataNotAvailable;
   }
@@ -432,7 +437,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_HintTables::CheckPage(uint32_t index) {
     if (!shared_group_info.m_szOffset || !shared_group_info.m_dwLength)
       return CPDF_DataAvail::kDataError;
 
-    if (!m_pValidator->CheckDataRangeAndRequestIfUnavailable(
+    if (!validator_->CheckDataRangeAndRequestIfUnavailable(
             shared_group_info.m_szOffset, shared_group_info.m_dwLength)) {
       return CPDF_DataAvail::kDataNotAvailable;
     }
@@ -441,8 +446,9 @@ CPDF_DataAvail::DocAvailStatus CPDF_HintTables::CheckPage(uint32_t index) {
 }
 
 bool CPDF_HintTables::LoadHintStream(CPDF_Stream* pHintStream) {
-  if (!pHintStream || !m_pLinearized->HasHintTable())
+  if (!pHintStream || !linearized_->HasHintTable()) {
     return false;
+  }
 
   RetainPtr<const CPDF_Object> pOffset =
       pHintStream->GetDict()->GetObjectFor("S");
@@ -491,8 +497,9 @@ FX_FILESIZE CPDF_HintTables::HintsOffsetToFileOffset(
   // stream offset also need to have the hint stream length added to it. e.g.
   // There exists linearized PDFs generated by Adobe software that have this
   // property.
-  if (file_offset.ValueOrDie() >= m_pLinearized->GetHintStart())
-    file_offset += m_pLinearized->GetHintLength();
+  if (file_offset.ValueOrDie() >= linearized_->GetHintStart()) {
+    file_offset += linearized_->GetHintLength();
+  }
 
   return file_offset.ValueOrDefault(0);
 }

@@ -195,7 +195,7 @@ CPDF_TextPageFind::CPDF_TextPageFind(
     const std::vector<WideString>& findwhat_array,
     const Options& options,
     std::optional<size_t> startPos)
-    : m_pTextPage(pTextPage),
+    : text_page_(pTextPage),
       m_strText(GetStringCase(pTextPage->GetAllPageText(), options.bMatchCase)),
       m_csFindWhatArray(findwhat_array),
       m_options(options) {
@@ -208,7 +208,7 @@ CPDF_TextPageFind::CPDF_TextPageFind(
 CPDF_TextPageFind::~CPDF_TextPageFind() = default;
 
 int CPDF_TextPageFind::GetCharIndex(int index) const {
-  return m_pTextPage->CharIndexFromTextIndex(index);
+  return text_page_->CharIndexFromTextIndex(index);
 }
 
 bool CPDF_TextPageFind::FindFirst() {
@@ -311,7 +311,7 @@ bool CPDF_TextPageFind::FindPrev() {
   if (m_strText.IsEmpty() || !m_findPreStart.has_value())
     return false;
 
-  CPDF_TextPageFind find_engine(m_pTextPage, m_csFindWhatArray, m_options, 0);
+  CPDF_TextPageFind find_engine(text_page_, m_csFindWhatArray, m_options, 0);
   if (!find_engine.FindFirst())
     return false;
 
@@ -330,8 +330,8 @@ bool CPDF_TextPageFind::FindPrev() {
   if (order == -1)
     return false;
 
-  m_resStart = m_pTextPage->TextIndexFromCharIndex(order);
-  m_resEnd = m_pTextPage->TextIndexFromCharIndex(order + matches - 1);
+  m_resStart = text_page_->TextIndexFromCharIndex(order);
+  m_resEnd = text_page_->TextIndexFromCharIndex(order + matches - 1);
   if (m_options.bConsecutive) {
     m_findNextStart = m_resStart + 1;
     m_findPreStart = m_resEnd - 1;

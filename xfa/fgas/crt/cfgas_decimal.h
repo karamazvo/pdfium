@@ -40,7 +40,7 @@ class CFGAS_Decimal {
   uint32_t m_uHi = 0;
   uint32_t m_uMid = 0;
   uint32_t m_uLo = 0;
-  bool m_bNeg = false;
+  bool neg_ = false;
   uint8_t m_uScale = 0;
 };
 

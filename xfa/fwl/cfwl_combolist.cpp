@@ -122,8 +122,9 @@ void CFWL_ComboList::OnDropListFocusChanged(CFWL_Message* pMsg, bool bSet) {
 
 void CFWL_ComboList::OnDropListMouseMove(CFWL_MessageMouse* pMsg) {
   if (GetRTClient().Contains(pMsg->m_pos)) {
-    if (m_bNotifyOwner)
-      m_bNotifyOwner = false;
+    if (notify_owner_) {
+      notify_owner_ = false;
+    }
 
     CFWL_ScrollBar* vertSB = GetVertScrollBar();
     if (IsShowVertScrollBar() && vertSB) {
@@ -137,7 +138,7 @@ void CFWL_ComboList::OnDropListMouseMove(CFWL_MessageMouse* pMsg) {
       return;
 
     ChangeSelected(GetItemIndex(this, hItem));
-  } else if (m_bNotifyOwner) {
+  } else if (notify_owner_) {
     pMsg->m_pos = ClientToOuter(pMsg->m_pos);
 
     CFWL_ComboBox* pOuter = static_cast<CFWL_ComboBox*>(GetOuter());
@@ -155,7 +156,7 @@ void CFWL_ComboList::OnDropListLButtonDown(CFWL_MessageMouse* pMsg) {
 
 void CFWL_ComboList::OnDropListLButtonUp(CFWL_MessageMouse* pMsg) {
   CFWL_ComboBox* pOuter = static_cast<CFWL_ComboBox*>(GetOuter());
-  if (m_bNotifyOwner) {
+  if (notify_owner_) {
     pMsg->m_pos = ClientToOuter(pMsg->m_pos);
     pOuter->GetDelegate()->OnProcessMessage(pMsg);
     return;

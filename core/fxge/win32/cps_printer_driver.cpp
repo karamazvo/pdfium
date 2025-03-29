@@ -64,7 +64,7 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
   m_VertSize = ::GetDeviceCaps(m_hDC, VERTSIZE);
   m_Width = ::GetDeviceCaps(m_hDC, HORZRES);
   m_Height = ::GetDeviceCaps(m_hDC, VERTRES);
-  m_nBitsPerPixel = ::GetDeviceCaps(m_hDC, BITSPIXEL);
+  bits_per_pixel_ = ::GetDeviceCaps(m_hDC, BITSPIXEL);
 
   m_PSRenderer.Init(pdfium::MakeRetain<CPSOutput>(m_hDC, output_mode), level,
                     m_Width, m_Height);
@@ -106,7 +106,7 @@ int CPSPrinterDriver::GetDeviceCaps(int caps_id) const {
     case FXDC_PIXEL_HEIGHT:
       return m_Height;
     case FXDC_BITS_PIXEL:
-      return m_nBitsPerPixel;
+      return bits_per_pixel_;
     case FXDC_RENDER_CAPS:
       return 0;
     case FXDC_HORZ_SIZE:

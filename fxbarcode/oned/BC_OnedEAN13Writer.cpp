@@ -67,7 +67,7 @@ constexpr std::array<const LGPatternRow, 20> kOnedEAN13LGPatternTable = {
 }  // namespace
 
 CBC_OnedEAN13Writer::CBC_OnedEAN13Writer() {
-  m_bLeftPadding = true;
+  left_padding_ = true;
   m_codeWidth = 3 + (7 * 6) + 5 + (7 * 6) + 3;
 }
 CBC_OnedEAN13Writer::~CBC_OnedEAN13Writer() = default;
@@ -168,27 +168,27 @@ bool CBC_OnedEAN13Writer::ShowChars(WideStringView contents,
   int32_t strWidth = static_cast<int32_t>(kWidth * m_outputHScale);
 
   pdfium::span<TextCharPos> charpos_span = pdfium::make_span(charpos);
-  CalcTextInfo(tempStr, charpos_span.subspan(1), m_pFont, (float)strWidth,
+  CalcTextInfo(tempStr, charpos_span.subspan(1), font_, (float)strWidth,
                iFontSize, blank);
   {
     CFX_Matrix affine_matrix1(1.0, 0.0, 0.0, -1.0,
                               kLeftPosition * m_outputHScale,
                               (float)(m_Height - iTextHeight) + iFontSize);
     affine_matrix1.Concat(matrix);
-    device->DrawNormalText(charpos_span.subspan(1, length), m_pFont,
+    device->DrawNormalText(charpos_span.subspan(1, length), font_,
                            static_cast<float>(iFontSize), affine_matrix1,
                            m_fontColor, GetTextRenderOptions());
   }
   tempStr = str.Substr(7, 6);
   length = tempStr.GetLength();
-  CalcTextInfo(tempStr, charpos_span.subspan(7), m_pFont, (float)strWidth,
+  CalcTextInfo(tempStr, charpos_span.subspan(7), font_, (float)strWidth,
                iFontSize, blank);
   {
     CFX_Matrix affine_matrix1(1.0, 0.0, 0.0, -1.0,
                               (kLeftPosition + 47) * m_outputHScale,
                               (float)(m_Height - iTextHeight + iFontSize));
     affine_matrix1.Concat(matrix);
-    device->DrawNormalText(charpos_span.subspan(7, length), m_pFont,
+    device->DrawNormalText(charpos_span.subspan(7, length), font_,
                            static_cast<float>(iFontSize), affine_matrix1,
                            m_fontColor, GetTextRenderOptions());
   }
@@ -196,12 +196,12 @@ bool CBC_OnedEAN13Writer::ShowChars(WideStringView contents,
   length = tempStr.GetLength();
   strWidth = 7 * static_cast<int32_t>(strWidth * m_outputHScale);
 
-  CalcTextInfo(tempStr, charpos, m_pFont, (float)strWidth, iFontSize, blank);
+  CalcTextInfo(tempStr, charpos, font_, (float)strWidth, iFontSize, blank);
   {
     CFX_Matrix affine_matrix1(1.0, 0.0, 0.0, -1.0, 0.0,
                               (float)(m_Height - iTextHeight + iFontSize));
     affine_matrix1.Concat(matrix);
-    device->DrawNormalText(charpos_span.first(length), m_pFont,
+    device->DrawNormalText(charpos_span.first(length), font_,
                            static_cast<float>(iFontSize), affine_matrix1,
                            m_fontColor, GetTextRenderOptions());
   }

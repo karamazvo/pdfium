@@ -91,7 +91,7 @@ bool CBC_EncoderContext::UpdateSymbolInfo() {
 
 bool CBC_EncoderContext::UpdateSymbolInfo(size_t len) {
   if (!m_symbolInfo || len > m_symbolInfo->data_capacity()) {
-    m_symbolInfo = CBC_SymbolInfo::Lookup(len, m_bAllowRectangular);
+    m_symbolInfo = CBC_SymbolInfo::Lookup(len, allow_rectangular_);
     if (!m_symbolInfo)
       return false;
   }
@@ -99,7 +99,7 @@ bool CBC_EncoderContext::UpdateSymbolInfo(size_t len) {
 }
 
 void CBC_EncoderContext::resetSymbolInfo() {
-  m_bAllowRectangular = true;
+  allow_rectangular_ = true;
 }
 
 size_t CBC_EncoderContext::getTotalMessageCharCount() {

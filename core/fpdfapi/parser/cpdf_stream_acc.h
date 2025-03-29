@@ -53,7 +53,7 @@ class CPDF_StreamAcc final : public Retainable {
   void ProcessRawData();
   void ProcessFilteredData(uint32_t estimated_size, bool bImageAcc);
 
-  // Returns the raw data from `m_pStream`, or no data on failure.
+  // Returns the raw data from `stream_`, or no data on failure.
   DataVector<uint8_t> ReadRawStream() const;
 
   bool is_owned() const {
@@ -61,9 +61,9 @@ class CPDF_StreamAcc final : public Retainable {
   }
 
   ByteString m_ImageDecoder;
-  RetainPtr<const CPDF_Dictionary> m_pImageParam;
+  RetainPtr<const CPDF_Dictionary> image_param_;
   // Needs to outlive `m_Data` when the data is not owned.
-  RetainPtr<const CPDF_Stream> const m_pStream;
+  RetainPtr<const CPDF_Stream> const stream_;
   std::variant<pdfium::raw_span<const uint8_t>, DataVector<uint8_t>> m_Data;
 };
 

@@ -42,13 +42,13 @@ class CPDF_AnnotList final : public CPDF_PageRenderContext::AnnotListIface {
                    const CFX_Matrix& mtMatrix,
                    bool bWidget);
 
-  UnownedPtr<CPDF_Page> const m_pPage;
-  UnownedPtr<CPDF_Document> const m_pDocument;
+  UnownedPtr<CPDF_Page> const page_;
+  UnownedPtr<CPDF_Document> const document_;
 
-  // The first |m_nAnnotCount| elements are from the PDF itself. The rest are
+  // The first |annot_count_| elements are from the PDF itself. The rest are
   // generated pop-up annotations.
   std::vector<std::unique_ptr<CPDF_Annot>> m_AnnotList;
-  size_t m_nAnnotCount = 0;
+  size_t annot_count_ = 0;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_ANNOTLIST_H_

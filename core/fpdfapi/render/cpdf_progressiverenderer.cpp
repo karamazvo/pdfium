@@ -22,15 +22,15 @@ CPDF_ProgressiveRenderer::CPDF_ProgressiveRenderer(
     CPDF_RenderContext* pContext,
     CFX_RenderDevice* pDevice,
     const CPDF_RenderOptions* pOptions)
-    : m_pContext(pContext), m_pDevice(pDevice), m_pOptions(pOptions) {
-  CHECK(m_pContext);
-  CHECK(m_pDevice);
+    : context_(pContext), device_(pDevice), options_(pOptions) {
+  CHECK(context_);
+  CHECK(device_);
 }
 
 CPDF_ProgressiveRenderer::~CPDF_ProgressiveRenderer() {
-  if (m_pRenderStatus) {
-    m_pRenderStatus.reset();  // Release first.
-    m_pDevice->RestoreState(false);
+  if (render_status_) {
+    render_status_.reset();  // Release first.
+    device_->RestoreState(false);
   }
 }
 
@@ -45,32 +45,32 @@ void CPDF_ProgressiveRenderer::Start(PauseIndicatorIface* pPause) {
 
 void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
   while (m_Status == kToBeContinued) {
-    if (!m_pCurrentLayer) {
-      if (m_LayerIndex >= m_pContext->CountLayers()) {
+    if (!current_layer_) {
+      if (m_LayerIndex >= context_->CountLayers()) {
         m_Status = kDone;
         return;
       }
-      m_pCurrentLayer = m_pContext->GetLayer(m_LayerIndex);
-      m_LastObjectRendered = m_pCurrentLayer->GetObjectHolder()->end();
-      m_pRenderStatus =
-          std::make_unique<CPDF_RenderStatus>(m_pContext, m_pDevice);
-      if (m_pOptions)
-        m_pRenderStatus->SetOptions(*m_pOptions);
-      m_pRenderStatus->SetTransparency(
-          m_pCurrentLayer->GetObjectHolder()->GetTransparency());
-      m_pRenderStatus->Initialize(nullptr, nullptr);
-      m_pDevice->SaveState();
-      m_ClipRect = m_pCurrentLayer->GetMatrix().GetInverse().TransformRect(
-          CFX_FloatRect(m_pDevice->GetClipBox()));
+      current_layer_ = context_->GetLayer(m_LayerIndex);
+      m_LastObjectRendered = current_layer_->GetObjectHolder()->end();
+      render_status_ = std::make_unique<CPDF_RenderStatus>(context_, device_);
+      if (options_) {
+        render_status_->SetOptions(*options_);
+      }
+      render_status_->SetTransparency(
+          current_layer_->GetObjectHolder()->GetTransparency());
+      render_status_->Initialize(nullptr, nullptr);
+      device_->SaveState();
+      m_ClipRect = current_layer_->GetMatrix().GetInverse().TransformRect(
+          CFX_FloatRect(device_->GetClipBox()));
     }
     CPDF_PageObjectHolder::const_iterator iter;
     CPDF_PageObjectHolder::const_iterator iterEnd =
-        m_pCurrentLayer->GetObjectHolder()->end();
+        current_layer_->GetObjectHolder()->end();
     if (m_LastObjectRendered != iterEnd) {
       iter = m_LastObjectRendered;
       ++iter;
     } else {
-      iter = m_pCurrentLayer->GetObjectHolder()->begin();
+      iter = current_layer_->GetObjectHolder()->begin();
     }
     int nObjsToGo = kStepLimit;
     bool is_mask = false;
@@ -80,27 +80,27 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
           pCurObj->GetRect().right >= m_ClipRect.left &&
           pCurObj->GetRect().bottom <= m_ClipRect.top &&
           pCurObj->GetRect().top >= m_ClipRect.bottom) {
-        if (m_pOptions->GetOptions().bBreakForMasks && pCurObj->IsImage() &&
+        if (options_->GetOptions().bBreakForMasks && pCurObj->IsImage() &&
             pCurObj->AsImage()->GetImage()->IsMask()) {
 #if BUILDFLAG(IS_WIN)
-          if (m_pDevice->GetDeviceType() == DeviceType::kPrinter) {
+          if (device_->GetDeviceType() == DeviceType::kPrinter) {
             m_LastObjectRendered = iter;
-            m_pRenderStatus->ProcessClipPath(pCurObj->clip_path(),
-                                             m_pCurrentLayer->GetMatrix());
+            render_status_->ProcessClipPath(pCurObj->clip_path(),
+                                            current_layer_->GetMatrix());
             return;
           }
 #endif
           is_mask = true;
         }
-        if (m_pRenderStatus->ContinueSingleObject(
-                pCurObj, m_pCurrentLayer->GetMatrix(), pPause)) {
+        if (render_status_->ContinueSingleObject(
+                pCurObj, current_layer_->GetMatrix(), pPause)) {
           return;
         }
-        if (pCurObj->IsImage() && m_pRenderStatus->GetRenderOptions()
+        if (pCurObj->IsImage() && render_status_->GetRenderOptions()
                                       .GetOptions()
                                       .bLimitedImageCache) {
-          m_pContext->GetPageCache()->CacheOptimization(
-              m_pRenderStatus->GetRenderOptions().GetCacheSizeLimit());
+          context_->GetPageCache()->CacheOptimization(
+              render_status_->GetRenderOptions().GetCacheSizeLimit());
         }
         if (pCurObj->IsForm() || pCurObj->IsShading())
           nObjsToGo = 0;
@@ -117,19 +117,19 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
       if (is_mask && iter != iterEnd)
         return;
     }
-    if (m_pCurrentLayer->GetObjectHolder()->GetParseState() ==
+    if (current_layer_->GetObjectHolder()->GetParseState() ==
         CPDF_PageObjectHolder::ParseState::kParsed) {
-      m_pRenderStatus.reset();
-      m_pDevice->RestoreState(false);
-      m_pCurrentLayer = nullptr;
+      render_status_.reset();
+      device_->RestoreState(false);
+      current_layer_ = nullptr;
       m_LayerIndex++;
       if (is_mask || (pPause && pPause->NeedToPauseNow()))
         return;
     } else if (is_mask) {
       return;
     } else {
-      m_pCurrentLayer->GetObjectHolder()->ContinueParse(pPause);
-      if (m_pCurrentLayer->GetObjectHolder()->GetParseState() !=
+      current_layer_->GetObjectHolder()->ContinueParse(pPause);
+      if (current_layer_->GetObjectHolder()->GetParseState() !=
           CPDF_PageObjectHolder::ParseState::kParsed) {
         return;
       }

@@ -41,11 +41,11 @@ class CXFA_TextParser : public cppgc::GarbageCollected<CXFA_TextParser> {
 
     void SetParentStyle(RetainPtr<const CFX_CSSComputedStyle> style);
     RetainPtr<const CFX_CSSComputedStyle> GetParentStyle() const {
-      return m_pParentStyle;
+      return parent_style_;
     }
 
-    void SetDisplay(CFX_CSSDisplay eDisplay) { m_eDisplay = eDisplay; }
-    CFX_CSSDisplay GetDisplay() const { return m_eDisplay; }
+    void SetDisplay(CFX_CSSDisplay eDisplay) { display_ = eDisplay; }
+    CFX_CSSDisplay GetDisplay() const { return display_; }
 
     void SetDecls(std::vector<const CFX_CSSDeclaration*>&& decl);
     const std::vector<const CFX_CSSDeclaration*>& GetDecls() const {
@@ -53,8 +53,8 @@ class CXFA_TextParser : public cppgc::GarbageCollected<CXFA_TextParser> {
     }
 
    private:
-    RetainPtr<const CFX_CSSComputedStyle> m_pParentStyle;
-    CFX_CSSDisplay m_eDisplay = CFX_CSSDisplay::None;
+    RetainPtr<const CFX_CSSComputedStyle> parent_style_;
+    CFX_CSSDisplay display_ = CFX_CSSDisplay::None;
     std::vector<const CFX_CSSDeclaration*> decls_;
   };
 
@@ -73,7 +73,7 @@ class CXFA_TextParser : public cppgc::GarbageCollected<CXFA_TextParser> {
       const CFX_XMLNode* pXMLNode,
       RetainPtr<const CFX_CSSComputedStyle> pParentStyle);
 
-  bool IsParsed() const { return m_bParsed; }
+  bool IsParsed() const { return parsed_; }
 
   XFA_AttributeValue GetVAlign(CXFA_TextProvider* pTextProvider) const;
 
@@ -126,9 +126,9 @@ class CXFA_TextParser : public cppgc::GarbageCollected<CXFA_TextParser> {
     TagProvider();
     ~TagProvider();
 
-    WideString GetTagName() { return m_wsTagName; }
+    WideString GetTagName() { return tag_name_; }
 
-    void SetTagName(const WideString& wsName) { m_wsTagName = wsName; }
+    void SetTagName(const WideString& wsName) { tag_name_ = wsName; }
     void SetAttribute(const WideString& wsAttr, const WideString& wsValue) {
       m_Attributes.insert({wsAttr, wsValue});
     }
@@ -137,11 +137,11 @@ class CXFA_TextParser : public cppgc::GarbageCollected<CXFA_TextParser> {
       return m_Attributes[wsAttr];
     }
 
-    bool m_bTagAvailable = false;
-    bool m_bContent = false;
+    bool tag_available_ = false;
+    bool content_ = false;
 
    private:
-    WideString m_wsTagName;
+    WideString tag_name_;
     std::map<WideString, WideString> m_Attributes;
   };
 
@@ -155,9 +155,9 @@ class CXFA_TextParser : public cppgc::GarbageCollected<CXFA_TextParser> {
   RetainPtr<CFX_CSSComputedStyle> CreateStyle(
       const CFX_CSSComputedStyle* pParentStyle);
 
-  bool m_bParsed = false;
+  bool parsed_ = false;
   bool m_cssInitialized = false;
-  std::unique_ptr<CFX_CSSStyleSelector> m_pSelector;
+  std::unique_ptr<CFX_CSSStyleSelector> selector_;
   std::map<const CFX_XMLNode*, std::unique_ptr<Context>>
       m_mapXMLNodeToParseContext;
 };

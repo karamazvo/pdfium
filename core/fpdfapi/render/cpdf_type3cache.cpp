@@ -77,7 +77,7 @@ int DetectLastScan(const RetainPtr<CFX_DIBitmap>& pBitmap) {
 
 }  // namespace
 
-CPDF_Type3Cache::CPDF_Type3Cache(CPDF_Type3Font* pFont) : m_pFont(pFont) {}
+CPDF_Type3Cache::CPDF_Type3Cache(CPDF_Type3Font* pFont) : font_(pFont) {}
 
 CPDF_Type3Cache::~CPDF_Type3Cache() = default;
 
@@ -113,7 +113,7 @@ std::unique_ptr<CFX_GlyphBitmap> CPDF_Type3Cache::RenderGlyph(
     CPDF_Type3GlyphMap* pSize,
     uint32_t charcode,
     const CFX_Matrix& mtMatrix) {
-  CPDF_Type3Char* pChar = m_pFont->LoadChar(charcode);
+  CPDF_Type3Char* pChar = font_->LoadChar(charcode);
   if (!pChar)
     return nullptr;
 

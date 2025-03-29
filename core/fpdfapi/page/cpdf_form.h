@@ -66,7 +66,7 @@ class CPDF_Form final : public CPDF_PageObjectHolder,
                             RecursionState* recursion_state);
 
   RecursionState m_RecursionState;
-  RetainPtr<CPDF_Stream> const m_pFormStream;
+  RetainPtr<CPDF_Stream> const form_stream_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_FORM_H_

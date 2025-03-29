@@ -113,7 +113,7 @@ std::vector<TextCharPos> GetCharPosList(pdfium::span<const uint32_t> char_codes,
     results.emplace_back();
     TextCharPos& text_char_pos = results.back();
     if (cid_font)
-      text_char_pos.m_bFontStyle = true;
+      text_char_pos.font_style_ = true;
     WideString unicode = font->UnicodeFromCharCode(char_code);
     text_char_pos.m_Unicode = !unicode.IsEmpty() ? unicode[0] : char_code;
     text_char_pos.m_GlyphIndex =
@@ -146,7 +146,7 @@ std::vector<TextCharPos> GetCharPosList(pdfium::span<const uint32_t> char_codes,
       text_char_pos.m_FontCharWidth = 0;
 
     text_char_pos.m_Origin = CFX_PointF(i > 0 ? char_pos[i - 1] : 0, 0);
-    text_char_pos.m_bGlyphAdjust = false;
+    text_char_pos.glyph_adjust_ = false;
 
     float scaling_factor = 1.0f;
     if (ApplyGlyphSpacingHeuristic(font, current_font, is_vertical_writing)) {
@@ -165,7 +165,7 @@ std::vector<TextCharPos> GetCharPosList(pdfium::span<const uint32_t> char_codes,
         text_char_pos.m_AdjustMatrix[1] = 0.0f;
         text_char_pos.m_AdjustMatrix[2] = 0.0f;
         text_char_pos.m_AdjustMatrix[3] = 1.0f;
-        text_char_pos.m_bGlyphAdjust = true;
+        text_char_pos.glyph_adjust_ = true;
       }
     }
     if (!cid_font)
@@ -194,7 +194,7 @@ std::vector<TextCharPos> GetCharPosList(pdfium::span<const uint32_t> char_codes,
           cid_font->CIDTransformToFloat(cid_transform->e) * font_size;
       text_char_pos.m_Origin.y +=
           cid_font->CIDTransformToFloat(cid_transform->f) * font_size;
-      text_char_pos.m_bGlyphAdjust = true;
+      text_char_pos.glyph_adjust_ = true;
     }
   }
 
