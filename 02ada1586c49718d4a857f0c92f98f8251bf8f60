@@ -3,6 +3,46 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "61911cc3_69ffe163",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-03-29T00:19:52Z",
+      "side": 1,
+      "message": "LG w/ comment.",
+      "revId": "02ada1586c49718d4a857f0c92f98f8251bf8f60",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9d3b0f83_443588d5",
+        "filename": "core/fpdfdoc/cpdf_generateap.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1056,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-03-29T00:19:52Z",
+      "side": 1,
+      "message": "return false as before?",
+      "range": {
+        "startLine": 1056,
+        "startChar": 0,
+        "endLine": 1056,
+        "endChar": 21
+      },
+      "revId": "02ada1586c49718d4a857f0c92f98f8251bf8f60",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "14569f9d_02e11b9a",
         "filename": "core/fpdfdoc/cpdf_interactiveform.cpp",
         "patchSetId": 5
