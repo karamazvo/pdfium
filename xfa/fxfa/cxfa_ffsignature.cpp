@@ -33,7 +33,7 @@ void CXFA_FFSignature::RenderWidget(CFGAS_GEGraphics* pGS,
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, highlight);
 
-  DrawBorder(pGS, m_pNode->GetUIBorder(), m_UIRect, mtRotate);
+  DrawBorder(pGS, node_->GetUIBorder(), m_UIRect, mtRotate);
   RenderCaption(pGS, mtRotate);
   DrawHighlight(pGS, mtRotate, highlight, kSquareShape);
 }

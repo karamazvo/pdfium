@@ -26,7 +26,7 @@ struct ByteRange {
 };
 
 struct PredefinedCMap {
-  const char* m_pName;  // Raw, POD struct.
+  const char* name_;  // Raw, POD struct.
   CIDSet m_Charset;
   CIDCoding m_Coding;
   CPDF_CMap::CodingScheme m_CodingScheme;
@@ -160,8 +160,9 @@ const PredefinedCMap* GetPredefinedCMap(ByteStringView cmapid) {
   if (cmapid.GetLength() > 2)
     cmapid = cmapid.First(cmapid.GetLength() - 2);
   for (const auto& map : kPredefinedCMaps) {
-    if (cmapid == map.m_pName)
+    if (cmapid == map.name_) {
       return &map;
+    }
   }
   return nullptr;
 }
@@ -250,10 +251,10 @@ const fxcmap::CMap* FindEmbeddedCMap(pdfium::span<const fxcmap::CMap> pCMaps,
 }  // namespace
 
 CPDF_CMap::CPDF_CMap(ByteStringView bsPredefinedName)
-    : m_bVertical(bsPredefinedName.Back() == 'V') {
+    : vertical_(bsPredefinedName.Back() == 'V') {
   if (bsPredefinedName == "Identity-H" || bsPredefinedName == "Identity-V") {
     m_Coding = CIDCoding::kCID;
-    m_bLoaded = true;
+    loaded_ = true;
     return;
   }
 
@@ -266,13 +267,14 @@ CPDF_CMap::CPDF_CMap(ByteStringView bsPredefinedName)
   m_CodingScheme = map->m_CodingScheme;
   if (m_CodingScheme == MixedTwoBytes)
     m_MixedTwoByteLeadingBytes = LoadLeadingSegments(*map);
-  m_pEmbedMap = FindEmbeddedCMap(
+  embed_map_ = FindEmbeddedCMap(
       CPDF_FontGlobals::GetInstance()->GetEmbeddedCharset(m_Charset),
       bsPredefinedName);
-  if (!m_pEmbedMap)
+  if (!embed_map_) {
     return;
+  }
 
-  m_bLoaded = true;
+  loaded_ = true;
 }
 
 CPDF_CMap::CPDF_CMap(pdfium::span<const uint8_t> spEmbeddedData)
@@ -295,8 +297,9 @@ uint16_t CPDF_CMap::CIDFromCharCode(uint32_t charcode) const {
   if (m_Coding == CIDCoding::kCID)
     return static_cast<uint16_t>(charcode);
 
-  if (m_pEmbedMap)
-    return fxcmap::CIDFromCharCode(m_pEmbedMap, charcode);
+  if (embed_map_) {
+    return fxcmap::CIDFromCharCode(embed_map_, charcode);
+  }
 
   if (m_DirectCharcodeToCIDTable.empty())
     return static_cast<uint16_t>(charcode);

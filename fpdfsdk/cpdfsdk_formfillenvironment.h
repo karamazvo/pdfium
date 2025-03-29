@@ -94,9 +94,9 @@ class CPDFSDK_FormFillEnvironment final
 
   int GetPageCount() const;
 
-  bool GetChangeMark() const { return m_bChangeMask; }
-  void SetChangeMark() { m_bChangeMask = true; }
-  void ClearChangeMark() { m_bChangeMask = false; }
+  bool GetChangeMark() const { return change_mask_; }
+  void SetChangeMark() { change_mask_ = true; }
+  void ClearChangeMark() { change_mask_ = false; }
 
   void ProcJavascriptAction();
   bool ProcOpenAction();
@@ -112,9 +112,9 @@ class CPDFSDK_FormFillEnvironment final
     return m_pCPDFDoc->GetExtension();
   }
 
-  bool IsJSPlatformPresent() const { return m_pInfo && m_pInfo->m_pJsPlatform; }
+  bool IsJSPlatformPresent() const { return info_ && info_->m_pJsPlatform; }
   IPDF_JSPLATFORM* GetJSPlatform() const {
-    return m_pInfo ? m_pInfo->m_pJsPlatform : nullptr;
+    return info_ ? info_->m_pJsPlatform : nullptr;
   }
 
   // Actions.
@@ -226,7 +226,7 @@ class CPDFSDK_FormFillEnvironment final
 
   WideString GetFilePath() const;
   ByteString GetAppName() const { return ByteString(); }
-  FPDF_FORMFILLINFO* GetFormFillInfo() const { return m_pInfo; }
+  FPDF_FORMFILLINFO* GetFormFillInfo() const { return info_; }
   void SubmitForm(pdfium::span<const uint8_t> form_data, const WideString& URL);
 
   void SetFocusableAnnotSubtypes(
@@ -239,7 +239,7 @@ class CPDFSDK_FormFillEnvironment final
 
   // Never returns null.
   CFFL_InteractiveFormFiller* GetInteractiveFormFiller() {
-    return m_pInteractiveFormFiller.get();
+    return interactive_form_filler_.get();
   }
 
   IJS_Runtime* GetIJSRuntime();                   // Creates if not present.
@@ -274,18 +274,18 @@ class CPDFSDK_FormFillEnvironment final
                           const WideString& script);
   bool IsValidField(const CPDF_Dictionary* pFieldDict);
 
-  UnownedPtr<FPDF_FORMFILLINFO> const m_pInfo;
+  UnownedPtr<FPDF_FORMFILLINFO> const info_;
   std::unique_ptr<IJS_Runtime> m_pIJSRuntime;
 
   // Iterator stability guarantees as provided by std::map<> required.
   std::map<IPDF_Page*, std::unique_ptr<CPDFSDK_PageView>> m_PageMap;
 
-  std::unique_ptr<CPDFSDK_InteractiveForm> m_pInteractiveForm;
-  ObservedPtr<CPDFSDK_Annot> m_pFocusAnnot;
+  std::unique_ptr<CPDFSDK_InteractiveForm> interactive_form_;
+  ObservedPtr<CPDFSDK_Annot> focus_annot_;
   UnownedPtr<CPDF_Document> const m_pCPDFDoc;
-  std::unique_ptr<CFFL_InteractiveFormFiller> m_pInteractiveFormFiller;
-  bool m_bChangeMask = false;
-  bool m_bBeingDestroyed = false;
+  std::unique_ptr<CFFL_InteractiveFormFiller> interactive_form_filler_;
+  bool change_mask_ = false;
+  bool being_destroyed_ = false;
 
   // Holds the list of focusable annot types.
   // Annotations of type WIDGET are by default focusable.

@@ -29,8 +29,9 @@ CFFL_ComboBox::~CFFL_ComboBox() {
 
 CPWL_Wnd::CreateParams CFFL_ComboBox::GetCreateParam() {
   CPWL_Wnd::CreateParams cp = CFFL_TextObject::GetCreateParam();
-  if (m_pWidget->GetFieldFlags() & pdfium::form_flags::kChoiceEdit)
+  if (widget_->GetFieldFlags() & pdfium::form_flags::kChoiceEdit) {
     cp.dwFlags |= PCBS_ALLOWCUSTOMTEXT;
+  }
 
   cp.pFontMap = GetOrCreateFontMap();
   return cp;
@@ -43,15 +44,16 @@ std::unique_ptr<CPWL_Wnd> CFFL_ComboBox::NewPWLWindow(
   auto pWnd = std::make_unique<CPWL_ComboBox>(cp, std::move(pAttachedData));
   pWnd->Realize();
 
-  int32_t nCurSel = m_pWidget->GetSelectedIndex(0);
+  int32_t nCurSel = widget_->GetSelectedIndex(0);
   WideString swText;
   if (nCurSel < 0)
-    swText = m_pWidget->GetValue();
+    swText = widget_->GetValue();
   else
-    swText = m_pWidget->GetOptionLabel(nCurSel);
+    swText = widget_->GetOptionLabel(nCurSel);
 
-  for (int32_t i = 0, sz = m_pWidget->CountOptions(); i < sz; i++)
-    pWnd->AddString(m_pWidget->GetOptionLabel(i));
+  for (int32_t i = 0, sz = widget_->CountOptions(); i < sz; i++) {
+    pWnd->AddString(widget_->GetOptionLabel(i));
+  }
 
   pWnd->SetSelect(nCurSel);
   pWnd->SetText(swText);
@@ -70,13 +72,14 @@ bool CFFL_ComboBox::IsDataChanged(const CPDFSDK_PageView* pPageView) {
     return false;
 
   int32_t nCurSel = pWnd->GetSelect();
-  if (!(m_pWidget->GetFieldFlags() & pdfium::form_flags::kChoiceEdit))
-    return nCurSel != m_pWidget->GetSelectedIndex(0);
+  if (!(widget_->GetFieldFlags() & pdfium::form_flags::kChoiceEdit)) {
+    return nCurSel != widget_->GetSelectedIndex(0);
+  }
 
   if (nCurSel >= 0)
-    return nCurSel != m_pWidget->GetSelectedIndex(0);
+    return nCurSel != widget_->GetSelectedIndex(0);
 
-  return pWnd->GetText() != m_pWidget->GetValue();
+  return pWnd->GetText() != widget_->GetValue();
 }
 
 void CFFL_ComboBox::SaveData(const CPDFSDK_PageView* pPageView) {
@@ -88,7 +91,7 @@ void CFFL_ComboBox::SaveData(const CPDFSDK_PageView* pPageView) {
   WideString swText = pWnd->GetText();
   int32_t nCurSel = pWnd->GetSelect();
   bool bSetValue = false;
-  ObservedPtr<CPDFSDK_Widget> observed_widget(observed_this->m_pWidget);
+  ObservedPtr<CPDFSDK_Widget> observed_widget(observed_this->widget_);
   if (observed_widget->GetFieldFlags() & pdfium::form_flags::kChoiceEdit) {
     bSetValue =
         (nCurSel < 0) || (swText != observed_widget->GetOptionLabel(nCurSel));
@@ -141,7 +144,7 @@ void CFFL_ComboBox::GetActionData(const CPDFSDK_PageView* pPageView,
       break;
     case CPDF_AAction::kLoseFocus:
     case CPDF_AAction::kGetFocus:
-      fa.sValue = m_pWidget->GetValue();
+      fa.sValue = widget_->GetValue();
       break;
     default:
       break;
@@ -203,8 +206,9 @@ bool CFFL_ComboBox::SetIndexSelected(int index, bool selected) {
   if (!IsValid() || !selected)
     return false;
 
-  if (index < 0 || index >= m_pWidget->CountOptions())
+  if (index < 0 || index >= widget_->CountOptions()) {
     return false;
+  }
 
   CPWL_ComboBox* pWnd = GetPWLComboBox(GetCurPageView());
   if (!pWnd)
@@ -218,8 +222,9 @@ bool CFFL_ComboBox::IsIndexSelected(int index) {
   if (!IsValid())
     return false;
 
-  if (index < 0 || index >= m_pWidget->CountOptions())
+  if (index < 0 || index >= widget_->CountOptions()) {
     return false;
+  }
 
   CPWL_ComboBox* pWnd = GetPWLComboBox(GetCurPageView());
   return pWnd && index == pWnd->GetSelect();
@@ -239,13 +244,13 @@ bool CFFL_ComboBox::IsFieldFull(const CPDFSDK_PageView* pPageView) {
 void CFFL_ComboBox::OnSetFocusForEdit(CPWL_Edit* pEdit) {
   pEdit->SetCharSet(FX_Charset::kChineseSimplified);
   pEdit->SetReadyToInput();
-  m_pFormFiller->OnSetFieldInputFocus(pEdit->GetText());
+  form_filler_->OnSetFieldInputFocus(pEdit->GetText());
 }
 
 WideString CFFL_ComboBox::GetSelectExportText() {
   CPWL_ComboBox* pComboBox = GetPWLComboBox(GetCurPageView());
   int nExport = pComboBox ? pComboBox->GetSelect() : -1;
-  return m_pWidget->GetSelectExportText(nExport);
+  return widget_->GetSelectExportText(nExport);
 }
 
 CPWL_ComboBox* CFFL_ComboBox::GetPWLComboBox(

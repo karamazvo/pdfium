@@ -68,13 +68,13 @@ CPDF_BAFontMap::Data::~Data() = default;
 CPDF_BAFontMap::CPDF_BAFontMap(CPDF_Document* pDocument,
                                RetainPtr<CPDF_Dictionary> pAnnotDict,
                                const ByteString& sAPType)
-    : m_pDocument(pDocument),
-      m_pAnnotDict(std::move(pAnnotDict)),
+    : document_(pDocument),
+      annot_dict_(std::move(pAnnotDict)),
       m_sAPType(sAPType) {
   FX_Charset nCharset = FX_Charset::kDefault;
-  m_pDefaultFont = GetAnnotDefaultFont(&m_sDefaultFontName);
-  if (m_pDefaultFont) {
-    auto maybe_charset = m_pDefaultFont->GetSubstFontCharset();
+  default_font_ = GetAnnotDefaultFont(&m_sDefaultFontName);
+  if (default_font_) {
+    auto maybe_charset = default_font_->GetSubstFontCharset();
     if (maybe_charset.has_value()) {
       nCharset = maybe_charset.value();
     } else if (m_sDefaultFontName == "Wingdings" ||
@@ -85,8 +85,8 @@ CPDF_BAFontMap::CPDF_BAFontMap(CPDF_Document* pDocument,
     } else {
       nCharset = FX_Charset::kANSI;
     }
-    AddFontData(m_pDefaultFont, m_sDefaultFontName, nCharset);
-    AddFontToAnnotDict(m_pDefaultFont, m_sDefaultFontName);
+    AddFontData(default_font_, m_sDefaultFontName, nCharset);
+    AddFontToAnnotDict(default_font_, m_sDefaultFontName);
   }
 
   if (nCharset != FX_Charset::kANSI)
@@ -173,10 +173,11 @@ FX_Charset CPDF_BAFontMap::GetNativeCharset() {
 
 RetainPtr<CPDF_Font> CPDF_BAFontMap::FindFontSameCharset(ByteString* sFontAlias,
                                                          FX_Charset nCharset) {
-  if (m_pAnnotDict->GetNameFor(pdfium::annotation::kSubtype) != "Widget")
+  if (annot_dict_->GetNameFor(pdfium::annotation::kSubtype) != "Widget") {
     return nullptr;
+  }
 
-  const CPDF_Dictionary* pRootDict = m_pDocument->GetRoot();
+  const CPDF_Dictionary* pRootDict = document_->GetRoot();
   if (!pRootDict)
     return nullptr;
 
@@ -212,7 +213,7 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::FindResFontSameCharset(
     if (!ValidateDictType(pElement.Get(), "Font"))
       continue;
 
-    auto* pData = CPDF_DocPageData::FromDocument(m_pDocument);
+    auto* pData = CPDF_DocPageData::FromDocument(document_);
     RetainPtr<CPDF_Font> pFont = pData->GetFont(std::move(pElement));
     if (!pFont)
       continue;
@@ -229,16 +230,16 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::FindResFontSameCharset(
 RetainPtr<CPDF_Font> CPDF_BAFontMap::GetAnnotDefaultFont(ByteString* sAlias) {
   RetainPtr<CPDF_Dictionary> pAcroFormDict;
   const bool bWidget =
-      (m_pAnnotDict->GetNameFor(pdfium::annotation::kSubtype) == "Widget");
+      (annot_dict_->GetNameFor(pdfium::annotation::kSubtype) == "Widget");
   if (bWidget) {
-    RetainPtr<CPDF_Dictionary> pRootDict = m_pDocument->GetMutableRoot();
+    RetainPtr<CPDF_Dictionary> pRootDict = document_->GetMutableRoot();
     if (pRootDict)
       pAcroFormDict = pRootDict->GetMutableDictFor("AcroForm");
   }
 
   ByteString sDA;
   RetainPtr<const CPDF_Object> pObj =
-      CPDF_FormField::GetFieldAttrForDict(m_pAnnotDict.Get(), "DA");
+      CPDF_FormField::GetFieldAttrForDict(annot_dict_.Get(), "DA");
   if (pObj)
     sDA = pObj->GetString();
 
@@ -258,7 +259,7 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::GetAnnotDefaultFont(ByteString* sAlias) {
 
   RetainPtr<CPDF_Dictionary> pFontDict;
   if (RetainPtr<CPDF_Dictionary> pAPDict =
-          m_pAnnotDict->GetMutableDictFor(pdfium::annotation::kAP)) {
+          annot_dict_->GetMutableDictFor(pdfium::annotation::kAP)) {
     if (RetainPtr<CPDF_Dictionary> pNormalDict =
             pAPDict->GetMutableDictFor("N")) {
       if (RetainPtr<CPDF_Dictionary> pNormalResDict =
@@ -282,7 +283,7 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::GetAnnotDefaultFont(ByteString* sAlias) {
   if (!pFontDict)
     return nullptr;
 
-  return CPDF_DocPageData::FromDocument(m_pDocument)->GetFont(pFontDict);
+  return CPDF_DocPageData::FromDocument(document_)->GetFont(pFontDict);
 }
 
 void CPDF_BAFontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
@@ -291,7 +292,7 @@ void CPDF_BAFontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
     return;
 
   RetainPtr<CPDF_Dictionary> pAPDict =
-      m_pAnnotDict->GetOrCreateDictFor(pdfium::annotation::kAP);
+      annot_dict_->GetOrCreateDictFor(pdfium::annotation::kAP);
 
   // to avoid checkbox and radiobutton
   if (ToDictionary(pAPDict->GetObjectFor(m_sAPType)))
@@ -299,9 +300,9 @@ void CPDF_BAFontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
 
   RetainPtr<CPDF_Stream> stream = pAPDict->GetMutableStreamFor(m_sAPType);
   if (!stream) {
-    stream = m_pDocument->NewIndirect<CPDF_Stream>(
-        m_pDocument->New<CPDF_Dictionary>());
-    pAPDict->SetNewFor<CPDF_Reference>(m_sAPType, m_pDocument,
+    stream =
+        document_->NewIndirect<CPDF_Stream>(document_->New<CPDF_Dictionary>());
+    pAPDict->SetNewFor<CPDF_Reference>(m_sAPType, document_,
                                        stream->GetObjNum());
   }
 
@@ -310,15 +311,15 @@ void CPDF_BAFontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
   RetainPtr<CPDF_Dictionary> pStreamResFontList =
       pStreamResList->GetMutableDictFor("Font");
   if (!pStreamResFontList) {
-    pStreamResFontList = m_pDocument->NewIndirect<CPDF_Dictionary>();
-    pStreamResList->SetNewFor<CPDF_Reference>("Font", m_pDocument,
+    pStreamResFontList = document_->NewIndirect<CPDF_Dictionary>();
+    pStreamResList->SetNewFor<CPDF_Reference>("Font", document_,
                                               pStreamResFontList->GetObjNum());
   }
   if (!pStreamResFontList->KeyExist(sAlias)) {
     RetainPtr<const CPDF_Dictionary> pFontDict = pFont->GetFontDict();
-    RetainPtr<CPDF_Object> pObject =
-        pFontDict->IsInline() ? pFontDict->Clone()
-                              : pFontDict->MakeReference(m_pDocument);
+    RetainPtr<CPDF_Object> pObject = pFontDict->IsInline()
+                                         ? pFontDict->Clone()
+                                         : pFontDict->MakeReference(document_);
     pStreamResFontList->SetFor(sAlias, std::move(pObject));
   }
 }
@@ -407,7 +408,7 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::AddFontToDocument(ByteString sFontName,
 }
 
 RetainPtr<CPDF_Font> CPDF_BAFontMap::AddStandardFont(ByteString sFontName) {
-  auto* pPageData = CPDF_DocPageData::FromDocument(m_pDocument);
+  auto* pPageData = CPDF_DocPageData::FromDocument(document_);
   if (sFontName == "ZapfDingbats")
     return pPageData->AddStandardFont(sFontName, nullptr);
 
@@ -423,5 +424,5 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::AddSystemFont(ByteString sFontName,
   if (nCharset == FX_Charset::kDefault)
     nCharset = GetNativeCharset();
 
-  return AddNativeTrueTypeFontToPDF(m_pDocument, sFontName, nCharset);
+  return AddNativeTrueTypeFontToPDF(document_, sFontName, nCharset);
 }

@@ -38,12 +38,12 @@ class CPDF_DeviceBuffer {
   const CFX_Matrix& GetMatrix() const { return m_Matrix; }
 
  private:
-  UnownedPtr<CFX_RenderDevice> const m_pDevice;
+  UnownedPtr<CFX_RenderDevice> const device_;
 #if BUILDFLAG(IS_WIN)
-  UnownedPtr<CPDF_RenderContext> const m_pContext;
+  UnownedPtr<CPDF_RenderContext> const context_;
 #endif
-  UnownedPtr<const CPDF_PageObject> const m_pObject;
-  RetainPtr<CFX_DIBitmap> const m_pBitmap;
+  UnownedPtr<const CPDF_PageObject> const object_;
+  RetainPtr<CFX_DIBitmap> const bitmap_;
   const FX_RECT m_Rect;
   const CFX_Matrix m_Matrix;
 };

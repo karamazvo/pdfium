@@ -43,7 +43,7 @@ class CPDF_LinkExtract {
   std::optional<Link> CheckWebLink(const WideString& str);
   bool CheckMailLink(WideString* str);
 
-  UnownedPtr<const CPDF_TextPage> const m_pTextPage;
+  UnownedPtr<const CPDF_TextPage> const text_page_;
   std::vector<Link> m_LinkArray;
 };
 

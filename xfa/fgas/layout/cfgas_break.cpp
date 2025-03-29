@@ -18,20 +18,20 @@ const float CFGAS_Break::kConversionFactor = 20000.0f;
 const int CFGAS_Break::kMinimumTabWidth = 160000;
 
 CFGAS_Break::CFGAS_Break(Mask<LayoutStyle> dwLayoutStyles)
-    : m_dwLayoutStyles(dwLayoutStyles), m_pCurLine(&m_Lines[0]) {}
+    : m_dwLayoutStyles(dwLayoutStyles), cur_line_(&m_Lines[0]) {}
 
 CFGAS_Break::~CFGAS_Break() = default;
 
 void CFGAS_Break::Reset() {
-  m_eCharType = FX_CHARTYPE::kUnknown;
+  char_type_ = FX_CHARTYPE::kUnknown;
   for (CFGAS_BreakLine& line : m_Lines)
     line.Clear();
 }
 
 void CFGAS_Break::SetLayoutStyles(Mask<LayoutStyle> dwLayoutStyles) {
   m_dwLayoutStyles = dwLayoutStyles;
-  m_bSingleLine = !!(m_dwLayoutStyles & LayoutStyle::kSingleLine);
-  m_bCombText = !!(m_dwLayoutStyles & LayoutStyle::kCombText);
+  single_line_ = !!(m_dwLayoutStyles & LayoutStyle::kSingleLine);
+  comb_text_ = !!(m_dwLayoutStyles & LayoutStyle::kCombText);
 }
 
 void CFGAS_Break::SetHorizontalScale(int32_t iScale) {
@@ -54,11 +54,12 @@ void CFGAS_Break::SetVerticalScale(int32_t iScale) {
 }
 
 void CFGAS_Break::SetFont(RetainPtr<CFGAS_GEFont> pFont) {
-  if (!pFont || pFont == m_pFont)
+  if (!pFont || pFont == font_) {
     return;
+  }
 
   SetBreakStatus();
-  m_pFont = std::move(pFont);
+  font_ = std::move(pFont);
 }
 
 void CFGAS_Break::SetFontSize(float fFontSize) {
@@ -73,7 +74,7 @@ void CFGAS_Break::SetFontSize(float fFontSize) {
 void CFGAS_Break::SetBreakStatus() {
   ++m_dwIdentity;
 
-  CFGAS_Char* tc = m_pCurLine->LastChar();
+  CFGAS_Char* tc = cur_line_->LastChar();
   if (tc && tc->m_dwStatus == CFGAS_Char::BreakType::kNone)
     tc->m_dwStatus = CFGAS_Char::BreakType::kPiece;
 }
@@ -116,14 +117,14 @@ void CFGAS_Break::SetLineBoundary(float fLineStart, float fLineEnd) {
 
   m_iLineStart = FXSYS_roundf(fLineStart * kConversionFactor);
   m_iLineWidth = FXSYS_roundf(fLineEnd * kConversionFactor);
-  m_pCurLine->m_iStart = std::min(m_pCurLine->m_iStart, m_iLineWidth);
-  m_pCurLine->m_iStart = std::max(m_pCurLine->m_iStart, m_iLineStart);
+  cur_line_->m_iStart = std::min(cur_line_->m_iStart, m_iLineWidth);
+  cur_line_->m_iStart = std::max(cur_line_->m_iStart, m_iLineStart);
 }
 
 CFGAS_Char* CFGAS_Break::GetLastChar(int32_t index,
                                      bool bOmitChar,
                                      bool bRichText) const {
-  std::vector<CFGAS_Char>& tca = m_pCurLine->m_LineChars;
+  std::vector<CFGAS_Char>& tca = cur_line_->m_LineChars;
   if (!fxcrt::IndexInBounds(tca, index))
     return nullptr;
 

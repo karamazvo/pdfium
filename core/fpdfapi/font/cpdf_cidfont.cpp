@@ -401,13 +401,13 @@ uint32_t CPDF_CIDFont::CharCodeFromUnicode(wchar_t unicode) const {
 }
 
 bool CPDF_CIDFont::Load() {
-  if (m_pFontDict->GetByteStringFor("Subtype") == "TrueType") {
+  if (font_dict_->GetByteStringFor("Subtype") == "TrueType") {
     LoadGB2312();
     return true;
   }
 
   RetainPtr<const CPDF_Array> pFonts =
-      m_pFontDict->GetArrayFor("DescendantFonts");
+      font_dict_->GetArrayFor("DescendantFonts");
   if (!pFonts || pFonts->size() != 1)
     return false;
 
@@ -420,11 +420,11 @@ bool CPDF_CIDFont::Load() {
        m_BaseFontName == "CourierStd-BoldOblique" ||
        m_BaseFontName == "CourierStd-Oblique") &&
       !IsEmbedded()) {
-    m_bAdobeCourierStd = true;
+    adobe_courier_std_ = true;
   }
 
   RetainPtr<const CPDF_Object> pEncoding =
-      m_pFontDict->GetDirectObjectFor("Encoding");
+      font_dict_->GetDirectObjectFor("Encoding");
   if (!pEncoding)
     return false;
 
@@ -487,9 +487,9 @@ bool CPDF_CIDFont::Load() {
   if (pmap) {
     RetainPtr<const CPDF_Stream> pMapStream(pmap->AsStream());
     if (pMapStream) {
-      m_pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(pMapStream));
-      m_pStreamAcc->LoadAllDataFiltered();
-    } else if (m_pFontFile && pmap->IsName() &&
+      stream_acc_ = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(pMapStream));
+      stream_acc_->LoadAllDataFiltered();
+    } else if (font_file_ && pmap->IsName() &&
                pmap->GetString() == "Identity") {
       m_bCIDIsGID = true;
     }
@@ -527,7 +527,7 @@ FX_RECT CPDF_CIDFont::GetCharBBox(uint32_t charcode) {
   if (face) {
     rect = face->GetCharBBox(charcode, glyph_index);
   }
-  if (!m_pFontFile && m_Charset == CIDSET_JAPAN1) {
+  if (!font_file_ && m_Charset == CIDSET_JAPAN1) {
     uint16_t cid = CIDFromCharCode(charcode);
     const CIDTransform* pTransform = GetCIDTransform(cid);
     if (pTransform && !bVert) {
@@ -547,7 +547,7 @@ FX_RECT CPDF_CIDFont::GetCharBBox(uint32_t charcode) {
 }
 
 int CPDF_CIDFont::GetCharWidthF(uint32_t charcode) {
-  if (charcode < 0x80 && m_bAnsiWidthsFixed) {
+  if (charcode < 0x80 && ansi_widths_fixed_) {
     return (charcode >= 32 && charcode < 127) ? 500 : 0;
   }
   uint16_t cid = CIDFromCharCode(charcode);
@@ -640,7 +640,7 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
   if (pVertGlyph)
     *pVertGlyph = false;
 
-  if (!m_pFontFile && (!m_pStreamAcc || m_pCID2UnicodeMap)) {
+  if (!font_file_ && (!stream_acc_ || m_pCID2UnicodeMap)) {
     uint16_t cid = CIDFromCharCode(charcode);
     wchar_t unicode = 0;
     if (m_bCIDIsGID) {
@@ -668,8 +668,9 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
       }
     }
     if (unicode == 0) {
-      if (!m_bAdobeCourierStd)
+      if (!adobe_courier_std_) {
         return charcode ? static_cast<int>(charcode) : -1;
+      }
 
       charcode += 31;
       RetainPtr<CFX_Face> face = m_Font.GetFace();
@@ -752,11 +753,11 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
   }
 
   uint16_t cid = CIDFromCharCode(charcode);
-  if (!m_pStreamAcc) {
+  if (!stream_acc_) {
     if (m_FontType == CIDFontType::kType1) {
       return cid;
     }
-    if (m_pFontFile && m_pCMap->IsDirectCharcodeToCIDTableIsEmpty()) {
+    if (font_file_ && m_pCMap->IsDirectCharcodeToCIDTableIsEmpty()) {
       return cid;
     }
     if (m_pCMap->GetCoding() == CIDCoding::kUNKNOWN) {
@@ -779,10 +780,11 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
     return GetGlyphIndex(charcode, pVertGlyph);
   }
   uint32_t byte_pos = cid * 2;
-  if (byte_pos + 2 > m_pStreamAcc->GetSize())
+  if (byte_pos + 2 > stream_acc_->GetSize()) {
     return -1;
+  }
 
-  pdfium::span<const uint8_t> span = m_pStreamAcc->GetSpan().subspan(byte_pos);
+  pdfium::span<const uint8_t> span = stream_acc_->GetSpan().subspan(byte_pos);
   return span[0] * 256 + span[1];
 }
 
@@ -824,26 +826,27 @@ float CPDF_CIDFont::CIDTransformToFloat(uint8_t ch) {
 }
 
 void CPDF_CIDFont::LoadGB2312() {
-  m_BaseFontName = m_pFontDict->GetByteStringFor("BaseFont");
+  m_BaseFontName = font_dict_->GetByteStringFor("BaseFont");
   m_Charset = CIDSET_GB1;
 
   auto* pFontGlobals = CPDF_FontGlobals::GetInstance();
   m_pCMap = pFontGlobals->GetPredefinedCMap("GBK-EUC-H");
   m_pCID2UnicodeMap = pFontGlobals->GetCID2UnicodeMap(m_Charset);
   RetainPtr<const CPDF_Dictionary> pFontDesc =
-      m_pFontDict->GetDictFor("FontDescriptor");
+      font_dict_->GetDictFor("FontDescriptor");
   if (pFontDesc)
     LoadFontDescriptor(pFontDesc.Get());
 
   if (!IsEmbedded())
     LoadSubstFont();
   CheckFontMetrics();
-  m_bAnsiWidthsFixed = true;
+  ansi_widths_fixed_ = true;
 }
 
 const CIDTransform* CPDF_CIDFont::GetCIDTransform(uint16_t cid) const {
-  if (m_Charset != CIDSET_JAPAN1 || m_pFontFile)
+  if (m_Charset != CIDSET_JAPAN1 || font_file_) {
     return nullptr;
+  }
 
   const auto* pBegin = std::begin(kJapan1VerticalCIDs);
   const auto* pEnd = std::end(kJapan1VerticalCIDs);

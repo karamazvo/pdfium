@@ -51,8 +51,8 @@ class CFX_Timer {
   static void TimerProc(int32_t idEvent);
 
   int32_t m_nTimerID = HandlerIface::kInvalidTimerID;
-  ObservedPtr<HandlerIface> m_pHandlerIface;
-  UnownedPtr<CallbackIface> const m_pCallbackIface;
+  ObservedPtr<HandlerIface> handler_iface_;
+  UnownedPtr<CallbackIface> const callback_iface_;
 };
 
 #endif  // CORE_FXCRT_CFX_TIMER_H_

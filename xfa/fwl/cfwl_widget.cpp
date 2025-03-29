@@ -44,9 +44,9 @@ CFWL_Widget::CFWL_Widget(CFWL_App* app,
                          CFWL_Widget* pOuter)
     : m_Properties(properties),
       m_pFWLApp(app),
-      m_pWidgetMgr(app->GetWidgetMgr()),
-      m_pOuter(pOuter) {
-  m_pWidgetMgr->InsertWidget(m_pOuter, this);
+      widget_mgr_(app->GetWidgetMgr()),
+      outer_(pOuter) {
+  widget_mgr_->InsertWidget(outer_, this);
 }
 
 CFWL_Widget::~CFWL_Widget() = default;
@@ -54,15 +54,15 @@ CFWL_Widget::~CFWL_Widget() = default;
 void CFWL_Widget::PreFinalize() {
   CHECK(!IsLocked());  // Prefer hard stop to UaF.
   NotifyDriver();
-  m_pWidgetMgr->RemoveWidget(this);
+  widget_mgr_->RemoveWidget(this);
 }
 
 void CFWL_Widget::Trace(cppgc::Visitor* visitor) const {
-  visitor->Trace(m_pAdapterIface);
+  visitor->Trace(adapter_iface_);
   visitor->Trace(m_pFWLApp);
-  visitor->Trace(m_pWidgetMgr);
-  visitor->Trace(m_pDelegate);
-  visitor->Trace(m_pOuter);
+  visitor->Trace(widget_mgr_);
+  visitor->Trace(delegate_);
+  visitor->Trace(outer_);
 }
 
 bool CFWL_Widget::IsForm() const {
@@ -231,7 +231,7 @@ CFX_RectF CFWL_Widget::GetRelativeRect() const {
 
 CFX_SizeF CFWL_Widget::CalcTextSize(const WideString& wsText, bool bMultiLine) {
   CFWL_ThemeText calPart(CFWL_ThemePart::Part::kNone, this, nullptr);
-  calPart.m_wsText = wsText;
+  calPart.text_ = wsText;
   if (bMultiLine)
     calPart.m_dwTTOStyles.line_wrap_ = true;
   else
@@ -249,7 +249,7 @@ void CFWL_Widget::CalcTextRect(const WideString& wsText,
                                FDE_TextAlignment iTTOAlign,
                                CFX_RectF* pRect) {
   CFWL_ThemeText calPart(CFWL_ThemePart::Part::kNone, this, nullptr);
-  calPart.m_wsText = wsText;
+  calPart.text_ = wsText;
   calPart.m_dwTTOStyles = dwTTOStyles;
   calPart.m_iTTOAlign = iTTOAlign;
   GetThemeProvider()->CalcTextRect(calPart, pRect);
@@ -266,8 +266,8 @@ void CFWL_Widget::UnregisterEventTarget() {
 }
 
 void CFWL_Widget::DispatchEvent(CFWL_Event* pEvent) {
-  if (m_pOuter) {
-    m_pOuter->GetDelegate()->OnProcessEvent(pEvent);
+  if (outer_) {
+    outer_->GetDelegate()->OnProcessEvent(pEvent);
     return;
   }
   CFWL_NoteDriver* pNoteDriver = GetFWLApp()->GetNoteDriver();
@@ -275,7 +275,7 @@ void CFWL_Widget::DispatchEvent(CFWL_Event* pEvent) {
 }
 
 void CFWL_Widget::RepaintRect(const CFX_RectF& pRect) {
-  m_pWidgetMgr->RepaintWidget(this, pRect);
+  widget_mgr_->RepaintWidget(this, pRect);
 }
 
 void CFWL_Widget::DrawBackground(CFGAS_GEGraphics* pGraphics,

@@ -179,23 +179,23 @@ class ProgressiveDecoder final :
 
   FXCODEC_STATUS m_status = FXCODEC_STATUS::kDecodeFinished;
   FXCODEC_IMAGE_TYPE m_imageType = FXCODEC_IMAGE_UNKNOWN;
-  RetainPtr<IFX_SeekableReadStream> m_pFile;
-  RetainPtr<CFX_DIBitmap> m_pDeviceBitmap;
-  RetainPtr<CFX_CodecMemory> m_pCodecMemory;
+  RetainPtr<IFX_SeekableReadStream> file_;
+  RetainPtr<CFX_DIBitmap> device_bitmap_;
+  RetainPtr<CFX_CodecMemory> codec_memory_;
   DataVector<uint8_t> m_DecodeBuf;
   DataVector<FX_ARGB> m_SrcPalette;
-  std::unique_ptr<ProgressiveDecoderIface::Context> m_pJpegContext;
+  std::unique_ptr<ProgressiveDecoderIface::Context> jpeg_context_;
 #ifdef PDF_ENABLE_XFA_BMP
-  std::unique_ptr<ProgressiveDecoderIface::Context> m_pBmpContext;
+  std::unique_ptr<ProgressiveDecoderIface::Context> bmp_context_;
 #endif  // PDF_ENABLE_XFA_BMP
 #ifdef PDF_ENABLE_XFA_GIF
-  std::unique_ptr<ProgressiveDecoderIface::Context> m_pGifContext;
+  std::unique_ptr<ProgressiveDecoderIface::Context> gif_context_;
 #endif  // PDF_ENABLE_XFA_GIF
 #ifdef PDF_ENABLE_XFA_PNG
-  std::unique_ptr<ProgressiveDecoderIface::Context> m_pPngContext;
+  std::unique_ptr<ProgressiveDecoderIface::Context> png_context_;
 #endif  // PDF_ENABLE_XFA_PNG
 #ifdef PDF_ENABLE_XFA_TIFF
-  std::unique_ptr<ProgressiveDecoderIface::Context> m_pTiffContext;
+  std::unique_ptr<ProgressiveDecoderIface::Context> tiff_context_;
 #endif  // PDF_ENABLE_XFA_TIFF
   uint32_t m_offSet = 0;
   int m_ScanlineSize = 0;

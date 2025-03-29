@@ -76,7 +76,7 @@ class CFX_Font {
   FXFT_FaceRec* GetFaceRec() const {
     return m_Face ? m_Face->GetRec() : nullptr;
   }
-  CFX_SubstFont* GetSubstFont() const { return m_pSubstFont.get(); }
+  CFX_SubstFont* GetSubstFont() const { return subst_font_.get(); }
   int GetSubstFontItalicAngle() const;
 
 #if defined(PDF_ENABLE_XFA)
@@ -105,7 +105,7 @@ class CFX_Font {
   bool IsItalic() const;
   bool IsBold() const;
   bool IsFixedWidth() const;
-  bool IsVertical() const { return m_bVertical; }
+  bool IsVertical() const { return vertical_; }
   ByteString GetPsName() const;
   ByteString GetFamilyName() const;
   ByteString GetBaseFontName() const;
@@ -131,8 +131,8 @@ class CFX_Font {
 #endif
 
 #if BUILDFLAG(IS_APPLE)
-  void* GetPlatformFont() const { return m_pPlatformFont; }
-  void SetPlatformFont(void* font) { m_pPlatformFont = font; }
+  void* GetPlatformFont() const { return platform_font_; }
+  void SetPlatformFont(void* font) { platform_font_ = font; }
 #endif
 
  private:
@@ -144,21 +144,21 @@ class CFX_Font {
   ByteString GetFamilyNameOrUntitled() const;
 
 #if defined(PDF_ENABLE_XFA)
-  // |m_pOwnedFile| must outlive |m_pOwnedStreamRec|.
-  RetainPtr<IFX_SeekableReadStream> m_pOwnedFile;
-  std::unique_ptr<FXFT_StreamRec> m_pOwnedStreamRec;  // Must outlive |m_Face|.
+  // |owned_file_| must outlive |owned_stream_rec_|.
+  RetainPtr<IFX_SeekableReadStream> owned_file_;
+  std::unique_ptr<FXFT_StreamRec> owned_stream_rec_;  // Must outlive |m_Face|.
 #endif
 
   mutable RetainPtr<CFX_Face> m_Face;
   mutable RetainPtr<CFX_GlyphCache> m_GlyphCache;
-  std::unique_ptr<CFX_SubstFont> m_pSubstFont;
+  std::unique_ptr<CFX_SubstFont> subst_font_;
   DataVector<uint8_t> m_FontDataAllocation;
   pdfium::raw_span<uint8_t> m_FontData;
   FontType m_FontType = FontType::kUnknown;
   uint64_t m_ObjectTag = 0;
-  bool m_bVertical = false;
+  bool vertical_ = false;
 #if BUILDFLAG(IS_APPLE)
-  UNOWNED_PTR_EXCLUSION void* m_pPlatformFont = nullptr;
+  UNOWNED_PTR_EXCLUSION void* platform_font_ = nullptr;
 #endif
 };
 

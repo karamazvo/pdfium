@@ -52,17 +52,17 @@ CPWL_Wnd::CreateParams::~CreateParams() = default;
 class CPWL_Wnd::SharedCaptureFocusState final : public Observable {
  public:
   explicit SharedCaptureFocusState(const CPWL_Wnd* pOwnerWnd)
-      : m_pOwnerWnd(pOwnerWnd) {}
+      : owner_wnd_(pOwnerWnd) {}
   ~SharedCaptureFocusState() = default;
 
-  bool IsOwnedByWnd(const CPWL_Wnd* pWnd) const { return m_pOwnerWnd == pWnd; }
+  bool IsOwnedByWnd(const CPWL_Wnd* pWnd) const { return owner_wnd_ == pWnd; }
 
   bool IsWndCaptureMouse(const CPWL_Wnd* pWnd) const {
     return pWnd && pdfium::Contains(m_MousePaths, pWnd);
   }
 
   bool IsMainCaptureKeyboard(const CPWL_Wnd* pWnd) const {
-    return pWnd == m_pMainKeyboardWnd;
+    return pWnd == main_keyboard_wnd_;
   }
 
   bool IsWndCaptureKeyboard(const CPWL_Wnd* pWnd) const {
@@ -74,7 +74,7 @@ class CPWL_Wnd::SharedCaptureFocusState final : public Observable {
 
   void SetFocus(CPWL_Wnd* pWnd) {
     m_KeyboardPaths = pWnd->GetAncestors();
-    m_pMainKeyboardWnd = pWnd;
+    main_keyboard_wnd_ = pWnd;
 
     // Note, pWnd may get destroyed in the OnSetFocus call.
     pWnd->OnSetFocus();
@@ -90,16 +90,16 @@ class CPWL_Wnd::SharedCaptureFocusState final : public Observable {
     if (!this_observed) {
       return;
     }
-    this_observed->m_pMainKeyboardWnd = nullptr;
+    this_observed->main_keyboard_wnd_ = nullptr;
     this_observed->m_KeyboardPaths.clear();
   }
 
   void RemoveWnd(CPWL_Wnd* pWnd) {
-    if (pWnd == m_pOwnerWnd) {
-      m_pOwnerWnd = nullptr;
+    if (pWnd == owner_wnd_) {
+      owner_wnd_ = nullptr;
     }
-    if (pWnd == m_pMainKeyboardWnd) {
-      m_pMainKeyboardWnd = nullptr;
+    if (pWnd == main_keyboard_wnd_) {
+      main_keyboard_wnd_ = nullptr;
     }
     auto mouse_it = std::find(m_MousePaths.begin(), m_MousePaths.end(), pWnd);
     if (mouse_it != m_MousePaths.end()) {
@@ -113,8 +113,8 @@ class CPWL_Wnd::SharedCaptureFocusState final : public Observable {
   }
 
  private:
-  UnownedPtr<const CPWL_Wnd> m_pOwnerWnd;
-  UnownedPtr<const CPWL_Wnd> m_pMainKeyboardWnd;
+  UnownedPtr<const CPWL_Wnd> owner_wnd_;
+  UnownedPtr<const CPWL_Wnd> main_keyboard_wnd_;
   std::vector<UnownedPtr<CPWL_Wnd>> m_MousePaths;
   std::vector<UnownedPtr<CPWL_Wnd>> m_KeyboardPaths;
 };
@@ -151,14 +151,14 @@ bool CPWL_Wnd::IsPlatformShortcutKey(Mask<FWL_EVENTFLAG> nFlag) {
 CPWL_Wnd::CPWL_Wnd(
     const CreateParams& cp,
     std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData)
-    : m_CreationParams(cp), m_pAttachedData(std::move(pAttachedData)) {}
+    : m_CreationParams(cp), attached_data_(std::move(pAttachedData)) {}
 
 CPWL_Wnd::~CPWL_Wnd() {
-  DCHECK(!m_bCreated);
+  DCHECK(!created_);
 }
 
 void CPWL_Wnd::Realize() {
-  DCHECK(!m_bCreated);
+  DCHECK(!created_);
 
   m_CreationParams.rcRectWnd.Normalize();
   m_rcWindow = m_CreationParams.rcRectWnd;
@@ -173,13 +173,13 @@ void CPWL_Wnd::Realize() {
   ccp.dwFlags &= 0xFFFF0000L;  // remove sub styles
   CreateVScrollBar(ccp);
   CreateChildWnd(ccp);
-  m_bVisible = HasFlag(PWS_VISIBLE);
+  visible_ = HasFlag(PWS_VISIBLE);
   OnCreated();
   if (!RepositionChildWnd()) {
     return;
   }
 
-  m_bCreated = true;
+  created_ = true;
 }
 
 void CPWL_Wnd::OnCreated() {}
@@ -194,16 +194,17 @@ void CPWL_Wnd::InvalidateProvider(ProviderIface* provider) {
 void CPWL_Wnd::Destroy() {
   KillFocus();
   OnDestroy();
-  if (m_bCreated) {
+  if (created_) {
     m_pVScrollBar = nullptr;
     while (!m_Children.empty()) {
       std::unique_ptr<CPWL_Wnd> pChild = std::move(m_Children.back());
       m_Children.pop_back();
       pChild->Destroy();
     }
-    if (m_pParent)
-      m_pParent->RemoveChild(this);
-    m_bCreated = false;
+    if (parent_) {
+      parent_->RemoveChild(this);
+    }
+    created_ = false;
   }
   DestroySharedCaptureFocusState();
 }
@@ -291,7 +292,7 @@ bool CPWL_Wnd::InvalidateRect(const CFX_FloatRect* pRect) {
   rcWin.Inflate(1, 1);
   rcWin.Normalize();
   this_observed->GetFillerNotify()->InvalidateRect(
-      this_observed->m_pAttachedData.get(), rcWin);
+      this_observed->attached_data_.get(), rcWin);
   return !!this_observed;
 }
 
@@ -409,13 +410,13 @@ bool CPWL_Wnd::OnMouseWheel(Mask<FWL_EVENTFLAG> nFlag,
 }
 
 void CPWL_Wnd::AddChild(std::unique_ptr<CPWL_Wnd> pWnd) {
-  DCHECK(!pWnd->m_pParent);
-  pWnd->m_pParent = this;
+  DCHECK(!pWnd->parent_);
+  pWnd->parent_ = this;
   m_Children.push_back(std::move(pWnd));
 }
 
 void CPWL_Wnd::RemoveChild(CPWL_Wnd* pWnd) {
-  DCHECK_EQ(pWnd->m_pParent, this);
+  DCHECK_EQ(pWnd->parent_, this);
   auto it =
       std::find(m_Children.begin(), m_Children.end(), MakeFakeUniquePtr(pWnd));
   if (it == m_Children.end())
@@ -554,7 +555,7 @@ void CPWL_Wnd::OnKillFocus() {}
 
 std::unique_ptr<IPWL_FillerNotify::PerWindowData> CPWL_Wnd::CloneAttachedData()
     const {
-  return m_pAttachedData ? m_pAttachedData->Clone() : nullptr;
+  return attached_data_ ? attached_data_->Clone() : nullptr;
 }
 
 std::vector<UnownedPtr<CPWL_Wnd>> CPWL_Wnd::GetAncestors() {
@@ -586,8 +587,8 @@ bool CPWL_Wnd::SetVisible(bool bVisible) {
       return false;
     }
   }
-  if (bVisible != this_observed->m_bVisible) {
-    this_observed->m_bVisible = bVisible;
+  if (bVisible != this_observed->visible_) {
+    this_observed->visible_ = bVisible;
     if (!this_observed->RepositionChildWnd()) {
       return false;
     }

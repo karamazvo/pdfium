@@ -832,31 +832,32 @@ class CXFA_TextLayoutData final : public CXFA_WidgetLayoutData {
 
   void Trace(cppgc::Visitor* visitor) const override {
     CXFA_WidgetLayoutData::Trace(visitor);
-    visitor->Trace(m_pTextLayout);
-    visitor->Trace(m_pTextProvider);
+    visitor->Trace(text_layout_);
+    visitor->Trace(text_provider_);
   }
 
   CXFA_TextLayoutData* AsTextLayoutData() override { return this; }
 
-  CXFA_TextLayout* GetTextLayout() const { return m_pTextLayout; }
-  CXFA_TextProvider* GetTextProvider() const { return m_pTextProvider; }
+  CXFA_TextLayout* GetTextLayout() const { return text_layout_; }
+  CXFA_TextProvider* GetTextProvider() const { return text_provider_; }
 
   void LoadText(CXFA_FFDoc* doc, CXFA_Node* pNode) {
-    if (m_pTextLayout)
+    if (text_layout_) {
       return;
+    }
 
-    m_pTextProvider = cppgc::MakeGarbageCollected<CXFA_TextProvider>(
+    text_provider_ = cppgc::MakeGarbageCollected<CXFA_TextProvider>(
         doc->GetHeap()->GetAllocationHandle(), pNode,
         CXFA_TextProvider::Type::kText);
-    m_pTextLayout = cppgc::MakeGarbageCollected<CXFA_TextLayout>(
-        doc->GetHeap()->GetAllocationHandle(), doc, m_pTextProvider);
+    text_layout_ = cppgc::MakeGarbageCollected<CXFA_TextLayout>(
+        doc->GetHeap()->GetAllocationHandle(), doc, text_provider_);
   }
 
  private:
   CXFA_TextLayoutData() = default;
 
-  cppgc::Member<CXFA_TextLayout> m_pTextLayout;
-  cppgc::Member<CXFA_TextProvider> m_pTextProvider;
+  cppgc::Member<CXFA_TextLayout> text_layout_;
+  cppgc::Member<CXFA_TextProvider> text_provider_;
 };
 
 class CXFA_ImageLayoutData final : public CXFA_WidgetLayoutData {
@@ -878,7 +879,7 @@ class CXFA_ImageLayoutData final : public CXFA_WidgetLayoutData {
     if (!image)
       return false;
 
-    pNode->SetLayoutImage(XFA_LoadImageData(doc, image, m_bNamedImage,
+    pNode->SetLayoutImage(XFA_LoadImageData(doc, image, named_image_,
                                             m_iImageXDpi, m_iImageYDpi));
     return !!m_pDIBitmap;
   }
@@ -892,7 +893,7 @@ class CXFA_ImageLayoutData final : public CXFA_WidgetLayoutData {
  private:
   CXFA_ImageLayoutData() = default;
 
-  bool m_bNamedImage = false;
+  bool named_image_ = false;
   int32_t m_iImageXDpi = 0;
   int32_t m_iImageYDpi = 0;
   RetainPtr<CFX_DIBitmap> m_pDIBitmap;
@@ -905,8 +906,8 @@ class CXFA_FieldLayoutData : public CXFA_WidgetLayoutData {
 
   void Trace(cppgc::Visitor* visitor) const override {
     CXFA_WidgetLayoutData::Trace(visitor);
-    visitor->Trace(m_pCapTextLayout);
-    visitor->Trace(m_pCapTextProvider);
+    visitor->Trace(cap_text_layout_);
+    visitor->Trace(cap_text_provider_);
   }
   CXFA_FieldLayoutData* AsFieldLayoutData() override { return this; }
 
@@ -914,23 +915,24 @@ class CXFA_FieldLayoutData : public CXFA_WidgetLayoutData {
   virtual CXFA_TextEditData* AsTextEditData() { return nullptr; }
 
   bool LoadCaption(CXFA_FFDoc* doc, CXFA_Node* pNode) {
-    if (m_pCapTextLayout)
+    if (cap_text_layout_) {
       return true;
+    }
     CXFA_Caption* caption = pNode->GetCaptionIfExists();
     if (!caption || caption->IsHidden())
       return false;
 
-    m_pCapTextProvider = cppgc::MakeGarbageCollected<CXFA_TextProvider>(
+    cap_text_provider_ = cppgc::MakeGarbageCollected<CXFA_TextProvider>(
         doc->GetHeap()->GetAllocationHandle(), pNode,
         CXFA_TextProvider::Type::kCaption);
-    m_pCapTextLayout = cppgc::MakeGarbageCollected<CXFA_TextLayout>(
-        doc->GetHeap()->GetAllocationHandle(), doc, m_pCapTextProvider);
+    cap_text_layout_ = cppgc::MakeGarbageCollected<CXFA_TextLayout>(
+        doc->GetHeap()->GetAllocationHandle(), doc, cap_text_provider_);
     return true;
   }
 
-  cppgc::Member<CXFA_TextLayout> m_pCapTextLayout;
-  cppgc::Member<CXFA_TextProvider> m_pCapTextProvider;
-  std::unique_ptr<CFDE_TextOut> m_pTextOut;
+  cppgc::Member<CXFA_TextLayout> cap_text_layout_;
+  cppgc::Member<CXFA_TextProvider> cap_text_provider_;
+  std::unique_ptr<CFDE_TextOut> text_out_;
   std::vector<float> m_FieldSplitArray;
 
  protected:
@@ -967,7 +969,7 @@ class CXFA_ImageEditData final : public CXFA_FieldLayoutData {
     if (!image)
       return false;
 
-    pNode->SetEditImage(XFA_LoadImageData(doc, image, m_bNamedImage,
+    pNode->SetEditImage(XFA_LoadImageData(doc, image, named_image_,
                                           m_iImageXDpi, m_iImageYDpi));
     return !!m_pDIBitmap;
   }
@@ -981,7 +983,7 @@ class CXFA_ImageEditData final : public CXFA_FieldLayoutData {
  private:
   CXFA_ImageEditData() = default;
 
-  bool m_bNamedImage = false;
+  bool named_image_ = false;
   int32_t m_iImageXDpi = 0;
   int32_t m_iImageYDpi = 0;
   RetainPtr<CFX_DIBitmap> m_pDIBitmap;
@@ -999,8 +1001,8 @@ CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
       m_Properties(properties),
       m_Attributes(attributes),
       m_ValidPackets(validPackets),
-      m_ePacket(ePacket) {
-  DCHECK(m_pDocument);
+      packet_(ePacket) {
+  DCHECK(document_);
 }
 
 CXFA_Node::~CXFA_Node() = default;
@@ -1008,14 +1010,14 @@ CXFA_Node::~CXFA_Node() = default;
 void CXFA_Node::Trace(cppgc::Visitor* visitor) const {
   CXFA_Object::Trace(visitor);
   GCedTreeNodeMixin<CXFA_Node>::Trace(visitor);
-  visitor->Trace(m_pAuxNode);
-  visitor->Trace(m_pLayoutData);
+  visitor->Trace(aux_node_);
+  visitor->Trace(layout_data_);
   visitor->Trace(ui_);
   ContainerTrace(visitor, binding_nodes_);
 }
 
 CXFA_Node* CXFA_Node::Clone(bool bRecursive) {
-  CXFA_Node* pClone = m_pDocument->CreateNode(m_ePacket, m_elementType);
+  CXFA_Node* pClone = document_->CreateNode(packet_, m_elementType);
   if (!pClone)
     return nullptr;
 
@@ -1256,7 +1258,7 @@ std::vector<CXFA_Node*> CXFA_Node::GetNodeListWithFilter(
     return nodes;
 
   CXFA_Node* pNewNode =
-      m_pDocument->CreateNode(GetPacketType(), property.value());
+      document_->CreateNode(GetPacketType(), property.value());
   if (pNewNode) {
     InsertChildAndNotify(pNewNode, nullptr);
     pNewNode->SetInitializedFlagAndNotify();
@@ -1266,7 +1268,7 @@ std::vector<CXFA_Node*> CXFA_Node::GetNodeListWithFilter(
 }
 
 CXFA_Node* CXFA_Node::CreateSamePacketNode(XFA_Element eType) {
-  CXFA_Node* pNode = m_pDocument->CreateNode(m_ePacket, eType);
+  CXFA_Node* pNode = document_->CreateNode(packet_, eType);
   if (!pNode)
     return nullptr;
 
@@ -1275,9 +1277,9 @@ CXFA_Node* CXFA_Node::CreateSamePacketNode(XFA_Element eType) {
 }
 
 CXFA_Node* CXFA_Node::CloneTemplateToForm(bool bRecursive) {
-  CHECK_EQ(m_ePacket, XFA_PacketType::Template);
+  CHECK_EQ(packet_, XFA_PacketType::Template);
   CXFA_Node* pClone =
-      m_pDocument->CreateNode(XFA_PacketType::Form, m_elementType);
+      document_->CreateNode(XFA_PacketType::Form, m_elementType);
   if (!pClone)
     return nullptr;
 
@@ -1299,11 +1301,11 @@ CXFA_Node* CXFA_Node::CloneTemplateToForm(bool bRecursive) {
 }
 
 CXFA_Node* CXFA_Node::GetTemplateNodeIfExists() const {
-  return m_pAuxNode;
+  return aux_node_;
 }
 
 void CXFA_Node::SetTemplateNode(CXFA_Node* pTemplateNode) {
-  m_pAuxNode = pTemplateNode;
+  aux_node_ = pTemplateNode;
 }
 
 CXFA_Node* CXFA_Node::GetBindData() {
@@ -1503,7 +1505,7 @@ XFA_AttributeValue CXFA_Node::GetIntact() {
         return XFA_AttributeValue::None;
       }
 
-      XFA_VERSION version = m_pDocument->GetCurVersionMode();
+      XFA_VERSION version = document_->GetCurVersionMode();
       if (eParLayout == XFA_AttributeValue::Tb && version < XFA_VERSION_208) {
         std::optional<CXFA_Measurement> measureH =
             JSObject()->TryMeasure(XFA_Attribute::H, false);
@@ -1533,36 +1535,37 @@ WideString CXFA_Node::GetNameExpression() {
 }
 
 CXFA_Node* CXFA_Node::GetDataDescriptionNode() {
-  if (m_ePacket == XFA_PacketType::Datasets)
-    return m_pAuxNode;
+  if (packet_ == XFA_PacketType::Datasets) {
+    return aux_node_;
+  }
   return nullptr;
 }
 
 void CXFA_Node::SetDataDescriptionNode(CXFA_Node* pDataDescriptionNode) {
-  DCHECK_EQ(m_ePacket, XFA_PacketType::Datasets);
-  m_pAuxNode = pDataDescriptionNode;
+  DCHECK_EQ(packet_, XFA_PacketType::Datasets);
+  aux_node_ = pDataDescriptionNode;
 }
 
 CXFA_Node* CXFA_Node::GetModelNode() {
   switch (GetPacketType()) {
     case XFA_PacketType::Xdp:
-      return m_pDocument->GetRoot();
+      return document_->GetRoot();
     case XFA_PacketType::Config:
-      return ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Config));
+      return ToNode(document_->GetXFAObject(XFA_HASHCODE_Config));
     case XFA_PacketType::Template:
-      return ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Template));
+      return ToNode(document_->GetXFAObject(XFA_HASHCODE_Template));
     case XFA_PacketType::Form:
-      return ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Form));
+      return ToNode(document_->GetXFAObject(XFA_HASHCODE_Form));
     case XFA_PacketType::Datasets:
-      return ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Datasets));
+      return ToNode(document_->GetXFAObject(XFA_HASHCODE_Datasets));
     case XFA_PacketType::LocaleSet:
-      return ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_LocaleSet));
+      return ToNode(document_->GetXFAObject(XFA_HASHCODE_LocaleSet));
     case XFA_PacketType::ConnectionSet:
-      return ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_ConnectionSet));
+      return ToNode(document_->GetXFAObject(XFA_HASHCODE_ConnectionSet));
     case XFA_PacketType::SourceSet:
-      return ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_SourceSet));
+      return ToNode(document_->GetXFAObject(XFA_HASHCODE_SourceSet));
     case XFA_PacketType::Xdc:
-      return ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Xdc));
+      return ToNode(document_->GetXFAObject(XFA_HASHCODE_Xdc));
     default:
       return this;
   }
@@ -1618,7 +1621,7 @@ void CXFA_Node::InsertChildAndNotify(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
   pNode->ClearFlag(XFA_NodeFlag::kHasRemovedChildren);
   InsertBefore(pNode, pBeforeNode);
 
-  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
+  CXFA_FFNotify* pNotify = document_->GetNotify();
   if (pNotify)
     pNotify->OnChildAdded(this);
 
@@ -1773,7 +1776,7 @@ size_t CXFA_Node::GetIndexByClassName() {
 
 CXFA_Node* CXFA_Node::GetInstanceMgrOfSubform() {
   CXFA_Node* pInstanceMgr = nullptr;
-  if (m_ePacket == XFA_PacketType::Form) {
+  if (packet_ == XFA_PacketType::Form) {
     CXFA_Node* pParentNode = GetParent();
     if (!pParentNode || pParentNode->GetElementType() == XFA_Element::Area)
       return pInstanceMgr;
@@ -1814,7 +1817,7 @@ bool CXFA_Node::HasFlag(XFA_NodeFlag dwFlag) const {
 
 void CXFA_Node::SetInitializedFlagAndNotify() {
   if (!IsInitialized()) {
-    CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
+    CXFA_FFNotify* pNotify = document_->GetNotify();
     if (pNotify)
       pNotify->OnNodeReady(this);
   }
@@ -1838,7 +1841,7 @@ void CXFA_Node::OnRemoved(bool bNotify) const {
   if (!bNotify)
     return;
 
-  CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
+  CXFA_FFNotify* pNotify = document_->GetNotify();
   if (pNotify)
     pNotify->OnChildRemoved();
 }
@@ -2361,7 +2364,7 @@ std::optional<XFA_AttributeValue> CXFA_Node::GetIntactFromKeep(
 
   if (intact.value() != XFA_AttributeValue::None ||
       eLayoutType != XFA_AttributeValue::Row ||
-      m_pDocument->GetCurVersionMode() >= XFA_VERSION_208) {
+      document_->GetCurVersionMode() >= XFA_VERSION_208) {
     return intact;
   }
 
@@ -2430,7 +2433,7 @@ XFA_EventError CXFA_Node::ProcessEvent(CXFA_FFDocView* pDocView,
     return XFA_EventError::kNotExist;
 
   std::vector<CXFA_Event*> eventArray =
-      GetEventByActivity(iActivity, pEventParam->m_bIsFormReady);
+      GetEventByActivity(iActivity, pEventParam->is_form_ready_);
   bool first = true;
   XFA_EventError iRet = XFA_EventError::kNotExist;
   for (CXFA_Event* event : eventArray) {
@@ -2491,14 +2494,14 @@ XFA_EventError CXFA_Node::ProcessCalculate(CXFA_FFDocView* pDocView) {
     return XFA_EventError::kDisabled;
 
   CXFA_EventParam EventParam(XFA_EVENT_Calculate);
-  EventParam.m_bTargeted = false;
+  EventParam.targeted_ = false;
   XFA_EventError iRet =
       ExecuteScript(pDocView, calc->GetScriptIfExists(), &EventParam);
   if (iRet != XFA_EventError::kSuccess)
     return iRet;
 
-  if (GetRawValue() != EventParam.m_wsResult) {
-    SetValue(XFA_ValuePicture::kRaw, EventParam.m_wsResult);
+  if (GetRawValue() != EventParam.result_) {
+    SetValue(XFA_ValuePicture::kRaw, EventParam.result_);
     pDocView->UpdateUIDisplay(this, nullptr);
   }
   return XFA_EventError::kSuccess;
@@ -2603,8 +2606,9 @@ XFA_EventError CXFA_Node::ProcessNullTestValidate(CXFA_FFDocView* pDocView,
                                                   bool bVersionFlag) {
   if (!GetValue(XFA_ValuePicture::kRaw).IsEmpty())
     return XFA_EventError::kSuccess;
-  if (m_bIsNull && m_bPreNull)
+  if (is_null_ && pre_null_) {
     return XFA_EventError::kSuccess;
+  }
 
   XFA_AttributeValue eNullTest = validate->GetNullTest();
   WideString wsNullMsg = validate->GetNullMessageText();
@@ -2769,12 +2773,12 @@ CXFA_Node::BoolScriptResult CXFA_Node::ExecuteBoolScript(
   CXFA_FFDoc* pDoc = pDocView->GetDoc();
   CFXJSE_Engine* pContext = pDoc->GetXFADoc()->GetScriptContext();
   CFXJSE_Engine::EventParamScope paramScope(
-      pContext, pEventParam->m_bTargeted ? this : nullptr, pEventParam);
+      pContext, pEventParam->targeted_ ? this : nullptr, pEventParam);
   pContext->SetRunAtType(script->GetRunAt());
 
   std::vector<cppgc::Persistent<CXFA_Node>> refNodes;
-  if (pEventParam->m_eType == XFA_EVENT_InitCalculate ||
-      pEventParam->m_eType == XFA_EVENT_Calculate) {
+  if (pEventParam->type_ == XFA_EVENT_InitCalculate ||
+      pEventParam->type_ == XFA_EVENT_Calculate) {
     pContext->SetNodesOfRunScript(&refNodes);
   }
 
@@ -2789,11 +2793,11 @@ CXFA_Node::BoolScriptResult CXFA_Node::ExecuteBoolScript(
   XFA_EventError iRet = XFA_EventError::kError;
   if (exec_result.status) {
     iRet = XFA_EventError::kSuccess;
-    if (pEventParam->m_eType == XFA_EVENT_Calculate ||
-        pEventParam->m_eType == XFA_EVENT_InitCalculate) {
+    if (pEventParam->type_ == XFA_EVENT_Calculate ||
+        pEventParam->type_ == XFA_EVENT_InitCalculate) {
       if (!exec_result.value->IsUndefined(pContext->GetIsolate())) {
         if (!exec_result.value->IsNull(pContext->GetIsolate())) {
-          pEventParam->m_wsResult =
+          pEventParam->result_ =
               exec_result.value->ToWideString(pContext->GetIsolate());
         }
 
@@ -2801,10 +2805,10 @@ CXFA_Node::BoolScriptResult CXFA_Node::ExecuteBoolScript(
       } else {
         iRet = XFA_EventError::kError;
       }
-      if (pEventParam->m_eType == XFA_EVENT_InitCalculate) {
+      if (pEventParam->type_ == XFA_EVENT_InitCalculate) {
         if ((iRet == XFA_EventError::kSuccess) &&
-            (GetRawValue() != pEventParam->m_wsResult)) {
-          SetValue(XFA_ValuePicture::kRaw, pEventParam->m_wsResult);
+            (GetRawValue() != pEventParam->result_)) {
+          SetValue(XFA_ValuePicture::kRaw, pEventParam->result_);
           pDocView->AddValidateNode(this);
         }
       }
@@ -3165,7 +3169,7 @@ void CXFA_Node::CalcCaptionSize(CXFA_FFDoc* doc, CFX_SizeF* pszCap) {
   const bool bVert = iCapPlacement == XFA_AttributeValue::Top ||
                      iCapPlacement == XFA_AttributeValue::Bottom;
   CXFA_TextLayout* pCapTextLayout =
-      m_pLayoutData->AsFieldLayoutData()->m_pCapTextLayout;
+      layout_data_->AsFieldLayoutData()->cap_text_layout_;
   if (pCapTextLayout) {
     if (!bVert && GetFFWidgetType() != XFA_FFWidgetType::kButton)
       pszCap->width = fCapReserve;
@@ -3291,10 +3295,10 @@ void CXFA_Node::CalculateTextContentSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
   if (wsText.Back() == L'\n')
     wsText += L'\n';
 
-  CXFA_FieldLayoutData* layoutData = m_pLayoutData->AsFieldLayoutData();
-  if (!layoutData->m_pTextOut) {
-    layoutData->m_pTextOut = std::make_unique<CFDE_TextOut>();
-    CFDE_TextOut* pTextOut = layoutData->m_pTextOut.get();
+  CXFA_FieldLayoutData* layoutData = layout_data_->AsFieldLayoutData();
+  if (!layoutData->text_out_) {
+    layoutData->text_out_ = std::make_unique<CFDE_TextOut>();
+    CFDE_TextOut* pTextOut = layoutData->text_out_.get();
     pTextOut->SetFont(GetFGASFont(doc));
     pTextOut->SetFontSize(fFontSize);
     pTextOut->SetLineBreakTolerance(fFontSize * 0.2f);
@@ -3307,7 +3311,7 @@ void CXFA_Node::CalculateTextContentSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
 
     pTextOut->SetStyles(dwStyles);
   }
-  layoutData->m_pTextOut->CalcLogicSize(wsText.AsStringView(), pSize);
+  layoutData->text_out_->CalcLogicSize(wsText.AsStringView(), pSize);
 }
 
 void CXFA_Node::CalculateTextEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
@@ -3430,22 +3434,22 @@ void CXFA_Node::CalculateImageEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
 
 bool CXFA_Node::LoadLayoutImage(CXFA_FFDoc* doc) {
   InitLayoutData(doc);
-  return m_pLayoutData->AsImageLayoutData()->LoadImageData(doc, this);
+  return layout_data_->AsImageLayoutData()->LoadImageData(doc, this);
 }
 
 bool CXFA_Node::LoadEditImage(CXFA_FFDoc* doc) {
   InitLayoutData(doc);
-  return m_pLayoutData->AsFieldLayoutData()->AsImageEditData()->LoadImageData(
+  return layout_data_->AsFieldLayoutData()->AsImageEditData()->LoadImageData(
       doc, this);
 }
 
 CFX_Size CXFA_Node::GetLayoutImageDpi() const {
-  return m_pLayoutData->AsImageLayoutData()->GetDpi();
+  return layout_data_->AsImageLayoutData()->GetDpi();
 }
 
 CFX_Size CXFA_Node::GetEditImageDpi() const {
   CXFA_ImageEditData* pData =
-      m_pLayoutData->AsFieldLayoutData()->AsImageEditData();
+      layout_data_->AsFieldLayoutData()->AsImageEditData();
   return pData->GetDpi();
 }
 
@@ -3501,14 +3505,14 @@ void CXFA_Node::StartWidgetLayout(CXFA_FFDoc* doc,
   InitLayoutData(doc);
 
   if (GetFFWidgetType() == XFA_FFWidgetType::kText) {
-    m_pLayoutData->SetWidgetHeight(TryHeight().value_or(-1));
+    layout_data_->SetWidgetHeight(TryHeight().value_or(-1));
     StartTextLayout(doc, pCalcWidth, pCalcHeight);
     return;
   }
   if (*pCalcWidth > 0 && *pCalcHeight > 0)
     return;
 
-  m_pLayoutData->SetWidgetHeight(-1.0f);
+  layout_data_->SetWidgetHeight(-1.0f);
   float fWidth = 0;
   if (*pCalcWidth > 0 && *pCalcHeight < 0) {
     std::optional<float> height = TryHeight();
@@ -3519,7 +3523,7 @@ void CXFA_Node::StartWidgetLayout(CXFA_FFDoc* doc,
       *pCalcWidth = size.width;
       *pCalcHeight = size.height;
     }
-    m_pLayoutData->SetWidgetHeight(*pCalcHeight);
+    layout_data_->SetWidgetHeight(*pCalcHeight);
     return;
   }
   if (*pCalcWidth < 0 && *pCalcHeight < 0) {
@@ -3539,11 +3543,11 @@ void CXFA_Node::StartWidgetLayout(CXFA_FFDoc* doc,
       *pCalcWidth = fWidth;
     }
   }
-  m_pLayoutData->SetWidgetHeight(*pCalcHeight);
+  layout_data_->SetWidgetHeight(*pCalcHeight);
 }
 
 CFX_SizeF CXFA_Node::CalculateAccWidthAndHeight(CXFA_FFDoc* doc, float fWidth) {
-  CFX_SizeF sz(fWidth, m_pLayoutData->GetWidgetHeight());
+  CFX_SizeF sz(fWidth, layout_data_->GetWidgetHeight());
   switch (GetFFWidgetType()) {
     case XFA_FFWidgetType::kBarcode:
     case XFA_FFWidgetType::kChoiceList:
@@ -3579,7 +3583,7 @@ CFX_SizeF CXFA_Node::CalculateAccWidthAndHeight(CXFA_FFDoc* doc, float fWidth) {
     case XFA_FFWidgetType::kNone:
       break;
   }
-  m_pLayoutData->SetWidgetHeight(sz.height);
+  layout_data_->SetWidgetHeight(sz.height);
   return sz;
 }
 
@@ -3622,10 +3626,9 @@ std::optional<float> CXFA_Node::FindSplitPos(CXFA_FFDocView* pDocView,
       fCalcHeight = std::max(fCalcHeight, 0.0f);
     }
     CXFA_TextLayout* pTextLayout =
-        m_pLayoutData->AsTextLayoutData()->GetTextLayout();
+        layout_data_->AsTextLayoutData()->GetTextLayout();
     fCalcHeight = pTextLayout->DoSplitLayout(
-        szBlockIndex, fCalcHeight,
-        m_pLayoutData->GetWidgetHeight() - fTopInset);
+        szBlockIndex, fCalcHeight, layout_data_->GetWidgetHeight() - fTopInset);
     if (fCalcHeight != 0) {
       if (szBlockIndex == 0)
         fCalcHeight += fTopInset;
@@ -3648,25 +3651,25 @@ std::optional<float> CXFA_Node::FindSplitPos(CXFA_FFDocView* pDocView,
       return 0.0f;
     }
     if (iCapPlacement == XFA_AttributeValue::Bottom &&
-        m_pLayoutData->GetWidgetHeight() - fCapReserve - fBottomInset) {
+        layout_data_->GetWidgetHeight() - fCapReserve - fBottomInset) {
       return 0.0f;
     }
     if (iCapPlacement != XFA_AttributeValue::Top)
       fCapReserve = 0;
   }
-  CXFA_FieldLayoutData* pFieldData = m_pLayoutData->AsFieldLayoutData();
+  CXFA_FieldLayoutData* pFieldData = layout_data_->AsFieldLayoutData();
   int32_t iLinesCount = 0;
-  float fHeight = m_pLayoutData->GetWidgetHeight();
+  float fHeight = layout_data_->GetWidgetHeight();
   if (GetValue(XFA_ValuePicture::kDisplay).IsEmpty()) {
     iLinesCount = 1;
   } else {
-    if (!pFieldData->m_pTextOut) {
+    if (!pFieldData->text_out_) {
       CFX_SizeF size = CalculateAccWidthAndHeight(pDocView->GetDoc(),
                                                   TryWidth().value_or(0));
       fHeight = size.height;
     }
 
-    iLinesCount = pFieldData->m_pTextOut->GetTotalLines();
+    iLinesCount = pFieldData->text_out_->GetTotalLines();
   }
   std::vector<float>* pFieldArray = &pFieldData->m_FieldSplitArray;
   size_t szFieldSplitCount = pFieldArray->size();
@@ -3809,35 +3812,36 @@ std::optional<float> CXFA_Node::FindSplitPos(CXFA_FFDocView* pDocView,
 }
 
 void CXFA_Node::InitLayoutData(CXFA_FFDoc* doc) {
-  if (m_pLayoutData)
+  if (layout_data_) {
     return;
+  }
 
   switch (GetFFWidgetType()) {
     case XFA_FFWidgetType::kText:
-      m_pLayoutData = cppgc::MakeGarbageCollected<CXFA_TextLayoutData>(
+      layout_data_ = cppgc::MakeGarbageCollected<CXFA_TextLayoutData>(
           doc->GetHeap()->GetAllocationHandle());
       return;
     case XFA_FFWidgetType::kTextEdit:
-      m_pLayoutData = cppgc::MakeGarbageCollected<CXFA_TextEditData>(
+      layout_data_ = cppgc::MakeGarbageCollected<CXFA_TextEditData>(
           doc->GetHeap()->GetAllocationHandle());
       return;
     case XFA_FFWidgetType::kImage:
-      m_pLayoutData = cppgc::MakeGarbageCollected<CXFA_ImageLayoutData>(
+      layout_data_ = cppgc::MakeGarbageCollected<CXFA_ImageLayoutData>(
           doc->GetHeap()->GetAllocationHandle());
       return;
     case XFA_FFWidgetType::kImageEdit:
-      m_pLayoutData = cppgc::MakeGarbageCollected<CXFA_ImageEditData>(
+      layout_data_ = cppgc::MakeGarbageCollected<CXFA_ImageEditData>(
           doc->GetHeap()->GetAllocationHandle());
       return;
     default:
       break;
   }
   if (GetElementType() == XFA_Element::Field) {
-    m_pLayoutData = cppgc::MakeGarbageCollected<CXFA_FieldLayoutData>(
+    layout_data_ = cppgc::MakeGarbageCollected<CXFA_FieldLayoutData>(
         doc->GetHeap()->GetAllocationHandle());
     return;
   }
-  m_pLayoutData = cppgc::MakeGarbageCollected<CXFA_WidgetLayoutData>(
+  layout_data_ = cppgc::MakeGarbageCollected<CXFA_WidgetLayoutData>(
       doc->GetHeap()->GetAllocationHandle());
 }
 
@@ -3846,7 +3850,7 @@ void CXFA_Node::StartTextLayout(CXFA_FFDoc* doc,
                                 float* pCalcHeight) {
   InitLayoutData(doc);
 
-  CXFA_TextLayoutData* pTextLayoutData = m_pLayoutData->AsTextLayoutData();
+  CXFA_TextLayoutData* pTextLayoutData = layout_data_->AsTextLayoutData();
   pTextLayoutData->LoadText(doc, this);
 
   CXFA_TextLayout* pTextLayout = pTextLayoutData->GetTextLayout();
@@ -3874,52 +3878,51 @@ void CXFA_Node::StartTextLayout(CXFA_FFDoc* doc,
       *pCalcWidth = fMaxWidth;
     }
   }
-  if (m_pLayoutData->GetWidgetHeight() < 0) {
-    m_pLayoutData->SetWidgetHeight(
+  if (layout_data_->GetWidgetHeight() < 0) {
+    layout_data_->SetWidgetHeight(
         CalculateWidgetAutoHeight(pTextLayout->GetLayoutHeight()));
   }
-  fTextHeight = m_pLayoutData->GetWidgetHeight();
+  fTextHeight = layout_data_->GetWidgetHeight();
   fTextHeight = GetHeightWithoutMargin(fTextHeight);
   pTextLayout->DoLayout(fTextHeight);
-  *pCalcHeight = m_pLayoutData->GetWidgetHeight();
+  *pCalcHeight = layout_data_->GetWidgetHeight();
 }
 
 bool CXFA_Node::LoadCaption(CXFA_FFDoc* doc) {
   InitLayoutData(doc);
-  return m_pLayoutData->AsFieldLayoutData()->LoadCaption(doc, this);
+  return layout_data_->AsFieldLayoutData()->LoadCaption(doc, this);
 }
 
 CXFA_TextLayout* CXFA_Node::GetCaptionTextLayout() {
-  return m_pLayoutData ? m_pLayoutData->AsFieldLayoutData()->m_pCapTextLayout
-                       : nullptr;
+  return layout_data_ ? layout_data_->AsFieldLayoutData()->cap_text_layout_
+                      : nullptr;
 }
 
 CXFA_TextLayout* CXFA_Node::GetTextLayout() {
-  return m_pLayoutData ? m_pLayoutData->AsTextLayoutData()->GetTextLayout()
-                       : nullptr;
+  return layout_data_ ? layout_data_->AsTextLayoutData()->GetTextLayout()
+                      : nullptr;
 }
 
 RetainPtr<CFX_DIBitmap> CXFA_Node::GetLayoutImage() {
-  return m_pLayoutData ? m_pLayoutData->AsImageLayoutData()->GetBitmap()
-                       : nullptr;
+  return layout_data_ ? layout_data_->AsImageLayoutData()->GetBitmap()
+                      : nullptr;
 }
 
 RetainPtr<CFX_DIBitmap> CXFA_Node::GetEditImage() {
-  return m_pLayoutData ? m_pLayoutData->AsFieldLayoutData()
-                             ->AsImageEditData()
-                             ->GetBitmap()
-                       : nullptr;
+  return layout_data_
+             ? layout_data_->AsFieldLayoutData()->AsImageEditData()->GetBitmap()
+             : nullptr;
 }
 
 void CXFA_Node::SetLayoutImage(RetainPtr<CFX_DIBitmap> newImage) {
-  CXFA_ImageLayoutData* pData = m_pLayoutData->AsImageLayoutData();
+  CXFA_ImageLayoutData* pData = layout_data_->AsImageLayoutData();
   if (pData->GetBitmap() != newImage)
     pData->SetBitmap(std::move(newImage));
 }
 
 void CXFA_Node::SetEditImage(RetainPtr<CFX_DIBitmap> newImage) {
   CXFA_ImageEditData* pData =
-      m_pLayoutData->AsFieldLayoutData()->AsImageEditData();
+      layout_data_->AsFieldLayoutData()->AsImageEditData();
   if (pData->GetBitmap() != newImage)
     pData->SetBitmap(std::move(newImage));
 }

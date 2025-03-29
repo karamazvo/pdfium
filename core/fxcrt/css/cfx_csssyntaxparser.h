@@ -46,8 +46,8 @@ class CFX_CSSSyntaxParser {
   void SaveMode(Mode eMode);
   bool RestoreMode();
 
-  bool m_bHasError = false;
-  Mode m_eMode = Mode::kRuleSet;
+  bool has_error_ = false;
+  Mode mode_ = Mode::kRuleSet;
   CFX_CSSOutputTextBuf m_Output;
   CFX_CSSInputTextBuf m_Input;
   std::stack<Mode> m_ModeStack;

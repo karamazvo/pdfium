@@ -67,7 +67,7 @@ class CFX_ImageTransformer {
                  FXDIB_Format format,
                  int src_bytes_per_pixel);
 
-  RetainPtr<const CFX_DIBBase> const m_pSrc;
+  RetainPtr<const CFX_DIBBase> const src_;
   const CFX_Matrix m_matrix;
   FX_RECT m_StretchClip;
   FX_RECT m_result;

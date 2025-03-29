@@ -26,8 +26,8 @@ class CXFA_ContentLayoutItem final : public CXFA_LayoutItem {
 
   CXFA_ContentLayoutItem* GetFirst();
   CXFA_ContentLayoutItem* GetLast();
-  CXFA_ContentLayoutItem* GetPrev() const { return m_pPrev; }
-  CXFA_ContentLayoutItem* GetNext() const { return m_pNext; }
+  CXFA_ContentLayoutItem* GetPrev() const { return prev_; }
+  CXFA_ContentLayoutItem* GetNext() const { return next_; }
   void InsertAfter(CXFA_ContentLayoutItem* pNext);
 
   CFX_RectF GetRelativeRect() const;
@@ -50,8 +50,8 @@ class CXFA_ContentLayoutItem final : public CXFA_LayoutItem {
   void RemoveSelf();
 
   mutable Mask<XFA_WidgetStatus> m_dwStatus;
-  cppgc::Member<CXFA_ContentLayoutItem> m_pPrev;
-  cppgc::Member<CXFA_ContentLayoutItem> m_pNext;
+  cppgc::Member<CXFA_ContentLayoutItem> prev_;
+  cppgc::Member<CXFA_ContentLayoutItem> next_;
   cppgc::Member<CXFA_FFWidget> const m_pFFWidget;
 };
 

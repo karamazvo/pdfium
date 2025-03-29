@@ -85,9 +85,9 @@ class CFGAS_StringFormatter {
                                  WideString* wsTimePattern) const;
 
   // keep pattern string alive.
-  const WideString m_wsPattern;
+  const WideString pattern_;
 
-  // span into `m_wsPattern`.
+  // span into `pattern_`.
   const pdfium::raw_span<const wchar_t> m_spPattern;
 };
 

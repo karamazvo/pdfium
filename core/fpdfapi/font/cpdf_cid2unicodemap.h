@@ -20,7 +20,7 @@ class CPDF_CID2UnicodeMap {
 
  private:
   const CIDSet m_Charset;
-  const pdfium::raw_span<const uint16_t> m_pEmbeddedMap;
+  const pdfium::raw_span<const uint16_t> embedded_map_;
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_CID2UNICODEMAP_H_

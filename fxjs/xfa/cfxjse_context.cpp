@@ -204,7 +204,7 @@ std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
 }
 
 CFXJSE_Context::CFXJSE_Context(v8::Isolate* pIsolate, CXFA_ThisProxy* pProxy)
-    : m_pIsolate(pIsolate), m_pProxy(pProxy) {}
+    : isolate_(pIsolate), proxy_(pProxy) {}
 
 CFXJSE_Context::~CFXJSE_Context() = default;
 

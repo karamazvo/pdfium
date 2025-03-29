@@ -39,7 +39,7 @@ class CPDF_ImageObject final : public CPDF_PageObject {
   void MaybePurgeCache();
 
   CFX_Matrix m_Matrix;
-  RetainPtr<CPDF_Image> m_pImage;
+  RetainPtr<CPDF_Image> image_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_IMAGEOBJECT_H_

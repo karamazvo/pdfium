@@ -54,7 +54,7 @@ class CPDF_ToUnicodeMap {
   void InsertIntoMultimap(uint32_t code, uint32_t destcode);
 
   std::map<uint32_t, std::set<uint32_t>> m_Multimap;
-  UnownedPtr<const CPDF_CID2UnicodeMap> m_pBaseMap;
+  UnownedPtr<const CPDF_CID2UnicodeMap> base_map_;
   std::vector<WideString> m_MultiCharVec;
 };
 

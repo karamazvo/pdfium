@@ -44,7 +44,7 @@ class CFX_RenderDevice {
     ~StateRestorer();
 
    private:
-    UnownedPtr<CFX_RenderDevice> m_pDevice;
+    UnownedPtr<CFX_RenderDevice> device_;
   };
 
   virtual ~CFX_RenderDevice();
@@ -211,7 +211,7 @@ class CFX_RenderDevice {
 
   void SetDeviceDriver(std::unique_ptr<RenderDeviceDriverIface> pDriver);
   RenderDeviceDriverIface* GetDeviceDriver() const {
-    return m_pDeviceDriver.get();
+    return device_driver_.get();
   }
 
  private:
@@ -234,14 +234,14 @@ class CFX_RenderDevice {
                         uint32_t fill_color,
                         uint8_t fill_alpha);
 
-  RetainPtr<CFX_DIBitmap> m_pBitmap;
+  RetainPtr<CFX_DIBitmap> bitmap_;
   int m_Width = 0;
   int m_Height = 0;
   int m_bpp = 0;
   int m_RenderCaps = 0;
   DeviceType m_DeviceType = DeviceType::kDisplay;
   FX_RECT m_ClipBox;
-  std::unique_ptr<RenderDeviceDriverIface> m_pDeviceDriver;
+  std::unique_ptr<RenderDeviceDriverIface> device_driver_;
 };
 
 #endif  // CORE_FXGE_CFX_RENDERDEVICE_H_

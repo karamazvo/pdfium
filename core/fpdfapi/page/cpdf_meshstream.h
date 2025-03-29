@@ -62,27 +62,27 @@ class CPDF_MeshStream {
   std::vector<CPDF_MeshVertex> ReadVertexRow(const CFX_Matrix& pObject2Bitmap,
                                              int count);
 
-  uint32_t ComponentBits() const { return m_nComponentBits; }
-  uint32_t Components() const { return m_nComponents; }
+  uint32_t ComponentBits() const { return component_bits_; }
+  uint32_t Components() const { return components_; }
 
  private:
   static constexpr uint32_t kMaxComponents = 8;
 
   const ShadingType m_type;
   const std::vector<std::unique_ptr<CPDF_Function>>& m_funcs;
-  RetainPtr<const CPDF_Stream> const m_pShadingStream;
+  RetainPtr<const CPDF_Stream> const shading_stream_;
   RetainPtr<CPDF_ColorSpace> const m_pCS;
-  uint32_t m_nCoordBits = 0;
-  uint32_t m_nComponentBits = 0;
-  uint32_t m_nFlagBits = 0;
-  uint32_t m_nComponents = 0;
+  uint32_t coord_bits_ = 0;
+  uint32_t component_bits_ = 0;
+  uint32_t flag_bits_ = 0;
+  uint32_t components_ = 0;
   uint32_t m_CoordMax = 0;
   uint32_t m_ComponentMax = 0;
   float m_xmin = 0.0f;
   float m_xmax = 0.0f;
   float m_ymin = 0.0f;
   float m_ymax = 0.0f;
-  RetainPtr<CPDF_StreamAcc> m_pStream;
+  RetainPtr<CPDF_StreamAcc> stream_;
   std::unique_ptr<CFX_BitStream> m_BitStream;
   std::array<float, kMaxComponents> m_ColorMin = {};
   std::array<float, kMaxComponents> m_ColorMax = {};

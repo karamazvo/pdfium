@@ -352,13 +352,13 @@ CGdiDeviceDriver::CGdiDeviceDriver(HDC hDC, DeviceType device_type)
     hBitmap = (HBITMAP)SelectObject(m_hDC, hBitmap);
     BITMAP bitmap;
     GetObject(hBitmap, sizeof(bitmap), &bitmap);
-    m_nBitsPerPixel = bitmap.bmBitsPixel;
+    bits_per_pixel_ = bitmap.bmBitsPixel;
     m_Width = bitmap.bmWidth;
     m_Height = abs(bitmap.bmHeight);
     hBitmap = (HBITMAP)SelectObject(m_hDC, hBitmap);
     DeleteObject(hBitmap);
   } else {
-    m_nBitsPerPixel = ::GetDeviceCaps(m_hDC, BITSPIXEL);
+    bits_per_pixel_ = ::GetDeviceCaps(m_hDC, BITSPIXEL);
     m_Width = ::GetDeviceCaps(m_hDC, HORZRES);
     m_Height = ::GetDeviceCaps(m_hDC, VERTRES);
   }
@@ -382,7 +382,7 @@ int CGdiDeviceDriver::GetDeviceCaps(int caps_id) const {
     case FXDC_PIXEL_HEIGHT:
       return m_Height;
     case FXDC_BITS_PIXEL:
-      return m_nBitsPerPixel;
+      return bits_per_pixel_;
     case FXDC_RENDER_CAPS:
       return m_RenderCaps;
     default:
@@ -510,7 +510,7 @@ bool CGdiDeviceDriver::GDI_StretchBitMask(RetainPtr<const CFX_DIBBase> source,
   bmi.bmiHeader.biHeight = -height;
   bmi.bmiHeader.biPlanes = 1;
   bmi.bmiHeader.biWidth = width;
-  if (m_nBitsPerPixel != 1) {
+  if (bits_per_pixel_ != 1) {
     SetStretchBltMode(m_hDC, HALFTONE);
   }
   bmi.bmiColors[0] = 0xffffff;

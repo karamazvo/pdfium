@@ -100,7 +100,7 @@ class CPDF_Dictionary final : public CPDF_Object {
   typename std::enable_if<CanInternStrings<T>::value, RetainPtr<T>>::type
   SetNewFor(const ByteString& key, Args&&... args) {
     return pdfium::WrapRetain(static_cast<T*>(SetForInternal(
-        key, pdfium::MakeRetain<T>(m_pPool, std::forward<Args>(args)...))));
+        key, pdfium::MakeRetain<T>(pool_, std::forward<Args>(args)...))));
   }
 
   // If `object` is null, then `key` is erased from the map. Otherwise, takes
@@ -123,7 +123,7 @@ class CPDF_Dictionary final : public CPDF_Object {
   // Invalidates iterators for the element with the key |oldkey|.
   void ReplaceKey(const ByteString& oldkey, const ByteString& newkey);
 
-  WeakPtr<ByteStringPool> GetByteStringPool() const { return m_pPool; }
+  WeakPtr<ByteStringPool> GetByteStringPool() const { return pool_; }
 
  private:
   friend class CPDF_DictionaryLocker;
@@ -150,7 +150,7 @@ class CPDF_Dictionary final : public CPDF_Object {
       std::set<const CPDF_Object*>* visited) const override;
 
   mutable uint32_t m_LockCount = 0;
-  WeakPtr<ByteStringPool> m_pPool;
+  WeakPtr<ByteStringPool> pool_;
   DictMap m_Map;
 };
 
@@ -165,16 +165,16 @@ class CPDF_DictionaryLocker {
   ~CPDF_DictionaryLocker();
 
   const_iterator begin() const {
-    CHECK(m_pDictionary->IsLocked());
-    return m_pDictionary->m_Map.begin();
+    CHECK(dictionary_->IsLocked());
+    return dictionary_->m_Map.begin();
   }
   const_iterator end() const {
-    CHECK(m_pDictionary->IsLocked());
-    return m_pDictionary->m_Map.end();
+    CHECK(dictionary_->IsLocked());
+    return dictionary_->m_Map.end();
   }
 
  private:
-  RetainPtr<const CPDF_Dictionary> const m_pDictionary;
+  RetainPtr<const CPDF_Dictionary> const dictionary_;
 };
 
 inline CPDF_Dictionary* ToDictionary(CPDF_Object* obj) {

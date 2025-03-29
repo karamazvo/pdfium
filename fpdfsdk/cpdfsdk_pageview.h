@@ -62,7 +62,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
 
   CPDF_Page* GetPDFPage() const;
   CPDF_Document* GetPDFDocument();
-  CPDFSDK_FormFillEnvironment* GetFormFillEnv() const { return m_pFormFillEnv; }
+  CPDFSDK_FormFillEnvironment* GetFormFillEnv() const { return form_fill_env_; }
 
   WideString GetFocusedFormText();
   WideString GetSelectedText();
@@ -97,11 +97,11 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
 
   int GetPageIndex() const;
 
-  void SetValid(bool bValid) { m_bValid = bValid; }
-  bool IsValid() const { return m_bValid; }
-  bool IsLocked() const { return m_bLocked; }
-  void SetBeingDestroyed() { m_bBeingDestroyed = true; }
-  bool IsBeingDestroyed() const { return m_bBeingDestroyed; }
+  void SetValid(bool bValid) { valid_ = bValid; }
+  bool IsValid() const { return valid_; }
+  bool IsLocked() const { return locked_; }
+  void SetBeingDestroyed() { being_destroyed_ = true; }
+  bool IsBeingDestroyed() const { return being_destroyed_; }
 
  private:
 #ifdef PDF_ENABLE_XFA
@@ -122,14 +122,14 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
 
   CFX_Matrix m_curMatrix;
   UnownedPtr<IPDF_Page> const m_page;
-  std::unique_ptr<CPDF_AnnotList> m_pAnnotList;
+  std::unique_ptr<CPDF_AnnotList> annot_list_;
   std::vector<std::unique_ptr<CPDFSDK_Annot>> m_SDKAnnotArray;
-  UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
-  ObservedPtr<CPDFSDK_Annot> m_pCaptureWidget;
-  bool m_bOnWidget = false;
-  bool m_bValid = false;
-  bool m_bLocked = false;
-  bool m_bBeingDestroyed = false;
+  UnownedPtr<CPDFSDK_FormFillEnvironment> const form_fill_env_;
+  ObservedPtr<CPDFSDK_Annot> capture_widget_;
+  bool on_widget_ = false;
+  bool valid_ = false;
+  bool locked_ = false;
+  bool being_destroyed_ = false;
 };
 
 #endif  // FPDFSDK_CPDFSDK_PAGEVIEW_H_

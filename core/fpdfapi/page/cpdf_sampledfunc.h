@@ -38,7 +38,7 @@ class CPDF_SampledFunc final : public CPDF_Function {
   const std::vector<SampleEncodeInfo>& GetEncodeInfo() const {
     return m_EncodeInfo;
   }
-  uint32_t GetBitsPerSample() const { return m_nBitsPerSample; }
+  uint32_t GetBitsPerSample() const { return bits_per_sample_; }
 
 #if defined(PDF_USE_SKIA)
   RetainPtr<CPDF_StreamAcc> GetSampleStream() const;
@@ -47,9 +47,9 @@ class CPDF_SampledFunc final : public CPDF_Function {
  private:
   std::vector<SampleEncodeInfo> m_EncodeInfo;
   std::vector<SampleDecodeInfo> m_DecodeInfo;
-  uint32_t m_nBitsPerSample = 0;
+  uint32_t bits_per_sample_ = 0;
   uint32_t m_SampleMax = 0;
-  RetainPtr<CPDF_StreamAcc> m_pSampleStream;
+  RetainPtr<CPDF_StreamAcc> sample_stream_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_SAMPLEDFUNC_H_

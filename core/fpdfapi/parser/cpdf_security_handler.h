@@ -36,9 +36,7 @@ class CPDF_SecurityHandler final : public Retainable {
   uint32_t GetPermissions(bool get_owner_perms) const;
   bool IsMetadataEncrypted() const;
 
-  CPDF_CryptoHandler* GetCryptoHandler() const {
-    return m_pCryptoHandler.get();
-  }
+  CPDF_CryptoHandler* GetCryptoHandler() const { return crypto_handler_.get(); }
 
   // Take |password| and encode it, if necessary, based on the password encoding
   // conversion.
@@ -73,7 +71,7 @@ class CPDF_SecurityHandler final : public Retainable {
 
   void InitCryptoHandler();
 
-  bool m_bOwnerUnlocked = false;
+  bool owner_unlocked_ = false;
   int m_Version = 0;
   int m_Revision = 0;
   uint32_t m_Permissions = 0;
@@ -81,8 +79,8 @@ class CPDF_SecurityHandler final : public Retainable {
   CPDF_CryptoHandler::Cipher m_Cipher = CPDF_CryptoHandler::Cipher::kNone;
   PasswordEncodingConversion m_PasswordEncodingConversion = kUnknown;
   ByteString m_FileId;
-  RetainPtr<const CPDF_Dictionary> m_pEncryptDict;
-  std::unique_ptr<CPDF_CryptoHandler> m_pCryptoHandler;
+  RetainPtr<const CPDF_Dictionary> encrypt_dict_;
+  std::unique_ptr<CPDF_CryptoHandler> crypto_handler_;
   std::array<uint8_t, 32> m_EncryptKey = {};
 };
 

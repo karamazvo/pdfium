@@ -53,7 +53,7 @@ class CJBig2_Segment {
   uint32_t m_dwDataOffset = 0;
   uint64_t m_Key = 0;
   JBig2_SegmentState m_State = JBIG2_SEGMENT_HEADER_UNPARSED;
-  JBig2_ResultType m_nResultType = JBIG2_VOID_POINTER;
+  JBig2_ResultType result_type_ = JBIG2_VOID_POINTER;
   std::unique_ptr<CJBig2_SymbolDict> m_SymbolDict;
   std::unique_ptr<CJBig2_PatternDict> m_PatternDict;
   std::unique_ptr<CJBig2_Image> m_Image;

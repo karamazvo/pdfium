@@ -2076,9 +2076,9 @@ TEST_F(FPDFViewEmbedderTest, Bug2087) {
   const FPDF_LIBRARY_CONFIG kAggConfig = {
       .version = 4,
       .m_pUserFontPaths = nullptr,
-      .m_pIsolate = nullptr,
+      .isolate_ = nullptr,
       .m_v8EmbedderSlot = 0,
-      .m_pPlatform = nullptr,
+      .platform_ = nullptr,
       .m_RendererType = FPDF_RENDERERTYPE_AGG,
   };
   FPDF_InitLibraryWithConfig(&kAggConfig);
@@ -2095,7 +2095,7 @@ TEST_F(FPDFViewEmbedderTest, Bug2087) {
   const FPDF_LIBRARY_CONFIG kSkiaConfig = {
       .version = 2,
       .m_pUserFontPaths = nullptr,
-      .m_pIsolate = nullptr,
+      .isolate_ = nullptr,
       .m_v8EmbedderSlot = 0,
   };
   FPDF_InitLibraryWithConfig(&kSkiaConfig);

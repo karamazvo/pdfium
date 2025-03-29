@@ -69,7 +69,7 @@ class CTextOnlyPrinterDriver final : public RenderDeviceDriverIface {
   HDC m_hDC;
   const int m_Width;
   const int m_Height;
-  int m_nBitsPerPixel;
+  int bits_per_pixel_;
   const int m_HorzSize;
   const int m_VertSize;
   float m_OriginY;

@@ -155,26 +155,26 @@ bool CBC_OnedEAN8Writer::ShowChars(WideStringView contents,
   int32_t strWidth = static_cast<int32_t>(kWidth * m_outputHScale);
 
   pdfium::span<TextCharPos> charpos_span = pdfium::make_span(charpos);
-  CalcTextInfo(tempStr, charpos, m_pFont, (float)strWidth, iFontSize, blank);
+  CalcTextInfo(tempStr, charpos, font_, (float)strWidth, iFontSize, blank);
   {
     CFX_Matrix affine_matrix1(1.0, 0.0, 0.0, -1.0,
                               kLeftPosition * m_outputHScale,
                               (float)(m_Height - iTextHeight + iFontSize));
     affine_matrix1.Concat(matrix);
-    device->DrawNormalText(charpos_span.first(iLen), m_pFont,
+    device->DrawNormalText(charpos_span.first(iLen), font_,
                            static_cast<float>(iFontSize), affine_matrix1,
                            m_fontColor, GetTextRenderOptions());
   }
   tempStr = str.Substr(4, 4);
   iLen = tempStr.GetLength();
-  CalcTextInfo(tempStr, charpos_span.subspan(4), m_pFont, (float)strWidth,
+  CalcTextInfo(tempStr, charpos_span.subspan(4), font_, (float)strWidth,
                iFontSize, blank);
   {
     CFX_Matrix affine_matrix1(1.0, 0.0, 0.0, -1.0,
                               (kLeftPosition + 33) * m_outputHScale,
                               (float)(m_Height - iTextHeight + iFontSize));
     affine_matrix1.Concat(matrix);
-    device->DrawNormalText(charpos_span.subspan(4, iLen), m_pFont,
+    device->DrawNormalText(charpos_span.subspan(4, iLen), font_,
                            static_cast<float>(iFontSize), affine_matrix1,
                            m_fontColor, GetTextRenderOptions());
   }

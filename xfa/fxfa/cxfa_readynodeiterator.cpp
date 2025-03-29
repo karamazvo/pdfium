@@ -14,12 +14,13 @@ CXFA_ReadyNodeIterator::CXFA_ReadyNodeIterator(CXFA_Node* pTravelRoot)
 CXFA_ReadyNodeIterator::~CXFA_ReadyNodeIterator() = default;
 
 CXFA_Node* CXFA_ReadyNodeIterator::MoveToNext() {
-  CXFA_Node* pItem = m_pCurNode ? m_ContentIterator.MoveToNext()
-                                : m_ContentIterator.GetCurrent();
+  CXFA_Node* pItem = cur_node_ ? m_ContentIterator.MoveToNext()
+                               : m_ContentIterator.GetCurrent();
   while (pItem) {
-    m_pCurNode = pItem->IsWidgetReady() ? pItem : nullptr;
-    if (m_pCurNode)
-      return m_pCurNode;
+    cur_node_ = pItem->IsWidgetReady() ? pItem : nullptr;
+    if (cur_node_) {
+      return cur_node_;
+    }
     pItem = m_ContentIterator.MoveToNext();
   }
   return nullptr;
@@ -27,5 +28,5 @@ CXFA_Node* CXFA_ReadyNodeIterator::MoveToNext() {
 
 void CXFA_ReadyNodeIterator::SkipTree() {
   m_ContentIterator.SkipChildrenAndMoveToNext();
-  m_pCurNode = nullptr;
+  cur_node_ = nullptr;
 }

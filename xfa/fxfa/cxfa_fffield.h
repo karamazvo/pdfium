@@ -110,7 +110,7 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   CFX_RectF m_CaptionRect;
 
  private:
-  cppgc::Member<CFWL_Widget> m_pNormalWidget;
+  cppgc::Member<CFWL_Widget> normal_widget_;
 };
 
 inline CXFA_FFDropDown* ToDropDown(CXFA_FFField* field) {

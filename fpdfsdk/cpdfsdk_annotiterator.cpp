@@ -37,9 +37,9 @@ bool CompareByTopDescending(const CPDFSDK_Annot* p1, const CPDFSDK_Annot* p2) {
 CPDFSDK_AnnotIterator::CPDFSDK_AnnotIterator(
     CPDFSDK_PageView* pPageView,
     const std::vector<CPDF_Annot::Subtype>& subtypes_to_iterate)
-    : m_pPageView(pPageView),
+    : page_view_(pPageView),
       m_subtypes(subtypes_to_iterate),
-      m_eTabOrder(GetTabOrder(pPageView)) {
+      tab_order_(GetTabOrder(pPageView)) {
   GenerateResults();
 }
 
@@ -72,7 +72,7 @@ CPDFSDK_Annot* CPDFSDK_AnnotIterator::GetPrevAnnot(CPDFSDK_Annot* pAnnot) {
 
 void CPDFSDK_AnnotIterator::CollectAnnots(
     std::vector<UnownedPtr<CPDFSDK_Annot>>* pArray) {
-  for (auto* pAnnot : m_pPageView->GetAnnotList()) {
+  for (auto* pAnnot : page_view_->GetAnnotList()) {
     if (pdfium::Contains(m_subtypes, pAnnot->GetAnnotSubtype())) {
       CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
       if (!pWidget || !pWidget->IsSignatureWidget())
@@ -116,7 +116,7 @@ CPDFSDK_AnnotIterator::TabOrder CPDFSDK_AnnotIterator::GetTabOrder(
 }
 
 void CPDFSDK_AnnotIterator::GenerateResults() {
-  switch (m_eTabOrder) {
+  switch (tab_order_) {
     case TabOrder::kStructure:
       CollectAnnots(&m_Annots);
       break;

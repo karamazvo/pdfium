@@ -40,7 +40,7 @@ void CPDF_PathObject::CalcBoundingBox() {
     return;
   CFX_FloatRect rect;
   float width = graph_state().GetLineWidth();
-  if (m_bStroke && width != 0) {
+  if (stroke_ && width != 0) {
     rect = m_Path.GetBoundingBoxForStrokePath(width,
                                               graph_state().GetMiterLimit());
   } else {
@@ -48,8 +48,9 @@ void CPDF_PathObject::CalcBoundingBox() {
   }
   rect = m_Matrix.TransformRect(rect);
 
-  if (width == 0 && m_bStroke)
+  if (width == 0 && stroke_) {
     rect.Inflate(0.5f, 0.5f);
+  }
   SetRect(rect);
 }
 

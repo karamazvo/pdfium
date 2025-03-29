@@ -23,7 +23,7 @@ class CPDF_Encryptor {
   DataVector<uint8_t> Encrypt(pdfium::span<const uint8_t> src_data) const;
 
  private:
-  UnownedPtr<const CPDF_CryptoHandler> const m_pHandler;
+  UnownedPtr<const CPDF_CryptoHandler> const handler_;
   const int m_ObjNum;
 };
 

@@ -91,11 +91,11 @@ void CFWL_MonthCalendarTP::DrawText(const CFWL_ThemeText& pParams) {
       !(pParams.m_dwStates & CFWL_PartState::kFlagged) &&
       (pParams.m_dwStates & Mask<CFWL_PartState>{CFWL_PartState::kHovered,
                                                  CFWL_PartState::kSelected})) {
-    m_pTextOut->SetTextColor(0xFFFFFFFF);
+    text_out_->SetTextColor(0xFFFFFFFF);
   } else if (pParams.GetPart() == CFWL_ThemePart::Part::kCaption) {
-    m_pTextOut->SetTextColor(kCaptionColor);
+    text_out_->SetTextColor(kCaptionColor);
   } else {
-    m_pTextOut->SetTextColor(0xFF000000);
+    text_out_->SetTextColor(0xFF000000);
   }
   CFWL_WidgetTP::DrawText(pParams);
 }

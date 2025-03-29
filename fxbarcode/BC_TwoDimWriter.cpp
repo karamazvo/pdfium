@@ -17,8 +17,7 @@
 #include "fxbarcode/BC_Writer.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 
-CBC_TwoDimWriter::CBC_TwoDimWriter(bool bFixedSize)
-    : m_bFixedSize(bFixedSize) {}
+CBC_TwoDimWriter::CBC_TwoDimWriter(bool bFixedSize) : fixed_size_(bFixedSize) {}
 
 CBC_TwoDimWriter::~CBC_TwoDimWriter() = default;
 
@@ -41,7 +40,7 @@ bool CBC_TwoDimWriter::RenderResult(pdfium::span<const uint8_t> code,
   m_outputWidth = scaledWidth.ValueOrDie();
   m_outputHeight = scaledHeight.ValueOrDie();
 
-  if (m_bFixedSize) {
+  if (fixed_size_) {
     if (m_Width < m_outputWidth || m_Height < m_outputHeight) {
       return false;
     }
@@ -62,7 +61,7 @@ bool CBC_TwoDimWriter::RenderResult(pdfium::span<const uint8_t> code,
       static_cast<int32_t>(ceil(static_cast<float>(m_outputWidth) / tempWidth));
   m_multiY = static_cast<int32_t>(
       ceil(static_cast<float>(m_outputHeight) / tempHeight));
-  if (m_bFixedSize) {
+  if (fixed_size_) {
     m_multiX = std::min(m_multiX, m_multiY);
     m_multiY = m_multiX;
   }

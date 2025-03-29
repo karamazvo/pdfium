@@ -20,10 +20,10 @@ class CXFA_Measurement {
 
   void Set(float fValue, XFA_Unit eUnit) {
     m_fValue = fValue;
-    m_eUnit = eUnit;
+    unit_ = eUnit;
   }
 
-  XFA_Unit GetUnit() const { return m_eUnit; }
+  XFA_Unit GetUnit() const { return unit_; }
   float GetValue() const { return m_fValue; }
 
   WideString ToString() const;
@@ -34,7 +34,7 @@ class CXFA_Measurement {
   bool ToUnitInternal(XFA_Unit eUnit, float* fValue) const;
 
   float m_fValue = 0.0f;
-  XFA_Unit m_eUnit = XFA_Unit::Percent;
+  XFA_Unit unit_ = XFA_Unit::Percent;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_MEASUREMENT_H_

@@ -39,13 +39,13 @@ class CFWL_Event {
   virtual ~CFWL_Event();
 
   Type GetType() const { return m_type; }
-  CFWL_Widget* GetSrcTarget() const { return m_pSrcTarget; }
-  CFWL_Widget* GetDstTarget() const { return m_pDstTarget; }
+  CFWL_Widget* GetSrcTarget() const { return src_target_; }
+  CFWL_Widget* GetDstTarget() const { return dst_target_; }
 
  private:
   const Type m_type;
-  UnownedPtr<CFWL_Widget> const m_pSrcTarget;
-  UnownedPtr<CFWL_Widget> const m_pDstTarget;
+  UnownedPtr<CFWL_Widget> const src_target_;
+  UnownedPtr<CFWL_Widget> const dst_target_;
 };
 
 }  // namespace pdfium

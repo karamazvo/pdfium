@@ -97,14 +97,14 @@ class CPDF_Font : public Retainable, public Observable {
 
   ByteString GetBaseFontName() const { return m_BaseFontName; }
   std::optional<FX_Charset> GetSubstFontCharset() const;
-  bool IsEmbedded() const { return IsType3Font() || m_pFontFile != nullptr; }
-  RetainPtr<CPDF_Dictionary> GetMutableFontDict() { return m_pFontDict; }
-  RetainPtr<const CPDF_Dictionary> GetFontDict() const { return m_pFontDict; }
-  uint32_t GetFontDictObjNum() const { return m_pFontDict->GetObjNum(); }
+  bool IsEmbedded() const { return IsType3Font() || font_file_ != nullptr; }
+  RetainPtr<CPDF_Dictionary> GetMutableFontDict() { return font_dict_; }
+  RetainPtr<const CPDF_Dictionary> GetFontDict() const { return font_dict_; }
+  uint32_t GetFontDictObjNum() const { return font_dict_->GetObjNum(); }
   bool FontDictIs(const CPDF_Dictionary* pThat) const {
-    return m_pFontDict == pThat;
+    return font_dict_ == pThat;
   }
-  void ClearFontDict() { m_pFontDict = nullptr; }
+  void ClearFontDict() { font_dict_ = nullptr; }
   bool IsStandardFont() const;
   bool HasFace() const { return !!m_Font.GetFace(); }
 
@@ -126,7 +126,7 @@ class CPDF_Font : public Retainable, public Observable {
 
   // Can return nullptr for stock Type1 fonts. Always returns non-null for other
   // font types.
-  CPDF_Document* GetDocument() const { return m_pDocument; }
+  CPDF_Document* GetDocument() const { return document_; }
 
   CFX_Font* GetFont() { return &m_Font; }
   const CFX_Font* GetFont() const { return &m_Font; }
@@ -164,16 +164,16 @@ class CPDF_Font : public Retainable, public Observable {
   void LoadFontDescriptor(const CPDF_Dictionary* pFontDesc);
   void CheckFontMetrics();
 
-  UnownedPtr<CPDF_Document> const m_pDocument;
+  UnownedPtr<CPDF_Document> const document_;
   ByteString m_ResourceName;  // The resource name for this font.
   CFX_Font m_Font;
   std::vector<std::unique_ptr<CFX_Font>> m_FontFallbacks;
-  RetainPtr<CPDF_StreamAcc> m_pFontFile;
-  RetainPtr<CPDF_Dictionary> m_pFontDict;
+  RetainPtr<CPDF_StreamAcc> font_file_;
+  RetainPtr<CPDF_Dictionary> font_dict_;
   ByteString m_BaseFontName;
-  mutable std::unique_ptr<CPDF_ToUnicodeMap> m_pToUnicodeMap;
-  mutable bool m_bToUnicodeLoaded = false;
-  bool m_bWillBeDestroyed = false;
+  mutable std::unique_ptr<CPDF_ToUnicodeMap> to_unicode_map_;
+  mutable bool to_unicode_loaded_ = false;
+  bool will_be_destroyed_ = false;
   int m_Flags = 0;
   int m_StemV = 0;
   int m_Ascent = 0;

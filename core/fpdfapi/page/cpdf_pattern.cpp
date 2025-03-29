@@ -14,11 +14,11 @@
 CPDF_Pattern::CPDF_Pattern(CPDF_Document* pDoc,
                            RetainPtr<CPDF_Object> pObj,
                            const CFX_Matrix& parentMatrix)
-    : m_pDocument(pDoc),
-      m_pPatternObj(std::move(pObj)),
+    : document_(pDoc),
+      pattern_obj_(std::move(pObj)),
       m_ParentMatrix(parentMatrix) {
-  DCHECK(m_pDocument);
-  DCHECK(m_pPatternObj);
+  DCHECK(document_);
+  DCHECK(pattern_obj_);
 }
 
 CPDF_Pattern::~CPDF_Pattern() = default;

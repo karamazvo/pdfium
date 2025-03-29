@@ -85,7 +85,7 @@ ByteString GetUsageTypeString(CPDF_OCContext::UsageType eType) {
 }  // namespace
 
 CPDF_OCContext::CPDF_OCContext(CPDF_Document* pDoc, UsageType eUsageType)
-    : m_pDocument(pDoc), m_eUsageType(eUsageType) {
+    : document_(pDoc), usage_type_(eUsageType) {
   DCHECK(pDoc);
 }
 
@@ -94,7 +94,7 @@ CPDF_OCContext::~CPDF_OCContext() = default;
 bool CPDF_OCContext::LoadOCGStateFromConfig(
     const ByteString& csConfig,
     const CPDF_Dictionary* pOCGDict) const {
-  RetainPtr<const CPDF_Dictionary> pConfig = GetConfig(m_pDocument, pOCGDict);
+  RetainPtr<const CPDF_Dictionary> pConfig = GetConfig(document_, pOCGDict);
   if (!pConfig)
     return true;
 
@@ -140,7 +140,7 @@ bool CPDF_OCContext::LoadOCGState(const CPDF_Dictionary* pOCGDict) const {
   if (!HasIntent(pOCGDict, "View", "View"))
     return true;
 
-  ByteString csState = GetUsageTypeString(m_eUsageType);
+  ByteString csState = GetUsageTypeString(usage_type_);
   RetainPtr<const CPDF_Dictionary> pUsage = pOCGDict->GetDictFor("Usage");
   if (pUsage) {
     RetainPtr<const CPDF_Dictionary> pState = pUsage->GetDictFor(csState);

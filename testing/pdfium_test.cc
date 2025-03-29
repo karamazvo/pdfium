@@ -850,13 +850,13 @@ class PdfProcessor final {
         events_(events),
         doc_(doc),
         form_(form),
-        form_fill_info_(form_fill_info) {
+        m_pFormFillInfo(form_fill_info) {
     DCHECK(processor_);
     DCHECK(name_);
     DCHECK(events_);
     DCHECK(doc_);
     DCHECK(form_);
-    DCHECK(form_fill_info_);
+    DCHECK(m_pFormFillInfo);
   }
 
   bool ProcessPage(int page_index);
@@ -880,7 +880,7 @@ class PdfProcessor final {
   void Idle() const { idler()(); }
 
   FPDF_PAGE GetPage(int page_index) const {
-    return GetPageForIndex(form_fill_info_, doc_, page_index);
+    return GetPageForIndex(m_pFormFillInfo, doc_, page_index);
   }
 
   Processor* processor_;
@@ -888,7 +888,7 @@ class PdfProcessor final {
   const std::string* events_;
   FPDF_DOCUMENT doc_;
   FPDF_FORMHANDLE form_;
-  FPDF_FORMFILLINFO_PDFiumTest* form_fill_info_;
+  FPDF_FORMFILLINFO_PDFiumTest* m_pFormFillInfo;
 };
 
 // Page renderer with bitmap output.

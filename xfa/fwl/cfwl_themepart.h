@@ -90,19 +90,19 @@ class CFWL_ThemePart {
   ~CFWL_ThemePart();
 
   Part GetPart() const { return m_iPart; }
-  CFWL_Widget* GetWidget() const { return m_pWidget; }
+  CFWL_Widget* GetWidget() const { return widget_; }
   FWLTHEME_STATE GetThemeState() const;
 
   CFX_Matrix m_matrix;
   CFX_RectF m_PartRect;
-  UnownedPtr<const CFX_RectF> m_pRtData;
+  UnownedPtr<const CFX_RectF> rt_data_;
   Mask<CFWL_PartState> m_dwStates = CFWL_PartState::kNormal;
-  bool m_bMaximize = false;
-  bool m_bStaticBackground = false;
+  bool maximize_ = false;
+  bool static_background_ = false;
 
  private:
   const Part m_iPart;
-  UnownedPtr<CFWL_Widget> const m_pWidget;
+  UnownedPtr<CFWL_Widget> const widget_;
 };
 
 }  // namespace pdfium

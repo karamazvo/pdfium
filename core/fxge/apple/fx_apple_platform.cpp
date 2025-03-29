@@ -19,8 +19,8 @@
 namespace {
 
 struct Substs {
-  const char* m_pName;
-  const char* m_pSubstName;
+  const char* name_;
+  const char* subst_name_;
 };
 
 constexpr Substs kBase14Substs[] = {
@@ -72,8 +72,9 @@ void* CFX_MacFontInfo::MapFont(int weight,
                                int pitch_family,
                                const ByteString& face) {
   for (const auto& sub : kBase14Substs) {
-    if (face == ByteStringView(sub.m_pName))
-      return GetFont(sub.m_pSubstName);
+    if (face == ByteStringView(sub.name_)) {
+      return GetFont(sub.subst_name_);
+    }
   }
 
   // The request may not ask for the bold and/or italic version of a font by

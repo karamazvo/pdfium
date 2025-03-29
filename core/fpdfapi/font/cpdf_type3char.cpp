@@ -33,24 +33,26 @@ void CPDF_Type3Char::TextUnitRectToGlyphUnitRect(CFX_FloatRect* pRect) {
 }
 
 bool CPDF_Type3Char::LoadBitmapFromSoleImageOfForm() {
-  if (m_pBitmap || !m_pForm)
+  if (bitmap_ || !form_) {
     return true;
+  }
 
-  if (m_bColored)
+  if (colored_) {
     return false;
+  }
 
-  auto result = m_pForm->GetBitmapAndMatrixFromSoleImageOfForm();
+  auto result = form_->GetBitmapAndMatrixFromSoleImageOfForm();
   if (!result.has_value())
     return false;
 
-  std::tie(m_pBitmap, m_ImageMatrix) = result.value();
-  m_pForm.reset();
+  std::tie(bitmap_, m_ImageMatrix) = result.value();
+  form_.reset();
   return true;
 }
 
 void CPDF_Type3Char::InitializeFromStreamData(bool bColored,
                                               pdfium::span<const float> pData) {
-  m_bColored = bColored;
+  colored_ = bColored;
   m_Width = FXSYS_roundf(TextUnitToGlyphUnit(pData[0]));
   m_BBox.left = FXSYS_roundf(TextUnitToGlyphUnit(pData[2]));
   m_BBox.bottom = FXSYS_roundf(TextUnitToGlyphUnit(pData[3]));
@@ -60,7 +62,7 @@ void CPDF_Type3Char::InitializeFromStreamData(bool bColored,
 
 void CPDF_Type3Char::WillBeDestroyed() {
   // Break cycles.
-  m_pForm.reset();
+  form_.reset();
 }
 
 void CPDF_Type3Char::Transform(CPDF_Font::FormIface* pForm,
@@ -79,9 +81,9 @@ void CPDF_Type3Char::Transform(CPDF_Font::FormIface* pForm,
 }
 
 void CPDF_Type3Char::SetForm(std::unique_ptr<CPDF_Font::FormIface> pForm) {
-  m_pForm = std::move(pForm);
+  form_ = std::move(pForm);
 }
 
 RetainPtr<CFX_DIBitmap> CPDF_Type3Char::GetBitmap() {
-  return m_pBitmap;
+  return bitmap_;
 }

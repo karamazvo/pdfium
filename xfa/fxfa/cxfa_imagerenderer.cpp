@@ -18,12 +18,12 @@ CXFA_ImageRenderer::CXFA_ImageRenderer(CFX_RenderDevice* device,
                                        RetainPtr<CFX_DIBitmap> bitmap,
                                        const CFX_Matrix& image_to_device)
     : m_ImageMatrix(image_to_device),
-      m_pDevice(device),
-      m_pBitmap(std::move(bitmap)) {
+      device_(device),
+      bitmap_(std::move(bitmap)) {
   // Assume this always draws into CFX_DefaultRenderDevice.
-  CHECK(m_pDevice);
-  CHECK(m_pDevice->GetRenderCaps() & FXRC_GET_BITS);
-  CHECK(m_pBitmap);
+  CHECK(device_);
+  CHECK(device_->GetRenderCaps() & FXRC_GET_BITS);
+  CHECK(bitmap_);
 }
 
 CXFA_ImageRenderer::~CXFA_ImageRenderer() = default;
@@ -31,8 +31,8 @@ CXFA_ImageRenderer::~CXFA_ImageRenderer() = default;
 bool CXFA_ImageRenderer::Start() {
   FXDIB_ResampleOptions options;
   options.bInterpolateBilinear = true;
-  RenderDeviceDriverIface::StartResult result = m_pDevice->StartDIBits(
-      m_pBitmap, /*alpha=*/1.0f, /*argb=*/0, m_ImageMatrix, options);
+  RenderDeviceDriverIface::StartResult result = device_->StartDIBits(
+      bitmap_, /*alpha=*/1.0f, /*argb=*/0, m_ImageMatrix, options);
   if (result.result == RenderDeviceDriverIface::Result::kFailure) {
     return false;
   }
@@ -49,5 +49,5 @@ bool CXFA_ImageRenderer::Start() {
 
 bool CXFA_ImageRenderer::Continue() {
   CHECK_EQ(m_State, State::kStarted);
-  return m_pDevice->ContinueDIBits(m_DeviceHandle.get(), nullptr);
+  return device_->ContinueDIBits(m_DeviceHandle.get(), nullptr);
 }

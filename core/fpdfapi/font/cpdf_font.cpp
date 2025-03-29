@@ -49,13 +49,13 @@ constexpr std::array<const char*, 5> kChineseFontNames = {{
 
 CPDF_Font::CPDF_Font(CPDF_Document* pDocument,
                      RetainPtr<CPDF_Dictionary> pFontDict)
-    : m_pDocument(pDocument),
-      m_pFontDict(std::move(pFontDict)),
-      m_BaseFontName(m_pFontDict->GetByteStringFor("BaseFont")) {}
+    : document_(pDocument),
+      font_dict_(std::move(pFontDict)),
+      m_BaseFontName(font_dict_->GetByteStringFor("BaseFont")) {}
 
 CPDF_Font::~CPDF_Font() {
-  if (!m_bWillBeDestroyed && m_pFontFile) {
-    m_pDocument->MaybePurgeFontFileStreamAcc(std::move(m_pFontFile));
+  if (!will_be_destroyed_ && font_file_) {
+    document_->MaybePurgeFontFileStreamAcc(std::move(font_file_));
   }
 }
 
@@ -118,7 +118,7 @@ int CPDF_Font::GlyphFromCharCodeExt(uint32_t charcode) {
 #endif
 
 void CPDF_Font::WillBeDestroyed() {
-  m_bWillBeDestroyed = true;
+  will_be_destroyed_ = true;
 }
 
 bool CPDF_Font::IsVertWriting() const {
@@ -131,17 +131,19 @@ void CPDF_Font::AppendChar(ByteString* str, uint32_t charcode) const {
 }
 
 WideString CPDF_Font::UnicodeFromCharCode(uint32_t charcode) const {
-  if (!m_bToUnicodeLoaded)
+  if (!to_unicode_loaded_) {
     LoadUnicodeMap();
+  }
 
-  return m_pToUnicodeMap ? m_pToUnicodeMap->Lookup(charcode) : WideString();
+  return to_unicode_map_ ? to_unicode_map_->Lookup(charcode) : WideString();
 }
 
 uint32_t CPDF_Font::CharCodeFromUnicode(wchar_t unicode) const {
-  if (!m_bToUnicodeLoaded)
+  if (!to_unicode_loaded_) {
     LoadUnicodeMap();
+  }
 
-  return m_pToUnicodeMap ? m_pToUnicodeMap->ReverseLookup(unicode) : 0;
+  return to_unicode_map_ ? to_unicode_map_->ReverseLookup(unicode) : 0;
 }
 
 bool CPDF_Font::HasFontWidths() const {
@@ -201,12 +203,14 @@ void CPDF_Font::LoadFontDescriptor(const CPDF_Dictionary* pFontDesc) {
     return;
 
   const uint64_t key = pFontFile->KeyForCache();
-  m_pFontFile = m_pDocument->GetFontFileStreamAcc(std::move(pFontFile));
-  if (!m_pFontFile)
+  font_file_ = document_->GetFontFileStreamAcc(std::move(pFontFile));
+  if (!font_file_) {
     return;
+  }
 
-  if (!m_Font.LoadEmbedded(m_pFontFile->GetSpan(), IsVertWriting(), key))
-    m_pDocument->MaybePurgeFontFileStreamAcc(std::move(m_pFontFile));
+  if (!m_Font.LoadEmbedded(font_file_->GetSpan(), IsVertWriting(), key)) {
+    document_->MaybePurgeFontFileStreamAcc(std::move(font_file_));
+  }
 }
 
 void CPDF_Font::CheckFontMetrics() {
@@ -251,12 +255,12 @@ void CPDF_Font::CheckFontMetrics() {
 }
 
 void CPDF_Font::LoadUnicodeMap() const {
-  m_bToUnicodeLoaded = true;
-  RetainPtr<const CPDF_Stream> pStream = m_pFontDict->GetStreamFor("ToUnicode");
+  to_unicode_loaded_ = true;
+  RetainPtr<const CPDF_Stream> pStream = font_dict_->GetStreamFor("ToUnicode");
   if (!pStream)
     return;
 
-  m_pToUnicodeMap = std::make_unique<CPDF_ToUnicodeMap>(std::move(pStream));
+  to_unicode_map_ = std::make_unique<CPDF_ToUnicodeMap>(std::move(pStream));
 }
 
 int CPDF_Font::GetStringWidth(ByteStringView pString) {
@@ -336,8 +340,9 @@ uint32_t CPDF_Font::GetNextChar(ByteStringView pString, size_t* pOffset) const {
 bool CPDF_Font::IsStandardFont() const {
   if (!IsType1Font())
     return false;
-  if (m_pFontFile)
+  if (font_file_) {
     return false;
+  }
   return AsType1Font()->IsBase14Font();
 }
 

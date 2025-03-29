@@ -47,7 +47,7 @@ class CFGAS_GEFont final : public Retainable {
   std::optional<FX_RECT> GetCharBBox(wchar_t wUnicode);
 
   RetainPtr<CFGAS_GEFont> GetSubstFont(int32_t iGlyphIndex);
-  CFX_Font* GetDevFont() const { return m_pFont.Get(); }
+  CFX_Font* GetDevFont() const { return font_.Get(); }
 
   void SetLogicalFontStyle(uint32_t dwLogFontStyle) {
     m_dwLogFontStyle = dwLogFontStyle;
@@ -71,9 +71,9 @@ class CFGAS_GEFont final : public Retainable {
   WideString GetFamilyName() const;
 
   std::optional<uint32_t> m_dwLogFontStyle;
-  RetainPtr<CPDF_Font> m_pPDFFont;  // Must come before |m_pFont|.
-  MaybeOwned<CFX_Font> m_pFont;     // Must come before |m_pFontEncoding|.
-  std::unique_ptr<CFX_UnicodeEncodingEx> m_pFontEncoding;
+  RetainPtr<CPDF_Font> m_pPDFFont;  // Must come before |font_|.
+  MaybeOwned<CFX_Font> font_;       // Must come before |font_encoding_|.
+  std::unique_ptr<CFX_UnicodeEncodingEx> font_encoding_;
   std::map<wchar_t, std::optional<uint16_t>> m_CharWidthMap;
   std::map<wchar_t, FX_RECT> m_BBoxMap;
   std::vector<RetainPtr<CFGAS_GEFont>> m_SubstFonts;

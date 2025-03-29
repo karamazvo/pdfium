@@ -23,8 +23,9 @@ CPWL_Caret::~CPWL_Caret() = default;
 
 void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                     const CFX_Matrix& mtUser2Device) {
-  if (!IsVisible() || !m_bFlash)
+  if (!IsVisible() || !flash_) {
     return;
+  }
 
   CFX_FloatRect rcRect = GetCaretRect();
   CFX_FloatRect rcClip = GetClipRect();
@@ -54,7 +55,7 @@ void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
 }
 
 void CPWL_Caret::OnTimerFired() {
-  m_bFlash = !m_bFlash;
+  flash_ = !flash_;
   InvalidateRect(nullptr);
   // Note, |this| may no longer be viable at this point. If more work needs
   // to be done, add an observer.
@@ -71,11 +72,11 @@ void CPWL_Caret::SetCaret(bool bVisible,
   if (!bVisible) {
     m_ptHead = CFX_PointF();
     m_ptFoot = CFX_PointF();
-    m_bFlash = false;
+    flash_ = false;
     if (!IsVisible())
       return;
 
-    m_pTimer.reset();
+    timer_.reset();
     (void)CPWL_Wnd::SetVisible(false);
     // Note, |this| may no longer be viable at this point. If more work needs
     // to be done, check the return value of SetVisible().
@@ -87,13 +88,13 @@ void CPWL_Caret::SetCaret(bool bVisible,
 
     m_ptHead = ptHead;
     m_ptFoot = ptFoot;
-    m_pTimer = std::make_unique<CFX_Timer>(GetTimerHandler(), this,
-                                           kCaretFlashIntervalMs);
+    timer_ = std::make_unique<CFX_Timer>(GetTimerHandler(), this,
+                                         kCaretFlashIntervalMs);
 
     if (!CPWL_Wnd::SetVisible(true))
       return;
 
-    m_bFlash = true;
+    flash_ = true;
     Move(m_rcInvalid, false, true);
     // Note, |this| may no longer be viable at this point. If more work needs
     // to be done, check the return value of Move().
@@ -105,7 +106,7 @@ void CPWL_Caret::SetCaret(bool bVisible,
 
   m_ptHead = ptHead;
   m_ptFoot = ptFoot;
-  m_bFlash = true;
+  flash_ = true;
   Move(m_rcInvalid, false, true);
   // Note, |this| may no longer be viable at this point. If more work
   // needs to be done, check the return value of Move().

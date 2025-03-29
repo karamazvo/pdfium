@@ -54,11 +54,11 @@ void CPDF_ImageObject::CalcBoundingBox() {
 
 void CPDF_ImageObject::SetImage(RetainPtr<CPDF_Image> pImage) {
   MaybePurgeCache();
-  m_pImage = std::move(pImage);
+  image_ = std::move(pImage);
 }
 
 RetainPtr<CPDF_Image> CPDF_ImageObject::GetImage() const {
-  return m_pImage;
+  return image_;
 }
 
 RetainPtr<CFX_DIBitmap> CPDF_ImageObject::GetIndependentBitmap() const {
@@ -79,11 +79,11 @@ void CPDF_ImageObject::SetImageMatrix(const CFX_Matrix& matrix) {
 }
 
 void CPDF_ImageObject::MaybePurgeCache() {
-  if (!m_pImage || m_pImage->IsGoingToBeDestroyed()) {
+  if (!image_ || image_->IsGoingToBeDestroyed()) {
     return;
   }
 
-  RetainPtr<const CPDF_Stream> pStream = m_pImage->GetStream();
+  RetainPtr<const CPDF_Stream> pStream = image_->GetStream();
   if (!pStream)
     return;
 
@@ -91,9 +91,9 @@ void CPDF_ImageObject::MaybePurgeCache() {
   if (!objnum)
     return;
 
-  auto* pDoc = m_pImage->GetDocument();
+  auto* pDoc = image_->GetDocument();
   CHECK(pDoc);
 
-  m_pImage.Reset();  // Clear my reference before asking the cache.
+  image_.Reset();  // Clear my reference before asking the cache.
   pDoc->MaybePurgeImage(objnum);
 }

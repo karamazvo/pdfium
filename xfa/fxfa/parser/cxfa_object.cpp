@@ -25,13 +25,13 @@ CXFA_Object::CXFA_Object(CXFA_Document* pDocument,
       m_elementType(elementType),
       m_elementName(XFA_ElementToName(elementType)),
       m_elementNameHash(FX_HashCode_GetAsIfW(m_elementName)),
-      m_pDocument(pDocument),
+      document_(pDocument),
       m_pJSObject(jsObject) {}
 
 CXFA_Object::~CXFA_Object() = default;
 
 void CXFA_Object::Trace(cppgc::Visitor* visitor) const {
-  visitor->Trace(m_pDocument);
+  visitor->Trace(document_);
   visitor->Trace(m_pJSObject);
 }
 

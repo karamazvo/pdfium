@@ -65,7 +65,7 @@ class CPDFXFA_Page final : public IPDF_Page {
   bool LoadPDFPage();
 
   RetainPtr<CPDF_Page> m_pPDFPage;  // Backing page, if any.
-  UnownedPtr<CPDF_Document> const m_pDocument;
+  UnownedPtr<CPDF_Document> const document_;
   int m_iPageIndex;
 };
 

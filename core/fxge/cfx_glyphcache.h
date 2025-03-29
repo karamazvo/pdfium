@@ -88,7 +88,7 @@ class CFX_GlyphCache final : public Retainable, public Observable {
   std::map<PathMapKey, std::unique_ptr<CFX_Path>> m_PathMap;
   std::map<WidthMapKey, int> m_WidthMap;
 #if defined(PDF_USE_SKIA)
-  sk_sp<SkTypeface> m_pTypeface;
+  sk_sp<SkTypeface> typeface_;
 #endif
 };
 

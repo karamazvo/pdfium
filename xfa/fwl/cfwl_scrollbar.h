@@ -118,15 +118,15 @@ class CFWL_ScrollBar final : public CFWL_Widget,
   CFX_PointF m_cpTrackPoint;
   int32_t m_iMouseWheel = 0;
   float m_fButtonLen = 0.0f;
-  bool m_bMouseDown = false;
-  bool m_bMinSize = false;
+  bool mouse_down_ = false;
+  bool min_size_ = false;
   CFX_RectF m_ClientRect;
   CFX_RectF m_ThumbRect;
   CFX_RectF m_MinBtnRect;
   CFX_RectF m_MaxBtnRect;
   CFX_RectF m_MinTrackRect;
   CFX_RectF m_MaxTrackRect;
-  std::unique_ptr<CFX_Timer> m_pTimer;
+  std::unique_ptr<CFX_Timer> timer_;
 };
 
 }  // namespace pdfium

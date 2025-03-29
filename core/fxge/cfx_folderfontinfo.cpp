@@ -31,8 +31,8 @@
 namespace {
 
 struct FontSubst {
-  const char* m_pName;
-  const char* m_pSubstName;
+  const char* name_;
+  const char* subst_name_;
 };
 
 constexpr auto kBase14Substs = fxcrt::ToArray<const FontSubst>({
@@ -147,7 +147,7 @@ void CFX_FolderFontInfo::AddPath(const ByteString& path) {
 }
 
 void CFX_FolderFontInfo::EnumFontList(CFX_FontMapper* pMapper) {
-  m_pMapper = pMapper;
+  mapper_ = pMapper;
   for (const auto& path : m_PathList) {
     ScanPath(path);
   }
@@ -276,27 +276,27 @@ void CFX_FolderFontInfo::ReportFace(const ByteString& path,
     pdfium::span<const uint8_t> p = os2.unsigned_span().subspan(78);
     uint32_t codepages = fxcrt::GetUInt32MSBFirst(p);
     if (codepages & (1U << 17)) {
-      m_pMapper->AddInstalledFont(facename, FX_Charset::kShiftJIS);
+      mapper_->AddInstalledFont(facename, FX_Charset::kShiftJIS);
       pInfo->m_Charsets |= CHARSET_FLAG_SHIFTJIS;
     }
     if (codepages & (1U << 18)) {
-      m_pMapper->AddInstalledFont(facename, FX_Charset::kChineseSimplified);
+      mapper_->AddInstalledFont(facename, FX_Charset::kChineseSimplified);
       pInfo->m_Charsets |= CHARSET_FLAG_GB;
     }
     if (codepages & (1U << 20)) {
-      m_pMapper->AddInstalledFont(facename, FX_Charset::kChineseTraditional);
+      mapper_->AddInstalledFont(facename, FX_Charset::kChineseTraditional);
       pInfo->m_Charsets |= CHARSET_FLAG_BIG5;
     }
     if ((codepages & (1U << 19)) || (codepages & (1U << 21))) {
-      m_pMapper->AddInstalledFont(facename, FX_Charset::kHangul);
+      mapper_->AddInstalledFont(facename, FX_Charset::kHangul);
       pInfo->m_Charsets |= CHARSET_FLAG_KOREAN;
     }
     if (codepages & (1U << 31)) {
-      m_pMapper->AddInstalledFont(facename, FX_Charset::kSymbol);
+      mapper_->AddInstalledFont(facename, FX_Charset::kSymbol);
       pInfo->m_Charsets |= CHARSET_FLAG_SYMBOL;
     }
   }
-  m_pMapper->AddInstalledFont(facename, FX_Charset::kANSI);
+  mapper_->AddInstalledFont(facename, FX_Charset::kANSI);
   pInfo->m_Charsets |= CHARSET_FLAG_ANSI;
   pInfo->m_Styles = 0;
   if (style.Contains("Bold")) {
@@ -315,8 +315,8 @@ void CFX_FolderFontInfo::ReportFace(const ByteString& path,
 void* CFX_FolderFontInfo::GetSubstFont(const ByteString& face) {
   for (size_t iBaseFont = 0; iBaseFont < std::size(kBase14Substs);
        iBaseFont++) {
-    if (face == kBase14Substs[iBaseFont].m_pName) {
-      return GetFont(kBase14Substs[iBaseFont].m_pSubstName);
+    if (face == kBase14Substs[iBaseFont].name_) {
+      return GetFont(kBase14Substs[iBaseFont].subst_name_);
     }
   }
   return nullptr;

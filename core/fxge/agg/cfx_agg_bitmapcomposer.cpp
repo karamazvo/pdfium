@@ -32,22 +32,22 @@ void CFX_AggBitmapComposer::Compose(const RetainPtr<CFX_DIBitmap>& pDest,
                                     bool bFlipY,
                                     bool bRgbByteOrder,
                                     BlendMode blend_mode) {
-  m_pBitmap = pDest;
-  m_pClipRgn = pClipRgn;
+  bitmap_ = pDest;
+  clip_rgn_ = pClipRgn;
   m_DestLeft = dest_rect.left;
   m_DestTop = dest_rect.top;
   m_DestWidth = dest_rect.Width();
   m_DestHeight = dest_rect.Height();
   m_Alpha = alpha;
   m_MaskColor = mask_color;
-  m_pClipMask = nullptr;
+  clip_mask_ = nullptr;
   if (pClipRgn && pClipRgn->GetType() != CFX_AggClipRgn::kRectI) {
-    m_pClipMask = pClipRgn->GetMask();
+    clip_mask_ = pClipRgn->GetMask();
   }
-  m_bVertical = bVertical;
+  vertical_ = bVertical;
   m_bFlipX = bFlipX;
   m_bFlipY = bFlipY;
-  m_bRgbByteOrder = bRgbByteOrder;
+  rgb_byte_order_ = bRgbByteOrder;
   m_BlendMode = blend_mode;
 }
 
@@ -58,17 +58,17 @@ bool CFX_AggBitmapComposer::SetInfo(int width,
   DCHECK_NE(src_format, FXDIB_Format::k1bppMask);
   DCHECK_NE(src_format, FXDIB_Format::k1bppRgb);
   m_SrcFormat = src_format;
-  if (!m_Compositor.Init(m_pBitmap->GetFormat(), src_format, src_palette,
-                         m_MaskColor, m_BlendMode, m_bRgbByteOrder)) {
+  if (!m_Compositor.Init(bitmap_->GetFormat(), src_format, src_palette,
+                         m_MaskColor, m_BlendMode, rgb_byte_order_)) {
     return false;
   }
-  if (m_bVertical) {
-    m_pScanlineV.resize(m_pBitmap->GetBPP() / 8 * width + 4);
-    m_pClipScanV.resize(m_pBitmap->GetHeight());
+  if (vertical_) {
+    m_pScanlineV.resize(bitmap_->GetBPP() / 8 * width + 4);
+    m_pClipScanV.resize(bitmap_->GetHeight());
   }
   if (m_Alpha != 1.0f) {
-    m_pAddClipScan.resize(m_bVertical ? m_pBitmap->GetHeight()
-                                      : m_pBitmap->GetWidth());
+    add_clip_scan_.resize(vertical_ ? bitmap_->GetHeight()
+                                    : bitmap_->GetWidth());
   }
   return true;
 }
@@ -80,13 +80,13 @@ void CFX_AggBitmapComposer::DoCompose(pdfium::span<uint8_t> dest_scan,
   if (m_Alpha != 1.0f) {
     if (!clip_scan.empty()) {
       for (int i = 0; i < dest_width; ++i) {
-        m_pAddClipScan[i] = clip_scan[i] * m_Alpha;
+        add_clip_scan_[i] = clip_scan[i] * m_Alpha;
       }
     } else {
-      fxcrt::Fill(pdfium::make_span(m_pAddClipScan).first(dest_width),
+      fxcrt::Fill(pdfium::make_span(add_clip_scan_).first(dest_width),
                   FXSYS_roundf(m_Alpha * 255));
     }
-    clip_scan = m_pAddClipScan;
+    clip_scan = add_clip_scan_;
   }
   if (m_SrcFormat == FXDIB_Format::k8bppMask) {
     m_Compositor.CompositeByteMaskLine(dest_scan, src_scan, dest_width,
@@ -103,22 +103,22 @@ void CFX_AggBitmapComposer::DoCompose(pdfium::span<uint8_t> dest_scan,
 void CFX_AggBitmapComposer::ComposeScanline(
     int line,
     pdfium::span<const uint8_t> scanline) {
-  if (m_bVertical) {
+  if (vertical_) {
     ComposeScanlineV(line, scanline);
     return;
   }
   pdfium::span<const uint8_t> clip_scan;
-  if (m_pClipMask) {
+  if (clip_mask_) {
     clip_scan =
-        m_pClipMask
-            ->GetWritableScanline(m_DestTop + line - m_pClipRgn->GetBox().top)
-            .subspan(m_DestLeft - m_pClipRgn->GetBox().left);
+        clip_mask_
+            ->GetWritableScanline(m_DestTop + line - clip_rgn_->GetBox().top)
+            .subspan(m_DestLeft - clip_rgn_->GetBox().left);
   }
   pdfium::span<uint8_t> dest_scan =
-      m_pBitmap->GetWritableScanline(line + m_DestTop);
+      bitmap_->GetWritableScanline(line + m_DestTop);
   if (!dest_scan.empty()) {
     FX_SAFE_UINT32 offset = m_DestLeft;
-    offset *= m_pBitmap->GetBPP();
+    offset *= bitmap_->GetBPP();
     offset /= 8;
     if (!offset.IsValid())
       return;
@@ -131,10 +131,10 @@ void CFX_AggBitmapComposer::ComposeScanline(
 void CFX_AggBitmapComposer::ComposeScanlineV(
     int line,
     pdfium::span<const uint8_t> scanline) {
-  const int bytes_per_pixel = m_pBitmap->GetBPP() / 8;
-  int dest_pitch = m_pBitmap->GetPitch();
+  const int bytes_per_pixel = bitmap_->GetBPP() / 8;
+  int dest_pitch = bitmap_->GetPitch();
   int dest_x = m_DestLeft + (m_bFlipX ? (m_DestWidth - line - 1) : line);
-  pdfium::span<uint8_t> dest_span = m_pBitmap->GetWritableBuffer();
+  pdfium::span<uint8_t> dest_span = bitmap_->GetWritableBuffer();
   if (!dest_span.empty()) {
     const size_t dest_x_offset = Fx2DSizeOrDie(dest_x, bytes_per_pixel);
     const size_t dest_y_offset = Fx2DSizeOrDie(m_DestTop, dest_pitch);
@@ -157,12 +157,12 @@ void CFX_AggBitmapComposer::ComposeScanlineV(
       dest_scan += y_step;
     }
     pdfium::span<uint8_t> clip_scan;
-    if (m_pClipMask) {
+    if (clip_mask_) {
       clip_scan = m_pClipScanV;
-      int clip_pitch = m_pClipMask->GetPitch();
+      int clip_pitch = clip_mask_->GetPitch();
       const uint8_t* src_clip =
-          m_pClipMask->GetScanline(m_DestTop - m_pClipRgn->GetBox().top)
-              .subspan(dest_x - m_pClipRgn->GetBox().left)
+          clip_mask_->GetScanline(m_DestTop - clip_rgn_->GetBox().top)
+              .subspan(dest_x - clip_rgn_->GetBox().left)
               .data();
       if (m_bFlipY) {
         src_clip += Fx2DSizeOrDie(clip_pitch, m_DestHeight - 1);

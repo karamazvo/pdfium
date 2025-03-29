@@ -30,7 +30,7 @@ class CXFA_TextTabstopsContext {
   void Reset();
 
   int32_t m_iTabIndex = -1;
-  bool m_bHasTabstops = false;
+  bool has_tabstops_ = false;
   float m_fTabWidth = 0.0f;
   float m_fLeft = 0.0f;
   std::vector<XFA_TABSTOPS> m_tabstops;

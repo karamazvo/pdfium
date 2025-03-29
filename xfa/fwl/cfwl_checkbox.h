@@ -70,7 +70,7 @@ class CFWL_CheckBox final : public CFWL_Widget {
   CFX_RectF m_FocusRect;
   FDE_TextStyle m_TTOStyles;
   FDE_TextAlignment m_iTTOAlign = FDE_TextAlignment::kCenter;
-  bool m_bBtnDown = false;
+  bool btn_down_ = false;
   float m_fBoxHeight = 16.0f;
 };
 

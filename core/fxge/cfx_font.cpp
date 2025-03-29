@@ -202,8 +202,8 @@ bool CFX_Font::LoadFile(RetainPtr<IFX_SeekableReadStream> pFile,
   if (!m_Face)
     return false;
 
-  m_pOwnedFile = std::move(pFile);
-  m_pOwnedStreamRec = std::move(pStreamRec);
+  owned_file_ = std::move(pFile);
+  owned_stream_rec_ = std::move(pStreamRec);
   m_Face->SetPixelSize(0, 64);
   return true;
 }
@@ -216,7 +216,7 @@ void CFX_Font::SetFace(RetainPtr<CFX_Face> face) {
 }
 
 void CFX_Font::SetSubstFont(std::unique_ptr<CFX_SubstFont> subst) {
-  m_pSubstFont = std::move(subst);
+  subst_font_ = std::move(subst);
 }
 #endif  // !BUILDFLAG(IS_WIN)
 #endif  // PDF_ENABLE_XFA
@@ -237,12 +237,12 @@ void CFX_Font::LoadSubst(const ByteString& face_name,
                          int italic_angle,
                          FX_CodePage code_page,
                          bool bVertical) {
-  m_bVertical = bVertical;
+  vertical_ = bVertical;
   m_ObjectTag = 0;
-  m_pSubstFont = std::make_unique<CFX_SubstFont>();
+  subst_font_ = std::make_unique<CFX_SubstFont>();
   m_Face = CFX_GEModule::Get()->GetFontMgr()->GetBuiltinMapper()->FindSubstFont(
       face_name, bTrueType, flags, weight, italic_angle, code_page,
-      m_pSubstFont.get());
+      subst_font_.get());
   if (m_Face) {
     m_FontData = m_Face->GetData();
   }
@@ -266,13 +266,13 @@ int CFX_Font::GetGlyphWidthImpl(uint32_t glyph_index,
     return 0;
 
   return m_Face->GetGlyphWidth(glyph_index, dest_width, weight,
-                               m_pSubstFont.get());
+                               subst_font_.get());
 }
 
 bool CFX_Font::LoadEmbedded(pdfium::span<const uint8_t> src_span,
                             bool force_vertical,
                             uint64_t object_tag) {
-  m_bVertical = force_vertical;
+  vertical_ = force_vertical;
   m_ObjectTag = object_tag;
   m_FontDataAllocation = DataVector<uint8_t>(src_span.begin(), src_span.end());
   m_Face = CFX_GEModule::Get()->GetFontMgr()->NewFixedFace(
@@ -386,11 +386,12 @@ ByteString CFX_Font::GetPsName() const {
 }
 
 ByteString CFX_Font::GetFamilyName() const {
-  if (!m_Face && !m_pSubstFont)
+  if (!m_Face && !subst_font_) {
     return ByteString();
+  }
   if (m_Face)
     return m_Face->GetFamilyName();
-  return m_pSubstFont->m_Family;
+  return subst_font_->m_Family;
 }
 
 ByteString CFX_Font::GetFamilyNameOrUntitled() const {
@@ -411,8 +412,9 @@ ByteString CFX_Font::GetBaseFontName() const {
       facename += (IsTTFont() ? "," : " ") + style;
     return facename;
   }
-  if (m_pSubstFont)
-    return m_pSubstFont->m_Family;
+  if (subst_font_) {
+    return subst_font_->m_Family;
+  }
   return ByteString();
 }
 
@@ -453,8 +455,8 @@ std::unique_ptr<CFX_Path> CFX_Font::LoadGlyphPathImpl(uint32_t glyph_index,
   if (!m_Face)
     return nullptr;
 
-  return m_Face->LoadGlyphPath(glyph_index, dest_width, m_bVertical,
-                               m_pSubstFont.get());
+  return m_Face->LoadGlyphPath(glyph_index, dest_width, vertical_,
+                               subst_font_.get());
 }
 
 const CFX_GlyphBitmap* CFX_Font::LoadGlyphBitmap(

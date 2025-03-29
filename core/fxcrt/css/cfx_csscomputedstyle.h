@@ -29,14 +29,14 @@ class CFX_CSSComputedStyle final : public Retainable {
     CFX_CSSLength m_LetterSpacing{CFX_CSSLengthUnit::Normal, 0};
     CFX_CSSLength m_WordSpacing{CFX_CSSLengthUnit::Normal, 0};
     CFX_CSSLength m_TextIndent{CFX_CSSLengthUnit::Point, 0};
-    RetainPtr<CFX_CSSValueList> m_pFontFamily;
+    RetainPtr<CFX_CSSValueList> font_family_;
     float m_fFontSize = 12.0f;
     float m_fLineHeight = 14.0f;
     FX_ARGB m_dwFontColor = 0xFF000000;
     uint16_t m_wFontWeight = 400;
-    CFX_CSSFontVariant m_eFontVariant = CFX_CSSFontVariant::Normal;
-    CFX_CSSFontStyle m_eFontStyle = CFX_CSSFontStyle::Normal;
-    CFX_CSSTextAlign m_eTextAlign = CFX_CSSTextAlign::Left;
+    CFX_CSSFontVariant font_variant_ = CFX_CSSFontVariant::Normal;
+    CFX_CSSFontStyle font_style_ = CFX_CSSFontStyle::Normal;
+    CFX_CSSTextAlign text_align_ = CFX_CSSTextAlign::Left;
   };
 
   class NonInheritedData {
@@ -51,12 +51,12 @@ class CFX_CSSComputedStyle final : public Retainable {
     CFX_CSSLength m_Left;
     CFX_CSSLength m_Right;
     float m_fVerticalAlign = 0.0f;
-    CFX_CSSDisplay m_eDisplay = CFX_CSSDisplay::Inline;
-    CFX_CSSVerticalAlign m_eVerticalAlignType = CFX_CSSVerticalAlign::Baseline;
+    CFX_CSSDisplay display_ = CFX_CSSDisplay::Inline;
+    CFX_CSSVerticalAlign vertical_align_type_ = CFX_CSSVerticalAlign::Baseline;
     Mask<CFX_CSSTEXTDECORATION> m_dwTextDecoration;
-    bool m_bHasMargin = false;
-    bool m_bHasBorder = false;
-    bool m_bHasPadding = false;
+    bool has_margin_ = false;
+    bool has_border_ = false;
+    bool has_padding_ = false;
   };
 
   CONSTRUCT_VIA_MAKE_RETAIN;

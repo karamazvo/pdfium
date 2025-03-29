@@ -41,9 +41,9 @@ class CPDFSDK_AnnotIterator {
   void AddSelectedToAnnots(std::vector<UnownedPtr<CPDFSDK_Annot>>& sa,
                            pdfium::span<const size_t> aSelect);
 
-  UnownedPtr<CPDFSDK_PageView> const m_pPageView;
+  UnownedPtr<CPDFSDK_PageView> const page_view_;
   const std::vector<CPDF_Annot::Subtype> m_subtypes;
-  const TabOrder m_eTabOrder;
+  const TabOrder tab_order_;
   std::vector<UnownedPtr<CPDFSDK_Annot>> m_Annots;
 };
 

@@ -35,12 +35,12 @@ class CPWL_Caret final : public CPWL_Wnd, public CFX_Timer::CallbackIface {
  private:
   CFX_FloatRect GetCaretRect() const;
 
-  bool m_bFlash = false;
+  bool flash_ = false;
   CFX_PointF m_ptHead;
   CFX_PointF m_ptFoot;
   float m_fWidth = 0.4f;
   CFX_FloatRect m_rcInvalid;
-  std::unique_ptr<CFX_Timer> m_pTimer;
+  std::unique_ptr<CFX_Timer> timer_;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_CARET_H_

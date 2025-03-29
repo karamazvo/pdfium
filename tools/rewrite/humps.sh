@@ -14,9 +14,9 @@ git checkout -- public/
 git checkout -- testing/embedder_test_environment.cpp
 
 # Fixup individual cases of public header with m_ member
-sed -i 's/js_platform_/m_pJsPlatform/g' `git grep -l js_platform_`
-sed -i 's/form_fill_info_/m_pFormFillInfo/g' `git grep -l form_fill_info_`
-sed -i 's/user_font_paths_/m_pUserFontPaths/g' `git grep -l user_font_paths_`
+sed -i 's/m_pJsPlatform/m_pJsPlatform/g' `git grep -l m_pJsPlatform`
+sed -i 's/m_pFormFillInfo/m_pFormFillInfo/g' `git grep -l m_pFormFillInfo`
+sed -i 's/m_pUserFontPaths/m_pUserFontPaths/g' `git grep -l m_pUserFontPaths`
 
 # m_pPlatform and m_pIsolate are trickier and need context
 sed -i 's/\bconfig\(\.\|->\)platform_/config\1m_pPlatform/g' `git grep -l platform_`

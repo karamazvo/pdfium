@@ -118,7 +118,7 @@ bool CPWL_SBButton::OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
   if (CPWL_Wnd* pParent = GetParentWindow())
     pParent->NotifyLButtonDown(this, point);
 
-  m_bMouseDown = true;
+  mouse_down_ = true;
   SetCapture();
 
   return true;
@@ -131,7 +131,7 @@ bool CPWL_SBButton::OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag,
   if (CPWL_Wnd* pParent = GetParentWindow())
     pParent->NotifyLButtonUp(this, point);
 
-  m_bMouseDown = false;
+  mouse_down_ = false;
   ReleaseCapture();
 
   return true;

@@ -39,7 +39,7 @@ class CPDF_Type3Cache final : public Retainable, public Observable {
                                                uint32_t charcode,
                                                const CFX_Matrix& mtMatrix);
 
-  RetainPtr<CPDF_Type3Font> const m_pFont;
+  RetainPtr<CPDF_Type3Font> const font_;
   std::map<SizeKey, std::unique_ptr<CPDF_Type3GlyphMap>> m_SizeMap;
 };
 

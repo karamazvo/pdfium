@@ -57,10 +57,10 @@ class CFWL_DateTimePicker final : public CFWL_Widget {
 
   void SelectAll();
   void ClearSelection();
-  bool HasSelection() const { return m_pEdit->HasSelection(); }
+  bool HasSelection() const { return edit_->HasSelection(); }
   // Returns <start, count> of the selection.
   std::pair<size_t, size_t> GetSelection() const {
-    return m_pEdit->GetSelection();
+    return edit_->GetSelection();
   }
   std::optional<WideString> Copy();
   std::optional<WideString> Cut();
@@ -71,7 +71,7 @@ class CFWL_DateTimePicker final : public CFWL_Widget {
   bool CanRedo();
 
   CFX_RectF GetBBox() const;
-  void SetEditLimit(int32_t nLimit) { m_pEdit->SetLimit(nLimit); }
+  void SetEditLimit(int32_t nLimit) { edit_->SetLimit(nLimit); }
   void ModifyEditStyleExts(uint32_t dwStyleExtsAdded,
                            uint32_t dwStyleExtsRemoved);
 
@@ -108,8 +108,8 @@ class CFWL_DateTimePicker final : public CFWL_Widget {
   float m_fBtn = 0.0f;
   CFX_RectF m_BtnRect;
   CFX_RectF m_ClientRect;
-  cppgc::Member<CFWL_DateTimeEdit> const m_pEdit;
-  cppgc::Member<CFWL_MonthCalendar> const m_pMonthCal;
+  cppgc::Member<CFWL_DateTimeEdit> const edit_;
+  cppgc::Member<CFWL_MonthCalendar> const month_cal_;
 };
 
 }  // namespace pdfium

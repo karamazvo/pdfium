@@ -22,7 +22,7 @@ class TextGlyphPos {
 
   std::optional<CFX_Point> GetOrigin(const CFX_Point& offset) const;
 
-  UnownedPtr<const CFX_GlyphBitmap> m_pGlyph;
+  UnownedPtr<const CFX_GlyphBitmap> glyph_;
   CFX_Point m_Origin;
   CFX_PointF m_fDeviceOrigin;
 };

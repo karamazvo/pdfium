@@ -44,9 +44,9 @@ IccTransform::IccTransform(cmsHTRANSFORM hTransform,
                            bool bIsLab,
                            bool bNormal)
     : m_hTransform(hTransform),
-      m_nSrcComponents(srcComponents),
-      m_bLab(bIsLab),
-      m_bNormal(bNormal) {}
+      src_components_(srcComponents),
+      lab_(bIsLab),
+      normal_(bNormal) {}
 
 IccTransform::~IccTransform() {
   cmsDeleteTransform(m_hTransform);
@@ -119,7 +119,7 @@ void IccTransform::Translate(pdfium::span<const float> pSrcValues,
   // apply some member of m_hTransform to the input. We need to go over all the
   // places which set transform to verify that only `pSrcValues.size()`
   // components are used.
-  if (m_bLab) {
+  if (lab_) {
     DataVector<double> inputs(std::max<size_t>(pSrcValues.size(), 16));
     for (uint32_t i = 0; i < pSrcValues.size(); ++i)
       inputs[i] = pSrcValues[i];

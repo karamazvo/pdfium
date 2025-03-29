@@ -206,7 +206,7 @@ bool CPDF_SecurityHandler::OnInit(const CPDF_Dictionary* pEncryptDict,
 
 bool CPDF_SecurityHandler::CheckSecurity(const ByteString& password) {
   if (!password.IsEmpty() && CheckPassword(password, true)) {
-    m_bOwnerUnlocked = true;
+    owner_unlocked_ = true;
     return true;
   }
   return CheckPassword(password, false);
@@ -214,9 +214,9 @@ bool CPDF_SecurityHandler::CheckSecurity(const ByteString& password) {
 
 uint32_t CPDF_SecurityHandler::GetPermissions(bool get_owner_perms) const {
   uint32_t dwPermission =
-      m_bOwnerUnlocked && get_owner_perms ? 0xFFFFFFFF : m_Permissions;
-  if (m_pEncryptDict &&
-      m_pEncryptDict->GetByteStringFor("Filter") == "Standard") {
+      owner_unlocked_ && get_owner_perms ? 0xFFFFFFFF : m_Permissions;
+  if (encrypt_dict_ &&
+      encrypt_dict_->GetByteStringFor("Filter") == "Standard") {
     // See PDF Reference 1.7, page 123, table 3.20.
     dwPermission &= 0xFFFFFFFC;
     dwPermission |= 0xFFFFF0C0;
@@ -280,7 +280,7 @@ static bool LoadCryptInfo(const CPDF_Dictionary* pEncryptDict,
 }
 
 bool CPDF_SecurityHandler::LoadDict(const CPDF_Dictionary* pEncryptDict) {
-  m_pEncryptDict.Reset(pEncryptDict);
+  encrypt_dict_.Reset(pEncryptDict);
   m_Version = pEncryptDict->GetIntegerFor("V");
   m_Revision = pEncryptDict->GetIntegerFor("R");
   m_Permissions = pEncryptDict->GetIntegerFor("P", -1);
@@ -298,7 +298,7 @@ bool CPDF_SecurityHandler::LoadDict(const CPDF_Dictionary* pEncryptDict) {
 bool CPDF_SecurityHandler::LoadDict(const CPDF_Dictionary* pEncryptDict,
                                     CPDF_CryptoHandler::Cipher* cipher,
                                     size_t* key_len) {
-  m_pEncryptDict.Reset(pEncryptDict);
+  encrypt_dict_.Reset(pEncryptDict);
   m_Version = pEncryptDict->GetIntegerFor("V");
   m_Revision = pEncryptDict->GetIntegerFor("R");
   m_Permissions = pEncryptDict->GetIntegerFor("P", -1);
@@ -321,14 +321,14 @@ bool CPDF_SecurityHandler::LoadDict(const CPDF_Dictionary* pEncryptDict,
 
 bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
                                                 bool bOwner) {
-  DCHECK(m_pEncryptDict);
+  DCHECK(encrypt_dict_);
   DCHECK(m_Revision >= 5);
 
-  ByteString okey = m_pEncryptDict->GetByteStringFor("O");
+  ByteString okey = encrypt_dict_->GetByteStringFor("O");
   if (okey.GetLength() < 48)
     return false;
 
-  ByteString ukey = m_pEncryptDict->GetByteStringFor("U");
+  ByteString ukey = encrypt_dict_->GetByteStringFor("U");
   if (ukey.GetLength() < 48)
     return false;
 
@@ -363,7 +363,7 @@ bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
     }
     CRYPT_SHA256Finish(&sha, digest);
   }
-  ByteString ekey = m_pEncryptDict->GetByteStringFor(bOwner ? "OE" : "UE");
+  ByteString ekey = encrypt_dict_->GetByteStringFor(bOwner ? "OE" : "UE");
   if (ekey.GetLength() < 32)
     return false;
 
@@ -374,7 +374,7 @@ bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
   CRYPT_AESDecrypt(&aes, m_EncryptKey.data(), ekey.unsigned_str(), 32);
   CRYPT_AESSetKey(&aes, m_EncryptKey.data(), m_EncryptKey.size());
   CRYPT_AESSetIV(&aes, iv);
-  ByteString perms = m_pEncryptDict->GetByteStringFor("Perms");
+  ByteString perms = encrypt_dict_->GetByteStringFor("Perms");
   if (perms.IsEmpty())
     return false;
 
@@ -442,11 +442,11 @@ bool CPDF_SecurityHandler::CheckPasswordImpl(const ByteString& password,
 
 bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
                                              bool bIgnoreEncryptMeta) {
-  CalcEncryptKey(m_pEncryptDict.Get(), password,
+  CalcEncryptKey(encrypt_dict_.Get(), password,
                  pdfium::make_span(m_EncryptKey).first(m_KeyLen),
                  bIgnoreEncryptMeta, m_FileId);
   ByteString ukey =
-      m_pEncryptDict ? m_pEncryptDict->GetByteStringFor("U") : ByteString();
+      encrypt_dict_ ? encrypt_dict_->GetByteStringFor("U") : ByteString();
   if (ukey.GetLength() < 16) {
     return false;
   }
@@ -481,7 +481,7 @@ bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
 ByteString CPDF_SecurityHandler::GetUserPassword(
     const ByteString& owner_password) const {
   static constexpr size_t kRequiredOkeyLength = 32;
-  ByteString okey = m_pEncryptDict->GetByteStringFor("O");
+  ByteString okey = encrypt_dict_->GetByteStringFor("O");
   size_t okeylen = std::min<size_t>(okey.GetLength(), kRequiredOkeyLength);
   if (okeylen < kRequiredOkeyLength)
     return ByteString();
@@ -532,7 +532,7 @@ bool CPDF_SecurityHandler::CheckOwnerPassword(const ByteString& password) {
 }
 
 bool CPDF_SecurityHandler::IsMetadataEncrypted() const {
-  return m_pEncryptDict->GetBooleanFor("EncryptMetadata", true);
+  return encrypt_dict_->GetBooleanFor("EncryptMetadata", true);
 }
 
 ByteString CPDF_SecurityHandler::GetEncodedPassword(
@@ -577,7 +577,7 @@ void CPDF_SecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict,
   if (pIdArray)
     file_id = pIdArray->GetByteStringAt(0);
 
-  CalcEncryptKey(m_pEncryptDict.Get(), password,
+  CalcEncryptKey(encrypt_dict_.Get(), password,
                  pdfium::make_span(m_EncryptKey).first(key_len), false,
                  file_id);
   if (m_Revision < 3) {
@@ -691,6 +691,6 @@ void CPDF_SecurityHandler::AES256_SetPerms(CPDF_Dictionary* pEncryptDict) {
 }
 
 void CPDF_SecurityHandler::InitCryptoHandler() {
-  m_pCryptoHandler = std::make_unique<CPDF_CryptoHandler>(
+  crypto_handler_ = std::make_unique<CPDF_CryptoHandler>(
       m_Cipher, pdfium::make_span(m_EncryptKey).first(m_KeyLen));
 }

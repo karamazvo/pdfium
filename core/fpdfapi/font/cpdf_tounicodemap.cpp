@@ -57,10 +57,11 @@ CPDF_ToUnicodeMap::~CPDF_ToUnicodeMap() = default;
 WideString CPDF_ToUnicodeMap::Lookup(uint32_t charcode) const {
   auto it = m_Multimap.find(charcode);
   if (it == m_Multimap.end()) {
-    if (!m_pBaseMap)
+    if (!base_map_) {
       return WideString();
+    }
     return WideString(
-        m_pBaseMap->UnicodeFromCID(static_cast<uint16_t>(charcode)));
+        base_map_->UnicodeFromCID(static_cast<uint16_t>(charcode)));
   }
 
   uint32_t value = *it->second.begin();
@@ -178,7 +179,7 @@ void CPDF_ToUnicodeMap::Load(RetainPtr<const CPDF_Stream> pStream) {
     previous_word = word;
   }
   if (cid_set != CIDSET_UNKNOWN) {
-    m_pBaseMap = CPDF_FontGlobals::GetInstance()->GetCID2UnicodeMap(cid_set);
+    base_map_ = CPDF_FontGlobals::GetInstance()->GetCID2UnicodeMap(cid_set);
   }
 }
 

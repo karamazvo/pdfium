@@ -23,8 +23,8 @@ CXFA_ContentLayoutItem::~CXFA_ContentLayoutItem() = default;
 
 void CXFA_ContentLayoutItem::Trace(cppgc::Visitor* visitor) const {
   CXFA_LayoutItem::Trace(visitor);
-  visitor->Trace(m_pPrev);
-  visitor->Trace(m_pNext);
+  visitor->Trace(prev_);
+  visitor->Trace(next_);
   visitor->Trace(m_pFFWidget);
 }
 
@@ -47,18 +47,21 @@ CXFA_ContentLayoutItem* CXFA_ContentLayoutItem::GetLast() {
 void CXFA_ContentLayoutItem::InsertAfter(CXFA_ContentLayoutItem* pItem) {
   CHECK_NE(this, pItem);
   pItem->RemoveSelf();
-  pItem->m_pNext = m_pNext;
-  pItem->m_pPrev = this;
-  m_pNext = pItem;
-  if (pItem->m_pNext)
-    pItem->m_pNext->m_pPrev = pItem;
+  pItem->next_ = next_;
+  pItem->prev_ = this;
+  next_ = pItem;
+  if (pItem->next_) {
+    pItem->next_->prev_ = pItem;
+  }
 }
 
 void CXFA_ContentLayoutItem::RemoveSelf() {
-  if (m_pNext)
-    m_pNext->m_pPrev = m_pPrev;
-  if (m_pPrev)
-    m_pPrev->m_pNext = m_pNext;
+  if (next_) {
+    next_->prev_ = prev_;
+  }
+  if (prev_) {
+    prev_->next_ = next_;
+  }
 }
 
 CFX_RectF CXFA_ContentLayoutItem::GetRelativeRect() const {

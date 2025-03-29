@@ -502,9 +502,9 @@ class FaxDecoder final : public ScanlineDecoder {
 
   const int m_Encoding;
   int m_bitpos = 0;
-  bool m_bByteAlign = false;
-  const bool m_bEndOfLine;
-  const bool m_bBlack;
+  bool byte_align_ = false;
+  const bool end_of_line_;
+  const bool black_;
   const pdfium::raw_span<const uint8_t> m_SrcSpan;
   DataVector<uint8_t> m_ScanlineBuf;
   DataVector<uint8_t> m_RefBuf;
@@ -525,16 +525,16 @@ FaxDecoder::FaxDecoder(pdfium::span<const uint8_t> src_span,
                       kFaxBpc,
                       fxge::CalculatePitch32OrDie(kFaxBpc, width)),
       m_Encoding(K),
-      m_bByteAlign(EncodedByteAlign),
-      m_bEndOfLine(EndOfLine),
-      m_bBlack(BlackIs1),
+      byte_align_(EncodedByteAlign),
+      end_of_line_(EndOfLine),
+      black_(BlackIs1),
       m_SrcSpan(src_span),
       m_ScanlineBuf(m_Pitch),
       m_RefBuf(m_Pitch) {}
 
 FaxDecoder::~FaxDecoder() {
   // Span in superclass can't outlive our buffer.
-  m_pLastScanline = pdfium::span<uint8_t>();
+  last_scanline_ = pdfium::span<uint8_t>();
 }
 
 bool FaxDecoder::Rewind() {
@@ -567,24 +567,27 @@ pdfium::span<uint8_t> FaxDecoder::GetNextLine() {
     }
     m_RefBuf = m_ScanlineBuf;
   }
-  if (m_bEndOfLine)
+  if (end_of_line_) {
     FaxSkipEOL(m_SrcSpan.data(), bitsize, &m_bitpos);
+  }
 
-  if (m_bByteAlign && m_bitpos < bitsize) {
+  if (byte_align_ && m_bitpos < bitsize) {
     int bitpos0 = m_bitpos;
     int bitpos1 = FxAlignToBoundary<8>(m_bitpos);
-    while (m_bByteAlign && bitpos0 < bitpos1) {
+    while (byte_align_ && bitpos0 < bitpos1) {
       int bit = m_SrcSpan[bitpos0 / 8] & (1 << (7 - bitpos0 % 8));
       if (bit != 0)
-        m_bByteAlign = false;
+        byte_align_ = false;
       else
         ++bitpos0;
     }
-    if (m_bByteAlign)
+    if (byte_align_) {
       m_bitpos = bitpos1;
+    }
   }
-  if (m_bBlack)
+  if (black_) {
     InvertBuffer();
+  }
   return m_ScanlineBuf;
 }
 

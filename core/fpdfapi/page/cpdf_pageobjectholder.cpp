@@ -39,11 +39,11 @@ CPDF_PageObjectHolder::CPDF_PageObjectHolder(
     RetainPtr<CPDF_Dictionary> pDict,
     RetainPtr<CPDF_Dictionary> pPageResources,
     RetainPtr<CPDF_Dictionary> pResources)
-    : m_pPageResources(std::move(pPageResources)),
-      m_pResources(std::move(pResources)),
-      m_pDict(std::move(pDict)),
-      m_pDocument(pDoc) {
-  DCHECK(m_pDict);
+    : page_resources_(std::move(pPageResources)),
+      resources_(std::move(pResources)),
+      dict_(std::move(pDict)),
+      document_(pDoc) {
+  DCHECK(dict_);
 }
 
 CPDF_PageObjectHolder::~CPDF_PageObjectHolder() = default;
@@ -55,7 +55,7 @@ bool CPDF_PageObjectHolder::IsPage() const {
 void CPDF_PageObjectHolder::StartParse(
     std::unique_ptr<CPDF_ContentParser> pParser) {
   DCHECK_EQ(m_ParseState, ParseState::kNotParsed);
-  m_pParser = std::move(pParser);
+  parser_ = std::move(pParser);
   m_ParseState = ParseState::kParsing;
 }
 
@@ -64,14 +64,15 @@ void CPDF_PageObjectHolder::ContinueParse(PauseIndicatorIface* pPause) {
     return;
 
   DCHECK_EQ(m_ParseState, ParseState::kParsing);
-  if (m_pParser->Continue(pPause))
+  if (parser_->Continue(pPause)) {
     return;
+  }
 
   m_ParseState = ParseState::kParsed;
-  m_pDocument->IncrementParsedPageCount();
-  m_AllCTMs = m_pParser->TakeAllCTMs();
+  document_->IncrementParsedPageCount();
+  m_AllCTMs = parser_->TakeAllCTMs();
 
-  m_pParser.reset();
+  parser_.reset();
 }
 
 void CPDF_PageObjectHolder::AddImageMaskBoundingBox(const CFX_FloatRect& box) {
@@ -143,7 +144,7 @@ CFX_Matrix CPDF_PageObjectHolder::GetCTMAtEndOfStream(int32_t stream) {
 }
 
 void CPDF_PageObjectHolder::LoadTransparencyInfo() {
-  RetainPtr<const CPDF_Dictionary> pGroup = m_pDict->GetDictFor("Group");
+  RetainPtr<const CPDF_Dictionary> pGroup = dict_->GetDictFor("Group");
   if (!pGroup)
     return;
 

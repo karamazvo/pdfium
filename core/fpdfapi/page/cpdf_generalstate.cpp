@@ -152,16 +152,16 @@ void CPDF_GeneralState::SetStrokeAlpha(float alpha) {
 
 RetainPtr<const CPDF_Dictionary> CPDF_GeneralState::GetSoftMask() const {
   const StateData* pData = m_Ref.GetObject();
-  return pData ? pData->m_pSoftMask : nullptr;
+  return pData ? pData->soft_mask_ : nullptr;
 }
 
 RetainPtr<CPDF_Dictionary> CPDF_GeneralState::GetMutableSoftMask() {
   const StateData* pData = m_Ref.GetObject();
-  return pData ? pData->m_pSoftMask : nullptr;
+  return pData ? pData->soft_mask_ : nullptr;
 }
 
 void CPDF_GeneralState::SetSoftMask(RetainPtr<CPDF_Dictionary> pDict) {
-  m_Ref.GetPrivateCopy()->m_pSoftMask = std::move(pDict);
+  m_Ref.GetPrivateCopy()->soft_mask_ = std::move(pDict);
 }
 
 RetainPtr<const CPDF_Object> CPDF_GeneralState::GetTR() const {
@@ -175,11 +175,11 @@ void CPDF_GeneralState::SetTR(RetainPtr<const CPDF_Object> pObject) {
 
 RetainPtr<CPDF_TransferFunc> CPDF_GeneralState::GetTransferFunc() const {
   const StateData* pData = m_Ref.GetObject();
-  return pData ? pData->m_pTransferFunc : nullptr;
+  return pData ? pData->transfer_func_ : nullptr;
 }
 
 void CPDF_GeneralState::SetTransferFunc(RetainPtr<CPDF_TransferFunc> pFunc) {
-  m_Ref.GetPrivateCopy()->m_pTransferFunc = std::move(pFunc);
+  m_Ref.GetPrivateCopy()->transfer_func_ = std::move(pFunc);
 }
 
 void CPDF_GeneralState::SetBlendMode(const ByteString& mode) {
@@ -283,12 +283,12 @@ CPDF_GeneralState::StateData::StateData() = default;
 CPDF_GeneralState::StateData::StateData(const StateData& that)
     : m_BlendMode(that.m_BlendMode),
       m_BlendType(that.m_BlendType),
-      m_pSoftMask(that.m_pSoftMask),
+      soft_mask_(that.soft_mask_),
       m_SMaskMatrix(that.m_SMaskMatrix),
       m_StrokeAlpha(that.m_StrokeAlpha),
       m_FillAlpha(that.m_FillAlpha),
       m_pTR(that.m_pTR),
-      m_pTransferFunc(that.m_pTransferFunc),
+      transfer_func_(that.transfer_func_),
       m_RenderIntent(that.m_RenderIntent),
       m_StrokeAdjust(that.m_StrokeAdjust),
       m_AlphaSource(that.m_AlphaSource),

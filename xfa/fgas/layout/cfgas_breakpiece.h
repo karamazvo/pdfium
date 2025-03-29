@@ -67,11 +67,11 @@ class CFGAS_BreakPiece {
   uint32_t GetCharStyles() const { return m_dwCharStyles; }
   void SetCharStyles(uint32_t styles) { m_dwCharStyles = styles; }
 
-  void SetChars(std::vector<CFGAS_Char>* chars) { m_pChars = chars; }
+  void SetChars(std::vector<CFGAS_Char>* chars) { chars_ = chars; }
 
-  const CFGAS_TextUserData* GetUserData() const { return m_pUserData.Get(); }
+  const CFGAS_TextUserData* GetUserData() const { return user_data_.Get(); }
   void SetUserData(const RetainPtr<CFGAS_TextUserData>& user_data) {
-    m_pUserData = user_data;
+    user_data_ = user_data;
   }
 
  private:
@@ -86,8 +86,8 @@ class CFGAS_BreakPiece {
   int32_t m_iHorizontalScale = 100;
   int32_t m_iVerticalScale = 100;
   uint32_t m_dwCharStyles = 0;
-  UnownedPtr<std::vector<CFGAS_Char>> m_pChars;
-  RetainPtr<CFGAS_TextUserData> m_pUserData;
+  UnownedPtr<std::vector<CFGAS_Char>> chars_;
+  RetainPtr<CFGAS_TextUserData> user_data_;
 };
 
 #endif  // XFA_FGAS_LAYOUT_CFGAS_BREAKPIECE_H_

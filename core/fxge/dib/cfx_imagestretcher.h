@@ -38,9 +38,9 @@ class CFX_ImageStretcher {
   bool StartStretch();
   bool ContinueStretch(PauseIndicatorIface* pPause);
 
-  UnownedPtr<ScanlineComposerIface> const m_pDest;
-  RetainPtr<const CFX_DIBBase> const m_pSource;
-  std::unique_ptr<CStretchEngine> m_pStretchEngine;
+  UnownedPtr<ScanlineComposerIface> const dest_;
+  RetainPtr<const CFX_DIBBase> const source_;
+  std::unique_ptr<CStretchEngine> stretch_engine_;
   const FXDIB_ResampleOptions m_ResampleOptions;
   const int m_DestWidth;
   const int m_DestHeight;

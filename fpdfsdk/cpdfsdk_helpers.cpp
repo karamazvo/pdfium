@@ -115,7 +115,7 @@ class FPDF_FileHandlerContext final : public IFX_SeekableStream {
   ~FPDF_FileHandlerContext() override;
 
   UnownedPtr<FPDF_FILEHANDLER> const m_pFS;
-  FX_FILESIZE m_nCurPos = 0;
+  FX_FILESIZE cur_pos_ = 0;
 };
 
 FPDF_FileHandlerContext::FPDF_FileHandlerContext(FPDF_FILEHANDLER* pFS)
@@ -137,11 +137,11 @@ FX_FILESIZE FPDF_FileHandlerContext::GetSize() {
 }
 
 bool FPDF_FileHandlerContext::IsEOF() {
-  return m_nCurPos >= GetSize();
+  return cur_pos_ >= GetSize();
 }
 
 FX_FILESIZE FPDF_FileHandlerContext::GetPosition() {
-  return m_nCurPos;
+  return cur_pos_;
 }
 
 bool FPDF_FileHandlerContext::ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
@@ -162,7 +162,7 @@ bool FPDF_FileHandlerContext::ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
     return false;
   }
 
-  m_nCurPos = new_position.ValueOrDie();
+  cur_pos_ = new_position.ValueOrDie();
   return true;
 }
 
@@ -184,7 +184,7 @@ bool FPDF_FileHandlerContext::WriteBlock(pdfium::span<const uint8_t> buffer) {
     return false;
   }
 
-  m_nCurPos = new_position.ValueOrDie();
+  cur_pos_ = new_position.ValueOrDie();
   return true;
 }
 

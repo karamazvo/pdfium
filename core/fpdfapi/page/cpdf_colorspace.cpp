@@ -267,7 +267,7 @@ class CPDF_SeparationCS final : public CPDF_BasedCS {
   CPDF_SeparationCS();
 
   bool m_IsNoneType = false;
-  std::unique_ptr<const CPDF_Function> m_pFunc;
+  std::unique_ptr<const CPDF_Function> func_;
 };
 
 class CPDF_DeviceNCS final : public CPDF_BasedCS {
@@ -289,7 +289,7 @@ class CPDF_DeviceNCS final : public CPDF_BasedCS {
  private:
   CPDF_DeviceNCS();
 
-  std::unique_ptr<const CPDF_Function> m_pFunc;
+  std::unique_ptr<const CPDF_Function> func_;
 };
 
 class Vector_3by1 {
@@ -539,10 +539,11 @@ RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::Load(
   if (!pCS)
     return nullptr;
 
-  pCS->m_pArray.Reset(pArray);
-  pCS->m_nComponents = pCS->v_Load(pDoc, pArray, pVisited);
-  if (pCS->m_nComponents == 0)
+  pCS->array_.Reset(pArray);
+  pCS->components_ = pCS->v_Load(pDoc, pArray, pVisited);
+  if (pCS->components_ == 0) {
     return nullptr;
+  }
 
   return pCS;
 }
@@ -592,15 +593,16 @@ std::vector<float> CPDF_ColorSpace::CreateBufAndSetDefaultColor() const {
 
   float min;
   float max;
-  std::vector<float> buf(m_nComponents);
-  for (uint32_t i = 0; i < m_nComponents; i++)
+  std::vector<float> buf(components_);
+  for (uint32_t i = 0; i < components_; i++) {
     GetDefaultValue(i, &buf[i], &min, &max);
+  }
 
   return buf;
 }
 
 uint32_t CPDF_ColorSpace::ComponentCount() const {
-  return m_nComponents;
+  return components_;
 }
 
 // Returns nullptr because only the CPDF_ICCBasedCS subclass supports ICC
@@ -631,11 +633,11 @@ void CPDF_ColorSpace::TranslateImageLine(pdfium::span<uint8_t> dest_span,
 
   uint8_t* dest_buf = dest_span.data();
   const uint8_t* src_buf = src_span.data();
-  std::vector<float> src(m_nComponents);
+  std::vector<float> src(components_);
   const int divisor = m_Family != Family::kIndexed ? 255 : 1;
   UNSAFE_TODO({
     for (int i = 0; i < pixels; i++) {
-      for (uint32_t j = 0; j < m_nComponents; j++) {
+      for (uint32_t j = 0; j < components_; j++) {
         src[j] = static_cast<float>(*src_buf++) / divisor;
       }
       auto rgb = GetRGBOrZerosOnError(src);
@@ -673,7 +675,7 @@ CPDF_ColorSpace::CPDF_ColorSpace(Family family) : m_Family(family) {}
 CPDF_ColorSpace::~CPDF_ColorSpace() = default;
 
 void CPDF_ColorSpace::SetComponentsForStockCS(uint32_t nComponents) {
-  m_nComponents = nComponents;
+  components_ = nComponents;
 }
 
 CPDF_CalGray::CPDF_CalGray() : CPDF_ColorSpace(Family::kCalGray) {}
@@ -1139,7 +1141,7 @@ uint32_t CPDF_SeparationCS::v_Load(CPDF_Document* pDoc,
   if (pFuncObj && !pFuncObj->IsName()) {
     auto pFunc = CPDF_Function::Load(std::move(pFuncObj));
     if (pFunc && pFunc->OutputCount() >= m_pBaseCS->ComponentCount()) {
-      m_pFunc = std::move(pFunc);
+      func_ = std::move(pFunc);
     }
   }
   return 1;
@@ -1150,7 +1152,7 @@ std::optional<FX_RGB_STRUCT<float>> CPDF_SeparationCS::GetRGB(
   if (m_IsNoneType) {
     return std::nullopt;
   }
-  if (!m_pFunc) {
+  if (!func_) {
     if (!m_pBaseCS) {
       return std::nullopt;
     }
@@ -1159,8 +1161,8 @@ std::optional<FX_RGB_STRUCT<float>> CPDF_SeparationCS::GetRGB(
   }
 
   // Using at least 16 elements due to the call m_pAltCS->GetRGB() below.
-  std::vector<float> results(std::max(m_pFunc->OutputCount(), 16u));
-  uint32_t nresults = m_pFunc->Call(pBuf.first(1), results).value_or(0);
+  std::vector<float> results(std::max(func_->OutputCount(), 16u));
+  uint32_t nresults = func_->Call(pBuf.first(1), results).value_or(0);
   if (nresults == 0) {
     return std::nullopt;
   }
@@ -1195,14 +1197,15 @@ uint32_t CPDF_DeviceNCS::v_Load(CPDF_Document* pDoc,
     return 0;
 
   m_pBaseCS = Load(pDoc, pAltCS.Get(), pVisited);
-  m_pFunc = CPDF_Function::Load(pArray->GetDirectObjectAt(3));
-  if (!m_pBaseCS || !m_pFunc)
+  func_ = CPDF_Function::Load(pArray->GetDirectObjectAt(3));
+  if (!m_pBaseCS || !func_) {
     return 0;
+  }
 
   if (m_pBaseCS->IsSpecial())
     return 0;
 
-  if (m_pFunc->OutputCount() < m_pBaseCS->ComponentCount()) {
+  if (func_->OutputCount() < m_pBaseCS->ComponentCount()) {
     return 0;
   }
 
@@ -1211,13 +1214,13 @@ uint32_t CPDF_DeviceNCS::v_Load(CPDF_Document* pDoc,
 
 std::optional<FX_RGB_STRUCT<float>> CPDF_DeviceNCS::GetRGB(
     pdfium::span<const float> pBuf) const {
-  if (!m_pFunc) {
+  if (!func_) {
     return std::nullopt;
   }
   // Using at least 16 elements due to the call m_pAltCS->GetRGB() below.
-  std::vector<float> results(std::max(m_pFunc->OutputCount(), 16u));
+  std::vector<float> results(std::max(func_->OutputCount(), 16u));
   uint32_t nresults =
-      m_pFunc->Call(pBuf.first(ComponentCount()), results).value_or(0);
+      func_->Call(pBuf.first(ComponentCount()), results).value_or(0);
 
   if (nresults == 0) {
     return std::nullopt;

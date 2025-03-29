@@ -25,7 +25,7 @@ CXFA_ViewLayoutItem::~CXFA_ViewLayoutItem() = default;
 
 void CXFA_ViewLayoutItem::Trace(cppgc::Visitor* visitor) const {
   CXFA_LayoutItem::Trace(visitor);
-  visitor->Trace(m_pOldSubform);
+  visitor->Trace(old_subform_);
   visitor->Trace(m_pFFPageView);
 }
 
@@ -61,5 +61,5 @@ CXFA_Node* CXFA_ViewLayoutItem::GetMasterPage() const {
 }
 
 void CXFA_ViewLayoutItem::SetOldSubform(CXFA_Node* pSubform) {
-  m_pOldSubform = pSubform;
+  old_subform_ = pSubform;
 }

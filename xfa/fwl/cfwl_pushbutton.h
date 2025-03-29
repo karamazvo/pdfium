@@ -47,7 +47,7 @@ class CFWL_PushButton final : public CFWL_Widget {
   void OnMouseLeave(CFWL_MessageMouse* pMsg);
   void OnKeyDown(CFWL_MessageKey* pMsg);
 
-  bool m_bBtnDown = false;
+  bool btn_down_ = false;
   CFX_RectF m_ClientRect;
   CFX_RectF m_CaptionRect;
 };

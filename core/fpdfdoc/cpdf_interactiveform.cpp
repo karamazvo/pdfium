@@ -422,18 +422,18 @@ class CFieldTree {
     size_t CountFields() const { return CountFieldsInternal(); }
 
     void SetField(std::unique_ptr<CPDF_FormField> field) {
-      m_pField = std::move(field);
+      field_ = std::move(field);
     }
 
-    CPDF_FormField* GetField() const { return m_pField.get(); }
+    CPDF_FormField* GetField() const { return field_.get(); }
     WideString GetShortName() const { return m_ShortName; }
     int GetLevel() const { return m_level; }
 
    private:
     CPDF_FormField* GetFieldInternal(size_t* pFieldsToGo) {
-      if (m_pField) {
+      if (field_) {
         if (*pFieldsToGo == 0) {
-          return m_pField.get();
+          return field_.get();
         }
 
         --*pFieldsToGo;
@@ -449,7 +449,7 @@ class CFieldTree {
 
     size_t CountFieldsInternal() const {
       size_t count = 0;
-      if (m_pField) {
+      if (field_) {
         ++count;
       }
 
@@ -461,7 +461,7 @@ class CFieldTree {
 
     std::vector<std::unique_ptr<Node>> m_Children;
     WideString m_ShortName;
-    std::unique_ptr<CPDF_FormField> m_pField;
+    std::unique_ptr<CPDF_FormField> field_;
     const int m_level;
   };
 
@@ -472,16 +472,16 @@ class CFieldTree {
                 std::unique_ptr<CPDF_FormField> field);
   CPDF_FormField* GetField(const WideString& full_name);
 
-  Node* GetRoot() { return m_pRoot.get(); }
+  Node* GetRoot() { return root_.get(); }
   Node* FindNode(const WideString& full_name);
   Node* AddChild(Node* pParent, const WideString& short_name);
   Node* Lookup(Node* pParent, WideStringView short_name);
 
  private:
-  std::unique_ptr<Node> m_pRoot;
+  std::unique_ptr<Node> root_;
 };
 
-CFieldTree::CFieldTree() : m_pRoot(std::make_unique<Node>()) {}
+CFieldTree::CFieldTree() : root_(std::make_unique<Node>()) {}
 
 CFieldTree::~CFieldTree() = default;
 
@@ -587,18 +587,18 @@ CFieldTree::Node* CFieldTree::FindNode(const WideString& full_name) {
 }
 
 CPDF_InteractiveForm::CPDF_InteractiveForm(CPDF_Document* document)
-    : m_pDocument(document), m_pFieldTree(std::make_unique<CFieldTree>()) {
-  RetainPtr<CPDF_Dictionary> pRoot = m_pDocument->GetMutableRoot();
+    : document_(document), field_tree_(std::make_unique<CFieldTree>()) {
+  RetainPtr<CPDF_Dictionary> pRoot = document_->GetMutableRoot();
   if (!pRoot) {
     return;
   }
 
-  m_pFormDict = pRoot->GetMutableDictFor("AcroForm");
-  if (!m_pFormDict) {
+  form_dict_ = pRoot->GetMutableDictFor("AcroForm");
+  if (!form_dict_) {
     return;
   }
 
-  RetainPtr<CPDF_Array> fields = m_pFormDict->GetMutableArrayFor("Fields");
+  RetainPtr<CPDF_Array> fields = form_dict_->GetMutableArrayFor("Fields");
   if (!fields) {
     return;
   }
@@ -665,10 +665,10 @@ RetainPtr<CPDF_Dictionary> CPDF_InteractiveForm::InitAcroFormDict(
 
 size_t CPDF_InteractiveForm::CountFields(const WideString& field_name) const {
   if (field_name.IsEmpty()) {
-    return m_pFieldTree->GetRoot()->CountFields();
+    return field_tree_->GetRoot()->CountFields();
   }
 
-  CFieldTree::Node* node = m_pFieldTree->FindNode(field_name);
+  CFieldTree::Node* node = field_tree_->FindNode(field_name);
   return node ? node->CountFields() : 0;
 }
 
@@ -676,10 +676,10 @@ CPDF_FormField* CPDF_InteractiveForm::GetField(
     size_t index,
     const WideString& field_name) const {
   if (field_name.IsEmpty()) {
-    return m_pFieldTree->GetRoot()->GetFieldAtIndex(index);
+    return field_tree_->GetRoot()->GetFieldAtIndex(index);
   }
 
-  CFieldTree::Node* node = m_pFieldTree->FindNode(field_name);
+  CFieldTree::Node* node = field_tree_->FindNode(field_name);
   return node ? node->GetFieldAtIndex(index) : nullptr;
 }
 
@@ -689,7 +689,7 @@ CPDF_FormField* CPDF_InteractiveForm::GetFieldByDict(
     return nullptr;
   }
 
-  return m_pFieldTree->GetField(CPDF_FormField::GetFullNameForDict(field_dict));
+  return field_tree_->GetField(CPDF_FormField::GetFullNameForDict(field_dict));
 }
 
 const CPDF_FormControl* CPDF_InteractiveForm::GetControlAtPoint(
@@ -733,24 +733,24 @@ CPDF_FormControl* CPDF_InteractiveForm::GetControlByDict(
 }
 
 bool CPDF_InteractiveForm::NeedConstructAP() const {
-  return m_pFormDict && m_pFormDict->GetBooleanFor("NeedAppearances", false);
+  return form_dict_ && form_dict_->GetBooleanFor("NeedAppearances", false);
 }
 
 int CPDF_InteractiveForm::CountFieldsInCalculationOrder() {
-  if (!m_pFormDict) {
+  if (!form_dict_) {
     return 0;
   }
 
-  RetainPtr<const CPDF_Array> pArray = m_pFormDict->GetArrayFor("CO");
+  RetainPtr<const CPDF_Array> pArray = form_dict_->GetArrayFor("CO");
   return pArray ? fxcrt::CollectionSize<int>(*pArray) : 0;
 }
 
 CPDF_FormField* CPDF_InteractiveForm::GetFieldInCalculationOrder(int index) {
-  if (!m_pFormDict || index < 0) {
+  if (!form_dict_ || index < 0) {
     return nullptr;
   }
 
-  RetainPtr<const CPDF_Array> pArray = m_pFormDict->GetArrayFor("CO");
+  RetainPtr<const CPDF_Array> pArray = form_dict_->GetArrayFor("CO");
   if (!pArray) {
     return nullptr;
   }
@@ -762,11 +762,11 @@ CPDF_FormField* CPDF_InteractiveForm::GetFieldInCalculationOrder(int index) {
 
 int CPDF_InteractiveForm::FindFieldInCalculationOrder(
     const CPDF_FormField* field) {
-  if (!m_pFormDict) {
+  if (!form_dict_) {
     return -1;
   }
 
-  RetainPtr<const CPDF_Array> pArray = m_pFormDict->GetArrayFor("CO");
+  RetainPtr<const CPDF_Array> pArray = form_dict_->GetArrayFor("CO");
   if (!pArray) {
     return -1;
   }
@@ -781,7 +781,7 @@ int CPDF_InteractiveForm::FindFieldInCalculationOrder(
 
 RetainPtr<CPDF_Font> CPDF_InteractiveForm::GetFormFont(
     ByteString name_tag) const {
-  if (!m_pFormDict) {
+  if (!form_dict_) {
     return nullptr;
   }
   ByteString alias = PDF_NameDecode(name_tag.AsStringView());
@@ -789,7 +789,7 @@ RetainPtr<CPDF_Font> CPDF_InteractiveForm::GetFormFont(
     return nullptr;
   }
 
-  RetainPtr<CPDF_Dictionary> pDR = m_pFormDict->GetMutableDictFor("DR");
+  RetainPtr<CPDF_Dictionary> pDR = form_dict_->GetMutableDictFor("DR");
   if (!pDR) {
     return nullptr;
   }
@@ -809,22 +809,22 @@ RetainPtr<CPDF_Font> CPDF_InteractiveForm::GetFormFont(
 
 RetainPtr<CPDF_Font> CPDF_InteractiveForm::GetFontForElement(
     RetainPtr<CPDF_Dictionary> element) const {
-  auto* pData = CPDF_DocPageData::FromDocument(m_pDocument);
+  auto* pData = CPDF_DocPageData::FromDocument(document_);
   return pData->GetFont(std::move(element));
 }
 
 CPDF_DefaultAppearance CPDF_InteractiveForm::GetDefaultAppearance() const {
-  return CPDF_DefaultAppearance(
-      m_pFormDict ? m_pFormDict->GetByteStringFor("DA") : "");
+  return CPDF_DefaultAppearance(form_dict_ ? form_dict_->GetByteStringFor("DA")
+                                           : "");
 }
 
 int CPDF_InteractiveForm::GetFormAlignment() const {
-  return m_pFormDict ? m_pFormDict->GetIntegerFor("Q", 0) : 0;
+  return form_dict_ ? form_dict_->GetIntegerFor("Q", 0) : 0;
 }
 
 void CPDF_InteractiveForm::ResetForm(pdfium::span<CPDF_FormField*> fields,
                                      bool bIncludeOrExclude) {
-  CFieldTree::Node* pRoot = m_pFieldTree->GetRoot();
+  CFieldTree::Node* pRoot = field_tree_->GetRoot();
   const size_t nCount = pRoot->CountFields();
   for (size_t i = 0; i < nCount; ++i) {
     CPDF_FormField* field = pRoot->GetFieldAtIndex(i);
@@ -836,8 +836,8 @@ void CPDF_InteractiveForm::ResetForm(pdfium::span<CPDF_FormField*> fields,
       field->ResetField();
     }
   }
-  if (m_pFormNotify) {
-    m_pFormNotify->AfterFormReset(this);
+  if (form_notify_) {
+    form_notify_->AfterFormReset(this);
   }
 }
 
@@ -915,7 +915,7 @@ void CPDF_InteractiveForm::AddTerminalField(
     return;
   }
 
-  CPDF_FormField* field = m_pFieldTree->GetField(field_name);
+  CPDF_FormField* field = field_tree_->GetField(field_name);
   if (!field) {
     RetainPtr<CPDF_Dictionary> pParent(field_dict);
     if (!field_dict->KeyExist(pdfium::form_fields::kT) &&
@@ -958,7 +958,7 @@ void CPDF_InteractiveForm::AddTerminalField(
                                            ByteString());
       }
     }
-    if (!m_pFieldTree->SetField(field_name, std::move(new_field))) {
+    if (!field_tree_->SetField(field_name, std::move(new_field))) {
       return;
     }
   }
@@ -999,7 +999,7 @@ CPDF_FormControl* CPDF_InteractiveForm::AddControl(
 bool CPDF_InteractiveForm::CheckRequiredFields(
     const std::vector<CPDF_FormField*>* fields,
     bool bIncludeOrExclude) const {
-  CFieldTree::Node* pRoot = m_pFieldTree->GetRoot();
+  CFieldTree::Node* pRoot = field_tree_->GetRoot();
   const size_t nCount = pRoot->CountFields();
   for (size_t i = 0; i < nCount; ++i) {
     CPDF_FormField* field = pRoot->GetFieldAtIndex(i);
@@ -1035,7 +1035,7 @@ bool CPDF_InteractiveForm::CheckRequiredFields(
 std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
     const WideString& pdf_path) const {
   std::vector<CPDF_FormField*> fields;
-  CFieldTree::Node* pRoot = m_pFieldTree->GetRoot();
+  CFieldTree::Node* pRoot = field_tree_->GetRoot();
   const size_t nCount = pRoot->CountFields();
   for (size_t i = 0; i < nCount; ++i) {
     fields.push_back(pRoot->GetFieldAtIndex(i));
@@ -1064,7 +1064,7 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
   }
 
   auto fields_array = pMainDict->SetNewFor<CPDF_Array>("Fields");
-  CFieldTree::Node* pRoot = m_pFieldTree->GetRoot();
+  CFieldTree::Node* pRoot = field_tree_->GetRoot();
   const size_t nCount = pRoot->CountFields();
   for (size_t i = 0; i < nCount; ++i) {
     CPDF_FormField* field = pRoot->GetFieldAtIndex(i);
@@ -1117,35 +1117,35 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
 }
 
 void CPDF_InteractiveForm::SetNotifierIface(NotifierIface* notify) {
-  m_pFormNotify = notify;
+  form_notify_ = notify;
 }
 
 bool CPDF_InteractiveForm::NotifyBeforeValueChange(CPDF_FormField* field,
                                                    const WideString& value) {
-  return !m_pFormNotify || m_pFormNotify->BeforeValueChange(field, value);
+  return !form_notify_ || form_notify_->BeforeValueChange(field, value);
 }
 
 void CPDF_InteractiveForm::NotifyAfterValueChange(CPDF_FormField* field) {
-  if (m_pFormNotify) {
-    m_pFormNotify->AfterValueChange(field);
+  if (form_notify_) {
+    form_notify_->AfterValueChange(field);
   }
 }
 
 bool CPDF_InteractiveForm::NotifyBeforeSelectionChange(
     CPDF_FormField* field,
     const WideString& value) {
-  return !m_pFormNotify || m_pFormNotify->BeforeSelectionChange(field, value);
+  return !form_notify_ || form_notify_->BeforeSelectionChange(field, value);
 }
 
 void CPDF_InteractiveForm::NotifyAfterSelectionChange(CPDF_FormField* field) {
-  if (m_pFormNotify) {
-    m_pFormNotify->AfterSelectionChange(field);
+  if (form_notify_) {
+    form_notify_->AfterSelectionChange(field);
   }
 }
 
 void CPDF_InteractiveForm::NotifyAfterCheckedStatusChange(
     CPDF_FormField* field) {
-  if (m_pFormNotify) {
-    m_pFormNotify->AfterCheckedStatusChange(field);
+  if (form_notify_) {
+    form_notify_->AfterCheckedStatusChange(field);
   }
 }

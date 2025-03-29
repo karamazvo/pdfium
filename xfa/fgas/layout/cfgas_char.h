@@ -43,7 +43,7 @@ class CFGAS_Char {
 
   BreakType m_dwStatus = BreakType::kNone;
   FX_BIDICLASS m_iBidiClass = FX_BIDICLASS::kON;
-  FX_LINEBREAKTYPE m_eLineBreakType = FX_LINEBREAKTYPE::kUNKNOWN;
+  FX_LINEBREAKTYPE line_break_type_ = FX_LINEBREAKTYPE::kUNKNOWN;
   uint32_t m_dwCharStyles = 0;
   int32_t m_iCharWidth = 0;
   uint16_t m_iBidiLevel = 0;
@@ -51,7 +51,7 @@ class CFGAS_Char {
   uint16_t m_iBidiOrder = 0;
   int32_t m_iFontSize = 0;
   uint32_t m_dwIdentity = 0;
-  RetainPtr<CFGAS_TextUserData> m_pUserData;
+  RetainPtr<CFGAS_TextUserData> user_data_;
 
  private:
   uint16_t m_wCharCode;

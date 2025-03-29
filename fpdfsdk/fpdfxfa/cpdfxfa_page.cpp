@@ -71,8 +71,8 @@ CXFA_FFWidget::IteratorIface* GCedWidgetIteratorForAnnot(
 }  // namespace
 
 CPDFXFA_Page::CPDFXFA_Page(CPDF_Document* pDocument, int page_index)
-    : m_pDocument(pDocument), m_iPageIndex(page_index) {
-  DCHECK(m_pDocument->GetExtension());
+    : document_(pDocument), m_iPageIndex(page_index) {
+  DCHECK(document_->GetExtension());
   DCHECK(m_iPageIndex >= 0);
 }
 
@@ -87,7 +87,7 @@ CPDFXFA_Page* CPDFXFA_Page::AsXFAPage() {
 }
 
 CPDF_Document* CPDFXFA_Page::GetDocument() const {
-  return m_pDocument;
+  return document_;
 }
 
 bool CPDFXFA_Page::LoadPDFPage() {
@@ -103,13 +103,13 @@ bool CPDFXFA_Page::LoadPDFPage() {
 }
 
 CXFA_FFPageView* CPDFXFA_Page::GetXFAPageView() const {
-  auto* pContext = static_cast<CPDFXFA_Context*>(m_pDocument->GetExtension());
+  auto* pContext = static_cast<CPDFXFA_Context*>(document_->GetExtension());
   CXFA_FFDocView* pXFADocView = pContext->GetXFADocView();
   return pXFADocView ? pXFADocView->GetPageView(m_iPageIndex) : nullptr;
 }
 
 bool CPDFXFA_Page::LoadPage() {
-  auto* pContext = static_cast<CPDFXFA_Context*>(m_pDocument->GetExtension());
+  auto* pContext = static_cast<CPDFXFA_Context*>(document_->GetExtension());
   switch (pContext->GetFormType()) {
     case FormType::kNone:
     case FormType::kAcroForm:
@@ -133,7 +133,7 @@ float CPDFXFA_Page::GetPageWidth() const {
   if (!m_pPDFPage && !pPageView)
     return 0.0f;
 
-  auto* pContext = static_cast<CPDFXFA_Context*>(m_pDocument->GetExtension());
+  auto* pContext = static_cast<CPDFXFA_Context*>(document_->GetExtension());
   switch (pContext->GetFormType()) {
     case FormType::kNone:
     case FormType::kAcroForm:
@@ -155,7 +155,7 @@ float CPDFXFA_Page::GetPageHeight() const {
   if (!m_pPDFPage && !pPageView)
     return 0.0f;
 
-  auto* pContext = static_cast<CPDFXFA_Context*>(m_pDocument->GetExtension());
+  auto* pContext = static_cast<CPDFXFA_Context*>(document_->GetExtension());
   switch (pContext->GetFormType()) {
     case FormType::kNone:
     case FormType::kAcroForm:
@@ -202,7 +202,7 @@ CFX_Matrix CPDFXFA_Page::GetDisplayMatrix(const FX_RECT& rect,
   if (!m_pPDFPage && !pPageView)
     return CFX_Matrix();
 
-  auto* pContext = static_cast<CPDFXFA_Context*>(m_pDocument->GetExtension());
+  auto* pContext = static_cast<CPDFXFA_Context*>(document_->GetExtension());
   switch (pContext->GetFormType()) {
     case FormType::kNone:
     case FormType::kAcroForm:

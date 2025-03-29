@@ -15,8 +15,8 @@ struct JBig2PageInfo {
   uint32_t m_dwResolutionX;
   uint32_t m_dwResolutionY;
   // Page segment flags, bit 2.
-  bool m_bDefaultPixelValue;
-  bool m_bIsStriped;
+  bool default_pixel_value_;
+  bool is_striped_;
   uint16_t m_wMaxStripeSize;
 };
 

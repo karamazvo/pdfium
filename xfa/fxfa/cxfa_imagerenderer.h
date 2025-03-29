@@ -33,8 +33,8 @@ class CXFA_ImageRenderer {
 
   State m_State = State::kInitial;
   const CFX_Matrix m_ImageMatrix;
-  UnownedPtr<CFX_RenderDevice> const m_pDevice;
-  RetainPtr<CFX_DIBitmap> const m_pBitmap;
+  UnownedPtr<CFX_RenderDevice> const device_;
+  RetainPtr<CFX_DIBitmap> const bitmap_;
   std::unique_ptr<CFX_AggImageRenderer> m_DeviceHandle;
 };
 

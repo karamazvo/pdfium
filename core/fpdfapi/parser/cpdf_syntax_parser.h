@@ -116,15 +116,15 @@ class CPDF_SyntaxParser {
       CPDF_IndirectObjectHolder* pObjList,
       ParseType parse_type);
 
-  RetainPtr<CPDF_ReadValidator> m_pFileAccess;
+  RetainPtr<CPDF_ReadValidator> file_access_;
   // The syntax parser use position relative to header offset.
   // The header contains at file start, and can follow after some stuff. We
   // ignore this stuff.
   const FX_FILESIZE m_HeaderOffset;
   const FX_FILESIZE m_FileLen;
   FX_FILESIZE m_Pos = 0;
-  WeakPtr<ByteStringPool> m_pPool;
-  DataVector<uint8_t> m_pFileBuf;
+  WeakPtr<ByteStringPool> pool_;
+  DataVector<uint8_t> file_buf_;
   FX_FILESIZE m_BufOffset = 0;
   uint32_t m_WordSize = 0;
   uint32_t m_ReadBufferSize = CPDF_Stream::kFileBufSize;

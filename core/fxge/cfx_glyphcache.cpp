@@ -264,21 +264,21 @@ void CFX_GlyphCache::DestroyGlobals() {
 }
 
 CFX_TypeFace* CFX_GlyphCache::GetDeviceCache(const CFX_Font* pFont) {
-  if (!m_pTypeface && g_fontmgr) {
+  if (!typeface_ && g_fontmgr) {
     pdfium::span<const uint8_t> span = pFont->GetFontSpan();
-    m_pTypeface = g_fontmgr->makeFromStream(
+    typeface_ = g_fontmgr->makeFromStream(
         std::make_unique<SkMemoryStream>(span.data(), span.size()));
   }
 #if BUILDFLAG(IS_WIN) || BUILDFLAG(IS_APPLE)
   // If DirectWrite or CoreText didn't work, try FreeType.
-  if (!m_pTypeface) {
+  if (!typeface_) {
     sk_sp<SkFontMgr> freetype_mgr = SkFontMgr_New_Custom_Empty();
     pdfium::span<const uint8_t> span = pFont->GetFontSpan();
-    m_pTypeface = freetype_mgr->makeFromStream(
+    typeface_ = freetype_mgr->makeFromStream(
         std::make_unique<SkMemoryStream>(span.data(), span.size()));
   }
 #endif  // BUILDFLAG(IS_WIN) || BUILDFLAG(IS_APPLE)
-  return m_pTypeface.get();
+  return typeface_.get();
 }
 #endif  // defined(PDF_USE_SKIA)
 

@@ -124,11 +124,11 @@ class CFX_FontMapper {
     uint32_t charset;
   };
 
-  bool m_bListLoaded = false;
+  bool list_loaded_ = false;
   ByteString m_LastFamily;
   std::vector<FaceData> m_FaceArray;
-  std::unique_ptr<SystemFontInfoIface> m_pFontInfo;
-  UnownedPtr<CFX_FontMgr> const m_pFontMgr;
+  std::unique_ptr<SystemFontInfoIface> font_info_;
+  UnownedPtr<CFX_FontMgr> const font_mgr_;
   std::vector<ByteString> m_InstalledTTFonts;
   std::vector<std::pair<ByteString, ByteString>> m_LocalizedTTFonts;
   std::array<RetainPtr<CFX_Face>, kNumStandardFonts> m_StandardFaces;

@@ -108,7 +108,7 @@ size_t TrimExternalBracketsFromWebLink(const WideString& str,
 }  // namespace
 
 CPDF_LinkExtract::CPDF_LinkExtract(const CPDF_TextPage* pTextPage)
-    : m_pTextPage(pTextPage) {}
+    : text_page_(pTextPage) {}
 
 CPDF_LinkExtract::~CPDF_LinkExtract() = default;
 
@@ -118,10 +118,10 @@ void CPDF_LinkExtract::ExtractLinks() {
   size_t pos = 0;
   bool bAfterHyphen = false;
   bool bLineBreak = false;
-  const size_t nTotalChar = m_pTextPage->CountChars();
-  const WideString page_text = m_pTextPage->GetAllPageText();
+  const size_t nTotalChar = text_page_->CountChars();
+  const WideString page_text = text_page_->GetAllPageText();
   while (pos < nTotalChar) {
-    const CPDF_TextPage::CharInfo& char_info = m_pTextPage->GetCharInfo(pos);
+    const CPDF_TextPage::CharInfo& char_info = text_page_->GetCharInfo(pos);
     if (char_info.char_type() != CPDF_TextPage::CharType::kGenerated &&
         char_info.unicode() != L' ' && pos != nTotalChar - 1) {
       bAfterHyphen =
@@ -305,8 +305,8 @@ std::vector<CFX_FloatRect> CPDF_LinkExtract::GetRects(size_t index) const {
   if (index >= m_LinkArray.size())
     return std::vector<CFX_FloatRect>();
 
-  return m_pTextPage->GetRectArray(m_LinkArray[index].m_Start,
-                                   m_LinkArray[index].m_Count);
+  return text_page_->GetRectArray(m_LinkArray[index].m_Start,
+                                  m_LinkArray[index].m_Count);
 }
 
 std::optional<CPDF_LinkExtract::Range> CPDF_LinkExtract::GetTextRange(

@@ -869,7 +869,7 @@ bool FX_TimeFromCanonical(const LocaleIface* pLocale,
 }
 
 CFGAS_StringFormatter::CFGAS_StringFormatter(const WideString& wsPattern)
-    : m_wsPattern(wsPattern), m_spPattern(m_wsPattern.span()) {}
+    : pattern_(wsPattern), m_spPattern(pattern_.span()) {}
 
 CFGAS_StringFormatter::~CFGAS_StringFormatter() = default;
 
@@ -988,7 +988,7 @@ WideString CFGAS_StringFormatter::GetTextFormat(
     ccf++;
   }
   if (!bBrackOpen)
-    wsPurgePattern = m_wsPattern;
+    wsPurgePattern = pattern_;
 
   return wsPurgePattern;
 }
@@ -1613,8 +1613,8 @@ CFGAS_StringFormatter::DateTimeType CFGAS_StringFormatter::GetDateTimeFormat(
       while (ccf < m_spPattern.size() && m_spPattern[ccf] != '{' &&
              m_spPattern[ccf] != '.' && m_spPattern[ccf] != '(') {
         if (m_spPattern[ccf] == 'T') {
-          *wsDatePattern = m_wsPattern.First(ccf);
-          *wsTimePattern = m_wsPattern.Last(m_wsPattern.GetLength() - ccf);
+          *wsDatePattern = pattern_.First(ccf);
+          *wsTimePattern = pattern_.Last(pattern_.GetLength() - ccf);
           wsTimePattern->SetAt(0, ' ');
           if (!*pLocale)
             *pLocale = pLocaleMgr->GetDefLocale();
@@ -1714,7 +1714,7 @@ CFGAS_StringFormatter::DateTimeType CFGAS_StringFormatter::GetDateTimeFormat(
     *pLocale = pLocaleMgr->GetDefLocale();
   if (eDateTimeType == DateTimeType::kUnknown) {
     wsTimePattern->clear();
-    *wsDatePattern = m_wsPattern;
+    *wsDatePattern = pattern_;
   }
   return eDateTimeType;
 }

@@ -30,8 +30,8 @@ class CXFA_FFPageView final : public cppgc::GarbageCollected<CXFA_FFPageView> {
 
   void Trace(cppgc::Visitor* visitor) const;
 
-  CXFA_ViewLayoutItem* GetLayoutItem() const { return m_pLayoutItem; }
-  void SetLayoutItem(CXFA_ViewLayoutItem* pItem) { m_pLayoutItem = pItem; }
+  CXFA_ViewLayoutItem* GetLayoutItem() const { return layout_item_; }
+  void SetLayoutItem(CXFA_ViewLayoutItem* pItem) { layout_item_ = pItem; }
 
   CXFA_FFDocView* GetDocView() const;
   CFX_RectF GetPageViewRect() const;
@@ -44,9 +44,9 @@ class CXFA_FFPageView final : public cppgc::GarbageCollected<CXFA_FFPageView> {
  private:
   CXFA_FFPageView(CXFA_FFDocView* pDocView, CXFA_Node* pPageArea);
 
-  cppgc::Member<CXFA_Node> const m_pPageArea;
-  cppgc::Member<CXFA_FFDocView> const m_pDocView;
-  cppgc::Member<CXFA_ViewLayoutItem> m_pLayoutItem;
+  cppgc::Member<CXFA_Node> const page_area_;
+  cppgc::Member<CXFA_FFDocView> const doc_view_;
+  cppgc::Member<CXFA_ViewLayoutItem> layout_item_;
 };
 
 class CXFA_FFPageWidgetIterator final : public CXFA_FFWidget::IteratorIface {
@@ -68,7 +68,7 @@ class CXFA_FFPageWidgetIterator final : public CXFA_FFWidget::IteratorIface {
  private:
   CXFA_LayoutItemIterator m_sIterator;
   const Mask<XFA_WidgetStatus> m_dwFilter;
-  const bool m_bIgnoreRelevant;
+  const bool ignore_relevant_;
 };
 
 class CXFA_FFTabOrderPageWidgetIterator final
@@ -98,11 +98,11 @@ class CXFA_FFTabOrderPageWidgetIterator final
   void CreateTabOrderWidgetArray();
   std::vector<CXFA_ContentLayoutItem*> CreateSpaceOrderLayoutItems();
 
-  cppgc::Member<CXFA_ViewLayoutItem> const m_pPageViewLayout;
+  cppgc::Member<CXFA_ViewLayoutItem> const page_view_layout_;
   std::vector<cppgc::Member<CXFA_ContentLayoutItem>> m_TabOrderWidgetArray;
   const Mask<XFA_WidgetStatus> m_dwFilter;
   int32_t m_iCurWidget = -1;
-  const bool m_bIgnoreRelevant;
+  const bool ignore_relevant_;
 };
 
 #endif  // XFA_FXFA_CXFA_FFPAGEVIEW_H_

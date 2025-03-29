@@ -39,7 +39,7 @@ void CFWL_EditTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
         path.AddRectangle(pParams.m_PartRect.left, pParams.m_PartRect.top,
                           pParams.m_PartRect.width, pParams.m_PartRect.height);
         CFGAS_GEColor cr(FWLTHEME_COLOR_Background);
-        if (!pParams.m_bStaticBackground) {
+        if (!pParams.static_background_) {
           if (pParams.m_dwStates & CFWL_PartState::kDisabled)
             cr = CFGAS_GEColor(FWLTHEME_COLOR_EDGERB1);
           else if (pParams.m_dwStates & CFWL_PartState::kReadOnly)

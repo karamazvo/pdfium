@@ -47,12 +47,11 @@
 CPDFSDK_Widget::CPDFSDK_Widget(CPDF_Annot* pAnnot,
                                CPDFSDK_PageView* pPageView,
                                CPDFSDK_InteractiveForm* pInteractiveForm)
-    : CPDFSDK_BAAnnot(pAnnot, pPageView),
-      m_pInteractiveForm(pInteractiveForm) {}
+    : CPDFSDK_BAAnnot(pAnnot, pPageView), interactive_form_(pInteractiveForm) {}
 
 CPDFSDK_Widget::~CPDFSDK_Widget() {
   GetInteractiveFormFiller()->OnDelete(this);
-  m_pInteractiveForm->RemoveMap(GetFormControl());
+  interactive_form_->RemoveMap(GetFormControl());
 }
 
 #ifdef PDF_ENABLE_XFA
@@ -225,15 +224,15 @@ bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
     return false;
 
   CXFA_EventParam param(eEventType);
-  param.m_wsChange = data->sChange;
+  param.change_ = data->sChange;
   param.m_iCommitKey = 0;
-  param.m_bShift = data->bShift;
+  param.shift_ = data->bShift;
   param.m_iSelStart = data->nSelStart;
   param.m_iSelEnd = data->nSelEnd;
-  param.m_wsFullText = data->sValue;
-  param.m_bKeyDown = data->bKeyDown;
-  param.m_bModifier = data->bModifier;
-  param.m_wsPrevText = data->sValue;
+  param.full_text_ = data->sValue;
+  param.key_down_ = data->bKeyDown;
+  param.modifier_ = data->bModifier;
+  param.prev_text_ = data->sValue;
   if ((eEventType == XFA_EVENT_Click || eEventType == XFA_EVENT_Change) &&
       GetFieldType() == FormFieldType::kRadioButton) {
     CXFA_FFWidget* hGroupWidget = GetGroupMixXFAWidget();
@@ -320,15 +319,15 @@ bool CPDFSDK_Widget::HandleXFAAAction(
     return false;
 
   CXFA_EventParam param(eEventType);
-  param.m_wsChange = data->sChange;
+  param.change_ = data->sChange;
   param.m_iCommitKey = 0;
-  param.m_bShift = data->bShift;
+  param.shift_ = data->bShift;
   param.m_iSelStart = data->nSelStart;
   param.m_iSelEnd = data->nSelEnd;
-  param.m_wsFullText = data->sValue;
-  param.m_bKeyDown = data->bKeyDown;
-  param.m_bModifier = data->bModifier;
-  param.m_wsPrevText = data->sValue;
+  param.full_text_ = data->sValue;
+  param.key_down_ = data->bKeyDown;
+  param.modifier_ = data->bModifier;
+  param.prev_text_ = data->sValue;
   bool ret = hWidget->ProcessEventUnderHandler(&param, pXFAWidgetHandler);
   CXFA_FFDocView* pDocView = pContext->GetXFADocView();
   if (pDocView)
@@ -422,7 +421,7 @@ CPDF_FormField* CPDFSDK_Widget::GetFormField() const {
 
 CPDF_FormControl* CPDFSDK_Widget::GetFormControl() const {
   CPDF_InteractiveForm* pPDFInteractiveForm =
-      m_pInteractiveForm->GetInteractiveForm();
+      interactive_form_->GetInteractiveForm();
   return pPDFInteractiveForm->GetControlByDict(GetAnnotDict());
 }
 
@@ -617,15 +616,15 @@ void CPDFSDK_Widget::ClearSelection() {
 void CPDFSDK_Widget::SetTopVisibleIndex(int index) {}
 
 void CPDFSDK_Widget::SetAppModified() {
-  m_bAppModified = true;
+  app_modified_ = true;
 }
 
 void CPDFSDK_Widget::ClearAppModified() {
-  m_bAppModified = false;
+  app_modified_ = false;
 }
 
 bool CPDFSDK_Widget::IsAppModified() const {
-  return m_bAppModified;
+  return app_modified_;
 }
 
 #ifdef PDF_ENABLE_XFA
@@ -647,9 +646,9 @@ void CPDFSDK_Widget::ResetAppearance(std::optional<WideString> sValue,
                                      ValueChanged bValueChanged) {
   SetAppModified();
 
-  m_nAppearanceAge++;
+  appearance_age_++;
   if (bValueChanged == kValueChanged)
-    m_nValueAge++;
+    value_age_++;
 
   CPDFSDK_AppStream appStream(this, GetAPDict().Get());
   switch (GetFieldType()) {
@@ -681,13 +680,13 @@ void CPDFSDK_Widget::ResetAppearance(std::optional<WideString> sValue,
 std::optional<WideString> CPDFSDK_Widget::OnFormat() {
   CPDF_FormField* pFormField = GetFormField();
   DCHECK(pFormField);
-  return m_pInteractiveForm->OnFormat(pFormField);
+  return interactive_form_->OnFormat(pFormField);
 }
 
 void CPDFSDK_Widget::ResetFieldAppearance() {
   CPDF_FormField* pFormField = GetFormField();
   DCHECK(pFormField);
-  m_pInteractiveForm->ResetFieldAppearance(pFormField, std::nullopt);
+  interactive_form_->ResetFieldAppearance(pFormField, std::nullopt);
 }
 
 void CPDFSDK_Widget::OnDraw(CFX_RenderDevice* pDevice,
@@ -930,14 +929,15 @@ void CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice,
 void CPDFSDK_Widget::UpdateField() {
   CPDF_FormField* pFormField = GetFormField();
   DCHECK(pFormField);
-  m_pInteractiveForm->UpdateField(pFormField);
+  interactive_form_->UpdateField(pFormField);
 }
 
 void CPDFSDK_Widget::DrawShadow(CFX_RenderDevice* pDevice,
                                 CPDFSDK_PageView* pPageView) {
   FormFieldType fieldType = GetFieldType();
-  if (!m_pInteractiveForm->IsNeedHighLight(fieldType))
+  if (!interactive_form_->IsNeedHighLight(fieldType)) {
     return;
+  }
 
   CFX_Matrix page2device = pPageView->GetCurrentMatrix();
   CFX_FloatRect rcDevice = GetRect();
@@ -954,8 +954,8 @@ void CPDFSDK_Widget::DrawShadow(CFX_RenderDevice* pDevice,
   pDevice->FillRect(
       rcDevice.ToFxRect(),
       AlphaAndColorRefToArgb(
-          static_cast<int>(m_pInteractiveForm->GetHighlightAlpha()),
-          m_pInteractiveForm->GetHighlightColor(fieldType)));
+          static_cast<int>(interactive_form_->GetHighlightAlpha()),
+          interactive_form_->GetHighlightColor(fieldType)));
 }
 
 CFX_FloatRect CPDFSDK_Widget::GetClientRect() const {

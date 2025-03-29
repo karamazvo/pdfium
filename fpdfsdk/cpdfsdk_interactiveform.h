@@ -33,7 +33,7 @@ class CPDFSDK_InteractiveForm final
   ~CPDFSDK_InteractiveForm() override;
 
   CPDF_InteractiveForm* GetInteractiveForm() const {
-    return m_pInteractiveForm.get();
+    return interactive_form_.get();
   }
 
   CPDFSDK_Widget* GetWidget(CPDF_FormControl* pControl) const;
@@ -103,18 +103,18 @@ class CPDFSDK_InteractiveForm final
   int GetPageIndexByAnnotDict(CPDF_Document* pDocument,
                               const CPDF_Dictionary* pAnnotDict) const;
 
-  UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
-  std::unique_ptr<CPDF_InteractiveForm> const m_pInteractiveForm;
+  UnownedPtr<CPDFSDK_FormFillEnvironment> const form_fill_env_;
+  std::unique_ptr<CPDF_InteractiveForm> const interactive_form_;
   std::map<UnownedPtr<const CPDF_FormControl>,
            UnownedPtr<CPDFSDK_Widget>,
            std::less<>>
       m_Map;
 #ifdef PDF_ENABLE_XFA
-  bool m_bXfaCalculate = true;
-  bool m_bXfaValidationsEnabled = true;
+  bool xfa_calculate_ = true;
+  bool xfa_validations_enabled_ = true;
 #endif  // PDF_ENABLE_XFA
-  bool m_bCalculate = true;
-  bool m_bBusy = false;
+  bool calculate_ = true;
+  bool busy_ = false;
   uint8_t m_HighlightAlpha = 0;
   std::array<FX_COLORREF, kFormFieldTypeCount> m_HighlightColor;
   std::array<bool, kFormFieldTypeCount> m_NeedsHighlight;

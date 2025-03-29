@@ -120,8 +120,8 @@ CXFA_Object* CFXJSE_Engine::ToObject(CFXJSE_HostObject* pHostObj) {
 CFXJSE_Engine::CFXJSE_Engine(CXFA_Document* pDocument,
                              CJS_Runtime* fxjs_runtime)
     : CFX_V8(fxjs_runtime->GetIsolate()),
-      m_pSubordinateRuntime(fxjs_runtime),
-      m_pDocument(pDocument),
+      subordinate_runtime_(fxjs_runtime),
+      document_(pDocument),
       m_JsContext(CFXJSE_Context::Create(fxjs_runtime->GetIsolate(),
                                          &kGlobalClassDescriptor,
                                          pDocument->GetRoot()->JSObject(),
@@ -134,7 +134,7 @@ CFXJSE_Engine::CFXJSE_Engine(CXFA_Document* pDocument,
 
   // Don't know if this can happen before we remove the builtin objs and set
   // compatibility mode.
-  m_pJsClass =
+  js_class_ =
       CFXJSE_Class::Create(m_JsContext.get(), &kNormalClassDescriptor, false);
 }
 
@@ -151,16 +151,16 @@ CFXJSE_Engine::~CFXJSE_Engine() {
 CFXJSE_Engine::EventParamScope::EventParamScope(CFXJSE_Engine* pEngine,
                                                 CXFA_Node* pTarget,
                                                 CXFA_EventParam* pEventParam)
-    : m_pEngine(pEngine),
-      m_pPrevTarget(pEngine->GetEventTarget()),
-      m_pPrevEventParam(pEngine->GetEventParam()) {
-  m_pEngine->m_pTarget = pTarget;
-  m_pEngine->m_eventParam = pEventParam;
+    : engine_(pEngine),
+      prev_target_(pEngine->GetEventTarget()),
+      prev_event_param_(pEngine->GetEventParam()) {
+  engine_->target_ = pTarget;
+  engine_->m_eventParam = pEventParam;
 }
 
 CFXJSE_Engine::EventParamScope::~EventParamScope() {
-  m_pEngine->m_pTarget = m_pPrevTarget;
-  m_pEngine->m_eventParam = m_pPrevEventParam;
+  engine_->target_ = prev_target_;
+  engine_->m_eventParam = prev_event_param_;
 }
 
 CFXJSE_Context::ExecutionResult CFXJSE_Engine::RunScript(
@@ -168,17 +168,17 @@ CFXJSE_Context::ExecutionResult CFXJSE_Engine::RunScript(
     WideStringView wsScript,
     CXFA_Object* pThisObject) {
   CFXJSE_ScopeUtil_IsolateHandleContext scope(GetJseContext());
-  AutoRestorer<CXFA_Script::Type> typeRestorer(&m_eScriptType);
-  m_eScriptType = eScriptType;
+  AutoRestorer<CXFA_Script::Type> typeRestorer(&script_type_);
+  script_type_ = eScriptType;
 
   ByteString btScript;
   if (eScriptType == CXFA_Script::Type::Formcalc) {
     if (!m_FormCalcContext) {
       m_FormCalcContext = std::make_unique<CFXJSE_FormCalcContext>(
-          GetIsolate(), m_JsContext.get(), m_pDocument.Get());
+          GetIsolate(), m_JsContext.get(), document_.Get());
     }
     std::optional<WideTextBuffer> wsJavaScript =
-        CFXJSE_FormCalcContext::Translate(m_pDocument->GetHeap(), wsScript);
+        CFXJSE_FormCalcContext::Translate(document_->GetHeap(), wsScript);
     if (!wsJavaScript.has_value()) {
       auto undefined_value = std::make_unique<CFXJSE_Value>();
       undefined_value->SetUndefined(GetIsolate());
@@ -188,14 +188,14 @@ CFXJSE_Context::ExecutionResult CFXJSE_Engine::RunScript(
   } else {
     btScript = FX_UTF8Encode(wsScript);
   }
-  AutoRestorer<cppgc::Persistent<CXFA_Object>> nodeRestorer(&m_pThisObject);
-  m_pThisObject = pThisObject;
+  AutoRestorer<cppgc::Persistent<CXFA_Object>> nodeRestorer(&this_object_);
+  this_object_ = pThisObject;
 
   v8::Local<v8::Object> pThisBinding;
   if (pThisObject)
     pThisBinding = GetOrCreateJSBindingFromMap(pThisObject);
 
-  IJS_Runtime::ScopedEventContext ctx(m_pSubordinateRuntime);
+  IJS_Runtime::ScopedEventContext ctx(subordinate_runtime_);
   return m_JsContext->ExecuteScript(btScript.AsStringView(), pThisBinding);
 }
 
@@ -550,11 +550,11 @@ CJS_Result CFXJSE_Engine::NormalMethodCall(
 }
 
 bool CFXJSE_Engine::IsStrictScopeInJavaScript() {
-  return m_pDocument->is_strict_scoping();
+  return document_->is_strict_scoping();
 }
 
 CXFA_Script::Type CFXJSE_Engine::GetType() {
-  return m_eScriptType;
+  return script_type_;
 }
 
 void CFXJSE_Engine::AddObjectToUpArray(CXFA_Node* pNode) {
@@ -617,8 +617,8 @@ void CFXJSE_Engine::RunVariablesScript(CXFA_Script* pScriptNode) {
   CXFA_Node* pThisObject = pParent->GetParent();
   CFXJSE_Context* pVariablesContext =
       CreateVariablesContext(pScriptNode, pThisObject);
-  AutoRestorer<cppgc::Persistent<CXFA_Object>> nodeRestorer(&m_pThisObject);
-  m_pThisObject = pThisObject;
+  AutoRestorer<cppgc::Persistent<CXFA_Object>> nodeRestorer(&this_object_);
+  this_object_ = pThisObject;
   pVariablesContext->ExecuteScript(btScript.AsStringView(),
                                    v8::Local<v8::Object>());
 }
@@ -697,14 +697,15 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
   if (wsExpression.IsEmpty())
     return std::nullopt;
 
-  AutoRestorer<bool> resolving_restorer(&m_bResolvingNodes);
-  m_bResolvingNodes = true;
+  AutoRestorer<bool> resolving_restorer(&resolving_nodes_);
+  resolving_nodes_ = true;
 
   const bool bParentOrSiblings =
       !!(dwStyles & Mask<XFA_ResolveFlag>{XFA_ResolveFlag::kParent,
                                           XFA_ResolveFlag::kSiblings});
-  if (m_eScriptType != CXFA_Script::Type::Formcalc || bParentOrSiblings)
+  if (script_type_ != CXFA_Script::Type::Formcalc || bParentOrSiblings) {
     m_upObjectArray.clear();
+  }
   if (refObject && refObject->IsNode() && bParentOrSiblings)
     m_upObjectArray.push_back(refObject->AsNode());
 
@@ -713,7 +714,7 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
   if (dwStyles & XFA_ResolveFlag::kCreateNode)
     m_NodeHelper->SetCreateNodeType(bindNode);
 
-  m_NodeHelper->m_pCreateParent = nullptr;
+  m_NodeHelper->create_parent_ = nullptr;
   m_NodeHelper->m_iCurAllStart = -1;
 
   CFXJSE_ResolveProcessor::NodeData rndFind;
@@ -721,7 +722,7 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
   int32_t nLevel = 0;
 
   std::vector<cppgc::Member<CXFA_Object>> findObjects;
-  findObjects.emplace_back(refObject ? refObject : m_pDocument->GetRoot());
+  findObjects.emplace_back(refObject ? refObject : document_->GetRoot());
   int32_t nNodes = 0;
   CFXJSE_ScopeUtil_IsolateHandleContext scope(GetJseContext());
   while (true) {
@@ -735,7 +736,7 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
         CXFA_Node* pDataNode = nullptr;
         nStart = m_NodeHelper->m_iCurAllStart;
         if (nStart != -1) {
-          pDataNode = m_pDocument->GetNotBindNode(findObjects);
+          pDataNode = document_->GetNotBindNode(findObjects);
           if (pDataNode) {
             findObjects.clear();
             findObjects.emplace_back(pDataNode);
@@ -749,7 +750,7 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
         }
         dwStyles |= XFA_ResolveFlag::kBind;
         findObjects.clear();
-        findObjects.emplace_back(m_NodeHelper->m_pAllStartParent.Get());
+        findObjects.emplace_back(m_NodeHelper->all_start_parent_.Get());
         continue;
       }
       break;
@@ -757,7 +758,7 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
     if (bNextCreate) {
       int32_t checked_length =
           pdfium::checked_cast<int32_t>(wsExpression.GetLength());
-      if (m_NodeHelper->CreateNode(rndFind.m_wsName, rndFind.m_wsCondition,
+      if (m_NodeHelper->CreateNode(rndFind.name_, rndFind.condition_,
                                    nStart == checked_length, this)) {
         continue;
       }
@@ -771,11 +772,11 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
           nNodes > 1) {
         CFXJSE_ResolveProcessor::NodeData rndBind;
         m_ResolveProcessor->GetFilter(wsExpression, nStart, rndBind);
-        i = m_ResolveProcessor->IndexForDataBind(rndBind.m_wsCondition, nNodes);
+        i = m_ResolveProcessor->IndexForDataBind(rndBind.condition_, nNodes);
         bDataBind = true;
       }
       rndFind.m_CurObject = findObjects[i++].Get();
-      rndFind.m_nLevel = nLevel;
+      rndFind.level_ = nLevel;
       rndFind.m_Result.type = ResolveResult::Type::kNodes;
       if (!m_ResolveProcessor->Resolve(GetIsolate(), rndFind))
         continue;
@@ -806,13 +807,13 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
     if (nNodes < 1) {
       if (dwStyles & XFA_ResolveFlag::kCreateNode) {
         bNextCreate = true;
-        if (!m_NodeHelper->m_pCreateParent) {
-          m_NodeHelper->m_pCreateParent = ToNode(rndFind.m_CurObject);
+        if (!m_NodeHelper->create_parent_) {
+          m_NodeHelper->create_parent_ = ToNode(rndFind.m_CurObject);
           m_NodeHelper->m_iCreateCount = 1;
         }
         int32_t checked_length =
             pdfium::checked_cast<int32_t>(wsExpression.GetLength());
-        if (m_NodeHelper->CreateNode(rndFind.m_wsName, rndFind.m_wsCondition,
+        if (m_NodeHelper->CreateNode(rndFind.name_, rndFind.condition_,
                                      nStart == checked_length, this)) {
           continue;
         }
@@ -843,10 +844,10 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
   if ((dwStyles & XFA_ResolveFlag::kCreateNode) ||
       (dwStyles & XFA_ResolveFlag::kBind) ||
       (dwStyles & XFA_ResolveFlag::kBindNew)) {
-    if (m_NodeHelper->m_pCreateParent)
-      result.objects.emplace_back(m_NodeHelper->m_pCreateParent.Get());
-    else
-      m_NodeHelper->CreateNodeForCondition(rndFind.m_wsCondition);
+    if (m_NodeHelper->create_parent_) {
+      result.objects.emplace_back(m_NodeHelper->create_parent_.Get());
+    } else
+      m_NodeHelper->CreateNodeForCondition(rndFind.condition_);
 
     result.type = m_NodeHelper->m_iCreateFlag;
     if (result.type == ResolveResult::Type::kCreateNodeOne) {
@@ -878,7 +879,7 @@ v8::Local<v8::Object> CFXJSE_Engine::GetOrCreateJSBindingFromMap(
     return v8::Local<v8::Object>::New(GetIsolate(), iter->second);
 
   v8::Local<v8::Object> binding = pCJXObject->NewBoundV8Object(
-      GetIsolate(), m_pJsClass->GetTemplate(GetIsolate()));
+      GetIsolate(), js_class_->GetTemplate(GetIsolate()));
 
   m_mapObjectToObject[pCJXObject].Reset(GetIsolate(), binding);
   return binding;
@@ -886,12 +887,13 @@ v8::Local<v8::Object> CFXJSE_Engine::GetOrCreateJSBindingFromMap(
 
 void CFXJSE_Engine::SetNodesOfRunScript(
     std::vector<cppgc::Persistent<CXFA_Node>>* pArray) {
-  m_pScriptNodeArray = pArray;
+  script_node_array_ = pArray;
 }
 
 void CFXJSE_Engine::AddNodesOfRunScript(CXFA_Node* pNode) {
-  if (m_pScriptNodeArray && !pdfium::Contains(*m_pScriptNodeArray, pNode))
-    m_pScriptNodeArray->emplace_back(pNode);
+  if (script_node_array_ && !pdfium::Contains(*script_node_array_, pNode)) {
+    script_node_array_->emplace_back(pNode);
+  }
 }
 
 CXFA_Object* CFXJSE_Engine::ToXFAObject(v8::Local<v8::Value> obj) {

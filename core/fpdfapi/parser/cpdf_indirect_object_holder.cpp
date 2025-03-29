@@ -23,10 +23,10 @@ const CPDF_Object* FilterInvalidObjNum(const CPDF_Object* obj) {
 }  // namespace
 
 CPDF_IndirectObjectHolder::CPDF_IndirectObjectHolder()
-    : m_pByteStringPool(std::make_unique<ByteStringPool>()) {}
+    : byte_string_pool_(std::make_unique<ByteStringPool>()) {}
 
 CPDF_IndirectObjectHolder::~CPDF_IndirectObjectHolder() {
-  m_pByteStringPool.DeleteObject();  // Make weak.
+  byte_string_pool_.DeleteObject();  // Make weak.
 }
 
 RetainPtr<const CPDF_Object> CPDF_IndirectObjectHolder::GetIndirectObject(

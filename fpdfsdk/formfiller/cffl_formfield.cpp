@@ -18,8 +18,8 @@
 
 CFFL_FormField::CFFL_FormField(CFFL_InteractiveFormFiller* pFormFiller,
                                CPDFSDK_Widget* pWidget)
-    : m_pFormFiller(pFormFiller), m_pWidget(pWidget) {
-  DCHECK(m_pFormFiller);
+    : form_filler_(pFormFiller), widget_(pWidget) {
+  DCHECK(form_filler_);
 }
 
 CFFL_FormField::~CFFL_FormField() {
@@ -39,7 +39,7 @@ void CFFL_FormField::DestroyWindows() {
 FX_RECT CFFL_FormField::GetViewBBox(const CPDFSDK_PageView* pPageView) {
   CPWL_Wnd* pWnd = GetPWLWindow(pPageView);
   CFX_FloatRect rcAnnot =
-      pWnd ? PWLtoFFL(pWnd->GetWindowRect()) : m_pWidget->GetRect();
+      pWnd ? PWLtoFFL(pWnd->GetWindowRect()) : widget_->GetRect();
   CFX_FloatRect rcFocus = GetFocusBox(pPageView);
 
   CFX_FloatRect rcWin = rcAnnot;
@@ -80,8 +80,8 @@ void CFFL_FormField::OnDrawDeactive(CPDFSDK_PageView* pPageView,
 void CFFL_FormField::OnMouseEnter(CPDFSDK_PageView* pPageView) {}
 
 void CFFL_FormField::OnMouseExit(CPDFSDK_PageView* pPageView) {
-  m_pTimer.reset();
-  DCHECK(m_pWidget);
+  timer_.reset();
+  DCHECK(widget_);
 }
 
 bool CFFL_FormField::OnLButtonDown(CPDFSDK_PageView* pPageView,
@@ -92,7 +92,7 @@ bool CFFL_FormField::OnLButtonDown(CPDFSDK_PageView* pPageView,
   if (!pWnd)
     return false;
 
-  m_bValid = true;
+  valid_ = true;
   FX_RECT rect = GetViewBBox(pPageView);
   InvalidateRect(rect);
   if (!rect.Contains(static_cast<int>(point.x), static_cast<int>(point.y)))
@@ -268,12 +268,12 @@ bool CFFL_FormField::Redo() {
 void CFFL_FormField::SetFocusForAnnot(CPDFSDK_Widget* pWidget,
                                       Mask<FWL_EVENTFLAG> nFlag) {
   CPDFSDK_PageView* pPageView =
-      m_pFormFiller->GetOrCreatePageView(pWidget->GetPage());
+      form_filler_->GetOrCreatePageView(pWidget->GetPage());
   CPWL_Wnd* pWnd = CreateOrUpdatePWLWindow(pPageView);
   if (pWnd)
     pWnd->SetFocus();
 
-  m_bValid = true;
+  valid_ = true;
   InvalidateRect(GetViewBBox(pPageView));
 }
 
@@ -281,15 +281,14 @@ void CFFL_FormField::KillFocusForAnnot(Mask<FWL_EVENTFLAG> nFlag) {
   if (!IsValid())
     return;
 
-  CPDFSDK_PageView* pPageView =
-      m_pFormFiller->GetPageView(m_pWidget->GetPage());
+  CPDFSDK_PageView* pPageView = form_filler_->GetPageView(widget_->GetPage());
   if (!pPageView || !CommitData(pPageView, nFlag))
     return;
   if (CPWL_Wnd* pWnd = GetPWLWindow(pPageView))
     pWnd->KillFocus();
 
   bool bDestroyPWLWindow;
-  switch (m_pWidget->GetFieldType()) {
+  switch (widget_->GetFieldType()) {
     case FormFieldType::kPushButton:
     case FormFieldType::kCheckBox:
     case FormFieldType::kRadioButton:
@@ -303,37 +302,37 @@ void CFFL_FormField::KillFocusForAnnot(Mask<FWL_EVENTFLAG> nFlag) {
 }
 
 bool CFFL_FormField::IsValid() const {
-  return m_bValid;
+  return valid_;
 }
 
 CPWL_Wnd::CreateParams CFFL_FormField::GetCreateParam() {
-  CPWL_Wnd::CreateParams cp(m_pFormFiller->GetTimerHandler(), m_pFormFiller,
+  CPWL_Wnd::CreateParams cp(form_filler_->GetTimerHandler(), form_filler_,
                             this);
 
   cp.rcRectWnd = GetPDFAnnotRect();
 
   uint32_t dwCreateFlags = PWS_BORDER | PWS_BACKGROUND | PWS_VISIBLE;
-  uint32_t dwFieldFlag = m_pWidget->GetFieldFlags();
+  uint32_t dwFieldFlag = widget_->GetFieldFlags();
   if (dwFieldFlag & pdfium::form_flags::kReadOnly)
     dwCreateFlags |= PWS_READONLY;
 
-  std::optional<FX_COLORREF> color = m_pWidget->GetFillColor();
+  std::optional<FX_COLORREF> color = widget_->GetFillColor();
   if (color.has_value())
     cp.sBackgroundColor = CFX_Color(color.value());
-  color = m_pWidget->GetBorderColor();
+  color = widget_->GetBorderColor();
   if (color.has_value())
     cp.sBorderColor = CFX_Color(color.value());
 
   cp.sTextColor = CFX_Color(CFX_Color::Type::kGray, 0);
 
-  color = m_pWidget->GetTextColor();
+  color = widget_->GetTextColor();
   if (color.has_value())
     cp.sTextColor = CFX_Color(color.value());
 
-  cp.fFontSize = m_pWidget->GetFontSize();
-  cp.dwBorderWidth = m_pWidget->GetBorderWidth();
+  cp.fFontSize = widget_->GetFontSize();
+  cp.dwBorderWidth = widget_->GetBorderWidth();
 
-  cp.nBorderStyle = m_pWidget->GetBorderStyle();
+  cp.nBorderStyle = widget_->GetBorderStyle();
   switch (cp.nBorderStyle) {
     case BorderStyle::kDash:
       cp.sDash = CPWL_Dash{3, 3, 0};
@@ -368,16 +367,17 @@ CPWL_Wnd* CFFL_FormField::CreateOrUpdatePWLWindow(
     CPWL_Wnd::CreateParams cp = GetCreateParam();
     // TODO(tsepez): maybe pass widget's value age as 4th arg.
     auto pPrivateData = std::make_unique<CFFL_PerWindowData>(
-        m_pWidget, pPageView, m_pWidget->GetAppearanceAge(), 0);
+        widget_, pPageView, widget_->GetAppearanceAge(), 0);
     m_Maps[pPageView] = NewPWLWindow(cp, std::move(pPrivateData));
     return m_Maps[pPageView].get();
   }
   const auto* pPrivateData =
       static_cast<const CFFL_PerWindowData*>(pWnd->GetAttachedData());
-  if (pPrivateData->AppearanceAgeEquals(m_pWidget->GetAppearanceAge()))
+  if (pPrivateData->AppearanceAgeEquals(widget_->GetAppearanceAge())) {
     return pWnd;
+  }
 
-  return ResetPWLWindowForValueAgeInternal(pPageView, m_pWidget,
+  return ResetPWLWindowForValueAgeInternal(pPageView, widget_,
                                            pPrivateData->GetValueAge());
 }
 
@@ -410,8 +410,8 @@ void CFFL_FormField::OnSetFocusForEdit(CPWL_Edit* pEdit) {
 
 CFX_Matrix CFFL_FormField::GetCurMatrix() {
   CFX_Matrix mt;
-  CFX_FloatRect rcDA = m_pWidget->GetPDFAnnot()->GetRect();
-  switch (m_pWidget->GetRotate()) {
+  CFX_FloatRect rcDA = widget_->GetPDFAnnot()->GetRect();
+  switch (widget_->GetRotate()) {
     case 90:
       mt = CFX_Matrix(0, 1, -1, 0, rcDA.right - rcDA.left, 0);
       break;
@@ -433,16 +433,17 @@ CFX_Matrix CFFL_FormField::GetCurMatrix() {
 }
 
 CFX_FloatRect CFFL_FormField::GetPDFAnnotRect() const {
-  CFX_FloatRect rectAnnot = m_pWidget->GetPDFAnnot()->GetRect();
+  CFX_FloatRect rectAnnot = widget_->GetPDFAnnot()->GetRect();
   float fWidth = rectAnnot.Width();
   float fHeight = rectAnnot.Height();
-  if ((m_pWidget->GetRotate() / 90) & 0x01)
+  if ((widget_->GetRotate() / 90) & 0x01) {
     std::swap(fWidth, fHeight);
+  }
   return CFX_FloatRect(0, 0, fWidth, fHeight);
 }
 
 CPDFSDK_PageView* CFFL_FormField::GetCurPageView() {
-  return m_pFormFiller->GetOrCreatePageView(m_pWidget->GetPage());
+  return form_filler_->GetOrCreatePageView(widget_->GetPage());
 }
 
 CFX_FloatRect CFFL_FormField::GetFocusBox(const CPDFSDK_PageView* pPageView) {
@@ -476,8 +477,8 @@ bool CFFL_FormField::CommitData(const CPDFSDK_PageView* pPageView,
   if (!IsDataChanged(pPageView))
     return true;
 
-  ObservedPtr<CPDFSDK_Widget> pObserved(m_pWidget);
-  if (!m_pFormFiller->OnKeyStrokeCommit(pObserved, pPageView, nFlag)) {
+  ObservedPtr<CPDFSDK_Widget> pObserved(widget_);
+  if (!form_filler_->OnKeyStrokeCommit(pObserved, pPageView, nFlag)) {
     if (!pObserved)
       return false;
     ResetPWLWindow(pPageView);
@@ -486,7 +487,7 @@ bool CFFL_FormField::CommitData(const CPDFSDK_PageView* pPageView,
   if (!pObserved)
     return false;
 
-  if (!m_pFormFiller->OnValidate(pObserved, pPageView, nFlag)) {
+  if (!form_filler_->OnValidate(pObserved, pPageView, nFlag)) {
     if (!pObserved)
       return false;
     ResetPWLWindow(pPageView);
@@ -499,11 +500,11 @@ bool CFFL_FormField::CommitData(const CPDFSDK_PageView* pPageView,
   if (!pObserved)
     return false;
 
-  m_pFormFiller->OnCalculate(pObserved);
+  form_filler_->OnCalculate(pObserved);
   if (!pObserved)
     return false;
 
-  m_pFormFiller->OnFormat(pObserved);
+  form_filler_->OnFormat(pObserved);
   if (!pObserved)
     return false;
 
@@ -523,13 +524,13 @@ bool CFFL_FormField::IsFieldFull(const CPDFSDK_PageView* pPageView) {
 #endif  // PDF_ENABLE_XFA
 
 void CFFL_FormField::SetChangeMark() {
-  m_pFormFiller->OnChange();
+  form_filler_->OnChange();
 }
 
 void CFFL_FormField::GetActionData(const CPDFSDK_PageView* pPageView,
                                    CPDF_AAction::AActionType type,
                                    CFFL_FieldAction& fa) {
-  fa.sValue = m_pWidget->GetValue();
+  fa.sValue = widget_->GetValue();
 }
 
 void CFFL_FormField::SetActionData(const CPDFSDK_PageView* pPageView,
@@ -578,7 +579,7 @@ void CFFL_FormField::OnTimerFired() {}
 
 void CFFL_FormField::EscapeFiller(CPDFSDK_PageView* pPageView,
                                   bool bDestroyPWLWindow) {
-  m_bValid = false;
+  valid_ = false;
 
   InvalidateRect(GetViewBBox(pPageView));
   if (bDestroyPWLWindow)
@@ -586,5 +587,5 @@ void CFFL_FormField::EscapeFiller(CPDFSDK_PageView* pPageView,
 }
 
 void CFFL_FormField::InvalidateRect(const FX_RECT& rect) {
-  m_pFormFiller->Invalidate(m_pWidget->GetPage(), rect);
+  form_filler_->Invalidate(widget_->GetPage(), rect);
 }

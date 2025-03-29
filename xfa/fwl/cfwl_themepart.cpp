@@ -9,7 +9,7 @@
 namespace pdfium {
 
 CFWL_ThemePart::CFWL_ThemePart(Part iPart, CFWL_Widget* pWidget)
-    : m_iPart(iPart), m_pWidget(pWidget) {}
+    : m_iPart(iPart), widget_(pWidget) {}
 
 CFWL_ThemePart::~CFWL_ThemePart() = default;
 

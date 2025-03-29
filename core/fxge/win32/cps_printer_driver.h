@@ -77,7 +77,7 @@ class CPSPrinterDriver final : public RenderDeviceDriverIface {
   HDC m_hDC;
   int m_Width;
   int m_Height;
-  int m_nBitsPerPixel;
+  int bits_per_pixel_;
   int m_HorzSize;
   int m_VertSize;
   CFX_PSRenderer m_PSRenderer;

@@ -34,7 +34,7 @@ class CFX_BitStream {
  private:
   size_t m_BitPos = 0;
   const size_t m_BitSize;
-  pdfium::raw_span<const uint8_t> const m_pData;
+  pdfium::raw_span<const uint8_t> const data_;
 };
 
 #endif  // CORE_FXCRT_CFX_BITSTREAM_H_

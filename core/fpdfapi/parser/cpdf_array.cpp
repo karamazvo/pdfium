@@ -23,7 +23,7 @@
 
 CPDF_Array::CPDF_Array() = default;
 
-CPDF_Array::CPDF_Array(const WeakPtr<ByteStringPool>& pPool) : m_pPool(pPool) {}
+CPDF_Array::CPDF_Array(const WeakPtr<ByteStringPool>& pPool) : pool_(pPool) {}
 
 CPDF_Array::~CPDF_Array() {
   // Break cycles for cyclic references.
@@ -276,21 +276,20 @@ bool CPDF_Array::WriteTo(IFX_ArchiveStream* archive,
   return archive->WriteString("]");
 }
 
-CPDF_ArrayLocker::CPDF_ArrayLocker(const CPDF_Array* pArray)
-    : m_pArray(pArray) {
-  m_pArray->m_LockCount++;
+CPDF_ArrayLocker::CPDF_ArrayLocker(const CPDF_Array* pArray) : array_(pArray) {
+  array_->m_LockCount++;
 }
 
 CPDF_ArrayLocker::CPDF_ArrayLocker(RetainPtr<CPDF_Array> pArray)
-    : m_pArray(std::move(pArray)) {
-  m_pArray->m_LockCount++;
+    : array_(std::move(pArray)) {
+  array_->m_LockCount++;
 }
 
 CPDF_ArrayLocker::CPDF_ArrayLocker(RetainPtr<const CPDF_Array> pArray)
-    : m_pArray(std::move(pArray)) {
-  m_pArray->m_LockCount++;
+    : array_(std::move(pArray)) {
+  array_->m_LockCount++;
 }
 
 CPDF_ArrayLocker::~CPDF_ArrayLocker() {
-  m_pArray->m_LockCount--;
+  array_->m_LockCount--;
 }

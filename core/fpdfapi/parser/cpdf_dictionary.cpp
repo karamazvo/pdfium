@@ -26,7 +26,7 @@ CPDF_Dictionary::CPDF_Dictionary()
     : CPDF_Dictionary(WeakPtr<ByteStringPool>()) {}
 
 CPDF_Dictionary::CPDF_Dictionary(const WeakPtr<ByteStringPool>& pPool)
-    : m_pPool(pPool) {}
+    : pool_(pPool) {}
 
 CPDF_Dictionary::~CPDF_Dictionary() {
   // Mark the object as deleted so that it will not be deleted again,
@@ -54,7 +54,7 @@ RetainPtr<CPDF_Object> CPDF_Dictionary::CloneNonCyclic(
     bool bDirect,
     std::set<const CPDF_Object*>* pVisited) const {
   pVisited->insert(this);
-  auto pCopy = pdfium::MakeRetain<CPDF_Dictionary>(m_pPool);
+  auto pCopy = pdfium::MakeRetain<CPDF_Dictionary>(pool_);
   CPDF_DictionaryLocker locker(this);
   for (const auto& it : locker) {
     if (!pdfium::Contains(*pVisited, it.second.Get())) {
@@ -342,7 +342,7 @@ void CPDF_Dictionary::SetMatrixFor(const ByteString& key,
 }
 
 ByteString CPDF_Dictionary::MaybeIntern(const ByteString& str) {
-  return m_pPool ? m_pPool->Intern(str) : str;
+  return pool_ ? pool_->Intern(str) : str;
 }
 
 bool CPDF_Dictionary::WriteTo(IFX_ArchiveStream* archive,
@@ -370,22 +370,22 @@ bool CPDF_Dictionary::WriteTo(IFX_ArchiveStream* archive,
 }
 
 CPDF_DictionaryLocker::CPDF_DictionaryLocker(const CPDF_Dictionary* pDictionary)
-    : m_pDictionary(pDictionary) {
-  m_pDictionary->m_LockCount++;
+    : dictionary_(pDictionary) {
+  dictionary_->m_LockCount++;
 }
 
 CPDF_DictionaryLocker::CPDF_DictionaryLocker(
     RetainPtr<CPDF_Dictionary> pDictionary)
-    : m_pDictionary(std::move(pDictionary)) {
-  m_pDictionary->m_LockCount++;
+    : dictionary_(std::move(pDictionary)) {
+  dictionary_->m_LockCount++;
 }
 
 CPDF_DictionaryLocker::CPDF_DictionaryLocker(
     RetainPtr<const CPDF_Dictionary> pDictionary)
-    : m_pDictionary(std::move(pDictionary)) {
-  m_pDictionary->m_LockCount++;
+    : dictionary_(std::move(pDictionary)) {
+  dictionary_->m_LockCount++;
 }
 
 CPDF_DictionaryLocker::~CPDF_DictionaryLocker() {
-  m_pDictionary->m_LockCount--;
+  dictionary_->m_LockCount--;
 }

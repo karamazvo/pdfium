@@ -31,8 +31,8 @@ class CPDF_PageImageCache {
 
   void ResetBitmapForImage(RetainPtr<CPDF_Image> pImage);
   void CacheOptimization(int32_t dwLimitCacheSize);
-  uint32_t GetTimeCount() const { return m_nTimeCount; }
-  CPDF_Page* GetPage() const { return m_pPage; }
+  uint32_t GetTimeCount() const { return time_count_; }
+  CPDF_Page* GetPage() const { return page_; }
 
   bool StartGetCachedBitmap(RetainPtr<CPDF_Image> pImage,
                             const CPDF_Dictionary* pFormResources,
@@ -59,7 +59,7 @@ class CPDF_PageImageCache {
     uint32_t GetMatteColor() const { return m_MatteColor; }
     uint32_t GetTimeCount() const { return m_dwTimeCount; }
     void SetTimeCount(uint32_t count) { m_dwTimeCount = count; }
-    CPDF_Image* GetImage() const { return m_pImage.Get(); }
+    CPDF_Image* GetImage() const { return image_.Get(); }
 
     CPDF_DIB::LoadState StartGetCachedBitmap(
         CPDF_PageImageCache* pPageImageCache,
@@ -85,23 +85,23 @@ class CPDF_PageImageCache {
     uint32_t m_dwTimeCount = 0;
     uint32_t m_MatteColor = 0;
     uint32_t m_dwCacheSize = 0;
-    RetainPtr<CPDF_Image> const m_pImage;
-    RetainPtr<CFX_DIBBase> m_pCurBitmap;
-    RetainPtr<CFX_DIBBase> m_pCurMask;
-    RetainPtr<CFX_DIBBase> m_pCachedBitmap;
-    RetainPtr<CFX_DIBBase> m_pCachedMask;
-    bool m_bCachedSetMaxSizeRequired = false;
+    RetainPtr<CPDF_Image> const image_;
+    RetainPtr<CFX_DIBBase> cur_bitmap_;
+    RetainPtr<CFX_DIBBase> cur_mask_;
+    RetainPtr<CFX_DIBBase> cached_bitmap_;
+    RetainPtr<CFX_DIBBase> cached_mask_;
+    bool cached_set_max_size_required_ = false;
   };
 
   void ClearImageCacheEntry(const CPDF_Stream* pStream);
 
-  UnownedPtr<CPDF_Page> const m_pPage;
+  UnownedPtr<CPDF_Page> const page_;
   std::map<RetainPtr<const CPDF_Stream>, std::unique_ptr<Entry>, std::less<>>
       m_ImageCache;
-  MaybeOwned<Entry> m_pCurImageCacheEntry;
-  uint32_t m_nTimeCount = 0;
-  uint32_t m_nCacheSize = 0;
-  bool m_bCurFindCache = false;
+  MaybeOwned<Entry> cur_image_cache_entry_;
+  uint32_t time_count_ = 0;
+  uint32_t cache_size_ = 0;
+  bool cur_find_cache_ = false;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PAGEIMAGECACHE_H_

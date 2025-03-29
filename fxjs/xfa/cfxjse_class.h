@@ -25,13 +25,13 @@ class CFXJSE_Class {
   ~CFXJSE_Class();
 
   bool IsName(ByteStringView name) const { return name == m_szClassName; }
-  const CFXJSE_Context* GetContext() const { return m_pContext; }
+  const CFXJSE_Context* GetContext() const { return context_; }
   v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* pIsolate);
 
  protected:
   ByteString m_szClassName;
-  UnownedPtr<const FXJSE_CLASS_DESCRIPTOR> m_pClassDescriptor;
-  UnownedPtr<const CFXJSE_Context> const m_pContext;
+  UnownedPtr<const FXJSE_CLASS_DESCRIPTOR> class_descriptor_;
+  UnownedPtr<const CFXJSE_Context> const context_;
   v8::Global<v8::FunctionTemplate> m_hTemplate;
 };
 
