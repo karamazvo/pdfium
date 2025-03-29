@@ -47,6 +47,54 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "714623a1_e9d6f70a",
+        "filename": "fpdfsdk/cpdfsdk_helpers.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-03-29T01:12:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "999dc0b9_a4e1d670",
+      "range": {
+        "startLine": 267,
+        "startChar": 72,
+        "endLine": 267,
+        "endChar": 78
+      },
+      "revId": "dd23425f2d53653dffd05c2d4f79161cb1d67b1e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7a8da3d5_0c2c8371",
+        "filename": "fpdfsdk/cpdfsdk_helpers.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-03-29T01:12:01Z",
+      "side": 1,
+      "message": "Done. As of this CL, the only ways an embedder can get a premultiplied bitmap is to either bypass the public interface, or something has gone wrong. Thus the CHECK() to say it never happens for those using the public interface.",
+      "parentUuid": "f8b77ffc_97c33617",
+      "range": {
+        "startLine": 267,
+        "startChar": 3,
+        "endLine": 267,
+        "endChar": 12
+      },
+      "revId": "dd23425f2d53653dffd05c2d4f79161cb1d67b1e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "dec8a1f6_d55777b2",
@@ -60,6 +108,30 @@
       "writtenOn": "2025-02-19T19:28:48Z",
       "side": 1,
       "message": "This probably should have been a return false?",
+      "range": {
+        "startLine": 181,
+        "startChar": 2,
+        "endLine": 181,
+        "endChar": 41
+      },
+      "revId": "dd23425f2d53653dffd05c2d4f79161cb1d67b1e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a0f47df9_2c9d15d7",
+        "filename": "fpdfsdk/fpdf_editimg.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-03-29T01:12:01Z",
+      "side": 1,
+      "message": "Can\u0027t happen. PDFium (for now) never hands out premultiplied bitmaps, so how can the embedder pass one in?",
+      "parentUuid": "dec8a1f6_d55777b2",
       "range": {
         "startLine": 181,
         "startChar": 2,
