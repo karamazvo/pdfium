@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "daabad26_29bf97fa",
+        "filename": "fxjs/cfxjs_engine.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-01T21:50:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d802be72_bf7c4317",
+      "range": {
+        "startLine": 177,
+        "startChar": 26,
+        "endLine": 177,
+        "endChar": 36
+      },
+      "revId": "61a84e8f724aae56bc9e49eddad99af787d00c69",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e1ccb373_e0cad8f6",
@@ -37,6 +61,30 @@
       "writtenOn": "2025-04-01T21:35:03Z",
       "side": 1,
       "message": "Omit \"cw_\"",
+      "range": {
+        "startLine": 308,
+        "startChar": 13,
+        "endLine": 308,
+        "endChar": 16
+      },
+      "revId": "61a84e8f724aae56bc9e49eddad99af787d00c69",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "84960752_4dcc1b33",
+        "filename": "fxjs/cjs_document.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 308,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-01T21:50:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e1ccb373_e0cad8f6",
       "range": {
         "startLine": 308,
         "startChar": 13,
@@ -70,6 +118,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e252a6a4_125f8fcc",
+        "filename": "fxjs/cjs_event_context.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-01T21:50:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "de6526c5_9757f70d",
+      "range": {
+        "startLine": 156,
+        "startChar": 0,
+        "endLine": 160,
+        "endChar": 42
+      },
+      "revId": "61a84e8f724aae56bc9e49eddad99af787d00c69",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "95e98e54_b3015c23",
@@ -83,6 +155,30 @@
       "writtenOn": "2025-04-01T21:35:03Z",
       "side": 1,
       "message": "Omit \"i\" prefix.",
+      "range": {
+        "startLine": 167,
+        "startChar": 0,
+        "endLine": 168,
+        "endChar": 30
+      },
+      "revId": "61a84e8f724aae56bc9e49eddad99af787d00c69",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "025e17ef_de3b0710",
+        "filename": "fxjs/cjs_event_context.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-01T21:50:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "95e98e54_b3015c23",
       "range": {
         "startLine": 167,
         "startChar": 0,
@@ -116,6 +212,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9e8cd5ec_de876a18",
+        "filename": "fxjs/cjs_field.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-01T21:50:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f9ea3128_06487ca2",
+      "range": {
+        "startLine": 364,
+        "startChar": 28,
+        "endLine": 364,
+        "endChar": 34
+      },
+      "revId": "61a84e8f724aae56bc9e49eddad99af787d00c69",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5a20eb30_b36aea12",
@@ -129,6 +249,30 @@
       "writtenOn": "2025-04-01T21:35:03Z",
       "side": 1,
       "message": "Omit \"sw_\"",
+      "range": {
+        "startLine": 34,
+        "startChar": 13,
+        "endLine": 34,
+        "endChar": 16
+      },
+      "revId": "61a84e8f724aae56bc9e49eddad99af787d00c69",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "969e262e_8f7c0952",
+        "filename": "fxjs/cjs_icon.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-01T21:50:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a20eb30_b36aea12",
       "range": {
         "startLine": 34,
         "startChar": 13,
@@ -162,6 +306,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "66590e4e_3045f6ac",
+        "filename": "fxjs/cjs_object.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-01T21:50:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "50aa9df5_541453ab",
+      "range": {
+        "startLine": 56,
+        "startChar": 25,
+        "endLine": 56,
+        "endChar": 34
+      },
+      "revId": "61a84e8f724aae56bc9e49eddad99af787d00c69",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "98d5fa24_32a22561",
@@ -175,6 +343,30 @@
       "writtenOn": "2025-04-01T21:35:03Z",
       "side": 1,
       "message": "Omit \"sw_\"",
+      "range": {
+        "startLine": 49,
+        "startChar": 19,
+        "endLine": 49,
+        "endChar": 22
+      },
+      "revId": "61a84e8f724aae56bc9e49eddad99af787d00c69",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9cf33502_65d565fd",
+        "filename": "fxjs/global_timer.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-01T21:50:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "98d5fa24_32a22561",
       "range": {
         "startLine": 49,
         "startChar": 19,
