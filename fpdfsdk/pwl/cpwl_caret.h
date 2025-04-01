@@ -30,17 +30,17 @@ class CPWL_Caret final : public CPWL_Wnd, public CFX_Timer::CallbackIface {
   void SetCaret(bool bVisible,
                 const CFX_PointF& ptHead,
                 const CFX_PointF& ptFoot);
-  void SetInvalidRect(const CFX_FloatRect& rc) { m_rcInvalid = rc; }
+  void SetInvalidRect(const CFX_FloatRect& rc) { rc_invalid_ = rc; }
 
  private:
   CFX_FloatRect GetCaretRect() const;
 
-  bool m_bFlash = false;
-  CFX_PointF m_ptHead;
-  CFX_PointF m_ptFoot;
-  float m_fWidth = 0.4f;
-  CFX_FloatRect m_rcInvalid;
-  std::unique_ptr<CFX_Timer> m_pTimer;
+  bool flash_ = false;
+  CFX_PointF pt_head_;
+  CFX_PointF pt_foot_;
+  float fwidth_ = 0.4f;
+  CFX_FloatRect rc_invalid_;
+  std::unique_ptr<CFX_Timer> timer_;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_CARET_H_

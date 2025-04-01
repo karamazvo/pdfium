@@ -13,9 +13,9 @@ CFWL_MessageMouse::CFWL_MessageMouse(CFWL_Widget* pDstTarget,
                                      Mask<XFA_FWL_KeyFlag> flags,
                                      CFX_PointF pos)
     : CFWL_Message(CFWL_Message::Type::kMouse, pDstTarget),
-      m_dwCmd(cmd),
-      m_dwFlags(flags),
-      m_pos(pos) {}
+      dw_cmd_(cmd),
+      dw_flags_(flags),
+      os_(pos) {}
 
 CFWL_MessageMouse::~CFWL_MessageMouse() = default;
 
