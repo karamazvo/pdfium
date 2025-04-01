@@ -44,9 +44,9 @@ enum class EventAppliesTo : uint8_t {
 };
 
 struct ExecEventParaInfo {
-  uint32_t m_uHash;  // hashed as wide string.
-  XFA_EVENTTYPE m_eventType;
-  EventAppliesTo m_validFlags;
+  uint32_t uhash_;  // hashed as wide string.
+  XFA_EVENTTYPE vent_type_;
+  EventAppliesTo valid_flags_;
 };
 
 #undef PARA
@@ -81,10 +81,11 @@ const ExecEventParaInfo* GetExecEventParaInfoByName(
   auto* result = std::lower_bound(
       std::begin(kExecEventParaInfoTable), std::end(kExecEventParaInfoTable),
       uHash, [](const ExecEventParaInfo& iter, const uint16_t& hash) {
-        return iter.m_uHash < hash;
+        return iter.uhash_ < hash;
       });
-  if (result != std::end(kExecEventParaInfoTable) && result->m_uHash == uHash)
+  if (result != std::end(kExecEventParaInfoTable) && result->uhash_ == uHash) {
     return result;
+  }
   return nullptr;
 }
 
@@ -476,20 +477,20 @@ XFA_EventError CJX_Node::execSingleEventByName(WideStringView wsEventName,
   if (!eventParaInfo)
     return XFA_EventError::kNotExist;
 
-  switch (eventParaInfo->m_validFlags) {
+  switch (eventParaInfo->valid_flags_) {
     case EventAppliesTo::kNone:
       return XFA_EventError::kNotExist;
     case EventAppliesTo::kAll:
     case EventAppliesTo::kAllNonRecursive:
       return pNotify->ExecEventByDeepFirst(
-          GetXFANode(), eventParaInfo->m_eventType, false,
-          eventParaInfo->m_validFlags == EventAppliesTo::kAll);
+          GetXFANode(), eventParaInfo->vent_type_, false,
+          eventParaInfo->valid_flags_ == EventAppliesTo::kAll);
     case EventAppliesTo::kSubform:
       if (eType != XFA_Element::Subform)
         return XFA_EventError::kNotExist;
 
       return pNotify->ExecEventByDeepFirst(
-          GetXFANode(), eventParaInfo->m_eventType, false, false);
+          GetXFANode(), eventParaInfo->vent_type_, false, false);
     case EventAppliesTo::kFieldOrExclusion: {
       if (eType != XFA_Element::ExclGroup && eType != XFA_Element::Field)
         return XFA_EventError::kNotExist;
@@ -498,18 +499,18 @@ XFA_EventError CJX_Node::execSingleEventByName(WideStringView wsEventName,
       if (pParentNode &&
           pParentNode->GetElementType() == XFA_Element::ExclGroup) {
         // TODO(dsinclair): This seems like a bug, we do the same work twice?
-        pNotify->ExecEventByDeepFirst(GetXFANode(), eventParaInfo->m_eventType,
+        pNotify->ExecEventByDeepFirst(GetXFANode(), eventParaInfo->vent_type_,
                                       false, false);
       }
       return pNotify->ExecEventByDeepFirst(
-          GetXFANode(), eventParaInfo->m_eventType, false, false);
+          GetXFANode(), eventParaInfo->vent_type_, false, false);
     }
     case EventAppliesTo::kField:
       if (eType != XFA_Element::Field)
         return XFA_EventError::kNotExist;
 
       return pNotify->ExecEventByDeepFirst(
-          GetXFANode(), eventParaInfo->m_eventType, false, false);
+          GetXFANode(), eventParaInfo->vent_type_, false, false);
     case EventAppliesTo::kSignature: {
       if (!GetXFANode()->IsWidgetReady())
         return XFA_EventError::kNotExist;
@@ -518,7 +519,7 @@ XFA_EventError CJX_Node::execSingleEventByName(WideStringView wsEventName,
         return XFA_EventError::kNotExist;
       }
       return pNotify->ExecEventByDeepFirst(
-          GetXFANode(), eventParaInfo->m_eventType, false, false);
+          GetXFANode(), eventParaInfo->vent_type_, false, false);
     }
     case EventAppliesTo::kChoiceList: {
       if (!GetXFANode()->IsWidgetReady())
@@ -528,7 +529,7 @@ XFA_EventError CJX_Node::execSingleEventByName(WideStringView wsEventName,
         return XFA_EventError::kNotExist;
       }
       return pNotify->ExecEventByDeepFirst(
-          GetXFANode(), eventParaInfo->m_eventType, false, false);
+          GetXFANode(), eventParaInfo->vent_type_, false, false);
     }
   }
   return XFA_EventError::kNotExist;

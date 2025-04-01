@@ -273,7 +273,7 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
 
   v8::Local<v8::Value> GlobalPropertyGetter();
   v8::Isolate* GetIsolate() const { return m_pIsolate; }
-  CXFA_Document* GetDocument() const { return m_pDocument.Get(); }
+  CXFA_Document* GetDocument() const { return document_.Get(); }
 
  private:
   friend class FormCalcContextTest_GenerateSomExpression_Test;
@@ -327,8 +327,8 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
   void ThrowException(ByteStringView str) const;
 
   UnownedPtr<v8::Isolate> const m_pIsolate;
-  v8::Global<v8::Value> m_Value;
-  cppgc::WeakPersistent<CXFA_Document> const m_pDocument;
+  v8::Global<v8::Value> value_;
+  cppgc::WeakPersistent<CXFA_Document> const document_;
 };
 
 #endif  // FXJS_XFA_CFXJSE_FORMCALC_CONTEXT_H_
