@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8721a5c0_f91aab85",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 653,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-01T21:13:10Z",
+      "side": 1,
+      "message": "nit: I might move this to line 643 to do it immediately upon entry, to prove there is no funny business going on with adjusting the parameters.",
+      "range": {
+        "startLine": 653,
+        "startChar": 0,
+        "endLine": 653,
+        "endChar": 2
+      },
+      "revId": "6de77b864dd1a035b01f6d45e99cbebf5685c2db",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
