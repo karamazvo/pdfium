@@ -70,6 +70,30 @@
       },
       "revId": "6de77b864dd1a035b01f6d45e99cbebf5685c2db",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ede75335_c1c7277f",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 653,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-01T21:52:54Z",
+      "side": 1,
+      "message": "Meh, let\u0027s just land it as-is.",
+      "parentUuid": "30d808fc_799abd00",
+      "range": {
+        "startLine": 653,
+        "startChar": 0,
+        "endLine": 653,
+        "endChar": 2
+      },
+      "revId": "6de77b864dd1a035b01f6d45e99cbebf5685c2db",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
