@@ -66,8 +66,8 @@ class CFX_GlobalData {
   bool SaveGlobalPersisitentVariables();
   iterator FindGlobalVariable(const ByteString& sPropname);
 
-  size_t m_RefCount = 0;
-  UnownedPtr<Delegate> const m_pDelegate;
+  size_t ref_count_ = 0;
+  UnownedPtr<Delegate> const delegate_;
   std::vector<std::unique_ptr<Element>> m_arrayGlobalData;
 };
 
