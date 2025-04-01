@@ -25,8 +25,9 @@ CPDF_StitchFunc::CPDF_StitchFunc() : CPDF_Function(Type::kType3Stitching) {}
 CPDF_StitchFunc::~CPDF_StitchFunc() = default;
 
 bool CPDF_StitchFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
-  if (m_nInputs != kRequiredNumInputs)
+  if (inputs_ != kRequiredNumInputs) {
     return false;
+  }
 
   CHECK(pObj->IsDictionary() || pObj->IsStream());
   RetainPtr<const CPDF_Dictionary> pDict = pObj->GetDict();
@@ -90,18 +91,18 @@ bool CPDF_StitchFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
       } else {
         nOutputs = nFuncOutputs;
       }
-      m_pSubFunctions.push_back(std::move(pFunc));
+      sub_functions_.push_back(std::move(pFunc));
     }
-    m_nOutputs = nOutputs.value();
+    outputs_ = nOutputs.value();
   }
 
-  m_bounds.reserve(nSubs + 1);
-  m_bounds.push_back(m_Domains[0]);
+  ounds_.reserve(nSubs + 1);
+  ounds_.push_back(domains_[0]);
   for (uint32_t i = 0; i < nSubs - 1; i++)
-    m_bounds.push_back(pBoundsArray->GetFloatAt(i));
-  m_bounds.push_back(m_Domains[1]);
+    ounds_.push_back(pBoundsArray->GetFloatAt(i));
+  ounds_.push_back(domains_[1]);
 
-  m_encode = ReadArrayElementsToVector(pEncodeArray.Get(), nSubs * 2);
+  ncode_ = ReadArrayElementsToVector(pEncodeArray.Get(), nSubs * 2);
   return true;
 }
 
@@ -109,13 +110,14 @@ bool CPDF_StitchFunc::v_Call(pdfium::span<const float> inputs,
                              pdfium::span<float> results) const {
   float input = inputs[0];
   size_t i;
-  for (i = 0; i + 1 < m_pSubFunctions.size(); i++) {
-    if (input < m_bounds[i + 1])
+  for (i = 0; i + 1 < sub_functions_.size(); i++) {
+    if (input < ounds_[i + 1]) {
       break;
+    }
   }
-  input = Interpolate(input, m_bounds[i], m_bounds[i + 1], m_encode[i * 2],
-                      m_encode[i * 2 + 1]);
-  return m_pSubFunctions[i]
+  input = Interpolate(input, ounds_[i], ounds_[i + 1], ncode_[i * 2],
+                      ncode_[i * 2 + 1]);
+  return sub_functions_[i]
       ->Call(pdfium::span_from_ref(input), results)
       .has_value();
 }

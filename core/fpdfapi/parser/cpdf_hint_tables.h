@@ -22,10 +22,10 @@ class CPDF_SyntaxParser;
 class CPDF_HintTables {
  public:
   struct SharedObjGroupInfo {
-    FX_FILESIZE m_szOffset = 0;
-    uint32_t m_dwLength = 0;
-    uint32_t m_dwObjectsCount = 0;
-    uint32_t m_dwStartObjNum = 0;
+    FX_FILESIZE sz_offset_ = 0;
+    uint32_t dw_length_ = 0;
+    uint32_t dw_objects_count_ = 0;
+    uint32_t dw_start_obj_num_ = 0;
   };
 
   class PageInfo {
@@ -34,35 +34,35 @@ class CPDF_HintTables {
     ~PageInfo();
 
     void set_objects_count(uint32_t objects_count) {
-      m_dwObjectsCount = objects_count;
+      dw_objects_count_ = objects_count;
     }
-    uint32_t objects_count() const { return m_dwObjectsCount; }
+    uint32_t objects_count() const { return dw_objects_count_; }
 
-    void set_page_offset(FX_FILESIZE offset) { m_szOffset = offset; }
-    FX_FILESIZE page_offset() const { return m_szOffset; }
+    void set_page_offset(FX_FILESIZE offset) { sz_offset_ = offset; }
+    FX_FILESIZE page_offset() const { return sz_offset_; }
 
-    void set_page_length(uint32_t length) { m_dwLength = length; }
-    uint32_t page_length() const { return m_dwLength; }
+    void set_page_length(uint32_t length) { dw_length_ = length; }
+    uint32_t page_length() const { return dw_length_; }
 
     void set_start_obj_num(uint32_t start_obj_num) {
-      m_dwStartObjNum = start_obj_num;
+      dw_start_obj_num_ = start_obj_num;
     }
-    uint32_t start_obj_num() const { return m_dwStartObjNum; }
+    uint32_t start_obj_num() const { return dw_start_obj_num_; }
 
     void AddIdentifier(uint32_t Identifier) {
-      m_dwIdentifierArray.push_back(Identifier);
+      dw_identifier_array_.push_back(Identifier);
     }
 
     const std::vector<uint32_t>& Identifiers() const {
-      return m_dwIdentifierArray;
+      return dw_identifier_array_;
     }
 
    private:
-    uint32_t m_dwObjectsCount = 0;
-    FX_FILESIZE m_szOffset = 0;
-    uint32_t m_dwLength = 0;
-    uint32_t m_dwStartObjNum = 0;
-    std::vector<uint32_t> m_dwIdentifierArray;
+    uint32_t dw_objects_count_ = 0;
+    FX_FILESIZE sz_offset_ = 0;
+    uint32_t dw_length_ = 0;
+    uint32_t dw_start_obj_num_ = 0;
+    std::vector<uint32_t> dw_identifier_array_;
 
     PageInfo(const PageInfo& other) = delete;
     PageInfo& operator=(const PageInfo&) = delete;
@@ -85,12 +85,14 @@ class CPDF_HintTables {
 
   bool LoadHintStream(CPDF_Stream* pHintStream);
 
-  const std::vector<PageInfo>& PageInfos() const { return m_PageInfos; }
+  const std::vector<PageInfo>& PageInfos() const { return page_infos_; }
   const std::vector<SharedObjGroupInfo>& SharedGroupInfos() const {
-    return m_SharedObjGroupInfos;
+    return shared_obj_group_infos_;
   }
 
-  FX_FILESIZE GetFirstPageObjOffset() const { return m_szFirstPageObjOffset; }
+  FX_FILESIZE GetFirstPageObjOffset() const {
+    return sz_first_page_obj_offset_;
+  }
 
  protected:
   bool ReadPageHintTable(CFX_BitStream* hStream);
@@ -99,12 +101,12 @@ class CPDF_HintTables {
  private:
   FX_FILESIZE HintsOffsetToFileOffset(uint32_t hints_offset) const;
 
-  uint32_t m_nFirstPageSharedObjs = 0;
-  FX_FILESIZE m_szFirstPageObjOffset = 0;
-  std::vector<PageInfo> m_PageInfos;
-  std::vector<SharedObjGroupInfo> m_SharedObjGroupInfos;
-  UnownedPtr<CPDF_ReadValidator> m_pValidator;
-  UnownedPtr<const CPDF_LinearizedHeader> const m_pLinearized;
+  uint32_t first_page_shared_objs_ = 0;
+  FX_FILESIZE sz_first_page_obj_offset_ = 0;
+  std::vector<PageInfo> page_infos_;
+  std::vector<SharedObjGroupInfo> shared_obj_group_infos_;
+  UnownedPtr<CPDF_ReadValidator> validator_;
+  UnownedPtr<const CPDF_LinearizedHeader> const linearized_;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_HINT_TABLES_H_

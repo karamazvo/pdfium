@@ -41,8 +41,8 @@ class CFX_GEModule {
   static void Destroy();
   static CFX_GEModule* Get();
 
-  CFX_FontCache* GetFontCache() const { return m_pFontCache.get(); }
-  CFX_FontMgr* GetFontMgr() const { return m_pFontMgr.get(); }
+  CFX_FontCache* GetFontCache() const { return font_cache_.get(); }
+  CFX_FontMgr* GetFontMgr() const { return font_mgr_.get(); }
   PlatformIface* GetPlatform() const { return m_pPlatform.get(); }
   const char** GetUserFontPaths() const { return m_pUserFontPaths; }
 
@@ -51,8 +51,8 @@ class CFX_GEModule {
   ~CFX_GEModule();
 
   std::unique_ptr<PlatformIface> const m_pPlatform;
-  std::unique_ptr<CFX_FontMgr> const m_pFontMgr;
-  std::unique_ptr<CFX_FontCache> const m_pFontCache;
+  std::unique_ptr<CFX_FontMgr> const font_mgr_;
+  std::unique_ptr<CFX_FontCache> const font_cache_;
 
   // Exclude because taken from public API.
   UNOWNED_PTR_EXCLUSION const char** const m_pUserFontPaths;

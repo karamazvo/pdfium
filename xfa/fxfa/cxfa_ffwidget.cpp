@@ -126,22 +126,20 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
   CFX_DIBAttribute dibAttr;
   pProgressiveDecoder->LoadImageInfo(std::move(pImageFileRead), type, &dibAttr,
                                      false);
-  switch (dibAttr.m_wDPIUnit) {
+  switch (dibAttr.wdpiunit_) {
     case CFX_DIBAttribute::kResUnitCentimeter:
-      dibAttr.m_nXDPI = static_cast<int32_t>(dibAttr.m_nXDPI * 2.54f);
-      dibAttr.m_nYDPI = static_cast<int32_t>(dibAttr.m_nYDPI * 2.54f);
+      dibAttr.xdpi_ = static_cast<int32_t>(dibAttr.xdpi_ * 2.54f);
+      dibAttr.ydpi_ = static_cast<int32_t>(dibAttr.ydpi_ * 2.54f);
       break;
     case CFX_DIBAttribute::kResUnitMeter:
-      dibAttr.m_nXDPI =
-          static_cast<int32_t>(dibAttr.m_nXDPI / (float)100 * 2.54f);
-      dibAttr.m_nYDPI =
-          static_cast<int32_t>(dibAttr.m_nYDPI / (float)100 * 2.54f);
+      dibAttr.xdpi_ = static_cast<int32_t>(dibAttr.xdpi_ / (float)100 * 2.54f);
+      dibAttr.ydpi_ = static_cast<int32_t>(dibAttr.ydpi_ / (float)100 * 2.54f);
       break;
     default:
       break;
   }
-  iImageXDpi = dibAttr.m_nXDPI > 1 ? dibAttr.m_nXDPI : (96);
-  iImageYDpi = dibAttr.m_nYDPI > 1 ? dibAttr.m_nYDPI : (96);
+  iImageXDpi = dibAttr.xdpi_ > 1 ? dibAttr.xdpi_ : (96);
+  iImageYDpi = dibAttr.ydpi_ > 1 ? dibAttr.ydpi_ : (96);
   if (pProgressiveDecoder->GetWidth() <= 0 ||
       pProgressiveDecoder->GetHeight() <= 0) {
     return nullptr;
@@ -192,15 +190,15 @@ CXFA_FFWidget* CXFA_FFWidget::FromLayoutItem(CXFA_LayoutItem* pLayoutItem) {
   return GetFFWidget(ToContentLayoutItem(pLayoutItem));
 }
 
-CXFA_FFWidget::CXFA_FFWidget(CXFA_Node* node) : m_pNode(node) {}
+CXFA_FFWidget::CXFA_FFWidget(CXFA_Node* node) : node_(node) {}
 
 CXFA_FFWidget::~CXFA_FFWidget() = default;
 
 void CXFA_FFWidget::Trace(cppgc::Visitor* visitor) const {
-  visitor->Trace(m_pLayoutItem);
-  visitor->Trace(m_pDocView);
-  visitor->Trace(m_pPageView);
-  visitor->Trace(m_pNode);
+  visitor->Trace(layout_item_);
+  visitor->Trace(doc_view_);
+  visitor->Trace(page_view_);
+  visitor->Trace(node_);
 }
 
 CFWL_App* CXFA_FFWidget::GetFWLApp() const {
@@ -214,19 +212,19 @@ CXFA_FFWidget* CXFA_FFWidget::GetNextFFWidget() const {
 const CFX_RectF& CXFA_FFWidget::GetWidgetRect() const {
   if (!GetLayoutItem()->TestStatusBits(XFA_WidgetStatus::kRectCached))
     RecacheWidgetRect();
-  return m_WidgetRect;
+  return widget_rect_;
 }
 
 const CFX_RectF& CXFA_FFWidget::RecacheWidgetRect() const {
   GetLayoutItem()->SetStatusBits(XFA_WidgetStatus::kRectCached);
-  m_WidgetRect = GetLayoutItem()->GetAbsoluteRect();
-  return m_WidgetRect;
+  widget_rect_ = GetLayoutItem()->GetAbsoluteRect();
+  return widget_rect_;
 }
 
 CFX_RectF CXFA_FFWidget::GetRectWithoutRotate() {
   CFX_RectF rtWidget = GetWidgetRect();
   float fValue = 0;
-  switch (m_pNode->GetRotate()) {
+  switch (node_->GetRotate()) {
     case 90:
       rtWidget.top = rtWidget.bottom();
       fValue = rtWidget.width;
@@ -258,9 +256,10 @@ CXFA_FFField* CXFA_FFWidget::AsField() {
 }
 
 CFX_RectF CXFA_FFWidget::GetBBox(FocusOption focus) {
-  if (focus == kDrawFocus || !m_pPageView)
+  if (focus == kDrawFocus || !page_view_) {
     return CFX_RectF();
-  return m_pPageView->GetPageViewRect();
+  }
+  return page_view_->GetPageViewRect();
 }
 
 void CXFA_FFWidget::RenderWidget(CFGAS_GEGraphics* pGS,
@@ -269,7 +268,7 @@ void CXFA_FFWidget::RenderWidget(CFGAS_GEGraphics* pGS,
   if (!HasVisibleStatus())
     return;
 
-  CXFA_Border* border = m_pNode->GetBorderIfExists();
+  CXFA_Border* border = node_->GetBorderIfExists();
   if (!border)
     return;
 
@@ -281,7 +280,7 @@ void CXFA_FFWidget::RenderWidget(CFGAS_GEGraphics* pGS,
 }
 
 bool CXFA_FFWidget::IsLoaded() {
-  return !!m_pPageView;
+  return !!page_view_;
 }
 
 bool CXFA_FFWidget::LoadWidget() {
@@ -332,7 +331,7 @@ void CXFA_FFWidget::DrawBorderWithFlag(CFGAS_GEGraphics* pGS,
 void CXFA_FFWidget::InvalidateRect() {
   CFX_RectF rtWidget = GetBBox(kDoNotDrawFocus);
   rtWidget.Inflate(2, 2);
-  m_pDocView->InvalidateRect(m_pPageView.Get(), rtWidget);
+  doc_view_->InvalidateRect(page_view_.Get(), rtWidget);
 }
 
 bool CXFA_FFWidget::OnMouseEnter() {
@@ -400,7 +399,7 @@ bool CXFA_FFWidget::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   GetLayoutItem()->SetStatusBits(XFA_WidgetStatus::kFocused);
 
   CXFA_EventParam eParam(XFA_EVENT_Enter);
-  m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::Enter, &eParam);
+  node_->ProcessEvent(GetDocView(), XFA_AttributeValue::Enter, &eParam);
   return true;
 }
 
@@ -506,7 +505,7 @@ CFX_PointF CXFA_FFWidget::Rotate2Normal(const CFX_PointF& point) {
 }
 
 CFX_Matrix CXFA_FFWidget::GetRotateMatrix() {
-  int32_t iRotate = m_pNode->GetRotate();
+  int32_t iRotate = node_->GetRotate();
   if (!iRotate)
     return CFX_Matrix();
 
@@ -565,7 +564,7 @@ bool CXFA_FFWidget::IsLayoutRectEmpty() {
 }
 
 CXFA_LayoutItem* CXFA_FFWidget::GetParent() {
-  CXFA_Node* pParentNode = m_pNode->GetParent();
+  CXFA_Node* pParentNode = node_->GetParent();
   if (!pParentNode)
     return nullptr;
 
@@ -579,8 +578,9 @@ bool CXFA_FFWidget::IsAncestorOf(CXFA_FFWidget* pWidget) {
 
   CXFA_Node* pChildNode = pWidget->GetNode();
   while (pChildNode) {
-    if (pChildNode == m_pNode)
+    if (pChildNode == node_) {
       return true;
+    }
 
     pChildNode = pChildNode->GetParent();
   }
@@ -592,7 +592,7 @@ bool CXFA_FFWidget::PtInActiveRect(const CFX_PointF& point) {
 }
 
 CXFA_FFDoc* CXFA_FFWidget::GetDoc() {
-  return m_pDocView->GetDoc();
+  return doc_view_->GetDoc();
 }
 
 CXFA_FFApp* CXFA_FFWidget::GetApp() {
@@ -614,7 +614,7 @@ void CXFA_FFWidget::EventKillFocus() {
     return;
   }
   CXFA_EventParam eParam(XFA_EVENT_Exit);
-  m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::Exit, &eParam);
+  node_->ProcessEvent(GetDocView(), XFA_AttributeValue::Exit, &eParam);
 }
 
 bool CXFA_FFWidget::IsButtonDown() {

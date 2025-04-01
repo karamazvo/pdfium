@@ -117,58 +117,58 @@ const FX_HATCHDATA& GetHatchBitmapData(size_t index) {
 }  // namespace
 
 CFGAS_GEGraphics::CFGAS_GEGraphics(CFX_RenderDevice* renderDevice)
-    : m_renderDevice(renderDevice) {
-  DCHECK(m_renderDevice);
+    : render_device_(renderDevice) {
+  DCHECK(render_device_);
 }
 
 CFGAS_GEGraphics::~CFGAS_GEGraphics() = default;
 
 void CFGAS_GEGraphics::SaveGraphState() {
-  m_renderDevice->SaveState();
-  m_infoStack.push_back(std::make_unique<TInfo>(m_info));
+  render_device_->SaveState();
+  nfo_stack_.push_back(std::make_unique<TInfo>(nfo_));
 }
 
 void CFGAS_GEGraphics::RestoreGraphState() {
-  m_renderDevice->RestoreState(false);
-  CHECK(!m_infoStack.empty());
-  m_info = *m_infoStack.back();
-  m_infoStack.pop_back();
+  render_device_->RestoreState(false);
+  CHECK(!nfo_stack_.empty());
+  nfo_ = *nfo_stack_.back();
+  nfo_stack_.pop_back();
   return;
 }
 
 void CFGAS_GEGraphics::SetLineCap(CFX_GraphStateData::LineCap lineCap) {
-  m_info.graphState.set_line_cap(lineCap);
+  nfo_.graphState.set_line_cap(lineCap);
 }
 
 void CFGAS_GEGraphics::SetLineDash(std::vector<float> dash_array) {
   // For `dash_array` to be empty, call SetSolidLineDash() instead.
   CHECK(!dash_array.empty());
-  const float scale = m_info.isActOnDash ? m_info.graphState.line_width() : 1.0;
+  const float scale = nfo_.isActOnDash ? nfo_.graphState.line_width() : 1.0;
   for (float& f : dash_array) {
     f *= scale;
   }
-  m_info.graphState.set_dash_array(std::move(dash_array));
-  m_info.graphState.set_dash_phase(0);
+  nfo_.graphState.set_dash_array(std::move(dash_array));
+  nfo_.graphState.set_dash_phase(0);
 }
 
 void CFGAS_GEGraphics::SetSolidLineDash() {
-  m_info.graphState.set_dash_array({});
+  nfo_.graphState.set_dash_array({});
 }
 
 void CFGAS_GEGraphics::SetLineWidth(float lineWidth) {
-  m_info.graphState.set_line_width(lineWidth);
+  nfo_.graphState.set_line_width(lineWidth);
 }
 
 void CFGAS_GEGraphics::EnableActOnDash() {
-  m_info.isActOnDash = true;
+  nfo_.isActOnDash = true;
 }
 
 void CFGAS_GEGraphics::SetStrokeColor(const CFGAS_GEColor& color) {
-  m_info.strokeColor = color;
+  nfo_.strokeColor = color;
 }
 
 void CFGAS_GEGraphics::SetFillColor(const CFGAS_GEColor& color) {
-  m_info.fillColor = color;
+  nfo_.fillColor = color;
 }
 
 void CFGAS_GEGraphics::StrokePath(const CFGAS_GEPath& path,
@@ -183,52 +183,52 @@ void CFGAS_GEGraphics::FillPath(const CFGAS_GEPath& path,
 }
 
 void CFGAS_GEGraphics::ConcatMatrix(const CFX_Matrix& matrix) {
-  m_info.CTM.Concat(matrix);
+  nfo_.CTM.Concat(matrix);
 }
 
 const CFX_Matrix* CFGAS_GEGraphics::GetMatrix() const {
-  return &m_info.CTM;
+  return &nfo_.CTM;
 }
 
 CFX_RectF CFGAS_GEGraphics::GetClipRect() const {
-  FX_RECT r = m_renderDevice->GetClipBox();
+  FX_RECT r = render_device_->GetClipBox();
   return CFX_RectF(r.left, r.top, r.Width(), r.Height());
 }
 
 void CFGAS_GEGraphics::SetClipRect(const CFX_RectF& rect) {
-  m_renderDevice->SetClip_Rect(
+  render_device_->SetClip_Rect(
       FX_RECT(FXSYS_roundf(rect.left), FXSYS_roundf(rect.top),
               FXSYS_roundf(rect.right()), FXSYS_roundf(rect.bottom())));
 }
 
 CFX_RenderDevice* CFGAS_GEGraphics::GetRenderDevice() {
-  return m_renderDevice;
+  return render_device_;
 }
 
 void CFGAS_GEGraphics::RenderDeviceStrokePath(const CFGAS_GEPath& path,
                                               const CFX_Matrix& matrix) {
-  if (m_info.strokeColor.GetType() != CFGAS_GEColor::Solid)
+  if (nfo_.strokeColor.GetType() != CFGAS_GEColor::Solid) {
     return;
+  }
 
-  CFX_Matrix m = m_info.CTM;
+  CFX_Matrix m = nfo_.CTM;
   m.Concat(matrix);
-  m_renderDevice->DrawPath(path.GetPath(), &m, &m_info.graphState, 0x0,
-                           m_info.strokeColor.GetArgb(),
-                           CFX_FillRenderOptions());
+  render_device_->DrawPath(path.GetPath(), &m, &nfo_.graphState, 0x0,
+                           nfo_.strokeColor.GetArgb(), CFX_FillRenderOptions());
 }
 
 void CFGAS_GEGraphics::RenderDeviceFillPath(
     const CFGAS_GEPath& path,
     CFX_FillRenderOptions::FillType fill_type,
     const CFX_Matrix& matrix) {
-  CFX_Matrix m = m_info.CTM;
+  CFX_Matrix m = nfo_.CTM;
   m.Concat(matrix);
 
   const CFX_FillRenderOptions fill_options(fill_type);
-  switch (m_info.fillColor.GetType()) {
+  switch (nfo_.fillColor.GetType()) {
     case CFGAS_GEColor::Solid:
-      m_renderDevice->DrawPath(path.GetPath(), &m, &m_info.graphState,
-                               m_info.fillColor.GetArgb(), 0x0, fill_options);
+      render_device_->DrawPath(path.GetPath(), &m, &nfo_.graphState,
+                               nfo_.fillColor.GetArgb(), 0x0, fill_options);
       return;
     case CFGAS_GEColor::Pattern:
       FillPathWithPattern(path, fill_options, m);
@@ -245,17 +245,17 @@ void CFGAS_GEGraphics::FillPathWithPattern(
     const CFGAS_GEPath& path,
     const CFX_FillRenderOptions& fill_options,
     const CFX_Matrix& matrix) {
-  RetainPtr<const CFX_DIBitmap> bitmap = m_renderDevice->GetBitmap();
+  RetainPtr<const CFX_DIBitmap> bitmap = render_device_->GetBitmap();
   int32_t width = bitmap->GetWidth();
   int32_t height = bitmap->GetHeight();
   auto bmp = pdfium::MakeRetain<CFX_DIBitmap>();
   // TODO(crbug.com/355630556): Consider adding support for
   // `FXDIB_Format::kBgraPremul`
   CHECK(bmp->Create(width, height, FXDIB_Format::kBgra));
-  m_renderDevice->GetDIBits(bmp, 0, 0);
+  render_device_->GetDIBits(bmp, 0, 0);
 
   CFGAS_GEPattern::HatchStyle hatchStyle =
-      m_info.fillColor.GetPattern()->GetHatchStyle();
+      nfo_.fillColor.GetPattern()->GetHatchStyle();
   const FX_HATCHDATA& data =
       GetHatchBitmapData(static_cast<size_t>(hatchStyle));
 
@@ -270,15 +270,14 @@ void CFGAS_GEGraphics::FillPathWithPattern(
 
   CFX_DefaultRenderDevice device;
   device.Attach(bmp);
-  device.FillRect(rect, m_info.fillColor.GetPattern()->GetBackArgb());
+  device.FillRect(rect, nfo_.fillColor.GetPattern()->GetBackArgb());
   for (int32_t j = rect.bottom; j < rect.top; j += mask->GetHeight()) {
     for (int32_t i = rect.left; i < rect.right; i += mask->GetWidth()) {
-      device.SetBitMask(mask, i, j,
-                        m_info.fillColor.GetPattern()->GetForeArgb());
+      device.SetBitMask(mask, i, j, nfo_.fillColor.GetPattern()->GetForeArgb());
     }
   }
-  CFX_RenderDevice::StateRestorer restorer(m_renderDevice);
-  m_renderDevice->SetClip_PathFill(path.GetPath(), &matrix, fill_options);
+  CFX_RenderDevice::StateRestorer restorer(render_device_);
+  render_device_->SetClip_PathFill(path.GetPath(), &matrix, fill_options);
   SetDIBitsWithMatrix(std::move(bmp), CFX_Matrix());
 }
 
@@ -286,20 +285,20 @@ void CFGAS_GEGraphics::FillPathWithShading(
     const CFGAS_GEPath& path,
     const CFX_FillRenderOptions& fill_options,
     const CFX_Matrix& matrix) {
-  RetainPtr<const CFX_DIBitmap> bitmap = m_renderDevice->GetBitmap();
+  RetainPtr<const CFX_DIBitmap> bitmap = render_device_->GetBitmap();
   int32_t width = bitmap->GetWidth();
   int32_t height = bitmap->GetHeight();
-  float start_x = m_info.fillColor.GetShading()->GetBeginPoint().x;
-  float start_y = m_info.fillColor.GetShading()->GetBeginPoint().y;
-  float end_x = m_info.fillColor.GetShading()->GetEndPoint().x;
-  float end_y = m_info.fillColor.GetShading()->GetEndPoint().y;
+  float start_x = nfo_.fillColor.GetShading()->GetBeginPoint().x;
+  float start_y = nfo_.fillColor.GetShading()->GetBeginPoint().y;
+  float end_x = nfo_.fillColor.GetShading()->GetEndPoint().x;
+  float end_y = nfo_.fillColor.GetShading()->GetEndPoint().y;
   auto bmp = pdfium::MakeRetain<CFX_DIBitmap>();
   // TODO(crbug.com/355630556): Consider adding support for
   // `FXDIB_Format::kBgraPremul`
   CHECK(bmp->Create(width, height, FXDIB_Format::kBgra));
-  m_renderDevice->GetDIBits(bmp, 0, 0);
+  render_device_->GetDIBits(bmp, 0, 0);
   bool result = false;
-  switch (m_info.fillColor.GetShading()->GetType()) {
+  switch (nfo_.fillColor.GetShading()->GetType()) {
     case CFGAS_GEShading::Type::kAxial: {
       float x_span = end_x - start_x;
       float y_span = end_y - start_y;
@@ -314,24 +313,26 @@ void CFGAS_GEGraphics::FillPathWithShading(
             scale = (((x - start_x) * x_span) + ((y - start_y) * y_span)) /
                     axis_len_square;
             if (isnan(scale) || scale < 0.0f) {
-              if (!m_info.fillColor.GetShading()->IsExtendedBegin())
+              if (!nfo_.fillColor.GetShading()->IsExtendedBegin()) {
                 continue;
+              }
               scale = 0.0f;
             } else if (scale > 1.0f) {
-              if (!m_info.fillColor.GetShading()->IsExtendedEnd())
+              if (!nfo_.fillColor.GetShading()->IsExtendedEnd()) {
                 continue;
+              }
               scale = 1.0f;
             }
           }
-          dib_buf[column] = m_info.fillColor.GetShading()->GetArgb(scale);
+          dib_buf[column] = nfo_.fillColor.GetShading()->GetArgb(scale);
         }
       }
       result = true;
       break;
     }
     case CFGAS_GEShading::Type::kRadial: {
-      float start_r = m_info.fillColor.GetShading()->GetBeginRadius();
-      float end_r = m_info.fillColor.GetShading()->GetEndRadius();
+      float start_r = nfo_.fillColor.GetShading()->GetBeginRadius();
+      float end_r = nfo_.fillColor.GetShading()->GetEndRadius();
       float a = ((start_x - end_x) * (start_x - end_x)) +
                 ((start_y - end_y) * (start_y - end_y)) -
                 ((start_r - end_r) * (start_r - end_r));
@@ -363,7 +364,7 @@ void CFGAS_GEGraphics::FillPathWithShading(
               s2 = (-b - root) / (2 * a);
               s1 = (-b + root) / (2 * a);
             }
-            if (s2 <= 1.0f || m_info.fillColor.GetShading()->IsExtendedEnd()) {
+            if (s2 <= 1.0f || nfo_.fillColor.GetShading()->IsExtendedEnd()) {
               s = (s2);
             } else {
               s = (s1);
@@ -373,16 +374,18 @@ void CFGAS_GEGraphics::FillPathWithShading(
             }
           }
           if (isnan(s) || s < 0.0f) {
-            if (!m_info.fillColor.GetShading()->IsExtendedBegin())
+            if (!nfo_.fillColor.GetShading()->IsExtendedBegin()) {
               continue;
+            }
             s = 0.0f;
           }
           if (s > 1.0f) {
-            if (!m_info.fillColor.GetShading()->IsExtendedEnd())
+            if (!nfo_.fillColor.GetShading()->IsExtendedEnd()) {
               continue;
+            }
             s = 1.0f;
           }
-          dib_buf[column] = m_info.fillColor.GetShading()->GetArgb(s);
+          dib_buf[column] = nfo_.fillColor.GetShading()->GetArgb(s);
         }
       }
       result = true;
@@ -390,8 +393,8 @@ void CFGAS_GEGraphics::FillPathWithShading(
     }
   }
   if (result) {
-    CFX_RenderDevice::StateRestorer restorer(m_renderDevice);
-    m_renderDevice->SetClip_PathFill(path.GetPath(), &matrix, fill_options);
+    CFX_RenderDevice::StateRestorer restorer(render_device_);
+    render_device_->SetClip_PathFill(path.GetPath(), &matrix, fill_options);
     SetDIBitsWithMatrix(std::move(bmp), matrix);
   }
 }
@@ -399,7 +402,7 @@ void CFGAS_GEGraphics::FillPathWithShading(
 void CFGAS_GEGraphics::SetDIBitsWithMatrix(RetainPtr<CFX_DIBBase> source,
                                            const CFX_Matrix& matrix) {
   if (matrix.IsIdentity()) {
-    m_renderDevice->SetDIBits(source, 0, 0);
+    render_device_->SetDIBits(source, 0, 0);
   } else {
     CFX_Matrix m((float)source->GetWidth(), 0, 0, (float)source->GetHeight(), 0,
                  0);
@@ -408,7 +411,7 @@ void CFGAS_GEGraphics::SetDIBitsWithMatrix(RetainPtr<CFX_DIBBase> source,
     int32_t top;
     RetainPtr<CFX_DIBitmap> bmp1 = source->FlipImage(false, true);
     RetainPtr<CFX_DIBitmap> bmp2 = bmp1->TransformTo(m, &left, &top);
-    m_renderDevice->SetDIBits(bmp2, left, top);
+    render_device_->SetDIBits(bmp2, left, top);
   }
 }
 

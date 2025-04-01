@@ -812,14 +812,14 @@ FPDFTextObj_GetRenderedBitmap(FPDF_DOCUMENT document,
 
   auto device = std::make_unique<CFX_DefaultRenderDevice>();
   CFX_DefaultRenderDevice* device_ptr = device.get();
-  render_context_ptr->m_pDevice = std::move(device);
-  render_context_ptr->m_pContext = std::make_unique<CPDF_RenderContext>(
+  render_context_ptr->device_ = std::move(device);
+  render_context_ptr->context_ = std::make_unique<CPDF_RenderContext>(
       doc, std::move(page_resources), /*pPageCache=*/nullptr);
 
   device_ptr->Attach(result_bitmap);
 
   CFX_Matrix device_matrix(rect.Width(), 0, 0, rect.Height(), 0, 0);
-  CPDF_RenderStatus status(render_context_ptr->m_pContext.get(), device_ptr);
+  CPDF_RenderStatus status(render_context_ptr->context_.get(), device_ptr);
   status.SetDeviceMatrix(device_matrix);
   status.Initialize(nullptr, nullptr);
 
@@ -1033,17 +1033,17 @@ FPDFFont_GetGlyphPath(FPDF_FONT font, uint32_t glyph, float font_size) {
     return nullptr;
 
   CFX_Font* pCfxFont;
-  if (pos[0].m_FallbackFontPosition == -1) {
+  if (pos[0].fallback_font_position_ == -1) {
     pCfxFont = pFont->GetFont();
     DCHECK(pCfxFont);  // Never null.
   } else {
-    pCfxFont = pFont->GetFontFallback(pos[0].m_FallbackFontPosition);
+    pCfxFont = pFont->GetFontFallback(pos[0].fallback_font_position_);
     if (!pCfxFont)
       return nullptr;
   }
 
   const CFX_Path* pPath =
-      pCfxFont->LoadGlyphPath(pos[0].m_GlyphIndex, pos[0].m_FontCharWidth);
+      pCfxFont->LoadGlyphPath(pos[0].glyph_index_, pos[0].font_char_width_);
 
   return FPDFGlyphPathFromCFXPath(pPath);
 }

@@ -13,9 +13,9 @@ CFWL_MessageKey::CFWL_MessageKey(CFWL_Widget* pDstTarget,
                                  Mask<XFA_FWL_KeyFlag> flags,
                                  uint32_t dwKeyCodeOrChar)
     : CFWL_Message(CFWL_Message::Type::kKey, pDstTarget),
-      m_dwCmd(cmd),
-      m_dwFlags(flags),
-      m_dwKeyCodeOrChar(dwKeyCodeOrChar) {}
+      dw_cmd_(cmd),
+      dw_flags_(flags),
+      dw_key_code_or_char_(dwKeyCodeOrChar) {}
 
 CFWL_MessageKey::~CFWL_MessageKey() = default;
 

@@ -28,9 +28,9 @@ class CFX_DIBAttribute {
   CFX_DIBAttribute();
   ~CFX_DIBAttribute();
 
-  int32_t m_nXDPI = -1;
-  int32_t m_nYDPI = -1;
-  ResUnit m_wDPIUnit = kResUnitNone;
+  int32_t xdpi_ = -1;
+  int32_t ydpi_ = -1;
+  ResUnit wdpiunit_ = kResUnitNone;
 };
 #endif  // PDF_ENABLE_XFA
 

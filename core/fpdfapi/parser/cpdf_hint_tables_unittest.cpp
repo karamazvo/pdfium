@@ -119,35 +119,35 @@ TEST_F(HintTablesTest, PageAndGroupInfos) {
   // SharedGroupInfo
   ASSERT_EQ(6u, hint_tables->SharedGroupInfos().size());
 
-  EXPECT_EQ(777, hint_tables->SharedGroupInfos()[0].m_szOffset);
-  EXPECT_EQ(254u, hint_tables->SharedGroupInfos()[0].m_dwLength);
-  EXPECT_EQ(39u, hint_tables->SharedGroupInfos()[0].m_dwStartObjNum);
-  EXPECT_EQ(1u, hint_tables->SharedGroupInfos()[0].m_dwObjectsCount);
+  EXPECT_EQ(777, hint_tables->SharedGroupInfos()[0].sz_offset_);
+  EXPECT_EQ(254u, hint_tables->SharedGroupInfos()[0].dw_length_);
+  EXPECT_EQ(39u, hint_tables->SharedGroupInfos()[0].dw_start_obj_num_);
+  EXPECT_EQ(1u, hint_tables->SharedGroupInfos()[0].dw_objects_count_);
 
-  EXPECT_EQ(1031, hint_tables->SharedGroupInfos()[1].m_szOffset);
-  EXPECT_EQ(389u, hint_tables->SharedGroupInfos()[1].m_dwLength);
-  EXPECT_EQ(40u, hint_tables->SharedGroupInfos()[1].m_dwStartObjNum);
-  EXPECT_EQ(1u, hint_tables->SharedGroupInfos()[1].m_dwObjectsCount);
+  EXPECT_EQ(1031, hint_tables->SharedGroupInfos()[1].sz_offset_);
+  EXPECT_EQ(389u, hint_tables->SharedGroupInfos()[1].dw_length_);
+  EXPECT_EQ(40u, hint_tables->SharedGroupInfos()[1].dw_start_obj_num_);
+  EXPECT_EQ(1u, hint_tables->SharedGroupInfos()[1].dw_objects_count_);
 
-  EXPECT_EQ(1420, hint_tables->SharedGroupInfos()[2].m_szOffset);
-  EXPECT_EQ(726u, hint_tables->SharedGroupInfos()[2].m_dwLength);
-  EXPECT_EQ(41u, hint_tables->SharedGroupInfos()[2].m_dwStartObjNum);
-  EXPECT_EQ(1u, hint_tables->SharedGroupInfos()[2].m_dwObjectsCount);
+  EXPECT_EQ(1420, hint_tables->SharedGroupInfos()[2].sz_offset_);
+  EXPECT_EQ(726u, hint_tables->SharedGroupInfos()[2].dw_length_);
+  EXPECT_EQ(41u, hint_tables->SharedGroupInfos()[2].dw_start_obj_num_);
+  EXPECT_EQ(1u, hint_tables->SharedGroupInfos()[2].dw_objects_count_);
 
-  EXPECT_EQ(2146, hint_tables->SharedGroupInfos()[3].m_szOffset);
-  EXPECT_EQ(290u, hint_tables->SharedGroupInfos()[3].m_dwLength);
-  EXPECT_EQ(42u, hint_tables->SharedGroupInfos()[3].m_dwStartObjNum);
-  EXPECT_EQ(1u, hint_tables->SharedGroupInfos()[3].m_dwObjectsCount);
+  EXPECT_EQ(2146, hint_tables->SharedGroupInfos()[3].sz_offset_);
+  EXPECT_EQ(290u, hint_tables->SharedGroupInfos()[3].dw_length_);
+  EXPECT_EQ(42u, hint_tables->SharedGroupInfos()[3].dw_start_obj_num_);
+  EXPECT_EQ(1u, hint_tables->SharedGroupInfos()[3].dw_objects_count_);
 
-  EXPECT_EQ(2436, hint_tables->SharedGroupInfos()[4].m_szOffset);
-  EXPECT_EQ(2669u, hint_tables->SharedGroupInfos()[4].m_dwLength);
-  EXPECT_EQ(43u, hint_tables->SharedGroupInfos()[4].m_dwStartObjNum);
-  EXPECT_EQ(1u, hint_tables->SharedGroupInfos()[4].m_dwObjectsCount);
+  EXPECT_EQ(2436, hint_tables->SharedGroupInfos()[4].sz_offset_);
+  EXPECT_EQ(2669u, hint_tables->SharedGroupInfos()[4].dw_length_);
+  EXPECT_EQ(43u, hint_tables->SharedGroupInfos()[4].dw_start_obj_num_);
+  EXPECT_EQ(1u, hint_tables->SharedGroupInfos()[4].dw_objects_count_);
 
-  EXPECT_EQ(10939, hint_tables->SharedGroupInfos()[5].m_szOffset);
-  EXPECT_EQ(544u, hint_tables->SharedGroupInfos()[5].m_dwLength);
-  EXPECT_EQ(4u, hint_tables->SharedGroupInfos()[5].m_dwStartObjNum);
-  EXPECT_EQ(1u, hint_tables->SharedGroupInfos()[5].m_dwObjectsCount);
+  EXPECT_EQ(10939, hint_tables->SharedGroupInfos()[5].sz_offset_);
+  EXPECT_EQ(544u, hint_tables->SharedGroupInfos()[5].dw_length_);
+  EXPECT_EQ(4u, hint_tables->SharedGroupInfos()[5].dw_start_obj_num_);
+  EXPECT_EQ(1u, hint_tables->SharedGroupInfos()[5].dw_objects_count_);
 }
 
 TEST_F(HintTablesTest, FirstPageOffset) {

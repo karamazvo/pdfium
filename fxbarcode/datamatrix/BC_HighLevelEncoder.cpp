@@ -135,11 +135,11 @@ WideString CBC_HighLevelEncoder::EncodeHighLevel(const WideString& msg) {
     if (left == kMacro05Header) {
       context.writeCodeword(kMacro05);
       context.setSkipAtEnd(2);
-      context.m_pos += 6;
+      context.os_ += 6;
     } else if (left == kMacro06Header) {
       context.writeCodeword(kMacro06);
       context.setSkipAtEnd(2);
-      context.m_pos += 6;
+      context.os_ += 6;
     }
   }
 
@@ -155,21 +155,21 @@ WideString CBC_HighLevelEncoder::EncodeHighLevel(const WideString& msg) {
     if (!encoders[EncoderIndex(encodingMode)]->Encode(&context))
       return WideString();
 
-    if (context.m_newEncoding != Encoding::UNKNOWN) {
-      encodingMode = context.m_newEncoding;
+    if (context.ew_encoding_ != Encoding::UNKNOWN) {
+      encodingMode = context.ew_encoding_;
       context.ResetEncoderSignal();
     }
   }
-  size_t len = context.m_codewords.GetLength();
+  size_t len = context.codewords_.GetLength();
   if (!context.UpdateSymbolInfo())
     return WideString();
 
-  size_t capacity = context.m_symbolInfo->data_capacity();
+  size_t capacity = context.symbol_info_->data_capacity();
   if (len < capacity) {
     if (encodingMode != Encoding::ASCII && encodingMode != Encoding::BASE256)
       context.writeCodeword(0x00fe);
   }
-  WideString codewords = context.m_codewords;
+  WideString codewords = context.codewords_;
   if (codewords.GetLength() < capacity)
     codewords += kPad;
 
