@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d53c45c7_26f7f052",
+        "filename": "core/fxcrt/cfx_fileaccess_windows.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-01T22:30:14Z",
+      "side": 1,
+      "message": "file_",
+      "range": {
+        "startLine": 40,
+        "startChar": 30,
+        "endLine": 40,
+        "endChar": 36
+      },
+      "revId": "bc34a5b5b794484fe02c22c7976cf0df3291e77b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9ba1e9d7_4bd8bc5d",
+        "filename": "core/fxcrt/cfx_seekablestreamproxy.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-01T22:30:14Z",
+      "side": 1,
+      "message": "code_page_",
+      "range": {
+        "startLine": 46,
+        "startChar": 14,
+        "endLine": 46,
+        "endChar": 25
+      },
+      "revId": "bc34a5b5b794484fe02c22c7976cf0df3291e77b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "db02e012_220babb4",
+        "filename": "core/fxcrt/cfx_seekablestreamproxy.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-01T22:30:14Z",
+      "side": 1,
+      "message": "bom_length_",
+      "range": {
+        "startLine": 47,
+        "startChar": 9,
+        "endLine": 47,
+        "endChar": 20
+      },
+      "revId": "bc34a5b5b794484fe02c22c7976cf0df3291e77b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
