@@ -26,42 +26,42 @@
 #include "fxbarcode/BC_Writer.h"
 
 CBC_CodeBase::CBC_CodeBase(std::unique_ptr<CBC_Writer> pWriter)
-    : m_pBCWriter(std::move(pWriter)) {}
+    : bcwriter_(std::move(pWriter)) {}
 
 CBC_CodeBase::~CBC_CodeBase() = default;
 
 void CBC_CodeBase::SetTextLocation(BC_TEXT_LOC location) {
-  m_pBCWriter->SetTextLocation(location);
+  bcwriter_->SetTextLocation(location);
 }
 
 bool CBC_CodeBase::SetWideNarrowRatio(int8_t ratio) {
-  return m_pBCWriter->SetWideNarrowRatio(ratio);
+  return bcwriter_->SetWideNarrowRatio(ratio);
 }
 
 bool CBC_CodeBase::SetStartChar(char start) {
-  return m_pBCWriter->SetStartChar(start);
+  return bcwriter_->SetStartChar(start);
 }
 
 bool CBC_CodeBase::SetEndChar(char end) {
-  return m_pBCWriter->SetEndChar(end);
+  return bcwriter_->SetEndChar(end);
 }
 
 bool CBC_CodeBase::SetErrorCorrectionLevel(int32_t level) {
-  return m_pBCWriter->SetErrorCorrectionLevel(level);
+  return bcwriter_->SetErrorCorrectionLevel(level);
 }
 
 bool CBC_CodeBase::SetModuleHeight(int32_t moduleHeight) {
-  return m_pBCWriter->SetModuleHeight(moduleHeight);
+  return bcwriter_->SetModuleHeight(moduleHeight);
 }
 
 bool CBC_CodeBase::SetModuleWidth(int32_t moduleWidth) {
-  return m_pBCWriter->SetModuleWidth(moduleWidth);
+  return bcwriter_->SetModuleWidth(moduleWidth);
 }
 
 void CBC_CodeBase::SetHeight(int32_t height) {
-  return m_pBCWriter->SetHeight(height);
+  return bcwriter_->SetHeight(height);
 }
 
 void CBC_CodeBase::SetWidth(int32_t width) {
-  return m_pBCWriter->SetWidth(width);
+  return bcwriter_->SetWidth(width);
 }
