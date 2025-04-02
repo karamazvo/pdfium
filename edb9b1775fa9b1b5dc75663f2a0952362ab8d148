@@ -1,0 +1,228 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "516037e6_deccccb4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-02T23:46:09Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 7,
+        "startChar": 11,
+        "endLine": 7,
+        "endChar": 24
+      },
+      "revId": "edb9b1775fa9b1b5dc75663f2a0952362ab8d148",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9f4a0a0a_0d764ac2",
+        "filename": "xfa/fgas/crt/cfgas_decimal.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-02T23:46:09Z",
+      "side": 1,
+      "message": "These probably don\u0027t need u_ prefix.",
+      "revId": "edb9b1775fa9b1b5dc75663f2a0952362ab8d148",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1e235c25_32463ea9",
+        "filename": "xfa/fgas/crt/cfgas_stringformatter.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-02T23:46:09Z",
+      "side": 1,
+      "message": "Maybe \"pattern_span_\" ?",
+      "range": {
+        "startLine": 91,
+        "startChar": 40,
+        "endLine": 91,
+        "endChar": 51
+      },
+      "revId": "edb9b1775fa9b1b5dc75663f2a0952362ab8d148",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "27bdd63d_c0cea305",
+        "filename": "xfa/fgas/layout/cfgas_char.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-02T23:46:09Z",
+      "side": 1,
+      "message": "Omit \"w_\".",
+      "range": {
+        "startLine": 57,
+        "startChar": 11,
+        "endLine": 57,
+        "endChar": 13
+      },
+      "revId": "edb9b1775fa9b1b5dc75663f2a0952362ab8d148",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "87cd287e_65259906",
+        "filename": "xfa/fwl/cfwl_barcode.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-02T23:46:09Z",
+      "side": 1,
+      "message": "\"c_\" is for char? Also next line.",
+      "range": {
+        "startLine": 69,
+        "startChar": 22,
+        "endLine": 69,
+        "endChar": 24
+      },
+      "revId": "edb9b1775fa9b1b5dc75663f2a0952362ab8d148",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a38793ea_afbea071",
+        "filename": "xfa/fwl/cfwl_checkbox.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-02T23:46:09Z",
+      "side": 1,
+      "message": "tto_ here and next line.",
+      "range": {
+        "startLine": 71,
+        "startChar": 16,
+        "endLine": 71,
+        "endChar": 26
+      },
+      "revId": "edb9b1775fa9b1b5dc75663f2a0952362ab8d148",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ce6b1a9a_9be74e42",
+        "filename": "xfa/fwl/cfwl_themepart.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-02T23:46:09Z",
+      "side": 1,
+      "message": "data_rect_ ?",
+      "range": {
+        "startLine": 98,
+        "startChar": 30,
+        "endLine": 98,
+        "endChar": 38
+      },
+      "revId": "edb9b1775fa9b1b5dc75663f2a0952362ab8d148",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c4221714_5f58553a",
+        "filename": "xfa/fxfa/formcalc/cxfa_fmexpression.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-02T23:46:09Z",
+      "side": 1,
+      "message": "parameters_",
+      "range": {
+        "startLine": 51,
+        "startChar": 11,
+        "endLine": 51,
+        "endChar": 24
+      },
+      "revId": "edb9b1775fa9b1b5dc75663f2a0952362ab8d148",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f554e413_14604e7f",
+        "filename": "xfa/fxfa/formcalc/cxfa_fmlexer.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-02T23:46:09Z",
+      "side": 1,
+      "message": "Just \"input_\"",
+      "range": {
+        "startLine": 119,
+        "startChar": 34,
+        "endLine": 119,
+        "endChar": 37
+      },
+      "revId": "edb9b1775fa9b1b5dc75663f2a0952362ab8d148",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1febd508_ae382fd0",
+        "filename": "xfa/fxfa/parser/cxfa_node.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 536,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-02T23:46:09Z",
+      "side": 1,
+      "message": "Omit \"u_\"?",
+      "range": {
+        "startLine": 536,
+        "startChar": 21,
+        "endLine": 536,
+        "endChar": 23
+      },
+      "revId": "edb9b1775fa9b1b5dc75663f2a0952362ab8d148",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
