@@ -16,6 +16,23 @@
       "message": "Will backfill later. Chromium side test case is https://crrev.com/c/6423520",
       "revId": "928075e9457cb35f11ef4cacf122cd4d86469b5d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c2203fef_9f31661e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-02T17:47:37Z",
+      "side": 1,
+      "message": "Sure, would like to see a scoper/RAII solution as a follow-on.",
+      "revId": "928075e9457cb35f11ef4cacf122cd4d86469b5d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
