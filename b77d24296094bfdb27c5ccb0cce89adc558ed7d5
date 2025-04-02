@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0906fa24_516a8b58",
+        "filename": "fxbarcode/datamatrix/BC_EncoderContext.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-02T18:51:34Z",
+      "side": 1,
+      "message": "Underscore before \"encoding\".",
+      "range": {
+        "startLine": 50,
+        "startChar": 7,
+        "endLine": 50,
+        "endChar": 47
+      },
+      "revId": "b77d24296094bfdb27c5ccb0cce89adc558ed7d5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
