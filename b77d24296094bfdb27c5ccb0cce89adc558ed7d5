@@ -22,6 +22,30 @@
       },
       "revId": "b77d24296094bfdb27c5ccb0cce89adc558ed7d5",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0bf1ac26_598af932",
+        "filename": "fxbarcode/datamatrix/BC_EncoderContext.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-02T18:58:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0906fa24_516a8b58",
+      "range": {
+        "startLine": 50,
+        "startChar": 7,
+        "endLine": 50,
+        "endChar": 47
+      },
+      "revId": "b77d24296094bfdb27c5ccb0cce89adc558ed7d5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
