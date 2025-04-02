@@ -21,9 +21,9 @@ CPDF_RenderOptions::Options& CPDF_RenderOptions::Options::operator=(
     const CPDF_RenderOptions::Options& rhs) = default;
 
 CPDF_RenderOptions::CPDF_RenderOptions() {
-  // TODO(thestig): Make constexpr to initialize |m_Options| once C++14 is
+  // TODO(thestig): Make constexpr to initialize |options_| once C++14 is
   // available.
-  m_Options.bClearType = true;
+  options_.bClearType = true;
 }
 
 CPDF_RenderOptions::CPDF_RenderOptions(const CPDF_RenderOptions& rhs) = default;
@@ -49,9 +49,9 @@ FX_ARGB CPDF_RenderOptions::TranslateObjectFillColor(
   }
   switch (object_type) {
     case CPDF_PageObject::Type::kPath:
-      return m_ColorScheme.path_fill_color;
+      return color_scheme_.path_fill_color;
     case CPDF_PageObject::Type::kText:
-      return m_ColorScheme.text_fill_color;
+      return color_scheme_.text_fill_color;
     default:
       return argb;
   }
@@ -65,9 +65,9 @@ FX_ARGB CPDF_RenderOptions::TranslateObjectStrokeColor(
   }
   switch (object_type) {
     case CPDF_PageObject::Type::kPath:
-      return m_ColorScheme.path_stroke_color;
+      return color_scheme_.path_stroke_color;
     case CPDF_PageObject::Type::kText:
-      return m_ColorScheme.text_stroke_color;
+      return color_scheme_.text_stroke_color;
     default:
       return argb;
   }
@@ -78,10 +78,10 @@ uint32_t CPDF_RenderOptions::GetCacheSizeLimit() const {
 }
 
 bool CPDF_RenderOptions::CheckOCGDictVisible(const CPDF_Dictionary* pOC) const {
-  return !m_pOCContext || m_pOCContext->CheckOCGDictVisible(pOC);
+  return !occontext_ || occontext_->CheckOCGDictVisible(pOC);
 }
 
 bool CPDF_RenderOptions::CheckPageObjectVisible(
     const CPDF_PageObject* pPageObj) const {
-  return !m_pOCContext || m_pOCContext->CheckPageObjectVisible(pPageObj);
+  return !occontext_ || occontext_->CheckPageObjectVisible(pPageObj);
 }
