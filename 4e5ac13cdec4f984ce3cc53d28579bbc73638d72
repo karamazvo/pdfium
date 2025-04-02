@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "69d39a21_9448e94d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 3729774
+      },
+      "writtenOn": "2025-04-02T13:27:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f1309339_4df45271",
+      "range": {
+        "startLine": 9,
+        "startChar": 5,
+        "endLine": 9,
+        "endChar": 13
+      },
+      "revId": "4e5ac13cdec4f984ce3cc53d28579bbc73638d72",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "ed99e3a5_ab8c02df",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1
@@ -75,6 +99,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b2292b75_72cea6bb",
+        "filename": "DIR_METADATA",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 3729774
+      },
+      "writtenOn": "2025-04-02T13:27:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ff2c6075_3c769cd3",
+      "revId": "4e5ac13cdec4f984ce3cc53d28579bbc73638d72",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "836ba6eb_bf930bb9",
@@ -88,6 +130,24 @@
       "writtenOn": "2024-11-18T17:05:43Z",
       "side": 1,
       "message": "Might as well use the PDFium component - 1586257.",
+      "revId": "4e5ac13cdec4f984ce3cc53d28579bbc73638d72",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f2eb76c5_5fdb886b",
+        "filename": "DIR_METADATA",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 3729774
+      },
+      "writtenOn": "2025-04-02T13:27:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "836ba6eb_bf930bb9",
       "revId": "4e5ac13cdec4f984ce3cc53d28579bbc73638d72",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
