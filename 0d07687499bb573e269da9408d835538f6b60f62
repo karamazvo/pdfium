@@ -91,6 +91,47 @@
       },
       "revId": "0d07687499bb573e269da9408d835538f6b60f62",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0b067437_004cc42d",
+        "filename": "core/fxcrt/span.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-03T21:55:22Z",
+      "side": 1,
+      "message": "I think we will need this form, but this const_cast means that there\u0027s probably an issue with the span constructor and constness. I played around a bit but couldn\u0027t make it work, so I guess we can take this.",
+      "range": {
+        "startLine": 397,
+        "startChar": 23,
+        "endLine": 397,
+        "endChar": 34
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "4dde0cf8_9b7b4163",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcrt/span.h",
+              "range": {
+                "startLine": 397,
+                "startChar": 0,
+                "endLine": 397,
+                "endChar": 0
+              },
+              "replacement": "  // SAFETY: `array` contains `N` elements.\n"
+            }
+          ]
+        }
+      ],
+      "revId": "0d07687499bb573e269da9408d835538f6b60f62",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
