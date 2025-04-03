@@ -23,13 +23,14 @@ CPWL_Caret::~CPWL_Caret() = default;
 
 void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                     const CFX_Matrix& mtUser2Device) {
-  if (!IsVisible() || !m_bFlash)
+  if (!IsVisible() || !flash_) {
     return;
+  }
 
   CFX_FloatRect rcRect = GetCaretRect();
   CFX_FloatRect rcClip = GetClipRect();
 
-  float fCaretX = rcRect.left + m_fWidth * 0.5f;
+  float fCaretX = rcRect.left + width_ * 0.5f;
   float fCaretTop = rcRect.top;
   float fCaretBottom = rcRect.bottom;
   if (!rcClip.IsEmpty()) {
@@ -48,34 +49,33 @@ void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
                    CFX_Path::Point::Type::kLine);
 
   CFX_GraphStateData gsd;
-  gsd.set_line_width(m_fWidth);
+  gsd.set_line_width(width_);
   pDevice->DrawPath(path, &mtUser2Device, &gsd, 0, ArgbEncode(255, 0, 0, 0),
                     CFX_FillRenderOptions::EvenOddOptions());
 }
 
 void CPWL_Caret::OnTimerFired() {
-  m_bFlash = !m_bFlash;
+  flash_ = !flash_;
   InvalidateRect(nullptr);
   // Note, |this| may no longer be viable at this point. If more work needs
   // to be done, add an observer.
 }
 
 CFX_FloatRect CPWL_Caret::GetCaretRect() const {
-  return CFX_FloatRect(m_ptFoot.x, m_ptFoot.y, m_ptHead.x + m_fWidth,
-                       m_ptHead.y);
+  return CFX_FloatRect(pt_foot_.x, pt_foot_.y, pt_head_.x + width_, pt_head_.y);
 }
 
 void CPWL_Caret::SetCaret(bool bVisible,
                           const CFX_PointF& ptHead,
                           const CFX_PointF& ptFoot) {
   if (!bVisible) {
-    m_ptHead = CFX_PointF();
-    m_ptFoot = CFX_PointF();
-    m_bFlash = false;
+    pt_head_ = CFX_PointF();
+    pt_foot_ = CFX_PointF();
+    flash_ = false;
     if (!IsVisible())
       return;
 
-    m_pTimer.reset();
+    timer_.reset();
     (void)CPWL_Wnd::SetVisible(false);
     // Note, |this| may no longer be viable at this point. If more work needs
     // to be done, check the return value of SetVisible().
@@ -85,28 +85,29 @@ void CPWL_Caret::SetCaret(bool bVisible,
   if (!IsVisible()) {
     static constexpr int32_t kCaretFlashIntervalMs = 500;
 
-    m_ptHead = ptHead;
-    m_ptFoot = ptFoot;
-    m_pTimer = std::make_unique<CFX_Timer>(GetTimerHandler(), this,
-                                           kCaretFlashIntervalMs);
+    pt_head_ = ptHead;
+    pt_foot_ = ptFoot;
+    timer_ = std::make_unique<CFX_Timer>(GetTimerHandler(), this,
+                                         kCaretFlashIntervalMs);
 
     if (!CPWL_Wnd::SetVisible(true))
       return;
 
-    m_bFlash = true;
-    Move(m_rcInvalid, false, true);
+    flash_ = true;
+    Move(rc_invalid_, false, true);
     // Note, |this| may no longer be viable at this point. If more work needs
     // to be done, check the return value of Move().
     return;
   }
 
-  if (m_ptHead == ptHead && m_ptFoot == ptFoot)
+  if (pt_head_ == ptHead && pt_foot_ == ptFoot) {
     return;
+  }
 
-  m_ptHead = ptHead;
-  m_ptFoot = ptFoot;
-  m_bFlash = true;
-  Move(m_rcInvalid, false, true);
+  pt_head_ = ptHead;
+  pt_foot_ = ptFoot;
+  flash_ = true;
+  Move(rc_invalid_, false, true);
   // Note, |this| may no longer be viable at this point. If more work
   // needs to be done, check the return value of Move().
 }
