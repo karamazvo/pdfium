@@ -35,6 +35,8 @@ class CPDF_PageContentManager {
 
   bool HasStreamAtIndex(size_t stream_index);
 
+  size_t GetStreamCount();
+
  private:
   // Gets the Content stream at a given index. If Contents is a single stream
   // rather than an array, it is retrievable at index 0.

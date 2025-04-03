@@ -78,12 +78,6 @@ void CPDF_PageObjectHolder::AddImageMaskBoundingBox(const CFX_FloatRect& box) {
   m_MaskBoundingBoxes.push_back(box);
 }
 
-std::set<int32_t> CPDF_PageObjectHolder::TakeDirtyStreams() {
-  auto dirty_streams = std::move(m_DirtyStreams);
-  m_DirtyStreams.clear();
-  return dirty_streams;
-}
-
 std::optional<ByteString> CPDF_PageObjectHolder::GraphicsMapSearch(
     const GraphicsData& gd) {
   auto it = m_GraphicsMap.find(gd);
@@ -188,11 +182,6 @@ std::unique_ptr<CPDF_PageObject> CPDF_PageObjectHolder::RemovePageObject(
 
   std::unique_ptr<CPDF_PageObject> result = std::move(*it);
   m_PageObjectList.erase(it);
-
-  int32_t content_stream = pPageObj->GetContentStream();
-  if (content_stream >= 0)
-    m_DirtyStreams.insert(content_stream);
-
   return result;
 }
 

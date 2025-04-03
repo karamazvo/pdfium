@@ -21,6 +21,7 @@ class CPDF_Document;
 class CPDF_FormObject;
 class CPDF_ImageObject;
 class CPDF_Object;
+class CPDF_PageContentManager;
 class CPDF_PageObject;
 class CPDF_PageObjectHolder;
 class CPDF_Path;
@@ -55,13 +56,16 @@ class CPDF_PageContentGenerator {
   void FinishMarks(fxcrt::ostringstream* buf,
                    const CPDF_ContentMarks* pContentMarks);
 
-  // Returns a map from content stream index to new stream data. Unmodified
-  // streams are not touched.
-  std::map<int32_t, fxcrt::ostringstream> GenerateModifiedStreams();
+  // Returns a map from content stream index to new stream data. All existing
+  // streams are regenerated.
+  // `stream_count` is the number of streams in `m_pDocument`.
+  std::map<int32_t, fxcrt::ostringstream> GenerateAllStreams(
+      size_t stream_count);
 
   // For each entry in `new_stream_data`, adds the string buffer to the page's
-  // content stream.
+  // content stream using `page_content_manager`.
   void UpdateContentStreams(
+      CPDF_PageContentManager& page_content_manager,
       std::map<int32_t, fxcrt::ostringstream>&& new_stream_data);
 
   // Sets the stream index of all page objects with stream index ==

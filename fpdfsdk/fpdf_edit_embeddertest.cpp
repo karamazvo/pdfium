@@ -811,8 +811,7 @@ TEST_F(FPDFEditEmbedderTest, Bug1549) {
 
   ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
-  // TODO(crbug.com/pdfium/1549): Should be `kRemovedChecksum`.
-  VerifySavedDocument(100, 150, "4f9889cd5993db20f1ab37d677ac8d26");
+  VerifySavedDocument(100, 150, kRemovedChecksum);
 }
 
 TEST_F(FPDFEditEmbedderTest, SetText) {

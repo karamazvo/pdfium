@@ -14,7 +14,6 @@
 #include <map>
 #include <memory>
 #include <optional>
-#include <set>
 #include <utility>
 #include <vector>
 
@@ -122,8 +121,6 @@ class CPDF_PageObjectHolder {
     return m_MaskBoundingBoxes;
   }
   void AddImageMaskBoundingBox(const CFX_FloatRect& box);
-  bool HasDirtyStreams() const { return !m_DirtyStreams.empty(); }
-  std::set<int32_t> TakeDirtyStreams();
 
   std::optional<ByteString> GraphicsMapSearch(const GraphicsData& gd);
   void GraphicsMapInsert(const GraphicsData& gd, const ByteString& str);
@@ -161,9 +158,6 @@ class CPDF_PageObjectHolder {
   std::deque<std::unique_ptr<CPDF_PageObject>> m_PageObjectList;
 
   CTMMap m_AllCTMs;
-
-  // The indexes of Content streams that are dirty and need to be regenerated.
-  std::set<int32_t> m_DirtyStreams;
 
   // All the resources from `m_pResources` that are unused. Hold on to them here
   // in case they need to be restored.

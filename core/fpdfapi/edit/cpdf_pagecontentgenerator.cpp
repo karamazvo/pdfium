@@ -44,6 +44,7 @@
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/notreached.h"
+#include "core/fxcrt/numerics/checked_math.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
 
@@ -55,7 +56,7 @@ using ResourcesMap = std::map<ByteString, std::set<ByteString>>;
 
 // Returns whether it wrote to `buf` or not.
 bool WriteColorToStream(fxcrt::ostringstream& buf, const CPDF_Color* color) {
-  if (!color || (!color->IsColorSpaceRGB() && !color->IsColorSpaceGray())) {
+  if (!color) {
     return false;
   }
 
@@ -224,7 +225,7 @@ CPDF_PageContentGenerator::CPDF_PageContentGenerator(
     CPDF_PageObjectHolder* pObjHolder)
     : m_pObjHolder(pObjHolder), m_pDocument(pObjHolder->GetDocument()) {
   // Copy all page objects, even if they are inactive. They are needed in
-  // GenerateModifiedStreams() below.
+  // GenerateAllStreams() below.
   for (const auto& pObj : *pObjHolder) {
     m_pageObjects.emplace_back(pObj.get());
   }
@@ -234,58 +235,66 @@ CPDF_PageContentGenerator::~CPDF_PageContentGenerator() = default;
 
 void CPDF_PageContentGenerator::GenerateContent() {
   DCHECK(m_pObjHolder->IsPage());
+
+  CPDF_PageContentManager page_content_manager(m_pObjHolder, m_pDocument);
   std::map<int32_t, fxcrt::ostringstream> new_stream_data =
-      GenerateModifiedStreams();
+      GenerateAllStreams(page_content_manager.GetStreamCount());
   // If no streams were regenerated or removed, nothing to do here.
   if (new_stream_data.empty()) {
     return;
   }
 
-  UpdateContentStreams(std::move(new_stream_data));
+  UpdateContentStreams(page_content_manager, std::move(new_stream_data));
   UpdateResourcesDict();
 }
 
 std::map<int32_t, fxcrt::ostringstream>
-CPDF_PageContentGenerator::GenerateModifiedStreams() {
-  // Figure out which streams are dirty.
-  std::set<int32_t> all_dirty_streams;
+CPDF_PageContentGenerator::GenerateAllStreams(size_t stream_count) {
+  // Add all existing streams to the set.
+  std::set<int32_t> all_streams;
+  const int32_t stream_count_signed =
+      pdfium::checked_cast<int32_t>(stream_count);
+  for (int32_t i = 0; i < stream_count_signed; ++i) {
+    all_streams.insert(i);
+  }
+
+  // Include streams for all objects. Since a prior run with inactive objects
+  // may have caused some streams to get deleted, this run may included the
+  // same objects, but as active objects. Thus this loop can still add to
+  // `all_streams`.
   for (auto& pPageObj : m_pageObjects) {
-    // Must include dirty page objects even if they are marked as inactive.
+    // Must include page objects even if they are marked as inactive.
     // Otherwise an inactive object will not be detected that its stream needs
     // to be removed as part of regeneration.
-    if (pPageObj->IsDirty())
-      all_dirty_streams.insert(pPageObj->GetContentStream());
+    all_streams.insert(pPageObj->GetContentStream());
   }
-  std::set<int32_t> marked_dirty_streams = m_pObjHolder->TakeDirtyStreams();
-  all_dirty_streams.insert(marked_dirty_streams.begin(),
-                           marked_dirty_streams.end());
 
-  // Start regenerating dirty streams.
+  // Start regenerating streams.
   std::map<int32_t, fxcrt::ostringstream> streams;
   std::set<int32_t> empty_streams;
   std::unique_ptr<const CPDF_ContentMarks> empty_content_marks =
       std::make_unique<CPDF_ContentMarks>();
   std::map<int32_t, const CPDF_ContentMarks*> current_content_marks;
 
-  for (int32_t dirty_stream : all_dirty_streams) {
+  for (int32_t current_stream : all_streams) {
     fxcrt::ostringstream buf;
 
     // Set the default graphic state values. Update CTM to be the identity
     // matrix for the duration of this stream, if it is not already.
     buf << "q\n";
     const CFX_Matrix ctm =
-        m_pObjHolder->GetCTMAtBeginningOfStream(dirty_stream);
+        m_pObjHolder->GetCTMAtBeginningOfStream(current_stream);
     if (!ctm.IsIdentity()) {
       WriteMatrix(buf, ctm.GetInverse()) << " cm\n";
     }
 
     ProcessDefaultGraphics(&buf);
-    streams[dirty_stream] = std::move(buf);
-    empty_streams.insert(dirty_stream);
-    current_content_marks[dirty_stream] = empty_content_marks.get();
+    streams[current_stream] = std::move(buf);
+    empty_streams.insert(current_stream);
+    current_content_marks[current_stream] = empty_content_marks.get();
   }
 
-  // Process the page objects, write into each dirty stream.
+  // Process the page objects, write into each stream.
   for (auto& pPageObj : m_pageObjects) {
     if (!pPageObj->IsActive()) {
       continue;
@@ -293,8 +302,7 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
 
     int stream_index = pPageObj->GetContentStream();
     auto it = streams.find(stream_index);
-    if (it == streams.end())
-      continue;
+    CHECK(it != streams.end());
 
     fxcrt::ostringstream* buf = &it->second;
     empty_streams.erase(stream_index);
@@ -303,29 +311,29 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
     ProcessPageObject(buf, pPageObj);
   }
 
-  // Finish dirty streams.
-  for (int32_t dirty_stream : all_dirty_streams) {
+  // Finish streams.
+  for (int32_t current_stream : all_streams) {
     CFX_Matrix prev_ctm;
     CFX_Matrix ctm;
     bool affects_ctm;
-    if (dirty_stream == 0) {
+    if (current_stream == 0) {
       // For the first stream, `prev_ctm` is the identity matrix.
-      ctm = m_pObjHolder->GetCTMAtEndOfStream(dirty_stream);
+      ctm = m_pObjHolder->GetCTMAtEndOfStream(current_stream);
       affects_ctm = !ctm.IsIdentity();
-    } else if (dirty_stream > 0) {
-      prev_ctm = m_pObjHolder->GetCTMAtEndOfStream(dirty_stream - 1);
-      ctm = m_pObjHolder->GetCTMAtEndOfStream(dirty_stream);
+    } else if (current_stream > 0) {
+      prev_ctm = m_pObjHolder->GetCTMAtEndOfStream(current_stream - 1);
+      ctm = m_pObjHolder->GetCTMAtEndOfStream(current_stream);
       affects_ctm = prev_ctm != ctm;
     } else {
-      CHECK_EQ(CPDF_PageObject::kNoContentStream, dirty_stream);
+      CHECK_EQ(CPDF_PageObject::kNoContentStream, current_stream);
       // This is the last stream, so there is no subsequent stream that it can
       // affect.
       affects_ctm = false;
     }
 
-    const bool is_empty = pdfium::Contains(empty_streams, dirty_stream);
+    const bool is_empty = pdfium::Contains(empty_streams, current_stream);
 
-    fxcrt::ostringstream* buf = &streams[dirty_stream];
+    fxcrt::ostringstream* buf = &streams[current_stream];
     if (is_empty && !affects_ctm) {
       // Clear to show that this stream needs to be deleted.
       buf->str("");
@@ -333,7 +341,7 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
     }
 
     if (!is_empty) {
-      FinishMarks(buf, current_content_marks[dirty_stream]);
+      FinishMarks(buf, current_content_marks[current_stream]);
     }
 
     // Return graphics to original state.
@@ -352,13 +360,13 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
 }
 
 void CPDF_PageContentGenerator::UpdateContentStreams(
+    CPDF_PageContentManager& page_content_manager,
     std::map<int32_t, fxcrt::ostringstream>&& new_stream_data) {
   CHECK(!new_stream_data.empty());
 
   // Make sure default graphics are created.
   m_DefaultGraphicsName = GetOrCreateDefaultGraphics();
 
-  CPDF_PageContentManager page_content_manager(m_pObjHolder, m_pDocument);
   for (auto& pair : new_stream_data) {
     int32_t stream_index = pair.first;
     fxcrt::ostringstream* buf = &pair.second;

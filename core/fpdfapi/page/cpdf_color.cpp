@@ -90,16 +90,6 @@ uint32_t CPDF_Color::ComponentCount() const {
   return cs_->ComponentCount();
 }
 
-bool CPDF_Color::IsColorSpaceRGB() const {
-  return cs_ ==
-         CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceRGB);
-}
-
-bool CPDF_Color::IsColorSpaceGray() const {
-  return cs_ ==
-         CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceGray);
-}
-
 std::optional<FX_COLORREF> CPDF_Color::GetColorRef() const {
   std::optional<FX_RGB_STRUCT<float>> maybe_rgb = GetRGB();
   if (!maybe_rgb.has_value()) {
@@ -114,6 +104,10 @@ std::optional<FX_COLORREF> CPDF_Color::GetColorRef() const {
 }
 
 std::optional<FX_RGB_STRUCT<float>> CPDF_Color::GetRGB() const {
+  if (!cs_) {
+    return std::nullopt;
+  }
+
   if (IsPatternInternal()) {
     if (std::holds_alternative<std::unique_ptr<PatternValue>>(color_data_)) {
       const auto& pattern_value =

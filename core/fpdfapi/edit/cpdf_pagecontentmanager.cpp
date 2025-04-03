@@ -74,6 +74,20 @@ bool CPDF_PageContentManager::HasStreamAtIndex(size_t stream_index) {
   return !!GetStreamByIndex(stream_index);
 }
 
+size_t CPDF_PageContentManager::GetStreamCount() {
+  RetainPtr<CPDF_Stream> contents_stream = GetContentsStream();
+  if (contents_stream) {
+    return 1;
+  }
+
+  RetainPtr<CPDF_Array> contents_array = GetContentsArray();
+  if (contents_array) {
+    return contents_array->size();
+  }
+
+  return 0;
+}
+
 RetainPtr<CPDF_Stream> CPDF_PageContentManager::GetStreamByIndex(
     size_t stream_index) {
   RetainPtr<CPDF_Stream> contents_stream = GetContentsStream();
@@ -174,16 +188,9 @@ void CPDF_PageContentManager::ScheduleRemoveStreamByIndex(size_t stream_index) {
 }
 
 void CPDF_PageContentManager::ExecuteScheduledRemovals() {
-  // This method assumes there are no dirty streams in the
-  // CPDF_PageObjectHolder. If there were any, their indexes would need to be
-  // updated.
-  // Since CPDF_PageContentManager is only instantiated in
-  // CPDF_PageContentGenerator::GenerateContent(), which cleans up the dirty
-  // streams first, this should always be true.
   // This method does not bother to inspect IsActive() for page objects; it will
   // remove any object that has been scheduled for removal, regardless of active
   // status.
-  DCHECK(!page_obj_holder_->HasDirtyStreams());
 
   if (streams_to_remove_.empty()) {
     return;
