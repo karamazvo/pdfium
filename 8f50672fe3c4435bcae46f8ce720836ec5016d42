@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d222de03_a64cf529",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-03T21:14:47Z",
+      "side": 1,
+      "message": "- This is the safer alternative to https://pdfium-review.googlesource.com/130370. I think merging that back to a branch is too risky.\n- https://crrev.com/c/6431986 should pass with this CL.",
+      "revId": "8f50672fe3c4435bcae46f8ce720836ec5016d42",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
