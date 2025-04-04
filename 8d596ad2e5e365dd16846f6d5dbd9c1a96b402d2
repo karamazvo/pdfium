@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "adbf1ef8_20de3b96",
+        "filename": "core/fxcodec/jbig2/JBig2_HuffmanTable.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-04T22:58:35Z",
+      "side": 1,
+      "message": "These sneaky member variables didn\u0027t have a prefix.",
+      "revId": "8d596ad2e5e365dd16846f6d5dbd9c1a96b402d2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dcfa2c83_8e786f95",
+        "filename": "core/fxcodec/progressive_decoder.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-04T22:58:35Z",
+      "side": 1,
+      "message": "Probably should be offset_",
+      "range": {
+        "startLine": 200,
+        "startChar": 11,
+        "endLine": 200,
+        "endChar": 19
+      },
+      "revId": "8d596ad2e5e365dd16846f6d5dbd9c1a96b402d2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
