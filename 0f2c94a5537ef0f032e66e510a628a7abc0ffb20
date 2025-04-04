@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a06468eb_34ff5620",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-04T22:04:47Z",
+      "side": 1,
+      "message": "I didn\u0027t see any emails for this CL, but checked in via my dashboard.\n\nThe alternative to checking a PNG and immediately overwriting it is to instead check in the correct expectation, and suppress the result. Then the CL that fixes the issue just removes the suppression and can leave the PNG as-is.",
+      "revId": "0f2c94a5537ef0f032e66e510a628a7abc0ffb20",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
