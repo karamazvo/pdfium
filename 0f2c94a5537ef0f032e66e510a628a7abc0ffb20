@@ -34,6 +34,24 @@
       "parentUuid": "a06468eb_34ff5620",
       "revId": "0f2c94a5537ef0f032e66e510a628a7abc0ffb20",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d075bed8_92a84797",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-04T23:35:35Z",
+      "side": 1,
+      "message": "Doesn\u0027t matter so much in this case, since the PNG file is small, but sometimes the expectation file is large, so it would be nice to avoid the churn. Thus good to practice how to do that.",
+      "parentUuid": "92464595_47d21b3d",
+      "revId": "0f2c94a5537ef0f032e66e510a628a7abc0ffb20",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
