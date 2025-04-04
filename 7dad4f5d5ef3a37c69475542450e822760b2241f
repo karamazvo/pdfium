@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fe243db6_69ba902e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-04T23:51:29Z",
+      "side": 1,
+      "message": "This can be said for many CLs. If everyone wrote this in their CLs...",
+      "range": {
+        "startLine": 16,
+        "startChar": 37,
+        "endLine": 17,
+        "endChar": 10
+      },
+      "revId": "7dad4f5d5ef3a37c69475542450e822760b2241f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "063176e9_52d142c1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-04T23:51:29Z",
+      "side": 1,
+      "message": "Acrobat behavior carries more weight. Not sure why Evince is worth mentioning unless there is something special there. If all other common PDF implementations get this right, and PDFium is the only one that gets it wrong, maybe just say something to that effect.",
+      "revId": "7dad4f5d5ef3a37c69475542450e822760b2241f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
