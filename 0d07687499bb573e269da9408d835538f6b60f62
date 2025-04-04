@@ -141,6 +141,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "11e33440_00583a96",
+        "filename": "core/fpdfdoc/cpvt_variabletext.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 774,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-04T01:26:05Z",
+      "side": 1,
+      "message": "Whoops, sorry. I was reading the comment, which talks about `kFontSizeSteps` and missed this was checking `kQuarterSize`. Now the check is `kQuarterSize \u003e\u003d 4`, which is mixed up.\n\nIf the check is `kQuarterSize \u003e 0`, then it would be less confusing to have a comment that matches. Otherwise check `kFullSize \u003e\u003d 4`. and have a comment that discusses `kFullSize`.",
+      "parentUuid": "f3d300d9_148d7e3f",
+      "range": {
+        "startLine": 774,
+        "startChar": 29,
+        "endLine": 774,
+        "endChar": 32
+      },
+      "revId": "0d07687499bb573e269da9408d835538f6b60f62",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "0b067437_004cc42d",
