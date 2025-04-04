@@ -1,0 +1,45 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a2cb5cec_11dd0854",
+        "filename": "core/fpdfapi/edit/cpdf_pagecontentgenerator.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-04T22:44:39Z",
+      "side": 1,
+      "message": "std::move() to reduce ref-churn",
+      "range": {
+        "startLine": 292,
+        "startChar": 51,
+        "endLine": 292,
+        "endChar": 64
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "762fc8ac_2da43558",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/edit/cpdf_pagecontentgenerator.cpp",
+              "range": {
+                "startLine": 292,
+                "startChar": 0,
+                "endLine": 293,
+                "endChar": 0
+              },
+              "replacement": "          entries_to_maybe_clone.emplace_back(key, std::move(direct_object));\n"
+            }
+          ]
+        }
+      ],
+      "revId": "bf4f681c32a2c4c036c5d87b1f874f8ee5e90ec5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
