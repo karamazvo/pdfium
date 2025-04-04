@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1ff7b239_fa41c710",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-04T17:11:10Z",
+      "side": 1,
+      "message": "Maybe the clip path should have been transformed at the same time. One more follow-up item to look into later.",
+      "revId": "fd3e53125b61778fc89020814d9ed6a14349303d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
