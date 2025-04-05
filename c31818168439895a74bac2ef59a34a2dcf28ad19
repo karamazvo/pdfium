@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a9d8c1e0_c4d4d441",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-05T16:27:37Z",
+      "side": 1,
+      "message": "The other CL made more progress and landed. Thanks for trying, but the other CL author finished first. I\u0027m going to abandon this CL.",
+      "parentUuid": "6d07cd09_2390ab07",
+      "revId": "c31818168439895a74bac2ef59a34a2dcf28ad19",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7d5abab2_6d65ace9",
