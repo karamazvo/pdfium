@@ -154,7 +154,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPage_Continue(FPDF_PAGE page,
 
 #if defined(PDF_USE_SKIA)
   if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-    pContext->m_pDevice->GetBitmap()->UnPreMultiply();
+    pContext->pDevice_->GetBitmap()->UnPreMultiply();
   }
 #endif  // defined(PDF_USE_SKIA)
   return status;
