@@ -80,10 +80,10 @@ void OutputPath(fxcrt::ostringstream& buf, CPDF_Path path) {
 
   for (size_t i = 0; i < points.size(); ++i) {
     buf << points[i].m_Point.x << " " << points[i].m_Point.y;
-    CFX_Path::Point::Type point_type = points[i].m_Type;
-    if (point_type == CFX_Path::Point::Type::kMove) {
+    CFX_Path::Point::Type m_Pointtype = points[i].m_Type;
+    if (m_Pointtype == CFX_Path::Point::Type::kMove) {
       buf << " m\n";
-    } else if (point_type == CFX_Path::Point::Type::kBezier) {
+    } else if (m_Pointtype == CFX_Path::Point::Type::kBezier) {
       buf << " " << points[i + 1].m_Point.x << " " << points[i + 1].m_Point.y
           << " " << points[i + 2].m_Point.x << " " << points[i + 2].m_Point.y;
       buf << " c";
@@ -92,7 +92,7 @@ void OutputPath(fxcrt::ostringstream& buf, CPDF_Path path) {
       buf << "\n";
 
       i += 2;
-    } else if (point_type == CFX_Path::Point::Type::kLine) {
+    } else if (m_Pointtype == CFX_Path::Point::Type::kLine) {
       buf << " l";
       if (points[i].m_CloseFigure)
         buf << " h";
