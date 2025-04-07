@@ -622,8 +622,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   device->Attach(pBitmap);
   context->m_pDevice = std::move(device);
   if (bHasMask) {
-    context->m_pOptions = std::make_unique<CPDF_RenderOptions>();
-    context->m_pOptions->GetOptions().bBreakForMasks = true;
+    context->options_ = std::make_unique<CPDF_RenderOptions>();
+    context->options_->GetOptions().bBreakForMasks = true;
   }
 
   CPDFSDK_RenderPageWithContext(context, pPage, start_x, start_y, size_x,
@@ -659,7 +659,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   for (size_t i = 0; i < mask_boxes.size(); i++) {
     bitmaps[i] = GetMaskBitmap(pPage, start_x, start_y, size_x, size_y, rotate,
                                pBitmap, mask_boxes[i], &bitmap_areas[i]);
-    context->m_pRenderer->Continue(nullptr);
+    context->renderer_->Continue(nullptr);
   }
 
   // Begin rendering to the printer. Add flag to indicate the renderer should
@@ -670,8 +670,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   pPage->SetRenderContext(std::move(owned_context));
   context->m_pDevice = std::make_unique<CPDF_WindowsRenderDevice>(
       dc, render_data->GetPSFontTracker());
-  context->m_pOptions = std::make_unique<CPDF_RenderOptions>();
-  context->m_pOptions->GetOptions().bBreakForMasks = true;
+  context->options_ = std::make_unique<CPDF_RenderOptions>();
+  context->options_->GetOptions().bBreakForMasks = true;
 
   CPDFSDK_RenderPageWithContext(context, pPage, start_x, start_y, size_x,
                                 size_y, rotate, flags,
@@ -686,7 +686,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_RenderPage(HDC dc,
                    bitmap_areas[i]);
     }
     // Render the next portion of page.
-    context->m_pRenderer->Continue(nullptr);
+    context->renderer_->Continue(nullptr);
   }
 
   return true;
