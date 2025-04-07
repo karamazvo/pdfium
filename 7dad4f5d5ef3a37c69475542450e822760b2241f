@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a1033e6e_cc8ce5fe",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2025-04-07T19:57:46Z",
+      "side": 1,
+      "message": "Removed.",
+      "parentUuid": "fe243db6_69ba902e",
+      "range": {
+        "startLine": 16,
+        "startChar": 37,
+        "endLine": 17,
+        "endChar": 10
+      },
+      "revId": "7dad4f5d5ef3a37c69475542450e822760b2241f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "063176e9_52d142c1",
@@ -37,6 +61,24 @@
       "writtenOn": "2025-04-04T23:51:29Z",
       "side": 1,
       "message": "Acrobat behavior carries more weight. Not sure why Evince is worth mentioning unless there is something special there. If all other common PDF implementations get this right, and PDFium is the only one that gets it wrong, maybe just say something to that effect.",
+      "revId": "7dad4f5d5ef3a37c69475542450e822760b2241f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "95d6b140_a0f8952a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 7704
+      },
+      "writtenOn": "2025-04-07T19:57:46Z",
+      "side": 1,
+      "message": "Reworded.",
+      "parentUuid": "063176e9_52d142c1",
       "revId": "7dad4f5d5ef3a37c69475542450e822760b2241f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
