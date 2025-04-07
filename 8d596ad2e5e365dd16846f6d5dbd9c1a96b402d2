@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "978ce2e7_9a0bd996",
+        "filename": "core/fxcodec/jbig2/JBig2_HuffmanTable.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-07T16:25:13Z",
+      "side": 1,
+      "message": "Leaving for now.",
+      "parentUuid": "adbf1ef8_20de3b96",
+      "revId": "8d596ad2e5e365dd16846f6d5dbd9c1a96b402d2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "01da38ec_4b92e38c",
@@ -41,6 +59,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a7b22c16_fcfc18b6",
+        "filename": "core/fxcodec/jbig2/JBig2_Segment.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-07T16:25:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "01da38ec_4b92e38c",
+      "range": {
+        "startLine": 48,
+        "startChar": 10,
+        "endLine": 48,
+        "endChar": 37
+      },
+      "revId": "8d596ad2e5e365dd16846f6d5dbd9c1a96b402d2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "dcfa2c83_8e786f95",
@@ -54,6 +96,30 @@
       "writtenOn": "2025-04-04T22:58:35Z",
       "side": 1,
       "message": "Probably should be offset_",
+      "range": {
+        "startLine": 200,
+        "startChar": 11,
+        "endLine": 200,
+        "endChar": 19
+      },
+      "revId": "8d596ad2e5e365dd16846f6d5dbd9c1a96b402d2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6b30a25d_0d4f7020",
+        "filename": "core/fxcodec/progressive_decoder.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-07T16:25:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dcfa2c83_8e786f95",
       "range": {
         "startLine": 200,
         "startChar": 11,
