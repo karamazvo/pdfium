@@ -16,6 +16,57 @@
       "message": "ping",
       "revId": "8bc2d2c18e2c6bade14fa8709e11241eafe50806",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9a81ef8e_201171c2",
+        "filename": "testing/embedder_test.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-07T19:10:39Z",
+      "side": 1,
+      "message": "See also ScopedFPDPage in public/cpp/fpdf_scopers.h.  Should this depend on that?",
+      "range": {
+        "startLine": 108,
+        "startChar": 0,
+        "endLine": 108,
+        "endChar": 20
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "587ea23f_475b5066",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "testing/embedder_test.h",
+              "range": {
+                "startLine": 19,
+                "startChar": 0,
+                "endLine": 19,
+                "endChar": 0
+              },
+              "replacement": "#include \"public/cpp/fpdf_deleters.h\"\n"
+            },
+            {
+              "path": "testing/embedder_test.h",
+              "range": {
+                "startLine": 108,
+                "startChar": 0,
+                "endLine": 109,
+                "endChar": 0
+              },
+              "replacement": "    ScopedFPDFPage page_;\n"
+            }
+          ]
+        }
+      ],
+      "revId": "8bc2d2c18e2c6bade14fa8709e11241eafe50806",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
