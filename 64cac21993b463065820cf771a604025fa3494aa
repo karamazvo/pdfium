@@ -137,6 +137,87 @@
       ],
       "revId": "64cac21993b463065820cf771a604025fa3494aa",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aba1c11c_d7e8ad6a",
+        "filename": "testing/embedder_test.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-07T19:15:35Z",
+      "side": 1,
+      "message": "can this inherit from scopedSavedPage with the save part being added in the dtor?",
+      "range": {
+        "startLine": 130,
+        "startChar": 8,
+        "endLine": 130,
+        "endChar": 23
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "4ab3bbc2_26603bc1",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "testing/embedder_test.h",
+              "range": {
+                "startLine": 111,
+                "startChar": 0,
+                "endLine": 112,
+                "endChar": 0
+              },
+              "replacement": "  class ScopedPageBase {\n"
+            },
+            {
+              "path": "testing/embedder_test.h",
+              "range": {
+                "startLine": 113,
+                "startChar": 0,
+                "endLine": 120,
+                "endChar": 0
+              },
+              "replacement": "    ScopedPageBase();\n    ScopedPageBase(EmbedderTest* test, int page_index);\n    ScopedPageBase(const ScopedPageBase\u0026) \u003d delete;\n    ScopedPageBase\u0026 operator\u003d(const ScopedPageBase\u0026) \u003d delete;\n    ScopedPageBase(ScopedPageBase\u0026\u0026) noexcept;\n    ScopedPageBase\u0026 operator\u003d(ScopedPageBase\u0026\u0026) noexcept;\n    virtual ~ScopedPageBase();\n"
+            },
+            {
+              "path": "testing/embedder_test.h",
+              "range": {
+                "startLine": 125,
+                "startChar": 0,
+                "endLine": 126,
+                "endChar": 0
+              },
+              "replacement": "   protected:\n"
+            },
+            {
+              "path": "testing/embedder_test.h",
+              "range": {
+                "startLine": 130,
+                "startChar": 0,
+                "endLine": 131,
+                "endChar": 0
+              },
+              "replacement": "  class ScopedPage : public ScopedPageBase {\n   public:\n    ScopedPage();\n    ScopedPage(EmbedderTest* test, int page_index);\n    ScopedPage(const ScopedPage\u0026) \u003d delete;\n    ScopedPage\u0026 operator\u003d(const ScopedPage\u0026) \u003d delete;\n    ScopedPage(ScopedPage\u0026\u0026) noexcept;\n    ScopedPage\u0026 operator\u003d(ScopedPage\u0026\u0026) noexcept;\n    ~ScopedPage() override;\n  };\n\n  class ScopedSavedPage : public ScopedPageBase {\n"
+            },
+            {
+              "path": "testing/embedder_test.h",
+              "range": {
+                "startLine": 138,
+                "startChar": 0,
+                "endLine": 147,
+                "endChar": 0
+              },
+              "replacement": "    ~ScopedSavedPage() override;\n"
+            }
+          ]
+        }
+      ],
+      "revId": "64cac21993b463065820cf771a604025fa3494aa",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
