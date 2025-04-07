@@ -1195,7 +1195,7 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
 
   if (pSrcLine.empty()) {
     pdfium::span<uint8_t> result = !m_MaskBuf.empty() ? m_MaskBuf : m_LineBuf;
-    fxcrt::Fill(result, 0);
+    std::ranges::fill(result, 0);
     return result;
   }
   if (m_bpc * m_nComponents == 1) {
@@ -1277,7 +1277,7 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
         }
       });
     } else {
-      fxcrt::Fill(m_MaskBuf, 0xFF);
+      std::ranges::fill(m_MaskBuf, 0xFF);
     }
   }
   if (m_pColorSpace) {
