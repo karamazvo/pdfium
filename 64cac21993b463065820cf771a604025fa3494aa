@@ -16,6 +16,127 @@
       "message": "ping",
       "revId": "64cac21993b463065820cf771a604025fa3494aa",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "18950b9f_5985f03b",
+        "filename": "testing/embedder_test.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-07T19:12:01Z",
+      "side": 1,
+      "message": "again see ScopedFPDFDocument in public/cpp/fpdf_scopers.h",
+      "range": {
+        "startLine": 108,
+        "startChar": 0,
+        "endLine": 108,
+        "endChar": 23
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "3d2244c8_b4aa64d9",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "testing/embedder_test.h",
+              "range": {
+                "startLine": 102,
+                "startChar": 0,
+                "endLine": 103,
+                "endChar": 0
+              },
+              "replacement": "    FPDF_DOCUMENT get() { return doc_.get(); }\n"
+            },
+            {
+              "path": "testing/embedder_test.h",
+              "range": {
+                "startLine": 104,
+                "startChar": 0,
+                "endLine": 105,
+                "endChar": 0
+              },
+              "replacement": "    explicit operator bool() const { return !!doc_.get(); }\n"
+            },
+            {
+              "path": "testing/embedder_test.h",
+              "range": {
+                "startLine": 108,
+                "startChar": 0,
+                "endLine": 109,
+                "endChar": 0
+              },
+              "replacement": "    ScopedFPDFDocument doc_;\n"
+            },
+            {
+              "path": "testing/embedder_test.h",
+              "range": {
+                "startLine": 121,
+                "startChar": 0,
+                "endLine": 122,
+                "endChar": 0
+              },
+              "replacement": "    FPDF_PAGE get() { return page_.get(); }\n"
+            },
+            {
+              "path": "testing/embedder_test.h",
+              "range": {
+                "startLine": 123,
+                "startChar": 0,
+                "endLine": 124,
+                "endChar": 0
+              },
+              "replacement": "    explicit operator bool() const { return !!page_.get(); }\n"
+            },
+            {
+              "path": "testing/embedder_test.h",
+              "range": {
+                "startLine": 127,
+                "startChar": 0,
+                "endLine": 128,
+                "endChar": 0
+              },
+              "replacement": "    ScopedFPDFPage page_;\n"
+            },
+            {
+              "path": "testing/embedder_test.h",
+              "range": {
+                "startLine": 140,
+                "startChar": 0,
+                "endLine": 141,
+                "endChar": 0
+              },
+              "replacement": "    FPDF_PAGE get() { return page_.get(); }\n"
+            },
+            {
+              "path": "testing/embedder_test.h",
+              "range": {
+                "startLine": 142,
+                "startChar": 0,
+                "endLine": 143,
+                "endChar": 0
+              },
+              "replacement": "    explicit operator bool() const { return !!page_.get(); }\n"
+            },
+            {
+              "path": "testing/embedder_test.h",
+              "range": {
+                "startLine": 146,
+                "startChar": 0,
+                "endLine": 147,
+                "endChar": 0
+              },
+              "replacement": "    ScopedFPDFPage page_;\n"
+            }
+          ]
+        }
+      ],
+      "revId": "64cac21993b463065820cf771a604025fa3494aa",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
