@@ -28,13 +28,13 @@ CPDF_StructElement::CPDF_StructElement(const CPDF_StructTree* pTree,
                                        RetainPtr<const CPDF_Dictionary> pDict)
     : m_pTree(pTree),
       m_pDict(std::move(pDict)),
-      m_Type(m_pTree->GetRoleMapNameFor(m_pDict->GetNameFor("S"))) {
+      type_(m_pTree->GetRoleMapNameFor(m_pDict->GetNameFor("S"))) {
   LoadKids();
 }
 
 CPDF_StructElement::~CPDF_StructElement() {
   for (auto& kid : m_Kids) {
-    if (kid.m_Type == Kid::kElement && kid.m_pElement) {
+    if (kid.type_ == Kid::kElement && kid.m_pElement) {
       kid.m_pElement->SetParent(nullptr);
     }
   }
@@ -83,13 +83,13 @@ size_t CPDF_StructElement::CountKids() const {
 }
 
 CPDF_StructElement* CPDF_StructElement::GetKidIfElement(size_t index) const {
-  return m_Kids[index].m_Type == Kid::kElement ? m_Kids[index].m_pElement.Get()
-                                               : nullptr;
+  return m_Kids[index].type_ == Kid::kElement ? m_Kids[index].m_pElement.Get()
+                                              : nullptr;
 }
 
 int CPDF_StructElement::GetKidContentId(size_t index) const {
-  return m_Kids[index].m_Type == Kid::kStreamContent ||
-                 m_Kids[index].m_Type == Kid::kPageContent
+  return m_Kids[index].type_ == Kid::kStreamContent ||
+                 m_Kids[index].type_ == Kid::kPageContent
              ? m_Kids[index].m_ContentId
              : -1;
 }
@@ -98,7 +98,7 @@ bool CPDF_StructElement::UpdateKidIfElement(const CPDF_Dictionary* pDict,
                                             CPDF_StructElement* pElement) {
   bool bSave = false;
   for (auto& kid : m_Kids) {
-    if (kid.m_Type == Kid::kElement && kid.m_pDict == pDict) {
+    if (kid.type_ == Kid::kElement && kid.m_pDict == pDict) {
       kid.m_pElement.Reset(pElement);
       bSave = true;
     }
@@ -138,7 +138,7 @@ void CPDF_StructElement::LoadKid(uint32_t page_obj_num,
       return;
     }
 
-    kid.m_Type = Kid::kPageContent;
+    kid.type_ = Kid::kPageContent;
     kid.m_ContentId = pKidObj->GetInteger();
     kid.m_PageObjNum = page_obj_num;
     return;
@@ -159,7 +159,7 @@ void CPDF_StructElement::LoadKid(uint32_t page_obj_num,
   }
 
   if (type == "MCR") {
-    kid.m_Type = Kid::kStreamContent;
+    kid.type_ = Kid::kStreamContent;
     RetainPtr<const CPDF_Reference> pRef =
         ToReference(pKidDict->GetObjectFor("Stm"));
     kid.m_RefObjNum = pRef ? pRef->GetRefObjNum() : 0;
@@ -169,7 +169,7 @@ void CPDF_StructElement::LoadKid(uint32_t page_obj_num,
   }
 
   if (type == "OBJR") {
-    kid.m_Type = Kid::kObject;
+    kid.type_ = Kid::kObject;
     RetainPtr<const CPDF_Reference> pObj =
         ToReference(pKidDict->GetObjectFor("Obj"));
     kid.m_RefObjNum = pObj ? pObj->GetRefObjNum() : 0;
@@ -177,6 +177,6 @@ void CPDF_StructElement::LoadKid(uint32_t page_obj_num,
     return;
   }
 
-  kid.m_Type = Kid::kElement;
+  kid.type_ = Kid::kElement;
   kid.m_pDict.Reset(pKidDict);
 }

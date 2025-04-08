@@ -22,7 +22,7 @@ class CPDF_StructElement final : public Retainable {
  public:
   CONSTRUCT_VIA_MAKE_RETAIN;
 
-  ByteString GetType() const { return m_Type; }
+  ByteString GetType() const { return type_; }
   ByteString GetObjType() const;
   WideString GetAltText() const;
   WideString GetActualText() const;
@@ -51,7 +51,7 @@ class CPDF_StructElement final : public Retainable {
     Kid(const Kid& that);
     ~Kid();
 
-    Type m_Type = kInvalid;
+    Type type_ = kInvalid;
     uint32_t m_PageObjNum = 0;  // For {PageContent, StreamContent, Object}.
     uint32_t m_RefObjNum = 0;   // For {StreamContent, Object} types.
     uint32_t m_ContentId = 0;   // For {PageContent, StreamContent} types.
@@ -71,7 +71,7 @@ class CPDF_StructElement final : public Retainable {
   UnownedPtr<const CPDF_StructTree> const m_pTree;
   RetainPtr<const CPDF_Dictionary> const m_pDict;
   UnownedPtr<CPDF_StructElement> m_pParentElement;
-  const ByteString m_Type;
+  const ByteString type_;
   std::vector<Kid> m_Kids;
 };
 

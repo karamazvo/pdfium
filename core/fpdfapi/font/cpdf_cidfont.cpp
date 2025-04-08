@@ -814,7 +814,7 @@ void CPDF_CIDFont::LoadSubstFont() {
   safe_stem_v *= 5;
   m_Font.LoadSubst(
       m_BaseFontName, m_FontType == CIDFontType::kTrueType, m_Flags,
-      safe_stem_v.ValueOrDefault(pdfium::kFontWeightNormal), m_ItalicAngle,
+      safe_stem_v.ValueOrDefault(pdfium::kFontWeightNormal), italic_angle_,
       kCharsetCodePages[m_Charset], IsVertWriting());
 }
 

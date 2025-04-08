@@ -126,31 +126,31 @@ void CPDF_FormField::InitFieldFlags() {
 
   if (type_name == pdfium::form_fields::kBtn) {
     if (flags & pdfium::form_flags::kButtonRadio) {
-      m_Type = kRadioButton;
+      type_ = kRadioButton;
       m_bIsUnison = flags & pdfium::form_flags::kButtonRadiosInUnison;
     } else if (flags & pdfium::form_flags::kButtonPushbutton) {
-      m_Type = kPushButton;
+      type_ = kPushButton;
     } else {
-      m_Type = kCheckBox;
+      type_ = kCheckBox;
       m_bIsUnison = true;
     }
   } else if (type_name == pdfium::form_fields::kTx) {
     if (flags & pdfium::form_flags::kTextFileSelect)
-      m_Type = kFile;
+      type_ = kFile;
     else if (flags & pdfium::form_flags::kTextRichText)
-      m_Type = kRichText;
+      type_ = kRichText;
     else
-      m_Type = kText;
+      type_ = kText;
   } else if (type_name == pdfium::form_fields::kCh) {
     if (flags & pdfium::form_flags::kChoiceCombo) {
-      m_Type = kComboBox;
+      type_ = kComboBox;
     } else {
-      m_Type = kListBox;
+      type_ = kListBox;
       m_bIsMultiSelectListBox = flags & pdfium::form_flags::kChoiceMultiSelect;
     }
     m_bUseSelectedIndices = UseSelectedIndicesObject();
   } else if (type_name == pdfium::form_fields::kSig) {
-    m_Type = kSign;
+    type_ = kSign;
   }
 }
 
@@ -168,7 +168,7 @@ RetainPtr<const CPDF_Dictionary> CPDF_FormField::GetFieldDict() const {
 }
 
 void CPDF_FormField::ResetField() {
-  switch (m_Type) {
+  switch (type_) {
     case kCheckBox:
     case kRadioButton: {
       int iCount = CountControls();
@@ -265,7 +265,7 @@ int CPDF_FormField::GetControlIndex(const CPDF_FormControl* pControl) const {
 }
 
 FormFieldType CPDF_FormField::GetFieldType() const {
-  switch (m_Type) {
+  switch (type_) {
     case kPushButton:
       return FormFieldType::kPushButton;
     case kCheckBox:
@@ -323,8 +323,9 @@ WideString CPDF_FormField::GetValue(bool bDefault) const {
   RetainPtr<const CPDF_Object> pValue =
       bDefault ? GetDefaultValueObject() : GetValueObject();
   if (!pValue) {
-    if (!bDefault && m_Type != kText)
+    if (!bDefault && type_ != kText) {
       pValue = GetDefaultValueObject();
+    }
     if (!pValue)
       return WideString();
   }
@@ -383,7 +384,7 @@ bool CPDF_FormField::SetValue(const WideString& value,
         iIndex = -1;
       }
       if (iIndex < 0) {
-        if (m_Type == kRichText && !bDefault) {
+        if (type_ == kRichText && !bDefault) {
           m_pDict->SetFor(pdfium::form_fields::kRV,
                           m_pDict->GetObjectFor(key)->Clone());
         }

@@ -67,7 +67,7 @@ class CPDF_Function {
   virtual bool v_Call(pdfium::span<const float> inputs,
                       pdfium::span<float> results) const = 0;
 
-  const Type m_Type;
+  const Type type_;
   uint32_t m_nInputs = 0;
   uint32_t m_nOutputs = 0;
   std::vector<float> m_Domains;

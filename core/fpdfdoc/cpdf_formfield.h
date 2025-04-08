@@ -82,7 +82,7 @@ class CPDF_FormField {
       const ByteString& name);
 
   WideString GetFullName() const;
-  Type GetType() const { return m_Type; }
+  Type GetType() const { return type_; }
 
   RetainPtr<const CPDF_Object> GetFieldAttr(const ByteString& name) const;
   RetainPtr<const CPDF_Dictionary> GetFieldDict() const;
@@ -173,7 +173,7 @@ class CPDF_FormField {
 
   const std::vector<UnownedPtr<CPDF_FormControl>>& GetControls() const;
 
-  CPDF_FormField::Type m_Type = kUnknown;
+  CPDF_FormField::Type type_ = kUnknown;
   bool m_bRequired = false;
   bool m_bNoExport = false;
   bool m_bIsMultiSelectListBox = false;

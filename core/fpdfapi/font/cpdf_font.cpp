@@ -158,7 +158,7 @@ void CPDF_Font::LoadFontDescriptor(const CPDF_Dictionary* pFontDesc) {
   }
   if (ItalicAngle < 0) {
     m_Flags |= pdfium::kFontStyleItalic;
-    m_ItalicAngle = ItalicAngle;
+    italic_angle_ = ItalicAngle;
   }
   bool bExistStemV = false;
   if (pFontDesc->KeyExist("StemV")) {
@@ -343,9 +343,10 @@ bool CPDF_Font::IsStandardFont() const {
 
 std::optional<FX_Charset> CPDF_Font::GetSubstFontCharset() const {
   CFX_SubstFont* pFont = m_Font.GetSubstFont();
-  if (!pFont)
+  if (!pFont) {
     return std::nullopt;
-  return pFont->m_Charset;
+  }
+  return pFont->charset_;
 }
 
 // static
@@ -376,7 +377,7 @@ uint32_t CPDF_Font::FallbackFontFromCharcode(uint32_t charcode) {
     safe_weight *= 5;
     m_FontFallbacks[0]->LoadSubst(
         "Arial", IsTrueTypeFont(), m_Flags,
-        safe_weight.ValueOrDefault(pdfium::kFontWeightNormal), m_ItalicAngle,
+        safe_weight.ValueOrDefault(pdfium::kFontWeightNormal), italic_angle_,
         FX_CodePage::kDefANSI, IsVertWriting());
   }
   return 0;
