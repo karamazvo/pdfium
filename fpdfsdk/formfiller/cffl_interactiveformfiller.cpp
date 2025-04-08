@@ -101,7 +101,7 @@ void CFFL_InteractiveFormFiller::OnMouseEnter(
   if (!notifying_) {
     if (pWidget->GetAAction(CPDF_AAction::kCursorEnter).HasDict()) {
       uint32_t nValueAge = pWidget->GetValueAge();
-      pWidget->ClearAppModified();
+      pWidget->set_appearance_modified(false);
       DCHECK(pPageView);
       {
         AutoRestorer<bool> restorer(&notifying_);
@@ -115,7 +115,7 @@ void CFFL_InteractiveFormFiller::OnMouseEnter(
       if (!pWidget)
         return;
 
-      if (pWidget->IsAppModified()) {
+      if (pWidget->appearance_modified()) {
         CFFL_FormField* pFormField = GetFormField(pWidget.Get());
         if (pFormField)
           pFormField->ResetPWLWindowForValueAge(pPageView, pWidget.Get(),
@@ -134,7 +134,7 @@ void CFFL_InteractiveFormFiller::OnMouseExit(
   if (!notifying_) {
     if (pWidget->GetAAction(CPDF_AAction::kCursorExit).HasDict()) {
       uint32_t nValueAge = pWidget->GetValueAge();
-      pWidget->ClearAppModified();
+      pWidget->set_appearance_modified(false);
       DCHECK(pPageView);
       {
         AutoRestorer<bool> restorer(&notifying_);
@@ -148,7 +148,7 @@ void CFFL_InteractiveFormFiller::OnMouseExit(
       if (!pWidget)
         return;
 
-      if (pWidget->IsAppModified()) {
+      if (pWidget->appearance_modified()) {
         CFFL_FormField* pFormField = GetFormField(pWidget.Get());
         if (pFormField) {
           pFormField->ResetPWLWindowForValueAge(pPageView, pWidget.Get(),
@@ -170,7 +170,7 @@ bool CFFL_InteractiveFormFiller::OnLButtonDown(
     if (Annot_HitTest(pWidget.Get(), point) &&
         pWidget->GetAAction(CPDF_AAction::kButtonDown).HasDict()) {
       uint32_t nValueAge = pWidget->GetValueAge();
-      pWidget->ClearAppModified();
+      pWidget->set_appearance_modified(false);
       DCHECK(pPageView);
       {
         AutoRestorer<bool> restorer(&notifying_);
@@ -187,7 +187,7 @@ bool CFFL_InteractiveFormFiller::OnLButtonDown(
       if (!IsValidAnnot(pPageView, pWidget.Get()))
         return true;
 
-      if (pWidget->IsAppModified()) {
+      if (pWidget->appearance_modified()) {
         CFFL_FormField* pFormField = GetFormField(pWidget.Get());
         if (pFormField) {
           pFormField->ResetPWLWindowForValueAge(pPageView, pWidget.Get(),
@@ -362,7 +362,7 @@ bool CFFL_InteractiveFormFiller::OnSetFocus(
   if (!notifying_) {
     if (pWidget->GetAAction(CPDF_AAction::kGetFocus).HasDict()) {
       uint32_t nValueAge = pWidget->GetValueAge();
-      pWidget->ClearAppModified();
+      pWidget->set_appearance_modified(false);
 
       CFFL_FormField* pFormField = GetOrCreateFormField(pWidget.Get());
       if (!pFormField)
@@ -383,7 +383,7 @@ bool CFFL_InteractiveFormFiller::OnSetFocus(
       if (!pWidget)
         return false;
 
-      if (pWidget->IsAppModified()) {
+      if (pWidget->appearance_modified()) {
         CFFL_FormField* pFiller = GetFormField(pWidget.Get());
         if (pFiller) {
           pFiller->ResetPWLWindowForValueAge(pPageView, pWidget.Get(),
@@ -420,7 +420,7 @@ bool CFFL_InteractiveFormFiller::OnKillFocus(
   if (!pWidget->GetAAction(CPDF_AAction::kLoseFocus).HasDict())
     return true;
 
-  pWidget->ClearAppModified();
+  pWidget->set_appearance_modified(false);
 
   CPDFSDK_PageView* pPageView = pWidget->GetPageView();
   DCHECK(pPageView);
@@ -693,7 +693,7 @@ bool CFFL_InteractiveFormFiller::OnKeyStrokeCommit(
     return true;
 
   DCHECK(pPageView);
-  pWidget->ClearAppModified();
+  pWidget->set_appearance_modified(false);
 
   AutoRestorer<bool> restorer(&notifying_);
   notifying_ = true;
@@ -728,7 +728,7 @@ bool CFFL_InteractiveFormFiller::OnValidate(
     return true;
 
   DCHECK(pPageView);
-  pWidget->ClearAppModified();
+  pWidget->set_appearance_modified(false);
 
   AutoRestorer<bool> restorer(&notifying_);
   notifying_ = true;
