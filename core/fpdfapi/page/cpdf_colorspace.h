@@ -93,7 +93,7 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   std::vector<float> CreateBufAndSetDefaultColor() const;
 
   uint32_t ComponentCount() const;
-  Family GetFamily() const { return m_Family; }
+  Family GetFamily() const { return family_; }
   bool IsSpecial() const {
     return GetFamily() == Family::kSeparation ||
            GetFamily() == Family::kDeviceN || GetFamily() == Family::kIndexed ||
@@ -156,7 +156,7 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   static RetainPtr<CPDF_ColorSpace> AllocateColorSpace(
       ByteStringView bsFamilyName);
 
-  const Family m_Family;
+  const Family family_;
   uint32_t m_dwStdConversion = 0;
   uint32_t m_nComponents = 0;
   RetainPtr<const CPDF_Array> m_pArray;

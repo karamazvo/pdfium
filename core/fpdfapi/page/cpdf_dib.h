@@ -112,7 +112,7 @@ class CPDF_DIB final : public CFX_DIBBase {
   uint32_t m_bpc = 0;
   uint32_t m_bpc_orig = 0;
   uint32_t m_nComponents = 0;
-  CPDF_ColorSpace::Family m_Family = CPDF_ColorSpace::Family::kUnknown;
+  CPDF_ColorSpace::Family family_ = CPDF_ColorSpace::Family::kUnknown;
   CPDF_ColorSpace::Family m_GroupFamily = CPDF_ColorSpace::Family::kUnknown;
   uint32_t m_MatteColor = 0;
   LoadState m_Status = LoadState::kFail;

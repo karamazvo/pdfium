@@ -81,7 +81,7 @@ std::unique_ptr<CPDF_Function> CPDF_Function::Load(
   return pFunc;
 }
 
-CPDF_Function::CPDF_Function(Type type) : m_Type(type) {}
+CPDF_Function::CPDF_Function(Type type) : type_(type) {}
 
 CPDF_Function::~CPDF_Function() = default;
 
@@ -107,7 +107,7 @@ bool CPDF_Function::Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
   // Ranges are required for type 0 and type 4 functions. A non-zero
   // |m_nOutputs| here implied Ranges meets the requirements.
   bool bRangeRequired =
-      m_Type == Type::kType0Sampled || m_Type == Type::kType4PostScript;
+      type_ == Type::kType0Sampled || type_ == Type::kType4PostScript;
   if (bRangeRequired && m_nOutputs == 0)
     return false;
 
@@ -171,19 +171,19 @@ float CPDF_Function::Interpolate(float x,
 
 #if defined(PDF_USE_SKIA)
 const CPDF_SampledFunc* CPDF_Function::ToSampledFunc() const {
-  return m_Type == Type::kType0Sampled
+  return type_ == Type::kType0Sampled
              ? static_cast<const CPDF_SampledFunc*>(this)
              : nullptr;
 }
 
 const CPDF_ExpIntFunc* CPDF_Function::ToExpIntFunc() const {
-  return m_Type == Type::kType2ExponentialInterpolation
+  return type_ == Type::kType2ExponentialInterpolation
              ? static_cast<const CPDF_ExpIntFunc*>(this)
              : nullptr;
 }
 
 const CPDF_StitchFunc* CPDF_Function::ToStitchFunc() const {
-  return m_Type == Type::kType3Stitching
+  return type_ == Type::kType3Stitching
              ? static_cast<const CPDF_StitchFunc*>(this)
              : nullptr;
 }
