@@ -115,7 +115,7 @@ class CPDF_Font : public Retainable, public Observable {
   uint32_t FallbackFontFromCharcode(uint32_t charcode);
   int FallbackGlyphFromCharcode(int fallbackFont, uint32_t charcode);
   int GetFontFlags() const { return m_Flags; }
-  int GetItalicAngle() const { return m_ItalicAngle; }
+  int GetItalicAngle() const { return italic_angle_; }
 
   // Note that even when non-nullopt, the value may be outside the normal range
   // of [100, 900].
@@ -178,7 +178,7 @@ class CPDF_Font : public Retainable, public Observable {
   int m_StemV = 0;
   int m_Ascent = 0;
   int m_Descent = 0;
-  int m_ItalicAngle = 0;
+  int italic_angle_ = 0;
   FX_RECT m_FontBBox;
 };
 

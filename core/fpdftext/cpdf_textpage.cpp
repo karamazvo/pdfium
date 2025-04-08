@@ -70,7 +70,7 @@ float CalculateBaseSpace(const CPDF_TextObject* pTextObj,
   for (size_t i = 0; i < nItems; ++i) {
     CPDF_TextObject::Item item = pTextObj->GetItemInfo(i);
     if (item.m_CharCode == 0xffffffff) {
-      float kerning = -fontsize_h * item.m_Origin.x / 1000;
+      float kerning = -fontsize_h * item.origin_.x / 1000;
       base_space = std::min(base_space, kerning + spacing);
       bAllChar = false;
     }
@@ -1093,12 +1093,12 @@ CPDF_TextPage::TextOrientation CPDF_TextPage::GetTextObjectWritingMode(
   CPDF_TextObject::Item first = pTextObj->GetCharInfo(0);
   CPDF_TextObject::Item last = pTextObj->GetCharInfo(nChars - 1);
   CFX_Matrix text_matrix = pTextObj->GetTextMatrix();
-  first.m_Origin = text_matrix.Transform(first.m_Origin);
-  last.m_Origin = text_matrix.Transform(last.m_Origin);
+  first.origin_ = text_matrix.Transform(first.origin_);
+  last.origin_ = text_matrix.Transform(last.origin_);
 
   static constexpr float kEpsilon = 0.0001f;
-  float dX = fabs(last.m_Origin.x - first.m_Origin.x);
-  float dY = fabs(last.m_Origin.y - first.m_Origin.y);
+  float dX = fabs(last.origin_.x - first.origin_.x);
+  float dY = fabs(last.origin_.y - first.origin_.y);
   if (dX <= kEpsilon && dY <= kEpsilon)
     return TextOrientation::kUnknown;
 
@@ -1179,7 +1179,7 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
     }
   }
 
-  float last_pos = PrevItem.m_Origin.x;
+  float last_pos = PrevItem.origin_.x;
   int nLastWidth =
       GetCharWidth(PrevItem.m_CharCode, m_pPrevTextObj->GetFont().Get());
   float last_width = nLastWidth * m_pPrevTextObj->GetFontSize() / 1000;
@@ -1208,7 +1208,7 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
       if (nItem > 1) {
         CPDF_TextObject::Item tempItem = m_pPrevTextObj->GetItemInfo(0);
         CFX_Matrix m = m_pPrevTextObj->GetTextMatrix();
-        if (PrevItem.m_Origin.x > tempItem.m_Origin.x &&
+        if (PrevItem.origin_.x > tempItem.origin_.x &&
             m_DisplayMatrix.a > 0.9 && m_DisplayMatrix.b < 0.1 &&
             m_DisplayMatrix.c < 0.1 && m_DisplayMatrix.d < -0.9 && m.b < 0.1 &&
             m.c < 0.1) {
@@ -1327,7 +1327,7 @@ void CPDF_TextPage::ProcessTextObjectItems(CPDF_TextObject* text_object,
       }
       if (!str.IsEmpty() && str.Back() != L' ') {
         float fontsize_h = text_object->text_state().GetFontSizeH();
-        spacing = -fontsize_h * item.m_Origin.x / 1000;
+        spacing = -fontsize_h * item.origin_.x / 1000;
       }
       continue;
     }
@@ -1339,7 +1339,7 @@ void CPDF_TextPage::ProcessTextObjectItems(CPDF_TextObject* text_object,
           font, text_object->text_state().GetFontSizeH(), item.m_CharCode);
       if (threshold && spacing && spacing >= threshold) {
         m_TempTextBuf.AppendChar(L' ');
-        CFX_PointF origin = matrix.Transform(item.m_Origin);
+        CFX_PointF origin = matrix.Transform(item.origin_);
         m_TempCharList.push_back(CharInfo(
             CharType::kGenerated, CPDF_Font::kInvalidCharCode, L' ', origin,
             CFX_FloatRect(origin.x, origin.y, origin.x, origin.y), form_matrix,
@@ -1360,10 +1360,10 @@ void CPDF_TextPage::ProcessTextObjectItems(CPDF_TextObject* text_object,
 
     const FX_RECT rect = font->GetCharBBox(item.m_CharCode);
     const float fFontSize = text_object->GetFontSize() / 1000;
-    CFX_FloatRect char_box(rect.left * fFontSize + item.m_Origin.x,
-                           rect.bottom * fFontSize + item.m_Origin.y,
-                           rect.right * fFontSize + item.m_Origin.x,
-                           rect.top * fFontSize + item.m_Origin.y);
+    CFX_FloatRect char_box(rect.left * fFontSize + item.origin_.x,
+                           rect.bottom * fFontSize + item.origin_.y,
+                           rect.right * fFontSize + item.origin_.x,
+                           rect.top * fFontSize + item.origin_.y);
     if (fabsf(char_box.top - char_box.bottom) < kSizeEpsilon) {
       char_box.top = char_box.bottom + fFontSize;
     }
@@ -1374,7 +1374,7 @@ void CPDF_TextPage::ProcessTextObjectItems(CPDF_TextObject* text_object,
     char_box = matrix.TransformRect(char_box);
 
     CharInfo charinfo(char_type, item.m_CharCode, 0,
-                      matrix.Transform(item.m_Origin), char_box, matrix,
+                      matrix.Transform(item.origin_), char_box, matrix,
                       text_object);
     if (unicode.IsEmpty()) {
       m_TempCharList.push_back(charinfo);

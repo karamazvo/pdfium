@@ -588,7 +588,7 @@ uint32_t CPDF_ColorSpace::ComponentsForFamily(Family family) {
 }
 
 std::vector<float> CPDF_ColorSpace::CreateBufAndSetDefaultColor() const {
-  DCHECK(m_Family != Family::kPattern);
+  DCHECK(family_ != Family::kPattern);
 
   float min;
   float max;
@@ -632,7 +632,7 @@ void CPDF_ColorSpace::TranslateImageLine(pdfium::span<uint8_t> dest_span,
   uint8_t* dest_buf = dest_span.data();
   const uint8_t* src_buf = src_span.data();
   std::vector<float> src(m_nComponents);
-  const int divisor = m_Family != Family::kIndexed ? 255 : 1;
+  const int divisor = family_ != Family::kIndexed ? 255 : 1;
   UNSAFE_TODO({
     for (int i = 0; i < pixels; i++) {
       for (uint32_t j = 0; j < m_nComponents; j++) {
@@ -668,7 +668,7 @@ const CPDF_IndexedCS* CPDF_ColorSpace::AsIndexedCS() const {
   return nullptr;
 }
 
-CPDF_ColorSpace::CPDF_ColorSpace(Family family) : m_Family(family) {}
+CPDF_ColorSpace::CPDF_ColorSpace(Family family) : family_(family) {}
 
 CPDF_ColorSpace::~CPDF_ColorSpace() = default;
 

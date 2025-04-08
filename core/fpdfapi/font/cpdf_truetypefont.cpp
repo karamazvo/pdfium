@@ -75,43 +75,44 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
     for (uint32_t charcode = 0; charcode < 256; charcode++) {
       const char* name = GetAdobeCharName(base_encoding, m_CharNames, charcode);
       if (!name) {
-        m_GlyphIndex[charcode] =
+        glyph_index_[charcode] =
             m_pFontFile ? face->GetCharIndex(charcode) : -1;
         continue;
       }
       m_Encoding.SetUnicode(charcode, UnicodeFromAdobeName(name));
       if (charmap_type == CharmapType::kMSSymbol) {
-        m_GlyphIndex[charcode] = GetGlyphIndexForMSSymbol(face, charcode);
+        glyph_index_[charcode] = GetGlyphIndexForMSSymbol(face, charcode);
       } else if (m_Encoding.UnicodeFromCharCode(charcode)) {
         if (charmap_type == CharmapType::kMSUnicode) {
-          m_GlyphIndex[charcode] =
+          glyph_index_[charcode] =
               face->GetCharIndex(m_Encoding.UnicodeFromCharCode(charcode));
         } else if (charmap_type == CharmapType::kMacRoman) {
           uint32_t maccode = CharCodeFromUnicodeForEncoding(
               fxge::FontEncoding::kAppleRoman,
               m_Encoding.UnicodeFromCharCode(charcode));
           if (!maccode) {
-            m_GlyphIndex[charcode] = face->GetNameIndex(name);
+            glyph_index_[charcode] = face->GetNameIndex(name);
           } else {
-            m_GlyphIndex[charcode] = face->GetCharIndex(maccode);
+            glyph_index_[charcode] = face->GetCharIndex(maccode);
           }
         }
       }
-      if ((m_GlyphIndex[charcode] != 0 && m_GlyphIndex[charcode] != 0xffff) ||
+      if ((glyph_index_[charcode] != 0 && glyph_index_[charcode] != 0xffff) ||
           !name) {
         continue;
       }
       if (UNSAFE_TODO(strcmp(name, kNotDef)) == 0) {
-        m_GlyphIndex[charcode] = face->GetCharIndex(32);
+        glyph_index_[charcode] = face->GetCharIndex(32);
         continue;
       }
-      m_GlyphIndex[charcode] = face->GetNameIndex(name);
-      if (m_GlyphIndex[charcode] != 0 || !bToUnicode)
+      glyph_index_[charcode] = face->GetNameIndex(name);
+      if (glyph_index_[charcode] != 0 || !bToUnicode) {
         continue;
+      }
 
       WideString wsUnicode = UnicodeFromCharCode(charcode);
       if (!wsUnicode.IsEmpty()) {
-        m_GlyphIndex[charcode] = face->GetCharIndex(wsUnicode[0]);
+        glyph_index_[charcode] = face->GetCharIndex(wsUnicode[0]);
         m_Encoding.SetUnicode(charcode, wsUnicode[0]);
       }
     }
@@ -119,7 +120,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
   }
   if (UseTTCharmapMSSymbol(face)) {
     for (uint32_t charcode = 0; charcode < 256; charcode++)
-      m_GlyphIndex[charcode] = GetGlyphIndexForMSSymbol(face, charcode);
+      glyph_index_[charcode] = GetGlyphIndexForMSSymbol(face, charcode);
     if (HasAnyGlyphIndex()) {
       if (base_encoding != FontEncoding::kBuiltin) {
         for (uint32_t charcode = 0; charcode < 256; charcode++) {
@@ -139,7 +140,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
   }
   if (UseTTCharmapMacRoman(face)) {
     for (uint32_t charcode = 0; charcode < 256; charcode++) {
-      m_GlyphIndex[charcode] = face->GetCharIndex(charcode);
+      glyph_index_[charcode] = face->GetCharIndex(charcode);
       m_Encoding.SetUnicode(charcode, UnicodeFromAppleRomanCharCode(charcode));
     }
     if (m_pFontFile || HasAnyGlyphIndex())
@@ -160,20 +161,21 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
           m_Encoding.SetUnicode(charcode, unicodes[charcode]);
         }
       }
-      m_GlyphIndex[charcode] =
+      glyph_index_[charcode] =
           face->GetCharIndex(m_Encoding.UnicodeFromCharCode(charcode));
     }
     if (HasAnyGlyphIndex())
       return;
   }
   for (int charcode = 0; charcode < 256; charcode++)
-    m_GlyphIndex[charcode] = charcode;
+    glyph_index_[charcode] = charcode;
 }
 
 bool CPDF_TrueTypeFont::HasAnyGlyphIndex() const {
   for (uint32_t charcode = 0; charcode < kInternalTableSize; charcode++) {
-    if (m_GlyphIndex[charcode])
+    if (glyph_index_[charcode]) {
       return true;
+    }
   }
   return false;
 }
@@ -240,9 +242,9 @@ void CPDF_TrueTypeFont::SetGlyphIndicesFromFirstChar() {
   if (start_char < 0 || start_char > 255)
     return;
 
-  auto it = std::begin(m_GlyphIndex);
+  auto it = std::begin(glyph_index_);
   std::fill(it, it + start_char, 0);
   uint16_t glyph = 3;
   for (int charcode = start_char; charcode < 256; charcode++, glyph++)
-    m_GlyphIndex[charcode] = glyph;
+    glyph_index_[charcode] = glyph;
 }
