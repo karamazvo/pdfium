@@ -19,8 +19,8 @@ CFX_GEModule* g_pGEModule = nullptr;
 
 CFX_GEModule::CFX_GEModule(const char** pUserFontPaths)
     : m_pPlatform(PlatformIface::Create()),
-      m_pFontMgr(std::make_unique<CFX_FontMgr>()),
-      m_pFontCache(std::make_unique<CFX_FontCache>()),
+      font_mgr_(std::make_unique<CFX_FontMgr>()),
+      font_cache_(std::make_unique<CFX_FontCache>()),
       m_pUserFontPaths(pUserFontPaths) {}
 
 CFX_GEModule::~CFX_GEModule() = default;
