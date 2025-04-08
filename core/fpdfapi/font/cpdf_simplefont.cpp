@@ -38,7 +38,7 @@ CPDF_SimpleFont::CPDF_SimpleFont(CPDF_Document* pDocument,
                                  RetainPtr<CPDF_Dictionary> pFontDict)
     : CPDF_Font(pDocument, std::move(pFontDict)) {
   m_CharWidth.fill(0xffff);
-  m_GlyphIndex.fill(0xffff);
+  glyph_index_.fill(0xffff);
   m_CharBBox.fill(FX_RECT(-1, -1, -1, -1));
 }
 
@@ -51,7 +51,7 @@ int CPDF_SimpleFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
   if (charcode > 0xff)
     return -1;
 
-  int index = m_GlyphIndex[charcode];
+  int index = glyph_index_[charcode];
   if (index == 0xffff)
     return -1;
 
@@ -65,7 +65,7 @@ void CPDF_SimpleFont::LoadCharMetrics(int charcode) {
   if (charcode < 0 || charcode > 0xff) {
     return;
   }
-  int glyph_index = m_GlyphIndex[charcode];
+  int glyph_index = glyph_index_[charcode];
   if (glyph_index == 0xffff) {
     if (!m_pFontFile && charcode != 32) {
       LoadCharMetrics(32);
@@ -248,11 +248,11 @@ bool CPDF_SimpleFont::LoadCommon() {
             {{'a', 'z'}, {0xe0, 0xf6}, {0xf8, 0xfd}});
     for (const auto& lower : kLowercases) {
       for (int i = lower.first; i <= lower.second; ++i) {
-        if (m_GlyphIndex[i] != 0xffff && m_pFontFile) {
+        if (glyph_index_[i] != 0xffff && m_pFontFile) {
           continue;
         }
         int j = i - 32;
-        m_GlyphIndex[i] = m_GlyphIndex[j];
+        glyph_index_[i] = glyph_index_[j];
         if (m_CharWidth[j]) {
           m_CharWidth[i] = m_CharWidth[j];
           m_CharBBox[i] = m_CharBBox[j];
@@ -290,7 +290,7 @@ void CPDF_SimpleFont::LoadSubstFont() {
     weight = pdfium::kFontWeightNormal;
   }
   m_Font.LoadSubst(m_BaseFontName, IsTrueTypeFont(), m_Flags, weight,
-                   m_ItalicAngle, FX_CodePage::kDefANSI, /*bVertical=*/false);
+                   italic_angle_, FX_CodePage::kDefANSI, /*bVertical=*/false);
 }
 
 bool CPDF_SimpleFont::IsUnicodeCompatible() const {

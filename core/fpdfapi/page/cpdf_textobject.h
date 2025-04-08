@@ -27,7 +27,7 @@ class CPDF_TextObject final : public CPDF_PageObject {
     ~Item();
 
     uint32_t m_CharCode = 0;
-    CFX_PointF m_Origin;
+    CFX_PointF origin_;
   };
 
   explicit CPDF_TextObject(int32_t content_stream);
