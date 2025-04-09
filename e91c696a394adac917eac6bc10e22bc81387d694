@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2f33a75e_313cdc66",
+        "filename": "testing/gtest_mac.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-09T20:58:44Z",
+      "side": 1,
+      "message": "Made a few manual newline edits here and in testing/gtest_mac.mm.",
+      "revId": "e91c696a394adac917eac6bc10e22bc81387d694",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
