@@ -1676,11 +1676,11 @@ FX_RGB_STRUCT<uint8_t> AdobeCMYK_to_sRGB1(uint8_t c,
   int fix_y = y << 8;
   int fix_k = k << 8;
   int c_index = (fix_c + 4096) >> 13;
-  int m_index = (fix_m + 4096) >> 13;
+  int index_ = (fix_m + 4096) >> 13;
   int y_index = (fix_y + 4096) >> 13;
   int k_index = (fix_k + 4096) >> 13;
   const auto& start_rgb =
-      kCMYK[IndexFromCMYK(c_index, m_index, y_index, k_index)];
+      kCMYK[IndexFromCMYK(c_index, index_, y_index, k_index)];
   int fix_r = start_rgb.red << 8;
   int fix_g = start_rgb.green << 8;
   int fix_b = start_rgb.blue << 8;
@@ -1688,8 +1688,9 @@ FX_RGB_STRUCT<uint8_t> AdobeCMYK_to_sRGB1(uint8_t c,
   if (c1_index == c_index)
     c1_index = c1_index == 8 ? c1_index - 1 : c1_index + 1;
   int m1_index = fix_m >> 13;
-  if (m1_index == m_index)
+  if (m1_index == index_) {
     m1_index = m1_index == 8 ? m1_index - 1 : m1_index + 1;
+  }
   int y1_index = fix_y >> 13;
   if (y1_index == y_index)
     y1_index = y1_index == 8 ? y1_index - 1 : y1_index + 1;
@@ -1697,8 +1698,7 @@ FX_RGB_STRUCT<uint8_t> AdobeCMYK_to_sRGB1(uint8_t c,
   if (k1_index == k_index)
     k1_index = k1_index == 8 ? k1_index - 1 : k1_index + 1;
 
-  const auto& c1_rgb =
-      kCMYK[IndexFromCMYK(c1_index, m_index, y_index, k_index)];
+  const auto& c1_rgb = kCMYK[IndexFromCMYK(c1_index, index_, y_index, k_index)];
   const int c_rate = (fix_c - (c_index << 13)) * (c_index - c1_index);
   fix_r += (start_rgb.red - c1_rgb.red) * c_rate / 32;
   fix_g += (start_rgb.green - c1_rgb.green) * c_rate / 32;
@@ -1706,20 +1706,18 @@ FX_RGB_STRUCT<uint8_t> AdobeCMYK_to_sRGB1(uint8_t c,
 
   const auto& m1_rgb =
       kCMYK[IndexFromCMYK(c_index, m1_index, y_index, k_index)];
-  const int m_rate = (fix_m - (m_index << 13)) * (m_index - m1_index);
-  fix_r += (start_rgb.red - m1_rgb.red) * m_rate / 32;
-  fix_g += (start_rgb.green - m1_rgb.green) * m_rate / 32;
-  fix_b += (start_rgb.blue - m1_rgb.blue) * m_rate / 32;
+  const int rate_ = (fix_m - (index_ << 13)) * (index_ - m1_index);
+  fix_r += (start_rgb.red - m1_rgb.red) * rate_ / 32;
+  fix_g += (start_rgb.green - m1_rgb.green) * rate_ / 32;
+  fix_b += (start_rgb.blue - m1_rgb.blue) * rate_ / 32;
 
-  const auto& y1_rgb =
-      kCMYK[IndexFromCMYK(c_index, m_index, y1_index, k_index)];
+  const auto& y1_rgb = kCMYK[IndexFromCMYK(c_index, index_, y1_index, k_index)];
   const int y_rate = (fix_y - (y_index << 13)) * (y_index - y1_index);
   fix_r += (start_rgb.red - y1_rgb.red) * y_rate / 32;
   fix_g += (start_rgb.green - y1_rgb.green) * y_rate / 32;
   fix_b += (start_rgb.blue - y1_rgb.blue) * y_rate / 32;
 
-  const auto& k1_rgb =
-      kCMYK[IndexFromCMYK(c_index, m_index, y_index, k1_index)];
+  const auto& k1_rgb = kCMYK[IndexFromCMYK(c_index, index_, y_index, k1_index)];
   const int k_rate = (fix_k - (k_index << 13)) * (k_index - k1_index);
   fix_r += (start_rgb.red - k1_rgb.red) * k_rate / 32;
   fix_g += (start_rgb.green - k1_rgb.green) * k_rate / 32;
