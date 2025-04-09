@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "80625044_2db32d95",
+        "filename": "core/fpdfapi/font/cpdf_font.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-09T16:37:56Z",
+      "side": 1,
+      "message": "regexp too greedy, but leave anyways.",
+      "range": {
+        "startLine": 181,
+        "startChar": 6,
+        "endLine": 181,
+        "endChar": 19
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "fbf9e6f3_58636111",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/font/cpdf_font.h",
+              "range": {
+                "startLine": 118,
+                "startChar": 0,
+                "endLine": 119,
+                "endChar": 0
+              },
+              "replacement": "  int GetItalicAngle() const { return m_ItalicAngle; }\n"
+            },
+            {
+              "path": "core/fpdfapi/font/cpdf_font.h",
+              "range": {
+                "startLine": 181,
+                "startChar": 0,
+                "endLine": 182,
+                "endChar": 0
+              },
+              "replacement": "  int m_ItalicAngle \u003d 0;\n"
+            }
+          ]
+        }
+      ],
+      "revId": "04f14314a3e7d009364eeaf90225f8b3992fc625",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
