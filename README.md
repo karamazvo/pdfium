@@ -232,8 +232,8 @@ Note, the Reviews and Bugs lists are typically read-only.
 
 ## Bugs
 
-PDFium uses this [bug tracker](https://bugs.chromium.org/p/pdfium/issues/list),
-but for security bugs, please use
+PDFium uses this [bug tracker](https://crbug.com/pdfium/new), but for security
+bugs, please use
 [Chromium's security bug template](https://bugs.chromium.org/p/chromium/issues/entry?template=Security%20Bug)
 and add the "Cr-Internals-Plugins-PDF" label.
 
