@@ -22,6 +22,30 @@
       },
       "revId": "370006ea3867ab039cd2a93fb6f654bf46ef336a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "84cd448d_dadd9b93",
+        "filename": "README.md",
+        "patchSetId": 2
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-10T05:54:42Z",
+      "side": 1,
+      "message": "Well, there\u0027s a Buganizer component ID now, so this Monorail-specific procedure is no longer applicable.",
+      "parentUuid": "34b566d5_afc20fe9",
+      "range": {
+        "startLine": 238,
+        "startChar": 0,
+        "endLine": 238,
+        "endChar": 44
+      },
+      "revId": "370006ea3867ab039cd2a93fb6f654bf46ef336a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
