@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "754fa5ec_b08a187e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 13
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-10T17:53:24Z",
+      "side": 1,
+      "message": "Do we want to actually check in these scripts, or just use them to convert the codebase and be done?",
+      "revId": "94a2341467f7bb8dba14cf406f2b837bb44769d9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
