@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "690747e1_9e12df6a",
+        "filename": "core/fxcrt/stl_util.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-15T20:49:42Z",
+      "side": 0,
+      "message": "can we do this deletion in a single-file follow-on CL?",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 43
+      },
+      "revId": "3d8aaf4460d8141f064acdbed71925d0e2a3389e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
