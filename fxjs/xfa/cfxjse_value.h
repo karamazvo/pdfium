@@ -83,16 +83,16 @@ class CFXJSE_Value {
       v8::Local<v8::Object> lpNewThis);
 
   v8::Local<v8::Value> GetValue(v8::Isolate* pIsolate) const;
-  const v8::Global<v8::Value>& DirectGetValue() const { return m_hValue; }
+  const v8::Global<v8::Value>& DirectGetValue() const { return h_value_; }
   void ForceSetValue(v8::Isolate* pIsolate, v8::Local<v8::Value> hValue) {
-    m_hValue.Reset(pIsolate, hValue);
+    h_value_.Reset(pIsolate, hValue);
   }
 
  private:
   CFXJSE_Value(const CFXJSE_Value&) = delete;
   CFXJSE_Value& operator=(const CFXJSE_Value&) = delete;
 
-  v8::Global<v8::Value> m_hValue;
+  v8::Global<v8::Value> h_value_;
 };
 
 #endif  // FXJS_XFA_CFXJSE_VALUE_H_
