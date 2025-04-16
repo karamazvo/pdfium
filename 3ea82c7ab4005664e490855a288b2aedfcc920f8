@@ -16,6 +16,24 @@
       "message": "This should be `srgb_`. See line 28.",
       "revId": "3ea82c7ab4005664e490855a288b2aedfcc920f8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f8bda132_ff933b42",
+        "filename": "core/fpdfapi/page/cpdf_iccprofile.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-16T18:04:34Z",
+      "side": 1,
+      "message": "now is_srgb_",
+      "parentUuid": "41dd16e1_5c903940",
+      "revId": "3ea82c7ab4005664e490855a288b2aedfcc920f8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
