@@ -80,10 +80,10 @@ uint32_t CPDF_RenderOptions::GetCacheSizeLimit() const {
 }
 
 bool CPDF_RenderOptions::CheckOCGDictVisible(const CPDF_Dictionary* pOC) const {
-  return !oc_context_ || oc_context_->CheckOCGDictVisible(pOC);
+  return !occontext_ || occontext_->CheckOCGDictVisible(pOC);
 }
 
 bool CPDF_RenderOptions::CheckPageObjectVisible(
     const CPDF_PageObject* pPageObj) const {
-  return !oc_context_ || oc_context_->CheckPageObjectVisible(pPageObj);
+  return !occontext_ || occontext_->CheckPageObjectVisible(pPageObj);
 }

@@ -58,7 +58,7 @@ class CPDF_CryptoHandler {
 
   const size_t key_len_;
   const Cipher cipher_;
-  std::unique_ptr<CRYPT_aes_context, FxFreeDeleter> aes_context_;
+  std::unique_ptr<CRYPT_aes_context, FxFreeDeleter> aescontext_;
   std::array<uint8_t, 32> encrypt_key_ = {};
 };
 

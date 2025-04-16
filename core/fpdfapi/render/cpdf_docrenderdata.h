@@ -55,7 +55,7 @@ class CPDF_DocRenderData : public CPDF_Document::RenderDataIface {
 
  private:
   // TODO(tsepez): investigate this map outliving its font keys.
-  std::map<CPDF_Font*, ObservedPtr<CPDF_Type3Cache>> type3_face_map_;
+  std::map<CPDF_Font*, ObservedPtr<CPDF_Type3Cache>> type_3face_map_;
   std::map<RetainPtr<const CPDF_Object>,
            ObservedPtr<CPDF_TransferFunc>,
            std::less<>>

@@ -100,8 +100,8 @@ CPDF_SyntaxParser::CPDF_SyntaxParser(RetainPtr<CPDF_ReadValidator> validator,
                                      FX_FILESIZE HeaderOffset)
     : file_access_(std::move(validator)),
       header_offset_(HeaderOffset),
-      file_len_(file_access_->GetSize()) {
-  DCHECK(header_offset_ <= file_len_);
+      m_FileLen(file_access_->GetSize()) {
+  DCHECK(header_offset_ <= m_FileLen);
 }
 
 CPDF_SyntaxParser::~CPDF_SyntaxParser() = default;
@@ -113,14 +113,14 @@ bool CPDF_SyntaxParser::GetCharAt(FX_FILESIZE pos, uint8_t& ch) {
 }
 
 bool CPDF_SyntaxParser::ReadBlockAt(FX_FILESIZE read_pos) {
-  if (read_pos >= file_len_) {
+  if (read_pos >= m_FileLen) {
     return false;
   }
   size_t read_size = read_buffer_size_;
   FX_SAFE_FILESIZE safe_end = read_pos;
   safe_end += read_size;
-  if (!safe_end.IsValid() || safe_end.ValueOrDie() > file_len_) {
-    read_size = file_len_ - read_pos;
+  if (!safe_end.IsValid() || safe_end.ValueOrDie() > m_FileLen) {
+    read_size = m_FileLen - read_pos;
   }
 
   file_buf_.resize(read_size);
@@ -135,7 +135,7 @@ bool CPDF_SyntaxParser::ReadBlockAt(FX_FILESIZE read_pos) {
 
 bool CPDF_SyntaxParser::GetNextChar(uint8_t& ch) {
   FX_FILESIZE pos = pos_ + header_offset_;
-  if (pos >= file_len_) {
+  if (pos >= m_FileLen) {
     return false;
   }
 
@@ -149,12 +149,12 @@ bool CPDF_SyntaxParser::GetNextChar(uint8_t& ch) {
 }
 
 FX_FILESIZE CPDF_SyntaxParser::GetDocumentSize() const {
-  return file_len_ - header_offset_;
+  return m_FileLen - header_offset_;
 }
 
 bool CPDF_SyntaxParser::GetCharAtBackward(FX_FILESIZE pos, uint8_t* ch) {
   pos += header_offset_;
-  if (pos >= file_len_) {
+  if (pos >= m_FileLen) {
     return false;
   }
 
@@ -523,7 +523,7 @@ ByteString CPDF_SyntaxParser::GetKeyword() {
 
 void CPDF_SyntaxParser::SetPos(FX_FILESIZE pos) {
   DCHECK_GE(pos, 0);
-  pos_ = std::min(pos, file_len_);
+  pos_ = std::min(pos, m_FileLen);
 }
 
 RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetObjectBody(
@@ -723,7 +723,7 @@ FX_FILESIZE CPDF_SyntaxParser::FindWordPos(ByteStringView word) {
   FX_FILESIZE end_offset = FindTag(word);
   while (end_offset >= 0) {
     // Stop searching when word is found.
-    if (IsWholeWord(GetPos() - word.GetLength(), file_len_, word, true)) {
+    if (IsWholeWord(GetPos() - word.GetLength(), m_FileLen, word, true)) {
       return GetPos() - word.GetLength();
     }
 
@@ -782,7 +782,7 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
   if (len > 0) {
     FX_SAFE_FILESIZE pos = GetPos();
     pos += len;
-    if (!pos.IsValid() || pos.ValueOrDie() >= file_len_) {
+    if (!pos.IsValid() || pos.ValueOrDie() >= m_FileLen) {
       len = -1;
     }
   }

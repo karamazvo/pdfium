@@ -121,7 +121,7 @@ class CPDF_SyntaxParser {
   // The header contains at file start, and can follow after some stuff. We
   // ignore this stuff.
   const FX_FILESIZE header_offset_;
-  const FX_FILESIZE file_len_;
+  const FX_FILESIZE m_FileLen;
   FX_FILESIZE pos_ = 0;
   WeakPtr<ByteStringPool> pool_;
   DataVector<uint8_t> file_buf_;

@@ -192,7 +192,7 @@ bool CPDF_ImageRenderer::Start(CPDF_ImageObject* pImageObject,
   std_cs_ = bStdCS;
   image_object_ = pImageObject;
   blend_type_ = BlendMode::kNormal;
-  obj_to_device_ = mtObj2Device;
+  mt_obj_2device_ = mtObj2Device;
   RetainPtr<const CPDF_Dictionary> pOC = image_object_->GetImage()->GetOC();
   if (pOC && !GetRenderOptions().CheckOCGDictVisible(pOC)) {
     return false;
@@ -345,7 +345,7 @@ bool CPDF_ImageRenderer::DrawPatternImage() {
   bitmap_status.SetStdCS(true);
   bitmap_status.Initialize(nullptr, nullptr);
 
-  CFX_Matrix pattern_matrix = obj_to_device_;
+  CFX_Matrix pattern_matrix = mt_obj_2device_;
   pattern_matrix.Translate(-rect.left, -rect.top);
   if (CPDF_TilingPattern* pTilingPattern = pattern_->AsTilingPattern()) {
     bitmap_status.DrawTilingPattern(pTilingPattern, image_object_,

@@ -758,14 +758,14 @@ void CPDF_StreamContentParser::Handle_SetDash() {
 }
 
 void CPDF_StreamContentParser::Handle_SetCharWidth() {
-  type3_data_[0] = GetNumber(1);
-  type3_data_[1] = GetNumber(0);
+  type_3data_[0] = GetNumber(1);
+  type_3data_[1] = GetNumber(0);
   colored_ = true;
 }
 
 void CPDF_StreamContentParser::Handle_SetCachedDevice() {
   for (int i = 0; i < 6; i++) {
-    type3_data_[i] = GetNumber(5 - i);
+    type_3data_[i] = GetNumber(5 - i);
   }
   colored_ = false;
 }

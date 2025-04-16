@@ -70,7 +70,7 @@ DataVector<uint8_t> CPDF_CryptoHandler::EncryptContent(
     realkeylen = std::min(key_len_ + 5, sizeof(realkey));
   }
   if (cipher_ == Cipher::kAES) {
-    CRYPT_AESSetKey(aes_context_.get(),
+    CRYPT_AESSetKey(aescontext_.get(),
                     key_len_ == 32 ? encrypt_key_.data() : realkey, key_len_);
 
     static constexpr size_t kIVSize = 16;
@@ -87,16 +87,16 @@ DataVector<uint8_t> CPDF_CryptoHandler::EncryptContent(
     for (auto& v : dest_iv_span) {
       v = static_cast<uint8_t>(rand());
     }
-    CRYPT_AESSetIV(aes_context_.get(), dest_iv_span.data());
+    CRYPT_AESSetIV(aescontext_.get(), dest_iv_span.data());
 
-    CRYPT_AESEncrypt(aes_context_.get(), dest_data_span,
+    CRYPT_AESEncrypt(aescontext_.get(), dest_data_span,
                      source.first(source_data_size));
 
     std::array<uint8_t, kPaddingSize> padding;
     fxcrt::Copy(source.subspan(source_data_size, source_padding_size), padding);
     fxcrt::Fill(pdfium::make_span(padding).subspan(source_padding_size),
                 16 - source_padding_size);
-    CRYPT_AESEncrypt(aes_context_.get(), dest_padding_span, padding);
+    CRYPT_AESEncrypt(aescontext_.get(), dest_padding_span, padding);
     return dest;
   }
   DataVector<uint8_t> dest(source.begin(), source.end());
@@ -336,7 +336,7 @@ CPDF_CryptoHandler::CPDF_CryptoHandler(Cipher cipher,
     fxcrt::Copy(key.first(key_len_), encrypt_key_);
   }
   if (cipher_ == Cipher::kAES) {
-    aes_context_.reset(FX_Alloc(CRYPT_aes_context, 1));
+    aescontext_.reset(FX_Alloc(CRYPT_aes_context, 1));
   }
 }
 

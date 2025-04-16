@@ -55,8 +55,8 @@ class CPDF_RenderStatus {
   void SetFormResource(RetainPtr<const CPDF_Dictionary> pRes) {
     form_resource_ = std::move(pRes);
   }
-  void SetType3Char(CPDF_Type3Char* pType3Char) { type3_char_ = pType3Char; }
-  void SetFillColor(FX_ARGB color) { t3_fill_color_ = color; }
+  void SetType3Char(CPDF_Type3Char* pType3Char) { type_3char_ = pType3Char; }
+  void SetFillColor(FX_ARGB color) { t3fill_color_ = color; }
   void SetDropObjects(bool bDropObjects) { drop_objects_ = bDropObjects; }
   void SetLoadMask(bool bLoadMask) { load_mask_ = bLoadMask; }
   void SetStdCS(bool bStdCS) { std_cs_ = bStdCS; }
@@ -194,7 +194,7 @@ class CPDF_RenderStatus {
   CPDF_RenderOptions options_;
   RetainPtr<const CPDF_Dictionary> form_resource_;
   RetainPtr<const CPDF_Dictionary> page_resource_;
-  std::vector<UnownedPtr<const CPDF_Type3Font>> type3_font_cache_;
+  std::vector<UnownedPtr<const CPDF_Type3Font>> type_3font_cache_;
   UnownedPtr<CPDF_RenderContext> const context_;
   UnownedPtr<CFX_RenderDevice> const device_;
   CFX_Matrix device_matrix_;
@@ -203,7 +203,7 @@ class CPDF_RenderStatus {
   UnownedPtr<const CPDF_PageObject> stop_obj_;
   CPDF_GraphicStates initial_states_;
   std::unique_ptr<CPDF_ImageRenderer> image_renderer_;
-  UnownedPtr<const CPDF_Type3Char> type3_char_;
+  UnownedPtr<const CPDF_Type3Char> type_3char_;
   CPDF_Transparency transparency_;
   bool stopped_ = false;
 #if BUILDFLAG(IS_WIN)
@@ -214,7 +214,7 @@ class CPDF_RenderStatus {
   bool load_mask_ = false;
   bool in_group_ = false;
   CPDF_ColorSpace::Family group_family_ = CPDF_ColorSpace::Family::kUnknown;
-  FX_ARGB t3_fill_color_ = 0;
+  FX_ARGB t3fill_color_ = 0;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_RENDERSTATUS_H_

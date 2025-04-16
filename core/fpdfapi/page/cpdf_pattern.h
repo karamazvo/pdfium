@@ -25,7 +25,7 @@ class CPDF_Pattern : public Retainable, public Observable {
   virtual CPDF_TilingPattern* AsTilingPattern();
   virtual CPDF_ShadingPattern* AsShadingPattern();
 
-  const CFX_Matrix& pattern_to_form() const { return pattern_to_form_; }
+  const CFX_Matrix& pattern_to_form() const { return pattern_2form_; }
 
  protected:
   CPDF_Pattern(CPDF_Document* pDoc,
@@ -43,7 +43,7 @@ class CPDF_Pattern : public Retainable, public Observable {
  private:
   UnownedPtr<CPDF_Document> const document_;
   RetainPtr<CPDF_Object> const pattern_obj_;
-  CFX_Matrix pattern_to_form_;
+  CFX_Matrix pattern_2form_;
   const CFX_Matrix parent_matrix_;
 };
 

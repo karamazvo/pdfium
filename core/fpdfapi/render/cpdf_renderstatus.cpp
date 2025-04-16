@@ -187,7 +187,7 @@ void CPDF_RenderStatus::Initialize(const CPDF_RenderStatus* pParentStatus,
   print_ = device_->GetDeviceType() == DeviceType::kPrinter;
 #endif
   page_resource_.Reset(context_->GetPageResources());
-  if (pInitialStates && !type3_char_) {
+  if (pInitialStates && !type_3char_) {
     initial_states_ = *pInitialStates;
     if (pParentStatus) {
       if (!initial_states_.color_state().HasFillColor()) {
@@ -452,7 +452,7 @@ bool CPDF_RenderStatus::ProcessPath(CPDF_PathObject* path_obj,
       *path_obj->path().GetObject(), &path_matrix,
       path_obj->graph_state().GetObject(), fill_argb, stroke_argb,
       GetFillOptionsForDrawPathWithBlend(options, path_obj, fill_type, stroke,
-                                         type3_char_));
+                                         type_3char_));
 }
 
 RetainPtr<CPDF_TransferFunc> CPDF_RenderStatus::GetTransferFunc(
@@ -463,8 +463,8 @@ RetainPtr<CPDF_TransferFunc> CPDF_RenderStatus::GetTransferFunc(
 }
 
 FX_ARGB CPDF_RenderStatus::GetFillArgb(CPDF_PageObject* pObj) const {
-  if (Type3CharMissingFillColor(type3_char_, &pObj->color_state())) {
-    return t3_fill_color_;
+  if (Type3CharMissingFillColor(type_3char_, &pObj->color_state())) {
+    return t3fill_color_;
   }
 
   return GetFillArgbForType3(pObj);
@@ -500,8 +500,8 @@ FX_ARGB CPDF_RenderStatus::GetFillArgbForType3(CPDF_PageObject* pObj) const {
 
 FX_ARGB CPDF_RenderStatus::GetStrokeArgb(CPDF_PageObject* pObj) const {
   const CPDF_ColorState* pColorState = &pObj->color_state();
-  if (Type3CharMissingStrokeColor(type3_char_, pColorState)) {
-    return t3_fill_color_;
+  if (Type3CharMissingStrokeColor(type_3char_, pColorState)) {
+    return t3fill_color_;
   }
 
   if (MissingStrokeColor(pColorState)) {
@@ -925,7 +925,7 @@ bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
 bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
                                          const CFX_Matrix& mtObj2Device) {
   CPDF_Type3Font* pType3Font = textobj->text_state().GetFont()->AsType3Font();
-  if (pdfium::Contains(type3_font_cache_, pType3Font)) {
+  if (pdfium::Contains(type_3font_cache_, pType3Font)) {
     return true;
   }
 
@@ -1002,8 +1002,8 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         status.SetDropObjects(drop_objects_);
         status.SetFormResource(std::move(pFormResource));
         status.Initialize(this, pStates.get());
-        status.type3_font_cache_ = type3_font_cache_;
-        status.type3_font_cache_.emplace_back(pType3Font);
+        status.type_3font_cache_ = type_3font_cache_;
+        status.type_3font_cache_.emplace_back(pType3Font);
 
         CFX_RenderDevice::StateRestorer restorer(device_);
         status.RenderObjectList(pForm, matrix);
@@ -1029,8 +1029,8 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         status.SetDropObjects(drop_objects_);
         status.SetFormResource(std::move(pFormResource));
         status.Initialize(this, pStates.get());
-        status.type3_font_cache_ = type3_font_cache_;
-        status.type3_font_cache_.emplace_back(pType3Font);
+        status.type_3font_cache_ = type_3font_cache_;
+        status.type_3font_cache_.emplace_back(pType3Font);
         matrix.Translate(-rect.left, -rect.top);
         status.RenderObjectList(pForm, matrix);
         device_->SetDIBits(bitmap_device.GetBitmap(), rect.left, rect.top);

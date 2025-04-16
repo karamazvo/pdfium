@@ -46,13 +46,13 @@ CPDF_DocRenderData::~CPDF_DocRenderData() = default;
 RetainPtr<CPDF_Type3Cache> CPDF_DocRenderData::GetCachedType3(
     CPDF_Type3Font* font) {
   CHECK(font);
-  auto it = type3_face_map_.find(font);
-  if (it != type3_face_map_.end() && it->second) {
+  auto it = type_3face_map_.find(font);
+  if (it != type_3face_map_.end() && it->second) {
     return pdfium::WrapRetain(it->second.Get());
   }
 
   auto cache = pdfium::MakeRetain<CPDF_Type3Cache>(font);
-  type3_face_map_[font].Reset(cache.Get());
+  type_3face_map_[font].Reset(cache.Get());
   return cache;
 }
 

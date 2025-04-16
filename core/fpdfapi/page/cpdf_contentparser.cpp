@@ -67,7 +67,7 @@ CPDF_ContentParser::CPDF_ContentParser(
     CPDF_Form::RecursionState* recursion_state)
     : current_stage_(Stage::kParse),
       page_object_holder_(pPageObjectHolder),
-      type3_char_(pType3Char) {
+      type_3char_(pType3Char) {
   DCHECK(page_object_holder_);
   CFX_Matrix form_matrix =
       page_object_holder_->GetDict()->GetMatrixFor("Matrix");
@@ -234,8 +234,8 @@ CPDF_ContentParser::Stage CPDF_ContentParser::Parse() {
 }
 
 CPDF_ContentParser::Stage CPDF_ContentParser::CheckClip() {
-  if (type3_char_) {
-    type3_char_->InitializeFromStreamData(parser_->IsColored(),
+  if (type_3char_) {
+    type_3char_->InitializeFromStreamData(parser_->IsColored(),
                                           parser_->GetType3Data());
   }
 

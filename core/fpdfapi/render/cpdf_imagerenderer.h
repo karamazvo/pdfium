@@ -93,7 +93,7 @@ class CPDF_ImageRenderer {
   UnownedPtr<CPDF_ImageObject> image_object_;
   RetainPtr<CPDF_Pattern> pattern_;
   RetainPtr<CFX_DIBBase> dibbase_;
-  CFX_Matrix obj_to_device_;
+  CFX_Matrix mt_obj_2device_;
   CFX_Matrix image_matrix_;
   std::unique_ptr<CPDF_ImageLoader> const loader_;
 #if BUILDFLAG(IS_WIN)

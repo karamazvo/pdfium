@@ -103,7 +103,7 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
 
   CFX_SizeF page_size_;
   CFX_Matrix page_matrix_;
-  UnownedPtr<CPDF_Document> const pdf_document_;
+  UnownedPtr<CPDF_Document> const pdfdocument_;
   std::unique_ptr<CPDF_PageImageCache> page_image_cache_;
   std::unique_ptr<RenderContextIface> render_context_;
   ObservedPtr<View> view_;

@@ -24,7 +24,7 @@ CPDF_Page::CPDF_Page(CPDF_Document* pDocument,
                      RetainPtr<CPDF_Dictionary> pPageDict)
     : CPDF_PageObjectHolder(pDocument, std::move(pPageDict), nullptr, nullptr),
       page_size_(100, 100),
-      pdf_document_(pDocument) {
+      pdfdocument_(pDocument) {
   // Cannot initialize |resources_| and |page_resources_| via the
   // CPDF_PageObjectHolder ctor because GetPageAttr() requires
   // CPDF_PageObjectHolder to finish initializing first.
@@ -49,7 +49,7 @@ CPDFXFA_Page* CPDF_Page::AsXFAPage() {
 }
 
 CPDF_Document* CPDF_Page::GetDocument() const {
-  return pdf_document_;
+  return pdfdocument_;
 }
 
 float CPDF_Page::GetPageWidth() const {

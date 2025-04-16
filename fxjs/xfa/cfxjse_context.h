@@ -60,10 +60,10 @@ class CFXJSE_Context {
   CFXJSE_Context(const CFXJSE_Context&) = delete;
   CFXJSE_Context& operator=(const CFXJSE_Context&) = delete;
 
-  v8::Global<v8::Context> m_hContext;
+  v8::Global<v8::Context> h_context_;
   UnownedPtr<v8::Isolate> m_pIsolate;
-  std::vector<std::unique_ptr<CFXJSE_Class>> m_rgClasses;
-  cppgc::Persistent<CXFA_ThisProxy> m_pProxy;
+  std::vector<std::unique_ptr<CFXJSE_Class>> rg_classes_;
+  cppgc::Persistent<CXFA_ThisProxy> proxy_;
 };
 
 void FXJSE_UpdateObjectBinding(v8::Local<v8::Object> hObject,

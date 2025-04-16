@@ -27,7 +27,7 @@ class CPDF_LinearizedHeader {
   uint32_t GetFirstPageNo() const { return first_page_no_; }
   // Will only return values > 0.
   FX_FILESIZE GetMainXRefTableFirstEntryOffset() const {
-    return main_xref_table_first_entry_offset_;
+    return szmainxreftablefirstentryoffset_;
   }
   uint32_t GetPageCount() const { return page_count_; }
   // Will only return values > 0.
@@ -49,7 +49,7 @@ class CPDF_LinearizedHeader {
  private:
   const FX_FILESIZE file_size_;
   const uint32_t first_page_no_;
-  const FX_FILESIZE main_xref_table_first_entry_offset_;
+  const FX_FILESIZE szmainxreftablefirstentryoffset_;
   const uint32_t page_count_;
   const FX_FILESIZE first_page_end_offset_;
   const uint32_t first_page_obj_num_;

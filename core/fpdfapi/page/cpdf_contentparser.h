@@ -71,7 +71,7 @@ class CPDF_ContentParser {
 
   Stage current_stage_;
   UnownedPtr<CPDF_PageObjectHolder> const page_object_holder_;
-  UnownedPtr<CPDF_Type3Char> type3_char_;  // Only used when parsing forms.
+  UnownedPtr<CPDF_Type3Char> type_3char_;  // Only used when parsing forms.
   RetainPtr<CPDF_StreamAcc> single_stream_;
   std::vector<RetainPtr<CPDF_StreamAcc>> stream_array_;
   std::vector<uint32_t> stream_segment_offsets_;
