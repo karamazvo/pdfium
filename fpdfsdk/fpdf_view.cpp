@@ -755,7 +755,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
   auto device = std::make_unique<CFX_DefaultRenderDevice>();
   device->AttachWithRgbByteOrder(std::move(pBitmap),
                                  !!(flags & FPDF_REVERSE_BYTE_ORDER));
-  context->m_pDevice = std::move(device);
+  context->device_ = std::move(device);
 
   CPDFSDK_RenderPageWithContext(context, pPage, start_x, start_y, size_x,
                                 size_y, rotate, flags, /*color_scheme=*/nullptr,
@@ -791,7 +791,7 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
   auto device = std::make_unique<CFX_DefaultRenderDevice>();
   device->AttachWithRgbByteOrder(std::move(pBitmap),
                                  !!(flags & FPDF_REVERSE_BYTE_ORDER));
-  context->m_pDevice = std::move(device);
+  context->device_ = std::move(device);
 
   CFX_FloatRect clipping_rect;
   if (clipping) {
