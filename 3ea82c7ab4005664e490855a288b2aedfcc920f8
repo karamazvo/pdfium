@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "41dd16e1_5c903940",
+        "filename": "core/fpdfapi/page/cpdf_iccprofile.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-16T00:36:14Z",
+      "side": 1,
+      "message": "This should be `srgb_`. See line 28.",
+      "revId": "3ea82c7ab4005664e490855a288b2aedfcc920f8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
