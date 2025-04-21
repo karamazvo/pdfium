@@ -1,0 +1,107 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "04a9669d_b9690db2",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 409,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-21T21:58:43Z",
+      "side": 1,
+      "message": "Let\u0027s try to use Google C++ style naming in new code, like with `version_obj` below.",
+      "range": {
+        "startLine": 409,
+        "startChar": 25,
+        "endLine": 409,
+        "endChar": 30
+      },
+      "revId": "94ad6de21b992a88fa9dea1b3361e02be0f28d84",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "de202b1d_6fc9e436",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 411,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-21T21:58:43Z",
+      "side": 1,
+      "message": "Use GetNameFor(), then no need for IsName() check.",
+      "range": {
+        "startLine": 411,
+        "startChar": 54,
+        "endLine": 411,
+        "endChar": 66
+      },
+      "revId": "94ad6de21b992a88fa9dea1b3361e02be0f28d84",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a90b13ca_de4a5c9c",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 417,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-21T21:58:43Z",
+      "side": 1,
+      "message": "PDF 2.0 exists, so I imagine this check is a bit too restrictive. How about just allowing \"X.Y\" for single digit X and Y values? Or maybe reuse the code that parses \"%PDF-X.Y\" if possible?",
+      "revId": "94ad6de21b992a88fa9dea1b3361e02be0f28d84",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a7951002_9fedd59f",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 2240,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-21T21:58:43Z",
+      "side": 1,
+      "message": "s/Root/Catalog/ ?\n\nI know there\u0027s GetRoot(), but it makes more sense for this to match the version_in_catalog.pdf name.",
+      "range": {
+        "startLine": 2240,
+        "startChar": 46,
+        "endLine": 2240,
+        "endChar": 50
+      },
+      "revId": "94ad6de21b992a88fa9dea1b3361e02be0f28d84",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b7f5600f_2697bb63",
+        "filename": "testing/resources/version_in_catalog.in",
+        "patchSetId": 6
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-21T21:58:43Z",
+      "side": 1,
+      "message": "There\u0027s a trailing space here but not newline.",
+      "revId": "94ad6de21b992a88fa9dea1b3361e02be0f28d84",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
