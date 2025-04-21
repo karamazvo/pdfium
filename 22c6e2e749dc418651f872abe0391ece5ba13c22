@@ -56,6 +56,52 @@
       "message": "Same problem as the last time. Revert changes to this file.",
       "revId": "22c6e2e749dc418651f872abe0391ece5ba13c22",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c3a6b191_a849783e",
+        "filename": "fxjs/xfa/cfxjse_formcalc_context.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-21T17:20:50Z",
+      "side": 1,
+      "message": "`code_`",
+      "range": {
+        "startLine": 72,
+        "startChar": 11,
+        "endLine": 72,
+        "endChar": 18
+      },
+      "revId": "22c6e2e749dc418651f872abe0391ece5ba13c22",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b85e0ce6_bca3c5e7",
+        "filename": "fxjs/xfa/cfxjse_resolveprocessor.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-21T17:20:50Z",
+      "side": 1,
+      "message": "`hash_name_`",
+      "range": {
+        "startLine": 33,
+        "startChar": 17,
+        "endLine": 33,
+        "endChar": 27
+      },
+      "revId": "22c6e2e749dc418651f872abe0391ece5ba13c22",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
