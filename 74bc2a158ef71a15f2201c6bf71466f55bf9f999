@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c99bcaa2_96dd20bc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-04-21T21:37:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f8bc5369_4ba930a6",
+      "revId": "74bc2a158ef71a15f2201c6bf71466f55bf9f999",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3dc3caba_ac05ac29",
@@ -31,6 +49,30 @@
       "writtenOn": "2025-04-21T17:47:16Z",
       "side": 1,
       "message": "I\u0027m looking at ISO 32000-1:2008, table 28. It shows only \"name\" for Version\u0027s type. Why is this CL trying to accept string type as well?",
+      "range": {
+        "startLine": 10,
+        "startChar": 67,
+        "endLine": 11,
+        "endChar": 14
+      },
+      "revId": "74bc2a158ef71a15f2201c6bf71466f55bf9f999",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fa8bafc9_3608afcd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-04-21T21:37:48Z",
+      "side": 1,
+      "message": "honestly, i haven\u0027t read the pdf specs, i thought of making sure, in case someone stores it as a string.\n\nfound the spec now, and as you mentioned it is pretty clear about it, removed string support and the corresponding tests.",
+      "parentUuid": "3dc3caba_ac05ac29",
       "range": {
         "startLine": 10,
         "startChar": 67,
