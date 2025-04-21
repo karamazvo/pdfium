@@ -16,6 +16,23 @@
       "message": "Ta da!",
       "revId": "22c6e2e749dc418651f872abe0391ece5ba13c22",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "48194920_c6cd0223",
+        "filename": "core/fxge/dib/cfx_cmyk_to_srgb.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1679,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-21T17:08:06Z",
+      "side": 1,
+      "message": "Same problem as the last time. Revert changes to this file.",
+      "revId": "22c6e2e749dc418651f872abe0391ece5ba13c22",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
