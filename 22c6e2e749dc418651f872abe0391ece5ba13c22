@@ -20,6 +20,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "fa07af7b_463dfb12",
+        "filename": "core/fpdftext/cpdf_linkextract.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-21T17:14:41Z",
+      "side": 1,
+      "message": "Just `url_`?",
+      "range": {
+        "startLine": 40,
+        "startChar": 15,
+        "endLine": 40,
+        "endChar": 23
+      },
+      "revId": "22c6e2e749dc418651f872abe0391ece5ba13c22",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "48194920_c6cd0223",
         "filename": "core/fxge/dib/cfx_cmyk_to_srgb.cpp",
         "patchSetId": 5
