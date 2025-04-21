@@ -37,6 +37,7 @@
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/ptr_util.h"
@@ -404,6 +405,25 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_GetFileVersion(FPDF_DOCUMENT doc,
   }
 
   *fileVersion = pParser->GetFileVersion();
+
+  const CPDF_Dictionary* pRoot = pDoc->GetRoot();
+  if (pRoot) {
+    RetainPtr<const CPDF_Object> version_obj = pRoot->GetObjectFor("Version");
+    ByteString version;
+    if (version_obj && version_obj->IsName()) {
+      version = version_obj->AsName()->GetString();
+    }
+    if (!version.IsEmpty()) {
+      // Version string should be in the format "1.x"
+      if (version.GetLength() >= 3 && version[0] == '1' && version[1] == '.') {
+        int minor = version[2] - '0';
+        if (minor >= 0 && minor <= 7) {
+          *fileVersion = 10 + minor;
+        }
+      }
+    }
+  }
+
   return true;
 }
 

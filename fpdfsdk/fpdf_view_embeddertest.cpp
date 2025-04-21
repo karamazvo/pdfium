@@ -2236,3 +2236,10 @@ TEST_F(FPDFViewEmbedderTest, BitmapBGRAPremulFormat) {
     ASSERT_FALSE(bitmap);
   }
 }
+
+TEST_F(FPDFViewEmbedderTest, DocumentVersionInRoot) {
+  ASSERT_TRUE(OpenDocument("version_in_catalog.pdf"));
+  int version;
+  EXPECT_TRUE(FPDF_GetFileVersion(document(), &version));
+  EXPECT_EQ(16, version);
+}
