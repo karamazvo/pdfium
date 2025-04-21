@@ -97,6 +97,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "173f50e6_758047d4",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 411,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-21T23:22:35Z",
+      "side": 1,
+      "message": "Patch set 7 still uses GetObjectFor() instead of GetNameFor().",
+      "parentUuid": "4ae78268_33e15354",
+      "range": {
+        "startLine": 411,
+        "startChar": 54,
+        "endLine": 411,
+        "endChar": 66
+      },
+      "revId": "94ad6de21b992a88fa9dea1b3361e02be0f28d84",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a90b13ca_de4a5c9c",
         "filename": "fpdfsdk/fpdf_view.cpp",
         "patchSetId": 6
@@ -208,6 +232,24 @@
       "side": 1,
       "message": "Done",
       "parentUuid": "b7f5600f_2697bb63",
+      "revId": "94ad6de21b992a88fa9dea1b3361e02be0f28d84",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9779342c_2f390b21",
+        "filename": "testing/resources/version_in_catalog.in",
+        "patchSetId": 6
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-21T23:22:35Z",
+      "side": 1,
+      "message": "Can you also regenerate testing/resources/version_in_catalog.pdf?",
+      "parentUuid": "ac64d8e6_8f944f26",
       "revId": "94ad6de21b992a88fa9dea1b3361e02be0f28d84",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
