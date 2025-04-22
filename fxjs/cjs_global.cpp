@@ -25,10 +25,10 @@
 
 namespace {
 
-ByteString ByteStringFromV8Name(v8::Isolate* pIsolate,
+ByteString ByteStringFromV8Name(v8::Isolate* isolate,
                                 v8::Local<v8::Name> name) {
   CHECK(name->IsString());
-  return fxv8::ToByteString(pIsolate, name.As<v8::String>());
+  return fxv8::ToByteString(isolate, name.As<v8::String>());
 }
 
 }  // namespace
@@ -53,13 +53,13 @@ void CJS_Global::setPersistent_static(
 v8::Intercepted CJS_Global::queryprop_static(
     v8::Local<v8::Name> property,
     const v8::PropertyCallbackInfo<v8::Integer>& info) {
-  auto pObj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
-  if (!pObj) {
+  auto obj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
+  if (!obj) {
     return v8::Intercepted::kNo;
   }
 
   ByteString bsProp = ByteStringFromV8Name(info.GetIsolate(), property);
-  if (!pObj->HasProperty(bsProp)) {
+  if (!obj->HasProperty(bsProp)) {
     return v8::Intercepted::kNo;
   }
 
@@ -71,18 +71,18 @@ v8::Intercepted CJS_Global::queryprop_static(
 v8::Intercepted CJS_Global::getprop_static(
     v8::Local<v8::Name> property,
     const v8::PropertyCallbackInfo<v8::Value>& info) {
-  auto pObj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
-  if (!pObj) {
+  auto obj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
+  if (!obj) {
     return v8::Intercepted::kNo;
   }
 
-  CJS_Runtime* pRuntime = pObj->GetRuntime();
+  CJS_Runtime* pRuntime = obj->GetRuntime();
   if (!pRuntime) {
     return v8::Intercepted::kNo;
   }
 
   ByteString bsProp = ByteStringFromV8Name(info.GetIsolate(), property);
-  CJS_Result result = pObj->GetProperty(pRuntime, bsProp);
+  CJS_Result result = obj->GetProperty(pRuntime, bsProp);
   if (result.HasError()) {
     pRuntime->Error(
         JSFormatErrorString("global", "GetProperty", result.Error()));
@@ -101,18 +101,18 @@ v8::Intercepted CJS_Global::putprop_static(
     v8::Local<v8::Name> property,
     v8::Local<v8::Value> value,
     const v8::PropertyCallbackInfo<void>& info) {
-  auto pObj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
-  if (!pObj) {
+  auto obj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
+  if (!obj) {
     return v8::Intercepted::kNo;
   }
 
-  CJS_Runtime* pRuntime = pObj->GetRuntime();
+  CJS_Runtime* pRuntime = obj->GetRuntime();
   if (!pRuntime) {
     return v8::Intercepted::kNo;
   }
 
   ByteString bsProp = ByteStringFromV8Name(info.GetIsolate(), property);
-  CJS_Result result = pObj->SetProperty(pRuntime, bsProp, value);
+  CJS_Result result = obj->SetProperty(pRuntime, bsProp, value);
   if (result.HasError()) {
     pRuntime->Error(
         JSFormatErrorString("global", "PutProperty", result.Error()));
@@ -125,13 +125,13 @@ v8::Intercepted CJS_Global::putprop_static(
 v8::Intercepted CJS_Global::delprop_static(
     v8::Local<v8::Name> property,
     const v8::PropertyCallbackInfo<v8::Boolean>& info) {
-  auto pObj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
-  if (!pObj) {
+  auto obj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
+  if (!obj) {
     return v8::Intercepted::kNo;
   }
 
   ByteString bsProp = ByteStringFromV8Name(info.GetIsolate(), property);
-  if (!pObj->DelProperty(bsProp)) {
+  if (!obj->DelProperty(bsProp)) {
     return v8::Intercepted::kNo;
   }
 
@@ -141,17 +141,17 @@ v8::Intercepted CJS_Global::delprop_static(
 
 void CJS_Global::enumprop_static(
     const v8::PropertyCallbackInfo<v8::Array>& info) {
-  auto pObj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
-  if (!pObj) {
+  auto obj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
+  if (!obj) {
     return;
   }
 
-  CJS_Runtime* pRuntime = pObj->GetRuntime();
+  CJS_Runtime* pRuntime = obj->GetRuntime();
   if (!pRuntime) {
     return;
   }
 
-  pObj->EnumProperties(pRuntime, info);
+  obj->EnumProperties(pRuntime, info);
 }
 
 // static
@@ -327,13 +327,13 @@ void CJS_Global::UpdateGlobalPersistentVariables() {
             pRuntime->NewString(pData->data.sData.AsStringView()));
         break;
       case CFX_Value::DataType::kObject: {
-        v8::Local<v8::Object> pObj = pRuntime->NewObject();
-        if (!pObj.IsEmpty()) {
-          PutObjectProperty(pObj, &pData->data);
+        v8::Local<v8::Object> obj = pRuntime->NewObject();
+        if (!obj.IsEmpty()) {
+          PutObjectProperty(obj, &pData->data);
           SetGlobalVariables(pData->data.sKey, CFX_Value::DataType::kObject, 0,
-                             false, ByteString(), pObj, pData->bPersistent);
+                             false, ByteString(), obj, pData->bPersistent);
           pRuntime->PutObjectProperty(ToV8Object(),
-                                      pData->data.sKey.AsStringView(), pObj);
+                                      pData->data.sKey.AsStringView(), obj);
         }
       } break;
       case CFX_Value::DataType::kNull:
@@ -390,13 +390,13 @@ void CJS_Global::CommitGlobalPersisitentVariables() {
 
 std::vector<std::unique_ptr<CFX_KeyValue>> CJS_Global::ObjectToArray(
     CJS_Runtime* pRuntime,
-    v8::Local<v8::Object> pObj) {
+    v8::Local<v8::Object> obj) {
   std::vector<std::unique_ptr<CFX_KeyValue>> array;
-  std::vector<WideString> pKeyList = pRuntime->GetObjectPropertyNames(pObj);
+  std::vector<WideString> pKeyList = pRuntime->GetObjectPropertyNames(obj);
   for (const auto& ws : pKeyList) {
     ByteString sKey = ws.ToUTF8();
     v8::Local<v8::Value> v =
-        pRuntime->GetObjectProperty(pObj, sKey.AsStringView());
+        pRuntime->GetObjectProperty(obj, sKey.AsStringView());
     if (v->IsNumber()) {
       auto pObjElement = std::make_unique<CFX_KeyValue>();
       pObjElement->nType = CFX_Value::DataType::kNumber;
@@ -440,7 +440,7 @@ std::vector<std::unique_ptr<CFX_KeyValue>> CJS_Global::ObjectToArray(
   return array;
 }
 
-void CJS_Global::PutObjectProperty(v8::Local<v8::Object> pObj,
+void CJS_Global::PutObjectProperty(v8::Local<v8::Object> obj,
                                    CFX_KeyValue* pData) {
   CJS_Runtime* pRuntime = GetRuntime();
   if (pRuntime) {
@@ -451,28 +451,28 @@ void CJS_Global::PutObjectProperty(v8::Local<v8::Object> pObj,
     CFX_KeyValue* pObjData = pData->objData.at(i).get();
     switch (pObjData->nType) {
       case CFX_Value::DataType::kNumber:
-        pRuntime->PutObjectProperty(pObj, pObjData->sKey.AsStringView(),
+        pRuntime->PutObjectProperty(obj, pObjData->sKey.AsStringView(),
                                     pRuntime->NewNumber(pObjData->dData));
         break;
       case CFX_Value::DataType::kBoolean:
-        pRuntime->PutObjectProperty(pObj, pObjData->sKey.AsStringView(),
+        pRuntime->PutObjectProperty(obj, pObjData->sKey.AsStringView(),
                                     pRuntime->NewBoolean(pObjData->bData == 1));
         break;
       case CFX_Value::DataType::kString:
         pRuntime->PutObjectProperty(
-            pObj, pObjData->sKey.AsStringView(),
+            obj, pObjData->sKey.AsStringView(),
             pRuntime->NewString(pObjData->sData.AsStringView()));
         break;
       case CFX_Value::DataType::kObject: {
         v8::Local<v8::Object> pNewObj = pRuntime->NewObject();
         if (!pNewObj.IsEmpty()) {
           PutObjectProperty(pNewObj, pObjData);
-          pRuntime->PutObjectProperty(pObj, pObjData->sKey.AsStringView(),
+          pRuntime->PutObjectProperty(obj, pObjData->sKey.AsStringView(),
                                       pNewObj);
         }
       } break;
       case CFX_Value::DataType::kNull:
-        pRuntime->PutObjectProperty(pObj, pObjData->sKey.AsStringView(),
+        pRuntime->PutObjectProperty(obj, pObjData->sKey.AsStringView(),
                                     pRuntime->NewNull());
         break;
     }

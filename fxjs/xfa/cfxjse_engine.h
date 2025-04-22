@@ -80,34 +80,34 @@ class CFXJSE_Engine final : public CFX_V8 {
   };
 
   static CXFA_Object* ToObject(const v8::FunctionCallbackInfo<v8::Value>& info);
-  static CXFA_Object* ToObject(v8::Isolate* pIsolate,
+  static CXFA_Object* ToObject(v8::Isolate* isolate,
                                v8::Local<v8::Value> value);
-  static CXFA_Object* ToObject(v8::Isolate* pIsolate, CFXJSE_Value* pValue);
+  static CXFA_Object* ToObject(v8::Isolate* isolate, CFXJSE_Value* value);
   static CXFA_Object* ToObject(CFXJSE_HostObject* pHostObj);
   static v8::Local<v8::Value> GlobalPropertyGetter(
-      v8::Isolate* pIsolate,
+      v8::Isolate* isolate,
       v8::Local<v8::Object> pObject,
       ByteStringView szPropName);
-  static void GlobalPropertySetter(v8::Isolate* pIsolate,
+  static void GlobalPropertySetter(v8::Isolate* isolate,
                                    v8::Local<v8::Object> pObject,
                                    ByteStringView szPropName,
-                                   v8::Local<v8::Value> pValue);
+                                   v8::Local<v8::Value> value);
   static v8::Local<v8::Value> NormalPropertyGetter(
-      v8::Isolate* pIsolate,
+      v8::Isolate* isolate,
       v8::Local<v8::Object> pObject,
       ByteStringView szPropName);
-  static void NormalPropertySetter(v8::Isolate* pIsolate,
+  static void NormalPropertySetter(v8::Isolate* isolate,
                                    v8::Local<v8::Object> pObject,
                                    ByteStringView szPropName,
-                                   v8::Local<v8::Value> pValue);
+                                   v8::Local<v8::Value> value);
   static CJS_Result NormalMethodCall(
       const v8::FunctionCallbackInfo<v8::Value>& info,
       const WideString& functionName);
-  static FXJSE_ClassPropType NormalPropTypeGetter(v8::Isolate* pIsolate,
+  static FXJSE_ClassPropType NormalPropTypeGetter(v8::Isolate* isolate,
                                                   v8::Local<v8::Object> pObject,
                                                   ByteStringView szPropName,
                                                   bool bQueryIn);
-  static FXJSE_ClassPropType GlobalPropTypeGetter(v8::Isolate* pIsolate,
+  static FXJSE_ClassPropType GlobalPropTypeGetter(v8::Isolate* isolate,
                                                   v8::Local<v8::Object> pObject,
                                                   ByteStringView szPropName,
                                                   bool bQueryIn);
@@ -154,7 +154,7 @@ class CFXJSE_Engine final : public CFX_V8 {
   CFXJSE_Class* GetJseNormalClass() const { return js_class_; }
   CXFA_Document* GetDocument() const { return document_.Get(); }
 
-  void SetNodesOfRunScript(std::vector<cppgc::Persistent<CXFA_Node>>* pArray);
+  void SetNodesOfRunScript(std::vector<cppgc::Persistent<CXFA_Node>>* array);
   void AddNodesOfRunScript(CXFA_Node* pNode);
 
   void SetRunAtType(XFA_AttributeValue eRunAt) { run_at_type_ = eRunAt; }
@@ -179,11 +179,11 @@ class CFXJSE_Engine final : public CFX_V8 {
   void RemoveBuiltInObjs(CFXJSE_Context* pContext);
   bool QueryNodeByFlag(CXFA_Node* refNode,
                        WideStringView propname,
-                       v8::Local<v8::Value>* pValue,
+                       v8::Local<v8::Value>* value,
                        Mask<XFA_ResolveFlag> dwFlag);
   bool UpdateNodeByFlag(CXFA_Node* refNode,
                         WideStringView propname,
-                        v8::Local<v8::Value> pValue,
+                        v8::Local<v8::Value> value,
                         Mask<XFA_ResolveFlag> dwFlag);
   bool IsStrictScopeInJavaScript();
   CXFA_Object* GetVariablesThis(CXFA_Object* pObject);
@@ -191,10 +191,10 @@ class CFXJSE_Engine final : public CFX_V8 {
   CFXJSE_Context* VariablesContextForScriptNode(CXFA_Script* pScriptNode);
   bool QueryVariableValue(CXFA_Script* pScriptNode,
                           ByteStringView szPropName,
-                          v8::Local<v8::Value>* pValue);
+                          v8::Local<v8::Value>* value);
   bool UpdateVariableValue(CXFA_Script* pScriptNode,
                            ByteStringView szPropName,
-                           v8::Local<v8::Value> pValue);
+                           v8::Local<v8::Value> value);
   void RunVariablesScript(CXFA_Script* pScriptNode);
 
   UnownedPtr<CJS_Runtime> const subordinate_runtime_;

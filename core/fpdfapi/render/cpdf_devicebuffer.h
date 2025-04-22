@@ -27,7 +27,7 @@ class CPDF_DeviceBuffer {
   CPDF_DeviceBuffer(CPDF_RenderContext* pContext,
                     CFX_RenderDevice* pDevice,
                     const FX_RECT& rect,
-                    const CPDF_PageObject* pObj,
+                    const CPDF_PageObject* obj,
                     int max_dpi);
   ~CPDF_DeviceBuffer();
 

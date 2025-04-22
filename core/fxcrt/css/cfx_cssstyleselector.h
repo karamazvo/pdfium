@@ -58,7 +58,7 @@ class CFX_CSSStyleSelector {
       const CFX_CSSDeclaration* extraDecl,
       CFX_CSSComputedStyle* pDestStyle);
   void ApplyProperty(CFX_CSSProperty eProperty,
-                     const RetainPtr<CFX_CSSValue>& pValue,
+                     const RetainPtr<CFX_CSSValue>& value,
                      CFX_CSSComputedStyle* pComputedStyle);
   void ExtractValues(const CFX_CSSDeclaration* decl,
                      std::vector<const CFX_CSSPropertyHolder*>* importants,
@@ -67,7 +67,7 @@ class CFX_CSSStyleSelector {
 
   bool SetLengthWithPercent(CFX_CSSLength& width,
                             CFX_CSSValue::PrimitiveType eType,
-                            const RetainPtr<CFX_CSSValue>& pValue,
+                            const RetainPtr<CFX_CSSValue>& value,
                             float fFontSize);
   float ToFontSize(CFX_CSSPropertyValue eValue, float fCurFontSize);
   CFX_CSSDisplay ToDisplay(CFX_CSSPropertyValue eValue);

@@ -36,8 +36,8 @@ TEST(CPDFFunction, NoRange) {
   auto pDict = pdfium::MakeRetain<CPDF_Dictionary>();
   pDict->SetNewFor<CPDF_Number>("FunctionType", 0);
 
-  auto pArray = pDict->SetNewFor<CPDF_Array>("Domain");
-  pArray->AppendNew<CPDF_Number>(0);
-  pArray->AppendNew<CPDF_Number>(10);
+  auto array = pDict->SetNewFor<CPDF_Array>("Domain");
+  array->AppendNew<CPDF_Number>(0);
+  array->AppendNew<CPDF_Number>(10);
   EXPECT_FALSE(CPDF_Function::Load(pDict));
 }

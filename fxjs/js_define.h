@@ -19,7 +19,7 @@
 
 class CJS_Object;
 
-double JS_DateParse(v8::Isolate* pIsolate, const WideString& str);
+double JS_DateParse(v8::Isolate* isolate, const WideString& str);
 
 // Some JS methods have the bizarre convention that they may also be called
 // with a single argument which is an object containing the actual arguments
@@ -74,17 +74,17 @@ void JSPropGetter(const char* prop_name_string,
                   const char* class_name_string,
                   v8::Local<v8::Name> property,
                   const v8::PropertyCallbackInfo<v8::Value>& info) {
-  auto pObj = JSGetObject<C>(info.GetIsolate(), info.Holder());
-  if (!pObj) {
+  auto obj = JSGetObject<C>(info.GetIsolate(), info.Holder());
+  if (!obj) {
     return;
   }
 
-  CJS_Runtime* pRuntime = pObj->GetRuntime();
+  CJS_Runtime* pRuntime = obj->GetRuntime();
   if (!pRuntime) {
     return;
   }
 
-  CJS_Result result = (pObj.get()->*M)(pRuntime);
+  CJS_Result result = (obj.get()->*M)(pRuntime);
   if (result.HasError()) {
     pRuntime->Error(JSFormatErrorString(class_name_string, prop_name_string,
                                         result.Error()));
@@ -102,17 +102,17 @@ void JSPropSetter(const char* prop_name_string,
                   v8::Local<v8::Name> property,
                   v8::Local<v8::Value> value,
                   const v8::PropertyCallbackInfo<void>& info) {
-  auto pObj = JSGetObject<C>(info.GetIsolate(), info.Holder());
-  if (!pObj) {
+  auto obj = JSGetObject<C>(info.GetIsolate(), info.Holder());
+  if (!obj) {
     return;
   }
 
-  CJS_Runtime* pRuntime = pObj->GetRuntime();
+  CJS_Runtime* pRuntime = obj->GetRuntime();
   if (!pRuntime) {
     return;
   }
 
-  CJS_Result result = (pObj.get()->*M)(pRuntime, value);
+  CJS_Result result = (obj.get()->*M)(pRuntime, value);
   if (result.HasError()) {
     pRuntime->Error(JSFormatErrorString(class_name_string, prop_name_string,
                                         result.Error()));
@@ -124,12 +124,12 @@ template <class C,
 void JSMethod(const char* method_name_string,
               const char* class_name_string,
               const v8::FunctionCallbackInfo<v8::Value>& info) {
-  auto pObj = JSGetObject<C>(info.GetIsolate(), info.This());
-  if (!pObj) {
+  auto obj = JSGetObject<C>(info.GetIsolate(), info.This());
+  if (!obj) {
     return;
   }
 
-  CJS_Runtime* pRuntime = pObj->GetRuntime();
+  CJS_Runtime* pRuntime = obj->GetRuntime();
   if (!pRuntime) {
     return;
   }
@@ -140,7 +140,7 @@ void JSMethod(const char* method_name_string,
   }
 
   // TODO(tsepez): why does the compiler think this is sometimes unsafe?
-  CJS_Result result = UNSAFE_TODO((pObj.get()->*M)(pRuntime, parameters));
+  CJS_Result result = UNSAFE_TODO((obj.get()->*M)(pRuntime, parameters));
   if (result.HasError()) {
     pRuntime->Error(JSFormatErrorString(class_name_string, method_name_string,
                                         result.Error()));

@@ -27,7 +27,7 @@ class CPDF_DeviceCS final : public CPDF_ColorSpace {
                           int image_height,
                           bool bTransMask) const override;
   uint32_t v_Load(CPDF_Document* pDoc,
-                  const CPDF_Array* pArray,
+                  const CPDF_Array* array,
                   std::set<const CPDF_Object*>* pVisited) override;
 
  private:

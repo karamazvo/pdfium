@@ -24,41 +24,41 @@ CFXJSE_RuntimeData::CFXJSE_RuntimeData() = default;
 CFXJSE_RuntimeData::~CFXJSE_RuntimeData() = default;
 
 std::unique_ptr<CFXJSE_RuntimeData> CFXJSE_RuntimeData::Create(
-    v8::Isolate* pIsolate) {
+    v8::Isolate* isolate) {
   std::unique_ptr<CFXJSE_RuntimeData> pRuntimeData(new CFXJSE_RuntimeData());
-  CFXJSE_ScopeUtil_IsolateHandle scope(pIsolate);
+  CFXJSE_ScopeUtil_IsolateHandle scope(isolate);
   v8::Local<v8::FunctionTemplate> hFuncTemplate =
-      v8::FunctionTemplate::New(pIsolate);
+      v8::FunctionTemplate::New(isolate);
 
-  v8::Local<v8::ObjectTemplate> hGlobalTemplate =
+  v8::Local<v8::ObjectTemplate> global_template =
       hFuncTemplate->InstanceTemplate();
-  hGlobalTemplate->Set(v8::Symbol::GetToStringTag(pIsolate),
-                       fxv8::NewStringHelper(pIsolate, "global"));
+  global_template->Set(v8::Symbol::GetToStringTag(isolate),
+                       fxv8::NewStringHelper(isolate, "global"));
 
   v8::Local<v8::Context> hContext =
-      v8::Context::New(pIsolate, nullptr, hGlobalTemplate);
+      v8::Context::New(isolate, nullptr, global_template);
 
   DCHECK_EQ(hContext->Global()->InternalFieldCount(), 0);
   DCHECK_EQ(
       hContext->Global()->GetPrototype().As<v8::Object>()->InternalFieldCount(),
       0);
 
-  hContext->SetSecurityToken(v8::External::New(pIsolate, pIsolate));
-  pRuntimeData->root_context_global_template_.Reset(pIsolate, hFuncTemplate);
-  pRuntimeData->root_context_.Reset(pIsolate, hContext);
+  hContext->SetSecurityToken(v8::External::New(isolate, isolate));
+  pRuntimeData->root_context_global_template_.Reset(isolate, hFuncTemplate);
+  pRuntimeData->root_context_.Reset(isolate, hContext);
   return pRuntimeData;
 }
 
-CFXJSE_RuntimeData* CFXJSE_RuntimeData::Get(v8::Isolate* pIsolate) {
-  CFXJS_PerIsolateData::SetUp(pIsolate);
-  CFXJS_PerIsolateData* pData = CFXJS_PerIsolateData::Get(pIsolate);
+CFXJSE_RuntimeData* CFXJSE_RuntimeData::Get(v8::Isolate* isolate) {
+  CFXJS_PerIsolateData::SetUp(isolate);
+  CFXJS_PerIsolateData* pData = CFXJS_PerIsolateData::Get(isolate);
   if (!pData->GetExtension()) {
-    pData->SetExtension(CFXJSE_RuntimeData::Create(pIsolate));
+    pData->SetExtension(CFXJSE_RuntimeData::Create(isolate));
   }
   return static_cast<CFXJSE_RuntimeData*>(pData->GetExtension());
 }
 
 v8::Local<v8::Context> CFXJSE_RuntimeData::GetRootContext(
-    v8::Isolate* pIsolate) {
-  return v8::Local<v8::Context>::New(pIsolate, root_context_);
+    v8::Isolate* isolate) {
+  return v8::Local<v8::Context>::New(isolate, root_context_);
 }

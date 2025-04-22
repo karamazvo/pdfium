@@ -18,7 +18,7 @@ class CPDF_Stream;
 
 class CPDF_FileSpec {
  public:
-  explicit CPDF_FileSpec(RetainPtr<const CPDF_Object> pObj);
+  explicit CPDF_FileSpec(RetainPtr<const CPDF_Object> obj);
   ~CPDF_FileSpec();
 
   // Convert a platform dependent file name into pdf format.

@@ -80,7 +80,7 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   static RetainPtr<CPDF_ColorSpace> GetStockCSForName(const ByteString& name);
   static RetainPtr<CPDF_ColorSpace> Load(
       CPDF_Document* pDoc,
-      const CPDF_Object* pObj,
+      const CPDF_Object* obj,
       std::set<const CPDF_Object*>* pVisited);
 
   static RetainPtr<CPDF_ColorSpace> AllocateColorSpaceForID(
@@ -139,7 +139,7 @@ class CPDF_ColorSpace : public Retainable, public Observable {
 
   // Returns the number of components, or 0 on failure.
   virtual uint32_t v_Load(CPDF_Document* pDoc,
-                          const CPDF_Array* pArray,
+                          const CPDF_Array* array,
                           std::set<const CPDF_Object*>* pVisited) = 0;
 
   // Stock colorspaces are not loaded normally. This initializes their
@@ -147,7 +147,7 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   void SetComponentsForStockCS(uint32_t nComponents);
 
   bool IsStdConversionEnabled() const { return std_conversion_ != 0; }
-  bool HasSameArray(const CPDF_Object* pObj) const { return array_ == pObj; }
+  bool HasSameArray(const CPDF_Object* obj) const { return array_ == obj; }
 
  private:
   friend class CPDFCalGrayTest_TranslateImageLine_Test;

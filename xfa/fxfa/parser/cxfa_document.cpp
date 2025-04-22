@@ -550,12 +550,12 @@ void CreateDataBinding(CXFA_Node* pFormNode,
               pFormNode->GetSelectedItemsValue();
           if (!wsSelTextArray.empty()) {
             for (const auto& text : wsSelTextArray) {
-              CXFA_Node* pValue =
+              CXFA_Node* value =
                   pDataNode->CreateSamePacketNode(XFA_Element::DataValue);
-              pValue->JSObject()->SetCData(XFA_Attribute::Name, L"value");
-              pValue->CreateXMLMappingNode();
-              pDataNode->InsertChildAndNotify(pValue, nullptr);
-              pValue->JSObject()->SetCData(XFA_Attribute::Value, text);
+              value->JSObject()->SetCData(XFA_Attribute::Name, L"value");
+              value->CreateXMLMappingNode();
+              pDataNode->InsertChildAndNotify(value, nullptr);
+              value->JSObject()->SetCData(XFA_Attribute::Value, text);
             }
           } else {
             CFX_XMLElement* pElement =
@@ -584,13 +584,13 @@ void CreateDataBinding(CXFA_Node* pFormNode,
             continue;
           }
 
-          auto* pValue =
+          auto* value =
               pChild->GetChild<CXFA_Value>(0, XFA_Element::Value, false);
-          if (!pValue) {
+          if (!value) {
             continue;
           }
 
-          wsValue = pValue->GetChildValueContent();
+          wsValue = value->GetChildValueContent();
           if (wsValue.IsEmpty()) {
             continue;
           }
@@ -627,7 +627,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
             continue;
           }
 
-          CXFA_Value* pValue =
+          CXFA_Value* value =
               pChild->JSObject()->GetOrCreateProperty<CXFA_Value>(
                   0, XFA_Element::Value);
           CXFA_Items* pItems =
@@ -642,7 +642,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
             wsContent = pText->JSObject()->GetContent(false);
           }
 
-          FormValueNode_SetChildContent(pValue, wsContent, XFA_Element::Text);
+          FormValueNode_SetChildContent(value, wsContent, XFA_Element::Text);
         }
         break;
       }
@@ -655,10 +655,10 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         wsValue = pFormNode->NormalizeNumStr(wsValue);
         pDataNode->JSObject()->SetAttributeValue(
             wsValue, pFormNode->GetFormatDataValue(wsValue));
-        CXFA_Value* pValue =
+        CXFA_Value* value =
             pFormNode->JSObject()->GetOrCreateProperty<CXFA_Value>(
                 0, XFA_Element::Value);
-        FormValueNode_SetChildContent(pValue, wsValue, XFA_Element::Float);
+        FormValueNode_SetChildContent(value, wsValue, XFA_Element::Float);
         break;
       }
       default:

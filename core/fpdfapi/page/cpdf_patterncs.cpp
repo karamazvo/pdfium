@@ -22,9 +22,9 @@ void CPDF_PatternCS::InitializeStockPattern() {
 }
 
 uint32_t CPDF_PatternCS::v_Load(CPDF_Document* pDoc,
-                                const CPDF_Array* pArray,
+                                const CPDF_Array* array,
                                 std::set<const CPDF_Object*>* pVisited) {
-  RetainPtr<const CPDF_Object> pBaseCS = pArray->GetDirectObjectAt(1);
+  RetainPtr<const CPDF_Object> pBaseCS = array->GetDirectObjectAt(1);
   if (HasSameArray(pBaseCS.Get())) {
     return 0;
   }

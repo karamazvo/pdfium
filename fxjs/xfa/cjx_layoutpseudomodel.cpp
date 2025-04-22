@@ -63,8 +63,8 @@ bool CJX_LayoutPseudoModel::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
 }
 
-void CJX_LayoutPseudoModel::ready(v8::Isolate* pIsolate,
-                                  v8::Local<v8::Value>* pValue,
+void CJX_LayoutPseudoModel::ready(v8::Isolate* isolate,
+                                  v8::Local<v8::Value>* value,
                                   bool bSetting,
                                   XFA_Attribute eAttribute) {
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
@@ -72,7 +72,7 @@ void CJX_LayoutPseudoModel::ready(v8::Isolate* pIsolate,
     return;
   }
   if (bSetting) {
-    ThrowException(pIsolate,
+    ThrowException(isolate,
                    WideString::FromASCII("Unable to set ready value."));
     return;
   }
@@ -80,7 +80,7 @@ void CJX_LayoutPseudoModel::ready(v8::Isolate* pIsolate,
   CXFA_FFDocView::LayoutStatus iStatus = pNotify->GetLayoutStatus();
   const bool bReady = iStatus != CXFA_FFDocView::LayoutStatus::kNone &&
                       iStatus != CXFA_FFDocView::LayoutStatus::kStart;
-  *pValue = fxv8::NewBooleanHelper(pIsolate, bReady);
+  *value = fxv8::NewBooleanHelper(isolate, bReady);
 }
 
 CJS_Result CJX_LayoutPseudoModel::DoHWXYInternal(

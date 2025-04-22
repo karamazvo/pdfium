@@ -22,7 +22,7 @@ class GlobalTimer {
   static void InitializeGlobals();
   static void DestroyGlobals();
 
-  GlobalTimer(CJS_App* pObj,
+  GlobalTimer(CJS_App* obj,
               CJS_Runtime* pRuntime,
               Type nType,
               const WideString& script,

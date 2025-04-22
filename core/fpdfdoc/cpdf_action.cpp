@@ -161,15 +161,15 @@ std::vector<RetainPtr<const CPDF_Object>> CPDF_Action::GetAllFields() const {
     return result;
   }
 
-  const CPDF_Array* pArray = pFields->AsArray();
-  if (!pArray) {
+  const CPDF_Array* array = pFields->AsArray();
+  if (!array) {
     return result;
   }
 
-  for (size_t i = 0; i < pArray->size(); ++i) {
-    RetainPtr<const CPDF_Object> pObj = pArray->GetDirectObjectAt(i);
-    if (pObj) {
-      result.push_back(std::move(pObj));
+  for (size_t i = 0; i < array->size(); ++i) {
+    RetainPtr<const CPDF_Object> obj = array->GetDirectObjectAt(i);
+    if (obj) {
+      result.push_back(std::move(obj));
     }
   }
   return result;
@@ -200,8 +200,8 @@ size_t CPDF_Action::GetSubActionsCount() const {
   if (pNext->IsDictionary()) {
     return 1;
   }
-  const CPDF_Array* pArray = pNext->AsArray();
-  return pArray ? pArray->size() : 0;
+  const CPDF_Array* array = pNext->AsArray();
+  return array ? array->size() : 0;
 }
 
 CPDF_Action CPDF_Action::GetSubAction(size_t iIndex) const {
@@ -214,8 +214,8 @@ CPDF_Action CPDF_Action::GetSubAction(size_t iIndex) const {
     return CPDF_Action(nullptr);
   }
 
-  if (const CPDF_Array* pArray = pNext->AsArray()) {
-    return CPDF_Action(pArray->GetDictAt(iIndex));
+  if (const CPDF_Array* array = pNext->AsArray()) {
+    return CPDF_Action(array->GetDictAt(iIndex));
   }
 
   if (const CPDF_Dictionary* pDict = pNext->AsDictionary()) {

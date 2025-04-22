@@ -15,16 +15,16 @@
 
 class CFXJSE_RuntimeData final : public CFXJS_PerIsolateData::ExtensionIface {
  public:
-  static CFXJSE_RuntimeData* Get(v8::Isolate* pIsolate);
+  static CFXJSE_RuntimeData* Get(v8::Isolate* isolate);
 
   CFXJSE_RuntimeData(const CFXJSE_RuntimeData&) = delete;
   CFXJSE_RuntimeData& operator=(const CFXJSE_RuntimeData&) = delete;
   ~CFXJSE_RuntimeData() override;
 
-  v8::Local<v8::Context> GetRootContext(v8::Isolate* pIsolate);
+  v8::Local<v8::Context> GetRootContext(v8::Isolate* isolate);
 
  private:
-  static std::unique_ptr<CFXJSE_RuntimeData> Create(v8::Isolate* pIsolate);
+  static std::unique_ptr<CFXJSE_RuntimeData> Create(v8::Isolate* isolate);
 
   CFXJSE_RuntimeData();
 

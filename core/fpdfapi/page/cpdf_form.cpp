@@ -104,11 +104,11 @@ CFX_FloatRect CPDF_Form::CalcBoundingBox() const {
   float right = -1000000.0f;
   float bottom = 1000000.0f;
   float top = -1000000.0f;
-  for (const auto& pObj : *this) {
-    if (!pObj->IsActive()) {
+  for (const auto& obj : *this) {
+    if (!obj->IsActive()) {
       continue;
     }
-    const auto& rect = pObj->GetRect();
+    const auto& rect = obj->GetRect();
     left = std::min(left, rect.left);
     right = std::max(right, rect.right);
     bottom = std::min(bottom, rect.bottom);

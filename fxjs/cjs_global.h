@@ -83,7 +83,7 @@ class CJS_Global final : public CJS_Object {
                                 bool bDefaultPersistent);
   std::vector<std::unique_ptr<CFX_KeyValue>> ObjectToArray(
       CJS_Runtime* pRuntime,
-      v8::Local<v8::Object> pObj);
+      v8::Local<v8::Object> obj);
   void PutObjectProperty(v8::Local<v8::Object> obj, CFX_KeyValue* pData);
   CJS_Result setPersistent(CJS_Runtime* pRuntime,
                            pdfium::span<v8::Local<v8::Value>> params);

@@ -182,25 +182,25 @@ void CJS_EventContext::OnField_MouseUp(bool bModifier,
 void CJS_EventContext::OnField_Focus(bool bModifier,
                                      bool bShift,
                                      CPDF_FormField* pTarget,
-                                     WideString* pValue) {
-  DCHECK(pValue);
+                                     WideString* value) {
+  DCHECK(value);
   Initialize(Kind::kFieldFocus);
   modifier_ = bModifier;
   shift_ = bShift;
   target_name_ = pTarget->GetFullName();
-  value_ = pValue;
+  value_ = value;
 }
 
 void CJS_EventContext::OnField_Blur(bool bModifier,
                                     bool bShift,
                                     CPDF_FormField* pTarget,
-                                    WideString* pValue) {
-  DCHECK(pValue);
+                                    WideString* value) {
+  DCHECK(value);
   Initialize(Kind::kFieldBlur);
   modifier_ = bModifier;
   shift_ = bShift;
   target_name_ = pTarget->GetFullName();
-  value_ = pValue;
+  value_ = value;
 }
 
 void CJS_EventContext::OnField_Keystroke(WideString* strChange,
@@ -211,11 +211,11 @@ void CJS_EventContext::OnField_Keystroke(WideString* strChange,
                                          int* pSelStart,
                                          bool bShift,
                                          CPDF_FormField* pTarget,
-                                         WideString* pValue,
+                                         WideString* value,
                                          bool bWillCommit,
                                          bool bFieldFull,
                                          bool* pbRc) {
-  DCHECK(pValue);
+  DCHECK(value);
   DCHECK(pbRc);
   DCHECK(pSelStart);
   DCHECK(pSelEnd);
@@ -230,7 +230,7 @@ void CJS_EventContext::OnField_Keystroke(WideString* strChange,
   sel_start_ = pSelStart;
   shift_ = bShift;
   target_name_ = pTarget->GetFullName();
-  value_ = pValue;
+  value_ = value;
   will_commit_ = bWillCommit;
   pb_rc_ = pbRc;
   field_full_ = bFieldFull;
@@ -242,9 +242,9 @@ void CJS_EventContext::OnField_Validate(WideString* strChange,
                                         bool bModifier,
                                         bool bShift,
                                         CPDF_FormField* pTarget,
-                                        WideString* pValue,
+                                        WideString* value,
                                         bool* pbRc) {
-  DCHECK(pValue);
+  DCHECK(value);
   DCHECK(pbRc);
   Initialize(Kind::kFieldValidate);
   change_ = strChange;
@@ -253,32 +253,32 @@ void CJS_EventContext::OnField_Validate(WideString* strChange,
   modifier_ = bModifier;
   shift_ = bShift;
   target_name_ = pTarget->GetFullName();
-  value_ = pValue;
+  value_ = value;
   pb_rc_ = pbRc;
 }
 
 void CJS_EventContext::OnField_Calculate(CPDF_FormField* pSource,
                                          CPDF_FormField* pTarget,
-                                         WideString* pValue,
+                                         WideString* value,
                                          bool* pRc) {
-  DCHECK(pValue);
+  DCHECK(value);
   DCHECK(pRc);
   Initialize(Kind::kFieldCalculate);
   if (pSource) {
     source_name_ = pSource->GetFullName();
   }
   target_name_ = pTarget->GetFullName();
-  value_ = pValue;
+  value_ = value;
   pb_rc_ = pRc;
 }
 
 void CJS_EventContext::OnField_Format(CPDF_FormField* pTarget,
-                                      WideString* pValue) {
-  DCHECK(pValue);
+                                      WideString* value) {
+  DCHECK(value);
   Initialize(Kind::kFieldFormat);
   commit_key_ = 0;
   target_name_ = pTarget->GetFullName();
-  value_ = pValue;
+  value_ = value;
   will_commit_ = true;
 }
 

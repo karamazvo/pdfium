@@ -80,7 +80,7 @@ class TRIVIAL_ABI GSL_POINTER UnownedPtr {
   // NOLINTNEXTLINE(runtime/explicit)
   constexpr UnownedPtr(std::nullptr_t ptr) {}
 
-  explicit constexpr UnownedPtr(T* pObj) noexcept : obj_(pObj) {}
+  explicit constexpr UnownedPtr(T* obj) noexcept : obj_(obj) {}
 
   // Copy-construct an UnownedPtr.
   // Required in addition to copy conversion constructor below.

@@ -40,18 +40,18 @@ bool CJX_InstanceManager::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
 }
 
-int32_t CJX_InstanceManager::SetInstances(v8::Isolate* pIsolate,
+int32_t CJX_InstanceManager::SetInstances(v8::Isolate* isolate,
                                           int32_t iDesired) {
   CXFA_Occur* occur = GetXFANode()->GetOccurIfExists();
   int32_t iMin = occur ? occur->GetMin() : CXFA_Occur::kDefaultMin;
   if (iDesired < iMin) {
-    ThrowTooManyOccurrencesException(pIsolate, L"min");
+    ThrowTooManyOccurrencesException(isolate, L"min");
     return 1;
   }
 
   int32_t iMax = occur ? occur->GetMax() : CXFA_Occur::kDefaultMax;
   if (iMax >= 0 && iDesired > iMax) {
-    ThrowTooManyOccurrencesException(pIsolate, L"max");
+    ThrowTooManyOccurrencesException(isolate, L"max");
     return 2;
   }
 
@@ -73,7 +73,7 @@ int32_t CJX_InstanceManager::SetInstances(v8::Isolate* pIsolate,
                                   : GetXFANode()->GetItemIfExists(iDesired - 1);
     if (!pPrevSibling) {
       // TODO(dsinclair): Better error?
-      ThrowIndexOutOfBoundsException(pIsolate);
+      ThrowIndexOutOfBoundsException(isolate);
       return 0;
     }
 
@@ -111,12 +111,12 @@ int32_t CJX_InstanceManager::SetInstances(v8::Isolate* pIsolate,
   return 0;
 }
 
-int32_t CJX_InstanceManager::MoveInstance(v8::Isolate* pIsolate,
+int32_t CJX_InstanceManager::MoveInstance(v8::Isolate* isolate,
                                           int32_t iTo,
                                           int32_t iFrom) {
   int32_t iCount = GetXFANode()->GetCount();
   if (iFrom > iCount || iTo > iCount - 1) {
-    ThrowIndexOutOfBoundsException(pIsolate);
+    ThrowIndexOutOfBoundsException(isolate);
     return 1;
   }
   if (iFrom < 0 || iTo < 0 || iFrom == iTo) {
@@ -125,7 +125,7 @@ int32_t CJX_InstanceManager::MoveInstance(v8::Isolate* pIsolate,
 
   CXFA_Node* pMoveInstance = GetXFANode()->GetItemIfExists(iFrom);
   if (!pMoveInstance) {
-    ThrowIndexOutOfBoundsException(pIsolate);
+    ThrowIndexOutOfBoundsException(isolate);
     return 1;
   }
 
@@ -318,39 +318,39 @@ CJS_Result CJX_InstanceManager::insertInstance(
       runtime->GetOrCreateJSBindingFromMap(pNewInstance));
 }
 
-void CJX_InstanceManager::max(v8::Isolate* pIsolate,
-                              v8::Local<v8::Value>* pValue,
+void CJX_InstanceManager::max(v8::Isolate* isolate,
+                              v8::Local<v8::Value>* value,
                               bool bSetting,
                               XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException(pIsolate);
+    ThrowInvalidPropertyException(isolate);
     return;
   }
   CXFA_Occur* occur = GetXFANode()->GetOccurIfExists();
-  *pValue = fxv8::NewNumberHelper(
-      pIsolate, occur ? occur->GetMax() : CXFA_Occur::kDefaultMax);
+  *value = fxv8::NewNumberHelper(
+      isolate, occur ? occur->GetMax() : CXFA_Occur::kDefaultMax);
 }
 
-void CJX_InstanceManager::min(v8::Isolate* pIsolate,
-                              v8::Local<v8::Value>* pValue,
+void CJX_InstanceManager::min(v8::Isolate* isolate,
+                              v8::Local<v8::Value>* value,
                               bool bSetting,
                               XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException(pIsolate);
+    ThrowInvalidPropertyException(isolate);
     return;
   }
   CXFA_Occur* occur = GetXFANode()->GetOccurIfExists();
-  *pValue = fxv8::NewNumberHelper(
-      pIsolate, occur ? occur->GetMin() : CXFA_Occur::kDefaultMin);
+  *value = fxv8::NewNumberHelper(
+      isolate, occur ? occur->GetMin() : CXFA_Occur::kDefaultMin);
 }
 
-void CJX_InstanceManager::count(v8::Isolate* pIsolate,
-                                v8::Local<v8::Value>* pValue,
+void CJX_InstanceManager::count(v8::Isolate* isolate,
+                                v8::Local<v8::Value>* value,
                                 bool bSetting,
                                 XFA_Attribute eAttribute) {
   if (bSetting) {
-    SetInstances(pIsolate, fxv8::ReentrantToInt32Helper(pIsolate, *pValue));
+    SetInstances(isolate, fxv8::ReentrantToInt32Helper(isolate, *value));
     return;
   }
-  *pValue = fxv8::NewNumberHelper(pIsolate, GetXFANode()->GetCount());
+  *value = fxv8::NewNumberHelper(isolate, GetXFANode()->GetCount());
 }

@@ -44,8 +44,8 @@ CPDF_SampledFunc::CPDF_SampledFunc() : CPDF_Function(Type::kType0Sampled) {}
 
 CPDF_SampledFunc::~CPDF_SampledFunc() = default;
 
-bool CPDF_SampledFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
-  RetainPtr<const CPDF_Stream> pStream(pObj->AsStream());
+bool CPDF_SampledFunc::v_Init(const CPDF_Object* obj, VisitedSet* pVisited) {
+  RetainPtr<const CPDF_Stream> pStream(obj->AsStream());
   if (!pStream) {
     return false;
   }

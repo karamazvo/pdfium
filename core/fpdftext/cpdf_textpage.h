@@ -148,7 +148,7 @@ class CPDF_TextPage {
                          const CFX_Matrix& form_matrix,
                          const CPDF_PageObjectHolder* pObjList,
                          CPDF_PageObjectHolder::const_iterator ObjPos);
-  GenerateCharacter ProcessInsertObject(const CPDF_TextObject* pObj,
+  GenerateCharacter ProcessInsertObject(const CPDF_TextObject* obj,
                                         const CFX_Matrix& form_matrix);
   // Returns whether to continue or not.
   bool ProcessGenerateCharacter(GenerateCharacter type,

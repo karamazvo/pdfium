@@ -1178,18 +1178,18 @@ FPDF_VIEWERREF_GetPrintPageRange(FPDF_DOCUMENT document) {
 
 FPDF_EXPORT size_t FPDF_CALLCONV
 FPDF_VIEWERREF_GetPrintPageRangeCount(FPDF_PAGERANGE pagerange) {
-  const CPDF_Array* pArray = CPDFArrayFromFPDFPageRange(pagerange);
-  return pArray ? pArray->size() : 0;
+  const CPDF_Array* array = CPDFArrayFromFPDFPageRange(pagerange);
+  return array ? array->size() : 0;
 }
 
 FPDF_EXPORT int FPDF_CALLCONV
 FPDF_VIEWERREF_GetPrintPageRangeElement(FPDF_PAGERANGE pagerange,
                                         size_t index) {
-  const CPDF_Array* pArray = CPDFArrayFromFPDFPageRange(pagerange);
-  if (!pArray || index >= pArray->size()) {
+  const CPDF_Array* array = CPDFArrayFromFPDFPageRange(pagerange);
+  if (!array || index >= array->size()) {
     return -1;
   }
-  return pArray->GetIntegerAt(index);
+  return array->GetIntegerAt(index);
 }
 
 FPDF_EXPORT FPDF_DUPLEXTYPE FPDF_CALLCONV

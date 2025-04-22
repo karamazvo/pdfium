@@ -33,77 +33,73 @@ bool IsArray(v8::Local<v8::Value> value);
 bool IsDate(v8::Local<v8::Value> value);
 bool IsFunction(v8::Local<v8::Value> value);
 
-v8::Local<v8::Value> NewNullHelper(v8::Isolate* pIsolate);
-v8::Local<v8::Value> NewUndefinedHelper(v8::Isolate* pIsolate);
-v8::Local<v8::Number> NewNumberHelper(v8::Isolate* pIsolate, int number);
-v8::Local<v8::Number> NewNumberHelper(v8::Isolate* pIsolate, double number);
-v8::Local<v8::Number> NewNumberHelper(v8::Isolate* pIsolate, float number);
-v8::Local<v8::Boolean> NewBooleanHelper(v8::Isolate* pIsolate, bool b);
-v8::Local<v8::String> NewStringHelper(v8::Isolate* pIsolate,
-                                      ByteStringView str);
-v8::Local<v8::String> NewStringHelper(v8::Isolate* pIsolate,
-                                      WideStringView str);
-v8::Local<v8::Array> NewArrayHelper(v8::Isolate* pIsolate);
-v8::Local<v8::Array> NewArrayHelper(v8::Isolate* pIsolate,
+v8::Local<v8::Value> NewNullHelper(v8::Isolate* isolate);
+v8::Local<v8::Value> NewUndefinedHelper(v8::Isolate* isolate);
+v8::Local<v8::Number> NewNumberHelper(v8::Isolate* isolate, int number);
+v8::Local<v8::Number> NewNumberHelper(v8::Isolate* isolate, double number);
+v8::Local<v8::Number> NewNumberHelper(v8::Isolate* isolate, float number);
+v8::Local<v8::Boolean> NewBooleanHelper(v8::Isolate* isolate, bool b);
+v8::Local<v8::String> NewStringHelper(v8::Isolate* isolate, ByteStringView str);
+v8::Local<v8::String> NewStringHelper(v8::Isolate* isolate, WideStringView str);
+v8::Local<v8::Array> NewArrayHelper(v8::Isolate* isolate);
+v8::Local<v8::Array> NewArrayHelper(v8::Isolate* isolate,
                                     pdfium::span<v8::Local<v8::Value>> values);
-v8::Local<v8::Object> NewObjectHelper(v8::Isolate* pIsolate);
-v8::Local<v8::Date> NewDateHelper(v8::Isolate* pIsolate, double d);
+v8::Local<v8::Object> NewObjectHelper(v8::Isolate* isolate);
+v8::Local<v8::Date> NewDateHelper(v8::Isolate* isolate, double d);
 
 // Conversion to PDFium type without re-entry from known v8 type.
-WideString ToWideString(v8::Isolate* pIsolate, v8::Local<v8::String> pValue);
-ByteString ToByteString(v8::Isolate* pIsolate, v8::Local<v8::String> pValue);
+WideString ToWideString(v8::Isolate* isolate, v8::Local<v8::String> value);
+ByteString ToByteString(v8::Isolate* isolate, v8::Local<v8::String> value);
 
 // Conversion to PDFium type with possible re-entry for coercion.
-int32_t ReentrantToInt32Helper(v8::Isolate* pIsolate,
-                               v8::Local<v8::Value> pValue);
-bool ReentrantToBooleanHelper(v8::Isolate* pIsolate,
-                              v8::Local<v8::Value> pValue);
-float ReentrantToFloatHelper(v8::Isolate* pIsolate,
-                             v8::Local<v8::Value> pValue);
-double ReentrantToDoubleHelper(v8::Isolate* pIsolate,
-                               v8::Local<v8::Value> pValue);
-WideString ReentrantToWideStringHelper(v8::Isolate* pIsolate,
-                                       v8::Local<v8::Value> pValue);
-ByteString ReentrantToByteStringHelper(v8::Isolate* pIsolate,
-                                       v8::Local<v8::Value> pValue);
-v8::Local<v8::Object> ReentrantToObjectHelper(v8::Isolate* pIsolate,
-                                              v8::Local<v8::Value> pValue);
-v8::Local<v8::Array> ReentrantToArrayHelper(v8::Isolate* pIsolate,
-                                            v8::Local<v8::Value> pValue);
+int32_t ReentrantToInt32Helper(v8::Isolate* isolate,
+                               v8::Local<v8::Value> value);
+bool ReentrantToBooleanHelper(v8::Isolate* isolate, v8::Local<v8::Value> value);
+float ReentrantToFloatHelper(v8::Isolate* isolate, v8::Local<v8::Value> value);
+double ReentrantToDoubleHelper(v8::Isolate* isolate,
+                               v8::Local<v8::Value> value);
+WideString ReentrantToWideStringHelper(v8::Isolate* isolate,
+                                       v8::Local<v8::Value> value);
+ByteString ReentrantToByteStringHelper(v8::Isolate* isolate,
+                                       v8::Local<v8::Value> value);
+v8::Local<v8::Object> ReentrantToObjectHelper(v8::Isolate* isolate,
+                                              v8::Local<v8::Value> value);
+v8::Local<v8::Array> ReentrantToArrayHelper(v8::Isolate* isolate,
+                                            v8::Local<v8::Value> value);
 
 v8::Local<v8::Value> ReentrantGetObjectPropertyHelper(
-    v8::Isolate* pIsolate,
-    v8::Local<v8::Object> pObj,
+    v8::Isolate* isolate,
+    v8::Local<v8::Object> obj,
     ByteStringView bsUTF8PropertyName);
 std::vector<WideString> ReentrantGetObjectPropertyNamesHelper(
-    v8::Isolate* pIsolate,
-    v8::Local<v8::Object> pObj);
-bool ReentrantHasObjectOwnPropertyHelper(v8::Isolate* pIsolate,
-                                         v8::Local<v8::Object> pObj,
+    v8::Isolate* isolate,
+    v8::Local<v8::Object> obj);
+bool ReentrantHasObjectOwnPropertyHelper(v8::Isolate* isolate,
+                                         v8::Local<v8::Object> obj,
                                          ByteStringView bsUTF8PropertyName);
-bool ReentrantSetObjectOwnPropertyHelper(v8::Isolate* pIsolate,
-                                         v8::Local<v8::Object> pObj,
+bool ReentrantSetObjectOwnPropertyHelper(v8::Isolate* isolate,
+                                         v8::Local<v8::Object> obj,
                                          ByteStringView bsUTF8PropertyName,
-                                         v8::Local<v8::Value> pValue);
-bool ReentrantPutObjectPropertyHelper(v8::Isolate* pIsolate,
-                                      v8::Local<v8::Object> pObj,
+                                         v8::Local<v8::Value> value);
+bool ReentrantPutObjectPropertyHelper(v8::Isolate* isolate,
+                                      v8::Local<v8::Object> obj,
                                       ByteStringView bsUTF8PropertyName,
                                       v8::Local<v8::Value> pPut);
-void ReentrantDeleteObjectPropertyHelper(v8::Isolate* pIsolate,
-                                         v8::Local<v8::Object> pObj,
+void ReentrantDeleteObjectPropertyHelper(v8::Isolate* isolate,
+                                         v8::Local<v8::Object> obj,
                                          ByteStringView bsUTF8PropertyName);
 
-bool ReentrantPutArrayElementHelper(v8::Isolate* pIsolate,
-                                    v8::Local<v8::Array> pArray,
+bool ReentrantPutArrayElementHelper(v8::Isolate* isolate,
+                                    v8::Local<v8::Array> array,
                                     size_t index,
-                                    v8::Local<v8::Value> pValue);
-v8::Local<v8::Value> ReentrantGetArrayElementHelper(v8::Isolate* pIsolate,
-                                                    v8::Local<v8::Array> pArray,
+                                    v8::Local<v8::Value> value);
+v8::Local<v8::Value> ReentrantGetArrayElementHelper(v8::Isolate* isolate,
+                                                    v8::Local<v8::Array> array,
                                                     size_t index);
-size_t GetArrayLengthHelper(v8::Local<v8::Array> pArray);
+size_t GetArrayLengthHelper(v8::Local<v8::Array> array);
 
-void ThrowExceptionHelper(v8::Isolate* pIsolate, ByteStringView str);
-void ThrowExceptionHelper(v8::Isolate* pIsolate, WideStringView str);
+void ThrowExceptionHelper(v8::Isolate* isolate, ByteStringView str);
+void ThrowExceptionHelper(v8::Isolate* isolate, WideStringView str);
 
 }  // namespace fxv8
 

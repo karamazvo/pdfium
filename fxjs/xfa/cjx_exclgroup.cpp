@@ -120,8 +120,8 @@ CJS_Result CJX_ExclGroup::selectedMember(
   return CJS_Result::Success(runtime->GetOrCreateJSBindingFromMap(pReturnNode));
 }
 
-void CJX_ExclGroup::defaultValue(v8::Isolate* pIsolate,
-                                 v8::Local<v8::Value>* pValue,
+void CJX_ExclGroup::defaultValue(v8::Isolate* isolate,
+                                 v8::Local<v8::Value>* value,
                                  bool bSetting,
                                  XFA_Attribute eAttribute) {
   CXFA_Node* node = GetXFANode();
@@ -131,37 +131,37 @@ void CJX_ExclGroup::defaultValue(v8::Isolate* pIsolate,
 
   if (bSetting) {
     node->SetSelectedMemberByValue(
-        fxv8::ReentrantToWideStringHelper(pIsolate, *pValue).AsStringView(),
-        true, true, true);
+        fxv8::ReentrantToWideStringHelper(isolate, *value).AsStringView(), true,
+        true, true);
     return;
   }
 
   WideString wsValue = GetContent(true);
   XFA_VERSION curVersion = GetDocument()->GetCurVersionMode();
   if (wsValue.IsEmpty() && curVersion >= XFA_VERSION_300) {
-    *pValue = fxv8::NewNullHelper(pIsolate);
+    *value = fxv8::NewNullHelper(isolate);
     return;
   }
-  *pValue = fxv8::NewStringHelper(pIsolate, wsValue.ToUTF8().AsStringView());
+  *value = fxv8::NewStringHelper(isolate, wsValue.ToUTF8().AsStringView());
 }
 
-void CJX_ExclGroup::rawValue(v8::Isolate* pIsolate,
-                             v8::Local<v8::Value>* pValue,
+void CJX_ExclGroup::rawValue(v8::Isolate* isolate,
+                             v8::Local<v8::Value>* value,
                              bool bSetting,
                              XFA_Attribute eAttribute) {
-  defaultValue(pIsolate, pValue, bSetting, eAttribute);
+  defaultValue(isolate, value, bSetting, eAttribute);
 }
 
-void CJX_ExclGroup::transient(v8::Isolate* pIsolate,
-                              v8::Local<v8::Value>* pValue,
+void CJX_ExclGroup::transient(v8::Isolate* isolate,
+                              v8::Local<v8::Value>* value,
                               bool bSetting,
                               XFA_Attribute eAttribute) {}
 
-void CJX_ExclGroup::errorText(v8::Isolate* pIsolate,
-                              v8::Local<v8::Value>* pValue,
+void CJX_ExclGroup::errorText(v8::Isolate* isolate,
+                              v8::Local<v8::Value>* value,
                               bool bSetting,
                               XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException(pIsolate);
+    ThrowInvalidPropertyException(isolate);
   }
 }

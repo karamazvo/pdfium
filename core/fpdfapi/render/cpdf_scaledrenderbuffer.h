@@ -24,7 +24,7 @@ class CPDF_ScaledRenderBuffer {
   ~CPDF_ScaledRenderBuffer();
 
   bool Initialize(CPDF_RenderContext* pContext,
-                  const CPDF_PageObject* pObj,
+                  const CPDF_PageObject* obj,
                   const CPDF_RenderOptions& options,
                   int max_dpi);
 

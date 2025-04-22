@@ -69,12 +69,12 @@ CJS_Result CJX_Tree::resolveNode(CFXJSE_Engine* runtime,
     return CJS_Result::Success(runtime->NewNull());
   }
 
-  v8::Local<v8::Value> pValue;
+  v8::Local<v8::Value> value;
   CJX_Object* jsObject = maybeResult.value().objects.front()->JSObject();
   (*maybeResult.value().script_attribute.callback)(
-      runtime->GetIsolate(), jsObject, &pValue, false,
+      runtime->GetIsolate(), jsObject, &value, false,
       maybeResult.value().script_attribute.attribute);
-  return CJS_Result::Success(pValue);
+  return CJS_Result::Success(value);
 }
 
 CJS_Result CJX_Tree::resolveNodes(CFXJSE_Engine* runtime,
@@ -97,41 +97,41 @@ CJS_Result CJX_Tree::resolveNodes(CFXJSE_Engine* runtime,
                                              kFlags, ToNode(refNode)));
 }
 
-void CJX_Tree::all(v8::Isolate* pIsolate,
-                   v8::Local<v8::Value>* pValue,
+void CJX_Tree::all(v8::Isolate* isolate,
+                   v8::Local<v8::Value>* value,
                    bool bSetting,
                    XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException(pIsolate);
+    ThrowInvalidPropertyException(isolate);
     return;
   }
   const Mask<XFA_ResolveFlag> kFlags = {XFA_ResolveFlag::kSiblings,
                                         XFA_ResolveFlag::kALL};
   WideString wsExpression = GetAttributeByEnum(XFA_Attribute::Name) + L"[*]";
-  *pValue = ResolveNodeList(pIsolate, wsExpression, kFlags, nullptr);
+  *value = ResolveNodeList(isolate, wsExpression, kFlags, nullptr);
 }
 
-void CJX_Tree::classAll(v8::Isolate* pIsolate,
-                        v8::Local<v8::Value>* pValue,
+void CJX_Tree::classAll(v8::Isolate* isolate,
+                        v8::Local<v8::Value>* value,
                         bool bSetting,
                         XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException(pIsolate);
+    ThrowInvalidPropertyException(isolate);
     return;
   }
   const Mask<XFA_ResolveFlag> kFlags = {XFA_ResolveFlag::kSiblings,
                                         XFA_ResolveFlag::kALL};
   WideString wsExpression =
       L"#" + WideString::FromASCII(GetXFAObject()->GetClassName()) + L"[*]";
-  *pValue = ResolveNodeList(pIsolate, wsExpression, kFlags, nullptr);
+  *value = ResolveNodeList(isolate, wsExpression, kFlags, nullptr);
 }
 
-void CJX_Tree::nodes(v8::Isolate* pIsolate,
-                     v8::Local<v8::Value>* pValue,
+void CJX_Tree::nodes(v8::Isolate* isolate,
+                     v8::Local<v8::Value>* value,
                      bool bSetting,
                      XFA_Attribute eAttribute) {
   if (bSetting) {
-    FXJSE_ThrowMessage(pIsolate, "Unable to set ");
+    FXJSE_ThrowMessage(isolate, "Unable to set ");
     return;
   }
 
@@ -141,71 +141,71 @@ void CJX_Tree::nodes(v8::Isolate* pIsolate,
   pDoc->GetNodeOwner()->PersistList(pNodeList);
 
   CFXJSE_Engine* pEngine = pDoc->GetScriptContext();
-  *pValue = pNodeList->JSObject()->NewBoundV8Object(
-      pIsolate, pEngine->GetJseNormalClass()->GetTemplate(pIsolate));
+  *value = pNodeList->JSObject()->NewBoundV8Object(
+      isolate, pEngine->GetJseNormalClass()->GetTemplate(isolate));
 }
 
-void CJX_Tree::parent(v8::Isolate* pIsolate,
-                      v8::Local<v8::Value>* pValue,
+void CJX_Tree::parent(v8::Isolate* isolate,
+                      v8::Local<v8::Value>* value,
                       bool bSetting,
                       XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException(pIsolate);
+    ThrowInvalidPropertyException(isolate);
     return;
   }
 
   CXFA_Node* pParent = GetXFANode()->GetParent();
-  *pValue = pParent ? GetDocument()
-                          ->GetScriptContext()
-                          ->GetOrCreateJSBindingFromMap(pParent)
-                          .As<v8::Value>()
-                    : fxv8::NewNullHelper(pIsolate).As<v8::Value>();
+  *value = pParent ? GetDocument()
+                         ->GetScriptContext()
+                         ->GetOrCreateJSBindingFromMap(pParent)
+                         .As<v8::Value>()
+                   : fxv8::NewNullHelper(isolate).As<v8::Value>();
 }
 
-void CJX_Tree::index(v8::Isolate* pIsolate,
-                     v8::Local<v8::Value>* pValue,
+void CJX_Tree::index(v8::Isolate* isolate,
+                     v8::Local<v8::Value>* value,
                      bool bSetting,
                      XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException(pIsolate);
+    ThrowInvalidPropertyException(isolate);
     return;
   }
 
   CXFA_Node* pNode = GetXFANode();
   size_t iIndex = pNode ? pNode->GetIndexByName() : 0;
-  *pValue =
-      fxv8::NewNumberHelper(pIsolate, pdfium::checked_cast<int32_t>(iIndex));
+  *value =
+      fxv8::NewNumberHelper(isolate, pdfium::checked_cast<int32_t>(iIndex));
 }
 
-void CJX_Tree::classIndex(v8::Isolate* pIsolate,
-                          v8::Local<v8::Value>* pValue,
+void CJX_Tree::classIndex(v8::Isolate* isolate,
+                          v8::Local<v8::Value>* value,
                           bool bSetting,
                           XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException(pIsolate);
+    ThrowInvalidPropertyException(isolate);
     return;
   }
 
   CXFA_Node* pNode = GetXFANode();
   size_t iIndex = pNode ? pNode->GetIndexByClassName() : 0;
-  *pValue =
-      fxv8::NewNumberHelper(pIsolate, pdfium::checked_cast<int32_t>(iIndex));
+  *value =
+      fxv8::NewNumberHelper(isolate, pdfium::checked_cast<int32_t>(iIndex));
 }
 
-void CJX_Tree::somExpression(v8::Isolate* pIsolate,
-                             v8::Local<v8::Value>* pValue,
+void CJX_Tree::somExpression(v8::Isolate* isolate,
+                             v8::Local<v8::Value>* value,
                              bool bSetting,
                              XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException(pIsolate);
+    ThrowInvalidPropertyException(isolate);
     return;
   }
 
   ByteString bsSOMExpression = GetXFAObject()->GetSOMExpression().ToUTF8();
-  *pValue = fxv8::NewStringHelper(pIsolate, bsSOMExpression.AsStringView());
+  *value = fxv8::NewStringHelper(isolate, bsSOMExpression.AsStringView());
 }
 
-v8::Local<v8::Value> CJX_Tree::ResolveNodeList(v8::Isolate* pIsolate,
+v8::Local<v8::Value> CJX_Tree::ResolveNodeList(v8::Isolate* isolate,
                                                WideString wsExpression,
                                                Mask<XFA_ResolveFlag> dwFlag,
                                                CXFA_Node* refNode) {
@@ -239,7 +239,7 @@ v8::Local<v8::Value> CJX_Tree::ResolveNodeList(v8::Isolate* pIsolate,
           v8::Local<v8::Value> innerValue;
           CJX_Object* jsObject = pObject->JSObject();
           (*maybeResult.value().script_attribute.callback)(
-              pIsolate, jsObject, &innerValue, false,
+              isolate, jsObject, &innerValue, false,
               maybeResult.value().script_attribute.attribute);
           CXFA_Object* obj =
               CFXJSE_Engine::ToObject(pScriptContext->GetIsolate(), innerValue);
@@ -251,5 +251,5 @@ v8::Local<v8::Value> CJX_Tree::ResolveNodeList(v8::Isolate* pIsolate,
     }
   }
   return pNodeList->JSObject()->NewBoundV8Object(
-      pIsolate, pScriptContext->GetJseNormalClass()->GetTemplate(pIsolate));
+      isolate, pScriptContext->GetJseNormalClass()->GetTemplate(isolate));
 }

@@ -88,12 +88,12 @@ CJS_Result CJX_Model::isCompatibleNS(
       runtime->NewBoolean(TryNamespace().value_or(WideString()) == nameSpace));
 }
 
-void CJX_Model::context(v8::Isolate* pIsolate,
-                        v8::Local<v8::Value>* pValue,
+void CJX_Model::context(v8::Isolate* isolate,
+                        v8::Local<v8::Value>* value,
                         bool bSetting,
                         XFA_Attribute eAttribute) {}
 
-void CJX_Model::aliasNode(v8::Isolate* pIsolate,
-                          v8::Local<v8::Value>* pValue,
+void CJX_Model::aliasNode(v8::Isolate* isolate,
+                          v8::Local<v8::Value>* value,
                           bool bSetting,
                           XFA_Attribute eAttribute) {}

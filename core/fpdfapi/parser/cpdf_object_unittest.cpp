@@ -865,14 +865,14 @@ TEST(PDFArrayTest, CloneDirectObject) {
 TEST(PDFArrayTest, ConvertIndirect) {
   CPDF_IndirectObjectHolder objects_holder;
   auto array = pdfium::MakeRetain<CPDF_Array>();
-  auto pObj = array->AppendNew<CPDF_Number>(42);
+  auto obj = array->AppendNew<CPDF_Number>(42);
   array->ConvertToIndirectObjectAt(0, &objects_holder);
   RetainPtr<const CPDF_Object> pRef = array->GetObjectAt(0);
   RetainPtr<const CPDF_Object> pNum = array->GetDirectObjectAt(0);
   EXPECT_TRUE(pRef->IsReference());
   EXPECT_TRUE(pNum->IsNumber());
-  EXPECT_NE(pObj, pRef);
-  EXPECT_EQ(pObj, pNum);
+  EXPECT_NE(obj, pRef);
+  EXPECT_EQ(obj, pNum);
   EXPECT_EQ(42, array->GetIntegerAt(0));
 }
 
@@ -1016,22 +1016,22 @@ TEST(PDFObjectTest, CloneCheckLoop) {
 TEST(PDFDictionaryTest, ConvertIndirect) {
   CPDF_IndirectObjectHolder objects_holder;
   auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
-  auto pObj = dict->SetNewFor<CPDF_Number>("clams", 42);
+  auto obj = dict->SetNewFor<CPDF_Number>("clams", 42);
   dict->ConvertToIndirectObjectFor("clams", &objects_holder);
   RetainPtr<const CPDF_Object> pRef = dict->GetObjectFor("clams");
   RetainPtr<const CPDF_Object> pNum = dict->GetDirectObjectFor("clams");
   EXPECT_TRUE(pRef->IsReference());
   EXPECT_TRUE(pNum->IsNumber());
-  EXPECT_NE(pObj, pRef);
-  EXPECT_EQ(pObj, pNum);
+  EXPECT_NE(obj, pRef);
+  EXPECT_EQ(obj, pNum);
   EXPECT_EQ(42, dict->GetIntegerFor("clams"));
 }
 
 TEST(PDFDictionaryTest, ExtractObjectOnRemove) {
   auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
-  auto pObj = dict->SetNewFor<CPDF_Number>("child", 42);
+  auto obj = dict->SetNewFor<CPDF_Number>("child", 42);
   auto extracted_object = dict->RemoveFor("child");
-  EXPECT_EQ(pObj, extracted_object.Get());
+  EXPECT_EQ(obj, extracted_object.Get());
 
   extracted_object = dict->RemoveFor("non_exists_object");
   EXPECT_FALSE(extracted_object);

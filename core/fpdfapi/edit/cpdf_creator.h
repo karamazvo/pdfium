@@ -68,7 +68,7 @@ class CPDF_Creator {
   bool WriteOldIndirectObject(uint32_t objnum);
   bool WriteOldObjs();
   bool WriteNewObjs();
-  bool WriteIndirectObj(uint32_t objnum, const CPDF_Object* pObj);
+  bool WriteIndirectObj(uint32_t objnum, const CPDF_Object* obj);
 
   CPDF_CryptoHandler* GetCryptoHandler();
 

@@ -61,7 +61,7 @@ class CPDF_ContentParser {
   Stage CheckClip();
 
   void HandlePageContentStream(const CPDF_Stream* pStream);
-  bool HandlePageContentArray(const CPDF_Array* pArray);
+  bool HandlePageContentArray(const CPDF_Array* array);
   void HandlePageContentFailure();
 
   bool is_owned() const {

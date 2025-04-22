@@ -31,7 +31,7 @@ class V8TestEnvironment : public testing::Environment {
   // Note: GetInstance() does not create one if it does not exist,
   // so the main program must explicitly add this enviroment.
   static V8TestEnvironment* GetInstance();
-  static void PumpPlatformMessageLoop(v8::Isolate* pIsolate);
+  static void PumpPlatformMessageLoop(v8::Isolate* isolate);
 
   // testing::Environment:
   void SetUp() override;

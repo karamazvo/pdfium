@@ -587,16 +587,16 @@ RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
                                            CPDF_String::DataType::kIsHex);
   }
   if (word == "[") {
-    auto pArray = pdfium::MakeRetain<CPDF_Array>();
-    while (RetainPtr<CPDF_Object> pObj =
+    auto array = pdfium::MakeRetain<CPDF_Array>();
+    while (RetainPtr<CPDF_Object> obj =
                GetObjectBodyInternal(pObjList, ParseType::kLoose)) {
-      // `pObj` cannot be a stream, per ISO 32000-1:2008 section 7.3.8.1.
-      if (!pObj->IsStream()) {
-        pArray->Append(std::move(pObj));
+      // `obj` cannot be a stream, per ISO 32000-1:2008 section 7.3.8.1.
+      if (!obj->IsStream()) {
+        array->Append(std::move(obj));
       }
     }
     return (parse_type == ParseType::kLoose || word_buffer_[0] == ']')
-               ? std::move(pArray)
+               ? std::move(array)
                : nullptr;
   }
   if (word[0] == '/') {
@@ -632,9 +632,9 @@ RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
         continue;
       }
 
-      RetainPtr<CPDF_Object> pObj =
+      RetainPtr<CPDF_Object> obj =
           GetObjectBodyInternal(pObjList, ParseType::kLoose);
-      if (!pObj) {
+      if (!obj) {
         if (parse_type == ParseType::kLoose) {
           continue;
         }
@@ -644,9 +644,9 @@ RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
       }
 
       // `key` has to be "/X" at the minimum.
-      // `pObj` cannot be a stream, per ISO 32000-1:2008 section 7.3.8.1.
-      if (key.GetLength() > 1 && !pObj->IsStream()) {
-        pDict->SetFor(key.Substr(1), std::move(pObj));
+      // `obj` cannot be a stream, per ISO 32000-1:2008 section 7.3.8.1.
+      if (key.GetLength() > 1 && !obj->IsStream()) {
+        pDict->SetFor(key.Substr(1), std::move(obj));
       }
     }
 
@@ -690,13 +690,13 @@ RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetIndirectObject(
     return nullptr;
   }
 
-  RetainPtr<CPDF_Object> pObj = GetObjectBodyInternal(pObjList, parse_type);
-  if (pObj) {
-    pObj->SetObjNum(parser_objnum);
-    pObj->SetGenNum(parser_gennum);
+  RetainPtr<CPDF_Object> obj = GetObjectBodyInternal(pObjList, parse_type);
+  if (obj) {
+    obj->SetObjNum(parser_objnum);
+    obj->SetGenNum(parser_gennum);
   }
 
-  return GetValidator()->has_read_problems() ? nullptr : pObj;
+  return GetValidator()->has_read_problems() ? nullptr : obj;
 }
 
 unsigned int CPDF_SyntaxParser::ReadEOLMarkers(FX_FILESIZE pos) {

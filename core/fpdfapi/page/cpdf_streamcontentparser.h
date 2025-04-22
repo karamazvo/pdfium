@@ -80,7 +80,7 @@ class CPDF_StreamContentParser {
 
   void AddNameParam(ByteStringView bsName);
   void AddNumberParam(ByteStringView str);
-  void AddObjectParam(RetainPtr<CPDF_Object> pObj);
+  void AddObjectParam(RetainPtr<CPDF_Object> obj);
   int GetNextParamPos();
   void ClearAllParams();
   RetainPtr<CPDF_Object> GetObject(uint32_t index);
@@ -118,7 +118,7 @@ class CPDF_StreamContentParser {
   CPDF_ImageObject* AddLastImage();
 
   void AddForm(RetainPtr<CPDF_Stream> pStream, const ByteString& name);
-  void SetGraphicStates(CPDF_PageObject* pObj,
+  void SetGraphicStates(CPDF_PageObject* obj,
                         bool bColor,
                         bool bText,
                         bool bGraph);

@@ -66,13 +66,13 @@ class CPDF_Annot {
 
   static Subtype StringToAnnotSubtype(const ByteString& sSubtype);
   static ByteString AnnotSubtypeToString(Subtype nSubtype);
-  static CFX_FloatRect RectFromQuadPointsArray(const CPDF_Array* pArray,
+  static CFX_FloatRect RectFromQuadPointsArray(const CPDF_Array* array,
                                                size_t nIndex);
   static CFX_FloatRect BoundingRectFromQuadPoints(
       const CPDF_Dictionary* pAnnotDict);
   static CFX_FloatRect RectFromQuadPoints(const CPDF_Dictionary* pAnnotDict,
                                           size_t nIndex);
-  static size_t QuadPointCount(const CPDF_Array* pArray);
+  static size_t QuadPointCount(const CPDF_Array* array);
 
   CPDF_Annot(RetainPtr<CPDF_Dictionary> pDict, CPDF_Document* pDocument);
   ~CPDF_Annot();

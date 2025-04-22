@@ -25,7 +25,7 @@ class CPDF_AllStates {
 
   void ProcessExtGS(const CPDF_Dictionary* pGS,
                     CPDF_StreamContentParser* pParser);
-  void SetLineDash(const CPDF_Array* pArray, float phase);
+  void SetLineDash(const CPDF_Array* array, float phase);
 
   CFX_PointF GetTransformedTextPosition() const;
   void ResetTextPosition();

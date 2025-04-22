@@ -355,28 +355,28 @@ RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetColorSpaceInternal(
                                  pVisitedInternal);
   }
 
-  RetainPtr<const CPDF_Array> pArray(pCSObj->AsArray());
-  if (!pArray || pArray->IsEmpty()) {
+  RetainPtr<const CPDF_Array> array(pCSObj->AsArray());
+  if (!array || array->IsEmpty()) {
     return nullptr;
   }
 
-  if (pArray->size() == 1) {
-    return GetColorSpaceInternal(pArray->GetDirectObjectAt(0).Get(), pResources,
+  if (array->size() == 1) {
+    return GetColorSpaceInternal(array->GetDirectObjectAt(0).Get(), pResources,
                                  pVisited, pVisitedInternal);
   }
 
-  auto it = color_space_map_.find(pArray);
+  auto it = color_space_map_.find(array);
   if (it != color_space_map_.end() && it->second) {
     return pdfium::WrapRetain(it->second.Get());
   }
 
   RetainPtr<CPDF_ColorSpace> pCS =
-      CPDF_ColorSpace::Load(GetDocument(), pArray.Get(), pVisited);
+      CPDF_ColorSpace::Load(GetDocument(), array.Get(), pVisited);
   if (!pCS) {
     return nullptr;
   }
 
-  color_space_map_[std::move(pArray)].Reset(pCS.Get());
+  color_space_map_[std::move(array)].Reset(pCS.Get());
   return pCS;
 }
 
@@ -733,13 +733,13 @@ size_t CPDF_DocPageData::CalculateEncodingDict(FX_Charset charset,
   pEncodingDict->SetNewFor<CPDF_Name>("BaseEncoding",
                                       pdfium::font_encodings::kWinAnsiEncoding);
 
-  auto pArray = pEncodingDict->SetNewFor<CPDF_Array>("Differences");
-  pArray->AppendNew<CPDF_Number>(128);
+  auto array = pEncodingDict->SetNewFor<CPDF_Array>("Differences");
+  array->AppendNew<CPDF_Number>(128);
 
   pdfium::span<const uint16_t> pUnicodes = kFX_CharsetUnicodes[i].unicodes_;
   for (int j = 0; j < 128; j++) {
     ByteString name = AdobeNameFromUnicode(pUnicodes[j]);
-    pArray->AppendNew<CPDF_Name>(name.IsEmpty() ? ".notdef" : name);
+    array->AppendNew<CPDF_Name>(name.IsEmpty() ? ".notdef" : name);
   }
   pBaseDict->SetNewFor<CPDF_Reference>("Encoding", GetDocument(),
                                        pEncodingDict->GetObjNum());
@@ -808,7 +808,7 @@ RetainPtr<CPDF_Dictionary> CPDF_DocPageData::ProcessbCJK(
   pCIDSysInfo->SetNewFor<CPDF_String>("Ordering", ordering);
   pCIDSysInfo->SetNewFor<CPDF_Number>("Supplement", supplement);
 
-  auto pArray = pBaseDict->SetNewFor<CPDF_Array>("DescendantFonts");
-  pArray->AppendNew<CPDF_Reference>(GetDocument(), pFontDict->GetObjNum());
+  auto array = pBaseDict->SetNewFor<CPDF_Array>("DescendantFonts");
+  array->AppendNew<CPDF_Reference>(GetDocument(), pFontDict->GetObjNum());
   return pFontDict;
 }

@@ -16,7 +16,7 @@ bool CJX_Handler::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
 }
 
-void CJX_Handler::version(v8::Isolate* pIsolate,
-                          v8::Local<v8::Value>* pValue,
+void CJX_Handler::version(v8::Isolate* isolate,
+                          v8::Local<v8::Value>* value,
                           bool bSetting,
                           XFA_Attribute eAttribute) {}

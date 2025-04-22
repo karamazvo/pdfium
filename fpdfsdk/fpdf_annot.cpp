@@ -508,8 +508,8 @@ FPDFAnnot_IsObjectSupportedSubtype(FPDF_ANNOTATION_SUBTYPE subtype) {
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFAnnot_UpdateObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj) {
   CPDF_AnnotContext* pAnnot = CPDFAnnotContextFromFPDFAnnotation(annot);
-  CPDF_PageObject* pObj = CPDFPageObjectFromFPDFPageObject(obj);
-  if (!pAnnot || !pAnnot->HasForm() || !pObj) {
+  CPDF_PageObject* obj = CPDFPageObjectFromFPDFPageObject(obj);
+  if (!pAnnot || !pAnnot->HasForm() || !obj) {
     return false;
   }
 
@@ -529,7 +529,7 @@ FPDFAnnot_UpdateObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj) {
 
   // Check that the object is already in this annotation's object list.
   CPDF_Form* pForm = pAnnot->GetForm();
-  if (!pdfium::Contains(*pForm, fxcrt::MakeFakeUniquePtr(pObj))) {
+  if (!pdfium::Contains(*pForm, fxcrt::MakeFakeUniquePtr(obj))) {
     return false;
   }
 
@@ -581,8 +581,8 @@ FPDFAnnot_RemoveInkList(FPDF_ANNOTATION annot) {
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFAnnot_AppendObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj) {
   CPDF_AnnotContext* pAnnot = CPDFAnnotContextFromFPDFAnnotation(annot);
-  CPDF_PageObject* pObj = CPDFPageObjectFromFPDFPageObject(obj);
-  if (!pAnnot || !pObj) {
+  CPDF_PageObject* obj = CPDFPageObjectFromFPDFPageObject(obj);
+  if (!pAnnot || !obj) {
     return false;
   }
 
@@ -615,12 +615,12 @@ FPDFAnnot_AppendObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj) {
   // Note that an object that came from a different annotation must not be
   // passed here, since an object cannot belong to more than one annotation.
   CPDF_Form* pForm = pAnnot->GetForm();
-  if (pdfium::Contains(*pForm, fxcrt::MakeFakeUniquePtr(pObj))) {
+  if (pdfium::Contains(*pForm, fxcrt::MakeFakeUniquePtr(obj))) {
     return false;
   }
 
   // Append the object to the object list.
-  pForm->AppendPageObject(pdfium::WrapUnique(pObj));
+  pForm->AppendPageObject(pdfium::WrapUnique(obj));
 
   // Set the content stream data in the annotation's AP stream.
   UpdateContentStream(pForm, pStream.Get());
@@ -861,9 +861,9 @@ FPDFAnnot_CountAttachmentPoints(FPDF_ANNOTATION annot) {
 
   const CPDF_Dictionary* pAnnotDict =
       CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict();
-  RetainPtr<const CPDF_Array> pArray =
+  RetainPtr<const CPDF_Array> array =
       GetQuadPointsArrayFromDictionary(pAnnotDict);
-  return pArray ? pArray->size() / 8 : 0;
+  return array ? array->size() / 8 : 0;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -876,13 +876,13 @@ FPDFAnnot_GetAttachmentPoints(FPDF_ANNOTATION annot,
 
   const CPDF_Dictionary* pAnnotDict =
       CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict();
-  RetainPtr<const CPDF_Array> pArray =
+  RetainPtr<const CPDF_Array> array =
       GetQuadPointsArrayFromDictionary(pAnnotDict);
-  if (!pArray) {
+  if (!array) {
     return false;
   }
 
-  return GetQuadPointsAtIndex(std::move(pArray), quad_index, quad_points);
+  return GetQuadPointsAtIndex(std::move(array), quad_index, quad_points);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetRect(FPDF_ANNOTATION annot,
@@ -1086,8 +1086,8 @@ FPDFAnnot_GetValueType(FPDF_ANNOTATION annot, FPDF_BYTESTRING key) {
   }
 
   const CPDF_AnnotContext* pAnnot = CPDFAnnotContextFromFPDFAnnotation(annot);
-  RetainPtr<const CPDF_Object> pObj = pAnnot->GetAnnotDict()->GetObjectFor(key);
-  return pObj ? pObj->GetType() : FPDF_OBJECT_UNKNOWN;
+  RetainPtr<const CPDF_Object> obj = pAnnot->GetAnnotDict()->GetObjectFor(key);
+  return obj ? obj->GetType() : FPDF_OBJECT_UNKNOWN;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV

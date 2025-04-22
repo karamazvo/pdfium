@@ -34,7 +34,7 @@ class TRIVIAL_ABI RetainPtr {
   // NOLINTNEXTLINE(runtime/explicit)
   RetainPtr(std::nullptr_t ptr) {}
 
-  explicit RetainPtr(T* pObj) noexcept : obj_(pObj) {
+  explicit RetainPtr(T* obj) noexcept : obj_(obj) {
     if (obj_) {
       obj_->Retain();
     }

@@ -74,12 +74,12 @@ CPDFSDK_Annot* CPDFSDK_AnnotIterator::GetPrevAnnot(CPDFSDK_Annot* pAnnot) {
 }
 
 void CPDFSDK_AnnotIterator::CollectAnnots(
-    std::vector<UnownedPtr<CPDFSDK_Annot>>* pArray) {
+    std::vector<UnownedPtr<CPDFSDK_Annot>>* array) {
   for (auto* pAnnot : page_view_->GetAnnotList()) {
     if (pdfium::Contains(subtypes_, pAnnot->GetAnnotSubtype())) {
       CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
       if (!pWidget || !pWidget->IsSignatureWidget()) {
-        pArray->emplace_back(pAnnot);
+        array->emplace_back(pAnnot);
       }
     }
   }

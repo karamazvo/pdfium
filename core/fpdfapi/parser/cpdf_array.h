@@ -159,9 +159,9 @@ class CPDF_Array final : public CPDF_Object {
   // No guarantees about result lifetime, use with caution.
   const CPDF_Object* GetObjectAtInternal(size_t index) const;
   CPDF_Object* GetMutableObjectAtInternal(size_t index);
-  CPDF_Object* AppendInternal(RetainPtr<CPDF_Object> pObj);
-  CPDF_Object* SetAtInternal(size_t index, RetainPtr<CPDF_Object> pObj);
-  CPDF_Object* InsertAtInternal(size_t index, RetainPtr<CPDF_Object> pObj);
+  CPDF_Object* AppendInternal(RetainPtr<CPDF_Object> obj);
+  CPDF_Object* SetAtInternal(size_t index, RetainPtr<CPDF_Object> obj);
+  CPDF_Object* InsertAtInternal(size_t index, RetainPtr<CPDF_Object> obj);
 
   RetainPtr<CPDF_Object> CloneNonCyclic(
       bool bDirect,
@@ -177,9 +177,9 @@ class CPDF_ArrayLocker {
   FX_STACK_ALLOCATED();
   using const_iterator = CPDF_Array::const_iterator;
 
-  explicit CPDF_ArrayLocker(const CPDF_Array* pArray);
-  explicit CPDF_ArrayLocker(RetainPtr<CPDF_Array> pArray);
-  explicit CPDF_ArrayLocker(RetainPtr<const CPDF_Array> pArray);
+  explicit CPDF_ArrayLocker(const CPDF_Array* array);
+  explicit CPDF_ArrayLocker(RetainPtr<CPDF_Array> array);
+  explicit CPDF_ArrayLocker(RetainPtr<const CPDF_Array> array);
   ~CPDF_ArrayLocker();
 
   const_iterator begin() const {

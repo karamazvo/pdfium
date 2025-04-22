@@ -161,13 +161,13 @@ RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::FindFont(const ByteString& strPsName,
   CPDF_DictionaryLocker locker(pFontSetDict);
   for (const auto& it : locker) {
     const ByteString& key = it.first;
-    const RetainPtr<CPDF_Object>& pObj = it.second;
+    const RetainPtr<CPDF_Object>& obj = it.second;
     if (!PsNameMatchDRFontName(name.AsStringView(), bBold, bItalic, key,
                                bStrictMatch)) {
       continue;
     }
     RetainPtr<CPDF_Dictionary> pFontDict =
-        ToDictionary(pObj->GetMutableDirect());
+        ToDictionary(obj->GetMutableDirect());
     if (!ValidateDictType(pFontDict.Get(), "Font")) {
       return nullptr;
     }

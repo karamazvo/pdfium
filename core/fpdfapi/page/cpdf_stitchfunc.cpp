@@ -24,13 +24,13 @@ CPDF_StitchFunc::CPDF_StitchFunc() : CPDF_Function(Type::kType3Stitching) {}
 
 CPDF_StitchFunc::~CPDF_StitchFunc() = default;
 
-bool CPDF_StitchFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
+bool CPDF_StitchFunc::v_Init(const CPDF_Object* obj, VisitedSet* pVisited) {
   if (inputs_ != kRequiredNumInputs) {
     return false;
   }
 
-  CHECK(pObj->IsDictionary() || pObj->IsStream());
-  RetainPtr<const CPDF_Dictionary> pDict = pObj->GetDict();
+  CHECK(obj->IsDictionary() || obj->IsStream());
+  RetainPtr<const CPDF_Dictionary> pDict = obj->GetDict();
   RetainPtr<const CPDF_Array> pFunctionsArray = pDict->GetArrayFor("Functions");
   if (!pFunctionsArray) {
     return false;
@@ -74,7 +74,7 @@ bool CPDF_StitchFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
     std::optional<uint32_t> nOutputs;
     for (uint32_t i = 0; i < nSubs; ++i) {
       RetainPtr<const CPDF_Object> pSub = pFunctionsArray->GetDirectObjectAt(i);
-      if (pSub == pObj) {
+      if (pSub == obj) {
         return false;
       }
 

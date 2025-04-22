@@ -109,8 +109,8 @@ bool CPDF_StructElement::UpdateKidIfElement(const CPDF_Dictionary* pDict,
 }
 
 void CPDF_StructElement::LoadKids() {
-  RetainPtr<const CPDF_Object> pObj = dict_->GetObjectFor("Pg");
-  const CPDF_Reference* pRef = ToReference(pObj.Get());
+  RetainPtr<const CPDF_Object> obj = dict_->GetObjectFor("Pg");
+  const CPDF_Reference* pRef = ToReference(obj.Get());
   const uint32_t page_obj_num = pRef ? pRef->GetRefObjNum() : 0;
   RetainPtr<const CPDF_Object> pKids = dict_->GetDirectObjectFor("K");
   if (!pKids) {
@@ -118,10 +118,10 @@ void CPDF_StructElement::LoadKids() {
   }
 
   DCHECK(kids_.empty());
-  if (const CPDF_Array* pArray = pKids->AsArray()) {
-    kids_.resize(pArray->size());
-    for (size_t i = 0; i < pArray->size(); ++i) {
-      LoadKid(page_obj_num, pArray->GetDirectObjectAt(i), kids_[i]);
+  if (const CPDF_Array* array = pKids->AsArray()) {
+    kids_.resize(array->size());
+    for (size_t i = 0; i < array->size(); ++i) {
+      LoadKid(page_obj_num, array->GetDirectObjectAt(i), kids_[i]);
     }
     return;
   }
@@ -175,9 +175,9 @@ void CPDF_StructElement::LoadKid(uint32_t page_obj_num,
 
   if (type == "OBJR") {
     kid.type_ = Kid::kObject;
-    RetainPtr<const CPDF_Reference> pObj =
+    RetainPtr<const CPDF_Reference> obj =
         ToReference(pKidDict->GetObjectFor("Obj"));
-    kid.ref_obj_num_ = pObj ? pObj->GetRefObjNum() : 0;
+    kid.ref_obj_num_ = obj ? obj->GetRefObjNum() : 0;
     kid.page_obj_num_ = page_obj_num;
     return;
   }

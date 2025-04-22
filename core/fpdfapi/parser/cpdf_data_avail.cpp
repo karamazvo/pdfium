@@ -312,17 +312,17 @@ bool CPDF_DataAvail::CheckPage() {
   std::vector<uint32_t> UnavailObjList;
   for (uint32_t dwPageObjNum : page_obj_list_) {
     bool bExists = false;
-    RetainPtr<CPDF_Object> pObj = GetObject(dwPageObjNum, &bExists);
-    if (!pObj) {
+    RetainPtr<CPDF_Object> obj = GetObject(dwPageObjNum, &bExists);
+    if (!obj) {
       if (bExists) {
         UnavailObjList.push_back(dwPageObjNum);
       }
       continue;
     }
 
-    switch (pObj->GetType()) {
+    switch (obj->GetType()) {
       case CPDF_Object::kArray: {
-        CPDF_ArrayLocker locker(pObj->AsArray());
+        CPDF_ArrayLocker locker(obj->AsArray());
         for (const auto& pArrayObj : locker) {
           const CPDF_Reference* pRef = ToReference(pArrayObj.Get());
           if (pRef) {
@@ -332,8 +332,8 @@ bool CPDF_DataAvail::CheckPage() {
         break;
       }
       case CPDF_Object::kDictionary:
-        if (pObj->GetDict()->GetNameFor("Type") == "Pages") {
-          pages_array_.push_back(std::move(pObj));
+        if (obj->GetDict()->GetNameFor("Type") == "Pages") {
+          pages_array_.push_back(std::move(obj));
         }
         break;
       default:
@@ -571,15 +571,15 @@ bool CPDF_DataAvail::CheckArrayPageNode(uint32_t dwPageNo,
     return false;
   }
 
-  const CPDF_Array* pArray = pPages->AsArray();
-  if (!pArray) {
+  const CPDF_Array* array = pPages->AsArray();
+  if (!array) {
     internal_status_ = InternalStatus::kError;
     return false;
   }
 
   pPageNode->type_ = PageNode::Type::kPages;
-  for (size_t i = 0; i < pArray->size(); ++i) {
-    RetainPtr<const CPDF_Reference> pKid = ToReference(pArray->GetObjectAt(i));
+  for (size_t i = 0; i < array->size(); ++i) {
+    RetainPtr<const CPDF_Reference> pKid = ToReference(array->GetObjectAt(i));
     if (!pKid) {
       continue;
     }

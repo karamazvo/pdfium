@@ -55,12 +55,12 @@ class CPDF_IndirectObjectHolder {
     return pdfium::MakeRetain<T>(std::forward<Args>(args)...);
   }
 
-  // Always Retains |pObj|, returns its new object number.
-  uint32_t AddIndirectObject(RetainPtr<CPDF_Object> pObj);
+  // Always Retains |obj|, returns its new object number.
+  uint32_t AddIndirectObject(RetainPtr<CPDF_Object> obj);
 
-  // If higher generation number, retains |pObj| and returns true.
+  // If higher generation number, retains |obj| and returns true.
   bool ReplaceIndirectObjectIfHigherGeneration(uint32_t objnum,
-                                               RetainPtr<CPDF_Object> pObj);
+                                               RetainPtr<CPDF_Object> obj);
 
   uint32_t GetLastObjNum() const { return last_obj_num_; }
   void SetLastObjNum(uint32_t objnum) { last_obj_num_ = objnum; }

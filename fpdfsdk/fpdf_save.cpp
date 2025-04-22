@@ -64,16 +64,16 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
     return true;
   }
 
-  CPDF_Array* pArray = pXFA->AsMutableArray();
-  if (!pArray) {
+  CPDF_Array* array = pXFA->AsMutableArray();
+  if (!array) {
     return false;
   }
 
-  int size = fxcrt::CollectionSize<int>(*pArray);
+  int size = fxcrt::CollectionSize<int>(*array);
   int iFormIndex = -1;
   int iDataSetsIndex = -1;
   for (int i = 0; i < size - 1; i++) {
-    RetainPtr<const CPDF_Object> pPDFObj = pArray->GetObjectAt(i);
+    RetainPtr<const CPDF_Object> pPDFObj = array->GetObjectAt(i);
     if (!pPDFObj->IsString()) {
       continue;
     }
@@ -87,7 +87,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
   RetainPtr<CPDF_Stream> pFormStream;
   if (iFormIndex != -1) {
     // Get form CPDF_Stream
-    RetainPtr<CPDF_Object> pFormPDFObj = pArray->GetMutableObjectAt(iFormIndex);
+    RetainPtr<CPDF_Object> pFormPDFObj = array->GetMutableObjectAt(iFormIndex);
     if (pFormPDFObj->IsReference()) {
       RetainPtr<CPDF_Object> pFormDirectObj = pFormPDFObj->GetMutableDirect();
       if (pFormDirectObj && pFormDirectObj->IsStream()) {
@@ -102,7 +102,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
   if (iDataSetsIndex != -1) {
     // Get datasets CPDF_Stream
     RetainPtr<CPDF_Object> pDataSetsPDFObj =
-        pArray->GetMutableObjectAt(iDataSetsIndex);
+        array->GetMutableObjectAt(iDataSetsIndex);
     if (pDataSetsPDFObj->IsReference()) {
       CPDF_Reference* pDataSetsRefObj = pDataSetsPDFObj->AsMutableReference();
       RetainPtr<CPDF_Object> pDataSetsDirectObj =
@@ -127,10 +127,10 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
       } else {
         auto data_stream = pPDFDocument->NewIndirect<CPDF_Stream>(
             pFileWrite, pPDFDocument->New<CPDF_Dictionary>());
-        int iLast = fxcrt::CollectionSize<int>(*pArray) - 2;
-        pArray->InsertNewAt<CPDF_String>(iLast, "datasets");
-        pArray->InsertNewAt<CPDF_Reference>(iLast + 1, pPDFDocument,
-                                            data_stream->GetObjNum());
+        int iLast = fxcrt::CollectionSize<int>(*array) - 2;
+        array->InsertNewAt<CPDF_String>(iLast, "datasets");
+        array->InsertNewAt<CPDF_Reference>(iLast + 1, pPDFDocument,
+                                           data_stream->GetObjNum());
       }
       fileList->push_back(std::move(pFileWrite));
     }
@@ -147,10 +147,10 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
       } else {
         auto data_stream = pPDFDocument->NewIndirect<CPDF_Stream>(
             pFileWrite, pPDFDocument->New<CPDF_Dictionary>());
-        int iLast = fxcrt::CollectionSize<int>(*pArray) - 2;
-        pArray->InsertNewAt<CPDF_String>(iLast, "form");
-        pArray->InsertNewAt<CPDF_Reference>(iLast + 1, pPDFDocument,
-                                            data_stream->GetObjNum());
+        int iLast = fxcrt::CollectionSize<int>(*array) - 2;
+        array->InsertNewAt<CPDF_String>(iLast, "form");
+        array->InsertNewAt<CPDF_Reference>(iLast + 1, pPDFDocument,
+                                           data_stream->GetObjNum());
       }
       fileList->push_back(std::move(pFileWrite));
     }

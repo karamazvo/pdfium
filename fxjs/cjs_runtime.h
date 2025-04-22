@@ -54,7 +54,7 @@ class CJS_Runtime final : public IJS_Runtime,
 
   v8::Local<v8::Value> GetValueByNameFromGlobalObject(ByteStringView utf8Name);
   bool SetValueByNameInGlobalObject(ByteStringView utf8Name,
-                                    v8::Local<v8::Value> pValue);
+                                    v8::Local<v8::Value> value);
 
  private:
   void DefineJSObjects();

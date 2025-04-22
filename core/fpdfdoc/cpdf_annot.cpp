@@ -249,10 +249,10 @@ std::optional<CFX_FloatRect> CPDF_Annot::GetPopupAnnotRect() const {
 }
 
 // static
-CFX_FloatRect CPDF_Annot::RectFromQuadPointsArray(const CPDF_Array* pArray,
+CFX_FloatRect CPDF_Annot::RectFromQuadPointsArray(const CPDF_Array* array,
                                                   size_t nIndex) {
-  DCHECK(pArray);
-  DCHECK(nIndex < pArray->size() / 8);
+  DCHECK(array);
+  DCHECK(nIndex < array->size() / 8);
 
   // QuadPoints are defined with 4 pairs of numbers
   // ([ pair0, pair1, pair2, pair3 ]), where
@@ -266,23 +266,23 @@ CFX_FloatRect CPDF_Annot::RectFromQuadPointsArray(const CPDF_Array* pArray,
   // pair1 = top_right.
 
   return CFX_FloatRect(
-      pArray->GetFloatAt(4 + nIndex * 8), pArray->GetFloatAt(5 + nIndex * 8),
-      pArray->GetFloatAt(2 + nIndex * 8), pArray->GetFloatAt(3 + nIndex * 8));
+      array->GetFloatAt(4 + nIndex * 8), array->GetFloatAt(5 + nIndex * 8),
+      array->GetFloatAt(2 + nIndex * 8), array->GetFloatAt(3 + nIndex * 8));
 }
 
 // static
 CFX_FloatRect CPDF_Annot::BoundingRectFromQuadPoints(
     const CPDF_Dictionary* pAnnotDict) {
   CFX_FloatRect ret;
-  RetainPtr<const CPDF_Array> pArray = pAnnotDict->GetArrayFor("QuadPoints");
-  size_t nQuadPointCount = pArray ? QuadPointCount(pArray.Get()) : 0;
+  RetainPtr<const CPDF_Array> array = pAnnotDict->GetArrayFor("QuadPoints");
+  size_t nQuadPointCount = array ? QuadPointCount(array.Get()) : 0;
   if (nQuadPointCount == 0) {
     return ret;
   }
 
-  ret = RectFromQuadPointsArray(pArray.Get(), 0);
+  ret = RectFromQuadPointsArray(array.Get(), 0);
   for (size_t i = 1; i < nQuadPointCount; ++i) {
-    CFX_FloatRect rect = RectFromQuadPointsArray(pArray.Get(), i);
+    CFX_FloatRect rect = RectFromQuadPointsArray(array.Get(), i);
     ret.Union(rect);
   }
   return ret;
@@ -291,12 +291,12 @@ CFX_FloatRect CPDF_Annot::BoundingRectFromQuadPoints(
 // static
 CFX_FloatRect CPDF_Annot::RectFromQuadPoints(const CPDF_Dictionary* pAnnotDict,
                                              size_t nIndex) {
-  RetainPtr<const CPDF_Array> pArray = pAnnotDict->GetArrayFor("QuadPoints");
-  size_t nQuadPointCount = pArray ? QuadPointCount(pArray.Get()) : 0;
+  RetainPtr<const CPDF_Array> array = pAnnotDict->GetArrayFor("QuadPoints");
+  size_t nQuadPointCount = array ? QuadPointCount(array.Get()) : 0;
   if (nIndex >= nQuadPointCount) {
     return CFX_FloatRect();
   }
-  return RectFromQuadPointsArray(pArray.Get(), nIndex);
+  return RectFromQuadPointsArray(array.Get(), nIndex);
 }
 
 // static
@@ -479,8 +479,8 @@ ByteString CPDF_Annot::AnnotSubtypeToString(CPDF_Annot::Subtype nSubtype) {
 }
 
 // static
-size_t CPDF_Annot::QuadPointCount(const CPDF_Array* pArray) {
-  return pArray->size() / 8;
+size_t CPDF_Annot::QuadPointCount(const CPDF_Array* array) {
+  return array->size() / 8;
 }
 
 bool CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
@@ -579,8 +579,8 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
         size_t nLen = pDashArray->size();
         size_t i = 0;
         for (; i < nLen; ++i) {
-          RetainPtr<const CPDF_Object> pObj = pDashArray->GetDirectObjectAt(i);
-          if (pObj && pObj->GetInteger()) {
+          RetainPtr<const CPDF_Object> obj = pDashArray->GetDirectObjectAt(i);
+          if (obj && obj->GetInteger()) {
             break;
           }
         }

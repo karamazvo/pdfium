@@ -638,15 +638,15 @@ CJS_Result CJS_Document::submitForm(CJS_Runtime* pRuntime,
       aFields = pRuntime->ToArray(params[3]);
     }
   } else if (params[0]->IsObject()) {
-    v8::Local<v8::Object> pObj = pRuntime->ToObject(params[0]);
-    v8::Local<v8::Value> pValue = pRuntime->GetObjectProperty(pObj, "cURL");
-    if (!pValue.IsEmpty()) {
-      strURL = pRuntime->ToWideString(pValue);
+    v8::Local<v8::Object> obj = pRuntime->ToObject(params[0]);
+    v8::Local<v8::Value> value = pRuntime->GetObjectProperty(obj, "cURL");
+    if (!value.IsEmpty()) {
+      strURL = pRuntime->ToWideString(value);
     }
 
-    bFDF = pRuntime->ToBoolean(pRuntime->GetObjectProperty(pObj, "bFDF"));
-    bEmpty = pRuntime->ToBoolean(pRuntime->GetObjectProperty(pObj, "bEmpty"));
-    aFields = pRuntime->ToArray(pRuntime->GetObjectProperty(pObj, "aFields"));
+    bFDF = pRuntime->ToBoolean(pRuntime->GetObjectProperty(obj, "bFDF"));
+    bEmpty = pRuntime->ToBoolean(pRuntime->GetObjectProperty(obj, "bEmpty"));
+    aFields = pRuntime->ToArray(pRuntime->GetObjectProperty(obj, "aFields"));
   }
 
   CPDF_InteractiveForm* pPDFForm = GetCoreInteractiveForm();
@@ -726,24 +726,24 @@ CJS_Result CJS_Document::get_info(CJS_Runtime* pRuntime) {
   WideString cwModDate = pDictionary->GetUnicodeTextFor("ModDate");
   WideString cwTrapped = pDictionary->GetUnicodeTextFor("Trapped");
 
-  v8::Local<v8::Object> pObj = pRuntime->NewObject();
-  pRuntime->PutObjectProperty(pObj, "Author",
+  v8::Local<v8::Object> obj = pRuntime->NewObject();
+  pRuntime->PutObjectProperty(obj, "Author",
                               pRuntime->NewString(cwAuthor.AsStringView()));
-  pRuntime->PutObjectProperty(pObj, "Title",
+  pRuntime->PutObjectProperty(obj, "Title",
                               pRuntime->NewString(cwTitle.AsStringView()));
-  pRuntime->PutObjectProperty(pObj, "Subject",
+  pRuntime->PutObjectProperty(obj, "Subject",
                               pRuntime->NewString(cwSubject.AsStringView()));
-  pRuntime->PutObjectProperty(pObj, "Keywords",
+  pRuntime->PutObjectProperty(obj, "Keywords",
                               pRuntime->NewString(cwKeywords.AsStringView()));
-  pRuntime->PutObjectProperty(pObj, "Creator",
+  pRuntime->PutObjectProperty(obj, "Creator",
                               pRuntime->NewString(cwCreator.AsStringView()));
-  pRuntime->PutObjectProperty(pObj, "Producer",
+  pRuntime->PutObjectProperty(obj, "Producer",
                               pRuntime->NewString(cwProducer.AsStringView()));
   pRuntime->PutObjectProperty(
-      pObj, "CreationDate", pRuntime->NewString(cwCreationDate.AsStringView()));
-  pRuntime->PutObjectProperty(pObj, "ModDate",
+      obj, "CreationDate", pRuntime->NewString(cwCreationDate.AsStringView()));
+  pRuntime->PutObjectProperty(obj, "ModDate",
                               pRuntime->NewString(cwModDate.AsStringView()));
-  pRuntime->PutObjectProperty(pObj, "Trapped",
+  pRuntime->PutObjectProperty(obj, "Trapped",
                               pRuntime->NewString(cwTrapped.AsStringView()));
 
   // PutObjectProperty() calls below may re-enter JS and change info dict.
@@ -753,18 +753,18 @@ CJS_Result CJS_Document::get_info(CJS_Runtime* pRuntime) {
     const RetainPtr<CPDF_Object>& pValueObj = it.second;
     if (pValueObj->IsString() || pValueObj->IsName()) {
       pRuntime->PutObjectProperty(
-          pObj, bsKey.AsStringView(),
+          obj, bsKey.AsStringView(),
           pRuntime->NewString(pValueObj->GetUnicodeText().AsStringView()));
     } else if (pValueObj->IsNumber()) {
-      pRuntime->PutObjectProperty(pObj, bsKey.AsStringView(),
+      pRuntime->PutObjectProperty(obj, bsKey.AsStringView(),
                                   pRuntime->NewNumber(pValueObj->GetNumber()));
     } else if (pValueObj->IsBoolean()) {
       pRuntime->PutObjectProperty(
-          pObj, bsKey.AsStringView(),
+          obj, bsKey.AsStringView(),
           pRuntime->NewBoolean(!!pValueObj->GetInteger()));
     }
   }
-  return CJS_Result::Success(pObj);
+  return CJS_Result::Success(obj);
 }
 
 CJS_Result CJS_Document::set_info(CJS_Runtime* pRuntime,
@@ -1088,14 +1088,14 @@ CJS_Result CJS_Document::getAnnot(CJS_Runtime* pRuntime,
     return CJS_Result::Failure(JSMessage::kBadObjectError);
   }
 
-  v8::Local<v8::Object> pObj = pRuntime->NewFXJSBoundObject(
+  v8::Local<v8::Object> obj = pRuntime->NewFXJSBoundObject(
       CJS_Annot::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
-  if (pObj.IsEmpty()) {
+  if (obj.IsEmpty()) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
   }
 
   auto* pJS_Annot = static_cast<CJS_Annot*>(
-      CFXJS_Engine::GetBinding(pRuntime->GetIsolate(), pObj));
+      CFXJS_Engine::GetBinding(pRuntime->GetIsolate(), obj));
   if (!pJS_Annot) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
   }
@@ -1127,14 +1127,14 @@ CJS_Result CJS_Document::getAnnots(CJS_Runtime* pRuntime,
         return CJS_Result::Failure(JSMessage::kBadObjectError);
       }
 
-      v8::Local<v8::Object> pObj = pRuntime->NewFXJSBoundObject(
+      v8::Local<v8::Object> obj = pRuntime->NewFXJSBoundObject(
           CJS_Annot::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
-      if (pObj.IsEmpty()) {
+      if (obj.IsEmpty()) {
         return CJS_Result::Failure(JSMessage::kBadObjectError);
       }
 
       auto* pJS_Annot = static_cast<CJS_Annot*>(
-          CFXJS_Engine::GetBinding(pRuntime->GetIsolate(), pObj));
+          CFXJS_Engine::GetBinding(pRuntime->GetIsolate(), obj));
       pJS_Annot->SetSDKAnnot(pSDKAnnotCur->AsBAAnnot());
       pRuntime->PutArrayElement(
           annots, i,
@@ -1176,8 +1176,8 @@ CJS_Result CJS_Document::addIcon(CJS_Runtime* pRuntime,
     return CJS_Result::Failure(JSMessage::kTypeError);
   }
 
-  v8::Local<v8::Object> pObj = pRuntime->ToObject(params[1]);
-  if (!JSGetObject<CJS_Icon>(pRuntime->GetIsolate(), pObj)) {
+  v8::Local<v8::Object> obj = pRuntime->ToObject(params[1]);
+  if (!JSGetObject<CJS_Icon>(pRuntime->GetIsolate(), obj)) {
     return CJS_Result::Failure(JSMessage::kTypeError);
   }
 
@@ -1196,14 +1196,14 @@ CJS_Result CJS_Document::get_icons(CJS_Runtime* pRuntime) {
   v8::Local<v8::Array> Icons = pRuntime->NewArray();
   int i = 0;
   for (const auto& name : icon_names_) {
-    v8::Local<v8::Object> pObj = pRuntime->NewFXJSBoundObject(
+    v8::Local<v8::Object> obj = pRuntime->NewFXJSBoundObject(
         CJS_Icon::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
-    if (pObj.IsEmpty()) {
+    if (obj.IsEmpty()) {
       return CJS_Result::Failure(JSMessage::kBadObjectError);
     }
 
     auto* pJS_Icon = static_cast<CJS_Icon*>(
-        CFXJS_Engine::GetBinding(pRuntime->GetIsolate(), pObj));
+        CFXJS_Engine::GetBinding(pRuntime->GetIsolate(), obj));
     pJS_Icon->SetIconName(name);
     pRuntime->PutArrayElement(Icons, i++,
                               pJS_Icon
@@ -1230,14 +1230,14 @@ CJS_Result CJS_Document::getIcon(CJS_Runtime* pRuntime,
     return CJS_Result::Failure(JSMessage::kBadObjectError);
   }
 
-  v8::Local<v8::Object> pObj = pRuntime->NewFXJSBoundObject(
+  v8::Local<v8::Object> obj = pRuntime->NewFXJSBoundObject(
       CJS_Icon::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
-  if (pObj.IsEmpty()) {
+  if (obj.IsEmpty()) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
   }
 
   auto* pJSIcon = static_cast<CJS_Icon*>(
-      CFXJS_Engine::GetBinding(pRuntime->GetIsolate(), pObj));
+      CFXJS_Engine::GetBinding(pRuntime->GetIsolate(), obj));
   if (!pJSIcon) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
   }

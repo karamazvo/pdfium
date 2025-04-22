@@ -70,7 +70,7 @@ class CFX_CSSDeclaration {
   RetainPtr<CFX_CSSValue> ParseColor(WideStringView value);
   RetainPtr<CFX_CSSValue> ParseString(WideStringView value);
   void AddPropertyHolder(CFX_CSSProperty eProperty,
-                         RetainPtr<CFX_CSSValue> pValue,
+                         RetainPtr<CFX_CSSValue> value,
                          bool bImportant);
 
   std::vector<std::unique_ptr<CFX_CSSPropertyHolder>> properties_;

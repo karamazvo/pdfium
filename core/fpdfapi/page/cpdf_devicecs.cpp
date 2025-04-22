@@ -36,7 +36,7 @@ CPDF_DeviceCS::CPDF_DeviceCS(Family family) : CPDF_ColorSpace(family) {
 CPDF_DeviceCS::~CPDF_DeviceCS() = default;
 
 uint32_t CPDF_DeviceCS::v_Load(CPDF_Document* pDoc,
-                               const CPDF_Array* pArray,
+                               const CPDF_Array* array,
                                std::set<const CPDF_Object*>* pVisited) {
   // Unlike other classes that inherit from CPDF_ColorSpace, CPDF_DeviceCS is
   // never loaded by CPDF_ColorSpace.

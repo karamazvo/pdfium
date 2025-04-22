@@ -51,7 +51,7 @@ class CPDF_DocRenderData : public CPDF_Document::RenderDataIface {
  protected:
   // protected for use by test subclasses.
   RetainPtr<CPDF_TransferFunc> CreateTransferFunc(
-      RetainPtr<const CPDF_Object> pObj) const;
+      RetainPtr<const CPDF_Object> obj) const;
 
  private:
   // TODO(tsepez): investigate this map outliving its font keys.

@@ -26,7 +26,7 @@ class CPDF_OCContext final : public Retainable {
   CONSTRUCT_VIA_MAKE_RETAIN;
 
   bool CheckOCGDictVisible(const CPDF_Dictionary* pOCGDict) const;
-  bool CheckPageObjectVisible(const CPDF_PageObject* pObj) const;
+  bool CheckPageObjectVisible(const CPDF_PageObject* obj) const;
 
  private:
   CPDF_OCContext(CPDF_Document* pDoc, UsageType eUsageType);

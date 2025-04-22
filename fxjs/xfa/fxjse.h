@@ -44,7 +44,7 @@ class CFXJSE_HostObject {
   virtual CFXJSE_FormCalcContext* AsFormCalcContext();
   virtual CJX_Object* AsCJXObject();
 
-  v8::Local<v8::Object> NewBoundV8Object(v8::Isolate* pIsolate,
+  v8::Local<v8::Object> NewBoundV8Object(v8::Isolate* isolate,
                                          v8::Local<v8::FunctionTemplate> tmpl);
 
  protected:
@@ -57,15 +57,15 @@ using FXJSE_MethodCallback =
 using FXJSE_FuncCallback =
     void (*)(CFXJSE_HostObject* pThis,
              const v8::FunctionCallbackInfo<v8::Value>& info);
-using FXJSE_PropGetter = v8::Local<v8::Value> (*)(v8::Isolate* pIsolate,
+using FXJSE_PropGetter = v8::Local<v8::Value> (*)(v8::Isolate* isolate,
                                                   v8::Local<v8::Object> pObject,
                                                   ByteStringView szPropName);
-using FXJSE_PropSetter = void (*)(v8::Isolate* pIsolate,
+using FXJSE_PropSetter = void (*)(v8::Isolate* isolate,
                                   v8::Local<v8::Object> pObject,
                                   ByteStringView szPropName,
-                                  v8::Local<v8::Value> pValue);
+                                  v8::Local<v8::Value> value);
 using FXJSE_PropTypeGetter =
-    FXJSE_ClassPropType (*)(v8::Isolate* pIsolate,
+    FXJSE_ClassPropType (*)(v8::Isolate* isolate,
                             v8::Local<v8::Object> pObject,
                             ByteStringView szPropName,
                             bool bQueryIn);
@@ -91,6 +91,6 @@ extern const FXJSE_CLASS_DESCRIPTOR kNormalClassDescriptor;
 extern const FXJSE_CLASS_DESCRIPTOR kVariablesClassDescriptor;
 extern const FXJSE_CLASS_DESCRIPTOR kFormCalcDescriptor;
 
-void FXJSE_ThrowMessage(v8::Isolate* pIsolate, ByteStringView utf8Message);
+void FXJSE_ThrowMessage(v8::Isolate* isolate, ByteStringView utf8Message);
 
 #endif  // FXJS_XFA_FXJSE_H_

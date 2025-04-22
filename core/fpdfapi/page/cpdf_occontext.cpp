@@ -23,9 +23,9 @@ bool HasIntent(const CPDF_Dictionary* pDict,
   }
 
   ByteString bsIntent;
-  if (const CPDF_Array* pArray = pIntent->AsArray()) {
-    for (size_t i = 0; i < pArray->size(); i++) {
-      bsIntent = pArray->GetByteStringAt(i);
+  if (const CPDF_Array* array = pIntent->AsArray()) {
+    for (size_t i = 0; i < array->size(); i++) {
+      bsIntent = array->GetByteStringAt(i);
       if (bsIntent == "All" || bsIntent == csElement) {
         return true;
       }
@@ -107,24 +107,24 @@ bool CPDF_OCContext::LoadOCGStateFromConfig(
   }
 
   bool bState = pConfig->GetByteStringFor("BaseState", "ON") != "OFF";
-  RetainPtr<const CPDF_Array> pArray = pConfig->GetArrayFor("ON");
-  if (pArray && pArray->Contains(pOCGDict)) {
+  RetainPtr<const CPDF_Array> array = pConfig->GetArrayFor("ON");
+  if (array && array->Contains(pOCGDict)) {
     bState = true;
   }
 
-  pArray = pConfig->GetArrayFor("OFF");
-  if (pArray && pArray->Contains(pOCGDict)) {
+  array = pConfig->GetArrayFor("OFF");
+  if (array && array->Contains(pOCGDict)) {
     bState = false;
   }
 
-  pArray = pConfig->GetArrayFor("AS");
-  if (!pArray) {
+  array = pConfig->GetArrayFor("AS");
+  if (!array) {
     return bState;
   }
 
   ByteString csFind = csConfig + "State";
-  for (size_t i = 0; i < pArray->size(); i++) {
-    RetainPtr<const CPDF_Dictionary> pUsage = pArray->GetDictAt(i);
+  for (size_t i = 0; i < array->size(); i++) {
+    RetainPtr<const CPDF_Dictionary> pUsage = array->GetDictAt(i);
     if (!pUsage) {
       continue;
     }
@@ -192,8 +192,8 @@ bool CPDF_OCContext::GetOCGVisible(const CPDF_Dictionary* pOCGDict) const {
   return bState;
 }
 
-bool CPDF_OCContext::CheckPageObjectVisible(const CPDF_PageObject* pObj) const {
-  const CPDF_ContentMarks* pMarks = pObj->GetContentMarks();
+bool CPDF_OCContext::CheckPageObjectVisible(const CPDF_PageObject* obj) const {
+  const CPDF_ContentMarks* pMarks = obj->GetContentMarks();
   for (size_t i = 0; i < pMarks->CountItems(); ++i) {
     const CPDF_ContentMarkItem* item = pMarks->GetItem(i);
     if (item->GetName() == "OC" &&
@@ -219,8 +219,8 @@ bool CPDF_OCContext::GetOCGVE(const CPDF_Array* pExpression, int nLevel) const {
     if (const CPDF_Dictionary* pDict = pOCGObj->AsDictionary()) {
       return !GetOCGVisible(pDict);
     }
-    if (const CPDF_Array* pArray = pOCGObj->AsArray()) {
-      return !GetOCGVE(pArray, nLevel + 1);
+    if (const CPDF_Array* array = pOCGObj->AsArray()) {
+      return !GetOCGVE(array, nLevel + 1);
     }
     return false;
   }
@@ -239,8 +239,8 @@ bool CPDF_OCContext::GetOCGVE(const CPDF_Array* pExpression, int nLevel) const {
     bool bItem = false;
     if (const CPDF_Dictionary* pDict = pOCGObj->AsDictionary()) {
       bItem = GetOCGVisible(pDict);
-    } else if (const CPDF_Array* pArray = pOCGObj->AsArray()) {
-      bItem = GetOCGVE(pArray, nLevel + 1);
+    } else if (const CPDF_Array* array = pOCGObj->AsArray()) {
+      bItem = GetOCGVE(array, nLevel + 1);
     }
 
     if (i == 1) {
@@ -272,8 +272,8 @@ bool CPDF_OCContext::LoadOCMDState(const CPDF_Dictionary* pOCMDDict) const {
     return GetOCGVisible(pDict);
   }
 
-  const CPDF_Array* pArray = pOCGObj->AsArray();
-  if (!pArray) {
+  const CPDF_Array* array = pOCGObj->AsArray();
+  if (!array) {
     return true;
   }
 
@@ -281,9 +281,9 @@ bool CPDF_OCContext::LoadOCMDState(const CPDF_Dictionary* pOCMDDict) const {
   // At least one entry of OCGs needs to be a valid dictionary for it to be
   // considered present. See "OCGs" in table 4.49 in the PDF 1.7 spec.
   bool bValidEntrySeen = false;
-  for (size_t i = 0; i < pArray->size(); i++) {
+  for (size_t i = 0; i < array->size(); i++) {
     bool bItem = true;
-    RetainPtr<const CPDF_Dictionary> pItemDict = pArray->GetDictAt(i);
+    RetainPtr<const CPDF_Dictionary> pItemDict = array->GetDictAt(i);
     if (!pItemDict) {
       continue;
     }

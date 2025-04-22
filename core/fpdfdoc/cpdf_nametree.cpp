@@ -539,7 +539,7 @@ size_t CPDF_NameTree::GetCount() const {
   return CountNamesInternal(root_.Get(), 0, seen);
 }
 
-bool CPDF_NameTree::AddValueAndName(RetainPtr<CPDF_Object> pObj,
+bool CPDF_NameTree::AddValueAndName(RetainPtr<CPDF_Object> obj,
                                     const WideString& name) {
   NodeToInsert node_to_insert;
   // Handle the corner case where the root node is empty. i.e. No kids and no
@@ -559,7 +559,7 @@ bool CPDF_NameTree::AddValueAndName(RetainPtr<CPDF_Object> pObj,
   // If the returned `node_to_insert.names` is a nullptr, then `name` is smaller
   // than all existing entries in the tree, and we did not find a leaf array to
   // place `name` into. We instead will find the leftmost leaf array in which to
-  // place `name` and `pObj`.
+  // place `name` and `obj`.
   if (!node_to_insert.names) {
     std::optional<IndexSearchResult> result =
         SearchNameNodeByIndex(root_.Get(), 0);
@@ -578,7 +578,7 @@ bool CPDF_NameTree::AddValueAndName(RetainPtr<CPDF_Object> pObj,
   size_t nValueIndex = nNameIndex + 1;
   node_to_insert.names->InsertNewAt<CPDF_String>(nNameIndex,
                                                  name.AsStringView());
-  node_to_insert.names->InsertAt(nValueIndex, std::move(pObj));
+  node_to_insert.names->InsertAt(nValueIndex, std::move(obj));
 
   // Expand the limits that the newly added name is under, if the name falls
   // outside of the limits of its leaf array or any arrays above it.

@@ -31,8 +31,8 @@ void CPDF_AllStates::SetDefaultStates() {
   graphic_states_.SetDefaultStates();
 }
 
-void CPDF_AllStates::SetLineDash(const CPDF_Array* pArray, float phase) {
-  std::vector<float> dashes = ReadArrayElementsToVector(pArray, pArray->size());
+void CPDF_AllStates::SetLineDash(const CPDF_Array* array, float phase) {
+  std::vector<float> dashes = ReadArrayElementsToVector(array, array->size());
   mutable_graph_state().SetLineDash(std::move(dashes), phase);
 }
 
@@ -67,12 +67,12 @@ void CPDF_AllStates::ProcessExtGS(const CPDF_Dictionary* pGS,
           break;
         }
 
-        RetainPtr<const CPDF_Array> pArray = pDash->GetArrayAt(0);
-        if (!pArray) {
+        RetainPtr<const CPDF_Array> array = pDash->GetArrayAt(0);
+        if (!array) {
           break;
         }
 
-        SetLineDash(pArray.Get(), pDash->GetFloatAt(1));
+        SetLineDash(array.Get(), pDash->GetFloatAt(1));
         break;
       }
       case FXBSTR_ID('R', 'I', 0, 0):
@@ -99,9 +99,9 @@ void CPDF_AllStates::ProcessExtGS(const CPDF_Dictionary* pGS,
                                                          : nullptr);
         break;
       case FXBSTR_ID('B', 'M', 0, 0): {
-        const CPDF_Array* pArray = pObject->AsArray();
-        mutable_general_state().SetBlendMode(pArray ? pArray->GetByteStringAt(0)
-                                                    : pObject->GetString());
+        const CPDF_Array* array = pObject->AsArray();
+        mutable_general_state().SetBlendMode(array ? array->GetByteStringAt(0)
+                                                   : pObject->GetString());
         if (general_state().GetBlendType() > BlendMode::kMultiply) {
           pParser->GetPageObjectHolder()->SetBackgroundAlphaNeeded(true);
         }

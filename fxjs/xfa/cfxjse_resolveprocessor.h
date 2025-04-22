@@ -39,7 +39,7 @@ class CFXJSE_ResolveProcessor {
   CFXJSE_ResolveProcessor(CFXJSE_Engine* pEngine, CFXJSE_NodeHelper* pHelper);
   ~CFXJSE_ResolveProcessor();
 
-  bool Resolve(v8::Isolate* pIsolate, NodeData& rnd);
+  bool Resolve(v8::Isolate* isolate, NodeData& rnd);
   int32_t GetFilter(WideStringView wsExpression, int32_t nStart, NodeData& rnd);
   int32_t IndexForDataBind(const WideString& wsNextCondition, int32_t iCount);
   void SetCurStart(int32_t start) { cur_start_ = start; }
@@ -48,22 +48,22 @@ class CFXJSE_ResolveProcessor {
   bool ResolveForAttributeRs(CXFA_Object* curNode,
                              CFXJSE_Engine::ResolveResult* rnd,
                              WideStringView strAttr);
-  bool ResolveAnyChild(v8::Isolate* pIsolate, NodeData& rnd);
-  bool ResolveDollar(v8::Isolate* pIsolate, NodeData& rnd);
-  bool ResolveExcalmatory(v8::Isolate* pIsolate, NodeData& rnd);
-  bool ResolveNumberSign(v8::Isolate* pIsolate, NodeData& rnd);
+  bool ResolveAnyChild(v8::Isolate* isolate, NodeData& rnd);
+  bool ResolveDollar(v8::Isolate* isolate, NodeData& rnd);
+  bool ResolveExcalmatory(v8::Isolate* isolate, NodeData& rnd);
+  bool ResolveNumberSign(v8::Isolate* isolate, NodeData& rnd);
   bool ResolveAsterisk(NodeData& rnd);
-  bool ResolveNormal(v8::Isolate* pIsolate, NodeData& rnd);
+  bool ResolveNormal(v8::Isolate* isolate, NodeData& rnd);
   void SetStylesForChild(Mask<XFA_ResolveFlag> dwParentStyles, NodeData& rnd);
 
   void ConditionArray(size_t iCurIndex,
                       WideString wsCondition,
                       size_t iFoundCount,
                       NodeData* pRnd);
-  void FilterCondition(v8::Isolate* pIsolate,
+  void FilterCondition(v8::Isolate* isolate,
                        WideString wsCondition,
                        NodeData* pRnd);
-  void DoPredicateFilter(v8::Isolate* pIsolate,
+  void DoPredicateFilter(v8::Isolate* isolate,
                          WideString wsCondition,
                          size_t iFoundCount,
                          NodeData* pRnd);

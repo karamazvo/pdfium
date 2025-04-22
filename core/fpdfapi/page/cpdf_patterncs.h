@@ -30,7 +30,7 @@ class CPDF_PatternCS final : public CPDF_BasedCS {
       pdfium::span<const float> pBuf) const override;
   const CPDF_PatternCS* AsPatternCS() const override;
   uint32_t v_Load(CPDF_Document* pDoc,
-                  const CPDF_Array* pArray,
+                  const CPDF_Array* array,
                   std::set<const CPDF_Object*>* pVisited) override;
 
   std::optional<FX_RGB_STRUCT<float>> GetPatternRGB(

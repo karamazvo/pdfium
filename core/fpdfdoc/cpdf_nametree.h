@@ -41,7 +41,7 @@ class CPDF_NameTree {
   static RetainPtr<const CPDF_Array> LookupNamedDest(CPDF_Document* doc,
                                                      const ByteString& name);
 
-  bool AddValueAndName(RetainPtr<CPDF_Object> pObj, const WideString& name);
+  bool AddValueAndName(RetainPtr<CPDF_Object> obj, const WideString& name);
   bool DeleteValueAndName(size_t nIndex);
 
   RetainPtr<CPDF_Object> LookupValueAndName(size_t nIndex,

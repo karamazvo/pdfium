@@ -223,20 +223,20 @@ void UseCIDCharmap(const RetainPtr<CFX_Face>& face, CIDCoding coding) {
   }
 }
 
-void LoadMetricsArray(RetainPtr<const CPDF_Array> pArray,
+void LoadMetricsArray(RetainPtr<const CPDF_Array> array,
                       std::vector<int>* result,
                       int nElements) {
   int width_status = 0;
   int iCurElement = 0;
   int first_code = 0;
   int last_code = 0;
-  for (size_t i = 0; i < pArray->size(); i++) {
-    RetainPtr<const CPDF_Object> pObj = pArray->GetDirectObjectAt(i);
-    if (!pObj) {
+  for (size_t i = 0; i < array->size(); i++) {
+    RetainPtr<const CPDF_Object> obj = array->GetDirectObjectAt(i);
+    if (!obj) {
       continue;
     }
 
-    const CPDF_Array* pObjArray = pObj->AsArray();
+    const CPDF_Array* pObjArray = obj->AsArray();
     if (pObjArray) {
       if (width_status != 1) {
         return;
@@ -258,10 +258,10 @@ void LoadMetricsArray(RetainPtr<const CPDF_Array> pArray,
       width_status = 0;
     } else {
       if (width_status == 0) {
-        first_code = pObj->GetInteger();
+        first_code = obj->GetInteger();
         width_status = 1;
       } else if (width_status == 1) {
-        last_code = pObj->GetInteger();
+        last_code = obj->GetInteger();
         width_status = 2;
         iCurElement = 0;
       } else {
@@ -269,7 +269,7 @@ void LoadMetricsArray(RetainPtr<const CPDF_Array> pArray,
           result->push_back(first_code);
           result->push_back(last_code);
         }
-        result->push_back(pObj->GetInteger());
+        result->push_back(obj->GetInteger());
         iCurElement++;
         if (iCurElement == nElements) {
           width_status = 0;

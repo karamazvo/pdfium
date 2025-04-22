@@ -35,7 +35,7 @@ class CPDFSDK_AnnotIterator {
   static TabOrder GetTabOrder(CPDFSDK_PageView* pPageView);
 
   void GenerateResults();
-  void CollectAnnots(std::vector<UnownedPtr<CPDFSDK_Annot>>* pArray);
+  void CollectAnnots(std::vector<UnownedPtr<CPDFSDK_Annot>>* array);
   CFX_FloatRect AddToAnnotsList(std::vector<UnownedPtr<CPDFSDK_Annot>>& sa,
                                 size_t idx);
   void AddSelectedToAnnots(std::vector<UnownedPtr<CPDFSDK_Annot>>& sa,

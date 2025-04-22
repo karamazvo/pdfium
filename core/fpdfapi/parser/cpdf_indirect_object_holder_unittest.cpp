@@ -82,11 +82,11 @@ TEST(IndirectObjectHolderTest, TemplateNewMethods) {
   MockIndirectObjectHolder mock_holder;
 
   auto pDict = mock_holder.NewIndirect<CPDF_Dictionary>();
-  auto pArray = mock_holder.NewIndirect<CPDF_Array>();
+  auto array = mock_holder.NewIndirect<CPDF_Array>();
   mock_holder.DeleteIndirectObject(pDict->GetObjNum());
-  mock_holder.DeleteIndirectObject(pArray->GetObjNum());
+  mock_holder.DeleteIndirectObject(array->GetObjNum());
 
   // No longer UAF since NewIndirect<> returns retained objects.
   EXPECT_TRUE(pDict->IsDictionary());
-  EXPECT_TRUE(pArray->IsArray());
+  EXPECT_TRUE(array->IsArray());
 }

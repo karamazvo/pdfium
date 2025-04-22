@@ -57,8 +57,8 @@ WideString ChangeSlashToPDF(WideStringView str) {
 
 }  // namespace
 
-CPDF_FileSpec::CPDF_FileSpec(RetainPtr<const CPDF_Object> pObj)
-    : obj_(std::move(pObj)) {
+CPDF_FileSpec::CPDF_FileSpec(RetainPtr<const CPDF_Object> obj)
+    : obj_(std::move(obj)) {
   DCHECK(obj_);
 }
 
@@ -119,11 +119,11 @@ WideString CPDF_FileSpec::GetFileName() const {
 
     if (csFileName.IsEmpty()) {
       for (const auto* key : {"DOS", "Mac", "Unix"}) {
-        RetainPtr<const CPDF_String> pValue =
+        RetainPtr<const CPDF_String> value =
             ToString(pDict->GetDirectObjectFor(key));
-        if (pValue) {
+        if (value) {
           csFileName =
-              WideString::FromDefANSI(pValue->GetString().AsStringView());
+              WideString::FromDefANSI(value->GetString().AsStringView());
           break;
         }
       }

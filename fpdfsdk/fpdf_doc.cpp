@@ -452,9 +452,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_GetAnnotRect(FPDF_LINK link_annot,
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFLink_CountQuadPoints(FPDF_LINK link_annot) {
-  RetainPtr<const CPDF_Array> pArray =
+  RetainPtr<const CPDF_Array> array =
       GetQuadPointsArrayFromDictionary(CPDFDictionaryFromFPDFLink(link_annot));
-  return pArray ? static_cast<int>(pArray->size() / 8) : 0;
+  return array ? static_cast<int>(array->size() / 8) : 0;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -470,14 +470,14 @@ FPDFLink_GetQuadPoints(FPDF_LINK link_annot,
     return false;
   }
 
-  RetainPtr<const CPDF_Array> pArray =
+  RetainPtr<const CPDF_Array> array =
       GetQuadPointsArrayFromDictionary(pLinkDict);
-  if (!pArray) {
+  if (!array) {
     return false;
   }
 
-  return GetQuadPointsAtIndex(std::move(pArray),
-                              static_cast<size_t>(quad_index), quad_points);
+  return GetQuadPointsAtIndex(std::move(array), static_cast<size_t>(quad_index),
+                              quad_points);
 }
 
 FPDF_EXPORT FPDF_ACTION FPDF_CALLCONV FPDF_GetPageAAction(FPDF_PAGE page,
@@ -526,15 +526,15 @@ FPDF_GetFileIdentifier(FPDF_DOCUMENT document,
   }
 
   size_t nIndex = id_type == FILEIDTYPE_PERMANENT ? 0 : 1;
-  RetainPtr<const CPDF_String> pValue =
+  RetainPtr<const CPDF_String> value =
       ToString(pFileId->GetDirectObjectAt(nIndex));
-  if (!pValue) {
+  if (!value) {
     return 0;
   }
 
   // SAFETY: required from caller.
   return NulTerminateMaybeCopyAndReturnLength(
-      pValue->GetString(), UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
+      value->GetString(), UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV FPDF_GetMetaText(FPDF_DOCUMENT document,

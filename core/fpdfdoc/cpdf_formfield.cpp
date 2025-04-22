@@ -302,27 +302,27 @@ FormFieldType CPDF_FormField::GetFieldType() const {
 }
 
 CPDF_AAction CPDF_FormField::GetAdditionalAction() const {
-  RetainPtr<const CPDF_Object> pObj =
+  RetainPtr<const CPDF_Object> obj =
       GetFieldAttrInternal(pdfium::form_fields::kAA);
-  return CPDF_AAction(pObj ? pObj->GetDict() : nullptr);
+  return CPDF_AAction(obj ? obj->GetDict() : nullptr);
 }
 
 WideString CPDF_FormField::GetAlternateName() const {
-  RetainPtr<const CPDF_Object> pObj =
+  RetainPtr<const CPDF_Object> obj =
       GetFieldAttrInternal(pdfium::form_fields::kTU);
-  return pObj ? pObj->GetUnicodeText() : WideString();
+  return obj ? obj->GetUnicodeText() : WideString();
 }
 
 WideString CPDF_FormField::GetMappingName() const {
-  RetainPtr<const CPDF_Object> pObj =
+  RetainPtr<const CPDF_Object> obj =
       GetFieldAttrInternal(pdfium::form_fields::kTM);
-  return pObj ? pObj->GetUnicodeText() : WideString();
+  return obj ? obj->GetUnicodeText() : WideString();
 }
 
 uint32_t CPDF_FormField::GetFieldFlags() const {
-  RetainPtr<const CPDF_Object> pObj =
+  RetainPtr<const CPDF_Object> obj =
       GetFieldAttrInternal(pdfium::form_fields::kFf);
-  return pObj ? pObj->GetInteger() : 0;
+  return obj ? obj->GetInteger() : 0;
 }
 
 void CPDF_FormField::SetFieldFlags(uint32_t dwFlags) {
@@ -335,24 +335,24 @@ WideString CPDF_FormField::GetValue(bool bDefault) const {
     return GetCheckValue(bDefault);
   }
 
-  RetainPtr<const CPDF_Object> pValue =
+  RetainPtr<const CPDF_Object> value =
       bDefault ? GetDefaultValueObject() : GetValueObject();
-  if (!pValue) {
+  if (!value) {
     if (!bDefault && type_ != kText) {
-      pValue = GetDefaultValueObject();
+      value = GetDefaultValueObject();
     }
-    if (!pValue) {
+    if (!value) {
       return WideString();
     }
   }
 
-  switch (pValue->GetType()) {
+  switch (value->GetType()) {
     case CPDF_Object::kString:
     case CPDF_Object::kStream:
-      return pValue->GetUnicodeText();
+      return value->GetUnicodeText();
     case CPDF_Object::kArray: {
       RetainPtr<const CPDF_Object> pNewValue =
-          pValue->AsArray()->GetDirectObjectAt(0);
+          value->AsArray()->GetDirectObjectAt(0);
       if (pNewValue) {
         return pNewValue->GetUnicodeText();
       }
@@ -452,9 +452,9 @@ bool CPDF_FormField::SetValue(const WideString& value,
 }
 
 int CPDF_FormField::GetMaxLen() const {
-  RetainPtr<const CPDF_Object> pObj = GetFieldAttrInternal("MaxLen");
-  if (pObj) {
-    return pObj->GetInteger();
+  RetainPtr<const CPDF_Object> obj = GetFieldAttrInternal("MaxLen");
+  if (obj) {
+    return obj->GetInteger();
   }
 
   for (auto& pControl : GetControls()) {
@@ -471,42 +471,41 @@ int CPDF_FormField::GetMaxLen() const {
 }
 
 int CPDF_FormField::CountSelectedItems() const {
-  const CPDF_Object* pValue = GetValueOrSelectedIndicesObject();
-  if (!pValue) {
+  const CPDF_Object* value = GetValueOrSelectedIndicesObject();
+  if (!value) {
     return 0;
   }
 
-  if (pValue->IsString() || pValue->IsNumber()) {
-    return pValue->GetString().IsEmpty() ? 0 : 1;
+  if (value->IsString() || value->IsNumber()) {
+    return value->GetString().IsEmpty() ? 0 : 1;
   }
-  const CPDF_Array* pArray = pValue->AsArray();
-  return pArray ? fxcrt::CollectionSize<int>(*pArray) : 0;
+  const CPDF_Array* array = value->AsArray();
+  return array ? fxcrt::CollectionSize<int>(*array) : 0;
 }
 
 int CPDF_FormField::GetSelectedIndex(int index) const {
-  const CPDF_Object* pValue = GetValueOrSelectedIndicesObject();
-  if (!pValue) {
+  const CPDF_Object* value = GetValueOrSelectedIndicesObject();
+  if (!value) {
     return -1;
   }
 
-  if (pValue->IsNumber()) {
-    return pValue->GetInteger();
+  if (value->IsNumber()) {
+    return value->GetInteger();
   }
 
   WideString sel_value;
-  if (pValue->IsString()) {
+  if (value->IsString()) {
     if (index != 0) {
       return -1;
     }
-    sel_value = pValue->GetUnicodeText();
+    sel_value = value->GetUnicodeText();
   } else {
-    const CPDF_Array* pArray = pValue->AsArray();
-    if (!pArray || index < 0) {
+    const CPDF_Array* array = value->AsArray();
+    if (!array || index < 0) {
       return -1;
     }
 
-    RetainPtr<const CPDF_Object> elementValue =
-        pArray->GetDirectObjectAt(index);
+    RetainPtr<const CPDF_Object> elementValue = array->GetDirectObjectAt(index);
     sel_value = elementValue ? elementValue->GetUnicodeText() : WideString();
   }
   if (index < CountSelectedOptions()) {
@@ -594,21 +593,21 @@ void CPDF_FormField::SetItemSelectionSelected(int index,
     return;
   }
 
-  auto pArray = dict_->SetNewFor<CPDF_Array>(pdfium::form_fields::kV);
+  auto array = dict_->SetNewFor<CPDF_Array>(pdfium::form_fields::kV);
   for (int i = 0; i < CountOptions(); i++) {
     if (i == index || IsItemSelected(i)) {
-      pArray->AppendNew<CPDF_String>(GetOptionValue(i).AsStringView());
+      array->AppendNew<CPDF_String>(GetOptionValue(i).AsStringView());
     }
   }
 }
 
 int CPDF_FormField::GetDefaultSelectedItem() const {
   CHECK(IsComboOrListField(GetType()));
-  RetainPtr<const CPDF_Object> pValue = GetDefaultValueObject();
-  if (!pValue) {
+  RetainPtr<const CPDF_Object> value = GetDefaultValueObject();
+  if (!value) {
     return -1;
   }
-  WideString csDV = pValue->GetUnicodeText();
+  WideString csDV = value->GetUnicodeText();
   if (csDV.IsEmpty()) {
     return -1;
   }
@@ -634,18 +633,18 @@ bool CPDF_FormField::HasOptField() const {
 
 int CPDF_FormField::CountOptions() const {
   CHECK(HasOptField());
-  RetainPtr<const CPDF_Array> pArray = ToArray(GetFieldAttrInternal("Opt"));
-  return pArray ? fxcrt::CollectionSize<int>(*pArray) : 0;
+  RetainPtr<const CPDF_Array> array = ToArray(GetFieldAttrInternal("Opt"));
+  return array ? fxcrt::CollectionSize<int>(*array) : 0;
 }
 
 WideString CPDF_FormField::GetOptionText(int index, int sub_index) const {
   CHECK(HasOptField());
-  RetainPtr<const CPDF_Array> pArray = ToArray(GetFieldAttrInternal("Opt"));
-  if (!pArray) {
+  RetainPtr<const CPDF_Array> array = ToArray(GetFieldAttrInternal("Opt"));
+  if (!array) {
     return WideString();
   }
 
-  RetainPtr<const CPDF_Object> pOption = pArray->GetDirectObjectAt(index);
+  RetainPtr<const CPDF_Object> pOption = array->GetDirectObjectAt(index);
   if (!pOption) {
     return WideString();
   }
@@ -779,13 +778,13 @@ bool CPDF_FormField::SetCheckValue(const WideString& value,
 }
 
 int CPDF_FormField::GetTopVisibleIndex() const {
-  RetainPtr<const CPDF_Object> pObj = GetFieldAttrInternal("TI");
-  return pObj ? pObj->GetInteger() : 0;
+  RetainPtr<const CPDF_Object> obj = GetFieldAttrInternal("TI");
+  return obj ? obj->GetInteger() : 0;
 }
 
 int CPDF_FormField::CountSelectedOptions() const {
-  RetainPtr<const CPDF_Array> pArray = ToArray(GetSelectedIndicesObject());
-  return pArray ? fxcrt::CollectionSize<int>(*pArray) : 0;
+  RetainPtr<const CPDF_Array> array = ToArray(GetSelectedIndicesObject());
+  return array ? fxcrt::CollectionSize<int>(*array) : 0;
 }
 
 int CPDF_FormField::GetSelectedOptionIndex(int index) const {
@@ -793,14 +792,13 @@ int CPDF_FormField::GetSelectedOptionIndex(int index) const {
     return 0;
   }
 
-  RetainPtr<const CPDF_Array> pArray = ToArray(GetSelectedIndicesObject());
-  if (!pArray) {
+  RetainPtr<const CPDF_Array> array = ToArray(GetSelectedIndicesObject());
+  if (!array) {
     return -1;
   }
 
-  return index < fxcrt::CollectionSize<int>(*pArray)
-             ? pArray->GetIntegerAt(index)
-             : -1;
+  return index < fxcrt::CollectionSize<int>(*array) ? array->GetIntegerAt(index)
+                                                    : -1;
 }
 
 bool CPDF_FormField::IsSelectedOption(const WideString& wsOptValue) const {
@@ -812,8 +810,8 @@ bool CPDF_FormField::IsSelectedOption(const WideString& wsOptValue) const {
   const CPDF_Array* pValueArray = pValueObject->AsArray();
   if (pValueArray) {
     CPDF_ArrayLocker locker(pValueArray);
-    for (const auto& pObj : locker) {
-      if (pObj->IsString() && pObj->GetUnicodeText() == wsOptValue) {
+    for (const auto& obj : locker) {
+      if (obj->IsString() && obj->GetUnicodeText() == wsOptValue) {
         return true;
       }
     }
@@ -833,8 +831,8 @@ bool CPDF_FormField::IsSelectedIndex(int iOptIndex) const {
   const CPDF_Array* pSelectedIndicesArray = pSelectedIndicesObject->AsArray();
   if (pSelectedIndicesArray) {
     CPDF_ArrayLocker locker(pSelectedIndicesArray);
-    for (const auto& pObj : locker) {
-      if (pObj->IsNumber() && pObj->GetInteger() == iOptIndex) {
+    for (const auto& obj : locker) {
+      if (obj->IsNumber() && obj->GetInteger() == iOptIndex) {
         return true;
       }
     }
@@ -845,19 +843,19 @@ bool CPDF_FormField::IsSelectedIndex(int iOptIndex) const {
 }
 
 void CPDF_FormField::SelectOption(int iOptIndex) {
-  RetainPtr<CPDF_Array> pArray = dict_->GetOrCreateArrayFor("I");
-  for (size_t i = 0; i < pArray->size(); i++) {
-    int iFind = pArray->GetIntegerAt(i);
+  RetainPtr<CPDF_Array> array = dict_->GetOrCreateArrayFor("I");
+  for (size_t i = 0; i < array->size(); i++) {
+    int iFind = array->GetIntegerAt(i);
     if (iFind == iOptIndex) {
       return;
     }
 
     if (iFind > iOptIndex) {
-      pArray->InsertNewAt<CPDF_Number>(i, iOptIndex);
+      array->InsertNewAt<CPDF_Number>(i, iOptIndex);
       return;
     }
   }
-  pArray->AppendNew<CPDF_Number>(iOptIndex);
+  array->AppendNew<CPDF_Number>(iOptIndex);
 }
 
 bool CPDF_FormField::UseSelectedIndicesObject() const {
@@ -897,9 +895,9 @@ bool CPDF_FormField::UseSelectedIndicesObject() const {
       return false;
     }
     CPDF_ArrayLocker locker(pValueArray);
-    for (const auto& pObj : locker) {
-      if (pObj->IsString()) {
-        values[pObj->GetUnicodeText()]++;
+    for (const auto& obj : locker) {
+      if (obj->IsString()) {
+        values[obj->GetUnicodeText()]++;
       }
     }
   } else if (pValueObject->IsString()) {
@@ -915,12 +913,12 @@ bool CPDF_FormField::UseSelectedIndicesObject() const {
   const int num_options = CountOptions();
   if (pSelectedIndicesArray) {
     CPDF_ArrayLocker locker(pSelectedIndicesArray);
-    for (const auto& pObj : locker) {
-      if (!pObj->IsNumber()) {
+    for (const auto& obj : locker) {
+      if (!obj->IsNumber()) {
         return false;
       }
 
-      int index = pObj->GetInteger();
+      int index = obj->GetInteger();
       if (index < 0 || index >= num_options) {
         return false;
       }
@@ -998,8 +996,8 @@ RetainPtr<const CPDF_Object> CPDF_FormField::GetSelectedIndicesObject() const {
 RetainPtr<const CPDF_Object> CPDF_FormField::GetValueOrSelectedIndicesObject()
     const {
   CHECK(IsComboOrListField(GetType()));
-  RetainPtr<const CPDF_Object> pValue = GetValueObject();
-  return pValue ? pValue : GetSelectedIndicesObject();
+  RetainPtr<const CPDF_Object> value = GetValueObject();
+  return value ? value : GetSelectedIndicesObject();
 }
 
 const std::vector<UnownedPtr<CPDF_FormControl>>& CPDF_FormField::GetControls()

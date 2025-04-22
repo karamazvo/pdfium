@@ -204,9 +204,9 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
     if (set_bgra.alpha == 0 || reset_bgra.alpha == 0) {
       pDict->SetNewFor<CPDF_Boolean>("ImageMask", true);
       if (reset_bgra.alpha == 0) {
-        auto pArray = pDict->SetNewFor<CPDF_Array>("Decode");
-        pArray->AppendNew<CPDF_Number>(1);
-        pArray->AppendNew<CPDF_Number>(0);
+        auto array = pDict->SetNewFor<CPDF_Array>("Decode");
+        array->AppendNew<CPDF_Number>(1);
+        array->AppendNew<CPDF_Number>(0);
       }
     } else {
       auto pCS = pDict->SetNewFor<CPDF_Array>("ColorSpace");

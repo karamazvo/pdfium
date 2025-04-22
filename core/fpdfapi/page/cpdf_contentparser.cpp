@@ -50,8 +50,8 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Page* pPage)
     return;
   }
 
-  const CPDF_Array* pArray = pContent->AsArray();
-  if (pArray && HandlePageContentArray(pArray)) {
+  const CPDF_Array* array = pContent->AsArray();
+  if (array && HandlePageContentArray(array)) {
     return;
   }
 
@@ -239,11 +239,11 @@ CPDF_ContentParser::Stage CPDF_ContentParser::CheckClip() {
                                           parser_->GetType3Data());
   }
 
-  for (auto& pObj : *page_object_holder_) {
-    if (!pObj->IsActive()) {
+  for (auto& obj : *page_object_holder_) {
+    if (!obj->IsActive()) {
       continue;
     }
-    CPDF_ClipPath& clip_path = pObj->mutable_clip_path();
+    CPDF_ClipPath& clip_path = obj->mutable_clip_path();
     if (!clip_path.HasRef()) {
       continue;
     }
@@ -255,14 +255,14 @@ CPDF_ContentParser::Stage CPDF_ContentParser::CheckClip() {
     }
 
     CPDF_Path path = clip_path.GetPath(0);
-    if (!path.IsRect() || pObj->IsShading()) {
+    if (!path.IsRect() || obj->IsShading()) {
       continue;
     }
 
     CFX_PointF point0 = path.GetPoint(0);
     CFX_PointF point2 = path.GetPoint(2);
     CFX_FloatRect old_rect(point0.x, point0.y, point2.x, point2.y);
-    if (old_rect.Contains(pObj->GetRect())) {
+    if (old_rect.Contains(obj->GetRect())) {
       clip_path.SetNull();
     }
   }
@@ -276,8 +276,8 @@ void CPDF_ContentParser::HandlePageContentStream(const CPDF_Stream* pStream) {
   current_stage_ = Stage::kPrepareContent;
 }
 
-bool CPDF_ContentParser::HandlePageContentArray(const CPDF_Array* pArray) {
-  streams_ = fxcrt::CollectionSize<uint32_t>(*pArray);
+bool CPDF_ContentParser::HandlePageContentArray(const CPDF_Array* array) {
+  streams_ = fxcrt::CollectionSize<uint32_t>(*array);
   if (streams_ == 0) {
     return false;
   }

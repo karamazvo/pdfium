@@ -472,12 +472,12 @@ FPDFPageObjMark_GetParamIntValue(FPDF_PAGEOBJECTMARK mark,
     return false;
   }
 
-  RetainPtr<const CPDF_Object> pObj = pParams->GetObjectFor(key);
-  if (!pObj || !pObj->IsNumber()) {
+  RetainPtr<const CPDF_Object> obj = pParams->GetObjectFor(key);
+  if (!obj || !obj->IsNumber()) {
     return false;
   }
 
-  *out_value = pObj->GetInteger();
+  *out_value = obj->GetInteger();
   return true;
 }
 
@@ -496,14 +496,14 @@ FPDFPageObjMark_GetParamStringValue(FPDF_PAGEOBJECTMARK mark,
     return false;
   }
 
-  RetainPtr<const CPDF_Object> pObj = pParams->GetObjectFor(key);
-  if (!pObj || !pObj->IsString()) {
+  RetainPtr<const CPDF_Object> obj = pParams->GetObjectFor(key);
+  if (!obj || !obj->IsString()) {
     return false;
   }
 
   // SAFETY: required from caller.
   *out_buflen = Utf16EncodeMaybeCopyAndReturnLength(
-      WideString::FromUTF8(pObj->GetString().AsStringView()),
+      WideString::FromUTF8(obj->GetString().AsStringView()),
       UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
   return true;
 }
@@ -523,14 +523,14 @@ FPDFPageObjMark_GetParamBlobValue(FPDF_PAGEOBJECTMARK mark,
     return false;
   }
 
-  RetainPtr<const CPDF_Object> pObj = pParams->GetObjectFor(key);
-  if (!pObj || !pObj->IsString()) {
+  RetainPtr<const CPDF_Object> obj = pParams->GetObjectFor(key);
+  if (!obj || !obj->IsString()) {
     return false;
   }
 
   // SAFETY: required from caller.
   auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen));
-  ByteString value = pObj->GetString();
+  ByteString value = obj->GetString();
   fxcrt::try_spancpy(result_span, value.span());
   *out_buflen = pdfium::checked_cast<unsigned long>(value.span().size());
   return true;

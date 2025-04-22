@@ -21,27 +21,27 @@ bool CJX_Draw::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
 }
 
-void CJX_Draw::rawValue(v8::Isolate* pIsolate,
-                        v8::Local<v8::Value>* pValue,
+void CJX_Draw::rawValue(v8::Isolate* isolate,
+                        v8::Local<v8::Value>* value,
                         bool bSetting,
                         XFA_Attribute eAttribute) {
-  defaultValue(pIsolate, pValue, bSetting, eAttribute);
+  defaultValue(isolate, value, bSetting, eAttribute);
 }
 
-void CJX_Draw::defaultValue(v8::Isolate* pIsolate,
-                            v8::Local<v8::Value>* pValue,
+void CJX_Draw::defaultValue(v8::Isolate* isolate,
+                            v8::Local<v8::Value>* value,
                             bool bSetting,
                             XFA_Attribute eAttribute) {
   if (!bSetting) {
     ByteString content = GetContent(true).ToUTF8();
-    *pValue = content.IsEmpty()
-                  ? fxv8::NewNullHelper(pIsolate).As<v8::Value>()
-                  : fxv8::NewStringHelper(pIsolate, content.AsStringView())
-                        .As<v8::Value>();
+    *value = content.IsEmpty()
+                 ? fxv8::NewNullHelper(isolate).As<v8::Value>()
+                 : fxv8::NewStringHelper(isolate, content.AsStringView())
+                       .As<v8::Value>();
     return;
   }
 
-  if (!pValue || !fxv8::IsString(*pValue)) {
+  if (!value || !fxv8::IsString(*value)) {
     return;
   }
 
@@ -50,6 +50,6 @@ void CJX_Draw::defaultValue(v8::Isolate* pIsolate,
     return;
   }
 
-  WideString wsNewValue = fxv8::ReentrantToWideStringHelper(pIsolate, *pValue);
+  WideString wsNewValue = fxv8::ReentrantToWideStringHelper(isolate, *value);
   SetContent(wsNewValue, wsNewValue, true, true, true);
 }

@@ -435,10 +435,10 @@ void ReportUnsupportedFeatures(const CPDF_Document* pDoc) {
     RetainPtr<const CPDF_Dictionary> pJSDict =
         pNameDict->GetDictFor("JavaScript");
     if (pJSDict) {
-      RetainPtr<const CPDF_Array> pArray = pJSDict->GetArrayFor("Names");
-      if (pArray) {
-        for (size_t i = 0; i < pArray->size(); i++) {
-          ByteString cbStr = pArray->GetByteStringAt(i);
+      RetainPtr<const CPDF_Array> array = pJSDict->GetArrayFor("Names");
+      if (array) {
+        for (size_t i = 0; i < array->size(); i++) {
+          ByteString cbStr = array->GetByteStringAt(i);
           if (cbStr == "com.adobe.acrobat.SharedReview.Register") {
             RaiseUnsupportedError(FPDF_UNSP_DOC_SHAREDREVIEW);
             break;

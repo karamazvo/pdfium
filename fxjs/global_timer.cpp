@@ -32,7 +32,7 @@ void GlobalTimer::DestroyGlobals() {
   g_global_timer_map = nullptr;
 }
 
-GlobalTimer::GlobalTimer(CJS_App* pObj,
+GlobalTimer::GlobalTimer(CJS_App* obj,
                          CJS_Runtime* pRuntime,
                          Type nType,
                          const WideString& script,
@@ -43,7 +43,7 @@ GlobalTimer::GlobalTimer(CJS_App* pObj,
       time_out_(dwTimeOut),
       jscript_(script),
       runtime_(pRuntime),
-      embed_app_(pObj) {
+      embed_app_(obj) {
   if (HasValidID()) {
     DCHECK(!pdfium::Contains((*g_global_timer_map), timer_id_));
     (*g_global_timer_map)[timer_id_] = this;

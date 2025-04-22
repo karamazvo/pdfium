@@ -73,9 +73,8 @@ class CPDF_RenderStatus {
 
   void RenderObjectList(const CPDF_PageObjectHolder* pObjectHolder,
                         const CFX_Matrix& mtObj2Device);
-  void RenderSingleObject(CPDF_PageObject* pObj,
-                          const CFX_Matrix& mtObj2Device);
-  bool ContinueSingleObject(CPDF_PageObject* pObj,
+  void RenderSingleObject(CPDF_PageObject* obj, const CFX_Matrix& mtObj2Device);
+  bool ContinueSingleObject(CPDF_PageObject* obj,
                             const CFX_Matrix& mtObj2Device,
                             PauseIndicatorIface* pPause);
   void ProcessClipPath(const CPDF_ClipPath& ClipPath,
@@ -105,8 +104,8 @@ class CPDF_RenderStatus {
   RetainPtr<CPDF_TransferFunc> GetTransferFunc(
       RetainPtr<const CPDF_Object> pObject) const;
 
-  FX_ARGB GetFillArgb(CPDF_PageObject* pObj) const;
-  FX_ARGB GetFillArgbForType3(CPDF_PageObject* pObj) const;
+  FX_ARGB GetFillArgb(CPDF_PageObject* obj) const;
+  FX_ARGB GetFillArgbForType3(CPDF_PageObject* obj) const;
 
   void DrawTilingPattern(CPDF_TilingPattern* pattern,
                          CPDF_PageObject* pPageObj,
@@ -132,15 +131,15 @@ class CPDF_RenderStatus {
  private:
   bool ProcessTransparency(CPDF_PageObject* PageObj,
                            const CFX_Matrix& mtObj2Device);
-  void ProcessObjectNoClip(CPDF_PageObject* pObj,
+  void ProcessObjectNoClip(CPDF_PageObject* obj,
                            const CFX_Matrix& mtObj2Device);
-  void DrawObjWithBackground(CPDF_PageObject* pObj,
+  void DrawObjWithBackground(CPDF_PageObject* obj,
                              const CFX_Matrix& mtObj2Device);
   void DrawObjWithBackgroundToDevice(CPDF_PageObject* obj,
                                      const CFX_Matrix& object_to_device,
                                      CFX_RenderDevice* device,
                                      const CFX_Matrix& device_matrix);
-  bool DrawObjWithBlend(CPDF_PageObject* pObj, const CFX_Matrix& mtObj2Device);
+  bool DrawObjWithBlend(CPDF_PageObject* obj, const CFX_Matrix& mtObj2Device);
   bool ProcessPath(CPDF_PathObject* path_obj, const CFX_Matrix& mtObj2Device);
   void ProcessPathPattern(CPDF_PathObject* path_obj,
                           const CFX_Matrix& mtObj2Device,
@@ -175,7 +174,7 @@ class CPDF_RenderStatus {
   bool ProcessForm(const CPDF_FormObject* pFormObj,
                    const CFX_Matrix& mtObj2Device);
   FX_RECT GetClippedBBox(const FX_RECT& rect) const;
-  RetainPtr<CFX_DIBitmap> GetBackdrop(const CPDF_PageObject* pObj,
+  RetainPtr<CFX_DIBitmap> GetBackdrop(const CPDF_PageObject* obj,
                                       const FX_RECT& bbox,
                                       bool bBackAlphaRequired);
   RetainPtr<CFX_DIBitmap> LoadSMask(CPDF_Dictionary* smask_dict,
@@ -185,8 +184,8 @@ class CPDF_RenderStatus {
   FX_ARGB GetBackgroundColor(const CPDF_Dictionary* pSMaskDict,
                              const CPDF_Dictionary* pGroupDict,
                              CPDF_ColorSpace::Family* pCSFamily);
-  FX_ARGB GetStrokeArgb(CPDF_PageObject* pObj) const;
-  FX_RECT GetObjectClippedRect(const CPDF_PageObject* pObj,
+  FX_ARGB GetStrokeArgb(CPDF_PageObject* obj) const;
+  FX_RECT GetObjectClippedRect(const CPDF_PageObject* obj,
                                const CFX_Matrix& mtObj2Device) const;
   // Returns the format that is compatible with `device_`.
   FXDIB_Format GetCompatibleArgbFormat() const;

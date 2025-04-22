@@ -12,10 +12,10 @@
 #include "core/fxcrt/check.h"
 
 CPDF_Pattern::CPDF_Pattern(CPDF_Document* pDoc,
-                           RetainPtr<CPDF_Object> pObj,
+                           RetainPtr<CPDF_Object> obj,
                            const CFX_Matrix& parentMatrix)
     : document_(pDoc),
-      pattern_obj_(std::move(pObj)),
+      pattern_obj_(std::move(obj)),
       parent_matrix_(parentMatrix) {
   DCHECK(document_);
   DCHECK(pattern_obj_);

@@ -358,13 +358,13 @@ RetainPtr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
       }
 
       ByteString key = PDF_NameDecode(GetWord().Substr(1));
-      RetainPtr<CPDF_Object> pObj =
+      RetainPtr<CPDF_Object> obj =
           ReadNextObject(true, bInArray, dwRecursionLevel + 1);
-      if (!pObj) {
+      if (!obj) {
         return nullptr;
       }
 
-      pDict->SetFor(key, std::move(pObj));
+      pDict->SetFor(key, std::move(obj));
     }
     return pDict;
   }
@@ -374,19 +374,19 @@ RetainPtr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
       return nullptr;
     }
 
-    auto pArray = pdfium::MakeRetain<CPDF_Array>();
+    auto array = pdfium::MakeRetain<CPDF_Array>();
     while (true) {
-      RetainPtr<CPDF_Object> pObj =
+      RetainPtr<CPDF_Object> obj =
           ReadNextObject(bAllowNestedArray, true, dwRecursionLevel + 1);
-      if (pObj) {
-        pArray->Append(std::move(pObj));
+      if (obj) {
+        array->Append(std::move(obj));
         continue;
       }
       if (!word_size_ || word_buffer_[0] == ']') {
         break;
       }
     }
-    return pArray;
+    return array;
   }
 
   if (GetWord() == kFalse) {

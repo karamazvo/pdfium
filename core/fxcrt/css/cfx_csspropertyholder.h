@@ -18,7 +18,7 @@ class CFX_CSSPropertyHolder {
 
   CFX_CSSProperty eProperty;
   bool bImportant;
-  RetainPtr<CFX_CSSValue> pValue;
+  RetainPtr<CFX_CSSValue> value;
 };
 
 #endif  // CORE_FXCRT_CSS_CFX_CSSPROPERTYHOLDER_H_

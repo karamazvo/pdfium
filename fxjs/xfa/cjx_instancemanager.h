@@ -31,7 +31,7 @@ class CJX_InstanceManager final : public CJX_Node {
   JSE_PROP(max);
   JSE_PROP(min);
 
-  int32_t MoveInstance(v8::Isolate* pIsolate, int32_t iTo, int32_t iFrom);
+  int32_t MoveInstance(v8::Isolate* isolate, int32_t iTo, int32_t iFrom);
 
  private:
   explicit CJX_InstanceManager(CXFA_InstanceManager* mgr);
@@ -42,7 +42,7 @@ class CJX_InstanceManager final : public CJX_Node {
   static const TypeTag static_type__ = TypeTag::InstanceManager;
   static const CJX_MethodSpec MethodSpecs[];
 
-  int32_t SetInstances(v8::Isolate* pIsolate, int32_t iDesired);
+  int32_t SetInstances(v8::Isolate* isolate, int32_t iDesired);
 };
 
 #endif  // FXJS_XFA_CJX_INSTANCEMANAGER_H_

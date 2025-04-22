@@ -131,37 +131,36 @@ void DynPropGetterAdapter_MethodCallback(
 }
 
 std::unique_ptr<CFXJSE_Value> DynPropGetterAdapter(
-    v8::Isolate* pIsolate,
+    v8::Isolate* isolate,
     const FXJSE_CLASS_DESCRIPTOR* pClassDescriptor,
     v8::Local<v8::Object> pObject,
     ByteStringView szPropName) {
-  FXJSE_ClassPropType nPropType =
-      pClassDescriptor->dynPropTypeGetter
-          ? pClassDescriptor->dynPropTypeGetter(pIsolate, pObject, szPropName,
-                                                false)
-          : FXJSE_ClassPropType::kProperty;
+  FXJSE_ClassPropType nPropType = pClassDescriptor->dynPropTypeGetter
+                                      ? pClassDescriptor->dynPropTypeGetter(
+                                            isolate, pObject, szPropName, false)
+                                      : FXJSE_ClassPropType::kProperty;
   if (nPropType == FXJSE_ClassPropType::kProperty) {
     if (pClassDescriptor->dynPropGetter) {
       return std::make_unique<CFXJSE_Value>(
-          pIsolate,
-          pClassDescriptor->dynPropGetter(pIsolate, pObject, szPropName));
+          isolate,
+          pClassDescriptor->dynPropGetter(isolate, pObject, szPropName));
     }
   } else if (nPropType == FXJSE_ClassPropType::kMethod) {
     if (pClassDescriptor->dynMethodCall) {
-      v8::HandleScope hscope(pIsolate);
+      v8::HandleScope hscope(isolate);
       v8::Local<v8::ObjectTemplate> hCallBackInfoTemplate =
-          v8::ObjectTemplate::New(pIsolate);
+          v8::ObjectTemplate::New(isolate);
       hCallBackInfoTemplate->SetInternalFieldCount(2);
       v8::Local<v8::Object> hCallBackInfo =
-          hCallBackInfoTemplate->NewInstance(pIsolate->GetCurrentContext())
+          hCallBackInfoTemplate->NewInstance(isolate->GetCurrentContext())
               .ToLocalChecked();
       hCallBackInfo->SetAlignedPointerInInternalField(
           0, const_cast<FXJSE_CLASS_DESCRIPTOR*>(pClassDescriptor));
       hCallBackInfo->SetInternalField(
-          1, fxv8::NewStringHelper(pIsolate, szPropName));
+          1, fxv8::NewStringHelper(isolate, szPropName));
       return std::make_unique<CFXJSE_Value>(
-          pIsolate,
-          v8::Function::New(pIsolate->GetCurrentContext(),
+          isolate,
+          v8::Function::New(isolate->GetCurrentContext(),
                             DynPropGetterAdapter_MethodCallback, hCallBackInfo,
                             0, v8::ConstructorBehavior::kThrow)
               .ToLocalChecked());
@@ -170,32 +169,31 @@ std::unique_ptr<CFXJSE_Value> DynPropGetterAdapter(
   return std::make_unique<CFXJSE_Value>();
 }
 
-void DynPropSetterAdapter(v8::Isolate* pIsolate,
+void DynPropSetterAdapter(v8::Isolate* isolate,
                           const FXJSE_CLASS_DESCRIPTOR* pClassDescriptor,
                           v8::Local<v8::Object> pObject,
                           ByteStringView szPropName,
-                          CFXJSE_Value* pValue) {
+                          CFXJSE_Value* value) {
   DCHECK(pClassDescriptor);
-  FXJSE_ClassPropType nPropType =
-      pClassDescriptor->dynPropTypeGetter
-          ? pClassDescriptor->dynPropTypeGetter(pIsolate, pObject, szPropName,
-                                                false)
-          : FXJSE_ClassPropType::kProperty;
+  FXJSE_ClassPropType nPropType = pClassDescriptor->dynPropTypeGetter
+                                      ? pClassDescriptor->dynPropTypeGetter(
+                                            isolate, pObject, szPropName, false)
+                                      : FXJSE_ClassPropType::kProperty;
   if (nPropType != FXJSE_ClassPropType::kMethod) {
     if (pClassDescriptor->dynPropSetter) {
-      pClassDescriptor->dynPropSetter(pIsolate, pObject, szPropName,
-                                      pValue->GetValue(pIsolate));
+      pClassDescriptor->dynPropSetter(isolate, pObject, szPropName,
+                                      value->GetValue(isolate));
     }
   }
 }
 
-bool DynPropQueryAdapter(v8::Isolate* pIsolate,
+bool DynPropQueryAdapter(v8::Isolate* isolate,
                          const FXJSE_CLASS_DESCRIPTOR* pClassDescriptor,
                          v8::Local<v8::Object> pObject,
                          ByteStringView szPropName) {
   FXJSE_ClassPropType nPropType = pClassDescriptor->dynPropTypeGetter
                                       ? pClassDescriptor->dynPropTypeGetter(
-                                            pIsolate, pObject, szPropName, true)
+                                            isolate, pObject, szPropName, true)
                                       : FXJSE_ClassPropType::kProperty;
   return nPropType != FXJSE_ClassPropType::kNone;
 }
@@ -267,7 +265,7 @@ void NamedPropertyEnumeratorCallback(
   info.GetReturnValue().Set(v8::Array::New(info.GetIsolate()));
 }
 
-void SetUpNamedPropHandler(v8::Isolate* pIsolate,
+void SetUpNamedPropHandler(v8::Isolate* isolate,
                            v8::Local<v8::ObjectTemplate> pObjectTemplate,
                            const FXJSE_CLASS_DESCRIPTOR* pClassDescriptor) {
   v8::NamedPropertyHandlerConfiguration configuration(
@@ -276,7 +274,7 @@ void SetUpNamedPropHandler(v8::Isolate* pIsolate,
       pClassDescriptor->dynPropTypeGetter ? NamedPropertyQueryCallback
                                           : nullptr,
       nullptr, NamedPropertyEnumeratorCallback,
-      v8::External::New(pIsolate,
+      v8::External::New(isolate,
                         const_cast<FXJSE_CLASS_DESCRIPTOR*>(pClassDescriptor)),
       v8::PropertyHandlerFlags::kNonMasking);
   pObjectTemplate->SetHandler(configuration);
@@ -299,44 +297,44 @@ CFXJSE_Class* CFXJSE_Class::Create(
     return pExistingClass;
   }
 
-  v8::Isolate* pIsolate = pContext->GetIsolate();
+  v8::Isolate* isolate = pContext->GetIsolate();
   auto pClass = std::make_unique<CFXJSE_Class>(pContext);
   pClass->class_name_ = pClassDescriptor->name;
   pClass->class_descriptor_ = pClassDescriptor;
-  CFXJSE_ScopeUtil_IsolateHandleRootContext scope(pIsolate);
+  CFXJSE_ScopeUtil_IsolateHandleRootContext scope(isolate);
   v8::Local<v8::FunctionTemplate> hFunctionTemplate = v8::FunctionTemplate::New(
-      pIsolate, bIsJSGlobal ? nullptr : V8ConstructorCallback_Wrapper,
-      v8::External::New(pIsolate,
+      isolate, bIsJSGlobal ? nullptr : V8ConstructorCallback_Wrapper,
+      v8::External::New(isolate,
                         const_cast<FXJSE_CLASS_DESCRIPTOR*>(pClassDescriptor)));
   v8::Local<v8::String> classname =
-      fxv8::NewStringHelper(pIsolate, pClassDescriptor->name);
+      fxv8::NewStringHelper(isolate, pClassDescriptor->name);
   hFunctionTemplate->SetClassName(classname);
   hFunctionTemplate->PrototypeTemplate()->Set(
-      v8::Symbol::GetToStringTag(pIsolate), classname,
+      v8::Symbol::GetToStringTag(isolate), classname,
       static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontEnum));
   hFunctionTemplate->InstanceTemplate()->SetInternalFieldCount(2);
   v8::Local<v8::ObjectTemplate> hObjectTemplate =
       hFunctionTemplate->InstanceTemplate();
-  SetUpNamedPropHandler(pIsolate, hObjectTemplate, pClassDescriptor);
+  SetUpNamedPropHandler(isolate, hObjectTemplate, pClassDescriptor);
 
   for (const auto& method : pClassDescriptor->methods) {
     v8::Local<v8::FunctionTemplate> fun = v8::FunctionTemplate::New(
-        pIsolate, V8FunctionCallback_Wrapper,
-        v8::External::New(pIsolate,
+        isolate, V8FunctionCallback_Wrapper,
+        v8::External::New(isolate,
                           const_cast<FXJSE_FUNCTION_DESCRIPTOR*>(&method)));
     fun->RemovePrototype();
     hObjectTemplate->Set(
-        fxv8::NewStringHelper(pIsolate, method.name), fun,
+        fxv8::NewStringHelper(isolate, method.name), fun,
         static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete));
   }
 
   if (bIsJSGlobal) {
     v8::Local<v8::FunctionTemplate> fn = v8::FunctionTemplate::New(
-        pIsolate, Context_GlobalObjToString,
+        isolate, Context_GlobalObjToString,
         v8::External::New(
-            pIsolate, const_cast<FXJSE_CLASS_DESCRIPTOR*>(pClassDescriptor)));
+            isolate, const_cast<FXJSE_CLASS_DESCRIPTOR*>(pClassDescriptor)));
     fn->RemovePrototype();
-    hObjectTemplate->Set(fxv8::NewStringHelper(pIsolate, "toString"), fn);
+    hObjectTemplate->Set(fxv8::NewStringHelper(isolate, "toString"), fn);
   }
   pClass->func_template_.Reset(pContext->GetIsolate(), hFunctionTemplate);
   CFXJSE_Class* pResult = pClass.get();
@@ -350,6 +348,6 @@ CFXJSE_Class::CFXJSE_Class(const CFXJSE_Context* pContext)
 CFXJSE_Class::~CFXJSE_Class() = default;
 
 v8::Local<v8::FunctionTemplate> CFXJSE_Class::GetTemplate(
-    v8::Isolate* pIsolate) {
-  return v8::Local<v8::FunctionTemplate>::New(pIsolate, func_template_);
+    v8::Isolate* isolate) {
+  return v8::Local<v8::FunctionTemplate>::New(isolate, func_template_);
 }

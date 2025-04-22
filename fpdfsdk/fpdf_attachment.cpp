@@ -150,8 +150,8 @@ FPDFAttachment_GetValueType(FPDF_ATTACHMENT attachment, FPDF_BYTESTRING key) {
 
   CPDF_FileSpec spec(
       pdfium::WrapRetain(CPDFObjectFromFPDFAttachment(attachment)));
-  RetainPtr<const CPDF_Object> pObj = spec.GetParamsDict()->GetObjectFor(key);
-  return pObj ? pObj->GetType() : FPDF_OBJECT_UNKNOWN;
+  RetainPtr<const CPDF_Object> obj = spec.GetParamsDict()->GetObjectFor(key);
+  return obj ? obj->GetType() : FPDF_OBJECT_UNKNOWN;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV

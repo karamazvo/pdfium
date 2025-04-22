@@ -164,8 +164,8 @@ class TestDocRenderData : public CPDF_DocRenderData {
   TestDocRenderData() = default;
 
   RetainPtr<CPDF_TransferFunc> CreateTransferFuncForTesting(
-      RetainPtr<const CPDF_Object> pObj) const {
-    return CreateTransferFunc(std::move(pObj));
+      RetainPtr<const CPDF_Object> obj) const {
+    return CreateTransferFunc(std::move(obj));
   }
 };
 

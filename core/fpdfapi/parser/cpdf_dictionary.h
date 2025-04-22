@@ -141,7 +141,7 @@ class CPDF_Dictionary final : public CPDF_Object {
   const CPDF_Stream* GetStreamForInternal(const ByteString& key) const;
   const CPDF_String* GetStringForInternal(const ByteString& key) const;
   CPDF_Object* SetForInternal(const ByteString& key,
-                              RetainPtr<CPDF_Object> pObj);
+                              RetainPtr<CPDF_Object> obj);
 
   ByteString MaybeIntern(const ByteString& str);
   const CPDF_Dictionary* GetDictInternal() const override;

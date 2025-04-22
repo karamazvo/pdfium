@@ -14,21 +14,21 @@ CFX_V8::CFX_V8(v8::Isolate* isolate) : isolate_(isolate) {}
 CFX_V8::~CFX_V8() = default;
 
 v8::Local<v8::Value> CFX_V8::GetObjectProperty(
-    v8::Local<v8::Object> pObj,
+    v8::Local<v8::Object> obj,
     ByteStringView bsUTF8PropertyName) {
-  return fxv8::ReentrantGetObjectPropertyHelper(GetIsolate(), pObj,
+  return fxv8::ReentrantGetObjectPropertyHelper(GetIsolate(), obj,
                                                 bsUTF8PropertyName);
 }
 
 std::vector<WideString> CFX_V8::GetObjectPropertyNames(
-    v8::Local<v8::Object> pObj) {
-  return fxv8::ReentrantGetObjectPropertyNamesHelper(GetIsolate(), pObj);
+    v8::Local<v8::Object> obj) {
+  return fxv8::ReentrantGetObjectPropertyNamesHelper(GetIsolate(), obj);
 }
 
-void CFX_V8::PutObjectProperty(v8::Local<v8::Object> pObj,
+void CFX_V8::PutObjectProperty(v8::Local<v8::Object> obj,
                                ByteStringView bsUTF8PropertyName,
                                v8::Local<v8::Value> pPut) {
-  fxv8::ReentrantPutObjectPropertyHelper(GetIsolate(), pObj, bsUTF8PropertyName,
+  fxv8::ReentrantPutObjectPropertyHelper(GetIsolate(), obj, bsUTF8PropertyName,
                                          pPut);
 }
 
@@ -46,19 +46,19 @@ v8::Local<v8::Object> CFX_V8::NewObject() {
   return fxv8::NewObjectHelper(GetIsolate());
 }
 
-void CFX_V8::PutArrayElement(v8::Local<v8::Array> pArray,
+void CFX_V8::PutArrayElement(v8::Local<v8::Array> array,
                              size_t index,
-                             v8::Local<v8::Value> pValue) {
-  fxv8::ReentrantPutArrayElementHelper(GetIsolate(), pArray, index, pValue);
+                             v8::Local<v8::Value> value) {
+  fxv8::ReentrantPutArrayElementHelper(GetIsolate(), array, index, value);
 }
 
-v8::Local<v8::Value> CFX_V8::GetArrayElement(v8::Local<v8::Array> pArray,
+v8::Local<v8::Value> CFX_V8::GetArrayElement(v8::Local<v8::Array> array,
                                              size_t index) {
-  return fxv8::ReentrantGetArrayElementHelper(GetIsolate(), pArray, index);
+  return fxv8::ReentrantGetArrayElementHelper(GetIsolate(), array, index);
 }
 
-size_t CFX_V8::GetArrayLength(v8::Local<v8::Array> pArray) {
-  return fxv8::GetArrayLengthHelper(pArray);
+size_t CFX_V8::GetArrayLength(v8::Local<v8::Array> array) {
+  return fxv8::GetArrayLengthHelper(array);
 }
 
 v8::Local<v8::Number> CFX_V8::NewNumber(int number) {
@@ -100,32 +100,32 @@ v8::Local<v8::Date> CFX_V8::NewDate(double d) {
   return fxv8::NewDateHelper(GetIsolate(), d);
 }
 
-int CFX_V8::ToInt32(v8::Local<v8::Value> pValue) {
-  return fxv8::ReentrantToInt32Helper(GetIsolate(), pValue);
+int CFX_V8::ToInt32(v8::Local<v8::Value> value) {
+  return fxv8::ReentrantToInt32Helper(GetIsolate(), value);
 }
 
-bool CFX_V8::ToBoolean(v8::Local<v8::Value> pValue) {
-  return fxv8::ReentrantToBooleanHelper(GetIsolate(), pValue);
+bool CFX_V8::ToBoolean(v8::Local<v8::Value> value) {
+  return fxv8::ReentrantToBooleanHelper(GetIsolate(), value);
 }
 
-double CFX_V8::ToDouble(v8::Local<v8::Value> pValue) {
-  return fxv8::ReentrantToDoubleHelper(GetIsolate(), pValue);
+double CFX_V8::ToDouble(v8::Local<v8::Value> value) {
+  return fxv8::ReentrantToDoubleHelper(GetIsolate(), value);
 }
 
-WideString CFX_V8::ToWideString(v8::Local<v8::Value> pValue) {
-  return fxv8::ReentrantToWideStringHelper(GetIsolate(), pValue);
+WideString CFX_V8::ToWideString(v8::Local<v8::Value> value) {
+  return fxv8::ReentrantToWideStringHelper(GetIsolate(), value);
 }
 
-ByteString CFX_V8::ToByteString(v8::Local<v8::Value> pValue) {
-  return fxv8::ReentrantToByteStringHelper(GetIsolate(), pValue);
+ByteString CFX_V8::ToByteString(v8::Local<v8::Value> value) {
+  return fxv8::ReentrantToByteStringHelper(GetIsolate(), value);
 }
 
-v8::Local<v8::Object> CFX_V8::ToObject(v8::Local<v8::Value> pValue) {
-  return fxv8::ReentrantToObjectHelper(GetIsolate(), pValue);
+v8::Local<v8::Object> CFX_V8::ToObject(v8::Local<v8::Value> value) {
+  return fxv8::ReentrantToObjectHelper(GetIsolate(), value);
 }
 
-v8::Local<v8::Array> CFX_V8::ToArray(v8::Local<v8::Value> pValue) {
-  return fxv8::ReentrantToArrayHelper(GetIsolate(), pValue);
+v8::Local<v8::Array> CFX_V8::ToArray(v8::Local<v8::Value> value) {
+  return fxv8::ReentrantToArrayHelper(GetIsolate(), value);
 }
 
 void CFX_V8IsolateDeleter::operator()(v8::Isolate* ptr) {

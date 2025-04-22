@@ -244,17 +244,17 @@ RetainPtr<const CPDF_String> CPDF_Dictionary::GetStringFor(
 }
 
 CFX_FloatRect CPDF_Dictionary::GetRectFor(const ByteString& key) const {
-  const CPDF_Array* pArray = GetArrayForInternal(key);
-  if (pArray) {
-    return pArray->GetRect();
+  const CPDF_Array* array = GetArrayForInternal(key);
+  if (array) {
+    return array->GetRect();
   }
   return CFX_FloatRect();
 }
 
 CFX_Matrix CPDF_Dictionary::GetMatrixFor(const ByteString& key) const {
-  const CPDF_Array* pArray = GetArrayForInternal(key);
-  if (pArray) {
-    return pArray->GetMatrix();
+  const CPDF_Array* array = GetArrayForInternal(key);
+  if (array) {
+    return array->GetMatrix();
   }
   return CFX_Matrix();
 }
@@ -278,16 +278,16 @@ void CPDF_Dictionary::SetFor(const ByteString& key,
 }
 
 CPDF_Object* CPDF_Dictionary::SetForInternal(const ByteString& key,
-                                             RetainPtr<CPDF_Object> pObj) {
+                                             RetainPtr<CPDF_Object> obj) {
   CHECK(!IsLocked());
-  if (!pObj) {
+  if (!obj) {
     map_.erase(key);
     return nullptr;
   }
-  CHECK(pObj->IsInline());
-  CHECK(!pObj->IsStream());
-  CPDF_Object* pRet = pObj.Get();
-  map_[MaybeIntern(key)] = std::move(pObj);
+  CHECK(obj->IsInline());
+  CHECK(!obj->IsStream());
+  CPDF_Object* pRet = obj.Get();
+  map_[MaybeIntern(key)] = std::move(obj);
   return pRet;
 }
 
@@ -334,22 +334,22 @@ void CPDF_Dictionary::ReplaceKey(const ByteString& oldkey,
 
 void CPDF_Dictionary::SetRectFor(const ByteString& key,
                                  const CFX_FloatRect& rect) {
-  auto pArray = SetNewFor<CPDF_Array>(key);
-  pArray->AppendNew<CPDF_Number>(rect.left);
-  pArray->AppendNew<CPDF_Number>(rect.bottom);
-  pArray->AppendNew<CPDF_Number>(rect.right);
-  pArray->AppendNew<CPDF_Number>(rect.top);
+  auto array = SetNewFor<CPDF_Array>(key);
+  array->AppendNew<CPDF_Number>(rect.left);
+  array->AppendNew<CPDF_Number>(rect.bottom);
+  array->AppendNew<CPDF_Number>(rect.right);
+  array->AppendNew<CPDF_Number>(rect.top);
 }
 
 void CPDF_Dictionary::SetMatrixFor(const ByteString& key,
                                    const CFX_Matrix& matrix) {
-  auto pArray = SetNewFor<CPDF_Array>(key);
-  pArray->AppendNew<CPDF_Number>(matrix.a);
-  pArray->AppendNew<CPDF_Number>(matrix.b);
-  pArray->AppendNew<CPDF_Number>(matrix.c);
-  pArray->AppendNew<CPDF_Number>(matrix.d);
-  pArray->AppendNew<CPDF_Number>(matrix.e);
-  pArray->AppendNew<CPDF_Number>(matrix.f);
+  auto array = SetNewFor<CPDF_Array>(key);
+  array->AppendNew<CPDF_Number>(matrix.a);
+  array->AppendNew<CPDF_Number>(matrix.b);
+  array->AppendNew<CPDF_Number>(matrix.c);
+  array->AppendNew<CPDF_Number>(matrix.d);
+  array->AppendNew<CPDF_Number>(matrix.e);
+  array->AppendNew<CPDF_Number>(matrix.f);
 }
 
 ByteString CPDF_Dictionary::MaybeIntern(const ByteString& str) {
@@ -367,14 +367,14 @@ bool CPDF_Dictionary::WriteTo(IFX_ArchiveStream* archive,
   CPDF_DictionaryLocker locker(this);
   for (const auto& it : locker) {
     const ByteString& key = it.first;
-    const RetainPtr<CPDF_Object>& pValue = it.second;
+    const RetainPtr<CPDF_Object>& value = it.second;
     if (!archive->WriteString("/") ||
         !archive->WriteString(PDF_NameEncode(key).AsStringView())) {
       return false;
     }
-    if (!pValue->WriteTo(archive, !is_signature || key != "Contents"
-                                      ? encryptor
-                                      : nullptr)) {
+    if (!value->WriteTo(archive, !is_signature || key != "Contents"
+                                     ? encryptor
+                                     : nullptr)) {
       return false;
     }
   }

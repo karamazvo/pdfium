@@ -539,15 +539,14 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
       return;
     }
 
-    RetainPtr<const CPDF_Array> pArray =
-        ToArray(pAcroForm->GetObjectFor("XFA"));
-    if (!pArray) {
+    RetainPtr<const CPDF_Array> array = ToArray(pAcroForm->GetObjectFor("XFA"));
+    if (!array) {
       return;
     }
 
-    for (size_t i = 1; i < pArray->size(); i += 2) {
-      RetainPtr<const CPDF_Object> pPDFObj = pArray->GetObjectAt(i);
-      RetainPtr<const CPDF_Object> pPrePDFObj = pArray->GetObjectAt(i - 1);
+    for (size_t i = 1; i < array->size(); i += 2) {
+      RetainPtr<const CPDF_Object> pPDFObj = array->GetObjectAt(i);
+      RetainPtr<const CPDF_Object> pPrePDFObj = array->GetObjectAt(i - 1);
       if (!pPrePDFObj->IsString()) {
         continue;
       }
@@ -573,7 +572,7 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
             fileWrite);
         continue;
       }
-      if (i == pArray->size() - 1) {
+      if (i == array->size() - 1) {
         WideString wPath = WideString::FromUTF16LE(bs.unsigned_span());
         ByteString bPath = wPath.ToUTF8();
         static const char kFormat[] =
@@ -849,15 +848,15 @@ bool CPDFXFA_DocEnvironment::ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
     return false;
   }
 
-  RetainPtr<const CPDF_Array> pArray = ToArray(pAcroForm->GetObjectFor("XFA"));
-  if (!pArray) {
+  RetainPtr<const CPDF_Array> array = ToArray(pAcroForm->GetObjectFor("XFA"));
+  if (!array) {
     fileStream->Flush();
     return false;
   }
 
-  for (size_t i = 1; i < pArray->size(); i += 2) {
-    RetainPtr<const CPDF_Object> pPDFObj = pArray->GetObjectAt(i);
-    RetainPtr<const CPDF_Object> pPrePDFObj = pArray->GetObjectAt(i - 1);
+  for (size_t i = 1; i < array->size(); i += 2) {
+    RetainPtr<const CPDF_Object> pPDFObj = array->GetObjectAt(i);
+    RetainPtr<const CPDF_Object> pPrePDFObj = array->GetObjectAt(i - 1);
     if (!pPrePDFObj->IsString()) {
       continue;
     }

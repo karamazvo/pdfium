@@ -56,18 +56,18 @@ CXFA_ThisProxy* CXFA_Object::AsThisProxy() {
   return IsThisProxy() ? static_cast<CXFA_ThisProxy*>(this) : nullptr;
 }
 
-CXFA_List* ToList(CXFA_Object* pObj) {
-  return pObj ? pObj->AsList() : nullptr;
+CXFA_List* ToList(CXFA_Object* obj) {
+  return obj ? obj->AsList() : nullptr;
 }
 
-CXFA_Node* ToNode(CXFA_Object* pObj) {
-  return pObj ? pObj->AsNode() : nullptr;
+CXFA_Node* ToNode(CXFA_Object* obj) {
+  return obj ? obj->AsNode() : nullptr;
 }
 
-CXFA_TreeList* ToTreeList(CXFA_Object* pObj) {
-  return pObj ? pObj->AsTreeList() : nullptr;
+CXFA_TreeList* ToTreeList(CXFA_Object* obj) {
+  return obj ? obj->AsTreeList() : nullptr;
 }
 
-CXFA_ThisProxy* ToThisProxy(CXFA_Object* pObj) {
-  return pObj ? pObj->AsThisProxy() : nullptr;
+CXFA_ThisProxy* ToThisProxy(CXFA_Object* obj) {
+  return obj ? obj->AsThisProxy() : nullptr;
 }

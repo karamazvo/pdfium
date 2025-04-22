@@ -36,7 +36,7 @@ class CFXJSE_Context {
   };
 
   static std::unique_ptr<CFXJSE_Context> Create(
-      v8::Isolate* pIsolate,
+      v8::Isolate* isolate,
       const FXJSE_CLASS_DESCRIPTOR* pGlobalClass,
       CFXJSE_HostObject* pGlobalObject,
       CXFA_ThisProxy* pProxy);
@@ -56,7 +56,7 @@ class CFXJSE_Context {
                                 v8::Local<v8::Object> pNewThisObject);
 
  private:
-  CFXJSE_Context(v8::Isolate* pIsolate, CXFA_ThisProxy* pProxy);
+  CFXJSE_Context(v8::Isolate* isolate, CXFA_ThisProxy* pProxy);
   CFXJSE_Context(const CFXJSE_Context&) = delete;
   CFXJSE_Context& operator=(const CFXJSE_Context&) = delete;
 

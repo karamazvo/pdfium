@@ -64,10 +64,10 @@ bool CPDF_ShadingPattern::Load() {
   RetainPtr<const CPDF_Object> pFunc =
       pShadingDict->GetDirectObjectFor("Function");
   if (pFunc) {
-    if (const CPDF_Array* pArray = pFunc->AsArray()) {
-      functions_.resize(std::min<size_t>(pArray->size(), 4));
+    if (const CPDF_Array* array = pFunc->AsArray()) {
+      functions_.resize(std::min<size_t>(array->size(), 4));
       for (size_t i = 0; i < functions_.size(); ++i) {
-        functions_[i] = CPDF_Function::Load(pArray->GetDirectObjectAt(i));
+        functions_[i] = CPDF_Function::Load(array->GetDirectObjectAt(i));
       }
     } else {
       functions_.push_back(CPDF_Function::Load(std::move(pFunc)));

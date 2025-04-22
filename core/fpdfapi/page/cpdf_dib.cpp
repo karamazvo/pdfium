@@ -547,11 +547,11 @@ bool CPDF_DIB::GetDecodeAndMaskArray() {
     return true;
   }
 
-  if (const CPDF_Array* pArray = pMask->AsArray()) {
-    if (pArray->size() >= components_ * 2) {
+  if (const CPDF_Array* array = pMask->AsArray()) {
+    if (array->size() >= components_ * 2) {
       for (uint32_t i = 0; i < components_; i++) {
-        int min_num = pArray->GetIntegerAt(i * 2);
-        int max_num = pArray->GetIntegerAt(i * 2 + 1);
+        int min_num = array->GetIntegerAt(i * 2);
+        int max_num = array->GetIntegerAt(i * 2 + 1);
         comp_data_[i].color_key_min_ = std::max(min_num, 0);
         comp_data_[i].color_key_max_ = std::min(max_num, max_data);
       }

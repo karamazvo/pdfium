@@ -29,13 +29,13 @@ const CPDF_IndexedCS* CPDF_IndexedCS::AsIndexedCS() const {
 }
 
 uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
-                                const CPDF_Array* pArray,
+                                const CPDF_Array* array,
                                 std::set<const CPDF_Object*>* pVisited) {
-  if (pArray->size() < 4) {
+  if (array->size() < 4) {
     return 0;
   }
 
-  RetainPtr<const CPDF_Object> pBaseObj = pArray->GetDirectObjectAt(1);
+  RetainPtr<const CPDF_Object> pBaseObj = array->GetDirectObjectAt(1);
   if (HasSameArray(pBaseObj.Get())) {
     return 0;
   }
@@ -67,9 +67,9 @@ uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
   // ISO 32000-1:2008 section 8.6.6.3 says the maximum value is 255.  Clamp
   // the value to this range, so that images with an out-of-range hival value
   // can still be loaded.
-  max_index_ = std::clamp(pArray->GetIntegerAt(2), 0, 255);
+  max_index_ = std::clamp(array->GetIntegerAt(2), 0, 255);
 
-  RetainPtr<const CPDF_Object> pTableObj = pArray->GetDirectObjectAt(3);
+  RetainPtr<const CPDF_Object> pTableObj = array->GetDirectObjectAt(3);
   if (!pTableObj) {
     return 0;
   }

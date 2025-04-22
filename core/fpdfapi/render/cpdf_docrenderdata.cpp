@@ -79,22 +79,22 @@ CFX_PSFontTracker* CPDF_DocRenderData::GetPSFontTracker() {
 #endif
 
 RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::CreateTransferFunc(
-    RetainPtr<const CPDF_Object> pObj) const {
+    RetainPtr<const CPDF_Object> obj) const {
   std::array<std::unique_ptr<CPDF_Function>, 3> pFuncs;
-  const CPDF_Array* pArray = pObj->AsArray();
-  if (pArray) {
-    if (pArray->size() < 3) {
+  const CPDF_Array* array = obj->AsArray();
+  if (array) {
+    if (array->size() < 3) {
       return nullptr;
     }
 
     for (uint32_t i = 0; i < 3; ++i) {
-      pFuncs[2 - i] = CPDF_Function::Load(pArray->GetDirectObjectAt(i));
+      pFuncs[2 - i] = CPDF_Function::Load(array->GetDirectObjectAt(i));
       if (!pFuncs[2 - i]) {
         return nullptr;
       }
     }
   } else {
-    pFuncs[0] = CPDF_Function::Load(pObj);
+    pFuncs[0] = CPDF_Function::Load(obj);
     if (!pFuncs[0]) {
       return nullptr;
     }
@@ -113,7 +113,7 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::CreateTransferFunc(
 
   std::array<pdfium::span<uint8_t>, 3> samples = {
       samples_r.span(), samples_g.span(), samples_b.span()};
-  if (pArray) {
+  if (array) {
     for (size_t v = 0; v < CPDF_TransferFunc::kChannelSampleSize; ++v) {
       float input = static_cast<float>(v) / 255.0f;
       for (int i = 0; i < 3; ++i) {

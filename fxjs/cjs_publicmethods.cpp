@@ -138,13 +138,13 @@ WideString CalcMergedString(const CJS_EventContext* event,
 template <CJS_Result (*F)(CJS_Runtime*, pdfium::span<v8::Local<v8::Value>>)>
 void JSGlobalFunc(const char* func_name_string,
                   const v8::FunctionCallbackInfo<v8::Value>& info) {
-  auto* pObj = static_cast<CJS_Object*>(
+  auto* obj = static_cast<CJS_Object*>(
       CFXJS_Engine::GetBinding(info.GetIsolate(), info.This()));
-  if (!pObj) {
+  if (!obj) {
     return;
   }
 
-  CJS_Runtime* pRuntime = pObj->GetRuntime();
+  CJS_Runtime* pRuntime = obj->GetRuntime();
   if (!pRuntime) {
     return;
   }

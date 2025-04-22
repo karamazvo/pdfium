@@ -22,8 +22,8 @@ class WeakPtr {
   WeakPtr() = default;
   WeakPtr(const WeakPtr& that) : handle_(that.handle_) {}
   WeakPtr(WeakPtr&& that) noexcept { Swap(that); }
-  explicit WeakPtr(std::unique_ptr<T, D> pObj)
-      : handle_(new Handle(std::move(pObj))) {}
+  explicit WeakPtr(std::unique_ptr<T, D> obj)
+      : handle_(new Handle(std::move(obj))) {}
 
   // Deliberately implicit to allow passing nullptr.
   // NOLINTNEXTLINE(runtime/explicit)
@@ -48,8 +48,8 @@ class WeakPtr {
     }
   }
   void Reset() { handle_.Reset(); }
-  void Reset(std::unique_ptr<T, D> pObj) {
-    handle_.Reset(new Handle(std::move(pObj)));
+  void Reset(std::unique_ptr<T, D> obj) {
+    handle_.Reset(new Handle(std::move(obj)));
   }
   void Swap(WeakPtr& that) { handle_.Swap(that.handle_); }
 

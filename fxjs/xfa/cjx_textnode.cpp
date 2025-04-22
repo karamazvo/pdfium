@@ -17,16 +17,16 @@ bool CJX_TextNode::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
 }
 
-void CJX_TextNode::defaultValue(v8::Isolate* pIsolate,
-                                v8::Local<v8::Value>* pValue,
+void CJX_TextNode::defaultValue(v8::Isolate* isolate,
+                                v8::Local<v8::Value>* value,
                                 bool bSetting,
                                 XFA_Attribute attr) {
-  ScriptSomDefaultValue(pIsolate, pValue, bSetting, attr);
+  ScriptSomDefaultValue(isolate, value, bSetting, attr);
 }
 
-void CJX_TextNode::value(v8::Isolate* pIsolate,
-                         v8::Local<v8::Value>* pValue,
+void CJX_TextNode::value(v8::Isolate* isolate,
+                         v8::Local<v8::Value>* value,
                          bool bSetting,
                          XFA_Attribute attr) {
-  ScriptSomDefaultValue(pIsolate, pValue, bSetting, attr);
+  ScriptSomDefaultValue(isolate, value, bSetting, attr);
 }

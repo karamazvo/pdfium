@@ -92,9 +92,9 @@ WideString CPDF_FormControl::GetExportValue() const {
   DCHECK(GetType() == CPDF_FormField::kCheckBox ||
          GetType() == CPDF_FormField::kRadioButton);
   ByteString csOn = GetOnStateName();
-  RetainPtr<const CPDF_Array> pArray = ToArray(field_->GetFieldAttr("Opt"));
-  if (pArray) {
-    csOn = pArray->GetByteStringAt(field_->GetControlIndex(this));
+  RetainPtr<const CPDF_Array> array = ToArray(field_->GetFieldAttr("Opt"));
+  if (array) {
+    csOn = array->GetByteStringAt(field_->GetControlIndex(this));
   }
   if (csOn.IsEmpty()) {
     csOn = "Yes";
@@ -196,10 +196,10 @@ CPDF_DefaultAppearance CPDF_FormControl::GetDefaultAppearance() const {
     return CPDF_DefaultAppearance(
         widget_dict_->GetByteStringFor(pdfium::form_fields::kDA));
   }
-  RetainPtr<const CPDF_Object> pObj =
+  RetainPtr<const CPDF_Object> obj =
       field_->GetFieldAttr(pdfium::form_fields::kDA);
-  if (pObj) {
-    return CPDF_DefaultAppearance(pObj->GetString());
+  if (obj) {
+    return CPDF_DefaultAppearance(obj->GetString());
   }
 
   return form_->GetDefaultAppearance();
@@ -269,10 +269,10 @@ int CPDF_FormControl::GetControlAlignment() const {
     return widget_dict_->GetIntegerFor(pdfium::form_fields::kQ, 0);
   }
 
-  RetainPtr<const CPDF_Object> pObj =
+  RetainPtr<const CPDF_Object> obj =
       field_->GetFieldAttr(pdfium::form_fields::kQ);
-  if (pObj) {
-    return pObj->GetInteger();
+  if (obj) {
+    return obj->GetInteger();
   }
 
   return form_->GetFormAlignment();

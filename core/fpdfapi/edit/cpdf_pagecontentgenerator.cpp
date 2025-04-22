@@ -322,8 +322,8 @@ CPDF_PageContentGenerator::CPDF_PageContentGenerator(
     : obj_holder_(pObjHolder), document_(pObjHolder->GetDocument()) {
   // Copy all page objects, even if they are inactive. They are needed in
   // GenerateModifiedStreams() below.
-  for (const auto& pObj : *pObjHolder) {
-    page_objects_.emplace_back(pObj.get());
+  for (const auto& obj : *pObjHolder) {
+    page_objects_.emplace_back(obj.get());
   }
 }
 

@@ -50,7 +50,7 @@ class CJS_EventContextStub final : public IJS_EventContext {
                     WideString* Value) override {}
   void OnField_Calculate(CPDF_FormField* pSource,
                          CPDF_FormField* pTarget,
-                         WideString* pValue,
+                         WideString* value,
                          bool* pRc) override {}
   void OnField_Format(CPDF_FormField* pTarget, WideString* Value) override {}
   void OnField_Keystroke(WideString* strChange,

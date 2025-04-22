@@ -30,8 +30,8 @@ constexpr auto kZoomModeMaxParamCount =
 
 }  // namespace
 
-CPDF_Dest::CPDF_Dest(RetainPtr<const CPDF_Array> pArray)
-    : array_(std::move(pArray)) {}
+CPDF_Dest::CPDF_Dest(RetainPtr<const CPDF_Array> array)
+    : array_(std::move(array)) {}
 
 CPDF_Dest::CPDF_Dest(const CPDF_Dest& that) = default;
 
@@ -88,11 +88,11 @@ int CPDF_Dest::GetZoomMode() const {
   if (!array_) {
     return 0;
   }
-  RetainPtr<const CPDF_Object> pArray = array_->GetDirectObjectAt(1);
-  if (!pArray) {
+  RetainPtr<const CPDF_Object> array = array_->GetDirectObjectAt(1);
+  if (!array) {
     return 0;
   }
-  ByteString mode = pArray->GetString();
+  ByteString mode = array->GetString();
   for (size_t i = 1; i < std::size(kZoomModes); ++i) {
     if (mode == kZoomModes[i]) {
       return static_cast<int>(i);

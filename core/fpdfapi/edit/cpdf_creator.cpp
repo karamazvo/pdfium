@@ -131,17 +131,17 @@ CPDF_Creator::CPDF_Creator(CPDF_Document* pDoc,
 
 CPDF_Creator::~CPDF_Creator() = default;
 
-bool CPDF_Creator::WriteIndirectObj(uint32_t objnum, const CPDF_Object* pObj) {
+bool CPDF_Creator::WriteIndirectObj(uint32_t objnum, const CPDF_Object* obj) {
   if (!archive_->WriteDWord(objnum) || !archive_->WriteString(" 0 obj\r\n")) {
     return false;
   }
 
   std::unique_ptr<CPDF_Encryptor> encryptor;
-  if (GetCryptoHandler() && pObj != encrypt_dict_) {
+  if (GetCryptoHandler() && obj != encrypt_dict_) {
     encryptor = std::make_unique<CPDF_Encryptor>(GetCryptoHandler(), objnum);
   }
 
-  if (!pObj->WriteTo(archive_.get(), encryptor.get())) {
+  if (!obj->WriteTo(archive_.get(), encryptor.get())) {
     return false;
   }
 
@@ -156,12 +156,12 @@ bool CPDF_Creator::WriteOldIndirectObject(uint32_t objnum) {
   object_offsets_[objnum] = archive_->CurrentOffset();
 
   bool bExistInMap = !!document_->GetIndirectObject(objnum);
-  RetainPtr<CPDF_Object> pObj = document_->GetOrParseIndirectObject(objnum);
-  if (!pObj) {
+  RetainPtr<CPDF_Object> obj = document_->GetOrParseIndirectObject(objnum);
+  if (!obj) {
     object_offsets_.erase(objnum);
     return true;
   }
-  if (!WriteIndirectObj(pObj->GetObjNum(), pObj.Get())) {
+  if (!WriteIndirectObj(obj->GetObjNum(), obj.Get())) {
     return false;
   }
   if (!bExistInMap) {
@@ -202,13 +202,13 @@ bool CPDF_Creator::WriteOldObjs() {
 bool CPDF_Creator::WriteNewObjs() {
   for (size_t i = cur_obj_num_; i < new_obj_num_array_.size(); ++i) {
     uint32_t objnum = new_obj_num_array_[i];
-    RetainPtr<const CPDF_Object> pObj = document_->GetIndirectObject(objnum);
-    if (!pObj) {
+    RetainPtr<const CPDF_Object> obj = document_->GetIndirectObject(objnum);
+    if (!obj) {
       continue;
     }
 
     object_offsets_[objnum] = archive_->CurrentOffset();
-    if (!WriteIndirectObj(pObj->GetObjNum(), pObj.Get())) {
+    if (!WriteIndirectObj(obj->GetObjNum(), obj.Get())) {
       return false;
     }
   }
@@ -464,7 +464,7 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage4() {
     CPDF_DictionaryLocker locker(parser_->GetCombinedTrailer());
     for (const auto& it : locker) {
       const ByteString& key = it.first;
-      const RetainPtr<CPDF_Object>& pValue = it.second;
+      const RetainPtr<CPDF_Object>& value = it.second;
       if (key == "Encrypt" || key == "Size" || key == "Filter" ||
           key == "Index" || key == "Length" || key == "Prev" || key == "W" ||
           key == "XRefStm" || key == "ID" || key == "DecodeParms" ||
@@ -475,7 +475,7 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage4() {
           !archive_->WriteString(PDF_NameEncode(key).AsStringView())) {
         return Stage::kInvalid;
       }
-      if (!pValue->WriteTo(archive_.get(), nullptr)) {
+      if (!value->WriteTo(archive_.get(), nullptr)) {
         return Stage::kInvalid;
       }
     }

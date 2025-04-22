@@ -2452,14 +2452,14 @@ CJS_Result CJS_Field::buttonGetIcon(CJS_Runtime* pRuntime,
     return CJS_Result::Failure(JSMessage::kBadObjectError);
   }
 
-  v8::Local<v8::Object> pObj = pRuntime->NewFXJSBoundObject(
+  v8::Local<v8::Object> obj = pRuntime->NewFXJSBoundObject(
       CJS_Icon::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
-  if (pObj.IsEmpty()) {
+  if (obj.IsEmpty()) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
   }
 
   auto* pJS_Icon = static_cast<CJS_Icon*>(
-      CFXJS_Engine::GetBinding(pRuntime->GetIsolate(), pObj));
+      CFXJS_Engine::GetBinding(pRuntime->GetIsolate(), obj));
   return pJS_Icon ? CJS_Result::Success(pJS_Icon->ToV8Object())
                   : CJS_Result::Failure(JSMessage::kBadObjectError);
 }
@@ -2572,14 +2572,14 @@ CJS_Result CJS_Field::getArray(CJS_Runtime* pRuntime,
   v8::Local<v8::Array> FormFieldArray = pRuntime->NewArray();
   int j = 0;
   for (const auto& pStr : swSort) {
-    v8::Local<v8::Object> pObj = pRuntime->NewFXJSBoundObject(
+    v8::Local<v8::Object> obj = pRuntime->NewFXJSBoundObject(
         CJS_Field::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
-    if (pObj.IsEmpty()) {
+    if (obj.IsEmpty()) {
       return CJS_Result::Failure(JSMessage::kBadObjectError);
     }
 
     auto* pJSField = static_cast<CJS_Field*>(
-        CFXJS_Engine::GetBinding(pRuntime->GetIsolate(), pObj));
+        CFXJS_Engine::GetBinding(pRuntime->GetIsolate(), obj));
     pJSField->AttachField(js_doc_.Get(), *pStr);
     pRuntime->PutArrayElement(FormFieldArray, j++,
                               pJSField

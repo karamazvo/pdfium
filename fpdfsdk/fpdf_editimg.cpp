@@ -465,9 +465,9 @@ FPDFImageObj_GetImageFilter(FPDF_PAGEOBJECT image_object,
     return 0;
   }
 
-  CPDF_PageObject* pObj = CPDFPageObjectFromFPDFPageObject(image_object);
+  CPDF_PageObject* obj = CPDFPageObjectFromFPDFPageObject(image_object);
   RetainPtr<const CPDF_Dictionary> pDict =
-      pObj->AsImage()->GetImage()->GetDict();
+      obj->AsImage()->GetImage()->GetDict();
   RetainPtr<const CPDF_Object> pFilter = pDict->GetDirectObjectFor("Filter");
   ByteString bsFilter = pFilter->IsName()
                             ? pFilter->AsName()->GetString()

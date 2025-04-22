@@ -109,9 +109,9 @@ class CXFA_Object : public cppgc::GarbageCollected<CXFA_Object> {
 };
 
 // Helper functions that permit nullptr arguments.
-CXFA_List* ToList(CXFA_Object* pObj);
-CXFA_Node* ToNode(CXFA_Object* pObj);
-CXFA_TreeList* ToTreeList(CXFA_Object* pObj);
-CXFA_ThisProxy* ToThisProxy(CXFA_Object* pObj);
+CXFA_List* ToList(CXFA_Object* obj);
+CXFA_Node* ToNode(CXFA_Object* obj);
+CXFA_TreeList* ToTreeList(CXFA_Object* obj);
+CXFA_ThisProxy* ToThisProxy(CXFA_Object* obj);
 
 #endif  // XFA_FXFA_PARSER_CXFA_OBJECT_H_

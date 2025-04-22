@@ -150,38 +150,38 @@ float GetMinMaxValue(const std::vector<CFX_FloatRect>& array,
   }
 
   size_t nRects = array.size();
-  std::vector<float> pArray(nRects);
+  std::vector<float> array(nRects);
   switch (value) {
     case LEFT:
       for (size_t i = 0; i < nRects; i++) {
-        pArray[i] = array[i].left;
+        array[i] = array[i].left;
       }
       break;
     case TOP:
       for (size_t i = 0; i < nRects; i++) {
-        pArray[i] = array[i].top;
+        array[i] = array[i].top;
       }
       break;
     case RIGHT:
       for (size_t i = 0; i < nRects; i++) {
-        pArray[i] = array[i].right;
+        array[i] = array[i].right;
       }
       break;
     case BOTTOM:
       for (size_t i = 0; i < nRects; i++) {
-        pArray[i] = array[i].bottom;
+        array[i] = array[i].bottom;
       }
       break;
   }
 
-  float fRet = pArray[0];
+  float fRet = array[0];
   if (type == MAX) {
     for (size_t i = 1; i < nRects; i++) {
-      fRet = std::max(fRet, pArray[i]);
+      fRet = std::max(fRet, array[i]);
     }
   } else {
     for (size_t i = 1; i < nRects; i++) {
-      fRet = std::min(fRet, pArray[i]);
+      fRet = std::min(fRet, array[i]);
     }
   }
   return fRet;

@@ -90,10 +90,10 @@ CPDF_Function::CPDF_Function(Type type) : type_(type) {}
 
 CPDF_Function::~CPDF_Function() = default;
 
-bool CPDF_Function::Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
-  const CPDF_Stream* pStream = pObj->AsStream();
+bool CPDF_Function::Init(const CPDF_Object* obj, VisitedSet* pVisited) {
+  const CPDF_Stream* pStream = obj->AsStream();
   RetainPtr<const CPDF_Dictionary> pDict =
-      pStream ? pStream->GetDict() : pdfium::WrapRetain(pObj->AsDictionary());
+      pStream ? pStream->GetDict() : pdfium::WrapRetain(obj->AsDictionary());
 
   RetainPtr<const CPDF_Array> pDomains = pDict->GetArrayFor("Domain");
   if (!pDomains) {
@@ -125,7 +125,7 @@ bool CPDF_Function::Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
   }
 
   uint32_t old_outputs = outputs_;
-  if (!v_Init(pObj, pVisited)) {
+  if (!v_Init(obj, pVisited)) {
     return false;
   }
 

@@ -63,9 +63,9 @@ std::optional<FX_FILESIZE> GetHeaderOffset(
 ByteString PDF_NameDecode(ByteStringView orig);
 ByteString PDF_NameEncode(const ByteString& orig);
 
-// Return |nCount| elements from |pArray| as a vector of floats. |pArray| must
+// Return |nCount| elements from |array| as a vector of floats. |array| must
 // have at least |nCount| elements.
-std::vector<float> ReadArrayElementsToVector(const CPDF_Array* pArray,
+std::vector<float> ReadArrayElementsToVector(const CPDF_Array* array,
                                              size_t nCount);
 
 // Returns true if |dict| is non-null and has a /Type name entry that matches
@@ -83,6 +83,6 @@ bool ValidateFontResourceDict(const CPDF_Dictionary* dict);
 // Like ValidateDictType(), but /Type can also not exist.
 bool ValidateDictOptionalType(const CPDF_Dictionary* dict, ByteStringView type);
 
-std::ostream& operator<<(std::ostream& buf, const CPDF_Object* pObj);
+std::ostream& operator<<(std::ostream& buf, const CPDF_Object* obj);
 
 #endif  // CORE_FPDFAPI_PARSER_FPDF_PARSER_UTILITY_H_

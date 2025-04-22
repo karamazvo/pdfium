@@ -97,8 +97,8 @@ CJS_App::CJS_App(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
 CJS_App::~CJS_App() = default;
 
 CJS_Result CJS_App::get_active_docs(CJS_Runtime* pRuntime) {
-  v8::Local<v8::Object> pObj = pRuntime->GetThisObj();
-  auto pJSDocument = JSGetObject<CJS_Document>(pRuntime->GetIsolate(), pObj);
+  v8::Local<v8::Object> obj = pRuntime->GetThisObj();
+  auto pJSDocument = JSGetObject<CJS_Document>(pRuntime->GetIsolate(), obj);
   if (!pJSDocument) {
     return CJS_Result::Failure(JSMessage::kObjectTypeError);
   }
@@ -397,8 +397,8 @@ void CJS_App::ClearTimerCommon(CJS_Runtime* pRuntime,
     return;
   }
 
-  v8::Local<v8::Object> pObj = pRuntime->ToObject(param);
-  auto pTimer = JSGetObject<CJS_TimerObj>(pRuntime->GetIsolate(), pObj);
+  v8::Local<v8::Object> obj = pRuntime->ToObject(param);
+  auto pTimer = JSGetObject<CJS_TimerObj>(pRuntime->GetIsolate(), obj);
   if (!pTimer) {
     return;
   }

@@ -119,14 +119,14 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   float end_y = pCoords->GetFloatAt(3);
   float t_min = 0;
   float t_max = 1.0f;
-  RetainPtr<const CPDF_Array> pArray = pDict->GetArrayFor("Domain");
-  if (pArray) {
-    t_min = pArray->GetFloatAt(0);
-    t_max = pArray->GetFloatAt(1);
+  RetainPtr<const CPDF_Array> array = pDict->GetArrayFor("Domain");
+  if (array) {
+    t_min = array->GetFloatAt(0);
+    t_max = array->GetFloatAt(1);
   }
-  pArray = pDict->GetArrayFor("Extend");
-  const bool bStartExtend = pArray && pArray->GetBooleanAt(0, false);
-  const bool bEndExtend = pArray && pArray->GetBooleanAt(1, false);
+  array = pDict->GetArrayFor("Extend");
+  const bool bStartExtend = array && array->GetBooleanAt(0, false);
+  const bool bEndExtend = array && array->GetBooleanAt(1, false);
 
   int width = pBitmap->GetWidth();
   int height = pBitmap->GetHeight();
@@ -191,14 +191,14 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   float end_r = pCoords->GetFloatAt(5);
   float t_min = 0;
   float t_max = 1.0f;
-  RetainPtr<const CPDF_Array> pArray = pDict->GetArrayFor("Domain");
-  if (pArray) {
-    t_min = pArray->GetFloatAt(0);
-    t_max = pArray->GetFloatAt(1);
+  RetainPtr<const CPDF_Array> array = pDict->GetArrayFor("Domain");
+  if (array) {
+    t_min = array->GetFloatAt(0);
+    t_max = array->GetFloatAt(1);
   }
-  pArray = pDict->GetArrayFor("Extend");
-  const bool bStartExtend = pArray && pArray->GetBooleanAt(0, false);
-  const bool bEndExtend = pArray && pArray->GetBooleanAt(1, false);
+  array = pDict->GetArrayFor("Extend");
+  const bool bStartExtend = array && array->GetBooleanAt(0, false);
+  const bool bEndExtend = array && array->GetBooleanAt(1, false);
 
   std::array<FX_ARGB, kShadingSteps> shading_steps =
       GetShadingSteps(t_min, t_max, funcs, pCS, alpha, total_results);

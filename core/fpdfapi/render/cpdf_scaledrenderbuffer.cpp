@@ -28,7 +28,7 @@ CPDF_ScaledRenderBuffer::CPDF_ScaledRenderBuffer(CFX_RenderDevice* device,
 CPDF_ScaledRenderBuffer::~CPDF_ScaledRenderBuffer() = default;
 
 bool CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
-                                         const CPDF_PageObject* pObj,
+                                         const CPDF_PageObject* obj,
                                          const CPDF_RenderOptions& options,
                                          int max_dpi) {
   matrix_ = CPDF_DeviceBuffer::CalculateMatrix(device_, rect_, max_dpi,
@@ -55,8 +55,7 @@ bool CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
     }
     matrix_.Scale(0.5f, 0.5f);
   }
-  pContext->GetBackgroundToDevice(bitmap_device_.get(), pObj, &options,
-                                  matrix_);
+  pContext->GetBackgroundToDevice(bitmap_device_.get(), obj, &options, matrix_);
   return true;
 }
 

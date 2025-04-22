@@ -52,15 +52,15 @@ bool GetBoundingBox(const CPDF_Page* page,
     return false;
   }
 
-  RetainPtr<const CPDF_Array> pArray = page->GetDict()->GetArrayFor(key);
-  if (!pArray) {
+  RetainPtr<const CPDF_Array> array = page->GetDict()->GetArrayFor(key);
+  if (!array) {
     return false;
   }
 
-  *left = pArray->GetFloatAt(0);
-  *bottom = pArray->GetFloatAt(1);
-  *right = pArray->GetFloatAt(2);
-  *top = pArray->GetFloatAt(3);
+  *left = array->GetFloatAt(0);
+  *bottom = array->GetFloatAt(1);
+  *right = array->GetFloatAt(2);
+  *top = array->GetFloatAt(3);
   return true;
 }
 
@@ -273,15 +273,15 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
 
   CPDF_DictionaryLocker locker(pPatternDict);
   for (const auto& it : locker) {
-    RetainPtr<CPDF_Object> pObj = it.second;
-    if (pObj->IsReference()) {
-      pObj = pObj->GetMutableDirect();
+    RetainPtr<CPDF_Object> obj = it.second;
+    if (obj->IsReference()) {
+      obj = obj->GetMutableDirect();
     }
 
     RetainPtr<CPDF_Dictionary> pDict;
-    if (pObj->IsDictionary()) {
-      pDict.Reset(pObj->AsMutableDictionary());
-    } else if (CPDF_Stream* pObjStream = pObj->AsMutableStream()) {
+    if (obj->IsDictionary()) {
+      pDict.Reset(obj->AsMutableDictionary());
+    } else if (CPDF_Stream* pObjStream = obj->AsMutableStream()) {
       pDict = pObjStream->GetMutableDict();
     } else {
       continue;
@@ -432,9 +432,9 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertClipPath(FPDF_PAGE page,
   auto pStream = pDoc->NewIndirect<CPDF_Stream>(pDoc->New<CPDF_Dictionary>());
   pStream->SetDataFromStringstream(&strClip);
 
-  RetainPtr<CPDF_Array> pArray = ToArray(pContentObj);
-  if (pArray) {
-    pArray->InsertNewAt<CPDF_Reference>(0, pDoc, pStream->GetObjNum());
+  RetainPtr<CPDF_Array> array = ToArray(pContentObj);
+  if (array) {
+    array->InsertNewAt<CPDF_Reference>(0, pDoc, pStream->GetObjNum());
   } else if (pContentObj->IsStream() && !pContentObj->IsInline()) {
     auto pContentArray = pDoc->NewIndirect<CPDF_Array>();
     pContentArray->AppendNew<CPDF_Reference>(pDoc, pStream->GetObjNum());

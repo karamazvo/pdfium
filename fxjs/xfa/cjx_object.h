@@ -208,12 +208,12 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   CalcData* GetOrCreateCalcData(cppgc::Heap* heap);
   void TakeCalcDataFrom(CJX_Object* that);
 
-  void ThrowInvalidPropertyException(v8::Isolate* pIsolate) const;
-  void ThrowArgumentMismatchException(v8::Isolate* pIsolate) const;
-  void ThrowIndexOutOfBoundsException(v8::Isolate* pIsolate) const;
-  void ThrowParamCountMismatchException(v8::Isolate* pIsolate,
+  void ThrowInvalidPropertyException(v8::Isolate* isolate) const;
+  void ThrowArgumentMismatchException(v8::Isolate* isolate) const;
+  void ThrowIndexOutOfBoundsException(v8::Isolate* isolate) const;
+  void ThrowParamCountMismatchException(v8::Isolate* isolate,
                                         const WideString& method) const;
-  void ThrowTooManyOccurrencesException(v8::Isolate* pIsolate,
+  void ThrowTooManyOccurrencesException(v8::Isolate* isolate,
                                         const WideString& obj) const;
 
  protected:
@@ -225,8 +225,8 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
 
   explicit CJX_Object(CXFA_Object* obj);
 
-  void ScriptSomMessage(v8::Isolate* pIsolate,
-                        v8::Local<v8::Value>* pValue,
+  void ScriptSomMessage(v8::Isolate* isolate,
+                        v8::Local<v8::Value>* value,
                         bool bSetting,
                         SOMMessageType iMessageType);
   void SetAttributeValueImpl(const WideString& wsValue,
@@ -239,7 +239,7 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
                     bool bScriptModify);
   void DefineMethods(pdfium::span<const CJX_MethodSpec> methods);
   void MoveBufferMapData(CXFA_Object* pSrcObj, CXFA_Object* pDstObj);
-  void ThrowException(v8::Isolate* pIsolate, const WideString& str) const;
+  void ThrowException(v8::Isolate* isolate, const WideString& str) const;
 
  private:
   using Type__ = CJX_Object;

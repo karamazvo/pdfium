@@ -52,10 +52,10 @@ RetainPtr<CPDF_Object> CPDF_Array::CloneNonCyclic(
     std::set<const CPDF_Object*>* pVisited) const {
   pVisited->insert(this);
   auto pCopy = pdfium::MakeRetain<CPDF_Array>();
-  for (const auto& pValue : objects_) {
-    if (!pdfium::Contains(*pVisited, pValue.Get())) {
+  for (const auto& value : objects_) {
+    if (!pdfium::Contains(*pVisited, value.Get())) {
       std::set<const CPDF_Object*> visited(*pVisited);
-      if (auto obj = pValue->CloneNonCyclic(bDirect, &visited)) {
+      if (auto obj = value->CloneNonCyclic(bDirect, &visited)) {
         pCopy->objects_.push_back(std::move(obj));
       }
     }
@@ -119,8 +119,8 @@ RetainPtr<const CPDF_Object> CPDF_Array::GetDirectObjectAt(size_t index) const {
 }
 
 RetainPtr<CPDF_Object> CPDF_Array::GetMutableDirectObjectAt(size_t index) {
-  RetainPtr<CPDF_Object> pObj = GetMutableObjectAt(index);
-  return pObj ? pObj->GetMutableDirect() : nullptr;
+  RetainPtr<CPDF_Object> obj = GetMutableObjectAt(index);
+  return obj ? obj->GetMutableDirect() : nullptr;
 }
 
 ByteString CPDF_Array::GetByteStringAt(size_t index) const {
@@ -243,42 +243,42 @@ void CPDF_Array::Append(RetainPtr<CPDF_Object> object) {
 }
 
 CPDF_Object* CPDF_Array::SetAtInternal(size_t index,
-                                       RetainPtr<CPDF_Object> pObj) {
+                                       RetainPtr<CPDF_Object> obj) {
   CHECK(!IsLocked());
-  CHECK(pObj);
-  CHECK(pObj->IsInline());
-  CHECK(!pObj->IsStream());
+  CHECK(obj);
+  CHECK(obj->IsInline());
+  CHECK(!obj->IsStream());
   if (index >= objects_.size()) {
     return nullptr;
   }
 
-  CPDF_Object* pRet = pObj.Get();
-  objects_[index] = std::move(pObj);
+  CPDF_Object* pRet = obj.Get();
+  objects_[index] = std::move(obj);
   return pRet;
 }
 
 CPDF_Object* CPDF_Array::InsertAtInternal(size_t index,
-                                          RetainPtr<CPDF_Object> pObj) {
+                                          RetainPtr<CPDF_Object> obj) {
   CHECK(!IsLocked());
-  CHECK(pObj);
-  CHECK(pObj->IsInline());
-  CHECK(!pObj->IsStream());
+  CHECK(obj);
+  CHECK(obj->IsInline());
+  CHECK(!obj->IsStream());
   if (index > objects_.size()) {
     return nullptr;
   }
 
-  CPDF_Object* pRet = pObj.Get();
-  objects_.insert(objects_.begin() + index, std::move(pObj));
+  CPDF_Object* pRet = obj.Get();
+  objects_.insert(objects_.begin() + index, std::move(obj));
   return pRet;
 }
 
-CPDF_Object* CPDF_Array::AppendInternal(RetainPtr<CPDF_Object> pObj) {
+CPDF_Object* CPDF_Array::AppendInternal(RetainPtr<CPDF_Object> obj) {
   CHECK(!IsLocked());
-  CHECK(pObj);
-  CHECK(pObj->IsInline());
-  CHECK(!pObj->IsStream());
-  CPDF_Object* pRet = pObj.Get();
-  objects_.push_back(std::move(pObj));
+  CHECK(obj);
+  CHECK(obj->IsInline());
+  CHECK(!obj->IsStream());
+  CPDF_Object* pRet = obj.Get();
+  objects_.push_back(std::move(obj));
   return pRet;
 }
 
@@ -296,17 +296,17 @@ bool CPDF_Array::WriteTo(IFX_ArchiveStream* archive,
   return archive->WriteString("]");
 }
 
-CPDF_ArrayLocker::CPDF_ArrayLocker(const CPDF_Array* pArray) : array_(pArray) {
+CPDF_ArrayLocker::CPDF_ArrayLocker(const CPDF_Array* array) : array_(array) {
   array_->lock_count_++;
 }
 
-CPDF_ArrayLocker::CPDF_ArrayLocker(RetainPtr<CPDF_Array> pArray)
-    : array_(std::move(pArray)) {
+CPDF_ArrayLocker::CPDF_ArrayLocker(RetainPtr<CPDF_Array> array)
+    : array_(std::move(array)) {
   array_->lock_count_++;
 }
 
-CPDF_ArrayLocker::CPDF_ArrayLocker(RetainPtr<const CPDF_Array> pArray)
-    : array_(std::move(pArray)) {
+CPDF_ArrayLocker::CPDF_ArrayLocker(RetainPtr<const CPDF_Array> array)
+    : array_(std::move(array)) {
   array_->lock_count_++;
 }
 

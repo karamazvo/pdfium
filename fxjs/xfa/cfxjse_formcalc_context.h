@@ -29,7 +29,7 @@ class Heap;
 
 class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
  public:
-  CFXJSE_FormCalcContext(v8::Isolate* pIsolate,
+  CFXJSE_FormCalcContext(v8::Isolate* isolate,
                          CFXJSE_Context* pScriptContext,
                          CXFA_Document* pDoc);
   ~CFXJSE_FormCalcContext() override;
@@ -308,11 +308,11 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
       const v8::FunctionCallbackInfo<v8::Value>& info,
       bool bStrict);
 
-  bool ApplyToArray(v8::Isolate* pIsolate,
+  bool ApplyToArray(v8::Isolate* isolate,
                     std::function<void(v8::Isolate*, v8::Local<v8::Value>)> fn,
-                    v8::Local<v8::Array> pArray);
+                    v8::Local<v8::Array> array);
 
-  void ApplyToObject(v8::Isolate* pIsolate,
+  void ApplyToObject(v8::Isolate* isolate,
                      std::function<void(v8::Isolate*, v8::Local<v8::Value>)> fn,
                      v8::Local<v8::Object> pObject);
 

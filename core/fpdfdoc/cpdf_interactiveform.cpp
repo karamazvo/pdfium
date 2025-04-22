@@ -741,8 +741,8 @@ int CPDF_InteractiveForm::CountFieldsInCalculationOrder() {
     return 0;
   }
 
-  RetainPtr<const CPDF_Array> pArray = form_dict_->GetArrayFor("CO");
-  return pArray ? fxcrt::CollectionSize<int>(*pArray) : 0;
+  RetainPtr<const CPDF_Array> array = form_dict_->GetArrayFor("CO");
+  return array ? fxcrt::CollectionSize<int>(*array) : 0;
 }
 
 CPDF_FormField* CPDF_InteractiveForm::GetFieldInCalculationOrder(int index) {
@@ -750,13 +750,13 @@ CPDF_FormField* CPDF_InteractiveForm::GetFieldInCalculationOrder(int index) {
     return nullptr;
   }
 
-  RetainPtr<const CPDF_Array> pArray = form_dict_->GetArrayFor("CO");
-  if (!pArray) {
+  RetainPtr<const CPDF_Array> array = form_dict_->GetArrayFor("CO");
+  if (!array) {
     return nullptr;
   }
 
   RetainPtr<const CPDF_Dictionary> element =
-      ToDictionary(pArray->GetDirectObjectAt(index));
+      ToDictionary(array->GetDirectObjectAt(index));
   return element ? GetFieldByDict(element.Get()) : nullptr;
 }
 
@@ -766,12 +766,12 @@ int CPDF_InteractiveForm::FindFieldInCalculationOrder(
     return -1;
   }
 
-  RetainPtr<const CPDF_Array> pArray = form_dict_->GetArrayFor("CO");
-  if (!pArray) {
+  RetainPtr<const CPDF_Array> array = form_dict_->GetArrayFor("CO");
+  if (!array) {
     return -1;
   }
 
-  std::optional<size_t> maybe_found = pArray->Find(field->GetFieldDict());
+  std::optional<size_t> maybe_found = array->Find(field->GetFieldDict());
   if (!maybe_found.has_value()) {
     return -1;
   }
