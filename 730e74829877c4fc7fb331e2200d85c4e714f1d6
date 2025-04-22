@@ -52,6 +52,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "eaaa6b34_cc6bb3df",
+        "filename": "core/fpdfapi/page/cpdf_streamcontentparser.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 873,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-22T21:26:15Z",
+      "side": 1,
+      "message": "I added a scoper to avoid having to mess with curly braces.",
+      "parentUuid": "7b67d390_8dd111b1",
+      "range": {
+        "startLine": 873,
+        "startChar": 4,
+        "endLine": 873,
+        "endChar": 34
+      },
+      "revId": "730e74829877c4fc7fb331e2200d85c4e714f1d6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e7e30836_b94540a1",
@@ -163,6 +187,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4d4d3ce8_85545543",
+        "filename": "core/fpdfapi/page/cpdf_streamcontentparser.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 937,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-22T21:26:15Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "e7e30836_b94540a1",
+      "range": {
+        "startLine": 937,
+        "startChar": 0,
+        "endLine": 937,
+        "endChar": 32
+      },
+      "revId": "730e74829877c4fc7fb331e2200d85c4e714f1d6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "974fb9e3_56d82892",
@@ -200,6 +248,30 @@
           ]
         }
       ],
+      "revId": "730e74829877c4fc7fb331e2200d85c4e714f1d6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6c0be215_511d8475",
+        "filename": "core/fpdfapi/page/cpdf_streamcontentparser.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 1015,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-22T21:26:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "974fb9e3_56d82892",
+      "range": {
+        "startLine": 1015,
+        "startChar": 1,
+        "endLine": 1015,
+        "endChar": 43
+      },
       "revId": "730e74829877c4fc7fb331e2200d85c4e714f1d6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
