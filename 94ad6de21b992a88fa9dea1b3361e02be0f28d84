@@ -119,6 +119,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "edd58756_3d13b518",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 411,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-04-22T07:28:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "173f50e6_758047d4",
+      "range": {
+        "startLine": 411,
+        "startChar": 54,
+        "endLine": 411,
+        "endChar": 66
+      },
+      "revId": "94ad6de21b992a88fa9dea1b3361e02be0f28d84",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a90b13ca_de4a5c9c",
@@ -250,6 +274,24 @@
       "side": 1,
       "message": "Can you also regenerate testing/resources/version_in_catalog.pdf?",
       "parentUuid": "ac64d8e6_8f944f26",
+      "revId": "94ad6de21b992a88fa9dea1b3361e02be0f28d84",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "93453f59_fa37275f",
+        "filename": "testing/resources/version_in_catalog.in",
+        "patchSetId": 6
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-04-22T07:28:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9779342c_2f390b21",
       "revId": "94ad6de21b992a88fa9dea1b3361e02be0f28d84",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
