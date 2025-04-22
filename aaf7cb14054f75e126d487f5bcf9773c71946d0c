@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b5d464a8_6d56422d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-04-22T12:41:26Z",
+      "side": 1,
+      "message": "hello nicolas, as a non-commiter, i need another CR+1, let me know if you want me to change anything.",
+      "revId": "aaf7cb14054f75e126d487f5bcf9773c71946d0c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
