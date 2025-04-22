@@ -15,7 +15,7 @@
 #include "fxjs/xfa/cjx_object.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
-using XFA_ATTRIBUTE_CALLBACK = void (*)(v8::Isolate* pIsolate,
+using XFA_ATTRIBUTE_CALLBACK = void (*)(v8::Isolate* isolate,
                                         CJX_Object* pNode,
                                         v8::Local<v8::Value>* pValue,
                                         bool bSetting,

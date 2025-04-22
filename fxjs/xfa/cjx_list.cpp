@@ -105,14 +105,14 @@ CJS_Result CJX_List::item(CFXJSE_Engine* runtime,
       runtime->NewNormalXFAObject(GetXFAList()->Item(cast_index)));
 }
 
-void CJX_List::length(v8::Isolate* pIsolate,
+void CJX_List::length(v8::Isolate* isolate,
                       v8::Local<v8::Value>* pValue,
                       bool bSetting,
                       XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException(pIsolate);
+    ThrowInvalidPropertyException(isolate);
     return;
   }
   *pValue = fxv8::NewNumberHelper(
-      pIsolate, pdfium::checked_cast<int32_t>(GetXFAList()->GetLength()));
+      isolate, pdfium::checked_cast<int32_t>(GetXFAList()->GetLength()));
 }

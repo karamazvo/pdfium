@@ -25,10 +25,10 @@
 
 namespace {
 
-ByteString ByteStringFromV8Name(v8::Isolate* pIsolate,
+ByteString ByteStringFromV8Name(v8::Isolate* isolate,
                                 v8::Local<v8::Name> name) {
   CHECK(name->IsString());
-  return fxv8::ToByteString(pIsolate, name.As<v8::String>());
+  return fxv8::ToByteString(isolate, name.As<v8::String>());
 }
 
 }  // namespace

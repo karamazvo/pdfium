@@ -80,7 +80,7 @@ CJS_Result CJX_Packet::removeAttribute(
   return CJS_Result::Success(runtime->NewNull());
 }
 
-void CJX_Packet::content(v8::Isolate* pIsolate,
+void CJX_Packet::content(v8::Isolate* isolate,
                          v8::Local<v8::Value>* pValue,
                          bool bSetting,
                          XFA_Attribute eAttribute) {
@@ -94,7 +94,7 @@ void CJX_Packet::content(v8::Isolate* pIsolate,
               ->GetFFDoc()
               ->GetXMLDocument()
               ->CreateNode<CFX_XMLText>(
-                  fxv8::ReentrantToWideStringHelper(pIsolate, *pValue)));
+                  fxv8::ReentrantToWideStringHelper(isolate, *pValue)));
     }
     return;
   }
@@ -104,5 +104,5 @@ void CJX_Packet::content(v8::Isolate* pIsolate,
     wsTextData = element->GetTextData();
   }
 
-  *pValue = fxv8::NewStringHelper(pIsolate, wsTextData.ToUTF8().AsStringView());
+  *pValue = fxv8::NewStringHelper(isolate, wsTextData.ToUTF8().AsStringView());
 }

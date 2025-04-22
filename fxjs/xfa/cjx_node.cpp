@@ -415,67 +415,67 @@ CJS_Result CJX_Node::setElement(CFXJSE_Engine* runtime,
   return CJS_Result::Success();
 }
 
-void CJX_Node::ns(v8::Isolate* pIsolate,
+void CJX_Node::ns(v8::Isolate* isolate,
                   v8::Local<v8::Value>* pValue,
                   bool bSetting,
                   XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException(pIsolate);
+    ThrowInvalidPropertyException(isolate);
     return;
   }
   *pValue = fxv8::NewStringHelper(
-      pIsolate, TryNamespace().value_or(WideString()).ToUTF8().AsStringView());
+      isolate, TryNamespace().value_or(WideString()).ToUTF8().AsStringView());
 }
 
-void CJX_Node::model(v8::Isolate* pIsolate,
+void CJX_Node::model(v8::Isolate* isolate,
                      v8::Local<v8::Value>* pValue,
                      bool bSetting,
                      XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException(pIsolate);
+    ThrowInvalidPropertyException(isolate);
     return;
   }
   CXFA_Node* pModel = GetXFANode()->GetModelNode();
   if (!pModel) {
-    *pValue = fxv8::NewNullHelper(pIsolate);
+    *pValue = fxv8::NewNullHelper(isolate);
     return;
   }
   *pValue =
       GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(pModel);
 }
 
-void CJX_Node::isContainer(v8::Isolate* pIsolate,
+void CJX_Node::isContainer(v8::Isolate* isolate,
                            v8::Local<v8::Value>* pValue,
                            bool bSetting,
                            XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException(pIsolate);
+    ThrowInvalidPropertyException(isolate);
     return;
   }
-  *pValue = fxv8::NewBooleanHelper(pIsolate, GetXFANode()->IsContainerNode());
+  *pValue = fxv8::NewBooleanHelper(isolate, GetXFANode()->IsContainerNode());
 }
 
-void CJX_Node::isNull(v8::Isolate* pIsolate,
+void CJX_Node::isNull(v8::Isolate* isolate,
                       v8::Local<v8::Value>* pValue,
                       bool bSetting,
                       XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException(pIsolate);
+    ThrowInvalidPropertyException(isolate);
     return;
   }
   if (GetXFANode()->GetElementType() == XFA_Element::Subform) {
-    *pValue = fxv8::NewBooleanHelper(pIsolate, false);
+    *pValue = fxv8::NewBooleanHelper(isolate, false);
     return;
   }
-  *pValue = fxv8::NewBooleanHelper(pIsolate, GetContent(false).IsEmpty());
+  *pValue = fxv8::NewBooleanHelper(isolate, GetContent(false).IsEmpty());
 }
 
-void CJX_Node::oneOfChild(v8::Isolate* pIsolate,
+void CJX_Node::oneOfChild(v8::Isolate* isolate,
                           v8::Local<v8::Value>* pValue,
                           bool bSetting,
                           XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException(pIsolate);
+    ThrowInvalidPropertyException(isolate);
     return;
   }
 

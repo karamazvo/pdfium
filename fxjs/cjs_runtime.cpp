@@ -46,24 +46,24 @@
 
 CJS_Runtime::CJS_Runtime(CPDFSDK_FormFillEnvironment* pFormFillEnv)
     : form_fill_env_(pFormFillEnv) {
-  v8::Isolate* pIsolate = nullptr;
+  v8::Isolate* isolate = nullptr;
   IPDF_JSPLATFORM* pPlatform = form_fill_env_->GetFormFillInfo()->m_pJsPlatform;
   if (pPlatform->version <= 2) {
     // Backwards compatibility - JS now initialized earlier in more modern
     // JSPLATFORM versions.
-    unsigned int embedderDataSlot = 0;
+    unsigned int embedder_data_slot = 0;
     v8::Isolate* pExternalIsolate = nullptr;
     if (pPlatform->version == 2) {
       pExternalIsolate = static_cast<v8::Isolate*>(pPlatform->m_isolate);
-      embedderDataSlot = pPlatform->m_v8EmbedderSlot;
+      embedder_data_slot = pPlatform->m_v8EmbedderSlot;
     }
-    FXJS_Initialize(embedderDataSlot, pExternalIsolate);
+    FXJS_Initialize(embedder_data_slot, pExternalIsolate);
   }
-  isolate_managed_ = FXJS_GetIsolate(&pIsolate);
-  SetIsolate(pIsolate);
+  isolate_managed_ = FXJS_GetIsolate(&isolate);
+  SetIsolate(isolate);
 
-  v8::Isolate::Scope isolate_scope(pIsolate);
-  v8::HandleScope handle_scope(pIsolate);
+  v8::Isolate::Scope isolate_scope(isolate);
+  v8::HandleScope handle_scope(isolate);
   if (isolate_managed_ || FXJS_GlobalIsolateRefCount() == 0) {
     DefineJSObjects();
   }
@@ -206,11 +206,11 @@ bool CJS_Runtime::SetValueByNameInGlobalObject(ByteStringView utf8Name,
     return false;
   }
 
-  v8::Isolate* pIsolate = GetIsolate();
-  v8::Isolate::Scope isolate_scope(pIsolate);
+  v8::Isolate* isolate = GetIsolate();
+  v8::Isolate::Scope isolate_scope(isolate);
   v8::Local<v8::Context> context = GetV8Context();
   v8::Context::Scope context_scope(context);
-  v8::Local<v8::String> str = fxv8::NewStringHelper(pIsolate, utf8Name);
+  v8::Local<v8::String> str = fxv8::NewStringHelper(isolate, utf8Name);
   v8::Maybe<bool> result = context->Global()->Set(context, str, pValue);
   return result.IsJust() && result.FromJust();
 }

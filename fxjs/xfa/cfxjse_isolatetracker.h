@@ -17,7 +17,7 @@ class CFXJSE_ScopeUtil_IsolateHandle {
  public:
   FX_STACK_ALLOCATED();
 
-  explicit CFXJSE_ScopeUtil_IsolateHandle(v8::Isolate* pIsolate);
+  explicit CFXJSE_ScopeUtil_IsolateHandle(v8::Isolate* isolate);
   CFXJSE_ScopeUtil_IsolateHandle(const CFXJSE_ScopeUtil_IsolateHandle&) =
       delete;
   CFXJSE_ScopeUtil_IsolateHandle& operator=(
@@ -62,7 +62,7 @@ class CFXJSE_ScopeUtil_RootContext {
  public:
   FX_STACK_ALLOCATED();
 
-  explicit CFXJSE_ScopeUtil_RootContext(v8::Isolate* pIsolate);
+  explicit CFXJSE_ScopeUtil_RootContext(v8::Isolate* isolate);
   CFXJSE_ScopeUtil_RootContext(const CFXJSE_ScopeUtil_RootContext&) = delete;
   CFXJSE_ScopeUtil_RootContext& operator=(const CFXJSE_ScopeUtil_RootContext&) =
       delete;
@@ -76,7 +76,7 @@ class CFXJSE_ScopeUtil_IsolateHandleRootContext {
  public:
   FX_STACK_ALLOCATED();
 
-  explicit CFXJSE_ScopeUtil_IsolateHandleRootContext(v8::Isolate* pIsolate);
+  explicit CFXJSE_ScopeUtil_IsolateHandleRootContext(v8::Isolate* isolate);
   CFXJSE_ScopeUtil_IsolateHandleRootContext(
       const CFXJSE_ScopeUtil_IsolateHandleRootContext&) = delete;
   CFXJSE_ScopeUtil_IsolateHandleRootContext& operator=(

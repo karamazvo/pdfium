@@ -50,22 +50,22 @@ CJS_Result CJX_DataWindow::isRecordGroup(
   return CJS_Result::Success();
 }
 
-void CJX_DataWindow::recordsBefore(v8::Isolate* pIsolate,
+void CJX_DataWindow::recordsBefore(v8::Isolate* isolate,
                                    v8::Local<v8::Value>* pValue,
                                    bool bSetting,
                                    XFA_Attribute eAttribute) {}
 
-void CJX_DataWindow::currentRecordNumber(v8::Isolate* pIsolate,
+void CJX_DataWindow::currentRecordNumber(v8::Isolate* isolate,
                                          v8::Local<v8::Value>* pValue,
                                          bool bSetting,
                                          XFA_Attribute eAttribute) {}
 
-void CJX_DataWindow::recordsAfter(v8::Isolate* pIsolate,
+void CJX_DataWindow::recordsAfter(v8::Isolate* isolate,
                                   v8::Local<v8::Value>* pValue,
                                   bool bSetting,
                                   XFA_Attribute eAttribute) {}
 
-void CJX_DataWindow::isDefined(v8::Isolate* pIsolate,
+void CJX_DataWindow::isDefined(v8::Isolate* isolate,
                                v8::Local<v8::Value>* pValue,
                                bool bSetting,
                                XFA_Attribute eAttribute) {}

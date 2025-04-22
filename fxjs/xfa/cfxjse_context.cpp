@@ -68,9 +68,9 @@ const char szConsoleScript[] =
 const wchar_t kFXJSEHostObjectTag[] = L"FXJSE Host Object";
 const wchar_t kFXJSEProxyObjectTag[] = L"FXJSE Proxy Object";
 
-v8::Local<v8::Object> CreateReturnValue(v8::Isolate* pIsolate,
+v8::Local<v8::Object> CreateReturnValue(v8::Isolate* isolate,
                                         v8::TryCatch* trycatch) {
-  v8::Local<v8::Object> hReturnValue = v8::Object::New(pIsolate);
+  v8::Local<v8::Object> hReturnValue = v8::Object::New(isolate);
   if (!trycatch->HasCaught()) {
     return hReturnValue;
   }
@@ -80,21 +80,20 @@ v8::Local<v8::Object> CreateReturnValue(v8::Isolate* pIsolate,
     return hReturnValue;
   }
 
-  v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
+  v8::Local<v8::Context> context = isolate->GetCurrentContext();
   v8::Local<v8::Value> hException = trycatch->Exception();
   if (hException->IsObject()) {
-    v8::Local<v8::String> hNameStr = fxv8::NewStringHelper(pIsolate, "name");
+    v8::Local<v8::String> hNameStr = fxv8::NewStringHelper(isolate, "name");
     v8::Local<v8::Value> hValue =
         hException.As<v8::Object>()->Get(context, hNameStr).ToLocalChecked();
     if (hValue->IsString() || hValue->IsStringObject()) {
       hReturnValue->Set(context, 0, hValue).FromJust();
     } else {
-      v8::Local<v8::String> hErrorStr =
-          fxv8::NewStringHelper(pIsolate, "Error");
+      v8::Local<v8::String> hErrorStr = fxv8::NewStringHelper(isolate, "Error");
       hReturnValue->Set(context, 0, hErrorStr).FromJust();
     }
     v8::Local<v8::String> hMessageStr =
-        fxv8::NewStringHelper(pIsolate, "message");
+        fxv8::NewStringHelper(isolate, "message");
     hValue =
         hException.As<v8::Object>()->Get(context, hMessageStr).ToLocalChecked();
     if (hValue->IsString() || hValue->IsStringObject()) {
@@ -103,20 +102,20 @@ v8::Local<v8::Object> CreateReturnValue(v8::Isolate* pIsolate,
       hReturnValue->Set(context, 1, hMessage->Get()).FromJust();
     }
   } else {
-    v8::Local<v8::String> hErrorStr = fxv8::NewStringHelper(pIsolate, "Error");
+    v8::Local<v8::String> hErrorStr = fxv8::NewStringHelper(isolate, "Error");
     hReturnValue->Set(context, 0, hErrorStr).FromJust();
     hReturnValue->Set(context, 1, hMessage->Get()).FromJust();
   }
   hReturnValue->Set(context, 2, hException).FromJust();
   int line = hMessage->GetLineNumber(context).FromMaybe(0);
-  hReturnValue->Set(context, 3, v8::Integer::New(pIsolate, line)).FromJust();
+  hReturnValue->Set(context, 3, v8::Integer::New(isolate, line)).FromJust();
   v8::Local<v8::String> source =
       hMessage->GetSourceLine(context).FromMaybe(v8::Local<v8::String>());
   hReturnValue->Set(context, 4, source).FromJust();
   int column = hMessage->GetStartColumn(context).FromMaybe(0);
-  hReturnValue->Set(context, 5, v8::Integer::New(pIsolate, column)).FromJust();
+  hReturnValue->Set(context, 5, v8::Integer::New(isolate, column)).FromJust();
   column = hMessage->GetEndColumn(context).FromMaybe(0);
-  hReturnValue->Set(context, 6, v8::Integer::New(pIsolate, column)).FromJust();
+  hReturnValue->Set(context, 6, v8::Integer::New(isolate, column)).FromJust();
   return hReturnValue;
 }
 
@@ -174,29 +173,28 @@ CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(v8::Local<v8::Value> hValue) {
 
 // static
 std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
-    v8::Isolate* pIsolate,
+    v8::Isolate* isolate,
     const FXJSE_CLASS_DESCRIPTOR* pGlobalClass,
     CFXJSE_HostObject* pGlobalObject,
     CXFA_ThisProxy* pProxy) {
-  CFXJSE_ScopeUtil_IsolateHandle scope(pIsolate);
+  CFXJSE_ScopeUtil_IsolateHandle scope(isolate);
 
   // Private constructor.
-  auto pContext = pdfium::WrapUnique(new CFXJSE_Context(pIsolate, pProxy));
+  auto pContext = pdfium::WrapUnique(new CFXJSE_Context(isolate, pProxy));
   v8::Local<v8::ObjectTemplate> hObjectTemplate;
   if (pGlobalClass) {
     CFXJSE_Class* pGlobalClassObj =
         CFXJSE_Class::Create(pContext.get(), pGlobalClass, true);
-    hObjectTemplate =
-        pGlobalClassObj->GetTemplate(pIsolate)->InstanceTemplate();
+    hObjectTemplate = pGlobalClassObj->GetTemplate(isolate)->InstanceTemplate();
   } else {
-    hObjectTemplate = v8::ObjectTemplate::New(pIsolate);
+    hObjectTemplate = v8::ObjectTemplate::New(isolate);
     hObjectTemplate->SetInternalFieldCount(2);
   }
-  hObjectTemplate->Set(v8::Symbol::GetToStringTag(pIsolate),
-                       fxv8::NewStringHelper(pIsolate, "global"));
+  hObjectTemplate->Set(v8::Symbol::GetToStringTag(isolate),
+                       fxv8::NewStringHelper(isolate, "global"));
 
   v8::Local<v8::Context> hNewContext =
-      v8::Context::New(pIsolate, nullptr, hObjectTemplate);
+      v8::Context::New(isolate, nullptr, hObjectTemplate);
   v8::Local<v8::Object> pThisProxy = hNewContext->Global();
   FXJSE_UpdateProxyBinding(pThisProxy);
 
@@ -204,14 +202,14 @@ std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
   FXJSE_UpdateObjectBinding(pThis, pGlobalObject);
 
   v8::Local<v8::Context> hRootContext =
-      CFXJSE_RuntimeData::Get(pIsolate)->GetRootContext(pIsolate);
+      CFXJSE_RuntimeData::Get(isolate)->GetRootContext(isolate);
   hNewContext->SetSecurityToken(hRootContext->GetSecurityToken());
-  pContext->context_.Reset(pIsolate, hNewContext);
+  pContext->context_.Reset(isolate, hNewContext);
   return pContext;
 }
 
-CFXJSE_Context::CFXJSE_Context(v8::Isolate* pIsolate, CXFA_ThisProxy* pProxy)
-    : isolate_(pIsolate), this_proxy_(pProxy) {}
+CFXJSE_Context::CFXJSE_Context(v8::Isolate* isolate, CXFA_ThisProxy* pProxy)
+    : isolate_(isolate), this_proxy_(pProxy) {}
 
 CFXJSE_Context::~CFXJSE_Context() = default;
 

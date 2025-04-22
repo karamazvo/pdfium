@@ -21,22 +21,22 @@ bool CJX_Draw::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
 }
 
-void CJX_Draw::rawValue(v8::Isolate* pIsolate,
+void CJX_Draw::rawValue(v8::Isolate* isolate,
                         v8::Local<v8::Value>* pValue,
                         bool bSetting,
                         XFA_Attribute eAttribute) {
-  defaultValue(pIsolate, pValue, bSetting, eAttribute);
+  defaultValue(isolate, pValue, bSetting, eAttribute);
 }
 
-void CJX_Draw::defaultValue(v8::Isolate* pIsolate,
+void CJX_Draw::defaultValue(v8::Isolate* isolate,
                             v8::Local<v8::Value>* pValue,
                             bool bSetting,
                             XFA_Attribute eAttribute) {
   if (!bSetting) {
     ByteString content = GetContent(true).ToUTF8();
     *pValue = content.IsEmpty()
-                  ? fxv8::NewNullHelper(pIsolate).As<v8::Value>()
-                  : fxv8::NewStringHelper(pIsolate, content.AsStringView())
+                  ? fxv8::NewNullHelper(isolate).As<v8::Value>()
+                  : fxv8::NewStringHelper(isolate, content.AsStringView())
                         .As<v8::Value>();
     return;
   }
@@ -50,6 +50,6 @@ void CJX_Draw::defaultValue(v8::Isolate* pIsolate,
     return;
   }
 
-  WideString wsNewValue = fxv8::ReentrantToWideStringHelper(pIsolate, *pValue);
+  WideString wsNewValue = fxv8::ReentrantToWideStringHelper(isolate, *pValue);
   SetContent(wsNewValue, wsNewValue, true, true, true);
 }

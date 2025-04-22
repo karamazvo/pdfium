@@ -80,34 +80,34 @@ class CFXJSE_Engine final : public CFX_V8 {
   };
 
   static CXFA_Object* ToObject(const v8::FunctionCallbackInfo<v8::Value>& info);
-  static CXFA_Object* ToObject(v8::Isolate* pIsolate,
+  static CXFA_Object* ToObject(v8::Isolate* isolate,
                                v8::Local<v8::Value> value);
-  static CXFA_Object* ToObject(v8::Isolate* pIsolate, CFXJSE_Value* pValue);
+  static CXFA_Object* ToObject(v8::Isolate* isolate, CFXJSE_Value* pValue);
   static CXFA_Object* ToObject(CFXJSE_HostObject* pHostObj);
   static v8::Local<v8::Value> GlobalPropertyGetter(
-      v8::Isolate* pIsolate,
+      v8::Isolate* isolate,
       v8::Local<v8::Object> pObject,
       ByteStringView szPropName);
-  static void GlobalPropertySetter(v8::Isolate* pIsolate,
+  static void GlobalPropertySetter(v8::Isolate* isolate,
                                    v8::Local<v8::Object> pObject,
                                    ByteStringView szPropName,
                                    v8::Local<v8::Value> pValue);
   static v8::Local<v8::Value> NormalPropertyGetter(
-      v8::Isolate* pIsolate,
+      v8::Isolate* isolate,
       v8::Local<v8::Object> pObject,
       ByteStringView szPropName);
-  static void NormalPropertySetter(v8::Isolate* pIsolate,
+  static void NormalPropertySetter(v8::Isolate* isolate,
                                    v8::Local<v8::Object> pObject,
                                    ByteStringView szPropName,
                                    v8::Local<v8::Value> pValue);
   static CJS_Result NormalMethodCall(
       const v8::FunctionCallbackInfo<v8::Value>& info,
       const WideString& functionName);
-  static FXJSE_ClassPropType NormalPropTypeGetter(v8::Isolate* pIsolate,
+  static FXJSE_ClassPropType NormalPropTypeGetter(v8::Isolate* isolate,
                                                   v8::Local<v8::Object> pObject,
                                                   ByteStringView szPropName,
                                                   bool bQueryIn);
-  static FXJSE_ClassPropType GlobalPropTypeGetter(v8::Isolate* pIsolate,
+  static FXJSE_ClassPropType GlobalPropTypeGetter(v8::Isolate* isolate,
                                                   v8::Local<v8::Object> pObject,
                                                   ByteStringView szPropName,
                                                   bool bQueryIn);

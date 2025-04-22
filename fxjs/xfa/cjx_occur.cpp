@@ -19,27 +19,27 @@ bool CJX_Occur::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
 }
 
-void CJX_Occur::max(v8::Isolate* pIsolate,
+void CJX_Occur::max(v8::Isolate* isolate,
                     v8::Local<v8::Value>* pValue,
                     bool bSetting,
                     XFA_Attribute eAttribute) {
   CXFA_Occur* occur = static_cast<CXFA_Occur*>(GetXFANode());
   if (!bSetting) {
-    *pValue = fxv8::NewNumberHelper(pIsolate, occur->GetMax());
+    *pValue = fxv8::NewNumberHelper(isolate, occur->GetMax());
     return;
   }
-  occur->SetMax(fxv8::ReentrantToInt32Helper(pIsolate, *pValue));
+  occur->SetMax(fxv8::ReentrantToInt32Helper(isolate, *pValue));
 }
 
 // NOLINTNEXTLINE(build/include_what_you_use)
-void CJX_Occur::min(v8::Isolate* pIsolate,
+void CJX_Occur::min(v8::Isolate* isolate,
                     v8::Local<v8::Value>* pValue,
                     bool bSetting,
                     XFA_Attribute eAttribute) {
   CXFA_Occur* occur = static_cast<CXFA_Occur*>(GetXFANode());
   if (!bSetting) {
-    *pValue = fxv8::NewNumberHelper(pIsolate, occur->GetMin());
+    *pValue = fxv8::NewNumberHelper(isolate, occur->GetMin());
     return;
   }
-  occur->SetMin(fxv8::ReentrantToInt32Helper(pIsolate, *pValue));
+  occur->SetMin(fxv8::ReentrantToInt32Helper(isolate, *pValue));
 }

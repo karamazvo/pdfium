@@ -10,8 +10,8 @@
 #include "fxjs/xfa/cfxjse_runtimedata.h"
 
 CFXJSE_ScopeUtil_IsolateHandle::CFXJSE_ScopeUtil_IsolateHandle(
-    v8::Isolate* pIsolate)
-    : isolate_scope_(pIsolate), handle_scope_(pIsolate) {}
+    v8::Isolate* isolate)
+    : isolate_scope_(isolate), handle_scope_(isolate) {}
 
 CFXJSE_ScopeUtil_IsolateHandle::~CFXJSE_ScopeUtil_IsolateHandle() = default;
 
@@ -27,16 +27,15 @@ CFXJSE_ScopeUtil_IsolateHandleContext::CFXJSE_ScopeUtil_IsolateHandleContext(
 CFXJSE_ScopeUtil_IsolateHandleContext::
     ~CFXJSE_ScopeUtil_IsolateHandleContext() = default;
 
-CFXJSE_ScopeUtil_RootContext::CFXJSE_ScopeUtil_RootContext(
-    v8::Isolate* pIsolate)
+CFXJSE_ScopeUtil_RootContext::CFXJSE_ScopeUtil_RootContext(v8::Isolate* isolate)
     : context_scope_(
-          CFXJSE_RuntimeData::Get(pIsolate)->GetRootContext(pIsolate)) {}
+          CFXJSE_RuntimeData::Get(isolate)->GetRootContext(isolate)) {}
 
 CFXJSE_ScopeUtil_RootContext::~CFXJSE_ScopeUtil_RootContext() = default;
 
 CFXJSE_ScopeUtil_IsolateHandleRootContext::
-    CFXJSE_ScopeUtil_IsolateHandleRootContext(v8::Isolate* pIsolate)
-    : isolate_handle_(pIsolate), root_context_(pIsolate) {}
+    CFXJSE_ScopeUtil_IsolateHandleRootContext(v8::Isolate* isolate)
+    : isolate_handle_(isolate), root_context_(isolate) {}
 
 CFXJSE_ScopeUtil_IsolateHandleRootContext::
     ~CFXJSE_ScopeUtil_IsolateHandleRootContext() = default;

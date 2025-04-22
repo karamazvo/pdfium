@@ -17,7 +17,7 @@
 
 class CFX_V8 {
  public:
-  explicit CFX_V8(v8::Isolate* pIsolate);
+  explicit CFX_V8(v8::Isolate* isolate);
   virtual ~CFX_V8();
 
   v8::Isolate* GetIsolate() const { return isolate_; }

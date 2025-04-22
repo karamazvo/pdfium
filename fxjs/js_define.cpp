@@ -27,15 +27,15 @@ void JSDestructor(v8::Local<v8::Object> obj) {
   CFXJS_Engine::SetBinding(obj, nullptr);
 }
 
-double JS_DateParse(v8::Isolate* pIsolate, const WideString& str) {
-  v8::Isolate::Scope isolate_scope(pIsolate);
-  v8::HandleScope scope(pIsolate);
+double JS_DateParse(v8::Isolate* isolate, const WideString& str) {
+  v8::Isolate::Scope isolate_scope(isolate);
+  v8::HandleScope scope(isolate);
 
-  v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
+  v8::Local<v8::Context> context = isolate->GetCurrentContext();
 
   // Use the built-in object method.
   v8::MaybeLocal<v8::Value> maybe_value =
-      context->Global()->Get(context, fxv8::NewStringHelper(pIsolate, "Date"));
+      context->Global()->Get(context, fxv8::NewStringHelper(isolate, "Date"));
 
   v8::Local<v8::Value> value;
   if (!maybe_value.ToLocal(&value) || !value->IsObject()) {
@@ -43,7 +43,7 @@ double JS_DateParse(v8::Isolate* pIsolate, const WideString& str) {
   }
 
   v8::Local<v8::Object> obj = value.As<v8::Object>();
-  maybe_value = obj->Get(context, fxv8::NewStringHelper(pIsolate, "parse"));
+  maybe_value = obj->Get(context, fxv8::NewStringHelper(isolate, "parse"));
   if (!maybe_value.ToLocal(&value) || !value->IsFunction()) {
     return 0;
   }
@@ -51,7 +51,7 @@ double JS_DateParse(v8::Isolate* pIsolate, const WideString& str) {
   v8::Local<v8::Function> func = value.As<v8::Function>();
   static constexpr int argc = 1;
   v8::Local<v8::Value> argv[argc] = {
-      fxv8::NewStringHelper(pIsolate, str.AsStringView()),
+      fxv8::NewStringHelper(isolate, str.AsStringView()),
   };
   maybe_value = func->Call(context, context->Global(), argc, argv);
   if (!maybe_value.ToLocal(&value) || !value->IsNumber()) {

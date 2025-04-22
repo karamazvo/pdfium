@@ -26,7 +26,7 @@ class CFXJSE_Class {
 
   bool IsName(ByteStringView name) const { return name == class_name_; }
   const CFXJSE_Context* GetContext() const { return context_; }
-  v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* pIsolate);
+  v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate);
 
  protected:
   ByteString class_name_;

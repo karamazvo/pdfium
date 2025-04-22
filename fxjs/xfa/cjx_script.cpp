@@ -18,13 +18,13 @@ bool CJX_Script::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
 }
 
-void CJX_Script::stateless(v8::Isolate* pIsolate,
+void CJX_Script::stateless(v8::Isolate* isolate,
                            v8::Local<v8::Value>* pValue,
                            bool bSetting,
                            XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowInvalidPropertyException(pIsolate);
+    ThrowInvalidPropertyException(isolate);
     return;
   }
-  *pValue = fxv8::NewStringHelper(pIsolate, "0");
+  *pValue = fxv8::NewStringHelper(isolate, "0");
 }

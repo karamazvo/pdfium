@@ -1016,33 +1016,33 @@ ByteString WordUS(ByteStringView bsData, int32_t iStyle) {
   return strBuf;
 }
 
-v8::Local<v8::Value> GetObjectDefaultValue(v8::Isolate* pIsolate,
+v8::Local<v8::Value> GetObjectDefaultValue(v8::Isolate* isolate,
                                            v8::Local<v8::Object> pObject) {
-  CXFA_Node* pNode = ToNode(CFXJSE_Engine::ToObject(pIsolate, pObject));
+  CXFA_Node* pNode = ToNode(CFXJSE_Engine::ToObject(isolate, pObject));
   if (!pNode) {
-    return fxv8::NewNullHelper(pIsolate);
+    return fxv8::NewNullHelper(isolate);
   }
 
   v8::Local<v8::Value> value;
-  pNode->JSObject()->ScriptSomDefaultValue(pIsolate, &value, false,
+  pNode->JSObject()->ScriptSomDefaultValue(isolate, &value, false,
                                            XFA_Attribute::Unknown);
   return value;
 }
 
-bool SetObjectDefaultValue(v8::Isolate* pIsolate,
+bool SetObjectDefaultValue(v8::Isolate* isolate,
                            v8::Local<v8::Object> pObject,
                            v8::Local<v8::Value> hNewValue) {
-  CXFA_Node* pNode = ToNode(CFXJSE_Engine::ToObject(pIsolate, pObject));
+  CXFA_Node* pNode = ToNode(CFXJSE_Engine::ToObject(isolate, pObject));
   if (!pNode) {
     return false;
   }
 
-  pNode->JSObject()->ScriptSomDefaultValue(pIsolate, &hNewValue, true,
+  pNode->JSObject()->ScriptSomDefaultValue(isolate, &hNewValue, true,
                                            XFA_Attribute::Unknown);
   return true;
 }
 
-v8::Local<v8::Value> GetExtractedValue(v8::Isolate* pIsolate,
+v8::Local<v8::Value> GetExtractedValue(v8::Isolate* isolate,
                                        v8::Local<v8::Value> pValue) {
   if (pValue.IsEmpty()) {
     return v8::Local<v8::Value>();
@@ -1052,30 +1052,30 @@ v8::Local<v8::Value> GetExtractedValue(v8::Isolate* pIsolate,
     v8::Local<v8::Array> arr = pValue.As<v8::Array>();
     uint32_t iLength = fxv8::GetArrayLengthHelper(arr);
     if (iLength < 3) {
-      return fxv8::NewUndefinedHelper(pIsolate);
+      return fxv8::NewUndefinedHelper(isolate);
     }
 
-    v8::Local<v8::Value> propertyValue =
-        fxv8::ReentrantGetArrayElementHelper(pIsolate, arr, 1);
-    v8::Local<v8::Value> jsValue =
-        fxv8::ReentrantGetArrayElementHelper(pIsolate, arr, 2);
-    if (!fxv8::IsObject(jsValue)) {
-      return fxv8::NewUndefinedHelper(pIsolate);
+    v8::Local<v8::Value> property_value =
+        fxv8::ReentrantGetArrayElementHelper(isolate, arr, 1);
+    v8::Local<v8::Value> js_value =
+        fxv8::ReentrantGetArrayElementHelper(isolate, arr, 2);
+    if (!fxv8::IsObject(js_value)) {
+      return fxv8::NewUndefinedHelper(isolate);
     }
 
-    v8::Local<v8::Object> jsObjectValue = jsValue.As<v8::Object>();
-    if (fxv8::IsNull(propertyValue)) {
-      return GetObjectDefaultValue(pIsolate, jsObjectValue);
+    v8::Local<v8::Object> jsObjectValue = js_value.As<v8::Object>();
+    if (fxv8::IsNull(property_value)) {
+      return GetObjectDefaultValue(isolate, jsObjectValue);
     }
 
     ByteString bsName =
-        fxv8::ReentrantToByteStringHelper(pIsolate, propertyValue);
-    return fxv8::ReentrantGetObjectPropertyHelper(pIsolate, jsObjectValue,
+        fxv8::ReentrantToByteStringHelper(isolate, property_value);
+    return fxv8::ReentrantGetObjectPropertyHelper(isolate, jsObjectValue,
                                                   bsName.AsStringView());
   }
 
   if (fxv8::IsObject(pValue)) {
-    return GetObjectDefaultValue(pIsolate, pValue.As<v8::Object>());
+    return GetObjectDefaultValue(isolate, pValue.As<v8::Object>());
   }
 
   return pValue;
@@ -1088,31 +1088,31 @@ v8::Local<v8::Value> GetSimpleValue(
   return GetExtractedValue(info.GetIsolate(), info[index]);
 }
 
-bool ValueIsNull(v8::Isolate* pIsolate, v8::Local<v8::Value> arg) {
-  v8::Local<v8::Value> extracted = GetExtractedValue(pIsolate, arg);
+bool ValueIsNull(v8::Isolate* isolate, v8::Local<v8::Value> arg) {
+  v8::Local<v8::Value> extracted = GetExtractedValue(isolate, arg);
   return extracted.IsEmpty() || fxv8::IsNull(extracted);
 }
 
-int32_t ValueToInteger(v8::Isolate* pIsolate, v8::Local<v8::Value> arg) {
-  v8::Local<v8::Value> extracted = GetExtractedValue(pIsolate, arg);
+int32_t ValueToInteger(v8::Isolate* isolate, v8::Local<v8::Value> arg) {
+  v8::Local<v8::Value> extracted = GetExtractedValue(isolate, arg);
   if (extracted.IsEmpty()) {
     return 0;
   }
 
   if (fxv8::IsObject(extracted) || fxv8::IsArray(extracted)) {
-    return ValueToInteger(pIsolate, extracted);
+    return ValueToInteger(isolate, extracted);
   }
 
   if (fxv8::IsString(extracted)) {
-    ByteString value = fxv8::ReentrantToByteStringHelper(pIsolate, extracted);
+    ByteString value = fxv8::ReentrantToByteStringHelper(isolate, extracted);
     return StringToInt(value.AsStringView());
   }
 
-  return fxv8::ReentrantToInt32Helper(pIsolate, extracted);
+  return fxv8::ReentrantToInt32Helper(isolate, extracted);
 }
 
-float ValueToFloat(v8::Isolate* pIsolate, v8::Local<v8::Value> arg) {
-  v8::Local<v8::Value> extracted = GetExtractedValue(pIsolate, arg);
+float ValueToFloat(v8::Isolate* isolate, v8::Local<v8::Value> arg) {
+  v8::Local<v8::Value> extracted = GetExtractedValue(isolate, arg);
   if (extracted.IsEmpty()) {
     return 0.0f;
   }
@@ -1122,19 +1122,19 @@ float ValueToFloat(v8::Isolate* pIsolate, v8::Local<v8::Value> arg) {
   }
 
   if (fxv8::IsObject(extracted) || fxv8::IsArray(extracted)) {
-    return ValueToFloat(pIsolate, extracted);
+    return ValueToFloat(isolate, extracted);
   }
 
   if (fxv8::IsString(extracted)) {
-    ByteString bsValue = fxv8::ReentrantToByteStringHelper(pIsolate, extracted);
+    ByteString bsValue = fxv8::ReentrantToByteStringHelper(isolate, extracted);
     return StringToFloat(bsValue.AsStringView());
   }
 
-  return fxv8::ReentrantToFloatHelper(pIsolate, extracted);
+  return fxv8::ReentrantToFloatHelper(isolate, extracted);
 }
 
-double ValueToDouble(v8::Isolate* pIsolate, v8::Local<v8::Value> arg) {
-  v8::Local<v8::Value> extracted = GetExtractedValue(pIsolate, arg);
+double ValueToDouble(v8::Isolate* isolate, v8::Local<v8::Value> arg) {
+  v8::Local<v8::Value> extracted = GetExtractedValue(isolate, arg);
   if (extracted.IsEmpty()) {
     return 0.0;
   }
@@ -1144,25 +1144,25 @@ double ValueToDouble(v8::Isolate* pIsolate, v8::Local<v8::Value> arg) {
   }
 
   if (fxv8::IsObject(extracted) || fxv8::IsArray(extracted)) {
-    return ValueToDouble(pIsolate, extracted);
+    return ValueToDouble(isolate, extracted);
   }
 
   if (fxv8::IsString(extracted)) {
-    ByteString bsValue = fxv8::ReentrantToByteStringHelper(pIsolate, extracted);
+    ByteString bsValue = fxv8::ReentrantToByteStringHelper(isolate, extracted);
     return StringToDouble(bsValue.AsStringView());
   }
 
-  return fxv8::ReentrantToDoubleHelper(pIsolate, extracted);
+  return fxv8::ReentrantToDoubleHelper(isolate, extracted);
 }
 
-std::optional<double> ExtractDouble(v8::Isolate* pIsolate,
+std::optional<double> ExtractDouble(v8::Isolate* isolate,
                                     v8::Local<v8::Value> src) {
   if (src.IsEmpty()) {
     return 0.0;
   }
 
   if (!fxv8::IsArray(src)) {
-    return ValueToDouble(pIsolate, src);
+    return ValueToDouble(isolate, src);
   }
 
   v8::Local<v8::Array> arr = src.As<v8::Array>();
@@ -1171,22 +1171,22 @@ std::optional<double> ExtractDouble(v8::Isolate* pIsolate,
     return std::nullopt;
   }
 
-  v8::Local<v8::Value> propertyValue =
-      fxv8::ReentrantGetArrayElementHelper(pIsolate, arr, 1);
-  v8::Local<v8::Value> jsValue =
-      fxv8::ReentrantGetArrayElementHelper(pIsolate, arr, 2);
-  if (fxv8::IsNull(propertyValue) || !fxv8::IsObject(jsValue)) {
-    return ValueToDouble(pIsolate, jsValue);
+  v8::Local<v8::Value> property_value =
+      fxv8::ReentrantGetArrayElementHelper(isolate, arr, 1);
+  v8::Local<v8::Value> js_value =
+      fxv8::ReentrantGetArrayElementHelper(isolate, arr, 2);
+  if (fxv8::IsNull(property_value) || !fxv8::IsObject(js_value)) {
+    return ValueToDouble(isolate, js_value);
   }
 
   ByteString bsName =
-      fxv8::ReentrantToByteStringHelper(pIsolate, propertyValue);
+      fxv8::ReentrantToByteStringHelper(isolate, property_value);
   return ValueToDouble(
-      pIsolate, fxv8::ReentrantGetObjectPropertyHelper(
-                    pIsolate, jsValue.As<v8::Object>(), bsName.AsStringView()));
+      isolate, fxv8::ReentrantGetObjectPropertyHelper(
+                   isolate, js_value.As<v8::Object>(), bsName.AsStringView()));
 }
 
-ByteString ValueToUTF8String(v8::Isolate* pIsolate, v8::Local<v8::Value> arg) {
+ByteString ValueToUTF8String(v8::Isolate* isolate, v8::Local<v8::Value> arg) {
   if (arg.IsEmpty()) {
     return ByteString();
   }
@@ -1196,13 +1196,13 @@ ByteString ValueToUTF8String(v8::Isolate* pIsolate, v8::Local<v8::Value> arg) {
   }
 
   if (fxv8::IsBoolean(arg)) {
-    return fxv8::ReentrantToBooleanHelper(pIsolate, arg) ? "1" : "0";
+    return fxv8::ReentrantToBooleanHelper(isolate, arg) ? "1" : "0";
   }
 
-  return fxv8::ReentrantToByteStringHelper(pIsolate, arg);
+  return fxv8::ReentrantToByteStringHelper(isolate, arg);
 }
 
-bool SimpleValueCompare(v8::Isolate* pIsolate,
+bool SimpleValueCompare(v8::Isolate* isolate,
                         v8::Local<v8::Value> firstValue,
                         v8::Local<v8::Value> secondValue) {
   if (firstValue.IsEmpty()) {
@@ -1210,18 +1210,18 @@ bool SimpleValueCompare(v8::Isolate* pIsolate,
   }
 
   if (fxv8::IsString(firstValue)) {
-    const ByteString first = ValueToUTF8String(pIsolate, firstValue);
-    const ByteString second = ValueToUTF8String(pIsolate, secondValue);
+    const ByteString first = ValueToUTF8String(isolate, firstValue);
+    const ByteString second = ValueToUTF8String(isolate, secondValue);
     return first == second;
   }
   if (fxv8::IsNumber(firstValue)) {
-    const float first = ValueToFloat(pIsolate, firstValue);
-    const float second = ValueToFloat(pIsolate, secondValue);
+    const float first = ValueToFloat(isolate, firstValue);
+    const float second = ValueToFloat(isolate, secondValue);
     return first == second;
   }
   if (fxv8::IsBoolean(firstValue)) {
-    const bool first = fxv8::ReentrantToBooleanHelper(pIsolate, firstValue);
-    const bool second = fxv8::ReentrantToBooleanHelper(pIsolate, secondValue);
+    const bool first = fxv8::ReentrantToBooleanHelper(isolate, firstValue);
+    const bool second = fxv8::ReentrantToBooleanHelper(isolate, secondValue);
     return first == second;
   }
   return fxv8::IsNull(firstValue) && fxv8::IsNull(secondValue);
@@ -1230,7 +1230,7 @@ bool SimpleValueCompare(v8::Isolate* pIsolate,
 v8::LocalVector<v8::Value> UnfoldArgs(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   v8::LocalVector<v8::Value> results(info.GetIsolate());
-  v8::Isolate* pIsolate = info.GetIsolate();
+  v8::Isolate* isolate = info.GetIsolate();
   for (int i = 1; i < info.Length(); ++i) {
     v8::Local<v8::Value> arg = info[i];
     if (fxv8::IsArray(arg)) {
@@ -1240,27 +1240,27 @@ v8::LocalVector<v8::Value> UnfoldArgs(
         continue;
       }
 
-      v8::Local<v8::Value> propertyValue =
-          fxv8::ReentrantGetArrayElementHelper(pIsolate, arr, 1);
+      v8::Local<v8::Value> property_value =
+          fxv8::ReentrantGetArrayElementHelper(isolate, arr, 1);
 
       for (uint32_t j = 2; j < iLength; j++) {
-        v8::Local<v8::Value> jsValue =
-            fxv8::ReentrantGetArrayElementHelper(pIsolate, arr, j);
+        v8::Local<v8::Value> js_value =
+            fxv8::ReentrantGetArrayElementHelper(isolate, arr, j);
 
-        if (!fxv8::IsObject(jsValue)) {
-          results.push_back(fxv8::NewUndefinedHelper(pIsolate));
-        } else if (fxv8::IsNull(propertyValue)) {
+        if (!fxv8::IsObject(js_value)) {
+          results.push_back(fxv8::NewUndefinedHelper(isolate));
+        } else if (fxv8::IsNull(property_value)) {
           results.push_back(
-              GetObjectDefaultValue(pIsolate, jsValue.As<v8::Object>()));
+              GetObjectDefaultValue(isolate, js_value.As<v8::Object>()));
         } else {
           ByteString bsName =
-              fxv8::ReentrantToByteStringHelper(pIsolate, propertyValue);
+              fxv8::ReentrantToByteStringHelper(isolate, property_value);
           results.push_back(fxv8::ReentrantGetObjectPropertyHelper(
-              pIsolate, jsValue.As<v8::Object>(), bsName.AsStringView()));
+              isolate, js_value.As<v8::Object>(), bsName.AsStringView()));
         }
       }
     } else if (fxv8::IsObject(arg)) {
-      results.push_back(GetObjectDefaultValue(pIsolate, arg.As<v8::Object>()));
+      results.push_back(GetObjectDefaultValue(isolate, arg.As<v8::Object>()));
     } else {
       results.push_back(arg);
     }
@@ -1304,7 +1304,7 @@ std::optional<CFXJSE_Engine::ResolveResult> ResolveObjects(
     return std::nullopt;
   }
 
-  v8::Isolate* pIsolate = ToFormCalcContext(pHostObject)->GetIsolate();
+  v8::Isolate* isolate = ToFormCalcContext(pHostObject)->GetIsolate();
   WideString wsSomExpression = WideString::FromUTF8(bsSomExp);
   CFXJSE_Engine* pScriptContext = pDoc->GetScriptContext();
   CXFA_Object* pNode = nullptr;
@@ -1314,7 +1314,7 @@ std::optional<CFXJSE_Engine::ResolveResult> ResolveObjects(
       pNode = pScriptContext->GetThisObject();
       dwFlags = {XFA_ResolveFlag::kSiblings, XFA_ResolveFlag::kParent};
     } else {
-      pNode = CFXJSE_Engine::ToObject(pIsolate, pRefValue);
+      pNode = CFXJSE_Engine::ToObject(isolate, pRefValue);
       if (!pNode) {
         return std::nullopt;
       }
@@ -1343,7 +1343,7 @@ std::optional<CFXJSE_Engine::ResolveResult> ResolveObjects(
       }
     }
   } else {
-    pNode = CFXJSE_Engine::ToObject(pIsolate, pRefValue);
+    pNode = CFXJSE_Engine::ToObject(isolate, pRefValue);
     dwFlags = XFA_ResolveFlag::kAnyChild;
   }
   return pScriptContext->ResolveObjects(pNode, wsSomExpression.AsStringView(),
@@ -1356,8 +1356,8 @@ v8::LocalVector<v8::Value> ParseResolveResult(
     v8::Local<v8::Value> pParentValue,
     bool* bAttribute) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pHostObject);
-  v8::Isolate* pIsolate = pContext->GetIsolate();
-  v8::LocalVector<v8::Value> resultValues(pIsolate);
+  v8::Isolate* isolate = pContext->GetIsolate();
+  v8::LocalVector<v8::Value> resultValues(isolate);
 
   if (resolveNodeRS.type == CFXJSE_Engine::ResolveResult::Type::kNodes) {
     *bAttribute = false;
@@ -1376,7 +1376,7 @@ v8::LocalVector<v8::Value> ParseResolveResult(
       v8::Local<v8::Value> pValue;
       CJX_Object* jsObject = pObject->JSObject();
       (*resolveNodeRS.script_attribute.callback)(
-          pIsolate, jsObject, &pValue, false,
+          isolate, jsObject, &pValue, false,
           resolveNodeRS.script_attribute.attribute);
       resultValues.push_back(pValue);
       *bAttribute = false;
@@ -1439,9 +1439,9 @@ void CFXJSE_FormCalcContext::Avg(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   uint32_t uCount = 0;
   double dSum = 0.0;
-  auto fn = [&uCount, &dSum](v8::Isolate* pIsolate,
+  auto fn = [&uCount, &dSum](v8::Isolate* isolate,
                              v8::Local<v8::Value> pValue) {
-    dSum += ValueToDouble(pIsolate, pValue);
+    dSum += ValueToDouble(isolate, pValue);
     uCount++;
   };
   if (!ToFormCalcContext(pThis)->ApplyToExpansion(fn, info,
@@ -1479,7 +1479,7 @@ void CFXJSE_FormCalcContext::Count(
     CFXJSE_HostObject* pThis,
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   uint32_t iCount = 0;
-  auto fn = [&iCount](v8::Isolate* pIsolate, v8::Local<v8::Value> pvalue) {
+  auto fn = [&iCount](v8::Isolate* isolate, v8::Local<v8::Value> pvalue) {
     ++iCount;
   };
   if (!ToFormCalcContext(pThis)->ApplyToExpansion(fn, info, /*bStrict=*/true)) {
@@ -1513,10 +1513,10 @@ void CFXJSE_FormCalcContext::Max(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   uint32_t uCount = 0;
   double dMaxValue = 0.0;
-  auto fn = [&uCount, &dMaxValue](v8::Isolate* pIsolate,
+  auto fn = [&uCount, &dMaxValue](v8::Isolate* isolate,
                                   v8::Local<v8::Value> pValue) {
     ++uCount;
-    double dValue = ValueToDouble(pIsolate, pValue);
+    double dValue = ValueToDouble(isolate, pValue);
     dMaxValue = uCount == 1 ? dValue : std::max(dMaxValue, dValue);
   };
   if (!ToFormCalcContext(pThis)->ApplyToExpansion(fn, info, /*bStrict=*/true)) {
@@ -1536,10 +1536,10 @@ void CFXJSE_FormCalcContext::Min(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   uint32_t uCount = 0;
   double dMinValue = 0.0;
-  auto fn = [&uCount, &dMinValue](v8::Isolate* pIsolate,
+  auto fn = [&uCount, &dMinValue](v8::Isolate* isolate,
                                   v8::Local<v8::Value> pValue) {
     ++uCount;
-    double dValue = ValueToDouble(pIsolate, pValue);
+    double dValue = ValueToDouble(isolate, pValue);
     dMinValue = uCount == 1 ? dValue : std::min(dMinValue, dValue);
   };
   if (!ToFormCalcContext(pThis)->ApplyToExpansion(fn, info, /*bStrict=*/true)) {
@@ -1637,10 +1637,10 @@ void CFXJSE_FormCalcContext::Sum(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   uint32_t uCount = 0;
   double dSum = 0.0;
-  auto fn = [&uCount, &dSum](v8::Isolate* pIsolate,
+  auto fn = [&uCount, &dSum](v8::Isolate* isolate,
                              v8::Local<v8::Value> pValue) {
     ++uCount;
-    dSum += ValueToDouble(pIsolate, pValue);
+    dSum += ValueToDouble(isolate, pValue);
   };
   if (!ToFormCalcContext(pThis)->ApplyToExpansion(fn, info, /*bStrict=*/true)) {
     return;
@@ -2894,19 +2894,19 @@ void CFXJSE_FormCalcContext::Choose(
 
       iValueIndex += (iLength - 2);
       if (iValueIndex >= iIndex) {
-        v8::Local<v8::Value> propertyValue =
+        v8::Local<v8::Value> property_value =
             fxv8::ReentrantGetArrayElementHelper(info.GetIsolate(), arr, 1);
-        v8::Local<v8::Value> jsValue = fxv8::ReentrantGetArrayElementHelper(
+        v8::Local<v8::Value> js_value = fxv8::ReentrantGetArrayElementHelper(
             info.GetIsolate(), arr, (iLength - 1) - (iValueIndex - iIndex));
         v8::Local<v8::Value> newPropertyValue;
-        if (fxv8::IsObject(jsValue)) {
-          v8::Local<v8::Object> jsObjectValue = jsValue.As<v8::Object>();
-          if (fxv8::IsNull(propertyValue)) {
+        if (fxv8::IsObject(js_value)) {
+          v8::Local<v8::Object> jsObjectValue = js_value.As<v8::Object>();
+          if (fxv8::IsNull(property_value)) {
             newPropertyValue =
                 GetObjectDefaultValue(info.GetIsolate(), jsObjectValue);
           } else {
             ByteString bsName = fxv8::ReentrantToByteStringHelper(
-                info.GetIsolate(), propertyValue);
+                info.GetIsolate(), property_value);
             newPropertyValue = fxv8::ReentrantGetObjectPropertyHelper(
                 info.GetIsolate(), jsObjectValue, bsName.AsStringView());
           }
@@ -3045,7 +3045,7 @@ void CFXJSE_FormCalcContext::Eval(
     return;
   }
 
-  v8::Isolate* pIsolate = pContext->GetIsolate();
+  v8::Isolate* isolate = pContext->GetIsolate();
   v8::Local<v8::Value> scriptValue = GetSimpleValue(info, 0);
   ByteString bsUtf8Script = ValueToUTF8String(info.GetIsolate(), scriptValue);
   if (bsUtf8Script.IsEmpty()) {
@@ -3062,7 +3062,7 @@ void CFXJSE_FormCalcContext::Eval(
     return;
   }
   std::unique_ptr<CFXJSE_Context> pNewContext =
-      CFXJSE_Context::Create(pIsolate, nullptr, nullptr, nullptr);
+      CFXJSE_Context::Create(isolate, nullptr, nullptr, nullptr);
 
   ByteString bsScript = FX_UTF8Encode(wsJavaScriptBuf.value().AsStringView());
   CFXJSE_Context::ExecutionResult result = pNewContext->ExecuteScript(
@@ -3096,11 +3096,11 @@ void CFXJSE_FormCalcContext::Ref(
     values[2] = fxv8::NewNullHelper(info.GetIsolate());
   } else if (fxv8::IsArray(argOne)) {
     v8::Local<v8::Array> arr = argOne.As<v8::Array>();
-    v8::Local<v8::Value> propertyValue =
+    v8::Local<v8::Value> property_value =
         fxv8::ReentrantGetArrayElementHelper(info.GetIsolate(), arr, 1);
     v8::Local<v8::Value> jsObjectValue =
         fxv8::ReentrantGetArrayElementHelper(info.GetIsolate(), arr, 2);
-    if (!fxv8::IsNull(propertyValue) || fxv8::IsNull(jsObjectValue)) {
+    if (!fxv8::IsNull(property_value) || fxv8::IsNull(jsObjectValue)) {
       pContext->ThrowArgumentMismatchException();
       return;
     }
@@ -4416,7 +4416,7 @@ void CFXJSE_FormCalcContext::Put(
 void CFXJSE_FormCalcContext::assign_value_operator(
     CFXJSE_HostObject* pThis,
     const v8::FunctionCallbackInfo<v8::Value>& info) {
-  v8::Isolate* pIsolate = info.GetIsolate();
+  v8::Isolate* isolate = info.GetIsolate();
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   if (info.Length() != 2) {
     pContext->ThrowCompilerErrorException();
@@ -4428,31 +4428,31 @@ void CFXJSE_FormCalcContext::assign_value_operator(
   if (fxv8::IsArray(lValue)) {
     v8::Local<v8::Array> arr = lValue.As<v8::Array>();
     uint32_t iLeftLength = fxv8::GetArrayLengthHelper(arr);
-    v8::Local<v8::Value> propertyValue =
-        fxv8::ReentrantGetArrayElementHelper(pIsolate, arr, 1);
+    v8::Local<v8::Value> property_value =
+        fxv8::ReentrantGetArrayElementHelper(isolate, arr, 1);
     for (uint32_t i = 2; i < iLeftLength; i++) {
-      v8::Local<v8::Value> jsValue =
-          fxv8::ReentrantGetArrayElementHelper(pIsolate, arr, i);
-      if (!fxv8::IsObject(jsValue)) {
+      v8::Local<v8::Value> js_value =
+          fxv8::ReentrantGetArrayElementHelper(isolate, arr, i);
+      if (!fxv8::IsObject(js_value)) {
         pContext->ThrowNoDefaultPropertyException(bsFuncName);
         return;
       }
-      v8::Local<v8::Object> jsObjectValue = jsValue.As<v8::Object>();
-      if (fxv8::IsNull(propertyValue)) {
-        if (!SetObjectDefaultValue(pIsolate, jsObjectValue, rValue)) {
+      v8::Local<v8::Object> jsObjectValue = js_value.As<v8::Object>();
+      if (fxv8::IsNull(property_value)) {
+        if (!SetObjectDefaultValue(isolate, jsObjectValue, rValue)) {
           pContext->ThrowNoDefaultPropertyException(bsFuncName);
           return;
         }
       } else {
         fxv8::ReentrantPutObjectPropertyHelper(
-            pIsolate, jsObjectValue,
-            fxv8::ReentrantToByteStringHelper(pIsolate, propertyValue)
+            isolate, jsObjectValue,
+            fxv8::ReentrantToByteStringHelper(isolate, property_value)
                 .AsStringView(),
             rValue);
       }
     }
   } else if (fxv8::IsObject(lValue)) {
-    if (!SetObjectDefaultValue(pIsolate, lValue.As<v8::Object>(), rValue)) {
+    if (!SetObjectDefaultValue(isolate, lValue.As<v8::Object>(), rValue)) {
       pContext->ThrowNoDefaultPropertyException(bsFuncName);
       return;
     }
@@ -4935,22 +4935,22 @@ void CFXJSE_FormCalcContext::get_fm_value(
   v8::Local<v8::Value> argOne = info[0];
   if (fxv8::IsArray(argOne)) {
     v8::Local<v8::Array> arr = argOne.As<v8::Array>();
-    v8::Local<v8::Value> propertyValue =
+    v8::Local<v8::Value> property_value =
         fxv8::ReentrantGetArrayElementHelper(info.GetIsolate(), arr, 1);
-    v8::Local<v8::Value> jsValue =
+    v8::Local<v8::Value> js_value =
         fxv8::ReentrantGetArrayElementHelper(info.GetIsolate(), arr, 2);
-    if (!fxv8::IsObject(jsValue)) {
+    if (!fxv8::IsObject(js_value)) {
       info.GetReturnValue().Set(fxv8::NewUndefinedHelper(info.GetIsolate()));
       return;
     }
-    v8::Local<v8::Object> jsObjectValue = jsValue.As<v8::Object>();
-    if (fxv8::IsNull(propertyValue)) {
+    v8::Local<v8::Object> jsObjectValue = js_value.As<v8::Object>();
+    if (fxv8::IsNull(property_value)) {
       info.GetReturnValue().Set(
           GetObjectDefaultValue(info.GetIsolate(), jsObjectValue));
       return;
     }
     ByteString bsName =
-        fxv8::ReentrantToByteStringHelper(info.GetIsolate(), propertyValue);
+        fxv8::ReentrantToByteStringHelper(info.GetIsolate(), property_value);
     info.GetReturnValue().Set(fxv8::ReentrantGetObjectPropertyHelper(
         info.GetIsolate(), jsObjectValue, bsName.AsStringView()));
     return;
@@ -5032,8 +5032,8 @@ void CFXJSE_FormCalcContext::fm_var_filter(
 void CFXJSE_FormCalcContext::concat_fm_object(
     CFXJSE_HostObject* pThis,
     const v8::FunctionCallbackInfo<v8::Value>& info) {
-  v8::Isolate* pIsolate = ToFormCalcContext(pThis)->GetIsolate();
-  v8::LocalVector<v8::Value> returnValues(pIsolate);
+  v8::Isolate* isolate = ToFormCalcContext(pThis)->GetIsolate();
+  v8::LocalVector<v8::Value> returnValues(isolate);
   for (int i = 0; i < info.Length(); ++i) {
     if (fxv8::IsArray(info[i])) {
       v8::Local<v8::Array> arr = info[i].As<v8::Array>();
@@ -5045,7 +5045,7 @@ void CFXJSE_FormCalcContext::concat_fm_object(
     }
     returnValues.push_back(info[i]);
   }
-  info.GetReturnValue().Set(fxv8::NewArrayHelper(pIsolate, returnValues));
+  info.GetReturnValue().Set(fxv8::NewArrayHelper(isolate, returnValues));
 }
 
 // static
@@ -5113,10 +5113,10 @@ std::optional<WideTextBuffer> CFXJSE_FormCalcContext::Translate(
   return wsJavaScript;
 }
 
-CFXJSE_FormCalcContext::CFXJSE_FormCalcContext(v8::Isolate* pIsolate,
+CFXJSE_FormCalcContext::CFXJSE_FormCalcContext(v8::Isolate* isolate,
                                                CFXJSE_Context* pScriptContext,
                                                CXFA_Document* pDoc)
-    : isolate_(pIsolate), document_(pDoc) {
+    : isolate_(isolate), document_(pDoc) {
   value_.Reset(isolate_,
                NewBoundV8Object(
                    isolate_, CFXJSE_Class::Create(pScriptContext,
@@ -5140,7 +5140,7 @@ void CFXJSE_FormCalcContext::DotAccessorCommon(
     const v8::FunctionCallbackInfo<v8::Value>& info,
     bool bDotAccessor) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
-  v8::Isolate* pIsolate = pContext->GetIsolate();
+  v8::Isolate* isolate = pContext->GetIsolate();
   int32_t argc = info.Length();
   if (argc < 4 || argc > 5) {
     pContext->ThrowCompilerErrorException();
@@ -5195,18 +5195,18 @@ void CFXJSE_FormCalcContext::DotAccessorCommon(
       return;
     }
 
-    v8::LocalVector<v8::Value> values(pIsolate);
-    values.push_back(fxv8::NewNumberHelper(pIsolate, 1));
-    values.push_back(
-        bAttribute ? fxv8::NewStringHelper(pIsolate, bsName.AsStringView())
-                         .As<v8::Value>()
-                   : fxv8::NewNullHelper(pIsolate).As<v8::Value>());
+    v8::LocalVector<v8::Value> values(isolate);
+    values.push_back(fxv8::NewNumberHelper(isolate, 1));
+    values.push_back(bAttribute
+                         ? fxv8::NewStringHelper(isolate, bsName.AsStringView())
+                               .As<v8::Value>()
+                         : fxv8::NewNullHelper(isolate).As<v8::Value>());
     for (uint32_t i = 0; i < iLength - 2; i++) {
       for (size_t j = 0; j < resolveValues[i].size(); j++) {
         values.push_back(resolveValues[i][j]);
       }
     }
-    info.GetReturnValue().Set(fxv8::NewArrayHelper(pIsolate, values));
+    info.GetReturnValue().Set(fxv8::NewArrayHelper(isolate, values));
     return;
   }
 
@@ -5236,18 +5236,17 @@ void CFXJSE_FormCalcContext::DotAccessorCommon(
   v8::LocalVector<v8::Value> resolveValues =
       ParseResolveResult(pThis, maybeResult.value(), argAccessor, &bAttribute);
 
-  v8::LocalVector<v8::Value> values(pIsolate, resolveValues.size() + 2);
-  values[0] = fxv8::NewNumberHelper(pIsolate, 1);
-  values[1] = bAttribute
-                  ? fxv8::NewStringHelper(pIsolate, bsName.AsStringView())
-                        .As<v8::Value>()
-                  : fxv8::NewNullHelper(pIsolate).As<v8::Value>();
+  v8::LocalVector<v8::Value> values(isolate, resolveValues.size() + 2);
+  values[0] = fxv8::NewNumberHelper(isolate, 1);
+  values[1] = bAttribute ? fxv8::NewStringHelper(isolate, bsName.AsStringView())
+                               .As<v8::Value>()
+                         : fxv8::NewNullHelper(isolate).As<v8::Value>();
 
   for (size_t i = 0; i < resolveValues.size(); i++) {
     values[i + 2] = resolveValues[i];
   }
 
-  info.GetReturnValue().Set(fxv8::NewArrayHelper(pIsolate, values));
+  info.GetReturnValue().Set(fxv8::NewArrayHelper(isolate, values));
 }
 
 // static
@@ -5529,25 +5528,25 @@ bool CFXJSE_FormCalcContext::ApplyToExpansion(
     std::function<void(v8::Isolate*, v8::Local<v8::Value>)> fn,
     const v8::FunctionCallbackInfo<v8::Value>& info,
     bool bStrict) {
-  v8::Isolate* pIsolate = info.GetIsolate();
+  v8::Isolate* isolate = info.GetIsolate();
   for (int32_t i = 0; i < info.Length(); i++) {
     v8::Local<v8::Value> argValue = info[i];
     if (fxv8::IsArray(argValue)) {
-      if (!ApplyToArray(pIsolate, fn, argValue.As<v8::Array>()) && bStrict) {
+      if (!ApplyToArray(isolate, fn, argValue.As<v8::Array>()) && bStrict) {
         ThrowArgumentMismatchException();
         return false;
       }
     } else if (fxv8::IsObject(argValue)) {
-      ApplyToObject(pIsolate, fn, argValue.As<v8::Object>());
+      ApplyToObject(isolate, fn, argValue.As<v8::Object>());
     } else if (!fxv8::IsNull(argValue)) {
-      fn(pIsolate, argValue);
+      fn(isolate, argValue);
     }
   }
   return true;
 }
 
 bool CFXJSE_FormCalcContext::ApplyToArray(
-    v8::Isolate* pIsolate,
+    v8::Isolate* isolate,
     std::function<void(v8::Isolate*, v8::Local<v8::Value>)> fn,
     v8::Local<v8::Array> pArray) {
   uint32_t iLength = fxv8::GetArrayLengthHelper(pArray);
@@ -5555,42 +5554,42 @@ bool CFXJSE_FormCalcContext::ApplyToArray(
     return false;
   }
 
-  v8::Local<v8::Value> propertyValue =
-      fxv8::ReentrantGetArrayElementHelper(pIsolate, pArray, 1);
+  v8::Local<v8::Value> property_value =
+      fxv8::ReentrantGetArrayElementHelper(isolate, pArray, 1);
 
   ByteString bsName;
-  const bool nullprop = fxv8::IsNull(propertyValue);
+  const bool nullprop = fxv8::IsNull(property_value);
   if (!nullprop) {
-    bsName = fxv8::ReentrantToByteStringHelper(pIsolate, propertyValue);
+    bsName = fxv8::ReentrantToByteStringHelper(isolate, property_value);
   }
 
   for (uint32_t j = 2; j < iLength; j++) {
-    v8::Local<v8::Value> jsValue =
-        fxv8::ReentrantGetArrayElementHelper(pIsolate, pArray, j);
-    if (!fxv8::IsObject(jsValue)) {
+    v8::Local<v8::Value> js_value =
+        fxv8::ReentrantGetArrayElementHelper(isolate, pArray, j);
+    if (!fxv8::IsObject(js_value)) {
       continue;
     }
 
-    v8::Local<v8::Object> jsObjectValue = jsValue.As<v8::Object>();
+    v8::Local<v8::Object> jsObjectValue = js_value.As<v8::Object>();
     v8::Local<v8::Value> newPropertyValue =
-        nullprop ? GetObjectDefaultValue(pIsolate, jsObjectValue)
+        nullprop ? GetObjectDefaultValue(isolate, jsObjectValue)
                  : fxv8::ReentrantGetObjectPropertyHelper(
-                       pIsolate, jsObjectValue, bsName.AsStringView());
+                       isolate, jsObjectValue, bsName.AsStringView());
     if (!fxv8::IsNull(newPropertyValue)) {
-      fn(pIsolate, newPropertyValue);
+      fn(isolate, newPropertyValue);
     }
   }
   return true;
 }
 
 void CFXJSE_FormCalcContext::ApplyToObject(
-    v8::Isolate* pIsolate,
+    v8::Isolate* isolate,
     std::function<void(v8::Isolate*, v8::Local<v8::Value>)> fn,
     v8::Local<v8::Object> pObject) {
   v8::Local<v8::Value> newPropertyValue =
-      GetObjectDefaultValue(pIsolate, pObject);
+      GetObjectDefaultValue(isolate, pObject);
   if (!fxv8::IsNull(newPropertyValue)) {
-    fn(pIsolate, newPropertyValue);
+    fn(isolate, newPropertyValue);
   }
 }
 
