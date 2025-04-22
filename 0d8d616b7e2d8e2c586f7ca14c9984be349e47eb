@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e96ff2dd_bd4e62af",
+        "filename": "testing/resources/bug_1591.pdf",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-22T16:40:35Z",
+      "side": 1,
+      "message": "Length decreasing due to https://pdfium-review.googlesource.com/128570.",
+      "revId": "0d8d616b7e2d8e2c586f7ca14c9984be349e47eb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
