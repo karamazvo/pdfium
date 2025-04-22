@@ -1,0 +1,207 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7b67d390_8dd111b1",
+        "filename": "core/fpdfapi/page/cpdf_streamcontentparser.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 873,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-22T17:32:29Z",
+      "side": 1,
+      "message": "nit: in some sense, this makes your reference go stale, which is still in scope until the return. Writing out ..._.value().state might be safer and don\u0027t take the reference until after this line.",
+      "range": {
+        "startLine": 873,
+        "startChar": 4,
+        "endLine": 873,
+        "endChar": 34
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "201bac95_b98e9ba2",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/page/cpdf_streamcontentparser.cpp",
+              "range": {
+                "startLine": 870,
+                "startChar": 0,
+                "endLine": 873,
+                "endChar": 0
+              },
+              "replacement": "  if (inline_image_context_.value().state !\u003d\n      InlineImageContext::State::kLookingForEI) {\n"
+            },
+            {
+              "path": "core/fpdfapi/page/cpdf_streamcontentparser.cpp",
+              "range": {
+                "startLine": 877,
+                "startChar": 0,
+                "endLine": 877,
+                "endChar": 0
+              },
+              "replacement": "  const InlineImageContext\u0026 inline_image_context \u003d\n      inline_image_context_.value();\n"
+            }
+          ]
+        }
+      ],
+      "revId": "730e74829877c4fc7fb331e2200d85c4e714f1d6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e7e30836_b94540a1",
+        "filename": "core/fpdfapi/page/cpdf_streamcontentparser.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 937,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-22T17:32:29Z",
+      "side": 1,
+      "message": "nit: same here, could maybe put {} around a big block declaring the reference that ends before the reset.",
+      "range": {
+        "startLine": 937,
+        "startChar": 0,
+        "endLine": 937,
+        "endChar": 32
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "099d87e4_63fa1bb2",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/page/cpdf_streamcontentparser.cpp",
+              "range": {
+                "startLine": 870,
+                "startChar": 0,
+                "endLine": 876,
+                "endChar": 0
+              },
+              "replacement": "  {\n    const InlineImageContext\u0026 inline_image_context \u003d\n        inline_image_context_.value();\n    if (inline_image_context.state !\u003d\n        InlineImageContext::State::kLookingForEI) {\n      inline_image_context_.reset();\n      return;  // No matching \"ID\" operator.\n    }\n"
+            },
+            {
+              "path": "core/fpdfapi/page/cpdf_streamcontentparser.cpp",
+              "range": {
+                "startLine": 877,
+                "startChar": 0,
+                "endLine": 878,
+                "endChar": 0
+              },
+              "replacement": "    CHECK_LT(inline_image_context.begin_pos, inline_image_context.data_pos);\n"
+            },
+            {
+              "path": "core/fpdfapi/page/cpdf_streamcontentparser.cpp",
+              "range": {
+                "startLine": 879,
+                "startChar": 0,
+                "endLine": 902,
+                "endChar": 0
+              },
+              "replacement": "    const uint32_t saved_position \u003d syntax_-\u003eGetPos();\n    auto synthesized_dict \u003d document_-\u003eNew\u003cCPDF_Dictionary\u003e();\n    syntax_-\u003eSetPos(inline_image_context.begin_pos);\n    while (true) {\n      CPDF_StreamParser::ElementType type \u003d syntax_-\u003eParseNextElement();\n      if (syntax_-\u003eGetPos() \u003e\u003d inline_image_context.data_pos) {\n        break;  // Reached \"ID\" operator.\n      }\n      if (type \u003d\u003d CPDF_StreamParser::ElementType::kKeyword) {\n        continue;  // Already handled by CPDF_StreamContentParser itself.\n      }\n      if (type !\u003d CPDF_StreamParser::ElementType::kName) {\n        break;\n      }\n      // Next `syntax_` read below may invalidate `word`. Must save to `key`.\n      ByteStringView word \u003d syntax_-\u003eGetWord();\n      ByteString key(word.Last(word.GetLength() - 1));\n      auto value_object \u003d syntax_-\u003eReadNextObject(false, false, 0);\n      if (value_object \u0026\u0026 !value_object-\u003eIsInline()) {\n        synthesized_dict-\u003eSetNewFor\u003cCPDF_Reference\u003e(key, document_,\n                                                    value_object-\u003eGetObjNum());\n      } else {\n        synthesized_dict-\u003eSetFor(key, std::move(value_object));\n      }\n"
+            },
+            {
+              "path": "core/fpdfapi/page/cpdf_streamcontentparser.cpp",
+              "range": {
+                "startLine": 903,
+                "startChar": 0,
+                "endLine": 906,
+                "endChar": 0
+              },
+              "replacement": "    ReplaceAbbr(synthesized_dict);\n    synthesized_dict-\u003eSetNewFor\u003cCPDF_Name\u003e(\"Subtype\", \"Image\");\n"
+            },
+            {
+              "path": "core/fpdfapi/page/cpdf_streamcontentparser.cpp",
+              "range": {
+                "startLine": 907,
+                "startChar": 0,
+                "endLine": 916,
+                "endChar": 0
+              },
+              "replacement": "    RetainPtr\u003cconst CPDF_Object\u003e colorspace;\n    if (synthesized_dict-\u003eKeyExist(\"ColorSpace\")) {\n      colorspace \u003d synthesized_dict-\u003eGetDirectObjectFor(\"ColorSpace\");\n      if (colorspace-\u003eIsName()) {\n        ByteString name \u003d colorspace-\u003eGetString();\n        if (name !\u003d \"DeviceRGB\" \u0026\u0026 name !\u003d \"DeviceGray\" \u0026\u0026\n            name !\u003d \"DeviceCMYK\") {\n          colorspace \u003d FindResourceObj(\"ColorSpace\", name);\n          if (colorspace \u0026\u0026 colorspace-\u003eIsInline()) {\n            synthesized_dict-\u003eSetFor(\"ColorSpace\", colorspace-\u003eClone());\n          }\n"
+            },
+            {
+              "path": "core/fpdfapi/page/cpdf_streamcontentparser.cpp",
+              "range": {
+                "startLine": 919,
+                "startChar": 0,
+                "endLine": 920,
+                "endChar": 0
+              },
+              "replacement": "\n    syntax_-\u003eSetPos(inline_image_context.data_pos);\n    FX_SAFE_UINT32 stream_length \u003d saved_position;\n    stream_length -\u003d inline_image_context.data_pos;\n    stream_length -\u003d 2;  // Account for \"EI\" operator.\n    RetainPtr\u003cCPDF_Stream\u003e inline_stream \u003d\n        syntax_-\u003eReadInlineStream(document_, std::move(synthesized_dict),\n                                  colorspace, stream_length.ValueOrDie());\n    CPDF_ImageObject* new_image_object \u003d\n        AddImageFromStream(std::move(inline_stream), /*name\u003d*/\"\");\n    // Record the bounding box of this image, so rendering code can draw it\n    // properly.\n    if (new_image_object \u0026\u0026 new_image_object-\u003eGetImage()-\u003eIsMask()) {\n      object_holder_-\u003eAddImageMaskBoundingBox(new_image_object-\u003eGetRect());\n    }\n"
+            },
+            {
+              "path": "core/fpdfapi/page/cpdf_streamcontentparser.cpp",
+              "range": {
+                "startLine": 921,
+                "startChar": 0,
+                "endLine": 934,
+                "endChar": 0
+              },
+              "replacement": "    syntax_-\u003eSetPos(saved_position);\n"
+            },
+            {
+              "path": "core/fpdfapi/page/cpdf_streamcontentparser.cpp",
+              "range": {
+                "startLine": 936,
+                "startChar": 0,
+                "endLine": 937,
+                "endChar": 0
+              },
+              "replacement": "  const uint32_t saved_position \u003d syntax_-\u003eGetPos();\n"
+            }
+          ]
+        }
+      ],
+      "revId": "730e74829877c4fc7fb331e2200d85c4e714f1d6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "974fb9e3_56d82892",
+        "filename": "core/fpdfapi/page/cpdf_streamcontentparser.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 1015,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-22T17:32:29Z",
+      "side": 1,
+      "message": "nit: get this for free on next line if no value.",
+      "range": {
+        "startLine": 1015,
+        "startChar": 1,
+        "endLine": 1015,
+        "endChar": 43
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "ebbe0746_8ad1aef2",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/page/cpdf_streamcontentparser.cpp",
+              "range": {
+                "startLine": 1015,
+                "startChar": 0,
+                "endLine": 1016,
+                "endChar": 0
+              },
+              "replacement": ""
+            }
+          ]
+        }
+      ],
+      "revId": "730e74829877c4fc7fb331e2200d85c4e714f1d6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
