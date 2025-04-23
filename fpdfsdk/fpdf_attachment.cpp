@@ -304,3 +304,45 @@ FPDFAttachment_GetFile(FPDF_ATTACHMENT attachment,
                                        static_cast<size_t>(buflen))));
   return true;
 }
+
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFAttachment_GetSubtype(FPDF_ATTACHMENT attachment,
+                          FPDF_WCHAR* buffer,
+                          unsigned long buflen) {
+  return FPDFAttachment_GetStreamValue(attachment, "Subtype", buffer, buflen);
+}
+
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFAttachment_GetStreamValue(FPDF_ATTACHMENT attachment,
+                              FPDF_BYTESTRING key,
+                              FPDF_WCHAR* buffer,
+                              unsigned long buflen) {
+  CPDF_Object* pFile = CPDFObjectFromFPDFAttachment(attachment);
+  if (!pFile) {
+    return 0;
+  }
+
+  CPDF_FileSpec spec(pdfium::WrapRetain(pFile));
+  RetainPtr<const CPDF_Stream> pFileStream = spec.GetFileStream();
+  if (!pFileStream) {
+    return 0;
+  }
+
+  // SAFETY: required from caller.
+  auto buffer_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen));
+
+  RetainPtr<const CPDF_Dictionary> stream_dict = pFileStream->GetDict();
+  if (!stream_dict) {
+    return Utf16EncodeMaybeCopyAndReturnLength(WideString(), buffer_span);
+  }
+
+  ByteString key_str = key;
+  RetainPtr<const CPDF_Object> object = stream_dict->GetObjectFor(key_str);
+  if (!object || (!object->IsString() && !object->IsName())) {
+    // Per API description, return an empty string in these cases.
+    return Utf16EncodeMaybeCopyAndReturnLength(WideString(), buffer_span);
+  }
+
+  return Utf16EncodeMaybeCopyAndReturnLength(object->GetUnicodeText(),
+                                             buffer_span);
+}

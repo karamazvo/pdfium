@@ -172,6 +172,45 @@ FPDFAttachment_GetFile(FPDF_ATTACHMENT attachment,
                        unsigned long buflen,
                        unsigned long* out_buflen);
 
+// Experimental API.
+// Get the MIME type (Subtype) of the embedded file |attachment|. |buffer| is
+// only modified if |buflen| is longer than the length of the MIME type string.
+// If the Subtype is not found or if there is no file stream, an empty string
+// would be copied to |buffer| and the return value would be 2. On other errors,
+// nothing would be added to |buffer| and the return value would be 0.
+//
+//   attachment - handle to an attachment.
+//   buffer     - buffer for holding the MIME type string encoded in UTF-16LE.
+//   buflen     - length of the buffer in bytes.
+//
+// Returns the length of the MIME type string in bytes.
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFAttachment_GetSubtype(FPDF_ATTACHMENT attachment,
+                          FPDF_WCHAR* buffer,
+                          unsigned long buflen);
+
+// Experimental API.
+// Get the string value corresponding to |key| in the embedded file stream
+// dictionary of |attachment|. |buffer| is only modified if |buflen| is longer
+// than the length of the string value. Note that if |key| does not exist in the
+// dictionary or if |key|'s corresponding value in the dictionary is not a
+// string (i.e. the value is not of type FPDF_OBJECT_STRING or
+// FPDF_OBJECT_NAME), then an empty string would be copied to |buffer| and the
+// return value would be 2. On other errors, nothing would be added to |buffer|
+// and the return value would be 0.
+//
+//   attachment - handle to an attachment.
+//   key        - the key to the requested string value, encoded in UTF-8.
+//   buffer     - buffer for holding the string value encoded in UTF-16LE.
+//   buflen     - length of the buffer in bytes.
+//
+// Returns the length of the dictionary value string in bytes.
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFAttachment_GetStreamValue(FPDF_ATTACHMENT attachment,
+                              FPDF_BYTESTRING key,
+                              FPDF_WCHAR* buffer,
+                              unsigned long buflen);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus
