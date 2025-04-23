@@ -33,6 +33,24 @@
       "message": "@thestig@chromium.org am i missing something - there are 2 CR+1\u0027s and yet \"review enforcement - unsatisfied\" - can you help here?",
       "revId": "aaf7cb14054f75e126d487f5bcf9773c71946d0c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a916d25a_aabad6a0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-23T16:12:05Z",
+      "side": 1,
+      "message": "I think npm@ needs to link their chromium.org and google.com accounts.",
+      "parentUuid": "594d6c9b_3187bed3",
+      "revId": "aaf7cb14054f75e126d487f5bcf9773c71946d0c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
