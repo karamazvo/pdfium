@@ -86,6 +86,24 @@
       "parentUuid": "a916d25a_aabad6a0",
       "revId": "aaf7cb14054f75e126d487f5bcf9773c71946d0c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "56315f7b_b3a198e3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-23T18:03:59Z",
+      "side": 1,
+      "message": "Thanks. Yes, PDFium Gerrit is a separate instance from Chromium Gerrit. Why a separate instance and not use Chromium Gerrit like V8? No idea.",
+      "parentUuid": "6d3543d9_07530d51",
+      "revId": "aaf7cb14054f75e126d487f5bcf9773c71946d0c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
