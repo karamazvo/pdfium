@@ -68,6 +68,24 @@
       "message": "Or we can add another reviewer. :)",
       "revId": "aaf7cb14054f75e126d487f5bcf9773c71946d0c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6d3543d9_07530d51",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6355
+      },
+      "writtenOn": "2025-04-23T17:59:35Z",
+      "side": 1,
+      "message": "I filed a bug requesting them to be linked. They are linked on chromium gerrit but it seems like not here",
+      "parentUuid": "a916d25a_aabad6a0",
+      "revId": "aaf7cb14054f75e126d487f5bcf9773c71946d0c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
