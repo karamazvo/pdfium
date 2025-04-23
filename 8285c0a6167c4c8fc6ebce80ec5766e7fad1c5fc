@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9ee076cf_93195be9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-04-23T22:04:47Z",
+      "side": 1,
+      "message": "@thestig@chromium.org as always, thanks in advance for a review.\n\nthere can be other, non string fields in the stream, should we also support those - or is there already something similar?\n\n```\n  /Type /Stream\n  /Subtype /text/plain\n  /Filter /FlateDecode\n  /Length 0\n  /Params \u003c\u003c\n    /Size 0\n    /CreationDate (D:20240101000000)\n    /ModDate (D:20240101000000)\n    /CheckSum \u003c00000000000000000000000000000000\u003e\n```",
+      "revId": "8285c0a6167c4c8fc6ebce80ec5766e7fad1c5fc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
