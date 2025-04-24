@@ -20,6 +20,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "8cc29e9d_40a2ff6c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-04-24T11:41:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f1d9d5ea_4fa47834",
+      "revId": "8285c0a6167c4c8fc6ebce80ec5766e7fad1c5fc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "9ee076cf_93195be9",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 2
@@ -48,6 +66,30 @@
       "writtenOn": "2025-04-24T06:21:53Z",
       "side": 1,
       "message": "Google C++ style in new code please. Also `pFileStream` below.",
+      "range": {
+        "startLine": 320,
+        "startChar": 15,
+        "endLine": 320,
+        "endChar": 20
+      },
+      "revId": "8285c0a6167c4c8fc6ebce80ec5766e7fad1c5fc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "561f9a29_60377213",
+        "filename": "fpdfsdk/fpdf_attachment.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 320,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-04-24T11:41:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07efaa84_c5c71418",
       "range": {
         "startLine": 320,
         "startChar": 15,
