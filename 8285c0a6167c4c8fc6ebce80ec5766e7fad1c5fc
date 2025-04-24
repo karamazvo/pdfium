@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "f1d9d5ea_4fa47834",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-24T06:21:53Z",
+      "side": 1,
+      "message": "I would recommend not adding this API. According to the spec, the embedded file stream dictionary has nothing else worth reading out. All the other values are in the Params dictionary.",
+      "revId": "8285c0a6167c4c8fc6ebce80ec5766e7fad1c5fc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "9ee076cf_93195be9",
@@ -14,6 +31,29 @@
       "writtenOn": "2025-04-23T22:04:47Z",
       "side": 1,
       "message": "@thestig@chromium.org as always, thanks in advance for a review.\n\nthere can be other, non string fields in the stream, should we also support those - or is there already something similar?\n\n```\n  /Type /Stream\n  /Subtype /text/plain\n  /Filter /FlateDecode\n  /Length 0\n  /Params \u003c\u003c\n    /Size 0\n    /CreationDate (D:20240101000000)\n    /ModDate (D:20240101000000)\n    /CheckSum \u003c00000000000000000000000000000000\u003e\n```",
+      "revId": "8285c0a6167c4c8fc6ebce80ec5766e7fad1c5fc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "07efaa84_c5c71418",
+        "filename": "fpdfsdk/fpdf_attachment.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 320,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-24T06:21:53Z",
+      "side": 1,
+      "message": "Google C++ style in new code please. Also `pFileStream` below.",
+      "range": {
+        "startLine": 320,
+        "startChar": 15,
+        "endLine": 320,
+        "endChar": 20
+      },
       "revId": "8285c0a6167c4c8fc6ebce80ec5766e7fad1c5fc",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
