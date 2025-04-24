@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a3175747_f491a1f8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-24T16:07:12Z",
+      "side": 1,
+      "message": "Just one now. Probably no bullet point needed below either.",
+      "range": {
+        "startLine": 9,
+        "startChar": 5,
+        "endLine": 9,
+        "endChar": 8
+      },
+      "revId": "4bf5c28871fcf2dc48253d7b8b9d1ee40f71d4be",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "70c65e6b_0b5724fe",
+        "filename": "fpdfsdk/fpdf_attachment.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 331,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-24T16:07:12Z",
+      "side": 1,
+      "message": "Maybe rename this to `subtype`, as `file` is also an object, and `stream_dict` is (a sub-class of) an object.",
+      "range": {
+        "startLine": 331,
+        "startChar": 31,
+        "endLine": 331,
+        "endChar": 37
+      },
+      "revId": "4bf5c28871fcf2dc48253d7b8b9d1ee40f71d4be",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6317e104_de6955c3",
+        "filename": "fpdfsdk/fpdf_attachment_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 421,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-24T16:07:12Z",
+      "side": 1,
+      "message": "Probably initialize `small_buf` with a known pattern, and then check FPDFAttachment_GetSubtype() didn\u0027t actually write into the buffer?",
+      "revId": "4bf5c28871fcf2dc48253d7b8b9d1ee40f71d4be",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
