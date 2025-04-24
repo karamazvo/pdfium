@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "12d1cac4_ca283247",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-24T17:45:46Z",
+      "side": 1,
+      "message": "this rev doesn\u0027t point to a CL updating numerics, I guess you mean this was TOT at the time of the sync?",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 69
+      },
+      "revId": "4d23b1d20a7751e441c68f1370e3650fb91f8d4f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "79f8d15d_d51e1c13",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-24T17:45:46Z",
+      "side": 1,
+      "message": "LG w/ question.",
+      "revId": "4d23b1d20a7751e441c68f1370e3650fb91f8d4f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
