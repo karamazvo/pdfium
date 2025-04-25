@@ -133,7 +133,7 @@ bool CPDF_MeshStream::Load() {
   }
 
   uint32_t nComponents = cs_->ComponentCount();
-  if (nComponents > kMaxComponents) {
+  if (nComponents > kMaxMeshColorComponents) {
     return false;
   }
 
@@ -205,25 +205,17 @@ CFX_PointF CPDF_MeshStream::ReadCoords() const {
   return pos;
 }
 
-FX_RGB_STRUCT<float> CPDF_MeshStream::ReadColor() const {
+CPDF_MeshColor CPDF_MeshStream::ReadColor() const {
   DCHECK(ShouldCheckBPC(type_));
 
-  std::array<float, kMaxComponents> color_value;
+  CPDF_MeshColor color_value;
   for (uint32_t i = 0; i < components_; ++i) {
     color_value[i] = color_min_[i] + bit_stream_->GetBits(component_bits_) *
                                          (color_max_[i] - color_min_[i]) /
                                          component_max_;
   }
-  if (funcs_.empty()) {
-    return cs_->GetRGBOrZerosOnError(color_value);
-  }
-  float result[kMaxComponents] = {};
-  for (const auto& func : funcs_) {
-    if (func && func->OutputCount() <= kMaxComponents) {
-      func->Call(pdfium::make_span(color_value).first<1u>(), result);
-    }
-  }
-  return cs_->GetRGBOrZerosOnError(result);
+
+  return color_value;
 }
 
 bool CPDF_MeshStream::ReadVertex(const CFX_Matrix& pObject2Bitmap,
