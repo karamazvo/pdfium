@@ -277,6 +277,30 @@ FPDFPage_InsertObject(FPDF_PAGE page, FPDF_PAGEOBJECT page_object) {
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPage_InsertObjectAtIndex(FPDF_PAGE page,
+                             FPDF_PAGEOBJECT page_object,
+                             size_t index) {
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  if (!IsPageObject(pPage)) {
+    return false;
+  }
+
+  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
+  if (!pPageObj) {
+    return false;
+  }
+
+  if (index > pPage->GetPageObjectCount()) {
+    return false;
+  }
+
+  pPageObj->SetDirty(true);
+  CalcBoundingBox(pPageObj);
+  std::unique_ptr<CPDF_PageObject> pPageObjHolder(pPageObj);
+  return pPage->InsertPageObjectAtIndex(index, std::move(pPageObjHolder));
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPage_RemoveObject(FPDF_PAGE page, FPDF_PAGEOBJECT page_object) {
   CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
   if (!pPageObj) {

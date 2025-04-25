@@ -2333,6 +2333,47 @@ TEST_F(FPDFEditEmbedderTest, InsertPageObjectEditAndSave) {
   CloseSavedDocument();
 }
 
+TEST_F(FPDFEditEmbedderTest, InsertObjectAtIndex) {
+  ScopedFPDFDocument doc(FPDF_CreateNewDocument());
+  ASSERT_TRUE(doc);
+  ScopedFPDFPage page(FPDFPage_New(doc.get(), 0, 100, 100));
+  ASSERT_TRUE(page);
+
+  EXPECT_EQ(0, FPDFPage_CountObjects(page.get()));
+
+  FPDF_PAGEOBJECT img1 = FPDFPageObj_NewImageObj(doc.get());
+  FPDF_PAGEOBJECT img2 = FPDFPageObj_NewImageObj(doc.get());
+  FPDF_PAGEOBJECT img3 = FPDFPageObj_NewImageObj(doc.get());
+  ASSERT_TRUE(img1);
+  ASSERT_TRUE(img2);
+  ASSERT_TRUE(img3);
+
+  EXPECT_TRUE(FPDFPage_InsertObjectAtIndex(page.get(), img1, 0));
+  EXPECT_TRUE(FPDFPage_InsertObjectAtIndex(page.get(), img2, 0));
+  EXPECT_TRUE(FPDFPage_InsertObjectAtIndex(page.get(), img3, 1));
+
+  EXPECT_EQ(3, FPDFPage_CountObjects(page.get()));
+
+  EXPECT_EQ(img2, FPDFPage_GetObject(page.get(), 0));
+  EXPECT_EQ(img3, FPDFPage_GetObject(page.get(), 1));
+  EXPECT_EQ(img1, FPDFPage_GetObject(page.get(), 2));
+
+  // Test invalid index
+  FPDF_PAGEOBJECT img4 = FPDFPageObj_NewImageObj(doc.get());
+  EXPECT_FALSE(FPDFPage_InsertObjectAtIndex(page.get(), img4, 4));
+
+  // Try to use img4 after failed insertion to verify it's still valid
+  EXPECT_TRUE(FPDFPage_InsertObjectAtIndex(page.get(), img4, 3));
+  EXPECT_EQ(4, FPDFPage_CountObjects(page.get()));
+  EXPECT_EQ(img4, FPDFPage_GetObject(page.get(), 3));
+
+  // inserting at the end
+  FPDF_PAGEOBJECT img5 = FPDFPageObj_NewImageObj(doc.get());
+  EXPECT_TRUE(FPDFPage_InsertObjectAtIndex(page.get(), img5, 4));
+  EXPECT_EQ(5, FPDFPage_CountObjects(page.get()));
+  EXPECT_EQ(img5, FPDFPage_GetObject(page.get(), 4));
+}
+
 TEST_F(FPDFEditEmbedderTest, InsertAndRemoveLargeFile) {
   const int kOriginalObjectCount = 600;
 

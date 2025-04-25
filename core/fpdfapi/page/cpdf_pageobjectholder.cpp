@@ -188,6 +188,19 @@ void CPDF_PageObjectHolder::AppendPageObject(
   page_object_list_.push_back(std::move(pPageObj));
 }
 
+bool CPDF_PageObjectHolder::InsertPageObjectAtIndex(
+    size_t index,
+    std::unique_ptr<CPDF_PageObject> pPageObj) {
+  CHECK(pPageObj);
+  if (index > page_object_list_.size()) {
+    return false;
+  }
+
+  page_object_list_.insert(page_object_list_.begin() + index,
+                           std::move(pPageObj));
+  return true;
+}
+
 std::unique_ptr<CPDF_PageObject> CPDF_PageObjectHolder::RemovePageObject(
     CPDF_PageObject* pPageObj) {
   auto it =
