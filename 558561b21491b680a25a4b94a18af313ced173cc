@@ -228,6 +228,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "74bdaceb_3d90eeff",
+        "filename": "core/fxcrt/fx_coordinates_unittest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-25T20:41:51Z",
+      "side": 1,
+      "message": "Can\u0027t use template with 0u, as there\u0027s a static_assert IIRC. Left both as-is for consistency.",
+      "parentUuid": "c5b36c3b_00351bf2",
+      "revId": "558561b21491b680a25a4b94a18af313ced173cc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fab2c6ed_8817c0a8",
@@ -241,6 +259,24 @@
       "writtenOn": "2025-04-25T20:34:25Z",
       "side": 1,
       "message": "\u003c1u\u003e here and below.",
+      "revId": "558561b21491b680a25a4b94a18af313ced173cc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f5a7de43_a5d84fd4",
+        "filename": "core/fxcrt/span_util_unittest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-25T20:41:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fab2c6ed_8817c0a8",
       "revId": "558561b21491b680a25a4b94a18af313ced173cc",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
