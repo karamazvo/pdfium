@@ -19,6 +19,9 @@
 
 class CPDF_StreamAcc;
 
+static constexpr uint32_t kMaxMeshColorComponents = 8;
+using CPDF_MeshColor = std::array<float, kMaxMeshColorComponents>;
+
 class CPDF_MeshVertex {
  public:
   CPDF_MeshVertex();
@@ -26,7 +29,7 @@ class CPDF_MeshVertex {
   ~CPDF_MeshVertex();
 
   CFX_PointF position;
-  FX_RGB_STRUCT<float> rgb = {};
+  CPDF_MeshColor rgb = {};
 };
 
 class CFX_BitStream;
@@ -54,7 +57,7 @@ class CPDF_MeshStream {
 
   uint32_t ReadFlag() const;
   CFX_PointF ReadCoords() const;
-  FX_RGB_STRUCT<float> ReadColor() const;
+  CPDF_MeshColor ReadColor() const;
 
   bool ReadVertex(const CFX_Matrix& pObject2Bitmap,
                   CPDF_MeshVertex* vertex,
@@ -65,8 +68,9 @@ class CPDF_MeshStream {
   uint32_t ComponentBits() const { return component_bits_; }
   uint32_t Components() const { return components_; }
 
+  const CPDF_ColorSpace& ColorSpace() const { return *cs_; }
+
  private:
-  static constexpr uint32_t kMaxComponents = 8;
 
   const ShadingType type_;
   const std::vector<std::unique_ptr<CPDF_Function>>& funcs_;
@@ -84,8 +88,8 @@ class CPDF_MeshStream {
   float ymax_ = 0.0f;
   RetainPtr<CPDF_StreamAcc> stream_;
   std::unique_ptr<CFX_BitStream> bit_stream_;
-  std::array<float, kMaxComponents> color_min_ = {};
-  std::array<float, kMaxComponents> color_max_ = {};
+  CPDF_MeshColor color_min_ = {};
+  CPDF_MeshColor color_max_ = {};
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_MESHSTREAM_H_
