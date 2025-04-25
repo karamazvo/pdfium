@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9b36c710_6da297b7",
+        "filename": "fpdfsdk/fpdf_attachment.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 331,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-04-25T12:47:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d5b455c1_1dfc8fda",
+      "range": {
+        "startLine": 331,
+        "startChar": 54,
+        "endLine": 331,
+        "endChar": 66
+      },
+      "revId": "0290753b47593606c859a62887ae2a8954edb3c6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "09baa32a_f06ef0dc",
@@ -47,6 +71,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e3d09c27_919f3c51",
+        "filename": "fpdfsdk/fpdf_attachment_embeddertest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 424,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-04-25T12:47:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "09baa32a_f06ef0dc",
+      "range": {
+        "startLine": 424,
+        "startChar": 2,
+        "endLine": 424,
+        "endChar": 11
+      },
+      "revId": "0290753b47593606c859a62887ae2a8954edb3c6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3d263bb9_b501ea8d",
@@ -60,6 +108,24 @@
       "writtenOn": "2025-04-25T04:30:54Z",
       "side": 1,
       "message": "`EXPECT_THAT(small_buf, testing::Each(kPattern));` will do the same thing, but is shorter and will likely print better diagnostics on failure.",
+      "revId": "0290753b47593606c859a62887ae2a8954edb3c6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3c1b3eb1_99a302fb",
+        "filename": "fpdfsdk/fpdf_attachment_embeddertest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 427,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-04-25T12:47:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3d263bb9_b501ea8d",
       "revId": "0290753b47593606c859a62887ae2a8954edb3c6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
