@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f65e1b14_87b36c06",
+        "filename": "fpdfsdk/fpdf_attachment.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-25T20:40:24Z",
+      "side": 1,
+      "message": "Just merge with the next line?",
+      "revId": "be695d0c031a41ceb2476464939e1d6c2fed4d60",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
