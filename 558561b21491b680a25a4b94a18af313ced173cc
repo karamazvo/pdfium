@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f52a2ac1_3983895a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-25T20:06:24Z",
+      "side": 1,
+      "message": "Ack.",
+      "parentUuid": "7ad5d839_ff882383",
+      "revId": "558561b21491b680a25a4b94a18af313ced173cc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1d18d096_2b68f9fc",
@@ -31,6 +49,24 @@
       "writtenOn": "2025-04-25T19:44:00Z",
       "side": 1,
       "message": "Is it possible to omit the first() at some point, since `digest` is already the required size? Same for line 504, etc.",
+      "revId": "558561b21491b680a25a4b94a18af313ced173cc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a7da68df_d5dc7f8a",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 438,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-25T20:06:24Z",
+      "side": 1,
+      "message": "Alas, not yet. The sizeof DataVector isn\u0027t really known at compile time as part of its template type, and it seems conversion from dynamic to fixed spans of the same size isn\u0027t working somehow.",
+      "parentUuid": "1d18d096_2b68f9fc",
       "revId": "558561b21491b680a25a4b94a18af313ced173cc",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -52,6 +88,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d41a929e_c9f9c4c8",
+        "filename": "core/fpdfapi/font/cpdf_cmap.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 360,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-25T20:06:24Z",
+      "side": 1,
+      "message": "Likely.  But I just wanted to blatantly cast given the number of changes and that I might introduce issues with unsigned comparisions with 0, say.",
+      "parentUuid": "aee32b48_4d40c9c9",
+      "revId": "558561b21491b680a25a4b94a18af313ced173cc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d456aa99_f28db9d4",
@@ -65,6 +119,24 @@
       "writtenOn": "2025-04-25T19:44:00Z",
       "side": 1,
       "message": "4u",
+      "revId": "558561b21491b680a25a4b94a18af313ced173cc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9941af50_8de95a98",
+        "filename": "core/fxcodec/basic/basicmodule.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 339,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-25T20:06:24Z",
+      "side": 1,
+      "message": "Yep, but just by convention.  This compiles because the templated versions get substituted without safe numerics interjecting itself.",
+      "parentUuid": "d456aa99_f28db9d4",
       "revId": "558561b21491b680a25a4b94a18af313ced173cc",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -86,6 +158,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ea847afe_9559afbf",
+        "filename": "core/fxcodec/fx_codec.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-25T20:06:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a27b6b4_c155caf8",
+      "revId": "558561b21491b680a25a4b94a18af313ced173cc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "20ba1546_152527e6",
@@ -99,6 +189,24 @@
       "writtenOn": "2025-04-25T19:44:00Z",
       "side": 1,
       "message": "\u003c5u\u003e on these 2 lines.",
+      "revId": "558561b21491b680a25a4b94a18af313ced173cc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3b5f2cb3_85aefa4a",
+        "filename": "core/fxcodec/gif/lzw_decompressor_unittest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-25T20:06:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "20ba1546_152527e6",
       "revId": "558561b21491b680a25a4b94a18af313ced173cc",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -120,6 +228,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5ef32e38_1d2ab425",
+        "filename": "fxbarcode/oned/BC_OnedUPCAWriter.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-25T20:06:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "40a402ae_108cc6c1",
+      "revId": "558561b21491b680a25a4b94a18af313ced173cc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "764b1722_efe17226",
@@ -133,6 +259,24 @@
       "writtenOn": "2025-04-25T19:44:00Z",
       "side": 1,
       "message": "\u003c2u\u003e",
+      "revId": "558561b21491b680a25a4b94a18af313ced173cc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6d109914_80b50a09",
+        "filename": "testing/fuzzers/pdf_lzw_fuzzer.cc",
+        "patchSetId": 5
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-25T20:06:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "764b1722_efe17226",
       "revId": "558561b21491b680a25a4b94a18af313ced173cc",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
