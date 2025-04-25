@@ -16,6 +16,23 @@
       "message": "gah, this is messed up.  Not sure why Lei is still author",
       "revId": "f1d27278e4022b4a9a12dc8248dd68783bd03bdd",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "285f919b_38650bee",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-25T20:48:54Z",
+      "side": 1,
+      "message": "Just do `git cl issue 0` locally, and it should use a new CL ID on the next upload?",
+      "revId": "f1d27278e4022b4a9a12dc8248dd68783bd03bdd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ],
   "submitRequirementResults": [
