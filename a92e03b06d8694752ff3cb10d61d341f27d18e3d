@@ -35,6 +35,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "16ff47fa_3813e2e7",
+        "filename": "fpdfsdk/fpdf_attachment.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 320,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-04-25T19:45:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3456664c_d672c15d",
+      "revId": "a92e03b06d8694752ff3cb10d61d341f27d18e3d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "65567384_4c81b802",
@@ -48,6 +66,24 @@
       "writtenOn": "2025-04-25T19:08:04Z",
       "side": 1,
       "message": "I strongly suspect this never evaluates to true. CPDF_Stream always has a dictionary.",
+      "revId": "a92e03b06d8694752ff3cb10d61d341f27d18e3d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b9e1cc3e_d2336d3f",
+        "filename": "fpdfsdk/fpdf_attachment.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 327,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-04-25T19:45:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "65567384_4c81b802",
       "revId": "a92e03b06d8694752ff3cb10d61d341f27d18e3d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
