@@ -187,6 +187,22 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetRotation(FPDF_PAGE page, int rotate);
 FPDF_EXPORT void FPDF_CALLCONV
 FPDFPage_InsertObject(FPDF_PAGE page, FPDF_PAGEOBJECT page_object);
 
+// Insert |page_object| into |page| at the specified |index|.
+//
+//   page        - handle to a page
+//   page_object - handle to a page object. The |page_object| will be
+//                 automatically freed.
+//   index       - the index position to insert the object at. If index equals
+//                 the current object count, the object will be appended to the
+//                 end. If index is greater than the object count, the function
+//                 will fail and return false.
+//
+// Returns true if successful.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPage_InsertObjectAtIndex(FPDF_PAGE page,
+                             FPDF_PAGEOBJECT page_object,
+                             size_t index);
+
 // Experimental API.
 // Remove |page_object| from |page|.
 //
