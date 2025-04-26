@@ -41,6 +41,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ac1e905a_e07d2671",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-04-26T19:00:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "408d2196_53524adc",
+      "range": {
+        "startLine": 283,
+        "startChar": 13,
+        "endLine": 283,
+        "endChar": 18
+      },
+      "revId": "07f220c15317d69e6abc99359687dc5f31131931",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "52357d16_475fd3fe",
@@ -58,6 +82,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a6eb2204_2b7cc853",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-04-26T19:00:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "52357d16_475fd3fe",
+      "revId": "07f220c15317d69e6abc99359687dc5f31131931",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b2d9332d_6b2ded49",
@@ -71,6 +113,24 @@
       "writtenOn": "2025-04-25T21:53:49Z",
       "side": 1,
       "message": "Document the behavior when `index` is the same value as the object count; is a greater value than the object count.",
+      "revId": "07f220c15317d69e6abc99359687dc5f31131931",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "18131271_a5c338be",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-04-26T19:00:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b2d9332d_6b2ded49",
       "revId": "07f220c15317d69e6abc99359687dc5f31131931",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
