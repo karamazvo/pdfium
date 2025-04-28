@@ -34,6 +34,24 @@
       "parentUuid": "45f614ba_e468b7c4",
       "revId": "c19101438377ab89e088b6761aefe13206c63fb7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "61c8be8e_1aa69ba1",
+        "filename": "testing/resources/pixel/shade_expected_gdi_skia.pdf.0.png",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-28T19:18:19Z",
+      "side": 1,
+      "message": "We probably should finish off crbug.com/42270670 and crbug.com/42270671 at some point and just stop checking in expectation files, but it hasn\u0027t been prioritized. Meanwhile, I don\u0027t mind running optipng, but I can see how this is an extra point of friction.",
+      "parentUuid": "c885d481_41853fd2",
+      "revId": "c19101438377ab89e088b6761aefe13206c63fb7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
