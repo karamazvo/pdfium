@@ -16,6 +16,24 @@
       "message": "Run `optipng` on these files? I uploaded the optimized PNGS to https://drive.google.com/drive/folders/1XX9M9kl_do5FbjLrptfCp4HSv_ECR5n1?usp\u003dsharing",
       "revId": "c19101438377ab89e088b6761aefe13206c63fb7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c885d481_41853fd2",
+        "filename": "testing/resources/pixel/shade_expected_gdi_skia.pdf.0.png",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-04-28T18:08:56Z",
+      "side": 1,
+      "message": "Hey, thanks! I copied these in.\n\nIf `optipng` is mandatory, maybe `./testing/tools/make_expected.sh` should be stricter about it not being around?\n\nAlso, for skia and gdi_skia variants, I just downloaded them from the red bots. Maybe the bots should offer `optipng`\u0027d baselines?",
+      "parentUuid": "45f614ba_e468b7c4",
+      "revId": "c19101438377ab89e088b6761aefe13206c63fb7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
