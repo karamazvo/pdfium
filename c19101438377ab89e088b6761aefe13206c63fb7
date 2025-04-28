@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "45f614ba_e468b7c4",
+        "filename": "testing/resources/pixel/shade_expected_gdi_skia.pdf.0.png",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-28T17:49:01Z",
+      "side": 1,
+      "message": "Run `optipng` on these files? I uploaded the optimized PNGS to https://drive.google.com/drive/folders/1XX9M9kl_do5FbjLrptfCp4HSv_ECR5n1?usp\u003dsharing",
+      "revId": "c19101438377ab89e088b6761aefe13206c63fb7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
