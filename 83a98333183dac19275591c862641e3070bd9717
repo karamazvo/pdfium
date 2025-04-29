@@ -109,6 +109,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "ee20272a_dad519f7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-29T17:20:01Z",
+      "side": 1,
+      "message": "Size seen by the compiler. e.g. https://commondatastorage.googleapis.com/chromium-browser-clang/chrome_includes_2025-04-29_050817.html\n\nAlso note how the pre-C++20 spans have smaller expanded sizes. https://commondatastorage.googleapis.com/chromium-browser-clang/chrome_includes_2025-04-29_050817.html#view\u003dfiles\u0026filter\u003d%5C%2Fspan%5C.h\u0026sort\u003dasize\u0026reverse\u003d\u0026includer\u003d\u0026included\u003d\u0026limit\u003d1000\n\nThis CL is just rewriting the parts that got the most increase, which also happens to be the part that doesn\u0027t actually need spans.",
+      "parentUuid": "81122936_c16984d2",
+      "revId": "83a98333183dac19275591c862641e3070bd9717",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "17d41ddb_9f06b67f",
         "filename": "core/fpdfapi/cmaps/CNS1/Adobe-CNS1-UCS2_5.inc",
         "patchSetId": 2
