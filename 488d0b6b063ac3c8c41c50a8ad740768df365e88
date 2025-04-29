@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "63a909b1_d942346f",
+        "filename": "core/fxcrt/span.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-29T21:11:26Z",
+      "side": 1,
+      "message": "BTW, this is actually in span_util.h.",
+      "revId": "488d0b6b063ac3c8c41c50a8ad740768df365e88",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
