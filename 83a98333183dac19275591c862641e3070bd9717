@@ -91,6 +91,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "81122936_c16984d2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-29T17:09:17Z",
+      "side": 1,
+      "message": "Or is this just the total bytes seen by the compiler ?",
+      "parentUuid": "055558ec_bb359620",
+      "revId": "83a98333183dac19275591c862641e3070bd9717",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "17d41ddb_9f06b67f",
         "filename": "core/fpdfapi/cmaps/CNS1/Adobe-CNS1-UCS2_5.inc",
         "patchSetId": 2
@@ -144,6 +162,30 @@
       "side": 1,
       "message": "I initially just deleted this file and moved the data into the header, but that makes it a bit harder to review. So I modeled this after core/fxcrt/fx_ucddata.inc.",
       "parentUuid": "17d41ddb_9f06b67f",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 36
+      },
+      "revId": "83a98333183dac19275591c862641e3070bd9717",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bab41fea_b84ba121",
+        "filename": "core/fpdfapi/cmaps/CNS1/Adobe-CNS1-UCS2_5.inc",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-29T17:09:17Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "a008e814_ec5f4daa",
       "range": {
         "startLine": 1,
         "startChar": 0,
