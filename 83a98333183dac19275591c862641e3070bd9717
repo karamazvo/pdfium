@@ -178,6 +178,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ccf07575_6704fa4c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-29T19:40:27Z",
+      "side": 1,
+      "message": "https://ci.chromium.org/ui/p/chromium/builders/try/compile-size/151289/overview results show +275 MB.",
+      "parentUuid": "f33552a8_e92d54d8",
+      "revId": "83a98333183dac19275591c862641e3070bd9717",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "17d41ddb_9f06b67f",
