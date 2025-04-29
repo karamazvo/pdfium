@@ -160,6 +160,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e05c87a6_3621bca1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-29T19:05:58Z",
+      "side": 1,
+      "message": "I took a quick look and there\u0027s not much to remove, because we\u0027ve been generally good about DIWYDU in PDFium.",
+      "parentUuid": "f2d3968d_e252e327",
+      "revId": "83a98333183dac19275591c862641e3070bd9717",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "17d41ddb_9f06b67f",
