@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d8761192_97768795",
+        "filename": "core/fxcrt/span.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 359,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-29T22:03:33Z",
+      "side": 0,
+      "message": "Can also remove \u003carray\u003e?",
+      "revId": "488d0b6b063ac3c8c41c50a8ad740768df365e88",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
