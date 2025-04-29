@@ -36,6 +36,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "eff006c8_3ba25e6b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-29T17:05:35Z",
+      "side": 1,
+      "message": "Here is the napkin math. Every core/fpdfapi/cmaps/*/*.cpp file (61 in total) include span.h via core/fpdfapi/cmaps/*/*.h. The compile cost prior to the span update CL is ~1.5 MB per file. With the span update, it\u0027s ~4 MB per file. Removing span.h from core/fpdfapi/cmaps sub-dirs reduces cost by ~244 MB, thus reducing the +490 MB increase in one to below the 300 MB threshold.",
+      "parentUuid": "26a7c291_66c72306",
+      "revId": "83a98333183dac19275591c862641e3070bd9717",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "17d41ddb_9f06b67f",
