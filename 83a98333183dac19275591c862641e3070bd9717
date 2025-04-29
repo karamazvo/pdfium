@@ -34,6 +34,47 @@
       "parentUuid": "bf553d49_05a03f9a",
       "revId": "83a98333183dac19275591c862641e3070bd9717",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "17d41ddb_9f06b67f",
+        "filename": "core/fpdfapi/cmaps/CNS1/Adobe-CNS1-UCS2_5.inc",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-29T17:05:32Z",
+      "side": 1,
+      "message": "Why .inc instead of include-guarded .h file?",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 36
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "91d7bde0_204330d0",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/cmaps/CNS1/Adobe-CNS1-UCS2_5.inc",
+              "range": {
+                "startLine": 7,
+                "startChar": 0,
+                "endLine": 7,
+                "endChar": 0
+              },
+              "replacement": "// This is an included file, not a standalone source file, and is expected to\n// be included in a C++ source file.\n\n"
+            }
+          ]
+        }
+      ],
+      "revId": "83a98333183dac19275591c862641e3070bd9717",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
