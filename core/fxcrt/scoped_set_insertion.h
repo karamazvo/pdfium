@@ -5,7 +5,6 @@
 #ifndef CORE_FXCRT_SCOPED_SET_INSERTION_H_
 #define CORE_FXCRT_SCOPED_SET_INSERTION_H_
 
-#include <set>
 #include <utility>
 
 #include "core/fxcrt/check.h"
@@ -21,7 +20,7 @@ class ScopedSetInsertion {
  public:
   FX_STACK_ALLOCATED();
 
-  ScopedSetInsertion(std::set<T>* org_set, const T& elem)
+  ScopedSetInsertion(T* org_set, const T::value_type& elem)
       : set_(org_set), insert_results_(set_->insert(elem)) {
     CHECK(insert_results_.second);
   }
@@ -30,8 +29,8 @@ class ScopedSetInsertion {
   ~ScopedSetInsertion() { set_->erase(insert_results_.first); }
 
  private:
-  UnownedPtr<std::set<T>> const set_;
-  const std::pair<typename std::set<T>::iterator, bool> insert_results_;
+  UnownedPtr<T> const set_;
+  const std::pair<typename T::iterator, bool> insert_results_;
 };
 
 }  // namespace fxcrt
