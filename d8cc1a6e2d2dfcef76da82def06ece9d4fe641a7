@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d48d9d06_9e409492",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-30T17:15:31Z",
+      "side": 1,
+      "message": "Hang on. Got red bots on the next CL, likely due to unstable iterators.",
+      "revId": "d8cc1a6e2d2dfcef76da82def06ece9d4fe641a7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
