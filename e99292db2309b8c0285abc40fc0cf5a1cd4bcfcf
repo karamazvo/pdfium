@@ -16,6 +16,24 @@
       "message": "Tests?  In particular, can we add this plus a test in one CL, then use it in a follow-on CL?",
       "revId": "e99292db2309b8c0285abc40fc0cf5a1cd4bcfcf",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "310a048e_0b618b8e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-30T17:38:44Z",
+      "side": 1,
+      "message": "What do you have in mind for the test? Something like this?\n\n```\nstatic constexpr ByteStringView kView(\"view\");\nstatic_assert(kView.GetLength() \u003d\u003d 4);\n```",
+      "parentUuid": "3baceafe_75c25292",
+      "revId": "e99292db2309b8c0285abc40fc0cf5a1cd4bcfcf",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
