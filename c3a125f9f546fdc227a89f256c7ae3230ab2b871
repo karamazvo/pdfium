@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7d64ef7e_bb938d1e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-30T23:57:43Z",
+      "side": 1,
+      "message": "This patch is now obsolete, given the prior one?",
+      "revId": "c3a125f9f546fdc227a89f256c7ae3230ab2b871",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
