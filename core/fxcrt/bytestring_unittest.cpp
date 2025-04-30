@@ -1166,6 +1166,34 @@ TEST(ByteString, MultiCharReverseIterator) {
   EXPECT_EQ(0, iter - multi_str.rbegin());
 }
 
+TEST(ByteStringView, ConstexprCtors) {
+  static constexpr ByteStringView null_string;
+  static_assert(null_string.GetLength() == 0);
+  static_assert(null_string.IsEmpty());
+
+  static constexpr ByteStringView copied_null_string(null_string);
+  static_assert(copied_null_string.GetLength() == 0);
+  static_assert(copied_null_string.IsEmpty());
+
+  static constexpr ByteStringView literal_string("foo");
+  static_assert(literal_string.GetLength() == 3);
+  static_assert(!literal_string.IsEmpty());
+
+  static constexpr ByteStringView span_string(pdfium::span_from_cstring("bar"));
+  static_assert(span_string.GetLength() == 3);
+  static_assert(!span_string.IsEmpty());
+
+  static constexpr char kChar = 'x';
+  static constexpr ByteStringView char_string(kChar);
+  static_assert(char_string.GetLength() == 1);
+  static_assert(!char_string.IsEmpty());
+
+  // SAFETY: known fixed-length string.
+  static constexpr ByteStringView UNSAFE_BUFFERS(ptr_size_string("foo", 2));
+  static_assert(ptr_size_string.GetLength() == 2);
+  static_assert(!ptr_size_string.IsEmpty());
+}
+
 TEST(ByteStringView, Null) {
   ByteStringView null_string;
   EXPECT_FALSE(null_string.unterminated_unsigned_str());
