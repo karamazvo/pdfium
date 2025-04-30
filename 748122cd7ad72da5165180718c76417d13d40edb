@@ -88,6 +88,24 @@
       "parentUuid": "437fe935_2f655bee",
       "revId": "748122cd7ad72da5165180718c76417d13d40edb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "94689781_2bc9b7d7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-30T01:22:28Z",
+      "side": 1,
+      "message": "Alas, `static constexpr auto s \u003d byte_span_from_cstring(\"hello\");` doesn\u0027t compile. The `constexpr auto byte_span_from_cstring(...);` signature gave false hope.\n\nGoing to try with https://pdfium-review.googlesource.com/131215, and it would also be preferable to just write `ByteStringView(\"foo\")` and not have to use the `u8` prefix.",
+      "parentUuid": "ab18b506_5cbdbbc5",
+      "revId": "748122cd7ad72da5165180718c76417d13d40edb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
