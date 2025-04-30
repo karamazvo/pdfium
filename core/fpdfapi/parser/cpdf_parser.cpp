@@ -314,9 +314,8 @@ CPDF_Parser::Error CPDF_Parser::StartParseInternal() {
 }
 
 FX_FILESIZE CPDF_Parser::ParseStartXRef() {
-  static constexpr char kStartXRefKeyword[] = "startxref";
-  syntax_->SetPos(syntax_->GetDocumentSize() -
-                  UNSAFE_TODO(strlen(kStartXRefKeyword)));
+  static constexpr ByteStringView kStartXRefKeyword("startxref");
+  syntax_->SetPos(syntax_->GetDocumentSize() - kStartXRefKeyword.GetLength());
   if (!syntax_->BackwardsSearchToWord(kStartXRefKeyword, 4096)) {
     return 0;
   }

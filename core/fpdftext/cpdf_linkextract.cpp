@@ -183,8 +183,8 @@ void CPDF_LinkExtract::ExtractLinks() {
 
 std::optional<CPDF_LinkExtract::Link> CPDF_LinkExtract::CheckWebLink(
     const WideString& strBeCheck) {
-  const WideStringView kHttpScheme = L"http";
-  const WideStringView kWWWAddrStart = L"www.";
+  static constexpr WideStringView kHttpScheme(L"http");
+  static constexpr WideStringView kWWWAddrStart(L"www.");
   WideString str = strBeCheck;
   str.MakeLower();
 
