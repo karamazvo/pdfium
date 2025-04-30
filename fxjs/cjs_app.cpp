@@ -11,9 +11,9 @@
 #include <algorithm>
 #include <utility>
 
+#include "core/fxcrt/containers/unique_ptr_adapters.h"
 #include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/span.h"
-#include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "fxjs/cjs_document.h"
@@ -419,7 +419,7 @@ void CJS_App::TimerProc(GlobalTimer* pTimer) {
 }
 
 void CJS_App::CancelProc(GlobalTimer* pTimer) {
-  timers_.erase(fxcrt::MakeFakeUniquePtr(pTimer));
+  std::erase_if(timers_, pdfium::MatchesUniquePtr(pTimer));
 }
 
 void CJS_App::RunJsScript(CJS_Runtime* pRuntime, const WideString& wsScript) {
