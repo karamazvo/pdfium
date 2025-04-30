@@ -157,7 +157,6 @@ ByteString::ByteString(const fxcrt::ostringstream& outStream) {
   }
 }
 
-// TODO(tsepez): Should be UNSAFE_BUFFER_USAGE.
 ByteString& ByteString::operator=(const char* str) {
   if (!str || !str[0]) {
     clear();
@@ -224,51 +223,46 @@ ByteString& ByteString::operator+=(ByteStringView str) {
   return *this;
 }
 
-// TODO(tsepez): Should be UNSAFE_BUFFER_USAGE
-bool ByteString::operator==(const char* ptr) const {
-  if (!data_) {
-    return !ptr || !ptr[0];
+bool operator==(const ByteString& lhs, const char* rhs) {
+  if (lhs.IsEmpty()) {
+    return !rhs || !rhs[0];
+  }
+  if (!rhs) {
+    return false;
   }
 
-  if (!ptr) {
-    return data_->data_length_ == 0;
-  }
-
-  // SAFETY: `data_length_` is within `string_`, and the strlen() call
-  // (whose own safety is required from the caller) ensures there are
-  // `data_length_` bytes at `ptr` before the terminator.
-  return UNSAFE_BUFFERS(strlen(ptr)) == data_->data_length_ &&
-         UNSAFE_BUFFERS(
-             FXSYS_memcmp(ptr, data_->string_, data_->data_length_)) == 0;
+  // SAFETY: required from caller.
+  return UNSAFE_BUFFERS(strcmp(lhs.data_->string_, rhs)) == 0;
 }
 
-bool ByteString::operator==(ByteStringView str) const {
-  if (!data_) {
-    return str.IsEmpty();
+bool operator==(const ByteString& lhs, ByteStringView rhs) {
+  if (!lhs.data_) {
+    return rhs.IsEmpty();
   }
 
-  // SAFETY: `str` has `GetLength()` valid bytes in `unterminated_c_str()`,
+  // SAFETY: `rhs` has `GetLength()` valid bytes in `unterminated_c_str()`,
   // `data_length_` is within `string_`, and equality comparison.
-  return data_->data_length_ == str.GetLength() &&
-         UNSAFE_BUFFERS(FXSYS_memcmp(data_->string_, str.unterminated_c_str(),
-                                     str.GetLength())) == 0;
+  return lhs.data_->data_length_ == rhs.GetLength() &&
+         UNSAFE_BUFFERS(FXSYS_memcmp(
+             lhs.data_->string_, rhs.unterminated_c_str(), rhs.GetLength())) ==
+             0;
 }
 
-bool ByteString::operator==(const ByteString& other) const {
-  if (data_ == other.data_) {
+bool operator==(const ByteString& lhs, const ByteString& rhs) {
+  if (lhs.data_ == rhs.data_) {
     return true;
   }
-  if (IsEmpty()) {
-    return other.IsEmpty();
+  if (lhs.IsEmpty()) {
+    return rhs.IsEmpty();
   }
-  if (other.IsEmpty()) {
+  if (rhs.IsEmpty()) {
     return false;
   }
 
   // SAFETY: data_length_ describes the length of string_.
-  return other.data_->data_length_ == data_->data_length_ &&
-         UNSAFE_BUFFERS(memcmp(other.data_->string_, data_->string_,
-                               data_->data_length_)) == 0;
+  return lhs.data_->data_length_ == rhs.data_->data_length_ &&
+         UNSAFE_BUFFERS(memcmp(lhs.data_->string_, rhs.data_->string_,
+                               rhs.data_->data_length_)) == 0;
 }
 
 // TODO(tsepez): Should be UNSAFE_BUFFER_USAGE.
