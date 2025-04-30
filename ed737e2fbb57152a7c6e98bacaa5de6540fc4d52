@@ -1,0 +1,39 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c2c71be1_23ca3aea",
+        "filename": "core/fxcrt/containers/contains.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-30T17:49:38Z",
+      "side": 1,
+      "message": "nit: commment\n\n// This is chromium\u0027s blah with the following modifications:",
+      "fixSuggestions": [
+        {
+          "fixId": "d85684c7_b5e0a732",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcrt/containers/contains.h",
+              "range": {
+                "startLine": 4,
+                "startChar": 0,
+                "endLine": 4,
+                "endChar": 0
+              },
+              "replacement": "//\n// This is a modified version of Chromium\u0027s base/containers/contains.h, with\n// the following modifications:\n// -   Removed dependency on base/ranges/algorithm.h.\n// -   Added a static_assert to prevent linear searches on associative\n//     containers.\n"
+            }
+          ]
+        }
+      ],
+      "revId": "ed737e2fbb57152a7c6e98bacaa5de6540fc4d52",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
