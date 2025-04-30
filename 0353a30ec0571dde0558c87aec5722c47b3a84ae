@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a81ab258_acc44a7f",
+        "filename": "core/fxcrt/containers/unique_ptr_adapters.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-30T17:46:16Z",
+      "side": 1,
+      "message": "nit: add something along the lines of\n\n// This is chromum\u0027s blah blah blah wit the following modifications:",
+      "fixSuggestions": [
+        {
+          "fixId": "625ec1a5_d1192e10",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcrt/containers/unique_ptr_adapters.h",
+              "range": {
+                "startLine": 4,
+                "startChar": 0,
+                "endLine": 4,
+                "endChar": 0
+              },
+              "replacement": "//\n// This is a modified version of Chromium\u0027s unique_ptr_adapters.h, adapted to\n// work with PDFium\u0027s codebase.\n"
+            }
+          ]
+        }
+      ],
+      "revId": "0353a30ec0571dde0558c87aec5722c47b3a84ae",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c3d9b779_bc8ce2d3",
+        "filename": "core/fxcrt/containers/unique_ptr_adapters.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-04-30T17:46:16Z",
+      "side": 1,
+      "message": "wrong include guard.",
+      "range": {
+        "startLine": 6,
+        "startChar": 8,
+        "endLine": 6,
+        "endChar": 46
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "4d2cabc7_d6fcbd78",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcrt/containers/unique_ptr_adapters.h",
+              "range": {
+                "startLine": 5,
+                "startChar": 0,
+                "endLine": 7,
+                "endChar": 0
+              },
+              "replacement": "#ifndef CORE_FXCRT_CONTAINERS_UNIQUE_PTR_ADAPTERS_H_\n#define CORE_FXCRT_CONTAINERS_UNIQUE_PTR_ADAPTERS_H_\n"
+            },
+            {
+              "path": "core/fxcrt/containers/unique_ptr_adapters.h",
+              "range": {
+                "startLine": 44,
+                "startChar": 0,
+                "endLine": 45,
+                "endChar": 0
+              },
+              "replacement": "#endif  // CORE_FXCRT_CONTAINERS_UNIQUE_PTR_ADAPTERS_H_\n"
+            }
+          ]
+        }
+      ],
+      "revId": "0353a30ec0571dde0558c87aec5722c47b3a84ae",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
