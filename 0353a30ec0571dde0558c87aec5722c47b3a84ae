@@ -36,6 +36,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6a830dfb_46fdc8df",
+        "filename": "core/fxcrt/containers/unique_ptr_adapters.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-30T17:56:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a81ab258_acc44a7f",
+      "revId": "0353a30ec0571dde0558c87aec5722c47b3a84ae",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c3d9b779_bc8ce2d3",
@@ -83,6 +101,30 @@
           ]
         }
       ],
+      "revId": "0353a30ec0571dde0558c87aec5722c47b3a84ae",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "18b4f6dd_3cea8cf0",
+        "filename": "core/fxcrt/containers/unique_ptr_adapters.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-04-30T17:56:41Z",
+      "side": 1,
+      "message": "Hmm, `git cl lint` didn\u0027t catch this. Done.",
+      "parentUuid": "c3d9b779_bc8ce2d3",
+      "range": {
+        "startLine": 6,
+        "startChar": 8,
+        "endLine": 6,
+        "endChar": 46
+      },
       "revId": "0353a30ec0571dde0558c87aec5722c47b3a84ae",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
