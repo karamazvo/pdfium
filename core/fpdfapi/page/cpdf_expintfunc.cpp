@@ -21,7 +21,7 @@ CPDF_ExpIntFunc::CPDF_ExpIntFunc()
 
 CPDF_ExpIntFunc::~CPDF_ExpIntFunc() = default;
 
-bool CPDF_ExpIntFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
+bool CPDF_ExpIntFunc::v_Init(const CPDF_Object* pObj, VisitedSet* visited) {
   CHECK(pObj->IsDictionary() || pObj->IsStream());
   RetainPtr<const CPDF_Dictionary> pDict = pObj->GetDict();
   RetainPtr<const CPDF_Number> pExponent = pDict->GetNumberFor("N");

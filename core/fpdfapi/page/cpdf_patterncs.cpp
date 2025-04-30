@@ -21,9 +21,10 @@ void CPDF_PatternCS::InitializeStockPattern() {
   SetComponentsForStockCS(1);
 }
 
-uint32_t CPDF_PatternCS::v_Load(CPDF_Document* pDoc,
-                                const CPDF_Array* pArray,
-                                std::set<const CPDF_Object*>* pVisited) {
+uint32_t CPDF_PatternCS::v_Load(
+    CPDF_Document* pDoc,
+    const CPDF_Array* pArray,
+    absl::flat_hash_set<const CPDF_Object*>* visited) {
   RetainPtr<const CPDF_Object> pBaseCS = pArray->GetDirectObjectAt(1);
   if (HasSameArray(pBaseCS.Get())) {
     return 0;
@@ -31,7 +32,7 @@ uint32_t CPDF_PatternCS::v_Load(CPDF_Document* pDoc,
 
   auto* pDocPageData = CPDF_DocPageData::FromDocument(pDoc);
   base_cs_ =
-      pDocPageData->GetColorSpaceGuarded(pBaseCS.Get(), nullptr, pVisited);
+      pDocPageData->GetColorSpaceGuarded(pBaseCS.Get(), nullptr, visited);
   if (!base_cs_) {
     return 1;
   }

@@ -49,16 +49,16 @@ std::unique_ptr<CPDF_Function> CPDF_Function::Load(
 // static
 std::unique_ptr<CPDF_Function> CPDF_Function::Load(
     RetainPtr<const CPDF_Object> pFuncObj,
-    VisitedSet* pVisited) {
+    VisitedSet* visited) {
   if (!pFuncObj) {
     return nullptr;
   }
 
-  if (pdfium::Contains(*pVisited, pFuncObj)) {
+  if (pdfium::Contains(*visited, pFuncObj)) {
     return nullptr;
   }
 
-  ScopedSetInsertion insertion(pVisited, pFuncObj);
+  ScopedSetInsertion insertion(visited, pFuncObj);
 
   int iType = -1;
   if (const CPDF_Stream* pStream = pFuncObj->AsStream()) {
@@ -79,7 +79,7 @@ std::unique_ptr<CPDF_Function> CPDF_Function::Load(
     pFunc = std::make_unique<CPDF_PSFunc>();
   }
 
-  if (!pFunc || !pFunc->Init(pFuncObj, pVisited)) {
+  if (!pFunc || !pFunc->Init(pFuncObj, visited)) {
     return nullptr;
   }
 
@@ -90,7 +90,7 @@ CPDF_Function::CPDF_Function(Type type) : type_(type) {}
 
 CPDF_Function::~CPDF_Function() = default;
 
-bool CPDF_Function::Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
+bool CPDF_Function::Init(const CPDF_Object* pObj, VisitedSet* visited) {
   const CPDF_Stream* pStream = pObj->AsStream();
   RetainPtr<const CPDF_Dictionary> pDict =
       pStream ? pStream->GetDict() : pdfium::WrapRetain(pObj->AsDictionary());
@@ -125,7 +125,7 @@ bool CPDF_Function::Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
   }
 
   uint32_t old_outputs = outputs_;
-  if (!v_Init(pObj, pVisited)) {
+  if (!v_Init(pObj, visited)) {
     return false;
   }
 

@@ -31,7 +31,7 @@ class CPDF_SampledFunc final : public CPDF_Function {
   ~CPDF_SampledFunc() override;
 
   // CPDF_Function:
-  bool v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) override;
+  bool v_Init(const CPDF_Object* pObj, VisitedSet* visited) override;
   bool v_Call(pdfium::span<const float> inputs,
               pdfium::span<float> results) const override;
 

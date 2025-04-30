@@ -11,7 +11,6 @@
 
 #include <map>
 #include <memory>
-#include <set>
 #include <utility>
 #include <vector>
 
@@ -29,6 +28,7 @@
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "fpdfsdk/pwl/ipwl_fillernotify.h"
 #include "public/fpdf_formfill.h"
+#include "third_party/abseil-cpp/absl/container/flat_hash_set.h"
 
 class CPDF_Action;
 class CPDF_FormField;
@@ -254,16 +254,18 @@ class CPDFSDK_FormFillEnvironment final
 
   // Support methods for Actions.
   void RunScript(const WideString& script, const RunScriptCallback& cb);
-  bool ExecuteDocumentOpenAction(const CPDF_Action& action,
-                                 std::set<const CPDF_Dictionary*>* visited);
-  bool ExecuteDocumentPageAction(const CPDF_Action& action,
-                                 CPDF_AAction::AActionType type,
-                                 std::set<const CPDF_Dictionary*>* visited);
+  bool ExecuteDocumentOpenAction(
+      const CPDF_Action& action,
+      absl::flat_hash_set<const CPDF_Dictionary*>* visited);
+  bool ExecuteDocumentPageAction(
+      const CPDF_Action& action,
+      CPDF_AAction::AActionType type,
+      absl::flat_hash_set<const CPDF_Dictionary*>* visited);
   bool ExecuteFieldAction(const CPDF_Action& action,
                           CPDF_AAction::AActionType type,
                           CPDF_FormField* pFormField,
                           CFFL_FieldAction* data,
-                          std::set<const CPDF_Dictionary*>* visited);
+                          absl::flat_hash_set<const CPDF_Dictionary*>* visited);
   void RunDocumentPageJavaScript(CPDF_AAction::AActionType type,
                                  const WideString& script);
   void RunDocumentOpenJavaScript(const WideString& sScriptName,

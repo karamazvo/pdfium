@@ -902,7 +902,7 @@ void CPDFSDK_FormFillEnvironment::SendOnFocusChange(
 }
 
 bool CPDFSDK_FormFillEnvironment::DoActionDocOpen(const CPDF_Action& action) {
-  std::set<const CPDF_Dictionary*> visited;
+  absl::flat_hash_set<const CPDF_Dictionary*> visited;
   return ExecuteDocumentOpenAction(action, &visited);
 }
 
@@ -965,14 +965,14 @@ bool CPDFSDK_FormFillEnvironment::DoActionDestination(const CPDF_Dest& dest) {
 bool CPDFSDK_FormFillEnvironment::DoActionPage(
     const CPDF_Action& action,
     CPDF_AAction::AActionType eType) {
-  std::set<const CPDF_Dictionary*> visited;
+  absl::flat_hash_set<const CPDF_Dictionary*> visited;
   return ExecuteDocumentPageAction(action, eType, &visited);
 }
 
 bool CPDFSDK_FormFillEnvironment::DoActionDocument(
     const CPDF_Action& action,
     CPDF_AAction::AActionType eType) {
-  std::set<const CPDF_Dictionary*> visited;
+  absl::flat_hash_set<const CPDF_Dictionary*> visited;
   return ExecuteDocumentPageAction(action, eType, &visited);
 }
 
@@ -980,13 +980,13 @@ bool CPDFSDK_FormFillEnvironment::DoActionField(const CPDF_Action& action,
                                                 CPDF_AAction::AActionType type,
                                                 CPDF_FormField* pFormField,
                                                 CFFL_FieldAction* data) {
-  std::set<const CPDF_Dictionary*> visited;
+  absl::flat_hash_set<const CPDF_Dictionary*> visited;
   return ExecuteFieldAction(action, type, pFormField, data, &visited);
 }
 
 bool CPDFSDK_FormFillEnvironment::ExecuteDocumentOpenAction(
     const CPDF_Action& action,
-    std::set<const CPDF_Dictionary*>* visited) {
+    absl::flat_hash_set<const CPDF_Dictionary*>* visited) {
   const CPDF_Dictionary* pDict = action.GetDict();
   if (pdfium::Contains(*visited, pDict)) {
     return false;
@@ -1018,7 +1018,7 @@ bool CPDFSDK_FormFillEnvironment::ExecuteDocumentOpenAction(
 bool CPDFSDK_FormFillEnvironment::ExecuteDocumentPageAction(
     const CPDF_Action& action,
     CPDF_AAction::AActionType type,
-    std::set<const CPDF_Dictionary*>* visited) {
+    absl::flat_hash_set<const CPDF_Dictionary*>* visited) {
   const CPDF_Dictionary* pDict = action.GetDict();
   if (pdfium::Contains(*visited, pDict)) {
     return false;
@@ -1061,7 +1061,7 @@ bool CPDFSDK_FormFillEnvironment::ExecuteFieldAction(
     CPDF_AAction::AActionType type,
     CPDF_FormField* pFormField,
     CFFL_FieldAction* data,
-    std::set<const CPDF_Dictionary*>* visited) {
+    absl::flat_hash_set<const CPDF_Dictionary*>* visited) {
   const CPDF_Dictionary* pDict = action.GetDict();
   if (pdfium::Contains(*visited, pDict)) {
     return false;

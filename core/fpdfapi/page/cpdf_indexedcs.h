@@ -7,12 +7,11 @@
 
 #include <stdint.h>
 
-#include <set>
-
 #include "core/fpdfapi/page/cpdf_basedcs.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "third_party/abseil-cpp/absl/container/flat_hash_set.h"
 
 class CPDF_Document;
 
@@ -33,7 +32,7 @@ class CPDF_IndexedCS final : public CPDF_BasedCS {
   const CPDF_IndexedCS* AsIndexedCS() const override;
   uint32_t v_Load(CPDF_Document* pDoc,
                   const CPDF_Array* pArray,
-                  std::set<const CPDF_Object*>* pVisited) override;
+                  absl::flat_hash_set<const CPDF_Object*>* visited) override;
 
   int GetMaxIndex() const { return max_index_; }
 

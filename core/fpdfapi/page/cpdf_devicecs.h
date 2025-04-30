@@ -7,10 +7,9 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_DEVICECS_H_
 #define CORE_FPDFAPI_PAGE_CPDF_DEVICECS_H_
 
-#include <set>
-
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "third_party/abseil-cpp/absl/container/flat_hash_set.h"
 
 class CPDF_DeviceCS final : public CPDF_ColorSpace {
  public:
@@ -28,7 +27,7 @@ class CPDF_DeviceCS final : public CPDF_ColorSpace {
                           bool bTransMask) const override;
   uint32_t v_Load(CPDF_Document* pDoc,
                   const CPDF_Array* pArray,
-                  std::set<const CPDF_Object*>* pVisited) override;
+                  absl::flat_hash_set<const CPDF_Object*>* visited) override;
 
  private:
   explicit CPDF_DeviceCS(Family family);

@@ -12,7 +12,6 @@
 
 #include <array>
 #include <optional>
-#include <set>
 #include <utility>
 #include <vector>
 
@@ -25,6 +24,7 @@
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
+#include "third_party/abseil-cpp/absl/container/flat_hash_set.h"
 
 class CPDF_Document;
 class CPDF_IccProfile;
@@ -81,7 +81,7 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   static RetainPtr<CPDF_ColorSpace> Load(
       CPDF_Document* pDoc,
       const CPDF_Object* pObj,
-      std::set<const CPDF_Object*>* pVisited);
+      absl::flat_hash_set<const CPDF_Object*>* visited);
 
   static RetainPtr<CPDF_ColorSpace> AllocateColorSpaceForID(
       CPDF_Document* pDocument,
@@ -140,7 +140,7 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   // Returns the number of components, or 0 on failure.
   virtual uint32_t v_Load(CPDF_Document* pDoc,
                           const CPDF_Array* pArray,
-                          std::set<const CPDF_Object*>* pVisited) = 0;
+                          absl::flat_hash_set<const CPDF_Object*>* visited) = 0;
 
   // Stock colorspaces are not loaded normally. This initializes their
   // components count.
