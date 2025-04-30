@@ -8,9 +8,26 @@
 
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/abseil-cpp/absl/container/flat_hash_set.h"
 
-TEST(fxcrt, ScopedSetInsertion) {
+TEST(fxcrt, ScopedSetInsertionStl) {
   std::set<int> container;
+  {
+    ScopedSetInsertion insertion(&container, 5);
+    EXPECT_THAT(container, testing::UnorderedElementsAreArray({5}));
+
+    {
+      ScopedSetInsertion insertion2(&container, 6);
+      EXPECT_THAT(container, testing::UnorderedElementsAreArray({5, 6}));
+    }
+
+    EXPECT_THAT(container, testing::UnorderedElementsAreArray({5}));
+  }
+  EXPECT_TRUE(container.empty());
+}
+
+TEST(fxcrt, ScopedSetInsertionAbsl) {
+  absl::flat_hash_set<int> container;
   {
     ScopedSetInsertion insertion(&container, 5);
     EXPECT_THAT(container, testing::UnorderedElementsAreArray({5}));

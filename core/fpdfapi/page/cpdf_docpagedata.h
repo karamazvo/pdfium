@@ -9,7 +9,6 @@
 
 #include <map>
 #include <memory>
-#include <set>
 
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_colorspace.h"
@@ -19,6 +18,7 @@
 #include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "third_party/abseil-cpp/absl/container/flat_hash_set.h"
 
 class CFX_Font;
 class CPDF_Dictionary;
@@ -70,12 +70,12 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
                                            const CPDF_Dictionary* pResources);
 
   // Loads a colorspace in a context that might be while loading another
-  // colorspace. |pVisited| is passed recursively to avoid circular calls
+  // colorspace. |visited| is passed recursively to avoid circular calls
   // involving CPDF_ColorSpace::Load().
   RetainPtr<CPDF_ColorSpace> GetColorSpaceGuarded(
       const CPDF_Object* pCSObj,
       const CPDF_Dictionary* pResources,
-      std::set<const CPDF_Object*>* pVisited);
+      absl::flat_hash_set<const CPDF_Object*>* visited);
 
   RetainPtr<CPDF_Pattern> GetPattern(RetainPtr<CPDF_Object> pPatternObj,
                                      const CFX_Matrix& matrix);
@@ -100,15 +100,15 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
   };
 
   // Loads a colorspace in a context that might be while loading another
-  // colorspace, or even in a recursive call from this method itself. |pVisited|
+  // colorspace, or even in a recursive call from this method itself. |visited|
   // is passed recursively to avoid circular calls involving
-  // CPDF_ColorSpace::Load() and |pVisitedInternal| is also passed recursively
+  // CPDF_ColorSpace::Load() and |visited_internal| is also passed recursively
   // to avoid circular calls with this method calling itself.
   RetainPtr<CPDF_ColorSpace> GetColorSpaceInternal(
       const CPDF_Object* pCSObj,
       const CPDF_Dictionary* pResources,
-      std::set<const CPDF_Object*>* pVisited,
-      std::set<const CPDF_Object*>* pVisitedInternal);
+      absl::flat_hash_set<const CPDF_Object*>* visited,
+      absl::flat_hash_set<const CPDF_Object*>* visited_internal);
 
   size_t CalculateEncodingDict(FX_Charset charset, CPDF_Dictionary* pBaseDict);
   RetainPtr<CPDF_Dictionary> ProcessbCJK(

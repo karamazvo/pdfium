@@ -8,11 +8,11 @@
 #define CORE_FPDFAPI_PAGE_CPDF_PATTERNCS_H_
 
 #include <optional>
-#include <set>
 
 #include "core/fpdfapi/page/cpdf_basedcs.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
+#include "third_party/abseil-cpp/absl/container/flat_hash_set.h"
 
 class CPDF_Document;
 
@@ -31,7 +31,7 @@ class CPDF_PatternCS final : public CPDF_BasedCS {
   const CPDF_PatternCS* AsPatternCS() const override;
   uint32_t v_Load(CPDF_Document* pDoc,
                   const CPDF_Array* pArray,
-                  std::set<const CPDF_Object*>* pVisited) override;
+                  absl::flat_hash_set<const CPDF_Object*>* visited) override;
 
   std::optional<FX_RGB_STRUCT<float>> GetPatternRGB(
       const PatternValue& value) const;

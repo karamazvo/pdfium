@@ -9,7 +9,6 @@
 #include <algorithm>
 #include <array>
 #include <memory>
-#include <set>
 #include <utility>
 #include <vector>
 
@@ -45,6 +44,7 @@
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/cfx_unicodeencoding.h"
 #include "core/fxge/fx_font.h"
+#include "third_party/abseil-cpp/absl/container/flat_hash_set.h"
 
 namespace {
 
@@ -285,32 +285,32 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::GetStandardFont(
 RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetColorSpace(
     const CPDF_Object* pCSObj,
     const CPDF_Dictionary* pResources) {
-  std::set<const CPDF_Object*> visited;
+  absl::flat_hash_set<const CPDF_Object*> visited;
   return GetColorSpaceGuarded(pCSObj, pResources, &visited);
 }
 
 RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetColorSpaceGuarded(
     const CPDF_Object* pCSObj,
     const CPDF_Dictionary* pResources,
-    std::set<const CPDF_Object*>* pVisited) {
-  std::set<const CPDF_Object*> visitedLocal;
-  return GetColorSpaceInternal(pCSObj, pResources, pVisited, &visitedLocal);
+    absl::flat_hash_set<const CPDF_Object*>* visited) {
+  absl::flat_hash_set<const CPDF_Object*> visitedLocal;
+  return GetColorSpaceInternal(pCSObj, pResources, visited, &visitedLocal);
 }
 
 RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetColorSpaceInternal(
     const CPDF_Object* pCSObj,
     const CPDF_Dictionary* pResources,
-    std::set<const CPDF_Object*>* pVisited,
-    std::set<const CPDF_Object*>* pVisitedInternal) {
+    absl::flat_hash_set<const CPDF_Object*>* visited,
+    absl::flat_hash_set<const CPDF_Object*>* visited_internal) {
   if (!pCSObj) {
     return nullptr;
   }
 
-  if (pdfium::Contains(*pVisitedInternal, pCSObj)) {
+  if (pdfium::Contains(*visited_internal, pCSObj)) {
     return nullptr;
   }
 
-  ScopedSetInsertion insertion(pVisitedInternal, pCSObj);
+  ScopedSetInsertion insertion(visited_internal, pCSObj);
 
   if (pCSObj->IsName()) {
     ByteString name = pCSObj->GetString();
@@ -320,7 +320,7 @@ RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetColorSpaceInternal(
           pResources->GetDictFor("ColorSpace");
       if (pList) {
         return GetColorSpaceInternal(pList->GetDirectObjectFor(name).Get(),
-                                     nullptr, pVisited, pVisitedInternal);
+                                     nullptr, visited, visited_internal);
       }
     }
     if (!pCS || !pResources) {
@@ -351,8 +351,8 @@ RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetColorSpaceInternal(
       return pCS;
     }
 
-    return GetColorSpaceInternal(pDefaultCS.Get(), nullptr, pVisited,
-                                 pVisitedInternal);
+    return GetColorSpaceInternal(pDefaultCS.Get(), nullptr, visited,
+                                 visited_internal);
   }
 
   RetainPtr<const CPDF_Array> pArray(pCSObj->AsArray());
@@ -362,7 +362,7 @@ RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetColorSpaceInternal(
 
   if (pArray->size() == 1) {
     return GetColorSpaceInternal(pArray->GetDirectObjectAt(0).Get(), pResources,
-                                 pVisited, pVisitedInternal);
+                                 visited, visited_internal);
   }
 
   auto it = color_space_map_.find(pArray);
@@ -371,7 +371,7 @@ RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetColorSpaceInternal(
   }
 
   RetainPtr<CPDF_ColorSpace> pCS =
-      CPDF_ColorSpace::Load(GetDocument(), pArray.Get(), pVisited);
+      CPDF_ColorSpace::Load(GetDocument(), pArray.Get(), visited);
   if (!pCS) {
     return nullptr;
   }

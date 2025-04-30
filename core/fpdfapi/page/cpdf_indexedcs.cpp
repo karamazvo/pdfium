@@ -4,8 +4,6 @@
 
 #include "core/fpdfapi/page/cpdf_indexedcs.h"
 
-#include <set>
-
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -19,6 +17,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
+#include "third_party/abseil-cpp/absl/container/flat_hash_set.h"
 
 CPDF_IndexedCS::CPDF_IndexedCS() : CPDF_BasedCS(Family::kIndexed) {}
 
@@ -28,9 +27,10 @@ const CPDF_IndexedCS* CPDF_IndexedCS::AsIndexedCS() const {
   return this;
 }
 
-uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
-                                const CPDF_Array* pArray,
-                                std::set<const CPDF_Object*>* pVisited) {
+uint32_t CPDF_IndexedCS::v_Load(
+    CPDF_Document* pDoc,
+    const CPDF_Array* pArray,
+    absl::flat_hash_set<const CPDF_Object*>* visited) {
   if (pArray->size() < 4) {
     return 0;
   }
@@ -42,7 +42,7 @@ uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
 
   auto* pDocPageData = CPDF_DocPageData::FromDocument(pDoc);
   base_cs_ =
-      pDocPageData->GetColorSpaceGuarded(pBaseObj.Get(), nullptr, pVisited);
+      pDocPageData->GetColorSpaceGuarded(pBaseObj.Get(), nullptr, visited);
   if (!base_cs_) {
     return 0;
   }
