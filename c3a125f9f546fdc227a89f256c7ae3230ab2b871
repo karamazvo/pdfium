@@ -34,6 +34,24 @@
       "parentUuid": "7d64ef7e_bb938d1e",
       "revId": "c3a125f9f546fdc227a89f256c7ae3230ab2b871",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fe2006d6_09cf501c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-01T20:28:57Z",
+      "side": 1,
+      "message": "ah, this a precursor CL in the chain.",
+      "parentUuid": "68370374_2c53affd",
+      "revId": "c3a125f9f546fdc227a89f256c7ae3230ab2b871",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
