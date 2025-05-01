@@ -1617,6 +1617,19 @@ FPDFFormObj_CountObjects(FPDF_PAGEOBJECT form_object);
 FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV
 FPDFFormObj_GetObject(FPDF_PAGEOBJECT form_object, unsigned long index);
 
+// Remove the page object at |page_object| from |form_object|.
+//
+//   form_object - handle to a form object.
+//   page_object - handle to a page object to be removed from the form.
+//
+// Returns TRUE on success.
+//
+// Ownership is transferred to the caller. Call FPDFPageObj_Destroy() to free
+// it.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFFormObj_RemoveObject(FPDF_PAGEOBJECT form_object,
+                         FPDF_PAGEOBJECT page_object);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus

@@ -5471,3 +5471,47 @@ TEST_F(FPDFEditEmbedderTest, Bug377948405) {
   EXPECT_EQ(widths_array->GetIntegerAt(0), 1);
   EXPECT_EQ(widths_array->GetIntegerAt(2), 5);
 }
+
+TEST_F(FPDFEditEmbedderTest, FormModifyObject) {
+  ASSERT_TRUE(OpenDocument("42271087.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  ASSERT_GE(FPDFPage_CountObjects(page), 1);
+
+  // Find a form object
+  FPDF_PAGEOBJECT form_obj = nullptr;
+  for (int i = 0; i < FPDFPage_CountObjects(page); i++) {
+    FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page, i);
+    if (FPDFPageObj_GetType(obj) == FPDF_PAGEOBJ_FORM) {
+      form_obj = obj;
+      break;
+    }
+  }
+  ASSERT_TRUE(form_obj);
+
+  int form_obj_count = FPDFFormObj_CountObjects(form_obj);
+  ASSERT_GT(form_obj_count, 0);
+
+  FPDF_PAGEOBJECT image_obj = nullptr;
+  int image_index = -1;
+  for (int i = 0; i < form_obj_count; i++) {
+    FPDF_PAGEOBJECT obj = FPDFFormObj_GetObject(form_obj, i);
+    if (FPDFPageObj_GetType(obj) == FPDF_PAGEOBJ_IMAGE) {
+      image_obj = obj;
+      image_index = i;
+      break;
+    }
+  }
+  ASSERT_TRUE(image_obj);
+  ASSERT_GE(image_index, 0);
+
+  ASSERT_TRUE(FPDFFormObj_RemoveObject(form_obj, image_obj));
+  ASSERT_EQ(form_obj_count - 1, FPDFFormObj_CountObjects(form_obj));
+  ASSERT_FALSE(FPDFFormObj_RemoveObject(nullptr, image_obj));
+  ASSERT_FALSE(FPDFFormObj_RemoveObject(form_obj, nullptr));
+
+  FPDFPageObj_Destroy(image_obj);
+  ASSERT_TRUE(FPDFPage_GenerateContent(page));
+
+  UnloadPage(page);
+}
