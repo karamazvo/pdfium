@@ -16,6 +16,24 @@
       "message": "This patch is now obsolete, given the prior one?",
       "revId": "c3a125f9f546fdc227a89f256c7ae3230ab2b871",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "68370374_2c53affd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-01T00:35:01Z",
+      "side": 1,
+      "message": "Which CL are you thinking of?",
+      "parentUuid": "7d64ef7e_bb938d1e",
+      "revId": "c3a125f9f546fdc227a89f256c7ae3230ab2b871",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
