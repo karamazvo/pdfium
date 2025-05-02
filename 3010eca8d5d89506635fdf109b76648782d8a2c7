@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9ff5b2f3_d1e20b5a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-02T17:48:08Z",
+      "side": 1,
+      "message": "Sure. Do we know about size increases?",
+      "revId": "3010eca8d5d89506635fdf109b76648782d8a2c7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
