@@ -184,3 +184,12 @@ TEST_F(FPDFFlattenEmbedderTest, Bug896366) {
 
   VerifySavedDocument(612, 792, checksum);
 }
+
+TEST_F(FPDFFlattenEmbedderTest, Bug349502141) {
+  ASSERT_TRUE(OpenDocument("text_form.pdf"));
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page.get(), FLAT_PRINT));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+}
