@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "56072a5f_fa771d75",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-02T12:57:47Z",
+      "side": 1,
+      "message": "(whoops, accidentally deleted the first line of the commit description when pasting in a more detailed description. GitHub PR reflexes taking over...)",
+      "revId": "4784ec8a60f4d99316416e19aad63779c802cf1b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
