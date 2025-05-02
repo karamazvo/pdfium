@@ -16,6 +16,24 @@
       "message": "Please have a look at this CL. Most of it is CL description.\n\ntesting/corpus/third_party/tcpdf/example_030_expected seems to be in a separate repository. How does rebaselining files in there work? Do I have to land a CL with new baselines over there and add a roll to the new baselines in this CL? Or is there something more convenient?",
       "revId": "74b717316a81612bb14d3cbe13e80d98f8a75be9",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b1eb0550_d1b6c258",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-02T16:07:41Z",
+      "side": 1,
+      "message": "Yes, land separate CL in the test corpus repo, and then roll it as part of this CL.",
+      "parentUuid": "39476926_560bb31a",
+      "revId": "74b717316a81612bb14d3cbe13e80d98f8a75be9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
