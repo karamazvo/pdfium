@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "47e30ff4_71e26677",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-05T15:08:45Z",
+      "side": 1,
+      "message": "I made new baselines at https://pdfium-review.googlesource.com/c/pdfium_tests/+/131510 and DEPS\u0027d them in as a proof that they work.\n\nBut alas, I read the expected/actual the wrong way round, and the pdfium coons renderer produces artifacts, not the skia one. So I think I\u0027ll fix that first. This CL is on hold until then.\n\n(The artifacts are also present in bezier patches, where skia has no dedicated code path, and that\u0027s the one that\u0027s used in practice.)",
+      "revId": "a207187b65b853893f60634bcc01dcf3a216a540",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
