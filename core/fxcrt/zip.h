@@ -49,6 +49,7 @@ class ZipView2 {
 
     bool operator!=(const Iter& that) const { return first != that.first; }
 
+    // PRECONDITIONS: Iter must not have reached end().
     UNSAFE_BUFFER_USAGE Iter& operator++() {
       // SAFETY: required from caller, enforced by UNSAFE_BUFFER_USAGE.
       UNSAFE_BUFFERS(++first);
@@ -85,6 +86,7 @@ class ZipView3 {
 
     bool operator!=(const Iter& that) const { return first != that.first; }
 
+    // PRECONDITIONS: Iter must not have reached end().
     UNSAFE_BUFFER_USAGE Iter& operator++() {
       // SAFETY: required from caller, enforced by UNSAFE_BUFFER_USAGE.
       UNSAFE_BUFFERS(++first);
