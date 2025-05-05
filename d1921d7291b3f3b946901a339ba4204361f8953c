@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c763e984_9a5cb856",
+        "filename": "core/fxcrt/observed_ptr.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-05T20:18:55Z",
+      "side": 1,
+      "message": "Maybe use `observable_` here, or use Get() on line 83?",
+      "range": {
+        "startLine": 88,
+        "startChar": 15,
+        "endLine": 88,
+        "endChar": 20
+      },
+      "revId": "d1921d7291b3f3b946901a339ba4204361f8953c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "87f4f5da_177b1d75",
+        "filename": "fpdfsdk/pwl/cpwl_scroll_bar.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-05T20:18:55Z",
+      "side": 1,
+      "message": "Still needed?",
+      "revId": "d1921d7291b3f3b946901a339ba4204361f8953c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
