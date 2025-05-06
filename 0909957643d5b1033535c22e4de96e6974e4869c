@@ -16,6 +16,57 @@
       "message": "Sure, but we likely get the same code when optimized?",
       "revId": "0909957643d5b1033535c22e4de96e6974e4869c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eabdbc4f_cfd1713e",
+        "filename": "core/fpdfdoc/cpdf_annot.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 305,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-06T17:05:50Z",
+      "side": 1,
+      "message": "NOTE: this deserves the same treatment in a follow-up.",
+      "range": {
+        "startLine": 305,
+        "startChar": 0,
+        "endLine": 305,
+        "endChar": 27
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "901ff371_15901f4d",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfdoc/cpdf_annot.cpp",
+              "range": {
+                "startLine": 305,
+                "startChar": 0,
+                "endLine": 305,
+                "endChar": 0
+              },
+              "replacement": "  // TODO(https://crbug.com/pdfium/2048): Use a map instead of a chain of ifs.\n"
+            },
+            {
+              "path": "core/fpdfdoc/cpdf_annot.cpp",
+              "range": {
+                "startLine": 394,
+                "startChar": 0,
+                "endLine": 394,
+                "endChar": 0
+              },
+              "replacement": "  // TODO(https://crbug.com/pdfium/2048): Use a map instead of a switch.\n"
+            }
+          ]
+        }
+      ],
+      "revId": "0909957643d5b1033535c22e4de96e6974e4869c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
