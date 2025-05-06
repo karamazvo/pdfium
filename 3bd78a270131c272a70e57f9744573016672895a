@@ -34,6 +34,24 @@
       "parentUuid": "c1c7398d_fd2d6ad4",
       "revId": "3bd78a270131c272a70e57f9744573016672895a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "83215397_642672dd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-06T20:59:54Z",
+      "side": 1,
+      "message": "I\u0027ve found Acrobat Reader on Windows to generally be more spec compliant than the mobile versions. It\u0027s also easier to test with in that I can remotely connect to one more easily vs. getting out a mobile device.",
+      "parentUuid": "aded5a40_ef05c6a2",
+      "revId": "3bd78a270131c272a70e57f9744573016672895a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }

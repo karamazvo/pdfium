@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f7d7df7f_07231efa",
+        "filename": "testing/resources/pixel/shade.in",
+        "patchSetId": 9
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-06T20:59:54Z",
+      "side": 1,
+      "message": "Another option is to add a second page with the new shade objects. As you like.",
+      "revId": "eea865ad79d7a31c18f6f9950165ceaeba4ad386",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "524068b7_4c43a5d3",
+        "filename": "testing/resources/pixel/shade.in",
+        "patchSetId": 9
+      },
+      "lineNbr": 406,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-06T20:59:54Z",
+      "side": 1,
+      "message": "We usually try to keep the objects sorted by object number. It would be nice if you can either just move this down, or shuffle the numbers around.",
+      "revId": "eea865ad79d7a31c18f6f9950165ceaeba4ad386",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
