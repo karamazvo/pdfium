@@ -16,12 +16,21 @@ class CPDF_SimpleParser;
 
 class CPDF_DefaultAppearance {
  public:
+  struct FontNameAndSize {
+    FontNameAndSize();
+    FontNameAndSize(const ByteString& name, float size);
+    ~FontNameAndSize();
+
+    std::optional<ByteString> name;
+    float size = 0;  // Set to 0 if not found.
+  };
+
   explicit CPDF_DefaultAppearance(const ByteString& csDA);
   CPDF_DefaultAppearance(const CPDF_DefaultAppearance&) = delete;
   CPDF_DefaultAppearance& operator=(const CPDF_DefaultAppearance&) = delete;
   ~CPDF_DefaultAppearance();
 
-  std::optional<ByteString> GetFont(float* fFontSize) const;
+  FontNameAndSize GetFont() const;
 
   std::optional<CFX_Color> GetColor() const;
   std::optional<CFX_Color::TypeAndARGB> GetColorARGB() const;

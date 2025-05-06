@@ -1204,14 +1204,9 @@ void CPDFSDK_AppStream::SetAsPushButton() {
   std::optional<CFX_Color> color = da.GetColor();
   CFX_Color crText = color.value_or(CFX_Color(CFX_Color::Type::kGray, 0));
 
-  float fFontSize;
-  ByteString csNameTag;
-  std::optional<ByteString> font = da.GetFont(&fFontSize);
-  if (font.has_value()) {
-    csNameTag = font.value();
-  } else {
-    fFontSize = 12.0f;
-  }
+  auto font_name_and_size = da.GetFont();
+  const float font_size =
+      font_name_and_size.name.has_value() ? font_name_and_size.size : 12.0f;
 
   WideString csWCaption;
   WideString csNormalCaption;
@@ -1258,7 +1253,7 @@ void CPDFSDK_AppStream::SetAsPushButton() {
                                    crRightBottom, nBorderStyle, dsBorder) +
         GetPushButtonAppStream(iconFit.GetFittingBounds() ? rcWindow : rcClient,
                                &font_map, pNormalIcon, iconFit, csNormalCaption,
-                               crText, fFontSize, nLayout);
+                               crText, font_size, nLayout);
 
     Write("N", csAP, ByteString());
     if (pNormalIcon) {
@@ -1286,7 +1281,7 @@ void CPDFSDK_AppStream::SetAsPushButton() {
                                    crRightBottom, nBorderStyle, dsBorder) +
         GetPushButtonAppStream(iconFit.GetFittingBounds() ? rcWindow : rcClient,
                                &font_map, pRolloverIcon, iconFit,
-                               csRolloverCaption, crText, fFontSize, nLayout);
+                               csRolloverCaption, crText, font_size, nLayout);
 
     Write("R", csAP, ByteString());
     if (pRolloverIcon) {
@@ -1323,7 +1318,7 @@ void CPDFSDK_AppStream::SetAsPushButton() {
                                    crRightBottom, nBorderStyle, dsBorder) +
         GetPushButtonAppStream(iconFit.GetFittingBounds() ? rcWindow : rcClient,
                                &font_map, pDownIcon, iconFit, csDownCaption,
-                               crText, fFontSize, nLayout);
+                               crText, font_size, nLayout);
 
     Write("D", csAP, ByteString());
     if (pDownIcon) {
