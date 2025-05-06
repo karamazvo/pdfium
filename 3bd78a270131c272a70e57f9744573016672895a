@@ -16,6 +16,24 @@
       "message": "Annoyingly, the PDF generated from this .in file looks different in acrobat reader on desktop and on mobile. On desktop, acroread does not interpolate the lab meshes in the lab colorspace, even though the spec says to do so. On mobile, it does do that, but only if lab colors are used directly, not when they\u0027re used via an indexed color space, even though the spec explicitly says to use the underlying colorspace of an indexed colorspace for interpolation.\n\nNot sure what to make of this (other than that interpolation color space issues are pretty out in the weeds and it doesn\u0027t matter all that much what we do here 😅).\n\nAnyways, this does show the rendering artifacts the current skia renderer has for patches when we don\u0027t hit the coons happy-path special-case renderer.",
       "revId": "3bd78a270131c272a70e57f9744573016672895a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aded5a40_ef05c6a2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-06T13:14:53Z",
+      "side": 1,
+      "message": "Also, acroread on desktop cannot render the lab function patch (topmost row, third from the left). It renders fine in acrobat/mobile and in pdfium and preview.app. (Firefox cannot render any `/ShadingType 1` shadings apparently.) So I _think_ it\u0027s correct? Lab is a bit interesting since its components range from 0..100 for L and -128..127 for a and b (at least in this file; a and b range is configurable) instead of from 0..1 like components in all other PDF color spaces, so that sometimes causes issues.",
+      "parentUuid": "c1c7398d_fd2d6ad4",
+      "revId": "3bd78a270131c272a70e57f9744573016672895a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
