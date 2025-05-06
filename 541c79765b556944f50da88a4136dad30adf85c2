@@ -16,6 +16,86 @@
       "message": "should be ready for review now (see https://issues.chromium.org/issues/349502141)",
       "revId": "541c79765b556944f50da88a4136dad30adf85c2",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8a0e53ef_21e1c905",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-06T17:17:32Z",
+      "side": 1,
+      "message": "snake_case",
+      "range": {
+        "startLine": 110,
+        "startChar": 9,
+        "endLine": 110,
+        "endChar": 17
+      },
+      "revId": "541c79765b556944f50da88a4136dad30adf85c2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f572e171_1e168bf2",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-06T17:17:32Z",
+      "side": 1,
+      "message": "The code is simple enough to speak for itself. This comment actually makes it slightly more confusing, since the array being cleared is not /AcroForms.",
+      "revId": "541c79765b556944f50da88a4136dad30adf85c2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "13b53970_6f1ba887",
+        "filename": "fpdfsdk/fpdf_flatten_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-06T17:17:32Z",
+      "side": 1,
+      "message": "Just \"doc\" - stop using Hungarian notation for new variable names.",
+      "range": {
+        "startLine": 195,
+        "startChar": 17,
+        "endLine": 195,
+        "endChar": 21
+      },
+      "revId": "541c79765b556944f50da88a4136dad30adf85c2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "36deeb79_ea56cf54",
+        "filename": "fpdfsdk/fpdf_flatten_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-06T17:17:32Z",
+      "side": 1,
+      "message": "Should there be more testing after FPDF_SaveAsCopy() to verify the properties of the saved document?",
+      "revId": "541c79765b556944f50da88a4136dad30adf85c2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
