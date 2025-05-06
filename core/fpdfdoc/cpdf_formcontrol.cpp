@@ -215,10 +215,9 @@ std::optional<WideString> CPDF_FormControl::GetDefaultControlFontName() const {
 }
 
 RetainPtr<CPDF_Font> CPDF_FormControl::GetDefaultControlFont() const {
-  float fFontSize;
-  CPDF_DefaultAppearance cDA = GetDefaultAppearance();
-  std::optional<ByteString> csFontNameTag = cDA.GetFont(&fFontSize);
-  if (!csFontNameTag.has_value() || csFontNameTag->IsEmpty()) {
+  CPDF_DefaultAppearance default_appearance = GetDefaultAppearance();
+  std::optional<ByteString> font_name = default_appearance.GetFont().name;
+  if (!font_name.has_value() || font_name->IsEmpty()) {
     return nullptr;
   }
 
@@ -228,7 +227,7 @@ RetainPtr<CPDF_Font> CPDF_FormControl::GetDefaultControlFont() const {
     RetainPtr<CPDF_Dictionary> pFonts = pDRDict->GetMutableDictFor("Font");
     if (ValidateFontResourceDict(pFonts.Get())) {
       RetainPtr<CPDF_Dictionary> pElement =
-          pFonts->GetMutableDictFor(csFontNameTag.value());
+          pFonts->GetMutableDictFor(font_name.value());
       if (pElement) {
         RetainPtr<CPDF_Font> pFont =
             form_->GetFontForElement(std::move(pElement));
@@ -238,7 +237,7 @@ RetainPtr<CPDF_Font> CPDF_FormControl::GetDefaultControlFont() const {
       }
     }
   }
-  RetainPtr<CPDF_Font> pFormFont = form_->GetFormFont(csFontNameTag.value());
+  RetainPtr<CPDF_Font> pFormFont = form_->GetFormFont(font_name.value());
   if (pFormFont) {
     return pFormFont;
   }
@@ -256,7 +255,7 @@ RetainPtr<CPDF_Font> CPDF_FormControl::GetDefaultControlFont() const {
   }
 
   RetainPtr<CPDF_Dictionary> pElement =
-      pFonts->GetMutableDictFor(csFontNameTag.value());
+      pFonts->GetMutableDictFor(font_name.value());
   if (!pElement) {
     return nullptr;
   }

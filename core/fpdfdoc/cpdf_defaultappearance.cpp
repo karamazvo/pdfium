@@ -58,26 +58,42 @@ bool FindTagParamFromStart(CPDF_SimpleParser* parser,
 
 }  // namespace
 
+CPDF_DefaultAppearance::FontNameAndSize::FontNameAndSize() = default;
+
+CPDF_DefaultAppearance::FontNameAndSize::FontNameAndSize(const ByteString& name,
+                                                         float size)
+    : name(name), size(size) {}
+
+CPDF_DefaultAppearance::FontNameAndSize::FontNameAndSize(
+    FontNameAndSize&&) noexcept = default;
+
+CPDF_DefaultAppearance::FontNameAndSize&
+CPDF_DefaultAppearance::FontNameAndSize::operator=(FontNameAndSize&&) noexcept =
+    default;
+
+CPDF_DefaultAppearance::FontNameAndSize::~FontNameAndSize() = default;
+
 CPDF_DefaultAppearance::CPDF_DefaultAppearance(const ByteString& csDA)
     : da_(csDA) {}
 
 CPDF_DefaultAppearance::~CPDF_DefaultAppearance() = default;
 
-std::optional<ByteString> CPDF_DefaultAppearance::GetFont(
-    float* fFontSize) const {
-  *fFontSize = 0.0f;
+CPDF_DefaultAppearance::FontNameAndSize CPDF_DefaultAppearance::GetFont()
+    const {
   if (da_.IsEmpty()) {
-    return std::nullopt;
+    return FontNameAndSize();
   }
 
   CPDF_SimpleParser syntax(da_.AsStringView().unsigned_span());
   if (!FindTagParamFromStart(&syntax, "Tf", 2)) {
-    return ByteString();
+    return FontNameAndSize("", 0);
   }
 
-  ByteString name = PDF_NameDecode(syntax.GetWord().Substr(1));
-  *fFontSize = StringToFloat(syntax.GetWord());
-  return name;
+  // Avoid ambiguity about which GetWord() call gets called first.
+  FontNameAndSize result;
+  result.name = PDF_NameDecode(syntax.GetWord().Substr(1));
+  result.size = StringToFloat(syntax.GetWord());
+  return result;
 }
 
 std::optional<CFX_Color> CPDF_DefaultAppearance::GetColor() const {
