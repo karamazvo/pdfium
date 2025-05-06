@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bad4380c_85b58b29",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-06T09:01:21Z",
+      "side": 1,
+      "message": "should be ready for review now (see https://issues.chromium.org/issues/349502141)",
+      "revId": "541c79765b556944f50da88a4136dad30adf85c2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
