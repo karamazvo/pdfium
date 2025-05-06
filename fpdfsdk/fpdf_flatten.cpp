@@ -95,6 +95,9 @@ void ParserStream(const CPDF_Dictionary* pPageDic,
   pObjectArray->push_back(pStream);
 }
 
+void RemoveAnnotFromAcroForms(RetainPtr<const CPDF_Dictionary> acro_form,
+                              RetainPtr<CPDF_Dictionary> pAnnotDict) {}
+
 int ParserAnnots(CPDF_Document* pSourceDoc,
                  RetainPtr<CPDF_Dictionary> pPageDic,
                  std::vector<CFX_FloatRect>* pRectArray,
@@ -102,6 +105,13 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
                  int nUsage) {
   if (!pSourceDoc) {
     return FLATTEN_FAIL;
+  }
+
+  // get acroforms dict
+  RetainPtr<const CPDF_Dictionary> acro_form = nullptr;
+  const CPDF_Dictionary* root = pSourceDoc->GetRoot();
+  if (root) {
+    acro_form = root->GetDictFor("AcroForm");
   }
 
   GetContentsRect(pSourceDoc, pPageDic, pRectArray);
@@ -116,6 +126,11 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
         ToDictionary(pAnnot->GetMutableDirect());
     if (!pAnnotDict) {
       continue;
+    }
+
+    // remove from /AcroForms
+    if (acro_form) {
+      RemoveAnnotFromAcroForms(acro_form, pAnnotDict);
     }
 
     ByteString sSubtype =
