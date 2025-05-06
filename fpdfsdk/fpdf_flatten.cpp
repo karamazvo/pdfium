@@ -104,6 +104,19 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
     return FLATTEN_FAIL;
   }
 
+  // get acroforms dict
+  CPDF_Dictionary* root = pSourceDoc->GetMutableRoot();
+  if (root) {
+    auto acroDict = root->GetMutableDictFor("AcroForm");
+    // clear /AcroForms
+    if (acroDict) {
+      auto fields = acroDict->GetMutableArrayFor("Fields");
+      if (fields) {
+        fields->Clear();
+      }
+    }
+  }
+
   GetContentsRect(pSourceDoc, pPageDic, pRectArray);
   RetainPtr<const CPDF_Array> pAnnots = pPageDic->GetArrayFor("Annots");
   if (!pAnnots) {
