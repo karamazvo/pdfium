@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f97a19b4_5e2659c9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-06T13:09:20Z",
+      "side": 1,
+      "message": "I uploaded optipng-optimized images in patch set 7 (it didn\u0027t build out-of-the-box, https://sourceforge.net/p/optipng/bugs/92/), and zopflipng-optimized images (zopflipng built without problems) in patch set 8. optipng reduce file size by ~10%; zopflipng by another ~10%. (Both with default settings.) zopflipng did take noticeably longer to run (0.185s vs 2.95s.)",
+      "revId": "dc112fc16dfad7dab61903af4baecaab418566d1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
