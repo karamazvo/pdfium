@@ -102,6 +102,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "a0bb321c_26d5ab57",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-07T06:18:27Z",
+      "side": 1,
+      "message": "`page_obj_holder` is still not taking ownership of `cpage_object` sufficiently early in patch set 4. For better coverage, and to trigger this scenario, please consider adding a test case that calls `FPDFPage_InsertObjectAtIndex(nullptr, ...)`.",
+      "parentUuid": "a6eb2204_2b7cc853",
+      "revId": "07f220c15317d69e6abc99359687dc5f31131931",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "b2d9332d_6b2ded49",
         "filename": "public/fpdf_edit.h",
         "patchSetId": 2
