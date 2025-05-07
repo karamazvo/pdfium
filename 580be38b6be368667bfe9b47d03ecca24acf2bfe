@@ -80,6 +80,30 @@
       },
       "revId": "580be38b6be368667bfe9b47d03ecca24acf2bfe",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "16582e46_0dbb01aa",
+        "filename": "core/fpdfapi/parser/cpdf_dictionary.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-07T22:45:36Z",
+      "side": 1,
+      "message": "... abandoning this CL, but will try to revive it in some form a new CL. Probably with a focus on the getters first. This actually has real world performance impact in some cases. e.g. https://issues.chromium.org/issues/42270183#comment12",
+      "parentUuid": "eccbcfe8_758df7a7",
+      "range": {
+        "startLine": 89,
+        "startChar": 6,
+        "endLine": 89,
+        "endChar": 25
+      },
+      "revId": "580be38b6be368667bfe9b47d03ecca24acf2bfe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
