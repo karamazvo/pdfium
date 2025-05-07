@@ -67,6 +67,30 @@
       ],
       "revId": "0909957643d5b1033535c22e4de96e6974e4869c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "960dc06d_35fd8592",
+        "filename": "core/fpdfdoc/cpdf_annot.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 305,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-07T17:03:10Z",
+      "side": 1,
+      "message": "Setting this as a non-blocking comment.",
+      "parentUuid": "eabdbc4f_cfd1713e",
+      "range": {
+        "startLine": 305,
+        "startChar": 0,
+        "endLine": 305,
+        "endChar": 27
+      },
+      "revId": "0909957643d5b1033535c22e4de96e6974e4869c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
