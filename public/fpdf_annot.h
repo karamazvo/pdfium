@@ -324,6 +324,26 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetColor(FPDF_ANNOTATION annot,
                                                        unsigned int* A);
 
 // Experimental API.
+// Set the text color of an annotation.
+//
+//   document - handle to the document that contains |annot|.
+//   annot    - handle to an annotation.
+//   R        - the red component for the text color.
+//   G        - the green component for the text color.
+//   B        - the blue component for the text color.
+//
+// Returns true if successful.
+//
+// Currently supported subtypes: freetext.
+// The range for the color components is 0 to 255.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFAnnot_SetTextColor(FPDF_DOCUMENT document,
+                       FPDF_ANNOTATION annot,
+                       unsigned int R,
+                       unsigned int G,
+                       unsigned int B);
+
+// Experimental API.
 // Check if the annotation is of a type that has attachment points
 // (i.e. quadpoints). Quadpoints are the vertices of the rectangle that
 // encompasses the texts affected by the annotation. They provide the

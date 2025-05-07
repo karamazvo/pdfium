@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "constants/annotation_common.h"
+#include "core/fpdfapi/edit/cpdf_contentstream_write_utils.h"
 #include "core/fpdfapi/edit/cpdf_pagecontentgenerator.h"
 #include "core/fpdfapi/page/cpdf_annotcontext.h"
 #include "core/fpdfapi/page/cpdf_form.h"
@@ -802,6 +803,32 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetColor(FPDF_ANNOTATION annot,
       break;
   }
   return true;
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFAnnot_SetTextColor(FPDF_DOCUMENT document,
+                       FPDF_ANNOTATION annot,
+                       unsigned int R,
+                       unsigned int G,
+                       unsigned int B) {
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc) {
+    return false;
+  }
+
+  RetainPtr<CPDF_Dictionary> annot_dict =
+      GetMutableAnnotDictFromFPDFAnnotation(annot);
+  if (!annot_dict || R > 255 || G > 255 || B > 255) {
+    return false;
+  }
+
+  if (CPDF_Annot::StringToAnnotSubtype(annot_dict->GetNameFor(
+          pdfium::annotation::kSubtype)) != CPDF_Annot::Subtype::FREETEXT) {
+    return false;
+  }
+
+  return CPDF_GenerateAP::GenerateDefaultAppearanceWithColor(
+      doc, annot_dict, CFX_Color(R, G, B));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
