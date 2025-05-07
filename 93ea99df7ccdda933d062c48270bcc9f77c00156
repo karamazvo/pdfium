@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "537bf248_081bfc4c",
+        "filename": "fpdfsdk/cpdfsdk_appstream.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1208,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-07T01:17:10Z",
+      "side": 0,
+      "message": "Never read from.",
+      "revId": "93ea99df7ccdda933d062c48270bcc9f77c00156",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

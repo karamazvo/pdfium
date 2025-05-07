@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "738f0588_91eaa161",
+        "filename": "fpdfsdk/cpdfsdk_appstream.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1208,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-07T01:17:10Z",
+      "side": 1,
+      "message": "Not sure this is any better:\n\n```\n  const float font_size \u003d\n      maybe_font_name_and_size\n          .value_or(CPDF_DefaultAppearance::FontNameAndSize{.size \u003d 12.0f})\n          .size;\n```",
+      "revId": "ece5bb51ee0f4d736051ad2bab325af36cc2f6e5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
