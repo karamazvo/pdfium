@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8122e9f8_bfcac8a3",
+        "filename": "core/fpdfapi/page/cpdf_pageobjectholder.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-07T06:28:37Z",
+      "side": 1,
+      "message": "More variables to switch to C++ style.",
+      "range": {
+        "startLine": 193,
+        "startChar": 37,
+        "endLine": 193,
+        "endChar": 45
+      },
+      "revId": "e8da001ff7817ae4f6ab0f887a4219eda3c82b9e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c9cb3272_e49492fd",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-07T06:28:37Z",
+      "side": 1,
+      "message": "Is this and the check in CPDF_PageObjectHolder::InsertPageObjectAtIndex() redundant?",
+      "revId": "e8da001ff7817ae4f6ab0f887a4219eda3c82b9e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
