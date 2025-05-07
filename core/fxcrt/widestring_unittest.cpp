@@ -1479,6 +1479,25 @@ TEST(WideStringView, ConstexprCtors) {
   static constexpr WideStringView copied_null_string(null_string);
   static_assert(copied_null_string.GetLength() == 0);
   static_assert(copied_null_string.IsEmpty());
+
+  static constexpr WideStringView literal_string(L"foo");
+  static_assert(literal_string.GetLength() == 3);
+  static_assert(!literal_string.IsEmpty());
+
+  static constexpr WideStringView span_string(
+      pdfium::span_from_cstring(L"bar"));
+  static_assert(span_string.GetLength() == 3);
+  static_assert(!span_string.IsEmpty());
+
+  static constexpr wchar_t kChar = L'x';
+  static constexpr WideStringView char_string(kChar);
+  static_assert(char_string.GetLength() == 1);
+  static_assert(!char_string.IsEmpty());
+
+  // SAFETY: known fixed-length string.
+  static constexpr WideStringView UNSAFE_BUFFERS(ptr_size_string(L"foo", 2));
+  static_assert(ptr_size_string.GetLength() == 2);
+  static_assert(!ptr_size_string.IsEmpty());
 }
 
 TEST(WideStringView, FromVector) {
