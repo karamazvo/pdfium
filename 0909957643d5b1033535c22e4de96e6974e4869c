@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b4cf1381_781dae1c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-07T23:51:15Z",
+      "side": 1,
+      "message": "Just a bit more compact.",
+      "parentUuid": "08bdfc9e_3d6f2d9a",
+      "revId": "0909957643d5b1033535c22e4de96e6974e4869c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "eabdbc4f_cfd1713e",
@@ -83,6 +101,30 @@
       "side": 1,
       "message": "Setting this as a non-blocking comment.",
       "parentUuid": "eabdbc4f_cfd1713e",
+      "range": {
+        "startLine": 305,
+        "startChar": 0,
+        "endLine": 305,
+        "endChar": 27
+      },
+      "revId": "0909957643d5b1033535c22e4de96e6974e4869c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3b051d68_74650cc2",
+        "filename": "core/fpdfdoc/cpdf_annot.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 305,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-07T23:51:15Z",
+      "side": 1,
+      "message": "Can a switch-statement have string cases?",
+      "parentUuid": "960dc06d_35fd8592",
       "range": {
         "startLine": 305,
         "startChar": 0,
