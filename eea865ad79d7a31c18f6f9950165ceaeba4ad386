@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "454c6b9d_550ae8d9",
+        "filename": "testing/resources/pixel/shade.in",
+        "patchSetId": 9
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 6665
+      },
+      "writtenOn": "2025-05-07T00:43:01Z",
+      "side": 1,
+      "message": "Went with the reordering.",
+      "parentUuid": "f7d7df7f_07231efa",
+      "revId": "eea865ad79d7a31c18f6f9950165ceaeba4ad386",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "524068b7_4c43a5d3",
@@ -31,6 +49,24 @@
       "writtenOn": "2025-05-06T20:59:54Z",
       "side": 1,
       "message": "We usually try to keep the objects sorted by object number. It would be nice if you can either just move this down, or shuffle the numbers around.",
+      "revId": "eea865ad79d7a31c18f6f9950165ceaeba4ad386",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3954ce3e_83ac8b5d",
+        "filename": "testing/resources/pixel/shade.in",
+        "patchSetId": 9
+      },
+      "lineNbr": 406,
+      "author": {
+        "id": 6665
+      },
+      "writtenOn": "2025-05-07T00:43:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "524068b7_4c43a5d3",
       "revId": "eea865ad79d7a31c18f6f9950165ceaeba4ad386",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
