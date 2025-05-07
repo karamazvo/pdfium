@@ -204,6 +204,24 @@
       "message": "Not sure this is any better:\n\n```\n  const float font_size \u003d\n      maybe_font_name_and_size\n          .value_or(CPDF_DefaultAppearance::FontNameAndSize{.size \u003d 12.0f})\n          .size;\n```",
       "revId": "ece5bb51ee0f4d736051ad2bab325af36cc2f6e5",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d4b96212_f4ebdbcb",
+        "filename": "fpdfsdk/cpdfsdk_appstream.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1208,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-07T17:15:05Z",
+      "side": 1,
+      "message": "maybe above\n```auto font_name_and_size \u003d da.GetFont().value_or({.size \u003d 12.0f});```",
+      "parentUuid": "738f0588_91eaa161",
+      "revId": "ece5bb51ee0f4d736051ad2bab325af36cc2f6e5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
