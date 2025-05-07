@@ -314,7 +314,7 @@ bool ValidateOrCreateFontResources(CPDF_Document* doc,
     return false;
   }
 
-  if (!font_resource_dict->KeyExist(font_name)) {
+  if (!font_resource_dict->KeyExistForString(font_name)) {
     font_resource_dict->SetNewFor<CPDF_Reference>(font_name, doc,
                                                   font_dict->GetObjNum());
   }
