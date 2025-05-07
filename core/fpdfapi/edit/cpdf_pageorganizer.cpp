@@ -166,7 +166,7 @@ bool CPDF_PageOrganizer::CopyInheritable(
     RetainPtr<CPDF_Dictionary> dest_page_dict,
     RetainPtr<const CPDF_Dictionary> src_page_dict,
     const ByteString& key) {
-  if (dest_page_dict->KeyExist(key)) {
+  if (dest_page_dict->KeyExistForString(key)) {
     return true;
   }
 
@@ -204,12 +204,12 @@ RetainPtr<const CPDF_Object> CPDF_PageOrganizer::PageDictGetInheritableTag(
     return nullptr;
   }
 
-  if (dict->KeyExist(src_tag)) {
+  if (dict->KeyExistForString(src_tag)) {
     return dict->GetObjectFor(src_tag);
   }
 
   while (pp) {
-    if (pp->KeyExist(src_tag)) {
+    if (pp->KeyExistForString(src_tag)) {
       return pp->GetObjectFor(src_tag);
     }
     if (!pp->KeyExist(pdfium::page_object::kParent)) {
