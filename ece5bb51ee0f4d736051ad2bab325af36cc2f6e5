@@ -1,6 +1,194 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "7ad2de68_9296c737",
+        "filename": "core/fpdfdoc/cpdf_defaultappearance.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-07T17:11:16Z",
+      "side": 1,
+      "message": "given inline initiailizer in header, `return FontnameAndSize{};`",
+      "range": {
+        "startLine": 76,
+        "startChar": 12,
+        "endLine": 76,
+        "endChar": 18
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "b5c17a5b_98b1a4e4",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfdoc/cpdf_defaultappearance.cpp",
+              "range": {
+                "startLine": 75,
+                "startChar": 0,
+                "endLine": 77,
+                "endChar": 0
+              },
+              "replacement": "    return FontNameAndSize{};\n"
+            }
+          ]
+        }
+      ],
+      "revId": "ece5bb51ee0f4d736051ad2bab325af36cc2f6e5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cfa74565_9acc3a73",
+        "filename": "core/fpdfdoc/cpdf_defaultappearance.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-07T17:11:16Z",
+      "side": 1,
+      "message": "maybe\n```\nreturn FontNameAndSize{\n  .name  \u003d ...,\n  .size \u003d ...\n};\n```\nand the local result is no longer used.",
+      "range": {
+        "startLine": 81,
+        "startChar": 2,
+        "endLine": 81,
+        "endChar": 16
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "af850ca1_78713499",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfdoc/cpdf_defaultappearance.cpp",
+              "range": {
+                "startLine": 72,
+                "startChar": 0,
+                "endLine": 73,
+                "endChar": 0
+              },
+              "replacement": ""
+            },
+            {
+              "path": "core/fpdfdoc/cpdf_defaultappearance.cpp",
+              "range": {
+                "startLine": 75,
+                "startChar": 0,
+                "endLine": 77,
+                "endChar": 0
+              },
+              "replacement": "    return FontNameAndSize{.size \u003d 0};\n"
+            },
+            {
+              "path": "core/fpdfdoc/cpdf_defaultappearance.cpp",
+              "range": {
+                "startLine": 79,
+                "startChar": 0,
+                "endLine": 82,
+                "endChar": 0
+              },
+              "replacement": "  return FontNameAndSize{\n      .name \u003d PDF_NameDecode(syntax.GetWord().Substr(1)),\n      .size \u003d StringToFloat(syntax.GetWord()),\n  };\n"
+            }
+          ]
+        }
+      ],
+      "revId": "ece5bb51ee0f4d736051ad2bab325af36cc2f6e5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1d70494e_3bc77508",
+        "filename": "core/fpdfdoc/cpdf_defaultappearance.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-07T17:11:16Z",
+      "side": 1,
+      "message": "Maybe just wrap the above function and return the .size member. A little string churn to be sure, but this is going away eventually? I\u0027d hate to have a difference in parsing between the two.",
+      "fixSuggestions": [
+        {
+          "fixId": "1b441c6a_069bb52a",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfdoc/cpdf_defaultappearance.cpp",
+              "range": {
+                "startLine": 85,
+                "startChar": 0,
+                "endLine": 91,
+                "endChar": 0
+              },
+              "replacement": "  std::optional\u003cFontNameAndSize\u003e font \u003d GetFont();\n  if (!font.has_value()) {\n"
+            },
+            {
+              "path": "core/fpdfdoc/cpdf_defaultappearance.cpp",
+              "range": {
+                "startLine": 93,
+                "startChar": 0,
+                "endLine": 96,
+                "endChar": 0
+              },
+              "replacement": "  return font-\u003esize;\n"
+            }
+          ]
+        }
+      ],
+      "revId": "ece5bb51ee0f4d736051ad2bab325af36cc2f6e5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ad27b1c6_a3fa645a",
+        "filename": "core/fpdfdoc/cpdf_defaultappearance.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-07T17:11:16Z",
+      "side": 1,
+      "message": "nit: \u003d 0.0f to avoid setting size \u003d 0 in a few places.",
+      "range": {
+        "startLine": 21,
+        "startChar": 17,
+        "endLine": 21,
+        "endChar": 42
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "929c6db0_c96815f3",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfdoc/cpdf_defaultappearance.h",
+              "range": {
+                "startLine": 21,
+                "startChar": 0,
+                "endLine": 22,
+                "endChar": 0
+              },
+              "replacement": "    float size \u003d 0.0f;\n"
+            }
+          ]
+        }
+      ],
+      "revId": "ece5bb51ee0f4d736051ad2bab325af36cc2f6e5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "738f0588_91eaa161",
