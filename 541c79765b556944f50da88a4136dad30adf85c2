@@ -18,6 +18,23 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "317bab62_e28b8b67",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-08T10:27:53Z",
+      "side": 1,
+      "message": "please look at the SIGNIFICANT change to logic (it\u0027s a bit more complex now to account for the fact the FPDFPage_Flatten only flattens a page at a time!)\n\nand please look at any other pending comments. thank you",
+      "revId": "541c79765b556944f50da88a4136dad30adf85c2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8a0e53ef_21e1c905",
@@ -31,6 +48,30 @@
       "writtenOn": "2025-05-06T17:17:32Z",
       "side": 1,
       "message": "snake_case",
+      "range": {
+        "startLine": 110,
+        "startChar": 9,
+        "endLine": 110,
+        "endChar": 17
+      },
+      "revId": "541c79765b556944f50da88a4136dad30adf85c2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3d14539d_4ad5ad39",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-08T10:27:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8a0e53ef_21e1c905",
       "range": {
         "startLine": 110,
         "startChar": 9,
@@ -58,6 +99,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f15af0ac_08f09983",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-08T10:27:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f572e171_1e168bf2",
+      "revId": "541c79765b556944f50da88a4136dad30adf85c2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "13b53970_6f1ba887",
@@ -81,6 +140,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a634b72d_a8f4366d",
+        "filename": "fpdfsdk/fpdf_flatten_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-08T10:27:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "13b53970_6f1ba887",
+      "range": {
+        "startLine": 195,
+        "startChar": 17,
+        "endLine": 195,
+        "endChar": 21
+      },
+      "revId": "541c79765b556944f50da88a4136dad30adf85c2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "36deeb79_ea56cf54",
@@ -94,6 +177,24 @@
       "writtenOn": "2025-05-06T17:17:32Z",
       "side": 1,
       "message": "Should there be more testing after FPDF_SaveAsCopy() to verify the properties of the saved document?",
+      "revId": "541c79765b556944f50da88a4136dad30adf85c2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f0058b28_8b9de330",
+        "filename": "fpdfsdk/fpdf_flatten_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-08T10:27:53Z",
+      "side": 1,
+      "message": "hmm, any suggestions here, I think checking the Fields dictionary is sufficient UNLESS you think it is appropriate to check against a hash, as many other tests do",
+      "parentUuid": "36deeb79_ea56cf54",
       "revId": "541c79765b556944f50da88a4136dad30adf85c2",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
