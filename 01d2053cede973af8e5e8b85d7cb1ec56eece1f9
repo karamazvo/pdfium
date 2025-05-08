@@ -1,0 +1,243 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "927708c6_7dfa3656",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 5483,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-08T00:26:53Z",
+      "side": 1,
+      "message": "Since 42271087.pdf is a PDF with known properties, there is no need to loop through the objects here. Just change line 5479 to have a stronger assertion for the exact number of objects, and then fetch the index that the test cares about. Same for the loop below.",
+      "revId": "01d2053cede973af8e5e8b85d7cb1ec56eece1f9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cc704ad2_c370e89c",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 5508,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-08T00:26:53Z",
+      "side": 1,
+      "message": "Do this after the calls on line 5510/5511? Since this succeeds, those have no chance of succeeding because the removal already happened.",
+      "revId": "01d2053cede973af8e5e8b85d7cb1ec56eece1f9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "30061528_3674738b",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 5510,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-08T00:26:53Z",
+      "side": 1,
+      "message": "Also test with {nullptr, nullptr} for completeness.",
+      "revId": "01d2053cede973af8e5e8b85d7cb1ec56eece1f9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f70d6865_858bb97e",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-08T00:26:53Z",
+      "side": 1,
+      "message": "How about \"MutableCPDFPageObjHolderFromFPDFFormObject\"?",
+      "range": {
+        "startLine": 159,
+        "startChar": 23,
+        "endLine": 159,
+        "endChar": 67
+      },
+      "revId": "01d2053cede973af8e5e8b85d7cb1ec56eece1f9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "985434de_0a9e0872",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-08T00:26:53Z",
+      "side": 1,
+      "message": "There should be a non-const version of CPDF_FormObject::form(), instead of using const_cast here.",
+      "revId": "01d2053cede973af8e5e8b85d7cb1ec56eece1f9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3f7fd12f_146c8132",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1178,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-08T00:26:53Z",
+      "side": 1,
+      "message": "No Hungarian notation in new code, so how about \"cpage_object\"? Same goes for the rest of this CL.",
+      "range": {
+        "startLine": 1178,
+        "startChar": 19,
+        "endLine": 1178,
+        "endChar": 27
+      },
+      "revId": "01d2053cede973af8e5e8b85d7cb1ec56eece1f9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "185faa6a_aa8091dc",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1189,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-08T00:26:53Z",
+      "side": 1,
+      "message": "It looks like this is trying to leak memory. Add a comment to explain why it is ok to release() here, so someone doesn\u0027t get alarmed by this and try to \"fix\" it.",
+      "revId": "01d2053cede973af8e5e8b85d7cb1ec56eece1f9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "51a0b801_738f3538",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 1620,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-08T00:26:53Z",
+      "side": 1,
+      "message": "Can probably omit this bit.",
+      "range": {
+        "startLine": 1620,
+        "startChar": 10,
+        "endLine": 1620,
+        "endChar": 29
+      },
+      "revId": "01d2053cede973af8e5e8b85d7cb1ec56eece1f9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b5e6201c_bb3ea15b",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 1627,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-08T00:26:53Z",
+      "side": 1,
+      "message": "Please clarify what \"Ownership\" refers to.",
+      "revId": "01d2053cede973af8e5e8b85d7cb1ec56eece1f9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "51de03fd_c8b0bf35",
+        "filename": "testing/resources/42271087.in",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-08T00:26:53Z",
+      "side": 1,
+      "message": "Is there an existing PDF that can work for the test?",
+      "revId": "01d2053cede973af8e5e8b85d7cb1ec56eece1f9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "559ea3b3_cd1db9be",
+        "filename": "testing/resources/42271087.in",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-08T00:26:53Z",
+      "side": 1,
+      "message": "Name this bug_42271087.in?",
+      "revId": "01d2053cede973af8e5e8b85d7cb1ec56eece1f9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b6febdcf_7ad2bc58",
+        "filename": "testing/resources/42271087.in",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-08T00:26:53Z",
+      "side": 1,
+      "message": "No need to set the current transformation matrix to the identity matrix. It already starts out that way.",
+      "revId": "01d2053cede973af8e5e8b85d7cb1ec56eece1f9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "408b9549_880dc10f",
+        "filename": "testing/resources/42271087.in",
+        "patchSetId": 3
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-08T00:26:53Z",
+      "side": 1,
+      "message": "There\u0027s a trailing space here.",
+      "revId": "01d2053cede973af8e5e8b85d7cb1ec56eece1f9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
