@@ -95,6 +95,32 @@ void ParserStream(const CPDF_Dictionary* pPageDic,
   pObjectArray->push_back(pStream);
 }
 
+// recursively searches the form field dictionary for specified annotation
+// (returns true when removed)
+bool RemoveAnnotationFromFormField(RetainPtr<CPDF_Dictionary> dict,
+                                   unsigned int obj_num) {
+  if (dict == nullptr) {
+    return false;
+  }
+  RetainPtr<CPDF_Array> array = dict->GetMutableArrayFor("Kids");
+  if (array == nullptr) {
+    return false;
+  }
+  for (size_t i = 0; i < array->size(); i++) {
+    RetainPtr<CPDF_Object> obj = array->GetMutableDirectObjectAt(i);
+    if (obj == nullptr) {
+      continue;
+    }
+    if (obj->GetObjNum() == obj_num) {
+      array->RemoveAt(i);
+      return true;
+    } else if (RemoveAnnotationFromFormField(obj->GetMutableDict(), obj_num)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 int ParserAnnots(CPDF_Document* pSourceDoc,
                  RetainPtr<CPDF_Dictionary> pPageDic,
                  std::vector<CFX_FloatRect>* pRectArray,
@@ -102,6 +128,16 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
                  int nUsage) {
   if (!pSourceDoc) {
     return FLATTEN_FAIL;
+  }
+
+  // get acroforms dict
+  CPDF_Dictionary* root = pSourceDoc->GetMutableRoot();
+  RetainPtr<CPDF_Array> fields = nullptr;
+  if (root) {
+    auto acro_dict = root->GetMutableDictFor("AcroForm");
+    if (acro_dict) {
+      fields = acro_dict->GetMutableArrayFor("Fields");
+    }
   }
 
   GetContentsRect(pSourceDoc, pPageDic, pRectArray);
@@ -137,6 +173,21 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
     }
     if (bParseStream) {
       ParserStream(pPageDic.Get(), pAnnotDict.Get(), pRectArray, pObjectArray);
+    }
+
+    if (fields) {
+      for (size_t i = 0; i < fields->size(); i++) {
+        RetainPtr<CPDF_Object> obj = fields->GetMutableDirectObjectAt(i);
+        if (obj->GetObjNum() == pAnnotDict->GetObjNum()) {
+          fields->RemoveAt(i);
+          break;
+        } else {
+          if (RemoveAnnotationFromFormField(pAnnotDict,
+                                            pAnnotDict->GetObjNum())) {
+            break;
+          }
+        }
+      }
     }
   }
   return FLATTEN_SUCCESS;

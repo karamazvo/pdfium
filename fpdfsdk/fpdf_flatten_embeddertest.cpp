@@ -3,7 +3,11 @@
 // found in the LICENSE file.
 
 #include "build/build_config.h"
+#include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
+#include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdf_flatten.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
@@ -183,4 +187,22 @@ TEST_F(FPDFFlattenEmbedderTest, Bug896366) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
   VerifySavedDocument(612, 792, checksum);
+}
+
+TEST_F(FPDFFlattenEmbedderTest, Bug349502141) {
+  // load doc
+  ASSERT_TRUE(OpenDocument("text_form.pdf"));
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document());
+  // get acro form field count
+  RetainPtr<CPDF_Dictionary> acroDict =
+      doc->GetMutableRoot()->GetMutableDictFor("AcroForm");
+  RetainPtr<CPDF_Array> fields = acroDict->GetMutableArrayFor("Fields");
+  EXPECT_GT(fields->size(), 0u);
+  // flatten
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+  EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page.get(), FLAT_PRINT));
+  // check new field count (should be 0)
+  EXPECT_EQ(0u, fields->size());
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 }
