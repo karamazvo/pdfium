@@ -652,8 +652,12 @@ struct CoonBezier {
 int Interpolate(int p1, int p2, int delta1, int delta2, bool* overflow) {
   FX_SAFE_INT32 p = p2;
   p -= p1;
+
   p *= delta1;
-  p /= delta2;
+  if (delta2 > 1) {
+    p = (p + (delta2 - 1) / 2) / (delta2 - 1);
+  }
+
   p += p1;
   if (!p.IsValid()) {
     *overflow = true;
