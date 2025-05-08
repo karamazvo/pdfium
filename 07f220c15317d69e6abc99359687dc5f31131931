@@ -120,6 +120,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "2eebbc99_8074a1df",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-05-08T21:53:56Z",
+      "side": 1,
+      "message": "i am lost at this, invested a bit of time now, moving the unique_ptr up -\u003e segfaults.\n\n(retried it by looking at FPDFPage_InsertObject, still no matter what i try it crashes)\n\nadded the test, can i somehow check for leaks ? might it not leak?",
+      "parentUuid": "a0bb321c_26d5ab57",
+      "revId": "07f220c15317d69e6abc99359687dc5f31131931",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "b2d9332d_6b2ded49",
         "filename": "public/fpdf_edit.h",
         "patchSetId": 2
