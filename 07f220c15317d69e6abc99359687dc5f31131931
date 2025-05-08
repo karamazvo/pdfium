@@ -138,6 +138,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "6b464fac_0367abb8",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-08T22:51:17Z",
+      "side": 1,
+      "message": "Are you getting a nullptr segfault or something else? Enable ASAN/LSAN to help check for memory access errors and memory leaks. Feel free to upload a known to be broken CL and we can see what\u0027s wrong.",
+      "parentUuid": "2eebbc99_8074a1df",
+      "revId": "07f220c15317d69e6abc99359687dc5f31131931",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "b2d9332d_6b2ded49",
         "filename": "public/fpdf_edit.h",
         "patchSetId": 2
