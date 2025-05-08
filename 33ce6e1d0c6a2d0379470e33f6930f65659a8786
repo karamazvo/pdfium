@@ -55,6 +55,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "313556e1_24225681",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 532,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-08T19:07:52Z",
+      "side": 1,
+      "message": "Implement in CFX_PTemplate in core/fxcrt/fx_coordinates.h?",
+      "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "49c5b0af_e7c79434",
         "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
         "patchSetId": 12
@@ -66,6 +83,70 @@
       "writtenOn": "2025-05-08T17:38:54Z",
       "side": 1,
       "message": "tsepez: Is there a nicer way for interpreting a 2d-array as an 1d-span?",
+      "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4c42a2d2_cb64aecb",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 539,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-08T19:07:52Z",
+      "side": 1,
+      "message": "Maybe go the other way around with a 1D array and accessors that interpret as 2D? i.e. Similar to bitmaps.",
+      "parentUuid": "49c5b0af_e7c79434",
+      "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e5322bdc_72cfab81",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 545,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-08T19:07:52Z",
+      "side": 1,
+      "message": "Extra space here.",
+      "range": {
+        "startLine": 545,
+        "startChar": 48,
+        "endLine": 545,
+        "endChar": 50
+      },
+      "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f1468546_8bc74fb8",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 572,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-08T19:07:52Z",
+      "side": 1,
+      "message": "Just write out 0.5f or use a constant?",
+      "range": {
+        "startLine": 572,
+        "startChar": 9,
+        "endLine": 572,
+        "endChar": 23
+      },
       "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -83,6 +164,23 @@
       "writtenOn": "2025-05-08T17:38:54Z",
       "side": 1,
       "message": "(This is the usual De Casteljau subdivision.)",
+      "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1b216e31_7bdcc7b0",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 623,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-08T19:07:52Z",
+      "side": 1,
+      "message": "1 declaration per line. More below.",
       "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -134,6 +232,41 @@
       "writtenOn": "2025-05-08T17:38:54Z",
       "side": 1,
       "message": "This order is on p330 of the PDF 1.7 spec",
+      "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bc95912c_7bd3da26",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 879,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-08T19:07:52Z",
+      "side": 1,
+      "message": "Maybe add a comment in the code and reference ISO 32000-1:2008?",
+      "parentUuid": "9333eb44_b45dc8f2",
+      "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "82d327f7_0ec953f3",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 881,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-08T19:07:52Z",
+      "side": 1,
+      "message": "CHECK_EQ()",
       "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
