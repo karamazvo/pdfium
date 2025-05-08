@@ -125,6 +125,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "2a9fecc2_edb1c9c6",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 539,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-08T19:51:21Z",
+      "side": 1,
+      "message": "See e.g. https://pdfium-review.googlesource.com/c/pdfium/+/131931 which you have inspired me to add ...",
+      "parentUuid": "76b66a71_87fecdcd",
+      "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "e5322bdc_72cfab81",
         "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
         "patchSetId": 12
