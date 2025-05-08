@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f7721a60_a97e988b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 12
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-08T17:38:54Z",
+      "side": 1,
+      "message": "thestig: main review\ntsepez: UNSAFE_BUFFERS question below",
+      "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "49c5b0af_e7c79434",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 539,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-08T17:38:54Z",
+      "side": 1,
+      "message": "tsepez: Is there a nicer way for interpreting a 2d-array as an 1d-span?",
+      "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "52e6f0e5_c16c77c7",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 574,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-08T17:38:54Z",
+      "side": 1,
+      "message": "(This is the usual De Casteljau subdivision.)",
+      "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e4ef99b0_0a12e4ef",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 629,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-08T17:38:54Z",
+      "side": 1,
+      "message": "Indexed like on page 328 of the 1.7 spec.",
+      "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "270bed91_a128e4cb",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 874,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-08T17:38:54Z",
+      "side": 1,
+      "message": "FIGURE 4.22 on page 325 and p330 for tensor shows that the first 12 points have the same order.",
+      "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9333eb44_b45dc8f2",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 879,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-08T17:38:54Z",
+      "side": 1,
+      "message": "This order is on p330 of the PDF 1.7 spec",
+      "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "584fb6d9_ced7b470",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 882,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-08T17:38:54Z",
+      "side": 1,
+      "message": "This is also on page 330, a bit further up.",
+      "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
