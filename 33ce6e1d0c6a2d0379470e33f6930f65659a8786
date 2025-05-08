@@ -18,6 +18,23 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "479a190e_11059d0f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 12
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-08T21:48:31Z",
+      "side": 1,
+      "message": "Thanks, all done I think 😊",
+      "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fe32709c_08d39256",
@@ -66,6 +83,24 @@
       "writtenOn": "2025-05-08T19:07:52Z",
       "side": 1,
       "message": "Implement in CFX_PTemplate in core/fxcrt/fx_coordinates.h?",
+      "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "73819357_f9be20f6",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 532,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-08T21:48:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "313556e1_24225681",
       "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -141,6 +176,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1b7f4656_55a935fa",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 539,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-08T21:48:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2a9fecc2_edb1c9c6",
+      "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e5322bdc_72cfab81",
@@ -164,6 +217,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5901dd86_fd091785",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 545,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-08T21:48:31Z",
+      "side": 1,
+      "message": "Done, thanks. Good eye!",
+      "parentUuid": "e5322bdc_72cfab81",
+      "range": {
+        "startLine": 545,
+        "startChar": 48,
+        "endLine": 545,
+        "endChar": 50
+      },
+      "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f1468546_8bc74fb8",
@@ -177,6 +254,30 @@
       "writtenOn": "2025-05-08T19:07:52Z",
       "side": 1,
       "message": "Just write out 0.5f or use a constant?",
+      "range": {
+        "startLine": 572,
+        "startChar": 9,
+        "endLine": 572,
+        "endChar": 23
+      },
+      "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0d1977db_bc6be947",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 572,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-08T21:48:31Z",
+      "side": 1,
+      "message": "Duh, thanks. I had 1.0f / 2.0f, 1.0f / 4.0f, 1.0f / 8.0f in an earlier version and that looked imho nicer, but in the current version this just looks silly :D",
+      "parentUuid": "f1468546_8bc74fb8",
       "range": {
         "startLine": 572,
         "startChar": 9,
@@ -217,6 +318,24 @@
       "writtenOn": "2025-05-08T19:07:52Z",
       "side": 1,
       "message": "1 declaration per line. More below.",
+      "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "853120c2_c92b87c4",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 623,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-08T21:48:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1b216e31_7bdcc7b0",
       "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -290,6 +409,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b1ef74e7_a12f788f",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 879,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-08T21:48:31Z",
+      "side": 1,
+      "message": "Isn\u0027t the current version ISO 32000-2:2020? If I\u0027m quoting an older spec, then 1.7 is the last one that\u0027s nicely typeset.\n\nLooks like ISO 32000-2:2020 is being referenced in some places, so I used that.",
+      "parentUuid": "bc95912c_7bd3da26",
+      "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "82d327f7_0ec953f3",
@@ -303,6 +440,24 @@
       "writtenOn": "2025-05-08T19:07:52Z",
       "side": 1,
       "message": "CHECK_EQ()",
+      "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1f996f5f_f181b09a",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 881,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-08T21:48:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "82d327f7_0ec953f3",
       "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
