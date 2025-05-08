@@ -107,6 +107,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "76b66a71_87fecdcd",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 539,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-08T19:14:43Z",
+      "side": 1,
+      "message": "For pdfium::span, yes see reinterpret_span() (an extension to span I can\u0027t seem to get base:: to accept) at https://source.chromium.org/chromium/chromium/src/+/main:third_party/pdfium/core/fxcrt/span_util.h;drc\u003d41e5f40989140dee3767bf13d71ac7983e1236e6;l\u003d125 though I think expressing the types might be verbose.  Use using to make things simpler below?",
+      "parentUuid": "4c42a2d2_cb64aecb",
+      "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "e5322bdc_72cfab81",
         "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
         "patchSetId": 12
