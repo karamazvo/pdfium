@@ -37,6 +37,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "11e30da2_308fc05e",
+        "filename": "DEPS",
+        "patchSetId": 12
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-08T18:27:08Z",
+      "side": 1,
+      "message": "Yep. `refs/changes/92/131892/4` also works.\n\nLeaving this unresolved until it\u0027s updated.",
+      "parentUuid": "fe32709c_08d39256",
+      "revId": "33ce6e1d0c6a2d0379470e33f6930f65659a8786",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "49c5b0af_e7c79434",
         "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
         "patchSetId": 12
