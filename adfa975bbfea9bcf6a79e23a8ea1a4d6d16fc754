@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9c379c0e_7dd77cab",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-08T01:08:02Z",
+      "side": 1,
+      "message": "Just want to start with one method before doing more work in core/fpdfapi/parser/cpdf_dictionary.h. Previously discussed in https://pdfium-review.googlesource.com/91613",
+      "revId": "adfa975bbfea9bcf6a79e23a8ea1a4d6d16fc754",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
