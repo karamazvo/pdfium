@@ -16,6 +16,47 @@
       "message": "Just want to start with one method before doing more work in core/fpdfapi/parser/cpdf_dictionary.h. Previously discussed in https://pdfium-review.googlesource.com/91613",
       "revId": "adfa975bbfea9bcf6a79e23a8ea1a4d6d16fc754",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "01e9101f_c6e15c18",
+        "filename": "core/fpdfapi/parser/cpdf_dictionary.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-09T20:35:45Z",
+      "side": 1,
+      "message": "Ok, but could re-write callers to `KeyExist(byte_string.AsStringView())` insead of adding this.",
+      "range": {
+        "startLine": 83,
+        "startChar": 0,
+        "endLine": 83,
+        "endChar": 54
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "97717fce_b41fa468",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/parser/cpdf_dictionary.h",
+              "range": {
+                "startLine": 83,
+                "startChar": 0,
+                "endLine": 84,
+                "endChar": 0
+              },
+              "replacement": ""
+            }
+          ]
+        }
+      ],
+      "revId": "adfa975bbfea9bcf6a79e23a8ea1a4d6d16fc754",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
