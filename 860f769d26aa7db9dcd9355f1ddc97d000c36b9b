@@ -81,6 +81,24 @@
       "parentUuid": "4321dacd_55a47d1e",
       "revId": "860f769d26aa7db9dcd9355f1ddc97d000c36b9b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8052454f_f7517a77",
+        "filename": "testing/resources/pixel/shade-tensor.in",
+        "patchSetId": 7
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-09T19:53:23Z",
+      "side": 1,
+      "message": "Hm, I need to make some change to make the CQ not reuse the pre-rebase results anyways, so I suppose I\u0027ll remove the newline.",
+      "parentUuid": "4454eeff_f80127a2",
+      "revId": "860f769d26aa7db9dcd9355f1ddc97d000c36b9b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
