@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "828ab63c_19b6d4f8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-09T18:19:15Z",
+      "side": 1,
+      "message": "I\u0027ll have to update the skia baselines after https://pdfium-review.googlesource.com/c/pdfium/+/131370 is through the CQ.\n\nIs there any preference for adding a new page to shade.in vs having a new file? The old file is already kind of long, which is why I went with a new file, but I don\u0027t feel strongly about it.\n\nThe white holes in the skia baselines (which will persist over the rebaseline) are also related to https://issues.chromium.org/issues/416702486 somehow. With the diff in comment 1 there, they go away.",
+      "revId": "20d48afb0a3c35e35bc21bd0be32e11714d2d46d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
