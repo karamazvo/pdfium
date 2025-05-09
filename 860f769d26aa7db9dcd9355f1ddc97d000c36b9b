@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "54d74c19_b97eec01",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-09T19:50:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bd67fe50_e0b65758",
+      "range": {
+        "startLine": 9,
+        "startChar": 4,
+        "endLine": 9,
+        "endChar": 39
+      },
+      "revId": "860f769d26aa7db9dcd9355f1ddc97d000c36b9b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4321dacd_55a47d1e",
@@ -37,6 +61,24 @@
       "writtenOn": "2025-05-09T19:35:17Z",
       "side": 1,
       "message": "If there\u0027s something different at the group below that\u0027s worth nothing, then add a comment. Otherwise delete this blank line.",
+      "revId": "860f769d26aa7db9dcd9355f1ddc97d000c36b9b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4454eeff_f80127a2",
+        "filename": "testing/resources/pixel/shade-tensor.in",
+        "patchSetId": 7
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-09T19:50:27Z",
+      "side": 1,
+      "message": "It\u0027s the three curves that share a grid spot in the bottom right corner. Having a comment seems silly. I can remove it, but it groups related things together – isn\u0027t that what whitespace is for?",
+      "parentUuid": "4321dacd_55a47d1e",
       "revId": "860f769d26aa7db9dcd9355f1ddc97d000c36b9b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
