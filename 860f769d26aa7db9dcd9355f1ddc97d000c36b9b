@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bd67fe50_e0b65758",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-09T19:35:17Z",
+      "side": 1,
+      "message": "https://crbug.com/407070894#comment7",
+      "range": {
+        "startLine": 9,
+        "startChar": 4,
+        "endLine": 9,
+        "endChar": 39
+      },
+      "revId": "860f769d26aa7db9dcd9355f1ddc97d000c36b9b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4321dacd_55a47d1e",
+        "filename": "testing/resources/pixel/shade-tensor.in",
+        "patchSetId": 7
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-09T19:35:17Z",
+      "side": 1,
+      "message": "If there\u0027s something different at the group below that\u0027s worth nothing, then add a comment. Otherwise delete this blank line.",
+      "revId": "860f769d26aa7db9dcd9355f1ddc97d000c36b9b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
