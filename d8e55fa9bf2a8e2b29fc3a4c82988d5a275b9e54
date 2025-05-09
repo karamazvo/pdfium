@@ -1,0 +1,124 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "67755054_0d5f285d",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-09T01:08:32Z",
+      "side": 1,
+      "message": "What if the form field has a loop in its references. (It\u0027s a trap!)",
+      "revId": "d8e55fa9bf2a8e2b29fc3a4c82988d5a275b9e54",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "92253633_e63b781b",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-09T01:08:32Z",
+      "side": 1,
+      "message": "Consistently use uint32_t, since that\u0027s what GetObjNum() returns?",
+      "range": {
+        "startLine": 101,
+        "startChar": 35,
+        "endLine": 101,
+        "endChar": 47
+      },
+      "revId": "d8e55fa9bf2a8e2b29fc3a4c82988d5a275b9e54",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "81f0a1b6_1ea1e55d",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-09T01:08:32Z",
+      "side": 1,
+      "message": "`if (!dict) {`, similar to how line 136 is not `if (root !\u003d nullptr)`.",
+      "revId": "d8e55fa9bf2a8e2b29fc3a4c82988d5a275b9e54",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e3361731_c18a3a4b",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-09T01:08:32Z",
+      "side": 1,
+      "message": "No need for `else` after a `return`.",
+      "range": {
+        "startLine": 117,
+        "startChar": 6,
+        "endLine": 117,
+        "endChar": 10
+      },
+      "revId": "d8e55fa9bf2a8e2b29fc3a4c82988d5a275b9e54",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fcf686d0_0ff7fa06",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-09T01:08:32Z",
+      "side": 1,
+      "message": "No need to explicitly initialize smart pointer to null.",
+      "range": {
+        "startLine": 135,
+        "startChar": 30,
+        "endLine": 135,
+        "endChar": 40
+      },
+      "revId": "d8e55fa9bf2a8e2b29fc3a4c82988d5a275b9e54",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aab43fe1_0e4c5512",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-09T01:08:32Z",
+      "side": 1,
+      "message": "No `else` after a `break` either.",
+      "revId": "d8e55fa9bf2a8e2b29fc3a4c82988d5a275b9e54",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
