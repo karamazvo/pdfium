@@ -16,6 +16,24 @@
       "message": "Uh, this shouldn\u0027t have changed / shouldn\u0027t have been manually submitted.",
       "revId": "cce603a3d0f0ab7e22625a83aaccef47377d1955",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c65116dd_73e6fca6",
+        "filename": "DEPS",
+        "patchSetId": 18
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-09T23:22:16Z",
+      "side": 1,
+      "message": "I figured there\u0027s no way that that purple bot is related to this CL. https://pdfium-review.googlesource.com/c/pdfium/+/131990 fixes. Sorry!",
+      "parentUuid": "3f8ce591_c1c01366",
+      "revId": "cce603a3d0f0ab7e22625a83aaccef47377d1955",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
