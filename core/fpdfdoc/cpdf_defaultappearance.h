@@ -12,6 +12,7 @@
 #include "core/fxcrt/bytestring.h"
 #include "core/fxge/cfx_color.h"
 
+class CPDF_Dictionary;
 class CPDF_SimpleParser;
 
 class CPDF_DefaultAppearance {
@@ -31,6 +32,9 @@ class CPDF_DefaultAppearance {
 
   std::optional<CFX_Color> GetColor() const;
   std::optional<CFX_Color::TypeAndARGB> GetColorARGB() const;
+
+  static ByteString GetStringFromDicts(const CPDF_Dictionary* annot_dict,
+                                       const CPDF_Dictionary* acroform_dict);
 
   static bool FindTagParamFromStartForTesting(CPDF_SimpleParser* parser,
                                               ByteStringView token,
