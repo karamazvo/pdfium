@@ -16,6 +16,126 @@
       "message": "thank you so much! i think i addressed all open feedbacks.",
       "revId": "a4a63727468c93751873a3d18dc5f9980f3d0ba1",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4f311267_bb2a3770",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 5504,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-13T23:25:36Z",
+      "side": 1,
+      "message": "\"no objects left\"",
+      "range": {
+        "startLine": 5504,
+        "startChar": 52,
+        "endLine": 5504,
+        "endChar": 68
+      },
+      "revId": "a4a63727468c93751873a3d18dc5f9980f3d0ba1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5f0702b1_b3218f15",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 5505,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-13T23:25:36Z",
+      "side": 1,
+      "message": "Since line 5491 already asserted `form_obj_count` was 1, this can just be 0. Then readers can easily see that without doing mental math.",
+      "range": {
+        "startLine": 5505,
+        "startChar": 12,
+        "endLine": 5505,
+        "endChar": 30
+      },
+      "revId": "a4a63727468c93751873a3d18dc5f9980f3d0ba1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cfdf08c1_1dfd4de2",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-13T23:25:36Z",
+      "side": 1,
+      "message": "Google C++ variable name please.",
+      "range": {
+        "startLine": 161,
+        "startChar": 19,
+        "endLine": 161,
+        "endChar": 30
+      },
+      "revId": "a4a63727468c93751873a3d18dc5f9980f3d0ba1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d557e36b_f9194f7b",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-13T23:25:36Z",
+      "side": 1,
+      "message": "Use the ternary operator like line 155.",
+      "revId": "a4a63727468c93751873a3d18dc5f9980f3d0ba1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3cd7b1f1_e1789b4e",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 1627,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-13T23:25:36Z",
+      "side": 1,
+      "message": "Probably should clarify this only happens on success. Since this is separated from line 1625, it is slightly ambiguous if this happens on failure as well.",
+      "revId": "a4a63727468c93751873a3d18dc5f9980f3d0ba1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "778c434f_4378bce4",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 1627,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-13T23:25:36Z",
+      "side": 1,
+      "message": "Wrap \"page_object\" in pipes like line 1620, since it\u0027s referring to the variable.",
+      "revId": "a4a63727468c93751873a3d18dc5f9980f3d0ba1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
