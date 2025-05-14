@@ -22,6 +22,29 @@
       },
       "revId": "af38a5c4f38ed8a9c12ce736e14f09b4df658ee0",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "db035c9a_bde21005",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-14T23:45:00Z",
+      "side": 1,
+      "message": "There\u0027s no //build/README.chromium to update? I guess it\u0027s just a no-op then?",
+      "range": {
+        "startLine": 16,
+        "startChar": 17,
+        "endLine": 16,
+        "endChar": 32
+      },
+      "revId": "af38a5c4f38ed8a9c12ce736e14f09b4df658ee0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
