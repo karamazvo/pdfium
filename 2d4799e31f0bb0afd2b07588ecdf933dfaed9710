@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "25e667e3_872d1986",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-05-15T18:14:33Z",
+      "side": 1,
+      "message": "+1 was removed in the latest patchset, needs re +1",
+      "revId": "2d4799e31f0bb0afd2b07588ecdf933dfaed9710",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
