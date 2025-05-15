@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f03ed91e_17e4c44b",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 5489,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-15T22:18:07Z",
+      "side": 1,
+      "message": "Fold this into line 5491, similar to line 5482?",
+      "revId": "c2afb54d618d391a0bddbf79e6d6065965642839",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "56961e22_444bc0f4",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1176,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-15T22:18:07Z",
+      "side": 1,
+      "message": "Can lines 1176-1179 be swapped with lines 1171-1174, so `form_object` gets checked first? It does not look like the ordering matters, so it would be slightly more preferable to check them in the same order as the parameters.",
+      "revId": "c2afb54d618d391a0bddbf79e6d6065965642839",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "03f56e1c_157b07f6",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 1620,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-15T22:18:07Z",
+      "side": 1,
+      "message": "Please add a comment to note this is an experimental API.",
+      "revId": "c2afb54d618d391a0bddbf79e6d6065965642839",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
