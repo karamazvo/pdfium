@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e547c17c_c6d63b35",
+        "filename": "third_party/dragonbox/BUILD.gn",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-15T20:08:01Z",
+      "side": 1,
+      "message": "What\u0027s this for? Not seeing a need for this import.",
+      "revId": "16b15227dffe8f22c46a4a9ea536d5b3131d1c81",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
