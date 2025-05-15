@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b30957cf_29987ac4",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 2379,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-05-15T21:57:19Z",
+      "side": 1,
+      "message": "think i fixed it now, thing is when insertion failed, the release was missing",
+      "parentUuid": "8ac2bafe_7b372864",
+      "revId": "6ed69d3b9ba4fdb96155fffe9d65a3638a5b2a9c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7472280f_4cc02bf0",
@@ -35,6 +53,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "54260b84_b6643272",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 3305,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-05-15T21:57:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7472280f_4cc02bf0",
+      "revId": "6ed69d3b9ba4fdb96155fffe9d65a3638a5b2a9c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "05e00c79_808b896e",
@@ -48,6 +84,24 @@
       "writtenOn": "2025-05-12T21:21:10Z",
       "side": 1,
       "message": "This doesn\u0027t make sense. When line 301 performed the std::move(), it results in `page_obj_holder` holding a nullptr. Thus release() here has nothing to release.",
+      "revId": "6ed69d3b9ba4fdb96155fffe9d65a3638a5b2a9c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0aecb0ef_49cfa0c9",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-05-15T21:57:19Z",
+      "side": 1,
+      "message": "think i now understood the issue here, hope the latest PS does it right.",
+      "parentUuid": "05e00c79_808b896e",
       "revId": "6ed69d3b9ba4fdb96155fffe9d65a3638a5b2a9c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
