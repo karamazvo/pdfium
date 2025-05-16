@@ -33,6 +33,24 @@
       "message": "Any thoughts on adding a system libpng (or system libs) path to CI to catch issues like this in future?",
       "revId": "c4bed0e3e80fd810dc7c2d3c8529fc8d91f72ee6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3e70ec63_ff1b7d31",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-16T18:53:26Z",
+      "side": 1,
+      "message": "I don\u0027t think Chromium does this, so PDFium is not going to either. Please double check this, as Chromium has many CI builders.",
+      "parentUuid": "4527e3e3_ce5d100d",
+      "revId": "c4bed0e3e80fd810dc7c2d3c8529fc8d91f72ee6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
