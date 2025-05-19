@@ -58,6 +58,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "622564c6_051823fc",
+        "filename": "core/fpdfapi/edit/cpdf_pagecontentgenerator_unittest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-19T20:21:08Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "c9ef30a4_e33e1394",
+      "range": {
+        "startLine": 230,
+        "startChar": 34,
+        "endLine": 230,
+        "endChar": 46
+      },
+      "revId": "819f899036c09bc4e204310c8a20f33530de75c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3ab90fd6_51a20943",
@@ -109,6 +133,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7e706ffb_0232d773",
+        "filename": "core/fpdfapi/page/cpdf_occontext.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-19T20:21:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3ab90fd6_51a20943",
+      "range": {
+        "startLine": 119,
+        "startChar": 22,
+        "endLine": 119,
+        "endChar": 39
+      },
+      "revId": "819f899036c09bc4e204310c8a20f33530de75c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "91d9dc02_55169ddd",
@@ -156,6 +204,30 @@
           ]
         }
       ],
+      "revId": "819f899036c09bc4e204310c8a20f33530de75c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8d562a03_c7f63178",
+        "filename": "core/fpdfapi/page/cpdf_pageobjectholder.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-19T20:21:08Z",
+      "side": 1,
+      "message": "If I revert this change, core/fpdfapi/edit/cpdf_pagecontentgenerator.cpp:529 generates an error.",
+      "parentUuid": "91d9dc02_55169ddd",
+      "range": {
+        "startLine": 67,
+        "startChar": 46,
+        "endLine": 67,
+        "endChar": 58
+      },
       "revId": "819f899036c09bc4e204310c8a20f33530de75c1",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
