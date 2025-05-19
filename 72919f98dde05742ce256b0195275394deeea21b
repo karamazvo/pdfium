@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ab5f1406_eed0eede",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-19T17:52:25Z",
+      "side": 1,
+      "message": "My only concern is that this requires the caller to pass an obj_num consistent with the dict, and failure to do so will result in an inconsistent document. Is there a way to avoid passing obj_num and just pass the dict?",
+      "range": {
+        "startLine": 101,
+        "startChar": 35,
+        "endLine": 102,
+        "endChar": 52
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "6d42a00d_2ccfc907",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "fpdfsdk/fpdf_flatten.cpp",
+              "range": {
+                "startLine": 102,
+                "startChar": 0,
+                "endLine": 103,
+                "endChar": 0
+              },
+              "replacement": "                                   const CPDF_Dictionary* annotation,\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_flatten.cpp",
+              "range": {
+                "startLine": 104,
+                "startChar": 0,
+                "endLine": 104,
+                "endChar": 0
+              },
+              "replacement": "  if (!annotation) {\n    return false;\n  }\n  uint32_t obj_num \u003d annotation-\u003eGetObjNum();\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_flatten.cpp",
+              "range": {
+                "startLine": 195,
+                "startChar": 0,
+                "endLine": 197,
+                "endChar": 0
+              },
+              "replacement": "        if (RemoveAnnotationFromFormField(pAnnotDict, pAnnotDict.Get(), visited)) {\n"
+            }
+          ]
+        }
+      ],
+      "revId": "72919f98dde05742ce256b0195275394deeea21b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8f5ae768_f96c5eea",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-19T17:52:25Z",
+      "side": 1,
+      "message": "can\u0027t happen?",
+      "range": {
+        "startLine": 109,
+        "startChar": 2,
+        "endLine": 111,
+        "endChar": 3
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "429803bd_faea8b33",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "fpdfsdk/fpdf_flatten.cpp",
+              "range": {
+                "startLine": 109,
+                "startChar": 0,
+                "endLine": 112,
+                "endChar": 0
+              },
+              "replacement": ""
+            }
+          ]
+        }
+      ],
+      "revId": "72919f98dde05742ce256b0195275394deeea21b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
