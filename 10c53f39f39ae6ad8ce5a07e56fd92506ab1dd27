@@ -1,0 +1,146 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3f672178_85196503",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 13
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-19T17:15:49Z",
+      "side": 1,
+      "message": "Just a few comments about comment.s",
+      "revId": "10c53f39f39ae6ad8ce5a07e56fd92506ab1dd27",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1f746436_6feceb2d",
+        "filename": "core/fpdfapi/page/cpdf_pageobjectholder.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-19T17:15:49Z",
+      "side": 1,
+      "message": "NOTE: this would require an UNSAFE_TODO() wrapper except that std::deque::iterator::operator++() isn\u0027t yet marked as unsafe. Using std::next() as the AI suggests is no better. Feel free to wrap as UNSAFE_TODO(page_object_list_.begin() + index)",
+      "range": {
+        "startLine": 199,
+        "startChar": 45,
+        "endLine": 199,
+        "endChar": 60
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "fe92f673_6ccefda2",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/page/cpdf_pageobjectholder.cpp",
+              "range": {
+                "startLine": 199,
+                "startChar": 0,
+                "endLine": 200,
+                "endChar": 0
+              },
+              "replacement": "  page_object_list_.insert(std::next(page_object_list_.begin(), index),\n"
+            },
+            {
+              "path": "core/fpdfapi/page/cpdf_pageobjectholder.cpp",
+              "range": {
+                "startLine": 229,
+                "startChar": 0,
+                "endLine": 230,
+                "endChar": 0
+              },
+              "replacement": "  page_object_list_.erase(std::next(page_object_list_.begin(), index));\n"
+            }
+          ]
+        }
+      ],
+      "revId": "10c53f39f39ae6ad8ce5a07e56fd92506ab1dd27",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "144bf35f_1ee0242d",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-19T17:15:49Z",
+      "side": 1,
+      "message": "nit: maybe comment\n\n// Take ownership back from embebdder across the C API.",
+      "range": {
+        "startLine": 288,
+        "startChar": 2,
+        "endLine": 288,
+        "endChar": 5
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "8e91ca88_c2642986",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 288,
+                "startChar": 0,
+                "endLine": 288,
+                "endChar": 0
+              },
+              "replacement": "  // Take ownership back from the embedder across the C API.\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 313,
+                "startChar": 0,
+                "endLine": 314,
+                "endChar": 0
+              },
+              "replacement": "  // Release ownership to the caller.\n"
+            }
+          ]
+        }
+      ],
+      "revId": "10c53f39f39ae6ad8ce5a07e56fd92506ab1dd27",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8c74406c_6c12b6f6",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 13
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-19T17:15:49Z",
+      "side": 1,
+      "message": "nit: say \"handle to a page object as previously obtained by FPDF_whatever(). Ownership of the object is transferred back to PDFium\" or some such.",
+      "range": {
+        "startLine": 193,
+        "startChar": 44,
+        "endLine": 194,
+        "endChar": 39
+      },
+      "revId": "10c53f39f39ae6ad8ce5a07e56fd92506ab1dd27",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
