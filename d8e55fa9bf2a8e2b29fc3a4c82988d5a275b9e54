@@ -37,6 +37,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "88c44cce_6a21aad3",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-19T10:18:58Z",
+      "side": 1,
+      "message": "I\u0027m so grateful to have you to point this out",
+      "parentUuid": "67755054_0d5f285d",
+      "revId": "d8e55fa9bf2a8e2b29fc3a4c82988d5a275b9e54",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "92253633_e63b781b",
         "filename": "fpdfsdk/fpdf_flatten.cpp",
         "patchSetId": 7
@@ -48,6 +66,30 @@
       "writtenOn": "2025-05-09T01:08:32Z",
       "side": 1,
       "message": "Consistently use uint32_t, since that\u0027s what GetObjNum() returns?",
+      "range": {
+        "startLine": 101,
+        "startChar": 35,
+        "endLine": 101,
+        "endChar": 47
+      },
+      "revId": "d8e55fa9bf2a8e2b29fc3a4c82988d5a275b9e54",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "79f2a29c_0f6f2f22",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-19T10:18:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "92253633_e63b781b",
       "range": {
         "startLine": 101,
         "startChar": 35,
@@ -75,6 +117,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "32ab1fba_21acc733",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-19T10:18:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "81f0a1b6_1ea1e55d",
+      "revId": "d8e55fa9bf2a8e2b29fc3a4c82988d5a275b9e54",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e3361731_c18a3a4b",
@@ -88,6 +148,30 @@
       "writtenOn": "2025-05-09T01:08:32Z",
       "side": 1,
       "message": "No need for `else` after a `return`.",
+      "range": {
+        "startLine": 117,
+        "startChar": 6,
+        "endLine": 117,
+        "endChar": 10
+      },
+      "revId": "d8e55fa9bf2a8e2b29fc3a4c82988d5a275b9e54",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "73cbec98_ab0b6dae",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-19T10:18:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e3361731_c18a3a4b",
       "range": {
         "startLine": 117,
         "startChar": 6,
@@ -121,6 +205,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "13dd6cac_3a3ef030",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-19T10:18:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fcf686d0_0ff7fa06",
+      "range": {
+        "startLine": 135,
+        "startChar": 30,
+        "endLine": 135,
+        "endChar": 40
+      },
+      "revId": "d8e55fa9bf2a8e2b29fc3a4c82988d5a275b9e54",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "aab43fe1_0e4c5512",
@@ -134,6 +242,24 @@
       "writtenOn": "2025-05-09T01:08:32Z",
       "side": 1,
       "message": "No `else` after a `break` either.",
+      "revId": "d8e55fa9bf2a8e2b29fc3a4c82988d5a275b9e54",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cecbf5cb_8ff0033f",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-19T10:18:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aab43fe1_0e4c5512",
       "revId": "d8e55fa9bf2a8e2b29fc3a4c82988d5a275b9e54",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
