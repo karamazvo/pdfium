@@ -1,0 +1,267 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c579e7d5_b0db5359",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-19T17:42:42Z",
+      "side": 1,
+      "message": "nit: Mention that some of this is made possible by C++20 transparent comparators for maps.",
+      "revId": "819f899036c09bc4e204310c8a20f33530de75c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c9ef30a4_e33e1394",
+        "filename": "core/fpdfapi/edit/cpdf_pagecontentgenerator_unittest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-19T17:42:42Z",
+      "side": 1,
+      "message": "follow-up: much as std::string implicitly converts to std::string_view, maybe we should consider tha same for PDFium strings.",
+      "range": {
+        "startLine": 230,
+        "startChar": 34,
+        "endLine": 230,
+        "endChar": 46
+      },
+      "revId": "819f899036c09bc4e204310c8a20f33530de75c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3ab90fd6_51a20943",
+        "filename": "core/fpdfapi/page/cpdf_occontext.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-19T17:42:42Z",
+      "side": 1,
+      "message": "How does this work? I didn\u0027t think the view types had operator+ defined, since that would require them allocating string storage. Maybe use the initializer-list\u003cByteStringView\u003e form of ByteString constructor?",
+      "range": {
+        "startLine": 119,
+        "startChar": 22,
+        "endLine": 119,
+        "endChar": 39
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "c03ee09b_93e1aaea",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/page/cpdf_occontext.cpp",
+              "range": {
+                "startLine": 119,
+                "startChar": 0,
+                "endLine": 120,
+                "endChar": 0
+              },
+              "replacement": "  ByteString csFind({config, \"State\"});\n"
+            },
+            {
+              "path": "core/fpdfapi/page/cpdf_occontext.cpp",
+              "range": {
+                "startLine": 159,
+                "startChar": 0,
+                "endLine": 160,
+                "endChar": 0
+              },
+              "replacement": "      ByteString csFind({state, \"State\"});\n"
+            }
+          ]
+        }
+      ],
+      "revId": "819f899036c09bc4e204310c8a20f33530de75c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "91d9dc02_55169ddd",
+        "filename": "core/fpdfapi/page/cpdf_pageobjectholder.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-19T17:42:42Z",
+      "side": 1,
+      "message": "I would have thought that c++20 would have made this no longer required.",
+      "range": {
+        "startLine": 67,
+        "startChar": 46,
+        "endLine": 67,
+        "endChar": 58
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "9487429f_c8a2455c",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/page/cpdf_pageobjectholder.h",
+              "range": {
+                "startLine": 14,
+                "startChar": 0,
+                "endLine": 15,
+                "endChar": 0
+              },
+              "replacement": ""
+            },
+            {
+              "path": "core/fpdfapi/page/cpdf_pageobjectholder.h",
+              "range": {
+                "startLine": 66,
+                "startChar": 0,
+                "endLine": 68,
+                "endChar": 0
+              },
+              "replacement": "  using AllRemovedResourcesMap \u003d std::map\u003cByteString, RemovedResourceMap\u003e;\n"
+            }
+          ]
+        }
+      ],
+      "revId": "819f899036c09bc4e204310c8a20f33530de75c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "00627fa9_7b1fb00e",
+        "filename": "core/fpdfapi/parser/cpdf_dictionary.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-19T17:42:42Z",
+      "side": 1,
+      "message": "Copy happen here anyways in old code, so fine.",
+      "range": {
+        "startLine": 204,
+        "startChar": 31,
+        "endLine": 204,
+        "endChar": 41
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "e71692dc_791eb62b",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/parser/cpdf_dictionary.cpp",
+              "range": {
+                "startLine": 182,
+                "startChar": 0,
+                "endLine": 183,
+                "endChar": 0
+              },
+              "replacement": "  return SetNewFor\u003cCPDF_Dictionary\u003e(key);\n"
+            },
+            {
+              "path": "core/fpdfapi/parser/cpdf_dictionary.cpp",
+              "range": {
+                "startLine": 204,
+                "startChar": 0,
+                "endLine": 205,
+                "endChar": 0
+              },
+              "replacement": "  return SetNewFor\u003cCPDF_Array\u003e(key);\n"
+            },
+            {
+              "path": "core/fpdfapi/parser/cpdf_dictionary.cpp",
+              "range": {
+                "startLine": 272,
+                "startChar": 0,
+                "endLine": 273,
+                "endChar": 0
+              },
+              "replacement": "void CPDF_Dictionary::SetFor(ByteStringView key,\n"
+            },
+            {
+              "path": "core/fpdfapi/parser/cpdf_dictionary.cpp",
+              "range": {
+                "startLine": 277,
+                "startChar": 0,
+                "endLine": 278,
+                "endChar": 0
+              },
+              "replacement": "CPDF_Object* CPDF_Dictionary::SetForInternal(ByteStringView key,\n"
+            },
+            {
+              "path": "core/fpdfapi/parser/cpdf_dictionary.cpp",
+              "range": {
+                "startLine": 292,
+                "startChar": 0,
+                "endLine": 293,
+                "endChar": 0
+              },
+              "replacement": "    ByteStringView key,\n"
+            },
+            {
+              "path": "core/fpdfapi/parser/cpdf_dictionary.cpp",
+              "range": {
+                "startLine": 315,
+                "startChar": 0,
+                "endLine": 317,
+                "endChar": 0
+              },
+              "replacement": "void CPDF_Dictionary::ReplaceKey(ByteStringView oldkey,\n                                 ByteStringView newkey) {\n"
+            },
+            {
+              "path": "core/fpdfapi/parser/cpdf_dictionary.cpp",
+              "range": {
+                "startLine": 332,
+                "startChar": 0,
+                "endLine": 333,
+                "endChar": 0
+              },
+              "replacement": "void CPDF_Dictionary::SetRectFor(ByteStringView key,\n"
+            },
+            {
+              "path": "core/fpdfapi/parser/cpdf_dictionary.cpp",
+              "range": {
+                "startLine": 341,
+                "startChar": 0,
+                "endLine": 342,
+                "endChar": 0
+              },
+              "replacement": "void CPDF_Dictionary::SetMatrixFor(ByteStringView key,\n"
+            },
+            {
+              "path": "core/fpdfapi/parser/cpdf_dictionary.cpp",
+              "range": {
+                "startLine": 352,
+                "startChar": 0,
+                "endLine": 354,
+                "endChar": 0
+              },
+              "replacement": "ByteString CPDF_Dictionary::MaybeIntern(ByteStringView str) {\n  return pool_ ? pool_-\u003eIntern(str) : ByteString(str);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "819f899036c09bc4e204310c8a20f33530de75c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
