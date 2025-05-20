@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "21e435d8_27e52837",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-20T07:49:52Z",
+      "side": 1,
+      "message": "responded to Tom ✔",
+      "revId": "72919f98dde05742ce256b0195275394deeea21b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ab5f1406_eed0eede",
@@ -64,6 +81,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "6e4c834e_59f70c8f",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-20T07:49:52Z",
+      "side": 1,
+      "message": "I think the logic is OK. `dict` is the FORM field dictionary in which we are searching for an ANNOT associated with the specified object number (often times the FORM and ANNOT dictionaries will be merged as one, but not always)\n\nsee this example where `dict` and `obj_num` do not refer to the same dictionary:\nhttps://i.ibb.co/BHT6V8jd/javaw-NNar1q6-SNo.png",
+      "parentUuid": "ab5f1406_eed0eede",
+      "range": {
+        "startLine": 101,
+        "startChar": 35,
+        "endLine": 102,
+        "endChar": 52
+      },
+      "revId": "72919f98dde05742ce256b0195275394deeea21b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8f5ae768_f96c5eea",
         "filename": "fpdfsdk/fpdf_flatten.cpp",
         "patchSetId": 10
@@ -99,6 +140,30 @@
           ]
         }
       ],
+      "revId": "72919f98dde05742ce256b0195275394deeea21b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f7536c36_c2345238",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-20T07:49:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8f5ae768_f96c5eea",
+      "range": {
+        "startLine": 109,
+        "startChar": 2,
+        "endLine": 111,
+        "endChar": 3
+      },
       "revId": "72919f98dde05742ce256b0195275394deeea21b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
