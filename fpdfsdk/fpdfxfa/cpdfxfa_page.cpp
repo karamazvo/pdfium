@@ -211,7 +211,7 @@ std::optional<CFX_PointF> CPDFXFA_Page::PageToDevice(
 }
 
 CFX_Matrix CPDFXFA_Page::GetDisplayMatrix(const FX_RECT& rect,
-                                          int iRotate) const {
+                                          int rotate) const {
   CXFA_FFPageView* pPageView = GetXFAPageView();
   if (!pdfpage_ && !pPageView) {
     return CFX_Matrix();
@@ -223,12 +223,12 @@ CFX_Matrix CPDFXFA_Page::GetDisplayMatrix(const FX_RECT& rect,
     case FormType::kAcroForm:
     case FormType::kXFAForeground:
       if (pdfpage_) {
-        return pdfpage_->GetDisplayMatrix(rect, iRotate);
+        return pdfpage_->GetDisplayMatrix(rect, rotate);
       }
       [[fallthrough]];
     case FormType::kXFAFull:
       if (pPageView) {
-        return pPageView->GetDisplayMatrix(rect, iRotate);
+        return pPageView->GetDisplayMatrix(rect, rotate);
       }
       break;
   }

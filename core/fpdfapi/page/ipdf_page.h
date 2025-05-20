@@ -34,7 +34,7 @@ class IPDF_Page : public Retainable {
   virtual float GetPageWidth() const = 0;
   virtual float GetPageHeight() const = 0;
   virtual CFX_Matrix GetDisplayMatrix(const FX_RECT& rect,
-                                      int iRotate) const = 0;
+                                      int rotate) const = 0;
 
   virtual std::optional<CFX_PointF> DeviceToPage(
       const FX_RECT& rect,
