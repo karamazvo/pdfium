@@ -522,14 +522,14 @@ CFX_PointF CXFA_FFWidget::Rotate2Normal(const CFX_PointF& point) {
 }
 
 CFX_Matrix CXFA_FFWidget::GetRotateMatrix() {
-  int32_t iRotate = node_->GetRotate();
-  if (!iRotate) {
+  int32_t rotate = node_->GetRotate();
+  if (!rotate) {
     return CFX_Matrix();
   }
 
   CFX_RectF rcWidget = GetRectWithoutRotate();
   CFX_Matrix mt;
-  switch (iRotate) {
+  switch (rotate) {
     case 90:
       mt.a = 0;
       mt.b = -1;

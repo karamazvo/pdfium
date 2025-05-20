@@ -30,20 +30,20 @@ namespace {
 
 CFX_Matrix GetPageMatrix(const CFX_RectF& docPageRect,
                          const FX_RECT& devicePageRect,
-                         int32_t iRotate) {
-  DCHECK(iRotate >= 0);
-  DCHECK(iRotate <= 3);
+                         int32_t rotate) {
+  DCHECK(rotate >= 0);
+  DCHECK(rotate <= 3);
 
   CFX_Matrix m;
-  if (iRotate == 0 || iRotate == 2) {
+  if (rotate == 0 || rotate == 2) {
     m.a *= (float)devicePageRect.Width() / docPageRect.width;
     m.d *= (float)devicePageRect.Height() / docPageRect.height;
   } else {
     m.a *= (float)devicePageRect.Height() / docPageRect.width;
     m.d *= (float)devicePageRect.Width() / docPageRect.height;
   }
-  m.Rotate(iRotate * 1.57079632675f);
-  switch (iRotate) {
+  m.Rotate(rotate * 1.57079632675f);
+  switch (rotate) {
     case 0:
       m.e = devicePageRect.left;
       m.f = devicePageRect.top;
@@ -263,13 +263,13 @@ CFX_RectF CXFA_FFPageView::GetPageViewRect() const {
 }
 
 CFX_Matrix CXFA_FFPageView::GetDisplayMatrix(const FX_RECT& rtDisp,
-                                             int32_t iRotate) const {
+                                             int32_t rotate) const {
   auto* pItem = GetLayoutItem();
   if (!pItem) {
     return CFX_Matrix();
   }
 
-  return GetPageMatrix(CFX_RectF(0, 0, pItem->GetPageSize()), rtDisp, iRotate);
+  return GetPageMatrix(CFX_RectF(0, 0, pItem->GetPageSize()), rtDisp, rotate);
 }
 
 CXFA_FFWidget::IteratorIface* CXFA_FFPageView::CreateGCedTraverseWidgetIterator(
