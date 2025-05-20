@@ -1179,5 +1179,18 @@ FPDFFormObj_RemoveObject(FPDF_PAGEOBJECT form_object,
   }
 
   // Caller takes ownership of the removed page object
-  return !!object_holder->RemovePageObject(cpage_object).release();
+  std::unique_ptr<CPDF_PageObject> removed_object =
+      object_holder->RemovePageObject(cpage_object);
+  if (!removed_object) {
+    return false;
+  }
+
+  CPDF_PageObject* cform_page_object =
+      CPDFPageObjectFromFPDFPageObject(form_object);
+  if (cform_page_object) {
+    cform_page_object->SetDirty(true);
+  }
+
+  removed_object.release();
+  return true;
 }
