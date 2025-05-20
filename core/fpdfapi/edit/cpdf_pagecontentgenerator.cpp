@@ -342,6 +342,18 @@ void CPDF_PageContentGenerator::GenerateContent() {
   UpdateResourcesDict();
 }
 
+void CPDF_PageContentGenerator::GenerateHolderStreamContent() {
+  std::map<int32_t, fxcrt::ostringstream> new_stream_data =
+      GenerateModifiedStreams();
+
+  if (new_stream_data.empty()) {
+    return;
+  }
+
+  UpdateContentStreams(std::move(new_stream_data));
+  UpdateResourcesDict();
+}
+
 std::map<int32_t, fxcrt::ostringstream>
 CPDF_PageContentGenerator::GenerateModifiedStreams() {
   // Figure out which streams are dirty.
@@ -703,6 +715,28 @@ void CPDF_PageContentGenerator::ProcessImage(fxcrt::ostringstream* buf,
 
 void CPDF_PageContentGenerator::ProcessForm(fxcrt::ostringstream* buf,
                                             CPDF_FormObject* pFormObj) {
+  CPDF_Form* form_xobject = pFormObj->form();
+  if (form_xobject && form_xobject->HasDirtyStreams()) {
+    // The Form XObject itself has modified content (e.g., an object was
+    // removed). We need to regenerate its content stream before using it.
+
+    // Save the current text state from the form object
+    const CPDF_TextState& text_state = pFormObj->text_state();
+
+    // Create a new content generator for the form
+    CPDF_PageContentGenerator form_content_generator(form_xobject);
+
+    // Set the inherited text state on all text objects in the form
+    for (const auto& pObj : *form_xobject) {
+      if (CPDF_TextObject* text_obj = pObj->AsText()) {
+        InheritTextState(text_state, text_obj);
+      }
+    }
+
+    // Now regenerate with inherited state
+    form_content_generator.GenerateHolderStreamContent();
+  }
+
   const CFX_Matrix& matrix = pFormObj->form_matrix();
   if ((matrix.a == 0 && matrix.b == 0) || (matrix.c == 0 && matrix.d == 0)) {
     return;
@@ -1000,5 +1034,42 @@ void CPDF_PageContentGenerator::ProcessText(fxcrt::ostringstream* buf,
     }
   }
   *buf << PDF_HexEncodeString(text.AsStringView()) << " Tj ET";
+
+  // Write text spacing operators
+  float char_space = pTextObj->text_state().GetCharSpace();
+  if (char_space != 0.0f) {
+    WriteFloat(*buf, char_space) << " Tc ";
+  }
+
+  float word_space = pTextObj->text_state().GetWordSpace();
+  if (word_space != 0.0f) {
+    WriteFloat(*buf, word_space) << " Tw ";
+  }
+
+  float horz_scale = pTextObj->text_state().GetFontSize();
+  if (horz_scale != 100.0f) {
+    WriteFloat(*buf, horz_scale) << " Tz ";
+  }
   EndProcessGraphics(*buf);
+}
+
+void CPDF_PageContentGenerator::InheritTextState(
+    const CPDF_TextState& parent_state,
+    CPDF_TextObject* text_obj) {
+  // Only inherit non-default values to avoid unnecessary operators in content
+  // stream
+  float char_space = parent_state.GetCharSpace();
+  if (char_space != 0.0f) {
+    text_obj->mutable_text_state().SetCharSpace(char_space);
+  }
+
+  float word_space = parent_state.GetWordSpace();
+  if (word_space != 0.0f) {
+    text_obj->mutable_text_state().SetWordSpace(word_space);
+  }
+
+  float horz_scale = parent_state.GetFontSize();
+  if (horz_scale != 100.0f) {
+    text_obj->mutable_text_state().SetFontSize(horz_scale);
+  }
 }

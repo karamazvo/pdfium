@@ -12,6 +12,7 @@
 #include <map>
 #include <vector>
 
+#include "core/fpdfapi/page/cpdf_textstate.h"
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -33,6 +34,7 @@ class CPDF_PageContentGenerator {
   ~CPDF_PageContentGenerator();
 
   void GenerateContent();
+  void GenerateHolderStreamContent();
   bool ProcessPageObjects(fxcrt::ostringstream* buf);
 
  private:
@@ -72,6 +74,9 @@ class CPDF_PageContentGenerator {
   // Updates the resource dictionary for `obj_holder_` to account for all the
   // changes.
   void UpdateResourcesDict();
+
+  void InheritTextState(const CPDF_TextState& parent_state,
+                        CPDF_TextObject* text_obj);
 
   UnownedPtr<CPDF_PageObjectHolder> const obj_holder_;
   UnownedPtr<CPDF_Document> const document_;
