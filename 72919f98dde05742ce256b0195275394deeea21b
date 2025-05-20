@@ -1,6 +1,29 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "971cef65_871cd2ea",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-20T21:06:06Z",
+      "side": 1,
+      "message": "s/::/./\n\nIn googletest, one would run the test by itself with `--gtest_filter\u003dFoo.Bar`, not `Foo::Bar`.",
+      "range": {
+        "startLine": 10,
+        "startChar": 35,
+        "endLine": 10,
+        "endChar": 37
+      },
+      "revId": "72919f98dde05742ce256b0195275394deeea21b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "21e435d8_27e52837",
@@ -105,6 +128,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "90cd429c_72ddac42",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-20T21:06:06Z",
+      "side": 1,
+      "message": "Just insert() and check the return result to see if the insertion succeeded?",
+      "range": {
+        "startLine": 104,
+        "startChar": 0,
+        "endLine": 107,
+        "endChar": 26
+      },
+      "revId": "72919f98dde05742ce256b0195275394deeea21b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8f5ae768_f96c5eea",
         "filename": "fpdfsdk/fpdf_flatten.cpp",
         "patchSetId": 10
@@ -164,6 +210,144 @@
         "endLine": 111,
         "endChar": 3
       },
+      "revId": "72919f98dde05742ce256b0195275394deeea21b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c224be4a_079587eb",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-20T21:06:06Z",
+      "side": 1,
+      "message": "It can during the recursive calls. Line 117-125 doesn\u0027t check if `obj` is a dictionary, so GetMutableDict() can pass in nullptr.",
+      "parentUuid": "f7536c36_c2345238",
+      "range": {
+        "startLine": 109,
+        "startChar": 2,
+        "endLine": 111,
+        "endChar": 3
+      },
+      "revId": "72919f98dde05742ce256b0195275394deeea21b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d7e2369d_c8e4e3e7",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-20T21:06:06Z",
+      "side": 1,
+      "message": "PDFium recently started using absl::flat_hash_set for a similar purpose in https://pdfium-review.googlesource.com/131951, so how about doing that here as well?\n\nhttps://chromium.googlesource.com/chromium/src/+/8fc6cc18a8/base/containers/README.md suggests generally not using it.",
+      "revId": "72919f98dde05742ce256b0195275394deeea21b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4040fe35_98f7778c",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-20T21:06:06Z",
+      "side": 1,
+      "message": "`field` could potentially specify the same field multiple times for whatever reason. e.g. `/Fields [7 0 R 8 0 R 7 0 R]`. Maybe build a list of indices to remove in this for-loop, and then loop over that separately to clean them up?\n\nSimilarly, RemoveAnnotationFromFormField() may potentially encounter this with `/Kids`.",
+      "revId": "72919f98dde05742ce256b0195275394deeea21b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "137b8844_448630df",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-20T21:06:06Z",
+      "side": 1,
+      "message": "The for-loop that contains this call will pass in the same `pAnnotDict` here in every iteration. Is it necessary to make multiple RemoveAnnotationFromFormField() calls in this fashion?",
+      "revId": "72919f98dde05742ce256b0195275394deeea21b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a842cc02_711b4475",
+        "filename": "fpdfsdk/fpdf_flatten_embeddertest.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-20T21:06:06Z",
+      "side": 1,
+      "message": "snake_case again.",
+      "range": {
+        "startLine": 197,
+        "startChar": 29,
+        "endLine": 197,
+        "endChar": 37
+      },
+      "revId": "72919f98dde05742ce256b0195275394deeea21b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c8c83709_84c3b5ff",
+        "filename": "fpdfsdk/fpdf_flatten_embeddertest.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-20T21:06:06Z",
+      "side": 1,
+      "message": "Since `fields` is only being read from, there\u0027s no need to get the mutable version.",
+      "range": {
+        "startLine": 198,
+        "startChar": 29,
+        "endLine": 198,
+        "endChar": 46
+      },
+      "revId": "72919f98dde05742ce256b0195275394deeea21b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4ecd7359_8793f6d0",
+        "filename": "fpdfsdk/fpdf_flatten_embeddertest.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-20T21:06:06Z",
+      "side": 1,
+      "message": "Probably not necessary as-is, since it basically repeats what the code does on the next line. What could be helpful is to explain why it should be 0.",
       "revId": "72919f98dde05742ce256b0195275394deeea21b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
