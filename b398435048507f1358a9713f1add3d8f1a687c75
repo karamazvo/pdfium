@@ -18,6 +18,29 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d7bb7d92_39e2b127",
+        "filename": "core/fxcrt/fx_coordinates.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-21T18:51:56Z",
+      "side": 1,
+      "message": "follow-up: `\u003d default;` should just work?",
+      "range": {
+        "startLine": 264,
+        "startChar": 3,
+        "endLine": 269,
+        "endChar": 0
+      },
+      "revId": "b398435048507f1358a9713f1add3d8f1a687c75",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "933ad13b_baa54372",
