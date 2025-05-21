@@ -139,6 +139,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "800e29df_7f653d0d",
+        "filename": "testing/embedder_test.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-21T21:26:59Z",
+      "side": 1,
+      "message": "Same as `ScopedPage::page_` - need to call into `EmbedderTest` and let it do the freeing.",
+      "parentUuid": "18950b9f_5985f03b",
+      "range": {
+        "startLine": 108,
+        "startChar": 0,
+        "endLine": 108,
+        "endChar": 23
+      },
+      "revId": "64cac21993b463065820cf771a604025fa3494aa",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "aba1c11c_d7e8ad6a",
@@ -216,6 +240,30 @@
           ]
         }
       ],
+      "revId": "64cac21993b463065820cf771a604025fa3494aa",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ca0f4248_5778003b",
+        "filename": "testing/embedder_test.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-21T21:26:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aba1c11c_d7e8ad6a",
+      "range": {
+        "startLine": 130,
+        "startChar": 8,
+        "endLine": 130,
+        "endChar": 23
+      },
       "revId": "64cac21993b463065820cf771a604025fa3494aa",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
