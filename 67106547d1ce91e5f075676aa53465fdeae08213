@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "333f625c_b80511cf",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-21T19:43:36Z",
+      "side": 1,
+      "message": "There\u0027s more churn to go name-by-name, but it\u0027s easier to review.",
+      "revId": "67106547d1ce91e5f075676aa53465fdeae08213",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
