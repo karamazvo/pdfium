@@ -127,20 +127,19 @@ CFX_Matrix CPDF_Page::GetDisplayMatrix(const FX_RECT& rect, int rotate) const {
     return CFX_Matrix();
   }
 
-  float x0 = 0;
-  float y0 = 0;
-  float x1 = 0;
-  float y1 = 0;
-  float x2 = 0;
-  float y2 = 0;
-  rotate %= 4;
+  float x0;
+  float y0;
+  float x1;
+  float y1;
+  float x2;
+  float y2;
   // This code implicitly inverts the y-axis to account for page coordinates
   // pointing up and bitmap coordinates pointing down. (x0, y0) is the base
   // point, (x1, y1) is that point translated on y and (x2, y2) is the point
   // translated on x. On rotate = 0, y0 is rect.bottom and the translation
   // to get y1 is performed as negative. This results in the desired
   // transformation.
-  switch (rotate) {
+  switch (rotate % 4) {
     case 0:
       x0 = rect.left;
       y0 = rect.bottom;
@@ -173,6 +172,11 @@ CFX_Matrix CPDF_Page::GetDisplayMatrix(const FX_RECT& rect, int rotate) const {
       x2 = rect.right;
       y2 = rect.top;
       break;
+    default:
+      CHECK_LT(rotate, 0);
+      // Handing this with `rotate += 4` breaks public API compatibility. So
+      // just return early here without doing all the matrix calculations below.
+      return CFX_Matrix(0, 0, 0, 0, 0, 0);
   }
   CFX_Matrix matrix((x2 - x0) / page_size_.width, (y2 - y0) / page_size_.width,
                     (x1 - x0) / page_size_.height,
