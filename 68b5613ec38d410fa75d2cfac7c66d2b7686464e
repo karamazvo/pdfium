@@ -60,6 +60,30 @@
       ],
       "revId": "68b5613ec38d410fa75d2cfac7c66d2b7686464e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "239c2b94_4180277b",
+        "filename": "core/fpdfapi/page/cpdf_page.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-21T18:46:47Z",
+      "side": 1,
+      "message": "Renamed to \"rotation\". I changed a few more \"rotate\" variables too.",
+      "parentUuid": "ff238564_4975411c",
+      "range": {
+        "startLine": 60,
+        "startChar": 55,
+        "endLine": 60,
+        "endChar": 61
+      },
+      "revId": "68b5613ec38d410fa75d2cfac7c66d2b7686464e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
