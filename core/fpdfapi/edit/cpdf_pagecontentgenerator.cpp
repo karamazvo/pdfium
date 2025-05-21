@@ -342,6 +342,18 @@ void CPDF_PageContentGenerator::GenerateContent() {
   UpdateResourcesDict();
 }
 
+void CPDF_PageContentGenerator::GenerateHolderStreamContent() {
+  std::map<int32_t, fxcrt::ostringstream> new_stream_data =
+      GenerateModifiedStreams();
+
+  if (new_stream_data.empty()) {
+    return;
+  }
+
+  UpdateContentStreams(std::move(new_stream_data));
+  UpdateResourcesDict();
+}
+
 std::map<int32_t, fxcrt::ostringstream>
 CPDF_PageContentGenerator::GenerateModifiedStreams() {
   // Figure out which streams are dirty.
@@ -703,6 +715,14 @@ void CPDF_PageContentGenerator::ProcessImage(fxcrt::ostringstream* buf,
 
 void CPDF_PageContentGenerator::ProcessForm(fxcrt::ostringstream* buf,
                                             CPDF_FormObject* pFormObj) {
+  CPDF_Form* form_xobject = pFormObj->form();
+  if (form_xobject && form_xobject->HasDirtyStreams()) {
+    // The Form XObject itself has modified content (e.g., an object was
+    // removed). We need to regenerate its content stream before using it.
+    CPDF_PageContentGenerator form_content_generator(form_xobject);
+    form_content_generator.GenerateHolderStreamContent();
+  }
+
   const CFX_Matrix& matrix = pFormObj->form_matrix();
   if ((matrix.a == 0 && matrix.b == 0) || (matrix.c == 0 && matrix.d == 0)) {
     return;

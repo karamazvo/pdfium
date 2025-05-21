@@ -33,6 +33,7 @@ class CPDF_PageContentGenerator {
   ~CPDF_PageContentGenerator();
 
   void GenerateContent();
+  void GenerateHolderStreamContent();
   bool ProcessPageObjects(fxcrt::ostringstream* buf);
 
  private:
