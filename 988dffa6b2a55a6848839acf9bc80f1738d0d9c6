@@ -1,0 +1,92 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9e522df1_e8bc1410",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-21T18:48:18Z",
+      "side": 1,
+      "message": "Bug: ?",
+      "revId": "988dffa6b2a55a6848839acf9bc80f1738d0d9c6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a769441d_9de5e339",
+        "filename": "fpdfsdk/fpdf_annot_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 2795,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-21T18:48:18Z",
+      "side": 1,
+      "message": "nit: init to non-zero to prove update worked, and not just 0 by happenstance?",
+      "range": {
+        "startLine": 2795,
+        "startChar": 0,
+        "endLine": 2795,
+        "endChar": 19
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "81393ef6_91f42d1f",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "fpdfsdk/fpdf_annot_embeddertest.cpp",
+              "range": {
+                "startLine": 2795,
+                "startChar": 0,
+                "endLine": 2798,
+                "endChar": 0
+              },
+              "replacement": "    unsigned int r \u003d 255;\n    unsigned int g \u003d 255;\n    unsigned int b \u003d 255;\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_annot_embeddertest.cpp",
+              "range": {
+                "startLine": 2864,
+                "startChar": 0,
+                "endLine": 2867,
+                "endChar": 0
+              },
+              "replacement": "    unsigned int R \u003d 255;\n    unsigned int G \u003d 255;\n    unsigned int B \u003d 255;\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_annot_embeddertest.cpp",
+              "range": {
+                "startLine": 3841,
+                "startChar": 0,
+                "endLine": 3846,
+                "endChar": 0
+              },
+              "replacement": "    ScopedFPDFBitmap bitmap \u003d RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);\n    CompareBitmap(bitmap.get(), 612, 792, original_checksum);\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_annot_embeddertest.cpp",
+              "range": {
+                "startLine": 3851,
+                "startChar": 0,
+                "endLine": 3856,
+                "endChar": 0
+              },
+              "replacement": "    bitmap \u003d RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);\n    CompareBitmap(bitmap.get(), 612, 792, modified_checksum);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "988dffa6b2a55a6848839acf9bc80f1738d0d9c6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
