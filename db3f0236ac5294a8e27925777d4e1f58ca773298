@@ -52,6 +52,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8299bf5b_6a60e854",
+        "filename": "core/fpdfdoc/cpdf_generateap.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 1616,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-21T19:20:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2ab77113_998d3d27",
+      "range": {
+        "startLine": 1616,
+        "startChar": 1,
+        "endLine": 1616,
+        "endChar": 13
+      },
+      "revId": "db3f0236ac5294a8e27925777d4e1f58ca773298",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "36d0001d_547348f7",
@@ -99,6 +123,30 @@
           ]
         }
       ],
+      "revId": "db3f0236ac5294a8e27925777d4e1f58ca773298",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1633d225_a03cd81b",
+        "filename": "public/fpdf_annot.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 868,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-21T19:20:00Z",
+      "side": 1,
+      "message": "It\u0027s on line 875.",
+      "parentUuid": "36d0001d_547348f7",
+      "range": {
+        "startLine": 868,
+        "startChar": 0,
+        "endLine": 868,
+        "endChar": 53
+      },
       "revId": "db3f0236ac5294a8e27925777d4e1f58ca773298",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
