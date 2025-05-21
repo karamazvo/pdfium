@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2ab77113_998d3d27",
+        "filename": "core/fpdfdoc/cpdf_generateap.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 1616,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-21T18:45:25Z",
+      "side": 1,
+      "message": "nit: segv for free on next line",
+      "range": {
+        "startLine": 1616,
+        "startChar": 1,
+        "endLine": 1616,
+        "endChar": 13
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "ba4e2e15_44c288e5",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfdoc/cpdf_generateap.cpp",
+              "range": {
+                "startLine": 1616,
+                "startChar": 0,
+                "endLine": 1617,
+                "endChar": 0
+              },
+              "replacement": ""
+            },
+            {
+              "path": "core/fpdfdoc/cpdf_generateap.cpp",
+              "range": {
+                "startLine": 1618,
+                "startChar": 0,
+                "endLine": 1618,
+                "endChar": 0
+              },
+              "replacement": "  if (!doc) {\n    return false;\n  }\n"
+            }
+          ]
+        }
+      ],
+      "revId": "db3f0236ac5294a8e27925777d4e1f58ca773298",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "36d0001d_547348f7",
+        "filename": "public/fpdf_annot.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 868,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-21T18:45:25Z",
+      "side": 1,
+      "message": "nit: units?a",
+      "range": {
+        "startLine": 868,
+        "startChar": 0,
+        "endLine": 868,
+        "endChar": 53
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "cdca0b0c_35d7eace",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "public/fpdf_annot.h",
+              "range": {
+                "startLine": 868,
+                "startChar": 0,
+                "endLine": 871,
+                "endChar": 0
+              },
+              "replacement": "//   R        - the red component for the text color, in the range [0, 255].\n//   G        - the green component for the text color, in the range [0, 255].\n//   B        - the blue component for the text color, in the range [0, 255].\n"
+            },
+            {
+              "path": "public/fpdf_annot.h",
+              "range": {
+                "startLine": 889,
+                "startChar": 0,
+                "endLine": 890,
+                "endChar": 0
+              },
+              "replacement": "//   R, G, B  - buffer to hold the RGB value of the color, in the range [0,\n//              255].\n"
+            }
+          ]
+        }
+      ],
+      "revId": "db3f0236ac5294a8e27925777d4e1f58ca773298",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
