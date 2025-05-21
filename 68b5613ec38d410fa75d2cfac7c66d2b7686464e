@@ -1,0 +1,65 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ff238564_4975411c",
+        "filename": "core/fpdfapi/page/cpdf_page.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-21T17:42:05Z",
+      "side": 1,
+      "message": "The more pedantic among us might complain that rotate is a verb, and this should be rotation.  Or rotation_code, since the values are in the 0..3",
+      "range": {
+        "startLine": 60,
+        "startChar": 55,
+        "endLine": 60,
+        "endChar": 61
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "2f6ee574_e5c8f6c3",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/page/cpdf_page.h",
+              "range": {
+                "startLine": 60,
+                "startChar": 0,
+                "endLine": 61,
+                "endChar": 0
+              },
+              "replacement": "  CFX_Matrix GetDisplayMatrix(const FX_RECT\u0026 rect,\n                              int rotation_code) const override;\n"
+            },
+            {
+              "path": "core/fpdfapi/page/cpdf_page.h",
+              "range": {
+                "startLine": 63,
+                "startChar": 0,
+                "endLine": 64,
+                "endChar": 0
+              },
+              "replacement": "      int rotation_code,\n"
+            },
+            {
+              "path": "core/fpdfapi/page/cpdf_page.h",
+              "range": {
+                "startLine": 67,
+                "startChar": 0,
+                "endLine": 68,
+                "endChar": 0
+              },
+              "replacement": "      int rotation_code,\n"
+            }
+          ]
+        }
+      ],
+      "revId": "68b5613ec38d410fa75d2cfac7c66d2b7686464e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
