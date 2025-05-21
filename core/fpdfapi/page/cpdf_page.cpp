@@ -111,7 +111,7 @@ std::optional<CFX_PointF> CPDF_Page::DeviceToPage(
     const FX_RECT& rect,
     int rotate,
     const CFX_PointF& device_point) const {
-  CFX_Matrix page2device = GetDisplayMatrix(rect, rotate);
+  CFX_Matrix page2device = GetDisplayMatrixForRect(rect, rotate);
   return page2device.GetInverse().Transform(device_point);
 }
 
@@ -119,11 +119,12 @@ std::optional<CFX_PointF> CPDF_Page::PageToDevice(
     const FX_RECT& rect,
     int rotate,
     const CFX_PointF& page_point) const {
-  CFX_Matrix page2device = GetDisplayMatrix(rect, rotate);
+  CFX_Matrix page2device = GetDisplayMatrixForRect(rect, rotate);
   return page2device.Transform(page_point);
 }
 
-CFX_Matrix CPDF_Page::GetDisplayMatrix(const FX_RECT& rect, int rotate) const {
+CFX_Matrix CPDF_Page::GetDisplayMatrixForRect(const FX_RECT& rect,
+                                              int rotate) const {
   if (page_size_.width == 0 || page_size_.height == 0) {
     return CFX_Matrix();
   }
