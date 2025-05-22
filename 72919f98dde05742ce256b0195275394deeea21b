@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "774ed4e2_44134f6f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-22T13:12:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "971cef65_871cd2ea",
+      "range": {
+        "startLine": 10,
+        "startChar": 35,
+        "endLine": 10,
+        "endChar": 37
+      },
+      "revId": "72919f98dde05742ce256b0195275394deeea21b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "21e435d8_27e52837",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 10
@@ -149,6 +173,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d92cb0b2_23e9f994",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-22T13:12:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "90cd429c_72ddac42",
+      "range": {
+        "startLine": 104,
+        "startChar": 0,
+        "endLine": 107,
+        "endChar": 26
+      },
+      "revId": "72919f98dde05742ce256b0195275394deeea21b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8f5ae768_f96c5eea",
@@ -228,6 +276,30 @@
       "side": 1,
       "message": "It can during the recursive calls. Line 117-125 doesn\u0027t check if `obj` is a dictionary, so GetMutableDict() can pass in nullptr.",
       "parentUuid": "f7536c36_c2345238",
+      "range": {
+        "startLine": 109,
+        "startChar": 2,
+        "endLine": 111,
+        "endChar": 3
+      },
+      "revId": "72919f98dde05742ce256b0195275394deeea21b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fa6f1007_49db678e",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-22T13:12:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c224be4a_079587eb",
       "range": {
         "startLine": 109,
         "startChar": 2,
