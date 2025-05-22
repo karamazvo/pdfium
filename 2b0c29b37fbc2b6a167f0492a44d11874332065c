@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5f977c04_e084628d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-05-22T19:57:21Z",
+      "side": 1,
+      "message": "Hello @thestig@chromium.org,\nI unfortunately introduced a bug with my change (https://pdfium-review.googlesource.com/c/pdfium/+/131232). the object is removed in memory, but not in the generated output, this CL fixes it, my new test verifies that the functionality works as expected. \n\nHowever, the original bug reporter mentioned in https://issues.chromium.org/issues/42271087#comment31 that their PDF now has broken output.\nTheir PDF is experiencing issues with missing spaces and other font-related problems.\n\n I suspect that removing that object might be collapsing part of the rendering tree.\nI\u0027d appreciate your thoughts on the best approach to fix this.",
+      "revId": "2b0c29b37fbc2b6a167f0492a44d11874332065c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
