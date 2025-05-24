@@ -150,6 +150,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "92063ea0_d4361625",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-24T09:30:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6e4c834e_59f70c8f",
+      "range": {
+        "startLine": 101,
+        "startChar": 35,
+        "endLine": 102,
+        "endChar": 52
+      },
+      "revId": "72919f98dde05742ce256b0195275394deeea21b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "90cd429c_72ddac42",
@@ -327,6 +351,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "827f8245_d54058dc",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-24T09:30:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d7e2369d_c8e4e3e7",
+      "revId": "72919f98dde05742ce256b0195275394deeea21b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4040fe35_98f7778c",
@@ -340,6 +382,24 @@
       "writtenOn": "2025-05-20T21:06:06Z",
       "side": 1,
       "message": "`field` could potentially specify the same field multiple times for whatever reason. e.g. `/Fields [7 0 R 8 0 R 7 0 R]`. Maybe build a list of indices to remove in this for-loop, and then loop over that separately to clean them up?\n\nSimilarly, RemoveAnnotationFromFormField() may potentially encounter this with `/Kids`.",
+      "revId": "72919f98dde05742ce256b0195275394deeea21b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4d95fdb7_cac024cd",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-24T09:30:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4040fe35_98f7778c",
       "revId": "72919f98dde05742ce256b0195275394deeea21b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -361,6 +421,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "151b3ad9_3382a963",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-24T09:30:48Z",
+      "side": 1,
+      "message": "oops, this was a straight-up error, should be passing the current field dictionary (same as the logic in RemoveAnnotationFromFormField)\n\nFIXED",
+      "parentUuid": "137b8844_448630df",
+      "revId": "72919f98dde05742ce256b0195275394deeea21b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a842cc02_711b4475",
@@ -374,6 +452,30 @@
       "writtenOn": "2025-05-20T21:06:06Z",
       "side": 1,
       "message": "snake_case again.",
+      "range": {
+        "startLine": 197,
+        "startChar": 29,
+        "endLine": 197,
+        "endChar": 37
+      },
+      "revId": "72919f98dde05742ce256b0195275394deeea21b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ab7b7860_c1779f98",
+        "filename": "fpdfsdk/fpdf_flatten_embeddertest.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-24T09:30:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a842cc02_711b4475",
       "range": {
         "startLine": 197,
         "startChar": 29,
@@ -407,6 +509,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "32f04ae5_d1917c61",
+        "filename": "fpdfsdk/fpdf_flatten_embeddertest.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-24T09:30:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c8c83709_84c3b5ff",
+      "range": {
+        "startLine": 198,
+        "startChar": 29,
+        "endLine": 198,
+        "endChar": 46
+      },
+      "revId": "72919f98dde05742ce256b0195275394deeea21b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4ecd7359_8793f6d0",
@@ -420,6 +546,24 @@
       "writtenOn": "2025-05-20T21:06:06Z",
       "side": 1,
       "message": "Probably not necessary as-is, since it basically repeats what the code does on the next line. What could be helpful is to explain why it should be 0.",
+      "revId": "72919f98dde05742ce256b0195275394deeea21b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4ccc3c29_5fc806ca",
+        "filename": "fpdfsdk/fpdf_flatten_embeddertest.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-24T09:30:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4ecd7359_8793f6d0",
       "revId": "72919f98dde05742ce256b0195275394deeea21b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
