@@ -16,6 +16,24 @@
       "message": "Do you know what\u0027s causing this to be removed?",
       "revId": "93a66c490c1c61b31765c3f8a30a80a2df21e636",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "962f2486_8e473237",
+        "filename": "generated/cr-buildbucket.cfg",
+        "patchSetId": 4
+      },
+      "lineNbr": 1506,
+      "author": {
+        "id": 9026
+      },
+      "writtenOn": "2025-05-27T23:34:20Z",
+      "side": 0,
+      "message": "Good catch. It seems cr-buildbucket.cfg` wasn\u0027t updated at the previous change?\nI made https://pdfium-review.googlesource.com/c/pdfium/+/132430 to regenerate it without the starlark chagne.",
+      "parentUuid": "717ed15e_0e528954",
+      "revId": "93a66c490c1c61b31765c3f8a30a80a2df21e636",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
