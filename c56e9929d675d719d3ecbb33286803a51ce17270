@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "297474cc_309aba25",
+        "filename": "DEPS",
+        "patchSetId": 2
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-27T19:07:56Z",
+      "side": 1,
+      "message": "Typo - should reflect line 215.",
+      "range": {
+        "startLine": 213,
+        "startChar": 44,
+        "endLine": 213,
+        "endChar": 51
+      },
+      "revId": "c56e9929d675d719d3ecbb33286803a51ce17270",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
