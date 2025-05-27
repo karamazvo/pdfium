@@ -34,6 +34,24 @@
       "parentUuid": "717ed15e_0e528954",
       "revId": "93a66c490c1c61b31765c3f8a30a80a2df21e636",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c48427ba_31e082c8",
+        "filename": "generated/cr-buildbucket.cfg",
+        "patchSetId": 4
+      },
+      "lineNbr": 1506,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-27T23:39:52Z",
+      "side": 0,
+      "message": "Thanks! Please chain this CL to that CL, or, rebase after that one submits.",
+      "parentUuid": "962f2486_8e473237",
+      "revId": "93a66c490c1c61b31765c3f8a30a80a2df21e636",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
