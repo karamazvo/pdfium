@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <sstream>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -33,6 +34,7 @@
 #include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxcrt/notreached.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
+#include "third_party/abseil-cpp/absl/container/flat_hash_set.h"
 
 enum FPDF_TYPE { MAX, MIN };
 enum FPDF_VALUE { TOP, LEFT, RIGHT, BOTTOM };
@@ -95,6 +97,38 @@ void ParserStream(const CPDF_Dictionary* pPageDic,
   pObjectArray->push_back(pStream);
 }
 
+// recursively searches the form field dictionary for specified annotation
+// (returns true when removed)
+bool RemoveAnnotationFromFormField(RetainPtr<CPDF_Dictionary> dict,
+                                   uint32_t obj_num,
+                                   absl::flat_hash_set<uint32_t>& visited) {
+  if (!visited.insert(obj_num).second || !dict) {
+    return false;  // prevent inf loop
+  }
+
+  RetainPtr<CPDF_Array> array = dict->GetMutableArrayFor("Kids");
+  if (!array) {
+    return false;
+  }
+  // determine elements to-be-removed
+  std::vector<size_t> remove_me;
+  for (size_t i = 0; i < array->size(); i++) {
+    RetainPtr<CPDF_Object> obj = array->GetMutableDirectObjectAt(i);
+    if (obj && obj->GetObjNum() == obj_num) {
+      // mark for removal
+      remove_me.push_back(i);
+    } else {
+      // check object's children
+      RemoveAnnotationFromFormField(obj->GetMutableDict(), obj_num, visited);
+    }
+  }
+  // remove flattened annotations
+  for (size_t i = 0; i < remove_me.size(); i++) {
+    array->RemoveAt(remove_me[i]);
+  }
+  return false;
+}
+
 int ParserAnnots(CPDF_Document* pSourceDoc,
                  RetainPtr<CPDF_Dictionary> pPageDic,
                  std::vector<CFX_FloatRect>* pRectArray,
@@ -102,6 +136,16 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
                  int nUsage) {
   if (!pSourceDoc) {
     return FLATTEN_FAIL;
+  }
+
+  // get acroforms dict
+  CPDF_Dictionary* root = pSourceDoc->GetMutableRoot();
+  RetainPtr<CPDF_Array> fields;
+  if (root) {
+    auto acro_dict = root->GetMutableDictFor("AcroForm");
+    if (acro_dict) {
+      fields = acro_dict->GetMutableArrayFor("Fields");
+    }
   }
 
   GetContentsRect(pSourceDoc, pPageDic, pRectArray);
@@ -137,6 +181,27 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
     }
     if (bParseStream) {
       ParserStream(pPageDic.Get(), pAnnotDict.Get(), pRectArray, pObjectArray);
+    }
+
+    if (fields) {
+      absl::flat_hash_set<uint32_t> visited;
+      // determine elements to-be-removed
+      std::vector<size_t> remove_me;
+      for (size_t i = 0; i < fields->size(); i++) {
+        RetainPtr<CPDF_Object> obj = fields->GetMutableDirectObjectAt(i);
+        if (obj && obj->GetObjNum() == pAnnotDict->GetObjNum()) {
+          // mark for removal
+          remove_me.push_back(i);
+        } else {
+          // check object's children
+          RemoveAnnotationFromFormField(obj->GetMutableDict(),
+                                        pAnnotDict->GetObjNum(), visited);
+        }
+      }
+      // remove flattened annotations
+      for (size_t i = 0; i < remove_me.size(); i++) {
+        fields->RemoveAt(remove_me[i]);
+      }
     }
   }
   return FLATTEN_SUCCESS;
