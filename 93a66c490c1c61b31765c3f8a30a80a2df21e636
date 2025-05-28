@@ -52,6 +52,24 @@
       "parentUuid": "962f2486_8e473237",
       "revId": "93a66c490c1c61b31765c3f8a30a80a2df21e636",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "03965c07_1dc4387b",
+        "filename": "generated/cr-buildbucket.cfg",
+        "patchSetId": 4
+      },
+      "lineNbr": 1506,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-28T00:21:31Z",
+      "side": 0,
+      "message": "Latest patch set looks like something went wrong while rebasing. Probably need to avoid running `gclient sync` here.",
+      "parentUuid": "c48427ba_31e082c8",
+      "revId": "93a66c490c1c61b31765c3f8a30a80a2df21e636",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
