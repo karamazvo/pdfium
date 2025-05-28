@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "c9173733_c67e7384",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-28T19:21:36Z",
+      "side": 1,
+      "message": "Wrap at 72 columns.",
+      "revId": "2b0c29b37fbc2b6a167f0492a44d11874332065c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "5f977c04_e084628d",
@@ -14,6 +31,137 @@
       "writtenOn": "2025-05-22T19:57:21Z",
       "side": 1,
       "message": "Hello @thestig@chromium.org,\nI unfortunately introduced a bug with my change (https://pdfium-review.googlesource.com/c/pdfium/+/131232). the object is removed in memory, but not in the generated output, this CL fixes it, my new test verifies that the functionality works as expected. \n\nHowever, the original bug reporter mentioned in https://issues.chromium.org/issues/42271087#comment31 that their PDF now has broken output.\nTheir PDF is experiencing issues with missing spaces and other font-related problems.\n\n I suspect that removing that object might be collapsing part of the rendering tree.\nI\u0027d appreciate your thoughts on the best approach to fix this.",
+      "revId": "2b0c29b37fbc2b6a167f0492a44d11874332065c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "389e9fe9_298e59da",
+        "filename": "core/fpdfapi/edit/cpdf_pagecontentgenerator.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-28T19:21:36Z",
+      "side": 1,
+      "message": "This looks like GenerateContent() without the DCHECK(). Why not just reuse GenerateContent() and remove the DCHECK()?",
+      "revId": "2b0c29b37fbc2b6a167f0492a44d11874332065c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eeb5a2cb_53b2ca27",
+        "filename": "core/fpdfapi/edit/cpdf_pagecontentgenerator.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 719,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-28T19:21:36Z",
+      "side": 1,
+      "message": "This part of the check isn\u0027t necessary, since `form_xobject` is never null.",
+      "range": {
+        "startLine": 719,
+        "startChar": 6,
+        "endLine": 719,
+        "endChar": 22
+      },
+      "revId": "2b0c29b37fbc2b6a167f0492a44d11874332065c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b9a65465_de2b2d5d",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 5511,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-28T19:21:36Z",
+      "side": 1,
+      "message": "Most callers just pass in 0. Is there a special need for `FPDF_NO_INCREMENTAL`?",
+      "range": {
+        "startLine": 5511,
+        "startChar": 48,
+        "endLine": 5511,
+        "endChar": 67
+      },
+      "revId": "2b0c29b37fbc2b6a167f0492a44d11874332065c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "20ec7d16_6549b9af",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 5517,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-28T19:21:36Z",
+      "side": 1,
+      "message": "`const char kFoo[]`, not `const char* kFoo`. The latter is not const enough as one can then write `kFoo \u003d nullptr;`.",
+      "revId": "2b0c29b37fbc2b6a167f0492a44d11874332065c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8510d2f2_97b99168",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1181,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-28T19:21:36Z",
+      "side": 1,
+      "message": "The comment should stay with the release() call.",
+      "revId": "2b0c29b37fbc2b6a167f0492a44d11874332065c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cb884d14_c9724c06",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1189,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-28T19:21:36Z",
+      "side": 1,
+      "message": "Probably should just do this earlier in place of MutableCPDFPageObjHolderFromFPDFFormObject(), to avoid having to do two `FPDF_PAGEOBJECT` to CPDF object conversions.",
+      "revId": "2b0c29b37fbc2b6a167f0492a44d11874332065c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d45609f1_7a1be494",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1190,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-28T19:21:36Z",
+      "side": 1,
+      "message": "As-is, with the check on line 1172, this never evaluates to false.",
       "revId": "2b0c29b37fbc2b6a167f0492a44d11874332065c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
