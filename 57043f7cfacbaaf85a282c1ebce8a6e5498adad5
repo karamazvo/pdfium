@@ -33,6 +33,24 @@
       "message": "Despite what Gerrit shows, there\u0027s no CQ for infra/config. Please manually submit. Let me know if you can\u0027t and I can submit for you.",
       "revId": "57043f7cfacbaaf85a282c1ebce8a6e5498adad5",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "055e37d3_51f9713c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-28T00:19:50Z",
+      "side": 1,
+      "message": "^^ i.e. CQ+2 does work. I\u0027ll manually submit.",
+      "parentUuid": "a873cce2_38c31753",
+      "revId": "57043f7cfacbaaf85a282c1ebce8a6e5498adad5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
