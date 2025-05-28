@@ -16,6 +16,125 @@
       "message": "whoops, I must have messed something up when squashing / messing with my history locally\n\nsorry for wasting a bit of your time there\n\npatchset 14 seems to include the resolutions",
       "revId": "6e161cac53c99455021d0a5f4de4b76878d9e694",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "817d58af_70238f07",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 14
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-28T17:40:34Z",
+      "side": 1,
+      "message": "Just some nits from me.",
+      "revId": "6e161cac53c99455021d0a5f4de4b76878d9e694",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d7feba78_2be28b6e",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-28T17:40:34Z",
+      "side": 1,
+      "message": "nit: prefer range-based for loop here.",
+      "range": {
+        "startLine": 126,
+        "startChar": 2,
+        "endLine": 127,
+        "endChar": 34
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "498f09c3_df86d42e",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "fpdfsdk/fpdf_flatten.cpp",
+              "range": {
+                "startLine": 126,
+                "startChar": 0,
+                "endLine": 128,
+                "endChar": 0
+              },
+              "replacement": "  for (size_t index_to_remove : remove_me) {\n    array-\u003eRemoveAt(index_to_remove);\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_flatten.cpp",
+              "range": {
+                "startLine": 202,
+                "startChar": 0,
+                "endLine": 204,
+                "endChar": 0
+              },
+              "replacement": "      for (size_t index_to_remove : remove_me) {\n        fields-\u003eRemoveAt(index_to_remove);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "6e161cac53c99455021d0a5f4de4b76878d9e694",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3680bb94_e62f0247",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-28T17:40:34Z",
+      "side": 1,
+      "message": "nit: same.",
+      "range": {
+        "startLine": 202,
+        "startChar": 6,
+        "endLine": 203,
+        "endChar": 39
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "fca76a8e_497199cd",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "fpdfsdk/fpdf_flatten.cpp",
+              "range": {
+                "startLine": 126,
+                "startChar": 0,
+                "endLine": 128,
+                "endChar": 0
+              },
+              "replacement": "  for (size_t index : remove_me) {\n    array-\u003eRemoveAt(index);\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_flatten.cpp",
+              "range": {
+                "startLine": 202,
+                "startChar": 0,
+                "endLine": 204,
+                "endChar": 0
+              },
+              "replacement": "      for (size_t index : remove_me) {\n        fields-\u003eRemoveAt(index);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "6e161cac53c99455021d0a5f4de4b76878d9e694",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
