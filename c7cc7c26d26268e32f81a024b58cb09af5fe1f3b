@@ -16,6 +16,24 @@
       "message": "Maybe I\u0027m holding it wrong—how do y\u0027all profile pdfium code?",
       "revId": "c7cc7c26d26268e32f81a024b58cb09af5fe1f3b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6b88816b_a4ed8b77",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-28T19:59:30Z",
+      "side": 1,
+      "message": "I use a build without V8 for profiling. Does that work better for you?",
+      "parentUuid": "76283a6b_c7164fe5",
+      "revId": "c7cc7c26d26268e32f81a024b58cb09af5fe1f3b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
