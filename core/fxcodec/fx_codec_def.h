@@ -7,7 +7,7 @@
 #ifndef CORE_FXCODEC_FX_CODEC_DEF_H_
 #define CORE_FXCODEC_FX_CODEC_DEF_H_
 
-enum class FXCODEC_STATUS {
+enum class FXCODEC_STATUS : uint8_t {
   kError = -1,
   kFrameReady,
   kFrameToBeContinued,
@@ -17,7 +17,7 @@ enum class FXCODEC_STATUS {
 };
 
 #ifdef PDF_ENABLE_XFA
-enum FXCODEC_IMAGE_TYPE {
+enum FXCODEC_IMAGE_TYPE : uint8_t {
   FXCODEC_IMAGE_UNKNOWN = 0,
   FXCODEC_IMAGE_JPG,
 #ifdef PDF_ENABLE_XFA_BMP

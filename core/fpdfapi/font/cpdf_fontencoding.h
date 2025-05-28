@@ -16,7 +16,9 @@
 #include "core/fxcrt/weak_ptr.h"
 #include "core/fxge/fx_fontencoding.h"
 
-enum class FontEncoding {
+class CPDF_Object;
+
+enum class FontEncoding : uint8_t {
   kBuiltin = 0,
   kWinAnsi = 1,
   kMacRoman = 2,
@@ -35,10 +37,9 @@ wchar_t UnicodeFromAppleRomanCharCode(uint8_t charcode);
 
 pdfium::span<const uint16_t> UnicodesForPredefinedCharSet(
     FontEncoding encoding);
+
 const char* CharNameFromPredefinedCharSet(FontEncoding encoding,
                                           uint8_t charcode);
-
-class CPDF_Object;
 
 class CPDF_FontEncoding {
  public:

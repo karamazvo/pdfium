@@ -15,7 +15,7 @@
 #include "core/fxcodec/jbig2/JBig2_PatternDict.h"
 #include "core/fxcodec/jbig2/JBig2_SymbolDict.h"
 
-enum JBig2_SegmentState {
+enum JBig2_SegmentState : uint8_t {
   JBIG2_SEGMENT_HEADER_UNPARSED,
   JBIG2_SEGMENT_DATA_UNPARSED,
   JBIG2_SEGMENT_PARSE_COMPLETE,
@@ -23,7 +23,7 @@ enum JBig2_SegmentState {
   JBIG2_SEGMENT_ERROR
 };
 
-enum JBig2_ResultType {
+enum JBig2_ResultType : uint8_t {
   JBIG2_VOID_POINTER = 0,
   JBIG2_IMAGE_POINTER,
   JBIG2_SYMBOL_DICT_POINTER,

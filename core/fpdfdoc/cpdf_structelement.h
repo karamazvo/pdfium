@@ -45,7 +45,13 @@ class CPDF_StructElement final : public Retainable {
 
  private:
   struct Kid {
-    enum Type { kInvalid, kElement, kPageContent, kStreamContent, kObject };
+    enum Type : uint8_t {
+      kInvalid,
+      kElement,
+      kPageContent,
+      kStreamContent,
+      kObject,
+    };
 
     Kid();
     Kid(const Kid& that);

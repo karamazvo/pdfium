@@ -25,7 +25,7 @@ class CPDF_CrossRefAvail {
   CPDF_DataAvail::DocAvailStatus CheckAvail();
 
  private:
-  enum class State {
+  enum class State : uint8_t {
     kCrossRefCheck,
     kCrossRefTableItemCheck,
     kCrossRefTableTrailerCheck,
