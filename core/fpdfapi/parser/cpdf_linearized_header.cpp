@@ -94,12 +94,12 @@ std::unique_ptr<CPDF_LinearizedHeader> CPDF_LinearizedHeader::Parse(
 CPDF_LinearizedHeader::CPDF_LinearizedHeader(const CPDF_Dictionary* pDict,
                                              FX_FILESIZE szLastXRefOffset)
     : file_size_(pDict->GetIntegerFor("L")),
-      first_page_no_(pDict->GetIntegerFor("P")),
       main_xref_table_first_entry_offset_(pDict->GetIntegerFor("T")),
-      page_count_(pDict->GetIntegerFor("N")),
       first_page_end_offset_(pDict->GetIntegerFor("E")),
-      first_page_obj_num_(pDict->GetIntegerFor("O")),
-      last_xref_offset_(szLastXRefOffset) {
+      last_xref_offset_(szLastXRefOffset),
+      first_page_no_(pDict->GetIntegerFor("P")),
+      page_count_(pDict->GetIntegerFor("N")),
+      first_page_obj_num_(pDict->GetIntegerFor("O")) {
   RetainPtr<const CPDF_Array> pHintStreamRange = pDict->GetArrayFor("H");
   const size_t nHintStreamSize =
       pHintStreamRange ? pHintStreamRange->size() : 0;
