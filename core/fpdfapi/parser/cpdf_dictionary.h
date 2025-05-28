@@ -159,9 +159,9 @@ class CPDF_DictionaryLocker {
   FX_STACK_ALLOCATED();
   using const_iterator = CPDF_Dictionary::const_iterator;
 
-  explicit CPDF_DictionaryLocker(const CPDF_Dictionary* pDictionary);
-  explicit CPDF_DictionaryLocker(RetainPtr<CPDF_Dictionary> pDictionary);
-  explicit CPDF_DictionaryLocker(RetainPtr<const CPDF_Dictionary> pDictionary);
+  explicit CPDF_DictionaryLocker(const CPDF_Dictionary* dictionary);
+  explicit CPDF_DictionaryLocker(RetainPtr<CPDF_Dictionary> dictionary);
+  explicit CPDF_DictionaryLocker(RetainPtr<const CPDF_Dictionary> dictionary);
   ~CPDF_DictionaryLocker();
 
   const_iterator begin() const {

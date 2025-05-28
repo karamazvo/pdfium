@@ -711,21 +711,21 @@ CJS_Result CJS_Document::get_info(CJS_Runtime* pRuntime) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
   }
 
-  RetainPtr<const CPDF_Dictionary> pDictionary =
+  RetainPtr<const CPDF_Dictionary> dictionary =
       form_fill_env_->GetPDFDocument()->GetInfo();
-  if (!pDictionary) {
+  if (!dictionary) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
   }
 
-  WideString cwAuthor = pDictionary->GetUnicodeTextFor("Author");
-  WideString cwTitle = pDictionary->GetUnicodeTextFor("Title");
-  WideString cwSubject = pDictionary->GetUnicodeTextFor("Subject");
-  WideString cwKeywords = pDictionary->GetUnicodeTextFor("Keywords");
-  WideString cwCreator = pDictionary->GetUnicodeTextFor("Creator");
-  WideString cwProducer = pDictionary->GetUnicodeTextFor("Producer");
-  WideString cwCreationDate = pDictionary->GetUnicodeTextFor("CreationDate");
-  WideString cwModDate = pDictionary->GetUnicodeTextFor("ModDate");
-  WideString cwTrapped = pDictionary->GetUnicodeTextFor("Trapped");
+  WideString cwAuthor = dictionary->GetUnicodeTextFor("Author");
+  WideString cwTitle = dictionary->GetUnicodeTextFor("Title");
+  WideString cwSubject = dictionary->GetUnicodeTextFor("Subject");
+  WideString cwKeywords = dictionary->GetUnicodeTextFor("Keywords");
+  WideString cwCreator = dictionary->GetUnicodeTextFor("Creator");
+  WideString cwProducer = dictionary->GetUnicodeTextFor("Producer");
+  WideString cwCreationDate = dictionary->GetUnicodeTextFor("CreationDate");
+  WideString cwModDate = dictionary->GetUnicodeTextFor("ModDate");
+  WideString cwTrapped = dictionary->GetUnicodeTextFor("Trapped");
 
   v8::Local<v8::Object> pObj = pRuntime->NewObject();
   pRuntime->PutObjectProperty(pObj, "Author",
@@ -748,7 +748,7 @@ CJS_Result CJS_Document::get_info(CJS_Runtime* pRuntime) {
                               pRuntime->NewString(cwTrapped.AsStringView()));
 
   // PutObjectProperty() calls below may re-enter JS and change info dict.
-  CPDF_DictionaryLocker locker(ToDictionary(pDictionary->Clone()));
+  CPDF_DictionaryLocker locker(ToDictionary(dictionary->Clone()));
   for (const auto& it : locker) {
     const ByteString& bsKey = it.first;
     const RetainPtr<CPDF_Object>& pValueObj = it.second;
@@ -779,14 +779,14 @@ CJS_Result CJS_Document::GetPropertyInternal(CJS_Runtime* pRuntime,
     return CJS_Result::Failure(JSMessage::kBadObjectError);
   }
 
-  RetainPtr<CPDF_Dictionary> pDictionary =
+  RetainPtr<CPDF_Dictionary> dictionary =
       form_fill_env_->GetPDFDocument()->GetInfo();
-  if (!pDictionary) {
+  if (!dictionary) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
   }
 
   return CJS_Result::Success(pRuntime->NewString(
-      pDictionary->GetUnicodeTextFor(property_name).AsStringView()));
+      dictionary->GetUnicodeTextFor(property_name).AsStringView()));
 }
 
 CJS_Result CJS_Document::get_creation_date(CJS_Runtime* pRuntime) {
