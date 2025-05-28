@@ -12,7 +12,7 @@
 
 class CXFA_Script final : public CXFA_Node {
  public:
-  enum class Type {
+  enum class Type : uint8_t {
     Formcalc = 0,
     Javascript,
     Unknown,

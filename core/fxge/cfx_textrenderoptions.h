@@ -9,7 +9,7 @@ struct CFX_TextRenderOptions {
   // AliasingType defines the options for drawing pixels on the edges of the
   // text. The values are defined in an incrementing order due to the latter
   // aliasing type's dependency on the previous one.
-  enum AliasingType {
+  enum AliasingType : uint8_t {
     // No transparent pixels on glyph edges.
     kAliasing,
 

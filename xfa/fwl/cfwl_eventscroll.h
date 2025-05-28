@@ -13,7 +13,7 @@ namespace pdfium {
 
 class CFWL_EventScroll final : public CFWL_Event {
  public:
-  enum class Code {
+  enum class Code : uint8_t {
     None = 1,
     Min,
     Max,

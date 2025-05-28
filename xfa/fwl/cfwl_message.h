@@ -19,7 +19,13 @@ class CFWL_Message {
   CPPGC_STACK_ALLOCATED();  // Allow Raw/Unowned pointers.
 
  public:
-  enum class Type { kKey, kKillFocus, kMouse, kMouseWheel, kSetFocus };
+  enum class Type : uint8_t {
+    kKey,
+    kKillFocus,
+    kMouse,
+    kMouseWheel,
+    kSetFocus,
+  };
 
   virtual ~CFWL_Message();
 

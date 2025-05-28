@@ -14,7 +14,7 @@ class CPDF_Dictionary;
 
 class CPDF_ContentMarkItem final : public Retainable {
  public:
-  enum ParamType { kNone, kPropertiesDict, kDirectDict };
+  enum ParamType : uint8_t { kNone, kPropertiesDict, kDirectDict };
 
   CONSTRUCT_VIA_MAKE_RETAIN;
 

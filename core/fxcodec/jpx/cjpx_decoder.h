@@ -30,7 +30,7 @@ class CJPX_Decoder {
   // 1 is the smallest required size.
   static constexpr uint8_t kMaxResolutionsToSkip = 32;
 
-  enum class ColorSpaceOption {
+  enum class ColorSpaceOption : uint8_t {
     kNone,
     kNormal,
     kIndexed,

@@ -43,7 +43,7 @@ class CPDF_SecurityHandler final : public Retainable {
   ByteString GetEncodedPassword(ByteStringView password) const;
 
  private:
-  enum PasswordEncodingConversion {
+  enum PasswordEncodingConversion : uint8_t {
     kUnknown,
     kNone,
     kLatin1ToUtf8,

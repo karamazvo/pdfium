@@ -37,7 +37,7 @@ class CPDF_Creator {
   bool SetFileVersion(int32_t fileVersion);
 
  private:
-  enum class Stage {
+  enum class Stage : int8_t {
     kInvalid = -1,
     kInit0 = 0,
     kWriteHeader10 = 10,

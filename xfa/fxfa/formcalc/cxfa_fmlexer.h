@@ -11,7 +11,7 @@
 #include "core/fxcrt/widestring.h"
 #include "v8/include/cppgc/macros.h"
 
-enum XFA_FM_TOKEN {
+enum XFA_FM_TOKEN : uint8_t {
   TOKand,
   TOKlparen,
   TOKrparen,

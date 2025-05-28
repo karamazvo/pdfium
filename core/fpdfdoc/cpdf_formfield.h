@@ -56,7 +56,7 @@ constexpr size_t kFormFieldTypeCount = 8;
 
 class CPDF_FormField {
  public:
-  enum Type {
+  enum Type : uint8_t {
     kUnknown,
     kPushButton,
     kRadioButton,
