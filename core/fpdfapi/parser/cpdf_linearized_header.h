@@ -48,13 +48,13 @@ class CPDF_LinearizedHeader {
 
  private:
   const FX_FILESIZE file_size_;
-  const uint32_t first_page_no_;
   const FX_FILESIZE main_xref_table_first_entry_offset_;
-  const uint32_t page_count_;
   const FX_FILESIZE first_page_end_offset_;
-  const uint32_t first_page_obj_num_;
   const FX_FILESIZE last_xref_offset_;
   FX_FILESIZE hint_start_ = 0;
+  const uint32_t first_page_no_;
+  const uint32_t page_count_;
+  const uint32_t first_page_obj_num_;
   uint32_t hint_length_ = 0;
 };
 
