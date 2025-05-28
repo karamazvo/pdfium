@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cfcbd5af_4dd48a57",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 14
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-05-28T00:56:02Z",
+      "side": 1,
+      "message": "whoops, I must have messed something up when squashing / messing with my history locally\n\nsorry for wasting a bit of your time there\n\npatchset 14 seems to include the resolutions",
+      "revId": "6e161cac53c99455021d0a5f4de4b76878d9e694",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
