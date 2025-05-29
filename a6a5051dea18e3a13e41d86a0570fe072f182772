@@ -1,0 +1,247 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "585cfd83_7dd03fd3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-29T17:54:15Z",
+      "side": 1,
+      "message": "Few nits, as you like.",
+      "revId": "a6a5051dea18e3a13e41d86a0570fe072f182772",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "627c559a_17c2df5c",
+        "filename": "core/fpdfapi/render/cpdf_renderstatus.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1527,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-29T17:54:15Z",
+      "side": 1,
+      "message": "nit: whaddabout me?",
+      "range": {
+        "startLine": 1527,
+        "startChar": 27,
+        "endLine": 1527,
+        "endChar": 37
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "ca942bc7_234dc7cc",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/render/cpdf_renderstatus.cpp",
+              "range": {
+                "startLine": 1527,
+                "startChar": 0,
+                "endLine": 1528,
+                "endChar": 0
+              },
+              "replacement": "    const CPDF_Dictionary* smask_dict,\n"
+            },
+            {
+              "path": "core/fpdfapi/render/cpdf_renderstatus.cpp",
+              "range": {
+                "startLine": 1532,
+                "startChar": 0,
+                "endLine": 1533,
+                "endChar": 0
+              },
+              "replacement": "      smask_dict-\u003eGetArrayFor(pdfium::transparency::kBC);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "a6a5051dea18e3a13e41d86a0570fe072f182772",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "17357370_bcd701f9",
+        "filename": "fpdfsdk/cpdfsdk_interactiveform.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-29T17:54:15Z",
+      "side": 1,
+      "message": "nit: and here?",
+      "range": {
+        "startLine": 186,
+        "startChar": 27,
+        "endLine": 186,
+        "endChar": 37
+      },
+      "revId": "a6a5051dea18e3a13e41d86a0570fe072f182772",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d28d1f73_b4063dd0",
+        "filename": "fpdfsdk/cpdfsdk_interactiveform.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-29T17:54:15Z",
+      "side": 1,
+      "message": "nit: here too?",
+      "range": {
+        "startLine": 190,
+        "startChar": 37,
+        "endLine": 190,
+        "endChar": 46
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "525c9883_2efb2bbe",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "fpdfsdk/cpdfsdk_interactiveform.cpp",
+              "range": {
+                "startLine": 190,
+                "startChar": 0,
+                "endLine": 192,
+                "endChar": 0
+              },
+              "replacement": "    RetainPtr\u003cconst CPDF_Dictionary\u003e page_dict \u003d document-\u003eGetPageDictionary(i);\n    if (!page_dict) {\n"
+            },
+            {
+              "path": "fpdfsdk/cpdfsdk_interactiveform.cpp",
+              "range": {
+                "startLine": 195,
+                "startChar": 0,
+                "endLine": 196,
+                "endChar": 0
+              },
+              "replacement": "    RetainPtr\u003cconst CPDF_Array\u003e pAnnots \u003d page_dict-\u003eGetArrayFor(\"Annots\");\n"
+            }
+          ]
+        }
+      ],
+      "revId": "a6a5051dea18e3a13e41d86a0570fe072f182772",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "adce7636_853e1532",
+        "filename": "fxjs/cjs_document.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 720,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-05-29T17:54:15Z",
+      "side": 1,
+      "message": "nit: or just `dict` while at it.",
+      "range": {
+        "startLine": 720,
+        "startChar": 24,
+        "endLine": 720,
+        "endChar": 34
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "a848dcad_42a747f7",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "fxjs/cjs_document.cpp",
+              "range": {
+                "startLine": 714,
+                "startChar": 0,
+                "endLine": 715,
+                "endChar": 0
+              },
+              "replacement": "  RetainPtr\u003cconst CPDF_Dictionary\u003e dict \u003d\n"
+            },
+            {
+              "path": "fxjs/cjs_document.cpp",
+              "range": {
+                "startLine": 716,
+                "startChar": 0,
+                "endLine": 717,
+                "endChar": 0
+              },
+              "replacement": "  if (!dict) {\n"
+            },
+            {
+              "path": "fxjs/cjs_document.cpp",
+              "range": {
+                "startLine": 720,
+                "startChar": 0,
+                "endLine": 729,
+                "endChar": 0
+              },
+              "replacement": "  WideString cwAuthor \u003d dict-\u003eGetUnicodeTextFor(\"Author\");\n  WideString cwTitle \u003d dict-\u003eGetUnicodeTextFor(\"Title\");\n  WideString cwSubject \u003d dict-\u003eGetUnicodeTextFor(\"Subject\");\n  WideString cwKeywords \u003d dict-\u003eGetUnicodeTextFor(\"Keywords\");\n  WideString cwCreator \u003d dict-\u003eGetUnicodeTextFor(\"Creator\");\n  WideString cwProducer \u003d dict-\u003eGetUnicodeTextFor(\"Producer\");\n  WideString cwCreationDate \u003d dict-\u003eGetUnicodeTextFor(\"CreationDate\");\n  WideString cwModDate \u003d dict-\u003eGetUnicodeTextFor(\"ModDate\");\n  WideString cwTrapped \u003d dict-\u003eGetUnicodeTextFor(\"Trapped\");\n"
+            },
+            {
+              "path": "fxjs/cjs_document.cpp",
+              "range": {
+                "startLine": 751,
+                "startChar": 0,
+                "endLine": 752,
+                "endChar": 0
+              },
+              "replacement": "  CPDF_DictionaryLocker locker(ToDictionary(dict-\u003eClone()));\n"
+            },
+            {
+              "path": "fxjs/cjs_document.cpp",
+              "range": {
+                "startLine": 782,
+                "startChar": 0,
+                "endLine": 783,
+                "endChar": 0
+              },
+              "replacement": "  RetainPtr\u003cCPDF_Dictionary\u003e dict \u003d\n"
+            },
+            {
+              "path": "fxjs/cjs_document.cpp",
+              "range": {
+                "startLine": 784,
+                "startChar": 0,
+                "endLine": 785,
+                "endChar": 0
+              },
+              "replacement": "  if (!dict) {\n"
+            },
+            {
+              "path": "fxjs/cjs_document.cpp",
+              "range": {
+                "startLine": 789,
+                "startChar": 0,
+                "endLine": 790,
+                "endChar": 0
+              },
+              "replacement": "      dict-\u003eGetUnicodeTextFor(property_name).AsStringView()));\n"
+            }
+          ]
+        }
+      ],
+      "revId": "a6a5051dea18e3a13e41d86a0570fe072f182772",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
