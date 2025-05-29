@@ -62,6 +62,8 @@ class CJBig2_TRDProc {
       pdfium::span<JBig2ArithCtx> grContexts,
       JBig2IntDecoderState* pIDS);
 
+  JBig2ComposeOp SBCOMBOP;
+  JBig2Corner REFCORNER;
   bool SBHUFF;
   bool SBREFINE;
   bool SBRTEMPLATE;
@@ -76,8 +78,6 @@ class CJBig2_TRDProc {
   uint32_t SBNUMSYMS;
   std::vector<JBig2HuffmanCode> SBSYMCODES;
   std::vector<UnownedPtr<CJBig2_Image>> SBSYMS;
-  JBig2ComposeOp SBCOMBOP;
-  JBig2Corner REFCORNER;
   UnownedPtr<const CJBig2_HuffmanTable> SBHUFFFS;
   UnownedPtr<const CJBig2_HuffmanTable> SBHUFFDS;
   UnownedPtr<const CJBig2_HuffmanTable> SBHUFFDT;

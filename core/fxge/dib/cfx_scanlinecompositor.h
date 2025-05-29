@@ -108,15 +108,15 @@ class CFX_ScanlineCompositor {
       int width,
       pdfium::span<const uint8_t> clip_scan) const;
 
+  BlendMode blend_type_ = BlendMode::kNormal;
+  bool rgb_byte_order_ = false;
   FXDIB_Format src_format_;
   FXDIB_Format dest_format_;
-  Palette src_palette_;
   int mask_alpha_;
   int mask_red_;
   int mask_green_;
   int mask_blue_;
-  BlendMode blend_type_ = BlendMode::kNormal;
-  bool rgb_byte_order_ = false;
+  Palette src_palette_;
 };
 
 #endif  // CORE_FXGE_DIB_CFX_SCANLINECOMPOSITOR_H_
