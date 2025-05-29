@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "14694638_84a34da5",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-29T21:26:40Z",
+      "side": 1,
+      "message": "Since the functions in the vector aren\u0027t being used, just pass a bool instead?",
+      "revId": "2b275936e0058460eeb8e033e4a65d029ecdd062",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ba427fab_b43c7e79",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 849,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-29T21:26:40Z",
+      "side": 1,
+      "message": "The code in this block has been repeated a few times. Consolidate?",
+      "revId": "2b275936e0058460eeb8e033e4a65d029ecdd062",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
