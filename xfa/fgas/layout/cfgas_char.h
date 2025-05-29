@@ -44,11 +44,11 @@ class CFGAS_Char {
   BreakType status_ = BreakType::kNone;
   FX_BIDICLASS bidi_class_ = FX_BIDICLASS::kON;
   FX_LINEBREAKTYPE line_break_type_ = FX_LINEBREAKTYPE::kUNKNOWN;
-  uint32_t char_styles_ = 0;
-  int32_t char_width_ = 0;
   uint16_t bidi_level_ = 0;
   uint16_t bidi_pos_ = 0;
   uint16_t bidi_order_ = 0;
+  uint32_t char_styles_ = 0;
+  int32_t char_width_ = 0;
   int32_t font_size_ = 0;
   uint32_t identity_ = 0;
   RetainPtr<CFGAS_TextUserData> user_data_;

@@ -84,22 +84,22 @@ class CJBig2_Context {
   std::vector<JBig2HuffmanCode> DecodeSymbolIDHuffmanTable(uint32_t SBNUMSYMS);
   const CJBig2_HuffmanTable* GetHuffmanTable(size_t idx);
 
+  FXCODEC_STATUS processing_status_ = FXCODEC_STATUS::kFrameReady;
+  const bool is_global_;
+  bool in_page_ = false;
+  bool buf_specified_ = false;
+  int32_t pause_step_ = 10;
+  uint32_t offset_ = 0;
   std::unique_ptr<CJBig2_Context> global_context_;
   std::unique_ptr<CJBig2_BitStream> stream_;
   std::vector<std::unique_ptr<CJBig2_Segment>> segment_list_;
   std::vector<std::unique_ptr<JBig2PageInfo>> page_info_list_;
   std::unique_ptr<CJBig2_Image> page_;
   std::vector<std::unique_ptr<CJBig2_HuffmanTable>> huffman_tables_;
-  const bool is_global_;
-  bool in_page_ = false;
-  bool buf_specified_ = false;
-  int32_t pause_step_ = 10;
-  FXCODEC_STATUS processing_status_ = FXCODEC_STATUS::kFrameReady;
   std::vector<JBig2ArithCtx> gb_contexts_;
   std::unique_ptr<CJBig2_ArithDecoder> arith_decoder_;
   std::unique_ptr<CJBig2_GRDProc> grd_;
   std::unique_ptr<CJBig2_Segment> segment_;
-  uint32_t offset_ = 0;
   JBig2RegionInfo ri_ = {};
   UnownedPtr<std::list<CJBig2_CachePair>> const symbol_dict_cache_;
 };

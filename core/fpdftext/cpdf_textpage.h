@@ -181,6 +181,8 @@ class CPDF_TextPage {
   WideString GetTextByPredicate(
       const std::function<bool(const CharInfo&)>& predicate) const;
 
+  const bool rtl_;
+  TextOrientation textline_dir_ = TextOrientation::kUnknown;
   UnownedPtr<const CPDF_Page> const page_;
   DataVector<TextPageCharSegment> char_indices_;
   std::deque<CharInfo> char_list_;
@@ -189,11 +191,9 @@ class CPDF_TextPage {
   WideTextBuffer temp_text_buf_;
   UnownedPtr<const CPDF_TextObject> prev_text_obj_;
   CFX_Matrix prev_matrix_;
-  const bool rtl_;
   const CFX_Matrix display_matrix_;
   std::vector<CFX_FloatRect> sel_rects_;
   std::vector<TransformedTextObject> mTextObjects;
-  TextOrientation textline_dir_ = TextOrientation::kUnknown;
   CFX_FloatRect curline_rect_;
 };
 

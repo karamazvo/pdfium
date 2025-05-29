@@ -134,27 +134,27 @@ class CStretchEngine {
     kManyBpptoManyBppWithAlpha
   };
 
+  State state_ = State::kInitial;
+  TransformMethod trans_method_;
   const FXDIB_Format dest_format_;
-  const int dest_bpp_;
-  const int src_bpp_;
   const bool has_alpha_;
-  RetainPtr<const CFX_DIBBase> const source_;
-  pdfium::raw_span<const uint32_t> src_palette_;
+  const int src_bpp_;
   const int src_width_;
   const int src_height_;
-  UnownedPtr<ScanlineComposerIface> const dest_bitmap_;
+  const int dest_bpp_;
   const int dest_width_;
   const int dest_height_;
-  const FX_RECT dest_clip_;
-  DataVector<uint8_t> dest_scanline_;
-  FixedSizeDataVector<uint8_t> inter_buf_;
-  FX_RECT src_clip_;
+  int cur_row_ = 0;
   int inter_pitch_;
   int extra_mask_pitch_;
+  FX_RECT src_clip_;
+  const FX_RECT dest_clip_;
+  RetainPtr<const CFX_DIBBase> const source_;
+  pdfium::raw_span<const uint32_t> src_palette_;
+  UnownedPtr<ScanlineComposerIface> const dest_bitmap_;
+  DataVector<uint8_t> dest_scanline_;
+  FixedSizeDataVector<uint8_t> inter_buf_;
   FXDIB_ResampleOptions resample_options_;
-  TransformMethod trans_method_;
-  State state_ = State::kInitial;
-  int cur_row_ = 0;
   WeightTable weight_table_;
 };
 

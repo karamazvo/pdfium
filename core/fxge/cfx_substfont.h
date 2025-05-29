@@ -23,16 +23,14 @@ class CFX_SubstFont {
   void SetIsBuiltInGenericFont() { flag_mm_ = true; }
   bool IsBuiltInGenericFont() const { return flag_mm_; }
 
-  ByteString family_;
   FX_Charset charset_ = FX_Charset::kANSI;
+  bool subst_cjk_ = false;
+  bool italic_cjk_ = false;
+  bool flag_mm_ = false;
   int weight_ = 0;
   int italic_angle_ = 0;
   int weight_cjk_ = 0;
-  bool subst_cjk_ = false;
-  bool italic_cjk_ = false;
-
- private:
-  bool flag_mm_ = false;
+  ByteString family_;
 };
 
 #endif  // CORE_FXGE_CFX_SUBSTFONT_H_

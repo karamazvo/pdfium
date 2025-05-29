@@ -72,24 +72,24 @@ class CPDF_Creator {
 
   CPDF_CryptoHandler* GetCryptoHandler();
 
+  Stage stage_ = Stage::kInvalid;
+  bool security_changed_ = false;
+  bool is_incremental_ = false;
+  bool is_original_ = false;
+  int32_t file_version_ = 0;
+  uint32_t last_obj_num_ = 0;
+  uint32_t cur_obj_num_ = 0;
+  FX_FILESIZE saved_offset_ = 0;
+  FX_FILESIZE xref_start_ = 0;
   UnownedPtr<CPDF_Document> const document_;
   UnownedPtr<CPDF_Parser> const parser_;
   RetainPtr<const CPDF_Dictionary> encrypt_dict_;
   RetainPtr<CPDF_Dictionary> new_encrypt_dict_;
   RetainPtr<CPDF_SecurityHandler> security_handler_;
-  uint32_t last_obj_num_;
   std::unique_ptr<IFX_ArchiveStream> archive_;
-  FX_FILESIZE saved_offset_ = 0;
-  Stage stage_ = Stage::kInvalid;
-  uint32_t cur_obj_num_ = 0;
-  FX_FILESIZE xref_start_ = 0;
   std::map<uint32_t, FX_FILESIZE> object_offsets_;
   std::vector<uint32_t> new_obj_num_array_;  // Sorted, ascending.
   RetainPtr<CPDF_Array> id_array_;
-  int32_t file_version_ = 0;
-  bool security_changed_ = false;
-  bool is_incremental_ = false;
-  bool is_original_ = false;
 };
 
 #endif  // CORE_FPDFAPI_EDIT_CPDF_CREATOR_H_

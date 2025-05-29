@@ -25,10 +25,10 @@ const FGAS_FONTUSB* FGAS_GetUnicodeBitField(wchar_t wUnicode);
 
 struct FGAS_FontInfo {
   uint32_t dwFontNameHash;   // WideString hash.
-  const char* pPsName;       // Raw, POD struct.
-  const char* pReplaceFont;  // Raw, POD struct.
   uint16_t dwStyles;
   FX_CodePage wCodePage;
+  const char* pPsName;       // Raw, POD struct.
+  const char* pReplaceFont;  // Raw, POD struct.
 };
 
 WideString FGAS_FontNameToEnglishName(const WideString& wsLocalName);

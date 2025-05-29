@@ -82,6 +82,7 @@ class CPDF_PageImageCache {
     void CalcSize();
     bool IsCacheValid(const CFX_Size& max_size_required) const;
 
+    bool cached_set_max_size_required_ = false;
     uint32_t time_count_ = 0;
     uint32_t matte_color_ = 0;
     uint32_t cache_size_ = 0;
@@ -90,7 +91,6 @@ class CPDF_PageImageCache {
     RetainPtr<CFX_DIBBase> cur_mask_;
     RetainPtr<CFX_DIBBase> cached_bitmap_;
     RetainPtr<CFX_DIBBase> cached_mask_;
-    bool cached_set_max_size_required_ = false;
   };
 
   void ClearImageCacheEntry(const CPDF_Stream* pStream);

@@ -147,14 +147,14 @@ class CFX_Font {
   std::unique_ptr<FXFT_StreamRec> owned_stream_rec_;  // Must outlive |face_|.
 #endif
 
+  FontType font_type_ = FontType::kUnknown;
+  bool vertical_ = false;
+  uint64_t object_tag_ = 0;
   mutable RetainPtr<CFX_Face> face_;
   mutable RetainPtr<CFX_GlyphCache> glyph_cache_;
   std::unique_ptr<CFX_SubstFont> subst_font_;
   DataVector<uint8_t> font_data_allocation_;
   pdfium::raw_span<uint8_t> font_data_;
-  FontType font_type_ = FontType::kUnknown;
-  uint64_t object_tag_ = 0;
-  bool vertical_ = false;
 #if BUILDFLAG(IS_APPLE)
   UNOWNED_PTR_EXCLUSION void* platform_font_ = nullptr;
 #endif
