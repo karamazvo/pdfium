@@ -32,7 +32,8 @@ class CPDF_Type1Font;
 class CPDF_Type3Char;
 class CPDF_Type3Font;
 class CPDF_ToUnicodeMap;
-enum class FontEncoding;
+
+enum class FontEncoding : uint8_t;
 
 class CPDF_Font : public Retainable, public Observable {
  public:

@@ -31,7 +31,7 @@
 class CFXJS_ObjDefinition;
 class V8TemplateMap;
 
-enum FXJSOBJTYPE {
+enum FXJSOBJTYPE : uint8_t {
   FXJSOBJTYPE_DYNAMIC = 0,  // Created by native method and returned to JS.
   FXJSOBJTYPE_STATIC,       // Created by init and hung off of global object.
   FXJSOBJTYPE_GLOBAL,       // The global object itself (may only appear once).

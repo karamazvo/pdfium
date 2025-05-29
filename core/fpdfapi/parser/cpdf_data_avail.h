@@ -113,7 +113,7 @@ class CPDF_DataAvail final : public Observable::ObserverIface {
 
   class PageNode {
    public:
-    enum class Type { kUnknown = 0, kPage, kPages, kArray };
+    enum class Type : uint8_t { kUnknown = 0, kPage, kPages, kArray };
 
     PageNode();
     ~PageNode();

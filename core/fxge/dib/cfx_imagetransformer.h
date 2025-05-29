@@ -51,7 +51,7 @@ class CFX_ImageTransformer {
   RetainPtr<CFX_DIBitmap> DetachBitmap();
 
  private:
-  enum class StretchType {
+  enum class StretchType : uint8_t {
     kNone,
     kNormal,
     kRotate,

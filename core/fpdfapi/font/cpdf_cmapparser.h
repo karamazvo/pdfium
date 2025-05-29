@@ -29,7 +29,7 @@ class CPDF_CMapParser {
   friend class CPDFCMapParserTest_GetCode_Test;
   friend class CPDFCMapParserTest_GetCodeRange_Test;
 
-  enum Status {
+  enum Status : uint8_t {
     kStart,
     kProcessingCidChar,
     kProcessingCidRange,

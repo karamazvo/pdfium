@@ -51,7 +51,7 @@ enum class XFA_PrintOpt : uint8_t {
   kPrintAnnot = 1 << 5,
 };
 
-enum class XFA_EventError {
+enum class XFA_EventError : int8_t {
   kError = -1,
   kNotExist = 0,
   kSuccess = 1,

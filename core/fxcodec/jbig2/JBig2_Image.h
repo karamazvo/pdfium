@@ -19,7 +19,7 @@
 
 struct FX_RECT;
 
-enum JBig2ComposeOp {
+enum JBig2ComposeOp : uint8_t {
   JBIG2_COMPOSE_OR = 0,
   JBIG2_COMPOSE_AND = 1,
   JBIG2_COMPOSE_XOR = 2,

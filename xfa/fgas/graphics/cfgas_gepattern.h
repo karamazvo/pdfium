@@ -11,7 +11,7 @@
 
 class CFGAS_GEPattern final {
  public:
-  enum class HatchStyle {
+  enum class HatchStyle : uint8_t {
     Horizontal = 0,
     Vertical = 1,
     ForwardDiagonal = 2,
