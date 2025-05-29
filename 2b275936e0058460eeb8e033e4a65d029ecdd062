@@ -18,6 +18,29 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "40b426d6_2c75ffd2",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 448,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-29T23:02:08Z",
+      "side": 1,
+      "message": "FYI, I\u0027ll resolve this TODO in https://pdfium-review.googlesource.com/132590 after this lands.",
+      "range": {
+        "startLine": 448,
+        "startChar": 8,
+        "endLine": 448,
+        "endChar": 19
+      },
+      "revId": "2b275936e0058460eeb8e033e4a65d029ecdd062",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ba427fab_b43c7e79",
