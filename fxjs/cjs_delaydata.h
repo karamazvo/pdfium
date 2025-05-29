@@ -19,14 +19,14 @@ struct CJS_DelayData {
   ~CJS_DelayData();
 
   FIELD_PROP eProp;
+  bool b = false;
   int nControlIndex;
   int32_t num = 0;
-  bool b = false;
+  CFX_Color color;
   WideString sFieldName;
   ByteString bytestring;
   WideString widestring;
   CFX_FloatRect rect;
-  CFX_Color color;
   std::vector<uint32_t> wordarray;
   std::vector<WideString> widestringarray;
 };

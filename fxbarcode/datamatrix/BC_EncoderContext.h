@@ -39,9 +39,9 @@ class CBC_EncoderContext {
   WideString msg_;
   WideString codewords_;
   size_t pos_ = 0;
+  UnownedPtr<const CBC_SymbolInfo> symbol_info_;
   CBC_HighLevelEncoder::Encoding new_encoding_ =
       CBC_HighLevelEncoder::Encoding::UNKNOWN;
-  UnownedPtr<const CBC_SymbolInfo> symbol_info_;
 
  private:
   size_t getTotalMessageCharCount();

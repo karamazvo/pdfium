@@ -51,20 +51,20 @@ class CFGAS_TxtBreak final : public CFGAS_Break {
     Run(const Run& other);
     ~Run();
 
-    UnownedPtr<CFGAS_TxtBreak::Engine> pEdtEngine;
-    WideString wsStr;
-    pdfium::span<int32_t> pWidths;
+    bool bSkipSpace = true;
+    Mask<LayoutStyle> dwStyles = LayoutStyle::kNone;
     // TODO(thestig): These 2 members probably should be size_t.
     int32_t iStart = 0;
     int32_t iLength = 0;
-    RetainPtr<CFGAS_GEFont> font;
-    float fFontSize = 12.0f;
-    Mask<LayoutStyle> dwStyles = LayoutStyle::kNone;
     int32_t iHorizontalScale = 100;
     int32_t iVerticalScale = 100;
     uint32_t dwCharStyles = 0;
+    float fFontSize = 12.0f;
+    UnownedPtr<CFGAS_TxtBreak::Engine> pEdtEngine;
+    WideString wsStr;
+    pdfium::span<int32_t> pWidths;
+    RetainPtr<CFGAS_GEFont> font;
     UnownedPtr<const CFX_RectF> pRect;
-    bool bSkipSpace = true;
   };
 
   CFGAS_TxtBreak();

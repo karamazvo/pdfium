@@ -209,6 +209,15 @@ class CPDF_StreamContentParser {
   void Handle_NextLineShowText_Space();
   void Handle_Invalid();
 
+  CFX_FillRenderOptions::FillType path_clip_type_ =
+      CFX_FillRenderOptions::FillType::kNoFill;
+  bool colored_ = false;
+  uint32_t param_start_pos_ = 0;
+  uint32_t param_count_ = 0;
+
+  // The merged stream offset at which the last |syntax_| started parsing.
+  uint32_t start_parse_offset_ = 0;
+
   UnownedPtr<CPDF_Document> const document_;
   RetainPtr<CPDF_Dictionary> const page_resources_;
   RetainPtr<CPDF_Dictionary> const parent_resources_;
@@ -217,8 +226,6 @@ class CPDF_StreamContentParser {
   UnownedPtr<CPDF_Form::RecursionState> const recursion_state_;
   CFX_Matrix mt_content_to_user_;
   const CFX_FloatRect bbox_;
-  uint32_t param_start_pos_ = 0;
-  uint32_t param_count_ = 0;
   std::unique_ptr<CPDF_StreamParser> syntax_;
   std::unique_ptr<CPDF_AllStates> cur_states_;
   std::stack<std::unique_ptr<CPDF_ContentMarks>> content_marks_stack_;
@@ -226,11 +233,8 @@ class CPDF_StreamContentParser {
   std::vector<CFX_Path::Point> path_points_;
   CFX_PointF path_start_;
   CFX_PointF path_current_;
-  CFX_FillRenderOptions::FillType path_clip_type_ =
-      CFX_FillRenderOptions::FillType::kNoFill;
   ByteString last_image_name_;
   RetainPtr<CPDF_Image> last_image_;
-  bool colored_ = false;
   std::vector<std::unique_ptr<CPDF_AllStates>> state_stack_;
   std::array<float, 6> type3_data_ = {};
   std::array<ContentParam, kParamBufSize> param_buf_;
@@ -240,8 +244,6 @@ class CPDF_StreamContentParser {
   // begins.
   std::vector<uint32_t> stream_start_offsets_;
 
-  // The merged stream offset at which the last |syntax_| started parsing.
-  uint32_t start_parse_offset_ = 0;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_STREAMCONTENTPARSER_H_

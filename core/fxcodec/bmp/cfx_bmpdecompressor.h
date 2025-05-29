@@ -71,20 +71,16 @@ class CFX_BmpDecompressor {
   bool SetHeight(int32_t signed_height);
   int PaletteChannelCount() const { return pal_type_ == PalType::kNew ? 4 : 3; }
 
-  UnownedPtr<const CFX_BmpContext> const context_;
-  DataVector<uint8_t> out_row_buffer_;
-  std::vector<FX_ARGB> palette_;
+  DecodeStatus decode_status_ = DecodeStatus::kHeader;
+  PalType pal_type_ = PalType::kNew;
+  bool img_tb_flag_ = false;
+  uint16_t bit_counts_ = 0;
   uint32_t header_offset_ = 0;
   uint32_t width_ = 0;
   uint32_t height_ = 0;
   uint32_t compress_flag_ = 0;
   int32_t components_ = 0;
-  size_t src_row_bytes_ = 0;
-  size_t out_row_bytes_ = 0;
-  bool img_tb_flag_ = false;
-  uint16_t bit_counts_ = 0;
   uint32_t color_used_ = 0;
-  PalType pal_type_ = PalType::kNew;
   uint32_t data_offset_ = 0;
   uint32_t data_size_ = 0;
   uint32_t img_ifh_size_ = 0;
@@ -95,7 +91,11 @@ class CFX_BmpDecompressor {
   uint32_t mask_red_ = 0;
   uint32_t mask_green_ = 0;
   uint32_t mask_blue_ = 0;
-  DecodeStatus decode_status_ = DecodeStatus::kHeader;
+  size_t src_row_bytes_ = 0;
+  size_t out_row_bytes_ = 0;
+  UnownedPtr<const CFX_BmpContext> const context_;
+  DataVector<uint8_t> out_row_buffer_;
+  std::vector<FX_ARGB> palette_;
   RetainPtr<CFX_CodecMemory> input_buffer_;
 };
 
