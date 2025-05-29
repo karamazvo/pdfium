@@ -41,7 +41,7 @@ class CXFA_LayoutItem : public GCedTreeNode<CXFA_LayoutItem> {
   void SetFormNode(CXFA_Node* pNode);
 
  protected:
-  enum ItemType { kViewItem, kContentItem };
+  enum ItemType : uint8_t { kViewItem, kContentItem };
   CXFA_LayoutItem(CXFA_Node* pNode, ItemType type);
 
  private:

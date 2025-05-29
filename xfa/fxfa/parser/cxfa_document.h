@@ -44,7 +44,7 @@ namespace cppgc {
 class Heap;
 }  // namespace cppgc
 
-enum XFA_VERSION {
+enum XFA_VERSION : uint16_t {
   XFA_VERSION_UNKNOWN = 0,
   XFA_VERSION_200 = 200,
   XFA_VERSION_202 = 202,

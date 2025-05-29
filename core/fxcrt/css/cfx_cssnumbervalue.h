@@ -10,7 +10,7 @@
 #include "core/fxcrt/css/cfx_cssvalue.h"
 
 struct CFX_CSSNumber {
-  enum class Unit {
+  enum class Unit : uint8_t {
     kNumber,
     kPercent,
     kEMS,

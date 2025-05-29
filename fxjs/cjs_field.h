@@ -18,7 +18,7 @@ class CFX_FloatRect;
 class CPDF_FormControl;
 struct CJS_DelayData;
 
-enum FIELD_PROP {
+enum FIELD_PROP : uint8_t {
   FP_BORDERSTYLE,
   FP_CURRENTVALUEINDICES,
   FP_DISPLAY,

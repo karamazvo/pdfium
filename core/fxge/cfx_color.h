@@ -11,7 +11,7 @@
 
 struct CFX_Color {
   // Ordered by increasing number of components.
-  enum class Type { kTransparent = 0, kGray, kRGB, kCMYK };
+  enum class Type : uint8_t { kTransparent = 0, kGray, kRGB, kCMYK, };
 
   struct TypeAndARGB {
     TypeAndARGB(CFX_Color::Type type_in, FX_ARGB argb_in)

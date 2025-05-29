@@ -114,20 +114,20 @@ class CPDF_TextPage {
   bool GetRect(int rectIndex, CFX_FloatRect* pRect) const;
 
  private:
-  enum class TextOrientation {
+  enum class TextOrientation : uint8_t {
     kUnknown,
     kHorizontal,
     kVertical,
   };
 
-  enum class GenerateCharacter {
+  enum class GenerateCharacter : uint8_t {
     kNone,
     kSpace,
     kLineBreak,
     kHyphen,
   };
 
-  enum class MarkedContentState { kPass = 0, kDone, kDelay };
+  enum class MarkedContentState : uint8_t { kPass = 0, kDone, kDelay, };
 
   struct TransformedTextObject {
     TransformedTextObject();

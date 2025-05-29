@@ -116,7 +116,7 @@ struct FXDIB_ResampleOptions {
 
 // See PDF 1.7 spec, table 7.2 and 7.3. The enum values need to be in the same
 // order as listed in the spec.
-enum class BlendMode {
+enum class BlendMode : uint8_t {
   kNormal = 0,
   kMultiply,
   kScreen,
