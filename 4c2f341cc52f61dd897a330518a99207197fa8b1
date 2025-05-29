@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cd31ceea_8cea1e41",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 8
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-29T20:52:55Z",
+      "side": 1,
+      "message": "`Roll abseil-cpp, build, buildtools, clang, icu and tools/rust`\n\n- Shorten the summary line.\n- Most entries are unambiguous with the shortened name.",
+      "revId": "4c2f341cc52f61dd897a330518a99207197fa8b1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7f1ecfe7_086b2c99",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 8
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-29T20:52:55Z",
+      "side": 1,
+      "message": "PDFium DEPS rolls usually just omit the actual log of commits, since it can be quite long. Readers can click the link above if they want to see the details.",
+      "revId": "4c2f341cc52f61dd897a330518a99207197fa8b1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4f0fa916_666bb81b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 8
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-29T20:52:55Z",
+      "side": 1,
+      "message": "PDFium DEPS rolls usually highlight the compiler upgrades. See the commit message in https://pdfium-review.googlesource.com/c/pdfium/+/130570 for example.",
+      "revId": "4c2f341cc52f61dd897a330518a99207197fa8b1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
