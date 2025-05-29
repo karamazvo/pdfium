@@ -16,6 +16,24 @@
       "message": "Lei, \n\nPlease help running a dry run to check if Siso builds are working or not.",
       "revId": "7e5a619e1e5a459f0230078aab6f3652297a7ba7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "829d45a7_1db1e201",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9026
+      },
+      "writtenOn": "2025-05-29T01:53:35Z",
+      "side": 1,
+      "message": "Hmm, the builds are taking long time. suspect remoteexec isn\u0027t enabled.\nreverting the recipe \nhttps://chromium-review.googlesource.com/c/chromium/tools/build/+/6600249",
+      "parentUuid": "85654596_a58e0d25",
+      "revId": "7e5a619e1e5a459f0230078aab6f3652297a7ba7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
