@@ -746,6 +746,7 @@ bool CFX_DIBitmap::CompositeRect(int left,
     return true;
   }
 
+  CHECK_GE(rect.left, 0);
   width = rect.Width();
   uint32_t dst_color = color;
   uint8_t* color_p = reinterpret_cast<uint8_t*>(&dst_color);
@@ -850,29 +851,28 @@ bool CFX_DIBitmap::CompositeRect(int left,
   }
   if (bAlpha) {
     for (int row = rect.top; row < rect.bottom; row++) {
-      UNSAFE_TODO({
-        uint8_t* dest_scan =
-            buffer_.Get() + row * GetPitch() + rect.left * bytes_per_pixel;
-        for (int col = 0; col < width; col++) {
-          uint8_t back_alpha = dest_scan[3];
-          if (back_alpha == 0) {
-            FXARGB_SetDIB(dest_scan, ArgbEncode(src_alpha, color_p[2],
-                                                color_p[1], color_p[0]));
-            dest_scan += 4;
-            continue;
-          }
-          uint8_t dest_alpha =
-              back_alpha + src_alpha - back_alpha * src_alpha / 255;
-          int alpha_ratio = src_alpha * 255 / dest_alpha;
-          *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, color_p[0], alpha_ratio);
-          dest_scan++;
-          *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, color_p[1], alpha_ratio);
-          dest_scan++;
-          *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, color_p[2], alpha_ratio);
-          dest_scan++;
-          *dest_scan++ = dest_alpha;
+      auto dest_span = GetWritableScanline(row).subspan(
+          static_cast<size_t>(rect.left) * bytes_per_pixel);
+      for (int col = 0; col < width; col++) {
+        auto dest = dest_span.first<4u>();
+        dest_span = dest_span.subspan<4u>();
+        uint8_t back_alpha = dest[3];
+        if (back_alpha == 0) {
+          FXARGB_SetDIB(dest, UNSAFE_TODO(ArgbEncode(src_alpha, color_p[2],
+                                                     color_p[1], color_p[0])));
+          continue;
         }
-      });
+        uint8_t dest_alpha =
+            back_alpha + src_alpha - back_alpha * src_alpha / 255;
+        int alpha_ratio = src_alpha * 255 / dest_alpha;
+        dest[0] =
+            FXDIB_ALPHA_MERGE(dest[0], UNSAFE_TODO(color_p[0]), alpha_ratio);
+        dest[1] =
+            FXDIB_ALPHA_MERGE(dest[1], UNSAFE_TODO(color_p[1]), alpha_ratio);
+        dest[2] =
+            FXDIB_ALPHA_MERGE(dest[2], UNSAFE_TODO(color_p[2]), alpha_ratio);
+        dest[3] = dest_alpha;
+      }
     }
     return true;
   }
