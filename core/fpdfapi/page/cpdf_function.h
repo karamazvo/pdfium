@@ -23,7 +23,7 @@ class CPDF_StitchFunc;
 class CPDF_Function {
  public:
   // Valid values are from ISO 32000-1:2008 spec, table 38. DO NOT CHANGE.
-  enum class Type {
+  enum class Type : int8_t {
     kTypeInvalid = -1,
     kType0Sampled = 0,
     kType2ExponentialInterpolation = 2,

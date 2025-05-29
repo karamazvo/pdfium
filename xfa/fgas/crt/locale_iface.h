@@ -11,7 +11,7 @@
 
 class LocaleIface {
  public:
-  enum class DateTimeSubcategory {
+  enum class DateTimeSubcategory : uint8_t {
     kDefault,
     kShort,
     kMedium,
@@ -19,7 +19,7 @@ class LocaleIface {
     kLong,
   };
 
-  enum class NumSubcategory {
+  enum class NumSubcategory : uint8_t {
     kPercent,
     kCurrency,
     kDecimal,

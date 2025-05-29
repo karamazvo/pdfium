@@ -18,7 +18,7 @@
 
 // Values used in PDFs except for |kInvalidShading| and |kMaxShading|.
 // Do not change.
-enum ShadingType {
+enum ShadingType : uint8_t {
   kInvalidShading = 0,
   kFunctionBasedShading = 1,
   kAxialShading = 2,
