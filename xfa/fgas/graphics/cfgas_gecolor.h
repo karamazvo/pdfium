@@ -18,7 +18,12 @@ class CFGAS_GEShading;
 
 class CFGAS_GEColor {
  public:
-  enum Type { Invalid, Solid, Pattern, Shading };
+  enum Type : uint8_t {
+    Invalid,
+    Solid,
+    Pattern,
+    Shading,
+  };
 
   explicit CFGAS_GEColor(FX_ARGB argb);
   explicit CFGAS_GEColor(CFGAS_GEShading* shading);

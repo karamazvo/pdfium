@@ -52,7 +52,7 @@ class CFXJSE_Engine final : public CFX_V8 {
     CPPGC_STACK_ALLOCATED();  // Allow raw/unowned pointers.
 
    public:
-    enum class Type {
+    enum class Type : uint8_t {
       kNodes = 0,
       kAttribute,
       kCreateNodeOne,

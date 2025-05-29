@@ -21,7 +21,7 @@
 #include "core/fxge/freetype/fx_freetype.h"
 
 namespace fxge {
-enum class FontEncoding : uint32_t;
+enum class FontEncoding : uint8_t;
 }
 
 class CFX_Font;

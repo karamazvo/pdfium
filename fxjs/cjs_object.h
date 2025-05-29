@@ -13,7 +13,10 @@
 #include "fxjs/cjs_runtime.h"
 
 struct JSConstSpec {
-  enum Type { Number = 0, String = 1 };
+  enum Type : uint8_t {
+    Number = 0,
+    String = 1,
+  };
 
   const char* pName;
   Type eType;

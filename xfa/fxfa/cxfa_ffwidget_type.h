@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_CXFA_FFWIDGET_TYPE_H_
 #define XFA_FXFA_CXFA_FFWIDGET_TYPE_H_
 
-enum class XFA_FFWidgetType {
+enum class XFA_FFWidgetType : uint8_t {
   kNone = 0,
   kBarcode,
   kButton,

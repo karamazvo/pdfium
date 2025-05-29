@@ -7,7 +7,9 @@
 #ifndef CORE_FXGE_DIB_BLEND_H_
 #define CORE_FXGE_DIB_BLEND_H_
 
-enum class BlendMode;
+#include <stdint.h>
+
+enum class BlendMode : uint8_t;
 
 namespace fxge {
 

@@ -56,7 +56,7 @@ class ProgressiveDecoder final :
 #endif  // PDF_ENABLE_XFA_PNG
     public Dummy {
  public:
-  enum FXCodec_Format {
+  enum FXCodec_Format : int16_t {
     FXCodec_Invalid = 0,
     FXCodec_8bppGray = 0x108,
     FXCodec_8bppRgb = 0x008,

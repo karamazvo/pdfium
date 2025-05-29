@@ -18,7 +18,7 @@ class CPDF_Document;
 class CPDF_Font;
 
 // See PDF Reference 1.7, page 402, table 5.3.
-enum class TextRenderingMode {
+enum class TextRenderingMode : int8_t {
   MODE_UNKNOWN = -1,
   MODE_FILL = 0,
   MODE_STROKE = 1,

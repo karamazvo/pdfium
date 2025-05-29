@@ -43,7 +43,7 @@ class CFX_Font {
     const char* fontname;  // Name of default font to use with that charset.
   };
 
-  enum class FontType {
+  enum class FontType : uint8_t {
     kUnknown,
     kCIDTrueType,
   };

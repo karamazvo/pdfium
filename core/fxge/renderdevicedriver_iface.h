@@ -40,7 +40,7 @@ enum class DeviceType : bool {
 
 class RenderDeviceDriverIface {
  public:
-  enum class Result {
+  enum class Result : uint8_t {
     kFailure,
     kSuccess,
 #if BUILDFLAG(IS_WIN)

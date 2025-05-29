@@ -16,7 +16,13 @@
 // Processes characters and group them into segments based on text direction.
 class CFX_BidiChar {
  public:
-  enum class Direction { kNeutral, kLeft, kRight, kLeftWeak };
+  enum class Direction : uint8_t {
+    kNeutral,
+    kLeft,
+    kRight,
+    kLeftWeak,
+  };
+
   struct Segment {
     int32_t start;        // Start position.
     int32_t count;        // Character count.
