@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3d29f4b0_a0b74ca0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-29T13:23:48Z",
+      "side": 1,
+      "message": "(since I have that `--render-repeats\u003d` hammer now, I also measured shade-tensor.pdf time before \"Implement support for drawing bezier patches\", and that patch was perf-neutral.)",
+      "revId": "15cf2394bc78ea3c76ad2d98cef220a9ab466dd6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
