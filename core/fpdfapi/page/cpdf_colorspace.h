@@ -53,7 +53,7 @@ class PatternValue {
 
 class CPDF_ColorSpace : public Retainable, public Observable {
  public:
-  enum class Family {
+  enum class Family : uint8_t {
     kUnknown = 0,
     kDeviceGray = 1,
     kDeviceRGB = 2,

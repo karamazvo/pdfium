@@ -9,7 +9,7 @@
 
 namespace fxge {
 
-enum class FontEncoding : uint32_t {
+enum class FontEncoding : uint8_t {
   kAdobeCustom,
   kAdobeExpert,
   kAdobeStandard,

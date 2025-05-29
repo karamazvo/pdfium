@@ -41,7 +41,7 @@ struct JBig2IntDecoderState {
   UnownedPtr<CJBig2_ArithIaidDecoder> IAID;
 };
 
-enum JBig2Corner {
+enum JBig2Corner : uint8_t {
   JBIG2_CORNER_BOTTOMLEFT = 0,
   JBIG2_CORNER_TOPLEFT = 1,
   JBIG2_CORNER_BOTTOMRIGHT = 2,

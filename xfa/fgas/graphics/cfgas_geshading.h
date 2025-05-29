@@ -16,7 +16,7 @@
 
 class CFGAS_GEShading final {
  public:
-  enum class Type { kAxial = 1, kRadial };
+  enum class Type : uint8_t { kAxial = 1, kRadial };
 
   // Axial shading.
   CFGAS_GEShading(const CFX_PointF& beginPoint,

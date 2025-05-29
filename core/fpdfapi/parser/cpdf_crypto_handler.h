@@ -26,7 +26,7 @@ class CPDF_Object;
 
 class CPDF_CryptoHandler {
  public:
-  enum class Cipher {
+  enum class Cipher : uint8_t {
     kNone = 0,
     kRC4 = 1,
     kAES = 2,

@@ -50,7 +50,7 @@ class CPDF_ImageRenderer {
   bool GetResult() const { return result_; }
 
  private:
-  enum class Mode {
+  enum class Mode : uint8_t {
     kNone = 0,
     kDefault,
     kBlend,  // AGG-specific

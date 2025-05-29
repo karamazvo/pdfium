@@ -31,7 +31,13 @@ struct CFX_Color;
 struct CFX_FillRenderOptions;
 struct CFX_TextRenderOptions;
 
-enum class BorderStyle { kSolid, kDash, kBeveled, kInset, kUnderline };
+enum class BorderStyle : uint8_t {
+  kSolid,
+  kDash,
+  kBeveled,
+  kInset,
+  kUnderline,
+};
 
 // Base class for all render devices. Derived classes must call
 // SetDeviceDriver() to fully initialize the class. Until then, class methods
