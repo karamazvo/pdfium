@@ -103,23 +103,23 @@ class CFDE_TextOut {
   void DoAlignment(const CFX_RectF& rect);
   size_t GetDisplayPos(const Piece* pPiece);
 
-  std::unique_ptr<CFGAS_TxtBreak> const txt_break_;
-  RetainPtr<CFGAS_GEFont> font_;
+  FDE_TextAlignment alignment_ = FDE_TextAlignment::kTopLeft;
+  FDE_TextStyle styles_;
+  int32_t total_lines_ = 0;
+  FX_ARGB txt_color_ = 0xFF000000;
   float font_size_ = 12.0f;
   float line_space_ = 12.0f;
   float line_pos_ = 0.0f;
   float tolerance_ = 0.0f;
-  FDE_TextAlignment alignment_ = FDE_TextAlignment::kTopLeft;
-  FDE_TextStyle styles_;
-  std::vector<int32_t> char_widths_;
-  FX_ARGB txt_color_ = 0xFF000000;
-  Mask<CFGAS_Break::LayoutStyle> txt_bk_styles_;
-  WideString text_;
-  CFX_Matrix matrix_;
-  std::deque<Line> tto_lines_;
   size_t cur_line_ = 0;
   size_t cur_piece_ = 0;
-  int32_t total_lines_ = 0;
+  Mask<CFGAS_Break::LayoutStyle> txt_bk_styles_;
+  std::vector<int32_t> char_widths_;
+  WideString text_;
+  CFX_Matrix matrix_;
+  std::unique_ptr<CFGAS_TxtBreak> const txt_break_;
+  RetainPtr<CFGAS_GEFont> font_;
+  std::deque<Line> tto_lines_;
   std::vector<TextCharPos> char_pos_;
 };
 

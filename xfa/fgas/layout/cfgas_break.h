@@ -76,6 +76,7 @@ class CFGAS_Break {
   FX_CHARTYPE char_type_ = FX_CHARTYPE::kUnknown;
   bool single_line_ = false;
   bool comb_text_ = false;
+  int8_t ready_line_index_ = -1;
   Mask<LayoutStyle> layout_styles_ = LayoutStyle::kNone;
   uint32_t identity_ = 0;
   int32_t line_start_ = 0;
@@ -88,7 +89,6 @@ class CFGAS_Break {
   int32_t tolerance_ = 0;
   int32_t char_space_ = 0;
   RetainPtr<CFGAS_GEFont> font_;
-  int8_t ready_line_index_ = -1;
   std::array<CFGAS_BreakLine, 2> lines_;
   UnownedPtr<CFGAS_BreakLine> cur_line_;
 };

@@ -65,17 +65,17 @@ class LZWDecompressor {
 
   const uint8_t code_size_;
   uint8_t code_size_cur_ = 0;
+  uint8_t code_first_ = 0;
+  uint8_t bits_left_ = 0;
   const uint16_t code_color_end_;
   const uint16_t code_clear_;
   const uint16_t code_end_;
   uint16_t code_next_ = 0;
-  uint8_t code_first_ = 0;
-  DataVector<uint8_t> decompressed_;
-  size_t decompressed_next_ = 0;
   uint16_t code_old_ = 0;
-  pdfium::span<const uint8_t> avail_input_;
-  uint8_t bits_left_ = 0;
   uint32_t code_store_ = 0;
+  size_t decompressed_next_ = 0;
+  DataVector<uint8_t> decompressed_;
+  pdfium::span<const uint8_t> avail_input_;
   std::array<CodeEntry, GIF_MAX_LZW_CODE> code_table_;
 };
 

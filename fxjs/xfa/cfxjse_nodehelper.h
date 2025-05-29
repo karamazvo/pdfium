@@ -29,8 +29,8 @@ class CFXJSE_NodeHelper {
   XFA_Element last_create_type_ = XFA_Element::DataValue;
   CFXJSE_Engine::ResolveResult::Type create_flag_ =
       CFXJSE_Engine::ResolveResult::Type::kCreateNodeOne;
-  size_t create_count_ = 0;
   int32_t cur_all_start_ = -1;
+  size_t create_count_ = 0;
   cppgc::Persistent<CXFA_Node> create_parent_;
   cppgc::Persistent<CXFA_Node> all_start_parent_;
 };

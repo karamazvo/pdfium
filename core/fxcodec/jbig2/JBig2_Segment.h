@@ -46,7 +46,6 @@ class CJBig2_Segment {
     uint8_t c = 0;
   } flags_;
   int32_t referred_to_segment_count_ = 0;
-  std::vector<uint32_t> referred_to_segment_numbers_;
   uint32_t page_association_ = 0;
   uint32_t data_length_ = 0;
   uint32_t header_length_ = 0;
@@ -54,6 +53,7 @@ class CJBig2_Segment {
   uint64_t key_ = 0;
   JBig2_SegmentState state_ = JBIG2_SEGMENT_HEADER_UNPARSED;
   JBig2_ResultType result_type_ = JBIG2_VOID_POINTER;
+  std::vector<uint32_t> referred_to_segment_numbers_;
   std::unique_ptr<CJBig2_SymbolDict> symbol_dict_;
   std::unique_ptr<CJBig2_PatternDict> pattern_dict_;
   std::unique_ptr<CJBig2_Image> image_;
