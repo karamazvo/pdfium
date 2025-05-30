@@ -39,6 +39,30 @@
       },
       "revId": "1219aed9f5cd29d4ff9dd8bbbe0a8cd7d55396b7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e162bd6b_8a321906",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-30T22:18:21Z",
+      "side": 1,
+      "message": "Good catch, thanks!",
+      "parentUuid": "394136bb_f3e92bb3",
+      "range": {
+        "startLine": 103,
+        "startChar": 24,
+        "endLine": 103,
+        "endChar": 39
+      },
+      "revId": "1219aed9f5cd29d4ff9dd8bbbe0a8cd7d55396b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
