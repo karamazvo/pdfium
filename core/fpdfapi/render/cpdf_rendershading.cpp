@@ -435,14 +435,14 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
         } else if (index >= kShadingSteps) {
           index = kShadingSteps - 1;
         }
-        UNSAFE_TODO(FXARGB_SetDIB(dib_span.data(), (*shading_steps)[index]));
+        FXARGB_SetDIB(dib_span.first<4u>(), (*shading_steps)[index]);
       } else {
         g_result += g_unit;
         b_result += b_unit;
-        UNSAFE_TODO(FXARGB_SetDIB(
-            dib_span.data(), ArgbEncode(alpha, static_cast<int>(r_result * 255),
-                                        static_cast<int>(g_result * 255),
-                                        static_cast<int>(b_result * 255))));
+        FXARGB_SetDIB(dib_span.first<4u>(),
+                      ArgbEncode(alpha, static_cast<int>(r_result * 255),
+                                 static_cast<int>(g_result * 255),
+                                 static_cast<int>(b_result * 255)));
       }
       dib_span = dib_span.subspan<4u>();
     }
