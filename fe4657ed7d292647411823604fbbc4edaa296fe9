@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "acef8c59_1196d438",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-30T01:27:49Z",
+      "side": 1,
+      "message": "Style guide generally prefers out-parameters to be after in-params. Or return `std::optional\u003cstd::array\u003c....\u003e\u003e`?",
+      "revId": "fe4657ed7d292647411823604fbbc4edaa296fe9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eb27162f_746ba3c5",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-30T01:27:49Z",
+      "side": 1,
+      "message": "Write into `output` directly if keeping it?",
+      "revId": "fe4657ed7d292647411823604fbbc4edaa296fe9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
