@@ -1536,7 +1536,7 @@ void CompositeRow_Bgr2Bgra_Blend_NoClip_RgbByteOrder(
     size_t index = 2;
     if (non_separable_blend) {
       uint8_t dest_scan_o[3];
-      UNSAFE_TODO({ ReverseCopy3Bytes(dest_scan_o, dest.data()); });
+      ReverseCopy3Bytes(dest_scan_o, dest.first<3u>());
       int blended_colors[3];
       RGB_Blend(blend_type, src_span.data(), dest_scan_o, blended_colors);
       for (auto [src_comp, blended_comp] :
@@ -1579,51 +1579,46 @@ void CompositeRow_Rgb2Rgb_Blend_NoClip_RgbByteOrder(
     pdfium::span<const uint8_t> src_span,
     int width,
     BlendMode blend_type,
-    int dest_Bpp,
-    int src_Bpp) {
-  int blended_colors[3];
-  bool bNonseparableBlend = IsNonSeparableBlendMode(blend_type);
-  uint8_t* dest_scan = dest_span.data();
-  const uint8_t* src_scan = src_span.data();
-  int src_gap = src_Bpp - 3;
-  UNSAFE_TODO({
+    size_t dest_Bpp,
+    size_t src_Bpp) {
+  if (IsNonSeparableBlendMode(blend_type)) {
     for (int col = 0; col < width; col++) {
-      if (bNonseparableBlend) {
-        uint8_t dest_scan_o[3];
-        ReverseCopy3Bytes(dest_scan_o, dest_scan);
-        RGB_Blend(blend_type, src_scan, dest_scan_o, blended_colors);
+      uint8_t dest_scan_o[3];
+      ReverseCopy3Bytes(dest_scan_o, dest_span.first<3u>());
+      int blended_colors[3];
+      RGB_Blend(blend_type, src_span.data(), dest_scan_o, blended_colors);
+      size_t index = 2;
+      for (int blended_comp : blended_colors) {
+        dest_span[index] = blended_comp;
+        --index;
       }
-      for (int color = 0; color < 3; color++) {
-        int index = 2 - color;
-        int back_color = dest_scan[index];
-        int src_color = *src_scan;
-        int blended = bNonseparableBlend
-                          ? blended_colors[color]
-                          : Blend(blend_type, back_color, src_color);
-        dest_scan[index] = blended;
-        src_scan++;
-      }
-      dest_scan += dest_Bpp;
-      src_scan += src_gap;
+      dest_span = dest_span.subspan(dest_Bpp);
+      src_span = src_span.subspan(src_Bpp);
     }
-  });
+    return;
+  }
+
+  for (int col = 0; col < width; col++) {
+    for (int color = 0; color < 3; color++) {
+      int index = 2 - color;
+      dest_span[index] = Blend(blend_type, dest_span[index], src_span[color]);
+    }
+    dest_span = dest_span.subspan(dest_Bpp);
+    src_span = src_span.subspan(src_Bpp);
+  }
 }
 
 void CompositeRow_Rgb2Rgb_NoBlend_NoClip_RgbByteOrder(
     pdfium::span<uint8_t> dest_span,
     pdfium::span<const uint8_t> src_span,
     int width,
-    int dest_Bpp,
-    int src_Bpp) {
-  uint8_t* dest_scan = dest_span.data();
-  const uint8_t* src_scan = src_span.data();
-  UNSAFE_TODO({
-    for (int col = 0; col < width; col++) {
-      ReverseCopy3Bytes(dest_scan, src_scan);
-      dest_scan += dest_Bpp;
-      src_scan += src_Bpp;
-    }
-  });
+    size_t dest_Bpp,
+    size_t src_Bpp) {
+  for (int col = 0; col < width; col++) {
+    ReverseCopy3Bytes(dest_span.first<3u>(), src_span.first<3u>());
+    dest_span = dest_span.subspan(dest_Bpp);
+    src_span = src_span.subspan(src_Bpp);
+  }
 }
 
 void CompositeRow_Bgr2Bgra_Blend_Clip_RgbByteOrder(
@@ -1631,52 +1626,46 @@ void CompositeRow_Bgr2Bgra_Blend_Clip_RgbByteOrder(
     pdfium::span<const uint8_t> src_span,
     int width,
     BlendMode blend_type,
-    int src_Bpp,
+    size_t src_Bpp,
     pdfium::span<const uint8_t> clip_span) {
-  uint8_t* dest_scan = dest_span.data();
-  const uint8_t* src_scan = src_span.data();
-  const uint8_t* clip_scan = clip_span.data();
-  int blended_colors[3];
-  bool bNonseparableBlend = IsNonSeparableBlendMode(blend_type);
-  int src_gap = src_Bpp - 3;
-  UNSAFE_TODO({
-    for (int col = 0; col < width; col++) {
-      int src_alpha = *clip_scan++;
-      uint8_t back_alpha = dest_scan[3];
-      if (back_alpha == 0) {
-        ReverseCopy3Bytes(dest_scan, src_scan);
-        src_scan += src_Bpp;
-        dest_scan += 4;
-        continue;
-      }
-      if (src_alpha == 0) {
-        dest_scan += 4;
-        src_scan += src_Bpp;
-        continue;
-      }
-      uint8_t dest_alpha = AlphaUnion(back_alpha, src_alpha);
-      dest_scan[3] = dest_alpha;
-      int alpha_ratio = src_alpha * 255 / dest_alpha;
-      if (bNonseparableBlend) {
-        uint8_t dest_scan_o[3];
-        ReverseCopy3Bytes(dest_scan_o, dest_scan);
-        RGB_Blend(blend_type, src_scan, dest_scan_o, blended_colors);
-      }
-      for (int color = 0; color < 3; color++) {
-        int index = 2 - color;
-        int src_color = *src_scan;
-        int blended = bNonseparableBlend
-                          ? blended_colors[color]
-                          : Blend(blend_type, dest_scan[index], src_color);
-        blended = FXDIB_ALPHA_MERGE(src_color, blended, back_alpha);
-        dest_scan[index] =
-            FXDIB_ALPHA_MERGE(dest_scan[index], blended, alpha_ratio);
-        src_scan++;
-      }
-      dest_scan += 4;
-      src_scan += src_gap;
+  const bool non_separable_blend = IsNonSeparableBlendMode(blend_type);
+  for (int col = 0; col < width; col++) {
+    const int src_alpha = clip_span[col];
+    auto dest = dest_span.first<4u>();
+    dest_span = dest_span.subspan<4u>();
+    auto src = src_span.first(src_Bpp);
+    src_span = src_span.subspan(src_Bpp);
+    uint8_t back_alpha = dest[3];
+    if (back_alpha == 0) {
+      ReverseCopy3Bytes(dest.first<3u>(), src.first<3u>());
+      continue;
     }
-  });
+    if (src_alpha == 0) {
+      continue;
+    }
+    const uint8_t dest_alpha = AlphaUnion(back_alpha, src_alpha);
+    dest[3] = dest_alpha;
+    int alpha_ratio = src_alpha * 255 / dest_alpha;
+    size_t index = 2;
+    if (non_separable_blend) {
+      uint8_t dest_scan_o[3];
+      ReverseCopy3Bytes(dest_scan_o, dest.first<3u>());
+      int blended_colors[3];
+      RGB_Blend(blend_type, src.data(), dest_scan_o, blended_colors);
+      for (auto [src_comp, blended_comp] : fxcrt::Zip(src, blended_colors)) {
+        blended_comp = FXDIB_ALPHA_MERGE(src_comp, blended_comp, back_alpha);
+        dest[index] = FXDIB_ALPHA_MERGE(dest[index], blended_comp, alpha_ratio);
+        --index;
+      }
+    } else {
+      for (uint8_t src_comp : src.first<3u>()) {
+        int blended = Blend(blend_type, dest[index], src_comp);
+        blended = FXDIB_ALPHA_MERGE(src_comp, blended, back_alpha);
+        dest[index] = FXDIB_ALPHA_MERGE(dest[index], blended, alpha_ratio);
+        --index;
+      }
+    }
+  }
 }
 
 void CompositeRow_Rgb2Rgb_Blend_Clip_RgbByteOrder(
@@ -1684,114 +1673,90 @@ void CompositeRow_Rgb2Rgb_Blend_Clip_RgbByteOrder(
     pdfium::span<const uint8_t> src_span,
     int width,
     BlendMode blend_type,
-    int dest_Bpp,
-    int src_Bpp,
+    size_t dest_Bpp,
+    size_t src_Bpp,
     pdfium::span<const uint8_t> clip_span) {
-  uint8_t* dest_scan = dest_span.data();
-  const uint8_t* src_scan = src_span.data();
-  const uint8_t* clip_scan = clip_span.data();
-  int blended_colors[3];
-  bool bNonseparableBlend = IsNonSeparableBlendMode(blend_type);
-  int src_gap = src_Bpp - 3;
-  UNSAFE_TODO({
-    for (int col = 0; col < width; col++) {
-      uint8_t src_alpha = *clip_scan++;
-      if (src_alpha == 0) {
-        dest_scan += dest_Bpp;
-        src_scan += src_Bpp;
-        continue;
-      }
-      if (bNonseparableBlend) {
-        uint8_t dest_scan_o[3];
-        ReverseCopy3Bytes(dest_scan_o, dest_scan);
-        RGB_Blend(blend_type, src_scan, dest_scan_o, blended_colors);
-      }
-      for (int color = 0; color < 3; color++) {
-        int index = 2 - color;
-        int src_color = *src_scan;
-        int back_color = dest_scan[index];
-        int blended = bNonseparableBlend
-                          ? blended_colors[color]
-                          : Blend(blend_type, back_color, src_color);
-        dest_scan[index] = FXDIB_ALPHA_MERGE(back_color, blended, src_alpha);
-        src_scan++;
-      }
-      dest_scan += dest_Bpp;
-      src_scan += src_gap;
+  const bool non_separable_blend = IsNonSeparableBlendMode(blend_type);
+  for (int col = 0; col < width; col++) {
+    const uint8_t src_alpha = clip_span[col];
+    auto src = src_span.first(src_Bpp);
+    src_span = src_span.subspan(src_Bpp);
+    auto dest = dest_span.first(dest_Bpp);
+    dest_span = dest_span.subspan(dest_Bpp);
+    if (src_alpha == 0) {
+      continue;
     }
-  });
+    size_t index = 2;
+    if (non_separable_blend) {
+      uint8_t dest_scan_o[3];
+      ReverseCopy3Bytes(dest_scan_o, dest.first<3u>());
+      int blended_colors[3];
+      RGB_Blend(blend_type, src.data(), dest_scan_o, blended_colors);
+      for (int blended_comp : blended_colors) {
+        dest[index] = FXDIB_ALPHA_MERGE(dest[index], blended_comp, src_alpha);
+        --index;
+      }
+    } else {
+      for (uint8_t src_color : src.first<3u>()) {
+        int back_color = dest[index];
+        int blended = Blend(blend_type, back_color, src_color);
+        dest[index] = FXDIB_ALPHA_MERGE(back_color, blended, src_alpha);
+        --index;
+      }
+    }
+  }
 }
 
 void CompositeRow_Bgr2Bgra_NoBlend_Clip_RgbByteOrder(
     pdfium::span<uint8_t> dest_span,
     pdfium::span<const uint8_t> src_span,
     int width,
-    int src_Bpp,
+    size_t src_Bpp,
     pdfium::span<const uint8_t> clip_span) {
-  uint8_t* dest_scan = dest_span.data();
-  const uint8_t* src_scan = src_span.data();
-  const uint8_t* clip_scan = clip_span.data();
-  int src_gap = src_Bpp - 3;
-  UNSAFE_TODO({
-    for (int col = 0; col < width; col++) {
-      int src_alpha = clip_scan[col];
-      if (src_alpha == 255) {
-        ReverseCopy3Bytes(dest_scan, src_scan);
-        dest_scan[3] = 255;
-        dest_scan += 4;
-        src_scan += src_Bpp;
-        continue;
-      }
-      if (src_alpha == 0) {
-        dest_scan += 4;
-        src_scan += src_Bpp;
-        continue;
-      }
-      int back_alpha = dest_scan[3];
-      uint8_t dest_alpha = AlphaUnion(back_alpha, src_alpha);
-      dest_scan[3] = dest_alpha;
-      int alpha_ratio = src_alpha * 255 / dest_alpha;
-      for (int color = 0; color < 3; color++) {
-        int index = 2 - color;
-        dest_scan[index] =
-            FXDIB_ALPHA_MERGE(dest_scan[index], *src_scan, alpha_ratio);
-        src_scan++;
-      }
-      dest_scan += 4;
-      src_scan += src_gap;
+  for (int col = 0; col < width; col++) {
+    auto src = src_span.first(src_Bpp);
+    src_span = src_span.subspan(src_Bpp);
+    auto dest = dest_span.first<4u>();
+    dest_span = dest_span.subspan<4u>();
+    const int src_alpha = clip_span[col];
+    if (src_alpha == 255) {
+      ReverseCopy3Bytes(dest.first<3u>(), src.first<3u>());
+      dest[3] = 255;
+      continue;
     }
-  });
+    if (src_alpha == 0) {
+      continue;
+    }
+    int back_alpha = dest[3];
+    uint8_t dest_alpha = AlphaUnion(back_alpha, src_alpha);
+    dest[3] = dest_alpha;
+    int alpha_ratio = src_alpha * 255 / dest_alpha;
+    for (int color = 0; color < 3; color++) {
+      int index = 2 - color;
+      dest[index] = FXDIB_ALPHA_MERGE(dest[index], src[color], alpha_ratio);
+    }
+  }
 }
 
 void CompositeRow_Rgb2Rgb_NoBlend_Clip_RgbByteOrder(
     pdfium::span<uint8_t> dest_span,
     pdfium::span<const uint8_t> src_span,
     int width,
-    int dest_Bpp,
-    int src_Bpp,
+    size_t dest_Bpp,
+    size_t src_Bpp,
     pdfium::span<const uint8_t> clip_span) {
-  uint8_t* dest_scan = dest_span.data();
-  const uint8_t* src_scan = src_span.data();
-  const uint8_t* clip_scan = clip_span.data();
-  UNSAFE_TODO({
-    for (int col = 0; col < width; col++) {
-      int src_alpha = clip_scan[col];
-      if (src_alpha == 255) {
-        ReverseCopy3Bytes(dest_scan, src_scan);
-      } else if (src_alpha) {
-        dest_scan[2] = FXDIB_ALPHA_MERGE(dest_scan[2], *src_scan, src_alpha);
-        src_scan++;
-        dest_scan[1] = FXDIB_ALPHA_MERGE(dest_scan[1], *src_scan, src_alpha);
-        src_scan++;
-        dest_scan[0] = FXDIB_ALPHA_MERGE(dest_scan[0], *src_scan, src_alpha);
-        dest_scan += dest_Bpp;
-        src_scan += src_Bpp - 2;
-        continue;
-      }
-      dest_scan += dest_Bpp;
-      src_scan += src_Bpp;
+  for (int col = 0; col < width; col++) {
+    int src_alpha = clip_span[col];
+    if (src_alpha == 255) {
+      ReverseCopy3Bytes(dest_span.first<3u>(), src_span.first<3u>());
+    } else if (src_alpha) {
+      dest_span[2] = FXDIB_ALPHA_MERGE(dest_span[2], src_span[0], src_alpha);
+      dest_span[1] = FXDIB_ALPHA_MERGE(dest_span[1], src_span[1], src_alpha);
+      dest_span[0] = FXDIB_ALPHA_MERGE(dest_span[0], src_span[2], src_alpha);
     }
-  });
+    dest_span = dest_span.subspan(dest_Bpp);
+    src_span = src_span.subspan(src_Bpp);
+  }
 }
 
 void CompositeRow_8bppRgb2Rgb_NoBlend_RgbByteOrder(
@@ -2008,50 +1973,48 @@ void CompositeRow_ByteMask2Bgra_RgbByteOrder(
     int pixel_count,
     BlendMode blend_type,
     pdfium::span<const uint8_t> clip_span) {
-  UNSAFE_TODO({
-    for (int col = 0; col < pixel_count; col++) {
-      auto dest = dest_span.first<4u>();
-      dest_span = dest_span.subspan<4u>();
-      int src_alpha = GetAlphaWithSrc(mask_alpha, clip_span, src_span, col);
-      uint8_t back_alpha = dest[3];
-      if (back_alpha == 0) {
-        FXARGB_SetRGBOrderDIB(dest, ArgbEncode(src_alpha, src_r, src_g, src_b));
-        continue;
-      }
-      if (src_alpha == 0) {
-        continue;
-      }
-      uint8_t dest_alpha = AlphaUnion(back_alpha, src_alpha);
-      dest[3] = dest_alpha;
-      int alpha_ratio = src_alpha * 255 / dest_alpha;
-      if (IsNonSeparableBlendMode(blend_type)) {
-        int blended_colors[3];
-        uint8_t scan[3] = {static_cast<uint8_t>(src_b),
-                           static_cast<uint8_t>(src_g),
-                           static_cast<uint8_t>(src_r)};
-        uint8_t dest_scan_o[3];
-        ReverseCopy3Bytes(dest_scan_o, dest.data());
-        RGB_Blend(blend_type, scan, dest_scan_o, blended_colors);
-        dest[2] = FXDIB_ALPHA_MERGE(dest[2], blended_colors[0], alpha_ratio);
-        dest[1] = FXDIB_ALPHA_MERGE(dest[1], blended_colors[1], alpha_ratio);
-        dest[0] = FXDIB_ALPHA_MERGE(dest[0], blended_colors[2], alpha_ratio);
-      } else if (blend_type != BlendMode::kNormal) {
-        int blended = Blend(blend_type, dest[2], src_b);
-        blended = FXDIB_ALPHA_MERGE(src_b, blended, back_alpha);
-        dest[2] = FXDIB_ALPHA_MERGE(dest[2], blended, alpha_ratio);
-        blended = Blend(blend_type, dest[1], src_g);
-        blended = FXDIB_ALPHA_MERGE(src_g, blended, back_alpha);
-        dest[1] = FXDIB_ALPHA_MERGE(dest[1], blended, alpha_ratio);
-        blended = Blend(blend_type, dest[0], src_r);
-        blended = FXDIB_ALPHA_MERGE(src_r, blended, back_alpha);
-        dest[0] = FXDIB_ALPHA_MERGE(dest[0], blended, alpha_ratio);
-      } else {
-        dest[2] = FXDIB_ALPHA_MERGE(dest[2], src_b, alpha_ratio);
-        dest[1] = FXDIB_ALPHA_MERGE(dest[1], src_g, alpha_ratio);
-        dest[0] = FXDIB_ALPHA_MERGE(dest[0], src_r, alpha_ratio);
-      }
+  for (int col = 0; col < pixel_count; col++) {
+    auto dest = dest_span.first<4u>();
+    dest_span = dest_span.subspan<4u>();
+    int src_alpha = GetAlphaWithSrc(mask_alpha, clip_span, src_span, col);
+    uint8_t back_alpha = dest[3];
+    if (back_alpha == 0) {
+      FXARGB_SetRGBOrderDIB(dest, ArgbEncode(src_alpha, src_r, src_g, src_b));
+      continue;
     }
-  });
+    if (src_alpha == 0) {
+      continue;
+    }
+    uint8_t dest_alpha = AlphaUnion(back_alpha, src_alpha);
+    dest[3] = dest_alpha;
+    int alpha_ratio = src_alpha * 255 / dest_alpha;
+    if (IsNonSeparableBlendMode(blend_type)) {
+      int blended_colors[3];
+      uint8_t scan[3] = {static_cast<uint8_t>(src_b),
+                         static_cast<uint8_t>(src_g),
+                         static_cast<uint8_t>(src_r)};
+      uint8_t dest_scan_o[3];
+      ReverseCopy3Bytes(dest_scan_o, dest.first<3u>());
+      RGB_Blend(blend_type, scan, dest_scan_o, blended_colors);
+      dest[2] = FXDIB_ALPHA_MERGE(dest[2], blended_colors[0], alpha_ratio);
+      dest[1] = FXDIB_ALPHA_MERGE(dest[1], blended_colors[1], alpha_ratio);
+      dest[0] = FXDIB_ALPHA_MERGE(dest[0], blended_colors[2], alpha_ratio);
+    } else if (blend_type != BlendMode::kNormal) {
+      int blended = Blend(blend_type, dest[2], src_b);
+      blended = FXDIB_ALPHA_MERGE(src_b, blended, back_alpha);
+      dest[2] = FXDIB_ALPHA_MERGE(dest[2], blended, alpha_ratio);
+      blended = Blend(blend_type, dest[1], src_g);
+      blended = FXDIB_ALPHA_MERGE(src_g, blended, back_alpha);
+      dest[1] = FXDIB_ALPHA_MERGE(dest[1], blended, alpha_ratio);
+      blended = Blend(blend_type, dest[0], src_r);
+      blended = FXDIB_ALPHA_MERGE(src_r, blended, back_alpha);
+      dest[0] = FXDIB_ALPHA_MERGE(dest[0], blended, alpha_ratio);
+    } else {
+      dest[2] = FXDIB_ALPHA_MERGE(dest[2], src_b, alpha_ratio);
+      dest[1] = FXDIB_ALPHA_MERGE(dest[1], src_g, alpha_ratio);
+      dest[0] = FXDIB_ALPHA_MERGE(dest[0], src_r, alpha_ratio);
+    }
+  }
 }
 
 void CompositeRow_ByteMask2Rgb_RgbByteOrder(
@@ -2063,45 +2026,42 @@ void CompositeRow_ByteMask2Rgb_RgbByteOrder(
     int src_b,
     int pixel_count,
     BlendMode blend_type,
-    int Bpp,
+    size_t Bpp,
     pdfium::span<const uint8_t> clip_span) {
-  uint8_t* dest_scan = dest_span.data();
-  UNSAFE_TODO({
-    for (int col = 0; col < pixel_count; col++) {
-      int src_alpha = GetAlphaWithSrc(mask_alpha, clip_span, src_span, col);
-      if (src_alpha == 0) {
-        dest_scan += Bpp;
-        continue;
-      }
-      if (IsNonSeparableBlendMode(blend_type)) {
-        int blended_colors[3];
-        uint8_t scan[3] = {static_cast<uint8_t>(src_b),
-                           static_cast<uint8_t>(src_g),
-                           static_cast<uint8_t>(src_r)};
-        uint8_t dest_scan_o[3];
-        ReverseCopy3Bytes(dest_scan_o, dest_scan);
-        RGB_Blend(blend_type, scan, dest_scan_o, blended_colors);
-        dest_scan[2] =
-            FXDIB_ALPHA_MERGE(dest_scan[2], blended_colors[0], src_alpha);
-        dest_scan[1] =
-            FXDIB_ALPHA_MERGE(dest_scan[1], blended_colors[1], src_alpha);
-        dest_scan[0] =
-            FXDIB_ALPHA_MERGE(dest_scan[0], blended_colors[2], src_alpha);
-      } else if (blend_type != BlendMode::kNormal) {
-        int blended = Blend(blend_type, dest_scan[2], src_b);
-        dest_scan[2] = FXDIB_ALPHA_MERGE(dest_scan[2], blended, src_alpha);
-        blended = Blend(blend_type, dest_scan[1], src_g);
-        dest_scan[1] = FXDIB_ALPHA_MERGE(dest_scan[1], blended, src_alpha);
-        blended = Blend(blend_type, dest_scan[0], src_r);
-        dest_scan[0] = FXDIB_ALPHA_MERGE(dest_scan[0], blended, src_alpha);
-      } else {
-        dest_scan[2] = FXDIB_ALPHA_MERGE(dest_scan[2], src_b, src_alpha);
-        dest_scan[1] = FXDIB_ALPHA_MERGE(dest_scan[1], src_g, src_alpha);
-        dest_scan[0] = FXDIB_ALPHA_MERGE(dest_scan[0], src_r, src_alpha);
-      }
-      dest_scan += Bpp;
+  for (int col = 0; col < pixel_count; col++) {
+    int src_alpha = GetAlphaWithSrc(mask_alpha, clip_span, src_span, col);
+    if (src_alpha == 0) {
+      dest_span = dest_span.subspan(Bpp);
+      continue;
     }
-  });
+    if (IsNonSeparableBlendMode(blend_type)) {
+      int blended_colors[3];
+      uint8_t scan[3] = {static_cast<uint8_t>(src_b),
+                         static_cast<uint8_t>(src_g),
+                         static_cast<uint8_t>(src_r)};
+      uint8_t dest_scan_o[3];
+      ReverseCopy3Bytes(dest_scan_o, dest_span.first<3u>());
+      RGB_Blend(blend_type, scan, dest_scan_o, blended_colors);
+      dest_span[2] =
+          FXDIB_ALPHA_MERGE(dest_span[2], blended_colors[0], src_alpha);
+      dest_span[1] =
+          FXDIB_ALPHA_MERGE(dest_span[1], blended_colors[1], src_alpha);
+      dest_span[0] =
+          FXDIB_ALPHA_MERGE(dest_span[0], blended_colors[2], src_alpha);
+    } else if (blend_type != BlendMode::kNormal) {
+      int blended = Blend(blend_type, dest_span[2], src_b);
+      dest_span[2] = FXDIB_ALPHA_MERGE(dest_span[2], blended, src_alpha);
+      blended = Blend(blend_type, dest_span[1], src_g);
+      dest_span[1] = FXDIB_ALPHA_MERGE(dest_span[1], blended, src_alpha);
+      blended = Blend(blend_type, dest_span[0], src_r);
+      dest_span[0] = FXDIB_ALPHA_MERGE(dest_span[0], blended, src_alpha);
+    } else {
+      dest_span[2] = FXDIB_ALPHA_MERGE(dest_span[2], src_b, src_alpha);
+      dest_span[1] = FXDIB_ALPHA_MERGE(dest_span[1], src_g, src_alpha);
+      dest_span[0] = FXDIB_ALPHA_MERGE(dest_span[0], src_r, src_alpha);
+    }
+    dest_span = dest_span.subspan(Bpp);
+  }
 }
 
 void CompositeRow_BitMask2Bgra_RgbByteOrder(
@@ -2151,7 +2111,7 @@ void CompositeRow_BitMask2Bgra_RgbByteOrder(
                            static_cast<uint8_t>(src_g),
                            static_cast<uint8_t>(src_r)};
         uint8_t dest_scan_o[3];
-        ReverseCopy3Bytes(dest_scan_o, dest.data());
+        ReverseCopy3Bytes(dest_scan_o, dest.first<3u>());
         RGB_Blend(blend_type, scan, dest_scan_o, blended_colors);
         dest[2] = FXDIB_ALPHA_MERGE(dest[2], blended_colors[0], alpha_ratio);
         dest[1] = FXDIB_ALPHA_MERGE(dest[1], blended_colors[1], alpha_ratio);
@@ -2185,9 +2145,8 @@ void CompositeRow_BitMask2Rgb_RgbByteOrder(
     int src_left,
     int pixel_count,
     BlendMode blend_type,
-    int Bpp,
+    size_t Bpp,
     pdfium::span<const uint8_t> clip_span) {
-  uint8_t* dest_scan = dest_span.data();
   const uint8_t* src_scan = src_span.data();
   const uint8_t* clip_scan = clip_span.data();
   UNSAFE_TODO({
@@ -2195,23 +2154,23 @@ void CompositeRow_BitMask2Rgb_RgbByteOrder(
       for (int col = 0; col < pixel_count; col++) {
         if (src_scan[(src_left + col) / 8] &
             (1 << (7 - (src_left + col) % 8))) {
-          dest_scan[2] = src_b;
-          dest_scan[1] = src_g;
-          dest_scan[0] = src_r;
+          dest_span[2] = src_b;
+          dest_span[1] = src_g;
+          dest_span[0] = src_r;
         }
-        dest_scan += Bpp;
+        dest_span = dest_span.subspan(Bpp);
       }
       return;
     }
     for (int col = 0; col < pixel_count; col++) {
       if (!(src_scan[(src_left + col) / 8] &
             (1 << (7 - (src_left + col) % 8)))) {
-        dest_scan += Bpp;
+        dest_span = dest_span.subspan(Bpp);
         continue;
       }
       int src_alpha = GetAlpha(mask_alpha, clip_scan, col);
       if (src_alpha == 0) {
-        dest_scan += Bpp;
+        dest_span = dest_span.subspan(Bpp);
         continue;
       }
       if (IsNonSeparableBlendMode(blend_type)) {
@@ -2220,30 +2179,27 @@ void CompositeRow_BitMask2Rgb_RgbByteOrder(
                            static_cast<uint8_t>(src_g),
                            static_cast<uint8_t>(src_r)};
         uint8_t dest_scan_o[3];
-        ReverseCopy3Bytes(dest_scan_o, dest_scan);
+        ReverseCopy3Bytes(dest_scan_o, dest_span.first<3u>());
         RGB_Blend(blend_type, scan, dest_scan_o, blended_colors);
-        dest_scan[2] =
-            FXDIB_ALPHA_MERGE(dest_scan[2], blended_colors[0], src_alpha);
-        dest_scan[1] =
-            FXDIB_ALPHA_MERGE(dest_scan[1], blended_colors[1], src_alpha);
-        dest_scan[0] =
-            FXDIB_ALPHA_MERGE(dest_scan[0], blended_colors[2], src_alpha);
+        dest_span[2] =
+            FXDIB_ALPHA_MERGE(dest_span[2], blended_colors[0], src_alpha);
+        dest_span[1] =
+            FXDIB_ALPHA_MERGE(dest_span[1], blended_colors[1], src_alpha);
+        dest_span[0] =
+            FXDIB_ALPHA_MERGE(dest_span[0], blended_colors[2], src_alpha);
       } else if (blend_type != BlendMode::kNormal) {
-        int back_color = dest_scan[2];
-        int blended = Blend(blend_type, back_color, src_b);
-        dest_scan[2] = FXDIB_ALPHA_MERGE(back_color, blended, src_alpha);
-        back_color = dest_scan[1];
-        blended = Blend(blend_type, back_color, src_g);
-        dest_scan[1] = FXDIB_ALPHA_MERGE(back_color, blended, src_alpha);
-        back_color = dest_scan[0];
-        blended = Blend(blend_type, back_color, src_r);
-        dest_scan[0] = FXDIB_ALPHA_MERGE(back_color, blended, src_alpha);
+        int blended = Blend(blend_type, dest_span[2], src_b);
+        dest_span[2] = FXDIB_ALPHA_MERGE(dest_span[2], blended, src_alpha);
+        blended = Blend(blend_type, dest_span[1], src_g);
+        dest_span[1] = FXDIB_ALPHA_MERGE(dest_span[1], blended, src_alpha);
+        blended = Blend(blend_type, dest_span[0], src_r);
+        dest_span[0] = FXDIB_ALPHA_MERGE(dest_span[0], blended, src_alpha);
       } else {
-        dest_scan[2] = FXDIB_ALPHA_MERGE(dest_scan[2], src_b, src_alpha);
-        dest_scan[1] = FXDIB_ALPHA_MERGE(dest_scan[1], src_g, src_alpha);
-        dest_scan[0] = FXDIB_ALPHA_MERGE(dest_scan[0], src_r, src_alpha);
+        dest_span[2] = FXDIB_ALPHA_MERGE(dest_span[2], src_b, src_alpha);
+        dest_span[1] = FXDIB_ALPHA_MERGE(dest_span[1], src_g, src_alpha);
+        dest_span[0] = FXDIB_ALPHA_MERGE(dest_span[0], src_r, src_alpha);
       }
-      dest_scan += Bpp;
+      dest_span = dest_span.subspan(Bpp);
     }
   });
 }
