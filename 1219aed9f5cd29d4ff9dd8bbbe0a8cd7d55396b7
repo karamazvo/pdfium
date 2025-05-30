@@ -16,6 +16,29 @@
       "message": "(The fuzzer input has\n\n```\n/Decode[-16384\n16384\n-16384\n1\n64830\n1]\n```\n\nSo the index component was in 1..64830, which we multiplied by 255 and then used as an index into a 256-element array.)",
       "revId": "1219aed9f5cd29d4ff9dd8bbbe0a8cd7d55396b7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "394136bb_f3e92bb3",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-05-30T20:50:35Z",
+      "side": 1,
+      "message": "Can this cause a divide by 0?",
+      "range": {
+        "startLine": 103,
+        "startChar": 24,
+        "endLine": 103,
+        "endChar": 39
+      },
+      "revId": "1219aed9f5cd29d4ff9dd8bbbe0a8cd7d55396b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
