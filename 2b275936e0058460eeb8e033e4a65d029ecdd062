@@ -20,6 +20,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "9ea35708_7bbead30",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-30T00:31:41Z",
+      "side": 1,
+      "message": "Went with a pointer for `shading_steps`. Does that work?",
+      "parentUuid": "14694638_84a34da5",
+      "revId": "2b275936e0058460eeb8e033e4a65d029ecdd062",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "40b426d6_2c75ffd2",
         "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
         "patchSetId": 11
@@ -54,6 +72,24 @@
       "writtenOn": "2025-05-29T21:26:40Z",
       "side": 1,
       "message": "The code in this block has been repeated a few times. Consolidate?",
+      "revId": "2b275936e0058460eeb8e033e4a65d029ecdd062",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0f398e02_4f864548",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 849,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-30T00:31:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba427fab_b43c7e79",
       "revId": "2b275936e0058460eeb8e033e4a65d029ecdd062",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
