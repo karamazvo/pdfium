@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "33a06db7_fffe2c6c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 14
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-30T01:37:48Z",
+      "side": 1,
+      "message": "ty!",
+      "revId": "fe4657ed7d292647411823604fbbc4edaa296fe9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "acef8c59_1196d438",
@@ -18,6 +35,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e8ff17b4_78db6da0",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-30T01:37:48Z",
+      "side": 1,
+      "message": "Put it at the end. (But C got it right, imho :P)\n\nI don\u0027t like using std::optional\u003c\u003e for error returns. I suppose I could use std::expected\u003c\u003e, but without base/types/expected_macros.h (which pdfium doesn\u0027t have as far as I can tell) the call sites get pretty ugly.",
+      "parentUuid": "acef8c59_1196d438",
+      "revId": "fe4657ed7d292647411823604fbbc4edaa296fe9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "eb27162f_746ba3c5",
@@ -31,6 +66,24 @@
       "writtenOn": "2025-05-30T01:27:49Z",
       "side": 1,
       "message": "Write into `output` directly if keeping it?",
+      "revId": "fe4657ed7d292647411823604fbbc4edaa296fe9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a7d4c249_67168aed",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-05-30T01:37:48Z",
+      "side": 1,
+      "message": "It\u0027s imho more readable as-is, and it\u0027s going to optimize to the same thing.",
+      "parentUuid": "eb27162f_746ba3c5",
       "revId": "fe4657ed7d292647411823604fbbc4edaa296fe9",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
