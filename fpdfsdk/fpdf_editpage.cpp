@@ -155,13 +155,6 @@ const CPDF_PageObjectHolder* CPDFPageObjHolderFromFPDFFormObject(
   return pFormObject ? pFormObject->form() : nullptr;
 }
 
-// Non-const version needed for FPDFFormObj_RemoveObject
-CPDF_PageObjectHolder* MutableCPDFPageObjHolderFromFPDFFormObject(
-    FPDF_PAGEOBJECT page_object) {
-  CPDF_FormObject* form_object = CPDFFormObjectFromFPDFPageObject(page_object);
-  return form_object ? form_object->form() : nullptr;
-}
-
 }  // namespace
 
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV FPDF_CreateNewDocument() {
@@ -1168,7 +1161,16 @@ FPDFFormObj_GetObject(FPDF_PAGEOBJECT form_object, unsigned long index) {
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFFormObj_RemoveObject(FPDF_PAGEOBJECT form_object,
                          FPDF_PAGEOBJECT page_object) {
-  auto* object_holder = MutableCPDFPageObjHolderFromFPDFFormObject(form_object);
+  CPDF_PageObject* cform_page_object =
+      CPDFPageObjectFromFPDFPageObject(form_object);
+  if (!cform_page_object) {
+    return false;
+  }
+  CPDF_FormObject* form_obj = cform_page_object->AsForm();
+  if (!form_obj) {
+    return false;
+  }
+  CPDF_PageObjectHolder* object_holder = form_obj->form();
   if (!object_holder) {
     return false;
   }
@@ -1178,6 +1180,15 @@ FPDFFormObj_RemoveObject(FPDF_PAGEOBJECT form_object,
     return false;
   }
 
+  std::unique_ptr<CPDF_PageObject> removed_object =
+      object_holder->RemovePageObject(cpage_object);
+  if (!removed_object) {
+    return false;
+  }
+
+  cform_page_object->SetDirty(true);
+
   // Caller takes ownership of the removed page object
-  return !!object_holder->RemovePageObject(cpage_object).release();
+  removed_object.release();
+  return true;
 }
