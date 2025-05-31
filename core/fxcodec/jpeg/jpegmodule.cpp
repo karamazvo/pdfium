@@ -447,20 +447,17 @@ bool JpegModule::JpegEncode(const RetainPtr<const CFX_DIBBase>& pSource,
     if (nComponents > 1) {
       uint8_t* dest_scan = line_buf;
       if (nComponents == 3) {
-        UNSAFE_TODO({
-          for (uint32_t i = 0; i < width; i++) {
-            ReverseCopy3Bytes(dest_scan, src_scan.data());
-            dest_scan += 3;
-            src_scan = src_scan.subspan(static_cast<size_t>(bytes_per_pixel));
-          }
-        });
+        auto* dest_pixel = reinterpret_cast<FX_BGR_STRUCT<uint8_t>*>(line_buf);
+        for (uint32_t i = 0; i < width; i++) {
+          dest_pixel[i].blue = src_scan[2];
+          dest_pixel[i].green = src_scan[1];
+          dest_pixel[i].red = src_scan[0];
+          src_scan = src_scan.subspan(static_cast<size_t>(bytes_per_pixel));
+        }
       } else {
-        UNSAFE_TODO({
-          for (uint32_t i = 0; i < pitch; i++) {
-            *dest_scan++ = ~src_scan.front();
-            src_scan = src_scan.subspan<1u>();
-          }
-        });
+        for (uint32_t i = 0; i < pitch; i++) {
+          dest_scan[i] = ~src_scan[i];
+        }
       }
       row_pointer[0] = line_buf;
     } else {

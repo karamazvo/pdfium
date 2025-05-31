@@ -11,7 +11,6 @@
 
 #include <utility>
 
-#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/span.h"
 
 // Encoding:
@@ -221,15 +220,6 @@ inline void FXARGB_SetDIB(pdfium::span<uint8_t, 4> p, uint32_t argb) {
   p[1] = FXARGB_G(argb);
   p[2] = FXARGB_R(argb);
   p[3] = FXARGB_A(argb);
-}
-
-// PRECONDITIONS: Caller must ensure 3 valid bytes at `dest` and `src`.
-UNSAFE_BUFFER_USAGE inline void ReverseCopy3Bytes(uint8_t* dest,
-                                                  const uint8_t* src) {
-  // SAFETY: required from caller, enforced by UNSAFE_BUFFER_USAGE.
-  UNSAFE_BUFFERS(dest[2] = src[0]);
-  UNSAFE_BUFFERS(dest[1] = src[1]);
-  UNSAFE_BUFFERS(dest[0] = src[2]);
 }
 
 #if defined(PDF_USE_SKIA)
