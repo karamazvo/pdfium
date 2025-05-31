@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "30ba100a_4c8a7655",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-05-31T17:09:53Z",
+      "side": 1,
+      "message": "@thestig@chromium.org Thanks for the feedback! I think I\u0027ve addressed all the open issues.",
+      "revId": "28483c39419db9c830fc11310b3eb93c638ac0d0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

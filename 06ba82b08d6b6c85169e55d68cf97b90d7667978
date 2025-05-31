@@ -16,6 +16,24 @@
       "message": "This can be simplified. Let\u0027s substitute `cond1` for `is_insert_undo_clear` and `cond2` for `text.IsEmpty())`. This conditional becomes `!cond1 || (cond1 \u0026\u0026 cond2)`. With a truth table, this becomes:\n\n```\n+---------+---------+---------+\n| cond1/T | cond1/F |         |\n+---------+---------+---------+\n|    T    |    T    | cond2/T |\n+---------+---------+---------+\n|    F    |    T    | cond2/F |\n+---------+---------+---------+\n```\n\nSo that simplified to `!cond1 || cond2`.",
       "revId": "06ba82b08d6b6c85169e55d68cf97b90d7667978",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "26585296_c522b7cc",
+        "filename": "fpdfsdk/pwl/cpwl_edit_impl.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1860,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-05-31T17:09:53Z",
+      "side": 1,
+      "message": "thanks!",
+      "parentUuid": "a7b7b962_37f36ff8",
+      "revId": "06ba82b08d6b6c85169e55d68cf97b90d7667978",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
