@@ -20,6 +20,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "ce522878_9b66e9fa",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-05-31T20:56:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c9173733_c67e7384",
+      "revId": "2b0c29b37fbc2b6a167f0492a44d11874332065c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "5f977c04_e084628d",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 3
@@ -52,6 +70,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "89d243a8_2f1485e3",
+        "filename": "core/fpdfapi/edit/cpdf_pagecontentgenerator.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-05-31T20:56:22Z",
+      "side": 1,
+      "message": "was not brave enough, done.",
+      "parentUuid": "389e9fe9_298e59da",
+      "revId": "2b0c29b37fbc2b6a167f0492a44d11874332065c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "eeb5a2cb_53b2ca27",
@@ -65,6 +101,30 @@
       "writtenOn": "2025-05-28T19:21:36Z",
       "side": 1,
       "message": "This part of the check isn\u0027t necessary, since `form_xobject` is never null.",
+      "range": {
+        "startLine": 719,
+        "startChar": 6,
+        "endLine": 719,
+        "endChar": 22
+      },
+      "revId": "2b0c29b37fbc2b6a167f0492a44d11874332065c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "77f629b8_cdda1219",
+        "filename": "core/fpdfapi/edit/cpdf_pagecontentgenerator.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 719,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-05-31T20:56:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eeb5a2cb_53b2ca27",
       "range": {
         "startLine": 719,
         "startChar": 6,
@@ -98,6 +158,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c9b420c7_cb8bb961",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 5511,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-05-31T20:56:22Z",
+      "side": 1,
+      "message": "just had a wrong sample",
+      "parentUuid": "b9a65465_de2b2d5d",
+      "range": {
+        "startLine": 5511,
+        "startChar": 48,
+        "endLine": 5511,
+        "endChar": 67
+      },
+      "revId": "2b0c29b37fbc2b6a167f0492a44d11874332065c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "20ec7d16_6549b9af",
@@ -111,6 +195,24 @@
       "writtenOn": "2025-05-28T19:21:36Z",
       "side": 1,
       "message": "`const char kFoo[]`, not `const char* kFoo`. The latter is not const enough as one can then write `kFoo \u003d nullptr;`.",
+      "revId": "2b0c29b37fbc2b6a167f0492a44d11874332065c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "076f3f2c_ab521140",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 5517,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-05-31T20:56:22Z",
+      "side": 1,
+      "message": "thanks!",
+      "parentUuid": "20ec7d16_6549b9af",
       "revId": "2b0c29b37fbc2b6a167f0492a44d11874332065c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -132,6 +234,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6462a157_b9c14269",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1181,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-05-31T20:56:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8510d2f2_97b99168",
+      "revId": "2b0c29b37fbc2b6a167f0492a44d11874332065c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cb884d14_c9724c06",
@@ -149,6 +269,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a748d0ca_45fb25ff",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1189,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-05-31T20:56:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cb884d14_c9724c06",
+      "revId": "2b0c29b37fbc2b6a167f0492a44d11874332065c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d45609f1_7a1be494",
@@ -162,6 +300,24 @@
       "writtenOn": "2025-05-28T19:21:36Z",
       "side": 1,
       "message": "As-is, with the check on line 1172, this never evaluates to false.",
+      "revId": "2b0c29b37fbc2b6a167f0492a44d11874332065c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "591396af_f0b363fe",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1190,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-05-31T20:56:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d45609f1_7a1be494",
       "revId": "2b0c29b37fbc2b6a167f0492a44d11874332065c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
