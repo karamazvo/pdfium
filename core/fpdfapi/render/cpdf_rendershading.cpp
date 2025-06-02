@@ -85,6 +85,7 @@ bool GetShadingSteps(float t_min,
       if (!func) {
         continue;
       }
+      // (XXX: doing the func thing here...)
       std::optional<uint32_t> nresults =
           func->Call(pdfium::span_from_ref(input), result_span);
       if (nresults.has_value()) {
@@ -92,6 +93,7 @@ bool GetShadingSteps(float t_min,
       }
     }
     auto rgb = pCS->GetRGBOrZerosOnError(result_array);
+    // XXX also seems to interpolate in wrong space
     shading_steps[i] =
         ArgbEncode(alpha, FXSYS_roundf(rgb.red * 255),
                    FXSYS_roundf(rgb.green * 255), FXSYS_roundf(rgb.blue * 255));
@@ -328,6 +330,8 @@ void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
         }
       }
       auto rgb = pCS->GetRGBOrZerosOnError(result_array);
+
+      // XXX round
       dib_buf[column] = ArgbEncode(alpha, static_cast<int32_t>(rgb.red * 255),
                                    static_cast<int32_t>(rgb.green * 255),
                                    static_cast<int32_t>(rgb.blue * 255));
@@ -357,7 +361,11 @@ bool GetScanlineIntersect(int y,
 void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
                  int alpha,
                  pdfium::span<CPDF_MeshVertex, 3> triangle,
-                 const std::array<FX_ARGB, kShadingSteps>* shading_steps) {
+                 const std::array<FX_ARGB, kShadingSteps>* shading_steps,
+                 uint32_t component_count,
+                 const CPDF_ColorSpace& cs) {
+  CHECK(component_count <= kMaxMeshColorComponents);
+
   float min_y = triangle[0].position.y;
   float max_y = triangle[0].position.y;
   for (int i = 1; i < 3; i++) {
@@ -377,9 +385,7 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
   for (int y = min_yi; y <= max_yi; y++) {
     int nIntersects = 0;
     std::array<float, 3> inter_x;
-    std::array<float, 3> r;
-    std::array<float, 3> g;
-    std::array<float, 3> b;
+    std::array<CPDF_MeshColor, 3> color;
     for (int i = 0; i < 3; i++) {
       const CPDF_MeshVertex& vertex1 = triangle[i];
       const CPDF_MeshVertex& vertex2 = triangle[(i + 1) % 3];
@@ -392,12 +398,10 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
       }
 
       float y_dist = (y - position1.y) / (position2.y - position1.y);
-      r[nIntersects] =
-          vertex1.rgb.red + ((vertex2.rgb.red - vertex1.rgb.red) * y_dist);
-      g[nIntersects] = vertex1.rgb.green +
-                       ((vertex2.rgb.green - vertex1.rgb.green) * y_dist);
-      b[nIntersects] =
-          vertex1.rgb.blue + ((vertex2.rgb.blue - vertex1.rgb.blue) * y_dist);
+      for (uint32_t j = 0; j < component_count; ++j) {
+        color[nIntersects][j] =
+            vertex1.rgb[j] + ((vertex2.rgb[j] - vertex1.rgb[j]) * y_dist);
+      }
       nIntersects++;
     }
     if (nIntersects != 2) {
@@ -423,20 +427,24 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
     int start_x = std::clamp(min_x, 0, pBitmap->GetWidth());
     int end_x = std::clamp(max_x, 0, pBitmap->GetWidth());
     const int range_x = pdfium::ClampSub(max_x, min_x);
-    float r_unit = (r[end_index] - r[start_index]) / range_x;
-    float g_unit = (g[end_index] - g[start_index]) / range_x;
-    float b_unit = (b[end_index] - b[start_index]) / range_x;
-    const int diff_x = pdfium::ClampSub(start_x, min_x);
-    float r_result = r[start_index] + diff_x * r_unit;
-    float g_result = g[start_index] + diff_x * g_unit;
-    float b_result = b[start_index] + diff_x * b_unit;
-    auto dib_span = pBitmap->GetWritableScanlineAs<FX_ARGB>(y).subspan(
-        static_cast<size_t>(start_x));
+
+    CPDF_MeshColor unit;
+    CPDF_MeshColor result_color;
+    for (uint32_t i = 0; i < component_count; ++i) {
+      unit[i] = (color[end_index][i] - color[start_index][i]) / range_x;
+      const int diff_x = pdfium::ClampSub(start_x, min_x);
+      result_color[i] = color[start_index][i] + diff_x * unit[i];
+    }
+    pdfium::span<uint8_t> dib_span = pBitmap->GetWritableScanline(y).subspan(
+        static_cast<size_t>(start_x * 4));
 
     for (int x = start_x; x < end_x; x++) {
-      r_result += r_unit;
+      for (uint32_t i = 0; i < component_count; ++i) {
+        result_color[i] += unit[i];
+      }
+
       if (shading_steps) {
-        int index = static_cast<int32_t>(r_result);
+        int index = static_cast<int32_t>(result_color[0]);
         if (index < 0) {
           index = 0;
         } else if (index >= kShadingSteps) {
@@ -444,11 +452,12 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
         }
         dib_span.front() = (*shading_steps)[index];
       } else {
-        g_result += g_unit;
-        b_result += b_unit;
-        dib_span.front() = ArgbEncode(alpha, static_cast<int>(r_result * 255),
-                                      static_cast<int>(g_result * 255),
-                                      static_cast<int>(b_result * 255));
+        CPDF_MeshColor result{result_color};
+        FX_RGB_STRUCT<float> rgb = cs.GetRGBOrZerosOnError(result);
+        // XXX round
+        dib_span.front() = ArgbEncode(alpha, static_cast<int>(rgb.red * 255),
+                                      static_cast<int>(rgb.green * 255),
+                                      static_cast<int>(rgb.blue * 255));
       }
       dib_span = dib_span.subspan<1u>();
     }
@@ -488,7 +497,7 @@ void DrawFreeGouraudShading(
       return;
     }
     if (!funcs.empty()) {
-      vertex.rgb.red = ComponentToShadingIndex(vertex.rgb.red, c0_min, c0_max);
+      vertex.rgb[0] = ComponentToShadingIndex(vertex.rgb[0], c0_min, c0_max);
     }
 
     if (flag == 0) {
@@ -499,8 +508,8 @@ void DrawFreeGouraudShading(
           return;
         }
         if (!funcs.empty()) {
-          triangle[i].rgb.red =
-              ComponentToShadingIndex(triangle[i].rgb.red, c0_min, c0_max);
+          triangle[i].rgb[0] =
+              ComponentToShadingIndex(triangle[i].rgb[0], c0_min, c0_max);
         }
       }
     } else {
@@ -512,7 +521,8 @@ void DrawFreeGouraudShading(
       triangle[2] = vertex;
     }
     DrawGouraud(pBitmap, alpha, triangle,
-                funcs.empty() ? nullptr : &shading_steps);
+                funcs.empty() ? nullptr : &shading_steps,
+                stream.BaseComponents(), stream.BaseColorSpace());
   }
 }
 
@@ -553,7 +563,7 @@ void DrawLatticeGouraudShading(
   }
   for (auto& vertex : vertices[0]) {
     if (!funcs.empty()) {
-      vertex.rgb.red = ComponentToShadingIndex(vertex.rgb.red, c0_min, c0_max);
+      vertex.rgb[0] = ComponentToShadingIndex(vertex.rgb[0], c0_min, c0_max);
     }
   }
 
@@ -565,8 +575,7 @@ void DrawLatticeGouraudShading(
     }
     for (auto& vertex : vertices[1 - last_index]) {
       if (!funcs.empty()) {
-        vertex.rgb.red =
-            ComponentToShadingIndex(vertex.rgb.red, c0_min, c0_max);
+        vertex.rgb[0] = ComponentToShadingIndex(vertex.rgb[0], c0_min, c0_max);
       }
     }
 
@@ -576,10 +585,12 @@ void DrawLatticeGouraudShading(
       triangle[1] = vertices[1 - last_index][i - 1];
       triangle[2] = vertices[last_index][i - 1];
       DrawGouraud(pBitmap, alpha, triangle,
-                  funcs.empty() ? nullptr : &shading_steps);
+                  funcs.empty() ? nullptr : &shading_steps,
+                  stream.BaseComponents(), stream.BaseColorSpace());
       triangle[2] = vertices[1 - last_index][i];
       DrawGouraud(pBitmap, alpha, triangle,
-                  funcs.empty() ? nullptr : &shading_steps);
+                  funcs.empty() ? nullptr : &shading_steps,
+                  stream.BaseComponents(), stream.BaseColorSpace());
     }
     last_index = 1 - last_index;
   }
@@ -681,43 +692,44 @@ struct CubicBezierPatch {
   std::array<std::array<CFX_PointF, 4>, 4> points;
 };
 
-int Interpolate(int p1, int p2, int delta1, int delta2, bool* overflow) {
-  FX_SAFE_INT32 p = p2;
+float Interpolate(float p1, float p2, int delta1, int delta2, bool* overflow) {
+  float p = p2;
   p -= p1;
   p *= delta1;
   p /= delta2;
   p += p1;
-  if (!p.IsValid()) {
-    *overflow = true;
-  }
-  return p.ValueOrDefault(0);
+  // XXX is there a safe float?
+  // if (!p.IsValid()) {
+  //   *overflow = true;
+  // }
+  return p;  // p.ValueOrDefault(0);
 }
 
-int BiInterpolImpl(int c0,
-                   int c1,
-                   int c2,
-                   int c3,
-                   int x,
-                   int y,
-                   int x_scale,
-                   int y_scale,
-                   bool* overflow) {
-  int x1 = Interpolate(c0, c3, x, x_scale, overflow);
-  int x2 = Interpolate(c1, c2, x, x_scale, overflow);
+float BiInterpolImpl(float c0,
+                     float c1,
+                     float c2,
+                     float c3,
+                     int x,
+                     int y,
+                     int x_scale,
+                     int y_scale,
+                     bool* overflow) {
+  float x1 = Interpolate(c0, c3, x, x_scale, overflow);
+  float x2 = Interpolate(c1, c2, x, x_scale, overflow);
   return Interpolate(x1, x2, y, y_scale, overflow);
 }
 
-struct CoonColor {
-  CoonColor() = default;
+struct CoonsColor {
+  CoonsColor() = default;
 
   // Returns true if successful, false if overflow detected.
-  bool BiInterpol(pdfium::span<CoonColor, 4> colors,
+  bool BiInterpol(pdfium::span<CoonsColor, 4> colors,
                   int x,
                   int y,
                   int x_scale,
                   int y_scale) {
     bool overflow = false;
-    for (int i = 0; i < 3; i++) {
+    for (size_t i = 0; i < comp.size(); i++) {
       comp[i] = BiInterpolImpl(colors[0].comp[i], colors[1].comp[i],
                                colors[2].comp[i], colors[3].comp[i], x, y,
                                x_scale, y_scale, &overflow);
@@ -725,16 +737,31 @@ struct CoonColor {
     return !overflow;
   }
 
-  int Distance(const CoonColor& o) const {
-    return std::max({abs(comp[0] - o.comp[0]), abs(comp[1] - o.comp[1]),
-                     abs(comp[2] - o.comp[2])});
+  float Distance(const CoonsColor& o,
+                 const CPDF_ColorSpace& color_space) const {
+    // XXX converting here a bit wasteful
+    // XXX have to look at func here too, maybe via 1d texture or something
+    CPDF_MeshColor result{comp};
+    pdfium::span<float> result_span = pdfium::span(result);
+    FX_RGB_STRUCT<float> rgb_left = color_space.GetRGBOrZerosOnError(result);
+
+    CPDF_MeshColor oresult{o.comp};
+    pdfium::span<float> oresult_span = pdfium::span(oresult);
+    FX_RGB_STRUCT<float> rgb_right = color_space.GetRGBOrZerosOnError(oresult);
+
+    return std::max({abs(rgb_right.red - rgb_left.red),
+                     abs(rgb_right.green - rgb_left.green),
+                     abs(rgb_right.blue - rgb_left.blue)});
   }
 
-  std::array<int, 3> comp = {};
+  CPDF_MeshColor comp = {};
 };
 
 struct PatchDrawer {
-  static constexpr int kCoonColorThreshold = 4;
+  explicit PatchDrawer(const CPDF_ColorSpace& color_space)
+      : color_space(color_space) {}
+
+  static constexpr float kCoonsColorThreshold = 4.0f / 255.0f;
 
   void Draw(int x_scale,
             int y_scale,
@@ -744,11 +771,11 @@ struct PatchDrawer {
             const std::array<FX_ARGB, kShadingSteps>* shading_steps) {
     bool bSmall = patch.IsSmall();
 
-    CoonColor div_colors[4];
-    int d_bottom = 0;
-    int d_left = 0;
-    int d_top = 0;
-    int d_right = 0;
+    CoonsColor div_colors[4];
+    float d_bottom = 0;
+    float d_left = 0;
+    float d_top = 0;
+    float d_right = 0;
     if (!div_colors[0].BiInterpol(patch_colors, left, bottom, x_scale,
                                   y_scale)) {
       return;
@@ -766,15 +793,15 @@ struct PatchDrawer {
                                     y_scale)) {
         return;
       }
-      d_bottom = div_colors[3].Distance(div_colors[0]);
-      d_left = div_colors[1].Distance(div_colors[0]);
-      d_top = div_colors[1].Distance(div_colors[2]);
-      d_right = div_colors[2].Distance(div_colors[3]);
+      d_bottom = div_colors[3].Distance(div_colors[0], color_space);
+      d_left = div_colors[1].Distance(div_colors[0], color_space);
+      d_top = div_colors[1].Distance(div_colors[2], color_space);
+      d_right = div_colors[2].Distance(div_colors[3], color_space);
     }
 
     if (bSmall ||
-        (d_bottom < kCoonColorThreshold && d_left < kCoonColorThreshold &&
-         d_top < kCoonColorThreshold && d_right < kCoonColorThreshold)) {
+        (d_bottom < kCoonsColorThreshold && d_left < kCoonsColorThreshold &&
+         d_top < kCoonsColorThreshold && d_right < kCoonsColorThreshold)) {
       pdfium::span<CFX_Path::Point> points = path.GetPoints();
       patch.GetBoundary(points);
       CFX_FillRenderOptions fill_options(
@@ -789,14 +816,31 @@ struct PatchDrawer {
                           (*shading_steps)[div_colors[0].comp[0]], 0,
                           fill_options);
       } else {
-        pDevice->DrawPath(
-            path, nullptr, nullptr,
-            ArgbEncode(alpha, div_colors[0].comp[0], div_colors[0].comp[1],
-                       div_colors[0].comp[2]),
-            0, fill_options);
+        CPDF_MeshColor result{div_colors[0].comp};
+        pdfium::span<float> result_span = pdfium::span(result);
+
+        FX_RGB_STRUCT<float> rgb = color_space.GetRGBOrZerosOnError(result);
+
+#if 1
+        pDevice->DrawPath(path, nullptr, nullptr,
+                          ArgbEncode(alpha, FXSYS_roundf(rgb.red * 255),
+                                     FXSYS_roundf(rgb.green * 255),
+                                     FXSYS_roundf(rgb.blue * 255)),
+                          0, fill_options);
+#else
+        CFX_GraphStateData stroke_state;
+        stroke = ArgbEncode(0x40, 0, 0, 0);
+        fill_options.stroke = true;
+
+        pDevice->DrawPath(path, nullptr, &stroke_state,
+                          ArgbEncode(alpha, FXSYS_roundf(rgb.red * 255),
+                                     FXSYS_roundf(rgb.green * 255),
+                                     FXSYS_roundf(rgb.blue * 255)),
+                          stroke, fill_options);
+#endif
       }
     } else {
-      if (d_bottom < kCoonColorThreshold && d_top < kCoonColorThreshold) {
+      if (d_bottom < kCoonsColorThreshold && d_top < kCoonsColorThreshold) {
         CubicBezierPatch top_patch;
         CubicBezierPatch bottom_patch;
         patch.SubdivideVertical(top_patch, bottom_patch);
@@ -804,8 +848,8 @@ struct PatchDrawer {
         bottom *= 2;
         Draw(x_scale, y_scale, left, bottom, top_patch, shading_steps);
         Draw(x_scale, y_scale, left, bottom + 1, bottom_patch, shading_steps);
-      } else if (d_left < kCoonColorThreshold &&
-                 d_right < kCoonColorThreshold) {
+      } else if (d_left < kCoonsColorThreshold &&
+                 d_right < kCoonsColorThreshold) {
         CubicBezierPatch left_patch;
         CubicBezierPatch right_patch;
         patch.SubdivideHorizontal(left_patch, right_patch);
@@ -837,7 +881,9 @@ struct PatchDrawer {
   UnownedPtr<CFX_RenderDevice> pDevice;
   bool bNoPathSmooth;
   int alpha;
-  std::array<CoonColor, 4> patch_colors;
+  std::array<CoonsColor, 4> patch_colors;
+  uint32_t color_component_count;
+  const CPDF_ColorSpace& color_space;
 };
 
 void DrawCoonPatchMeshes(
@@ -871,10 +917,11 @@ void DrawCoonPatchMeshes(
   float c0_min = stream.component_min(0);
   float c0_max = stream.component_max(0);
 
-  PatchDrawer patch_drawer;
+  PatchDrawer patch_drawer{stream.BaseColorSpace()};
   patch_drawer.alpha = alpha;
   patch_drawer.pDevice = &device;
   patch_drawer.bNoPathSmooth = bNoPathSmooth;
+  patch_drawer.color_component_count = stream.BaseComponents();
 
   for (int i = 0; i < 13; i++) {
     patch_drawer.path.AppendPoint(
@@ -900,7 +947,7 @@ void DrawCoonPatchMeshes(
         tempCoords[i] = coords[(flag * 3 + i) % 12];
       }
       fxcrt::Copy(tempCoords, coords);
-      std::array<CoonColor, 2> tempColors = {{
+      std::array<CoonsColor, 2> tempColors = {{
           patch_drawer.patch_colors[flag],
           patch_drawer.patch_colors[(flag + 1) % 4],
       }};
@@ -918,19 +965,10 @@ void DrawCoonPatchMeshes(
         break;
       }
 
-      FX_RGB_STRUCT<float> rgb = stream.ReadColor();
-      if (funcs.empty()) {
-        patch_drawer.patch_colors[i].comp[0] =
-            static_cast<int32_t>(rgb.red * 255);
-        patch_drawer.patch_colors[i].comp[1] =
-            static_cast<int32_t>(rgb.green * 255);
-        patch_drawer.patch_colors[i].comp[2] =
-            static_cast<int32_t>(rgb.blue * 255);
-      } else {
-        patch_drawer.patch_colors[i].comp[0] = static_cast<int32_t>(
-            ComponentToShadingIndex(rgb.red, c0_min, c0_max));
-        patch_drawer.patch_colors[i].comp[1] = 0;
-        patch_drawer.patch_colors[i].comp[2] = 0;
+      patch_drawer.patch_colors[i].comp = stream.ReadColor();
+      if (!funcs.empty()) {
+        patch_drawer.patch_colors[i].comp[0] = ComponentToShadingIndex(
+            patch_drawer.patch_colors[i].comp[0], c0_min, c0_max);
       }
     }
 
@@ -1018,8 +1056,9 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
     if (pBackColor && pBackColor->size() >= pColorSpace->ComponentCount()) {
       std::vector<float> comps = ReadArrayElementsToVector(
           pBackColor.Get(), pColorSpace->ComponentCount());
-
       auto rgb = pColorSpace->GetRGBOrZerosOnError(comps);
+
+      // XXX round
       background = ArgbEncode(255, static_cast<int32_t>(rgb.red * 255),
                               static_cast<int32_t>(rgb.green * 255),
                               static_cast<int32_t>(rgb.blue * 255));
