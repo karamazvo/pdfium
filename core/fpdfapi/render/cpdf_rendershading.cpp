@@ -589,7 +589,7 @@ struct CubicBezierPatch {
   bool IsSmall() const {
     CFX_FloatRect bbox = CFX_FloatRect::GetBBox(
         fxcrt::reinterpret_span<const CFX_PointF>(pdfium::span(points)));
-    return bbox.Width() < 2 && bbox.Height() < 2;
+    return bbox.Width() < 10 && bbox.Height() < 10;
   }
 
   void GetBoundary(pdfium::span<CFX_Path::Point> boundary) {
@@ -730,30 +730,26 @@ struct CoonColor {
                      abs(comp[2] - o.comp[2])});
   }
 
+  FX_RGB_STRUCT<float> to_rgb() const {
+    return {comp[0] / 255.0f, comp[1] / 255.0f, comp[2] / 255.0f};
+  }
+
   std::array<int, 3> comp = {};
 };
 
 struct PatchDrawer {
-  static constexpr int kCoonColorThreshold = 4;
-
   void Draw(int x_scale,
             int y_scale,
             int left,
             int bottom,
             CubicBezierPatch patch,
             const std::array<FX_ARGB, kShadingSteps>* shading_steps) {
-    bool bSmall = patch.IsSmall();
-
-    CoonColor div_colors[4];
-    int d_bottom = 0;
-    int d_left = 0;
-    int d_top = 0;
-    int d_right = 0;
-    if (!div_colors[0].BiInterpol(patch_colors, left, bottom, x_scale,
-                                  y_scale)) {
-      return;
-    }
-    if (!bSmall) {
+    if (patch.IsSmall()) {
+      CoonColor div_colors[4];
+      if (!div_colors[0].BiInterpol(patch_colors, left, bottom, x_scale,
+                                    y_scale)) {
+        return;
+      }
       if (!div_colors[1].BiInterpol(patch_colors, left, bottom + 1, x_scale,
                                     y_scale)) {
         return;
@@ -766,75 +762,48 @@ struct PatchDrawer {
                                     y_scale)) {
         return;
       }
-      d_bottom = div_colors[3].Distance(div_colors[0]);
-      d_left = div_colors[1].Distance(div_colors[0]);
-      d_top = div_colors[1].Distance(div_colors[2]);
-      d_right = div_colors[2].Distance(div_colors[3]);
-    }
 
-    if (bSmall ||
-        (d_bottom < kCoonColorThreshold && d_left < kCoonColorThreshold &&
-         d_top < kCoonColorThreshold && d_right < kCoonColorThreshold)) {
-      pdfium::span<CFX_Path::Point> points = path.GetPoints();
-      patch.GetBoundary(points);
-      CFX_FillRenderOptions fill_options(
-          CFX_FillRenderOptions::WindingOptions());
-      fill_options.full_cover = true;
-      if (bNoPathSmooth) {
-        fill_options.aliased_path = true;
-      }
-
+      std::array<CPDF_MeshVertex, 3> triangle;
+      triangle[0].position = patch.points[0][0];
+      triangle[0].rgb = div_colors[0].to_rgb();
+      triangle[1].position = patch.points[3][0];
+      triangle[1].rgb = div_colors[3].to_rgb();
+      triangle[2].position = patch.points[3][3];
+      triangle[2].rgb = div_colors[2].to_rgb();
       if (shading_steps) {
-        pDevice->DrawPath(path, nullptr, nullptr,
-                          (*shading_steps)[div_colors[0].comp[0]], 0,
-                          fill_options);
-      } else {
-        pDevice->DrawPath(
-            path, nullptr, nullptr,
-            ArgbEncode(alpha, div_colors[0].comp[0], div_colors[0].comp[1],
-                       div_colors[0].comp[2]),
-            0, fill_options);
+        for (int i = 0; i < 3; ++i) {
+          triangle[i].rgb.red *= 255.0f;  // XXX back and forth
+        }
       }
-    } else {
-      if (d_bottom < kCoonColorThreshold && d_top < kCoonColorThreshold) {
-        CubicBezierPatch top_patch;
-        CubicBezierPatch bottom_patch;
-        patch.SubdivideVertical(top_patch, bottom_patch);
-        y_scale *= 2;
-        bottom *= 2;
-        Draw(x_scale, y_scale, left, bottom, top_patch, shading_steps);
-        Draw(x_scale, y_scale, left, bottom + 1, bottom_patch, shading_steps);
-      } else if (d_left < kCoonColorThreshold &&
-                 d_right < kCoonColorThreshold) {
-        CubicBezierPatch left_patch;
-        CubicBezierPatch right_patch;
-        patch.SubdivideHorizontal(left_patch, right_patch);
-        x_scale *= 2;
-        left *= 2;
-        Draw(x_scale, y_scale, left, bottom, left_patch, shading_steps);
-        Draw(x_scale, y_scale, left + 1, bottom, right_patch, shading_steps);
-      } else {
-        CubicBezierPatch top_left;
-        CubicBezierPatch bottom_left;
-        CubicBezierPatch top_right;
-        CubicBezierPatch bottom_right;
-        patch.Subdivide(top_left, bottom_left, top_right, bottom_right);
-        x_scale *= 2;
-        y_scale *= 2;
-        left *= 2;
-        bottom *= 2;
-        Draw(x_scale, y_scale, left, bottom, top_left, shading_steps);
-        Draw(x_scale, y_scale, left, bottom + 1, bottom_left, shading_steps);
-        Draw(x_scale, y_scale, left + 1, bottom, top_right, shading_steps);
-        Draw(x_scale, y_scale, left + 1, bottom + 1, bottom_right,
-             shading_steps);
+      DrawGouraud(pBitmap, alpha, triangle, shading_steps);
+
+      triangle[1] = triangle[2];
+      triangle[2].position = patch.points[0][3];
+      triangle[2].rgb = div_colors[1].to_rgb();
+      if (shading_steps) {
+        triangle[2].rgb.red *= 255.0f;  // XXX back and forth
       }
+
+      DrawGouraud(pBitmap, alpha, triangle, shading_steps);
+      return;
     }
+
+    CubicBezierPatch top_left;
+    CubicBezierPatch bottom_left;
+    CubicBezierPatch top_right;
+    CubicBezierPatch bottom_right;
+    patch.Subdivide(top_left, bottom_left, top_right, bottom_right);
+    x_scale *= 2;
+    y_scale *= 2;
+    left *= 2;
+    bottom *= 2;
+    Draw(x_scale, y_scale, left, bottom, top_left, shading_steps);
+    Draw(x_scale, y_scale, left, bottom + 1, bottom_left, shading_steps);
+    Draw(x_scale, y_scale, left + 1, bottom, top_right, shading_steps);
+    Draw(x_scale, y_scale, left + 1, bottom + 1, bottom_right, shading_steps);
   }
 
-  int max_delta;
-  CFX_Path path;
-  UnownedPtr<CFX_RenderDevice> pDevice;
+  RetainPtr<CFX_DIBitmap> pBitmap;
   bool bNoPathSmooth;
   int alpha;
   std::array<CoonColor, 4> patch_colors;
@@ -853,9 +822,6 @@ void DrawCoonPatchMeshes(
   DCHECK(type == kCoonsPatchMeshShading ||
          type == kTensorProductPatchMeshShading);
 
-  CFX_DefaultRenderDevice device;
-  device.Attach(pBitmap);
-
   CPDF_MeshStream stream(type, funcs, std::move(pShadingStream), pCS);
   if (!stream.Load()) {
     return;
@@ -873,14 +839,8 @@ void DrawCoonPatchMeshes(
 
   PatchDrawer patch_drawer;
   patch_drawer.alpha = alpha;
-  patch_drawer.pDevice = &device;
+  patch_drawer.pBitmap = pBitmap;
   patch_drawer.bNoPathSmooth = bNoPathSmooth;
-
-  for (int i = 0; i < 13; i++) {
-    patch_drawer.path.AppendPoint(
-        CFX_PointF(),
-        i == 0 ? CFX_Path::Point::Type::kMove : CFX_Path::Point::Type::kBezier);
-  }
 
   std::array<CFX_PointF, 16> coords;
   int point_count = type == kTensorProductPatchMeshShading ? 16 : 12;
