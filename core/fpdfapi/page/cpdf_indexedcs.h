@@ -37,6 +37,8 @@ class CPDF_IndexedCS final : public CPDF_BasedCS {
 
   int GetMaxIndex() const { return max_index_; }
 
+  std::optional<DataVector<float>> GetBaseComponents(int32_t index) const;
+
  private:
   CPDF_IndexedCS();
 
