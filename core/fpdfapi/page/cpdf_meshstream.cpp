@@ -10,6 +10,7 @@
 
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fpdfapi/page/cpdf_function.h"
+#include "core/fpdfapi/page/cpdf_indexedcs.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
@@ -132,8 +133,17 @@ bool CPDF_MeshStream::Load() {
     return false;
   }
 
+  // XXX reject indexed with funcs somewhere
+
+  // XXX should i do this here?
+  if (auto* indexed = cs_->AsIndexedCS()) {
+    base_cs_ = indexed->base_color_space();
+  } else {
+    base_cs_ = cs_;
+  }
   uint32_t nComponents = cs_->ComponentCount();
-  if (nComponents > kMaxComponents) {
+  if (nComponents > kMaxMeshColorComponents ||
+      base_cs_->ComponentCount() > kMaxMeshColorComponents) {
     return false;
   }
 
@@ -205,19 +215,42 @@ CFX_PointF CPDF_MeshStream::ReadCoords() const {
   return pos;
 }
 
-FX_RGB_STRUCT<float> CPDF_MeshStream::ReadColor() const {
+CPDF_MeshColor CPDF_MeshStream::ReadColor() const {
   DCHECK(ShouldCheckBPC(type_));
 
-  std::array<float, kMaxComponents> color_value;
+  CPDF_MeshColor color_value;
+
   for (uint32_t i = 0; i < components_; ++i) {
     color_value[i] = color_min_[i] + bit_stream_->GetBits(component_bits_) *
                                          (color_max_[i] - color_min_[i]) /
                                          component_max_;
   }
-  if (funcs_.empty()) {
-    return cs_->GetRGBOrZerosOnError(color_value);
+
+  // XXX comment
+  // XXX probably shouldn't do this here but at call sites
+  if (auto* indexed = cs_->AsIndexedCS()) {
+    // XXX CHECK that base color space is not indexed or pattern
+    // XXX return base color space from ColorSpace()
+    // XXX return base color space's component count from Components()
+    int n = indexed->base_color_space()->ComponentCount();
+
+    // XXX maybe not true for DeviceN?
+    CHECK(n <= (int)kMaxMeshColorComponents);
+
+    // XXX CHECK that we have 1 element here
+    auto maybe_mapped = indexed->GetBaseComponents(color_value[0]);
+    if (!maybe_mapped.has_value()) {
+      // XXX good error handling (return default color value in base colorspace)
+      CHECK(false);
+    }
+    auto mapped = std::move(maybe_mapped.value());
+
+    for (int i = 0; i < n; ++i) {
+      color_value[i] = mapped[i];
+    }
   }
-  return {color_value[0], 0.0f, 0.0f};
+
+  return color_value;
 }
 
 bool CPDF_MeshStream::ReadVertex(const CFX_Matrix& pObject2Bitmap,
@@ -236,7 +269,10 @@ bool CPDF_MeshStream::ReadVertex(const CFX_Matrix& pObject2Bitmap,
   if (!CanReadColor()) {
     return false;
   }
+
+  // XXX but one call site is here, hmm
   vertex->rgb = ReadColor();
+
   bit_stream_->ByteAlign();
   return true;
 }
