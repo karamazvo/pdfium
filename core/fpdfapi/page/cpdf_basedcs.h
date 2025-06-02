@@ -20,6 +20,8 @@ class CPDF_BasedCS : public CPDF_ColorSpace {
 
   void EnableStdConversion(bool bEnabled) final;
 
+  RetainPtr<CPDF_ColorSpace> base_color_space() const { return base_cs_; }
+
  protected:
   explicit CPDF_BasedCS(Family family);
 
