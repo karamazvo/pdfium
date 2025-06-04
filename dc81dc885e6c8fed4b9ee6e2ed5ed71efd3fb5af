@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7020bd3d_a75aa619",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 9461
+      },
+      "writtenOn": "2025-06-04T21:14:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7fb26d5e_5a1d3b56",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 27
+      },
+      "revId": "dc81dc885e6c8fed4b9ee6e2ed5ed71efd3fb5af",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b1e3e5fc_c9f56114",
@@ -43,6 +67,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "913fa79f_5ff3193d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 9461
+      },
+      "writtenOn": "2025-06-04T21:14:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b1e3e5fc_c9f56114",
+      "revId": "dc81dc885e6c8fed4b9ee6e2ed5ed71efd3fb5af",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "de24b83d_c5d5b469",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 2
@@ -54,6 +96,24 @@
       "writtenOn": "2025-06-04T20:20:49Z",
       "side": 1,
       "message": "Note that there\u0027s no CQ here. So please resolve all the open comments and I can submit this CL.",
+      "revId": "dc81dc885e6c8fed4b9ee6e2ed5ed71efd3fb5af",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "eb47562e_f211c31c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9461
+      },
+      "writtenOn": "2025-06-04T21:14:54Z",
+      "side": 1,
+      "message": "tysm",
+      "parentUuid": "de24b83d_c5d5b469",
       "revId": "dc81dc885e6c8fed4b9ee6e2ed5ed71efd3fb5af",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
