@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "586ca6b0_9476b245",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1174,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-04T22:29:41Z",
+      "side": 1,
+      "message": "This never evaluates to true. Same as https://pdfium-review.googlesource.com/c/pdfium/+/132190/comment/eeb5a2cb_53b2ca27/",
+      "revId": "f5860275b22b2272a794a289d7e6c259b217e391",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
