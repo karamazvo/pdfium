@@ -28,7 +28,7 @@ struct CRYPT_aes_context {
 void CRYPT_AESSetKey(CRYPT_aes_context* ctx,
                      const uint8_t* key,
                      uint32_t keylen);
-void CRYPT_AESSetIV(CRYPT_aes_context* ctx, const uint8_t* iv);
+void CRYPT_AESSetIV(CRYPT_aes_context* ctx, pdfium::span<const uint8_t, 16> iv);
 void CRYPT_AESDecrypt(CRYPT_aes_context* ctx,
                       uint8_t* dest,
                       const uint8_t* src,
