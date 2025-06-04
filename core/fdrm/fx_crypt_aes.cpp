@@ -584,11 +584,10 @@ void CRYPT_AESSetKey(CRYPT_aes_context* ctx,
   }
 }
 
-void CRYPT_AESSetIV(CRYPT_aes_context* ctx, const uint8_t* iv) {
+void CRYPT_AESSetIV(CRYPT_aes_context* ctx,
+                    pdfium::span<const uint8_t, 16> iv) {
   for (int i = 0; i < ctx->Nb; i++) {
-    // TODO(tsepez): Pass actual span.
-    ctx->iv[i] = fxcrt::GetUInt32MSBFirst(
-        UNSAFE_TODO(pdfium::span(iv + 4u * i, 4u).first<4u>()));
+    ctx->iv[i] = fxcrt::GetUInt32MSBFirst(iv.subspan(4u * i).first<4u>());
   }
 }
 

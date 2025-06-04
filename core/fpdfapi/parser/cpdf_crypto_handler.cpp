@@ -80,15 +80,14 @@ DataVector<uint8_t> CPDF_CryptoHandler::EncryptContent(
 
     DataVector<uint8_t> dest(kIVSize + source_data_size + kPaddingSize);
     auto dest_span = pdfium::span(dest);
-    auto dest_iv_span = dest_span.first(kIVSize);
+    auto dest_iv_span = dest_span.first<kIVSize>();
     auto dest_data_span = dest_span.subspan(kIVSize, source_data_size);
     auto dest_padding_span = dest_span.subspan(kIVSize + source_data_size);
 
     for (auto& v : dest_iv_span) {
       v = static_cast<uint8_t>(rand());
     }
-    CRYPT_AESSetIV(aes_context_.get(), dest_iv_span.data());
-
+    CRYPT_AESSetIV(aes_context_.get(), dest_iv_span);
     CRYPT_AESEncrypt(aes_context_.get(), dest_data_span,
                      source.first(source_data_size));
 
