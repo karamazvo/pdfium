@@ -153,7 +153,8 @@ void Revision6_Hash(const ByteString& password,
     }
     CHECK_EQ(content.size(), encrypted_output.size());
     CRYPT_AESSetKey(&aes, key, 16);
-    CRYPT_AESSetIV(&aes, iv);
+    CRYPT_AESSetIV(
+        &aes, UNSAFE_TODO(pdfium::span<const uint8_t>(iv, 16u).first<16u>()));
     CRYPT_AESEncrypt(&aes, encrypted_output_span, content);
 
     switch (BigOrder64BitsMod3(encrypted_output_span)) {
