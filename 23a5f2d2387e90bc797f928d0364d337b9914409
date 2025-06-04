@@ -16,6 +16,23 @@
       "message": "Note that this added test is similar to the one added in https://pdfium-review.googlesource.com/c/pdfium/+/128591 . The only difference being that the ActualText replacements are made up entirely of code points not present in the currently selected drawing font.",
       "revId": "23a5f2d2387e90bc797f928d0364d337b9914409",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c48739b6_dfcba74e",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2186,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-04T01:02:44Z",
+      "side": 1,
+      "message": "I have no idea, but I\u0027m getting hungry thinking about the answer.",
+      "revId": "23a5f2d2387e90bc797f928d0364d337b9914409",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
