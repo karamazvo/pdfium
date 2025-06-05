@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0c5335f7_d06ee6c3",
+        "filename": "DEPS",
+        "patchSetId": 3
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-05T01:23:02Z",
+      "side": 1,
+      "message": "Note to self. Replace with real commit when https://pdfium-review.googlesource.com/132891 lands.",
+      "revId": "ea24e052a1116393919f0803e5f5662c68a9d78c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
