@@ -16,6 +16,24 @@
       "message": "Note to self. Replace with real commit when https://pdfium-review.googlesource.com/132891 lands.",
       "revId": "ea24e052a1116393919f0803e5f5662c68a9d78c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "39667bd5_01ccb161",
+        "filename": "DEPS",
+        "patchSetId": 3
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-05T16:14:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0c5335f7_d06ee6c3",
+      "revId": "ea24e052a1116393919f0803e5f5662c68a9d78c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
