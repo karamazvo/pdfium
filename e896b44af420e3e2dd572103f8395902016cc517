@@ -16,6 +16,23 @@
       "message": "Ping.",
       "revId": "e896b44af420e3e2dd572103f8395902016cc517",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1a872a05_6da48e67",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3504583
+      },
+      "writtenOn": "2025-06-09T23:12:39Z",
+      "side": 1,
+      "message": "LGTM, sorry for the delayed response. \nI don\u0027t have committers, but my colleague Jiewei might be able to help.",
+      "revId": "e896b44af420e3e2dd572103f8395902016cc517",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
