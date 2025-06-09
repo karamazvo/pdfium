@@ -529,10 +529,9 @@ void aes_decrypt_nb_4(CRYPT_aes_context* ctx, pdfium::span<uint32_t, 4> block) {
 void CRYPT_AESSetKey(CRYPT_aes_context* ctx, pdfium::span<const uint8_t> key) {
   DCHECK(key.size() == 16 || key.size() == 24 || key.size() == 32);
   size_t Nk = key.size() / 4;
-  ctx->Nb = 4;
-  ctx->Nr = 6 + (ctx->Nb > Nk ? ctx->Nb : Nk);
+  ctx->Nr = 6 + Nk;
   int rconst = 1;
-  for (size_t i = 0; i < (ctx->Nr + 1) * ctx->Nb; i++) {
+  for (size_t i = 0; i < (ctx->Nr + 1) * CRYPT_aes_context::kBlockSize; i++) {
     if (i < Nk) {
       ctx->keysched[i] =
           fxcrt::GetUInt32MSBFirst(key.subspan(4u * i).first<4u>());
@@ -562,8 +561,9 @@ void CRYPT_AESSetKey(CRYPT_aes_context* ctx, pdfium::span<const uint8_t> key) {
     }
   }
   for (size_t i = 0; i <= ctx->Nr; i++) {
-    for (size_t j = 0; j < ctx->Nb; j++) {
-      uint32_t temp = ctx->keysched[(ctx->Nr - i) * ctx->Nb + j];
+    for (size_t j = 0; j < CRYPT_aes_context::kBlockSize; j++) {
+      uint32_t temp =
+          ctx->keysched[(ctx->Nr - i) * CRYPT_aes_context::kBlockSize + j];
       if (i != 0 && i != ctx->Nr) {
         int a = (temp >> 24) & 0xFF;
         int b = (temp >> 16) & 0xFF;
@@ -574,14 +574,14 @@ void CRYPT_AESSetKey(CRYPT_aes_context* ctx, pdfium::span<const uint8_t> key) {
         temp ^= D2[Sbox[c]];
         temp ^= D3[Sbox[d]];
       }
-      ctx->invkeysched[i * ctx->Nb + j] = temp;
+      ctx->invkeysched[i * CRYPT_aes_context::kBlockSize + j] = temp;
     }
   }
 }
 
 void CRYPT_AESSetIV(CRYPT_aes_context* ctx,
                     pdfium::span<const uint8_t, 16> iv) {
-  for (size_t i = 0; i < ctx->Nb; i++) {
+  for (size_t i = 0; i < CRYPT_aes_context::kBlockSize; i++) {
     ctx->iv[i] = fxcrt::GetUInt32MSBFirst(iv.subspan(4u * i).first<4u>());
   }
 }
