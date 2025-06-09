@@ -34,6 +34,24 @@
       "parentUuid": "7f4a1560_0641ac74",
       "revId": "cef1f80d9238ac62f6bea95cbe228fff7b4b81ff",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "86b44d46_e22ae81b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-09T22:57:15Z",
+      "side": 1,
+      "message": "Yes the r5 PDF has `/V 5 /R 5` and the r6 PDF has `/V 5 /R 6`. I believe qpdf generated these. ISO 32000-2:2020 table 20 says `/V 5` is the latest, and table 21 says `/R 6` is the latest.",
+      "parentUuid": "1771a94e_960721c8",
+      "revId": "cef1f80d9238ac62f6bea95cbe228fff7b4b81ff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
