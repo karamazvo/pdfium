@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7f4a1560_0641ac74",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-06-09T22:40:02Z",
+      "side": 1,
+      "message": "Code likely not covered. R 5 appears at line \n\nhttps://source.chromium.org/chromium/chromium/src/+/main:third_party/pdfium/testing/resources/encrypted_hello_world_r6.pdf;drc\u003db76e451261845a087460986794e65e162cbb6482;l\u003d27\n\nwhich might be why no tests.  Should the r6 file specific R 6?",
+      "revId": "cef1f80d9238ac62f6bea95cbe228fff7b4b81ff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
