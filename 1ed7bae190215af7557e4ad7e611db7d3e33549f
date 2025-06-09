@@ -1,0 +1,78 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9b64e417_d7b88761",
+        "filename": "core/fdrm/fx_crypt_aes.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-09T22:08:53Z",
+      "side": 1,
+      "message": "Is this ever 0 though? i.e. Maybe just CHECK_NE(ctx-\u003eNr, 0u) instead?",
+      "revId": "1ed7bae190215af7557e4ad7e611db7d3e33549f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2d39ccbc_d2b9d74b",
+        "filename": "core/fdrm/fx_crypt_aes.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 602,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-09T22:08:53Z",
+      "side": 1,
+      "message": "!src.empty()",
+      "range": {
+        "startLine": 602,
+        "startChar": 11,
+        "endLine": 602,
+        "endChar": 26
+      },
+      "revId": "1ed7bae190215af7557e4ad7e611db7d3e33549f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bd6e2887_36cb80f2",
+        "filename": "core/fdrm/fx_crypt_aes.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 611,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-09T22:08:53Z",
+      "side": 1,
+      "message": "Up to you. Maybe the for-loops above can increment by 4 for every iteration instead.",
+      "revId": "1ed7bae190215af7557e4ad7e611db7d3e33549f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b05f1b06_1cc3fe36",
+        "filename": "core/fpdfapi/parser/cpdf_security_handler.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 676,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-09T22:08:53Z",
+      "side": 1,
+      "message": "Should this be `digest1.first\u003c32u\u003e()`?",
+      "revId": "1ed7bae190215af7557e4ad7e611db7d3e33549f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
