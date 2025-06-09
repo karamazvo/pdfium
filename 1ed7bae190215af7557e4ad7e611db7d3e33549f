@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ae0a36c8_779377fe",
+        "filename": "core/fdrm/fx_crypt_aes.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-06-09T22:21:30Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "9b64e417_d7b88761",
+      "revId": "1ed7bae190215af7557e4ad7e611db7d3e33549f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2d39ccbc_d2b9d74b",
@@ -31,6 +49,30 @@
       "writtenOn": "2025-06-09T22:08:53Z",
       "side": 1,
       "message": "!src.empty()",
+      "range": {
+        "startLine": 602,
+        "startChar": 11,
+        "endLine": 602,
+        "endChar": 26
+      },
+      "revId": "1ed7bae190215af7557e4ad7e611db7d3e33549f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3aa96951_070a1f6e",
+        "filename": "core/fdrm/fx_crypt_aes.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 602,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-06-09T22:21:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2d39ccbc_d2b9d74b",
       "range": {
         "startLine": 602,
         "startChar": 11,
@@ -76,6 +118,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7d2ab102_612fa033",
+        "filename": "core/fdrm/fx_crypt_aes.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 611,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-06-09T22:21:30Z",
+      "side": 1,
+      "message": "Yep. Did this in a later CL, but lets do it now. Done.",
+      "parentUuid": "bd6e2887_36cb80f2",
+      "revId": "1ed7bae190215af7557e4ad7e611db7d3e33549f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b05f1b06_1cc3fe36",
@@ -89,6 +149,24 @@
       "writtenOn": "2025-06-09T22:08:53Z",
       "side": 1,
       "message": "Should this be `digest1.first\u003c32u\u003e()`?",
+      "revId": "1ed7bae190215af7557e4ad7e611db7d3e33549f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7164dff2_ac8d8e03",
+        "filename": "core/fpdfapi/parser/cpdf_security_handler.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 676,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-06-09T22:21:30Z",
+      "side": 1,
+      "message": "Yeah, how the heck did this pass tests?",
+      "parentUuid": "b05f1b06_1cc3fe36",
       "revId": "1ed7bae190215af7557e4ad7e611db7d3e33549f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
