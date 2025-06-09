@@ -52,6 +52,24 @@
       "parentUuid": "1771a94e_960721c8",
       "revId": "cef1f80d9238ac62f6bea95cbe228fff7b4b81ff",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a96391d8_e9ba6f2f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-06-09T23:11:45Z",
+      "side": 1,
+      "message": "AES256_SetPassword() only called from  CPDF_SecurityHandler::OnCreate()\nCPDF_SecurityHandler::OnCreate() only called from  CPDF_Creator::InitID().\n\nSo we\u0027d have to somehow save out the document to hit this?",
+      "parentUuid": "86b44d46_e22ae81b",
+      "revId": "cef1f80d9238ac62f6bea95cbe228fff7b4b81ff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
