@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c80a89e2_d95cf34a",
+        "filename": "core/fdrm/fx_crypt_unittest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-10T23:08:55Z",
+      "side": 1,
+      "message": "Some form of this may be useful in other places. Look for code that calls FXSYS_HexCharToInt() twice in a row.",
+      "revId": "e5b2410a333a1998c99deb36ded5ab2e03addf4d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f2204c5b_ab4b3b6b",
+        "filename": "core/fdrm/fx_crypt_unittest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-10T23:08:55Z",
+      "side": 1,
+      "message": "size() is shorter.",
+      "range": {
+        "startLine": 41,
+        "startChar": 20,
+        "endLine": 41,
+        "endChar": 26
+      },
+      "revId": "e5b2410a333a1998c99deb36ded5ab2e03addf4d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "49e2123a_71c3be44",
+        "filename": "core/fdrm/fx_crypt_unittest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-10T23:08:55Z",
+      "side": 1,
+      "message": "style",
+      "range": {
+        "startLine": 43,
+        "startChar": 16,
+        "endLine": 43,
+        "endChar": 26
+      },
+      "revId": "e5b2410a333a1998c99deb36ded5ab2e03addf4d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
