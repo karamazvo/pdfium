@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2c1c3576_41704cd2",
+        "filename": "core/fdrm/fx_crypt_unittest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-06-10T23:26:57Z",
+      "side": 1,
+      "message": "Oddly I didn\u0027t see anything like this when I searched.  Re-wrote this in terms of hexchartoint.  We can move it later if you\u0027d like.",
+      "parentUuid": "c80a89e2_d95cf34a",
+      "revId": "e5b2410a333a1998c99deb36ded5ab2e03addf4d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f2204c5b_ab4b3b6b",
@@ -41,6 +59,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2639e2bd_b860935e",
+        "filename": "core/fdrm/fx_crypt_unittest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-06-10T23:26:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f2204c5b_ab4b3b6b",
+      "range": {
+        "startLine": 41,
+        "startChar": 20,
+        "endLine": 41,
+        "endChar": 26
+      },
+      "revId": "e5b2410a333a1998c99deb36ded5ab2e03addf4d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "49e2123a_71c3be44",
@@ -54,6 +96,30 @@
       "writtenOn": "2025-06-10T23:08:55Z",
       "side": 1,
       "message": "style",
+      "range": {
+        "startLine": 43,
+        "startChar": 16,
+        "endLine": 43,
+        "endChar": 26
+      },
+      "revId": "e5b2410a333a1998c99deb36ded5ab2e03addf4d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8c32fed4_8d9e01ef",
+        "filename": "core/fdrm/fx_crypt_unittest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-06-10T23:26:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "49e2123a_71c3be44",
       "range": {
         "startLine": 43,
         "startChar": 16,
