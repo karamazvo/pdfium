@@ -88,6 +88,24 @@
       "parentUuid": "a96391d8_e9ba6f2f",
       "revId": "cef1f80d9238ac62f6bea95cbe228fff7b4b81ff",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4c36dbef_31d8c340",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-06-11T00:12:13Z",
+      "side": 1,
+      "message": "And the last coverage run from months ago on x20 shows this uncovered.",
+      "parentUuid": "a96391d8_e9ba6f2f",
+      "revId": "cef1f80d9238ac62f6bea95cbe228fff7b4b81ff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
