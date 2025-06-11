@@ -40,48 +40,41 @@ LZWDecompressor::LZWDecompressor(uint8_t color_exp, uint8_t code_exp)
 
 LZWDecompressor::~LZWDecompressor() = default;
 
-LZWDecompressor::Status LZWDecompressor::Decode(uint8_t* dest_buf,
-                                                uint32_t* dest_size) {
-  if (!dest_buf || !dest_size) {
-    return Status::kError;
-  }
-
+LZWDecompressor::Result LZWDecompressor::Decode(
+    pdfium::span<uint8_t> dest_span) {
   if (avail_input_.empty()) {
-    return Status::kUnfinished;
+    return {Status::kUnfinished, {}};
   }
 
-  if (*dest_size == 0) {
-    return Status::kInsufficientDestSize;
+  if (dest_span.empty()) {
+    return {Status::kInsufficientDestSize, {}};
   }
 
   FX_SAFE_UINT32 i = 0;
   if (decompressed_next_ != 0) {
-    size_t extracted_size =
-        ExtractData(UNSAFE_TODO(pdfium::span(dest_buf, *dest_size)));
-    if (decompressed_next_ != 0) {
-      return Status::kInsufficientDestSize;
-    }
-
-    UNSAFE_TODO(dest_buf += extracted_size);
+    size_t extracted_size = ExtractData(dest_span);
     i += extracted_size;
+    if (decompressed_next_ != 0) {
+      return {Status::kInsufficientDestSize, dest_span.first(i.ValueOrDie())};
+    }
   }
 
-  while (i.ValueOrDie() <= *dest_size &&
+  while (i.ValueOrDie() <= dest_span.size() &&
          (!avail_input_.empty() || bits_left_ >= code_size_cur_)) {
     if (code_size_cur_ > GIF_MAX_LZW_EXP) {
-      return Status::kError;
+      return {Status::kError, dest_span.first(i.ValueOrDie())};
     }
 
     if (!avail_input_.empty()) {
       if (bits_left_ > 31) {
-        return Status::kError;
+        return {Status::kError, dest_span.first(i.ValueOrDie())};
       }
 
       FX_SAFE_UINT32 safe_code = avail_input_.front();
       safe_code <<= bits_left_;
       safe_code |= code_store_;
       if (!safe_code.IsValid()) {
-        return Status::kError;
+        return {Status::kError, dest_span.first(i.ValueOrDie())};
       }
 
       code_store_ = safe_code.ValueOrDie();
@@ -99,8 +92,7 @@ LZWDecompressor::Status LZWDecompressor::Decode(uint8_t* dest_buf,
         continue;
       }
       if (code == code_end_) {
-        *dest_size = i.ValueOrDie();
-        return Status::kSuccess;
+        return {Status::kSuccess, dest_span.first(i.ValueOrDie())};
       }
 
       if (code_old_ != static_cast<uint16_t>(-1)) {
@@ -108,13 +100,13 @@ LZWDecompressor::Status LZWDecompressor::Decode(uint8_t* dest_buf,
           if (code == code_next_) {
             AddCode(code_old_, code_first_);
             if (!DecodeString(code)) {
-              return Status::kError;
+              return {Status::kError, dest_span.first(i.ValueOrDie())};
             }
           } else if (code > code_next_) {
-            return Status::kError;
+            return {Status::kError, dest_span.first(i.ValueOrDie())};
           } else {
             if (!DecodeString(code)) {
-              return Status::kError;
+              return {Status::kError, dest_span.first(i.ValueOrDie())};
             }
 
             uint8_t append_char = decompressed_[decompressed_next_ - 1];
@@ -123,26 +115,23 @@ LZWDecompressor::Status LZWDecompressor::Decode(uint8_t* dest_buf,
         }
       } else {
         if (!DecodeString(code)) {
-          return Status::kError;
+          return {Status::kError, dest_span.first(i.ValueOrDie())};
         }
       }
 
       code_old_ = code;
-      size_t extracted_size = ExtractData(
-          UNSAFE_TODO(pdfium::span(dest_buf, (*dest_size - i).ValueOrDie())));
-      if (decompressed_next_ != 0) {
-        return Status::kInsufficientDestSize;
-      }
-      UNSAFE_TODO(dest_buf += extracted_size);
+      size_t extracted_size = ExtractData(dest_span.subspan(i.ValueOrDie()));
       i += extracted_size;
+      if (decompressed_next_ != 0) {
+        return {Status::kInsufficientDestSize, dest_span.first(i.ValueOrDie())};
+      }
     }
   }
 
   if (!avail_input_.empty()) {
-    return Status::kError;
+    return {Status::kError, dest_span.first(i.ValueOrDie())};
   }
-  *dest_size = i.ValueOrDie();
-  return Status::kUnfinished;
+  return {Status::kUnfinished, dest_span.first(i.ValueOrDie())};
 }
 
 void LZWDecompressor::ClearTable() {

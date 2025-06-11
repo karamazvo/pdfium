@@ -29,6 +29,11 @@ class LZWDecompressor {
     kInsufficientDestSize,
   };
 
+  struct LZWDecompressor::Result {
+    Status status = Status::kSuccess;
+    pdfium::span<uint8_t> span;
+  };
+
   struct CodeEntry {
     uint16_t prefix;
     uint8_t suffix;
@@ -43,8 +48,7 @@ class LZWDecompressor {
     avail_input_ = src_buf;
   }
 
-  // PRECONDITIONS: `dest_buf` must point to memory of `*dest_size` bytes.
-  UNSAFE_BUFFER_USAGE Status Decode(uint8_t* dest_buf, uint32_t* dest_size);
+  Result Decode(pdfium::span<uint8_t> dest_buf);
 
   // Used by unittests, should not be called in production code.
   size_t ExtractDataForTest(pdfium::span<uint8_t> dest_buf) {
