@@ -50,6 +50,23 @@
       "message": "@lei\n\nfriendly ping",
       "revId": "9e01a8918c64d08cee81f0fa2bae41c5cca5fc7b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cdb2a194_859bfbc2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-11T00:04:04Z",
+      "side": 1,
+      "message": "Looks close enough to https://pdfium-review.googlesource.com/112930. Thanks.",
+      "revId": "9e01a8918c64d08cee81f0fa2bae41c5cca5fc7b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
