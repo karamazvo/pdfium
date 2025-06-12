@@ -142,7 +142,7 @@ class CPDF_Font : public Retainable, public Observable {
 
   // Commonly used wrappers for UseTTCharmap().
   static bool UseTTCharmapMSUnicode(const RetainPtr<CFX_Face>& face) {
-    return UseTTCharmap(face, 3, 1);
+    return UseTTUnicodeCharmap(face);
   }
   static bool UseTTCharmapMSSymbol(const RetainPtr<CFX_Face>& face) {
     return UseTTCharmap(face, 3, 0);
@@ -153,6 +153,7 @@ class CPDF_Font : public Retainable, public Observable {
   static bool UseTTCharmap(const RetainPtr<CFX_Face>& face,
                            int platform_id,
                            int encoding_id);
+  static bool UseTTUnicodeCharmap(const RetainPtr<CFX_Face>& face);
 
   static const char* GetAdobeCharName(FontEncoding base_encoding,
                                       const std::vector<ByteString>& charnames,
