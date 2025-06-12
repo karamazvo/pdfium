@@ -141,9 +141,7 @@ class CPDF_Font : public Retainable, public Observable {
   ~CPDF_Font() override;
 
   // Commonly used wrappers for UseTTCharmap().
-  static bool UseTTCharmapMSUnicode(const RetainPtr<CFX_Face>& face) {
-    return UseTTCharmap(face, 3, 1);
-  }
+  static bool UseTTCharmapUnicode(const RetainPtr<CFX_Face>& face);
   static bool UseTTCharmapMSSymbol(const RetainPtr<CFX_Face>& face) {
     return UseTTCharmap(face, 3, 0);
   }
