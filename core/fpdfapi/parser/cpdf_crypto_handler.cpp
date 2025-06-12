@@ -33,6 +33,13 @@ namespace {
 constexpr char kContentsKey[] = "Contents";
 constexpr char kTypeKey[] = "Type";
 
+struct AESCryptContext {
+  bool iv_;
+  uint32_t block_offset_;
+  CRYPT_aes_context context_;
+  uint8_t block_[16];
+};
+
 }  // namespace
 
 // static
@@ -56,25 +63,28 @@ DataVector<uint8_t> CPDF_CryptoHandler::EncryptContent(
   if (cipher_ == Cipher::kNone) {
     return DataVector<uint8_t>(source.begin(), source.end());
   }
-  uint8_t realkey[16];
-  size_t realkeylen = sizeof(realkey);
+  // Use std::array for fixed-size buffers to avoid unsafe C-style array decay.
+  std::array<uint8_t, 16> realkey;
+  size_t realkeylen;
   if (cipher_ != Cipher::kAES || key_len_ != 32) {
-    uint8_t key1[32];
-    PopulateKey(objnum, gennum, key1);
+    std::array<uint8_t, 32> key1;
+    PopulateKey(objnum, gennum, key1.data());
     if (cipher_ == Cipher::kAES) {
       fxcrt::Copy(ByteStringView("sAlT").unsigned_span(),
                   pdfium::span(key1).subspan(key_len_ + 5));
     }
     size_t len = cipher_ == Cipher::kAES ? key_len_ + 9 : key_len_ + 5;
-    CRYPT_MD5Generate(pdfium::span(key1).first(len), realkey);
-    realkeylen = std::min(key_len_ + 5, sizeof(realkey));
+    CRYPT_MD5Generate(pdfium::span(key1).first(len), pdfium::span(realkey));
+    realkeylen = std::min<size_t>(key_len_ + 5, realkey.size());
   }
+
   if (cipher_ == Cipher::kAES) {
     if (key_len_ == 32) {
       CRYPT_AESSetKey(aes_context_.get(), encrypt_key_);
     } else {
+      // Safely create a subspan from the std::array, removing the UNSAFE_TODO.
       CRYPT_AESSetKey(aes_context_.get(),
-                      UNSAFE_TODO(pdfium::span(realkey, key_len_)));
+                      pdfium::span(realkey).first(key_len_));
     }
 
     static constexpr size_t kIVSize = 16;
@@ -87,7 +97,6 @@ DataVector<uint8_t> CPDF_CryptoHandler::EncryptContent(
     auto dest_iv_span = dest_span.first<kIVSize>();
     auto dest_data_span = dest_span.subspan(kIVSize, source_data_size);
     auto dest_padding_span = dest_span.subspan(kIVSize + source_data_size);
-
     for (auto& v : dest_iv_span) {
       v = static_cast<uint8_t>(rand());
     }
@@ -96,23 +105,20 @@ DataVector<uint8_t> CPDF_CryptoHandler::EncryptContent(
                      source.first(source_data_size));
 
     std::array<uint8_t, kPaddingSize> padding;
-    fxcrt::Copy(source.subspan(source_data_size, source_padding_size), padding);
+    fxcrt::Copy(source.subspan(source_data_size, source_padding_size),
+                pdfium::span(padding));
     std::ranges::fill(pdfium::span(padding).subspan(source_padding_size),
                       16 - source_padding_size);
     CRYPT_AESEncrypt(aes_context_.get(), dest_padding_span, padding);
     return dest;
   }
+
   DataVector<uint8_t> dest(source.begin(), source.end());
-  CRYPT_ArcFourCryptBlock(dest, pdfium::span(realkey).first(realkeylen));
+  // Pass buffers as spans to crypto functions to ensure safety.
+  CRYPT_ArcFourCryptBlock(pdfium::span(dest),
+                          pdfium::span(realkey).first(realkeylen));
   return dest;
 }
-
-struct AESCryptContext {
-  bool iv_;
-  uint32_t block_offset_;
-  CRYPT_aes_context context_;
-  uint8_t block_[16];
-};
 
 void* CPDF_CryptoHandler::DecryptStart(uint32_t objnum, uint32_t gennum) {
   if (cipher_ == Cipher::kNone) {
