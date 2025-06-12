@@ -242,6 +242,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "35208112_b81f5482",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 5511,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-12T17:23:06Z",
+      "side": 1,
+      "message": "https://pdfium-review.googlesource.com/133070 to mention 0.\n\nI believe the original authors intended for these flags to be self-explanatory, which is part of why there are no comments. I suppose additional commentary would be helpful.",
+      "parentUuid": "31326ace_db7d6e01",
+      "range": {
+        "startLine": 5511,
+        "startChar": 48,
+        "endLine": 5511,
+        "endChar": 67
+      },
+      "revId": "2b0c29b37fbc2b6a167f0492a44d11874332065c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "20ec7d16_6549b9af",
