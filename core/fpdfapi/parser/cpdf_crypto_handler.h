@@ -49,12 +49,16 @@ class CPDF_CryptoHandler {
  private:
   size_t DecryptGetSize(size_t src_size);
   void* DecryptStart(uint32_t objnum, uint32_t gennum);
+  void* DecryptStartAes(uint32_t objnum, uint32_t gennum);
+  void* DecryptStartArcFour(uint32_t objnum, uint32_t gennum);
   ByteString Decrypt(uint32_t objnum, uint32_t gennum, const ByteString& str);
   bool DecryptStream(void* context,
                      pdfium::span<const uint8_t> source,
                      BinaryBuffer& dest_buf);
   bool DecryptFinish(void* context, BinaryBuffer& dest_buf);
-  void PopulateKey(uint32_t objnum, uint32_t gennum, uint8_t* key) const;
+  void PopulateKey(uint32_t objnum,
+                   uint32_t gennum,
+                   pdfium::span<uint8_t> key) const;
 
   const size_t key_len_;
   const Cipher cipher_;
