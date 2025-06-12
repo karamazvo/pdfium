@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b0bfcf89_5bd92db9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-06-12T21:36:56Z",
+      "side": 1,
+      "message": "lg w/nit",
+      "revId": "ece932479d6e97eafd9c6bcb985fcf165f91f950",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dfadc650_61109ba4",
+        "filename": "public/fpdf_save.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-06-12T21:36:56Z",
+      "side": 1,
+      "message": "what kinda flags?",
+      "range": {
+        "startLine": 55,
+        "startChar": 32,
+        "endLine": 55,
+        "endChar": 37
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "3423aa02_fb20a0f8",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "public/fpdf_save.h",
+              "range": {
+                "startLine": 55,
+                "startChar": 0,
+                "endLine": 57,
+                "endChar": 0
+              },
+              "replacement": "//          flags           -   Flags (see FPDF_INCREMENTAL, FPDF_NO_INCREMENTAL,\n//                              FPDF_REMOVE_SECURITY) that affect how the PDF\n//                              gets saved. Pass in 0 when there are no flags.\n"
+            },
+            {
+              "path": "public/fpdf_save.h",
+              "range": {
+                "startLine": 70,
+                "startChar": 0,
+                "endLine": 71,
+                "endChar": 0
+              },
+              "replacement": "//          flags           -   Flags (see FPDF_INCREMENTAL, FPDF_NO_INCREMENTAL,\n//                              FPDF_REMOVE_SECURITY) that affect how the PDF\n//                              gets saved.\n"
+            }
+          ]
+        }
+      ],
+      "revId": "ece932479d6e97eafd9c6bcb985fcf165f91f950",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
