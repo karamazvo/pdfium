@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b19d6544_e7224045",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 16
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9186
+      },
+      "writtenOn": "2025-06-12T00:37:29Z",
+      "side": 1,
+      "message": "Hello all, I have fixed the error generated when built by the bots:\n\n\u003e stdout:\n../../fpdfsdk/fpdf_flatten_embeddertest.cpp(202,3): error: unknown type name \u0027ScopedEmbedderTestPage\u0027\n  202 |   ScopedEmbedderTestPage page \u003d LoadScopedPage(0);\n      |   ^\n1 error generated.\n\nThis is now fixed by using `ScopedPage` instead.\n\nalso, I rebased on latest main. please run bots again @tsepez@chromium.org",
+      "revId": "d07ff8ff05f600e37d5929ac3bbc92922514332a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
