@@ -86,6 +86,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "95b225eb_f8b89b20",
+        "filename": "fxjs/cfxjs_engine.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 3293871
+      },
+      "writtenOn": "2025-06-13T21:45:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bd5b2c30_fbfc0d33",
+      "range": {
+        "startLine": 77,
+        "startChar": 6,
+        "endLine": 77,
+        "endChar": 23
+      },
+      "revId": "04901a235b3e2d7dbf9e1365df43eac5a4ec4978",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "206b4625_e5b5f3d1",
@@ -133,6 +157,30 @@
           ]
         }
       ],
+      "revId": "04901a235b3e2d7dbf9e1365df43eac5a4ec4978",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7e35dfd4_d34ec170",
+        "filename": "fxjs/cfxjs_engine.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 3293871
+      },
+      "writtenOn": "2025-06-13T21:45:39Z",
+      "side": 1,
+      "message": "Yes, compiler was complaining about initialized but unused `obj_type_` field but I wasn\u0027t brave enough to remove it and added getter to suppress the warning.\n\nI was worried that the changes become too intrusive, because then we don\u0027t need to pass the type to `CFXJS_PerObjectData` constructor and so on...\n\nAnyway, done!",
+      "parentUuid": "206b4625_e5b5f3d1",
+      "range": {
+        "startLine": 86,
+        "startChar": 0,
+        "endLine": 86,
+        "endChar": 54
+      },
       "revId": "04901a235b3e2d7dbf9e1365df43eac5a4ec4978",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
