@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4fa6a74c_8b115ad0",
+        "filename": "core/fpdfapi/parser/cpdf_security_handler_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 682,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-13T20:31:10Z",
+      "side": 1,
+      "message": "Extra \u0027s\u0027, but I suppose it is the year of the snake.",
+      "range": {
+        "startLine": 682,
+        "startChar": 10,
+        "endLine": 682,
+        "endChar": 17
+      },
+      "revId": "61c2bf3f5b3b76ebf8aab4f6c65dcdb76a590ad2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
