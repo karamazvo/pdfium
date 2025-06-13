@@ -16,6 +16,24 @@
       "message": "Do you actually want to update this file? Is this copied verbatim from the PDF in the bug?",
       "revId": "034d99c3bdb487e6c02e471ee0f1ea34ba95cba5",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7de24762_900cefba",
+        "filename": "testing/resources/bug_644.in",
+        "patchSetId": 5
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-06-13T20:13:53Z",
+      "side": 1,
+      "message": "Any overly long key would trip it, but I\u0027ll put \u0027644 back the way it was and add the example directly from the fuzzer.",
+      "parentUuid": "8358cf67_8171393c",
+      "revId": "034d99c3bdb487e6c02e471ee0f1ea34ba95cba5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
