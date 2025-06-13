@@ -75,7 +75,7 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
 #endif
 
   RetainPtr<CFGAS_GEFont> pCurFont;
-  TextCharPos* pCurCP = nullptr;
+  size_t start_index = 0;
   size_t count = 0;
   static constexpr CFX_TextRenderOptions kOptions(CFX_TextRenderOptions::kLcd);
   for (auto& pos : pCharPos) {
@@ -95,11 +95,11 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
 #else
         font = pFxFont;
 #endif
-        device->DrawNormalText(UNSAFE_TODO(pdfium::span(pCurCP, count)), font,
+        device->DrawNormalText(pCharPos.subspan(start_index, count), font,
                                -fFontSize, matrix, color, kOptions);
       }
       pCurFont = pSTFont;
-      pCurCP = &pos;
+      start_index = &pos - pCharPos.data();
       count = 1;
     } else {
       ++count;
@@ -115,8 +115,8 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
 #else
     font = pFxFont;
 #endif
-    return device->DrawNormalText(UNSAFE_TODO(pdfium::span(pCurCP, count)),
-                                  font, -fFontSize, matrix, color, kOptions);
+    return device->DrawNormalText(pCharPos.subspan(start_index, count), font,
+                                  -fFontSize, matrix, color, kOptions);
   }
   return true;
 }
