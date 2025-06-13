@@ -16,6 +16,125 @@
       "message": "Hi Tom and Lei!\nI proceed pushing towards never exposing JSGlobalObject from V8 Apis.\nPTAL and please run CQ (I don\u0027t have the rights to run it but the tests work locally).",
       "revId": "04901a235b3e2d7dbf9e1365df43eac5a4ec4978",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a110a209_5a3ae0ac",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-06-13T21:27:09Z",
+      "side": 1,
+      "message": "Thanks, this looks much simpler. Just a few nits.",
+      "revId": "04901a235b3e2d7dbf9e1365df43eac5a4ec4978",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bd5b2c30_fbfc0d33",
+        "filename": "fxjs/cfxjs_engine.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-06-13T21:27:09Z",
+      "side": 1,
+      "message": "nit: invert test and early return of nullptr.",
+      "range": {
+        "startLine": 77,
+        "startChar": 6,
+        "endLine": 77,
+        "endChar": 23
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "988577d4_ce3163ca",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "fxjs/cfxjs_engine.cpp",
+              "range": {
+                "startLine": 77,
+                "startChar": 0,
+                "endLine": 79,
+                "endChar": 0
+              },
+              "replacement": "  if (!HasInternalFields(pObj)) {\n    return nullptr;\n"
+            },
+            {
+              "path": "fxjs/cfxjs_engine.cpp",
+              "range": {
+                "startLine": 80,
+                "startChar": 0,
+                "endLine": 81,
+                "endChar": 0
+              },
+              "replacement": "  return ExtractFromObject(pObj);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "04901a235b3e2d7dbf9e1365df43eac5a4ec4978",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "206b4625_e5b5f3d1",
+        "filename": "fxjs/cfxjs_engine.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-06-13T21:27:09Z",
+      "side": 1,
+      "message": "I didn\u0027t see where this was used.",
+      "range": {
+        "startLine": 86,
+        "startChar": 0,
+        "endLine": 86,
+        "endChar": 54
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "f1e0bcf3_503dce3b",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "fxjs/cfxjs_engine.h",
+              "range": {
+                "startLine": 86,
+                "startChar": 0,
+                "endLine": 87,
+                "endChar": 0
+              },
+              "replacement": ""
+            },
+            {
+              "path": "fxjs/cfxjs_engine.h",
+              "range": {
+                "startLine": 97,
+                "startChar": 0,
+                "endLine": 98,
+                "endChar": 0
+              },
+              "replacement": ""
+            }
+          ]
+        }
+      ],
+      "revId": "04901a235b3e2d7dbf9e1365df43eac5a4ec4978",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
