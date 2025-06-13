@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a70d4dbc_97ab7e3a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3293871
+      },
+      "writtenOn": "2025-06-13T20:39:09Z",
+      "side": 1,
+      "message": "Hi Tom and Lei!\nI proceed pushing towards never exposing JSGlobalObject from V8 Apis.\nPTAL and please run CQ (I don\u0027t have the rights to run it but the tests work locally).",
+      "revId": "04901a235b3e2d7dbf9e1365df43eac5a4ec4978",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
