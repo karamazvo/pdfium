@@ -16,6 +16,86 @@
       "message": "Hello all, I have fixed the error generated when built by the bots:\n\n\u003e stdout:\n../../fpdfsdk/fpdf_flatten_embeddertest.cpp(202,3): error: unknown type name \u0027ScopedEmbedderTestPage\u0027\n  202 |   ScopedEmbedderTestPage page \u003d LoadScopedPage(0);\n      |   ^\n1 error generated.\n\nThis is now fixed by using `ScopedPage` instead.\n\nalso, I rebased on latest main. please run bots again @tsepez@chromium.org",
       "revId": "d07ff8ff05f600e37d5929ac3bbc92922514332a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "afa2b641_6e1f29b1",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-16T22:00:31Z",
+      "side": 1,
+      "message": "Do this check first, and also separately.\n1) It\u0027s cheaper to perform a null pointer check than the insert() call, so this function can potentially return false faster.\n2) `!dict` isn\u0027t for \"prevent inf loop\".",
+      "range": {
+        "startLine": 105,
+        "startChar": 41,
+        "endLine": 105,
+        "endChar": 46
+      },
+      "revId": "d07ff8ff05f600e37d5929ac3bbc92922514332a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7a293d45_11d08eac",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-16T22:00:31Z",
+      "side": 1,
+      "message": "Maybe this can be named \"indices_to_remove\". Then like 126 becomes `for (size_t index : indices_to_remove)`. Same for line 189.",
+      "range": {
+        "startLine": 114,
+        "startChar": 22,
+        "endLine": 114,
+        "endChar": 31
+      },
+      "revId": "d07ff8ff05f600e37d5929ac3bbc92922514332a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a6812ce4_8ab4b7ef",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-16T22:00:31Z",
+      "side": 1,
+      "message": "This should keep the separate `obj` null pointer check from earlier. As-is, if `obj` is null, then like 122 runs and tries to dereference it. Same for line 192.",
+      "revId": "d07ff8ff05f600e37d5929ac3bbc92922514332a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c6e2808f_030dca70",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-16T22:00:31Z",
+      "side": 1,
+      "message": "This function always returns false. Did you want it to return true at some point?",
+      "revId": "d07ff8ff05f600e37d5929ac3bbc92922514332a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
