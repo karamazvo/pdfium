@@ -8,6 +8,8 @@
 
 #include <stdint.h>
 
+#include <optional>
+
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
@@ -105,112 +107,100 @@ FT_Long ScopedFXFTMMVar::GetAxisMax(size_t index) const {
   return axis_[index].maximum;
 }
 
-int FXFT_unicode_from_adobe_name(const char* glyph_name) {
+int FXFT_unicode_from_adobe_name(ByteStringView glyph_name) {
   /* If the name begins with `uni', then the glyph name may be a */
-  /* hard-coded unicode character code.                          */
-  UNSAFE_TODO({
-    if (glyph_name[0] == 'u' && glyph_name[1] == 'n' && glyph_name[2] == 'i') {
-      /* determine whether the next four characters following are */
-      /* hexadecimal.                                             */
+  /* hard-coded unicode character code.                           */
+  if (glyph_name.GetLength() >= 7 && glyph_name.First(3) == "uni") {
+    /* determine whether the next four characters following are */
+    /* hexadecimal.                                             */
 
-      /* XXX: Add code to deal with ligatures, i.e. glyph names like */
-      /*      `uniXXXXYYYYZZZZ'...                                   */
+    /* XXX: Add code to deal with ligatures, i.e. glyph names like */
+    /*      `uniXXXXYYYYZZZZ'...                                   */
 
-      FT_Int count;
-      FT_UInt32 value = 0;
-      const char* p = glyph_name + 3;
+    FT_Int count;
+    FT_UInt32 value = 0;
+    size_t p = 3;
 
-      for (count = 4; count > 0; count--, p++) {
-        char c = *p;
-        unsigned int d = (unsigned char)c - '0';
-        if (d >= 10) {
-          d = (unsigned char)c - 'A';
-          if (d >= 6) {
-            d = 16;
-          } else {
-            d += 10;
-          }
+    for (count = 4; count > 0; count--, p++) {
+      char c = glyph_name[p];
+      unsigned int d = (unsigned char)c - '0';
+      if (d >= 10) {
+        d = (unsigned char)c - 'A';
+        if (d >= 6) {
+          d = 16;
+        } else {
+          d += 10;
         }
-
-        /* Exit if a non-uppercase hexadecimal character was found   */
-        /* -- this also catches character codes below `0' since such */
-        /* negative numbers cast to `unsigned int' are far too big.  */
-        if (d >= 16) {
-          break;
-        }
-
-        value = (value << 4) + d;
       }
 
-      /* there must be exactly four hex digits */
-      if (count == 0) {
-        if (*p == '\0') {
-          return value;
-        }
-        if (*p == '.') {
-          return (FT_UInt32)(value | kVariantBit);
-        }
+      /* Exit if a non-uppercase hexadecimal character was found   */
+      /* -- this also catches character codes below `0' since such */
+      /* negative numbers cast to `unsigned int' are far too big.  */
+      if (d >= 16) {
+        break;
+      }
+
+      value = (value << 4) + d;
+    }
+
+    /* there must be exactly four hex digits */
+    if (count == 0) {
+      if (p == glyph_name.GetLength()) {
+        return value;
+      }
+      if (glyph_name[p] == '.') {
+        return (FT_UInt32)(value | kVariantBit);
       }
     }
+  }
 
     /* If the name begins with `u', followed by four to six uppercase */
     /* hexadecimal digits, it is a hard-coded unicode character code. */
-    if (glyph_name[0] == 'u') {
-      FT_Int count;
-      FT_UInt32 value = 0;
-      const char* p = glyph_name + 1;
+  if (glyph_name.Front() == 'u') {
+    FT_Int count;
+    FT_UInt32 value = 0;
+    size_t p = 1;
 
-      for (count = 6; count > 0; count--, p++) {
-        char c = *p;
-        unsigned int d = (unsigned char)c - '0';
-        if (d >= 10) {
-          d = (unsigned char)c - 'A';
-          if (d >= 6) {
-            d = 16;
-          } else {
-            d += 10;
-          }
+    for (count = 6; count > 0; count--, p++) {
+      if (p >= glyph_name.GetLength()) {
+        break;
+      }
+      char c = glyph_name[p];
+      unsigned int d = (unsigned char)c - '0';
+      if (d >= 10) {
+        d = (unsigned char)c - 'A';
+        if (d >= 6) {
+          d = 16;
+        } else {
+          d += 10;
         }
-
-        if (d >= 16) {
-          break;
-        }
-
-        value = (value << 4) + d;
       }
 
-      if (count <= 2) {
-        if (*p == '\0') {
-          return value;
-        }
-        if (*p == '.') {
-          return (FT_UInt32)(value | kVariantBit);
-        }
+      if (d >= 16) {
+        break;
       }
+
+      value = (value << 4) + d;
     }
 
-    /* Look for a non-initial dot in the glyph name in order to */
-    /* find variants like `A.swash', `e.final', etc.            */
-    {
-      const char* p = glyph_name;
-      const char* dot = nullptr;
-
-      for (; *p; p++) {
-        if (*p == '.' && p > glyph_name) {
-          dot = p;
-          break;
-        }
+    if (count <= 2) {
+      if (p == glyph_name.GetLength()) {
+        return value;
       }
-
-      /* now look up the glyph in the Adobe Glyph List */
-      if (!dot) {
-        return (FT_UInt32)ft_get_adobe_glyph_index(glyph_name, p);
+      if (glyph_name[p] == '.') {
+        return (FT_UInt32)(value | kVariantBit);
       }
-
-      return (FT_UInt32)(ft_get_adobe_glyph_index(glyph_name, dot) |
-                         kVariantBit);
     }
-  });
+  }
+
+  /* Look for a non-initial dot in the glyph name in order to */
+  /* find variants like `A.swash', `e.final', etc.            */
+  std::optional<size_t> maybe_dot = glyph_name.Find('.');
+  if (maybe_dot.has_value() && maybe_dot.value() != 0) {
+    glyph_name = glyph_name.First(maybe_dot.value());
+  }
+  return (FT_UInt32)ft_get_adobe_glyph_index(glyph_name.begin(),
+                                             glyph_name.end());
 }
 
 void FXFT_adobe_name_from_unicode(pdfium::span<char> name_buf,
