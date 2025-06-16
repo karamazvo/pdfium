@@ -1443,8 +1443,29 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_GetOptionCount(FPDF_FORMHANDLE hHandle,
   return form_field->CountOptions();
 }
 
+FPDF_EXPORT unsigned long FPDF_CALLCONV c(FPDF_FORMHANDLE hHandle,
+                                          FPDF_ANNOTATION annot,
+                                          int index,
+                                          FPDF_WCHAR* buffer,
+                                          unsigned long buflen) {
+  if (index < 0) {
+    return 0;
+  }
+
+  const CPDF_FormField* form_field = GetFormField(hHandle, annot);
+  if (!form_field || !form_field->HasOptField() ||
+      index >= form_field->CountOptions()) {
+    return 0;
+  }
+
+  // SAFETY: required from caller.
+  return Utf16EncodeMaybeCopyAndReturnLength(
+      form_field->GetOptionLabel(index),
+      UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
+}
+
 FPDF_EXPORT unsigned long FPDF_CALLCONV
-FPDFAnnot_GetOptionLabel(FPDF_FORMHANDLE hHandle,
+FPDFAnnot_GetOptionValue(FPDF_FORMHANDLE hHandle,
                          FPDF_ANNOTATION annot,
                          int index,
                          FPDF_WCHAR* buffer,
@@ -1461,7 +1482,7 @@ FPDFAnnot_GetOptionLabel(FPDF_FORMHANDLE hHandle,
 
   // SAFETY: required from caller.
   return Utf16EncodeMaybeCopyAndReturnLength(
-      form_field->GetOptionLabel(index),
+      form_field->GetOptionValue(index),
       UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }
 
