@@ -23,34 +23,33 @@
 
 namespace {
 
-bool IsScanLine1bpp(const uint8_t* pBuf, int width) {
-  int size = width / 8;
-  for (int i = 0; i < size; i++) {
-    if (UNSAFE_TODO(pBuf[i])) {
+bool IsScanLine1bpp(pdfium::span<const uint8_t> buf, int active_width) {
+  int size = active_width / 8;
+  for (const auto& pix : buf.first(static_cast<size_t>(size))) {
+    if (pix) {
       return true;
     }
   }
-  return (width % 8) &&
-         (UNSAFE_TODO(pBuf[width / 8]) & (0xff << (8 - width % 8)));
+  return (active_width % 8) && (buf[size] & (0xff << (8 - active_width % 8)));
 }
 
-bool IsScanLine8bpp(const uint8_t* pBuf, int width) {
-  for (int i = 0; i < width; i++) {
-    if (UNSAFE_TODO(pBuf[i]) > 0x40) {
+bool IsScanLine8bpp(pdfium::span<const uint8_t> buf, int active_width) {
+  for (const auto& pix : buf.first(static_cast<size_t>(active_width))) {
+    if (pix > 0x40) {
       return true;
     }
   }
   return false;
 }
 
-bool IsScanLineBpp(int bpp, const uint8_t* pBuf, int width) {
+bool IsScanLineBpp(int bpp, pdfium::span<const uint8_t> buf, int active_width) {
   if (bpp == 1) {
-    return IsScanLine1bpp(pBuf, width);
+    return IsScanLine1bpp(buf, active_width);
   }
   if (bpp > 8) {
-    width *= bpp / 8;
+    active_width *= bpp / 8;
   }
-  return IsScanLine8bpp(pBuf, width);
+  return IsScanLine8bpp(buf, active_width);
 }
 
 int DetectFirstScan(const RetainPtr<CFX_DIBitmap>& pBitmap) {
@@ -58,8 +57,7 @@ int DetectFirstScan(const RetainPtr<CFX_DIBitmap>& pBitmap) {
   const int width = pBitmap->GetWidth();
   const int bpp = pBitmap->GetBPP();
   for (int line = 0; line < height; ++line) {
-    const uint8_t* pBuf = pBitmap->GetScanline(line).data();
-    if (IsScanLineBpp(bpp, pBuf, width)) {
+    if (IsScanLineBpp(bpp, pBitmap->GetScanline(line), width)) {
       return line;
     }
   }
@@ -71,8 +69,7 @@ int DetectLastScan(const RetainPtr<CFX_DIBitmap>& pBitmap) {
   const int bpp = pBitmap->GetBPP();
   const int width = pBitmap->GetWidth();
   for (int line = height - 1; line >= 0; --line) {
-    const uint8_t* pBuf = pBitmap->GetScanline(line).data();
-    if (IsScanLineBpp(bpp, pBuf, width)) {
+    if (IsScanLineBpp(bpp, pBitmap->GetScanline(line), width)) {
       return line;
     }
   }
