@@ -1502,13 +1502,10 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
     for (int row = 0; row < height; row++) {
       const size_t dest_offset = Fx2DSizeOrDie(row, dest_pitch);
       const size_t src_offset = Fx2DSizeOrDie(row, src_pitch);
-      uint8_t* dest_pos = dest_buf.subspan(dest_offset).data();
-      const uint8_t* src_pos = src_buf.subspan(src_offset).data();
-      for (int col = 0; col < width; col++) {
-        UNSAFE_TODO({
-          *dest_pos++ = transfers[FXRGB2GRAY(src_pos[2], src_pos[1], *src_pos)];
-          src_pos += bytes_per_pixel;
-        });
+      for (auto& dst : dest_buf.subspan(dest_offset, width)) {
+        auto src_pos = src_buf.subspan(src_offset).first<3u>();
+        dst = transfers[FXRGB2GRAY(src_pos[2], src_pos[1], src_pos[0])];
+        src_offset += bytes_per_pixel;
       }
     }
   } else if (pFunc) {
