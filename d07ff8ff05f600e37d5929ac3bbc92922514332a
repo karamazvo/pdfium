@@ -66,6 +66,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "51f0fed9_62f5a8ce",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-16T22:03:40Z",
+      "side": 1,
+      "message": "s/like/line/",
+      "parentUuid": "7a293d45_11d08eac",
+      "range": {
+        "startLine": 114,
+        "startChar": 22,
+        "endLine": 114,
+        "endChar": 31
+      },
+      "revId": "d07ff8ff05f600e37d5929ac3bbc92922514332a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a6812ce4_8ab4b7ef",
         "filename": "fpdfsdk/fpdf_flatten.cpp",
         "patchSetId": 16
@@ -77,6 +101,24 @@
       "writtenOn": "2025-06-16T22:00:31Z",
       "side": 1,
       "message": "This should keep the separate `obj` null pointer check from earlier. As-is, if `obj` is null, then like 122 runs and tries to dereference it. Same for line 192.",
+      "revId": "d07ff8ff05f600e37d5929ac3bbc92922514332a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7828e222_716dc6b1",
+        "filename": "fpdfsdk/fpdf_flatten.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-16T22:03:40Z",
+      "side": 1,
+      "message": "\"earlier\" as in previous patchsets.",
+      "parentUuid": "a6812ce4_8ab4b7ef",
       "revId": "d07ff8ff05f600e37d5929ac3bbc92922514332a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
