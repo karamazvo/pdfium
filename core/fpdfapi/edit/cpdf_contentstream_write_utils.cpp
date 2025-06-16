@@ -121,10 +121,7 @@ unsigned SkFloatToDecimal(
   // Experimentally, rasterizers such as pdfium do seem to benefit
   // from this.  Rasterizers that rely on fixed-point scalars should
   // gracefully ignore these values that they can not parse.
-  char* output_ptr = output.data();
-
-  // last(1) leaves space for '\0'.
-  const char* const end = output.last(1u).data();
+  size_t output_index = 0;
 
   // This function is written to accept any possible input value,
   // including non-finite values such as INF and NAN.  In that case,
@@ -140,12 +137,12 @@ unsigned SkFloatToDecimal(
     if (!std::isfinite(value) || value == 0.0f) {
       // NAN is unsupported in PDF.  Always output a valid number.
       // Also catch zero here, as a special case.
-      *output_ptr++ = '0';
-      *output_ptr = '\0';
-      return static_cast<unsigned>(output_ptr - output.data());
+      output[output_index++] = '0';
+      output[output_index] = '\0';
+      return static_cast<unsigned>(output_index);
     }
     if (value < 0.0) {
-      *output_ptr++ = '-';
+      output[output_index++] = '-';
       value = -value;
     }
     assert(value >= 0.0f);
@@ -174,49 +171,50 @@ unsigned SkFloatToDecimal(
     }
     assert(d > 0);
     // assert(value == (float)(d * pow(10.0, decimalShift)));
-    unsigned char buffer[9];  // decimal value buffer.
+    std::array<unsigned char, 9> buffer;  // decimal value buffer.
     int bufferIndex = 0;
     do {
       buffer[bufferIndex++] = d % 10;
       d /= 10;
     } while (d != 0);
-    assert(bufferIndex <= (int)sizeof(buffer) && bufferIndex > 0);
+    assert(bufferIndex <= static_cast<int>(buffer.size()) && bufferIndex > 0);
     if (decimalShift >= 0) {
       do {
         --bufferIndex;
-        *output_ptr++ = '0' + buffer[bufferIndex];
+        output[output_index++] = '0' + buffer[bufferIndex];
       } while (bufferIndex);
       for (int i = 0; i < decimalShift; ++i) {
-        *output_ptr++ = '0';
+        output[output_index++] = '0';
       }
     } else {
       int placesBeforeDecimal = bufferIndex + decimalShift;
       if (placesBeforeDecimal > 0) {
         while (placesBeforeDecimal-- > 0) {
           --bufferIndex;
-          *output_ptr++ = '0' + buffer[bufferIndex];
+          output[output_index++] = '0' + buffer[bufferIndex];
         }
-        *output_ptr++ = '.';
+        output[output_index++] = '.';
       } else {
-        *output_ptr++ = '.';
+        output[output_index++] = '.';
         int placesAfterDecimal = -placesBeforeDecimal;
         while (placesAfterDecimal-- > 0) {
-          *output_ptr++ = '0';
+          output[output_index++] = '0';
         }
       }
       while (bufferIndex > 0) {
         --bufferIndex;
-        *output_ptr++ = '0' + buffer[bufferIndex];
-        if (output_ptr == end) {
+        output[output_index++] = '0' + buffer[bufferIndex];
+        if (output_index ==
+            output.size() -
+                1) {  // Check against end() - 1 for the null terminator.
           break;  // denormalized: don't need extra precision.
           // Note: denormalized numbers will not have the same number
           // of significantDigits, but do not need them to round-trip.
         }
       }
     }
-    assert(output_ptr <= end);
-    *output_ptr = '\0';
-    return static_cast<unsigned>(output_ptr - output.data());
+    output[output_index] = '\0';
+    return static_cast<unsigned>(output_index);
   });
 }
 
