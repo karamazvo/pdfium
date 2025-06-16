@@ -1,0 +1,216 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "47f74867_07b44588",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-16T22:58:56Z",
+      "side": 1,
+      "message": "\"CMaps\" (and \"CMap\" below.)",
+      "range": {
+        "startLine": 7,
+        "startChar": 31,
+        "endLine": 7,
+        "endChar": 36
+      },
+      "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "badf6240_4c9847ba",
+        "filename": "core/fpdfapi/font/cpdf_truetypefont_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-16T22:58:56Z",
+      "side": 1,
+      "message": "constexpr",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 5
+      },
+      "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fea413ef_b7ca2d2a",
+        "filename": "core/fpdfapi/font/cpdf_truetypefont_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-16T22:58:56Z",
+      "side": 1,
+      "message": "IWYU: \u003carray\u003e",
+      "range": {
+        "startLine": 28,
+        "startChar": 11,
+        "endLine": 28,
+        "endChar": 16
+      },
+      "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b4a29711_7e5f2d81",
+        "filename": "core/fpdfapi/font/cpdf_truetypefont_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-16T22:58:56Z",
+      "side": 1,
+      "message": "Use `pdfium::span`?",
+      "range": {
+        "startLine": 122,
+        "startChar": 9,
+        "endLine": 122,
+        "endChar": 18
+      },
+      "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7b9ab831_1c1289f8",
+        "filename": "core/fpdfapi/font/cpdf_truetypefont_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-16T22:58:56Z",
+      "side": 1,
+      "message": "No need to check if NewIndirect() fails. It should never fail except when OOM.",
+      "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b35d4f3c_eade01fa",
+        "filename": "core/fpdfapi/font/cpdf_truetypefont_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-16T22:58:56Z",
+      "side": 1,
+      "message": "Can this be `static constexpr char kToUnicode[] \u003d ...`?",
+      "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cdd3c5b2_9331a32d",
+        "filename": "core/fpdfapi/font/cpdf_truetypefont_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-16T22:58:56Z",
+      "side": 1,
+      "message": "A great font!",
+      "range": {
+        "startLine": 178,
+        "startChar": 49,
+        "endLine": 178,
+        "endChar": 61
+      },
+      "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9d84d24d_cb796cbb",
+        "filename": "core/fpdfapi/font/cpdf_truetypefont_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-16T22:58:56Z",
+      "side": 1,
+      "message": "Should be able to implicitly convert to pdfium::span, but maybe the compiler knows something I don\u0027t.",
+      "range": {
+        "startLine": 189,
+        "startChar": 31,
+        "endLine": 189,
+        "endChar": 40
+      },
+      "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "272e5aa0_add88754",
+        "filename": "core/fpdfapi/font/cpdf_truetypefont_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-16T22:58:56Z",
+      "side": 1,
+      "message": "\"unused_is_vert\" ?",
+      "range": {
+        "startLine": 195,
+        "startChar": 7,
+        "endLine": 195,
+        "endChar": 13
+      },
+      "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1cb6eb02_f8ed7cae",
+        "filename": "core/fpdfapi/font/cpdf_truetypefont_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-16T22:58:56Z",
+      "side": 1,
+      "message": "snake_case",
+      "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
