@@ -1,0 +1,65 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4b9e6639_222b64a7",
+        "filename": "core/fxcrt/utf16.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-06-16T22:14:45Z",
+      "side": 1,
+      "message": "I once tried making these have char16_t and char32_t overloads, but it got messy.",
+      "range": {
+        "startLine": 56,
+        "startChar": 31,
+        "endLine": 56,
+        "endChar": 39
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "64730048_9d3beee0",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcrt/utf16.h",
+              "range": {
+                "startLine": 56,
+                "startChar": 0,
+                "endLine": 57,
+                "endChar": 0
+              },
+              "replacement": "constexpr bool IsHighSurrogate(char16_t code_point) {\n"
+            },
+            {
+              "path": "core/fxcrt/utf16.h",
+              "range": {
+                "startLine": 62,
+                "startChar": 0,
+                "endLine": 63,
+                "endChar": 0
+              },
+              "replacement": "constexpr bool IsLowSurrogate(char16_t code_point) {\n"
+            },
+            {
+              "path": "core/fxcrt/utf16.h",
+              "range": {
+                "startLine": 73,
+                "startChar": 0,
+                "endLine": 75,
+                "endChar": 0
+              },
+              "replacement": "    DCHECK(IsHighSurrogate(high));\n    DCHECK(IsLowSurrogate(low));\n"
+            }
+          ]
+        }
+      ],
+      "revId": "852b133aa945c818e044e00f2b67e7c3bfd5df7f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
