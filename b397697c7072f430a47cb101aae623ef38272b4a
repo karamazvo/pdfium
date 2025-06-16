@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1045c082_f2cca2c0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-16T23:10:01Z",
+      "side": 1,
+      "message": "nit: Space after the colon, like the next line. Probably easiest to just do this edit in Gerrit\u0027s web interface.",
+      "revId": "b397697c7072f430a47cb101aae623ef38272b4a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "912c5783_4f219df5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-16T23:10:01Z",
+      "side": 1,
+      "message": "FPDFAnnot_GetOptionLabel() has tests. Can this CL add tests for the new API?",
+      "revId": "b397697c7072f430a47cb101aae623ef38272b4a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "926e7141_ab624ed8",
+        "filename": "fpdfsdk/fpdf_annot.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1446,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-16T23:10:01Z",
+      "side": 1,
+      "message": "Name is wrong here. I suspect this CL doesn\u0027t build.",
+      "range": {
+        "startLine": 1446,
+        "startChar": 40,
+        "endLine": 1446,
+        "endChar": 41
+      },
+      "revId": "b397697c7072f430a47cb101aae623ef38272b4a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
