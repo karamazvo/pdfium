@@ -95,6 +95,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "a453d474_b6fca142",
+        "filename": "core/fpdfapi/font/cpdf_truetypefont_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-16T23:02:39Z",
+      "side": 1,
+      "message": "From core/fxcrt/span.h.",
+      "parentUuid": "b4a29711_7e5f2d81",
+      "range": {
+        "startLine": 122,
+        "startChar": 9,
+        "endLine": 122,
+        "endChar": 18
+      },
+      "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "7b9ab831_1c1289f8",
         "filename": "core/fpdfapi/font/cpdf_truetypefont_unittest.cpp",
         "patchSetId": 1
@@ -106,6 +130,23 @@
       "writtenOn": "2025-06-16T22:58:56Z",
       "side": 1,
       "message": "No need to check if NewIndirect() fails. It should never fail except when OOM.",
+      "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9c3d6d85_2ae74804",
+        "filename": "core/fpdfapi/font/cpdf_truetypefont_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-16T23:02:39Z",
+      "side": 1,
+      "message": "Make `CHECK_GT(font_file_stream_object_number, 0u)` instead? Also line 171.",
       "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
