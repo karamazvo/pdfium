@@ -226,8 +226,7 @@ bool GetNumericDotIndex(const WideString& wsNum,
       continue;
     }
     if (ccf + spDotSymbol.size() <= spNum.size() &&
-        UNSAFE_TODO(wcsncmp(&spNum[ccf], spDotSymbol.data(),
-                            spDotSymbol.size())) == 0) {
+        spNum.subspan(ccf, spDotSymbol.size()) == spDotSymbol) {
       *iDotIndex = ccf;
       return true;
     }
@@ -278,8 +277,7 @@ bool ParseLocaleDate(const WideString& wsDate,
       WideString wsLiteral = GetLiteralText(spDatePattern, &ccf);
       size_t iLiteralLen = wsLiteral.GetLength();
       if (*cc + iLiteralLen > spDate.size() ||
-          UNSAFE_TODO(wcsncmp(spDate.data() + *cc, wsLiteral.c_str(),
-                              iLiteralLen)) != 0) {
+          WideStringView(spDate.subspan(*cc, iLiteralLen)) != wsLiteral) {
         return false;
       }
       *cc += iLiteralLen;
@@ -320,8 +318,9 @@ bool ParseLocaleDate(const WideString& wsDate,
         if (wsMonthName.IsEmpty()) {
           continue;
         }
-        if (UNSAFE_TODO(wcsncmp(wsMonthName.c_str(), spDate.data() + *cc,
-                                wsMonthName.GetLength())) == 0) {
+        if (*cc + wsMonthName.GetLength() <= spDate.size() &&
+            WideStringView(spDate.subspan(*cc, wsMonthName.GetLength())) ==
+                wsMonthName) {
           *cc += wsMonthName.GetLength();
           month = i + 1;
           break;
@@ -334,8 +333,9 @@ bool ParseLocaleDate(const WideString& wsDate,
         if (wsDayName.IsEmpty()) {
           continue;
         }
-        if (UNSAFE_TODO(wcsncmp(wsDayName.c_str(), spDate.data() + *cc,
-                                wsDayName.GetLength())) == 0) {
+        if (*cc + wsDayName.GetLength() <= spDate.size() &&
+            WideStringView(spDate.subspan(*cc, wsDayName.GetLength())) ==
+                wsDayName) {
           *cc += wsDayName.GetLength();
           break;
         }
@@ -407,8 +407,7 @@ bool ParseLocaleTime(const WideString& wsTime,
       WideString wsLiteral = GetLiteralText(spTimePattern, &ccf);
       size_t iLiteralLen = wsLiteral.GetLength();
       if (*cc + iLiteralLen > spTime.size() ||
-          UNSAFE_TODO(wcsncmp(spTime.data() + *cc, wsLiteral.c_str(),
-                              iLiteralLen)) != 0) {
+          WideStringView(spTime.subspan(*cc, iLiteralLen)) != wsLiteral) {
         return false;
       }
       *cc += iLiteralLen;
@@ -956,13 +955,13 @@ std::vector<WideString> CFGAS_StringFormatter::SplitOnBars(
     if (spFormatString[index] == '\'') {
       bQuote = !bQuote;
     } else if (spFormatString[index] == L'|' && !bQuote) {
-      wsPatterns.push_back(UNSAFE_TODO(
-          WideString(spFormatString.data() + token, index - token)));
+      wsPatterns.push_back(WideString(
+          WideStringView(spFormatString.subspan(token, index - token))));
       token = index + 1;
     }
   }
   wsPatterns.push_back(
-      UNSAFE_TODO(WideString(spFormatString.data() + token, index - token)));
+      WideString(WideStringView(spFormatString.subspan(token, index - token))));
   return wsPatterns;
 }
 
@@ -1207,8 +1206,8 @@ bool CFGAS_StringFormatter::ParseText(const WideString& wsSrcText,
         WideString wsLiteral = GetLiteralText(spTextFormat, &iPattern);
         size_t iLiteralLen = wsLiteral.GetLength();
         if (iText + iLiteralLen > spSrcText.size() ||
-            UNSAFE_TODO(wcsncmp(spSrcText.data() + iText, wsLiteral.c_str(),
-                                iLiteralLen)) != 0) {
+            WideStringView(spSrcText.subspan(iText, iLiteralLen)) !=
+                wsLiteral) {
           *wsValue = wsSrcText;
           return false;
         }
@@ -1312,8 +1311,8 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
         size_t iLiteralLen = wsLiteral.GetLength();
         cc -= iLiteralLen - 1;
         if (cc >= spSrcNum.size() ||
-            UNSAFE_TODO(wcsncmp(spSrcNum.data() + cc, wsLiteral.c_str(),
-                                iLiteralLen)) != 0) {
+            (cc + iLiteralLen > spSrcNum.size() ||
+             WideStringView(spSrcNum.subspan(cc, iLiteralLen)) != wsLiteral)) {
           return false;
         }
         cc--;
@@ -1348,9 +1347,8 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
           cc--;
         } else {
           cc -= iMinusLen - 1;
-          if (cc >= spSrcNum.size() ||
-              UNSAFE_TODO(wcsncmp(spSrcNum.data() + cc, wsMinus.c_str(),
-                                  iMinusLen)) != 0) {
+          if (cc >= spSrcNum.size() || cc + iMinusLen > spSrcNum.size() ||
+              WideStringView(spSrcNum.subspan(cc, iMinusLen)) != wsMinus) {
             return false;
           }
           cc--;
@@ -1377,9 +1375,9 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
             cc--;
             continue;
           }
-          if (cc - iMinusLen + 1 <= spSrcNum.size() &&
-              UNSAFE_TODO(wcsncmp(spSrcNum.data() + (cc - iMinusLen + 1),
-                                  wsMinus.c_str(), iMinusLen)) == 0) {
+          if (cc >= iMinusLen - 1 &&
+              WideStringView(spSrcNum.subspan(cc - iMinusLen + 1, iMinusLen)) ==
+                  wsMinus) {
             bExpSign = true;
             cc -= iMinusLen;
             continue;
@@ -1396,9 +1394,8 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
         WideString wsSymbol = pLocale->GetCurrencySymbol();
         size_t iSymbolLen = wsSymbol.GetLength();
         cc -= iSymbolLen - 1;
-        if (cc >= spSrcNum.size() ||
-            UNSAFE_TODO(wcsncmp(spSrcNum.data() + cc, wsSymbol.c_str(),
-                                iSymbolLen)) != 0) {
+        if (cc >= spSrcNum.size() || cc + iSymbolLen > spSrcNum.size() ||
+            WideStringView(spSrcNum.subspan(cc, iSymbolLen)) != wsSymbol) {
           return false;
         }
         cc--;
@@ -1443,9 +1440,8 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
         WideString wsSymbol = pLocale->GetPercentSymbol();
         size_t iSymbolLen = wsSymbol.GetLength();
         cc -= iSymbolLen - 1;
-        if (cc >= spSrcNum.size() ||
-            UNSAFE_TODO(wcsncmp(spSrcNum.data() + cc, wsSymbol.c_str(),
-                                iSymbolLen)) != 0) {
+        if (cc >= spSrcNum.size() || cc + iSymbolLen > spSrcNum.size() ||
+            WideStringView(spSrcNum.subspan(cc, iSymbolLen)) != wsSymbol) {
           return false;
         }
         cc--;
@@ -1461,9 +1457,9 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
       case ',': {
         if (cc < spSrcNum.size()) {
           cc -= iGroupLen - 1;
-          if (cc < spSrcNum.size() &&
-              UNSAFE_TODO(wcsncmp(spSrcNum.data() + cc, wsGroupSymbol.c_str(),
-                                  iGroupLen)) == 0) {
+          if (cc + iGroupLen <= spSrcNum.size() &&
+              WideStringView(spSrcNum.subspan(cc, iGroupLen)) ==
+                  wsGroupSymbol) {
             cc--;
           } else {
             cc += iGroupLen - 1;
@@ -1514,8 +1510,7 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
           WideString wsLiteral = GetLiteralText(spNumFormat, &ccf);
           size_t iLiteralLen = wsLiteral.GetLength();
           if (cc + iLiteralLen > spSrcNum.size() ||
-              UNSAFE_TODO(wcsncmp(spSrcNum.data() + cc, wsLiteral.c_str(),
-                                  iLiteralLen)) != 0) {
+              WideStringView(spSrcNum.subspan(cc, iLiteralLen)) != wsLiteral) {
             return false;
           }
           cc += iLiteralLen;
@@ -1547,8 +1542,7 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
             cc++;
           } else {
             if (cc + iMinusLen > spSrcNum.size() ||
-                UNSAFE_TODO(wcsncmp(spSrcNum.data() + cc, wsMinus.c_str(),
-                                    iMinusLen)) != 0) {
+                WideStringView(spSrcNum.subspan(cc, iMinusLen)) != wsMinus) {
               return false;
             }
             bNeg = true;
@@ -1589,8 +1583,7 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
           WideString wsSymbol = pLocale->GetCurrencySymbol();
           size_t iSymbolLen = wsSymbol.GetLength();
           if (cc + iSymbolLen > spSrcNum.size() ||
-              UNSAFE_TODO(wcsncmp(spSrcNum.data() + cc, wsSymbol.c_str(),
-                                  iSymbolLen)) != 0) {
+              WideStringView(spSrcNum.subspan(cc, iSymbolLen)) != wsSymbol) {
             return false;
           }
           cc += iSymbolLen;
@@ -1634,8 +1627,7 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
           WideString wsSymbol = pLocale->GetPercentSymbol();
           size_t iSymbolLen = wsSymbol.GetLength();
           if (cc + iSymbolLen <= spSrcNum.size() &&
-              UNSAFE_TODO(wcsncmp(spSrcNum.data() + cc, wsSymbol.c_str(),
-                                  iSymbolLen)) == 0) {
+              WideStringView(spSrcNum.subspan(cc, iSymbolLen)) == wsSymbol) {
             cc += iSymbolLen;
           }
           bHavePercentSymbol = true;
@@ -1652,8 +1644,8 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
         } break;
         case ',': {
           if (cc + iGroupLen <= spSrcNum.size() &&
-              UNSAFE_TODO(wcsncmp(spSrcNum.data() + cc, wsGroupSymbol.c_str(),
-                                  iGroupLen)) == 0) {
+              WideStringView(spSrcNum.subspan(cc, iGroupLen)) ==
+                  wsGroupSymbol) {
             cc += iGroupLen;
           }
           break;
@@ -1894,8 +1886,8 @@ bool CFGAS_StringFormatter::ParseZero(const WideString& wsSrcText) const {
       WideString wsLiteral = GetLiteralText(spTextFormat, &iPattern);
       size_t iLiteralLen = wsLiteral.GetLength();
       if (iText + iLiteralLen > spSrcText.size() ||
-          UNSAFE_TODO(wcsncmp(spSrcText.data() + iText, wsLiteral.c_str(),
-                              iLiteralLen))) {
+          (WideStringView(spSrcText.subspan(iText, iLiteralLen)) !=
+           wsLiteral)) {
         return false;
       }
       iText += iLiteralLen;
@@ -1922,8 +1914,8 @@ bool CFGAS_StringFormatter::ParseNull(const WideString& wsSrcText) const {
       WideString wsLiteral = GetLiteralText(spTextFormat, &iPattern);
       size_t iLiteralLen = wsLiteral.GetLength();
       if (iText + iLiteralLen > spSrcText.size() ||
-          UNSAFE_TODO(wcsncmp(spSrcText.data() + iText, wsLiteral.c_str(),
-                              iLiteralLen))) {
+          (WideStringView(spSrcText.subspan(iText, iLiteralLen)) !=
+           wsLiteral)) {
         return false;
       }
       iText += iLiteralLen;
