@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ece9f749_9550f3c3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2025-06-17T02:29:38Z",
+      "side": 1,
+      "message": "These really are TrueType `cmap`s and not Adobe CMaps. On the other hand, unlike the test, this change is about any Unicode character map (in a generic way, it need not be a `cmap` nor CMap).\n\nI\u0027ve updated all uses to be explicitly either generic \"character map\" or specific \"TrueType cmap format\".",
+      "parentUuid": "0d7be5cf_32265dc8",
+      "range": {
+        "startLine": 7,
+        "startChar": 18,
+        "endLine": 7,
+        "endChar": 23
+      },
+      "revId": "47af84018340db99e39f4da2ca2b500a63ae6607",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "62789b54_32c00a51",
@@ -37,6 +61,30 @@
       "writtenOn": "2025-06-16T22:51:51Z",
       "side": 1,
       "message": "Add a comma after. Then wrap at 72 columns.",
+      "range": {
+        "startLine": 10,
+        "startChar": 40,
+        "endLine": 10,
+        "endChar": 51
+      },
+      "revId": "47af84018340db99e39f4da2ca2b500a63ae6607",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8e8bd904_d3ab5b1e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2025-06-17T02:29:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "62789b54_32c00a51",
       "range": {
         "startLine": 10,
         "startChar": 40,
@@ -70,6 +118,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "61f4f782_942beed6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2025-06-17T02:29:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "000919c9_f4396d62",
+      "range": {
+        "startLine": 11,
+        "startChar": 45,
+        "endLine": 11,
+        "endChar": 52
+      },
+      "revId": "47af84018340db99e39f4da2ca2b500a63ae6607",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ff61ed42_768d9949",
@@ -93,6 +165,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6615e51b_ee894bef",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2025-06-17T02:29:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ff61ed42_768d9949",
+      "range": {
+        "startLine": 12,
+        "startChar": 46,
+        "endLine": 12,
+        "endChar": 52
+      },
+      "revId": "47af84018340db99e39f4da2ca2b500a63ae6607",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "018b49df_15d43fdb",
@@ -106,6 +202,24 @@
       "writtenOn": "2025-06-16T22:51:51Z",
       "side": 1,
       "message": "This comment now only apply to line 145 and below. UseTTCharmapUnicode() should get its own comments.",
+      "revId": "47af84018340db99e39f4da2ca2b500a63ae6607",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "088351a1_857c6b70",
+        "filename": "core/fpdfapi/font/cpdf_font.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2025-06-17T02:29:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "018b49df_15d43fdb",
       "revId": "47af84018340db99e39f4da2ca2b500a63ae6607",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
