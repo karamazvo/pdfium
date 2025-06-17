@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3cd26af3_23c43718",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2025-06-17T02:29:59Z",
+      "side": 1,
+      "message": "So in PDF (and Adobe in general) there is a CMap File (Adobe 5014, maps character codes to CID), but in TrueType/OpenType it is a `cmap` table (the name of the table, maps various encodings to glyph ids). Here this is specifically just about `cmap` tables in particular.\n\nI\u0027ve edited the commit messages to directly call this out and specify \"TrueType Unicode cmap format\".",
+      "parentUuid": "47f74867_07b44588",
+      "range": {
+        "startLine": 7,
+        "startChar": 31,
+        "endLine": 7,
+        "endChar": 36
+      },
+      "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "badf6240_4c9847ba",
@@ -65,6 +89,54 @@
         "startChar": 11,
         "endLine": 28,
         "endChar": 16
+      },
+      "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6beb03a5_2fb49689",
+        "filename": "core/fpdfapi/font/cpdf_truetypefont_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2025-06-17T02:29:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fea413ef_b7ca2d2a",
+      "range": {
+        "startLine": 28,
+        "startChar": 11,
+        "endLine": 28,
+        "endChar": 16
+      },
+      "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f7c7ca3d_dbe060bd",
+        "filename": "core/fpdfapi/font/cpdf_truetypefont_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2025-06-17T02:29:59Z",
+      "side": 1,
+      "message": "I was basing this off of `core/fxge/fontdata/chromefontdata/FoxitFixed.cpp`. However, doing this now it makes sense to write it nicely.",
+      "parentUuid": "badf6240_4c9847ba",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 5
       },
       "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
@@ -117,6 +189,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5ef9963b_5fccb878",
+        "filename": "core/fpdfapi/font/cpdf_truetypefont_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2025-06-17T02:29:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a453d474_b6fca142",
+      "range": {
+        "startLine": 122,
+        "startChar": 9,
+        "endLine": 122,
+        "endChar": 18
+      },
+      "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7b9ab831_1c1289f8",
@@ -130,6 +226,24 @@
       "writtenOn": "2025-06-16T22:58:56Z",
       "side": 1,
       "message": "No need to check if NewIndirect() fails. It should never fail except when OOM.",
+      "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3a5e063d_f48bceb6",
+        "filename": "core/fpdfapi/font/cpdf_truetypefont_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2025-06-17T02:29:59Z",
+      "side": 1,
+      "message": "Was cargo culting [CPDFSimpleFontTest::BaseFontNameWithSubsetting](https://source.chromium.org/chromium/chromium/src/+/main:third_party/pdfium/core/fpdfapi/font/cpdf_simplefont_unittest.cpp;l\u003d46;drc\u003d75e77041a822f7ac7e73fb94b24e8c7771ff7f36). However, note that this is part of lamba that returns `RetainPtr\u003cCPDF_Font\u003e` so the gtest `ASSERT_*` doesn\u0027t work here (since it returns `void`). That being said, on inspection it appears `NewIndirect` has `new` semantics (it calls `new` eventually) and so will crash and never return `nullptr`.",
+      "parentUuid": "7b9ab831_1c1289f8",
       "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -151,6 +265,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "47d90579_9505d50a",
+        "filename": "core/fpdfapi/font/cpdf_truetypefont_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2025-06-17T02:29:59Z",
+      "side": 1,
+      "message": "The issue is that the gtest assertions return void, so they\u0027re difficult to use inside a function like this (see [documentation](https://google.github.io/googletest/advanced.html#assertion-placement)). `CHECK_OP` things will just crash I think, which isn\u0027t what we want here, as this should log an error and allow the current thread to continue testing. The idea here is to allow `make_font` to be a somewhat \"external\" bit of code and fail by returning nullptr, then the caller can `ASSERT_TRUE` the result.\n\nThat being said, this should never happen, so it\u0027s probably fine to put the `CHECK` here.",
+      "parentUuid": "9c3d6d85_2ae74804",
+      "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b35d4f3c_eade01fa",
@@ -164,6 +296,24 @@
       "writtenOn": "2025-06-16T22:58:56Z",
       "side": 1,
       "message": "Can this be `static constexpr char kToUnicode[] \u003d ...`?",
+      "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d3fa4ea3_33e90c03",
+        "filename": "core/fpdfapi/font/cpdf_truetypefont_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2025-06-17T02:29:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b35d4f3c_eade01fa",
       "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -214,6 +364,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0b4deeca_f6827388",
+        "filename": "core/fpdfapi/font/cpdf_truetypefont_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2025-06-17T02:29:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9d84d24d_cb796cbb",
+      "range": {
+        "startLine": 189,
+        "startChar": 31,
+        "endLine": 189,
+        "endChar": 40
+      },
+      "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "272e5aa0_add88754",
@@ -237,6 +411,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d5aa13b3_640e9ed8",
+        "filename": "core/fpdfapi/font/cpdf_truetypefont_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2025-06-17T02:29:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "272e5aa0_add88754",
+      "range": {
+        "startLine": 195,
+        "startChar": 7,
+        "endLine": 195,
+        "endChar": 13
+      },
+      "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1cb6eb02_f8ed7cae",
@@ -250,6 +448,24 @@
       "writtenOn": "2025-06-16T22:58:56Z",
       "side": 1,
       "message": "snake_case",
+      "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4e7759f4_b4fc9d38",
+        "filename": "core/fpdfapi/font/cpdf_truetypefont_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2025-06-17T02:29:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1cb6eb02_f8ed7cae",
       "revId": "2def67f76c79150125c1ebfcc2febb5d07209374",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
