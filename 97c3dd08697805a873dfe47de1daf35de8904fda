@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e2589266_274dea4c",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2025-06-18T18:56:33Z",
+      "side": 1,
+      "message": "This new bit of predicate is essentially protecting this call (and the one below) that the result of `charinfo.char_code()` is meaningful. It might be better to test for the invalid code here and then setup the left and right based on the char_box",
+      "revId": "97c3dd08697805a873dfe47de1daf35de8904fda",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
