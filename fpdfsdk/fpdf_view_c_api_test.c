@@ -75,6 +75,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFAnnot_GetObjectCount);
     CHK(FPDFAnnot_GetOptionCount);
     CHK(FPDFAnnot_GetOptionLabel);
+    CHK(FPDFAnnot_GetOptionValue);
     CHK(FPDFAnnot_GetRect);
     CHK(FPDFAnnot_GetStringValue);
     CHK(FPDFAnnot_GetSubtype);

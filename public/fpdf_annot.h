@@ -827,6 +827,31 @@ FPDFAnnot_GetOptionLabel(FPDF_FORMHANDLE hHandle,
                          unsigned long buflen);
 
 // Experimental API.
+// Get the string value for the export value of the option at |index| in
+// |annot|'s "Opt" dictionary. Intended for use with listbox and combobox widget
+// annotations. |buffer| is only modified if |buflen| is longer than the length
+// of contents. If index is out of range or in case of other error, nothing
+// will be added to |buffer| and the return value will be 0. Note that
+// return value of empty string is 2 for "\0\0".
+//
+//   hHandle - handle to the form fill module, returned by
+//             FPDFDOC_InitFormFillEnvironment.
+//   annot   - handle to an annotation.
+//   index   - numeric index of the option in the "Opt" array
+//   buffer  - buffer for holding the value string, encoded in UTF-16LE.
+//   buflen  - length of the buffer in bytes.
+//
+// Returns the length of the string value in bytes.
+// If |annot| does not have an "Opt" array, |index| is out of range or if any
+// other error occurs, returns 0.
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFAnnot_GetOptionValue(FPDF_FORMHANDLE hHandle,
+                         FPDF_ANNOTATION annot,
+                         int index,
+                         FPDF_WCHAR* buffer,
+                         unsigned long buflen);
+
+// Experimental API.
 // Determine whether or not the option at |index| in |annot|'s "Opt" dictionary
 // is selected. Intended for use with listbox and combobox widget annotations.
 //
