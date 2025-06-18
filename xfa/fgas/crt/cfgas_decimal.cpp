@@ -9,12 +9,14 @@
 #include <math.h>
 
 #include <algorithm>
+#include <array>
 #include <limits>
 #include <utility>
 
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/span.h"
 
 #define FXMATH_DECIMAL_SCALELIMIT 0x1c
 #define FXMATH_DECIMAL_RSHIFT32BIT(x) ((x) >> 0x10 >> 0x10)
@@ -35,15 +37,14 @@ inline uint8_t decimal_helper_div10(uint64_t& phi,
   return retVal;
 }
 
-inline uint8_t decimal_helper_div10_any(uint64_t nums[], uint8_t numcount) {
+inline uint8_t decimal_helper_div10_any(pdfium::span<uint64_t> nums) {
   uint8_t retVal = 0;
-  UNSAFE_TODO({
-    for (int i = numcount - 1; i > 0; i--) {
-      nums[i - 1] += FXMATH_DECIMAL_LSHIFT32BIT(nums[i] % 0xA);
-      nums[i] /= 0xA;
-    }
-  });
-  if (numcount) {
+  const int numcount = static_cast<int>(nums.size());
+  for (int i = numcount - 1; i > 0; i--) {
+    nums[i - 1] += FXMATH_DECIMAL_LSHIFT32BIT(nums[i] % 0xA);
+    nums[i] /= 0xA;
+  }
+  if (numcount > 0) {
     retVal = nums[0] % 0xA;
     nums[0] /= 0xA;
   }
@@ -58,14 +59,16 @@ inline void decimal_helper_mul10(uint64_t& phi, uint64_t& pmid, uint64_t& plo) {
   pmid = (uint32_t)pmid;
 }
 
-inline void decimal_helper_mul10_any(uint64_t nums[], uint8_t numcount) {
+inline void decimal_helper_mul10_any(pdfium::span<uint64_t> nums) {
+  if (nums.empty()) {
+    return;
+  }
   nums[0] *= 0xA;
-  UNSAFE_TODO({
-    for (int i = 1; i < numcount; i++) {
-      nums[i] = nums[i] * 0xA + FXMATH_DECIMAL_RSHIFT32BIT(nums[i - 1]);
-      nums[i - 1] = (uint32_t)nums[i - 1];
-    }
-  });
+  const int numcount = static_cast<int>(nums.size());
+  for (int i = 1; i < numcount; i++) {
+    nums[i] = nums[i] * 0xA + FXMATH_DECIMAL_RSHIFT32BIT(nums[i - 1]);
+    nums[i - 1] = (uint32_t)nums[i - 1];
+  }
 }
 
 inline void decimal_helper_normalize(uint64_t& phi,
@@ -79,172 +82,152 @@ inline void decimal_helper_normalize(uint64_t& phi,
   pmid = (uint32_t)pmid;
 }
 
-inline void decimal_helper_normalize_any(uint64_t nums[], uint8_t len) {
-  UNSAFE_TODO({
-    for (int i = len - 2; i > 0; i--) {
-      nums[i + 1] += FXMATH_DECIMAL_RSHIFT32BIT(nums[i]);
-      nums[i] = (uint32_t)nums[i];
-    }
-    for (int i = 0; i < len - 1; i++) {
-      nums[i + 1] += FXMATH_DECIMAL_RSHIFT32BIT(nums[i]);
-      nums[i] = (uint32_t)nums[i];
-    }
-  });
+inline void decimal_helper_normalize_any(pdfium::span<uint64_t> nums) {
+  const int len = static_cast<int>(nums.size());
+  for (int i = len - 2; i > 0; i--) {
+    nums[i + 1] += FXMATH_DECIMAL_RSHIFT32BIT(nums[i]);
+    nums[i] = (uint32_t)nums[i];
+  }
+  for (int i = 0; i < len - 1; i++) {
+    nums[i + 1] += FXMATH_DECIMAL_RSHIFT32BIT(nums[i]);
+    nums[i] = (uint32_t)nums[i];
+  }
 }
 
-inline int8_t decimal_helper_raw_compare_any(uint64_t a[],
-                                             uint8_t al,
-                                             uint64_t b[],
-                                             uint8_t bl) {
+inline int8_t decimal_helper_raw_compare_any(pdfium::span<const uint64_t> a,
+                                             pdfium::span<const uint64_t> b) {
   int8_t retVal = 0;
-  UNSAFE_TODO({
-    for (int i = std::max(al - 1, bl - 1); i >= 0; i--) {
-      uint64_t l = (i >= al ? 0 : a[i]), r = (i >= bl ? 0 : b[i]);
-      retVal += (l > r ? 1 : (l < r ? -1 : 0));
-      if (retVal) {
-        return retVal;
-      }
+  const int al = static_cast<int>(a.size());
+  const int bl = static_cast<int>(b.size());
+  for (int i = std::max(al - 1, bl - 1); i >= 0; i--) {
+    uint64_t l = (i >= al ? 0 : a[i]);
+    uint64_t r = (i >= bl ? 0 : b[i]);
+    retVal += (l > r ? 1 : (l < r ? -1 : 0));
+    if (retVal) {
+      return retVal;
     }
-  });
+  }
   return retVal;
 }
 
-inline void decimal_helper_dec_any(uint64_t a[], uint8_t al) {
-  UNSAFE_TODO({
-    for (int i = 0; i < al; i++) {
-      if (a[i]--) {
+inline void decimal_helper_dec_any(pdfium::span<uint64_t> a) {
+  for (size_t i = 0; i < a.size(); i++) {
+    if (a[i]--) {
+      return;
+    }
+  }
+}
+
+inline void decimal_helper_inc_any(pdfium::span<uint64_t> a) {
+  for (size_t i = 0; i < a.size(); i++) {
+    a[i]++;
+    if ((uint32_t)a[i] == a[i]) {
+      return;
+    }
+    a[i] = 0;
+  }
+}
+
+inline void decimal_helper_raw_mul(pdfium::span<const uint64_t> a,
+                                   pdfium::span<const uint64_t> b,
+                                   pdfium::span<uint64_t> c) {
+  DCHECK(a.size() + b.size() <= c.size());
+  std::ranges::fill(c, 0);
+
+  const int al = static_cast<int>(a.size());
+  const int bl = static_cast<int>(b.size());
+  const int cl = static_cast<int>(c.size());
+  for (int i = 0; i < al; i++) {
+    for (int j = 0; j < bl; j++) {
+      uint64_t m = (uint64_t)a[i] * b[j];
+      c[i + j] += (uint32_t)m;
+      c[i + j + 1] += FXMATH_DECIMAL_RSHIFT32BIT(m);
+    }
+  }
+  for (int i = 0; i < cl - 1; i++) {
+    c[i + 1] += FXMATH_DECIMAL_RSHIFT32BIT(c[i]);
+    c[i] = (uint32_t)c[i];
+  }
+  for (int i = 0; i < cl; i++) {
+    c[i] = (uint32_t)c[i];
+  }
+}
+
+inline void decimal_helper_raw_div(pdfium::span<const uint64_t> a,
+                                   pdfium::span<const uint64_t> b,
+                                   pdfium::span<uint64_t> c) {
+  std::ranges::fill(c, 0);
+
+  std::array<uint64_t, 16> left = {};
+  std::array<uint64_t, 16> right = {};
+  CHECK(a.size() <= right.size());
+  pdfium::span(right).first(a.size()).copy_from(a);
+
+  std::array<uint64_t, 16> tmp;
+  while (decimal_helper_raw_compare_any(pdfium::span(left).first(a.size()),
+                                        pdfium::span(right).first(a.size())) <=
+         0) {
+    std::array<uint64_t, 16> cur;
+    for (size_t i = 0; i < a.size(); i++) {
+      cur[i] = left[i] + right[i];
+    }
+
+    const int al = static_cast<int>(a.size());
+    for (int i = al - 1; i >= 0; i--) {
+      if (i) {
+        cur[i - 1] += FXMATH_DECIMAL_LSHIFT32BIT(cur[i] % 2);
+      }
+      cur[i] /= 2;
+    }
+
+    decimal_helper_raw_mul(pdfium::span(cur).first(a.size()), b, tmp);
+    switch (decimal_helper_raw_compare_any(tmp, a)) {
+      case -1:
+        left = cur;
+        left[0]++;
+        decimal_helper_normalize_any(pdfium::span(left).first(a.size()));
+        break;
+      case 1:
+        right = cur;
+        decimal_helper_dec_any(pdfium::span(right).first(a.size()));
+        break;
+      case 0: {
+        size_t len = std::min(a.size(), c.size());
+        c.first(len).copy_from(pdfium::span(cur).first(len));
         return;
       }
     }
-  });
+  }
+  size_t len = std::min(a.size(), c.size());
+  c.first(len).copy_from(pdfium::span(left).first(len));
 }
 
-inline void decimal_helper_inc_any(uint64_t a[], uint8_t al) {
-  UNSAFE_TODO({
-    for (int i = 0; i < al; i++) {
-      a[i]++;
-      if ((uint32_t)a[i] == a[i]) {
-        return;
-      }
-      a[i] = 0;
+inline bool decimal_helper_outofrange(pdfium::span<const uint64_t> a,
+                                      uint8_t goal) {
+  if (goal >= a.size()) {
+    return false;
+  }
+  for (size_t i = goal; i < a.size(); i++) {
+    if (a[i]) {
+      return true;
     }
-  });
-}
-
-inline void decimal_helper_raw_mul(uint64_t a[],
-                                   uint8_t al,
-                                   uint64_t b[],
-                                   uint8_t bl,
-                                   uint64_t c[],
-                                   uint8_t cl) {
-  DCHECK(al + bl <= cl);
-  UNSAFE_TODO({
-    for (int i = 0; i < cl; i++) {
-      c[i] = 0;
-    }
-
-    for (int i = 0; i < al; i++) {
-      for (int j = 0; j < bl; j++) {
-        uint64_t m = (uint64_t)a[i] * b[j];
-        c[i + j] += (uint32_t)m;
-        c[i + j + 1] += FXMATH_DECIMAL_RSHIFT32BIT(m);
-      }
-    }
-    for (int i = 0; i < cl - 1; i++) {
-      c[i + 1] += FXMATH_DECIMAL_RSHIFT32BIT(c[i]);
-      c[i] = (uint32_t)c[i];
-    }
-    for (int i = 0; i < cl; i++) {
-      c[i] = (uint32_t)c[i];
-    }
-  });
-}
-
-inline void decimal_helper_raw_div(uint64_t a[],
-                                   uint8_t al,
-                                   uint64_t b[],
-                                   uint8_t bl,
-                                   uint64_t c[],
-                                   uint8_t cl) {
-  UNSAFE_TODO({
-    for (int i = 0; i < cl; i++) {
-      c[i] = 0;
-    }
-
-    uint64_t left[16] = {0};
-    uint64_t right[16] = {0};
-    left[0] = 0;
-    for (int i = 0; i < al; i++) {
-      right[i] = a[i];
-    }
-
-    uint64_t tmp[16];
-    while (decimal_helper_raw_compare_any(left, al, right, al) <= 0) {
-      uint64_t cur[16];
-      for (int i = 0; i < al; i++) {
-        cur[i] = left[i] + right[i];
-      }
-
-      for (int i = al - 1; i >= 0; i--) {
-        if (i) {
-          cur[i - 1] += FXMATH_DECIMAL_LSHIFT32BIT(cur[i] % 2);
-        }
-        cur[i] /= 2;
-      }
-
-      decimal_helper_raw_mul(cur, al, b, bl, tmp, 16);
-      switch (decimal_helper_raw_compare_any(tmp, 16, a, al)) {
-        case -1:
-          for (int i = 0; i < 16; i++) {
-            left[i] = cur[i];
-          }
-
-          left[0]++;
-          decimal_helper_normalize_any(left, al);
-          break;
-        case 1:
-          for (int i = 0; i < 16; i++) {
-            right[i] = cur[i];
-          }
-          decimal_helper_dec_any(right, al);
-          break;
-        case 0:
-          for (int i = 0; i < std::min(al, cl); i++) {
-            c[i] = cur[i];
-          }
-          return;
-      }
-    }
-    for (int i = 0; i < std::min(al, cl); i++) {
-      c[i] = left[i];
-    }
-  });
-}
-
-inline bool decimal_helper_outofrange(uint64_t a[], uint8_t al, uint8_t goal) {
-  UNSAFE_TODO({
-    for (int i = goal; i < al; i++) {
-      if (a[i]) {
-        return true;
-      }
-    }
-  });
+  }
   return false;
 }
 
-inline void decimal_helper_shrinkintorange(uint64_t a[],
-                                           uint8_t al,
+inline void decimal_helper_shrinkintorange(pdfium::span<uint64_t> a,
                                            uint8_t goal,
                                            uint8_t& scale) {
   bool bRoundUp = false;
   while (scale != 0 && (scale > FXMATH_DECIMAL_SCALELIMIT ||
-                        decimal_helper_outofrange(a, al, goal))) {
-    bRoundUp = decimal_helper_div10_any(a, al) >= 5;
+                        decimal_helper_outofrange(a, goal))) {
+    bRoundUp = decimal_helper_div10_any(a) >= 5;
     scale--;
   }
   if (bRoundUp) {
-    decimal_helper_normalize_any(a, goal);
-    decimal_helper_inc_any(a, goal);
+    CHECK(goal <= a.size());
+    decimal_helper_normalize_any(a.first(goal));
+    decimal_helper_inc_any(a.first(goal));
   }
 }
 
@@ -449,12 +432,13 @@ void CFGAS_Decimal::SetNegate() {
 }
 
 CFGAS_Decimal CFGAS_Decimal::operator*(const CFGAS_Decimal& val) const {
-  uint64_t a[3] = {lo_, mid_, hi_}, b[3] = {val.lo_, val.mid_, val.hi_};
-  uint64_t c[6];
-  decimal_helper_raw_mul(a, 3, b, 3, c, 6);
+  const std::array<uint64_t, 3> a = {lo_, mid_, hi_};
+  const std::array<uint64_t, 3> b = {val.lo_, val.mid_, val.hi_};
+  std::array<uint64_t, 6> c;
+  decimal_helper_raw_mul(a, b, c);
   bool neg = neg_ ^ val.neg_;
   uint8_t scale = u_scale_ + val.u_scale_;
-  decimal_helper_shrinkintorange(c, 6, 3, scale);
+  decimal_helper_shrinkintorange(c, 3, scale);
   return CFGAS_Decimal(static_cast<uint32_t>(c[0]), static_cast<uint32_t>(c[1]),
                        static_cast<uint32_t>(c[2]), neg, scale);
 }
@@ -465,12 +449,13 @@ CFGAS_Decimal CFGAS_Decimal::operator/(const CFGAS_Decimal& val) const {
   }
 
   bool neg = neg_ ^ val.neg_;
-  uint64_t a[7] = {lo_, mid_, hi_}, b[3] = {val.lo_, val.mid_, val.hi_},
-           c[7] = {0};
+  std::array<uint64_t, 7> a = {lo_, mid_, hi_};
+  const std::array<uint64_t, 3> b = {val.lo_, val.mid_, val.hi_};
+  std::array<uint64_t, 7> c = {0};
   uint8_t scale = 0;
   if (u_scale_ < val.u_scale_) {
     for (int i = val.u_scale_ - u_scale_; i > 0; i--) {
-      decimal_helper_mul10_any(a, 7);
+      decimal_helper_mul10_any(a);
     }
   } else {
     scale = u_scale_ - val.u_scale_;
@@ -482,14 +467,14 @@ CFGAS_Decimal CFGAS_Decimal::operator/(const CFGAS_Decimal& val) const {
   }
 
   while (!a[6]) {
-    decimal_helper_mul10_any(a, 7);
+    decimal_helper_mul10_any(a);
     scale++;
   }
 
-  decimal_helper_div10_any(a, 7);
+  decimal_helper_div10_any(a);
   scale--;
-  decimal_helper_raw_div(a, 6, b, 3, c, 7);
-  decimal_helper_shrinkintorange(c, 6, 3, scale);
+  decimal_helper_raw_div(pdfium::span(a).first<6u>(), b, c);
+  decimal_helper_shrinkintorange(pdfium::span(c).first<6u>(), 3, scale);
   decimal_helper_truncate(c[2], c[1], c[0], scale, minscale);
   return CFGAS_Decimal(static_cast<uint32_t>(c[0]), static_cast<uint32_t>(c[1]),
                        static_cast<uint32_t>(c[2]), neg, scale);
