@@ -31,9 +31,9 @@ class CFGAS_Decimal {
   void SetNegate();
 
  private:
-  CFGAS_Decimal(uint32_t hi,
+  CFGAS_Decimal(uint32_t lo,
                 uint32_t mid,
-                uint32_t lo,
+                uint32_t hi,
                 bool neg,
                 uint8_t scale);
 
