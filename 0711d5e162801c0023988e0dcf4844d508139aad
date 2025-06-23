@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ac37d288_c64fddfa",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-23T17:49:05Z",
+      "side": 1,
+      "message": "We usually just omit the log entries, as they are often quite long. Those interested in the details can just visit the link above.",
+      "revId": "0711d5e162801c0023988e0dcf4844d508139aad",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
