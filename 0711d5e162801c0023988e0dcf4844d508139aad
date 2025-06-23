@@ -16,6 +16,23 @@
       "message": "We usually just omit the log entries, as they are often quite long. Those interested in the details can just visit the link above.",
       "revId": "0711d5e162801c0023988e0dcf4844d508139aad",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9dfddabd_3308e413",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-06-23T17:50:40Z",
+      "side": 1,
+      "message": "Since pdfium-review.googlesource.com is a different Gerrit instance from chromium-review, you need to either:\n\n1) Link your chromium.org account to your google.com account in this instance.\n2) Stamp this CL with your google.com account.\n3) Add another reviewer.",
+      "revId": "0711d5e162801c0023988e0dcf4844d508139aad",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
