@@ -2250,9 +2250,8 @@ TEST_F(FPDFTextEmbedderTest, TextObjectSetIsActive) {
 }
 
 TEST_F(FPDFTextEmbedderTest, Bug425244539) {
-  // TODO(crbug.com/425244539): This should contain the characters in "hello".
   static constexpr std::array<unsigned short, 6> kExpectedChars = {
-      65534, 65534, 65534, 65534, 65534, 0};
+      'h', 'e', 'l', 'l', 'o', 0};
 
   ASSERT_TRUE(OpenDocument("bug_425244539.pdf"));
   ScopedPage page = LoadScopedPage(0);
