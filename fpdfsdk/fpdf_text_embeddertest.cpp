@@ -2248,3 +2248,23 @@ TEST_F(FPDFTextEmbedderTest, TextObjectSetIsActive) {
                 ElementsAreArray(kHelloGoodbyeText));
   }
 }
+
+TEST_F(FPDFTextEmbedderTest, Bug425244539) {
+  // TODO(crbug.com/425244539): This should contain the characters in "hello".
+  static constexpr std::array<unsigned short, 6> kExpectedChars = {
+      65534, 65534, 65534, 65534, 65534, 0};
+
+  ASSERT_TRUE(OpenDocument("bug_425244539.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+
+  std::array<unsigned short, 128> buffer = {};
+  int num_chars =
+      FPDFText_GetText(textpage.get(), 0, buffer.size(), buffer.data());
+  ASSERT_EQ(static_cast<int>(kExpectedChars.size()), num_chars);
+  EXPECT_THAT(pdfium::span(buffer).first<kExpectedChars.size()>(),
+              ElementsAreArray(kExpectedChars));
+}
