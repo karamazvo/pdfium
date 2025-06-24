@@ -1,0 +1,45 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b3595c96_1976b0f5",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-06-24T17:05:03Z",
+      "side": 1,
+      "message": "nit: ?-operator maybe.",
+      "range": {
+        "startLine": 155,
+        "startChar": 0,
+        "endLine": 155,
+        "endChar": 67
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "bedd8634_b0fb11c2",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdftext/cpdf_textpage.cpp",
+              "range": {
+                "startLine": 155,
+                "startChar": 0,
+                "endLine": 157,
+                "endChar": 0
+              },
+              "replacement": "  return char_info.unicode() !\u003d 0\n             ? !IsControlChar(char_info)\n             : char_info.char_code() !\u003d 0;\n"
+            }
+          ]
+        }
+      ],
+      "revId": "c8b02a53940ff3f8410001de50401c9b403c0f40",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
