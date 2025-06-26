@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ca6708cf_5b154488",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3960307
+      },
+      "writtenOn": "2025-06-26T16:05:37Z",
+      "side": 1,
+      "message": "Seems like I need someone else to submit the CL for me.",
+      "revId": "08b54929c46d84022bcce3a1df942b5793e761de",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
