@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7fe7dcd8_b5845471",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-06-27T18:01:40Z",
+      "side": 1,
+      "message": "Ok, but I\u0027d also be OK with just sticking it in unconditionally in the C includes section.",
+      "revId": "60787da542aaf9977fb8d9435ccb2f5d9cdd84f4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
