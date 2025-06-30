@@ -204,7 +204,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling rust
   # and whatever else without interference from each other.
-  'rust_revision': '483563e40f9d4408cafacca8c553191f0f7867cb',
+  'rust_revision': '2c5b3e50a617d67efa52f051852f49d9490e4c10',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling simdutf
   # and whatever else without interference from each other.
