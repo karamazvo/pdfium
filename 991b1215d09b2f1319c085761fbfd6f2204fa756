@@ -16,6 +16,23 @@
       "message": "PTAL",
       "revId": "991b1215d09b2f1319c085761fbfd6f2204fa756",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f17e1adf_3cd23a17",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7610
+      },
+      "writtenOn": "2025-07-09T11:00:10Z",
+      "side": 1,
+      "message": "Lei Zhang, can you provide the second CR+1?",
+      "revId": "991b1215d09b2f1319c085761fbfd6f2204fa756",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
