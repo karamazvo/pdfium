@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "88a55641_6ae00744",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-07-11T23:07:31Z",
+      "side": 1,
+      "message": "Mac failures seem to be a combination of https://crrev.com/1478653 and https://pdfium-review.googlesource.com/c/pdfium/+/132390 which introduces the dependency. Unable to repro locally.",
+      "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
