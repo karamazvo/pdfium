@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a8f1a03d_c1db3a8d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-07-11T16:44:12Z",
+      "side": 1,
+      "message": "LGTM!",
+      "revId": "3e7b86229283ba83f41288aac89fadfedfe37a6d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "36b15653_c94bc9a0",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 949,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-07-11T16:44:12Z",
+      "side": 1,
+      "message": "maybe someday this too shall span.",
+      "range": {
+        "startLine": 949,
+        "startChar": 8,
+        "endLine": 949,
+        "endChar": 55
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "28bfe05d_a1eafa19",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxge/skia/fx_skia_device.cpp",
+              "range": {
+                "startLine": 949,
+                "startChar": 0,
+                "endLine": 950,
+                "endChar": 0
+              },
+              "replacement": "        pdfium::as_bytes(pdfium::make_span(glyphs)), rsxform_, font,\n"
+            },
+            {
+              "path": "core/fxge/skia/fx_skia_device.cpp",
+              "range": {
+                "startLine": 968,
+                "startChar": 0,
+                "endLine": 969,
+                "endChar": 0
+              },
+              "replacement": "    auto blob \u003d SkTextBlob::MakeFromPosText(pdfium::as_bytes(pdfium::make_span(\u0026glyphs[i], 1)),\n"
+            }
+          ]
+        }
+      ],
+      "revId": "3e7b86229283ba83f41288aac89fadfedfe37a6d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "de98a8b9_d9ed1650",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 968,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-07-11T16:44:12Z",
+      "side": 1,
+      "message": "and this someday.",
+      "range": {
+        "startLine": 968,
+        "startChar": 44,
+        "endLine": 968,
+        "endChar": 72
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "ef01443e_9ba758a3",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxge/skia/fx_skia_device.cpp",
+              "range": {
+                "startLine": 968,
+                "startChar": 0,
+                "endLine": 969,
+                "endChar": 0
+              },
+              "replacement": "    auto blob \u003d SkTextBlob::MakeFromPosText(glyphs.subspan(i).data(), sizeof(uint16_t),\n"
+            }
+          ]
+        }
+      ],
+      "revId": "3e7b86229283ba83f41288aac89fadfedfe37a6d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
