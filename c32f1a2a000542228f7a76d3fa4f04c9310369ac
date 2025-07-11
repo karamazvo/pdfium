@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6d438f18_7a95f5c1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-07-11T17:36:39Z",
+      "side": 1,
+      "message": "Bot failures fixed after https://crrev.com/c/6725994, thanks jwata@!",
+      "revId": "c32f1a2a000542228f7a76d3fa4f04c9310369ac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
