@@ -16,6 +16,24 @@
       "message": "Mac failures seem to be a combination of https://crrev.com/1478653 and https://pdfium-review.googlesource.com/c/pdfium/+/132390 which introduces the dependency. Unable to repro locally.",
       "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d7bddf5d_98932064",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-07-11T23:08:29Z",
+      "side": 1,
+      "message": "```\nTraceback (most recent call last):\n  File \"/Volumes/Work/s/w/ir/cache/builder/pdfium/build/mac/find_sdk.py\", line 112, in \u003cmodule\u003e\n    sys.exit(main())\n             ^^^^^^\n  File \"/Volumes/Work/s/w/ir/cache/builder/pdfium/build/mac/find_sdk.py\", line 84, in main\n    raise Exception(\u0027No %s+ SDK found\u0027 % min_sdk_version)\nException: No 15+ SDK found\n\nSee //build/gn_logs.gni:36:3: whence it was imported.\n  import(\"//build/config/mac/mac_sdk.gni\")\n  ^--------------------------------------\nSee //BUILD.gn:448:3: whence it was imported.\n  import(\"//build/gn_logs.gni\")\n  ^---------------------------\n```",
+      "parentUuid": "88a55641_6ae00744",
+      "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
