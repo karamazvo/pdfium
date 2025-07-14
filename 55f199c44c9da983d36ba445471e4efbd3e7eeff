@@ -70,6 +70,24 @@
       "parentUuid": "64516c77_842434cd",
       "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2511f1d4_d66638ae",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-07-14T17:24:56Z",
+      "side": 1,
+      "message": "+thestig@, do we want to upgrade the Mac trybots or set the Xcode version?",
+      "parentUuid": "477bfd46_15e930c2",
+      "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
