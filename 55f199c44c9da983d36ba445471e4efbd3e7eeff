@@ -88,6 +88,24 @@
       "parentUuid": "477bfd46_15e930c2",
       "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8e862079_b8a56c6d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-14T22:19:55Z",
+      "side": 1,
+      "message": "How about specifying a newer Xcode version for now and see if that works?\n\nSpecifying a newer version of macOS will ultimately require the data center that hosts the Macs to have machines with that OS version. We can check later, but machines with a different dimension may not be available.\n\nFor reference: third_party/depot_tools/recipes/recipe_modules/osx_sdk/api.py has the macOS to Xcode mapping.\n\nAlso, https://groups.google.com/a/chromium.org/g/embedder-dev/c/SiZ-erHY-G0 says macOS 12 is still supported, though that is for end users, not developers.",
+      "parentUuid": "2511f1d4_d66638ae",
+      "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
