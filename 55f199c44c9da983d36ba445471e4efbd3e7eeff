@@ -52,6 +52,24 @@
       "parentUuid": "d7bddf5d_98932064",
       "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "477bfd46_15e930c2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9026
+      },
+      "writtenOn": "2025-07-14T08:12:00Z",
+      "side": 1,
+      "message": "The recipe installs Xcode 13? \n\nhttps://logs.chromium.org/logs/pdfium/buildbucket/cr-buildbucket/8709602746533715841/+/u/install_xcode/l_execution_details#L3396_1\n\nThe Xcode version is determined by the runtime OS version.\nhttps://pdfium.googlesource.com/pdfium.git/+/refs/heads/infra/config/main.star#35\n\nIt needs either\n1) Update the bot dimensions for newer macOS, or\n2) Specify the Xcode version explicitly (if PDFium still needs to build on the old mac bots)\ne.g.\nhttps://pdfium-review.googlesource.com/c/pdfium/+/134050",
+      "parentUuid": "64516c77_842434cd",
+      "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
