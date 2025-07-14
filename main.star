@@ -180,9 +180,15 @@ def pdfium_internal_builder(name, bucket, swarm_tests):
     elif name.startswith("mac") and "_arm" in name:
         dimensions.update(_MACOS_ARM_DIMENSIONS)
         caches = [swarming.cache("osx_sdk", name = "osx_sdk")]
+        properties.update({"$depot_tools/osx_sdk": {
+            "sdk_version": "15e204a",
+        }})
     elif name.startswith("mac"):
         dimensions.update(_MACOS_INTEL_DIMENSIONS)
         caches = [swarming.cache("osx_sdk", name = "osx_sdk")]
+        properties.update({"$depot_tools/osx_sdk": {
+            "sdk_version": "15e204a",
+        }})
     elif name.startswith("win") and "_arm" in name:
         dimensions.update(_WINDOWS_ARM_DIMENSIONS)
     elif name.startswith("win"):
