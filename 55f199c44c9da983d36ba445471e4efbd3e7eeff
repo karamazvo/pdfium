@@ -34,6 +34,24 @@
       "parentUuid": "88a55641_6ae00744",
       "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "64516c77_842434cd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9026
+      },
+      "writtenOn": "2025-07-14T07:40:00Z",
+      "side": 1,
+      "message": "Hmm, PDFium builders don\u0027t use hermetic Xcode?\n\nhttps://source.chromium.org/chromium/chromium/src/+/main:build/config/mac/mac_sdk.gni;l\u003d141-159;drc\u003d6a67dce6588ec20f616306d9d639c660f18317fe",
+      "parentUuid": "d7bddf5d_98932064",
+      "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
