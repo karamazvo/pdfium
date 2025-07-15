@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d434d608_a4701887",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-07-15T14:50:23Z",
+      "side": 1,
+      "message": "The interesting part is probably how to test this. The pdf file on the bug is a good test, but it\u0027s not clear what the license of the jbig2 file in it is. Maybe it should be in the corpus repo instead of here?",
+      "revId": "379dcd9fc23092ab0bad679f2b1a034dca80625a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
