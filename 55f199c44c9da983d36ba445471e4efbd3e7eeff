@@ -160,6 +160,24 @@
       "parentUuid": "15f43cdb_a5f13f97",
       "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fd636a37_27b439ac",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9026
+      },
+      "writtenOn": "2025-07-15T01:35:02Z",
+      "side": 1,
+      "message": "The flex ones are shared pools. So, it should makes sense to upgrade some of them to be aligned with Chromium. If any projects need old mac, they should have their own custom pool. One issue is that there is no central team to manage the flex pools. So, let\u0027s ask about this in http://go/luci-users-chat.",
+      "parentUuid": "21fa0719_0eb6d7d9",
+      "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
