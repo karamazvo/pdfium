@@ -124,6 +124,24 @@
       "parentUuid": "8e862079_b8a56c6d",
       "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "15f43cdb_a5f13f97",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9026
+      },
+      "writtenOn": "2025-07-15T01:15:10Z",
+      "side": 1,
+      "message": "Lei pointed out that Xcode 15 requires macOS 14.\n\nhttps://pdfium-review.googlesource.com/c/pdfium/+/134050/comments/92eb80e1_d5a3a907\n\u003e https://xcodereleases.com/ says this Xcode version requires macOS 14. I\u0027m guessing there is no simple fix to this, and we\u0027ll need to upgrade the PDFium bots.\n\n\u003e We can check later, but machines with a different dimension may not be available.\n\nPDFium builders use `luci.flex.try` pool. \nHere is the list of available Mac bots on that pool. http://screen/3HuiUayBQYqkgxQ\nThere are Intel Mac 14 and ARM Mac 15. Can we update the bot dimensions to use them?",
+      "parentUuid": "7e66a7ca_dbb35fec",
+      "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
