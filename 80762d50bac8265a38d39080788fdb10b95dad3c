@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6342dfa4_806fdb12",
+        "filename": "main.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 9026
+      },
+      "writtenOn": "2025-07-15T02:09:08Z",
+      "side": 1,
+      "message": "I guess you also need to update ARM Mac dimension for the reason? There is only ARM Mac-15 bots on the flex pools.\nhttps://chromium-swarm.appspot.com/botlist?c\u003did\u0026c\u003dtask\u0026c\u003dcpu\u0026c\u003dos\u0026c\u003dstatus\u0026d\u003dasc\u0026f\u003dpool%3Aluci.flex.ci|luci.flex.try\u0026f\u003dos%3AMac\u0026k\u003dos\u0026s\u003dos",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 19
+      },
+      "revId": "80762d50bac8265a38d39080788fdb10b95dad3c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
