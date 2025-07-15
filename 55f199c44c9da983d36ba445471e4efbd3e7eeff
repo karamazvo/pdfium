@@ -214,6 +214,24 @@
       "parentUuid": "fd636a37_27b439ac",
       "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2236bf11_a5a6041c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-15T02:06:18Z",
+      "side": 1,
+      "message": "Thanks for raising the issue. I uploaded https://pdfium-review.googlesource.com/134071 for the OS update. After that lands, I\u0027ll run some try jobs and make sure they pass on the newer OS.",
+      "parentUuid": "685e245e_a87eab15",
+      "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
