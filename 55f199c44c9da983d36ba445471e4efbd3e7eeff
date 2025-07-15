@@ -178,6 +178,24 @@
       "parentUuid": "21fa0719_0eb6d7d9",
       "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "20a2430b_b9512823",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-15T01:42:35Z",
+      "side": 1,
+      "message": "Yes. efoo@ and I talked about moving out of the flex pool a few years ago, but that effort fizzled. I think we can look at the usage pattern for these Macs and make reasonable recommendation/request to reimage machines with a newer OS. I imagine it is much easier to reimage a machine than to try to get new ones.",
+      "parentUuid": "fd636a37_27b439ac",
+      "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
