@@ -26,10 +26,11 @@ std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::DecodeArith(
     HSKIP = std::make_unique<CJBig2_Image>(HGW, HGH);
     for (uint32_t mg = 0; mg < HGH; ++mg) {
       for (uint32_t ng = 0; ng < HGW; ++ng) {
-        int32_t x = (HGX + mg * HRY + ng * HRX) >> 8;
-        int32_t y = (HGY + mg * HRX - ng * HRY) >> 8;
+        int32_t x = (HGX + int(mg) * HRY + int(ng) * HRX) >> 8;
+        int32_t y = (HGY + int(mg) * HRX - int(ng) * HRY) >> 8;
+
         if ((x + HPW <= 0) | (x >= static_cast<int32_t>(HBW)) | (y + HPH <= 0) |
-            (y >= static_cast<int32_t>(HPH))) {
+            (y >= static_cast<int32_t>(HBH))) {
           HSKIP->SetPixel(ng, mg, 1);
         } else {
           HSKIP->SetPixel(ng, mg, 0);
@@ -140,8 +141,8 @@ std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::DecodeImage(
         gsval |= GSPLANES[i]->GetPixel(x, y) << i;
       }
       uint32_t pat_index = std::min(gsval, HNUMPATS - 1);
-      int32_t out_x = (HGX + y * HRY + x * HRX) >> 8;
-      int32_t out_y = (HGY + y * HRX - x * HRY) >> 8;
+      int32_t out_x = (HGX + int(y) * HRY + int(x) * HRX) >> 8;
+      int32_t out_y = (HGY + int(y) * HRX - int(x) * HRY) >> 8;
       (*HPATS)[pat_index]->ComposeTo(HTREG.get(), out_x, out_y, HCOMBOP);
     }
   }
