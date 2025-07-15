@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "92eb80e1_d5a3a907",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-15T00:13:10Z",
+      "side": 1,
+      "message": "https://xcodereleases.com/ says this Xcode version requires macOS 14. I\u0027m guessing there is no simple fix to this, and we\u0027ll need to upgrade the PDFium bots.\n\nI believe Chromium uses a newer macOS version on the builder bot, and various versions on the test bots. PDFium isn\u0027t particularly interested in checking the behavior for older macOS. It just happens to be what was available when the bots were set up.",
+      "revId": "1c6fbe44823460471670d47b5ff82235c91ba2c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
