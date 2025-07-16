@@ -63,6 +63,30 @@
       },
       "revId": "80762d50bac8265a38d39080788fdb10b95dad3c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ecadaf20_41e46269",
+        "filename": "main.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 9026
+      },
+      "writtenOn": "2025-07-16T03:04:19Z",
+      "side": 1,
+      "message": "Ack. LGTM",
+      "parentUuid": "a17862e1_0f0712c5",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 19
+      },
+      "revId": "80762d50bac8265a38d39080788fdb10b95dad3c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
