@@ -232,6 +232,24 @@
       "parentUuid": "685e245e_a87eab15",
       "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aac80ac4_71382f05",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-16T19:42:32Z",
+      "side": 1,
+      "message": "Now the bots install Xcode 15e204a by default, but the macOS 14 bots all go red because some pixel tests no longer match. We need to get the bots green first.",
+      "parentUuid": "2236bf11_a5a6041c",
+      "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
