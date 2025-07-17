@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fffab634_8f226056",
+        "filename": "DEPS",
+        "patchSetId": 1
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-17T02:06:21Z",
+      "side": 1,
+      "message": "Note to self: Use real commit hash.",
+      "revId": "6dc5a6a1e74afac1186d60d4693999583fbb2ec6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
