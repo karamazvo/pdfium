@@ -764,13 +764,19 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
       break;
   }
 
-  // If |original_colorspace| exists, then LoadColorInfo() already set
-  // |components_|.
+  // If `original_colorspace` exists, then LoadColorInfo() already set
+  // `components_`.
   if (original_colorspace) {
     DCHECK_NE(0u, components_);
   } else {
     DCHECK_EQ(0u, components_);
     components_ = GetComponentCountFromOpjColorSpace(image_info.colorspace);
+    if (components_ == 0) {
+      // Fall back to using the channel count if `original_colorspace` does not
+      // exist and `image_info.colorspace` does not provide a component count
+      // either.
+      components_ = image_info.channels;
+    }
     if (components_ == 0) {
       return nullptr;
     }
