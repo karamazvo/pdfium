@@ -16,6 +16,24 @@
       "message": "(I renamed these to match the names in the spec, and the names in the other place.)",
       "revId": "53e124788aedf0abdf576f732a2e86aedfe05b67",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ab1286f3_ebd97909",
+        "filename": "core/fxcodec/jbig2/JBig2_HtrdProc.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-17T19:42:14Z",
+      "side": 1,
+      "message": "Sure. Ya, there\u0027s a tug of war between using names that better match the spec, vs. names that match what may be more intuitive or better match Google C++ style.",
+      "parentUuid": "503c10d8_0770d51d",
+      "revId": "53e124788aedf0abdf576f732a2e86aedfe05b67",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
