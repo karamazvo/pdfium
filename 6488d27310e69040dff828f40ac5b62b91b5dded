@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "29585a8e_ab3548d9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-07-17T23:44:14Z",
+      "side": 1,
+      "message": "e.g. testing/resources/utf-8.pdf, testing/resources/pixel/shade-tensor.pdf, or the 40 files with dashes in their names in https://pdfium-review.googlesource.com/c/pdfium_tests/+/134170",
+      "revId": "6488d27310e69040dff828f40ac5b62b91b5dded",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
