@@ -16,6 +16,23 @@
       "message": "The interesting part is probably how to test this. The pdf file on the bug is a good test, but it\u0027s not clear what the license of the jbig2 file in it is. Maybe it should be in the corpus repo instead of here?",
       "revId": "379dcd9fc23092ab0bad679f2b1a034dca80625a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c9264bbe_7a25c93e",
+        "filename": "core/fxcodec/jbig2/JBig2_HtrdProc.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-17T18:10:05Z",
+      "side": 1,
+      "message": "Can all the changes in this file use C++ style casts? A comment may be helpful, as most readers won\u0027t be able to easily tell why it is necessary.",
+      "revId": "379dcd9fc23092ab0bad679f2b1a034dca80625a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
