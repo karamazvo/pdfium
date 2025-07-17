@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0e7efb7d_fb6641b9",
+        "filename": "testing/resources/pixel/bug_1236.in",
+        "patchSetId": 4
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-07-17T17:14:02Z",
+      "side": 1,
+      "message": "Apologies for the zombie comment. I was looking through JBIG2 tests in pdfium and happened to notice this:\n\nThis has no effect as-is: It should go in the /DecodeParms array. See page 82 of the PDF 1.7 spec.\n\n(Same problem in https://pdfium-review.googlesource.com/c/pdfium/+/121553 which copied some of this file to a different one.)",
+      "revId": "fe92b743c76cebacde522314e0e2fcca85b08b36",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
