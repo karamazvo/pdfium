@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "503c10d8_0770d51d",
+        "filename": "core/fxcodec/jbig2/JBig2_HtrdProc.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-07-17T19:37:20Z",
+      "side": 1,
+      "message": "(I renamed these to match the names in the spec, and the names in the other place.)",
+      "revId": "53e124788aedf0abdf576f732a2e86aedfe05b67",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
