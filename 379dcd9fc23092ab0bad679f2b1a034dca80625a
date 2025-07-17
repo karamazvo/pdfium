@@ -18,6 +18,23 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f636df7a_99e4af13",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-07-17T19:36:46Z",
+      "side": 1,
+      "message": "Thanks! Done; need new +1.",
+      "revId": "379dcd9fc23092ab0bad679f2b1a034dca80625a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c9264bbe_7a25c93e",
@@ -31,6 +48,24 @@
       "writtenOn": "2025-07-17T18:10:05Z",
       "side": 1,
       "message": "Can all the changes in this file use C++ style casts? A comment may be helpful, as most readers won\u0027t be able to easily tell why it is necessary.",
+      "revId": "379dcd9fc23092ab0bad679f2b1a034dca80625a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "287e7cf3_dc908682",
+        "filename": "core/fxcodec/jbig2/JBig2_HtrdProc.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-07-17T19:36:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c9264bbe_7a25c93e",
       "revId": "379dcd9fc23092ab0bad679f2b1a034dca80625a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
