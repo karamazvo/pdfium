@@ -16,6 +16,24 @@
       "message": "Apologies for the zombie comment. I was looking through JBIG2 tests in pdfium and happened to notice this:\n\nThis has no effect as-is: It should go in the /DecodeParms array. See page 82 of the PDF 1.7 spec.\n\n(Same problem in https://pdfium-review.googlesource.com/c/pdfium/+/121553 which copied some of this file to a different one.)",
       "revId": "fe92b743c76cebacde522314e0e2fcca85b08b36",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6bdc9464_55ff7129",
+        "filename": "testing/resources/pixel/bug_1236.in",
+        "patchSetId": 4
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-18T01:26:28Z",
+      "side": 1,
+      "message": "It\u0027s ok. I comment on CLs from years ago quite often. Thanks for pointing it out. I\u0027ll leave this unresolved and try to get to it when I have a chance. I see the example in the spec has `/DecodeParms [null \u003c\u003c /JBIG2Globals 6 0 R \u003e\u003e}`.\n\nBTW, PDF 1.7 spec is fairly out of date at this point. I\u0027ve been using ISO 32000-1:2008 for years, partly because ISO 32000-2:2020 used to not be freely available. But thanks to https://pdfa.org/sponsored-standards/ that can be obtained for free now.",
+      "parentUuid": "0e7efb7d_fb6641b9",
+      "revId": "fe92b743c76cebacde522314e0e2fcca85b08b36",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
