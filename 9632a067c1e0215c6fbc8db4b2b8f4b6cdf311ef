@@ -16,6 +16,24 @@
       "message": "Oh, while I have you here: jbig2-annexh2.pdf on the linked bug is a data stream from the spec (Annex H from the PDF in https://www.itu.int/rec/dologin_pub.asp?lang\u003de\u0026id\u003dT-REC-T.88-201808-I!!SOFT-ZST-E\u0026type\u003ditems). Do we have license concerns about that too, or could we add that as a test? It tests quite a few jbig2 features.",
       "revId": "9632a067c1e0215c6fbc8db4b2b8f4b6cdf311ef",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "060ac56f_3669c1fe",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-07-18T19:46:54Z",
+      "side": 1,
+      "message": "Looks like the spec says \"All rights reserved. No part of this publication may be reproduced, by any means whatsoever, without the\nprior written permission of ITU.\"",
+      "parentUuid": "62a27304_c7a9d3aa",
+      "revId": "9632a067c1e0215c6fbc8db4b2b8f4b6cdf311ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
