@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4ca12a76_58f89a3a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-18T02:15:51Z",
+      "side": 1,
+      "message": "Consider writing a more detailed commit message in this format:\n\n```\nSubject line\n\nDetailed description\n\nMeta: data\n```\n\nIt will be helpful to mention \"public API\" and \"FPDFAnnot_GetOptionValue()\".",
+      "revId": "b9b66de40bfcc84c9281d9584ddeb4a613bbfb34",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b92f08dd_aa2e5bfb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-18T02:15:51Z",
+      "side": 1,
+      "message": "nit: Space after colon.",
+      "revId": "b9b66de40bfcc84c9281d9584ddeb4a613bbfb34",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6e99dce0_28ec18a5",
+        "filename": "fpdfsdk/fpdf_annot_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 2499,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-18T02:15:51Z",
+      "side": 1,
+      "message": "Maybe just let `annot` go out of scope, and start a new scope and put this there? Same for other test cases below.",
+      "revId": "b9b66de40bfcc84c9281d9584ddeb4a613bbfb34",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7eb393d9_344d588c",
+        "filename": "fpdfsdk/fpdf_annot_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 2502,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-18T02:15:51Z",
+      "side": 1,
+      "message": "Was 0 already?",
+      "revId": "b9b66de40bfcc84c9281d9584ddeb4a613bbfb34",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1914a472_04bed57a",
+        "filename": "public/fpdf_annot.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 837,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-18T02:15:51Z",
+      "side": 1,
+      "message": "PDFium is every so slowly trying to confirm to Google C++ style. As such, please name this \"handle\", like line 866 below.",
+      "range": {
+        "startLine": 837,
+        "startChar": 5,
+        "endLine": 837,
+        "endChar": 12
+      },
+      "revId": "b9b66de40bfcc84c9281d9584ddeb4a613bbfb34",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
