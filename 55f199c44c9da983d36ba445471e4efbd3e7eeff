@@ -394,6 +394,24 @@
       "parentUuid": "f25c32e8_6aa64c98",
       "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e442fbaf_349a7102",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-18T21:57:02Z",
+      "side": 1,
+      "message": "Setting mac_sdk_min in https://pdfium-review.googlesource.com/c/pdfium/+/134290/2 -\u003e green: https://ci.chromium.org/ui/p/pdfium/builders/try/mac/30206/overview",
+      "parentUuid": "54aa4c3c_d3b9a4c5",
+      "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
