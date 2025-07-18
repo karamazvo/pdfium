@@ -340,6 +340,24 @@
       "parentUuid": "9a7885fa_15d5e0a3",
       "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "976118df_67ecea5a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-18T17:44:20Z",
+      "side": 1,
+      "message": "The bot says `CFBundleVersion 22618 matches between local and cipd and Xcode passed integrity check. So it should not be re-installed`, and 22618 is Xcode 15.3.",
+      "parentUuid": "02f56dcc_310c6451",
+      "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
