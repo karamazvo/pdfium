@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a45eac7e_fc41b430",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-07-18T22:49:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bf079848_52f78c22",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 6
+      },
+      "revId": "9632a067c1e0215c6fbc8db4b2b8f4b6cdf311ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "02355f10_d92bd73f",
@@ -37,6 +61,30 @@
       "writtenOn": "2025-07-18T20:11:19Z",
       "side": 1,
       "message": "typo",
+      "range": {
+        "startLine": 26,
+        "startChar": 4,
+        "endLine": 26,
+        "endChar": 9
+      },
+      "revId": "9632a067c1e0215c6fbc8db4b2b8f4b6cdf311ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ef25edd7_a8f60d9b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-07-18T22:49:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "02355f10_d92bd73f",
       "range": {
         "startLine": 26,
         "startChar": 4,
@@ -70,6 +118,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ac35135f_247ac4a6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-07-18T22:49:12Z",
+      "side": 1,
+      "message": "Oh, thanks! I\u0027ll use that next time.",
+      "parentUuid": "cd4063ef_f457b83b",
+      "range": {
+        "startLine": 36,
+        "startChar": 54,
+        "endLine": 36,
+        "endChar": 63
+      },
+      "revId": "9632a067c1e0215c6fbc8db4b2b8f4b6cdf311ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4561399a_59ebdadd",
@@ -83,6 +155,30 @@
       "writtenOn": "2025-07-18T20:11:19Z",
       "side": 1,
       "message": "Hard to parse. Is there one word too many?",
+      "range": {
+        "startLine": 37,
+        "startChar": 42,
+        "endLine": 37,
+        "endChar": 69
+      },
+      "revId": "9632a067c1e0215c6fbc8db4b2b8f4b6cdf311ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9db989ea_b616df25",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-07-18T22:49:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4561399a_59ebdadd",
       "range": {
         "startLine": 37,
         "startChar": 42,
@@ -141,6 +237,24 @@
       "writtenOn": "2025-07-18T20:11:19Z",
       "side": 1,
       "message": "I usually put this last. i.e. As a reader, I want to know what the type is most of all. The auto-generated stream length is less important.",
+      "revId": "9632a067c1e0215c6fbc8db4b2b8f4b6cdf311ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "309517dd_19fd6020",
+        "filename": "testing/resources/pixel/jbig2_mmr.in",
+        "patchSetId": 6
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-07-18T22:49:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "71fcb7eb_96c28a36",
       "revId": "9632a067c1e0215c6fbc8db4b2b8f4b6cdf311ef",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
