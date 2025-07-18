@@ -282,6 +282,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "2f83e3ab_b4b82268",
+        "filename": "testing/resources/pixel/jbig2_mmr.in",
+        "patchSetId": 6
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-18T23:14:40Z",
+      "side": 1,
+      "message": "^",
+      "parentUuid": "8db41734_40180436",
+      "range": {
+        "startLine": 45,
+        "startChar": 10,
+        "endLine": 45,
+        "endChar": 42
+      },
+      "revId": "9632a067c1e0215c6fbc8db4b2b8f4b6cdf311ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "ca05c864_8dc12a31",
