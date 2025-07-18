@@ -1,6 +1,98 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "bf079848_52f78c22",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-18T20:11:19Z",
+      "side": 1,
+      "message": "\"To fix\" ?",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 6
+      },
+      "revId": "9632a067c1e0215c6fbc8db4b2b8f4b6cdf311ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "02355f10_d92bd73f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-18T20:11:19Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 26,
+        "startChar": 4,
+        "endLine": 26,
+        "endChar": 9
+      },
+      "revId": "9632a067c1e0215c6fbc8db4b2b8f4b6cdf311ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cd4063ef_f457b83b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-18T20:11:19Z",
+      "side": 1,
+      "message": "testing/tools/encode_pdf_filter.py can help there.",
+      "range": {
+        "startLine": 36,
+        "startChar": 54,
+        "endLine": 36,
+        "endChar": 63
+      },
+      "revId": "9632a067c1e0215c6fbc8db4b2b8f4b6cdf311ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4561399a_59ebdadd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-18T20:11:19Z",
+      "side": 1,
+      "message": "Hard to parse. Is there one word too many?",
+      "range": {
+        "startLine": 37,
+        "startChar": 42,
+        "endLine": 37,
+        "endChar": 69
+      },
+      "revId": "9632a067c1e0215c6fbc8db4b2b8f4b6cdf311ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "62a27304_c7a9d3aa",
@@ -32,6 +124,63 @@
       "side": 1,
       "message": "Looks like the spec says \"All rights reserved. No part of this publication may be reproduced, by any means whatsoever, without the\nprior written permission of ITU.\"",
       "parentUuid": "62a27304_c7a9d3aa",
+      "revId": "9632a067c1e0215c6fbc8db4b2b8f4b6cdf311ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "71fcb7eb_96c28a36",
+        "filename": "testing/resources/pixel/jbig2_mmr.in",
+        "patchSetId": 6
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-18T20:11:19Z",
+      "side": 1,
+      "message": "I usually put this last. i.e. As a reader, I want to know what the type is most of all. The auto-generated stream length is less important.",
+      "revId": "9632a067c1e0215c6fbc8db4b2b8f4b6cdf311ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8db41734_40180436",
+        "filename": "testing/resources/pixel/jbig2_mmr.in",
+        "patchSetId": 6
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-18T20:11:19Z",
+      "side": 1,
+      "message": "No space on the inside of the brackets., like line 19.",
+      "range": {
+        "startLine": 45,
+        "startChar": 10,
+        "endLine": 45,
+        "endChar": 42
+      },
+      "revId": "9632a067c1e0215c6fbc8db4b2b8f4b6cdf311ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ca05c864_8dc12a31",
+        "filename": "testing/resources/pixel/jbig2_mmr_expected.pdf.0.png",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-18T20:11:19Z",
+      "side": 1,
+      "message": ":^)",
       "revId": "9632a067c1e0215c6fbc8db4b2b8f4b6cdf311ef",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
