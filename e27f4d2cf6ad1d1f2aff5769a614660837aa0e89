@@ -1,0 +1,45 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a90b801e_83051175",
+        "filename": "core/fpdfapi/page/cpdf_dib.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 911,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-07-18T18:17:44Z",
+      "side": 1,
+      "message": "nit: maybe early-return and lose the else.",
+      "range": {
+        "startLine": 911,
+        "startChar": 2,
+        "endLine": 911,
+        "endChar": 3
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "b425f6dd_f41aa458",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/page/cpdf_dib.cpp",
+              "range": {
+                "startLine": 911,
+                "startChar": 0,
+                "endLine": 923,
+                "endChar": 0
+              },
+              "replacement": "    return rgb_bitmap;\n  }\n\n  // TODO(thestig): Is there existing code that does this already?\n  for (uint32_t row \u003d 0; row \u003c height; ++row) {\n    auto src \u003d\n        argb_bitmap-\u003eGetScanlineAs\u003cFX_BGRA_STRUCT\u003cuint8_t\u003e\u003e(row).first(width);\n    auto dest \u003d rgb_bitmap-\u003eGetWritableScanlineAs\u003cFX_BGR_STRUCT\u003cuint8_t\u003e\u003e(row);\n    for (auto [input, output] : fxcrt::Zip(src, dest)) {\n      output.green \u003d input.green;\n      output.red \u003d input.red;\n      output.blue \u003d input.blue;\n"
+            }
+          ]
+        }
+      ],
+      "revId": "e27f4d2cf6ad1d1f2aff5769a614660837aa0e89",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
