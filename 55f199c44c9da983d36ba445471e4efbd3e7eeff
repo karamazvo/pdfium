@@ -376,6 +376,24 @@
       "parentUuid": "976118df_67ecea5a",
       "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "54aa4c3c_d3b9a4c5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-18T21:23:38Z",
+      "side": 1,
+      "message": "Cloned CL to https://pdfium-review.googlesource.com/c/pdfium/+/134290/1, updated it, and failed here: https://ci.chromium.org/ui/p/pdfium/builders/try/mac/30205/overview\n\n`Exception: No 15+ SDK found. /path/to/osx_sdk/XCode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs contains: [\u0027MacOSX14.4.sdk\u0027, \u0027MacOSX.sdk\u0027, \u0027MacOSX14.sdk\u0027]`\n\nI think we are confusing Xcode version and SDK version. SDK 15.x, is Xcode 16.x. Confusing? Yes. So Apple fixed it where Xcode 26 will have SDK 26. Meanwhile, maybe we can override `mac_sdk_min`.",
+      "parentUuid": "f25c32e8_6aa64c98",
+      "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
