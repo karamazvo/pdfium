@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "27f00fb9_56c2015e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-07-20T23:48:30Z",
+      "side": 1,
+      "message": "Just happened to notice this while making my jbig2 decoder a bit stricter. No real effect, but it seems nice if this file is spec-compliant 😊",
+      "revId": "c25f4787a345f8e34d95867ccb809f820bcd0832",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
