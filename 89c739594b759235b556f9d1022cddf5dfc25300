@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c96a9237_652dec12",
+        "filename": "fxjs/cfxjs_engine_unittest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 7610
+      },
+      "writtenOn": "2025-07-21T10:07:49Z",
+      "side": 1,
+      "message": "I need help fixing this `CJS_Object` creation, and the same in line 65.\nWe pass a `nullptr` as `CJS_Runtime*`, so we can\u0027t get the isolate from that. And I don\u0027t see any `CJS_Runtime` that I could pass instead. How can we fix this?",
+      "revId": "89c739594b759235b556f9d1022cddf5dfc25300",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
