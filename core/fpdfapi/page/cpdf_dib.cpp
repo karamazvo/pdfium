@@ -234,8 +234,8 @@ int GetComponentCountFromOpjColorSpace(OPJ_COLOR_SPACE colorspace) {
 
 }  // namespace
 
-CPDF_DIB::CPDF_DIB(CPDF_Document* pDoc, RetainPtr<const CPDF_Stream> pStream)
-    : document_(pDoc), stream_(std::move(pStream)) {}
+CPDF_DIB::CPDF_DIB(CPDF_Document* doc, RetainPtr<const CPDF_Stream> pStream)
+    : document_(doc), stream_(std::move(pStream)) {}
 
 CPDF_DIB::~CPDF_DIB() = default;
 
