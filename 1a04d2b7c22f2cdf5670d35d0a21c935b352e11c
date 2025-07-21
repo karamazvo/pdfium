@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "578af4f9_4a65596b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-07-21T23:10:05Z",
+      "side": 1,
+      "message": "This was a job for sed, not LLM ...",
+      "revId": "1a04d2b7c22f2cdf5670d35d0a21c935b352e11c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
