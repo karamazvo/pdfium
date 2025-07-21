@@ -57,6 +57,54 @@
       ],
       "revId": "07ab8f1b691b896085f173a68ff8cf7dde68ac20",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bd25335a_d0733398",
+        "filename": "core/fpdfapi/page/cpdf_dib.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-21T19:49:37Z",
+      "side": 1,
+      "message": "Fix applied. Maybe I\u0027ll upgrade this later.",
+      "parentUuid": "47f5e252_06450d42",
+      "range": {
+        "startLine": 253,
+        "startChar": 0,
+        "endLine": 253,
+        "endChar": 39
+      },
+      "revId": "07ab8f1b691b896085f173a68ff8cf7dde68ac20",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "70840eec_cf1755d4",
+        "filename": "core/fpdfapi/page/cpdf_dib.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-21T19:49:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "47f5e252_06450d42",
+      "range": {
+        "startLine": 253,
+        "startChar": 0,
+        "endLine": 253,
+        "endChar": 39
+      },
+      "revId": "07ab8f1b691b896085f173a68ff8cf7dde68ac20",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
