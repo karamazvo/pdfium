@@ -1461,10 +1461,34 @@ void CPDF_TextPage::ProcessTextObjectItems(CPDF_TextObject* text_object,
       }
     }
     if (add_unicode) {
+      CFX_FloatRect rect_part = charinfo.char_box();
+      float step = 0;
+      // Really want the number of extended grapheme clusters.
+      // Or at least the number of code points.
+      // Currently this is in UTF-16 code units.
+      if (unicode.GetLength() > 1) {
+        const bool bR2L = IsRightToLeft(*text_object);
+        if (bR2L) {
+          rect_part.left = rect_part.right - (rect_part.Width() / unicode.GetLength());
+          step = -rect_part.Width();
+        } else {
+          rect_part.right = rect_part.left + (rect_part.Width() / unicode.GetLength());
+          step = rect_part.Width();
+        }
+        charinfo.set_char_type(CharType::kPiece);
+      }
+      size_t k = 0;
       for (wchar_t c : unicode) {
-        charinfo.set_unicode(c);
+        // TODO: on Windows wchar_t is 16 bit. "Fuse" by drawing them on top of each other. (See also ProcessMarkedContent.)
+        // However, current users will only pick up first?
+        // Want to put everything from the same extended grapheme cluster at the same location (and make users go to last at location).
         temp_text_buf_.AppendChar(c ? c : 0xfffe);
-        temp_char_list_.push_back(charinfo);
+        CFX_FloatRect char_box_part(rect_part);
+        char_box_part.Translate(k * step, 0);
+        temp_char_list_.push_back(
+            CharInfo(charinfo.char_type(), charinfo.char_code(), c,
+                     charinfo.origin(), char_box_part, matrix, text_object));
+        ++k;
       }
     } else if (i == 0) {
       WideStringView str = temp_text_buf_.AsStringView();
