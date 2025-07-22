@@ -412,6 +412,24 @@
       "parentUuid": "54aa4c3c_d3b9a4c5",
       "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "86973560_f496ee0a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-07-22T19:12:04Z",
+      "side": 1,
+      "message": "Setting the SDK min version resolves the first Mac issue, so resolving, thanks!",
+      "parentUuid": "e442fbaf_349a7102",
+      "revId": "55f199c44c9da983d36ba445471e4efbd3e7eeff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
