@@ -51,6 +51,24 @@
       "parentUuid": "e4b5db47_eba01ccd",
       "revId": "58401577b4127e9b2bb320f016c1c8b358e57951",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aea7f292_38167ecb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-23T22:07:43Z",
+      "side": 1,
+      "message": "Maybe we need to copy over additional DEPS entries for Mac/llvmobjdump-$version.tar.xz.",
+      "parentUuid": "846b9ed0_d77f7193",
+      "revId": "58401577b4127e9b2bb320f016c1c8b358e57951",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
