@@ -87,6 +87,24 @@
       "parentUuid": "aea7f292_38167ecb",
       "revId": "58401577b4127e9b2bb320f016c1c8b358e57951",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "64c6ea9f_032b57a4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-23T22:18:47Z",
+      "side": 1,
+      "message": "And don\u0027t roll Clang forward further if that adds more issues, since that is not going to fix the red Mac bots anyway.",
+      "parentUuid": "e2ea1621_273cd696",
+      "revId": "58401577b4127e9b2bb320f016c1c8b358e57951",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
