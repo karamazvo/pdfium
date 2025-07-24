@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e06bebfc_60370ede",
+        "filename": "DEPS",
+        "patchSetId": 14
+      },
+      "lineNbr": 498,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-07-24T20:05:37Z",
+      "side": 1,
+      "message": "Condition was copied from the only entry for Win, but noticeably different than the condition for `clang-win-runtime-library`.",
+      "revId": "9f38c882a5d1567a4903bffb613b1b71a65683da",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
