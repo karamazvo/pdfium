@@ -22,6 +22,30 @@
       },
       "revId": "8d536f594fd93a55a25fd22010b7367c95138e63",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8989f5b7_369bf6a7",
+        "filename": "core/fxcrt/numerics/safe_math_shared_impl.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-28T21:07:21Z",
+      "side": 0,
+      "message": "Oh, this came from https://crrev.com/1485045. I can mention it in the CL description.",
+      "parentUuid": "f9b4337b_fa4e8e87",
+      "range": {
+        "startLine": 21,
+        "startChar": 4,
+        "endLine": 24,
+        "endChar": 38
+      },
+      "revId": "8d536f594fd93a55a25fd22010b7367c95138e63",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
