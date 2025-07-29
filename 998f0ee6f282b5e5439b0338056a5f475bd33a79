@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "bbdf0ab6_aeda5839",
+        "filename": "core/fxcodec/jbig2/JBig2_HtrdProc.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-07-29T13:49:28Z",
+      "side": 1,
+      "message": "(will do)",
+      "parentUuid": "212412ce_2509f26f",
+      "range": {
+        "startLine": 29,
+        "startChar": 71,
+        "endLine": 29,
+        "endChar": 74
+      },
+      "revId": "998f0ee6f282b5e5439b0338056a5f475bd33a79",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "748387de_345502f9",
         "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
         "patchSetId": 1
@@ -37,6 +61,24 @@
       "writtenOn": "2025-07-24T02:13:27Z",
       "side": 1,
       "message": "Now these names don\u0027t match the header. Instead of renaming the parameter, how about changing lines 313, 316, 323, 326, 337-338 to use the 32-bit vars?",
+      "revId": "998f0ee6f282b5e5439b0338056a5f475bd33a79",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "45c2613a_d6f458af",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-07-29T13:49:28Z",
+      "side": 1,
+      "message": "I\u0027m conflicted about this. Every use of the variable should use int32_t version (since that\u0027s how the rest of the function is currently written), so I think the parameter should have a longer, less attractive name than the static_cast\u003c\u003eed version you\u0027re supposed to use. So I do want the parameter to have a longer name than the local variable.\n\nBut callers don\u0027t care about the implementation, so I figured I\u0027d giving the parameter a longer name in the implementation and keep the name in the interface.\n\nBoth \"names match between interface and impl\" and \"give more obvious names to the variables you should refer to\" seem like useful requirements, and they\u0027re in conflict here. Do you have a strong preference for preferring the first?",
+      "parentUuid": "748387de_345502f9",
       "revId": "998f0ee6f282b5e5439b0338056a5f475bd33a79",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
