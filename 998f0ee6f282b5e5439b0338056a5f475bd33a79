@@ -99,6 +99,24 @@
       "parentUuid": "45c2613a_d6f458af",
       "revId": "998f0ee6f282b5e5439b0338056a5f475bd33a79",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5217553f_0d74530f",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-07-30T01:31:56Z",
+      "side": 1,
+      "message": "I suppose a third requirement I had written down is \"the parameter names in the .h file make sense to a reader\". Why would they be called x_in, y_in for ComposeToInternal but x, y for all the other functions?\n\nSince it\u0027s a private internal function in this case, I\u0027m on board with renaming in the .h, but in general I think it\u0027s not always possible to, uh, have all three cakes.",
+      "parentUuid": "854f2fff_f3653e2e",
+      "revId": "998f0ee6f282b5e5439b0338056a5f475bd33a79",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
