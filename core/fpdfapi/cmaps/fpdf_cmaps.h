@@ -23,9 +23,12 @@ struct DWordCIDMap {
 struct CMap {
   enum class Type : bool { kSingle, kRange };
 
-  UNOWNED_PTR_EXCLUSION const char* name_;              // POD struct.
-  UNOWNED_PTR_EXCLUSION const uint16_t* word_map_;      // POD struct.
-  UNOWNED_PTR_EXCLUSION const DWordCIDMap* dword_map_;  // POD struct.
+  // POD struct. Never null.
+  UNOWNED_PTR_EXCLUSION const char* name_;
+  // POD struct. Never null.
+  UNOWNED_PTR_EXCLUSION const uint16_t* word_map_;
+  // POD struct. More likely null.
+  UNOWNED_PTR_EXCLUSION const DWordCIDMap* dword_map_;
   uint16_t word_count_;
   uint16_t dword_count_;
   Type word_map_type_;

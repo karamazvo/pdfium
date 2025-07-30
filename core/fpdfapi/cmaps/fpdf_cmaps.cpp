@@ -31,26 +31,32 @@ const CMap* FindNextCMap(const CMap* cmap) {
 }
 
 uint16_t CIDFromCharCodeForDword(const CMap* cmap, uint32_t charcode) {
-  const uint16_t loword = static_cast<uint16_t>(charcode);
-  while (cmap) {
-    if (cmap->dword_map_) {
-      const DWordCIDMap* begin = cmap->dword_map_;
-      const auto* end = UNSAFE_TODO(begin + cmap->dword_count_);
-      const auto* found = std::lower_bound(
-          begin, end, charcode,
-          [](const DWordCIDMap& element, uint32_t charcode) {
-            uint16_t hiword = static_cast<uint16_t>(charcode >> 16);
-            if (element.hi_word_ != hiword) {
-              return element.hi_word_ < hiword;
-            }
-            return element.lo_word_high_ < static_cast<uint16_t>(charcode);
-          });
-      if (found != end && loword >= found->lo_word_low_ &&
-          loword <= found->lo_word_high_) {
-        return found->cid_ + loword - found->lo_word_low_;
-      }
-    }
+  // - No `CMap` with a `dword_map_` points to another `CMap` with a
+  //  `dword_map_`.
+  // - When a `CMap` has a `dword_map_`, the linked list of `CMap` entries is
+  //   at most 2 entries long. So only 1 FindNextCMap() call is necessary to
+  //   traverse the list.
+  if (!cmap->dword_map_) {
     cmap = FindNextCMap(cmap);
+  }
+  if (!cmap || !cmap->dword_map_) {
+    return 0;
+  }
+
+  const uint16_t loword = static_cast<uint16_t>(charcode);
+  const DWordCIDMap* begin = cmap->dword_map_;
+  const auto* end = UNSAFE_TODO(begin + cmap->dword_count_);
+  const auto* found = std::lower_bound(
+      begin, end, charcode, [](const DWordCIDMap& element, uint32_t charcode) {
+        uint16_t hiword = static_cast<uint16_t>(charcode >> 16);
+        if (element.hi_word_ != hiword) {
+          return element.hi_word_ < hiword;
+        }
+        return element.lo_word_high_ < static_cast<uint16_t>(charcode);
+      });
+  if (found != end && loword >= found->lo_word_low_ &&
+      loword <= found->lo_word_high_) {
+    return found->cid_ + loword - found->lo_word_low_;
   }
   return 0;
 }
