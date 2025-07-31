@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "130cc7ec_4a6e3365",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4256746
+      },
+      "writtenOn": "2025-07-31T00:18:04Z",
+      "side": 1,
+      "message": "Well, it appears I don\u0027t have dry run perms in this repo.",
+      "revId": "02f68706a7855e35a6a9f68c803f385b629c10ce",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
