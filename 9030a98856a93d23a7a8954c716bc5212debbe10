@@ -57,6 +57,24 @@
       "parentUuid": "f0912245_5fc305fd",
       "revId": "9030a98856a93d23a7a8954c716bc5212debbe10",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3199b52b_638cb454",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-07-31T16:37:45Z",
+      "side": 1,
+      "message": "Will https://pdfium-review.googlesource.com/134630 be sufficient to unblock this CL?",
+      "parentUuid": "c6bdb21f_a13ab63f",
+      "revId": "9030a98856a93d23a7a8954c716bc5212debbe10",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
