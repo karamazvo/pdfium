@@ -16,6 +16,24 @@
       "message": "Ok, but blocked on previous cl.",
       "revId": "696d9f590a67b2bea018382c7e3d89785f0f4477",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0547e166_bac0e22f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-01T21:38:55Z",
+      "side": 1,
+      "message": "Abandoned that CL.",
+      "parentUuid": "bc0ea4a2_cd6da2be",
+      "revId": "696d9f590a67b2bea018382c7e3d89785f0f4477",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
