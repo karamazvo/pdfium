@@ -50,6 +50,30 @@
       ],
       "revId": "5cf364bedce2d822277daff76a4cad924561b785",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d8529e76_eb7a8173",
+        "filename": "core/fpdfapi/cmaps/fpdf_cmaps.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-01T20:57:34Z",
+      "side": 1,
+      "message": "OK, maybe I won\u0027t muck around with this then.",
+      "parentUuid": "8b004e81_2f63aff8",
+      "range": {
+        "startLine": 34,
+        "startChar": 5,
+        "endLine": 38,
+        "endChar": 25
+      },
+      "revId": "5cf364bedce2d822277daff76a4cad924561b785",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
