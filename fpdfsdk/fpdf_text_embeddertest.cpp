@@ -1995,6 +1995,41 @@ TEST_F(FPDFTextEmbedderTest, CharBoxForLatinExtendedText) {
   EXPECT_NEAR(752.422f, rect.top, 0.001f);
 }
 
+TEST_F(FPDFTextEmbedderTest, Bug402562387) {
+  ASSERT_TRUE(OpenDocument("bug_402562387.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ScopedFPDFTextPage text_page(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(text_page);
+
+  int char_count = FPDFText_CountChars(text_page.get());
+  ASSERT_GT(char_count, 0);
+
+  for (int i = 0; i < char_count; ++i) {
+    double char_left, char_right, char_bottom, char_top;
+    if (!FPDFText_GetCharBox(text_page.get(), i, &char_left, &char_right,
+                             &char_bottom, &char_top)) {
+      continue;
+    }
+
+    FS_RECTF loose_rect;
+    if (!FPDFText_GetLooseCharBox(text_page.get(), i, &loose_rect)) {
+      continue;
+    }
+
+    EXPECT_LE(loose_rect.left, char_left) << "Character " << i;
+    EXPECT_GE(loose_rect.right, char_right) << "Character " << i;
+    EXPECT_LE(loose_rect.bottom, char_bottom) << "Character " << i;
+    EXPECT_GE(loose_rect.top, char_top) << "Character " << i;
+
+    EXPECT_GE(loose_rect.right - loose_rect.left, char_right - char_left)
+        << "Character " << i << " loose width smaller than regular width";
+    EXPECT_GE(loose_rect.top - loose_rect.bottom, char_top - char_bottom)
+        << "Character " << i << " loose height smaller than regular height";
+  }
+}
+
 TEST_F(FPDFTextEmbedderTest, Bug399689604) {
   ASSERT_TRUE(OpenDocument("bug_399689604.pdf"));
   ScopedPage page = LoadScopedPage(0);
