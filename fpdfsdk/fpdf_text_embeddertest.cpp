@@ -1995,6 +1995,47 @@ TEST_F(FPDFTextEmbedderTest, CharBoxForLatinExtendedText) {
   EXPECT_NEAR(752.422f, rect.top, 0.001f);
 }
 
+TEST_F(FPDFTextEmbedderTest, Bug402562387) {
+  ASSERT_TRUE(OpenDocument("bug_402562387.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ScopedFPDFTextPage text_page(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(text_page);
+
+  // This PDF contains text with diacritics where the loose char box
+  // should always be at least as big as the regular char box.
+  int char_count = FPDFText_CountChars(text_page.get());
+  ASSERT_GT(char_count, 0);
+
+  for (int i = 0; i < char_count; ++i) {
+    // Get regular character box
+    double char_left, char_right, char_bottom, char_top;
+    if (!FPDFText_GetCharBox(text_page.get(), i, &char_left, &char_right,
+                             &char_bottom, &char_top)) {
+      continue;  // Skip invalid characters
+    }
+
+    // Get loose character box
+    FS_RECTF loose_rect;
+    if (!FPDFText_GetLooseCharBox(text_page.get(), i, &loose_rect)) {
+      continue;  // Skip invalid characters
+    }
+
+    // Loose char box should contain the regular char box
+    EXPECT_LE(loose_rect.left, char_left) << "Character " << i;
+    EXPECT_GE(loose_rect.right, char_right) << "Character " << i;
+    EXPECT_LE(loose_rect.bottom, char_bottom) << "Character " << i;
+    EXPECT_GE(loose_rect.top, char_top) << "Character " << i;
+
+    // Loose char box should be at least as big as regular char box
+    EXPECT_GE(loose_rect.right - loose_rect.left, char_right - char_left)
+        << "Character " << i << " loose width smaller than regular width";
+    EXPECT_GE(loose_rect.top - loose_rect.bottom, char_top - char_bottom)
+        << "Character " << i << " loose height smaller than regular height";
+  }
+}
+
 TEST_F(FPDFTextEmbedderTest, Bug399689604) {
   ASSERT_TRUE(OpenDocument("bug_399689604.pdf"));
   ScopedPage page = LoadScopedPage(0);
