@@ -300,6 +300,7 @@ uint32_t CPDFXFA_Context::DeletePage(int page_index) {
   // this |page_index| then |xfa_page_list_| may have size < |page_index| even
   // if it's a valid page in the document.
   uint32_t page_obj_num = pdfdoc_->DeletePage(page_index);
+  page_count_ -= 1;
 
   if (fxcrt::IndexInBounds(xfa_page_list_, page_index)) {
     xfa_page_list_.erase(xfa_page_list_.begin() + page_index);
@@ -312,6 +313,15 @@ uint32_t CPDFXFA_Context::DeletePage(int page_index) {
   }
 
   return page_obj_num;
+}
+
+void CPDFXFA_Context::PagesInserted(int page_index, int num_pages) {
+  if (fxcrt::IndexInBounds(xfa_page_list_, page_index)) {
+    xfa_page_list_.insert(xfa_page_list_.begin() + page_index,
+      (size_t) num_pages,
+      RetainPtr<CPDFXFA_Page>());
+    page_count_ += num_pages;
+  }
 }
 
 bool CPDFXFA_Context::ContainsExtensionForm() const {
