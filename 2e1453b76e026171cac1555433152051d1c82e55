@@ -16,6 +16,23 @@
       "message": "Hello everyone, I made some tweaks to address some issues with XFA in PDFIUM. This is my first CL. I\u0027m 15 and would appreciate some feedback if I missed anything or did anything incorrectly. Thanks in advance!",
       "revId": "2e1453b76e026171cac1555433152051d1c82e55",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5c107e92_34439e48",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-08-05T17:24:37Z",
+      "side": 1,
+      "message": "Thanks for the patch.  We\u0027ll see what the tests produce.\n\nIn the mean time, there are a few small formatting issues - you can fix these by running `git cl format` before uploading the changes.",
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
