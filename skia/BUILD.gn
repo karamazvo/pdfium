@@ -353,6 +353,10 @@ component("skia") {
   } else {
     sources += [ "//third_party/skia/src/pdf/SkDocument_PDF_None.cpp" ]
   }
+
+  if (pdf_use_skia && !is_win && !is_apple) {
+    sources += [ "config/pdfium_config.h" ]
+  }
 }
 
 # Template for things that are logically part of :skia, but need to be split out
