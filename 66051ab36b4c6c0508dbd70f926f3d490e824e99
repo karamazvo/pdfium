@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "545fd6e4_4cff1105",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-06T18:35:41Z",
+      "side": 1,
+      "message": "Ping. This CL got lost in the DEPS rolling stampede.",
+      "revId": "66051ab36b4c6c0508dbd70f926f3d490e824e99",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
