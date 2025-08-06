@@ -24,15 +24,16 @@
 #include "third_party/skia/include/core/SkFontMgr.h"         // nogncheck
 #include "third_party/skia/include/core/SkStream.h"          // nogncheck
 #include "third_party/skia/include/core/SkTypeface.h"        // nogncheck
-#include "third_party/skia/include/ports/SkFontMgr_empty.h"  // nogncheck
 
 #if BUILDFLAG(IS_WIN)
 #include "third_party/skia/include/ports/SkTypeface_win.h"  // nogncheck
 #elif BUILDFLAG(IS_APPLE)
 #include "third_party/skia/include/ports/SkFontMgr_mac_ct.h"  // nogncheck
+#else
+#include "skia/config/pdfium_config.h"
 #endif
 
-#endif
+#endif  // defined(PDF_USE_SKIA)
 
 #if BUILDFLAG(IS_APPLE)
 #include "core/fxge/cfx_textrenderoptions.h"
@@ -252,9 +253,8 @@ void CFX_GlyphCache::InitializeGlobals() {
   g_fontmgr = SkFontMgr_New_DirectWrite().release();
 #elif BUILDFLAG(IS_APPLE)
   g_fontmgr = SkFontMgr_New_CoreText(nullptr).release();
-#else
-  // This is a SkFontMgr which will use FreeType to decode font data.
-  g_fontmgr = SkFontMgr_New_Custom_Empty().release();
+#elif defined(PDF_SKIA_FONT_MANAGER)
+  g_fontmgr = PDF_SKIA_FONT_MANAGER().release();
 #endif
 }
 
