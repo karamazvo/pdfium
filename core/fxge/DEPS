@@ -1,5 +1,6 @@
 specific_include_rules = {
   'cfx_dibbase\.h|cfx_glyphcache\.(cpp|h)|cfx_renderdevice\.cpp': [
+    '+skia/config/pdfium_config.h',
     '+third_party/skia/include',
   ],
 }
