@@ -21,10 +21,10 @@
 #include "core/fxge/cfx_substfont.h"
 
 #if defined(PDF_USE_SKIA)
+#include "skia/config/pdfium_config.h"
 #include "third_party/skia/include/core/SkFontMgr.h"         // nogncheck
 #include "third_party/skia/include/core/SkStream.h"          // nogncheck
 #include "third_party/skia/include/core/SkTypeface.h"        // nogncheck
-#include "third_party/skia/include/ports/SkFontMgr_empty.h"  // nogncheck
 
 #if BUILDFLAG(IS_WIN)
 #include "third_party/skia/include/ports/SkTypeface_win.h"  // nogncheck
@@ -32,7 +32,7 @@
 #include "third_party/skia/include/ports/SkFontMgr_mac_ct.h"  // nogncheck
 #endif
 
-#endif
+#endif  // defined(PDF_USE_SKIA)
 
 #if BUILDFLAG(IS_APPLE)
 #include "core/fxge/cfx_textrenderoptions.h"
@@ -253,8 +253,7 @@ void CFX_GlyphCache::InitializeGlobals() {
 #elif BUILDFLAG(IS_APPLE)
   g_fontmgr = SkFontMgr_New_CoreText(nullptr).release();
 #else
-  // This is a SkFontMgr which will use FreeType to decode font data.
-  g_fontmgr = SkFontMgr_New_Custom_Empty().release();
+  g_fontmgr = PDF_SKIA_FONT_MANAGER().release();
 #endif
 }
 
@@ -272,11 +271,11 @@ CFX_TypeFace* CFX_GlyphCache::GetDeviceCache(const CFX_Font* font) {
         std::make_unique<SkMemoryStream>(span.data(), span.size()));
   }
 #if BUILDFLAG(IS_WIN) || BUILDFLAG(IS_APPLE)
-  // If DirectWrite or CoreText didn't work, try FreeType.
+  // If DirectWrite or CoreText didn't work, try the fallback manager.
   if (!typeface_) {
-    sk_sp<SkFontMgr> freetype_mgr = SkFontMgr_New_Custom_Empty();
+    sk_sp<SkFontMgr> fallback_mgr = PDF_SKIA_FONT_MANAGER();
     pdfium::span<const uint8_t> span = font->GetFontSpan();
-    typeface_ = freetype_mgr->makeFromStream(
+    typeface_ = fallback_mgr->makeFromStream(
         std::make_unique<SkMemoryStream>(span.data(), span.size()));
   }
 #endif  // BUILDFLAG(IS_WIN) || BUILDFLAG(IS_APPLE)
