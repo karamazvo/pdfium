@@ -16,6 +16,40 @@
       "message": "Alternative without touching //skia.",
       "revId": "64156c76e40969e2736cb0e81cac659647f7d125",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "242edf08_03ecf64d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6715
+      },
+      "writtenOn": "2025-08-07T19:23:08Z",
+      "side": 1,
+      "message": "LGTM, works for me, big thanks!",
+      "revId": "64156c76e40969e2736cb0e81cac659647f7d125",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dcd06c85_193cfd20",
+        "filename": "core/fxge/cfx_glyphcache.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 6715
+      },
+      "writtenOn": "2025-08-07T19:23:08Z",
+      "side": 1,
+      "message": "This approach works well for me. Just curious, would it be conceivable to immediately make the Fontations one the default and make the FreeType one the non-default/override?",
+      "revId": "64156c76e40969e2736cb0e81cac659647f7d125",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
