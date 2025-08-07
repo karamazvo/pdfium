@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5d072f5c_fe969c88",
+        "filename": "core/fpdfapi/parser/cpdf_dictionary.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-08-07T17:44:37Z",
+      "side": 1,
+      "message": "Changing this to extract() would require c++26 since the current versions don\u0027t support transparent comparison between bytestring and bytestringview.",
+      "range": {
+        "startLine": 306,
+        "startChar": 17,
+        "endLine": 306,
+        "endChar": 27
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "7f6e3059_650798e0",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/parser/cpdf_dictionary.cpp",
+              "range": {
+                "startLine": 306,
+                "startChar": 0,
+                "endLine": 308,
+                "endChar": 0
+              },
+              "replacement": "  auto node \u003d map_.extract(key);\n  if (node.empty()) {\n"
+            },
+            {
+              "path": "core/fpdfapi/parser/cpdf_dictionary.cpp",
+              "range": {
+                "startLine": 310,
+                "startChar": 0,
+                "endLine": 311,
+                "endChar": 0
+              },
+              "replacement": ""
+            }
+          ]
+        }
+      ],
+      "revId": "a07488129612d2d3bc3e62e1a31ae72581a797f1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
