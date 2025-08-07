@@ -161,8 +161,8 @@ void RestoreUsedResources(
   for (const ByteString& key : keys_to_restore) {
     auto it = saved_resource_map.find(key);
     CHECK(it != saved_resource_map.end());
-    resource_dict->SetFor(key, std::move(it->second));
-    saved_resource_map.erase(it);
+    auto node = saved_resource_map.extract(it);
+    resource_dict->SetFor(node.key(), std::move(node.mapped()));
   }
 }
 
