@@ -50,6 +50,24 @@
       "message": "This approach works well for me. Just curious, would it be conceivable to immediately make the Fontations one the default and make the FreeType one the non-default/override?",
       "revId": "64156c76e40969e2736cb0e81cac659647f7d125",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "53877c6d_a974bcf7",
+        "filename": "core/fxge/cfx_glyphcache.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-07T19:50:05Z",
+      "side": 1,
+      "message": "PDFium isn\u0027t ready to start depending on Fontations by default.",
+      "parentUuid": "dcd06c85_193cfd20",
+      "revId": "64156c76e40969e2736cb0e81cac659647f7d125",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
