@@ -142,6 +142,10 @@ source_set("fxge") {
       "skia/fx_skia_device.cpp",
     ]
     public_deps += [ "//skia" ]
+
+    if (pdf_skia_font_manager_config_override != "") {
+      configs += [ pdf_skia_font_manager_config_override ]
+    }
   }
 
   if (is_android) {
