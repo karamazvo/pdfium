@@ -16,6 +16,24 @@
       "message": "Given this, can the new code do: CHECK(!node.empty());",
       "revId": "027db43edcabd897dd61471cd3134a057954455f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "192a37ee_cb9b22c2",
+        "filename": "core/fpdfapi/edit/cpdf_pagecontentgenerator.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-08-07T17:53:54Z",
+      "side": 0,
+      "message": "Done. Which begs the question as to whether libc++ hardening will CHECK for us or just UB as in the spec.",
+      "parentUuid": "c0c470d7_7fe8ca9a",
+      "revId": "027db43edcabd897dd61471cd3134a057954455f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
