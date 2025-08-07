@@ -37,6 +37,40 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "950ecf82_d9b80c55",
+        "filename": "build_overrides/pdfium.gni",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2025-08-07T20:16:06Z",
+      "side": 1,
+      "message": "Instead of being a config, this could be the name of a target that defines a `sk_sp\u003cSkFontMgr\u003e pdfium_skia_fontmgr()` or something like that. This is kind of how `skia_fontmgr_factory` worked prior to https://skia-review.googlesource.com/c/skia/+/801656 (it had the similar issue of being a global, and is now passed into everything that needs it, but like the embedder should be passing this in). This is even messier cross repo. It was removed from Skia for a reason and I don\u0027t recommend this general approach.",
+      "revId": "64156c76e40969e2736cb0e81cac659647f7d125",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7d8489f1_0049ab0c",
+        "filename": "core/fxge/cfx_glyphcache.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2025-08-07T20:16:06Z",
+      "side": 1,
+      "message": "Is this (using a macro for an include) a thing that will even work for the internal build of Chromium? I\u0027m not entirely sure how that works, but I know we\u0027ve run into issues with this before.\n\nAlso, this is odd because it isn\u0027t clear that the build of this file necessarily can include this header.",
+      "revId": "64156c76e40969e2736cb0e81cac659647f7d125",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "dcd06c85_193cfd20",
         "filename": "core/fxge/cfx_glyphcache.cpp",
         "patchSetId": 2
@@ -66,6 +100,23 @@
       "side": 1,
       "message": "PDFium isn\u0027t ready to start depending on Fontations by default.",
       "parentUuid": "dcd06c85_193cfd20",
+      "revId": "64156c76e40969e2736cb0e81cac659647f7d125",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aabe7056_f0700be4",
+        "filename": "core/fxge/cfx_glyphcache.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2025-08-07T20:16:06Z",
+      "side": 1,
+      "message": "In the end this is both too flexible and too constrained. This should either be a very simple \"set a build flag and get Fontations instead of FreeType\" or this should be \"passed to PDFium by the embedder\", like putting it on `FPDF_LIBRARY_CONFIG`.",
       "revId": "64156c76e40969e2736cb0e81cac659647f7d125",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
