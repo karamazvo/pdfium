@@ -84,6 +84,97 @@
       "message": "Pinging Lei for second approval",
       "revId": "2e1453b76e026171cac1555433152051d1c82e55",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8d6cfc57_2084188c",
+        "filename": "core/fpdfapi/parser/cpdf_document.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 752,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-08T20:44:07Z",
+      "side": 1,
+      "message": "Since the loop at line 744 is calling InsertNewPage() N times based on the size of `pages_to_move`, should this also use `pages_to_move`? Even if the two arrays are equal in size, it would be more consistent to use the same container in both places.",
+      "range": {
+        "startLine": 752,
+        "startChar": 51,
+        "endLine": 752,
+        "endChar": 63
+      },
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e17e6726_f668089d",
+        "filename": "fpdfsdk/fpdf_ppo.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-08T20:44:07Z",
+      "side": 1,
+      "message": "Lines like this are still not formatted correctly.",
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "55c6a45e_33c2a1df",
+        "filename": "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-08T20:44:07Z",
+      "side": 1,
+      "message": "In cpdf_document.h, the comment for DeletePage() says \"Returns the object number for the deleted page, or 0 on failure.\", so what should happen here when `page_obj_num` is 0?",
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "43a1294e_b2ab79c7",
+        "filename": "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-08T20:44:07Z",
+      "side": 1,
+      "message": "`--page_count_`;",
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3f690b6b_49e595cb",
+        "filename": "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-08T20:44:07Z",
+      "side": 1,
+      "message": "Many callers cast size_t to int, and here, the int gets casted back to size_t. Is all this casting necessary?\n\nSide note: Use C++ style casts, not C casts.",
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
