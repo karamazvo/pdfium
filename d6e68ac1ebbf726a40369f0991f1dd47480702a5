@@ -1,6 +1,52 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "e9bb214f_f7956545",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-08T20:28:40Z",
+      "side": 1,
+      "message": "Sentence got cut off / is a bit long.",
+      "range": {
+        "startLine": 7,
+        "startChar": 61,
+        "endLine": 7,
+        "endChar": 68
+      },
+      "revId": "d6e68ac1ebbf726a40369f0991f1dd47480702a5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7f133a49_5aa2b545",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-08T20:28:40Z",
+      "side": 1,
+      "message": "Prefix not needed anymore.",
+      "range": {
+        "startLine": 9,
+        "startChar": 5,
+        "endLine": 9,
+        "endChar": 14
+      },
+      "revId": "d6e68ac1ebbf726a40369f0991f1dd47480702a5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "d0b696d3_d88cd73f",
@@ -14,6 +60,97 @@
       "writtenOn": "2025-08-04T10:05:48Z",
       "side": 1,
       "message": "👋 @thestig@chromium.org - could you give the CL a quick look if the suggested solution is correct? as always, thank you for your feedback and let me know if i should address anything!",
+      "revId": "d6e68ac1ebbf726a40369f0991f1dd47480702a5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6101fd16_d5002aae",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 2007,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-08T20:28:40Z",
+      "side": 1,
+      "message": "Can probably tighten this check to become an ASSERT_EQ().",
+      "revId": "d6e68ac1ebbf726a40369f0991f1dd47480702a5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d02f85a3_e8bf59b5",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 2010,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-08T20:28:40Z",
+      "side": 1,
+      "message": "Declare 1 variable per line.",
+      "revId": "d6e68ac1ebbf726a40369f0991f1dd47480702a5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "47adc35a_7be83b15",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 2013,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-08T20:28:40Z",
+      "side": 1,
+      "message": "Here and line 2018 - should it silently fail? Should there instead be an ADD_FAILURE() call?",
+      "revId": "d6e68ac1ebbf726a40369f0991f1dd47480702a5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "59ebd80b_d387788a",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 2021,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-08T20:28:40Z",
+      "side": 1,
+      "message": "Instead of adding a message to every check, maybe use SCOPED_TRACE() once for the entire block?\n\nhttps://google.github.io/googletest/reference/testing.html#SCOPED_TRACE",
+      "range": {
+        "startLine": 2021,
+        "startChar": 41,
+        "endLine": 2021,
+        "endChar": 63
+      },
+      "revId": "d6e68ac1ebbf726a40369f0991f1dd47480702a5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9431339f_d0218852",
+        "filename": "testing/resources/bug_402562387.pdf",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-08T20:28:40Z",
+      "side": 1,
+      "message": "I can try making another pass and see if it possible to further minimize this test file.",
       "revId": "d6e68ac1ebbf726a40369f0991f1dd47480702a5",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
