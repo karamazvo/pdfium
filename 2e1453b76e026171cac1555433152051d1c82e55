@@ -3,6 +3,86 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "62c693f9_55d49c97",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-08T21:03:42Z",
+      "side": 1,
+      "message": "\"PDFium\"",
+      "range": {
+        "startLine": 7,
+        "startChar": 41,
+        "endLine": 7,
+        "endChar": 47
+      },
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0b9ade94_4436b30e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-08T21:03:42Z",
+      "side": 1,
+      "message": "It would be helpful to mention FPDF_MovePages() somewhere.",
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b77a06ea_6d4c9648",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-08T21:03:42Z",
+      "side": 1,
+      "message": "It may be better to add a test first to demonstrate broken behavior. Then this CL can fix the test and prove it works. The work on https://crbug.com/425244539 is a recent example of this development strategy.",
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9e4201af_21cfea49",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-08T21:03:42Z",
+      "side": 1,
+      "message": "\"PDFs\", like line 9.",
+      "range": {
+        "startLine": 19,
+        "startChar": 14,
+        "endLine": 19,
+        "endChar": 18
+      },
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "90cef766_75ebf6d9",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1
@@ -173,6 +253,29 @@
       "writtenOn": "2025-08-08T20:44:07Z",
       "side": 1,
       "message": "Many callers cast size_t to int, and here, the int gets casted back to size_t. Is all this casting necessary?\n\nSide note: Use C++ style casts, not C casts.",
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "82175ebe_9ff1bb94",
+        "filename": "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-08T21:03:42Z",
+      "side": 1,
+      "message": "Can this just be `nullptr`?",
+      "range": {
+        "startLine": 322,
+        "startChar": 6,
+        "endLine": 322,
+        "endChar": 31
+      },
       "revId": "2e1453b76e026171cac1555433152051d1c82e55",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
