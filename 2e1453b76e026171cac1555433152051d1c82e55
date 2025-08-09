@@ -293,6 +293,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "2711be59_575bb3e5",
+        "filename": "core/fpdfapi/parser/cpdf_document.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 752,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-09T06:33:12Z",
+      "side": 1,
+      "message": "Agree - made the change for consistency, I also removed the int cast as I had to change the function to take size_t as the arg instead of int.",
+      "parentUuid": "8d6cfc57_2084188c",
+      "range": {
+        "startLine": 752,
+        "startChar": 51,
+        "endLine": 752,
+        "endChar": 63
+      },
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "e17e6726_f668089d",
         "filename": "fpdfsdk/fpdf_ppo.cpp",
         "patchSetId": 1
@@ -380,6 +404,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "3acac2da_30b23409",
+        "filename": "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-09T06:33:12Z",
+      "side": 1,
+      "message": "Changed.",
+      "parentUuid": "43a1294e_b2ab79c7",
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "3f690b6b_49e595cb",
         "filename": "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
         "patchSetId": 1
@@ -397,6 +439,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "a82ecdfa_b368dcbd",
+        "filename": "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-09T06:33:12Z",
+      "side": 1,
+      "message": "I fixed the function - and for casts I made them as static_cast\u003ctype\u003e instead.",
+      "parentUuid": "3f690b6b_49e595cb",
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "82175ebe_9ff1bb94",
         "filename": "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
         "patchSetId": 1
@@ -408,6 +468,30 @@
       "writtenOn": "2025-08-08T21:03:42Z",
       "side": 1,
       "message": "Can this just be `nullptr`?",
+      "range": {
+        "startLine": 322,
+        "startChar": 6,
+        "endLine": 322,
+        "endChar": 31
+      },
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ff59dee4_f7803dc2",
+        "filename": "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-09T06:33:12Z",
+      "side": 1,
+      "message": "I made it a nullptr in the new patch.",
+      "parentUuid": "82175ebe_9ff1bb94",
       "range": {
         "startLine": 322,
         "startChar": 6,
