@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "850112ce_430175da",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-08-09T00:00:09Z",
+      "side": 1,
+      "message": "LGTM",
+      "revId": "1b53c61681555a3aea3192fd677fc435bf9823c7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6703bc97_45145ec6",
+        "filename": "testing/resources/pixel/bug_432208037.in",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-08-09T00:00:09Z",
+      "side": 1,
+      "message": "Typo?",
+      "range": {
+        "startLine": 32,
+        "startChar": 15,
+        "endLine": 32,
+        "endChar": 16
+      },
+      "revId": "1b53c61681555a3aea3192fd677fc435bf9823c7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
