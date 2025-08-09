@@ -3,8 +3,10 @@
 // found in the LICENSE file.
 
 #include <array>
+#include <iomanip>
 #include <iterator>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -32,7 +34,22 @@
 
 namespace {
 
-class FPDFPPOEmbedderTest : public EmbedderTest {};
+class FPDFPPOEmbedderTest : public EmbedderTest {
+protected:
+// moved function from another file for use in this test suite
+  void TestRenderPageBitmapWithFlags(FPDF_PAGE page,
+                                     int flags,
+                                     const char* expected_checksum) {
+    int bitmap_width = static_cast<int>(FPDF_GetPageWidth(page));
+    int bitmap_height = static_cast<int>(FPDF_GetPageHeight(page));
+    ScopedFPDFBitmap bitmap(FPDFBitmap_Create(bitmap_width, bitmap_height, 0));
+    ASSERT_TRUE(FPDFBitmap_FillRect(bitmap.get(), 0, 0, bitmap_width,
+                                    bitmap_height, 0xFFFFFFFF));
+    FPDF_RenderPageBitmap(bitmap.get(), page, 0, 0, bitmap_width, bitmap_height,
+                          0, flags);
+    CompareBitmap(bitmap.get(), bitmap_width, bitmap_height, expected_checksum);
+  }
+};
 
 int FakeBlockWriter(FPDF_FILEWRITE* pThis,
                     const void* pData,
@@ -698,4 +715,73 @@ TEST_F(FPDFPPOEmbedderTest, ImportIntoDocWithWrongPageType) {
     CompareBitmap(bitmap.get(), 200, 100, new_page_2_checksum);
     CloseSavedPage(page);
   }
+}
+
+static std::string ComputeBitmapChecksum(FPDF_BITMAP bitmap) {
+  int width = FPDFBitmap_GetWidth(bitmap);
+  int height = FPDFBitmap_GetHeight(bitmap);
+  int stride = FPDFBitmap_GetStride(bitmap);
+  uint8_t* buffer = static_cast<uint8_t*>(FPDFBitmap_GetBuffer(bitmap));
+
+  uint32_t checksum = 0;
+  for (int y = 0; y < height; ++y) {
+    for (int x = 0; x < width * 4; ++x) {
+      checksum += buffer[y * stride + x];
+    }
+  }
+
+  std::stringstream ss;
+  ss << std::hex << std::setw(8) << std::setfill('0') << checksum;
+  return ss.str();
+}
+// For Issue 433689235
+TEST_F(FPDFPPOEmbedderTest, XFA_MovePage_Test) {
+  ASSERT_TRUE(OpenDocument("injected_xfa_multipage.pdf"));
+
+  int initial_page_index = 0;
+  int new_position = 2;
+
+  // Load and render page 0 before move to get checksum
+  ScopedPage page_before_move = LoadScopedPage(initial_page_index);
+  ASSERT_TRUE(page_before_move);
+  int width = FPDF_GetPageWidth(page_before_move.get());
+  int height = FPDF_GetPageHeight(page_before_move.get());
+  ASSERT_GT(width, 0);
+  ASSERT_GT(height, 0);
+
+  ScopedFPDFBitmap bitmap_before(FPDFBitmap_Create(width, height, 0));
+  ASSERT_TRUE(FPDFBitmap_FillRect(bitmap_before.get(), 0, 0, width, height,
+   0xFFFFFFFF));
+  FPDF_RenderPageBitmap(bitmap_before.get(), page_before_move.get(), 0, 0,
+  width, height, 0, 0);
+
+  std::string checksum_before = ComputeBitmapChecksum(bitmap_before.get());
+  fprintf(stderr, "Checksum before move: %s\n", checksum_before.c_str());
+
+  // Move page 0 to position 2
+  int page_indices[] = {initial_page_index};
+  int move_count = 1;
+  EXPECT_TRUE(FPDF_MovePages(document(), page_indices, move_count,
+  new_position));
+
+  int new_page_count = FPDF_GetPageCount(document());
+  EXPECT_EQ(new_page_count, 5);
+
+  // Load and render page at new position
+  // (should be the moved page with the same checksum)
+  ScopedPage page_after_move = LoadScopedPage(new_position);
+  ASSERT_TRUE(page_after_move);
+
+  ScopedFPDFBitmap bitmap_after(FPDFBitmap_Create(width, height, 0));
+  ASSERT_TRUE(FPDFBitmap_FillRect(bitmap_after.get(), 0, 0, width, height,
+   0xFFFFFFFF));
+  FPDF_RenderPageBitmap(bitmap_after.get(), page_after_move.get(), 0, 0,
+   width, height, 0, 0);
+
+  std::string checksum_after = ComputeBitmapChecksum(bitmap_after.get());
+  fprintf(stderr, "Checksum after move: %s\n", checksum_after.c_str());
+  // Checksum same before and after move at the new position suggests the
+  // page content is unchanged, and hence success.
+  ASSERT_STREQ(checksum_before.c_str(), checksum_after.c_str());
+  fprintf(stderr, "Move page test completed successfully.\n");
 }
