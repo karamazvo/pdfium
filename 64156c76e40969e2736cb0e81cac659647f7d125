@@ -90,6 +90,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "f906b13b_bb68e029",
+        "filename": "build_overrides/pdfium.gni",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2025-08-09T18:19:30Z",
+      "side": 1,
+      "message": "Patch set 3 is fine for now.",
+      "parentUuid": "015a0f85_529db6e4",
+      "revId": "64156c76e40969e2736cb0e81cac659647f7d125",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "ee4d09b9_73867deb",
         "filename": "core/fxge/BUILD.gn",
         "patchSetId": 2
@@ -230,6 +248,24 @@
       "side": 1,
       "message": "GN pdf_enable_fontations exists, but this isn\u0027t really that. I initially thought of this as a //skia build configuration change, which is why I\u0027m not going through PDFium\u0027s public API. Since there\u0027s pushback against the //skia change, I guess my mentality hasn\u0027t changed, and I\u0027m just dancing around with this alternative. I admit it\u0027s not great, but it\u0027s also not intended to be a permanent thing. Once PDFium can support Fontations without A/B testing with Freetype, this would be obsolete.",
       "parentUuid": "aabe7056_f0700be4",
+      "revId": "64156c76e40969e2736cb0e81cac659647f7d125",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "57a00f0c_450af3b4",
+        "filename": "core/fxge/cfx_glyphcache.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2025-08-09T18:19:30Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "252afb6f_acb5d35f",
       "revId": "64156c76e40969e2736cb0e81cac659647f7d125",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
