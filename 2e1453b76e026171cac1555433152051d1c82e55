@@ -43,6 +43,48 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e78fc8b0_5adb9753",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-09T05:16:24Z",
+      "side": 1,
+      "message": "I mentioned it, do let me know if you would prefer more detail on the same.",
+      "parentUuid": "0b9ade94_4436b30e",
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "86680e47_a74d8f04",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-09T05:16:24Z",
+      "side": 1,
+      "message": "Fixed",
+      "parentUuid": "62c693f9_55d49c97",
+      "range": {
+        "startLine": 7,
+        "startChar": 41,
+        "endLine": 7,
+        "endChar": 47
+      },
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "b77a06ea_6d4c9648",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
@@ -71,6 +113,30 @@
       "writtenOn": "2025-08-08T21:03:42Z",
       "side": 1,
       "message": "\"PDFs\", like line 9.",
+      "range": {
+        "startLine": 19,
+        "startChar": 14,
+        "endLine": 19,
+        "endChar": 18
+      },
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1d3621f9_ac56e8dd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-09T05:16:24Z",
+      "side": 1,
+      "message": "Fixed",
+      "parentUuid": "9e4201af_21cfea49",
       "range": {
         "startLine": 19,
         "startChar": 14,
@@ -166,6 +232,42 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "efb65ceb_b960e37a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-09T05:16:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "90cef766_75ebf6d9",
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ebf9be8a_1439e8ca",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-09T05:16:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "43ef6527_37c36391",
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8d6cfc57_2084188c",
@@ -208,6 +310,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "dd6e65e6_5829f909",
+        "filename": "fpdfsdk/fpdf_ppo.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-09T05:16:24Z",
+      "side": 1,
+      "message": "Right, I ran the formatter and it didn\u0027t seem to fix those, I\u0027ll try doing so again, or fix it manually.",
+      "parentUuid": "e17e6726_f668089d",
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "55c6a45e_33c2a1df",
         "filename": "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
         "patchSetId": 1
@@ -219,6 +339,24 @@
       "writtenOn": "2025-08-08T20:44:07Z",
       "side": 1,
       "message": "In cpdf_document.h, the comment for DeletePage() says \"Returns the object number for the deleted page, or 0 on failure.\", so what should happen here when `page_obj_num` is 0?",
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c75ee881_d67c2103",
+        "filename": "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-09T05:16:24Z",
+      "side": 1,
+      "message": "The section of code was pre-existing commit, and the function would still return 0 in the case of the error. And the fact that this is a pre existing implementation suggests that other sections of code that invoke the same function may already have such checks to see if page_obj_num is 0. Do let me know if i should change it to add the check here instead. I.e. we can either handle the error to give a non-zero return value, or we can propagate it for the caller to handle.\n\nDo let me know which approach is fine.",
+      "parentUuid": "55c6a45e_33c2a1df",
       "revId": "2e1453b76e026171cac1555433152051d1c82e55",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
