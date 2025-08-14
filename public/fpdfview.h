@@ -285,7 +285,7 @@ typedef struct FPDF_LIBRARY_CONFIG_ {
 // Function: FPDF_InitLibraryWithConfig
 //          Initialize the PDFium library and allocate global resources for it.
 // Parameters:
-//          config - configuration information as above.
+//          config - configuration information as above. Must not be NULL.
 // Return value:
 //          None.
 // Comments:
@@ -329,8 +329,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_DestroyLibrary();
 // Function: FPDF_SetSandBoxPolicy
 //          Set the policy for the sandbox environment.
 // Parameters:
-//          policy -   The specified policy for setting, for example:
-//                     FPDF_POLICY_MACHINETIME_ACCESS.
+//          policy -   The specified policy for setting. Currently, the only
+//                     supported policy is FPDF_POLICY_MACHINETIME_ACCESS.
 //          enable -   True to enable, false to disable the policy.
 // Return value:
 //          None.
@@ -400,7 +400,8 @@ FPDF_LoadDocument(FPDF_STRING file_path, FPDF_BYTESTRING password);
 // Return value:
 //          A handle to the loaded document, or NULL on failure.
 // Comments:
-//          The memory buffer must remain valid when the document is open.
+//          The memory buffer, passed in as |data_buf|, must remain valid for
+//          the lifetime of the FPDF_DOCUMENT.
 //          The loaded document can be closed by FPDF_CloseDocument.
 //          If this function fails, you can use FPDF_GetLastError() to retrieve
 //          the reason why it failed.
@@ -425,7 +426,8 @@ FPDF_LoadMemDocument(const void* data_buf, int size, FPDF_BYTESTRING password);
 // Return value:
 //          A handle to the loaded document, or NULL on failure.
 // Comments:
-//          The memory buffer must remain valid when the document is open.
+//          The memory buffer, passed in as |data_buf|, must remain valid for
+//          the lifetime of the FPDF_DOCUMENT.
 //          The loaded document can be closed by FPDF_CloseDocument.
 //          If this function fails, you can use FPDF_GetLastError() to retrieve
 //          the reason why it failed.
@@ -551,7 +553,7 @@ typedef struct FPDF_FILEHANDLER_ {
 // Return value:
 //          A handle to the loaded document, or NULL on failure.
 // Comments:
-//          The application must keep the file resources |pFileAccess| points to
+//          The application must keep the file access handler |pFileAccess|
 //          valid until the returned FPDF_DOCUMENT is closed. |pFileAccess|
 //          itself does not need to outlive the FPDF_DOCUMENT.
 //
@@ -576,7 +578,8 @@ FPDF_LoadCustomDocument(FPDF_FILEACCESS* pFileAccess, FPDF_BYTESTRING password);
 //          True if succeeds, false otherwise.
 // Comments:
 //          If the document was created by FPDF_CreateNewDocument,
-//          then this function will always fail.
+//          then this function will always fail, and |fileVersion| will be
+//          unmodified.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_GetFileVersion(FPDF_DOCUMENT doc,
                                                         int* fileVersion);
 
@@ -684,7 +687,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageCount(FPDF_DOCUMENT document);
 //          Load a page inside the document.
 // Parameters:
 //          document    -   Handle to document. Returned by FPDF_LoadDocument
-//          page_index  -   Index number of the page. 0 for the first page.
+//          page_index  -   Index number of the page. 0 for the first page. Must
+//                          be in the range [0, FPDF_GetPageCount(document)).
 // Return value:
 //          A handle to the loaded page, or NULL if page load fails.
 // Comments:
@@ -763,7 +767,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_GetPageBoundingBox(FPDF_PAGE page,
 //          Get the size of the page at the given index.
 // Parameters:
 //          document    -   Handle to document. Returned by FPDF_LoadDocument().
-//          page_index  -   Page index, zero for the first page.
+//          page_index  -   Page index, zero for the first page. Must be in the
+//                          range [0, FPDF_GetPageCount(document)).
 //          size        -   Pointer to a FS_SIZEF to receive the page size.
 //                          (in points).
 // Return value:
@@ -777,7 +782,8 @@ FPDF_GetPageSizeByIndexF(FPDF_DOCUMENT document,
 //          Get the size of the page at the given index.
 // Parameters:
 //          document    -   Handle to document. Returned by FPDF_LoadDocument.
-//          page_index  -   Page index, zero for the first page.
+//          page_index  -   Page index, zero for the first page. Must be in the
+//                          range [0, FPDF_GetPageCount(document)).
 //          width       -   Pointer to a double to receive the page width
 //                          (in points).
 //          height      -   Pointer to a double to receive the page height
