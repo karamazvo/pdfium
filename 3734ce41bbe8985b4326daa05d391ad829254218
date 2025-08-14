@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c9e94e8f_7e979ed9",
+        "filename": "public/fpdf_formfill.h",
+        "patchSetId": 9
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-14T18:50:03Z",
+      "side": 1,
+      "message": "This lost the part about trailing zeros.",
+      "revId": "3734ce41bbe8985b4326daa05d391ad829254218",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6c1f9645_877f7720",
+        "filename": "public/fpdf_searchex.h",
+        "patchSetId": 9
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-14T18:50:03Z",
+      "side": 1,
+      "message": "While I think the documentation could use some improvement, this then raises the question of what is a virtual character.",
+      "revId": "3734ce41bbe8985b4326daa05d391ad829254218",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ad891634_f4f58bbd",
+        "filename": "public/fpdf_text.h",
+        "patchSetId": 9
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-14T18:50:03Z",
+      "side": 1,
+      "message": "Probably can omit this sentence, given line 55.",
+      "revId": "3734ce41bbe8985b4326daa05d391ad829254218",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "51e0b640_ba7e4435",
+        "filename": "public/fpdf_text.h",
+        "patchSetId": 9
+      },
+      "lineNbr": 377,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-14T18:50:03Z",
+      "side": 1,
+      "message": "Probably should leave this as it was.",
+      "revId": "3734ce41bbe8985b4326daa05d391ad829254218",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dd97634e_eb63f31a",
+        "filename": "public/fpdfview.h",
+        "patchSetId": 9
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-14T18:50:03Z",
+      "side": 1,
+      "message": "Nope",
+      "revId": "3734ce41bbe8985b4326daa05d391ad829254218",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6163dd0e_53b67901",
+        "filename": "public/fpdfview.h",
+        "patchSetId": 9
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-14T18:50:03Z",
+      "side": 1,
+      "message": "I\u0027d prefer to not have to update this if another policy gets added.",
+      "revId": "3734ce41bbe8985b4326daa05d391ad829254218",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
