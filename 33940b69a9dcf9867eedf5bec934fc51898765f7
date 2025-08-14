@@ -1,6 +1,46 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "7636d27e_08714e2b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-14T17:44:35Z",
+      "side": 1,
+      "message": "Please omit this sentence. The `Bug: 433689235` conveys the same information.",
+      "range": {
+        "startLine": 9,
+        "startChar": 80,
+        "endLine": 9,
+        "endChar": 113
+      },
+      "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ef3362a8_c99c8ace",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-14T17:44:35Z",
+      "side": 1,
+      "message": "Please try to wrap at 72 columns. In the Gerrit UI, the CL description editor has a \"format\" button that can do this automatically.",
+      "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "20ff1c1f_8ec53805",
@@ -14,6 +54,149 @@
       "writtenOn": "2025-08-12T14:49:30Z",
       "side": 1,
       "message": "Hi Tom and Lei, \nI have worked on some of the fixes mentioned and would like to run my test XFA_MovePage_Test inside PPO embedded test - can we dry run it.\n\nAlso please go through the tests and files and let me know if it is fine.\nThanks in advance!",
+      "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "051e8d4e_881f4a88",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-14T17:44:35Z",
+      "side": 1,
+      "message": "I only took a quick look and haven\u0027t looked at the new test in close detail.",
+      "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8aca7ab6_0473b7d7",
+        "filename": "fpdfsdk/fpdf_ppo.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-14T17:44:35Z",
+      "side": 1,
+      "message": "Does the code compile without this static_cast?",
+      "range": {
+        "startLine": 102,
+        "startChar": 38,
+        "endLine": 102,
+        "endChar": 58
+      },
+      "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c143562b_0232093b",
+        "filename": "fpdfsdk/fpdf_ppo.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-14T17:44:35Z",
+      "side": 1,
+      "message": "This looks like an unnecessary size_t to size_t cast.",
+      "range": {
+        "startLine": 154,
+        "startChar": 36,
+        "endLine": 154,
+        "endChar": 47
+      },
+      "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "20769d3b_41c5d17b",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 720,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-14T17:44:35Z",
+      "side": 1,
+      "message": "Use EmbedderTest::HashBitmap() instead of adding a new checksum function?",
+      "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "85dfc093_c9031b62",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 738,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-14T17:44:35Z",
+      "side": 1,
+      "message": "No need to put \"Test\" in the test name. The test\u0027s full name is currently FPDFPPOEmbedderTest.XFA_MovePage_Test.",
+      "range": {
+        "startLine": 738,
+        "startChar": 40,
+        "endLine": 738,
+        "endChar": 45
+      },
+      "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "59675f0b_3928e79f",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 738,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-14T17:44:35Z",
+      "side": 1,
+      "message": "https://google.github.io/googletest/faq.html#why-should-test-suite-names-and-test-names-not-contain-underscore",
+      "range": {
+        "startLine": 738,
+        "startChar": 28,
+        "endLine": 738,
+        "endChar": 45
+      },
+      "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "57111fe2_d850a977",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 741,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-14T17:44:35Z",
+      "side": 1,
+      "message": "Make these constants.",
       "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }

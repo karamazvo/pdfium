@@ -83,6 +83,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "db2a7e41_992a62c0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-14T17:44:35Z",
+      "side": 1,
+      "message": "Thanks for addressing the comment. Please try to use the \"Resolved\" checkbox below the comment text boxes to mark these as done. There is also a \"Done\" button that checks the box and writes in \"Done\".",
+      "parentUuid": "86680e47_a74d8f04",
+      "range": {
+        "startLine": 7,
+        "startChar": 41,
+        "endLine": 7,
+        "endChar": 47
+      },
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b77a06ea_6d4c9648",
@@ -209,6 +233,30 @@
       "side": 1,
       "message": "Fixed",
       "parentUuid": "9e4201af_21cfea49",
+      "range": {
+        "startLine": 19,
+        "startChar": 14,
+        "endLine": 19,
+        "endChar": 18
+      },
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "23de6e51_623ee25b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-14T17:44:35Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "1d3621f9_ac56e8dd",
       "range": {
         "startLine": 19,
         "startChar": 14,
@@ -387,6 +435,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d057b861_ff94ef40",
+        "filename": "core/fpdfapi/parser/cpdf_document.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 752,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-14T17:44:35Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "2711be59_575bb3e5",
+      "range": {
+        "startLine": 752,
+        "startChar": 51,
+        "endLine": 752,
+        "endChar": 63
+      },
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e17e6726_f668089d",
@@ -418,6 +490,24 @@
       "side": 1,
       "message": "Right, I ran the formatter and it didn\u0027t seem to fix those, I\u0027ll try doing so again, or fix it manually.",
       "parentUuid": "e17e6726_f668089d",
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "55c5d375_4482038c",
+        "filename": "fpdfsdk/fpdf_ppo.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-14T17:44:35Z",
+      "side": 1,
+      "message": "Please do. If you are editing PDFium code in a Chromium checkout, `git cl format` may be confused because it is trying to only format the Chromium git repo. You can try running `clang-format -i /path/to/fpdfsdk/fpdf_ppo.cpp`, or do this change in a standalone PDFium checkout, per README.md instructions.",
+      "parentUuid": "dd6e65e6_5829f909",
       "revId": "2e1453b76e026171cac1555433152051d1c82e55",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -492,6 +582,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "143c8b8c_dd614b5e",
+        "filename": "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-14T17:44:35Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "3acac2da_30b23409",
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3f690b6b_49e595cb",
@@ -523,6 +631,24 @@
       "side": 1,
       "message": "I fixed the function - and for casts I made them as static_cast\u003ctype\u003e instead.",
       "parentUuid": "3f690b6b_49e595cb",
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "281afd09_52be610e",
+        "filename": "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-14T17:44:35Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "a82ecdfa_b368dcbd",
       "revId": "2e1453b76e026171cac1555433152051d1c82e55",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -564,6 +690,30 @@
       "side": 1,
       "message": "I made it a nullptr in the new patch.",
       "parentUuid": "82175ebe_9ff1bb94",
+      "range": {
+        "startLine": 322,
+        "startChar": 6,
+        "endLine": 322,
+        "endChar": 31
+      },
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ece07e6e_25e437fe",
+        "filename": "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-14T17:44:35Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "ff59dee4_f7803dc2",
       "range": {
         "startLine": 322,
         "startChar": 6,
