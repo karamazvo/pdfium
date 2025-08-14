@@ -621,3 +621,56 @@ TEST(CFXMatrixTest, TransformRectForFloatRect) {
   EXPECT_NEAR(0.0f, rect.Right(), 0.00001f);
   EXPECT_FLOAT_EQ(159.25f, rect.Top());
 }
+
+TEST(CFXFloatRectTest, Contains) {
+  CFX_FloatRect rect(1.0f, 2.0f, 3.0f, 4.0f);
+  EXPECT_TRUE(rect.Contains(CFX_PointF(1.0f, 2.0f)));
+  EXPECT_TRUE(rect.Contains(CFX_PointF(2.0f, 3.0f)));
+  EXPECT_TRUE(rect.Contains(CFX_PointF(3.0f, 4.0f)));
+  EXPECT_FALSE(rect.Contains(CFX_PointF(0.0f, 2.0f)));
+  EXPECT_FALSE(rect.Contains(CFX_PointF(1.0f, 1.0f)));
+  EXPECT_FALSE(rect.Contains(CFX_PointF(4.0f, 4.0f)));
+  EXPECT_FALSE(rect.Contains(CFX_PointF(3.0f, 5.0f)));
+
+  CFX_FloatRect rect2(1.5f, 2.5f, 2.5f, 3.5f);
+  EXPECT_TRUE(rect.Contains(rect2));
+
+  CFX_FloatRect rect3(0.5f, 2.5f, 2.5f, 3.5f);
+  EXPECT_FALSE(rect.Contains(rect3));
+}
+
+TEST(CFXFloatRectTest, Intersect) {
+  CFX_FloatRect rect1(1.0f, 2.0f, 3.0f, 4.0f);
+  CFX_FloatRect rect2(2.0f, 3.0f, 4.0f, 5.0f);
+  rect1.Intersect(rect2);
+  EXPECT_FLOAT_EQ(2.0f, rect1.left);
+  EXPECT_FLOAT_EQ(3.0f, rect1.bottom);
+  EXPECT_FLOAT_EQ(3.0f, rect1.right);
+  EXPECT_FLOAT_EQ(4.0f, rect1.top);
+}
+
+TEST(CFXFloatRectTest, Union) {
+  CFX_FloatRect rect1(1.0f, 2.0f, 3.0f, 4.0f);
+  CFX_FloatRect rect2(2.0f, 3.0f, 4.0f, 5.0f);
+  rect1.Union(rect2);
+  EXPECT_FLOAT_EQ(1.0f, rect1.left);
+  EXPECT_FLOAT_EQ(2.0f, rect1.bottom);
+  EXPECT_FLOAT_EQ(4.0f, rect1.right);
+  EXPECT_FLOAT_EQ(5.0f, rect1.top);
+}
+
+TEST(CFXRectFTest, Normalize) {
+  CFX_RectF rect(1.0f, 2.0f, -3.0f, -4.0f);
+  rect.Normalize();
+  EXPECT_FLOAT_EQ(-2.0f, rect.left);
+  EXPECT_FLOAT_EQ(-2.0f, rect.top);
+  EXPECT_FLOAT_EQ(3.0f, rect.width);
+  EXPECT_FLOAT_EQ(4.0f, rect.height);
+}
+
+TEST(CFXMatrixTest, IsScaled) {
+  CFX_Matrix m;
+  EXPECT_TRUE(m.IsScaled());
+  m.Rotate(FXSYS_PI / 2);
+  EXPECT_FALSE(m.IsScaled());
+}

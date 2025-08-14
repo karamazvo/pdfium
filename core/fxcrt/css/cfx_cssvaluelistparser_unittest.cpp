@@ -141,3 +141,47 @@ TEST(CFXCSSValueListParserTest, MultiParsing) {
   EXPECT_EQ(CFX_CSSValue::PrimitiveType::kNumber, maybe_next.value().type);
   EXPECT_EQ(L"4", maybe_next.value().string_view);
 }
+
+TEST(CFXCSSValueListParserTest, InvalidNumberParsing) {
+  auto parser = std::make_unique<CFX_CSSValueListParser>(L"4321.12.34", L' ');
+  auto maybe_next = parser->NextValue();
+  ASSERT_TRUE(maybe_next.has_value());
+  EXPECT_EQ(CFX_CSSValue::PrimitiveType::kNumber, maybe_next.value().type);
+  EXPECT_EQ(L"4321.12.34", maybe_next.value().string_view);
+
+  parser = std::make_unique<CFX_CSSValueListParser>(L"43a1.12.34", L' ');
+  maybe_next = parser->NextValue();
+  ASSERT_TRUE(maybe_next.has_value());
+  EXPECT_EQ(CFX_CSSValue::PrimitiveType::kNumber, maybe_next.value().type);
+  EXPECT_EQ(L"43a1.12.34", maybe_next.value().string_view);
+}
+
+TEST(CFXCSSValueListParserTest, UseCommaSeparator) {
+  auto parser = std::make_unique<CFX_CSSValueListParser>(L"1 2,3", L' ');
+  auto maybe_next = parser->NextValue();
+  ASSERT_TRUE(maybe_next.has_value());
+  EXPECT_EQ(CFX_CSSValue::PrimitiveType::kNumber, maybe_next.value().type);
+  EXPECT_EQ(L"1", maybe_next.value().string_view);
+
+  maybe_next = parser->NextValue();
+  ASSERT_TRUE(maybe_next.has_value());
+  EXPECT_EQ(CFX_CSSValue::PrimitiveType::kNumber, maybe_next.value().type);
+  EXPECT_EQ(L"2,3", maybe_next.value().string_view);
+
+  parser = std::make_unique<CFX_CSSValueListParser>(L"1 2,3", L',');
+
+  maybe_next = parser->NextValue();
+  ASSERT_TRUE(maybe_next.has_value());
+  EXPECT_EQ(CFX_CSSValue::PrimitiveType::kNumber, maybe_next.value().type);
+  EXPECT_EQ(L"1", maybe_next.value().string_view);
+
+  maybe_next = parser->NextValue();
+  ASSERT_TRUE(maybe_next.has_value());
+  EXPECT_EQ(CFX_CSSValue::PrimitiveType::kNumber, maybe_next.value().type);
+  EXPECT_EQ(L"2", maybe_next.value().string_view);
+
+  maybe_next = parser->NextValue();
+  ASSERT_TRUE(maybe_next.has_value());
+  EXPECT_EQ(CFX_CSSValue::PrimitiveType::kNumber, maybe_next.value().type);
+  EXPECT_EQ(L"3", maybe_next.value().string_view);
+}
