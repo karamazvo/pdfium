@@ -52,10 +52,9 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFText_ClosePage(FPDF_TEXTPAGE text_page);
 //          characters, are also counted.
 // Comments:
 //          Characters in a page form a "stream", inside the stream, each
-//          character has an index.
+//          character has a zero-based index.
 //          We will use the index parameters in many of FPDFTEXT functions. The
-//          first character in the page
-//          has an index value of zero.
+//          first character in the page also has a zero-based index.
 //
 FPDF_EXPORT int FPDF_CALLCONV FPDFText_CountChars(FPDF_TEXTPAGE text_page);
 
@@ -375,10 +374,11 @@ FPDFText_GetCharIndexAtPos(FPDF_TEXTPAGE text_page,
 //          text_page   -   Handle to a text page information structure.
 //                          Returned by FPDFText_LoadPage function.
 //          start_index -   Index for the start characters.
-//          count       -   Number of UCS-2 values to be extracted.
+//          count       -   Number of characters to be extracted.
 //          result      -   A buffer (allocated by application) receiving the
 //                          extracted UCS-2 values. The buffer must be able to
-//                          hold `count` UCS-2 values plus a terminator.
+//                          hold `count * 2` bytes, and will be terminated by
+//                          a 2-byte zero.
 // Return Value:
 //          Number of characters written into the result buffer, including the
 //          trailing terminator.

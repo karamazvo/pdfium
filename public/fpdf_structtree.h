@@ -324,7 +324,8 @@ FPDF_StructElement_GetAttributeCount(FPDF_STRUCTELEMENT struct_element);
 //          The |index| must be less than the
 //          FPDF_StructElement_GetAttributeCount() return value.
 FPDF_EXPORT FPDF_STRUCTELEMENT_ATTR FPDF_CALLCONV
-FPDF_StructElement_GetAttributeAtIndex(FPDF_STRUCTELEMENT struct_element, int index);
+FPDF_StructElement_GetAttributeAtIndex(FPDF_STRUCTELEMENT struct_element,
+                                       int index);
 
 // Experimental API.
 // Function: FPDF_StructElement_Attr_GetCount
