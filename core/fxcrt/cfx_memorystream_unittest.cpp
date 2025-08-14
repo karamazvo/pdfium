@@ -56,3 +56,43 @@ TEST(CFXMemoryStreamTest, WriteZeroBytes) {
   ASSERT_TRUE(stream->WriteBlock({}));
   ASSERT_THAT(stream->GetSpan(), testing::ElementsAre('a', 'b', 'c'));
 }
+
+TEST(CFXMemoryStreamTest, GetSize) {
+  auto stream = pdfium::MakeRetain<CFX_MemoryStream>();
+  EXPECT_EQ(0, stream->GetSize());
+  const uint8_t kData1[] = {'a', 'b', 'c'};
+  ASSERT_TRUE(stream->WriteBlock(kData1));
+  EXPECT_EQ(3, stream->GetSize());
+}
+
+TEST(CFXMemoryStreamTest, GetPosition) {
+  auto stream = pdfium::MakeRetain<CFX_MemoryStream>();
+  EXPECT_EQ(0, stream->GetPosition());
+  const uint8_t kData1[] = {'a', 'b', 'c'};
+  ASSERT_TRUE(stream->WriteBlock(kData1));
+  EXPECT_EQ(3, stream->GetPosition());
+  uint8_t buffer[2];
+  ASSERT_TRUE(stream->ReadBlockAtOffset(buffer, 1));
+  EXPECT_EQ(3, stream->GetPosition());
+}
+
+TEST(CFXMemoryStreamTest, IsEOF) {
+  auto stream = pdfium::MakeRetain<CFX_MemoryStream>();
+  EXPECT_TRUE(stream->IsEOF());
+  const uint8_t kData1[] = {'a', 'b', 'c'};
+  ASSERT_TRUE(stream->WriteBlock(kData1));
+  EXPECT_TRUE(stream->IsEOF());
+
+  uint8_t buffer[1];
+  ASSERT_TRUE(stream->ReadBlockAtOffset(buffer, 0));
+  EXPECT_FALSE(stream->IsEOF());
+
+  uint8_t buffer2[2];
+  ASSERT_TRUE(stream->ReadBlockAtOffset(buffer2, 1));
+  EXPECT_TRUE(stream->IsEOF());
+}
+
+TEST(CFXMemoryStreamTest, Flush) {
+  auto stream = pdfium::MakeRetain<CFX_MemoryStream>();
+  EXPECT_TRUE(stream->Flush());
+}

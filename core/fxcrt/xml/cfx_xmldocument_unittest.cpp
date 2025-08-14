@@ -19,3 +19,20 @@ TEST(CFXXMLDocumentTest, CreateNode) {
   ASSERT_EQ(CFX_XMLNode::Type::kElement, node->GetType());
   EXPECT_EQ(L"elem", node->GetName());
 }
+
+TEST(CFXXMLDocumentTest, AppendNodesFrom) {
+  CFX_XMLDocument doc1;
+  auto* elem1 = doc1.CreateNode<CFX_XMLElement>(L"elem1");
+  doc1.GetRoot()->AppendLastChild(elem1);
+
+  CFX_XMLDocument doc2;
+  auto* elem2 = doc2.CreateNode<CFX_XMLElement>(L"elem2");
+
+  doc1.AppendNodesFrom(&doc2);
+  doc1.GetRoot()->AppendLastChild(elem2);
+
+  EXPECT_EQ(L"elem1", ToXMLElement(doc1.GetRoot()->GetFirstChild())->GetName());
+  EXPECT_EQ(L"elem2",
+            ToXMLElement(doc1.GetRoot()->GetFirstChild()->GetNextSibling())
+                ->GetName());
+}

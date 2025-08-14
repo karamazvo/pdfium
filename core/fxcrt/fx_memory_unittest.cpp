@@ -187,3 +187,26 @@ TEST(FxMemory, StackObjectIsNotPA) {
 #endif  // PA_BUILDFLAG(USE_PARTITION_ALLOC_AS_MALLOC) &&
         // PA_BUILDFLAG(HAS_64_BIT_POINTERS)
 #endif  // defined(PDF_USE_PARTITION_ALLOC)
+
+TEST(fxcrt, FXMEMDefaultCalloc) {
+  void* ptr = FXMEM_DefaultCalloc(1, 32);
+  ASSERT_TRUE(ptr);
+  for (size_t i = 0; i < 32; ++i) {
+    // SAFETY: required for testing, length and loop bounds 32.
+    EXPECT_EQ(0, UNSAFE_BUFFERS(static_cast<uint8_t*>(ptr)[i]));
+  }
+  FXMEM_DefaultFree(ptr);
+}
+
+TEST(fxcrt, FXStringAlloc) {
+  void* ptr = FX_StringAlloc(char, 32);
+  ASSERT_TRUE(ptr);
+  FX_StringFree(ptr);
+}
+
+TEST(fxcrt, FXAlignedAlloc) {
+  void* ptr = FX_AlignedAlloc(32, 16);
+  ASSERT_TRUE(ptr);
+  EXPECT_EQ(0u, reinterpret_cast<uintptr_t>(ptr) % 16);
+  FX_AlignedFree(ptr);
+}

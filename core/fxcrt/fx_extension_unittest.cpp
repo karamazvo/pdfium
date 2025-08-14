@@ -252,3 +252,78 @@ TEST(fxcrt, FXSYSSafeOps) {
     }
   });
 }
+
+TEST(fxcrt, FXSYS_wcsncpy) {
+  wchar_t dest[5];
+  const wchar_t src[] = L"abcde";
+  // SAFETY: API under test.
+  UNSAFE_BUFFERS(FXSYS_wcsncpy(dest, src, 5));
+  EXPECT_EQ(0, UNSAFE_TODO(wcsncmp(dest, src, 5)));
+}
+
+TEST(fxcrt, FXSYS_iswlower) {
+  EXPECT_TRUE(FXSYS_iswlower(L'a'));
+  EXPECT_FALSE(FXSYS_iswlower(L'A'));
+}
+
+TEST(fxcrt, FXSYS_iswupper) {
+  EXPECT_TRUE(FXSYS_iswupper(L'A'));
+  EXPECT_FALSE(FXSYS_iswupper(L'a'));
+}
+
+TEST(fxcrt, FXSYS_towlower) {
+  EXPECT_EQ(L'a', FXSYS_towlower(L'A'));
+  EXPECT_EQ(L'a', FXSYS_towlower(L'a'));
+}
+
+TEST(fxcrt, FXSYS_towupper) {
+  EXPECT_EQ(L'A', FXSYS_towupper(L'a'));
+  EXPECT_EQ(L'A', FXSYS_towupper(L'A'));
+}
+
+TEST(fxcrt, FXSYS_ToUpperASCII) {
+  EXPECT_EQ('A', FXSYS_ToUpperASCII('a'));
+  EXPECT_EQ('A', FXSYS_ToUpperASCII('A'));
+}
+
+TEST(fxcrt, FXSYS_iswalpha) {
+  EXPECT_TRUE(FXSYS_iswalpha(L'a'));
+  EXPECT_TRUE(FXSYS_iswalpha(L'A'));
+  EXPECT_FALSE(FXSYS_iswalpha(L'1'));
+}
+
+TEST(fxcrt, FXSYS_iswalnum) {
+  EXPECT_TRUE(FXSYS_iswalnum(L'a'));
+  EXPECT_TRUE(FXSYS_iswalnum(L'A'));
+  EXPECT_TRUE(FXSYS_iswalnum(L'1'));
+  EXPECT_FALSE(FXSYS_iswalnum(L'-'));
+}
+
+TEST(fxcrt, FXSYS_iswspace) {
+  EXPECT_TRUE(FXSYS_iswspace(L' '));
+  EXPECT_TRUE(FXSYS_iswspace(L'\t'));
+  EXPECT_FALSE(FXSYS_iswspace(L'a'));
+}
+
+TEST(fxcrt, FXSYS_IsOctalDigit) {
+  EXPECT_TRUE(FXSYS_IsOctalDigit('7'));
+  EXPECT_FALSE(FXSYS_IsOctalDigit('8'));
+}
+
+TEST(fxcrt, FXSYS_IsHexDigit) {
+  EXPECT_TRUE(FXSYS_IsHexDigit('f'));
+  EXPECT_TRUE(FXSYS_IsHexDigit('F'));
+  EXPECT_FALSE(FXSYS_IsHexDigit('g'));
+}
+
+TEST(fxcrt, FXSYS_IsWideHexDigit) {
+  EXPECT_TRUE(FXSYS_IsWideHexDigit(L'f'));
+  EXPECT_TRUE(FXSYS_IsWideHexDigit(L'F'));
+  EXPECT_FALSE(FXSYS_IsWideHexDigit(L'g'));
+}
+
+TEST(fxcrt, FXSYS_WideHexCharToInt) {
+  EXPECT_EQ(15, FXSYS_WideHexCharToInt(L'f'));
+  EXPECT_EQ(15, FXSYS_WideHexCharToInt(L'F'));
+  EXPECT_EQ(0, FXSYS_WideHexCharToInt(L'g'));
+}

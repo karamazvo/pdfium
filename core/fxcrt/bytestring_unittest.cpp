@@ -2024,4 +2024,40 @@ TEST(ByteString, FXHashCodeWide) {
   EXPECT_EQ(1313u * 97u + 255u, FX_HashCode_GetLoweredAsIfW("A\xff"));
 }
 
+TEST(ByteString, ConstructFromUint8) {
+  const uint8_t data[] = {65, 66, 67};
+  // SAFTEY: API under test.
+  UNSAFE_BUFFERS(ByteString str(data, 3));
+  EXPECT_EQ("ABC", str);
+}
+
+TEST(ByteString, ConstructFromTwoByteStringViews) {
+  ByteString str("ABC", "DEF");
+  EXPECT_EQ("ABCDEF", str);
+}
+
+TEST(ByteString, ConstructFromOstringstream) {
+  fxcrt::ostringstream stream;
+  stream << "ABC" << "DEF";
+  ByteString str(stream);
+  EXPECT_EQ("ABCDEF", str);
+}
+
+TEST(ByteString, Compare) {
+  ByteString str("ABC");
+  EXPECT_EQ(0, str.Compare("ABC"));
+  EXPECT_GT(0, str.Compare("ABD"));
+  EXPECT_LT(0, str.Compare("ABB"));
+  EXPECT_GT(0, str.Compare("ABCD"));
+  EXPECT_LT(0, str.Compare("AB"));
+}
+
+TEST(ByteStringView, Contains) {
+  ByteStringView str("ABC");
+  EXPECT_TRUE(str.Contains('A'));
+  EXPECT_TRUE(str.Contains('B'));
+  EXPECT_TRUE(str.Contains('C'));
+  EXPECT_FALSE(str.Contains('D'));
+}
+
 }  // namespace fxcrt
