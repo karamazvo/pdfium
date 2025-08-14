@@ -27,6 +27,7 @@ extern "C" {
 #endif  // __cplusplus
 
 // Flatten annotations and form fields into the page contents.
+// A flattened page will not have any annotations or form fields.
 //
 //   page  - handle to the page.
 //   nFlag - One of the |FLAT_*| values denoting the page usage.
