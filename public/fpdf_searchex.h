@@ -14,21 +14,30 @@
 extern "C" {
 #endif  // __cplusplus
 
-// Get the character index in |text_page| internal character list.
+// Get the character index in the text page's character list.
 //
 //   text_page  - a text page information structure.
-//   nTextIndex - index of the text returned from FPDFText_GetText().
+//   nTextIndex - index of a character in the string returned from
+//                FPDFText_GetText().
 //
-// Returns the index of the character in internal character list. -1 for error.
+// Returns the index of the character in the text page's character list.
+// Returns -1 on error.
+//
+// The text page's character list is a list of all characters on the page,
+// including virtual characters.
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFText_GetCharIndexFromTextIndex(FPDF_TEXTPAGE text_page, int nTextIndex);
 
-// Get the text index in |text_page| internal character list.
+// Get the character index in the string returned from FPDFText_GetText().
 //
 //   text_page  - a text page information structure.
-//   nCharIndex - index of the character in internal character list.
+//   nCharIndex - index of a character in the text page's character list.
 //
-// Returns the index of the text returned from FPDFText_GetText(). -1 for error.
+// Returns the index of the character in the string returned from
+// FPDFText_GetText(). Returns -1 on error.
+//
+// The text page's character list is a list of all characters on the page,
+// including virtual characters.
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFText_GetTextIndexFromCharIndex(FPDF_TEXTPAGE text_page, int nCharIndex);
 
