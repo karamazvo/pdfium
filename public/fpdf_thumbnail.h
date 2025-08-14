@@ -16,14 +16,14 @@ extern "C" {
 
 // Experimental API.
 // Gets the decoded data from the thumbnail of |page| if it exists.
-// This only modifies |buffer| if |buflen| less than or equal to the
-// size of the decoded data. Returns the size of the decoded
-// data or 0 if thumbnail DNE. Optional, pass null to just retrieve
-// the size of the buffer needed.
 //
 //   page    - handle to a page.
-//   buffer  - buffer for holding the decoded image data.
-//   buflen  - length of the buffer in bytes.
+//   buffer  - buffer for holding the decoded image data. Can be NULL.
+//   buflen  - length of the buffer in bytes. Can be 0.
+//
+// Returns the size of the decoded data in bytes. If |buffer| is NULL or
+// |buflen| is smaller than the decoded data, this function returns the required
+// buffer size. If the thumbnail does not exist, this function returns 0.
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFPage_GetDecodedThumbnailData(FPDF_PAGE page,
                                  void* buffer,
@@ -31,14 +31,14 @@ FPDFPage_GetDecodedThumbnailData(FPDF_PAGE page,
 
 // Experimental API.
 // Gets the raw data from the thumbnail of |page| if it exists.
-// This only modifies |buffer| if |buflen| is less than or equal to
-// the size of the raw data. Returns the size of the raw data or 0
-// if thumbnail DNE. Optional, pass null to just retrieve the size
-// of the buffer needed.
 //
 //   page    - handle to a page.
-//   buffer  - buffer for holding the raw image data.
-//   buflen  - length of the buffer in bytes.
+//   buffer  - buffer for holding the raw image data. Can be NULL.
+//   buflen  - length of the buffer in bytes. Can be 0.
+//
+// Returns the size of the raw data in bytes. If |buffer| is NULL or |buflen| is
+// smaller than the raw data, this function returns the required buffer size.
+// If the thumbnail does not exist, this function returns 0.
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFPage_GetRawThumbnailData(FPDF_PAGE page,
                              void* buffer,
