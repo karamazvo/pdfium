@@ -411,3 +411,45 @@ TEST(fxcrt, FXSYSatoui) {
   EXPECT_EQ(4294967295, FXSYS_atoui("4294967296"));
   EXPECT_EQ(4294967295, FXSYS_atoui("-4294967345"));
 }
+
+#if !BUILDFLAG(IS_WIN)
+TEST(fxcrt, FXSYS_strlwr) {
+  char str[] = "ABC";
+  FXSYS_strlwr(str);
+  EXPECT_STREQ("abc", str);
+}
+
+TEST(fxcrt, FXSYS_strupr) {
+  char str[] = "abc";
+  FXSYS_strupr(str);
+  EXPECT_STREQ("ABC", str);
+}
+
+TEST(fxcrt, FXSYS_wcslwr) {
+  wchar_t str[] = L"ABC";
+  FXSYS_wcslwr(str);
+  EXPECT_STREQ(L"abc", str);
+}
+
+TEST(fxcrt, FXSYS_wcsupr) {
+  wchar_t str[] = L"abc";
+  FXSYS_wcsupr(str);
+  EXPECT_STREQ(L"ABC", str);
+}
+#endif  // !BUILDFLAG(IS_WIN)
+
+TEST(fxcrt, FXSYS_stricmp) {
+  EXPECT_EQ(0, FXSYS_stricmp("abc", "ABC"));
+  EXPECT_GT(0, FXSYS_stricmp("abc", "abd"));
+  EXPECT_LT(0, FXSYS_stricmp("abd", "abc"));
+}
+
+TEST(fxcrt, FXSYS_wcsicmp) {
+  EXPECT_EQ(0, FXSYS_wcsicmp(L"abc", L"ABC"));
+  EXPECT_GT(0, FXSYS_wcsicmp(L"abc", L"abd"));
+  EXPECT_LT(0, FXSYS_wcsicmp(L"abd", L"abc"));
+}
+
+TEST(fxcrt, FXSYS_sqrt2) {
+  EXPECT_FLOAT_EQ(5.0f, FXSYS_sqrt2(3.0f, 4.0f));
+}

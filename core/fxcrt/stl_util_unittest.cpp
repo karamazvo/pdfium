@@ -94,3 +94,16 @@ TEST(fxcrt, CopySpan) {
     EXPECT_EQ(b, 123.0f);
   }
 }
+
+TEST(fxcrt, CollectionSize) {
+  std::vector<int> vec(5);
+  EXPECT_EQ(5, fxcrt::CollectionSize<int>(vec));
+}
+
+TEST(fxcrt, IndexInBounds) {
+  std::vector<int> vec(5);
+  EXPECT_TRUE(fxcrt::IndexInBounds(vec, 0));
+  EXPECT_TRUE(fxcrt::IndexInBounds(vec, 4));
+  EXPECT_FALSE(fxcrt::IndexInBounds(vec, 5));
+  EXPECT_FALSE(fxcrt::IndexInBounds(vec, -1));
+}

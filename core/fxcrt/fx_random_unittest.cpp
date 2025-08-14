@@ -22,3 +22,12 @@ TEST(FXRandomTest, GenerateMT3600times) {
     EXPECT_TRUE(seen.insert(current).second);
   }
 }
+
+TEST(FXRandomTest, MTGenerate) {
+  void* context = FX_Random_MT_Start(12345);
+  ASSERT_TRUE(context);
+  uint32_t first = FX_Random_MT_Generate(context);
+  uint32_t second = FX_Random_MT_Generate(context);
+  EXPECT_NE(first, second);
+  FX_Random_MT_Close(context);
+}
