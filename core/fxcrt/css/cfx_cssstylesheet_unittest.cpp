@@ -261,7 +261,7 @@ TEST_F(CFXCSSStyleSheetTest, ParseBorder) {
 }
 
 TEST_F(CFXCSSStyleSheetTest, ParseBorderFull) {
-  LoadAndVerifyDecl(L"a { border: 5px solid red; }", {L"a"}, 4);
+  LoadAndVerifyDecl(L"a { border: 5px red; }", {L"a"}, 4);
   VerifyFloat(CFX_CSSProperty::BorderLeftWidth, 5.0,
               CFX_CSSNumber::Unit::kPixels);
   VerifyFloat(CFX_CSSProperty::BorderRightWidth, 5.0,

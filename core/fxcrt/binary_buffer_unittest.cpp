@@ -149,4 +149,58 @@ TEST(BinaryBuffer, AppendDouble) {
   // arch-dependent bit pattern.
 }
 
+TEST(BinaryBuffer, GetMutableSpan) {
+  BinaryBuffer buffer;
+  buffer.AppendUint8(65u);
+  pdfium::span<uint8_t> span = buffer.GetMutableSpan();
+  ASSERT_EQ(1u, span.size());
+  EXPECT_EQ(65u, span[0]);
+  span[0] = 66u;
+  pdfium::span<const uint8_t> const_span = buffer.GetSpan();
+  ASSERT_EQ(1u, const_span.size());
+  EXPECT_EQ(66u, const_span[0]);
+}
+
+TEST(BinaryBuffer, SetAllocStep) {
+  BinaryBuffer buffer;
+  buffer.SetAllocStep(256);
+  buffer.AppendUint8(1);
+  buffer.EstimateSize(1);
+  EXPECT_GE(buffer.GetSpan().size(), 1u);
+}
+
+TEST(BinaryBuffer, EstimateSize) {
+  BinaryBuffer buffer;
+  buffer.EstimateSize(100);
+  buffer.AppendUint8(1);
+  EXPECT_GE(buffer.GetSpan().size(), 1u);
+}
+
+class BinaryBufferUnderTest : public BinaryBuffer {
+ public:
+  void CallDeleteBuf(size_t start_index, size_t count) {
+    DeleteBuf(start_index, count);
+  }
+};
+
+TEST(BinaryBuffer, DeleteBuf) {
+  BinaryBufferUnderTest buffer;
+  buffer.AppendString("ABC");
+  buffer.CallDeleteBuf(1, 1);
+  ASSERT_EQ(2u, buffer.GetSize());
+  EXPECT_EQ('A', buffer.GetSpan()[0]);
+  EXPECT_EQ('C', buffer.GetSpan()[1]);
+}
+
+TEST(BinaryBuffer, DetachBuffer) {
+  BinaryBuffer buffer;
+  buffer.AppendString("ABC");
+  DataVector<uint8_t> data = buffer.DetachBuffer();
+  EXPECT_TRUE(buffer.IsEmpty());
+  ASSERT_EQ(3u, data.size());
+  EXPECT_EQ('A', data[0]);
+  EXPECT_EQ('B', data[1]);
+  EXPECT_EQ('C', data[2]);
+}
+
 }  // namespace fxcrt
