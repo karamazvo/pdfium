@@ -112,12 +112,10 @@ typedef struct _IPDF_JsPlatform {
   //                       the response, which might be sensitive information.
   //       response    -   A string buffer allocated by PDFium, to receive the
   //                       user's response.
-  //       length      -   The length of the buffer in bytes. Currently, it is
-  //                       always 2048.
+  //       length      -   The length of the buffer in bytes.
   // Return Value:
-  //       Number of bytes the complete user input would actually require, not
-  //       including trailing zeros, regardless of the value of the length
-  //       parameter or the presence of the response buffer.
+  //       The number of bytes of the user's response. If |response| is NULL or
+  //       |length| is too small, this is the required buffer size.
   // Comments:
   //       No matter on what platform, the response buffer should be always
   //       written using UTF-16LE encoding. If a response buffer is
