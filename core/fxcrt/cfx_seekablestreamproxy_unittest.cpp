@@ -63,3 +63,28 @@ TEST(SeekableStreamProxyTest, UTF16BEStream) {
   EXPECT_EQ(L'A', buffer[0]);
   EXPECT_EQ(L'\u0142', buffer[1]);
 }
+
+TEST(SeekableStreamProxyTest, GetSize) {
+  const uint8_t data[] = {1, 2, 3, 4};
+  auto proxy_stream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(
+      pdfium::MakeRetain<CFX_ReadOnlySpanStream>(data));
+  EXPECT_EQ(4, proxy_stream->GetSize());
+}
+
+TEST(SeekableStreamProxyTest, IsEOF) {
+  const uint8_t data[] = {1, 2, 3, 4};
+  auto proxy_stream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(
+      pdfium::MakeRetain<CFX_ReadOnlySpanStream>(data));
+  EXPECT_FALSE(proxy_stream->IsEOF());
+  wchar_t buffer[4];
+  proxy_stream->ReadBlock(buffer);
+  EXPECT_TRUE(proxy_stream->IsEOF());
+}
+
+TEST(SeekableStreamProxyTest, SetAndGetCodePage) {
+  const uint8_t data[] = {1, 2, 3, 4};
+  auto proxy_stream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(
+      pdfium::MakeRetain<CFX_ReadOnlySpanStream>(data));
+  proxy_stream->SetCodePage(FX_CodePage::kUTF16BE);
+  EXPECT_EQ(FX_CodePage::kUTF16BE, proxy_stream->GetCodePage());
+}
