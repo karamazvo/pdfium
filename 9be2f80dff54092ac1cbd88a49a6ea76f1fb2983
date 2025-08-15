@@ -56,6 +56,24 @@
       "message": "Move this close to line 448?",
       "revId": "9be2f80dff54092ac1cbd88a49a6ea76f1fb2983",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "94c66dd7_9e6404d5",
+        "filename": "core/fpdfapi/font/cpdf_font.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 439,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-15T19:12:37Z",
+      "side": 1,
+      "message": "Feel free to land this as-is. I want to do some code refactoring anyway, so I can get this later.",
+      "parentUuid": "8fcc7bd0_1ba0ef97",
+      "revId": "9be2f80dff54092ac1cbd88a49a6ea76f1fb2983",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
