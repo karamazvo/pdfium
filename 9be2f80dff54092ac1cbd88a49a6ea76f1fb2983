@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "27b083e0_84598197",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2025-08-15T18:08:19Z",
+      "side": 1,
+      "message": "Need to add tests\n\n1) like the one in this issue with cmap(0,0) and cmap(3,0) and want (3,0)\n\n2) like the one in 378932943 with cmap(0,*) and no cmap(3,0) or cmap(3,1) and want cmap(0,*)",
+      "revId": "9be2f80dff54092ac1cbd88a49a6ea76f1fb2983",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
