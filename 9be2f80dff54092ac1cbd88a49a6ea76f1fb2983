@@ -1,6 +1,29 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "6f254101_37bb81e5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-15T19:11:09Z",
+      "side": 1,
+      "message": "\"after that change, all ...\"",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 6
+      },
+      "revId": "9be2f80dff54092ac1cbd88a49a6ea76f1fb2983",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "27b083e0_84598197",
@@ -14,6 +37,23 @@
       "writtenOn": "2025-08-15T18:08:19Z",
       "side": 1,
       "message": "Need to add tests\n\n1) like the one in this issue with cmap(0,0) and cmap(3,0) and want (3,0)\n\n2) like the one in 378932943 with cmap(0,*) and no cmap(3,0) or cmap(3,1) and want cmap(0,*)",
+      "revId": "9be2f80dff54092ac1cbd88a49a6ea76f1fb2983",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8fcc7bd0_1ba0ef97",
+        "filename": "core/fpdfapi/font/cpdf_font.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 439,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-15T19:11:09Z",
+      "side": 1,
+      "message": "Move this close to line 448?",
       "revId": "9be2f80dff54092ac1cbd88a49a6ea76f1fb2983",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
