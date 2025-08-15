@@ -43,6 +43,48 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "2793781b_258eba15",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-15T07:00:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7636d27e_08714e2b",
+      "range": {
+        "startLine": 9,
+        "startChar": 80,
+        "endLine": 9,
+        "endChar": 113
+      },
+      "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "21ec99a9_eca54ad3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-15T07:00:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ef3362a8_c99c8ace",
+      "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "20ff1c1f_8ec53805",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 5
@@ -100,6 +142,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "db63db52_9feb8d77",
+        "filename": "fpdfsdk/fpdf_ppo.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-15T07:00:19Z",
+      "side": 1,
+      "message": "It does compile, but the thing is the Pages Inserted function requests a size_t argument, but earlier in the code it is stated `unsigned long length`, which is why I thought we needed the cast.\n\nI\u0027ll remove it but i do feel its better for readability.",
+      "parentUuid": "8aca7ab6_0473b7d7",
+      "range": {
+        "startLine": 102,
+        "startChar": 38,
+        "endLine": 102,
+        "endChar": 58
+      },
+      "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c143562b_0232093b",
         "filename": "fpdfsdk/fpdf_ppo.cpp",
         "patchSetId": 5
@@ -111,6 +177,30 @@
       "writtenOn": "2025-08-14T17:44:35Z",
       "side": 1,
       "message": "This looks like an unnecessary size_t to size_t cast.",
+      "range": {
+        "startLine": 154,
+        "startChar": 36,
+        "endLine": 154,
+        "endChar": 47
+      },
+      "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7f715bef_03baff35",
+        "filename": "fpdfsdk/fpdf_ppo.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-15T07:00:19Z",
+      "side": 1,
+      "message": "Yeah - I noticed now.\nI think when I was patching this function I tried to make sure that all inputs are size_t, but forgot that page_indices.size() is size_t. Have fixed it now.",
+      "parentUuid": "c143562b_0232093b",
       "range": {
         "startLine": 154,
         "startChar": 36,
@@ -134,6 +224,24 @@
       "writtenOn": "2025-08-14T17:44:35Z",
       "side": 1,
       "message": "Use EmbedderTest::HashBitmap() instead of adding a new checksum function?",
+      "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9c42454f_44edf60a",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 720,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-15T07:00:19Z",
+      "side": 1,
+      "message": "Done and ran with result\n```\nNote: Google Test filter \u003d *XFAMovePage\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] Running 1 test from 1 test suite.\n[----------] Global test environment set-up.\n[----------] 1 test from FPDFPPOEmbedderTest\n[ RUN      ] FPDFPPOEmbedderTest.XFAMovePage\nChecksum before move: 4b6590a267eae90b8be1607e808fb57f\nChecksum after move: 4b6590a267eae90b8be1607e808fb57f\nMove page test completed successfully.\n[       OK ] FPDFPPOEmbedderTest.XFAMovePage (11 ms)\n[----------] 1 test from FPDFPPOEmbedderTest (11 ms total)\n\n[----------] Global test environment tear-down\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 1 test from 1 test suite ran. (302 ms total)\n[  PASSED  ] 1 test.\n\n```",
+      "parentUuid": "20769d3b_41c5d17b",
       "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -184,6 +292,54 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "40ecd23e_3721084d",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 738,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-15T07:00:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "85dfc093_c9031b62",
+      "range": {
+        "startLine": 738,
+        "startChar": 40,
+        "endLine": 738,
+        "endChar": 45
+      },
+      "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5a3d49c6_637349ba",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 738,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-15T07:00:19Z",
+      "side": 1,
+      "message": "Made it to XFAMovePage",
+      "parentUuid": "59675f0b_3928e79f",
+      "range": {
+        "startLine": 738,
+        "startChar": 28,
+        "endLine": 738,
+        "endChar": 45
+      },
+      "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "57111fe2_d850a977",
@@ -197,6 +353,24 @@
       "writtenOn": "2025-08-14T17:44:35Z",
       "side": 1,
       "message": "Make these constants.",
+      "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "68f978a5_5fc82e4a",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 741,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-15T07:00:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "57111fe2_d850a977",
       "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
