@@ -26,32 +26,28 @@ class CPDF_FormObject;
 class CPDF_Page;
 class CPDF_TextObject;
 
-struct TextPageCharSegment {
-  int index;
-  int count;
-};
-
-FX_DATA_PARTITION_EXCEPTION(TextPageCharSegment);
-
 class CPDF_TextPage {
  public:
   enum class CharType : uint8_t {
     kNormal,
-    kGenerated,
+    kGenerated,  // All generated CharInfo have CPDF_Font::kInvalidCharCode
     kNotUnicode,
     kHyphen,
-    kPiece,
+    kPiece, // Probably just get rid of this?
+    kPieceContinue,
   };
 
-  class CharInfo {
+  struct Range { size_t begin; size_t end; };
+
+  class CharInfo { // GlyphInfo, really. The unicode text needs to be stored separately with a cluster mapping.
    public:
     CharInfo();
     CharInfo(CharType char_type,
              uint32_t char_code,
-             wchar_t unicode,
              CFX_PointF origin,
              CFX_FloatRect char_box,
              CFX_Matrix matrix,
+             Range text_index,
              CPDF_TextObject* text_object);
     CharInfo(const CharInfo&);
     ~CharInfo();
@@ -61,8 +57,9 @@ class CPDF_TextPage {
 
     uint32_t char_code() const { return char_code_; }
 
-    wchar_t unicode() const { return unicode_; }
-    void set_unicode(wchar_t unicode) { unicode_ = unicode; }
+    Range text_index() const { return text_index_; }
+    //int32_t unicode() const { return unicode_; } // Now a view, but cannot be reported from here.
+    //void set_unicode(int32_t unicode) { unicode_ = unicode; } // Not really a thing anymore.
 
     const CFX_PointF& origin() const { return origin_; }
 
@@ -76,12 +73,12 @@ class CPDF_TextPage {
 
    private:
     CharType char_type_ = CharType::kNormal;
-    wchar_t unicode_ = 0;  // Above `char_code_` to potentially pack tighter.
     uint32_t char_code_ = 0;
     CFX_PointF origin_;
     CFX_FloatRect char_box_;
     CFX_FloatRect loose_char_box_;
     CFX_Matrix matrix_;
+    Range text_index_; // Index of first code point.
     UnownedPtr<CPDF_TextObject> text_object_;
   };
 
@@ -139,7 +136,7 @@ class CPDF_TextPage {
   };
 
   void Init();
-  bool IsHyphen(wchar_t curChar) const;
+  bool IsHyphen(int32_t unicode) const; // More like "ShouldMarkAPreviousHyphenAsGeneratedBeforeAppending"
   void ProcessObject();
   void ProcessFormObject(CPDF_FormObject* pFormObj,
                          const CFX_Matrix& form_matrix);
@@ -158,7 +155,7 @@ class CPDF_TextPage {
                               const CFX_Matrix& form_matrix,
                               const CFX_Matrix& matrix);
   const CharInfo* GetPrevCharInfo() const;
-  std::optional<CharInfo> GenerateCharInfo(wchar_t unicode,
+  std::optional<CharInfo> GenerateCharInfo(Range text_index,
                                            const CFX_Matrix& form_matrix);
   bool IsSameAsPreTextObject(CPDF_TextObject* pTextObj,
                              const CPDF_PageObjectHolder* pObjList,
@@ -166,15 +163,15 @@ class CPDF_TextPage {
   bool IsSameTextObject(CPDF_TextObject* pTextObj1,
                         CPDF_TextObject* pTextObj2) const;
   void CloseTempLine();
-  MarkedContentState PreMarkedContent(const CPDF_TextObject* pTextObj);
+  MarkedContentState PreMarkedContent(const TransformedTextObject& obj);
   void ProcessMarkedContent(const TransformedTextObject& obj);
   void FindPreviousTextObject();
-  void AddCharInfoByLRDirection(wchar_t wChar, const CharInfo& info);
-  void AddCharInfoByRLDirection(wchar_t wChar, const CharInfo& info);
+  void AddCharInfoByLRDirection(int32_t unicode, const CharInfo& info);
+  void AddCharInfoByRLDirection(int32_t unicode, const CharInfo& info);
   TextOrientation GetTextObjectWritingMode(
       const CPDF_TextObject* pTextObj) const;
   TextOrientation FindTextlineFlowOrientation() const;
-  void AppendGeneratedCharacter(wchar_t unicode,
+  void AppendGeneratedCharacter(WideStringView unicode,
                                 const CFX_Matrix& form_matrix,
                                 bool use_temp_buffer);
   void SwapTempTextBuf(size_t iCharListStartAppend, size_t iBufStartAppend);
@@ -182,11 +179,16 @@ class CPDF_TextPage {
       const std::function<bool(const CharInfo&)>& predicate) const;
 
   UnownedPtr<const CPDF_Page> const page_;
-  DataVector<TextPageCharSegment> char_indices_;
+  // These are append only deques, just trying to avoid copying.
+  // If the number of CharInfo or rough size of text is known before hand, that would be much faster.
+  // TODO: temp_ means "for the current line"
   std::deque<CharInfo> char_list_;
   std::deque<CharInfo> temp_char_list_;
+  std::deque<size_t> char_index_for_text_index_;  // These are a bit awkward since there may be multiple.
+  std::deque<size_t> temp_char_index_for_text_index_; // Before there weren't because the first rect in ActualText got everything.
   WideTextBuffer text_buf_;
   WideTextBuffer temp_text_buf_;
+
   UnownedPtr<const CPDF_TextObject> prev_text_obj_;
   CFX_Matrix prev_matrix_;
   const bool rtl_;
