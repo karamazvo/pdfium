@@ -107,6 +107,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a7468210_dd49801a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-16T11:42:38Z",
+      "side": 1,
+      "message": "I think this is done - reopen if needed.",
+      "parentUuid": "e78fc8b0_5adb9753",
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b77a06ea_6d4c9648",
@@ -579,6 +597,24 @@
       "side": 1,
       "message": "The section of code was pre-existing commit, and the function would still return 0 in the case of the error. And the fact that this is a pre existing implementation suggests that other sections of code that invoke the same function may already have such checks to see if page_obj_num is 0. Do let me know if i should change it to add the check here instead. I.e. we can either handle the error to give a non-zero return value, or we can propagate it for the caller to handle.\n\nDo let me know which approach is fine.",
       "parentUuid": "55c6a45e_33c2a1df",
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6ebbadb5_0c1fa6f1",
+        "filename": "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-16T11:42:38Z",
+      "side": 1,
+      "message": "Keeping same approach as before and making sure that caller handles it.\nDone - re-open if needed.",
+      "parentUuid": "c75ee881_d67c2103",
       "revId": "2e1453b76e026171cac1555433152051d1c82e55",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
