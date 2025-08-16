@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "23f0caf9_43f1669e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-16T03:55:40Z",
+      "side": 1,
+      "message": "Just sanity checking PDFium behavior.",
+      "revId": "01a6297609b6bf7ea2367850b923168c84fee069",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
