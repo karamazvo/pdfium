@@ -16,6 +16,24 @@
       "message": "Mostly I wanted to be sure this would cherry-pick cleanly. Now that I look about it seems that maybe you have a different method of doing cherry-picks into Chromium?",
       "revId": "225faccaad730528d28ff7f3a4d3e7de6d12d950",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "09c55fa9_a5a306ad",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-18T19:21:54Z",
+      "side": 1,
+      "message": "Since CQ is running and succeeding, I believe this can land without any issues. Cherrypicking to the branch like this is all you need to do for a PDFium merge for Chromium. No need to roll DEPS on the Chromium branch.",
+      "parentUuid": "cd795c2c_b6c11ef0",
+      "revId": "225faccaad730528d28ff7f3a4d3e7de6d12d950",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
