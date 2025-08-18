@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cd795c2c_b6c11ef0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2025-08-18T19:16:45Z",
+      "side": 1,
+      "message": "Mostly I wanted to be sure this would cherry-pick cleanly. Now that I look about it seems that maybe you have a different method of doing cherry-picks into Chromium?",
+      "revId": "225faccaad730528d28ff7f3a4d3e7de6d12d950",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
