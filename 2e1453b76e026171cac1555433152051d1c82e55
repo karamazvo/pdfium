@@ -252,6 +252,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "424ffbf5_958dd9f6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-21T09:35:27Z",
+      "side": 1,
+      "message": "Yeah turns out I slightly misunderstood the bug at hand... I\u0027ll make the changes and upload it.\n\nTest passes in situation 1, I will test situation 2 and get back.",
+      "parentUuid": "6fe70fb0_92d730d3",
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "9e4201af_21cfea49",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1

@@ -212,6 +212,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "586929a9_d0026504",
+        "filename": "fpdfsdk/fpdf_ppo.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-21T09:35:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "73565d81_d6df36ef",
+      "range": {
+        "startLine": 102,
+        "startChar": 38,
+        "endLine": 102,
+        "endChar": 58
+      },
+      "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c143562b_0232093b",
@@ -437,6 +461,24 @@
       "side": 1,
       "message": "Might as well use `constexpr`, so it\u0027s the constest. :) Also rename to \"kInitialPageIndex\" to fit the style for konstants.",
       "parentUuid": "68f978a5_5fc82e4a",
+      "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "627349a9_a20eb376",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 741,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-21T09:35:27Z",
+      "side": 1,
+      "message": "This should be done as well",
+      "parentUuid": "050ca743_aae83ff3",
       "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }

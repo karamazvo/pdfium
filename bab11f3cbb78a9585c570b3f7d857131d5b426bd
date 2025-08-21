@@ -53,6 +53,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1419905f_0e71ef15",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-21T09:35:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fc2ce3c7_8e511ecb",
+      "revId": "bab11f3cbb78a9585c570b3f7d857131d5b426bd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c19d2738_d7ad0833",
@@ -66,6 +84,24 @@
       "writtenOn": "2025-08-21T01:51:52Z",
       "side": 1,
       "message": "Does calling RenderPage(), AKA EmbedderTest::RenderPage(), from this EmbedderTest sub-class remove the need to directly use a bunch of PDFium APIs for a common task?",
+      "revId": "bab11f3cbb78a9585c570b3f7d857131d5b426bd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bf391042_56f550b8",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 735,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-21T09:35:27Z",
+      "side": 1,
+      "message": "Yeah, that should work, Done in patchset 10.",
+      "parentUuid": "c19d2738_d7ad0833",
       "revId": "bab11f3cbb78a9585c570b3f7d857131d5b426bd",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -87,6 +123,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "78ec813f_73846745",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 742,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-21T09:35:27Z",
+      "side": 1,
+      "message": "Removed and done.",
+      "parentUuid": "8b63ccca_9f246abe",
+      "revId": "bab11f3cbb78a9585c570b3f7d857131d5b426bd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "528b405b_29759472",
@@ -104,6 +158,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fee79f2b_f420b55d",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 745,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-21T09:35:27Z",
+      "side": 1,
+      "message": "I made page_indices a const, renamed and hardcoded move_count for the new patchset.",
+      "parentUuid": "528b405b_29759472",
+      "revId": "bab11f3cbb78a9585c570b3f7d857131d5b426bd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1476fd1e_14414f03",
@@ -117,6 +189,24 @@
       "writtenOn": "2025-08-21T01:51:52Z",
       "side": 1,
       "message": "Looks like this file can use some auto-formatting too.",
+      "revId": "bab11f3cbb78a9585c570b3f7d857131d5b426bd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "588ff754_fedda351",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 748,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-21T09:35:27Z",
+      "side": 1,
+      "message": "I ran clang-format and cl format on fpdfsdk/fpdf_ppo_embeddertest.cpp",
+      "parentUuid": "1476fd1e_14414f03",
       "revId": "bab11f3cbb78a9585c570b3f7d857131d5b426bd",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
