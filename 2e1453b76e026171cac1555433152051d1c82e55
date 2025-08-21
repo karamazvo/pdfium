@@ -234,6 +234,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "6fe70fb0_92d730d3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-21T01:51:52Z",
+      "side": 1,
+      "message": "Thanks for working on the test. I tried out this code in 2 ways:\n\n1) Fully patched into my local unmodified tree.\n2) Only patch in the test changes and the new test PDF.\n\nI found either way, the test succeeds. While the test certainly exercises FPDF_MovePages(), it doesn\u0027t appear to be demonstrating the broken behavior in scenario (2).",
+      "parentUuid": "d48a89c8_f3792939",
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "9e4201af_21cfea49",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1

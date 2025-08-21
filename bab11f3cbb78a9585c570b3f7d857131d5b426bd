@@ -34,6 +34,91 @@
       "parentUuid": "921b164f_837d4e48",
       "revId": "bab11f3cbb78a9585c570b3f7d857131d5b426bd",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fc2ce3c7_8e511ecb",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-21T01:51:52Z",
+      "side": 1,
+      "message": "With ComputeBitmapChecksum() gone, this and line 9 can be removed as well.",
+      "revId": "bab11f3cbb78a9585c570b3f7d857131d5b426bd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c19d2738_d7ad0833",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 735,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-21T01:51:52Z",
+      "side": 1,
+      "message": "Does calling RenderPage(), AKA EmbedderTest::RenderPage(), from this EmbedderTest sub-class remove the need to directly use a bunch of PDFium APIs for a common task?",
+      "revId": "bab11f3cbb78a9585c570b3f7d857131d5b426bd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8b63ccca_9f246abe",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 742,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-21T01:51:52Z",
+      "side": 1,
+      "message": "Please remove the print-debugging code from the CL. I would suggest keeping it in a separate local branch or patch for debugging, when needed.",
+      "revId": "bab11f3cbb78a9585c570b3f7d857131d5b426bd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "528b405b_29759472",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 745,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-21T01:51:52Z",
+      "side": 1,
+      "message": "More constants?",
+      "revId": "bab11f3cbb78a9585c570b3f7d857131d5b426bd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1476fd1e_14414f03",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 748,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-21T01:51:52Z",
+      "side": 1,
+      "message": "Looks like this file can use some auto-formatting too.",
+      "revId": "bab11f3cbb78a9585c570b3f7d857131d5b426bd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }

@@ -190,6 +190,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "73565d81_d6df36ef",
+        "filename": "fpdfsdk/fpdf_ppo.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-21T01:51:52Z",
+      "side": 1,
+      "message": "Thinking about this a bit more... please use pdfium::checked_cast\u003csize_t\u003e() to convert `length` to size_t earlier in the function. Then use the size_t variable everywhere in place of `length`. In practice, the checked_cast() will not fail, so don\u0027t worry about it potentially crashing.",
+      "parentUuid": "c77036d7_7cb1fdfa",
+      "range": {
+        "startLine": 102,
+        "startChar": 38,
+        "endLine": 102,
+        "endChar": 58
+      },
+      "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c143562b_0232093b",
         "filename": "fpdfsdk/fpdf_ppo.cpp",
         "patchSetId": 5
@@ -395,6 +419,24 @@
       "side": 1,
       "message": "Done",
       "parentUuid": "57111fe2_d850a977",
+      "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "050ca743_aae83ff3",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 741,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-21T01:51:52Z",
+      "side": 1,
+      "message": "Might as well use `constexpr`, so it\u0027s the constest. :) Also rename to \"kInitialPageIndex\" to fit the style for konstants.",
+      "parentUuid": "68f978a5_5fc82e4a",
       "revId": "33940b69a9dcf9867eedf5bec934fc51898765f7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
