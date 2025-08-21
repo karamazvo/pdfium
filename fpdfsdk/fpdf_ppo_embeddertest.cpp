@@ -5,6 +5,8 @@
 #include <array>
 #include <iterator>
 #include <memory>
+#include <set>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -32,7 +34,22 @@
 
 namespace {
 
-class FPDFPPOEmbedderTest : public EmbedderTest {};
+class FPDFPPOEmbedderTest : public EmbedderTest {
+protected:
+// moved function from another file for use in this test suite
+  void TestRenderPageBitmapWithFlags(FPDF_PAGE page,
+                                     int flags,
+                                     const char* expected_checksum) {
+    int bitmap_width = static_cast<int>(FPDF_GetPageWidth(page));
+    int bitmap_height = static_cast<int>(FPDF_GetPageHeight(page));
+    ScopedFPDFBitmap bitmap(FPDFBitmap_Create(bitmap_width, bitmap_height, 0));
+    ASSERT_TRUE(FPDFBitmap_FillRect(bitmap.get(), 0, 0, bitmap_width,
+                                    bitmap_height, 0xFFFFFFFF));
+    FPDF_RenderPageBitmap(bitmap.get(), page, 0, 0, bitmap_width, bitmap_height,
+                          0, flags);
+    CompareBitmap(bitmap.get(), bitmap_width, bitmap_height, expected_checksum);
+  }
+};
 
 int FakeBlockWriter(FPDF_FILEWRITE* pThis,
                     const void* pData,
@@ -698,4 +715,81 @@ TEST_F(FPDFPPOEmbedderTest, ImportIntoDocWithWrongPageType) {
     CompareBitmap(bitmap.get(), 200, 100, new_page_2_checksum);
     CloseSavedPage(page);
   }
+}
+
+// For Issue 433689235
+TEST_F(FPDFPPOEmbedderTest, XFAMovePage) {
+  // Load the PDF with injected XFA present
+  std::string path = PathService::GetTestFilePath("injected_xfa_multipage.pdf");
+  FPDF_DOCUMENT document = FPDF_LoadDocument(path.c_str(), nullptr);
+  ASSERT_TRUE(document);
+
+  // Test if XFA is present
+  EXPECT_EQ(FPDF_GetFormType(document), 3);
+
+  const int page_count = FPDF_GetPageCount(document);
+  ASSERT_EQ(page_count, 5);  // needs exactly 5 pages
+
+  // Hashes of original page
+  std::vector<std::string> checksums_before;
+  for (int i = 0; i < page_count; i++) {
+    FPDF_PAGE page = FPDF_LoadPage(document, i);
+    ASSERT_TRUE(page);
+    auto bitmap = RenderPage(page);
+    checksums_before.push_back(HashBitmap(bitmap.get()));
+    FPDF_ClosePage(page);
+  }
+
+  // Page movement
+  const int kPageIndices[] = {0};
+  ASSERT_TRUE(FPDF_MovePages(document, kPageIndices, 1, 2));
+
+  // Save changes to buffer
+  struct VectorFileWrite {
+    FPDF_FILEWRITE filewrite;
+    std::vector<uint8_t> buffer;
+  } file_write;
+
+  file_write.filewrite.WriteBlock = [](FPDF_FILEWRITE* param, const void* data,
+    unsigned long size) -> int {
+    auto* wrapper = reinterpret_cast<VectorFileWrite*>(param);
+    const uint8_t* bytes = reinterpret_cast<const uint8_t*>(data);
+    wrapper->buffer.insert(wrapper->buffer.end(), bytes, bytes + size);
+    return 1;
+  };
+
+  ASSERT_TRUE(FPDF_SaveAsCopy(document, &file_write.filewrite, 0));
+
+  // Close the original document
+  FPDF_CloseDocument(document);
+
+  // Reload from the updated buffer
+  FPDF_DOCUMENT document_updated = FPDF_LoadMemDocument(file_write.buffer.data()
+    , file_write.buffer.size(), nullptr);
+  ASSERT_TRUE(document_updated);
+
+  // Capture new page hashes
+  std::vector<std::string> checksums_after;
+  for (int i = 0; i < page_count; i++) {
+    FPDF_PAGE page = FPDF_LoadPage(document_updated, i);
+    ASSERT_TRUE(page);
+    auto bitmap = RenderPage(page);
+    checksums_after.push_back(HashBitmap(bitmap.get()));
+    FPDF_ClosePage(page);
+  }
+
+  // Page 0 content should have changed
+  EXPECT_STRNE(checksums_before[0].c_str(), checksums_after[0].c_str());
+
+  // Pages should be reordered
+  std::multiset<std::string> set_before(checksums_before.begin(),
+    checksums_before.end());
+  std::multiset<std::string> set_after(checksums_after.begin(),
+    checksums_after.end());
+  EXPECT_EQ(set_before, set_after);
+
+  // And finally the index should have also changed.
+  EXPECT_EQ(checksums_before[0], checksums_after[2]);
+
+  FPDF_CloseDocument(document_updated);
 }
