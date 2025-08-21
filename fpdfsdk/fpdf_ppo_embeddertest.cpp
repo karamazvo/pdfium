@@ -5,6 +5,7 @@
 #include <array>
 #include <iterator>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -32,7 +33,22 @@
 
 namespace {
 
-class FPDFPPOEmbedderTest : public EmbedderTest {};
+class FPDFPPOEmbedderTest : public EmbedderTest {
+protected:
+// moved function from another file for use in this test suite
+  void TestRenderPageBitmapWithFlags(FPDF_PAGE page,
+                                     int flags,
+                                     const char* expected_checksum) {
+    int bitmap_width = static_cast<int>(FPDF_GetPageWidth(page));
+    int bitmap_height = static_cast<int>(FPDF_GetPageHeight(page));
+    ScopedFPDFBitmap bitmap(FPDFBitmap_Create(bitmap_width, bitmap_height, 0));
+    ASSERT_TRUE(FPDFBitmap_FillRect(bitmap.get(), 0, 0, bitmap_width,
+                                    bitmap_height, 0xFFFFFFFF));
+    FPDF_RenderPageBitmap(bitmap.get(), page, 0, 0, bitmap_width, bitmap_height,
+                          0, flags);
+    CompareBitmap(bitmap.get(), bitmap_width, bitmap_height, expected_checksum);
+  }
+};
 
 int FakeBlockWriter(FPDF_FILEWRITE* pThis,
                     const void* pData,
@@ -697,5 +713,33 @@ TEST_F(FPDFPPOEmbedderTest, ImportIntoDocWithWrongPageType) {
     ScopedFPDFBitmap bitmap = RenderPage(page);
     CompareBitmap(bitmap.get(), 200, 100, new_page_2_checksum);
     CloseSavedPage(page);
+  }
+}
+
+// For Issue 433689235
+TEST_F(FPDFPPOEmbedderTest, XFAMovePage) {
+  ASSERT_TRUE(OpenDocument("injected_xfa_multipage.pdf"));
+  constexpr int kInitialPageIndex = 0;
+  constexpr int kNewPosition = 2;
+
+  {
+    ScopedFPDFPage page(FPDF_LoadPage(document(), kInitialPageIndex));
+    ASSERT_TRUE(page);
+    auto bitmap_original0 = RenderPage(page.get());
+    std::string checksum_original0 = HashBitmap(bitmap_original0.get());
+
+    // Move page 0 → position 2
+    constexpr int kPageIndices[] = {kInitialPageIndex};
+    EXPECT_TRUE(FPDF_MovePages(document(), kPageIndices,
+                               1, kNewPosition));
+
+    // After move, render *new* page 0
+    ScopedFPDFPage new_page(FPDF_LoadPage(document(), 0));
+    ASSERT_TRUE(new_page);
+    auto bitmap_new0 = RenderPage(new_page.get());
+    std::string checksum_new0 = HashBitmap(bitmap_new0.get());
+
+    // Regression check:
+    EXPECT_STRNE(checksum_original0.c_str(), checksum_new0.c_str());
   }
 }
