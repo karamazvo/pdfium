@@ -1,0 +1,250 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bd7a6495_7b8093a4",
+        "filename": "fpdfsdk/fpdf_ppo.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-22T16:20:10Z",
+      "side": 1,
+      "message": "No need for this comment. The next line already contains \"size_t\" 3 times. :)",
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6317bc4b_85fbd815",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-22T16:20:10Z",
+      "side": 1,
+      "message": "Not needed. I would also suggest removing \u003cset\u003e and use a different way of tracking the checksums, as suggested in another comment.",
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6ad4c316_45eef700",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-22T16:20:10Z",
+      "side": 1,
+      "message": "Unused code?",
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d685b63d_2c1a2e1a",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 724,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-22T16:20:10Z",
+      "side": 1,
+      "message": "Use the OpenDocument() helper function instead. Then use the document() function instead of this local variable. See existing test cases for examples.",
+      "range": {
+        "startLine": 724,
+        "startChar": 27,
+        "endLine": 724,
+        "endChar": 44
+      },
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "00995fc6_44937b6f",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 728,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-22T16:20:10Z",
+      "side": 1,
+      "message": "Use `FORMTYPE_XFA_FOREGROUND` constant instead. Then the comment above is not needed.",
+      "range": {
+        "startLine": 728,
+        "startChar": 40,
+        "endLine": 728,
+        "endChar": 41
+      },
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7941f17a_c805376d",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 733,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-22T16:20:10Z",
+      "side": 1,
+      "message": "Similar situation here. The code already says the same thing.",
+      "range": {
+        "startLine": 731,
+        "startChar": 27,
+        "endLine": 733,
+        "endChar": 0
+      },
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e6a2a3c4_de14e65f",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 736,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-22T16:20:10Z",
+      "side": 1,
+      "message": "This can be LoadScopedPage(), then no need to explicitly call FPDF_ClosePage(). Reusing existing test helpers is a major theme in these comments.",
+      "range": {
+        "startLine": 736,
+        "startChar": 21,
+        "endLine": 736,
+        "endChar": 34
+      },
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a5c3f596_78c0615b",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 744,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-22T16:20:10Z",
+      "side": 1,
+      "message": "constexpr",
+      "range": {
+        "startLine": 744,
+        "startChar": 2,
+        "endLine": 744,
+        "endChar": 7
+      },
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "87c38bd1_2a6b0173",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 745,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-22T16:20:10Z",
+      "side": 1,
+      "message": "Use `std::size(kPageIndices)` instead of hardcoding the size. Or make `kPageIndices` a `std::array`. and use its data() and size() methods.",
+      "range": {
+        "startLine": 745,
+        "startChar": 53,
+        "endLine": 745,
+        "endChar": 54
+      },
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d8f512f4_1eee83cb",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 748,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-22T16:20:10Z",
+      "side": 1,
+      "message": "No need to add this new code. Save operations are common enough that this already exists. Reuse `EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));` where `EmbedderTest` already has a `WriteBlock` implementation.",
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "772b82cf_7159b742",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 767,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-22T16:20:10Z",
+      "side": 1,
+      "message": "Then use OpenSavedDocument() here.",
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3fed356b_6787e9db",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 792,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-22T16:20:10Z",
+      "side": 1,
+      "message": "Since the test is just reordering pages, can it perform the check as follows:\n\n```\nEXPECT_EQ(checksums_after[0], checksums_before[i]);\nEXPECT_EQ(checksums_after[1], checksums_before[j]);\nEXPECT_EQ(checksums_after[2], checksums_before[k]);\nEXPECT_EQ(checksums_after[3], checksums_before[l]);\nEXPECT_EQ(checksums_after[0], checksums_before[m]);\n```\n\nWhere you would fill in the index variables to match the reordering operations. Then the checks explicitly makes sure all the pages have an expected checksum, whereas the std::multiset check is a bit looser in terms of what will pass. It would be less code too.",
+      "range": {
+        "startLine": 781,
+        "startChar": 0,
+        "endLine": 792,
+        "endChar": 53
+      },
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
