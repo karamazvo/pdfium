@@ -1080,7 +1080,7 @@ CJS_Result CJS_Document::getAnnots(
           CFXJS_Engine::GetObjectPrivate(pRuntime->GetIsolate(), pObj));
       pJS_Annot->SetSDKAnnot(pSDKAnnotCur->AsBAAnnot());
       pRuntime->PutArrayElement(
-          annots, i,
+          annots, annots->Length(),
           pJS_Annot ? v8::Local<v8::Value>(pJS_Annot->ToV8Object())
                     : v8::Local<v8::Value>());
     }
