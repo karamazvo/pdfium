@@ -378,6 +378,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "0445ae60_03a58eeb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-22T17:02:19Z",
+      "side": 1,
+      "message": "I\u0027m not sure what move you are referring to. What I wanted to do was to only patch in fpdfsdk/fpdf_ppo_embeddertest.cpp and testing/resources/injected_xfa_multipage.pdf from this CL. I went about it in a slightly roundabout way, where I patched in this entire CL, and then reverted the other files.",
+      "parentUuid": "de128913_ca2787d3",
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "9e4201af_21cfea49",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
