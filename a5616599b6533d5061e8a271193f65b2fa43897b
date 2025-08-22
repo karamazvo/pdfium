@@ -33,6 +33,23 @@
       "message": "Oh, can you base this CL off of the main branch and not the master branch? PDFium switched to main years ago.",
       "revId": "a5616599b6533d5061e8a271193f65b2fa43897b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "079f9702_5e61b01f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-22T17:42:29Z",
+      "side": 1,
+      "message": "Also, thank you for working on PDFium. Please add yourself to the AUTHORS file.",
+      "revId": "a5616599b6533d5061e8a271193f65b2fa43897b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
