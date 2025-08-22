@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e5159feb_5f4d1cfd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4140855
+      },
+      "writtenOn": "2025-08-22T17:35:11Z",
+      "side": 1,
+      "message": "Already deleted",
+      "revId": "a5616599b6533d5061e8a271193f65b2fa43897b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
