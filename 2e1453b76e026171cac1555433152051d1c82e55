@@ -342,6 +342,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "294928f2_f2dc61bf",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-22T16:40:25Z",
+      "side": 1,
+      "message": "- I can\u0027t help your with your local git branch management issues. Sorry.\n- What I did locally to take this CL, and only keep the test parts is:\n```\ngit checkout -b their_branch\ngit cl patch 134810\ngit diff origin core fpdfsdk/fpdf_ppo.cpp fpdfsdk/fpdfxfa | patch -p1 -R\n```\n- Since the bug reporter can observe the issue using just public PDFium APIs, a test case should be able to as well.\n- As before, the test in the latest patchset, with or without the rest of the CL, behaves the same.",
+      "parentUuid": "ad4dc370_db55d096",
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "9e4201af_21cfea49",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
