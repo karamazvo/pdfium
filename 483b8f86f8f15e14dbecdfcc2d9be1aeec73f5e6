@@ -207,6 +207,29 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8b43a3fe_a78b68c2",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 757,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-22T16:29:42Z",
+      "side": 1,
+      "message": "Just FYI, since I expect this code to be deleted. When PDFium gets built with its bundled Clang, it also uses a Clang plugin to check for potentially unsafe pointer arithmetics. That fires here, as shown in the logs for this CQ build: https://ci.chromium.org/ui/p/pdfium/builders/try/linux_xfa/30265/overview",
+      "range": {
+        "startLine": 757,
+        "startChar": 57,
+        "endLine": 757,
+        "endChar": 69
+      },
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "772b82cf_7159b742",
