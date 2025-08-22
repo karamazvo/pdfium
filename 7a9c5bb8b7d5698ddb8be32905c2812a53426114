@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "f4dcfc06_ddd68e43",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 4140855
+      },
+      "writtenOn": "2025-08-22T17:36:21Z",
+      "side": 1,
+      "message": "Already deleted",
+      "parentUuid": "9d888734_1da0b95f",
+      "range": {
+        "startLine": 12,
+        "startChar": 5,
+        "endLine": 12,
+        "endChar": 12
+      },
+      "revId": "7a9c5bb8b7d5698ddb8be32905c2812a53426114",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "46092fa0_fccf1c55",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 2
