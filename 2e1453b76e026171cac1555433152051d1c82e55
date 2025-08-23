@@ -414,6 +414,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "7b1f532b_7afd8093",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-23T19:03:50Z",
+      "side": 1,
+      "message": "Came up with a new test case which at least on my end works on my branch as shown below\n\n```[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] Running 1 test from 1 test suite.\n[----------] Global test environment set-up.\n[----------] 1 test from FPDFPPOEmbedderTest\n[ RUN      ] FPDFPPOEmbedderTest.XFAImportCrossDocCorruption\n[DEBUG] extension ptr \u003d 0x600000218dc0\n[DEBUG] page_indices.size() \u003d 3\n[DEBUG] calling PagesInserted index\u003d4 count\u003d3\n[DEBUG] ImportPages returning true\n[       OK ] FPDFPPOEmbedderTest.XFAImportCrossDocCorruption (189 ms)\n[----------] 1 test from FPDFPPOEmbedderTest (189 ms total)\n\n[----------] Global test environment tear-down\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 1 test from 1 test suite ran. (465 ms total)\n[  PASSED  ] 1 test.\n\n(usernameandwhateverhidden) % git branch\n  main\n* pdfium-xfa-movepage```\n\nBut on main it yields\n\n```[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] Running 1 test from 1 test suite.\n[----------] Global test environment set-up.\n[----------] 1 test from FPDFPPOEmbedderTest\n[ RUN      ] FPDFPPOEmbedderTest.XFAImportCrossDocCorruption\n../../third_party/pdfium/fpdfsdk/fpdf_ppo_embeddertest.cpp:757: Failure\nExpected equality of these values:\n  GetPageChecksum(doc_b, 4, \"B[4]\")\n    Which is: \"a2bde6b68d7981e665ab25bc633746aa\"\n  doc_a_checksums[0]\n    Which is: \"4b6590a267eae90b8be1607e808fb57f\"\nStack trace:\n0   pdfium_embeddertests                0x000000010250fb58 FPDFPPOEmbedderTest_XFAImportCrossDocCorruption_Test::TestBody() + 3176\n1   pdfium_embeddertests                0x000000010319a7d8 void testing::internal::HandleSehExceptionsInMethodIfSupported\u003ctesting::Test, void\u003e(testing::Test*, void (testing::Test::*)(), char const*) + 140\n2   pdfium_embeddertests                0x0000000103167248 void testing::internal::HandleExceptionsInMethodIfSupported\u003ctesting::Test, void\u003e(testing::Test*, void (testing::Test::*)(), char const*) + 96\n\n[  FAILED  ] FPDFPPOEmbedderTest.XFAImportCrossDocCorruption (218 ms)\n[----------] 1 test from FPDFPPOEmbedderTest (218 ms total)\n\n[----------] Global test environment tear-down\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 1 test from 1 test suite ran. (504 ms total)\n[  PASSED  ] 0 tests.\n[  FAILED  ] 1 test, listed below:\n[  FAILED  ] FPDFPPOEmbedderTest.XFAImportCrossDocCorruption```\n\n\nHowever, I will format it and post it tom (it is quite late in my timezone)",
+      "parentUuid": "7936e454_a192be69",
+      "revId": "2e1453b76e026171cac1555433152051d1c82e55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "9e4201af_21cfea49",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
