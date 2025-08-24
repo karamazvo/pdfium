@@ -71,6 +71,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e8d8392b_8fac0020",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-24T06:20:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c39ee825_80fef215",
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6ad4c316_45eef700",
@@ -200,6 +218,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d195e7d8_803eb297",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 728,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-24T06:20:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "54023613_e65e663c",
+      "range": {
+        "startLine": 728,
+        "startChar": 40,
+        "endLine": 728,
+        "endChar": 41
+      },
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7941f17a_c805376d",
@@ -294,6 +336,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "61a58ecd_28e9191b",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 736,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-24T06:20:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5f187cc1_85dd09f9",
+      "range": {
+        "startLine": 736,
+        "startChar": 21,
+        "endLine": 736,
+        "endChar": 34
+      },
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a5c3f596_78c0615b",
@@ -378,6 +444,30 @@
       "side": 1,
       "message": "Will do.",
       "parentUuid": "87c38bd1_2a6b0173",
+      "range": {
+        "startLine": 745,
+        "startChar": 53,
+        "endLine": 745,
+        "endChar": 54
+      },
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "97d73963_9035a5ed",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 745,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-24T06:20:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "22af9c3b_aedc8968",
       "range": {
         "startLine": 745,
         "startChar": 53,
