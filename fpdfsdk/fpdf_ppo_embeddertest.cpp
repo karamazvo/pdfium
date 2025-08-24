@@ -5,9 +5,9 @@
 #include <array>
 #include <iterator>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <vector>
-
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_formobject.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -32,7 +32,8 @@
 
 namespace {
 
-class FPDFPPOEmbedderTest : public EmbedderTest {};
+class FPDFPPOEmbedderTest : public EmbedderTest {
+};
 
 int FakeBlockWriter(FPDF_FILEWRITE* pThis,
                     const void* pData,
@@ -698,4 +699,77 @@ TEST_F(FPDFPPOEmbedderTest, ImportIntoDocWithWrongPageType) {
     CompareBitmap(bitmap.get(), 200, 100, new_page_2_checksum);
     CloseSavedPage(page);
   }
+}
+
+TEST_F(FPDFPPOEmbedderTest, XFAImportTest) {
+  // Helper to get page checksum
+  auto GetPageChecksum = [](FPDF_DOCUMENT doc, int index, const char* desc) ->
+  std::string {
+    ScopedFPDFPage page = LoadScopedPage(doc, index);
+    auto bitmap = RenderPage(page.get());
+    std::string checksum = HashBitmap(bitmap.get());
+    return checksum;
+  };
+
+  // Load doc_b with OpenDocument for XFA extension
+  ASSERT_TRUE(OpenDocument("injected_xfa_multipage_2.pdf"));
+  // Reordered version of injected_xfa_multipage_1.pdf (with XFA)
+  FPDF_DOCUMENT doc_b = document();
+  ASSERT_TRUE(doc_b);
+  EXPECT_EQ(FPDF_GetFormType(doc_b), FORMTYPE_XFA_FOREGROUND);
+  EXPECT_EQ(FPDF_GetPageCount(doc_b), 5);
+
+  // Capture initial checksums of B (all original pages)
+  std::vector<std::string> doc_b_checksums;
+  for (int i = 0; i < 5; i++)
+    doc_b_checksums.push_back(GetPageChecksum(doc_b, i,
+       ("B[" + std::to_string(i) + "]").c_str()));
+
+  // Load doc_a manually (source) to get pages to move
+  FPDF_DOCUMENT doc_a = FPDF_LoadDocument(
+    PathService::GetTestFilePath("injected_xfa_multipage_1.pdf").c_str(),
+    nullptr);
+  ASSERT_TRUE(doc_a);
+  EXPECT_EQ(FPDF_GetFormType(doc_a), 3);
+  EXPECT_EQ(FPDF_GetPageCount(doc_a), 5);
+
+  // Capture checksums of A (all pages)
+  std::vector<std::string> doc_a_checksums;
+  for (int i = 0; i < 5; i++)
+    doc_a_checksums.push_back(GetPageChecksum(doc_a, i,
+      ("A[" + std::to_string(i) + "]").c_str()));
+
+  // Insert pages from A into B: pages "1, 4, 2" before B[4]
+  // Expected [B0, B1, B2, B3, A0, A3, A1, B4] (0 based index)
+  ASSERT_TRUE(FPDF_ImportPages(doc_b, doc_a, "1, 4, 2", 4));
+
+  const int new_count = FPDF_GetPageCount(doc_b);
+  EXPECT_EQ(new_count, 5+std::size_t("1, 4, 2")); // 8 pages now
+
+  // Verify that original pages of B (0..3) remain unchanged
+  for (int i = 0; i < 4; i++)
+    EXPECT_EQ(GetPageChecksum(doc_b, i,
+      ("B[" + std::to_string(i) + "]").c_str()), doc_b_checksums[i]);
+
+  // Verify inserted pages now at B[4], B[5], B[6] match A[0], A[3], A[1]
+  // Checking these involves getting the pages from XFA page list, a failure
+  // Hence suggests that the xfa_page_list_ isn't properly updated.
+  EXPECT_EQ(GetPageChecksum(doc_b, 4, "B[4]"), doc_a_checksums[0]);
+  // Fails from here (without bug fix)
+  // Although there seem to be 8 pages, it seems like while
+  // the page count is correct, the content is not.
+  EXPECT_EQ(GetPageChecksum(doc_b, 5, "B[5]"), doc_a_checksums[3]);
+  EXPECT_EQ(GetPageChecksum(doc_b, 6, "B[6]"), doc_a_checksums[1]);
+
+  // Verify that B[4] is now at B[7]
+  EXPECT_EQ(GetPageChecksum(doc_b, 7, "B[7]"), doc_b_checksums[4]);
+
+  // Ensure all pages render
+  for (int i = 0; i < new_count; i++) {
+    std::string checksum = GetPageChecksum(doc_b, i,
+      ("B[" + std::to_string(i) + "]").c_str());
+    EXPECT_FALSE(checksum.empty());
+  }
+
+  FPDF_CloseDocument(doc_a);
 }
