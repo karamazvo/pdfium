@@ -33,6 +33,23 @@
       "message": "Give me some time, switching to ScopedPages seems to have broken something in the build. I\u0027ll push and resolve it. In the mean time, if you want to test the fix, you can try out patchset 12.",
       "revId": "f29b1eeab0f44982fe4627bb365ae2824dc8d648",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8be5ccf9_35226296",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 13
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-24T07:02:45Z",
+      "side": 1,
+      "message": "Give me some time, switching to ScopedPages seems to have broken something in the build. I\u0027ll push and resolve it. In the mean time, if you want to test the fix, you can try out patchset 12.",
+      "revId": "f29b1eeab0f44982fe4627bb365ae2824dc8d648",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
