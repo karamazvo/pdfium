@@ -85,6 +85,42 @@
       "message": "LoadScopedPage() seems to be taking the checksums from the wrong document. Do let me know if the LoadPage method is fine.",
       "revId": "f29b1eeab0f44982fe4627bb365ae2824dc8d648",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "52ed9f6d_0589010d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 13
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-24T10:12:34Z",
+      "side": 1,
+      "message": "Edit - Resolved in patchset 14. However, ScopedPage will not work for this case (as far as I understand)\n\na. OpenDocument() Does not let you open multiple documents without closing the first.\nb. The FPDF_ImportPages() function requires 2 documents open to insert pages from one to the other.\nc. Opening both documents means opening the second one with FPDF_LoadDocument() which doesn\u0027t seem to open it with the XFA extension, which is fine however, as the case only requires the one in which pages are inserted into (the destination document) to be opened with the extension.\nd. LoadScopedPage() fetches pages from the pdf opened with OpenDocument(), which is actually pdf 2 instead of the intended pdf 1.\n\nNevertheless, using LoadPage() the test proves the broken behaviour by working correctly on the fixed branch while failing on main.\n\nDo let me know if I interpreted something incorrectly.",
+      "parentUuid": "4885b328_689dfbcd",
+      "revId": "f29b1eeab0f44982fe4627bb365ae2824dc8d648",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d2d4b445_4f6134e2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 13
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-24T10:12:34Z",
+      "side": 1,
+      "message": "Fixed in patchset 14. The bug works on the bugfixed branch but fails on main, which proves the broken behaviour.",
+      "parentUuid": "e6b17ac7_03734d70",
+      "revId": "f29b1eeab0f44982fe4627bb365ae2824dc8d648",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
