@@ -748,6 +748,10 @@ bool CPDF_Document::MovePages(pdfium::span<const int> page_indices,
     }
   }
 
+  if (extension) {
+    extension->PagesInserted(dest_page_index, pages_to_move.size());
+  }
+
   return true;
 }
 
