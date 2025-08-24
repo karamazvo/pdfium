@@ -16,6 +16,23 @@
       "message": "Do let me know if there are some more formatting/code changes to make.",
       "revId": "f29b1eeab0f44982fe4627bb365ae2824dc8d648",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e6b17ac7_03734d70",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 13
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-24T06:55:54Z",
+      "side": 1,
+      "message": "Give me some time, switching to ScopedPages seems to have broken something in the build. I\u0027ll push and resolve it. In the mean time, if you want to test the fix, you can try out patchset 12.",
+      "revId": "f29b1eeab0f44982fe4627bb365ae2824dc8d648",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
