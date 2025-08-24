@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5dd60a4f_28f8aa81",
+        "filename": "fpdfsdk/fpdf_ppo.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-24T06:19:42Z",
+      "side": 1,
+      "message": "Removed",
+      "parentUuid": "bd7a6495_7b8093a4",
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6317bc4b_85fbd815",
@@ -31,6 +49,24 @@
       "writtenOn": "2025-08-22T16:20:10Z",
       "side": 1,
       "message": "Not needed. I would also suggest removing \u003cset\u003e and use a different way of tracking the checksums, as suggested in another comment.",
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c39ee825_80fef215",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-24T06:19:42Z",
+      "side": 1,
+      "message": "I think set is not needed anymore, will push a few more patchsets to fix these errors.",
+      "parentUuid": "6317bc4b_85fbd815",
       "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -52,6 +88,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8669ffe8_5c0a9629",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-24T06:19:42Z",
+      "side": 1,
+      "message": "Removed",
+      "parentUuid": "6ad4c316_45eef700",
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d685b63d_2c1a2e1a",
@@ -65,6 +119,30 @@
       "writtenOn": "2025-08-22T16:20:10Z",
       "side": 1,
       "message": "Use the OpenDocument() helper function instead. Then use the document() function instead of this local variable. See existing test cases for examples.",
+      "range": {
+        "startLine": 724,
+        "startChar": 27,
+        "endLine": 724,
+        "endChar": 44
+      },
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e5151464_5e372e5e",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 724,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-24T06:19:42Z",
+      "side": 1,
+      "message": "I did for one of them, but as I mentioned, it didn\u0027t let me open 2 at the same time.",
+      "parentUuid": "d685b63d_2c1a2e1a",
       "range": {
         "startLine": 724,
         "startChar": 27,
@@ -100,6 +178,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "54023613_e65e663c",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 728,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-24T06:19:42Z",
+      "side": 1,
+      "message": "Will do.",
+      "parentUuid": "00995fc6_44937b6f",
+      "range": {
+        "startLine": 728,
+        "startChar": 40,
+        "endLine": 728,
+        "endChar": 41
+      },
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "7941f17a_c805376d",
         "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
         "patchSetId": 11
@@ -111,6 +213,30 @@
       "writtenOn": "2025-08-22T16:20:10Z",
       "side": 1,
       "message": "Similar situation here. The code already says the same thing.",
+      "range": {
+        "startLine": 731,
+        "startChar": 27,
+        "endLine": 733,
+        "endChar": 0
+      },
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9e06b20d_ecc1e71d",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 733,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-24T06:19:42Z",
+      "side": 1,
+      "message": "Will reduce comments, I just wanted to make it easier when I edit it again.",
+      "parentUuid": "7941f17a_c805376d",
       "range": {
         "startLine": 731,
         "startChar": 27,
@@ -146,6 +272,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "5f187cc1_85dd09f9",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 736,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-24T06:19:42Z",
+      "side": 1,
+      "message": "Will do.",
+      "parentUuid": "e6a2a3c4_de14e65f",
+      "range": {
+        "startLine": 736,
+        "startChar": 21,
+        "endLine": 736,
+        "endChar": 34
+      },
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a5c3f596_78c0615b",
         "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
         "patchSetId": 11
@@ -157,6 +307,30 @@
       "writtenOn": "2025-08-22T16:20:10Z",
       "side": 1,
       "message": "constexpr",
+      "range": {
+        "startLine": 744,
+        "startChar": 2,
+        "endLine": 744,
+        "endChar": 7
+      },
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1a9d5a5b_37f06499",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 744,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-24T06:19:42Z",
+      "side": 1,
+      "message": "I do not think it is needed in the new test, do let me know if it is though.",
+      "parentUuid": "a5c3f596_78c0615b",
       "range": {
         "startLine": 744,
         "startChar": 2,
@@ -192,6 +366,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "22af9c3b_aedc8968",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 745,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-24T06:19:42Z",
+      "side": 1,
+      "message": "Will do.",
+      "parentUuid": "87c38bd1_2a6b0173",
+      "range": {
+        "startLine": 745,
+        "startChar": 53,
+        "endLine": 745,
+        "endChar": 54
+      },
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "d8f512f4_1eee83cb",
         "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
         "patchSetId": 11
@@ -203,6 +401,24 @@
       "writtenOn": "2025-08-22T16:20:10Z",
       "side": 1,
       "message": "No need to add this new code. Save operations are common enough that this already exists. Reuse `EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));` where `EmbedderTest` already has a `WriteBlock` implementation.",
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7bed5847_f6dd7f83",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 748,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-24T06:19:42Z",
+      "side": 1,
+      "message": "Didn\u0027t use any saving mechanics in my new test.",
+      "parentUuid": "d8f512f4_1eee83cb",
       "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -247,6 +463,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "66cae52c_6fccad67",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 767,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-24T06:19:42Z",
+      "side": 1,
+      "message": "I did for one of them in the new test, but not the other because, I can\u0027t open 2 simultaneous documents, and hence used Load_Document for doc_a (As i needed pages only and not XFA for A).\n\nXFA was only needed in the PDF which I am inserting into.",
+      "parentUuid": "772b82cf_7159b742",
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3fed356b_6787e9db",
@@ -260,6 +494,30 @@
       "writtenOn": "2025-08-22T16:20:10Z",
       "side": 1,
       "message": "Since the test is just reordering pages, can it perform the check as follows:\n\n```\nEXPECT_EQ(checksums_after[0], checksums_before[i]);\nEXPECT_EQ(checksums_after[1], checksums_before[j]);\nEXPECT_EQ(checksums_after[2], checksums_before[k]);\nEXPECT_EQ(checksums_after[3], checksums_before[l]);\nEXPECT_EQ(checksums_after[0], checksums_before[m]);\n```\n\nWhere you would fill in the index variables to match the reordering operations. Then the checks explicitly makes sure all the pages have an expected checksum, whereas the std::multiset check is a bit looser in terms of what will pass. It would be less code too.",
+      "range": {
+        "startLine": 781,
+        "startChar": 0,
+        "endLine": 792,
+        "endChar": 53
+      },
+      "revId": "483b8f86f8f15e14dbecdfcc2d9be1aeec73f5e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fcf8f42c_abac8aaa",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 792,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-24T06:19:42Z",
+      "side": 1,
+      "message": "Made a new test, which is quite different. Added something similar in the new test.",
+      "parentUuid": "3fed356b_6787e9db",
       "range": {
         "startLine": 781,
         "startChar": 0,
