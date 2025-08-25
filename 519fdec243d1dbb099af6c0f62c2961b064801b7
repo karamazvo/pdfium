@@ -20,6 +20,46 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "6b26342b_62d56737",
+        "filename": "testing/resources/javascript/bug_421304870.in",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-25T17:53:36Z",
+      "side": 1,
+      "message": "Probably not necessary, given the line below.",
+      "range": {
+        "startLine": 40,
+        "startChar": 17,
+        "endLine": 40,
+        "endChar": 32
+      },
+      "revId": "519fdec243d1dbb099af6c0f62c2961b064801b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ef2cb805_8196ce60",
+        "filename": "testing/resources/javascript/bug_421304870.in",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-25T17:53:36Z",
+      "side": 1,
+      "message": "Wouldn\u0027t hurt to add `/Type /Action` here.",
+      "revId": "519fdec243d1dbb099af6c0f62c2961b064801b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "4cd24b9c_458024dc",
         "filename": "testing/resources/javascript/bug_421304870.in",
         "patchSetId": 2
@@ -31,6 +71,23 @@
       "writtenOn": "2025-08-25T17:19:33Z",
       "side": 1,
       "message": "Should be:\n\n```\n{{xref}}\n{{trailer}}\n{{startxref}}\n```",
+      "revId": "519fdec243d1dbb099af6c0f62c2961b064801b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f7b9ec73_16751aa2",
+        "filename": "testing/resources/javascript/bug_421304870_expected.txt",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-25T17:53:36Z",
+      "side": 1,
+      "message": "I tried with Acrobat Reader and it returns 1. I can\u0027t tell if it\u0027s excluding popups, or something else. Probably need to do more blackbox testing to figure out what the behavior is.\n\nSeparately, Acrobat Reader doesn\u0027t like `this.getAnnots()` as part of `/OpenAction`. Not sure why.",
       "revId": "519fdec243d1dbb099af6c0f62c2961b064801b7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
