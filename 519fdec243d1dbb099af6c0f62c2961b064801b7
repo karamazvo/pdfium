@@ -16,6 +16,23 @@
       "message": "Thanks for doing all this.",
       "revId": "519fdec243d1dbb099af6c0f62c2961b064801b7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4cd24b9c_458024dc",
+        "filename": "testing/resources/javascript/bug_421304870.in",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-25T17:19:33Z",
+      "side": 1,
+      "message": "Should be:\n\n```\n{{xref}}\n{{trailer}}\n{{startxref}}\n```",
+      "revId": "519fdec243d1dbb099af6c0f62c2961b064801b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
