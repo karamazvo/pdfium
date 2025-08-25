@@ -16,6 +16,23 @@
       "message": "Please let me know if you need help testing in case you couldn\u0027t repro locally.",
       "revId": "9bb5353947e4a1bd777fb51d5bbd5521bc27e68b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "45f8921f_05f48dd0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-08-25T17:31:28Z",
+      "side": 1,
+      "message": "I still haven\u0027t repro\u0027d locally, no. (My chromium checkout is still doing other things, and CQ couldn\u0027t repro with the file from the bug either: https://pdfium-review.googlesource.com/c/pdfium/+/135270)",
+      "revId": "9bb5353947e4a1bd777fb51d5bbd5521bc27e68b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
