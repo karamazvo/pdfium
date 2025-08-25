@@ -90,6 +90,24 @@
       "message": "I tried with Acrobat Reader and it returns 1. I can\u0027t tell if it\u0027s excluding popups, or something else. Probably need to do more blackbox testing to figure out what the behavior is.\n\nSeparately, Acrobat Reader doesn\u0027t like `this.getAnnots()` as part of `/OpenAction`. Not sure why.",
       "revId": "519fdec243d1dbb099af6c0f62c2961b064801b7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c7c1ba7c_8e433a77",
+        "filename": "testing/resources/javascript/bug_421304870_expected.txt",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-25T19:59:20Z",
+      "side": 1,
+      "message": "\u003e I tried with Acrobat Reader and it returns 1. I can\u0027t tell if it\u0027s excluding popups, or something else. Probably need to do more blackbox testing to figure out what the behavior is.\n\nProbably need to remove the popups from the list. i.e. Call `GetAnnotSubtype()` and check against `CPDF_Annot::Subtype::POPUP`.\n\n\u003e Separately, Acrobat Reader doesn\u0027t like `this.getAnnots()` as part of `/OpenAction`. Not sure why.\n\nWith some of the other suggested improvements, it\u0027s happier.",
+      "parentUuid": "f7b9ec73_16751aa2",
+      "revId": "519fdec243d1dbb099af6c0f62c2961b064801b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
