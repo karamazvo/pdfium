@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1174234d_e9bdde22",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-08-25T20:27:05Z",
+      "side": 1,
+      "message": "Assuming the bots like it.\n\nSee https://pdfium-review.googlesource.com/c/pdfium/+/135270/3?tab\u003dchecks for a patch set that also reverts my fix, and that the try jobs fail on with the hardening assert.",
+      "revId": "7192bec663b937e1255cce7fe776330110bd0ed3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
