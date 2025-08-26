@@ -1,0 +1,135 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "95aecdab_f4d55cc5",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-26T17:31:07Z",
+      "side": 1,
+      "message": "nit: Also no longer needed.",
+      "revId": "f092558c13e50ca2960a5d4720f1abb08b1bd014",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "92693a63_f7629e33",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-26T17:31:07Z",
+      "side": 1,
+      "message": "Reminder to clang-format files. i.e. This change is unnecessary and the auto-formatter wants to change some of the code below.",
+      "revId": "f092558c13e50ca2960a5d4720f1abb08b1bd014",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "08da8bef_b88ab3b6",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 706,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-26T17:31:07Z",
+      "side": 1,
+      "message": "nit: Unused parameter.",
+      "range": {
+        "startLine": 706,
+        "startChar": 56,
+        "endLine": 706,
+        "endChar": 74
+      },
+      "revId": "f092558c13e50ca2960a5d4720f1abb08b1bd014",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cf4ff35a_ccf0c34b",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 729,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-26T17:31:07Z",
+      "side": 1,
+      "message": "Instead of naming this `FPDF_DOCUMENT` \"doc_a\" and then have to explain it\u0027s the source, how about just naming it \"source_doc\" so the variable name is self-documenting?",
+      "revId": "f092558c13e50ca2960a5d4720f1abb08b1bd014",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6aa3d84c_5f0f07fb",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 731,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-26T17:31:07Z",
+      "side": 1,
+      "message": "I\u0027m curious if the source doc has to be this PDF, or can it be a regular PDF like testing/resources/rectangles_multi_pages.pdf.",
+      "revId": "f092558c13e50ca2960a5d4720f1abb08b1bd014",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1f383af0_fe345dc5",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 766,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-26T17:31:07Z",
+      "side": 1,
+      "message": "Didn\u0027t lines 751-759 just check all the pages?",
+      "range": {
+        "startLine": 761,
+        "startChar": 0,
+        "endLine": 766,
+        "endChar": 3
+      },
+      "revId": "f092558c13e50ca2960a5d4720f1abb08b1bd014",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0ab2f809_aefdb29e",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 768,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-26T17:31:07Z",
+      "side": 1,
+      "message": "Even when a separate doc is needed, that is not tied to `EmbedderTest`, prefer to use scoped objects instead of manually closing. e.g. Use `ScopedFPDFDocument` to control the lifetime instead. The doc may need to be placed in a separate scoped. e.g.\n\n```\n{  // main scope\n  ...\n  {  // source_doc scope\n      ScopedFPDFDocument source_doc(FPDF_LoadDocument(...));\n      ...\n      // Auto close\n  }\n}\n```",
+      "revId": "f092558c13e50ca2960a5d4720f1abb08b1bd014",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
