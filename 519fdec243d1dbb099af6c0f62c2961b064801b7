@@ -41,6 +41,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3ce066cd_98a0afaf",
+        "filename": "testing/resources/javascript/bug_421304870.in",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 4140855
+      },
+      "writtenOn": "2025-08-26T14:06:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6b26342b_62d56737",
+      "range": {
+        "startLine": 40,
+        "startChar": 17,
+        "endLine": 40,
+        "endChar": 32
+      },
+      "revId": "519fdec243d1dbb099af6c0f62c2961b064801b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ef2cb805_8196ce60",
@@ -58,6 +82,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2a092825_7a95dead",
+        "filename": "testing/resources/javascript/bug_421304870.in",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 4140855
+      },
+      "writtenOn": "2025-08-26T14:06:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ef2cb805_8196ce60",
+      "revId": "519fdec243d1dbb099af6c0f62c2961b064801b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4cd24b9c_458024dc",
@@ -71,6 +113,24 @@
       "writtenOn": "2025-08-25T17:19:33Z",
       "side": 1,
       "message": "Should be:\n\n```\n{{xref}}\n{{trailer}}\n{{startxref}}\n```",
+      "revId": "519fdec243d1dbb099af6c0f62c2961b064801b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "919f4516_dae6b816",
+        "filename": "testing/resources/javascript/bug_421304870.in",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 4140855
+      },
+      "writtenOn": "2025-08-26T14:06:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4cd24b9c_458024dc",
       "revId": "519fdec243d1dbb099af6c0f62c2961b064801b7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -142,6 +202,24 @@
       "side": 1,
       "message": "Sure. If the code already needs to check for 1 subtype, checking for a second isn\u0027t that much more work.",
       "parentUuid": "85f1bb1c_d53915b2",
+      "revId": "519fdec243d1dbb099af6c0f62c2961b064801b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5673e15b_08d33b7d",
+        "filename": "testing/resources/javascript/bug_421304870_expected.txt",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 4140855
+      },
+      "writtenOn": "2025-08-26T14:06:55Z",
+      "side": 1,
+      "message": "There is currently an issue where, after filtering Popup and Widget annotations, the bug_679643 test fails. This error occurs because the JavaScript script for bug_679643 retrieves only Widget annotations. However, the `getAnnots` method then filters out the Widget annotations, resulting in an empty list of annotations. When the script attempts to manipulate the properties of the first annotation, it encounters an error because the array contains no objects:\nfailed: TypeError: Cannot set properties of undefined (setting ‘name’)\n\nTherefore, the expected result for bug_679643 should be:\nAlert: Starting ...\n Alert: failed: TypeError: Cannot set properties of undefined (setting ‘name’)\nThis matches the behavior observed in Acrobat Reader and Foxit PDF Editor.\n\nShould I modify the contents of bug_679643_expected.txt?",
+      "parentUuid": "8980710f_2788ce8e",
       "revId": "519fdec243d1dbb099af6c0f62c2961b064801b7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
