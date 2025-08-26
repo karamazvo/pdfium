@@ -222,6 +222,24 @@
       "parentUuid": "8980710f_2788ce8e",
       "revId": "519fdec243d1dbb099af6c0f62c2961b064801b7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "51af4f5a_a7a89589",
+        "filename": "testing/resources/javascript/bug_421304870_expected.txt",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-26T16:06:53Z",
+      "side": 1,
+      "message": "Let me try to fix the bug_679643 test case first to get that out of the way of this CL.",
+      "parentUuid": "5673e15b_08d33b7d",
+      "revId": "519fdec243d1dbb099af6c0f62c2961b064801b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }

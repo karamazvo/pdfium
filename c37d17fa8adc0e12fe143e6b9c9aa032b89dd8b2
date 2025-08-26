@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c804b37b_c9de70b7",
+        "filename": "testing/resources/javascript/bug_421304870.in",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-26T16:06:53Z",
+      "side": 1,
+      "message": "Object 4 probably shouldn\u0027t be the parent of object 4.",
+      "revId": "c37d17fa8adc0e12fe143e6b9c9aa032b89dd8b2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eb415a19_36af1c43",
+        "filename": "testing/resources/javascript/bug_421304870.in",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-26T16:06:53Z",
+      "side": 1,
+      "message": "Is this intentional?",
+      "revId": "c37d17fa8adc0e12fe143e6b9c9aa032b89dd8b2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
