@@ -16,6 +16,23 @@
       "message": "Apparently a basically white image needs 3 different baselines :/\n\nLooks like the skia gdi bot defaults to the regular expected image instead of the the _skia image -- at least https://ci.chromium.org/ui/p/pdfium/builders/try/win_xfa_skia_gdi/4697/overview failed, despite testing/resources/pixel/bug_440028542_expected_skia.pdf.0.png and testing/resources/pixel/bug_440028542_expected_gdi_skia.pdf.0.png having the same pixels. Is that expected?",
       "revId": "7eb5567f782d4577f82763cb9a9ee41f29d9a9dc",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b0b9fd02_218545d8",
+        "filename": "testing/resources/pixel/bug_440028542.pdf",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-26T16:45:21Z",
+      "side": 1,
+      "message": "Want to check in an .in file instead of the .pdf?\n\n```\n{{header}}\n{{object 1 0}} \u003c\u003c\n  /Type /Catalog\n  /Pages 2 0 R\n\u003e\u003e\nendobj\n{{object 2 0}} \u003c\u003c\n  /Type /Pages\n  /Count 1\n  /Kids [3 0 R]\n\u003e\u003e\nendobj\n{{object 3 0}} \u003c\u003c\n  /Type /Page\n  /Parent 2 0 R\n  /Contents 4 0 R\n  /MediaBox [0 0 200 200]\n  /Resources \u003c\u003c\n    /Shading \u003c\u003c\n      /Sh0 5 0 R\n    \u003e\u003e\n  \u003e\u003e\n\u003e\u003e\nendobj\n{{object 4 0}} \u003c\u003c\n  {{streamlen}}\n\u003e\u003e\nstream\n/Sh0 sh\nendstream\nendobj\n{{object 5 0}} \u003c\u003c\n  /ShadingType 6\n  /BitsPerComponent 8\n  /BitsPerCoordinate 32\n  /BitsPerFlag 8\n  /ColorSpace /DeviceRGB\n  % Requires trailing zeroes for issue to repro.\n  /Decode [0 1 0 1 -340282346600000016151267322115014000640.000000\n           340282346600000016151267322115014000640.000000]\n  /Filter [/ASCII85Decode /FlateDecode]\n  /Function 6 0 R\n  {{streamlen}}\n\u003e\u003e\nstream\nGhQY8J-*?N1M;8PHXgPq0\\l^@#LOYS\u0026.Od)dn\";B*/Yf9)\u0027HKi5ai\u0026\\C?uRj~\u003e\nendstream\nendobj\n{{object 6 0}} \u003c\u003c\n  /FunctionType 4\n  /Domain [0 1]\n  {{streamlen}}\n  /Range [0 1 0 1 0 1]\n\u003e\u003e\nstream\n{ dup } % Simple function: input -\u003e input\nendstream\nendobj\n{{xref}}\n{{trailer}}\n{{startxref}}\n%%EOF\n```",
+      "revId": "7eb5567f782d4577f82763cb9a9ee41f29d9a9dc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
