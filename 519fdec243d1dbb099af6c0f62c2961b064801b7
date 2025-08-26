@@ -108,6 +108,24 @@
       "parentUuid": "f7b9ec73_16751aa2",
       "revId": "519fdec243d1dbb099af6c0f62c2961b064801b7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "85f1bb1c_d53915b2",
+        "filename": "testing/resources/javascript/bug_421304870_expected.txt",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 4140855
+      },
+      "writtenOn": "2025-08-26T01:28:47Z",
+      "side": 1,
+      "message": "I tried again with Acrobat Reader and found that it not only filters Popup annotations but also Widget annotations. So, do we need to filter both of these annotations?",
+      "parentUuid": "c7c1ba7c_8e433a77",
+      "revId": "519fdec243d1dbb099af6c0f62c2961b064801b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
