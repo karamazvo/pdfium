@@ -51,6 +51,24 @@
       "parentUuid": "b0b9fd02_218545d8",
       "revId": "7eb5567f782d4577f82763cb9a9ee41f29d9a9dc",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aa12d43f_90eedaea",
+        "filename": "testing/resources/pixel/bug_440028542.pdf",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-26T17:42:17Z",
+      "side": 1,
+      "message": "I couldn\u0027t view the this file in Gerrit, so my \"oh, it\u0027s a binary blob, let\u0027s make it a .in file\" instinct kicked it. I also found a curiosity, in that changing N.000000 to N makes the bug fail to repro, so there can be some value in having the file in an easier to edit format.\n\nSince the PDF is actually fairly small and not that hard to read, sure, just check it in.",
+      "parentUuid": "bddbc3d2_6d365427",
+      "revId": "7eb5567f782d4577f82763cb9a9ee41f29d9a9dc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
