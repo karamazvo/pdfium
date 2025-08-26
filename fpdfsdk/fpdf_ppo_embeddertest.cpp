@@ -699,3 +699,54 @@ TEST_F(FPDFPPOEmbedderTest, ImportIntoDocWithWrongPageType) {
     CloseSavedPage(page);
   }
 }
+
+TEST_F(FPDFPPOEmbedderTest, XFAImportTest) {
+  // Helper to get page checksum
+  auto GetPageChecksum = [](FPDF_DOCUMENT doc, int index) -> std::string {
+    FPDF_PAGE page = FPDF_LoadPage(doc, index);
+    auto bitmap = RenderPage(page);
+    std::string checksum = HashBitmap(bitmap.get());
+    FPDF_ClosePage(page);
+    return checksum;
+  };
+
+  // Load dest_doc with OpenDocument for XFA extension
+  ASSERT_TRUE(OpenDocument("injected_xfa_multipage_2.pdf"));
+  FPDF_DOCUMENT dest_doc = document();
+  ASSERT_TRUE(dest_doc);
+  EXPECT_EQ(FPDF_GetFormType(dest_doc), FORMTYPE_XFA_FOREGROUND);
+  EXPECT_EQ(FPDF_GetPageCount(dest_doc), 5);
+
+  // Capture initial checksums of dest_doc (all original pages)
+  std::vector<std::string> dest_doc_checksums;
+  for (int i = 0; i < 5; i++)
+    dest_doc_checksums.push_back(GetPageChecksum(dest_doc, i));
+
+  ScopedFPDFDocument source_doc(FPDF_LoadDocument(
+    PathService::GetTestFilePath("injected_xfa_multipage_1.pdf").c_str(),
+    nullptr));
+  ASSERT_TRUE(source_doc.get());
+  EXPECT_EQ(FPDF_GetFormType(source_doc.get()), FORMTYPE_XFA_FOREGROUND);
+  EXPECT_EQ(FPDF_GetPageCount(source_doc.get()), 5);
+
+  // Capture checksums of source_doc (all pages)
+  std::vector<std::string> source_doc_checksums;
+  for (int i = 0; i < 5; i++)
+    source_doc_checksums.push_back(GetPageChecksum(source_doc.get(), i));
+
+  ASSERT_TRUE(FPDF_ImportPages(dest_doc, source_doc.get(), "1, 4, 2", 4));
+
+  const int new_count = FPDF_GetPageCount(dest_doc);
+  // 5 Initial + 3 Inserted
+  EXPECT_EQ(new_count, 5 + 3);
+
+  // Expected [dest0, dest1, dest2, dest3, src0, src3, src1, dest4]
+  for (int i = 0; i < 4; i++)
+    EXPECT_EQ(GetPageChecksum(dest_doc, i), dest_doc_checksums[i]);
+
+  EXPECT_EQ(GetPageChecksum(dest_doc, 4), source_doc_checksums[0]);
+  EXPECT_EQ(GetPageChecksum(dest_doc, 5), source_doc_checksums[3]);
+  EXPECT_EQ(GetPageChecksum(dest_doc, 6), source_doc_checksums[1]);
+
+  EXPECT_EQ(GetPageChecksum(dest_doc, 7), dest_doc_checksums[4]);
+}
