@@ -65,12 +65,13 @@ void CFWL_ListBoxTP::DrawListBoxItem(CFGAS_GEGraphics* pGraphics,
     CFGAS_GEGraphics::StateRestorer restorer(pGraphics);
     pGraphics->SetFillColor(CFGAS_GEColor(FWLTHEME_COLOR_BKSelected));
     CFGAS_GEPath path;
-#if BUILDFLAG(IS_APPLE)
-    path.AddRectangle(rtItem.left, rtItem.top, rtItem.width - 1,
-                      rtItem.height - 1);
-#else
-    path.AddRectangle(rtItem.left, rtItem.top, rtItem.width, rtItem.height);
-#endif
+    float width = rtItem.width;
+    float height = rtItem.height;
+    if constexpr (BUILDFLAG(IS_APPLE)) {
+      width -= 1.0f;
+      height -= 1.0f;
+    }
+    path.AddRectangle(rtItem.left, rtItem.top, width, height);
     pGraphics->FillPath(path, CFX_FillRenderOptions::FillType::kWinding,
                         matrix);
   }

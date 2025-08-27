@@ -98,11 +98,11 @@ class CFDETextOutTest : public testing::Test {
 TEST_F(CFDETextOutTest, DrawLogicTextBasic) {
   text_out().DrawLogicText(device(), L"foo", CFX_RectF(0, 0, 2100, 100));
   const char* checksum = []() {
-#if BUILDFLAG(IS_WIN)
-    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-      return "bc1f736237b08d13db06c09f6becc9f7";
+    if constexpr (BUILDFLAG(IS_WIN)) {
+      if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+        return "bc1f736237b08d13db06c09f6becc9f7";
+      }
     }
-#endif
     return "b26f1c171fcdbf185823364185adacf0";
   }();
   EXPECT_EQ(checksum, GetBitmapChecksum());

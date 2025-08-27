@@ -338,30 +338,29 @@ wchar_t CPDF_CIDFont::GetUnicodeFromCharCode(uint32_t charcode) const {
   if (cid2unicode_map_ && cid2unicode_map_->IsLoaded() && cmap_->IsLoaded()) {
     return cid2unicode_map_->UnicodeFromCID(CIDFromCharCode(charcode));
   }
-
-#if BUILDFLAG(IS_WIN)
-  uint8_t sequence[2] = {};
-  const int charsize = charcode < 256 ? 1 : 2;
-  if (charsize == 1) {
-    sequence[0] = charcode;
+  if constexpr (BUILDFLAG(IS_WIN)) {
+    uint8_t sequence[2] = {};
+    const int charsize = charcode < 256 ? 1 : 2;
+    if (charsize == 1) {
+      sequence[0] = charcode;
+    } else {
+      sequence[0] = charcode / 256;
+      sequence[1] = charcode % 256;
+    }
+    wchar_t unicode;
+    size_t ret = FX_MultiByteToWideChar(
+        kCharsetCodePages[static_cast<size_t>(cmap_->GetCoding())],
+        ByteStringView(
+            pdfium::span(sequence).first(static_cast<size_t>(charsize))),
+        pdfium::span_from_ref(unicode));
+    return ret == 1 ? unicode : 0;
   } else {
-    sequence[0] = charcode / 256;
-    sequence[1] = charcode % 256;
+    if (!cmap_->GetEmbedMap()) {
+      return 0;
+    }
+    return EmbeddedUnicodeFromCharcode(cmap_->GetEmbedMap(),
+                                       cmap_->GetCharset(), charcode);
   }
-  wchar_t unicode;
-  size_t ret = FX_MultiByteToWideChar(
-      kCharsetCodePages[static_cast<size_t>(cmap_->GetCoding())],
-      ByteStringView(
-          pdfium::span(sequence).first(static_cast<size_t>(charsize))),
-      pdfium::span_from_ref(unicode));
-  return ret == 1 ? unicode : 0;
-#else
-  if (!cmap_->GetEmbedMap()) {
-    return 0;
-  }
-  return EmbeddedUnicodeFromCharcode(cmap_->GetEmbedMap(), cmap_->GetCharset(),
-                                     charcode);
-#endif
 }
 
 uint32_t CPDF_CIDFont::CharCodeFromUnicode(wchar_t unicode) const {
@@ -401,24 +400,24 @@ uint32_t CPDF_CIDFont::CharCodeFromUnicode(wchar_t unicode) const {
   if (cmap_->GetCoding() == CIDCoding::kCID) {
     return 0;
   }
-#if BUILDFLAG(IS_WIN)
-  uint8_t buffer[32];
-  size_t ret = FX_WideCharToMultiByte(
-      kCharsetCodePages[static_cast<size_t>(cmap_->GetCoding())],
-      WideStringView(unicode),
-      pdfium::as_writable_chars(pdfium::span(buffer).first(4u)));
-  if (ret == 1) {
-    return buffer[0];
+  if constexpr (BUILDFLAG(IS_WIN)) {
+    uint8_t buffer[32];
+    size_t ret = FX_WideCharToMultiByte(
+        kCharsetCodePages[static_cast<size_t>(cmap_->GetCoding())],
+        WideStringView(unicode),
+        pdfium::as_writable_chars(pdfium::span(buffer).first(4u)));
+    if (ret == 1) {
+      return buffer[0];
+    }
+    if (ret == 2) {
+      return buffer[0] * 256 + buffer[1];
+    }
+  } else {
+    if (cmap_->GetEmbedMap()) {
+      return EmbeddedCharcodeFromUnicode(cmap_->GetEmbedMap(),
+                                         cmap_->GetCharset(), unicode);
+    }
   }
-  if (ret == 2) {
-    return buffer[0] * 256 + buffer[1];
-  }
-#else
-  if (cmap_->GetEmbedMap()) {
-    return EmbeddedCharcodeFromUnicode(cmap_->GetEmbedMap(),
-                                       cmap_->GetCharset(), unicode);
-  }
-#endif
   return 0;
 }
 

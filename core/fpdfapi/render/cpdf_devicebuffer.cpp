@@ -25,11 +25,7 @@
 
 namespace {
 
-#if BUILDFLAG(IS_WIN)
-constexpr bool kScaleDeviceBuffer = true;
-#else
-constexpr bool kScaleDeviceBuffer = false;
-#endif
+constexpr bool kScaleDeviceBuffer = !!BUILDFLAG(IS_WIN);
 
 }  // namespace
 
@@ -94,14 +90,13 @@ void CPDF_DeviceBuffer::OutputToDevice() {
       device_->SetDIBits(bitmap_, rect_.left, rect_.top);
       return;
     }
-
-#if BUILDFLAG(IS_WIN)
-    device_->StretchDIBits(bitmap_, rect_.left, rect_.top, rect_.Width(),
-                           rect_.Height());
-    return;
-#else
-    NOTREACHED();
-#endif
+    if constexpr (BUILDFLAG(IS_WIN)) {
+      device_->StretchDIBits(bitmap_, rect_.left, rect_.top, rect_.Width(),
+                             rect_.Height());
+      return;
+    } else {
+      NOTREACHED();
+    }
   }
 
 #if BUILDFLAG(IS_WIN)

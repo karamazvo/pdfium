@@ -63,16 +63,16 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
     }
   }
 
-#if !BUILDFLAG(IS_WIN)
-  uint32_t dwFontStyle = pFont->GetFontStyles();
   CFX_Font FxFont;
-  auto SubstFxFont = std::make_unique<CFX_SubstFont>();
-  SubstFxFont->weight_ = FontStyleIsForceBold(dwFontStyle) ? 700 : 400;
-  SubstFxFont->italic_angle_ = FontStyleIsItalic(dwFontStyle) ? -12 : 0;
-  SubstFxFont->weight_cjk_ = SubstFxFont->weight_;
-  SubstFxFont->italic_cjk_ = FontStyleIsItalic(dwFontStyle);
-  FxFont.SetSubstFont(std::move(SubstFxFont));
-#endif
+  if constexpr (!BUILDFLAG(IS_WIN)) {
+    uint32_t dwFontStyle = pFont->GetFontStyles();
+    auto SubstFxFont = std::make_unique<CFX_SubstFont>();
+    SubstFxFont->weight_ = FontStyleIsForceBold(dwFontStyle) ? 700 : 400;
+    SubstFxFont->italic_angle_ = FontStyleIsItalic(dwFontStyle) ? -12 : 0;
+    SubstFxFont->weight_cjk_ = SubstFxFont->weight_;
+    SubstFxFont->italic_cjk_ = FontStyleIsItalic(dwFontStyle);
+    FxFont.SetSubstFont(std::move(SubstFxFont));
+  }
 
   RetainPtr<CFGAS_GEFont> pCurFont;
   TextCharPos* pCurCP = nullptr;
@@ -88,13 +88,13 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
         pFxFont = pCurFont->GetDevFont();
 
         CFX_Font* font;
-#if !BUILDFLAG(IS_WIN)
-        FxFont.SetFace(pFxFont->GetFace());
-        FxFont.SetFontSpan(pFxFont->GetFontSpan());
-        font = &FxFont;
-#else
-        font = pFxFont;
-#endif
+        if constexpr (!BUILDFLAG(IS_WIN)) {
+          FxFont.SetFace(pFxFont->GetFace());
+          FxFont.SetFontSpan(pFxFont->GetFontSpan());
+          font = &FxFont;
+        } else {
+          font = pFxFont;
+        }
         device->DrawNormalText(UNSAFE_TODO(pdfium::span(pCurCP, count)), font,
                                -fFontSize, matrix, color, kOptions);
       }
@@ -108,13 +108,13 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
   if (pCurFont && count) {
     pFxFont = pCurFont->GetDevFont();
     CFX_Font* font;
-#if !BUILDFLAG(IS_WIN)
-    FxFont.SetFace(pFxFont->GetFace());
-    FxFont.SetFontSpan(pFxFont->GetFontSpan());
-    font = &FxFont;
-#else
-    font = pFxFont;
-#endif
+    if constexpr (!BUILDFLAG(IS_WIN)) {
+      FxFont.SetFace(pFxFont->GetFace());
+      FxFont.SetFontSpan(pFxFont->GetFontSpan());
+      font = &FxFont;
+    } else {
+      font = pFxFont;
+    }
     return device->DrawNormalText(UNSAFE_TODO(pdfium::span(pCurCP, count)),
                                   font, -fFontSize, matrix, color, kOptions);
   }
