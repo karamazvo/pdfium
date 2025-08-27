@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5fdcc4ea_824633d0",
+        "filename": "testing/resources/javascript/bug_421304870.in",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 4140855
+      },
+      "writtenOn": "2025-08-27T02:12:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c804b37b_c9de70b7",
+      "revId": "c37d17fa8adc0e12fe143e6b9c9aa032b89dd8b2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "eb415a19_36af1c43",
@@ -31,6 +49,24 @@
       "writtenOn": "2025-08-26T16:06:53Z",
       "side": 1,
       "message": "Is this intentional?",
+      "revId": "c37d17fa8adc0e12fe143e6b9c9aa032b89dd8b2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6c0b834c_2643d1ab",
+        "filename": "testing/resources/javascript/bug_421304870.in",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 4140855
+      },
+      "writtenOn": "2025-08-27T02:12:34Z",
+      "side": 1,
+      "message": "Sorry, I made a mistake.",
+      "parentUuid": "eb415a19_36af1c43",
       "revId": "c37d17fa8adc0e12fe143e6b9c9aa032b89dd8b2",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
