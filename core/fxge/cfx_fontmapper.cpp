@@ -763,14 +763,14 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
   }
 
   if (Charset == FX_Charset::kSymbol) {
-#if !BUILDFLAG(IS_WIN)
-    if (subst_name == "Symbol") {
-      subst_font->family_ = "Chrome Symbol";
-      subst_font->charset_ = FX_Charset::kSymbol;
-      return UseInternalSubst(kSymbol, old_weight, italic_angle, pitch_family,
-                              subst_font);
+    if constexpr (!BUILDFLAG(IS_WIN)) {
+      if (subst_name == "Symbol") {
+        subst_font->family_ = "Chrome Symbol";
+        subst_font->charset_ = FX_Charset::kSymbol;
+        return UseInternalSubst(kSymbol, old_weight, italic_angle, pitch_family,
+                                subst_font);
+      }
     }
-#endif
     return FindSubstFont(family, is_truetype,
                          flags & ~pdfium::kFontStyleSymbolic, weight,
                          italic_angle, FX_CodePage::kDefANSI, subst_font);

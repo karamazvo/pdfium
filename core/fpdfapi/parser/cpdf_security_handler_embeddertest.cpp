@@ -142,19 +142,19 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPassword) {
 TEST_F(CPDFSecurityHandlerEmbedderTest, PasswordAfterGenerateSave) {
   const char* checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-#if BUILDFLAG(IS_WIN)
-      return "caa4bfda016a9c48a540ff7c6716468c";
-#elif BUILDFLAG(IS_APPLE)
-      return "6c1a242ce886df5cf578401eeeaa1929";
-#else
-      return "ad97491cab71c02f1f4ef5ba0a7b5593";
-#endif
+      if constexpr (BUILDFLAG(IS_WIN)) {
+        return "caa4bfda016a9c48a540ff7c6716468c";
+      } else if constexpr (BUILDFLAG(IS_APPLE)) {
+        return "6c1a242ce886df5cf578401eeeaa1929";
+      } else {
+        return "ad97491cab71c02f1f4ef5ba0a7b5593";
+      }
     }
-#if BUILDFLAG(IS_APPLE)
-    return "2a308e8cc20a6221112c387d122075a8";
-#else
-    return "9fe7eef8e51d15a604001854be6ed1ee";
-#endif  // BUILDFLAG(IS_APPLE)
+    if constexpr (BUILDFLAG(IS_APPLE)) {
+      return "2a308e8cc20a6221112c387d122075a8";
+    } else {
+      return "9fe7eef8e51d15a604001854be6ed1ee";
+    }
   }();
   {
     ASSERT_TRUE(OpenDocumentWithOptions("encrypted.pdf", "5678",

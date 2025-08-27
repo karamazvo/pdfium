@@ -1300,18 +1300,18 @@ void CPDF_RenderStatus::CompositeDIBitmap(
 
   if (blend_mode == BlendMode::kNormal) {
     if (bitmap->IsMaskFormat()) {
-#if BUILDFLAG(IS_WIN)
-      FX_ARGB fill_argb = options_.TranslateColor(mask_argb);
-      if (alpha != 1.0f) {
-        auto& bgra = reinterpret_cast<FX_BGRA_STRUCT<uint8_t>&>(fill_argb);
-        bgra.alpha *= FXSYS_roundf(alpha * 255) / 255;
+      if constexpr (BUILDFLAG(IS_WIN)) {
+        FX_ARGB fill_argb = options_.TranslateColor(mask_argb);
+        if (alpha != 1.0f) {
+          auto& bgra = reinterpret_cast<FX_BGRA_STRUCT<uint8_t>&>(fill_argb);
+          bgra.alpha *= FXSYS_roundf(alpha * 255) / 255;
+        }
+        if (device_->SetBitMask(bitmap, left, top, fill_argb)) {
+          return;
+        }
+      } else {
+        NOTREACHED();
       }
-      if (device_->SetBitMask(bitmap, left, top, fill_argb)) {
-        return;
-      }
-#else
-      NOTREACHED();
-#endif
     } else {
       if (alpha != 1.0f) {
         if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
