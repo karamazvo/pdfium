@@ -48,11 +48,7 @@ namespace {
 constexpr size_t kBlockSize = 4096;
 
 #ifdef PDF_ENABLE_XFA_PNG
-#if BUILDFLAG(IS_APPLE)
-const double kPngGamma = 1.7;
-#else
-const double kPngGamma = 2.2;
-#endif  // BUILDFLAG(IS_APPLE)
+constexpr double kPngGamma = BUILDFLAG(IS_APPLE) ? 1.7 : 2.2;
 #endif  // PDF_ENABLE_XFA_PNG
 
 void RGB2BGR(uint8_t* buffer, int width = 1) {
