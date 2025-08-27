@@ -256,11 +256,11 @@ std::pair<int32_t, RetainPtr<CFGAS_GEFont>> CFGAS_GEFont::GetGlyphIndexAndFont(
   WideString wsFamily = GetFamilyName();
   RetainPtr<CFGAS_GEFont> pFont =
       pFontMgr->GetFontByUnicode(wUnicode, GetFontStyles(), wsFamily.c_str());
-#if !BUILDFLAG(IS_WIN)
-  if (!pFont) {
-    pFont = pFontMgr->GetFontByUnicode(wUnicode, GetFontStyles(), nullptr);
+  if constexpr (!BUILDFLAG(IS_WIN)) {
+    if (!pFont) {
+      pFont = pFontMgr->GetFontByUnicode(wUnicode, GetFontStyles(), nullptr);
+    }
   }
-#endif
   if (!pFont || pFont == this) {  // Avoids direct cycles below.
     return {0xFFFF, nullptr};
   }
