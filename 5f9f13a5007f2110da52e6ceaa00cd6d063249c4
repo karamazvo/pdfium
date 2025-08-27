@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a60f55e7_065526f6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-27T18:37:57Z",
+      "side": 1,
+      "message": "Will take a little getting used to, but if this will become commonplace in Chromium as well, then sure.",
+      "revId": "5f9f13a5007f2110da52e6ceaa00cd6d063249c4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
