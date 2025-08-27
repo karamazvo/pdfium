@@ -306,20 +306,18 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
 
 bool ShouldDrawDeviceText(const CFX_Font* font,
                           const CFX_TextRenderOptions& options) {
-#if BUILDFLAG(IS_APPLE)
-  if (options.font_is_cid) {
-    return false;
+  if constexpr (BUILDFLAG(IS_APPLE)) {
+    if (options.font_is_cid) {
+      return false;
+    }
+    const ByteString bsPsName = font->GetPsName();
+    if (bsPsName.Contains("+ZJHL")) {
+      return false;
+    }
+    if (bsPsName == "CNAAJI+cmex10") {
+      return false;
+    }
   }
-
-  const ByteString bsPsName = font->GetPsName();
-  if (bsPsName.Contains("+ZJHL")) {
-    return false;
-  }
-
-  if (bsPsName == "CNAAJI+cmex10") {
-    return false;
-  }
-#endif
   return true;
 }
 

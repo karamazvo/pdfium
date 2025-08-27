@@ -176,12 +176,11 @@ void CFX_FolderFontInfo::ScanPath(const ByteString& path) {
     }
 
     ByteString fullpath = path;
-#if BUILDFLAG(IS_WIN)
-    fullpath += "\\";
-#else
-    fullpath += "/";
-#endif
-
+    if constexpr (BUILDFLAG(IS_WIN)) {
+      fullpath += "\\";
+    } else {
+      fullpath += "/";
+    }
     fullpath += filename;
     bFolder ? ScanPath(fullpath) : ScanFile(fullpath);
   }

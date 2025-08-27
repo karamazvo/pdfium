@@ -11,25 +11,17 @@
 #include "build/build_config.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
+#include "core/fxcrt/notreached.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
 
-#if BUILDFLAG(IS_WIN)
-#include "core/fpdfapi/render/cpdf_rendercontext.h"
-#else
-#include "core/fxcrt/notreached.h"
-#endif
-
 namespace {
 
-#if BUILDFLAG(IS_WIN)
-constexpr bool kScaleDeviceBuffer = true;
-#else
-constexpr bool kScaleDeviceBuffer = false;
-#endif
+constexpr bool kScaleDeviceBuffer = !!BUILDFLAG(IS_WIN);
 
 }  // namespace
 
@@ -94,14 +86,13 @@ void CPDF_DeviceBuffer::OutputToDevice() {
       device_->SetDIBits(bitmap_, rect_.left, rect_.top);
       return;
     }
-
-#if BUILDFLAG(IS_WIN)
-    device_->StretchDIBits(bitmap_, rect_.left, rect_.top, rect_.Width(),
-                           rect_.Height());
-    return;
-#else
-    NOTREACHED();
-#endif
+    if constexpr (BUILDFLAG(IS_WIN)) {
+      device_->StretchDIBits(bitmap_, rect_.left, rect_.top, rect_.Width(),
+                             rect_.Height());
+      return;
+    } else {
+      NOTREACHED();
+    }
   }
 
 #if BUILDFLAG(IS_WIN)

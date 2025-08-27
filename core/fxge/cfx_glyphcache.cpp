@@ -82,19 +82,20 @@ UniqueKeyGen::UniqueKeyGen(const CFX_Font* font,
   int nMatrixC = static_cast<int>(matrix.c * 10000);
   int nMatrixD = static_cast<int>(matrix.d * 10000);
 
-#if BUILDFLAG(IS_APPLE)
-  if (bNative) {
-    if (font->GetSubstFont()) {
-      Initialize({nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
-                  anti_alias, font->GetSubstFont()->weight_,
-                  font->GetSubstFont()->italic_angle_, font->IsVertical(), 3});
-    } else {
-      Initialize(
-          {nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width, anti_alias, 3});
+  if constexpr (BUILDFLAG(IS_APPLE)) {
+    if (bNative) {
+      if (font->GetSubstFont()) {
+        Initialize({nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
+                    anti_alias, font->GetSubstFont()->weight_,
+                    font->GetSubstFont()->italic_angle_, font->IsVertical(),
+                    3});
+      } else {
+        Initialize({nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
+                    anti_alias, 3});
+      }
+      return;
     }
-    return;
   }
-#endif
 
   CHECK(!bNative);
   if (font->GetSubstFont()) {
