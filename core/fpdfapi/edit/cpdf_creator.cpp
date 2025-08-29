@@ -218,16 +218,26 @@ bool CPDF_Creator::WriteNewObjs() {
 void CPDF_Creator::InitNewObjNumOffsets() {
   for (const auto& pair : *document_) {
     const uint32_t objnum = pair.first;
-    if (is_incremental_ ||
-        pair.second->GetObjNum() == CPDF_Object::kInvalidObjNum) {
+    if (pair.second->GetObjNum() == CPDF_Object::kInvalidObjNum) {
       continue;
     }
-    if (parser_ && parser_->IsValidObjectNumber(objnum) &&
-        !parser_->IsObjectFree(objnum)) {
-      continue;
+
+    // Original logic but handle incremental mode specially
+    if (is_incremental_) {
+      // In incremental mode, we want to include modified/new objects
+      // If the object exists in the original file and is also in memory,
+      // it means it has been modified and should be written
+      new_obj_num_array_.insert(
+          std::ranges::lower_bound(new_obj_num_array_, objnum), objnum);
+    } else {
+      // Non-incremental mode: use completely original logic
+      if (parser_ && parser_->IsValidObjectNumber(objnum) &&
+          !parser_->IsObjectFree(objnum)) {
+        continue;
+      }
+      new_obj_num_array_.insert(
+          std::ranges::lower_bound(new_obj_num_array_, objnum), objnum);
     }
-    new_obj_num_array_.insert(
-        std::ranges::lower_bound(new_obj_num_array_, objnum), objnum);
   }
 }
 

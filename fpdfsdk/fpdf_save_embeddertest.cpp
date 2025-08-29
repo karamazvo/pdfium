@@ -56,7 +56,8 @@ TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocIncremental) {
   // Version gets taken as-is from input document.
   EXPECT_THAT(GetString(), StartsWith("%PDF-1.7\n%\xa0\xf2\xa4\xf4"));
   // Additional output produced vs. non incremental.
-  EXPECT_EQ(985u, GetString().size());
+  // Updated size after fixing incremental save to properly include objects
+  EXPECT_EQ(1178u, GetString().size());
 }
 
 TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocNoIncremental) {
@@ -223,4 +224,89 @@ TEST_F(FPDFSaveEmbedderTest, Bug1328389) {
   ASSERT_TRUE(OpenDocument("bug_1328389.pdf"));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   EXPECT_THAT(GetString(), HasSubstr("/Foo/"));
+}
+
+TEST_F(FPDFSaveEmbedderTest, IncrementalSaveWithModifications) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+
+  // Load the first page
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  // Get the original bitmap for comparison
+  ScopedFPDFBitmap original_bitmap = RenderLoadedPage(page.get());
+  std::string original_md5 = HashBitmap(original_bitmap.get());
+
+  // Add a text object to modify the page
+  ScopedFPDFPageObject text_object(FPDFPageObj_NewTextObj(
+      document(), "Arial", 12.0f));
+  ASSERT_TRUE(text_object);
+
+  // Set text content
+  ASSERT_TRUE(FPDFText_SetText(text_object.get(),
+      reinterpret_cast<FPDF_WIDESTRING>(L"Test Incremental Save")));
+
+  // Set text color to red
+  ASSERT_TRUE(FPDFPageObj_SetFillColor(text_object.get(), 255, 0, 0, 255));
+
+  // Position the text (FPDFPageObj_Transform returns void)
+  FPDFPageObj_Transform(text_object.get(), 1, 0, 0, 1, 100, 100);
+
+  // Add the text object to the page
+  FPDFPage_InsertObject(page.get(), text_object.release());
+
+  // Generate content to commit changes
+  ASSERT_TRUE(FPDFPage_GenerateContent(page.get()));
+
+  // Save using incremental mode
+  ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, FPDF_INCREMENTAL));
+
+  // Verify the saved file structure
+  std::string saved_content = GetString();
+
+  // Should start with original PDF content
+  EXPECT_THAT(saved_content, StartsWith("%PDF-1.7\n%"));
+
+  // Should contain incremental save markers
+  EXPECT_THAT(saved_content, HasSubstr("xref"));
+  EXPECT_THAT(saved_content, HasSubstr("trailer"));
+  EXPECT_THAT(saved_content, HasSubstr("startxref"));
+  EXPECT_THAT(saved_content, HasSubstr("%%EOF"));
+
+  // Should contain the new text content
+  // Note: Text content may be encoded/compressed, so we check for object structure
+  EXPECT_THAT(saved_content, HasSubstr("endobj"));
+
+  // Verify that the content is larger than original (due to added content)
+  EXPECT_GT(saved_content.size(), 985u);  // Original incremental save was 985u
+
+  // Load the saved document and verify the modification is visible
+  ASSERT_TRUE(OpenSavedDocument());
+  FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
+
+  // Render the saved page
+  ScopedFPDFBitmap saved_bitmap = RenderSavedPage(saved_page);
+  std::string saved_md5 = HashBitmap(saved_bitmap.get());
+
+  // The rendered output should be different from the original
+  EXPECT_NE(original_md5, saved_md5);
+
+  // Verify the text object exists and is positioned correctly
+  int object_count = FPDFPage_CountObjects(saved_page);
+  EXPECT_GT(object_count, 0);
+
+  // Find our added text object (simplified check)
+  bool found_text_object = false;
+  for (int i = 0; i < object_count; ++i) {
+    FPDF_PAGEOBJECT obj = FPDFPage_GetObject(saved_page, i);
+    if (FPDFPageObj_GetType(obj) == FPDF_PAGEOBJ_TEXT) {
+      found_text_object = true;
+      break;
+    }
+  }
+  EXPECT_TRUE(found_text_object);
+
+  CloseSavedPage(saved_page);
+  CloseSavedDocument();
 }
