@@ -276,6 +276,24 @@
       "parentUuid": "4c4a19f6_868f6a0c",
       "revId": "519fdec243d1dbb099af6c0f62c2961b064801b7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "26c6fde5_35e2f744",
+        "filename": "testing/resources/javascript/bug_421304870_expected.txt",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 4140855
+      },
+      "writtenOn": "2025-08-29T01:32:58Z",
+      "side": 1,
+      "message": "Got it, thanks for clarifying. I\u0027ll wait until that CL lands.",
+      "parentUuid": "9814a44a_5a596a03",
+      "revId": "519fdec243d1dbb099af6c0f62c2961b064801b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
