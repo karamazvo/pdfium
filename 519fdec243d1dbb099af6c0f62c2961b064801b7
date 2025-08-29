@@ -312,6 +312,24 @@
       "parentUuid": "26c6fde5_35e2f744",
       "revId": "519fdec243d1dbb099af6c0f62c2961b064801b7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "acae22a0_63540fae",
+        "filename": "testing/resources/javascript/bug_421304870_expected.txt",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 4140855
+      },
+      "writtenOn": "2025-08-29T01:58:10Z",
+      "side": 1,
+      "message": "Thanks for the update, I\u0027ll wait for the fix to be deployed.",
+      "parentUuid": "98376fcb_0c359fe3",
+      "revId": "519fdec243d1dbb099af6c0f62c2961b064801b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
