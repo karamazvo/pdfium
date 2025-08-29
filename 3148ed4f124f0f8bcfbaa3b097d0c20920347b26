@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eebc2ee4_afad30d2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-29T16:26:47Z",
+      "side": 1,
+      "message": "Thanks for looking into this issue and sending out a fix. Can you add yourself to the AUTHORS file as well?",
+      "revId": "3148ed4f124f0f8bcfbaa3b097d0c20920347b26",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7fc4f546_b29e4068",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-29T16:26:47Z",
+      "side": 1,
+      "message": "Thanks for adding comments, but it would be preferrable to use them more sparring when the code is tricky in some way. If the code is self-explanatory, the comment feels redundant.",
+      "revId": "3148ed4f124f0f8bcfbaa3b097d0c20920347b26",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ede06ee6_a9f8bef1",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-29T16:26:47Z",
+      "side": 1,
+      "message": "Since all the code that runs should be deterministic, this can check for an exact number.",
+      "revId": "3148ed4f124f0f8bcfbaa3b097d0c20920347b26",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a814faf7_9c4ede3c",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-29T16:26:47Z",
+      "side": 1,
+      "message": "Since hello_world.pdf already starts out with some text objects, so this check isn\u0027t doing much. Maybe switch to rectangles.pdf?",
+      "revId": "3148ed4f124f0f8bcfbaa3b097d0c20920347b26",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
