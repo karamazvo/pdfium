@@ -294,6 +294,24 @@
       "parentUuid": "9814a44a_5a596a03",
       "revId": "519fdec243d1dbb099af6c0f62c2961b064801b7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "98376fcb_0c359fe3",
+        "filename": "testing/resources/javascript/bug_421304870_expected.txt",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-29T01:41:55Z",
+      "side": 1,
+      "message": "Our commit queue infrastructure is slightly broken. It\u0027s been fixed, but I\u0027m waiting for the fix to be deployed.",
+      "parentUuid": "26c6fde5_35e2f744",
+      "revId": "519fdec243d1dbb099af6c0f62c2961b064801b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
