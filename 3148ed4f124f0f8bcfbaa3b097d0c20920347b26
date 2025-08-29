@@ -67,6 +67,23 @@
       "message": "Since hello_world.pdf already starts out with some text objects, so this check isn\u0027t doing much. Maybe switch to rectangles.pdf?",
       "revId": "3148ed4f124f0f8bcfbaa3b097d0c20920347b26",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "12292b12_b8c4c5e5",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-08-29T17:59:13Z",
+      "side": 1,
+      "message": "Instead of manually managing the saved page / document lifetimes, would you like to try using OpenScopedSavedDocument() and LoadScopedSavedPage()?",
+      "revId": "3148ed4f124f0f8bcfbaa3b097d0c20920347b26",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
