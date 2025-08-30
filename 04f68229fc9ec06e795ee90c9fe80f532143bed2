@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "42da4448_20ed381d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 15
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-08-30T18:29:26Z",
+      "side": 1,
+      "message": "Can you update me on if everything is fine now. Do let me know if anything is to be edited.",
+      "revId": "04f68229fc9ec06e795ee90c9fe80f532143bed2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
