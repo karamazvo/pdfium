@@ -11,8 +11,18 @@
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxge/dib/fx_dib.h"
 
 namespace {
+
+enum class JpxDecodeAction {
+  kDoNothing,
+  kUseGray,
+  kUseIndexed,
+  kUseRgb,
+  kUseCmyk,
+  kConvertArgbToRgb,
+};
 
 // ISO 32000-1:2008 section 7.4.9 says the PDF and JPX colorspaces should have
 // the same number of color channels. This helper function checks the
@@ -123,6 +133,26 @@ int GetComponentCountFromJpxImageInfo(
   NOTREACHED();
 }
 
+std::optional<FXDIB_Format> GetFormatFromJpxDecodeActionAndImageInfo(
+    JpxDecodeAction action,
+    uint32_t channels) {
+  if (action == JpxDecodeAction::kUseGray ||
+      action == JpxDecodeAction::kUseIndexed) {
+    return FXDIB_Format::k8bppRgb;
+  }
+  if (action == JpxDecodeAction::kUseRgb && channels == 3) {
+    return FXDIB_Format::kBgr;
+  }
+  if (action == JpxDecodeAction::kUseRgb && channels == 4) {
+    return FXDIB_Format::kBgrx;
+  }
+  if (action == JpxDecodeAction::kConvertArgbToRgb) {
+    CHECK_GE(channels, 4);
+    return FXDIB_Format::kBgrx;
+  }
+  return std::nullopt;
+}
+
 }  // namespace
 
 // static
@@ -138,9 +168,21 @@ std::optional<JpxDecodeConversion> JpxDecodeConversion::Create(
     return std::nullopt;
   }
 
+  const JpxDecodeAction action = maybe_action.value();
   JpxDecodeConversion conversion;
-  conversion.action_ = maybe_action.value();
-  switch (conversion.action_) {
+  conversion.swap_rgb_ = (action == JpxDecodeAction::kUseRgb ||
+                          action == JpxDecodeAction::kConvertArgbToRgb);
+  conversion.convert_argb_to_rgb_ =
+      (action == JpxDecodeAction::kConvertArgbToRgb);
+
+  std::optional<FXDIB_Format> maybe_format =
+      GetFormatFromJpxDecodeActionAndImageInfo(action, jpx_info.channels);
+  conversion.format_ = maybe_format.value_or(FXDIB_Format::kBgr);
+  conversion.width_ = maybe_format.has_value()
+                          ? jpx_info.width
+                          : ((jpx_info.width * jpx_info.channels + 2) / 3);
+
+  switch (action) {
     case JpxDecodeAction::kDoNothing:
       break;
 
