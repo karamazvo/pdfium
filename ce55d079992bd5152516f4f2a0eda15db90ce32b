@@ -33,6 +33,24 @@
       "message": "LG otherwise.",
       "revId": "ce55d079992bd5152516f4f2a0eda15db90ce32b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e9b24a00_5274cf13",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-02T17:55:30Z",
+      "side": 1,
+      "message": "All the tests are pixel tests and such. There are no cpdf_dib_*test*.cpp files.",
+      "parentUuid": "a0167e9c_daa5834c",
+      "revId": "ce55d079992bd5152516f4f2a0eda15db90ce32b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
