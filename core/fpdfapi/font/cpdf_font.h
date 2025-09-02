@@ -96,6 +96,8 @@ class CPDF_Font : public Retainable, public Observable {
   virtual bool HasFontWidths() const;
 
   ByteString GetBaseFontName() const { return base_font_name_; }
+  ByteString GetFullBaseFont() const;
+
   std::optional<FX_Charset> GetSubstFontCharset() const;
   bool IsEmbedded() const { return IsType3Font() || font_file_ != nullptr; }
   RetainPtr<CPDF_Dictionary> GetMutableFontDict() { return font_dict_; }

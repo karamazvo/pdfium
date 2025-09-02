@@ -107,6 +107,16 @@ CPDF_CIDFont* CPDF_Font::AsCIDFont() {
   return nullptr;
 }
 
+ByteString CPDF_Font::GetFullBaseFont() const {
+    auto fontDict = GetFontDict();
+    if (!fontDict || !fontDict->KeyExist("BaseFont")) {
+        return GetBaseFontName();
+    }
+    
+    return fontDict->GetNameFor("BaseFont");
+}
+
+
 size_t CPDF_Font::CountChar(ByteStringView pString) const {
   return pString.GetLength();
 }
