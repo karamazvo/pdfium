@@ -182,7 +182,7 @@ uint32_t CPDF_Parser::GetLastObjNum() const {
 }
 
 bool CPDF_Parser::IsValidObjectNumber(uint32_t objnum) const {
-  return objnum <= GetLastObjNum();
+  return objnum < kMaxObjectNumber && objnum <= GetLastObjNum();
 }
 
 FX_FILESIZE CPDF_Parser::GetObjectPositionOrZero(uint32_t objnum) const {
