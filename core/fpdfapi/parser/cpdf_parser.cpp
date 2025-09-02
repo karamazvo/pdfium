@@ -850,7 +850,7 @@ bool CPDF_Parser::LoadCrossRefStream(FX_FILESIZE* pos, bool is_main_xref) {
   }
 
   int32_t size = dict->GetIntegerFor("Size");
-  if (size < 0) {
+  if (size < 0 || size > kMaxXRefSize) {
     return false;
   }
 
