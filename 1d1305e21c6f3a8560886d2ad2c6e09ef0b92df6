@@ -1,0 +1,147 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0ff8782b_3fd65039",
+        "filename": "core/fpdfapi/page/jpx_decode_conversion.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-09-02T16:41:17Z",
+      "side": 1,
+      "message": "super-nit: blank line before, also maybe no blank line at 170 as it is the else case of the if statement.",
+      "range": {
+        "startLine": 172,
+        "startChar": 0,
+        "endLine": 172,
+        "endChar": 2
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "20555ec3_4ef20beb",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/page/jpx_decode_conversion.cpp",
+              "range": {
+                "startLine": 172,
+                "startChar": 0,
+                "endLine": 172,
+                "endChar": 0
+              },
+              "replacement": "\n"
+            },
+            {
+              "path": "core/fpdfapi/page/jpx_decode_conversion.cpp",
+              "range": {
+                "startLine": 181,
+                "startChar": 0,
+                "endLine": 184,
+                "endChar": 0
+              },
+              "replacement": "  conversion.width_ \u003d maybe_format.has_value() ? jpx_info.width\n                                               : ((jpx_info.width * jpx_info.channels + 2) / 3);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "1d1305e21c6f3a8560886d2ad2c6e09ef0b92df6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c2a71227_b269bbca",
+        "filename": "core/fpdfapi/page/jpx_decode_conversion.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-09-02T16:41:17Z",
+      "side": 1,
+      "message": "can this entire switch statement move up and be switch (maybe_action.value())?",
+      "range": {
+        "startLine": 185,
+        "startChar": 1,
+        "endLine": 211,
+        "endChar": 0
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "5f561a00_5a71016c",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/page/jpx_decode_conversion.cpp",
+              "range": {
+                "startLine": 173,
+                "startChar": 0,
+                "endLine": 184,
+                "endChar": 0
+              },
+              "replacement": ""
+            },
+            {
+              "path": "core/fpdfapi/page/jpx_decode_conversion.cpp",
+              "range": {
+                "startLine": 211,
+                "startChar": 0,
+                "endLine": 211,
+                "endChar": 0
+              },
+              "replacement": "\n  conversion.swap_rgb_ \u003d (action \u003d\u003d JpxDecodeAction::kUseRgb ||\n                          action \u003d\u003d JpxDecodeAction::kConvertArgbToRgb);\n  conversion.convert_argb_to_rgb_ \u003d\n      (action \u003d\u003d JpxDecodeAction::kConvertArgbToRgb);\n\n  std::optional\u003cFXDIB_Format\u003e maybe_format \u003d\n      GetFormatFromJpxDecodeActionAndImageInfo(action, jpx_info.channels);\n  conversion.format_ \u003d maybe_format.value_or(FXDIB_Format::kBgr);\n  conversion.width_ \u003d maybe_format.has_value()\n                          ? jpx_info.width\n                          : ((jpx_info.width * jpx_info.channels + 2) / 3);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "1d1305e21c6f3a8560886d2ad2c6e09ef0b92df6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2154d390_e1bc8147",
+        "filename": "core/fpdfapi/page/jpx_decode_conversion.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-09-02T16:41:17Z",
+      "side": 1,
+      "message": "can we get default initializers for these? Since these are all set in Create(), rather than the constructor, it would be a shame if the logic in Create didn\u0027t init all of these.",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 17
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "34eafd38_6ae95e95",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/page/jpx_decode_conversion.h",
+              "range": {
+                "startLine": 44,
+                "startChar": 0,
+                "endLine": 48,
+                "endChar": 0
+              },
+              "replacement": "  bool swap_rgb_ \u003d false;\n  bool convert_argb_to_rgb_ \u003d false;\n  FXDIB_Format format_ \u003d FXDIB_Format::kInvalid;\n  uint32_t width_ \u003d 0;\n"
+            }
+          ]
+        }
+      ],
+      "revId": "1d1305e21c6f3a8560886d2ad2c6e09ef0b92df6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
