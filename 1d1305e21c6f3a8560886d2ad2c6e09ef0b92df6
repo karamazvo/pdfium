@@ -54,6 +54,117 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "97a0d0a7_d4babc4c",
+        "filename": "core/fpdfapi/page/jpx_decode_conversion.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-09-02T17:57:43Z",
+      "side": 1,
+      "message": "if we move the switch up, can some of these go into its cases?",
+      "range": {
+        "startLine": 173,
+        "startChar": 2,
+        "endLine": 176,
+        "endChar": 53
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "31c8ba27_980059dc",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/page/jpx_decode_conversion.cpp",
+              "range": {
+                "startLine": 173,
+                "startChar": 0,
+                "endLine": 184,
+                "endChar": 0
+              },
+              "replacement": ""
+            },
+            {
+              "path": "core/fpdfapi/page/jpx_decode_conversion.cpp",
+              "range": {
+                "startLine": 187,
+                "startChar": 0,
+                "endLine": 187,
+                "endChar": 0
+              },
+              "replacement": "      conversion.swap_rgb_ \u003d false;\n      conversion.convert_argb_to_rgb_ \u003d false;\n"
+            },
+            {
+              "path": "core/fpdfapi/page/jpx_decode_conversion.cpp",
+              "range": {
+                "startLine": 190,
+                "startChar": 0,
+                "endLine": 190,
+                "endChar": 0
+              },
+              "replacement": "      conversion.swap_rgb_ \u003d false;\n      conversion.convert_argb_to_rgb_ \u003d false;\n"
+            },
+            {
+              "path": "core/fpdfapi/page/jpx_decode_conversion.cpp",
+              "range": {
+                "startLine": 195,
+                "startChar": 0,
+                "endLine": 195,
+                "endChar": 0
+              },
+              "replacement": "      conversion.swap_rgb_ \u003d false;\n      conversion.convert_argb_to_rgb_ \u003d false;\n"
+            },
+            {
+              "path": "core/fpdfapi/page/jpx_decode_conversion.cpp",
+              "range": {
+                "startLine": 199,
+                "startChar": 0,
+                "endLine": 199,
+                "endChar": 0
+              },
+              "replacement": "      conversion.swap_rgb_ \u003d true;\n      conversion.convert_argb_to_rgb_ \u003d false;\n"
+            },
+            {
+              "path": "core/fpdfapi/page/jpx_decode_conversion.cpp",
+              "range": {
+                "startLine": 203,
+                "startChar": 0,
+                "endLine": 203,
+                "endChar": 0
+              },
+              "replacement": "      conversion.swap_rgb_ \u003d false;\n      conversion.convert_argb_to_rgb_ \u003d false;\n"
+            },
+            {
+              "path": "core/fpdfapi/page/jpx_decode_conversion.cpp",
+              "range": {
+                "startLine": 208,
+                "startChar": 0,
+                "endLine": 208,
+                "endChar": 0
+              },
+              "replacement": "      conversion.swap_rgb_ \u003d true;\n      conversion.convert_argb_to_rgb_ \u003d true;\n"
+            },
+            {
+              "path": "core/fpdfapi/page/jpx_decode_conversion.cpp",
+              "range": {
+                "startLine": 211,
+                "startChar": 0,
+                "endLine": 211,
+                "endChar": 0
+              },
+              "replacement": "\n  std::optional\u003cFXDIB_Format\u003e maybe_format \u003d\n      GetFormatFromJpxDecodeActionAndImageInfo(action, jpx_info.channels);\n  conversion.format_ \u003d maybe_format.value_or(FXDIB_Format::kBgr);\n  conversion.width_ \u003d maybe_format.has_value()\n                          ? jpx_info.width\n                          : ((jpx_info.width * jpx_info.channels + 2) / 3);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "1d1305e21c6f3a8560886d2ad2c6e09ef0b92df6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c2a71227_b269bbca",
         "filename": "core/fpdfapi/page/jpx_decode_conversion.cpp",
         "patchSetId": 1
