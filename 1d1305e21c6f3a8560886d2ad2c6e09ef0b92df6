@@ -52,6 +52,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6e987ec5_0610f2d5",
+        "filename": "core/fpdfapi/page/jpx_decode_conversion.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-03T01:15:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0ff8782b_3fd65039",
+      "range": {
+        "startLine": 172,
+        "startChar": 0,
+        "endLine": 172,
+        "endChar": 2
+      },
+      "revId": "1d1305e21c6f3a8560886d2ad2c6e09ef0b92df6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "97a0d0a7_d4babc4c",
@@ -163,6 +187,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c4b19ea7_ed1ef5a4",
+        "filename": "core/fpdfapi/page/jpx_decode_conversion.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-03T01:15:35Z",
+      "side": 1,
+      "message": "Done. I didn\u0027t explicitly set values to the default values.",
+      "parentUuid": "97a0d0a7_d4babc4c",
+      "range": {
+        "startLine": 173,
+        "startChar": 2,
+        "endLine": 176,
+        "endChar": 53
+      },
+      "revId": "1d1305e21c6f3a8560886d2ad2c6e09ef0b92df6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c2a71227_b269bbca",
@@ -214,6 +262,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "61590fae_c7a49c4a",
+        "filename": "core/fpdfapi/page/jpx_decode_conversion.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-03T01:15:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c2a71227_b269bbca",
+      "range": {
+        "startLine": 185,
+        "startChar": 1,
+        "endLine": 211,
+        "endChar": 0
+      },
+      "revId": "1d1305e21c6f3a8560886d2ad2c6e09ef0b92df6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2154d390_e1bc8147",
@@ -251,6 +323,30 @@
           ]
         }
       ],
+      "revId": "1d1305e21c6f3a8560886d2ad2c6e09ef0b92df6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f477fe4e_dac4a0db",
+        "filename": "core/fpdfapi/page/jpx_decode_conversion.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-03T01:15:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2154d390_e1bc8147",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 17
+      },
       "revId": "1d1305e21c6f3a8560886d2ad2c6e09ef0b92df6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
