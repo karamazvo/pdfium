@@ -426,7 +426,83 @@ class ParserXRefTest : public testing::Test {
   CPDF_TestParser parser_;
 };
 
-TEST_F(ParserXRefTest, XrefObjectIndicesTooBig) {
+TEST_F(ParserXRefTest, XrefObjectHighestIndex) {
+  // The object number will be just under `kMaxObjectNumber`.
+  static_assert(CPDF_Parser::kMaxObjectNumber == 4194304,
+                "Unexpected kMaxObjectNumber");
+  const unsigned char kData[] =
+      "%PDF1-7\n%\xa0\xf2\xa4\xf4\n"
+      "7 0 obj <<\n"
+      "  /Filter /ASCIIHexDecode\n"
+      "  /Index [4194303 1]\n"
+      "  /Root 1 0 R\n"
+      "  /Size 4194304\n"
+      "  /W [1 1 1]\n"
+      ">>\n"
+      "stream\n"
+      "01 00 00\n"
+      "endstream\n"
+      "endobj\n"
+      "startxref\n"
+      "14\n"
+      "%%EOF\n";
+  ASSERT_TRUE(parser().InitTestFromBuffer(kData));
+  EXPECT_EQ(CPDF_Parser::SUCCESS, parser().StartParseInternal());
+  EXPECT_FALSE(parser().xref_table_rebuilt());
+  ASSERT_TRUE(parser().GetCrossRefTableForTesting());
+  const auto& objects_info =
+      parser().GetCrossRefTableForTesting()->objects_info();
+
+  const CPDF_CrossRefTable::ObjectInfo only_valid_object = {
+      .type = CPDF_CrossRefTable::ObjectType::kNormal, .pos = 0};
+  EXPECT_THAT(objects_info, ElementsAre(Pair(4194303, only_valid_object)));
+}
+
+TEST_F(ParserXRefTest, XrefObjectIndicesTooBig1) {
+  // Since /Index starts at 4194303, the object number will go to
+  // `kMaxObjectNumber`, which is actually over the limit.
+  static_assert(CPDF_Parser::kMaxObjectNumber == 4194304,
+                "Unexpected kMaxObjectNumber");
+  const unsigned char kData[] =
+      "%PDF1-7\n%\xa0\xf2\xa4\xf4\n"
+      "7 0 obj <<\n"
+      "  /Filter /ASCIIHexDecode\n"
+      "  /Index [4194303 2]\n"
+      "  /Root 1 0 R\n"
+      "  /Size 4194305\n"
+      "  /W [1 1 1]\n"
+      ">>\n"
+      "stream\n"
+      "01 00 00\n"
+      "01 0F 00\n"
+      "endstream\n"
+      "endobj\n"
+      "startxref\n"
+      "14\n"
+      "%%EOF\n";
+  ASSERT_TRUE(parser().InitTestFromBuffer(kData));
+  EXPECT_EQ(CPDF_Parser::SUCCESS, parser().StartParseInternal());
+  EXPECT_FALSE(parser().xref_table_rebuilt());
+  ASSERT_TRUE(parser().GetCrossRefTableForTesting());
+  const auto& objects_info =
+      parser().GetCrossRefTableForTesting()->objects_info();
+
+  // This should be the only object from table. Subsequent objects have object
+  // numbers that are too big.
+  const CPDF_CrossRefTable::ObjectInfo only_valid_object = {
+      .type = CPDF_CrossRefTable::ObjectType::kNormal, .pos = 0};
+
+  // TODO(thestig): Should the xref table contain object 4194304?
+  // Consider reworking CPDF_Parser's object representation to avoid having to
+  // store this placeholder object.
+  const CPDF_CrossRefTable::ObjectInfo placeholder_object = {
+      .type = CPDF_CrossRefTable::ObjectType::kFree, .pos = 0};
+
+  EXPECT_THAT(objects_info, ElementsAre(Pair(4194303, only_valid_object),
+                                        Pair(4194304, placeholder_object)));
+}
+
+TEST_F(ParserXRefTest, XrefObjectIndicesTooBig2) {
   // Since /Index starts at 4194303, the object number will go past
   // `kMaxObjectNumber`.
   static_assert(CPDF_Parser::kMaxObjectNumber == 4194304,
@@ -458,13 +534,13 @@ TEST_F(ParserXRefTest, XrefObjectIndicesTooBig) {
 
   // This should be the only object from table. Subsequent objects have object
   // numbers that are too big.
-  CPDF_CrossRefTable::ObjectInfo only_valid_object = {
+  const CPDF_CrossRefTable::ObjectInfo only_valid_object = {
       .type = CPDF_CrossRefTable::ObjectType::kNormal, .pos = 0};
 
   // TODO(thestig): Should the xref table contain object 4194305?
   // Consider reworking CPDF_Parser's object representation to avoid having to
   // store this placeholder object.
-  CPDF_CrossRefTable::ObjectInfo placeholder_object = {
+  const CPDF_CrossRefTable::ObjectInfo placeholder_object = {
       .type = CPDF_CrossRefTable::ObjectType::kFree, .pos = 0};
 
   EXPECT_THAT(objects_info, ElementsAre(Pair(4194303, only_valid_object),
