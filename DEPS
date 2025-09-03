@@ -70,7 +70,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling abseil
   # and whatever else without interference from each other.
-  'abseil_revision': '77596c0368ffd14cbc13306181441122eb01ef2d',
+  'abseil_revision': '04fe3ac35a94bbeeb04f859f84254df6a43590c5',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling android_toolchain
   # and whatever else without interference from each other.
@@ -233,6 +233,10 @@ vars = {
   # the commit queue can handle CLs rolling tools_rust
   # and whatever else without interference from each other.
   'tools_rust_revision': 'fa1df48579a1f8af4ddafd9a65705bf0b40e5186',
+  # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling tools_win_revision
+  # and whatever else without interference from each other.
+  'tools_win_revision': '89d58ebe78f02706d414154f923f759a05a887b6',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling v8
   # and whatever else without interference from each other.
@@ -661,6 +665,12 @@ deps = {
       }
     ],
     'dep_type': 'cipd',
+    'condition': 'checkout_win',
+  },
+
+  'tools/win': {
+    'url': Var('chromium_git') + '/chromium/src/tools/win.git@' +
+        Var('tools_win_revision'),
     'condition': 'checkout_win',
   },
 
