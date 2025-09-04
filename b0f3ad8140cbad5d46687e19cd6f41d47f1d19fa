@@ -46,6 +46,30 @@
       },
       "revId": "b0f3ad8140cbad5d46687e19cd6f41d47f1d19fa",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5efc5ed1_010eac20",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-09-04T19:05:28Z",
+      "side": 1,
+      "message": "Subtracting 1.  But let\u0027s do it in a follow-up",
+      "parentUuid": "53c7688b_ab28208f",
+      "range": {
+        "startLine": 10,
+        "startChar": 5,
+        "endLine": 10,
+        "endChar": 21
+      },
+      "revId": "b0f3ad8140cbad5d46687e19cd6f41d47f1d19fa",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
