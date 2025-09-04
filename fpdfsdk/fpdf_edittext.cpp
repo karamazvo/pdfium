@@ -246,6 +246,7 @@ void AddCharcode(fxcrt::ostringstream& buffer, uint32_t number) {
   buffer << "<";
   char ans[4];
   FXSYS_IntToFourHexChars(number, ans);
+  // 141-JULIACHECK(FAIL)
   for (char c : ans) {
     buffer << c;
   }
