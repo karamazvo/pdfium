@@ -16,6 +16,97 @@
       "message": "Thank you for reviewing.",
       "revId": "b6d666d37dd77aaeee4d9692b7b4ba5e2c9db2c3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b16573c5_1893529e",
+        "filename": "core/fpdfapi/edit/cpdf_creator.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-04T21:13:20Z",
+      "side": 1,
+      "message": "Instead of duplicating the `new_obj_num_array_.insert()` call, wouldn\u0027t it be less churn to just change `if (parser_ \u0026\u0026 parser_-\u003eIsValidObjectNumber(...), ...)` to also check `!is_incremental_`?",
+      "revId": "b6d666d37dd77aaeee4d9692b7b4ba5e2c9db2c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "61cdb080_c5de2e7e",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-04T21:13:20Z",
+      "side": 1,
+      "message": "Please use GetFPDFWideString() here.",
+      "revId": "b6d666d37dd77aaeee4d9692b7b4ba5e2c9db2c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "38fc8130_b1e9f7e1",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-04T21:13:20Z",
+      "side": 1,
+      "message": "With so many comments, one would expect each comment to correspond to the code immediately below it. That looks like the pattern, but then this comment / code pair doesn\u0027t actually match.",
+      "revId": "b6d666d37dd77aaeee4d9692b7b4ba5e2c9db2c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bd927109_f3640b74",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-04T21:13:20Z",
+      "side": 1,
+      "message": "This check is also meaningless. I doubt there are any valid, non-trivial PDFs without \"endobj\".",
+      "range": {
+        "startLine": 277,
+        "startChar": 0,
+        "endLine": 279,
+        "endChar": 50
+      },
+      "revId": "b6d666d37dd77aaeee4d9692b7b4ba5e2c9db2c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2a036c25_16fac37e",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-04T21:13:20Z",
+      "side": 1,
+      "message": "It would be helpful near the top of the test, where `original_object_count` gets set, to first establish the original PDF does not have any text objects.",
+      "revId": "b6d666d37dd77aaeee4d9692b7b4ba5e2c9db2c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
