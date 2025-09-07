@@ -13,9 +13,11 @@
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
 #include "testing/embedder_test_constants.h"
+#include "testing/fx_string_testhelpers.h"
 #include "testing/gmock/include/gmock/gmock-matchers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
+using testing::Contains;
 using testing::HasSubstr;
 using testing::Not;
 using testing::StartsWith;
@@ -56,7 +58,8 @@ TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocIncremental) {
   // Version gets taken as-is from input document.
   EXPECT_THAT(GetString(), StartsWith("%PDF-1.7\n%\xa0\xf2\xa4\xf4"));
   // Additional output produced vs. non incremental.
-  EXPECT_EQ(985u, GetString().size());
+  // Check that the size is larger than the old, broken incremental save size.
+  EXPECT_GT(GetString().size(), 985u);
 }
 
 TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocNoIncremental) {
@@ -223,4 +226,77 @@ TEST_F(FPDFSaveEmbedderTest, Bug1328389) {
   ASSERT_TRUE(OpenDocument("bug_1328389.pdf"));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   EXPECT_THAT(GetString(), HasSubstr("/Foo/"));
+}
+
+TEST_F(FPDFSaveEmbedderTest, IncrementalSaveWithModifications) {
+  ASSERT_TRUE(OpenDocument("rectangles.pdf"));
+
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  // Get the original bitmap for comparison
+  ScopedFPDFBitmap original_bitmap = RenderLoadedPage(page.get());
+  std::string original_md5 = HashBitmap(original_bitmap.get());
+
+  // Verify the original PDF does not have any text objects
+  const int original_object_count = FPDFPage_CountObjects(page.get());
+  for (int i = 0; i < original_object_count; ++i) {
+    FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page.get(), i);
+    ASSERT_NE(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(obj));
+  }
+
+  // Add a new text object to modify the page.
+  ScopedFPDFPageObject text_object(FPDFPageObj_NewTextObj(
+      document(), "Arial", 12.0f));
+  ScopedFPDFWideString text = GetFPDFWideString(L"Test Incremental Save");
+  FPDFText_SetText(text_object.get(), text.get());
+  FPDFPageObj_Transform(text_object.get(), 1, 0, 0, 1, 100, 100);
+  FPDFPage_InsertObject(page.get(), text_object.release());
+  ASSERT_TRUE(FPDFPage_GenerateContent(page.get()));
+
+  // Save using incremental mode
+  ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, FPDF_INCREMENTAL));
+
+  // Verify the saved document
+  // Count occurrences of key markers
+  auto count_occurrences = [](const std::string& str, const std::string& substr) {
+    size_t count = 0;
+    size_t pos = 0;
+    while ((pos = str.find(substr, pos)) != std::string::npos) {
+      ++count;
+      pos += substr.length();
+    }
+    return count;
+  };
+  // Should contain incremental save markers (original + incremental)
+  std::string saved_content = GetString();
+  EXPECT_EQ(2u, count_occurrences(saved_content, "trailer"));
+  EXPECT_EQ(1u, count_occurrences(saved_content, "/Prev"));
+  EXPECT_EQ(2u, count_occurrences(saved_content, "startxref"));
+  EXPECT_EQ(2u, count_occurrences(saved_content, "%%EOF"));
+
+  // Load the saved document and verify the modification is visible
+  ScopedSavedDoc saved_doc = OpenScopedSavedDocument();
+  ASSERT_TRUE(saved_doc);
+  ScopedSavedPage saved_page = LoadScopedSavedPage(0);
+  ASSERT_TRUE(saved_page);
+
+  // Render the saved page
+  ScopedFPDFBitmap saved_bitmap = RenderSavedPage(saved_page.get());
+  std::string saved_md5 = HashBitmap(saved_bitmap.get());
+
+  // The rendered output should be different from the original
+  EXPECT_NE(original_md5, saved_md5);
+
+  // Verify the text object exists after the save
+  int object_count = FPDFPage_CountObjects(saved_page.get());
+  bool found_text_object = false;
+  for (int i = 0; i < object_count; ++i) {
+    FPDF_PAGEOBJECT obj = FPDFPage_GetObject(saved_page.get(), i);
+    if (FPDFPageObj_GetType(obj) == FPDF_PAGEOBJ_TEXT) {
+      found_text_object = true;
+      break;
+    }
+  }
+  EXPECT_TRUE(found_text_object);
 }
