@@ -20,6 +20,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "783a9968_503243ab",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 8
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 4223398
+      },
+      "writtenOn": "2025-09-07T03:37:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7c2fcf9d_9d5280c8",
+      "revId": "b6d666d37dd77aaeee4d9692b7b4ba5e2c9db2c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "d6bc819a_b9574ec6",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 8
@@ -52,6 +70,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "38bc13dc_1b470e51",
+        "filename": "core/fpdfapi/edit/cpdf_creator.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 4223398
+      },
+      "writtenOn": "2025-09-07T03:37:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b16573c5_1893529e",
+      "revId": "b6d666d37dd77aaeee4d9692b7b4ba5e2c9db2c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "61cdb080_c5de2e7e",
@@ -69,6 +105,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ded51ba3_52945cd6",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 4223398
+      },
+      "writtenOn": "2025-09-07T03:37:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "61cdb080_c5de2e7e",
+      "revId": "b6d666d37dd77aaeee4d9692b7b4ba5e2c9db2c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "38fc8130_b1e9f7e1",
@@ -82,6 +136,24 @@
       "writtenOn": "2025-09-04T21:13:20Z",
       "side": 1,
       "message": "With so many comments, one would expect each comment to correspond to the code immediately below it. That looks like the pattern, but then this comment / code pair doesn\u0027t actually match.",
+      "revId": "b6d666d37dd77aaeee4d9692b7b4ba5e2c9db2c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5fa1c1f8_97c42668",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 4223398
+      },
+      "writtenOn": "2025-09-07T03:37:24Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "38fc8130_b1e9f7e1",
       "revId": "b6d666d37dd77aaeee4d9692b7b4ba5e2c9db2c3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -109,6 +181,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cbb2ff39_fc43d136",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 4223398
+      },
+      "writtenOn": "2025-09-07T03:37:24Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "bd927109_f3640b74",
+      "range": {
+        "startLine": 277,
+        "startChar": 0,
+        "endLine": 279,
+        "endChar": 50
+      },
+      "revId": "b6d666d37dd77aaeee4d9692b7b4ba5e2c9db2c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2a036c25_16fac37e",
@@ -122,6 +218,24 @@
       "writtenOn": "2025-09-04T21:13:20Z",
       "side": 1,
       "message": "It would be helpful near the top of the test, where `original_object_count` gets set, to first establish the original PDF does not have any text objects.",
+      "revId": "b6d666d37dd77aaeee4d9692b7b4ba5e2c9db2c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "43fd036d_d196b769",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 4223398
+      },
+      "writtenOn": "2025-09-07T03:37:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2a036c25_16fac37e",
       "revId": "b6d666d37dd77aaeee4d9692b7b4ba5e2c9db2c3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
