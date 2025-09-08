@@ -314,7 +314,10 @@ test("pdfium_unittests") {
     "//testing/gmock",
     "//testing/gtest",
   ]
-  configs += [ ":pdfium_core_config" ]
+  configs += [
+    ":pdfium_core_config",
+    "testing:pdfium_test_config",
+  ]
   if (is_android) {
     use_raw_android_executable = true
   }
