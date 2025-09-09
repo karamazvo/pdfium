@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ddb2a2b3_a6dba846",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-09-09T20:52:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a8a3638_bc9dbec3",
+      "revId": "9a8b3cff1e8e7e5f05db31589800b1dab532cf90",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8123d1e4_64e75731",
@@ -35,6 +53,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "41cb070b_77eb6a49",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-09-09T20:52:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8123d1e4_64e75731",
+      "revId": "9a8b3cff1e8e7e5f05db31589800b1dab532cf90",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "49b6a3f2_5d012a64",
@@ -48,6 +84,24 @@
       "writtenOn": "2025-09-09T19:17:53Z",
       "side": 1,
       "message": "Does PDFium already get `ADDRESS_SANITIZER` and `MEMORY_SANITIZER` defined by //build?",
+      "revId": "9a8b3cff1e8e7e5f05db31589800b1dab532cf90",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b65d90e4_fc021c63",
+        "filename": "BUILD.gn",
+        "patchSetId": 10
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-09-09T20:52:12Z",
+      "side": 1,
+      "message": "Looks like it does. Using that instead.",
+      "parentUuid": "49b6a3f2_5d012a64",
       "revId": "9a8b3cff1e8e7e5f05db31589800b1dab532cf90",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
