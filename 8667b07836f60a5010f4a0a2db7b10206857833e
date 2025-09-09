@@ -16,6 +16,120 @@
       "message": "Please take another look, thanks.",
       "revId": "8667b07836f60a5010f4a0a2db7b10206857833e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b1e14cc3_68932f68",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-09T20:26:29Z",
+      "side": 1,
+      "message": "If the CL is no longer using testing::Contains(), then please remove this line as well.",
+      "revId": "8667b07836f60a5010f4a0a2db7b10206857833e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "398a5a96_b572853f",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-09T20:26:29Z",
+      "side": 1,
+      "message": "Up to you. Maybe add a helper lambda, like `count_occurrences`, that returns the text object count. Then this can check it\u0027s 0, and lines 294-301 can reuse it to check the count becomes 1.",
+      "range": {
+        "startLine": 243,
+        "startChar": 0,
+        "endLine": 246,
+        "endChar": 3
+      },
+      "revId": "8667b07836f60a5010f4a0a2db7b10206857833e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dc04d961_e23fc37b",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-09T20:26:29Z",
+      "side": 1,
+      "message": "This comment also feels redundant, since the next line already mentions \"SaveAsCopy\" and \"FPDF_INCREMENTAL\".",
+      "revId": "8667b07836f60a5010f4a0a2db7b10206857833e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c9639ce9_05776076",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-09T20:26:29Z",
+      "side": 1,
+      "message": "size() and length() do the same thing, and size() is shorter.",
+      "range": {
+        "startLine": 267,
+        "startChar": 20,
+        "endLine": 267,
+        "endChar": 26
+      },
+      "revId": "8667b07836f60a5010f4a0a2db7b10206857833e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c1aa2f9b_4d654278",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-09T20:26:29Z",
+      "side": 1,
+      "message": "Mention why /Prev is only present once.",
+      "revId": "8667b07836f60a5010f4a0a2db7b10206857833e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6c6840fb_cc485d67",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-09T20:26:29Z",
+      "side": 1,
+      "message": "As is, this comment is redundant. If you combine this with line 288, and delete line 297, that can help make this comment feel worthwhile.",
+      "revId": "8667b07836f60a5010f4a0a2db7b10206857833e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
