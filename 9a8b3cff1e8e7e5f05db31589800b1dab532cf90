@@ -33,6 +33,23 @@
       "message": "Can we prepend a CL for this, just to reduce the size of this CL?",
       "revId": "9a8b3cff1e8e7e5f05db31589800b1dab532cf90",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "49b6a3f2_5d012a64",
+        "filename": "BUILD.gn",
+        "patchSetId": 10
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-09T19:17:53Z",
+      "side": 1,
+      "message": "Does PDFium already get `ADDRESS_SANITIZER` and `MEMORY_SANITIZER` defined by //build?",
+      "revId": "9a8b3cff1e8e7e5f05db31589800b1dab532cf90",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
