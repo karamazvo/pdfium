@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3a8a3638_bc9dbec3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-09T19:09:59Z",
+      "side": 1,
+      "message": "Prepend CL?",
+      "revId": "9a8b3cff1e8e7e5f05db31589800b1dab532cf90",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8123d1e4_64e75731",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-09T19:09:59Z",
+      "side": 1,
+      "message": "Can we prepend a CL for this, just to reduce the size of this CL?",
+      "revId": "9a8b3cff1e8e7e5f05db31589800b1dab532cf90",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
