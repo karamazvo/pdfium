@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fa88e13f_64288b9d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-10T22:56:53Z",
+      "side": 1,
+      "message": "FTR, see: https://skia-review.googlesource.com/c/skia/+/667298",
+      "revId": "98d2a1cee0763ab0c4ae6d90c8426bdd7945314e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
