@@ -319,7 +319,7 @@ component("skia") {
   deps += [
     ":skcms",
     ":skia_opts",
-    "../third_party:png",
+    "../third_party:libpng",
     "../third_party:zlib",
     "//:freetype_common",
   ]

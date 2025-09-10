@@ -440,7 +440,7 @@ config("system_libpng_config") {
   defines = [ "USE_SYSTEM_LIBPNG" ]
 }
 
-group("png") {
+group("libpng") {
   if (use_system_libpng) {
     public_configs = [ ":system_libpng_config" ]
   } else {
