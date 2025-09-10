@@ -123,7 +123,7 @@ source_set("fxcodec") {
         "png/png_decoder.cpp",
         "png/png_decoder.h",
       ]
-      deps += [ "../../third_party:png" ]
+      deps += [ "../../third_party:libpng" ]
     }
     if (pdf_enable_xfa_tiff) {
       sources += [

@@ -16,7 +16,7 @@ source_set("image_diff") {
   ]
   public_deps = [ "../../core/fxcrt" ]
   deps = [
-    "../../third_party:png",
+    "../../third_party:libpng",
     "../../third_party:zlib",
   ]
 }
