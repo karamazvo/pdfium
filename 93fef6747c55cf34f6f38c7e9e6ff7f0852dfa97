@@ -16,6 +16,24 @@
       "message": "Looks like gn check is failing.",
       "revId": "93fef6747c55cf34f6f38c7e9e6ff7f0852dfa97",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ca1b13cf_4cf571a4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-11T18:32:09Z",
+      "side": 1,
+      "message": "Ack.  It seems that I first would need to land a Chromium-side change to `third_party/libpng/visibility.gni`.  And I am not sure if it\u0027s worth the trouble at this point.  I may revisit this after getting the other CLs out.",
+      "parentUuid": "d62a9c4f_81832771",
+      "revId": "93fef6747c55cf34f6f38c7e9e6ff7f0852dfa97",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
