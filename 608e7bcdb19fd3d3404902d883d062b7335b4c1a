@@ -36,6 +36,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8c2b8911_6ce80875",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-12T23:26:22Z",
+      "side": 1,
+      "message": "Done - the extracted CL is being reviewed at https://pdfium-review.googlesource.com/c/pdfium/+/135670",
+      "parentUuid": "8a93eed3_207cd447",
+      "revId": "608e7bcdb19fd3d3404902d883d062b7335b4c1a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c9e68adb_814919a4",
@@ -61,6 +79,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "bc3050b8_f42518ec",
+        "filename": "core/fxcodec/png/png_decoder.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-12T23:26:22Z",
+      "side": 1,
+      "message": "Still just FYI: The follow-up CL can be found here: https://pdfium-review.googlesource.com/c/pdfium/+/135653",
+      "parentUuid": "c9e68adb_814919a4",
+      "range": {
+        "startLine": 25,
+        "startChar": 8,
+        "endLine": 25,
+        "endChar": 16
+      },
+      "revId": "608e7bcdb19fd3d3404902d883d062b7335b4c1a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "5ce7b026_cb8589ff",
         "filename": "core/fxcodec/progressive_decoder.cpp",
         "patchSetId": 1
@@ -72,6 +114,30 @@
       "writtenOn": "2025-09-12T18:35:11Z",
       "side": 1,
       "message": "Hmmm... maybe for disambiguation these type aliases should be called `PngEncodedColorType`?  WDYT?",
+      "range": {
+        "startLine": 52,
+        "startChar": 6,
+        "endLine": 52,
+        "endChar": 22
+      },
+      "revId": "608e7bcdb19fd3d3404902d883d062b7335b4c1a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e9913100_1771e854",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-12T23:26:22Z",
+      "side": 1,
+      "message": "Resolving - this got taken care of in a separate CL at https://pdfium-review.googlesource.com/c/pdfium/+/135670",
+      "parentUuid": "5ce7b026_cb8589ff",
       "range": {
         "startLine": 52,
         "startChar": 6,
