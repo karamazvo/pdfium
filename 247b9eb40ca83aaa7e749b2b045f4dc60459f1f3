@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "36639078_5bd4b303",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-12T22:16:23Z",
+      "side": 1,
+      "message": "@thestig, can you PTAL?  (This CL has been extracted out of https://pdfium-review.googlesource.com/c/pdfium/+/135615.)\n\nDisclaimer: CQ dry run hasn\u0027t completed yet, but most bots are green, and these changes should be platform-agnostic, so I think it\u0027s okay to start reviewing.",
+      "revId": "247b9eb40ca83aaa7e749b2b045f4dc60459f1f3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
