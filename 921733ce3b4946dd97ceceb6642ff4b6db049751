@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "49513107_a30004df",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-12T21:05:28Z",
+      "side": 1,
+      "message": "The actual log can get quite long for some DEPS rolls, and it is usually not relevant to PDFium, so PDFium CL descriptions tend to delete this. Readers can just click the link above if they are interested.",
+      "revId": "921733ce3b4946dd97ceceb6642ff4b6db049751",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
