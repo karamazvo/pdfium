@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a1d86533_1f5e5119",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 4342168
+      },
+      "writtenOn": "2025-09-12T21:06:13Z",
+      "side": 1,
+      "message": "Done (old habit)",
+      "parentUuid": "3c85dfa4_01d1612d",
+      "range": {
+        "startLine": 13,
+        "startChar": 5,
+        "endLine": 13,
+        "endChar": 14
+      },
+      "revId": "ffe9a1ae193f16a8fdc34ec3de4cb3d0abba0b2d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "18a27038_5d66058d",
@@ -37,6 +61,24 @@
       "writtenOn": "2025-09-12T21:04:09Z",
       "side": 1,
       "message": "PDFium doesn\u0027t use `Test:`.",
+      "revId": "ffe9a1ae193f16a8fdc34ec3de4cb3d0abba0b2d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "013b5e75_50162864",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 4342168
+      },
+      "writtenOn": "2025-09-12T21:06:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "18a27038_5d66058d",
       "revId": "ffe9a1ae193f16a8fdc34ec3de4cb3d0abba0b2d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
