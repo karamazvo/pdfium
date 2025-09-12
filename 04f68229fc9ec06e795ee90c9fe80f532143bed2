@@ -3,6 +3,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "0cd7093e_e9a9767e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-12T19:34:56Z",
+      "side": 1,
+      "message": "It\u0027s great that you were able to resolve this, but it\u0027s not a relevant detail in the commit message that gets recorded into the git history.",
+      "revId": "04f68229fc9ec06e795ee90c9fe80f532143bed2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "42da4448_20ed381d",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 15
@@ -50,6 +67,47 @@
       "side": 1,
       "message": "@thestig@chromium.org Following up - LMK when possible.",
       "parentUuid": "dca3fec5_8986cdcc",
+      "revId": "04f68229fc9ec06e795ee90c9fe80f532143bed2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9451315c_b8701b09",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 15
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-12T19:34:56Z",
+      "side": 1,
+      "message": "Ack. Sorry for being slow here.",
+      "parentUuid": "9232163b_5f57c504",
+      "revId": "04f68229fc9ec06e795ee90c9fe80f532143bed2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "15f9aed2_a70a5d30",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 728,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-12T19:34:56Z",
+      "side": 1,
+      "message": "Not needed to determine truthiness. Just: `ASSERT_TRUE(source_doc);` will do.",
+      "range": {
+        "startLine": 728,
+        "startChar": 24,
+        "endLine": 728,
+        "endChar": 30
+      },
       "revId": "04f68229fc9ec06e795ee90c9fe80f532143bed2",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
