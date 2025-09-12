@@ -16,6 +16,24 @@
       "message": "@thestig@chromium.org Thanks for the reviews. Unfortunately, I don\u0027t have [tryjob access](https://ci.chromium.org/ui/auth/groups/project-pdfium-tryjob-access?tab\u003doverview), so would you mind clicking the submit button for this CL and https://pdfium-review.googlesource.com/c/pdfium/+/135650 on my behalf?",
       "revId": "a82e73f44e61ed5d7d6bf306f952be471bda14f8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c7ef18d4_e2f26f91",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-12T21:21:11Z",
+      "side": 1,
+      "message": "Ack. Will shepard these CLs and make sure they land safely.",
+      "parentUuid": "ff2a5133_1b1db0a2",
+      "revId": "a82e73f44e61ed5d7d6bf306f952be471bda14f8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
