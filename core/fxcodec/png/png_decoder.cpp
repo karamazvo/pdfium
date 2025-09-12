@@ -140,30 +140,10 @@ void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
       png_set_gamma(png_ptr, gamma, 0.45455);
     }
   }
-  switch (color_type) {
-    case EncodedColorType::kGrayscale:
-    case EncodedColorType::kGrayscaleWithAlpha: {
-      if (libpng_color_type & PNG_COLOR_MASK_COLOR) {
-        png_set_rgb_to_gray(png_ptr, 1, 0.299, 0.587);
-      }
-      // The only delegate impl never asks to decode into grayscale.
-      NOTREACHED();
-    } break;
-    case EncodedColorType::kIndexedColor:
-      if (libpng_color_type != PNG_COLOR_TYPE_PALETTE) {
-        png_error(pContext->png_, "Not Support Output Palette Now");
-      }
-      // The only delegate impl never asks to decode into palette-based image.
-      NOTREACHED();
-      break;
-    case EncodedColorType::kTruecolor:
-    case EncodedColorType::kTruecolorWithAlpha:
-      if (!(libpng_color_type & PNG_COLOR_MASK_COLOR)) {
-        png_set_gray_to_rgb(png_ptr);
-      }
-      png_set_bgr(png_ptr);
-      break;
+  if (!(libpng_color_type & PNG_COLOR_MASK_COLOR)) {
+    png_set_gray_to_rgb(png_ptr);
   }
+  png_set_bgr(png_ptr);
   switch (color_type) {
     case EncodedColorType::kTruecolor:
       png_set_strip_alpha(png_ptr);
