@@ -35,6 +35,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5b953076_8578ee8a",
+        "filename": "core/fxcodec/png/png_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-12T22:50:06Z",
+      "side": 1,
+      "message": "\u003e Is this suppose to be here.\n\nYes, this is an intentional change.\n\nThe comment above the `NOTREACHED` was supposed to point out what this `NOTREACH` tries to communicate.  Let me get rid of `NOTREACHED` and just add a comment - maybe this will be more straightforward.\n\n\u003e What happens after line 147 finishes?",
+      "parentUuid": "ebe7f6f7_fbf1008f",
+      "revId": "247b9eb40ca83aaa7e749b2b045f4dc60459f1f3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b394b670_ea9d13a1",
@@ -52,6 +70,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "81433336_916515dd",
+        "filename": "core/fxcodec/png/png_decoder.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-12T22:50:06Z",
+      "side": 1,
+      "message": "Ack.  Let me remove the incomplete description of `pass` for now.",
+      "parentUuid": "b394b670_ea9d13a1",
+      "revId": "247b9eb40ca83aaa7e749b2b045f4dc60459f1f3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ec19e5bb_0326aba0",
@@ -65,6 +101,30 @@
       "writtenOn": "2025-09-12T22:33:45Z",
       "side": 1,
       "message": "typo",
+      "range": {
+        "startLine": 50,
+        "startChar": 7,
+        "endLine": 50,
+        "endChar": 20
+      },
+      "revId": "247b9eb40ca83aaa7e749b2b045f4dc60459f1f3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5d4152f2_80b4e043",
+        "filename": "core/fxcodec/png/png_decoder.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-12T22:50:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ec19e5bb_0326aba0",
       "range": {
         "startLine": 50,
         "startChar": 7,
@@ -98,6 +158,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "dcd9ea20_eac7e371",
+        "filename": "core/fxcodec/png/png_decoder.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-12T22:50:06Z",
+      "side": 1,
+      "message": "I am not a native speaker.  This seemed to work for me.  Maybe \"decode with\" works better?  If it doesn\u0027t, then can you please suggest an alternative wording that works for you?",
+      "parentUuid": "1116302a_9ab9f4b3",
+      "range": {
+        "startLine": 55,
+        "startChar": 52,
+        "endLine": 55,
+        "endChar": 55
+      },
+      "revId": "247b9eb40ca83aaa7e749b2b045f4dc60459f1f3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "26d3d276_669ecd56",
@@ -111,6 +195,24 @@
       "writtenOn": "2025-09-12T22:33:45Z",
       "side": 1,
       "message": "How about making the switch-statement its own function? Then it can have a NOTREACHED() at the end to handle the unexpected, and the line above can just take the return result without initializing to 0, which should never happen.",
+      "revId": "247b9eb40ca83aaa7e749b2b045f4dc60459f1f3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e3d65488_2c4ae0ed",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-12T22:50:06Z",
+      "side": 1,
+      "message": "Good idea.  Done.",
+      "parentUuid": "26d3d276_669ecd56",
       "revId": "247b9eb40ca83aaa7e749b2b045f4dc60459f1f3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
