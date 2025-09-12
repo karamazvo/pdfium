@@ -18,6 +18,23 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9be00991_48611568",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-12T23:19:16Z",
+      "side": 1,
+      "message": "Thanks!  Can you PTAL again?",
+      "revId": "710374d1f620ee0286299837cfd477e748bf6a8a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c1218e06_3da5f403",
@@ -31,6 +48,30 @@
       "writtenOn": "2025-09-12T23:00:51Z",
       "side": 1,
       "message": "Add bug number here?",
+      "range": {
+        "startLine": 54,
+        "startChar": 14,
+        "endLine": 54,
+        "endChar": 15
+      },
+      "revId": "710374d1f620ee0286299837cfd477e748bf6a8a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1beee7fb_2696e984",
+        "filename": "core/fxcodec/png/png_decoder.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-12T23:19:16Z",
+      "side": 1,
+      "message": "Let me just avoid adding the TODO here.\n\nI initially thought about adding a TODO, because IIUC hardcoding a gamma values (one value for Mac, another for other platforms) doesn\u0027t reflect that AFAIU the display properties can be further tweaked by the end user (on Mac at least).\n\nBut this is probably bigger work item that nobody is currently planning to do.  And given this, I am not sure if it\u0027s worth opening a bug and adding a TODO.",
+      "parentUuid": "c1218e06_3da5f403",
       "range": {
         "startLine": 54,
         "startChar": 14,

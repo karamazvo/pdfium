@@ -71,6 +71,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1a9c0e47_d6146742",
+        "filename": "core/fxcodec/png/png_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-12T23:19:16Z",
+      "side": 1,
+      "message": "\u003e Oh, I would just delete this code and replace it with NOTREACHED() altogether. \n\nDone.\n\n\u003e Maybe combine the 2 switch-statements.\n\nThis is a bit hard, because the first `switch` executes the same code for **both** BGR + BGRA, but the second `switch` wants different code for BGR and different code for BGRA.\n\nFWIW note that the first `switch` will disappear in a follow-up CL here: https://pdfium-review.googlesource.com/c/pdfium/+/135615/5/core/fxcodec/png/png_decoder.cpp\n\n\u003e Patch set 1 confused me because it is sending mixed messages:\n\u003e \n\u003e - lines 146-148 says this code does something.\n\u003e - line 150 says this code can\u0027t be reached.",
+      "parentUuid": "58795754_fa7fae72",
+      "revId": "247b9eb40ca83aaa7e749b2b045f4dc60459f1f3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b394b670_ea9d13a1",
