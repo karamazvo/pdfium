@@ -24,6 +24,7 @@
 
 #define PNG_ERROR_SIZE 256
 
+using DecodedColorType = fxcodec::PngDecoder::Delegate::DecodedColorType;
 using EncodedColorType = fxcodec::PngDecoder::Delegate::EncodedColorType;
 
 class CPngContext final : public ProgressiveDecoderIface::Context {
@@ -121,11 +122,12 @@ void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
   static_assert(static_cast<int>(EncodedColorType::kTruecolorWithAlpha) ==
                 PNG_COLOR_TYPE_RGB_ALPHA);
   static_assert(sizeof(EncodedColorType) == sizeof(int));
-  auto color_type = static_cast<EncodedColorType>(libpng_color_type);
+  auto src_color_type = static_cast<EncodedColorType>(libpng_color_type);
 
+  DecodedColorType dst_color_type;
   double gamma = 1.0;
-  if (!pContext->delegate_->PngReadHeader(width, height, bpc, pass, &color_type,
-                                          &gamma)) {
+  if (!pContext->delegate_->PngReadHeader(
+          width, height, bpc, pass, src_color_type, &dst_color_type, &gamma)) {
     // Note that `png_error` function is marked as `PNG_NORETURN`.
     png_error(pContext->png_, "Read Header Callback Error");
   }
@@ -144,18 +146,14 @@ void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
     png_set_gray_to_rgb(png_ptr);
   }
   png_set_bgr(png_ptr);
-  switch (color_type) {
-    case EncodedColorType::kTruecolor:
+  switch (dst_color_type) {
+    case DecodedColorType::kBgr:
       png_set_strip_alpha(png_ptr);
       break;
-    case EncodedColorType::kTruecolorWithAlpha:
+    case DecodedColorType::kBgra:
       if (!(libpng_color_type & PNG_COLOR_MASK_ALPHA)) {
         png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
       }
-      break;
-    default:
-      // The only delegate impl never asks to decode into other color types.
-      NOTREACHED();
       break;
   }
   png_read_update_info(png_ptr, info_ptr);
