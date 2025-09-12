@@ -55,6 +55,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "58795754_fa7fae72",
+        "filename": "core/fxcodec/png/png_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-12T23:00:51Z",
+      "side": 1,
+      "message": "Oh, I would just delete this code and replace it with NOTREACHED() altogether. Maybe combine the 2 switch-statements. Patch set 1 confused me because it is sending mixed messages:\n\n- lines 146-148 says this code does something.\n- line 150 says this code can\u0027t be reached.",
+      "parentUuid": "5b953076_8578ee8a",
+      "revId": "247b9eb40ca83aaa7e749b2b045f4dc60459f1f3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "b394b670_ea9d13a1",
         "filename": "core/fxcodec/png/png_decoder.h",
         "patchSetId": 1
@@ -172,6 +190,30 @@
       "side": 1,
       "message": "I am not a native speaker.  This seemed to work for me.  Maybe \"decode with\" works better?  If it doesn\u0027t, then can you please suggest an alternative wording that works for you?",
       "parentUuid": "1116302a_9ab9f4b3",
+      "range": {
+        "startLine": 55,
+        "startChar": 52,
+        "endLine": 55,
+        "endChar": 55
+      },
+      "revId": "247b9eb40ca83aaa7e749b2b045f4dc60459f1f3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2d82970d_80cdb11f",
+        "filename": "core/fxcodec/png/png_decoder.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-12T23:00:51Z",
+      "side": 1,
+      "message": "Oh, I see what you mean. It was a bit ambiguous. Also, the sentence didn\u0027t end with a period, so I thought it just got cut off.",
+      "parentUuid": "dcd9ea20_eac7e371",
       "range": {
         "startLine": 55,
         "startChar": 52,
