@@ -48,6 +48,7 @@ namespace {
 constexpr size_t kBlockSize = 4096;
 
 #ifdef PDF_ENABLE_XFA_PNG
+using PngEncodedColorType = fxcodec::PngDecoder::Delegate::EncodedColorType;
 #if BUILDFLAG(IS_APPLE)
 const double kPngGamma = 1.7;
 #else
@@ -81,29 +82,27 @@ bool ProgressiveDecoder::PngReadHeader(int width,
                                        int height,
                                        int bpc,
                                        int pass,
-                                       int* color_type,
+                                       PngEncodedColorType* color_type,
                                        double* gamma) {
   if (!device_bitmap_) {
     src_width_ = width;
     src_height_ = height;
     src_bpc_ = bpc;
     src_pass_number_ = pass;
+    src_components_ = 0;
     switch (*color_type) {
-      case 0:
+      case PngEncodedColorType::kGrayscale:
         src_components_ = 1;
         break;
-      case 4:
+      case PngEncodedColorType::kGrayscaleWithAlpha:
         src_components_ = 2;
         break;
-      case 2:
+      case PngEncodedColorType::kTruecolor:
         src_components_ = 3;
         break;
-      case 3:
-      case 6:
+      case PngEncodedColorType::kIndexedColor:
+      case PngEncodedColorType::kTruecolorWithAlpha:
         src_components_ = 4;
-        break;
-      default:
-        src_components_ = 0;
         break;
     }
     return false;
@@ -116,11 +115,11 @@ bool ProgressiveDecoder::PngReadHeader(int width,
     case FXDIB_Format::k8bppRgb:
       NOTREACHED();
     case FXDIB_Format::kBgr:
-      *color_type = 2;
+      *color_type = PngEncodedColorType::kTruecolor;
       break;
     case FXDIB_Format::kBgrx:
     case FXDIB_Format::kBgra:
-      *color_type = 6;
+      *color_type = PngEncodedColorType::kTruecolorWithAlpha;
       break;
 #if defined(PDF_USE_SKIA)
     case FXDIB_Format::kBgraPremul:
