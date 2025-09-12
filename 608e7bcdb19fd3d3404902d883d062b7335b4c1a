@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e944a93d_e973c706",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-12T18:35:11Z",
+      "side": 1,
+      "message": "@thestig, can you PTAL?\n\n(Please shout if you\u0027d prefer to first see a full chain of CLs that actually hooks up `SkPngRustCodec` at the end.  I am still working on that.)",
+      "revId": "608e7bcdb19fd3d3404902d883d062b7335b4c1a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c9e68adb_814919a4",
+        "filename": "core/fxcodec/png/png_decoder.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-12T18:35:11Z",
+      "side": 1,
+      "message": "FYI: In a follow-up CL I would move this abstract interface declaration to a separate, `libpng`-agnostic file.",
+      "range": {
+        "startLine": 25,
+        "startChar": 8,
+        "endLine": 25,
+        "endChar": 16
+      },
+      "revId": "608e7bcdb19fd3d3404902d883d062b7335b4c1a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5ce7b026_cb8589ff",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-12T18:35:11Z",
+      "side": 1,
+      "message": "Hmmm... maybe for disambiguation these type aliases should be called `PngEncodedColorType`?  WDYT?",
+      "range": {
+        "startLine": 52,
+        "startChar": 6,
+        "endLine": 52,
+        "endChar": 22
+      },
+      "revId": "608e7bcdb19fd3d3404902d883d062b7335b4c1a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

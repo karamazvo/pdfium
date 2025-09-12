@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dd9bf52d_94182499",
+        "filename": "core/fxcodec/png/png_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-12T18:35:11Z",
+      "side": 0,
+      "message": "Dropping this code, because the only implementation of `PngReadHeader` would only return `true` when setting `color_type` to either 2 (truecolor) or 6 (truecolor+alpha): https://source.chromium.org/chromium/chromium/src/+/main:third_party/pdfium/core/fxcodec/progressive_decoder.cpp;l\u003d111-133;drc\u003df16c9fa83f3e9ae6d67d8543b4db07acdd04caa2.\n\nNote that when `color_type` was not mutated, then `false` would be returned here: https://source.chromium.org/chromium/chromium/src/+/main:third_party/pdfium/core/fxcodec/progressive_decoder.cpp;l\u003d109;drc\u003df16c9fa83f3e9ae6d67d8543b4db07acdd04caa2",
+      "range": {
+        "startLine": 127,
+        "startChar": 0,
+        "endLine": 137,
+        "endChar": 22
+      },
+      "revId": "c158a08a59e31b0ecba706228c8ff34f432c0af8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8f1f1abc_10890e39",
+        "filename": "core/fxcodec/png/png_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-12T18:35:11Z",
+      "side": 0,
+      "message": "This old condition is equivalent in the new code to `case DecodedColorType::kBgr`.",
+      "range": {
+        "startLine": 146,
+        "startChar": 6,
+        "endLine": 146,
+        "endChar": 42
+      },
+      "revId": "c158a08a59e31b0ecba706228c8ff34f432c0af8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8ae9136b_ab3db0ce",
+        "filename": "core/fxcodec/png/png_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-12T18:35:11Z",
+      "side": 0,
+      "message": "This old condition is equivalent in the new code to `case DecodedColorType::kBgra`.",
+      "range": {
+        "startLine": 150,
+        "startChar": 6,
+        "endLine": 150,
+        "endChar": 39
+      },
+      "revId": "c158a08a59e31b0ecba706228c8ff34f432c0af8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
