@@ -4,8 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/parser/cpdf_document.h"
-
 #include <algorithm>
 #include <functional>
 #include <optional>
@@ -13,6 +11,7 @@
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_linearized_header.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_null.h"
@@ -111,11 +110,8 @@ std::optional<int> CountPages(
   return count;
 }
 
-int FindPageIndex(const CPDF_Dictionary* pNode,
-                  uint32_t* skip_count,
-                  uint32_t objnum,
-                  int* index,
-                  int level) {
+int FindPageIndex(const CPDF_Dictionary* pNode, uint32_t* skip_count,
+                  uint32_t objnum, int* index, int level) {
   if (!pNode->KeyExist("Kids")) {
     if (objnum == pNode->GetObjNum()) {
       return *index;
@@ -213,8 +209,7 @@ bool CPDF_Document::TryInit() {
 }
 
 CPDF_Parser::Error CPDF_Document::LoadDoc(
-    RetainPtr<IFX_SeekableReadStream> pFileAccess,
-    const ByteString& password) {
+    RetainPtr<IFX_SeekableReadStream> pFileAccess, const ByteString& password) {
   if (!parser_) {
     SetParser(std::make_unique<CPDF_Parser>(this));
   }
@@ -224,8 +219,7 @@ CPDF_Parser::Error CPDF_Document::LoadDoc(
 }
 
 CPDF_Parser::Error CPDF_Document::LoadLinearizedDoc(
-    RetainPtr<CPDF_ReadValidator> validator,
-    const ByteString& password) {
+    RetainPtr<CPDF_ReadValidator> validator, const ByteString& password) {
   if (!parser_) {
     SetParser(std::make_unique<CPDF_Parser>(this));
   }
@@ -511,10 +505,8 @@ RetainPtr<CPDF_Dictionary> CPDF_Document::CreateNewPage(int iPage) {
 }
 
 bool CPDF_Document::InsertDeletePDFPage(
-    RetainPtr<CPDF_Dictionary> pages_dict,
-    int pages_to_go,
-    RetainPtr<CPDF_Dictionary> page_dict,
-    bool is_insert,
+    RetainPtr<CPDF_Dictionary> pages_dict, int pages_to_go,
+    RetainPtr<CPDF_Dictionary> page_dict, bool is_insert,
     std::set<RetainPtr<CPDF_Dictionary>>* visited) {
   RetainPtr<CPDF_Array> kids_list = pages_dict->GetMutableArrayFor("Kids");
   if (!kids_list) {
@@ -746,6 +738,10 @@ bool CPDF_Document::MovePages(pdfium::span<const int> page_indices,
       // Fail in an indeterminate state.
       return false;
     }
+  }
+
+  if (extension) {
+    extension->PagesInserted(dest_page_index, pages_to_move.size());
   }
 
   return true;

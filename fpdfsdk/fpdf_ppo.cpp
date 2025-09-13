@@ -4,8 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "public/fpdf_ppo.h"
-
 #include <memory>
 #include <numeric>
 #include <utility>
@@ -28,6 +26,7 @@
 #include "core/fxcrt/span.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/cpp/fpdf_scopers.h"
+#include "public/fpdf_ppo.h"
 
 namespace {
 
@@ -72,12 +71,10 @@ bool IsValidViewerPreferencesObject(const CPDF_Object* obj) {
 
 }  // namespace
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDF_ImportPagesByIndex(FPDF_DOCUMENT dest_doc,
-                        FPDF_DOCUMENT src_doc,
-                        const int* page_indices,
-                        unsigned long length,
-                        int index) {
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_ImportPagesByIndex(
+    FPDF_DOCUMENT dest_doc, FPDF_DOCUMENT src_doc, const int* page_indices,
+    unsigned long length, int index) {
+  size_t length_size_t = pdfium::checked_cast<size_t>(length);
   CPDF_Document* cdest_doc = CPDFDocumentFromFPDFDocument(dest_doc);
   if (!cdest_doc) {
     return false;
@@ -88,26 +85,40 @@ FPDF_ImportPagesByIndex(FPDF_DOCUMENT dest_doc,
     return false;
   }
 
+  CPDF_Document::Extension* extension = cdest_doc->GetExtension();
+
   CPDF_PageExporter exporter(cdest_doc, csrc_doc);
 
   if (!page_indices) {
     std::vector<uint32_t> page_indices_vec(csrc_doc->GetPageCount());
     std::iota(page_indices_vec.begin(), page_indices_vec.end(), 0);
-    return exporter.ExportPages(page_indices_vec, index);
+    if (!exporter.ExportPages(page_indices_vec, index)) {
+      return false;
+    }
+    if (extension) {
+      extension->PagesInserted(index, length_size_t);
+    }
+    return true;
   }
-  if (length == 0) {
+  if (length_size_t == 0) {
     return false;
   }
 
   // SAFETY: required from caller.
-  auto page_span = UNSAFE_BUFFERS(pdfium::span(page_indices, length));
+  auto page_span = UNSAFE_BUFFERS(pdfium::span(page_indices, length_size_t));
   for (int page_index : page_span) {
     if (page_index < 0) {
       return false;
     }
   }
-  return exporter.ExportPages(
-      fxcrt::reinterpret_span<const uint32_t>(page_span), index);
+  if (!exporter.ExportPages(fxcrt::reinterpret_span<const uint32_t>(page_span),
+                            index)) {
+    return false;
+  }
+  if (extension) {
+    extension->PagesInserted(index, length_size_t);
+  }
+  return true;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_ImportPages(FPDF_DOCUMENT dest_doc,
@@ -124,21 +135,28 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_ImportPages(FPDF_DOCUMENT dest_doc,
     return false;
   }
 
+  CPDF_Document::Extension* extension = cdest_doc->GetExtension();
+
   std::vector<uint32_t> page_indices = GetPageIndices(*csrc_doc, pagerange);
   if (page_indices.empty()) {
     return false;
   }
 
   CPDF_PageExporter exporter(cdest_doc, csrc_doc);
-  return exporter.ExportPages(page_indices, index);
+  if (!exporter.ExportPages(page_indices, index)) {
+    return false;
+  }
+
+  if (extension) {
+    extension->PagesInserted(index, page_indices.size());
+  }
+
+  return true;
 }
 
-FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV
-FPDF_ImportNPagesToOne(FPDF_DOCUMENT src_doc,
-                       float output_width,
-                       float output_height,
-                       size_t pages_on_x_axis,
-                       size_t pages_on_y_axis) {
+FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV FPDF_ImportNPagesToOne(
+    FPDF_DOCUMENT src_doc, float output_width, float output_height,
+    size_t pages_on_x_axis, size_t pages_on_y_axis) {
   CPDF_Document* csrc_doc = CPDFDocumentFromFPDFDocument(src_doc);
   if (!csrc_doc) {
     return nullptr;
@@ -179,10 +197,8 @@ FPDF_ImportNPagesToOne(FPDF_DOCUMENT src_doc,
   return output_doc.release();
 }
 
-FPDF_EXPORT FPDF_XOBJECT FPDF_CALLCONV
-FPDF_NewXObjectFromPage(FPDF_DOCUMENT dest_doc,
-                        FPDF_DOCUMENT src_doc,
-                        int src_page_index) {
+FPDF_EXPORT FPDF_XOBJECT FPDF_CALLCONV FPDF_NewXObjectFromPage(
+    FPDF_DOCUMENT dest_doc, FPDF_DOCUMENT src_doc, int src_page_index) {
   CPDF_Document* dest = CPDFDocumentFromFPDFDocument(dest_doc);
   if (!dest) {
     return nullptr;

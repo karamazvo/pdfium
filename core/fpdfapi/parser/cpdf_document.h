@@ -37,6 +37,7 @@ class CPDF_Document : public Observable,
     virtual bool ContainsExtensionForm() const = 0;
     virtual bool ContainsExtensionFullForm() const = 0;
     virtual bool ContainsExtensionForegroundForm() const = 0;
+    virtual void PagesInserted(int page_index, size_t num_pages) = 0;
   };
 
   class LinkListIface {
@@ -184,8 +185,7 @@ class CPDF_Document : public Observable,
   int RetrievePageCount();
 
   // When this method is called, tree_traversal_[level] exists.
-  RetainPtr<CPDF_Dictionary> TraversePDFPages(int iPage,
-                                              int* nPagesToGo,
+  RetainPtr<CPDF_Dictionary> TraversePDFPages(int iPage, int* nPagesToGo,
                                               size_t level);
 
   RetainPtr<const CPDF_Dictionary> GetPagesDict() const;
@@ -193,8 +193,7 @@ class CPDF_Document : public Observable,
 
   bool InsertDeletePDFPage(RetainPtr<CPDF_Dictionary> pages_dict,
                            int pages_to_go,
-                           RetainPtr<CPDF_Dictionary> page_dict,
-                           bool is_insert,
+                           RetainPtr<CPDF_Dictionary> page_dict, bool is_insert,
                            std::set<RetainPtr<CPDF_Dictionary>>* visited);
 
   bool InsertNewPage(int iPage, RetainPtr<CPDF_Dictionary> pPageDict);

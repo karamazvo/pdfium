@@ -73,6 +73,7 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
   bool ContainsExtensionForm() const override;
   bool ContainsExtensionFullForm() const override;
   bool ContainsExtensionForegroundForm() const override;
+  void PagesInserted(int page_index, size_t num_pages) override;
 
   // CXFA_FFApp::CallbackIface:
   WideString GetLanguage() override;
@@ -80,24 +81,17 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
   WideString GetAppName() override;
   WideString GetAppTitle() const override;
   void Beep(uint32_t dwType) override;
-  int32_t MsgBox(const WideString& wsMessage,
-                 const WideString& wsTitle,
-                 uint32_t dwIconType,
-                 uint32_t dwButtonType) override;
-  WideString Response(const WideString& wsQuestion,
-                      const WideString& wsTitle,
-                      const WideString& wsDefaultAnswer,
-                      bool bMark) override;
+  int32_t MsgBox(const WideString& wsMessage, const WideString& wsTitle,
+                 uint32_t dwIconType, uint32_t dwButtonType) override;
+  WideString Response(const WideString& wsQuestion, const WideString& wsTitle,
+                      const WideString& wsDefaultAnswer, bool bMark) override;
   RetainPtr<IFX_SeekableReadStream> DownloadURL(
       const WideString& wsURL) override;
-  bool PostRequestURL(const WideString& wsURL,
-                      const WideString& wsData,
+  bool PostRequestURL(const WideString& wsURL, const WideString& wsData,
                       const WideString& wsContentType,
-                      const WideString& wsEncode,
-                      const WideString& wsHeader,
+                      const WideString& wsEncode, const WideString& wsHeader,
                       WideString& wsResponse) override;
-  bool PutRequestURL(const WideString& wsURL,
-                     const WideString& wsData,
+  bool PutRequestURL(const WideString& wsURL, const WideString& wsData,
                      const WideString& wsEncode) override;
   CFX_Timer::HandlerIface* GetTimerHandler() const override;
   cppgc::Heap* GetGCHeap() const override;
