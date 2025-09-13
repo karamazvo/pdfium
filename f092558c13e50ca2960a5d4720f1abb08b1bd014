@@ -141,6 +141,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b89f75c5_b5764b4d",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-09-13T06:52:42Z",
+      "side": 1,
+      "message": "My bad - ran it with -style\u003dGoogle in patch set 19, refer to patch set 20 for fixed formatting.\n\nUpdate - fixed on patchset 20.",
+      "parentUuid": "f9023af1_1c6e797e",
+      "revId": "f092558c13e50ca2960a5d4720f1abb08b1bd014",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "08da8bef_b88ab3b6",
