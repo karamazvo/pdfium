@@ -101,6 +101,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5195c1f8_6fb91d7d",
+        "filename": "core/fxcodec/png/png_decoder.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-13T00:29:24Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "bc3050b8_f42518ec",
+      "range": {
+        "startLine": 25,
+        "startChar": 8,
+        "endLine": 25,
+        "endChar": 16
+      },
+      "revId": "608e7bcdb19fd3d3404902d883d062b7335b4c1a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5ce7b026_cb8589ff",
