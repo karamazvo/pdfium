@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6b7b6a78_6a4b8d19",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-13T00:30:33Z",
+      "side": 1,
+      "message": "Gerrit sometimes claim there is a merge conflict after the parent CL in a CL chain lands. Sometimes CQ+2 works, and sometimes it fails. Let\u0027s try and see.",
+      "revId": "b97f3052b3addd927c618f05d8a3474813e84020",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
