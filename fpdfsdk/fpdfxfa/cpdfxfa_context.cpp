@@ -4,8 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
-
 #include <stdint.h>
 
 #include <algorithm>
@@ -24,6 +22,7 @@
 #include "core/fxcrt/xml/cfx_xmlparser.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
 #include "fxbarcode/BC_Library.h"
@@ -300,6 +299,7 @@ uint32_t CPDFXFA_Context::DeletePage(int page_index) {
   // this |page_index| then |xfa_page_list_| may have size < |page_index| even
   // if it's a valid page in the document.
   uint32_t page_obj_num = pdfdoc_->DeletePage(page_index);
+  --page_count_;
 
   if (fxcrt::IndexInBounds(xfa_page_list_, page_index)) {
     xfa_page_list_.erase(xfa_page_list_.begin() + page_index);
@@ -312,6 +312,14 @@ uint32_t CPDFXFA_Context::DeletePage(int page_index) {
   }
 
   return page_obj_num;
+}
+
+void CPDFXFA_Context::PagesInserted(int page_index, size_t num_pages) {
+  if (fxcrt::IndexInBounds(xfa_page_list_, page_index)) {
+    xfa_page_list_.insert(xfa_page_list_.begin() + page_index, num_pages,
+                          nullptr);
+    page_count_ += num_pages;
+  }
 }
 
 bool CPDFXFA_Context::ContainsExtensionForm() const {

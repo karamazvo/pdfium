@@ -4,8 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/parser/cpdf_document.h"
-
 #include <algorithm>
 #include <functional>
 #include <optional>
@@ -13,6 +11,7 @@
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_linearized_header.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_null.h"
@@ -746,6 +745,10 @@ bool CPDF_Document::MovePages(pdfium::span<const int> page_indices,
       // Fail in an indeterminate state.
       return false;
     }
+  }
+
+  if (extension) {
+    extension->PagesInserted(dest_page_index, pages_to_move.size());
   }
 
   return true;
