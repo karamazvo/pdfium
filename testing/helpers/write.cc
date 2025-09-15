@@ -22,10 +22,16 @@
 #include "testing/image_diff/image_diff_png.h"
 
 #ifdef PDF_ENABLE_SKIA
-#include "third_party/skia/include/core/SkPicture.h"       // nogncheck
-#include "third_party/skia/include/core/SkSerialProcs.h"   // nogncheck
-#include "third_party/skia/include/core/SkStream.h"        // nogncheck
+#include "third_party/skia/include/core/SkImage.h"        // nogncheck
+#include "third_party/skia/include/core/SkPicture.h"      // nogncheck
+#include "third_party/skia/include/core/SkPixmap.h"       // nogncheck
+#include "third_party/skia/include/core/SkSerialProcs.h"  // nogncheck
+#include "third_party/skia/include/core/SkStream.h"       // nogncheck
+#ifdef PDF_ENABLE_RUST_PNG
+#include "third_party/skia/experimental/rust_png/encoder/SkPngRustEncoder.h"  // nogncheck
+#else
 #include "third_party/skia/include/encode/SkPngEncoder.h"  // nogncheck
+#endif
 #endif
 
 namespace {
@@ -625,6 +631,40 @@ std::unique_ptr<SkWStream> WriteToSkWStream(const std::string& pdf_name,
   return stream;
 }
 
+// Based on `skia/ext/codec_utils.cc` from Chromium.  We can't deduplicate the
+// code at this point because:
+//
+// 1. Pdfium didn't so far need to pass a nonnull context into `makeRasterImage`
+// 2. Pdfium needs to be able to select either `SkPngEncoder` or
+//    `SkPngRustEncoder` at build-time (because for now it needs to support
+//    both, unlike Chromium which can pick and use only one).
+sk_sp<SkData> EncodePngAsSkData(const SkImage* src) {
+  if (!src) {
+    return nullptr;
+  }
+
+  sk_sp<SkImage> raster_image = src->makeRasterImage(nullptr);
+  if (!raster_image) {
+    return nullptr;
+  }
+
+  SkPixmap pixmap;
+  bool success = raster_image->peekPixels(&pixmap);
+  CHECK(success);  // `peekPixels` should always succeed for raster images.
+
+  SkDynamicMemoryWStream stream;
+#ifdef PDF_ENABLE_RUST_PNG
+  success = SkPngRustEncoder::Encode(&stream, pixmap, /*options=*/{});
+#else
+  success = SkPngEncoder::Encode(&stream, pixmap, /*options=*/{});
+#endif
+  if (!success) {
+    return nullptr;
+  }
+
+  return stream.detachAsData();
+}
+
 std::string WriteSkp(const char* pdf_name, int num, const SkPicture& picture) {
   std::string filename;
   std::unique_ptr<SkWStream> stream =
@@ -634,7 +674,7 @@ std::string WriteSkp(const char* pdf_name, int num, const SkPicture& picture) {
   }
   SkSerialProcs procs;
   procs.fImageProc = [](SkImage* img, void*) -> sk_sp<SkData> {
-    return SkPngEncoder::Encode(nullptr, img, SkPngEncoder::Options{});
+    return EncodePngAsSkData(img);
   };
 
   picture.serialize(stream.get(), &procs);
