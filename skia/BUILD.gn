@@ -383,16 +383,10 @@ component("skia") {
   if (pdf_enable_rust_png) {
     deps += [ ":rust_png_ffi" ]
 
-    # TODO(https://crbug.com/444045690): Also add `skia_codec_rust_png` and
-    # `skia_codec_rust_png_public` when needed (see the other TODO below).
+    sources += skia_codec_rust_png
+    sources += skia_codec_rust_png_public
     sources += skia_encode_rust_png_public
     sources += skia_encode_rust_png_srcs
-
-    # TODO(https://crbug.com/444045690): Stop depending on `libpng` here once
-    # Rust PNG support is also added to the decoding code path (replacing the
-    # `libpng`-based one from `core/fxcodec/png/png_decoder.cpp`).
-    deps += [ "../third_party:png" ]
-    sources += skia_codec_libpng_srcs
   } else {
     deps += [ "../third_party:png" ]
     sources += skia_codec_libpng_srcs
