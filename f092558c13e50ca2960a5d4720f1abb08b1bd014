@@ -332,6 +332,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "258a07b9_bee992d1",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 731,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-09-16T12:45:30Z",
+      "side": 1,
+      "message": "Summing it up - both source and destination need to be XFA enabled for it to show broken behavior, from what I have tested, neither setting the source NOR destination doc to the above PDF file demonstrates broken behavior, both PDFs do have to be XFA enabled.\n\nAgain, do let me know if you would suggest a different test as well specifically for movepages.\n\nSide note - the bug report, although mentioning move page, also mentioned insert pages later in the bug thread and message.",
+      "parentUuid": "1a9ab5ff_c0923226",
+      "revId": "f092558c13e50ca2960a5d4720f1abb08b1bd014",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "1f383af0_fe345dc5",
         "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
         "patchSetId": 14
