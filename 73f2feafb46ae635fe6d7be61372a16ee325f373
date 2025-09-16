@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ad7ccadd_8088744c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-16T23:30:41Z",
+      "side": 1,
+      "message": "@thestig, can you PTAL?  This is a silly, small CL, but I think it\u0027s best to do this outside of the big CLs that add a `skia_png_decoder.h/.cc`.",
+      "revId": "73f2feafb46ae635fe6d7be61372a16ee325f373",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
