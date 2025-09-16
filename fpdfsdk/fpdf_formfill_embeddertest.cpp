@@ -3279,36 +3279,43 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, ReplaceSelection) {
   CheckFocusedFieldText("XYZB");
   CheckCanUndo(true);
   CheckCanRedo(false);
+  CheckSelection("");
 
   PerformUndo();
   CheckFocusedFieldText("AB");
   CheckCanUndo(true);
   CheckCanRedo(true);
+  CheckSelection("A");
 
   PerformUndo();
   CheckFocusedFieldText("A");
   CheckCanUndo(true);
   CheckCanRedo(true);
+  CheckSelection("");
 
   PerformUndo();
   CheckFocusedFieldText("");
   CheckCanUndo(false);
   CheckCanRedo(true);
+  CheckSelection("");
 
   PerformRedo();
   CheckFocusedFieldText("A");
   CheckCanUndo(true);
   CheckCanRedo(true);
+  CheckSelection("");
 
   PerformRedo();
   CheckFocusedFieldText("AB");
   CheckCanUndo(true);
   CheckCanRedo(true);
+  CheckSelection("");
 
   PerformRedo();
   CheckFocusedFieldText("XYZB");
   CheckCanUndo(true);
   CheckCanRedo(false);
+  CheckSelection("");
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest, ContinuouslyReplaceSelection) {
