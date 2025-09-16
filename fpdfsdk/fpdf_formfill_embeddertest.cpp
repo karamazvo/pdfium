@@ -127,17 +127,29 @@ class FPDFFormFillInteractiveEmbedderTest : public FPDFFormFillEmbedderTest {
     EXPECT_TRUE(FORM_SelectAllText(form_handle(), page_));
   }
 
-  void CheckSelection(ByteStringView expected_string) {
+  testing::AssertionResult SelectionIs(ByteStringView expected_string) {
     unsigned long actual_len =
         FORM_GetSelectedText(form_handle(), page_, nullptr, 0);
-    ASSERT_NE(actual_len, 0U);
-    ASSERT_LT(actual_len, 1000U);
-    ASSERT_EQ(actual_len % sizeof(FPDF_WCHAR), 0U);
+    if (actual_len == 0 || actual_len >= 1000 ||
+        actual_len % sizeof(FPDF_WCHAR) != 0) {
+      return testing::AssertionFailure()
+             << "Bad selected text length: " << actual_len;
+    }
 
     std::vector<FPDF_WCHAR> buf(actual_len / sizeof(FPDF_WCHAR));
-    ASSERT_EQ(actual_len, FORM_GetSelectedText(form_handle(), page_, buf.data(),
-                                               actual_len));
-    EXPECT_EQ(expected_string, ByteStringView(GetPlatformString(buf.data())));
+    if (actual_len !=
+        FORM_GetSelectedText(form_handle(), page_, buf.data(), actual_len)) {
+      return testing::AssertionFailure()
+             << "FORM_GetSelectedText did not fill the buffer";
+    }
+    ByteStringView got_string = ByteStringView(GetPlatformString(buf.data()));
+    if (expected_string == got_string) {
+      return testing::AssertionSuccess();
+    } else {
+      return testing::AssertionFailure()
+             << "got: \"" << got_string << "\" want: \"" << expected_string
+             << "\"";
+    }
   }
 
   void FocusOnPoint(const CFX_PointF& point) {
@@ -1683,25 +1695,25 @@ TEST_F(FPDFFormFillEmbedderTest, SelectAllText) {
 TEST_F(FPDFFormFillTextFormEmbedderTest, GetSelectedTextEmptyAndBasicKeyboard) {
   // Test empty selection.
   CheckFocusedFieldText("");
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
 
   // Test basic selection.
   TypeTextIntoTextField(3, RegularFormBegin());
   CheckFocusedFieldText("ABC");
   SelectTextWithKeyboard(3, FWL_VKEY_Left, RegularFormAtX(123.0));
-  CheckSelection("ABC");
+  EXPECT_TRUE(SelectionIs("ABC"));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest, GetSelectedTextEmptyAndBasicMouse) {
   // Test empty selection.
   CheckFocusedFieldText("");
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
 
   // Test basic selection.
   TypeTextIntoTextField(3, RegularFormBegin());
   CheckFocusedFieldText("ABC");
   SelectTextWithMouse(RegularFormAtX(125.0), RegularFormBegin());
-  CheckSelection("ABC");
+  EXPECT_TRUE(SelectionIs("ABC"));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest, GetSelectedTextFragmentsKeyBoard) {
@@ -1710,23 +1722,23 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, GetSelectedTextFragmentsKeyBoard) {
 
   // Test selecting first character in forward direction.
   SelectTextWithKeyboard(1, FWL_VKEY_Right, RegularFormBegin());
-  CheckSelection("A");
+  EXPECT_TRUE(SelectionIs("A"));
 
   // Test selecting entire long string in backwards direction.
   SelectTextWithKeyboard(12, FWL_VKEY_Left, RegularFormEnd());
-  CheckSelection("ABCDEFGHIJKL");
+  EXPECT_TRUE(SelectionIs("ABCDEFGHIJKL"));
 
   // Test selecting middle section in backwards direction.
   SelectTextWithKeyboard(6, FWL_VKEY_Left, RegularFormAtX(170.0));
-  CheckSelection("DEFGHI");
+  EXPECT_TRUE(SelectionIs("DEFGHI"));
 
   // Test selecting middle selection in forward direction.
   SelectTextWithKeyboard(6, FWL_VKEY_Right, RegularFormAtX(125.0));
-  CheckSelection("DEFGHI");
+  EXPECT_TRUE(SelectionIs("DEFGHI"));
 
   // Test selecting last character in backwards direction.
   SelectTextWithKeyboard(1, FWL_VKEY_Left, RegularFormEnd());
-  CheckSelection("L");
+  EXPECT_TRUE(SelectionIs("L"));
   CheckFocusedFieldText("ABCDEFGHIJKL");
 }
 
@@ -1735,74 +1747,74 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, GetSelectedTextFragmentsMouse) {
 
   // Test selecting first character in forward direction.
   SelectTextWithMouse(RegularFormBegin(), RegularFormAtX(106.0));
-  CheckSelection("A");
+  EXPECT_TRUE(SelectionIs("A"));
 
   // Test selecting entire long string in backwards direction.
   SelectAllRegularFormTextWithMouse();
-  CheckSelection("ABCDEFGHIJKL");
+  EXPECT_TRUE(SelectionIs("ABCDEFGHIJKL"));
 
   // Test selecting middle section in backwards direction.
   SelectTextWithMouse(RegularFormAtX(170.0), RegularFormAtX(125.0));
-  CheckSelection("DEFGHI");
+  EXPECT_TRUE(SelectionIs("DEFGHI"));
 
   // Test selecting middle selection in forward direction.
   SelectTextWithMouse(RegularFormAtX(125.0), RegularFormAtX(170.0));
-  CheckSelection("DEFGHI");
+  EXPECT_TRUE(SelectionIs("DEFGHI"));
 
   // Test selecting last character in backwards direction.
   SelectTextWithMouse(RegularFormEnd(), RegularFormAtX(186.0));
-  CheckSelection("L");
+  EXPECT_TRUE(SelectionIs("L"));
 }
 
 TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
        GetSelectedTextEmptyAndBasicNormalComboBox) {
   // Test empty selection.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   CheckFocusedFieldText("");
 
   // Non-editable comboboxes don't allow selection with keyboard.
   SelectTextWithMouse(NonEditableFormBegin(), NonEditableFormAtX(142.0));
   CheckFocusedFieldText("Banana");
-  CheckSelection("Banana");
+  EXPECT_TRUE(SelectionIs("Banana"));
 
   // Select other another provided option.
   SelectNonEditableFormOption(0);
   CheckFocusedFieldText("Apple");
-  CheckSelection("Apple");
+  EXPECT_TRUE(SelectionIs("Apple"));
 }
 
 TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
        GetSelectedTextEmptyAndBasicEditableComboBoxKeyboard) {
   // Test empty selection.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   CheckFocusedFieldText("");
 
   // Test basic selection of text within user editable combobox using keyboard.
   TypeTextIntoTextField(3, EditableFormBegin());
   CheckFocusedFieldText("ABC");
   SelectTextWithKeyboard(3, FWL_VKEY_Left, EditableFormAtX(128.0));
-  CheckSelection("ABC");
+  EXPECT_TRUE(SelectionIs("ABC"));
 
   // Select a provided option.
   SelectEditableFormOption(1);
-  CheckSelection("Bar");
+  EXPECT_TRUE(SelectionIs("Bar"));
   CheckFocusedFieldText("Bar");
 }
 
 TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
        GetSelectedTextEmptyAndBasicEditableComboBoxMouse) {
   // Test empty selection.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
 
   // Test basic selection of text within user editable combobox using mouse.
   TypeTextIntoTextField(3, EditableFormBegin());
   SelectTextWithMouse(EditableFormAtX(128.0), EditableFormBegin());
-  CheckSelection("ABC");
+  EXPECT_TRUE(SelectionIs("ABC"));
 
   // Select a provided option.
   SelectEditableFormOption(2);
   CheckFocusedFieldText("Qux");
-  CheckSelection("Qux");
+  EXPECT_TRUE(SelectionIs("Qux"));
 }
 
 TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
@@ -1812,31 +1824,31 @@ TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
   // Test selecting first character in forward direction.
   SelectTextWithMouse(NonEditableFormBegin(), NonEditableFormAtX(107.0));
   CheckFocusedFieldText("Banana");
-  CheckSelection("B");
+  EXPECT_TRUE(SelectionIs("B"));
 
   // Test selecting entire string in backwards direction.
   SelectTextWithMouse(NonEditableFormAtX(142.0), NonEditableFormBegin());
-  CheckSelection("Banana");
+  EXPECT_TRUE(SelectionIs("Banana"));
 
   // Test selecting middle section in backwards direction.
   SelectTextWithMouse(NonEditableFormAtX(135.0), NonEditableFormAtX(117.0));
-  CheckSelection("nan");
+  EXPECT_TRUE(SelectionIs("nan"));
 
   // Test selecting middle section in forward direction.
   SelectTextWithMouse(NonEditableFormAtX(117.0), NonEditableFormAtX(135.0));
-  CheckSelection("nan");
+  EXPECT_TRUE(SelectionIs("nan"));
 
   // Test selecting last character in backwards direction.
   SelectTextWithMouse(NonEditableFormAtX(142.0), NonEditableFormAtX(138.0));
-  CheckSelection("a");
+  EXPECT_TRUE(SelectionIs("a"));
   CheckFocusedFieldText("Banana");
 
   // Select another option and then reset selection as first three chars.
   SelectNonEditableFormOption(2);
   CheckFocusedFieldText("Cherry");
-  CheckSelection("Cherry");
+  EXPECT_TRUE(SelectionIs("Cherry"));
   SelectTextWithMouse(NonEditableFormBegin(), NonEditableFormAtX(122.0));
-  CheckSelection("Che");
+  EXPECT_TRUE(SelectionIs("Che"));
 }
 
 TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
@@ -1847,29 +1859,29 @@ TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
 
   // Test selecting first character in forward direction.
   SelectTextWithKeyboard(1, FWL_VKEY_Right, EditableFormBegin());
-  CheckSelection("A");
+  EXPECT_TRUE(SelectionIs("A"));
 
   // Test selecting entire long string in backwards direction.
   SelectTextWithKeyboard(10, FWL_VKEY_Left, EditableFormEnd());
-  CheckSelection("ABCDEFGHIJ");
+  EXPECT_TRUE(SelectionIs("ABCDEFGHIJ"));
 
   // Test selecting middle section in backwards direction.
   SelectTextWithKeyboard(5, FWL_VKEY_Left, EditableFormAtX(168.0));
-  CheckSelection("DEFGH");
+  EXPECT_TRUE(SelectionIs("DEFGH"));
 
   // Test selecting middle selection in forward direction.
   SelectTextWithKeyboard(5, FWL_VKEY_Right, EditableFormAtX(127.0));
-  CheckSelection("DEFGH");
+  EXPECT_TRUE(SelectionIs("DEFGH"));
 
   // Test selecting last character in backwards direction.
   SelectTextWithKeyboard(1, FWL_VKEY_Left, EditableFormEnd());
-  CheckSelection("J");
+  EXPECT_TRUE(SelectionIs("J"));
 
   // Select a provided option and then reset selection as first two chars.
   SelectEditableFormOption(0);
-  CheckSelection("Foo");
+  EXPECT_TRUE(SelectionIs("Foo"));
   SelectTextWithKeyboard(2, FWL_VKEY_Right, EditableFormBegin());
-  CheckSelection("Fo");
+  EXPECT_TRUE(SelectionIs("Fo"));
   CheckFocusedFieldText("Foo");
 }
 
@@ -1879,23 +1891,23 @@ TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
 
   // Test selecting first character in forward direction.
   SelectTextWithMouse(EditableFormBegin(), EditableFormAtX(107.0));
-  CheckSelection("A");
+  EXPECT_TRUE(SelectionIs("A"));
 
   // Test selecting entire long string in backwards direction.
   SelectAllEditableFormTextWithMouse();
-  CheckSelection("ABCDEFGHIJ");
+  EXPECT_TRUE(SelectionIs("ABCDEFGHIJ"));
 
   // Test selecting middle section in backwards direction.
   SelectTextWithMouse(EditableFormAtX(168.0), EditableFormAtX(127.0));
-  CheckSelection("DEFGH");
+  EXPECT_TRUE(SelectionIs("DEFGH"));
 
   // Test selecting middle selection in forward direction.
   SelectTextWithMouse(EditableFormAtX(127.0), EditableFormAtX(168.0));
-  CheckSelection("DEFGH");
+  EXPECT_TRUE(SelectionIs("DEFGH"));
 
   // Test selecting last character in backwards direction.
   SelectTextWithMouse(EditableFormEnd(), EditableFormAtX(174.0));
-  CheckSelection("J");
+  EXPECT_TRUE(SelectionIs("J"));
   CheckFocusedFieldText("ABCDEFGHIJ");
 }
 
@@ -2013,7 +2025,7 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, DeleteTextFieldEntireSelection) {
   TypeTextIntoTextField(12, RegularFormBegin());
   SelectAllRegularFormTextWithMouse();
   CheckFocusedFieldText("ABCDEFGHIJKL");
-  CheckSelection("ABCDEFGHIJKL");
+  EXPECT_TRUE(SelectionIs("ABCDEFGHIJKL"));
 
   // Test deleting current text selection. Select what remains after deletion to
   // check that remaining text is as expected.
@@ -2021,7 +2033,7 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, DeleteTextFieldEntireSelection) {
   CheckFocusedFieldText("");
 
   SelectTextWithKeyboard(12, FWL_VKEY_Left, RegularFormEnd());
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest, DeleteTextFieldSelectionMiddle) {
@@ -2029,54 +2041,54 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, DeleteTextFieldSelectionMiddle) {
   TypeTextIntoTextField(12, RegularFormBegin());
   SelectTextWithMouse(RegularFormAtX(170.0), RegularFormAtX(125.0));
   CheckFocusedFieldText("ABCDEFGHIJKL");
-  CheckSelection("DEFGHI");
+  EXPECT_TRUE(SelectionIs("DEFGHI"));
 
   // Test deleting current text selection. Select what remains after deletion to
   // check that remaining text is as expected.
   FORM_ReplaceSelection(form_handle(), page(), nullptr);
   CheckFocusedFieldText("ABCJKL");
   SelectTextWithKeyboard(12, FWL_VKEY_Left, RegularFormEnd());
-  CheckSelection("ABCJKL");
+  EXPECT_TRUE(SelectionIs("ABCJKL"));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest, DeleteTextFieldSelectionLeft) {
   // Select first few characters of text.
   TypeTextIntoTextField(12, RegularFormBegin());
   SelectTextWithMouse(RegularFormBegin(), RegularFormAtX(132.0));
-  CheckSelection("ABCD");
+  EXPECT_TRUE(SelectionIs("ABCD"));
 
   // Test deleting current text selection. Select what remains after deletion to
   // check that remaining text is as expected.
   FORM_ReplaceSelection(form_handle(), page(), nullptr);
   CheckFocusedFieldText("EFGHIJKL");
   SelectTextWithKeyboard(12, FWL_VKEY_Left, RegularFormEnd());
-  CheckSelection("EFGHIJKL");
+  EXPECT_TRUE(SelectionIs("EFGHIJKL"));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest, DeleteTextFieldSelectionRight) {
   // Select last few characters of text.
   TypeTextIntoTextField(12, RegularFormBegin());
   SelectTextWithMouse(RegularFormEnd(), RegularFormAtX(165.0));
-  CheckSelection("IJKL");
+  EXPECT_TRUE(SelectionIs("IJKL"));
 
   // Test deleting current text selection. Select what remains after deletion to
   // check that remaining text is as expected.
   FORM_ReplaceSelection(form_handle(), page(), nullptr);
   CheckFocusedFieldText("ABCDEFGH");
   SelectTextWithKeyboard(12, FWL_VKEY_Left, RegularFormEnd());
-  CheckSelection("ABCDEFGH");
+  EXPECT_TRUE(SelectionIs("ABCDEFGH"));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest, DeleteEmptyTextFieldSelection) {
   // Do not select text.
   TypeTextIntoTextField(12, RegularFormBegin());
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
 
   // Test that attempt to delete empty text selection has no effect.
   FORM_ReplaceSelection(form_handle(), page(), nullptr);
   CheckFocusedFieldText("ABCDEFGHIJKL");
   SelectTextWithKeyboard(12, FWL_VKEY_Left, RegularFormEnd());
-  CheckSelection("ABCDEFGHIJKL");
+  EXPECT_TRUE(SelectionIs("ABCDEFGHIJKL"));
 }
 
 TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
@@ -2084,14 +2096,14 @@ TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
   // Select entire contents of user-editable combobox text field.
   TypeTextIntoTextField(10, EditableFormBegin());
   SelectAllEditableFormTextWithMouse();
-  CheckSelection("ABCDEFGHIJ");
+  EXPECT_TRUE(SelectionIs("ABCDEFGHIJ"));
 
   // Test deleting current text selection. Select what remains after deletion to
   // check that remaining text is as expected.
   FORM_ReplaceSelection(form_handle(), page(), nullptr);
   CheckFocusedFieldText("");
   SelectAllEditableFormTextWithMouse();
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
 }
 
 TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
@@ -2099,14 +2111,14 @@ TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
   // Select middle section of text.
   TypeTextIntoTextField(10, EditableFormBegin());
   SelectTextWithMouse(EditableFormAtX(168.0), EditableFormAtX(127.0));
-  CheckSelection("DEFGH");
+  EXPECT_TRUE(SelectionIs("DEFGH"));
 
   // Test deleting current text selection. Select what remains after deletion to
   // check that remaining text is as expected.
   FORM_ReplaceSelection(form_handle(), page(), nullptr);
   CheckFocusedFieldText("ABCIJ");
   SelectAllEditableFormTextWithMouse();
-  CheckSelection("ABCIJ");
+  EXPECT_TRUE(SelectionIs("ABCIJ"));
 }
 
 TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
@@ -2114,13 +2126,13 @@ TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
   // Select first few characters of text.
   TypeTextIntoTextField(10, EditableFormBegin());
   SelectTextWithMouse(EditableFormBegin(), EditableFormAtX(132.0));
-  CheckSelection("ABCD");
+  EXPECT_TRUE(SelectionIs("ABCD"));
 
   // Test deleting current text selection. Select what remains after deletion to
   // check that remaining text is as expected.
   FORM_ReplaceSelection(form_handle(), page(), nullptr);
   SelectAllEditableFormTextWithMouse();
-  CheckSelection("EFGHIJ");
+  EXPECT_TRUE(SelectionIs("EFGHIJ"));
 }
 
 TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
@@ -2128,25 +2140,25 @@ TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
   // Select last few characters of text.
   TypeTextIntoTextField(10, EditableFormBegin());
   SelectTextWithMouse(EditableFormEnd(), EditableFormAtX(152.0));
-  CheckSelection("GHIJ");
+  EXPECT_TRUE(SelectionIs("GHIJ"));
 
   // Test deleting current text selection. Select what remains after deletion to
   // check that remaining text is as expected.
   FORM_ReplaceSelection(form_handle(), page(), nullptr);
   SelectAllEditableFormTextWithMouse();
-  CheckSelection("ABCDEF");
+  EXPECT_TRUE(SelectionIs("ABCDEF"));
 }
 
 TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
        DeleteEmptyEditableComboBoxSelection) {
   // Do not select text.
   TypeTextIntoTextField(10, EditableFormBegin());
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
 
   // Test that attempt to delete empty text selection has no effect.
   FORM_ReplaceSelection(form_handle(), page(), nullptr);
   SelectAllEditableFormTextWithMouse();
-  CheckSelection("ABCDEFGHIJ");
+  EXPECT_TRUE(SelectionIs("ABCDEFGHIJ"));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest, InsertTextInEmptyTextField) {
@@ -2161,9 +2173,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, InsertTextInEmptyTextField) {
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllRegularFormTextWithMouse();
-  CheckSelection("Hello");
+  EXPECT_TRUE(SelectionIs("Hello"));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest, InsertTextInPopulatedTextFieldLeft) {
@@ -2181,9 +2193,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, InsertTextInPopulatedTextFieldLeft) {
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllRegularFormTextWithMouse();
-  CheckSelection("HelloABCDEFGH");
+  EXPECT_TRUE(SelectionIs("HelloABCDEFGH"));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest, InsertTextInPopulatedTextFieldMiddle) {
@@ -2199,9 +2211,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, InsertTextInPopulatedTextFieldMiddle) {
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllRegularFormTextWithMouse();
-  CheckSelection("ABCDHelloEFGH");
+  EXPECT_TRUE(SelectionIs("ABCDHelloEFGH"));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest, InsertTextInPopulatedTextFieldRight) {
@@ -2217,9 +2229,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, InsertTextInPopulatedTextFieldRight) {
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllRegularFormTextWithMouse();
-  CheckSelection("ABCDEFGHHello");
+  EXPECT_TRUE(SelectionIs("ABCDEFGHHello"));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest,
@@ -2227,9 +2239,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest,
   TypeTextIntoTextField(12, RegularFormBegin());
 
   // Select entire string in text field.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectTextWithKeyboard(12, FWL_VKEY_Left, RegularFormEnd());
-  CheckSelection("ABCDEFGHIJKL");
+  EXPECT_TRUE(SelectionIs("ABCDEFGHIJKL"));
 
   // Test replacing text selection with text to be inserted.
   ScopedFPDFWideString text_to_insert = GetFPDFWideString(L"Hello");
@@ -2238,9 +2250,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest,
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllRegularFormTextWithMouse();
-  CheckSelection("Hello");
+  EXPECT_TRUE(SelectionIs("Hello"));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest,
@@ -2248,9 +2260,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest,
   TypeTextIntoTextField(12, RegularFormBegin());
 
   // Select left portion of string in text field.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectTextWithKeyboard(6, FWL_VKEY_Left, RegularFormAtX(148.0));
-  CheckSelection("ABCDEF");
+  EXPECT_TRUE(SelectionIs("ABCDEF"));
 
   // Test replacing text selection with text to be inserted.
   ScopedFPDFWideString text_to_insert = GetFPDFWideString(L"Hello");
@@ -2259,9 +2271,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest,
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllRegularFormTextWithMouse();
-  CheckSelection("HelloGHIJKL");
+  EXPECT_TRUE(SelectionIs("HelloGHIJKL"));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest,
@@ -2269,9 +2281,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest,
   TypeTextIntoTextField(12, RegularFormBegin());
 
   // Select middle portion of string in text field.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectTextWithKeyboard(6, FWL_VKEY_Left, RegularFormAtX(171.0));
-  CheckSelection("DEFGHI");
+  EXPECT_TRUE(SelectionIs("DEFGHI"));
 
   // Test replacing text selection with text to be inserted.
   ScopedFPDFWideString text_to_insert = GetFPDFWideString(L"Hello");
@@ -2279,9 +2291,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest,
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllRegularFormTextWithMouse();
-  CheckSelection("ABCHelloJKL");
+  EXPECT_TRUE(SelectionIs("ABCHelloJKL"));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest,
@@ -2289,9 +2301,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest,
   TypeTextIntoTextField(12, RegularFormBegin());
 
   // Select right portion of string in text field.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectTextWithKeyboard(6, FWL_VKEY_Left, RegularFormEnd());
-  CheckSelection("GHIJKL");
+  EXPECT_TRUE(SelectionIs("GHIJKL"));
 
   // Test replacing text selection with text to be inserted.
   ScopedFPDFWideString text_to_insert = GetFPDFWideString(L"Hello");
@@ -2299,9 +2311,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest,
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllRegularFormTextWithMouse();
-  CheckSelection("ABCDEFHello");
+  EXPECT_TRUE(SelectionIs("ABCDEFHello"));
 }
 
 TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
@@ -2316,9 +2328,9 @@ TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
 
   // Select entire contents of user-editable combobox text field to check that
   // insertion worked as expected.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllEditableFormTextWithMouse();
-  CheckSelection("Hello");
+  EXPECT_TRUE(SelectionIs("Hello"));
 }
 
 TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
@@ -2334,9 +2346,9 @@ TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
 
   // Select entire contents of user-editable combobox text field to check that
   // insertion worked as expected.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllEditableFormTextWithMouse();
-  CheckSelection("HelloABCDEF");
+  EXPECT_TRUE(SelectionIs("HelloABCDEF"));
 }
 
 TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
@@ -2353,9 +2365,9 @@ TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
 
   // Select entire contents of user-editable combobox text field to check that
   // insertion worked as expected.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllEditableFormTextWithMouse();
-  CheckSelection("ABCHelloDEF");
+  EXPECT_TRUE(SelectionIs("ABCHelloDEF"));
 }
 
 TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
@@ -2371,9 +2383,9 @@ TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
 
   // Select entire contents of user-editable combobox text field to check that
   // insertion worked as expected.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllEditableFormTextWithMouse();
-  CheckSelection("ABCDEFHello");
+  EXPECT_TRUE(SelectionIs("ABCDEFHello"));
 }
 
 TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
@@ -2381,9 +2393,9 @@ TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
   TypeTextIntoTextField(10, EditableFormBegin());
 
   // Select entire string in user-editable combobox.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectTextWithKeyboard(10, FWL_VKEY_Left, EditableFormEnd());
-  CheckSelection("ABCDEFGHIJ");
+  EXPECT_TRUE(SelectionIs("ABCDEFGHIJ"));
 
   // Test replacing text selection with text to be inserted.
   ScopedFPDFWideString text_to_insert = GetFPDFWideString(L"Hello");
@@ -2391,9 +2403,9 @@ TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
 
   // Select entire contents of user-editable combobox text field to check that
   // insertion worked as expected.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllEditableFormTextWithMouse();
-  CheckSelection("Hello");
+  EXPECT_TRUE(SelectionIs("Hello"));
 }
 
 TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
@@ -2401,9 +2413,9 @@ TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
   TypeTextIntoTextField(10, EditableFormBegin());
 
   // Select left portion of string in user-editable combobox.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectTextWithKeyboard(5, FWL_VKEY_Left, EditableFormAtX(142.0));
-  CheckSelection("ABCDE");
+  EXPECT_TRUE(SelectionIs("ABCDE"));
 
   // Test replacing text selection with text to be inserted.
   ScopedFPDFWideString text_to_insert = GetFPDFWideString(L"Hello");
@@ -2411,9 +2423,9 @@ TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
 
   // Select entire contents of user-editable combobox text field to check that
   // insertion worked as expected.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllEditableFormTextWithMouse();
-  CheckSelection("HelloFGHIJ");
+  EXPECT_TRUE(SelectionIs("HelloFGHIJ"));
 }
 
 TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
@@ -2421,9 +2433,9 @@ TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
   TypeTextIntoTextField(10, EditableFormBegin());
 
   // Select middle portion of string in user-editable combobox.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectTextWithKeyboard(5, FWL_VKEY_Left, EditableFormAtX(167.0));
-  CheckSelection("DEFGH");
+  EXPECT_TRUE(SelectionIs("DEFGH"));
 
   // Test replacing text selection with text to be inserted.
   ScopedFPDFWideString text_to_insert = GetFPDFWideString(L"Hello");
@@ -2431,9 +2443,9 @@ TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
 
   // Select entire contents of user-editable combobox text field to check that
   // insertion worked as expected.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllEditableFormTextWithMouse();
-  CheckSelection("ABCHelloIJ");
+  EXPECT_TRUE(SelectionIs("ABCHelloIJ"));
 }
 
 TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
@@ -2441,9 +2453,9 @@ TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
   TypeTextIntoTextField(10, EditableFormBegin());
 
   // Select right portion of string in user-editable combobox.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectTextWithKeyboard(5, FWL_VKEY_Left, EditableFormEnd());
-  CheckSelection("FGHIJ");
+  EXPECT_TRUE(SelectionIs("FGHIJ"));
 
   // Test replacing text selection with text to be inserted.
   ScopedFPDFWideString text_to_insert = GetFPDFWideString(L"Hello");
@@ -2451,9 +2463,9 @@ TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
 
   // Select entire contents of user-editable combobox text field to check that
   // insertion worked as expected.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllEditableFormTextWithMouse();
-  CheckSelection("ABCDEHello");
+  EXPECT_TRUE(SelectionIs("ABCDEHello"));
 }
 
 TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
@@ -2539,9 +2551,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest,
   CheckFocusedFieldText("Elephant");
 
   // Delete pre-filled contents of text field with char limit.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllCharLimitFormTextWithMouse();
-  CheckSelection("Elephant");
+  EXPECT_TRUE(SelectionIs("Elephant"));
   FORM_ReplaceSelection(form_handle(), page(), nullptr);
   CheckFocusedFieldText("");
 
@@ -2553,9 +2565,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest,
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllCharLimitFormTextWithMouse();
-  CheckSelection("Hippopotam");
+  EXPECT_TRUE(SelectionIs("Hippopotam"));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest,
@@ -2565,9 +2577,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest,
   CheckFocusedFieldText("Elephant");
 
   // Delete pre-filled contents of text field with char limit.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllCharLimitFormTextWithMouse();
-  CheckSelection("Elephant");
+  EXPECT_TRUE(SelectionIs("Elephant"));
   FORM_ReplaceSelection(form_handle(), page(), nullptr);
 
   // Test inserting text into now empty text field so text to be inserted
@@ -2578,9 +2590,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest,
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllCharLimitFormTextWithMouse();
-  CheckSelection("Zebra");
+  EXPECT_TRUE(SelectionIs("Zebra"));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest,
@@ -2594,9 +2606,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest,
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllCharLimitFormTextWithMouse();
-  CheckSelection("HiElephant");
+  EXPECT_TRUE(SelectionIs("HiElephant"));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest,
@@ -2616,9 +2628,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest,
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllCharLimitFormTextWithMouse();
-  CheckSelection("ElephHiant");
+  EXPECT_TRUE(SelectionIs("ElephHiant"));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest,
@@ -2634,9 +2646,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest,
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllCharLimitFormTextWithMouse();
-  CheckSelection("ElephantHi");
+  EXPECT_TRUE(SelectionIs("ElephantHi"));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest,
@@ -2644,9 +2656,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest,
   TypeTextIntoTextField(12, RegularFormBegin());
 
   // Select entire string in text field.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectTextWithKeyboard(12, FWL_VKEY_Left, CharLimitFormEnd());
-  CheckSelection("Elephant");
+  EXPECT_TRUE(SelectionIs("Elephant"));
 
   // Test replacing text selection with text to be inserted.
   ScopedFPDFWideString text_to_insert = GetFPDFWideString(L"Hippopotamus");
@@ -2654,9 +2666,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest,
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllCharLimitFormTextWithMouse();
-  CheckSelection("Hippopotam");
+  EXPECT_TRUE(SelectionIs("Hippopotam"));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest,
@@ -2664,9 +2676,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest,
   TypeTextIntoTextField(12, RegularFormBegin());
 
   // Select left portion of string in text field.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectTextWithKeyboard(4, FWL_VKEY_Left, CharLimitFormAtX(122.0));
-  CheckSelection("Elep");
+  EXPECT_TRUE(SelectionIs("Elep"));
 
   // Test replacing text selection with text to be inserted.
   ScopedFPDFWideString text_to_insert = GetFPDFWideString(L"Hippopotamus");
@@ -2674,9 +2686,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest,
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllCharLimitFormTextWithMouse();
-  CheckSelection("Hippophant");
+  EXPECT_TRUE(SelectionIs("Hippophant"));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest,
@@ -2684,9 +2696,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest,
   TypeTextIntoTextField(12, RegularFormBegin());
 
   // Select middle portion of string in text field.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectTextWithKeyboard(4, FWL_VKEY_Left, CharLimitFormAtX(136.0));
-  CheckSelection("epha");
+  EXPECT_TRUE(SelectionIs("epha"));
 
   // Test replacing text selection with text to be inserted.
   ScopedFPDFWideString text_to_insert = GetFPDFWideString(L"Hippopotamus");
@@ -2694,9 +2706,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest,
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllCharLimitFormTextWithMouse();
-  CheckSelection("ElHippopnt");
+  EXPECT_TRUE(SelectionIs("ElHippopnt"));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest,
@@ -2704,9 +2716,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest,
   TypeTextIntoTextField(12, RegularFormBegin());
 
   // Select right portion of string in text field.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectTextWithKeyboard(4, FWL_VKEY_Left, CharLimitFormAtX(152.0));
-  CheckSelection("hant");
+  EXPECT_TRUE(SelectionIs("hant"));
 
   // Test replacing text selection with text to be inserted.
   ScopedFPDFWideString text_to_insert = GetFPDFWideString(L"Hippopotamus");
@@ -2714,9 +2726,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest,
 
   // Select entire contents of text field to check that insertion worked
   // as expected.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectAllCharLimitFormTextWithMouse();
-  CheckSelection("ElepHippop");
+  EXPECT_TRUE(SelectionIs("ElepHippop"));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest, DoubleClickInTextField) {
@@ -2730,9 +2742,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, DoubleClickInTextField) {
   CheckFocusedFieldText("Hello World");
 
   // Make sure double clicking selects the entire line.
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   DoubleClickOnFormFieldAtPoint(RegularFormBegin());
-  CheckSelection("Hello World");
+  EXPECT_TRUE(SelectionIs("Hello World"));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest, FocusAnnotationUpdateToEmbedder) {
@@ -3203,13 +3215,13 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, ReplaceAndKeepSelection) {
 
   TypeTextIntoTextField(2, RegularFormBegin());
   CheckFocusedFieldText("AB");
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectTextWithKeyboard(1, FWL_VKEY_Right, RegularFormBegin());
-  CheckSelection("A");
+  EXPECT_TRUE(SelectionIs("A"));
 
   FORM_ReplaceAndKeepSelection(form_handle(), page(), text_to_insert.get());
   CheckFocusedFieldText("XYZB");
-  CheckSelection("XYZ");
+  EXPECT_TRUE(SelectionIs("XYZ"));
   CheckCanUndo(true);
   CheckCanRedo(false);
 
@@ -3219,11 +3231,11 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, ReplaceAndKeepSelection) {
   CheckCanRedo(true);
 
   SelectTextWithKeyboard(1, FWL_VKEY_Left, RegularFormEnd());
-  CheckSelection("B");
+  EXPECT_TRUE(SelectionIs("B"));
 
   FORM_ReplaceAndKeepSelection(form_handle(), page(), text_to_insert.get());
   CheckFocusedFieldText("AXYZ");
-  CheckSelection("XYZ");
+  EXPECT_TRUE(SelectionIs("XYZ"));
   CheckCanUndo(true);
   CheckCanRedo(false);
 }
@@ -3238,7 +3250,7 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, ContinuouslyReplaceAndKeepSelection) {
 
   FORM_ReplaceAndKeepSelection(form_handle(), page(), text_to_insert1.get());
   CheckFocusedFieldText("UVW");
-  CheckSelection("UVW");
+  EXPECT_TRUE(SelectionIs("UVW"));
 
   CheckCanUndo(true);
   CheckCanRedo(false);
@@ -3250,17 +3262,17 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, ContinuouslyReplaceAndKeepSelection) {
   CheckCanRedo(true);
   PerformRedo();
   CheckFocusedFieldText("UVW");
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
 
   ScopedFPDFWideString text_to_insert2 = GetFPDFWideString(L"XYZ");
   FORM_ReplaceAndKeepSelection(form_handle(), page(), text_to_insert2.get());
   CheckFocusedFieldText("UVWXYZ");
-  CheckSelection("XYZ");
+  EXPECT_TRUE(SelectionIs("XYZ"));
 
   CheckCanUndo(true);
   PerformUndo();
   CheckFocusedFieldText("UVW");
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest, ReplaceSelection) {
@@ -3271,9 +3283,9 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, ReplaceSelection) {
 
   TypeTextIntoTextField(2, RegularFormBegin());
   CheckFocusedFieldText("AB");
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   SelectTextWithKeyboard(1, FWL_VKEY_Right, RegularFormBegin());
-  CheckSelection("A");
+  EXPECT_TRUE(SelectionIs("A"));
 
   FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
   CheckFocusedFieldText("XYZB");
@@ -3321,7 +3333,7 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, ContinuouslyReplaceSelection) {
 
   FORM_ReplaceSelection(form_handle(), page(), text_to_insert1.get());
   CheckFocusedFieldText("UVW");
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
 
   CheckCanUndo(true);
   CheckCanRedo(false);
@@ -3333,7 +3345,7 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, ContinuouslyReplaceSelection) {
   CheckCanRedo(true);
   PerformRedo();
   CheckFocusedFieldText("UVW");
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
 
   ScopedFPDFWideString text_to_insert2 = GetFPDFWideString(L"XYZ");
   FORM_ReplaceSelection(form_handle(), page(), text_to_insert2.get());
@@ -3344,14 +3356,14 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, ContinuouslyReplaceSelection) {
 
   PerformUndo();
   CheckFocusedFieldText("UVW");
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest, SelectAllWithKeyboardShortcut) {
   // Start with a couple of letters in the text form.
   TypeTextIntoTextField(2, RegularFormBegin());
   CheckFocusedFieldText("AB");
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
 
   // Select all with the keyboard shortcut.
 #if BUILDFLAG(IS_APPLE)
@@ -3361,11 +3373,11 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, SelectAllWithKeyboardShortcut) {
 #endif
   FORM_OnChar(form_handle(), page(), pdfium::ascii::kControlA,
               kCorrectModifier);
-  CheckSelection("AB");
+  EXPECT_TRUE(SelectionIs("AB"));
 
   // Reset the selection again.
   ClickOnFormFieldAtPoint(RegularFormBegin());
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
 
   // Select all with the keyboard shortcut using the wrong modifier key.
 #if BUILDFLAG(IS_APPLE)
@@ -3374,7 +3386,7 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, SelectAllWithKeyboardShortcut) {
   static constexpr int kWrongModifier = FWL_EVENTFLAG_MetaKey;
 #endif
   FORM_OnChar(form_handle(), page(), pdfium::ascii::kControlA, kWrongModifier);
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
 }
 
 class FPDFXFAFormBug1055869EmbedderTest
@@ -3600,12 +3612,12 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, CutAllTextUndoRestoresAllCharacters) {
   // Type "ABC"
   TypeTextIntoTextField(3, RegularFormBegin());
   CheckFocusedFieldText("ABC");
-  CheckSelection("");
+  EXPECT_TRUE(SelectionIs(""));
   CheckCanUndo(true);
 
   // Select all text
   SelectAllRegularFormTextWithMouse();
-  CheckSelection("ABC");
+  EXPECT_TRUE(SelectionIs("ABC"));
 
   // Cut all text (equivalent to ctrl+x) by replacing selection with empty
   // string
