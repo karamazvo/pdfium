@@ -3217,6 +3217,19 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, ReplaceAndKeepSelection) {
   CheckFocusedFieldText("AB");
   CheckCanUndo(true);
   CheckCanRedo(true);
+  CheckSelection("A");
+
+  PerformRedo();
+  CheckFocusedFieldText("XYZB");
+  CheckCanUndo(true);
+  CheckCanRedo(false);
+  CheckSelection("");  // The selection is not an undo item.
+
+  PerformUndo();
+  CheckFocusedFieldText("AB");
+  CheckCanUndo(true);
+  CheckCanRedo(true);
+  CheckSelection("A");
 
   SelectTextWithKeyboard(1, FWL_VKEY_Left, RegularFormEnd());
   CheckSelection("B");
@@ -3279,36 +3292,43 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, ReplaceSelection) {
   CheckFocusedFieldText("XYZB");
   CheckCanUndo(true);
   CheckCanRedo(false);
+  CheckSelection("");
 
   PerformUndo();
   CheckFocusedFieldText("AB");
   CheckCanUndo(true);
   CheckCanRedo(true);
+  CheckSelection("A");
 
   PerformUndo();
   CheckFocusedFieldText("A");
   CheckCanUndo(true);
   CheckCanRedo(true);
+  CheckSelection("");
 
   PerformUndo();
   CheckFocusedFieldText("");
   CheckCanUndo(false);
   CheckCanRedo(true);
+  CheckSelection("");
 
   PerformRedo();
   CheckFocusedFieldText("A");
   CheckCanUndo(true);
   CheckCanRedo(true);
+  CheckSelection("");
 
   PerformRedo();
   CheckFocusedFieldText("AB");
   CheckCanUndo(true);
   CheckCanRedo(true);
+  CheckSelection("");
 
   PerformRedo();
   CheckFocusedFieldText("XYZB");
   CheckCanUndo(true);
   CheckCanRedo(false);
+  CheckSelection("");
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest, ContinuouslyReplaceSelection) {
@@ -3328,6 +3348,7 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, ContinuouslyReplaceSelection) {
 
   PerformUndo();
   CheckFocusedFieldText("");
+  CheckSelection("");
 
   CheckCanUndo(false);
   CheckCanRedo(true);
