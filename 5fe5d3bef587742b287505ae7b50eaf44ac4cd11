@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "a3fd09c3_cf9678be",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-09-16T21:31:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fcbaa23c_49f1a854",
+      "range": {
+        "startLine": 15,
+        "startChar": 8,
+        "endLine": 15,
+        "endChar": 10
+      },
+      "revId": "5fe5d3bef587742b287505ae7b50eaf44ac4cd11",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "1d68dd01_d185d4db",
         "filename": "fpdfsdk/fpdf_formfill_embeddertest.cpp",
         "patchSetId": 2
@@ -54,6 +78,24 @@
       "writtenOn": "2025-09-16T21:07:25Z",
       "side": 1,
       "message": "In the existing code, failing here would stop CheckSelection() from continuing. Now it does keep going. I don\u0027t think anything bad happens as a result, but it is a behavior change worth noting.",
+      "revId": "5fe5d3bef587742b287505ae7b50eaf44ac4cd11",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8c344e38_ee2b9b93",
+        "filename": "fpdfsdk/fpdf_formfill_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-09-16T21:31:57Z",
+      "side": 1,
+      "message": "That\u0027s a limitation of gtest see https://google.github.io/googletest/advanced.html#assertion-placement\n\nIf we wanted to maintain the stopping I could change it to CHECKs so it would crash. But in this case it\u0027s not like we will have a segfault or anything from these checks failing.",
+      "parentUuid": "0db71e19_c8e93bde",
       "revId": "5fe5d3bef587742b287505ae7b50eaf44ac4cd11",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
