@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fcbaa23c_49f1a854",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-16T21:07:25Z",
+      "side": 1,
+      "message": "go/avoid-we",
+      "range": {
+        "startLine": 15,
+        "startChar": 8,
+        "endLine": 15,
+        "endChar": 10
+      },
+      "revId": "5fe5d3bef587742b287505ae7b50eaf44ac4cd11",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1d68dd01_d185d4db",
+        "filename": "fpdfsdk/fpdf_formfill_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-16T21:07:25Z",
+      "side": 1,
+      "message": "Please be mindful of CL size next time, as it can get hard to review when the CL gets too big. In this case, I think it\u0027s mechanical enough that I can check there is no accidental changes.",
+      "revId": "5fe5d3bef587742b287505ae7b50eaf44ac4cd11",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0db71e19_c8e93bde",
+        "filename": "fpdfsdk/fpdf_formfill_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-16T21:07:25Z",
+      "side": 1,
+      "message": "In the existing code, failing here would stop CheckSelection() from continuing. Now it does keep going. I don\u0027t think anything bad happens as a result, but it is a behavior change worth noting.",
+      "revId": "5fe5d3bef587742b287505ae7b50eaf44ac4cd11",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
