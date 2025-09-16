@@ -278,6 +278,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "68c4c3fa_74f770e0",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 731,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-16T03:50:37Z",
+      "side": 1,
+      "message": "So this CL has deviated a bit from the original bug. It now has a test that exercises FPDF_ImportPages() and not FPDF_MovePages(). With FPDF_ImportPages(), there are 2 PDFs involved, while FPDF_MovePages() only has 1. With the 2 PDFs, I\u0027m not suggesting changing the destination PDF, only the source PDF. Doesn\u0027t it still trigger the issue if the source is rectangles_multi_pages.pdf?",
+      "parentUuid": "8a468451_61ddecfc",
+      "revId": "f092558c13e50ca2960a5d4720f1abb08b1bd014",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "1f383af0_fe345dc5",
         "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
         "patchSetId": 14
