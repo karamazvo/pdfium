@@ -296,6 +296,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "acf73909_822b99ba",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 731,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-09-16T06:33:16Z",
+      "side": 1,
+      "message": "The issue still should trigger if the source PDF is non xfa, it only remains needed that the destination is XFA enabled.\nWill test later today.\n\nAlso do let me know if another test is needed or if this is sufficient.",
+      "parentUuid": "68c4c3fa_74f770e0",
+      "revId": "f092558c13e50ca2960a5d4720f1abb08b1bd014",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "1f383af0_fe345dc5",
         "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
         "patchSetId": 14
