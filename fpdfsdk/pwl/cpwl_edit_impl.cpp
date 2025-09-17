@@ -255,11 +255,26 @@ void CPWL_EditImpl::UndoStack::AddItem(std::unique_ptr<UndoItemIface> pItem) {
 }
 
 void CPWL_EditImpl::UndoStack::RemoveHeads() {
-  DCHECK(undo_item_stack_.size() > 1);
+  DCHECK(!undo_item_stack_.empty());
+  if (!undo_item_stack_.front()->IsSentinel()) {
+    undo_item_stack_.pop_front();
+    return;
+  }
+  // Pop everything from the initial sentinel, until the next sentinel item. Or
+  // keep popping until the queue is empty.
   undo_item_stack_.pop_front();
+  while (!undo_item_stack_.empty()) {
+    bool isSentinel = !undo_item_stack_.front()->IsSentinel();
+    undo_item_stack_.pop_front();
+    if (isSentinel) {
+      break;
+    }
+  }
 }
 
 void CPWL_EditImpl::UndoStack::RemoveTails() {
+  // Note: this covers the sentinel items in the queue automatically, since it
+  // always pops all redo items.
   while (CanRedo()) {
     undo_item_stack_.pop_back();
   }
