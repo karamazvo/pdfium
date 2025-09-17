@@ -70,6 +70,7 @@ class CPWL_Edit final : public CPWL_Wnd {
   bool CanRedo() override;
   bool Undo() override;
   bool Redo() override;
+  void SetMaxUndoItems(size_t items);
 
   void SetSelection(int32_t nStartChar, int32_t nEndChar);
   std::pair<int32_t, int32_t> GetSelection() const;

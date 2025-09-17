@@ -103,6 +103,7 @@ class CPWL_EditImpl {
   void ReplaceSelection(const WideString& text);
   bool Redo();
   bool Undo();
+  void SetMaxUndoItems(size_t items);
   CPVT_WordPlace WordIndexToWordPlace(int32_t index) const;
   CPVT_WordPlace SearchWordPlace(const CFX_PointF& point) const;
   int32_t GetCaret() const;
@@ -195,7 +196,7 @@ class CPWL_EditImpl {
 
   class UndoStack {
    public:
-    UndoStack();
+    explicit UndoStack(size_t max_undo_items);
     ~UndoStack();
 
     void AddItem(std::unique_ptr<UndoItemIface> pItem);
@@ -203,6 +204,7 @@ class CPWL_EditImpl {
     void Redo();
     bool CanUndo() const;
     bool CanRedo() const;
+    void SetMaxUndoItems(size_t items);
 
    private:
     void RemoveHeads();
@@ -211,6 +213,7 @@ class CPWL_EditImpl {
     std::deque<std::unique_ptr<UndoItemIface>> undo_item_stack_;
     size_t cur_undo_pos_ = 0;
     bool working_ = false;
+    size_t max_undo_items_;
   };
 
   class Provider;
