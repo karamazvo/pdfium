@@ -44,7 +44,7 @@ void DrawTextString(CFX_RenderDevice* pDevice,
 
   CFX_PointF pos = mtUser2Device.Transform(pt);
   CPDF_RenderOptions ro;
-  DCHECK(ro.GetOptions().bClearType);
+  CHECK(ro.GetOptions().bClearType);
   ro.SetColorMode(CPDF_RenderOptions::kNormal);
   CPDF_TextRenderer::DrawTextString(pDevice, pos.x, pos.y, font, fFontSize,
                                     mtUser2Device, str, crTextFill, ro);
@@ -63,7 +63,7 @@ bool CPWL_EditImpl::Iterator::NextWord() {
 }
 
 bool CPWL_EditImpl::Iterator::GetWord(CPVT_Word& word) const {
-  DCHECK(edit_);
+  CHECK(edit_);
 
   if (vt_iterator_->GetWord(word)) {
     word.ptWord = edit_->VTToEdit(word.ptWord);
@@ -73,7 +73,7 @@ bool CPWL_EditImpl::Iterator::GetWord(CPVT_Word& word) const {
 }
 
 bool CPWL_EditImpl::Iterator::GetLine(CPVT_Line& line) const {
-  DCHECK(edit_);
+  CHECK(edit_);
 
   if (vt_iterator_->GetLine(line)) {
     line.ptLine = edit_->VTToEdit(line.ptLine);
@@ -189,7 +189,7 @@ bool CPWL_EditImpl::UndoStack::CanUndo() const {
 }
 
 void CPWL_EditImpl::UndoStack::Undo() {
-  DCHECK(!working_);
+  CHECK(!working_);
   working_ = true;
   bool first_undo = true;
   while (CanUndo()) {
@@ -208,7 +208,7 @@ void CPWL_EditImpl::UndoStack::Undo() {
       }
     }
   }
-  DCHECK(working_);
+  CHECK(working_);
   working_ = false;
 }
 
@@ -217,7 +217,7 @@ bool CPWL_EditImpl::UndoStack::CanRedo() const {
 }
 
 void CPWL_EditImpl::UndoStack::Redo() {
-  DCHECK(!working_);
+  CHECK(!working_);
   working_ = true;
 
   bool first_undo = true;
@@ -236,13 +236,13 @@ void CPWL_EditImpl::UndoStack::Redo() {
       }
     }
   }
-  DCHECK(working_);
+  CHECK(working_);
   working_ = false;
 }
 
 void CPWL_EditImpl::UndoStack::AddItem(std::unique_ptr<UndoItemIface> pItem) {
-  DCHECK(!working_);
-  DCHECK(pItem);
+  CHECK(!working_);
+  CHECK(pItem);
   if (CanRedo()) {
     RemoveTails();
   }
@@ -256,7 +256,7 @@ void CPWL_EditImpl::UndoStack::AddItem(std::unique_ptr<UndoItemIface> pItem) {
 }
 
 void CPWL_EditImpl::UndoStack::RemoveHeads() {
-  DCHECK(!undo_item_stack_.empty());
+  CHECK(!undo_item_stack_.empty());
   if (!undo_item_stack_.front()->IsSentinel()) {
     undo_item_stack_.pop_front();
     return;
@@ -314,7 +314,7 @@ CPWL_EditImpl::UndoInsertWord::UndoInsertWord(CPWL_EditImpl* pEdit,
       wp_new_(wpNewPlace),
       word_(word),
       charset_(charset) {
-  DCHECK(edit_);
+  CHECK(edit_);
 }
 
 CPWL_EditImpl::UndoInsertWord::~UndoInsertWord() = default;
@@ -355,7 +355,7 @@ CPWL_EditImpl::UndoInsertReturn::UndoInsertReturn(
     const CPVT_WordPlace& wpOldPlace,
     const CPVT_WordPlace& wpNewPlace)
     : edit_(pEdit), wp_old_(wpOldPlace), wp_new_(wpNewPlace) {
-  DCHECK(edit_);
+  CHECK(edit_);
 }
 
 CPWL_EditImpl::UndoInsertReturn::~UndoInsertReturn() = default;
@@ -419,7 +419,7 @@ CPWL_EditImpl::UndoBackspace::UndoBackspace(CPWL_EditImpl* pEdit,
       wp_new_(wpNewPlace),
       word_(word),
       charset_(charset) {
-  DCHECK(edit_);
+  CHECK(edit_);
 }
 
 CPWL_EditImpl::UndoBackspace::~UndoBackspace() = default;
@@ -476,7 +476,7 @@ CPWL_EditImpl::UndoDelete::UndoDelete(CPWL_EditImpl* pEdit,
       word_(word),
       charset_(charset),
       sec_end_(bSecEnd) {
-  DCHECK(edit_);
+  CHECK(edit_);
 }
 
 CPWL_EditImpl::UndoDelete::~UndoDelete() = default;
@@ -519,7 +519,7 @@ CPWL_EditImpl::UndoClear::UndoClear(CPWL_EditImpl* pEdit,
                                     const CPVT_WordRange& wrSel,
                                     const WideString& swText)
     : edit_(pEdit), wr_sel_(wrSel), sw_text_(swText) {
-  DCHECK(edit_);
+  CHECK(edit_);
 }
 
 CPWL_EditImpl::UndoClear::~UndoClear() = default;
@@ -570,7 +570,7 @@ CPWL_EditImpl::UndoInsertText::UndoInsertText(CPWL_EditImpl* pEdit,
       wp_new_(wpNewPlace),
       sw_text_(swText),
       charset_(charset) {
-  DCHECK(edit_);
+  CHECK(edit_);
 }
 
 CPWL_EditImpl::UndoInsertText::~UndoInsertText() = default;
