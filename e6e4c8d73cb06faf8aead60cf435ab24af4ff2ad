@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8edbdae5_884f23d2",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 21
+      },
+      "lineNbr": 757,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-09-17T17:00:23Z",
+      "side": 1,
+      "message": "So this test is a work in progress if we need it later on (ignore the broken code for now - still working on fixing this testcase)",
+      "range": {
+        "startLine": 757,
+        "startChar": 0,
+        "endLine": 757,
+        "endChar": 42
+      },
+      "revId": "e6e4c8d73cb06faf8aead60cf435ab24af4ff2ad",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
