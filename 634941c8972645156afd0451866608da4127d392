@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "457848d3_1b3c21ae",
+        "filename": "fpdfsdk/pwl/cpwl_edit_impl.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 375,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-09-17T16:52:03Z",
+      "side": 0,
+      "message": "Note: there\u0027s no test coverage that makes sure pdfium doesn\u0027t clear the selection here because selecting text in general does not go into the undo stack. The only selection related undo item is UndoClearSelection which on redo clears the selection and on undo selects text. Also all other undo items clear selection at the beginning of both undo and redo.\n\nSo there\u0027s currently no way to have selected text after a redo, but either way UndoReplaceSelection is meant to be a sentinel item that shouldn\u0027t do anything.",
+      "revId": "634941c8972645156afd0451866608da4127d392",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
