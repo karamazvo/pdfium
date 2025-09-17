@@ -30,6 +30,8 @@
 namespace {
 
 const int kEditUndoMaxItems = 10000;
+static_assert(kEditUndoMaxItems >= 4,
+              "ReplaceText inserts a group of up to 4 undo items");
 
 void DrawTextString(CFX_RenderDevice* pDevice,
                     const CFX_PointF& pt,
@@ -180,7 +182,8 @@ bool CPWL_EditImpl::UndoItemIface::IsSentinel() {
   return false;
 }
 
-CPWL_EditImpl::UndoStack::UndoStack() = default;
+CPWL_EditImpl::UndoStack::UndoStack(size_t max_undo_items)
+    : max_undo_items_(max_undo_items) {}
 
 CPWL_EditImpl::UndoStack::~UndoStack() = default;
 
@@ -240,6 +243,11 @@ void CPWL_EditImpl::UndoStack::Redo() {
   working_ = false;
 }
 
+void CPWL_EditImpl::UndoStack::SetMaxUndoItems(size_t items) {
+  CHECK(items >= 4);
+  max_undo_items_ = items;
+}
+
 void CPWL_EditImpl::UndoStack::AddItem(std::unique_ptr<UndoItemIface> pItem) {
   DCHECK(!working_);
   DCHECK(pItem);
@@ -247,7 +255,7 @@ void CPWL_EditImpl::UndoStack::AddItem(std::unique_ptr<UndoItemIface> pItem) {
     RemoveTails();
   }
 
-  if (undo_item_stack_.size() >= kEditUndoMaxItems) {
+  if (undo_item_stack_.size() >= max_undo_items_) {
     RemoveHeads();
   }
 
@@ -256,11 +264,26 @@ void CPWL_EditImpl::UndoStack::AddItem(std::unique_ptr<UndoItemIface> pItem) {
 }
 
 void CPWL_EditImpl::UndoStack::RemoveHeads() {
-  DCHECK(undo_item_stack_.size() > 1);
+  DCHECK(!undo_item_stack_.empty());
+  if (!undo_item_stack_.front()->IsSentinel()) {
+    undo_item_stack_.pop_front();
+    return;
+  }
+  // Pop everything from the initial sentinel, until the next sentinel item. Or
+  // keep popping until the queue is empty.
   undo_item_stack_.pop_front();
+  while (!undo_item_stack_.empty()) {
+    bool isSentinel = undo_item_stack_.front()->IsSentinel();
+    undo_item_stack_.pop_front();
+    if (isSentinel) {
+      break;
+    }
+  }
 }
 
 void CPWL_EditImpl::UndoStack::RemoveTails() {
+  // Note: this covers the sentinel items in the queue automatically, since it
+  // always pops all redo items.
   while (CanRedo()) {
     undo_item_stack_.pop_back();
   }
@@ -681,7 +704,8 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
 }
 
 CPWL_EditImpl::CPWL_EditImpl()
-    : vt_(std::make_unique<CPVT_VariableText>(nullptr)) {}
+    : vt_(std::make_unique<CPVT_VariableText>(nullptr)),
+      undo_(kEditUndoMaxItems) {}
 
 CPWL_EditImpl::~CPWL_EditImpl() = default;
 
@@ -1936,6 +1960,10 @@ bool CPWL_EditImpl::CanRedo() const {
   }
 
   return false;
+}
+
+void CPWL_EditImpl::SetMaxUndoItems(size_t items) {
+  undo_.SetMaxUndoItems(items);
 }
 
 void CPWL_EditImpl::EnableRefresh(bool bRefresh) {

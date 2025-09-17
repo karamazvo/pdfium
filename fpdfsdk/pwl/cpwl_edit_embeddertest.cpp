@@ -518,3 +518,58 @@ TEST_F(CPWLEditEmbedderTest, ReplaceAndKeepSelection) {
   EXPECT_EQ(L"12", GetCPWLEdit()->GetSelectedText());
   EXPECT_EQ(GetCPWLEdit()->GetSelection(), std::make_pair(1, 3));
 }
+
+TEST_F(CPWLEditEmbedderTest, ReplaceSelectionUndoRedo) {
+  ScopedPage page = CreateAndInitializeFormPDF();
+  ASSERT_TRUE(page);
+  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+
+  TypeTextIntoTextField(50);
+
+  GetCPWLEdit()->SetSelection(0, -1);
+  EXPECT_EQ(L"ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqr",
+            GetCPWLEdit()->GetSelectedText());
+
+  GetCPWLEdit()->ReplaceSelection(L"123");
+  EXPECT_EQ(L"123", GetCPWLEdit()->GetText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanUndo());
+  EXPECT_TRUE(GetCPWLEdit()->Undo());
+  EXPECT_EQ(L"ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqr",
+            GetCPWLEdit()->GetSelectedText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanRedo());
+  EXPECT_TRUE(GetCPWLEdit()->Redo());
+  EXPECT_EQ(L"123", GetCPWLEdit()->GetText());
+}
+
+TEST_F(CPWLEditEmbedderTest, ReplaceSelectionUndoQueueLimit) {
+  ScopedPage page = CreateAndInitializeFormPDF();
+  ASSERT_TRUE(page);
+  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  GetCPWLEdit()->SetMaxUndoItems(4);
+
+  TypeTextIntoTextField(50);
+
+  GetCPWLEdit()->SetSelection(0, -1);
+  EXPECT_EQ(L"ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqr",
+            GetCPWLEdit()->GetSelectedText());
+
+  GetCPWLEdit()->ReplaceSelection(L"123");
+  EXPECT_EQ(L"123", GetCPWLEdit()->GetText());
+
+  TypeTextIntoTextField(2);
+  EXPECT_EQ(L"123AB", GetCPWLEdit()->GetText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanUndo());
+  EXPECT_TRUE(GetCPWLEdit()->Undo());
+  EXPECT_EQ(L"123A", GetCPWLEdit()->GetText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanUndo());
+  EXPECT_TRUE(GetCPWLEdit()->Undo());
+  EXPECT_EQ(L"123", GetCPWLEdit()->GetText());
+
+  // The entire group of 4 ReplaceSelection undo items should have been dropped
+  // off the end of the queue.
+  EXPECT_FALSE(GetCPWLEdit()->CanUndo());
+}
