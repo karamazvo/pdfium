@@ -34,6 +34,24 @@
       "parentUuid": "3397b19f_9b03d73f",
       "revId": "cbbf1d4c94c1b3b67e22a9b593be27a2a924d7f4",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1f0979c6_92d00339",
+        "filename": "core/fpdfapi/parser/cpdf_document.cpp",
+        "patchSetId": 20
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-09-17T16:29:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "92776ab5_efe72838",
+      "revId": "cbbf1d4c94c1b3b67e22a9b593be27a2a924d7f4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
