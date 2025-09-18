@@ -22,6 +22,30 @@
       },
       "revId": "e6e4c8d73cb06faf8aead60cf435ab24af4ff2ad",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "800ae299_3bc150ca",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 21
+      },
+      "lineNbr": 757,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-09-18T16:52:03Z",
+      "side": 1,
+      "message": "Will be resolved in patch set 22.\n\nOn my branch with fixes (move page):\n```\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] Running 1 test from 1 test suite.\n[----------] Global test environment set-up.\n[----------] 1 test from FPDFPPOEmbedderTest\n[ RUN      ] FPDFPPOEmbedderTest.XFAMoveTest\nDebug - Page order after move:\nPage 0: checksum e8edd3655f6629ff489bd8c3bb110c82\nPage 1: checksum a2bde6b68d7981e665ab25bc633746aa\nPage 2: checksum a8c5b3e626f665eddf593c6d4c32ae9e\nPage 3: checksum 4b6590a267eae90b8be1607e808fb57f\nPage 4: checksum 72eb157853ae2d19b70ea62e3f5ac202\nDebug - Original checksums:\nOriginal page 0: checksum 4b6590a267eae90b8be1607e808fb57f\nOriginal page 1: checksum e8edd3655f6629ff489bd8c3bb110c82\nOriginal page 2: checksum a2bde6b68d7981e665ab25bc633746aa\nOriginal page 3: checksum a8c5b3e626f665eddf593c6d4c32ae9e\nOriginal page 4: checksum 72eb157853ae2d19b70ea62e3f5ac202\n[       OK ] FPDFPPOEmbedderTest.XFAMoveTest (128 ms)\n[----------] 1 test from FPDFPPOEmbedderTest (128 ms total)\n\n[----------] Global test environment tear-down\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 1 test from 1 test suite ran. (454 ms total)\n[  PASSED  ] 1 test.\n```\n\nI added the debug prints for now for testing - will remove when pushing\n\non main:\n```\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] Running 1 test from 1 test suite.\n[----------] Global test environment set-up.\n[----------] 1 test from FPDFPPOEmbedderTest\n[ RUN      ] FPDFPPOEmbedderTest.XFAMoveTest\nDebug - Page order after move:\nPage 0: checksum 4b6590a267eae90b8be1607e808fb57f\nPage 1: checksum 72eb157853ae2d19b70ea62e3f5ac202\nPage 2: checksum a8c5b3e626f665eddf593c6d4c32ae9e\nPage 3: checksum 4b6590a267eae90b8be1607e808fb57f\nPage 4: checksum 72eb157853ae2d19b70ea62e3f5ac202\nDebug - Original checksums:\nOriginal page 0: checksum 4b6590a267eae90b8be1607e808fb57f\nOriginal page 1: checksum e8edd3655f6629ff489bd8c3bb110c82\nOriginal page 2: checksum a2bde6b68d7981e665ab25bc633746aa\nOriginal page 3: checksum a8c5b3e626f665eddf593c6d4c32ae9e\nOriginal page 4: checksum 72eb157853ae2d19b70ea62e3f5ac202\n../../third_party/pdfium/fpdfsdk/fpdf_ppo_embeddertest.cpp:744: Failure\nExpected equality of these values:\n  GetPageChecksum(target_doc, 0)\n    Which is: \"4b6590a267eae90b8be1607e808fb57f\"\n  target_doc_checksums[1]\n    Which is: \"e8edd3655f6629ff489bd8c3bb110c82\"\nStack trace:\n0   pdfium_embeddertests                0x0000000104e8fb8c FPDFPPOEmbedderTest_XFAMoveTest_Test::TestBody() + 2032\n1   pdfium_embeddertests                0x0000000105b1f88c void testing::internal::HandleSehExceptionsInMethodIfSupported\u003ctesting::Test, void\u003e(testing::Test*, void (testing::Test::*)(), char const*) + 140\n2   pdfium_embeddertests                0x0000000105aec108 void testing::internal::HandleExceptionsInMethodIfSupported\u003ctesting::Test, void\u003e(testing::Test*, void (testing::Test::*)(), char const*) + 96\n```\n\nAs shown - some of the movements did not work as expected - showing broken behavior.\n\nRelevant movement code:\n```\nint pages[] \u003d {1, 2, 3};\nASSERT_TRUE(FPDF_MovePages(target_doc, pages, 3, 0));\n// Expected [src1, src2, src3, src0, src4]\n```",
+      "parentUuid": "8edbdae5_884f23d2",
+      "range": {
+        "startLine": 757,
+        "startChar": 0,
+        "endLine": 757,
+        "endChar": 42
+      },
+      "revId": "e6e4c8d73cb06faf8aead60cf435ab24af4ff2ad",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }

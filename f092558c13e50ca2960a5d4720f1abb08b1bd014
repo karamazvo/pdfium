@@ -350,6 +350,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "72195189_d3c5090b",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 731,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-09-18T16:52:03Z",
+      "side": 1,
+      "message": "Added the move page test as well. I believe it is resolved now. I have also documented the output of the test (with debug prints which I later removed) in another comment.",
+      "parentUuid": "258a07b9_bee992d1",
+      "revId": "f092558c13e50ca2960a5d4720f1abb08b1bd014",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "1f383af0_fe345dc5",
         "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
         "patchSetId": 14
