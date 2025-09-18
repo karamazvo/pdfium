@@ -1,0 +1,141 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c3358776_5cc0d575",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-18T19:54:36Z",
+      "side": 1,
+      "message": "This sentence is quite long and adding the URL makes it even longer. Also can use more active voice. Maybe something like: \"So CL [1] added an additional complication in ReplaceSelection, where the internal logic ...\"\n\n...\n\n[1] https://...",
+      "range": {
+        "startLine": 20,
+        "startChar": 10,
+        "endLine": 22,
+        "endChar": 36
+      },
+      "revId": "c266a88eb49da4bac6af3ad40c11753a698a63c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9b2319cb_881a405d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-18T19:54:36Z",
+      "side": 1,
+      "message": "\"The fix in CL [1]\" so readers don\u0027t misread \"this fix\" to mean this CL.",
+      "revId": "c266a88eb49da4bac6af3ad40c11753a698a63c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f45d3f0c_78a2be08",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-18T19:54:36Z",
+      "side": 1,
+      "message": "This CL fixes the problems by ...",
+      "revId": "c266a88eb49da4bac6af3ad40c11753a698a63c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4ee18f5a_8fbe9cde",
+        "filename": "fpdfsdk/fpdf_formfill_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 3364,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-18T19:54:36Z",
+      "side": 1,
+      "message": "I see patching in this test only triggers the DCHECK() failure.",
+      "revId": "c266a88eb49da4bac6af3ad40c11753a698a63c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d711503d_b85915b3",
+        "filename": "fpdfsdk/fpdf_formfill_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 3365,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-18T19:54:36Z",
+      "side": 1,
+      "message": "Move this closer to where first used.",
+      "revId": "c266a88eb49da4bac6af3ad40c11753a698a63c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9f648c6c_88d68243",
+        "filename": "fpdfsdk/pwl/cpwl_edit_impl.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-18T19:54:36Z",
+      "side": 1,
+      "message": "How about \"is_first_undo\"?",
+      "range": {
+        "startLine": 194,
+        "startChar": 7,
+        "endLine": 194,
+        "endChar": 12
+      },
+      "revId": "c266a88eb49da4bac6af3ad40c11753a698a63c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "741d0677_3ab151bf",
+        "filename": "fpdfsdk/pwl/cpwl_edit_impl.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-18T19:54:36Z",
+      "side": 1,
+      "message": "Can this mirror lines 196-199?",
+      "range": {
+        "startLine": 225,
+        "startChar": 0,
+        "endLine": 227,
+        "endChar": 16
+      },
+      "revId": "c266a88eb49da4bac6af3ad40c11753a698a63c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
