@@ -696,9 +696,10 @@ bool CPDF_Document::MovePages(pdfium::span<const int> page_indices,
   }
 
   // Check for if XFA is enabled.
+  // Edited blocking case
   Extension* extension = GetExtension();
-  if (extension && extension->ContainsExtensionForm()) {
-    // Don't manipulate XFA PDFs.
+  if (extension && extension->ContainsExtensionFullForm()) {
+    // Don't manipulate XFA-full PDFs.
     return false;
   }
 
@@ -746,6 +747,10 @@ bool CPDF_Document::MovePages(pdfium::span<const int> page_indices,
       // Fail in an indeterminate state.
       return false;
     }
+  }
+
+  if (extension) {
+    extension->PagesInserted(dest_page_index, pages_to_move.size());
   }
 
   return true;
