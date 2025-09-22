@@ -16,6 +16,24 @@
       "message": "What does it mean if we didn\u0027t get an external_face_name and we didn\u0027t get a maybe_face_name? Does that put us back in the same position of the name confusion later?",
       "revId": "1c69e9b7ba3e5b43aaf870c79baaad6f3ef1fb55",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "122797e9_fb6b2acc",
+        "filename": "core/fxge/cfx_fontmapper.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 605,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-22T20:14:38Z",
+      "side": 1,
+      "message": "If the PDFium embedder didn\u0027t update the name, and this new code can\u0027t figure out the new name from the font itself, then it is what it is. I believe that would shouldn\u0027t happen with most fonts in the real world, as they do have names.",
+      "parentUuid": "3ad845b2_dd88dac7",
+      "revId": "1c69e9b7ba3e5b43aaf870c79baaad6f3ef1fb55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
