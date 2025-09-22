@@ -19,6 +19,7 @@
 #include "fxjs/xfa/cfxjse_runtimedata.h"
 #include "fxjs/xfa/cfxjse_value.h"
 #include "fxjs/xfa/cjx_object.h"
+#include "gin/public/gin_embedders.h"
 #include "v8/include/v8-exception.h"
 #include "v8/include/v8-function.h"
 #include "v8/include/v8-message.h"
@@ -126,15 +127,19 @@ void FXJSE_UpdateObjectBinding(v8::Local<v8::Object> hObject,
   DCHECK(!hObject.IsEmpty());
   DCHECK_EQ(hObject->InternalFieldCount(), 2);
   hObject->SetAlignedPointerInInternalField(
-      0, const_cast<wchar_t*>(kFXJSEHostObjectTag));
-  hObject->SetAlignedPointerInInternalField(1, pNewBinding);
+      0, const_cast<wchar_t*>(kFXJSEHostObjectTag),
+      gin::kPdfiumFXJSEHostObjectTag);
+  hObject->SetAlignedPointerInInternalField(1, pNewBinding,
+                                            gin::kPdfiumCFXJSEHostObject);
 }
 
 void FXJSE_ClearObjectBinding(v8::Local<v8::Object> hObject) {
   DCHECK(!hObject.IsEmpty());
   DCHECK_EQ(hObject->InternalFieldCount(), 2);
-  hObject->SetAlignedPointerInInternalField(0, nullptr);
-  hObject->SetAlignedPointerInInternalField(1, nullptr);
+  hObject->SetAlignedPointerInInternalField(0, nullptr,
+                                            gin::kPdfiumFXJSEHostObjectTag);
+  hObject->SetAlignedPointerInInternalField(1, nullptr,
+                                            gin::kPdfiumCFXJSEHostObject);
 }
 
 CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(v8::Local<v8::Value> hValue) {
@@ -144,12 +149,14 @@ CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(v8::Local<v8::Value> hValue) {
 
   v8::Local<v8::Object> hObject = hValue.As<v8::Object>();
   if (hObject->InternalFieldCount() != 2 ||
-      hObject->GetAlignedPointerFromInternalField(0) != kFXJSEHostObjectTag) {
+      hObject->GetAlignedPointerFromInternalField(
+          0, gin::kPdfiumFXJSEHostObjectTag) != kFXJSEHostObjectTag) {
     return nullptr;
   }
 
   return static_cast<CFXJSE_HostObject*>(
-      hObject->GetAlignedPointerFromInternalField(1));
+      hObject->GetAlignedPointerFromInternalField(
+          1, gin::kPdfiumCFXJSEHostObject));
 }
 
 // static
