@@ -18,6 +18,7 @@
 #include "fxjs/xfa/cfxjse_context.h"
 #include "fxjs/xfa/cfxjse_isolatetracker.h"
 #include "fxjs/xfa/cfxjse_value.h"
+#include "gin/public/gin_embedders.h"
 #include "v8/include/v8-container.h"
 #include "v8/include/v8-external.h"
 #include "v8/include/v8-function-callback.h"
@@ -66,8 +67,9 @@ void V8ConstructorCallback_Wrapper(
   }
 
   DCHECK_EQ(info.This()->InternalFieldCount(), 2);
-  info.This()->SetAlignedPointerInInternalField(0, nullptr);
-  info.This()->SetAlignedPointerInInternalField(1, nullptr);
+  info.This()->SetAlignedPointerInInternalField(
+      0, nullptr, gin::kPdfiumFXJSEClassDescriptor);
+  info.This()->SetInternalField(1, v8::Undefined(info.GetIsolate()));
 }
 
 void Context_GlobalObjToString(
@@ -100,7 +102,8 @@ void DynPropGetterAdapter_MethodCallback(
   }
 
   auto* pClassDescriptor = static_cast<const FXJSE_CLASS_DESCRIPTOR*>(
-      hCallBackInfo->GetAlignedPointerFromInternalField(0));
+      hCallBackInfo->GetAlignedPointerFromInternalField(
+          0, gin::kPdfiumFXJSEClassDescriptor));
   if (pClassDescriptor != &kGlobalClassDescriptor &&
       pClassDescriptor != &kNormalClassDescriptor &&
       pClassDescriptor != &kVariablesClassDescriptor &&
@@ -156,7 +159,8 @@ std::unique_ptr<CFXJSE_Value> DynPropGetterAdapter(
           hCallBackInfoTemplate->NewInstance(pIsolate->GetCurrentContext())
               .ToLocalChecked();
       hCallBackInfo->SetAlignedPointerInInternalField(
-          0, const_cast<FXJSE_CLASS_DESCRIPTOR*>(pClassDescriptor));
+          0, const_cast<FXJSE_CLASS_DESCRIPTOR*>(pClassDescriptor),
+          gin::kPdfiumFXJSEClassDescriptor);
       hCallBackInfo->SetInternalField(
           1, fxv8::NewStringHelper(pIsolate, szPropName));
       return std::make_unique<CFXJSE_Value>(
