@@ -1,6 +1,52 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "3f1aad39_b43e547a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-22T18:50:35Z",
+      "side": 1,
+      "message": "2 words, then wrap.",
+      "range": {
+        "startLine": 9,
+        "startChar": 5,
+        "endLine": 9,
+        "endChar": 20
+      },
+      "revId": "fcff6877c4b4be3c7b50554f025104daca543b70",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3689e011_eea83308",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-22T18:50:35Z",
+      "side": 1,
+      "message": "\"PDFium\", BTW.",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 6
+      },
+      "revId": "fcff6877c4b4be3c7b50554f025104daca543b70",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "2113de4e_9359e7d4",
@@ -20,6 +66,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "6f434252_87451415",
+        "filename": "core/fxcodec/png/png_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-22T18:50:35Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 63,
+        "startChar": 46,
+        "endLine": 63,
+        "endChar": 55
+      },
+      "revId": "fcff6877c4b4be3c7b50554f025104daca543b70",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c01aa023_c174e6bf",
         "filename": "core/fxcodec/png/png_decoder.cpp",
         "patchSetId": 1
@@ -31,6 +100,30 @@
       "writtenOn": "2025-09-22T17:35:39Z",
       "side": 1,
       "message": "I guess `PNG_iCCP_SUPPORTED` and `PNG_TEXT_SUPPORTED` could in theory be given the same treatment.  I don\u0027t have a strong opinion whether this is worth it or not.  But we probably should wait for now until the `PNG_pHYs_SUPPORTED` changes stick without causing trouble.",
+      "range": {
+        "startLine": 67,
+        "startChar": 12,
+        "endLine": 67,
+        "endChar": 30
+      },
+      "revId": "fcff6877c4b4be3c7b50554f025104daca543b70",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b0e1c5f4_5fbda7b6",
+        "filename": "core/fxcodec/png/png_decoder.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-22T18:50:35Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "c01aa023_c174e6bf",
       "range": {
         "startLine": 67,
         "startChar": 12,
