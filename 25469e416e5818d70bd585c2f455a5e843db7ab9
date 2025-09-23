@@ -18,6 +18,40 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "c24a90e1_e011f337",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 742,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-23T08:02:37Z",
+      "side": 1,
+      "message": "Comment\u0027s not helpful. Maybe:\n\n```\n// Insert 3 pages into `dest_doc`\nASSERT_TRUE(FPDF_ImportPages(...));\nEXPECT_EQ(FPDF_GetPageCount(dest_doc), 8);\n```\n\nSimilar pattern in the Move test below.",
+      "revId": "25469e416e5818d70bd585c2f455a5e843db7ab9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f3f9e73d_f617bec9",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 745,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-23T08:02:37Z",
+      "side": 1,
+      "message": "Just omit this comment. It\u0027s not that helpful. If you want to unroll the loop below, that would actually make it easier to see what this comment is saying, and it would not be that much longer.\n\nSame with line 787.",
+      "revId": "25469e416e5818d70bd585c2f455a5e843db7ab9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "b4783afe_9573231c",
@@ -48,6 +82,63 @@
       "writtenOn": "2025-09-23T07:53:14Z",
       "side": 1,
       "message": "Since this is a repeat of line 705, consider making this a standalone function for reuse.",
+      "revId": "25469e416e5818d70bd585c2f455a5e843db7ab9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "afb34515_07c6387e",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 769,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-23T08:02:37Z",
+      "side": 1,
+      "message": "In this test, there is only 1 document, so just use `document()`. There\u0027s no need to have a `target_doc` variable, since there is no source document.",
+      "revId": "25469e416e5818d70bd585c2f455a5e843db7ab9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3f341367_f8d81288",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 780,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-23T08:02:37Z",
+      "side": 1,
+      "message": "Add `constexpr`.",
+      "revId": "25469e416e5818d70bd585c2f455a5e843db7ab9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d7e73b54_8d290e24",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 781,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-23T08:02:37Z",
+      "side": 1,
+      "message": "Use std::size(pages) instead of hard coding the size.",
+      "range": {
+        "startLine": 781,
+        "startChar": 48,
+        "endLine": 781,
+        "endChar": 49
+      },
       "revId": "25469e416e5818d70bd585c2f455a5e843db7ab9",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
