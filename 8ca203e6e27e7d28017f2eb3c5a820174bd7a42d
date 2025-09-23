@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "be6ae1da_e9693f8c",
+        "filename": "fpdfsdk/pwl/cpwl_edit.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-23T19:56:46Z",
+      "side": 1,
+      "message": "If the stack of SetMaxUndoItems() calls are only used for testing, then can they have \"ForTest\" or \"ForTesting\" as the suffix?",
+      "range": {
+        "startLine": 73,
+        "startChar": 7,
+        "endLine": 73,
+        "endChar": 22
+      },
+      "revId": "8ca203e6e27e7d28017f2eb3c5a820174bd7a42d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2be7938d_0f625a67",
+        "filename": "fpdfsdk/pwl/cpwl_edit_impl.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-23T19:56:46Z",
+      "side": 1,
+      "message": "Can the header document this requirement?",
+      "revId": "8ca203e6e27e7d28017f2eb3c5a820174bd7a42d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aadcb227_99e17ee7",
+        "filename": "fpdfsdk/pwl/cpwl_edit_impl.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-23T19:56:46Z",
+      "side": 1,
+      "message": "CHECK_GE()",
+      "revId": "8ca203e6e27e7d28017f2eb3c5a820174bd7a42d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
