@@ -26,6 +26,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "34b96e0c_639a61c1",
+        "filename": "fpdfsdk/pwl/cpwl_edit_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 527,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-23T20:01:51Z",
+      "side": 1,
+      "message": "Can these test cases get away with a smaller number of types characters? Is 26 enough? 15?",
+      "revId": "8ca203e6e27e7d28017f2eb3c5a820174bd7a42d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "2be7938d_0f625a67",
         "filename": "fpdfsdk/pwl/cpwl_edit_impl.cpp",
         "patchSetId": 5
@@ -54,6 +71,29 @@
       "writtenOn": "2025-09-23T19:56:46Z",
       "side": 1,
       "message": "CHECK_GE()",
+      "revId": "8ca203e6e27e7d28017f2eb3c5a820174bd7a42d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bc7bd20a_b2d687d2",
+        "filename": "fpdfsdk/pwl/cpwl_edit_impl.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-23T20:01:51Z",
+      "side": 1,
+      "message": "is_sentinel",
+      "range": {
+        "startLine": 276,
+        "startChar": 9,
+        "endLine": 276,
+        "endChar": 19
+      },
       "revId": "8ca203e6e27e7d28017f2eb3c5a820174bd7a42d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
