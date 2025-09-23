@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ac9951e6_fafdb42d",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 709,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-23T07:53:14Z",
+      "side": 1,
+      "message": "Not needed. Instead, make `page` a `ScopedFPDFPage`.",
+      "revId": "25469e416e5818d70bd585c2f455a5e843db7ab9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b4783afe_9573231c",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 757,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-23T07:53:14Z",
+      "side": 1,
+      "message": "Thank you for adding a test for FPDF_MovePages() as well. Will take a look.",
+      "revId": "25469e416e5818d70bd585c2f455a5e843db7ab9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "46a9ee33_3186e13e",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 759,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-23T07:53:14Z",
+      "side": 1,
+      "message": "Since this is a repeat of line 705, consider making this a standalone function for reuse.",
+      "revId": "25469e416e5818d70bd585c2f455a5e843db7ab9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
