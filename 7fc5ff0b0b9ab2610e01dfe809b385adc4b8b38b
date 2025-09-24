@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e8114889_b339fa67",
+        "filename": "fpdfsdk/pwl/cpwl_edit_impl.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-24T16:43:46Z",
+      "side": 1,
+      "message": "Alternatively, move `kEditUndoMaxItems` into the private section and initialize `max_undo_items_` there, since the argument to this ctor is always that constant.",
+      "revId": "7fc5ff0b0b9ab2610e01dfe809b385adc4b8b38b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6e53d3df_13c337d8",
+        "filename": "fpdfsdk/pwl/cpwl_edit_impl.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-24T16:43:46Z",
+      "side": 1,
+      "message": "Google C++ style has ClassName and FunctionName naming, which makes it harder to distinguish the two. Writing FunctionName() makes it more obvious.",
+      "range": {
+        "startLine": 207,
+        "startChar": 57,
+        "endLine": 207,
+        "endChar": 73
+      },
+      "revId": "7fc5ff0b0b9ab2610e01dfe809b385adc4b8b38b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9d404a42_9850bcc2",
+        "filename": "fpdfsdk/pwl/cpwl_edit_impl.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-24T16:43:46Z",
+      "side": 1,
+      "message": "1) Wrap in backticks.\n2) The constant is in another file, but hopefully it won\u0027t be too hard to find.",
+      "range": {
+        "startLine": 207,
+        "startChar": 30,
+        "endLine": 207,
+        "endChar": 50
+      },
+      "revId": "7fc5ff0b0b9ab2610e01dfe809b385adc4b8b38b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
