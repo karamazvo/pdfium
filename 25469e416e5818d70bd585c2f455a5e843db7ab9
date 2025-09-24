@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9fb6773e_d821c883",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 709,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-09-24T14:38:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ac9951e6_fafdb42d",
+      "revId": "25469e416e5818d70bd585c2f455a5e843db7ab9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c24a90e1_e011f337",
@@ -35,6 +53,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "41a6f43f_6a33aea9",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 742,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-09-24T14:38:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c24a90e1_e011f337",
+      "revId": "25469e416e5818d70bd585c2f455a5e843db7ab9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f3f9e73d_f617bec9",
@@ -48,6 +84,24 @@
       "writtenOn": "2025-09-23T08:02:37Z",
       "side": 1,
       "message": "Just omit this comment. It\u0027s not that helpful. If you want to unroll the loop below, that would actually make it easier to see what this comment is saying, and it would not be that much longer.\n\nSame with line 787.",
+      "revId": "25469e416e5818d70bd585c2f455a5e843db7ab9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "36007e6c_e826c09c",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 745,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-09-24T14:38:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f3f9e73d_f617bec9",
       "revId": "25469e416e5818d70bd585c2f455a5e843db7ab9",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -86,6 +140,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d815bbfb_070d56d4",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 759,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-09-24T14:38:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "46a9ee33_3186e13e",
+      "revId": "25469e416e5818d70bd585c2f455a5e843db7ab9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "afb34515_07c6387e",
@@ -99,6 +171,24 @@
       "writtenOn": "2025-09-23T08:02:37Z",
       "side": 1,
       "message": "In this test, there is only 1 document, so just use `document()`. There\u0027s no need to have a `target_doc` variable, since there is no source document.",
+      "revId": "25469e416e5818d70bd585c2f455a5e843db7ab9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d2ec3253_c6187842",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 769,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-09-24T14:38:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "afb34515_07c6387e",
       "revId": "25469e416e5818d70bd585c2f455a5e843db7ab9",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -120,6 +210,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "09fab607_39a0bee0",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 780,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-09-24T14:38:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3f341367_f8d81288",
+      "revId": "25469e416e5818d70bd585c2f455a5e843db7ab9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d7e73b54_8d290e24",
@@ -133,6 +241,30 @@
       "writtenOn": "2025-09-23T08:02:37Z",
       "side": 1,
       "message": "Use std::size(pages) instead of hard coding the size.",
+      "range": {
+        "startLine": 781,
+        "startChar": 48,
+        "endLine": 781,
+        "endChar": 49
+      },
+      "revId": "25469e416e5818d70bd585c2f455a5e843db7ab9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8ce4ed1e_2b0ea44a",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 781,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-09-24T14:38:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d7e73b54_8d290e24",
       "range": {
         "startLine": 781,
         "startChar": 48,

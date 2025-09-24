@@ -404,6 +404,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "10e49b8f_c781f78a",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 731,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-09-24T14:38:50Z",
+      "side": 1,
+      "message": "Will try again and update on the same.\n\nUpdate - I made a pretty silly error (I forgot to enable XFA when building a part of it last time) - Sorry about it and I made sure to address it this time.\n\nWith rectangles as source it now fails on main and passes on my branch - which proves the broken behaviour and shows the fix actually addresses it.\n\n```\nOn my branch\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] Running 1 test from 1 test suite.\n[----------] Global test environment set-up.\n[----------] 1 test from FPDFPPOEmbedderTest\n[ RUN      ] FPDFPPOEmbedderTest.XFAImportTest\n[       OK ] FPDFPPOEmbedderTest.XFAImportTest (133 ms)\n[----------] 1 test from FPDFPPOEmbedderTest (133 ms total)\n\n[----------] Global test environment tear-down\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 1 test from 1 test suite ran. (372 ms total)\n[  PASSED  ] 1 test.\n```\n\n```\nOn main\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] Running 1 test from 1 test suite.\n[----------] Global test environment set-up.\n[----------] 1 test from FPDFPPOEmbedderTest\n[ RUN      ] FPDFPPOEmbedderTest.XFAImportTest\n../../fpdfsdk/fpdf_ppo_embeddertest.cpp:746: Failure\nExpected equality of these values:\n  GetPageChecksum(dest_doc, 4)\n    Which is: \"7a3f8f79ebcb350854c0d69607729ec5\"\n  source_doc_checksums[0]\n    Which is: \"1e5d1cf19ffbb9cf9dbf099483cea327\"\n\n[  FAILED  ] FPDFPPOEmbedderTest.XFAImportTest (132 ms)\n[----------] 1 test from FPDFPPOEmbedderTest (132 ms total)\n\n[----------] Global test environment tear-down\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 1 test from 1 test suite ran. (329 ms total)\n[  PASSED  ] 0 tests.\n[  FAILED  ] 1 test, listed below:\n[  FAILED  ] FPDFPPOEmbedderTest.XFAImportTest\n```\n\nThen I think we can reduce to just 1 XFA sample and rename it to domething more reasonable such as \"rectangles_multi_page_xfa.pdf\". \nDo let me know if this is fine.\nMy bad once again.",
+      "parentUuid": "51131605_e246eb1f",
+      "revId": "f092558c13e50ca2960a5d4720f1abb08b1bd014",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "1f383af0_fe345dc5",
         "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
         "patchSetId": 14
