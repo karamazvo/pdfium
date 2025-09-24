@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "28c2be59_3d2c8a0d",
+        "filename": "fpdfsdk/pwl/cpwl_edit_impl.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-09-24T17:09:40Z",
+      "side": 1,
+      "message": "It would be nice to just use the default constructor but I like the static assert and it doesn\u0027t fit as well in the header.",
+      "parentUuid": "e8114889_b339fa67",
+      "revId": "7fc5ff0b0b9ab2610e01dfe809b385adc4b8b38b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6e53d3df_13c337d8",
@@ -54,6 +72,54 @@
       "writtenOn": "2025-09-24T16:43:46Z",
       "side": 1,
       "message": "1) Wrap in backticks.\n2) The constant is in another file, but hopefully it won\u0027t be too hard to find.",
+      "range": {
+        "startLine": 207,
+        "startChar": 30,
+        "endLine": 207,
+        "endChar": 50
+      },
+      "revId": "7fc5ff0b0b9ab2610e01dfe809b385adc4b8b38b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4aeca82c_e118a5a3",
+        "filename": "fpdfsdk/pwl/cpwl_edit_impl.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-09-24T17:09:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6e53d3df_13c337d8",
+      "range": {
+        "startLine": 207,
+        "startChar": 57,
+        "endLine": 207,
+        "endChar": 73
+      },
+      "revId": "7fc5ff0b0b9ab2610e01dfe809b385adc4b8b38b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f48e8cc5_552166bf",
+        "filename": "fpdfsdk/pwl/cpwl_edit_impl.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-09-24T17:09:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9d404a42_9850bcc2",
       "range": {
         "startLine": 207,
         "startChar": 30,
