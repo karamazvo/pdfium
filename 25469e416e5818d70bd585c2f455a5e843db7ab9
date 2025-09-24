@@ -73,6 +73,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "6e3a3b3e_0aab3edf",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 742,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-24T17:47:14Z",
+      "side": 1,
+      "message": "Please also update lines 769-771 in the latest patchset. Same issue with redundant comment.",
+      "parentUuid": "41a6f43f_6a33aea9",
+      "revId": "25469e416e5818d70bd585c2f455a5e843db7ab9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "f3f9e73d_f617bec9",
         "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
         "patchSetId": 23
