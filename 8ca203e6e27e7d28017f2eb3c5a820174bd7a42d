@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3c3235a0_372765c0",
+        "filename": "fpdfsdk/pwl/cpwl_edit.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-09-24T16:32:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "be6ae1da_e9693f8c",
+      "range": {
+        "startLine": 73,
+        "startChar": 7,
+        "endLine": 73,
+        "endChar": 22
+      },
+      "revId": "8ca203e6e27e7d28017f2eb3c5a820174bd7a42d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "34b96e0c_639a61c1",
@@ -37,6 +61,24 @@
       "writtenOn": "2025-09-23T20:01:51Z",
       "side": 1,
       "message": "Can these test cases get away with a smaller number of types characters? Is 26 enough? 15?",
+      "revId": "8ca203e6e27e7d28017f2eb3c5a820174bd7a42d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "67da93f9_8b05e032",
+        "filename": "fpdfsdk/pwl/cpwl_edit_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 527,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-09-24T16:32:11Z",
+      "side": 1,
+      "message": "Sure, pretty much any number works. I reduced it. I just got 50 from copy-pasting another test.",
+      "parentUuid": "34b96e0c_639a61c1",
       "revId": "8ca203e6e27e7d28017f2eb3c5a820174bd7a42d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -75,6 +117,42 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fca2d53b_66f792da",
+        "filename": "fpdfsdk/pwl/cpwl_edit_impl.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-09-24T16:32:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aadcb227_99e17ee7",
+      "revId": "8ca203e6e27e7d28017f2eb3c5a820174bd7a42d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fdf3471f_bc19038e",
+        "filename": "fpdfsdk/pwl/cpwl_edit_impl.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-09-24T16:32:11Z",
+      "side": 1,
+      "message": "I put a comment on the UndoStack function. It seems excessive to put it on every function. I\u0027m not sure if it\u0027s best to put the comment at the bottom or the top of the stack.",
+      "parentUuid": "2be7938d_0f625a67",
+      "revId": "8ca203e6e27e7d28017f2eb3c5a820174bd7a42d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bc7bd20a_b2d687d2",
@@ -88,6 +166,30 @@
       "writtenOn": "2025-09-23T20:01:51Z",
       "side": 1,
       "message": "is_sentinel",
+      "range": {
+        "startLine": 276,
+        "startChar": 9,
+        "endLine": 276,
+        "endChar": 19
+      },
+      "revId": "8ca203e6e27e7d28017f2eb3c5a820174bd7a42d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "48840645_8a703dd2",
+        "filename": "fpdfsdk/pwl/cpwl_edit_impl.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-09-24T16:32:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bc7bd20a_b2d687d2",
       "range": {
         "startLine": 276,
         "startChar": 9,
