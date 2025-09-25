@@ -41,6 +41,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cf07f775_a90951d3",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-09-25T03:10:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2b5d281a_4bbd3dd0",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 20
+      },
+      "revId": "28b0b5cb0818db9c34222e28a29c8695e527d4a0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "64c4a77e_219ee1a8",
@@ -54,6 +78,30 @@
       "writtenOn": "2025-09-24T17:47:14Z",
       "side": 1,
       "message": "Here and line 760 - there is no \"target_doc\" anymore.",
+      "range": {
+        "startLine": 754,
+        "startChar": 10,
+        "endLine": 754,
+        "endChar": 20
+      },
+      "revId": "28b0b5cb0818db9c34222e28a29c8695e527d4a0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "67f0e38b_5d8ecb4b",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 754,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-09-25T03:10:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "64c4a77e_219ee1a8",
       "range": {
         "startLine": 754,
         "startChar": 10,
