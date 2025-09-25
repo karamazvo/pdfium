@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d9cae79d_a57c515e",
+        "filename": "core/fpdfapi/parser/cpdf_parser.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 5965
+      },
+      "writtenOn": "2025-09-25T18:05:01Z",
+      "side": 1,
+      "message": "Isn\u0027t this smaller then both the referenced values of 38 and 41?",
+      "revId": "20150650b4d5444c1477dccd94496fd3caaf859d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
