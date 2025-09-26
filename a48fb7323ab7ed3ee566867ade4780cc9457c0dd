@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1555d540_f4d00f83",
+        "filename": "core/fpdfapi/parser/cpdf_document.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 699,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-09-26T16:41:51Z",
+      "side": 1,
+      "message": "Removed, and it was initially a note to self, that I leftover when working on the patch. \nRemoved in the latest edits.",
+      "parentUuid": "0ee4e591_87e33765",
+      "revId": "a48fb7323ab7ed3ee566867ade4780cc9457c0dd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8b5b53d5_60af00df",
@@ -35,6 +53,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c94e2cfd_97c48351",
+        "filename": "fpdfsdk/fpdf_ppo.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-09-26T16:41:51Z",
+      "side": 1,
+      "message": "Moved to line 91.",
+      "parentUuid": "8b5b53d5_60af00df",
+      "revId": "a48fb7323ab7ed3ee566867ade4780cc9457c0dd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "73301218_685819f4",
@@ -48,6 +84,24 @@
       "writtenOn": "2025-09-26T16:05:55Z",
       "side": 1,
       "message": "Same here. Move down towards line 154.",
+      "revId": "a48fb7323ab7ed3ee566867ade4780cc9457c0dd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "975addc4_0b3e85fd",
+        "filename": "fpdfsdk/fpdf_ppo.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-09-26T16:41:51Z",
+      "side": 1,
+      "message": "Moved before the \n\n`if (extension)` \nblock.",
+      "parentUuid": "73301218_685819f4",
       "revId": "a48fb7323ab7ed3ee566867ade4780cc9457c0dd",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
