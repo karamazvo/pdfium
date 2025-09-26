@@ -203,10 +203,7 @@ std::unique_ptr<ProgressiveDecoderIface::Context> PngDecoder::StartDecode(
 // static
 bool PngDecoder::ContinueDecode(ProgressiveDecoderIface::Context* pContext,
                                 RetainPtr<CFX_CodecMemory> codec_memory) {
-  auto* ctx = static_cast<CPngContext*>(pContext);
-  pdfium::span<uint8_t> src_buf = codec_memory->GetUnconsumedSpan();
-  return _png_continue_decode(ctx->png_, ctx->info_, src_buf.data(),
-                              src_buf.size());
+  NOTREACHED();
 }
 
 }  // namespace fxcodec
