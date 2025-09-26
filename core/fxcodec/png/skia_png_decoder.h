@@ -1,11 +1,11 @@
-// Copyright 2016 The PDFium Authors
+// Copyright 2025 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_PNG_PNG_DECODER_H_
-#define CORE_FXCODEC_PNG_PNG_DECODER_H_
+#ifndef CORE_FXCODEC_PNG_SKIA_PNG_DECODER_H_
+#define CORE_FXCODEC_PNG_SKIA_PNG_DECODER_H_
 
 #include <memory>
 
@@ -18,9 +18,11 @@
 
 namespace fxcodec {
 
+class CFX_DIBAttribute;
 class PngDecoderDelegate;
 
-class PngDecoder {
+// PNG decoder based on the Skia library.
+class SkiaPngDecoder {
  public:
   static std::unique_ptr<ProgressiveDecoderIface::Context> StartDecode(
       PngDecoderDelegate* pDelegate);
@@ -28,13 +30,13 @@ class PngDecoder {
   static bool ContinueDecode(ProgressiveDecoderIface::Context* pContext,
                              RetainPtr<CFX_CodecMemory> codec_memory);
 
-  PngDecoder() = delete;
-  PngDecoder(const PngDecoder&) = delete;
-  PngDecoder& operator=(const PngDecoder&) = delete;
+  SkiaPngDecoder() = delete;
+  SkiaPngDecoder(const SkiaPngDecoder&) = delete;
+  SkiaPngDecoder& operator=(const SkiaPngDecoder&) = delete;
 };
 
 }  // namespace fxcodec
 
-using PngDecoder = fxcodec::PngDecoder;
+using PngDecoder = fxcodec::SkiaPngDecoder;
 
-#endif  // CORE_FXCODEC_PNG_PNG_DECODER_H_
+#endif  // CORE_FXCODEC_PNG_SKIA_PNG_DECODER_H_

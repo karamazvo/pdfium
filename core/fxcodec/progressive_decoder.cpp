@@ -38,8 +38,17 @@
 #endif  // PDF_ENABLE_XFA_GIF
 
 #ifdef PDF_ENABLE_XFA_PNG
-#include "core/fxcodec/png/png_decoder.h"
 #include "core/fxcodec/png/png_decoder_delegate.h"
+// TODO(https://crbug.com/444045690): Remove `pdf_enable_rust_png` from the
+// condition below once this build mode has been tested and stabilized.
+// (Chromium already sets `pdf_use_skia_override = true` but we don't want to
+// use `skia_png_decoder.cpp` in Chromium without a separate, explicit opt-in -
+// for now `pdf_enable_rust_png` provides such an extra opt-in.)
+#if defined(PDF_USE_SKIA) && defined(PDF_ENABLE_RUST_PNG)
+#include "core/fxcodec/png/skia_png_decoder.h"
+#else
+#include "core/fxcodec/png/libpng_png_decoder.h"
+#endif
 #endif  // PDF_ENABLE_XFA_PNG
 
 #ifdef PDF_ENABLE_XFA_TIFF
