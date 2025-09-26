@@ -41,4 +41,4 @@ pdf_enable_fontations_override = false
 
 # Build PDFium with Skia's support for Rust-based PNG decoder and encoder.
 # If enabled, it drops the dependency on `libpng`.
-pdf_enable_rust_png_override = false
+pdf_enable_rust_png_override = true  # DO NOT SUBMIT - for smoke-test only
