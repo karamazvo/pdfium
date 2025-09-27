@@ -22,6 +22,30 @@
       },
       "revId": "366ba086d87f5fd2bcc6503987ea853e26c34442",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "43dc182d_3e07092a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 28
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-09-27T03:16:56Z",
+      "side": 1,
+      "message": "@thestig@chromium.org - Thanks for your help throughout this process - was really able to learn a lot from you!  Do let me know if you would suggest any more changes.\n\n@tsepez@chromium.org - Thanks for helping me out with the process! Do let me know if you have any other thoughts or suggestions. \n\nThanks once again guys!",
+      "parentUuid": "64f58728_b3a02c44",
+      "range": {
+        "startLine": 14,
+        "startChar": 59,
+        "endLine": 14,
+        "endChar": 71
+      },
+      "revId": "366ba086d87f5fd2bcc6503987ea853e26c34442",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
