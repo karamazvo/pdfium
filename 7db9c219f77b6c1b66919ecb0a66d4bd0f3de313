@@ -16,6 +16,29 @@
       "message": "@thestig, can you PTAL?",
       "revId": "7db9c219f77b6c1b66919ecb0a66d4bd0f3de313",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0a4a2ac8_264211ea",
+        "filename": "core/fxcodec/png/libpng_png_decoder.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-29T17:32:05Z",
+      "side": 1,
+      "message": "Did you want to change this as well?",
+      "range": {
+        "startLine": 39,
+        "startChar": 6,
+        "endLine": 39,
+        "endChar": 16
+      },
+      "revId": "7db9c219f77b6c1b66919ecb0a66d4bd0f3de313",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
