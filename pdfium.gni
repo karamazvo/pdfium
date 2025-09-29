@@ -64,8 +64,6 @@ declare_args() {
 
   # Build PDFium with Skia's support for Rust-based PNG decoder and encoder.
   # If enabled, it drops the dependency on `libpng`.
-  #
-  # TODO(https://crbug.com/444045690): Cover decoding code path.
   pdf_enable_rust_png = pdf_enable_rust_png_override
 
   # Build PDFium standalone. Now only controls whether the test binaries
