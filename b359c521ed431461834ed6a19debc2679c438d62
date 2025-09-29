@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7ee6d8e5_a84f7102",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-09-29T21:29:46Z",
+      "side": 1,
+      "message": "nit: blank line before, no blank line between it and bug: (some automation used to not be able to grok this).",
+      "revId": "b359c521ed431461834ed6a19debc2679c438d62",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1a342665_46e18e56",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-09-29T21:29:46Z",
+      "side": 1,
+      "message": "LGTM, one comment.",
+      "revId": "b359c521ed431461834ed6a19debc2679c438d62",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
