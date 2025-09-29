@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "7d319b79_48ea31c2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-29T21:18:53Z",
+      "side": 1,
+      "message": "The log is very long and most it is not relevant to PDFium. Just omit it and let readers that want to see if read the link above instead.",
+      "revId": "340a6a3c043accf1115d2844ae6ab4f8bee13eb4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "7ac1f5d2_f2671e50",
