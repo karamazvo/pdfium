@@ -51,6 +51,24 @@
       "parentUuid": "d75a2a7b_24dcf4da",
       "revId": "647e3054b8bd2e8b575dcd952782a90f22bf71aa",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e38a6bf0_88cab8c2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7276
+      },
+      "writtenOn": "2025-09-29T12:20:46Z",
+      "side": 1,
+      "message": "I have a question about how to implement this properly in PDFium. What I want to do in this CL is to add type tags to calls to `GetAlignedPointerFromInternalField` and `SetAlignedPointerInInternalField`, and to use values for these type tags that don\u0027t overlap with the values that are used by Blink.\n\nI thought that `gin` is also used by PDFium, but apparently that\u0027s wrong. So what I could do is to just define some constants somewhere in the PDFium code, or I could more fields to `FPDF_LIBRARY_CONFIG` such that the constants get provided by Blink.\n\nI was about to add the constants to `FPDF_LIBRARY_CONFIG, but then I saw the comments about versioning and felt unsure.\n\nIf it\u0027s better to just define some constants somewhere, where would I define these constants? And would there be a way to add CHECKs to make sure that they don\u0027t overlap with the type tags used by Blink?",
+      "parentUuid": "c653653b_c7d9c67d",
+      "revId": "647e3054b8bd2e8b575dcd952782a90f22bf71aa",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
