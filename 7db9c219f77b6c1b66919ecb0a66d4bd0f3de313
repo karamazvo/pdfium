@@ -18,6 +18,23 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d6de9350_3ff82b69",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-29T17:45:00Z",
+      "side": 1,
+      "message": "@thestig, can you PTAL at my reply below?",
+      "revId": "7db9c219f77b6c1b66919ecb0a66d4bd0f3de313",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0a4a2ac8_264211ea",
@@ -31,6 +48,30 @@
       "writtenOn": "2025-09-29T17:32:05Z",
       "side": 1,
       "message": "Did you want to change this as well?",
+      "range": {
+        "startLine": 39,
+        "startChar": 6,
+        "endLine": 39,
+        "endChar": 16
+      },
+      "revId": "7db9c219f77b6c1b66919ecb0a66d4bd0f3de313",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a1fdba70_0fdd7d41",
+        "filename": "core/fxcodec/png/libpng_png_decoder.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-29T17:45:00Z",
+      "side": 1,
+      "message": "No, I want to leave this as-is and then after a follow-up in https://pdfium-review.googlesource.com/c/pdfium/+/135730/4/core/fxcodec/png/skia_png_decoder.h:\n\n1. If `progressive_decoder.cpp` includes `core/fxcodec/png/libpng_png_decoder.h` (this file) then we will have `PngDecoder \u003d LibpngPngDecoder`\n2. If `progressive_decoder.cpp` includes `core/fxcodec/png/skia_png_decoder.h` (from the follow-up CL) then we will have `PngDecoder \u003d SkiaPngDecoder`\n\nThis kind of duck-typing is fairly straightforward and works here.\n\nIn theory I could also introduce an abstract `PngDecoderBase` class with `StartDecode` and `ContinueDecode` methods.  I didn\u0027t do this, because changing `static` methods into `virtual` methods felt bit weird - it wasn\u0027t clear to me who would 1) construct a specific kind of decoder and 2) what would be the lifetime of the decoder (e.g. would `PngDecoder::ContinueDecode(...)` change to `CreatePngDecoder().ContinueDecode(...)` VS would results of `CreatePngDecoder` be stored in a field of `progressive_decoder.cpp` or in a static-or-global variable somewhere)?\n\nAny feedback?",
+      "parentUuid": "0a4a2ac8_264211ea",
       "range": {
         "startLine": 39,
         "startChar": 6,
