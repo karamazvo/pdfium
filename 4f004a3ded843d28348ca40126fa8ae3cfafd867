@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8f7ee6d2_c0dcb67e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-29T21:12:45Z",
+      "side": 1,
+      "message": "@thestig, can you PTAL?  This CL is needed because a recent Skia CL has moved the Rust PNG headers from `third_party/skia/experimental/rust_png/decoder/SkPngRustDecoder.h` to `third_party/skia/include/codec/SkPngRustDecoder.h`.  In other words this CL allows PDFium to use the same `#include` path as Chromium (where Skia is being auto-rolled).",
+      "revId": "4f004a3ded843d28348ca40126fa8ae3cfafd867",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
