@@ -104,6 +104,30 @@
       },
       "revId": "7db9c219f77b6c1b66919ecb0a66d4bd0f3de313",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d4751b31_dde66f5b",
+        "filename": "core/fxcodec/png/libpng_png_decoder.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-29T18:01:07Z",
+      "side": 1,
+      "message": "\u003e Are we going to allow embedders to swap decoders at runtime?\n\nRuntime swap is not needed by Chromium.  So, for simplicity, I would lean toward supporting only built-time selection/swap.\n\n\u003e Just eyeballing, but this is a compile-time swap. It\u0027s probably ok, given how libpng is used.\n\nAck.  Thanks for looking.",
+      "parentUuid": "d2030ae2_efd92c59",
+      "range": {
+        "startLine": 39,
+        "startChar": 6,
+        "endLine": 39,
+        "endChar": 16
+      },
+      "revId": "7db9c219f77b6c1b66919ecb0a66d4bd0f3de313",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
