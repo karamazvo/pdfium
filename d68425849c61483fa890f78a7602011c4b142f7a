@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "24f08d76_e151eb49",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-09-29T18:33:57Z",
+      "side": 1,
+      "message": "Yeah, we don\u0027t have gin/ in standalone PDFium.  So we\u0027ll need an equivalent constant.",
+      "revId": "d68425849c61483fa890f78a7602011c4b142f7a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
