@@ -16,6 +16,24 @@
       "message": "I hate that about c++23.",
       "revId": "4f9834150b78a27596fdc491a430b56a4f943d8a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2c79a859_c1c62a0e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-09-30T18:59:33Z",
+      "side": 1,
+      "message": "Is this the tip of the iceberg? Is there more to do / should we stop trying to forward declare T in cases like this in Chromium as well?",
+      "parentUuid": "2e076f7e_f5935415",
+      "revId": "4f9834150b78a27596fdc491a430b56a4f943d8a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ],
   "submitRequirementResults": [
