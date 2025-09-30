@@ -112,6 +112,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "698f9f78_389a0949",
+        "filename": "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
+        "patchSetId": 28
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-09-30T07:03:21Z",
+      "side": 1,
+      "message": "Correction:\nIn the current setup, we are not sure. The line above would return 0 in an error. Added a statement to only decrement if we have a non 0 value.\n\nDone (in patchset 29).",
+      "parentUuid": "6155c7e9_d7b8f729",
+      "range": {
+        "startLine": 303,
+        "startChar": 2,
+        "endLine": 303,
+        "endChar": 16
+      },
+      "revId": "366ba086d87f5fd2bcc6503987ea853e26c34442",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5cbc101e_b3a55d8d",
