@@ -34,6 +34,24 @@
       "parentUuid": "2e076f7e_f5935415",
       "revId": "4f9834150b78a27596fdc491a430b56a4f943d8a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d84889e5_e04cdedd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9656
+      },
+      "writtenOn": "2025-09-30T19:14:20Z",
+      "side": 1,
+      "message": "It is indeed the tip of the iceberg. There\u0027s quite a bit of it. I\u0027m currently trying to figure out a mess in the DevTools inspector protocol generator.\n\nIt... looks like this is not a C++23 change per se, but fallout from the combination of unique_ptr becoming constexpr and quirks of how clang implements it. It\u0027s quite a mess.\n\nhttps://github.com/llvm/llvm-project/issues/83409\n\nHere\u0027s some minor investigation I\u0027ve done and yeeeeesh.\nhttps://godbolt.org/z/6dWGve411",
+      "parentUuid": "2c79a859_c1c62a0e",
+      "revId": "4f9834150b78a27596fdc491a430b56a4f943d8a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ],
   "submitRequirementResults": [
