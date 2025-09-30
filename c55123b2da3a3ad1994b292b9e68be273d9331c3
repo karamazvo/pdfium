@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "675e18bb_1275ef39",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-30T17:12:57Z",
+      "side": 1,
+      "message": "I see https://source.chromium.org/chromium/infra/infra_superproject/+/main:build/recipes/recipes/pdfium.py;l\u003d1101-1107;drc\u003de91d03de75c598672338419a76b34b351a9b0b52, but I don\u0027t follow how it maps to `args.gn` (and how to tweak things so that `rust\u003dTrue` in `build/recipes/recipes/pdfium.py` translates into having `pdf_enable_rust_png \u003d true` in `args.gn`).",
+      "range": {
+        "startLine": 19,
+        "startChar": 2,
+        "endLine": 19,
+        "endChar": 54
+      },
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6eebd929_244c403e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-30T17:12:57Z",
+      "side": 1,
+      "message": "Any feedback?  This seems unfortunate, but I think that this shouldn\u0027t block this CL.",
+      "range": {
+        "startLine": 23,
+        "startChar": 54,
+        "endLine": 24,
+        "endChar": 32
+      },
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "79a3a629_db1ed240",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-30T17:12:57Z",
+      "side": 1,
+      "message": "@thestig, can you PTAL?\n\n(I assume that communicating the new build mode more broadly [to more PDFium clients/users/OSS-community] can wait until everything has settled down in PDFium/Chromium as long as the new build mode remains optional/opt-in on PDFium side.)",
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
