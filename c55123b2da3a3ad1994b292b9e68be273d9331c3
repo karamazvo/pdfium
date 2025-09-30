@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "469ae721_2623bc3e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-09-30T17:32:03Z",
+      "side": 1,
+      "message": "Actually, I should have just searched harder.  I now see that I just need to cover the new `args.gn` property here: https://source.chromium.org/chromium/infra/infra_superproject/+/main:build/recipes/recipes/pdfium.py;l\u003d235;drc\u003de91d03de75c598672338419a76b34b351a9b0b52\n\nBut since this is a separate repo, this would anyway need to be done in a separate CL (I think).",
+      "parentUuid": "675e18bb_1275ef39",
+      "range": {
+        "startLine": 19,
+        "startChar": 2,
+        "endLine": 19,
+        "endChar": 54
+      },
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "6eebd929_244c403e",
         "filename": "/COMMIT_MSG",
         "patchSetId": 10
