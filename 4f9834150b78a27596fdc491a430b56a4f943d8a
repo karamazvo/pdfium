@@ -70,6 +70,24 @@
       "parentUuid": "d84889e5_e04cdedd",
       "revId": "4f9834150b78a27596fdc491a430b56a4f943d8a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fb91c52f_8dda27e1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9656
+      },
+      "writtenOn": "2025-09-30T20:48:06Z",
+      "side": 1,
+      "message": "Talked with the Lexan folks and it sounds like fixing it in code is the most plausible path.\n\n\u003e You may also want to mention this on cxx@ for Chromium.\n\nAh yeah, probably. I\u0027ll see if I can get the chrome binary building and how bad the damage is.",
+      "parentUuid": "56652508_161dceb6",
+      "revId": "4f9834150b78a27596fdc491a430b56a4f943d8a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ],
   "submitRequirementResults": [
