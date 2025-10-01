@@ -6,5 +6,8 @@ include_rules = [
   '+public',
   '+third_party/skia/include',
   '+v8',
-  '+xfa'
+  '+xfa',
+
+  # TODO(https://crbug.com/444061405): Stop calling Rust PNG "experimental".
+  '+third_party/skia/experimental/rust_png'
 ]
