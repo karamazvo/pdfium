@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ed47fab3_0a5ebe2a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 12
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-01T19:24:39Z",
+      "side": 1,
+      "message": "Thanks for the feedback.  I\u0027ve partially addressed the feedback, but let me just leave myself in the attention set, because before this CL can be landed I think I should work on avoid using `libpng` via `testing/image_diff/image_diff_png.cpp`.",
+      "revId": "0119f04f299e68de8e6bf4dee14ba13785ff0852",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
