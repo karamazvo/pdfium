@@ -119,6 +119,47 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "e48cc0d5_cf260b1c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-01T00:28:20Z",
+      "side": 1,
+      "message": "Since this is about the encoder, you should try to intentionally break `pdfium_test --png`. Every `pdfium_test` call in pixel tests and corpus tests run with `--png` to render to PNG and then compare the output against the baseline.\n\nSee EncodePng() comment in testing/helpers/write.cc.",
+      "parentUuid": "a19139bd_358fa5cd",
+      "range": {
+        "startLine": 23,
+        "startChar": 54,
+        "endLine": 24,
+        "endChar": 32
+      },
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1f3b70b2_b7c0c979",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-01T00:28:20Z",
+      "side": 1,
+      "message": "Over 72 columns.",
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "79a3a629_db1ed240",
@@ -132,6 +173,120 @@
       "writtenOn": "2025-09-30T17:12:57Z",
       "side": 1,
       "message": "@thestig, can you PTAL?\n\n(I assume that communicating the new build mode more broadly [to more PDFium clients/users/OSS-community] can wait until everything has settled down in PDFium/Chromium as long as the new build mode remains optional/opt-in on PDFium side.)",
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e2691831_76bf95ee",
+        "filename": "build_overrides/pdfium.gni",
+        "patchSetId": 10
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-01T00:28:20Z",
+      "side": 1,
+      "message": "I personally don\u0027t like the word \"drop\" unless it is literally about some object falling down. At least in recent years, some have used \"feature drop\" to mean \"adding new features\" while others say \"dropping a feature\" to mean \"removing an existing feature\". This can be confusing. Meanwhile, there exists many other less confusing words. \u003c/rant\u003e",
+      "range": {
+        "startLine": 43,
+        "startChar": 17,
+        "endLine": 43,
+        "endChar": 22
+      },
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "edfa2ce1_8975236c",
+        "filename": "pdfium.gni",
+        "patchSetId": 10
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-01T00:28:20Z",
+      "side": 1,
+      "message": "Since the GN variable name doesn\u0027t mention Skia, how about being consistent here. e.g. Build PDFium to use Rust-based PNG decoder and encoder.\n\nThen mention the requirement like line 62.",
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dc7f04ee_7e3970e4",
+        "filename": "skia/BUILD.gn",
+        "patchSetId": 10
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-01T00:28:20Z",
+      "side": 1,
+      "message": "Out of curiosity, why can\u0027t these source files use the \"chromium_code\" config?",
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a2c8227d_65de8590",
+        "filename": "skia/BUILD.gn",
+        "patchSetId": 10
+      },
+      "lineNbr": 393,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-01T00:28:20Z",
+      "side": 1,
+      "message": "In general, sources before deps.",
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "65b3aab4_2f6d0e6a",
+        "filename": "testing/helpers/write.cc",
+        "patchSetId": 10
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-01T00:28:20Z",
+      "side": 1,
+      "message": "Is this encoding path going to be covered by this CL?",
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9e5fcf01_30359412",
+        "filename": "testing/helpers/write.cc",
+        "patchSetId": 10
+      },
+      "lineNbr": 634,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-01T00:28:20Z",
+      "side": 1,
+      "message": "Can you ever deduplicate the code, when standalone PDFium does not have Chromium\u0027s //skia?",
+      "range": {
+        "startLine": 634,
+        "startChar": 63,
+        "endLine": 634,
+        "endChar": 74
+      },
       "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
