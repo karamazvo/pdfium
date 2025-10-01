@@ -74,6 +74,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "c0bec10c_749e3543",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-01T19:23:32Z",
+      "side": 1,
+      "message": "Thanks for the pointer to the `pdfium/.../infra/config/main.star` file.  Unfortunately I wasn\u0027t able to find that file in code search (even after deleting the Chromium scope/filter): https://source.chromium.org/search?q\u003ddef.pdfium_internal_builder%20f:main.star\n\nI have put together a CL to propagate `gn_bool[rust]` into `pdf_enable_rust_png\u003d...`: https://chromium-review.googlesource.com/c/chromium/tools/build/+/7004443.  I will hold off with reviewing and landing it until the current-CL-under-review lands.",
+      "parentUuid": "5bfa673b_a27f6155",
+      "range": {
+        "startLine": 19,
+        "startChar": 2,
+        "endLine": 19,
+        "endChar": 54
+      },
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "6eebd929_244c403e",
         "filename": "/COMMIT_MSG",
         "patchSetId": 10
@@ -162,6 +186,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "1febd4ae_259765b4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-01T19:23:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1f3b70b2_b7c0c979",
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "79a3a629_db1ed240",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 10
@@ -200,6 +242,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b70f6b2a_8c1d73ad",
+        "filename": "build_overrides/pdfium.gni",
+        "patchSetId": 10
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-01T19:23:32Z",
+      "side": 1,
+      "message": "Thanks for the feedback.  Done.",
+      "parentUuid": "e2691831_76bf95ee",
+      "range": {
+        "startLine": 43,
+        "startChar": 17,
+        "endLine": 43,
+        "endChar": 22
+      },
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "edfa2ce1_8975236c",
@@ -213,6 +279,24 @@
       "writtenOn": "2025-10-01T00:28:20Z",
       "side": 1,
       "message": "Since the GN variable name doesn\u0027t mention Skia, how about being consistent here. e.g. Build PDFium to use Rust-based PNG decoder and encoder.\n\nThen mention the requirement like line 62.",
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f7fa5d66_093c7f4c",
+        "filename": "pdfium.gni",
+        "patchSetId": 10
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-01T19:23:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "edfa2ce1_8975236c",
       "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -234,6 +318,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "431ee2fa_db320622",
+        "filename": "skia/BUILD.gn",
+        "patchSetId": 10
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-01T19:23:32Z",
+      "side": 1,
+      "message": "I am replicating `//skia/BUILD.gn` from Chromium.\n\nGiven above, I think I won\u0027t try to answer the question - sorry.  I am guessing that Skia, V8, etc use a slightly different compilation flags (different warnings?) than Chromium, but I haven\u0027t really checked.\n\nStill, I think the best way to avoid this question would be to avoid duplication somehow... But currently Skia does **not** provide `BUILD.gn` files that can be used by PDFium and/or Chromium.  So this probably requires discussion with @kjlubick - I opened https://crbug.com/448663461 for that and added a TODO here.\n\nLet me tentatively resolve - assuming that the new TODO is sufficient to enable landing this CL.",
+      "parentUuid": "dc7f04ee_7e3970e4",
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a2c8227d_65de8590",
@@ -247,6 +349,24 @@
       "writtenOn": "2025-10-01T00:28:20Z",
       "side": 1,
       "message": "In general, sources before deps.",
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7d9dab1c_ca1bad48",
+        "filename": "skia/BUILD.gn",
+        "patchSetId": 10
+      },
+      "lineNbr": 393,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-01T19:23:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a2c8227d_65de8590",
       "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -270,6 +390,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "bcb4b6f7_7c01da80",
+        "filename": "testing/helpers/write.cc",
+        "patchSetId": 10
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-01T19:23:32Z",
+      "side": 1,
+      "message": "Ugh... I missed usage of `libpng` from `testing/image_diff/image_diff_png.cpp`.  I\u0027ll work on that.",
+      "parentUuid": "65b3aab4_2f6d0e6a",
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "9e5fcf01_30359412",
         "filename": "testing/helpers/write.cc",
         "patchSetId": 10
@@ -281,6 +419,30 @@
       "writtenOn": "2025-10-01T00:28:20Z",
       "side": 1,
       "message": "Can you ever deduplicate the code, when standalone PDFium does not have Chromium\u0027s //skia?",
+      "range": {
+        "startLine": 634,
+        "startChar": 63,
+        "endLine": 634,
+        "endChar": 74
+      },
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f050ca38_c133a7d8",
+        "filename": "testing/helpers/write.cc",
+        "patchSetId": 10
+      },
+      "lineNbr": 634,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-01T19:23:32Z",
+      "side": 1,
+      "message": "Hmmm... I think I didn\u0027t try deduplicating this hard enough. :-/\n\nLet me try to hoist this into Skia proper.  The PDFium-specific code will just call into a single Skia method based on `#ifdef PDF_ENABLE_RUST_PNG`.  See https://skia-review.googlesource.com/c/skia/+/1065416",
+      "parentUuid": "9e5fcf01_30359412",
       "range": {
         "startLine": 634,
         "startChar": 63,
