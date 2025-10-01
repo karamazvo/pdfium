@@ -98,6 +98,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "c969a624_cb6af7dd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-01T20:35:12Z",
+      "side": 1,
+      "message": "Likely you don\u0027t need to change main.star with that recipe change. You should also run CQ on that recipe change and update the test expectations. It\u0027s going to fail as-is.\n\nIndeed PDFium\u0027s infra/config branch is not indexed by Code Search, which is why I gave you the direct link.",
+      "parentUuid": "c0bec10c_749e3543",
+      "range": {
+        "startLine": 19,
+        "startChar": 2,
+        "endLine": 19,
+        "endChar": 54
+      },
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "6eebd929_244c403e",
         "filename": "/COMMIT_MSG",
         "patchSetId": 10
@@ -336,6 +360,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "82d3ba6c_a4d404cf",
+        "filename": "skia/BUILD.gn",
+        "patchSetId": 10
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-01T20:35:12Z",
+      "side": 1,
+      "message": "OK. No worries. This can definitely be a side conversation and is not a blocker for this CL.",
+      "parentUuid": "431ee2fa_db320622",
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a2c8227d_65de8590",
@@ -367,6 +409,24 @@
       "side": 1,
       "message": "Done",
       "parentUuid": "a2c8227d_65de8590",
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2488784a_d2f60f89",
+        "filename": "skia/BUILD.gn",
+        "patchSetId": 10
+      },
+      "lineNbr": 393,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-01T20:35:12Z",
+      "side": 1,
+      "message": "Please try again.",
+      "parentUuid": "7d9dab1c_ca1bad48",
       "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -443,6 +503,30 @@
       "side": 1,
       "message": "Hmmm... I think I didn\u0027t try deduplicating this hard enough. :-/\n\nLet me try to hoist this into Skia proper.  The PDFium-specific code will just call into a single Skia method based on `#ifdef PDF_ENABLE_RUST_PNG`.  See https://skia-review.googlesource.com/c/skia/+/1065416",
       "parentUuid": "9e5fcf01_30359412",
+      "range": {
+        "startLine": 634,
+        "startChar": 63,
+        "endLine": 634,
+        "endChar": 74
+      },
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f0c32106_2e2e1dbe",
+        "filename": "testing/helpers/write.cc",
+        "patchSetId": 10
+      },
+      "lineNbr": 634,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-01T20:35:12Z",
+      "side": 1,
+      "message": "Thanks. Do we need to do another Skia DEPS roll into PDFium when that Skia CL lands?",
+      "parentUuid": "f050ca38_c133a7d8",
       "range": {
         "startLine": 634,
         "startChar": 63,
