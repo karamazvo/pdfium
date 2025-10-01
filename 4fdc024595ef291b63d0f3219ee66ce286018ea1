@@ -16,6 +16,24 @@
       "message": "So to complete the work here, what happens if there is a tag mismatch between set/get tags?  CHECK()? nullptr return?  I didn\u0027t see the explanation in a two minute search of the v8 heaers.",
       "revId": "4fdc024595ef291b63d0f3219ee66ce286018ea1",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "403f2f35_d0f7d6b0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7276
+      },
+      "writtenOn": "2025-10-01T08:27:16Z",
+      "side": 1,
+      "message": "There are three possible results, depending on the configuration. It can crash with a CHECK, it can return with a nullptr, or on 32-bit and on configs without sandbox, the tag would just get ignored.",
+      "parentUuid": "c8b29db1_2bb8f290",
+      "revId": "4fdc024595ef291b63d0f3219ee66ce286018ea1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
