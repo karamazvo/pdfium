@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "579f1810_01fbd926",
+        "filename": "fpdfsdk/cpdfsdk_pageview.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 550,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-02T18:59:05Z",
+      "side": 1,
+      "message": "I believe it should be safe to use pAnnot instead of calling GetFocusAnnot() again, which is guaranteed to return the exact same pointer as pAnnot in this case.\n\nHowever I did not make that change because there\u0027s a possibility that if we used pAnnot then it could be changed to null after calling GetNextAnnot(), then the pNext.Get() !\u003d pFocusAnnot would potentially compare against null, which would always trigger the if statement.\n\nIt\u0027s not clear to me if this logical possibility is a case that we need to maintain the current behavior for.",
+      "revId": "7953840f2f075277e3fd7e2c4569b6c3c90aa36c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "966f3503_2fda6977",
+        "filename": "fpdfsdk/cpdfsdk_pageview.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 584,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-02T18:59:05Z",
+      "side": 1,
+      "message": "This comment was added in https://pdfium.googlesource.com/pdfium/+/6e3a40600f246bd8cff2367e3805ce53466cb349\n\nI think there is potentially still a possibility that the object could be destroyed by JS but the pathway has changed. In that CL they said that CXFA_FFPageView::CreateWidgetIterator() could trigger JS code that could destroy the object. That function no longer exists and it\u0027s not clear to me if the replacement has the same behavior.",
+      "revId": "7953840f2f075277e3fd7e2c4569b6c3c90aa36c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
