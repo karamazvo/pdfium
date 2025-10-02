@@ -1,0 +1,141 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "51f2c360_0678e0f6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-02T20:25:27Z",
+      "side": 1,
+      "message": "It would be better to focus more on PDFium and its relationship with its embedder, and not focus on a particular embedder.",
+      "revId": "30509135ba8d0e8487b0bb5430a987ed75a9cf32",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3a2d7955_293d44a2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-02T20:25:27Z",
+      "side": 1,
+      "message": "Chrome !\u003d chrome, just as Windows !\u003d windows.",
+      "range": {
+        "startLine": 12,
+        "startChar": 24,
+        "endLine": 12,
+        "endChar": 30
+      },
+      "revId": "30509135ba8d0e8487b0bb5430a987ed75a9cf32",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "031aaaf5_354528b4",
+        "filename": "fpdfsdk/cpdfsdk_pageview.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 549,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-02T20:25:27Z",
+      "side": 1,
+      "message": "No need for `else` after a `return`.",
+      "revId": "30509135ba8d0e8487b0bb5430a987ed75a9cf32",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6e7dd49b_a2b162fb",
+        "filename": "fpdfsdk/cpdfsdk_pageview.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 551,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-02T20:25:27Z",
+      "side": 1,
+      "message": "Consistently wrap in backticks.",
+      "range": {
+        "startLine": 551,
+        "startChar": 42,
+        "endLine": 551,
+        "endChar": 48
+      },
+      "revId": "30509135ba8d0e8487b0bb5430a987ed75a9cf32",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a19f9f11_c7405b8e",
+        "filename": "fpdfsdk/cpdfsdk_pageview.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 567,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-02T20:25:27Z",
+      "side": 1,
+      "message": "There\u0027s another switch-statement in fpdfsdk/pwl/cpwl_edit.cpp that has the same list. WDYT about doing a refactoring CL to consolidating this list into function?",
+      "revId": "30509135ba8d0e8487b0bb5430a987ed75a9cf32",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "57b1344e_35f81f12",
+        "filename": "fpdfsdk/fpdf_formfill_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 904,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-02T20:25:27Z",
+      "side": 1,
+      "message": "Can we try adding a test for the pre-existing behavior in CL 1, and then change the behavior in CL 2? Then it would be easier to see what is actually changing.",
+      "revId": "30509135ba8d0e8487b0bb5430a987ed75a9cf32",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "695ef33a_fa766fa6",
+        "filename": "fpdfsdk/fpdf_formfill_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 934,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-02T20:25:27Z",
+      "side": 1,
+      "message": "Same here. PDFium isn\u0027t a component solely used in Chromium.",
+      "range": {
+        "startLine": 934,
+        "startChar": 49,
+        "endLine": 934,
+        "endChar": 55
+      },
+      "revId": "30509135ba8d0e8487b0bb5430a987ed75a9cf32",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
