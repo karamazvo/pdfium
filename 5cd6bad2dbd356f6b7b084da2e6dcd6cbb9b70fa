@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "32ddcb88_1bdb175e",
+        "filename": "fpdfsdk/cpdfsdk_pageview.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 553,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-02T19:08:32Z",
+      "side": 0,
+      "message": "Initially I was tempted to just change this condition to return false and to check for the meta key. However when I looked at all of the widget handlers I found that some do in fact handle ctrl+home and ctrl+end, which we still need to pass to them (also it checks ctrl only and needs mac support https://crbug.com/448699368).\n\nSo in the new implementation I checked only for the shortcut keys instead of hiding all control+key or cmd+key events from the widgets.",
+      "revId": "5cd6bad2dbd356f6b7b084da2e6dcd6cbb9b70fa",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "69aa740c_1b3e1daf",
+        "filename": "fpdfsdk/cpdfsdk_pageview.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 555,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-02T19:08:32Z",
+      "side": 0,
+      "message": "Previously the logic was setup so that ctrl+tab or alt+tab was handled by the widget message queue and would block the tab handling below.\n\nHowever none of the widgets actually handled either of these events so it was just a no-op return true ultimately. \n\nIn the new code these two events return false, correctly since PDFium didn\u0027t handle them.",
+      "range": {
+        "startLine": 553,
+        "startChar": 0,
+        "endLine": 555,
+        "endChar": 3
+      },
+      "revId": "5cd6bad2dbd356f6b7b084da2e6dcd6cbb9b70fa",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
