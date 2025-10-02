@@ -378,6 +378,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3be852d5_5cdfe513",
+        "filename": "skia/BUILD.gn",
+        "patchSetId": 10
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-02T18:31:36Z",
+      "side": 1,
+      "message": "FYI, I filed crbug.com/448789662 and will also have a separate CL for the Rust bridges in Chromium.",
+      "parentUuid": "82d3ba6c_a4d404cf",
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a2c8227d_65de8590",
