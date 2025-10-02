@@ -3,6 +3,23 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "f2885265_62800327",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 30
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-10-02T17:28:48Z",
+      "side": 1,
+      "message": "Still needs `git cl format` for some line wrap.",
+      "revId": "4565c0dda3a7a0759508b834858783062bb9633f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "dff9e4ce_1efd8086",
         "filename": "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
         "patchSetId": 30
@@ -14,6 +31,30 @@
       "writtenOn": "2025-10-02T07:33:32Z",
       "side": 1,
       "message": "Do let me know if this is needed or not, because it follows the same point @tsepez@chromium.org mentioned in Line 323.",
+      "range": {
+        "startLine": 309,
+        "startChar": 4,
+        "endLine": 309,
+        "endChar": 72
+      },
+      "revId": "4565c0dda3a7a0759508b834858783062bb9633f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "953a8e5f_a4b1dfbd",
+        "filename": "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
+        "patchSetId": 30
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-10-02T17:28:48Z",
+      "side": 1,
+      "message": "Yea, sneaking around iterator increments with std::next doesn\u0027t buy much.  Let\u0027s just leave this for the moment.",
+      "parentUuid": "dff9e4ce_1efd8086",
       "range": {
         "startLine": 309,
         "startChar": 4,
