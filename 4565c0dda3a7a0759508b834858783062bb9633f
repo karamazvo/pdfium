@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dff9e4ce_1efd8086",
+        "filename": "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
+        "patchSetId": 30
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-10-02T07:33:32Z",
+      "side": 1,
+      "message": "Do let me know if this is needed or not, because it follows the same point @tsepez@chromium.org mentioned in Line 323.",
+      "range": {
+        "startLine": 309,
+        "startChar": 4,
+        "endLine": 309,
+        "endChar": 72
+      },
+      "revId": "4565c0dda3a7a0759508b834858783062bb9633f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
