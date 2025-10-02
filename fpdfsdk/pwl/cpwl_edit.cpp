@@ -362,43 +362,7 @@ bool CPWL_Edit::OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag) {
     }
   }
 
-  bool bRet = this_observed->OnKeyDownInternal(nKeyCode, nFlag);
-
-  // In case of implementation swallow the OnKeyDown event.
-  if (this_observed->IsProceedtoOnChar(nKeyCode, nFlag)) {
-    return true;
-  }
-  return bRet;
-}
-
-// static
-bool CPWL_Edit::IsProceedtoOnChar(FWL_VKEYCODE nKeyCode,
-                                  Mask<FWL_EVENTFLAG> nFlag) {
-  bool bCtrl = IsPlatformShortcutKey(nFlag);
-  bool bAlt = IsALTKeyDown(nFlag);
-  if (bCtrl && !bAlt) {
-    // hot keys for edit control.
-    switch (nKeyCode) {
-      case FWL_VKEY_A:
-      case FWL_VKEY_C:
-      case FWL_VKEY_V:
-      case FWL_VKEY_X:
-      case FWL_VKEY_Z:
-        return true;
-      default:
-        break;
-    }
-  }
-  // control characters.
-  switch (nKeyCode) {
-    case FWL_VKEY_Escape:
-    case FWL_VKEY_Back:
-    case FWL_VKEY_Return:
-    case FWL_VKEY_Space:
-      return true;
-    default:
-      return false;
-  }
+  return this_observed->OnKeyDownInternal(nKeyCode, nFlag);
 }
 
 bool CPWL_Edit::OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
@@ -568,11 +532,6 @@ bool CPWL_Edit::OnKeyDownInternal(FWL_VKEYCODE nKeyCode,
     case FWL_VKEY_Home:
     case FWL_VKEY_End:
     case FWL_VKEY_Insert:
-    case FWL_VKEY_A:
-    case FWL_VKEY_C:
-    case FWL_VKEY_V:
-    case FWL_VKEY_X:
-    case FWL_VKEY_Z:
       break;
   }
 
