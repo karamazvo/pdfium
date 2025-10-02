@@ -858,12 +858,19 @@ TEST_F(FPDFFormFillEmbedderTest, TabWithModifiers) {
   ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
                               FWL_EVENTFLAG_AltKey));
 
+  ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
+                              FWL_EVENTFLAG_MetaKey));
+
   ASSERT_FALSE(
       FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
                      (FWL_EVENTFLAG_ControlKey | FWL_EVENTFLAG_ShiftKey)));
 
   ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
                               (FWL_EVENTFLAG_AltKey | FWL_EVENTFLAG_ShiftKey)));
+
+  ASSERT_FALSE(
+      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
+                     (FWL_EVENTFLAG_MetaKey | FWL_EVENTFLAG_ShiftKey)));
 }
 
 TEST_F(FPDFFormFillEmbedderTest, KeyPressWithNoFocusedAnnot) {
@@ -892,6 +899,51 @@ TEST_F(FPDFFormFillEmbedderTest, KeyPressWithNoFocusedAnnot) {
     EXPECT_EQ(-1, page_index);
     EXPECT_FALSE(annot);
   }
+}
+
+TEST_F(FPDFFormFillEmbedderTest, DoNotHandleShortcutsOnKeyDown) {
+  ASSERT_TRUE(OpenDocument("annotiter.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  // Select the first form field
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab, 0));
+  int page_index = -2;
+  FPDF_ANNOTATION annot = nullptr;
+  EXPECT_TRUE(FORM_GetFocusedAnnot(form_handle(), &page_index, &annot));
+  EXPECT_EQ(0, page_index);
+  ASSERT_TRUE(annot);
+  EXPECT_EQ(1, FPDFPage_GetAnnotIndex(page.get(), annot));
+  FPDFPage_CloseAnnot(annot);
+
+#if BUILDFLAG(IS_APPLE)
+  static constexpr int kModifier = FWL_EVENTFLAG_MetaKey;
+#else
+  static constexpr int kModifier = FWL_EVENTFLAG_ControlKey;
+#endif
+
+  // Ensure that FORM_OnKeyDown actually handles some events
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Left, 0));
+  // TODO(448699368): This should work with the meta key on macos
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Home,
+                             FWL_EVENTFLAG_ControlKey));
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Home, 0));
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Up, 0));
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Right, 0));
+
+  // These shortcuts must not be handled so that chrome can handle them
+  EXPECT_FALSE(
+      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_A, kModifier));
+  EXPECT_FALSE(
+      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_C, kModifier));
+  EXPECT_FALSE(
+      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_V, kModifier));
+  EXPECT_FALSE(
+      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_X, kModifier));
+  EXPECT_FALSE(
+      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Z, kModifier));
+  EXPECT_FALSE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Z,
+                              kModifier | FWL_EVENTFLAG_ShiftKey));
 }
 
 #ifdef PDF_ENABLE_XFA

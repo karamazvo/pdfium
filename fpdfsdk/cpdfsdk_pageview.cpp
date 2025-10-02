@@ -533,46 +533,58 @@ bool CPDFSDK_PageView::OnChar(uint32_t nChar, Mask<FWL_EVENTFLAG> nFlags) {
 bool CPDFSDK_PageView::OnKeyDown(FWL_VKEYCODE nKeyCode,
                                  Mask<FWL_EVENTFLAG> nFlags) {
   ObservedPtr<CPDFSDK_Annot> pAnnot(GetFocusAnnot());
-  if (!pAnnot) {
-    // If pressed key is not tab then no action is needed.
-    if (nKeyCode != FWL_VKEY_Tab) {
+  // Handle tab and shift+tab to change field focus
+  if (nKeyCode == FWL_VKEY_Tab) {
+    // Ctrl, Alt, or Meta plus tab are system shortcuts we should not handle
+    if (CPWL_Wnd::IsCTRLKeyDown(nFlags) || CPWL_Wnd::IsALTKeyDown(nFlags) ||
+        CPWL_Wnd::IsMETAKeyDown(nFlags)) {
       return false;
     }
 
-    // If ctrl key or alt key is pressed, then no action is needed.
-    if (CPWL_Wnd::IsCTRLKeyDown(nFlags) || CPWL_Wnd::IsALTKeyDown(nFlags)) {
-      return false;
-    }
-
-    ObservedPtr<CPDFSDK_Annot> end_annot(CPWL_Wnd::IsSHIFTKeyDown(nFlags)
-                                             ? GetLastFocusableAnnot()
-                                             : GetFirstFocusableAnnot());
-    return end_annot && form_fill_env_->SetFocusAnnot(end_annot);
-  }
-
-  if (CPWL_Wnd::IsCTRLKeyDown(nFlags) || CPWL_Wnd::IsALTKeyDown(nFlags)) {
-    return CPDFSDK_Annot::OnKeyDown(pAnnot, nKeyCode, nFlags);
-  }
-
-  CPDFSDK_Annot* pFocusAnnot = GetFocusAnnot();
-  if (pFocusAnnot && (nKeyCode == FWL_VKEY_Tab)) {
-    ObservedPtr<CPDFSDK_Annot> pNext(CPWL_Wnd::IsSHIFTKeyDown(nFlags)
-                                         ? GetPrevAnnot(pFocusAnnot)
-                                         : GetNextAnnot(pFocusAnnot));
-    if (!pNext) {
-      return false;
-    }
-    if (pNext.Get() != pFocusAnnot) {
-      GetFormFillEnv()->SetFocusAnnot(pNext);
-      return true;
+    if (!pAnnot) {
+      ObservedPtr<CPDFSDK_Annot> end_annot(CPWL_Wnd::IsSHIFTKeyDown(nFlags)
+                                               ? GetLastFocusableAnnot()
+                                               : GetFirstFocusableAnnot());
+      return end_annot && form_fill_env_->SetFocusAnnot(end_annot);
+    } else {
+      CPDFSDK_Annot* pFocusAnnot = GetFocusAnnot();
+      CHECK(pFocusAnnot);  // The same as pAnnot, which was checked not null
+      ObservedPtr<CPDFSDK_Annot> pNext(CPWL_Wnd::IsSHIFTKeyDown(nFlags)
+                                           ? GetPrevAnnot(pFocusAnnot)
+                                           : GetNextAnnot(pFocusAnnot));
+      if (!pNext) {
+        return false;
+      }
+      if (pNext.Get() != pFocusAnnot) {
+        GetFormFillEnv()->SetFocusAnnot(pNext);
+        return true;
+      }
     }
   }
 
-  // Check |pAnnot| again because JS may have destroyed it in GetNextAnnot().
+  if (CPWL_Wnd::IsPlatformShortcutKey(nFlags)) {
+    switch (nKeyCode) {
+      case FWL_VKEY_A:
+      case FWL_VKEY_C:
+      case FWL_VKEY_V:
+      case FWL_VKEY_X:
+      case FWL_VKEY_Z:
+        // Do not handle the edit shortcut keys in FORM_OnKeyDown. There is
+        // handling for them in FORM_OnChar.
+        //
+        // On MacOS we need to use the Chrome shortcut keys handler, which goes
+        // through OnKeyDown. If we return true here we would block the chrome
+        // handler.
+        return false;
+      default:
+        break;
+    }
+  }
+
+  // Check `pAnnot` again because JS may have destroyed it in GetNextAnnot().
   if (!pAnnot) {
     return false;
   }
-
   return CPDFSDK_Annot::OnKeyDown(pAnnot, nKeyCode, nFlags);
 }
 
