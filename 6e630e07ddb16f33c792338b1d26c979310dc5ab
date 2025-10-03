@@ -95,6 +95,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "61224fde_53b83f34",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-03T23:26:08Z",
+      "side": 1,
+      "message": "JFYI: I\u0027ve opened cl/814869858 to improve the internal go/linkable Chrome extension which can be used to shorten links and copy them to clipboard.",
+      "parentUuid": "88106bc3_d6f1341b",
+      "range": {
+        "startLine": 17,
+        "startChar": 2,
+        "endLine": 17,
+        "endChar": 58
+      },
+      "revId": "6e630e07ddb16f33c792338b1d26c979310dc5ab",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bdfb93e5_93542068",
