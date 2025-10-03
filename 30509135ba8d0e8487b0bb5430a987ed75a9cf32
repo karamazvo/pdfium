@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5ac5f304_e63325c6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-03T16:50:07Z",
+      "side": 1,
+      "message": "Done. Changed my phrasing in the split commits.",
+      "parentUuid": "51f2c360_0678e0f6",
+      "revId": "30509135ba8d0e8487b0bb5430a987ed75a9cf32",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3a2d7955_293d44a2",
@@ -31,6 +49,30 @@
       "writtenOn": "2025-10-02T20:25:27Z",
       "side": 1,
       "message": "Chrome !\u003d chrome, just as Windows !\u003d windows.",
+      "range": {
+        "startLine": 12,
+        "startChar": 24,
+        "endLine": 12,
+        "endChar": 30
+      },
+      "revId": "30509135ba8d0e8487b0bb5430a987ed75a9cf32",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "54b7318b_37d689de",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-03T16:50:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a2d7955_293d44a2",
       "range": {
         "startLine": 12,
         "startChar": 24,
@@ -58,6 +100,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d2e235aa_79926ce2",
+        "filename": "fpdfsdk/cpdfsdk_pageview.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 549,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-03T16:50:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "031aaaf5_354528b4",
+      "revId": "30509135ba8d0e8487b0bb5430a987ed75a9cf32",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6e7dd49b_a2b162fb",
@@ -71,6 +131,30 @@
       "writtenOn": "2025-10-02T20:25:27Z",
       "side": 1,
       "message": "Consistently wrap in backticks.",
+      "range": {
+        "startLine": 551,
+        "startChar": 42,
+        "endLine": 551,
+        "endChar": 48
+      },
+      "revId": "30509135ba8d0e8487b0bb5430a987ed75a9cf32",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4bac2b54_507484c8",
+        "filename": "fpdfsdk/cpdfsdk_pageview.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 551,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-03T16:50:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6e7dd49b_a2b162fb",
       "range": {
         "startLine": 551,
         "startChar": 42,
@@ -98,6 +182,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cddd6834_b4706e93",
+        "filename": "fpdfsdk/cpdfsdk_pageview.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 567,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-03T16:50:07Z",
+      "side": 1,
+      "message": "I\u0027m now deleting those switch lines in https://pdfium-review.googlesource.com/c/pdfium/+/136371\n\nThey\u0027re actually a closer-to-the-source cause of this problem.",
+      "parentUuid": "a19f9f11_c7405b8e",
+      "revId": "30509135ba8d0e8487b0bb5430a987ed75a9cf32",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "57b1344e_35f81f12",
@@ -115,6 +217,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0682dbfc_d97a9c6b",
+        "filename": "fpdfsdk/fpdf_formfill_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 904,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-03T16:50:07Z",
+      "side": 1,
+      "message": "Done. Tests are now in https://pdfium-review.googlesource.com/c/pdfium/+/136370",
+      "parentUuid": "57b1344e_35f81f12",
+      "revId": "30509135ba8d0e8487b0bb5430a987ed75a9cf32",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "695ef33a_fa766fa6",
@@ -128,6 +248,30 @@
       "writtenOn": "2025-10-02T20:25:27Z",
       "side": 1,
       "message": "Same here. PDFium isn\u0027t a component solely used in Chromium.",
+      "range": {
+        "startLine": 934,
+        "startChar": 49,
+        "endLine": 934,
+        "endChar": 55
+      },
+      "revId": "30509135ba8d0e8487b0bb5430a987ed75a9cf32",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ffb5721e_4c46b42c",
+        "filename": "fpdfsdk/fpdf_formfill_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 934,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-03T16:50:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "695ef33a_fa766fa6",
       "range": {
         "startLine": 934,
         "startChar": 49,
