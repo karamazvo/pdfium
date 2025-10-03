@@ -20,6 +20,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "d4760f03_b97dd369",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 30
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-10-03T06:02:25Z",
+      "side": 1,
+      "message": "```\naryankrishnan@Aryans-MacBook-Pro pdfium % git status\nOn branch change-134810-clean\nnothing to commit, working tree clean\naryankrishnan@Aryans-MacBook-Pro pdfium % git cl format\naryankrishnan@Aryans-MacBook-Pro pdfium % git status\nOn branch change-134810-clean\nnothing to commit, working tree clean\naryankrishnan@Aryans-MacBook-Pro pdfium % \n```\n\nCl format didn\u0027t seem to do anything - will try clang formatting these files.\n\n```\n void CPDFXFA_Context::PagesInserted(int page_index, size_t num_pages) {\n   if (fxcrt::IndexInBounds(xfa_page_list_, page_index)) {\n-    xfa_page_list_.insert(std::next(xfa_page_list_.begin(), page_index), num_pages,\n-                          nullptr);\n+    xfa_page_list_.insert(std::next(xfa_page_list_.begin(), page_index),\n+                          num_pages, nullptr);\n     page_count_ +\u003d num_pages;\n   }\n }\n ```\nI assume this was the line wrap you were talking about.\n\nUpdated.",
+      "parentUuid": "f2885265_62800327",
+      "revId": "4565c0dda3a7a0759508b834858783062bb9633f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "dff9e4ce_1efd8086",
         "filename": "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
         "patchSetId": 30
