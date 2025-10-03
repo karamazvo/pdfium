@@ -197,6 +197,15 @@ enum class XFA_FWL_KeyFlag : uint8_t {
   kMButton = 1 << 6
 };
 
+static inline bool IsPlatformShortcutKey(Mask<XFA_FWL_KeyFlag> flags) {
+#if BUILDFLAG(IS_APPLE)
+  constexpr XFA_FWL_KeyFlag kEditingModifier = XFA_FWL_KeyFlag::kCommand;
+#else
+  constexpr XFA_FWL_KeyFlag kEditingModifier = XFA_FWL_KeyFlag::kCtrl;
+#endif
+  return !!(flags & kEditingModifier);
+}
+
 }  // namespace pdfium
 
 // TODO(crbug.com/42271761): Remove.
