@@ -567,6 +567,22 @@ bool CXFA_FFField::OnKeyDown(XFA_FWL_VKEYCODE dwKeyCode,
     return false;
   }
 
+  // Return false for edit shortcut keys so that PDFium does not consume the
+  // events, embedders may need to handle these. This is to bypass the
+  // hard-coded return true once the event goes into the queue below.
+  if (pdfium::IsPlatformShortcutKey(dwFlags)) {
+    switch (dwKeyCode) {
+      case pdfium::XFA_FWL_VKEY_A:
+      case pdfium::XFA_FWL_VKEY_C:
+      case pdfium::XFA_FWL_VKEY_V:
+      case pdfium::XFA_FWL_VKEY_X:
+      case pdfium::XFA_FWL_VKEY_Z:  // also covers {ctrl,cmd}+shift+z
+        return false;
+      default:
+        break;
+    }
+  }
+
   CFWL_MessageKey msg(GetNormalWidget(), CFWL_MessageKey::KeyCommand::kKeyDown,
                       dwFlags, dwKeyCode);
   SendMessageToFWLWidget(&msg);
