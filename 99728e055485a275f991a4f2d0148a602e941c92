@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e9c46a77_c2c2ca0f",
+        "filename": "fpdfsdk/fpdf_formfill_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 981,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-03T21:15:38Z",
+      "side": 1,
+      "message": "Same comment as before re: being too specific about embedders.",
+      "revId": "99728e055485a275f991a4f2d0148a602e941c92",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "43a2995f_bd4661f6",
+        "filename": "xfa/fwl/fwl_widgetdef.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-03T21:15:38Z",
+      "side": 1,
+      "message": "Want to add a .cpp file (note this is different from most other code that uses .cc files) for this?",
+      "revId": "99728e055485a275f991a4f2d0148a602e941c92",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e17b93f5_0653e51f",
+        "filename": "xfa/fxfa/cxfa_fffield.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 579,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-03T21:15:38Z",
+      "side": 1,
+      "message": "How does this cover the shift modifier?",
+      "revId": "99728e055485a275f991a4f2d0148a602e941c92",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
