@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e82c9247_b789772e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-03T17:26:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6b0d6b7b_8a163bbd",
+      "revId": "7ae4c1594bf917c18afd80836f59239aabf10a47",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ea10cfbe_4c1b0c00",
@@ -31,6 +49,30 @@
       "writtenOn": "2025-10-03T17:05:03Z",
       "side": 1,
       "message": "Put this in an anonymous namespace at the top and use that everywhere in this file?",
+      "range": {
+        "startLine": 960,
+        "startChar": 0,
+        "endLine": 964,
+        "endChar": 6
+      },
+      "revId": "7ae4c1594bf917c18afd80836f59239aabf10a47",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9d37f42a_3a361dbb",
+        "filename": "fpdfsdk/fpdf_formfill_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 964,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-03T17:26:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ea10cfbe_4c1b0c00",
       "range": {
         "startLine": 960,
         "startChar": 0,
