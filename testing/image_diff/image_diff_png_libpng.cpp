@@ -666,6 +666,7 @@ std::vector<uint8_t> DecodePNG(pdfium::span<const uint8_t> input,
                                bool reverse_byte_order,
                                int* width,
                                int* height) {
+  NOTREACHED();
   ColorFormat format = reverse_byte_order ? FORMAT_BGRA : FORMAT_RGBA;
   return Decode(input, format, width, height);
 }
@@ -674,6 +675,7 @@ std::vector<uint8_t> EncodeBGRPNG(pdfium::span<const uint8_t> input,
                                   int width,
                                   int height,
                                   int row_byte_width) {
+  NOTREACHED();
   return Encode(input, FORMAT_BGR, width, height, row_byte_width, false,
                 std::vector<Comment>());
 }
@@ -682,6 +684,7 @@ std::vector<uint8_t> EncodeRGBAPNG(pdfium::span<const uint8_t> input,
                                    int width,
                                    int height,
                                    int row_byte_width) {
+  NOTREACHED();
   return Encode(input, FORMAT_RGBA, width, height, row_byte_width, false,
                 std::vector<Comment>());
 }
@@ -691,6 +694,7 @@ std::vector<uint8_t> EncodeBGRAPNG(pdfium::span<const uint8_t> input,
                                    int height,
                                    int row_byte_width,
                                    bool discard_transparency) {
+  NOTREACHED();
   return Encode(input, FORMAT_BGRA, width, height, row_byte_width,
                 discard_transparency, std::vector<Comment>());
 }
@@ -699,6 +703,7 @@ std::vector<uint8_t> EncodeGrayPNG(pdfium::span<const uint8_t> input,
                                    int width,
                                    int height,
                                    int row_byte_width) {
+  NOTREACHED();
   return Encode(input, FORMAT_GRAY, width, height, row_byte_width, false,
                 std::vector<Comment>());
 }
