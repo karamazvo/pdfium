@@ -988,7 +988,7 @@ void CFWL_Edit::OnMouseMove(CFWL_MessageMouse* pMsg) {
 
 void CFWL_Edit::OnKeyDown(CFWL_MessageKey* pMsg) {
   bool bShift = !!(pMsg->flags_ & XFA_FWL_KeyFlag::kShift);
-  bool bCtrl = !!(pMsg->flags_ & XFA_FWL_KeyFlag::kCtrl);
+  bool bCtrl = pdfium::IsPlatformShortcutKey(pMsg->flags_);
 
   size_t sel_start = cursor_position_;
   if (edit_engine_->HasSelection()) {
