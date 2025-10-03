@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f8b0cc6d_231bb6f3",
+        "filename": "fpdfsdk/fpdf_formfill_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 948,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-03T20:46:58Z",
+      "side": 1,
+      "message": "This is still oddly specific about how a particular embedder works.",
+      "range": {
+        "startLine": 945,
+        "startChar": 69,
+        "endLine": 948,
+        "endChar": 0
+      },
+      "revId": "d229d6c29f86f8b7efd79054a36f1aa4fc7b2dea",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7d7b570a_e056d943",
+        "filename": "fpdfsdk/pwl/cpwl_edit.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 577,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-03T20:46:58Z",
+      "side": 1,
+      "message": "This is actually NOTREACHED() now. Or maybe the 2 switch statements can be combined.",
+      "revId": "d229d6c29f86f8b7efd79054a36f1aa4fc7b2dea",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
