@@ -546,10 +546,11 @@ bool CPWL_Edit::OnKeyDownInternal(FWL_VKEYCODE nKeyCode,
       edit_impl_->OnVK_RIGHT(IsSHIFTKeyDown(nFlag));
       return true;
     case FWL_VKEY_Home:
-      edit_impl_->OnVK_HOME(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));
+      edit_impl_->OnVK_HOME(IsSHIFTKeyDown(nFlag),
+                            IsPlatformShortcutKey(nFlag));
       return true;
     case FWL_VKEY_End:
-      edit_impl_->OnVK_END(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));
+      edit_impl_->OnVK_END(IsSHIFTKeyDown(nFlag), IsPlatformShortcutKey(nFlag));
       return true;
     case FWL_VKEY_Unknown:
       if (!IsSHIFTKeyDown(nFlag)) {

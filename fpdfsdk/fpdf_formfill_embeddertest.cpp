@@ -34,9 +34,9 @@ using testing::StrEq;
 namespace {
 
 #if BUILDFLAG(IS_APPLE)
-static constexpr int kModifier = FWL_EVENTFLAG_MetaKey;
+static constexpr int kShortcutModifier = FWL_EVENTFLAG_MetaKey;
 #else
-static constexpr int kModifier = FWL_EVENTFLAG_ControlKey;
+static constexpr int kShortcutModifier = FWL_EVENTFLAG_ControlKey;
 #endif
 
 }  // namespace
@@ -94,7 +94,10 @@ class FPDFFormFillInteractiveEmbedderTest : public FPDFFormFillEmbedderTest {
   void TypeTextIntoTextField(int num_chars, const CFX_PointF& point) {
     EXPECT_EQ(GetFormType(), GetFormTypeAtPoint(point));
     ClickOnFormFieldAtPoint(point);
+    TypeText(num_chars);
+  }
 
+  void TypeText(int num_chars) {
     // Type text starting with 'A' to as many chars as specified by |num_chars|.
     for (int i = 0; i < num_chars; ++i) {
       FORM_OnChar(form_handle(), page_, 'A' + i, 0);
@@ -257,6 +260,34 @@ class FPDFFormFillTextFormEmbedderTest
   static constexpr float kCharLimitFormY = 60.0;
   static constexpr float kRegularFormY = 115.0;
 };
+
+class FPDFFormFillMultilineTextFormEmbedderTest
+    : public FPDFFormFillInteractiveEmbedderTest {
+ protected:
+  FPDFFormFillMultilineTextFormEmbedderTest() = default;
+  ~FPDFFormFillMultilineTextFormEmbedderTest() override = default;
+
+  const char* GetDocumentName() const override {
+    return "text_form_multiline.pdf";
+  }
+
+  int GetFormType() const override { return FPDF_FORMFIELD_TEXTFIELD; }
+};
+
+#ifdef PDF_ENABLE_XFA
+class FPDFFormFillXFAMultilineTextFormEmbedderTest
+    : public FPDFFormFillInteractiveEmbedderTest {
+ protected:
+  FPDFFormFillXFAMultilineTextFormEmbedderTest() = default;
+  ~FPDFFormFillXFAMultilineTextFormEmbedderTest() override = default;
+
+  const char* GetDocumentName() const override {
+    return "xfa/xfa_multiline_textfield.pdf";
+  }
+
+  int GetFormType() const override { return FPDF_FORMFIELD_TEXTFIELD; }
+};
+#endif
 
 class FPDFFormFillComboBoxFormEmbedderTest
     : public FPDFFormFillInteractiveEmbedderTest {
@@ -928,9 +959,8 @@ TEST_F(FPDFFormFillEmbedderTest, DoNotHandleShortcutsOnKeyDown) {
 
   // Ensure that FORM_OnKeyDown actually handles some events
   EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Left, 0));
-  // TODO(448699368): This should work with the meta key on macos
   EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Home,
-                             FWL_EVENTFLAG_ControlKey));
+                             kShortcutModifier));
   EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Home, 0));
   EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Up, 0));
   EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Right, 0));
@@ -939,17 +969,17 @@ TEST_F(FPDFFormFillEmbedderTest, DoNotHandleShortcutsOnKeyDown) {
   // these shortcuts on platforms like MacOS which don't send OnChar events for
   // the shortcuts.
   EXPECT_FALSE(
-      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_A, kModifier));
+      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_A, kShortcutModifier));
   EXPECT_FALSE(
-      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_C, kModifier));
+      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_C, kShortcutModifier));
   EXPECT_FALSE(
-      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_V, kModifier));
+      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_V, kShortcutModifier));
   EXPECT_FALSE(
-      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_X, kModifier));
+      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_X, kShortcutModifier));
   EXPECT_FALSE(
-      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Z, kModifier));
+      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Z, kShortcutModifier));
   EXPECT_FALSE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Z,
-                              kModifier | FWL_EVENTFLAG_ShiftKey));
+                              kShortcutModifier | FWL_EVENTFLAG_ShiftKey));
 }
 
 #ifdef PDF_ENABLE_XFA
@@ -963,9 +993,8 @@ TEST_F(FPDFFormFillEmbedderTest, DoNotHandleShortcutsOnKeyDownXFA) {
 
   // Ensure that FORM_OnKeyDown actually handles some events
   EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Left, 0));
-  // TODO(448699368): This should work with the meta key on macos
   EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Home,
-                             FWL_EVENTFLAG_ControlKey));
+                             kShortcutModifier));
   EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Home, 0));
   EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Up, 0));
   EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Right, 0));
@@ -974,17 +1003,17 @@ TEST_F(FPDFFormFillEmbedderTest, DoNotHandleShortcutsOnKeyDownXFA) {
   // these shortcuts on platforms like MacOS which don't send OnChar events for
   // the shortcuts.
   EXPECT_FALSE(
-      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_A, kModifier));
+      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_A, kShortcutModifier));
   EXPECT_FALSE(
-      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_C, kModifier));
+      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_C, kShortcutModifier));
   EXPECT_FALSE(
-      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_V, kModifier));
+      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_V, kShortcutModifier));
   EXPECT_FALSE(
-      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_X, kModifier));
+      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_X, kShortcutModifier));
   EXPECT_FALSE(
-      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Z, kModifier));
+      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Z, kShortcutModifier));
   EXPECT_FALSE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Z,
-                              kModifier | FWL_EVENTFLAG_ShiftKey));
+                              kShortcutModifier | FWL_EVENTFLAG_ShiftKey));
 }
 
 TEST_F(FPDFFormFillEmbedderTest, XFAFormFillFirstTab) {
@@ -3523,6 +3552,98 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, SelectAllWithKeyboardShortcut) {
   FORM_OnChar(form_handle(), page(), pdfium::ascii::kControlA, kWrongModifier);
   EXPECT_EQ(Selection(), "");
 }
+
+TEST_F(FPDFFormFillMultilineTextFormEmbedderTest, HomeEndKey) {
+  // Select the first form field
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Tab, 0));
+
+  // Type two lines of text into the field
+  TypeText(10);
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), pdfium::ascii::kReturn, 0));
+  TypeText(8);
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), pdfium::ascii::kReturn, 0));
+  TypeText(7);
+  EXPECT_EQ(FocusedFieldText(), "ABCDEFGHIJ\r\nABCDEFGH\r\nABCDEFG");
+  EXPECT_EQ(Selection(), "");
+
+  // Verify the cursor is at the end of the text box
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), pdfium::ascii::kBackspace, 0));
+  EXPECT_EQ(FocusedFieldText(), "ABCDEFGHIJ\r\nABCDEFGH\r\nABCDEF");
+
+  // Cursor should go to the beginning of the last line
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Home, 0));
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Delete, 0));
+  EXPECT_EQ(FocusedFieldText(), "ABCDEFGHIJ\r\nABCDEFGH\r\nBCDEF");
+
+  // Cursor should go to the end of the last line
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_End, 0));
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), pdfium::ascii::kBackspace, 0));
+  EXPECT_EQ(FocusedFieldText(), "ABCDEFGHIJ\r\nABCDEFGH\r\nBCDE");
+
+  // Cursor should go to the beginning of the text box
+  EXPECT_TRUE(
+      FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Home, kShortcutModifier));
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Delete, 0));
+  EXPECT_EQ(FocusedFieldText(), "BCDEFGHIJ\r\nABCDEFGH\r\nBCDE");
+
+  // Cursor should go to the end of the first line
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_End, 0));
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), pdfium::ascii::kBackspace, 0));
+  EXPECT_EQ(FocusedFieldText(), "BCDEFGHI\r\nABCDEFGH\r\nBCDE");
+
+  // Cursor should go to the end of the text box
+  EXPECT_TRUE(
+      FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_End, kShortcutModifier));
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), pdfium::ascii::kBackspace, 0));
+  EXPECT_EQ(FocusedFieldText(), "BCDEFGHI\r\nABCDEFGH\r\nBCD");
+}
+
+#ifdef PDF_ENABLE_XFA
+TEST_F(FPDFFormFillXFAMultilineTextFormEmbedderTest, HomeEndKey) {
+  // Select the first form field
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Tab, 0));
+
+  // Type two lines of text into the field
+  TypeText(10);
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), pdfium::ascii::kReturn, 0));
+  TypeText(8);
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), pdfium::ascii::kReturn, 0));
+  TypeText(7);
+  EXPECT_EQ(FocusedFieldText(), "ABCDEFGHIJ\nABCDEFGH\nABCDEFG");
+  EXPECT_EQ(Selection(), "");
+
+  // Verify the cursor is at the end of the text box
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), pdfium::ascii::kBackspace, 0));
+  EXPECT_EQ(FocusedFieldText(), "ABCDEFGHIJ\nABCDEFGH\nABCDEF");
+
+  // Cursor should go to the beginning of the last line
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Home, 0));
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Delete, 0));
+  EXPECT_EQ(FocusedFieldText(), "ABCDEFGHIJ\nABCDEFGH\nBCDEF");
+
+  // Cursor should go to the end of the last line
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_End, 0));
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), pdfium::ascii::kBackspace, 0));
+  EXPECT_EQ(FocusedFieldText(), "ABCDEFGHIJ\nABCDEFGH\nBCDE");
+
+  // Cursor should go to the beginning of the text box
+  EXPECT_TRUE(
+      FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Home, kShortcutModifier));
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Delete, 0));
+  EXPECT_EQ(FocusedFieldText(), "BCDEFGHIJ\nABCDEFGH\nBCDE");
+
+  // Cursor should go to the end of the first line
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_End, 0));
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), pdfium::ascii::kBackspace, 0));
+  EXPECT_EQ(FocusedFieldText(), "BCDEFGHI\nABCDEFGH\nBCDE");
+
+  // Cursor should go to the end of the text box
+  EXPECT_TRUE(
+      FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_End, kShortcutModifier));
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), pdfium::ascii::kBackspace, 0));
+  EXPECT_EQ(FocusedFieldText(), "BCDEFGHI\nABCDEFGH\nBCD");
+}
+#endif
 
 class FPDFXFAFormBug1055869EmbedderTest
     : public FPDFFormFillInteractiveEmbedderTest {
