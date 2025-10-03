@@ -977,13 +977,18 @@ TEST_F(FPDFFormFillEmbedderTest, DoNotHandleShortcutsOnKeyDownXFA) {
   EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Right, 0));
 
   // TODO(413695643): cmd+{a,c,v,x,z} and cmd+shift+z should not be handled
-  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_A, kModifier));
-  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_C, kModifier));
-  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_V, kModifier));
-  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_X, kModifier));
-  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Z, kModifier));
-  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Z,
-                             kModifier | FWL_EVENTFLAG_ShiftKey));
+  EXPECT_FALSE(
+      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_A, kModifier));
+  EXPECT_FALSE(
+      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_C, kModifier));
+  EXPECT_FALSE(
+      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_V, kModifier));
+  EXPECT_FALSE(
+      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_X, kModifier));
+  EXPECT_FALSE(
+      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Z, kModifier));
+  EXPECT_FALSE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Z,
+                              kModifier | FWL_EVENTFLAG_ShiftKey));
 }
 
 TEST_F(FPDFFormFillEmbedderTest, XFAFormFillFirstTab) {
