@@ -81,6 +81,30 @@
       },
       "revId": "4565c0dda3a7a0759508b834858783062bb9633f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f1e7fc00_099c00b0",
+        "filename": "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
+        "patchSetId": 30
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-10-05T04:01:26Z",
+      "side": 1,
+      "message": "Done, will leave this as is (with std::next), do let me know if you want me to change it back to addition later.\n\nAs I mentioned though, if page_index is in bounds of xfa_page_list_ then even if we add or use next with xfa_page_list_.begin() it shouldn\u0027t cause issues.",
+      "parentUuid": "953a8e5f_a4b1dfbd",
+      "range": {
+        "startLine": 309,
+        "startChar": 4,
+        "endLine": 309,
+        "endChar": 72
+      },
+      "revId": "4565c0dda3a7a0759508b834858783062bb9633f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
