@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f7398949_e44ab629",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4376337
+      },
+      "writtenOn": "2025-10-05T22:48:29Z",
+      "side": 1,
+      "message": "Roll build: 8c1fe266c..f6b5f3e89 (109 commits)\nhttps://chromium.googlesource.com/chromium/src/build.git/+log/8c1fe266c710..f6b5f3e896ae\n\nCreated with: roll-dep build\n\nRoll tools/clang: 969098a0e..d2182ae5c (15 commits)\nhttps://chromium.googlesource.com/chromium/src/tools/clang/+log/969098a0e448..d2182ae5ccb9\n\nRoll clang+rust llvmorg-22-init-6852-g2384a6a2-4 : llvmorg-22-init-8940-g4d4cb757-1\nCreated with: roll-dep tools/clang\n\nRoll tools/rust: 9dbbc10b2..0eaaeed1c (6 commits)\nCreated with: roll-dep tools/rust",
+      "revId": "126489648def71f8837cc25840aa5864bedf68eb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
