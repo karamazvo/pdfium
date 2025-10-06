@@ -34,6 +34,7 @@ std::vector<uint8_t> EncodePNG(pdfium::span<const uint8_t> input,
                                size_t width,
                                size_t height,
                                size_t row_byte_width) {
+  CHECK(false);  // DO NOT SUBMIT - ad-hoc test
   CHECK_LE(row_byte_width * height, input.size());
 
   SkImageInfo info = SkImageInfo::Make(pdfium::checked_cast<int>(width),
