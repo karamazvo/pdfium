@@ -120,6 +120,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "02d19965_fb877c3f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-06T17:07:08Z",
+      "side": 1,
+      "message": "Okay - I think this is done and can be marked as resolved.  `main.star` changes landed in https://crrev.com/c/7004443 and `pdfium.gni` changes landed in https://pdfium-review.googlesource.com/136410.  I\u0027ve edited the CL description to point out that the CQ provides test coverage for most of this CL.  (Discussion of `testing/helpers/write.cc` is covered by another thread.)",
+      "parentUuid": "c969a624_cb6af7dd",
+      "range": {
+        "startLine": 19,
+        "startChar": 2,
+        "endLine": 19,
+        "endChar": 54
+      },
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6eebd929_244c403e",
@@ -181,6 +205,30 @@
       "side": 1,
       "message": "Since this is about the encoder, you should try to intentionally break `pdfium_test --png`. Every `pdfium_test` call in pixel tests and corpus tests run with `--png` to render to PNG and then compare the output against the baseline.\n\nSee EncodePng() comment in testing/helpers/write.cc.",
       "parentUuid": "a19139bd_358fa5cd",
+      "range": {
+        "startLine": 23,
+        "startChar": 54,
+        "endLine": 24,
+        "endChar": 32
+      },
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e5b1192d_e62534a0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-06T17:07:08Z",
+      "side": 1,
+      "message": "I apologize, but I still can\u0027t figure out how the code in `testing/helpers/write.cc` is tested currently (i.e. before this CL).\n\nhttps://pdfium-review.googlesource.com/136111 shows that broken `testing/helpers/write.cc` passes CQ even *before* this CL.  We may want to try to improve CQ coverage in a _separate_ CL, but I don\u0027t think the lack of pre-existing coverage should block _this_ CL.\n\n\u003e Since this is about the encoder, you should try to intentionally break `pdfium_test --png`.\n\nHow would I do that?\n\nRunning `out/rust/pdfium_test` just says `No input files` and exits.  Adding a `--png` command-line flag doesn\u0027t change that.\n\nLooking at test logs on the bots, it seems that the \"pixel tests\" step invokes `testing/tools/run_pixel_tests.py` which _already_ ensures that CQ covers passing `--png` flag to `pdfium_test`.  For example, I already see an invocation like this (copied from the log + cleaned-up to use relative paths and avoid python literal syntax):\n\n```\nout/debug_skia_rust_v8/pdfium_test                                \n--send-events                                                     \n--png                                                             \n--md5\n--time\u003d1399672130                                                 \n--font-dir\u003d/b/s/w/ir/cache/builder/pdfium/third_party/test_fonts  \n--croscore-font-names\nout/debug_skia_rust_v8/gen/pdfium/testing/pixel/bug_1258634.pdf\n```\n\n\u003e Every `pdfium_test` call in pixel tests and corpus tests run with `--png` to render to PNG and then compare the output against the baseline.\n\u003e \nAck.  This doesn\u0027t seem to cover the code I am modifying in `testing/helpers/write.cc`.\n\n\u003e See EncodePng() comment in testing/helpers/write.cc.\n\nCan you please provide a code search link?  I searched for \"EncodePng\" in `testing/helpers/write.cc` and there were no comments.",
+      "parentUuid": "e48cc0d5_cf260b1c",
       "range": {
         "startLine": 23,
         "startChar": 54,
@@ -520,6 +568,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9ebcea5b_65665717",
+        "filename": "testing/helpers/write.cc",
+        "patchSetId": 10
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-06T17:07:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bcb4b6f7_7c01da80",
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9e5fcf01_30359412",
@@ -581,6 +647,30 @@
       "side": 1,
       "message": "Thanks. Do we need to do another Skia DEPS roll into PDFium when that Skia CL lands?",
       "parentUuid": "f050ca38_c133a7d8",
+      "range": {
+        "startLine": 634,
+        "startChar": 63,
+        "endLine": 634,
+        "endChar": 74
+      },
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "368b914d_f0b45422",
+        "filename": "testing/helpers/write.cc",
+        "patchSetId": 10
+      },
+      "lineNbr": 634,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-06T17:07:08Z",
+      "side": 1,
+      "message": "This is done now.",
+      "parentUuid": "f0c32106_2e2e1dbe",
       "range": {
         "startLine": 634,
         "startChar": 63,
