@@ -56,6 +56,7 @@ std::vector<uint8_t> DecodePNG(pdfium::span<const uint8_t> input,
                                bool reverse_byte_order,
                                int* width,
                                int* height) {
+  CHECK(false);
   CHECK(width);
   CHECK(height);
 
