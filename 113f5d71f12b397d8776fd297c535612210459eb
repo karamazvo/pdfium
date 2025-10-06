@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "0cddc75e_80184fd8",
+        "filename": "testing/resources/pixel/composite-and-xnor.pdf",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6665
+      },
+      "writtenOn": "2025-10-06T23:37:09Z",
+      "side": 1,
+      "message": "As mentioned, they\u0027re from another repro. I\u0027m hoping to grow a full jbig2 test suites there and would like to add all the files there to the test suite here once it\u0027s complete.\n\nI can move the files to a dedicated directory if you prefer?",
+      "parentUuid": "1cb9db09_1a3a747c",
+      "revId": "113f5d71f12b397d8776fd297c535612210459eb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "35e6e8e9_4bc98b58",
