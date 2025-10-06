@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1cb9db09_1a3a747c",
+        "filename": "testing/resources/pixel/composite-and-xnor.pdf",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-06T23:34:40Z",
+      "side": 1,
+      "message": "Ca we add .in files instead?",
+      "revId": "113f5d71f12b397d8776fd297c535612210459eb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "35e6e8e9_4bc98b58",
+        "filename": "testing/resources/pixel/composite-and-xnor_expected.pdf.0.png",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-06T23:34:40Z",
+      "side": 1,
+      "message": "Output LGTM! :^)",
+      "revId": "113f5d71f12b397d8776fd297c535612210459eb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
