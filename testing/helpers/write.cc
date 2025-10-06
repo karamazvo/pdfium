@@ -641,6 +641,7 @@ std::string WriteSkp(const char* pdf_name, int num, const SkPicture& picture) {
   SkSerialProcs procs;
   procs.fImageProc = [](SkImage* img, void*) -> sk_sp<SkData> {
 #ifdef PDF_ENABLE_RUST_PNG
+    CHECK(false);
     return SkPngRustEncoder::Encode(nullptr, img, /*options=*/{});
 #else
     return SkPngEncoder::Encode(nullptr, img, /*options=*/{});
