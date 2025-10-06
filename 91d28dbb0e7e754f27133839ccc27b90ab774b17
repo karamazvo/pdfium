@@ -16,6 +16,24 @@
       "message": "Fix page movement handling in XFA-based PDFs\n\nFixes issues with FPDF_MovePages() when used on XFA-enabled PDFs by\nadding separate logic for XFA extensions. This ensures consistent page\nmovement behavior between standard and XFA-based documents.\n\nThe patch refines handling of XFA objects during page move operations\nto preserve form data and structure. Tests for both page movement and\ninsertion in XFA PDFs have been added and verified.\n\nOriginal patch and code contributions by Stefan Ziegler, with further\nmodifications and testing to ensure stability and backward compatibility.",
       "revId": "91d28dbb0e7e754f27133839ccc27b90ab774b17",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e6751c07_a3f8940a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 31
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-10-06T02:42:15Z",
+      "side": 1,
+      "message": "I assume you wanted me to edit the cl message, edited.",
+      "parentUuid": "29ac33da_336b5ec3",
+      "revId": "91d28dbb0e7e754f27133839ccc27b90ab774b17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
