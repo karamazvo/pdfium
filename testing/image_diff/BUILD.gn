@@ -6,17 +6,27 @@ import("../../pdfium.gni")
 
 source_set("image_diff") {
   testonly = true
-  sources = [
-    "image_diff_png_libpng.cpp",
-    "image_diff_png.h",
-  ]
+  sources = [ "image_diff_png.h" ]
+
+  # TODO(https://crbug.com/444045690): Remove `pdf_enable_rust_png` from
+  # the condition below once this build mode has been tested and stabilized.
+  # (Chromium already sets `pdf_use_skia_override = true` but we don't want
+  # to use `skia_png_decoder.cpp` in Chromium without a separate, explicit
+  # opt-in - for now `pdf_enable_rust_png` provides such an extra opt-in.)
+  if (pdf_use_skia && pdf_enable_rust_png) {
+    sources += [ "image_diff_png_skia.cpp" ]
+    deps = [ "//skia" ]
+  } else {
+    sources += [ "image_diff_png_libpng.cpp" ]
+    deps = [
+      "../../third_party:png",
+      "../../third_party:zlib",
+    ]
+  }
+
   configs += [
     "../../:pdfium_strict_config",
     "../../:pdfium_noshorten_config",
   ]
   public_deps = [ "../../core/fxcrt" ]
-  deps = [
-    "../../third_party:png",
-    "../../third_party:zlib",
-  ]
 }
