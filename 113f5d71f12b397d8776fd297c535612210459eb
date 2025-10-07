@@ -90,6 +90,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "e4f4f603_a3ea7786",
+        "filename": "testing/resources/pixel/composite-and-xnor.pdf",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-10-07T18:40:43Z",
+      "side": 1,
+      "message": "Most of the test files I have so far are a couple hundred bytes. The by far largest one is 14 kB. I\u0027d expect that all of them will stay in that range.\n\nI converted these to .in files with a script for now. We can move them around and do whatever later.",
+      "parentUuid": "211dd924_d4588eae",
+      "revId": "113f5d71f12b397d8776fd297c535612210459eb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "35e6e8e9_4bc98b58",
