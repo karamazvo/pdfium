@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e23d5981_ff3742a4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-07T22:41:16Z",
+      "side": 1,
+      "message": "Thanks, but if there is no rush, would you mind abandoning this CL? Let\u0027s refine the autoformatter script a bit before applying it to more files.",
+      "revId": "3931d13e3d8883d0872a1f7cd66e73f7e2ccfed5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
