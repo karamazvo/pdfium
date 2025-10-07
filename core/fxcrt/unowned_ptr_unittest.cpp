@@ -14,7 +14,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 #if defined(PDF_USE_PARTITION_ALLOC)
-#include "partition_alloc/shim/allocator_shim_default_dispatch_to_partition_alloc.h"
+#include "partition_alloc/shim/dispatch/partition_alloc.h"
 #endif
 
 namespace fxcrt {
