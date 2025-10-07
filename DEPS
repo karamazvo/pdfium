@@ -266,7 +266,7 @@ deps = {
         Var('partition_allocator_revision'),
 
   'build':
-    Var('chromium_git') + '/chromium/src/build.git@' + Var('build_revision'),
+    'https://github.com/victorvianna/chromium-build.git@cae90c6a2128464ca3170a94dcaa70dc6d39cb70',
 
   'buildtools':
     Var('chromium_git') + '/chromium/src/buildtools.git@' +
