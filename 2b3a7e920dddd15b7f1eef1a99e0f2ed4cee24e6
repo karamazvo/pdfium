@@ -51,6 +51,24 @@
       "parentUuid": "48d127dc_d968517c",
       "revId": "2b3a7e920dddd15b7f1eef1a99e0f2ed4cee24e6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "87cfb781_8825e0a0",
+        "filename": "testing/resources/pixel/composite-and-xnor.in",
+        "patchSetId": 5
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-10-07T18:49:33Z",
+      "side": 1,
+      "message": "is this really time well spent? if you care about formatting, have an autoformatter do it, else you won\u0027t get it right:\n\n```\n% rg -l \u0027^\u003c\u003c\u0027 testing/resources/pixel/*.in | wc -l                  \n       8\n```\n\nit\u0027s not even all me either:\n\n```\n% rg -l \u0027^\u003c\u003c\u0027 testing/resources/pixel/*.in | xargs git shortlog -nes\n     3  Nico Weber \u003cthakis@chromium.org\u003e\n     2  Lei Zhang \u003cthestig@chromium.org\u003e\n     1  Nicolas Pena \u003cnpm@chromium.org\u003e\n     1  dan sinclair \u003cdsinclair@chromium.org\u003e\n```",
+      "parentUuid": "54847f88_b971bc9a",
+      "revId": "2b3a7e920dddd15b7f1eef1a99e0f2ed4cee24e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
