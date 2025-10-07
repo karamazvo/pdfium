@@ -110,6 +110,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "1b211ba3_1cf0177f",
+        "filename": "testing/resources/pixel/composite-and-xnor.pdf",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-07T19:52:49Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "e4f4f603_a3ea7786",
+      "revId": "113f5d71f12b397d8776fd297c535612210459eb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "35e6e8e9_4bc98b58",
         "filename": "testing/resources/pixel/composite-and-xnor_expected.pdf.0.png",
         "patchSetId": 3
