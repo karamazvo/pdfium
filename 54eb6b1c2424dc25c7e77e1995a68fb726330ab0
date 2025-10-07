@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "39b9af5f_876062ab",
+        "filename": "fpdfsdk/cpdfsdk_pageview.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 542,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-07T22:48:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "521d3848_79ad5fe2",
+      "revId": "54eb6b1c2424dc25c7e77e1995a68fb726330ab0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e2a2546c_41cbfcb0",
@@ -31,6 +49,24 @@
       "writtenOn": "2025-10-03T21:19:27Z",
       "side": 1,
       "message": "Add a helper function instead of repeating lines 543-544?",
+      "revId": "54eb6b1c2424dc25c7e77e1995a68fb726330ab0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d087ba41_3ef996a3",
+        "filename": "fpdfsdk/cpdfsdk_pageview.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 554,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-07T22:48:44Z",
+      "side": 1,
+      "message": "I consolidated these lines into one check in https://pdfium-review.googlesource.com/c/pdfium/+/136310 so I don\u0027t think it makes sense to abstract them here.\n\nArguably I could have combined this CL with that one but I wanted to make the other one a \"pure refactoring\" to not confuse the issue about this bug fix.",
+      "parentUuid": "e2a2546c_41cbfcb0",
       "revId": "54eb6b1c2424dc25c7e77e1995a68fb726330ab0",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
