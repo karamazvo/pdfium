@@ -54,6 +54,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "5faee506_f9a48646",
+        "filename": "testing/resources/pixel/composite-and-xnor.pdf",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-10-07T00:29:54Z",
+      "side": 1,
+      "message": "We could create a third_party directory in here too, no? The DEPS rollery is a pain, I\u0027d rather not deal with that.",
+      "parentUuid": "004d53f2_fd8e87c1",
+      "revId": "113f5d71f12b397d8776fd297c535612210459eb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "35e6e8e9_4bc98b58",
