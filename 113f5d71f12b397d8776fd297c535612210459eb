@@ -36,6 +36,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "004d53f2_fd8e87c1",
+        "filename": "testing/resources/pixel/composite-and-xnor.pdf",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-07T00:07:43Z",
+      "side": 1,
+      "message": "A dedicated directory under https://pdfium.googlesource.com/pdfium_tests/+/refs/heads/main/third_party/ would make it clear these are from another project. Though there\u0027s more head with a manual PDFium DEPS roll. At least in this case, it wouldn\u0027t be too much work, since the C++ side fix didn\u0027t affect any other tests.",
+      "parentUuid": "0cddc75e_80184fd8",
+      "revId": "113f5d71f12b397d8776fd297c535612210459eb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "35e6e8e9_4bc98b58",
