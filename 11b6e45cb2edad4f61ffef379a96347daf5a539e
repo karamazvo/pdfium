@@ -16,6 +16,24 @@
       "message": "This line\u0027s messed up. Same in the other file.",
       "revId": "11b6e45cb2edad4f61ffef379a96347daf5a539e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c3b8b484_01829bb3",
+        "filename": "testing/resources/pixel/composite-and-xnor.in",
+        "patchSetId": 6
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-10-07T19:08:46Z",
+      "side": 1,
+      "message": "😱\n\nWhat\u0027s your ideal formatting for single element dicts? Like multiline? Something else?",
+      "parentUuid": "2fc6c79d_135a4f4d",
+      "revId": "11b6e45cb2edad4f61ffef379a96347daf5a539e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
