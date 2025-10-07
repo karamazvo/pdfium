@@ -122,6 +122,24 @@
       "parentUuid": "87cfb781_8825e0a0",
       "revId": "2b3a7e920dddd15b7f1eef1a99e0f2ed4cee24e6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3e07cc8f_d968ee73",
+        "filename": "testing/resources/pixel/composite-and-xnor.in",
+        "patchSetId": 5
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-10-07T18:57:44Z",
+      "side": 1,
+      "message": "(re-resolving as it\u0027s done)",
+      "parentUuid": "7f3c5f74_5615ec21",
+      "revId": "2b3a7e920dddd15b7f1eef1a99e0f2ed4cee24e6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
