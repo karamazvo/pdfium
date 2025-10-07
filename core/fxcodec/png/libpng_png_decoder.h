@@ -16,6 +16,13 @@
 #error "PNG must be enabled"
 #endif
 
+#ifdef PDF_ENABLE_RUST_PNG
+// TODO(https://crbug.com/444045690): After adding Rust-PNG-based decoding
+// support we should introduce a hard build error if `libpng` is used in
+// presence of the `PDF_ENABLE_RUST_PNG` macro definition:
+// #error "If Rust PNG is enabled, then `libpng` should not be used."
+#endif
+
 namespace fxcodec {
 
 class PngDecoderDelegate;

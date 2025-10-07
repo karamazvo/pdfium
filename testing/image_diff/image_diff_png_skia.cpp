@@ -13,12 +13,18 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/numerics/checked_math.h"
 #include "core/fxcrt/span.h"
-#include "third_party/skia/include/codec/SkPngDecoder.h"
 #include "third_party/skia/include/core/SkColorSpace.h"
 #include "third_party/skia/include/core/SkColorType.h"
 #include "third_party/skia/include/core/SkImageInfo.h"
 #include "third_party/skia/include/core/SkStream.h"
+
+#ifdef PDF_ENABLE_RUST_PNG
+#include "third_party/skia/include/codec/SkPngRustDecoder.h"
+#include "third_party/skia/include/encode/SkPngRustEncoder.h"
+#else
+#include "third_party/skia/include/codec/SkPngDecoder.h"
 #include "third_party/skia/include/encode/SkPngEncoder.h"
+#endif
 
 namespace image_diff_png {
 
@@ -40,7 +46,11 @@ std::vector<uint8_t> EncodePNG(pdfium::span<const uint8_t> input,
   CHECK_LE(info.computeMinByteSize(), row_byte_width);
 
   SkPixmap pixmap(info, input.data(), row_byte_width);
+#ifdef PDF_ENABLE_RUST_PNG
+  sk_sp<SkData> data = SkPngRustEncoder::Encode(pixmap, {});
+#else
   sk_sp<SkData> data = SkPngEncoder::Encode(pixmap, {});
+#endif
   SkSpan<const uint8_t> span = data->byteSpan();
   return std::vector<uint8_t>(span.begin(), span.end());
 }
@@ -56,8 +66,13 @@ std::vector<uint8_t> DecodePNG(pdfium::span<const uint8_t> input,
 
   auto stream = std::make_unique<SkMemoryStream>(input.data(), input.size(),
                                                  /*copyData=*/false);
+#ifdef PDF_ENABLE_RUST_PNG
+  std::unique_ptr<SkCodec> codec =
+      SkPngRustDecoder::Decode(std::move(stream), nullptr);
+#else
   std::unique_ptr<SkCodec> codec =
       SkPngDecoder::Decode(std::move(stream), nullptr);
+#endif
   if (!codec) {
     return {};
   }
