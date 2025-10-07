@@ -72,6 +72,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "211dd924_d4588eae",
+        "filename": "testing/resources/pixel/composite-and-xnor.pdf",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-07T17:44:57Z",
+      "side": 1,
+      "message": "Regardless of where exactly we put it, having a sub-directory would make syncing easier.\n\nIf the test files are all created by you, then I guess it could also be considered first party?\n\nDo you expect to check in any large images? If not, then putting it here is fine. The .git dir for the pdfium repo is ~190 MB here, and ~828 MB for the pdfium_tests repo. We put a large chunk of the test data in pdfium_tests to keep the pdfium checkout smaller.",
+      "parentUuid": "5faee506_f9a48646",
+      "revId": "113f5d71f12b397d8776fd297c535612210459eb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "35e6e8e9_4bc98b58",
