@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ffe53edf_76a58682",
+        "filename": "fpdfsdk/fpdf_formfill_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 981,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-07T22:48:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e9c46a77_c2c2ca0f",
+      "revId": "99728e055485a275f991a4f2d0148a602e941c92",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "43a2995f_bd4661f6",
@@ -35,6 +53,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f0733cdd_6ba5268d",
+        "filename": "xfa/fwl/fwl_widgetdef.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-07T22:48:35Z",
+      "side": 1,
+      "message": "Done. I thought it was fine making this inline but okay.",
+      "parentUuid": "43a2995f_bd4661f6",
+      "revId": "99728e055485a275f991a4f2d0148a602e941c92",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e17b93f5_0653e51f",
@@ -48,6 +84,24 @@
       "writtenOn": "2025-10-03T21:15:38Z",
       "side": 1,
       "message": "How does this cover the shift modifier?",
+      "revId": "99728e055485a275f991a4f2d0148a602e941c92",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e9c39221_0eb53be4",
+        "filename": "xfa/fxfa/cxfa_fffield.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 579,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-07T22:48:35Z",
+      "side": 1,
+      "message": "Just because there\u0027s no checking whether or not the shift flag is set, so this return false happens regardless of whether shift is pressed.\n\nIt actually also returns false for cmd+shift+A etc but that seems fine.",
+      "parentUuid": "e17b93f5_0653e51f",
       "revId": "99728e055485a275f991a4f2d0148a602e941c92",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
