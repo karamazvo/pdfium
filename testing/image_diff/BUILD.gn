@@ -6,17 +6,25 @@ import("../../pdfium.gni")
 
 source_set("image_diff") {
   testonly = true
-  sources = [
-    "image_diff_png_libpng.cpp",
-    "image_diff_png.h",
-  ]
+  sources = [ "image_diff_png.h" ]
+
+  # `pdf_enable_rust_png` is part of the condition below, because non-Rust
+  # Skia PNG codecs fail PDFium CQ - see for example CQ dry run for
+  # https://pdfium-review.googlesource.com/135630/23
+  if (pdf_use_skia && pdf_enable_rust_png) {
+    sources += [ "image_diff_png_skia.cpp" ]
+    deps = [ "//skia" ]
+  } else {
+    sources += [ "image_diff_png_libpng.cpp" ]
+    deps = [
+      "../../third_party:png",
+      "../../third_party:zlib",
+    ]
+  }
+
   configs += [
     "../../:pdfium_strict_config",
     "../../:pdfium_noshorten_config",
   ]
   public_deps = [ "../../core/fxcrt" ]
-  deps = [
-    "../../third_party:png",
-    "../../third_party:zlib",
-  ]
 }
