@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0c69e0c1_c1eeeb60",
+        "filename": "fpdfsdk/fpdf_formfill_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 948,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-07T22:48:20Z",
+      "side": 1,
+      "message": "Done. Removed \"such as Chrome\"",
+      "parentUuid": "f8b0cc6d_231bb6f3",
+      "range": {
+        "startLine": 945,
+        "startChar": 69,
+        "endLine": 948,
+        "endChar": 0
+      },
+      "revId": "d229d6c29f86f8b7efd79054a36f1aa4fc7b2dea",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7d7b570a_e056d943",
@@ -37,6 +61,24 @@
       "writtenOn": "2025-10-03T20:46:58Z",
       "side": 1,
       "message": "This is actually NOTREACHED() now. Or maybe the 2 switch statements can be combined.",
+      "revId": "d229d6c29f86f8b7efd79054a36f1aa4fc7b2dea",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "07834741_2d5f8692",
+        "filename": "fpdfsdk/pwl/cpwl_edit.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 577,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-07T22:48:20Z",
+      "side": 1,
+      "message": "Good point. I deleted the first switch and now the second one returns false instead of break.\n\nActually this function is kind of strange that it runs the parent class OnKeyDown handler and then kind of ignores it. I\u0027m not sure what to do with that. Maybe not relevant to this CL.\n\nI\u0027m not sure if it\u0027s even possible for cpwl_edit to have child elements. We are currently basically ignoring the validity checks in CPWL_Wnd::OnKeyDown though.",
+      "parentUuid": "7d7b570a_e056d943",
       "revId": "d229d6c29f86f8b7efd79054a36f1aa4fc7b2dea",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }

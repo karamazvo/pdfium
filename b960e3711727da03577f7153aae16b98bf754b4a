@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "dd179d70_bcaa2f12",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-07T22:48:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9c447b19_18a506a3",
+      "range": {
+        "startLine": 14,
+        "startChar": 34,
+        "endLine": 14,
+        "endChar": 37
+      },
+      "revId": "b960e3711727da03577f7153aae16b98bf754b4a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4fb14d05_219c1b09",
@@ -47,6 +71,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9b695652_8be686a1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-07T22:48:20Z",
+      "side": 1,
+      "message": "Not in this chain. I was going to explain more in the upcoming Chromium CL that will make all of the shortcuts use this OnKeyDown path on MacOS.\n\nBasically it works like this:\n\n 1. There\u0027s an objective-C++ plaform native event handler that checks for these shortcuts https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/ui/cocoa/accelerators_cocoa.mm;l\u003d36-37,46,82-90;drc\u003d0bf31feb3731abd3c1e09456575afd8ebaba6305\n 2. That becomes a mojo message and ends up here in C++ which calls ExecuteEditCommand(\"Undo\") etc https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/platform/widget/input/frame_widget_input_handler_impl.cc;l\u003d206;drc\u003de7c21c2a4b1c1b81de83b6a4a12375c055ae6e8a\n 3. That ends up in the PdfWebViewPlugin here https://source.chromium.org/chromium/chromium/src/+/main:pdf/pdf_view_web_plugin.cc;l\u003d930;drc\u003d73673cf4ab0c6ea4844aa6f545f90db0726e23cf\n \nSo basically when PDFium returns true from OnKeyDown it blocks that platform-specific event handler and PdfViewWebPlugin never gets the ExecuteEditCommand. That native event handler is necessary flash the edit menu.",
+      "parentUuid": "4fb14d05_219c1b09",
+      "range": {
+        "startLine": 15,
+        "startChar": 39,
+        "endLine": 16,
+        "endChar": 67
+      },
+      "revId": "b960e3711727da03577f7153aae16b98bf754b4a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3775f940_67ed0134",
@@ -60,6 +108,30 @@
       "writtenOn": "2025-10-03T20:41:17Z",
       "side": 1,
       "message": "Wouldn\u0027t this equally affect any embedder? Better to phrase in terms of a generic embedder.",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 50
+      },
+      "revId": "b960e3711727da03577f7153aae16b98bf754b4a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "36bc6929_650f5093",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-07T22:48:20Z",
+      "side": 1,
+      "message": "Done. I just don\u0027t have any awareness of how other embedders actually use these events.",
+      "parentUuid": "3775f940_67ed0134",
       "range": {
         "startLine": 17,
         "startChar": 0,
