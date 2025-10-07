@@ -52,6 +52,24 @@
       "parentUuid": "c3b8b484_01829bb3",
       "revId": "11b6e45cb2edad4f61ffef379a96347daf5a539e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f1381946_208071b2",
+        "filename": "testing/resources/pixel/composite-and-xnor.in",
+        "patchSetId": 6
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-10-07T19:43:53Z",
+      "side": 1,
+      "message": "Tweaked my script to filter through `mutool -a` which pretty-prints (thus handling this case) and ascii-hex-formats",
+      "parentUuid": "3a97b104_8599eb7c",
+      "revId": "11b6e45cb2edad4f61ffef379a96347daf5a539e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
