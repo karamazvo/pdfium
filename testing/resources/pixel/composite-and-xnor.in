@@ -1,0 +1,95 @@
+{{header}}
+
+{{object 1 0}}
+<<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+
+{{object 2 0}}
+<<
+  /Type /Pages
+  /Kids [3 0 R]
+  /Count 1
+>>
+endobj
+
+{{object 3 0}}
+<<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 399 400]
+  /Contents 4 0 R
+  /Resources <<
+    /XObject <<
+      /Im 5 0 R
+    >>
+  >>
+>>
+endobj
+
+{{object 4 0}}
+<<{{streamlen}}>>
+stream
+399 0 0 400 0 0 cm
+/Im Do
+endstream
+endobj
+
+{{object 5 0}}
+<<
+  {{streamlen}}
+  /Type /XObject
+  /Subtype /Image
+  /Width 399
+  /Height 400
+  /ColorSpace /DeviceGray
+  /Filter [/ASCIIHexDecode /JBIG2Decode]
+  /BitsPerComponent 1
+>>
+stream
+0000 0000 3000 0100 0000 1300 0001 8f00
+0001 9000 0000 0000 0000 0044 0000 0000
+0001 2700 0100 0000 5100 0000 8d00 0001
+9000 0000 0000 0000 0001 0003 fffd ff02
+fefe feab f290 cfbd a9a2 2f7a b088 c63a
+9b73 49ad a851 452f f0ee d1c1 a9d6 3317
+cb22 56ba 279d 3b3b 2847 0637 b607 36ad
+2ad3 7736 2ae8 fda2 ffac 0000 0002 2700
+0100 0000 5100 0000 8d00 0001 9000 0000
+0000 0000 0001 0003 fffd ff02 fefe feab
+f290 cfbd a9a2 2f7a b088 c63a 9b73 49ad
+a851 452f f0ee d1c1 a9d6 3317 cb22 56ba
+279d 3b3b 2847 0637 b607 36ad 2ad3 7736
+2ae8 fda2 ffac 0000 0003 2700 0100 0000
+dd00 0001 0200 0001 9000 0000 8d00 0000
+0003 0003 fffd ff02 fefe feab f3a2 ff5e
+dcfd f411 11c0 8b54 46d5 c936 7ed6 aea4
+9cb6 c908 5e20 cd57 8b49 4dad ed9b 8ea7
+342e 2c1e 951d 9fff 71a0 8df5 09d1 ff63
+a981 cf92 9942 152f 446a ac9d ceaa 0494
+d12f 61fb a0ff 793d a430 f5ef 7df0 1ff6
+7fe5 ae7f 4d1a e505 5012 366e fdc5 f67b
+de90 415c d5ee 6d78 a4a7 df93 8e94 2ec0
+b84e 65c8 56f8 ab97 7cd0 5fd2 4063 ff3e
+2efc 3b3d a531 fe1d 2896 6aff 2a07 747b
+8bb5 5e68 4cfd bef4 a745 e994 01fe 1de9
+7dcc fade 1432 560c 349b b667 bf42 43ba
+3fb1 a6a9 5a8d 8750 3d03 c67f ffac 0000
+0004 2700 0100 0000 3600 0000 1700 0000
+1700 0000 3c00 0000 be03 0003 fffd ff02
+fefe fe72 c6a7 6eee 7dd1 6e76 1e86 28c6
+b3c0 3cf8 6fbe 632f f8e2 bef7 7fff ac00
+0000 0527 0001 0000 0036 0000 0017 0000
+0017 0000 003c 0000 00be 0300 03ff fdff
+02fe fefe 72c6 a76e ee7d d16e 761e 8628
+c6b3 c03c f86f be63 2ff8 e2be f77f ffac
+>
+endstream
+endobj
+
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
