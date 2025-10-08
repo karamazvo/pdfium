@@ -1,0 +1,136 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "befe8b90_158374fa",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-08T17:48:42Z",
+      "side": 1,
+      "message": "Well, not just today, but really every since the initial commit...",
+      "range": {
+        "startLine": 15,
+        "startChar": 63,
+        "endLine": 15,
+        "endChar": 68
+      },
+      "revId": "487e7db145a1e6d1babfc12f382e576648f07408",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4a55c4e3_ae2e7aa0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-08T17:48:42Z",
+      "side": 1,
+      "message": "Still feels very specific to particular embedders. IMO, what would make sense more generally is: if PDFium didn\u0027t actually handle the event, then it should return false. If PDFium does nothing and just stops event propagation, then depending on the situation, that could make sense, or that could be a problem for embedders since it blocks them.",
+      "range": {
+        "startLine": 16,
+        "startChar": 11,
+        "endLine": 16,
+        "endChar": 41
+      },
+      "revId": "487e7db145a1e6d1babfc12f382e576648f07408",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3fb632b7_5aaa9c2f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-08T17:48:42Z",
+      "side": 1,
+      "message": "I don\u0027t believe PDFium has this expectation?",
+      "range": {
+        "startLine": 17,
+        "startChar": 14,
+        "endLine": 17,
+        "endChar": 35
+      },
+      "revId": "487e7db145a1e6d1babfc12f382e576648f07408",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3e7886e3_c3fb5e12",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-08T17:48:42Z",
+      "side": 1,
+      "message": "Since we don\u0027t know what all embedders do, it is unclear if this fixes anything for any particular embedder. From the PDFium perspective, it would make more sense to say \"This only affects interactions with non-XFA forms ...\".",
+      "range": {
+        "startLine": 20,
+        "startChar": 10,
+        "endLine": 20,
+        "endChar": 31
+      },
+      "revId": "487e7db145a1e6d1babfc12f382e576648f07408",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "51749759_04fe9a6d",
+        "filename": "fpdfsdk/fpdf_formfill_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 947,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-08T17:48:42Z",
+      "side": 1,
+      "message": "Is this how all programs on macOS behave? Or just some specific embedders?",
+      "range": {
+        "startLine": 946,
+        "startChar": 21,
+        "endLine": 947,
+        "endChar": 19
+      },
+      "revId": "487e7db145a1e6d1babfc12f382e576648f07408",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2db51c47_5181fb55",
+        "filename": "fpdfsdk/pwl/cpwl_edit.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 521,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-08T17:48:42Z",
+      "side": 1,
+      "message": "What about the pre-existing value here? Should line 562 return that as before, since CPWL_Wnd::OnKeyDown() can return true to indicate it handled the event?",
+      "revId": "487e7db145a1e6d1babfc12f382e576648f07408",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
