@@ -104,6 +104,24 @@
       "parentUuid": "e17b93f5_0653e51f",
       "revId": "99728e055485a275f991a4f2d0148a602e941c92",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "44927f4e_a20807fc",
+        "filename": "xfa/fxfa/cxfa_fffield.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 579,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-08T18:02:12Z",
+      "side": 1,
+      "message": "Got it. It seems very specific to call it out for `XFA_FWL_VKEY_Z`, when it applies to all the cases above too. Maybe just mention this after line 572 as an addendum?",
+      "parentUuid": "e9c39221_0eb53be4",
+      "revId": "99728e055485a275f991a4f2d0148a602e941c92",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
