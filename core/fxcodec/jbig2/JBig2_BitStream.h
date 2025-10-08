@@ -40,10 +40,10 @@ class CJBig2_BitStream {
   const uint8_t* getPointer() const;
   uint32_t getByteLeft() const;
   uint64_t getKey() const { return key_; }
-  bool IsInBounds() const;
 
  private:
   void AdvanceBit();
+  bool IsInBounds() const;
   uint32_t LengthInBits() const;
 
   const pdfium::raw_span<const uint8_t> span_;

@@ -52,9 +52,6 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate0Unopt(
   int LTP = 0;
   for (uint32_t h = 0; h < GRH; h++) {
     if (TPGRON) {
-      if (pArithDecoder->IsComplete()) {
-        return nullptr;
-      }
       LTP = LTP ^ pArithDecoder->Decode(&grContexts[0x0010]);
     }
     uint32_t lines[5];
@@ -77,10 +74,6 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate0Unopt(
       for (uint32_t w = 0; w < GRW; w++) {
         uint32_t CONTEXT =
             DecodeTemplate0UnoptCalculateContext(*GRREG, lines, w, h);
-        if (pArithDecoder->IsComplete()) {
-          return nullptr;
-        }
-
         int bVal = pArithDecoder->Decode(&grContexts[CONTEXT]);
         DecodeTemplate0UnoptSetPixel(GRREG.get(), lines, w, h, bVal);
       }
@@ -97,10 +90,6 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate0Unopt(
               (bVal == GRREFERENCE->GetPixel(w + 1, h + 1)))) {
           uint32_t CONTEXT =
               DecodeTemplate0UnoptCalculateContext(*GRREG, lines, w, h);
-          if (pArithDecoder->IsComplete()) {
-            return nullptr;
-          }
-
           bVal = pArithDecoder->Decode(&grContexts[CONTEXT]);
         }
         DecodeTemplate0UnoptSetPixel(GRREG.get(), lines, w, h, bVal);
@@ -179,9 +168,6 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate0Opt(
   intptr_t nOffset = -GRREFERENCEDY * nStrideR;
   for (int32_t h = 0; h < iGRH; h++) {
     if (TPGRON) {
-      if (pArithDecoder->IsComplete()) {
-        return nullptr;
-      }
       LTP = LTP ^ pArithDecoder->Decode(&grContexts[0x0010]);
     }
     uint32_t line1 = (h > 0) ? UNSAFE_TODO(pLine[-nStride]) << 4 : 0;
@@ -286,10 +272,6 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate0Opt(
                 (bVal == GRREFERENCE->GetPixel(w + k - 1, h + 1)) &&
                 (bVal == GRREFERENCE->GetPixel(w + k, h + 1)) &&
                 (bVal == GRREFERENCE->GetPixel(w + k + 1, h + 1)))) {
-            if (pArithDecoder->IsComplete()) {
-              return nullptr;
-            }
-
             bVal = pArithDecoder->Decode(&grContexts[CONTEXT]);
           }
           cVal |= bVal << (7 - k);
@@ -322,9 +304,6 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate1Unopt(
   int LTP = 0;
   for (uint32_t h = 0; h < GRH; h++) {
     if (TPGRON) {
-      if (pArithDecoder->IsComplete()) {
-        return nullptr;
-      }
       LTP = LTP ^ pArithDecoder->Decode(&grContexts[0x0008]);
     }
     if (!LTP) {
@@ -349,9 +328,6 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate1Unopt(
         CONTEXT |= line3 << 5;
         CONTEXT |= line2 << 6;
         CONTEXT |= line1 << 7;
-        if (pArithDecoder->IsComplete()) {
-          return nullptr;
-        }
         int bVal = pArithDecoder->Decode(&grContexts[CONTEXT]);
         GRREG->SetPixel(w, h, bVal);
         line1 = ((line1 << 1) | GRREG->GetPixel(w + 2, h - 1)) & 0x07;
@@ -397,9 +373,6 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate1Unopt(
           CONTEXT |= line3 << 5;
           CONTEXT |= line2 << 6;
           CONTEXT |= line1 << 7;
-          if (pArithDecoder->IsComplete()) {
-            return nullptr;
-          }
           bVal = pArithDecoder->Decode(&grContexts[CONTEXT]);
         }
         GRREG->SetPixel(w, h, bVal);
@@ -447,10 +420,6 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate1Opt(
   intptr_t nOffset = -GRREFERENCEDY * nStrideR;
   for (int32_t h = 0; h < iGRH; h++) {
     if (TPGRON) {
-      if (pArithDecoder->IsComplete()) {
-        return nullptr;
-      }
-
       LTP = LTP ^ pArithDecoder->Decode(&grContexts[0x0008]);
     }
     uint32_t line1 = (h > 0) ? UNSAFE_TODO(pLine[-nStride]) << 1 : 0;
@@ -548,10 +517,6 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate1Opt(
                 (bVal == GRREFERENCE->GetPixel(w + k - 1, h + 1)) &&
                 (bVal == GRREFERENCE->GetPixel(w + k, h + 1)) &&
                 (bVal == GRREFERENCE->GetPixel(w + k + 1, h + 1)))) {
-            if (pArithDecoder->IsComplete()) {
-              return nullptr;
-            }
-
             bVal = pArithDecoder->Decode(&grContexts[CONTEXT]);
           }
           cVal |= bVal << (7 - k);
