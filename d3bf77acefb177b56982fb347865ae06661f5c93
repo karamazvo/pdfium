@@ -16,6 +16,24 @@
       "message": "@thestig, can you PTAL?\n\nThis CL has been extracted from https://pdfium-review.googlesource.com//135630 based on your earlier feedback over chat.  And it should also address your feedback about improving integer overflow checks.\n\n-------------------\n\nThe CL passes CQ.  Earlier failures were caused by a silly mistake I made earlier - see https://pdfium-review.googlesource.com/c/pdfium/+/136570/1..2/testing/image_diff/image_diff_png_skia.cpp.  I don\u0027t know why it took me so long to identify this mistake - I should have focused on a local repro, rather than trying to avoid the pain of learning new things/tools and trying to compensate by guessing what the problem may be... :-/  Ugh...\n\nThe problem above is mostly my fault, but I wonder if `CHECK` failures in `is_debug \u003d true` mode could print something helpful to test logs?  Is this something worth opening a bug about?  Maybe the definition of [`CHECK(...)`](https://source.chromium.org/chromium/chromium/src/+/main:third_party/pdfium/core/fxcrt/check.h;l\u003d14-19;drc\u003df6d3ca2cd925785a8ba48c39af6a1678a20caf5f) can have `#ifndef NDEBUG`-gated `assert` call or some other logging?",
       "revId": "d3bf77acefb177b56982fb347865ae06661f5c93",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2b96516e_d57e36eb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-09T20:59:03Z",
+      "side": 1,
+      "message": "PDFium\u0027s CHECK() is a cheap knockoff of Chromium\u0027s CHECK(). I tried porting Chromium\u0027s CHECK() over, but it actually involved a lot of code, and I didn\u0027t care enough to maintain all that.",
+      "parentUuid": "bd85fa3f_91dbb6e7",
+      "revId": "d3bf77acefb177b56982fb347865ae06661f5c93",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
