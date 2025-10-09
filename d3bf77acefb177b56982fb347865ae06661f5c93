@@ -34,6 +34,63 @@
       "parentUuid": "bd85fa3f_91dbb6e7",
       "revId": "d3bf77acefb177b56982fb347865ae06661f5c93",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "89bce5d6_83cb0efd",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-09T21:14:59Z",
+      "side": 1,
+      "message": "I don\u0027t understand why the EncodePNG() passes in `pdfium::checked_cast\u003csize_t\u003e(width)`, and this passes `pdfium::checked_cast\u003cint\u003e(width)` onwards. Why not just pass `int width` all the way through?",
+      "range": {
+        "startLine": 37,
+        "startChar": 39,
+        "endLine": 37,
+        "endChar": 71
+      },
+      "revId": "d3bf77acefb177b56982fb347865ae06661f5c93",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dc50b41b_b5ec9e24",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-09T21:14:59Z",
+      "side": 1,
+      "message": "Not sure if it\u0027s worth the effort, but it would be possible to avoid a copy on line 45 if there was a SkWStream class, similar to the one in Chromium\u0027s third_party/blink/renderer/platform/image-encoders/image_encoder.h, that would write into a vector. Then one could use the other Encode() overload and write into the stream.",
+      "revId": "d3bf77acefb177b56982fb347865ae06661f5c93",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dd293476_28c29db8",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-09T21:14:59Z",
+      "side": 1,
+      "message": "Can you see if this code snippet handles negative values properly? If so, can this CL use FX_SAFE_SIZE_T in this manner?\n\n```\nFX_SAFE_SIZE_T expected_minimum_row_byte_width \u003d 3;\nexpected_minimum_row_byte_width *\u003d width;  // Where width is an int\nCHECK_LT(expected_minimum_row_byte_width.ValueOrDie(), ...);\n```",
+      "revId": "d3bf77acefb177b56982fb347865ae06661f5c93",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
