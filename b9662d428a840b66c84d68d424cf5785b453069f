@@ -1,0 +1,169 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "13d5ec54_316a0138",
+        "filename": "testing/image_diff/BUILD.gn",
+        "patchSetId": 4
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-10T06:00:34Z",
+      "side": 1,
+      "message": "Let\u0027s define an empty list after line 9, and then append to it here and on line 16. Doing so will likely work out better in the long run as build rules get more complicated.",
+      "revId": "b9662d428a840b66c84d68d424cf5785b453069f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e7386f5d_9ff053f8",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-10T06:00:34Z",
+      "side": 1,
+      "message": "Is checking `input.size()` against `info.computeMinByteSize()` sufficient?",
+      "revId": "b9662d428a840b66c84d68d424cf5785b453069f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "86fc592e_0f2712a7",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-10T06:00:34Z",
+      "side": 1,
+      "message": "Why not use minRowBytes()? That already returns a size_t.",
+      "range": {
+        "startLine": 39,
+        "startChar": 45,
+        "endLine": 39,
+        "endChar": 58
+      },
+      "revId": "b9662d428a840b66c84d68d424cf5785b453069f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "24ec5991_07246243",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-10T06:00:34Z",
+      "side": 1,
+      "message": "The existing libpng version only writes into these out-params on success. There\u0027s still a failure path below.",
+      "revId": "b9662d428a840b66c84d68d424cf5785b453069f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9a26fa46_423f8c91",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-10T06:00:34Z",
+      "side": 1,
+      "message": "Same comment as before re: FX_SAFE_SIZE_T usage.",
+      "revId": "b9662d428a840b66c84d68d424cf5785b453069f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "35df2344_97dac376",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-10T06:00:34Z",
+      "side": 1,
+      "message": "More computeMinByteSize() usage here?",
+      "revId": "b9662d428a840b66c84d68d424cf5785b453069f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6d14eaab_7be02143",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-10T06:00:34Z",
+      "side": 1,
+      "message": "Just copy 3 bytes at a time? There\u0027s fxcrt::spancpy(), for instance.",
+      "revId": "b9662d428a840b66c84d68d424cf5785b453069f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2ecd8022_a8cf8ec6",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-10T06:00:34Z",
+      "side": 1,
+      "message": "Is std::min() necessary?",
+      "range": {
+        "startLine": 123,
+        "startChar": 24,
+        "endLine": 123,
+        "endChar": 32
+      },
+      "revId": "b9662d428a840b66c84d68d424cf5785b453069f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "06d3774a_9654d858",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-10T06:00:34Z",
+      "side": 1,
+      "message": "The code already says this.",
+      "revId": "b9662d428a840b66c84d68d424cf5785b453069f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
