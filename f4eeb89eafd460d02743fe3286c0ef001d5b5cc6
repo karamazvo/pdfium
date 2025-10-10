@@ -90,10 +90,10 @@
       },
       "applicabilityExpressionResult": {},
       "submittabilityExpressionResult": {
-        "value": {"expression":{"expressionString":"label:Code-Review=MAX,user=non_uploader AND -label:Code-Review=MIN"},"status":"FAIL","errorMessage":{"value":null},"passingAtoms":[],"failingAtoms":["label:Code-Review=MAX,user=non_uploader","label:Code-Review=MIN"],"atomExplanations":{"value":null}}
+        "value": {"expression":{"expressionString":"label:Code-Review=MAX,user=non_uploader AND -label:Code-Review=MIN"},"status":"FAIL","errorMessage":{"value":null},"passingAtoms":[],"failingAtoms":["label:Code-Review=MAX,user=non_uploader","label:Code-Review=MIN"],"atomExplanations":{"value":{"label:Code-Review=MAX,user=non_uploader":"","label:Code-Review=MIN":""}}}
       },
       "overrideExpressionResult": {
-        "value": {"expression":{"expressionString":"label:Bot-Commit=+1 AND -label:Code-Review=MIN"},"status":"FAIL","errorMessage":{"value":null},"passingAtoms":[],"failingAtoms":["label:Bot-Commit=+1","label:Code-Review=MIN"],"atomExplanations":{"value":null}}
+        "value": {"expression":{"expressionString":"label:Bot-Commit=+1 AND -label:Code-Review=MIN"},"status":"FAIL","errorMessage":{"value":null},"passingAtoms":[],"failingAtoms":["label:Bot-Commit=+1","label:Code-Review=MIN"],"atomExplanations":{"value":{"label:Bot-Commit=+1":"","label:Code-Review=MIN":""}}}
       },
       "patchSetCommitId": "f4eeb89eafd460d02743fe3286c0ef001d5b5cc6",
       "legacy": {
@@ -124,7 +124,7 @@
         "allowOverrideInChildProjects": false
       },
       "applicabilityExpressionResult": {
-        "value": {"expression":{"expressionString":"has:unresolved"},"status":"FAIL","errorMessage":{"value":null},"passingAtoms":[],"failingAtoms":["has:unresolved"],"atomExplanations":{"value":null}}
+        "value": {"expression":{"expressionString":"has:unresolved"},"status":"FAIL","errorMessage":{"value":null},"passingAtoms":[],"failingAtoms":["has:unresolved"],"atomExplanations":{"value":{"has:unresolved":""}}}
       },
       "submittabilityExpressionResult": {
         "value": {"expression":{"expressionString":"-has:unresolved"},"status":"NOT_EVALUATED","errorMessage":{"value":null},"passingAtoms":[],"failingAtoms":[],"atomExplanations":{"value":null}}
@@ -143,7 +143,7 @@
       "submitRequirement": {
         "name": "Review-Enforcement",
         "description": {
-          "value": "Two Google employees must approve the change. Uploading the change or voting positively on Code-Review count as approval. Using a trusted device is required, see go/gerrit-onboarding#review-enforcement."
+          "value": "Two trusted contributors must approve the change. Uploading the change or voting positively on Code-Review count as approval. For Google employees, using a trusted device is required (go/gerrit-onboarding#review-enforcement). For non-Google employees, ReAuth is required (https://chromium.googlesource.com/chromium/src/+/HEAD/docs/gerrit_reauth.md)."
         },
         "applicabilityExpression": {
           "value": {
@@ -157,10 +157,10 @@
         "allowOverrideInChildProjects": false
       },
       "applicabilityExpressionResult": {
-        "value": {"expression":{"expressionString":"is:review-enforced_gerrit"},"status":"PASS","errorMessage":{"value":null},"passingAtoms":["is:review-enforced_gerrit"],"failingAtoms":[],"atomExplanations":{"value":null}}
+        "value": {"expression":{"expressionString":"is:review-enforced_gerrit"},"status":"PASS","errorMessage":{"value":null},"passingAtoms":["is:review-enforced_gerrit"],"failingAtoms":[],"atomExplanations":{"value":{"is:review-enforced_gerrit":""}}}
       },
       "submittabilityExpressionResult": {
-        "value": {"expression":{"expressionString":"is:review-enforcement-satisfied_gerrit"},"status":"FAIL","errorMessage":{"value":null},"passingAtoms":[],"failingAtoms":["is:review-enforcement-satisfied_gerrit"],"atomExplanations":{"value":null}}
+        "value": {"expression":{"expressionString":"is:review-enforcement-satisfied_gerrit"},"status":"FAIL","errorMessage":{"value":null},"passingAtoms":[],"failingAtoms":["is:review-enforcement-satisfied_gerrit"],"atomExplanations":{"value":{"is:review-enforcement-satisfied_gerrit":"No approvals present"}}}
       },
       "overrideExpressionResult": {},
       "patchSetCommitId": "f4eeb89eafd460d02743fe3286c0ef001d5b5cc6",
