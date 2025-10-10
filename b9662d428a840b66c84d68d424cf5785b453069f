@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "888b63f6_22dfa272",
+        "filename": "testing/image_diff/BUILD.gn",
+        "patchSetId": 4
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-10T23:32:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "13d5ec54_316a0138",
+      "revId": "b9662d428a840b66c84d68d424cf5785b453069f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e7386f5d_9ff053f8",
@@ -31,6 +49,24 @@
       "writtenOn": "2025-10-10T06:00:34Z",
       "side": 1,
       "message": "Is checking `input.size()` against `info.computeMinByteSize()` sufficient?",
+      "revId": "b9662d428a840b66c84d68d424cf5785b453069f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "09be67d2_70b6d2cb",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-10T23:32:24Z",
+      "side": 1,
+      "message": "I can do that.  The `LE` part of the comparison would be insufficient, because `computeMinByteSize` returns 0 when encountering conversion trouble, but we can check that separately.",
+      "parentUuid": "e7386f5d_9ff053f8",
       "revId": "b9662d428a840b66c84d68d424cf5785b453069f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -58,6 +94,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5abae8ab_53e031cc",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-10T23:32:24Z",
+      "side": 1,
+      "message": "I can use `minRowBytes` and also add a check that `minRowBytes` is not zero.",
+      "parentUuid": "86fc592e_0f2712a7",
+      "range": {
+        "startLine": 39,
+        "startChar": 45,
+        "endLine": 39,
+        "endChar": 58
+      },
+      "revId": "b9662d428a840b66c84d68d424cf5785b453069f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "24ec5991_07246243",
@@ -71,6 +131,24 @@
       "writtenOn": "2025-10-10T06:00:34Z",
       "side": 1,
       "message": "The existing libpng version only writes into these out-params on success. There\u0027s still a failure path below.",
+      "revId": "b9662d428a840b66c84d68d424cf5785b453069f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b95ade8d_b770ef70",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-10T23:32:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "24ec5991_07246243",
       "revId": "b9662d428a840b66c84d68d424cf5785b453069f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -92,6 +170,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1dbf3c5c_dd51e913",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-10T23:32:24Z",
+      "side": 1,
+      "message": "N/A after switching to `computeMinByteSize`",
+      "parentUuid": "9a26fa46_423f8c91",
+      "revId": "b9662d428a840b66c84d68d424cf5785b453069f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "35df2344_97dac376",
@@ -109,6 +205,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "59771ffa_ebd8a955",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-10T23:32:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "35df2344_97dac376",
+      "revId": "b9662d428a840b66c84d68d424cf5785b453069f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6d14eaab_7be02143",
@@ -122,6 +236,24 @@
       "writtenOn": "2025-10-10T06:00:34Z",
       "side": 1,
       "message": "Just copy 3 bytes at a time? There\u0027s fxcrt::spancpy(), for instance.",
+      "revId": "b9662d428a840b66c84d68d424cf5785b453069f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "52836c34_44ca6d9b",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-10T23:32:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6d14eaab_7be02143",
       "revId": "b9662d428a840b66c84d68d424cf5785b453069f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -149,6 +281,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2792769c_1409e022",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-10T23:32:24Z",
+      "side": 1,
+      "message": "I am not sure why I thought that it may legitimately go beyond the length of the span on the very last iteration.\n\nDone.",
+      "parentUuid": "2ecd8022_a8cf8ec6",
+      "range": {
+        "startLine": 123,
+        "startChar": 24,
+        "endLine": 123,
+        "endChar": 32
+      },
+      "revId": "b9662d428a840b66c84d68d424cf5785b453069f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "06d3774a_9654d858",
@@ -162,6 +318,24 @@
       "writtenOn": "2025-10-10T06:00:34Z",
       "side": 1,
       "message": "The code already says this.",
+      "revId": "b9662d428a840b66c84d68d424cf5785b453069f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f9c31576_862a304f",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-10T23:32:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "06d3774a_9654d858",
       "revId": "b9662d428a840b66c84d68d424cf5785b453069f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
