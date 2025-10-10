@@ -69,6 +69,24 @@
       "parentUuid": "c1bbfbbc_6f93f0d7",
       "revId": "d4fcd57b6063bfc923d20262a9a82b5d6e0ead78",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "da80e43a_993c9e9a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-10-10T18:37:55Z",
+      "side": 1,
+      "message": "https://pdfium-review.googlesource.com/c/pdfium/+/136730 is the pending roll.",
+      "parentUuid": "585d3707_7d54f028",
+      "revId": "d4fcd57b6063bfc923d20262a9a82b5d6e0ead78",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
