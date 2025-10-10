@@ -51,6 +51,24 @@
       "parentUuid": "5ee58e54_7b189729",
       "revId": "d4fcd57b6063bfc923d20262a9a82b5d6e0ead78",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "585d3707_7d54f028",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-10-10T18:31:49Z",
+      "side": 1,
+      "message": "https://pdfium-review.googlesource.com/c/pdfium/+/136230 was the latest roll. I can roll to 14.3 today.",
+      "parentUuid": "c1bbfbbc_6f93f0d7",
+      "revId": "d4fcd57b6063bfc923d20262a9a82b5d6e0ead78",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
