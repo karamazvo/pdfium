@@ -59,6 +59,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b54c06f4_ec55aa6f",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-10T01:41:31Z",
+      "side": 1,
+      "message": "Sure, I can do that.",
+      "parentUuid": "89bce5d6_83cb0efd",
+      "range": {
+        "startLine": 37,
+        "startChar": 39,
+        "endLine": 37,
+        "endChar": 71
+      },
+      "revId": "d3bf77acefb177b56982fb347865ae06661f5c93",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "dc50b41b_b5ec9e24",
@@ -76,6 +100,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b251c287_c47738e6",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-10T01:41:31Z",
+      "side": 1,
+      "message": "Yes, this is a bit suboptimal.  OTOH this seems ok for a test code.  And it also simplifies the test code, which seems desirable.",
+      "parentUuid": "dc50b41b_b5ec9e24",
+      "revId": "d3bf77acefb177b56982fb347865ae06661f5c93",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "dd293476_28c29db8",
@@ -89,6 +131,24 @@
       "writtenOn": "2025-10-09T21:14:59Z",
       "side": 1,
       "message": "Can you see if this code snippet handles negative values properly? If so, can this CL use FX_SAFE_SIZE_T in this manner?\n\n```\nFX_SAFE_SIZE_T expected_minimum_row_byte_width \u003d 3;\nexpected_minimum_row_byte_width *\u003d width;  // Where width is an int\nCHECK_LT(expected_minimum_row_byte_width.ValueOrDie(), ...);\n```",
+      "revId": "d3bf77acefb177b56982fb347865ae06661f5c93",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4d64193b_d96f7419",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-10T01:41:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dd293476_28c29db8",
       "revId": "d3bf77acefb177b56982fb347865ae06661f5c93",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
