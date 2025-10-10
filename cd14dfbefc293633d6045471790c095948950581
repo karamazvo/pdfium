@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "67b22888_8eb6d1d1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3686837
+      },
+      "writtenOn": "2025-10-10T15:29:07Z",
+      "side": 1,
+      "message": "Hello, Lei.\n\nI\u0027m trying to implement two APIs. This CL is currently a POC. Please take a look at it. Thank you!",
+      "revId": "cd14dfbefc293633d6045471790c095948950581",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
