@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f448c910_28f4b928",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3686837
+      },
+      "writtenOn": "2025-10-10T11:17:59Z",
+      "side": 1,
+      "message": "Please take a look at this CL and the test results below, thank you!\n\n```\naaron@debian:~/work/google/pdfium/pdfium$ python --version\nPython 3.13.7\naaron@debian:~/work/google/pdfium/pdfium$ echo \"test data\" \u003e input \u0026\u0026 python testing/tools/encode_pdf_filter.py input output \u0026\u0026 cat output\n\u003c\u003c\n  /Filter [/ASCII85Decode /FlateDecode]\n  {{streamlen}}\n\u003e\u003e\nstream\nGhOZ\u003e/M9mk8M!Ho!WWs\u0026\",-~\u003e\nendstream\n```",
+      "revId": "da7a9c2ceb708da4f2d0c92fe7c4b12e72faef53",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
