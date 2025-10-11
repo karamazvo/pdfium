@@ -75,6 +75,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fa4af824_9d6dd12a",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-11T00:48:49Z",
+      "side": 1,
+      "message": "Done.  FWIW, I was just copying from the Chromium declaration.",
+      "parentUuid": "ac8eb2b5_8b01c2cf",
+      "revId": "b085659f3cc8081b6650cf240a5307308a000339",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "87bf8db3_132dc34a",
@@ -88,6 +106,30 @@
       "writtenOn": "2025-10-11T00:06:52Z",
       "side": 1,
       "message": "If you are using `final`, then should the class itself be `final` as well?",
+      "range": {
+        "startLine": 41,
+        "startChar": 46,
+        "endLine": 41,
+        "endChar": 51
+      },
+      "revId": "b085659f3cc8081b6650cf240a5307308a000339",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9a7d4eca_80729932",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-11T00:48:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87bf8db3_132dc34a",
       "range": {
         "startLine": 41,
         "startChar": 46,
@@ -115,6 +157,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1aa0b64c_bdb8fbc5",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-11T00:48:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2caba2fd_30c6a441",
+      "revId": "b085659f3cc8081b6650cf240a5307308a000339",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "21ffd8d7_eb8a0f6e",
@@ -128,6 +188,30 @@
       "writtenOn": "2025-10-11T00:06:52Z",
       "side": 1,
       "message": "go/avoid-we, so just \"Manually calculate ...\"",
+      "range": {
+        "startLine": 115,
+        "startChar": 21,
+        "endLine": 115,
+        "endChar": 23
+      },
+      "revId": "b085659f3cc8081b6650cf240a5307308a000339",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4da977b1_16748f1c",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-11T00:48:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "21ffd8d7_eb8a0f6e",
       "range": {
         "startLine": 115,
         "startChar": 21,
@@ -161,6 +245,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8ecd5dca_05408495",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-11T00:48:49Z",
+      "side": 1,
+      "message": "I guess `..._row_byte_width` would be most consistent.  Done.",
+      "parentUuid": "5b16e418_5793f1b9",
+      "range": {
+        "startLine": 134,
+        "startChar": 9,
+        "endLine": 134,
+        "endChar": 33
+      },
+      "revId": "b085659f3cc8081b6650cf240a5307308a000339",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f159fdf7_f4dea345",
@@ -178,6 +286,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8e0ff829_0f5ae8bd",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-11T00:48:49Z",
+      "side": 1,
+      "message": "I think it\u0027s nice to limit the scope of `src` and `dst`.  But yes, I probably should move the 2 statements at the top out of the nested scope.  Done.",
+      "parentUuid": "f159fdf7_f4dea345",
+      "revId": "b085659f3cc8081b6650cf240a5307308a000339",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0005fa29_7857d2aa",
@@ -191,6 +317,30 @@
       "writtenOn": "2025-10-11T00:26:40Z",
       "side": 1,
       "message": "I want to think it may be possible to use int here and on the next line, but maybe I\u0027m wrong. It would be nicer to avoid the checked casts. If that is not possible, then how about doing the checked casts once outside of the for-loops?",
+      "range": {
+        "startLine": 143,
+        "startChar": 9,
+        "endLine": 143,
+        "endChar": 15
+      },
+      "revId": "b085659f3cc8081b6650cf240a5307308a000339",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "846d913e_21244c83",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-11T00:48:49Z",
+      "side": 1,
+      "message": "If you use `int` here, then we need to convert before calling `subspan`.\n\nSo, let me introduce a new variable called `width_as_size_t` and another for `height_as_size_t`.",
+      "parentUuid": "0005fa29_7857d2aa",
       "range": {
         "startLine": 143,
         "startChar": 9,
@@ -224,6 +374,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "924049c9_32dbbaf0",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-11T00:48:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eeee7c62_897b38d5",
+      "range": {
+        "startLine": 145,
+        "startChar": 70,
+        "endLine": 145,
+        "endChar": 72
+      },
+      "revId": "b085659f3cc8081b6650cf240a5307308a000339",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6047e910_86eb6e9a",
@@ -247,6 +421,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7d244ef1_cb9c6815",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-11T00:48:49Z",
+      "side": 1,
+      "message": "Ugh... this gets me sometimes after I\u0027ve spend quite a bit of time in Skia over the last year...\n\nDone.",
+      "parentUuid": "6047e910_86eb6e9a",
+      "range": {
+        "startLine": 147,
+        "startChar": 30,
+        "endLine": 147,
+        "endChar": 38
+      },
+      "revId": "b085659f3cc8081b6650cf240a5307308a000339",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "85064c9f_f5268124",
@@ -260,6 +458,24 @@
       "writtenOn": "2025-10-11T00:06:52Z",
       "side": 1,
       "message": "Does the compiler let us get away with a signed int here? I\u0027m guessing not. So please do the checked_cast once outside of the loop.",
+      "revId": "b085659f3cc8081b6650cf240a5307308a000339",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "737b31a1_15a05b02",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-11T00:48:49Z",
+      "side": 1,
+      "message": "`StrictNumeric` complains.\n\nDone.",
+      "parentUuid": "85064c9f_f5268124",
       "revId": "b085659f3cc8081b6650cf240a5307308a000339",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
