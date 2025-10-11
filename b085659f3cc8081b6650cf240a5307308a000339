@@ -140,6 +140,69 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "5b16e418_5793f1b9",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-11T00:26:40Z",
+      "side": 1,
+      "message": "Can this use \"byte_width\" instead of \"stride\" for consistency?",
+      "range": {
+        "startLine": 134,
+        "startChar": 9,
+        "endLine": 134,
+        "endChar": 33
+      },
+      "revId": "b085659f3cc8081b6650cf240a5307308a000339",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f159fdf7_f4dea345",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-11T00:26:40Z",
+      "side": 1,
+      "message": "Is this still needed? I can\u0027t tell what scoping issue this is fixing.",
+      "revId": "b085659f3cc8081b6650cf240a5307308a000339",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0005fa29_7857d2aa",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-11T00:26:40Z",
+      "side": 1,
+      "message": "I want to think it may be possible to use int here and on the next line, but maybe I\u0027m wrong. It would be nicer to avoid the checked casts. If that is not possible, then how about doing the checked casts once outside of the for-loops?",
+      "range": {
+        "startLine": 143,
+        "startChar": 9,
+        "endLine": 143,
+        "endChar": 15
+      },
+      "revId": "b085659f3cc8081b6650cf240a5307308a000339",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "eeee7c62_897b38d5",
         "filename": "testing/image_diff/image_diff_png_skia.cpp",
         "patchSetId": 8
