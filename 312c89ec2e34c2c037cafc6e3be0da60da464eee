@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "41514e66_c22b8173",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-11T00:54:21Z",
+      "side": 1,
+      "message": "Can this stay as \"row_byte_width\", and make the size_t version \"row_byte_width_as_size_t\"?\n\nIf you want to shorten the size_t variable names to \"foo_size_t\", that would be fine with me.",
+      "range": {
+        "startLine": 113,
+        "startChar": 38,
+        "endLine": 113,
+        "endChar": 56
+      },
+      "revId": "312c89ec2e34c2c037cafc6e3be0da60da464eee",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
