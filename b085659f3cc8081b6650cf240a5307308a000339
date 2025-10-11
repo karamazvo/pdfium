@@ -16,6 +16,189 @@
       "message": "@thestig, can you PTAL again?",
       "revId": "b085659f3cc8081b6650cf240a5307308a000339",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8cc26622_172dc05c",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-11T00:06:52Z",
+      "side": 1,
+      "message": "Unless you add it to Skia proper, I\u0027m not sure how else to do this. I\u0027m fine with leaving the comment here. We can figure it out later.",
+      "revId": "b085659f3cc8081b6650cf240a5307308a000339",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c404ca9c_839c93ad",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-11T00:06:52Z",
+      "side": 1,
+      "message": "Why BufferWStream and not VectorWStream? Just to use the same name as Chromium? OK.",
+      "range": {
+        "startLine": 30,
+        "startChar": 6,
+        "endLine": 30,
+        "endChar": 19
+      },
+      "revId": "b085659f3cc8081b6650cf240a5307308a000339",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ac8eb2b5_8b01c2cf",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-11T00:06:52Z",
+      "side": 1,
+      "message": "Since the code is a 1-liner, someone proficient in C++ can figure it out without this comment. Again, maybe I\u0027m just nitpicking at the Chromium code.",
+      "revId": "b085659f3cc8081b6650cf240a5307308a000339",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "87bf8db3_132dc34a",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-11T00:06:52Z",
+      "side": 1,
+      "message": "If you are using `final`, then should the class itself be `final` as well?",
+      "range": {
+        "startLine": 41,
+        "startChar": 46,
+        "endLine": 41,
+        "endChar": 51
+      },
+      "revId": "b085659f3cc8081b6650cf240a5307308a000339",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2caba2fd_30c6a441",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-11T00:06:52Z",
+      "side": 1,
+      "message": "Can `info` be consistently either the LHS or RHS of the checks? It\u0027s flip-flopping.",
+      "revId": "b085659f3cc8081b6650cf240a5307308a000339",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "21ffd8d7_eb8a0f6e",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-11T00:06:52Z",
+      "side": 1,
+      "message": "go/avoid-we, so just \"Manually calculate ...\"",
+      "range": {
+        "startLine": 115,
+        "startChar": 21,
+        "endLine": 115,
+        "endChar": 23
+      },
+      "revId": "b085659f3cc8081b6650cf240a5307308a000339",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eeee7c62_897b38d5",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-11T00:06:52Z",
+      "side": 1,
+      "message": "No \"we\" here either. Personally, I don\u0027t want to suffer an integer overflow. ;-)",
+      "range": {
+        "startLine": 145,
+        "startChar": 70,
+        "endLine": 145,
+        "endChar": 72
+      },
+      "revId": "b085659f3cc8081b6650cf240a5307308a000339",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6047e910_86eb6e9a",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-11T00:06:52Z",
+      "side": 1,
+      "message": "Style: dst_pixel/src_pixel (PDFium follows Chromium style, but Skia is not Skia-ium, so their naming style pre-dates this convention).",
+      "range": {
+        "startLine": 147,
+        "startChar": 30,
+        "endLine": 147,
+        "endChar": 38
+      },
+      "revId": "b085659f3cc8081b6650cf240a5307308a000339",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "85064c9f_f5268124",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-11T00:06:52Z",
+      "side": 1,
+      "message": "Does the compiler let us get away with a signed int here? I\u0027m guessing not. So please do the checked_cast once outside of the loop.",
+      "revId": "b085659f3cc8081b6650cf240a5307308a000339",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
