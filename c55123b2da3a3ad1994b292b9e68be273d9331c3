@@ -265,6 +265,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "7f31a6b8_ffb83682",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-13T16:03:33Z",
+      "side": 1,
+      "message": "\u003e \u003e \u003e Since this is about the encoder, you should try to intentionally break `pdfium_test --png`.\n\u003e \u003e \n\u003e \u003e How would I do that?\n\u003e \u003e \n\u003e \u003e Running `out/rust/pdfium_test` just says `No input files` and exits.  Adding a `--png` command-line flag doesn\u0027t change that.\n\u003e \n\u003e pdfium_test expects PDFs files as the arguments. See `pdfium_test --help` output. e.g `testing/resources/hello_world.pdf /tmp; path/to/pdfium_test --png /tmp/hello_world.pdf`\n\u003e  \n\u003e \u003e \u003e See EncodePng() comment in testing/helpers/write.cc.\n\u003e \u003e \n\u003e \u003e Can you please provide a code search link?  I searched for \"EncodePng\" in `testing/helpers/write.cc` and there were no comments.\n\u003e \n\u003e I meant this Gerrit comment re: EncodePng(): https://pdfium-review.googlesource.com/c/pdfium/+/135630/comment/65b3aab4_2f6d0e6a/\n\nRight - `testing/image_diff` is indeed covered by CQ + after this CL will use Rust PNG.\n\n`testing/helpers/write.cc` is not covered by CQ.  This seems ok.  I can manually trigger this code path by passing `--skp` instead of `--png` to `pdfium_test`.\n\nFWIW I\u0027ve checked with some ad-hoc / printf-style-debugging that `#ifdef PDF_ENABLE_RUST_PNG` is correctly set (with bot\u0027s `args.gn`) both in `testing/image_diff/image_diff_png_skia.cpp` and in `testing/helpers/write.cc`.",
+      "parentUuid": "b1b55c85_fb31aed2",
+      "range": {
+        "startLine": 23,
+        "startChar": 54,
+        "endLine": 24,
+        "endChar": 32
+      },
+      "revId": "c55123b2da3a3ad1994b292b9e68be273d9331c3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "1f3b70b2_b7c0c979",
         "filename": "/COMMIT_MSG",
         "patchSetId": 10
