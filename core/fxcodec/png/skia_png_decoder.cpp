@@ -262,6 +262,8 @@ bool CSkiaPngContext::CreateDecoder() {
   CHECK(!decoder_);
   SkCodec::Result result = SkCodec::kSuccess;
 #ifdef PDF_ENABLE_RUST_PNG
+  fprintf(stderr, "DO NOT SUBMIT - ad-hoc test\n");
+  NOTREACHED();
   decoder_ = SkPngRustDecoder::Decode(std::move(stream), &result);
 #else
   decoder_ = SkPngDecoder::Decode(std::move(stream), &result);
