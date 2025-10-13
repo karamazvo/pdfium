@@ -16,6 +16,23 @@
       "message": "@thestig, can you PTAL?\n\nI think this CL is ready for code review - recent patchsets have passed CQ (before I added a request 2 specific bots to the CL description).  But I want to be transparent that I am still trying to understand why `win_xfa_skia_rust` shows linking problems [1] in the follow-up, ad-hoc, do-not-submit CL.  AFAICT including https://skia-review.googlesource.com/c/skia/+/1070816/3/src/ports/SkScalerContext_win_dw.cpp should have avoided this specific linking problems, so I am not sure why I keep seeing this.  At any rate, even if Skia is not ready for no-`libpng`, the code in this CL will remain the same (and we just need to land this CL with a few extra tweaks to PDFium\u0027s `skia/BUILD.gn` - `if (is_win)` then we can retain `libpng` dependency).\n\n[1] e.g. from https://logs.chromium.org/logs/pdfium/buildbucket/cr-buildbucket/8701091558028473329/+/u/compile_with_siso/stdout\n\n```\n[4066/4949] 1m46.14s F LINK pdfium_diff.exe pdfium_diff.exe.pdb\t\nFAILED: ca8bc2cd-7009-4167-a2f8-5db2e69edde8 \"./pdfium_diff.exe\" LINK pdfium_diff.exe pdfium_diff.exe.pdb\nerr: exit\u003d1\n..\\..\\third_party\\llvm-build\\Release+Asserts\\bin\\lld-link.exe \"/OUT:./pdfium_diff.exe\" /nologo -libpath:../../third_party/llvm-build/Release+Asserts/lib/clang/22/lib/windows /winsysroot:../../third_party/depot_tools/win_toolchain/vs_files/e4305f407e /MACHINE:X64  \"/PDB:./pdfium_diff.exe.pdb\" \"@./pdfium_diff.exe.rsp\"\nbuild step: link \"./pdfium_diff.exe\"\nsiso_rule: lld-link/link\nstderr:\nlld-link: error: undefined symbol: class std::__Cr::unique_ptr\u003cclass SkCodec, struct std::__Cr::default_delete\u003cclass SkCodec\u003e\u003e __cdecl SkPngDecoder::Decode(class sk_sp\u003cclass SkData\u003e, enum SkCodec::Result *, void *)\n\u003e\u003e\u003e referenced by .\\..\\..\\third_party\\skia\\src\\ports\\SkScalerContext_win_dw.cpp:1740\n\u003e\u003e\u003e               obj/skia/skia/SkScalerContext_win_dw.obj:(private: bool __cdecl SkScalerContext_DW::generatePngMetrics(class SkGlyph const \u0026, struct SkRect *))\n```",
       "revId": "db72e8e3ecea93e87d681b1496aa3d15525767e7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e2e78138_15116551",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 21
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-13T23:28:16Z",
+      "side": 1,
+      "message": "JFYI: I can repro the `win_xfa_skia_rust` linking problems on my gWindows Cloudtop.  I\u0027ve verified that these problems would be fixed by https://review.skia.org/1073497",
+      "revId": "db72e8e3ecea93e87d681b1496aa3d15525767e7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
