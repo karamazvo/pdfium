@@ -52,6 +52,230 @@
       "parentUuid": "5c10dd07_52515fd8",
       "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c05a032b_f1bd8495",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 23
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-14T23:00:29Z",
+      "side": 1,
+      "message": "No worries.",
+      "parentUuid": "11efe8cc_9e6be68d",
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b530323f_35218019",
+        "filename": "core/fxcodec/png/png_decoder_delegate.h",
+        "patchSetId": 23
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-14T23:00:29Z",
+      "side": 1,
+      "message": "Probably not needed, given the filename already has \"libpng\" in it.",
+      "range": {
+        "startLine": 12,
+        "startChar": 34,
+        "endLine": 12,
+        "endChar": 48
+      },
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "150f5261_76a5e958",
+        "filename": "core/fxcodec/png/png_decoder_delegate.h",
+        "patchSetId": 23
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-14T23:00:29Z",
+      "side": 1,
+      "message": "The \"LHS\" is a .h file, but the \"RHS\" here is a .cpp file.",
+      "range": {
+        "startLine": 13,
+        "startChar": 53,
+        "endLine": 13,
+        "endChar": 56
+      },
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "af8ea4aa_baf42b76",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-14T23:00:29Z",
+      "side": 1,
+      "message": "Shouldn\u0027t be needed? Line 28 says this is already inside namespace fxcodec.",
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3284d4a5_47bd71d7",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-14T23:00:29Z",
+      "side": 1,
+      "message": "The \"C\" prefix is probably also not needed in new code.",
+      "range": {
+        "startLine": 36,
+        "startChar": 6,
+        "endLine": 36,
+        "endChar": 21
+      },
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "303aae66_984328f7",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-14T23:00:29Z",
+      "side": 1,
+      "message": "Here and below - better define who \"we\" refers to.",
+      "range": {
+        "startLine": 190,
+        "startChar": 78,
+        "endLine": 190,
+        "endChar": 80
+      },
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "85a652a0_ba1c958f",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-14T23:00:29Z",
+      "side": 1,
+      "message": "IWYU",
+      "range": {
+        "startLine": 202,
+        "startChar": 7,
+        "endLine": 202,
+        "endChar": 15
+      },
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b770536c_ef682a9c",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-14T23:00:29Z",
+      "side": 1,
+      "message": "Should this just be set to 1?",
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3889e746_377cac80",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-14T23:00:29Z",
+      "side": 1,
+      "message": "Given line 33, shorten?",
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d4bb753b_e43a1c9d",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 396,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-14T23:00:29Z",
+      "side": 1,
+      "message": "Can this code consistently use PDFium\u0027s span instead of std::span? You may need to deal with UNSAFE_BUFFERS...",
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "64854bdc_c2d95bcc",
+        "filename": "core/fxcodec/png/skia_png_decoder.h",
+        "patchSetId": 23
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-14T23:00:29Z",
+      "side": 1,
+      "message": "Would you mind not using Hungarian notation in new code? Use Google C++ style names instead.",
+      "range": {
+        "startLine": 33,
+        "startChar": 63,
+        "endLine": 33,
+        "endChar": 71
+      },
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
