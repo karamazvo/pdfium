@@ -34,6 +34,24 @@
       "parentUuid": "e8cf98e9_d4299785",
       "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "11efe8cc_9e6be68d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 23
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-14T22:50:54Z",
+      "side": 1,
+      "message": "Ooops - it seems that the earlier patchsets simply didn\u0027t include `mac_xfa_skia_rust` tryjobs in the CQ dry runs.  So I guess this CL is not ready for a review after all - sorry about that.",
+      "parentUuid": "5c10dd07_52515fd8",
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
