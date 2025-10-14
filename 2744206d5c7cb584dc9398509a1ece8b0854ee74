@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4db976a2_f1533e19",
+        "filename": "core/fxcodec/jbig2/jbig2_decoder.h",
+        "patchSetId": 20
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-14T04:53:05Z",
+      "side": 1,
+      "message": "There\u0027s only 1 caller that would use the default argument. Just pass in false there instead?",
+      "revId": "2744206d5c7cb584dc9398509a1ece8b0854ee74",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
