@@ -74,6 +74,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "00d9d2fc_5bbf54b3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 23
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-14T23:35:17Z",
+      "side": 1,
+      "message": "@thestig, can you please provide feedback on CQ coverage?  Should we consider adding `...xfa_skia_rust` bots to the PDFium CQ?  Possibly before landing this CL?",
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "b530323f_35218019",
         "filename": "core/fxcodec/png/png_decoder_delegate.h",
         "patchSetId": 23
@@ -135,6 +152,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fc4e6394_de369116",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-14T23:35:17Z",
+      "side": 1,
+      "message": "Done. (I didn\u0027t notice this when copying from `libpng_png_decoder.cpp` where things are not wrapped in the `fxcodec` namespace.)",
+      "parentUuid": "af8ea4aa_baf42b76",
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3284d4a5_47bd71d7",
@@ -148,6 +183,30 @@
       "writtenOn": "2025-10-14T23:00:29Z",
       "side": 1,
       "message": "The \"C\" prefix is probably also not needed in new code.",
+      "range": {
+        "startLine": 36,
+        "startChar": 6,
+        "endLine": 36,
+        "endChar": 21
+      },
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ed429c0d_6f3c70fe",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-14T23:35:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3284d4a5_47bd71d7",
       "range": {
         "startLine": 36,
         "startChar": 6,
@@ -177,6 +236,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "83cabadf_fdb89213",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-14T23:35:17Z",
+      "side": 1,
+      "message": "Encoded PNG pixels are actually a subset of these formats (various-bit-depths X (G, GA, RGB, RGBA, Indexed)).  But some PNG chunks (like [sBIT](https://www.w3.org/TR/png-3/#11sBIT)) can influence which color format Skia will recommend for decoder clients (e.g. see [here](https://source.chromium.org/chromium/chromium/src/+/main:third_party/skia/src/codec/SkPngRustCodec.cpp;l\u003d48-50;drc\u003d593c8eb07c6dcff050fdf70a8df1347417615bd4)).\n\nWe could in theory say `NOTREACHED` for color formats that are not used by Skia today.  But it seems more robust to handle all the enum values.\n\nBut... looking at this a bit more, it seems that `PngEncodedColorType src_color_type` is *only* used to calculate the number of components (in [`core/fxcodec/progressive_decoder.cpp`](https://source.chromium.org/chromium/chromium/src/+/main:third_party/pdfium/core/fxcodec/progressive_decoder.cpp;l\u003d99;drc\u003d1a1c55244b379198ca0eaa9498c1fd527850abb2)).  So I think I should refactor things (in a separate, prerequisite CL) to just pass the number of components instead of mapping color formats from one enum to another.\n\nLeaving this unresolved for now - I\u0027ll address it later (as part of rebasing on top of the other CL I am planning above).",
+      "parentUuid": "7aa0c35a_6d49a914",
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "303aae66_984328f7",
         "filename": "core/fxcodec/png/skia_png_decoder.cpp",
         "patchSetId": 23
@@ -188,6 +265,30 @@
       "writtenOn": "2025-10-14T23:00:29Z",
       "side": 1,
       "message": "Here and below - better define who \"we\" refers to.",
+      "range": {
+        "startLine": 190,
+        "startChar": 78,
+        "endLine": 190,
+        "endChar": 80
+      },
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aa2c2570_d52ce8c8",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-14T23:35:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "303aae66_984328f7",
       "range": {
         "startLine": 190,
         "startChar": 78,
@@ -221,6 +322,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "aa0a0b0d_f8b93c2b",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-14T23:35:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "85a652a0_ba1c958f",
+      "range": {
+        "startLine": 202,
+        "startChar": 7,
+        "endLine": 202,
+        "endChar": 15
+      },
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b770536c_ef682a9c",
@@ -234,6 +359,24 @@
       "writtenOn": "2025-10-14T23:00:29Z",
       "side": 1,
       "message": "Should this just be set to 1?",
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b4772e57_2b853dac",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-14T23:35:17Z",
+      "side": 1,
+      "message": "Sure, done.  I set it to `!0` to more accurately match `src_pass_number_ \u003d\u003d 0` check in https://source.chromium.org/chromium/chromium/src/+/main:third_party/pdfium/core/fxcodec/progressive_decoder.cpp;l\u003d619;drc\u003d1a1c55244b379198ca0eaa9498c1fd527850abb2.\n\nI guess refactoring this further would be better, but I wanted to avoid changing `libpng`-based implementation to avoid unnecessary risk.",
+      "parentUuid": "b770536c_ef682a9c",
       "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -255,6 +398,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "647e0a8f_8ab5fb9e",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-14T23:35:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3889e746_377cac80",
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d4bb753b_e43a1c9d",
@@ -268,6 +429,24 @@
       "writtenOn": "2025-10-14T23:00:29Z",
       "side": 1,
       "message": "Can this code consistently use PDFium\u0027s span instead of std::span? You may need to deal with UNSAFE_BUFFERS...",
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "109b9686_3fc8c71e",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 396,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-14T23:35:17Z",
+      "side": 1,
+      "message": "Ooops.  Done.",
+      "parentUuid": "d4bb753b_e43a1c9d",
       "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
