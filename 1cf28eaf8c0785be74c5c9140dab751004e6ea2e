@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aa00c692_4e347130",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 21
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-10-14T17:27:14Z",
+      "side": 1,
+      "message": "(needs a new stamp after default arg removal 🙏)",
+      "revId": "1cf28eaf8c0785be74c5c9140dab751004e6ea2e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
