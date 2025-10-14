@@ -9,12 +9,8 @@
 
 namespace fxcodec {
 
-// Abstract interface used by the `libpng`-based decoder from `png_decoder.h`
-// (in the future by Skia-based decoder from `skia_png_decoder.h`).
-//
-// TODO(https://crbug.com/444045690): Update the comment above once the
-// Skia-based decoder is implemented and/or the `libpng`-based decoder moved
-// to renamed .h/.cc files.
+// Abstract interface used by the `libpng`-based decoder from
+// `libpng_png_decoder.h` and from `skia_png_decoder.cpp`.
 class PngDecoderDelegate {
  public:
   // Color type specified in the PNG IHDR chunk.  See also
