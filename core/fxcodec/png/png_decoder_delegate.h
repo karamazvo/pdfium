@@ -17,20 +17,6 @@ namespace fxcodec {
 // to renamed .h/.cc files.
 class PngDecoderDelegate {
  public:
-  // Color type specified in the PNG IHDR chunk.  See also
-  // https://www.w3.org/TR/png-3/#6Colour-values and
-  // https://www.w3.org/TR/png-3/#11IHDR
-  //
-  // The enumerator values below have been picked to match 1) the PNG spec and
-  // 2) `PNG_COLOR_TYPE_...` constants from `libpng/png.h`.
-  enum class EncodedColorType : int {
-    kGrayscale = 0,
-    kTruecolor = 2,
-    kIndexedColor = 3,
-    kGrayscaleWithAlpha = 4,
-    kTruecolorWithAlpha = 6,
-  };
-
   // Color format to decode into.
   enum class DecodedColorType {
     kBgr,
@@ -40,8 +26,8 @@ class PngDecoderDelegate {
   // Called by `PngDecoder` after decoding the image header:
   //
   // * `width` and `height` specify image dimensions in pixels
-  // * `bpc` is number of bits per component (e.g. per red, or per alpha)
-  // * `src_color_type` is the color type the image has been encoded with
+  // * `bits_per_component` and `number_of_components` describe the format
+  //   of the encoded pixels
   //
   // Implementation should:
   //
@@ -51,9 +37,9 @@ class PngDecoderDelegate {
   // * TODO(crbug.com/355630556): Add out parameter for desired alpha-premul.
   virtual bool PngReadHeader(int width,
                              int height,
-                             int bpc,
+                             int bits_per_component,
+                             int number_of_components,
                              int pass,
-                             EncodedColorType src_color_type,
                              DecodedColorType* dst_color_type,
                              double* gamma) = 0;
 
@@ -68,11 +54,6 @@ class PngDecoderDelegate {
   // Called by `PngDecoder` Communicates that `line`th row has been decoded
   // enough to be displayed.
   virtual void PngFillScanlineBufCompleted(int line) = 0;
-
-  // Helper to get the number of components in the given `color_type`.  For
-  // example, when called with `EncodedColorType::kTruecolor` (RGB) the helper
-  // will return `3`.
-  static int GetNumberOfComponents(EncodedColorType color_type);
 };
 
 }  // namespace fxcodec
