@@ -16,6 +16,24 @@
       "message": "(I think this will do the wrong thing if /DecodeParms is also present. That\u0027s an exercise for future us.)",
       "revId": "d7d3ee50a38cda1494eb578d0a96f100da4015ae",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "34c4e5ad_04fd8734",
+        "filename": "testing/tools/pdftoin_shrdlu.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-10-14T15:26:32Z",
+      "side": 1,
+      "message": "(fixed by moving to `mutool -a`.)",
+      "parentUuid": "560afa33_cfe4a9fb",
+      "revId": "d7d3ee50a38cda1494eb578d0a96f100da4015ae",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
