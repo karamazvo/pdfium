@@ -25,6 +25,8 @@
 
 #define PNG_ERROR_SIZE 256
 
+// No-op change here.
+
 using PngDecoderDelegate = fxcodec::PngDecoderDelegate;
 using DecodedColorType = PngDecoderDelegate::DecodedColorType;
 using EncodedColorType = PngDecoderDelegate::EncodedColorType;
