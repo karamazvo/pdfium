@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cffef390_039ea7ae",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-15T23:02:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9e0dd44e_176c905d",
+      "range": {
+        "startLine": 14,
+        "startChar": 15,
+        "endLine": 14,
+        "endChar": 23
+      },
+      "revId": "75b57eccb69338809ed74c14d8b0cfb4816da25a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "09f9f042_8ef04eb0",
@@ -37,6 +61,30 @@
       "writtenOn": "2025-10-15T19:10:33Z",
       "side": 1,
       "message": "to",
+      "range": {
+        "startLine": 15,
+        "startChar": 33,
+        "endLine": 15,
+        "endChar": 37
+      },
+      "revId": "75b57eccb69338809ed74c14d8b0cfb4816da25a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6a505805_42b54658",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-15T23:02:50Z",
+      "side": 1,
+      "message": "Done. (Interestingly I thought that I am correctly using `into` convention from https://rust-lang.github.io/api-guidelines/naming.html#ad-hoc-conversions-follow-as_-to_-into_-conventions-c-conv but it turns out that indeed `to` would be more correct, because this is a `Copy` type.)",
+      "parentUuid": "09f9f042_8ef04eb0",
       "range": {
         "startLine": 15,
         "startChar": 33,
@@ -66,6 +114,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "8f7126e0_6bc04bdd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-15T23:02:50Z",
+      "side": 1,
+      "message": "Done - see https://pdfium-review.googlesource.com/136970",
+      "parentUuid": "f3271609_22338add",
+      "revId": "75b57eccb69338809ed74c14d8b0cfb4816da25a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "6b70249f_b2029a19",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1
@@ -77,6 +143,23 @@
       "writtenOn": "2025-10-15T19:01:21Z",
       "side": 1,
       "message": "@thestig, can you PTAL?\n\nDisclaimer: I still need to look into how to translate `SkImageInfo` into the data needed by PDFium.  But getting rid of the unnecessary `EncodedColorType` seems like a reasonable step toward that.",
+      "revId": "75b57eccb69338809ed74c14d8b0cfb4816da25a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dac15875_1361c5e3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-15T23:02:50Z",
+      "side": 1,
+      "message": "(disclaimer: comments are addressed but CQ dry run was just kicked off and didn\u0027t have a chance to finish yet)",
       "revId": "75b57eccb69338809ed74c14d8b0cfb4816da25a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
