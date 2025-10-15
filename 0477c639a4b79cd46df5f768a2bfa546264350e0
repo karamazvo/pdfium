@@ -16,6 +16,24 @@
       "message": "Got red bots.",
       "revId": "0477c639a4b79cd46df5f768a2bfa546264350e0",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8608d508_abef6f51",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-15T21:37:19Z",
+      "side": 1,
+      "message": "Fixed. Turns out XFA modifier flags were missing a conversion for Command and it was never used at all in XFA before.",
+      "parentUuid": "e10068e7_fd1130e8",
+      "revId": "0477c639a4b79cd46df5f768a2bfa546264350e0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }

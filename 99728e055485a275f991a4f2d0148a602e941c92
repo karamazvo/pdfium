@@ -122,6 +122,24 @@
       "parentUuid": "e9c39221_0eb53be4",
       "revId": "99728e055485a275f991a4f2d0148a602e941c92",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1fc0df93_4040dcba",
+        "filename": "xfa/fxfa/cxfa_fffield.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 579,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-15T21:37:19Z",
+      "side": 1,
+      "message": "I had mentioned it specifically because cmd/ctrl+shift+z is the redo shortcut which we need to not block so that the MacOS redo shortcut works in Chrome. Not blocking ctrl+shift+C for example is incidental.\n\nI moved the comment like you asked though.",
+      "parentUuid": "44927f4e_a20807fc",
+      "revId": "99728e055485a275f991a4f2d0148a602e941c92",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }

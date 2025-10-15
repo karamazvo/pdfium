@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3030df2b_0e2eefa1",
+        "filename": "xfa/fwl/cfwl_edit.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-15T21:37:19Z",
+      "side": 0,
+      "message": "Note: this was actually broken before because kCommand was never set before this CL. It is now set in fpdfsdk/fpdfxfa/cpdfxfa_widget.cpp\n\nSo this CL actually also fixes not typing into the field when command is held on MacOS. This is XFA text fields only. I don\u0027t think it\u0027s worth splitting that up into a separate bug report.",
+      "revId": "487e7db145a1e6d1babfc12f382e576648f07408",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
