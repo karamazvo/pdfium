@@ -33,6 +33,92 @@
       "message": "@lei\n\nfriendly ping",
       "revId": "cd14dfbefc293633d6045471790c095948950581",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c37fbdd8_335f622c",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 4239,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-15T04:25:07Z",
+      "side": 1,
+      "message": "Can this be a scoped object instead?",
+      "range": {
+        "startLine": 4239,
+        "startChar": 2,
+        "endLine": 4239,
+        "endChar": 11
+      },
+      "revId": "cd14dfbefc293633d6045471790c095948950581",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "50d8aa33_87e39c7f",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 4291,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-15T04:25:07Z",
+      "side": 1,
+      "message": "Please try to use LoadScopedSavedPage() here.",
+      "range": {
+        "startLine": 4291,
+        "startChar": 25,
+        "endLine": 4291,
+        "endChar": 38
+      },
+      "revId": "cd14dfbefc293633d6045471790c095948950581",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b51e3430_25677d61",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 4418,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-15T04:25:07Z",
+      "side": 1,
+      "message": "Merge with first assignment below.",
+      "revId": "cd14dfbefc293633d6045471790c095948950581",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8bd77cff_049e25b8",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 515,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-15T04:25:07Z",
+      "side": 1,
+      "message": "Please use Google C++ style in new code. More below.",
+      "range": {
+        "startLine": 515,
+        "startChar": 35,
+        "endLine": 515,
+        "endChar": 42
+      },
+      "revId": "cd14dfbefc293633d6045471790c095948950581",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
