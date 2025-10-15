@@ -47,6 +47,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "919de99d_d86ccbe5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-15T21:37:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4a55c4e3_ae2e7aa0",
+      "range": {
+        "startLine": 16,
+        "startChar": 11,
+        "endLine": 16,
+        "endChar": 41
+      },
+      "revId": "487e7db145a1e6d1babfc12f382e576648f07408",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3fb632b7_5aaa9c2f",
@@ -60,6 +84,30 @@
       "writtenOn": "2025-10-08T17:48:42Z",
       "side": 1,
       "message": "I don\u0027t believe PDFium has this expectation?",
+      "range": {
+        "startLine": 17,
+        "startChar": 14,
+        "endLine": 17,
+        "endChar": 35
+      },
+      "revId": "487e7db145a1e6d1babfc12f382e576648f07408",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5fc3c2a1_7c59e2b7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-15T21:37:03Z",
+      "side": 1,
+      "message": "Done. Updated it to \"don\u0027t return true for evens PDFium doesn\u0027t handle\"",
+      "parentUuid": "3fb632b7_5aaa9c2f",
       "range": {
         "startLine": 17,
         "startChar": 14,
@@ -93,6 +141,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cc012734_19575ecd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-15T21:37:03Z",
+      "side": 1,
+      "message": "Done. Rephrased but I still want to point out that this CL actually solves the cmd+z issue in Chrome.",
+      "parentUuid": "3e7886e3_c3fb5e12",
+      "range": {
+        "startLine": 20,
+        "startChar": 10,
+        "endLine": 20,
+        "endChar": 31
+      },
+      "revId": "487e7db145a1e6d1babfc12f382e576648f07408",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "51749759_04fe9a6d",
@@ -116,6 +188,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "676d3b9f_c8519fb8",
+        "filename": "fpdfsdk/fpdf_formfill_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 947,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-15T21:37:03Z",
+      "side": 1,
+      "message": "That\u0027s how the javascript/chrome event model behaves on MacOS. I\u0027m not sure how keyboard events work in native MacOS applications.",
+      "parentUuid": "51749759_04fe9a6d",
+      "range": {
+        "startLine": 946,
+        "startChar": 21,
+        "endLine": 947,
+        "endChar": 19
+      },
+      "revId": "487e7db145a1e6d1babfc12f382e576648f07408",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2db51c47_5181fb55",
@@ -129,6 +225,24 @@
       "writtenOn": "2025-10-08T17:48:42Z",
       "side": 1,
       "message": "What about the pre-existing value here? Should line 562 return that as before, since CPWL_Wnd::OnKeyDown() can return true to indicate it handled the event?",
+      "revId": "487e7db145a1e6d1babfc12f382e576648f07408",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2932343b_129dcb9e",
+        "filename": "fpdfsdk/pwl/cpwl_edit.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 521,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-15T21:37:03Z",
+      "side": 1,
+      "message": "This line is fairly weird and I spent some time digging before I changed it this way. Essentially it\u0027s calling the parent class function which we overrode, so that if this widget has any child widgets they would get called. I think in practice this function doesn\u0027t do anything though.\n\nBefore my change bRet was only returned when A,C,V,X, or Z was pressed and otherwise was completely ignored. No code in pdfium handled these keys in OnKeyDown. So effectively whenever we returned bRet it was always false.\n\nSo this change actually doesn\u0027t make any behavioral difference.\n\nHowever, it seems to me that the right thing to do is CPWL_Edit should only call the child/super handler if CPWL_Edit does not handle the event here [so instead of return false we should return CPWL_Wnd::OnKeyDown()]. Alternatively if CPWL_Wnd::OnKeyDown returns true CPWL_Edit could block handling the cursor keys and return true right away.\n\nI didn\u0027t make this change because I\u0027m not sure which option fits the pdfium child widgets model and it seemed unrelated to the cmd+z fix and I wasn\u0027t sure if I should change the behavior of this function for everyone just because it doesn\u0027t look right.",
+      "parentUuid": "2db51c47_5181fb55",
       "revId": "487e7db145a1e6d1babfc12f382e576648f07408",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
