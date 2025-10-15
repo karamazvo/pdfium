@@ -112,6 +112,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "638f0f7c_ce785398",
+        "filename": "core/fxcodec/png/png_decoder_delegate.h",
+        "patchSetId": 23
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-15T00:02:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b530323f_35218019",
+      "range": {
+        "startLine": 12,
+        "startChar": 34,
+        "endLine": 12,
+        "endChar": 48
+      },
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "150f5261_76a5e958",
@@ -125,6 +149,30 @@
       "writtenOn": "2025-10-14T23:00:29Z",
       "side": 1,
       "message": "The \"LHS\" is a .h file, but the \"RHS\" here is a .cpp file.",
+      "range": {
+        "startLine": 13,
+        "startChar": 53,
+        "endLine": 13,
+        "endChar": 56
+      },
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f0abfdf1_12a7adaa",
+        "filename": "core/fxcodec/png/png_decoder_delegate.h",
+        "patchSetId": 23
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-15T00:02:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "150f5261_76a5e958",
       "range": {
         "startLine": 13,
         "startChar": 53,
@@ -248,6 +296,24 @@
       "side": 1,
       "message": "Encoded PNG pixels are actually a subset of these formats (various-bit-depths X (G, GA, RGB, RGBA, Indexed)).  But some PNG chunks (like [sBIT](https://www.w3.org/TR/png-3/#11sBIT)) can influence which color format Skia will recommend for decoder clients (e.g. see [here](https://source.chromium.org/chromium/chromium/src/+/main:third_party/skia/src/codec/SkPngRustCodec.cpp;l\u003d48-50;drc\u003d593c8eb07c6dcff050fdf70a8df1347417615bd4)).\n\nWe could in theory say `NOTREACHED` for color formats that are not used by Skia today.  But it seems more robust to handle all the enum values.\n\nBut... looking at this a bit more, it seems that `PngEncodedColorType src_color_type` is *only* used to calculate the number of components (in [`core/fxcodec/progressive_decoder.cpp`](https://source.chromium.org/chromium/chromium/src/+/main:third_party/pdfium/core/fxcodec/progressive_decoder.cpp;l\u003d99;drc\u003d1a1c55244b379198ca0eaa9498c1fd527850abb2)).  So I think I should refactor things (in a separate, prerequisite CL) to just pass the number of components instead of mapping color formats from one enum to another.\n\nLeaving this unresolved for now - I\u0027ll address it later (as part of rebasing on top of the other CL I am planning above).",
       "parentUuid": "7aa0c35a_6d49a914",
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a41a7d28_c9b2459a",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-15T00:02:44Z",
+      "side": 1,
+      "message": "Done.  Although we still need to handle all the different Skia color types here.  AFAICT there is no public Skia API to directly get the number of components in `SkImageInfo` and/or `SkColorType`.  I think this is okay.",
+      "parentUuid": "83cabadf_fdb89213",
       "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -464,6 +530,30 @@
       "writtenOn": "2025-10-14T23:00:29Z",
       "side": 1,
       "message": "Would you mind not using Hungarian notation in new code? Use Google C++ style names instead.",
+      "range": {
+        "startLine": 33,
+        "startChar": 63,
+        "endLine": 33,
+        "endChar": 71
+      },
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9c3c09a3_886fbc83",
+        "filename": "core/fxcodec/png/skia_png_decoder.h",
+        "patchSetId": 23
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-15T00:02:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "64854bdc_c2d95bcc",
       "range": {
         "startLine": 33,
         "startChar": 63,
