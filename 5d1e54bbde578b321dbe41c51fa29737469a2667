@@ -1,0 +1,78 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e16d7741_97d34f74",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 26
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-15T02:31:41Z",
+      "side": 1,
+      "message": "Can someone more familiar with Skia PNG decoding help take a look?",
+      "revId": "5d1e54bbde578b321dbe41c51fa29737469a2667",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b979e0b1_8a76ace4",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 26
+      },
+      "lineNbr": 391,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-15T02:31:41Z",
+      "side": 1,
+      "message": "Why not use addr8() and avoid the reinterpret_cast?",
+      "range": {
+        "startLine": 391,
+        "startChar": 51,
+        "endLine": 391,
+        "endChar": 57
+      },
+      "revId": "5d1e54bbde578b321dbe41c51fa29737469a2667",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9ecb91a0_13db6a36",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 26
+      },
+      "lineNbr": 392,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-15T02:31:41Z",
+      "side": 1,
+      "message": "In production code, we\u0027ve been trying to consistently write a comment to explain why it\u0027s safe.\n\n```\n// SAFETY: ...\nauto src_bgra \u003d UNSAFE_BUFFERS(...);\n```",
+      "revId": "5d1e54bbde578b321dbe41c51fa29737469a2667",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "87f28099_767b157c",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 26
+      },
+      "lineNbr": 399,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-15T02:31:41Z",
+      "side": 1,
+      "message": "Can you write a CL to change PngAskScanlineBuf() to return a span instead?",
+      "revId": "5d1e54bbde578b321dbe41c51fa29737469a2667",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
