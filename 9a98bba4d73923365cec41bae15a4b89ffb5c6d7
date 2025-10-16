@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "45948ab3_8f664b52",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-16T23:06:06Z",
+      "side": 1,
+      "message": "@thestig, can you PTAL?  This is mostly for:\n\n* `SkDynamicMemoryWStream::detachAsVector` from https://skia.googlesource.com/skia.git/+/74b4235b73bd339ecd0e5a8194fe4ef8d79fc8a3\n* Eliminating internal Skia \u003d\u003e libpng dependency on Windows in https://skia.googlesource.com/skia.git/+/2c5fe48ae601636c645b3e0e01bcbb8de11db266",
+      "revId": "9a98bba4d73923365cec41bae15a4b89ffb5c6d7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
