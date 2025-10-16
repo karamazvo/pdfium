@@ -18,6 +18,23 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6d1c6c9d_368cbbc8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-10-16T20:32:50Z",
+      "side": 1,
+      "message": "Thanks!",
+      "revId": "471179a6343029f2bc1bffa64912c84a534cd8ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "950a8d1b_3d90cc37",
@@ -35,6 +52,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "004b990b_92e87d92",
+        "filename": "testing/tools/pdftoin_shrdlu.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-10-16T20:32:50Z",
+      "side": 1,
+      "message": "\"pdftoin\" reminded me of https://en.wikipedia.org/wiki/Etaoin_shrdlu (and it\u0027s a nice unique sequence of characters to ctrl-r this by)",
+      "parentUuid": "950a8d1b_3d90cc37",
+      "revId": "471179a6343029f2bc1bffa64912c84a534cd8ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c11ca592_5d154b1f",
@@ -48,6 +83,24 @@
       "writtenOn": "2025-10-16T17:05:50Z",
       "side": 1,
       "message": "Not used?",
+      "revId": "471179a6343029f2bc1bffa64912c84a534cd8ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e1ba2d41_f866c6f6",
+        "filename": "testing/tools/pdftoin_shrdlu.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-10-16T20:32:50Z",
+      "side": 1,
+      "message": "Sorry, forgot to remove this!",
+      "parentUuid": "c11ca592_5d154b1f",
       "revId": "471179a6343029f2bc1bffa64912c84a534cd8ef",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -75,6 +128,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "260c31bd_1df43b8f",
+        "filename": "testing/tools/pdftoin_shrdlu.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-10-16T20:32:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cdb07475_f97f5443",
+      "range": {
+        "startLine": 69,
+        "startChar": 30,
+        "endLine": 69,
+        "endChar": 36
+      },
+      "revId": "471179a6343029f2bc1bffa64912c84a534cd8ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "985de852_95e1bb56",
@@ -88,6 +165,30 @@
       "writtenOn": "2025-10-16T17:05:50Z",
       "side": 1,
       "message": "Should the mode be \u0027wb\u0027 in case there\u0027s still bianry data somewhere?",
+      "range": {
+        "startLine": 108,
+        "startChar": 28,
+        "endLine": 108,
+        "endChar": 29
+      },
+      "revId": "471179a6343029f2bc1bffa64912c84a534cd8ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1545355d_f710ace8",
+        "filename": "testing/tools/pdftoin_shrdlu.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-10-16T20:32:50Z",
+      "side": 1,
+      "message": "There won\u0027t be binary data because `content_str \u003d content.decode(\u0027latin-1\u0027, errors\u003d\u0027replace\u0027)` converts that to text (and then re-encodes it to utf-8 here if it\u0027s present). In other words, if there\u0027s binary data left after `mutool -a` and after stripping the header, it\u0027ll get corrupted. (\"best-effort\" etc.)\n\nI think outside of streams but inside of objects (which is all we keep), PDFs shouldn\u0027t contain binary data (?)",
+      "parentUuid": "985de852_95e1bb56",
       "range": {
         "startLine": 108,
         "startChar": 28,
