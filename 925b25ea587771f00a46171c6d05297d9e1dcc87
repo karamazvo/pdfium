@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0bf31dab_c95eb485",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-16T02:42:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "84258ffd_69ce08c9",
+      "range": {
+        "startLine": 7,
+        "startChar": 42,
+        "endLine": 7,
+        "endChar": 62
+      },
+      "revId": "925b25ea587771f00a46171c6d05297d9e1dcc87",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3a9ce8a1_38f1c040",
@@ -41,6 +65,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "98fd34bc_adaa4f62",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-16T02:42:47Z",
+      "side": 1,
+      "message": "Ugh... It\u0027s not the first time when I update (and self-review) a CL but forget to also look at the CL description... :-/\n\nDone",
+      "parentUuid": "3a9ce8a1_38f1c040",
+      "revId": "925b25ea587771f00a46171c6d05297d9e1dcc87",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0d651e53_e42f310c",
@@ -54,6 +96,24 @@
       "writtenOn": "2025-10-16T01:31:21Z",
       "side": 1,
       "message": "No need to initialize.",
+      "revId": "925b25ea587771f00a46171c6d05297d9e1dcc87",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e65c1713_dbe70d8b",
+        "filename": "core/fxcodec/png/libpng_png_decoder.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-16T02:42:47Z",
+      "side": 1,
+      "message": "Better safe than sorry?  Always using initialization means that you don\u0027t need to worry as much about leaving things uninitialized (uninitialized \u003d UB;  initialized with 0 - probably also bad, but at least not UB).  And a sufficiently smart compiler should elide the unnecessary initialization?  Although I guess with C++26 this will automatically get initialized to 0, so maybe we should indeed focus on conveying intent.\n\nSo, reluctantly done?",
+      "parentUuid": "0d651e53_e42f310c",
       "revId": "925b25ea587771f00a46171c6d05297d9e1dcc87",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
