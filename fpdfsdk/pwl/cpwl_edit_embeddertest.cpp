@@ -6,6 +6,7 @@
 
 #include <utility>
 
+#include "constants/ascii.h"
 #include "fpdfsdk/cpdfsdk_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
@@ -41,10 +42,10 @@ class CPWLEditEmbedderTest : public EmbedderTest {
     }
 
     // Read-only text field.
-    CPDFSDK_Annot* pAnnotReadOnly = iter.GetNextAnnot(annot_);
+    CPDFSDK_Annot* annot_read_only = iter.GetNextAnnot(annot_);
 
     // Pre-filled text field with char limit of 10.
-    annot_char_limit_ = ToCPDFSDKWidget(iter.GetNextAnnot(pAnnotReadOnly));
+    annot_char_limit_ = ToCPDFSDKWidget(iter.GetNextAnnot(annot_read_only));
     if (!annot_char_limit_) {
       ADD_FAILURE();
       return ScopedPage();
@@ -61,8 +62,8 @@ class CPWLEditEmbedderTest : public EmbedderTest {
       return ScopedPage();
     }
 
-    CPDFSDK_Annot* pLastAnnot = iter.GetLastAnnot();
-    if (password_annot != pLastAnnot) {
+    CPDFSDK_Annot* last_annot = iter.GetLastAnnot();
+    if (password_annot != last_annot) {
       ADD_FAILURE();
       return ScopedPage();
     }
@@ -70,21 +71,86 @@ class CPWLEditEmbedderTest : public EmbedderTest {
   }
 
   void FormFillerAndWindowSetup(CPDFSDK_Widget* pAnnotTextField) {
-    CFFL_InteractiveFormFiller* pInteractiveFormFiller =
+    CFFL_InteractiveFormFiller* interactive_form_filler =
         form_fill_env_->GetInteractiveFormFiller();
     {
-      ObservedPtr<CPDFSDK_Widget> pObserved(pAnnotTextField);
-      EXPECT_TRUE(pInteractiveFormFiller->OnSetFocus(pObserved, {}));
+      ObservedPtr<CPDFSDK_Widget> observed(pAnnotTextField);
+      EXPECT_TRUE(interactive_form_filler->OnSetFocus(observed, {}));
     }
 
     form_filler_ =
-        pInteractiveFormFiller->GetFormFieldForTesting(pAnnotTextField);
+        interactive_form_filler->GetFormFieldForTesting(pAnnotTextField);
     ASSERT_TRUE(form_filler_);
 
-    CPWL_Wnd* pWindow =
+    CPWL_Wnd* window =
         form_filler_->GetPWLWindow(form_fill_env_->GetPageViewAtIndex(0));
-    ASSERT_TRUE(pWindow);
-    edit_ = static_cast<CPWL_Edit*>(pWindow);
+    ASSERT_TRUE(window);
+    edit_ = static_cast<CPWL_Edit*>(window);
+  }
+
+  void TypeTextIntoTextField(int num_chars) {
+    // Type text starting with 'A' to as many chars as specified by |num_chars|.
+    for (int i = 0; i < num_chars; ++i) {
+      EXPECT_TRUE(GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnot(), i + 'A', {}));
+    }
+  }
+
+  CPWL_Edit* GetCPWLEdit() { return edit_; }
+  CFFL_FormField* GetCFFLFormFiller() { return form_filler_; }
+  CPDFSDK_Widget* GetCPDFSDKAnnot() { return annot_; }
+  CPDFSDK_Widget* GetCPDFSDKAnnotCharLimit() { return annot_char_limit_; }
+
+ private:
+  CPWL_Edit* edit_;
+  CFFL_FormField* form_filler_;
+  CPDFSDK_Widget* annot_;
+  CPDFSDK_Widget* annot_char_limit_;
+  CPDFSDK_FormFillEnvironment* form_fill_env_;
+};
+
+class CPWLEditMultilineEmbedderTest : public EmbedderTest {
+ protected:
+  void SetUp() override {
+    EmbedderTest::SetUp();
+    ASSERT_TRUE(OpenDocument("text_form_multiline.pdf"));
+  }
+
+  ScopedPage CreateAndInitializeFormPDF() {
+    ScopedPage page = LoadScopedPage(0);
+    if (!page) {
+      ADD_FAILURE();
+      return ScopedPage();
+    }
+    form_fill_env_ =
+        CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
+    CPDFSDK_AnnotIterator iter(form_fill_env_->GetPageViewAtIndex(0),
+                               {CPDF_Annot::Subtype::WIDGET});
+    // Normal text field.
+    annot_ = ToCPDFSDKWidget(iter.GetFirstAnnot());
+    if (!annot_) {
+      ADD_FAILURE();
+      return ScopedPage();
+    }
+
+    return page;
+  }
+
+  void FormFillerAndWindowSetup(CPDFSDK_Widget* pAnnotTextField) {
+    CFFL_InteractiveFormFiller* interactive_form_filler =
+        form_fill_env_->GetInteractiveFormFiller();
+    {
+      ObservedPtr<CPDFSDK_Widget> observed(pAnnotTextField);
+      EXPECT_TRUE(interactive_form_filler->OnSetFocus(observed, {}));
+    }
+
+    form_filler_ =
+        interactive_form_filler->GetFormFieldForTesting(pAnnotTextField);
+    ASSERT_TRUE(form_filler_);
+
+    CPWL_Wnd* window =
+        form_filler_->GetPWLWindow(form_fill_env_->GetPageViewAtIndex(0));
+    ASSERT_TRUE(window);
+    edit_ = static_cast<CPWL_Edit*>(window);
   }
 
   void TypeTextIntoTextField(int num_chars) {
@@ -608,4 +674,124 @@ TEST_F(CPWLEditEmbedderTest, ReplaceSelectionRedoQueueLimit) {
   EXPECT_EQ(L"ABCDEFGHIJKLM", GetCPWLEdit()->GetText());
   // Typing "A" was the only item left on the undo stack
   EXPECT_FALSE(GetCPWLEdit()->Undo());
+}
+
+TEST_F(CPWLEditEmbedderTest, BackspaceUndoRedo) {
+  ScopedPage page = CreateAndInitializeFormPDF();
+  ASSERT_TRUE(page);
+  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+
+  TypeTextIntoTextField(3);
+  EXPECT_EQ(L"ABC", GetCPWLEdit()->GetText());
+
+  EXPECT_TRUE(GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnot(),
+                                          pdfium::ascii::kBackspace, {}));
+  EXPECT_EQ(L"AB", GetCPWLEdit()->GetText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanUndo());
+  EXPECT_TRUE(GetCPWLEdit()->Undo());
+  EXPECT_EQ(L"ABC", GetCPWLEdit()->GetText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanRedo());
+  EXPECT_TRUE(GetCPWLEdit()->Redo());
+  EXPECT_EQ(L"AB", GetCPWLEdit()->GetText());
+  EXPECT_FALSE(GetCPWLEdit()->CanRedo());
+}
+
+TEST_F(CPWLEditEmbedderTest, BackspaceOverSelectionUndoRedo) {
+  ScopedPage page = CreateAndInitializeFormPDF();
+  ASSERT_TRUE(page);
+  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+
+  TypeTextIntoTextField(3);
+  GetCPWLEdit()->SetSelection(0, -1);
+  EXPECT_EQ(L"ABC", GetCPWLEdit()->GetSelectedText());
+
+  EXPECT_TRUE(GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnot(),
+                                          pdfium::ascii::kBackspace, {}));
+  EXPECT_EQ(L"", GetCPWLEdit()->GetText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanUndo());
+  EXPECT_TRUE(GetCPWLEdit()->Undo());
+  EXPECT_EQ(L"ABC", GetCPWLEdit()->GetSelectedText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanRedo());
+  EXPECT_TRUE(GetCPWLEdit()->Redo());
+  EXPECT_EQ(L"", GetCPWLEdit()->GetText());
+  EXPECT_FALSE(GetCPWLEdit()->CanRedo());
+}
+
+TEST_F(CPWLEditEmbedderTest, TypeOverSelectionUndoRedo) {
+  ScopedPage page = CreateAndInitializeFormPDF();
+  ASSERT_TRUE(page);
+  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+
+  TypeTextIntoTextField(3);
+  GetCPWLEdit()->SetSelection(0, -1);
+  EXPECT_EQ(L"ABC", GetCPWLEdit()->GetSelectedText());
+
+  EXPECT_TRUE(GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnot(), 'Z', {}));
+  EXPECT_EQ(L"Z", GetCPWLEdit()->GetText());
+  EXPECT_EQ(L"", GetCPWLEdit()->GetSelectedText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanUndo());
+  // TODO(crbug.com/446727801): Only one undo/redo should be needed
+  EXPECT_TRUE(GetCPWLEdit()->Undo());
+  EXPECT_TRUE(GetCPWLEdit()->Undo());
+  EXPECT_EQ(L"ABC", GetCPWLEdit()->GetSelectedText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanRedo());
+  EXPECT_TRUE(GetCPWLEdit()->Redo());
+  EXPECT_TRUE(GetCPWLEdit()->Redo());
+  EXPECT_EQ(L"Z", GetCPWLEdit()->GetText());
+  EXPECT_EQ(L"", GetCPWLEdit()->GetSelectedText());
+  EXPECT_FALSE(GetCPWLEdit()->CanRedo());
+}
+
+TEST_F(CPWLEditMultilineEmbedderTest, ReturnUndoRedo) {
+  ScopedPage page = CreateAndInitializeFormPDF();
+  ASSERT_TRUE(page);
+  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+
+  TypeTextIntoTextField(3);
+  EXPECT_EQ(L"ABC", GetCPWLEdit()->GetText());
+
+  EXPECT_TRUE(GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnot(),
+                                          pdfium::ascii::kReturn, {}));
+  EXPECT_EQ(L"ABC\r\n", GetCPWLEdit()->GetText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanUndo());
+  EXPECT_TRUE(GetCPWLEdit()->Undo());
+  EXPECT_EQ(L"ABC", GetCPWLEdit()->GetText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanRedo());
+  EXPECT_TRUE(GetCPWLEdit()->Redo());
+  EXPECT_EQ(L"ABC\r\n", GetCPWLEdit()->GetText());
+  EXPECT_FALSE(GetCPWLEdit()->CanRedo());
+}
+
+TEST_F(CPWLEditMultilineEmbedderTest, ReturnOverSelectionUndoRedo) {
+  ScopedPage page = CreateAndInitializeFormPDF();
+  ASSERT_TRUE(page);
+  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+
+  TypeTextIntoTextField(3);
+  GetCPWLEdit()->SetSelection(0, -1);
+  EXPECT_EQ(L"ABC", GetCPWLEdit()->GetSelectedText());
+
+  EXPECT_TRUE(GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnot(),
+                                          pdfium::ascii::kReturn, {}));
+  EXPECT_EQ(L"\r\n", GetCPWLEdit()->GetText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanUndo());
+  // TODO(crbug.com/446727801): Only one undo/redo should be needed
+  EXPECT_TRUE(GetCPWLEdit()->Undo());
+  EXPECT_TRUE(GetCPWLEdit()->Undo());
+  EXPECT_EQ(L"ABC", GetCPWLEdit()->GetSelectedText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanRedo());
+  EXPECT_TRUE(GetCPWLEdit()->Redo());
+  EXPECT_TRUE(GetCPWLEdit()->Redo());
+  EXPECT_EQ(L"\r\n", GetCPWLEdit()->GetText());
+  EXPECT_FALSE(GetCPWLEdit()->CanRedo());
 }
