@@ -73,6 +73,24 @@
       "message": "Can you write a CL to change PngAskScanlineBuf() to return a span instead?",
       "revId": "5d1e54bbde578b321dbe41c51fa29737469a2667",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0cb9c7a2_f71fcb29",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 26
+      },
+      "lineNbr": 399,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-16T00:22:19Z",
+      "side": 1,
+      "message": "Yes, I think I totally misunderstood how this is supposed to work.  Now I see that `ProgressiveDecoder::decode_buf_` only covers a **single** row.\n\nI think that we should pass the whole `device_bitmap_` to the decoder (e.g. `PngDecoderDelegate::PngReadHeader` should return not only `*dst_color_type` but also `*dst_span_for_whole_image` [name TBD]).  And with this, we should get rid of `PngAskScalineBuf` and `PngFillScanlineBufCompleted` (with weird inter-procedural dependencies/requirements happening across calls to both of them + weird/unnecessary hop into `decode_buf_`).\n\n(and a bit relatedly - I see that `decode_buf_.resize` is done based on **src** properties, rather than based on the requested decoding format;  this seems wrong;  I guess that ideally I should come up with a ASAN test that triggers an OOB for G or GA PNGs when they are decoded into RGB or RGBA)\n\nI will trying doing the above in a separate CL.",
+      "parentUuid": "87f28099_767b157c",
+      "revId": "5d1e54bbde578b321dbe41c51fa29737469a2667",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
