@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c489d9b0_f53534f0",
+        "filename": "fpdfsdk/pwl/cpwl_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-16T23:48:21Z",
+      "side": 1,
+      "message": "Can the failure paths return nullptr?",
+      "revId": "5c88faad5e0f76ca78b531a038516111c22cc7fa",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "48e5f555_ea89abbb",
+        "filename": "fpdfsdk/pwl/cpwl_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-16T23:48:21Z",
+      "side": 1,
+      "message": "Use Google style names in new code.",
+      "range": {
+        "startLine": 139,
+        "startChar": 32,
+        "endLine": 139,
+        "endChar": 54
+      },
+      "revId": "5c88faad5e0f76ca78b531a038516111c22cc7fa",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b0558491_39b3dea6",
+        "filename": "fpdfsdk/pwl/cpwl_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-16T23:48:21Z",
+      "side": 1,
+      "message": "If this any of the ASSERT_TRUE() statements above fail, then `edit_` doesn\u0027t get initialized, and the calling test case will get undefined behavior.",
+      "revId": "5c88faad5e0f76ca78b531a038516111c22cc7fa",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a6cd2af1_a4d940c9",
+        "filename": "testing/resources/text_form_multiline.in",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-16T23:48:21Z",
+      "side": 1,
+      "message": "Please try to follow the style in hello_world.in.",
+      "revId": "5c88faad5e0f76ca78b531a038516111c22cc7fa",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b73647f3_b8e7b6f0",
+        "filename": "testing/resources/text_form_multiline.in",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-16T23:48:21Z",
+      "side": 1,
+      "message": "Put after /Type instead of in alphabetical order, to help readers see what this is.",
+      "revId": "5c88faad5e0f76ca78b531a038516111c22cc7fa",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
