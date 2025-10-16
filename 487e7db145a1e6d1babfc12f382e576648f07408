@@ -245,6 +245,24 @@
       "parentUuid": "2db51c47_5181fb55",
       "revId": "487e7db145a1e6d1babfc12f382e576648f07408",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d89e1d15_037ee002",
+        "filename": "fpdfsdk/pwl/cpwl_edit.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 521,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-16T16:51:24Z",
+      "side": 1,
+      "message": "I looked at this as well and here are my notes:\n\nThe CPWL_Wnd::OnKeyDown() call here could end up calling these overrides:\n1. CPWL_ComboBox::OnKeyDown()\n2. CPWL_ListBox::OnKeyDown()\n3. CPWL_Edit::OnKeyDown()\n\nHowever, the actual reachable ones depends on the parent-child relationship, so it also depends on CPWL_Wnd::AddChild() calls. Auditing those, the possible relationships are:\n\n1. ComboBox has a child Edit\n2. ComboBox has a child Button\n3. ComboBox has a child ListBox\n4. Edit has a child Caret\n5. Scrollbar has a child Button\n\nSo I agree this doesn\u0027t make any behavior difference.\n\nSince this is consistent with OnCharInternal(), I guess it\u0027s ok to leave it like this.\n\nAlternatively, the code can assert the above. CHECK() the return value is always false. But maybe we can do that consistently in this whole file some other time.",
+      "parentUuid": "2932343b_129dcb9e",
+      "revId": "487e7db145a1e6d1babfc12f382e576648f07408",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
