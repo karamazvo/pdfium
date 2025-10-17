@@ -143,6 +143,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8e58bc5a_58b333e7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 23
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-17T01:01:01Z",
+      "side": 1,
+      "message": "Landed, and bots are green after the most recent Skia roll.",
+      "parentUuid": "087e5663_a86d14b0",
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b530323f_35218019",
