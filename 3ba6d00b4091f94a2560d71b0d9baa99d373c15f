@@ -48,6 +48,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "529f510e_bfbc5a30",
+        "filename": "testing/resources/text_form_multiline.in",
+        "patchSetId": 3
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-17T17:30:00Z",
+      "side": 1,
+      "message": "Sure, but I imagine you know what I meant.",
+      "parentUuid": "b3664c78_5e02eeb0",
+      "range": {
+        "startLine": 6,
+        "startChar": 23,
+        "endLine": 6,
+        "endChar": 32
+      },
+      "revId": "3ba6d00b4091f94a2560d71b0d9baa99d373c15f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e09bc5bd_e9bc898b",

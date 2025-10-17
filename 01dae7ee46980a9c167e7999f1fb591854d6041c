@@ -1,0 +1,101 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c6868adf_f40f16cc",
+        "filename": "fpdfsdk/pwl/cpwl_edit_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-17T17:30:00Z",
+      "side": 1,
+      "message": "Mention bonus cleanups in the CL description. Thanks for doing that.",
+      "revId": "01dae7ee46980a9c167e7999f1fb591854d6041c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d9af0992_02154586",
+        "filename": "fpdfsdk/pwl/cpwl_edit_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-17T17:30:00Z",
+      "side": 1,
+      "message": "Still got pFoo here. (Copied from line 73)",
+      "range": {
+        "startLine": 138,
+        "startChar": 48,
+        "endLine": 138,
+        "endChar": 63
+      },
+      "revId": "01dae7ee46980a9c167e7999f1fb591854d6041c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c44fe290_127e5de8",
+        "filename": "fpdfsdk/pwl/cpwl_edit_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-17T17:30:00Z",
+      "side": 1,
+      "message": "Also mention bonus robust improvement in the CL description.",
+      "revId": "01dae7ee46980a9c167e7999f1fb591854d6041c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "09bc43f8_374c7c34",
+        "filename": "testing/resources/text_form_multiline.in",
+        "patchSetId": 6
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-17T17:30:00Z",
+      "side": 1,
+      "message": "Expand into multiple lines.",
+      "revId": "01dae7ee46980a9c167e7999f1fb591854d6041c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "31ef251a_683df64a",
+        "filename": "testing/resources/text_form_multiline.in",
+        "patchSetId": 6
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-17T17:30:00Z",
+      "side": 1,
+      "message": "```\n{{object 5 0}} \u003c\u003c\n  /Font 6 0 R\n\u003e\u003e\n```\n\nThen if someone wants to add more key/value pairs, they don\u0027t have to reformat this.",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 17
+      },
+      "revId": "01dae7ee46980a9c167e7999f1fb591854d6041c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
