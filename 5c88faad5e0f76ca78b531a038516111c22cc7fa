@@ -136,6 +136,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "20bf1949_f9cbd3c2",
+        "filename": "fpdfsdk/pwl/cpwl_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-17T17:14:59Z",
+      "side": 1,
+      "message": "I went with this solution https://google.github.io/googletest/advanced.html#asserting-on-subroutines\n\nThere are other options like returning a bool or a status instead but this works and doesn\u0027t require me to change all the old fixture code.",
+      "parentUuid": "33730afc_f72fae4f",
+      "revId": "5c88faad5e0f76ca78b531a038516111c22cc7fa",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a6cd2af1_a4d940c9",
@@ -203,6 +221,24 @@
       "side": 1,
       "message": "Use \"C++ style\" angle brackets. e.g.\n\n```\n{{object 1 0}} \u003c\u003c\n  /Foo /Bar\n\u003e\u003e\n```",
       "parentUuid": "1b4d99a4_229119f3",
+      "revId": "5c88faad5e0f76ca78b531a038516111c22cc7fa",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "db9eb22e_045a538c",
+        "filename": "testing/resources/text_form_multiline.in",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-17T17:14:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f9682e6d_6b6bc146",
       "revId": "5c88faad5e0f76ca78b531a038516111c22cc7fa",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
