@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2fd34d2d_a2c50b3a",
+        "filename": "fpdfsdk/pwl/cpwl_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-17T16:47:03Z",
+      "side": 1,
+      "message": "Not easily. It returns a value type right now not a pointer. All of the test cases already check if the page was set.\n\nThis is just copy-pasted from the other test fixture above. I\u0027m not sure it makes sense to change the API.",
+      "parentUuid": "c489d9b0_f53534f0",
+      "revId": "5c88faad5e0f76ca78b531a038516111c22cc7fa",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "48e5f555_ea89abbb",
@@ -31,6 +49,30 @@
       "writtenOn": "2025-10-16T23:48:21Z",
       "side": 1,
       "message": "Use Google style names in new code.",
+      "range": {
+        "startLine": 139,
+        "startChar": 32,
+        "endLine": 139,
+        "endChar": 54
+      },
+      "revId": "5c88faad5e0f76ca78b531a038516111c22cc7fa",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "140d99fc_57eb52fd",
+        "filename": "fpdfsdk/pwl/cpwl_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-17T16:47:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "48e5f555_ea89abbb",
       "range": {
         "startLine": 139,
         "startChar": 32,
@@ -58,6 +100,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "58f07ac2_86b75b70",
+        "filename": "fpdfsdk/pwl/cpwl_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-17T16:47:03Z",
+      "side": 1,
+      "message": "Isn\u0027t that why it\u0027s an assert not an expect? It will stop execution of the test if it fails.",
+      "parentUuid": "b0558491_39b3dea6",
+      "revId": "5c88faad5e0f76ca78b531a038516111c22cc7fa",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a6cd2af1_a4d940c9",
@@ -77,6 +137,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "1b4d99a4_229119f3",
+        "filename": "testing/resources/text_form_multiline.in",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-17T16:47:03Z",
+      "side": 1,
+      "message": "I don\u0027t understand what you want me to change. They look the same to me.",
+      "parentUuid": "a6cd2af1_a4d940c9",
+      "revId": "5c88faad5e0f76ca78b531a038516111c22cc7fa",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "b73647f3_b8e7b6f0",
         "filename": "testing/resources/text_form_multiline.in",
         "patchSetId": 1
@@ -88,6 +166,24 @@
       "writtenOn": "2025-10-16T23:48:21Z",
       "side": 1,
       "message": "Put after /Type instead of in alphabetical order, to help readers see what this is.",
+      "revId": "5c88faad5e0f76ca78b531a038516111c22cc7fa",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2532e2e8_89c16597",
+        "filename": "testing/resources/text_form_multiline.in",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-10-17T16:47:03Z",
+      "side": 1,
+      "message": "Done. This was just copy pasted from text_form.in and I added the one line to set /Ff",
+      "parentUuid": "b73647f3_b8e7b6f0",
       "revId": "5c88faad5e0f76ca78b531a038516111c22cc7fa",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
