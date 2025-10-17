@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e6db761c_494b917e",
+        "filename": "testing/resources/text_form_multiline.in",
+        "patchSetId": 3
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-17T16:52:09Z",
+      "side": 1,
+      "message": "No spaces on the inside, also like C++.",
+      "range": {
+        "startLine": 6,
+        "startChar": 23,
+        "endLine": 6,
+        "endChar": 32
+      },
+      "revId": "3ba6d00b4091f94a2560d71b0d9baa99d373c15f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e09bc5bd_e9bc898b",
+        "filename": "testing/resources/text_form_multiline.in",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-17T16:52:09Z",
+      "side": 1,
+      "message": "1 key/value pair per line. Put the types first.",
+      "revId": "3ba6d00b4091f94a2560d71b0d9baa99d373c15f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
