@@ -1,0 +1,107 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e3c2e7a1_00c845b6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-17T00:59:53Z",
+      "side": 1,
+      "message": "Probably need to write \"The Return key\" so readers don\u0027t trip up over this and think something is returning.",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 6
+      },
+      "revId": "a6217ee6248b3d204f733376a613aa3dfa017bb0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "349694fb_bd5e4a4c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-17T00:59:53Z",
+      "side": 1,
+      "message": "What is \"previously\" relative to? Before this CL? It may be clearer to say \"In the pre-existing code, the return key ...\"",
+      "range": {
+        "startLine": 9,
+        "startChar": 26,
+        "endLine": 9,
+        "endChar": 36
+      },
+      "revId": "a6217ee6248b3d204f733376a613aa3dfa017bb0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "14203c2c_93d07ea8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-17T00:59:53Z",
+      "side": 1,
+      "message": "May be good to first mention this CL adds a new CPWL_EditImpl::TypeChar() and what that replaces in CPWL_Edit.",
+      "revId": "a6217ee6248b3d204f733376a613aa3dfa017bb0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bb87738e_7be31185",
+        "filename": "fpdfsdk/pwl/cpwl_edit_impl.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1885,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-17T00:59:53Z",
+      "side": 1,
+      "message": "go/avoid-we",
+      "range": {
+        "startLine": 1885,
+        "startChar": 55,
+        "endLine": 1885,
+        "endChar": 57
+      },
+      "revId": "a6217ee6248b3d204f733376a613aa3dfa017bb0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "86a79fd8_cf766a69",
+        "filename": "fpdfsdk/pwl/cpwl_edit_impl.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1892,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-17T00:59:53Z",
+      "side": 1,
+      "message": "Would it be easier to just use an if-else block?",
+      "revId": "a6217ee6248b3d204f733376a613aa3dfa017bb0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
