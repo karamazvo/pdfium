@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b89246e8_1e443532",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-17T17:12:46Z",
+      "side": 1,
+      "message": "This sentence probably can use 1 or 2 commas to make it earlier to read.",
+      "revId": "43afac1730818cfa4095f20d16a6ea830a9322d2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "82055eb7_7c49d1e5",
+        "filename": "fpdfsdk/pwl/cpwl_edit_impl.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 1894,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-17T17:12:46Z",
+      "side": 1,
+      "message": "Probably slightly better to put the comment on a new line.",
+      "range": {
+        "startLine": 1894,
+        "startChar": 10,
+        "endLine": 1894,
+        "endChar": 12
+      },
+      "revId": "43afac1730818cfa4095f20d16a6ea830a9322d2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
