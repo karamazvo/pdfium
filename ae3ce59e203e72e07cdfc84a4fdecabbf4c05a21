@@ -22,6 +22,30 @@
       },
       "revId": "ae3ce59e203e72e07cdfc84a4fdecabbf4c05a21",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d03f52eb_0bc5cd7f",
+        "filename": "fpdfsdk/pwl/cpwl_edit_embeddertest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 684,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-17T18:50:48Z",
+      "side": 1,
+      "message": "FWIW, the pre-existing code has some TypeTextIntoTextField(50) calls. I think when that code was written, the CL author/reviewer decided it was easier to not write out all 50 letters. But then again, that could have been made into a constant.",
+      "parentUuid": "16f0599c_46a04a07",
+      "range": {
+        "startLine": 684,
+        "startChar": 2,
+        "endLine": 684,
+        "endChar": 23
+      },
+      "revId": "ae3ce59e203e72e07cdfc84a4fdecabbf4c05a21",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
