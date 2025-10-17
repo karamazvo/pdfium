@@ -70,6 +70,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2f4f5a93_3de22afc",
+        "filename": "testing/tools/pdftoin_shrdlu.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-17T23:41:38Z",
+      "side": 1,
+      "message": "Fun!",
+      "parentUuid": "004b990b_92e87d92",
+      "revId": "471179a6343029f2bc1bffa64912c84a534cd8ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c11ca592_5d154b1f",
@@ -189,6 +207,30 @@
       "side": 1,
       "message": "There won\u0027t be binary data because `content_str \u003d content.decode(\u0027latin-1\u0027, errors\u003d\u0027replace\u0027)` converts that to text (and then re-encodes it to utf-8 here if it\u0027s present). In other words, if there\u0027s binary data left after `mutool -a` and after stripping the header, it\u0027ll get corrupted. (\"best-effort\" etc.)\n\nI think outside of streams but inside of objects (which is all we keep), PDFs shouldn\u0027t contain binary data (?)",
       "parentUuid": "985de852_95e1bb56",
+      "range": {
+        "startLine": 108,
+        "startChar": 28,
+        "endLine": 108,
+        "endChar": 29
+      },
+      "revId": "471179a6343029f2bc1bffa64912c84a534cd8ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "979aceed_b43786ce",
+        "filename": "testing/tools/pdftoin_shrdlu.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-17T23:41:38Z",
+      "side": 1,
+      "message": "I like to think so, but I\u0027m not 100% sure if that holds. Let\u0027s try it and see.",
+      "parentUuid": "1545355d_f710ace8",
       "range": {
         "startLine": 108,
         "startChar": 28,
