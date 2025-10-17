@@ -120,6 +120,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "33730afc_f72fae4f",
+        "filename": "fpdfsdk/pwl/cpwl_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-17T16:54:58Z",
+      "side": 1,
+      "message": "AFAIK, ASSERT_TRUE() is just a shorthand for roughly the following logic:\n\n```\nif (!cond) {\n  ADD_FAILURE();\n  return;\n}\n```\n\nSo if it\u0027s being called in the test case itself, the test case bails out early. Here, it is in a helper method, so only the helper method bails out early. The caller keeps going.",
+      "parentUuid": "58f07ac2_86b75b70",
+      "revId": "5c88faad5e0f76ca78b531a038516111c22cc7fa",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a6cd2af1_a4d940c9",
         "filename": "testing/resources/text_form_multiline.in",
         "patchSetId": 1
