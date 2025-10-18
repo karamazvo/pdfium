@@ -26,11 +26,6 @@ class PngDecoderDelegate {
   // Called by `PngDecoder` after decoding the image header:
   //
   // * `width` and `height` specify image dimensions in pixels
-  // * `bits_per_component` is number of bits per component (e.g. per red,
-  //   or per alpha)
-  // * `components_count` describes the number of channels that
-  //   the encoded pixels are composed of.  For example it would be 3
-  //   for a PNG containing RGB pixels.
   //
   // Implementation should:
   //
@@ -40,8 +35,6 @@ class PngDecoderDelegate {
   // * TODO(crbug.com/355630556): Add out parameter for desired alpha-premul.
   virtual bool PngReadHeader(int width,
                              int height,
-                             int bits_per_component,
-                             int components_count,
                              int pass,
                              DecodedColorType* dst_color_type,
                              double* gamma) = 0;

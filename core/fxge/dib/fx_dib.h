@@ -164,7 +164,11 @@ inline int GetBppFromFormat(FXDIB_Format format) {
 
 // AKA bytes per pixel, assuming 8-bits per component.
 inline int GetCompsFromFormat(FXDIB_Format format) {
-  return (static_cast<uint16_t>(format) & 0xff) / 8;
+  int bits_per_pixel = GetBppFromFormat(format);
+
+  // TODO(lukasza): Should we round-up `bits_per_pixel` to the nearest multiple
+  // of 8 (before dividing)?
+  return bits_per_pixel / 8;
 }
 
 inline bool GetIsMaskFromFormat(FXDIB_Format format) {
