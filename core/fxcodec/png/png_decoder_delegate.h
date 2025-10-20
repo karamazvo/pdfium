@@ -17,12 +17,6 @@ namespace fxcodec {
 // to renamed .h/.cc files.
 class PngDecoderDelegate {
  public:
-  // Color format to decode into.
-  enum class DecodedColorType {
-    kBgr,
-    kBgra,
-  };
-
   // Called by `PngDecoder` after decoding the image header:
   //
   // * `width` and `height` specify image dimensions in pixels
@@ -35,7 +29,6 @@ class PngDecoderDelegate {
   // Implementation should:
   //
   // * Return `true` upon success (and `false` otherwise)
-  // * Set `*dst_color_type` to the color type to decode into
   // * Set `*gamma` to the target gamma to decode with
   // * TODO(crbug.com/355630556): Add out parameter for desired alpha-premul.
   virtual bool PngReadHeader(int width,
@@ -43,12 +36,14 @@ class PngDecoderDelegate {
                              int bits_per_component,
                              int components_count,
                              int pass,
-                             DecodedColorType* dst_color_type,
                              double* gamma) = 0;
 
   // Called by `PngDecoder` to ask where to write decoded pixels.
   // Implementation should return a pointer to the buffer where the
   // decoded pixels should be written to.
+  //
+  // Note that the decoder will always decode/write RGBA pixels into the
+  // provided buffer.
   //
   // `PngDecoder` guarantees that `0 <= line && line < height`
   // (`height` that was earlier passed to `PngReadHeader`).

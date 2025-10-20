@@ -53,7 +53,6 @@ namespace {
 constexpr size_t kBlockSize = 4096;
 
 #ifdef PDF_ENABLE_XFA_PNG
-using PngDecodedColorType = fxcodec::PngDecoderDelegate::DecodedColorType;
 #if BUILDFLAG(IS_APPLE)
 const double kPngGamma = 1.7;
 #else
@@ -88,7 +87,6 @@ bool ProgressiveDecoder::PngReadHeader(int width,
                                        int bits_per_component,
                                        int components_count,
                                        int pass,
-                                       PngDecodedColorType* dst_color_type,
                                        double* gamma) {
   if (!device_bitmap_) {
     src_width_ = width;
@@ -103,7 +101,6 @@ bool ProgressiveDecoder::PngReadHeader(int width,
   // (Note that `ProgressiveDecoder::GetBitmapFormat` always returns
   // `FXDIB_Format::kBgra` for `FXCODEC_IMAGE_PNG`.)
   CHECK_EQ(device_bitmap_->GetFormat(), FXDIB_Format::kBgra);
-  *dst_color_type = DecodedColorType::kBgra;
 
   *gamma = kPngGamma;
   return true;
