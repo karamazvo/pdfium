@@ -59,8 +59,6 @@ class CTiffContext final : public ProgressiveDecoderIface::Context {
   bool LoadFrameInfo(int32_t frame,
                      int32_t* width,
                      int32_t* height,
-                     int32_t* comps,
-                     int32_t* bpc,
                      CFX_DIBAttribute* pAttribute);
   bool Decode(RetainPtr<CFX_DIBitmap> bitmap);
 
@@ -210,8 +208,6 @@ bool CTiffContext::InitDecoder(
 bool CTiffContext::LoadFrameInfo(int32_t frame,
                                  int32_t* width,
                                  int32_t* height,
-                                 int32_t* comps,
-                                 int32_t* bpc,
                                  CFX_DIBAttribute* pAttribute) {
   if (!TIFFSetDirectory(tif_ctx_.get(), (uint16_t)frame)) {
     return false;
@@ -219,13 +215,9 @@ bool CTiffContext::LoadFrameInfo(int32_t frame,
 
   uint32_t tif_width = 0;
   uint32_t tif_height = 0;
-  uint16_t tif_comps = 0;
-  uint16_t tif_bpc = 0;
   uint32_t tif_rps = 0;
   TIFFGetField(tif_ctx_.get(), TIFFTAG_IMAGEWIDTH, &tif_width);
   TIFFGetField(tif_ctx_.get(), TIFFTAG_IMAGELENGTH, &tif_height);
-  TIFFGetField(tif_ctx_.get(), TIFFTAG_SAMPLESPERPIXEL, &tif_comps);
-  TIFFGetField(tif_ctx_.get(), TIFFTAG_BITSPERSAMPLE, &tif_bpc);
   TIFFGetField(tif_ctx_.get(), TIFFTAG_ROWSPERSTRIP, &tif_rps);
 
   uint16_t tif_resunit = 0;
@@ -256,8 +248,6 @@ bool CTiffContext::LoadFrameInfo(int32_t frame,
 
   *width = checked_width.ValueOrDie();
   *height = checked_height.ValueOrDie();
-  *comps = tif_comps;
-  *bpc = tif_bpc;
   if (tif_rps > tif_height) {
     tif_rps = tif_height;
     TIFFSetField(tif_ctx_.get(), TIFFTAG_ROWSPERSTRIP, tif_rps);
@@ -315,13 +305,11 @@ bool TiffDecoder::LoadFrameInfo(ProgressiveDecoderIface::Context* pContext,
                                 int32_t frame,
                                 int32_t* width,
                                 int32_t* height,
-                                int32_t* comps,
-                                int32_t* bpc,
                                 CFX_DIBAttribute* pAttribute) {
   DCHECK(pAttribute);
 
   auto* ctx = static_cast<CTiffContext*>(pContext);
-  return ctx->LoadFrameInfo(frame, width, height, comps, bpc, pAttribute);
+  return ctx->LoadFrameInfo(frame, width, height, pAttribute);
 }
 
 // static

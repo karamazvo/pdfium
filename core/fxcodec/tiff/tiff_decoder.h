@@ -32,8 +32,6 @@ class TiffDecoder {
                             int32_t frame,
                             int32_t* width,
                             int32_t* height,
-                            int32_t* comps,
-                            int32_t* bpc,
                             CFX_DIBAttribute* pAttribute);
   // `bitmap` must be `FXDIB_Format::kBgra`.
   static bool Decode(ProgressiveDecoderIface::Context* ctx,
