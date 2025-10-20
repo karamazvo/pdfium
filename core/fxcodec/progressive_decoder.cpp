@@ -84,8 +84,6 @@ ProgressiveDecoder::~ProgressiveDecoder() = default;
 #ifdef PDF_ENABLE_XFA_PNG
 bool ProgressiveDecoder::PngReadHeader(int width,
                                        int height,
-                                       int bits_per_component,
-                                       int components_count,
                                        int pass,
                                        double* gamma) {
   if (!device_bitmap_) {
@@ -93,12 +91,9 @@ bool ProgressiveDecoder::PngReadHeader(int width,
     src_height_ = height;
     src_pass_number_ = pass;
 
-    // TODO(https://crbug.com/444045690): Unconditionally set
-    // `src_bits_per_component_ = 8` and `src_components_count_ = 4` and then
-    // remove these parameters.  (Note that the PNG decoder always
-    // decodes/writes/returns RGBA pixels.)
-    src_bits_per_component_ = bits_per_component;
-    src_components_count_ = components_count;
+    // PNG decoder always decodes into RGBA.
+    src_bits_per_component_ = 8;
+    src_components_count_ = 4;
 
     return false;
   }
