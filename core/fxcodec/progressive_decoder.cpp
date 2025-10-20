@@ -98,27 +98,13 @@ bool ProgressiveDecoder::PngReadHeader(int width,
     src_components_count_ = components_count;
     return false;
   }
-  switch (device_bitmap_->GetFormat()) {
-    case FXDIB_Format::kInvalid:
-    case FXDIB_Format::k1bppMask:
-    case FXDIB_Format::k1bppRgb:
-    case FXDIB_Format::k8bppMask:
-    case FXDIB_Format::k8bppRgb:
-      NOTREACHED();
-    case FXDIB_Format::kBgr:
-      *dst_color_type = DecodedColorType::kBgr;
-      break;
-    case FXDIB_Format::kBgrx:
-    case FXDIB_Format::kBgra:
-      *dst_color_type = DecodedColorType::kBgra;
-      break;
-#if defined(PDF_USE_SKIA)
-    case FXDIB_Format::kBgraPremul:
-      // TODO(crbug.com/355630556): Consider adding support for
-      // `FXDIB_Format::kBgraPremul`
-      NOTREACHED();
-#endif
-  }
+
+  // TODO(https://crbug.com/444045690): Remove `dst_color_type` out parameter.
+  // (Note that `ProgressiveDecoder::GetBitmapFormat` always returns
+  // `FXDIB_Format::kBgra` for `FXCODEC_IMAGE_PNG`.)
+  CHECK_EQ(device_bitmap_->GetFormat(), FXDIB_Format::kBgra);
+  *dst_color_type = DecodedColorType::kBgra;
+
   *gamma = kPngGamma;
   return true;
 }
