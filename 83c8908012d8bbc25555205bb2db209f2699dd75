@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aa310f57_0e9f634f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-20T21:32:20Z",
+      "side": 1,
+      "message": "@thestig, can you PTAL?\n\nMy original plan here was to refactor the new `GetScanlineSize` method further - replacing `src_components_count_` and `src_bits_per_component_` with `dst_format_`.  It turned out that this would be incorrect - BMP may first decode with 1 byte per pixel into temporary `dest_buf_` (described by `src_components_count_` and `src_bits_per_component_`) and then resample into `device_buffer_` - we can\u0027t describe both of those with a single `dst_format_`.\n\nBut, I think this refactoring may still be nice/desirable on its own, even if it doesn\u0027t unblock anything else.\n\nWDYT?",
+      "revId": "83c8908012d8bbc25555205bb2db209f2699dd75",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
