@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a230e9a2_066691a1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-20T21:33:39Z",
+      "side": 1,
+      "message": "@thestig, can you PTAL?\n\nThis is a follow-up to https://pdfium-review.googlesource.com/137031.  If the other CL looks okay, then we should consider landing this one as well.  (But if you think we should just abandon the other CL, then we probably should also abandon this one.)",
+      "revId": "1c380297bac4b5917a5bf39232d7fa1c3dae8dbe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
