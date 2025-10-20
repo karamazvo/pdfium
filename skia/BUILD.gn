@@ -401,6 +401,16 @@ component("skia") {
     sources += skia_encode_rust_png_public
     sources += skia_encode_rust_png_srcs
     deps += [ ":rust_png_ffi" ]
+
+    # TODO(https://crbug.com/381900683): Fix PDFium's `win_xfa_skia_rust`
+    # tryjob and then remove the conditional `SkPngEncoder` and `libpng`
+    # dependency below.  (Current implementation of `SkXPS::MakeDocument`
+    # has a hardcoded dependency on `SkPngEncoder`.)
+    if (is_win) {
+      sources += skia_encode_libpng_srcs
+      sources += skia_encode_png_public
+      deps += [ "../third_party:png" ]
+    }
   } else {
     sources += skia_codec_libpng_srcs
     sources += skia_encode_libpng_srcs
