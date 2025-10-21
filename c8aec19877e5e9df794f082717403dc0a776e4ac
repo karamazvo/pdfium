@@ -16,6 +16,29 @@
       "message": "Hi, was working on the task to Consolidate FT_Load_Glyph.\n\nLet me know if there is anything to edit. I have a few qs about certain aspects as well.",
       "revId": "c8aec19877e5e9df794f082717403dc0a776e4ac",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bb70dd8f_e14c14f1",
+        "filename": "core/fpdfapi/font/cpdf_simplefont.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-10-21T19:11:55Z",
+      "side": 1,
+      "message": "Do I keep the call like this? It involves less arguments (and avoids duplicate of `face` and `face-\u003eGetRec()` as in `core/fxge/cfx_font.cpp`), or do I keep it like:\n\n`face-\u003eLoadFTGlyph(face_rec, glyph_index,\n                    FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);`\n\nwhich is more similar to how it was called previously (before Consolidation)?",
+      "range": {
+        "startLine": 91,
+        "startChar": 0,
+        "endLine": 92,
+        "endChar": 76
+      },
+      "revId": "c8aec19877e5e9df794f082717403dc0a776e4ac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
