@@ -390,6 +390,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b4ae53d0_7f568f65",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-21T20:12:41Z",
+      "side": 1,
+      "message": "Actually, this code is now not needed and has been removed in the latest patchset.",
+      "parentUuid": "a41a7d28_c9b2459a",
+      "revId": "124da8ded1088878a8fd041c442ae6bb1697acac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "303aae66_984328f7",
