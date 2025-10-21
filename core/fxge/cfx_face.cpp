@@ -664,6 +664,10 @@ int CFX_Face::GetNameIndex(const char* name) {
   return FT_Get_Name_Index(GetRec(), name);
 }
 
+int CFX_Face::LoadGlyph(uint32_t glyph_index, FT_Int32 args) {
+  return FT_Load_Glyph(GetRec(), glyph_index, args);
+}
+
 FX_RECT CFX_Face::GetCharBBox(uint32_t code, int glyph_index) {
   FX_RECT rect;
   FXFT_FaceRec* rec = GetRec();
