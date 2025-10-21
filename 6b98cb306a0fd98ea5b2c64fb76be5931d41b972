@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6b232b95_5e17ea5b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-21T15:38:56Z",
+      "side": 1,
+      "message": "Every other place treats `src_components_count_` as a description of what comes out of the decoder (not what comes into the decoder / not what is encoded in the PNG).  \"Every other place\" means:\n\nA) handling of other formats\nB) subsequent handling of PNG\n\n(e.g. `decode_buf_` size and `scanline_size` / `GetScanlineSize` need to accommodate the **output** of the decoder and they are calculated based on `src_components_count_` and `src_bits_per_component_`)",
+      "range": {
+        "startLine": 21,
+        "startChar": 11,
+        "endLine": 22,
+        "endChar": 22
+      },
+      "revId": "6b98cb306a0fd98ea5b2c64fb76be5931d41b972",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2d5ad0af_f392c65d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-21T15:38:56Z",
+      "side": 1,
+      "message": "@thestig, can you PTAL?",
+      "revId": "6b98cb306a0fd98ea5b2c64fb76be5931d41b972",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
