@@ -91,6 +91,7 @@ config("skia_config") {
     "SK_USER_CONFIG_HEADER=\"../../skia/config/SkPdfiumUserConfig.h\"",
     "SK_DISABLE_LEGACY_INIT_DECODERS",
     "SK_DISABLE_LEGACY_PNG_WRITEBUFFER",
+    "SK_DISABLE_LEGACY_XPS_FACTORIES",
   ]
 
   if (is_win) {
