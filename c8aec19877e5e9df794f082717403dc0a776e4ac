@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a47b7d53_7f029b41",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-10-21T19:05:19Z",
+      "side": 1,
+      "message": "Hi, was working on the task to Consolidate FT_Load_Glyph.\n\nLet me know if there is anything to edit. I have a few qs about certain aspects as well.",
+      "revId": "c8aec19877e5e9df794f082717403dc0a776e4ac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
