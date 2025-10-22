@@ -33,6 +33,24 @@
       "message": "Red bot. Do you need to roll DEPS or adjust skia/BUILD.gn?",
       "revId": "b414c8462a6ffac6623f6d3b662adbfc4e852314",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "95551824_f226d82f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-22T18:39:53Z",
+      "side": 1,
+      "message": "This CL is not yet ready for review.  Based on local testing the bot should become green after landing https://skia-review.googlesource.com/c/skia/+/1082156 and then rolling it into PDFium.",
+      "parentUuid": "51ae1d65_eaa6a5a3",
+      "revId": "b414c8462a6ffac6623f6d3b662adbfc4e852314",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
