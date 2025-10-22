@@ -16,6 +16,24 @@
       "message": "Do you want to just expand these out? e.g. This is now crbug.com/42270825.",
       "revId": "89528ae6ff904e16836cde65f27f027931849fac",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4ff3b1fa_9bddf309",
+        "filename": "testing/SUPPRESSIONS",
+        "patchSetId": 3
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-10-22T21:26:59Z",
+      "side": 1,
+      "message": "Did at first, then reverted. Some of the test files still reference the old bug IDs. Will update them in a follow-up.",
+      "parentUuid": "5b52ae9c_b55f1d43",
+      "revId": "89528ae6ff904e16836cde65f27f027931849fac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
