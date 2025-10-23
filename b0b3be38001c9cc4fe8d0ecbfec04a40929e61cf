@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b7d643c0_4a2f457b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-23T00:58:55Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "e79220cb_cf42dc07",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 59
+      },
+      "revId": "b0b3be38001c9cc4fe8d0ecbfec04a40929e61cf",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c70cf988_8cd926af",
@@ -37,6 +61,30 @@
       "writtenOn": "2025-10-21T15:38:56Z",
       "side": 1,
       "message": "See https://source.chromium.org/chromium/chromium/src/+/main:third_party/pdfium/core/fxcodec/progressive_decoder.cpp;l\u003d635-636;drc\u003d90a5b27becf2376ff5fa341e2c2833bfd6a63340",
+      "range": {
+        "startLine": 23,
+        "startChar": 12,
+        "endLine": 23,
+        "endChar": 23
+      },
+      "revId": "b0b3be38001c9cc4fe8d0ecbfec04a40929e61cf",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3b8095eb_cf82c0bb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-23T00:58:55Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "c70cf988_8cd926af",
       "range": {
         "startLine": 23,
         "startChar": 12,
