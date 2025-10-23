@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f3cebb9d_a9d3746e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-23T18:13:38Z",
+      "side": 1,
+      "message": "Actually, this CL is wrong and not ready for a review.  Let me remove you from the attention set.\n\nI re-read `CFX_CodecMemory::Consume` and `CFX_CodecMemory::ReadBlock` and I see that they \"consume\" input in different ways.  In particular, after `Consume` call the remaining `GetUnconsumedSpan` will contain garbage at the end.",
+      "revId": "41242489f4719245f44b862e41280ea9b78dfe02",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
