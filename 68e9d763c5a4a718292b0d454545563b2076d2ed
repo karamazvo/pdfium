@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "e5d74bdf_ad3e0c5f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2025-10-23T18:11:01Z",
+      "side": 1,
+      "message": "`Bug: skia:40040287` or just `Bug: 40040287` would work.",
+      "parentUuid": "e43d3db8_b48a3991",
+      "revId": "68e9d763c5a4a718292b0d454545563b2076d2ed",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "23539f3f_d63ccba4",
