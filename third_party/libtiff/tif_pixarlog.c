@@ -884,7 +884,7 @@ static int PixarLogDecode(TIFF *tif, uint8_t *op, tmsize_t occ, uint16_t s)
         return (0);
     }
     /* Check that we will not fill more than what was allocated */
-    if (sp->tbuf_size < 0 || sp->stream.avail_out > (uInt) sp->tbuf_size)
+    if ((tmsize_t)sp->stream.avail_out > sp->tbuf_size)
     {
         TIFFErrorExtR(tif, module, "sp->stream.avail_out > sp->tbuf_size");
         memset(op, 0, (size_t)occ);
@@ -1596,10 +1596,10 @@ static int PixarLogVGetField(TIFF *tif, uint32_t tag, va_list ap)
 }
 
 static const TIFFField pixarlogFields[] = {
-    {TIFFTAG_PIXARLOGDATAFMT, 0, 0, TIFF_ANY, 0, TIFF_SETGET_INT,
-     TIFF_SETGET_UNDEFINED, FIELD_PSEUDO, FALSE, FALSE, "", NULL},
-    {TIFFTAG_PIXARLOGQUALITY, 0, 0, TIFF_ANY, 0, TIFF_SETGET_INT,
-     TIFF_SETGET_UNDEFINED, FIELD_PSEUDO, FALSE, FALSE, "", NULL}};
+    {TIFFTAG_PIXARLOGDATAFMT, 0, 0, TIFF_ANY, 0, TIFF_SETGET_INT, FIELD_PSEUDO,
+     FALSE, FALSE, "", NULL},
+    {TIFFTAG_PIXARLOGQUALITY, 0, 0, TIFF_ANY, 0, TIFF_SETGET_INT, FIELD_PSEUDO,
+     FALSE, FALSE, "", NULL}};
 
 int TIFFInitPixarLog(TIFF *tif, int scheme)
 {

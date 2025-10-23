@@ -26,7 +26,7 @@
  * DEALINGS IN THE SOFTWARE.
  ****************************************************************************/
 
-#include "tiffconf.h"
+#include "tif_config.h"
 
 #include "tif_hash_set.h"
 
