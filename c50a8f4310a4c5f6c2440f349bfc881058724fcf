@@ -22,6 +22,30 @@
       },
       "revId": "c50a8f4310a4c5f6c2440f349bfc881058724fcf",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "25b9fddf_932ceae8",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-23T14:27:05Z",
+      "side": 1,
+      "message": "Oh, right.  We already have that span.  Done.",
+      "parentUuid": "02f0578c_cc4ea1c6",
+      "range": {
+        "startLine": 117,
+        "startChar": 9,
+        "endLine": 117,
+        "endChar": 20
+      },
+      "revId": "c50a8f4310a4c5f6c2440f349bfc881058724fcf",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
