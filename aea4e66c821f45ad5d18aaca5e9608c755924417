@@ -16,6 +16,23 @@
       "message": "@thestig, can you PTAL?",
       "revId": "aea4e66c821f45ad5d18aaca5e9608c755924417",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "083d1630_690952d7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-23T17:37:01Z",
+      "side": 1,
+      "message": "Nice simplification, BTW.",
+      "revId": "aea4e66c821f45ad5d18aaca5e9608c755924417",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
