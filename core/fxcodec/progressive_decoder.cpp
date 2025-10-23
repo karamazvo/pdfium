@@ -84,12 +84,12 @@ ProgressiveDecoder::~ProgressiveDecoder() = default;
 #ifdef PDF_ENABLE_XFA_PNG
 bool ProgressiveDecoder::PngReadHeader(int width,
                                        int height,
-                                       int pass,
                                        double* gamma) {
+  got_png_metadata_ = true;
+
   if (!device_bitmap_) {
     src_width_ = width;
     src_height_ = height;
-    src_pass_number_ = pass;
 
     // PNG decoder always decodes into BGRA.
     src_bits_per_component_ = 8;
@@ -557,7 +557,11 @@ bool ProgressiveDecoder::PngDetectImageTypeInBuffer() {
     status_ = FXCODEC_STATUS::kError;
     return false;
   }
-  while (PngDecoder::ContinueDecode(png_context_.get(), codec_memory_)) {
+  while (!got_png_metadata_) {
+    if (!PngDecoder::ContinueDecode(png_context_.get(), codec_memory_)) {
+      return false;
+    }
+
     uint32_t remain_size = static_cast<uint32_t>(file_->GetSize()) - offset_;
     uint32_t input_size = std::min<uint32_t>(remain_size, kBlockSize);
     if (input_size == 0) {
@@ -577,10 +581,6 @@ bool ProgressiveDecoder::PngDetectImageTypeInBuffer() {
     offset_ += input_size;
   }
   png_context_.reset();
-  if (src_pass_number_ == 0) {
-    status_ = FXCODEC_STATUS::kError;
-    return false;
-  }
   return true;
 }
 
