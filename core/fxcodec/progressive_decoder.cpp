@@ -617,21 +617,22 @@ FXCODEC_STATUS ProgressiveDecoder::PngContinueDecode() {
       status_ = FXCODEC_STATUS::kDecodeFinished;
       return status_;
     }
-    if (codec_memory_ && input_size > codec_memory_->GetSize()) {
+    if (!codec_memory_ || input_size != codec_memory_->GetSize()) {
       codec_memory_ = pdfium::MakeRetain<CFX_CodecMemory>(input_size);
     }
-
-    bool bResult = file_->ReadBlockAtOffset(
-        codec_memory_->GetBufferSpan().first(input_size), offset_);
-    if (!bResult) {
+    codec_memory_->Seek(0);  // Make the whole buffer "unconsumed".
+    bool success =
+        file_->ReadBlockAtOffset(codec_memory_->GetBufferSpan(), offset_);
+    if (!success) {
       device_bitmap_ = nullptr;
       file_ = nullptr;
       status_ = FXCODEC_STATUS::kError;
       return status_;
     }
     offset_ += input_size;
-    bResult = PngDecoder::ContinueDecode(png_context_.get(), codec_memory_);
-    if (!bResult) {
+
+    success = PngDecoder::ContinueDecode(png_context_.get(), codec_memory_);
+    if (!success) {
       device_bitmap_ = nullptr;
       file_ = nullptr;
       status_ = FXCODEC_STATUS::kError;

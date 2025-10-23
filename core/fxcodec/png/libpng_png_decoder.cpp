@@ -179,8 +179,10 @@ bool LibpngPngDecoder::ContinueDecode(
     RetainPtr<CFX_CodecMemory> codec_memory) {
   auto* ctx = static_cast<CPngContext*>(pContext);
   pdfium::span<uint8_t> src_buf = codec_memory->GetUnconsumedSpan();
-  return _png_continue_decode(ctx->png_, ctx->info_, src_buf.data(),
-                              src_buf.size());
+  bool result = _png_continue_decode(ctx->png_, ctx->info_, src_buf.data(),
+                                     src_buf.size());
+  codec_memory->Consume(src_buf.size());
+  return result;
 }
 
 }  // namespace fxcodec
