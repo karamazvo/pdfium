@@ -136,12 +136,10 @@
 #if defined(ARCH_CPU_64_BITS)
 #define TIFF_SSIZE_T int64_t
 #define TIFF_SSIZE_FORMAT PRId64
-#define TIFF_SSIZE_T_MAX INT64_MAX
 #define SIZEOF_SIZE_T 8
 #else
 #define TIFF_SSIZE_T int32_t
 #define TIFF_SSIZE_FORMAT PRId32
-#define TIFF_SSIZE_T_MAX INT32_MAX
 #define SIZEOF_SIZE_T 4
 #endif
 
