@@ -1,0 +1,103 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3f72963c_85d75e7f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-24T15:40:53Z",
+      "side": 1,
+      "message": "@thestig, can you PTAL?",
+      "revId": "bd5dda1d87301c6e62014478c864963361e64734",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e5cc0724_659fc7f5",
+        "filename": "core/fxcodec/png/libpng_png_decoder.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-24T15:40:53Z",
+      "side": 1,
+      "message": "IIUC we still need that call to set up interlace handling.  And in one of follow-up CLs we will retain the return value inside `pContext`.",
+      "range": {
+        "startLine": 76,
+        "startChar": 2,
+        "endLine": 76,
+        "endChar": 52
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "686acc5e_10c7d615",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/png/libpng_png_decoder.cpp",
+              "range": {
+                "startLine": 76,
+                "startChar": 0,
+                "endLine": 77,
+                "endChar": 0
+              },
+              "replacement": "  png_set_interlace_handling(png_ptr);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "bd5dda1d87301c6e62014478c864963361e64734",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5976b1e1_aeb3f5e5",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-24T15:40:53Z",
+      "side": 1,
+      "message": "Here only `return false` depends on the `if (!device_bitmap_)` condition.  Maybe in the \"else\" branch/fall through (new lines 93-96) we should add `CHECK_EQ(src_width_, width)` (and same for `height`)?  Maybe meh?",
+      "range": {
+        "startLine": 98,
+        "startChar": 0,
+        "endLine": 98,
+        "endChar": 17
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "d0c4d824_ae1eeef2",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/progressive_decoder.cpp",
+              "range": {
+                "startLine": 101,
+                "startChar": 0,
+                "endLine": 101,
+                "endChar": 0
+              },
+              "replacement": "  CHECK_EQ(src_width_, width);\n  CHECK_EQ(src_height_, height);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "bd5dda1d87301c6e62014478c864963361e64734",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
