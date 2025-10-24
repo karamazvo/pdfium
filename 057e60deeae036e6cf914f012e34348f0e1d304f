@@ -16,6 +16,46 @@
       "message": "@thestig, can you PTAL again?",
       "revId": "057e60deeae036e6cf914f012e34348f0e1d304f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6230b1ac_bcd819b6",
+        "filename": "core/fxcodec/progressive_decoder_unittest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 528,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-24T23:29:04Z",
+      "side": 1,
+      "message": "constexpr",
+      "range": {
+        "startLine": 528,
+        "startChar": 0,
+        "endLine": 528,
+        "endChar": 5
+      },
+      "revId": "057e60deeae036e6cf914f012e34348f0e1d304f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "85091c92_8bc862be",
+        "filename": "core/fxcodec/progressive_decoder_unittest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 568,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-24T23:29:04Z",
+      "side": 1,
+      "message": "Can be: `const auto input \u003d pdfium::span\u003cconst uint8_t\u003e(kGreenPng).first(64u);`",
+      "revId": "057e60deeae036e6cf914f012e34348f0e1d304f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
