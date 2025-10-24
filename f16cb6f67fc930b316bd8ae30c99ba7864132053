@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6f944977_4ce0c5f4",
+        "filename": "core/fxcodec/bmp/bmp_decoder.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-24T23:06:01Z",
+      "side": 1,
+      "message": "Before this CL `fx_types.h` (and `cfx_codec_memory.h`) used to be brought in by `core/fxcodec/progressive_decoder_iface.h`...",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 32
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "1e53c5de_1d3334ff",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/bmp/bmp_decoder.h",
+              "range": {
+                "startLine": 17,
+                "startChar": 0,
+                "endLine": 18,
+                "endChar": 0
+              },
+              "replacement": ""
+            }
+          ]
+        }
+      ],
+      "revId": "f16cb6f67fc930b316bd8ae30c99ba7864132053",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6a5ec20c_326a472a",
+        "filename": "core/fxcodec/progressive_decoder_iface.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-24T23:06:01Z",
+      "side": 1,
+      "message": "In theory the deleted virtual methods can be reintroduced as virtual methods of the `Context` (because right now functions like [`LibPngDecoder::ContinueDecode`](https://source.chromium.org/chromium/chromium/src/+/main:third_party/pdfium/core/fxcodec/png/libpng_png_decoder.cpp;l\u003d209-217;drc\u003d8900162810d457b64286ce653cb61bc2009c5068) or [`BmpDecoder::Input`](https://source.chromium.org/chromium/chromium/src/+/main:third_party/pdfium/core/fxcodec/bmp/bmp_decoder.cpp;l\u003d65-71;drc\u003d8900162810d457b64286ce653cb61bc2009c5068) are kind of manually doing a virtual dispatch [except that caller guarantees which virtual table is being used]).\n\nBut...\n\n* Let\u0027s do this step-by-step (the CL under review still makes sense on its own - removing an unneeded layer of indirection;  here we are talking about a different layer of calls)\n* I am not sure if doing virtual dispatch is needed at all.  I guess a `virtual` dispatch would avoid a `static_cast` in [`LibPngDecoder::ContinueDecode`](https://source.chromium.org/chromium/chromium/src/+/main:third_party/pdfium/core/fxcodec/png/libpng_png_decoder.cpp;l\u003d209-217;drc\u003d8900162810d457b64286ce653cb61bc2009c5068) or [`BmpDecoder::Input`](https://source.chromium.org/chromium/chromium/src/+/main:third_party/pdfium/core/fxcodec/bmp/bmp_decoder.cpp;l\u003d65-71;drc\u003d8900162810d457b64286ce653cb61bc2009c5068).  But `ProgressiveDecoder` already knows which decoder it is working with (well, except for libpng-vs-Rust-PNG).  So if it wasn\u0027t for libpng-vs-Rust-PNG we could get rid of `Context` altogether (just have `StartDecoding` return a concrete class).\n\nSo, I think that I may end up renaming `ProgressiveDecoderIface::Context` into `ProgressiveDecoderContext` (the TODO captured here), but won\u0027t be doing any of the other follow-up I am mentioning above (because it doesn\u0027t seem to be needed that much + because I am not sure about the best long-term shape for things - what we have works ok).",
+      "range": {
+        "startLine": 19,
+        "startChar": 55,
+        "endLine": 19,
+        "endChar": 56
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "a8b21b74_a5b2762c",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/progressive_decoder_iface.h",
+              "range": {
+                "startLine": 18,
+                "startChar": 0,
+                "endLine": 21,
+                "endChar": 0
+              },
+              "replacement": "  // TODO(https://crbug.com/444045690): Hoist the `ProgressiveDecoderContext`\n  // class to the top-level / delete empty `ProgressiveDecoderIface`.\n  class ProgressiveDecoderContext {\n"
+            },
+            {
+              "path": "core/fxcodec/progressive_decoder_iface.h",
+              "range": {
+                "startLine": 22,
+                "startChar": 0,
+                "endLine": 23,
+                "endChar": 0
+              },
+              "replacement": "    virtual ~ProgressiveDecoderContext() \u003d default;\n"
+            }
+          ]
+        }
+      ],
+      "revId": "f16cb6f67fc930b316bd8ae30c99ba7864132053",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
