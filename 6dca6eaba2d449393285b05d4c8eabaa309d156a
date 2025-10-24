@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f3e2aa4e_d6113311",
+        "filename": "core/fpdfapi/font/cpdf_simplefont.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-24T17:09:18Z",
+      "side": 1,
+      "message": "Sicne all the callers pass in `FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH`, and some of the callers pass in `FT_LOAD_NO_SCALE`, how about abstracting that way by changing the parameter from `FT_Int32 args` to just `bool scale`?",
+      "range": {
+        "startLine": 92,
+        "startChar": 39,
+        "endLine": 92,
+        "endChar": 74
+      },
+      "revId": "6dca6eaba2d449393285b05d4c8eabaa309d156a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "05629376_9bbc4127",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-24T17:09:18Z",
+      "side": 1,
+      "message": "Rename to \"glyph_index\", for consistent with the name in the callers and in FT_Load_Glyph().",
+      "range": {
+        "startLine": 131,
+        "startChar": 26,
+        "endLine": 131,
+        "endChar": 36
+      },
+      "revId": "6dca6eaba2d449393285b05d4c8eabaa309d156a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cca0dbe9_9635e6cd",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-24T17:09:18Z",
+      "side": 1,
+      "message": "Just \"LoadGlyph\".",
+      "range": {
+        "startLine": 131,
+        "startChar": 6,
+        "endLine": 131,
+        "endChar": 17
+      },
+      "revId": "6dca6eaba2d449393285b05d4c8eabaa309d156a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f2e285d1_fd6e8a94",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-24T17:09:18Z",
+      "side": 1,
+      "message": "Use uint32_t like line 102.",
+      "range": {
+        "startLine": 131,
+        "startChar": 18,
+        "endLine": 131,
+        "endChar": 25
+      },
+      "revId": "6dca6eaba2d449393285b05d4c8eabaa309d156a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
