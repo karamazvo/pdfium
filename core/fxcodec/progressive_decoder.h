@@ -161,8 +161,8 @@ class ProgressiveDecoder final :
 
   bool DetectImageType(FXCODEC_IMAGE_TYPE imageType,
                        CFX_DIBAttribute* pAttribute);
-  bool ReadMoreData(ProgressiveDecoderIface* pModule,
-                    ProgressiveDecoderIface::Context* pContext,
+  bool ReadMoreData(ProgressiveDecoderIface* module,
+                    ProgressiveDecoderIface::Context* context,
                     FXCODEC_STATUS* err_status);
 
   void SetTransMethod();
