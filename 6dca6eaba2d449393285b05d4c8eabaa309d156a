@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "a4255739_e8bba4a2",
+        "filename": "core/fpdfapi/font/cpdf_simplefont.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-10-24T19:58:58Z",
+      "side": 1,
+      "message": "Working on it",
+      "parentUuid": "f3e2aa4e_d6113311",
+      "range": {
+        "startLine": 92,
+        "startChar": 39,
+        "endLine": 92,
+        "endChar": 74
+      },
+      "revId": "6dca6eaba2d449393285b05d4c8eabaa309d156a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "05629376_9bbc4127",
         "filename": "core/fxge/cfx_face.h",
         "patchSetId": 5
