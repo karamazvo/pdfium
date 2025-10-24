@@ -11,6 +11,7 @@
 #include <numeric>
 #include <tuple>
 #include <utility>
+#include <vector>
 
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/fx_codec_def.h"
@@ -568,6 +569,80 @@ TEST_F(ProgressiveDecoderTest, TruncatedPng) {
 
   status = DecodeToBitmap(decoder, bitmap);
   EXPECT_EQ(FXCODEC_STATUS::kError, status);
+}
+
+// One motivation for the `BigPng` test is to ensure that tests cover multiple
+// iterations of the loop inside `ProgressiveDecoder::PngContinueDecode` (i.e.
+// covering the scenario where decoding happens over multiple file chunks).
+TEST_F(ProgressiveDecoderTest, BigPng) {
+  // Input data has been based on Chromium's
+  // `//third_party/blink/renderer/platform/testing/data/green.png` but split
+  // into pre-`IDAT` `kPrefix` and the remaining `kSuffix.`  Inserting 0, 1, or
+  // more inert `kTextChunk` bytes in the middle allows generating arbitrarily
+  // large inputs.
+  //
+  // clang-format off
+  static std::array<const uint8_t, 48> kPrefix = {  // `IHDR`, `PLTE`, `IDAT`
+    // Magic cookie
+    0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A,
+    // `IHDR`
+    0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x64,
+    0x00, 0x00, 0x00, 0x32, 0x01, 0x03, 0x00, 0x00, 0x00, 0x90, 0xFB, 0xEC,
+    0xFD,
+    // `PLTE`
+    0x00, 0x00, 0x00, 0x03, 0x50, 0x4C, 0x54, 0x45, 0x00, 0xFF, 0x00, 0x34,
+    0x5E, 0xC0, 0xA8,
+  };
+  static std::array<const uint8_t, 32> kTextChunk = {
+    // `tEXt`
+    0x00, 0x00, 0x00, 0x14, 0x74, 0x45, 0x58, 0x74, 0x54, 0x65, 0x73, 0x74,
+    0x00, 0x50, 0x44, 0x46, 0x69, 0x75, 0x6D, 0x20, 0x53, 0x75, 0x69, 0x74,
+    0x65, 0x2E, 0x2E, 0x2E, 0x11, 0x22, 0x17, 0x91
+  };
+  static std::array<const uint8_t, 39> kSuffix = {
+    // `IDAT`
+    0x00, 0x00, 0x00, 0x0F, 0x49, 0x44, 0x41, 0x54, 0x28, 0x15, 0x63, 0x60,
+    0x18, 0x05, 0xA3, 0x60, 0x68, 0x02, 0x00, 0x02, 0xBC, 0x00, 0x01, 0x1B,
+    0xDD, 0xE3, 0x90,
+    // `IEND`
+    0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82,
+  };
+  // clang-format off
+
+  // `kBlockSize` in `progressive_decoder.cpp` is 4096, so we want `input` to be
+  // a few multiples of that.
+  std::vector<uint8_t> input;
+  input.insert(input.end(), kPrefix.begin(), kPrefix.end());
+  while (input.size() < 16384) {
+    input.insert(input.end(), kTextChunk.begin(), kTextChunk.end());
+  }
+  input.insert(input.end(), kSuffix.begin(), kSuffix.end());
+
+  ProgressiveDecoder decoder;
+
+  auto source = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(input);
+  CFX_DIBAttribute attr;
+  FXCODEC_STATUS status =
+      decoder.LoadImageInfo(std::move(source), FXCODEC_IMAGE_PNG, &attr, true);
+  ASSERT_EQ(FXCODEC_STATUS::kFrameReady, status);
+
+  ASSERT_EQ(100, decoder.GetWidth());
+  ASSERT_EQ(50, decoder.GetHeight());
+  ASSERT_EQ(FXDIB_Format::kBgra, decoder.GetBitmapFormat());
+
+  auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+  ASSERT_TRUE(bitmap->Create(decoder.GetWidth(), decoder.GetHeight(),
+                             decoder.GetBitmapFormat()));
+
+  size_t frames;
+  std::tie(status, frames) = decoder.GetFrames();
+  ASSERT_EQ(FXCODEC_STATUS::kDecodeReady, status);
+  ASSERT_EQ(1u, frames);
+
+  status = DecodeToBitmap(decoder, bitmap);
+  EXPECT_EQ(FXCODEC_STATUS::kDecodeFinished, status);
+  EXPECT_THAT(bitmap->GetScanline(0).first(4u),
+              ElementsAre(0x00, 0xFF, 0x00, 0xFF));
 }
 #endif
 

@@ -588,31 +588,31 @@ FXCODEC_STATUS ProgressiveDecoder::JpegContinueDecode() {
 }
 
 #ifdef PDF_ENABLE_XFA_PNG
+bool ProgressiveDecoder::PngReadMoreData(FXCODEC_STATUS* err_status) {
+  size_t unconsumed_bytes = codec_memory_->GetUnconsumedSpan().size();
+  if (!ReadMoreData(unconsumed_bytes, err_status)) {
+    return false;
+  }
+
+  return PngDecoder::ContinueDecode(png_context_.get(), codec_memory_);
+}
+
 bool ProgressiveDecoder::PngDetectImageTypeInBuffer() {
   png_context_ = PngDecoder::StartDecode(this);
   if (!png_context_) {
     status_ = FXCODEC_STATUS::kError;
     return false;
   }
-  while (PngDecoder::ContinueDecode(png_context_.get(), codec_memory_)) {
-    uint32_t remain_size = static_cast<uint32_t>(file_->GetSize()) - offset_;
-    uint32_t input_size = std::min<uint32_t>(remain_size, kBlockSize);
-    if (input_size == 0) {
-      png_context_.reset();
-      status_ = FXCODEC_STATUS::kError;
-      return false;
-    }
-    if (codec_memory_ && input_size > codec_memory_->GetSize()) {
-      codec_memory_ = pdfium::MakeRetain<CFX_CodecMemory>(input_size);
-    }
 
-    if (!file_->ReadBlockAtOffset(
-            codec_memory_->GetBufferSpan().first(input_size), offset_)) {
-      status_ = FXCODEC_STATUS::kError;
-      return false;
+  // Keep feeding more input into the decoder until we either get the image
+  // metadata, or we get a failure.  (Note that `PngReadHeader` reports a
+  // failure when there is no `device_bitmap_` such as during image type
+  // detection.)
+  if (PngDecoder::ContinueDecode(png_context_.get(), codec_memory_)) {
+    while (!got_png_metadata_ && PngReadMoreData(&status_)) {
     }
-    offset_ += input_size;
   }
+
   png_context_.reset();
   return got_png_metadata_;
 }
@@ -634,37 +634,18 @@ FXCODEC_STATUS ProgressiveDecoder::PngStartDecode() {
   CHECK_EQ(device_bitmap_->GetFormat(), FXDIB_Format::kBgra);
   CHECK_EQ(src_format_, FXCodec_Argb);
 
+  // Restart reading from the start of the file.
   offset_ = 0;
+  codec_memory_->Seek(codec_memory_->GetSize());
+
   status_ = FXCODEC_STATUS::kDecodeToBeContinued;
   return status_;
 }
 
 FXCODEC_STATUS ProgressiveDecoder::PngContinueDecode() {
   while (status_ == FXCODEC_STATUS::kDecodeToBeContinued) {
-    uint32_t remain_size = (uint32_t)file_->GetSize() - offset_;
-    uint32_t input_size = std::min<uint32_t>(remain_size, kBlockSize);
-    if (input_size == 0) {
+    if (!PngReadMoreData(&status_)) {
       break;
-    }
-    if (codec_memory_ && input_size > codec_memory_->GetSize()) {
-      codec_memory_ = pdfium::MakeRetain<CFX_CodecMemory>(input_size);
-    }
-
-    bool bResult = file_->ReadBlockAtOffset(
-        codec_memory_->GetBufferSpan().first(input_size), offset_);
-    if (!bResult) {
-      device_bitmap_ = nullptr;
-      file_ = nullptr;
-      status_ = FXCODEC_STATUS::kError;
-      return status_;
-    }
-    offset_ += input_size;
-    bResult = PngDecoder::ContinueDecode(png_context_.get(), codec_memory_);
-    if (!bResult) {
-      device_bitmap_ = nullptr;
-      file_ = nullptr;
-      status_ = FXCODEC_STATUS::kError;
-      return status_;
     }
   }
 
