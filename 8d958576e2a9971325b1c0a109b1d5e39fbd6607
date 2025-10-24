@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dfb4b3de_1095199c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-24T05:10:53Z",
+      "side": 1,
+      "message": "Can this behavior discuss generic embedder behavior first, and Chromium behavior separately? Right now it/s generic/Chrome/generic/Chrome, and most non-Chromium embedders probably want to just focus on what affects them.",
+      "revId": "8d958576e2a9971325b1c0a109b1d5e39fbd6607",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
