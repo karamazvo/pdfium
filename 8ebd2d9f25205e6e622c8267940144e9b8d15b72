@@ -1,6 +1,29 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "dea47ed2_346bc7c7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-24T21:44:11Z",
+      "side": 1,
+      "message": "ProgressiveDecoder",
+      "range": {
+        "startLine": 11,
+        "startChar": 15,
+        "endLine": 11,
+        "endChar": 17
+      },
+      "revId": "8ebd2d9f25205e6e622c8267940144e9b8d15b72",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "5823f4ef_b9c472fc",
@@ -14,6 +37,57 @@
       "writtenOn": "2025-10-24T21:23:15Z",
       "side": 1,
       "message": "@thestig, can you PTAL?",
+      "revId": "8ebd2d9f25205e6e622c8267940144e9b8d15b72",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c83d5d48_cec17d55",
+        "filename": "core/fxcodec/png/libpng_png_decoder.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-24T21:44:11Z",
+      "side": 1,
+      "message": "On lines 78/79, are the values written into `CPngContext` known to be greater than 0? I wonder if this can be `row \u003d\u003d pContext-\u003eheight_ - 1` to avoid a potential integer overflow on the LHS. Assuming the RHS can\u0027t underflow.",
+      "revId": "8ebd2d9f25205e6e622c8267940144e9b8d15b72",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3c7ff728_ab4a97b2",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 642,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-24T21:44:11Z",
+      "side": 1,
+      "message": "Can `status_` hold any other value at this point? I see a couple of lines above that assigns to `status_`, but those immediately return.",
+      "revId": "8ebd2d9f25205e6e622c8267940144e9b8d15b72",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1700cf0b_a1887d83",
+        "filename": "core/fxcodec/progressive_decoder_unittest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 570,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-24T21:44:11Z",
+      "side": 1,
+      "message": "Reuse the data on line 529 instead? Just take a subspan.",
       "revId": "8ebd2d9f25205e6e622c8267940144e9b8d15b72",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
