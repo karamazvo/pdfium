@@ -112,6 +112,10 @@ pdfium::span<uint8_t> ProgressiveDecoder::PngAskScanlineBuf(int line) {
   CHECK_EQ(src_format_, FXCodec_Argb);
   return device_bitmap_->GetWritableScanline(line);
 }
+
+void ProgressiveDecoder::PngFinishedDecoding() {
+  status_ = FXCODEC_STATUS::kDecodeFinished;
+}
 #endif  // PDF_ENABLE_XFA_PNG
 
 #ifdef PDF_ENABLE_XFA_GIF
@@ -604,15 +608,11 @@ FXCODEC_STATUS ProgressiveDecoder::PngStartDecode() {
 }
 
 FXCODEC_STATUS ProgressiveDecoder::PngContinueDecode() {
-  while (true) {
+  while (status_ == FXCODEC_STATUS::kDecodeToBeContinued) {
     uint32_t remain_size = (uint32_t)file_->GetSize() - offset_;
     uint32_t input_size = std::min<uint32_t>(remain_size, kBlockSize);
     if (input_size == 0) {
-      png_context_.reset();
-      device_bitmap_ = nullptr;
-      file_ = nullptr;
-      status_ = FXCODEC_STATUS::kDecodeFinished;
-      return status_;
+      break;
     }
     if (codec_memory_ && input_size > codec_memory_->GetSize()) {
       codec_memory_ = pdfium::MakeRetain<CFX_CodecMemory>(input_size);
@@ -635,6 +635,15 @@ FXCODEC_STATUS ProgressiveDecoder::PngContinueDecode() {
       return status_;
     }
   }
+
+  png_context_.reset();
+  device_bitmap_ = nullptr;
+  file_ = nullptr;
+  if (status_ == FXCODEC_STATUS::kDecodeToBeContinued) {
+    status_ = FXCODEC_STATUS::kError;
+  }
+
+  return status_;
 }
 #endif  // PDF_ENABLE_XFA_PNG
 
