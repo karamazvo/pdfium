@@ -50,6 +50,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "511e8c14_f5d37c81",
+        "filename": "core/fpdfapi/font/cpdf_simplefont.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-10-25T09:46:12Z",
+      "side": 1,
+      "message": "I think this makes sense in the current code, however if anyone wants to add an additional flag like `FT_LOAD_VERTICAL_LAYOUT` or `FT_LOAD_NO_BITMAP` in the future, then it would be more difficult to use this method to apply these flags (It might require the function to be changed back to `FT_Int32 args`).\n\nRight now, I feel it wouldn\u0027t really save more than a line or so, because even though all the the callers may have 3-4 lines less at the end, the function itself would be about 2-3 lines longer.\n\nIn my opinion it could limit future flexibility in case any other callers choose to implement such a function with different flags. Do let me know what you think.\n\nI have uploaded the patchset for this change already, but I am keeping this unresolved for any further discussion on weather callers may pass additional flags and if we should keep it as `bool scale` in the latest patchset or consider `FT_Int32 args`.",
+      "parentUuid": "a4255739_e8bba4a2",
+      "range": {
+        "startLine": 92,
+        "startChar": 39,
+        "endLine": 92,
+        "endChar": 74
+      },
+      "revId": "6dca6eaba2d449393285b05d4c8eabaa309d156a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "05629376_9bbc4127",
         "filename": "core/fxge/cfx_face.h",
         "patchSetId": 5
