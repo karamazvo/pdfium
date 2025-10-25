@@ -18,6 +18,23 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "51172543_ab009e55",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-25T00:30:45Z",
+      "side": 1,
+      "message": "@thestig, can you PTAL again?",
+      "revId": "057e60deeae036e6cf914f012e34348f0e1d304f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6230b1ac_bcd819b6",
@@ -41,6 +58,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "560c09ba_e02babe4",
+        "filename": "core/fxcodec/progressive_decoder_unittest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 528,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-25T00:30:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6230b1ac_bcd819b6",
+      "range": {
+        "startLine": 528,
+        "startChar": 0,
+        "endLine": 528,
+        "endChar": 5
+      },
+      "revId": "057e60deeae036e6cf914f012e34348f0e1d304f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "85091c92_8bc862be",
@@ -54,6 +95,24 @@
       "writtenOn": "2025-10-24T23:29:04Z",
       "side": 1,
       "message": "Can be: `const auto input \u003d pdfium::span\u003cconst uint8_t\u003e(kGreenPng).first(64u);`",
+      "revId": "057e60deeae036e6cf914f012e34348f0e1d304f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "593487eb_d809d385",
+        "filename": "core/fxcodec/progressive_decoder_unittest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 568,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-25T00:30:45Z",
+      "side": 1,
+      "message": "Oh, right - thanks!  I thought for a moment that having two lines here (+ not having a `const` input is a bit regrettable), but it didn\u0027t occur to me that it can be fixed like this.  Done.",
+      "parentUuid": "85091c92_8bc862be",
       "revId": "057e60deeae036e6cf914f012e34348f0e1d304f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
