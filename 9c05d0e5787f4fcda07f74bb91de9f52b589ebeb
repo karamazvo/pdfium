@@ -16,6 +16,29 @@
       "message": "@thestig, can you PTAL?",
       "revId": "9c05d0e5787f4fcda07f74bb91de9f52b589ebeb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cd99f4fa_18a858fa",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 640,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-25T00:43:45Z",
+      "side": 1,
+      "message": "Over-parenthesized.",
+      "range": {
+        "startLine": 640,
+        "startChar": 8,
+        "endLine": 640,
+        "endChar": 9
+      },
+      "revId": "9c05d0e5787f4fcda07f74bb91de9f52b589ebeb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
