@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a00e5ca6_735dea6d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-27T14:23:58Z",
+      "side": 1,
+      "message": "Could you please stamp again?  Your CR+1 was lost after rebasing :-(",
+      "revId": "fb94fc78d8a1a352d6d3e194a6e2e983d178b17e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
