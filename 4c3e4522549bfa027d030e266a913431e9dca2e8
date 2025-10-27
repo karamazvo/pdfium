@@ -1,0 +1,45 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f1aa9270_388879c7",
+        "filename": "core/fpdfapi/font/cpdf_simplefont.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-10-27T18:41:46Z",
+      "side": 1,
+      "message": "After removal of the FT_LOAD_ constants, can we avoid this inclusion?",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 43
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "30798c0f_882a249c",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/font/cpdf_simplefont.cpp",
+              "range": {
+                "startLine": 20,
+                "startChar": 0,
+                "endLine": 21,
+                "endChar": 0
+              },
+              "replacement": "#include \"core/xge/freetype/fx_freetype.h\"\n"
+            }
+          ]
+        }
+      ],
+      "revId": "4c3e4522549bfa027d030e266a913431e9dca2e8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
