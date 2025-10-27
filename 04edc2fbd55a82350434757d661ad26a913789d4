@@ -41,6 +41,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c396a983_15ecfc0f",
+        "filename": "core/fxcodec/png/libpng_png_decoder.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-27T21:12:37Z",
+      "side": 1,
+      "message": "Done.  Makes sense.  Thanks for proposing the actual change/fix.",
+      "parentUuid": "28efe930_1e49c90b",
+      "range": {
+        "startLine": 194,
+        "startChar": 49,
+        "endLine": 194,
+        "endChar": 66
+      },
+      "revId": "04edc2fbd55a82350434757d661ad26a913789d4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "238a1f1b_9ed4994d",
@@ -58,6 +82,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4d9a386a_c3d07d3a",
+        "filename": "core/fxcodec/png/libpng_png_decoder.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-27T21:12:37Z",
+      "side": 1,
+      "message": "Let me change this to checking `...span.empty()`.  Done?",
+      "parentUuid": "238a1f1b_9ed4994d",
+      "revId": "04edc2fbd55a82350434757d661ad26a913789d4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "eddf9adb_4f6ea893",
@@ -71,6 +113,30 @@
       "writtenOn": "2025-10-27T20:42:02Z",
       "side": 1,
       "message": "Instead of having an out-parameter, can this method just write to `status_` directly?",
+      "range": {
+        "startLine": 589,
+        "startChar": 41,
+        "endLine": 589,
+        "endChar": 67
+      },
+      "revId": "04edc2fbd55a82350434757d661ad26a913789d4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "62c4efae_a1a64ef1",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-27T21:12:37Z",
+      "side": 1,
+      "message": "Oh, right.  I don\u0027t know why I did this.  Hmm... I guess forcing callers to explicitly pass `\u0026status_` makes it clearer that the call may mutate `status_`.  But this line of argumentation also applies to all the other things mutated by `ReadMoreData` (e.g. `codec_memory_`) so maybe let\u0027s just indeed simplify and avoid this out param.\n\nInterestingly, when `PngReadMoreData` returns `false`/failure, then `ProgressiveDecoder::PngContinueDecode` immediately sets `status_` to `kError`.  So setting `status_` inside `ReadMoreData` is kind of unnecessary.\n\nDone (applied the suggestion).  I am not sure if we want any other follow-ups.  Probably not in this CL?",
+      "parentUuid": "eddf9adb_4f6ea893",
       "range": {
         "startLine": 589,
         "startChar": 41,
@@ -104,6 +170,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d3564480_89c9a491",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 605,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-27T21:12:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2c313690_60167f0c",
+      "range": {
+        "startLine": 605,
+        "startChar": 52,
+        "endLine": 605,
+        "endChar": 54
+      },
+      "revId": "04edc2fbd55a82350434757d661ad26a913789d4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "40f47880_4fb11fe5",
@@ -117,6 +207,30 @@
       "writtenOn": "2025-10-27T20:42:02Z",
       "side": 1,
       "message": "As the reader, I\u0027m not sure what I should do this information as written. It would be more helpful if this comment explicitly mentioned `got_png_metadata_`, so readers can understand how the while-loop below can terminate.",
+      "range": {
+        "startLine": 606,
+        "startChar": 38,
+        "endLine": 606,
+        "endChar": 73
+      },
+      "revId": "04edc2fbd55a82350434757d661ad26a913789d4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5309690e_540584af",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 606,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-27T21:12:37Z",
+      "side": 1,
+      "message": "Done - I tried rewording + moving parts of the comment a few lines lower.\n\nPTAL?",
+      "parentUuid": "40f47880_4fb11fe5",
       "range": {
         "startLine": 606,
         "startChar": 38,
@@ -144,6 +258,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "09a34118_896289a7",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 637,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-27T21:12:37Z",
+      "side": 1,
+      "message": "This is a correct call.\n\n* After `Seek(0)`, `ReadMoreData` would think that the data present in `codec_memory_` still needs to be fed into the decoder.  So, `PngReadMoreData` would first feed old/stale `codec_memory_`, and then it would start feeding `file_` data starting at `offset_` 0.\n\n* After `Seek(...GetSize())`, `ReadMoreData` sees that `codec_memory_` is empty and needs to be populated with new data (read from `file_` starting at `offset_` 0).\n\nLet me try improving the comment here.  Done?",
+      "parentUuid": "45cef3c5_5b81c796",
+      "revId": "04edc2fbd55a82350434757d661ad26a913789d4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d15e17bf_727e4ae6",
@@ -157,6 +289,24 @@
       "writtenOn": "2025-10-27T20:42:02Z",
       "side": 1,
       "message": "Missing `constexpr`.",
+      "revId": "04edc2fbd55a82350434757d661ad26a913789d4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9ab48f82_9768a03b",
+        "filename": "core/fxcodec/progressive_decoder_unittest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 590,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-27T21:12:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d15e17bf_727e4ae6",
       "revId": "04edc2fbd55a82350434757d661ad26a913789d4",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
