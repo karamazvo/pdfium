@@ -139,6 +139,7 @@ class ProgressiveDecoder final :
 #endif  // PDF_ENABLE_XFA_GIF
 
 #ifdef PDF_ENABLE_XFA_PNG
+  bool PngReadMoreData(FXCODEC_STATUS* err_status);
   bool PngDetectImageTypeInBuffer();
   FXCODEC_STATUS PngStartDecode();
   FXCODEC_STATUS PngContinueDecode();
