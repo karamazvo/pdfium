@@ -74,6 +74,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "f3eabb15_ef7bb977",
+        "filename": "core/fpdfapi/font/cpdf_simplefont.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-10-27T18:32:40Z",
+      "side": 1,
+      "message": "Would this allow us to keep knowledge of the FT_LOAD_* constants in the cfx_* files and out of the cpdf_* files?",
+      "parentUuid": "511e8c14_f5d37c81",
+      "range": {
+        "startLine": 92,
+        "startChar": 39,
+        "endLine": 92,
+        "endChar": 74
+      },
+      "revId": "6dca6eaba2d449393285b05d4c8eabaa309d156a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "05629376_9bbc4127",
         "filename": "core/fxge/cfx_face.h",
         "patchSetId": 5
