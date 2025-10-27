@@ -21,6 +21,11 @@
 #include "core/fxge/cfx_substfont.h"
 
 #if defined(PDF_USE_SKIA)
+#if defined(PDF_ENABLE_FONTATIONS)
+// DO NOT SUBMIT?  Or do?  FWIW this is "step 3" of the repro steps from
+// http://crbug.com/438906414#comment6
+#include "third_party/skia/include/ports/SkFontMgr_Fontations.h"  // nogncheck
+#endif
 #include "third_party/skia/include/core/SkFontMgr.h"         // nogncheck
 #include "third_party/skia/include/core/SkStream.h"          // nogncheck
 #include "third_party/skia/include/core/SkTypeface.h"        // nogncheck
@@ -253,8 +258,11 @@ sk_sp<SkFontMgr> CreateSkiaFontManager() {
 #if defined(PDF_USE_SKIA_CUSTOM_FONT_MANAGER)
   return pdfium_skia_custom_font_manager();
 #else
-  // This is a SkFontMgr which will use FreeType to decode font data.
-  return SkFontMgr_New_Custom_Empty();
+  // This used to call `SkFontMgr_New_Custom_Empty`.  We replace it as "step 3"
+  // of the repro from http://crbug.com/438906414#comment6
+  //
+  // DO NOT SUBMIT
+  return SkFontMgr_New_Fontations_Empty();
 #endif
 }
 

@@ -308,6 +308,15 @@ component("skia") {
     ]
   }
 
+  # This step 2 of the repro from http://crbug.com/438906414#comment6
+  #
+  # DO NOT SUBMIT: https://crrev.com/c/6828742 suggests that directly
+  # adding to `sources` is undesirable / that for some reason an
+  # indirection of `pdf_skia_font_manager_target_override` is needed.
+  if (pdf_enable_fontations) {
+    sources += skia_ports_fontmgr_fontations_sources
+  }
+
   if (is_linux || is_chromeos) {
     sources += skia_ports_fci_sources
     sources += skia_ports_fontmgr_custom_sources
