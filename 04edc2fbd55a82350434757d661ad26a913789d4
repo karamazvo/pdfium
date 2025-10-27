@@ -16,6 +16,149 @@
       "message": "@thestig, can you PTAL?",
       "revId": "04edc2fbd55a82350434757d661ad26a913789d4",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "28efe930_1e49c90b",
+        "filename": "core/fxcodec/png/libpng_png_decoder.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-27T20:42:02Z",
+      "side": 1,
+      "message": "It may be clearer to write \"src_buf\" here, as that\u0027s what libpng actually consumed. As is, \"GetUnconsumedSpan\" is slightly ambiguous, as it can either refer to the GetUnconsumedSpan() call on line 190, or the one on 197.",
+      "range": {
+        "startLine": 194,
+        "startChar": 49,
+        "endLine": 194,
+        "endChar": 66
+      },
+      "revId": "04edc2fbd55a82350434757d661ad26a913789d4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "238a1f1b_9ed4994d",
+        "filename": "core/fxcodec/png/libpng_png_decoder.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-27T20:42:02Z",
+      "side": 1,
+      "message": "If the actual value doesn\u0027t matter, then check empty()? Or just check that Seek() succeeded. Which by definition should leave this as empty.",
+      "revId": "04edc2fbd55a82350434757d661ad26a913789d4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eddf9adb_4f6ea893",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-27T20:42:02Z",
+      "side": 1,
+      "message": "Instead of having an out-parameter, can this method just write to `status_` directly?",
+      "range": {
+        "startLine": 589,
+        "startChar": 41,
+        "endLine": 589,
+        "endChar": 67
+      },
+      "revId": "04edc2fbd55a82350434757d661ad26a913789d4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2c313690_60167f0c",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 605,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-27T20:42:02Z",
+      "side": 1,
+      "message": "go/avoid-we",
+      "range": {
+        "startLine": 605,
+        "startChar": 52,
+        "endLine": 605,
+        "endChar": 54
+      },
+      "revId": "04edc2fbd55a82350434757d661ad26a913789d4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "40f47880_4fb11fe5",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 606,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-27T20:42:02Z",
+      "side": 1,
+      "message": "As the reader, I\u0027m not sure what I should do this information as written. It would be more helpful if this comment explicitly mentioned `got_png_metadata_`, so readers can understand how the while-loop below can terminate.",
+      "range": {
+        "startLine": 606,
+        "startChar": 38,
+        "endLine": 606,
+        "endChar": 73
+      },
+      "revId": "04edc2fbd55a82350434757d661ad26a913789d4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "45cef3c5_5b81c796",
+        "filename": "core/fxcodec/progressive_decoder.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 637,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-27T20:42:02Z",
+      "side": 1,
+      "message": "Isn\u0027t this seeking to the end? Based on the comment above, I would have thought this should be a Seek(0) call.",
+      "revId": "04edc2fbd55a82350434757d661ad26a913789d4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d15e17bf_727e4ae6",
+        "filename": "core/fxcodec/progressive_decoder_unittest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 590,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-27T20:42:02Z",
+      "side": 1,
+      "message": "Missing `constexpr`.",
+      "revId": "04edc2fbd55a82350434757d661ad26a913789d4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
