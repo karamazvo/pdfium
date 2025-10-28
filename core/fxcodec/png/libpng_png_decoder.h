@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "core/fxcodec/cfx_codec_memory.h"
-#include "core/fxcodec/progressive_decoder_iface.h"
+#include "core/fxcodec/progressive_decoder_context.h"
 #include "core/fxcrt/retain_ptr.h"
 
 #ifndef PDF_ENABLE_XFA_PNG
@@ -24,10 +24,10 @@ class PngDecoderDelegate;
 // PNG decoder that uses the `libpng` library to decode pixels.
 class LibpngPngDecoder {
  public:
-  static std::unique_ptr<ProgressiveDecoderIface::Context> StartDecode(
+  static std::unique_ptr<ProgressiveDecoderContext> StartDecode(
       PngDecoderDelegate* pDelegate);
 
-  static bool ContinueDecode(ProgressiveDecoderIface::Context* pContext,
+  static bool ContinueDecode(ProgressiveDecoderContext* pContext,
                              RetainPtr<CFX_CodecMemory> codec_memory);
 
   LibpngPngDecoder() = delete;
