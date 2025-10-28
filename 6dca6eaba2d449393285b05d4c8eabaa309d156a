@@ -120,6 +120,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b04d9f05_cee99387",
+        "filename": "core/fpdfapi/font/cpdf_simplefont.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-10-28T04:54:42Z",
+      "side": 1,
+      "message": "If there are no real future plans to implement other flags, I think keeping it as bool scale makes sense. We can revisit this if future cases ever need more flexibility.\nResolving for now.",
+      "parentUuid": "2d4a7c89_9589659e",
+      "range": {
+        "startLine": 92,
+        "startChar": 39,
+        "endLine": 92,
+        "endChar": 74
+      },
+      "revId": "6dca6eaba2d449393285b05d4c8eabaa309d156a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "05629376_9bbc4127",
