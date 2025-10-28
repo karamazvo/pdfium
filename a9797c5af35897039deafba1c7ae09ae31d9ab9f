@@ -1,0 +1,185 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "db3d9123_77dafb93",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 11
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-10-28T17:58:54Z",
+      "side": 1,
+      "message": "This is quite good, just some small style points to fix as far as I can tell.",
+      "revId": "a9797c5af35897039deafba1c7ae09ae31d9ab9f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3e0c6954_1895d2b1",
+        "filename": "core/fpdfapi/font/cpdf_simplefont.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-10-28T17:58:54Z",
+      "side": 1,
+      "message": "nit: minor google style point with bools: `/*scale\u003d*/false`",
+      "range": {
+        "startLine": 90,
+        "startChar": 35,
+        "endLine": 90,
+        "endChar": 40
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "cc8b9926_9f4f0276",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/font/cpdf_simplefont.cpp",
+              "range": {
+                "startLine": 90,
+                "startChar": 0,
+                "endLine": 91,
+                "endChar": 0
+              },
+              "replacement": "      face-\u003eLoadGlyph(glyph_index, /*scale\u003d*/false);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "a9797c5af35897039deafba1c7ae09ae31d9ab9f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bf8fa74a_03867e4d",
+        "filename": "core/fpdfapi/font/cpdf_simplefont.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-10-28T17:58:54Z",
+      "side": 1,
+      "message": "nit: please `git cl format` to fix indentation here.",
+      "range": {
+        "startLine": 90,
+        "startChar": 4,
+        "endLine": 90,
+        "endChar": 42
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "cac2ecd4_e799286f",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/font/cpdf_simplefont.cpp",
+              "range": {
+                "startLine": 89,
+                "startChar": 0,
+                "endLine": 91,
+                "endChar": 0
+              },
+              "replacement": "  int err \u003d face-\u003eLoadGlyph(glyph_index, false);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "a9797c5af35897039deafba1c7ae09ae31d9ab9f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "62ae6032_7c8af41b",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 670,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-10-28T17:58:54Z",
+      "side": 1,
+      "message": "nit: again `git cl format` will fix indent here.",
+      "range": {
+        "startLine": 670,
+        "startChar": 0,
+        "endLine": 670,
+        "endChar": 31
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "f31b4c4a_0baa6dc0",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxge/cfx_face.cpp",
+              "range": {
+                "startLine": 670,
+                "startChar": 0,
+                "endLine": 671,
+                "endChar": 0
+              },
+              "replacement": "    args |\u003d FT_LOAD_NO_SCALE;\n"
+            }
+          ]
+        }
+      ],
+      "revId": "a9797c5af35897039deafba1c7ae09ae31d9ab9f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f0728cd1_b29f9fb9",
+        "filename": "core/fxge/cfx_font.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 328,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-10-28T17:58:54Z",
+      "side": 1,
+      "message": "nit: as above `/*scale\u003d*/true` and below as well",
+      "range": {
+        "startLine": 328,
+        "startChar": 42,
+        "endLine": 328,
+        "endChar": 46
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "86469ad1_ee6cff96",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxge/cfx_font.cpp",
+              "range": {
+                "startLine": 328,
+                "startChar": 0,
+                "endLine": 329,
+                "endChar": 0
+              },
+              "replacement": "    error \u003d face_-\u003eLoadGlyph(glyph_index, /*scale\u003d*/true);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "a9797c5af35897039deafba1c7ae09ae31d9ab9f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
