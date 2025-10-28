@@ -260,7 +260,7 @@ void ProgressiveDecoder::BmpReadScanline(uint32_t row_num,
 
 bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
     CFX_DIBAttribute* pAttribute) {
-  std::unique_ptr<ProgressiveDecoderIface::Context> pBmpContext =
+  std::unique_ptr<ProgressiveDecoderContext> pBmpContext =
       BmpDecoder::StartDecode(this);
   BmpDecoder::Input(pBmpContext.get(), codec_memory_);
 
@@ -332,9 +332,8 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
   return true;
 }
 
-bool ProgressiveDecoder::BmpReadMoreData(
-    ProgressiveDecoderIface::Context* bmp_context,
-    FXCODEC_STATUS* err_status) {
+bool ProgressiveDecoder::BmpReadMoreData(ProgressiveDecoderContext* bmp_context,
+                                         FXCODEC_STATUS* err_status) {
   // TODO(lukasza): Can this just use
   // `codec_memory_->GetUnconsumedSpan().size()`? (IIUC this is what
   // `GetAvailInput` uses in the end, but I haven't investigated that this is

@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fxcodec/progressive_decoder_iface.h"
+#include "core/fxcodec/progressive_decoder_context.h"
 #include "core/fxcrt/retain_ptr.h"
 
 #ifndef PDF_ENABLE_XFA_TIFF
@@ -25,10 +25,10 @@ class CFX_DIBAttribute;
 
 class TiffDecoder {
  public:
-  static std::unique_ptr<ProgressiveDecoderIface::Context> CreateDecoder(
+  static std::unique_ptr<ProgressiveDecoderContext> CreateDecoder(
       const RetainPtr<IFX_SeekableReadStream>& file_ptr);
 
-  static bool LoadFrameInfo(ProgressiveDecoderIface::Context* ctx,
+  static bool LoadFrameInfo(ProgressiveDecoderContext* ctx,
                             int32_t frame,
                             int32_t* width,
                             int32_t* height,
@@ -36,7 +36,7 @@ class TiffDecoder {
                             int32_t* bpc,
                             CFX_DIBAttribute* pAttribute);
   // `bitmap` must be `FXDIB_Format::kBgra`.
-  static bool Decode(ProgressiveDecoderIface::Context* ctx,
+  static bool Decode(ProgressiveDecoderContext* ctx,
                      RetainPtr<CFX_DIBitmap> bitmap);
 
   TiffDecoder() = delete;

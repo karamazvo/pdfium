@@ -14,7 +14,7 @@
 
 namespace fxcodec {
 
-class CFX_BmpContext final : public ProgressiveDecoderIface::Context {
+class CFX_BmpContext final : public ProgressiveDecoderContext {
  public:
   explicit CFX_BmpContext(BmpDecoder::Delegate* pDelegate);
   ~CFX_BmpContext() override;
