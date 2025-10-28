@@ -50,6 +50,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "32fd16ae_0d90cf12",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 31
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-28T18:37:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "746d51b8_5c5ba45b",
+      "range": {
+        "startLine": 15,
+        "startChar": 20,
+        "endLine": 15,
+        "endChar": 21
+      },
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "4c530aaa_a9b4566f",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 31
@@ -88,6 +112,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "002dd6ce_b673a4ae",
+        "filename": "core/fxcodec/png/png_decoder_delegate.h",
+        "patchSetId": 31
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-28T18:37:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "02b3ed02_f4df462d",
+      "range": {
+        "startLine": 38,
+        "startChar": 61,
+        "endLine": 39,
+        "endChar": 44
+      },
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f3e33129_0531535a",
@@ -105,6 +153,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f285646e_69cb8f54",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-28T18:37:26Z",
+      "side": 1,
+      "message": "Thanks for catching this.  I am keeping this `#include`, because I now use `NOTREACHED` to handle state management.",
+      "parentUuid": "f3e33129_0531535a",
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "91dd81ff_78b3dcf7",
@@ -118,6 +184,30 @@
       "writtenOn": "2025-10-28T00:48:04Z",
       "side": 1,
       "message": "style",
+      "range": {
+        "startLine": 32,
+        "startChar": 18,
+        "endLine": 32,
+        "endChar": 26
+      },
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "11474537_d1e2fc03",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-28T18:37:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "91dd81ff_78b3dcf7",
       "range": {
         "startLine": 32,
         "startChar": 18,
@@ -151,6 +241,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fd92e656_9e2407ac",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-28T18:37:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "65a6a33c_cfdf096d",
+      "range": {
+        "startLine": 50,
+        "startChar": 9,
+        "endLine": 50,
+        "endChar": 13
+      },
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "378ab09c_6fd6f707",
@@ -164,6 +278,30 @@
       "writtenOn": "2025-10-28T00:48:04Z",
       "side": 1,
       "message": "Is this a big hinderance, or just a minor inconvenience?\n\nI see the code in this file only calls getInfo(), startIncrementalDecode(), and incrementalDecode(). It\u0027s hard to see beyond that as to whether getFrameCount() or anything else that should be avoided is being called transitively.",
+      "range": {
+        "startLine": 52,
+        "startChar": 35,
+        "endLine": 52,
+        "endChar": 77
+      },
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f8f50ea1_a7ef8240",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-28T18:37:26Z",
+      "side": 1,
+      "message": "Let me add a clarification to the comment that:\n\n```\n/// ...  This is not an issue today, because\n// PDFium only needs to decode the first (or only) image / animation frame.\n```\n\nI mostly intended this comment to be a warning for future developers, because calling `getFrameCount` will compile fine, but may cause runtime decoding failures later (e.g. if during `getFrameCount` we try to parse metadata of all animation frames, but then have to rewind/seek-back to try to decode the first frame).\n\nDone?",
+      "parentUuid": "378ab09c_6fd6f707",
       "range": {
         "startLine": 52,
         "startChar": 35,
@@ -197,6 +335,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6231cf40_65c3ad09",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-28T18:37:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d414062b_0624f9de",
+      "range": {
+        "startLine": 79,
+        "startChar": 46,
+        "endLine": 79,
+        "endChar": 55
+      },
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "996d5204_e4d7dde0",
@@ -210,6 +372,24 @@
       "writtenOn": "2025-10-28T00:48:04Z",
       "side": 1,
       "message": "I didn\u0027t look too hard, so please tell me to look harder if this is a silly question. Should `delegate_accepted_image_metadata_` and `started_incremental_decode_` combine into a state enum?",
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c15fbc5d_9139d1c0",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-28T18:37:26Z",
+      "side": 1,
+      "message": "I am not sure.  Let\u0027s talk? :-)\n\nThe states are:\n\n* No `decoder_` (i.e. have to call `decoder_ \u003d SkPngRustDecoder::Decode(...)`)\n* Got `decoder_`, but no successful `PngReadHeader` call yet - this is tracked via `delegate_accepted_image_metadata_` (and delegate provides `target_gamma_`)\n* Got `decoder_`, `delegate_accepted_image_metadata_`, but haven\u0027t successfully called `startIncrementalDecode` yet - this is tracked via `started_incremental_decode_`\n* Finished (i.e. `incrementalDecode` succeeded + we called delegate\u0027s `PngFinishedDecoding`) - not really tracked, except by resetting `decoder_`\n\nRetrying/continuing after `PngReadHeader` returns a failure is unnecessary.  Let me get rid of this part of tracking.\n\nAnd let me try introducing an explicit `enum`.  I wish I had Rust `enum`s where some states would have a `SkCodec` and others wouldn\u0027t.\n\nWDYT?",
+      "parentUuid": "996d5204_e4d7dde0",
       "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -231,6 +411,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e40532ea_125838ed",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-28T18:37:26Z",
+      "side": 1,
+      "message": "We wrap `CFX_CodecMemory` in `CodecMemoryStream:SkStream` and give up ownership of the stream to `SkCodec` (in ` decoder_ \u003d SkPngRustDecoder::Decode(std::move(stream), ...);` call).  But `decoder_` is long-lived and so when we try to use `decoder_` in a new `ContinueDecoding(maybe_new_codec_memory)` call, the `decoder_`\u0027s stream will still refer to the original codec memory.\n\nAt one point I took care of this more explicitly (but I think it is not really needed).  In the past I:\n\n* Stored `SkiaPngContext*` in `CodecMemoryStream`\n* Stored `RetainPtr\u003cCFX_CodecMemory\u003e` in `CodecMemoryStream` but **only for the duration of** execution of `SkiaPngContext::ContinueDecode`\n* Had `CodecMemoryStream` reach out to `SkiaPngContext`\u0027s `CFX_CodecMemory` for reads\n\nBut I think the current patchset is okay + it is simpler.",
+      "parentUuid": "bbc0329d_fa2f8ca8",
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d0d1a804_ba96637b",
@@ -244,6 +442,24 @@
       "writtenOn": "2025-10-28T00:48:04Z",
       "side": 1,
       "message": "Would PngAskScanlineBuf().size() work instead?",
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2151cdf0_d49f50d1",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-28T18:37:26Z",
+      "side": 1,
+      "message": "I wondered about that, but it seems less robust - it is not documented whether `CFX_DIBitmap::GetWritableScanline` returns a span that covers a potential end-of-the-row padding or not.\n\nI guess it is also not documented whether `GetWritableBuffer` includes padding at the very end of the image, but it seems more natural (we return the whole buffer - the whole buffer should include the padding I think).",
+      "parentUuid": "d0d1a804_ba96637b",
       "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -271,6 +487,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ea371149_a6d1e1c0",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-28T18:37:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "82177aed_56dbc3be",
+      "range": {
+        "startLine": 189,
+        "startChar": 24,
+        "endLine": 189,
+        "endChar": 33
+      },
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "59f6f584_53f8c45c",
@@ -284,6 +524,30 @@
       "writtenOn": "2025-10-28T00:48:04Z",
       "side": 1,
       "message": "Hungarian notation.",
+      "range": {
+        "startLine": 32,
+        "startChar": 26,
+        "endLine": 32,
+        "endChar": 35
+      },
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fca333f8_f019ee30",
+        "filename": "core/fxcodec/png/skia_png_decoder.h",
+        "patchSetId": 31
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-28T18:37:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "59f6f584_53f8c45c",
       "range": {
         "startLine": 32,
         "startChar": 26,
