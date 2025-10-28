@@ -40,6 +40,30 @@
       ],
       "revId": "4c3e4522549bfa027d030e266a913431e9dca2e8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "11f6c67d_9fdcb19a",
+        "filename": "core/fpdfapi/font/cpdf_simplefont.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-10-28T04:52:02Z",
+      "side": 1,
+      "message": "I assume you meant deleting the line altogether. \u0027xge\u0027 is not a directory inside core.\nDone",
+      "parentUuid": "f1aa9270_388879c7",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 43
+      },
+      "revId": "4c3e4522549bfa027d030e266a913431e9dca2e8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
