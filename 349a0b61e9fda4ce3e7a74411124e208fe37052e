@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1e355591_df4d1b77",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 31
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-28T00:17:48Z",
+      "side": 1,
+      "message": "Not sure whether I should keep this paragraph of the CL description... WDYT?",
+      "range": {
+        "startLine": 15,
+        "startChar": 20,
+        "endLine": 15,
+        "endChar": 21
+      },
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4c530aaa_a9b4566f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 31
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-28T00:17:48Z",
+      "side": 1,
+      "message": "@thestig, can you PTAL again?  The CQ is green, so I think this should be ready for another review now.  There have been many changes+simplifications in `skia_png_decoder.cpp`, so this file may need a review from scratch (rather than a re-review).  Other files should have fairly minimal changes compared to earlier patchsets.",
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
