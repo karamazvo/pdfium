@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "746d51b8_5c5ba45b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 31
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-28T00:48:04Z",
+      "side": 1,
+      "message": "Probably ok without.",
+      "parentUuid": "1e355591_df4d1b77",
+      "range": {
+        "startLine": 15,
+        "startChar": 20,
+        "endLine": 15,
+        "endChar": 21
+      },
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "4c530aaa_a9b4566f",
@@ -37,6 +61,235 @@
       "writtenOn": "2025-10-28T00:17:48Z",
       "side": 1,
       "message": "@thestig, can you PTAL again?  The CQ is green, so I think this should be ready for another review now.  There have been many changes+simplifications in `skia_png_decoder.cpp`, so this file may need a review from scratch (rather than a re-review).  Other files should have fairly minimal changes compared to earlier patchsets.",
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "02b3ed02_f4df462d",
+        "filename": "core/fxcodec/png/png_decoder_delegate.h",
+        "patchSetId": 31
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-28T00:48:04Z",
+      "side": 1,
+      "message": "Use language consistent with line 30, so readers can easily see what\u0027s the same and what\u0027s different. e.g. \"decoder can write all the decoded pixels.\"",
+      "range": {
+        "startLine": 38,
+        "startChar": 61,
+        "endLine": 39,
+        "endChar": 44
+      },
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f3e33129_0531535a",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-28T00:48:04Z",
+      "side": 1,
+      "message": "Not used.",
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "91dd81ff_78b3dcf7",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-28T00:48:04Z",
+      "side": 1,
+      "message": "style",
+      "range": {
+        "startLine": 32,
+        "startChar": 18,
+        "endLine": 32,
+        "endChar": 26
+      },
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "65a6a33c_cfdf096d",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-28T00:48:04Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 50,
+        "startChar": 9,
+        "endLine": 50,
+        "endChar": 13
+      },
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "378ab09c_6fd6f707",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-28T00:48:04Z",
+      "side": 1,
+      "message": "Is this a big hinderance, or just a minor inconvenience?\n\nI see the code in this file only calls getInfo(), startIncrementalDecode(), and incrementalDecode(). It\u0027s hard to see beyond that as to whether getFrameCount() or anything else that should be avoided is being called transitively.",
+      "range": {
+        "startLine": 52,
+        "startChar": 35,
+        "endLine": 52,
+        "endChar": 77
+      },
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d414062b_0624f9de",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-28T00:48:04Z",
+      "side": 1,
+      "message": "Hungarian notation.",
+      "range": {
+        "startLine": 79,
+        "startChar": 46,
+        "endLine": 79,
+        "endChar": 55
+      },
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "996d5204_e4d7dde0",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-28T00:48:04Z",
+      "side": 1,
+      "message": "I didn\u0027t look too hard, so please tell me to look harder if this is a silly question. Should `delegate_accepted_image_metadata_` and `started_incremental_decode_` combine into a state enum?",
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bbc0329d_fa2f8ca8",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-28T00:48:04Z",
+      "side": 1,
+      "message": "Would it be ok to not worry about this and avoid storing `codec_memory_`? Just always use `codec_memory`.",
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d0d1a804_ba96637b",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-28T00:48:04Z",
+      "side": 1,
+      "message": "Would PngAskScanlineBuf().size() work instead?",
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "82177aed_56dbc3be",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-28T00:48:04Z",
+      "side": 1,
+      "message": "Hungarian notation.",
+      "range": {
+        "startLine": 189,
+        "startChar": 24,
+        "endLine": 189,
+        "endChar": 33
+      },
+      "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "59f6f584_53f8c45c",
+        "filename": "core/fxcodec/png/skia_png_decoder.h",
+        "patchSetId": 31
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-28T00:48:04Z",
+      "side": 1,
+      "message": "Hungarian notation.",
+      "range": {
+        "startLine": 32,
+        "startChar": 26,
+        "endLine": 32,
+        "endChar": 35
+      },
       "revId": "349a0b61e9fda4ce3e7a74411124e208fe37052e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
