@@ -16,6 +16,63 @@
       "message": "@thestig, can you PTAL again?",
       "revId": "5815bd249f82eead7df2216b7c569e77d1849b35",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "13753a5f_9a1b0e8e",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-29T18:40:19Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 133,
+        "startChar": 59,
+        "endLine": 133,
+        "endChar": 68
+      },
+      "revId": "5815bd249f82eead7df2216b7c569e77d1849b35",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e4257b09_c9859e64",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-29T18:40:19Z",
+      "side": 1,
+      "message": "This can probably be an `if (state_ \u003d\u003d State::kGotDecoder) { ...` block. The next block after this will catch the not reachable cases anyway.\n\nIf you prefer to keep the switch-statement, then please reverse the order for the cases. e.g. kGotDecoder first, then kStartedDecode, and then the rest.",
+      "revId": "5815bd249f82eead7df2216b7c569e77d1849b35",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c33d446f_23ca17c6",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-29T18:40:19Z",
+      "side": 1,
+      "message": "Easier to just write `CHECK_EQ(state_, State::kStartedDecode);` here.",
+      "revId": "5815bd249f82eead7df2216b7c569e77d1849b35",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
