@@ -50,6 +50,74 @@
       "message": "Hello @thestig@chromium.org could you find time to review this or should i assign another reviewer?\nthanks!",
       "revId": "d6055ca5f12568daf92ebd84eead01b04e1cba16",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "47acda94_908fb7d1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6295
+      },
+      "writtenOn": "2025-10-29T21:09:51Z",
+      "side": 1,
+      "message": "I can\u0027t say I know this code so re-adding thestig@. My recommendation is to try to make the change more isolated from complex methods like FindSubstFont.",
+      "revId": "d6055ca5f12568daf92ebd84eead01b04e1cba16",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d63d10cc_0a514945",
+        "filename": "core/fxge/cfx_fontmapper.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 728,
+      "author": {
+        "id": 6295
+      },
+      "writtenOn": "2025-10-29T21:09:51Z",
+      "side": 1,
+      "message": "Why is this skipped?",
+      "revId": "d6055ca5f12568daf92ebd84eead01b04e1cba16",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d83b3c6d_ed2dfc0f",
+        "filename": "core/fxge/cfx_fontmapper.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 741,
+      "author": {
+        "id": 6295
+      },
+      "writtenOn": "2025-10-29T21:09:51Z",
+      "side": 1,
+      "message": "It is unclear to me why this check is only done here and not elsewhere. How did this come up?",
+      "revId": "d6055ca5f12568daf92ebd84eead01b04e1cba16",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6d337932_5a7df1c3",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 6295
+      },
+      "writtenOn": "2025-10-29T21:09:51Z",
+      "side": 1,
+      "message": "Missing?",
+      "revId": "d6055ca5f12568daf92ebd84eead01b04e1cba16",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
