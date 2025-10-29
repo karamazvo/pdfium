@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "33a0be26_a0038529",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 35
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-29T19:18:04Z",
+      "side": 1,
+      "message": "@fmalita, can you PTAL at `//core/fxcodec/png/skia_png_decoder.cpp` and review from Skia / `SkPng...Decoder` / `SkCodec` perspective?",
+      "revId": "74b4d92ef352a7a23839feaeea6de5ee666706f2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0174662b_62a36a53",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 35
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-29T19:18:04Z",
+      "side": 1,
+      "message": "I am not sure if this is the right/best way to construct the target `SkColorSpace`.  But IIUC this is what [the legacy code does](https://source.chromium.org/chromium/chromium/src/+/main:third_party/pdfium/core/fxcodec/png/libpng_png_decoder.cpp;l\u003d81-96;drc\u003d553e531de10b8096779b3d3c77724781f6cfe0e4).  But maybe we should get the screen color profile in a more-accurate, not-just-gamma-encompassing way?\n\nFWIW we had to do quite a few tweaks (hacks?) in https://crbug.com/388025081 to match legacy Blink decoder\u0027s handling of gamma values.  And in the end the Skia code is more accurate than `libpng` (e.g. Skia doesn\u0027t assume that 2.2 is a neutral gamma).\n\nIs this worth following up on?  Maybe I should open a separate bug?  Maybe loop in @ccameron for color-space questions?",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 1
+      },
+      "revId": "74b4d92ef352a7a23839feaeea6de5ee666706f2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

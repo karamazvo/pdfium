@@ -41,6 +41,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7ed36895_8372b201",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-29T19:18:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "13753a5f_9a1b0e8e",
+      "range": {
+        "startLine": 133,
+        "startChar": 59,
+        "endLine": 133,
+        "endChar": 68
+      },
+      "revId": "5815bd249f82eead7df2216b7c569e77d1849b35",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e4257b09_c9859e64",
@@ -58,6 +82,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "11a30dc1_db56e138",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-29T19:18:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e4257b09_c9859e64",
+      "revId": "5815bd249f82eead7df2216b7c569e77d1849b35",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c33d446f_23ca17c6",
@@ -71,6 +113,24 @@
       "writtenOn": "2025-10-29T18:40:19Z",
       "side": 1,
       "message": "Easier to just write `CHECK_EQ(state_, State::kStartedDecode);` here.",
+      "revId": "5815bd249f82eead7df2216b7c569e77d1849b35",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f04a7a7b_e34515b9",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-29T19:18:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c33d446f_23ca17c6",
       "revId": "5815bd249f82eead7df2216b7c569e77d1849b35",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
