@@ -16,6 +16,142 @@
       "message": "@thestig, can you PTAL?",
       "revId": "3a995959592b1ceb33e9de29e6ffd34240c40e78",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ec84d088_ac63b5fd",
+        "filename": "core/fxcodec/bmp/bmp_decoder.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-29T18:24:47Z",
+      "side": 1,
+      "message": "Can just forward declare now?",
+      "revId": "3a995959592b1ceb33e9de29e6ffd34240c40e78",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "327ebe07_ae7d62aa",
+        "filename": "core/fxcodec/bmp/cfx_bmpcontext.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-29T18:24:47Z",
+      "side": 1,
+      "message": "#include \"core/fxcodec/progressive_decoder_context.h\"",
+      "revId": "3a995959592b1ceb33e9de29e6ffd34240c40e78",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "24003bb7_fb5cc67d",
+        "filename": "core/fxcodec/gif/cfx_gifcontext.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-29T18:24:47Z",
+      "side": 1,
+      "message": "include",
+      "revId": "3a995959592b1ceb33e9de29e6ffd34240c40e78",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fd550c15_9653be5c",
+        "filename": "core/fxcodec/gif/gif_decoder.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-29T18:24:47Z",
+      "side": 1,
+      "message": "Forward declare",
+      "revId": "3a995959592b1ceb33e9de29e6ffd34240c40e78",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6d20c4f1_67c0b391",
+        "filename": "core/fxcodec/jpeg/jpeg_progressive_decoder.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-29T18:24:47Z",
+      "side": 1,
+      "message": "Forward declare",
+      "revId": "3a995959592b1ceb33e9de29e6ffd34240c40e78",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8adaa72b_780168fc",
+        "filename": "core/fxcodec/png/libpng_png_decoder.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-29T18:24:47Z",
+      "side": 1,
+      "message": "Forward declare",
+      "revId": "3a995959592b1ceb33e9de29e6ffd34240c40e78",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bc090e07_9ab135bd",
+        "filename": "core/fxcodec/progressive_decoder.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-29T18:24:47Z",
+      "side": 1,
+      "message": "Forward declare?",
+      "revId": "3a995959592b1ceb33e9de29e6ffd34240c40e78",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ba20a43a_e04313de",
+        "filename": "core/fxcodec/tiff/tiff_decoder.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-29T18:24:47Z",
+      "side": 1,
+      "message": "Forward declare",
+      "revId": "3a995959592b1ceb33e9de29e6ffd34240c40e78",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
