@@ -35,6 +35,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "dee41bf5_5afaf771",
+        "filename": "core/fxcodec/bmp/bmp_decoder.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-29T18:34:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ec84d088_ac63b5fd",
+      "revId": "3a995959592b1ceb33e9de29e6ffd34240c40e78",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "327ebe07_ae7d62aa",
@@ -48,6 +66,24 @@
       "writtenOn": "2025-10-29T18:24:47Z",
       "side": 1,
       "message": "#include \"core/fxcodec/progressive_decoder_context.h\"",
+      "revId": "3a995959592b1ceb33e9de29e6ffd34240c40e78",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ef4f2019_d00bb119",
+        "filename": "core/fxcodec/bmp/cfx_bmpcontext.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-29T18:34:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "327ebe07_ae7d62aa",
       "revId": "3a995959592b1ceb33e9de29e6ffd34240c40e78",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -69,6 +105,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d75af0b6_75d1295c",
+        "filename": "core/fxcodec/gif/cfx_gifcontext.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-29T18:34:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "24003bb7_fb5cc67d",
+      "revId": "3a995959592b1ceb33e9de29e6ffd34240c40e78",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fd550c15_9653be5c",
@@ -82,6 +136,24 @@
       "writtenOn": "2025-10-29T18:24:47Z",
       "side": 1,
       "message": "Forward declare",
+      "revId": "3a995959592b1ceb33e9de29e6ffd34240c40e78",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9138fdc1_65b5de8b",
+        "filename": "core/fxcodec/gif/gif_decoder.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-29T18:34:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fd550c15_9653be5c",
       "revId": "3a995959592b1ceb33e9de29e6ffd34240c40e78",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -103,6 +175,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2214f158_c8e53bac",
+        "filename": "core/fxcodec/jpeg/jpeg_progressive_decoder.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-29T18:34:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6d20c4f1_67c0b391",
+      "revId": "3a995959592b1ceb33e9de29e6ffd34240c40e78",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8adaa72b_780168fc",
@@ -116,6 +206,24 @@
       "writtenOn": "2025-10-29T18:24:47Z",
       "side": 1,
       "message": "Forward declare",
+      "revId": "3a995959592b1ceb33e9de29e6ffd34240c40e78",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7e2973b1_348c9557",
+        "filename": "core/fxcodec/png/libpng_png_decoder.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-29T18:34:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8adaa72b_780168fc",
       "revId": "3a995959592b1ceb33e9de29e6ffd34240c40e78",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -137,6 +245,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1bd565bf_13e319d6",
+        "filename": "core/fxcodec/progressive_decoder.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-29T18:34:33Z",
+      "side": 1,
+      "message": "Done (have to add to `progressive_decoder.cpp` so destructor knows how to destruct `std::unique_ptr\u003cProgressiveDecoderContext\u003e` fields).",
+      "parentUuid": "bc090e07_9ab135bd",
+      "revId": "3a995959592b1ceb33e9de29e6ffd34240c40e78",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ba20a43a_e04313de",
@@ -150,6 +276,24 @@
       "writtenOn": "2025-10-29T18:24:47Z",
       "side": 1,
       "message": "Forward declare",
+      "revId": "3a995959592b1ceb33e9de29e6ffd34240c40e78",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "05430bd7_fb77cb0d",
+        "filename": "core/fxcodec/tiff/tiff_decoder.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-29T18:34:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba20a43a_e04313de",
       "revId": "3a995959592b1ceb33e9de29e6ffd34240c40e78",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
