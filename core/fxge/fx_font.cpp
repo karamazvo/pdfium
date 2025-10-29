@@ -168,3 +168,33 @@ int NormalizeFontMetric(int64_t value, uint16_t upem) {
   const double scaled_value = (value * 1000.0 + upem / 2) / upem;
   return pdfium::saturated_cast<int>(scaled_value);
 }
+
+FontStyleInfo GetStyle(const RetainPtr<CFX_Face>& face) {
+  uint32_t style = 0;
+  if (face->IsBold()) {
+    style |= pdfium::kFontStyleForceBold;
+  }
+  if (face->IsItalic()) {
+    style |= pdfium::kFontStyleItalic;
+  }
+  if (face->IsFixedWidth()) {
+    style |= pdfium::kFontStyleFixedPitch;
+  }
+
+  uint32_t os2CodepageMask = 0;
+  std::optional<std::array<uint32_t, 2>> code_page_range =
+      face->GetOs2CodePageRange();
+  if (code_page_range.has_value() && (code_page_range.value()[0] & (1 << 31))) {
+    style |= pdfium::kFontStyleSymbolic;
+    os2CodepageMask = code_page_range.value()[0];
+  }
+
+  std::optional<std::array<uint8_t, 2>> panose = face->GetOs2Panose();
+  if (panose.has_value() && panose.value()[0] == 2) {
+    uint8_t serif = panose.value()[1];
+    if ((serif > 1 && serif < 10) || serif > 13) {
+      style |= pdfium::kFontStyleSerif;
+    }
+  }
+  return {style, os2CodepageMask};
+}
