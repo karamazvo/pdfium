@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "94223bbf_3be292e6",
+        "filename": "core/fxge/android/cfpf_skiafontmgr.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 414,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-10-29T13:51:18Z",
+      "side": 1,
+      "message": "Forgot this if statement in patchset 1. Edited.\nThis should be fine as os2CodepageMask is never going to be 0 when it is called from inside the if statement here.\n\n```\n  if (code_page_range.has_value() \u0026\u0026 (code_page_range.value()[0] \u0026 (1 \u003c\u003c 31))) {\n    style |\u003d pdfium::kFontStyleSymbolic;\n    os2CodepageMask \u003d code_page_range.value()[0];\n  }\n```",
+      "range": {
+        "startLine": 414,
+        "startChar": 2,
+        "endLine": 414,
+        "endChar": 38
+      },
+      "revId": "29a1b80c915aa4029a5fea2851cdfee051dc4477",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
