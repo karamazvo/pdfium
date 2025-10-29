@@ -14,6 +14,7 @@
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/span.h"
+#include "core/fxge/cfx_face.h"
 
 namespace pdfium {
 
@@ -113,5 +114,12 @@ ByteString AdobeNameFromUnicode(wchar_t unicode);
 // If the computed result is excessively large and does not fit in an int,
 // NormalizeFontMetric() handles that with `saturated_cast()`.
 int NormalizeFontMetric(int64_t value, uint16_t upem);
+
+struct FontStyleInfo {
+  uint32_t style;
+  uint32_t os2CodepageMask;
+};
+
+FontStyleInfo GetStyle(const RetainPtr<CFX_Face>& face);
 
 #endif  // CORE_FXGE_FX_FONT_H_
