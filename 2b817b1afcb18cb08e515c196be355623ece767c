@@ -58,6 +58,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ec35054b_bc1d1212",
+        "filename": "core/fxge/fx_font.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-29T23:55:34Z",
+      "side": 1,
+      "message": "See my other comment. My suggestion is GetFontStyleInfo().",
+      "parentUuid": "363d63f8_a0970fdd",
+      "range": {
+        "startLine": 172,
+        "startChar": 14,
+        "endLine": 172,
+        "endChar": 22
+      },
+      "revId": "2b817b1afcb18cb08e515c196be355623ece767c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "db644502_f0b85abc",
@@ -71,6 +95,30 @@
       "writtenOn": "2025-10-29T13:38:46Z",
       "side": 1,
       "message": "Any cleaner solutions than this struct?\nI had a few ideas during development:\n1) Use the struct to output both style and code_page_range.value()[0] \n(What I currently did)\n\n2) Use two different functions, one specifically to output code_page_range.value()[0] \n(Those two functions would share a large amount of duplicate code)\n\n3) Let the caller handle code_page_range.value()[0] themselves \n(Would involve duplicating the if statements)\n\n4) Having one function with a flag deciding weather to return style or os2CodepageMask. \n(Would involve the same function called twice with different args)",
+      "range": {
+        "startLine": 118,
+        "startChar": 7,
+        "endLine": 118,
+        "endChar": 20
+      },
+      "revId": "2b817b1afcb18cb08e515c196be355623ece767c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b4c6de75_eac1c2fb",
+        "filename": "core/fxge/fx_font.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-29T23:55:34Z",
+      "side": 1,
+      "message": "Returning a struct is fine.",
+      "parentUuid": "db644502_f0b85abc",
       "range": {
         "startLine": 118,
         "startChar": 7,
