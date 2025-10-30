@@ -35,6 +35,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d2194cab_6e7f6a98",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-30T19:17:37Z",
+      "side": 1,
+      "message": "Thanks for you interest in working on PDFium. I granted access. I also ran some try jobs for you and they came back red. Hopefully you can use the new permissions to get this and future CLs in better shape.",
+      "parentUuid": "c9fc16a9_8800cb22",
+      "revId": "2b817b1afcb18cb08e515c196be355623ece767c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "363d63f8_a0970fdd",
