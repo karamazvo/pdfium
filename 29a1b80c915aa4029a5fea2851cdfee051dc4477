@@ -47,6 +47,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "528887ec_a6730658",
+        "filename": "core/fxge/fx_font.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-10-30T05:17:40Z",
+      "side": 1,
+      "message": "Yep forgot about that, mb.\nDone.",
+      "parentUuid": "af820c2c_d3554331",
+      "range": {
+        "startLine": 120,
+        "startChar": 11,
+        "endLine": 120,
+        "endChar": 26
+      },
+      "revId": "29a1b80c915aa4029a5fea2851cdfee051dc4477",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "470f56c9_3124c2ea",
@@ -60,6 +84,24 @@
       "writtenOn": "2025-10-29T23:55:34Z",
       "side": 1,
       "message": "How about making this CFX_Face::GetFontStyleInfo()?\n\n1. If the return type is FontStyleInfo, then the function can be GetFontStyleInfo().\n2. If this becomes a method in CFX_Face, then CFX_Face::GetOs2Panose() can become private.",
+      "revId": "29a1b80c915aa4029a5fea2851cdfee051dc4477",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b664ed92_550cf13b",
+        "filename": "core/fxge/fx_font.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-10-30T05:17:40Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "470f56c9_3124c2ea",
       "revId": "29a1b80c915aa4029a5fea2851cdfee051dc4477",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
