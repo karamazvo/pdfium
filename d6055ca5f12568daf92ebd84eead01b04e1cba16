@@ -69,6 +69,23 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "336e7881_560effbd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-10-30T19:55:10Z",
+      "side": 1,
+      "message": "@npm@chromium.org - thanks for the feedback.\nAdded the missing tests.\n\nThe whole idea of this CL was to remove the font loading/iteration completely to reduce IPC in Chromium. The idea came up in http://crrev.com/c/7029600 to avoid blocking on machines with 600+ fonts. I was surprised too that it was actually a quite small change.\n\nHere is a WIP CL for Chromium that utilizes the V2:\nhttps://chromium-review.googlesource.com/c/chromium/src/+/7052723",
+      "revId": "d6055ca5f12568daf92ebd84eead01b04e1cba16",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d63d10cc_0a514945",
@@ -82,6 +99,24 @@
       "writtenOn": "2025-10-29T21:09:51Z",
       "side": 1,
       "message": "Why is this skipped?",
+      "revId": "d6055ca5f12568daf92ebd84eead01b04e1cba16",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1a4e91ba_80d7859c",
+        "filename": "core/fxge/cfx_fontmapper.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 728,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-10-30T19:55:10Z",
+      "side": 1,
+      "message": "since `font_info_-\u003eEnumFontList(this);` is skipped, this would not find anything!",
+      "parentUuid": "d63d10cc_0a514945",
       "revId": "d6055ca5f12568daf92ebd84eead01b04e1cba16",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -103,6 +138,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "686c537f_fd351606",
+        "filename": "core/fxge/cfx_fontmapper.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 741,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-10-30T19:55:10Z",
+      "side": 1,
+      "message": "If we reset weight to old_weight, we lose the style information parsed earlier.",
+      "parentUuid": "d83b3c6d_ed2dfc0f",
+      "revId": "d6055ca5f12568daf92ebd84eead01b04e1cba16",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6d337932_5a7df1c3",
@@ -116,6 +169,24 @@
       "writtenOn": "2025-10-29T21:09:51Z",
       "side": 1,
       "message": "Missing?",
+      "revId": "d6055ca5f12568daf92ebd84eead01b04e1cba16",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "923c164f_d1cc993f",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-10-30T19:55:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6d337932_5a7df1c3",
       "revId": "d6055ca5f12568daf92ebd84eead01b04e1cba16",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
