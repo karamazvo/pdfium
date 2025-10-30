@@ -16,6 +16,24 @@
       "message": "Chromium reverted the update to this particular version. https://crrev.com/1537747\n\nCan PDFium just stay away from the potentially problematic version as well?",
       "revId": "ce526663b74d8c1e68c70d7f60758dc10ca2aa45",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3237558a_5f00c605",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-10-30T22:58:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c4815cbb_7a2aff8d",
+      "revId": "ce526663b74d8c1e68c70d7f60758dc10ca2aa45",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
