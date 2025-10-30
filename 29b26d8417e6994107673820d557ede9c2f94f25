@@ -61,6 +61,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "685ee06f_f3dab281",
+        "filename": "core/fxge/android/cfpf_skiafontmgr.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 416,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-10-30T19:07:42Z",
+      "side": 1,
+      "message": "Yeah, that if statement could be removed, in the previous code it was done like this, so i thought i\u0027d stick to it to keep it clear.",
+      "parentUuid": "bf2922ca_bc97adfb",
+      "range": {
+        "startLine": 414,
+        "startChar": 1,
+        "endLine": 416,
+        "endChar": 3
+      },
+      "revId": "29b26d8417e6994107673820d557ede9c2f94f25",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "bdde1c88_3693da45",
         "filename": "core/fxge/cfx_face.h",
         "patchSetId": 3
@@ -106,6 +130,30 @@
           ]
         }
       ],
+      "revId": "29b26d8417e6994107673820d557ede9c2f94f25",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "993a7ccb_43c2db12",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-10-30T19:07:42Z",
+      "side": 1,
+      "message": "One second working on it.",
+      "parentUuid": "bdde1c88_3693da45",
+      "range": {
+        "startLine": 159,
+        "startChar": 0,
+        "endLine": 159,
+        "endChar": 55
+      },
       "revId": "29b26d8417e6994107673820d557ede9c2f94f25",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
