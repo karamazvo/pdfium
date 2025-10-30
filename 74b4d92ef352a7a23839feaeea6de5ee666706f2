@@ -63,6 +63,30 @@
       },
       "revId": "74b4d92ef352a7a23839feaeea6de5ee666706f2",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "db077705_d4d9e0a0",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 35
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-10-30T22:17:06Z",
+      "side": 1,
+      "message": "Ok.  I think we should go ahead and land this CL, because 1) the risk is low (because the new code is opt-in - a separate Chromium CL is needed to actually start using it) and 2) landing will unblock running Chromium tests against the new code + unblock removing `libpng` dependency from `pdfium/skia/BUILD.gn` and from `chromium/src/skia/BUILD.gn`.\n\nSo, let me resolve this thread for now.  I\u0027ll loop in @ccameron to ask for their feedback+recommendation later.",
+      "parentUuid": "9b83e232_7d4b8586",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 1
+      },
+      "revId": "74b4d92ef352a7a23839feaeea6de5ee666706f2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
