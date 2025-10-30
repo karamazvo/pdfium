@@ -513,7 +513,9 @@ void CFX_FontMapper::LoadInstalledFonts() {
     return;
   }
 
-  font_info_->EnumFontList(this);
+  if (!skip_font_enumeration_) {
+    font_info_->EnumFontList(this);
+  }
   list_loaded_ = true;
 }
 
@@ -721,16 +723,24 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
     family = ByteString(maybe_family);
   }
 
-  ByteString match = MatchInstalledFonts(TT_NormalizeName(family));
-  if (match.IsEmpty() && family != subst_name &&
-      (!has_comma && (!has_hyphen || (has_hyphen && !is_style_available)))) {
-    match = MatchInstalledFonts(TT_NormalizeName(subst_name));
+  ByteString match;
+  if (!skip_font_enumeration_) {
+    match = MatchInstalledFonts(TT_NormalizeName(family));
+    if (match.IsEmpty() && family != subst_name &&
+        (!has_comma && (!has_hyphen || (has_hyphen && !is_style_available)))) {
+      match = MatchInstalledFonts(TT_NormalizeName(subst_name));
+    }
   }
   if (match.IsEmpty() && base_font >= kNumStandardFonts) {
     if (!is_cjk) {
       if (!CheckSupportThirdPartFont(family, &pitch_family)) {
         is_italic = italic_angle != 0;
-        weight = old_weight;
+        // When skip_font_enumeration_ is true (version 2), we rely on MapFont
+        // to handle font matching with the correct weight. Don't reset weight
+        // here as it would break bold/light font variants.
+        if (!skip_font_enumeration_) {
+          weight = old_weight;
+        }
       }
       if (IsNarrowFontName(subst_name)) {
         family = kNarrowFamily;
