@@ -39,6 +39,30 @@
       },
       "revId": "74b4d92ef352a7a23839feaeea6de5ee666706f2",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9b83e232_7d4b8586",
+        "filename": "core/fxcodec/png/skia_png_decoder.cpp",
+        "patchSetId": 35
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 3903851
+      },
+      "writtenOn": "2025-10-30T22:09:23Z",
+      "side": 1,
+      "message": "Yeah, this is the bit I\u0027m least familiar with.  Is there decent test coverage for png color space conversions?  That may be sufficient.\n\nLooping in ccameron is also a good idea.",
+      "parentUuid": "0174662b_62a36a53",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 1
+      },
+      "revId": "74b4d92ef352a7a23839feaeea6de5ee666706f2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
