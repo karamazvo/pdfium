@@ -83,6 +83,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5f1f4aba_63afcd24",
+        "filename": "core/fxge/android/cfpf_skiafontmgr.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 416,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-10-30T19:08:40Z",
+      "side": 1,
+      "message": "Published edits you suggested.",
+      "parentUuid": "685ee06f_f3dab281",
+      "range": {
+        "startLine": 414,
+        "startChar": 1,
+        "endLine": 416,
+        "endChar": 3
+      },
+      "revId": "29b26d8417e6994107673820d557ede9c2f94f25",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bdde1c88_3693da45",
@@ -148,6 +172,30 @@
       "side": 1,
       "message": "One second working on it.",
       "parentUuid": "bdde1c88_3693da45",
+      "range": {
+        "startLine": 159,
+        "startChar": 0,
+        "endLine": 159,
+        "endChar": 55
+      },
+      "revId": "29b26d8417e6994107673820d557ede9c2f94f25",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d792b1c0_11a53751",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-10-30T19:08:40Z",
+      "side": 1,
+      "message": "Yeah makes sense, done.",
+      "parentUuid": "993a7ccb_43c2db12",
       "range": {
         "startLine": 159,
         "startChar": 0,
