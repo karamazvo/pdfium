@@ -301,18 +301,78 @@ RetainPtr<CFX_Face> CFX_Face::New(FT_Library library,
   return pdfium::WrapRetain(new CFX_Face(pRec, std::move(pDesc)));
 }
 
+#ifdef PDF_ENABLE_XFA
+unsigned long FTStreamRead(FXFT_StreamRec* stream,
+                           unsigned long offset,
+                           unsigned char* buffer,
+                           unsigned long count) {
+  if (count == 0) {
+    return 0;
+  }
+
+  IFX_SeekableReadStream* pFile =
+      static_cast<IFX_SeekableReadStream*>(stream->descriptor.pointer);
+
+  // SAFETY: caller ensures `buffer` points to at least `count` bytes.
+  return pFile && pFile->ReadBlockAtOffset(
+                      UNSAFE_BUFFERS(pdfium::span(buffer, count)), offset)
+             ? count
+             : 0;
+}
+
+void FTStreamClose(FXFT_StreamRec* stream) {}
+#endif  // PDF_ENABLE_XFA
+
 #if BUILDFLAG(IS_ANDROID) || defined(PDF_ENABLE_XFA)
 // static
 RetainPtr<CFX_Face> CFX_Face::Open(FT_Library library,
                                    const FT_Open_Args* args,
                                    FT_Long face_index) {
-  FXFT_FaceRec* pRec = nullptr;
-  if (FT_Open_Face(library, args, face_index, &pRec) != 0) {
+  if (!library) {
     return nullptr;
   }
 
+  FXFT_FaceRec* pRec = nullptr;
+  if (FT_Open_Face(library, args, face_index, &pRec) != 0) {
+    ft_sfree(ftStream);
+    return nullptr;
+  }
   // Private ctor.
-  return pdfium::WrapRetain(new CFX_Face(pRec, nullptr));
+  RetainPtr<CFX_Face> face = pdfium::WrapRetain(new CFX_Face(pRec, nullptr));
+
+  if (!face) {
+    return nullptr;
+  }
+  face->SetPixelSize(0, 64);
+  return face;
+}
+
+RetainPtr<CFX_Face> CFX_Face::OpenFromStream(
+    FT_Library library,
+    const RetainPtr<IFX_SeekableReadStream>& font_stream,
+    FT_Long face_index) {
+  if (!font_stream) {
+    return nullptr;
+  }
+
+  FXFT_StreamRec* ftStream =
+      static_cast<FXFT_StreamRec*>(ft_scalloc(sizeof(FXFT_StreamRec), 1));
+  *ftStream = {};  // Aggregate initialization.
+  static_assert(std::is_aggregate_v<std::remove_pointer_t<decltype(ftStream)>>);
+  ftStream->base = nullptr;
+  ftStream->descriptor.pointer = static_cast<void*>(font_stream.Get());
+  ftStream->pos = 0;
+  ftStream->size = static_cast<unsigned long>(font_stream->GetSize());
+  ftStream->read = ftStreamRead;
+  ftStream->close = ftStreamClose;
+
+  FT_Open_Args ftArgs = {};  // Aggregate initialization.
+  static_assert(std::is_aggregate_v<decltype(ftArgs)>);
+  ftArgs.flags |= FT_OPEN_STREAM;
+  ftArgs.stream = ftStream;
+
+  RetainPtr<CFX_Face> face = Open(library, &ftArgs, face_index);
+  return face;
 }
 #endif
 
