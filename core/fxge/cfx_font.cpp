@@ -197,29 +197,13 @@ int CFX_Font::GetSubstFontItalicAngle() const {
 bool CFX_Font::LoadFile(RetainPtr<IFX_SeekableReadStream> pFile,
                         int nFaceIndex) {
   object_tag_ = 0;
-
-  auto pStreamRec = std::make_unique<FXFT_StreamRec>();
-  pStreamRec->base = nullptr;
-  pStreamRec->size = static_cast<unsigned long>(pFile->GetSize());
-  pStreamRec->pos = 0;
-  pStreamRec->descriptor.pointer = static_cast<void*>(pFile.Get());
-  pStreamRec->close = FTStreamClose;
-  pStreamRec->read = FTStreamRead;
-
-  FT_Open_Args args;
-  args.flags = FT_OPEN_STREAM;
-  args.stream = pStreamRec.get();
-
   face_ = CFX_Face::Open(CFX_GEModule::Get()->GetFontMgr()->GetFTLibrary(),
-                         &args, nFaceIndex);
-  if (!face_) {
+                         pFile, nFaceIndex);
+  if (!!face_) {
+    return true;
+  } else {
     return false;
   }
-
-  owned_file_ = std::move(pFile);
-  owned_stream_rec_ = std::move(pStreamRec);
-  face_->SetPixelSize(0, 64);
-  return true;
 }
 
 #if !BUILDFLAG(IS_WIN)

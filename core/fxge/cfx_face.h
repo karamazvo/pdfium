@@ -59,9 +59,10 @@ class CFX_Face final : public Retainable, public Observable {
                                  FT_Long face_index);
 
 #if BUILDFLAG(IS_ANDROID) || defined(PDF_ENABLE_XFA)
-  static RetainPtr<CFX_Face> Open(FT_Library library,
-                                  const FT_Open_Args* args,
-                                  FT_Long face_index);
+  static RetainPtr<CFX_Face> Open(
+      FT_Library library,
+      const RetainPtr<IFX_SeekableReadStream>& font_stream,
+      FT_Long face_index);
 #endif
 
   bool HasGlyphNames() const;
