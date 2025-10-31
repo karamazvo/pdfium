@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e8d5a51e_2ba6d1e2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6295
+      },
+      "writtenOn": "2025-10-31T13:57:15Z",
+      "side": 1,
+      "message": "Looks like the CQ is failing. You can run the tests locally and see if you can fix them?",
+      "revId": "f3de42a7e80886a197b415f5d7b889510954517b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
