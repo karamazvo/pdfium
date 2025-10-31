@@ -358,11 +358,6 @@ RetainPtr<CFX_Face> CFPF_SkiaFontMgr::GetFontFace(ByteStringView path,
   args.pathname = const_cast<FT_String*>(path.unterminated_c_str());
   RetainPtr<CFX_Face> face =
       CFX_Face::Open(ft_library_.get(), &args, face_index);
-  if (!face) {
-    return nullptr;
-  }
-
-  face->SetPixelSize(0, 64);
   return face;
 }
 
