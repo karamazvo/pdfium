@@ -22,6 +22,29 @@
       },
       "revId": "7e8667ba77cdd2a6ee13e1f316bcd1506ea10651",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9a2027e2_9ec8783a",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 520,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-10-31T13:30:16Z",
+      "side": 1,
+      "message": "nit: make pFace to just face.\nThoughts?",
+      "range": {
+        "startLine": 520,
+        "startChar": 22,
+        "endLine": 520,
+        "endChar": 27
+      },
+      "revId": "7e8667ba77cdd2a6ee13e1f316bcd1506ea10651",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
