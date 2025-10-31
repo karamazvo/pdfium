@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "97ed9e0d_f0593fb9",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 870,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-31T05:31:10Z",
+      "side": 1,
+      "message": "This is redundant. Just delete it. Then line 872 can be `if (IsBold()) {`, for example.",
+      "range": {
+        "startLine": 870,
+        "startChar": 4,
+        "endLine": 870,
+        "endChar": 35
+      },
+      "revId": "a49c1dab21f4f8c3a7b541887b4ef248ff2fe896",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
