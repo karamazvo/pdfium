@@ -16,6 +16,24 @@
       "message": "Works on my local build, testing with android again.",
       "revId": "e68e490a934899f06c70819f5b6936bc22d09de3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "06dd52a6_357f5ca8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-10-31T12:14:44Z",
+      "side": 1,
+      "message": "Removed an edgecase where `#ifdef xfa` is used for the declaration of functions that are called in both android and xfa.",
+      "parentUuid": "8369e18b_d7d3b511",
+      "revId": "e68e490a934899f06c70819f5b6936bc22d09de3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
