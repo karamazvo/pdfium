@@ -540,42 +540,9 @@ RetainPtr<IFX_SeekableReadStream> CreateFontStream(
 RetainPtr<CFX_Face> LoadFace(
     const RetainPtr<IFX_SeekableReadStream>& font_stream,
     int32_t iFaceIndex) {
-  if (!font_stream) {
-    return nullptr;
-  }
-
   CFX_FontMgr* font_mgr = CFX_GEModule::Get()->GetFontMgr();
   FXFT_LibraryRec* library = font_mgr->GetFTLibrary();
-  if (!library) {
-    return nullptr;
-  }
-
-  // TODO(palmer): This memory will be freed with |ft_free| (which is |free|).
-  // Ultimately, we want to change this to:
-  //   FXFT_Stream ftStream = FX_Alloc(FXFT_StreamRec, 1);
-  // https://bugs.chromium.org/p/pdfium/issues/detail?id=690
-  FXFT_StreamRec* ftStream =
-      static_cast<FXFT_StreamRec*>(ft_scalloc(sizeof(FXFT_StreamRec), 1));
-  *ftStream = {};  // Aggregate initialization.
-  static_assert(std::is_aggregate_v<std::remove_pointer_t<decltype(ftStream)>>);
-  ftStream->base = nullptr;
-  ftStream->descriptor.pointer = static_cast<void*>(font_stream.Get());
-  ftStream->pos = 0;
-  ftStream->size = static_cast<unsigned long>(font_stream->GetSize());
-  ftStream->read = ftStreamRead;
-  ftStream->close = ftStreamClose;
-
-  FT_Open_Args ftArgs = {};  // Aggregate initialization.
-  static_assert(std::is_aggregate_v<decltype(ftArgs)>);
-  ftArgs.flags |= FT_OPEN_STREAM;
-  ftArgs.stream = ftStream;
-
-  RetainPtr<CFX_Face> pFace = CFX_Face::Open(library, &ftArgs, iFaceIndex);
-  if (!pFace) {
-    ft_sfree(ftStream);
-    return nullptr;
-  }
-  pFace->SetPixelSize(0, 64);
+  RetainPtr<CFX_Face> pFace = CFX_Face::Open(library, font_stream, iFaceIndex);
   return pFace;
 }
 
