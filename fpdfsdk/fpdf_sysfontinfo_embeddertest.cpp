@@ -60,6 +60,37 @@ void FakeDeleteFont(FPDF_SYSFONTINFO* pThis, void* hFont) {}
 
 }  // extern "C"
 
+class FPDFPerRequestFontMatchingTest : public EmbedderTest {
+ public:
+  FPDFPerRequestFontMatchingTest() = default;
+  ~FPDFPerRequestFontMatchingTest() override = default;
+
+  void SetUp() override {
+    EmbedderTest::SetUp();
+    // Get the default system font info
+    font_info_ = FPDF_GetDefaultSystemFontInfo();
+    ASSERT_TRUE(font_info_);
+    // Modify version to 2 for per-request font matching
+    font_info_->version = 2;
+    FPDF_SetSystemFontInfo(font_info_);
+  }
+
+  void TearDown() override {
+    EmbedderTest::TearDown();
+
+    // After releasing font_info_ from PDFium, it is safe to free it.
+    FPDF_SetSystemFontInfo(nullptr);
+    FPDF_FreeDefaultSystemFontInfo(font_info_);
+
+    // Bouncing the library is the only reliable way to fully undo the initial
+    // FPDF_SetSystemFontInfo() call at the moment.
+    EmbedderTestEnvironment::GetInstance()->TearDown();
+    EmbedderTestEnvironment::GetInstance()->SetUp();
+  }
+
+  FPDF_SYSFONTINFO* font_info_;
+};
+
 class FPDFUnavailableSysFontInfoEmbedderTest : public EmbedderTest {
  public:
   FPDFUnavailableSysFontInfoEmbedderTest() = default;
@@ -122,6 +153,28 @@ class FPDFSysFontInfoEmbedderTest : public EmbedderTest {
 };
 
 }  // namespace
+
+TEST_F(FPDFPerRequestFontMatchingTest, PerRequestFontMatching) {
+  // Verify version 2 works: skips EnumFonts, uses MapFont per-request.
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  ASSERT_EQ(1, FPDF_GetPageCount(document()));
+
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+}
+
+TEST_F(FPDFPerRequestFontMatchingTest, PerRequestWithRendering) {
+  // Verify version 2 works end-to-end with rendering.
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  ASSERT_EQ(1, FPDF_GetPageCount(document()));
+
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ScopedFPDFBitmap bitmap = RenderPage(page.get());
+  ASSERT_EQ(200, FPDFBitmap_GetWidth(bitmap.get()));
+  ASSERT_EQ(200, FPDFBitmap_GetHeight(bitmap.get()));
+}
 
 TEST_F(FPDFUnavailableSysFontInfoEmbedderTest, Bug972518) {
   ASSERT_TRUE(OpenDocument("bug_972518.pdf"));
@@ -209,4 +262,36 @@ TEST_F(FPDFSysFontInfoEmbedderTest, DefaultTTFMapCountAndEntries) {
   // Test out of bound indices.
   EXPECT_FALSE(FPDF_GetDefaultTTFMapEntry(count));
   EXPECT_FALSE(FPDF_GetDefaultTTFMapEntry(9999));
+}
+
+TEST(FPDFSysFontInfoTest, Version2Accepted) {
+  FPDF_SYSFONTINFO font_info = {};
+  font_info.version = 2;
+  font_info.Release = FakeRelease;
+  font_info.EnumFonts = FakeEnumFonts;
+  font_info.MapFont = FakeMapFont;
+  font_info.GetFont = FakeGetFont;
+  font_info.GetFontData = FakeGetFontData;
+  font_info.GetFaceName = FakeGetFaceName;
+  font_info.GetFontCharset = FakeGetFontCharset;
+  font_info.DeleteFont = FakeDeleteFont;
+
+  FPDF_SetSystemFontInfo(&font_info);
+  FPDF_SetSystemFontInfo(nullptr);
+}
+
+TEST(FPDFSysFontInfoTest, InvalidVersionRejected) {
+  FPDF_SYSFONTINFO font_info = {};
+  font_info.version = 3;
+  font_info.Release = FakeRelease;
+  font_info.EnumFonts = FakeEnumFonts;
+  font_info.MapFont = FakeMapFont;
+  font_info.GetFont = FakeGetFont;
+  font_info.GetFontData = FakeGetFontData;
+  font_info.GetFaceName = FakeGetFaceName;
+  font_info.GetFontCharset = FakeGetFontCharset;
+  font_info.DeleteFont = FakeDeleteFont;
+
+  FPDF_SetSystemFontInfo(&font_info);
+  FPDF_SetSystemFontInfo(nullptr);
 }
