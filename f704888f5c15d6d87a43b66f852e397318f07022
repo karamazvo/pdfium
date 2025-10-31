@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "517dd463_211669e8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-31T18:05:46Z",
+      "side": 1,
+      "message": "Looking good.",
+      "revId": "f704888f5c15d6d87a43b66f852e397318f07022",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5bb49a50_81ce05cf",
+        "filename": "core/fxge/android/cfpf_skiafontmgr.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 414,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-31T18:05:46Z",
+      "side": 1,
+      "message": "Combine with the previous line.",
+      "revId": "f704888f5c15d6d87a43b66f852e397318f07022",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d3c1ded9_5a4da374",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-31T18:05:46Z",
+      "side": 1,
+      "message": "Move this up, so this struct can hang out with `struct CharCodeAndIndex` and friends.",
+      "revId": "f704888f5c15d6d87a43b66f852e397318f07022",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2e89c049_6214ed66",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-31T18:05:46Z",
+      "side": 1,
+      "message": "Add a comment to mention this uses `enum FontStyle` values.",
+      "revId": "f704888f5c15d6d87a43b66f852e397318f07022",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "04b433f7_e12b7ad8",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-10-31T18:05:46Z",
+      "side": 1,
+      "message": "How about grouping this with IsBold()?",
+      "revId": "f704888f5c15d6d87a43b66f852e397318f07022",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
