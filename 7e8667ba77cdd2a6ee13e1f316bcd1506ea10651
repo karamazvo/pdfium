@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0c6eeee2_933d7681",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 9
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-10-31T12:58:03Z",
+      "side": 1,
+      "message": "nit: Do i consider naming this to OpenFromArgs to make it more clear?",
+      "range": {
+        "startLine": 67,
+        "startChar": 29,
+        "endLine": 67,
+        "endChar": 33
+      },
+      "revId": "7e8667ba77cdd2a6ee13e1f316bcd1506ea10651",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
