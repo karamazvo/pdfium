@@ -16,6 +16,24 @@
       "message": "Found a way to address the issue, may not be the most clean or effective but it is doable.",
       "revId": "a006dbe1aa373126093c954a395aa65f847fd0d4",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cba2d1ff_7ad48026",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 12
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-10-31T18:27:17Z",
+      "side": 1,
+      "message": "Approach didn\u0027t work, trying out a few more approaches.",
+      "parentUuid": "5cd319d3_76865ba5",
+      "revId": "a006dbe1aa373126093c954a395aa65f847fd0d4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ],
   "submitRequirementResults": [
