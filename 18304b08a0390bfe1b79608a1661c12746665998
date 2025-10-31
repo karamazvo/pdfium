@@ -16,6 +16,24 @@
       "message": "Retrying failed builds to make sure everything works now.",
       "revId": "18304b08a0390bfe1b79608a1661c12746665998",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aaf9cd63_bcd7772b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-10-31T05:01:10Z",
+      "side": 1,
+      "message": "Tests seem to work now (forgot changing it in the XFA document)\nSurprisingly all the code worked on my end, probably due to me not being able to build for android or linux.",
+      "parentUuid": "c18dfc04_03369835",
+      "revId": "18304b08a0390bfe1b79608a1661c12746665998",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
