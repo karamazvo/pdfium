@@ -157,16 +157,23 @@ FPDF_SetSystemFontInfo(FPDF_SYSFONTINFO* font_infoExt) {
   auto* mapper = CFX_GEModule::Get()->GetFontMgr()->GetBuiltinMapper();
   if (!font_infoExt) {
     std::unique_ptr<SystemFontInfoIface> info = mapper->TakeSystemFontInfo();
+    // Reset to default behavior when clearing font info.
+    mapper->SetSkipFontEnumeration(false);
     // Delete `info` when it goes out of scope here.
     return;
   }
 
-  if (font_infoExt->version != 1) {
+  if (font_infoExt->version != 1 && font_infoExt->version != 2) {
     return;
   }
 
   mapper->SetSystemFontInfo(
       std::make_unique<CFX_ExternalFontInfo>(font_infoExt));
+
+  // Version 2: Skip font enumeration, use per-request matching via MapFont.
+  if (font_infoExt->version == 2) {
+    mapper->SetSkipFontEnumeration(true);
+  }
 
 #ifdef PDF_ENABLE_XFA
   CFGAS_GEModule::Get()->GetFontMgr()->EnumFonts();

@@ -46,7 +46,9 @@ extern "C" {
 // Interface: FPDF_SYSFONTINFO
 //          Interface for getting system font information and font mapping
 typedef struct _FPDF_SYSFONTINFO {
-  // Version number of the interface. Currently must be 1.
+  // Version number of the interface. Currently must be 1 or 2.
+  // Version 1: Traditional behavior - calls EnumFonts during initialization.
+  // Version 2: Per-request behavior - skips EnumFonts, relies on MapFont.
   int version;
 
   // Method: Release
@@ -80,6 +82,8 @@ typedef struct _FPDF_SYSFONTINFO {
   //          Implementations should call FPDF_AddInstalledFont() function for
   //          each font found. Only TrueType/OpenType and Type1 fonts are
   //          accepted by PDFium.
+  //          NOTE: This method will not be called when version is set to 2.
+  //          Version 2 relies entirely on MapFont() for per-request matching.
   void (*EnumFonts)(struct _FPDF_SYSFONTINFO* pThis, void* pMapper);
 
   // Method: MapFont
