@@ -35,6 +35,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "13c84437_c7ab1991",
+        "filename": "core/fxge/android/cfpf_skiafontmgr.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 414,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-01T03:57:01Z",
+      "side": 1,
+      "message": "Cl format wants me to do this\n\n```\nuint32_t charset \u003d\n      SKIACHARSET_Default | SkiaGetFaceCharset(fontinfo.os2_codepage_mask);\n```\n\nUpdated.",
+      "parentUuid": "5bb49a50_81ce05cf",
+      "revId": "f704888f5c15d6d87a43b66f852e397318f07022",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d3c1ded9_5a4da374",
@@ -48,6 +66,24 @@
       "writtenOn": "2025-10-31T18:05:46Z",
       "side": 1,
       "message": "Move this up, so this struct can hang out with `struct CharCodeAndIndex` and friends.",
+      "revId": "f704888f5c15d6d87a43b66f852e397318f07022",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ab818bac_eaa2ec40",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-01T03:57:01Z",
+      "side": 1,
+      "message": "Done. They should all be in their friend groups now.",
+      "parentUuid": "d3c1ded9_5a4da374",
       "revId": "f704888f5c15d6d87a43b66f852e397318f07022",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -69,6 +105,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3d44e938_21e824f9",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-01T03:57:01Z",
+      "side": 1,
+      "message": "Added.",
+      "parentUuid": "2e89c049_6214ed66",
+      "revId": "f704888f5c15d6d87a43b66f852e397318f07022",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "04b433f7_e12b7ad8",
@@ -82,6 +136,24 @@
       "writtenOn": "2025-10-31T18:05:46Z",
       "side": 1,
       "message": "How about grouping this with IsBold()?",
+      "revId": "f704888f5c15d6d87a43b66f852e397318f07022",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "67544cbd_093868a1",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-01T03:57:01Z",
+      "side": 1,
+      "message": "Yeah that makes sense. Done.",
+      "parentUuid": "04b433f7_e12b7ad8",
       "revId": "f704888f5c15d6d87a43b66f852e397318f07022",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
