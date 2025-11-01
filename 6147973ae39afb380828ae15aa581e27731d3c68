@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d400c514_6c4f5452",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 11
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-01T04:22:51Z",
+      "side": 1,
+      "message": "The merge conflict seems to have broken something, and I am not able to push from my end, code doesn\u0027t compile yet - will resolve when fixed.",
+      "revId": "6147973ae39afb380828ae15aa581e27731d3c68",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
