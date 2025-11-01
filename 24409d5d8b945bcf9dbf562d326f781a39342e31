@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "30af028d_f8ea7daa",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 16
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-01T09:17:11Z",
+      "side": 1,
+      "message": "Hi, Worked a bit on consolidating code between CFX_Face::Open() callers. I left a few nits still open - which I would work on, if you agree with the change.\n\nI have also left some devlogs in the gerrit comments (when I was debugging some segfaults and testing what caused it). Those aren\u0027t really that relavent to the current patchset. Currently speaking, I have tested on 8 platforms across various osses and buildflags.\n\nPlatforms are:  android, linux, linux_xfa, mac_xfa, mac_xfa_rel, mac_xfa_skia, win. win_xfa\n\nLet me know your thoughts and any changes that you would suggest.",
+      "revId": "24409d5d8b945bcf9dbf562d326f781a39342e31",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

@@ -41,6 +41,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e0d09729_9c56b054",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-01T09:17:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "639fdbf0_5e2acaad",
+      "range": {
+        "startLine": 302,
+        "startChar": 0,
+        "endLine": 302,
+        "endChar": 1
+      },
+      "revId": "bf4d2746dd54cbd713ad2b904921fa9657e37d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3be7ffe0_fd161d25",
@@ -64,6 +88,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "61b85d34_4855bc2f",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-01T09:17:11Z",
+      "side": 1,
+      "message": "Let me know if these should be consolidated or if there are any other callers to worry about. Unresolve if so.",
+      "parentUuid": "3be7ffe0_fd161d25",
+      "range": {
+        "startLine": 304,
+        "startChar": 0,
+        "endLine": 322,
+        "endChar": 45
+      },
+      "revId": "bf4d2746dd54cbd713ad2b904921fa9657e37d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a6d1f4c2_1e5a77d8",
@@ -77,6 +125,24 @@
       "writtenOn": "2025-11-01T08:28:50Z",
       "side": 1,
       "message": "// static",
+      "revId": "bf4d2746dd54cbd713ad2b904921fa9657e37d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "02ac56c0_036cf73b",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-01T09:17:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a6d1f4c2_1e5a77d8",
       "revId": "bf4d2746dd54cbd713ad2b904921fa9657e37d17",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -150,6 +216,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "61c409b6_c6e0b3f7",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 14
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-01T09:17:11Z",
+      "side": 1,
+      "message": "Making the edit, let me know it actually has a different best friend in the block.",
+      "parentUuid": "f0da2829_6b51fb5e",
+      "range": {
+        "startLine": 151,
+        "startChar": 2,
+        "endLine": 151,
+        "endChar": 48
+      },
+      "revId": "bf4d2746dd54cbd713ad2b904921fa9657e37d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "59183950_73c9b7ab",
@@ -163,6 +253,30 @@
       "writtenOn": "2025-11-01T08:28:50Z",
       "side": 1,
       "message": "Maybe split into two lines? other than one long line.\nOne to declare library and the other to use it?\nIt would be two either way.",
+      "range": {
+        "startLine": 179,
+        "startChar": 6,
+        "endLine": 179,
+        "endChar": 55
+      },
+      "revId": "bf4d2746dd54cbd713ad2b904921fa9657e37d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fe912315_83ad5d5b",
+        "filename": "core/fxge/cfx_font.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-01T09:17:11Z",
+      "side": 1,
+      "message": "Actually, lets keep it like this, won\u0027t improve readability much and just defines an unnessary variable thats used nowhere else.",
+      "parentUuid": "59183950_73c9b7ab",
       "range": {
         "startLine": 179,
         "startChar": 6,
@@ -196,6 +310,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e8e2b6bc_cab15ce5",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 518,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-01T09:17:11Z",
+      "side": 1,
+      "message": "Seems to be needed for library, but why can\u0027t this just be one line W the line below, and the one below that? Updating.",
+      "parentUuid": "2384df20_83395869",
+      "range": {
+        "startLine": 518,
+        "startChar": 2,
+        "endLine": 518,
+        "endChar": 60
+      },
+      "revId": "bf4d2746dd54cbd713ad2b904921fa9657e37d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "319eb9a9_dd6ac521",
@@ -209,6 +347,30 @@
       "writtenOn": "2025-11-01T08:28:50Z",
       "side": 1,
       "message": "Since the next line is split to 2 anyway, may make sense to put this with the next line to make it even shorter.",
+      "range": {
+        "startLine": 519,
+        "startChar": 2,
+        "endLine": 519,
+        "endChar": 54
+      },
+      "revId": "bf4d2746dd54cbd713ad2b904921fa9657e37d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "059e2d1f_02dc407d",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 519,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-01T09:17:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "319eb9a9_dd6ac521",
       "range": {
         "startLine": 519,
         "startChar": 2,
