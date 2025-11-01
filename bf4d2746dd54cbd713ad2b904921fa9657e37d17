@@ -1,0 +1,222 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ded7b16c_428ff20c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 14
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-01T08:28:50Z",
+      "side": 1,
+      "message": "Just had a nit-look through my own code for good measure.",
+      "revId": "bf4d2746dd54cbd713ad2b904921fa9657e37d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "639fdbf0_5e2acaad",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-01T08:28:50Z",
+      "side": 1,
+      "message": "nit: Newline after 302.",
+      "range": {
+        "startLine": 302,
+        "startChar": 0,
+        "endLine": 302,
+        "endChar": 1
+      },
+      "revId": "bf4d2746dd54cbd713ad2b904921fa9657e37d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3be7ffe0_fd161d25",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-01T08:28:50Z",
+      "side": 1,
+      "message": "https://issues.chromium.org/issues/452087741#comment2\nHere\u0027s where the two functions are consolidated.",
+      "range": {
+        "startLine": 304,
+        "startChar": 0,
+        "endLine": 322,
+        "endChar": 45
+      },
+      "revId": "bf4d2746dd54cbd713ad2b904921fa9657e37d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a6d1f4c2_1e5a77d8",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-01T08:28:50Z",
+      "side": 1,
+      "message": "// static",
+      "revId": "bf4d2746dd54cbd713ad2b904921fa9657e37d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5a1ba5b1_b561620c",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 354,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-01T08:28:50Z",
+      "side": 1,
+      "message": "Since ftStream is in camel, do I make it fontStream for consistency or leave it as font_stream?",
+      "range": {
+        "startLine": 354,
+        "startChar": 18,
+        "endLine": 354,
+        "endChar": 26
+      },
+      "revId": "bf4d2746dd54cbd713ad2b904921fa9657e37d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a7122dd6_363b2366",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-01T08:28:50Z",
+      "side": 1,
+      "message": "Nit: face_ maybe? Some of the old logic had face_ instead.",
+      "range": {
+        "startLine": 373,
+        "startChar": 22,
+        "endLine": 373,
+        "endChar": 26
+      },
+      "revId": "bf4d2746dd54cbd713ad2b904921fa9657e37d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f0da2829_6b51fb5e",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 14
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-01T08:28:50Z",
+      "side": 1,
+      "message": "Todo: Move past 158 for it to be its best friend (another RetainPtr)",
+      "range": {
+        "startLine": 151,
+        "startChar": 2,
+        "endLine": 151,
+        "endChar": 48
+      },
+      "revId": "bf4d2746dd54cbd713ad2b904921fa9657e37d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "59183950_73c9b7ab",
+        "filename": "core/fxge/cfx_font.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-01T08:28:50Z",
+      "side": 1,
+      "message": "Maybe split into two lines? other than one long line.\nOne to declare library and the other to use it?\nIt would be two either way.",
+      "range": {
+        "startLine": 179,
+        "startChar": 6,
+        "endLine": 179,
+        "endChar": 55
+      },
+      "revId": "bf4d2746dd54cbd713ad2b904921fa9657e37d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2384df20_83395869",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 518,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-01T08:28:50Z",
+      "side": 1,
+      "message": "What is font_mgr used for here anymore?",
+      "range": {
+        "startLine": 518,
+        "startChar": 2,
+        "endLine": 518,
+        "endChar": 60
+      },
+      "revId": "bf4d2746dd54cbd713ad2b904921fa9657e37d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "319eb9a9_dd6ac521",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 519,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-01T08:28:50Z",
+      "side": 1,
+      "message": "Since the next line is split to 2 anyway, may make sense to put this with the next line to make it even shorter.",
+      "range": {
+        "startLine": 519,
+        "startChar": 2,
+        "endLine": 519,
+        "endChar": 54
+      },
+      "revId": "bf4d2746dd54cbd713ad2b904921fa9657e37d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

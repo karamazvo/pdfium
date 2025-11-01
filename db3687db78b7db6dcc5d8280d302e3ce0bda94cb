@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "26b5d3ba_b7bc2f98",
+        "filename": "core/fxge/android/cfpf_skiafontmgr.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 365,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-01T08:28:50Z",
+      "side": 0,
+      "message": "Reduced code in the skiaifontmgr as well.\nhttps://issues.chromium.org/issues/452087741#comment2",
+      "range": {
+        "startLine": 361,
+        "startChar": 0,
+        "endLine": 365,
+        "endChar": 28
+      },
+      "revId": "db3687db78b7db6dcc5d8280d302e3ce0bda94cb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
