@@ -52,6 +52,24 @@
       "parentUuid": "ce1ab303_a5ad4196",
       "revId": "f3de42a7e80886a197b415f5d7b889510954517b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3d37ebb8_57a8def6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-11-02T21:56:59Z",
+      "side": 1,
+      "message": "ok finally managed to reproduce locally, and got it working! also added the new tests!",
+      "parentUuid": "a1defb32_999b7948",
+      "revId": "f3de42a7e80886a197b415f5d7b889510954517b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
