@@ -523,7 +523,7 @@ void ClipAngledGradient(pdfium::span<const SkPoint, 2> pts,
   clip->lineTo(IntersectSides(rect_pts[maxBounds], slope, startEdgePt));
 }
 
-// Converts a stroking path to scanlines
+// Converts CFX_GraphStateData+CFX_FillRenderOptions into SkPaint
 void PaintStroke(SkPaint* spaint,
                  const CFX_GraphStateData* graph_state,
                  const SkMatrix& matrix,
@@ -1104,65 +1104,103 @@ bool CFX_SkiaDeviceDriver::SetClip_PathStroke(
 }
 
 bool CFX_SkiaDeviceDriver::DrawPath(const CFX_Path& path,
-                                    const CFX_Matrix* pObject2Device,
+                                    const CFX_Matrix* transform_matrix,
                                     const CFX_GraphStateData* pGraphState,
                                     uint32_t fill_color,
                                     uint32_t stroke_color,
                                     const CFX_FillRenderOptions& fill_options) {
   fill_options_ = fill_options;
 
-  SkPath skia_path = BuildAndFinishPath(path);
-  skia_path.setFillType(GetAlternateOrWindingFillType(fill_options));
+  SkPath stroke_path = BuildAndFinishPath(path);
+  stroke_path.setFillType(GetAlternateOrWindingFillType(fill_options));
 
-  SkMatrix skMatrix = pObject2Device ? ToSkMatrix(*pObject2Device) : SkMatrix();
-  SkPaint skPaint;
-  skPaint.setAntiAlias(!fill_options.aliased_path);
+  SkMatrix path_transform =
+      transform_matrix ? ToSkMatrix(*transform_matrix) : SkMatrix();
+  SkPaint path_paint;
+  path_paint.setAntiAlias(!fill_options.aliased_path);
   if (fill_options.full_cover) {
-    skPaint.setBlendMode(SkBlendMode::kPlus);
+    path_paint.setBlendMode(SkBlendMode::kPlus);
   }
+
+  SkPaint stroke_paint = path_paint;
   int stroke_alpha = FXARGB_A(stroke_color);
   if (stroke_alpha) {
     const CFX_GraphStateData& graph_state =
         pGraphState ? *pGraphState : CFX_GraphStateData();
-    PaintStroke(&skPaint, &graph_state, skMatrix, fill_options);
+    PaintStroke(&stroke_paint, &graph_state, path_transform, fill_options);
   }
 
   SkAutoCanvasRestore scoped_save_restore(canvas_, /*doSave=*/true);
-  canvas_->concat(skMatrix);
-  bool do_stroke = true;
+  canvas_->concat(path_transform);
+
+  // Draw the fill
+  bool fill_included_stroke = false;
   if (fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill &&
       fill_color) {
-    SkPath strokePath;
-    const SkPath* fillPath = &skia_path;
-    if (stroke_alpha) {
-      if (group_knockout_) {
-        skpathutils::FillPathWithPaint(skia_path, skPaint, &strokePath);
-        if (stroke_color == fill_color &&
-            Op(skia_path, strokePath, SkPathOp::kUnion_SkPathOp, &strokePath)) {
-          fillPath = &strokePath;
-          do_stroke = false;
-        } else if (Op(skia_path, strokePath, SkPathOp::kDifference_SkPathOp,
-                      &strokePath)) {
-          fillPath = &strokePath;
-        }
+    // Knockout mode means draw the stroke and path so that they don't overlap,
+    // so that the alpha effects don't add together. It should produce a solid
+    // color for the whole area.
+    if (stroke_alpha && group_knockout_) {
+      // Draw the mask on a separate layer, so SkBlendMode::kSrcIn works
+      canvas_->saveLayer(nullptr, &path_paint);
+
+      // Calculate the overall stroke path outline. Ex: if the path is dashed
+      // this will create a path with a bunch of little ovals. Drawing
+      // stroke_outline with kFill_Style replicates drawing stroke_path with
+      // kStroke_Style.
+      SkPath stroke_outline;
+      skpathutils::FillPathWithPaint(stroke_path, stroke_paint,
+                                     &stroke_outline);
+
+      // Start the mask with the original fill shape (which slightly overlaps
+      // the stroke)
+      SkPaint mask_paint = path_paint;  // Inherit the AntiAlias setting
+      mask_paint.setBlendMode(SkBlendMode::kSrc);
+      mask_paint.setStyle(SkPaint::kFill_Style);
+      DrawPathImpl(stroke_path, mask_paint);
+
+      // Add the stroke outline path to the mask
+      if (stroke_color == fill_color) {
+        // Just include the stroke with the fill by expanding the fill area to
+        // cover the stroke (the stroke should be half way out of the fill,
+        // it's along the edge), since fill and stroke are the same color
+        mask_paint.setBlendMode(SkBlendMode::kPlus);
+        DrawPathImpl(stroke_outline, mask_paint);
+        fill_included_stroke = true;
+      } else {
+        // Subtract the part of the stroke that overlaps with the fill so the
+        // opacity of the stroke and fill don't add together. We want to only
+        // draw the fill where the stroke is not covering it.
+        mask_paint.setBlendMode(SkBlendMode::kClear);
+        DrawPathImpl(stroke_outline, mask_paint);
       }
+
+      // Draw the mask in the fill color and restore the canvas state
+      mask_paint.setBlendMode(SkBlendMode::kSrcIn);
+      mask_paint.setColor(fill_color);
+      canvas_->drawPaint(mask_paint);
+      canvas_->restore();
+    } else {
+      // Just draw the fill normally
+      stroke_paint.setStyle(SkPaint::kFill_Style);
+      stroke_paint.setColor(fill_color);
+      DrawPathImpl(stroke_path, stroke_paint);
     }
-    skPaint.setStyle(SkPaint::kFill_Style);
-    skPaint.setColor(fill_color);
-    DrawPathImpl(*fillPath, skPaint);
   }
-  if (stroke_alpha && do_stroke) {
-    skPaint.setStyle(SkPaint::kStroke_Style);
-    skPaint.setColor(stroke_color);
-    if (!skia_path.isLastContourClosed() && IsPathAPoint(skia_path)) {
-      DCHECK_GE(skia_path.countPoints(), 1);
-      canvas_->drawPoint(skia_path.getPoint(0), skPaint);
-    } else if (IsPathAPoint(skia_path) &&
-               skPaint.getStrokeCap() != SkPaint::kRound_Cap) {
+
+  // Draw the stroke
+  if (stroke_alpha && !fill_included_stroke) {
+    stroke_paint.setStyle(SkPaint::kStroke_Style);
+    stroke_paint.setColor(stroke_color);
+    if (!stroke_path.isLastContourClosed() && IsPathAPoint(stroke_path)) {
+      CHECK_GE(stroke_path.countPoints(), 1);
+      canvas_->drawPoint(stroke_path.getPoint(0), stroke_paint);
+    } else if (IsPathAPoint(stroke_path) &&
+               stroke_paint.getStrokeCap() != SkPaint::kRound_Cap) {
       // Do nothing. A closed 0-length closed path can be rendered only if
       // its line cap type is round.
     } else {
-      DrawPathImpl(skia_path, skPaint);
+      DrawPathImpl(stroke_path, stroke_paint);
     }
   }
   return true;
