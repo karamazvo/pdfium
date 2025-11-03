@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b1144912_f5127e77",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 12
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-03T22:25:44Z",
+      "side": 1,
+      "message": "Oh, this paragraph needs some updates to match the latest patchset.",
+      "revId": "ef592dd2de30410e0792efea13c3df4eaee4f620",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
