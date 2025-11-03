@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "cb2a047d_2402c230",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 9
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-03T22:51:52Z",
+      "side": 1,
+      "message": "Sure.",
+      "parentUuid": "0c6eeee2_933d7681",
+      "range": {
+        "startLine": 67,
+        "startChar": 29,
+        "endLine": 67,
+        "endChar": 33
+      },
+      "revId": "7e8667ba77cdd2a6ee13e1f316bcd1506ea10651",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "9a2027e2_9ec8783a",
         "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
         "patchSetId": 9
@@ -37,6 +61,30 @@
       "writtenOn": "2025-10-31T13:30:16Z",
       "side": 1,
       "message": "nit: make pFace to just face.\nThoughts?",
+      "range": {
+        "startLine": 520,
+        "startChar": 22,
+        "endLine": 520,
+        "endChar": 27
+      },
+      "revId": "7e8667ba77cdd2a6ee13e1f316bcd1506ea10651",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "69ba6d73_f145a8e4",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 520,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-03T22:51:52Z",
+      "side": 1,
+      "message": "Maybe first write a separate CL that just renames. Then this CL doesn\u0027t have to worry about that.",
+      "parentUuid": "9a2027e2_9ec8783a",
       "range": {
         "startLine": 520,
         "startChar": 22,

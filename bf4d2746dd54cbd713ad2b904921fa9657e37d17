@@ -172,6 +172,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "c32c42dc_16c64345",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 354,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-03T22:51:52Z",
+      "side": 1,
+      "message": "Use snake_case where possible.",
+      "parentUuid": "5a1ba5b1_b561620c",
+      "range": {
+        "startLine": 354,
+        "startChar": 18,
+        "endLine": 354,
+        "endChar": 26
+      },
+      "revId": "bf4d2746dd54cbd713ad2b904921fa9657e37d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a7122dd6_363b2366",
         "filename": "core/fxge/cfx_face.cpp",
         "patchSetId": 14
