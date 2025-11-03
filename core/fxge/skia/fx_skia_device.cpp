@@ -1122,6 +1122,8 @@ bool CFX_SkiaDeviceDriver::DrawPath(const CFX_Path& cfx_path,
   if (fill_options.full_cover) {
     path_paint.setBlendMode(SkBlendMode::kPlus);
   }
+
+  SkPaint stroke_paint = path_paint;
   int stroke_alpha = FXARGB_A(stroke_color);
   if (stroke_alpha) {
     const CFX_GraphStateData stroke_options_copy =
@@ -1132,40 +1134,65 @@ bool CFX_SkiaDeviceDriver::DrawPath(const CFX_Path& cfx_path,
 
   SkAutoCanvasRestore scoped_save_restore(canvas_, /*doSave=*/true);
   canvas_->concat(transform_matrix);
-  bool do_stroke = true;
+
+  // Draw the fill (and the stroke if it's a knockout group)
+  bool stroke_already_done = false;
   if (fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill &&
       fill_color) {
-    SkPath path_outline;
-    const SkPath* fill_path = &path;
-    if (stroke_alpha) {
-      if (group_knockout_) {
-        skpathutils::FillPathWithPaint(path, path_paint, &path_outline);
-        if (stroke_color == fill_color &&
-            Op(path, path_outline, SkPathOp::kUnion_SkPathOp, &path_outline)) {
-          fill_path = &path_outline;
-          do_stroke = false;
-        } else if (Op(path, path_outline, SkPathOp::kDifference_SkPathOp,
-                      &path_outline)) {
-          fill_path = &path_outline;
-        }
-      }
+    // Knockout Group is a PDF feature that means the elements of the group
+    // should not affect each other with transparency.
+    //
+    // See section 11.4.6 of in ISO 32000-1:2008:
+    // "At any given point, only the topmost object enclosing the point shall
+    // contribute to the result colour and opacity of the group as a whole"
+    if (stroke_alpha && group_knockout_) {
+      // Draw the knockout group path on a separate layer so blend modes can be
+      // adjusted. When restore() is called path_paint is used to composite the
+      // layer.
+      canvas_->saveLayer(nullptr, &path_paint);
+      SkPaint layer_paint = stroke_paint;
+
+      // kSrc means the top-most object fully overwrites any pixels it draws.
+      // See https://skia.org/docs/user/api/skblendmode_overview/
+      layer_paint.setBlendMode(SkBlendMode::kSrc);
+
+      layer_paint.setStyle(SkPaint::kFill_Style);
+      layer_paint.setColor(fill_color);
+      DrawPathImpl(path, layer_paint);
+
+      // Compute the stroke outline and draw with fill style so that if the
+      // path self-intersects the anti-aliasing pixels won't stack their
+      // transparency.
+      //
+      // Drawing it as a stroke normally already operates in the knockout way
+      // but not for the AA pixels.
+      SkPath stroke_outline;
+      skpathutils::FillPathWithPaint(path, stroke_paint, &stroke_outline);
+      layer_paint.setColor(stroke_color);
+      DrawPathImpl(stroke_outline, layer_paint);
+      stroke_already_done = true;
+
+      canvas_->restore();
+    } else {
+      stroke_paint.setStyle(SkPaint::kFill_Style);
+      stroke_paint.setColor(fill_color);
+      DrawPathImpl(path, stroke_paint);
     }
-    path_paint.setStyle(SkPaint::kFill_Style);
-    path_paint.setColor(fill_color);
-    DrawPathImpl(*fill_path, path_paint);
   }
-  if (stroke_alpha && do_stroke) {
-    path_paint.setStyle(SkPaint::kStroke_Style);
-    path_paint.setColor(stroke_color);
+
+  // Draw the stroke
+  if (stroke_alpha && !stroke_already_done) {
+    stroke_paint.setStyle(SkPaint::kStroke_Style);
+    stroke_paint.setColor(stroke_color);
     if (!path.isLastContourClosed() && IsPathAPoint(path)) {
-      DCHECK_GE(path.countPoints(), 1);
-      canvas_->drawPoint(path.getPoint(0), path_paint);
+      CHECK_GE(path.countPoints(), 1);
+      canvas_->drawPoint(path.getPoint(0), stroke_paint);
     } else if (IsPathAPoint(path) &&
-               path_paint.getStrokeCap() != SkPaint::kRound_Cap) {
+               stroke_paint.getStrokeCap() != SkPaint::kRound_Cap) {
       // Do nothing. A closed 0-length closed path can be rendered only if
       // its line cap type is round.
     } else {
-      DrawPathImpl(path, path_paint);
+      DrawPathImpl(path, stroke_paint);
     }
   }
   return true;
