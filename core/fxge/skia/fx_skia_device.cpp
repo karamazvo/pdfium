@@ -523,7 +523,7 @@ void ClipAngledGradient(pdfium::span<const SkPoint, 2> pts,
   clip->lineTo(IntersectSides(rect_pts[maxBounds], slope, startEdgePt));
 }
 
-// Converts a stroking path to scanlines
+// Converts CFX_GraphStateData+CFX_FillRenderOptions into SkPaint
 void PaintStroke(SkPaint* spaint,
                  const CFX_GraphStateData* graph_state,
                  const SkMatrix& matrix,
@@ -1104,68 +1104,102 @@ bool CFX_SkiaDeviceDriver::SetClip_PathStroke(
 }
 
 bool CFX_SkiaDeviceDriver::DrawPath(const CFX_Path& path,
-                                    const CFX_Matrix* pObject2Device,
+                                    const CFX_Matrix* transform_matrix,
                                     const CFX_GraphStateData* pGraphState,
                                     uint32_t fill_color,
                                     uint32_t stroke_color,
                                     const CFX_FillRenderOptions& fill_options) {
   fill_options_ = fill_options;
 
-  SkPath skia_path = BuildAndFinishPath(path);
-  skia_path.setFillType(GetAlternateOrWindingFillType(fill_options));
+  SkPath stroke_path = BuildAndFinishPath(path);
+  stroke_path.setFillType(GetAlternateOrWindingFillType(fill_options));
 
-  SkMatrix skMatrix = pObject2Device ? ToSkMatrix(*pObject2Device) : SkMatrix();
-  SkPaint skPaint;
-  skPaint.setAntiAlias(!fill_options.aliased_path);
+  SkMatrix path_transform =
+      transform_matrix ? ToSkMatrix(*transform_matrix) : SkMatrix();
+  SkPaint path_paint;
+  path_paint.setAntiAlias(!fill_options.aliased_path);
   if (fill_options.full_cover) {
-    skPaint.setBlendMode(SkBlendMode::kPlus);
+    path_paint.setBlendMode(SkBlendMode::kPlus);
   }
+
+  SkPaint stroke_paint = path_paint;
   int stroke_alpha = FXARGB_A(stroke_color);
   if (stroke_alpha) {
     const CFX_GraphStateData& graph_state =
         pGraphState ? *pGraphState : CFX_GraphStateData();
-    PaintStroke(&skPaint, &graph_state, skMatrix, fill_options);
+    PaintStroke(&stroke_paint, &graph_state, path_transform, fill_options);
   }
 
   SkAutoCanvasRestore scoped_save_restore(canvas_, /*doSave=*/true);
-  canvas_->concat(skMatrix);
-  bool do_stroke = true;
+  canvas_->concat(path_transform);
+
+  // Draw the fill (and the stroke if it's a knockout group)
+  bool stroke_already_done = false;
   if (fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill &&
       fill_color) {
-    SkPath strokePath;
-    const SkPath* fillPath = &skia_path;
-    if (stroke_alpha) {
-      if (group_knockout_) {
-        skpathutils::FillPathWithPaint(skia_path, skPaint, &strokePath);
-        if (stroke_color == fill_color &&
-            Op(skia_path, strokePath, SkPathOp::kUnion_SkPathOp, &strokePath)) {
-          fillPath = &strokePath;
-          do_stroke = false;
-        } else if (Op(skia_path, strokePath, SkPathOp::kDifference_SkPathOp,
-                      &strokePath)) {
-          fillPath = &strokePath;
-        }
-      }
-    }
-    skPaint.setStyle(SkPaint::kFill_Style);
-    skPaint.setColor(fill_color);
-    DrawPathImpl(*fillPath, skPaint);
-  }
-  if (stroke_alpha && do_stroke) {
-    skPaint.setStyle(SkPaint::kStroke_Style);
-    skPaint.setColor(stroke_color);
-    if (!skia_path.isLastContourClosed() && IsPathAPoint(skia_path)) {
-      DCHECK_GE(skia_path.countPoints(), 1);
-      canvas_->drawPoint(skia_path.getPoint(0), skPaint);
-    } else if (IsPathAPoint(skia_path) &&
-               skPaint.getStrokeCap() != SkPaint::kRound_Cap) {
-      // Do nothing. A closed 0-length closed path can be rendered only if
-      // its line cap type is round.
+    // Knockout Group is a PDF feature that means the elements of the group
+    // should not affect each other with transparency.
+    //
+    // See section 11.4.6 of in ISO 32000-1:2008:
+    // "At any given point, only the topmost object enclosing the point shall
+    // contribute to the result colour and opacity of the group as a whole"
+    if (stroke_alpha && group_knockout_) {
+      // Draw the knockout group path on a separate layer so blend modes can be
+      // adjusted. When restore() is called path_paint is used to composite the
+      // layer.
+      canvas_->saveLayer(nullptr, &path_paint);
+      SkPaint layer_paint = stroke_paint;
+
+      // kSrc means the top-most object fully overwrites any pixels it draws.
+      // See https://skia.org/docs/user/api/skblendmode_overview/
+      layer_paint.setBlendMode(SkBlendMode::kSrc);
+
+      layer_paint.setStyle(SkPaint::kFill_Style);
+      layer_paint.setColor(fill_color);
+      DrawPathImpl(stroke_path, layer_paint);
+
+      // Compute the stroke outline and draw with fill style so that if the path
+      // self-intersects the anti-aliasing pixels won't stack their
+      // transparency.
+      //
+      // Drawing it as a stroke normally already operates in the knockout way
+      // but not for the AA pixels.
+      SkPath stroke_outline;
+      skpathutils::FillPathWithPaint(stroke_path, stroke_paint,
+                                     &stroke_outline);
+      layer_paint.setColor(stroke_color);
+      DrawPathImpl(stroke_outline, layer_paint);
+      stroke_already_done = true;
+
+      canvas_->restore();
     } else {
-      DrawPathImpl(skia_path, skPaint);
+      stroke_paint.setStyle(SkPaint::kFill_Style);
+      stroke_paint.setColor(fill_color);
+      DrawPathImpl(stroke_path, stroke_paint);
     }
+  }
+
+  // Draw the stroke
+  if (stroke_alpha && !stroke_already_done) {
+    stroke_paint.setColor(stroke_color);
+    stroke_paint.setStyle(SkPaint::kStroke_Style);
+    DrawPathStroke(stroke_path, stroke_paint);
   }
   return true;
+}
+
+void CFX_SkiaDeviceDriver::DrawPathStroke(const SkPath& path,
+                                          const SkPaint& paint) {
+  if (!path.isLastContourClosed() && IsPathAPoint(path)) {
+    CHECK_GE(path.countPoints(), 1);
+    canvas_->drawPoint(path.getPoint(0), paint);
+  } else if (IsPathAPoint(path) &&
+             paint.getStrokeCap() != SkPaint::kRound_Cap) {
+    // Do nothing. A closed 0-length closed path can be rendered only if
+    // its line cap type is round.
+  } else {
+    DrawPathImpl(path, paint);
+  }
 }
 
 bool CFX_SkiaDeviceDriver::FillRect(const FX_RECT& rect, uint32_t fill_color) {

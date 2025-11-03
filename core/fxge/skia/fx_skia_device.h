@@ -181,6 +181,10 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
   // A wrapper around SkCanvas::drawPath() that optionally can show debug data.
   void DrawPathImpl(const SkPath& path, const SkPaint& paint);
 
+  // Draw just the stroke part of a path.
+  // Handles single point paths and empty paths.
+  void DrawPathStroke(const SkPath& path, const SkPaint& paint);
+
   RetainPtr<CFX_DIBitmap> bitmap_;
   RetainPtr<CFX_DIBitmap> backdrop_bitmap_;
 
