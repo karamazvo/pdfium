@@ -1,0 +1,124 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4c96a59b_e9ed7dd2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 16
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6295
+      },
+      "writtenOn": "2025-11-03T21:02:07Z",
+      "side": 1,
+      "message": "thestig@ said he will take a look later but I took a pass mainly at the new tests",
+      "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0a83bce2_98e04feb",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 6295
+      },
+      "writtenOn": "2025-11-03T21:02:07Z",
+      "side": 1,
+      "message": "Maybe tracking_font_info_ should have the inner default font info and the two counters? No need for the static GetTracker",
+      "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ba6e3a0e_aea6cca3",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 6295
+      },
+      "writtenOn": "2025-11-03T21:02:07Z",
+      "side": 1,
+      "message": "Should not have to clean up during setup? Only during teardown",
+      "fixSuggestions": [
+        {
+          "fixId": "95a1acb2_ddca05f6",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+              "range": {
+                "startLine": 258,
+                "startChar": 0,
+                "endLine": 267,
+                "endChar": 0
+              },
+              "replacement": ""
+            }
+          ]
+        }
+      ],
+      "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f5d3dbd4_9edda6f5",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 6295
+      },
+      "writtenOn": "2025-11-03T21:02:07Z",
+      "side": 1,
+      "message": "ditto",
+      "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cdb6f248_14f84018",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 6295
+      },
+      "writtenOn": "2025-11-03T21:02:07Z",
+      "side": 1,
+      "message": "Where is the comment being checked in this test?",
+      "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b7adf38e_ba8fb282",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 453,
+      "author": {
+        "id": 6295
+      },
+      "writtenOn": "2025-11-03T21:02:07Z",
+      "side": 1,
+      "message": "Unclear what this is testing given that this and below test have basically no difference in what they expect",
+      "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
