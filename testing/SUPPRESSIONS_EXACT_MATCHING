@@ -37,6 +37,7 @@ radial_shading_point_at_border.in mac * * skia
 radial_shading_point_at_border_no_extend.in mac * * skia
 shade.in mac * * skia
 xfa_textfield.in mac * * skia
+bug_1430333.pdf mac_x86 * * skia
 
 #
 # Corpus tests
@@ -179,3 +180,5 @@ zh_file_structure.pdf mac * * skia
 zh_function_list.pdf mac * * skia
 zh_page.pdf mac * * skia
 zh_webdav.pdf mac * * skia
+path_9.pdf mac_x86 * * skia
+transparent1.pdf mac_x86 * * skia
