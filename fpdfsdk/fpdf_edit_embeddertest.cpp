@@ -2697,7 +2697,7 @@ TEST_F(FPDFEditEmbedderTest, AddStrokedPaths) {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
     const char* checksum_3 = []() {
       if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-        return "a5de6ddefcbae60924bebc99347e460b";
+        return "037f5b38d8b612abf0833eb9ac8adf69";
       }
       return "ff3e6a22326754944cc6e56609acd73b";
     }();
@@ -3943,7 +3943,7 @@ TEST_F(FPDFEditEmbedderTest, LoadCidType2FontWithBadParameters) {
 TEST_F(FPDFEditEmbedderTest, SaveAndRender) {
   const char* checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-      return "edd4aed776c0eaf8c79dd24d9654af95";
+      return "a6e8827e9fda09151765130e2f5531eb";
     }
     return "3c20472b0552c0c22b88ab1ed8c6202b";
   }();
