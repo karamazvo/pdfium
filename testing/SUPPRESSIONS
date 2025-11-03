@@ -351,6 +351,7 @@ font_2_embedded_font_en_size14.pdf mac_x86 * * skia
 xfermodes.pdf mac_x86 * * skia
 xfermodes2.pdf mac_x86 * * skia
 xfermodes3.pdf mac_x86 * * skia
+transparent1.pdf mac_x86 * * skia
 
 # GDI
 
