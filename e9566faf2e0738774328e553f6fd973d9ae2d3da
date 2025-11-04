@@ -75,6 +75,30 @@
       },
       "revId": "e9566faf2e0738774328e553f6fd973d9ae2d3da",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "97bf24c8_a9251080",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 13
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-04T19:11:44Z",
+      "side": 1,
+      "message": "Is this still an issue in the latest patchset?",
+      "parentUuid": "7b6ae327_5f1f9b5b",
+      "range": {
+        "startLine": 152,
+        "startChar": 2,
+        "endLine": 152,
+        "endChar": 52
+      },
+      "revId": "e9566faf2e0738774328e553f6fd973d9ae2d3da",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }

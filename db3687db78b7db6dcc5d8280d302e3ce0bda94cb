@@ -46,6 +46,23 @@
       },
       "revId": "db3687db78b7db6dcc5d8280d302e3ce0bda94cb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "96c1c3e0_a3e26660",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 18
+      },
+      "lineNbr": 557,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-04T19:11:44Z",
+      "side": 0,
+      "message": "Note that the code here and the code in core/fxge/cfx_font.cpp are not exactly the same. It may be helpful to first align the two so they use the same memory allocation strategy. Then this CL can more easily merge them.\n\nThis CL picked this code as the merged code that goes into core/fxge/cfx_face.cpp, but I would actually prefer the code from core/fxge/cfx_font.cpp, where the FXFT_StreamRec is wrapped in std::unique_ptr.",
+      "revId": "db3687db78b7db6dcc5d8280d302e3ce0bda94cb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
