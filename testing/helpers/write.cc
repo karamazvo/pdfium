@@ -189,6 +189,25 @@ const char* PageObjectTypeToCString(int type) {
   NOTREACHED();
 }
 
+#ifdef PDF_ENABLE_SKIA
+std::vector<uint8_t> ConvertToStraightAlpha(pdfium::span<const uint8_t> input,
+                                            int width,
+                                            int height,
+                                            int row_byte_width) {
+  SkImageInfo image_info = SkImageInfo::Make(
+      width, height, kBGRA_8888_SkColorType, kPremul_SkAlphaType);
+  SkPixmap src_pixmap(image_info, input.data(), row_byte_width);
+
+  std::vector<uint8_t> result(input.size());
+  SkPixmap dst_pixmap(SkImageInfo::Make(width, height, kBGRA_8888_SkColorType,
+                                        kUnpremul_SkAlphaType),
+                      result.data(), row_byte_width);
+
+  CHECK(src_pixmap.readPixels(dst_pixmap));
+  return result;
+}
+#endif
+
 std::vector<uint8_t> EncodePng(pdfium::span<const uint8_t> input,
                                int width,
                                int height,
@@ -212,6 +231,16 @@ std::vector<uint8_t> EncodePng(pdfium::span<const uint8_t> input,
       png = image_diff_png::EncodeBGRAPNG(input, width, height, stride,
                                           /*discard_transparency=*/false);
       break;
+#ifdef PDF_ENABLE_SKIA
+    case FPDFBitmap_BGRA_Premul: {
+      std::vector<uint8_t> input_with_straight_alpha =
+          ConvertToStraightAlpha(input, width, height, stride);
+      png = image_diff_png::EncodeBGRAPNG(input_with_straight_alpha, width,
+                                          height, stride,
+                                          /*discard_transparency=*/false);
+      break;
+    }
+#endif
     default:
       NOTREACHED();
   }
@@ -258,6 +287,48 @@ std::string GenerateImageOutputFilename(const char* pdf_name,
     return std::string();
   }
 
+  return filename;
+}
+
+std::string WritePng(const char* pdf_name,
+                     int num,
+                     void* buffer,
+                     int stride,
+                     int width,
+                     int height,
+                     bool buffer_has_premultiplied_alpha) {
+  if (!CheckDimensions(stride, width, height)) {
+    return "";
+  }
+
+  auto input = pdfium::span(static_cast<uint8_t*>(buffer),
+                            static_cast<size_t>(stride) * height);
+  int format =
+      buffer_has_premultiplied_alpha ? FPDFBitmap_BGRA_Premul : FPDFBitmap_BGRA;
+  std::vector<uint8_t> png_encoding =
+      EncodePng(input, width, height, stride, format);
+  if (png_encoding.empty()) {
+    fprintf(stderr, "Failed to convert bitmap to PNG\n");
+    return "";
+  }
+
+  std::string filename = GeneratePageOutputFilename(pdf_name, num, "png");
+  if (filename.empty()) {
+    return std::string();
+  }
+  FILE* fp = fopen(filename.c_str(), "wb");
+  if (!fp) {
+    fprintf(stderr, "Failed to open %s for output\n", filename.c_str());
+    return std::string();
+  }
+
+  size_t bytes_written =
+      fwrite(&png_encoding.front(), 1, png_encoding.size(), fp);
+  if (bytes_written != png_encoding.size()) {
+    fprintf(stderr, "Failed to write to %s\n", filename.c_str());
+  }
+
+  (void)fclose(fp);
   return filename;
 }
 
@@ -455,44 +526,27 @@ void WriteAnnot(FPDF_PAGE page, const char* pdf_name, int num) {
   (void)fclose(fp);
 }
 
-std::string WritePng(const char* pdf_name,
-                     int num,
-                     void* buffer,
-                     int stride,
-                     int width,
-                     int height) {
-  if (!CheckDimensions(stride, width, height)) {
-    return "";
-  }
-
-  auto input = pdfium::span(static_cast<uint8_t*>(buffer),
-                            static_cast<size_t>(stride) * height);
-  std::vector<uint8_t> png_encoding =
-      EncodePng(input, width, height, stride, FPDFBitmap_BGRA);
-  if (png_encoding.empty()) {
-    fprintf(stderr, "Failed to convert bitmap to PNG\n");
-    return "";
-  }
-
-  std::string filename = GeneratePageOutputFilename(pdf_name, num, "png");
-  if (filename.empty()) {
-    return std::string();
-  }
-  FILE* fp = fopen(filename.c_str(), "wb");
-  if (!fp) {
-    fprintf(stderr, "Failed to open %s for output\n", filename.c_str());
-    return std::string();
-  }
-
-  size_t bytes_written =
-      fwrite(&png_encoding.front(), 1, png_encoding.size(), fp);
-  if (bytes_written != png_encoding.size()) {
-    fprintf(stderr, "Failed to write to %s\n", filename.c_str());
-  }
-
-  (void)fclose(fp);
-  return filename;
+std::string WriteStraightAlphaBufferToPng(const char* pdf_name,
+                                          int num,
+                                          void* buffer,
+                                          int stride,
+                                          int width,
+                                          int height) {
+  return WritePng(pdf_name, num, buffer, stride, width, height,
+                  /*buffer_has_premultiplied_alpha=*/false);
 }
+
+#ifdef PDF_ENABLE_SKIA
+std::string WritePremultipliedAlphaBufferToPng(const char* pdf_name,
+                                               int num,
+                                               void* buffer,
+                                               int stride,
+                                               int width,
+                                               int height) {
+  return WritePng(pdf_name, num, buffer, stride, width, height,
+                  /*buffer_has_premultiplied_alpha=*/true);
+}
+#endif
 
 #ifdef _WIN32
 std::string WriteBmp(const char* pdf_name,
