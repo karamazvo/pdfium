@@ -16,6 +16,24 @@
       "message": "Oh, this paragraph needs some updates to match the latest patchset.",
       "revId": "ef592dd2de30410e0792efea13c3df4eaee4f620",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e16184c8_7827550c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 12
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-04T02:34:55Z",
+      "side": 1,
+      "message": "Edited the filename and function name. CQ it if it is ok.",
+      "parentUuid": "b1144912_f5127e77",
+      "revId": "ef592dd2de30410e0792efea13c3df4eaee4f620",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
