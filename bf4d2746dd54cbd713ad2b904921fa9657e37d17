@@ -218,6 +218,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "df4988ec_3b4e5164",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 354,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-04T06:50:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0026f477_1c2ff685",
+      "range": {
+        "startLine": 354,
+        "startChar": 18,
+        "endLine": 354,
+        "endChar": 26
+      },
+      "revId": "bf4d2746dd54cbd713ad2b904921fa9657e37d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a7122dd6_363b2366",
@@ -231,6 +255,30 @@
       "writtenOn": "2025-11-01T08:28:50Z",
       "side": 1,
       "message": "Nit: face_ maybe? Some of the old logic had face_ instead.",
+      "range": {
+        "startLine": 373,
+        "startChar": 22,
+        "endLine": 373,
+        "endChar": 26
+      },
+      "revId": "bf4d2746dd54cbd713ad2b904921fa9657e37d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "61cb65c3_930e4c3d",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-04T06:50:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7122dd6_363b2366",
       "range": {
         "startLine": 373,
         "startChar": 22,

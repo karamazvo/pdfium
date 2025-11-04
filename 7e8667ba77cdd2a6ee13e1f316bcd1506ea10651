@@ -72,6 +72,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "09884d16_895c0353",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 9
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-04T06:50:43Z",
+      "side": 1,
+      "message": "Will do in seperate CL.",
+      "parentUuid": "82f02199_17f632ff",
+      "range": {
+        "startLine": 67,
+        "startChar": 29,
+        "endLine": 67,
+        "endChar": 33
+      },
+      "revId": "7e8667ba77cdd2a6ee13e1f316bcd1506ea10651",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9a2027e2_9ec8783a",
@@ -181,6 +205,30 @@
       "side": 1,
       "message": "Up to you.",
       "parentUuid": "d52a5595_4106b01f",
+      "range": {
+        "startLine": 520,
+        "startChar": 22,
+        "endLine": 520,
+        "endChar": 27
+      },
+      "revId": "7e8667ba77cdd2a6ee13e1f316bcd1506ea10651",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4d7d1670_67a62a69",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 520,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-04T06:50:43Z",
+      "side": 1,
+      "message": "Makes sense, I\u0027ll have it in a separate CL, and resolve all of the nits for now in terms of naming) and keep all of my other points.",
+      "parentUuid": "d05aaf10_a34a5785",
       "range": {
         "startLine": 520,
         "startChar": 22,
