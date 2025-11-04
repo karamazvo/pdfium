@@ -165,6 +165,30 @@
       },
       "revId": "7e8667ba77cdd2a6ee13e1f316bcd1506ea10651",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d05aaf10_a34a5785",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 520,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-04T05:24:07Z",
+      "side": 1,
+      "message": "Up to you.",
+      "parentUuid": "d52a5595_4106b01f",
+      "range": {
+        "startLine": 520,
+        "startChar": 22,
+        "endLine": 520,
+        "endChar": 27
+      },
+      "revId": "7e8667ba77cdd2a6ee13e1f316bcd1506ea10651",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
