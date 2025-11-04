@@ -23,12 +23,20 @@ std::string WritePpm(const char* pdf_name,
                      int height);
 void WriteText(FPDF_TEXTPAGE textpage, const char* pdf_name, int num);
 void WriteAnnot(FPDF_PAGE page, const char* pdf_name, int num);
-std::string WritePng(const char* pdf_name,
-                     int num,
-                     void* buffer,
-                     int stride,
-                     int width,
-                     int height);
+std::string WriteStraightAlphaBufferToPng(const char* pdf_name,
+                                          int num,
+                                          void* buffer,
+                                          int stride,
+                                          int width,
+                                          int height);
+#ifdef PDF_ENABLE_SKIA
+std::string WritePremultipliedAlphaBufferToPng(const char* pdf_name,
+                                               int num,
+                                               void* buffer,
+                                               int stride,
+                                               int width,
+                                               int height);
+#endif
 
 #ifdef _WIN32
 std::string WriteBmp(const char* pdf_name,
