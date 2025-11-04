@@ -20,6 +20,69 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "033ad1e7_49e59436",
+        "filename": "core/fxge/cfx_fontmapper.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 735,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-04T02:01:31Z",
+      "side": 1,
+      "message": "It\u0027s clearer to specify who \"we\" refers to. e.g. \"CFX_FontMapper relies on ...\"",
+      "range": {
+        "startLine": 735,
+        "startChar": 60,
+        "endLine": 735,
+        "endChar": 62
+      },
+      "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cb441148_16ec0b47",
+        "filename": "core/fxge/cfx_fontmapper.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 735,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-04T02:01:31Z",
+      "side": 1,
+      "message": "In general, wrap variable names in comments with backticks for clarity.",
+      "range": {
+        "startLine": 735,
+        "startChar": 16,
+        "endLine": 735,
+        "endChar": 38
+      },
+      "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fce9efbf_d31b5e0c",
+        "filename": "fpdfsdk/fpdf_sysfontinfo.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-04T02:01:31Z",
+      "side": 1,
+      "message": "If the PDFium embedder calls `FPDF_SetSystemFontInfo(v2_info_ptr);` followed by `FPDF_SetSystemFontInfo(v1_info_ptr);` later, this probably should call `SetSkipFontEnumeration(false);` to re-enable font enumeration.",
+      "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0a83bce2_98e04feb",
         "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
         "patchSetId": 16
@@ -117,6 +180,40 @@
       "writtenOn": "2025-11-03T21:02:07Z",
       "side": 1,
       "message": "Unclear what this is testing given that this and below test have basically no difference in what they expect",
+      "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3b870255_5b7f5add",
+        "filename": "public/fpdf_sysfontinfo.h",
+        "patchSetId": 16
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-04T02:01:31Z",
+      "side": 1,
+      "message": "Should this say \"1 and 2\"? Same for others below as appropriate.",
+      "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1aff870d_b89c6649",
+        "filename": "public/fpdf_sysfontinfo.h",
+        "patchSetId": 16
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-04T02:01:31Z",
+      "side": 1,
+      "message": "In version 1, embedders need to at the very least implement either MapFont or GetFont. Does that still hold for version 2?",
       "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
