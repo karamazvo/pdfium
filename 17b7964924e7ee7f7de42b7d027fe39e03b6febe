@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "63bcf35e_776210ae",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 18
+      },
+      "lineNbr": 305,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-05T03:57:32Z",
+      "side": 1,
+      "message": "I assume you mean an anonymous namespace with the functions FTStreamRead and FTStreamClose? \n\nWorking on it.",
+      "parentUuid": "838758f7_7e0938a6",
+      "revId": "17b7964924e7ee7f7de42b7d027fe39e03b6febe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "7b4ac08a_0a435435",
         "filename": "core/fxge/cfx_face.h",
         "patchSetId": 18
@@ -31,6 +49,24 @@
       "writtenOn": "2025-11-04T19:11:44Z",
       "side": 1,
       "message": "Merge with OpenFromStream()?",
+      "revId": "17b7964924e7ee7f7de42b7d027fe39e03b6febe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eeeba267_ea939741",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 18
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-05T03:57:32Z",
+      "side": 1,
+      "message": "I believe you want me to merge the two functions into one common function?\n\nA caller still needs the regular Open() function (the android one) so I can\u0027t merge the two function definitions or make one private. Unless we add a boolean flag or something similar, or update that caller to use a font_stream.\n\nLet me know if this is not what you meant and have any other suggestions.",
+      "parentUuid": "7b4ac08a_0a435435",
       "revId": "17b7964924e7ee7f7de42b7d027fe39e03b6febe",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }

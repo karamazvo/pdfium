@@ -99,6 +99,30 @@
       },
       "revId": "e9566faf2e0738774328e553f6fd973d9ae2d3da",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d6438f1f_42be1992",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 13
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-05T03:57:32Z",
+      "side": 1,
+      "message": "Current patchset: does not have the line - tests pass\nPrevious patchset (PS 13): Had the line and the tests failed, but all passed after removing the line.\n\nSo if not including that line is fine then i do not think it is a problem. But I felt it was quite important for memory management so just checking.\n\nFor more reference, you can go through the checks tab and look at Patchset 13 with the line, and the subsiquent patchset 14 which removed said line.",
+      "parentUuid": "97bf24c8_a9251080",
+      "range": {
+        "startLine": 152,
+        "startChar": 2,
+        "endLine": 152,
+        "endChar": 52
+      },
+      "revId": "e9566faf2e0738774328e553f6fd973d9ae2d3da",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }

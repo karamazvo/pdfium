@@ -63,6 +63,24 @@
       "message": "Note that the code here and the code in core/fxge/cfx_font.cpp are not exactly the same. It may be helpful to first align the two so they use the same memory allocation strategy. Then this CL can more easily merge them.\n\nThis CL picked this code as the merged code that goes into core/fxge/cfx_face.cpp, but I would actually prefer the code from core/fxge/cfx_font.cpp, where the FXFT_StreamRec is wrapped in std::unique_ptr.",
       "revId": "db3687db78b7db6dcc5d8280d302e3ce0bda94cb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "81e7b77a_1f36835e",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 18
+      },
+      "lineNbr": 557,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-05T03:57:32Z",
+      "side": 0,
+      "message": "Yes, I did use this as the base function and edit it from there, the key reason being a mention of scalloc which is very similar to what we did in a previous CL with scoped page.\nI\u0027ll try a patchset with the other allocation strategy as well.\n\nWorking on it.",
+      "parentUuid": "96c1c3e0_a3e26660",
+      "revId": "db3687db78b7db6dcc5d8280d302e3ce0bda94cb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
