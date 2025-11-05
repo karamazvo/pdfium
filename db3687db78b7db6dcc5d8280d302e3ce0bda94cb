@@ -99,6 +99,24 @@
       "parentUuid": "81e7b77a_1f36835e",
       "revId": "db3687db78b7db6dcc5d8280d302e3ce0bda94cb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8a9f9cbd_8008449b",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 18
+      },
+      "lineNbr": 557,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-05T15:53:24Z",
+      "side": 0,
+      "message": "Update:\nI also went through LLDB, it seems like `CFGAS_FontMgr::RegisterFaces` seems to be where the segfault is taking place in the current patchset but not previous ones.\n\nThe code works fine when using the xfa logic as the common function, maybe because it works better with cfags_fontmgr, and adding the owned variable is sufficient to keep cfx_font \"happy\". However, by using the cfx_font code, we might need to edit `CFGAS_FontMgr::RegisterFaces` or some functions it may call (this function is where the code segfaults). \n\nSo we could consider either:\na. Using the logic of `cfags_fontmgr` for the callee (which seems to work as is with some previous patchsets)\nb. Changing functions like these and other functions to be able to change the memory management in xfa for it to \"support\" this function.\n\nLet me know if you have any alternative approaches, or if I missed anything.",
+      "parentUuid": "10e041ba_b3c392c8",
+      "revId": "db3687db78b7db6dcc5d8280d302e3ce0bda94cb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
