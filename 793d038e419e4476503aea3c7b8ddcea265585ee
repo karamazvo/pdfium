@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "abc6694a_9dd56999",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 24
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-05T06:56:04Z",
+      "side": 1,
+      "message": "Trying to resolve the new errors from changing the mem management.\nI still feel it is the line\n`std::unique_ptr\u003cFXFT_StreamRec\u003e owned_ft_stream;` is causing the issue.",
+      "revId": "793d038e419e4476503aea3c7b8ddcea265585ee",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
