@@ -23,11 +23,11 @@ class CFX_CodecMemory;
 
 namespace fxcodec {
 
-class CFX_BmpContext;
+class CFX_Bmcontext;
 
 class CFX_BmpDecompressor {
  public:
-  explicit CFX_BmpDecompressor(const CFX_BmpContext* context);
+  explicit CFX_BmpDecompressor(const CFX_Bmcontext* context);
   ~CFX_BmpDecompressor();
 
   BmpDecoder::Status DecodeImage();
@@ -71,7 +71,7 @@ class CFX_BmpDecompressor {
   bool SetHeight(int32_t signed_height);
   int PaletteChannelCount() const { return pal_type_ == PalType::kNew ? 4 : 3; }
 
-  UnownedPtr<const CFX_BmpContext> const context_;
+  UnownedPtr<const CFX_Bmcontext> const context_;
   DataVector<uint8_t> out_row_buffer_;
   std::vector<FX_ARGB> palette_;
   uint32_t header_offset_ = 0;

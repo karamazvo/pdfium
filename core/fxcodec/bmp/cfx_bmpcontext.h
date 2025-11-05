@@ -15,10 +15,10 @@
 
 namespace fxcodec {
 
-class CFX_BmpContext final : public ProgressiveDecoderContext {
+class CFX_Bmcontext final : public ProgressiveDecoderContext {
  public:
-  explicit CFX_BmpContext(BmpDecoder::Delegate* pDelegate);
-  ~CFX_BmpContext() override;
+  explicit CFX_Bmcontext(BmpDecoder::Delegate* pDelegate);
+  ~CFX_Bmcontext() override;
 
   CFX_BmpDecompressor bmp_;
   UnownedPtr<BmpDecoder::Delegate> const delegate_;

@@ -37,7 +37,7 @@ void* CQuartz2D::CreateGraphics(const RetainPtr<CFX_DIBitmap>& pBitmap) {
       return nullptr;
   }
   CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-  CGContextRef context = CGBitmapContextCreate(
+  CGContextRef context = CGBitmacontextCreate(
       pBitmap->GetWritableBuffer().data(), pBitmap->GetWidth(),
       pBitmap->GetHeight(), 8, pBitmap->GetPitch(), colorSpace, bmpInfo);
   CGColorSpaceRelease(colorSpace);
@@ -72,7 +72,7 @@ void CQuartz2D::SetGraphicsTextMatrix(void* graphics,
     return;
   }
   CGContextRef context = reinterpret_cast<CGContextRef>(graphics);
-  CGFloat ty = CGBitmapContextGetHeight(context) - matrix.f;
+  CGFloat ty = CGBitmacontextGetHeight(context) - matrix.f;
   CGContextSetTextMatrix(
       context, CGAffineTransformMake(matrix.a, matrix.b, matrix.c, matrix.d,
                                      matrix.e, ty));

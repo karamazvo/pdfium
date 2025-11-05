@@ -211,12 +211,12 @@ RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::ComputeStyle(
     return nullptr;
   }
 
-  Context* pContext = it->second.get();
-  if (!pContext) {
+  Context* context = it->second.get();
+  if (!context) {
     return nullptr;
   }
 
-  pContext->SetParentStyle(pParentStyle);
+  context->SetParentStyle(pParentStyle);
 
   auto tagProvider = ParseTagInfo(pXMLNode);
   if (tagProvider->content_) {
@@ -224,7 +224,7 @@ RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::ComputeStyle(
   }
 
   auto pStyle = CreateStyle(pParentStyle);
-  selector_->ComputeStyle(pContext->GetDecls(),
+  selector_->ComputeStyle(context->GetDecls(),
                           tagProvider->GetAttribute(L"style"),
                           tagProvider->GetAttribute(L"align"), pStyle.Get());
   return pStyle;
@@ -411,9 +411,9 @@ int32_t CXFA_TextParser::GetHorScale(CXFA_TextProvider* pTextProvider,
     while (pXMLNode) {
       auto it = map_xmlnode_to_parse_context_.find(pXMLNode);
       if (it != map_xmlnode_to_parse_context_.end()) {
-        Context* pContext = it->second.get();
-        if (pContext && pContext->GetParentStyle() &&
-            pContext->GetParentStyle()->GetCustomStyle(
+        Context* context = it->second.get();
+        if (context && context->GetParentStyle() &&
+            context->GetParentStyle()->GetCustomStyle(
                 L"xfa-font-horizontal-scale", &wsValue)) {
           return wsValue.GetInteger();
         }
@@ -577,8 +577,8 @@ CXFA_TextParser::Context* CXFA_TextParser::GetParseContextFromMap(
 }
 
 bool CXFA_TextParser::GetTabstops(const CFX_CSSComputedStyle* pStyle,
-                                  CXFA_TextTabstopsContext* pTabstopContext) {
-  if (!pStyle || !pTabstopContext) {
+                                  CXFA_TextTabstopsContext* pTabstocontext) {
+  if (!pStyle || !pTabstocontext) {
     return false;
   }
 
@@ -648,7 +648,7 @@ bool CXFA_TextParser::GetTabstops(const CFX_CSSComputedStyle* pStyle,
           CXFA_Measurement ms(
               WideStringView(spTabStops.subspan(iLast, iCur - iLast)));
           float fPos = ms.ToUnit(XFA_Unit::Pt);
-          pTabstopContext->Append(dwHashCode, fPos);
+          pTabstocontext->Append(dwHashCode, fPos);
           wsAlign.clear();
           eStatus = TabStopStatus::None;
         }
@@ -664,7 +664,7 @@ bool CXFA_TextParser::GetTabstops(const CFX_CSSComputedStyle* pStyle,
     CXFA_Measurement ms(
         WideStringView(spTabStops.subspan(iLast, iCur - iLast)));
     float fPos = ms.ToUnit(XFA_Unit::Pt);
-    pTabstopContext->Append(dwHashCode, fPos);
+    pTabstocontext->Append(dwHashCode, fPos);
   }
   return true;
 }

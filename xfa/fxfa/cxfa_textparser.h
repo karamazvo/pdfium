@@ -82,7 +82,7 @@ class CXFA_TextParser : public cppgc::GarbageCollected<CXFA_TextParser> {
 
   bool IsSpaceRun(const CFX_CSSComputedStyle* pStyle) const;
   bool GetTabstops(const CFX_CSSComputedStyle* pStyle,
-                   CXFA_TextTabstopsContext* pTabstopContext);
+                   CXFA_TextTabstopsContext* pTabstocontext);
 
   RetainPtr<CFGAS_GEFont> GetFont(CXFA_FFDoc* doc,
                                   CXFA_TextProvider* pTextProvider,
