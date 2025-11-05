@@ -361,7 +361,6 @@ RetainPtr<CFX_Face> CFPF_SkiaFontMgr::GetFontFace(ByteStringView path,
   if (!face) {
     return nullptr;
   }
-
   face->SetPixelSize(0, 64);
   return face;
 }
