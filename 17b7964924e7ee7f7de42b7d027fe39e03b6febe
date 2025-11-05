@@ -36,6 +36,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ddfe48b5_d94a7d16",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 18
+      },
+      "lineNbr": 305,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-05T13:37:05Z",
+      "side": 1,
+      "message": "I think it is done, reopen if I misunderstood what you were asking for perchance.",
+      "parentUuid": "63bcf35e_776210ae",
+      "revId": "17b7964924e7ee7f7de42b7d027fe39e03b6febe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7b4ac08a_0a435435",

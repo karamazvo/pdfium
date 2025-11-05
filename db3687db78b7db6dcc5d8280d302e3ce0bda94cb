@@ -81,6 +81,24 @@
       "parentUuid": "96c1c3e0_a3e26660",
       "revId": "db3687db78b7db6dcc5d8280d302e3ce0bda94cb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "10e041ba_b3c392c8",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 18
+      },
+      "lineNbr": 557,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-05T13:37:05Z",
+      "side": 0,
+      "message": "Nevermind, I think I misinterpreted the comment from \"it needs to be changed\" to \"it is changed\". My bad there! Just noticed.",
+      "parentUuid": "81e7b77a_1f36835e",
+      "revId": "db3687db78b7db6dcc5d8280d302e3ce0bda94cb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
