@@ -417,31 +417,6 @@ uint16_t ReadUInt16FromSpanAtOffset(pdfium::span<const uint8_t> data,
   return fxcrt::GetUInt16MSBFirst(data.subspan(offset).first<2u>());
 }
 
-extern "C" {
-
-unsigned long ftStreamRead(FXFT_StreamRec* stream,
-                           unsigned long offset,
-                           unsigned char* buffer,
-                           unsigned long count) {
-  if (count == 0) {
-    return 0;
-  }
-
-  IFX_SeekableReadStream* pFile =
-      static_cast<IFX_SeekableReadStream*>(stream->descriptor.pointer);
-
-  // SAFETY: required from caller.
-  if (!pFile->ReadBlockAtOffset(
-          UNSAFE_BUFFERS(pdfium::span(buffer, count), offset))) {
-    return 0;
-  }
-  return count;
-}
-
-void ftStreamClose(FXFT_StreamRec* stream) {}
-
-}  // extern "C"
-
 std::vector<WideString> GetNames(pdfium::span<const uint8_t> name_table) {
   std::vector<WideString> results;
   if (name_table.empty()) {
@@ -522,6 +497,50 @@ struct FTStreamRecAndFace {
 FTStreamRecAndFace LoadFace(
     const RetainPtr<IFX_SeekableReadStream>& font_stream,
     int32_t iFaceIndex) {
+<<<<<<< PATCH SET (4bfbd3cbf8ed73c09cc31f59c1411bca0b2d21d6 Consolidate CFX_Face::Open() callers)
+  RetainPtr<CFX_Face> pFace = CFX_Face::OpenFromStream(
+      CFX_GEModule::Get()->GetFontMgr()->GetFTLibrary(), font_stream,
+      iFaceIndex);
+  return pFace;
+||||||| BASE      (db3687db78b7db6dcc5d8280d302e3ce0bda94cb Revert "Add debugging data to help diagnose a hang in fread()
+  if (!font_stream) {
+    return nullptr;
+  }
+
+  CFX_FontMgr* font_mgr = CFX_GEModule::Get()->GetFontMgr();
+  FXFT_LibraryRec* library = font_mgr->GetFTLibrary();
+  if (!library) {
+    return nullptr;
+  }
+
+  // TODO(palmer): This memory will be freed with |ft_free| (which is |free|).
+  // Ultimately, we want to change this to:
+  //   FXFT_Stream ftStream = FX_Alloc(FXFT_StreamRec, 1);
+  // https://bugs.chromium.org/p/pdfium/issues/detail?id=690
+  FXFT_StreamRec* ftStream =
+      static_cast<FXFT_StreamRec*>(ft_scalloc(sizeof(FXFT_StreamRec), 1));
+  *ftStream = {};  // Aggregate initialization.
+  static_assert(std::is_aggregate_v<std::remove_pointer_t<decltype(ftStream)>>);
+  ftStream->base = nullptr;
+  ftStream->descriptor.pointer = static_cast<void*>(font_stream.Get());
+  ftStream->pos = 0;
+  ftStream->size = static_cast<unsigned long>(font_stream->GetSize());
+  ftStream->read = ftStreamRead;
+  ftStream->close = ftStreamClose;
+
+  FT_Open_Args ftArgs = {};  // Aggregate initialization.
+  static_assert(std::is_aggregate_v<decltype(ftArgs)>);
+  ftArgs.flags |= FT_OPEN_STREAM;
+  ftArgs.stream = ftStream;
+
+  RetainPtr<CFX_Face> pFace = CFX_Face::Open(library, &ftArgs, iFaceIndex);
+  if (!pFace) {
+    ft_sfree(ftStream);
+    return nullptr;
+  }
+  pFace->SetPixelSize(0, 64);
+  return pFace;
+=======
   if (!font_stream) {
     return {nullptr, nullptr};
   }
@@ -554,6 +573,7 @@ FTStreamRecAndFace LoadFace(
   }
   pFace->SetPixelSize(0, 64);
   return {std::move(ftStream), std::move(pFace)};
+>>>>>>> BASE      (0f689aaa20dfea04ff6ae8eee4db33f62912a2f7 Rename "iIndex" instances to "index")
 }
 
 bool VerifyUnicodeForFontDescriptor(CFGAS_FontDescriptor* pDesc,
