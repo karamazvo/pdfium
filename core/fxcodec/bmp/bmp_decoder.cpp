@@ -19,11 +19,11 @@ namespace fxcodec {
 // static
 std::unique_ptr<ProgressiveDecoderContext> BmpDecoder::StartDecode(
     Delegate* pDelegate) {
-  return std::make_unique<CFX_BmpContext>(pDelegate);
+  return std::make_unique<CFX_Bmcontext>(pDelegate);
 }
 
 // static
-BmpDecoder::Status BmpDecoder::ReadHeader(ProgressiveDecoderContext* pContext,
+BmpDecoder::Status BmpDecoder::ReadHeader(ProgressiveDecoderContext* context,
                                           int32_t* width,
                                           int32_t* height,
                                           bool* tb_flag,
@@ -32,7 +32,7 @@ BmpDecoder::Status BmpDecoder::ReadHeader(ProgressiveDecoderContext* pContext,
                                           CFX_DIBAttribute* pAttribute) {
   DCHECK(pAttribute);
 
-  auto* ctx = static_cast<CFX_BmpContext*>(pContext);
+  auto* ctx = static_cast<CFX_Bmcontext*>(context);
   Status status = ctx->bmp_.ReadHeader();
   if (status != Status::kSuccess) {
     return status;
@@ -50,19 +50,19 @@ BmpDecoder::Status BmpDecoder::ReadHeader(ProgressiveDecoderContext* pContext,
 }
 
 // static
-BmpDecoder::Status BmpDecoder::LoadImage(ProgressiveDecoderContext* pContext) {
-  return static_cast<CFX_BmpContext*>(pContext)->bmp_.DecodeImage();
+BmpDecoder::Status BmpDecoder::LoadImage(ProgressiveDecoderContext* context) {
+  return static_cast<CFX_Bmcontext*>(context)->bmp_.DecodeImage();
 }
 
 // static
-FX_FILESIZE BmpDecoder::GetAvailInput(ProgressiveDecoderContext* pContext) {
-  return static_cast<CFX_BmpContext*>(pContext)->bmp_.GetAvailInput();
+FX_FILESIZE BmpDecoder::GetAvailInput(ProgressiveDecoderContext* context) {
+  return static_cast<CFX_Bmcontext*>(context)->bmp_.GetAvailInput();
 }
 
 // static
-bool BmpDecoder::Input(ProgressiveDecoderContext* pContext,
+bool BmpDecoder::Input(ProgressiveDecoderContext* context,
                        RetainPtr<CFX_CodecMemory> codec_memory) {
-  auto* ctx = static_cast<CFX_BmpContext*>(pContext);
+  auto* ctx = static_cast<CFX_Bmcontext*>(context);
   ctx->bmp_.SetInputBuffer(std::move(codec_memory));
   return true;
 }
