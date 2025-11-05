@@ -302,17 +302,80 @@ RetainPtr<CFX_Face> CFX_Face::New(FT_Library library,
 }
 
 #if BUILDFLAG(IS_ANDROID) || defined(PDF_ENABLE_XFA)
+namespace {
+unsigned long FTStreamRead(FXFT_StreamRec* stream,
+                           unsigned long offset,
+                           unsigned char* buffer,
+                           unsigned long count) {
+  if (count == 0) {
+    return 0;
+  }
+
+  IFX_SeekableReadStream* pFile =
+      static_cast<IFX_SeekableReadStream*>(stream->descriptor.pointer);
+
+  // SAFETY: caller ensures `buffer` points to at least `count` bytes.
+  return pFile && pFile->ReadBlockAtOffset(
+                      UNSAFE_BUFFERS(pdfium::span(buffer, count)), offset)
+             ? count
+             : 0;
+}
+
+void FTStreamClose(FXFT_StreamRec* stream) {}
+}  // namespace
+
 // static
 RetainPtr<CFX_Face> CFX_Face::Open(FT_Library library,
                                    const FT_Open_Args* args,
                                    FT_Long face_index) {
+  if (!library) {
+    return nullptr;
+  }
+
   FXFT_FaceRec* pRec = nullptr;
   if (FT_Open_Face(library, args, face_index, &pRec) != 0) {
     return nullptr;
   }
-
   // Private ctor.
-  return pdfium::WrapRetain(new CFX_Face(pRec, nullptr));
+  RetainPtr<CFX_Face> face = pdfium::WrapRetain(new CFX_Face(pRec, nullptr));
+
+  if (!face) {
+    return nullptr;
+  }
+  face->SetPixelSize(0, 64);
+  return face;
+}
+
+// static
+RetainPtr<CFX_Face> CFX_Face::OpenFromStream(
+    FT_Library library,
+    const RetainPtr<IFX_SeekableReadStream>& font_stream,
+    FT_Long face_index) {
+  if (!font_stream) {
+    return nullptr;
+  }
+
+  auto ft_stream = std::make_unique<FXFT_StreamRec>();
+  if (!ft_stream) {
+    return nullptr;
+  }
+  ft_stream->base = nullptr;
+  ft_stream->descriptor.pointer = static_cast<void*>(font_stream.Get());
+  ft_stream->pos = 0;
+  ft_stream->size = static_cast<unsigned long>(font_stream->GetSize());
+  ft_stream->read = FTStreamRead;
+  ft_stream->close = FTStreamClose;
+
+  FT_Open_Args ftArgs;
+  ftArgs.flags = FT_OPEN_STREAM;
+  ftArgs.stream = ft_stream.get();
+
+  RetainPtr<CFX_Face> face_ = Open(library, &ftArgs, face_index);
+  if (!face_) {
+    return nullptr;
+  }
+  face_->owned_font_stream = std::move(font_stream);
+  return face_;
 }
 #endif
 
