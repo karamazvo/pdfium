@@ -135,6 +135,24 @@
       "parentUuid": "8a9f9cbd_8008449b",
       "revId": "db3687db78b7db6dcc5d8280d302e3ce0bda94cb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "51120cf0_146a54dd",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 18
+      },
+      "lineNbr": 557,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-06T01:30:30Z",
+      "side": 0,
+      "message": "Thanks for trying. Let me take a look and get back to you.",
+      "parentUuid": "696c9085_9a2d817b",
+      "revId": "db3687db78b7db6dcc5d8280d302e3ce0bda94cb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
