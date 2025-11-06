@@ -1,0 +1,38 @@
+# Copyright 2025 The PDFium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+config("skia_freetype_config") {
+  include_dirs = [ "../.." ]
+}
+
+# TODO(crbug.com/42271123): Remove this when after fully switching to
+# Fontations.
+source_set("skia_freetype") {
+  visibility = [ "../../core/fxge" ]
+
+  sources = [
+    "SkFontHost_FreeType.cpp",
+    "SkFontHost_FreeType_common.cpp",
+    "SkFontHost_FreeType_common.h",
+    "SkFontMgr_custom.cpp",
+    "SkFontMgr_custom.h",
+    "SkFontMgr_custom_empty.cpp",
+    "SkFontScanner_FreeType_priv.h",
+    "SkTypeface_FreeType.h",
+  ]
+
+  defines = [ "SK_FREETYPE_MINIMUM_RUNTIME_VERSION=(((FREETYPE_MAJOR) * 0x01000000) | ((FREETYPE_MINOR) * 0x00010000) | ((FREETYPE_PATCH) * 0x00000100))" ]
+
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [
+    "//build/config/compiler:no_chromium_code",
+    "//skia:skia_config",
+    ":skia_freetype_config",
+  ]
+
+  deps = [
+    "../../:freetype_common",
+    "//skia",
+  ]
+}

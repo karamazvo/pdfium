@@ -3,7 +3,6 @@
 # found in the LICENSE file.
 
 import("//build/config/features.gni")
-import("//build/config/freetype/freetype.gni")
 import("//build/config/ui.gni")
 import("//testing/test.gni")
 import("//third_party/skia/gn/codec.gni")
@@ -94,10 +93,6 @@ config("skia_config") {
     "SK_DISABLE_LEGACY_XPS_FACTORIES",
   ]
 
-  if (is_win) {
-    defines += [ "SK_FREETYPE_MINIMUM_RUNTIME_VERSION=(((FREETYPE_MAJOR) * 0x01000000) | ((FREETYPE_MINOR) * 0x00010000) | ((FREETYPE_PATCH) * 0x00000100))" ]
-  }
-
   if (is_component_build) {
     defines += [
       "SKIA_DLL",
@@ -150,12 +145,6 @@ config("skia_library_config") {
     "SKIA_IMPLEMENTATION=1",
   ]
 
-  if (use_blink && !use_system_freetype) {
-    defines += [ "SK_FREETYPE_MINIMUM_RUNTIME_VERSION=(((FREETYPE_MAJOR) * 0x01000000) | ((FREETYPE_MINOR) * 0x00010000) | ((FREETYPE_PATCH) * 0x00000100))" ]
-  }
-  if (use_blink) {
-    defines += [ "SK_TYPEFACE_FACTORY_FREETYPE" ]
-  }
   if (is_win) {
     defines += [ "SK_TYPEFACE_FACTORY_DIRECTWRITE" ]
   }
@@ -283,12 +272,6 @@ component("skia") {
 
   # Select Skia ports.
 
-  # FreeType is needed everywhere (except on iOS), on Linux and Android as main
-  # font backend, on Windows and Mac as fallback backend for Variations.
-  if (!is_ios) {
-    sources += skia_ports_freetype_sources
-  }
-
   if (is_win) {
     # See SK_TYPEFACE_FACTORY_DIRECTWRITE
     sources += skia_ports_windows_fonts_sources
@@ -310,8 +293,6 @@ component("skia") {
 
   if (is_linux || is_chromeos) {
     sources += skia_ports_fci_sources
-    sources += skia_ports_fontmgr_custom_sources
-    sources += skia_ports_fontmgr_empty_sources
     sources += skia_ports_typeface_proxy_sources
   }
 
@@ -320,12 +301,6 @@ component("skia") {
     # require these files, since PDFium does not perform Android emulation.
     # Note that this requires expat.
     sources += skia_ports_fontmgr_android_sources
-  }
-
-  if (is_win || (is_apple && use_blink)) {
-    # Add the FreeType custom font manager as a fallback backend for variable fonts.
-    sources += skia_ports_fontmgr_custom_sources
-    sources += skia_ports_fontmgr_empty_sources
   }
 
   if (pdf_enable_fontations) {
@@ -357,7 +332,6 @@ component("skia") {
     ":skcms",
     ":skia_opts",
     "../third_party:zlib",
-    "//:freetype_common",
   ]
   public_deps = [ ":skia_core_and_effects" ]
 

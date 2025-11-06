@@ -144,10 +144,7 @@ source_set("fxge") {
     ]
     public_deps += [ "//skia" ]
 
-    if (pdf_skia_font_manager_target != "") {
-      defines += [ "PDF_USE_SKIA_CUSTOM_FONT_MANAGER" ]
-      deps += [ pdf_skia_font_manager_target ]
-    }
+    deps += [ "../../third_party/skia_freetype" ]
   }
 
   if (is_android) {
