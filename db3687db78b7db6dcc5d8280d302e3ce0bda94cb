@@ -171,6 +171,24 @@
       "parentUuid": "51120cf0_146a54dd",
       "revId": "db3687db78b7db6dcc5d8280d302e3ce0bda94cb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "06daadad_ac76e347",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 18
+      },
+      "lineNbr": 557,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-06T02:26:06Z",
+      "side": 0,
+      "message": "I uploaded https://pdfium-review.googlesource.com/137711 which should hopefully fix the memory management issue, and maybe make this CL a little easier.",
+      "parentUuid": "f4225812_1070e3f7",
+      "revId": "db3687db78b7db6dcc5d8280d302e3ce0bda94cb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
