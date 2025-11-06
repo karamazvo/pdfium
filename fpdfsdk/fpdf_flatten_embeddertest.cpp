@@ -111,7 +111,7 @@ TEST_F(FPDFFlattenEmbedderTest, Bug889099) {
 #if BUILDFLAG(IS_APPLE)
     return "049ed3f1e21fc72f929af3410c64bc8f";
 #else
-    return "3db87245e3f4e37f4cb18654bbe22d97";
+    return "f735713c485b7863339e4cbd7d7e2cdc";
 #endif
   }();
   const char* flattened_page_checksum = []() {
@@ -127,7 +127,7 @@ TEST_F(FPDFFlattenEmbedderTest, Bug889099) {
 #if BUILDFLAG(IS_APPLE)
     return "41debc60cf2a8f74c710ec6082d77b18";
 #else
-    return "0832157462ea70fbbf053e14b1d6457f";
+    return "20f7a6174867a885f1b0d4025fdf7bfd";
 #endif
   }();
 
