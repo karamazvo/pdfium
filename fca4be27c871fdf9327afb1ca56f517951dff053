@@ -64,6 +64,54 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f10b62e8_4a604287",
+        "filename": "core/fxge/cfx_fontmapper.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 735,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-11-06T23:05:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "033ad1e7_49e59436",
+      "range": {
+        "startLine": 735,
+        "startChar": 60,
+        "endLine": 735,
+        "endChar": 62
+      },
+      "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1c6a556d_caaca2af",
+        "filename": "core/fxge/cfx_fontmapper.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 735,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-11-06T23:05:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cb441148_16ec0b47",
+      "range": {
+        "startLine": 735,
+        "startChar": 16,
+        "endLine": 735,
+        "endChar": 38
+      },
+      "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fce9efbf_d31b5e0c",
@@ -81,6 +129,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "dadcec48_812d3e17",
+        "filename": "fpdfsdk/fpdf_sysfontinfo.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-11-06T23:05:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fce9efbf_d31b5e0c",
+      "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0a83bce2_98e04feb",
@@ -94,6 +160,24 @@
       "writtenOn": "2025-11-03T21:02:07Z",
       "side": 1,
       "message": "Maybe tracking_font_info_ should have the inner default font info and the two counters? No need for the static GetTracker",
+      "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "321fcb4c_a5936d34",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-11-06T23:05:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0a83bce2_98e04feb",
       "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -133,6 +217,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "95545a91_f388f632",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-11-06T23:05:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba6e3a0e_aea6cca3",
+      "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f5d3dbd4_9edda6f5",
@@ -146,6 +248,24 @@
       "writtenOn": "2025-11-03T21:02:07Z",
       "side": 1,
       "message": "ditto",
+      "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3b6cac00_98c4f661",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-11-06T23:05:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f5d3dbd4_9edda6f5",
       "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -167,6 +287,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c5358a61_93d18590",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-11-06T23:05:03Z",
+      "side": 1,
+      "message": "removing this, its useless! thanks!",
+      "parentUuid": "cdb6f248_14f84018",
+      "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b7adf38e_ba8fb282",
@@ -180,6 +318,24 @@
       "writtenOn": "2025-11-03T21:02:07Z",
       "side": 1,
       "message": "Unclear what this is testing given that this and below test have basically no difference in what they expect",
+      "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9f6cca5c_54b4146e",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 453,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-11-06T23:05:03Z",
+      "side": 1,
+      "message": "removed the test",
+      "parentUuid": "b7adf38e_ba8fb282",
       "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -201,6 +357,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c3d16045_2a2040ed",
+        "filename": "public/fpdf_sysfontinfo.h",
+        "patchSetId": 16
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-11-06T23:05:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3b870255_5b7f5add",
+      "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1aff870d_b89c6649",
@@ -214,6 +388,24 @@
       "writtenOn": "2025-11-04T02:01:31Z",
       "side": 1,
       "message": "In version 1, embedders need to at the very least implement either MapFont or GetFont. Does that still hold for version 2?",
+      "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3575fe66_944f5893",
+        "filename": "public/fpdf_sysfontinfo.h",
+        "patchSetId": 16
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-11-06T23:05:03Z",
+      "side": 1,
+      "message": "Updated the docs to clarify that version 2 still requires implementing either MapFont or GetFont, just like version 1",
+      "parentUuid": "1aff870d_b89c6649",
       "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
