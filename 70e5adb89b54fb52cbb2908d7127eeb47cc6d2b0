@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e11f95ce_02f94e54",
+        "filename": "DEPS",
+        "patchSetId": 16
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-11-06T21:17:48Z",
+      "side": 1,
+      "message": "You could use the direct hash if we want to keep using that format https://pdfium.googlesource.com/pdfium_tests/+/b068d2481c371c2bc73a59e363765d747f31e572\n\nI just clicked the hash link next to the patchset drop down.",
+      "revId": "70e5adb89b54fb52cbb2908d7127eeb47cc6d2b0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
