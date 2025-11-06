@@ -37,7 +37,7 @@ const char* AnnotationStampWithApBaseContentChecksum() {
 #if BUILDFLAG(IS_APPLE)
   return "243f3d6267d9db09198fed9f8c4957fd";
 #else
-  return "e31414933c9ff3950773981e5bf61678";
+  return "508dd53d2c366c9d0a5ed17558e4c74d";
 #endif
 }
 
@@ -334,7 +334,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderTextWithColorScheme) {
 #if BUILDFLAG(IS_APPLE)
     return "ee4ec12f54ce8d117a73bd9b85a8954d";
 #else
-    return "704db63ed2bf77254ecaa8035b85f21a";
+    return "312c640773d55e9a363d46e1fc58383e";
 #endif  // BUILDFLAG(IS_APPLE)
   }();
 
@@ -497,12 +497,12 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderInkWithColorScheme) {
 #if BUILDFLAG(IS_WIN)
       return "0b9e2044a71465ed8af639527c3cc94a";
 #elif BUILDFLAG(IS_APPLE)
-      return "62c1dddb6440dd8180abf51d986141e4";
+      return "df7710f4e421e5b519d5b165217aa3db";
 #else
       return "32678124d0789c09aa61028de3a8cbcf";
 #endif
     }
-    return "546c99e50c4f2c66fc7ac02e1a834e57";
+    return "9c908000df5cf98832871527f7704603";
   }();
 
   ASSERT_TRUE(OpenDocument("annotation_ink_multiple.pdf"));
@@ -527,7 +527,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderStampWithColorScheme) {
 #if BUILDFLAG(IS_APPLE)
     return "ed794dc3e110ddb60aab788bd3d63598";
 #else
-    return "f61b2f70101073cc9e8905e16e3923ed";
+    return "cf083bd523d92277b07117adccae7077";
 #endif
   }();
 
