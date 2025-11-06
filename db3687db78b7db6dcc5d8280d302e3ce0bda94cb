@@ -189,6 +189,24 @@
       "parentUuid": "f4225812_1070e3f7",
       "revId": "db3687db78b7db6dcc5d8280d302e3ce0bda94cb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e11a303c_c90aa81e",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 18
+      },
+      "lineNbr": 557,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-06T03:33:39Z",
+      "side": 0,
+      "message": "Thanks! I checked it out, quick q, do I rebase after the CL so that it is included?",
+      "parentUuid": "06daadad_ac76e347",
+      "revId": "db3687db78b7db6dcc5d8280d302e3ce0bda94cb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
