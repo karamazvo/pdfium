@@ -58,6 +58,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5e2bc547_7ed9a4de",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-06T01:58:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "06c4f5ba_be4fdff0",
+      "range": {
+        "startLine": 364,
+        "startChar": 15,
+        "endLine": 364,
+        "endChar": 21
+      },
+      "revId": "89286ff91379338c6f297c30e7c92c6d90ee65ea",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "10708a66_2af573c3",
@@ -71,6 +95,30 @@
       "writtenOn": "2025-11-06T01:30:30Z",
       "side": 1,
       "message": "This is a local variable, so its name should not have a trailing underscore.",
+      "range": {
+        "startLine": 368,
+        "startChar": 22,
+        "endLine": 368,
+        "endChar": 27
+      },
+      "revId": "89286ff91379338c6f297c30e7c92c6d90ee65ea",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "30acc2e4_d3a0a39e",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-06T01:58:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "10708a66_2af573c3",
       "range": {
         "startLine": 368,
         "startChar": 22,
