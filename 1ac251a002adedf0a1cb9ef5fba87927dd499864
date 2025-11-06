@@ -37,6 +37,77 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "b2ff7c2c_817aec82",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 522,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-11-06T18:16:54Z",
+      "side": 1,
+      "message": "nit: maybe FTStreamRecAndFace since we have a kind of stream as an arg?",
+      "range": {
+        "startLine": 522,
+        "startChar": 0,
+        "endLine": 522,
+        "endChar": 15
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "066007e4_df7fb81b",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "xfa/fgas/font/cfgas_fontmgr.cpp",
+              "range": {
+                "startLine": 517,
+                "startChar": 0,
+                "endLine": 518,
+                "endChar": 0
+              },
+              "replacement": "struct FTStreamRecAndFace {\n"
+            },
+            {
+              "path": "xfa/fgas/font/cfgas_fontmgr.cpp",
+              "range": {
+                "startLine": 522,
+                "startChar": 0,
+                "endLine": 524,
+                "endChar": 0
+              },
+              "replacement": "FTStreamRecAndFace LoadFace(\n    const RetainPtr\u003cIFX_SeekableReadStream\u003e\u0026 font_stream,\n    int32_t iFaceIndex) {\n"
+            },
+            {
+              "path": "xfa/fgas/font/cfgas_fontmgr.cpp",
+              "range": {
+                "startLine": 566,
+                "startChar": 0,
+                "endLine": 567,
+                "endChar": 0
+              },
+              "replacement": "    FTStreamRecAndFace ft_stream_and_face \u003d\n"
+            },
+            {
+              "path": "xfa/fgas/font/cfgas_fontmgr.cpp",
+              "range": {
+                "startLine": 820,
+                "startChar": 0,
+                "endLine": 821,
+                "endChar": 0
+              },
+              "replacement": "    FTStreamRecAndFace ft_stream_and_face \u003d LoadFace(font_stream, index++);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "1ac251a002adedf0a1cb9ef5fba87927dd499864",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "66f786e1_d05a23ce",
         "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
         "patchSetId": 2
