@@ -153,6 +153,24 @@
       "parentUuid": "696c9085_9a2d817b",
       "revId": "db3687db78b7db6dcc5d8280d302e3ce0bda94cb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f4225812_1070e3f7",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 18
+      },
+      "lineNbr": 557,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-06T01:48:41Z",
+      "side": 0,
+      "message": "The memory management here is rather wonky. I think I have an idea of what\u0027s going on. Let me try to fix that, which should make this CL easier.",
+      "parentUuid": "51120cf0_146a54dd",
+      "revId": "db3687db78b7db6dcc5d8280d302e3ce0bda94cb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
