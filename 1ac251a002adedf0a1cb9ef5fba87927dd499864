@@ -1,0 +1,160 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7d2b11ab_afb7d2f7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-11-06T18:14:50Z",
+      "side": 1,
+      "message": "Bug: ?",
+      "revId": "1ac251a002adedf0a1cb9ef5fba87927dd499864",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e7246a65_9cbd5a05",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-11-06T18:14:50Z",
+      "side": 1,
+      "message": "Ok as-is, maybe the StreamAndFace moves to CFX_ layer?",
+      "revId": "1ac251a002adedf0a1cb9ef5fba87927dd499864",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "66f786e1_d05a23ce",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 573,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-11-06T18:14:50Z",
+      "side": 1,
+      "message": "maybe this could be a stream and face?",
+      "range": {
+        "startLine": 572,
+        "startChar": 4,
+        "endLine": 573,
+        "endChar": 17
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "18595c36_30491017",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "xfa/fgas/font/cfgas_fontmgr.cpp",
+              "range": {
+                "startLine": 560,
+                "startChar": 0,
+                "endLine": 561,
+                "endChar": 0
+              },
+              "replacement": "  if (!pDesc-\u003estream_and_face_.face) {\n"
+            },
+            {
+              "path": "xfa/fgas/font/cfgas_fontmgr.cpp",
+              "range": {
+                "startLine": 566,
+                "startChar": 0,
+                "endLine": 569,
+                "endChar": 0
+              },
+              "replacement": "    pDesc-\u003estream_and_face_ \u003d LoadFace(pFileRead, pDesc-\u003eface_index_);\n    if (!pDesc-\u003estream_and_face_.face) {\n"
+            },
+            {
+              "path": "xfa/fgas/font/cfgas_fontmgr.cpp",
+              "range": {
+                "startLine": 571,
+                "startChar": 0,
+                "endLine": 574,
+                "endChar": 0
+              },
+              "replacement": ""
+            },
+            {
+              "path": "xfa/fgas/font/cfgas_fontmgr.cpp",
+              "range": {
+                "startLine": 575,
+                "startChar": 0,
+                "endLine": 577,
+                "endChar": 0
+              },
+              "replacement": "  return pDesc-\u003estream_and_face_.face-\u003eSelectCharMap(\n             fxge::FontEncoding::kUnicode) \u0026\u0026\n         pDesc-\u003estream_and_face_.face-\u003eGetCharIndex(wcUnicode);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "1ac251a002adedf0a1cb9ef5fba87927dd499864",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e76a5284_49b39114",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-11-06T18:14:50Z",
+      "side": 1,
+      "message": "I thought we were trying to hide this behind a cfx_-something encapsulation?",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 43
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "70a8ad78_30f08dc5",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "xfa/fgas/font/cfgas_fontmgr.h",
+              "range": {
+                "startLine": 23,
+                "startChar": 0,
+                "endLine": 24,
+                "endChar": 0
+              },
+              "replacement": ""
+            },
+            {
+              "path": "xfa/fgas/font/cfgas_fontmgr.h",
+              "range": {
+                "startLine": 66,
+                "startChar": 0,
+                "endLine": 67,
+                "endChar": 0
+              },
+              "replacement": ""
+            }
+          ]
+        }
+      ],
+      "revId": "1ac251a002adedf0a1cb9ef5fba87927dd499864",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
