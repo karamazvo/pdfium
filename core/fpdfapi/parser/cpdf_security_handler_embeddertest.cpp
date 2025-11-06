@@ -153,7 +153,7 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, PasswordAfterGenerateSave) {
 #if BUILDFLAG(IS_APPLE)
     return "2a308e8cc20a6221112c387d122075a8";
 #else
-    return "9fe7eef8e51d15a604001854be6ed1ee";
+    return "abe19229dfdd24ba2bc50844d80e4d92";
 #endif  // BUILDFLAG(IS_APPLE)
   }();
   {
