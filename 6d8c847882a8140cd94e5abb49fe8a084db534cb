@@ -50,6 +50,24 @@
       "message": "I actually don\u0027t like this change. The existing format is more inline with Python style without the extra spaces.\n\nSo then I tried fiddling with pdftoin_shrdlu.py, and it turned out my OS for some reason did not provide mutools. I do have an older copy of the mupdf source laying around, so I actually had a mutools binary ready to go, except that didn\u0027t work. I synced my mupdf source, rebuilt, and got it working.\n\nThis make me realize a couple of things:\n\n1. Having more external dependencies is annoying in its own way.\n2. The external dependency can change its behavior at any time / different versions may not format consistently.\n\nI haven\u0027t had the energy to work on this, but I\u0027m hoping maybe with some AI help, the script can become self-contained.",
       "revId": "6d8c847882a8140cd94e5abb49fe8a084db534cb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e6ace5f7_666e9ae5",
+        "filename": "testing/resources/pixel/jbig2_mmr.in",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-11-06T15:17:14Z",
+      "side": 1,
+      "message": "Sure, fewer dependencies is nice.\n\nMy motivation here is that you always ask for .in files, and I want to add \u003e 100 jbig2 test cases, and I can\u0027t manually do this conversion.\n\nIt\u0027s easy to re-run the script once it improves and produces nicer output.\n\nIn the meantime, having some automation seems better than not having it?",
+      "parentUuid": "0e66c7e8_10a8c854",
+      "revId": "6d8c847882a8140cd94e5abb49fe8a084db534cb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
