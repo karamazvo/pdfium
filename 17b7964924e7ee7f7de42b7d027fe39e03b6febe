@@ -72,6 +72,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "58368e0a_fc6f0802",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 18
+      },
+      "lineNbr": 305,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-06T02:01:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c9413eb9_68c2c336",
+      "revId": "17b7964924e7ee7f7de42b7d027fe39e03b6febe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7b4ac08a_0a435435",
