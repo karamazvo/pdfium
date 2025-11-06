@@ -46,14 +46,16 @@ extern "C" {
 // Interface: FPDF_SYSFONTINFO
 //          Interface for getting system font information and font mapping
 typedef struct _FPDF_SYSFONTINFO {
-  // Version number of the interface. Currently must be 1.
+  // Version number of the interface. Currently must be 1 or 2.
+  // Version 1: Traditional behavior - calls EnumFonts during initialization.
+  // Version 2: Per-request behavior - skips EnumFonts, relies on MapFont.
   int version;
 
   // Method: Release
   //          Give implementation a chance to release any data after the
   //          interface is no longer used.
   // Interface Version:
-  //          1
+  //          1 and 2
   // Implementation Required:
   //          No
   // Parameters:
@@ -80,15 +82,18 @@ typedef struct _FPDF_SYSFONTINFO {
   //          Implementations should call FPDF_AddInstalledFont() function for
   //          each font found. Only TrueType/OpenType and Type1 fonts are
   //          accepted by PDFium.
+  //          NOTE: This method will not be called when version is set to 2.
+  //          Version 2 relies entirely on MapFont() for per-request matching.
   void (*EnumFonts)(struct _FPDF_SYSFONTINFO* pThis, void* pMapper);
 
   // Method: MapFont
   //          Use the system font mapper to get a font handle from requested
   //          parameters.
   // Interface Version:
-  //          1
+  //          1 and 2
   // Implementation Required:
-  //          Required if GetFont method is not implemented.
+  //          Version 1: Required if GetFont method is not implemented.
+  //          Version 2: At least one of MapFont or GetFont must be implemented.
   // Parameters:
   //          pThis       -   Pointer to the interface structure itself
   //          weight      -   Weight of the requested font. 400 is normal and
@@ -122,9 +127,10 @@ typedef struct _FPDF_SYSFONTINFO {
   // Method: GetFont
   //          Get a handle to a particular font by its internal ID
   // Interface Version:
-  //          1
+  //          1 and 2
   // Implementation Required:
-  //          Required if MapFont method is not implemented.
+  //          Version 1: Required if MapFont method is not implemented.
+  //          Version 2: At least one of MapFont or GetFont must be implemented.
   // Return Value:
   //          An opaque pointer for font handle.
   // Parameters:
@@ -138,7 +144,7 @@ typedef struct _FPDF_SYSFONTINFO {
   // Method: GetFontData
   //          Get font data from a font
   // Interface Version:
-  //          1
+  //          1 and 2
   // Implementation Required:
   //          Yes
   // Parameters:
@@ -164,7 +170,7 @@ typedef struct _FPDF_SYSFONTINFO {
   // Method: GetFaceName
   //          Get face name from a font handle
   // Interface Version:
-  //          1
+  //          1 and 2
   // Implementation Required:
   //          No
   // Parameters:
@@ -184,7 +190,7 @@ typedef struct _FPDF_SYSFONTINFO {
   // Method: GetFontCharset
   //          Get character set information for a font handle
   // Interface Version:
-  //          1
+  //          1 and 2
   // Implementation Required:
   //          No
   // Parameters:
@@ -197,7 +203,7 @@ typedef struct _FPDF_SYSFONTINFO {
   // Method: DeleteFont
   //          Delete a font handle
   // Interface Version:
-  //          1
+  //          1 and 2
   // Implementation Required:
   //          Yes
   // Parameters:
