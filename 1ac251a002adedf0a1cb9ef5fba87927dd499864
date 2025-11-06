@@ -20,6 +20,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "1fe2aace_6d680b20",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-06T19:46:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7d2b11ab_afb7d2f7",
+      "revId": "1ac251a002adedf0a1cb9ef5fba87927dd499864",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "e7246a65_9cbd5a05",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 2
@@ -106,6 +124,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b362f67c_6faa9550",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 522,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-06T19:46:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b2ff7c2c_817aec82",
+      "range": {
+        "startLine": 522,
+        "startChar": 0,
+        "endLine": 522,
+        "endChar": 15
+      },
+      "revId": "1ac251a002adedf0a1cb9ef5fba87927dd499864",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "66f786e1_d05a23ce",
@@ -177,6 +219,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a581f2f0_b0969ff7",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 573,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-06T19:46:50Z",
+      "side": 1,
+      "message": "Going to leave it as is. Hoping this is just temporary and the code will have just the CFX_Face in the near future.",
+      "parentUuid": "66f786e1_d05a23ce",
+      "range": {
+        "startLine": 572,
+        "startChar": 4,
+        "endLine": 573,
+        "endChar": 17
+      },
+      "revId": "1ac251a002adedf0a1cb9ef5fba87927dd499864",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e76a5284_49b39114",
@@ -224,6 +290,30 @@
           ]
         }
       ],
+      "revId": "1ac251a002adedf0a1cb9ef5fba87927dd499864",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a420d0ce_c6278469",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-06T19:46:50Z",
+      "side": 1,
+      "message": "Yes, but https://pdfium-review.googlesource.com/137550 was having a bit of trouble due to the wonky memory management, so I\u0027m trying to fix that in this CL first. I hope this is temporary, and the `FXFT_StreamRec` can move inside cfx_face.h in the near future.",
+      "parentUuid": "e76a5284_49b39114",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 43
+      },
       "revId": "1ac251a002adedf0a1cb9ef5fba87927dd499864",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
