@@ -204,6 +204,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4712ce7b_6e095354",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 33
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-07T19:50:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "965abb53_08b1bdd1",
+      "revId": "d36d918ae39389fdad5d58d47743d1f810c46c14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9debd264_2b6264c7",
@@ -217,6 +235,24 @@
       "writtenOn": "2025-11-07T19:35:06Z",
       "side": 1,
       "message": "Please retain the ```// Must outlive `face`.``` comment that was in xfa/fgas/font/cfgas_fontmgr.cpp.",
+      "revId": "d36d918ae39389fdad5d58d47743d1f810c46c14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ab9676bd_14b2d690",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 33
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-07T19:50:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9debd264_2b6264c7",
       "revId": "d36d918ae39389fdad5d58d47743d1f810c46c14",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
