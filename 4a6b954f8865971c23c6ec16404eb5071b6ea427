@@ -16,6 +16,69 @@
       "message": "Will work on the rest tomorrow.",
       "revId": "4a6b954f8865971c23c6ec16404eb5071b6ea427",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4688cdb1_1f0ab7d9",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 36
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-07T21:07:13Z",
+      "side": 1,
+      "message": "Actually, how about getting rid of `FTStreamRecAndFace`? Instead, let `CFX_Face` manage everything. e.g.\n\n```\n// `owned_font_stream_` must outlive `owned_stream_rec_`.\nRetainPtr\u003cIFX_SeekableReadStream\u003e owned_font_stream_;\n// `owned_stream_rec_` must outlive `rec_`.\nstd::unique_ptr\u003cFXFT_StreamRec\u003e owned_stream_rec_;\nScopedFXFTFaceRec const rec_;\nRetainPtr\u003cRetainable\u003e const desc_;\n```\n\nThen `CFX_Face::OpenFromStream()` can return `RetainPtr\u003cCFX_Face\u003e`.",
+      "revId": "4a6b954f8865971c23c6ec16404eb5071b6ea427",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b5b6fbb6_b4220552",
+        "filename": "core/fxge/cfx_font.cpp",
+        "patchSetId": 36
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-07T21:07:13Z",
+      "side": 1,
+      "message": "Use snake_case for local variables.",
+      "range": {
+        "startLine": 179,
+        "startChar": 31,
+        "endLine": 179,
+        "endChar": 47
+      },
+      "revId": "4a6b954f8865971c23c6ec16404eb5071b6ea427",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9b7ecb4b_29763b80",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 36
+      },
+      "lineNbr": 497,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-07T21:07:13Z",
+      "side": 1,
+      "message": "No need for a local variable here. Just: `return CFX_Face::OpenFromStream(library, font_stream, iFaceIndex);`.",
+      "range": {
+        "startLine": 497,
+        "startChar": 31,
+        "endLine": 497,
+        "endChar": 47
+      },
+      "revId": "4a6b954f8865971c23c6ec16404eb5071b6ea427",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
