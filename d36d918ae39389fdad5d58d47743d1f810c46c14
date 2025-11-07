@@ -153,6 +153,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f1a42027_9ad4aa1e",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 369,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-07T19:51:41Z",
+      "side": 1,
+      "message": "Whoops. Too many stream variables. @_@\n\nWill take another look.",
+      "parentUuid": "5e294920_06894f2e",
+      "revId": "d36d918ae39389fdad5d58d47743d1f810c46c14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "67e1c59f_c69bbb58",
