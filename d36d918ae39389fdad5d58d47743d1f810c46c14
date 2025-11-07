@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e7cbf338_28362b1e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 33
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-07T19:48:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5dde87a1_0b839df7",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 3
+      },
+      "revId": "d36d918ae39389fdad5d58d47743d1f810c46c14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "18f9f10a_71e28762",
@@ -37,6 +61,24 @@
       "writtenOn": "2025-11-07T19:35:06Z",
       "side": 1,
       "message": "nit: Blank line after this, like in the other files.",
+      "revId": "d36d918ae39389fdad5d58d47743d1f810c46c14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "73066b36_9046b95d",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 359,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-07T19:48:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "18f9f10a_71e28762",
       "revId": "d36d918ae39389fdad5d58d47743d1f810c46c14",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -58,6 +100,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6894ade4_d6307fe5",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 362,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-07T19:48:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e61ddab4_cb7d2e9c",
+      "revId": "d36d918ae39389fdad5d58d47743d1f810c46c14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2e400c15_65cfaa8a",
@@ -71,6 +131,24 @@
       "writtenOn": "2025-11-07T19:35:06Z",
       "side": 1,
       "message": "This doesn\u0027t work. `ft_stream` can\u0027t be moved here and also moved on the previous line.",
+      "revId": "d36d918ae39389fdad5d58d47743d1f810c46c14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5e294920_06894f2e",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 369,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-07T19:48:31Z",
+      "side": 1,
+      "message": "I\u0027m kind of confused here, because ft_stream was not moved in the previous line, font stream was.\nIs this regarding why `face-\u003eowned_ft_stream` didn\u0027t work?",
+      "parentUuid": "2e400c15_65cfaa8a",
       "revId": "d36d918ae39389fdad5d58d47743d1f810c46c14",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
