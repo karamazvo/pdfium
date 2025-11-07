@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e2047ac1_49e46018",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-07T21:23:51Z",
+      "side": 1,
+      "message": "Basically a no-op change to trigger CQ/CI.",
+      "revId": "8930cdaa416a92a6c6894fc5fab19b9bc6a93fb0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
