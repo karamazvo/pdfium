@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "286c0f6b_851ae49a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-07T17:37:37Z",
+      "side": 1,
+      "message": "https://ci.chromium.org/ui/p/pdfium/builders/try/mac_xfa_arm/ finally has green runs.",
+      "revId": "8573c2c0c5e260eea1253bf347222d165e24ce2a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
