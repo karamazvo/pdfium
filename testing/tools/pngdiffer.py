@@ -136,14 +136,16 @@ class PNGDiffer():
             print(f'WARNING: No diff for {page_diff.actual_path}')
             page_diff.diff_path = None
         else:
-          # Validate that no other paths match.
-          for unexpected_path in path_templates.GetExpectedPaths(page)[1:]:
-            page_diff.expected_path = unexpected_path
+          # Validate that the next most-specific path does not match. If they
+          # did match, then that file could have been used instead.
+          expected_paths = path_templates.GetExpectedPaths(page)
+          if len(expected_paths) > 1:
+            next_path = expected_paths[1]
+            page_diff.expected_path = next_path
             if not self._RunImageCompareCommand(page_diff,
                                                 image_matching_algorithm):
-              page_diff.reason = f'Also matches {unexpected_path}'
-              break
-          page_diff.expected_path = expected_path
+              page_diff.reason = f'Also matches {next_path}'
+            page_diff.expected_path = expected_path
       else:
         if page == 0:
           print(f'WARNING: no expected results files for {input_filename}')
