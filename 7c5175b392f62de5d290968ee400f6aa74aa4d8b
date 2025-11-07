@@ -16,6 +16,41 @@
       "message": "Wanted some initial thoughts on the approach while it is still a WIP.\nMade mostly everything into 2 common functions: Might not be what you expected, so just checking.",
       "revId": "7c5175b392f62de5d290968ee400f6aa74aa4d8b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d5bbfa7c_bf06e927",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-07T18:56:36Z",
+      "side": 1,
+      "message": "Also",
+      "revId": "7c5175b392f62de5d290968ee400f6aa74aa4d8b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "83e96903_fdbe2b9f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-07T18:56:36Z",
+      "side": 1,
+      "message": "Dont worry about tryjobs for now, still need to fix a couple syntax issues, just wanted to ask if the pattern of having it all in 2 common functions is fine.",
+      "parentUuid": "c5fcf004_6cdce3eb",
+      "revId": "7c5175b392f62de5d290968ee400f6aa74aa4d8b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
