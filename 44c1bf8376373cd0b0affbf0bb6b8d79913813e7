@@ -16,6 +16,24 @@
       "message": "Got a merge conflict here.",
       "revId": "44c1bf8376373cd0b0affbf0bb6b8d79913813e7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e29b5ac9_234f19bb",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 500,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-07T03:58:29Z",
+      "side": 1,
+      "message": "The thing is I need to update the functions anyway. What I was thinking is make the edits to consolidate the function locally, and after it works, I will push it on gerrit.\n\nJust seeing if the code compiles now, if it works i\u0027ll push it soon.",
+      "parentUuid": "2baa3ce1_ed9d4aad",
+      "revId": "44c1bf8376373cd0b0affbf0bb6b8d79913813e7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
