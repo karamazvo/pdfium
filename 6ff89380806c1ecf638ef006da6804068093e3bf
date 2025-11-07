@@ -16,6 +16,24 @@
       "message": "Let me see if I can find an alternative solution to avoid this CL...",
       "revId": "6ff89380806c1ecf638ef006da6804068093e3bf",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "996dcd0f_75d53b03",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-11-07T22:45:24Z",
+      "side": 1,
+      "message": "Sure. I did consider a few other options, like:\n\n1. Allow almost all expectations to match, except at least 1 different. That relaxed the constraints too much, and allowed potential for unnecessary dupes, so I scrapped it for the current version.\n\n2. Provide some way to make an exception for this test. It didn\u0027t seem like there was an obvious way to do this.\n\n3. Try testing less-specific tests after the first failure. It would work for this test, but then it could have false positives.\n\nThe current option still keeps the main goal of avoiding unnecessary dupes of images.",
+      "parentUuid": "7c03b8fe_1ae78053",
+      "revId": "6ff89380806c1ecf638ef006da6804068093e3bf",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
