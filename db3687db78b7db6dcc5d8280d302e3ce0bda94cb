@@ -279,6 +279,24 @@
       "parentUuid": "dbc22c50_061b9439",
       "revId": "db3687db78b7db6dcc5d8280d302e3ce0bda94cb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bb079e7c_ddafca8a",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 18
+      },
+      "lineNbr": 557,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-07T03:13:23Z",
+      "side": 0,
+      "message": "It\u0027s probably easiest if you use the web interface to take it out of WIP mode.",
+      "parentUuid": "418c93d9_59eb1c57",
+      "revId": "db3687db78b7db6dcc5d8280d302e3ce0bda94cb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }

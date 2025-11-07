@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2baa3ce1_ed9d4aad",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 500,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-07T03:13:23Z",
+      "side": 1,
+      "message": "Got a merge conflict here.",
+      "revId": "44c1bf8376373cd0b0affbf0bb6b8d79913813e7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
