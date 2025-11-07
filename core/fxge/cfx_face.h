@@ -15,6 +15,7 @@
 #include "build/build_config.h"
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
@@ -65,9 +66,26 @@ class CFX_Face final : public Retainable, public Observable {
                                  FT_Long face_index);
 
 #if BUILDFLAG(IS_ANDROID) || defined(PDF_ENABLE_XFA)
+ public:
+  struct FTStreamRecAndFace {
+    FTStreamRecAndFace();
+    FTStreamRecAndFace(std::unique_ptr<FXFT_StreamRec> ft_stream,
+                       RetainPtr<CFX_Face> face);
+    ~FTStreamRecAndFace();
+    FTStreamRecAndFace(const FTStreamRecAndFace&) = delete;
+    FTStreamRecAndFace& operator=(const FTStreamRecAndFace&) = delete;
+    FTStreamRecAndFace(FTStreamRecAndFace&&) noexcept;
+    FTStreamRecAndFace& operator=(FTStreamRecAndFace&&) noexcept;
+    std::unique_ptr<FXFT_StreamRec> ft_stream;
+    RetainPtr<CFX_Face> face;
+  };
   static RetainPtr<CFX_Face> Open(FT_Library library,
                                   const FT_Open_Args* args,
                                   FT_Long face_index);
+  static FTStreamRecAndFace OpenFromStream(
+      FT_Library library,
+      const RetainPtr<IFX_SeekableReadStream>& font_stream,
+      FT_Long face_index);
 #endif
 
   bool HasGlyphNames() const;
@@ -156,6 +174,7 @@ class CFX_Face final : public Retainable, public Observable {
 
   ScopedFXFTFaceRec const rec_;
   RetainPtr<Retainable> const desc_;
+  RetainPtr<IFX_SeekableReadStream> owned_font_stream;
 };
 
 #endif  // CORE_FXGE_CFX_FACE_H_
