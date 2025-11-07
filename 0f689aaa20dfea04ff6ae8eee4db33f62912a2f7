@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "00fa4b17_55e39d4a",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 531,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-07T19:35:06Z",
+      "side": 0,
+      "message": "This check got lost. It probably isn\u0027t necessary, but let\u0027s leave it for another CL.",
+      "revId": "0f689aaa20dfea04ff6ae8eee4db33f62912a2f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "62dbb215_d0cd75b8",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 536,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-07T19:35:06Z",
+      "side": 0,
+      "message": "Can line 536-538, and lines 546-547 transfer over to CFX_Face::OpenFromStream()?",
+      "revId": "0f689aaa20dfea04ff6ae8eee4db33f62912a2f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
