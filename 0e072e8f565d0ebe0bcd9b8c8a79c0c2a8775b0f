@@ -94,6 +94,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3b29eadf_ba5b44d9",
+        "filename": "core/fxge/cfx_font.cpp",
+        "patchSetId": 32
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-07T07:09:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "31af18ae_da3735b9",
+      "range": {
+        "startLine": 179,
+        "startChar": 31,
+        "endLine": 179,
+        "endChar": 37
+      },
+      "revId": "0e072e8f565d0ebe0bcd9b8c8a79c0c2a8775b0f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f5ec680a_0d5a3f6c",
@@ -131,6 +155,30 @@
       "side": 1,
       "message": "Maybe StreamRecAndFace is better.",
       "parentUuid": "f5ec680a_0d5a3f6c",
+      "range": {
+        "startLine": 497,
+        "startChar": 31,
+        "endLine": 497,
+        "endChar": 37
+      },
+      "revId": "0e072e8f565d0ebe0bcd9b8c8a79c0c2a8775b0f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "86ef7e5d_2cfea2d0",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 32
+      },
+      "lineNbr": 497,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-07T07:09:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0a3987ac_5b808e1b",
       "range": {
         "startLine": 497,
         "startChar": 31,
