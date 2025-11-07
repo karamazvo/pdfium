@@ -297,6 +297,24 @@
       "parentUuid": "418c93d9_59eb1c57",
       "revId": "db3687db78b7db6dcc5d8280d302e3ce0bda94cb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "47a8f98a_92e11109",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 18
+      },
+      "lineNbr": 557,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-07T06:49:44Z",
+      "side": 0,
+      "message": "Yeah, did that, I just wanted to push some locally changed stuff first.",
+      "parentUuid": "bb079e7c_ddafca8a",
+      "revId": "db3687db78b7db6dcc5d8280d302e3ce0bda94cb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
