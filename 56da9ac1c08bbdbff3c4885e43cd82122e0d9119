@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0dfe00bc_6870aab3",
+        "filename": "testing/resources/pixel/radial_shading_point_at_border_expected.pdf.0.png",
+        "patchSetId": 25
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-08T01:24:31Z",
+      "side": 1,
+      "message": "Umm, too late for https://pdfium-review.googlesource.com/c/pdfium_tests/+/137610, but I realized this file and many others have no text and don\u0027t need to change.",
+      "revId": "56da9ac1c08bbdbff3c4885e43cd82122e0d9119",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
