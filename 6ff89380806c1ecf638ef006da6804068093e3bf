@@ -51,6 +51,24 @@
       "message": "I think you can avoid this CL by doing the following:\n\n1. Keep en_14_foxit_products_expected.pdf.2.png.\n2. Keep en_14_foxit_products_expected_skia_win.pdf.2.png.\n3. Rename en_14_foxit_products_expected_skia.pdf.2.png to en_14_foxit_products_expected_skia_linux.pdf.2.png.\n4. Delete en_14_foxit_products_expected_skia_mac.pdf.2.png.",
       "revId": "6ff89380806c1ecf638ef006da6804068093e3bf",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d04c9e8c_35acaa95",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-11-08T00:44:02Z",
+      "side": 1,
+      "message": "Done, and bots still pass. I\u0027ll abandon this.",
+      "parentUuid": "64494cea_652a1c6b",
+      "revId": "6ff89380806c1ecf638ef006da6804068093e3bf",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
