@@ -34,6 +34,24 @@
       "parentUuid": "0dfe00bc_6870aab3",
       "revId": "56da9ac1c08bbdbff3c4885e43cd82122e0d9119",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "34e6040f_0dd5941c",
+        "filename": "testing/resources/pixel/radial_shading_point_at_border_expected.pdf.0.png",
+        "patchSetId": 25
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-08T01:40:19Z",
+      "side": 1,
+      "message": "No. It\u0027s already in the git history, so no point reverting.\n\nWhat are you unsure about?",
+      "parentUuid": "0bb6b7e1_39a92784",
+      "revId": "56da9ac1c08bbdbff3c4885e43cd82122e0d9119",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
