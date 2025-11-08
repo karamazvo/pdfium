@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c8c424c1_8e2c2801",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-08T05:51:24Z",
+      "side": 1,
+      "message": "Is this function which caters to all of the functions fine? Or would we want all the null checks in one function and all of the returns like the line below in another?\n\n```  *out_value \u003d pObj-\u003eGetInteger();\n  return true;```\n  \nOn second thought thought, consolidating just null checks wd suffice\n\nNot at my computer now (am on my phone), would update when I get back",
+      "range": {
+        "startLine": 486,
+        "startChar": 0,
+        "endLine": 487,
+        "endChar": 50
+      },
+      "revId": "94393f66054ab6fcade425dfee4fc9845936b1ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
