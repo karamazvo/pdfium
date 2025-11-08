@@ -58,6 +58,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "74d9c29a_c82ba8c9",
+        "filename": "core/fxge/cfx_font.cpp",
+        "patchSetId": 36
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-08T03:16:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b5b6fbb6_b4220552",
+      "range": {
+        "startLine": 179,
+        "startChar": 31,
+        "endLine": 179,
+        "endChar": 47
+      },
+      "revId": "4a6b954f8865971c23c6ec16404eb5071b6ea427",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9b7ecb4b_29763b80",
@@ -71,6 +95,30 @@
       "writtenOn": "2025-11-07T21:07:13Z",
       "side": 1,
       "message": "No need for a local variable here. Just: `return CFX_Face::OpenFromStream(library, font_stream, iFaceIndex);`.",
+      "range": {
+        "startLine": 497,
+        "startChar": 31,
+        "endLine": 497,
+        "endChar": 47
+      },
+      "revId": "4a6b954f8865971c23c6ec16404eb5071b6ea427",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e186a87c_3e6a09b1",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 36
+      },
+      "lineNbr": 497,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-08T03:16:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9b7ecb4b_29763b80",
       "range": {
         "startLine": 497,
         "startChar": 31,

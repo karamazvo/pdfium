@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "29255495_6fa2d1da",
+        "filename": "core/fxge/cfx_font.cpp",
+        "patchSetId": 36
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-08T03:16:21Z",
+      "side": 0,
+      "message": "Yes, it is unused, but it wasn\u0027t present in the latest patchset. I\u0027ll remove it from the header as well.\n\nDone.",
+      "parentUuid": "4b51ca1c_36b4d3d0",
+      "revId": "0f689aaa20dfea04ff6ae8eee4db33f62912a2f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "00fa4b17_55e39d4a",
@@ -35,6 +53,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "066154f0_d682eee5",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 531,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-08T03:16:21Z",
+      "side": 0,
+      "message": "Let\u0027s keep it in, i had it in initially but might have removed it.\nAdded to the Open() Callee.\nDone.",
+      "parentUuid": "00fa4b17_55e39d4a",
+      "revId": "0f689aaa20dfea04ff6ae8eee4db33f62912a2f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "62dbb215_d0cd75b8",
@@ -48,6 +84,24 @@
       "writtenOn": "2025-11-07T19:35:06Z",
       "side": 0,
       "message": "Can line 536-538, and lines 546-547 transfer over to CFX_Face::OpenFromStream()?",
+      "revId": "0f689aaa20dfea04ff6ae8eee4db33f62912a2f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5852f37d_6ab6f3aa",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 536,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-08T03:16:21Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "62dbb215_d0cd75b8",
       "revId": "0f689aaa20dfea04ff6ae8eee4db33f62912a2f7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }

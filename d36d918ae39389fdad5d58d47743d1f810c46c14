@@ -188,6 +188,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0f35eeae_23ed008c",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 33
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-08T03:16:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67e1c59f_c69bbb58",
+      "revId": "d36d918ae39389fdad5d58d47743d1f810c46c14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bf07fb13_f0ebb38d",
@@ -201,6 +219,24 @@
       "writtenOn": "2025-11-07T19:37:06Z",
       "side": 1,
       "message": "Move to after line 78. The style guide rule says constructors before destructors, and line 77 is a move constructor.",
+      "revId": "d36d918ae39389fdad5d58d47743d1f810c46c14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cee948d3_43070c86",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 33
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-08T03:16:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bf07fb13_f0ebb38d",
       "revId": "d36d918ae39389fdad5d58d47743d1f810c46c14",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -288,6 +324,30 @@
       "writtenOn": "2025-11-07T19:35:06Z",
       "side": 1,
       "message": "Class member names should have a trailing underscore. Struct member names should not. When not sure, just look around and follow the existing style in surrounding code. i.e. Be consistent with the line above.",
+      "range": {
+        "startLine": 177,
+        "startChar": 36,
+        "endLine": 177,
+        "endChar": 53
+      },
+      "revId": "d36d918ae39389fdad5d58d47743d1f810c46c14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0fbd3539_66759a69",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 33
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-08T03:16:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "100a3d45_f8b0c5bb",
       "range": {
         "startLine": 177,
         "startChar": 36,
