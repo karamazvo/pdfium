@@ -52,6 +52,24 @@
       "parentUuid": "0bb6b7e1_39a92784",
       "revId": "56da9ac1c08bbdbff3c4885e43cd82122e0d9119",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1b13ea57_e39aa5fe",
+        "filename": "testing/resources/pixel/radial_shading_point_at_border_expected.pdf.0.png",
+        "patchSetId": 25
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-11-08T01:42:24Z",
+      "side": 1,
+      "message": "I meant I\u0027m unsure why there are changes to no-text files.",
+      "parentUuid": "34e6040f_0dd5941c",
+      "revId": "56da9ac1c08bbdbff3c4885e43cd82122e0d9119",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
