@@ -70,6 +70,24 @@
       "parentUuid": "34e6040f_0dd5941c",
       "revId": "56da9ac1c08bbdbff3c4885e43cd82122e0d9119",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ba5935c2_20c3ab75",
+        "filename": "testing/resources/pixel/radial_shading_point_at_border_expected.pdf.0.png",
+        "patchSetId": 25
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-08T01:56:07Z",
+      "side": 1,
+      "message": "No worries. Hope you can revert them here.",
+      "parentUuid": "1b13ea57_e39aa5fe",
+      "revId": "56da9ac1c08bbdbff3c4885e43cd82122e0d9119",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
