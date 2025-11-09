@@ -87,6 +87,24 @@
       "parentUuid": "99318016_a5311bb9",
       "revId": "7c5175b392f62de5d290968ee400f6aa74aa4d8b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "02d81cd6_897e10b1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-09T09:00:03Z",
+      "side": 1,
+      "message": "Ignore this comment (I already mentioned it in the unresolved one) - comment didnt finish because my internet was bad",
+      "parentUuid": "d5bbfa7c_bf06e927",
+      "revId": "7c5175b392f62de5d290968ee400f6aa74aa4d8b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
