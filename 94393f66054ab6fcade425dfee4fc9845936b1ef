@@ -46,6 +46,30 @@
       },
       "revId": "94393f66054ab6fcade425dfee4fc9845936b1ef",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8eb23f76_2840e352",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-10T14:43:03Z",
+      "side": 1,
+      "message": "Ok looked through this, consolidating just the null checks would need us to return structs for the output. This patch set already consolidates the null checks.\n\nAnother idea can be having everything in the common function, as I attempted with previous patchsets, however it doesn\u0027t seem to be the most clean solution due to us having to have cases for each variable type anyway. May save more lines of code, but overall might also have more casts for each case, variables that certain cases do not use and aspects like that which may not be ideal.\n\nLet me know what you think.",
+      "parentUuid": "686f29a1_832e3473",
+      "range": {
+        "startLine": 486,
+        "startChar": 0,
+        "endLine": 487,
+        "endChar": 50
+      },
+      "revId": "94393f66054ab6fcade425dfee4fc9845936b1ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
