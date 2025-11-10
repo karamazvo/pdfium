@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c0675e7e_a8c4255f",
+        "filename": "DEPS",
+        "patchSetId": 3
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-10T17:26:06Z",
+      "side": 1,
+      "message": "Please make sure this is the latest hash after the pdfium_tests CL lands.",
+      "revId": "7a49cc0e6cff08761a185e34761d1994c76a14c5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
