@@ -33,6 +33,24 @@
       "message": "Lei, please run `lucicfg generate main.star` to update the generated files",
       "revId": "3b0d4b8f414b64ea7a3400333084f09424f051b8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d3e12be7_06d8b8e9",
+        "filename": "main.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-10T22:30:21Z",
+      "side": 1,
+      "message": "Whoops!",
+      "parentUuid": "7e968de6_ad45a9bb",
+      "revId": "3b0d4b8f414b64ea7a3400333084f09424f051b8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
