@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "40bf2d3d_be82d6ad",
+        "filename": "main.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3946384
+      },
+      "writtenOn": "2025-11-10T22:26:02Z",
+      "side": 1,
+      "message": "Thanks Lei for preparing the CL. Tom, please review but don\u0027t submit yet. This requires another change in the infra side before it can be landed",
+      "revId": "3b0d4b8f414b64ea7a3400333084f09424f051b8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
