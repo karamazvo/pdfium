@@ -199,6 +199,29 @@
       },
       "revId": "4a6b954f8865971c23c6ec16404eb5071b6ea427",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fdd7ecef_7b866fe6",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 36
+      },
+      "lineNbr": 516,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-10T17:17:03Z",
+      "side": 1,
+      "message": "Remove `ft_stream_` from xfa/fgas/font/cfgas_fontmgr.h. After which, also remove the include for fx_freetype.h.",
+      "range": {
+        "startLine": 516,
+        "startChar": 11,
+        "endLine": 516,
+        "endChar": 21
+      },
+      "revId": "4a6b954f8865971c23c6ec16404eb5071b6ea427",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
