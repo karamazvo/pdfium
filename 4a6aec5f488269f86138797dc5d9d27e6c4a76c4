@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d425ce42_4440598b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-11-11T03:33:26Z",
+      "side": 1,
+      "message": "Apparently this affects the output on an existing test, so I need a new stamp.\n\nI looked at the jbig2 file in that PDF a bit, and it\u0027s a gibberish file. It has no correct rendering. (It does use template 1 if ignoring the size of the generic region field and just assuming that there\u0027s enough data for the header.)",
+      "revId": "4a6aec5f488269f86138797dc5d9d27e6c4a76c4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
