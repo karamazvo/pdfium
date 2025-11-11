@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1c6a4384_49cd4822",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 613,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-11T11:13:30Z",
+      "side": 1,
+      "message": "Probably should put this before the pParams?",
+      "range": {
+        "startLine": 611,
+        "startChar": 0,
+        "endLine": 613,
+        "endChar": 3
+      },
+      "revId": "34c8f3287f3c65495c11b2924a9be59d1f2b026f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "44f0a000_527e7083",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 604,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-11T11:13:30Z",
+      "side": 1,
+      "message": "Should I consider moving the struct to the .h?\nThe main .h I saw linked to this file where functions like `FPDFPageObjMark_SetIntParam` declared is the public API. \n\nNot very sure if it would be a good idea to put this struct (or the helper) there. They are used as local helpers, and they may not need to be public.",
+      "range": {
+        "startLine": 601,
+        "startChar": 0,
+        "endLine": 604,
+        "endChar": 2
+      },
+      "revId": "e7d703058783de518f7fd405be0cd3ced4adfca8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2c768249_b5e6ca07",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 599,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-11T11:13:30Z",
+      "side": 1,
+      "message": "Newline here.",
+      "range": {
+        "startLine": 599,
+        "startChar": 0,
+        "endLine": 599,
+        "endChar": 1
+      },
+      "revId": "1a3eaef3187a2f01c4eed4201f9872e6ba4d91c8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "920a5239_dabdb859",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 607,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-11T11:13:30Z",
+      "side": 1,
+      "message": "Again, do I consider one big helper function with more arguments that uses the enums and cases to process every type, or is this better?",
+      "range": {
+        "startLine": 607,
+        "startChar": 57,
+        "endLine": 607,
+        "endChar": 61
+      },
+      "revId": "1a3eaef3187a2f01c4eed4201f9872e6ba4d91c8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
