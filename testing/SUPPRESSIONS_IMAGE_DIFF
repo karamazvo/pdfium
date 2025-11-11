@@ -3,11 +3,11 @@
 # found in the LICENSE file.
 #
 # List of tests to have image diff tests skipped, one per line.
-# There are four space-separated columns per line
+# There are five space-separated columns per line
 # Each column (except column 0) can contain a comma-separated list of values.
 #
 # Column 0: test file name
-# Column 1: platform: *, win, mac, linux
+# Column 1: platform: *, win, mac, mac_arm, mac_x86, linux
 # Column 2: v8 support: *, nov8, v8
 # Column 3: xfa support: *, noxfa, xfa
 # Column 4: rendering support: *, agg, gdi, skia
