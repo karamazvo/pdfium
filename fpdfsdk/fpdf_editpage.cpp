@@ -482,48 +482,73 @@ FPDFPageObjMark_GetParamValueType(FPDF_PAGEOBJECTMARK mark,
   return pObject ? pObject->GetType() : FPDF_OBJECT_UNKNOWN;
 }
 
+enum class ParamValueType { Int, Float, String, Blob };
+
+bool GetParamValueHelper(FPDF_PAGEOBJECTMARK mark,
+                         FPDF_BYTESTRING key,
+                         void* out_value,
+                         ParamValueType expected_type,
+                         void* buffer = nullptr,
+                         unsigned long buflen = 0) {
+  if (!out_value) {
+    return false;
+  }
+  RetainPtr<CPDF_Dictionary> pParams = GetMarkParamDict(mark);
+  if (!pParams) {
+    return false;
+  }
+  RetainPtr<const CPDF_Object> obj = pParams->GetObjectFor(key);
+  if (!obj) {
+    return false;
+  }
+  if ((expected_type == ParamValueType::Int && !obj->IsNumber()) ||
+      (expected_type == ParamValueType::Float && !obj->IsNumber()) ||
+      (expected_type == ParamValueType::String && !obj->IsString()) ||
+      (expected_type == ParamValueType::Blob && !obj->IsString())) {
+    return false;
+  }
+  switch (expected_type) {
+    case ParamValueType::Int:
+      *reinterpret_cast<int*>(out_value) = obj->GetInteger();
+      break;
+
+    case ParamValueType::Float:
+      *reinterpret_cast<float*>(out_value) = obj->GetNumber();
+      break;
+    case ParamValueType::String:
+      // SAFETY: required from caller.
+      *reinterpret_cast<unsigned long*>(out_value) =
+          Utf16EncodeMaybeCopyAndReturnLength(
+              WideString::FromUTF8(obj->GetString().AsStringView()),
+              UNSAFE_BUFFERS(SpanFromFPDFApiArgs(
+                  reinterpret_cast<FPDF_WCHAR*>(buffer), buflen)));
+      break;
+    case ParamValueType::Blob:
+      // SAFETY: required from caller.
+      auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen));
+      ByteString value = obj->GetString();
+      fxcrt::try_spancpy(result_span, value.span());
+      *reinterpret_cast<unsigned long*>(out_value) =
+          pdfium::checked_cast<unsigned long>(value.span().size());
+      break;
+  }
+  return true;
+}
+
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObjMark_GetParamIntValue(FPDF_PAGEOBJECTMARK mark,
                                  FPDF_BYTESTRING key,
                                  int* out_value) {
-  if (!out_value) {
-    return false;
-  }
-
-  RetainPtr<const CPDF_Dictionary> pParams = GetMarkParamDict(mark);
-  if (!pParams) {
-    return false;
-  }
-
-  RetainPtr<const CPDF_Object> pObj = pParams->GetObjectFor(key);
-  if (!pObj || !pObj->IsNumber()) {
-    return false;
-  }
-
-  *out_value = pObj->GetInteger();
-  return true;
+  return GetParamValueHelper(mark, key, out_value, ParamValueType::Int, nullptr,
+                             0);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObjMark_GetParamFloatValue(FPDF_PAGEOBJECTMARK mark,
                                    FPDF_BYTESTRING key,
                                    float* out_value) {
-  if (!out_value) {
-    return false;
-  }
-
-  RetainPtr<const CPDF_Dictionary> params = GetMarkParamDict(mark);
-  if (!params) {
-    return false;
-  }
-
-  RetainPtr<const CPDF_Object> obj = params->GetObjectFor(key);
-  if (!obj || !obj->IsNumber()) {
-    return false;
-  }
-
-  *out_value = obj->GetNumber();
-  return true;
+  return GetParamValueHelper(mark, key, out_value, ParamValueType::Float,
+                             nullptr, 0);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -532,25 +557,8 @@ FPDFPageObjMark_GetParamStringValue(FPDF_PAGEOBJECTMARK mark,
                                     FPDF_WCHAR* buffer,
                                     unsigned long buflen,
                                     unsigned long* out_buflen) {
-  if (!out_buflen) {
-    return false;
-  }
-
-  RetainPtr<const CPDF_Dictionary> pParams = GetMarkParamDict(mark);
-  if (!pParams) {
-    return false;
-  }
-
-  RetainPtr<const CPDF_Object> pObj = pParams->GetObjectFor(key);
-  if (!pObj || !pObj->IsString()) {
-    return false;
-  }
-
-  // SAFETY: required from caller.
-  *out_buflen = Utf16EncodeMaybeCopyAndReturnLength(
-      WideString::FromUTF8(pObj->GetString().AsStringView()),
-      UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
-  return true;
+  return GetParamValueHelper(mark, key, out_buflen, ParamValueType::String,
+                             buffer, buflen);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -559,26 +567,8 @@ FPDFPageObjMark_GetParamBlobValue(FPDF_PAGEOBJECTMARK mark,
                                   unsigned char* buffer,
                                   unsigned long buflen,
                                   unsigned long* out_buflen) {
-  if (!out_buflen) {
-    return false;
-  }
-
-  RetainPtr<const CPDF_Dictionary> pParams = GetMarkParamDict(mark);
-  if (!pParams) {
-    return false;
-  }
-
-  RetainPtr<const CPDF_Object> pObj = pParams->GetObjectFor(key);
-  if (!pObj || !pObj->IsString()) {
-    return false;
-  }
-
-  // SAFETY: required from caller.
-  auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen));
-  ByteString value = pObj->GetString();
-  fxcrt::try_spancpy(result_span, value.span());
-  *out_buflen = pdfium::checked_cast<unsigned long>(value.span().size());
-  return true;
+  return GetParamValueHelper(mark, key, out_buflen, ParamValueType::Blob,
+                             buffer, buflen);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -613,26 +603,57 @@ FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT page_object) {
   return trans.IsGroup() || trans.IsIsolated();
 }
 
+bool SetParamValueHelper(FPDF_DOCUMENT document,
+                         FPDF_PAGEOBJECT page_object,
+                         FPDF_PAGEOBJECTMARK mark,
+                         FPDF_BYTESTRING key,
+                         void* value,
+                         unsigned long value_len,
+                         ParamValueType expected_type) {
+  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
+  if (!pPageObj || !PageObjectContainsMark(pPageObj, mark)) {
+    return false;
+  }
+  RetainPtr<CPDF_Dictionary> pParams =
+      GetOrCreateMarkParamsDict(document, mark);
+  if (!pParams) {
+    return false;
+  }
+  switch (expected_type) {
+    case ParamValueType::Int:
+      pParams->SetNewFor<CPDF_Number>(key, *reinterpret_cast<int*>(value));
+      break;
+    case ParamValueType::Float:
+      pParams->SetNewFor<CPDF_Number>(key, *reinterpret_cast<float*>(value));
+      break;
+    case ParamValueType::String:
+      pParams->SetNewFor<CPDF_String>(
+          key, *reinterpret_cast<FPDF_BYTESTRING*>(value));
+      break;
+    case ParamValueType::Blob:
+      if (!value && value_len > 0) {
+        return false;
+      }
+      // SAFETY: required from caller.
+      pParams->SetNewFor<CPDF_String>(
+          key,
+          UNSAFE_BUFFERS(
+              pdfium::span(static_cast<unsigned char*>(value), value_len)),
+          CPDF_String::DataType::kIsHex);
+      break;
+  }
+  pPageObj->SetDirty(true);
+  return true;
+}
+
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObjMark_SetIntParam(FPDF_DOCUMENT document,
                             FPDF_PAGEOBJECT page_object,
                             FPDF_PAGEOBJECTMARK mark,
                             FPDF_BYTESTRING key,
                             int value) {
-  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
-  if (!pPageObj || !PageObjectContainsMark(pPageObj, mark)) {
-    return false;
-  }
-
-  RetainPtr<CPDF_Dictionary> pParams =
-      GetOrCreateMarkParamsDict(document, mark);
-  if (!pParams) {
-    return false;
-  }
-
-  pParams->SetNewFor<CPDF_Number>(key, value);
-  pPageObj->SetDirty(true);
-  return true;
+  return SetParamValueHelper(document, page_object, mark, key, &value, 0,
+                             ParamValueType::Int);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -641,19 +662,8 @@ FPDFPageObjMark_SetFloatParam(FPDF_DOCUMENT document,
                               FPDF_PAGEOBJECTMARK mark,
                               FPDF_BYTESTRING key,
                               float value) {
-  CPDF_PageObject* page_obj = CPDFPageObjectFromFPDFPageObject(page_object);
-  if (!page_obj || !PageObjectContainsMark(page_obj, mark)) {
-    return false;
-  }
-
-  RetainPtr<CPDF_Dictionary> params = GetOrCreateMarkParamsDict(document, mark);
-  if (!params) {
-    return false;
-  }
-
-  params->SetNewFor<CPDF_Number>(key, value);
-  page_obj->SetDirty(true);
-  return true;
+  return SetParamValueHelper(document, page_object, mark, key, &value, 0,
+                             ParamValueType::Float);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -662,20 +672,8 @@ FPDFPageObjMark_SetStringParam(FPDF_DOCUMENT document,
                                FPDF_PAGEOBJECTMARK mark,
                                FPDF_BYTESTRING key,
                                FPDF_BYTESTRING value) {
-  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
-  if (!pPageObj || !PageObjectContainsMark(pPageObj, mark)) {
-    return false;
-  }
-
-  RetainPtr<CPDF_Dictionary> pParams =
-      GetOrCreateMarkParamsDict(document, mark);
-  if (!pParams) {
-    return false;
-  }
-
-  pParams->SetNewFor<CPDF_String>(key, value);
-  pPageObj->SetDirty(true);
-  return true;
+  return SetParamValueHelper(document, page_object, mark, key, &value, 0,
+                             ParamValueType::String);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -685,27 +683,9 @@ FPDFPageObjMark_SetBlobParam(FPDF_DOCUMENT document,
                              FPDF_BYTESTRING key,
                              const unsigned char* value,
                              unsigned long value_len) {
-  if (!value && value_len > 0) {
-    return false;
-  }
-
-  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
-  if (!pPageObj || !PageObjectContainsMark(pPageObj, mark)) {
-    return false;
-  }
-
-  RetainPtr<CPDF_Dictionary> pParams =
-      GetOrCreateMarkParamsDict(document, mark);
-  if (!pParams) {
-    return false;
-  }
-
-  // SAFETY: required from caller.
-  pParams->SetNewFor<CPDF_String>(
-      key, UNSAFE_BUFFERS(pdfium::span(value, value_len)),
-      CPDF_String::DataType::kIsHex);
-  pPageObj->SetDirty(true);
-  return true;
+  return SetParamValueHelper(document, page_object, mark, key,
+                             const_cast<unsigned char*>(value), value_len,
+                             ParamValueType::Blob);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
