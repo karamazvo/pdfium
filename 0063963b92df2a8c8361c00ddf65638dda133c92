@@ -16,6 +16,24 @@
       "message": "LG but redbot.",
       "revId": "0063963b92df2a8c8361c00ddf65638dda133c92",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4b9d3e3e_2f35a3ca",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-11T00:40:37Z",
+      "side": 1,
+      "message": "Yes, but the bot is the optional Mac ARM bot, since the bots are back to X86 by default. On the bot, the pixel and corpus tests still fail. Will work on those separately.",
+      "parentUuid": "c51ce442_2a163ebf",
+      "revId": "0063963b92df2a8c8361c00ddf65638dda133c92",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
