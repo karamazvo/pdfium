@@ -16,6 +16,24 @@
       "message": "Not sure why the bots are purple, but this can be `refs/changes/90/137990/6`, which should work, and should be obviously not a git hash so one will remember to update to the final hash before landing.",
       "revId": "6c44b20f030365b8ecd937fd8f4c6664c5ffaf7c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "42320ec6_22642987",
+        "filename": "DEPS",
+        "patchSetId": 6
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-11T17:39:33Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "a42d2a9a_4f6f602a",
+      "revId": "6c44b20f030365b8ecd937fd8f4c6664c5ffaf7c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
