@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3812f11f_89d5afac",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 500,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-11T16:03:33Z",
+      "side": 1,
+      "message": "pObj? (Done in ps 12).",
+      "range": {
+        "startLine": 500,
+        "startChar": 31,
+        "endLine": 500,
+        "endChar": 34
+      },
+      "revId": "c60bb27d66d0912d0150279e54c4c9e3269e2396",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7dc785ab_612d16aa",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 513,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-11T16:03:33Z",
+      "side": 1,
+      "message": "Remove blank line 514.",
+      "revId": "c60bb27d66d0912d0150279e54c4c9e3269e2396",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "19a06c3f_78dd7a04",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 542,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-11T16:03:33Z",
+      "side": 1,
+      "message": "No need for 0, nullptr here, it is already set.\n\nDone.",
+      "range": {
+        "startLine": 542,
+        "startChar": 72,
+        "endLine": 542,
+        "endChar": 79
+      },
+      "revId": "c60bb27d66d0912d0150279e54c4c9e3269e2396",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
