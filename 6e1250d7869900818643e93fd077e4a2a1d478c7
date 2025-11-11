@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6ecebb22_9f842e87",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 485,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-11T13:20:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "77b64e4e_8fcf12db",
+      "range": {
+        "startLine": 485,
+        "startChar": 29,
+        "endLine": 485,
+        "endChar": 59
+      },
+      "revId": "6e1250d7869900818643e93fd077e4a2a1d478c7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1b9a5014_2f3fd9c0",
@@ -47,6 +71,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "249997b8_3e4956cf",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 488,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-11T13:20:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1b9a5014_2f3fd9c0",
+      "range": {
+        "startLine": 488,
+        "startChar": 20,
+        "endLine": 488,
+        "endChar": 23
+      },
+      "revId": "6e1250d7869900818643e93fd077e4a2a1d478c7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "32a05a81_c8d4a479",
@@ -60,6 +108,30 @@
       "writtenOn": "2025-11-11T11:13:30Z",
       "side": 1,
       "message": "Is this approach fine? Or should I leave it in the individual functions?",
+      "range": {
+        "startLine": 489,
+        "startChar": 2,
+        "endLine": 491,
+        "endChar": 3
+      },
+      "revId": "6e1250d7869900818643e93fd077e4a2a1d478c7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8f9f2900_84ca4ee5",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 491,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-11T13:20:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "32a05a81_c8d4a479",
       "range": {
         "startLine": 489,
         "startChar": 2,
