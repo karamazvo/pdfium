@@ -1,0 +1,45 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "976ed375_2573e667",
+        "filename": "testing/SUPPRESSIONS",
+        "patchSetId": 4
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-11-11T18:39:42Z",
+      "side": 1,
+      "message": "nit: document whether `mac` implies `mac_arm` and `mac_x86` or not, and/or whether we should just duplicate out the mac lines into mac_arm and mac_x86 entries intead, and remove `mac`.",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 1
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "6d28479d_b410abfd",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "testing/SUPPRESSIONS",
+              "range": {
+                "startLine": 9,
+                "startChar": 0,
+                "endLine": 9,
+                "endChar": 0
+              },
+              "replacement": "# For Column 1, \u0027mac\u0027 is a shorthand that includes both \u0027mac_arm\u0027 and \u0027mac_x86\u0027.\n#\n"
+            }
+          ]
+        }
+      ],
+      "revId": "0dd491143fff88336770ee3cae54bce765d083a9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
