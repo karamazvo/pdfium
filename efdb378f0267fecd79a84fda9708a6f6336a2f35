@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "11096fb0_a7b01b24",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 520,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-11T03:04:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d15aa465_41b321c6",
+      "range": {
+        "startLine": 520,
+        "startChar": 31,
+        "endLine": 520,
+        "endChar": 34
+      },
+      "revId": "efdb378f0267fecd79a84fda9708a6f6336a2f35",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4dea1c54_5131b7e5",
@@ -37,6 +61,30 @@
       "writtenOn": "2025-11-10T14:52:21Z",
       "side": 1,
       "message": "Naming is fine? or should it be pParamsAndObject.\nI think pParamsAndObject is fine, everything else seems to stick to Camel case.\nBut let me know if it should be p_params_and_object.",
+      "range": {
+        "startLine": 601,
+        "startChar": 7,
+        "endLine": 601,
+        "endChar": 26
+      },
+      "revId": "efdb378f0267fecd79a84fda9708a6f6336a2f35",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6ce7150a_388a4f5c",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 601,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-11T03:04:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4dea1c54_5131b7e5",
       "range": {
         "startLine": 601,
         "startChar": 7,
@@ -70,6 +118,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7f2e3eb8_2ace629b",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 613,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-11T03:04:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "559867db_2aa4df4b",
+      "range": {
+        "startLine": 611,
+        "startChar": 0,
+        "endLine": 613,
+        "endChar": 3
+      },
+      "revId": "efdb378f0267fecd79a84fda9708a6f6336a2f35",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "640b8f94_9d9f4a4a",
@@ -83,6 +155,30 @@
       "writtenOn": "2025-11-10T14:52:21Z",
       "side": 1,
       "message": "nit: ParamsAndObj instead of result.\n\nWill change.",
+      "range": {
+        "startLine": 630,
+        "startChar": 22,
+        "endLine": 630,
+        "endChar": 28
+      },
+      "revId": "efdb378f0267fecd79a84fda9708a6f6336a2f35",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "009801c6_9b6b4af1",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 630,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-11T03:04:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "640b8f94_9d9f4a4a",
       "range": {
         "startLine": 630,
         "startChar": 22,
