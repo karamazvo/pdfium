@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cd16aca7_b2b9a2b8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 42
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-11T05:35:39Z",
+      "side": 1,
+      "message": "Should be resolved now, checking if it builds on one target to start with.\nIf everything\u0027s fine I\u0027ll start a Dry run if thats ok.",
+      "revId": "212198e30b2e75cecaadabc67d46797d01571fdd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

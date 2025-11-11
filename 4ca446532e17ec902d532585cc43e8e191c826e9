@@ -35,6 +35,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ede893b9_65c342fb",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 39
+      },
+      "lineNbr": 346,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-11T05:35:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a9efaa7_e411b47c",
+      "revId": "4ca446532e17ec902d532585cc43e8e191c826e9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4fd6429b_dde7498f",
@@ -48,6 +66,24 @@
       "writtenOn": "2025-11-10T17:17:03Z",
       "side": 1,
       "message": "I think this can be removed now?",
+      "revId": "4ca446532e17ec902d532585cc43e8e191c826e9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4fafb46c_35f798be",
+        "filename": "core/fxge/cfx_font.h",
+        "patchSetId": 39
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-11T05:35:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4fd6429b_dde7498f",
       "revId": "4ca446532e17ec902d532585cc43e8e191c826e9",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
