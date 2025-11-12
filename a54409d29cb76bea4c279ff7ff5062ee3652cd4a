@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "89a58f5b_91ff27f4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-11-12T19:34:22Z",
+      "side": 1,
+      "message": "Ok, but I\u0027m not convinced this is UB, do we have an ASAN report or other crashes? Or is this just by inspection?\n\nEither way, the new code is safer and doesn\u0027t rely on the following quirks which may have kept the old code safe.\n\n1. The ?-operator returns values (prvalues, temporary objects) in this case, but\n2. Binding a const-ref to such a temporary invokes lifetime extension.",
+      "revId": "a54409d29cb76bea4c279ff7ff5062ee3652cd4a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
