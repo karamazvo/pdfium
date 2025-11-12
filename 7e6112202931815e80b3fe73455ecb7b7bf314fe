@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "12d502fb_2506586f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 19
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6295
+      },
+      "writtenOn": "2025-11-12T05:22:20Z",
+      "side": 1,
+      "message": "lgtm but please wait for a review from thestig@ as well",
+      "revId": "7e6112202931815e80b3fe73455ecb7b7bf314fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
