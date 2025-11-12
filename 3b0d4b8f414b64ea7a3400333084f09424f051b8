@@ -69,6 +69,24 @@
       "parentUuid": "40bf2d3d_be82d6ad",
       "revId": "3b0d4b8f414b64ea7a3400333084f09424f051b8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "da444922_6c75454d",
+        "filename": "main.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3946384
+      },
+      "writtenOn": "2025-11-12T22:50:38Z",
+      "side": 1,
+      "message": "I landed the CL but I\u0027m still waiting for it to take effect. I\u0027ll ping you when this can land\nhttps://chrome-internal-review.googlesource.com/c/infradata/config/+/8761356\nhttps://chromium-swarm.appspot.com/botlist?c\u003did\u0026c\u003dtask\u0026c\u003dos\u0026c\u003dstatus\u0026d\u003dasc\u0026f\u003dpool%3Aluci.flex.ci\u0026f\u003dos%3ALinux\u0026f\u003dos%3AUbuntu-24.04\u0026k\u003dos\u0026s\u003did",
+      "parentUuid": "45ce693a_5e2c2698",
+      "revId": "3b0d4b8f414b64ea7a3400333084f09424f051b8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
