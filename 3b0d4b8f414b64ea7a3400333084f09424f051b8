@@ -51,6 +51,24 @@
       "parentUuid": "7e968de6_ad45a9bb",
       "revId": "3b0d4b8f414b64ea7a3400333084f09424f051b8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "45ce693a_5e2c2698",
+        "filename": "main.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-12T22:49:13Z",
+      "side": 1,
+      "message": "Just to confirm, is the infra side ready for the switch? i.e. Is there enough capacity in the shared bot pool now?",
+      "parentUuid": "40bf2d3d_be82d6ad",
+      "revId": "3b0d4b8f414b64ea7a3400333084f09424f051b8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
