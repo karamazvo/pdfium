@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1f20fb50_47a845cd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-11-12T19:00:01Z",
+      "side": 1,
+      "message": "LG, but you might consider https://pdfium-review.googlesource.com/c/pdfium/+/134430",
+      "revId": "4077aedad24d22789081ceae7f5a1b3f0bdda636",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
