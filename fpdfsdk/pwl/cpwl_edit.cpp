@@ -563,7 +563,7 @@ bool CPWL_Edit::OnCharInternal(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
 
   if (bCtrl && !bAlt) {
     switch (nChar) {
-      case pdfium::ascii::kControlA:
+      case pdfium::ascii::kControlA2:
         SelectAllText();
         return true;
       case pdfium::ascii::kControlZ:

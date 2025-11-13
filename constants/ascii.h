@@ -11,7 +11,7 @@ namespace pdfium {
 namespace ascii {
 
 constexpr uint8_t kNul = 0x00;
-constexpr uint8_t kControlA = 0x01;
+constexpr uint8_t kControlA2 = 0x01;
 constexpr uint8_t kControlB = 0x02;
 constexpr uint8_t kControlC = 0x03;
 constexpr uint8_t kBackspace = 0x08;

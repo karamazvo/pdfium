@@ -3510,7 +3510,7 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, SelectAllWithKeyboardShortcut) {
 #else
   static constexpr int kCorrectModifier = FWL_EVENTFLAG_ControlKey;
 #endif
-  FORM_OnChar(form_handle(), page(), pdfium::ascii::kControlA,
+  FORM_OnChar(form_handle(), page(), pdfium::ascii::kControlA2,
               kCorrectModifier);
   EXPECT_EQ(Selection(), "AB");
 
@@ -3524,7 +3524,7 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, SelectAllWithKeyboardShortcut) {
 #else
   static constexpr int kWrongModifier = FWL_EVENTFLAG_MetaKey;
 #endif
-  FORM_OnChar(form_handle(), page(), pdfium::ascii::kControlA, kWrongModifier);
+  FORM_OnChar(form_handle(), page(), pdfium::ascii::kControlA2, kWrongModifier);
   EXPECT_EQ(Selection(), "");
 }
 
