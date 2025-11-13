@@ -35,6 +35,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e53aed55_677fcd74",
+        "filename": "fpdfsdk/fpdf_sysfontinfo.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-11-13T21:26:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "978642a4_256528fa",
+      "revId": "7e6112202931815e80b3fe73455ecb7b7bf314fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2ceb96a0_ba77fec0",
@@ -81,6 +99,54 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "75c10691_2d889241",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-11-13T21:26:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2ceb96a0_ba77fec0",
+      "range": {
+        "startLine": 28,
+        "startChar": 54,
+        "endLine": 28,
+        "endChar": 61
+      },
+      "revId": "7e6112202931815e80b3fe73455ecb7b7bf314fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b5f4bfab_2a848af2",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-11-13T21:26:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1033f363_f4aaa944",
+      "range": {
+        "startLine": 28,
+        "startChar": 41,
+        "endLine": 28,
+        "endChar": 46
+      },
+      "revId": "7e6112202931815e80b3fe73455ecb7b7bf314fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "47731939_4c748cc4",
@@ -94,6 +160,30 @@
       "writtenOn": "2025-11-13T06:40:33Z",
       "side": 1,
       "message": "italic",
+      "range": {
+        "startLine": 40,
+        "startChar": 32,
+        "endLine": 40,
+        "endChar": 39
+      },
+      "revId": "7e6112202931815e80b3fe73455ecb7b7bf314fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ec106831_9ac45ee3",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-11-13T21:26:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "47731939_4c748cc4",
       "range": {
         "startLine": 40,
         "startChar": 32,
@@ -127,6 +217,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "87d78275_13327cb8",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-11-13T21:26:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "13be32c5_8156475e",
+      "range": {
+        "startLine": 44,
+        "startChar": 33,
+        "endLine": 44,
+        "endChar": 39
+      },
+      "revId": "7e6112202931815e80b3fe73455ecb7b7bf314fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d2c89377_62414b48",
@@ -140,6 +254,30 @@
       "writtenOn": "2025-11-13T06:40:33Z",
       "side": 1,
       "message": "font",
+      "range": {
+        "startLine": 67,
+        "startChar": 40,
+        "endLine": 67,
+        "endChar": 45
+      },
+      "revId": "7e6112202931815e80b3fe73455ecb7b7bf314fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "afb23ad0_1f45efd3",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-11-13T21:26:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d2c89377_62414b48",
       "range": {
         "startLine": 67,
         "startChar": 40,
@@ -167,6 +305,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f7933b5e_de0014b5",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-11-13T21:26:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "94e971df_4ea1c88b",
+      "revId": "7e6112202931815e80b3fe73455ecb7b7bf314fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "93369638_4d138c98",
@@ -180,6 +336,24 @@
       "writtenOn": "2025-11-13T06:40:33Z",
       "side": 1,
       "message": "Can there be an extra comment to indicate version 2 is experimental? Just to give PDFium some wiggle room if the new version in this public API needs some adjustment.",
+      "revId": "7e6112202931815e80b3fe73455ecb7b7bf314fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c6cf1352_ee6fd7fb",
+        "filename": "public/fpdf_sysfontinfo.h",
+        "patchSetId": 19
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2025-11-13T21:26:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "93369638_4d138c98",
       "revId": "7e6112202931815e80b3fe73455ecb7b7bf314fe",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
