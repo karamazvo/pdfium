@@ -408,6 +408,24 @@
       "parentUuid": "1aff870d_b89c6649",
       "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5069e42e_13adf892",
+        "filename": "public/fpdf_sysfontinfo.h",
+        "patchSetId": 16
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-13T06:40:33Z",
+      "side": 1,
+      "message": "So is the requirement essentially the same? If so, then there is no need to distinguish between the 2 versions.",
+      "parentUuid": "3575fe66_944f5893",
+      "revId": "fca4be27c871fdf9327afb1ca56f517951dff053",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }

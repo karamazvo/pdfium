@@ -16,6 +16,172 @@
       "message": "lgtm but please wait for a review from thestig@ as well",
       "revId": "7e6112202931815e80b3fe73455ecb7b7bf314fe",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "978642a4_256528fa",
+        "filename": "fpdfsdk/fpdf_sysfontinfo.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-13T06:40:33Z",
+      "side": 1,
+      "message": "nit: List this first? Flip the ordering between the 2 comment lines.",
+      "revId": "7e6112202931815e80b3fe73455ecb7b7bf314fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2ceb96a0_ba77fec0",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-13T06:40:33Z",
+      "side": 1,
+      "message": "Rename to: mapper",
+      "range": {
+        "startLine": 28,
+        "startChar": 54,
+        "endLine": 28,
+        "endChar": 61
+      },
+      "revId": "7e6112202931815e80b3fe73455ecb7b7bf314fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1033f363_f4aaa944",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-13T06:40:33Z",
+      "side": 1,
+      "message": "How about renaming all the \"pThis\" parameters to \"sys_font_info\" to avoid introducing new Hungarian notation in this file?",
+      "range": {
+        "startLine": 28,
+        "startChar": 41,
+        "endLine": 28,
+        "endChar": 46
+      },
+      "revId": "7e6112202931815e80b3fe73455ecb7b7bf314fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "47731939_4c748cc4",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-13T06:40:33Z",
+      "side": 1,
+      "message": "italic",
+      "range": {
+        "startLine": 40,
+        "startChar": 32,
+        "endLine": 40,
+        "endChar": 39
+      },
+      "revId": "7e6112202931815e80b3fe73455ecb7b7bf314fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "13be32c5_8156475e",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-13T06:40:33Z",
+      "side": 1,
+      "message": "exact",
+      "range": {
+        "startLine": 44,
+        "startChar": 33,
+        "endLine": 44,
+        "endChar": 39
+      },
+      "revId": "7e6112202931815e80b3fe73455ecb7b7bf314fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d2c89377_62414b48",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-13T06:40:33Z",
+      "side": 1,
+      "message": "font",
+      "range": {
+        "startLine": 67,
+        "startChar": 40,
+        "endLine": 67,
+        "endChar": 45
+      },
+      "revId": "7e6112202931815e80b3fe73455ecb7b7bf314fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "94e971df_4ea1c88b",
+        "filename": "fpdfsdk/fpdf_sysfontinfo_embeddertest.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-13T06:40:33Z",
+      "side": 1,
+      "message": "Since this points at `enum_fonts_call_count_`, it would be better if `enum_fonts_call_count_` outlives this. i.e. Declare `enum_fonts_call_count_` first.",
+      "revId": "7e6112202931815e80b3fe73455ecb7b7bf314fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "93369638_4d138c98",
+        "filename": "public/fpdf_sysfontinfo.h",
+        "patchSetId": 19
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-13T06:40:33Z",
+      "side": 1,
+      "message": "Can there be an extra comment to indicate version 2 is experimental? Just to give PDFium some wiggle room if the new version in this public API needs some adjustment.",
+      "revId": "7e6112202931815e80b3fe73455ecb7b7bf314fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
