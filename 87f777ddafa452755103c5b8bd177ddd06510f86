@@ -20,6 +20,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "0be04d6b_b4071696",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 485,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-13T18:33:43Z",
+      "side": 1,
+      "message": "Is it fine if I leave this here do I put it in one of the headers?\nIf so let me know which one. The functions (like `GetParamIntValue`) seem to be there in the public API, just verifying if I should add it there. Let me know if I should.",
+      "range": {
+        "startLine": 485,
+        "startChar": 0,
+        "endLine": 485,
+        "endChar": 55
+      },
+      "revId": "87f777ddafa452755103c5b8bd177ddd06510f86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "12d3fc36_1034f7f9",
         "filename": "fpdfsdk/fpdf_editpage.cpp",
         "patchSetId": 14
