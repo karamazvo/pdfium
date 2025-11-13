@@ -16,6 +16,24 @@
       "message": "Ok, but I\u0027m not convinced this is UB, do we have an ASAN report or other crashes? Or is this just by inspection?\n\nEither way, the new code is safer and doesn\u0027t rely on the following quirks which may have kept the old code safe.\n\n1. The ?-operator returns values (prvalues, temporary objects) in this case, but\n2. Binding a const-ref to such a temporary invokes lifetime extension.",
       "revId": "a54409d29cb76bea4c279ff7ff5062ee3652cd4a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1812bcc3_b29f48fd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-11-13T19:01:23Z",
+      "side": 1,
+      "message": "I believe you are correct. I didn\u0027t know about const ref lifetime extension! Here\u0027s the relevant docs:\n\n 1. https://en.cppreference.com/w/cpp/language/operator_other.html#Conditional_operator this line falls under \"Otherwise, the result is an rvalue(until C++11) a prvalue(since C++11).\" in stage 4. Then In Stage 6 \"E2 and E3 have the same type. In this case, the result is of that type and the result is copy-initialized using the selected operand.\" applies so this line actually caused a copy despite the reference.\n 2. https://en.cppreference.com/w/cpp/language/reference_initialization.html#Lifetime_of_a_temporary. This line gets either \"a prvalue expression of an object type,\n(until C++17)\" or \"a temporary materialization conversion,\n(since C++17)\"\n\nI confirmed that the following static assert does not fire, so the ternary expression does indeed return a prvalue:\n\n```\nstatic_assert(!std::is_reference_v\u003cdecltype(\n    stroke_options ? *stroke_options : CFX_GraphStateData()\n)\u003e, \"The ternary operator is returning a reference (unsafe!)\");\n```\n\nI agree the new code is still better. There\u0027s copy-elision so it does not perform two copies and it more explicitly shows what actually happens. In fact the compiler might generate exactly the same assembly from both options since there\u0027s a copy either way.\n\nFor the record I did find this by inspection. I just assumed we don\u0027t have test coverage for the null case so the sanitizers didn\u0027t catch it.\n\nI\u0027ve updated the description to be more correct.",
+      "parentUuid": "89a58f5b_91ff27f4",
+      "revId": "a54409d29cb76bea4c279ff7ff5062ee3652cd4a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
