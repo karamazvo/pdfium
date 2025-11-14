@@ -1,6 +1,75 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "8f518c63_089dc42b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-14T17:41:43Z",
+      "side": 1,
+      "message": "One colon too many here.",
+      "range": {
+        "startLine": 9,
+        "startChar": 31,
+        "endLine": 9,
+        "endChar": 60
+      },
+      "revId": "737a3a862129c6cd39ae87004fdcc9b3cce57522",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "71e6401f_62941f5d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-14T17:41:43Z",
+      "side": 1,
+      "message": "CFPF_SkiaFontMgr",
+      "range": {
+        "startLine": 10,
+        "startChar": 43,
+        "endLine": 10,
+        "endChar": 54
+      },
+      "revId": "737a3a862129c6cd39ae87004fdcc9b3cce57522",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "82265fbc_05e6a1f0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-14T17:41:43Z",
+      "side": 1,
+      "message": "Try to use the names verbatim: FT_Open_Args",
+      "range": {
+        "startLine": 10,
+        "startChar": 11,
+        "endLine": 10,
+        "endChar": 23
+      },
+      "revId": "737a3a862129c6cd39ae87004fdcc9b3cce57522",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "ae497a0e_dccb2a0d",
@@ -14,6 +83,57 @@
       "writtenOn": "2025-11-14T11:39:06Z",
       "side": 1,
       "message": "Hi again, made some update to the Android CFX_Face::Open() caller that we were discussing about when we worked on the initial Consolidation of `CFX_Face::Open()`.",
+      "revId": "737a3a862129c6cd39ae87004fdcc9b3cce57522",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f1b4beec_1d56825b",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-14T17:41:43Z",
+      "side": 1,
+      "message": "This #if needs to be split up as well. OpenFromStream() is XFA-only. OpenFromFilePath() is Android-only.",
+      "revId": "737a3a862129c6cd39ae87004fdcc9b3cce57522",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "725cb2a0_1410baf8",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-14T17:41:43Z",
+      "side": 1,
+      "message": "Should be wrapped in: #if BUILDFLAG(IS_ANDROID) || defined(PDF_ENABLE_XFA)",
+      "revId": "737a3a862129c6cd39ae87004fdcc9b3cce57522",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d5df05fa_85342f79",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-14T17:41:43Z",
+      "side": 1,
+      "message": "Newline after to separate this method from the member variables, like in the pre-existing code.",
       "revId": "737a3a862129c6cd39ae87004fdcc9b3cce57522",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
