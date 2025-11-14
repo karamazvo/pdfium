@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c86080e2_a78bfd2a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 8
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-14T18:55:06Z",
+      "side": 1,
+      "message": "One more to change to GetRec()",
+      "range": {
+        "startLine": 7,
+        "startChar": 8,
+        "endLine": 7,
+        "endChar": 14
+      },
+      "revId": "d14ae41206786496425707406174a9461f415f0a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c7a12ac8_1dcebc44",
+        "filename": "core/fxge/android/cfpf_skiafontmgr.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 401,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-14T18:55:06Z",
+      "side": 1,
+      "message": "`constexpr` to be the constest. :)",
+      "range": {
+        "startLine": 401,
+        "startChar": 2,
+        "endLine": 401,
+        "endChar": 7
+      },
+      "revId": "d14ae41206786496425707406174a9461f415f0a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ab7cd21a_49a2a9e3",
+        "filename": "core/fxge/android/cfpf_skiafontmgr.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 401,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-14T18:55:06Z",
+      "side": 1,
+      "message": "Rename to kFaceIndex now.",
+      "range": {
+        "startLine": 401,
+        "startChar": 12,
+        "endLine": 401,
+        "endChar": 22
+      },
+      "revId": "d14ae41206786496425707406174a9461f415f0a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
