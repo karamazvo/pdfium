@@ -398,21 +398,21 @@ void CFPF_SkiaFontMgr::ScanPath(const ByteString& path) {
 }
 
 void CFPF_SkiaFontMgr::ScanFile(const ByteString& file) {
-  RetainPtr<CFX_Face> face = GetFontFace(file.AsStringView(), 0);
+  int face_index = 0;
+  RetainPtr<CFX_Face> face = GetFontFace(file.AsStringView(), face_index);
   if (!face) {
     return;
   }
-
-  font_faces_.push_back(ReportFace(face, file));
+  font_faces_.push_back(ReportFace(face, file, face_index));
 }
 
 std::unique_ptr<CFPF_SkiaPathFont> CFPF_SkiaFontMgr::ReportFace(
     RetainPtr<CFX_Face> face,
-    const ByteString& file) {
+    const ByteString& file int face_index) {
   CFX_Face::FontStyleInfo fontinfo = face->GetFontStyleInfo();
   uint32_t charset =
       SKIACHARSET_Default | SkiaGetFaceCharset(fontinfo.os2_codepage_mask);
-  return std::make_unique<CFPF_SkiaPathFont>(
-      file, face->GetFamilyName(), fontinfo.style, face->GetRec()->face_index,
-      charset, face->GetGlyphCount());
+  return std::make_unique<CFPF_SkiaPathFont>(file, face->GetFamilyName(),
+                                             fontinfo.style, face_index,
+                                             charset, face->GetGlyphCount());
 }
