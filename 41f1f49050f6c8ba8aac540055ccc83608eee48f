@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "72d9ae3a_48d94fb0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-14T18:49:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "63b2d3ea_4ec77463",
+      "range": {
+        "startLine": 9,
+        "startChar": 11,
+        "endLine": 9,
+        "endChar": 21
+      },
+      "revId": "41f1f49050f6c8ba8aac540055ccc83608eee48f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "1c6ccd8f_a712dd28",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 5
@@ -54,6 +78,24 @@
       "writtenOn": "2025-11-14T18:45:28Z",
       "side": 1,
       "message": "Make this a constant.\n\nI suspect it may be possible to remove all the \"face index\" code from core/fxge/android, but it\u0027s also possible that PDFium may want to use the face index here like it does on other platforms. So this CL is ok as-is.",
+      "revId": "41f1f49050f6c8ba8aac540055ccc83608eee48f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "abb02b76_90c936f0",
+        "filename": "core/fxge/android/cfpf_skiafontmgr.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 401,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-14T18:49:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "17c8a2e6_ff62479f",
       "revId": "41f1f49050f6c8ba8aac540055ccc83608eee48f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
