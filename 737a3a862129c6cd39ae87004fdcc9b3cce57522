@@ -194,6 +194,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "db6ac9f3_687e14f3",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-14T17:55:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "285430e7_74d6fddd",
+      "revId": "737a3a862129c6cd39ae87004fdcc9b3cce57522",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "725cb2a0_1410baf8",
@@ -211,6 +229,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fc02afed_8daa29da",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-14T17:55:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "725cb2a0_1410baf8",
+      "revId": "737a3a862129c6cd39ae87004fdcc9b3cce57522",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d5df05fa_85342f79",
@@ -224,6 +260,24 @@
       "writtenOn": "2025-11-14T17:41:43Z",
       "side": 1,
       "message": "Newline after to separate this method from the member variables, like in the pre-existing code.",
+      "revId": "737a3a862129c6cd39ae87004fdcc9b3cce57522",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "332b50e7_3924705f",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-14T17:55:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d5df05fa_85342f79",
       "revId": "737a3a862129c6cd39ae87004fdcc9b3cce57522",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
