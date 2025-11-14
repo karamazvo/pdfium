@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "041bc967_b87fc131",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 1139,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-14T22:57:08Z",
+      "side": 1,
+      "message": "~60 lines down, it may be harder for readers to see this is a bool. The name makes it sound like a SkPath. How about renaming it to `is_point_path`?",
+      "range": {
+        "startLine": 1139,
+        "startChar": 13,
+        "endLine": 1139,
+        "endChar": 23
+      },
+      "revId": "76970377fb1e3c4890b4c284dc22b7b2c225bdcc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "720807bb_371f4ec8",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 1140,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-14T22:57:08Z",
+      "side": 1,
+      "message": "Maybe rename to stroke_already_drawn or already_drew_stroke?",
+      "range": {
+        "startLine": 1140,
+        "startChar": 7,
+        "endLine": 1140,
+        "endChar": 26
+      },
+      "revId": "76970377fb1e3c4890b4c284dc22b7b2c225bdcc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c5926f7d_f080db48",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 1154,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-14T22:57:08Z",
+      "side": 1,
+      "message": "Can `SkAutoCanvasRestore` auto save/restore, so the restore() call on line 1177 becomes automatic?",
+      "revId": "76970377fb1e3c4890b4c284dc22b7b2c225bdcc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bb50cd73_24246de3",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 1185,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-14T22:57:08Z",
+      "side": 1,
+      "message": "... if needed",
+      "revId": "76970377fb1e3c4890b4c284dc22b7b2c225bdcc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
