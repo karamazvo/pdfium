@@ -16,6 +16,24 @@
       "message": "Wrap at 72 columns. Gerrit\u0027s web-based CL description editor has a \"format\" button to help with that.",
       "revId": "0ad472d26bb74aaa5958103a209e87e8cb92a111",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9c691808_6e33c909",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-14T17:55:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "48bb36cb_716e95e2",
+      "revId": "0ad472d26bb74aaa5958103a209e87e8cb92a111",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
