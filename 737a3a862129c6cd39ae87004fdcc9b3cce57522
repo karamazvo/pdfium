@@ -106,6 +106,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "285430e7_74d6fddd",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-14T17:48:26Z",
+      "side": 1,
+      "message": "Working on it.",
+      "parentUuid": "f1b4beec_1d56825b",
+      "revId": "737a3a862129c6cd39ae87004fdcc9b3cce57522",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "725cb2a0_1410baf8",
         "filename": "core/fxge/cfx_face.h",
         "patchSetId": 4
