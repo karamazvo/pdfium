@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4698b21e_755c6a64",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-14T22:31:35Z",
+      "side": 1,
+      "message": "There\u0027s no reference point for this code. Please mention the method name for context.",
+      "revId": "3c5ab5b7739f606fdfa3b9a4b6dca542772b4c93",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9c62b394_1763b572",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-14T22:31:35Z",
+      "side": 1,
+      "message": "Mention the gdi_skia expectation file is clearly wrong, but is blank to make the test pass for now. Then mention there is an open bug for that.",
+      "revId": "3c5ab5b7739f606fdfa3b9a4b6dca542772b4c93",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3ee004d7_14b24e5a",
+        "filename": "testing/resources/pixel/same_color_knockout_fill.in",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-14T22:31:35Z",
+      "side": 1,
+      "message": "GS1",
+      "range": {
+        "startLine": 20,
+        "startChar": 7,
+        "endLine": 20,
+        "endChar": 9
+      },
+      "revId": "3c5ab5b7739f606fdfa3b9a4b6dca542772b4c93",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
