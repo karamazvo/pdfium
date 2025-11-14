@@ -1,6 +1,29 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "63b2d3ea_4ec77463",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-14T18:45:28Z",
+      "side": 1,
+      "message": "Consistently refer to functions as ReportFace() and ScanFile(). Also for GetRec() on the next lien and 2 lines above.",
+      "range": {
+        "startLine": 9,
+        "startChar": 11,
+        "endLine": 9,
+        "endChar": 21
+      },
+      "revId": "41f1f49050f6c8ba8aac540055ccc83608eee48f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "1c6ccd8f_a712dd28",
@@ -14,6 +37,23 @@
       "writtenOn": "2025-11-14T10:24:04Z",
       "side": 1,
       "message": "Hi! Saw the issue report for removing CFX_Face::GetRec() callers.\nFound one in CFPF_skiafontmgr.h and tried to refactor it.\n\nLet me know if this is fine.\n\nAm running it on all android builders.",
+      "revId": "41f1f49050f6c8ba8aac540055ccc83608eee48f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "17c8a2e6_ff62479f",
+        "filename": "core/fxge/android/cfpf_skiafontmgr.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 401,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-14T18:45:28Z",
+      "side": 1,
+      "message": "Make this a constant.\n\nI suspect it may be possible to remove all the \"face index\" code from core/fxge/android, but it\u0027s also possible that PDFium may want to use the face index here like it does on other platforms. So this CL is ok as-is.",
       "revId": "41f1f49050f6c8ba8aac540055ccc83608eee48f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
