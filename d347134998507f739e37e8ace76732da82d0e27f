@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "215be44c_6d49effd",
+        "filename": "testing/resources/pixel/single_point_paths.in",
+        "patchSetId": 6
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-14T22:27:23Z",
+      "side": 1,
+      "message": "nit: Maybe rename this to \"GS1\", so it\u0027s more obvious it\u0027s a graphics state? i.e. If the content stream contained `/A3 12 Tf`, then it\u0027s not obvious if that\u0027s correct or not. Whereas `/GS3 12 Tf` will give off a bad smell.",
+      "range": {
+        "startLine": 21,
+        "startChar": 7,
+        "endLine": 21,
+        "endChar": 9
+      },
+      "revId": "d347134998507f739e37e8ace76732da82d0e27f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "252a7a7e_e5f6bea0",
+        "filename": "testing/resources/pixel/single_point_paths.in",
+        "patchSetId": 6
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-14T22:27:23Z",
+      "side": 1,
+      "message": "nit: If the ordering doesn\u0027t matter, then put the (sub)type keys first, and just sort the rest of the list.",
+      "revId": "d347134998507f739e37e8ace76732da82d0e27f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
