@@ -118,6 +118,7 @@ class CFX_Face final : public Retainable, public Observable {
                                           int dest_width,
                                           bool is_vertical,
                                           const CFX_SubstFont* subst_font);
+  int GetGlyphTTWidth();
   int GetGlyphWidth(uint32_t glyph_index,
                     int dest_width,
                     int weight,
