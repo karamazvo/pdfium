@@ -675,6 +675,12 @@ std::unique_ptr<CFX_Path> CFX_Face::LoadGlyphPath(
   return pPath;
 }
 
+int CFX_Face::GetGlyphTTWidth() {
+  const auto* fontglyph = GetRec()->glyph;
+  return static_cast<int>(
+      NormalizeFontMetric(fontglyph->metrics.horiAdvance, GetUnitsPerEm()));
+}
+
 int CFX_Face::GetGlyphWidth(uint32_t glyph_index,
                             int dest_width,
                             int weight,
