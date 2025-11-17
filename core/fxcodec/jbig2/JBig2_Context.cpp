@@ -1126,6 +1126,7 @@ JBig2_Result CJBig2_Context::ParseGenericRefinementRegion(
     }
   }
   CJBig2_Segment* pSeg = nullptr;
+  std::unique_ptr<CJBig2_Image> page_subimage;
   if (pSegment->referred_to_segment_count_ > 0) {
     int32_t i;
     for (i = 0; i < pSegment->referred_to_segment_count_; ++i) {
@@ -1145,7 +1146,8 @@ JBig2_Result CJBig2_Context::ParseGenericRefinementRegion(
 
     pGRRD->GRREFERENCE = pSeg->image_.get();
   } else {
-    pGRRD->GRREFERENCE = page_.get();
+    page_subimage = page_->SubImage(ri.x, ri.y, ri.width, ri.height);
+    pGRRD->GRREFERENCE = page_subimage.get();
   }
   pGRRD->GRREFERENCEDX = 0;
   pGRRD->GRREFERENCEDY = 0;
