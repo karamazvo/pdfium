@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "187d33c7_01390ef9",
+        "filename": "core/fxcodec/jbig2/JBig2_Context.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1149,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-11-17T16:24:40Z",
+      "side": 1,
+      "message": "(this makes a copy in the case where the region covers the entire page, but referring the page is super uncommon already, so imho simplicity wins here.)",
+      "revId": "c57589db73a2af94c1db24f456ee1c0a9f00cfe2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
