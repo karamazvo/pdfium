@@ -1,6 +1,46 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "c5dc884d_4cf357f8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-17T17:29:23Z",
+      "side": 1,
+      "message": "\"PDFium has to\" or \"the implementations have to\" ?",
+      "range": {
+        "startLine": 16,
+        "startChar": 21,
+        "endLine": 16,
+        "endChar": 31
+      },
+      "revId": "c57589db73a2af94c1db24f456ee1c0a9f00cfe2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e60b6ec9_88a3d2bb",
+        "filename": "core/fxcodec/jbig2/JBig2_Context.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1129,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-17T17:29:23Z",
+      "side": 1,
+      "message": "Probably need to move above line 1116? i.e. Outlive `pGRRD` to avoid a potential dangling pointer.",
+      "revId": "c57589db73a2af94c1db24f456ee1c0a9f00cfe2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "187d33c7_01390ef9",
