@@ -16,6 +16,24 @@
       "message": "red bot looks unrelated, manually submitting",
       "revId": "964dcd6fa6f62ae83f4e69fca8e2826b708cd82a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8b11fd8c_f35b05ff",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-18T17:56:53Z",
+      "side": 1,
+      "message": "Purple bot. 9 in a row is suspicious. I\u0027ll keep an eye on it and file a bug if needed.",
+      "parentUuid": "c34d18c5_597364e8",
+      "revId": "964dcd6fa6f62ae83f4e69fca8e2826b708cd82a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ],
   "submitRequirementResults": [
