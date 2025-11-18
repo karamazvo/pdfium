@@ -3,6 +3,23 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "2caa7702_e76ce063",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-18T16:27:23Z",
+      "side": 1,
+      "message": "Hi, decided to change the remainder of the GetRec() callers, Let me know what you think.",
+      "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "1923cb7b_ebdb04a9",
         "filename": "core/fxge/cfx_face.cpp",
         "patchSetId": 7
