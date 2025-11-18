@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3f62d53f_6c5082d5",
+        "filename": "testing/resources/pixel/single_point_paths.in",
+        "patchSetId": 6
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-11-18T19:01:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "215be44c_6d49effd",
+      "range": {
+        "startLine": 21,
+        "startChar": 7,
+        "endLine": 21,
+        "endChar": 9
+      },
+      "revId": "d347134998507f739e37e8ace76732da82d0e27f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "252a7a7e_e5f6bea0",
@@ -37,6 +61,24 @@
       "writtenOn": "2025-11-14T22:27:23Z",
       "side": 1,
       "message": "nit: If the ordering doesn\u0027t matter, then put the (sub)type keys first, and just sort the rest of the list.",
+      "revId": "d347134998507f739e37e8ace76732da82d0e27f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8dafab6a_a3f5cad6",
+        "filename": "testing/resources/pixel/single_point_paths.in",
+        "patchSetId": 6
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-11-18T19:01:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "252a7a7e_e5f6bea0",
       "revId": "d347134998507f739e37e8ace76732da82d0e27f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
