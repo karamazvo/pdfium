@@ -278,7 +278,7 @@ std::optional<FX_RECT> CFX_Font::GetGlyphBBox(uint32_t glyph_index) {
   }
 
   if (face_->IsTricky()) {
-    int error = FT_Set_Char_Size(face_->GetRec(), 0, 1000 * 64, 72, 72);
+    int error = face_->SetCharSize(0, 1000 * 64, 72, 72);
     if (error) {
       return std::nullopt;
     }
@@ -289,17 +289,16 @@ std::optional<FX_RECT> CFX_Font::GetGlyphBBox(uint32_t glyph_index) {
     }
 
     FT_Glyph glyph;
-    error = FT_Get_Glyph(face_->GetRec()->glyph, &glyph);
+    error = FT_Get_Glyph(face_->GetRecGlyph(), &glyph);
     if (error) {
       return std::nullopt;
     }
 
     FT_BBox cbox;
     FT_Glyph_Get_CBox(glyph, FT_GLYPH_BBOX_PIXELS, &cbox);
-    int pixel_size_x = face_->GetRec()->size->metrics.x_ppem;
-    int pixel_size_y = face_->GetRec()->size->metrics.y_ppem;
-    FX_RECT result = ScaledFXRectFromFTPos(
-        cbox.xMin, cbox.yMax, cbox.xMax, cbox.yMin, pixel_size_x, pixel_size_y);
+    CFX_Face::PixelSize pixelSize = face_->GetPixelSize();
+    FX_RECT result = ScaledFXRectFromFTPos(cbox.xMin, cbox.yMax, cbox.xMax,
+                                           cbox.yMin, pixelSize.x, pixelSize.y);
     result.top = std::min(result.top, static_cast<int>(face_->GetAscender()));
     result.bottom =
         std::max(result.bottom, static_cast<int>(face_->GetDescender()));
@@ -313,12 +312,12 @@ std::optional<FX_RECT> CFX_Font::GetGlyphBBox(uint32_t glyph_index) {
     return std::nullopt;
   }
   int em = face_->GetUnitsPerEm();
-  return ScaledFXRectFromFTPos(face_->GetRec()->glyph->metrics.horiBearingX,
-                               face_->GetRec()->glyph->metrics.horiBearingY -
-                                   face_->GetRec()->glyph->metrics.height,
-                               face_->GetRec()->glyph->metrics.horiBearingX +
-                                   face_->GetRec()->glyph->metrics.width,
-                               face_->GetRec()->glyph->metrics.horiBearingY, em,
+  return ScaledFXRectFromFTPos(face_->GetRecGlyph()->metrics.horiBearingX,
+                               face_->GetRecGlyph()->metrics.horiBearingY -
+                                   face_->GetRecGlyph()->metrics.height,
+                               face_->GetRecGlyph()->metrics.horiBearingX +
+                                   face_->GetRecGlyph()->metrics.width,
+                               face_->GetRecGlyph()->metrics.horiBearingY, em,
                                em);
 }
 
@@ -356,7 +355,7 @@ ByteString CFX_Font::GetPsName() const {
     return ByteString();
   }
 
-  ByteString psName = FT_Get_Postscript_Name(face_->GetRec());
+  ByteString psName = face_->GetPostscriptName();
   if (psName.IsEmpty()) {
     psName = kUntitledFontName;
   }
