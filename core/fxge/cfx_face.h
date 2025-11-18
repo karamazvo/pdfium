@@ -45,6 +45,11 @@ class CFX_Face final : public Retainable, public Observable {
     uint32_t os2_codepage_mask;
   };
 
+  struct PixelSize {
+    int x;
+    int y;
+  };
+
   // Note that this corresponds to the cmap header in fonts, and not the cmap
   // data in PDFs.
   struct CharMapId {
@@ -118,6 +123,7 @@ class CFX_Face final : public Retainable, public Observable {
                                           int dest_width,
                                           bool is_vertical,
                                           const CFX_SubstFont* subst_font);
+  int GetGlyphTTWidth();
   int GetGlyphWidth(uint32_t glyph_index,
                     int dest_width,
                     int weight,
@@ -139,10 +145,13 @@ class CFX_Face final : public Retainable, public Observable {
   fxge::FontEncoding GetCharMapEncodingByIndex(size_t index) const;
   size_t GetCharMapCount() const;
   int LoadGlyph(uint32_t glyph_index, bool scale);
+  int SetCharSize(int char_width, int char_height, int hdpi, int vdpi);
+  FT_GlyphSlot GetRecGlyph();
+  ByteString GetPostscriptName();
+  PixelSize GetPixelSize();
   void SetCharMap(CharMap map);
   void SetCharMapByIndex(size_t index);
   bool SelectCharMap(fxge::FontEncoding encoding);
-
   bool SetPixelSize(uint32_t width, uint32_t height);
 
 #if defined(PDF_ENABLE_XFA)
