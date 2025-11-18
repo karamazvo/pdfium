@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1923cb7b_ebdb04a9",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 733,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-18T16:23:52Z",
+      "side": 1,
+      "message": "Did I add too many helper functions or is this fine.",
+      "range": {
+        "startLine": 731,
+        "startChar": 0,
+        "endLine": 733,
+        "endChar": 1
+      },
+      "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3d590742_8566d548",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 7
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-18T16:23:52Z",
+      "side": 1,
+      "message": "I called them x and y here because when getting values of this struct, pixelSize.x would look a lot cleaner than pixelSize.PixelSizex for example.",
+      "range": {
+        "startLine": 49,
+        "startChar": 8,
+        "endLine": 49,
+        "endChar": 9
+      },
+      "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "56295df5_0f3aab79",
+        "filename": "core/fxge/cfx_font.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 301,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-18T16:23:52Z",
+      "side": 1,
+      "message": "Rename pixelSize to just \"Size\"?\nThe line seems to have a lot of... pixelSize right now.\nLet me know what you think.\n\n\n\n```suggestion\n    CFX_Face::PixelSize Size \u003d face_-\u003eGetPixelSize();\n    FX_RECT result \u003d ScaledFXRectFromFTPos(cbox.xMin, cbox.yMax, cbox.xMax,\n                                           cbox.yMin, Size.x, Size.y);\n```",
+      "range": {
+        "startLine": 299,
+        "startChar": 0,
+        "endLine": 301,
+        "endChar": 80
+      },
+      "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
