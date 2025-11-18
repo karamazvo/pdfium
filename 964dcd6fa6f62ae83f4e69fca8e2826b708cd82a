@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c34d18c5_597364e8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-11-18T17:52:16Z",
+      "side": 1,
+      "message": "red bot looks unrelated, manually submitting",
+      "revId": "964dcd6fa6f62ae83f4e69fca8e2826b708cd82a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
