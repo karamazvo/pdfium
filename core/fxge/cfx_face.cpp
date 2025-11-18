@@ -675,6 +675,11 @@ std::unique_ptr<CFX_Path> CFX_Face::LoadGlyphPath(
   return pPath;
 }
 
+int CFX_Face::GetGlyphTTWidth() {
+  const auto* fontglyph = GetRec()->glyph;
+  return NormalizeFontMetric(fontglyph->metrics.horiAdvance, GetUnitsPerEm());
+}
+
 int CFX_Face::GetGlyphWidth(uint32_t glyph_index,
                             int dest_width,
                             int weight,
@@ -720,6 +725,24 @@ int CFX_Face::LoadGlyph(uint32_t glyph_index, bool scale) {
     args |= FT_LOAD_NO_SCALE;
   }
   return FT_Load_Glyph(GetRec(), glyph_index, args);
+}
+
+int CFX_Face::SetCharSize(int char_width, int char_height, int hdpi, int vdpi) {
+  return FT_Set_Char_Size(GetRec(), char_width, char_height, hdpi, vdpi);
+}
+
+FT_GlyphSlot CFX_Face::GetRecGlyph() {
+  return GetRec()->glyph;
+}
+
+ByteString CFX_Face::GetPostscriptName() {
+  return FT_Get_Postscript_Name(GetRec());
+}
+
+CFX_Face::PixelSize CFX_Face::GetPixelSize() {
+  int pixel_size_x = GetRec()->size->metrics.x_ppem;
+  int pixel_size_y = GetRec()->size->metrics.y_ppem;
+  return {pixel_size_x, pixel_size_y};
 }
 
 FX_RECT CFX_Face::GetCharBBox(uint32_t code, int glyph_index) {
