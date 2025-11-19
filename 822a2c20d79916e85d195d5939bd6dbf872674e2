@@ -1,6 +1,75 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "afa2d9ed_4aee24d9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-19T01:19:34Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 10,
+        "startChar": 26,
+        "endLine": 10,
+        "endChar": 31
+      },
+      "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "48e6f2c6_7b577238",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-19T01:19:34Z",
+      "side": 1,
+      "message": "Did you mean: \"to the FreeType face record via GetRec()\" ?",
+      "range": {
+        "startLine": 11,
+        "startChar": 27,
+        "endLine": 11,
+        "endChar": 63
+      },
+      "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "35a18b1a_e1b1ef70",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-19T01:19:34Z",
+      "side": 1,
+      "message": "omit?",
+      "range": {
+        "startLine": 12,
+        "startChar": 34,
+        "endLine": 12,
+        "endChar": 38
+      },
+      "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "2caa7702_e76ce063",
@@ -14,6 +83,47 @@
       "writtenOn": "2025-11-18T16:27:23Z",
       "side": 1,
       "message": "Hi, decided to change the remainder of the GetRec() callers, Let me know what you think.",
+      "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7e25590e_63712af9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-19T01:19:34Z",
+      "side": 1,
+      "message": "Thanks for working on this. I made some suggestions on the direction you should try to go in, to further encapsulate FreeType code within CFX_Face.",
+      "parentUuid": "2caa7702_e76ce063",
+      "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "15be223c_f5c83b60",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 680,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-19T01:19:34Z",
+      "side": 1,
+      "message": "NormalizeFontMetric() already returns an int, so this cast is redundant.",
+      "range": {
+        "startLine": 680,
+        "startChar": 9,
+        "endLine": 680,
+        "endChar": 26
+      },
       "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -60,6 +170,64 @@
         "endLine": 49,
         "endChar": 9
       },
+      "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8baa90d4_1d6fed99",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 7
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-19T01:19:34Z",
+      "side": 1,
+      "message": "For PixelSize, maybe use `CFX_Point` instead?",
+      "parentUuid": "3d590742_8566d548",
+      "range": {
+        "startLine": 49,
+        "startChar": 8,
+        "endLine": 49,
+        "endChar": 9
+      },
+      "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "21b52f34_ea6126a7",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 7
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-19T01:19:34Z",
+      "side": 1,
+      "message": "Can this method be const? `int GetGlyphTTWidth() const;`",
+      "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "08a75c67_87ee5910",
+        "filename": "core/fxge/cfx_font.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-19T01:19:34Z",
+      "side": 1,
+      "message": "Could you try encapsulating lines 281-309 all within CFX_Face? Maybe something like `std::optional\u003cFX_RECT\u003e CFX_Face::GetTrickyFontGlyphBBox(uint32_t glyph_index)`?",
       "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
