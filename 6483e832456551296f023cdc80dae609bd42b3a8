@@ -69,6 +69,24 @@
       "parentUuid": "7fd68e43_43e215a5",
       "revId": "6483e832456551296f023cdc80dae609bd42b3a8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "070cc95b_2353fb19",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 11
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-19T12:13:44Z",
+      "side": 1,
+      "message": "FYI: Fails at \n```failed to install infra_internal/ios/xcode/mac: creating packages directory:\nmkdir /Volumes/Work/s/w/ir/cache/osx_sdk/XCode.app/.cipd: operation not permitted```",
+      "parentUuid": "933ef350_6f63354b",
+      "revId": "6483e832456551296f023cdc80dae609bd42b3a8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
