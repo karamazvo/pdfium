@@ -8,6 +8,7 @@
 #include <stdint.h>
 
 #include <array>
+#include <cstdint>
 #include <memory>
 #include <optional>
 #include <vector>
@@ -43,6 +44,11 @@ class CFX_Face final : public Retainable, public Observable {
     // Style utilizes enum FontStyle values
     uint32_t style;
     uint32_t os2_codepage_mask;
+  };
+
+  struct PixelSize {
+    int x;
+    int y;
   };
 
   // Note that this corresponds to the cmap header in fonts, and not the cmap
@@ -108,6 +114,7 @@ class CFX_Face final : public Retainable, public Observable {
   int GetGlyphCount() const;
   // TODO(crbug.com/pdfium/2037): Can this method be private?
   FX_RECT GetGlyphBBox() const;
+  std::optional<FX_RECT> GetFontGlyphBBox(uint32_t glyph_index);
   std::unique_ptr<CFX_GlyphBitmap> RenderGlyph(const CFX_Font* font,
                                                uint32_t glyph_index,
                                                bool bFontStyle,
@@ -118,6 +125,7 @@ class CFX_Face final : public Retainable, public Observable {
                                           int dest_width,
                                           bool is_vertical,
                                           const CFX_SubstFont* subst_font);
+  int GetGlyphTTWidth() const;
   int GetGlyphWidth(uint32_t glyph_index,
                     int dest_width,
                     int weight,
@@ -139,10 +147,11 @@ class CFX_Face final : public Retainable, public Observable {
   fxge::FontEncoding GetCharMapEncodingByIndex(size_t index) const;
   size_t GetCharMapCount() const;
   int LoadGlyph(uint32_t glyph_index, bool scale);
+  ByteString GetPostscriptName();
+  PixelSize GetPixelSize();
   void SetCharMap(CharMap map);
   void SetCharMapByIndex(size_t index);
   bool SelectCharMap(fxge::FontEncoding encoding);
-
   bool SetPixelSize(uint32_t width, uint32_t height);
 
 #if defined(PDF_ENABLE_XFA)
