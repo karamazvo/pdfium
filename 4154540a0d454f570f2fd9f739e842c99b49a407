@@ -1,0 +1,75 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "32aefb76_9afa359c",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 21
+      },
+      "lineNbr": 1177,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-11-19T22:58:53Z",
+      "side": 1,
+      "message": "can we early-return after this statement and avoid the stroke_already_drawn boolean?",
+      "range": {
+        "startLine": 1177,
+        "startChar": 24,
+        "endLine": 1177,
+        "endChar": 25
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "52c56c9a_5851ccde",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxge/skia/fx_skia_device.cpp",
+              "range": {
+                "startLine": 1140,
+                "startChar": 0,
+                "endLine": 1141,
+                "endChar": 0
+              },
+              "replacement": ""
+            },
+            {
+              "path": "core/fxge/skia/fx_skia_device.cpp",
+              "range": {
+                "startLine": 1175,
+                "startChar": 0,
+                "endLine": 1176,
+                "endChar": 0
+              },
+              "replacement": ""
+            },
+            {
+              "path": "core/fxge/skia/fx_skia_device.cpp",
+              "range": {
+                "startLine": 1178,
+                "startChar": 0,
+                "endLine": 1178,
+                "endChar": 0
+              },
+              "replacement": "      return true;\n"
+            },
+            {
+              "path": "core/fxge/skia/fx_skia_device.cpp",
+              "range": {
+                "startLine": 1186,
+                "startChar": 0,
+                "endLine": 1187,
+                "endChar": 0
+              },
+              "replacement": "  if (stroke_alpha) {\n"
+            }
+          ]
+        }
+      ],
+      "revId": "4154540a0d454f570f2fd9f739e842c99b49a407",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
