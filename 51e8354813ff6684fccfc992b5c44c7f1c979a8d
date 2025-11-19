@@ -38,6 +38,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "bd8790a4_f0563b33",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 3946384
+      },
+      "writtenOn": "2025-11-19T05:51:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2ba378dd_953b1040",
+      "revId": "51e8354813ff6684fccfc992b5c44c7f1c979a8d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "c9878f93_00db1698",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 3
@@ -49,6 +67,23 @@
       "writtenOn": "2025-11-19T05:29:58Z",
       "side": 1,
       "message": "Thanks for putting this together. The purple Macs are due to crbug.com/461757070, BTW.",
+      "revId": "51e8354813ff6684fccfc992b5c44c7f1c979a8d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "71a959b5_7568ec01",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3946384
+      },
+      "writtenOn": "2025-11-19T05:51:16Z",
+      "side": 1,
+      "message": "Thanks!",
       "revId": "51e8354813ff6684fccfc992b5c44c7f1c979a8d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -83,6 +118,24 @@
       "writtenOn": "2025-11-19T05:45:07Z",
       "side": 1,
       "message": "I filed crbug.com/461838013 to make roll_downstream_gcs_deps.py smarter. I suspect an AI can do a chunk of that work, if someone is willing to AI-babysit.",
+      "parentUuid": "84b72572_44640873",
+      "revId": "51e8354813ff6684fccfc992b5c44c7f1c979a8d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d615ba95_91256c19",
+        "filename": "DEPS",
+        "patchSetId": 3
+      },
+      "lineNbr": 455,
+      "author": {
+        "id": 3946384
+      },
+      "writtenOn": "2025-11-19T05:51:16Z",
+      "side": 1,
+      "message": "Done, I removed clang-tidy, clangd and clang-coverage-tools",
       "parentUuid": "84b72572_44640873",
       "revId": "51e8354813ff6684fccfc992b5c44c7f1c979a8d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
