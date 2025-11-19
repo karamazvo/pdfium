@@ -35,6 +35,41 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5b264f90_10f78d47",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 14
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-19T17:09:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e70a4478_7f56c2cc",
+      "revId": "87f777ddafa452755103c5b8bd177ddd06510f86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9f6315a0_fdb8c09f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 14
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-19T17:09:55Z",
+      "side": 1,
+      "message": "Marking these comments as resolved - unresolve if changes needed relating to those specific comments.",
+      "revId": "87f777ddafa452755103c5b8bd177ddd06510f86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0be04d6b_b4071696",
@@ -58,6 +93,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fe81be96_fba19bdd",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 485,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-19T17:09:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0be04d6b_b4071696",
+      "range": {
+        "startLine": 485,
+        "startChar": 0,
+        "endLine": 485,
+        "endChar": 55
+      },
+      "revId": "87f777ddafa452755103c5b8bd177ddd06510f86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "12d3fc36_1034f7f9",
@@ -71,6 +130,30 @@
       "writtenOn": "2025-11-11T16:45:38Z",
       "side": 1,
       "message": "Used void* here for use with multiple arg types, let me know if there is a better solution I am missing here, or if that is fine.",
+      "range": {
+        "startLine": 489,
+        "startChar": 25,
+        "endLine": 489,
+        "endChar": 29
+      },
+      "revId": "87f777ddafa452755103c5b8bd177ddd06510f86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "844a0e54_5deedbc2",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 489,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-19T17:09:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "12d3fc36_1034f7f9",
       "range": {
         "startLine": 489,
         "startChar": 25,
