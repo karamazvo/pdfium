@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6d171132_d1e96d1f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-19T01:28:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "afa2d9ed_4aee24d9",
+      "range": {
+        "startLine": 10,
+        "startChar": 26,
+        "endLine": 10,
+        "endChar": 31
+      },
+      "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "48e6f2c6_7b577238",
@@ -47,6 +71,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "aaa1995d_c1d9387f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-19T01:28:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "48e6f2c6_7b577238",
+      "range": {
+        "startLine": 11,
+        "startChar": 27,
+        "endLine": 11,
+        "endChar": 63
+      },
+      "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "35a18b1a_e1b1ef70",
@@ -60,6 +108,30 @@
       "writtenOn": "2025-11-19T01:19:34Z",
       "side": 1,
       "message": "omit?",
+      "range": {
+        "startLine": 12,
+        "startChar": 34,
+        "endLine": 12,
+        "endChar": 38
+      },
+      "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5e0a322c_021b5417",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-19T01:28:53Z",
+      "side": 1,
+      "message": "Yeah fixed grammar in other places as well.",
+      "parentUuid": "35a18b1a_e1b1ef70",
       "range": {
         "startLine": 12,
         "startChar": 34,
