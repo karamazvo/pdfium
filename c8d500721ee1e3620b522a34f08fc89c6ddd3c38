@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fef1dfdb_fbc48eac",
+        "filename": "testing/resources/pixel/bug_1430333_expected_skia.pdf.0.png",
+        "patchSetId": 18
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-11-19T19:51:16Z",
+      "side": 0,
+      "message": "This is a practically imperceptible difference. It\u0027s the AA pixels being a very slightly different shade of grey.",
+      "revId": "c8d500721ee1e3620b522a34f08fc89c6ddd3c38",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "11c10496_cdebab87",
+        "filename": "testing/resources/pixel/same_color_knockout_fill_expected_skia.pdf.0.png",
+        "patchSetId": 18
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-11-19T19:51:16Z",
+      "side": 0,
+      "message": "Somehow now the AA is exactly the same as agg",
+      "revId": "c8d500721ee1e3620b522a34f08fc89c6ddd3c38",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5c4b74a5_807d424c",
+        "filename": "testing/resources/pixel/single_point_paths_expected_skia.pdf.0.png",
+        "patchSetId": 18
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-11-19T19:51:16Z",
+      "side": 0,
+      "message": "This is an intended change. That red dot was not supposed to be rendered according to the spec. This fixed a bug in the fill_color \u003d\u003d stroke_color case in the old code.",
+      "revId": "c8d500721ee1e3620b522a34f08fc89c6ddd3c38",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
