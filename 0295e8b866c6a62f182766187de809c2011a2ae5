@@ -16,6 +16,24 @@
       "message": "(I don\u0027t have CR+1 bits.)\n\nFWIW, I think it was already the case that, even before https://pdfium-review.googlesource.com/c/pdfium/+/136210, every file that included JBig2_SymbolDict.h also included JBig2_Image.h. Otherwise this would never have compiled.\n\nSee https://godbolt.org/z/6o3fT9rWq\n\nIn both C++20 and C++23, this inline method requires `CJBig2_Image to be available. It\u0027s just that C++20 tolerated you defining `CJBig2_Image` *after* `CJBig2_SymbolDict::AddImage` while C++23 needs it to be in the right order.\n\nSo I expect this change will not change compile times, because the header was getting included anyway.\n\nThat said, based on https://godbolt.org/z/ec9csbKq9, it does look like this version is also valid, so LGTM.",
       "revId": "0295e8b866c6a62f182766187de809c2011a2ae5",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "01c9b4b8_a352d553",
+        "filename": "core/fxcodec/jbig2/JBig2_SymbolDict.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-19T21:33:23Z",
+      "side": 0,
+      "message": "Yes, indeed that is a happy/weird coincidence where every .cpp file just happens to include both headers.",
+      "parentUuid": "6d76a928_18019cc7",
+      "revId": "0295e8b866c6a62f182766187de809c2011a2ae5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
