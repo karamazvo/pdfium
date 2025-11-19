@@ -202,6 +202,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "dee27362_90d9c636",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 680,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-19T01:49:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "15be223c_f5c83b60",
+      "range": {
+        "startLine": 680,
+        "startChar": 9,
+        "endLine": 680,
+        "endChar": 26
+      },
+      "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "1923cb7b_ebdb04a9",
         "filename": "core/fxge/cfx_face.cpp",
         "patchSetId": 7
@@ -287,6 +311,42 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f8bbd0b6_56b5ccf9",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 7
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-19T01:49:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "21b52f34_ea6126a7",
+      "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "97707dc0_d4eca6bf",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 7
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-19T01:49:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "21b52f34_ea6126a7",
+      "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "08a75c67_87ee5910",
@@ -300,6 +360,42 @@
       "writtenOn": "2025-11-19T01:19:34Z",
       "side": 1,
       "message": "Could you try encapsulating lines 281-309 all within CFX_Face? Maybe something like `std::optional\u003cFX_RECT\u003e CFX_Face::GetTrickyFontGlyphBBox(uint32_t glyph_index)`?",
+      "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8dc11eea_ee986d33",
+        "filename": "core/fxge/cfx_font.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-19T01:49:49Z",
+      "side": 1,
+      "message": "Why not the whole thing from 275 to 322, that way we dont need to expose GetRecGlyph()?\n\nLet me know if this is fine - am working on it.",
+      "parentUuid": "08a75c67_87ee5910",
+      "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "462a3904_4971b94e",
+        "filename": "core/fxge/cfx_font.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-19T01:49:49Z",
+      "side": 1,
+      "message": "Why not the whole thing from 275 to 322, that way we dont need to expose GetRecGlyph()",
+      "parentUuid": "08a75c67_87ee5910",
       "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
