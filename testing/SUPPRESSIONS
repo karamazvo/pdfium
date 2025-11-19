@@ -220,7 +220,6 @@ form_same.pdf mac * * agg
 form_text_sign_url.pdf * * * *
 format_combo_box.pdf mac * * agg
 format_combo_box.pdf * nov8 * *
-format_custom_format.pdf * nov8 * *
 format_custom_keystroke.pdf * * * *
 format_date.pdf * nov8 * *
 format_number.pdf mac * * agg
@@ -642,14 +641,7 @@ bug_679642.in * * noxfa *
 bug_679643.in * * noxfa *
 bug_735912.in * * noxfa *
 
-# JS tests in nov8 mode expect empty results. This one will
-# not be empty as the callback is not js-based.
-named_action.in * nov8 * *
-
 # xfa_specific
-
-# TODO(crbug.com/42270097): Remove after associated bug is fixed
-resolve_nodes_1.pdf * * * *
 
 #
 # Pixel tests
@@ -735,8 +727,6 @@ reset_button.in * * * *
 
 # TODO(crbug.com/42270088): Remove after associated bug is fixed
 bug_997412.in win * * *
-# TODO(crbug.com/42270098): Remove after associated bug is fixed
-standard_symbols.pdf * * * *
 # TODO(crbug.com/42270088): Remove after associated bug is fixed
 xfa_example.in win * * *
 # TODO(crbug.com/42270088): Remove after associated bug is fixed
