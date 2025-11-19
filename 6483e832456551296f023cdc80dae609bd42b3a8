@@ -51,6 +51,24 @@
       "parentUuid": "94758fd5_ec93b386",
       "revId": "6483e832456551296f023cdc80dae609bd42b3a8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "933ef350_6f63354b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 11
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-19T12:02:26Z",
+      "side": 1,
+      "message": "Seems to be flaky. On rerun only 3 failed instead of earlier 6. @thestig@chromium.org we might need to look into it.",
+      "parentUuid": "7fd68e43_43e215a5",
+      "revId": "6483e832456551296f023cdc80dae609bd42b3a8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
