@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e3d4265e_cea75bdf",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 1139,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-11-19T19:39:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "041bc967_b87fc131",
+      "range": {
+        "startLine": 1139,
+        "startChar": 13,
+        "endLine": 1139,
+        "endChar": 23
+      },
+      "revId": "76970377fb1e3c4890b4c284dc22b7b2c225bdcc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "720807bb_371f4ec8",
@@ -37,6 +61,30 @@
       "writtenOn": "2025-11-14T22:57:08Z",
       "side": 1,
       "message": "Maybe rename to stroke_already_drawn or already_drew_stroke?",
+      "range": {
+        "startLine": 1140,
+        "startChar": 7,
+        "endLine": 1140,
+        "endChar": 26
+      },
+      "revId": "76970377fb1e3c4890b4c284dc22b7b2c225bdcc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f2c71be7_b6c2783d",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 1140,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-11-19T19:39:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "720807bb_371f4ec8",
       "range": {
         "startLine": 1140,
         "startChar": 7,
@@ -64,6 +112,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "30307a1d_4bdbda08",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 1154,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-11-19T19:39:39Z",
+      "side": 1,
+      "message": "It is possible but we would need a second SkAutoCanvasRestore in the inner scope. It is necessary to restore before drawing the stroke. We would also still need the separate saveLayer call because we need to set the restore paint arg.\n\nTo me it seems simpler to just call restore at the end especially since there\u0027s no control flow in the scope we\u0027re saving and restoring for. So my preference is to keep it as-is.\n\nI can use the scoped restore if we are worried about later changes forgetting to do it right. However if someone did forget, the existing SkAutoCanvasRestore will restore both levels of saved layers automatically.",
+      "parentUuid": "c5926f7d_f080db48",
+      "revId": "76970377fb1e3c4890b4c284dc22b7b2c225bdcc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bb50cd73_24246de3",
@@ -77,6 +143,24 @@
       "writtenOn": "2025-11-14T22:57:08Z",
       "side": 1,
       "message": "... if needed",
+      "revId": "76970377fb1e3c4890b4c284dc22b7b2c225bdcc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "31761c75_15595d88",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 1185,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-11-19T19:39:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bb50cd73_24246de3",
       "revId": "76970377fb1e3c4890b4c284dc22b7b2c225bdcc",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
