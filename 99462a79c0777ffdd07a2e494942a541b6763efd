@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "498a14e5_2b998edc",
+        "filename": "testing/SUPPRESSIONS",
+        "patchSetId": 20
+      },
+      "lineNbr": 354,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-11-19T22:04:44Z",
+      "side": 1,
+      "message": "Unfortunately this failed with fuzzy matching even though it\u0027s exactly the same as the skia png because mac png is the arm version.",
+      "revId": "99462a79c0777ffdd07a2e494942a541b6763efd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

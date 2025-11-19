@@ -3,6 +3,23 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "1b7755f3_e98d0348",
+        "filename": "testing/SUPPRESSIONS_EXACT_MATCHING",
+        "patchSetId": 20
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-11-19T22:04:44Z",
+      "side": 0,
+      "message": "These mac x86 tests actually match exactly the Linux Skia x86 images but we don\u0027t have a suffix for x86 specifically and we need the _mac images to be the arm images since that\u0027s the future of mac.",
+      "revId": "c8d500721ee1e3620b522a34f08fc89c6ddd3c38",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "fef1dfdb_fbc48eac",
         "filename": "testing/resources/pixel/bug_1430333_expected_skia.pdf.0.png",
         "patchSetId": 18
