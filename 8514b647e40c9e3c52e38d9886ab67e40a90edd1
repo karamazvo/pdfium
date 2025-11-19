@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d4391ad1_e3985583",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-19T06:03:48Z",
+      "side": 1,
+      "message": "Can you add a line with the Clang version change?",
+      "revId": "8514b647e40c9e3c52e38d9886ab67e40a90edd1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c896be59_797fbbae",
+        "filename": "DEPS",
+        "patchSetId": 6
+      },
+      "lineNbr": 440,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-19T06:03:48Z",
+      "side": 1,
+      "message": "This is just copying over the conditions from Chromium right? I imagine it\u0027s for better cross-compiling? Please mention in the CL description.",
+      "revId": "8514b647e40c9e3c52e38d9886ab67e40a90edd1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

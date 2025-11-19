@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d2e362d4_62a9fbbd",
+        "filename": "DEPS",
+        "patchSetId": 6
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-19T06:03:48Z",
+      "side": 0,
+      "message": "Mention this in the CL description?",
+      "revId": "0295e8b866c6a62f182766187de809c2011a2ae5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ca7a6f14_894b1440",
+        "filename": "DEPS",
+        "patchSetId": 6
+      },
+      "lineNbr": 498,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-19T06:03:48Z",
+      "side": 0,
+      "message": "Whoops! Looks like I made a mistake in https://pdfium-review.googlesource.com/134790. Thanks for fixing.",
+      "revId": "0295e8b866c6a62f182766187de809c2011a2ae5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
