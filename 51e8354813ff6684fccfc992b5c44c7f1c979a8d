@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "2ba378dd_953b1040",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-19T05:45:07Z",
+      "side": 1,
+      "message": "FWIW, my workflow usually involves running roll_deps.py for multiple DEPS entries, and then squashing the commits together.",
+      "parentUuid": "5a3f7fb9_9ca3bbe7",
+      "revId": "51e8354813ff6684fccfc992b5c44c7f1c979a8d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "c9878f93_00db1698",
@@ -48,6 +66,24 @@
       "writtenOn": "2025-11-19T05:29:58Z",
       "side": 1,
       "message": "PDFium doesn\u0027t want to checkout the extra packages here.",
+      "revId": "51e8354813ff6684fccfc992b5c44c7f1c979a8d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c33d41d6_4c3a3091",
+        "filename": "DEPS",
+        "patchSetId": 3
+      },
+      "lineNbr": 455,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-19T05:45:07Z",
+      "side": 1,
+      "message": "I filed crbug.com/461838013 to make roll_downstream_gcs_deps.py smarter. I suspect an AI can do a chunk of that work, if someone is willing to AI-babysit.",
+      "parentUuid": "84b72572_44640873",
       "revId": "51e8354813ff6684fccfc992b5c44c7f1c979a8d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
