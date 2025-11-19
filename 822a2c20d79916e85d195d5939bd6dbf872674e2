@@ -436,6 +436,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f98f3a1b_d09ab5ab",
+        "filename": "core/fxge/cfx_font.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-19T02:44:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6b143d02_829b7493",
+      "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "56295df5_0f3aab79",
@@ -449,6 +467,30 @@
       "writtenOn": "2025-11-18T16:23:52Z",
       "side": 1,
       "message": "Rename pixelSize to just \"Size\"?\nThe line seems to have a lot of... pixelSize right now.\nLet me know what you think.\n\n\n\n```suggestion\n    CFX_Face::PixelSize Size \u003d face_-\u003eGetPixelSize();\n    FX_RECT result \u003d ScaledFXRectFromFTPos(cbox.xMin, cbox.yMax, cbox.xMax,\n                                           cbox.yMin, Size.x, Size.y);\n```",
+      "range": {
+        "startLine": 299,
+        "startChar": 0,
+        "endLine": 301,
+        "endChar": 80
+      },
+      "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "57c35ac1_c080e8b5",
+        "filename": "core/fxge/cfx_font.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 301,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-19T02:44:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "56295df5_0f3aab79",
       "range": {
         "startLine": 299,
         "startChar": 0,
