@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "68315b25_0ab9bc65",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 20
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-20T05:02:34Z",
+      "side": 1,
+      "message": "@thestig@chromium.org let me know when that mac infra bug is fixed - I think the CQ would fail otherwise\n\nalso as an interrim fix - is it possible to disable the bots that are not working (for now). Or has that been done already.",
+      "revId": "edfe0ac57f7ef6a1acd0def05150699f4ac727e0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
