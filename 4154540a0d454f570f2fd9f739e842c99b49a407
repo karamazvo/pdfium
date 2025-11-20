@@ -94,6 +94,30 @@
       },
       "revId": "4154540a0d454f570f2fd9f739e842c99b49a407",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b77142f9_a7c1f891",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 21
+      },
+      "lineNbr": 1177,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-11-20T19:13:33Z",
+      "side": 1,
+      "message": "Great idea! In all the refactoring I missed this.\n\nPreviously that was there because this branch only conditionally drew the stroke.",
+      "parentUuid": "32aefb76_9afa359c",
+      "range": {
+        "startLine": 1177,
+        "startChar": 24,
+        "endLine": 1177,
+        "endChar": 25
+      },
+      "revId": "4154540a0d454f570f2fd9f739e842c99b49a407",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }

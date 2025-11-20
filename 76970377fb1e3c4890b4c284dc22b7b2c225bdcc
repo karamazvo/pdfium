@@ -130,6 +130,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8ea02c08_419851a8",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 1154,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-11-20T19:13:33Z",
+      "side": 1,
+      "message": "With the early return it made sense to use the scoped restore, so I\u0027ve deleted the restore call.\n\nIt does still need two layers in case the add blend mode is set in the outer layer.",
+      "parentUuid": "30307a1d_4bdbda08",
+      "revId": "76970377fb1e3c4890b4c284dc22b7b2c225bdcc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bb50cd73_24246de3",
