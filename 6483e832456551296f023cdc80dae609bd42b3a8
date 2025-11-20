@@ -1,6 +1,52 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "cabe684b_552cd1a2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 11
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-20T01:08:11Z",
+      "side": 1,
+      "message": "lowercase",
+      "range": {
+        "startLine": 7,
+        "startChar": 26,
+        "endLine": 7,
+        "endChar": 33
+      },
+      "revId": "6483e832456551296f023cdc80dae609bd42b3a8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c117c6c9_aaf64ba2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 11
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-20T01:08:11Z",
+      "side": 1,
+      "message": "This is gone now. Need to update the description here.",
+      "range": {
+        "startLine": 14,
+        "startChar": 37,
+        "endLine": 14,
+        "endChar": 48
+      },
+      "revId": "6483e832456551296f023cdc80dae609bd42b3a8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "54174c60_4559a746",
@@ -103,6 +149,41 @@
       "side": 1,
       "message": "Fixed it (by rerunning the tests a couple times)",
       "parentUuid": "070cc95b_2353fb19",
+      "revId": "6483e832456551296f023cdc80dae609bd42b3a8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "12734f98_0b429d03",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 11
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-20T01:08:11Z",
+      "side": 1,
+      "message": "That\u0027s https://crbug.com/461757070 and not this CL\u0027s fault.",
+      "parentUuid": "9fff5d1c_568611ab",
+      "revId": "6483e832456551296f023cdc80dae609bd42b3a8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6b7d3f9b_72757696",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 11
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-20T01:08:11Z",
+      "side": 1,
+      "message": "Not needed. Already got stdint.h above.",
       "revId": "6483e832456551296f023cdc80dae609bd42b3a8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }

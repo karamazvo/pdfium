@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8af9ecd7_c0639301",
+        "filename": "core/fxge/cfx_font.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-20T01:08:11Z",
+      "side": 0,
+      "message": "If `face_` is null, this returns std::nullopt, but the new code will crash. So put this check back?",
+      "revId": "d632d58a616a895d16d8c023a1685b268020c50e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
