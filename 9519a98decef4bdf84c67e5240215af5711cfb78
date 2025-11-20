@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ec573bae_d9e16735",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 16
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-20T01:57:19Z",
+      "side": 1,
+      "message": "Can this method be const?",
+      "revId": "9519a98decef4bdf84c67e5240215af5711cfb78",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
