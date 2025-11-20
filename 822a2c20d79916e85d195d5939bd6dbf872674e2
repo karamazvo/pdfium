@@ -368,6 +368,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "446b7e61_8ef2072e",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 7
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-20T02:03:34Z",
+      "side": 1,
+      "message": "\u003e What I mean is, CFX_Size already exists in core/fxcrt/fx_coordinates.h.\nOh ok - will edit.",
+      "parentUuid": "8ae7615e_9e6e145b",
+      "range": {
+        "startLine": 49,
+        "startChar": 8,
+        "endLine": 49,
+        "endChar": 9
+      },
+      "revId": "822a2c20d79916e85d195d5939bd6dbf872674e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "21b52f34_ea6126a7",
         "filename": "core/fxge/cfx_face.h",
         "patchSetId": 7
