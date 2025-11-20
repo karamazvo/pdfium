@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dca61bfd_c2890c0e",
+        "filename": "DEPS",
+        "patchSetId": 24
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-11-20T19:14:17Z",
+      "side": 1,
+      "message": "Reviewed at https://pdfium-review.googlesource.com/c/pdfium_tests/+/138210",
+      "revId": "6da637b961abaf977e1ee6d31a3513eac1e1135d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
