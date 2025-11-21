@@ -1,0 +1,494 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e7838044_987c4496",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 15
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-11-21T18:13:46Z",
+      "side": 1,
+      "message": "yes, is more compact, but logic reads more cleanly without the de-dupliation and the switching and the matching of expected types, etc.  Not sure this really improves the situation, I\u0027m afraid.",
+      "revId": "6355f4d81647a0abf3a392684114719a9f573ec6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "56858c70_bf9d58a8",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 485,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-11-21T18:13:46Z",
+      "side": 1,
+      "message": "nit: kInt, kFloat, kString, and kBlob per style guide (sorry).",
+      "range": {
+        "startLine": 485,
+        "startChar": 28,
+        "endLine": 485,
+        "endChar": 31
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "f6944004_d076a968",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 485,
+                "startChar": 0,
+                "endLine": 486,
+                "endChar": 0
+              },
+              "replacement": "enum class ParamValueType { kInt, kFloat, kString, kBlob };\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 504,
+                "startChar": 0,
+                "endLine": 508,
+                "endChar": 0
+              },
+              "replacement": "  if ((expected_type \u003d\u003d ParamValueType::kInt \u0026\u0026 !pObj-\u003eIsNumber()) ||\n      (expected_type \u003d\u003d ParamValueType::kFloat \u0026\u0026 !pObj-\u003eIsNumber()) ||\n      (expected_type \u003d\u003d ParamValueType::kString \u0026\u0026 !pObj-\u003eIsString()) ||\n      (expected_type \u003d\u003d ParamValueType::kBlob \u0026\u0026 !pObj-\u003eIsString())) {\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 511,
+                "startChar": 0,
+                "endLine": 512,
+                "endChar": 0
+              },
+              "replacement": "    case ParamValueType::kInt:\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 514,
+                "startChar": 0,
+                "endLine": 515,
+                "endChar": 0
+              },
+              "replacement": "    case ParamValueType::kFloat:\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 517,
+                "startChar": 0,
+                "endLine": 518,
+                "endChar": 0
+              },
+              "replacement": "    case ParamValueType::kString:\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 525,
+                "startChar": 0,
+                "endLine": 526,
+                "endChar": 0
+              },
+              "replacement": "    case ParamValueType::kBlob:\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 541,
+                "startChar": 0,
+                "endLine": 542,
+                "endChar": 0
+              },
+              "replacement": "  return GetParamValueHelper(mark, key, out_value, ParamValueType::kInt);\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 548,
+                "startChar": 0,
+                "endLine": 549,
+                "endChar": 0
+              },
+              "replacement": "  return GetParamValueHelper(mark, key, out_value, ParamValueType::kFloat);\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 557,
+                "startChar": 0,
+                "endLine": 558,
+                "endChar": 0
+              },
+              "replacement": "  return GetParamValueHelper(mark, key, out_buflen, ParamValueType::kString,\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 567,
+                "startChar": 0,
+                "endLine": 568,
+                "endChar": 0
+              },
+              "replacement": "  return GetParamValueHelper(mark, key, out_buflen, ParamValueType::kBlob,\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 620,
+                "startChar": 0,
+                "endLine": 621,
+                "endChar": 0
+              },
+              "replacement": "    case ParamValueType::kInt:\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 623,
+                "startChar": 0,
+                "endLine": 624,
+                "endChar": 0
+              },
+              "replacement": "    case ParamValueType::kFloat:\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 626,
+                "startChar": 0,
+                "endLine": 627,
+                "endChar": 0
+              },
+              "replacement": "    case ParamValueType::kString:\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 630,
+                "startChar": 0,
+                "endLine": 631,
+                "endChar": 0
+              },
+              "replacement": "    case ParamValueType::kBlob:\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 653,
+                "startChar": 0,
+                "endLine": 654,
+                "endChar": 0
+              },
+              "replacement": "                             ParamValueType::kInt);\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 663,
+                "startChar": 0,
+                "endLine": 664,
+                "endChar": 0
+              },
+              "replacement": "                             ParamValueType::kFloat);\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 673,
+                "startChar": 0,
+                "endLine": 674,
+                "endChar": 0
+              },
+              "replacement": "                             ParamValueType::kString);\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 685,
+                "startChar": 0,
+                "endLine": 686,
+                "endChar": 0
+              },
+              "replacement": "                             ParamValueType::kBlob, value_len);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "6355f4d81647a0abf3a392684114719a9f573ec6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c020abd3_79e1e95f",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-11-21T18:13:46Z",
+      "side": 1,
+      "message": "Perhaps something like std::optional\u003cstd::pair\u003cout_value, std::span\u003cuint8_t\u003e\u003e\u003e ... since we discourage out parameters.",
+      "range": {
+        "startLine": 487,
+        "startChar": 0,
+        "endLine": 487,
+        "endChar": 4
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "4d7e619b_bb2475c1",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 527,
+                "startChar": 0,
+                "endLine": 530,
+                "endChar": 0
+              },
+              "replacement": "      pdfium::span\u003cunsigned char\u003e result_span \u003d\n          UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen));\n      ByteString blob_value \u003d pObj-\u003eGetString();\n      pdfium::span\u003cconst uint8_t\u003e source_span \u003d blob_value.span();\n      fxcrt::try_spancpy(result_span, source_span);\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 531,
+                "startChar": 0,
+                "endLine": 532,
+                "endChar": 0
+              },
+              "replacement": "          pdfium::checked_cast\u003cunsigned long\u003e(source_span.size());\n"
+            }
+          ]
+        }
+      ],
+      "revId": "6355f4d81647a0abf3a392684114719a9f573ec6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a1fad9b1_4e0b8491",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 515,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-11-21T18:13:46Z",
+      "side": 1,
+      "message": "this would mean that the return type, avoiding out parameters would have to also include a std::variant\u003c\u003e.",
+      "range": {
+        "startLine": 515,
+        "startChar": 0,
+        "endLine": 515,
+        "endChar": 63
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "8b4b6c28_6d1359ab",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 485,
+                "startChar": 0,
+                "endLine": 486,
+                "endChar": 0
+              },
+              "replacement": "enum class ParamValueType { kInt, kFloat, kString, kBlob };\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 504,
+                "startChar": 0,
+                "endLine": 508,
+                "endChar": 0
+              },
+              "replacement": "  if ((expected_type \u003d\u003d ParamValueType::kInt \u0026\u0026 !pObj-\u003eIsNumber()) ||\n      (expected_type \u003d\u003d ParamValueType::kFloat \u0026\u0026 !pObj-\u003eIsNumber()) ||\n      (expected_type \u003d\u003d ParamValueType::kString \u0026\u0026 !pObj-\u003eIsString()) ||\n      (expected_type \u003d\u003d ParamValueType::kBlob \u0026\u0026 !pObj-\u003eIsString())) {\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 511,
+                "startChar": 0,
+                "endLine": 512,
+                "endChar": 0
+              },
+              "replacement": "    case ParamValueType::kInt:\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 514,
+                "startChar": 0,
+                "endLine": 515,
+                "endChar": 0
+              },
+              "replacement": "    case ParamValueType::kFloat:\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 517,
+                "startChar": 0,
+                "endLine": 518,
+                "endChar": 0
+              },
+              "replacement": "    case ParamValueType::kString:\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 525,
+                "startChar": 0,
+                "endLine": 526,
+                "endChar": 0
+              },
+              "replacement": "    case ParamValueType::kBlob:\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 541,
+                "startChar": 0,
+                "endLine": 542,
+                "endChar": 0
+              },
+              "replacement": "  return GetParamValueHelper(mark, key, out_value, ParamValueType::kInt);\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 548,
+                "startChar": 0,
+                "endLine": 549,
+                "endChar": 0
+              },
+              "replacement": "  return GetParamValueHelper(mark, key, out_value, ParamValueType::kFloat);\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 557,
+                "startChar": 0,
+                "endLine": 558,
+                "endChar": 0
+              },
+              "replacement": "  return GetParamValueHelper(mark, key, out_buflen, ParamValueType::kString,\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 567,
+                "startChar": 0,
+                "endLine": 568,
+                "endChar": 0
+              },
+              "replacement": "  return GetParamValueHelper(mark, key, out_buflen, ParamValueType::kBlob,\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 620,
+                "startChar": 0,
+                "endLine": 621,
+                "endChar": 0
+              },
+              "replacement": "    case ParamValueType::kInt:\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 623,
+                "startChar": 0,
+                "endLine": 624,
+                "endChar": 0
+              },
+              "replacement": "    case ParamValueType::kFloat:\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 626,
+                "startChar": 0,
+                "endLine": 627,
+                "endChar": 0
+              },
+              "replacement": "    case ParamValueType::kString:\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 630,
+                "startChar": 0,
+                "endLine": 631,
+                "endChar": 0
+              },
+              "replacement": "    case ParamValueType::kBlob:\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 653,
+                "startChar": 0,
+                "endLine": 654,
+                "endChar": 0
+              },
+              "replacement": "                             ParamValueType::kInt);\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 663,
+                "startChar": 0,
+                "endLine": 664,
+                "endChar": 0
+              },
+              "replacement": "                             ParamValueType::kFloat);\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 673,
+                "startChar": 0,
+                "endLine": 674,
+                "endChar": 0
+              },
+              "replacement": "                             ParamValueType::kString);\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 685,
+                "startChar": 0,
+                "endLine": 686,
+                "endChar": 0
+              },
+              "replacement": "                             ParamValueType::kBlob, value_len);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "6355f4d81647a0abf3a392684114719a9f573ec6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
