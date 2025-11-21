@@ -67,6 +67,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "be1ea1cd_8010d1f6",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 1082,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-21T18:13:24Z",
+      "side": 1,
+      "message": "Just checking if it was, the description only mentioned decoupling the anti-alias setting.",
+      "parentUuid": "daa9b64e_24448433",
+      "range": {
+        "startLine": 1082,
+        "startChar": 4,
+        "endLine": 1082,
+        "endChar": 20
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8d882bdd_549392d3",
         "filename": "core/fxge/cfx_renderdevice.h",
         "patchSetId": 15
@@ -149,6 +173,30 @@
           ]
         }
       ],
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dafd6921_acec2cfa",
+        "filename": "core/fxge/cfx_renderdevice.h",
+        "patchSetId": 15
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-21T18:13:24Z",
+      "side": 1,
+      "message": "Similar point to the line above, I didn\u0027t want to consider making the variable name too long because it would cause lines like core/fxge/cfx_renderdevice.cpp:1205 to wrap.\n\nNot really a big issue but that was my reasoning behind this variable name.\n\nWould change it if it seems unclear though.",
+      "parentUuid": "8d279413_d4f52601",
+      "range": {
+        "startLine": 216,
+        "startChar": 6,
+        "endLine": 216,
+        "endChar": 21
+      },
       "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
