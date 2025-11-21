@@ -41,6 +41,23 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "399fb35a_7e917c5d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 15
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-11-21T18:31:58Z",
+      "side": 1,
+      "message": "Mostly questions from me, but if you follow up with Lei\u0027s suggestions, I think we wind up with AARenderMode class moving to fx_font.h or elsewhere.  At which point my comments become moot.",
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0eefc4db_9079bcaf",
@@ -277,6 +294,57 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "f434b3b1_50a0c901",
+        "filename": "core/fxge/cfx_renderdevice.h",
+        "patchSetId": 15
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-11-21T18:31:58Z",
+      "side": 1,
+      "message": "My question, and I think I\u0027m missing the big picture, is what external callers are going to call this (in future CLs)?  Otherwise, this could go into the .cc file.",
+      "range": {
+        "startLine": 207,
+        "startChar": 0,
+        "endLine": 207,
+        "endChar": 33
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "cf96a595_bd8da712",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxge/cfx_renderdevice.h",
+              "range": {
+                "startLine": 50,
+                "startChar": 0,
+                "endLine": 50,
+                "endChar": 0
+              },
+              "replacement": "  enum class AARenderMode : int {\n    kNORMAL,\n    kLIGHT,\n    kMONO,\n    kLCD,\n    kLCD_V,\n    kSDF,\n    kMAX\n  };\n\n"
+            },
+            {
+              "path": "core/fxge/cfx_renderdevice.h",
+              "range": {
+                "startLine": 207,
+                "startChar": 0,
+                "endLine": 216,
+                "endChar": 0
+              },
+              "replacement": ""
+            }
+          ]
+        }
+      ],
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8d279413_d4f52601",
         "filename": "core/fxge/cfx_renderdevice.h",
         "patchSetId": 15
@@ -336,6 +404,47 @@
         "endLine": 216,
         "endChar": 21
       },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2762441e_15c6c5f6",
+        "filename": "core/fxge/cfx_renderdevice.h",
+        "patchSetId": 15
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-11-21T18:31:58Z",
+      "side": 1,
+      "message": "Similarly, this is only called from the .cc file at present, and unless we plan for future callers, it could go into an anonymous namespace in the .cc file, right?",
+      "range": {
+        "startLine": 216,
+        "startChar": 0,
+        "endLine": 216,
+        "endChar": 41
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "118f6014_443a68fc",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxge/cfx_renderdevice.h",
+              "range": {
+                "startLine": 207,
+                "startChar": 0,
+                "endLine": 218,
+                "endChar": 0
+              },
+              "replacement": ""
+            }
+          ]
+        }
+      ],
       "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
