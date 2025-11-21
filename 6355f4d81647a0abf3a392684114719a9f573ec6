@@ -330,6 +330,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "a2b63b4d_03e24c3a",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-21T18:23:38Z",
+      "side": 1,
+      "message": "One sec - I dont think this is resolved yet... Leaving it unresolved to edit.",
+      "parentUuid": "9d2cc45a_eec81741",
+      "range": {
+        "startLine": 487,
+        "startChar": 0,
+        "endLine": 487,
+        "endChar": 4
+      },
+      "revId": "6355f4d81647a0abf3a392684114719a9f573ec6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a1fad9b1_4e0b8491",
         "filename": "fpdfsdk/fpdf_editpage.cpp",
         "patchSetId": 15
