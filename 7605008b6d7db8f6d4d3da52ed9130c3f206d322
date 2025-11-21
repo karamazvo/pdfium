@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "52c285e1_c0d2e717",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-11-21T19:33:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fc943ac4_f918b2ba",
+      "range": {
+        "startLine": 13,
+        "startChar": 52,
+        "endLine": 13,
+        "endChar": 55
+      },
+      "revId": "7605008b6d7db8f6d4d3da52ed9130c3f206d322",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "3c02bdd8_b2b9413c",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
@@ -87,6 +111,54 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cbd229ce_9fa5b2b5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-11-21T19:33:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f1fd66a3_24028fcb",
+      "range": {
+        "startLine": 19,
+        "startChar": 40,
+        "endLine": 19,
+        "endChar": 49
+      },
+      "revId": "7605008b6d7db8f6d4d3da52ed9130c3f206d322",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0282c65f_664518ab",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-11-21T19:33:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bedd1ef1_69067a52",
+      "range": {
+        "startLine": 19,
+        "startChar": 21,
+        "endLine": 19,
+        "endChar": 23
+      },
+      "revId": "7605008b6d7db8f6d4d3da52ed9130c3f206d322",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "eb60e844_3d751add",
@@ -100,6 +172,30 @@
       "writtenOn": "2025-11-10T19:52:42Z",
       "side": 1,
       "message": "No need to name any embedder in particular. Same for line 787.",
+      "range": {
+        "startLine": 758,
+        "startChar": 14,
+        "endLine": 758,
+        "endChar": 32
+      },
+      "revId": "7605008b6d7db8f6d4d3da52ed9130c3f206d322",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8d50fc06_71c14cbb",
+        "filename": "fpdfsdk/pwl/cpwl_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 758,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-11-21T19:33:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eb60e844_3d751add",
       "range": {
         "startLine": 758,
         "startChar": 14,
