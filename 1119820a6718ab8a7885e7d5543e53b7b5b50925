@@ -1,0 +1,135 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c94ce7d6_c34cdd72",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-11-21T18:38:18Z",
+      "side": 1,
+      "message": "Here\u0027s an alternative thought.  Maybe we\u0027re combining too much here; maybe we want four separate helper functions: one for each type. GetParamValueIntHelper(), GetParamValueFloatHelper(), GetParamValueStringHelper(), and GetParamValueBlobHelper(). I think that gets us most of the consolidation without the switching and the variant return types.  WDYT?",
+      "range": {
+        "startLine": 487,
+        "startChar": 0,
+        "endLine": 487,
+        "endChar": 50
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "81d915a5_6972f059",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 485,
+                "startChar": 0,
+                "endLine": 486,
+                "endChar": 0
+              },
+              "replacement": "bool GetParamValueIntHelper(FPDF_PAGEOBJECTMARK mark,\n                            FPDF_BYTESTRING key,\n                            int* out_value) {\n  if (!out_value) {\n    return false;\n  }\n  RetainPtr\u003cCPDF_Dictionary\u003e pParams \u003d GetMarkParamDict(mark);\n  if (!pParams) {\n    return false;\n  }\n  RetainPtr\u003cconst CPDF_Object\u003e pObj \u003d pParams-\u003eGetObjectFor(key);\n  if (!pObj) {\n    return false;\n  }\n  if (!pObj-\u003eIsNumber()) {\n    return false;\n  }\n  *out_value \u003d pObj-\u003eGetInteger();\n  return true;\n}\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 487,
+                "startChar": 0,
+                "endLine": 493,
+                "endChar": 0
+              },
+              "replacement": "bool GetParamValueFloatHelper(FPDF_PAGEOBJECTMARK mark,\n                              FPDF_BYTESTRING key,\n                              float* out_value) {\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 504,
+                "startChar": 0,
+                "endLine": 508,
+                "endChar": 0
+              },
+              "replacement": "  if (!pObj-\u003eIsNumber()) {\n    return false;\n  }\n  *out_value \u003d pObj-\u003eGetNumber();\n  return true;\n}\n\nbool GetParamValueStringHelper(FPDF_PAGEOBJECTMARK mark,\n                               FPDF_BYTESTRING key,\n                               FPDF_WCHAR* buffer,\n                               unsigned long buflen,\n                               unsigned long* out_buflen) {\n  if (!out_buflen) {\n    return false;\n  }\n  RetainPtr\u003cCPDF_Dictionary\u003e pParams \u003d GetMarkParamDict(mark);\n  if (!pParams) {\n    return false;\n  }\n  RetainPtr\u003cconst CPDF_Object\u003e pObj \u003d pParams-\u003eGetObjectFor(key);\n  if (!pObj) {\n    return false;\n  }\n  if (!pObj-\u003eIsString()) {\n    return false;\n  }\n  // SAFETY: required from caller.\n  *out_buflen \u003d Utf16EncodeMaybeCopyAndReturnLength(\n      WideString::FromUTF8(pObj-\u003eGetString().AsStringView()),\n      UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));\n  return true;\n}\n\nbool GetParamValueBlobHelper(FPDF_PAGEOBJECTMARK mark,\n                             FPDF_BYTESTRING key,\n                             unsigned char* buffer,\n                             unsigned long buflen,\n                             unsigned long* out_buflen) {\n  if (!out_buflen) {\n    return false;\n  }\n  RetainPtr\u003cCPDF_Dictionary\u003e pParams \u003d GetMarkParamDict(mark);\n  if (!pParams) {\n    return false;\n  }\n  RetainPtr\u003cconst CPDF_Object\u003e pObj \u003d pParams-\u003eGetObjectFor(key);\n  if (!pObj) {\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 510,
+                "startChar": 0,
+                "endLine": 535,
+                "endChar": 0
+              },
+              "replacement": "  if (!pObj-\u003eIsString()) {\n    return false;\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 536,
+                "startChar": 0,
+                "endLine": 536,
+                "endChar": 0
+              },
+              "replacement": "  // SAFETY: required from caller.\n  pdfium::span\u003cunsigned char\u003e result_span \u003d\n      UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen));\n  ByteString blob_value \u003d pObj-\u003eGetString();\n  pdfium::span\u003cconst uint8_t\u003e source_span \u003d blob_value.span();\n  fxcrt::try_spancpy(result_span, source_span);\n  *out_buflen \u003d pdfium::checked_cast\u003cunsigned long\u003e(source_span.size());\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 543,
+                "startChar": 0,
+                "endLine": 544,
+                "endChar": 0
+              },
+              "replacement": "  return GetParamValueIntHelper(mark, key, out_value);\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 550,
+                "startChar": 0,
+                "endLine": 551,
+                "endChar": 0
+              },
+              "replacement": "  return GetParamValueFloatHelper(mark, key, out_value);\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 559,
+                "startChar": 0,
+                "endLine": 561,
+                "endChar": 0
+              },
+              "replacement": "  return GetParamValueStringHelper(mark, key, buffer, buflen, out_buflen);\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 569,
+                "startChar": 0,
+                "endLine": 571,
+                "endChar": 0
+              },
+              "replacement": "  return GetParamValueBlobHelper(mark, key, buffer, buflen, out_buflen);\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_editpage.cpp",
+              "range": {
+                "startLine": 604,
+                "startChar": 0,
+                "endLine": 604,
+                "endChar": 0
+              },
+              "replacement": "\nenum class ParamValueType { kInt, kFloat, kString, kBlob };\n"
+            }
+          ]
+        }
+      ],
+      "revId": "1119820a6718ab8a7885e7d5543e53b7b5b50925",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
