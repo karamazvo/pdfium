@@ -229,6 +229,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b1428936_9d661952",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 485,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-21T18:18:31Z",
+      "side": 1,
+      "message": "Yep mb - just sometimes tend to forget where to put the k and where to not...",
+      "parentUuid": "56858c70_bf9d58a8",
+      "range": {
+        "startLine": 485,
+        "startChar": 28,
+        "endLine": 485,
+        "endChar": 31
+      },
+      "revId": "6355f4d81647a0abf3a392684114719a9f573ec6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c020abd3_79e1e95f",
@@ -276,6 +300,30 @@
           ]
         }
       ],
+      "revId": "6355f4d81647a0abf3a392684114719a9f573ec6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9d2cc45a_eec81741",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-21T18:18:31Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "c020abd3_79e1e95f",
+      "range": {
+        "startLine": 487,
+        "startChar": 0,
+        "endLine": 487,
+        "endChar": 4
+      },
       "revId": "6355f4d81647a0abf3a392684114719a9f573ec6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -487,6 +535,30 @@
           ]
         }
       ],
+      "revId": "6355f4d81647a0abf3a392684114719a9f573ec6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "02d8f2c4_03eea355",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 515,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-21T18:18:31Z",
+      "side": 1,
+      "message": "Working on this",
+      "parentUuid": "a1fad9b1_4e0b8491",
+      "range": {
+        "startLine": 515,
+        "startChar": 0,
+        "endLine": 515,
+        "endChar": 63
+      },
       "revId": "6355f4d81647a0abf3a392684114719a9f573ec6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
