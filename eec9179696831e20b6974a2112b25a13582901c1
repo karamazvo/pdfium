@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1a2d75e7_61af51b8",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 22
+      },
+      "lineNbr": 1090,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-21T19:59:47Z",
+      "side": 1,
+      "message": "Calling GetFTRenderMode() no longer names sense.",
+      "revId": "eec9179696831e20b6974a2112b25a13582901c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3936ce52_ecc2b470",
+        "filename": "core/fxge/fx_font.cpp",
+        "patchSetId": 22
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-21T19:59:47Z",
+      "side": 1,
+      "message": "Instead of calling GetFTRenderMode() here, switch the RHS to kLcd.",
+      "range": {
+        "startLine": 72,
+        "startChar": 8,
+        "endLine": 72,
+        "endChar": 23
+      },
+      "revId": "eec9179696831e20b6974a2112b25a13582901c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3a3e5625_8097aff3",
+        "filename": "core/fxge/fx_font.h",
+        "patchSetId": 22
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-21T19:59:47Z",
+      "side": 1,
+      "message": "Just kNormal, kLight, etc. kLCD_V can become kLcdV.",
+      "revId": "eec9179696831e20b6974a2112b25a13582901c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

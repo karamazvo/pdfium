@@ -297,6 +297,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "c5fe5927_8b61ed73",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 1195,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-21T19:59:47Z",
+      "side": 1,
+      "message": "Yes to the function signature. I would recommend just checking for normal/light/mono AARenderMode values directly.",
+      "parentUuid": "67e98126_b4008cf7",
+      "range": {
+        "startLine": 1195,
+        "startChar": 22,
+        "endLine": 1195,
+        "endChar": 70
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "d6171960_c431a4b6",
         "filename": "core/fxge/cfx_renderdevice.cpp",
         "patchSetId": 15
@@ -379,6 +403,30 @@
       "side": 1,
       "message": "It seems to turn into some kind of loop where\na function uses `int anti_alias`\nAfter updating it, some of its callers also seem to use `int anti_alias`\n\nDo I update all callers with this?",
       "parentUuid": "db4e2a7e_b2969cda",
+      "range": {
+        "startLine": 1209,
+        "startChar": 21,
+        "endLine": 1209,
+        "endChar": 34
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c42c4c72_7379ebc1",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 1209,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-21T19:59:47Z",
+      "side": 1,
+      "message": "The GetGlyphsBBox() callers need to pass in the enum instead. Fortunately, there are only 2 of them.",
+      "parentUuid": "ce292cba_38583ba9",
       "range": {
         "startLine": 1209,
         "startChar": 21,
