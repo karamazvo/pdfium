@@ -1,6 +1,29 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "f130848e_dedbc33f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-21T18:26:59Z",
+      "side": 1,
+      "message": "hyphenate",
+      "range": {
+        "startLine": 9,
+        "startChar": 22,
+        "endLine": 9,
+        "endChar": 31
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "0063da07_20bd4087",
@@ -91,6 +114,98 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "22bc6dd9_66ca1723",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 1108,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-21T18:26:59Z",
+      "side": 1,
+      "message": "This variable probably should change its type to AARenderMode, so cfx_renderdevice.cpp does not have to know about FT_RENDER_MODE_* values.",
+      "range": {
+        "startLine": 1108,
+        "startChar": 2,
+        "endLine": 1108,
+        "endChar": 5
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1bab861d_36795419",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 1195,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-21T18:26:59Z",
+      "side": 1,
+      "message": "Given this, there may need to be a separate helper to determine if the mode is \"non-LCD\".",
+      "range": {
+        "startLine": 1195,
+        "startChar": 22,
+        "endLine": 1195,
+        "endChar": 70
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d6171960_c431a4b6",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 1201,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-21T18:26:59Z",
+      "side": 1,
+      "message": "Need to take an AARenderMode instead of an int for the second to last parameter.",
+      "range": {
+        "startLine": 1201,
+        "startChar": 25,
+        "endLine": 1201,
+        "endChar": 40
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "db4e2a7e_b2969cda",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 1209,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-21T18:26:59Z",
+      "side": 1,
+      "message": "Same here. GetGlyphsBBox() in core/fxge/fx_font.h should take AARenderMode. Maybe AARenderMode should be defined in that file, so code layering/dependencies work out.",
+      "range": {
+        "startLine": 1209,
+        "startChar": 21,
+        "endLine": 1209,
+        "endChar": 34
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8d882bdd_549392d3",
         "filename": "core/fxge/cfx_renderdevice.h",
         "patchSetId": 15
@@ -126,6 +241,30 @@
       "side": 1,
       "message": "Seems ok, given a comment.  Lei?",
       "parentUuid": "8d882bdd_549392d3",
+      "range": {
+        "startLine": 207,
+        "startChar": 13,
+        "endLine": 207,
+        "endChar": 25
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "48c93297_ed68cc8e",
+        "filename": "core/fxge/cfx_renderdevice.h",
+        "patchSetId": 15
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-21T18:26:59Z",
+      "side": 1,
+      "message": "WDYT about FontAntiAliasingMode?",
+      "parentUuid": "15647f51_1a647c82",
       "range": {
         "startLine": 207,
         "startChar": 13,
