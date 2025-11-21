@@ -224,6 +224,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a7591720_cc92fb72",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 1108,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-21T19:37:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "18bddec0_9c06e764",
+      "range": {
+        "startLine": 1108,
+        "startChar": 2,
+        "endLine": 1108,
+        "endChar": 5
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1bab861d_36795419",
@@ -294,6 +318,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "01a759e8_c4701adb",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 1201,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-21T19:37:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d6171960_c431a4b6",
+      "range": {
+        "startLine": 1201,
+        "startChar": 25,
+        "endLine": 1201,
+        "endChar": 40
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "db4e2a7e_b2969cda",
@@ -307,6 +355,30 @@
       "writtenOn": "2025-11-21T18:26:59Z",
       "side": 1,
       "message": "Same here. GetGlyphsBBox() in core/fxge/fx_font.h should take AARenderMode. Maybe AARenderMode should be defined in that file, so code layering/dependencies work out.",
+      "range": {
+        "startLine": 1209,
+        "startChar": 21,
+        "endLine": 1209,
+        "endChar": 34
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ce292cba_38583ba9",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 1209,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-21T19:37:22Z",
+      "side": 1,
+      "message": "It seems to turn into some kind of loop where\na function uses `int anti_alias`\nAfter updating it, some of its callers also seem to use `int anti_alias`\n\nDo I update all callers with this?",
+      "parentUuid": "db4e2a7e_b2969cda",
       "range": {
         "startLine": 1209,
         "startChar": 21,
@@ -636,6 +708,30 @@
         "startChar": 0,
         "endLine": 216,
         "endChar": 41
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a7176e16_ca00e991",
+        "filename": "core/fxge/cfx_renderdevice.h",
+        "patchSetId": 15
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-21T19:37:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dafd6921_acec2cfa",
+      "range": {
+        "startLine": 216,
+        "startChar": 6,
+        "endLine": 216,
+        "endChar": 21
       },
       "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
