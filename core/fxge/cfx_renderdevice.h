@@ -204,6 +204,17 @@ class CFX_RenderDevice {
   void SyncInternalBitmaps();
 #endif  // defined(PDF_USE_SKIA)
 
+  enum class AARenderMode : int {
+    kNORMAL,
+    kLIGHT,
+    kMONO,
+    kLCD,
+    kLCD_V,
+    kSDF,
+    kMAX
+  };
+  int GetFTRenderMode(AARenderMode mode);
+
  protected:
   CFX_RenderDevice();
 
