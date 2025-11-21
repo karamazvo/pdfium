@@ -105,6 +105,17 @@ inline bool FontFamilyIsScript(int32_t family) {
   return !!(family & pdfium::kFontPitchFamilyScript);
 }
 
+enum class FontAntiAliasingMode : int {
+  kNORMAL,
+  kLIGHT,
+  kMONO,
+  kLCD,
+  kLCD_V,
+  kSDF,
+  kMAX
+};
+FontAntiAliasingMode GetFTRenderMode(FontAntiAliasingMode mode);
+
 wchar_t UnicodeFromAdobeName(const char* name);
 ByteString AdobeNameFromUnicode(wchar_t unicode);
 
