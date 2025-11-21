@@ -181,7 +181,7 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_GlyphCache::RenderGlyph_Nativetext(
     uint32_t glyph_index,
     const CFX_Matrix& matrix,
     int dest_width,
-    int anti_alias) {
+    FontAntiAliasingMode anti_alias) {
   return nullptr;
 }
 

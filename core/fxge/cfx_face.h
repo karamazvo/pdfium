@@ -114,7 +114,7 @@ class CFX_Face final : public Retainable, public Observable {
                                                bool bFontStyle,
                                                const CFX_Matrix& matrix,
                                                int dest_width,
-                                               int anti_alias);
+                                               FontAntiAliasingMode anti_alias);
   std::unique_ptr<CFX_Path> LoadGlyphPath(uint32_t glyph_index,
                                           int dest_width,
                                           bool is_vertical,
