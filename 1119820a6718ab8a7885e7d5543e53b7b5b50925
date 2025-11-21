@@ -130,6 +130,30 @@
       ],
       "revId": "1119820a6718ab8a7885e7d5543e53b7b5b50925",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4884ed20_07226b83",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-21T19:03:30Z",
+      "side": 1,
+      "message": "I asked about that in one of my comments earlier - I assume you are refering to something similar to what I did in PS 10?",
+      "parentUuid": "c94ce7d6_c34cdd72",
+      "range": {
+        "startLine": 487,
+        "startChar": 0,
+        "endLine": 487,
+        "endChar": 50
+      },
+      "revId": "1119820a6718ab8a7885e7d5543e53b7b5b50925",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
