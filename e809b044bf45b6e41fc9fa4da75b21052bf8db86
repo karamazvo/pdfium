@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "a3150cc7_0a63c646",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-21T18:39:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f130848e_dedbc33f",
+      "range": {
+        "startLine": 9,
+        "startChar": 22,
+        "endLine": 9,
+        "endChar": 31
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "0063da07_20bd4087",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 15
@@ -142,6 +166,30 @@
       "writtenOn": "2025-11-21T18:26:59Z",
       "side": 1,
       "message": "This variable probably should change its type to AARenderMode, so cfx_renderdevice.cpp does not have to know about FT_RENDER_MODE_* values.",
+      "range": {
+        "startLine": 1108,
+        "startChar": 2,
+        "endLine": 1108,
+        "endChar": 5
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "18bddec0_9c06e764",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 1108,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-21T18:39:57Z",
+      "side": 1,
+      "message": "Editing",
+      "parentUuid": "22bc6dd9_66ca1723",
       "range": {
         "startLine": 1108,
         "startChar": 2,
@@ -343,6 +391,54 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9c9e7254_79d0b0b2",
+        "filename": "core/fxge/cfx_renderdevice.h",
+        "patchSetId": 15
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-21T18:39:57Z",
+      "side": 1,
+      "message": "Will probably consider moving it to core/fxge/fx_font.h instead.\nAm working on that now.",
+      "parentUuid": "f434b3b1_50a0c901",
+      "range": {
+        "startLine": 207,
+        "startChar": 0,
+        "endLine": 207,
+        "endChar": 33
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "170b38c1_c879fcef",
+        "filename": "core/fxge/cfx_renderdevice.h",
+        "patchSetId": 15
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-21T18:39:57Z",
+      "side": 1,
+      "message": "Yeah that could work. Editing",
+      "parentUuid": "48c93297_ed68cc8e",
+      "range": {
+        "startLine": 207,
+        "startChar": 13,
+        "endLine": 207,
+        "endChar": 25
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8d279413_d4f52601",
@@ -445,6 +541,30 @@
           ]
         }
       ],
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a1ef2358_d7029652",
+        "filename": "core/fxge/cfx_renderdevice.h",
+        "patchSetId": 15
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-21T18:39:57Z",
+      "side": 1,
+      "message": "Will probably consider moving it to core/fxge/fx_font.h instead.\nAm working on that now.",
+      "parentUuid": "2762441e_15c6c5f6",
+      "range": {
+        "startLine": 216,
+        "startChar": 0,
+        "endLine": 216,
+        "endChar": 41
+      },
       "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
