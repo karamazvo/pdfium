@@ -159,6 +159,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bf15f403_dba9ccff",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-11-21T21:31:07Z",
+      "side": 1,
+      "message": "I checked it on Firefox for Linux just now and it has the same behavior. It is sort of surprising that it is done that way.",
+      "parentUuid": "3c02bdd8_b2b9413c",
+      "revId": "7605008b6d7db8f6d4d3da52ed9130c3f206d322",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "eb60e844_3d751add",
