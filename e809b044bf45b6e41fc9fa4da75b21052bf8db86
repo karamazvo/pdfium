@@ -43,6 +43,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "daa9b64e_24448433",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 1082,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-11-21T18:08:07Z",
+      "side": 1,
+      "message": "If the point is to get rid of the FT_ symbols in this module, then it would have to move.",
+      "parentUuid": "0eefc4db_9079bcaf",
+      "range": {
+        "startLine": 1082,
+        "startChar": 4,
+        "endLine": 1082,
+        "endChar": 20
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8d882bdd_549392d3",
         "filename": "core/fxge/cfx_renderdevice.h",
         "patchSetId": 15
@@ -60,6 +84,71 @@
         "endLine": 207,
         "endChar": 25
       },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "15647f51_1a647c82",
+        "filename": "core/fxge/cfx_renderdevice.h",
+        "patchSetId": 15
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-11-21T18:08:07Z",
+      "side": 1,
+      "message": "Seems ok, given a comment.  Lei?",
+      "parentUuid": "8d882bdd_549392d3",
+      "range": {
+        "startLine": 207,
+        "startChar": 13,
+        "endLine": 207,
+        "endChar": 25
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8d279413_d4f52601",
+        "filename": "core/fxge/cfx_renderdevice.h",
+        "patchSetId": 15
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-11-21T18:08:07Z",
+      "side": 1,
+      "message": "Maybe call this  FTRenderModeFromAARenderMode() perhaps (unless I\u0027m missing the point).",
+      "range": {
+        "startLine": 216,
+        "startChar": 6,
+        "endLine": 216,
+        "endChar": 21
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "aa1be124_0a2be1b0",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxge/cfx_renderdevice.h",
+              "range": {
+                "startLine": 216,
+                "startChar": 0,
+                "endLine": 217,
+                "endChar": 0
+              },
+              "replacement": "  int FTRenderModeFromAARenderMode(AARenderMode mode);\n"
+            }
+          ]
+        }
+      ],
       "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
