@@ -35,7 +35,8 @@ ByteString GetStringFromTable(pdfium::span<const uint8_t> string_span,
 
 }  // namespace
 
-FX_RECT GetGlyphsBBox(const std::vector<TextGlyphPos>& glyphs, int anti_alias) {
+FX_RECT GetGlyphsBBox(const std::vector<TextGlyphPos>& glyphs,
+                      FontAntiAliasingMode anti_alias) {
   FX_RECT rect;
   bool bStarted = false;
   for (const TextGlyphPos& glyph : glyphs) {
@@ -167,4 +168,23 @@ int NormalizeFontMetric(int64_t value, uint16_t upem) {
 
   const double scaled_value = (value * 1000.0 + upem / 2) / upem;
   return pdfium::saturated_cast<int>(scaled_value);
+}
+
+FontAntiAliasingMode(FontAntiAliasingMode mode) {
+  switch (mode) {
+    case FontAntiAliasingMode::kNORMAL:
+      return FT_RENDER_MODE_NORMAL;
+    case FontAntiAliasingMode::kLIGHT:
+      return FT_RENDER_MODE_LIGHT;
+    case FontAntiAliasingMode::kMONO:
+      return FT_RENDER_MODE_MONO;
+    case FontAntiAliasingMode::kLCD:
+      return FT_RENDER_MODE_LCD;
+    case FontAntiAliasingMode::kLCD_V:
+      return FT_RENDER_MODE_LCD_V;
+    case FontAntiAliasingMode::kSDF:
+      return FT_RENDER_MODE_SDF;
+    case FontAntiAliasingMode::kMAX:
+      return FT_RENDER_MODE_MAX;
+  }
 }
