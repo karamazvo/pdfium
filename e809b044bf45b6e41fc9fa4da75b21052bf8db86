@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0063da07_20bd4087",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 15
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-21T18:00:19Z",
+      "side": 1,
+      "message": "Hi, made some edits to decouple the anti-alias setting from FT_Render_mode. Have a few additional ideas. Let me know if those might work better to consolidate it further.",
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0eefc4db_9079bcaf",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 1082,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-21T18:00:19Z",
+      "side": 1,
+      "message": "Do I keep this here or move to CFX_Face (where quite a lot of the FT usage already is)?",
+      "range": {
+        "startLine": 1082,
+        "startChar": 4,
+        "endLine": 1082,
+        "endChar": 20
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8d882bdd_549392d3",
+        "filename": "core/fxge/cfx_renderdevice.h",
+        "patchSetId": 15
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-21T18:00:19Z",
+      "side": 1,
+      "message": "Do I consider changing to AntiAlisingRenderMode, or is that variable name too long?",
+      "range": {
+        "startLine": 207,
+        "startChar": 13,
+        "endLine": 207,
+        "endChar": 25
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
