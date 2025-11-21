@@ -53,6 +53,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "27dbe5d0_22655f6d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 20
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-21T18:05:54Z",
+      "side": 1,
+      "message": "Sometimes...\nWhen I clone the whole chromium repo and try doing it for pdfium - usually not\nThe first time I clone the repo or run the command - usually not\notherwise - yes.\n\nI try use clang format the rest of the time...",
+      "parentUuid": "bdafdab8_1a981545",
+      "revId": "edfe0ac57f7ef6a1acd0def05150699f4ac727e0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8ebc1687_d899a7c8",
@@ -90,6 +108,30 @@
           ]
         }
       ],
+      "revId": "edfe0ac57f7ef6a1acd0def05150699f4ac727e0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6fb517f0_44c0e92c",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 20
+      },
+      "lineNbr": 783,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-21T18:05:54Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "8ebc1687_d899a7c8",
+      "range": {
+        "startLine": 783,
+        "startChar": 0,
+        "endLine": 783,
+        "endChar": 43
+      },
       "revId": "edfe0ac57f7ef6a1acd0def05150699f4ac727e0",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
