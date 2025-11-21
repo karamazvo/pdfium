@@ -509,12 +509,13 @@ int CFX_Face::GetGlyphCount() const {
   return pdfium::checked_cast<int>(GetRec()->num_glyphs);
 }
 
-std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(const CFX_Font* font,
-                                                       uint32_t glyph_index,
-                                                       bool bFontStyle,
-                                                       const CFX_Matrix& matrix,
-                                                       int dest_width,
-                                                       int anti_alias) {
+std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(
+    const CFX_Font* font,
+    uint32_t glyph_index,
+    bool bFontStyle,
+    const CFX_Matrix& matrix,
+    int dest_width,
+    FontAntiAliasingMode anti_alias) {
   FT_Matrix ft_matrix;
   ft_matrix.xx = matrix.a / 64 * 65536;
   ft_matrix.xy = matrix.c / 64 * 65536;
