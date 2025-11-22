@@ -35,7 +35,27 @@ ByteString GetStringFromTable(pdfium::span<const uint8_t> string_span,
 
 }  // namespace
 
-FX_RECT GetGlyphsBBox(const std::vector<TextGlyphPos>& glyphs, int anti_alias) {
+int GetFTRenderMode(FontAntiAliasingMode mode) {
+  switch (mode) {
+    case FontAntiAliasingMode::kNORMAL:
+      return FT_RENDER_MODE_NORMAL;
+    case FontAntiAliasingMode::kLIGHT:
+      return FT_RENDER_MODE_LIGHT;
+    case FontAntiAliasingMode::kMONO:
+      return FT_RENDER_MODE_MONO;
+    case FontAntiAliasingMode::kLCD:
+      return FT_RENDER_MODE_LCD;
+    case FontAntiAliasingMode::kLCD_V:
+      return FT_RENDER_MODE_LCD_V;
+    case FontAntiAliasingMode::kSDF:
+      return FT_RENDER_MODE_SDF;
+    case FontAntiAliasingMode::kMAX:
+      return FT_RENDER_MODE_MAX;
+  }
+}
+
+FX_RECT GetGlyphsBBox(const std::vector<TextGlyphPos>& glyphs,
+                      FontAntiAliasingMode anti_alias) {
   FX_RECT rect;
   bool bStarted = false;
   for (const TextGlyphPos& glyph : glyphs) {
@@ -49,7 +69,7 @@ FX_RECT GetGlyphsBBox(const std::vector<TextGlyphPos>& glyphs, int anti_alias) {
     }
 
     int char_width = glyph.glyph_->GetBitmap()->GetWidth();
-    if (anti_alias == FT_RENDER_MODE_LCD) {
+    if (anti_alias == FontAntiAliasingMode::kLCD) {
       char_width /= 3;
     }
 
