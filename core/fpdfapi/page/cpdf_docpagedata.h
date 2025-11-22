@@ -33,6 +33,9 @@ class CPDF_StreamAcc;
 class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
                                public CPDF_Font::FormFactoryIface {
  public:
+  using FontMap =
+      std::map<RetainPtr<const CPDF_Dictionary>, RetainPtr<CPDF_Font>>;
+
   static CPDF_DocPageData* FromDocument(const CPDF_Document* doc);
 
   CPDF_DocPageData();
@@ -64,6 +67,8 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
 #if BUILDFLAG(IS_WIN)
   RetainPtr<CPDF_Font> AddWindowsFont(LOGFONTA* pLogFont);
 #endif
+
+  const FontMap& GetFontMap() { return font_map_; }
 
   // Loads a colorspace.
   RetainPtr<CPDF_ColorSpace> GetColorSpace(const CPDF_Object* pCSObj,
@@ -130,7 +135,7 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
       icc_profile_map_;
   std::map<RetainPtr<const CPDF_Object>, RetainPtr<CPDF_Pattern>> pattern_map_;
   std::map<uint32_t, RetainPtr<CPDF_Image>> image_map_;
-  std::map<RetainPtr<const CPDF_Dictionary>, RetainPtr<CPDF_Font>> font_map_;
+  FontMap font_map_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_DOCPAGEDATA_H_

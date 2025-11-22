@@ -12,10 +12,13 @@
 #include <iterator>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_doc.h"
+#include "public/fpdf_edit.h"
 #include "public/fpdf_transformpage.h"
+#include "public/fpdfview.h"
 #include "testing/fx_string_testhelpers.h"
 
 using GetBoxInfoFunc =
@@ -228,6 +231,32 @@ void DumpPageInfo(FPDF_PAGE page, int page_idx) {
   DumpBoxInfo(&FPDFPage_GetBleedBox, "BleedBox", page, page_idx);
   DumpBoxInfo(&FPDFPage_GetTrimBox, "TrimBox", page, page_idx);
   DumpBoxInfo(&FPDFPage_GetArtBox, "ArtBox", page, page_idx);
+}
+
+void DumpFonts(FPDF_DOCUMENT doc) {
+  size_t fonts_count = 0;
+  if (!FPDF_GetDocFonts(doc, nullptr, 0, &fonts_count)) {
+    fprintf(stderr, "Failed to get fonts count\n");
+    return;
+  }
+
+  printf("Number of fonts: %zu\n", fonts_count);
+  if (fonts_count == 0) {
+    return;
+  }
+
+  std::vector<FPDF_FONT> fonts(fonts_count);
+  if (!FPDF_GetDocFonts(doc, fonts.data(), fonts.size(), &fonts_count)) {
+    fprintf(stderr, "Failed to get fonts\n");
+    return;
+  }
+  for (auto& font : fonts) {
+    unsigned long size = FPDFFont_GetBaseFontName(font, nullptr, 0);
+    std::vector<char> font_name(size);
+    FPDFFont_GetBaseFontName(font, font_name.data(), size);
+    printf("Name: %s, embedded: %d\n", font_name.data(),
+           FPDFFont_GetIsEmbedded(font));
+  }
 }
 
 void DumpPageStructure(FPDF_PAGE page, int page_idx) {

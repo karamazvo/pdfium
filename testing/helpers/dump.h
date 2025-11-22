@@ -8,6 +8,7 @@
 #include "public/fpdfview.h"
 
 void DumpChildStructure(FPDF_STRUCTELEMENT child, int indent);
+void DumpFonts(FPDF_DOCUMENT doc);
 void DumpPageInfo(FPDF_PAGE page, int page_idx);
 void DumpPageStructure(FPDF_PAGE page, int page_idx);
 void DumpMetaData(FPDF_DOCUMENT doc);
