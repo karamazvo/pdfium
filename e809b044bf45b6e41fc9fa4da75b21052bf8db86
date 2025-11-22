@@ -535,6 +535,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "95058342_51ddd525",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 1209,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-22T08:51:55Z",
+      "side": 1,
+      "message": "Yeah, GetFTRenderMode() has no callers remaining, but I think that might be because in one of the spots I had a static_cast\u003cint\u003e. I think it would be better to replace that with the function then.\nIn some spots its also possible I might have removed the caller by accident, but it still worked because Index 0 of the `AARenderMode` matches index 0 of the FT_Render_Mode.",
+      "parentUuid": "10d18ab0_58e8abd4",
+      "range": {
+        "startLine": 1209,
+        "startChar": 21,
+        "endLine": 1209,
+        "endChar": 34
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8d882bdd_549392d3",
         "filename": "core/fxge/cfx_renderdevice.h",
         "patchSetId": 15
