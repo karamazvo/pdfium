@@ -354,6 +354,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "65586b3e_c78d3dfc",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-22T10:18:24Z",
+      "side": 1,
+      "message": "Ok did you mean having the function itself return std::optional\u003cstd::pair\u003cout_value, std::span\u003cuint8_t\u003e\u003e\u003e and changing the signature from bool to this?",
+      "parentUuid": "a2b63b4d_03e24c3a",
+      "range": {
+        "startLine": 487,
+        "startChar": 0,
+        "endLine": 487,
+        "endChar": 4
+      },
+      "revId": "6355f4d81647a0abf3a392684114719a9f573ec6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a1fad9b1_4e0b8491",
         "filename": "fpdfsdk/fpdf_editpage.cpp",
         "patchSetId": 15
