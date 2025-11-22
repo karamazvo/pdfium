@@ -559,6 +559,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "0ab4017c_5c3610bd",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 1209,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-22T09:00:35Z",
+      "side": 1,
+      "message": "Also since all callers (and callers of the callers) were updated to use the new enum, the only place where GetFTRenderMode() would help is in cfx_glyphcache() which uses the cast to int currently, but should probably be updated to GetFTRenderMode()",
+      "parentUuid": "95058342_51ddd525",
+      "range": {
+        "startLine": 1209,
+        "startChar": 21,
+        "endLine": 1209,
+        "endChar": 34
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8d882bdd_549392d3",
         "filename": "core/fxge/cfx_renderdevice.h",
         "patchSetId": 15
