@@ -487,6 +487,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "65cc6e64_daf4d8aa",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 1209,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-22T06:39:15Z",
+      "side": 1,
+      "message": "What about moving the enum and the decoder function to cfx_face?\nMany of the files which use anti_alias anyway import it, + a lot of the freetype consolidation has been in that file.\n\nThoughts?",
+      "parentUuid": "f982d574_f5b53cc6",
+      "range": {
+        "startLine": 1209,
+        "startChar": 21,
+        "endLine": 1209,
+        "endChar": 34
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8d882bdd_549392d3",
         "filename": "core/fxge/cfx_renderdevice.h",
         "patchSetId": 15
