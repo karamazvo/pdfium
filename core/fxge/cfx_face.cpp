@@ -509,12 +509,13 @@ int CFX_Face::GetGlyphCount() const {
   return pdfium::checked_cast<int>(GetRec()->num_glyphs);
 }
 
-std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(const CFX_Font* font,
-                                                       uint32_t glyph_index,
-                                                       bool bFontStyle,
-                                                       const CFX_Matrix& matrix,
-                                                       int dest_width,
-                                                       int anti_alias) {
+std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(
+    const CFX_Font* font,
+    uint32_t glyph_index,
+    bool bFontStyle,
+    const CFX_Matrix& matrix,
+    int dest_width,
+    FontAntiAliasingMode anti_alias) {
   FT_Matrix ft_matrix;
   ft_matrix.xx = matrix.a / 64 * 65536;
   ft_matrix.xy = matrix.c / 64 * 65536;
@@ -600,7 +601,7 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(const CFX_Font* font,
   int dib_width = bitmap.width;
   auto pGlyphBitmap =
       std::make_unique<CFX_GlyphBitmap>(glyph->bitmap_left, glyph->bitmap_top);
-  const FXDIB_Format format = anti_alias == FT_RENDER_MODE_MONO
+  const FXDIB_Format format = anti_alias == FontAntiAliasingMode::kMONO
                                   ? FXDIB_Format::k1bppMask
                                   : FXDIB_Format::k8bppMask;
   if (!pGlyphBitmap->GetBitmap()->Create(dib_width, bitmap.rows, format)) {
@@ -611,7 +612,7 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(const CFX_Font* font,
   uint8_t* pDestBuf = pGlyphBitmap->GetBitmap()->GetWritableBuffer().data();
   const uint8_t* pSrcBuf = bitmap.buffer;
   UNSAFE_TODO({
-    if (anti_alias != FT_RENDER_MODE_MONO &&
+    if (anti_alias != FontAntiAliasingMode::kMONO &&
         bitmap.pixel_mode == FT_PIXEL_MODE_MONO) {
       unsigned int bytes = anti_alias == FT_RENDER_MODE_LCD ? 3 : 1;
       for (unsigned int i = 0; i < bitmap.rows; i++) {
