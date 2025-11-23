@@ -16,6 +16,24 @@
       "message": "Hi guys, another small change to finally make the method private and add the friend class. Am dry running.",
       "revId": "17c37e44f94f2293143f45f01a90fbfb659dd167",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7eb39079_4c3a5264",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-23T14:43:54Z",
+      "side": 1,
+      "message": "Dry run done.",
+      "parentUuid": "3c236f26_3f4414d3",
+      "revId": "17c37e44f94f2293143f45f01a90fbfb659dd167",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
