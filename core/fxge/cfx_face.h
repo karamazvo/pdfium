@@ -31,6 +31,7 @@ class CFX_Path;
 class CFX_SubstFont;
 
 class CFX_Face final : public Retainable, public Observable {
+
  public:
   using CharMap = void*;
 
@@ -158,14 +159,14 @@ class CFX_Face final : public Retainable, public Observable {
 #endif
 
   bool HasFaceRec() const { return !!GetRec(); }
-
-  // TODO(crbug.com/460068801): Make these private.
-  FXFT_FaceRec* GetRec() { return rec_.get(); }
   const FXFT_FaceRec* GetRec() const { return rec_.get(); }
 
- private:
   CFX_Face(FXFT_FaceRec* pRec, RetainPtr<Retainable> pDesc);
   ~CFX_Face() override;
+
+private:
+  FXFT_FaceRec* GetRec() { return rec_.get(); }
+  friend class ScopedFontTransform;
 
   void AdjustVariationParams(int glyph_index, int dest_width, int weight);
   std::optional<std::array<uint8_t, 2>> GetOs2Panose();
