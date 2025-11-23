@@ -31,6 +31,8 @@ class CFX_Path;
 class CFX_SubstFont;
 
 class CFX_Face final : public Retainable, public Observable {
+  friend class ScopedFontTransform;
+
  public:
   using CharMap = void*;
 
@@ -159,11 +161,10 @@ class CFX_Face final : public Retainable, public Observable {
 
   bool HasFaceRec() const { return !!GetRec(); }
 
-  // TODO(crbug.com/460068801): Make these private.
+ private:
   FXFT_FaceRec* GetRec() { return rec_.get(); }
   const FXFT_FaceRec* GetRec() const { return rec_.get(); }
 
- private:
   CFX_Face(FXFT_FaceRec* pRec, RetainPtr<Retainable> pDesc);
   ~CFX_Face() override;
 
