@@ -158,14 +158,16 @@ class CFX_Face final : public Retainable, public Observable {
 #endif
 
   bool HasFaceRec() const { return !!GetRec(); }
+private:
+  friend class ScopedFontTransform;
 
-  // TODO(crbug.com/460068801): Make these private.
+  CFX_Face(FXFT_FaceRec* pRec, RetainPtr<Retainable> pDesc);
+  ~CFX_Face() override;
+
   FXFT_FaceRec* GetRec() { return rec_.get(); }
   const FXFT_FaceRec* GetRec() const { return rec_.get(); }
 
- private:
-  CFX_Face(FXFT_FaceRec* pRec, RetainPtr<Retainable> pDesc);
-  ~CFX_Face() override;
+  FXFT_FaceRec* GetRec() { return rec_.get(); }
 
   void AdjustVariationParams(int glyph_index, int dest_width, int weight);
   std::optional<std::array<uint8_t, 2>> GetOs2Panose();
