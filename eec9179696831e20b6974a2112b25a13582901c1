@@ -158,6 +158,24 @@
       "parentUuid": "3a3e5625_8097aff3",
       "revId": "eec9179696831e20b6974a2112b25a13582901c1",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5a1817f3_71839095",
+        "filename": "core/fxge/fx_font.h",
+        "patchSetId": 22
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-23T17:31:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f5c0e197_315b91dc",
+      "revId": "eec9179696831e20b6974a2112b25a13582901c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
