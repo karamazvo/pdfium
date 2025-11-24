@@ -631,6 +631,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "32c29f94_ed79e03d",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 1209,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-24T03:43:13Z",
+      "side": 1,
+      "message": "Another option we have is having everything inside `core/fxge/cfx_renderdevice.cpp` use the enum and have the code use GetFTRenderMode() when calling other functions which expect an int. The disadvantage of that it is it doesn\u0027t fully decouple it (it only decouples it inside that file)",
+      "parentUuid": "81515e1c_57d20052",
+      "range": {
+        "startLine": 1209,
+        "startChar": 21,
+        "endLine": 1209,
+        "endChar": 34
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8d882bdd_549392d3",
         "filename": "core/fxge/cfx_renderdevice.h",
         "patchSetId": 15
