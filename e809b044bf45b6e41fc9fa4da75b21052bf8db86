@@ -677,6 +677,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "75e80806_be47a9ce",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 1209,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-25T03:57:03Z",
+      "side": 1,
+      "message": "Got it. Resolving.",
+      "parentUuid": "52d29756_54d4ad5d",
+      "range": {
+        "startLine": 1209,
+        "startChar": 21,
+        "endLine": 1209,
+        "endChar": 34
+      },
+      "revId": "e809b044bf45b6e41fc9fa4da75b21052bf8db86",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8d882bdd_549392d3",
