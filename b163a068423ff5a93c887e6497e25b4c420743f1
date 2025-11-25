@@ -1,0 +1,62 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "07125ead_e7234f13",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 38
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-11-25T17:01:23Z",
+      "side": 1,
+      "message": "One nit and then we can submit it.",
+      "revId": "b163a068423ff5a93c887e6497e25b4c420743f1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "44cf11c1_c399c93c",
+        "filename": "core/fxge/fx_font.h",
+        "patchSetId": 38
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-11-25T17:01:23Z",
+      "side": 1,
+      "message": "nit: given the comparision `mode \u003c FontAntiAliasingMode::kLcd` in the previous file, this should have a comment that the ordering maters.",
+      "range": {
+        "startLine": 52,
+        "startChar": 11,
+        "endLine": 52,
+        "endChar": 38
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "d4793d3a_6697d8f8",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxge/fx_font.h",
+              "range": {
+                "startLine": 52,
+                "startChar": 0,
+                "endLine": 52,
+                "endChar": 0
+              },
+              "replacement": "// The ordering of these enum values matters, as some comparisons rely on it\n// (e.g., `mode \u003c FontAntiAliasingMode::kLcd`).\n"
+            }
+          ]
+        }
+      ],
+      "revId": "b163a068423ff5a93c887e6497e25b4c420743f1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
