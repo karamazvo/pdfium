@@ -16,6 +16,24 @@
       "message": "Newline above please.\n\nOne thing `git cl format` doesn\u0027t do is handle blank lines in cases like this. So it is still possible to write code, auto-format, and get a nitpick about styling.",
       "revId": "7a71a2e3aaa5a3aa3509f46ac90254d6415a0794",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fef1cd20_cc80036b",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-25T03:46:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "454879a6_2583b728",
+      "revId": "7a71a2e3aaa5a3aa3509f46ac90254d6415a0794",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
