@@ -94,6 +94,30 @@
       },
       "revId": "ee554188e56a3f6cb71e33433f486478835b609d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9ebc2199_13162e89",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 42
+      },
+      "lineNbr": 512,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-26T06:59:18Z",
+      "side": 1,
+      "message": "Oh! I used web editor so I wasn\u0027t able to. Done with removing parenthesis.",
+      "parentUuid": "1609ef4f_64c838b0",
+      "range": {
+        "startLine": 508,
+        "startChar": 0,
+        "endLine": 512,
+        "endChar": 1
+      },
+      "revId": "ee554188e56a3f6cb71e33433f486478835b609d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
