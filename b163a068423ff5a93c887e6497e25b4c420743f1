@@ -81,6 +81,30 @@
       },
       "revId": "b163a068423ff5a93c887e6497e25b4c420743f1",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "20c5afc8_28a65d2c",
+        "filename": "core/fxge/fx_font.h",
+        "patchSetId": 38
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-26T02:52:28Z",
+      "side": 1,
+      "message": "Fix applied. Added the comment. Or would you suggest having the \u003d\u003d check?",
+      "parentUuid": "c550265a_3639093b",
+      "range": {
+        "startLine": 52,
+        "startChar": 11,
+        "endLine": 52,
+        "endChar": 38
+      },
+      "revId": "b163a068423ff5a93c887e6497e25b4c420743f1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
