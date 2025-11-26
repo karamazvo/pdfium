@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5afde902_49d6ddb0",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 489,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-11-26T00:05:22Z",
+      "side": 0,
+      "message": "Chiming in a bit late here, but notice lines 489 to the first half of line 499 is the same as line 511 to the first half of line 521, is the same as line 535 ...\n\nDoes that give a hint for how to best refactor this?",
+      "revId": "f49889b9c0623e5101921e3b76fce4c357fd4ddb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
