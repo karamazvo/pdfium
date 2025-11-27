@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "07fd1335_589ae2ab",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 18
+      },
+      "lineNbr": 491,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-27T03:00:35Z",
+      "side": 1,
+      "message": "Do we consider moving this to the individual callers?",
+      "range": {
+        "startLine": 489,
+        "startChar": 0,
+        "endLine": 491,
+        "endChar": 3
+      },
+      "revId": "f55587e06537bc3847418e34588b1ec5971dbe08",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2b6a0a6e_d5da6d8e",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 18
+      },
+      "lineNbr": 601,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-27T03:00:35Z",
+      "side": 1,
+      "message": "Where do I put this struct, can I leave it here or do i put it in the public file.",
+      "range": {
+        "startLine": 601,
+        "startChar": 0,
+        "endLine": 601,
+        "endChar": 25
+      },
+      "revId": "f55587e06537bc3847418e34588b1ec5971dbe08",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
