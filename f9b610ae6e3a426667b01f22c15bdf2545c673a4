@@ -16,6 +16,29 @@
       "message": "Something the bot spitted out. Might be useful to you.",
       "revId": "f9b610ae6e3a426667b01f22c15bdf2545c673a4",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "44430ea0_75a78a0e",
+        "filename": "tools/rewrite/rewrite_ptrs.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-27T16:29:59Z",
+      "side": 1,
+      "message": "Hi @tsepez@chromium.org quick question:\n\nIf we have something like\n\n```int my_cool_variable \u003d 5;\nint pMyCoolVariable \u003d 10;```\n\nDo we currently guard against the case that `new_name` already exists as a variable somewhere in the file? Not sure if this would occur in the real codebase, so I just wanted to check.\n\nAgain, this would involve a very specific case where both a variable `pMyCoolVariable` and `my_cool_variable` both exist. I think it is unlikely to occur in the real codebase, but I wanted to check.",
+      "range": {
+        "startLine": 89,
+        "startChar": 0,
+        "endLine": 98,
+        "endChar": 12
+      },
+      "revId": "f9b610ae6e3a426667b01f22c15bdf2545c673a4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
