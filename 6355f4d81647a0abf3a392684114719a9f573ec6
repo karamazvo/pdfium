@@ -376,6 +376,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9b09e0b2_01924c5e",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-27T02:43:57Z",
+      "side": 1,
+      "message": "Changed the consilidation behaviour. Resolving, reopen if it still applies now.",
+      "parentUuid": "65586b3e_c78d3dfc",
+      "range": {
+        "startLine": 487,
+        "startChar": 0,
+        "endLine": 487,
+        "endChar": 4
+      },
+      "revId": "6355f4d81647a0abf3a392684114719a9f573ec6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a1fad9b1_4e0b8491",
@@ -625,6 +649,30 @@
       "side": 1,
       "message": "Did you mean editing return GetParamValueHelper(mark, key, out_buflen, ParamValueType::kString, ...) and similar lines to use std::variant\u003c\u003e.\nAm slightly confused because the suggested edit and the line highlighted do not suggest that.",
       "parentUuid": "02d8f2c4_03eea355",
+      "range": {
+        "startLine": 515,
+        "startChar": 0,
+        "endLine": 515,
+        "endChar": 63
+      },
+      "revId": "6355f4d81647a0abf3a392684114719a9f573ec6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dc45c4d3_da3e8b05",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 515,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-27T02:43:57Z",
+      "side": 1,
+      "message": "Changed the consilidation behaviour. Resolving, reopen if it still applies now.",
+      "parentUuid": "3f9cbed0_1ac69837",
       "range": {
         "startLine": 515,
         "startChar": 0,

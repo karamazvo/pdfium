@@ -154,6 +154,30 @@
       },
       "revId": "1119820a6718ab8a7885e7d5543e53b7b5b50925",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8fd07764_54471b17",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-27T02:43:57Z",
+      "side": 1,
+      "message": "Reverted it to the behaviour in PS 10.",
+      "parentUuid": "4884ed20_07226b83",
+      "range": {
+        "startLine": 487,
+        "startChar": 0,
+        "endLine": 487,
+        "endChar": 50
+      },
+      "revId": "1119820a6718ab8a7885e7d5543e53b7b5b50925",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
