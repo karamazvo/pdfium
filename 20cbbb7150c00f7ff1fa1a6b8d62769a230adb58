@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8a0aae31_40158882",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 17
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-11-27T02:00:11Z",
+      "side": 1,
+      "message": "Was having an issue with my local branch, so I had to rebase it.",
+      "revId": "20cbbb7150c00f7ff1fa1a6b8d62769a230adb58",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
