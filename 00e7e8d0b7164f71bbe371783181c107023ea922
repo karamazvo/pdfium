@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fe71efae_f78db762",
+        "filename": "testing/helpers/write.cc",
+        "patchSetId": 3
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-12-01T22:12:30Z",
+      "side": 1,
+      "message": "Is there a missing BGRx option here? It\u0027s not clear to me, but in the BitmapPageRenderer::InitializeBitmap() function that third format was possible.",
+      "revId": "00e7e8d0b7164f71bbe371783181c107023ea922",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7f8c1959_2aa03116",
+        "filename": "testing/pdfium_test.cc",
+        "patchSetId": 3
+      },
+      "lineNbr": 714,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-12-01T22:12:30Z",
+      "side": 1,
+      "message": "Should there be an error if you try this option with the wrong renderer? I thought I had seen errors like that from pdfium_test arg parsing but I\u0027m not seeing it here now that I\u0027m looking at the code.",
+      "revId": "00e7e8d0b7164f71bbe371783181c107023ea922",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8b10d8c2_f902edef",
+        "filename": "testing/pdfium_test.cc",
+        "patchSetId": 3
+      },
+      "lineNbr": 1493,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-12-01T22:12:30Z",
+      "side": 1,
+      "message": "Don\u0027t you need to check the renderer option at runtime? The user might have compiled with Skia but set the flag to use the agg renderer.",
+      "range": {
+        "startLine": 1489,
+        "startChar": 0,
+        "endLine": 1493,
+        "endChar": 6
+      },
+      "revId": "00e7e8d0b7164f71bbe371783181c107023ea922",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a95d6422_00c3cfa6",
+        "filename": "testing/pdfium_test.cc",
+        "patchSetId": 3
+      },
+      "lineNbr": 1834,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-12-01T22:12:30Z",
+      "side": 1,
+      "message": "\"when possible\" is a bit vague. It would be nice to say \"when using the skia renderer\" or something like that.",
+      "range": {
+        "startLine": 1834,
+        "startChar": 5,
+        "endLine": 1834,
+        "endChar": 13
+      },
+      "revId": "00e7e8d0b7164f71bbe371783181c107023ea922",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
