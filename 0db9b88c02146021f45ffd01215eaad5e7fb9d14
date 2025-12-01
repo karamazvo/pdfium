@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "01c9a6a8_ee71151a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-12-01T22:13:10Z",
+      "side": 1,
+      "message": "LGTM, I don\u0027t have vote permissions.",
+      "revId": "0db9b88c02146021f45ffd01215eaad5e7fb9d14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
