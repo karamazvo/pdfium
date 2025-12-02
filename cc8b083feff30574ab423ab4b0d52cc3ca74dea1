@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3f1beda0_8ad44eb3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-12-02T20:12:21Z",
+      "side": 1,
+      "message": "Not sure how to handle code style/formatting for AGG files.",
+      "revId": "cc8b083feff30574ab423ab4b0d52cc3ca74dea1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
