@@ -51,6 +51,24 @@
       "message": "dash_len \u003d std::max(dash_len, 0.000001f);",
       "revId": "cc8b083feff30574ab423ab4b0d52cc3ca74dea1",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "da386e82_59f6c4e0",
+        "filename": "core/fxge/agg/cfx_agg_devicedriver.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2025-12-02T21:46:41Z",
+      "side": 1,
+      "message": "Done, but the final dash lengths will be different for negative dash lengths.",
+      "parentUuid": "b5c8e2b9_01b6027b",
+      "revId": "cc8b083feff30574ab423ab4b0d52cc3ca74dea1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
