@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "96cfd450_a1281bd0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-02T19:02:33Z",
+      "side": 1,
+      "message": "Thanks for putting this together. Can you run `git cl format` (which runs clang-format underneath` to auto-format the code?",
+      "revId": "228218b7c44a9778a23afa31ae094f21d7ba947c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
