@@ -16,6 +16,41 @@
       "message": "Not sure how to handle code style/formatting for AGG files.",
       "revId": "cc8b083feff30574ab423ab4b0d52cc3ca74dea1",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f21c0ad2_96505b74",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-02T21:19:59Z",
+      "side": 1,
+      "message": "Looks ok.",
+      "parentUuid": "3f1beda0_8ad44eb3",
+      "revId": "cc8b083feff30574ab423ab4b0d52cc3ca74dea1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b5c8e2b9_01b6027b",
+        "filename": "core/fxge/agg/cfx_agg_devicedriver.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-02T21:19:59Z",
+      "side": 1,
+      "message": "dash_len \u003d std::max(dash_len, 0.000001f);",
+      "revId": "cc8b083feff30574ab423ab4b0d52cc3ca74dea1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
