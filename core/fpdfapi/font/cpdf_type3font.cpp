@@ -18,6 +18,7 @@
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxge/fx_font.h"
 
 namespace {
 
@@ -97,10 +98,23 @@ bool CPDF_Type3Font::Load() {
   if (font_dict_->GetDirectObjectFor("Encoding")) {
     LoadPDFEncoding(false, false);
   }
+  LoadGlyphMap();
   return true;
 }
 
-void CPDF_Type3Font::LoadGlyphMap() {}
+void CPDF_Type3Font::LoadGlyphMap() {
+  for (size_t charcode = 0; charcode < kInternalTableSize; charcode++) {
+    const char* name = GetAdobeCharName(base_encoding_, char_names_,
+      static_cast<uint32_t>(charcode));
+
+    if (name) {
+      wchar_t unicode = UnicodeFromAdobeName(name);
+      if (unicode != 0) {
+        encoding_.SetUnicode(charcode, unicode);
+      }
+    }
+  }
+}
 
 void CPDF_Type3Font::CheckType3FontMetrics() {
   CheckFontMetrics();
