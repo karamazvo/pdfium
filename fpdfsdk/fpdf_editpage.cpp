@@ -155,6 +155,38 @@ const CPDF_PageObjectHolder* CPDFPageObjHolderFromFPDFFormObject(
   return pFormObject ? pFormObject->form() : nullptr;
 }
 
+RetainPtr<const CPDF_Object> GetParamObject(void* out_value,
+                                            FPDF_PAGEOBJECTMARK mark,
+                                            FPDF_BYTESTRING key) {
+  if (!out_value) {
+    return nullptr;
+  }
+
+  RetainPtr<const CPDF_Dictionary> pParams = GetMarkParamDict(mark);
+  if (!pParams) {
+    return nullptr;
+  }
+
+  return pParams->GetObjectFor(key);
+}
+
+struct pParamsAndObject {
+  RetainPtr<CPDF_Dictionary> pParams;
+  raw_ptr<CPDF_PageObject> pPageObj;
+};
+
+pParamsAndObject SetParamValueHelper(FPDF_DOCUMENT document,
+                                     FPDF_PAGEOBJECT page_object,
+                                     FPDF_PAGEOBJECTMARK mark) {
+  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
+  if (!pPageObj || !PageObjectContainsMark(pPageObj, mark)) {
+    return {nullptr, nullptr};
+  }
+  RetainPtr<CPDF_Dictionary> pParams =
+      GetOrCreateMarkParamsDict(document, mark);
+  return {pParams, pPageObj};
+}
+
 }  // namespace
 
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV FPDF_CreateNewDocument() {
@@ -486,16 +518,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObjMark_GetParamIntValue(FPDF_PAGEOBJECTMARK mark,
                                  FPDF_BYTESTRING key,
                                  int* out_value) {
-  if (!out_value) {
-    return false;
-  }
-
-  RetainPtr<const CPDF_Dictionary> pParams = GetMarkParamDict(mark);
-  if (!pParams) {
-    return false;
-  }
-
-  RetainPtr<const CPDF_Object> pObj = pParams->GetObjectFor(key);
+  RetainPtr<const CPDF_Object> pObj = GetParamObject(out_value, mark, key);
   if (!pObj || !pObj->IsNumber()) {
     return false;
   }
@@ -508,21 +531,12 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObjMark_GetParamFloatValue(FPDF_PAGEOBJECTMARK mark,
                                    FPDF_BYTESTRING key,
                                    float* out_value) {
-  if (!out_value) {
+  RetainPtr<const CPDF_Object> pObj = GetParamObject(out_value, mark, key);
+  if (!pObj || !pObj->IsNumber()) {
     return false;
   }
 
-  RetainPtr<const CPDF_Dictionary> params = GetMarkParamDict(mark);
-  if (!params) {
-    return false;
-  }
-
-  RetainPtr<const CPDF_Object> obj = params->GetObjectFor(key);
-  if (!obj || !obj->IsNumber()) {
-    return false;
-  }
-
-  *out_value = obj->GetNumber();
+  *out_value = pObj->GetNumber();
   return true;
 }
 
@@ -532,16 +546,7 @@ FPDFPageObjMark_GetParamStringValue(FPDF_PAGEOBJECTMARK mark,
                                     FPDF_WCHAR* buffer,
                                     unsigned long buflen,
                                     unsigned long* out_buflen) {
-  if (!out_buflen) {
-    return false;
-  }
-
-  RetainPtr<const CPDF_Dictionary> pParams = GetMarkParamDict(mark);
-  if (!pParams) {
-    return false;
-  }
-
-  RetainPtr<const CPDF_Object> pObj = pParams->GetObjectFor(key);
+  RetainPtr<const CPDF_Object> pObj = GetParamObject(out_buflen, mark, key);
   if (!pObj || !pObj->IsString()) {
     return false;
   }
@@ -559,16 +564,7 @@ FPDFPageObjMark_GetParamBlobValue(FPDF_PAGEOBJECTMARK mark,
                                   unsigned char* buffer,
                                   unsigned long buflen,
                                   unsigned long* out_buflen) {
-  if (!out_buflen) {
-    return false;
-  }
-
-  RetainPtr<const CPDF_Dictionary> pParams = GetMarkParamDict(mark);
-  if (!pParams) {
-    return false;
-  }
-
-  RetainPtr<const CPDF_Object> pObj = pParams->GetObjectFor(key);
+  RetainPtr<const CPDF_Object> pObj = GetParamObject(out_buflen, mark, key);
   if (!pObj || !pObj->IsString()) {
     return false;
   }
@@ -619,19 +615,13 @@ FPDFPageObjMark_SetIntParam(FPDF_DOCUMENT document,
                             FPDF_PAGEOBJECTMARK mark,
                             FPDF_BYTESTRING key,
                             int value) {
-  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
-  if (!pPageObj || !PageObjectContainsMark(pPageObj, mark)) {
+  pParamsAndObject ParamsAndObj =
+      SetParamValueHelper(document, page_object, mark);
+  if (!ParamsAndObj.pParams || !ParamsAndObj.pPageObj) {
     return false;
   }
-
-  RetainPtr<CPDF_Dictionary> pParams =
-      GetOrCreateMarkParamsDict(document, mark);
-  if (!pParams) {
-    return false;
-  }
-
-  pParams->SetNewFor<CPDF_Number>(key, value);
-  pPageObj->SetDirty(true);
+  ParamsAndObj.pParams->SetNewFor<CPDF_Number>(key, value);
+  ParamsAndObj.pPageObj->SetDirty(true);
   return true;
 }
 
@@ -641,18 +631,13 @@ FPDFPageObjMark_SetFloatParam(FPDF_DOCUMENT document,
                               FPDF_PAGEOBJECTMARK mark,
                               FPDF_BYTESTRING key,
                               float value) {
-  CPDF_PageObject* page_obj = CPDFPageObjectFromFPDFPageObject(page_object);
-  if (!page_obj || !PageObjectContainsMark(page_obj, mark)) {
+  pParamsAndObject ParamsAndObj =
+      SetParamValueHelper(document, page_object, mark);
+  if (!ParamsAndObj.pParams || !ParamsAndObj.pPageObj) {
     return false;
   }
-
-  RetainPtr<CPDF_Dictionary> params = GetOrCreateMarkParamsDict(document, mark);
-  if (!params) {
-    return false;
-  }
-
-  params->SetNewFor<CPDF_Number>(key, value);
-  page_obj->SetDirty(true);
+  ParamsAndObj.pParams->SetNewFor<CPDF_Number>(key, value);
+  ParamsAndObj.pPageObj->SetDirty(true);
   return true;
 }
 
@@ -662,19 +647,13 @@ FPDFPageObjMark_SetStringParam(FPDF_DOCUMENT document,
                                FPDF_PAGEOBJECTMARK mark,
                                FPDF_BYTESTRING key,
                                FPDF_BYTESTRING value) {
-  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
-  if (!pPageObj || !PageObjectContainsMark(pPageObj, mark)) {
+  pParamsAndObject ParamsAndObj =
+      SetParamValueHelper(document, page_object, mark);
+  if (!ParamsAndObj.pParams || !ParamsAndObj.pPageObj) {
     return false;
   }
-
-  RetainPtr<CPDF_Dictionary> pParams =
-      GetOrCreateMarkParamsDict(document, mark);
-  if (!pParams) {
-    return false;
-  }
-
-  pParams->SetNewFor<CPDF_String>(key, value);
-  pPageObj->SetDirty(true);
+  ParamsAndObj.pParams->SetNewFor<CPDF_String>(key, value);
+  ParamsAndObj.pPageObj->SetDirty(true);
   return true;
 }
 
@@ -685,26 +664,17 @@ FPDFPageObjMark_SetBlobParam(FPDF_DOCUMENT document,
                              FPDF_BYTESTRING key,
                              const unsigned char* value,
                              unsigned long value_len) {
-  if (!value && value_len > 0) {
-    return false;
-  }
-
-  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
-  if (!pPageObj || !PageObjectContainsMark(pPageObj, mark)) {
-    return false;
-  }
-
-  RetainPtr<CPDF_Dictionary> pParams =
-      GetOrCreateMarkParamsDict(document, mark);
-  if (!pParams) {
+  pParamsAndObject ParamsAndObj =
+      SetParamValueHelper(document, page_object, mark);
+  if (!ParamsAndObj.pParams || !ParamsAndObj.pPageObj) {
     return false;
   }
 
   // SAFETY: required from caller.
-  pParams->SetNewFor<CPDF_String>(
+  ParamsAndObj.pParams->SetNewFor<CPDF_String>(
       key, UNSAFE_BUFFERS(pdfium::span(value, value_len)),
       CPDF_String::DataType::kIsHex);
-  pPageObj->SetDirty(true);
+  ParamsAndObj.pPageObj->SetDirty(true);
   return true;
 }
 
