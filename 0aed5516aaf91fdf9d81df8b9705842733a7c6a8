@@ -59,6 +59,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "317fc246_07731b37",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 485,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-03T02:15:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "74e3e0f0_f1918f20",
+      "range": {
+        "startLine": 485,
+        "startChar": 29,
+        "endLine": 485,
+        "endChar": 59
+      },
+      "revId": "0aed5516aaf91fdf9d81df8b9705842733a7c6a8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2cb643f1_61cc56f4",
@@ -72,6 +96,24 @@
       "writtenOn": "2025-12-03T01:25:49Z",
       "side": 1,
       "message": "No need to declare the variable. Just return directly.",
+      "revId": "0aed5516aaf91fdf9d81df8b9705842733a7c6a8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "710d0672_343d4361",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 498,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-03T02:15:46Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "2cb643f1_61cc56f4",
       "revId": "0aed5516aaf91fdf9d81df8b9705842733a7c6a8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -95,6 +137,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "97586d4a_d6e1da62",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 606,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-03T02:15:46Z",
+      "side": 1,
+      "message": "Ok got it. Would look through this later.",
+      "parentUuid": "e691ca1f_3e694ba6",
+      "revId": "0aed5516aaf91fdf9d81df8b9705842733a7c6a8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "5967b423_0fdbd33f",
         "filename": "fpdfsdk/fpdf_editpage.cpp",
         "patchSetId": 19
@@ -106,6 +166,24 @@
       "writtenOn": "2025-12-03T01:25:49Z",
       "side": 1,
       "message": "Is it safe to call PageObjectContainsMark() without first checking `pPageObj` is non-null?",
+      "revId": "0aed5516aaf91fdf9d81df8b9705842733a7c6a8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "268114d1_e3a8edbd",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 610,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-03T02:15:46Z",
+      "side": 1,
+      "message": "No, it is not safe. Lets change it back to the old behaviour.\nDone.",
+      "parentUuid": "5967b423_0fdbd33f",
       "revId": "0aed5516aaf91fdf9d81df8b9705842733a7c6a8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
