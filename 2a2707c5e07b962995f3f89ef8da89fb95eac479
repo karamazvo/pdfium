@@ -34,6 +34,24 @@
       "parentUuid": "eff6439f_d1f70ccd",
       "revId": "2a2707c5e07b962995f3f89ef8da89fb95eac479",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "20f812bc_9b616108",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-03T18:58:47Z",
+      "side": 1,
+      "message": "Whoops. I saw \"888x\" and ran with it.\n\ninclude/core/SkAlphaType.h says \"If SkAlphaType is kOpaque_SkAlphaType, and SkColorType is not opaque, then the result of drawing any pixel with a alpha value less than 1.0 is undefined.\" However, it looks like SkPngEncoderBase::getTargetInfo() and SkPngRustEncoderImpl::Make() handle kOpaque_SkAlphaType correctly. So could you give it a try?",
+      "parentUuid": "927bb42c_624e4c24",
+      "revId": "2a2707c5e07b962995f3f89ef8da89fb95eac479",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
