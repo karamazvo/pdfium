@@ -122,6 +122,24 @@
       "parentUuid": "8e4a728a_312a3040",
       "revId": "14de170cdf4d1e554d29ef8fd41093d03f600e0b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8609b194_361ac055",
+        "filename": "testing/image_diff/image_diff_png_unittests.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-03T22:06:01Z",
+      "side": 1,
+      "message": "Yes, that\u0027s what I prefer as well. I should have written \"... so remove this check.\" but you got it.",
+      "parentUuid": "822f9e83_7cf00659",
+      "revId": "14de170cdf4d1e554d29ef8fd41093d03f600e0b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
