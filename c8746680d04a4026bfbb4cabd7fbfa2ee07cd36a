@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8dd9f3af_52352f93",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 21
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-03T20:44:58Z",
+      "side": 1,
+      "message": "Just `params`.",
+      "range": {
+        "startLine": 165,
+        "startChar": 35,
+        "endLine": 165,
+        "endChar": 42
+      },
+      "revId": "c8746680d04a4026bfbb4cabd7fbfa2ee07cd36a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4dc40c58_2d4764c7",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 21
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-03T20:44:58Z",
+      "side": 1,
+      "message": "Since this function is unlikely to change, this is the end of the function. As such, it can be shortened to: `return params ? params-\u003eGetObjectFor(key) : nullptr;`\n\nI should have pointed this out in the last round of reviews.",
+      "range": {
+        "startLine": 166,
+        "startChar": 0,
+        "endLine": 170,
+        "endChar": 36
+      },
+      "revId": "c8746680d04a4026bfbb4cabd7fbfa2ee07cd36a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "65362bb0_f8982a4d",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 21
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-03T20:44:58Z",
+      "side": 1,
+      "message": "Same from here to line 188. This is new code, so use Google C++ style names.",
+      "range": {
+        "startLine": 174,
+        "startChar": 29,
+        "endLine": 174,
+        "endChar": 36
+      },
+      "revId": "c8746680d04a4026bfbb4cabd7fbfa2ee07cd36a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3ecf1bda_bc455101",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 21
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-03T20:44:58Z",
+      "side": 1,
+      "message": "Though here, `page_object` already exists, so `pPageObj` will need to be `page_obj` to avoid naming conflicts.",
+      "range": {
+        "startLine": 181,
+        "startChar": 19,
+        "endLine": 181,
+        "endChar": 27
+      },
+      "revId": "c8746680d04a4026bfbb4cabd7fbfa2ee07cd36a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2bd8d213_f6d8bdf9",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 21
+      },
+      "lineNbr": 618,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-03T20:44:58Z",
+      "side": 1,
+      "message": "params_and_obj",
+      "range": {
+        "startLine": 618,
+        "startChar": 18,
+        "endLine": 618,
+        "endChar": 30
+      },
+      "revId": "c8746680d04a4026bfbb4cabd7fbfa2ee07cd36a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
