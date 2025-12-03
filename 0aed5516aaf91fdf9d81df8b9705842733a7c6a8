@@ -34,6 +34,80 @@
       "parentUuid": "9eb8219c_8de2c623",
       "revId": "0aed5516aaf91fdf9d81df8b9705842733a7c6a8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "74e3e0f0_f1918f20",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 485,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-03T01:25:49Z",
+      "side": 1,
+      "message": "Since this is a helper function and not a public API, don\u0027t name it like it\u0027s a public API.",
+      "range": {
+        "startLine": 485,
+        "startChar": 29,
+        "endLine": 485,
+        "endChar": 59
+      },
+      "revId": "0aed5516aaf91fdf9d81df8b9705842733a7c6a8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2cb643f1_61cc56f4",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 498,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-03T01:25:49Z",
+      "side": 1,
+      "message": "No need to declare the variable. Just return directly.",
+      "revId": "0aed5516aaf91fdf9d81df8b9705842733a7c6a8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e691ca1f_3e694ba6",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 606,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-03T01:25:49Z",
+      "side": 1,
+      "message": "Since this is new code, and most of the setter APIs below have been completely re-written, it would be better to use Google C++ style names. https://google.github.io/styleguide/cppguide.html#Type_Names",
+      "revId": "0aed5516aaf91fdf9d81df8b9705842733a7c6a8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5967b423_0fdbd33f",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 610,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-03T01:25:49Z",
+      "side": 1,
+      "message": "Is it safe to call PageObjectContainsMark() without first checking `pPageObj` is non-null?",
+      "revId": "0aed5516aaf91fdf9d81df8b9705842733a7c6a8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
