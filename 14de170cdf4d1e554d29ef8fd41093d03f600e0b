@@ -39,6 +39,47 @@
       },
       "revId": "14de170cdf4d1e554d29ef8fd41093d03f600e0b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "44cd68b5_b332d3c7",
+        "filename": "testing/image_diff/image_diff_png_unittests.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-03T21:50:37Z",
+      "side": 1,
+      "message": "Maybe the caller can call `ASSERT_FALSE(::testing::Test::HasFailure());` after calling this function? I\u0027ve never tried this, but I recently learned about `ASSERT_NO_FATAL_FAILURE()` and this looks like a potential alternative that also checks for non-fatal failures.",
+      "parentUuid": "a889f921_49271da6",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 56
+      },
+      "revId": "14de170cdf4d1e554d29ef8fd41093d03f600e0b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8e4a728a_312a3040",
+        "filename": "testing/image_diff/image_diff_png_unittests.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-03T21:50:37Z",
+      "side": 1,
+      "message": "Callers do this anyway.",
+      "revId": "14de170cdf4d1e554d29ef8fd41093d03f600e0b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
