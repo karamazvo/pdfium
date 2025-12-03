@@ -52,6 +52,24 @@
       "parentUuid": "927bb42c_624e4c24",
       "revId": "2a2707c5e07b962995f3f89ef8da89fb95eac479",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bda8f66b_c9009211",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-12-03T20:18:01Z",
+      "side": 1,
+      "message": "\u003e Whoops. I saw \"888x\" and ran with it.\n\nIt\u0027s almost correct, but I think we would need `kBGR_888x_SkColorType` rather than `kRGB_888x_SkColorType` (to match `FPDFBitmap_BGRx` [used](https://source.chromium.org/chromium/chromium/src/+/main:third_party/pdfium/testing/helpers/write.cc;l\u003d208-210;drc\u003db2d540b15cad394746b9277911ae1192f25158aa) in `//third_party/pdfium/testing/helpers/write.cc` when `discard_transparency` is `true`).  And skia doesn\u0027t provide/define/support the `kBGR_888x_SkColorType` value.\n\n\u003e include/core/SkAlphaType.h says \"If SkAlphaType is kOpaque_SkAlphaType, and SkColorType is not opaque, then the result of drawing any pixel with a alpha value less than 1.0 is undefined.\" However, it looks like SkPngEncoderBase::getTargetInfo() and SkPngRustEncoderImpl::Make() handle kOpaque_SkAlphaType correctly. So could you give it a try?\n\nYes - let\u0027s continue the discussion in https://pdfium-review.googlesource.com/c/pdfium/+/138891 (after CQ passes)",
+      "parentUuid": "20f812bc_9b616108",
+      "revId": "2a2707c5e07b962995f3f89ef8da89fb95eac479",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
