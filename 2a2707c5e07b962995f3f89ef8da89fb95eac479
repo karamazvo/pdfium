@@ -16,6 +16,24 @@
       "message": "BTW, should this function honor this bit and pass in `kRGB_888x_SkColorType` when it\u0027s set to true? I suspect it hasn\u0027t made a difference so far because when it\u0027s set to true, the input just happens to always have 255 as the alpha channel value.",
       "revId": "2a2707c5e07b962995f3f89ef8da89fb95eac479",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "927bb42c_624e4c24",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-12-03T16:45:29Z",
+      "side": 1,
+      "message": "Ugh, sorry for missing that this parameter ends up being unused here.\n\n\u003e BTW, should this function honor this bit and pass in `kRGB_888x_SkColorType` when it\u0027s set to true?\n\nThe `color_type` parameter of `EncodePNG` describes the format of the buffer pointed to by the `input` parameter.  So using `kRGB_888x_SkColorType` would be incorrect.\n\nI don\u0027t really know, but I am guessing that passing `kOpaque_SkAlphaType` (instead of `kUnpremul_SkAlphaType`) may work here.  Is this something you could try?  Or should I work on fixing this?\n\n\u003e I suspect it hasn\u0027t made a difference so far because when it\u0027s set to true, the input just happens to always have 255 as the alpha channel value.\n\nAck.",
+      "parentUuid": "eff6439f_d1f70ccd",
+      "revId": "2a2707c5e07b962995f3f89ef8da89fb95eac479",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
