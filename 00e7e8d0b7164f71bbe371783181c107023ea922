@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "43ee4fde_aee6607f",
+        "filename": "testing/helpers/write.cc",
+        "patchSetId": 3
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-03T18:46:46Z",
+      "side": 1,
+      "message": "This is a pre-existing issue. I\u0027ll try to prepend a CL to fix. There\u0027s also https://pdfium-review.googlesource.com/c/pdfium/+/136570/comment/eff6439f_d1f70ccd/",
+      "parentUuid": "fe71efae_f78db762",
+      "revId": "00e7e8d0b7164f71bbe371783181c107023ea922",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7f8c1959_2aa03116",
@@ -31,6 +49,24 @@
       "writtenOn": "2025-12-01T22:12:30Z",
       "side": 1,
       "message": "Should there be an error if you try this option with the wrong renderer? I thought I had seen errors like that from pdfium_test arg parsing but I\u0027m not seeing it here now that I\u0027m looking at the code.",
+      "revId": "00e7e8d0b7164f71bbe371783181c107023ea922",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2b3e6c62_d0967f0e",
+        "filename": "testing/pdfium_test.cc",
+        "patchSetId": 3
+      },
+      "lineNbr": 714,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-03T18:46:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7f8c1959_2aa03116",
       "revId": "00e7e8d0b7164f71bbe371783181c107023ea922",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -58,6 +94,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1139affc_2f252710",
+        "filename": "testing/pdfium_test.cc",
+        "patchSetId": 3
+      },
+      "lineNbr": 1493,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-03T18:46:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8b10d8c2_f902edef",
+      "range": {
+        "startLine": 1489,
+        "startChar": 0,
+        "endLine": 1493,
+        "endChar": 6
+      },
+      "revId": "00e7e8d0b7164f71bbe371783181c107023ea922",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a95d6422_00c3cfa6",
@@ -71,6 +131,30 @@
       "writtenOn": "2025-12-01T22:12:30Z",
       "side": 1,
       "message": "\"when possible\" is a bit vague. It would be nice to say \"when using the skia renderer\" or something like that.",
+      "range": {
+        "startLine": 1834,
+        "startChar": 5,
+        "endLine": 1834,
+        "endChar": 13
+      },
+      "revId": "00e7e8d0b7164f71bbe371783181c107023ea922",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f0f08b36_3ab5b9d7",
+        "filename": "testing/pdfium_test.cc",
+        "patchSetId": 3
+      },
+      "lineNbr": 1834,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-03T18:46:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a95d6422_00c3cfa6",
       "range": {
         "startLine": 1834,
         "startChar": 5,
