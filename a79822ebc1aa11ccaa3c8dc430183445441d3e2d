@@ -35,6 +35,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ffd69bf7_5a071f6a",
+        "filename": "testing/image_diff/image_diff_png_unittests.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-12-03T21:41:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7ad957e5_e1746a55",
+      "revId": "a79822ebc1aa11ccaa3c8dc430183445441d3e2d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "af94f93d_06831a28",
@@ -48,6 +66,30 @@
       "writtenOn": "2025-12-03T21:28:02Z",
       "side": 1,
       "message": "Stray comment here and repeated in several places below.",
+      "range": {
+        "startLine": 28,
+        "startChar": 34,
+        "endLine": 28,
+        "endChar": 44
+      },
+      "revId": "a79822ebc1aa11ccaa3c8dc430183445441d3e2d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1ddd6ffe_c354d0b4",
+        "filename": "testing/image_diff/image_diff_png_unittests.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-12-03T21:41:52Z",
+      "side": 1,
+      "message": "It was supposed to mean that `false` means `RGBA` output? :-)\n\nI guess I can make this easier to read (and also shorten the test code) by deduplicating this into a helper function.\n\nDone.",
+      "parentUuid": "af94f93d_06831a28",
       "range": {
         "startLine": 28,
         "startChar": 34,

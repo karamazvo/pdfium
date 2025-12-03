@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cbd84ee6_71276e4f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-12-03T21:41:52Z",
+      "side": 1,
+      "message": "@thestig, can you PTAL again?",
+      "revId": "14de170cdf4d1e554d29ef8fd41093d03f600e0b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a889f921_49271da6",
+        "filename": "testing/image_diff/image_diff_png_unittests.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-12-03T21:41:52Z",
+      "side": 1,
+      "message": "I don\u0027t like this part very much.  In theory I could change the return type to `void` to enable using `ASSERT_...` inside this helper.  But then I would dislike having an out parameter... So maybe let\u0027s just leave it as is?",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 56
+      },
+      "revId": "14de170cdf4d1e554d29ef8fd41093d03f600e0b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
