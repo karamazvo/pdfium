@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eff6439f_d1f70ccd",
+        "filename": "testing/image_diff/image_diff_png_skia.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-03T02:25:39Z",
+      "side": 1,
+      "message": "BTW, should this function honor this bit and pass in `kRGB_888x_SkColorType` when it\u0027s set to true? I suspect it hasn\u0027t made a difference so far because when it\u0027s set to true, the input just happens to always have 255 as the alpha channel value.",
+      "revId": "2a2707c5e07b962995f3f89ef8da89fb95eac479",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
