@@ -65,6 +65,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "188a6bdf_901a9839",
+        "filename": "testing/image_diff/image_diff_png_unittests.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-12-03T21:59:52Z",
+      "side": 1,
+      "message": "Indeed.  OTOH the removal of size checks (see the other comment below) means that there would be no fatal `ASSERT...`s here.  So I think there is nothing else to change?",
+      "parentUuid": "44cd68b5_b332d3c7",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 56
+      },
+      "revId": "14de170cdf4d1e554d29ef8fd41093d03f600e0b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8e4a728a_312a3040",
@@ -78,6 +102,24 @@
       "writtenOn": "2025-12-03T21:50:37Z",
       "side": 1,
       "message": "Callers do this anyway.",
+      "revId": "14de170cdf4d1e554d29ef8fd41093d03f600e0b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "822f9e83_7cf00659",
+        "filename": "testing/image_diff/image_diff_png_unittests.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 7232
+      },
+      "writtenOn": "2025-12-03T21:59:52Z",
+      "side": 1,
+      "message": "I think I want to keep the `ASSERT_EQ` in the callers, because the callers then rely on this check when \"deindexing\" individual bytes.  So let me just remove this here.",
+      "parentUuid": "8e4a728a_312a3040",
       "revId": "14de170cdf4d1e554d29ef8fd41093d03f600e0b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
