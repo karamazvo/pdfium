@@ -1935,6 +1935,7 @@ int main(int argc, const char* argv[]) {
   config.m_pIsolate = nullptr;
   config.m_v8EmbedderSlot = 0;
   config.m_pPlatform = nullptr;
+  config.m_FontLibraryType = FPDF_FONTBACKENDTYPE_FREETYPE;
 
   switch (options.use_renderer_type) {
     case RendererType::kDefault:
