@@ -155,7 +155,7 @@ bool CFX_Font::LoadFile(RetainPtr<IFX_SeekableReadStream> pFile,
                         int nFaceIndex) {
   object_tag_ = 0;
   face_ = CFX_Face::OpenFromStream(
-      CFX_GEModule::Get()->GetFontMgr()->GetFTLibrary(), pFile, nFaceIndex);
+      CFX_GEModule::Get()->GetFontMgr()->GetFontLibrary(), pFile, nFaceIndex);
   return !!face_;
 }
 

@@ -63,6 +63,28 @@ bool SearchNode(pdfium::span<const uint8_t> glyph_span,
   return false;
 }
 
+ScopedFXFTLibraryRec InitializeFreeType() {
+  FXFT_LibraryRec* ft_library = nullptr;
+  FT_Init_FreeType(&ft_library);
+  return ScopedFXFTLibraryRec(ft_library);
+}
+
+bool FreeTypeSetLcdFilterMode(FXFT_LibraryRec* ft_library) {
+  return FT_Library_SetLcdFilter(ft_library, FT_LCD_FILTER_DEFAULT) !=
+         FT_Err_Unimplemented_Feature;
+}
+
+bool FreeTypeVersionSupportsHinting(FXFT_LibraryRec* ft_library) {
+  FT_Int major;
+  FT_Int minor;
+  FT_Int patch;
+  FT_Library_Version(ft_library, &major, &minor, &patch);
+  // Freetype versions >= 2.8.1 support hinting even if subpixel rendering is
+  // disabled. https://sourceforge.net/projects/freetype/files/freetype2/2.8.1/
+  return major > 2 || (major == 2 && minor > 8) ||
+         (major == 2 && minor == 8 && patch >= 1);
+}
+
 FT_MM_Var* GetVariationDescriptor(FXFT_FaceRec* face) {
   FT_MM_Var* variation_desc = nullptr;
   FT_Get_MM_Var(face, &variation_desc);
@@ -83,7 +105,8 @@ pdfium::span<const FT_Var_Axis> GetVariationAxis(
 }  // namespace
 
 void FXFTMMVarDeleter::operator()(FT_MM_Var* variation_desc) {
-  FT_Done_MM_Var(CFX_GEModule::Get()->GetFontMgr()->GetFTLibrary(),
+  FT_Done_MM_Var(FreeTypeFontLibrary::GetFTLibrary(
+                     CFX_GEModule::Get()->GetFontMgr()->GetFontLibrary()),
                  variation_desc);
 }
 
@@ -105,26 +128,33 @@ FT_Long ScopedFXFTMMVar::GetAxisMax(size_t index) const {
   return axis_[index].maximum;
 }
 
-ScopedFXFTLibraryRec InitializeFreeType() {
-  FXFT_LibraryRec* ft_library = nullptr;
-  FT_Init_FreeType(&ft_library);
-  return ScopedFXFTLibraryRec(ft_library);
+// static
+FXFT_LibraryRec* FreeTypeFontLibrary::GetFTLibrary(FontLibrary* font_library) {
+  if (!font_library ||
+      font_library->GetType() != FontLibrary::Type::kFreeType) {
+    return nullptr;
+  }
+  return reinterpret_cast<FXFT_LibraryRec*>(font_library->GetHandle());
 }
 
-bool FreeTypeSetLcdFilterMode(FXFT_LibraryRec* ft_library) {
-  return FT_Library_SetLcdFilter(ft_library, FT_LCD_FILTER_DEFAULT) !=
-         FT_Err_Unimplemented_Feature;
+FreeTypeFontLibrary::FreeTypeFontLibrary()
+    : ft_library_(InitializeFreeType()),
+      ft_library_supports_hinting_(
+          FreeTypeSetLcdFilterMode(ft_library_.get()) ||
+          FreeTypeVersionSupportsHinting(ft_library_.get())) {}
+
+FreeTypeFontLibrary::~FreeTypeFontLibrary() = default;
+
+FontLibrary::Type FreeTypeFontLibrary::GetType() {
+  return FontLibrary::Type::kFreeType;
 }
 
-bool FreeTypeVersionSupportsHinting(FXFT_LibraryRec* ft_library) {
-  FT_Int major;
-  FT_Int minor;
-  FT_Int patch;
-  FT_Library_Version(ft_library, &major, &minor, &patch);
-  // Freetype versions >= 2.8.1 support hinting even if subpixel rendering is
-  // disabled. https://sourceforge.net/projects/freetype/files/freetype2/2.8.1/
-  return major > 2 || (major == 2 && minor > 8) ||
-         (major == 2 && minor == 8 && patch >= 1);
+void* FreeTypeFontLibrary::GetHandle() {
+  return ft_library_.get();
+}
+
+bool FreeTypeFontLibrary::SupportsHinting() {
+  return ft_library_supports_hinting_;
 }
 
 int FXFT_unicode_from_adobe_name(const char* glyph_name) {

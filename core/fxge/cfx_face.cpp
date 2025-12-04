@@ -325,13 +325,14 @@ FX_RECT ScaledFXRectFromFTPos(FT_Pos left,
 }  // namespace
 
 // static
-RetainPtr<CFX_Face> CFX_Face::New(FT_Library library,
+RetainPtr<CFX_Face> CFX_Face::New(FontLibrary* library,
                                   RetainPtr<Retainable> desc,
                                   pdfium::span<const uint8_t> data,
                                   uint32_t face_index) {
   FXFT_FaceRec* face_rec = nullptr;
   if (FT_New_Memory_Face(
-          library, data.data(), pdfium::checked_cast<FT_Long>(data.size()),
+          FreeTypeFontLibrary::GetFTLibrary(library), data.data(),
+          pdfium::checked_cast<FT_Long>(data.size()),
           pdfium::checked_cast<FT_Long>(face_index), &face_rec) != 0) {
     return nullptr;
   }
@@ -341,15 +342,12 @@ RetainPtr<CFX_Face> CFX_Face::New(FT_Library library,
 
 #if BUILDFLAG(IS_ANDROID) || defined(PDF_ENABLE_XFA)
 // static
-RetainPtr<CFX_Face> CFX_Face::Open(FT_Library library,
+RetainPtr<CFX_Face> CFX_Face::Open(FontLibrary* library,
                                    const FT_Open_Args* args,
                                    uint32_t face_index) {
-  if (!library) {
-    return nullptr;
-  }
   FXFT_FaceRec* face_rec = nullptr;
-  if (FT_Open_Face(library, args, pdfium::checked_cast<FT_Long>(face_index),
-                   &face_rec) != 0) {
+  if (FT_Open_Face(FreeTypeFontLibrary::GetFTLibrary(library), args,
+                   pdfium::checked_cast<FT_Long>(face_index), &face_rec) != 0) {
     return nullptr;
   }
 
@@ -359,7 +357,7 @@ RetainPtr<CFX_Face> CFX_Face::Open(FT_Library library,
 #endif
 
 #if BUILDFLAG(IS_ANDROID)
-RetainPtr<CFX_Face> CFX_Face::OpenFromFilePath(FT_Library library,
+RetainPtr<CFX_Face> CFX_Face::OpenFromFilePath(FontLibrary* library,
                                                ByteStringView path,
                                                int32_t face_index) {
   if (path.IsEmpty()) {
@@ -384,7 +382,7 @@ RetainPtr<CFX_Face> CFX_Face::OpenFromFilePath(FT_Library library,
 
 #if defined(PDF_ENABLE_XFA)
 RetainPtr<CFX_Face> CFX_Face::OpenFromStream(
-    FT_Library library,
+    FontLibrary* library,
     const RetainPtr<IFX_SeekableReadStream>& font_stream,
     uint32_t face_index) {
   if (!font_stream) {
@@ -609,8 +607,10 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(
             36655;
     FT_Outline_Embolden(&glyph->outline, level.ValueOrDefault(0));
   }
-  FT_Library_SetLcdFilter(CFX_GEModule::Get()->GetFontMgr()->GetFTLibrary(),
-                          FT_LCD_FILTER_DEFAULT);
+  FT_Library_SetLcdFilter(
+      FreeTypeFontLibrary::GetFTLibrary(
+          CFX_GEModule::Get()->GetFontMgr()->GetFontLibrary()),
+      FT_LCD_FILTER_DEFAULT);
   error = FT_Render_Glyph(glyph, static_cast<FT_Render_Mode>(anti_alias));
   if (error) {
     return nullptr;

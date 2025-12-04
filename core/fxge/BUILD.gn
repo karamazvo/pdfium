@@ -77,6 +77,7 @@ source_set("fxge") {
     "dib/fx_dib.cpp",
     "dib/fx_dib.h",
     "dib/scanlinecomposer_iface.h",
+    "font_library.h",
     "fontdata/chromefontdata/FoxitDingbats.cpp",
     "fontdata/chromefontdata/FoxitFixed.cpp",
     "fontdata/chromefontdata/FoxitFixedBold.cpp",
