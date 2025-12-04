@@ -15,6 +15,7 @@
 #include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/cfx_substfont.h"
+#include "core/fxge/font_library.h"
 #include "core/fxge/fontdata/chromefontdata/chromefontdata.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/systemfontinfo_iface.h"
@@ -61,7 +62,7 @@ CFX_Face* CFX_FontMgr::FontDesc::GetFace(size_t index) const {
 }
 
 CFX_FontMgr::CFX_FontMgr()
-    : font_library_(std::make_unique<FreeTypeFontLibrary>()),
+    : font_library_(FontLibrary::Create()),
       builtin_mapper_(std::make_unique<CFX_FontMapper>(this)) {}
 
 CFX_FontMgr::~CFX_FontMgr() = default;

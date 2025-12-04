@@ -20,7 +20,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/android/cfpf_skiafont.h"
 #include "core/fxge/android/cfpf_skiapathfont.h"
-#include "core/fxge/freetype/fx_freetype.h"
+#include "core/fxge/font_library.h"
 #include "core/fxge/fx_font.h"
 
 namespace {
@@ -222,7 +222,7 @@ CFPF_SkiaFontMgr::~CFPF_SkiaFontMgr() = default;
 
 bool CFPF_SkiaFontMgr::InitFontLibrary() {
   if (!font_library_) {
-    font_library_ = std::make_unique<FreeTypeFontLibrary>();
+    font_library_ = FontLibrary::Create();
   }
   return !!font_library_->GetHandle();
 }

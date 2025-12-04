@@ -51,6 +51,7 @@
 #include "core/fxge/cfx_glyphcache.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
+#include "core/fxge/font_library.h"
 #include "fpdfsdk/cpdfsdk_customaccess.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
@@ -98,6 +99,14 @@ static_assert(
     FPDF_PRINTMODE_POSTSCRIPT3_TYPE42_PASSTHROUGH);
 #endif  // BUILDFLAG(IS_WIN)
 
+// These checks are here because core/ and public/ cannot depend on each other.
+static_assert(static_cast<int>(FontLibrary::Type::kFreeType) ==
+              FPDF_FONTBACKENDTYPE_FREETYPE);
+#if defined(PDF_ENABLE_FONTATIONS)
+static_assert(static_cast<int>(FontLibrary::Type::kFontations) ==
+              FPDF_FONTBACKENDTYPE_FONTATIONS);
+#endif  // defined(PDF_ENABLE_FONTATIONS)
+
 #if defined(PDF_USE_SKIA)
 // These checks are here because core/ and public/ cannot depend on each other.
 static_assert(static_cast<int>(CFX_DefaultRenderDevice::RendererType::kAgg) ==
@@ -109,6 +118,20 @@ static_assert(static_cast<int>(CFX_DefaultRenderDevice::RendererType::kSkia) ==
 namespace {
 
 bool g_bLibraryInitialized = false;
+
+void SetFontLibraryType(FPDF_FONT_BACKEND_TYPE public_type) {
+  // FreeType is always present in a build. `FPDF_FONTBACKENDTYPE_FONTATIONS` is
+  // valid to use only if it is included in the build.
+#if defined(PDF_ENABLE_FONTATIONS)
+  // This build configuration has the option for runtime font library selection.
+  CHECK(public_type == FPDF_FONTBACKENDTYPE_FREETYPE ||
+        public_type == FPDF_FONTBACKENDTYPE_FONTATIONS);
+  FontLibrary::SetType(static_cast<FontLibrary::Type>(public_type));
+#else
+  // FreeType-only builds should always use `FPDF_FONTBACKENDTYPE_FREETYPE`.
+  CHECK_EQ(public_type, FPDF_FONTBACKENDTYPE_FREETYPE);
+#endif
+}
 
 void SetRendererType(FPDF_RENDERER_TYPE public_type) {
   // Internal definition of renderer types must stay updated with respect to
@@ -247,6 +270,9 @@ FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* config) {
     if (config->version >= 4) {
       SetRendererType(config->m_RendererType);
     }
+    if (config->version >= 5) {
+      SetFontLibraryType(config->m_FontLibraryType);
+    }
   }
   g_bLibraryInitialized = true;
 }
@@ -257,6 +283,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_DestroyLibrary() {
   }
 
   // Note: we teardown/destroy things in reverse order.
+  FontLibrary::SetType(FontLibrary::kDefaultType);
+
   ResetRendererType();
 
   IJS_Runtime::Destroy();
