@@ -16,6 +16,57 @@
       "message": "LGTM",
       "revId": "43e9e9e63819f5fe8c57c30a45ce51156d841837",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6b366b2c_9595f10e",
+        "filename": "testing/helpers/write.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-12-04T20:56:33Z",
+      "side": 1,
+      "message": "nit:, would be happier if these were size_t but no matter.",
+      "range": {
+        "startLine": 19,
+        "startChar": 6,
+        "endLine": 19,
+        "endChar": 11
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "e91935e0_8ba1b398",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "testing/helpers/write.h",
+              "range": {
+                "startLine": 8,
+                "startChar": 0,
+                "endLine": 8,
+                "endChar": 0
+              },
+              "replacement": "#include \u003ccstddef\u003e\n"
+            },
+            {
+              "path": "testing/helpers/write.h",
+              "range": {
+                "startLine": 19,
+                "startChar": 0,
+                "endLine": 22,
+                "endChar": 0
+              },
+              "replacement": "  size_t width;\n  size_t height;\n  size_t stride;\n"
+            }
+          ]
+        }
+      ],
+      "revId": "43e9e9e63819f5fe8c57c30a45ce51156d841837",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
