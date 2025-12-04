@@ -1,0 +1,68 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bfc8d03b_31c1d53f",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 6715
+      },
+      "writtenOn": "2025-12-04T08:51:23Z",
+      "side": 1,
+      "message": "Can we make this a non-machine specific type? Max number of fonts in a TTC is 2^32, compare https://learn.microsoft.com/en-us/typography/opentype/spec/otff#collections:~:text\u003dTTCHeader%20Version%202.0%3A",
+      "range": {
+        "startLine": 67,
+        "startChar": 33,
+        "endLine": 67,
+        "endChar": 39
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "9798a032_5c86516f",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxge/cfx_face.h",
+              "range": {
+                "startLine": 67,
+                "startChar": 0,
+                "endLine": 68,
+                "endChar": 0
+              },
+              "replacement": "                                 uint32_t face_index);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "2632caa6efcdf3473c3b56a0986281b84194119c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c97cbfad_845e1083",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 6715
+      },
+      "writtenOn": "2025-12-04T08:51:23Z",
+      "side": 1,
+      "message": "Ditto.",
+      "range": {
+        "startLine": 177,
+        "startChar": 34,
+        "endLine": 177,
+        "endChar": 40
+      },
+      "revId": "2632caa6efcdf3473c3b56a0986281b84194119c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
