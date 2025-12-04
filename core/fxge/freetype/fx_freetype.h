@@ -12,6 +12,7 @@
 #include <memory>
 
 #include "core/fxcrt/span.h"
+#include "core/fxge/font_library.h"
 
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
@@ -57,9 +58,24 @@ class ScopedFXFTMMVar {
   const pdfium::span<const FT_Var_Axis> axis_;
 };
 
-ScopedFXFTLibraryRec InitializeFreeType();
-bool FreeTypeSetLcdFilterMode(FXFT_LibraryRec* ft_library);
-bool FreeTypeVersionSupportsHinting(FXFT_LibraryRec* ft_library);
+class FreeTypeFontLibrary : public FontLibrary {
+ public:
+  static FXFT_LibraryRec* GetFTLibrary(FontLibrary* font_library);
+
+  FreeTypeFontLibrary();
+  FreeTypeFontLibrary(const FreeTypeFontLibrary&) = delete;
+  FreeTypeFontLibrary& operator=(const FreeTypeFontLibrary&) = delete;
+  ~FreeTypeFontLibrary() override;
+
+  // FontLibrary:
+  Type GetType() override;
+  void* GetHandle() override;
+  bool SupportsHinting() override;
+
+ private:
+  ScopedFXFTLibraryRec ft_library_;
+  const bool ft_library_supports_hinting_;
+};
 
 int FXFT_unicode_from_adobe_name(const char* glyph_name);
 void FXFT_adobe_name_from_unicode(pdfium::span<char> name_buf, wchar_t unicode);

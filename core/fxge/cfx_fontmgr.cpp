@@ -61,11 +61,8 @@ CFX_Face* CFX_FontMgr::FontDesc::GetFace(size_t index) const {
 }
 
 CFX_FontMgr::CFX_FontMgr()
-    : ft_library_(InitializeFreeType()),
-      builtin_mapper_(std::make_unique<CFX_FontMapper>(this)),
-      ft_library_supports_hinting_(
-          FreeTypeSetLcdFilterMode(ft_library_.get()) ||
-          FreeTypeVersionSupportsHinting(ft_library_.get())) {}
+    : font_library_(std::make_unique<FreeTypeFontLibrary>()),
+      builtin_mapper_(std::make_unique<CFX_FontMapper>(this)) {}
 
 CFX_FontMgr::~CFX_FontMgr() = default;
 
@@ -108,7 +105,7 @@ RetainPtr<CFX_Face> CFX_FontMgr::NewFixedFace(RetainPtr<FontDesc> desc,
                                               pdfium::span<const uint8_t> span,
                                               size_t face_index) {
   RetainPtr<CFX_Face> face =
-      CFX_Face::New(ft_library_.get(), std::move(desc), span, face_index);
+      CFX_Face::New(font_library_.get(), std::move(desc), span, face_index);
   if (!face || !face->SetPixelSize(64, 64)) {
     return nullptr;
   }
