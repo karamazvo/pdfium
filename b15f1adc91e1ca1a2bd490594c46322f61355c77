@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "30ec2e48_513b328e",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 22
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-04T03:29:18Z",
+      "side": 1,
+      "message": "Either way is fine.",
+      "parentUuid": "58a8a156_ad5baaf2",
+      "range": {
+        "startLine": 171,
+        "startChar": 27,
+        "endLine": 171,
+        "endChar": 35
+      },
+      "revId": "b15f1adc91e1ca1a2bd490594c46322f61355c77",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "3a93ca33_2de87209",
         "filename": "fpdfsdk/fpdf_editpage.cpp",
         "patchSetId": 22
@@ -37,6 +61,30 @@
       "writtenOn": "2025-12-04T03:25:19Z",
       "side": 1,
       "message": "Let me know if I change pObj here to obj or object or something similar? The old code still had pObj.",
+      "range": {
+        "startLine": 516,
+        "startChar": 31,
+        "endLine": 516,
+        "endChar": 35
+      },
+      "revId": "b15f1adc91e1ca1a2bd490594c46322f61355c77",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4bda341e_3e276182",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 22
+      },
+      "lineNbr": 516,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-04T03:29:18Z",
+      "side": 1,
+      "message": "It\u0027s ok to leave it. These can be (mass) renamed another time.",
+      "parentUuid": "3a93ca33_2de87209",
       "range": {
         "startLine": 516,
         "startChar": 31,
