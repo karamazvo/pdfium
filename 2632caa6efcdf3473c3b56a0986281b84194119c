@@ -42,6 +42,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a4211541_31f83c5a",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-04T17:50:06Z",
+      "side": 1,
+      "message": "Yes, we can, but it\u0027s a bit viral in that I have to fix some callers to avoid -Wshorten-64-to-32 warnings. So I prepended a CL to do that first.",
+      "parentUuid": "bfc8d03b_31c1d53f",
+      "range": {
+        "startLine": 67,
+        "startChar": 33,
+        "endLine": 67,
+        "endChar": 39
+      },
+      "revId": "2632caa6efcdf3473c3b56a0986281b84194119c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c97cbfad_845e1083",
@@ -55,6 +79,30 @@
       "writtenOn": "2025-12-04T08:51:23Z",
       "side": 1,
       "message": "Ditto.",
+      "range": {
+        "startLine": 177,
+        "startChar": 34,
+        "endLine": 177,
+        "endChar": 40
+      },
+      "revId": "2632caa6efcdf3473c3b56a0986281b84194119c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3b40e34f_df40f9c7",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-04T17:50:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c97cbfad_845e1083",
       "range": {
         "startLine": 177,
         "startChar": 34,
