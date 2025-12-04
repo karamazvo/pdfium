@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e065b447_fb0c6e35",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6715
+      },
+      "writtenOn": "2025-12-04T08:30:49Z",
+      "side": 1,
+      "message": "This is LGTM, but honestly I am not so sure if the `FontLibrary` abstraction will work 1:1 for the Fontations integration. Fontations carries much less state, and in the Skia integration of Fontations, we no longer had a need for a global `FT_Library` like state object. We only needed more fine-grained state carrying objects like one for the font handle, or one for the glyph collections or one for hinting configuration state. Please consider that before landing. More invasive changes might be needed here - which would obviate the need for having this abstraction.",
+      "revId": "40f96e766053f71a5838c96101a816f0ab8d1294",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "21f8e08d_06cc0d5b",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 494,
+      "author": {
+        "id": 6715
+      },
+      "writtenOn": "2025-12-04T08:30:49Z",
+      "side": 1,
+      "message": "I think it\u0027d still be useful to have an explicit type here.",
+      "range": {
+        "startLine": 494,
+        "startChar": 2,
+        "endLine": 494,
+        "endChar": 8
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "627326e6_c371ab22",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "xfa/fgas/font/cfgas_fontmgr.cpp",
+              "range": {
+                "startLine": 34,
+                "startChar": 0,
+                "endLine": 34,
+                "endChar": 0
+              },
+              "replacement": "#include \"core/fxge/cfx_font обита.h\"\n"
+            },
+            {
+              "path": "xfa/fgas/font/cfgas_fontmgr.cpp",
+              "range": {
+                "startLine": 494,
+                "startChar": 0,
+                "endLine": 495,
+                "endChar": 0
+              },
+              "replacement": "  CFX_FontLibrary* font_library \u003d\n      CFX_GEModule::Get()-\u003eGetFontMgr()-\u003eGetFontLibrary();\n"
+            }
+          ]
+        }
+      ],
+      "revId": "40f96e766053f71a5838c96101a816f0ab8d1294",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
