@@ -220,13 +220,11 @@ CFPF_SkiaFontMgr::CFPF_SkiaFontMgr() = default;
 
 CFPF_SkiaFontMgr::~CFPF_SkiaFontMgr() = default;
 
-bool CFPF_SkiaFontMgr::InitFTLibrary() {
-  if (ft_library_) {
-    return true;
+bool CFPF_SkiaFontMgr::InitFontLibrary() {
+  if (!font_library_) {
+    font_library_ = std::make_unique<FreeTypeFontLibrary>();
   }
-
-  ft_library_ = InitializeFreeType();
-  return !!ft_library_;
+  return !!font_library_->GetHandle();
 }
 
 void CFPF_SkiaFontMgr::LoadFonts(const char** user_paths) {
@@ -339,7 +337,7 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(ByteStringView family_name,
 
 RetainPtr<CFX_Face> CFPF_SkiaFontMgr::GetFontFace(ByteStringView path,
                                                   int32_t face_index) {
-  return CFX_Face::OpenFromFilePath(ft_library_.get(), path, face_index);
+  return CFX_Face::OpenFromFilePath(font_library_.get(), path, face_index);
 }
 
 void CFPF_SkiaFontMgr::ScanPath(const ByteString& path) {

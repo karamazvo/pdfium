@@ -20,10 +20,10 @@
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
-#include "core/fxge/cfx_face.h"
-#include "core/fxge/freetype/fx_freetype.h"
 
+class CFX_Face;
 class CFX_FontMapper;
+class FontLibrary;
 
 class CFX_FontMgr {
  public:
@@ -71,16 +71,15 @@ class CFX_FontMgr {
   // Always present.
   CFX_FontMapper* GetBuiltinMapper() const { return builtin_mapper_.get(); }
 
-  FXFT_LibraryRec* GetFTLibrary() const { return ft_library_.get(); }
-  bool FTLibrarySupportsHinting() const { return ft_library_supports_hinting_; }
+  // Always present.
+  FontLibrary* GetFontLibrary() const { return font_library_.get(); }
 
  private:
   // Must come before |builtin_mapper_| and |face_map_|.
-  ScopedFXFTLibraryRec const ft_library_;
+  std::unique_ptr<FontLibrary> const font_library_;
   std::unique_ptr<CFX_FontMapper> builtin_mapper_;
   std::map<std::tuple<ByteString, int, bool>, ObservedPtr<FontDesc>> face_map_;
   std::map<std::tuple<size_t, uint32_t>, ObservedPtr<FontDesc>> ttc_face_map_;
-  const bool ft_library_supports_hinting_;
 };
 
 #endif  // CORE_FXGE_CFX_FONTMGR_H_

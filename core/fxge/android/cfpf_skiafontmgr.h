@@ -15,10 +15,10 @@
 #include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_face.h"
-#include "core/fxge/freetype/fx_freetype.h"
 
 class CFPF_SkiaFont;
 class CFPF_SkiaPathFont;
+class FontLibrary;
 
 class CFPF_SkiaFontMgr {
  public:
@@ -30,7 +30,7 @@ class CFPF_SkiaFontMgr {
                             FX_Charset charset,
                             uint32_t style);
 
-  bool InitFTLibrary();
+  bool InitFontLibrary();
   RetainPtr<CFX_Face> GetFontFace(ByteStringView path, int32_t face_index);
 
  private:
@@ -41,7 +41,7 @@ class CFPF_SkiaFontMgr {
                                                 int face_index);
 
   bool loaded_fonts_ = false;
-  ScopedFXFTLibraryRec ft_library_;
+  std::unique_ptr<FontLibrary> font_library_;
   std::vector<std::unique_ptr<CFPF_SkiaPathFont>> font_faces_;
   // Key is a hash based on CreateFont() parameters.
   std::map<uint32_t, std::unique_ptr<CFPF_SkiaFont>> family_font_map_;
