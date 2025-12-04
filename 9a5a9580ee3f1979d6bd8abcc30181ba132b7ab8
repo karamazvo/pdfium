@@ -1,0 +1,45 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3503269f_26d6469b",
+        "filename": "core/fxge/freetype/fx_freetype.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 6715
+      },
+      "writtenOn": "2025-12-04T08:22:07Z",
+      "side": 1,
+      "message": "The project is no longer at this location. I\u0027d suggest to update the link.",
+      "range": {
+        "startLine": 125,
+        "startChar": 15,
+        "endLine": 125,
+        "endChar": 79
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "7f2650e4_41170520",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxge/freetype/fx_freetype.cpp",
+              "range": {
+                "startLine": 125,
+                "startChar": 0,
+                "endLine": 126,
+                "endChar": 0
+              },
+              "replacement": "  // disabled. See https://gitlab.com/freetype/freetype/-/blob/VER-2-8-1/docs/CHANGES\n"
+            }
+          ]
+        }
+      ],
+      "revId": "9a5a9580ee3f1979d6bd8abcc30181ba132b7ab8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
