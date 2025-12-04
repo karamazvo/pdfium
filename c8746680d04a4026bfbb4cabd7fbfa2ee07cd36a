@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fa4b7b31_b38770d5",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 21
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-04T03:09:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8dd9f3af_52352f93",
+      "range": {
+        "startLine": 165,
+        "startChar": 35,
+        "endLine": 165,
+        "endChar": 42
+      },
+      "revId": "c8746680d04a4026bfbb4cabd7fbfa2ee07cd36a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4dc40c58_2d4764c7",
@@ -37,6 +61,30 @@
       "writtenOn": "2025-12-03T20:44:58Z",
       "side": 1,
       "message": "Since this function is unlikely to change, this is the end of the function. As such, it can be shortened to: `return params ? params-\u003eGetObjectFor(key) : nullptr;`\n\nI should have pointed this out in the last round of reviews.",
+      "range": {
+        "startLine": 166,
+        "startChar": 0,
+        "endLine": 170,
+        "endChar": 36
+      },
+      "revId": "c8746680d04a4026bfbb4cabd7fbfa2ee07cd36a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f2a39b11_56c08dac",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 21
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-04T03:09:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4dc40c58_2d4764c7",
       "range": {
         "startLine": 166,
         "startChar": 0,
@@ -70,6 +118,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3a34c950_5d98d497",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 21
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-04T03:09:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "65362bb0_f8982a4d",
+      "range": {
+        "startLine": 174,
+        "startChar": 29,
+        "endLine": 174,
+        "endChar": 36
+      },
+      "revId": "c8746680d04a4026bfbb4cabd7fbfa2ee07cd36a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3ecf1bda_bc455101",
@@ -93,6 +165,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e0394dc2_92682072",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 21
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-04T03:09:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3ecf1bda_bc455101",
+      "range": {
+        "startLine": 181,
+        "startChar": 19,
+        "endLine": 181,
+        "endChar": 27
+      },
+      "revId": "c8746680d04a4026bfbb4cabd7fbfa2ee07cd36a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2bd8d213_f6d8bdf9",
@@ -106,6 +202,30 @@
       "writtenOn": "2025-12-03T20:44:58Z",
       "side": 1,
       "message": "params_and_obj",
+      "range": {
+        "startLine": 618,
+        "startChar": 18,
+        "endLine": 618,
+        "endChar": 30
+      },
+      "revId": "c8746680d04a4026bfbb4cabd7fbfa2ee07cd36a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "96b0d498_9ca2d3fa",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 21
+      },
+      "lineNbr": 618,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-04T03:09:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2bd8d213_f6d8bdf9",
       "range": {
         "startLine": 618,
         "startChar": 18,
