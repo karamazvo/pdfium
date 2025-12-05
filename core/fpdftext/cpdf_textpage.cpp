@@ -885,9 +885,10 @@ void CPDF_TextPage::ProcessTextObject(
     const CFX_Matrix& form_matrix,
     const CPDF_PageObjectHolder* pObjList,
     CPDF_PageObjectHolder::const_iterator ObjPos) {
-  if (fabs(pTextObj->GetRect().Width()) < kSizeEpsilon) {
-    return;
-  }
+  // if (fabs(pTextObj->GetRect().Width()) < kSizeEpsilon) {
+  //   return;
+  // }
+  // Remove check for now to fix 444176962 and 40643656
 
   size_t count = text_objects_.size();
   TransformedTextObject new_obj;

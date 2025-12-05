@@ -2354,3 +2354,12 @@ TEST_F(FPDFTextEmbedderTest, Bug431824298) {
   EXPECT_EQ(0, FPDFText_GetSchResultIndex(search.get()));
   EXPECT_EQ(0, FPDFText_GetSchCount(search.get()));
 }
+
+TEST_F(FPDFTextEmbedderTest, WhitespaceCharCount) {
+  ASSERT_TRUE(OpenDocument("whitespace.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+  EXPECT_EQ(1, FPDFText_CountChars(textpage.get()));
+}
