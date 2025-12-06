@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b483edc7_47741f9b",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1209,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-06T16:39:51Z",
+      "side": 1,
+      "message": "Done to take into account some additional spaces including the first two characters (which were previously omitted) U+0418 and U+0020. Was not able to fully verify (since I did not have a russian font and for that reason acrobat showed question marks instead of the actual font).\n\nWhat I instead did to verify this was look at the output pattern. I relied on the fact that U+0418 maps consistently in both Acrobat and PDFium (assuming nothing wrong with either in terms of unicode-\u003etext conversion).\n\nBoth (acrobat and PDFium) generated a spacing pattern as:\n```\nx xxxxx xx xxxxxxxx xxxxxxxxx xxxxxx \\r\\n\nxxxxxxx xxxxxxxxx xxxx xxxxxx x xxxxxx \\r\\n\n... 4 more lines\n```\n\nBoth tools produce identical space/newline placement across all lines. Hence we can deduce that the character count of the edited version matches acrobat. Hence I verified that the 278 from the new version is indeed correct.\n\nLet me know if there is an issue with my logic here, or if I am missing something.\n\nNote: the old pdfium code does not follow the pattern, the first line begins with\n\n`xxxxx xx ...` instead of the expected `x xxxxx xx ...`. In addition some other spaces and characters are removed throughout.\nHence resulting in a lower count of 268 (as it was initially), and hence why 278 is correct.",
+      "range": {
+        "startLine": 1209,
+        "startChar": 12,
+        "endLine": 1209,
+        "endChar": 15
+      },
+      "revId": "0514b26b8ea0ac6ba5f343183c06dee89777274e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "56855374_e5694d9f",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 2194,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-06T16:39:51Z",
+      "side": 1,
+      "message": "After testing the in acrobat, it gives the output \"world world\".This matched the edited version. This suggests that \"world world\" is correct. Following this I looked at the initial report which suggested a similar issue with \"wide wide\" omitting certain characters. This justifies that \"world world\" was indeed the correct output.\n\nSince 2 characters were added overall, I added 2 to the number of characters.",
+      "range": {
+        "startLine": 2194,
+        "startChar": 59,
+        "endLine": 2194,
+        "endChar": 64
+      },
+      "revId": "0514b26b8ea0ac6ba5f343183c06dee89777274e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
