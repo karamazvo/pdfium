@@ -38,7 +38,7 @@
 namespace {
 
 constexpr float kDefaultFontSize = 1.0f;
-constexpr float kSizeEpsilon = 0.01f;
+constexpr float kSizeEpsilon = 0.0f;
 constexpr std::array<pdfium::span<const uint16_t>, 3>
     kUnicodeDataNormalizationMaps = {{kUnicodeDataNormalizationMap2,
                                       kUnicodeDataNormalizationMap3,
@@ -845,6 +845,11 @@ void CPDF_TextPage::CloseTempLine() {
     if (str[i] != ' ') {
       bPrevSpace = false;
       continue;
+    } else if (i + 1 >= str.GetLength()) {
+      temp_text_buf_.Delete(i, 1);
+      temp_char_list_.erase(temp_char_list_.begin() + i);
+      str.Delete(i);
+      --i;
     }
     if (bPrevSpace) {
       temp_text_buf_.Delete(i, 1);
