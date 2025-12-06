@@ -50,15 +50,18 @@ bool VerifyUnicode(const RetainPtr<CFGAS_GEFont>& font, wchar_t wcUnicode) {
     return false;
   }
 
-  CFX_Face::CharMap charmap = face->GetCurrentCharMap();
+  std::optional<size_t> charmap_index = face->GetCurrentCharMapIndex();
   if (!face->SelectCharMap(fxge::FontEncoding::kUnicode)) {
     return false;
   }
 
   if (face->GetCharIndex(wcUnicode) == 0) {
-    face->SetCharMap(charmap);
+    if (charmap_index.has_value()) {
+      face->SetCharMapByIndex(charmap_index.value());
+    }
     return false;
   }
+
   return true;
 }
 

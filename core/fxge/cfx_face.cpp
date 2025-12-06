@@ -913,9 +913,22 @@ std::vector<CFX_Face::CharCodeAndIndex> CFX_Face::GetCharCodesAndIndices(
   }
 }
 
-CFX_Face::CharMap CFX_Face::GetCurrentCharMap() const {
-  return GetRec()->charmap;
+#if defined(PDF_ENABLE_XFA)
+std::optional<size_t> CFX_Face::GetCurrentCharMapIndex() const {
+  auto* charmap = GetRec()->charmap;
+  if (!charmap) {
+    return std::nullopt;
+  }
+
+  pdfium::span<const FT_CharMap> char_maps = GetCharMaps();
+  for (size_t i = 0; i < char_maps.size(); ++i) {
+    if (char_maps[i] == charmap) {
+      return i;
+    }
+  }
+  NOTREACHED();
 }
+#endif  // defined(PDF_ENABLE_XFA)
 
 std::optional<fxge::FontEncoding> CFX_Face::GetCurrentCharMapEncoding() const {
   if (!GetRec()->charmap) {
@@ -953,14 +966,19 @@ size_t CFX_Face::GetCharMapCount() const {
              : 0;
 }
 
-void CFX_Face::SetCharMap(CharMap map) {
-  FT_Set_Charmap(GetRec(), static_cast<FT_CharMap>(map));
-}
-
 void CFX_Face::SetCharMapByIndex(size_t index) {
   CHECK_LT(index, GetCharMapCount());
   // SAFETY: required from library as enforced by check above.
-  SetCharMap(UNSAFE_BUFFERS(GetRec()->charmaps[index]));
+  FT_Set_Charmap(GetRec(), UNSAFE_BUFFERS(GetRec()->charmaps[index]));
+}
+
+pdfium::span<const FT_CharMap> CFX_Face::GetCharMaps() const {
+  size_t count = GetCharMapCount();
+  if (count == 0) {
+    return {};
+  }
+  // SAFETY: required from library to provide correct count.
+  return UNSAFE_BUFFERS({GetRec()->charmaps, count});
 }
 
 bool CFX_Face::SelectCharMap(fxge::FontEncoding encoding) {

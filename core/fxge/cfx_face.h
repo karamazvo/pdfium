@@ -33,8 +33,6 @@ class CFX_SubstFont;
 
 class CFX_Face final : public Retainable, public Observable {
  public:
-  using CharMap = void*;
-
   struct CharCodeAndIndex {
     uint32_t char_code;
     uint32_t glyph_index;
@@ -120,7 +118,6 @@ class CFX_Face final : public Retainable, public Observable {
 
   std::vector<CharCodeAndIndex> GetCharCodesAndIndices(char32_t max_char);
 
-  CharMap GetCurrentCharMap() const;
   std::optional<fxge::FontEncoding> GetCurrentCharMapEncoding() const;
   CharMapId GetCharMapIdByIndex(size_t index) const;
   int GetCharMapPlatformIdByIndex(size_t index) const;
@@ -130,7 +127,6 @@ class CFX_Face final : public Retainable, public Observable {
   int LoadGlyph(uint32_t glyph_index, bool scale);
   ByteString GetPostscriptName();
   CFX_Size GetPixelSize() const;
-  void SetCharMap(CharMap map);
   void SetCharMapByIndex(size_t index);
   bool SelectCharMap(fxge::FontEncoding encoding);
 
@@ -145,6 +141,7 @@ class CFX_Face final : public Retainable, public Observable {
   bool IsScalable() const;
   int GetNumFaces() const;
   std::optional<std::array<uint32_t, 4>> GetOs2UnicodeRange();
+  std::optional<size_t> GetCurrentCharMapIndex() const;
 #endif
 
 #if BUILDFLAG(IS_WIN)
@@ -167,6 +164,8 @@ private:
   bool SetPixelSize(uint32_t width, uint32_t height);
 
   void AdjustVariationParams(int glyph_index, int dest_width, int weight);
+
+  pdfium::span<const FT_CharMap> GetCharMaps() const;
 
 #if BUILDFLAG(IS_ANDROID) || defined(PDF_ENABLE_XFA)
   std::optional<std::array<uint8_t, 2>> GetOs2Panose();
