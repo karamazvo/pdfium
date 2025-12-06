@@ -12,7 +12,6 @@
 #include <vector>
 
 #include "core/fxcrt/check.h"
-#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/numerics/clamped_math.h"
@@ -943,21 +942,15 @@ CFX_Face::CharMapId CFX_Face::GetCharMapIdByIndex(size_t index) const {
 }
 
 int CFX_Face::GetCharMapPlatformIdByIndex(size_t index) const {
-  CHECK_LT(index, GetCharMapCount());
-  // SAFETY: required from library as enforced by check above.
-  return UNSAFE_BUFFERS(GetRec()->charmaps[index]->platform_id);
+  return GetCharMaps()[index]->platform_id;
 }
 
 int CFX_Face::GetCharMapEncodingIdByIndex(size_t index) const {
-  CHECK_LT(index, GetCharMapCount());
-  // SAFETY: required from library as enforced by check above.
-  return UNSAFE_BUFFERS(GetRec()->charmaps[index]->encoding_id);
+  return GetCharMaps()[index]->encoding_id;
 }
 
 fxge::FontEncoding CFX_Face::GetCharMapEncodingByIndex(size_t index) const {
-  CHECK_LT(index, GetCharMapCount());
-  // SAFETY: required from library as enforced by check above.
-  return ToFontEncoding(UNSAFE_BUFFERS(GetRec()->charmaps[index]->encoding));
+  return ToFontEncoding(GetCharMaps()[index]->encoding);
 }
 
 size_t CFX_Face::GetCharMapCount() const {
@@ -967,9 +960,7 @@ size_t CFX_Face::GetCharMapCount() const {
 }
 
 void CFX_Face::SetCharMapByIndex(size_t index) {
-  CHECK_LT(index, GetCharMapCount());
-  // SAFETY: required from library as enforced by check above.
-  FT_Set_Charmap(GetRec(), UNSAFE_BUFFERS(GetRec()->charmaps[index]));
+  FT_Set_Charmap(GetRec(), GetCharMaps()[index]);
 }
 
 pdfium::span<const FT_CharMap> CFX_Face::GetCharMaps() const {
