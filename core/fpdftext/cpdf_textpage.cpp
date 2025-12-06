@@ -38,7 +38,7 @@
 namespace {
 
 constexpr float kDefaultFontSize = 1.0f;
-constexpr float kSizeEpsilon = 0.01f;
+constexpr float kSizeEpsilon = 0.0f;
 constexpr std::array<pdfium::span<const uint16_t>, 3>
     kUnicodeDataNormalizationMaps = {{kUnicodeDataNormalizationMap2,
                                       kUnicodeDataNormalizationMap3,
@@ -853,6 +853,11 @@ void CPDF_TextPage::CloseTempLine() {
       --i;
     }
     bPrevSpace = true;
+  }
+  if (str[str.GetLength() - 1] == ' ') {
+    temp_text_buf_.Delete(str.GetLength() - 1, 1);
+    temp_char_list_.erase(temp_char_list_.begin() + str.GetLength() - 1);
+    str.Delete(str.GetLength() - 1);
   }
   CFX_BidiString bidi(str);
   if (rtl_) {
