@@ -38,7 +38,7 @@
 namespace {
 
 constexpr float kDefaultFontSize = 1.0f;
-constexpr float kSizeEpsilon = 0.01f;
+constexpr float kSizeEpsilon = 0.0f;
 constexpr std::array<pdfium::span<const uint16_t>, 3>
     kUnicodeDataNormalizationMaps = {{kUnicodeDataNormalizationMap2,
                                       kUnicodeDataNormalizationMap3,

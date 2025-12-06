@@ -1204,9 +1204,9 @@ TEST_F(FPDFTextEmbedderTest, Bug921) {
   static constexpr auto kData = std::to_array<const unsigned int>(
       {1095, 1077, 1083, 1086, 1074, 1077, 1095, 1077, 1089, 1082, 1086, 1077,
        32,   1089, 1090, 1088, 1072, 1076, 1072, 1085, 1080, 1077, 46,   32});
-  static constexpr int kStartIndex = 238;
+  static constexpr int kStartIndex = 248;
 
-  ASSERT_EQ(268, FPDFText_CountChars(textpage.get()));
+  ASSERT_EQ(278, FPDFText_CountChars(textpage.get()));
   for (size_t i = 0; i < std::size(kData); ++i) {
     EXPECT_EQ(kData[i], FPDFText_GetUnicode(textpage.get(), kStartIndex + i));
   }
@@ -1313,7 +1313,7 @@ TEST_F(FPDFTextEmbedderTest, Bug1029) {
   ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
 
-  static constexpr int page_range_offset = 171;
+  static constexpr int page_range_offset = 173;
   static constexpr int page_range_length = 56;
 
   // This text is:
@@ -2191,9 +2191,9 @@ TEST_F(FPDFTextEmbedderTest, Bug1769) {
   // The first instance of "world" is visible to the human eye and should be
   // extracted as is. The second instance is not, so how it should be
   // extracted is debatable.
-  static constexpr char kNeedsImprovementResult[] = "wo d wo d";
-  ASSERT_EQ(10, FPDFText_GetText(textpage.get(), 0, 128, buffer));
-  EXPECT_THAT(pdfium::span(buffer).first(10u),
+  static constexpr char kNeedsImprovementResult[] = "world world";
+  ASSERT_EQ(12, FPDFText_GetText(textpage.get(), 0, 128, buffer));
+  EXPECT_THAT(pdfium::span(buffer).first(12u),
               ElementsAreArray(kNeedsImprovementResult));
 }
 
@@ -2353,4 +2353,13 @@ TEST_F(FPDFTextEmbedderTest, Bug431824298) {
   EXPECT_FALSE(FPDFText_FindNext(search.get()));
   EXPECT_EQ(0, FPDFText_GetSchResultIndex(search.get()));
   EXPECT_EQ(0, FPDFText_GetSchCount(search.get()));
+}
+
+TEST_F(FPDFTextEmbedderTest, WhitespaceCharCount) {
+  ASSERT_TRUE(OpenDocument("whitespace.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+  EXPECT_EQ(1, FPDFText_CountChars(textpage.get()));
 }
