@@ -885,9 +885,9 @@ void CPDF_TextPage::ProcessTextObject(
     const CFX_Matrix& form_matrix,
     const CPDF_PageObjectHolder* pObjList,
     CPDF_PageObjectHolder::const_iterator ObjPos) {
-  if (fabs(pTextObj->GetRect().Width()) < kSizeEpsilon) {
-    return;
-  }
+  // if (fabs(pTextObj->GetRect().Width()) < kSizeEpsilon) {
+    // return;
+  // }
 
   size_t count = text_objects_.size();
   TransformedTextObject new_obj;
@@ -1083,9 +1083,9 @@ void CPDF_TextPage::SwapTempTextBuf(size_t iCharListStartAppend,
 
 void CPDF_TextPage::ProcessTextObject(const TransformedTextObject& obj) {
   CPDF_TextObject* const pTextObj = obj.text_obj_;
-  if (fabs(pTextObj->GetRect().Width()) < kSizeEpsilon) {
-    return;
-  }
+  // if (fabs(pTextObj->GetRect().Width()) < kSizeEpsilon) {
+    // return;
+  // }
 
   const CFX_Matrix form_matrix = obj.form_matrix_;
   const MarkedContentState ePreMKC = PreMarkedContent(pTextObj);
