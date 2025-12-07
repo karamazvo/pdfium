@@ -2354,3 +2354,30 @@ TEST_F(FPDFTextEmbedderTest, Bug431824298) {
   EXPECT_EQ(0, FPDFText_GetSchResultIndex(search.get()));
   EXPECT_EQ(0, FPDFText_GetSchCount(search.get()));
 }
+
+TEST_F(FPDFTextEmbedderTest, WhitespaceCharCount) {
+  ASSERT_TRUE(OpenDocument("whitespace.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+  // TODO(crbug.com/40643656): This value needs improvement, true value is 1.
+  EXPECT_EQ(0, FPDFText_CountChars(textpage.get()));
+}
+
+TEST_F(FPDFTextEmbedderTest, Bug444176962) {
+  ASSERT_TRUE(OpenDocument("bug_444176962.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+
+  // TODO(crbug.com/444176962): This value needs improvement, true value is 10.
+  // true value for result is "local act"
+  unsigned short buffer[128] = {};
+  static constexpr char kNeedsImprovementResult[] = "localact";
+  ASSERT_EQ(9, FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer));
+  EXPECT_THAT(pdfium::span(buffer).first<9>(), ElementsAreArray(kNeedsImprovementResult));
+}
