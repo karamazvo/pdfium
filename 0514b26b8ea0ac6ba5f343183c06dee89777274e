@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "4e1555e7_ea5d4f1b",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1209,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-07T15:51:11Z",
+      "side": 1,
+      "message": "FYI where I said \"Both (acrobat and PDFium)\", I was refering to the edited branch (aka this CL). However I was refering to the main branch as \"old pdfium...\"",
+      "parentUuid": "b483edc7_47741f9b",
+      "range": {
+        "startLine": 1209,
+        "startChar": 12,
+        "endLine": 1209,
+        "endChar": 15
+      },
+      "revId": "0514b26b8ea0ac6ba5f343183c06dee89777274e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "56855374_e5694d9f",
         "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
         "patchSetId": 5
