@@ -1204,9 +1204,9 @@ TEST_F(FPDFTextEmbedderTest, Bug921) {
   static constexpr auto kData = std::to_array<const unsigned int>(
       {1095, 1077, 1083, 1086, 1074, 1077, 1095, 1077, 1089, 1082, 1086, 1077,
        32,   1089, 1090, 1088, 1072, 1076, 1072, 1085, 1080, 1077, 46,   32});
-  static constexpr int kStartIndex = 238;
+  static constexpr int kStartIndex = 248;
 
-  ASSERT_EQ(268, FPDFText_CountChars(textpage.get()));
+  ASSERT_EQ(278, FPDFText_CountChars(textpage.get()));
   for (size_t i = 0; i < std::size(kData); ++i) {
     EXPECT_EQ(kData[i], FPDFText_GetUnicode(textpage.get(), kStartIndex + i));
   }
@@ -2187,6 +2187,20 @@ TEST_F(FPDFTextEmbedderTest, Bug1769) {
   ASSERT_TRUE(textpage);
 
   unsigned short buffer[128] = {};
+<<<<<<< PATCH SET (f8963bea78fec3ec7b838cb7a7e5637c0e8fe917 Remove character width check to fix missing text)
+  static constexpr char kResult[] = "world world";
+  ASSERT_EQ(12, FPDFText_GetText(textpage.get(), 0, 128, buffer));
+  EXPECT_THAT(pdfium::span(buffer).first(12u), ElementsAreArray(kResult));
+||||||| BASE      (43df9559113696ea0a5236cc63c551fa9a079a6a Roll corpus tests again)
+  // TODO(crbug.com/pdfium/1769): Improve text extraction.
+  // The first instance of "world" is visible to the human eye and should be
+  // extracted as is. The second instance is not, so how it should be
+  // extracted is debatable.
+  static constexpr char kNeedsImprovementResult[] = "wo d wo d";
+  ASSERT_EQ(10, FPDFText_GetText(textpage.get(), 0, 128, buffer));
+  EXPECT_THAT(pdfium::span(buffer).first(10u),
+              ElementsAreArray(kNeedsImprovementResult));
+=======
   // TODO(crbug.com/42270780): Improve text extraction.
   // The first instance of "world" is visible to the human eye and should be
   // extracted as is. The second instance is not, so how it should be
@@ -2195,6 +2209,7 @@ TEST_F(FPDFTextEmbedderTest, Bug1769) {
   ASSERT_EQ(10, FPDFText_GetText(textpage.get(), 0, 128, buffer));
   EXPECT_THAT(pdfium::span(buffer).first(10u),
               ElementsAreArray(kNeedsImprovementResult));
+>>>>>>> BASE      (581748fd37f400ae401344f7e7e912aaecac2db8 Remove CFX_TypeFace abstraction.)
 }
 
 TEST_F(FPDFTextEmbedderTest, Bug384770169) {
@@ -2353,4 +2368,41 @@ TEST_F(FPDFTextEmbedderTest, Bug431824298) {
   EXPECT_FALSE(FPDFText_FindNext(search.get()));
   EXPECT_EQ(0, FPDFText_GetSchResultIndex(search.get()));
   EXPECT_EQ(0, FPDFText_GetSchCount(search.get()));
+}
+
+TEST_F(FPDFTextEmbedderTest, WhitespaceCharCount) {
+  ASSERT_TRUE(OpenDocument("whitespace.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+
+  EXPECT_EQ(1, FPDFText_CountChars(textpage.get()));
+}
+
+TEST_F(FPDFTextEmbedderTest, Bug444176962) {
+  ASSERT_TRUE(OpenDocument("bug_444176962.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+
+  unsigned short buffer[128] = {};
+  static constexpr char kResult[] = "local act";
+  ASSERT_EQ(10, FPDFText_GetText(textpage.get(), 0, 128, buffer));
+  EXPECT_THAT(pdfium::span(buffer).first(10u), ElementsAreArray(kResult));
+}
+
+TEST_F(FPDFTextEmbedderTest, HindiSpacingText) {
+  ASSERT_TRUE(OpenDocument("HindiSpacingTestSmall.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+
+  unsigned short buffer[128] = {};
+  EXPECT_EQ(71, FPDFText_GetText(textpage.get(), 0, 128, buffer));
 }
