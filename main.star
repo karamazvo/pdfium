@@ -115,6 +115,9 @@ def get_properties_by_name(name):
     if renderers:
         properties.update({"renderers": renderers})
 
+    if name.endswith("cpp23"):
+      properties.update({"use_cxx23": True})
+
     return properties
 
 def get_rbe_properties(name, bucket):
@@ -481,6 +484,7 @@ add_entries_for_builder(name = "android_32", category = "main|android")
 add_entries_for_builder(name = "android_no_v8", category = "no v8", short_name = "android")
 add_entries_for_builder(name = "android_no_v8_32", category = "no v8", short_name = "android_32")
 add_entries_for_builder(name = "linux", category = "main|linux", swarm_tests = True)
+add_entries_for_builder(name = "linux_cpp23", category = "main|linux", swarm_tests = True)
 add_entries_for_builder(name = "linux_asan_lsan", category = "main|linux", short_name = "asan", swarm_tests = True)
 add_entries_for_builder(name = "linux_msan", category = "main|linux", short_name = "msan", swarm_tests = True)
 add_entries_for_builder(name = "linux_no_v8", category = "no v8", short_name = "linux", swarm_tests = True)
