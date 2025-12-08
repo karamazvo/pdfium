@@ -16,6 +16,23 @@
       "message": "Calling FT_Set_Charmap(nullptr) doesn\u0027t work anyway.",
       "revId": "098475a42a947b114746a55eeebfd151d061dd60",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "867e3a75_d71fa3ca",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 6715
+      },
+      "writtenOn": "2025-12-08T19:38:20Z",
+      "side": 1,
+      "message": "Just a thought for preparing the migration: Does this need to be a - I assume - FreeType specific index? Or could this be something that identifies a specific `cmap` table in the font? The latter might be compatible with other font libraries. \n\nBut Fontations does have a charmap abstraction as well - but the choice of mapping table is left to the implementation there:\nhttps://docs.rs/skrifa/0.37.0/skrifa/charmap/index.html\n\nMore widely asking, out of curiosity: Why does PDFium need to call into specific character to glyph maps in the font?",
+      "revId": "098475a42a947b114746a55eeebfd151d061dd60",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
