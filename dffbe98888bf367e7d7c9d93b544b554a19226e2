@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "12dba72d_2ad785f1",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 886,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-08T18:24:53Z",
+      "side": 1,
+      "message": "Whoops. This isn\u0027t quite right. This should have been:\n\n```\nif (code_page_range.has_value()) {\n  if (code_page_range.value()[0] \u0026 (1 \u003c\u003c 31)) {\n    style |\u003d pdfium::kFontStyleSymbolic;\n  }\n  os2_codepage_mask \u003d code_page_range.value()[0];\n}\n```\n\nI\u0027ll fix it in https://pdfium-review.googlesource.com/139130",
+      "revId": "dffbe98888bf367e7d7c9d93b544b554a19226e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
