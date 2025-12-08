@@ -51,6 +51,29 @@
       "parentUuid": "81ba4993_f26944fd",
       "revId": "b3f57a556e697ee561284f1a96e848e2bc2238a6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "03b7b337_28fed0d1",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 862,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-08T14:35:16Z",
+      "side": 1,
+      "message": "Do I consider making this a local variable, it is used multiple times here.\nMaybe this:\n\n\n```suggestion\n  size_t lastIndex \u003d str.GetLength() - 1;\n  if (str.GetLength() \u003e\u003d 2 \u0026\u0026 str[lastIndex] \u003d\u003d \u0027 \u0027 \u0026\u0026\n      str[lastIndex - 1] !\u003d \u0027 \u0027) {\n    temp_text_buf_.Delete(lastIndex, 1);\n    temp_char_list_.erase(temp_char_list_.begin() + lastIndex);\n    str.Delete(lastIndex);\n  }\n```",
+      "range": {
+        "startLine": 857,
+        "startChar": 0,
+        "endLine": 862,
+        "endChar": 3
+      },
+      "revId": "b3f57a556e697ee561284f1a96e848e2bc2238a6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
