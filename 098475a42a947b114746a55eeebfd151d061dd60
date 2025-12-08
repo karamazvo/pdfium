@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4549c91c_64bc93ba",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 919,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-08T18:47:32Z",
+      "side": 1,
+      "message": "Calling FT_Set_Charmap(nullptr) doesn\u0027t work anyway.",
+      "revId": "098475a42a947b114746a55eeebfd151d061dd60",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
