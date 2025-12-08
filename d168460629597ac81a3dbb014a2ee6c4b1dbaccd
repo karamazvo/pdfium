@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b02b9646_a0fb5139",
+        "filename": "main.star",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3946384
+      },
+      "writtenOn": "2025-12-08T15:11:54Z",
+      "side": 1,
+      "message": "The recipe-side change is in https://crrev.com/c/7232301 but I proabably need to wait for this CL to propagate first. Because I don\u0027t see a linux_cxx23.json file in that repo yet",
+      "revId": "d168460629597ac81a3dbb014a2ee6c4b1dbaccd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
