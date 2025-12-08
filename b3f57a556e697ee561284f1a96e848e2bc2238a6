@@ -33,6 +33,24 @@
       "message": "Hi guys, worked on another idea for this character width thing, I\u0027ve seen multiple bugs which could be addressed by the same fix.\n\nThe goal is to first look at how it is impacting rendering overall before deciding on going ahead with this, however it seems all corpus and embedder tests do pass. We should look into these tests and consider adding new ones for areas not sufficiently covered to see what effect exactly this would have.",
       "revId": "b3f57a556e697ee561284f1a96e848e2bc2238a6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "250cef00_80c1b7d5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 17
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-08T14:26:05Z",
+      "side": 1,
+      "message": "From what I\u0027ve noticed, for the most part, it seems to not add anything more than characters already in the stream (just too thin to render). There are some edge cases though that I tried to filter out. \n\nFor example, duplicate spaces are already filtered out, but I also added another filter to prevent it from adding spaces before `\\r`s, which it might end up doing sometimes. This check should fix it though. Do let me know if there are some areas we should cover better to make sure that removing this width check wont break anything.",
+      "parentUuid": "81ba4993_f26944fd",
+      "revId": "b3f57a556e697ee561284f1a96e848e2bc2238a6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
