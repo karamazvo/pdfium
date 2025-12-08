@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6f90ccf1_90534a6a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-08T19:23:31Z",
+      "side": 1,
+      "message": "I\u0027ll approve and land this in an hour or two. The recipe change should be live by then.",
+      "revId": "71dc58b8988f94500572c4e4662db2396c8bb208",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "951e9577_a8238131",
+        "filename": "main.star",
+        "patchSetId": 9
+      },
+      "lineNbr": 502,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-08T19:23:31Z",
+      "side": 1,
+      "message": "cxx23 for the short name here?",
+      "range": {
+        "startLine": 502,
+        "startChar": 94,
+        "endLine": 502,
+        "endChar": 97
+      },
+      "revId": "71dc58b8988f94500572c4e4662db2396c8bb208",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
