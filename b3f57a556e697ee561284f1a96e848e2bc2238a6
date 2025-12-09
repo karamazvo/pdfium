@@ -55,6 +55,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "64dfd479_f85a75dd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 17
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-09T04:27:08Z",
+      "side": 1,
+      "message": "Again we could maybe also make this a flag if we are not 100% sure of the effect.",
+      "parentUuid": "250cef00_80c1b7d5",
+      "revId": "b3f57a556e697ee561284f1a96e848e2bc2238a6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "03b7b337_28fed0d1",
         "filename": "core/fpdftext/cpdf_textpage.cpp",
         "patchSetId": 17
