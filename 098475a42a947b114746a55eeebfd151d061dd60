@@ -51,6 +51,24 @@
       "parentUuid": "867e3a75_d71fa3ca",
       "revId": "098475a42a947b114746a55eeebfd151d061dd60",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3943fa2f_00f28a85",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 6715
+      },
+      "writtenOn": "2025-12-09T08:34:51Z",
+      "side": 1,
+      "message": "\u003e The only caller in third_party/pdfium/xfa/fgas/font/cfgas_fontmgr.cpp wants to see if the unicode charmap has specific chars.\n\nDoes that imply there would be a non-Unicode charmap? Does \"the Unicode charmap\" mean any particular cmap format? (If that is the case, I wonder - similar to my earlier question - why would a specific, non Unicode charmap be desirable to use?)",
+      "parentUuid": "7d8d7cdb_4b208e89",
+      "revId": "098475a42a947b114746a55eeebfd151d061dd60",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
