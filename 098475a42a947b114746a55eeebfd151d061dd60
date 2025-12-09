@@ -33,6 +33,24 @@
       "message": "Just a thought for preparing the migration: Does this need to be a - I assume - FreeType specific index? Or could this be something that identifies a specific `cmap` table in the font? The latter might be compatible with other font libraries. \n\nBut Fontations does have a charmap abstraction as well - but the choice of mapping table is left to the implementation there:\nhttps://docs.rs/skrifa/0.37.0/skrifa/charmap/index.html\n\nMore widely asking, out of curiosity: Why does PDFium need to call into specific character to glyph maps in the font?",
       "revId": "098475a42a947b114746a55eeebfd151d061dd60",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7d8d7cdb_4b208e89",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-09T04:16:12Z",
+      "side": 1,
+      "message": "The only caller in third_party/pdfium/xfa/fgas/font/cfgas_fontmgr.cpp wants to see if the unicode charmap has specific chars.\n\nIf the answer is no, the code tries to restore the original selected charmap. So in that sense, the exact meaning here probably doesn\u0027t matter, as long as the index value can be used to perform the restore correctly.\n\nOh, I probably shouldn\u0027t be using size_t here either. Will fix...",
+      "parentUuid": "867e3a75_d71fa3ca",
+      "revId": "098475a42a947b114746a55eeebfd151d061dd60",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
