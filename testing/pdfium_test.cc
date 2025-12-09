@@ -159,7 +159,7 @@ struct Options {
 
   bool show_config = false;
   bool show_metadata = false;
-  bool send_events = false;
+  bool send_events2 = false;
   bool use_load_mem_document = false;
   bool render_oneshot = false;
   bool lcd_text = false;
@@ -494,7 +494,7 @@ bool ParseCommandLine(const std::vector<std::string>& args,
     } else if (cur_arg == "--show-metadata") {
       options->show_metadata = true;
     } else if (cur_arg == "--send-events") {
-      options->send_events = true;
+      options->send_events2 = true;
     } else if (cur_arg == "--mem-document") {
       options->use_load_mem_document = true;
     } else if (cur_arg == "--render-oneshot") {
@@ -1445,7 +1445,7 @@ bool PdfProcessor::ProcessPage(const int page_index) {
     return false;
   }
 
-  if (options().send_events) {
+  if (options().send_events2) {
     SendPageEvents(form(), page, events(), idler());
   }
   if (options().save_images) {
@@ -2092,7 +2092,7 @@ int main(int argc, const char* argv[]) {
 #endif  // ENABLE_CALLGRIND
 
       std::string events;
-      if (options.send_events) {
+      if (options.send_events2) {
         std::string event_filename = filename;
         size_t extension_pos = event_filename.find(".pdf");
         if (extension_pos != std::string::npos) {
