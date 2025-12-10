@@ -40,6 +40,30 @@
       ],
       "revId": "91f81e32f2bb3988cbc420c0c9f93b606f4732e2",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f1a0413d_13fa97f6",
+        "filename": "core/fpdfapi/parser/cpdf_read_validator.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-10T19:55:32Z",
+      "side": 1,
+      "message": "Done. I really think the CHECK_GE() will hold, but checking the offset is more consistent with other ReadBlockAtOffset() implementations.",
+      "parentUuid": "e5316438_40012dfc",
+      "range": {
+        "startLine": 59,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 22
+      },
+      "revId": "91f81e32f2bb3988cbc420c0c9f93b606f4732e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
