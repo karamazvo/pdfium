@@ -9,6 +9,7 @@
 #include <stddef.h>
 
 #include <memory>
+#include <string>
 #include <utility>
 
 #include "core/fxcrt/compiler_specific.h"
@@ -28,6 +29,10 @@
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gemodule.h"
 #endif
+
+bool Foo(const std::string& foo) {
+  return foo.contains("hey");
+}
 
 static_assert(FXFONT_ANSI_CHARSET == static_cast<int>(FX_Charset::kANSI));
 static_assert(FXFONT_DEFAULT_CHARSET == static_cast<int>(FX_Charset::kDefault));
