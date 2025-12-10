@@ -1,0 +1,45 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e5316438_40012dfc",
+        "filename": "core/fpdfapi/parser/cpdf_read_validator.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-12-10T19:31:55Z",
+      "side": 1,
+      "message": "Let\u0027s return false here.",
+      "range": {
+        "startLine": 59,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 22
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "4f2ae1f3_45e95ce0",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/parser/cpdf_read_validator.cpp",
+              "range": {
+                "startLine": 59,
+                "startChar": 0,
+                "endLine": 60,
+                "endChar": 0
+              },
+              "replacement": "  if (offset \u003c 0) {\n    return false;\n  }\n"
+            }
+          ]
+        }
+      ],
+      "revId": "91f81e32f2bb3988cbc420c0c9f93b606f4732e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
