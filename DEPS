@@ -95,7 +95,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling clang
   # and whatever else without interference from each other.
-  'clang_revision': 'f0aeeca2d4eea4ade7308a31bc4023fc52614332',
+  'clang_revision': '82e9daa58447c4c83e8ec3a7fb69e6e15c3ff045',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling code_coverage
   # and whatever else without interference from each other.
@@ -161,7 +161,7 @@ vars = {
   # and whatever else without interference from each other.
   # If you change this, also update the libc++ revision in
   # //buildtools/deps_revisions.gni.
-  'libcxx_revision': 'e586acfc743b471da9bb3989246f77eafd356476',
+  'libcxx_revision': 'c5dd8ade977af3a7441bbf99a2dcac2d5820e702',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libc++abi
   # and whatever else without interference from each other.
@@ -433,73 +433,73 @@ deps = {
     'bucket': 'chromium-browser-clang',
     'objects': [
       {
-        'object_name': 'Linux_x64/clang-llvmorg-22-init-14273-gea10026b-1.tar.xz',
-        'sha256sum': '1ef7b1d60fb433100c27b4552b44577ab86ef5394531d1fbebc237db64a893fd',
-        'size_bytes': 56552908,
-        'generation': 1762971374100697,
+        'object_name': 'Linux_x64/clang-llvmorg-22-init-14273-gea10026b-4.tar.xz',
+        'sha256sum': 'ffe73a5c64fceaf874b745a6c9ba2260652e588afad77671abfce0af1eb850f7',
+        'size_bytes': 56865780,
+        'generation': 1764962592646125,
         'condition': '(host_os == "linux" or checkout_android) and non_git_source',
       },
       {
-        'object_name': 'Linux_x64/llvmobjdump-llvmorg-22-init-14273-gea10026b-1.tar.xz',
-        'sha256sum': 'ec1d88867045b8348659f7a8f677d12aa91d7d61a68603a82bad1926bf57c3b0',
-        'size_bytes': 5723188,
-        'generation': 1762971374436694,
+        'object_name': 'Linux_x64/llvmobjdump-llvmorg-22-init-14273-gea10026b-4.tar.xz',
+        'sha256sum': '687b25291bdb2370aba10b89bedfa23e9961cb5e440d8fc41669e7bbe349c333',
+        'size_bytes': 5729268,
+        'generation': 1764962592658462,
         'condition': '((checkout_linux or checkout_mac or checkout_android) and host_os == "linux") and non_git_source',
       },
       {
-        'object_name': 'Mac/clang-llvmorg-22-init-14273-gea10026b-1.tar.xz',
-        'sha256sum': 'f266b79576d4fc0075e9380b68b8879ec2bc9617c973e7bdea694ec006f43636',
-        'size_bytes': 54056416,
-        'generation': 1762971376161293,
+        'object_name': 'Mac/clang-llvmorg-22-init-14273-gea10026b-4.tar.xz',
+        'sha256sum': 'c3c99482493242269f159131af6d554aecd1cf1a5083bed3030162f86ce87596',
+        'size_bytes': 54126044,
+        'generation': 1764962594541007,
         'condition': 'host_os == "mac" and host_cpu == "x64"',
       },
       {
-        'object_name': 'Mac/clang-mac-runtime-library-llvmorg-22-init-14273-gea10026b-1.tar.xz',
-        'sha256sum': '6f2d61383a3c0ab28286e5a57b7e755eb14726bb9a73a7737b685488eae18b90',
-        'size_bytes': 1010052,
-        'generation': 1762971385382392,
+        'object_name': 'Mac/clang-mac-runtime-library-llvmorg-22-init-14273-gea10026b-4.tar.xz',
+        'sha256sum': 'd8d04aeae5956c32bc2f29c730f4fadb29c693577154a23bb2a9ee9298c0140e',
+        'size_bytes': 1008084,
+        'generation': 1764962601690454,
         'condition': 'checkout_mac and not host_os == "mac"',
       },
       {
-        'object_name': 'Mac/llvmobjdump-llvmorg-22-init-14273-gea10026b-1.tar.xz',
-        'sha256sum': '9a282bf252e0c7ac88152844f347428e02970aa22941fb583439ce72134f0161',
-        'size_bytes': 5607404,
-        'generation': 1762971376526568,
+        'object_name': 'Mac/llvmobjdump-llvmorg-22-init-14273-gea10026b-4.tar.xz',
+        'sha256sum': 'a59b86631da0805fac5e3626bd0e768c7846dcf397d0f5770a8986e547b27279',
+        'size_bytes': 5595800,
+        'generation': 1764962594554959,
         'condition': 'host_os == "mac" and host_cpu == "x64"',
       },
       {
-        'object_name': 'Mac_arm64/clang-llvmorg-22-init-14273-gea10026b-1.tar.xz',
-        'sha256sum': 'a7b7caf53f4e722234e85aecfdbb3eeb94608c37394672bebd074d6b2f300362',
-        'size_bytes': 45184380,
-        'generation': 1762971386895625,
+        'object_name': 'Mac_arm64/clang-llvmorg-22-init-14273-gea10026b-4.tar.xz',
+        'sha256sum': '825afff5e107693bf804f1dadbeb0392bf411ade94078156175459fd7b15c583',
+        'size_bytes': 45145120,
+        'generation': 1764962603414549,
         'condition': 'host_os == "mac" and host_cpu == "arm64"',
       },
       {
-        'object_name': 'Mac_arm64/llvmobjdump-llvmorg-22-init-14273-gea10026b-1.tar.xz',
-        'sha256sum': 'c5ee70e78ae5aa7a0d9b613ea5a8e21629438f12acb50bca0f7e18fae6abfe0a',
-        'size_bytes': 5353832,
-        'generation': 1762971387217357,
+        'object_name': 'Mac_arm64/llvmobjdump-llvmorg-22-init-14273-gea10026b-4.tar.xz',
+        'sha256sum': 'f4cb31dc186a6a56b5263c5e8de9dd88b4b3dcbd30bace97483912a4e4fb356a',
+        'size_bytes': 5345188,
+        'generation': 1764962603454411,
         'condition': 'host_os == "mac" and host_cpu == "arm64"',
       },
       {
-        'object_name': 'Win/clang-llvmorg-22-init-14273-gea10026b-1.tar.xz',
-        'sha256sum': '483b9b2809c3f53b9640e77d83ca6ab3017a0974979d242198abf23d99639e62',
-        'size_bytes': 48337640,
-        'generation': 1762971401378315,
+        'object_name': 'Win/clang-llvmorg-22-init-14273-gea10026b-4.tar.xz',
+        'sha256sum': '05083176b884fa985f9d48a4bb96b41584ee30f1fdd381cbefee2654aca707c2',
+        'size_bytes': 48342772,
+        'generation': 1764962612609250,
         'condition': 'host_os == "win"',
       },
       {
-        'object_name': 'Win/clang-win-runtime-library-llvmorg-22-init-14273-gea10026b-1.tar.xz',
-        'sha256sum': 'd8b3310760c3a8f5dac4801583f7872601f4ba312742b0bf530f043ce6b6f36f',
-        'size_bytes': 2520664,
-        'generation': 1762971410370409,
+        'object_name': 'Win/clang-win-runtime-library-llvmorg-22-init-14273-gea10026b-4.tar.xz',
+        'sha256sum': 'ee53a11a2448b9b2109cc2b7f7b809f0f39cc958c20b91a8d56e78ea0ad7f627',
+        'size_bytes': 2522476,
+        'generation': 1764962619734488,
         'condition': 'checkout_win and not host_os == "win"',
       },
       {
-        'object_name': 'Win/llvmobjdump-llvmorg-22-init-14273-gea10026b-1.tar.xz',
-        'sha256sum': '00c4dab7747534548e2111b3adbdbf9ef561887e18c7d6de4c7e273af799c190',
-        'size_bytes': 5742908,
-        'generation': 1762971401692156,
+        'object_name': 'Win/llvmobjdump-llvmorg-22-init-14273-gea10026b-4.tar.xz',
+        'sha256sum': 'ea9e337a521b5c7d4b3d7552080391892b77e01685d425f3afd7f5e5c6a99035',
+        'size_bytes': 5719064,
+        'generation': 1764962612635889,
         'condition': '(checkout_linux or checkout_mac or checkout_android) and host_os == "win"',
       },
     ]
