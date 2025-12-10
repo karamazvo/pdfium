@@ -310,7 +310,38 @@ void RasterizeStroke(agg::rasterizer_scanline_aa* rasterizer,
   }
   width = std::max(width, unit);
   const std::vector<float>& dash_array = pGraphState->dash_array();
-  if (!dash_array.empty()) {
+
+  // Introduce use_dash flag. If the dash pattern is too dense (total length is
+  // less than the threshold), force it to degenerate to a solid line to prevent
+  // AGG from entering an infinite loop.
+  bool use_dash = !dash_array.empty();
+  if (use_dash) {
+    float dash_cycle_len = 0.0f;
+    for (float val : dash_array) {
+      // Reject non-finite values (NaN, Infinity) per PDF spec
+      if (!std::isfinite(val)) {
+        use_dash = false;
+        break;
+      }
+      // Clamp negatives per PDF spec (non-negative expected)
+      dash_cycle_len += std::max(0.0f, val);
+    }
+
+
+    // Minimum dash cycle length in device pixels. Based on empirical testing:
+    // - At 96 DPI: 0.1px ≈ 0.001 inches (imperceptible to human eye)
+    // - At 300 DPI: 0.1px ≈ 0.0003 inches (still imperceptible)
+    constexpr float kMinDashCycleThreshold = 0.1f;
+
+    // If the dash cycle length is less than this value, the gaps would be
+    // nearly invisible, but rendering them would cause significant performance
+    // overhead.
+    if (dash_cycle_len * scale < kMinDashCycleThreshold) {
+      use_dash = false;
+    }
+  }
+
+  if (use_dash) {
     using DashConverter = agg::conv_dash<agg::path_storage>;
     DashConverter dash(*path_data);
     for (float dash_len : dash_array) {
