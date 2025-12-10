@@ -1,0 +1,41 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /MediaBox [0 0 200 200]
+>>
+endobj
+{{object 4 0}} <<
+  /Length {{streamlen}}
+>>
+stream
+q
+  % Set line width to 10
+  10 w
+
+  % Key point: Set an extremely small dash pattern [0.000015 0.000015]
+  [0.000015 0.000015] 0 d
+
+  % Draw a long straight line
+  20 100 m
+  180 100 l
+  S
+Q
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
