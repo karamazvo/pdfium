@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7f966eb6_b5c6553e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-12-11T17:58:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "581645a1_76b09c19",
+      "revId": "9dbd1e8e6c55fe15448f139fda4bc0c7b708aa38",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e52fa221_eb7af178",
@@ -35,6 +53,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7f7a2f36_aef4f455",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-12-11T17:58:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e52fa221_eb7af178",
+      "revId": "9dbd1e8e6c55fe15448f139fda4bc0c7b708aa38",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "72c99f1a_d2ff053a",
@@ -48,6 +84,24 @@
       "writtenOn": "2025-12-11T00:24:27Z",
       "side": 1,
       "message": "When rolling clang, please mention the revision numbers in the CL description.\n\n`Roll clang+rust llvmorg-22-init-14273-gea10026b-1:llvmorg-22-init-14273-gea10026b-4`",
+      "revId": "9dbd1e8e6c55fe15448f139fda4bc0c7b708aa38",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "371d646c_da0b37d0",
+        "filename": "DEPS",
+        "patchSetId": 7
+      },
+      "lineNbr": 436,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-12-11T17:58:14Z",
+      "side": 1,
+      "message": "Done. I wasn\u0027t sure if this counted as \"If the actual version of Clang is updated\" since only the last number changed.",
+      "parentUuid": "72c99f1a_d2ff053a",
       "revId": "9dbd1e8e6c55fe15448f139fda4bc0c7b708aa38",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
