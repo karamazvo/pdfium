@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5c57d899_6aa12395",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-11T03:02:16Z",
+      "side": 1,
+      "message": "Unchained the CL and slightly squashed it.",
+      "revId": "998edadb11ba7dd062ff809cee282e85c2dbe733",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
