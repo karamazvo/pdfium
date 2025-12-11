@@ -18,6 +18,7 @@
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/utf16.h"
 
 namespace {
 
@@ -353,8 +354,11 @@ ByteStringView CPDF_ToUnicodeMap::HandleBeginBFRange(
         const auto& range = std::get<MultimapMultiDestRange>(entry);
         uint32_t code = range.low_code;
         for (const auto& retcode : range.retcodes) {
-          InsertIntoMaps(code, GetMultiCharIndexIndicator());
+          // Must be called before changing `multi_char_vec_`.
+          uint32_t indicator = GetMultiCharIndexIndicator();
+          // Must be called before calling InsertIntoMaps().
           multi_char_vec_.push_back(retcode);
+          InsertIntoMaps(code, indicator);
           ++code;
         }
       }
@@ -378,8 +382,11 @@ void CPDF_ToUnicodeMap::SetCode(uint32_t srccode, WideString destcode) {
   if (len == 1) {
     InsertIntoMaps(srccode, destcode[0]);
   } else {
-    InsertIntoMaps(srccode, GetMultiCharIndexIndicator());
+    // Must be called before changing `multi_char_vec_`.
+    uint32_t indicator = GetMultiCharIndexIndicator();
     multi_char_vec_.push_back(destcode);
+    // Must be called before calling InsertIntoMaps().
+    InsertIntoMaps(srccode, indicator);
   }
 }
 
@@ -389,6 +396,16 @@ void CPDF_ToUnicodeMap::InsertIntoMaps(uint32_t code, uint32_t destcode) {
     it->second = std::min(it->second, destcode);
   } else {
     map_[code] = destcode;
+  }
+
+  if (destcode >= 0xffff) {
+    uint32_t index = destcode >> 16;
+    CHECK_LT(index, multi_char_vec_.size());
+    const WideString& multi_char = multi_char_vec_[index];
+    CHECK_GT(multi_char.GetLength(), 1);
+
+    pdfium::SurrogatePair surrogate_pair(multi_char[0], multi_char[1]);
+    destcode = surrogate_pair.ToCodePoint();
   }
 
   auto reverse_it = reverse_map_.find(destcode);
