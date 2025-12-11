@@ -25,7 +25,7 @@ class CPDF_ToUnicodeMap {
   ~CPDF_ToUnicodeMap();
 
   WideString Lookup(uint32_t charcode) const;
-  uint32_t ReverseLookup(wchar_t unicode) const;
+  uint32_t ReverseLookup(char32_t unicode) const;
 
   size_t GetUnicodeCountByCharcodeForTesting(uint32_t charcode) const;
 
@@ -56,7 +56,7 @@ class CPDF_ToUnicodeMap {
   std::map<uint32_t, WideString> map_;
   // Key: unicode code point
   // Value: charcode
-  std::map<uint32_t, uint32_t> reverse_map_;
+  std::map<char32_t, uint32_t> reverse_map_;
   UnownedPtr<const CPDF_CID2UnicodeMap> base_map_;
 };
 

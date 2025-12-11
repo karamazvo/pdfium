@@ -139,7 +139,7 @@ WideString CPDF_Font::UnicodeFromCharCode(uint32_t charcode) const {
   return to_unicode_map_ ? to_unicode_map_->Lookup(charcode) : WideString();
 }
 
-uint32_t CPDF_Font::CharCodeFromUnicode(wchar_t unicode) const {
+uint32_t CPDF_Font::CharCodeFromUnicode(char32_t unicode) const {
   if (!to_unicode_loaded_) {
     LoadUnicodeMap();
   }

@@ -357,8 +357,5 @@ TEST(CPDFToUnicodeMapTest, NonBmpUnicodeLookup) {
   static constexpr uint8_t kInput[] = "1 beginbfchar<01><d841de76>endbfchar";
   CPDF_ToUnicodeMap map(pdfium::MakeRetain<CPDF_Stream>(kInput));
   EXPECT_EQ(L"\xd841\xde76", map.Lookup(0x01));
-#if defined(WCHAR_T_IS_32_BIT)
-  // TODO(crbug.com/374947848): Should work if wchar_t is 16-bit.
   EXPECT_EQ(1u, map.ReverseLookup(0x20676));
-#endif
 }
