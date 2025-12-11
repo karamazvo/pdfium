@@ -16,6 +16,24 @@
       "message": "This CL needs to be rebased first; there have been some changes here that may affect this CL.",
       "revId": "36555e33adf37d51c8aafc3df55c8713e85e2fbc",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d0d384f8_f8d9eda5",
+        "filename": "core/fxge/agg/cfx_agg_devicedriver.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 4440675
+      },
+      "writtenOn": "2025-12-11T10:45:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8c12c077_ce3a5047",
+      "revId": "36555e33adf37d51c8aafc3df55c8713e85e2fbc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
