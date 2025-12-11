@@ -6,7 +6,7 @@
 
 #include "core/fpdfapi/font/cpdf_tounicodemap.h"
 
-#include <set>
+#include <algorithm>
 #include <utility>
 #include <variant>
 
@@ -56,8 +56,8 @@ CPDF_ToUnicodeMap::CPDF_ToUnicodeMap(RetainPtr<const CPDF_Stream> pStream) {
 CPDF_ToUnicodeMap::~CPDF_ToUnicodeMap() = default;
 
 WideString CPDF_ToUnicodeMap::Lookup(uint32_t charcode) const {
-  auto it = multimap_.find(charcode);
-  if (it == multimap_.end()) {
+  auto it = map_.find(charcode);
+  if (it == map_.end()) {
     if (!base_map_) {
       return WideString();
     }
@@ -65,7 +65,7 @@ WideString CPDF_ToUnicodeMap::Lookup(uint32_t charcode) const {
         base_map_->UnicodeFromCID(static_cast<uint16_t>(charcode)));
   }
 
-  uint32_t value = *it->second.begin();
+  uint32_t value = it->second;
   wchar_t unicode = static_cast<wchar_t>(value & 0xffff);
   if (unicode != 0xffff) {
     return WideString(unicode);
@@ -76,18 +76,19 @@ WideString CPDF_ToUnicodeMap::Lookup(uint32_t charcode) const {
 }
 
 uint32_t CPDF_ToUnicodeMap::ReverseLookup(wchar_t unicode) const {
-  for (const auto& pair : multimap_) {
-    if (pdfium::Contains(pair.second, static_cast<uint32_t>(unicode))) {
-      return pair.first;
-    }
-  }
-  return 0;
+  auto it = reverse_map_.find(unicode);
+  return it != reverse_map_.end() ? it->second : 0;
 }
 
 size_t CPDF_ToUnicodeMap::GetUnicodeCountByCharcodeForTesting(
     uint32_t charcode) const {
-  auto it = multimap_.find(charcode);
-  return it != multimap_.end() ? it->second.size() : 0u;
+  size_t count = 0;
+  for (const auto [unicode_key, charcode_value] : reverse_map_) {
+    if (charcode == charcode_value) {
+      ++count;
+    }
+  }
+  return count;
 }
 
 // static
@@ -383,11 +384,17 @@ void CPDF_ToUnicodeMap::SetCode(uint32_t srccode, WideString destcode) {
 }
 
 void CPDF_ToUnicodeMap::InsertIntoMultimap(uint32_t code, uint32_t destcode) {
-  auto it = multimap_.find(code);
-  if (it == multimap_.end()) {
-    multimap_.emplace(code, std::set<uint32_t>{destcode});
-    return;
+  auto it = map_.find(code);
+  if (it != map_.end()) {
+    it->second = std::min(it->second, destcode);
+  } else {
+    map_[code] = destcode;
   }
 
-  it->second.emplace(destcode);
+  auto reverse_it = reverse_map_.find(destcode);
+  if (reverse_it != reverse_map_.end()) {
+    reverse_it->second = std::min(reverse_it->second, code);
+  } else {
+    reverse_map_[destcode] = code;
+  }
 }
