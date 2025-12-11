@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "581645a1_76b09c19",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-11T00:24:27Z",
+      "side": 1,
+      "message": "Can these be sorted alphabetically, so someone looking at the hashes here can see the same order in the DEPS file?",
+      "revId": "9dbd1e8e6c55fe15448f139fda4bc0c7b708aa38",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e52fa221_eb7af178",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-11T00:24:27Z",
+      "side": 1,
+      "message": "Since the script is a work in progress and it\u0027s syntax is very verbose, how about just omitting this and not put this permanently into the git history?",
+      "revId": "9dbd1e8e6c55fe15448f139fda4bc0c7b708aa38",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "72c99f1a_d2ff053a",
+        "filename": "DEPS",
+        "patchSetId": 7
+      },
+      "lineNbr": 436,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-11T00:24:27Z",
+      "side": 1,
+      "message": "When rolling clang, please mention the revision numbers in the CL description.\n\n`Roll clang+rust llvmorg-22-init-14273-gea10026b-1:llvmorg-22-init-14273-gea10026b-4`",
+      "revId": "9dbd1e8e6c55fe15448f139fda4bc0c7b708aa38",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
