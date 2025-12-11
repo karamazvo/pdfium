@@ -69,6 +69,24 @@
       "parentUuid": "7d8d7cdb_4b208e89",
       "revId": "098475a42a947b114746a55eeebfd151d061dd60",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fe551b55_f1482282",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-11T08:34:55Z",
+      "side": 1,
+      "message": "Given CFX_Face now encapsulates FT_Set_Charmap() and FT_Select_Charmap(), we can check their corresponding CFX_Face public methods and see how these are used. For instance:\n\n1. In third_party/pdfium/core/fpdfapi/font/cpdf_cidfont.cpp, UseCIDCharmap() tries to select a CJK cmap based on predefined PDF CJK CMaps from the PDF spec when the CID font uses a TT font.\n2. In third_party/pdfium/core/fpdfapi/font/cpdf_type1font.cpp, UseType1Charmap() actively tries to select a non-Unicode charmap.\n3. third_party/pdfium/core/fpdfapi/font/cpdf_truetypefont.cpp tries to use Mac OS Roman character encoding in some cases. See `CFX_Face::kMacRomanCmapId` usage.\n\nPDFs can specify in its font dictionaries what encoding to use, so code like the ones above are trying to deal with that and do the mapping.",
+      "parentUuid": "3943fa2f_00f28a85",
+      "revId": "098475a42a947b114746a55eeebfd151d061dd60",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
