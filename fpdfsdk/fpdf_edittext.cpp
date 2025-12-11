@@ -1030,7 +1030,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetGlyphWidth(FPDF_FONT font,
     return false;
   }
 
-  uint32_t charcode = pFont->CharCodeFromUnicode(static_cast<wchar_t>(glyph));
+  uint32_t charcode = pFont->CharCodeFromUnicode(glyph);
 
   CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
   if (pCIDFont && pCIDFont->IsVertWriting()) {
@@ -1050,11 +1050,7 @@ FPDFFont_GetGlyphPath(FPDF_FONT font, uint32_t glyph, float font_size) {
     return nullptr;
   }
 
-  if (!pdfium::IsValueInRangeForNumericType<wchar_t>(glyph)) {
-    return nullptr;
-  }
-
-  uint32_t charcode = pFont->CharCodeFromUnicode(static_cast<wchar_t>(glyph));
+  uint32_t charcode = pFont->CharCodeFromUnicode(glyph);
   std::vector<TextCharPos> pos =
       GetCharPosList(pdfium::span_from_ref(charcode),
                      pdfium::span<const float>(), pFont, font_size);
