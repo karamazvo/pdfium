@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2f3c391f_bc53ff5b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 21
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-11T18:39:08Z",
+      "side": 1,
+      "message": "The bug_0_length_line.pdf change looks like a regression.\n\ndashed_lines.pdf change is debatable, since Acrobat Reader doesn\u0027t render the dashes with the negative values, while other PDF renderers I tried have several different behaviors.",
+      "revId": "830f56bac14357fd479cdb47f346e70bfb2907f8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
