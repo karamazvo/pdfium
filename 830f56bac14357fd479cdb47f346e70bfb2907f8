@@ -52,6 +52,24 @@
       "parentUuid": "15912676_48a0fe70",
       "revId": "830f56bac14357fd479cdb47f346e70bfb2907f8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2fef5f4b_d105d133",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 21
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4440675
+      },
+      "writtenOn": "2025-12-12T17:30:51Z",
+      "side": 1,
+      "message": "Additionally, regarding `bug_0_length_line.pdf`: Per the PDF spec(8.4.3.3), a 0-length dash with Butt Caps (e.g., [0 10]) should not be rendered. The code artificially clamped 0 to 0.1, which forced it to render incorrectly.",
+      "parentUuid": "e7cade48_75ffa1b7",
+      "revId": "830f56bac14357fd479cdb47f346e70bfb2907f8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
