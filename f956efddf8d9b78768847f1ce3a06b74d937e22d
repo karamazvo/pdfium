@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b7c1d25b_cdd34d55",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-12T23:37:43Z",
+      "side": 1,
+      "message": "Yes, I had that PDF laying around, but I forgot where it came from. So I ended up looking up the paper again and found this slightly different PDF that performed similarly. I\u0027ll reference the bug.",
+      "parentUuid": "72843bf3_3e925669",
+      "revId": "f956efddf8d9b78768847f1ce3a06b74d937e22d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b06f427e_7e7339ba",
@@ -31,6 +49,24 @@
       "writtenOn": "2025-12-12T22:32:22Z",
       "side": 1,
       "message": "It might be nice to explicitly comment that we want the minimum destcode here. Before it was directly part of the code since it was a sorted set but now you have to go read InsertIntoMaps to understand that.",
+      "revId": "f956efddf8d9b78768847f1ce3a06b74d937e22d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5cfed6b9_ede866ed",
+        "filename": "core/fpdfapi/font/cpdf_tounicodemap.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-12T23:37:43Z",
+      "side": 1,
+      "message": "I put the comment in the header.",
+      "parentUuid": "b06f427e_7e7339ba",
       "revId": "f956efddf8d9b78768847f1ce3a06b74d937e22d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -58,6 +94,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c3e6947a_78aa8f8e",
+        "filename": "core/fpdfapi/font/cpdf_tounicodemap.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-12T23:37:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "12234851_dc803407",
+      "range": {
+        "startLine": 84,
+        "startChar": 0,
+        "endLine": 90,
+        "endChar": 15
+      },
+      "revId": "f956efddf8d9b78768847f1ce3a06b74d937e22d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "75535fe7_0c5fe68f",
@@ -71,6 +131,42 @@
       "writtenOn": "2025-12-12T22:32:22Z",
       "side": 1,
       "message": "If you use map_.insert() instead you can avoid the double-lookup in the not-found case (where you use operator[])",
+      "revId": "f956efddf8d9b78768847f1ce3a06b74d937e22d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3e508388_b8f1a6e5",
+        "filename": "core/fpdfapi/font/cpdf_tounicodemap.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-12T23:37:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "75535fe7_0c5fe68f",
+      "revId": "f956efddf8d9b78768847f1ce3a06b74d937e22d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7a0084f5_b5f686e7",
+        "filename": "core/fpdfapi/font/cpdf_tounicodemap.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-12T23:37:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "75535fe7_0c5fe68f",
       "revId": "f956efddf8d9b78768847f1ce3a06b74d937e22d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -92,6 +188,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "be8d4188_a12bb69c",
+        "filename": "core/fpdfapi/font/cpdf_tounicodemap.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-12T23:37:43Z",
+      "side": 1,
+      "message": "Most of PDFium use std::map, so this should be ok for now. If another map type is better, it can always be swapped in later. (Maybe I will as a follow-up.)",
+      "parentUuid": "a1d0e8c4_73176044",
+      "revId": "f956efddf8d9b78768847f1ce3a06b74d937e22d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6fc657e4_6e8dab7c",
@@ -105,6 +219,24 @@
       "writtenOn": "2025-12-12T22:32:22Z",
       "side": 1,
       "message": "Would it maybe be helpful to point out somewhere in a comment that reverse_map_ may have more entries in it than map_? I was confused at first when I read this why it\u0027s okay to drop the multi-map.",
+      "revId": "f956efddf8d9b78768847f1ce3a06b74d937e22d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f25456df_89627ca2",
+        "filename": "core/fpdfapi/font/cpdf_tounicodemap.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-12T23:37:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6fc657e4_6e8dab7c",
       "revId": "f956efddf8d9b78768847f1ce3a06b74d937e22d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
