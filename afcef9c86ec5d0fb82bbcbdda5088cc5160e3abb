@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "06d6aa76_b2cd7623",
+        "filename": "core/fxcrt/fx_string.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-12T19:31:41Z",
+      "side": 0,
+      "message": "If the previous CL in the chain moved this to create ParseLeadingChars() as well, that would have make this review slightly easier.",
+      "revId": "afcef9c86ec5d0fb82bbcbdda5088cc5160e3abb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
