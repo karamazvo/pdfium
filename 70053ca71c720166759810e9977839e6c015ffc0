@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1b92fbcd_fd8a0613",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-12T18:06:41Z",
+      "side": 1,
+      "message": "Hi guys, I was looking for more FT stuff and stumbled across this test, just thought about taking some of the logic common (since it seemed to use the exact same pattern of EXPECT_EQ(). I thought about taking it common to make it easier to build new tests for this (if needed) or to edit existing tests.",
+      "revId": "70053ca71c720166759810e9977839e6c015ffc0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
