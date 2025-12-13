@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <string>
 #include "public/cpp/fpdf_scopers.h"
 #include "testing/embedder_test.h"
 #include "testing/embedder_test_constants.h"
@@ -9,11 +10,24 @@
 
 class FPDFRenderPatternEmbedderTest : public EmbedderTest {};
 
+static const std::string& GetPathPrefix() {
+#if BUILDFLAG(IS_WIN)
+  static const std::string path_prefix =
+      "CompareBitmapWithImage\\FPDFRenderPatternEmbedderTest\\";
+#else
+  static const std::string path_prefix =
+      "CompareBitmapWithImage/FPDFRenderPatternEmbedderTest/";
+#endif
+  return path_prefix;
+}
+
 TEST_F(FPDFRenderPatternEmbedderTest, LoadError547706) {
   // Test shading where object is a dictionary instead of a stream.
   ASSERT_TRUE(OpenDocument("bug_547706.pdf"));
   ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
-  CompareBitmap(bitmap.get(), 612, 792, pdfium::kBlankPage612By792Checksum);
+  CompareBitmapWithImage(
+      bitmap.get(), 612, 792,
+      (GetPathPrefix() + "LoadError547706_expected.pdf.0.png").c_str());
 }
