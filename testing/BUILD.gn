@@ -29,6 +29,8 @@ source_set("test_support") {
     "test_support.h",
     "utils/bitmap_saver.cpp",
     "utils/bitmap_saver.h",
+    "utils/bitmapfromimage.cpp",
+    "utils/bitmapfromimage.h",
     "utils/file_util.cpp",
     "utils/file_util.h",
     "utils/hash.cpp",
