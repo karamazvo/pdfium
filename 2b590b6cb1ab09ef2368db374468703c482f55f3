@@ -34,6 +34,24 @@
       "parentUuid": "f708a892_37ef1b04",
       "revId": "2b590b6cb1ab09ef2368db374468703c482f55f3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0fff3401_820b09f5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-13T14:08:00Z",
+      "side": 1,
+      "message": "For context, I fetched this directly from the CompareBitmap flag.",
+      "parentUuid": "5fdfc418_78d5a94c",
+      "revId": "2b590b6cb1ab09ef2368db374468703c482f55f3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
