@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5a510a8d_a82798eb",
+        "filename": "testing/utils/bitmap_from_image.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-13T17:39:49Z",
+      "side": 1,
+      "message": "Let me know a function to do something similar already exists (would allow this to be removed).",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 68
+      },
+      "revId": "e04196adb4d069b494b9d08bca17e79169e12559",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
