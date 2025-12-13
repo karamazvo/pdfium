@@ -27,6 +27,7 @@
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/test_loader.h"
 #include "testing/utils/bitmap_saver.h"
+#include "testing/utils/bitmapfromimage.h"
 #include "testing/utils/file_util.h"
 #include "testing/utils/hash.h"
 #include "testing/utils/path_service.h"
@@ -851,6 +852,19 @@ void EmbedderTest::CompareBitmap(FPDF_BITMAP bitmap,
   if (EmbedderTestEnvironment::GetInstance()->write_pngs()) {
     WriteBitmapToPng(bitmap, actual_md5sum + ".png");
   }
+}
+
+void EmbedderTest::CompareBitmapWithImage(FPDF_BITMAP bitmap,
+                                          int expected_width,
+                                          int expected_height,
+                                          const char* filename) {
+  FPDF_BITMAP imagebitmap = BitmapFromImage::BitmapFromPng(filename);
+  EXPECT_TRUE(imagebitmap);
+  if (!imagebitmap) {
+    return;
+  }
+  std::string imagechecksum = HashBitmap(imagebitmap);
+  CompareBitmap(bitmap, expected_width, expected_height, imagechecksum.c_str());
 }
 
 // static
