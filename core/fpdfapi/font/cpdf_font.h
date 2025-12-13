@@ -92,7 +92,7 @@ class CPDF_Font : public Retainable, public Observable {
   virtual int GlyphFromCharCodeExt(uint32_t charcode);
 #endif
   virtual WideString UnicodeFromCharCode(uint32_t charcode) const;
-  virtual uint32_t CharCodeFromUnicode(wchar_t Unicode) const;
+  virtual uint32_t CharCodeFromUnicode(char32_t Unicode) const;
   virtual bool HasFontWidths() const;
 
   ByteString GetBaseFontName() const { return base_font_name_; }
