@@ -47,6 +47,54 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9972496e_aa819c28",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-13T02:47:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d814127a_956af46d",
+      "range": {
+        "startLine": 7,
+        "startChar": 35,
+        "endLine": 7,
+        "endChar": 58
+      },
+      "revId": "70053ca71c720166759810e9977839e6c015ffc0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b7ee5811_6d48f718",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-13T02:47:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a2af7a4_4123fa11",
+      "range": {
+        "startLine": 7,
+        "startChar": 7,
+        "endLine": 7,
+        "endChar": 30
+      },
+      "revId": "70053ca71c720166759810e9977839e6c015ffc0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c11e52b9_3ff1c596",
@@ -60,6 +108,24 @@
       "writtenOn": "2025-12-12T18:47:26Z",
       "side": 1,
       "message": "Make these a set of \"bullet points\"?",
+      "revId": "70053ca71c720166759810e9977839e6c015ffc0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f57c252a_8ccaded6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-13T02:47:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c11e52b9_3ff1c596",
       "revId": "70053ca71c720166759810e9977839e6c015ffc0",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -104,6 +170,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d0ea97aa_8bfce922",
+        "filename": "core/fxcrt/fx_coordinates_unittest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-13T02:47:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cfa04f79_c7d08b81",
+      "range": {
+        "startLine": 24,
+        "startChar": 20,
+        "endLine": 24,
+        "endChar": 27
+      },
+      "revId": "70053ca71c720166759810e9977839e6c015ffc0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b26dbb70_b6c3222b",
@@ -117,6 +207,30 @@
       "writtenOn": "2025-12-12T18:47:26Z",
       "side": 1,
       "message": "Google C++ style: is_exact",
+      "range": {
+        "startLine": 29,
+        "startChar": 33,
+        "endLine": 29,
+        "endChar": 40
+      },
+      "revId": "70053ca71c720166759810e9977839e6c015ffc0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e9e6a9ba_64293579",
+        "filename": "core/fxcrt/fx_coordinates_unittest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-13T02:47:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b26dbb70_b6c3222b",
       "range": {
         "startLine": 29,
         "startChar": 33,
@@ -150,6 +264,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a4b04d72_91199170",
+        "filename": "core/fxcrt/fx_coordinates_unittest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-13T02:47:34Z",
+      "side": 1,
+      "message": "That is actually what the behaviour that was used previously, only one side was checked approximately. Will edit though.\n\nDone.",
+      "parentUuid": "1d0e54cd_cdd13706",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 37,
+        "endChar": 3
+      },
+      "revId": "70053ca71c720166759810e9977839e6c015ffc0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cc6022c8_b2904a68",
@@ -167,6 +305,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3c63782e_c75847d5",
+        "filename": "core/fxcrt/fx_coordinates_unittest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-13T02:47:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cc6022c8_b2904a68",
+      "revId": "70053ca71c720166759810e9977839e6c015ffc0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3b34ed4f_15b2e0e1",
@@ -180,6 +336,30 @@
       "writtenOn": "2025-12-12T18:47:26Z",
       "side": 1,
       "message": "If `point` is not transformed, isn\u0027t this helper function still useful? Give it a more general name?",
+      "range": {
+        "startLine": 70,
+        "startChar": 5,
+        "endLine": 70,
+        "endChar": 33
+      },
+      "revId": "70053ca71c720166759810e9977839e6c015ffc0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d4780a0f_51ada3a5",
+        "filename": "core/fxcrt/fx_coordinates_unittest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-13T02:47:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3b34ed4f_15b2e0e1",
       "range": {
         "startLine": 70,
         "startChar": 5,
