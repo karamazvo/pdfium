@@ -88,6 +88,24 @@
       "parentUuid": "f835022e_3ff19f19",
       "revId": "2b590b6cb1ab09ef2368db374468703c482f55f3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cc75362e_1aa3ab0d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-14T16:58:38Z",
+      "side": 1,
+      "message": "Ok I have a plan, I\u0027ll re-render these images on skia mac and windows (both)\nI dont have linux so I\u0027m going to hope that the windows images make linux pass as well.\n\nFYI: This would take some time for me to set up my windows vm for pdfium dev.",
+      "parentUuid": "097f5736_e4d38598",
+      "revId": "2b590b6cb1ab09ef2368db374468703c482f55f3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
