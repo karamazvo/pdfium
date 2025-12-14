@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <string>
 #include "build/build_config.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "public/cpp/fpdf_scopers.h"
@@ -11,7 +12,17 @@
 #include "testing/test_support.h"
 
 using FPDFParserDecodeEmbedderTest = EmbedderTest;
-using pdfium::kBlankPage612By792Checksum;
+
+static const std::string& GetPathPrefix() {
+#if BUILDFLAG(IS_WIN)
+  static const std::string path_prefix =
+      "CompareBitmapWithImage\\FPDFParserDecodeEmbedderTest\\";
+#else
+  static const std::string path_prefix =
+      "CompareBitmapWithImage/FPDFParserDecodeEmbedderTest/";
+#endif
+  return path_prefix;
+}
 
 TEST_F(FPDFParserDecodeEmbedderTest, Bug552046) {
   // Tests specifying multiple image filters for a stream. Should not cause a
@@ -20,7 +31,9 @@ TEST_F(FPDFParserDecodeEmbedderTest, Bug552046) {
   ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
-  CompareBitmap(bitmap.get(), 612, 792, kBlankPage612By792Checksum);
+  CompareBitmapWithImage(
+      bitmap.get(), 612, 792,
+      (GetPathPrefix() + "bug_552046_expected.pdf.0.png").c_str());
 }
 
 TEST_F(FPDFParserDecodeEmbedderTest, Bug555784) {
@@ -30,7 +43,9 @@ TEST_F(FPDFParserDecodeEmbedderTest, Bug555784) {
   ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
-  CompareBitmap(bitmap.get(), 612, 792, kBlankPage612By792Checksum);
+  CompareBitmapWithImage(
+      bitmap.get(), 612, 792,
+      (GetPathPrefix() + "bug_555784_expected.pdf.0.png").c_str());
 }
 
 TEST_F(FPDFParserDecodeEmbedderTest, Bug455199) {
@@ -41,5 +56,7 @@ TEST_F(FPDFParserDecodeEmbedderTest, Bug455199) {
   ASSERT_TRUE(page);
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
 
-  CompareBitmap(bitmap.get(), 200, 200, pdfium::HelloWorldChecksum());
+  CompareBitmapWithImage(
+      bitmap.get(), 200, 200,
+      (GetPathPrefix() + "bug_455199_expected.pdf.0.png").c_str());
 }

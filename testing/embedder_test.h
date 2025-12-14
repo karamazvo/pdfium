@@ -309,7 +309,10 @@ class EmbedderTest : public ::testing::Test,
                             int expected_width,
                             int expected_height,
                             const char* expected_md5sum);
-
+  static void CompareBitmapWithImage(FPDF_BITMAP bitmap,
+                                     int expected_width,
+                                     int expected_height,
+                                     const char* filename);
   void ClearString() { data_string_.clear(); }
   const std::string& GetString() const { return data_string_; }
 
