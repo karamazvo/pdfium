@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ce195a13_54e4624f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-12-15T20:56:15Z",
+      "side": 1,
+      "message": "Yeah, OK, might have preferred optional\u003cstd::string\u003e to ensure we don\u0027t use the blank string as a value ...",
+      "revId": "e5ff9acd628c574c40464233482b6f338708b31e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
