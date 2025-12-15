@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a919c49d_aeaa8fc8",
+        "filename": "fpdfsdk/fpdf_editpage.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-15T18:11:16Z",
+      "side": 1,
+      "message": "Whoops. PDFium should not use raw_ptr directly. Will fix in https://pdfium-review.googlesource.com/139690",
+      "range": {
+        "startLine": 171,
+        "startChar": 2,
+        "endLine": 171,
+        "endChar": 9
+      },
+      "revId": "a8882bc9d13276b942c1e64863cebdc67acdd7e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
