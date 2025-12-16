@@ -43,6 +43,7 @@ class CJBig2_Image {
   int32_t height() const { return height_; }
   int32_t stride() const { return stride_; }
 
+  pdfium::span<const uint8_t> span() const;
   pdfium::span<uint8_t> span();
   uint8_t* data() const { return data_.Get(); }
 
