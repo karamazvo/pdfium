@@ -74,6 +74,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "e3097f1c_20232dcd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-16T22:44:38Z",
+      "side": 1,
+      "message": "I admit, this suggestion would have been easier. As I\u0027ve opened a can of worms and now `std::ranges::find(unowned_ptr_container, raw_c_pointer)` doesn\u0027t work.",
+      "parentUuid": "c967d48e_6741362f",
+      "range": {
+        "startLine": 12,
+        "startChar": 10,
+        "endLine": 12,
+        "endChar": 36
+      },
+      "revId": "5fb4189c3d6176f10eca9cd82c38e2f697766edb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "258b1281_25fb5b88",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1
