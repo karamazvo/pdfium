@@ -20,7 +20,7 @@ TEST_F(FPDFParserDecodeEmbedderTest, Bug552046) {
   ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
-  CompareBitmap(bitmap.get(), 612, 792, kBlankPage612By792Checksum);
+  CompareBitmapToPng(bitmap.get(), pdfium::kBlankPage612By792Png);
 }
 
 TEST_F(FPDFParserDecodeEmbedderTest, Bug555784) {
@@ -30,7 +30,7 @@ TEST_F(FPDFParserDecodeEmbedderTest, Bug555784) {
   ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
-  CompareBitmap(bitmap.get(), 612, 792, kBlankPage612By792Checksum);
+  CompareBitmapToPng(bitmap.get(), pdfium::kBlankPage612By792Png);
 }
 
 TEST_F(FPDFParserDecodeEmbedderTest, Bug455199) {
@@ -40,6 +40,5 @@ TEST_F(FPDFParserDecodeEmbedderTest, Bug455199) {
   ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
-
-  CompareBitmap(bitmap.get(), 200, 200, pdfium::HelloWorldChecksum());
+  CompareBitmapToPngWithExpectationSuffix(bitmap.get(), pdfium::kHelloWorldPng);
 }
