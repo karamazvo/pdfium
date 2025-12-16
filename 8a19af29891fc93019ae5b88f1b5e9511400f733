@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "23fd0ca2_91b39c6c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-16T18:57:02Z",
+      "side": 1,
+      "message": "Spamming it in the headers that need it is sufficient.",
+      "revId": "8a19af29891fc93019ae5b88f1b5e9511400f733",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
