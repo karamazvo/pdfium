@@ -140,6 +140,24 @@
       "parentUuid": "0334723f_9ca94e47",
       "revId": "5fb4189c3d6176f10eca9cd82c38e2f697766edb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "96c856be_5f67bbdb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-12-16T20:05:32Z",
+      "side": 1,
+      "message": "Ack.  BRP is BackupRefPtr, the scheme used under the covers by raw_ptr when chrome is built with PA.  Agree that avoiding breakage is good.  Let\u0027s land it.",
+      "parentUuid": "cda37821_d8223872",
+      "revId": "5fb4189c3d6176f10eca9cd82c38e2f697766edb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
