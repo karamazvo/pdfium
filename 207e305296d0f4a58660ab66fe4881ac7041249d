@@ -1,0 +1,280 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a3746ae3_ca0ece63",
+        "filename": "core/fxcodec/fax/faxmodule.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-12-16T19:00:18Z",
+      "side": 1,
+      "message": "`bit ? pdfium::span(skip_block_0) : pdfium::span(skip_block_1);` as I\u0027m not sure what the value of ? between two arrays is in this case.",
+      "range": {
+        "startLine": 91,
+        "startChar": 41,
+        "endLine": 91,
+        "endChar": 74
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "7625f33a_a9a6fa9a",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/fax/faxmodule.cpp",
+              "range": {
+                "startLine": 91,
+                "startChar": 0,
+                "endLine": 92,
+                "endChar": 0
+              },
+              "replacement": "    pdfium::span\u003cconst uint8_t\u003e skip_block;\n    if (bit) {\n      skip_block \u003d pdfium::span(skip_block_0);\n    } else {\n      skip_block \u003d pdfium::span(skip_block_1);\n    }\n"
+            }
+          ]
+        }
+      ],
+      "revId": "207e305296d0f4a58660ab66fe4881ac7041249d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6515df70_5d1583e3",
+        "filename": "core/fxcodec/fax/faxmodule.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-12-16T19:00:18Z",
+      "side": 1,
+      "message": "probably needs count argument here as span\u003d\u003d wants the same lengths",
+      "range": {
+        "startLine": 93,
+        "startChar": 57,
+        "endLine": 93,
+        "endChar": 58
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "ca2eaa05_4de4e0ea",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/fax/faxmodule.cpp",
+              "range": {
+                "startLine": 93,
+                "startChar": 0,
+                "endLine": 94,
+                "endChar": 0
+              },
+              "replacement": "           data_buf.subspan(static_cast\u003csize_t\u003e(byte_pos), kBulkReadSize) \u003d\u003d\n               skip_block) {\n"
+            }
+          ]
+        }
+      ],
+      "revId": "207e305296d0f4a58660ab66fe4881ac7041249d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3843e78d_22a1bc01",
+        "filename": "core/fxcodec/fax/faxmodule.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-12-16T19:00:18Z",
+      "side": 1,
+      "message": "nit: this function should probably be declared UNSAFE_BUFFER_USAGE.",
+      "range": {
+        "startLine": 368,
+        "startChar": 0,
+        "endLine": 368,
+        "endChar": 56
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "fde148d3_2fced156",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/fax/faxmodule.cpp",
+              "range": {
+                "startLine": 131,
+                "startChar": 0,
+                "endLine": 132,
+                "endChar": 0
+              },
+              "replacement": "UNSAFE_BUFFER_USAGE void FaxFillBits(uint8_t* dest_buf,\n                                     int columns,\n                                     int startpos,\n                                     int endpos) {\n"
+            }
+          ]
+        }
+      ],
+      "revId": "207e305296d0f4a58660ab66fe4881ac7041249d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c3f46847_dae6a6c9",
+        "filename": "core/fxcodec/fax/faxmodule.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 603,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-12-16T19:00:18Z",
+      "side": 1,
+      "message": "nit: this should also likely have been declared UNSAFE_BUFFER_USAGE",
+      "range": {
+        "startLine": 603,
+        "startChar": 0,
+        "endLine": 603,
+        "endChar": 77
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "4066da2d_142a58d0",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/fax/faxmodule.cpp",
+              "range": {
+                "startLine": 603,
+                "startChar": 0,
+                "endLine": 605,
+                "endChar": 0
+              },
+              "replacement": "    UNSAFE_TODO(FaxG4GetRow(src_span_.data(), bitsize, \u0026bitpos_, scanline_buf_,\n                           ref_buf_, orig_width_));\n"
+            },
+            {
+              "path": "core/fxcodec/fax/faxmodule.cpp",
+              "range": {
+                "startLine": 607,
+                "startChar": 0,
+                "endLine": 609,
+                "endChar": 0
+              },
+              "replacement": "    UNSAFE_TODO(FaxGet1DLine(src_span_.data(), bitsize, \u0026bitpos_,\n                             scanline_buf_, orig_width_));\n"
+            },
+            {
+              "path": "core/fxcodec/fax/faxmodule.cpp",
+              "range": {
+                "startLine": 611,
+                "startChar": 0,
+                "endLine": 613,
+                "endChar": 0
+              },
+              "replacement": "      UNSAFE_TODO(FaxGet1DLine(src_span_.data(), bitsize, \u0026bitpos_,\n                               scanline_buf_, orig_width_));\n"
+            },
+            {
+              "path": "core/fxcodec/fax/faxmodule.cpp",
+              "range": {
+                "startLine": 614,
+                "startChar": 0,
+                "endLine": 616,
+                "endChar": 0
+              },
+              "replacement": "      UNSAFE_TODO(FaxG4GetRow(src_span_.data(), bitsize, \u0026bitpos_,\n                             scanline_buf_, ref_buf_, orig_width_));\n"
+            }
+          ]
+        }
+      ],
+      "revId": "207e305296d0f4a58660ab66fe4881ac7041249d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ebb92f0d_5ff3dfbe",
+        "filename": "core/fxcodec/fax/faxmodule.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-12-16T19:00:18Z",
+      "side": 1,
+      "message": "nit: \u0027at least\u0027 or \u0027exactly\u0027",
+      "range": {
+        "startLine": 41,
+        "startChar": 24,
+        "endLine": 41,
+        "endChar": 25
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "b47fa499_dd5b93b7",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/fax/faxmodule.h",
+              "range": {
+                "startLine": 41,
+                "startChar": 0,
+                "endLine": 42,
+                "endChar": 0
+              },
+              "replacement": "  // `dest_buf` must be at least `height` * `pitch` in size.\n"
+            }
+          ]
+        }
+      ],
+      "revId": "207e305296d0f4a58660ab66fe4881ac7041249d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6616b472_1f16d3d4",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-12-16T19:00:18Z",
+      "side": 1,
+      "message": "nit: must have allocted.",
+      "range": {
+        "startLine": 108,
+        "startChar": 51,
+        "endLine": 108,
+        "endChar": 59
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "fb2108a9_13806d99",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/jbig2/JBig2_Image.cpp",
+              "range": {
+                "startLine": 108,
+                "startChar": 0,
+                "endLine": 109,
+                "endChar": 0
+              },
+              "replacement": "  // SAFETY: If `data_` is owned, then `this` must have allocated the right\n  // amount.\n"
+            }
+          ]
+        }
+      ],
+      "revId": "207e305296d0f4a58660ab66fe4881ac7041249d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
