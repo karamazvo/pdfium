@@ -57,6 +57,30 @@
       },
       "revId": "024a271f15c5ea0091106177f81f3b3d44c7ba8f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "677d50a8_694ed76a",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-16T08:05:45Z",
+      "side": 1,
+      "message": "Will resolve this in one of the related CLs. Let me know if we should keep it as seperate functions, add new function, bool flag or another approach.",
+      "parentUuid": "783b5f5c_eb1ad894",
+      "range": {
+        "startLine": 292,
+        "startChar": 25,
+        "endLine": 292,
+        "endChar": 66
+      },
+      "revId": "024a271f15c5ea0091106177f81f3b3d44c7ba8f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
