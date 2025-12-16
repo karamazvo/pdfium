@@ -234,7 +234,7 @@ class FPDFViewEmbedderTest : public EmbedderTest {
   }
 
 #if defined(PDF_USE_SKIA)
-  void TestRenderPageSkp(FPDF_PAGE page, const char* expected_checksum) {
+  ScopedFDFBitmap GetSkpBitmap(FPDF_PAGE page) {
     int width = static_cast<int>(FPDF_GetPageWidth(page));
     int height = static_cast<int>(FPDF_GetPageHeight(page));
 
@@ -252,8 +252,16 @@ class FPDFViewEmbedderTest : public EmbedderTest {
 
     ScopedFPDFBitmap bitmap = SkPictureToPdfiumBitmap(
         std::move(picture), SkISize::Make(width, height));
-    CompareBitmap(bitmap.get(), width, height, expected_checksum);
   }
+
+  void TestRenderPageSkp(FPDF_PAGE page, const char* expected_checksum) {
+    CompareBitmap(GetSkpBitmap(page).get(), width, height, expected_checksum);
+  }
+
+  void TestRenderPageSkpToPng(FPDF_PAGE page, std::string_view png_name) {
+    CompareBitmapToPng(GetSkpBitmap(page).get(), png_name);
+  }
+
 #endif  // defined(PDF_USE_SKIA)
 
  private:
@@ -2090,8 +2098,8 @@ TEST_F(FPDFViewEmbedderTest, RenderXfaPage) {
   ASSERT_TRUE(page);
 
   // Should always be blank, as we're not testing `FPDF_FFLDraw()` here.
-  TestRenderPageBitmapWithFlags(page.get(), 0,
-                                pdfium::kBlankPage612By792Checksum);
+  TestRenderPageBitmapWithFlagsToPng(page.get(), 0,
+                                     pdfium::kBlankPage612By792Png);
 }
 
 #if defined(PDF_USE_SKIA)
@@ -2119,7 +2127,7 @@ TEST_F(FPDFViewEmbedderTest, RenderXfaPageToSkp) {
   ASSERT_TRUE(page);
 
   // Should always be blank, as we're not testing `FPDF_FFLRecord()` here.
-  TestRenderPageSkp(page.get(), pdfium::kBlankPage612By792Checksum);
+  TestRenderPageSkpToPng(page.get(), pdfium::kBlankPage612By792Png);
 }
 
 TEST_F(FPDFViewEmbedderTest, Bug2087) {
