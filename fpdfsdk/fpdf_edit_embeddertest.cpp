@@ -2461,10 +2461,10 @@ TEST_F(FPDFEditEmbedderTest, AddAndRemovePaths) {
   ASSERT_TRUE(page);
 
   // Render the blank page and verify it's a blank bitmap.
-  using pdfium::kBlankPage612By792Checksum;
+  using pdfium::kBlankPage612By792Png;
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 612, 792, kBlankPage612By792Checksum);
+    CompareBitmapToPng(page_bitmap.get(), pdfium::kBlankPage612By792Png);
   }
   ASSERT_EQ(0, FPDFPage_CountObjects(page));
 
@@ -2485,7 +2485,7 @@ TEST_F(FPDFEditEmbedderTest, AddAndRemovePaths) {
   EXPECT_TRUE(FPDFPage_RemoveObject(page, red_rect));
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 612, 792, kBlankPage612By792Checksum);
+    CompareBitmapToPng(page_bitmap.get(), pdfium::kBlankPage612By792Png);
   }
   EXPECT_EQ(0, FPDFPage_CountObjects(page));
 
@@ -2837,11 +2837,10 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontTextOfSizeZero) {
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
-    CompareBitmap(page_bitmap.get(), 612, 792,
-                  pdfium::kBlankPage612By792Checksum);
+    CompareBitmapToPng(page_bitmap.get(), pdfium::kBlankPage612By792Png);
 
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-    VerifySavedDocument(612, 792, pdfium::kBlankPage612By792Checksum);
+    VerifySavedDocumentToPng(pdfium::kBlankPage612By792Png);
   }
 }
 
