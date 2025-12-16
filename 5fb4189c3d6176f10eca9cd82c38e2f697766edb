@@ -122,6 +122,24 @@
       "parentUuid": "35fcac51_c625975b",
       "revId": "5fb4189c3d6176f10eca9cd82c38e2f697766edb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cda37821_d8223872",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-16T20:03:50Z",
+      "side": 1,
+      "message": "By BRP, are you referring to using raw_ptr in PA? If so, the raw_ptr equivalent ctor is not explicit, so that\u0027s something to take up with PA folks. This is just changing UnownedPtr to match raw_ptr.\n\nSince PDFium developers generally have PA turned on by default, the implicit conversion works for them. Then they run try bots, which don\u0027t have PA-disabled coverage, and that passes. CLs go in, and break developers that build with PA disabled. Even with PA-disabled coverage, this would still annoy developers, as their PA-enabled build works, but then a trybot would fail. Hopefully this won\u0027t happen that often, but it\u0027s still a small point of friction.",
+      "parentUuid": "0334723f_9ca94e47",
+      "revId": "5fb4189c3d6176f10eca9cd82c38e2f697766edb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
