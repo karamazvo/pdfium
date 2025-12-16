@@ -80,6 +80,24 @@
       "message": "I was hoping to avoid ref churn by not allowing accidental BRP creation. Adding the explicit construction would still be OK in this case, no?",
       "revId": "5fb4189c3d6176f10eca9cd82c38e2f697766edb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0334723f_9ca94e47",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-12-16T19:06:24Z",
+      "side": 1,
+      "message": "Would still be ok even for non-brp developers, right?",
+      "parentUuid": "35fcac51_c625975b",
+      "revId": "5fb4189c3d6176f10eca9cd82c38e2f697766edb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
