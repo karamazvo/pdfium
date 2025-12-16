@@ -399,7 +399,8 @@ TEST_F(FPDFAnnotEmbedderTest, RenderAnnotWithOnlyRolloverAP) {
   // normal appearance should be generated, allowing the highlight annotation to
   // still display.
   ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
-  CompareBitmap(bitmap.get(), 612, 792, "dc98f06da047bd8aabfa99562d2cbd1e");
+  CompareBitmapToPng(bitmap.get(),
+                     "fpdf_annot_render_annot_with_only_rollover_ap");
 }
 
 TEST_F(FPDFAnnotEmbedderTest, RenderMultilineMarkupAnnotWithoutAP) {
@@ -665,7 +666,8 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndSaveLinkAnnotation) {
   ASSERT_TRUE(page);
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
-    CompareBitmap(bitmap.get(), 200, 200, pdfium::HelloWorldChecksum());
+    CompareBitmapToPngWithExpectationSuffix(bitmap.get(),
+                                            pdfium::kHelloWorldPng);
   }
   EXPECT_EQ(0, FPDFPage_GetAnnotCount(page.get()));
 
@@ -723,8 +725,8 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndSaveLinkAnnotation) {
     ASSERT_TRUE(saved_doc);
     ScopedSavedPage saved_page = LoadScopedSavedPage(0);
     ASSERT_TRUE(saved_page);
-    VerifySavedRendering(saved_page.get(), 200, 200,
-                         pdfium::HelloWorldChecksum());
+    VerifySavedRenderingToPngWithExpectationSuffix(saved_page.get(),
+                                                   pdfium::kHelloWorldPng);
     EXPECT_EQ(1, FPDFPage_GetAnnotCount(saved_page.get()));
 
     ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(saved_page.get(), 0));
@@ -1354,7 +1356,7 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyAnnotationFlags) {
     {
       ScopedFPDFBitmap bitmap =
           RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
-      CompareBitmap(bitmap.get(), 612, 792, pdfium::kBlankPage612By792Checksum);
+      CompareBitmapToPng(bitmap.get(), pdfium::kBlankPage612By792Png);
     }
 
     // Unset the HIDDEN flag.
