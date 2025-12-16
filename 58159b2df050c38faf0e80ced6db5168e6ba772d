@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "af9e896e_ac8bfc80",
+        "filename": "testing/embedder_test_constants.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-16T04:01:53Z",
+      "side": 1,
+      "message": "Still need this checksum here, there are a few more functions that are reliant on it, that we can replace in a separate CL.",
+      "range": {
+        "startLine": 17,
+        "startChar": 18,
+        "endLine": 17,
+        "endChar": 44
+      },
+      "revId": "58159b2df050c38faf0e80ced6db5168e6ba772d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
