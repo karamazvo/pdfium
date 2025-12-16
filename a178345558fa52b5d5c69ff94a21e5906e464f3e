@@ -1,6 +1,46 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "1ec41299_507f2efe",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 22
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-16T00:46:56Z",
+      "side": 1,
+      "message": "Use backticks, as most new code also uses backticks. It\u0027s also clearer to refer to FunctionName() with the parenthesis, to make it clearer it is not a ClassName.",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 1
+      },
+      "revId": "a178345558fa52b5d5c69ff94a21e5906e464f3e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "984509b0_cecc7319",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 22
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-16T00:46:56Z",
+      "side": 1,
+      "message": "Mention why AGG and Skia render this test case differently.",
+      "revId": "a178345558fa52b5d5c69ff94a21e5906e464f3e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "63978ada_5c695d53",
