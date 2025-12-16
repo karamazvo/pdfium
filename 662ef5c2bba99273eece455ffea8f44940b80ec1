@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "524bf3e9_7cee3a48",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-16T07:00:52Z",
+      "side": 1,
+      "message": "Hi guys, began working on the checksum thing. Added the test image for the blank 612x792 image that is present in a few Embedder tests.\nFYI, dont have linux and my windows vm takes around about 12 hours to build for some reason, so just letting you know that I have gotten this image from MacOS (and not verified it with linux or windows aside from the tryjobs).",
+      "revId": "662ef5c2bba99273eece455ffea8f44940b80ec1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
