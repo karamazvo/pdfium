@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cc2c6e31_1783a91c",
+        "filename": "main.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 493,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-17T20:48:16Z",
+      "side": 1,
+      "message": "Try to keep the list sorted.",
+      "revId": "d5548380bb0976904bd57aada326e3d2fef7ad5f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
