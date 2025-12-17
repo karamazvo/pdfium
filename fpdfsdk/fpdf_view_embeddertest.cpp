@@ -8,6 +8,7 @@
 #include <limits>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -39,8 +40,6 @@
 #include "third_party/skia/include/core/SkSize.h"             // nogncheck
 #include "third_party/skia/include/core/SkSurface.h"          // nogncheck
 #endif  // defined(PDF_USE_SKIA)
-
-using pdfium::ManyRectanglesChecksum;
 
 namespace {
 
@@ -159,6 +158,21 @@ TEST(fpdf, CApiTest) {
 
 class FPDFViewEmbedderTest : public EmbedderTest {
  protected:
+  // Add ToPng equivalents of these
+  void TestRenderPageBitmapWithMatrixToPng(
+      FPDF_PAGE page,
+      int bitmap_width,
+      int bitmap_height,
+      const FS_MATRIX& matrix,
+      const FS_RECTF& rect,
+      std::string_view expectation_png_name) {
+    ScopedFPDFBitmap bitmap(FPDFBitmap_Create(bitmap_width, bitmap_height, 0));
+    ASSERT_TRUE(FPDFBitmap_FillRect(bitmap.get(), 0, 0, bitmap_width,
+                                    bitmap_height, 0xFFFFFFFF));
+
+    FPDF_RenderPageBitmapWithMatrix(bitmap.get(), page, &matrix, &rect, 0);
+    CompareBitmapToPngWithExpectationSuffix(bitmap.get(), expectation_png_name);
+  }
   void TestRenderPageBitmapWithMatrix(FPDF_PAGE page,
                                       int bitmap_width,
                                       int bitmap_height,
@@ -189,11 +203,34 @@ class FPDFViewEmbedderTest : public EmbedderTest {
     CompareBitmap(bitmap.get(), bitmap_width, bitmap_height, expected_checksum);
   }
 
+  void TestRenderPageBitmapWithInternalMemoryToPng(
+      FPDF_PAGE page,
+      int format,
+      std::string_view expectation_png_name) {
+    TestRenderPageBitmapWithInternalMemoryAndStrideToPng(
+        page, format, /*bitmap_stride=*/0, expectation_png_name);
+  }
+
   void TestRenderPageBitmapWithInternalMemory(FPDF_PAGE page,
                                               int format,
                                               const char* expected_checksum) {
     TestRenderPageBitmapWithInternalMemoryAndStride(
         page, format, /*bitmap_stride=*/0, expected_checksum);
+  }
+
+  void TestRenderPageBitmapWithInternalMemoryAndStrideToPng(
+      FPDF_PAGE page,
+      int format,
+      int bitmap_stride,
+      std::string_view expectation_png_name) {
+    int bitmap_width = static_cast<int>(FPDF_GetPageWidth(page));
+    int bitmap_height = static_cast<int>(FPDF_GetPageHeight(page));
+    int bytes_per_pixel = BytesPerPixelForFormat(format);
+    ASSERT_NE(0, bytes_per_pixel);
+
+    ScopedFPDFBitmap bitmap(FPDFBitmap_CreateEx(
+        bitmap_width, bitmap_height, format, nullptr, bitmap_stride));
+    RenderPageToBitmapAndCheckToPng(page, bitmap.get(), expectation_png_name);
   }
 
   void TestRenderPageBitmapWithInternalMemoryAndStride(
@@ -211,6 +248,19 @@ class FPDFViewEmbedderTest : public EmbedderTest {
     RenderPageToBitmapAndCheck(page, bitmap.get(), expected_checksum);
   }
 
+  void TestRenderPageBitmapWithExternalMemoryToPng(
+      FPDF_PAGE page,
+      int format,
+      std::string_view expectation_png_name) {
+    int bitmap_width = static_cast<int>(FPDF_GetPageWidth(page));
+    int bytes_per_pixel = BytesPerPixelForFormat(format);
+    ASSERT_NE(0, bytes_per_pixel);
+
+    int bitmap_stride = bytes_per_pixel * bitmap_width;
+    return TestRenderPageBitmapWithExternalMemoryImplToPng(
+        page, format, bitmap_stride, expectation_png_name);
+  }
+
   void TestRenderPageBitmapWithExternalMemory(FPDF_PAGE page,
                                               int format,
                                               const char* expected_checksum) {
@@ -223,6 +273,14 @@ class FPDFViewEmbedderTest : public EmbedderTest {
         page, format, bitmap_stride, expected_checksum);
   }
 
+  void TestRenderPageBitmapWithExternalMemoryAndNoStrideToPng(
+      FPDF_PAGE page,
+      int format,
+      std::string_view expectation_png_name) {
+    return TestRenderPageBitmapWithExternalMemoryImplToPng(
+        page, format, /*bitmap_stride=*/0, expectation_png_name);
+  }
+
   void TestRenderPageBitmapWithExternalMemoryAndNoStride(
       FPDF_PAGE page,
       int format,
@@ -232,27 +290,6 @@ class FPDFViewEmbedderTest : public EmbedderTest {
   }
 
 #if defined(PDF_USE_SKIA)
-  void TestRenderPageSkp(FPDF_PAGE page, const char* expected_checksum) {
-    int width = static_cast<int>(FPDF_GetPageWidth(page));
-    int height = static_cast<int>(FPDF_GetPageHeight(page));
-
-    sk_sp<SkPicture> picture;
-    {
-      auto recorder = std::make_unique<SkPictureRecorder>();
-      recorder->beginRecording(width, height);
-
-      FPDF_RenderPageSkia(
-          FPDFSkiaCanvasFromSkCanvas(recorder->getRecordingCanvas()), page,
-          width, height);
-      picture = recorder->finishRecordingAsPicture();
-      ASSERT_TRUE(picture);
-    }
-
-    ScopedFPDFBitmap bitmap = SkPictureToPdfiumBitmap(
-        std::move(picture), SkISize::Make(width, height));
-    CompareBitmap(bitmap.get(), width, height, expected_checksum);
-  }
-
   void TestRenderPageSkpToPng(FPDF_PAGE page, std::string_view png_name) {
     int width = static_cast<int>(FPDF_GetPageWidth(page));
     int height = static_cast<int>(FPDF_GetPageHeight(page));
@@ -271,7 +308,7 @@ class FPDFViewEmbedderTest : public EmbedderTest {
 
     ScopedFPDFBitmap bitmap = SkPictureToPdfiumBitmap(
         std::move(picture), SkISize::Make(width, height));
-    CompareBitmapToPng(bitmap.get(), png_name);
+    CompareBitmapToPngWithExpectationSuffix(bitmap.get(), png_name);
   }
 
 #endif  // defined(PDF_USE_SKIA)
@@ -291,6 +328,21 @@ class FPDFViewEmbedderTest : public EmbedderTest {
     return bitmap;
   }
 
+  void TestRenderPageBitmapWithExternalMemoryImplToPng(
+      FPDF_PAGE page,
+      int format,
+      int bitmap_stride,
+      std::string_view expectation_png_name) {
+    int bitmap_width = static_cast<int>(FPDF_GetPageWidth(page));
+    int bitmap_height = static_cast<int>(FPDF_GetPageHeight(page));
+
+    std::vector<uint8_t> external_memory(bitmap_stride * bitmap_height);
+    ScopedFPDFBitmap bitmap(FPDFBitmap_CreateEx(bitmap_width, bitmap_height,
+                                                format, external_memory.data(),
+                                                bitmap_stride));
+    RenderPageToBitmapAndCheckToPng(page, bitmap.get(), expectation_png_name);
+  }
+
   void TestRenderPageBitmapWithExternalMemoryImpl(
       FPDF_PAGE page,
       int format,
@@ -304,6 +356,20 @@ class FPDFViewEmbedderTest : public EmbedderTest {
                                                 format, external_memory.data(),
                                                 bitmap_stride));
     RenderPageToBitmapAndCheck(page, bitmap.get(), expected_checksum);
+  }
+
+  void RenderPageToBitmapAndCheckToPng(FPDF_PAGE page,
+                                       FPDF_BITMAP bitmap,
+                                       std::string_view expectation_png_name) {
+    int bitmap_width = FPDFBitmap_GetWidth(bitmap);
+    int bitmap_height = FPDFBitmap_GetHeight(bitmap);
+    EXPECT_EQ(bitmap_width, static_cast<int>(FPDF_GetPageWidth(page)));
+    EXPECT_EQ(bitmap_height, static_cast<int>(FPDF_GetPageHeight(page)));
+    ASSERT_TRUE(FPDFBitmap_FillRect(bitmap, 0, 0, bitmap_width, bitmap_height,
+                                    0xFFFFFFFF));
+    FPDF_RenderPageBitmap(bitmap, page, 0, 0, bitmap_width, bitmap_height, 0,
+                          FPDF_ANNOT);
+    CompareBitmapToPngWithExpectationSuffix(bitmap, expectation_png_name);
   }
 
   void RenderPageToBitmapAndCheck(FPDF_PAGE page,
@@ -1099,18 +1165,17 @@ TEST_F(FPDFViewEmbedderTest, FPDFRenderPageBitmapWithMatrix) {
   EXPECT_FLOAT_EQ(200, page_width);
   EXPECT_FLOAT_EQ(300, page_height);
 
-  using pdfium::RectanglesChecksum;
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
-  CompareBitmap(bitmap.get(), page_width, page_height, RectanglesChecksum());
+  CompareBitmapToPngWithExpectationSuffix(bitmap.get(), pdfium::kRectanglesPng);
 
   FS_RECTF page_rect{0, 0, page_width, page_height};
 
   // Try rendering with an identity matrix. The output should be the same as
   // the RenderLoadedPage() output.
   FS_MATRIX identity_matrix{1, 0, 0, 1, 0, 0};
-  TestRenderPageBitmapWithMatrix(page.get(), page_width, page_height,
-                                 identity_matrix, page_rect,
-                                 RectanglesChecksum());
+  TestRenderPageBitmapWithMatrixToPng(page.get(), page_width, page_height,
+                                      identity_matrix, page_rect,
+                                      pdfium::kRectanglesPng);
 
   // Again render with an identity matrix but with a smaller clipping rect.
   FS_RECTF middle_of_page_rect{page_width / 4, page_height / 4,
@@ -1624,24 +1689,24 @@ TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithFlags) {
   ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  TestRenderPageBitmapWithFlags(page.get(), 0, ManyRectanglesChecksum());
-  TestRenderPageBitmapWithFlags(page.get(), FPDF_ANNOT,
-                                ManyRectanglesChecksum());
-  TestRenderPageBitmapWithFlags(page.get(), FPDF_LCD_TEXT,
-                                ManyRectanglesChecksum());
-  TestRenderPageBitmapWithFlags(page.get(), FPDF_NO_NATIVETEXT,
-                                ManyRectanglesChecksum());
+  TestRenderPageBitmapWithFlagsToPng(page.get(), 0, pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_ANNOT,
+                                     pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_LCD_TEXT,
+                                     pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_NO_NATIVETEXT,
+                                     pdfium::kManyRectanglesPng);
   TestRenderPageBitmapWithFlags(page.get(), FPDF_GRAYSCALE, grayscale_checksum);
-  TestRenderPageBitmapWithFlags(page.get(), FPDF_RENDER_LIMITEDIMAGECACHE,
-                                ManyRectanglesChecksum());
-  TestRenderPageBitmapWithFlags(page.get(), FPDF_RENDER_FORCEHALFTONE,
-                                ManyRectanglesChecksum());
-  TestRenderPageBitmapWithFlags(page.get(), FPDF_PRINTING,
-                                ManyRectanglesChecksum());
-  TestRenderPageBitmapWithFlags(page.get(), FPDF_RENDER_NO_SMOOTHTEXT,
-                                ManyRectanglesChecksum());
-  TestRenderPageBitmapWithFlags(page.get(), FPDF_RENDER_NO_SMOOTHIMAGE,
-                                ManyRectanglesChecksum());
+  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_RENDER_LIMITEDIMAGECACHE,
+                                     pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_RENDER_FORCEHALFTONE,
+                                     pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_PRINTING,
+                                     pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_RENDER_NO_SMOOTHTEXT,
+                                     pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_RENDER_NO_SMOOTHIMAGE,
+                                     pdfium::kManyRectanglesPng);
   TestRenderPageBitmapWithFlags(page.get(), FPDF_RENDER_NO_SMOOTHPATH,
                                 no_smoothpath_checksum);
 }
@@ -1689,35 +1754,35 @@ TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithAndWithoutExternalMemory) {
                                                     gray_checksum);
 
   static constexpr int kBgrxStride = 800;  // Width of 200 * 32 bits per pixel.
-  TestRenderPageBitmapWithInternalMemory(page.get(), FPDFBitmap_BGRx,
-                                         ManyRectanglesChecksum());
-  TestRenderPageBitmapWithInternalMemoryAndStride(
-      page.get(), FPDFBitmap_BGRx, kBgrxStride, ManyRectanglesChecksum());
-  TestRenderPageBitmapWithExternalMemory(page.get(), FPDFBitmap_BGRx,
-                                         ManyRectanglesChecksum());
-  TestRenderPageBitmapWithExternalMemoryAndNoStride(page.get(), FPDFBitmap_BGRx,
-                                                    ManyRectanglesChecksum());
+  TestRenderPageBitmapWithInternalMemoryToPng(page.get(), FPDFBitmap_BGRx,
+                                              pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithInternalMemoryAndStrideToPng(
+      page.get(), FPDFBitmap_BGRx, kBgrxStride, pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithExternalMemoryToPng(page.get(), FPDFBitmap_BGRx,
+                                              pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithExternalMemoryAndNoStrideToPng(
+      page.get(), FPDFBitmap_BGRx, pdfium::kManyRectanglesPng);
 
-  TestRenderPageBitmapWithInternalMemory(page.get(), FPDFBitmap_BGRA,
-                                         ManyRectanglesChecksum());
-  TestRenderPageBitmapWithInternalMemoryAndStride(
-      page.get(), FPDFBitmap_BGRA, kBgrxStride, ManyRectanglesChecksum());
-  TestRenderPageBitmapWithExternalMemory(page.get(), FPDFBitmap_BGRA,
-                                         ManyRectanglesChecksum());
-  TestRenderPageBitmapWithExternalMemoryAndNoStride(page.get(), FPDFBitmap_BGRA,
-                                                    ManyRectanglesChecksum());
+  TestRenderPageBitmapWithInternalMemoryToPng(page.get(), FPDFBitmap_BGRA,
+                                              pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithInternalMemoryAndStrideToPng(
+      page.get(), FPDFBitmap_BGRA, kBgrxStride, pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithExternalMemoryToPng(page.get(), FPDFBitmap_BGRA,
+                                              pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithExternalMemoryAndNoStrideToPng(
+      page.get(), FPDFBitmap_BGRA, pdfium::kManyRectanglesPng);
 
 #if defined(PDF_USE_SKIA)
   if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-    TestRenderPageBitmapWithInternalMemory(page.get(), FPDFBitmap_BGRA_Premul,
-                                           ManyRectanglesChecksum());
-    TestRenderPageBitmapWithInternalMemoryAndStride(
+    TestRenderPageBitmapWithInternalMemoryToPng(
+        page.get(), FPDFBitmap_BGRA_Premul, pdfium::kManyRectanglesPng);
+    TestRenderPageBitmapWithInternalMemoryAndStrideToPng(
         page.get(), FPDFBitmap_BGRA_Premul, kBgrxStride,
-        ManyRectanglesChecksum());
-    TestRenderPageBitmapWithExternalMemory(page.get(), FPDFBitmap_BGRA_Premul,
-                                           ManyRectanglesChecksum());
-    TestRenderPageBitmapWithExternalMemoryAndNoStride(
-        page.get(), FPDFBitmap_BGRA_Premul, ManyRectanglesChecksum());
+        pdfium::kManyRectanglesPng);
+    TestRenderPageBitmapWithExternalMemoryToPng(
+        page.get(), FPDFBitmap_BGRA_Premul, pdfium::kManyRectanglesPng);
+    TestRenderPageBitmapWithExternalMemoryAndNoStrideToPng(
+        page.get(), FPDFBitmap_BGRA_Premul, pdfium::kManyRectanglesPng);
   }
 #endif
 }
@@ -2125,7 +2190,7 @@ TEST_F(FPDFViewEmbedderTest, RenderPageToSkp) {
   ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  TestRenderPageSkp(page.get(), pdfium::RectanglesChecksum());
+  TestRenderPageSkpToPng(page.get(), pdfium::kRectanglesPng);
 }
 
 TEST_F(FPDFViewEmbedderTest, RenderXfaPageToSkp) {
