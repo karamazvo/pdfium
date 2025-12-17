@@ -61,6 +61,7 @@ CJBig2_Image::CJBig2_Image(int32_t w, int32_t h) {
   width_ = w;
   height_ = h;
   stride_ = stride_pixels / 8;
+  CHECK_GE(stride_, 0);
   data_.Reset(std::unique_ptr<uint8_t, FxFreeDeleter>(
       FX_Alloc2D(uint8_t, stride_, height_)));
 }
@@ -86,6 +87,7 @@ CJBig2_Image::CJBig2_Image(int32_t w,
   width_ = w;
   height_ = h;
   stride_ = stride;
+  CHECK_GE(stride_, 0);
   data_.Reset(pBuf.data());
 }
 
@@ -122,10 +124,10 @@ int CJBig2_Image::GetPixel(int32_t x, int32_t y) const {
     return 0;
   }
 
-  const uint8_t* pLine = UNSAFE_TODO(GetLineUnsafe(y));
+  pdfium::span<const uint8_t> line = GetLine(y);
   int32_t m = BitIndexToByte(x);
   int32_t n = x & 7;
-  return UNSAFE_TODO((pLine[m] >> (7 - n)) & 1);
+  return (line[m] >> (7 - n)) & 1;
 }
 
 void CJBig2_Image::SetPixel(int32_t x, int32_t y, int v) {
@@ -133,14 +135,22 @@ void CJBig2_Image::SetPixel(int32_t x, int32_t y, int v) {
     return;
   }
 
-  uint8_t* pLine = UNSAFE_TODO(GetLineUnsafe(y));
+  pdfium::span<uint8_t> line = GetLine(y);
   int32_t m = BitIndexToByte(x);
   int32_t n = 1 << (7 - (x & 7));
   if (v) {
-    UNSAFE_TODO(pLine[m]) |= n;
+    line[m] |= n;
   } else {
-    UNSAFE_TODO(pLine[m]) &= ~n;
+    line[m] &= ~n;
   }
+}
+
+pdfium::span<const uint8_t> CJBig2_Image::GetLine(int32_t y) const {
+  return span().subspan(GetLineOffset(y), static_cast<size_t>(stride_));
+}
+
+pdfium::span<uint8_t> CJBig2_Image::GetLine(int32_t y) {
+  return span().subspan(GetLineOffset(y), static_cast<size_t>(stride_));
 }
 
 void CJBig2_Image::CopyLine(int32_t hTo, int32_t hFrom) {
@@ -148,14 +158,13 @@ void CJBig2_Image::CopyLine(int32_t hTo, int32_t hFrom) {
     return;
   }
 
-  uint8_t* dest = UNSAFE_TODO(GetLineUnsafe(hTo));
+  pdfium::span<uint8_t> dest = GetLine(hTo);
   if (!IsValidLine(hFrom)) {
-    UNSAFE_TODO(FXSYS_memset(dest, 0, stride_));
+    std::ranges::fill(dest, 0);
     return;
   }
 
-  uint8_t* src = UNSAFE_TODO(GetLineUnsafe(hFrom));
-  UNSAFE_TODO(FXSYS_memcpy(dest, src, stride_));
+  fxcrt::spancpy(dest, GetLine(hFrom));
 }
 
 void CJBig2_Image::Fill(bool v) {
@@ -238,6 +247,12 @@ bool CJBig2_Image::IsValidPixel(int32_t x, int32_t y) const {
   }
 
   return IsValidLine(y);
+}
+
+size_t CJBig2_Image::GetLineOffset(int32_t y) const {
+  FX_SAFE_SIZE_T size = stride_;
+  size *= y;
+  return size.ValueOrDie();
 }
 
 void CJBig2_Image::SubImageFast(int32_t x,

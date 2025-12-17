@@ -7,6 +7,7 @@
 #ifndef CORE_FXCODEC_JBIG2_JBIG2_IMAGE_H_
 #define CORE_FXCODEC_JBIG2_JBIG2_IMAGE_H_
 
+#include <stddef.h>
 #include <stdint.h>
 
 #include <memory>
@@ -56,6 +57,11 @@ class CJBig2_Image {
     return UNSAFE_BUFFERS(data() + y * stride_);
   }
 
+  // Caller must ensure `y` is non-negative and less than `height`, otherwise
+  // GetLine() will crash.
+  pdfium::span<const uint8_t> GetLine(int32_t y) const;
+  pdfium::span<uint8_t> GetLine(int32_t y);
+
   void CopyLine(int32_t hTo, int32_t hFrom);
   void Fill(bool v);
 
@@ -82,6 +88,7 @@ class CJBig2_Image {
  private:
   bool IsValidLine(int32_t y) const;
   bool IsValidPixel(int32_t x, int32_t y) const;
+  size_t GetLineOffset(int32_t y) const;
   void SubImageFast(int32_t x,
                     int32_t y,
                     int32_t w,
