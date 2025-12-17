@@ -390,86 +390,14 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
     if ((xs0 & ~31) == ((xs1 - 1) & ~31)) {
       if (s1 > d1) {
         uint32_t shift = s1 - d1;
-        UNSAFE_TODO({
-          for (int32_t yy = yd0; yy < yd1; yy++) {
-            if (src.empty()) {
-              return false;
-            }
-            const uint8_t* lineSrc = src.data();
-            uint8_t* lineDst = dest.data();
-            uint32_t tmp1 = JBIG2_GETDWORD(lineSrc) << shift;
-            uint32_t tmp2 = JBIG2_GETDWORD(lineDst);
-            uint32_t tmp = 0;
-            switch (op) {
-              case JBIG2_COMPOSE_OR:
-                tmp = (tmp2 & ~maskM) | ((tmp1 | tmp2) & maskM);
-                break;
-              case JBIG2_COMPOSE_AND:
-                tmp = (tmp2 & ~maskM) | ((tmp1 & tmp2) & maskM);
-                break;
-              case JBIG2_COMPOSE_XOR:
-                tmp = (tmp2 & ~maskM) | ((tmp1 ^ tmp2) & maskM);
-                break;
-              case JBIG2_COMPOSE_XNOR:
-                tmp = (tmp2 & ~maskM) | ((~(tmp1 ^ tmp2)) & maskM);
-                break;
-              case JBIG2_COMPOSE_REPLACE:
-                tmp = (tmp2 & ~maskM) | (tmp1 & maskM);
-                break;
-            }
-            JBIG2_PUTDWORD(lineDst, tmp);
-            src = src.subspan(static_cast<size_t>(stride_));
-            dest = dest.subspan(static_cast<size_t>(pDst->stride_));
-          }
-        });
-      } else {
-        uint32_t shift = d1 - s1;
-        UNSAFE_TODO({
-          for (int32_t yy = yd0; yy < yd1; yy++) {
-            if (src.empty()) {
-              return false;
-            }
-            const uint8_t* lineSrc = src.data();
-            uint8_t* lineDst = dest.data();
-            uint32_t tmp1 = JBIG2_GETDWORD(lineSrc) >> shift;
-            uint32_t tmp2 = JBIG2_GETDWORD(lineDst);
-            uint32_t tmp = 0;
-            switch (op) {
-              case JBIG2_COMPOSE_OR:
-                tmp = (tmp2 & ~maskM) | ((tmp1 | tmp2) & maskM);
-                break;
-              case JBIG2_COMPOSE_AND:
-                tmp = (tmp2 & ~maskM) | ((tmp1 & tmp2) & maskM);
-                break;
-              case JBIG2_COMPOSE_XOR:
-                tmp = (tmp2 & ~maskM) | ((tmp1 ^ tmp2) & maskM);
-                break;
-              case JBIG2_COMPOSE_XNOR:
-                tmp = (tmp2 & ~maskM) | ((~(tmp1 ^ tmp2)) & maskM);
-                break;
-              case JBIG2_COMPOSE_REPLACE:
-                tmp = (tmp2 & ~maskM) | (tmp1 & maskM);
-                break;
-            }
-            JBIG2_PUTDWORD(lineDst, tmp);
-            src = src.subspan(static_cast<size_t>(stride_));
-            dest = dest.subspan(static_cast<size_t>(pDst->stride_));
-          }
-        });
-      }
-    } else {
-      uint32_t shift1 = s1 - d1;
-      uint32_t shift2 = 32 - shift1;
-      UNSAFE_TODO({
         for (int32_t yy = yd0; yy < yd1; yy++) {
           if (src.empty()) {
             return false;
           }
-          const uint8_t* lineSrc = src.data();
-          uint8_t* lineDst = dest.data();
-          uint32_t tmp1 = (JBIG2_GETDWORD(lineSrc) << shift1) |
-                          (JBIG2_GETDWORD(lineSrc + 4) >> shift2);
-          uint32_t tmp2 = JBIG2_GETDWORD(lineDst);
+          auto src_bytes = src.first<4u>();
+          auto dest_bytes = dest.first<4u>();
+          uint32_t tmp1 = JBIG2_GETDWORD(src_bytes) << shift;
+          uint32_t tmp2 = JBIG2_GETDWORD(dest_bytes);
           uint32_t tmp = 0;
           switch (op) {
             case JBIG2_COMPOSE_OR:
@@ -488,11 +416,78 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
               tmp = (tmp2 & ~maskM) | (tmp1 & maskM);
               break;
           }
-          JBIG2_PUTDWORD(lineDst, tmp);
+          JBIG2_PUTDWORD(dest_bytes, tmp);
           src = src.subspan(static_cast<size_t>(stride_));
           dest = dest.subspan(static_cast<size_t>(pDst->stride_));
         }
-      });
+      } else {
+        uint32_t shift = d1 - s1;
+        for (int32_t yy = yd0; yy < yd1; yy++) {
+          if (src.empty()) {
+            return false;
+          }
+          auto src_bytes = src.first<4u>();
+          auto dest_bytes = dest.first<4u>();
+          uint32_t tmp1 = JBIG2_GETDWORD(src_bytes) >> shift;
+          uint32_t tmp2 = JBIG2_GETDWORD(dest_bytes);
+          uint32_t tmp = 0;
+          switch (op) {
+            case JBIG2_COMPOSE_OR:
+              tmp = (tmp2 & ~maskM) | ((tmp1 | tmp2) & maskM);
+              break;
+            case JBIG2_COMPOSE_AND:
+              tmp = (tmp2 & ~maskM) | ((tmp1 & tmp2) & maskM);
+              break;
+            case JBIG2_COMPOSE_XOR:
+              tmp = (tmp2 & ~maskM) | ((tmp1 ^ tmp2) & maskM);
+              break;
+            case JBIG2_COMPOSE_XNOR:
+              tmp = (tmp2 & ~maskM) | ((~(tmp1 ^ tmp2)) & maskM);
+              break;
+            case JBIG2_COMPOSE_REPLACE:
+              tmp = (tmp2 & ~maskM) | (tmp1 & maskM);
+              break;
+          }
+          JBIG2_PUTDWORD(dest_bytes, tmp);
+          src = src.subspan(static_cast<size_t>(stride_));
+          dest = dest.subspan(static_cast<size_t>(pDst->stride_));
+        }
+      }
+    } else {
+      uint32_t shift1 = s1 - d1;
+      uint32_t shift2 = 32 - shift1;
+      for (int32_t yy = yd0; yy < yd1; yy++) {
+        if (src.empty()) {
+          return false;
+        }
+        auto src_bytes1 = src.first<4u>();
+        auto src_bytes2 = src.subspan<4u, 4u>();
+        auto dest_bytes = dest.first<4u>();
+        uint32_t tmp1 = (JBIG2_GETDWORD(src_bytes1) << shift1) |
+                        (JBIG2_GETDWORD(src_bytes2) >> shift2);
+        uint32_t tmp2 = JBIG2_GETDWORD(dest_bytes);
+        uint32_t tmp = 0;
+        switch (op) {
+          case JBIG2_COMPOSE_OR:
+            tmp = (tmp2 & ~maskM) | ((tmp1 | tmp2) & maskM);
+            break;
+          case JBIG2_COMPOSE_AND:
+            tmp = (tmp2 & ~maskM) | ((tmp1 & tmp2) & maskM);
+            break;
+          case JBIG2_COMPOSE_XOR:
+            tmp = (tmp2 & ~maskM) | ((tmp1 ^ tmp2) & maskM);
+            break;
+          case JBIG2_COMPOSE_XNOR:
+            tmp = (tmp2 & ~maskM) | ((~(tmp1 ^ tmp2)) & maskM);
+            break;
+          case JBIG2_COMPOSE_REPLACE:
+            tmp = (tmp2 & ~maskM) | (tmp1 & maskM);
+            break;
+        }
+        JBIG2_PUTDWORD(dest_bytes, tmp);
+        src = src.subspan(static_cast<size_t>(stride_));
+        dest = dest.subspan(static_cast<size_t>(pDst->stride_));
+      }
     }
   } else {
     if (s1 > d1) {
