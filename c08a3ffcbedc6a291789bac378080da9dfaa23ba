@@ -1,5 +1,23 @@
 {
-  "comments": [],
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bd02230a_7a0a7f51",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-17T02:16:46Z",
+      "side": 1,
+      "message": "Thanks for trying. Hope it was fun try to do this and then compare/contrast with my CL.",
+      "revId": "c08a3ffcbedc6a291789bac378080da9dfaa23ba",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ],
   "submitRequirementResults": [
     {
       "submitRequirement": {
