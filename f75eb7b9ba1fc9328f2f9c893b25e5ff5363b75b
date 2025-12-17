@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c6a77714_6a73ad54",
+        "filename": "skia/BUILD.gn",
+        "patchSetId": 1
+      },
+      "lineNbr": 516,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-17T18:11:51Z",
+      "side": 0,
+      "message": "BTW, need to do the same removal in Chromium.",
+      "revId": "f75eb7b9ba1fc9328f2f9c893b25e5ff5363b75b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
