@@ -147,6 +147,30 @@
       },
       "revId": "024a271f15c5ea0091106177f81f3b3d44c7ba8f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9ef8247e_6c0fdfa9",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-17T10:27:29Z",
+      "side": 1,
+      "message": "Yeah that is fine, but I feel in a very specific case this would run into some issues:\n\nFor instance let us say I want to verify `MyVeryCoolPdf.pdf` renders fine on skia, I expect the checksum `0123456789abcdef...`\n\nNow let us say there is a CL which edits this rendering (and breaks something with this test), ending in a case where it now matches the checksum of `my_very_cool_pdf_skia.png` instead of the expected `my_very_cool_pdf_skia_mac.png`.\n\nIn the old behaviour, checksums do not match and it would still fail (as expected).\nIn the new behaviour, I assume this would compare with all images until something matches, which would say all is working correctly, even if it is not.\n\nAgain, this is extremely specific snd a very specific case that would happen (although it still could happen).",
+      "parentUuid": "dd8bc1ec_d61c37e5",
+      "range": {
+        "startLine": 292,
+        "startChar": 25,
+        "endLine": 292,
+        "endChar": 66
+      },
+      "revId": "024a271f15c5ea0091106177f81f3b3d44c7ba8f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
