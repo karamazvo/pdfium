@@ -28,8 +28,14 @@ const char* HelloWorldRemovedChecksum();
 // MD5 hash for rendering many_rectangles.pdf.
 const char* ManyRectanglesChecksum();
 
+// Expectation file for rendering many_rectangles.pdf.
+inline constexpr char kManyRectanglesPng[] = "many_rectangles";
+
 // MD5 hash for rendering rectangles.pdf.
 const char* RectanglesChecksum();
+
+// Expectation file for rendering rectangles.pdf.
+inline constexpr char kRectanglesPng[] = "rectangles";
 
 // MD5 hash for rendering text_form.pdf.
 const char* TextFormChecksum();
