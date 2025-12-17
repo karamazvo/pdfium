@@ -42,6 +42,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "dd9cc229_c4c219d6",
+        "filename": "core/fxcodec/fax/faxmodule.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-17T02:29:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a3746ae3_ca0ece63",
+      "range": {
+        "startLine": 91,
+        "startChar": 41,
+        "endLine": 91,
+        "endChar": 74
+      },
+      "revId": "207e305296d0f4a58660ab66fe4881ac7041249d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6515df70_5d1583e3",
@@ -83,6 +107,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "07884cea_aaac9d09",
+        "filename": "core/fxcodec/fax/faxmodule.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-17T02:29:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6515df70_5d1583e3",
+      "range": {
+        "startLine": 93,
+        "startChar": 57,
+        "endLine": 93,
+        "endChar": 58
+      },
+      "revId": "207e305296d0f4a58660ab66fe4881ac7041249d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3843e78d_22a1bc01",
@@ -120,6 +168,30 @@
           ]
         }
       ],
+      "revId": "207e305296d0f4a58660ab66fe4881ac7041249d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b3e23f56_b59edc16",
+        "filename": "core/fxcodec/fax/faxmodule.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-17T02:29:28Z",
+      "side": 1,
+      "message": "See next comment.",
+      "parentUuid": "3843e78d_22a1bc01",
+      "range": {
+        "startLine": 368,
+        "startChar": 0,
+        "endLine": 368,
+        "endChar": 56
+      },
       "revId": "207e305296d0f4a58660ab66fe4881ac7041249d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -197,6 +269,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "1af52d45_872bb0a9",
+        "filename": "core/fxcodec/fax/faxmodule.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 603,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-17T02:29:28Z",
+      "side": 1,
+      "message": "I\u0027m getting rid of all the UNSAFE_TODO() usage in this file in this CL chain. Just skip this?",
+      "parentUuid": "c3f46847_dae6a6c9",
+      "range": {
+        "startLine": 603,
+        "startChar": 0,
+        "endLine": 603,
+        "endChar": 77
+      },
+      "revId": "207e305296d0f4a58660ab66fe4881ac7041249d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "ebb92f0d_5ff3dfbe",
         "filename": "core/fxcodec/fax/faxmodule.h",
         "patchSetId": 1
@@ -232,6 +328,30 @@
           ]
         }
       ],
+      "revId": "207e305296d0f4a58660ab66fe4881ac7041249d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4a6600c1_09dc4965",
+        "filename": "core/fxcodec/fax/faxmodule.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-17T02:29:28Z",
+      "side": 1,
+      "message": "\"exactly\" it is.",
+      "parentUuid": "ebb92f0d_5ff3dfbe",
+      "range": {
+        "startLine": 41,
+        "startChar": 24,
+        "endLine": 41,
+        "endChar": 25
+      },
       "revId": "207e305296d0f4a58660ab66fe4881ac7041249d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -273,6 +393,30 @@
           ]
         }
       ],
+      "revId": "207e305296d0f4a58660ab66fe4881ac7041249d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4e68adb2_c485b5fb",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-17T02:29:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6616b472_1f16d3d4",
+      "range": {
+        "startLine": 108,
+        "startChar": 51,
+        "endLine": 108,
+        "endChar": 59
+      },
       "revId": "207e305296d0f4a58660ab66fe4881ac7041249d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
