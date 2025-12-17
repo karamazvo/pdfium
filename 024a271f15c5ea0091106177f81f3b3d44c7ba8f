@@ -36,6 +36,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f81a2e28_998400bd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-17T02:10:40Z",
+      "side": 1,
+      "message": "Thanks, but let\u0027s try to get through this CL first.",
+      "parentUuid": "0b50106f_aeccddf1",
+      "revId": "024a271f15c5ea0091106177f81f3b3d44c7ba8f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "783b5f5c_eb1ad894",
@@ -97,6 +115,30 @@
       "side": 1,
       "message": "Nevermind, found that it returns a vector so it shouldnt be an issue.",
       "parentUuid": "677d50a8_694ed76a",
+      "range": {
+        "startLine": 292,
+        "startChar": 25,
+        "endLine": 292,
+        "endChar": 66
+      },
+      "revId": "024a271f15c5ea0091106177f81f3b3d44c7ba8f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dd8bc1ec_d61c37e5",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-17T02:10:40Z",
+      "side": 1,
+      "message": "It should go through the suffixes and get to foo_agg.png / foo_skia.png.",
+      "parentUuid": "029d3d01_f1bbe0f4",
       "range": {
         "startLine": 292,
         "startChar": 25,
