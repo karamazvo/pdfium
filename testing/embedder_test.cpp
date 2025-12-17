@@ -352,6 +352,37 @@ int CompareBGRxBitmapToPng(pdfium::span<const uint8_t> bitmap_span,
   return pixels_different;
 }
 
+int CompareBGRxPremultBitmapToPng(pdfium::span<const uint8_t> bitmap_span,
+                                  size_t bitmap_stride,
+                                  const DecodedPng& decoded_png) {
+  uint8_t* mutable_data_ptr = const_cast<uint8_t*>(bitmap_span.data());
+  pdfium::span<uint8_t> mutable_byte_span(mutable_data_ptr, bitmap_span.size());
+
+  for (int h = 0; h < decoded_png.height; ++h) {
+    auto bitmap_row = fxcrt::reinterpret_span<uint32_t>(
+        mutable_byte_span.first(bitmap_stride));
+    mutable_byte_span = mutable_byte_span.subspan(bitmap_stride);
+    for (int w = 0; w < decoded_png.width; ++w) {
+      auto pixel = bitmap_row[w];
+      uint8_t alpha = (pixel >> 24) & 0xff;
+      uint8_t red = (pixel >> 16) & 0xff;
+      uint8_t green = (pixel >> 8) & 0xff;
+      uint8_t blue = pixel & 0xff;
+
+      if (alpha == 0) {
+        continue;
+      }
+
+      red = (red * 255) / alpha;
+      green = (green * 255) / alpha;
+      blue = (blue * 255) / alpha;
+
+      bitmap_row[w] = (alpha << 24) | (red << 16) | (green << 8) | blue;
+    }
+  }
+  return CompareBGRxBitmapToPng(bitmap_span, bitmap_stride, decoded_png);
+}
+
 void CompareBitmapToPngData(FPDF_BITMAP bitmap,
                             pdfium::span<const uint8_t> png_data) {
   DecodedPng decoded_png = DecodePngData(png_data);
@@ -380,6 +411,10 @@ void CompareBitmapToPngData(FPDF_BITMAP bitmap,
           CompareBGRxBitmapToPng(bitmap_span, stride, decoded_png);
       break;
     }
+    case FPDFBitmap_BGRA_Premul:
+      pixels_different =
+          CompareBGRxPremultBitmapToPng(bitmap_span, stride, decoded_png);
+      break;
     default:
       // Support other formats as-needed.
       NOTREACHED();
