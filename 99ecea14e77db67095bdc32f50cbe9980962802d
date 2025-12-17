@@ -51,6 +51,24 @@
       "parentUuid": "588a9074_289b3433",
       "revId": "99ecea14e77db67095bdc32f50cbe9980962802d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "94f99760_d4ac7682",
+        "filename": "core/fpdfapi/font/cpdf_tounicodemap.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-17T21:26:09Z",
+      "side": 1,
+      "message": "For one, testing/corpus/pdfium/bug_880920.pdf crashes.",
+      "parentUuid": "01efd2ff_b7f8a151",
+      "revId": "99ecea14e77db67095bdc32f50cbe9980962802d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
