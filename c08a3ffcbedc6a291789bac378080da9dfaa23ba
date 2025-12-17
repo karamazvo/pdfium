@@ -16,6 +16,24 @@
       "message": "Thanks for trying. Hope it was fun try to do this and then compare/contrast with my CL.",
       "revId": "c08a3ffcbedc6a291789bac378080da9dfaa23ba",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4ed5c61e_c52abe47",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-17T12:59:45Z",
+      "side": 1,
+      "message": "Was fun indeed, got to learn quite a bit from this, def a few things to take away:\n\nA. If I couldnt natively build for win or linux, I probably should have gone pdf file by file instead of test by test to make sure that I am able to first check of all the ones that are non-platform dependednt\n\nB. Creating a seperate file (and then messing around with Build.gn took some time, maybe should have added to the DecodePng file directly (i just got mentally blocked as there was one file that was used to write bitmaps to pngs)\n\nC. BTW, was there a more effective strategy than booting up a windows VM for the images (maybe using the CL bots)\n\nD. Maybe common functions instead of adding the PathPrefix and SkiaSuffix functions to the common embedder_test.cpp file.\n\nThanks for helping out with the image function though, was able to learn a few things!",
+      "parentUuid": "bd02230a_7a0a7f51",
+      "revId": "c08a3ffcbedc6a291789bac378080da9dfaa23ba",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ],
   "submitRequirementResults": [
