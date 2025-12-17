@@ -33,6 +33,24 @@
       "message": "Should this maybe be NOTREACHED()? I think the way you have it now is identical behavior to the old implementation, but does it actually make sense to have two different codes mapped to the same destcode? I\u0027m not sure about the larger context.\n\nIt seems fine to leave this as-is since it matches the old behavior of ReverseLookup(), I just wanted to ask the question.",
       "revId": "99ecea14e77db67095bdc32f50cbe9980962802d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "01efd2ff_b7f8a151",
+        "filename": "core/fpdfapi/font/cpdf_tounicodemap.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-17T21:22:52Z",
+      "side": 1,
+      "message": "It\u0027s currently reachable via CPDFToUnicodeMapTest.InsertIntoMaps. I can\u0027t easily eyeball what will break in the real world if this becomes NOTREACHED().",
+      "parentUuid": "588a9074_289b3433",
+      "revId": "99ecea14e77db67095bdc32f50cbe9980962802d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
