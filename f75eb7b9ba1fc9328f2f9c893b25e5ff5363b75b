@@ -16,6 +16,24 @@
       "message": "BTW, need to do the same removal in Chromium.",
       "revId": "f75eb7b9ba1fc9328f2f9c893b25e5ff5363b75b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5a5026a1_4a16394f",
+        "filename": "skia/BUILD.gn",
+        "patchSetId": 1
+      },
+      "lineNbr": 516,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-12-17T19:58:38Z",
+      "side": 0,
+      "message": "Yep, https://chromium-review.googlesource.com/c/chromium/src/+/7265333 :)",
+      "parentUuid": "c6a77714_6a73ad54",
+      "revId": "f75eb7b9ba1fc9328f2f9c893b25e5ff5363b75b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
