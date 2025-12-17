@@ -209,24 +209,24 @@ bool CJBig2_Image::ComposeFromWithRect(int64_t x,
 std::unique_ptr<CJBig2_Image> CJBig2_Image::SubImage(int32_t x,
                                                      int32_t y,
                                                      int32_t w,
-                                                     int32_t h) {
-  auto pImage = std::make_unique<CJBig2_Image>(w, h);
-  if (!pImage->data() || !data_) {
-    return pImage;
+                                                     int32_t h) const {
+  auto image = std::make_unique<CJBig2_Image>(w, h);
+  if (!image->data() || !data_) {
+    return image;
   }
 
   if (x < 0 || x >= width_ || y < 0 || y >= height_) {
-    return pImage;
+    return image;
   }
 
   // Fast case when byte-aligned, normal slow case otherwise.
   if ((x & 7) == 0) {
-    SubImageFast(x, y, w, h, pImage.get());
+    SubImageFast(x, y, w, h, image.get());
   } else {
-    SubImageSlow(x, y, w, h, pImage.get());
+    SubImageSlow(x, y, w, h, image.get());
   }
 
-  return pImage;
+  return image;
 }
 
 bool CJBig2_Image::IsValidLine(int32_t y) const {
@@ -259,13 +259,15 @@ void CJBig2_Image::SubImageFast(int32_t x,
                                 int32_t y,
                                 int32_t w,
                                 int32_t h,
-                                CJBig2_Image* pImage) {
+                                CJBig2_Image* image) const {
   int32_t m = BitIndexToByte(x);
-  int32_t bytes_to_copy = std::min(pImage->stride_, stride_ - m);
-  int32_t lines_to_copy = std::min(pImage->height_, height_ - y);
-  for (int32_t j = 0; j < lines_to_copy; j++) {
-    UNSAFE_TODO(FXSYS_memcpy(pImage->GetLineUnsafe(j), GetLineUnsafe(y + j) + m,
-                             bytes_to_copy));
+  size_t bytes_to_copy = std::min(image->stride_, stride_ - m);
+  int32_t lines_to_copy = std::min(image->height_, height_ - y);
+  for (int32_t j = 0; j < lines_to_copy; ++j) {
+    pdfium::span<const uint8_t> src =
+        GetLine(y + j).subspan(static_cast<size_t>(m), bytes_to_copy);
+    pdfium::span<uint8_t> dest = image->GetLine(j).first(bytes_to_copy);
+    fxcrt::spancpy(dest, src);
   }
 }
 
@@ -273,27 +275,25 @@ void CJBig2_Image::SubImageSlow(int32_t x,
                                 int32_t y,
                                 int32_t w,
                                 int32_t h,
-                                CJBig2_Image* pImage) {
+                                CJBig2_Image* image) const {
   int32_t m = BitIndexToAlignedByte(x);
   int32_t n = x & 31;
-  int32_t bytes_to_copy = std::min(pImage->stride_, stride_ - m);
-  int32_t lines_to_copy = std::min(pImage->height_, height_ - y);
-  UNSAFE_TODO({
-    for (int32_t j = 0; j < lines_to_copy; j++) {
-      const uint8_t* pLineSrc = GetLineUnsafe(y + j);
-      uint8_t* pLineDst = pImage->GetLineUnsafe(j);
-      const uint8_t* pSrc = pLineSrc + m;
-      const uint8_t* pSrcEnd = pLineSrc + stride_;
-      uint8_t* pDstEnd = pLineDst + bytes_to_copy;
-      for (uint8_t* pDst = pLineDst; pDst < pDstEnd; pSrc += 4, pDst += 4) {
-        uint32_t wTmp = JBIG2_GETDWORD(pSrc) << n;
-        if (pSrc + 4 < pSrcEnd) {
-          wTmp |= (JBIG2_GETDWORD(pSrc + 4) >> (32 - n));
-        }
-        JBIG2_PUTDWORD(pDst, wTmp);
+  size_t bytes_to_copy = std::min(image->stride_, stride_ - m);
+  int32_t lines_to_copy = std::min(image->height_, height_ - y);
+  for (int32_t j = 0; j < lines_to_copy; ++j) {
+    pdfium::span<const uint8_t> src =
+        GetLine(y + j).subspan(static_cast<size_t>(m));
+    pdfium::span<uint8_t> dest = image->GetLine(j).first(bytes_to_copy);
+    while (!dest.empty()) {
+      auto src_bytes = src.take_first<4u>();
+      auto dest_bytes = dest.take_first<4u>();
+      uint32_t val = JBIG2_GETDWORD(src_bytes) << n;
+      if (src.size() >= 4) {
+        val |= (JBIG2_GETDWORD(src.first<4u>()) >> (32 - n));
       }
+      JBIG2_PUTDWORD(dest_bytes, val);
     }
-  });
+  }
 }
 
 void CJBig2_Image::Expand(int32_t h, bool v) {
