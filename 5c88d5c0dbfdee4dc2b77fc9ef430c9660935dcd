@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5678443f_aff7b7c3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-17T21:27:28Z",
+      "side": 1,
+      "message": "No CQ here. Not sure if it\u0027s easy to configure PDFium Gerrit to figure that out for the infra/config branch CLs.",
+      "revId": "5c88d5c0dbfdee4dc2b77fc9ef430c9660935dcd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
