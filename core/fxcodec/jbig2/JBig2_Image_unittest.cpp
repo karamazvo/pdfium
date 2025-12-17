@@ -45,10 +45,6 @@ TEST(fxcodec, EmptyImage) {
   // Out-of-bounds GetPixel returns 0.
   EXPECT_EQ(empty.GetPixel(0, 0), 0);
   EXPECT_EQ(empty.GetPixel(1, 1), 0);
-
-  // Out-of-bounds GetLine() returns null.
-  EXPECT_EQ(empty.GetLine(0), nullptr);
-  EXPECT_EQ(empty.GetLine(1), nullptr);
 }
 
 TEST(fxcodec, JBig2ImageCreate) {
@@ -56,16 +52,18 @@ TEST(fxcodec, JBig2ImageCreate) {
   EXPECT_EQ(kWidthPixels, img.width());
   EXPECT_EQ(kHeightLines, img.height());
   EXPECT_EQ(0, img.GetPixel(0, 0));
-  EXPECT_EQ(0, img.GetLine(0)[0]);
+  EXPECT_EQ(0, UNSAFE_TODO(img.GetLineUnsafe(0)[0]));
   EXPECT_EQ(0, img.GetPixel(kWidthPixels - 1, kHeightLines - 1));
-  EXPECT_EQ(0, UNSAFE_TODO(img.GetLine(kHeightLines - 1)[kWidthBytes - 1]));
+  EXPECT_EQ(0,
+            UNSAFE_TODO(img.GetLineUnsafe(kHeightLines - 1)[kWidthBytes - 1]));
 
   img.SetPixel(0, 0, true);
   img.SetPixel(kWidthPixels - 1, kHeightLines - 1, true);
   EXPECT_EQ(1, img.GetPixel(0, 0));
   EXPECT_EQ(1, img.GetPixel(kWidthPixels - 1, kHeightLines - 1));
-  EXPECT_EQ(0x80, img.GetLine(0)[0]);
-  EXPECT_EQ(0x01, UNSAFE_TODO(img.GetLine(kHeightLines - 1)[kWidthBytes - 1]));
+  EXPECT_EQ(0x80, UNSAFE_TODO(img.GetLineUnsafe(0)[0]));
+  EXPECT_EQ(0x01,
+            UNSAFE_TODO(img.GetLineUnsafe(kHeightLines - 1)[kWidthBytes - 1]));
 
   // Out-of-bounds SetPixel() is silent no-op.
   img.SetPixel(-1, 1, true);
@@ -74,10 +72,6 @@ TEST(fxcodec, JBig2ImageCreate) {
   // Out-of-bounds GetPixel returns 0.
   EXPECT_EQ(0, img.GetPixel(-1, -1));
   EXPECT_EQ(0, img.GetPixel(kWidthPixels, kHeightLines));
-
-  // Out-of-bounds GetLine() returns null.
-  EXPECT_FALSE(img.GetLine(-1));
-  EXPECT_FALSE(img.GetLine(kHeightLines));
 }
 
 TEST(fxcodec, JBig2ImageCreateTooBig) {

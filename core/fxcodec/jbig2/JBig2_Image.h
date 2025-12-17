@@ -56,11 +56,6 @@ class CJBig2_Image {
     return UNSAFE_BUFFERS(data() + y * stride_);
   }
 
-  uint8_t* GetLine(int32_t y) const {
-    // SAFETY: height_ valid lines in image.
-    return (y >= 0 && y < height_) ? UNSAFE_BUFFERS(GetLineUnsafe(y)) : nullptr;
-  }
-
   void CopyLine(int32_t hTo, int32_t hFrom);
   void Fill(bool v);
 
@@ -85,6 +80,7 @@ class CJBig2_Image {
                          JBig2ComposeOp op);
 
  private:
+  bool IsValidLine(int32_t y) const;
   bool IsValidPixel(int32_t x, int32_t y) const;
   void SubImageFast(int32_t x,
                     int32_t y,
