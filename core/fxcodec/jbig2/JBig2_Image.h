@@ -85,6 +85,7 @@ class CJBig2_Image {
                          JBig2ComposeOp op);
 
  private:
+  bool IsValidPixel(int32_t x, int32_t y) const;
   void SubImageFast(int32_t x,
                     int32_t y,
                     int32_t w,

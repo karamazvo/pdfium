@@ -118,38 +118,22 @@ pdfium::span<uint8_t> CJBig2_Image::span() {
 }
 
 int CJBig2_Image::GetPixel(int32_t x, int32_t y) const {
-  if (!data_) {
+  if (!IsValidPixel(x, y)) {
     return 0;
   }
 
-  if (x < 0 || x >= width_) {
-    return 0;
-  }
-
-  const uint8_t* pLine = GetLine(y);
-  if (!pLine) {
-    return 0;
-  }
-
+  const uint8_t* pLine = UNSAFE_TODO(GetLineUnsafe(y));
   int32_t m = BitIndexToByte(x);
   int32_t n = x & 7;
   return UNSAFE_TODO((pLine[m] >> (7 - n)) & 1);
 }
 
 void CJBig2_Image::SetPixel(int32_t x, int32_t y, int v) {
-  if (!data_) {
+  if (!IsValidPixel(x, y)) {
     return;
   }
 
-  if (x < 0 || x >= width_) {
-    return;
-  }
-
-  uint8_t* pLine = GetLine(y);
-  if (!pLine) {
-    return;
-  }
-
+  uint8_t* pLine = UNSAFE_TODO(GetLineUnsafe(y));
   int32_t m = BitIndexToByte(x);
   int32_t n = 1 << (7 - (x & 7));
   if (v) {
@@ -239,6 +223,22 @@ std::unique_ptr<CJBig2_Image> CJBig2_Image::SubImage(int32_t x,
   }
 
   return pImage;
+}
+
+bool CJBig2_Image::IsValidPixel(int32_t x, int32_t y) const {
+  if (!data_) {
+    return false;
+  }
+
+  if (x < 0 || x >= width_) {
+    return false;
+  }
+
+  if (y < 0 || y >= height_) {
+    return false;
+  }
+
+  return true;
 }
 
 void CJBig2_Image::SubImageFast(int32_t x,
