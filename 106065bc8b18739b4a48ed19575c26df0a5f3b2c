@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7244453b_987e6f5a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-12-17T21:35:52Z",
+      "side": 1,
+      "message": "LGTM. I don\u0027t fully understand this though.",
+      "revId": "106065bc8b18739b4a48ed19575c26df0a5f3b2c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
