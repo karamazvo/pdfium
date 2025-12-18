@@ -65,10 +65,11 @@ WideString CPDF_ToUnicodeMap::Lookup(uint32_t charcode) const {
   if (!base_map_) {
     return WideString();
   }
-  return WideString(base_map_->UnicodeFromCID(static_cast<uint16_t>(charcode)));
+  uint16_t unicode = base_map_->UnicodeFromCID(static_cast<uint16_t>(charcode));
+  return WideString(static_cast<wchar_t>(unicode));
 }
 
-uint32_t CPDF_ToUnicodeMap::ReverseLookup(wchar_t unicode) const {
+uint32_t CPDF_ToUnicodeMap::ReverseLookup(char32_t unicode) const {
   auto it = reverse_map_.find(unicode);
   return it != reverse_map_.end() ? it->second : 0;
 }

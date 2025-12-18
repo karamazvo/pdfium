@@ -65,7 +65,7 @@ class CPDF_CIDFont final : public CPDF_Font {
   bool IsUnicodeCompatible() const override;
   bool Load() override;
   WideString UnicodeFromCharCode(uint32_t charcode) const override;
-  uint32_t CharCodeFromUnicode(wchar_t Unicode) const override;
+  uint32_t CharCodeFromUnicode(char32_t Unicode) const override;
 
   uint16_t CIDFromCharCode(uint32_t charcode) const;
   const CIDTransform* GetCIDTransform(uint16_t cid) const;

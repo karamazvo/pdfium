@@ -364,7 +364,7 @@ wchar_t CPDF_CIDFont::GetUnicodeFromCharCode(uint32_t charcode) const {
 #endif
 }
 
-uint32_t CPDF_CIDFont::CharCodeFromUnicode(wchar_t unicode) const {
+uint32_t CPDF_CIDFont::CharCodeFromUnicode(char32_t unicode) const {
   uint32_t charcode = CPDF_Font::CharCodeFromUnicode(unicode);
   if (charcode) {
     return charcode;
@@ -382,7 +382,7 @@ uint32_t CPDF_CIDFont::CharCodeFromUnicode(wchar_t unicode) const {
       }
       uint32_t cid = 0;
       while (cid < 65536) {
-        wchar_t this_unicode =
+        uint16_t this_unicode =
             cid2unicode_map_->UnicodeFromCID(static_cast<uint16_t>(cid));
         if (this_unicode == unicode) {
           return cid;

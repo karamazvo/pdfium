@@ -330,7 +330,7 @@ WideString CPDF_SimpleFont::UnicodeFromCharCode(uint32_t charcode) const {
   return WideString(ret);
 }
 
-uint32_t CPDF_SimpleFont::CharCodeFromUnicode(wchar_t unicode) const {
+uint32_t CPDF_SimpleFont::CharCodeFromUnicode(char32_t unicode) const {
   uint32_t ret = CPDF_Font::CharCodeFromUnicode(unicode);
   if (ret) {
     return ret;
