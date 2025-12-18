@@ -88,6 +88,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1eb797dd_204efe3d",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-18T02:37:15Z",
+      "side": 1,
+      "message": "Makes sense. Done. Though eventually CompareBitmapToPngData() will notice the null bitmap and fail, even without the ASSERT_TRUE() here.",
+      "parentUuid": "8342e02c_e9cbe8af",
+      "revId": "024a271f15c5ea0091106177f81f3b3d44c7ba8f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "783b5f5c_eb1ad894",
@@ -221,6 +239,30 @@
       "side": 1,
       "message": "The new behavior checks if the most-specific filename exists, and only checks less-specific filenames if it doesn\u0027t.",
       "parentUuid": "9ef8247e_6c0fdfa9",
+      "range": {
+        "startLine": 292,
+        "startChar": 25,
+        "endLine": 292,
+        "endChar": 66
+      },
+      "revId": "024a271f15c5ea0091106177f81f3b3d44c7ba8f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c7dc974e_a0548680",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-18T02:37:15Z",
+      "side": 1,
+      "message": "In your case, my_very_cool_pdf_skia_mac.png would still be the most specific test expectation image, but now it does not match. So the test case would fail, just like before.",
+      "parentUuid": "e96f1651_64824c98",
       "range": {
         "startLine": 292,
         "startChar": 25,
