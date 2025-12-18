@@ -145,23 +145,18 @@ void CJBig2_Image::SetPixel(int32_t x, int32_t y, int v) {
 }
 
 void CJBig2_Image::CopyLine(int32_t hTo, int32_t hFrom) {
-  if (!has_data()) {
+  if (!IsValidLine(hTo)) {
     return;
   }
 
-  uint8_t* pDst = GetLine(hTo);
-  if (!pDst) {
+  uint8_t* dest = UNSAFE_TODO(GetLineUnsafe(hTo));
+  if (!IsValidLine(hFrom)) {
+    UNSAFE_TODO(FXSYS_memset(dest, 0, stride_));
     return;
   }
 
-  const uint8_t* pSrc = GetLine(hFrom);
-  UNSAFE_TODO({
-    if (!pSrc) {
-      FXSYS_memset(pDst, 0, stride_);
-      return;
-    }
-    FXSYS_memcpy(pDst, pSrc, stride_);
-  });
+  uint8_t* src = UNSAFE_TODO(GetLineUnsafe(hFrom));
+  UNSAFE_TODO(FXSYS_memcpy(dest, src, stride_));
 }
 
 void CJBig2_Image::Fill(bool v) {
@@ -226,20 +221,12 @@ std::unique_ptr<CJBig2_Image> CJBig2_Image::SubImage(int32_t x,
   return pImage;
 }
 
+bool CJBig2_Image::IsValidLine(int32_t y) const {
+  return y >= 0 && y < height_ && has_data();
+}
+
 bool CJBig2_Image::IsValidPixel(int32_t x, int32_t y) const {
-  if (!has_data()) {
-    return false;
-  }
-
-  if (x < 0 || x >= width_) {
-    return false;
-  }
-
-  if (y < 0 || y >= height_) {
-    return false;
-  }
-
-  return true;
+  return x >= 0 && x < width_ && IsValidLine(y);
 }
 
 void CJBig2_Image::SubImageFast(int32_t x,
