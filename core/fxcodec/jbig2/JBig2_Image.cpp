@@ -371,23 +371,22 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
       pdfium::checked_cast<size_t>(BitIndexToAlignedByte(xd0));
   const int32_t lineLeft = stride_ - BitIndexToAlignedByte(xs0);
 
-  UNSAFE_TODO({
-    if ((xd0 & ~31) == ((xd1 - 1) & ~31)) {
-      if ((xs0 & ~31) == ((xs1 - 1) & ~31)) {
-        if (s1 > d1) {
-          uint32_t shift = s1 - d1;
-          for (int32_t i = 0; i < h; ++i) {
-            int src_line = src_start_line + i;
-            if (src_line >= height_) {
-              return false;
-            }
-            int dest_line = dest_start_line + i;
-            CHECK_LT(dest_line, pDst->height_);
-            const uint8_t* lineSrc =
-                GetLine(src_line).subspan(src_offset).data();
-            uint8_t* lineDst =
-                pDst->GetLine(dest_line).subspan(dest_offset).data();
+  if ((xd0 & ~31) == ((xd1 - 1) & ~31)) {
+    if ((xs0 & ~31) == ((xs1 - 1) & ~31)) {
+      if (s1 > d1) {
+        const uint32_t shift = s1 - d1;
+        for (int32_t i = 0; i < h; ++i) {
+          int src_line = src_start_line + i;
+          if (src_line >= height_) {
+            return false;
+          }
+          int dest_line = dest_start_line + i;
+          CHECK_LT(dest_line, pDst->height_);
+          const uint8_t* lineSrc = GetLine(src_line).subspan(src_offset).data();
+          uint8_t* lineDst =
+              pDst->GetLine(dest_line).subspan(dest_offset).data();
 
+          UNSAFE_TODO({
             uint32_t tmp1 = JBIG2_GETDWORD(lineSrc) << shift;
             uint32_t tmp2 = JBIG2_GETDWORD(lineDst);
             uint32_t tmp = 0;
@@ -409,21 +408,22 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
                 break;
             }
             JBIG2_PUTDWORD(lineDst, tmp);
+          });
+        }
+      } else {
+        const uint32_t shift = d1 - s1;
+        for (int32_t i = 0; i < h; ++i) {
+          int src_line = src_start_line + i;
+          if (src_line >= height_) {
+            return false;
           }
-        } else {
-          uint32_t shift = d1 - s1;
-          for (int32_t i = 0; i < h; ++i) {
-            int src_line = src_start_line + i;
-            if (src_line >= height_) {
-              return false;
-            }
-            int dest_line = dest_start_line + i;
-            CHECK_LT(dest_line, pDst->height_);
-            const uint8_t* lineSrc =
-                GetLine(src_line).subspan(src_offset).data();
-            uint8_t* lineDst =
-                pDst->GetLine(dest_line).subspan(dest_offset).data();
+          int dest_line = dest_start_line + i;
+          CHECK_LT(dest_line, pDst->height_);
+          const uint8_t* lineSrc = GetLine(src_line).subspan(src_offset).data();
+          uint8_t* lineDst =
+              pDst->GetLine(dest_line).subspan(dest_offset).data();
 
+          UNSAFE_TODO({
             uint32_t tmp1 = JBIG2_GETDWORD(lineSrc) >> shift;
             uint32_t tmp2 = JBIG2_GETDWORD(lineDst);
             uint32_t tmp = 0;
@@ -445,22 +445,23 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
                 break;
             }
             JBIG2_PUTDWORD(lineDst, tmp);
-          }
+          });
         }
-      } else {
-        uint32_t shift1 = s1 - d1;
-        uint32_t shift2 = 32 - shift1;
-        for (int32_t i = 0; i < h; ++i) {
-          int src_line = src_start_line + i;
-          if (src_line >= height_) {
-            return false;
-          }
-          int dest_line = dest_start_line + i;
-          CHECK_LT(dest_line, pDst->height_);
-          const uint8_t* lineSrc = GetLine(src_line).subspan(src_offset).data();
-          uint8_t* lineDst =
-              pDst->GetLine(dest_line).subspan(dest_offset).data();
+      }
+    } else {
+      const uint32_t shift1 = s1 - d1;
+      const uint32_t shift2 = 32 - shift1;
+      for (int32_t i = 0; i < h; ++i) {
+        int src_line = src_start_line + i;
+        if (src_line >= height_) {
+          return false;
+        }
+        int dest_line = dest_start_line + i;
+        CHECK_LT(dest_line, pDst->height_);
+        const uint8_t* lineSrc = GetLine(src_line).subspan(src_offset).data();
+        uint8_t* lineDst = pDst->GetLine(dest_line).subspan(dest_offset).data();
 
+        UNSAFE_TODO({
           uint32_t tmp1 = (JBIG2_GETDWORD(lineSrc) << shift1) |
                           (JBIG2_GETDWORD(lineSrc + 4) >> shift2);
           uint32_t tmp2 = JBIG2_GETDWORD(lineDst);
@@ -483,24 +484,25 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
               break;
           }
           JBIG2_PUTDWORD(lineDst, tmp);
-        }
+        });
       }
-    } else {
-      if (s1 > d1) {
-        uint32_t shift1 = s1 - d1;
-        uint32_t shift2 = 32 - shift1;
-        int32_t middleDwords = (xd1 >> 5) - ((xd0 + 31) >> 5);
-        for (int32_t i = 0; i < h; ++i) {
-          int src_line = src_start_line + i;
-          if (src_line >= height_) {
-            return false;
-          }
-          int dest_line = dest_start_line + i;
-          CHECK_LT(dest_line, pDst->height_);
-          const uint8_t* lineSrc = GetLine(src_line).subspan(src_offset).data();
-          uint8_t* lineDst =
-              pDst->GetLine(dest_line).subspan(dest_offset).data();
+    }
+  } else {
+    if (s1 > d1) {
+      const uint32_t shift1 = s1 - d1;
+      const uint32_t shift2 = 32 - shift1;
+      int32_t middleDwords = (xd1 >> 5) - ((xd0 + 31) >> 5);
+      for (int32_t i = 0; i < h; ++i) {
+        int src_line = src_start_line + i;
+        if (src_line >= height_) {
+          return false;
+        }
+        int dest_line = dest_start_line + i;
+        CHECK_LT(dest_line, pDst->height_);
+        const uint8_t* lineSrc = GetLine(src_line).subspan(src_offset).data();
+        uint8_t* lineDst = pDst->GetLine(dest_line).subspan(dest_offset).data();
 
+        UNSAFE_TODO({
           const uint8_t* sp = lineSrc;
           uint8_t* dp = lineDst;
           if (d1 != 0) {
@@ -581,20 +583,21 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
             }
             JBIG2_PUTDWORD(dp, tmp);
           }
+        });
+      }
+    } else if (s1 == d1) {
+      const int32_t middleDwords = (xd1 >> 5) - ((xd0 + 31) >> 5);
+      for (int32_t i = 0; i < h; ++i) {
+        int src_line = src_start_line + i;
+        if (src_line >= height_) {
+          return false;
         }
-      } else if (s1 == d1) {
-        int32_t middleDwords = (xd1 >> 5) - ((xd0 + 31) >> 5);
-        for (int32_t i = 0; i < h; ++i) {
-          int src_line = src_start_line + i;
-          if (src_line >= height_) {
-            return false;
-          }
-          int dest_line = dest_start_line + i;
-          CHECK_LT(dest_line, pDst->height_);
-          const uint8_t* lineSrc = GetLine(src_line).subspan(src_offset).data();
-          uint8_t* lineDst =
-              pDst->GetLine(dest_line).subspan(dest_offset).data();
+        int dest_line = dest_start_line + i;
+        CHECK_LT(dest_line, pDst->height_);
+        const uint8_t* lineSrc = GetLine(src_line).subspan(src_offset).data();
+        uint8_t* lineDst = pDst->GetLine(dest_line).subspan(dest_offset).data();
 
+        UNSAFE_TODO({
           const uint8_t* sp = lineSrc;
           uint8_t* dp = lineDst;
           if (d1 != 0) {
@@ -670,22 +673,23 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
             }
             JBIG2_PUTDWORD(dp, tmp);
           }
+        });
+      }
+    } else {
+      const uint32_t shift1 = d1 - s1;
+      const uint32_t shift2 = 32 - shift1;
+      const int32_t middleDwords = (xd1 >> 5) - ((xd0 + 31) >> 5);
+      for (int32_t i = 0; i < h; ++i) {
+        int src_line = src_start_line + i;
+        if (src_line >= height_) {
+          return false;
         }
-      } else {
-        uint32_t shift1 = d1 - s1;
-        uint32_t shift2 = 32 - shift1;
-        int32_t middleDwords = (xd1 >> 5) - ((xd0 + 31) >> 5);
-        for (int32_t i = 0; i < h; ++i) {
-          int src_line = src_start_line + i;
-          if (src_line >= height_) {
-            return false;
-          }
-          int dest_line = dest_start_line + i;
-          CHECK_LT(dest_line, pDst->height_);
-          const uint8_t* lineSrc = GetLine(src_line).subspan(src_offset).data();
-          uint8_t* lineDst =
-              pDst->GetLine(dest_line).subspan(dest_offset).data();
+        int dest_line = dest_start_line + i;
+        CHECK_LT(dest_line, pDst->height_);
+        const uint8_t* lineSrc = GetLine(src_line).subspan(src_offset).data();
+        uint8_t* lineDst = pDst->GetLine(dest_line).subspan(dest_offset).data();
 
+        UNSAFE_TODO({
           const uint8_t* sp = lineSrc;
           uint8_t* dp = lineDst;
           if (d1 != 0) {
@@ -764,9 +768,9 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
             }
             JBIG2_PUTDWORD(dp, tmp);
           }
-        }
+        });
       }
     }
-  });
+  }
   return true;
 }
