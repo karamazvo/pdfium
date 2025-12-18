@@ -382,51 +382,13 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
           }
           int dest_line = dest_start_line + i;
           CHECK_LT(dest_line, pDst->height_);
-          const uint8_t* lineSrc = GetLine(src_line).subspan(src_offset).data();
-          uint8_t* lineDst =
-              pDst->GetLine(dest_line).subspan(dest_offset).data();
+          auto src = GetLine(src_line).subspan(src_offset);
+          auto dest = pDst->GetLine(dest_line).subspan(dest_offset);
 
-          UNSAFE_TODO({
-            uint32_t tmp1 = JBIG2_GETDWORD(lineSrc) << shift;
-            uint32_t tmp2 = JBIG2_GETDWORD(lineDst);
-            uint32_t tmp = 0;
-            switch (op) {
-              case JBIG2_COMPOSE_OR:
-                tmp = (tmp2 & ~maskM) | ((tmp1 | tmp2) & maskM);
-                break;
-              case JBIG2_COMPOSE_AND:
-                tmp = (tmp2 & ~maskM) | ((tmp1 & tmp2) & maskM);
-                break;
-              case JBIG2_COMPOSE_XOR:
-                tmp = (tmp2 & ~maskM) | ((tmp1 ^ tmp2) & maskM);
-                break;
-              case JBIG2_COMPOSE_XNOR:
-                tmp = (tmp2 & ~maskM) | ((~(tmp1 ^ tmp2)) & maskM);
-                break;
-              case JBIG2_COMPOSE_REPLACE:
-                tmp = (tmp2 & ~maskM) | (tmp1 & maskM);
-                break;
-            }
-            JBIG2_PUTDWORD(lineDst, tmp);
-          });
-        }
-        return true;
-      }
-
-      const uint32_t shift = d1 - s1;
-      for (int32_t i = 0; i < h; ++i) {
-        int src_line = src_start_line + i;
-        if (src_line >= height_) {
-          return false;
-        }
-        int dest_line = dest_start_line + i;
-        CHECK_LT(dest_line, pDst->height_);
-        const uint8_t* lineSrc = GetLine(src_line).subspan(src_offset).data();
-        uint8_t* lineDst = pDst->GetLine(dest_line).subspan(dest_offset).data();
-
-        UNSAFE_TODO({
-          uint32_t tmp1 = JBIG2_GETDWORD(lineSrc) >> shift;
-          uint32_t tmp2 = JBIG2_GETDWORD(lineDst);
+          auto src_bytes = src.first<4u>();
+          auto dest_bytes = dest.first<4u>();
+          uint32_t tmp1 = JBIG2_GETDWORD(src_bytes) << shift;
+          uint32_t tmp2 = JBIG2_GETDWORD(dest_bytes);
           uint32_t tmp = 0;
           switch (op) {
             case JBIG2_COMPOSE_OR:
@@ -445,28 +407,26 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
               tmp = (tmp2 & ~maskM) | (tmp1 & maskM);
               break;
           }
-          JBIG2_PUTDWORD(lineDst, tmp);
-        });
+          JBIG2_PUTDWORD(dest_bytes, tmp);
+        }
+        return true;
       }
-      return true;
-    }
 
-    const uint32_t shift1 = s1 - d1;
-    const uint32_t shift2 = 32 - shift1;
-    for (int32_t i = 0; i < h; ++i) {
-      int src_line = src_start_line + i;
-      if (src_line >= height_) {
-        return false;
-      }
-      int dest_line = dest_start_line + i;
-      CHECK_LT(dest_line, pDst->height_);
-      const uint8_t* lineSrc = GetLine(src_line).subspan(src_offset).data();
-      uint8_t* lineDst = pDst->GetLine(dest_line).subspan(dest_offset).data();
+      const uint32_t shift = d1 - s1;
+      for (int32_t i = 0; i < h; ++i) {
+        int src_line = src_start_line + i;
+        if (src_line >= height_) {
+          return false;
+        }
+        int dest_line = dest_start_line + i;
+        CHECK_LT(dest_line, pDst->height_);
+        auto src = GetLine(src_line).subspan(src_offset);
+        auto dest = pDst->GetLine(dest_line).subspan(dest_offset);
 
-      UNSAFE_TODO({
-        uint32_t tmp1 = (JBIG2_GETDWORD(lineSrc) << shift1) |
-                        (JBIG2_GETDWORD(lineSrc + 4) >> shift2);
-        uint32_t tmp2 = JBIG2_GETDWORD(lineDst);
+        auto src_bytes = src.first<4u>();
+        auto dest_bytes = dest.first<4u>();
+        uint32_t tmp1 = JBIG2_GETDWORD(src_bytes) >> shift;
+        uint32_t tmp2 = JBIG2_GETDWORD(dest_bytes);
         uint32_t tmp = 0;
         switch (op) {
           case JBIG2_COMPOSE_OR:
@@ -485,8 +445,48 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
             tmp = (tmp2 & ~maskM) | (tmp1 & maskM);
             break;
         }
-        JBIG2_PUTDWORD(lineDst, tmp);
-      });
+        JBIG2_PUTDWORD(dest_bytes, tmp);
+      }
+      return true;
+    }
+
+    const uint32_t shift1 = s1 - d1;
+    const uint32_t shift2 = 32 - shift1;
+    for (int32_t i = 0; i < h; ++i) {
+      int src_line = src_start_line + i;
+      if (src_line >= height_) {
+        return false;
+      }
+      int dest_line = dest_start_line + i;
+      CHECK_LT(dest_line, pDst->height_);
+      auto src = GetLine(src_line).subspan(src_offset);
+      auto dest = pDst->GetLine(dest_line).subspan(dest_offset);
+
+      auto src_bytes1 = src.first<4u>();
+      auto src_bytes2 = src.subspan<4u, 4u>();
+      auto dest_bytes = dest.first<4u>();
+      uint32_t tmp1 = (JBIG2_GETDWORD(src_bytes1) << shift1) |
+                      (JBIG2_GETDWORD(src_bytes2) >> shift2);
+      uint32_t tmp2 = JBIG2_GETDWORD(dest_bytes);
+      uint32_t tmp = 0;
+      switch (op) {
+        case JBIG2_COMPOSE_OR:
+          tmp = (tmp2 & ~maskM) | ((tmp1 | tmp2) & maskM);
+          break;
+        case JBIG2_COMPOSE_AND:
+          tmp = (tmp2 & ~maskM) | ((tmp1 & tmp2) & maskM);
+          break;
+        case JBIG2_COMPOSE_XOR:
+          tmp = (tmp2 & ~maskM) | ((tmp1 ^ tmp2) & maskM);
+          break;
+        case JBIG2_COMPOSE_XNOR:
+          tmp = (tmp2 & ~maskM) | ((~(tmp1 ^ tmp2)) & maskM);
+          break;
+        case JBIG2_COMPOSE_REPLACE:
+          tmp = (tmp2 & ~maskM) | (tmp1 & maskM);
+          break;
+      }
+      JBIG2_PUTDWORD(dest_bytes, tmp);
     }
     return true;
   }
