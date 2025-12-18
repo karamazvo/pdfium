@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <utility>
 #include <variant>
+#include <vector>
 
 #include "core/fpdfapi/font/cpdf_cid2unicodemap.h"
 #include "core/fpdfapi/font/cpdf_fontglobals.h"
@@ -17,6 +18,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/utf16.h"
 
 namespace {
 
@@ -56,22 +58,14 @@ CPDF_ToUnicodeMap::~CPDF_ToUnicodeMap() = default;
 
 WideString CPDF_ToUnicodeMap::Lookup(uint32_t charcode) const {
   auto it = map_.find(charcode);
-  if (it == map_.end()) {
-    if (!base_map_) {
-      return WideString();
-    }
-    return WideString(
-        base_map_->UnicodeFromCID(static_cast<uint16_t>(charcode)));
+  if (it != map_.end()) {
+    return it->second;
   }
 
-  uint32_t value = it->second;
-  wchar_t unicode = static_cast<wchar_t>(value & 0xffff);
-  if (unicode != 0xffff) {
-    return WideString(unicode);
+  if (!base_map_) {
+    return WideString();
   }
-
-  size_t index = value >> 16;
-  return index < multi_char_vec_.size() ? multi_char_vec_[index] : WideString();
+  return WideString(base_map_->UnicodeFromCID(static_cast<uint16_t>(charcode)));
 }
 
 uint32_t CPDF_ToUnicodeMap::ReverseLookup(wchar_t unicode) const {
@@ -336,27 +330,23 @@ ByteStringView CPDF_ToUnicodeMap::HandleBeginBFRange(
         const auto& range = std::get<MultimapSingleDestRange>(entry);
         uint32_t value = range.start_value;
         for (uint32_t code = range.low_code; code <= range.high_code; ++code) {
-          InsertIntoMaps(code, value++);
+          if (value > 0xffff) {
+            break;
+          }
+          InsertIntoMapsSingleChar(code, value++);
         }
       } else {
         CHECK(std::holds_alternative<MultimapMultiDestRange>(entry));
         const auto& range = std::get<MultimapMultiDestRange>(entry);
         uint32_t code = range.low_code;
         for (const auto& retcode : range.retcodes) {
-          InsertIntoMaps(code, GetMultiCharIndexIndicator());
-          multi_char_vec_.push_back(retcode);
+          InsertIntoMapsMultiChar(code, retcode);
           ++code;
         }
       }
     }
   }
   return word;
-}
-
-uint32_t CPDF_ToUnicodeMap::GetMultiCharIndexIndicator() const {
-  FX_SAFE_UINT32 uni = multi_char_vec_.size();
-  uni = uni * 0x10000 + 0xffff;
-  return uni.ValueOrDefault(0);
 }
 
 void CPDF_ToUnicodeMap::SetCode(uint32_t srccode, WideString destcode) {
@@ -366,20 +356,44 @@ void CPDF_ToUnicodeMap::SetCode(uint32_t srccode, WideString destcode) {
   }
 
   if (len == 1) {
-    InsertIntoMaps(srccode, destcode[0]);
+    InsertIntoMapsSingleChar(srccode, static_cast<uint32_t>(destcode[0]));
   } else {
-    InsertIntoMaps(srccode, GetMultiCharIndexIndicator());
-    multi_char_vec_.push_back(destcode);
+    InsertIntoMapsMultiChar(srccode, destcode);
   }
 }
 
-void CPDF_ToUnicodeMap::InsertIntoMaps(uint32_t code, uint32_t destcode) {
+void CPDF_ToUnicodeMap::InsertIntoMapsSingleChar(uint32_t code,
+                                                 uint32_t destcode) {
+  CHECK_LE(destcode, 0xffff);
+  WideString value(static_cast<wchar_t>(destcode));
+  auto [it, inserted] = map_.insert({code, value});
+  if (!inserted) {
+    it->second = std::min(it->second, value);
+  }
+
+  auto [reverse_it, reverse_inserted] = reverse_map_.insert({destcode, code});
+  if (!reverse_inserted) {
+    reverse_it->second = std::min(reverse_it->second, code);
+  }
+}
+
+void CPDF_ToUnicodeMap::InsertIntoMapsMultiChar(uint32_t code,
+                                                WideString destcode) {
+  CHECK_GE(destcode.GetLength(), 2u);
+  for (wchar_t c : destcode) {
+    // In practice, `destcode` is usually 2 characters long, so this loop is not
+    // that expensive.
+    CHECK_GE(c, 0);
+    CHECK_LE(c, 0xffff);
+  }
   auto [it, inserted] = map_.insert({code, destcode});
   if (!inserted) {
     it->second = std::min(it->second, destcode);
   }
 
-  auto [reverse_it, reverse_inserted] = reverse_map_.insert({destcode, code});
+  pdfium::SurrogatePair surrogate_pair(destcode[0], destcode[1]);
+  auto [reverse_it, reverse_inserted] =
+      reverse_map_.insert({surrogate_pair.ToCodePoint(), code});
   if (!reverse_inserted) {
     reverse_it->second = std::min(reverse_it->second, code);
   }

@@ -9,7 +9,6 @@
 
 #include <map>
 #include <optional>
-#include <vector>
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -45,18 +44,21 @@ class CPDF_ToUnicodeMap {
   ByteStringView HandleBeginBFRange(CPDF_SimpleParser& parser,
                                     ByteStringView previous_word);
 
-  uint32_t GetMultiCharIndexIndicator() const;
   void SetCode(uint32_t srccode, WideString destcode);
 
   // Inserts a new entry into `map_` and `reverse_map_`.
-  void InsertIntoMaps(uint32_t code, uint32_t destcode);
+  // Assumes `destcode` is in the range [0, 0xffff].
+  void InsertIntoMapsSingleChar(uint32_t code, uint32_t destcode);
+  // Same as above, but assumes `destcode` is 2 or more values. Each value in
+  // `destcode` is in the range [0, 0xffff].
+  void InsertIntoMapsMultiChar(uint32_t code, WideString destcode);
 
   // Key: charcode
   // Value: unicode
   // If there are multiple entries with the same key, this stores the lowest
   // value.
-  std::map<uint32_t, uint32_t> map_;
-  // Key: unicode
+  std::map<uint32_t, WideString> map_;
+  // Key: unicode code point
   // Value: charcode
   // Since `map_` may encounter entries with the same key but different values,
   // that situation does not cause a conflict in `reverse_map_`. Thus
@@ -66,7 +68,6 @@ class CPDF_ToUnicodeMap {
   std::map<uint32_t, uint32_t> reverse_map_;
 
   UnownedPtr<const CPDF_CID2UnicodeMap> base_map_;
-  std::vector<WideString> multi_char_vec_;
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_TOUNICODEMAP_H_
