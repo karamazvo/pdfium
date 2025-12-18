@@ -271,6 +271,30 @@
       },
       "revId": "024a271f15c5ea0091106177f81f3b3d44c7ba8f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "45ce5643_c0932a13",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-18T03:39:55Z",
+      "side": 1,
+      "message": "Got it, my bad.",
+      "parentUuid": "c7dc974e_a0548680",
+      "range": {
+        "startLine": 292,
+        "startChar": 25,
+        "endLine": 292,
+        "endChar": 66
+      },
+      "revId": "024a271f15c5ea0091106177f81f3b3d44c7ba8f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
