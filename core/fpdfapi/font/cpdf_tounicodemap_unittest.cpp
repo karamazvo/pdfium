@@ -325,8 +325,7 @@ TEST(CPDFToUnicodeMapTest, HandleBeginBFRangeDestLargeValue) {
   CPDF_ToUnicodeMap map(stream);
   EXPECT_EQ(L"\xfff0", map.Lookup(0x10));
   EXPECT_EQ(L"\xfff1", map.Lookup(0x11));
-  // TODO(thestig): Should this return L"\xffff"?
-  EXPECT_EQ(L"", map.Lookup(0x1f));
+  EXPECT_EQ(L"\xffff", map.Lookup(0x1f));
   EXPECT_EQ(L"", map.Lookup(0x20));
   EXPECT_EQ(16u, map.ReverseLookup(0xfff0));
   EXPECT_EQ(17u, map.ReverseLookup(0xfff1));
@@ -334,9 +333,7 @@ TEST(CPDFToUnicodeMapTest, HandleBeginBFRangeDestLargeValue) {
 #if defined(WCHAR_T_IS_32_BIT)
   // TODO(crbug.com/374947848): Should be able to make this call if wchar_t is
   // 16-bit.
-  // TODO(thestig): Should this reverse lookup work when the corresponding
-  // Lookup() call does not work?
-  EXPECT_EQ(32u, map.ReverseLookup(0x10000));
+  EXPECT_EQ(0u, map.ReverseLookup(0x10000));
 #endif
 }
 
@@ -381,7 +378,6 @@ TEST(CPDFToUnicodeMapTest, NonBmpUnicodeLookup) {
   EXPECT_EQ(L"\xd841\xde76", map.Lookup(0x01));
 #if defined(WCHAR_T_IS_32_BIT)
   // TODO(crbug.com/374947848): Should work if wchar_t is 16-bit.
-  // TODO(crbug.com/374947848): Should return 1u.
-  EXPECT_EQ(0u, map.ReverseLookup(0x20676));
+  EXPECT_EQ(1u, map.ReverseLookup(0x20676));
 #endif
 }
