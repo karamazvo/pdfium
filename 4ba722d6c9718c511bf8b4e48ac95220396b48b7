@@ -16,6 +16,357 @@
       "message": "@thestig@chromium.org PTAL when available",
       "revId": "4ba722d6c9718c511bf8b4e48ac95220396b48b7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6aabf3c7_7dc1d1a5",
+        "filename": "core/fxcrt/fx_coordinates_unittest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-12-19T18:51:26Z",
+      "side": 1,
+      "message": "It seems like we are always passing a literal true/false to this argument rather than a variable value.  If so, we can split this up into VerifyFloatRectSidesExact() and VerifyFloatRectSidesNear().",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 49
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "46bb9863_086cf7fe",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 24,
+                "startChar": 0,
+                "endLine": 41,
+                "endChar": 0
+              },
+              "replacement": "void VerifyFloatRectSidesExact(float left,\n                               float bottom,\n                               float right,\n                               float top,\n                               const CFX_FloatRect\u0026 rect) {\n  EXPECT_FLOAT_EQ(rect.left, left);\n  EXPECT_FLOAT_EQ(rect.bottom, bottom);\n  EXPECT_FLOAT_EQ(rect.top, top);\n  EXPECT_FLOAT_EQ(rect.right, right);\n}\n\nvoid VerifyFloatRectSidesNear(float left,\n                              float bottom,\n                              float right,\n                              float top,\n                              const CFX_FloatRect\u0026 rect) {\n  EXPECT_NEAR_FIVE_PLACES(rect.left, left);\n  EXPECT_NEAR_FIVE_PLACES(rect.bottom, bottom);\n  EXPECT_NEAR_FIVE_PLACES(rect.top, top);\n  EXPECT_NEAR_FIVE_PLACES(rect.right, right);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 84,
+                "startChar": 0,
+                "endLine": 85,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(10.0f, 20.0f, 30.0f, 40.0f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 89,
+                "startChar": 0,
+                "endLine": 90,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(0.0f, 0.0f, 0.0f, 0.0f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 94,
+                "startChar": 0,
+                "endLine": 95,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(0.0f, 0.0f, 0.0f, 0.0f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 96,
+                "startChar": 0,
+                "endLine": 97,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(0.0f, 0.0f, 0.0f, 0.0f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 101,
+                "startChar": 0,
+                "endLine": 102,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(0.0f, 0.0f, 2.5f, 6.2f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 104,
+                "startChar": 0,
+                "endLine": 105,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(0.0f, 0.0f, 2.5f, 6.2f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 108,
+                "startChar": 0,
+                "endLine": 109,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(0.0f, 0.0f, 2.5f, 6.3f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 112,
+                "startChar": 0,
+                "endLine": 113,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(-3.0f, 0.0f, 2.5f, 6.3f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 116,
+                "startChar": 0,
+                "endLine": 117,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(-3.0f, -8.0f, 4.0f, 6.3f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 192,
+                "startChar": 0,
+                "endLine": 193,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(0.0f, 0.0f, 0.0f, 0.0f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 196,
+                "startChar": 0,
+                "endLine": 197,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(-1.0f, -3.0f, 4.5f, 3.2f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 199,
+                "startChar": 0,
+                "endLine": 200,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(-4.5f, -3.2f, 1.0f, 3.0f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 205,
+                "startChar": 0,
+                "endLine": 206,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(-1.0f, -3.0f, 4.5f, 3.2f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 207,
+                "startChar": 0,
+                "endLine": 208,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(-0.5, -1.5, 2.25f, 1.6f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 209,
+                "startChar": 0,
+                "endLine": 210,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(-1.0f, -3.0f, 4.5f, 3.2f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 211,
+                "startChar": 0,
+                "endLine": 212,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(1.0f, 3.0f, -4.5f, -3.2f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 213,
+                "startChar": 0,
+                "endLine": 214,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(0.0f, 0.0f, 0.0f, 0.0f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 219,
+                "startChar": 0,
+                "endLine": 220,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(0.0f, 0.0f, 0.0f, 0.0f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 221,
+                "startChar": 0,
+                "endLine": 222,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(0.0f, 0.0f, 0.0f, 0.0f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 223,
+                "startChar": 0,
+                "endLine": 224,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(0.0f, 0.0f, 0.0f, 0.0f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 225,
+                "startChar": 0,
+                "endLine": 226,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(0.0f, 0.0f, 0.0f, 0.0f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 231,
+                "startChar": 0,
+                "endLine": 232,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(-1.0f, -3.0f, 4.5f, 3.2f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 233,
+                "startChar": 0,
+                "endLine": 234,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(0.375f, -1.45f, 3.125f, 1.65f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 235,
+                "startChar": 0,
+                "endLine": 236,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(-1.0f, -3.0f, 4.5f, 3.2f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 237,
+                "startChar": 0,
+                "endLine": 238,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(4.5f, 3.2f, -1.0f, -3.0f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 248,
+                "startChar": 0,
+                "endLine": 249,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(0.0f, 0.0f, 0.0f, 0.0f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 250,
+                "startChar": 0,
+                "endLine": 251,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(0.0f, 0.0f, 0.0f, 0.0f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 252,
+                "startChar": 0,
+                "endLine": 253,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(0.0f, 0.0f, 0.0f, 0.0f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 254,
+                "startChar": 0,
+                "endLine": 255,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesExact(0.0f, 0.0f, 0.0f, 0.0f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 481,
+                "startChar": 0,
+                "endLine": 482,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesNear(-2.7f, 5.5f, 0.0f, 12.25f, rect);\n"
+            },
+            {
+              "path": "core/fxcrt/fx_coordinates_unittest.cpp",
+              "range": {
+                "startLine": 484,
+                "startChar": 0,
+                "endLine": 486,
+                "endChar": 0
+              },
+              "replacement": "  VerifyFloatRectSidesNear(-13.5f, 71.5f, 0.0f, 159.25f, rect);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "4ba722d6c9718c511bf8b4e48ac95220396b48b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
