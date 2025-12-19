@@ -3,6 +3,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "8c438915_4bd6aedd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 12
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-19T20:22:04Z",
+      "side": 1,
+      "message": "Since the image is blank, there are no cross-platform rendering differences. As such, omit \u0027*\u0027.",
+      "range": {
+        "startLine": 10,
+        "startChar": 32,
+        "endLine": 10,
+        "endChar": 33
+      },
+      "revId": "8a7c3d873259fafa89037d685a2b88571a7ba44b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "d8de8e37_d25aab80",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 12
@@ -32,6 +55,80 @@
       "side": 1,
       "message": "Done",
       "parentUuid": "d8de8e37_d25aab80",
+      "revId": "8a7c3d873259fafa89037d685a2b88571a7ba44b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "352e29c0_27c0b1cd",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 2467,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-19T20:22:04Z",
+      "side": 1,
+      "message": "Namespace prefix not needed given line 2464.",
+      "range": {
+        "startLine": 2467,
+        "startChar": 42,
+        "endLine": 2467,
+        "endChar": 49
+      },
+      "revId": "8a7c3d873259fafa89037d685a2b88571a7ba44b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4ed05a15_894ec21c",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-19T20:22:04Z",
+      "side": 1,
+      "message": "Refactor to avoid nearly completely duplicating TestRenderPageSkp().",
+      "revId": "8a7c3d873259fafa89037d685a2b88571a7ba44b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aa3cd84a_87829fff",
+        "filename": "testing/embedder_test_constants.h",
+        "patchSetId": 12
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-19T20:22:04Z",
+      "side": 1,
+      "message": "The parent CL updated the comment for `kBlankPage200x200Png` above. So please match that.",
+      "revId": "8a7c3d873259fafa89037d685a2b88571a7ba44b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "42e962ad_d6b2a8de",
+        "filename": "testing/resources/embedder_tests/blank_612x792.png",
+        "patchSetId": 12
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-19T20:22:04Z",
+      "side": 1,
+      "message": "Run the PNGs through optipng. This file should only be ~167 bytes.",
       "revId": "8a7c3d873259fafa89037d685a2b88571a7ba44b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
