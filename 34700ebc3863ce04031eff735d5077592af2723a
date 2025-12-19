@@ -46,6 +46,30 @@
       },
       "revId": "34700ebc3863ce04031eff735d5077592af2723a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "86a1b9fc_5c3194fa",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-19T19:33:02Z",
+      "side": 1,
+      "message": "Oh, but trying to use replacement span APIs with raw pointers is not great either. I\u0027ll remove the macros later. The `tmp` variables are back for now.",
+      "parentUuid": "8115e240_651bc6b5",
+      "range": {
+        "startLine": 389,
+        "startChar": 36,
+        "endLine": 389,
+        "endChar": 53
+      },
+      "revId": "34700ebc3863ce04031eff735d5077592af2723a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
