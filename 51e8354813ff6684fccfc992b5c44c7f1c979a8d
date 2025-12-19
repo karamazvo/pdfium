@@ -139,6 +139,24 @@
       "parentUuid": "84b72572_44640873",
       "revId": "51e8354813ff6684fccfc992b5c44c7f1c979a8d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "467d52cc_7acf39e0",
+        "filename": "DEPS",
+        "patchSetId": 3
+      },
+      "lineNbr": 455,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-19T02:57:44Z",
+      "side": 1,
+      "message": "I found a use for those variables, so adding them back. https://pdfium-review.googlesource.com/140110\n\nThanks for noticing they were unused and cleaning them back. It\u0027s only a little bit of churn.",
+      "parentUuid": "d615ba95_91256c19",
+      "revId": "51e8354813ff6684fccfc992b5c44c7f1c979a8d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
