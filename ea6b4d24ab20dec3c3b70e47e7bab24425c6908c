@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "748b20fc_dfe6f9c4",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-12-19T19:01:02Z",
+      "side": 1,
+      "message": "Maybe we CHECK() this and remove the restriction?",
+      "range": {
+        "startLine": 111,
+        "startChar": 37,
+        "endLine": 112,
+        "endChar": 18
+      },
+      "revId": "ea6b4d24ab20dec3c3b70e47e7bab24425c6908c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
