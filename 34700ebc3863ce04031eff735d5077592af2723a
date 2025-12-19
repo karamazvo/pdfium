@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6a57a532_5561840a",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-12-19T19:05:25Z",
+      "side": 1,
+      "message": "Is this macro going to instantiate multiple call to DCWM() ?",
+      "range": {
+        "startLine": 389,
+        "startChar": 36,
+        "endLine": 389,
+        "endChar": 53
+      },
+      "revId": "34700ebc3863ce04031eff735d5077592af2723a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
