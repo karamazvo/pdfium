@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "02c29bc2_b1322055",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-12-19T18:07:53Z",
+      "side": 1,
+      "message": "LGTM. I don\u0027t understand why it\u0027s safe to add that CHECK that the value is 16 bits only since it is a 32 bit type but I assume you know what you\u0027re doing.",
+      "revId": "55c732d00fb3a48a25b409db36b2b49221a340c6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c4d29a1c_0f2ef4e2",
+        "filename": "core/fpdfapi/font/cpdf_tounicodemap.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 305,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-12-19T18:07:53Z",
+      "side": 1,
+      "message": "I believe this CHECK is the only behavior change here. I think it was previously impossible for nullopt to be returned because the if destcode.GetLength() \u003d\u003d 1 implies that StringToCode will return a value.",
+      "revId": "55c732d00fb3a48a25b409db36b2b49221a340c6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
