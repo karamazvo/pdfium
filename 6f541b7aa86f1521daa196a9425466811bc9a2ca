@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9218c850_61b74c52",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-12-19T18:10:27Z",
+      "side": 1,
+      "message": "LGTM. I don\u0027t understand this but looks like normal test code.",
+      "revId": "6f541b7aa86f1521daa196a9425466811bc9a2ca",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
