@@ -1,6 +1,52 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "a9463ce3_41c4cb89",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-19T18:56:17Z",
+      "side": 1,
+      "message": "Not corners.",
+      "range": {
+        "startLine": 14,
+        "startChar": 16,
+        "endLine": 14,
+        "endChar": 23
+      },
+      "revId": "4ba722d6c9718c511bf8b4e48ac95220396b48b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "728b6a52_be20bedc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-19T18:56:17Z",
+      "side": 1,
+      "message": "Not corners.",
+      "range": {
+        "startLine": 15,
+        "startChar": 27,
+        "endLine": 15,
+        "endChar": 34
+      },
+      "revId": "4ba722d6c9718c511bf8b4e48ac95220396b48b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "e5064912_5dc59698",
@@ -31,6 +77,29 @@
       "writtenOn": "2025-12-19T18:55:45Z",
       "side": 1,
       "message": "I hate to say this, but there is something to said for keeping tests as simple as possible despite the duplicated code.  Currently when a test fails, we\u0027ll get the exact line and know exactly which side is wrong.  With the condensed logic, there\u0027s a little bit more back-tracking to figure out what\u0027s broken.",
+      "revId": "4ba722d6c9718c511bf8b4e48ac95220396b48b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "efdd354d_7385a7e3",
+        "filename": "core/fxcrt/fx_coordinates_unittest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-19T18:56:17Z",
+      "side": 1,
+      "message": "These functions can omit \"Sides\".",
+      "range": {
+        "startLine": 24,
+        "startChar": 20,
+        "endLine": 24,
+        "endChar": 25
+      },
       "revId": "4ba722d6c9718c511bf8b4e48ac95220396b48b7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -382,6 +451,46 @@
           ]
         }
       ],
+      "revId": "4ba722d6c9718c511bf8b4e48ac95220396b48b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "df5353cd_e2c5a044",
+        "filename": "core/fxcrt/fx_coordinates_unittest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-19T18:56:17Z",
+      "side": 1,
+      "message": "Which matrix is the expected matrix? It may help to name them \"expected\" and \"actual\".",
+      "range": {
+        "startLine": 54,
+        "startChar": 36,
+        "endLine": 54,
+        "endChar": 42
+      },
+      "revId": "4ba722d6c9718c511bf8b4e48ac95220396b48b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "beb157e9_05ac8c23",
+        "filename": "core/fxcrt/fx_coordinates_unittest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-19T18:56:17Z",
+      "side": 1,
+      "message": "Consistently pass by reference.",
       "revId": "4ba722d6c9718c511bf8b4e48ac95220396b48b7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
