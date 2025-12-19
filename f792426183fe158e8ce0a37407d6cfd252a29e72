@@ -81,6 +81,24 @@
       "parentUuid": "d71e95b7_c6e1521f",
       "revId": "f792426183fe158e8ce0a37407d6cfd252a29e72",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "17c81bef_fc453fe8",
+        "filename": "core/fpdfapi/font/cpdf_tounicodemap.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2025-12-19T18:13:54Z",
+      "side": 1,
+      "message": "I meant that you can name them same thing and just use different argument types so overloading will select which one based on what you call it with.\n\nWideString doesn\u0027t implicitly cast to uint32_t right?\n\nEither way it\u0027s also fine how it is. Naming both InsertIntoMaps could be easier to use as an API though.",
+      "parentUuid": "30ab58d0_dd93f252",
+      "revId": "f792426183fe158e8ce0a37407d6cfd252a29e72",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
