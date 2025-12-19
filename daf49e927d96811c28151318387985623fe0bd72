@@ -16,6 +16,47 @@
       "message": "LGTM",
       "revId": "daf49e927d96811c28151318387985623fe0bd72",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "acfaac52_d526b3c3",
+        "filename": "core/fpdfapi/font/cpdf_tounicodemap.h",
+        "patchSetId": 11
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-12-19T18:42:59Z",
+      "side": 1,
+      "message": "expensive for the 16-bit case as the string has a backing store, not the std::basic_string small string optimizations. We may want a new struct to hold one or two values.",
+      "range": {
+        "startLine": 60,
+        "startChar": 21,
+        "endLine": 60,
+        "endChar": 31
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "0c0d80ce_b2021f15",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/font/cpdf_tounicodemap.h",
+              "range": {
+                "startLine": 60,
+                "startChar": 0,
+                "endLine": 60,
+                "endChar": 0
+              },
+              "replacement": "  // TODO(crbug.com/40263168): This is expensive for the 16-bit case as the\n  // string has a backing store, not the std::basic_string small string\n  // optimizations. We may want a new struct to hold one or two values.\n"
+            }
+          ]
+        }
+      ],
+      "revId": "daf49e927d96811c28151318387985623fe0bd72",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
