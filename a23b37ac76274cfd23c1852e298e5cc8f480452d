@@ -1,0 +1,229 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e2c8c5e2_50c28ad8",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-12-19T19:24:41Z",
+      "side": 1,
+      "message": "nit: return a string_view ?",
+      "range": {
+        "startLine": 269,
+        "startChar": 5,
+        "endLine": 269,
+        "endChar": 11
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "20a83fd9_d89c9406",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "testing/embedder_test.cpp",
+              "range": {
+                "startLine": 269,
+                "startChar": 0,
+                "endLine": 270,
+                "endChar": 0
+              },
+              "replacement": "std::string_view GetPlatformName() {\n"
+            }
+          ]
+        }
+      ],
+      "revId": "a23b37ac76274cfd23c1852e298e5cc8f480452d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "98f1f515_195c44d6",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-12-19T19:24:41Z",
+      "side": 1,
+      "message": "Ah, that\u0027s why you were returning a string above, since adding to a string_view isn\u0027t allowed. I\u0027d suggest adding a literal `\"_\" + platform` in the arithemetic expressions below.  Alternatively, change to `GetPlatformNameSuffix() { return \"_win\"; }` et al.",
+      "range": {
+        "startLine": 297,
+        "startChar": 2,
+        "endLine": 297,
+        "endChar": 35
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "dd21b52c_a00fc23b",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "testing/embedder_test.cpp",
+              "range": {
+                "startLine": 297,
+                "startChar": 0,
+                "endLine": 301,
+                "endChar": 0
+              },
+              "replacement": "  const std::string platform_suffix \u003d \"_\" + GetPlatformName();\n  std::vector\u003cstd::string\u003e expectation_names{\n      (basename + renderer + platform_suffix), (basename + renderer),\n      (basename + platform_suffix), basename};\n"
+            }
+          ]
+        }
+      ],
+      "revId": "a23b37ac76274cfd23c1852e298e5cc8f480452d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9aeeb256_57335b2f",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 913,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-12-19T19:24:41Z",
+      "side": 1,
+      "message": "nit: I\u0027d check page first, not sure why, but feels out of order. No matter.",
+      "range": {
+        "startLine": 913,
+        "startChar": 0,
+        "endLine": 913,
+        "endChar": 14
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "e990420a_dae79f7c",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "testing/embedder_test.cpp",
+              "range": {
+                "startLine": 912,
+                "startChar": 0,
+                "endLine": 913,
+                "endChar": 0
+              },
+              "replacement": ""
+            },
+            {
+              "path": "testing/embedder_test.cpp",
+              "range": {
+                "startLine": 914,
+                "startChar": 0,
+                "endLine": 914,
+                "endChar": 0
+              },
+              "replacement": "  CHECK(saved_document());\n"
+            }
+          ]
+        }
+      ],
+      "revId": "a23b37ac76274cfd23c1852e298e5cc8f480452d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a0d5f38a_2d4f704b",
+        "filename": "testing/embedder_test.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-12-19T19:24:41Z",
+      "side": 1,
+      "message": "nit: `in the order`",
+      "range": {
+        "startLine": 315,
+        "startChar": 22,
+        "endLine": 315,
+        "endChar": 27
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "e2645869_19db7fec",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "testing/embedder_test.h",
+              "range": {
+                "startLine": 315,
+                "startChar": 0,
+                "endLine": 316,
+                "endChar": 0
+              },
+              "replacement": "  // several suffixes in the order: \"_$renderer_$os.png\", \"_$renderer.png\",\n  // \"_$os.png\".\n"
+            }
+          ]
+        }
+      ],
+      "revId": "a23b37ac76274cfd23c1852e298e5cc8f480452d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "87ef5b39_c06a4526",
+        "filename": "testing/embedder_test_constants.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-12-19T19:24:41Z",
+      "side": 1,
+      "message": "nit: `root name for` , not sure what to call path fragment.",
+      "range": {
+        "startLine": 13,
+        "startChar": 20,
+        "endLine": 13,
+        "endChar": 23
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "dc38701a_35d4892b",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "testing/embedder_test_constants.h",
+              "range": {
+                "startLine": 13,
+                "startChar": 0,
+                "endLine": 14,
+                "endChar": 0
+              },
+              "replacement": "// Root name for expectation file when rendering a 200x200 blank page.\n"
+            },
+            {
+              "path": "testing/embedder_test_constants.h",
+              "range": {
+                "startLine": 22,
+                "startChar": 0,
+                "endLine": 23,
+                "endChar": 0
+              },
+              "replacement": "// Root name for expectation file when rendering hello_world.pdf or\n// bug_455199.pdf.\n"
+            }
+          ]
+        }
+      ],
+      "revId": "a23b37ac76274cfd23c1852e298e5cc8f480452d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
