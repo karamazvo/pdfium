@@ -22,6 +22,30 @@
       },
       "revId": "34700ebc3863ce04031eff735d5077592af2723a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8115e240_651bc6b5",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-19T19:11:01Z",
+      "side": 1,
+      "message": "Yes. Let me get rid of the macro first then.",
+      "parentUuid": "6a57a532_5561840a",
+      "range": {
+        "startLine": 389,
+        "startChar": 36,
+        "endLine": 389,
+        "endChar": 53
+      },
+      "revId": "34700ebc3863ce04031eff735d5077592af2723a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
