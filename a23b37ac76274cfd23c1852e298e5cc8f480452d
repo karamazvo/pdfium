@@ -42,6 +42,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f46731f3_e3e3236a",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-19T19:54:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e2c8c5e2_50c28ad8",
+      "range": {
+        "startLine": 269,
+        "startChar": 5,
+        "endLine": 269,
+        "endChar": 11
+      },
+      "revId": "a23b37ac76274cfd23c1852e298e5cc8f480452d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "98f1f515_195c44d6",
@@ -79,6 +103,30 @@
           ]
         }
       ],
+      "revId": "a23b37ac76274cfd23c1852e298e5cc8f480452d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "41da97df_69bd2464",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-19T19:54:50Z",
+      "side": 1,
+      "message": "Still have to convert the string_view to a string to make the addition operators work. I\u0027m not in a hurray to do this here for test-only code, but maybe PDFium can start using absl::StrCat() in 2026.",
+      "parentUuid": "98f1f515_195c44d6",
+      "range": {
+        "startLine": 297,
+        "startChar": 2,
+        "endLine": 297,
+        "endChar": 35
+      },
       "revId": "a23b37ac76274cfd23c1852e298e5cc8f480452d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -134,6 +182,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "70b651c6_84161aaa",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 913,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-19T19:54:50Z",
+      "side": 1,
+      "message": "Carried over from existing code. Done.",
+      "parentUuid": "9aeeb256_57335b2f",
+      "range": {
+        "startLine": 913,
+        "startChar": 0,
+        "endLine": 913,
+        "endChar": 14
+      },
+      "revId": "a23b37ac76274cfd23c1852e298e5cc8f480452d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a0d5f38a_2d4f704b",
@@ -171,6 +243,30 @@
           ]
         }
       ],
+      "revId": "a23b37ac76274cfd23c1852e298e5cc8f480452d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "19885af8_35b9cd4c",
+        "filename": "testing/embedder_test.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-19T19:54:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a0d5f38a_2d4f704b",
+      "range": {
+        "startLine": 315,
+        "startChar": 22,
+        "endLine": 315,
+        "endChar": 27
+      },
       "revId": "a23b37ac76274cfd23c1852e298e5cc8f480452d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -222,6 +318,30 @@
           ]
         }
       ],
+      "revId": "a23b37ac76274cfd23c1852e298e5cc8f480452d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a6f834b3_cc68d0f2",
+        "filename": "testing/embedder_test_constants.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-19T19:54:50Z",
+      "side": 1,
+      "message": "Consistently using \"basename\".",
+      "parentUuid": "87ef5b39_c06a4526",
+      "range": {
+        "startLine": 13,
+        "startChar": 20,
+        "endLine": 13,
+        "endChar": 23
+      },
       "revId": "a23b37ac76274cfd23c1852e298e5cc8f480452d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
