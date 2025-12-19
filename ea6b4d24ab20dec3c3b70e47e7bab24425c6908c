@@ -22,6 +22,30 @@
       },
       "revId": "ea6b4d24ab20dec3c3b70e47e7bab24425c6908c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "583bd559_fcaa9346",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-19T21:34:28Z",
+      "side": 1,
+      "message": "I removed this restriction and added one more check to try to prevent unowned data from having nullptr + (size !\u003d 0). If there is not data, span() will just return an empty span. I prepended a CL to do this.",
+      "parentUuid": "748b20fc_dfe6f9c4",
+      "range": {
+        "startLine": 111,
+        "startChar": 37,
+        "endLine": 112,
+        "endChar": 18
+      },
+      "revId": "ea6b4d24ab20dec3c3b70e47e7bab24425c6908c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }

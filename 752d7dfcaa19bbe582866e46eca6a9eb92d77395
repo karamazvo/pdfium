@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "48e5d661_3c3ac31f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-19T21:34:28Z",
+      "side": 1,
+      "message": "Whoops. Had a bad rebase. Had to revert the core/fxcodec/fax/faxmodule.cpp changes.",
+      "revId": "752d7dfcaa19bbe582866e46eca6a9eb92d77395",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
