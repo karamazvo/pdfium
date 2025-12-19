@@ -1,0 +1,45 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9a016d88_28d37ebd",
+        "filename": "core/fxcodec/fax/faxmodule.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-12-19T19:25:33Z",
+      "side": 1,
+      "message": "why not size_t?",
+      "range": {
+        "startLine": 44,
+        "startChar": 30,
+        "endLine": 44,
+        "endChar": 38
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "5829472f_2cec793b",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/fax/faxmodule.h",
+              "range": {
+                "startLine": 43,
+                "startChar": 0,
+                "endLine": 49,
+                "endChar": 0
+              },
+              "replacement": "  static size_t FaxG4Decode(pdfium::span\u003cconst uint8_t\u003e src_buf,\n                            size_t starting_bitpos,\n                            int width,\n                            int height,\n                            int pitch,\n                            pdfium::span\u003cuint8_t\u003e dest_buf);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "0bca71c156c25ac09a21050d569b00ef25c32535",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
