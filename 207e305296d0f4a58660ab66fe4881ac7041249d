@@ -196,6 +196,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7aae059d_b87bc33d",
+        "filename": "core/fxcodec/fax/faxmodule.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-12-19T19:26:29Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "b3e23f56_b59edc16",
+      "range": {
+        "startLine": 368,
+        "startChar": 0,
+        "endLine": 368,
+        "endChar": 56
+      },
+      "revId": "207e305296d0f4a58660ab66fe4881ac7041249d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c3f46847_dae6a6c9",
@@ -281,6 +305,30 @@
       "side": 1,
       "message": "I\u0027m getting rid of all the UNSAFE_TODO() usage in this file in this CL chain. Just skip this?",
       "parentUuid": "c3f46847_dae6a6c9",
+      "range": {
+        "startLine": 603,
+        "startChar": 0,
+        "endLine": 603,
+        "endChar": 77
+      },
+      "revId": "207e305296d0f4a58660ab66fe4881ac7041249d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "631d3c5f_077318bb",
+        "filename": "core/fxcodec/fax/faxmodule.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 603,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-12-19T19:26:29Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "1af52d45_872bb0a9",
       "range": {
         "startLine": 603,
         "startChar": 0,
