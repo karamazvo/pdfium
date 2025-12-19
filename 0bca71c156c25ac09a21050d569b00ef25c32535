@@ -64,6 +64,30 @@
       },
       "revId": "0bca71c156c25ac09a21050d569b00ef25c32535",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f8475aaf_63fe1a09",
+        "filename": "core/fxcodec/fax/faxmodule.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-12-19T23:51:56Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "29a081a2_a4b6a6fb",
+      "range": {
+        "startLine": 44,
+        "startChar": 30,
+        "endLine": 44,
+        "endChar": 38
+      },
+      "revId": "0bca71c156c25ac09a21050d569b00ef25c32535",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
