@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "858bd2d8_814d08f7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-19T20:32:12Z",
+      "side": 1,
+      "message": "Please see the comments in the parent CL and try to apply those here as well.",
+      "revId": "5e1a66ad7aa8fdf2e86695fb84a5aea19e1ed944",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
