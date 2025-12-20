@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "749bd2aa_3b8fa621",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-20T06:07:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a9463ce3_41c4cb89",
+      "range": {
+        "startLine": 14,
+        "startChar": 16,
+        "endLine": 14,
+        "endChar": 23
+      },
+      "revId": "4ba722d6c9718c511bf8b4e48ac95220396b48b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "728b6a52_be20bedc",
@@ -37,6 +61,30 @@
       "writtenOn": "2025-12-19T18:56:17Z",
       "side": 1,
       "message": "Not corners.",
+      "range": {
+        "startLine": 15,
+        "startChar": 27,
+        "endLine": 15,
+        "endChar": 34
+      },
+      "revId": "4ba722d6c9718c511bf8b4e48ac95220396b48b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6df7b288_5c0a4815",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-20T06:07:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "728b6a52_be20bedc",
       "range": {
         "startLine": 15,
         "startChar": 27,
@@ -94,6 +142,30 @@
       "writtenOn": "2025-12-19T18:56:17Z",
       "side": 1,
       "message": "These functions can omit \"Sides\".",
+      "range": {
+        "startLine": 24,
+        "startChar": 20,
+        "endLine": 24,
+        "endChar": 25
+      },
+      "revId": "4ba722d6c9718c511bf8b4e48ac95220396b48b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "be827494_585d7d66",
+        "filename": "core/fxcrt/fx_coordinates_unittest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-20T06:07:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "efdd354d_7385a7e3",
       "range": {
         "startLine": 24,
         "startChar": 20,
@@ -455,6 +527,54 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d89d9205_020636c6",
+        "filename": "core/fxcrt/fx_coordinates_unittest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-20T06:07:35Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "6aabf3c7_7dc1d1a5",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 49
+      },
+      "revId": "4ba722d6c9718c511bf8b4e48ac95220396b48b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0db664ef_fcf7e7cc",
+        "filename": "core/fxcrt/fx_coordinates_unittest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-20T06:07:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6aabf3c7_7dc1d1a5",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 49
+      },
+      "revId": "4ba722d6c9718c511bf8b4e48ac95220396b48b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "df5353cd_e2c5a044",
@@ -478,6 +598,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "31b8fbc5_1da40558",
+        "filename": "core/fxcrt/fx_coordinates_unittest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-20T06:07:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "df5353cd_e2c5a044",
+      "range": {
+        "startLine": 54,
+        "startChar": 36,
+        "endLine": 54,
+        "endChar": 42
+      },
+      "revId": "4ba722d6c9718c511bf8b4e48ac95220396b48b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "beb157e9_05ac8c23",
@@ -491,6 +635,24 @@
       "writtenOn": "2025-12-19T18:56:17Z",
       "side": 1,
       "message": "Consistently pass by reference.",
+      "revId": "4ba722d6c9718c511bf8b4e48ac95220396b48b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7d878361_34ec371c",
+        "filename": "core/fxcrt/fx_coordinates_unittest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-20T06:07:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "beb157e9_05ac8c23",
       "revId": "4ba722d6c9718c511bf8b4e48ac95220396b48b7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
