@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b06a7ff6_c6d16fac",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 12
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-20T05:22:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8c438915_4bd6aedd",
+      "range": {
+        "startLine": 10,
+        "startChar": 32,
+        "endLine": 10,
+        "endChar": 33
+      },
+      "revId": "8a7c3d873259fafa89037d685a2b88571a7ba44b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d8de8e37_d25aab80",
@@ -82,6 +106,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c0c32215_b7a3d091",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 2467,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-20T05:22:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "352e29c0_27c0b1cd",
+      "range": {
+        "startLine": 2467,
+        "startChar": 42,
+        "endLine": 2467,
+        "endChar": 49
+      },
+      "revId": "8a7c3d873259fafa89037d685a2b88571a7ba44b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4ed05a15_894ec21c",
@@ -101,6 +149,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "9b88ce1b_f97ffb72",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-20T05:22:36Z",
+      "side": 1,
+      "message": "We could go for either a bool flag (might not be the best idea as it would be called everywhere with that bool).\n\nMaybe a helper GetSkpBitmap which does all of the stuff from lines 257 to 273 and returns a bitmap.\n\nThoughts on the second idea?",
+      "parentUuid": "4ed05a15_894ec21c",
+      "revId": "8a7c3d873259fafa89037d685a2b88571a7ba44b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "aa3cd84a_87829fff",
         "filename": "testing/embedder_test_constants.h",
         "patchSetId": 12
@@ -112,6 +178,24 @@
       "writtenOn": "2025-12-19T20:22:04Z",
       "side": 1,
       "message": "The parent CL updated the comment for `kBlankPage200x200Png` above. So please match that.",
+      "revId": "8a7c3d873259fafa89037d685a2b88571a7ba44b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3a951a65_39bd65c0",
+        "filename": "testing/embedder_test_constants.h",
+        "patchSetId": 12
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-20T05:22:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aa3cd84a_87829fff",
       "revId": "8a7c3d873259fafa89037d685a2b88571a7ba44b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
