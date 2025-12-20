@@ -183,6 +183,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9d33b667_bbdea2e8",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-20T06:23:28Z",
+      "side": 1,
+      "message": "FYI, the follow up CL deletes TestRenderPageSkp anyway.",
+      "parentUuid": "f9297f52_2e9bee3e",
+      "revId": "8a7c3d873259fafa89037d685a2b88571a7ba44b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "aa3cd84a_87829fff",
