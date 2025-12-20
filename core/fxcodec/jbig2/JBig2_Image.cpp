@@ -23,18 +23,6 @@
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/span_util.h"
 
-#define JBIG2_GETDWORD(buf)                  \
-  ((static_cast<uint32_t>((buf)[0]) << 24) | \
-   (static_cast<uint32_t>((buf)[1]) << 16) | \
-   (static_cast<uint32_t>((buf)[2]) << 8) |  \
-   (static_cast<uint32_t>((buf)[3]) << 0))
-
-#define JBIG2_PUTDWORD(buf, val)                 \
-  ((buf)[0] = static_cast<uint8_t>((val) >> 24), \
-   (buf)[1] = static_cast<uint8_t>((val) >> 16), \
-   (buf)[2] = static_cast<uint8_t>((val) >> 8),  \
-   (buf)[3] = static_cast<uint8_t>((val) >> 0))
-
 using fxcrt::GetUInt32MSBFirst;
 using fxcrt::PutUInt32MSBFirst;
 
@@ -411,7 +399,8 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
       pdfium::checked_cast<size_t>(BitIndexToAlignedByte(xs0 + rtSrc.left));
   const size_t dest_offset =
       pdfium::checked_cast<size_t>(BitIndexToAlignedByte(xd0));
-  const int32_t lineLeft = stride_ - BitIndexToAlignedByte(xs0);
+  const size_t line_size =
+      pdfium::checked_cast<size_t>(stride_ - BitIndexToAlignedByte(xs0));
 
   if ((xd0 & ~31) == ((xd1 - 1) & ~31)) {
     if ((xs0 & ~31) == ((xs1 - 1) & ~31)) {
@@ -482,42 +471,37 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
         return false;
       }
 
-      const uint8_t* lineSrc = src.subspan(src_offset).data();
-      uint8_t* lineDst = dest.subspan(dest_offset).data();
-      const uint8_t* sp = lineSrc;
-      uint8_t* dp = lineDst;
+      src = src.subspan(src_offset);
+      if (d2 != 0) {
+        src = src.first(line_size);
+      }
+      dest = dest.subspan(dest_offset);
       if (d1 != 0) {
-        UNSAFE_TODO({
-          uint32_t tmp1 = (JBIG2_GETDWORD(sp) << shift1) |
-                          (JBIG2_GETDWORD(sp + 4) >> shift2);
-          uint32_t tmp2 = JBIG2_GETDWORD(dp);
-          uint32_t tmp = DoComposeWithMask(op, tmp1, tmp2, maskL);
-          JBIG2_PUTDWORD(dp, tmp);
-          sp += 4;
-          dp += 4;
-        });
+        auto src_bytes1 = src.take_first<4u>();
+        auto src_bytes2 = src.first<4u>();
+        uint32_t tmp1 = (GetUInt32MSBFirst(src_bytes1) << shift1) |
+                        (GetUInt32MSBFirst(src_bytes2) >> shift2);
+        auto dest_bytes = dest.take_first<4u>();
+        uint32_t tmp2 = GetUInt32MSBFirst(dest_bytes);
+        PutUInt32MSBFirst(DoComposeWithMask(op, tmp1, tmp2, maskL), dest_bytes);
       }
       for (int32_t xx = 0; xx < middleDwords; xx++) {
-        UNSAFE_TODO({
-          uint32_t tmp1 = (JBIG2_GETDWORD(sp) << shift1) |
-                          (JBIG2_GETDWORD(sp + 4) >> shift2);
-          uint32_t tmp2 = JBIG2_GETDWORD(dp);
-          uint32_t tmp = DoCompose(op, tmp1, tmp2);
-          JBIG2_PUTDWORD(dp, tmp);
-          sp += 4;
-          dp += 4;
-        });
+        auto src_bytes1 = src.take_first<4u>();
+        auto src_bytes2 = src.first<4u>();
+        uint32_t tmp1 = (GetUInt32MSBFirst(src_bytes1) << shift1) |
+                        (GetUInt32MSBFirst(src_bytes2) >> shift2);
+        auto dest_bytes = dest.take_first<4u>();
+        uint32_t tmp2 = GetUInt32MSBFirst(dest_bytes);
+        PutUInt32MSBFirst(DoCompose(op, tmp1, tmp2), dest_bytes);
       }
       if (d2 != 0) {
-        UNSAFE_TODO({
-          uint32_t tmp1 =
-              (JBIG2_GETDWORD(sp) << shift1) |
-              (((sp + 4) < lineSrc + lineLeft ? JBIG2_GETDWORD(sp + 4) : 0) >>
-               shift2);
-          uint32_t tmp2 = JBIG2_GETDWORD(dp);
-          uint32_t tmp = DoComposeWithMask(op, tmp1, tmp2, maskR);
-          JBIG2_PUTDWORD(dp, tmp);
-        });
+        uint32_t tmp1 = (GetUInt32MSBFirst(src.take_first<4u>()) << shift1);
+        if (!src.empty()) {
+          tmp1 |= (GetUInt32MSBFirst(src.first<4u>()) >> shift2);
+        }
+        auto dest_bytes = dest.first<4u>();
+        uint32_t tmp2 = GetUInt32MSBFirst(dest_bytes);
+        PutUInt32MSBFirst(DoComposeWithMask(op, tmp1, tmp2, maskR), dest_bytes);
       }
     }
     return true;
@@ -532,37 +516,25 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
         return false;
       }
 
-      const uint8_t* lineSrc = src.subspan(src_offset).data();
-      uint8_t* lineDst = dest.subspan(dest_offset).data();
-      const uint8_t* sp = lineSrc;
-      uint8_t* dp = lineDst;
+      src = src.subspan(src_offset);
+      dest = dest.subspan(dest_offset);
       if (d1 != 0) {
-        UNSAFE_TODO({
-          uint32_t tmp1 = JBIG2_GETDWORD(sp);
-          uint32_t tmp2 = JBIG2_GETDWORD(dp);
-          uint32_t tmp = DoComposeWithMask(op, tmp1, tmp2, maskL);
-          JBIG2_PUTDWORD(dp, tmp);
-          sp += 4;
-          dp += 4;
-        });
+        uint32_t tmp1 = GetUInt32MSBFirst(src.take_first<4u>());
+        auto dest_bytes = dest.take_first<4u>();
+        uint32_t tmp2 = GetUInt32MSBFirst(dest_bytes);
+        PutUInt32MSBFirst(DoComposeWithMask(op, tmp1, tmp2, maskL), dest_bytes);
       }
       for (int32_t xx = 0; xx < middleDwords; xx++) {
-        UNSAFE_TODO({
-          uint32_t tmp1 = JBIG2_GETDWORD(sp);
-          uint32_t tmp2 = JBIG2_GETDWORD(dp);
-          uint32_t tmp = DoCompose(op, tmp1, tmp2);
-          JBIG2_PUTDWORD(dp, tmp);
-          sp += 4;
-          dp += 4;
-        });
+        uint32_t tmp1 = GetUInt32MSBFirst(src.take_first<4u>());
+        auto dest_bytes = dest.take_first<4u>();
+        uint32_t tmp2 = GetUInt32MSBFirst(dest_bytes);
+        PutUInt32MSBFirst(DoCompose(op, tmp1, tmp2), dest_bytes);
       }
       if (d2 != 0) {
-        UNSAFE_TODO({
-          uint32_t tmp1 = JBIG2_GETDWORD(sp);
-          uint32_t tmp2 = JBIG2_GETDWORD(dp);
-          uint32_t tmp = DoComposeWithMask(op, tmp1, tmp2, maskR);
-          JBIG2_PUTDWORD(dp, tmp);
-        });
+        uint32_t tmp1 = GetUInt32MSBFirst(src.first<4u>());
+        auto dest_bytes = dest.first<4u>();
+        uint32_t tmp2 = GetUInt32MSBFirst(dest_bytes);
+        PutUInt32MSBFirst(DoComposeWithMask(op, tmp1, tmp2, maskR), dest_bytes);
       }
     }
     return true;
@@ -578,40 +550,34 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
       return false;
     }
 
-    const uint8_t* lineSrc = src.subspan(src_offset).data();
-    uint8_t* lineDst = dest.subspan(dest_offset).data();
-    const uint8_t* sp = lineSrc;
-    uint8_t* dp = lineDst;
+    src = src.subspan(src_offset);
+    if (d2 != 0) {
+      src = src.first(line_size);
+    }
+    dest = dest.subspan(dest_offset);
     if (d1 != 0) {
-      UNSAFE_TODO({
-        uint32_t tmp1 = JBIG2_GETDWORD(sp) >> shift1;
-        uint32_t tmp2 = JBIG2_GETDWORD(dp);
-        uint32_t tmp = DoComposeWithMask(op, tmp1, tmp2, maskL);
-        JBIG2_PUTDWORD(dp, tmp);
-        dp += 4;
-      });
+      uint32_t tmp1 = GetUInt32MSBFirst(src.first<4u>()) >> shift1;
+      auto dest_bytes = dest.take_first<4u>();
+      uint32_t tmp2 = GetUInt32MSBFirst(dest_bytes);
+      PutUInt32MSBFirst(DoComposeWithMask(op, tmp1, tmp2, maskL), dest_bytes);
     }
     for (int32_t xx = 0; xx < middleDwords; xx++) {
-      UNSAFE_TODO({
-        uint32_t tmp1 = (JBIG2_GETDWORD(sp) << shift2) |
-                        ((JBIG2_GETDWORD(sp + 4)) >> shift1);
-        uint32_t tmp2 = JBIG2_GETDWORD(dp);
-        uint32_t tmp = DoCompose(op, tmp1, tmp2);
-        JBIG2_PUTDWORD(dp, tmp);
-        sp += 4;
-        dp += 4;
-      });
+      auto src_bytes1 = src.take_first<4u>();
+      auto src_bytes2 = src.first<4u>();
+      uint32_t tmp1 = (GetUInt32MSBFirst(src_bytes1) << shift2) |
+                      (GetUInt32MSBFirst(src_bytes2) >> shift1);
+      auto dest_bytes = dest.take_first<4u>();
+      uint32_t tmp2 = GetUInt32MSBFirst(dest_bytes);
+      PutUInt32MSBFirst(DoCompose(op, tmp1, tmp2), dest_bytes);
     }
     if (d2 != 0) {
-      UNSAFE_TODO({
-        uint32_t tmp1 =
-            (JBIG2_GETDWORD(sp) << shift2) |
-            (((sp + 4) < lineSrc + lineLeft ? JBIG2_GETDWORD(sp + 4) : 0) >>
-             shift1);
-        uint32_t tmp2 = JBIG2_GETDWORD(dp);
-        uint32_t tmp = DoComposeWithMask(op, tmp1, tmp2, maskR);
-        JBIG2_PUTDWORD(dp, tmp);
-      });
+      uint32_t tmp1 = (GetUInt32MSBFirst(src.take_first<4u>()) << shift2);
+      if (!src.empty()) {
+        tmp1 |= (GetUInt32MSBFirst(src.first<4u>()) >> shift1);
+      }
+      auto dest_bytes = dest.first<4u>();
+      uint32_t tmp2 = GetUInt32MSBFirst(dest_bytes);
+      PutUInt32MSBFirst(DoComposeWithMask(op, tmp1, tmp2, maskR), dest_bytes);
     }
   }
   return true;
