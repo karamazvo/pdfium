@@ -48,6 +48,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f55b5672_a183aac9",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1209,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-20T05:48:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4e1555e7_ea5d4f1b",
+      "range": {
+        "startLine": 1209,
+        "startChar": 12,
+        "endLine": 1209,
+        "endChar": 15
+      },
+      "revId": "0514b26b8ea0ac6ba5f343183c06dee89777274e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "56855374_e5694d9f",
@@ -61,6 +85,30 @@
       "writtenOn": "2025-12-06T16:39:51Z",
       "side": 1,
       "message": "After testing the in acrobat, it gives the output \"world world\".This matched the edited version. This suggests that \"world world\" is correct. Following this I looked at the initial report which suggested a similar issue with \"wide wide\" omitting certain characters. This justifies that \"world world\" was indeed the correct output.\n\nSince 2 characters were added overall, I added 2 to the number of characters.",
+      "range": {
+        "startLine": 2194,
+        "startChar": 59,
+        "endLine": 2194,
+        "endChar": 64
+      },
+      "revId": "0514b26b8ea0ac6ba5f343183c06dee89777274e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8c8039c3_56bcc7f2",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 2194,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-20T05:48:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "56855374_e5694d9f",
       "range": {
         "startLine": 2194,
         "startChar": 59,
