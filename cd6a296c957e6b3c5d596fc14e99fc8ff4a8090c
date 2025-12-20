@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7d852a86_fce61380",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2025-12-20T01:29:53Z",
+      "side": 1,
+      "message": "Diff\u0027s hard to read. No funny business.",
+      "revId": "cd6a296c957e6b3c5d596fc14e99fc8ff4a8090c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
