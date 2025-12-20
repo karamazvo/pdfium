@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c9b0ec9b_62b20e3d",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2025-12-20T01:05:10Z",
+      "side": 1,
+      "message": "existing: me no like \u0027h\u0027 in either of these arguments,",
+      "range": {
+        "startLine": 203,
+        "startChar": 49,
+        "endLine": 203,
+        "endChar": 54
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "f1a03345_79ecfd92",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/jbig2/JBig2_Image.cpp",
+              "range": {
+                "startLine": 203,
+                "startChar": 0,
+                "endLine": 205,
+                "endChar": 0
+              },
+              "replacement": "void CJBig2_Image::CopyLine(int32_t to, int32_t from) {\n  pdfium::span\u003cuint8_t\u003e dest \u003d GetLine(to);\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_Image.cpp",
+              "range": {
+                "startLine": 209,
+                "startChar": 0,
+                "endLine": 210,
+                "endChar": 0
+              },
+              "replacement": "  pdfium::span\u003cconst uint8_t\u003e src \u003d GetLine(from);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "d54ebf2fc582df17baaabcdb0286c18a53f6be12",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
