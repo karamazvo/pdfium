@@ -251,6 +251,24 @@
       "parentUuid": "42e962ad_d6b2a8de",
       "revId": "8a7c3d873259fafa89037d685a2b88571a7ba44b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f149f53c_761a52aa",
+        "filename": "testing/resources/embedder_tests/blank_612x792.png",
+        "patchSetId": 12
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-20T06:10:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6f2bce2d_72a9ca00",
+      "revId": "8a7c3d873259fafa89037d685a2b88571a7ba44b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
