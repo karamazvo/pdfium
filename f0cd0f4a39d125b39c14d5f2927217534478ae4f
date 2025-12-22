@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4134b12f_ee6b9313",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-22T10:29:37Z",
+      "side": 1,
+      "message": "Hi guys, made another update to the embeddertests to replace bug_890322 checksums with images.",
+      "revId": "f0cd0f4a39d125b39c14d5f2927217534478ae4f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
