@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1ea351fe_4657079a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-22T15:35:20Z",
+      "side": 1,
+      "message": "In my opinion, going file-by-file here is a better idea, as the files tend to have lower overlap, however for PDFs that are common, might be better to add them in embedder_test_constant.h (or .cpp if it is not inline). Let me know if this is fine.",
+      "revId": "5da7ee3388a9a63ea0ae5e1ceb261327583ff881",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
