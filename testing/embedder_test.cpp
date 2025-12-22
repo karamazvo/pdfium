@@ -382,6 +382,30 @@ int CompareBGRxPremultBitmapToPng(pdfium::span<const uint8_t> bitmap_span,
 }
 #endif  // PDF_USE_SKIA
 
+int CompareBGRBitmapToPng(pdfium::span<const uint8_t> bitmap_span,
+                          size_t bitmap_stride,
+                          const DecodedPng& decoded_png) {
+  const int width = decoded_png.width;
+  const int height = decoded_png.height;
+  const size_t bgrx_stride = width * 4;
+  std::vector<uint8_t> bgrx_buffer(bgrx_stride * height);
+
+  for (int h = 0; h < height; ++h) {
+    const uint8_t* src_row_ptr = &bitmap_span[h * bitmap_stride];
+    uint32_t* dest_row =
+        reinterpret_cast<uint32_t*>(&bgrx_buffer[h * bgrx_stride]);
+
+    for (int w = 0; w < width; ++w) {
+      const uint8_t* pixel_ptr = src_row_ptr + (w * 3);
+
+      uint32_t bgr_raw = 0;
+      memcpy(&bgr_raw, pixel_ptr, 3);
+      dest_row[w] = bgr_raw | (255u << 24);
+    }
+  }
+  return CompareBGRxBitmapToPng(bgrx_buffer, bgrx_stride, decoded_png);
+}
+
 void CompareBitmapToPngData(FPDF_BITMAP bitmap,
                             pdfium::span<const uint8_t> png_data) {
   DecodedPng decoded_png = DecodePngData(png_data);
@@ -415,7 +439,16 @@ void CompareBitmapToPngData(FPDF_BITMAP bitmap,
       pixels_different =
           CompareBGRxPremultBitmapToPng(bitmap_span, stride, decoded_png);
       break;
+<<<<<<< PATCH SET (370e28e2d6fa90827058e38ac24878131cb5c24e Update fpdf_editimg_embeddertest.cpp to use PNGs instead of )
+    case FPDFBitmap_BGR:
+      // Convert to BGRA by having alpha = 255.
+      pixels_different =
+          CompareBGRBitmapToPng(bitmap_span, stride, decoded_png);
+      break;
+||||||| BASE      (8d7b1742691e9a7b74d8702b6ee6cac8bef4eb27 Update jbig2_embeddertest.cpp to use PNGs Instead of Checksu)
+=======
 #endif  // PDF_USE_SKIA
+>>>>>>> BASE      (0c284a399619f111c2b517330562ce96de63ab77 Update jbig2_embeddertest.cpp to use PNGs Instead of Checksu)
     default:
       // Support other formats as-needed.
       NOTREACHED();
