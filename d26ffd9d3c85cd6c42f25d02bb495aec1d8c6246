@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d442d324_4b811053",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 22
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-22T12:53:57Z",
+      "side": 1,
+      "message": "Seems to be some kind of UAF on ASAN only that I wasn\u0027t able to find locally. Suspect it is because of this function (and maybe some kind of early-free). Will consider dry-running soon to figure it out.",
+      "parentUuid": "0fbc54b2_747d4469",
+      "range": {
+        "startLine": 345,
+        "startChar": 2,
+        "endLine": 345,
+        "endChar": 18
+      },
+      "revId": "d26ffd9d3c85cd6c42f25d02bb495aec1d8c6246",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "faaaf509_e9548228",
@@ -37,6 +61,30 @@
       "writtenOn": "2025-12-22T11:57:33Z",
       "side": 1,
       "message": "This thing might be flaky (I\u0027ve done a few tryjobs and 1 dry run and it seems to fail sometimes but not always...)",
+      "range": {
+        "startLine": 1729,
+        "startChar": 29,
+        "endLine": 1729,
+        "endChar": 77
+      },
+      "revId": "d26ffd9d3c85cd6c42f25d02bb495aec1d8c6246",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "905d1508_c0e7d89d",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 22
+      },
+      "lineNbr": 1729,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2025-12-22T12:53:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "faaaf509_e9548228",
       "range": {
         "startLine": 1729,
         "startChar": 29,
