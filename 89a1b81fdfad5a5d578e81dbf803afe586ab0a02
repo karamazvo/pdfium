@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "592ee66a_1e384cf1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2025-12-30T03:12:58Z",
+      "side": 1,
+      "message": "The Nice Fix is probably to make CJBig2_TRDProc::DecodeArith() take a JBig2IntDecoderState\u0026 and let CJBig2_Context::ParseTextRegion() allocate one for its call to CJBig2_TRDProc::DecodeArith() instead of having  CJBig2_TRDProc::DecodeArith() do it conditionally and have wobbly ownership semantics.\n\n(And to remove the `uint8_t SBSYMCODELEN;` field then.)",
+      "revId": "89a1b81fdfad5a5d578e81dbf803afe586ab0a02",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
