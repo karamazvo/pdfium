@@ -125,12 +125,22 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
           pDecoder->SBNUMINSTANCES = REFAGGNINST;
           pDecoder->SBSTRIPS = 1;
           pDecoder->SBNUMSYMS = SDNUMINSYMS + NSYMSDECODED;
+<<<<<<< PATCH SET (89a1b81fdfad5a5d578e81dbf803afe586ab0a02 Stop setting SBSYMCODELEN in REFAGGNINST > 1 arith case)
+||||||| BASE      (db61edb54f8921829ee3677f735c1734bc6c601f Roll goldctl from f1d8bd5336c2 to f09b414fc9a5)
+          uint32_t nTmp = 0;
+          while ((uint32_t)(1 << nTmp) < pDecoder->SBNUMSYMS) {
+            nTmp++;
+          }
+          uint8_t SBSYMCODELEN = (uint8_t)nTmp;
+          pDecoder->SBSYMCODELEN = SBSYMCODELEN;
+=======
           uint32_t nTmp = 0;
           while ((uint32_t)(1 << nTmp) < pDecoder->SBNUMSYMS) {
             nTmp++;
           }
           uint8_t SBSYMCODELEN = static_cast<uint8_t>(nTmp);
           pDecoder->SBSYMCODELEN = SBSYMCODELEN;
+>>>>>>> BASE      (56de60a2a0787eba0ea69bec2d857724b2d9d4f3 Fix reading refine-several symbols in huffman symbol diction)
           std::vector<UnownedPtr<CJBig2_Image>> SBSYMS(pDecoder->SBNUMSYMS);
           fxcrt::Copy(pdfium::span(SDINSYMS).first(SDNUMINSYMS),
                       pdfium::span(SBSYMS));
