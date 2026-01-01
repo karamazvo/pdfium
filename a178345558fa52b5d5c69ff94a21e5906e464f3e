@@ -56,6 +56,23 @@
       "message": "PTAL",
       "revId": "a178345558fa52b5d5c69ff94a21e5906e464f3e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4acb8abc_5d49c154",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 22
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4440675
+      },
+      "writtenOn": "2026-01-01T02:22:49Z",
+      "side": 1,
+      "message": "Hi Lei,\n\nI noticed that the `win_xfa_gdi` builder is reporting many failures due to \"timed out\". However, when I run the corpus tests locally using the following command, all tests pass (with some suppressed but 0 failures):\n```\nvpython3 testing/tools/run_corpus_tests.py --build-dir\u003dout/Debug_XFA_GDI/\n```\n\nLocal result summary:\n```\nTest cases executed: 816\nSuccesses: 738\nSuppressed: 78\nFailures: 0\n```\n\nIt seems my local environment doesn\u0027t trigger the timeouts seen on the trybots. Since I don\u0027t have the permissions to investigate the detailed environment or logs on the builder side, could you please help me look into why these timeouts are occurring? \n\nThanks!",
+      "revId": "a178345558fa52b5d5c69ff94a21e5906e464f3e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
