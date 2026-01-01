@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b81b933d_8ebd32e4",
+        "filename": "testing/resources/embedder_tests/rectangles_cropped_agg.png",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-01T18:54:34Z",
+      "side": 1,
+      "message": "These still need to be optipng-ed.",
+      "revId": "93e52a59042f54dd00e000bc9bfbb6cfda01e92b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
