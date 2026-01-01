@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fe4c2832_2d89a770",
+        "filename": "fpdfsdk/fpdf_formfill_embeddertest.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 1457,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-01T17:07:03Z",
+      "side": 1,
+      "message": "Was not able to address this case as I don\u0027t have access to a non-arm mac (or a windows or linux machine that will not take too long to build).\nHence I would not be able to replace the checksum in the case of the #else statement.",
+      "range": {
+        "startLine": 1457,
+        "startChar": 7,
+        "endLine": 1457,
+        "endChar": 31
+      },
+      "revId": "7d1aaa9b570eb4be8a6bfd331cd06cd6fac81fd3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
