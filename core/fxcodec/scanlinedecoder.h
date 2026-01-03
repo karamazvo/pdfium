@@ -29,6 +29,7 @@ class ScanlineDecoder {
   virtual ~ScanlineDecoder();
 
   pdfium::span<const uint8_t> GetScanline(int line);
+  virtual void Finish() {}
   bool SkipToScanline(int line, PauseIndicatorIface* pPause);
 
   int GetWidth() const { return output_width_; }
