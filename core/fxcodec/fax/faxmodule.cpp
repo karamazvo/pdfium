@@ -481,7 +481,7 @@ void FaxG4GetRow(pdfium::span<const uint8_t> src_buf,
   }
 }
 
-void FaxSkipEOL(pdfium::span<const uint8_t> src_buf, uint32_t* bitpos) {
+bool FaxSkipEOL(pdfium::span<const uint8_t> src_buf, uint32_t* bitpos) {
   const uint32_t bitsize = GetSrcBitSize(src_buf);
   uint32_t startbit = *bitpos;
   while (*bitpos < bitsize) {
@@ -490,9 +490,11 @@ void FaxSkipEOL(pdfium::span<const uint8_t> src_buf, uint32_t* bitpos) {
     }
     if (*bitpos - startbit <= 11) {
       *bitpos = startbit;
+      return false;
     }
-    return;
+    return true;
   }
+  return false; // only 0s until end-of-stream
 }
 
 void FaxGet1DLine(pdfium::span<const uint8_t> src_buf,
@@ -554,6 +556,7 @@ class FaxDecoder final : public ScanlineDecoder {
 
   // ScanlineDecoder:
   [[nodiscard]] bool Rewind() override;
+  void Finish() override;
   pdfium::span<uint8_t> GetNextLine() override;
   uint32_t GetSrcOffset() override;
 
@@ -603,10 +606,19 @@ bool FaxDecoder::Rewind() {
   return true;
 }
 
+void FaxDecoder::Finish() {
+  if (encoding_ < 0) {
+    bool eol = FaxSkipEOL(src_span_, &bitpos_);
+    if (eol) {
+      FaxSkipEOL(src_span_, &bitpos_);
+    }
+  }
+}
+
 pdfium::span<uint8_t> FaxDecoder::GetNextLine() {
   const uint32_t bitsize = GetSrcBitSize(src_span_);
-  FaxSkipEOL(src_span_, &bitpos_);
-  if (bitpos_ >= bitsize) {
+  bool eol = FaxSkipEOL(src_span_, &bitpos_);
+  if (bitpos_ >= bitsize || (eol && FaxSkipEOL(src_span_, &bitpos_))) {
     return pdfium::span<uint8_t>();
   }
 
