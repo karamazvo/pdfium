@@ -608,9 +608,27 @@ bool FaxDecoder::Rewind() {
 
 void FaxDecoder::Finish() {
   if (encoding_ < 0) {
+    // Group 4: End-of-facsimile block (EOFB)
     bool eol = FaxSkipEOL(src_span_, &bitpos_);
     if (eol) {
       FaxSkipEOL(src_span_, &bitpos_);
+    }
+  } else if (encoding_ == 0) {
+    // Group 3: Return To Control (RTC): 6 EOL
+    const uint32_t bitsize = GetSrcBitSize(src_span_);
+    for (int i = 0; i < 6; i++) {
+      bool eol = FaxSkipEOL(src_span_, &bitpos_);
+      if (eol) {
+        if (encoding_ > 0) {
+          if (bitpos_ < bitsize) {
+            NextBit(src_span_, &bitpos_);
+          } else {
+            break;
+          }
+        }
+      } else {
+        break;
+      }
     }
   }
 }
