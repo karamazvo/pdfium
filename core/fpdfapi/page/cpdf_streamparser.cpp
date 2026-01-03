@@ -72,6 +72,7 @@ uint32_t DecodeAllScanlines(std::unique_ptr<ScanlineDecoder> pDecoder) {
       break;
     }
   }
+  pDecoder->Finish();
   return pDecoder->GetSrcOffset();
 }
 
