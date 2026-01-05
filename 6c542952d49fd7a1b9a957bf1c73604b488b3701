@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f05db86e_fb415ff3",
+        "filename": "core/fxcodec/jbig2/JBig2_SddProc.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 340,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-05T18:28:12Z",
+      "side": 1,
+      "message": "Use static_cast.",
+      "range": {
+        "startLine": 340,
+        "startChar": 33,
+        "endLine": 340,
+        "endChar": 42
+      },
+      "revId": "6c542952d49fd7a1b9a957bf1c73604b488b3701",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
