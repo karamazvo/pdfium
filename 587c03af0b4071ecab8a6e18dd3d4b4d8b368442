@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "036ee3af_9ef5c6bb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-05T22:40:42Z",
+      "side": 1,
+      "message": "In addition to this subject line, can you add a brief description of what makes the test case special?",
+      "revId": "587c03af0b4071ecab8a6e18dd3d4b4d8b368442",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a5029e0e_ad27ce89",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-05T22:40:42Z",
+      "side": 1,
+      "message": "Thanks for your interest in contributing to PDFium. Since this is your first CL, please give yourself credit in the AUTHORS file.",
+      "revId": "587c03af0b4071ecab8a6e18dd3d4b4d8b368442",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f6a4e666_8f661cb7",
+        "filename": "testing/resources/pixel/bug_471224081.pdf",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-05T22:40:42Z",
+      "side": 1,
+      "message": "1) Are all the font objects in this PDF necessary, or is it sufficient to have just one?\n2) Can you try using testing/tools/pdftoin_shrdlu.py to make this a .in file, like many of the others in the same directory?",
+      "revId": "587c03af0b4071ecab8a6e18dd3d4b4d8b368442",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
