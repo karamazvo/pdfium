@@ -18,6 +18,23 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0469b634_efae567b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2026-01-06T00:43:24Z",
+      "side": 1,
+      "message": "lgtm!",
+      "revId": "1ed678786c4605ca4f260cad863f4fbf6b26ca70",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d6f7471c_f069828c",
@@ -31,6 +48,24 @@
       "writtenOn": "2026-01-06T00:42:34Z",
       "side": 1,
       "message": "This still returns 5, 6, 7 for an input of 5, 6, 7 as far as I can tell. Is that what you want?",
+      "revId": "1ed678786c4605ca4f260cad863f4fbf6b26ca70",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9b7387a3_a54131a1",
+        "filename": "core/fxcodec/jbig2/JBig2_Context.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2026-01-06T00:43:24Z",
+      "side": 1,
+      "message": "ah no, it has a \u0026 0x3, sorry 😬",
+      "parentUuid": "d6f7471c_f069828c",
       "revId": "1ed678786c4605ca4f260cad863f4fbf6b26ca70",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
