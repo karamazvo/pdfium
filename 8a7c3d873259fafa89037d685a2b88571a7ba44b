@@ -243,6 +243,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "67f7c534_e092fe3e",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-06T06:28:07Z",
+      "side": 1,
+      "message": "Alternatively, just do this conversion for later. As in:\n\n1) keep `kBlankPage612By792Checksum` for now.\n2) Similarly keep RectanglesChecksum() in the next CL.\n3) After these 2 CLs land, have one CL to convert TestRenderPageSkp() to use PNGs. This avoids the churn.\n\nSuggesting this because https://pdfium-review.googlesource.com/c/pdfium/+/139930/27/fpdfsdk/fpdf_view_embeddertest.cpp also duplicates / refactors.many methods so the checksum and PNG versions can temporarily co-exist. That\u0027s a lot of work, relatively speaking, just to delete RectanglesChecksum() sooner rather than later.",
+      "parentUuid": "8ce67965_c9693ce5",
+      "revId": "8a7c3d873259fafa89037d685a2b88571a7ba44b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "aa3cd84a_87829fff",
