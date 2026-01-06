@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "51ff1340_93e3b60d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-06T18:10:56Z",
+      "side": 1,
+      "message": "go/avoid-we\n\n\"can get rid of ..., and can remove ...\"",
+      "range": {
+        "startLine": 10,
+        "startChar": 32,
+        "endLine": 10,
+        "endChar": 34
+      },
+      "revId": "edf1a3768d0f47a6e9f880bc7b91dcfe02b75c93",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4619808f_3faeb75b",
+        "filename": "core/fxcodec/jbig2/JBig2_Context.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 724,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-06T18:10:56Z",
+      "side": 1,
+      "message": "static_cast since this is changing anyway?",
+      "range": {
+        "startLine": 724,
+        "startChar": 20,
+        "endLine": 724,
+        "endChar": 27
+      },
+      "revId": "edf1a3768d0f47a6e9f880bc7b91dcfe02b75c93",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cc80ff69_361840cf",
+        "filename": "core/fxcodec/jbig2/JBig2_TrdProc.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-06T18:10:56Z",
+      "side": 1,
+      "message": "Put these in the initializer list?",
+      "revId": "edf1a3768d0f47a6e9f880bc7b91dcfe02b75c93",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
