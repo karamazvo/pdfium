@@ -53,6 +53,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "65309c29_c6b6445c",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-06T13:52:17Z",
+      "side": 1,
+      "message": "Done, will verify if there are few more similar areas where this same thing can be applied.",
+      "parentUuid": "ad61b0cf_3f0270b2",
+      "revId": "e623e3e8c523d12de5e268efd33d40795ccfe7df",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8b072e75_93df4715",
@@ -66,6 +84,24 @@
       "writtenOn": "2026-01-06T06:35:58Z",
       "side": 1,
       "message": "Can stay as ASSERT_TRUE().",
+      "revId": "e623e3e8c523d12de5e268efd33d40795ccfe7df",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cbb7b262_580df14c",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-06T13:52:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8b072e75_93df4715",
       "revId": "e623e3e8c523d12de5e268efd33d40795ccfe7df",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -93,6 +129,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c2997717_8116bd71",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 358,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-06T13:52:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "988eaf1b_89b8b3c0",
+      "range": {
+        "startLine": 358,
+        "startChar": 30,
+        "endLine": 358,
+        "endChar": 40
+      },
+      "revId": "e623e3e8c523d12de5e268efd33d40795ccfe7df",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6ba672a0_0d9fca16",
@@ -106,6 +166,24 @@
       "writtenOn": "2026-01-06T06:35:58Z",
       "side": 1,
       "message": "Just reuse UnPreMultiplyColor()?",
+      "revId": "e623e3e8c523d12de5e268efd33d40795ccfe7df",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e19f55b2_eae3f64c",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-06T13:52:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6ba672a0_0d9fca16",
       "revId": "e623e3e8c523d12de5e268efd33d40795ccfe7df",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
