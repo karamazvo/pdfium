@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "03194ba8_b27f953e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-06T21:16:52Z",
+      "side": 1,
+      "message": "This CL is a bit too small. I would suggest combining it with https://pdfium-review.googlesource.com/140572 and https://pdfium-review.googlesource.com/140573.",
+      "revId": "ec8008940ce4dbf1b78476651f593a375d4ee10a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "39d151ed_54b8747d",
+        "filename": "core/fxcodec/scanlinedecoder.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-06T21:16:52Z",
+      "side": 1,
+      "message": "GetScanline() and SkipToScanline() look somewhat related. So how about putting this after SkipToScanline() instead of wedging it in the middle? Better yet, group this virtual method with the other virtual method on line 40.",
+      "revId": "ec8008940ce4dbf1b78476651f593a375d4ee10a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
