@@ -123,6 +123,24 @@
       "parentUuid": "1da7a062_49dad927",
       "revId": "ecbca2cf143cdc7a84abc69c6569843d2e4c2c57",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0195683e_5e16e440",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2026-01-06T22:23:36Z",
+      "side": 1,
+      "message": "To roll Skia further forward independently of this change one would need to add `SK_SUPPORT_LEGACY_UNSPANNED_GRADIENTS` to `skia/config/SkPdfiumUserConfig.h`. Then this change could remove it.\n\nOr this change can just include the Skia roll (update `skia_revision` in `DEPS`) and skip adding and removing the define.",
+      "parentUuid": "d659b809_559ff849",
+      "revId": "ecbca2cf143cdc7a84abc69c6569843d2e4c2c57",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
