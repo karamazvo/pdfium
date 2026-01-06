@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "23f39685_53fd2003",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2026-01-06T18:52:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "51ff1340_93e3b60d",
+      "range": {
+        "startLine": 10,
+        "startChar": 32,
+        "endLine": 10,
+        "endChar": 34
+      },
+      "revId": "edf1a3768d0f47a6e9f880bc7b91dcfe02b75c93",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4619808f_3faeb75b",
@@ -47,6 +71,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7d2aa79e_3cffdad3",
+        "filename": "core/fxcodec/jbig2/JBig2_Context.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 724,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2026-01-06T18:52:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4619808f_3faeb75b",
+      "range": {
+        "startLine": 724,
+        "startChar": 20,
+        "endLine": 724,
+        "endChar": 27
+      },
+      "revId": "edf1a3768d0f47a6e9f880bc7b91dcfe02b75c93",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cc80ff69_361840cf",
@@ -60,6 +108,24 @@
       "writtenOn": "2026-01-06T18:10:56Z",
       "side": 1,
       "message": "Put these in the initializer list?",
+      "revId": "edf1a3768d0f47a6e9f880bc7b91dcfe02b75c93",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f42acf41_7a40c355",
+        "filename": "core/fxcodec/jbig2/JBig2_TrdProc.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5475
+      },
+      "writtenOn": "2026-01-06T18:52:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cc80ff69_361840cf",
       "revId": "edf1a3768d0f47a6e9f880bc7b91dcfe02b75c93",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
