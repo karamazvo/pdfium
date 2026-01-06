@@ -132,6 +132,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "114bacd3_536785fd",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 2467,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-06T06:12:17Z",
+      "side": 1,
+      "message": "Comment applies to all the changes below as well.",
+      "parentUuid": "c0c32215_b7a3d091",
+      "range": {
+        "startLine": 2467,
+        "startChar": 42,
+        "endLine": 2467,
+        "endChar": 49
+      },
+      "revId": "8a7c3d873259fafa89037d685a2b88571a7ba44b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "4ed05a15_894ec21c",
         "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
         "patchSetId": 12
@@ -197,6 +221,24 @@
       "side": 1,
       "message": "FYI, the follow up CL deletes TestRenderPageSkp anyway.",
       "parentUuid": "f9297f52_2e9bee3e",
+      "revId": "8a7c3d873259fafa89037d685a2b88571a7ba44b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8ce67965_c9693ce5",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-06T06:12:17Z",
+      "side": 1,
+      "message": "A little bit of churn is ok.",
+      "parentUuid": "9d33b667_bbdea2e8",
       "revId": "8a7c3d873259fafa89037d685a2b88571a7ba44b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
