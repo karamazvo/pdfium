@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5ee98f29_b2088ed1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-06T21:23:03Z",
+      "side": 1,
+      "message": "Does the test case in https://pdfium-review.googlesource.com/140570 cover this case?",
+      "revId": "4db6ecd13bef941d5a0e2a3aaad36102388425a1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4dc8a0ad_2225d035",
+        "filename": "core/fxcodec/fax/faxmodule.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 621,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-06T21:23:03Z",
+      "side": 1,
+      "message": "Flip the conditional here and break early. Same for line 623.",
+      "revId": "4db6ecd13bef941d5a0e2a3aaad36102388425a1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
