@@ -437,27 +437,6 @@ luci.bucket(
 
 # Builders
 luci.builder(
-    name = "pdfium_gcs_dep_autoroller",
-    bucket = "ci",
-    executable = "gcs_dep_autoroller",
-    service_account = "pdfium-ci-builder@chops-service-accounts.iam.gserviceaccount.com",
-    dimensions = {
-        "cores": "8",
-        "cpu": "x86-64",
-        "os": "Ubuntu-24.04",
-        "pool": "luci.flex.ci",
-    },
-    properties = {
-        "source_url": "https://chromium.googlesource.com/chromium/src.git",
-        "destination_url": "https://pdfium.googlesource.com/pdfium.git",
-        "source_packages": "src/third_party/llvm-build/Release+Asserts,src/third_party/rust-toolchain",
-        "destination_packages": "third_party/llvm-build/Release+Asserts,third_party/rust-toolchain",
-    },
-    # Run every 2 weeks on the 1st and the 15th of each month at 1:30 AM
-    schedule = "30 1 1,15 * *",
-)
-
-luci.builder(
     name = "pdfium_presubmit",
     bucket = "try",
     executable = "presubmit",
