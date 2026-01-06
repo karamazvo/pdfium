@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "392eea2e_f8fe07cd",
+        "filename": "core/fxcodec/jbig2/jbig2_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-06T14:15:23Z",
+      "side": 0,
+      "message": "I did remove this because there is an expectation image for skia as well which Indeed made this pass. Let me know if it should be still kept AGG only.",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 44
+      },
+      "revId": "ace5a78f17dabfb8ebac01142de59e15101605f9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
