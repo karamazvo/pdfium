@@ -285,6 +285,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7e280bc2_3924d74d",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-06T19:29:02Z",
+      "side": 1,
+      "message": "WDYT about this approach? For just TestRenderPageSkp(), the amount of churn isn\u0027t that bad, but for FPDFViewEmbedderTest::Test*() in the next CL, that is a lot more.",
+      "parentUuid": "67f7c534_e092fe3e",
+      "revId": "8a7c3d873259fafa89037d685a2b88571a7ba44b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "aa3cd84a_87829fff",
