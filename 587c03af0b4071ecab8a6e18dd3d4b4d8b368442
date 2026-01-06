@@ -37,6 +37,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "b916b3fb_0a85f1b8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-06T21:27:43Z",
+      "side": 1,
+      "message": "Also, the test fails because the bug is not fixed yet, and the continuous integration cannot have failing tests. So the workaround is to temporarily supress the failure in testing/SUPPRESSIONS.",
+      "revId": "587c03af0b4071ecab8a6e18dd3d4b4d8b368442",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "f6a4e666_8f661cb7",
         "filename": "testing/resources/pixel/bug_471224081.pdf",
         "patchSetId": 2
