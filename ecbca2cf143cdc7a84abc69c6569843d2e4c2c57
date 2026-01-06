@@ -33,6 +33,24 @@
       "message": "Interesting failures. The fail is on addCircle() which was recently updated in skia, and that change has already rolled into chrome. Does PDFium not track that version of Skia?",
       "revId": "ecbca2cf143cdc7a84abc69c6569843d2e4c2c57",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bf015233_1a656475",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-06T17:35:03Z",
+      "side": 1,
+      "message": "PDFium only rolls DEPS for Skia about once a month, or as-needed. The last roll was https://pdfium-review.googlesource.com/139851. If PDFium rolled continuously, its commit log would be mostly DEPS rolls.\n\nSince it\u0027s about time for the monthly DEPS roll, I\u0027ll get that going.",
+      "parentUuid": "69836c56_244a8d6d",
+      "revId": "ecbca2cf143cdc7a84abc69c6569843d2e4c2c57",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
