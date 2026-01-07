@@ -708,7 +708,7 @@ bool CFX_DIBBase::GetOverlapRect(int& dest_left,
                                  int src_height,
                                  int& src_left,
                                  int& src_top,
-                                 const CFX_AggClipRgn* pClipRgn) const {
+                                 const FX_RECT* pClipRgn) const {
   if (width == 0 || height == 0) {
     return false;
   }
@@ -780,7 +780,7 @@ bool CFX_DIBBase::GetOverlapRect(int& dest_left,
   dest_rect.Intersect(dest_bound);
 
   if (pClipRgn) {
-    dest_rect.Intersect(pClipRgn->GetBox());
+    dest_rect.Intersect(*pClipRgn);
   }
   dest_left = dest_rect.left;
   dest_top = dest_rect.top;
