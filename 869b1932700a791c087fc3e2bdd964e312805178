@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d4fe7024_20e9c6e4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2026-01-07T22:19:51Z",
+      "side": 1,
+      "message": "@thestig@chromium.org - this is the only plausible place i found that could lead to a full enumeration, could you please take a look, hope this solves the issue!",
+      "revId": "869b1932700a791c087fc3e2bdd964e312805178",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
