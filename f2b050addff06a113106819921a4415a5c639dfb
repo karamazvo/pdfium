@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3b93c095_68bf9ce9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4426030
+      },
+      "writtenOn": "2026-01-07T20:35:23Z",
+      "side": 1,
+      "message": "added a legacy rounding step, just for test-suite compat. ptal",
+      "revId": "f2b050addff06a113106819921a4415a5c639dfb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
