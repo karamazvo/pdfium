@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "69de36af_9ca48fa7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-07T23:33:42Z",
+      "side": 1,
+      "message": "... on non-Windows platforms?",
+      "revId": "869b1932700a791c087fc3e2bdd964e312805178",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "d4fe7024_20e9c6e4",
@@ -14,6 +31,57 @@
       "writtenOn": "2026-01-07T22:19:51Z",
       "side": 1,
       "message": "@thestig@chromium.org - this is the only plausible place i found that could lead to a full enumeration, could you please take a look, hope this solves the issue!",
+      "revId": "869b1932700a791c087fc3e2bdd964e312805178",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "112247ab_0d5459ae",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-07T23:33:42Z",
+      "side": 1,
+      "message": "Probably fine to omit. Letting FooTest access Foo happens quite often.",
+      "revId": "869b1932700a791c087fc3e2bdd964e312805178",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "55389b5c_d196e499",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-07T23:33:42Z",
+      "side": 1,
+      "message": "`friend` is usually in the `private` section.",
+      "revId": "869b1932700a791c087fc3e2bdd964e312805178",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e7b9a518_64b635fc",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-07T23:33:42Z",
+      "side": 1,
+      "message": "How about only declaring this and EnsureFontsEnumerated() on non-Windows? Then there\u0027s no need for an empty EnsureFontsEnumerated() on Windows.",
       "revId": "869b1932700a791c087fc3e2bdd964e312805178",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
