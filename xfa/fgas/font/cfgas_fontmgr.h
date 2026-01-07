@@ -92,6 +92,9 @@ class CFGAS_FontMgr {
   CFGAS_FontMgr();
   ~CFGAS_FontMgr();
 
+  // For testing lazy enumeration behavior.
+  friend class CFGASFontMgrTest_LazyEnumeration_Test;
+
   bool EnumFonts();
   RetainPtr<CFGAS_GEFont> GetFontByCodePage(FX_CodePage wCodePage,
                                             uint32_t dwFontStyles,
@@ -134,8 +137,11 @@ class CFGAS_FontMgr {
                                            int32_t iFaceIndex);
 #endif  // BUILDFLAG(IS_WIN)
 
+  void EnsureFontsEnumerated();
+
   std::map<uint32_t, std::vector<RetainPtr<CFGAS_GEFont>>> hash_2fonts_;
   std::set<wchar_t> failed_unicodes_set_;
+  bool fonts_enumerated_ = false;
 
 #if BUILDFLAG(IS_WIN)
   std::deque<FX_FONTDESCRIPTOR> font_faces_;
