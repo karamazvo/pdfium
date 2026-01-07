@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "507e874a_17770d91",
+        "filename": "main.star",
+        "patchSetId": 1
+      },
+      "lineNbr": 387,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-01-07T16:22:20Z",
+      "side": 1,
+      "message": "Does this also need to be removed?",
+      "revId": "64ead531cb1e3baab1bce00d981f9beae8e55d91",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
