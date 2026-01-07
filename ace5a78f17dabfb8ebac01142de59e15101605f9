@@ -22,6 +22,30 @@
       },
       "revId": "ace5a78f17dabfb8ebac01142de59e15101605f9",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e1e73028_2e439312",
+        "filename": "core/fxcodec/jbig2/jbig2_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-07T01:18:10Z",
+      "side": 0,
+      "message": "Thanks. Mention this in the CL description?",
+      "parentUuid": "392eea2e_f8fe07cd",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 44
+      },
+      "revId": "ace5a78f17dabfb8ebac01142de59e15101605f9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
