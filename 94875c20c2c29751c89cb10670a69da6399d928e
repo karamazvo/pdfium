@@ -16,6 +16,24 @@
       "message": "I am using the 3 arg version of addCircle. ptal",
       "revId": "94875c20c2c29751c89cb10670a69da6399d928e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a3f63371_572afc4a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-07T00:04:41Z",
+      "side": 1,
+      "message": "Still got red bots. I\u0027m guessing using the floats directly causes some rounding errors to go away. As such, the PDFs don\u0027t render pixel perfect vs. the expectation PNGs. Two ways to resolve this are:\n\n1) Update all the expectations, which involves files in a different repo and another DEPS roll.\n2) Maybe add these to testing/SUPPRESSIONS_EXACT_MATCHING, if the fuzzy matching can tolerate these changes. This may be worth considering, if Skia changes how it draws gradients from time to time.",
+      "parentUuid": "ec3fafbb_e0a820e7",
+      "revId": "94875c20c2c29751c89cb10670a69da6399d928e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }

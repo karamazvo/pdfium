@@ -141,6 +141,24 @@
       "parentUuid": "d659b809_559ff849",
       "revId": "ecbca2cf143cdc7a84abc69c6569843d2e4c2c57",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5f5d37e0_3f210c36",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-07T00:04:41Z",
+      "side": 1,
+      "message": "ACLs updated.",
+      "parentUuid": "d0242ece_2b523e9e",
+      "revId": "ecbca2cf143cdc7a84abc69c6569843d2e4c2c57",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
