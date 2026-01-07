@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "18ae576b_aaa88eb3",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 34
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-07T14:46:11Z",
+      "side": 1,
+      "message": "When it comes to removing these functions, It is likely that I would not be able to make these fully unused.\n\n```\n  const char* gray_checksum \u003d []() {\n    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {\n#if BUILDFLAG(IS_APPLE) \u0026\u0026 defined(ARCH_CPU_ARM64)\n      return \"44575dfe9e72e5b4e535766230c640b2\";\n#else\n      return \"3dfe1fc3889123d68e1748fefac65e72\";\n#endif\n    }\n    return \"b561c11edc44dc3972125a9b8744fa2f\";\n  }();\n```\n\nInvolve some platforms that I don\u0027t have access to, which makes it difficult for me to replace these with images. Is there any way to access some kind of artifacts through the dry run bots?",
+      "range": {
+        "startLine": 222,
+        "startChar": 7,
+        "endLine": 222,
+        "endChar": 45
+      },
+      "revId": "c1655405ce0eda17a5ac08e208c618ad8fe240d9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
