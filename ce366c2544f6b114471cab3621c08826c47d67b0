@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c40cdef7_3e478c52",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-07T08:02:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7e4c94ed_6c614752",
+      "range": {
+        "startLine": 241,
+        "startChar": 4,
+        "endLine": 241,
+        "endChar": 15
+      },
+      "revId": "ce366c2544f6b114471cab3621c08826c47d67b0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c443d6ce_15b982f5",
@@ -37,6 +61,30 @@
       "writtenOn": "2026-01-07T01:13:09Z",
       "side": 1,
       "message": "Can stay as ASSERT_NE().",
+      "range": {
+        "startLine": 253,
+        "startChar": 4,
+        "endLine": 253,
+        "endChar": 13
+      },
+      "revId": "ce366c2544f6b114471cab3621c08826c47d67b0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b1680757_ee7fc9f5",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-07T08:02:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c443d6ce_15b982f5",
       "range": {
         "startLine": 253,
         "startChar": 4,
@@ -70,6 +118,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5dd0c704_e513f655",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-07T08:02:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f26e26cd_fe669977",
+      "range": {
+        "startLine": 257,
+        "startChar": 4,
+        "endLine": 257,
+        "endChar": 15
+      },
+      "revId": "ce366c2544f6b114471cab3621c08826c47d67b0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b4c52230_c960f695",
@@ -83,6 +155,30 @@
       "writtenOn": "2026-01-07T01:13:09Z",
       "side": 1,
       "message": "Can be ASSERT_TRUE().",
+      "range": {
+        "startLine": 375,
+        "startChar": 4,
+        "endLine": 375,
+        "endChar": 15
+      },
+      "revId": "ce366c2544f6b114471cab3621c08826c47d67b0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a74f1d36_c95bd268",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 375,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-07T08:02:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b4c52230_c960f695",
       "range": {
         "startLine": 375,
         "startChar": 4,
@@ -110,6 +206,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a257d2f2_80a145ae",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-07T08:02:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5726c87f_8cc8b781",
+      "revId": "ce366c2544f6b114471cab3621c08826c47d67b0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0a18c20e_feec205b",
@@ -123,6 +237,24 @@
       "writtenOn": "2026-01-07T01:13:09Z",
       "side": 1,
       "message": "Remove empty comment.",
+      "revId": "ce366c2544f6b114471cab3621c08826c47d67b0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0fde4b83_10c843c9",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-07T08:02:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0a18c20e_feec205b",
       "revId": "ce366c2544f6b114471cab3621c08826c47d67b0",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
