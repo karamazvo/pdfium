@@ -1,0 +1,130 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7e4c94ed_6c614752",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-07T01:13:09Z",
+      "side": 1,
+      "message": "Can be ASSERT_TRUE().",
+      "range": {
+        "startLine": 241,
+        "startChar": 4,
+        "endLine": 241,
+        "endChar": 15
+      },
+      "revId": "ce366c2544f6b114471cab3621c08826c47d67b0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c443d6ce_15b982f5",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-07T01:13:09Z",
+      "side": 1,
+      "message": "Can stay as ASSERT_NE().",
+      "range": {
+        "startLine": 253,
+        "startChar": 4,
+        "endLine": 253,
+        "endChar": 13
+      },
+      "revId": "ce366c2544f6b114471cab3621c08826c47d67b0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f26e26cd_fe669977",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-07T01:13:09Z",
+      "side": 1,
+      "message": "Can be ASSERT_TRUE().",
+      "range": {
+        "startLine": 257,
+        "startChar": 4,
+        "endLine": 257,
+        "endChar": 15
+      },
+      "revId": "ce366c2544f6b114471cab3621c08826c47d67b0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b4c52230_c960f695",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 375,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-07T01:13:09Z",
+      "side": 1,
+      "message": "Can be ASSERT_TRUE().",
+      "range": {
+        "startLine": 375,
+        "startChar": 4,
+        "endLine": 375,
+        "endChar": 15
+      },
+      "revId": "ce366c2544f6b114471cab3621c08826c47d67b0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5726c87f_8cc8b781",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-07T01:13:09Z",
+      "side": 1,
+      "message": "Use something like `fxcrt::reinterpret_span\u003cFX_BGRA_STRUCT\u003cuint8_t\u003e\u003e(...)` to directly convert to a span of FX_BGRA_STRUCT entries.",
+      "revId": "ce366c2544f6b114471cab3621c08826c47d67b0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0a18c20e_feec205b",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 31
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-07T01:13:09Z",
+      "side": 1,
+      "message": "Remove empty comment.",
+      "revId": "ce366c2544f6b114471cab3621c08826c47d67b0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
