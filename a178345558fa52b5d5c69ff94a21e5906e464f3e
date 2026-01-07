@@ -133,6 +133,24 @@
       "parentUuid": "4acb8abc_5d49c154",
       "revId": "a178345558fa52b5d5c69ff94a21e5906e464f3e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5e474780_3f8313a9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 22
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4440675
+      },
+      "writtenOn": "2026-01-07T07:08:53Z",
+      "side": 1,
+      "message": "Thanks, got it. I\u0027ve added the missing GDI expected image in the latest patchset.",
+      "parentUuid": "7cd979f1_a71c7a87",
+      "revId": "a178345558fa52b5d5c69ff94a21e5906e464f3e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
