@@ -303,6 +303,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5fe68ff3_a7d6e528",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-07T02:14:53Z",
+      "side": 1,
+      "message": "The approaach makes sense and it would minimise the clutter for sure, my only worry is that in a follow up CL all the callers, the signatures and the function itself will all have to be updatead at once, which although somewhat mechanical, might lead to a large CL size overall and a lot of comparisons changed.\n\nI think one strategy which could aleviate the subsequent CLs together.\n\nIf the CL that adds the TestSomethingToPng() functions lands with the ones that rename ToSomethingToPng() to the default ToSomething() then the overall clutter in the codebase is minimized. As for this CL thread, keeping track of when these functions can be removed is quite simple as the compile will anyway report it as an unused function.",
+      "parentUuid": "7e280bc2_3924d74d",
+      "revId": "8a7c3d873259fafa89037d685a2b88571a7ba44b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "aa3cd84a_87829fff",
