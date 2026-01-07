@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8aa4d306_5967f5c9",
+        "filename": "fpdfsdk/fpdf_editpage_embeddertest.cpp",
+        "patchSetId": 20
+      },
+      "lineNbr": 569,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-07T21:57:10Z",
+      "side": 1,
+      "message": "Reminder to remove",
+      "revId": "57b1e0007e1df4226667f2bf40d2c7a69908cfcb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
