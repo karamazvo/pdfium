@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "25017ed3_99f788ae",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 381,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-07T22:06:54Z",
+      "side": 1,
+      "message": "Is this necessary, or can the loop below just use `bitmap_stride`?",
+      "revId": "20b9248c2ad30a99be5c13ff417aeb6ebdb17f8b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7c8035b9_4bdee844",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 388,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-07T22:06:54Z",
+      "side": 1,
+      "message": "No need to add 0. Although it does make the code line up better.",
+      "range": {
+        "startLine": 388,
+        "startChar": 20,
+        "endLine": 388,
+        "endChar": 24
+      },
+      "revId": "20b9248c2ad30a99be5c13ff417aeb6ebdb17f8b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "72aa1059_30e0090e",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 388,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-07T22:06:54Z",
+      "side": 1,
+      "message": "Alternatively, use `reinterpret_span\u003cconst FX_BGR_STRUCT\u003cuint8_t\u003e\u003e` and `reinterpret_span\u003cconst FX_BGRA_STRUCT\u003cuint8_t\u003e\u003e`, and then assign the struct fields.",
+      "revId": "20b9248c2ad30a99be5c13ff417aeb6ebdb17f8b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
