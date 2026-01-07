@@ -378,19 +378,17 @@ int CompareBGRBitmapToPng(pdfium::span<const uint8_t> bitmap_span,
   const int width = decoded_png.width;
   const int height = decoded_png.height;
   const size_t bgrx_stride = width * 4;
+  const size_t bgr_stride = width * 3;
   std::vector<uint8_t> bgrx_buffer(bgrx_stride * height);
-
+  pdfium::span<uint8_t> bgrx_span(bgrx_buffer);
   for (int h = 0; h < height; ++h) {
-    const uint8_t* src_row_ptr = &bitmap_span[h * bitmap_stride];
-    uint32_t* dest_row =
-        reinterpret_cast<uint32_t*>(&bgrx_buffer[h * bgrx_stride]);
-
+    auto src_row = bitmap_span.subspan(h * bitmap_stride, bgr_stride);
+    auto dest_row = bgrx_span.subspan(h * bgrx_stride, bgrx_stride);
     for (int w = 0; w < width; ++w) {
-      const uint8_t* pixel_ptr = src_row_ptr + (w * 3);
-
-      uint32_t bgr_raw = 0;
-      memcpy(&bgr_raw, pixel_ptr, 3);
-      dest_row[w] = bgr_raw | (255u << 24);
+      dest_row[w * 4 + 0] = src_row[w * 3 + 0];
+      dest_row[w * 4 + 1] = src_row[w * 3 + 1];
+      dest_row[w * 4 + 2] = src_row[w * 3 + 2];
+      dest_row[w * 4 + 3] = 255;
     }
   }
   return CompareBGRxBitmapToPng(bgrx_buffer, bgrx_stride, decoded_png);
