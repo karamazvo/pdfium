@@ -69,6 +69,24 @@
       "message": "I see small image diffs (are there large ones?). I wonder if those are from improved fidelity:\n- old code reads floats from the PDF, and rounded them to byte\n- new code reads floats from the PDF, and keeps them as floats\nCan we accept the new versions?",
       "revId": "94875c20c2c29751c89cb10670a69da6399d928e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f5208c20_3684df06",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4426030
+      },
+      "writtenOn": "2026-01-07T19:41:51Z",
+      "side": 1,
+      "message": "Skia itself, and (mostly) chrome, have switched to using Gold for storing image results, making it trivial to \"update\" the expected image. Perhaps pdfium could use that...? Wouldn\u0027t require \u0027rolling\u0027 any repo.\n\nIn the short term, we can also try ...\n3) change the code to artifically round the floats (but keep them as floats) so we\u0027d get the previous results.\nIcky, but doable.",
+      "parentUuid": "200a8bd2_4aaf5c0e",
+      "revId": "94875c20c2c29751c89cb10670a69da6399d928e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
