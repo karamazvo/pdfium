@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2c395bcd_3214bb19",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 11
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-07T01:32:00Z",
+      "side": 1,
+      "message": "Wrap",
+      "revId": "37b8732bf9ad52999e8b3b5978b9a9a1e8231435",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c606a667_2d6c26c7",
+        "filename": "fpdfsdk/fpdf_editpage_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-07T01:32:00Z",
+      "side": 1,
+      "message": "constexpr char kFoo[] \u003d \"...\";\n\nMore below.",
+      "revId": "37b8732bf9ad52999e8b3b5978b9a9a1e8231435",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
