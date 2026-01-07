@@ -87,6 +87,42 @@
       "parentUuid": "200a8bd2_4aaf5c0e",
       "revId": "94875c20c2c29751c89cb10670a69da6399d928e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4c429576_4f6f286a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-07T22:14:33Z",
+      "side": 1,
+      "message": "Yes, PDFium uploads to Gold, but we never finished the project to migrate over. So what actually counts is the checked-in images and the Gold results are just FYI.",
+      "parentUuid": "f5208c20_3684df06",
+      "revId": "94875c20c2c29751c89cb10670a69da6399d928e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "260da49b_189ab097",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-07T22:14:33Z",
+      "side": 1,
+      "message": "Yes we can accept the new versions. Based on the latest patchset, I\u0027ll do a follow-up.",
+      "parentUuid": "53db2049_41df5e1c",
+      "revId": "94875c20c2c29751c89cb10670a69da6399d928e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }

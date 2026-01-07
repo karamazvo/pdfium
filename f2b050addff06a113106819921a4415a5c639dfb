@@ -16,6 +16,23 @@
       "message": "added a legacy rounding step, just for test-suite compat. ptal",
       "revId": "f2b050addff06a113106819921a4415a5c639dfb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4ae8b692_efd16495",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-07T22:14:33Z",
+      "side": 1,
+      "message": "Over 80 columns. Reminder to clang-format.\n\nI\u0027ll take care of removing this as a follow-up.",
+      "revId": "f2b050addff06a113106819921a4415a5c639dfb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
