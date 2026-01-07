@@ -33,6 +33,24 @@
       "message": "Use span APIs and avoid using pointer arithmetic.",
       "revId": "bd7e0c90b031ff6680930a071422f7019c88b03a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "99b5f5e4_06e693af",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 394,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-07T14:31:48Z",
+      "side": 1,
+      "message": "Done using subspans.",
+      "parentUuid": "ec6dcedb_21136916",
+      "revId": "bd7e0c90b031ff6680930a071422f7019c88b03a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
