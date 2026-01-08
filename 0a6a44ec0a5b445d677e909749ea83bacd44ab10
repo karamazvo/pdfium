@@ -16,6 +16,29 @@
       "message": "Missed this one.",
       "revId": "0a6a44ec0a5b445d677e909749ea83bacd44ab10",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2d403687_01d1c56a",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 418,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-08T23:39:04Z",
+      "side": 1,
+      "message": "I\u0027m trying to figure out a way to write this that maximizes clarity to the reader, and about the only thing I can com up with is somthing like:\n```\n// Eight possible approaches covering these three booleans:\nconst bool dst_same_word \u003d ((xd0 \u0026 ~31) \u003d\u003d ((xd1 - 1) \u0026 ~31));\nconst bool src_same_word \u003d ((xs0 \u0026 ~31) \u003d\u003d ((xs1 - 1) \u0026 ~31));\nconst bool s1_greater \u003d (s1 \u003e d1);\n\nif (dst_same_word \u0026\u0026 src_same_word \u0026\u0026 s1_greater) {\n  ...\n  return true;\n}\n\nif (dst_same_word \u0026\u0026 src_same_word \u0026\u0026 !s1_greater) {\n  ...\n  return true;\n}\n\nif (dst_same_word \u0026\u0026 !src_same_word \u0026\u0026 s1_greater) {\n  ...\n  return true;\n}\n\nif (dst_same_word \u0026\u0026 !src_same_word \u0026\u0026 !s1_greater) {\n  ...\n  return true;\n}\n\nif (dst_same_word \u0026\u0026 src_same_word \u0026\u0026 s1_greater) {\n  ...\n  return true;\n}\n\nif (dst_same_word \u0026\u0026 src_same_word \u0026\u0026 !s1_greater) {\n  ...\n  return true;\n}\n\nif (dst_same_word \u0026\u0026 !src_same_word \u0026\u0026 s1_greater) {\n  ...\n  return true;\n}\n\nif (dst_same_word \u0026\u0026 !src_same_word \u0026\u0026 !s1_greater) {\n  ...\n  return true;\n}\n\nNOTREACHED();\n```",
+      "range": {
+        "startLine": 415,
+        "startChar": 1,
+        "endLine": 418,
+        "endChar": 2
+      },
+      "revId": "0a6a44ec0a5b445d677e909749ea83bacd44ab10",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
