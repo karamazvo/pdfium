@@ -97,6 +97,30 @@
       },
       "revId": "0a6a44ec0a5b445d677e909749ea83bacd44ab10",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e18a402b_8c5310ae",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 418,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-08T23:55:06Z",
+      "side": 1,
+      "message": "argh, there are 7 levels it seems, not 8 as in simple 2**3.",
+      "parentUuid": "786738a0_86d9215f",
+      "range": {
+        "startLine": 415,
+        "startChar": 1,
+        "endLine": 418,
+        "endChar": 2
+      },
+      "revId": "0a6a44ec0a5b445d677e909749ea83bacd44ab10",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
