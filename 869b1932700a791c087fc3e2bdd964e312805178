@@ -20,6 +20,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "fe8b35b1_819b90f4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2026-01-08T06:38:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "69de36af_9ca48fa7",
+      "revId": "869b1932700a791c087fc3e2bdd964e312805178",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "d4fe7024_20e9c6e4",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 2
@@ -52,6 +70,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4e6a0781_dd6673d6",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2026-01-08T06:38:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "112247ab_0d5459ae",
+      "revId": "869b1932700a791c087fc3e2bdd964e312805178",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "55389b5c_d196e499",
@@ -69,6 +105,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "49792847_c1478042",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2026-01-08T06:38:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "55389b5c_d196e499",
+      "revId": "869b1932700a791c087fc3e2bdd964e312805178",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e7b9a518_64b635fc",
@@ -82,6 +136,24 @@
       "writtenOn": "2026-01-07T23:33:42Z",
       "side": 1,
       "message": "How about only declaring this and EnsureFontsEnumerated() on non-Windows? Then there\u0027s no need for an empty EnsureFontsEnumerated() on Windows.",
+      "revId": "869b1932700a791c087fc3e2bdd964e312805178",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "737b3a3a_2dbbf535",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2026-01-08T06:38:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7b9a518_64b635fc",
       "revId": "869b1932700a791c087fc3e2bdd964e312805178",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
