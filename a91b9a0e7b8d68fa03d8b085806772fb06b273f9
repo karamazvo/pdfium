@@ -1,0 +1,178 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3fa8cab6_a59271d9",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-08T19:09:00Z",
+      "side": 1,
+      "message": "follow-on: maybe a GetLinePortion(y, x_offset) might avoid a bounds check of m against width when taking subspans?",
+      "range": {
+        "startLine": 299,
+        "startChar": 8,
+        "endLine": 299,
+        "endChar": 22
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "8a0af0e5_6479b1f9",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/jbig2/JBig2_Image.cpp",
+              "range": {
+                "startLine": 206,
+                "startChar": 0,
+                "endLine": 206,
+                "endChar": 0
+              },
+              "replacement": "\npdfium::span\u003cconst uint8_t\u003e CJBig2_Image::GetLinePortion(int32_t y,\n                                                          int32_t x_offset,\n                                                          size_t size) const {\n  pdfium::span\u003cconst uint8_t\u003e line \u003d GetLine(y);\n  if (line.empty()) {\n    return {};\n  }\n  return line.subspan(static_cast\u003csize_t\u003e(x_offset), size);\n}\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_Image.cpp",
+              "range": {
+                "startLine": 298,
+                "startChar": 0,
+                "endLine": 300,
+                "endChar": 0
+              },
+              "replacement": "    pdfium::span\u003cconst uint8_t\u003e src \u003d GetLinePortion(y + i, m, bytes_to_copy);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "a91b9a0e7b8d68fa03d8b085806772fb06b273f9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0b238ac9_e3d120f3",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-08T19:09:00Z",
+      "side": 1,
+      "message": "I think we get this check for \u0027free\u0027 as part of spancpy, since spancpy size is determined by src size.",
+      "range": {
+        "startLine": 300,
+        "startChar": 50,
+        "endLine": 300,
+        "endChar": 71
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "4dcd05a1_29111cc3",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/jbig2/JBig2_Image.cpp",
+              "range": {
+                "startLine": 300,
+                "startChar": 0,
+                "endLine": 301,
+                "endChar": 0
+              },
+              "replacement": "    pdfium::span\u003cuint8_t\u003e dest \u003d image-\u003eGetLine(i);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "a91b9a0e7b8d68fa03d8b085806772fb06b273f9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e70c9bf9_c98dd8ee",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-08T19:09:00Z",
+      "side": 1,
+      "message": "follow-on: and here too.",
+      "range": {
+        "startLine": 316,
+        "startChar": 8,
+        "endLine": 316,
+        "endChar": 55
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "f160b844_a0987aa7",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/jbig2/JBig2_Image.cpp",
+              "range": {
+                "startLine": 316,
+                "startChar": 0,
+                "endLine": 317,
+                "endChar": 0
+              },
+              "replacement": "        GetLine(y + i).subspan(static_cast\u003csize_t\u003e(m), bytes_to_copy);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "a91b9a0e7b8d68fa03d8b085806772fb06b273f9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b5843074_8e53bf73",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 318,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-08T19:09:00Z",
+      "side": 1,
+      "message": "Do we know this is a multiple of 4?",
+      "range": {
+        "startLine": 318,
+        "startChar": 11,
+        "endLine": 318,
+        "endChar": 24
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "db8251fd_30a88e27",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/jbig2/JBig2_Image.cpp",
+              "range": {
+                "startLine": 318,
+                "startChar": 0,
+                "endLine": 318,
+                "endChar": 0
+              },
+              "replacement": "    // `bytes_to_copy` is a multiple of 4, so `dest` size is a multiple of 4.\n"
+            }
+          ]
+        }
+      ],
+      "revId": "a91b9a0e7b8d68fa03d8b085806772fb06b273f9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
