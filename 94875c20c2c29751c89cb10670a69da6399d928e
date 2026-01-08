@@ -123,6 +123,24 @@
       "parentUuid": "53db2049_41df5e1c",
       "revId": "94875c20c2c29751c89cb10670a69da6399d928e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6da278b6_8022a280",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-08T22:01:41Z",
+      "side": 1,
+      "message": "With this CL landed, https://pdfium-review.googlesource.com/140771 is rolling Skia forward again. After that, the 2-param version of addCircle() will be available, right?",
+      "parentUuid": "4c429576_4f6f286a",
+      "revId": "94875c20c2c29751c89cb10670a69da6399d928e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
