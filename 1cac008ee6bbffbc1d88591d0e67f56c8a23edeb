@@ -1,0 +1,153 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dd6272b3_ff0427ab",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-08T19:27:29Z",
+      "side": 1,
+      "message": "LG/nits.",
+      "revId": "1cac008ee6bbffbc1d88591d0e67f56c8a23edeb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5833a78c_f886eaa5",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-08T19:27:29Z",
+      "side": 1,
+      "message": "nit: again, the GetLinePortion(y, x) might help if it existed.",
+      "range": {
+        "startLine": 457,
+        "startChar": 40,
+        "endLine": 457,
+        "endChar": 47
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "d669f3b4_5c67670f",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/jbig2/JBig2_Image.cpp",
+              "range": {
+                "startLine": 423,
+                "startChar": 0,
+                "endLine": 426,
+                "endChar": 0
+              },
+              "replacement": ""
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_Image.cpp",
+              "range": {
+                "startLine": 441,
+                "startChar": 0,
+                "endLine": 444,
+                "endChar": 0
+              },
+              "replacement": ""
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_Image.cpp",
+              "range": {
+                "startLine": 459,
+                "startChar": 0,
+                "endLine": 462,
+                "endChar": 0
+              },
+              "replacement": ""
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_Image.cpp",
+              "range": {
+                "startLine": 482,
+                "startChar": 0,
+                "endLine": 485,
+                "endChar": 0
+              },
+              "replacement": ""
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_Image.cpp",
+              "range": {
+                "startLine": 532,
+                "startChar": 0,
+                "endLine": 535,
+                "endChar": 0
+              },
+              "replacement": ""
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_Image.cpp",
+              "range": {
+                "startLine": 578,
+                "startChar": 0,
+                "endLine": 581,
+                "endChar": 0
+              },
+              "replacement": ""
+            }
+          ]
+        }
+      ],
+      "revId": "1cac008ee6bbffbc1d88591d0e67f56c8a23edeb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c2f579e9_023dbe5f",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 464,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-08T19:27:29Z",
+      "side": 1,
+      "message": "nit:meh. maybe\n```\nauto src_bytes1 \u003d src.first\u003c4u\u003e();\nauto src_bytes2 \u003d src.subspan\u003c4u, 4u\u003e();\n```\nas compiler should be able to optimize bounds checks against literals.",
+      "range": {
+        "startLine": 464,
+        "startChar": 28,
+        "endLine": 464,
+        "endChar": 38
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "32abd3d7_dd1960e3",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/jbig2/JBig2_Image.cpp",
+              "range": {
+                "startLine": 464,
+                "startChar": 0,
+                "endLine": 466,
+                "endChar": 0
+              },
+              "replacement": "      auto src_bytes1 \u003d src.first\u003c4u\u003e();\n      auto src_bytes2 \u003d src.subspan\u003c4u, 4u\u003e();\n"
+            }
+          ]
+        }
+      ],
+      "revId": "1cac008ee6bbffbc1d88591d0e67f56c8a23edeb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
