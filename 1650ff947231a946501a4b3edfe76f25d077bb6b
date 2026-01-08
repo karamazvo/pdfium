@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dee1b6fa_01e16df6",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-08T17:21:51Z",
+      "side": 1,
+      "message": "Put this at the top of the private section. It can probably be unconditional.",
+      "revId": "1650ff947231a946501a4b3edfe76f25d077bb6b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "752b9f35_7b0fb698",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-08T17:21:51Z",
+      "side": 1,
+      "message": "These two go in the line 123 and line 149 sections, respectively.",
+      "revId": "1650ff947231a946501a4b3edfe76f25d077bb6b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
