@@ -134,6 +134,12 @@ class CFGAS_FontMgr {
                                            int32_t iFaceIndex);
 #endif  // BUILDFLAG(IS_WIN)
 
+#if !BUILDFLAG(IS_WIN)
+  friend class CFGASFontMgr_LazyEnumeration_Test;
+  void EnsureFontsEnumerated();
+  bool fonts_enumerated_ = false;
+#endif  // !BUILDFLAG(IS_WIN)
+
   std::map<uint32_t, std::vector<RetainPtr<CFGAS_GEFont>>> hash_2fonts_;
   std::set<wchar_t> failed_unicodes_set_;
 
