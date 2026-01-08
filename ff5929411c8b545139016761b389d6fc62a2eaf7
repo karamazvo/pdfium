@@ -16,6 +16,24 @@
       "message": "Over 80 columns here as well. Just run `git cl format` and be done with it?",
       "revId": "ff5929411c8b545139016761b389d6fc62a2eaf7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "33e8d179_593f3f5b",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 331,
+      "author": {
+        "id": 4426030
+      },
+      "writtenOn": "2026-01-08T03:48:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2b4512c0_3eefcb27",
+      "revId": "ff5929411c8b545139016761b389d6fc62a2eaf7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
