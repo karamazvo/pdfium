@@ -18,6 +18,23 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c88fbf77_03d623dd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-08T23:41:00Z",
+      "side": 1,
+      "message": "otherwise, adding comments to the close-braces in the original `} // (s1 \u003e d1)` might read well.",
+      "revId": "0a6a44ec0a5b445d677e909749ea83bacd44ab10",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2d403687_01d1c56a",
