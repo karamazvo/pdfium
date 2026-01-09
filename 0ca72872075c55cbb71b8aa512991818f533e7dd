@@ -48,6 +48,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "490a9ea8_8d69e216",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-09T21:46:44Z",
+      "side": 1,
+      "message": "Because of the branch on line 239, we don\u0027t know if this code will run. So the suggestion may be getting lines and not even using them.",
+      "parentUuid": "3fcd87e1_49b2ce1a",
+      "range": {
+        "startLine": 244,
+        "startChar": 3,
+        "endLine": 247,
+        "endChar": 41
+      },
+      "revId": "0ca72872075c55cbb71b8aa512991818f533e7dd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f31a6732_24225478",
@@ -85,6 +109,30 @@
       "side": 1,
       "message": "Acknowledged",
       "parentUuid": "f31a6732_24225478",
+      "range": {
+        "startLine": 261,
+        "startChar": 13,
+        "endLine": 261,
+        "endChar": 18
+      },
+      "revId": "0ca72872075c55cbb71b8aa512991818f533e7dd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cee13c1b_8aaaf29b",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-09T21:46:44Z",
+      "side": 1,
+      "message": "https://pdfium-review.googlesource.com/140870",
+      "parentUuid": "af52fcb5_19a307ff",
       "range": {
         "startLine": 261,
         "startChar": 13,
@@ -150,6 +198,30 @@
       "side": 1,
       "message": "Acknowledged",
       "parentUuid": "68aae578_a526ec3c",
+      "range": {
+        "startLine": 429,
+        "startChar": 6,
+        "endLine": 430,
+        "endChar": 53
+      },
+      "revId": "0ca72872075c55cbb71b8aa512991818f533e7dd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e2e5c93f_ffa29214",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 430,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-09T21:46:44Z",
+      "side": 1,
+      "message": "https://pdfium-review.googlesource.com/140850",
+      "parentUuid": "8cb9f7ef_0b949f03",
       "range": {
         "startLine": 429,
         "startChar": 6,
