@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e1cb2c21_faadcb93",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-09T18:34:43Z",
+      "side": 1,
+      "message": "Yea, that should allow all the bounds checks to be removed at compile time, too.",
+      "revId": "03ded0db6545af522c886563678b46540691071e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
