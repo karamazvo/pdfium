@@ -1,0 +1,82 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7c3c8815_d2988be1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-09T00:39:31Z",
+      "side": 1,
+      "message": "Nice!",
+      "revId": "853af60b3c2c28dd9d515a63918eabdfef55a8ea",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5a254f2d_b5a12439",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 420,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-09T00:39:31Z",
+      "side": 1,
+      "message": "nit: EqualTo",
+      "range": {
+        "startLine": 420,
+        "startChar": 22,
+        "endLine": 420,
+        "endChar": 30
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "397c8867_6815bbd5",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/jbig2/JBig2_Image.cpp",
+              "range": {
+                "startLine": 420,
+                "startChar": 0,
+                "endLine": 421,
+                "endChar": 0
+              },
+              "replacement": "    kDestNotAlignedSrcEqualToDest,\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_Image.cpp",
+              "range": {
+                "startLine": 437,
+                "startChar": 0,
+                "endLine": 438,
+                "endChar": 0
+              },
+              "replacement": "      compose_to_op \u003d ComposeToOp::kDestNotAlignedSrcEqualToDest;\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_Image.cpp",
+              "range": {
+                "startLine": 557,
+                "startChar": 0,
+                "endLine": 558,
+                "endChar": 0
+              },
+              "replacement": "    case ComposeToOp::kDestNotAlignedSrcEqualToDest: {\n"
+            }
+          ]
+        }
+      ],
+      "revId": "853af60b3c2c28dd9d515a63918eabdfef55a8ea",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
