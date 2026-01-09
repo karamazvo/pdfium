@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fa73d61b_9961609b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 27
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4426030
+      },
+      "writtenOn": "2026-01-09T16:09:35Z",
+      "side": 1,
+      "message": "This is a tricky problem I agree.\n\nOne possible difficulty with this fix is that the tolerance (0.1) does not account for the CTM -- i.e. if there is a big zoom applied, then the effective dash interval might be very big (i.e. visible), so disabling it would really show up as a flaw.",
+      "revId": "cfe5f8056aa2a4200723e0e109b4265783f5c983",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
