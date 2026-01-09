@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f02545b0_d972f318",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2026-01-09T13:36:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dee1b6fa_01e16df6",
+      "revId": "1650ff947231a946501a4b3edfe76f25d077bb6b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "752b9f35_7b0fb698",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-01-08T17:21:51Z",
       "side": 1,
       "message": "These two go in the line 123 and line 149 sections, respectively.",
+      "revId": "1650ff947231a946501a4b3edfe76f25d077bb6b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "435123f9_7cede8bc",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2026-01-09T13:36:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "752b9f35_7b0fb698",
       "revId": "1650ff947231a946501a4b3edfe76f25d077bb6b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
