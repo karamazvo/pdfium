@@ -77,6 +77,30 @@
       ],
       "revId": "853af60b3c2c28dd9d515a63918eabdfef55a8ea",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ea616e8e_e9c9a3fc",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 420,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-09T00:45:25Z",
+      "side": 1,
+      "message": "Whoops. Too much copy-pasta.",
+      "parentUuid": "5a254f2d_b5a12439",
+      "range": {
+        "startLine": 420,
+        "startChar": 22,
+        "endLine": 420,
+        "endChar": 30
+      },
+      "revId": "853af60b3c2c28dd9d515a63918eabdfef55a8ea",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
