@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "37946008_1abbca85",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-09T18:09:36Z",
+      "side": 1,
+      "message": "Create \"bgrx_span\" once outside of the for-loop.",
+      "revId": "a85fba18477ac0acf6d97c3e3129a6a92fc1b933",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
