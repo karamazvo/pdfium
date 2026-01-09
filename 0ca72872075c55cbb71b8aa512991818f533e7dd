@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3fcd87e1_49b2ce1a",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-09T21:19:08Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "9a61b60f_c4358a36",
+      "range": {
+        "startLine": 244,
+        "startChar": 3,
+        "endLine": 247,
+        "endChar": 41
+      },
+      "revId": "0ca72872075c55cbb71b8aa512991818f533e7dd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f31a6732_24225478",
@@ -37,6 +61,30 @@
       "writtenOn": "2026-01-09T18:50:06Z",
       "side": 1,
       "message": "follow-up: pre: super-nit: Me no like this variable name, its really something like pix_from_row_prev2.",
+      "range": {
+        "startLine": 261,
+        "startChar": 13,
+        "endLine": 261,
+        "endChar": 18
+      },
+      "revId": "0ca72872075c55cbb71b8aa512991818f533e7dd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "af52fcb5_19a307ff",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-09T21:19:08Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "f31a6732_24225478",
       "range": {
         "startLine": 261,
         "startChar": 13,
@@ -84,6 +132,30 @@
           ]
         }
       ],
+      "revId": "0ca72872075c55cbb71b8aa512991818f533e7dd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8cb9f7ef_0b949f03",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 430,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-09T21:19:08Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "68aae578_a526ec3c",
+      "range": {
+        "startLine": 429,
+        "startChar": 6,
+        "endLine": 430,
+        "endChar": 53
+      },
       "revId": "0ca72872075c55cbb71b8aa512991818f533e7dd",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -139,6 +211,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "03f613a3_9d541f81",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1057,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-09T21:19:08Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "b6d1f864_51d8909b",
+      "range": {
+        "startLine": 1054,
+        "startChar": 0,
+        "endLine": 1057,
+        "endChar": 16
+      },
+      "revId": "0ca72872075c55cbb71b8aa512991818f533e7dd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5cfe57f6_afd2bc01",
@@ -152,6 +248,30 @@
       "writtenOn": "2026-01-09T18:50:06Z",
       "side": 1,
       "message": "same here",
+      "range": {
+        "startLine": 1210,
+        "startChar": 1,
+        "endLine": 1213,
+        "endChar": 16
+      },
+      "revId": "0ca72872075c55cbb71b8aa512991818f533e7dd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a6d5242f_e61c61bb",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1213,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-09T21:19:08Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "5cfe57f6_afd2bc01",
       "range": {
         "startLine": 1210,
         "startChar": 1,
