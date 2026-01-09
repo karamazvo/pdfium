@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9a61b60f_c4358a36",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-09T18:50:06Z",
+      "side": 1,
+      "message": "follow-on: Can we set these up outside the for h loop and just schlep them into each other at the end of the loop for the next row?",
+      "range": {
+        "startLine": 244,
+        "startChar": 3,
+        "endLine": 247,
+        "endChar": 41
+      },
+      "revId": "0ca72872075c55cbb71b8aa512991818f533e7dd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f31a6732_24225478",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-09T18:50:06Z",
+      "side": 1,
+      "message": "follow-up: pre: super-nit: Me no like this variable name, its really something like pix_from_row_prev2.",
+      "range": {
+        "startLine": 261,
+        "startChar": 13,
+        "endLine": 261,
+        "endChar": 18
+      },
+      "revId": "0ca72872075c55cbb71b8aa512991818f533e7dd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "68aae578_a526ec3c",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 430,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-09T18:50:06Z",
+      "side": 1,
+      "message": "nit: maybe always set bVal \u003d 0 and invert test like at 274?",
+      "range": {
+        "startLine": 429,
+        "startChar": 6,
+        "endLine": 430,
+        "endChar": 53
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "2fdcc02c_d7aade99",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 429,
+                "startChar": 0,
+                "endLine": 433,
+                "endChar": 0
+              },
+              "replacement": "        int bVal \u003d 0;\n        if (!(USESKIP \u0026\u0026 SKIP-\u003eGetPixel(w, row_skip))) {\n"
+            }
+          ]
+        }
+      ],
+      "revId": "0ca72872075c55cbb71b8aa512991818f533e7dd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b6d1f864_51d8909b",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1057,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-09T18:50:06Z",
+      "side": 1,
+      "message": "same here.",
+      "range": {
+        "startLine": 1054,
+        "startChar": 0,
+        "endLine": 1057,
+        "endChar": 16
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "8cc0d89d_c6eef7cd",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 1054,
+                "startChar": 0,
+                "endLine": 1055,
+                "endChar": 0
+              },
+              "replacement": "        int bVal \u003d 0;\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 1056,
+                "startChar": 0,
+                "endLine": 1057,
+                "endChar": 0
+              },
+              "replacement": ""
+            }
+          ]
+        }
+      ],
+      "revId": "0ca72872075c55cbb71b8aa512991818f533e7dd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5cfe57f6_afd2bc01",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1213,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-09T18:50:06Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 1210,
+        "startChar": 1,
+        "endLine": 1213,
+        "endChar": 16
+      },
+      "revId": "0ca72872075c55cbb71b8aa512991818f533e7dd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
