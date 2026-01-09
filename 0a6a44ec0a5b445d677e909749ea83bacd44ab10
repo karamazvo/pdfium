@@ -121,6 +121,30 @@
       },
       "revId": "0a6a44ec0a5b445d677e909749ea83bacd44ab10",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d402884d_39da4e7a",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 418,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-09T00:36:08Z",
+      "side": 1,
+      "message": "There are actually only 6 paths through this code. I rearranged the code so it uses a switch statement.",
+      "parentUuid": "e18a402b_8c5310ae",
+      "range": {
+        "startLine": 415,
+        "startChar": 1,
+        "endLine": 418,
+        "endChar": 2
+      },
+      "revId": "0a6a44ec0a5b445d677e909749ea83bacd44ab10",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
