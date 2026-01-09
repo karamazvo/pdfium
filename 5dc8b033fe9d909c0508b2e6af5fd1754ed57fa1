@@ -1,0 +1,118 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "55422594_366b4d58",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 427,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-09T23:11:46Z",
+      "side": 1,
+      "message": "nit: val_prev for consistency",
+      "range": {
+        "startLine": 427,
+        "startChar": 15,
+        "endLine": 427,
+        "endChar": 25
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "4a29749c_9d400a57",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 427,
+                "startChar": 0,
+                "endLine": 429,
+                "endChar": 0
+              },
+              "replacement": "      uint32_t val_prev \u003d GBREG-\u003eGetPixel(1, row_prev);\n      val_prev |\u003d GBREG-\u003eGetPixel(0, row_prev) \u003c\u003c 1;\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 435,
+                "startChar": 0,
+                "endLine": 436,
+                "endChar": 0
+              },
+              "replacement": "          CONTEXT |\u003d val_prev \u003c\u003c 5;\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 445,
+                "startChar": 0,
+                "endLine": 447,
+                "endChar": 0
+              },
+              "replacement": "        val_prev \u003d ((val_prev \u003c\u003c 1) | GBREG-\u003eGetPixel(w + 2, row_prev)) \u0026 0x1f;\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 1214,
+                "startChar": 0,
+                "endLine": 1217,
+                "endChar": 0
+              },
+              "replacement": "      uint32_t val_prev \u003d pImage-\u003eGetPixel(1, row_prev);\n      val_prev |\u003d pImage-\u003eGetPixel(0, row_prev) \u003c\u003c 1;\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 1223,
+                "startChar": 0,
+                "endLine": 1224,
+                "endChar": 0
+              },
+              "replacement": "          CONTEXT |\u003d val_prev \u003c\u003c 5;\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 1233,
+                "startChar": 0,
+                "endLine": 1235,
+                "endChar": 0
+              },
+              "replacement": "        val_prev \u003d ((val_prev \u003c\u003c 1) | pImage-\u003eGetPixel(w + 2, row_prev)) \u0026 0x1f;\n"
+            }
+          ]
+        }
+      ],
+      "revId": "5dc8b033fe9d909c0508b2e6af5fd1754ed57fa1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "65ad82fa_b7d74c0d",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1215,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-09T23:11:46Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 1215,
+        "startChar": 15,
+        "endLine": 1215,
+        "endChar": 25
+      },
+      "revId": "5dc8b033fe9d909c0508b2e6af5fd1754ed57fa1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
