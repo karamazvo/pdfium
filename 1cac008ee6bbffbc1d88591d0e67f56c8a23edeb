@@ -109,6 +109,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b2649436_3e031bce",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-09T00:46:37Z",
+      "side": 1,
+      "message": "Maybe later. In the earlier CL, GetLinePortion() going out of bounds is fatal. Here, it is not.",
+      "parentUuid": "5833a78c_f886eaa5",
+      "range": {
+        "startLine": 457,
+        "startChar": 40,
+        "endLine": 457,
+        "endChar": 47
+      },
+      "revId": "1cac008ee6bbffbc1d88591d0e67f56c8a23edeb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c2f579e9_023dbe5f",
@@ -146,6 +170,30 @@
           ]
         }
       ],
+      "revId": "1cac008ee6bbffbc1d88591d0e67f56c8a23edeb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "440b024e_cd25b440",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 464,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-09T00:46:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c2f579e9_023dbe5f",
+      "range": {
+        "startLine": 464,
+        "startChar": 28,
+        "endLine": 464,
+        "endChar": 38
+      },
       "revId": "1cac008ee6bbffbc1d88591d0e67f56c8a23edeb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
