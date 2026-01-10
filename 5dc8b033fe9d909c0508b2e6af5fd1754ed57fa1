@@ -92,6 +92,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3cbbe4f2_7120122a",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 427,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-10T00:24:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "55422594_366b4d58",
+      "range": {
+        "startLine": 427,
+        "startChar": 15,
+        "endLine": 427,
+        "endChar": 25
+      },
+      "revId": "5dc8b033fe9d909c0508b2e6af5fd1754ed57fa1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "65ad82fa_b7d74c0d",
@@ -105,6 +129,30 @@
       "writtenOn": "2026-01-09T23:11:46Z",
       "side": 1,
       "message": "ditto",
+      "range": {
+        "startLine": 1215,
+        "startChar": 15,
+        "endLine": 1215,
+        "endChar": 25
+      },
+      "revId": "5dc8b033fe9d909c0508b2e6af5fd1754ed57fa1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "931ad61d_4e16c895",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1215,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-10T00:24:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "65ad82fa_b7d74c0d",
       "range": {
         "startLine": 1215,
         "startChar": 15,
