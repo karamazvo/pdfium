@@ -16,6 +16,23 @@
       "message": "See patch set 3 for the actual spanification.",
       "revId": "d4a55e1233196a22b7a1ec4701f1d73ab49ab670",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "58cbdc5a_4c4dd5a8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-10T02:10:20Z",
+      "side": 1,
+      "message": "Note that this has no code coverage, so the green bots are meaningless.",
+      "revId": "d4a55e1233196a22b7a1ec4701f1d73ab49ab670",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
