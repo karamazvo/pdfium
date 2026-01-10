@@ -583,50 +583,14 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate0Opt3(
         pImage->CopyLine(loop_index_, loop_index_ - 1);
       } else {
         if (loop_index_ > 1) {
-          uint8_t* pLine1 = line_prev2_.data();
-          uint8_t* pLine2 = line_prev1_.data();
-          uint32_t line1 = (*pLine1++) << 6;
-          uint32_t line2 = *pLine2++;
-          uint32_t CONTEXT = ((line1 & 0xf800) | (line2 & 0x07f0));
+          pdfium::raw_span<const uint8_t> line_prev2 = line_prev2_;
+          pdfium::raw_span<const uint8_t> line_prev1 = line_prev1_;
+          uint32_t val_prev2 = line_prev2.take_first_elem() << 6;
+          uint32_t val_prev1 = line_prev1.take_first_elem();
+          uint32_t CONTEXT = ((val_prev2 & 0xf800) | (val_prev1 & 0x07f0));
           for (int32_t cc = 0; cc < nLineBytes; cc++) {
-            line1 = (line1 << 8) | ((*pLine1++) << 6);
-            line2 = (line2 << 8) | (*pLine2++);
-            uint8_t cVal = 0;
-            for (int32_t k = 7; k >= 0; k--) {
-              if (pArithDecoder->IsComplete()) {
-                return FXCODEC_STATUS::kError;
-              }
-
-              int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-              cVal |= bVal << k;
-              CONTEXT = (((CONTEXT & 0x7bf7) << 1) | bVal |
-                         ((line1 >> k) & 0x0800) | ((line2 >> k) & 0x0010));
-            }
-            line_[cc] = cVal;
-          }
-          line1 <<= 8;
-          line2 <<= 8;
-          uint8_t cVal1 = 0;
-          for (int32_t k = 0; k < nBitsLeft; k++) {
-            if (pArithDecoder->IsComplete()) {
-              return FXCODEC_STATUS::kError;
-            }
-
-            int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-            cVal1 |= bVal << (7 - k);
-            CONTEXT =
-                (((CONTEXT & 0x7bf7) << 1) | bVal |
-                 ((line1 >> (7 - k)) & 0x0800) | ((line2 >> (7 - k)) & 0x0010));
-          }
-          line_[nLineBytes] = cVal1;
-        } else {
-          uint8_t* pLine2 = line_prev1_.data();
-          uint32_t line2 = (loop_index_ & 1) ? (*pLine2++) : 0;
-          uint32_t CONTEXT = (line2 & 0x07f0);
-          for (int32_t cc = 0; cc < nLineBytes; cc++) {
-            if (loop_index_ & 1) {
-              line2 = (line2 << 8) | (*pLine2++);
-            }
+            val_prev2 = (val_prev2 << 8) | (line_prev2.take_first_elem() << 6);
+            val_prev1 = (val_prev1 << 8) | line_prev1.take_first_elem();
             uint8_t cVal = 0;
             for (int32_t k = 7; k >= 0; k--) {
               if (pArithDecoder->IsComplete()) {
@@ -636,11 +600,13 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate0Opt3(
               int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
               cVal |= bVal << k;
               CONTEXT =
-                  (((CONTEXT & 0x7bf7) << 1) | bVal | ((line2 >> k) & 0x0010));
+                  (((CONTEXT & 0x7bf7) << 1) | bVal |
+                   ((val_prev2 >> k) & 0x0800) | ((val_prev1 >> k) & 0x0010));
             }
             line_[cc] = cVal;
           }
-          line2 <<= 8;
+          val_prev2 <<= 8;
+          val_prev1 <<= 8;
           uint8_t cVal1 = 0;
           for (int32_t k = 0; k < nBitsLeft; k++) {
             if (pArithDecoder->IsComplete()) {
@@ -650,7 +616,43 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate0Opt3(
             int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
             cVal1 |= bVal << (7 - k);
             CONTEXT = (((CONTEXT & 0x7bf7) << 1) | bVal |
-                       ((line2 >> (7 - k)) & 0x0010));
+                       ((val_prev2 >> (7 - k)) & 0x0800) |
+                       ((val_prev1 >> (7 - k)) & 0x0010));
+          }
+          line_[nLineBytes] = cVal1;
+        } else {
+          pdfium::raw_span<const uint8_t> line_prev = line_prev1_;
+          uint32_t val_prev =
+              (loop_index_ & 1) ? line_prev.take_first_elem() : 0;
+          uint32_t CONTEXT = (val_prev & 0x07f0);
+          for (int32_t cc = 0; cc < nLineBytes; cc++) {
+            if (loop_index_ & 1) {
+              val_prev = (val_prev << 8) | line_prev.take_first_elem();
+            }
+            uint8_t cVal = 0;
+            for (int32_t k = 7; k >= 0; k--) {
+              if (pArithDecoder->IsComplete()) {
+                return FXCODEC_STATUS::kError;
+              }
+
+              int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
+              cVal |= bVal << k;
+              CONTEXT = (((CONTEXT & 0x7bf7) << 1) | bVal |
+                         ((val_prev >> k) & 0x0010));
+            }
+            line_[cc] = cVal;
+          }
+          val_prev <<= 8;
+          uint8_t cVal1 = 0;
+          for (int32_t k = 0; k < nBitsLeft; k++) {
+            if (pArithDecoder->IsComplete()) {
+              return FXCODEC_STATUS::kError;
+            }
+
+            int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
+            cVal1 |= bVal << (7 - k);
+            CONTEXT = (((CONTEXT & 0x7bf7) << 1) | bVal |
+                       ((val_prev >> (7 - k)) & 0x0010));
           }
           line_[nLineBytes] = cVal1;
         }
@@ -765,14 +767,14 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate1Opt3(
         pImage->CopyLine(loop_index_, loop_index_ - 1);
       } else {
         if (loop_index_ > 1) {
-          uint8_t* pLine1 = line_prev2_.data();
-          uint8_t* pLine2 = line_prev1_.data();
-          uint32_t line1 = (*pLine1++) << 4;
-          uint32_t line2 = *pLine2++;
-          uint32_t CONTEXT = (line1 & 0x1e00) | ((line2 >> 1) & 0x01f8);
+          pdfium::raw_span<const uint8_t> line_prev2 = line_prev2_;
+          pdfium::raw_span<const uint8_t> line_prev1 = line_prev1_;
+          uint32_t val_prev2 = line_prev2.take_first_elem() << 4;
+          uint32_t val_prev1 = line_prev1.take_first_elem();
+          uint32_t CONTEXT = (val_prev2 & 0x1e00) | ((val_prev1 >> 1) & 0x01f8);
           for (int32_t cc = 0; cc < nLineBytes; cc++) {
-            line1 = (line1 << 8) | ((*pLine1++) << 4);
-            line2 = (line2 << 8) | (*pLine2++);
+            val_prev2 = (val_prev2 << 8) | (line_prev2.take_first_elem() << 4);
+            val_prev1 = (val_prev1 << 8) | line_prev1.take_first_elem();
             uint8_t cVal = 0;
             for (int32_t k = 7; k >= 0; k--) {
               if (pArithDecoder->IsComplete()) {
@@ -782,12 +784,13 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate1Opt3(
               int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
               cVal |= bVal << k;
               CONTEXT = ((CONTEXT & 0x0efb) << 1) | bVal |
-                        ((line1 >> k) & 0x0200) | ((line2 >> (k + 1)) & 0x0008);
+                        ((val_prev2 >> k) & 0x0200) |
+                        ((val_prev1 >> (k + 1)) & 0x0008);
             }
             line_[cc] = cVal;
           }
-          line1 <<= 8;
-          line2 <<= 8;
+          val_prev2 <<= 8;
+          val_prev1 <<= 8;
           uint8_t cVal1 = 0;
           for (int32_t k = 0; k < nBitsLeft; k++) {
             if (pArithDecoder->IsComplete()) {
@@ -797,17 +800,18 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate1Opt3(
             int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
             cVal1 |= bVal << (7 - k);
             CONTEXT = ((CONTEXT & 0x0efb) << 1) | bVal |
-                      ((line1 >> (7 - k)) & 0x0200) |
-                      ((line2 >> (8 - k)) & 0x0008);
+                      ((val_prev2 >> (7 - k)) & 0x0200) |
+                      ((val_prev1 >> (8 - k)) & 0x0008);
           }
           line_[nLineBytes] = cVal1;
         } else {
-          uint8_t* pLine2 = line_prev1_.data();
-          uint32_t line2 = (loop_index_ & 1) ? (*pLine2++) : 0;
-          uint32_t CONTEXT = (line2 >> 1) & 0x01f8;
+          pdfium::raw_span<const uint8_t> line_prev = line_prev1_;
+          uint32_t val_prev =
+              (loop_index_ & 1) ? line_prev.take_first_elem() : 0;
+          uint32_t CONTEXT = (val_prev >> 1) & 0x01f8;
           for (int32_t cc = 0; cc < nLineBytes; cc++) {
             if (loop_index_ & 1) {
-              line2 = (line2 << 8) | (*pLine2++);
+              val_prev = (val_prev << 8) | line_prev.take_first_elem();
             }
             uint8_t cVal = 0;
             for (int32_t k = 7; k >= 0; k--) {
@@ -818,11 +822,11 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate1Opt3(
               int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
               cVal |= bVal << k;
               CONTEXT = ((CONTEXT & 0x0efb) << 1) | bVal |
-                        ((line2 >> (k + 1)) & 0x0008);
+                        ((val_prev >> (k + 1)) & 0x0008);
             }
             line_[cc] = cVal;
           }
-          line2 <<= 8;
+          val_prev <<= 8;
           uint8_t cVal1 = 0;
           for (int32_t k = 0; k < nBitsLeft; k++) {
             if (pArithDecoder->IsComplete()) {
@@ -832,7 +836,7 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate1Opt3(
             int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
             cVal1 |= bVal << (7 - k);
             CONTEXT = ((CONTEXT & 0x0efb) << 1) | bVal |
-                      ((line2 >> (8 - k)) & 0x0008);
+                      ((val_prev >> (8 - k)) & 0x0008);
           }
           line_[nLineBytes] = cVal1;
         }
@@ -939,14 +943,14 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate2Opt3(
         pImage->CopyLine(loop_index_, loop_index_ - 1);
       } else {
         if (loop_index_ > 1) {
-          uint8_t* pLine1 = line_prev2_.data();
-          uint8_t* pLine2 = line_prev1_.data();
-          uint32_t line1 = (*pLine1++) << 1;
-          uint32_t line2 = *pLine2++;
-          uint32_t CONTEXT = (line1 & 0x0380) | ((line2 >> 3) & 0x007c);
+          pdfium::raw_span<const uint8_t> line_prev2 = line_prev2_;
+          pdfium::raw_span<const uint8_t> line_prev1 = line_prev1_;
+          uint32_t val_prev2 = line_prev2.take_first_elem() << 1;
+          uint32_t val_prev1 = line_prev1.take_first_elem();
+          uint32_t CONTEXT = (val_prev2 & 0x0380) | ((val_prev1 >> 3) & 0x007c);
           for (int32_t cc = 0; cc < nLineBytes; cc++) {
-            line1 = (line1 << 8) | ((*pLine1++) << 1);
-            line2 = (line2 << 8) | (*pLine2++);
+            val_prev2 = (val_prev2 << 8) | (line_prev2.take_first_elem() << 1);
+            val_prev1 = (val_prev1 << 8) | line_prev1.take_first_elem();
             uint8_t cVal = 0;
             for (int32_t k = 7; k >= 0; k--) {
               if (pArithDecoder->IsComplete()) {
@@ -956,12 +960,13 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate2Opt3(
               int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
               cVal |= bVal << k;
               CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
-                        ((line1 >> k) & 0x0080) | ((line2 >> (k + 3)) & 0x0004);
+                        ((val_prev2 >> k) & 0x0080) |
+                        ((val_prev1 >> (k + 3)) & 0x0004);
             }
             line_[cc] = cVal;
           }
-          line1 <<= 8;
-          line2 <<= 8;
+          val_prev2 <<= 8;
+          val_prev1 <<= 8;
           uint8_t cVal1 = 0;
           for (int32_t k = 0; k < nBitsLeft; k++) {
             if (pArithDecoder->IsComplete()) {
@@ -971,17 +976,18 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate2Opt3(
             int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
             cVal1 |= bVal << (7 - k);
             CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
-                      ((line1 >> (7 - k)) & 0x0080) |
-                      ((line2 >> (10 - k)) & 0x0004);
+                      ((val_prev2 >> (7 - k)) & 0x0080) |
+                      ((val_prev1 >> (10 - k)) & 0x0004);
           }
           line_[nLineBytes] = cVal1;
         } else {
-          uint8_t* pLine2 = line_prev1_.data();
-          uint32_t line2 = (loop_index_ & 1) ? (*pLine2++) : 0;
-          uint32_t CONTEXT = (line2 >> 3) & 0x007c;
+          pdfium::raw_span<const uint8_t> line_prev = line_prev1_;
+          uint32_t val_prev =
+              (loop_index_ & 1) ? line_prev.take_first_elem() : 0;
+          uint32_t CONTEXT = (val_prev >> 3) & 0x007c;
           for (int32_t cc = 0; cc < nLineBytes; cc++) {
             if (loop_index_ & 1) {
-              line2 = (line2 << 8) | (*pLine2++);
+              val_prev = (val_prev << 8) | line_prev.take_first_elem();
             }
             uint8_t cVal = 0;
             for (int32_t k = 7; k >= 0; k--) {
@@ -992,11 +998,11 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate2Opt3(
               int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
               cVal |= bVal << k;
               CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
-                        ((line2 >> (k + 3)) & 0x0004);
+                        ((val_prev >> (k + 3)) & 0x0004);
             }
             line_[cc] = cVal;
           }
-          line2 <<= 8;
+          val_prev <<= 8;
           uint8_t cVal1 = 0;
           for (int32_t k = 0; k < nBitsLeft; k++) {
             if (pArithDecoder->IsComplete()) {
@@ -1006,7 +1012,7 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate2Opt3(
             int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
             cVal1 |= bVal << (7 - k);
             CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
-                      (((line2 >> (10 - k))) & 0x0004);
+                      (((val_prev >> (10 - k))) & 0x0004);
           }
           line_[nLineBytes] = cVal1;
         }
@@ -1112,11 +1118,11 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate3Opt3(
         pImage->CopyLine(loop_index_, loop_index_ - 1);
       } else {
         if (loop_index_ > 0) {
-          uint8_t* pLine1 = line_prev1_.data();
-          uint32_t line1 = *pLine1++;
-          uint32_t CONTEXT = (line1 >> 1) & 0x03f0;
+          pdfium::raw_span<const uint8_t> line_prev = line_prev1_;
+          uint32_t val_prev = line_prev.take_first_elem();
+          uint32_t CONTEXT = (val_prev >> 1) & 0x03f0;
           for (int32_t cc = 0; cc < nLineBytes; cc++) {
-            line1 = (line1 << 8) | (*pLine1++);
+            val_prev = (val_prev << 8) | line_prev.take_first_elem();
             uint8_t cVal = 0;
             for (int32_t k = 7; k >= 0; k--) {
               if (pArithDecoder->IsComplete()) {
@@ -1126,11 +1132,11 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate3Opt3(
               int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
               cVal |= bVal << k;
               CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal |
-                        ((line1 >> (k + 1)) & 0x0010);
+                        ((val_prev >> (k + 1)) & 0x0010);
             }
             line_[cc] = cVal;
           }
-          line1 <<= 8;
+          val_prev <<= 8;
           uint8_t cVal1 = 0;
           for (int32_t k = 0; k < nBitsLeft; k++) {
             if (pArithDecoder->IsComplete()) {
@@ -1140,7 +1146,7 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate3Opt3(
             int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
             cVal1 |= bVal << (7 - k);
             CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal |
-                      ((line1 >> (8 - k)) & 0x0010);
+                      ((val_prev >> (8 - k)) & 0x0010);
           }
           line_[nLineBytes] = cVal1;
         } else {
