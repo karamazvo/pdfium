@@ -311,11 +311,8 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate3Opt3(
   }
 
   int LTP = 0;
-  uint8_t* pLine = GBREG->data();
-  int32_t nStride = GBREG->stride();
-  int32_t nLineBytes = ((GBW + 7) >> 3) - 1;
-  int32_t nBitsLeft = GBW - (nLineBytes << 3);
-
+  const int32_t nLineBytes = ((GBW + 7) >> 3) - 1;
+  const int32_t nBitsLeft = GBW - (nLineBytes << 3);
   UNSAFE_TODO({
     for (uint32_t h = 0; h < GBH; h++) {
       if (TPGDON) {
@@ -330,11 +327,11 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate3Opt3(
         GBREG->CopyLine(h, h - 1);
       } else {
         if (h > 0) {
-          uint8_t* pLine1 = pLine - nStride;
-          uint32_t line1 = *pLine1++;
-          uint32_t CONTEXT = (line1 >> 1) & 0x03f0;
+          pdfium::span<uint8_t> row_prev = GBREG->GetLine(h - 1);
+          uint32_t val_prev = row_prev.take_first_elem();
+          uint32_t CONTEXT = (val_prev >> 1) & 0x03f0;
           for (int32_t cc = 0; cc < nLineBytes; cc++) {
-            line1 = (line1 << 8) | (*pLine1++);
+            val_prev = (val_prev << 8) | row_prev.take_first_elem();
             uint8_t cVal = 0;
             for (int32_t k = 7; k >= 0; k--) {
               if (pArithDecoder->IsComplete()) {
@@ -344,11 +341,11 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate3Opt3(
               int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
               cVal |= bVal << k;
               CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal |
-                        ((line1 >> (k + 1)) & 0x0010);
+                        ((val_prev >> (k + 1)) & 0x0010);
             }
-            pLine[cc] = cVal;
+            row_prev[cc] = cVal;
           }
-          line1 <<= 8;
+          val_prev <<= 8;
           uint8_t cVal1 = 0;
           for (int32_t k = 0; k < nBitsLeft; k++) {
             if (pArithDecoder->IsComplete()) {
@@ -358,10 +355,11 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate3Opt3(
             int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
             cVal1 |= bVal << (7 - k);
             CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal |
-                      ((line1 >> (8 - k)) & 0x0010);
+                      ((val_prev >> (8 - k)) & 0x0010);
           }
-          pLine[nLineBytes] = cVal1;
+          row_prev[nLineBytes] = cVal1;
         } else {
+          pdfium::span<uint8_t> row_current = GBREG->GetLine(h);
           uint32_t CONTEXT = 0;
           for (int32_t cc = 0; cc < nLineBytes; cc++) {
             uint8_t cVal = 0;
@@ -374,7 +372,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate3Opt3(
               cVal |= bVal << k;
               CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal;
             }
-            pLine[cc] = cVal;
+            row_current[cc] = cVal;
           }
           uint8_t cVal1 = 0;
           for (int32_t k = 0; k < nBitsLeft; k++) {
@@ -386,10 +384,9 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate3Opt3(
             cVal1 |= bVal << (7 - k);
             CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal;
           }
-          pLine[nLineBytes] = cVal1;
+          row_current[nLineBytes] = cVal1;
         }
       }
-      pLine += nStride;
     }
     return GBREG;
   });
