@@ -219,9 +219,8 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
       continue;
     }
     if (i < SDNUMINSYMS) {
-      dict->AddImage(
-          UNSAFE_TODO(SDINSYMS[i] ? std::make_unique<CJBig2_Image>(*SDINSYMS[i])
-                                  : nullptr));
+      dict->AddImage(SDINSYMS[i] ? std::make_unique<CJBig2_Image>(*SDINSYMS[i])
+                                 : nullptr);
     } else {
       dict->AddImage(std::move(SDNEWSYMS[i - SDNUMINSYMS]));
     }
@@ -501,9 +500,8 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
       continue;
     }
     if (i < SDNUMINSYMS) {
-      dict->AddImage(
-          UNSAFE_TODO(SDINSYMS[i] ? std::make_unique<CJBig2_Image>(*SDINSYMS[i])
-                                  : nullptr));
+      dict->AddImage(SDINSYMS[i] ? std::make_unique<CJBig2_Image>(*SDINSYMS[i])
+                                 : nullptr);
     } else {
       dict->AddImage(std::move(SDNEWSYMS[i - SDNUMINSYMS]));
     }
