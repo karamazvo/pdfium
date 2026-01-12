@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "14377c50_884c37a9",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-12T18:41:17Z",
+      "side": 1,
+      "message": "I\u0027m not grokking h \u0026 1 in old code vs h \u003e 1 in new code.",
+      "range": {
+        "startLine": 183,
+        "startChar": 0,
+        "endLine": 183,
+        "endChar": 33
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "853b252e_01bfee7a",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 626,
+                "startChar": 0,
+                "endLine": 627,
+                "endChar": 0
+              },
+              "replacement": "          uint32_t line2 \u003d (loop_index_ \u003d\u003d 1) ? (*pLine2++) : 0;\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 629,
+                "startChar": 0,
+                "endLine": 630,
+                "endChar": 0
+              },
+              "replacement": "            if (loop_index_ \u003d\u003d 1) {\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 810,
+                "startChar": 0,
+                "endLine": 811,
+                "endChar": 0
+              },
+              "replacement": "          uint32_t line2 \u003d (loop_index_ \u003d\u003d 1) ? (*pLine2++) : 0;\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 813,
+                "startChar": 0,
+                "endLine": 814,
+                "endChar": 0
+              },
+              "replacement": "            if (loop_index_ \u003d\u003d 1) {\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 985,
+                "startChar": 0,
+                "endLine": 986,
+                "endChar": 0
+              },
+              "replacement": "          uint32_t line2 \u003d (loop_index_ \u003d\u003d 1) ? (*pLine2++) : 0;\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 988,
+                "startChar": 0,
+                "endLine": 989,
+                "endChar": 0
+              },
+              "replacement": "            if (loop_index_ \u003d\u003d 1) {\n"
+            }
+          ]
+        }
+      ],
+      "revId": "0b88d6b7931f72776c596f788c6ec868ca1a35c0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
