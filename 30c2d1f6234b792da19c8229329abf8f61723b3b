@@ -40,6 +40,30 @@
       ],
       "revId": "30c2d1f6234b792da19c8229329abf8f61723b3b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2f750c2b_bb5a5b5a",
+        "filename": "core/fxcodec/jbig2/JBig2_BitStream.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-12T21:29:18Z",
+      "side": 1,
+      "message": "The caller knows how much it wants to read, so passing that in.",
+      "parentUuid": "15c72acc_b6f92900",
+      "range": {
+        "startLine": 181,
+        "startChar": 15,
+        "endLine": 181,
+        "endChar": 22
+      },
+      "revId": "30c2d1f6234b792da19c8229329abf8f61723b3b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
