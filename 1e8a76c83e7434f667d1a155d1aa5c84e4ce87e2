@@ -1,0 +1,86 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "715b9680_c2a38562",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 472,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-12T23:33:26Z",
+      "side": 1,
+      "message": "nit: call finishdecode here?",
+      "range": {
+        "startLine": 472,
+        "startChar": 0,
+        "endLine": 472,
+        "endChar": 19
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "936b5f68_335f1a8a",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 471,
+                "startChar": 0,
+                "endLine": 475,
+                "endChar": 0
+              },
+              "replacement": "  FinishDecode();\n"
+            }
+          ]
+        }
+      ],
+      "revId": "1e8a76c83e7434f667d1a155d1aa5c84e4ce87e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2ed58198_a2d047ea",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 1253,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-12T23:33:26Z",
+      "side": 1,
+      "message": "Ok, would be happier in general if these were bounded by width, but I",
+      "range": {
+        "startLine": 1250,
+        "startChar": 2,
+        "endLine": 1253,
+        "endChar": 1
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "b679df34_5335d0f5",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 1250,
+                "startChar": 0,
+                "endLine": 1250,
+                "endChar": 0
+              },
+              "replacement": "  // TODO(b/339093834): Consider if line_prev2_ and line_prev1_ should be explicitly bounded by the actual line width (GBW) rather than the stride.\n"
+            }
+          ]
+        }
+      ],
+      "revId": "1e8a76c83e7434f667d1a155d1aa5c84e4ce87e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
