@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3bde32ec_122d3fdb",
+        "filename": "core/fxcrt/fx_coordinates_unittest.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-12T18:36:47Z",
+      "side": 1,
+      "message": "VerifyFloatRectNear() has the expected sides first, and the actual rect last. Here, the parameter order is the other way around. Flip it here?",
+      "revId": "d5d83fea872b41076c5288c05f38e8b6c5a409bf",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
