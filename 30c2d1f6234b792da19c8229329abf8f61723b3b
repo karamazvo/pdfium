@@ -1,0 +1,45 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "15c72acc_b6f92900",
+        "filename": "core/fxcodec/jbig2/JBig2_BitStream.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-12T18:48:12Z",
+      "side": 1,
+      "message": "do we know width to set an upper limit that doesn\u0027t span rows?",
+      "range": {
+        "startLine": 181,
+        "startChar": 15,
+        "endLine": 181,
+        "endChar": 22
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "8954443b_5d383e1d",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/jbig2/JBig2_BitStream.cpp",
+              "range": {
+                "startLine": 181,
+                "startChar": 0,
+                "endLine": 181,
+                "endChar": 0
+              },
+              "replacement": "  // byte_idx_ is guaranteed to be within [0, span_.size()] due to checks in\n  // setOffset() and addOffset(), so subspan() will not go out of bounds.\n  // The size of the returned span is at most the initial size of span_,\n  // which is already capped by ValidatedSpan().\n"
+            }
+          ]
+        }
+      ],
+      "revId": "30c2d1f6234b792da19c8229329abf8f61723b3b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
