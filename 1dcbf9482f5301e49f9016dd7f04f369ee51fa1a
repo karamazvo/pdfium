@@ -1,0 +1,105 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "41931e49_39d39ca8",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 586,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-12T18:46:25Z",
+      "side": 1,
+      "message": "just span to avoid brp foo on every take_first update.",
+      "range": {
+        "startLine": 586,
+        "startChar": 18,
+        "endLine": 586,
+        "endChar": 26
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "b3b3e57e_8ff6d6f7",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 586,
+                "startChar": 0,
+                "endLine": 588,
+                "endChar": 0
+              },
+              "replacement": "          pdfium::span\u003cconst uint8_t\u003e line_prev2 \u003d line_prev2_;\n          pdfium::span\u003cconst uint8_t\u003e line_prev1 \u003d line_prev1_;\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 624,
+                "startChar": 0,
+                "endLine": 625,
+                "endChar": 0
+              },
+              "replacement": "          pdfium::span\u003cconst uint8_t\u003e line_prev \u003d line_prev1_;\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 770,
+                "startChar": 0,
+                "endLine": 772,
+                "endChar": 0
+              },
+              "replacement": "          pdfium::span\u003cconst uint8_t\u003e line_prev2 \u003d line_prev2_;\n          pdfium::span\u003cconst uint8_t\u003e line_prev1 \u003d line_prev1_;\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 808,
+                "startChar": 0,
+                "endLine": 809,
+                "endChar": 0
+              },
+              "replacement": "          pdfium::span\u003cconst uint8_t\u003e line_prev \u003d line_prev1_;\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 946,
+                "startChar": 0,
+                "endLine": 948,
+                "endChar": 0
+              },
+              "replacement": "          pdfium::span\u003cconst uint8_t\u003e line_prev2 \u003d line_prev2_;\n          pdfium::span\u003cconst uint8_t\u003e line_prev1 \u003d line_prev1_;\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 984,
+                "startChar": 0,
+                "endLine": 985,
+                "endChar": 0
+              },
+              "replacement": "          pdfium::span\u003cconst uint8_t\u003e line_prev \u003d line_prev1_;\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 1121,
+                "startChar": 0,
+                "endLine": 1122,
+                "endChar": 0
+              },
+              "replacement": "          pdfium::span\u003cconst uint8_t\u003e line_prev \u003d line_prev1_;\n"
+            }
+          ]
+        }
+      ],
+      "revId": "1dcbf9482f5301e49f9016dd7f04f369ee51fa1a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
