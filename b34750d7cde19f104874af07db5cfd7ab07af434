@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6a88a712_ff62d42f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-12T18:48:57Z",
+      "side": 1,
+      "message": "Maybe rebase out of the chain to land sooner?",
+      "revId": "b34750d7cde19f104874af07db5cfd7ab07af434",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
