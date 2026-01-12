@@ -90,6 +90,30 @@
       ],
       "revId": "0b88d6b7931f72776c596f788c6ec868ca1a35c0",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "056e3a6e_1561d9ae",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-12T19:17:45Z",
+      "side": 1,
+      "message": "This is the else-branch for `if (h \u003e 1)`. So `h` is either 0 or 1 here. The existing code tested for `h \u003d\u003d 1` with `h \u0026 1`.",
+      "parentUuid": "14377c50_884c37a9",
+      "range": {
+        "startLine": 183,
+        "startChar": 0,
+        "endLine": 183,
+        "endChar": 33
+      },
+      "revId": "0b88d6b7931f72776c596f788c6ec868ca1a35c0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
