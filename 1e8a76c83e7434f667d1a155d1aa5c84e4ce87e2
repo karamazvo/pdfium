@@ -42,6 +42,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "d0561043_8bcbbcfa",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 472,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-13T00:26:25Z",
+      "side": 1,
+      "message": "That would read funny since this is StartDecodeArith() about to call ProgressiveDecodeArith().",
+      "parentUuid": "715b9680_c2a38562",
+      "range": {
+        "startLine": 472,
+        "startChar": 0,
+        "endLine": 472,
+        "endChar": 19
+      },
+      "revId": "1e8a76c83e7434f667d1a155d1aa5c84e4ce87e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "2ed58198_a2d047ea",
