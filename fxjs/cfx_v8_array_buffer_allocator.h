@@ -26,10 +26,10 @@ class CFX_V8ArrayBufferAllocator final : public v8::ArrayBuffer::Allocator {
   void* AllocateUninitialized(size_t length) override;
   void Free(void* data, size_t length) override;
 
-#ifdef V8_ENABLE_SANDBOX
+#ifdef PDF_USE_PARTITION_ALLOC
  private:
   std::unique_ptr<v8::ArrayBuffer::Allocator> wrapped_;
-#endif  // V8_ENABLE_SANDBOX
+#endif  // PDF_USE_PARTITION_ALLOC
 };
 
 #endif  // FXJS_CFX_V8_ARRAY_BUFFER_ALLOCATOR_H_

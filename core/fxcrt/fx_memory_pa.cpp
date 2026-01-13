@@ -20,7 +20,7 @@ namespace {
 constexpr partition_alloc::PartitionOptions kOptions = {};
 
 struct Allocators {
-#ifndef V8_ENABLE_SANDBOX
+#ifndef PDF_USE_PARTITION_ALLOC
   partition_alloc::PartitionAllocator array_buffer_allocator{kOptions};
 #endif
 
@@ -30,7 +30,7 @@ struct Allocators {
 
 Allocators* g_allocators = nullptr;
 
-#ifndef V8_ENABLE_SANDBOX
+#ifndef PDF_USE_PARTITION_ALLOC
 partition_alloc::PartitionAllocator& GetArrayBufferPartitionAllocator() {
   return g_allocators->array_buffer_allocator;
 }
@@ -142,7 +142,7 @@ void FX_DestroyMemoryAllocators() {
   g_allocators = nullptr;
 }
 
-#ifndef V8_ENABLE_SANDBOX
+#ifndef PDF_USE_PARTITION_ALLOC
 void* FX_ArrayBufferAllocate(size_t length) {
   return GetArrayBufferPartitionAllocator()
       .root()
@@ -158,4 +158,4 @@ void* FX_ArrayBufferAllocateUninitialized(size_t length) {
 void FX_ArrayBufferFree(void* data) {
   GetArrayBufferPartitionAllocator().root()->Free(data);
 }
-#endif  // V8_ENABLE_SANDBOX
+#endif  // PDF_USE_PARTITION_ALLOC

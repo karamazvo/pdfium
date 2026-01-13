@@ -74,7 +74,7 @@ NOINLINE void FX_OutOfMemoryTerminate(size_t size);
 // FX_StringFree frees memory from FX_StringAlloc.
 #define FX_StringFree(ptr) pdfium::internal::StringDealloc(ptr)
 
-#ifndef V8_ENABLE_SANDBOX
+#ifndef PDF_USE_PARTITION_ALLOC
 // V8 Array Buffer Partition Allocators.
 
 // This never returns nullptr, and returns zeroed memory.
@@ -85,7 +85,7 @@ void* FX_ArrayBufferAllocateUninitialized(size_t length);
 
 // FX_ArrayBufferFree accepts memory from both of the above.
 void FX_ArrayBufferFree(void* data);
-#endif  // V8_ENABLE_SANDBOX
+#endif  // PDF_USE_PARTITION_ALLOC
 
 // Aligned allocators.
 
