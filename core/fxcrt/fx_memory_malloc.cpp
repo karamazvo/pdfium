@@ -17,6 +17,11 @@
 #error "File compiled under wrong build option."
 #endif
 
+#if defined(V8_ENABLE_SANDBOX)
+#error "V8 sandbox can not be enabled against ordinary malloc"
+#error "Set v8_enable_sandbox = false in your GN args"
+#endif
+
 namespace pdfium {
 namespace internal {
 

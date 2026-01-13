@@ -20,36 +20,36 @@ void* CFX_V8ArrayBufferAllocator::Allocate(size_t length) {
   if (length > kMaxAllowedBytes) {
     return nullptr;
   }
-#ifdef V8_ENABLE_SANDBOX
+#ifdef PDF_USE_PARTITION_ALLOC
   if (!wrapped_) {
     wrapped_.reset(v8::ArrayBuffer::Allocator::NewDefaultAllocator());
   }
   return wrapped_->Allocate(length);
-#else   // V8_ENABLE_SANDBOX
+#else   // PDF_USE_PARTITION_ALLOC
   return FX_ArrayBufferAllocate(length);
-#endif  // V8_ENABLE_SANDBOX
+#endif  // PDF_USE_PARTITION_ALLOC
 }
 
 void* CFX_V8ArrayBufferAllocator::AllocateUninitialized(size_t length) {
   if (length > kMaxAllowedBytes) {
     return nullptr;
   }
-#ifdef V8_ENABLE_SANDBOX
+#ifdef PDF_USE_PARTITION_ALLOC
   if (!wrapped_) {
     wrapped_.reset(v8::ArrayBuffer::Allocator::NewDefaultAllocator());
   }
   return wrapped_->AllocateUninitialized(length);
-#else  // V8_ENABLE_SANDBOX
+#else  // PDF_USE_PARTITION_ALLOC
   return FX_ArrayBufferAllocateUninitialized(length);
 #endif
 }
 
 void CFX_V8ArrayBufferAllocator::Free(void* data, size_t length) {
-#ifdef V8_ENABLE_SANDBOX
+#ifdef PDF_USE_PARTITION_ALLOC
   if (wrapped_) {
     wrapped_->Free(data, length);
   }
-#else  // V8_ENABLE_SANDBOX
+#else  // PDF_USE_PARTITION_ALLOC
   FX_ArrayBufferFree(data);
 #endif
 }
