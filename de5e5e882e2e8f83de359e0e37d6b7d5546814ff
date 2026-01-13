@@ -16,6 +16,24 @@
       "message": "Since the expected parameters are first, these should be flipped so the expected parameter is first as well. Same for VerifyFloatRectNear() and VerifyFXRect().",
       "revId": "de5e5e882e2e8f83de359e0e37d6b7d5546814ff",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cdf71ff2_e751d887",
+        "filename": "core/fxcrt/fx_coordinates_unittest.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-13T19:18:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "749ac86d_e183c2da",
+      "revId": "de5e5e882e2e8f83de359e0e37d6b7d5546814ff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
