@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "67e5331b_a2daa6d1",
+        "filename": "core/fxcodec/jbig2/JBig2_HuffmanTable.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-13T01:15:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a9d72ad9_593c5277",
+      "range": {
+        "startLine": 135,
+        "startChar": 1,
+        "endLine": 136,
+        "endChar": 34
+      },
+      "revId": "2310d07aef5d54ecad110ba4a700f3621e6519a7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "86290a95_1f0b5ad9",
@@ -37,6 +61,30 @@
       "writtenOn": "2026-01-12T23:26:43Z",
       "side": 1,
       "message": "can we remove this value and use table.lines.size() directly?",
+      "range": {
+        "startLine": 139,
+        "startChar": 0,
+        "endLine": 139,
+        "endChar": 52
+      },
+      "revId": "2310d07aef5d54ecad110ba4a700f3621e6519a7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "542fc8a1_7dc4c22f",
+        "filename": "core/fxcodec/jbig2/JBig2_HuffmanTable.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-13T01:15:55Z",
+      "side": 1,
+      "message": "`NTEMP`, likely copied from the spec, is actually a member variable. It\u0027s value is not based on the table in the ctor below that calls ParseFromCodedBuffer().",
+      "parentUuid": "86290a95_1f0b5ad9",
       "range": {
         "startLine": 139,
         "startChar": 0,
@@ -70,6 +118,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c5abdf26_8573d7e5",
+        "filename": "core/fxcodec/jbig2/JBig2_HuffmanTable.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-13T01:15:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "181153a9_f65e8bd4",
+      "range": {
+        "startLine": 154,
+        "startChar": 15,
+        "endLine": 154,
+        "endChar": 20
+      },
+      "revId": "2310d07aef5d54ecad110ba4a700f3621e6519a7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e2aa5096_304aad1e",
@@ -83,6 +155,30 @@
       "writtenOn": "2026-01-12T23:26:43Z",
       "side": 1,
       "message": "pity we don\u0027t have zip4() ... if we in c++20, we can use init-statement in range-loop:\n```\nfor (uint32_t i \u003d 0; const auto\u0026 line : lines) {\n    CODES[i].codelen \u003d line.PREFLEN;\n    RANGELEN[i] \u003d line.RANDELEN;\n    RANGELOW[i] \u003d line.RANGELOW;\n    ++i;\n}\n```",
+      "range": {
+        "startLine": 157,
+        "startChar": 2,
+        "endLine": 161,
+        "endChar": 3
+      },
+      "revId": "2310d07aef5d54ecad110ba4a700f3621e6519a7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4c5d8f22_7d214d9e",
+        "filename": "core/fxcodec/jbig2/JBig2_HuffmanTable.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-13T01:15:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e2aa5096_304aad1e",
       "range": {
         "startLine": 157,
         "startChar": 2,
