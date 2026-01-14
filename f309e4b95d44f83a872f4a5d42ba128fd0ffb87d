@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b1ce3dc5_0a597855",
+        "filename": "testing/resources/pixel/alpha_composite.in",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2026-01-14T22:30:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3f2fec54_6097e213",
+      "revId": "f309e4b95d44f83a872f4a5d42ba128fd0ffb87d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7256909d_2f81de2d",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-01-14T22:27:31Z",
       "side": 1,
       "message": "Duplicate.",
+      "revId": "f309e4b95d44f83a872f4a5d42ba128fd0ffb87d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a54c9df5_99efeb28",
+        "filename": "testing/resources/pixel/alpha_composite.in",
+        "patchSetId": 3
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2026-01-14T22:30:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7256909d_2f81de2d",
       "revId": "f309e4b95d44f83a872f4a5d42ba128fd0ffb87d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
