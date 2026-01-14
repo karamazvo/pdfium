@@ -1,0 +1,100 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f0f7f210_a25c615c",
+        "filename": "tools/roll_pdfium_deps.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-01-14T20:29:48Z",
+      "side": 1,
+      "message": "The list risks becoming stale if new dependencies are added. Not sure of a great way to fix this, other than just making a note of this in the DEPS rolling doc for now?",
+      "revId": "a8d8db5310ef42993aa260d2108f5e185719f418",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "904fe93b_21f46688",
+        "filename": "tools/roll_pdfium_deps.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-01-14T20:29:48Z",
+      "side": 1,
+      "message": "Nit: in ASCII sorting, libcxx_revision would come first.",
+      "fixSuggestions": [
+        {
+          "fixId": "3d1742aa_68e456dc",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "tools/roll_pdfium_deps.py",
+              "range": {
+                "startLine": 28,
+                "startChar": 0,
+                "endLine": 29,
+                "endChar": 0
+              },
+              "replacement": ""
+            },
+            {
+              "path": "tools/roll_pdfium_deps.py",
+              "range": {
+                "startLine": 30,
+                "startChar": 0,
+                "endLine": 30,
+                "endChar": 0
+              },
+              "replacement": "    \u0027libcxxabi_revision\u0027,\n"
+            }
+          ]
+        }
+      ],
+      "revId": "a8d8db5310ef42993aa260d2108f5e185719f418",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1d847812_80b95f93",
+        "filename": "tools/roll_pdfium_deps.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-01-14T20:29:48Z",
+      "side": 1,
+      "message": "Maybe move this near ALL_DEPS_ENTRIES for consistency?",
+      "revId": "a8d8db5310ef42993aa260d2108f5e185719f418",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "82f69271_51a40e13",
+        "filename": "tools/roll_pdfium_deps.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-01-14T20:29:48Z",
+      "side": 1,
+      "message": "WDYT about adding messages of rolls that are the same? E.g. something like:\n\n```\nroll-dep third_party/abseil-cpp --ignore-dirty-tree --no-log\nroll-dep build --ignore-dirty-tree --no-log\n...\nroll-dep tools/win --ignore-dirty-tree --no-log\n\nRevisions that don\u0027t need updates:\nfast_float_revision\n...\n```\n\nThen the user can identify if some DEPS entry is missed by the script.",
+      "revId": "a8d8db5310ef42993aa260d2108f5e185719f418",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
