@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c61eb6cb_2afda521",
+        "filename": "tools/roll_pdfium_deps.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-14T21:47:29Z",
+      "side": 1,
+      "message": "If this list becomes out of sync, someone will eventually notice when rolling DEPS. Probably not critical to enforce keeping them in sync.",
+      "parentUuid": "f0f7f210_a25c615c",
+      "revId": "a8d8db5310ef42993aa260d2108f5e185719f418",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "904fe93b_21f46688",
@@ -63,6 +81,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "02846ddb_e5b9fac7",
+        "filename": "tools/roll_pdfium_deps.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-14T21:47:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "904fe93b_21f46688",
+      "revId": "a8d8db5310ef42993aa260d2108f5e185719f418",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1d847812_80b95f93",
@@ -80,6 +116,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "479f0e74_8879ec88",
+        "filename": "tools/roll_pdfium_deps.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-14T21:47:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1d847812_80b95f93",
+      "revId": "a8d8db5310ef42993aa260d2108f5e185719f418",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "82f69271_51a40e13",
@@ -93,6 +147,24 @@
       "writtenOn": "2026-01-14T20:29:48Z",
       "side": 1,
       "message": "WDYT about adding messages of rolls that are the same? E.g. something like:\n\n```\nroll-dep third_party/abseil-cpp --ignore-dirty-tree --no-log\nroll-dep build --ignore-dirty-tree --no-log\n...\nroll-dep tools/win --ignore-dirty-tree --no-log\n\nRevisions that don\u0027t need updates:\nfast_float_revision\n...\n```\n\nThen the user can identify if some DEPS entry is missed by the script.",
+      "revId": "a8d8db5310ef42993aa260d2108f5e185719f418",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "701fb8d8_3785daba",
+        "filename": "tools/roll_pdfium_deps.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-14T21:47:29Z",
+      "side": 1,
+      "message": "Probably more straight forward to just check `ALL_DEPS_ENTRIES` if that\u0027s the goal?",
+      "parentUuid": "82f69271_51a40e13",
       "revId": "a8d8db5310ef42993aa260d2108f5e185719f418",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
