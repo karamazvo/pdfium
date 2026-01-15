@@ -16,6 +16,23 @@
       "message": "Not enough code coverage, but at least the fuzzer noticed.",
       "revId": "d7e2325be3b63ae28bb34b2c87106438e0d31ab8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d8a86f60_1515dee8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-15T19:46:16Z",
+      "side": 1,
+      "message": "ping",
+      "revId": "d7e2325be3b63ae28bb34b2c87106438e0d31ab8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
