@@ -111,14 +111,12 @@ bool CPDF_SampledFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
 bool CPDF_SampledFunc::v_Call(pdfium::span<const float> inputs,
                               pdfium::span<float> results) const {
   int pos = 0;
-  absl::InlinedVector<float, 16, FxAllocAllocator<float>> encoded_input_buf(
+  absl::InlinedVector<float, 16, FxAllocAllocator<float>> encoded_input(
       inputs_);
-  absl::InlinedVector<uint32_t, 32, FxAllocAllocator<uint32_t>> int_buf(
-      inputs_ * 2);
+  absl::InlinedVector<uint32_t, 16, FxAllocAllocator<uint32_t>> index(inputs_);
+  absl::InlinedVector<uint32_t, 16, FxAllocAllocator<uint32_t>> blocksize(
+      inputs_);
   UNSAFE_TODO({
-    float* encoded_input = encoded_input_buf.data();
-    uint32_t* index = int_buf.data();
-    uint32_t* blocksize = index + inputs_;
     for (uint32_t i = 0; i < inputs_; i++) {
       if (i == 0) {
         blocksize[i] = 1;
