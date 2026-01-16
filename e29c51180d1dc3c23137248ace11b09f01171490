@@ -1,0 +1,153 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "abc80dcb_acf8904f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-16T19:03:18Z",
+      "side": 1,
+      "message": "Probably should CL format this while I am at this as well.",
+      "revId": "e29c51180d1dc3c23137248ace11b09f01171490",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cb526db7_544c8c94",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-16T19:03:18Z",
+      "side": 1,
+      "message": "Since nothing else calls this function, we can remove the above function and have it directly be used here.",
+      "range": {
+        "startLine": 180,
+        "startChar": 30,
+        "endLine": 180,
+        "endChar": 56
+      },
+      "revId": "e29c51180d1dc3c23137248ace11b09f01171490",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bacb5798_cc720ee6",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-16T19:03:18Z",
+      "side": 1,
+      "message": "Remove ToPng() from the name in a different CL to make this CL less cluttered.",
+      "range": {
+        "startLine": 185,
+        "startChar": 7,
+        "endLine": 185,
+        "endChar": 41
+      },
+      "revId": "e29c51180d1dc3c23137248ace11b09f01171490",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8a1c6731_7fc1cd82",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2145,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-16T19:03:18Z",
+      "side": 1,
+      "message": "Make this an actual TODO:",
+      "range": {
+        "startLine": 2145,
+        "startChar": 9,
+        "endLine": 2145,
+        "endChar": 14
+      },
+      "revId": "e29c51180d1dc3c23137248ace11b09f01171490",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b0d71468_05cd03f1",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 301,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-16T19:03:18Z",
+      "side": 1,
+      "message": "Newline",
+      "revId": "e29c51180d1dc3c23137248ace11b09f01171490",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "01cdb7b7_d9ffb34a",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 446,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-16T19:03:18Z",
+      "side": 1,
+      "message": "After BGRx/BGRA",
+      "range": {
+        "startLine": 443,
+        "startChar": 4,
+        "endLine": 446,
+        "endChar": 12
+      },
+      "revId": "e29c51180d1dc3c23137248ace11b09f01171490",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1526d6e0_37736191",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1123,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-16T19:03:18Z",
+      "side": 1,
+      "message": "Fix this debug thing.",
+      "range": {
+        "startLine": 1123,
+        "startChar": 6,
+        "endLine": 1123,
+        "endChar": 10
+      },
+      "revId": "e29c51180d1dc3c23137248ace11b09f01171490",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
