@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7068d7e2_5332f37c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-17T12:34:53Z",
+      "side": 1,
+      "message": "@thestig@chromium.org FYI, am working on view_embeddertest to clear out that churn.",
+      "revId": "c1cb9dec34063b99318a6a67bcab286b3f4a1129",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
