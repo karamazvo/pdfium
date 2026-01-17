@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7332610e_a588ea9d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 21
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-17T14:17:32Z",
+      "side": 1,
+      "message": "Hi again, added the images for the fpdf_view_embeddertest.cpp (Wanted to deal with that churn asap), there are some checksums that I do not have, so have left a todo next to them.\n\nBecause of this I Haven\u0027t been able to remove all the ToPng methods, but the plan is to have a follow up to this that implements those images while also taking out the \"ToPng\" from the name.\n\nI would have removed ToPng in this CL, but I believe that would have made it too large. Regardless I think the goal would be to wait before landing this CL so that we can land it together with the child CL which I will upload shortly.",
+      "revId": "dcaee9987bcbeb5470439b9ea8f2f0474cb9fb7d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
