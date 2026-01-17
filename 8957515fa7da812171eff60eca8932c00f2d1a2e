@@ -1,0 +1,45 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "599204a6_46bd821d",
+        "filename": "core/fpdfapi/render/cpdf_type3cache.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-01-17T00:48:52Z",
+      "side": 1,
+      "message": "Needs to take into account the width. Maybe just subspan it in the caller?",
+      "range": {
+        "startLine": 35,
+        "startChar": 21,
+        "endLine": 35,
+        "endChar": 25
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "4f2dfda4_39450e25",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/render/cpdf_type3cache.cpp",
+              "range": {
+                "startLine": 35,
+                "startChar": 0,
+                "endLine": 36,
+                "endChar": 0
+              },
+              "replacement": "  for (uint8_t val : line.first(width)) {\n"
+            }
+          ]
+        }
+      ],
+      "revId": "8957515fa7da812171eff60eca8932c00f2d1a2e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
