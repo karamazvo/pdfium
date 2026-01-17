@@ -16,6 +16,75 @@
       "message": "Hi again, added the images for the fpdf_view_embeddertest.cpp (Wanted to deal with that churn asap), there are some checksums that I do not have, so have left a todo next to them.\n\nBecause of this I Haven\u0027t been able to remove all the ToPng methods, but the plan is to have a follow up to this that implements those images while also taking out the \"ToPng\" from the name.\n\nI would have removed ToPng in this CL, but I believe that would have made it too large. Regardless I think the goal would be to wait before landing this CL so that we can land it together with the child CL which I will upload shortly.",
       "revId": "dcaee9987bcbeb5470439b9ea8f2f0474cb9fb7d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b7352cab_db41d66d",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 21
+      },
+      "lineNbr": 1532,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-17T14:45:13Z",
+      "side": 1,
+      "message": "Initially, Filename was meant for something that doesn\u0027t need an expectation suffix, and basename is for something that does. I think I probably should make all of them basename (would be simpler than this system).",
+      "range": {
+        "startLine": 1532,
+        "startChar": 52,
+        "endLine": 1532,
+        "endChar": 67
+      },
+      "revId": "dcaee9987bcbeb5470439b9ea8f2f0474cb9fb7d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bae6cbab_954d24ff",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 21
+      },
+      "lineNbr": 1600,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-17T14:45:13Z",
+      "side": 1,
+      "message": "Surprised cl format didn\u0027t fix this... will patch it after the dry run.",
+      "range": {
+        "startLine": 1600,
+        "startChar": 0,
+        "endLine": 1600,
+        "endChar": 2
+      },
+      "revId": "dcaee9987bcbeb5470439b9ea8f2f0474cb9fb7d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "024788fe_ca5ab111",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 21
+      },
+      "lineNbr": 1601,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-17T14:45:13Z",
+      "side": 1,
+      "message": "Probably should make this gray not grey.",
+      "range": {
+        "startLine": 1601,
+        "startChar": 31,
+        "endLine": 1601,
+        "endChar": 63
+      },
+      "revId": "dcaee9987bcbeb5470439b9ea8f2f0474cb9fb7d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
