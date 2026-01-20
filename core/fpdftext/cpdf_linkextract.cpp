@@ -15,6 +15,8 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
+#include <iostream>
+
 namespace {
 
 // Find the end of a web link starting from offset |start| and ending at offset
@@ -115,21 +117,29 @@ CPDF_LinkExtract::CPDF_LinkExtract(const CPDF_TextPage* pTextPage)
 CPDF_LinkExtract::~CPDF_LinkExtract() = default;
 
 void CPDF_LinkExtract::ExtractLinks() {
+  std::cout << "XXX " << __func__ << std::endl;
   link_array_.clear();
   size_t start = 0;
   size_t pos = 0;
+  bool is_url_symbol = false;
   bool bAfterHyphen = false;
   bool bLineBreak = false;
   const size_t nTotalChar = text_page_->CountChars();
   const WideString page_text = text_page_->GetAllPageText();
   while (pos < nTotalChar) {
     const CPDF_TextPage::CharInfo& char_info = text_page_->GetCharInfo(pos);
+    wchar_t ch = char_info.unicode();
     if (char_info.char_type() != CPDF_TextPage::CharType::kGenerated &&
-        char_info.unicode() != L' ' && pos != nTotalChar - 1) {
+        ch != L' ' && pos != nTotalChar - 1) {
+      is_url_symbol =
+          (char_info.char_type() == CPDF_TextPage::CharType::kNormal &&
+           (ch == L'.' || ch == L'/' || ch == L':' || ch == L'?' ||
+            ch == L'&' || ch == L'=' || ch == L'#'));
       bAfterHyphen =
           (char_info.char_type() == CPDF_TextPage::CharType::kHyphen ||
            (char_info.char_type() == CPDF_TextPage::CharType::kNormal &&
-            char_info.unicode() == L'-'));
+            ch == L'-'));
+      // std::cout << " XXX bAfterHyphen=" << bAfterHyphen << std::endl;
       ++pos;
       continue;
     }
@@ -137,8 +147,12 @@ void CPDF_LinkExtract::ExtractLinks() {
     size_t nCount = pos - start;
     if (pos == nTotalChar - 1) {
       ++nCount;
-    } else if (bAfterHyphen &&
-               (char_info.unicode() == L'\n' || char_info.unicode() == L'\r')) {
+    } else if ((is_url_symbol || bAfterHyphen) &&
+               (ch == L'\n' || ch == L'\r')) {
+      static int foo = 0;
+      std::cout << " XXX " << foo++
+                << " line break! is_url_symbol=" << is_url_symbol
+                << " bAfterHyphen=" << bAfterHyphen << std::endl;
       // Handle text breaks with a hyphen to the next line.
       bLineBreak = true;
       ++pos;
@@ -156,8 +170,9 @@ void CPDF_LinkExtract::ExtractLinks() {
 
     if (strBeCheck.GetLength() > 5) {
       while (strBeCheck.GetLength() > 0) {
-        wchar_t ch = strBeCheck.Back();
-        if (ch != L')' && ch != L',' && ch != L'>' && ch != L'.') {
+        ch = strBeCheck.Back();
+        if (ch != L')' && ch != L',' && ch != L'>' && ch != L'.' &&
+            ch != L'!' && ch != L'?' && ch != L';' && ch != L']') {
           break;
         }
 
