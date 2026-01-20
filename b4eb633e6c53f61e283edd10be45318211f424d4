@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3d7dbfef_cf25073d",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 22
+      },
+      "lineNbr": 1316,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-20T17:37:44Z",
+      "side": 1,
+      "message": "This TODO and the on one line 2146 are causing some issues as the zip file did not contain some of these checksums. All the methods can be fully removed only after these checksums are added.\n\n@thestig@chromium.org, can you share an updated zip with these images as well?\n\nFYI: For 2146, I have all images other than x86 mac.",
+      "range": {
+        "startLine": 1316,
+        "startChar": 5,
+        "endLine": 1316,
+        "endChar": 9
+      },
+      "revId": "b4eb633e6c53f61e283edd10be45318211f424d4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
