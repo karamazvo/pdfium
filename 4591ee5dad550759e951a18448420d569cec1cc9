@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b32b7a1f_b4ce63d3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-01-20T22:56:55Z",
+      "side": 1,
+      "message": "Originally used this to regenerate PNGs in earlier patchsets of https://pdfium-review.googlesource.com/c/pdfium/+/141193, but no longer needed. I think this CL is still helpful, though?",
+      "revId": "4591ee5dad550759e951a18448420d569cec1cc9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
