@@ -41,6 +41,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b4f3b110_e1e25e56",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 21
+      },
+      "lineNbr": 1532,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-20T17:25:52Z",
+      "side": 1,
+      "message": "Let me know if the current naming is fine or if it should be edited.",
+      "parentUuid": "b7352cab_db41d66d",
+      "range": {
+        "startLine": 1532,
+        "startChar": 52,
+        "endLine": 1532,
+        "endChar": 67
+      },
+      "revId": "dcaee9987bcbeb5470439b9ea8f2f0474cb9fb7d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bae6cbab_954d24ff",
