@@ -33,6 +33,23 @@
       "message": "BTW, I\u0027ve also got https://pdfium-review.googlesource.com/141274 in the works.",
       "revId": "4591ee5dad550759e951a18448420d569cec1cc9",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "88fc1da0_98279f07",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-20T23:59:15Z",
+      "side": 1,
+      "message": "The behavior changes a bit, as these are now writing into testing/resources/embedder_tests. Whereas in CompareBitmap(), they output to $CWD. I guess it\u0027s ok, considering --write-pngs is not documented anywhere.",
+      "revId": "4591ee5dad550759e951a18448420d569cec1cc9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
