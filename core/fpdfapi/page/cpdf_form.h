@@ -43,6 +43,11 @@ class CPDF_Form final : public CPDF_PageObjectHolder,
             RetainPtr<CPDF_Dictionary> pPageResources,
             RetainPtr<CPDF_Stream> pFormStream,
             CPDF_Dictionary* pParentResources);
+  CPDF_Form(CPDF_Document* document,
+            RetainPtr<CPDF_Dictionary> pPageResources,
+            RetainPtr<CPDF_Stream> pFormStream,
+            CPDF_Dictionary* pParentResources,
+            RetainPtr<CPDF_Dictionary> dict_override);
   ~CPDF_Form() override;
 
   // CPDF_Font::FormIface:

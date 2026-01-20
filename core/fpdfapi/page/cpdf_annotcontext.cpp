@@ -29,11 +29,16 @@ void CPDF_AnnotContext::SetForm(RetainPtr<CPDF_Stream> pStream) {
     return;
   }
 
+  // Clone the stream's dictionary to avoid mutating the original stream.
+  RetainPtr<CPDF_Dictionary> new_dict =
+      ToDictionary(pStream->GetDict()->Clone());
+
   // Reset the annotation matrix to be the identity matrix, since the
   // appearance stream already takes matrix into account.
-  pStream->GetMutableDict()->SetMatrixFor("Matrix", CFX_Matrix());
+  new_dict->SetMatrixFor("Matrix", CFX_Matrix());
 
   annot_form_ = std::make_unique<CPDF_Form>(
-      page_->GetDocument(), page_->AsPDFPage()->GetMutableResources(), pStream);
+      page_->GetDocument(), page_->AsPDFPage()->GetMutableResources(), pStream,
+      /*pParentResources=*/nullptr, std::move(new_dict));
   annot_form_->ParseContent();
 }
