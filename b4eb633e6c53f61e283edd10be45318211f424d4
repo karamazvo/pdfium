@@ -22,6 +22,30 @@
       },
       "revId": "b4eb633e6c53f61e283edd10be45318211f424d4",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6ed41bc5_19bf7b25",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 22
+      },
+      "lineNbr": 1316,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-20T21:38:48Z",
+      "side": 1,
+      "message": "The ones here are not for CompareBitmap() calls, so just leave them alone.\n\nI have an Intel Mac, but I realized it may still not work, since its OS version likely does not match what is running on the bots. Hang on while I work on this.",
+      "parentUuid": "3d7dbfef_cf25073d",
+      "range": {
+        "startLine": 1316,
+        "startChar": 5,
+        "endLine": 1316,
+        "endChar": 9
+      },
+      "revId": "b4eb633e6c53f61e283edd10be45318211f424d4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
