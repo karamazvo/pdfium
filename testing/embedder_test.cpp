@@ -35,6 +35,8 @@
 #include "testing/utils/file_util.h"
 #include "testing/utils/hash.h"
 #include "testing/utils/path_service.h"
+#include "testing/utils/png_encode.h"
+#include "third_party/simdutf/simdutf.h"
 
 namespace {
 
@@ -1071,7 +1073,13 @@ void EmbedderTest::CompareBitmapToPngWithExpectationSuffix(
     CompareBitmapToPngData(bitmap, GetFileContents(png_path.c_str()));
     return;
   }
-  ADD_FAILURE() << "No expectation file matching " << expectation_png_name;
+
+  std::vector<uint8_t> png = EncodePng(bitmap);
+  std::string base64_png(simdutf::base64_length_from_binary(png.size()), '\0');
+  size_t base64_len = simdutf::binary_to_base64(png, base64_png);
+  base64_png.resize(base64_len);
+  ADD_FAILURE() << "No expectation file matching " << expectation_png_name
+                << ", Actual pixels (open in browser): " << base64_png;
 }
 
 // static
