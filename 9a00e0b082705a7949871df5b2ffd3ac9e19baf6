@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7f41edbe_6aed9065",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 11
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-21T05:24:56Z",
+      "side": 1,
+      "message": "The other alternative is to save and restore the matrix. Not sure which is better.\n\n```\nRetainPtr\u003cCPDF_Array\u003e original_matrix \u003d ...;\npStream-\u003eGetDict()-\u003eSetMatrixFor(\"Matrix\", CFX_Matrix());\n...\npStream-\u003eGetDict()-\u003eSetFor(\"Matrix\", original_matrix);\n```",
+      "revId": "9a00e0b082705a7949871df5b2ffd3ac9e19baf6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fc5c3fe9_2991a23d",
+        "filename": "core/fpdfapi/page/cpdf_annotcontext.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-21T05:24:56Z",
+      "side": 1,
+      "message": "Does this work if the matrix is not invertible?",
+      "range": {
+        "startLine": 41,
+        "startChar": 49,
+        "endLine": 41,
+        "endChar": 59
+      },
+      "revId": "9a00e0b082705a7949871df5b2ffd3ac9e19baf6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
