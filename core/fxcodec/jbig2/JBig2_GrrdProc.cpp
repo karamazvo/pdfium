@@ -59,6 +59,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate0Unopt(
       LTP = LTP ^ pArithDecoder->Decode(&grContexts[0x0010]);
     }
 
+    pdfium::span<uint8_t> row_write = GRREG->GetLine(h);
     pdfium::span<const uint8_t> row_prev = GRREG->GetLine(h - 1);
     pdfium::span<const uint8_t> row_ref_dy_prev =
         GRREFERENCE->GetLine(h - GRREFERENCEDY - 1);
@@ -93,7 +94,9 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate0Unopt(
         }
 
         int bVal = pArithDecoder->Decode(&grContexts[CONTEXT]);
-        DecodeTemplate0UnoptSetPixel(GRREG.get(), lines, w, h, bVal);
+        DecodeTemplate0UnoptSetPixel(GRREG.get(), lines, w, bVal,
+                                     row_ref_dy_prev, row_ref_dy_current,
+                                     row_ref_dy_next, row_prev, row_write);
       }
     } else {
       pdfium::span<const uint8_t> row_ref_prev = GRREFERENCE->GetLine(h - 1);
@@ -112,7 +115,9 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate0Unopt(
 
           bVal = pArithDecoder->Decode(&grContexts[CONTEXT]);
         }
-        DecodeTemplate0UnoptSetPixel(GRREG.get(), lines, w, h, bVal);
+        DecodeTemplate0UnoptSetPixel(GRREG.get(), lines, w, bVal,
+                                     row_ref_dy_prev, row_ref_dy_current,
+                                     row_ref_dy_next, row_prev, row_write);
       }
     }
   }
@@ -140,20 +145,23 @@ void CJBig2_GRRDProc::DecodeTemplate0UnoptSetPixel(
     CJBig2_Image* GRREG,
     pdfium::span<uint32_t, 5> lines,
     uint32_t w,
-    uint32_t h,
-    int bVal) {
-  GRREG->SetPixel(w, h, bVal);
+    int bVal,
+    pdfium::span<const uint8_t> row_ref_dy_prev,
+    pdfium::span<const uint8_t> row_ref_dy_current,
+    pdfium::span<const uint8_t> row_ref_dy_next,
+    pdfium::span<const uint8_t> row_prev,
+    pdfium::span<uint8_t> row_write) {
+  GRREG->SetPixel(w, row_write, bVal);
   const int w_dx = w - GRREFERENCEDX + 2;
-  lines[0] = ((lines[0] << 1) | GRREG->GetPixel(w + 2, h - 1)) & 0x03;
+  lines[0] = ((lines[0] << 1) | GRREG->GetPixel(w + 2, row_prev)) & 0x03;
   lines[1] = ((lines[1] << 1) | bVal) & 0x01;
   lines[2] =
-      ((lines[2] << 1) | GRREFERENCE->GetPixel(w_dx, h - GRREFERENCEDY - 1)) &
-      0x03;
+      ((lines[2] << 1) | GRREFERENCE->GetPixel(w_dx, row_ref_dy_prev)) & 0x03;
   lines[3] =
-      ((lines[3] << 1) | GRREFERENCE->GetPixel(w_dx, h - GRREFERENCEDY)) & 0x07;
-  lines[4] =
-      ((lines[4] << 1) | GRREFERENCE->GetPixel(w_dx, h - GRREFERENCEDY + 1)) &
+      ((lines[3] << 1) | GRREFERENCE->GetPixel(w_dx, row_ref_dy_current)) &
       0x07;
+  lines[4] =
+      ((lines[4] << 1) | GRREFERENCE->GetPixel(w_dx, row_ref_dy_next)) & 0x07;
 }
 
 std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate0Opt(
