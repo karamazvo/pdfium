@@ -284,10 +284,15 @@ RetainPtr<const CFX_DIBitmap> CPDF_ImageRenderer::CalculateDrawImage(
     mask_status.Initialize(nullptr, nullptr);
 
     CPDF_ImageRenderer mask_renderer(&mask_status);
-    if (mask_renderer.Start(std::move(pDIBBase), 0xffffffff, mtNewMatrix,
-                            resample_options_, true)) {
+    bool should_continue = mask_renderer.Start(
+        std::move(pDIBBase), 0xffffffff, mtNewMatrix, resample_options_, true);
+#if defined(PDF_USE_AGG)
+    if (should_continue) {
       mask_renderer.Continue(nullptr);
     }
+#else
+    CHECK(!should_continue);
+#endif
     if (loader_->MatteColor() != 0xffffffff) {
       const int matte_r = FXARGB_R(loader_->MatteColor());
       const int matte_g = FXARGB_G(loader_->MatteColor());
@@ -393,9 +398,15 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
   bitmap_status.SetStdCS(true);
   bitmap_status.Initialize(nullptr, nullptr);
   CPDF_ImageRenderer bitmap_renderer(&bitmap_status);
-  if (bitmap_renderer.Start(dibbase_, 0, new_matrix, resample_options_, true)) {
+  bool should_continue =
+      bitmap_renderer.Start(dibbase_, 0, new_matrix, resample_options_, true);
+#if defined(PDF_USE_AGG)
+  if (should_continue) {
     bitmap_renderer.Continue(nullptr);
   }
+#else
+  CHECK(!should_continue);
+#endif
   RetainPtr<const CFX_DIBitmap> mask_bitmap =
       CalculateDrawImage(bitmap_device, loader_->GetMask(), new_matrix, rect);
   if (!mask_bitmap) {
@@ -437,11 +448,13 @@ bool CPDF_ImageRenderer::StartDIBBase() {
           dibbase_, alpha_, fill_argb_, image_matrix_, resample_options_,
           blend_type_);
   if (result.result == RenderDeviceDriverIface::Result::kSuccess) {
+#if defined(PDF_USE_AGG)
     device_handle_ = std::move(result.agg_image_renderer);
     if (device_handle_) {
       mode_ = Mode::kBlend;
       return true;
     }
+#endif
     return false;
   }
 
@@ -590,8 +603,10 @@ bool CPDF_ImageRenderer::Continue(PauseIndicatorIface* pPause) {
       return false;
     case Mode::kDefault:
       return ContinueDefault(pPause);
+#if defined(PDF_USE_AGG)
     case Mode::kBlend:
       return ContinueBlend(pPause);
+#endif
 #if BUILDFLAG(IS_WIN)
     case Mode::kTransform:
       return ContinueTransform(pPause);
@@ -615,10 +630,12 @@ bool CPDF_ImageRenderer::ContinueDefault(PauseIndicatorIface* pPause) {
   return Continue(pPause);
 }
 
+#if defined(PDF_USE_AGG)
 bool CPDF_ImageRenderer::ContinueBlend(PauseIndicatorIface* pPause) {
   return render_status_->GetRenderDevice()->ContinueDIBits(device_handle_.get(),
                                                            pPause);
 }
+#endif
 
 #if BUILDFLAG(IS_WIN)
 bool CPDF_ImageRenderer::ContinueTransform(PauseIndicatorIface* pPause) {

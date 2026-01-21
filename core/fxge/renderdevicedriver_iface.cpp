@@ -9,9 +9,12 @@
 #include <utility>
 
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxge/agg/cfx_agg_imagerenderer.h"
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
+
+#if defined(PDF_USE_AGG)
+#include "core/fxge/agg/cfx_agg_imagerenderer.h"
+#endif
 
 RenderDeviceDriverIface::~RenderDeviceDriverIface() = default;
 
@@ -45,10 +48,12 @@ RetainPtr<const CFX_DIBitmap> RenderDeviceDriverIface::GetBackDrop() const {
   return RetainPtr<const CFX_DIBitmap>();
 }
 
+#if defined(PDF_USE_AGG)
 bool RenderDeviceDriverIface::ContinueDIBits(CFX_AggImageRenderer* handle,
                                              PauseIndicatorIface* pPause) {
   return false;
 }
+#endif
 
 bool RenderDeviceDriverIface::DrawDeviceText(
     pdfium::span<const TextCharPos> pCharPos,
@@ -87,9 +92,14 @@ void RenderDeviceDriverIface::SetGroupKnockout(bool group_knockout) {}
 void RenderDeviceDriverIface::SyncInternalBitmaps() {}
 #endif  // defined(PDF_USE_SKIA)
 
+#if defined(PDF_USE_AGG)
 RenderDeviceDriverIface::StartResult::StartResult(
     Result result,
     std::unique_ptr<CFX_AggImageRenderer> agg_image_renderer)
     : result(result), agg_image_renderer(std::move(agg_image_renderer)) {}
+#else
+RenderDeviceDriverIface::StartResult::StartResult(Result result)
+    : result(result) {}
+#endif
 
 RenderDeviceDriverIface::StartResult::~StartResult() = default;

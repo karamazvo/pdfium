@@ -53,7 +53,9 @@ class CPDF_ImageRenderer {
   enum class Mode {
     kNone = 0,
     kDefault,
+#if defined(PDF_USE_AGG)
     kBlend,  // AGG-specific
+#endif
 #if BUILDFLAG(IS_WIN)
     kTransform,
 #endif
@@ -64,7 +66,9 @@ class CPDF_ImageRenderer {
   bool StartRenderDIBBase();
   bool StartLoadDIBBase();
   bool ContinueDefault(PauseIndicatorIface* pPause);
+#if defined(PDF_USE_AGG)
   bool ContinueBlend(PauseIndicatorIface* pPause);
+#endif
   bool DrawMaskedImage();
   bool DrawPatternImage();
 #if BUILDFLAG(IS_WIN)
@@ -72,7 +76,7 @@ class CPDF_ImageRenderer {
   bool ContinueTransform(PauseIndicatorIface* pPause);
   bool IsPrinting() const;
   void HandleFilters();
-#endif
+#endif  // BUILDFLAG(IS_WIN)
   FX_RECT GetDrawRect() const;
   CFX_Matrix GetDrawMatrix(const FX_RECT& rect) const;
   // Returns the mask, or nullptr if the mask could not be created.
@@ -99,7 +103,9 @@ class CPDF_ImageRenderer {
 #if BUILDFLAG(IS_WIN)
   std::unique_ptr<CFX_ImageTransformer> transformer_;
 #endif
+#if defined(PDF_USE_AGG)
   std::unique_ptr<CFX_AggImageRenderer> device_handle_;
+#endif
   Mode mode_ = Mode::kNone;
   float alpha_ = 0.0f;
   BlendMode blend_type_ = BlendMode::kNormal;

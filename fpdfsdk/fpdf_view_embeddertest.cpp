@@ -2213,7 +2213,9 @@ TEST_F(FPDFViewEmbedderTest, RenderXfaPageToSkp) {
   // Should always be blank, as we're not testing `FPDF_FFLRecord()` here.
   TestRenderPageSkpToPng(page.get(), pdfium::kBlankPage612By792Png);
 }
+#endif  // defined(PDF_USE_SKIA)
 
+#if defined(PDF_USE_AGG) && defined(PDF_USE_SKIA)
 TEST_F(FPDFViewEmbedderTest, Bug2087) {
   FPDF_DestroyLibrary();
 
@@ -2257,7 +2259,7 @@ TEST_F(FPDFViewEmbedderTest, Bug2087) {
   EmbedderTestEnvironment::GetInstance()->TearDown();
   EmbedderTestEnvironment::GetInstance()->SetUp();
 }
-#endif  // defined(PDF_USE_SKIA)
+#endif  // defined(PDF_USE_AGG) && defined(PDF_USE_SKIA)
 
 TEST_F(FPDFViewEmbedderTest, NoSmoothTextItalicOverlappingGlyphs) {
   ASSERT_TRUE(OpenDocument("bug_1919.pdf"));

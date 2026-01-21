@@ -98,10 +98,12 @@ static_assert(
     FPDF_PRINTMODE_POSTSCRIPT3_TYPE42_PASSTHROUGH);
 #endif  // BUILDFLAG(IS_WIN)
 
-#if defined(PDF_USE_SKIA)
 // These checks are here because core/ and public/ cannot depend on each other.
+#if defined(PDF_USE_AGG)
 static_assert(static_cast<int>(CFX_DefaultRenderDevice::RendererType::kAgg) ==
               FPDF_RENDERERTYPE_AGG);
+#endif  // defined(PDF_USE_AGG)
+#if defined(PDF_USE_SKIA)
 static_assert(static_cast<int>(CFX_DefaultRenderDevice::RendererType::kSkia) ==
               FPDF_RENDERERTYPE_SKIA);
 #endif  // defined(PDF_USE_SKIA)
@@ -117,22 +119,23 @@ void SetRendererType(FPDF_RENDERER_TYPE public_type) {
   // value might not be meaningful for a particular build configuration, which
   // would mean use of that value is an error for that build.
 
-  // AGG is always present in a build. `FPDF_RENDERERTYPE_SKIA` is valid to use
-  // only if it is included in the build.
-#if defined(PDF_USE_SKIA)
+#if defined(PDF_USE_AGG) && defined(PDF_USE_SKIA)
   // This build configuration has the option for runtime renderer selection.
   CHECK(public_type == FPDF_RENDERERTYPE_AGG ||
         public_type == FPDF_RENDERERTYPE_SKIA);
   CFX_DefaultRenderDevice::SetRendererType(
       static_cast<CFX_DefaultRenderDevice::RendererType>(public_type));
-#else
+#elif defined(PDF_USE_AGG)
   // AGG-only builds should always use `FPDF_RENDERERTYPE_AGG`.
   CHECK_EQ(public_type, FPDF_RENDERERTYPE_AGG);
+#elif defined(PDF_USE_SKIA)
+  // Skia-only builds should always use `FPDF_RENDERERTYPE_SKIA`.
+  CHECK_EQ(public_type, FPDF_RENDERERTYPE_SKIA);
 #endif
 }
 
 void ResetRendererType() {
-#if defined(PDF_USE_SKIA)
+#if defined(PDF_USE_AGG) && defined(PDF_USE_SKIA)
   CFX_DefaultRenderDevice::SetRendererType(
       CFX_DefaultRenderDevice::kDefaultRenderer);
 #endif

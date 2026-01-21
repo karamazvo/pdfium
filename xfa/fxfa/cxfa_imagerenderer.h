@@ -13,7 +13,9 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
+#if defined(PDF_USE_AGG)
 class CFX_AggImageRenderer;
+#endif
 class CFX_DIBitmap;
 class CFX_RenderDevice;
 
@@ -26,16 +28,22 @@ class CXFA_ImageRenderer {
 
   // Returns whether to continue or not.
   bool Start();
+#if defined(PDF_USE_AGG)
   bool Continue();
+#endif
 
  private:
+#if defined(PDF_USE_AGG)
   enum class State : bool { kInitial = 0, kStarted };
 
   State state_ = State::kInitial;
+#endif
   const CFX_Matrix image_matrix_;
   UnownedPtr<CFX_RenderDevice> const device_;
   RetainPtr<CFX_DIBitmap> const bitmap_;
+#if defined(PDF_USE_AGG)
   std::unique_ptr<CFX_AggImageRenderer> device_handle_;
+#endif
 };
 
 #endif  // XFA_FXFA_CXFA_IMAGERENDERER_H_

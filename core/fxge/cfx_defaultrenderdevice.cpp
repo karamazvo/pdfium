@@ -6,8 +6,11 @@
 
 #include <utility>
 
-#include "core/fxge/agg/cfx_agg_devicedriver.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
+
+#if defined(PDF_USE_AGG)
+#include "core/fxge/agg/cfx_agg_devicedriver.h"
+#endif
 
 #if defined(PDF_USE_SKIA)
 #include "core/fxge/skia/fx_skia_device.h"
@@ -17,23 +20,21 @@ namespace {
 
 // When build variant is Skia then it is assumed as the default, but might be
 // overridden at runtime.
-#if defined(PDF_USE_SKIA)
+#if defined(PDF_USE_AGG) && defined(PDF_USE_SKIA)
 CFX_DefaultRenderDevice::RendererType g_renderer_type =
     CFX_DefaultRenderDevice::kDefaultRenderer;
 #endif
 
 }  // namespace
 
+#if defined(PDF_USE_AGG) && defined(PDF_USE_SKIA)
 // static
 bool CFX_DefaultRenderDevice::UseSkiaRenderer() {
-#if defined(PDF_USE_SKIA)
   return g_renderer_type == RendererType::kSkia;
-#else
-  return false;
-#endif
 }
+#endif
 
-#if defined(PDF_USE_SKIA)
+#if defined(PDF_USE_AGG) && defined(PDF_USE_SKIA)
 // static
 void CFX_DefaultRenderDevice::SetRendererType(RendererType renderer_type) {
   g_renderer_type = renderer_type;
@@ -73,8 +74,10 @@ bool CFX_DefaultRenderDevice::CFX_DefaultRenderDevice::AttachImpl(
                           std::move(pBackdropBitmap), bGroupKnockout);
   }
 #endif
+#if defined(PDF_USE_AGG)
   return AttachAggImpl(std::move(pBitmap), bRgbByteOrder,
                        std::move(pBackdropBitmap), bGroupKnockout);
+#endif
 }
 
 bool CFX_DefaultRenderDevice::Create(int width,
@@ -93,7 +96,9 @@ bool CFX_DefaultRenderDevice::CreateWithBackdrop(
     return CreateSkia(width, height, format, backdrop);
   }
 #endif
+#if defined(PDF_USE_AGG)
   return CreateAgg(width, height, format, backdrop);
+#endif
 }
 
 void CFX_DefaultRenderDevice::Clear(uint32_t color) {
@@ -103,5 +108,7 @@ void CFX_DefaultRenderDevice::Clear(uint32_t color) {
     return;
   }
 #endif
+#if defined(PDF_USE_AGG)
   static_cast<pdfium::CFX_AggDeviceDriver*>(GetDeviceDriver())->Clear(color);
+#endif
 }

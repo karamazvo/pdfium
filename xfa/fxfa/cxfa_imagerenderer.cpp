@@ -38,6 +38,7 @@ bool CXFA_ImageRenderer::Start() {
   }
 
   CHECK_EQ(result.result, RenderDeviceDriverIface::Result::kSuccess);
+#if defined(PDF_USE_AGG)
   device_handle_ = std::move(result.agg_image_renderer);
   if (!device_handle_) {
     return false;
@@ -45,9 +46,14 @@ bool CXFA_ImageRenderer::Start() {
 
   state_ = State::kStarted;
   return true;
+#else
+  return false;
+#endif
 }
 
+#if defined(PDF_USE_AGG)
 bool CXFA_ImageRenderer::Continue() {
   CHECK_EQ(state_, State::kStarted);
   return device_->ContinueDIBits(device_handle_.get(), nullptr);
 }
+#endif

@@ -357,9 +357,13 @@ FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   // Do the actual rendering.
   bool should_continue =
       renderer.Start(image, image_render_matrix, /*bStdCS=*/false);
+#if defined(PDF_USE_AGG)
   while (should_continue) {
     should_continue = renderer.Continue(/*pPause=*/nullptr);
   }
+#else
+  CHECK(!should_continue);
+#endif
 
   if (!renderer.GetResult()) {
     return nullptr;

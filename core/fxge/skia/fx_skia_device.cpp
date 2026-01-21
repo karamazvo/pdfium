@@ -1462,7 +1462,11 @@ RenderDeviceDriverIface::StartResult CFX_SkiaDeviceDriver::StartDIBits(
   FX_RECT rect(0, 0, bitmap->GetWidth(), bitmap->GetHeight());
   bool success = StartDIBitsSkia(std::move(bitmap), rect, alpha, color, matrix,
                                  options, blend_type);
+#if defined(PDF_USE_AGG)
   return {success ? Result::kSuccess : Result::kFailure, nullptr};
+#else
+  return StartResult(success ? Result::kSuccess : Result::kFailure);
+#endif
 }
 
 void CFX_DIBitmap::PreMultiply() {

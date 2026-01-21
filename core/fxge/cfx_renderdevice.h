@@ -133,8 +133,10 @@ class CFX_RenderDevice {
       const CFX_Matrix& matrix,
       const FXDIB_ResampleOptions& options,
       BlendMode blend_mode);
+#if defined(PDF_USE_AGG)
   bool ContinueDIBits(CFX_AggImageRenderer* handle,
                       PauseIndicatorIface* pPause);
+#endif
 
   bool DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
                       CFX_Font* font,

@@ -110,13 +110,16 @@ void XFA_DrawImage(CFGAS_GEGraphics* pGS,
   image_to_device.Concat(matrix);
 
   CXFA_ImageRenderer image_renderer(device, std::move(bitmap), image_to_device);
-  if (!image_renderer.Start()) {
-    return;
+  bool should_continue = image_renderer.Start();
+#if defined(PDF_USE_AGG)
+  if (should_continue) {
+    while (image_renderer.Continue()) {
+      continue;
+    }
   }
-
-  while (image_renderer.Continue()) {
-    continue;
-  }
+#else
+  CHECK(!should_continue);
+#endif
 }
 
 RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(

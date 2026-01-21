@@ -1282,9 +1282,14 @@ void CPDF_RenderStatus::ProcessPathPattern(
 bool CPDF_RenderStatus::ProcessImage(CPDF_ImageObject* pImageObj,
                                      const CFX_Matrix& mtObj2Device) {
   CPDF_ImageRenderer render(this);
-  if (render.Start(pImageObj, mtObj2Device, std_cs_)) {
+  bool should_continue = render.Start(pImageObj, mtObj2Device, std_cs_);
+#if defined(PDF_USE_AGG)
+  if (should_continue) {
     render.Continue(nullptr);
   }
+#else
+  CHECK(!should_continue);
+#endif
   return render.GetResult();
 }
 

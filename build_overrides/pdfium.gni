@@ -22,10 +22,16 @@ pdf_enable_xfa_override = false
 # Default: Use PartitionAlloc when building with Clang.
 pdf_use_partition_alloc_override = is_clang
 
+# Build PDFium to use AGG (deprecated) for all PDFium graphics.
+# If enabled, may coexists in build with Skia graphics.
+# When both are enabled, the default renderer is selectable at runtime.
+# The default is to use AGG.
+pdf_use_agg_override = true
+
 # Build PDFium to use Skia (experimental) for all PDFium graphics.
-# If enabled, coexists in build with AGG graphics and the default
-# renderer is selectable at runtime.
-# The default is to use AGG when `pdf_use_skia_override` is false.
+# If enabled, may coexists in build with AGG graphics.
+# When both are enabled, the default renderer is selectable at runtime.
+# The default is to not use Skia.
 pdf_use_skia_override = false
 
 # When building PDFium with Skia enabled, optionally define a custom font
