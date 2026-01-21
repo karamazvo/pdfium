@@ -41,7 +41,8 @@ class CJBig2_GRRDProc {
       const CJBig2_Image& GRREG,
       pdfium::span<const uint32_t, 5> lines,
       uint32_t w,
-      uint32_t h) const;
+      pdfium::span<const uint8_t> row_ref_grat,
+      pdfium::span<const uint8_t> row_grat) const;
   void DecodeTemplate0UnoptSetPixel(CJBig2_Image* GRREG,
                                     pdfium::span<uint32_t, 5> lines,
                                     uint32_t w,
@@ -63,6 +64,12 @@ class CJBig2_GRRDProc {
   std::unique_ptr<CJBig2_Image> DecodeTemplate1Opt(
       CJBig2_ArithDecoder* pArithDecoder,
       pdfium::span<JBig2ArithCtx> grContexts);
+
+  bool TypicalPrediction(int x,
+                         int val,
+                         pdfium::span<const uint8_t> row_ref_prev,
+                         pdfium::span<const uint8_t> row_ref_current,
+                         pdfium::span<const uint8_t> row_ref_next);
 };
 
 #endif  // CORE_FXCODEC_JBIG2_JBIG2_GRRDPROC_H_
