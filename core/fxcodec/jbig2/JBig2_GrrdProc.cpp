@@ -401,7 +401,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate1Unopt(
       pdfium::span<const uint8_t> row_ref_next = GRREFERENCE->GetLine(h + 1);
 
       for (uint32_t w = 0; w < GRW; w++) {
-        int bVal = GRREFERENCE->GetPixel(w, h);
+        int bVal = GRREFERENCE->GetPixel(w, row_ref_current);
         if (!TPGRON || !TypicalPrediction(w, bVal, row_ref_prev,
                                           row_ref_current, row_ref_next)) {
           uint32_t CONTEXT = lines[4];
