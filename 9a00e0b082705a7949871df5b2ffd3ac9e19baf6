@@ -39,6 +39,30 @@
       },
       "revId": "9a00e0b082705a7949871df5b2ffd3ac9e19baf6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e1bec658_a468a6aa",
+        "filename": "core/fpdfapi/page/cpdf_annotcontext.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-01-21T17:29:30Z",
+      "side": 1,
+      "message": "CFX_Matrix::GetInverse() currently just returns the identity matrix if there isn\u0027t an inverse: https://source.chromium.org/chromium/_/pdfium/pdfium/+/ab124d69bdf3683f830decc7d10b8dd98643fae9:core/fxcrt/fx_coordinates.cpp;l\u003d381-385;drc\u003dc440145ffc24384f7260c7c8315fbabcf7163746;bpv\u003d0;bpt\u003d0\n\nIf that\u0027s just an implementation detail, then I can just construct the identity matrix explicitly here if not invertible.",
+      "parentUuid": "fc5c3fe9_2991a23d",
+      "range": {
+        "startLine": 41,
+        "startChar": 49,
+        "endLine": 41,
+        "endChar": 59
+      },
+      "revId": "9a00e0b082705a7949871df5b2ffd3ac9e19baf6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
