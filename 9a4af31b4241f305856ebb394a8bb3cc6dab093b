@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "be62b015_f808c33a",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 404,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-01-21T18:51:58Z",
+      "side": 1,
+      "message": "The header comment for `simdutf::binary_to_base64` mentions:\n\n```\n...\n* @return number of written bytes, will be equal to\n* base64_length_from_binary(length, options)\n*/\nsize_t binary_to_base64(const char *input, size_t length, char *output,\n                        base64_options options \u003d base64_default) noexcept;\n```\n\nThis resize seems unnecessary, then? If it\u0027s to be defensive, it can be a CHECK instead?",
+      "range": {
+        "startLine": 404,
+        "startChar": 2,
+        "endLine": 404,
+        "endChar": 32
+      },
+      "revId": "9a4af31b4241f305856ebb394a8bb3cc6dab093b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
