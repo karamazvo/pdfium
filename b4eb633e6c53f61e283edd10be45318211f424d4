@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fae52137_33e58e7b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 22
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-21T17:01:52Z",
+      "side": 1,
+      "message": "Also, suggestion, lets try to keep track of the files that are fully completed (or create assigned, split sub issues), that would work well to make sure that work is not accidentally not double-done. Or perhaps having them in the same relation chain?",
+      "revId": "b4eb633e6c53f61e283edd10be45318211f424d4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3d7dbfef_cf25073d",
