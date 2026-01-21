@@ -159,13 +159,12 @@ TEST(fpdf, CApiTest) {
 
 class FPDFViewEmbedderTest : public EmbedderTest {
  protected:
-  void TestRenderPageBitmapWithMatrixToPng(
-      FPDF_PAGE page,
-      int bitmap_width,
-      int bitmap_height,
-      const FS_MATRIX& matrix,
-      const FS_RECTF& rect,
-      std::string_view expectation_png_name) {
+  void TestRenderPageBitmapWithMatrix(FPDF_PAGE page,
+                                      int bitmap_width,
+                                      int bitmap_height,
+                                      const FS_MATRIX& matrix,
+                                      const FS_RECTF& rect,
+                                      std::string_view expectation_png_name) {
     ScopedFPDFBitmap bitmap(FPDFBitmap_Create(bitmap_width, bitmap_height, 0));
     EXPECT_TRUE(FPDFBitmap_FillRect(bitmap.get(), 0, 0, bitmap_width,
                                     bitmap_height, 0xFFFFFFFF));
@@ -174,10 +173,9 @@ class FPDFViewEmbedderTest : public EmbedderTest {
                                             0);
   }
 
-  void TestRenderPageBitmapWithFlagsToPng(
-      FPDF_PAGE page,
-      int flags,
-      std::string_view expectation_png_name) {
+  void TestRenderPageBitmapWithFlags(FPDF_PAGE page,
+                                     int flags,
+                                     std::string_view expectation_png_name) {
     ScopedFPDFBitmap bitmap = TestRenderPageBitmapWithFlagsImpl(page, flags);
     ASSERT_TRUE(bitmap);
     CompareBitmapToPngWithExpectationSuffix(bitmap.get(), expectation_png_name,
@@ -219,8 +217,14 @@ class FPDFViewEmbedderTest : public EmbedderTest {
     int bitmap_stride = bytes_per_pixel * bitmap_width;
     return bitmap_stride;
   }
+<<<<<<< PATCH SET (38aa8223147ebe6db923f4da06549440e71bc9e7 Remove ToPng from all method names in fpdf_view_embeddertest)
+  void TestRenderPageBitmapWithExternalMemory(
+||||||| BASE      (0cff1b9bae928bc62f5461ce8e5ec9de4c078b6c Use images instead of checksums for cfwl_edit_embeddertest.c)
+  void TestRenderPageBitmapWithExternalMemoryToPng(
+=======
 
   void TestRenderPageBitmapWithExternalMemoryToPng(
+>>>>>>> BASE      (ce696ea1c7c11414871871e23cd50acccc943999 Use images instead of checksums for cfwl_edit_embeddertest.c)
       FPDF_PAGE page,
       int format,
       std::string_view expectation_png_name,
@@ -230,7 +234,7 @@ class FPDFViewEmbedderTest : public EmbedderTest {
         page, format, bitmap_stride, expectation_png_name, fuzzy);
   }
 
-  void TestRenderPageBitmapWithExternalMemoryAndNoStrideToPng(
+  void TestRenderPageBitmapWithExternalMemoryAndNoStride(
       FPDF_PAGE page,
       int format,
       std::string_view expectation_png_name,
@@ -240,7 +244,7 @@ class FPDFViewEmbedderTest : public EmbedderTest {
   }
 
 #if defined(PDF_USE_SKIA)
-  void TestRenderPageSkpToPng(FPDF_PAGE page, std::string_view png_name) {
+  void TestRenderPageSkp(FPDF_PAGE page, std::string_view png_name) {
     int width = static_cast<int>(FPDF_GetPageWidth(page));
     int height = static_cast<int>(FPDF_GetPageHeight(page));
 
@@ -1055,60 +1059,60 @@ TEST_F(FPDFViewEmbedderTest, FPDFRenderPageBitmapWithMatrix) {
   // Try rendering with an identity matrix. The output should be the same as
   // the RenderLoadedPage() output.
   FS_MATRIX identity_matrix{1, 0, 0, 1, 0, 0};
-  TestRenderPageBitmapWithMatrixToPng(page.get(), page_width, page_height,
-                                      identity_matrix, page_rect,
-                                      pdfium::kRectanglesPng);
+  TestRenderPageBitmapWithMatrix(page.get(), page_width, page_height,
+                                 identity_matrix, page_rect,
+                                 pdfium::kRectanglesPng);
 
   // Again render with an identity matrix but with a smaller clipping rect.
   FS_RECTF middle_of_page_rect{page_width / 4, page_height / 4,
                                page_width * 3 / 4, page_height * 3 / 4};
-  TestRenderPageBitmapWithMatrixToPng(page.get(), page_width, page_height,
-                                      identity_matrix, middle_of_page_rect,
-                                      kClippedRectanglesBasename);
+  TestRenderPageBitmapWithMatrix(page.get(), page_width, page_height,
+                                 identity_matrix, middle_of_page_rect,
+                                 kClippedRectanglesBasename);
 
   // Now render again with the image scaled smaller.
   FS_MATRIX half_scale_matrix{0.5, 0, 0, 0.5, 0, 0};
-  TestRenderPageBitmapWithMatrixToPng(page.get(), page_width, page_height,
-                                      half_scale_matrix, page_rect,
-                                      kRectanglesTopLeftBasename);
+  TestRenderPageBitmapWithMatrix(page.get(), page_width, page_height,
+                                 half_scale_matrix, page_rect,
+                                 kRectanglesTopLeftBasename);
 
   // Now render again with the image scaled larger horizontally (the right half
   // will be clipped).
   FS_MATRIX stretch_x_matrix{2, 0, 0, 1, 0, 0};
-  TestRenderPageBitmapWithMatrixToPng(page.get(), page_width, page_height,
-                                      stretch_x_matrix, page_rect,
-                                      kHoriStretchedBasename);
+  TestRenderPageBitmapWithMatrix(page.get(), page_width, page_height,
+                                 stretch_x_matrix, page_rect,
+                                 kHoriStretchedBasename);
 
   // Try a 90 degree rotation clockwise but with the same bitmap size, so part
   // will be clipped.
   FS_MATRIX rotate_90_matrix{0, 1, -1, 0, page_width, 0};
-  TestRenderPageBitmapWithMatrixToPng(page.get(), page_width, page_height,
-                                      rotate_90_matrix, page_rect,
-                                      kRotated90ClockwiseBasename);
+  TestRenderPageBitmapWithMatrix(page.get(), page_width, page_height,
+                                 rotate_90_matrix, page_rect,
+                                 kRotated90ClockwiseBasename);
 
   // 180 degree rotation clockwise.
   FS_MATRIX rotate_180_matrix{-1, 0, 0, -1, page_width, page_height};
-  TestRenderPageBitmapWithMatrixToPng(page.get(), page_width, page_height,
-                                      rotate_180_matrix, page_rect,
-                                      kRotated180ClockwiseBasename);
+  TestRenderPageBitmapWithMatrix(page.get(), page_width, page_height,
+                                 rotate_180_matrix, page_rect,
+                                 kRotated180ClockwiseBasename);
 
   // 270 degree rotation clockwise.
   FS_MATRIX rotate_270_matrix{0, -1, 1, 0, 0, page_width};
-  TestRenderPageBitmapWithMatrixToPng(page.get(), page_width, page_height,
-                                      rotate_270_matrix, page_rect,
-                                      kRotated270ClockwiseBasename);
+  TestRenderPageBitmapWithMatrix(page.get(), page_width, page_height,
+                                 rotate_270_matrix, page_rect,
+                                 kRotated270ClockwiseBasename);
 
   // Mirror horizontally.
   FS_MATRIX mirror_hori_matrix{-1, 0, 0, 1, page_width, 0};
-  TestRenderPageBitmapWithMatrixToPng(page.get(), page_width, page_height,
-                                      mirror_hori_matrix, page_rect,
-                                      kMirrorHoriBasename);
+  TestRenderPageBitmapWithMatrix(page.get(), page_width, page_height,
+                                 mirror_hori_matrix, page_rect,
+                                 kMirrorHoriBasename);
 
   // Mirror vertically.
   FS_MATRIX mirror_vert_matrix{1, 0, 0, -1, 0, page_height};
-  TestRenderPageBitmapWithMatrixToPng(page.get(), page_width, page_height,
-                                      mirror_vert_matrix, page_rect,
-                                      kMirrorVertBasename);
+  TestRenderPageBitmapWithMatrix(page.get(), page_width, page_height,
+                                 mirror_vert_matrix, page_rect,
+                                 kMirrorVertBasename);
 
   // Tests rendering to a larger bitmap
   const float bitmap_width = page_width * 2;
@@ -1116,29 +1120,29 @@ TEST_F(FPDFViewEmbedderTest, FPDFRenderPageBitmapWithMatrix) {
 
   // Render using an identity matrix and the whole bitmap area as clipping rect.
   FS_RECTF bitmap_rect{0, 0, bitmap_width, bitmap_height};
-  TestRenderPageBitmapWithMatrixToPng(page.get(), bitmap_width, bitmap_height,
-                                      identity_matrix, bitmap_rect,
-                                      kLargerTopLeftQuarterBasename);
+  TestRenderPageBitmapWithMatrix(page.get(), bitmap_width, bitmap_height,
+                                 identity_matrix, bitmap_rect,
+                                 kLargerTopLeftQuarterBasename);
 
   // Render using a scaling matrix to fill the larger bitmap.
   FS_MATRIX double_scale_matrix{2, 0, 0, 2, 0, 0};
-  TestRenderPageBitmapWithMatrixToPng(page.get(), bitmap_width, bitmap_height,
-                                      double_scale_matrix, bitmap_rect,
-                                      kLargerBasename);
+  TestRenderPageBitmapWithMatrix(page.get(), bitmap_width, bitmap_height,
+                                 double_scale_matrix, bitmap_rect,
+                                 kLargerBasename);
 
   // Render the larger image again but with clipping.
   FS_RECTF middle_of_bitmap_rect{bitmap_width / 4, bitmap_height / 4,
                                  bitmap_width * 3 / 4, bitmap_height * 3 / 4};
-  TestRenderPageBitmapWithMatrixToPng(
-      page.get(), bitmap_width, bitmap_height, double_scale_matrix,
-      middle_of_bitmap_rect, kLargerClippedBasename);
+  TestRenderPageBitmapWithMatrix(page.get(), bitmap_width, bitmap_height,
+                                 double_scale_matrix, middle_of_bitmap_rect,
+                                 kLargerClippedBasename);
 
   // On the larger bitmap, try a 90 degree rotation but with the same bitmap
   // size, so part will be clipped.
   FS_MATRIX rotate_90_scale_2_matrix{0, 2, -2, 0, bitmap_width, 0};
-  TestRenderPageBitmapWithMatrixToPng(page.get(), bitmap_width, bitmap_height,
-                                      rotate_90_scale_2_matrix, bitmap_rect,
-                                      kLargerRotatedBasename);
+  TestRenderPageBitmapWithMatrix(page.get(), bitmap_width, bitmap_height,
+                                 rotate_90_scale_2_matrix, bitmap_rect,
+                                 kLargerRotatedBasename);
 
   // On the larger bitmap, apply 90 degree rotation to a bitmap with the
   // appropriate dimensions.
@@ -1148,7 +1152,7 @@ TEST_F(FPDFViewEmbedderTest, FPDFRenderPageBitmapWithMatrix) {
                                  landscape_bitmap_height};
   FS_MATRIX landscape_rotate_90_scale_2_matrix{
       0, 2, -2, 0, landscape_bitmap_width, 0};
-  TestRenderPageBitmapWithMatrixToPng(
+  TestRenderPageBitmapWithMatrix(
       page.get(), landscape_bitmap_width, landscape_bitmap_height,
       landscape_rotate_90_scale_2_matrix, landscape_bitmap_rect,
       kLargerRotatedLandscapeBasename);
@@ -1162,10 +1166,10 @@ TEST_F(FPDFViewEmbedderTest, FPDFRenderPageBitmapWithMatrix) {
                                 diagonal_bitmap_size};
   FS_MATRIX rotate_45_scale_2_matrix{
       sqrt2, sqrt2, -sqrt2, sqrt2, bitmap_height / sqrt2, 0};
-  TestRenderPageBitmapWithMatrixToPng(
-      page.get(), diagonal_bitmap_size, diagonal_bitmap_size,
-      rotate_45_scale_2_matrix, diagonal_bitmap_rect,
-      kLargerRotatedDiagonalBasename);
+  TestRenderPageBitmapWithMatrix(page.get(), diagonal_bitmap_size,
+                                 diagonal_bitmap_size, rotate_45_scale_2_matrix,
+                                 diagonal_bitmap_rect,
+                                 kLargerRotatedDiagonalBasename);
 
   // Render the (2, 1) tile of the page (third column, second row) when the page
   // is divided in 50x50 pixel tiles. The tile is scaled by a factor of 7.
@@ -1181,9 +1185,9 @@ TEST_F(FPDFViewEmbedderTest, FPDFRenderPageBitmapWithMatrix) {
                             scale,
                             -tile_x * tile_bitmap_size,
                             -tile_y * tile_bitmap_size};
-  TestRenderPageBitmapWithMatrixToPng(page.get(), tile_bitmap_size,
-                                      tile_bitmap_size, tile_2_1_matrix,
-                                      tile_bitmap_rect, kTileBasename);
+  TestRenderPageBitmapWithMatrix(page.get(), tile_bitmap_size, tile_bitmap_size,
+                                 tile_2_1_matrix, tile_bitmap_rect,
+                                 kTileBasename);
 }
 
 TEST_F(FPDFViewEmbedderTest, FPDFGetPageSizeByIndexF) {
@@ -1471,9 +1475,9 @@ TEST_F(FPDFViewEmbedderTest, RenderBug664284WithNoNativeText) {
   ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  TestRenderPageBitmapWithFlagsToPng(page.get(), 0, kOriginalBasename);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_NO_NATIVETEXT,
-                                     kNoNativeTextFilename);
+  TestRenderPageBitmapWithFlags(page.get(), 0, kOriginalBasename);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_NO_NATIVETEXT,
+                                kNoNativeTextFilename);
 }
 
 TEST_F(FPDFViewEmbedderTest, RenderAnnotationWithPrintingFlag) {
@@ -1484,12 +1488,11 @@ TEST_F(FPDFViewEmbedderTest, RenderAnnotationWithPrintingFlag) {
   ASSERT_TRUE(page);
 
   // A yellow highlight is rendered with `FPDF_ANNOT` flag.
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_ANNOT,
-                                     kAnnotationBasename);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_ANNOT, kAnnotationBasename);
 
   // After adding `FPDF_PRINTING` flag, the yellow highlight is not rendered.
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_PRINTING | FPDF_ANNOT,
-                                     kPrintingFilename);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_PRINTING | FPDF_ANNOT,
+                                kPrintingFilename);
 }
 
 // TODO(crbug.com/pdfium/1955): Remove this test once pixel tests can pass with
@@ -1501,9 +1504,9 @@ TEST_F(FPDFViewEmbedderTest, RenderBlueAndRedImagesWithReverByteOrderFlag) {
   ScopedFPDFPage page(FPDF_LoadPage(document(), 0));
   ASSERT_TRUE(page);
 
-  TestRenderPageBitmapWithFlagsToPng(page.get(), 0, "bug_1396264");
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_REVERSE_BYTE_ORDER,
-                                     "bug_1396264_reverse_byte");
+  TestRenderPageBitmapWithFlags(page.get(), 0, "bug_1396264");
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_REVERSE_BYTE_ORDER,
+                                "bug_1396264_reverse_byte");
 }
 
 TEST_F(FPDFViewEmbedderTest, RenderJpxLzwImageWithFlags) {
@@ -1514,26 +1517,23 @@ TEST_F(FPDFViewEmbedderTest, RenderJpxLzwImageWithFlags) {
   ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  TestRenderPageBitmapWithFlagsToPng(page.get(), 0, kNormalFilename);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_ANNOT, kNormalFilename);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_LCD_TEXT,
-                                     kNormalFilename);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_NO_NATIVETEXT,
-                                     kNormalFilename);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_GRAYSCALE,
-                                     kGrayscaleFilename);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_RENDER_LIMITEDIMAGECACHE,
-                                     kNormalFilename);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_RENDER_FORCEHALFTONE,
-                                     kNormalFilename);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_PRINTING,
-                                     kNormalFilename);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_RENDER_NO_SMOOTHTEXT,
-                                     kNormalFilename);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_RENDER_NO_SMOOTHIMAGE,
-                                     kNormalFilename);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_RENDER_NO_SMOOTHPATH,
-                                     kNormalFilename);
+  TestRenderPageBitmapWithFlags(page.get(), 0, kNormalFilename);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_ANNOT, kNormalFilename);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_LCD_TEXT, kNormalFilename);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_NO_NATIVETEXT,
+                                kNormalFilename);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_GRAYSCALE, kGrayscaleFilename);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_RENDER_LIMITEDIMAGECACHE,
+                                kNormalFilename);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_RENDER_FORCEHALFTONE,
+                                kNormalFilename);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_PRINTING, kNormalFilename);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_RENDER_NO_SMOOTHTEXT,
+                                kNormalFilename);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_RENDER_NO_SMOOTHIMAGE,
+                                kNormalFilename);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_RENDER_NO_SMOOTHPATH,
+                                kNormalFilename);
 }
 
 TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithFlags) {
@@ -1544,27 +1544,26 @@ TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithFlags) {
   ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  TestRenderPageBitmapWithFlagsToPng(page.get(), 0, pdfium::kManyRectanglesPng);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_ANNOT,
-                                     pdfium::kManyRectanglesPng);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_LCD_TEXT,
-                                     pdfium::kManyRectanglesPng);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_NO_NATIVETEXT,
-                                     pdfium::kManyRectanglesPng);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_GRAYSCALE,
-                                     kGrayscaleFilename);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_RENDER_LIMITEDIMAGECACHE,
-                                     pdfium::kManyRectanglesPng);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_RENDER_FORCEHALFTONE,
-                                     pdfium::kManyRectanglesPng);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_PRINTING,
-                                     pdfium::kManyRectanglesPng);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_RENDER_NO_SMOOTHTEXT,
-                                     pdfium::kManyRectanglesPng);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_RENDER_NO_SMOOTHIMAGE,
-                                     pdfium::kManyRectanglesPng);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_RENDER_NO_SMOOTHPATH,
-                                     kNoSmoothpathFilename);
+  TestRenderPageBitmapWithFlags(page.get(), 0, pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_ANNOT,
+                                pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_LCD_TEXT,
+                                pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_NO_NATIVETEXT,
+                                pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_GRAYSCALE, kGrayscaleFilename);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_RENDER_LIMITEDIMAGECACHE,
+                                pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_RENDER_FORCEHALFTONE,
+                                pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_PRINTING,
+                                pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_RENDER_NO_SMOOTHTEXT,
+                                pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_RENDER_NO_SMOOTHIMAGE,
+                                pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_RENDER_NO_SMOOTHPATH,
+                                kNoSmoothpathFilename);
 }
 
 TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithAndWithoutExternalMemory) {
@@ -1578,10 +1577,10 @@ TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithAndWithoutExternalMemory) {
                                               kBGRBasename);
   TestRenderPageBitmapWithInternalMemoryAndStrideToPng(
       page.get(), FPDFBitmap_BGR, kBgrStride, kBGRBasename);
-  TestRenderPageBitmapWithExternalMemoryToPng(page.get(), FPDFBitmap_BGR,
-                                              kBGRBasename);
-  TestRenderPageBitmapWithExternalMemoryAndNoStrideToPng(
-      page.get(), FPDFBitmap_BGR, kBGRBasename);
+  TestRenderPageBitmapWithExternalMemory(page.get(), FPDFBitmap_BGR,
+                                         kBGRBasename);
+  TestRenderPageBitmapWithExternalMemoryAndNoStride(page.get(), FPDFBitmap_BGR,
+                                                    kBGRBasename);
 
   const char* kGrayBasename = "many_rectangles_grayscale_memory";
 
@@ -1589,30 +1588,44 @@ TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithAndWithoutExternalMemory) {
                                               kGrayBasename, /*fuzzy=*/true);
   static constexpr int kGrayStride = 200;  // Width of 200 * 8 bits per pixel.
   TestRenderPageBitmapWithInternalMemoryAndStrideToPng(
+<<<<<<< PATCH SET (ba0e9bb050f36b17907aa1bc8f4dda9e9f3c15c8 Remove ToPng from all method names in fpdf_view_embeddertest)
+      page.get(), FPDFBitmap_Gray, kGrayStride, kGrayBasename);
+  TestRenderPageBitmapWithExternalMemory(page.get(), FPDFBitmap_Gray,
+                                         kGrayBasename);
+  TestRenderPageBitmapWithExternalMemoryAndNoStride(page.get(), FPDFBitmap_Gray,
+                                                    kGrayBasename);
+||||||| BASE      (dc4923c042e07f2c177cc7d52dc6c9d6be396efe Use images instead of checksums for cfwl_edit_embeddertest.c)
+      page.get(), FPDFBitmap_Gray, kGrayStride, kGrayBasename);
+  TestRenderPageBitmapWithExternalMemoryToPng(page.get(), FPDFBitmap_Gray,
+                                              kGrayBasename);
+  TestRenderPageBitmapWithExternalMemoryAndNoStrideToPng(
+      page.get(), FPDFBitmap_Gray, kGrayBasename);
+=======
       page.get(), FPDFBitmap_Gray, kGrayStride, kGrayBasename, /*fuzzy=*/true);
   TestRenderPageBitmapWithExternalMemoryToPng(page.get(), FPDFBitmap_Gray,
                                               kGrayBasename, /*fuzzy=*/true);
   TestRenderPageBitmapWithExternalMemoryAndNoStrideToPng(
       page.get(), FPDFBitmap_Gray, kGrayBasename, /*fuzzy=*/true);
+>>>>>>> BASE      (0cff1b9bae928bc62f5461ce8e5ec9de4c078b6c Use images instead of checksums for cfwl_edit_embeddertest.c)
 
   static constexpr int kBgrxStride = 800;  // Width of 200 * 32 bits per pixel.
   TestRenderPageBitmapWithInternalMemoryToPng(page.get(), FPDFBitmap_BGRx,
                                               pdfium::kManyRectanglesPng);
   TestRenderPageBitmapWithInternalMemoryAndStrideToPng(
       page.get(), FPDFBitmap_BGRx, kBgrxStride, pdfium::kManyRectanglesPng);
-  TestRenderPageBitmapWithExternalMemoryToPng(page.get(), FPDFBitmap_BGRx,
-                                              pdfium::kManyRectanglesPng);
-  TestRenderPageBitmapWithExternalMemoryAndNoStrideToPng(
-      page.get(), FPDFBitmap_BGRx, pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithExternalMemory(page.get(), FPDFBitmap_BGRx,
+                                         pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithExternalMemoryAndNoStride(page.get(), FPDFBitmap_BGRx,
+                                                    pdfium::kManyRectanglesPng);
 
   TestRenderPageBitmapWithInternalMemoryToPng(page.get(), FPDFBitmap_BGRA,
                                               pdfium::kManyRectanglesPng);
   TestRenderPageBitmapWithInternalMemoryAndStrideToPng(
       page.get(), FPDFBitmap_BGRA, kBgrxStride, pdfium::kManyRectanglesPng);
-  TestRenderPageBitmapWithExternalMemoryToPng(page.get(), FPDFBitmap_BGRA,
-                                              pdfium::kManyRectanglesPng);
-  TestRenderPageBitmapWithExternalMemoryAndNoStrideToPng(
-      page.get(), FPDFBitmap_BGRA, pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithExternalMemory(page.get(), FPDFBitmap_BGRA,
+                                         pdfium::kManyRectanglesPng);
+  TestRenderPageBitmapWithExternalMemoryAndNoStride(page.get(), FPDFBitmap_BGRA,
+                                                    pdfium::kManyRectanglesPng);
 
 #if defined(PDF_USE_SKIA)
   if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
@@ -1621,9 +1634,9 @@ TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithAndWithoutExternalMemory) {
     TestRenderPageBitmapWithInternalMemoryAndStrideToPng(
         page.get(), FPDFBitmap_BGRA_Premul, kBgrxStride,
         pdfium::kManyRectanglesPng);
-    TestRenderPageBitmapWithExternalMemoryToPng(
-        page.get(), FPDFBitmap_BGRA_Premul, pdfium::kManyRectanglesPng);
-    TestRenderPageBitmapWithExternalMemoryAndNoStrideToPng(
+    TestRenderPageBitmapWithExternalMemory(page.get(), FPDFBitmap_BGRA_Premul,
+                                           pdfium::kManyRectanglesPng);
+    TestRenderPageBitmapWithExternalMemoryAndNoStride(
         page.get(), FPDFBitmap_BGRA_Premul, pdfium::kManyRectanglesPng);
   }
 #endif
@@ -1635,33 +1648,31 @@ TEST_F(FPDFViewEmbedderTest, RenderHelloWorldWithFlags) {
   ASSERT_TRUE(page);
 
   using pdfium::kHelloWorldPng;
-  TestRenderPageBitmapWithFlagsToPng(page.get(), 0, kHelloWorldPng);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_ANNOT, kHelloWorldPng);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_GRAYSCALE,
-                                     kHelloWorldPng);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_RENDER_LIMITEDIMAGECACHE,
-                                     kHelloWorldPng);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_RENDER_FORCEHALFTONE,
-                                     kHelloWorldPng);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_PRINTING, kHelloWorldPng);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_RENDER_NO_SMOOTHIMAGE,
-                                     kHelloWorldPng);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_RENDER_NO_SMOOTHPATH,
-                                     kHelloWorldPng);
+  TestRenderPageBitmapWithFlags(page.get(), 0, kHelloWorldPng);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_ANNOT, kHelloWorldPng);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_GRAYSCALE, kHelloWorldPng);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_RENDER_LIMITEDIMAGECACHE,
+                                kHelloWorldPng);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_RENDER_FORCEHALFTONE,
+                                kHelloWorldPng);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_PRINTING, kHelloWorldPng);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_RENDER_NO_SMOOTHIMAGE,
+                                kHelloWorldPng);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_RENDER_NO_SMOOTHPATH,
+                                kHelloWorldPng);
 
   constexpr char kLCDTextBasename[] = "hello_world_lcd";
   constexpr char kNoSmoothTextBasename[] = "hello_world_no_smoothtext";
 
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_LCD_TEXT,
-                                     kLCDTextBasename);
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_RENDER_NO_SMOOTHTEXT,
-                                     kNoSmoothTextBasename);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_LCD_TEXT, kLCDTextBasename);
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_RENDER_NO_SMOOTHTEXT,
+                                kNoSmoothTextBasename);
 
   // For text rendering, When anti-aliasing is disabled, LCD Optimization flag
   // will be ignored.
-  TestRenderPageBitmapWithFlagsToPng(page.get(),
-                                     FPDF_LCD_TEXT | FPDF_RENDER_NO_SMOOTHTEXT,
-                                     kNoSmoothTextBasename);
+  TestRenderPageBitmapWithFlags(page.get(),
+                                FPDF_LCD_TEXT | FPDF_RENDER_NO_SMOOTHTEXT,
+                                kNoSmoothTextBasename);
 }
 
 // Deliberately disabled because this test case renders a large bitmap, which is
@@ -1680,9 +1691,9 @@ TEST_F(FPDFViewEmbedderTest, LargeImageDoesNotRenderBlank) {
 
   static constexpr int kWidth = 40000;
   static constexpr int kHeight = 100;
-  TestRenderPageBitmapWithMatrixToPng(page.get(), kWidth, kHeight,
-                                      {1000, 0, 0, 1, 0, 0},
-                                      {0, 0, kWidth, kHeight}, kFilename);
+  TestRenderPageBitmapWithMatrix(page.get(), kWidth, kHeight,
+                                 {1000, 0, 0, 1, 0, 0}, {0, 0, kWidth, kHeight},
+                                 kFilename);
 }
 
 #if BUILDFLAG(IS_WIN)
@@ -1988,8 +1999,7 @@ TEST_F(FPDFViewEmbedderTest, RenderXfaPage) {
   ASSERT_TRUE(page);
 
   // Should always be blank, as we're not testing `FPDF_FFLDraw()` here.
-  TestRenderPageBitmapWithFlagsToPng(page.get(), 0,
-                                     pdfium::kBlankPage612By792Png);
+  TestRenderPageBitmapWithFlags(page.get(), 0, pdfium::kBlankPage612By792Png);
 }
 
 #if defined(PDF_USE_SKIA)
@@ -2003,7 +2013,7 @@ TEST_F(FPDFViewEmbedderTest, RenderPageToSkp) {
   ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  TestRenderPageSkpToPng(page.get(), pdfium::kRectanglesPng);
+  TestRenderPageSkp(page.get(), pdfium::kRectanglesPng);
 }
 
 TEST_F(FPDFViewEmbedderTest, RenderXfaPageToSkp) {
@@ -2017,7 +2027,7 @@ TEST_F(FPDFViewEmbedderTest, RenderXfaPageToSkp) {
   ASSERT_TRUE(page);
 
   // Should always be blank, as we're not testing `FPDF_FFLRecord()` here.
-  TestRenderPageSkpToPng(page.get(), pdfium::kBlankPage612By792Png);
+  TestRenderPageSkp(page.get(), pdfium::kBlankPage612By792Png);
 }
 
 TEST_F(FPDFViewEmbedderTest, Bug2087) {
@@ -2070,8 +2080,8 @@ TEST_F(FPDFViewEmbedderTest, NoSmoothTextItalicOverlappingGlyphs) {
   ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  TestRenderPageBitmapWithFlagsToPng(page.get(), FPDF_RENDER_NO_SMOOTHTEXT,
-                                     "bug_1919");
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_RENDER_NO_SMOOTHTEXT,
+                                "bug_1919");
 }
 
 TEST_F(FPDFViewEmbedderTest, RenderTransparencyOnWhiteBackground) {
