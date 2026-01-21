@@ -94,6 +94,30 @@
       },
       "revId": "b4eb633e6c53f61e283edd10be45318211f424d4",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "07f1d03d_52d38aa7",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 22
+      },
+      "lineNbr": 1316,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-21T10:12:23Z",
+      "side": 1,
+      "message": "Note: will need to wait for \nhttps://pdfium-review.googlesource.com/c/pdfium/+/141270 to land to add the images.",
+      "parentUuid": "555dbba3_b11c262f",
+      "range": {
+        "startLine": 1316,
+        "startChar": 5,
+        "endLine": 1316,
+        "endChar": 9
+      },
+      "revId": "b4eb633e6c53f61e283edd10be45318211f424d4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
