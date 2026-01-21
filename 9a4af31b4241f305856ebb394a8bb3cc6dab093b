@@ -22,6 +22,30 @@
       },
       "revId": "9a4af31b4241f305856ebb394a8bb3cc6dab093b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "903ac7fd_1c1762b7",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 404,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-21T19:50:25Z",
+      "side": 1,
+      "message": "Switched to CHECK_EQ().",
+      "parentUuid": "be62b015_f808c33a",
+      "range": {
+        "startLine": 404,
+        "startChar": 2,
+        "endLine": 404,
+        "endChar": 32
+      },
+      "revId": "9a4af31b4241f305856ebb394a8bb3cc6dab093b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
