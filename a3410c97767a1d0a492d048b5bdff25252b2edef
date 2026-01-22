@@ -34,6 +34,24 @@
       "parentUuid": "55cab898_f6cc6aea",
       "revId": "a3410c97767a1d0a492d048b5bdff25252b2edef",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7ca3b0bf_f8ea2b33",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-22T19:33:11Z",
+      "side": 1,
+      "message": "With the PNGs from that CL:\n\npdfium_diff --fuzzy testing/resources/embedder_tests/annotation_stamp_with_ap_modified_text_agg_mac.png testing/resources/embedder_tests/annotation_stamp_with_ap_modified_text_agg_mac_x86.png\ndiff: 0.00% passed\n\npdfium_diff --fuzzy testing/resources/embedder_tests/annotation_stamp_with_ap_new_image_skia_mac.png testing/resources/embedder_tests/annotation_stamp_with_ap_new_image_skia_mac_x86.png\ndiff: 0.00% passed\n\npdfium_diff --fuzzy testing/resources/embedder_tests/annotation_stamp_with_ap_new_text_agg_mac.png testing/resources/embedder_tests/annotation_stamp_with_ap_new_text_agg_mac_x86.png\ndiff: 0.00% passed",
+      "parentUuid": "059dc9ee_6667960c",
+      "revId": "a3410c97767a1d0a492d048b5bdff25252b2edef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
