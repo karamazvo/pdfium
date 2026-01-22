@@ -57,6 +57,30 @@
       ],
       "revId": "01a0149b8538633f79730ba8223919475d8f150b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9a5d4fd4_139e8d3e",
+        "filename": "core/fxcodec/jbig2/JBig2_GrrdProc.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 419,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-22T23:03:08Z",
+      "side": 1,
+      "message": "The AI-suggested comment correctly explains it. Is that sufficient or were you thinking it would be better to actually add the comment into the code?\n\nhttps://pdfium-review.googlesource.com/c/pdfium/+/141431/4/core/fxcodec/jbig2/JBig2_GrrdProc.cpp from earlier in the CL chain is the same pattern.",
+      "parentUuid": "c06a5422_e2c1433f",
+      "range": {
+        "startLine": 419,
+        "startChar": 31,
+        "endLine": 419,
+        "endChar": 36
+      },
+      "revId": "01a0149b8538633f79730ba8223919475d8f150b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
