@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "03470bbe_aea1ae52",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-22T02:13:36Z",
+      "side": 1,
+      "message": "I meant to indent.",
+      "parentUuid": "9fa87255_9c3c66e6",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 2
+      },
+      "revId": "073bd3b79d7668c6429b79ea04176c6f35bbb704",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "80796ece_0ed6cfd4",
@@ -61,6 +85,30 @@
           ]
         }
       ],
+      "revId": "073bd3b79d7668c6429b79ea04176c6f35bbb704",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9ee2dd63_ca7bf642",
+        "filename": "core/fxcodec/jbig2/JBig2_GrrdProc.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-22T02:13:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "80796ece_0ed6cfd4",
+      "range": {
+        "startLine": 196,
+        "startChar": 31,
+        "endLine": 196,
+        "endChar": 32
+      },
       "revId": "073bd3b79d7668c6429b79ea04176c6f35bbb704",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
