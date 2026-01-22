@@ -64,6 +64,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ccef826b_6b75450e",
+        "filename": "core/fxcodec/jbig2/JBig2_GrrdProc.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 565,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-22T18:48:45Z",
+      "side": 1,
+      "message": "We can always move it later if inlining makes a difference.",
+      "parentUuid": "a98c78dd_bb70bebd",
+      "revId": "2c73521839570bb61f818d658c122c6e43791f10",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "23d0a3d4_2b2416d8",
