@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cf3a3cf6_4618f49f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-22T05:46:04Z",
+      "side": 1,
+      "message": "Oh right, github desktop causes this, mb.",
+      "parentUuid": "ed1714df_2c490911",
+      "revId": "7ffdf1937afb6deb19f807639ad546124dbd06b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f0313193_55d16d8d",
@@ -35,6 +53,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8e8cd41f_50893e65",
+        "filename": "xfa/fwl/cfwl_edit_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-22T05:46:04Z",
+      "side": 1,
+      "message": "Oh right, forgot to do that. Done.",
+      "parentUuid": "f0313193_55d16d8d",
+      "revId": "7ffdf1937afb6deb19f807639ad546124dbd06b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2ee249fe_fb325b78",
@@ -48,6 +84,24 @@
       "writtenOn": "2026-01-22T04:54:18Z",
       "side": 1,
       "message": "Did you want to wait for https://pdfium-review.googlesource.com/141270 ?",
+      "revId": "7ffdf1937afb6deb19f807639ad546124dbd06b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ade1dd3f_e929c505",
+        "filename": "xfa/fwl/cfwl_edit_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-22T05:46:04Z",
+      "side": 1,
+      "message": "Yes, that is why I am leaving this as is, and then I can remove the if block after this.",
+      "parentUuid": "2ee249fe_fb325b78",
       "revId": "7ffdf1937afb6deb19f807639ad546124dbd06b7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
