@@ -16,6 +16,24 @@
       "message": "This CL is fine, but are the differences minor enough that CompareBGRxBitmapToPng() can tolerate it being off by 1 for any particular color channel? See PercentageDifferent() in testing/image_diff/image_diff.cpp.",
       "revId": "a3410c97767a1d0a492d048b5bdff25252b2edef",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "059dc9ee_6667960c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-01-22T19:06:09Z",
+      "side": 1,
+      "message": "In https://pdfium-review.googlesource.com/c/pdfium/+/141192, I\u0027m seeing differences of .67%, .03%, and .12%. Pixels different were 3357, 136, and 557. The latter two seem ok, but a difference of .67% seems quite high.",
+      "parentUuid": "55cab898_f6cc6aea",
+      "revId": "a3410c97767a1d0a492d048b5bdff25252b2edef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
