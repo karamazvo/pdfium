@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ed1714df_2c490911",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-22T04:54:18Z",
+      "side": 1,
+      "message": "Wrap at 72 columns.",
+      "revId": "7ffdf1937afb6deb19f807639ad546124dbd06b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f0313193_55d16d8d",
+        "filename": "xfa/fwl/cfwl_edit_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-22T04:54:18Z",
+      "side": 1,
+      "message": "How about just reverting the changes in this test case for now?",
+      "revId": "7ffdf1937afb6deb19f807639ad546124dbd06b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2ee249fe_fb325b78",
+        "filename": "xfa/fwl/cfwl_edit_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-22T04:54:18Z",
+      "side": 1,
+      "message": "Did you want to wait for https://pdfium-review.googlesource.com/141270 ?",
+      "revId": "7ffdf1937afb6deb19f807639ad546124dbd06b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
