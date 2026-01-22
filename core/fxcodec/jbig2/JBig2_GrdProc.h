@@ -85,6 +85,7 @@ class CJBig2_GRDProc {
       ProgressiveArithDecodeState* pState);
 
   void AdvanceLine(CJBig2_Image* image);
+  void CopyLine(CJBig2_Image* image);
 
   std::unique_ptr<CJBig2_Image> DecodeArithOpt3(
       CJBig2_ArithDecoder* pArithDecoder,
