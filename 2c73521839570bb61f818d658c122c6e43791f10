@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8f08cb5f_7423b7f5",
+        "filename": "core/fxcodec/jbig2/JBig2_GrrdProc.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 565,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-22T00:04:44Z",
+      "side": 1,
+      "message": "Nit: I want to be sure these get inlined, no? Does that mean they have to move to the header?",
+      "fixSuggestions": [
+        {
+          "fixId": "f692ccc2_c7440a87",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrrdProc.cpp",
+              "range": {
+                "startLine": 565,
+                "startChar": 0,
+                "endLine": 566,
+                "endChar": 0
+              },
+              "replacement": "inline std::array\u003cpdfium::span\u003cconst uint8_t\u003e, 3\u003e CJBig2_GRRDProc::GetRowRefs(\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrrdProc.cpp",
+              "range": {
+                "startLine": 574,
+                "startChar": 0,
+                "endLine": 575,
+                "endChar": 0
+              },
+              "replacement": "inline std::array\u003cpdfium::span\u003cconst uint8_t\u003e, 3\u003e CJBig2_GRRDProc::GetRowRefsDy(\n"
+            }
+          ]
+        }
+      ],
+      "revId": "2c73521839570bb61f818d658c122c6e43791f10",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "23d0a3d4_2b2416d8",
+        "filename": "core/fxcodec/jbig2/JBig2_GrrdProc.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-22T00:04:44Z",
+      "side": 1,
+      "message": "Nit: I believe these are all const methods.",
+      "range": {
+        "startLine": 68,
+        "startChar": 2,
+        "endLine": 73,
+        "endChar": 2
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "ef5a28ee_daf20346",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrrdProc.h",
+              "range": {
+                "startLine": 68,
+                "startChar": 0,
+                "endLine": 73,
+                "endChar": 0
+              },
+              "replacement": "  std::array\u003cpdfium::span\u003cconst uint8_t\u003e, 3\u003e GetRowRefs(uint32_t h) const;\n  std::array\u003cpdfium::span\u003cconst uint8_t\u003e, 3\u003e GetRowRefsDy(uint32_t h) const;\n  bool TypicalPrediction(\n      int x,\n      int val,\n      pdfium::span\u003cpdfium::span\u003cconst uint8_t\u003e, 3\u003e row_refs) const;\n"
+            }
+          ]
+        }
+      ],
+      "revId": "2c73521839570bb61f818d658c122c6e43791f10",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
