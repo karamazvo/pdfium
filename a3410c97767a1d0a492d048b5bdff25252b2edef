@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "55cab898_f6cc6aea",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-22T00:35:30Z",
+      "side": 1,
+      "message": "This CL is fine, but are the differences minor enough that CompareBGRxBitmapToPng() can tolerate it being off by 1 for any particular color channel? See PercentageDifferent() in testing/image_diff/image_diff.cpp.",
+      "revId": "a3410c97767a1d0a492d048b5bdff25252b2edef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
