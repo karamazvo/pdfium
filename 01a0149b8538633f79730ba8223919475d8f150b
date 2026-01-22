@@ -1,0 +1,62 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "541a6831_347868f4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-22T20:30:13Z",
+      "side": 1,
+      "message": "LG w/ question.",
+      "revId": "01a0149b8538633f79730ba8223919475d8f150b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c06a5422_e2c1433f",
+        "filename": "core/fxcodec/jbig2/JBig2_GrrdProc.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 419,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-22T20:30:13Z",
+      "side": 1,
+      "message": "we know this is not empty how?  Otherwise front() will hit a check.",
+      "range": {
+        "startLine": 419,
+        "startChar": 31,
+        "endLine": 419,
+        "endChar": 36
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "f8102921_130aa665",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrrdProc.cpp",
+              "range": {
+                "startLine": 193,
+                "startChar": 0,
+                "endLine": 193,
+                "endChar": 0
+              },
+              "replacement": "      // We know this is not empty because reference_h is in [1, GRHR], so\n      // reference_h - 1 is in [0, GRHR - 1]. Since GRREFERENCE has data,\n      // GetLine() for a valid index returns a non-empty span.\n"
+            }
+          ]
+        }
+      ],
+      "revId": "01a0149b8538633f79730ba8223919475d8f150b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
