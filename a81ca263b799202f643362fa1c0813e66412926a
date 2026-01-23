@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d06c6078_2c0e2691",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 358,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-23T19:09:26Z",
+      "side": 1,
+      "message": "No need to call MaxPixelPerChannelDelta() if `max_pixel_per_channel_delta` is 0.",
+      "revId": "a81ca263b799202f643362fa1c0813e66412926a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2a563181_bb942c5b",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 1103,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-23T19:09:26Z",
+      "side": 1,
+      "message": "For pixel/corpus tests, they don\u0027t use --fuzzy by default, and only enables it selectively for certain tests. Here, this is making this the default for a given platform. Should the behavior align?",
+      "revId": "a81ca263b799202f643362fa1c0813e66412926a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
