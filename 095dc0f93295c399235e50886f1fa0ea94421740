@@ -1,0 +1,196 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d30159e2_40b4a898",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-23T19:05:44Z",
+      "side": 1,
+      "message": "nits.  Important nits, tho.",
+      "revId": "095dc0f93295c399235e50886f1fa0ea94421740",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e56a95e4_3d1e94a0",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 575,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-23T19:05:44Z",
+      "side": 1,
+      "message": "nit: can we use designated initializers for these params?",
+      "range": {
+        "startLine": 575,
+        "startChar": 6,
+        "endLine": 575,
+        "endChar": 60
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "12d5b22a_ef0b19c9",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 575,
+                "startChar": 0,
+                "endLine": 576,
+                "endChar": 0
+              },
+              "replacement": "      .tp_ctx \u003d 0x9b25,\n      .context_mask \u003d 0x7bf7,\n      .val1_shift \u003d 0,\n      .val1_context_mask \u003d 0x07f0,\n      .val1_bit_mask \u003d 0x0010,\n      .val2_shift \u003d 6,\n      .val2_context_mask \u003d 0xf800,\n      .val2_bit_mask \u003d 0x0800};\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 678,
+                "startChar": 0,
+                "endLine": 679,
+                "endChar": 0
+              },
+              "replacement": "      .tp_ctx \u003d 0x0795,\n      .context_mask \u003d 0x0efb,\n      .val1_shift \u003d 1,\n      .val1_context_mask \u003d 0x01f8,\n      .val1_bit_mask \u003d 0x0008,\n      .val2_shift \u003d 4,\n      .val2_context_mask \u003d 0x1e00,\n      .val2_bit_mask \u003d 0x0200};\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 771,
+                "startChar": 0,
+                "endLine": 773,
+                "endChar": 0
+              },
+              "replacement": "  static const TemplateOpt3Params kParams \u003d {\n      .tp_ctx \u003d 0x00e5,\n      .context_mask \u003d 0x01bd,\n      .val1_shift \u003d 3,\n      .val1_context_mask \u003d 0x007c,\n      .val1_bit_mask \u003d 0x0004,\n      .val2_shift \u003d 1,\n      .val2_context_mask \u003d 0x0380,\n      .val2_bit_mask \u003d 0x0080};\n"
+            }
+          ]
+        }
+      ],
+      "revId": "095dc0f93295c399235e50886f1fa0ea94421740",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7e209d09_ab747ecb",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 808,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-23T19:05:44Z",
+      "side": 1,
+      "message": "nit: early return and lose the else.",
+      "range": {
+        "startLine": 808,
+        "startChar": 0,
+        "endLine": 808,
+        "endChar": 10
+      },
+      "revId": "095dc0f93295c399235e50886f1fa0ea94421740",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b8d206a1_9f7958a4",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 847,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-23T19:05:44Z",
+      "side": 1,
+      "message": "having applied previous early return, early return here should be possible?",
+      "range": {
+        "startLine": 847,
+        "startChar": 0,
+        "endLine": 847,
+        "endChar": 12
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "f9d6ad34_54a3f6d7",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 847,
+                "startChar": 0,
+                "endLine": 864,
+                "endChar": 0
+              },
+              "replacement": "      return true;\n    }\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 865,
+                "startChar": 0,
+                "endLine": 878,
+                "endChar": 0
+              },
+              "replacement": "    pdfium::span\u003cconst uint8_t\u003e line_prev2 \u003d line_prev2_;\n    pdfium::span\u003cconst uint8_t\u003e line_prev1 \u003d line_prev1_;\n    uint32_t val_prev2 \u003d line_prev2.take_first_elem() \u003c\u003c params.val2_shift;\n    uint32_t val_prev1 \u003d line_prev1.take_first_elem();\n    uint32_t CONTEXT \u003d\n        (val_prev2 \u0026 params.val2_context_mask) |\n        ((val_prev1 \u003e\u003e params.val1_shift) \u0026 params.val1_context_mask);\n    for (int32_t cc \u003d 0; cc \u003c nLineBytes; cc++) {\n      val_prev2 \u003d (val_prev2 \u003c\u003c 8) |\n                  (line_prev2.take_first_elem() \u003c\u003c params.val2_shift);\n      val_prev1 \u003d (val_prev1 \u003c\u003c 8) | line_prev1.take_first_elem();\n      uint8_t cVal \u003d 0;\n      for (int32_t k \u003d 7; k \u003e\u003d 0; k--) {\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 883,
+                "startChar": 0,
+                "endLine": 884,
+                "endChar": 0
+              },
+              "replacement": "        cVal |\u003d bVal \u003c\u003c k;\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 886,
+                "startChar": 0,
+                "endLine": 888,
+                "endChar": 0
+              },
+              "replacement": "            ((val_prev2 \u003e\u003e k) \u0026 params.val2_bit_mask) |\n            ((val_prev1 \u003e\u003e (k + params.val1_shift)) \u0026 params.val1_bit_mask);\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 889,
+                "startChar": 0,
+                "endLine": 890,
+                "endChar": 0
+              },
+              "replacement": "      line_[cc] \u003d cVal;\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 891,
+                "startChar": 0,
+                "endLine": 891,
+                "endChar": 0
+              },
+              "replacement": "    val_prev2 \u003c\u003c\u003d 8;\n    val_prev1 \u003c\u003c\u003d 8;\n    uint8_t cVal1 \u003d 0;\n    for (int32_t k \u003d 0; k \u003c nBitsLeft; k++) {\n      if (state-\u003epArithDecoder-\u003eIsComplete()) {\n        return false;\n      }\n\n      int bVal \u003d state-\u003epArithDecoder-\u003eDecode(\u0026state-\u003egbContexts[CONTEXT]);\n      cVal1 |\u003d bVal \u003c\u003c (7 - k);\n      CONTEXT \u003d\n          ((CONTEXT \u0026 params.context_mask) \u003c\u003c 1) | bVal |\n          ((val_prev2 \u003e\u003e (7 - k)) \u0026 params.val2_bit_mask) |\n          ((val_prev1 \u003e\u003e (7 - k + params.val1_shift)) \u0026 params.val1_bit_mask);\n    }\n    line_[nLineBytes] \u003d cVal1;\n"
+            }
+          ]
+        }
+      ],
+      "revId": "095dc0f93295c399235e50886f1fa0ea94421740",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
