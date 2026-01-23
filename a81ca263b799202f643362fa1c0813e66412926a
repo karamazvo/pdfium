@@ -69,6 +69,24 @@
       "parentUuid": "2a563181_bb942c5b",
       "revId": "a81ca263b799202f643362fa1c0813e66412926a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4540a1ed_049b4dd5",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 1103,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-23T20:59:04Z",
+      "side": 1,
+      "message": "Add CompareBitmapToPngWithFuzzyExpectationSuffix()? Otherwise multiple tests may need their own GetPlatformMaxPixelDelta().",
+      "parentUuid": "d390649e_94e4b080",
+      "revId": "a81ca263b799202f643362fa1c0813e66412926a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
