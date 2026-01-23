@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d54b6b6e_f23c4b59",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 358,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-01-23T19:54:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d06c6078_2c0e2691",
+      "revId": "a81ca263b799202f643362fa1c0813e66412926a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2a563181_bb942c5b",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-01-23T19:09:26Z",
       "side": 1,
       "message": "For pixel/corpus tests, they don\u0027t use --fuzzy by default, and only enables it selectively for certain tests. Here, this is making this the default for a given platform. Should the behavior align?",
+      "revId": "a81ca263b799202f643362fa1c0813e66412926a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d390649e_94e4b080",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 1103,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-01-23T19:54:19Z",
+      "side": 1,
+      "message": "Sounds reasonable, is the latest patchset (7) and https://pdfium-review.googlesource.com/c/pdfium/+/141192/12..13 the approach you were thinking?",
+      "parentUuid": "2a563181_bb942c5b",
       "revId": "a81ca263b799202f643362fa1c0813e66412926a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
