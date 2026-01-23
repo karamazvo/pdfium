@@ -87,6 +87,24 @@
       "parentUuid": "d390649e_94e4b080",
       "revId": "a81ca263b799202f643362fa1c0813e66412926a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cf9c05ed_79a7c3a5",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 1103,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-01-23T23:43:51Z",
+      "side": 1,
+      "message": "Done, I think? Were you looking for this to be a shorthand for `CompareBitmapToPngWithExpectationSuffix()` with common fuzzy expectation matching? And keep the `max_pixel_per_channel_delta` parameter in `CompareBitmapToPngWithExpectationSuffix()`?",
+      "parentUuid": "4540a1ed_049b4dd5",
+      "revId": "a81ca263b799202f643362fa1c0813e66412926a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
