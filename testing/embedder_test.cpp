@@ -35,6 +35,7 @@
 #include "testing/utils/file_util.h"
 #include "testing/utils/hash.h"
 #include "testing/utils/path_service.h"
+#include "testing/utils/pixel_diff_util.h"
 #include "testing/utils/png_encode.h"
 #include "third_party/simdutf/simdutf.h"
 
@@ -335,7 +336,8 @@ DecodedPng DecodePngData(pdfium::span<const uint8_t> png_data) {
 
 int CompareBGRxBitmapToPng(pdfium::span<const uint8_t> bitmap_span,
                            size_t bitmap_stride,
-                           const DecodedPng& decoded_png) {
+                           const DecodedPng& decoded_png,
+                           int max_pixel_per_channel_delta = 0) {
   const size_t unsigned_width = static_cast<size_t>(decoded_png.width);
   auto decoded_png_span32 = fxcrt::reinterpret_span<const uint32_t>(
       pdfium::span(decoded_png.pixel_data));
@@ -347,7 +349,15 @@ int CompareBGRxBitmapToPng(pdfium::span<const uint8_t> bitmap_span,
         bitmap_span.first(bitmap_stride));
     bitmap_span = bitmap_span.subspan(bitmap_stride);
     for (int w = 0; w < decoded_png.width; ++w) {
-      if (decoded_png_row[w] != bitmap_row[w]) {
+      uint32_t png_pixel = decoded_png_row[w];
+      uint32_t bitmap_pixel = bitmap_row[w];
+      if (png_pixel == bitmap_pixel) {
+        continue;
+      }
+
+      if (max_pixel_per_channel_delta == 0 ||
+          MaxPixelPerChannelDelta(png_pixel, bitmap_pixel) >
+              max_pixel_per_channel_delta) {
         ++pixels_different;
       }
     }
@@ -410,7 +420,8 @@ std::string EncodeBase64Png(FPDF_BITMAP bitmap) {
 }
 
 void CompareBitmapToPngData(FPDF_BITMAP bitmap,
-                            pdfium::span<const uint8_t> png_data) {
+                            pdfium::span<const uint8_t> png_data,
+                            int max_pixel_per_channel_delta = 0) {
   DecodedPng decoded_png = DecodePngData(png_data);
   ASSERT_GT(decoded_png.width, 0);
   ASSERT_GT(decoded_png.height, 0);
@@ -433,8 +444,8 @@ void CompareBitmapToPngData(FPDF_BITMAP bitmap,
   switch (FPDFBitmap_GetFormat(bitmap)) {
     case FPDFBitmap_BGRx:
     case FPDFBitmap_BGRA: {
-      pixels_different =
-          CompareBGRxBitmapToPng(bitmap_span, stride, decoded_png);
+      pixels_different = CompareBGRxBitmapToPng(
+          bitmap_span, stride, decoded_png, max_pixel_per_channel_delta);
       break;
     }
 #ifdef PDF_USE_SKIA
@@ -1078,7 +1089,8 @@ void EmbedderTest::CompareBitmapToPng(FPDF_BITMAP bitmap,
 // static
 void EmbedderTest::CompareBitmapToPngWithExpectationSuffix(
     FPDF_BITMAP bitmap,
-    std::string_view expectation_png_name) {
+    std::string_view expectation_png_name,
+    int max_pixel_per_channel_delta) {
   std::vector<std::string> candidate_png_path =
       GetEmbedderTestExpectationsWithSuffixPath(expectation_png_name);
   for (const std::string& png_path : candidate_png_path) {
@@ -1089,7 +1101,8 @@ void EmbedderTest::CompareBitmapToPngWithExpectationSuffix(
     SCOPED_TRACE(testing::Message()
                  << "CompareBitmapToPngWithExpectationSuffix() with "
                  << png_path);
-    CompareBitmapToPngData(bitmap, GetFileContents(png_path.c_str()));
+    CompareBitmapToPngData(bitmap, GetFileContents(png_path.c_str()),
+                           max_pixel_per_channel_delta);
     if (EmbedderTestEnvironment::GetInstance()->write_pngs()) {
       WriteBitmapToPng(bitmap, png_path);
     }

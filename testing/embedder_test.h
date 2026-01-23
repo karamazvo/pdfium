@@ -323,9 +323,13 @@ class EmbedderTest : public ::testing::Test,
   // - hello_world.png
   //
   // This is similar to the behavior in testing/tools/pngdiffer.py.
+  //
+  // `max_pixel_per_channel_delta` can optionally be set to tolerate minor pixel
+  // discrepancies.
   static void CompareBitmapToPngWithExpectationSuffix(
       FPDF_BITMAP bitmap,
-      std::string_view expectation_png_name);
+      std::string_view expectation_png_name,
+      int max_pixel_per_channel_delta = 0);
 
   // Check `bitmap` to make sure it has the right dimensions and content.
   // TODO(crbug.com/468228360): Switch to the CompareBitmap() overload above.
