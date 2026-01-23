@@ -79,6 +79,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a08b6ae7_26256e23",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 575,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-23T19:17:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e56a95e4_3d1e94a0",
+      "range": {
+        "startLine": 575,
+        "startChar": 6,
+        "endLine": 575,
+        "endChar": 60
+      },
+      "revId": "095dc0f93295c399235e50886f1fa0ea94421740",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7e209d09_ab747ecb",
@@ -92,6 +116,30 @@
       "writtenOn": "2026-01-23T19:05:44Z",
       "side": 1,
       "message": "nit: early return and lose the else.",
+      "range": {
+        "startLine": 808,
+        "startChar": 0,
+        "endLine": 808,
+        "endChar": 10
+      },
+      "revId": "095dc0f93295c399235e50886f1fa0ea94421740",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dc5c9d8e_e835aa6b",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 808,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-23T19:17:59Z",
+      "side": 1,
+      "message": "Right. We can do this now.",
+      "parentUuid": "7e209d09_ab747ecb",
       "range": {
         "startLine": 808,
         "startChar": 0,
@@ -189,6 +237,30 @@
           ]
         }
       ],
+      "revId": "095dc0f93295c399235e50886f1fa0ea94421740",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "127ce2a7_3409b539",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 847,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-23T19:17:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b8d206a1_9f7958a4",
+      "range": {
+        "startLine": 847,
+        "startChar": 0,
+        "endLine": 847,
+        "endChar": 12
+      },
       "revId": "095dc0f93295c399235e50886f1fa0ea94421740",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
