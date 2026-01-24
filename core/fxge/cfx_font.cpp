@@ -230,6 +230,23 @@ bool CFX_Font::LoadEmbedded(pdfium::span<const uint8_t> src_span,
   return !!face_;
 }
 
+void CFX_Font::Reset() {
+#if BUILDFLAG(IS_APPLE)
+  if (platform_font_) {
+    ReleasePlatformResource();
+    platform_font_ = nullptr;
+  }
+#endif
+  vertical_ = false;
+  object_tag_ = 0;
+  font_type_ = FontType::kUnknown;
+  font_data_ = {};
+  font_data_allocation_.clear();
+  subst_font_.reset();
+  ClearGlyphCache();
+  face_.Reset();
+}
+
 bool CFX_Font::IsTTFont() const {
   return face_ && face_->IsTtOt();
 }

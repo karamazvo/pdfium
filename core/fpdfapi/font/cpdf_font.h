@@ -136,6 +136,8 @@ class CPDF_Font : public Retainable, public Observable {
   const ByteString& GetResourceName() const { return resource_name_; }
   void SetResourceName(const ByteString& name) { resource_name_ = name; }
 
+  bool SetFontFile(pdfium::span<const uint8_t> data);
+
  protected:
   CPDF_Font(CPDF_Document* document, RetainPtr<CPDF_Dictionary> font_dict);
   ~CPDF_Font() override;

@@ -1635,6 +1635,12 @@ FPDF_EXPORT FPDF_GLYPHPATH FPDF_CALLCONV FPDFFont_GetGlyphPath(FPDF_FONT font,
                                                                float font_size);
 
 // Experimental API.
+//
+FPDF_EXPORT bool FPDF_CALLCONV FPDFFont_SetFontData(FPDF_FONT font,
+                                                    const uint8_t* buffer,
+                                                    size_t size);
+
+// Experimental API.
 // Get number of segments inside glyphpath.
 //
 // glyphpath - handle to a glyph path.

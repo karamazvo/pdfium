@@ -1078,6 +1078,19 @@ FPDFFont_GetGlyphPath(FPDF_FONT font, uint32_t glyph, float font_size) {
   return FPDFGlyphPathFromCFXPath(pPath);
 }
 
+FPDF_EXPORT bool FPDF_CALLCONV FPDFFont_SetFontData(FPDF_FONT font,
+                                                    const uint8_t* buffer,
+                                                    size_t size) {
+  CPDF_Font* cpdf_font = CPDFFontFromFPDFFont(font);
+  if (!cpdf_font || !buffer || size == 0) {
+    return false;
+  }
+
+  // SAFETY: required from caller.
+  auto span = UNSAFE_BUFFERS(pdfium::span(buffer, size));
+  return cpdf_font->SetFontFile(span);
+}
+
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFGlyphPath_CountGlyphSegments(FPDF_GLYPHPATH glyphpath) {
   auto* pPath = CFXPathFromFPDFGlyphPath(glyphpath);

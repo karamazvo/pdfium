@@ -25,6 +25,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/check.h"
@@ -479,4 +480,61 @@ std::optional<int> CPDF_Font::GetFontWeight() const {
     return std::nullopt;
   }
   return safe_stem_v.ValueOrDie();
+}
+
+bool CPDF_Font::SetFontFile(pdfium::span<const uint8_t> data) {
+  RetainPtr<CPDF_Dictionary> font_dict = GetMutableFontDict();
+  if (!font_dict) {
+    return false;
+  }
+
+  RetainPtr<CPDF_Dictionary> font_desc;
+  if (IsCIDFont()) {
+    RetainPtr<CPDF_Array> descendants =
+        font_dict->GetMutableArrayFor("DescendantFonts");
+    if (!descendants || descendants->IsEmpty()) {
+      return false;
+    }
+    RetainPtr<CPDF_Dictionary> cid_font = descendants->GetMutableDictAt(0);
+    if (!cid_font) {
+      return false;
+    }
+    font_desc = cid_font->GetMutableDictFor("FontDescriptor");
+  } else {
+    font_desc = font_dict->GetMutableDictFor("FontDescriptor");
+  }
+  if (!font_desc) {
+    return false;
+  }
+
+  // TrueType.
+  RetainPtr<CPDF_Stream> font_file =
+      font_desc->GetMutableStreamFor("FontFile2");
+  if (!font_file) {
+    // Type 1.
+    font_file = font_desc->GetMutableStreamFor("FontFile");
+  }
+  if (!font_file) {
+    // CFF / OpenType.
+    font_file = font_desc->GetMutableStreamFor("FontFile3");
+  }
+  if (!font_file) {
+    return false;
+  }
+
+  // Clear out any existing references before replacing the data.
+  font_.Reset();
+  if (font_file_) {
+    document_->MaybePurgeFontFileStreamAcc(std::move(font_file_));
+    font_file_ = nullptr;
+  }
+
+  font_file->SetData(data);
+
+  // Required for Type1 and TrueType fonts.
+  if (font_desc->KeyExist("FontFile2") || font_desc->KeyExist("FontFile")) {
+    font_file->GetMutableDict()->SetNewFor<CPDF_Number>(
+        "Length1", static_cast<int>(data.size()));
+  }
+  return Load();
 }
