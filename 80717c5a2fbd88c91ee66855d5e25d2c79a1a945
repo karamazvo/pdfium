@@ -1,0 +1,108 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c9ce7b16_a4658879",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-26T19:15:41Z",
+      "side": 1,
+      "message": "nit: moving a span (as opposed to raw_span) doesn\u0027t do much other than update two values.",
+      "range": {
+        "startLine": 128,
+        "startChar": 31,
+        "endLine": 128,
+        "endChar": 35
+      },
+      "revId": "80717c5a2fbd88c91ee66855d5e25d2c79a1a945",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "56f20e91_4f21159c",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-26T19:15:41Z",
+      "side": 1,
+      "message": "If row_write lived outside the loop, maybe we could shuffle these at the top of the loop before retrieveing a new row_write. On early iterations, we\u0027d be moving null spans to null spans, but eh.  And we could avoid remembering to do this before every continue.\n\nOr if you wanted something truly bletcherous, we could do this in the for-loop expression itself as in `++h, row_prev_save \u003d row_prev1_saved, row_prev1_saved \u003d row_write`",
+      "range": {
+        "startLine": 129,
+        "startChar": 36,
+        "endLine": 129,
+        "endChar": 45
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "a30a1ee6_19c6991a",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 115,
+                "startChar": 0,
+                "endLine": 115,
+                "endChar": 0
+              },
+              "replacement": "  pdfium::span\u003cuint8_t\u003e row_write;\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 118,
+                "startChar": 0,
+                "endLine": 119,
+                "endChar": 0
+              },
+              "replacement": "    row_prev2_saved \u003d std::move(row_prev1_saved);\n    row_prev1_saved \u003d std::move(row_write);\n    row_write \u003d GBREG-\u003eGetLine(h);\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 128,
+                "startChar": 0,
+                "endLine": 130,
+                "endChar": 0
+              },
+              "replacement": ""
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 174,
+                "startChar": 0,
+                "endLine": 176,
+                "endChar": 0
+              },
+              "replacement": ""
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 219,
+                "startChar": 0,
+                "endLine": 221,
+                "endChar": 0
+              },
+              "replacement": ""
+            }
+          ]
+        }
+      ],
+      "revId": "80717c5a2fbd88c91ee66855d5e25d2c79a1a945",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
