@@ -16,6 +16,24 @@
       "message": "Build fails because of a missing argument in the gray caller. But despite resolving that locally, testing with pdfium_diff:\n\n```\npdfium % out/pdfiumdiff/pdfium_diff --fuzzy testing/resources/embedder_tests/many_rectangles_grayscale_skia.png testing/resources/embedder_tests/many_rectangles_grayscale_skia_mac.png              \ndiff: 52.21% failed\n```",
       "revId": "594866ba5cb10a0d3f758008c164e22d8ec61898",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9a7a1447_4e22767d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 24
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-26T11:57:54Z",
+      "side": 1,
+      "message": "Nevermind, seems like that image is",
+      "parentUuid": "000e33c2_7e0d077d",
+      "revId": "594866ba5cb10a0d3f758008c164e22d8ec61898",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
