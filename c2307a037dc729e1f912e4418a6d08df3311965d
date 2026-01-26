@@ -16,6 +16,154 @@
       "message": "Let us land this with https://pdfium-review.googlesource.com/c/pdfium/+/141371 so that we don\u0027t add the final method names containing ToPng here when an alternative (non ToPng doesn\u0027t exist).",
       "revId": "c2307a037dc729e1f912e4418a6d08df3311965d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bab1a89b_e88b7cd6",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-26T19:00:52Z",
+      "side": 1,
+      "message": "while we\u0027re at it, let\u0027s update the declaration of this function in embedder_test.h to remove the default `\u003d 0` value for the last parameter, as omitting it results in the other overload being selected rather that using this with the default.",
+      "range": {
+        "startLine": 173,
+        "startChar": 4,
+        "endLine": 173,
+        "endChar": 44
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "c7c0d176_f5016d9b",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "fpdfsdk/fpdf_view_embeddertest.cpp",
+              "range": {
+                "startLine": 173,
+                "startChar": 0,
+                "endLine": 175,
+                "endChar": 0
+              },
+              "replacement": "    CompareBitmapToPngWithExpectationSuffix(bitmap.get(), expectation_png_name, 0);\n"
+            },
+            {
+              "path": "fpdfsdk/fpdf_view_embeddertest.cpp",
+              "range": {
+                "startLine": 183,
+                "startChar": 0,
+                "endLine": 185,
+                "endChar": 0
+              },
+              "replacement": "    CompareBitmapToPngWithExpectationSuffix(bitmap.get(), expectation_png_name, 0);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "c2307a037dc729e1f912e4418a6d08df3311965d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aa0ad01a_92ccdc36",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-26T19:00:52Z",
+      "side": 1,
+      "message": "nit: `/*max_pixel_per_channel_delta\u003d*/0` throughout.",
+      "range": {
+        "startLine": 174,
+        "startChar": 44,
+        "endLine": 174,
+        "endChar": 45
+      },
+      "revId": "c2307a037dc729e1f912e4418a6d08df3311965d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f05d457c_bd498733",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 384,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-26T19:00:52Z",
+      "side": 1,
+      "message": "maybe this works better as a std::vector\u003cFX_BGRA_STRUCT\u003cuint8_t\u003e\u003e.",
+      "range": {
+        "startLine": 384,
+        "startChar": 2,
+        "endLine": 384,
+        "endChar": 23
+      },
+      "revId": "c2307a037dc729e1f912e4418a6d08df3311965d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f600a5fa_c46e9217",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 395,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-26T19:00:52Z",
+      "side": 1,
+      "message": "fxcrt::zip() is a way to aoids bounds checks per pixel.",
+      "range": {
+        "startLine": 390,
+        "startChar": 3,
+        "endLine": 395,
+        "endChar": 5
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "3dfd6d5e_60bba1ab",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "testing/embedder_test.cpp",
+              "range": {
+                "startLine": 22,
+                "startChar": 0,
+                "endLine": 22,
+                "endChar": 0
+              },
+              "replacement": "#include \"core/fxcrt/span_util.h\"\n"
+            },
+            {
+              "path": "testing/embedder_test.cpp",
+              "range": {
+                "startLine": 390,
+                "startChar": 0,
+                "endLine": 395,
+                "endChar": 0
+              },
+              "replacement": "    for (auto [src_pixel, dest_pixel] : fxcrt::zip(src_row, dest_row)) {\n      dest_pixel.blue \u003d src_pixel;\n      dest_pixel.green \u003d src_pixel;\n      dest_pixel.red \u003d src_pixel;\n      dest_pixel.alpha \u003d 255;\n"
+            }
+          ]
+        }
+      ],
+      "revId": "c2307a037dc729e1f912e4418a6d08df3311965d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
