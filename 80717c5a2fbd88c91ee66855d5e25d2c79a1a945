@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e31b04e0_a8b20afb",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-26T22:55:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c9ce7b16_a4658879",
+      "range": {
+        "startLine": 128,
+        "startChar": 31,
+        "endLine": 128,
+        "endChar": 35
+      },
+      "revId": "80717c5a2fbd88c91ee66855d5e25d2c79a1a945",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "56f20e91_4f21159c",
@@ -101,6 +125,30 @@
           ]
         }
       ],
+      "revId": "80717c5a2fbd88c91ee66855d5e25d2c79a1a945",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bf8d968a_c172f331",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-26T22:55:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "56f20e91_4f21159c",
+      "range": {
+        "startLine": 129,
+        "startChar": 36,
+        "endLine": 129,
+        "endChar": 45
+      },
       "revId": "80717c5a2fbd88c91ee66855d5e25d2c79a1a945",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
