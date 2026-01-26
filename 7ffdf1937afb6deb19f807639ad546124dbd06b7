@@ -104,6 +104,24 @@
       "parentUuid": "2ee249fe_fb325b78",
       "revId": "7ffdf1937afb6deb19f807639ad546124dbd06b7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d549e1bc_6ce8f5fe",
+        "filename": "xfa/fwl/cfwl_edit_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-26T12:58:54Z",
+      "side": 1,
+      "message": "Considering that fuzzy images were used instead, i will update the cl to use a strategy similar to the parent.",
+      "parentUuid": "ade1dd3f_e929c505",
+      "revId": "7ffdf1937afb6deb19f807639ad546124dbd06b7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
