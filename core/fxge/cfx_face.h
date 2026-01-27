@@ -72,6 +72,7 @@ class CFX_Face final : public Retainable, public Observable {
                                               ByteStringView path,
                                               int32_t face_index);
 #endif
+
   bool HasGlyphNames() const;
   bool IsTtOt() const;
   bool IsFixedWidth() const;
@@ -155,8 +156,6 @@ class CFX_Face final : public Retainable, public Observable {
   bool HasFaceRec() const { return !!GetRec(); }
 
  private:
-  friend class ScopedFontTransform;
-
   CFX_Face(FXFT_FaceRec* pRec, RetainPtr<Retainable> pDesc);
   ~CFX_Face() override;
 
