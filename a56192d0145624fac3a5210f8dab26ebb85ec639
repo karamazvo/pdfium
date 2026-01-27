@@ -129,6 +129,30 @@
       },
       "revId": "a56192d0145624fac3a5210f8dab26ebb85ec639",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "33f45c63_aaa17a4a",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-27T22:07:06Z",
+      "side": 1,
+      "message": "This is what I have in mind: https://pdfium-review.googlesource.com/c/pdfium/+/141710/1..2\n\nIt gets rid of SetTransform().",
+      "parentUuid": "b6240f42_1f38f69c",
+      "range": {
+        "startLine": 76,
+        "startChar": 20,
+        "endLine": 76,
+        "endChar": 29
+      },
+      "revId": "a56192d0145624fac3a5210f8dab26ebb85ec639",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
