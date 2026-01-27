@@ -41,6 +41,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "77bb9b12_85ed28ae",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 617,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-27T00:25:59Z",
+      "side": 1,
+      "message": "GetLine() will return empty spans for OOB line indices.",
+      "parentUuid": "caae3ff3_0337f8a6",
+      "range": {
+        "startLine": 617,
+        "startChar": 37,
+        "endLine": 617,
+        "endChar": 69
+      },
+      "revId": "c63b8b002a7da1a128563f0810dcd1526037fe78",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d85a3641_683556da",
@@ -54,6 +78,30 @@
       "writtenOn": "2026-01-26T23:49:57Z",
       "side": 1,
       "message": "maybe this has to move to 628 so we don\u0027t fetch if were going to hit the return at 626",
+      "range": {
+        "startLine": 621,
+        "startChar": 2,
+        "endLine": 623,
+        "endChar": 45
+      },
+      "revId": "c63b8b002a7da1a128563f0810dcd1526037fe78",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "70c1b8f7_31c0dc83",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 623,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-27T00:25:59Z",
+      "side": 1,
+      "message": "I think the chances of hitting the error case is low for well-formed inputs, so I\u0027d rather keep this as-is for consistency across the different methods. It\u0027s just one extra fetch per-call, not per-loop iteration, so it\u0027s not that bad.",
+      "parentUuid": "d85a3641_683556da",
       "range": {
         "startLine": 621,
         "startChar": 2,
