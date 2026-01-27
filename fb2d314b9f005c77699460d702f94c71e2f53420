@@ -1,0 +1,348 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b90539d6_bb628891",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-27T00:02:24Z",
+      "side": 1,
+      "message": "nit: I\u0027d expect 0..7 to be the range of `last_byte_bits`. but looks like 1..8.  In which case, full_bytes is slightly misleading since the last byte might be full (logically speaking) but handled as bits.",
+      "range": {
+        "startLine": 51,
+        "startChar": 2,
+        "endLine": 51,
+        "endChar": 10
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "dbb46484_1cf0bbcd",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 50,
+                "startChar": 0,
+                "endLine": 52,
+                "endChar": 0
+              },
+              "replacement": "  uint32_t num_full_bytes;\n  uint32_t num_bits_in_last_byte;\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 56,
+                "startChar": 0,
+                "endLine": 58,
+                "endChar": 0
+              },
+              "replacement": "  return {.num_full_bytes \u003d (width - 1) / 8,\n          .num_bits_in_last_byte \u003d ((width - 1) \u0026 7) + 1};\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 153,
+                "startChar": 0,
+                "endLine": 154,
+                "endChar": 0
+              },
+              "replacement": "      for (uint32_t cc \u003d 0; cc \u003c layout.num_full_bytes; ++cc) {\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 173,
+                "startChar": 0,
+                "endLine": 174,
+                "endChar": 0
+              },
+              "replacement": "      for (uint32_t k \u003d 0; k \u003c layout.num_bits_in_last_byte; ++k) {\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 184,
+                "startChar": 0,
+                "endLine": 185,
+                "endChar": 0
+              },
+              "replacement": "      row_write[layout.num_full_bytes] \u003d cVal1;\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 192,
+                "startChar": 0,
+                "endLine": 193,
+                "endChar": 0
+              },
+              "replacement": "    for (uint32_t cc \u003d 0; cc \u003c layout.num_full_bytes; ++cc) {\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 213,
+                "startChar": 0,
+                "endLine": 214,
+                "endChar": 0
+              },
+              "replacement": "    for (uint32_t k \u003d 0; k \u003c layout.num_bits_in_last_byte; ++k) {\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 225,
+                "startChar": 0,
+                "endLine": 226,
+                "endChar": 0
+              },
+              "replacement": "    row_write[layout.num_full_bytes] \u003d cVal1;\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 350,
+                "startChar": 0,
+                "endLine": 351,
+                "endChar": 0
+              },
+              "replacement": "      for (uint32_t cc \u003d 0; cc \u003c layout.num_full_bytes; cc++) {\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 364,
+                "startChar": 0,
+                "endLine": 365,
+                "endChar": 0
+              },
+              "replacement": "      for (uint32_t k \u003d 0; k \u003c layout.num_bits_in_last_byte; k++) {\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 373,
+                "startChar": 0,
+                "endLine": 374,
+                "endChar": 0
+              },
+              "replacement": "      row_write[layout.num_full_bytes] \u003d cVal1;\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 379,
+                "startChar": 0,
+                "endLine": 380,
+                "endChar": 0
+              },
+              "replacement": "    for (uint32_t cc \u003d 0; cc \u003c layout.num_full_bytes; cc++) {\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 396,
+                "startChar": 0,
+                "endLine": 397,
+                "endChar": 0
+              },
+              "replacement": "    for (uint32_t k \u003d 0; k \u003c layout.num_bits_in_last_byte; k++) {\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 406,
+                "startChar": 0,
+                "endLine": 407,
+                "endChar": 0
+              },
+              "replacement": "    row_write[layout.num_full_bytes] \u003d cVal1;\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 602,
+                "startChar": 0,
+                "endLine": 603,
+                "endChar": 0
+              },
+              "replacement": "            pState, kParams, layout.num_full_bytes, layout.num_bits_in_last_byte)) {\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 712,
+                "startChar": 0,
+                "endLine": 713,
+                "endChar": 0
+              },
+              "replacement": "            pState, kParams, layout.num_full_bytes, layout.num_bits_in_last_byte)) {\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 814,
+                "startChar": 0,
+                "endLine": 815,
+                "endChar": 0
+              },
+              "replacement": "            pState, kParams, layout.num_full_bytes, layout.num_bits_in_last_byte)) {\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 853,
+                "startChar": 0,
+                "endLine": 854,
+                "endChar": 0
+              },
+              "replacement": "    for (uint32_t cc \u003d 0; cc \u003c nLineBytes; cc++) {  // nLineBytes is num_full_bytes\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 873,
+                "startChar": 0,
+                "endLine": 874,
+                "endChar": 0
+              },
+              "replacement": "    for (uint32_t k \u003d 0; k \u003c nBitsLeft; k++) {  // nBitsLeft is num_bits_in_last_byte\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 884,
+                "startChar": 0,
+                "endLine": 885,
+                "endChar": 0
+              },
+              "replacement": "    line_[nLineBytes] \u003d cVal1;  // Index num_full_bytes is the last byte.\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 893,
+                "startChar": 0,
+                "endLine": 894,
+                "endChar": 0
+              },
+              "replacement": "  for (uint32_t cc \u003d 0; cc \u003c nLineBytes; cc++) {  // nLineBytes is num_full_bytes\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 913,
+                "startChar": 0,
+                "endLine": 914,
+                "endChar": 0
+              },
+              "replacement": "  for (uint32_t k \u003d 0; k \u003c nBitsLeft; k++) {  // nBitsLeft is num_bits_in_last_byte\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 925,
+                "startChar": 0,
+                "endLine": 926,
+                "endChar": 0
+              },
+              "replacement": "  line_[nLineBytes] \u003d cVal1;  // Index num_full_bytes is the last byte.\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 1019,
+                "startChar": 0,
+                "endLine": 1020,
+                "endChar": 0
+              },
+              "replacement": "        for (uint32_t cc \u003d 0; cc \u003c layout.num_full_bytes; cc++) {\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 1033,
+                "startChar": 0,
+                "endLine": 1034,
+                "endChar": 0
+              },
+              "replacement": "        for (uint32_t k \u003d 0; k \u003c layout.num_bits_in_last_byte; k++) {\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 1042,
+                "startChar": 0,
+                "endLine": 1043,
+                "endChar": 0
+              },
+              "replacement": "        line_[layout.num_full_bytes] \u003d cVal1;\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 1046,
+                "startChar": 0,
+                "endLine": 1047,
+                "endChar": 0
+              },
+              "replacement": "        for (uint32_t cc \u003d 0; cc \u003c layout.num_full_bytes; cc++) {\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 1063,
+                "startChar": 0,
+                "endLine": 1064,
+                "endChar": 0
+              },
+              "replacement": "        for (uint32_t k \u003d 0; k \u003c layout.num_bits_in_last_byte; k++) {\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+              "range": {
+                "startLine": 1073,
+                "startChar": 0,
+                "endLine": 1074,
+                "endChar": 0
+              },
+              "replacement": "        line_[layout.num_full_bytes] \u003d cVal1;\n"
+            }
+          ]
+        }
+      ],
+      "revId": "fb2d314b9f005c77699460d702f94c71e2f53420",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a5db2e8f_28227ff5",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-27T00:02:24Z",
+      "side": 1,
+      "message": "Not sure this is right. width \u003d\u003d 8 gives {0, 8} rather than {1, 0}. But that\u0027s what the old code got.",
+      "range": {
+        "startLine": 57,
+        "startChar": 28,
+        "endLine": 57,
+        "endChar": 51
+      },
+      "revId": "fb2d314b9f005c77699460d702f94c71e2f53420",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
