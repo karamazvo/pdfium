@@ -336,6 +336,26 @@ FT_Render_Mode FtRenderModeFromFontAntiAliasingMode(
   NOTREACHED();
 }
 
+// Sets the given transform on the font, and resets it to the identity when it
+// goes out of scope.
+class ScopedFontTransform {
+ public:
+  FX_STACK_ALLOCATED();
+
+  ScopedFontTransform(RetainPtr<CFX_Face> face, FT_Matrix* matrix)
+      : face_(std::move(face)) {
+    FT_Set_Transform(face_->GetRec(), matrix, nullptr);
+  }
+
+  ~ScopedFontTransform() {
+    FT_Matrix matrix = {0x10000L, 0L, 0L, 0x10000L};
+    FT_Set_Transform(face_->GetRec(), &matrix, nullptr);
+  }
+
+ private:
+  RetainPtr<CFX_Face> face_;
+};
+
 }  // namespace
 
 // static
