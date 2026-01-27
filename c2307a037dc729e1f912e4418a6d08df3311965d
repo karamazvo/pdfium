@@ -35,6 +35,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9b9700ae_9dd0fdb3",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-27T04:58:22Z",
+      "side": 1,
+      "message": "Yes, not needed. I used it at some point to get the CQ bots to output the PNGs, but forgot to remove it.",
+      "parentUuid": "8408e4a7_8ac52a86",
+      "revId": "c2307a037dc729e1f912e4418a6d08df3311965d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bab1a89b_e88b7cd6",
@@ -136,6 +154,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "9edffe5e_4267031e",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-27T04:58:22Z",
+      "side": 1,
+      "message": "Yes, I thought of doing that, but I thought there would have been an important motive for not having a default value, hence I decided to pass it in myself. Will update after 141630 lands.",
+      "parentUuid": "92f4bdc5_6786d7b5",
+      "range": {
+        "startLine": 173,
+        "startChar": 4,
+        "endLine": 173,
+        "endChar": 44
+      },
+      "revId": "c2307a037dc729e1f912e4418a6d08df3311965d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "aa0ad01a_92ccdc36",
         "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
         "patchSetId": 33
@@ -198,6 +240,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ae3721ee_9a6713ea",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 1301,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-27T04:58:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6aada1c9_57354835",
+      "revId": "c2307a037dc729e1f912e4418a6d08df3311965d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f05d457c_bd498733",
@@ -235,6 +295,30 @@
       "side": 1,
       "message": "And then use pdfium::as_bytes() to convert to byte span when needed.",
       "parentUuid": "f05d457c_bd498733",
+      "range": {
+        "startLine": 384,
+        "startChar": 2,
+        "endLine": 384,
+        "endChar": 23
+      },
+      "revId": "c2307a037dc729e1f912e4418a6d08df3311965d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c8d269bb_826bb700",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 384,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-27T04:58:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a4dcc61a_1203ba58",
       "range": {
         "startLine": 384,
         "startChar": 2,
@@ -296,6 +380,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d45bae42_7561066f",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 395,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-27T04:58:22Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "f600a5fa_c46e9217",
+      "range": {
+        "startLine": 390,
+        "startChar": 3,
+        "endLine": 395,
+        "endChar": 5
+      },
+      "revId": "c2307a037dc729e1f912e4418a6d08df3311965d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2b94305a_6ab89ccf",
@@ -309,6 +417,24 @@
       "writtenOn": "2026-01-27T02:00:37Z",
       "side": 1,
       "message": "nit: Put this first, so it\u0027s in the order defined in public/fpdfview.h.",
+      "revId": "c2307a037dc729e1f912e4418a6d08df3311965d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d7fac86a_8b398735",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 486,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-27T04:58:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2b94305a_6ab89ccf",
       "revId": "c2307a037dc729e1f912e4418a6d08df3311965d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
