@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7042f084_20ce528f",
+        "filename": "testing/embedder_test.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-01-27T17:08:12Z",
+      "side": 0,
+      "message": "My intention with the parameter here was to give more flexibility, so developers can specifically fuzzy match for specific platforms, whereas CompareBitmapToPngWithFuzzyExpectationSuffix() always uses GetPlatformMaxPixelDelta().\n\nE.g. a developer might want to do fuzzy match in a test on Windows, or macOS ARM, but GetPlatformMaxPixelDelta() doesn\u0027t support that.",
+      "revId": "fd276cd4eb7d682fc748fad0980be9bfbd46aaf5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
