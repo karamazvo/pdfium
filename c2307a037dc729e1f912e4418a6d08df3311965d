@@ -178,6 +178,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "7f2a8606_f3fd0ab2",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-27T06:10:57Z",
+      "side": 1,
+      "message": "You don\u0027t have to wait. It\u0027s an optional parameter.",
+      "parentUuid": "9edffe5e_4267031e",
+      "range": {
+        "startLine": 173,
+        "startChar": 4,
+        "endLine": 173,
+        "endChar": 44
+      },
+      "revId": "c2307a037dc729e1f912e4418a6d08df3311965d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "aa0ad01a_92ccdc36",
         "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
         "patchSetId": 33
