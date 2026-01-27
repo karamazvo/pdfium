@@ -16,6 +16,24 @@
       "message": "@thestig@chromium.org How exactly do we get these images again?",
       "revId": "77d6e761230a0f3006788f5cc72cd6f409567553",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b3ec7f8d_f67899b4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 14
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-27T13:29:27Z",
+      "side": 1,
+      "message": "Looked through the CL, turns out it\u0027s not always on failiure of CompareBitmap(), it\u0027s in the case where you use a ToPng where the image is missing only in ToPng variants.",
+      "parentUuid": "438275c2_911e45ac",
+      "revId": "77d6e761230a0f3006788f5cc72cd6f409567553",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
