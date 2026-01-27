@@ -20,6 +20,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "8408e4a7_8ac52a86",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-27T01:27:18Z",
+      "side": 1,
+      "message": "Not needed?",
+      "revId": "c2307a037dc729e1f912e4418a6d08df3311965d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "bab1a89b_e88b7cd6",
         "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
         "patchSetId": 33
@@ -65,6 +82,30 @@
           ]
         }
       ],
+      "revId": "c2307a037dc729e1f912e4418a6d08df3311965d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e55f212f_1114919d",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-27T01:27:18Z",
+      "side": 1,
+      "message": "I\u0027ll upload a CL to get rid of the third parameter. There\u0027s really no need to explicitly pass in the default argument.",
+      "parentUuid": "bab1a89b_e88b7cd6",
+      "range": {
+        "startLine": 173,
+        "startChar": 4,
+        "endLine": 173,
+        "endChar": 44
+      },
       "revId": "c2307a037dc729e1f912e4418a6d08df3311965d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
