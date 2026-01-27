@@ -1,0 +1,62 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "62bd2474_c1a1db59",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-27T21:14:55Z",
+      "side": 1,
+      "message": "thoughts",
+      "revId": "a56192d0145624fac3a5210f8dab26ebb85ec639",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "13d327aa_9cf55ad6",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-27T21:14:55Z",
+      "side": 1,
+      "message": "Alas, this pollutes the public portion of the CFX_Face with another freetype type.  Trying to imagine what this would be like as a pimpl design pattern ...",
+      "range": {
+        "startLine": 76,
+        "startChar": 20,
+        "endLine": 76,
+        "endChar": 29
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "7839a88b_2adccef7",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxge/cfx_face.h",
+              "range": {
+                "startLine": 76,
+                "startChar": 0,
+                "endLine": 77,
+                "endChar": 0
+              },
+              "replacement": "  void SetTransform(const CFX_Matrix\u0026 matrix);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "a56192d0145624fac3a5210f8dab26ebb85ec639",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
