@@ -22,6 +22,30 @@
       },
       "revId": "6d0c62441f1801648e37076732046584eb0f8ac1",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7577771c_ff4ae6f9",
+        "filename": "core/fxge/android/cfpf_skiafontmgr.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-27T20:22:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d3551345_c9258847",
+      "range": {
+        "startLine": 26,
+        "startChar": 41,
+        "endLine": 26,
+        "endChar": 49
+      },
+      "revId": "6d0c62441f1801648e37076732046584eb0f8ac1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
