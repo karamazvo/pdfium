@@ -81,6 +81,30 @@
       },
       "revId": "a56192d0145624fac3a5210f8dab26ebb85ec639",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c2a25e09_8736ef86",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-27T21:35:07Z",
+      "side": 1,
+      "message": "Pass a FXFT_FaceRec* to ScopedFontTransform and let ScopedFontTransform call FT_Set_Transform() directly?",
+      "parentUuid": "b4f0aedd_010a4151",
+      "range": {
+        "startLine": 76,
+        "startChar": 20,
+        "endLine": 76,
+        "endChar": 29
+      },
+      "revId": "a56192d0145624fac3a5210f8dab26ebb85ec639",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
