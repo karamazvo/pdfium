@@ -105,6 +105,30 @@
       },
       "revId": "a56192d0145624fac3a5210f8dab26ebb85ec639",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b6240f42_1f38f69c",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-27T21:50:51Z",
+      "side": 1,
+      "message": "FXFT_FaceRec is just FT_FaceRec_ in disguise, so that doen\u0027t quite solve this issue.",
+      "parentUuid": "c2a25e09_8736ef86",
+      "range": {
+        "startLine": 76,
+        "startChar": 20,
+        "endLine": 76,
+        "endChar": 29
+      },
+      "revId": "a56192d0145624fac3a5210f8dab26ebb85ec639",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
