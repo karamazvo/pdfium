@@ -29,7 +29,6 @@
 #include "core/fxge/dib/fx_dib.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_fontencoding.h"
-#include "core/fxge/scoped_font_transform.h"
 
 #define EM_ADJUST(em, a) (em == 0 ? (a) : (a) * 1000 / em)
 
@@ -336,6 +335,25 @@ FT_Render_Mode FtRenderModeFromFontAntiAliasingMode(
   NOTREACHED();
 }
 
+// Sets the given transform on the font, and resets it to the identity when it
+// goes out of scope.
+class ScopedFontTransform {
+ public:
+  FX_STACK_ALLOCATED();
+
+  ScopedFontTransform(RetainPtr<CFX_Face> face, FT_Matrix* matrix)
+      : face_(std::move(face)) {
+    face_->SetTransform(matrix);
+  }
+  ~ScopedFontTransform() {
+    FT_Matrix matrix = {0x10000L, 0L, 0L, 0x10000L};
+    face_->SetTransform(&matrix);
+  }
+
+ private:
+  RetainPtr<CFX_Face> face_;
+};
+
 }  // namespace
 
 // static
@@ -437,6 +455,10 @@ RetainPtr<CFX_Face> CFX_Face::OpenFromStream(
   return face;
 }
 #endif
+
+void CFX_Face::SetTransform(FT_Matrix* matrix) {
+  FT_Set_Transform(GetRec(), matrix, nullptr);
+}
 
 bool CFX_Face::HasGlyphNames() const {
   return !!(GetRec()->face_flags & FT_FACE_FLAG_GLYPH_NAMES);
