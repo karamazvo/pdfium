@@ -19,7 +19,6 @@
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
-#include "core/fxge/freetype/fx_freetype.h"
 #include "core/fxge/fx_font.h"
 
 namespace fxge {
@@ -27,12 +26,15 @@ enum class FontEncoding : uint32_t;
 }
 
 class CFX_Font;
+class CFX_FontMgr;
 class CFX_GlyphBitmap;
 class CFX_Path;
 class CFX_SubstFont;
 
 class CFX_Face final : public Retainable, public Observable {
  public:
+  class Impl;
+
   using CharMap = void*;
 
   struct CharCodeAndIndex {
@@ -55,26 +57,26 @@ class CFX_Face final : public Retainable, public Observable {
   static constexpr CharMapId kWindowsSymbolCmapId{3, 0};
   static constexpr CharMapId kWindowsUnicodeCmapId{3, 1};
 
-  static RetainPtr<CFX_Face> New(FT_Library library,
+  static RetainPtr<CFX_Face> New(CFX_FontMgr* font_mgr,
                                  RetainPtr<Retainable> desc,
                                  pdfium::span<const uint8_t> data,
                                  uint32_t face_index);
 
 #if defined(PDF_ENABLE_XFA)
   static RetainPtr<CFX_Face> OpenFromStream(
-      FT_Library library,
+      CFX_FontMgr* font_mgr,
       const RetainPtr<IFX_SeekableReadStream>& font_stream,
       uint32_t face_index);
 #endif
 #if BUILDFLAG(IS_ANDROID)
-  static RetainPtr<CFX_Face> OpenFromFilePath(FT_Library library,
+  static RetainPtr<CFX_Face> OpenFromFilePath(CFX_FontMgr* font_mgr,
                                               ByteStringView path,
                                               int32_t face_index);
 #endif
+
   bool HasGlyphNames() const;
   bool IsTtOt() const;
   bool IsFixedWidth() const;
-
   bool IsItalic() const;
   bool IsBold() const;
 
@@ -151,39 +153,17 @@ class CFX_Face final : public Retainable, public Observable {
   bool CanEmbed();
 #endif
 
-  bool HasFaceRec() const { return !!GetRec(); }
+  bool HasFaceRec() const;
 
  private:
-  friend class ScopedFontTransform;
-
-  CFX_Face(FXFT_FaceRec* pRec, RetainPtr<Retainable> pDesc);
+  explicit CFX_Face(std::unique_ptr<Impl> impl);
   ~CFX_Face() override;
 
-  FXFT_FaceRec* GetRec() { return rec_.get(); }
-  const FXFT_FaceRec* GetRec() const { return rec_.get(); }
-
   bool IsTricky() const;
-
   bool SetPixelSize(uint32_t width, uint32_t height);
-
   void AdjustVariationParams(int glyph_index, int dest_width, int weight);
 
-  pdfium::span<const FT_CharMap> GetCharMaps() const;
-
-#if BUILDFLAG(IS_ANDROID) || defined(PDF_ENABLE_XFA)
-  std::optional<std::array<uint8_t, 2>> GetOs2Panose();
-
-  static RetainPtr<CFX_Face> Open(FT_Library library,
-                                  const FT_Open_Args* args,
-                                  uint32_t face_index);
-#endif
-
-  // `owned_font_stream_` must outlive `owned_stream_rec_`.
-  RetainPtr<IFX_SeekableReadStream> owned_font_stream_;
-  // `owned_stream_rec_` must outlive `rec_`.
-  std::unique_ptr<FXFT_StreamRec> owned_stream_rec_;
-  ScopedFXFTFaceRec const rec_;
-  RetainPtr<Retainable> const desc_;
+  std::unique_ptr<Impl> const impl_;
 };
 
 #endif  // CORE_FXGE_CFX_FACE_H_
