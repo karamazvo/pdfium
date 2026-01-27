@@ -183,6 +183,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "6aada1c9_57354835",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 1301,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-27T02:00:37Z",
+      "side": 1,
+      "message": "Remove.",
+      "revId": "c2307a037dc729e1f912e4418a6d08df3311965d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "f05d457c_bd498733",
         "filename": "testing/embedder_test.cpp",
         "patchSetId": 33
@@ -194,6 +211,30 @@
       "writtenOn": "2026-01-26T19:00:52Z",
       "side": 1,
       "message": "maybe this works better as a std::vector\u003cFX_BGRA_STRUCT\u003cuint8_t\u003e\u003e.",
+      "range": {
+        "startLine": 384,
+        "startChar": 2,
+        "endLine": 384,
+        "endChar": 23
+      },
+      "revId": "c2307a037dc729e1f912e4418a6d08df3311965d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a4dcc61a_1203ba58",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 384,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-27T02:00:37Z",
+      "side": 1,
+      "message": "And then use pdfium::as_bytes() to convert to byte span when needed.",
+      "parentUuid": "f05d457c_bd498733",
       "range": {
         "startLine": 384,
         "startChar": 2,
@@ -251,6 +292,23 @@
           ]
         }
       ],
+      "revId": "c2307a037dc729e1f912e4418a6d08df3311965d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2b94305a_6ab89ccf",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 33
+      },
+      "lineNbr": 486,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-27T02:00:37Z",
+      "side": 1,
+      "message": "nit: Put this first, so it\u0027s in the order defined in public/fpdfview.h.",
       "revId": "c2307a037dc729e1f912e4418a6d08df3311965d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
