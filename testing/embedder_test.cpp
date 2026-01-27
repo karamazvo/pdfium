@@ -478,6 +478,33 @@ void CompareBitmapToPngData(FPDF_BITMAP bitmap,
       << EncodeBase64(png_data);
 }
 
+void CompareBitmapToPngWithExpectationSuffixImpl(
+    FPDF_BITMAP bitmap,
+    std::string_view expectation_png_name,
+    int max_pixel_per_channel_delta) {
+  std::vector<std::string> candidate_png_path =
+      GetEmbedderTestExpectationsWithSuffixPath(expectation_png_name);
+  for (const std::string& png_path : candidate_png_path) {
+    if (!CanReadFile(png_path.c_str())) {
+      continue;
+    }
+
+    SCOPED_TRACE(testing::Message()
+                 << "CompareBitmapToPngWithExpectationSuffix() with "
+                 << png_path);
+    CompareBitmapToPngData(bitmap, GetFileContents(png_path.c_str()),
+                           max_pixel_per_channel_delta);
+    if (EmbedderTestEnvironment::GetInstance()->write_pngs()) {
+      BitmapSaver::WriteBitmapToPng(bitmap, png_path);
+    }
+    return;
+  }
+
+  ADD_FAILURE() << "No expectation file matching " << expectation_png_name
+                << ", Actual pixels (open in browser):\n"
+                << EncodeBase64Png(bitmap);
+}
+
 }  // namespace
 
 EmbedderTest::EmbedderTest()
@@ -1099,37 +1126,17 @@ void EmbedderTest::CompareBitmapToPng(FPDF_BITMAP bitmap,
 // static
 void EmbedderTest::CompareBitmapToPngWithExpectationSuffix(
     FPDF_BITMAP bitmap,
-    std::string_view expectation_png_name,
-    int max_pixel_per_channel_delta) {
-  std::vector<std::string> candidate_png_path =
-      GetEmbedderTestExpectationsWithSuffixPath(expectation_png_name);
-  for (const std::string& png_path : candidate_png_path) {
-    if (!CanReadFile(png_path.c_str())) {
-      continue;
-    }
-
-    SCOPED_TRACE(testing::Message()
-                 << "CompareBitmapToPngWithExpectationSuffix() with "
-                 << png_path);
-    CompareBitmapToPngData(bitmap, GetFileContents(png_path.c_str()),
-                           max_pixel_per_channel_delta);
-    if (EmbedderTestEnvironment::GetInstance()->write_pngs()) {
-      WriteBitmapToPng(bitmap, png_path);
-    }
-    return;
-  }
-
-  ADD_FAILURE() << "No expectation file matching " << expectation_png_name
-                << ", Actual pixels (open in browser):\n"
-                << EncodeBase64Png(bitmap);
+    std::string_view expectation_png_name) {
+  CompareBitmapToPngWithExpectationSuffixImpl(
+      bitmap, expectation_png_name, /*max_pixel_per_channel_delta=*/0);
 }
 
 // static
 void EmbedderTest::CompareBitmapToPngWithFuzzyExpectationSuffix(
     FPDF_BITMAP bitmap,
     std::string_view expectation_png_name) {
-  CompareBitmapToPngWithExpectationSuffix(bitmap, expectation_png_name,
-                                          GetPlatformMaxPixelDelta());
+  CompareBitmapToPngWithExpectationSuffixImpl(bitmap, expectation_png_name,
+                                              GetPlatformMaxPixelDelta());
 }
 
 // static
