@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a97b7706_db31e8b5",
+        "filename": "core/fxcrt/zip.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-28T18:47:45Z",
+      "side": 1,
+      "message": "This is where I made a conscious choice to deviate from the c++23 spec and take the size from the first argument.  Then, we avoid any sort of bounds-checking safe-iterator on a step-by-step basis, rather check once at construction time that the other ranges are big enough.\n\nThis requires sized-rages, and makes but a single check at advance time rather than checking N iterators to see if any has hit an end.\n\nCan you take a look at the resulting assy for a simple loop and check if we regress when we go to base::zip?",
+      "range": {
+        "startLine": 60,
+        "startChar": 13,
+        "endLine": 60,
+        "endChar": 60
+      },
+      "revId": "90b5f7fbe2e99634252b53405df370badfb08732",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e11051a8_d5b00c20",
+        "filename": "core/fxge/apple/fx_quartz_device.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-28T18:47:45Z",
+      "side": 1,
+      "message": "should be able to pass glyph_positions_cg directly without need for span in old/new code.",
+      "range": {
+        "startLine": 104,
+        "startChar": 35,
+        "endLine": 104,
+        "endChar": 58
+      },
+      "revId": "90b5f7fbe2e99634252b53405df370badfb08732",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
