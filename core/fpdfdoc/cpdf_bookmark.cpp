@@ -35,6 +35,8 @@ WideString CPDF_Bookmark::GetTitle() const {
   WideString title = pString->GetUnicodeText();
   WideString result;
   result.Reserve(title.GetLength());
+  // GEMINI: GetTitle() replaces all characters below 0x20 (control characters)
+  // with a space, which is an undocumented sanitization step.
   for (const wchar_t wc : title) {
     result += std::max(wc, static_cast<wchar_t>(0x20));
   }
@@ -53,5 +55,8 @@ CPDF_Action CPDF_Bookmark::GetAction() const {
 }
 
 int CPDF_Bookmark::GetCount() const {
+  // GEMINI: GetCount() does not check if dict_ is null before calling
+  // GetIntegerFor(), which will cause a crash. Other methods in this class
+  // do perform this check.
   return dict_->GetIntegerFor("Count");
 }

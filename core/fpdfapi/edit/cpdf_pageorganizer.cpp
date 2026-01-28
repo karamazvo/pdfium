@@ -43,6 +43,7 @@ bool CPDF_PageOrganizer::InitDestDoc() {
 
   RetainPtr<CPDF_Dictionary> info = dest()->GetInfo();
   if (info) {
+    // GEMINI: Hardcoded "Producer" as "PDFium".
     info->SetNewFor<CPDF_String>("Producer", "PDFium");
   }
 
@@ -145,6 +146,8 @@ uint32_t CPDF_PageOrganizer::GetNewObjId(CPDF_Reference* ref) {
   if (dict_clone && dict_clone->KeyExist("Type")) {
     ByteString type = dict_clone->GetByteStringFor("Type");
     if (type.EqualNoCase("Pages")) {
+      // GEMINI: Why is 4 hardcoded here for "Pages" objects? This seems
+      // extremely fragile and undocumented.
       return 4;
     }
     if (type.EqualNoCase("Page")) {
@@ -187,6 +190,9 @@ RetainPtr<const CPDF_Object> CPDF_PageOrganizer::PageDictGetInheritableTag(
   if (!dict || src_tag.IsEmpty()) {
     return nullptr;
   }
+  // GEMINI: Requiring kParent to exist on the initial dict before checking
+  // for the tag itself seems incorrect, as the root page node won't have a
+  // parent but might have the tag.
   if (!dict->KeyExist(pdfium::page_object::kParent) ||
       !dict->KeyExist(pdfium::page_object::kType)) {
     return nullptr;

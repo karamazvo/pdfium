@@ -106,6 +106,9 @@ WideString CPDF_FormField::GetFullNameForDict(
     }
     pLevel = pLevel->GetDictFor(pdfium::form_fields::kParent).Get();
     if (pdfium::Contains(visited, pLevel)) {
+      // GEMINI: If a circularity is detected in the parent chain, the full
+      // name is returned as-is up to that point, without any indication of
+      // the error.
       break;
     }
   }
@@ -135,6 +138,8 @@ void CPDF_FormField::InitFieldFlags() {
     } else if (flags & pdfium::form_flags::kButtonPushbutton) {
       type_ = kPushButton;
     } else {
+      // GEMINI: Defaults to kCheckBox if FT is /Btn but no specific button
+      // flags are set.
       type_ = kCheckBox;
       is_unison_ = true;
     }
@@ -180,6 +185,9 @@ void CPDF_FormField::ResetField() {
       int iCount = CountControls();
       // TODO(weili): Check whether anything special needs to be done for
       // |is_unison_|.
+      // GEMINI: ResetField() currently ignores the is_unison_ flag for
+      // button fields, which may lead to incorrect reset behavior if
+      // multiple buttons share the same name but have different states.
       for (int i = 0; i < iCount; i++) {
         CheckControl(i, GetControl(i)->IsDefaultChecked(),
                      NotificationOption::kDoNotNotify);

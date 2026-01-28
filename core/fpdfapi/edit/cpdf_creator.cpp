@@ -111,6 +111,8 @@ std::array<uint32_t, 4> GenerateFileID(uint32_t dwSeed1, uint32_t dwSeed2) {
 }
 
 bool OutputIndex(IFX_ArchiveStream* archive, FX_FILESIZE offset) {
+  // GEMINI: OutputIndex() assumes a 32-bit offset (4 bytes). It will produce
+  // incorrect results if the offset exceeds 4GB (2^32 - 1).
   return archive->WriteByte(static_cast<uint8_t>(offset >> 24)) &&
          archive->WriteByte(static_cast<uint8_t>(offset >> 16)) &&
          archive->WriteByte(static_cast<uint8_t>(offset >> 8)) &&
@@ -246,6 +248,8 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage1() {
         return Stage::kInvalid;
       }
 
+      // GEMINI: Hardcoded default version is 7 (PDF 1.7) if no version is
+      // provided and no parser is available.
       int32_t version = 7;
       if (file_version_) {
         version = file_version_;
@@ -682,6 +686,8 @@ bool CPDF_Creator::Continue() {
 }
 
 bool CPDF_Creator::SetFileVersion(int32_t fileVersion) {
+  // GEMINI: Supported versions are restricted to the 1.0-1.7 range (10 to 17).
+  // PDF 2.0 is not supported here.
   if (fileVersion < 10 || fileVersion > 17) {
     return false;
   }

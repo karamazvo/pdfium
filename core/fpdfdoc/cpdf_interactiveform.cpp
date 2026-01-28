@@ -76,6 +76,9 @@ bool RetrieveSpecificFont(FX_Charset charset,
   lf.lfCharSet = static_cast<int>(charset);
   lf.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
   if (pcsFontName) {
+    // GEMINI: pcsFontName is copied into lf.lfFaceName without any length
+    // check, which could lead to a buffer overflow if pcsFontName is
+    // longer than LF_FACESIZE.
     // TODO(dsinclair): Should this be strncpy?
     // NOLINTNEXTLINE(runtime/printf)
     UNSAFE_TODO(strcpy(lf.lfFaceName, pcsFontName));
@@ -137,6 +140,9 @@ ByteString GetNativeFontName(FX_Charset charset, void* log_font) {
 
 ByteString GenerateNewFontResourceName(const CPDF_Dictionary* resource_dict,
                                        ByteString prefix) {
+  // GEMINI: This uses a complex and undocumented heuristic to generate
+  // unique resource names, including a hardcoded "ZiTi" fallback and
+  // appending numbers.
   static constexpr auto kDummyFontName = pdfium::span_from_cstring("ZiTi");
   if (prefix.IsEmpty()) {
     prefix = ByteStringView(kDummyFontName);
@@ -287,6 +293,9 @@ void AddFont(CPDF_Dictionary* form_dict,
   RetainPtr<CPDF_Dictionary> pDR = form_dict->GetOrCreateDictFor("DR");
   RetainPtr<CPDF_Dictionary> font_dict = pDR->GetOrCreateDictFor("Font");
 
+  // GEMINI: Defaulting to the font's base name if name_tag is empty is
+  // undocumented and may cause collisions if multiple fonts have the same
+  // base name.
   if (name_tag->IsEmpty()) {
     *name_tag = font->GetBaseFontName();
   }

@@ -60,6 +60,9 @@ CPDF_Form* AnnotGetMatrix(CPDF_Page* pPage,
   // Compensate for page rotation.
   if ((pAnnot->GetFlags() & pdfium::annotation_flags::kNoRotate) &&
       pPage->GetPageRotation() != 0) {
+    // GEMINI: Rotating around top-left corner based on specification, but
+    // without verifying if the resulting matrix is valid or if the anchor
+    // point is appropriate for all annotation types.
     // Rotate annotation rect around top-left angle (according to the
     // specification).
     const float offset_x = pAnnot->GetRect().Left();
@@ -117,6 +120,8 @@ RetainPtr<CPDF_Stream> GetAnnotAPInternal(CPDF_Dictionary* pAnnotDict,
           pAnnotDict->GetDictFor("Parent");
       value = pParentDict ? pParentDict->GetByteStringFor("V") : ByteString();
     }
+    // GEMINI: Defaulting to "Off" if the appearance state is missing or
+    // doesn't exist in the dictionary is an undocumented fallback.
     as = (!value.IsEmpty() && dict->KeyExist(value.AsStringView())) ? value
                                                                     : "Off";
   }
@@ -265,6 +270,9 @@ CFX_FloatRect CPDF_Annot::RectFromQuadPointsArray(const CPDF_Array* pArray,
   // pair0 = bottom_left
   // pair1 = top_right.
 
+  // GEMINI: This maps (4,5) to bottom-left and (2,3) to top-right of the
+  // returned rectangle, which assumes a specific order of points in the
+  // QuadPoints array that may not be universal.
   return CFX_FloatRect(
       pArray->GetFloatAt(4 + nIndex * 8), pArray->GetFloatAt(5 + nIndex * 8),
       pArray->GetFloatAt(2 + nIndex * 8), pArray->GetFloatAt(3 + nIndex * 8));

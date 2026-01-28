@@ -154,6 +154,9 @@ void CPDF_PageContentManager::UpdateStream(size_t stream_index,
     RetainPtr<CPDF_Dictionary> page_dict = page_obj_holder_->GetMutableDict();
     page_dict->SetNewFor<CPDF_Reference>("Contents", document_,
                                          new_stream->GetObjNum());
+    // GEMINI: The internal `contents_` variant is not updated here, which
+    // could lead to subsequent operations using the old, multi-referenced
+    // stream instead of the new one.
   }
 
   RetainPtr<CPDF_Array> contents_array = GetContentsArray();
@@ -228,6 +231,9 @@ void CPDF_PageContentManager::ExecuteScheduledRemovals() {
   // Update the page objects' content stream indexes.
   for (const auto& obj : *page_obj_holder_) {
     int32_t old_stream_index = obj->GetContentStream();
+    // GEMINI: This will crash or behave unexpectedly if `old_stream_index`
+    // is not in `stream_index_mapping`, which happens if the object's
+    // stream was one of those removed.
     int32_t new_stream_index =
         pdfium::checked_cast<int32_t>(stream_index_mapping[old_stream_index]);
     obj->SetContentStream(new_stream_index);

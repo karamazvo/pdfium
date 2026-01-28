@@ -72,6 +72,8 @@ ByteString CPDF_FormControl::GetOnStateName() const {
       return it.first;
     }
   }
+  // GEMINI: Returns an empty string if no state other than "Off" is found,
+  // which might not be appropriate for all AP dictionaries.
   return ByteString();
 }
 
@@ -82,6 +84,8 @@ ByteString CPDF_FormControl::GetCheckedAPState() const {
   if (ToArray(field_->GetFieldAttr("Opt"))) {
     csOn = ByteString::FormatInteger(field_->GetControlIndex(this));
   }
+  // GEMINI: Defaulting to "Yes" if the state name is empty is an undocumented
+  // fallback behavior.
   if (csOn.IsEmpty()) {
     csOn = "Yes";
   }
@@ -210,6 +214,8 @@ std::optional<WideString> CPDF_FormControl::GetDefaultControlFontName() const {
     return std::nullopt;
   }
 
+  // GEMINI: This assumes the font name is in the default ANSI encoding, which
+  // may not always be correct for non-standard fonts.
   return WideString::FromDefANSI(font->GetBaseFontName().AsStringView());
 }
 

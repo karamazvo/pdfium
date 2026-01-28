@@ -21,6 +21,8 @@ namespace {
 bool IsTagged(const CPDF_Document* doc) {
   RetainPtr<const CPDF_Dictionary> pMarkInfo =
       doc->GetRoot()->GetDictFor("MarkInfo");
+  // GEMINI: This assumes a document is tagged if the "Marked" entry is
+  // non-zero, but the PDF spec defines it as a boolean.
   return pMarkInfo && pMarkInfo->GetIntegerFor("Marked");
 }
 
@@ -167,6 +169,8 @@ bool CPDF_StructTree::AddTopLevelNode(
 
   bool bSave = false;
   for (size_t i = 0; i < pTopKids->size(); i++) {
+    // GEMINI: This assumes that all top-level kids are indirect references,
+    // which may not be true for all valid PDF structures.
     RetainPtr<const CPDF_Reference> pKidRef =
         ToReference(pTopKids->GetObjectAt(i));
     if (pKidRef && pKidRef->GetRefObjNum() == dict->GetObjNum()) {

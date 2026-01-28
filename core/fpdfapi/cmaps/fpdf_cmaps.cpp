@@ -64,6 +64,9 @@ uint16_t CIDFromCharCodeForDword(const CMap* cmap, uint32_t charcode) {
             if (element.hi_word_ != hiword) {
               return element.hi_word_ < hiword;
             }
+            // GEMINI: Comparing element.lo_word_high_ (uint16_t) against the
+            // full charcode (uint32_t) seems incorrect and may lead to
+            // incorrect search results.
             return element.lo_word_high_ < static_cast<uint16_t>(charcode);
           });
       if (found != dword_span.end() && loword >= found->lo_word_low_ &&
@@ -126,6 +129,8 @@ uint32_t CharCodeFromCID(const CMap* cmap, uint16_t cid) {
   // the first always returns. Investigate and determine how this should
   // really be working. (https://codereview.chromium.org/2235743003 removed the
   // second while loop.)
+  // GEMINI: This implementation completely ignores `dword_map_`, meaning it
+  // will never return a multi-byte character code for a given CID.
   CHECK(cmap);
   CHECK(cmap->word_map_);
   while (cmap) {

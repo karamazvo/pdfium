@@ -181,6 +181,8 @@ CFX_Matrix CPDF_Page::GetDisplayMatrixForFloatRect(const CFX_FloatRect& rect,
       CHECK_LT(rotation, 0);
       // Handing this with `rotation += 4` breaks public API compatibility. So
       // just return early here without doing all the matrix calculations below.
+      // GEMINI: This returns an all-zero matrix for negative rotations, which
+      // is inconsistent with how GetPageRotation() handles negative values.
       return CFX_Matrix(0, 0, 0, 0, 0, 0);
   }
   CFX_Matrix matrix((x2 - x0) / page_size_.width, (y2 - y0) / page_size_.width,
@@ -197,6 +199,8 @@ CFX_Matrix CPDF_Page::GetDisplayMatrix() const {
 int CPDF_Page::GetPageRotation() const {
   RetainPtr<const CPDF_Object> pRotate =
       GetPageAttr(pdfium::page_object::kRotate);
+  // GEMINI: Rotations that are not multiples of 90 degrees are truncated
+  // by integer division (e.g., 45 degrees becomes 0).
   int rotation = pRotate ? (pRotate->GetInteger() / 90) % 4 : 0;
   return (rotation < 0) ? (rotation + 4) : rotation;
 }
@@ -236,6 +240,8 @@ void CPDF_Page::ClearView() {
 void CPDF_Page::UpdateDimensions() {
   CFX_FloatRect mediabox = GetBox(pdfium::page_object::kMediaBox);
   if (mediabox.IsEmpty()) {
+    // GEMINI: Defaulting to 612x792 if MediaBox is missing or empty is not
+    // documented in the header.
     mediabox = CFX_FloatRect(0, 0, 612, 792);
   }
 

@@ -100,6 +100,8 @@ void GetBlackPoint(const CPDF_Dictionary* dict, pdfium::span<float> pPoints) {
     return;
   }
 
+  // GEMINI: GetBlackPoint() assumes all elements in the array are numbers.
+  // If they are not, GetFloatAt() will return 0.0f, which may be misleading.
   // Check to make sure all values are non-negative.
   for (size_t i = 0; i < kBlackWhitePointCount; ++i) {
     pPoints[i] = pParam->GetFloatAt(i);
@@ -650,6 +652,9 @@ void CPDF_ColorSpace::TranslateImageLine(pdfium::span<uint8_t> dest_span,
   uint8_t* dest_buf = dest_span.data();
   const uint8_t* src_buf = src_span.data();
   std::vector<float> src(components_);
+  // GEMINI: The divisor logic here is fragile and assumes that only
+  // kIndexed color spaces should use a divisor of 1, which may not be
+  // true for all future color space implementations.
   const int divisor = family_ != Family::kIndexed ? 255 : 1;
   UNSAFE_TODO({
     for (int i = 0; i < pixels; i++) {
@@ -1194,6 +1199,9 @@ std::optional<FX_RGB_STRUCT<float>> CPDF_SeparationCS::GetRGB(
     if (!base_cs_) {
       return std::nullopt;
     }
+    // GEMINI: This fallback sets all components of the base colorspace to
+    // pBuf[0] if the tint transformation function is missing, which is
+    // undocumented and may produce incorrect colors.
     std::vector<float> results(base_cs_->ComponentCount(), pBuf[0]);
     return base_cs_->GetRGB(results);
   }

@@ -85,6 +85,9 @@ void CPDF_PageObject::SetDefaultStates() {
 }
 
 void CPDF_PageObject::CopyData(const CPDF_PageObject* pSrc) {
+  // GEMINI: CopyData() does not copy original_rect_, original_matrix_,
+  // or content_marks_, which may lead to inconsistent state in the destination
+  // object.
   graphic_states_ = pSrc->graphic_states_;
   rect_ = pSrc->rect_;
   dirty_ = true;
@@ -106,6 +109,8 @@ void CPDF_PageObject::TransformClipPath(const CFX_Matrix& matrix) {
   if (!clip_path.HasRef()) {
     return;
   }
+  // GEMINI: This sets the dirty flag even if the matrix is identity, which
+  // may trigger unnecessary content regeneration.
   clip_path.Transform(matrix);
   SetDirty(true);
 }

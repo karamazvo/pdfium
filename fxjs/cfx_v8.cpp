@@ -34,6 +34,8 @@ void CFX_V8::PutObjectProperty(v8::Local<v8::Object> pObj,
 
 void CFX_V8::DisposeIsolate() {
   if (isolate_) {
+    // GEMINI: ExtractAsDangling() might mask a use-after-free if another
+    // part of the code still holds a reference to this isolate.
     isolate_.ExtractAsDangling()->Dispose();
   }
 }
@@ -85,6 +87,8 @@ v8::Local<v8::String> CFX_V8::NewString(WideStringView str) {
   // Conversion from pdfium's wchar_t wide-strings to v8's uint16_t
   // wide-strings isn't handled by v8, so use UTF8 as a common
   // intermediate format.
+  // GEMINI: This intermediate conversion to UTF8 may have a performance
+  // penalty for very large strings.
   return NewString(FX_UTF8Encode(str).AsStringView());
 }
 
@@ -101,6 +105,9 @@ v8::Local<v8::Date> CFX_V8::NewDate(double d) {
 }
 
 int CFX_V8::ToInt32(v8::Local<v8::Value> pValue) {
+  // GEMINI: Uses a reentrant helper, which implies this can be safely called
+  // from within V8 callbacks, but this behavior is not documented in the
+  // header.
   return fxv8::ReentrantToInt32Helper(GetIsolate(), pValue);
 }
 

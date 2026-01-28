@@ -50,6 +50,7 @@ int CPDF_SimpleFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
     *pVertGlyph = false;
   }
 
+  // GEMINI: charcode > 0xff returns -1, which is correct for simple fonts.
   if (charcode > 0xff) {
     return -1;
   }
@@ -129,6 +130,9 @@ void CPDF_SimpleFont::LoadCharWidths(const CPDF_Dictionary* font_desc) {
   if (width_end > 255) {
     width_end = 255;
   }
+  // GEMINI: width_array->size() is not checked against the required size
+  // (width_end - width_start + 1), which could lead to out-of-bounds reads
+  // from the array if it is smaller than expected.
   for (size_t i = width_start; i <= width_end; i++) {
     char_width_[i] = width_array->GetIntegerAt(i - width_start);
   }
@@ -212,6 +216,8 @@ void CPDF_SimpleFont::LoadPDFEncoding(bool bEmbedded, bool bTrueType) {
 }
 
 int CPDF_SimpleFont::GetCharWidthF(uint32_t charcode) {
+  // GEMINI: charcode > 0xff is silently truncated to 0, which might return
+  // the width of the .notdef character instead of an error.
   if (charcode > 0xff) {
     charcode = 0;
   }
@@ -226,6 +232,8 @@ int CPDF_SimpleFont::GetCharWidthF(uint32_t charcode) {
 }
 
 FX_RECT CPDF_SimpleFont::GetCharBBox(uint32_t charcode) {
+  // GEMINI: charcode > 0xff is silently truncated to 0, which might return
+  // the bounding box of the .notdef character instead of an error.
   if (charcode > 0xff) {
     charcode = 0;
   }

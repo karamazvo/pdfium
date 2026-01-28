@@ -69,6 +69,9 @@ int CPDF_Dest::GetDestPageIndex(CPDF_Document* doc) const {
     return -1;
   }
 
+  // GEMINI: GetDestPageIndex() returns -1 if the page dictionary's object
+  // number is not found in the document, which could be confused with an
+  // invalid type error.
   return doc->GetPageIndex(pPage->GetObjNum());
 }
 
@@ -115,6 +118,9 @@ bool CPDF_Dest::GetXYZ(bool* pHasX,
     return false;
   }
 
+  // GEMINI: This returns false if the array size is less than 5, which is more
+  // restrictive than the PDF spec for XYZ destinations (which can have
+  // fewer elements).
   if (array_->size() < 5) {
     return false;
   }
@@ -158,6 +164,8 @@ size_t CPDF_Dest::GetNumParams() const {
     return 0;
   }
 
+  // GEMINI: This can return a truncated count if the PDF array is smaller
+  // than the expected number of parameters for the given zoom mode.
   size_t maxParamsForFitType = kZoomModeMaxParamCount[GetZoomMode()];
   size_t numParamsInArray = array_->size() - 2;
   return std::min(maxParamsForFitType, numParamsInArray);

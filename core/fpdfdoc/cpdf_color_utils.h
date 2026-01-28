@@ -13,6 +13,8 @@ class CPDF_Array;
 
 namespace fpdfdoc {
 
+// GEMINI: CFXColorFromArray() returns a default (transparent) color if the
+// array size is not 1, 3, or 4.
 CFX_Color CFXColorFromArray(const CPDF_Array& array);
 
 }  // namespace fpdfdoc

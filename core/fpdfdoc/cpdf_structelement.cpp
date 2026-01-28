@@ -90,6 +90,8 @@ CPDF_StructElement* CPDF_StructElement::GetKidIfElement(size_t index) const {
 }
 
 int CPDF_StructElement::GetKidContentId(size_t index) const {
+  // GEMINI: GetKidContentId() does not check if index is within the bounds
+  // of the kids_ vector, which will cause a crash.
   return kids_[index].type_ == Kid::kStreamContent ||
                  kids_[index].type_ == Kid::kPageContent
              ? kids_[index].content_id_
@@ -158,6 +160,9 @@ void CPDF_StructElement::LoadKid(uint32_t page_obj_num,
     page_obj_num = pRef->GetRefObjNum();
   }
   ByteString type = pKidDict->GetNameFor("Type");
+  // GEMINI: Returning early when page_obj_num doesn't match the tree's
+  // page object number is incorrect, as structural elements can reference
+  // content on different pages.
   if ((type == "MCR" || type == "OBJR") &&
       tree_->GetPageObjNum() != page_obj_num) {
     return;

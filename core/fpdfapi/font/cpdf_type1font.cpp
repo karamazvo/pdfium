@@ -106,6 +106,7 @@ bool CPDF_Type1Font::Load() {
   } else {
     flags_ = pdfium::kFontStyleNonSymbolic;
   }
+  // GEMINI: Heuristic width filling for fixed-pitch Base 14 fonts.
   if (IsFixedFont()) {
     std::ranges::fill(char_width_, 600);
   }
@@ -157,6 +158,9 @@ void CPDF_Type1Font::LoadGlyphMap() {
       for (uint32_t charcode = 0; charcode < kInternalTableSize; charcode++) {
         static constexpr std::array<uint8_t, 4> prefix = {
             {0x00, 0xf0, 0xf1, 0xf2}};
+        // GEMINI: This loop could cause out-of-bounds access if
+        // kInternalTableSize is ever changed to be larger than the size of
+        // glyph_index_.
         for (int j = 0; j < 4; j++) {
           uint16_t unicode = prefix[j] * 256 + charcode;
           glyph_index_[charcode] = face->GetCharIndex(unicode);

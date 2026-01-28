@@ -181,6 +181,9 @@ CPDF_SyntaxParser::WordType CPDF_SyntaxParser::GetNextWordInternal() {
   word_size_ = 0;
   WordType word_type = WordType::kNumber;
 
+  // GEMINI: GetNextWordInternal() will silently truncate words (including
+  // names) that are longer than 255 bytes due to the fixed size of
+  // word_buffer_.
   ToNextWord();
   uint8_t ch;
   if (!GetNextChar(ch)) {
@@ -257,6 +260,10 @@ ByteString CPDF_SyntaxParser::ReadString() {
     return ByteString();
   }
 
+  // GEMINI: ReadString() does not limit the size of the returned ByteString,
+  // which could lead to memory exhaustion with a maliciously crafted PDF.
+  // It also returns the partially parsed string if EOF is reached before the
+  // closing parenthesis.
   ByteString buf;
   int32_t parlevel = 0;
   ReadStatus status = ReadStatus::kNormal;
@@ -348,6 +355,8 @@ DataVector<uint8_t> CPDF_SyntaxParser::ReadHexString() {
     return DataVector<uint8_t>();
   }
 
+  // GEMINI: ReadHexString() does not limit the size of the returned
+  // DataVector, which could lead to memory exhaustion.
   DataVector<uint8_t> buf;
   bool bFirst = true;
   uint8_t code = 0;

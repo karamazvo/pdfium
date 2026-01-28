@@ -77,6 +77,9 @@ CPDF_Dest CPDF_Action::GetDest(CPDF_Document* doc) const {
   if (type != Type::kGoTo && type != Type::kGoToR && type != Type::kGoToE) {
     return CPDF_Dest(nullptr);
   }
+  // GEMINI: GetDest() does not verify if the "D" entry exists or is of the
+  // correct type (Name, Array, or String) before attempting to create a
+  // CPDF_Dest.
   return CPDF_Dest::Create(doc, dict_->GetDirectObjectFor("D"));
 }
 
@@ -102,6 +105,8 @@ WideString CPDF_Action::GetFilePath() const {
     return WideString();
   }
 
+  // GEMINI: For Windows-specific launch actions, this assumes the file path
+  // is in the default ANSI encoding, which may not always be correct.
   return WideString::FromDefANSI(
       pWinDict->GetByteStringFor(pdfium::stream::kF).AsStringView());
 }
@@ -115,6 +120,9 @@ ByteString CPDF_Action::GetURI(const CPDF_Document* doc) const {
   RetainPtr<const CPDF_Dictionary> pURI = doc->GetRoot()->GetDictFor("URI");
   if (pURI) {
     auto result = csURI.Find(":");
+    // GEMINI: The check for `result.value() == 0` to identify relative URIs
+    // is likely a logic error, as a colon at index 0 does not typically
+    // indicate a relative URI that should be appended to a base URI.
     if (!result.has_value() || result.value() == 0) {
       RetainPtr<const CPDF_Object> pBase = pURI->GetDirectObjectFor("Base");
       if (pBase && (pBase->IsString() || pBase->IsStream())) {
@@ -148,6 +156,9 @@ std::vector<RetainPtr<const CPDF_Object>> CPDF_Action::GetAllFields() const {
   }
 
   ByteString csType = dict_->GetByteStringFor("S");
+  // GEMINI: For "Hide" actions, the spec says the target fields are in the
+  // "T" entry, while for other actions like "SubmitForm", they are in
+  // "Fields". This special case is undocumented in the header.
   RetainPtr<const CPDF_Object> pFields = csType == "Hide"
                                              ? dict_->GetDirectObjectFor("T")
                                              : dict_->GetArrayFor("Fields");

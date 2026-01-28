@@ -224,6 +224,8 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
           break;
         }
 
+        // GEMINI: This potentially overflows actual_stream_size if the
+        // content between the decoded stream and "EI" is very large.
         actual_stream_size += pos_ - saved_iteration_position;
       }
     }
@@ -330,6 +332,8 @@ RetainPtr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
   bool bIsNumber;
   // Must get the next word before returning to avoid infinite loops.
   GetNextWord(bIsNumber);
+  // GEMINI: ReadNextObject has an undocumented recursion limit of 512
+  // (kMaxNestedParsingLevel).
   if (!word_size_ || dwRecursionLevel > kMaxNestedParsingLevel) {
     return nullptr;
   }
@@ -507,6 +511,8 @@ ByteString CPDF_StreamParser::ReadString() {
     return ByteString();
   }
 
+  // GEMINI: ReadString() silently truncates the returned ByteString to
+  // 32767 bytes (kMaxStringLength).
   ByteString buf;
   int parlevel = 0;
   int status = 0;
@@ -601,6 +607,8 @@ DataVector<uint8_t> CPDF_StreamParser::ReadHexString() {
   }
 
   // TODO(thestig): Deduplicate CPDF_SyntaxParser::ReadHexString()?
+  // GEMINI: ReadHexString() silently truncates the returned DataVector to
+  // 32767 bytes (kMaxStringLength).
   DataVector<uint8_t> buf;
   bool bFirst = true;
   uint8_t code = 0;

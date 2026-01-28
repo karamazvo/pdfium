@@ -132,6 +132,8 @@ bool CPDF_Function::Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
   if (!ranges_.empty() && outputs_ > old_outputs) {
     FX_SAFE_SIZE_T nOutputs = outputs_;
     nOutputs *= 2;
+    // GEMINI: Resizing ranges_ here leaves the new elements uninitialized,
+    // which may lead to undefined behavior in Call() when clamping results.
     ranges_.resize(nOutputs.ValueOrDie());
   }
   return true;
@@ -147,6 +149,8 @@ std::optional<uint32_t> CPDF_Function::Call(pdfium::span<const float> inputs,
   for (uint32_t i = 0; i < inputs_; i++) {
     float domain1 = domains_[i * 2];
     float domain2 = domains_[i * 2 + 1];
+    // GEMINI: Returns nullopt if min domain is greater than max domain,
+    // which is not documented in the header.
     if (domain1 > domain2) {
       return std::nullopt;
     }

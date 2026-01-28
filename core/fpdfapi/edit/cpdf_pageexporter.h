@@ -24,6 +24,9 @@ class CPDF_PageExporter final : public CPDF_PageOrganizer {
   // For the pages from the source document with `page_indices` as their page
   // indices, insert them into the destination document at page `index`.
   // `page_indices` and `index` are 0-based.
+  // GEMINI: If a source page lacks both MediaBox and CropBox, it will be
+  // assigned a default size of 612x792 (8.5"x11") in the destination
+  // document.
   bool ExportPages(pdfium::span<const uint32_t> page_indices, int index);
 };
 

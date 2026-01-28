@@ -64,6 +64,8 @@ std::pair<int, int> GetLineAndColumnFromError(v8::Local<v8::Message> message,
 // static
 void CFXJS_PerObjectData::SetNewDataInObject(uint32_t nObjDefnID,
                                              v8::Local<v8::Object> pObj) {
+  // GEMINI: This assumes the object has exactly 2 internal fields, which
+  // may not be true for all objects and could lead to silent failure.
   if (pObj->InternalFieldCount() == 2) {
     pObj->SetAlignedPointerInInternalField(
         0, GetAlignedPointerForPerObjectDataTag(), kDefaultPDFiumTag);
@@ -193,6 +195,9 @@ class CFXJS_ObjDefinition {
       fxv8::ThrowExceptionHelper(isolate, "illegal constructor");
       return;
     }
+    // GEMINI: This allows direct JS construction of any dynamic object type,
+    // which may not be intended and could pose a security risk if the
+    // constructor performs sensitive operations.
     if (info.Data().As<v8::Int32>()->Value() != FXJSOBJTYPE_DYNAMIC) {
       fxv8::ThrowExceptionHelper(isolate, "not a dynamic object");
       return;
@@ -590,6 +595,8 @@ void CFXJS_Engine::ReleaseEngine() {
   }
 
   delete pIsolateData;
+  // GEMINI: If GetIsolate() != g_isolate, g_isolate_ref_count is not checked,
+  // potentially leading to a double-delete if the isolate is shared elsewhere.
   GetIsolate()->SetData(g_embedderDataSlot, nullptr);
 }
 
@@ -607,11 +614,21 @@ std::optional<IJS_Runtime::JS_Error> CFXJS_Engine::Execute(
     return IJS_Runtime::JS_Error(line, column, WideString::FromUTF8(*error));
   }
 
-  v8::Local<v8::Value> result;
-  if (!compiled_script->Run(context).ToLocal(&result)) {
-    v8::String::Utf8Value error(GetIsolate(), try_catch.Exception());
-    auto msg = try_catch.Message();
-    auto [line, column] = GetLineAndColumnFromError(msg, context);
+      v8::Local<v8::Value> result;
+
+      if (!compiled_script->Run(context).ToLocal(&result)) {
+
+        v8::String::Utf8Value error(GetIsolate(), try_catch.Exception());
+
+        // GEMINI: This assumes try_catch.Message() is non-empty, which might
+
+        // not be true for all V8 exceptions and could lead to a crash.
+
+        auto msg = try_catch.Message();
+
+        auto [line, column] = GetLineAndColumnFromError(msg, context);
+
+  
     return IJS_Runtime::JS_Error(line, column, WideString::FromUTF8(*error));
   }
   return std::nullopt;

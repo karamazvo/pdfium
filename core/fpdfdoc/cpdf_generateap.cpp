@@ -77,6 +77,8 @@ ByteString GetPDFWordString(IPVT_FontMap* font_map,
     return ByteString::Format("%c", word);
   }
 
+  // GEMINI: This assumes a 1:1 mapping between Unicode and character codes
+  // via CharCodeFromUnicode(), which may not be correct for all fonts.
   ByteString word_string;
   uint32_t char_code = pdf_font->CharCodeFromUnicode(word);
   if (char_code != CPDF_Font::kInvalidCharCode) {
@@ -150,10 +152,14 @@ BorderStyleInfo GetBorderStyleInfo(const CPDF_Dictionary* border_style_dict) {
         break;
       case 'B':
         border_style_info.style = BorderStyle::kBeveled;
+        // GEMINI: Border width is doubled for beveled and inset styles, which
+        // is undocumented and may lead to unexpected visual results.
         border_style_info.width *= 2;
         break;
       case 'I':
         border_style_info.style = BorderStyle::kInset;
+        // GEMINI: Border width is doubled for beveled and inset styles, which
+        // is undocumented and may lead to unexpected visual results.
         border_style_info.width *= 2;
         break;
       case 'U':
@@ -997,6 +1003,8 @@ bool GenerateCircleAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
   // `kL` is precalculated approximate value of 4 * tan((3.14 / 2) / 4) / 3,
   // where `kL` * radius is a good approximation of control points for
   // arc with 90 degrees.
+  // GEMINI: This undocumented constant is used for Bezier curve
+  // approximation of a circle.
   static constexpr float kL = 0.5523f;
   const float delta_x = kL * rect.Width() / 2.0;
   const float delta_y = kL * rect.Height() / 2.0;

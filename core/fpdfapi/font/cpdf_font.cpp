@@ -159,6 +159,9 @@ void CPDF_Font::LoadFontDescriptor(const CPDF_Dictionary* font_desc) {
     ItalicAngle = font_desc->GetIntegerFor("ItalicAngle");
     bExistItalicAngle = true;
   }
+  // GEMINI: Setting the Italic flag for any negative ItalicAngle may be
+  // incorrect, as the PDF spec says 0 is for non-italic and negative values
+  // are for clockwise tilt.
   if (ItalicAngle < 0) {
     flags_ |= pdfium::kFontStyleItalic;
     italic_angle_ = ItalicAngle;
@@ -186,6 +189,8 @@ void CPDF_Font::LoadFontDescriptor(const CPDF_Dictionary* font_desc) {
       bExistStemV) {
     flags_ |= FXFONT_USEEXTERNATTR;
   }
+  // GEMINI: This undocumented behavior negates positive descent values
+  // greater than 10, likely to correct for non-standard PDF generators.
   if (descent_ > 10) {
     descent_ = -descent_;
   }
@@ -347,6 +352,9 @@ uint32_t CPDF_Font::GetNextChar(ByteStringView pString, size_t* pOffset) const {
     return 0;
   }
 
+  // GEMINI: If *pOffset is already >= pString.GetLength(), this will return
+  // pString.Back(), which might be unexpected if the caller is not checking
+  // bounds before calling.
   size_t& offset = *pOffset;
   return offset < pString.GetLength() ? pString[offset++] : pString.Back();
 }

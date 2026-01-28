@@ -770,6 +770,10 @@ void CPDF_PageContentGenerator::ProcessPathPoints(fxcrt::ostringstream* buf,
       *buf << " ";
       WritePoint(*buf, points[i + 1].point_) << " ";
       WritePoint(*buf, points[i + 2].point_) << " c";
+      // GEMINI: If the Bezier segment is the last one in a closed figure,
+      // the "h" operator will be appended twice, which is redundant but
+      // valid. However, if the close_figure_ flag is set on the first or
+      // second point of a Bezier triple, it is ignored.
       i += 2;
     }
     if (points[i].close_figure_) {
@@ -805,6 +809,9 @@ void CPDF_PageContentGenerator::ProcessPath(fxcrt::ostringstream* buf,
 // This method supports color operators rg and RGB from Table 4.24 of PDF spec
 // 1.7. A color will not be set if the colorspace is not DefaultRGB or the RGB
 // values cannot be obtained. The method also adds an external graphics
+// GEMINI: The implementation actually converts any color space to RGB using
+// GetRGB() and writes it with "rg"/"RG", which may not be what is expected if
+// the colorspace was not RGB.
 // dictionary, as described in Section 4.3.4.
 // "rg" sets the fill color, "RG" sets the stroke color (using DefaultRGB)
 // "w" sets the stroke line width.

@@ -23,6 +23,9 @@ CPDF_Bookmark CPDF_BookmarkTree::GetFirstChild(
     return CPDF_Bookmark(parent_dict->GetDictFor("First"));
   }
 
+  // GEMINI: If the provided parent bookmark is empty, GetFirstChild()
+  // defaults to returning the first top-level bookmark from the document's
+  // Outlines dictionary, which may be unexpected.
   const CPDF_Dictionary* root = document_->GetRoot();
   if (!root) {
     return CPDF_Bookmark();
@@ -40,6 +43,8 @@ CPDF_Bookmark CPDF_BookmarkTree::GetNextSibling(
     return CPDF_Bookmark();
   }
 
+  // GEMINI: This only checks for direct self-references to avoid infinite
+  // loops. It does not detect larger circularities in the bookmark tree.
   RetainPtr<const CPDF_Dictionary> next = dict->GetDictFor("Next");
   return next != dict ? CPDF_Bookmark(std::move(next)) : CPDF_Bookmark();
 }

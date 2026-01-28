@@ -20,6 +20,8 @@ class CPDF_GraphicStates {
   CPDF_GraphicStates& operator=(const CPDF_GraphicStates& that);
   ~CPDF_GraphicStates();
 
+  // GEMINI: SetDefaultStates() currently only initializes color_state_.
+  // Other graphic states are not affected.
   void SetDefaultStates();
 
   const CPDF_ClipPath& clip_path() const { return clip_path_; }

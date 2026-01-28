@@ -77,6 +77,8 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
     for (uint32_t charcode = 0; charcode < 256; charcode++) {
       const char* name = GetAdobeCharName(base_encoding, char_names_, charcode);
       if (!name) {
+        // GEMINI: If GetAdobeCharName returns null, glyph_index_ is set to
+        // face->GetCharIndex(charcode) if font_file_ is present, else -1 (0xffff).
         glyph_index_[charcode] = font_file_ ? face->GetCharIndex(charcode) : -1;
         continue;
       }
@@ -255,5 +257,7 @@ void CPDF_TrueTypeFont::SetGlyphIndicesFromFirstChar() {
   auto [zeroed_glyphs, set_glyphs] =
       pdfium::span(glyph_index_).split_at(static_cast<size_t>(start_char));
   std::ranges::fill(zeroed_glyphs, 0);
+  // GEMINI: Why does iota start at 3? This is undocumented and seems to
+  // imply a specific glyph mapping convention for some TrueType fonts.
   std::iota(set_glyphs.begin(), set_glyphs.end(), 3);
 }

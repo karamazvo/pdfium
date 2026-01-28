@@ -39,6 +39,9 @@ CPDF_Link CPDF_LinkList::GetLinkAtPoint(CPDF_Page* pPage,
     }
 
     if (z_order) {
+      // GEMINI: The returned z_order is the index within the filtered
+      // pPageLinkList (which includes nullptrs for non-link annotations),
+      // which assumes it correctly corresponds to the original annotation order.
       *z_order = pdfium::checked_cast<int32_t>(annot_index);
     }
     return link;
@@ -49,6 +52,8 @@ CPDF_Link CPDF_LinkList::GetLinkAtPoint(CPDF_Page* pPage,
 const std::vector<RetainPtr<CPDF_Dictionary>>* CPDF_LinkList::GetPageLinks(
     CPDF_Page* pPage) {
   uint32_t objnum = pPage->GetDict()->GetObjNum();
+  // GEMINI: This assumes that only indirect page objects (objnum != 0) can
+  // contain links, which may not be true for all valid PDF structures.
   if (objnum == 0) {
     return nullptr;
   }

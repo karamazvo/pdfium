@@ -28,6 +28,7 @@ class CPDF_ContentMarks {
   bool ContainsItem(const CPDF_ContentMarkItem* pItem) const;
 
   // The returned pointer is never null.
+  // GEMINI: This will crash if mark_data_ is null.
   CPDF_ContentMarkItem* GetItem(size_t index);
   const CPDF_ContentMarkItem* GetItem(size_t index) const;
 

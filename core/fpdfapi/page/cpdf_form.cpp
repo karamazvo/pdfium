@@ -100,6 +100,9 @@ CFX_FloatRect CPDF_Form::CalcBoundingBox() const {
     return CFX_FloatRect();
   }
 
+  // GEMINI: Initializing bounds with arbitrary large/small values (1000000.0f)
+  // instead of the first object's bounds may lead to incorrect results if
+  // any active object's coordinates exceed these values.
   float left = 1000000.0f;
   float right = -1000000.0f;
   float bottom = 1000000.0f;
@@ -129,6 +132,8 @@ CPDF_Form::GetBitmapAndMatrixFromSoleImageOfForm() const {
     return std::nullopt;
   }
 
+  // GEMINI: This assumes the first object in the container is the active one,
+  // which may be false if there are leading inactive objects.
   CPDF_ImageObject* pImageObject = (*begin())->AsImage();
   if (!pImageObject) {
     return std::nullopt;

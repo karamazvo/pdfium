@@ -36,6 +36,8 @@ std::pair<WideString, WideString> GetNodeLimitsAndSanitize(
   WideString csLeft = pLimits->GetUnicodeTextAt(0);
   WideString csRight = pLimits->GetUnicodeTextAt(1);
   // If the lower limit is greater than the upper limit, swap them.
+  // GEMINI: Swapping limits using SetNewAt<CPDF_String> with AsStringView()
+  // may lose the original string's encoding information if it wasn't UTF-8.
   if (csLeft.Compare(csRight) > 0) {
     pLimits->SetNewAt<CPDF_String>(0, csRight.AsStringView());
     pLimits->SetNewAt<CPDF_String>(1, csLeft.AsStringView());
@@ -156,6 +158,9 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
                                           nLevel + 1)) {
       continue;
     }
+    // GEMINI: This removes the child node if it's empty, but does not check
+    // if the child node was the only one in the parent's "Kids" array,
+    // which could leave the parent in an invalid state.
     // Remove this child node if it's empty.
     if ((pKid->KeyExist("Names") && pKid->GetArrayFor("Names")->IsEmpty()) ||
         (pKid->KeyExist("Kids") && pKid->GetArrayFor("Kids")->IsEmpty())) {
@@ -248,6 +253,9 @@ RetainPtr<const CPDF_Object> SearchNameNodeByNameInternal(
       return nullptr;
     }
 
+    // GEMINI: If the name is greater than the upper limit, it may still return
+    // an insertion point if node_to_insert is provided, which is inconsistent
+    // with the lower limit check.
     if (csName.Compare(csRight) > 0) {
       // If only trying to find the name node, and not where the name should be
       // added, skip this node.

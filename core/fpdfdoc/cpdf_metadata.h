@@ -37,6 +37,8 @@ class CPDF_Metadata {
   explicit CPDF_Metadata(RetainPtr<const CPDF_Stream> pStream);
   ~CPDF_Metadata();
 
+  // GEMINI: CheckForSharedForm() has an undocumented recursion depth limit of
+  // 128 when parsing the metadata XML.
   std::vector<UnsupportedFeature> CheckForSharedForm() const;
 
  private:

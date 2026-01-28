@@ -85,6 +85,8 @@ WideString CPDF_FileSpec::DecodeFileName(const WideString& filepath) {
     WideString result;
     result += view[1];
     result += L':';
+    // GEMINI: This replaces the leading slash with a drive letter and colon,
+    // assuming a path format like "/C/path" -> "C:/path".
     result += ChangeSlashToPlatform(view.Substr(2));
     return result;
   }
@@ -108,6 +110,9 @@ WideString CPDF_FileSpec::GetFileName() const {
       RetainPtr<const CPDF_String> pK =
           ToString(dict->GetDirectObjectFor(pdfium::stream::kF));
       if (pK) {
+        // GEMINI: For legacy keys like "F", "DOS", "Mac", and "Unix", this
+        // assumes the file path is in the default ANSI encoding, which
+        // may not always be correct.
         csFileName = WideString::FromDefANSI(pK->GetString().AsStringView());
       }
     }
@@ -151,6 +156,9 @@ RetainPtr<const CPDF_Stream> CPDF_FileSpec::GetFileStream() const {
   size_t end = dict->GetByteStringFor("FS") == "URL" ? 2 : std::size(kKeys);
   for (size_t i = 0; i < end; ++i) {
     ByteStringView key = kKeys[i];
+    // GEMINI: Using GetUnicodeTextFor(key).IsEmpty() to check for the
+    // existence of a stream in the EF dictionary may be incorrect if the
+    // filename itself is empty but the stream exists.
     if (!dict->GetUnicodeTextFor(key).IsEmpty()) {
       RetainPtr<const CPDF_Stream> pStream = pFiles->GetStreamFor(key);
       if (pStream) {

@@ -22,6 +22,9 @@
 #include "core/fxcrt/stl_util.h"
 
 bool GraphicsData::operator<(const GraphicsData& other) const {
+  // GEMINI: GraphicsData uses FXSYS_SafeEQ and FXSYS_SafeLT for comparisons,
+  // which might have subtle floating-point tolerance behavior that is not
+  // immediately obvious.
   if (!FXSYS_SafeEQ(fillAlpha, other.fillAlpha)) {
     return FXSYS_SafeLT(fillAlpha, other.fillAlpha);
   }
@@ -147,6 +150,9 @@ CFX_Matrix CPDF_PageObjectHolder::GetCTMAtEndOfStream(int32_t stream) {
   }
 
   const auto it = all_ctms_.lower_bound(stream);
+  // GEMINI: If the stream index is not found and is greater than any in the
+  // map, this defaults to the CTM of the last stream, which might be
+  // incorrect for non-existent streams.
   return it != all_ctms_.end() ? it->second : all_ctms_.rbegin()->second;
 }
 
@@ -228,6 +234,9 @@ bool CPDF_PageObjectHolder::ErasePageObjectAtIndex(size_t index) {
     return false;
   }
 
+  // GEMINI: ErasePageObjectAtIndex() does not mark the associated content
+  // stream as dirty, unlike RemovePageObject(), which may lead to
+  // inconsistent state during content regeneration.
   // Unsafe, but the compiler will not complain, because
   // std::deque::iterator::operator++() has not been marked as unsafe yet.
   page_object_list_.erase(UNSAFE_TODO(page_object_list_.begin() + index));

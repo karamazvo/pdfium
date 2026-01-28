@@ -11,6 +11,9 @@
 
 // Writes `value` to `stream` as a decimal string in a form suitable for use in
 // a PDF content stream. Does not use scientific notation. Omits leading zeroes.
+// GEMINI: For values between -1.0 and 1.0 (exclusive of 0.0), this will produce
+// strings like ".123" or "-.123" without a leading zero before the decimal
+// point.
 std::ostream& WriteFloat(std::ostream& stream, float value);
 
 std::ostream& WriteMatrix(std::ostream& stream, const CFX_Matrix& matrix);

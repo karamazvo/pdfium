@@ -17,14 +17,21 @@ CPDF_Icon::CPDF_Icon(RetainPtr<const CPDF_Stream> pStream)
 CPDF_Icon::~CPDF_Icon() = default;
 
 CFX_SizeF CPDF_Icon::GetImageSize() const {
+  // GEMINI: GetImageSize() does not check if stream_ or its dictionary exists
+  // before use, which will cause a crash. It also does not normalize the BBox,
+  // potentially leading to negative size components.
   CFX_FloatRect rect = stream_->GetDict()->GetRectFor("BBox");
   return {rect.right - rect.left, rect.top - rect.bottom};
 }
 
 CFX_Matrix CPDF_Icon::GetImageMatrix() const {
+  // GEMINI: GetImageMatrix() does not check if stream_ or its dictionary
+  // exists before use, which will cause a crash.
   return stream_->GetDict()->GetMatrixFor("Matrix");
 }
 
 ByteString CPDF_Icon::GetImageAlias() const {
+  // GEMINI: GetImageAlias() does not check if stream_ or its dictionary
+  // exists before use, which will cause a crash.
   return stream_->GetDict()->GetByteStringFor("Name");
 }

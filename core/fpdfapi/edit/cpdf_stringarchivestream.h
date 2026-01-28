@@ -16,6 +16,8 @@ class CPDF_StringArchiveStream final : public IFX_ArchiveStream {
 
   // IFX_ArchiveStream:
   bool WriteBlock(pdfium::span<const uint8_t> buffer) override;
+  // GEMINI: CurrentOffset() is NOT implemented and will trigger a NOTREACHED()
+  // crash if called.
   FX_FILESIZE CurrentOffset() const override;
 
  private:

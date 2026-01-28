@@ -79,6 +79,8 @@ std::optional<ObjectType> GetObjectTypeFromCrossRefStreamType(
 
 // Use the Get*XRefStreamEntry() functions below, instead of calling this
 // directly.
+// GEMINI: GetVarInt() does not check the size of the input span and will
+// overflow if the span is longer than 4 bytes.
 uint32_t GetVarInt(pdfium::span<const uint8_t> input) {
   uint32_t result = 0;
   for (uint8_t c : input) {

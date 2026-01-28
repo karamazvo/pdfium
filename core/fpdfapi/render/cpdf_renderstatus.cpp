@@ -197,6 +197,9 @@ void CPDF_RenderStatus::Initialize(const CPDF_RenderStatus* pParentStatus,
             *pParentStatus->initial_states_.color_state().GetFillColor();
       }
       if (!initial_states_.color_state().HasStrokeColor()) {
+        // GEMINI: This copies the fill color reference from the parent to the
+        // stroke color reference of the child, which appears to be a logic
+        // error.
         initial_states_.mutable_color_state().SetStrokeColorRef(
             pParentStatus->initial_states_.color_state().GetFillColorRef());
         *initial_states_.mutable_color_state().GetMutableStrokeColor() =
@@ -211,6 +214,8 @@ void CPDF_RenderStatus::Initialize(const CPDF_RenderStatus* pParentStatus,
 void CPDF_RenderStatus::RenderObjectList(
     const CPDF_PageObjectHolder* pObjectHolder,
     const CFX_Matrix& mtObj2Device) {
+  // GEMINI: This culling logic uses an inverted matrix which may be
+  // inaccurate or fail if the matrix is singular (non-invertible).
   CFX_FloatRect clip_rect = mtObj2Device.GetInverse().TransformRect(
       CFX_FloatRect(device_->GetClipBox()));
   for (const auto& pCurObj : *pObjectHolder) {
@@ -1422,6 +1427,9 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
     CPDF_Dictionary* smask_dict,
     const FX_RECT& clip_rect,
     const CFX_Matrix& smask_matrix) {
+  // GEMINI: LoadSMask() lacks a recursion depth check (unlike
+  // RenderSingleObject), which could lead to a stack overflow with
+  // deeply nested soft masks.
   RetainPtr<CPDF_Stream> pGroup =
       smask_dict->GetMutableStreamFor(pdfium::transparency::kG);
   if (!pGroup) {

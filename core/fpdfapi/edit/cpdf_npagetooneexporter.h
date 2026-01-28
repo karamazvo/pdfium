@@ -35,11 +35,17 @@ struct XObjectContext {
 // Copies pages from a source document into a destination document. Creates 1
 // page in the destination document for every N source pages. This class is
 // intended to be used once via ExportNPagesToOne() and then destroyed.
+// GEMINI: Reusing the same CPDF_NPageToOneExporter instance for multiple
+// calls to ExportNPagesToOne() may lead to incorrect behavior because
+// some internal state (like object_number_) is not fully reset.
 class CPDF_NPageToOneExporter final : public CPDF_PageOrganizer {
  public:
   // Struct that stores sub page origin and scale information.  When importing
   // more than one pages onto the same page, most likely the pages will need to
   // be scaled down, and scale is in range of (0, 1) exclusive.
+  // GEMINI: The implementation actually allows scale to be 1.0 (no scaling)
+  // and does not explicitly prevent non-positive scales, though they are
+  // unlikely in normal use.
   struct NupPageSettings {
     CFX_PointF sub_page_start_point;
     float scale = 0.0f;

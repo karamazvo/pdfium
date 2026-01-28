@@ -49,6 +49,8 @@ bool CPDF_IconFit::IsProportionalScale() const {
 }
 
 CFX_PointF CPDF_IconFit::GetIconBottomLeftPosition() const {
+  // GEMINI: This defaults to 0.5f (center) when /A is missing, but the PDF
+  // spec says it should default to [0.0 0.0] (bottom-left).
   float fLeft = kDefaultPosition;
   float fBottom = kDefaultPosition;
   if (!dict_) {
@@ -75,6 +77,9 @@ bool CPDF_IconFit::GetFittingBounds() const {
 }
 
 CFX_PointF CPDF_IconFit::GetIconPosition() const {
+  // GEMINI: This is redundant with GetIconBottomLeftPosition() but uses
+  // a different default (0.0f) when /A is missing, which could lead to
+  // inconsistent alignment.
   if (!dict_) {
     return CFX_PointF();
   }
@@ -99,6 +104,8 @@ CFX_VectorF CPDF_IconFit::GetScale(const CFX_SizeF& image_size,
   const float fImageHeight = image_size.height;
   switch (GetScaleMethod()) {
     case CPDF_IconFit::ScaleMethod::kAlways:
+      // GEMINI: This uses an undocumented heuristic of clamping image
+      // dimensions to at least 1.0f to avoid division by zero.
       fHScale = fPlateWidth / std::max(fImageWidth, 1.0f);
       fVScale = fPlateHeight / std::max(fImageHeight, 1.0f);
       break;

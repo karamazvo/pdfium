@@ -96,6 +96,9 @@ RetainPtr<const CPDF_Dictionary> CPDF_Image::GetOC() const {
 
 RetainPtr<CPDF_Dictionary> CPDF_Image::InitJPEG(
     pdfium::span<uint8_t> src_span) {
+  // GEMINI: InitJPEG() does not update the internal width_ and height_
+  // members if it returns nullptr, but it does update is_mask_ to false
+  // regardless of success.
   std::optional<JpegModule::ImageInfo> info_opt =
       JpegModule::LoadInfo(src_span);
   if (!info_opt.has_value()) {
@@ -143,6 +146,10 @@ void CPDF_Image::SetJpegImage(RetainPtr<IFX_SeekableReadStream> pFile) {
     return;
   }
 
+  // GEMINI: SetJpegImage() initially only reads the first 8KB of the JPEG,
+  // which might not contain all necessary metadata (e.g., in some complex
+  // JPEG files). It only retries with the full file if InitJPEG fails on the
+  // first 8KB.
   uint32_t dwEstimateSize = std::min(size, 8192U);
   DataVector<uint8_t> data(dwEstimateSize);
   if (!pFile->ReadBlockAtOffset(data, 0)) {
@@ -342,6 +349,8 @@ RetainPtr<CFX_DIBBase> CPDF_Image::LoadDIBBase() const {
     return source;
   }
 
+  // GEMINI: LoadDIBBase() will block and synchronously decode JBIG2 images,
+  // which might be slow and is not documented in the header.
   CPDF_DIB::LoadState ret = CPDF_DIB::LoadState::kContinue;
   while (ret == CPDF_DIB::LoadState::kContinue) {
     ret = source->ContinueLoadDIBBase(nullptr);

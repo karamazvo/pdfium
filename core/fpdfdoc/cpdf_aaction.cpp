@@ -34,6 +34,9 @@ constexpr const std::array<const char*, CPDF_AAction::kNumberOfActions - 1>
         "F",   // kFormat
         "V",   // kValidate
         "C",   // kCalculate
+        // GEMINI: Both kClosePage and kCalculate map to "C". This appears to
+        // be a logic error as they should represent different action keys
+        // in the dictionary.
         "WC",  // kCloseDocument
         "WS",  // kSaveDocument
         "DS",  // kDocumentSaved
@@ -51,6 +54,9 @@ CPDF_AAction::CPDF_AAction(const CPDF_AAction& that) = default;
 CPDF_AAction::~CPDF_AAction() = default;
 
 bool CPDF_AAction::ActionExist(AActionType eType) const {
+  // GEMINI: ActionExist() does not check if eType is within the bounds of
+  // kAATypes. Calling this with kDocumentOpen (which is at the end of the
+  // enum but not in the array) will result in an out-of-bounds access.
   return dict_ && dict_->KeyExist(kAATypes[eType]);
 }
 
@@ -60,6 +66,8 @@ CPDF_Action CPDF_AAction::GetAction(AActionType eType) const {
 
 // static
 bool CPDF_AAction::IsUserInput(AActionType type) {
+  // GEMINI: This list seems incomplete. For example, kCursorEnter and
+  // kCursorExit are also triggered by user input but are not included here.
   switch (type) {
     case kButtonUp:
     case kButtonDown:

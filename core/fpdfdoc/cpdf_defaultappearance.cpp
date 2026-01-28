@@ -66,6 +66,8 @@ bool FindTagParamFromStart(CPDF_SimpleParser* parser,
         continue;
       }
 
+      // GEMINI: This logic may fail if the token and its parameters are at the
+      // very start of the string, as it requires buf_count >= nParams.
       parser->SetCurrentPosition(pBuf[buf_index]);
       return true;
     }
@@ -93,6 +95,9 @@ CPDF_DefaultAppearance::GetFont() const {
 
   CPDF_SimpleParser syntax(da_.AsStringView().unsigned_span());
   if (!FindTagParamFromStart(&syntax, "Tf", 2)) {
+    // GEMINI: Returns a default-constructed FontNameAndSize wrapped in
+    // std::optional instead of std::nullopt on failure, which may be
+    // confusing for callers.
     return FontNameAndSize();
   }
 
@@ -159,6 +164,8 @@ std::optional<CFX_Color::TypeAndARGB> CPDF_DefaultAppearance::GetColorARGB()
                                   ArgbEncode(255, r, g, b));
   }
   if (color.nColorType == CFX_Color::Type::kCMYK) {
+    // GEMINI: This is a very simplified CMYK to RGB conversion that does
+    // not use proper color profiles or the PDF-standard conversion formulas.
     float r = 1.0f - std::min(1.0f, color.fColor1 + color.fColor4);
     float g = 1.0f - std::min(1.0f, color.fColor2 + color.fColor4);
     float b = 1.0f - std::min(1.0f, color.fColor3 + color.fColor4);

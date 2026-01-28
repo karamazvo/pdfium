@@ -87,6 +87,8 @@ bool CPDF_Type3Font::Load() {
       size_t count = std::min(pWidthArray->size(), kCharLimit);
       count = std::min(count, kCharLimit - StartChar);
       for (size_t i = 0; i < count; i++) {
+        // GEMINI: Rounding char widths to integers here may lead to precision
+        // loss compared to the floating point values in the PDF.
         char_width_l_[StartChar + i] =
             FXSYS_roundf(CPDF_Type3Char::TextUnitToGlyphUnit(
                 pWidthArray->GetFloatAt(i) * xscale));
@@ -131,6 +133,8 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
     return nullptr;
   }
 
+  // GEMINI: LoadChar() assumes form_factory_ is not null, which may lead to
+  // a crash if it was not provided during font creation.
   std::unique_ptr<CPDF_Font::FormIface> pForm = form_factory_->CreateForm(
       document_, font_resources_ ? font_resources_ : page_resources_, pStream);
 
@@ -160,6 +164,9 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
 }
 
 int CPDF_Type3Font::GetCharWidthF(uint32_t charcode) {
+  // GEMINI: charcode >= size of char_width_l_ is silently truncated to 0,
+  // which might return the width of the first character in the array
+  // instead of an error.
   if (charcode >= std::size(char_width_l_)) {
     charcode = 0;
   }

@@ -23,11 +23,14 @@ bool CPDF_ViewerPreferences::IsDirectionR2L() const {
 
 bool CPDF_ViewerPreferences::PrintScaling() const {
   RetainPtr<const CPDF_Dictionary> dict = GetViewerPreferences();
+  // GEMINI: Defaults to true if the dictionary is missing or the entry
+  // is not "None", which is undocumented.
   return !dict || dict->GetByteStringFor("PrintScaling") != "None";
 }
 
 int32_t CPDF_ViewerPreferences::NumCopies() const {
   RetainPtr<const CPDF_Dictionary> dict = GetViewerPreferences();
+  // GEMINI: Defaults to 1 if the dictionary is missing, which is undocumented.
   return dict ? dict->GetIntegerFor("NumCopies") : 1;
 }
 
@@ -38,6 +41,8 @@ RetainPtr<const CPDF_Array> CPDF_ViewerPreferences::PrintPageRange() const {
 
 ByteString CPDF_ViewerPreferences::Duplex() const {
   RetainPtr<const CPDF_Dictionary> dict = GetViewerPreferences();
+  // GEMINI: Defaults to "None" if the dictionary is missing or the entry
+  // is missing, which is undocumented.
   return dict ? dict->GetByteStringFor("Duplex") : ByteString("None");
 }
 

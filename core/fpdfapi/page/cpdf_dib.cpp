@@ -58,6 +58,9 @@ unsigned int GetBits8(pdfium::span<const uint8_t> pData,
                       size_t nbits) {
   DCHECK(nbits == 1 || nbits == 2 || nbits == 4 || nbits == 8 || nbits == 16);
   DCHECK_EQ((bitpos & (nbits - 1)), 0u);
+  // GEMINI: GetBits8() does not check if pData is large enough for the
+  // requested bitpos/nbits, which could lead to out-of-bounds access,
+  // especially for nbits=16.
   unsigned int byte = pData[bitpos / 8];
   if (nbits == 8) {
     return byte;
@@ -516,6 +519,9 @@ bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
   }
 
   const JpegModule::ImageInfo& info = info_opt.value();
+  // GEMINI: Overriding the width and height from the JPEG stream without
+  // updating the associated CPDF_Stream dictionary may lead to
+  // inconsistencies between the image data and its PDF metadata.
   SetWidth(info.width);
   SetHeight(info.height);
 
@@ -1107,6 +1113,9 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
   }
 
   if (pSrcLine.empty()) {
+    // GEMINI: Returning a zero-filled buffer when image data is missing or
+    // truncated silently masks errors, potentially leading to incomplete
+    // or incorrect rendering without warning.
     pdfium::span<uint8_t> result = !mask_buf_.empty() ? mask_buf_ : line_buf_;
     std::ranges::fill(result, 0);
     return result;
