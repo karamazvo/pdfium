@@ -343,6 +343,30 @@
       },
       "revId": "fb2d314b9f005c77699460d702f94c71e2f53420",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "443412a9_6eb49180",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-28T18:38:10Z",
+      "side": 1,
+      "message": "width \u003d\u003d 8 would return {.full_bytes \u003d 0, .last_byte_bits \u003d 8}, instead of {.full_bytes \u003d 1, .last_byte_bits \u003d 0}, so I guess it\u0027s correct, but not intuitive. Let me see what happens if I try to fix this...",
+      "parentUuid": "a5db2e8f_28227ff5",
+      "range": {
+        "startLine": 57,
+        "startChar": 28,
+        "endLine": 57,
+        "endChar": 51
+      },
+      "revId": "fb2d314b9f005c77699460d702f94c71e2f53420",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
