@@ -1,5 +1,23 @@
 {
-  "comments": [],
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "24e3d33e_88e6c876",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-28T22:19:56Z",
+      "side": 1,
+      "message": "FYI, most of these are noise, the one that worries me is cpdf_syntax_parser.ccp:200",
+      "revId": "15790466fa4d5948438004ce34586d0552e08b68",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ],
   "submitRequirementResults": [
     {
       "submitRequirement": {
