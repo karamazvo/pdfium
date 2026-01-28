@@ -5,132 +5,135 @@
 #ifndef CORE_FXCRT_ZIP_H_
 #define CORE_FXCRT_ZIP_H_
 
-#include <stdint.h>
-
+#include <algorithm>
+#include <iterator>
 #include <tuple>
 #include <utility>
 
-#include "core/fxcrt/check_op.h"
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/compiler_specific.h"
-#include "core/fxcrt/span.h"
 
 namespace fxcrt {
 
-// Vastly simplified implementation of ideas from C++23 zip_view<>. Allows
-// safe traversal of two or three ranges with a single bounds check per
-// iteration.
-//
-// Example two range usage:
-//   struct RGB { uint8_t r; uint8_t g; uint8_t b; };
-//   const uint8_t gray[256] = { ... };
-//   RGB rgbs[260];
-//   for (auto [in, out] : Zip(gray, rgbs)) {
-//     out.r = in;
-//     out.g = in;
-//     out.b = in;
-//   }
-// which fills the first 256 elements of rgbs with the corresponding gray
-// value in each component, say.
-//
-// Differences include:
-// - Only zips together two or three views instead of N.
-// - Size is determined by the first view, which must be smaller than the
-//   other view(s).
-// - Views are passed as forwarding-references, so non-const views may be
-//   assigned-to in the body of the loop.
-// - Only those methods required to support use in a range-based for-loop
-//   are provided.
+namespace internal {
 
-template <typename T, typename U>
-class ZipView2 {
+template <typename... Ranges>
+class Zipper {
  public:
-  struct Iter {
-    friend inline bool operator==(const Iter& lhs, const Iter& rhs) {
-      return lhs.first == rhs.first;
-    }
+  constexpr explicit Zipper(Ranges&... ranges LIFETIME_BOUND) noexcept
+      : ranges_(ranges...) {}
 
-    // PRECONDITIONS: Iter must not have reached end().
-    UNSAFE_BUFFER_USAGE Iter& operator++() {
-      // SAFETY: required from caller, enforced by UNSAFE_BUFFER_USAGE.
-      UNSAFE_BUFFERS(++first);
-      UNSAFE_BUFFERS(++second);
+  struct ZipEnd;
+
+  class iterator {
+   public:
+    using value_type = std::tuple<
+        std::remove_cv_t<decltype(*std::begin(std::declval<Ranges&>()))>...>;
+    using reference = value_type;
+    using element_type = value_type;
+    using difference_type = std::ptrdiff_t;
+    using pointer = void;
+    // TODO(https://crbug.com/377940847): This could be improved going forward
+    // to select a better iterator category, based on the common denominator of
+    // the union of iterators, for instance output iterators, etc.
+    using iterator_category = std::input_iterator_tag;
+    using iterator_concept = std::input_iterator_tag;
+
+    constexpr iterator& operator++() noexcept LIFETIME_BOUND {
+      advance(std::index_sequence_for<Ranges...>{});
       return *this;
     }
 
-    std::pair<typename T::reference, typename U::reference> operator*() const {
-      return {*first, *second};
+    constexpr iterator operator++(int) noexcept LIFETIME_BOUND {
+      auto it = *this;
+      advance(std::index_sequence_for<Ranges...>{});
+      return it;
     }
 
-    typename T::iterator first;
-    typename U::iterator second;
+    constexpr auto operator*() const noexcept LIFETIME_BOUND {
+      return deref(std::index_sequence_for<Ranges...>{});
+    }
+
+    // Determines if the iterator has reached the end, so a for-range loop bails
+    // out.
+    constexpr bool operator!=(ZipEnd) const noexcept LIFETIME_BOUND {
+      return has_more(std::index_sequence_for<Ranges...>{});
+    }
+
+   private:
+    friend class Zipper;
+
+    constexpr explicit iterator(
+        std::tuple<decltype(std::begin(std::declval<Ranges&>()))...> begin
+            LIFETIME_BOUND,
+        std::tuple<decltype(std::end(std::declval<Ranges&>()))...> end
+            LIFETIME_BOUND) noexcept
+        : begin_(begin), end_(end) {}
+
+    // Checks if any range has reached the end.
+    template <std::size_t... Is>
+    constexpr bool has_more(std::index_sequence<Is...>) const {
+      return (... && (std::get<Is>(begin_) != std::get<Is>(end_)));
+    }
+
+    template <std::size_t... Is>
+    constexpr void advance(std::index_sequence<Is...>) {
+      CHECK(operator!=(ZipEnd()));
+      // SAFETY: The increment is safe as it has been just CHECKed so it is
+      // guaranteed to be inside [begin_, end_).
+      UNSAFE_BUFFERS((++std::get<Is>(begin_), ...));
+    }
+
+    template <size_t... Is>
+    constexpr value_type deref(std::index_sequence<Is...>) const
+        LIFETIME_BOUND {
+      return {*std::get<Is>(begin_)...};
+    }
+
+    std::tuple<decltype(std::begin(std::declval<Ranges&>()))...> begin_;
+    std::tuple<decltype(std::end(std::declval<Ranges&>()))...> end_;
   };
 
-  ZipView2(T first, U second) : first_(first), second_(second) {
-    CHECK_LE(first.size(), second.size());
-  }
-
-  Iter begin() { return {first_.begin(), second_.begin()}; }
-  Iter end() { return {first_.end(), second_.end()}; }
-
- private:
-  T first_;
-  U second_;
-};
-
-// Same as `ZipView2`, but with 2 inputs and 1 output.
-template <typename T, typename U, typename V>
-class ZipView3 {
- public:
-  struct Iter {
-    inline friend bool operator==(const Iter& lhs, const Iter& rhs) {
-      return lhs.first == rhs.first;
-    }
-
-    // PRECONDITIONS: Iter must not have reached end().
-    UNSAFE_BUFFER_USAGE Iter& operator++() {
-      // SAFETY: required from caller, enforced by UNSAFE_BUFFER_USAGE.
-      UNSAFE_BUFFERS(++first);
-      UNSAFE_BUFFERS(++second);
-      UNSAFE_BUFFERS(++third);
-      return *this;
-    }
-
-    std::tuple<typename T::reference,
-               typename U::reference,
-               typename V::reference>
-    operator*() const {
-      return {*first, *second, *third};
-    }
-
-    typename T::iterator first;
-    typename U::iterator second;
-    typename V::iterator third;
+  // A sentinel used by the iterator to constrain the comparison to make sure it
+  // has the proper end of each range.
+  struct ZipEnd {
+    constexpr bool operator==(iterator it) const { return it == *this; }
   };
 
-  ZipView3(T first, U second, V third)
-      : first_(first), second_(second), third_(third) {
-    CHECK_LE(first.size(), second.size());
-    CHECK_LE(first.size(), third.size());
+  constexpr iterator begin() noexcept LIFETIME_BOUND {
+    return begin_impl(std::index_sequence_for<Ranges...>{});
   }
 
-  Iter begin() { return {first_.begin(), second_.begin(), third_.begin()}; }
-  Iter end() { return {first_.end(), second_.end(), third_.end()}; }
+  constexpr ZipEnd end() noexcept { return ZipEnd(); }
 
  private:
-  T first_;
-  U second_;
-  V third_;
+  template <size_t... Is>
+  constexpr iterator begin_impl(std::index_sequence<Is...>) LIFETIME_BOUND {
+    return iterator(std::make_tuple(std::begin(std::get<Is>(ranges_))...),
+                    std::make_tuple(std::end(std::get<Is>(ranges_))...));
+  }
+
+  std::tuple<Ranges&...> ranges_;
 };
 
-template <typename T, typename U>
-auto Zip(T&& first, U&& second) {
-  return ZipView2(pdfium::span(first), pdfium::span(second));
-}
+}  // namespace internal
 
-template <typename T, typename U, typename V>
-auto Zip(T&& first, U&& second, V&& third) {
-  return ZipView3(pdfium::span(first), pdfium::span(second),
-                  pdfium::span(third));
+// Zipping utility that allows iterating over multiple ranges in lockstep.
+//
+// Example:
+//
+// std::vector<int> a = {1, 2, 3};
+// std::vector<double> b = {4.5, 5.5, 6.5};
+// std::vector<std::string> c = {"x", "y", "z"};
+// for (auto [x, y, z] : Zip(a, b, c)) {
+//   st::cout << x << " " << y << " " << z;
+// }
+//
+// Zipping will carry on until one of the ranges run out, at which the loop will
+// bail.
+template <typename... Ranges>
+constexpr internal::Zipper<Ranges...> Zip(Ranges&... ranges LIFETIME_BOUND) {
+  return internal::Zipper<Ranges...>(ranges...);
 }
 
 }  // namespace fxcrt

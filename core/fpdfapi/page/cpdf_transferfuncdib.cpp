@@ -95,18 +95,17 @@ void CPDF_TransferFuncDIB::TranslateScanline(
     }
     case FXDIB_Format::k8bppRgb: {
       pdfium::span<const uint32_t> src_palette = src_->GetPaletteSpan();
+      auto src = src_span.first(static_cast<size_t>(GetWidth()));
       auto dest = fxcrt::reinterpret_span<kPlatformRGBStruct>(scanline_span);
-      auto zip =
-          fxcrt::Zip(src_span.first(static_cast<size_t>(GetWidth())), dest);
       if (src_->HasPalette()) {
-        for (auto [input, output] : zip) {
+        for (auto [input, output] : fxcrt::Zip(src, dest)) {
           const FX_ARGB src_argb = src_palette[input];
           output = MakePlatformRGBStruct(r_samples_[FXARGB_B(src_argb)],
                                          g_samples_[FXARGB_G(src_argb)],
                                          b_samples_[FXARGB_R(src_argb)]);
         }
       } else {
-        for (auto [input, output] : zip) {
+        for (auto [input, output] : fxcrt::Zip(src, dest)) {
           output = MakePlatformRGBStruct(r_samples_[input], g_samples_[input],
                                          b_samples_[input]);
         }
@@ -114,19 +113,18 @@ void CPDF_TransferFuncDIB::TranslateScanline(
       break;
     }
     case FXDIB_Format::k8bppMask: {
-      for (auto [input, output] :
-           fxcrt::Zip(src_span.first(static_cast<size_t>(GetWidth())),
-                      scanline_span)) {
+      auto src = src_span.first(static_cast<size_t>(GetWidth()));
+      for (auto [input, output] : fxcrt::Zip(src, scanline_span)) {
         output = r_samples_[input];
       }
       break;
     }
     case FXDIB_Format::kBgr: {
       auto src =
-          fxcrt::reinterpret_span<const FX_BGR_STRUCT<uint8_t>>(src_span);
+          fxcrt::reinterpret_span<const FX_BGR_STRUCT<uint8_t>>(src_span).first(
+              static_cast<size_t>(GetWidth()));
       auto dest = fxcrt::reinterpret_span<kPlatformRGBStruct>(scanline_span);
-      for (auto [input, output] :
-           fxcrt::Zip(src.first(static_cast<size_t>(GetWidth())), dest)) {
+      for (auto [input, output] : fxcrt::Zip(src, dest)) {
         output = MakePlatformRGBStruct(r_samples_[input.red],
                                        g_samples_[input.green],
                                        b_samples_[input.blue]);
@@ -135,10 +133,10 @@ void CPDF_TransferFuncDIB::TranslateScanline(
     }
     case FXDIB_Format::kBgrx: {
       auto src =
-          fxcrt::reinterpret_span<const FX_BGRA_STRUCT<uint8_t>>(src_span);
+          fxcrt::reinterpret_span<const FX_BGRA_STRUCT<uint8_t>>(src_span)
+              .first(static_cast<size_t>(GetWidth()));
       auto dest = fxcrt::reinterpret_span<kPlatformRGBStruct>(scanline_span);
-      for (auto [input, output] :
-           fxcrt::Zip(src.first(static_cast<size_t>(GetWidth())), dest)) {
+      for (auto [input, output] : fxcrt::Zip(src, dest)) {
         output = MakePlatformRGBStruct(r_samples_[input.red],
                                        g_samples_[input.green],
                                        b_samples_[input.blue]);
@@ -147,11 +145,11 @@ void CPDF_TransferFuncDIB::TranslateScanline(
     }
     case FXDIB_Format::kBgra: {
       auto src =
-          fxcrt::reinterpret_span<const FX_BGRA_STRUCT<uint8_t>>(src_span);
+          fxcrt::reinterpret_span<const FX_BGRA_STRUCT<uint8_t>>(src_span)
+              .first(static_cast<size_t>(GetWidth()));
       auto dest =
           fxcrt::reinterpret_span<FX_BGRA_STRUCT<uint8_t>>(scanline_span);
-      for (auto [input, output] :
-           fxcrt::Zip(src.first(static_cast<size_t>(GetWidth())), dest)) {
+      for (auto [input, output] : fxcrt::Zip(src, dest)) {
         output = {
             .blue = b_samples_[input.blue],
             .green = g_samples_[input.green],

@@ -99,8 +99,9 @@ bool CQuartz2D::DrawGraphicsString(void* graphics,
 #if CGFLOAT_IS_DOUBLE
   auto glyph_positions_cg =
       FixedSizeDataVector<CGPoint>::Uninit(glyph_positions.size());
+  auto glyph_positions_cg_span = glyph_positions_cg.span();
   for (auto [input, output] :
-       fxcrt::Zip(glyph_positions, glyph_positions_cg.span())) {
+       fxcrt::Zip(glyph_positions, glyph_positions_cg_span)) {
     output.x = input.x;
     output.y = input.y;
   }
