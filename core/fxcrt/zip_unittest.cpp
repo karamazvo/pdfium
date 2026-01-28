@@ -4,12 +4,15 @@
 
 #include <stdint.h>
 
+#include <vector>
+
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/zip.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
+using ::testing::ElementsAre;
 using ::testing::ElementsAreArray;
 
 namespace fxcrt {
@@ -33,25 +36,32 @@ struct NoCopyNoMove {
 
 }  // namespace
 
-TEST(Zip, EmptyZip) {
-  pdfium::span<const int> nothing;
-  int stuff[] = {1, 2, 3};
+TEST(ZipTest, EmptyZip) {
+  std::vector<int> a;
+  std::vector<int> b;
+  std::vector<int> c;
 
-  auto zip_nothing_nothing = Zip(nothing, nothing);
-  EXPECT_EQ(zip_nothing_nothing.begin(), zip_nothing_nothing.end());
+  for (auto [x, y, z] : Zip(a, b, c)) {
+    x *= 10;
+    y *= 10;
+    z *= 10;
+  }
 
-  auto zip_nothing_stuff = Zip(nothing, stuff);
-  EXPECT_EQ(zip_nothing_stuff.begin(), zip_nothing_stuff.end());
+  EXPECT_TRUE(a.empty());
+  EXPECT_TRUE(b.empty());
+  EXPECT_TRUE(c.empty());
 
-  auto zip_nothing_nothing_nothing = Zip(nothing, nothing, nothing);
-  EXPECT_EQ(zip_nothing_nothing_nothing.begin(),
-            zip_nothing_nothing_nothing.end());
+  b.push_back(1);
 
-  auto zip_nothing_nothing_stuff = Zip(nothing, nothing, stuff);
-  EXPECT_EQ(zip_nothing_nothing_stuff.begin(), zip_nothing_nothing_stuff.end());
+  for (auto [x, y, z] : Zip(a, b, c)) {
+    x *= 10;
+    y *= 10;
+    z *= 10;
+  }
 
-  auto zip_nothing_stuff_stuff = Zip(nothing, stuff, stuff);
-  EXPECT_EQ(zip_nothing_stuff_stuff.begin(), zip_nothing_stuff_stuff.end());
+  EXPECT_TRUE(a.empty());
+  EXPECT_THAT(b, ElementsAre(1));
+  EXPECT_TRUE(c.empty());
 }
 
 TEST(Zip, ActualZip) {
@@ -130,14 +140,18 @@ TEST(Zip, BadArgumentsZip) {
   pdfium::span<const int> nothing;
   int stuff[] = {1, 2, 3};
 
-  EXPECT_DEATH(Zip(stuff, nothing), ".*");
+  auto ranges = Zip(stuff, nothing);
+  auto it = ranges.begin();
+  EXPECT_DEATH(std::advance(it, 1), ".*");
 }
 
 TEST(Zip, BadArgumentsZip3) {
   pdfium::span<const int> nothing;
   int stuff[] = {1, 2, 3};
 
-  EXPECT_DEATH(Zip(stuff, stuff, nothing), ".*");
+  auto ranges = Zip(stuff, stuff, nothing);
+  auto it = ranges.begin();
+  EXPECT_DEATH(std::advance(it, 1), ".*");
 }
 
 }  // namespace fxcrt
