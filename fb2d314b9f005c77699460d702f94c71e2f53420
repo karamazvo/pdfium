@@ -391,6 +391,30 @@
       },
       "revId": "fb2d314b9f005c77699460d702f94c71e2f53420",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e45053fd_828254a3",
+        "filename": "core/fxcodec/jbig2/JBig2_GrdProc.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-28T22:52:56Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "69023505_7d847a1f",
+      "range": {
+        "startLine": 57,
+        "startChar": 28,
+        "endLine": 57,
+        "endChar": 51
+      },
+      "revId": "fb2d314b9f005c77699460d702f94c71e2f53420",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
