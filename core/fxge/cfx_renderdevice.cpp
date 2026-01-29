@@ -1172,7 +1172,7 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
   }
   std::vector<TextGlyphPos> glyphs(pCharPos.size());
   const bool anti_alias_is_lcd = anti_alias == FontAntiAliasingMode::kLcd;
-  for (auto [charpos, glyph] : fxcrt::Zip(pCharPos, pdfium::span(glyphs))) {
+  for (auto [charpos, glyph] : fxcrt::Zip(pCharPos, glyphs)) {
     glyph.device_origin_ = text2Device.Transform(charpos.origin_);
     glyph.origin_.x = anti_alias_is_lcd
                           ? static_cast<int>(floor(glyph.device_origin_.x))
