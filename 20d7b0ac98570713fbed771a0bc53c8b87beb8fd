@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4513a7ee_a763453f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-29T02:21:08Z",
+      "side": 1,
+      "message": "I just wanted the test re-enabled on all platforms before switching to PNGs. It doesn\u0027t look flaky to me, so not sure why it was checked-in that way. The code review that added this test didn\u0027t give any clues.",
+      "revId": "20d7b0ac98570713fbed771a0bc53c8b87beb8fd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
