@@ -238,7 +238,7 @@ TEST_F(FPDFThumbnailEmbedderTest, GetThumbnailDoesNotAlterPage) {
   ScopedFPDFBitmap thumb_bitmap(FPDFPage_GetThumbnailAsBitmap(page.get()));
 
   EXPECT_EQ(FPDFBitmap_BGR, FPDFBitmap_GetFormat(thumb_bitmap.get()));
-  CompareBitmapToPng(thumb_bitmap.get(), "simple_thumbnail0");
+  CompareBitmapToPng(thumb_bitmap.get(), "simple_thumbnail_0");
 
   // Get the raw data again
   unsigned long new_raw_size =
