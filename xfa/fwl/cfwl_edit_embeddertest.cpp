@@ -80,7 +80,7 @@ TEST_F(CFWLEditEmbedderTest, LeftClickMouseSelection) {
 }
 
 TEST_F(CFWLEditEmbedderTest, DragMouseSelection) {
-  // TODO(crbug.com/pdfium/11): Fix this test and enable for Skia variants.
+  // TODO(crbug.com/40096188): Fix this test and enable for Skia variants.
   if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     return;
   }
@@ -114,7 +114,7 @@ TEST_F(CFWLEditEmbedderTest, DragMouseSelection) {
 }
 
 TEST_F(CFWLEditEmbedderTest, SimpleFill) {
-  // TODO(crbug.com/pdfium/11): Fix this test and enable for Skia variants.
+  // TODO(crbug.com/40096188): Fix this test and enable for Skia variants.
   if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     return;
   }
@@ -141,7 +141,7 @@ TEST_F(CFWLEditEmbedderTest, SimpleFill) {
 }
 
 TEST_F(CFWLEditEmbedderTest, FillWithNewLineWithoutMultiline) {
-  // TODO(crbug.com/pdfium/11): Fix this test and enable for Skia variants.
+  // TODO(crbug.com/40096188): Fix this test and enable for Skia variants.
   if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     return;
   }
@@ -164,8 +164,12 @@ TEST_F(CFWLEditEmbedderTest, FillWithNewLineWithoutMultiline) {
   }
 }
 
-// Disabled due to flakiness.
-TEST_F(CFWLEditEmbedderTest, DISABLED_FillWithNewLineWithMultiline) {
+TEST_F(CFWLEditEmbedderTest, FillWithNewLineWithMultiline) {
+  // TODO(crbug.com/40096188): Fix this test and enable for Skia variants.
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+    return;
+  }
+
   CreateAndInitializeFormPDF("xfa/xfa_multiline_textfield.pdf");
   ScopedPage page = LoadScopedPage(0);
   FORM_OnLButtonDown(form_handle(), page.get(), 0, 115, 58);
@@ -221,7 +225,7 @@ TEST_F(CFWLEditEmbedderTest, DISABLED_FillWithNewLineWithMultiline) {
 }
 
 TEST_F(CFWLEditEmbedderTest, DateTimePickerTest) {
-  // TODO(crbug.com/pdfium/11): Fix this test and enable for Skia variants.
+  // TODO(crbug.com/40096188): Fix this test and enable for Skia variants.
   if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     return;
   }
