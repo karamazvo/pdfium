@@ -16,6 +16,24 @@
       "message": "I just wanted the test re-enabled on all platforms before switching to PNGs. It doesn\u0027t look flaky to me, so not sure why it was checked-in that way. The code review that added this test didn\u0027t give any clues.",
       "revId": "20d7b0ac98570713fbed771a0bc53c8b87beb8fd",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e7abad0d_15fa989e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-29T08:06:27Z",
+      "side": 1,
+      "message": "Yeah, I noticed that when I was testing it with images as well. Perhaps it was flaky at the time, but it was not well documented.\n\nAlso quick question, why is this disabled for Skia? I was able to get it to work on Skia while testing it with expectation images.\n\nMight be worth a test to seeing if this flakiness still exists on Skia.",
+      "parentUuid": "4513a7ee_a763453f",
+      "revId": "20d7b0ac98570713fbed771a0bc53c8b87beb8fd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
