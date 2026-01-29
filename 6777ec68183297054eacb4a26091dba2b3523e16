@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "85d3d0c6_63a21975",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-01-29T17:02:25Z",
+      "side": 1,
+      "message": "The checksums were hiding how cute these thumbnails are!",
+      "revId": "6777ec68183297054eacb4a26091dba2b3523e16",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
