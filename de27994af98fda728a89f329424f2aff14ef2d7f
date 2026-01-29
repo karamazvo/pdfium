@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "276fe261_f638c286",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-29T20:59:19Z",
+      "side": 1,
+      "message": "This variable is gone.",
+      "range": {
+        "startLine": 179,
+        "startChar": 40,
+        "endLine": 179,
+        "endChar": 57
+      },
+      "revId": "de27994af98fda728a89f329424f2aff14ef2d7f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a83ebdee_9fef3033",
+        "filename": "core/fxge/cfx_font.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-29T20:59:19Z",
+      "side": 1,
+      "message": "Forward declare.",
+      "range": {
+        "startLine": 77,
+        "startChar": 22,
+        "endLine": 77,
+        "endChar": 46
+      },
+      "revId": "de27994af98fda728a89f329424f2aff14ef2d7f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
