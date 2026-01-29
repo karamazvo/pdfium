@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "637f68e6_d043133b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-29T20:59:04Z",
+      "side": 1,
+      "message": "And yet no pixel diffs under tests. Must be odd corner case ...",
+      "revId": "60047b9d464d82d9d3d9736b3ec64d3d1e7df934",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
