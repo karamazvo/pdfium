@@ -282,24 +282,6 @@ fxge::FontEncoding ToFontEncoding(uint32_t ft_encoding) {
   }
   NOTREACHED();
 }
-#if defined(PDF_ENABLE_XFA)
-unsigned long FTStreamRead(FXFT_StreamRec* stream,
-                           unsigned long offset,
-                           unsigned char* buffer,
-                           unsigned long count) {
-  if (count == 0) {
-    return 0;
-  }
-  IFX_SeekableReadStream* pFile =
-      static_cast<IFX_SeekableReadStream*>(stream->descriptor.pointer);
-  // SAFETY: caller ensures `buffer` points to at least `count` bytes.
-  return pFile && pFile->ReadBlockAtOffset(
-                      UNSAFE_BUFFERS(pdfium::span(buffer, count)), offset)
-             ? count
-             : 0;
-}
-void FTStreamClose(FXFT_StreamRec* stream) {}
-#endif
 
 FX_RECT FXRectFromFTPos(FT_Pos left, FT_Pos top, FT_Pos right, FT_Pos bottom) {
   return FX_RECT(pdfium::checked_cast<int32_t>(left),
@@ -377,26 +359,6 @@ RetainPtr<CFX_Face> CFX_Face::New(CFX_FontMgr* font_mgr,
   return face;
 }
 
-#if BUILDFLAG(IS_ANDROID) || defined(PDF_ENABLE_XFA)
-// static
-RetainPtr<CFX_Face> CFX_Face::Open(CFX_FontMgr* font_mgr,
-                                   const FT_Open_Args* args,
-                                   uint32_t face_index) {
-  FXFT_LibraryRec* library = font_mgr->GetFTLibrary();
-  if (!library) {
-    return nullptr;
-  }
-  FXFT_FaceRec* face_rec = nullptr;
-  if (FT_Open_Face(library, args, pdfium::checked_cast<FT_Long>(face_index),
-                   &face_rec) != 0) {
-    return nullptr;
-  }
-
-  // Private ctor.
-  return pdfium::WrapRetain(new CFX_Face(face_rec, nullptr));
-}
-#endif
-
 #if BUILDFLAG(IS_ANDROID)
 RetainPtr<CFX_Face> CFX_Face::OpenFromFilePath(CFX_FontMgr* font_mgr,
                                                ByteStringView path,
@@ -409,49 +371,48 @@ RetainPtr<CFX_Face> CFX_Face::OpenFromFilePath(CFX_FontMgr* font_mgr,
     return nullptr;
   }
 
+  FXFT_LibraryRec* library = font_mgr->GetFTLibrary();
+  if (!library) {
+    return nullptr;
+  }
+
   FT_Open_Args args;
   args.flags = FT_OPEN_PATHNAME;
   args.pathname = const_cast<FT_String*>(path.unterminated_c_str());
-  RetainPtr<CFX_Face> face = Open(font_mgr, &args, face_index);
+
+  FXFT_FaceRec* face_rec = nullptr;
+  if (FT_Open_Face(library, args, pdfium::checked_cast<FT_Long>(face_index),
+                   &face_rec) != 0) {
+    return nullptr;
+  }
+
+  // Private ctor.
+  RetainPtr<CFX_Face> face =
+      pdfium::WrapRetain(new CFX_Face(face_rec, nullptr));
   if (!face) {
     return nullptr;
   }
+
   face->SetPixelSize(0, 64);
   return face;
 }
 #endif
 
 #if defined(PDF_ENABLE_XFA)
-RetainPtr<CFX_Face> CFX_Face::OpenFromStream(
+RetainPtr<CFX_Face> CFX_Face::NewFromVectorStream(
     CFX_FontMgr* font_mgr,
-    const RetainPtr<IFX_SeekableReadStream>& font_stream,
+    const RetainPtr<CFX_ReadOnlyVectorStream>& font_stream,
     uint32_t face_index) {
   if (!font_stream) {
     return nullptr;
   }
-  auto ft_stream = std::make_unique<FXFT_StreamRec>();
-  *ft_stream = {};  // Aggregate initialization.
-  static_assert(
-      std::is_aggregate_v<std::remove_pointer_t<decltype(ft_stream.get())>>);
-  ft_stream->base = nullptr;
-  ft_stream->descriptor.pointer = static_cast<void*>(font_stream.Get());
-  ft_stream->pos = 0;
-  ft_stream->size = static_cast<unsigned long>(font_stream->GetSize());
-  ft_stream->read = FTStreamRead;
-  ft_stream->close = FTStreamClose;
-
-  FT_Open_Args ft_args = {};  // Aggregate initialization.
-  static_assert(std::is_aggregate_v<decltype(ft_args)>);
-  ft_args.flags = FT_OPEN_STREAM;
-  ft_args.stream = ft_stream.get();
-
-  RetainPtr<CFX_Face> face = Open(font_mgr, &ft_args, face_index);
+  RetainPtr<CFX_Face> face =
+      New(font_mgr, nullptr, font_stream->span(), face_index);
   if (!face) {
     return nullptr;
   }
   face->SetPixelSize(0, 64);
   face->owned_font_stream_ = std::move(font_stream);
-  face->owned_stream_rec_ = std::move(ft_stream);
   return face;
 }
 #endif
