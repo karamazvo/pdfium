@@ -569,7 +569,7 @@ TEST_F(FPDFViewEmbedderTest, DocumentWithEmptyPageTreeNode) {
   ASSERT_EQ(2, FPDF_GetPageCount(document()));
 }
 
-// See https://crbug.com/pdfium/465
+// See https://crbug.com/42271445
 TEST_F(FPDFViewEmbedderTest, EmptyDocument) {
   CreateEmptyDocument();
   {
@@ -634,7 +634,7 @@ TEST_F(FPDFViewEmbedderTest, LoadCustomDocumentWithoutFileAccess) {
   EXPECT_FALSE(FPDF_LoadCustomDocument(nullptr, ""));
 }
 
-// See https://crbug.com/pdfium/1261
+// See https://crbug.com/42270260
 TEST_F(FPDFViewEmbedderTest, LoadCustomDocumentWithShortLivedFileAccess) {
   std::string file_contents_string;  // Must outlive |doc|.
   ScopedFPDFDocument doc;
@@ -1426,7 +1426,7 @@ TEST_F(FPDFViewEmbedderTest, DocumentHasInvalidCrossReferenceTable) {
   EXPECT_FALSE(FPDF_DocumentHasValidCrossReferenceTable(document()));
 }
 
-// Related to https://crbug.com/pdfium/1197
+// Related to https://crbug.com/42270189
 TEST_F(FPDFViewEmbedderTest, LoadDocumentWithEmptyXRefConsistently) {
   ASSERT_TRUE(OpenDocument("empty_xref.pdf"));
   EXPECT_TRUE(FPDF_DocumentHasValidCrossReferenceTable(document()));
@@ -1488,7 +1488,7 @@ TEST_F(FPDFViewEmbedderTest, RenderAnnotationWithPrintingFlag) {
                                      kPrintingFilename);
 }
 
-// TODO(crbug.com/pdfium/1955): Remove this test once pixel tests can pass with
+// TODO(crbug.com/41480203): Remove this test once pixel tests can pass with
 // `reverse-byte-order` option.
 TEST_F(FPDFViewEmbedderTest, RenderBlueAndRedImagesWithReverByteOrderFlag) {
   // When rendering with `FPDF_REVERSE_BYTE_ORDER` flag, the blue and red
