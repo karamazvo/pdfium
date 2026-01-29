@@ -168,7 +168,14 @@ TEST_F(FPDFThumbnailEmbedderTest, GetThumbnailAsBitmapFromPage) {
     ScopedFPDFBitmap thumb_bitmap(FPDFPage_GetThumbnailAsBitmap(page.get()));
 
     EXPECT_EQ(FPDFBitmap_BGR, FPDFBitmap_GetFormat(thumb_bitmap.get()));
+<<<<<<< PATCH SET (29e5714c4113012b17580d2b0d9500825d4d438b Add expectation images for fpdf_thumbnail_embeddertest.cpp)
+    CompareBitmapToPng(thumb_bitmap.get(), "simple_thumbnail_0");
+||||||| BASE      (2cdcc39f70056c424cd0b9a69134933f030fe15d Replace HelloWorldRemovedChecksum and TextFormChecksum with )
+    CompareBitmap(thumb_bitmap.get(), 50, 50,
+                  "52b75451e396f55e95d1cb68e6018226");
+=======
     CompareBitmapToPng(thumb_bitmap.get(), "simple_thumbnail0");
+>>>>>>> BASE      (99dc75917af0569dff33712fdc23abf13421129a Replace HelloWorldRemovedChecksum and TextFormChecksum with )
   }
 
   {
@@ -178,7 +185,14 @@ TEST_F(FPDFThumbnailEmbedderTest, GetThumbnailAsBitmapFromPage) {
     ScopedFPDFBitmap thumb_bitmap(FPDFPage_GetThumbnailAsBitmap(page.get()));
 
     EXPECT_EQ(FPDFBitmap_BGR, FPDFBitmap_GetFormat(thumb_bitmap.get()));
+<<<<<<< PATCH SET (29e5714c4113012b17580d2b0d9500825d4d438b Add expectation images for fpdf_thumbnail_embeddertest.cpp)
+    CompareBitmapToPng(thumb_bitmap.get(), "simple_thumbnail_1");
+||||||| BASE      (2cdcc39f70056c424cd0b9a69134933f030fe15d Replace HelloWorldRemovedChecksum and TextFormChecksum with )
+    CompareBitmap(thumb_bitmap.get(), 50, 50,
+                  "1f448be08c6e6043ccd0bad8ecc2a351");
+=======
     CompareBitmapToPng(thumb_bitmap.get(), "simple_thumbnail1");
+>>>>>>> BASE      (99dc75917af0569dff33712fdc23abf13421129a Replace HelloWorldRemovedChecksum and TextFormChecksum with )
   }
 }
 
@@ -238,7 +252,13 @@ TEST_F(FPDFThumbnailEmbedderTest, GetThumbnailDoesNotAlterPage) {
   ScopedFPDFBitmap thumb_bitmap(FPDFPage_GetThumbnailAsBitmap(page.get()));
 
   EXPECT_EQ(FPDFBitmap_BGR, FPDFBitmap_GetFormat(thumb_bitmap.get()));
+<<<<<<< PATCH SET (29e5714c4113012b17580d2b0d9500825d4d438b Add expectation images for fpdf_thumbnail_embeddertest.cpp)
+  CompareBitmapToPng(thumb_bitmap.get(), "simple_thumbnail_0");
+||||||| BASE      (2cdcc39f70056c424cd0b9a69134933f030fe15d Replace HelloWorldRemovedChecksum and TextFormChecksum with )
+  CompareBitmap(thumb_bitmap.get(), 50, 50, "52b75451e396f55e95d1cb68e6018226");
+=======
   CompareBitmapToPng(thumb_bitmap.get(), "simple_thumbnail0");
+>>>>>>> BASE      (99dc75917af0569dff33712fdc23abf13421129a Replace HelloWorldRemovedChecksum and TextFormChecksum with )
 
   // Get the raw data again
   unsigned long new_raw_size =
