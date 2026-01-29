@@ -34,6 +34,41 @@
       "parentUuid": "4513a7ee_a763453f",
       "revId": "20d7b0ac98570713fbed771a0bc53c8b87beb8fd",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "33c117d5_91b5a280",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-01-29T17:18:01Z",
+      "side": 1,
+      "message": "+1 on if we can enable this for Skia, too.",
+      "parentUuid": "e7abad0d_15fa989e",
+      "revId": "20d7b0ac98570713fbed771a0bc53c8b87beb8fd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "df1bb332_26e1af0c",
+        "filename": "xfa/fwl/cfwl_edit_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-01-29T17:18:01Z",
+      "side": 1,
+      "message": "Maybe this just needs Skia-specific PNGs, too?",
+      "revId": "20d7b0ac98570713fbed771a0bc53c8b87beb8fd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
