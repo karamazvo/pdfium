@@ -22,6 +22,30 @@
       },
       "revId": "a53aee8a61bb39cd69461019f6a2412634d0c2a6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "486870b1_5eab0fb8",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1175,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-29T02:07:19Z",
+      "side": 0,
+      "message": "Likely this was necessary in an older pdfium::span or fxcrt::Zip() impl.",
+      "parentUuid": "9105af8b_1cba805b",
+      "range": {
+        "startLine": 1175,
+        "startChar": 60,
+        "endLine": 1175,
+        "endChar": 64
+      },
+      "revId": "a53aee8a61bb39cd69461019f6a2412634d0c2a6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }

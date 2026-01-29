@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "02bee52e_25fdeee7",
+        "filename": "core/fxcrt/zip.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-29T02:07:19Z",
+      "side": 1,
+      "message": "I didn\u0027t look, but I suspect it regresses performance. I guess I\u0027ll hold off on this for now.",
+      "parentUuid": "a97b7706_db31e8b5",
+      "range": {
+        "startLine": 60,
+        "startChar": 13,
+        "endLine": 60,
+        "endChar": 60
+      },
+      "revId": "90b5f7fbe2e99634252b53405df370badfb08732",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "e11051a8_d5b00c20",
         "filename": "core/fxge/apple/fx_quartz_device.cpp",
         "patchSetId": 3
@@ -37,6 +61,30 @@
       "writtenOn": "2026-01-28T18:47:45Z",
       "side": 1,
       "message": "should be able to pass glyph_positions_cg directly without need for span in old/new code.",
+      "range": {
+        "startLine": 104,
+        "startChar": 35,
+        "endLine": 104,
+        "endChar": 58
+      },
+      "revId": "90b5f7fbe2e99634252b53405df370badfb08732",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1884a25f_0e397b1a",
+        "filename": "core/fxge/apple/fx_quartz_device.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-29T02:07:19Z",
+      "side": 1,
+      "message": "Can\u0027t pass in glyph_positions_cg since it doesn\u0027t have begin() / end(). FixedSizeDataVector deliberately only exposes span(), so callers have to go through that.",
+      "parentUuid": "e11051a8_d5b00c20",
       "range": {
         "startLine": 104,
         "startChar": 35,
