@@ -87,6 +87,24 @@
       "message": "Maybe this just needs Skia-specific PNGs, too?",
       "revId": "20d7b0ac98570713fbed771a0bc53c8b87beb8fd",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "482bbda8_fb3640ad",
+        "filename": "xfa/fwl/cfwl_edit_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-30T04:38:52Z",
+      "side": 1,
+      "message": "Yes, can confirm it does, I\u0027ll look at this in my CL which replaces this with PNGs. Will share the ID when it\u0027s done.",
+      "parentUuid": "df1bb332_26e1af0c",
+      "revId": "20d7b0ac98570713fbed771a0bc53c8b87beb8fd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ],
   "submitRequirementResults": [
