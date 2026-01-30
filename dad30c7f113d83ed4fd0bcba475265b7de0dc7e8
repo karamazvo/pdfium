@@ -69,6 +69,24 @@
       "parentUuid": "9dc57db4_541b8020",
       "revId": "dad30c7f113d83ed4fd0bcba475265b7de0dc7e8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3915f05a_b25e5c08",
+        "filename": "testing/resources/HindiSpacingTestSmall.pdf",
+        "patchSetId": 21
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-30T05:32:51Z",
+      "side": 1,
+      "message": "re: 3. Maybe remove the English letters and see if that removes the Times fonts?",
+      "parentUuid": "620c5e11_69919c56",
+      "revId": "dad30c7f113d83ed4fd0bcba475265b7de0dc7e8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
