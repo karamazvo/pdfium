@@ -40,6 +40,30 @@
       ],
       "revId": "8ddd032423e8c8734e2ff15df0ec5309c90585f9",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bcda6b49_bd8f2716",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 296,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-30T18:11:39Z",
+      "side": 1,
+      "message": "Next CL will remove it.",
+      "parentUuid": "562eacca_6e3ded2a",
+      "range": {
+        "startLine": 296,
+        "startChar": 65,
+        "endLine": 296,
+        "endChar": 66
+      },
+      "revId": "8ddd032423e8c8734e2ff15df0ec5309c90585f9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
