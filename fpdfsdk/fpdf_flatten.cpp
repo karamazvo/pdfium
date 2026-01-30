@@ -130,7 +130,7 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
 
     bool bParseStream;
     if (nUsage == FLAT_NORMALDISPLAY) {
-      bParseStream = !(nAnnotFlag & pdfium::annotation_flags::kInvisible);
+      bParseStream = !(nAnnotFlag & pdfium::annotation_flags::kNoView);
     } else {
       bParseStream = !!(nAnnotFlag & pdfium::annotation_flags::kPrint);
     }
