@@ -1,0 +1,75 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c34921e5_459349f6",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 406,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-01-30T21:17:39Z",
+      "side": 1,
+      "message": "nit: sizeof(uint32_t) throughout I suppose.",
+      "range": {
+        "startLine": 406,
+        "startChar": 16,
+        "endLine": 406,
+        "endChar": 17
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "a96f06d9_e847f347",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcodec/jbig2/JBig2_Image.cpp",
+              "range": {
+                "startLine": 93,
+                "startChar": 0,
+                "endLine": 94,
+                "endChar": 0
+              },
+              "replacement": "  if (stride \u003c 0 || stride \u003e kMaxImageBytes ||\n      stride % sizeof(uint32_t) !\u003d 0) {\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_Image.cpp",
+              "range": {
+                "startLine": 300,
+                "startChar": 0,
+                "endLine": 301,
+                "endChar": 0
+              },
+              "replacement": "  CHECK_GT(static_cast\u003csize_t\u003e(stride_ / sizeof(uint32_t)), m);\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_Image.cpp",
+              "range": {
+                "startLine": 302,
+                "startChar": 0,
+                "endLine": 303,
+                "endChar": 0
+              },
+              "replacement": "  size_t elems_to_copy \u003d\n      std::min\u003csize_t\u003e(image-\u003estride_ / sizeof(uint32_t),\n                       stride_ / sizeof(uint32_t) - m);\n"
+            },
+            {
+              "path": "core/fxcodec/jbig2/JBig2_Image.cpp",
+              "range": {
+                "startLine": 406,
+                "startChar": 0,
+                "endLine": 407,
+                "endChar": 0
+              },
+              "replacement": "      stride_ / sizeof(uint32_t) - BitIndexToAlignedUint32(xs0));\n"
+            }
+          ]
+        }
+      ],
+      "revId": "79e30a2c285d29425246ef85ef5bddf4e2860fb5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
