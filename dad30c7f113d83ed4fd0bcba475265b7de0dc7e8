@@ -87,6 +87,24 @@
       "parentUuid": "620c5e11_69919c56",
       "revId": "dad30c7f113d83ed4fd0bcba475265b7de0dc7e8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4c9c1e91_47a8c3dd",
+        "filename": "testing/resources/HindiSpacingTestSmall.pdf",
+        "patchSetId": 21
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-30T14:12:01Z",
+      "side": 1,
+      "message": "On second thought, I think this can be removed, it is very similar to bug_921.",
+      "parentUuid": "3915f05a_b25e5c08",
+      "revId": "dad30c7f113d83ed4fd0bcba475265b7de0dc7e8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
