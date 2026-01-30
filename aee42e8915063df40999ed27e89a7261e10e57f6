@@ -16,6 +16,24 @@
       "message": "Thanks for working on this.\n\n1) Please add yourself to the AUTHORS file.\n2) All tests seem to pass with or without this change. This is a sign that there\u0027s insufficient test coverage for this issue. Would you like to try adding a test case in fpdfsdk/fpdf_flatten_embeddertest.cpp for this?",
       "revId": "aee42e8915063df40999ed27e89a7261e10e57f6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "87410909_1e39dc64",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4596105
+      },
+      "writtenOn": "2026-01-30T06:33:49Z",
+      "side": 1,
+      "message": "Sure I\u0027ll add them and upload a new patch set, thank you.",
+      "parentUuid": "e3cf99e1_4cf0b771",
+      "revId": "aee42e8915063df40999ed27e89a7261e10e57f6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
