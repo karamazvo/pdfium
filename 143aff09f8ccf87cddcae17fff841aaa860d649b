@@ -22,6 +22,30 @@
       },
       "revId": "143aff09f8ccf87cddcae17fff841aaa860d649b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2d330236_bf9aaf51",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 428,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-30T00:38:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8a14fc43_c8f38964",
+      "range": {
+        "startLine": 428,
+        "startChar": 12,
+        "endLine": 428,
+        "endChar": 19
+      },
+      "revId": "143aff09f8ccf87cddcae17fff841aaa860d649b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
