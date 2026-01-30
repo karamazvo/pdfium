@@ -11,7 +11,7 @@
 #include <stdint.h>
 
 #include <memory>
-#include <optional>
+#include <vector>
 
 #include "core/fxcodec/jbig2/JBig2_Define.h"
 #include "core/fxcrt/compiler_specific.h"
@@ -87,8 +87,6 @@ class CJBig2_Image {
                          JBig2ComposeOp op);
 
  private:
-  std::optional<size_t> GetLineOffset(int32_t y) const;
-
   void SubImageFast(int32_t x,
                     int32_t y,
                     int32_t w,
@@ -105,10 +103,13 @@ class CJBig2_Image {
                          JBig2ComposeOp op,
                          const FX_RECT& rtSrc);
 
+  void InitLineSpans();
+
   MaybeOwned<uint8_t, FxFreeDeleter> data_;
   int32_t width_ = 0;   // 1-bit pixels
   int32_t height_ = 0;  // lines
   int32_t stride_ = 0;  // bytes, must be multiple of 4.
+  std::vector<pdfium::span<uint8_t>> line_spans_;
 };
 
 #endif  // CORE_FXCODEC_JBIG2_JBIG2_IMAGE_H_

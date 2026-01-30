@@ -83,6 +83,7 @@ CJBig2_Image::CJBig2_Image(int32_t w, int32_t h) {
   CHECK_GE(stride_, 0);
   data_.Reset(std::unique_ptr<uint8_t, FxFreeDeleter>(
       FX_Alloc2D(uint8_t, stride_, height_)));
+  InitLineSpans();
 }
 
 CJBig2_Image::CJBig2_Image(int32_t w,
@@ -112,6 +113,7 @@ CJBig2_Image::CJBig2_Image(int32_t w,
   stride_ = stride;
   CHECK_GE(stride_, 0);
   data_.Reset(pBuf.data());
+  InitLineSpans();
 }
 
 CJBig2_Image::CJBig2_Image(const CJBig2_Image& other)
@@ -124,6 +126,7 @@ CJBig2_Image::CJBig2_Image(const CJBig2_Image& other)
   data_.Reset(std::unique_ptr<uint8_t, FxFreeDeleter>(
       FX_Alloc2D(uint8_t, stride_, height_)));
   fxcrt::spancpy(span(), other_span);
+  InitLineSpans();
 }
 
 CJBig2_Image::~CJBig2_Image() = default;
@@ -172,19 +175,17 @@ void CJBig2_Image::SetPixel(int32_t x, pdfium::span<uint8_t> line, int v) {
 }
 
 pdfium::span<const uint8_t> CJBig2_Image::GetLine(int32_t y) const {
-  std::optional<size_t> offset = GetLineOffset(y);
-  if (!offset.has_value()) {
+  if (y < 0 || static_cast<size_t>(y) >= line_spans_.size()) {
     return {};
   }
-  return span().subspan(offset.value(), static_cast<size_t>(stride_));
+  return line_spans_[y];
 }
 
 pdfium::span<uint8_t> CJBig2_Image::GetLine(int32_t y) {
-  std::optional<size_t> offset = GetLineOffset(y);
-  if (!offset.has_value()) {
+  if (y < 0 || static_cast<size_t>(y) >= line_spans_.size()) {
     return {};
   }
-  return span().subspan(offset.value(), static_cast<size_t>(stride_));
+  return line_spans_[y];
 }
 
 pdfium::span<const uint32_t> CJBig2_Image::GetLine32(int32_t y) const {
@@ -266,14 +267,18 @@ std::unique_ptr<CJBig2_Image> CJBig2_Image::SubImage(int32_t x,
   return image;
 }
 
-std::optional<size_t> CJBig2_Image::GetLineOffset(int32_t y) const {
-  if (!has_data() || y < 0 || y >= height_) {
-    return std::nullopt;
+void CJBig2_Image::InitLineSpans() {
+  line_spans_.clear();
+  if (width_ <= 0 || height_ <= 0 || !data_) {
+    return;
   }
 
-  FX_SAFE_SIZE_T size = stride_;
-  size *= y;
-  return size.ValueOrDie();
+  line_spans_.reserve(height_);
+  pdfium::span<uint8_t> full_span = span();
+  for (int32_t i = 0; i < height_; ++i) {
+    line_spans_.push_back(full_span.first(static_cast<size_t>(stride_)));
+    full_span = full_span.subspan(static_cast<size_t>(stride_));
+  }
 }
 
 void CJBig2_Image::SubImageFast(int32_t x,
@@ -345,6 +350,7 @@ void CJBig2_Image::Expand(int32_t h, bool v) {
   // filled. Do not reuse other spans here.
   height_ = h;
   std::ranges::fill(span().subspan(current_size), v ? 0xff : 0);
+  InitLineSpans();
 }
 
 bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
