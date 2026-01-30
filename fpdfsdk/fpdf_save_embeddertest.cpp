@@ -30,6 +30,15 @@ TEST_F(FPDFSaveEmbedderTest, SaveSimpleDoc) {
   EXPECT_EQ(805u, GetString().size());
 }
 
+TEST_F(FPDFSaveEmbedderTest, SaveWithSubset) {
+  FPDF_SAVE_PARAMS params = {.flags = 0, .version = 0, .subset_fonts = true};
+  ASSERT_TRUE(OpenDocument("before_font_subsetting.pdf"));
+  OpenPDFFileForWrite("test.pdf");
+  EXPECT_TRUE(FPDF_SaveWithParams(document(), this, &params));
+  // EXPECT_THAT(GetString(), StartsWith("%PDF-1.7\r\n"));
+  EXPECT_EQ(15856901u, GetString().size());
+}
+
 TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocWithVersion) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   EXPECT_TRUE(FPDF_SaveWithVersion(document(), this, 0, 14));
