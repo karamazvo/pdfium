@@ -36,6 +36,11 @@ class CPDF_Creator {
   bool Create(uint32_t flags);
   bool SetFileVersion(int32_t fileVersion);
 
+  void set_object_overrides(
+      const std::map<uint32_t, RetainPtr<CPDF_Object>>& object_overrides) {
+    object_overrides_ = object_overrides;
+  }
+
  private:
   enum class Stage {
     kInvalid = -1,
@@ -84,6 +89,7 @@ class CPDF_Creator {
   uint32_t cur_obj_num_ = 0;
   FX_FILESIZE xref_start_ = 0;
   std::map<uint32_t, FX_FILESIZE> object_offsets_;
+  std::map<uint32_t, RetainPtr<CPDF_Object>> object_overrides_;
   std::vector<uint32_t> new_obj_num_array_;  // Sorted, ascending.
   RetainPtr<CPDF_Array> id_array_;
   int32_t file_version_ = 0;

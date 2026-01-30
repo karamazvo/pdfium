@@ -132,16 +132,24 @@ CPDF_Creator::CPDF_Creator(CPDF_Document* doc,
 CPDF_Creator::~CPDF_Creator() = default;
 
 bool CPDF_Creator::WriteIndirectObj(uint32_t objnum, const CPDF_Object* pObj) {
+  auto it = object_overrides_.find(objnum);
+  const CPDF_Object* object_to_write = pObj;
+
+  if (it != object_overrides_.end()) {
+    // Use the substituted object (e.g., the subsetted font stream)
+    object_to_write = it->second.Get();
+  }
+
   if (!archive_->WriteDWord(objnum) || !archive_->WriteString(" 0 obj\r\n")) {
     return false;
   }
 
   std::unique_ptr<CPDF_Encryptor> encryptor;
-  if (GetCryptoHandler() && pObj != encrypt_dict_) {
+  if (GetCryptoHandler() && object_to_write != encrypt_dict_) {
     encryptor = std::make_unique<CPDF_Encryptor>(GetCryptoHandler(), objnum);
   }
 
-  if (!pObj->WriteTo(archive_.get(), encryptor.get())) {
+  if (!object_to_write->WriteTo(archive_.get(), encryptor.get())) {
     return false;
   }
 

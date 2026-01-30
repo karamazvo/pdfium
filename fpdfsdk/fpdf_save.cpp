@@ -12,6 +12,7 @@
 
 #include "build/build_config.h"
 #include "core/fpdfapi/edit/cpdf_creator.h"
+#include "core/fpdfapi/edit/cpdf_fontsubsetter.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -223,6 +224,9 @@ FPDF_SaveWithParams(FPDF_DOCUMENT document,
 
   if (params->subset_fonts) {
     // TODO(crbug.com/476127152): Subset fonts.
+    CPDF_FontSubsetter subsetter(pPDFDoc);
+    fileMaker.set_object_overrides(
+        subsetter.GenerateFontSubsetObjectOverrides());
   }
 
   bool bRet = fileMaker.Create(static_cast<uint32_t>(flags));
