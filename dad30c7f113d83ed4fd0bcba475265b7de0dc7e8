@@ -51,6 +51,24 @@
       "message": "1) Use snake_case.pdf naming.\n2) Describe what is special about this test case.\n3) If it\u0027s possible to achieve (2) with fewer characters / fonts, then an even smaller test case would be nicer.",
       "revId": "dad30c7f113d83ed4fd0bcba475265b7de0dc7e8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "620c5e11_69919c56",
+        "filename": "testing/resources/HindiSpacingTestSmall.pdf",
+        "patchSetId": 21
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-30T05:30:01Z",
+      "side": 1,
+      "message": "1. Sure will do\n2. It showcases that this bug can also tend to occur not just in specific \"whitespace\" cases but also involving other languages (ex: Hindi).\n3. Yes, can be done with less chars, but I don\u0027t see how to reduce the number of fonts (this was just a PDF I exported from google docs). Will finish it early tomorrow (in your TZ).",
+      "parentUuid": "9dc57db4_541b8020",
+      "revId": "dad30c7f113d83ed4fd0bcba475265b7de0dc7e8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
