@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "17b7f1c2_37cec45a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 25
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-30T18:35:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3e8395d2_7bf3e158",
+      "range": {
+        "startLine": 14,
+        "startChar": 5,
+        "endLine": 14,
+        "endChar": 7
+      },
+      "revId": "204e5068e23f482c79d16fcbba94d929239bf93d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fe2d1512_6e9d418d",
@@ -37,6 +61,30 @@
       "writtenOn": "2026-01-30T17:54:12Z",
       "side": 1,
       "message": "\"FPDFText_CountChars() should return 1.\" Similar phrasing change for line 2377.",
+      "range": {
+        "startLine": 2365,
+        "startChar": 31,
+        "endLine": 2365,
+        "endChar": 77
+      },
+      "revId": "204e5068e23f482c79d16fcbba94d929239bf93d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e71bc27f_31164c99",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 2365,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-30T18:35:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fe2d1512_6e9d418d",
       "range": {
         "startLine": 2365,
         "startChar": 31,
@@ -70,6 +118,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ad2472c9_e135b0e2",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 2380,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-30T18:35:27Z",
+      "side": 1,
+      "message": "Done. I saw \"NeedsImprovement\" in some other places so just decided to use that.\n\nReplaced now.",
+      "parentUuid": "95c4e723_4967e7c0",
+      "range": {
+        "startLine": 2380,
+        "startChar": 24,
+        "endLine": 2380,
+        "endChar": 47
+      },
+      "revId": "204e5068e23f482c79d16fcbba94d929239bf93d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "33fb3491_fecca74e",
@@ -83,6 +155,30 @@
       "writtenOn": "2026-01-30T17:54:12Z",
       "side": 1,
       "message": "std::size(buffer)",
+      "range": {
+        "startLine": 2381,
+        "startChar": 51,
+        "endLine": 2381,
+        "endChar": 54
+      },
+      "revId": "204e5068e23f482c79d16fcbba94d929239bf93d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4af441f8_3ecd8548",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 2381,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-30T18:35:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "33fb3491_fecca74e",
       "range": {
         "startLine": 2381,
         "startChar": 51,
@@ -116,6 +212,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a88f350c_1e7797e0",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 2382,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-30T18:35:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e0ee370e_75703763",
+      "range": {
+        "startLine": 2382,
+        "startChar": 35,
+        "endLine": 2382,
+        "endChar": 44
+      },
+      "revId": "204e5068e23f482c79d16fcbba94d929239bf93d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c6c27129_83723b6c",
@@ -129,6 +249,24 @@
       "writtenOn": "2026-01-30T17:54:12Z",
       "side": 1,
       "message": "Please mention in the CL description where these PDFs come from. Is this Chromium\u0027s chrome/test/data/pdf/accessibility/whitespace.pdf? Similarly, mention bug_444176962.pdf is from the bug.",
+      "revId": "204e5068e23f482c79d16fcbba94d929239bf93d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5e596a37_4fef04f8",
+        "filename": "testing/resources/whitespace.pdf",
+        "patchSetId": 25
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-30T18:35:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c6c27129_83723b6c",
       "revId": "204e5068e23f482c79d16fcbba94d929239bf93d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
