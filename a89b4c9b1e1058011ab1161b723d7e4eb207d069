@@ -16,6 +16,24 @@
       "message": "\"Replace checksums with images in foo.cpp\"",
       "revId": "a89b4c9b1e1058011ab1161b723d7e4eb207d069",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "87062b2f_d2f6e803",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-01-30T04:53:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "507b779c_0a13d456",
+      "revId": "a89b4c9b1e1058011ab1161b723d7e4eb207d069",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
