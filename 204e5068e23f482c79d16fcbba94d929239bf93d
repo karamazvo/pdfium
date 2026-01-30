@@ -97,6 +97,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "48bfe7bf_caa3b549",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 2365,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-30T18:43:22Z",
+      "side": 1,
+      "message": "Not yet.",
+      "parentUuid": "e71bc27f_31164c99",
+      "range": {
+        "startLine": 2365,
+        "startChar": 31,
+        "endLine": 2365,
+        "endChar": 77
+      },
+      "revId": "204e5068e23f482c79d16fcbba94d929239bf93d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "95c4e723_4967e7c0",
         "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
         "patchSetId": 25
@@ -132,6 +156,30 @@
       "side": 1,
       "message": "Done. I saw \"NeedsImprovement\" in some other places so just decided to use that.\n\nReplaced now.",
       "parentUuid": "95c4e723_4967e7c0",
+      "range": {
+        "startLine": 2380,
+        "startChar": 24,
+        "endLine": 2380,
+        "endChar": 47
+      },
+      "revId": "204e5068e23f482c79d16fcbba94d929239bf93d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7f807e91_aa023908",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 2380,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-30T18:43:22Z",
+      "side": 1,
+      "message": "Not yet.\n\nI\u0027ll hope into the time machine and go tell my past self to use better naming. ;-)",
+      "parentUuid": "ad2472c9_e135b0e2",
       "range": {
         "startLine": 2380,
         "startChar": 24,
