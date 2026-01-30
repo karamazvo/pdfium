@@ -1,0 +1,136 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3e8395d2_7bf3e158",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 25
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-30T17:54:12Z",
+      "side": 1,
+      "message": "\"CL\", like line 9.",
+      "range": {
+        "startLine": 14,
+        "startChar": 5,
+        "endLine": 14,
+        "endChar": 7
+      },
+      "revId": "204e5068e23f482c79d16fcbba94d929239bf93d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fe2d1512_6e9d418d",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 2365,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-30T17:54:12Z",
+      "side": 1,
+      "message": "\"FPDFText_CountChars() should return 1.\" Similar phrasing change for line 2377.",
+      "range": {
+        "startLine": 2365,
+        "startChar": 31,
+        "endLine": 2365,
+        "endChar": 77
+      },
+      "revId": "204e5068e23f482c79d16fcbba94d929239bf93d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "95c4e723_4967e7c0",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 2380,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-30T17:54:12Z",
+      "side": 1,
+      "message": "How about \"kMissingSpaceResult\". \"Needs improvement\" is a bit vague.",
+      "range": {
+        "startLine": 2380,
+        "startChar": 24,
+        "endLine": 2380,
+        "endChar": 47
+      },
+      "revId": "204e5068e23f482c79d16fcbba94d929239bf93d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "33fb3491_fecca74e",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 2381,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-30T17:54:12Z",
+      "side": 1,
+      "message": "std::size(buffer)",
+      "range": {
+        "startLine": 2381,
+        "startChar": 51,
+        "endLine": 2381,
+        "endChar": 54
+      },
+      "revId": "204e5068e23f482c79d16fcbba94d929239bf93d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e0ee370e_75703763",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 2382,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-30T17:54:12Z",
+      "side": 1,
+      "message": "When the value is hard coded, it can be first\u003c9\u003e().",
+      "range": {
+        "startLine": 2382,
+        "startChar": 35,
+        "endLine": 2382,
+        "endChar": 44
+      },
+      "revId": "204e5068e23f482c79d16fcbba94d929239bf93d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c6c27129_83723b6c",
+        "filename": "testing/resources/whitespace.pdf",
+        "patchSetId": 25
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-30T17:54:12Z",
+      "side": 1,
+      "message": "Please mention in the CL description where these PDFs come from. Is this Chromium\u0027s chrome/test/data/pdf/accessibility/whitespace.pdf? Similarly, mention bug_444176962.pdf is from the bug.",
+      "revId": "204e5068e23f482c79d16fcbba94d929239bf93d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
