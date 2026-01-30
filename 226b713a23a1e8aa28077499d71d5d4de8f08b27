@@ -52,6 +52,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e590aeac_63b50658",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-30T18:04:02Z",
+      "side": 1,
+      "message": "`stride_` is always a multiple of 4 in CJBig2_Image. See JBig2_Image.h comment.",
+      "parentUuid": "e30c5bfb_33486a34",
+      "range": {
+        "startLine": 188,
+        "startChar": 16,
+        "endLine": 188,
+        "endChar": 32
+      },
+      "revId": "226b713a23a1e8aa28077499d71d5d4de8f08b27",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "49a523f6_1be3c335",
@@ -99,6 +123,30 @@
           ]
         }
       ],
+      "revId": "226b713a23a1e8aa28077499d71d5d4de8f08b27",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "af9a4ba3_3b64089d",
+        "filename": "core/fxcodec/jbig2/JBig2_Image.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-01-30T18:04:02Z",
+      "side": 1,
+      "message": "It\u0027s going to go away in https://pdfium-review.googlesource.com/c/pdfium/+/141857.",
+      "parentUuid": "49a523f6_1be3c335",
+      "range": {
+        "startLine": 397,
+        "startChar": 78,
+        "endLine": 397,
+        "endChar": 79
+      },
       "revId": "226b713a23a1e8aa28077499d71d5d4de8f08b27",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
