@@ -41,6 +41,12 @@ typedef struct FPDF_FILEWRITE_ {
                     unsigned long size);
 } FPDF_FILEWRITE;
 
+typedef struct FPDF_SAVE_PARAMS_ {
+  FPDF_DWORD flags;
+  int version;
+  FPDF_BOOL subset_fonts;
+} FPDF_SAVE_PARAMS;
+
  // Flags for FPDF_SaveAsCopy()
 #define FPDF_INCREMENTAL 1
 #define FPDF_NO_INCREMENTAL 2
@@ -78,6 +84,13 @@ FPDF_SaveWithVersion(FPDF_DOCUMENT document,
                      FPDF_FILEWRITE* pFileWrite,
                      FPDF_DWORD flags,
                      int fileVersion);
+
+// Experimental API.
+// Function: FPDF_SaveWithParams
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDF_SaveWithParams(FPDF_DOCUMENT document,
+                    FPDF_FILEWRITE* pFileWrite,
+                    const FPDF_SAVE_PARAMS* params);
 
 #ifdef __cplusplus
 }

@@ -158,10 +158,41 @@ bool SaveXFADocumentData(CPDFXFA_Context* context,
 }
 #endif  // PDF_ENABLE_XFA
 
-bool DoDocSave(FPDF_DOCUMENT document,
-               FPDF_FILEWRITE* pFileWrite,
-               FPDF_DWORD flags,
-               std::optional<int> version) {
+}  // namespace
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_SaveAsCopy(FPDF_DOCUMENT document,
+                                                    FPDF_FILEWRITE* pFileWrite,
+                                                    FPDF_DWORD flags) {
+  FPDF_SAVE_PARAMS params = {
+      .flags = flags, .version = 0, .subset_fonts = false};
+  return FPDF_SaveWithParams(document, pFileWrite, &params);
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDF_SaveWithVersion(FPDF_DOCUMENT document,
+                     FPDF_FILEWRITE* pFileWrite,
+                     FPDF_DWORD flags,
+                     int fileVersion) {
+  FPDF_SAVE_PARAMS params = {
+      .flags = flags, .version = fileVersion, .subset_fonts = false};
+  return FPDF_SaveWithParams(document, pFileWrite, &params);
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDF_SaveWithParams(FPDF_DOCUMENT document,
+                    FPDF_FILEWRITE* pFileWrite,
+                    const FPDF_SAVE_PARAMS* params) {
+  if (!params) {
+    return false;
+  }
+
+  FPDF_DWORD flags = params->flags;
+
+  std::optional<int> version;
+  if (params->version != 0) {
+    version = params->version;
+  }
+
   CPDF_Document* pPDFDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pPDFDoc) {
     return false;
@@ -190,6 +221,10 @@ bool DoDocSave(FPDF_DOCUMENT document,
     fileMaker.RemoveSecurity();
   }
 
+  if (params->subset_fonts) {
+    // TODO(crbug.com/476127152): Subset fonts.
+  }
+
   bool bRet = fileMaker.Create(static_cast<uint32_t>(flags));
 
 #ifdef PDF_ENABLE_XFA
@@ -199,20 +234,4 @@ bool DoDocSave(FPDF_DOCUMENT document,
 #endif  // PDF_ENABLE_XFA
 
   return bRet;
-}
-
-}  // namespace
-
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_SaveAsCopy(FPDF_DOCUMENT document,
-                                                    FPDF_FILEWRITE* pFileWrite,
-                                                    FPDF_DWORD flags) {
-  return DoDocSave(document, pFileWrite, flags, {});
-}
-
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDF_SaveWithVersion(FPDF_DOCUMENT document,
-                     FPDF_FILEWRITE* pFileWrite,
-                     FPDF_DWORD flags,
-                     int fileVersion) {
-  return DoDocSave(document, pFileWrite, flags, fileVersion);
 }
