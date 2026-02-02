@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 
+#include <array>
 #include <map>
 #include <memory>
 #include <optional>
@@ -23,6 +24,7 @@
 #include "core/fxcrt/retain_ptr.h"
 
 class CFX_Font;
+class CFX_Face;
 class CFX_UnicodeEncodingEx;
 class CPDF_Document;
 class CPDF_Font;
@@ -53,6 +55,27 @@ class CFGAS_GEFont final : public Retainable {
     log_font_style_ = dwLogFontStyle;
   }
 
+#if !BUILDFLAG(IS_WIN)
+  void SetFaceMetadata(WideString face_name,
+                       int32_t face_index,
+                       uint32_t font_styles,
+                       std::vector<WideString> family_names,
+                       std::array<uint32_t, 4> usb,
+                       std::array<uint32_t, 2> csb);
+
+  const WideString& GetFaceName() const { return face_name_; }
+  int32_t GetFaceIndex() const { return face_index_; }
+  uint32_t GetFontStylesForComparing() const { return font_styles_; }
+  const std::vector<WideString>& GetFamilyNames() const {
+    return family_names_;
+  }
+  pdfium::span<const uint32_t, 4> GetUSB() const { return usb_; }
+  pdfium::span<const uint32_t, 2> GetCSB() const { return csb_; }
+
+  RetainPtr<CFX_Face> GetPreviewFace() const;
+  void SetPreviewFace(RetainPtr<CFX_Face> face);
+#endif
+
   bool VerifyUnicode(wchar_t wcUnicode);
 
  private:
@@ -80,6 +103,16 @@ class CFGAS_GEFont final : public Retainable {
   std::map<wchar_t, FX_RECT> bbox_map_;
   std::vector<RetainPtr<CFGAS_GEFont>> subst_fonts_;
   std::map<wchar_t, RetainPtr<CFGAS_GEFont>> font_mapper_;
+
+#if !BUILDFLAG(IS_WIN)
+  int32_t face_index_ = 0;
+  uint32_t font_styles_ = 0;
+  WideString face_name_;
+  std::vector<WideString> family_names_;
+  std::array<uint32_t, 4> usb_ = {};
+  std::array<uint32_t, 2> csb_ = {};
+  RetainPtr<CFX_Face> preview_face_;
+#endif
 };
 
 #endif  // XFA_FGAS_FONT_CFGAS_GEFONT_H_

@@ -54,23 +54,13 @@ inline bool operator==(const FX_FONTDESCRIPTOR& left,
 
 #else  // BUILDFLAG(IS_WIN)
 
-class CFGAS_FontDescriptor {
- public:
-  CFGAS_FontDescriptor();
-  ~CFGAS_FontDescriptor();
-
-  int32_t face_index_ = 0;
-  uint32_t font_styles_ = 0;
-  WideString face_name_;
-  RetainPtr<CFX_Face> face_;
-  std::vector<WideString> family_names_;
-  std::array<uint32_t, 4> usb_ = {};
-  std::array<uint32_t, 2> csb_ = {};
-};
-
 struct CFGAS_FontDescriptorInfo {
  public:
-  UNOWNED_PTR_EXCLUSION CFGAS_FontDescriptor* font;  // POD struct.
+  CFGAS_FontDescriptorInfo();
+  CFGAS_FontDescriptorInfo(const CFGAS_FontDescriptorInfo& other);
+  ~CFGAS_FontDescriptorInfo();
+
+  RetainPtr<CFGAS_GEFont> font;
   int32_t nPenalty;
 
   bool operator>(const CFGAS_FontDescriptorInfo& other) const {
@@ -144,7 +134,7 @@ class CFGAS_FontMgr {
   std::deque<FX_FONTDESCRIPTOR> font_faces_;
 #else
   bool fonts_enumerated_ = false;
-  std::vector<std::unique_ptr<CFGAS_FontDescriptor>> installed_fonts_;
+  std::vector<RetainPtr<CFGAS_GEFont>> installed_fonts_;
   std::map<uint32_t, std::vector<CFGAS_FontDescriptorInfo>>
       hash_2candidate_list_;
 #endif  // BUILDFLAG(IS_WIN)
