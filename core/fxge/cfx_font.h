@@ -85,7 +85,7 @@ class CFX_Font {
       int face_index);
 
 #if !BUILDFLAG(IS_WIN)
-  void SetFace(RetainPtr<CFX_Face> face);
+  void SetFaceFromFont(const CFX_Font& that);
   void SetFontSpan(pdfium::span<uint8_t> pSpan) { font_data_ = pSpan; }
   void SetSubstFont(std::unique_ptr<CFX_SubstFont> subst);
 #endif  // !BUILDFLAG(IS_WIN)
