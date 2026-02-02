@@ -35,6 +35,10 @@
 #include "core/fxcodec/jpeg/jpegmodule.h"
 #include "core/fxcodec/jpx/cjpx_decoder.h"
 #include "core/fxcodec/scanlinedecoder.h"
+
+#if defined(PDF_ENABLE_RUST_JXL)
+#include "core/fxcodec/jxl/jxl_decoder.h"
+#endif  // PDF_ENABLE_RUST_JXL
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/compiler_specific.h"
@@ -453,6 +457,15 @@ CPDF_DIB::LoadState CPDF_DIB::CreateDecoder(uint8_t resolution_levels_to_skip) {
     return cached_bitmap_ ? LoadState::kSuccess : LoadState::kFail;
   }
 
+  if (decoder == "JXLDecode") {
+#if defined(PDF_ENABLE_RUST_JXL)
+    cached_bitmap_ = LoadJxlBitmap();
+    return cached_bitmap_ ? LoadState::kSuccess : LoadState::kFail;
+#else
+    return LoadState::kFail;
+#endif
+  }
+
   if (decoder == "JBIG2Decode") {
     cached_bitmap_ = pdfium::MakeRetain<CFX_DIBitmap>();
     if (!cached_bitmap_->Create(
@@ -665,6 +678,96 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
 
   bpc_ = 8;
   return result_bitmap;
+}
+
+RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJxlBitmap() {
+#if !defined(PDF_ENABLE_RUST_JXL)
+  return nullptr;
+#else
+  // NOTE: This is a first bring-up implementation:
+  // - decode frame 0 only (PDF image XObjects are not animated)
+  // - decode to BGRA8 via jxl-rs and drop alpha
+  // - assume 8-bit output
+
+  pdfium::span<const uint8_t> src_span = stream_acc_->GetSpan();
+  const std::optional<pdfium::jxl::Info> info_opt =
+      pdfium::jxl::ParseInfo(src_span);
+  if (!info_opt.has_value()) {
+    return nullptr;
+  }
+
+  const pdfium::jxl::Info info = info_opt.value();
+  if (!IsValidDimension(static_cast<int>(info.width)) ||
+      !IsValidDimension(static_cast<int>(info.height))) {
+    return nullptr;
+  }
+
+  // Ensure the CPDF_DIB dimensions match the JXL payload.
+  SetWidth(static_cast<int>(info.width));
+  SetHeight(static_cast<int>(info.height));
+
+  // Decode into a temporary BGRA bitmap.
+  auto argb_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+  if (!argb_bitmap->Create(info.width, info.height, FXDIB_Format::kBgra)) {
+    return nullptr;
+  }
+
+  if (!pdfium::jxl::DecodeFrame0ToBgra(
+          src_span, argb_bitmap->GetWritableBuffer().data(),
+          argb_bitmap->GetPitch(), info.width, info.height)) {
+    return nullptr;
+  }
+
+  // If the JXL has an alpha channel, synthesize an SMask for PDFium's image
+  // pipeline. This is a "leader" interpretation for the still-evolving
+  // JXL-in-PDF spec.
+  if (info.has_alpha) {
+    // Force mask loading even if the original PDF stream dictionary doesn't
+    // declare an /SMask.
+    has_mask_ = true;
+    load_mask_ = true;
+
+    DCHECK(jpx_inline_data_.data.empty());
+    jpx_inline_data_.width = static_cast<int>(info.width);
+    jpx_inline_data_.height = static_cast<int>(info.height);
+    jpx_inline_data_.data.reserve(static_cast<size_t>(info.width) *
+                                  static_cast<size_t>(info.height));
+
+    for (uint32_t row = 0; row < info.height; ++row) {
+      auto src = argb_bitmap->GetScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(
+          info.width);
+      for (const auto& p : src) {
+        jpx_inline_data_.data.push_back(p.alpha);
+      }
+    }
+  }
+
+  // Return RGB bitmap in *PDF component order* (RGB).
+  // Note: TranslateScanline24bppDefaultDecode() expects RGB input and will
+  // convert to BGR for the renderer.
+  auto rgb_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+  if (!rgb_bitmap->Create(info.width, info.height, FXDIB_Format::kBgr)) {
+    return nullptr;
+  }
+
+  for (uint32_t row = 0; row < info.height; ++row) {
+    auto src = argb_bitmap->GetScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(
+        info.width);
+    auto dest = rgb_bitmap->GetWritableScanline(row).first(info.width * 3u);
+    for (uint32_t col = 0; col < info.width; ++col) {
+      const auto& p = src[col];
+      const size_t o = static_cast<size_t>(col) * 3u;
+      dest[o + 0] = p.red;
+      dest[o + 1] = p.green;
+      dest[o + 2] = p.blue;
+    }
+  }
+
+  // Most PDF images are 8bpc after decode.
+  bpc_ = 8;
+
+  return rgb_bitmap;
+#endif
 }
 
 RetainPtr<CFX_DIBitmap> CPDF_DIB::ConvertArgbJpxBitmapToRgb(

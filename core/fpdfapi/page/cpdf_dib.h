@@ -88,6 +88,7 @@ class CPDF_DIB final : public CFX_DIBBase {
                      const CPDF_Dictionary* pPageResources);
   bool GetDecodeAndMaskArray();
   RetainPtr<CFX_DIBitmap> LoadJpxBitmap(uint8_t resolution_levels_to_skip);
+  RetainPtr<CFX_DIBitmap> LoadJxlBitmap();
   RetainPtr<CFX_DIBitmap> ConvertArgbJpxBitmapToRgb(
       RetainPtr<CFX_DIBitmap> argb_bitmap,
       uint32_t width,

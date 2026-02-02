@@ -1,0 +1,24 @@
+# Copyright 2026 The PDFium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("../../../pdfium.gni")
+
+# Thin glue layer for Rust JXL decoder (jxl-rs).
+
+source_set("jxl") {
+  sources = [
+    "jxl_decoder.cc",
+    "jxl_decoder.h",
+    "jxl_rs_stub.cc",
+  ]
+
+  configs += [
+    "../../../:pdfium_strict_config",
+    "../../../:pdfium_noshorten_config",
+  ]
+
+  deps = [ "//third_party/rust/jxl/v0_3/wrapper:jxl_rs" ]
+
+  visibility = [ "../../../*" ]
+}
