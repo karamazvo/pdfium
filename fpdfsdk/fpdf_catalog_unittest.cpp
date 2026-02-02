@@ -5,6 +5,7 @@
 #include "public/fpdf_catalog.h"
 
 #include <memory>
+#include <vector>
 
 #include "core/fpdfapi/page/test_with_page_module.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -13,6 +14,7 @@
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/cpdf_test_document.h"
+#include "core/fxcrt/widestring.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -66,4 +68,33 @@ TEST_F(PDFCatalogTest, IsTagged) {
   // MarkInfo present and Marked is 1, PDF is considered tagged.
   markInfoDict->SetNewFor<CPDF_Number>("Marked", 1);
   EXPECT_TRUE(FPDFCatalog_IsTagged(doc_.get()));
+}
+
+TEST_F(PDFCatalogTest, GetLanguage) {
+  // Document cannot be nullptr.
+  EXPECT_EQ(0u, FPDFCatalog_GetLanguage(nullptr, nullptr, 0));
+
+  CPDF_TestDocument *pTestDoc = static_cast<CPDF_TestDocument *>(
+      CPDFDocumentFromFPDFDocument(doc_.get()));
+
+  // Document has no root.
+  pTestDoc->SetRoot(nullptr);
+  EXPECT_EQ(0u, FPDFCatalog_GetLanguage(doc_.get(), nullptr, 0));
+
+  // Document has no Lang entry.
+  pTestDoc->SetRoot(root_obj_);
+  EXPECT_EQ(0u, FPDFCatalog_GetLanguage(doc_.get(), nullptr, 0));
+
+  // Set language.
+  root_obj_->SetNewFor<CPDF_String>("Lang", "en-US");
+
+  // Query size. Expected: "en-US" + NUL in UTF-16LE = 6 * 2 bytes.
+  unsigned long size = FPDFCatalog_GetLanguage(doc_.get(), nullptr, 0);
+  EXPECT_EQ(12u, size);
+
+  // Get actual value.
+  std::vector<unsigned short> buffer(size / sizeof(unsigned short));
+  EXPECT_EQ(size, FPDFCatalog_GetLanguage(doc_.get(), buffer.data(), size));
+  EXPECT_EQ(L"en-US",
+            WideString::FromUTF16LE(pdfium::as_bytes(pdfium::span(buffer))));
 }

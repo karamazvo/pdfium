@@ -35,6 +35,28 @@ FPDFCatalog_IsTagged(FPDF_DOCUMENT document);
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFCatalog_SetLanguage(FPDF_DOCUMENT document, FPDF_BYTESTRING language);
 
+// Experimental API.
+// Gets the language of |document| from the catalog's /Lang entry.
+//
+//   document - handle to a document.
+//   buffer   - a buffer for the language string. May be NULL.
+//   buflen   - the length of the buffer, in bytes. May be 0.
+//
+// Returns the number of bytes in the language string, including the
+// trailing NUL character. The number of bytes is returned regardless of the
+// |buffer| and |buflen| parameters.
+//
+// Regardless of the platform, the |buffer| is always in UTF-16LE
+// encoding. The string is terminated by a UTF16 NUL character. If
+// |buflen| is less than the required length, or |buffer| is NULL,
+// |buffer| will not be modified.
+//
+// Returns 0 if the document has no /Lang entry or on error.
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFCatalog_GetLanguage(FPDF_DOCUMENT document,
+                        void* buffer,
+                        unsigned long buflen);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus
