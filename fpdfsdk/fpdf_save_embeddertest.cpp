@@ -37,6 +37,17 @@ TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocWithVersion) {
   EXPECT_EQ(805u, GetString().size());
 }
 
+TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocWithParams) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+
+  FPDF_SAVE_PARAMS params = {.flags = FPDF_NO_INCREMENTAL,
+                             .file_version = 15,
+                             .subset_new_fonts = false};
+  EXPECT_TRUE(FPDF_SaveWithParams(document(), this, &params));
+  EXPECT_THAT(GetString(), StartsWith("%PDF-1.5\r\n"));
+  EXPECT_EQ(805u, GetString().size());
+}
+
 TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocWithBadVersion) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   EXPECT_TRUE(FPDF_SaveWithVersion(document(), this, 0, -1));
