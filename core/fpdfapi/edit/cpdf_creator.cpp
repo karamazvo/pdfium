@@ -681,12 +681,11 @@ bool CPDF_Creator::Continue() {
   return stage_ > Stage::kInvalid;
 }
 
-bool CPDF_Creator::SetFileVersion(int32_t fileVersion) {
-  if (fileVersion < 10 || fileVersion > 17) {
-    return false;
+void CPDF_Creator::SetFileVersion(int32_t file_version) {
+  if (file_version < 10 || file_version > 17) {
+    return;
   }
-  file_version_ = fileVersion;
-  return true;
+  file_version_ = file_version;
 }
 
 void CPDF_Creator::RemoveSecurity() {

@@ -34,7 +34,7 @@ class CPDF_Creator {
 
   void RemoveSecurity();
   bool Create(uint32_t flags);
-  bool SetFileVersion(int32_t fileVersion);
+  void SetFileVersion(int32_t file_version);
 
  private:
   enum class Stage {
