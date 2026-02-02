@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "34d91e30_8b4aed4c",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1207,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-02T17:50:34Z",
+      "side": 1,
+      "message": "Perhaps should have explained the change in the parent. Will add as a comment in the parent.",
+      "range": {
+        "startLine": 1207,
+        "startChar": 37,
+        "endLine": 1207,
+        "endChar": 40
+      },
+      "revId": "dc05498f1c05aa2feb7b051ac6e9afbb26d69d0a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "74f4c40e_d380991f",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2361,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-02T17:50:34Z",
+      "side": 1,
+      "message": "Remove the newline in between.\n\n\n```suggestion\n  ASSERT_TRUE(textpage);\n  EXPECT_EQ(1, FPDFText_CountChars(textpage.get()));\n```",
+      "range": {
+        "startLine": 2359,
+        "startChar": 0,
+        "endLine": 2361,
+        "endChar": 52
+      },
+      "revId": "dc05498f1c05aa2feb7b051ac6e9afbb26d69d0a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0c953d9d_65206795",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2374,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-02T17:50:34Z",
+      "side": 1,
+      "message": "should be std::size(buffer)",
+      "range": {
+        "startLine": 2374,
+        "startChar": 52,
+        "endLine": 2374,
+        "endChar": 55
+      },
+      "revId": "dc05498f1c05aa2feb7b051ac6e9afbb26d69d0a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5cf713a9_be8684a3",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2375,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-02T17:50:34Z",
+      "side": 1,
+      "message": "should be first\u003c10\u003e()",
+      "range": {
+        "startLine": 2375,
+        "startChar": 41,
+        "endLine": 2375,
+        "endChar": 44
+      },
+      "revId": "dc05498f1c05aa2feb7b051ac6e9afbb26d69d0a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
