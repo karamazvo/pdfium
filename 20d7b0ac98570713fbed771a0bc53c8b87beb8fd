@@ -105,6 +105,24 @@
       "parentUuid": "df1bb332_26e1af0c",
       "revId": "20d7b0ac98570713fbed771a0bc53c8b87beb8fd",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f23cc5eb_5e9d1b85",
+        "filename": "xfa/fwl/cfwl_edit_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-02T16:55:38Z",
+      "side": 1,
+      "message": "https://pdfium-review.googlesource.com/c/pdfium/+/141950.\n\nYes, this seems to work well with skia images. However, we should probably consider the CL that creates separate files for x86 and arm in this case (as CompareBitmapToPngWithFlakyExpectationSuffix() doesn\u0027t seem to help here)",
+      "parentUuid": "482bbda8_fb3640ad",
+      "revId": "20d7b0ac98570713fbed771a0bc53c8b87beb8fd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ],
   "submitRequirementResults": [
