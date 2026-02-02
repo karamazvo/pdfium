@@ -88,6 +88,24 @@
       "parentUuid": "bd39fad9_f5383fa5",
       "revId": "a3410c97767a1d0a492d048b5bdff25252b2edef",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "435f4e1c_f3e52354",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-02T16:17:51Z",
+      "side": 1,
+      "message": "Would like to add one thing, maybe we should reconsider this CL, in \nhttps://pdfium-review.googlesource.com/c/pdfium/+/141950 (Which adds the images for the disabled test), we have 2 images which fail pdfium_diff with about 2-3 different pixels.",
+      "parentUuid": "b33c2e26_3aa6eea1",
+      "revId": "a3410c97767a1d0a492d048b5bdff25252b2edef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
