@@ -135,16 +135,16 @@ RetainPtr<CPDF_Dictionary> LoadFontDesc(CPDF_Document* doc,
   font_descriptor_dict->SetNewFor<CPDF_Name>("Type", "FontDescriptor");
   font_descriptor_dict->SetNewFor<CPDF_Name>("FontName", font_name);
   int flags = 0;
-  if (font->GetFace()->IsFixedWidth()) {
+  if (font->IsFixedWidth()) {
     flags |= pdfium::kFontStyleFixedPitch;
   }
   if (font_name.Contains("Serif")) {
     flags |= pdfium::kFontStyleSerif;
   }
-  if (font->GetFace()->IsItalic()) {
+  if (font->IsItalic()) {
     flags |= pdfium::kFontStyleItalic;
   }
-  if (font->GetFace()->IsBold()) {
+  if (font->IsBold()) {
     flags |= pdfium::kFontStyleForceBold;
   }
 
@@ -439,8 +439,7 @@ RetainPtr<CPDF_Font> LoadSimpleFont(CPDF_Document* doc,
                                     pdfium::span<const uint8_t> font_data,
                                     int font_type) {
   // If it doesn't have a single char, just fail.
-  RetainPtr<CFX_Face> face = font->GetFace();
-  if (face->GetGlyphCount() <= 0) {
+  if (font->GetGlyphCount() == 0) {
     return nullptr;
   }
 
