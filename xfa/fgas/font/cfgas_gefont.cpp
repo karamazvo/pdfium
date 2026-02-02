@@ -70,6 +70,30 @@ CFGAS_GEFont::CFGAS_GEFont() = default;
 
 CFGAS_GEFont::~CFGAS_GEFont() = default;
 
+#if !BUILDFLAG(IS_WIN)
+void CFGAS_GEFont::SetFaceMetadata(WideString face_name,
+                                   int32_t face_index,
+                                   uint32_t font_styles,
+                                   std::vector<WideString> family_names,
+                                   std::array<uint32_t, 4> usb,
+                                   std::array<uint32_t, 2> csb) {
+  face_name_ = std::move(face_name);
+  face_index_ = face_index;
+  font_styles_ = font_styles;
+  family_names_ = std::move(family_names);
+  usb_ = usb;
+  csb_ = csb;
+}
+
+RetainPtr<CFX_Face> CFGAS_GEFont::GetPreviewFace() const {
+  return preview_face_;
+}
+
+void CFGAS_GEFont::SetPreviewFace(RetainPtr<CFX_Face> face) {
+  preview_face_ = std::move(face);
+}
+#endif
+
 #if BUILDFLAG(IS_WIN)
 bool CFGAS_GEFont::LoadFontInternal(const wchar_t* pszFontFamily,
                                     uint32_t dwFontStyles,
@@ -291,4 +315,27 @@ RetainPtr<CFGAS_GEFont> CFGAS_GEFont::GetSubstFont(int32_t iGlyphIndex) {
     return pdfium::WrapRetain(this);
   }
   return subst_fonts_[iGlyphIndex - 1];
+}
+
+bool CFGAS_GEFont::VerifyUnicode(wchar_t wcUnicode) {
+  RetainPtr<CFX_Face> face = GetDevFont() ? GetDevFont()->GetFace() : nullptr;
+#if !BUILDFLAG(IS_WIN)
+  if (!face) {
+    face = preview_face_;
+  }
+#endif
+  if (!face) {
+    return false;
+  }
+
+  CFX_Face::CharMap charmap = face->GetCurrentCharMap();
+  if (!face->SelectCharMap(fxge::FontEncoding::kUnicode)) {
+    return false;
+  }
+
+  if (face->GetCharIndex(wcUnicode) == 0) {
+    face->SetCharMap(charmap);
+    return false;
+  }
+  return true;
 }
