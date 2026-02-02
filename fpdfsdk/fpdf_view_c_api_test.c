@@ -363,6 +363,7 @@ int CheckPDFiumCApi() {
 
     // fpdf_save.h
     CHK(FPDF_SaveAsCopy);
+    CHK(FPDF_SaveWithParams);
     CHK(FPDF_SaveWithVersion);
 
     // fpdf_searchex.h
