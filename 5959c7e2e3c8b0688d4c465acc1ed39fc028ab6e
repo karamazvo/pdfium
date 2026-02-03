@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1d5632f4_1385c222",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 34
+      },
+      "lineNbr": 1196,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-03T01:40:20Z",
+      "side": 1,
+      "message": "Oops: forgot to explain how the test needed to be changed here. The number of chars is 10 more primarily due to some removed characters at the beginning of the text. Will do this in the follow up.",
+      "range": {
+        "startLine": 1196,
+        "startChar": 29,
+        "endLine": 1196,
+        "endChar": 35
+      },
+      "revId": "5959c7e2e3c8b0688d4c465acc1ed39fc028ab6e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
