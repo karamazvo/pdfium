@@ -10,9 +10,11 @@
 
 #include <algorithm>
 #include <memory>
+#include <ranges>
 #include <utility>
 
 #include "build/build_config.h"
+#include "core/fxcrt/cfx_read_only_vector_stream.h"
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/containers/adapters.h"
 #include "core/fxcrt/containers/contains.h"
@@ -22,6 +24,7 @@
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "core/fxge/cfx_fontmgr.h"
+#include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/systemfontinfo_iface.h"
@@ -894,6 +897,30 @@ FixedSizeDataVector<uint8_t> CFX_FontMapper::RawBytesForIndex(size_t index) {
     return FixedSizeDataVector<uint8_t>();
   }
   return result;
+}
+
+RetainPtr<CFX_ReadOnlyVectorStream> CFX_FontMapper::CreateFontStream(
+    size_t index) {
+  FixedSizeDataVector<uint8_t> buffer = RawBytesForIndex(index);
+  if (buffer.empty()) {
+    return nullptr;
+  }
+  return pdfium::MakeRetain<CFX_ReadOnlyVectorStream>(std::move(buffer));
+}
+
+// static
+RetainPtr<CFX_ReadOnlyVectorStream> CFX_FontMapper::CreateFontStream(
+    const ByteString& bsFaceName) {
+  CFX_FontMgr* font_mgr = CFX_GEModule::Get()->GetFontMgr();
+  CFX_FontMapper* font_mapper = font_mgr->GetBuiltinMapper();
+  font_mapper->LoadInstalledFonts();
+
+  for (size_t i = 0; i < font_mapper->GetFaceSize(); ++i) {
+    if (font_mapper->GetFaceName(i) == bsFaceName) {
+      return font_mapper->CreateFontStream(i);
+    }
+  }
+  return nullptr;
 }
 #endif  // PDF_ENABLE_XFA
 

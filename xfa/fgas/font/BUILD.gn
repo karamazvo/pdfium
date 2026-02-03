@@ -35,6 +35,12 @@ source_set("font") {
     "../../../core/fxge",
   ]
   visibility = [ "../../../*" ]
+  if (!is_win) {
+    sources += [
+      "cfgas_fontdescriptor.cpp",
+      "cfgas_fontdescriptor.h",
+    ]
+  }
 }
 
 pdfium_unittest_source_set("unittests") {

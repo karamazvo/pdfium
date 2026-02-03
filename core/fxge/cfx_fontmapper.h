@@ -91,6 +91,9 @@ class CFX_FontMapper {
 #ifdef PDF_ENABLE_XFA
   // `index` must be less than GetFaceSize().
   FixedSizeDataVector<uint8_t> RawBytesForIndex(size_t index);
+  RetainPtr<CFX_ReadOnlyVectorStream> CreateFontStream(size_t index);
+  static RetainPtr<CFX_ReadOnlyVectorStream> CreateFontStream(
+      const ByteString& face_name);
 #endif  // PDF_ENABLE_XFA
 
  private:
