@@ -44,24 +44,6 @@
 
 namespace {
 
-bool VerifyUnicode(const RetainPtr<CFGAS_GEFont>& font, wchar_t wcUnicode) {
-  RetainPtr<CFX_Face> face = font->GetDevFont()->GetFace();
-  if (!face) {
-    return false;
-  }
-
-  CFX_Face::CharMap charmap = face->GetCurrentCharMap();
-  if (!face->SelectCharMap(fxge::FontEncoding::kUnicode)) {
-    return false;
-  }
-
-  if (face->GetCharIndex(wcUnicode) == 0) {
-    face->SetCharMap(charmap);
-    return false;
-  }
-  return true;
-}
-
 uint32_t ShortFormHash(FX_CodePage wCodePage,
                        uint32_t dwFontStyles,
                        WideStringView wsFontFamily) {
@@ -274,7 +256,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByUnicodeImpl(
   }
 
   font->SetLogicalFontStyle(dwFontStyles);
-  if (!VerifyUnicode(font, wUnicode)) {
+  if (!font->VerifyUnicode(wUnicode)) {
     failed_unicodes_set_.insert(wUnicode);
     return nullptr;
   }
@@ -484,31 +466,6 @@ RetainPtr<CFX_ReadOnlyVectorStream> CreateFontStream(
   return nullptr;
 }
 
-RetainPtr<CFX_Face> LoadFace(
-    const RetainPtr<CFX_ReadOnlyVectorStream>& font_stream,
-    int32_t face_index) {
-  return CFX_Face::NewFromVectorStream(CFX_GEModule::Get()->GetFontMgr(),
-                                       font_stream, face_index);
-}
-
-bool VerifyUnicodeForFontDescriptor(CFGAS_FontDescriptor* pDesc,
-                                    wchar_t wcUnicode) {
-  if (!pDesc->face_) {
-    RetainPtr<CFX_ReadOnlyVectorStream> pFileRead =
-        CreateFontStream(pDesc->face_name_.ToUTF8());
-    if (!pFileRead) {
-      return false;
-    }
-    RetainPtr<CFX_Face> ft_face = LoadFace(pFileRead, pDesc->face_index_);
-    if (!ft_face) {
-      return false;
-    }
-    pDesc->face_ = std::move(ft_face);
-  }
-  return pDesc->face_->SelectCharMap(fxge::FontEncoding::kUnicode) &&
-         pDesc->face_->GetCharIndex(wcUnicode);
-}
-
 bool IsPartName(const WideString& name1, const WideString& name2) {
   return name1.Contains(name2.AsStringView());
 }
@@ -602,6 +559,78 @@ CFGAS_FontDescriptor::CFGAS_FontDescriptor() = default;
 
 CFGAS_FontDescriptor::~CFGAS_FontDescriptor() = default;
 
+// static
+std::unique_ptr<CFGAS_FontDescriptor> CFGAS_FontDescriptor::CreateFromStream(
+    const RetainPtr<CFX_ReadOnlyVectorStream>& font_stream,
+    int face_index,
+    const WideString& face_name) {
+  RetainPtr<CFX_Face> face = CFX_Face::NewFromVectorStream(
+      CFX_GEModule::Get()->GetFontMgr(), font_stream, face_index);
+  if (!face->IsScalable()) {
+    return nullptr;
+  }
+
+  auto font = std::make_unique<CFGAS_FontDescriptor>();
+  font->font_styles_ |= face->GetFontStyle();
+
+  std::optional<std::array<uint32_t, 4>> unicode_range =
+      face->GetOs2UnicodeRange();
+  if (unicode_range.has_value()) {
+    fxcrt::Copy(unicode_range.value(), font->usb_);
+  } else {
+    std::ranges::fill(font->usb_, 0);
+  }
+
+  std::optional<std::array<uint32_t, 2>> code_page_range =
+      face->GetOs2CodePageRange();
+  if (code_page_range.has_value()) {
+    fxcrt::Copy(code_page_range.value(), font->csb_);
+  } else {
+    std::ranges::fill(font->csb_, 0);
+  }
+
+  static constexpr uint32_t kNameTag =
+      CFX_FontMapper::MakeTag('n', 'a', 'm', 'e');
+
+  DataVector<uint8_t> table;
+  size_t table_size = face->GetSfntTable(kNameTag, table);
+  if (table_size) {
+    table.resize(table_size);
+    if (!face->GetSfntTable(kNameTag, table)) {
+      table.clear();
+    }
+  }
+  font->family_names_ = GetNames(table);
+  font->family_names_.push_back(
+      WideString::FromUTF8(face->GetFamilyName().AsStringView()));
+  font->face_name_ = face_name;
+  font->face_index_ = face_index;
+
+  return font;
+}
+
+int CFGAS_FontDescriptor::GetNumFaces() const {
+  return face_->GetNumFaces();
+}
+
+bool CFGAS_FontDescriptor::VerifyUnicodeForFontDescriptor(wchar_t unicode) {
+  if (!face_) {
+    RetainPtr<CFX_ReadOnlyVectorStream> file_read =
+        CreateFontStream(face_name_.ToUTF8());
+    if (!file_read) {
+      return false;
+    }
+    RetainPtr<CFX_Face> ft_face = CFX_Face::NewFromVectorStream(
+        CFX_GEModule::Get()->GetFontMgr(), file_read, face_index_);
+    if (!ft_face) {
+      return false;
+    }
+    face_ = std::move(ft_face);
+  }
+  return face_->SelectCharMap(fxge::FontEncoding::kUnicode) &&
+         face_->GetCharIndex(unicode);
+}
+
 CFGAS_FontMgr::CFGAS_FontMgr() = default;
 
 CFGAS_FontMgr::~CFGAS_FontMgr() = default;
@@ -651,7 +680,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByUnicodeImpl(
   }
   for (const auto& info : hash_2candidate_list_[dwHash]) {
     CFGAS_FontDescriptor* pDesc = info.font;
-    if (!VerifyUnicodeForFontDescriptor(pDesc, wUnicode)) {
+    if (!pDesc->VerifyUnicodeForFontDescriptor(wUnicode)) {
       continue;
     }
     RetainPtr<CFGAS_GEFont> font =
@@ -706,68 +735,23 @@ std::vector<CFGAS_FontDescriptorInfo> CFGAS_FontMgr::MatchFonts(
   return matched_fonts;
 }
 
-void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> face,
-                                 int face_index,
-                                 const WideString& wsFaceName) {
-  if (!face->IsScalable()) {
-    return;
-  }
-
-  auto font = std::make_unique<CFGAS_FontDescriptor>();
-  font->font_styles_ |= face->GetFontStyle();
-
-  std::optional<std::array<uint32_t, 4>> unicode_range =
-      face->GetOs2UnicodeRange();
-  if (unicode_range.has_value()) {
-    fxcrt::Copy(unicode_range.value(), font->usb_);
-  } else {
-    std::ranges::fill(font->usb_, 0);
-  }
-
-  std::optional<std::array<uint32_t, 2>> code_page_range =
-      face->GetOs2CodePageRange();
-  if (code_page_range.has_value()) {
-    fxcrt::Copy(code_page_range.value(), font->csb_);
-  } else {
-    std::ranges::fill(font->csb_, 0);
-  }
-
-  static constexpr uint32_t kNameTag =
-      CFX_FontMapper::MakeTag('n', 'a', 'm', 'e');
-
-  DataVector<uint8_t> table;
-  size_t table_size = face->GetSfntTable(kNameTag, table);
-  if (table_size) {
-    table.resize(table_size);
-    if (!face->GetSfntTable(kNameTag, table)) {
-      table.clear();
-    }
-  }
-  font->family_names_ = GetNames(table);
-  font->family_names_.push_back(
-      WideString::FromUTF8(face->GetFamilyName().AsStringView()));
-  font->face_name_ = wsFaceName;
-  font->face_index_ = face_index;
-  installed_fonts_.push_back(std::move(font));
-}
-
 void CFGAS_FontMgr::RegisterFaces(
     const RetainPtr<CFX_ReadOnlyVectorStream>& font_stream,
     const WideString& face_name) {
   int index = 0;
   int num_faces = 0;
   do {
-    RetainPtr<CFX_Face> face = LoadFace(font_stream, index);
-    if (!face) {
-      ++index;
+    std::unique_ptr<CFGAS_FontDescriptor> font_desc =
+        CFGAS_FontDescriptor::CreateFromStream(font_stream, index, face_name);
+    ++index;
+    if (!font_desc) {
       continue;
     }
     // All faces keep number of faces. It can be retrieved from any one face.
     if (num_faces == 0) {
-      num_faces = face->GetNumFaces();
+      num_faces = font_desc->GetNumFaces();
     }
-    RegisterFace(face, index, face_name);
-    ++index;
+    installed_fonts_.push_back(std::move(font_desc));
   } while (index < num_faces);
 }
 
@@ -845,7 +829,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByUnicode(
           ? LongFormHash(wCodePage, wBitField, dwFontStyles, pszFontFamily)
           : ShortFormHash(wCodePage, dwFontStyles, pszFontFamily);
   for (auto& font : hash_2fonts_[dwHash]) {
-    if (VerifyUnicode(font, wUnicode)) {
+    if (font->VerifyUnicode(wUnicode)) {
       return font;
     }
   }

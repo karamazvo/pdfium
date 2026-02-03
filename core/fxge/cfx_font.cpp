@@ -147,6 +147,14 @@ int CFX_Font::GetSubstFontItalicAngle() const {
   return subst_font ? subst_font->italic_angle_ : 0;
 }
 
+std::vector<CharCodeAndIndex> CFX_Font::GetCharCodesAndIndices(
+    char32_t max_char) {
+  if (!face_) {
+    return {};
+  }
+  return face_->GetCharCodesAndIndices(max_char);
+}
+
 #ifdef PDF_ENABLE_XFA
 bool CFX_Font::LoadFromVectorStream(
     const RetainPtr<CFX_ReadOnlyVectorStream>& vector_stream,
@@ -158,10 +166,10 @@ bool CFX_Font::LoadFromVectorStream(
 }
 
 #if !BUILDFLAG(IS_WIN)
-void CFX_Font::SetFace(RetainPtr<CFX_Face> face) {
+void CFX_Font::SetFaceFromFont(const CFX_Font& that) {
   ClearGlyphCache();
   object_tag_ = 0;
-  face_ = face;
+  face_ = that.face_;
 }
 
 void CFX_Font::SetSubstFont(std::unique_ptr<CFX_SubstFont> subst) {
@@ -195,6 +203,10 @@ void CFX_Font::LoadSubst(const ByteString& face_name,
   if (face_) {
     font_data_ = face_->GetData();
   }
+}
+
+bool CFX_Font::HasAnyGlyphs() const {
+  return face_ && face_->GetGlyphCount() > 0;
 }
 
 int CFX_Font::GetGlyphWidth(uint32_t glyph_index) const {
