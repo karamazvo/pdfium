@@ -47,6 +47,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "82b561c9_740c0380",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2361,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-03T02:10:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "74f4c40e_d380991f",
+      "range": {
+        "startLine": 2359,
+        "startChar": 0,
+        "endLine": 2361,
+        "endChar": 52
+      },
+      "revId": "dc05498f1c05aa2feb7b051ac6e9afbb26d69d0a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0c953d9d_65206795",
@@ -70,6 +94,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c22d4801_c3bf6537",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2374,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-03T02:10:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0c953d9d_65206795",
+      "range": {
+        "startLine": 2374,
+        "startChar": 52,
+        "endLine": 2374,
+        "endChar": 55
+      },
+      "revId": "dc05498f1c05aa2feb7b051ac6e9afbb26d69d0a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5cf713a9_be8684a3",
@@ -83,6 +131,30 @@
       "writtenOn": "2026-02-02T17:50:34Z",
       "side": 1,
       "message": "should be first\u003c10\u003e()",
+      "range": {
+        "startLine": 2375,
+        "startChar": 41,
+        "endLine": 2375,
+        "endChar": 44
+      },
+      "revId": "dc05498f1c05aa2feb7b051ac6e9afbb26d69d0a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2362dfa5_217a0ba9",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2375,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-03T02:10:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5cf713a9_be8684a3",
       "range": {
         "startLine": 2375,
         "startChar": 41,
