@@ -18,8 +18,9 @@
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "core/fxcrt/widestring.h"
-#include "core/fxge/cfx_face.h"
+#include "xfa/fgas/font/cfgas_fontdescriptor.h"
 
 class CFX_ReadOnlyVectorStream;
 class CFGAS_GEFont;
@@ -53,29 +54,6 @@ inline bool operator==(const FX_FONTDESCRIPTOR& left,
 }
 
 #else  // BUILDFLAG(IS_WIN)
-
-// Represents metatdata about a font that isn't necessarily loaded yet.
-class CFGAS_FontDescriptor {
- public:
-  static std::unique_ptr<CFGAS_FontDescriptor> CreateFromStream(
-      const RetainPtr<CFX_ReadOnlyVectorStream>& font_stream,
-      int face_index,
-      const WideString& face_name);
-
-  CFGAS_FontDescriptor();
-  ~CFGAS_FontDescriptor();
-
-  int GetNumFaces() const;
-  bool VerifyUnicodeForFontDescriptor(wchar_t unicode);
-
-  int32_t face_index_ = 0;
-  uint32_t font_styles_ = 0;
-  WideString face_name_;
-  RetainPtr<CFX_Face> face_;
-  std::vector<WideString> family_names_;
-  std::array<uint32_t, 4> usb_ = {};
-  std::array<uint32_t, 2> csb_ = {};
-};
 
 struct CFGAS_FontDescriptorInfo {
  public:

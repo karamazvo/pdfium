@@ -393,79 +393,6 @@ uint16_t FX_GetUnicodeBit(wchar_t wcUnicode) {
   return x ? x->wBitField : FGAS_FONTUSB::kNoBitField;
 }
 
-uint16_t ReadUInt16FromSpanAtOffset(pdfium::span<const uint8_t> data,
-                                    size_t offset) {
-  return fxcrt::GetUInt16MSBFirst(data.subspan(offset).first<2u>());
-}
-
-std::vector<WideString> GetNames(pdfium::span<const uint8_t> name_table) {
-  std::vector<WideString> results;
-  if (name_table.empty()) {
-    return results;
-  }
-
-  uint16_t nNameCount = ReadUInt16FromSpanAtOffset(name_table, 2);
-  pdfium::span<const uint8_t> str =
-      name_table.subspan(ReadUInt16FromSpanAtOffset(name_table, 4));
-  pdfium::span<const uint8_t> name_record = name_table.subspan<6u>();
-  for (uint16_t i = 0; i < nNameCount; ++i) {
-    uint16_t nNameID = ReadUInt16FromSpanAtOffset(name_table, i * 12 + 6);
-    if (nNameID != 1) {
-      continue;
-    }
-
-    uint16_t nPlatformID = ReadUInt16FromSpanAtOffset(name_record, i * 12);
-    uint16_t nNameLength = ReadUInt16FromSpanAtOffset(name_record, i * 12 + 8);
-    uint16_t nNameOffset = ReadUInt16FromSpanAtOffset(name_record, i * 12 + 10);
-    if (nPlatformID != 1) {
-      WideString wsFamily;
-      for (uint16_t j = 0; j < nNameLength / 2; ++j) {
-        wchar_t wcTemp = ReadUInt16FromSpanAtOffset(str, nNameOffset + j * 2);
-        wsFamily += wcTemp;
-      }
-      results.push_back(wsFamily);
-      continue;
-    }
-
-    // Avoid out of bounds crashes if the length and/or offset are wrong.
-    if (static_cast<size_t>(nNameLength) + nNameOffset >= str.size()) {
-      continue;
-    }
-
-    WideString wsFamily;
-    for (uint16_t j = 0; j < nNameLength; ++j) {
-      wchar_t wcTemp = str[nNameOffset + j];
-      wsFamily += wcTemp;
-    }
-    results.push_back(wsFamily);
-  }
-  return results;
-}
-
-RetainPtr<CFX_ReadOnlyVectorStream> CreateFontStream(
-    CFX_FontMapper* font_mapper,
-    size_t index) {
-  FixedSizeDataVector<uint8_t> buffer = font_mapper->RawBytesForIndex(index);
-  if (buffer.empty()) {
-    return nullptr;
-  }
-  return pdfium::MakeRetain<CFX_ReadOnlyVectorStream>(std::move(buffer));
-}
-
-RetainPtr<CFX_ReadOnlyVectorStream> CreateFontStream(
-    const ByteString& bsFaceName) {
-  CFX_FontMgr* font_mgr = CFX_GEModule::Get()->GetFontMgr();
-  CFX_FontMapper* font_mapper = font_mgr->GetBuiltinMapper();
-  font_mapper->LoadInstalledFonts();
-
-  for (size_t i = 0; i < font_mapper->GetFaceSize(); ++i) {
-    if (font_mapper->GetFaceName(i) == bsFaceName) {
-      return CreateFontStream(font_mapper, i);
-    }
-  }
-  return nullptr;
-}
-
 bool IsPartName(const WideString& name1, const WideString& name2) {
   return name1.Contains(name2.AsStringView());
 }
@@ -555,82 +482,6 @@ int32_t CalcPenalty(CFGAS_FontDescriptor* pInstalled,
 
 }  // namespace
 
-CFGAS_FontDescriptor::CFGAS_FontDescriptor() = default;
-
-CFGAS_FontDescriptor::~CFGAS_FontDescriptor() = default;
-
-// static
-std::unique_ptr<CFGAS_FontDescriptor> CFGAS_FontDescriptor::CreateFromStream(
-    const RetainPtr<CFX_ReadOnlyVectorStream>& font_stream,
-    int face_index,
-    const WideString& face_name) {
-  RetainPtr<CFX_Face> face = CFX_Face::NewFromVectorStream(
-      CFX_GEModule::Get()->GetFontMgr(), font_stream, face_index);
-  if (!face->IsScalable()) {
-    return nullptr;
-  }
-
-  auto font = std::make_unique<CFGAS_FontDescriptor>();
-  font->font_styles_ |= face->GetFontStyle();
-
-  std::optional<std::array<uint32_t, 4>> unicode_range =
-      face->GetOs2UnicodeRange();
-  if (unicode_range.has_value()) {
-    fxcrt::Copy(unicode_range.value(), font->usb_);
-  } else {
-    std::ranges::fill(font->usb_, 0);
-  }
-
-  std::optional<std::array<uint32_t, 2>> code_page_range =
-      face->GetOs2CodePageRange();
-  if (code_page_range.has_value()) {
-    fxcrt::Copy(code_page_range.value(), font->csb_);
-  } else {
-    std::ranges::fill(font->csb_, 0);
-  }
-
-  static constexpr uint32_t kNameTag =
-      CFX_FontMapper::MakeTag('n', 'a', 'm', 'e');
-
-  DataVector<uint8_t> table;
-  size_t table_size = face->GetSfntTable(kNameTag, table);
-  if (table_size) {
-    table.resize(table_size);
-    if (!face->GetSfntTable(kNameTag, table)) {
-      table.clear();
-    }
-  }
-  font->family_names_ = GetNames(table);
-  font->family_names_.push_back(
-      WideString::FromUTF8(face->GetFamilyName().AsStringView()));
-  font->face_name_ = face_name;
-  font->face_index_ = face_index;
-
-  return font;
-}
-
-int CFGAS_FontDescriptor::GetNumFaces() const {
-  return face_->GetNumFaces();
-}
-
-bool CFGAS_FontDescriptor::VerifyUnicodeForFontDescriptor(wchar_t unicode) {
-  if (!face_) {
-    RetainPtr<CFX_ReadOnlyVectorStream> file_read =
-        CreateFontStream(face_name_.ToUTF8());
-    if (!file_read) {
-      return false;
-    }
-    RetainPtr<CFX_Face> ft_face = CFX_Face::NewFromVectorStream(
-        CFX_GEModule::Get()->GetFontMgr(), file_read, face_index_);
-    if (!ft_face) {
-      return false;
-    }
-    face_ = std::move(ft_face);
-  }
-  return face_->SelectCharMap(fxge::FontEncoding::kUnicode) &&
-         face_->GetCharIndex(unicode);
-}
-
 CFGAS_FontMgr::CFGAS_FontMgr() = default;
 
 CFGAS_FontMgr::~CFGAS_FontMgr() = default;
@@ -650,7 +501,7 @@ bool CFGAS_FontMgr::EnumFontsFromFontMapper() {
 
   for (size_t i = 0; i < font_mapper->GetFaceSize(); ++i) {
     RetainPtr<CFX_ReadOnlyVectorStream> font_stream =
-        CreateFontStream(font_mapper, i);
+        font_mapper->CreateFontStream(i);
     if (!font_stream) {
       continue;
     }
@@ -702,7 +553,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::LoadFontInternal(
     const WideString& face_name,
     int32_t face_index) {
   RetainPtr<CFX_ReadOnlyVectorStream> font_stream =
-      CreateFontStream(face_name.ToUTF8());
+      CFX_FontMapper::CreateFontStream(face_name.ToUTF8());
   if (!font_stream) {
     return nullptr;
   }
