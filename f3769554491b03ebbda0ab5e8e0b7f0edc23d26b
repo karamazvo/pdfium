@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7c2d53a1_f603ccdb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-03T19:30:09Z",
+      "side": 1,
+      "message": "wrap",
+      "revId": "f3769554491b03ebbda0ab5e8e0b7f0edc23d26b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f79a3dd2_8efaef4f",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 857,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-03T19:30:09Z",
+      "side": 1,
+      "message": "The CL description doesn\u0027t mention what\u0027s going on here.",
+      "revId": "f3769554491b03ebbda0ab5e8e0b7f0edc23d26b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
