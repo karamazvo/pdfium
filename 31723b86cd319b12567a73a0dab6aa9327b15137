@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0aabbcf0_58824879",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-03T19:17:37Z",
+      "side": 1,
+      "message": "Does tihs CL need to be chained to https://pdfium-review.googlesource.com/141950 ? If not, this can get reviewed and committed earlier.",
+      "revId": "31723b86cd319b12567a73a0dab6aa9327b15137",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
