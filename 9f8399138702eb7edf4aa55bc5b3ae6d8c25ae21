@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6f0762b8_ecd5df6b",
+        "filename": "xfa/fgas/font/cfgas_fontmgr.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 564,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-03T20:20:01Z",
+      "side": 1,
+      "message": "Switch to Google C++ style along the way?",
+      "range": {
+        "startLine": 564,
+        "startChar": 40,
+        "endLine": 564,
+        "endChar": 49
+      },
+      "revId": "9f8399138702eb7edf4aa55bc5b3ae6d8c25ae21",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
