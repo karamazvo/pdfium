@@ -33,6 +33,46 @@
       "message": "The CL description doesn\u0027t mention what\u0027s going on here.",
       "revId": "f3769554491b03ebbda0ab5e8e0b7f0edc23d26b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f783391b_5b663bab",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 857,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-03T20:34:52Z",
+      "side": 1,
+      "message": "I think this can be simplified to `if (bPrevSpace \u0026\u0026 str.GetLength() \u003e 1) {`",
+      "revId": "f3769554491b03ebbda0ab5e8e0b7f0edc23d26b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ecd80428_568daa60",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 859,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-03T20:34:52Z",
+      "side": 1,
+      "message": "Calculate this index once and save it to a local variable.",
+      "range": {
+        "startLine": 859,
+        "startChar": 26,
+        "endLine": 859,
+        "endChar": 45
+      },
+      "revId": "f3769554491b03ebbda0ab5e8e0b7f0edc23d26b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
