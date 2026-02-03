@@ -54,6 +54,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "4f578afc_8799524d",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 857,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-03T20:44:27Z",
+      "side": 1,
+      "message": "Or wrap the entire for-loop above inside a `str.GetLength() \u003e 1` check. No need to do any of this if `str` is 0 or 1 char long.",
+      "parentUuid": "f783391b_5b663bab",
+      "revId": "f3769554491b03ebbda0ab5e8e0b7f0edc23d26b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "ecd80428_568daa60",
         "filename": "core/fpdftext/cpdf_textpage.cpp",
         "patchSetId": 3
