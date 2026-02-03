@@ -32,7 +32,6 @@ CFGAS_GEModule* CFGAS_GEModule::Get() {
   return g_module;
 }
 
-CFGAS_GEModule::CFGAS_GEModule()
-    : font_mgr_(std::make_unique<CFGAS_FontMgr>()) {}
+CFGAS_GEModule::CFGAS_GEModule() : font_mgr_(CFGAS_FontMgr::Create()) {}
 
 CFGAS_GEModule::~CFGAS_GEModule() = default;

@@ -22,6 +22,17 @@ source_set("font") {
     "fgas_fontutils.cpp",
     "fgas_fontutils.h",
   ]
+  if (is_win) {
+    sources += [
+      "cfgas_fontmgr_win.cpp",
+      "cfgas_fontmgr_win.h",
+    ]
+  } else {
+    sources += [
+      "cfgas_fontmgr_default.cpp",
+      "cfgas_fontmgr_default.h",
+    ]
+  }
   configs += [
     "../../../:pdfium_strict_config",
     "../../../:pdfium_noshorten_config",

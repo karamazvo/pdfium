@@ -8,8 +8,10 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 #if !BUILDFLAG(IS_WIN)
+#include "xfa/fgas/font/cfgas_fontmgr_default.h"
+
 TEST(CFGASFontMgr, LazyEnumeration) {
-  CFGAS_FontMgr font_mgr;
+  CFGAS_FontMgrDefault font_mgr;
 
   // Fonts should not be enumerated until explicitly requested. This allows
   // embedders to configure the font mapper before any enumeration occurs.
