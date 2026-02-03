@@ -659,13 +659,13 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::LoadFontInternal(
   return CFGAS_GEFont::LoadFont(std::move(internal_font));
 }
 
-std::vector<CFGAS_FontDescriptorInfo> CFGAS_FontMgr::MatchFonts(
+std::vector<CFGAS_FontDescriptor::Rank> CFGAS_FontMgr::MatchFonts(
     FX_CodePage wCodePage,
     uint32_t dwFontStyles,
     const WideString& FontName,
     wchar_t wcUnicode) {
   EnsureFontsEnumerated();
-  std::vector<CFGAS_FontDescriptorInfo> matched_fonts;
+  std::vector<CFGAS_FontDescriptor::Rank> matched_fonts;
   for (const auto& font : installed_fonts_) {
     int32_t nPenalty =
         CalcPenalty(font.get(), wCodePage, dwFontStyles, FontName, wcUnicode);
