@@ -54,10 +54,13 @@ inline bool operator==(const FX_FONTDESCRIPTOR& left,
 
 #else  // BUILDFLAG(IS_WIN)
 
+// Represents metatdata about a font that isn't necessarily loaded yet.
 class CFGAS_FontDescriptor {
  public:
   CFGAS_FontDescriptor();
   ~CFGAS_FontDescriptor();
+
+  bool VerifyUnicodeForFontDescriptor(wchar_t unicode);
 
   int32_t face_index_ = 0;
   uint32_t font_styles_ = 0;
