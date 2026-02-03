@@ -6,8 +6,13 @@
 
 #include <utility>
 
+#include "build/build_config.h"
 #include "core/fxcrt/cfx_read_only_span_stream.h"
 #include "core/fxcrt/span.h"
+
+#if BUILDFLAG(IS_POSIX)
+#include "core/fxcrt/mapped_data_bytes.h"
+#endif
 
 CFX_ReadOnlyVectorStream::CFX_ReadOnlyVectorStream(DataVector<uint8_t> data)
     : data_(std::move(data)),
@@ -17,6 +22,15 @@ CFX_ReadOnlyVectorStream::CFX_ReadOnlyVectorStream(
     FixedSizeDataVector<uint8_t> data)
     : fixed_data_(std::move(data)),
       stream_(pdfium::MakeRetain<CFX_ReadOnlySpanStream>(fixed_data_)) {}
+
+#if BUILDFLAG(IS_POSIX)
+CFX_ReadOnlyVectorStream::CFX_ReadOnlyVectorStream(const ByteString& file_name)
+    : mapped_data_(MappedDataBytes::Create(file_name)) {
+  if (mapped_data_) {
+    stream_ = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(mapped_data_->span());
+  }
+}
+#endif
 
 CFX_ReadOnlyVectorStream::~CFX_ReadOnlyVectorStream() = default;
 
