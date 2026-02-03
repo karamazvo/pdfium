@@ -329,9 +329,11 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(ByteStringView family_name,
   return ret;
 }
 
-RetainPtr<CFX_Face> CFPF_SkiaFontMgr::GetFontFace(ByteStringView path,
+RetainPtr<CFX_Face> CFPF_SkiaFontMgr::GetFontFace(const ByteString& path,
                                                   int32_t face_index) {
-  return CFX_Face::OpenFromFilePath(font_mgr_, path, face_index);
+  return CFX_Face::NewFromVectorStream(
+      font_mgr_, pdfium::MakeRetain<CFX_ReadOnlyVectorStream>(path),
+      face_index);
 }
 
 void CFPF_SkiaFontMgr::ScanPath(const ByteString& path) {
@@ -367,7 +369,7 @@ void CFPF_SkiaFontMgr::ScanPath(const ByteString& path) {
 
 void CFPF_SkiaFontMgr::ScanFile(const ByteString& file) {
   constexpr int kFaceIndex = 0;
-  RetainPtr<CFX_Face> face = GetFontFace(file.AsStringView(), kFaceIndex);
+  RetainPtr<CFX_Face> face = GetFontFace(file, kFaceIndex);
   if (!face) {
     return;
   }
