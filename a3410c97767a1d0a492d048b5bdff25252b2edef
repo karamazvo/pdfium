@@ -106,6 +106,24 @@
       "parentUuid": "b33c2e26_3aa6eea1",
       "revId": "a3410c97767a1d0a492d048b5bdff25252b2edef",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "74607bde_fe3e8c73",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-03T19:15:06Z",
+      "side": 1,
+      "message": "Sure. It\u0027s understandable that fuzzy matching doesn\u0027t cover all the rendering differences for Intel vs. ARM Mac.",
+      "parentUuid": "435f4e1c_f3e52354",
+      "revId": "a3410c97767a1d0a492d048b5bdff25252b2edef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
