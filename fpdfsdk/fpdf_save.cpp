@@ -214,16 +214,10 @@ FPDF_SaveWithParams(FPDF_DOCUMENT document,
 
   CPDF_Creator file_maker(
       doc, pdfium::MakeRetain<CPDFSDK_FileWriteAdapter>(file_write));
-  if (params->file_version != 0) {
-    file_maker.SetFileVersion(params->file_version);
-  }
-  if (flags == FPDF_REMOVE_SECURITY) {
-    flags = 0;
-    file_maker.RemoveSecurity();
-  }
-
   // TODO(crbug.com/476127152): Subset new fonts.
-  bool create_result = file_maker.Create(static_cast<uint32_t>(flags));
+  bool create_result =
+      file_maker.Create({.flags = static_cast<uint32_t>(flags),
+                         .file_version = params->file_version});
 
 #ifdef PDF_ENABLE_XFA
   if (context) {
