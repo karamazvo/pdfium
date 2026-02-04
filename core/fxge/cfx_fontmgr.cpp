@@ -45,17 +45,20 @@ constexpr pdfium::span<const uint8_t> kGenericSerifFont = kFoxitSerifMMFontData;
 
 }  // namespace
 
-CFX_FontMgr::FontDesc::FontDesc(FixedSizeDataVector<uint8_t> data)
+CFX_FontMgr::SystemFontCacheEntry::SystemFontCacheEntry(
+    FixedSizeDataVector<uint8_t> data)
     : font_data_(std::move(data)) {}
 
-CFX_FontMgr::FontDesc::~FontDesc() = default;
+CFX_FontMgr::SystemFontCacheEntry::~SystemFontCacheEntry() = default;
 
-void CFX_FontMgr::FontDesc::SetFace(uint32_t face_index, CFX_Face* face) {
+void CFX_FontMgr::SystemFontCacheEntry::SetFace(uint32_t face_index,
+                                                CFX_Face* face) {
   CHECK_LT(face_index, std::size(ttc_faces_));
   ttc_faces_[face_index].Reset(face);
 }
 
-CFX_Face* CFX_FontMgr::FontDesc::GetFace(uint32_t face_index) const {
+CFX_Face* CFX_FontMgr::SystemFontCacheEntry::GetFace(
+    uint32_t face_index) const {
   CHECK_LT(face_index, std::size(ttc_faces_));
   return ttc_faces_[face_index].Get();
 }
@@ -69,7 +72,7 @@ CFX_FontMgr::CFX_FontMgr()
 
 CFX_FontMgr::~CFX_FontMgr() = default;
 
-RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::GetCachedFontDesc(
+RetainPtr<CFX_FontMgr::SystemFontCacheEntry> CFX_FontMgr::GetCachedFontDesc(
     const ByteString& face_name,
     int weight,
     bool bItalic) {
@@ -77,17 +80,17 @@ RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::GetCachedFontDesc(
   return it != face_map_.end() ? pdfium::WrapRetain(it->second.Get()) : nullptr;
 }
 
-RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::AddCachedFontDesc(
+RetainPtr<CFX_FontMgr::SystemFontCacheEntry> CFX_FontMgr::AddCachedFontDesc(
     const ByteString& face_name,
     int weight,
     bool bItalic,
     FixedSizeDataVector<uint8_t> data) {
-  auto font_desc = pdfium::MakeRetain<FontDesc>(std::move(data));
+  auto font_desc = pdfium::MakeRetain<SystemFontCacheEntry>(std::move(data));
   face_map_[{face_name, weight, bItalic}].Reset(font_desc.Get());
   return font_desc;
 }
 
-RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::GetCachedTTCFontDesc(
+RetainPtr<CFX_FontMgr::SystemFontCacheEntry> CFX_FontMgr::GetCachedTTCFontDesc(
     size_t ttc_size,
     uint32_t checksum) {
   auto it = ttc_face_map_.find({ttc_size, checksum});
@@ -95,18 +98,19 @@ RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::GetCachedTTCFontDesc(
                                    : nullptr;
 }
 
-RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::AddCachedTTCFontDesc(
+RetainPtr<CFX_FontMgr::SystemFontCacheEntry> CFX_FontMgr::AddCachedTTCFontDesc(
     size_t ttc_size,
     uint32_t checksum,
     FixedSizeDataVector<uint8_t> data) {
-  auto pNewDesc = pdfium::MakeRetain<FontDesc>(std::move(data));
+  auto pNewDesc = pdfium::MakeRetain<SystemFontCacheEntry>(std::move(data));
   ttc_face_map_[{ttc_size, checksum}].Reset(pNewDesc.Get());
   return pNewDesc;
 }
 
-RetainPtr<CFX_Face> CFX_FontMgr::NewFixedFace(RetainPtr<FontDesc> desc,
-                                              pdfium::span<const uint8_t> span,
-                                              uint32_t face_index) {
+RetainPtr<CFX_Face> CFX_FontMgr::NewFixedFace(
+    RetainPtr<SystemFontCacheEntry> desc,
+    pdfium::span<const uint8_t> span,
+    uint32_t face_index) {
   return CFX_Face::New(this, std::move(desc), span, face_index);
 }
 
