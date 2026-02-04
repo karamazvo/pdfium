@@ -18,7 +18,6 @@
 #include "core/fxcrt/span.h"
 #endif
 
-class CFX_FontCache;
 class CFX_FontMgr;
 class SystemFontInfoIface;
 
@@ -52,7 +51,6 @@ class CFX_GEModule {
 
   std::unique_ptr<PlatformIface> const platform_;
   std::unique_ptr<CFX_FontMgr> const font_mgr_;
-  std::unique_ptr<CFX_FontCache> const font_cache_;
 
   // Exclude because taken from public API.
   UNOWNED_PTR_EXCLUSION const char** const user_font_paths_;

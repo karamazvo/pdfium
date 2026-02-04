@@ -104,6 +104,17 @@ RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::AddCachedTTCFontDesc(
   return pNewDesc;
 }
 
+RetainPtr<CFX_GlyphCache> CFX_FontMgr::GetGlyphCache(const CFX_Font* font) {
+  RetainPtr<CFX_Face> face = font->GetFace();
+  auto it = glyph_cache_map_.find(face.Get());
+  if (it != glyph_cache_map_.end() && it->second) {
+    return pdfium::WrapRetain(it->second.Get());
+  }
+  auto new_cache = pdfium::MakeRetain<CFX_GlyphCache>(face);
+  glyph_cache_map_[face.Get()].Reset(new_cache.Get());
+  return new_cache;
+}
+
 // static
 pdfium::span<const uint8_t> CFX_FontMgr::GetStandardFont(size_t index) {
   return kFoxitFonts[index];
