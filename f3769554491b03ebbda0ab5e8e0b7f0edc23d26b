@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fc26b0ba_4d1e8211",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-04T16:07:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7c2d53a1_f603ccdb",
+      "revId": "f3769554491b03ebbda0ab5e8e0b7f0edc23d26b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f79a3dd2_8efaef4f",
@@ -70,6 +88,42 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1d15cf6a_1f7efcd2",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 857,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-04T16:07:08Z",
+      "side": 1,
+      "message": "Did both, considering the loop can also delete characters, It would still require the check for string length being \u003e 1 for the if statement.",
+      "parentUuid": "4f578afc_8799524d",
+      "revId": "f3769554491b03ebbda0ab5e8e0b7f0edc23d26b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d2f0a869_0ad2bba2",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 857,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-04T16:07:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f79a3dd2_8efaef4f",
+      "revId": "f3769554491b03ebbda0ab5e8e0b7f0edc23d26b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ecd80428_568daa60",
@@ -83,6 +137,30 @@
       "writtenOn": "2026-02-03T20:34:52Z",
       "side": 1,
       "message": "Calculate this index once and save it to a local variable.",
+      "range": {
+        "startLine": 859,
+        "startChar": 26,
+        "endLine": 859,
+        "endChar": 45
+      },
+      "revId": "f3769554491b03ebbda0ab5e8e0b7f0edc23d26b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "94088757_4ae85ce8",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 859,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-04T16:07:08Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "ecd80428_568daa60",
       "range": {
         "startLine": 859,
         "startChar": 26,
