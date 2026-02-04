@@ -77,6 +77,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2cf1d693_9be98d77",
+        "filename": "core/fpdfapi/render/fpdf_progressive_render_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-04T03:07:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "61b97149_d309ff58",
+      "range": {
+        "startLine": 116,
+        "startChar": 38,
+        "endLine": 116,
+        "endChar": 43
+      },
+      "revId": "31723b86cd319b12567a73a0dab6aa9327b15137",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9b1896c8_e45de447",
@@ -90,6 +114,24 @@
       "writtenOn": "2026-02-03T19:19:39Z",
       "side": 1,
       "message": "Negate this so the logic is yes/no, rather than no/yes.",
+      "revId": "31723b86cd319b12567a73a0dab6aa9327b15137",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2ba64e66_0780af87",
+        "filename": "core/fpdfapi/render/fpdf_progressive_render_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-04T03:07:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9b1896c8_e45de447",
       "revId": "31723b86cd319b12567a73a0dab6aa9327b15137",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
