@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "521cc0b6_acf19489",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 843,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-04T17:34:57Z",
+      "side": 1,
+      "message": "Move this one line down to reduce its scope.",
+      "revId": "6f8e47ac386d7468b80f350645e90fdc5ac98dff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "710575a9_217ee9f7",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 860,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-04T17:34:57Z",
+      "side": 1,
+      "message": "Can check `last_idx` instead.",
+      "range": {
+        "startLine": 860,
+        "startChar": 22,
+        "endLine": 860,
+        "endChar": 41
+      },
+      "revId": "6f8e47ac386d7468b80f350645e90fdc5ac98dff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
