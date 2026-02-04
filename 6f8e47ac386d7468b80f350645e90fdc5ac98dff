@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8046d736_cba0f8a2",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 843,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-04T17:36:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "521cc0b6_acf19489",
+      "revId": "6f8e47ac386d7468b80f350645e90fdc5ac98dff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "710575a9_217ee9f7",
@@ -31,6 +49,30 @@
       "writtenOn": "2026-02-04T17:34:57Z",
       "side": 1,
       "message": "Can check `last_idx` instead.",
+      "range": {
+        "startLine": 860,
+        "startChar": 22,
+        "endLine": 860,
+        "endChar": 41
+      },
+      "revId": "6f8e47ac386d7468b80f350645e90fdc5ac98dff",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "de341958_2c4f921e",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 860,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-04T17:36:52Z",
+      "side": 1,
+      "message": "Yeah was considering that, just thought it would be less readable than the GetLength() call. Will edit.\n\nDone.",
+      "parentUuid": "710575a9_217ee9f7",
       "range": {
         "startLine": 860,
         "startChar": 22,
