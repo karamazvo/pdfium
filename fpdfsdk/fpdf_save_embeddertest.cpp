@@ -16,6 +16,8 @@
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gmock/include/gmock/gmock-matchers.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "testing/utils/file_util.h"
+#include "testing/utils/path_service.h"
 
 using testing::HasSubstr;
 using testing::Not;
@@ -28,6 +30,122 @@ TEST_F(FPDFSaveEmbedderTest, SaveSimpleDoc) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   EXPECT_THAT(GetString(), StartsWith("%PDF-1.7\r\n"));
   EXPECT_EQ(805u, GetString().size());
+}
+
+TEST_F(FPDFSaveEmbedderTest, SaveWithSubset) {
+  FPDF_SAVE_PARAMS params = {
+      .version = 1, .flags = 0, .file_version = 17, .subset_new_fonts = true};
+  ASSERT_TRUE(OpenDocument("before_font_subsetting.pdf"));
+  OpenPDFFileForWrite("test.pdf");
+  EXPECT_TRUE(FPDF_SaveWithParams(document(), this, &params));
+  EXPECT_THAT(GetString(), StartsWith("%PDF-1.7\r\n"));
+  EXPECT_EQ(15856901u, GetString().size());
+}
+
+TEST_F(FPDFSaveEmbedderTest, SaveWithSubset2NoSubset) {
+  FPDF_SAVE_PARAMS params = {
+      .version = 1, .flags = 0, .file_version = 17, .subset_new_fonts = false};
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+
+  std::string font_path = PathService::GetThirdPartyFilePath(
+      "NotoSansCJK/NotoSansSC-Regular.subset.otf");
+  ASSERT_FALSE(font_path.empty());
+
+  std::vector<uint8_t> font_data = GetFileContents(font_path.c_str());
+  ASSERT_FALSE(font_data.empty());
+
+  ScopedFPDFFont font(FPDFText_LoadFont(document(), font_data.data(),
+                                        font_data.size(), FPDF_FONT_TRUETYPE,
+                                        /*cid=*/true));
+
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  FPDF_PAGEOBJECT text_obj =
+      FPDFPageObj_CreateTextObj(document(), font.get(), 24.0f);
+
+  ScopedFPDFWideString text = GetFPDFWideString(L"这是第一句。");
+  EXPECT_TRUE(FPDFText_SetText(text_obj, text.get()));
+
+  const FS_MATRIX matrix{1, 0, 0, 1, 10, 10};
+  ASSERT_TRUE(FPDFPageObj_TransformF(text_obj, &matrix));
+  FPDFPage_InsertObject(page.get(), text_obj);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+
+  OpenPDFFileForWrite("test2_nosubset.pdf");
+  EXPECT_TRUE(FPDF_SaveWithParams(document(), this, &params));
+  EXPECT_THAT(GetString(), StartsWith("%PDF-1.7\r\n"));
+  // Before subset: 5001
+  // After subset: 5000
+  EXPECT_EQ(4999u, GetString().size());
+}
+
+TEST_F(FPDFSaveEmbedderTest, SaveWithSubsetNewTextObject) {
+  FPDF_SAVE_PARAMS params = {
+      .version = 1, .flags = 0, .file_version = 17, .subset_new_fonts = true};
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+
+  std::string font_path = PathService::GetThirdPartyFilePath(
+      "NotoSansCJK/NotoSansSC-Regular.subset.otf");
+  ASSERT_FALSE(font_path.empty());
+
+  std::vector<uint8_t> font_data = GetFileContents(font_path.c_str());
+  ASSERT_FALSE(font_data.empty());
+
+  ScopedFPDFFont font(FPDFText_LoadFont(document(), font_data.data(),
+                                        font_data.size(), FPDF_FONT_TRUETYPE,
+                                        /*cid=*/true));
+
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  FPDF_PAGEOBJECT text_obj =
+      FPDFPageObj_CreateTextObj(document(), font.get(), 24.0f);
+
+  ScopedFPDFWideString text = GetFPDFWideString(L"这是第一句。");
+  EXPECT_TRUE(FPDFText_SetText(text_obj, text.get()));
+
+  const FS_MATRIX matrix{1, 0, 0, 1, 10, 10};
+  ASSERT_TRUE(FPDFPageObj_TransformF(text_obj, &matrix));
+  FPDFPage_InsertObject(page.get(), text_obj);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+
+  OpenPDFFileForWrite("save_with_subset_new_text_object.pdf");
+  EXPECT_TRUE(FPDF_SaveWithParams(document(), this, &params));
+  EXPECT_THAT(GetString(), StartsWith("%PDF-1.7\r\n"));
+  EXPECT_EQ(3473u, GetString().size());
+}
+
+TEST_F(FPDFSaveEmbedderTest, SaveWithSubsetEditTextObject) {
+  // Load document with some text.
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  // Get the "Hello, world!" text object and change it.
+  ASSERT_EQ(2, FPDFPage_CountObjects(page.get()));
+  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page.get(), 0);
+  ASSERT_TRUE(page_object);
+  ScopedFPDFWideString text1 = GetFPDFWideString(L"Changed for SetText test");
+  EXPECT_TRUE(FPDFText_SetText(page_object, text1.get()));
+
+  // Verify the "Hello, world!" text is gone and "Changed for SetText test" is
+  // now displayed.
+  ASSERT_EQ(2, FPDFPage_CountObjects(page.get()));
+
+  // Now save the result.
+  OpenPDFFileForWrite("test3.pdf");
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+
+  // Re-open the file and check the changes were kept in the saved .pdf.
+  ASSERT_TRUE(OpenSavedDocument());
+  FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
+  EXPECT_EQ(2, FPDFPage_CountObjects(saved_page));
+
+  CloseSavedPage(saved_page);
+  CloseSavedDocument();
 }
 
 TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocWithVersion) {

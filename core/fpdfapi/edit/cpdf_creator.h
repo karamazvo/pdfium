@@ -87,6 +87,7 @@ class CPDF_Creator {
   RetainPtr<CPDF_Dictionary> new_encrypt_dict_;
   RetainPtr<CPDF_SecurityHandler> security_handler_;
   uint32_t last_obj_num_;
+  std::map<uint32_t, RetainPtr<CPDF_Object>> font_obj_overrides_;
   std::unique_ptr<IFX_ArchiveStream> archive_;
   FX_FILESIZE saved_offset_ = 0;
   Stage stage_ = Stage::kInvalid;

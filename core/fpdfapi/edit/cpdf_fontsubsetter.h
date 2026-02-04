@@ -10,13 +10,13 @@
 #include <map>
 
 #include "core/fxcrt/retain_ptr.h"
-#include "core/fxcrt/span.h"
 
 class CPDF_Document;
 class CPDF_Object;
+class CPDF_Parser;
 
 std::map<uint32_t, RetainPtr<CPDF_Object>> GenerateFontSubsetObjectOverrides(
     CPDF_Document* doc,
-    pdfium::span<const uint32_t> obj_nums);
+    CPDF_Parser* parser);
 
 #endif  // CORE_FPDFAPI_EDIT_CPDF_FONTSUBSETTER_H_

@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <array>
+#include <iostream>
 #include <set>
 #include <utility>
 
@@ -202,10 +203,6 @@ bool CPDF_Creator::WriteOldObjs() {
 
 bool CPDF_Creator::WriteNewObjs() {
   std::map<uint32_t, RetainPtr<CPDF_Object>> font_obj_overrides;
-  if (subset_new_fonts_) {
-    font_obj_overrides =
-        GenerateFontSubsetObjectOverrides(document_, new_obj_num_array_);
-  }
 
   for (size_t i = cur_obj_num_; i < new_obj_num_array_.size(); ++i) {
     uint32_t objnum = new_obj_num_array_[i];
@@ -218,15 +215,16 @@ bool CPDF_Creator::WriteNewObjs() {
 
     const CPDF_Object* obj_to_write = obj.Get();
     if (subset_new_fonts_) {
-      auto it = font_obj_overrides.find(objnum);
+      auto it = font_obj_overrides_.find(objnum);
 
-      if (it != font_obj_overrides.end()) {
+      if (it != font_obj_overrides_.end()) {
+        std::cout << " OVERRIDING " << objnum << std::endl;
         // Use the substituted object (e.g., the subsetted font stream)
         obj_to_write = it->second.Get();
       }
     }
 
-    if (!WriteIndirectObj(obj_to_write->GetObjNum(), obj.Get())) {
+    if (!WriteIndirectObj(obj_to_write->GetObjNum(), obj_to_write)) {
       return false;
     }
   }
@@ -622,10 +620,13 @@ bool CPDF_Creator::Create(const CreateOptions& options) {
     RemoveSecurity();
   }
 
+  subset_new_fonts_ = options.subset_new_fonts;
+  if (subset_new_fonts_) {
+    font_obj_overrides_ = GenerateFontSubsetObjectOverrides(document_, parser_);
+  }
+
   is_incremental_ = !!(flags & FPDFCREATE_INCREMENTAL);
   is_original_ = !(flags & FPDFCREATE_NO_ORIGINAL);
-
-  subset_new_fonts_ = options.subset_new_fonts;
 
   stage_ = Stage::kInit0;
   last_obj_num_ = document_->GetLastObjNum();
