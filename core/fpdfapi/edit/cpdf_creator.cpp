@@ -13,6 +13,7 @@
 #include <set>
 #include <utility>
 
+#include "core/fpdfapi/edit/cpdf_fontsubsetter.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_crypto_handler.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -200,15 +201,32 @@ bool CPDF_Creator::WriteOldObjs() {
 }
 
 bool CPDF_Creator::WriteNewObjs() {
+  std::map<uint32_t, RetainPtr<CPDF_Object>> font_obj_overrides;
+  if (subset_new_fonts_) {
+    font_obj_overrides =
+        GenerateFontSubsetObjectOverrides(document_, new_obj_num_array_);
+  }
+
   for (size_t i = cur_obj_num_; i < new_obj_num_array_.size(); ++i) {
     uint32_t objnum = new_obj_num_array_[i];
-    RetainPtr<const CPDF_Object> pObj = document_->GetIndirectObject(objnum);
-    if (!pObj) {
+    RetainPtr<const CPDF_Object> obj = document_->GetIndirectObject(objnum);
+    if (!obj) {
       continue;
     }
 
     object_offsets_[objnum] = archive_->CurrentOffset();
-    if (!WriteIndirectObj(pObj->GetObjNum(), pObj.Get())) {
+
+    const CPDF_Object* obj_to_write = obj.Get();
+    if (subset_new_fonts_) {
+      auto it = font_obj_overrides.find(objnum);
+
+      if (it != font_obj_overrides.end()) {
+        // Use the substituted object (e.g., the subsetted font stream)
+        obj_to_write = it->second.Get();
+      }
+    }
+
+    if (!WriteIndirectObj(obj_to_write->GetObjNum(), obj.Get())) {
       return false;
     }
   }
@@ -606,6 +624,8 @@ bool CPDF_Creator::Create(const CreateOptions& options) {
 
   is_incremental_ = !!(flags & FPDFCREATE_INCREMENTAL);
   is_original_ = !(flags & FPDFCREATE_NO_ORIGINAL);
+
+  subset_new_fonts_ = options.subset_new_fonts;
 
   stage_ = Stage::kInit0;
   last_obj_num_ = document_->GetLastObjNum();

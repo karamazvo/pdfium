@@ -34,6 +34,7 @@ class CPDF_Creator {
   struct CreateOptions {
     uint32_t flags = 0;
     int file_version = 0;
+    bool subset_new_fonts = false;
   };
 
   CPDF_Creator(CPDF_Document* doc,
@@ -98,6 +99,7 @@ class CPDF_Creator {
   bool security_changed_ = false;
   bool is_incremental_ = false;
   bool is_original_ = false;
+  bool subset_new_fonts_ = false;
 };
 
 #endif  // CORE_FPDFAPI_EDIT_CPDF_CREATOR_H_
