@@ -902,7 +902,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedTTCFace(void* font_handle,
                                                      size_t data_size) {
   CHECK_GE(ttc_size, data_size);
   uint32_t checksum = GetChecksumFromTT(font_handle);
-  RetainPtr<CFX_FontMgr::FontDesc> font_desc =
+  RetainPtr<CFX_FontMgr::Entry> font_desc =
       font_mgr_->GetCachedTTCFontDesc(ttc_size, checksum);
   if (!font_desc) {
     auto font_data = FixedSizeDataVector<uint8_t>::Uninit(ttc_size);
@@ -938,7 +938,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedFace(void* font_handle,
                                                   int weight,
                                                   bool is_italic,
                                                   size_t data_size) {
-  RetainPtr<CFX_FontMgr::FontDesc> font_desc =
+  RetainPtr<CFX_FontMgr::Entry> font_desc =
       font_mgr_->GetCachedFontDesc(subst_name, weight, is_italic);
   if (!font_desc) {
     auto font_data = FixedSizeDataVector<uint8_t>::Uninit(data_size);
