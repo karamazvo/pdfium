@@ -33,6 +33,8 @@
 
 namespace {
 
+constexpr int kSaveParamsLatestVersion = 1;
+
 #ifdef PDF_ENABLE_XFA
 bool SaveXFADocumentData(
     CPDFXFA_Context* context,
@@ -159,10 +161,38 @@ bool SaveXFADocumentData(
 }
 #endif  // PDF_ENABLE_XFA
 
-bool DoDocSave(FPDF_DOCUMENT document,
-               FPDF_FILEWRITE* file_write,
-               FPDF_DWORD flags,
-               std::optional<int> version) {
+}  // namespace
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_SaveAsCopy(FPDF_DOCUMENT document,
+                                                    FPDF_FILEWRITE* file_write,
+                                                    FPDF_DWORD flags) {
+  FPDF_SAVE_PARAMS params = {.version = kSaveParamsLatestVersion,
+                             .flags = flags,
+                             .file_version = 0,
+                             .subset_new_fonts = false};
+  return FPDF_SaveWithParams(document, file_write, &params);
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDF_SaveWithVersion(FPDF_DOCUMENT document,
+                     FPDF_FILEWRITE* file_write,
+                     FPDF_DWORD flags,
+                     int file_version) {
+  FPDF_SAVE_PARAMS params = {.version = kSaveParamsLatestVersion,
+                             .flags = flags,
+                             .file_version = file_version,
+                             .subset_new_fonts = false};
+  return FPDF_SaveWithParams(document, file_write, &params);
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDF_SaveWithParams(FPDF_DOCUMENT document,
+                    FPDF_FILEWRITE* file_write,
+                    const FPDF_SAVE_PARAMS* params) {
+  if (!params || params->version != kSaveParamsLatestVersion) {
+    return false;
+  }
+
   CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
   if (!doc) {
     return false;
@@ -177,20 +207,22 @@ bool DoDocSave(FPDF_DOCUMENT document,
   }
 #endif  // PDF_ENABLE_XFA
 
+  FPDF_DWORD flags = params->flags;
   if (flags < FPDF_INCREMENTAL || flags > FPDF_REMOVE_SECURITY) {
     flags = 0;
   }
 
   CPDF_Creator file_maker(
       doc, pdfium::MakeRetain<CPDFSDK_FileWriteAdapter>(file_write));
-  if (version.has_value()) {
-    file_maker.SetFileVersion(version.value());
+  if (params->file_version != 0) {
+    file_maker.SetFileVersion(params->file_version);
   }
   if (flags == FPDF_REMOVE_SECURITY) {
     flags = 0;
     file_maker.RemoveSecurity();
   }
 
+  // TODO(crbug.com/476127152): Subset new fonts.
   bool create_result = file_maker.Create(static_cast<uint32_t>(flags));
 
 #ifdef PDF_ENABLE_XFA
@@ -200,20 +232,4 @@ bool DoDocSave(FPDF_DOCUMENT document,
 #endif  // PDF_ENABLE_XFA
 
   return create_result;
-}
-
-}  // namespace
-
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_SaveAsCopy(FPDF_DOCUMENT document,
-                                                    FPDF_FILEWRITE* file_write,
-                                                    FPDF_DWORD flags) {
-  return DoDocSave(document, file_write, flags, {});
-}
-
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDF_SaveWithVersion(FPDF_DOCUMENT document,
-                     FPDF_FILEWRITE* file_write,
-                     FPDF_DWORD flags,
-                     int fileVersion) {
-  return DoDocSave(document, file_write, flags, fileVersion);
 }
