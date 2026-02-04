@@ -5085,10 +5085,12 @@ static OPJ_BOOL opj_j2k_read_sod(opj_j2k_t *p_j2k,
         l_cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index[l_current_tile_part].end_header
             =
                 l_current_pos;
-        l_cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index[l_current_tile_part].end_pos
-            =
-                l_current_pos + p_j2k->m_specific_param.m_decoder.m_sot_length + 2;
-
+        if (cstr_index->tile_index[tileno].tp_index &&
+            l_current_tile_part < cstr_index->tile_index[tileno].nb_tps) {
+          l_cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index[l_current_tile_part].end_pos
+              =
+              l_current_pos + p_j2k->m_specific_param.m_decoder.m_sot_length + 2;
+        }
         if (OPJ_FALSE == opj_j2k_add_tlmarker(p_j2k->m_current_tile_number,
                                               l_cstr_index,
                                               J2K_MS_SOD,
