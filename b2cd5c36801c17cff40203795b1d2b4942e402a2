@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "47c34d9e_b220ec85",
+        "filename": "third_party/libopenjpeg/j2k.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 5089,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-04T18:46:05Z",
+      "side": 1,
+      "message": "Formatting is off here and on line 5092, but since this patch will likely get replaced by the upstream version, I\u0027m not going to worry about it.",
+      "revId": "b2cd5c36801c17cff40203795b1d2b4942e402a2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
