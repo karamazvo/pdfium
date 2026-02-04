@@ -1,0 +1,18 @@
+Name: harfbuzz-ng
+Short Name: harfbuzz-ng
+URL: http://harfbuzz.org
+Version: 12.3.0-20
+CPEPrefix: cpe:/a:harfbuzz_project:harfbuzz:12.3.0
+Date: 2026-01-08
+Revision: fa2908bf16d2ccd6623f4d575455fea72a1a722b
+Update Mechanism: Manual
+Security Critical: yes
+Shipped: yes
+License: MIT-Modern-Variant
+License File: src/COPYING
+
+Description:
+This is harfbuzz-ng, a new implementation of harfbuzz with a different
+API from the old one.
+
+WIP
