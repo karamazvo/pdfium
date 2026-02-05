@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0dd8e7bd_e564b05b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-05T03:32:00Z",
+      "side": 1,
+      "message": "@thestig@chromium.org This crashed the auto-roller it is either 1 of 2 things in my opinion.\n\n1. Test expectations for chromium/pdf need to still be updated\n2. There is something wrong with this patch.\n\nI am going to prepare for both approaches by updating the patch to use new testing expectations and also prepare a revert of this if something truly is broken.\n\nAm making a CL for revert, let\u0027s merge it if it is case 2.",
+      "revId": "a3b9c639038532a84f169df3d679a48ea6940a4b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
