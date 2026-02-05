@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "77912d28_61b6e627",
+        "filename": "core/fxge/cfx_fontmapper.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 905,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-05T01:30:38Z",
+      "side": 1,
+      "message": "Rename the variable as well?",
+      "range": {
+        "startLine": 905,
+        "startChar": 41,
+        "endLine": 905,
+        "endChar": 50
+      },
+      "revId": "9063ff9b943d11e9857322c6ee4765133d83f124",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "426a960e_9a23c084",
+        "filename": "core/fxge/cfx_fontmgr.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-05T01:30:38Z",
+      "side": 1,
+      "message": "More renaming everywhere.",
+      "range": {
+        "startLine": 104,
+        "startChar": 7,
+        "endLine": 104,
+        "endChar": 15
+      },
+      "revId": "9063ff9b943d11e9857322c6ee4765133d83f124",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
