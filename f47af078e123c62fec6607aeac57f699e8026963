@@ -16,6 +16,29 @@
       "message": "Done.  Plus other tidying, PTAL.",
       "revId": "f47af078e123c62fec6607aeac57f699e8026963",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "18f9cec8_c464a2fe",
+        "filename": "core/fxge/cfx_fontmapper.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 905,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-05T17:51:07Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 905,
+        "startChar": 41,
+        "endLine": 905,
+        "endChar": 52
+      },
+      "revId": "f47af078e123c62fec6607aeac57f699e8026963",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
