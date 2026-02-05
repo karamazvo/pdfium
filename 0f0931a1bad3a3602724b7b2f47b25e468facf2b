@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "07758cef_2e328e95",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5845
+      },
+      "writtenOn": "2026-02-05T19:29:47Z",
+      "side": 1,
+      "message": "\"where AGG does not draw joins on two segment loops\"? There are no \"end of lines\" since these are closed loops (I originally thought they were lines and these were caps as well, but this is a two segment loop with round joins between segments).",
+      "revId": "0f0931a1bad3a3602724b7b2f47b25e468facf2b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
