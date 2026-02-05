@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "532186ad_08a746f2",
+        "filename": "core/fxcrt/mapped_data_bytes.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-05T22:29:14Z",
+      "side": 1,
+      "message": "Can this be deduced from the static_cast?",
+      "range": {
+        "startLine": 45,
+        "startChar": 48,
+        "endLine": 45,
+        "endChar": 63
+      },
+      "revId": "5de23ced43459b5dce3e27b67553fde69c715a6b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eede7b98_0842ffbd",
+        "filename": "core/fxcrt/mapped_data_bytes.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-05T22:29:14Z",
+      "side": 1,
+      "message": "dot after (deleted) ctors",
+      "revId": "5de23ced43459b5dce3e27b67553fde69c715a6b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3078506a_830628a3",
+        "filename": "core/fxcrt/mapped_data_bytes.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-05T22:29:14Z",
+      "side": 1,
+      "message": "Or just force callers to go through span() first?",
+      "revId": "5de23ced43459b5dce3e27b67553fde69c715a6b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
