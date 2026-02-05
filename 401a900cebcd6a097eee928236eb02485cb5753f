@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "865f2eeb_370ae395",
+        "filename": "core/fxcrt/cfx_read_only_vector_stream.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-05T22:41:26Z",
+      "side": 1,
+      "message": "If this evaluates to false, then `stream_` is null, and GetSize() will crash.",
+      "revId": "401a900cebcd6a097eee928236eb02485cb5753f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b883d89e_17155eb5",
+        "filename": "core/fxcrt/cfx_read_only_vector_stream.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-05T22:41:26Z",
+      "side": 1,
+      "message": "Maybe rename at some point, since the new variation is no longer a vector.",
+      "range": {
+        "startLine": 26,
+        "startChar": 6,
+        "endLine": 26,
+        "endChar": 30
+      },
+      "revId": "401a900cebcd6a097eee928236eb02485cb5753f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "78e9847e_0f4d647a",
+        "filename": "core/fxcrt/cfx_read_only_vector_stream_unittest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-05T22:41:26Z",
+      "side": 1,
+      "message": "Test pre-existing code separately first?",
+      "revId": "401a900cebcd6a097eee928236eb02485cb5753f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8c1b5043_9cd7103c",
+        "filename": "core/fxcrt/cfx_read_only_vector_stream_unittest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-05T22:41:26Z",
+      "side": 1,
+      "message": "OutOfBoundsRead",
+      "range": {
+        "startLine": 52,
+        "startChar": 35,
+        "endLine": 52,
+        "endChar": 51
+      },
+      "revId": "401a900cebcd6a097eee928236eb02485cb5753f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
