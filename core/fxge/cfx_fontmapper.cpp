@@ -902,8 +902,8 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedTTCFace(void* font_handle,
                                                      size_t data_size) {
   CHECK_GE(ttc_size, data_size);
   uint32_t checksum = GetChecksumFromTT(font_handle);
-  RetainPtr<CFX_FontMgr::FontDesc> font_desc =
-      font_mgr_->GetCachedTTCFontDesc(ttc_size, checksum);
+  RetainPtr<CFX_FontMgr::FontCacheEntry> font_desc =
+      font_mgr_->GetTTCFontCacheEntry(ttc_size, checksum);
   if (!font_desc) {
     auto font_data = FixedSizeDataVector<uint8_t>::Uninit(ttc_size);
     size_t size =
@@ -912,7 +912,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedTTCFace(void* font_handle,
       return nullptr;
     }
 
-    font_desc = font_mgr_->AddCachedTTCFontDesc(ttc_size, checksum,
+    font_desc = font_mgr_->AddTTCFontCacheEntry(ttc_size, checksum,
                                                 std::move(font_data));
   }
   size_t font_offset = ttc_size - data_size;
@@ -938,8 +938,8 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedFace(void* font_handle,
                                                   int weight,
                                                   bool is_italic,
                                                   size_t data_size) {
-  RetainPtr<CFX_FontMgr::FontDesc> font_desc =
-      font_mgr_->GetCachedFontDesc(subst_name, weight, is_italic);
+  RetainPtr<CFX_FontMgr::FontCacheEntry> font_desc =
+      font_mgr_->GetFontCacheEntry(subst_name, weight, is_italic);
   if (!font_desc) {
     auto font_data = FixedSizeDataVector<uint8_t>::Uninit(data_size);
     size_t size = font_info_->GetFontData(font_handle, 0, font_data.span());
@@ -947,7 +947,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedFace(void* font_handle,
       return nullptr;
     }
 
-    font_desc = font_mgr_->AddCachedFontDesc(subst_name, weight, is_italic,
+    font_desc = font_mgr_->AddFontCacheEntry(subst_name, weight, is_italic,
                                              std::move(font_data));
   }
   RetainPtr<CFX_Face> face(font_desc->GetFace(0));
