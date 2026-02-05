@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3899e275_02569f55",
+        "filename": "core/fxge/cfx_fontmapper.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 905,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-05T17:47:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "77912d28_61b6e627",
+      "range": {
+        "startLine": 905,
+        "startChar": 41,
+        "endLine": 905,
+        "endChar": 50
+      },
+      "revId": "9063ff9b943d11e9857322c6ee4765133d83f124",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "426a960e_9a23c084",
@@ -37,6 +61,30 @@
       "writtenOn": "2026-02-05T01:30:38Z",
       "side": 1,
       "message": "More renaming everywhere.",
+      "range": {
+        "startLine": 104,
+        "startChar": 7,
+        "endLine": 104,
+        "endChar": 15
+      },
+      "revId": "9063ff9b943d11e9857322c6ee4765133d83f124",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "422684bf_e9ff3cc6",
+        "filename": "core/fxge/cfx_fontmgr.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-05T17:47:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "426a960e_9a23c084",
       "range": {
         "startLine": 104,
         "startChar": 7,
