@@ -34,6 +34,7 @@ class CPDF_Creator {
   struct CreateOptions {
     uint32_t flags = 0;
     int file_version = 0;
+    bool subset_new_fonts = false;
   };
 
   CPDF_Creator(CPDF_Document* doc,
@@ -86,6 +87,7 @@ class CPDF_Creator {
   RetainPtr<CPDF_Dictionary> new_encrypt_dict_;
   RetainPtr<CPDF_SecurityHandler> security_handler_;
   uint32_t last_obj_num_;
+  std::map<uint32_t, RetainPtr<const CPDF_Object>> font_obj_overrides_;
   std::unique_ptr<IFX_ArchiveStream> archive_;
   FX_FILESIZE saved_offset_ = 0;
   Stage stage_ = Stage::kInvalid;
@@ -98,6 +100,7 @@ class CPDF_Creator {
   bool security_changed_ = false;
   bool is_incremental_ = false;
   bool is_original_ = false;
+  bool subset_new_fonts_ = false;
 };
 
 #endif  // CORE_FPDFAPI_EDIT_CPDF_CREATOR_H_
