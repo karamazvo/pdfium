@@ -4,6 +4,7 @@
 
 #include <array>
 #include <string>
+#include <vector>
 
 #include "core/fxcrt/fx_string.h"
 #include "public/cpp/fpdf_scopers.h"
@@ -16,6 +17,8 @@
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gmock/include/gmock/gmock-matchers.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "testing/utils/file_util.h"
+#include "testing/utils/path_service.h"
 
 using testing::HasSubstr;
 using testing::Not;
@@ -300,4 +303,79 @@ TEST_F(FPDFSaveEmbedderTest, IncrementalSaveWithModifications) {
 
   // Verify the text object exists after the save
   EXPECT_EQ(1, count_text_objects(saved_page.get()));
+}
+
+class FPDFSaveWithParamsEmbedderTest : public FPDFSaveEmbedderTest {
+ public:
+  static constexpr FPDF_SAVE_PARAMS kSaveParamsWithoutSubset{
+      .version = 1,
+      .flags = 0,
+      .file_version = 15,
+      .subset_new_fonts = false};
+
+  ScopedFPDFFont LoadTestFont() {
+    std::string font_path = PathService::GetThirdPartyFilePath(
+        "NotoSansCJK/NotoSansSC-Regular.subset.otf");
+    if (font_path.empty()) {
+      return nullptr;
+    }
+
+    std::vector<uint8_t> font_data = GetFileContents(font_path.c_str());
+    if (font_data.empty()) {
+      return nullptr;
+    }
+
+    return ScopedFPDFFont(FPDFText_LoadFont(
+        document(), font_data.data(), font_data.size(), FPDF_FONT_TRUETYPE,
+        /*cid=*/true));
+  }
+
+  void InsertNewTextObject(const FPDF_PAGE& page, const FPDF_FONT& font) {
+    FPDF_PAGEOBJECT text_obj =
+        FPDFPageObj_CreateTextObj(document(), font, 24.0f);
+
+    ScopedFPDFWideString text = GetFPDFWideString(L"这是第一句。");
+    EXPECT_TRUE(FPDFText_SetText(text_obj, text.get()));
+
+    const FS_MATRIX matrix{1, 0, 0, 1, 10, 10};
+    ASSERT_TRUE(FPDFPageObj_TransformF(text_obj, &matrix));
+    FPDFPage_InsertObject(page, text_obj);
+    EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  }
+};
+
+TEST_F(FPDFSaveWithParamsEmbedderTest, SaveWithBadVersion) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  constexpr FPDF_SAVE_PARAMS kSaveParamsBadVersion{.version = 0,
+                                                   .flags = FPDF_NO_INCREMENTAL,
+                                                   .file_version = 15,
+                                                   .subset_new_fonts = false};
+  EXPECT_FALSE(FPDF_SaveWithParams(document(), this, &kSaveParamsBadVersion));
+}
+
+TEST_F(FPDFSaveWithParamsEmbedderTest, SaveWithoutSubsetWithoutNewText) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  EXPECT_TRUE(FPDF_SaveWithParams(document(), this, &kSaveParamsWithoutSubset));
+  EXPECT_THAT(GetString(), StartsWith("%PDF-1.5\r\n"));
+  EXPECT_EQ(805u, GetString().size());
+}
+
+TEST_F(FPDFSaveWithParamsEmbedderTest, SaveWithoutSubsetWithNewText) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ScopedFPDFFont font = LoadTestFont();
+  ASSERT_TRUE(font);
+
+  InsertNewTextObject(page.get(), font.get());
+
+  // Verify the file size is larger without font subsetting.
+  EXPECT_TRUE(FPDF_SaveWithParams(document(), this, &kSaveParamsWithoutSubset));
+  EXPECT_THAT(GetString(), StartsWith("%PDF-1.5\r\n"));
+  EXPECT_EQ(5001u, GetString().size());
+
+  // Verify the text is visible.
+  ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
+  CompareBitmapToPng(bitmap.get(), "save_new_text");
 }
