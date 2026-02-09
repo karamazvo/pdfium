@@ -41,6 +41,22 @@ typedef struct FPDF_FILEWRITE_ {
                     unsigned long size);
 } FPDF_FILEWRITE;
 
+// Structure for customizing the document save operation.
+typedef struct FPDF_SAVE_PARAMS_ {
+  // Struct version. Currently must be 1.
+  int version;
+
+  // Flags that affect how the PDF gets saved.
+  FPDF_DWORD flags;
+
+  // The PDF file version. File version: 14 for 1.4, 15 for 1.5, ... Pass in 0
+  // to use the original file version.
+  int file_version;
+
+  // Whether fonts for new text objects should be subsetted or not.
+  FPDF_BOOL subset_new_fonts;
+} FPDF_SAVE_PARAMS;
+
  // Flags for FPDF_SaveAsCopy()
 #define FPDF_INCREMENTAL 1
 #define FPDF_NO_INCREMENTAL 2
@@ -78,6 +94,19 @@ FPDF_SaveWithVersion(FPDF_DOCUMENT document,
                      FPDF_FILEWRITE* file_write,
                      FPDF_DWORD flags,
                      int file_version);
+
+// Experimental API.
+// Function: FPDF_SaveWithParams
+//          Same as FPDF_SaveAsCopy(), but provides more customization through
+//          `params`.
+// Parameters:
+//          document        -   Handle to document.
+//          file_write      -   A pointer to a custom file write structure.
+//          params          -   Parameters to customize saving.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDF_SaveWithParams(FPDF_DOCUMENT document,
+                    FPDF_FILEWRITE* file_write,
+                    const FPDF_SAVE_PARAMS* params);
 
 #ifdef __cplusplus
 }
