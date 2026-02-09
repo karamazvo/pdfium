@@ -33,6 +33,9 @@
 
 namespace {
 
+constexpr int kAllValidFlags = FPDF_INCREMENTAL | FPDF_NO_INCREMENTAL |
+                               FPDF_REMOVE_SECURITY | FPDF_SUBSET_NEW_FONTS;
+
 #ifdef PDF_ENABLE_XFA
 bool SaveXFADocumentData(
     CPDFXFA_Context* context,
@@ -177,7 +180,7 @@ bool DoDocSave(FPDF_DOCUMENT document,
   }
 #endif  // PDF_ENABLE_XFA
 
-  if (flags < FPDF_INCREMENTAL || flags > FPDF_REMOVE_SECURITY) {
+  if (flags > kAllValidFlags) {
     flags = 0;
   }
 
@@ -186,11 +189,17 @@ bool DoDocSave(FPDF_DOCUMENT document,
   if (version.has_value()) {
     file_maker.SetFileVersion(version.value());
   }
-  if (flags == FPDF_REMOVE_SECURITY) {
-    flags = 0;
+  bool remove_security_deprecated = flags == FPDF_REMOVE_SECURITY_DEPRECATED;
+  if (remove_security_deprecated || flags & FPDF_REMOVE_SECURITY) {
+    if (remove_security_deprecated) {
+      flags = 0;
+    } else {
+      flags &= ~FPDF_REMOVE_SECURITY;
+    }
     file_maker.RemoveSecurity();
   }
 
+  // TODO(crbug.com/476127152): Subset new fonts.
   bool create_result = file_maker.Create(static_cast<uint32_t>(flags));
 
 #ifdef PDF_ENABLE_XFA

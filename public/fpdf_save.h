@@ -42,9 +42,15 @@ typedef struct FPDF_FILEWRITE_ {
 } FPDF_FILEWRITE;
 
  // Flags for FPDF_SaveAsCopy()
-#define FPDF_INCREMENTAL 1
-#define FPDF_NO_INCREMENTAL 2
-#define FPDF_REMOVE_SECURITY 3
+ // Avoid using FPDF_INCREMENTAL | FPDF_NO_INCREMENTAL or
+ // FPDF_REMOVE_SECURITY_DEPRECATED, which are equivalent. Callers should use
+ // FPDF_REMOVE_SECURITY instead.
+ // TODO(crbug.com/42270430): Remove FPDF_REMOVE_SECURITY_DEPRECATED.
+#define FPDF_INCREMENTAL (1 << 0)
+#define FPDF_NO_INCREMENTAL (1 << 1)
+#define FPDF_REMOVE_SECURITY_DEPRECATED 3
+#define FPDF_REMOVE_SECURITY (1 << 2)
+#define FPDF_SUBSET_NEW_FONTS (1 << 3)
 
 // Function: FPDF_SaveAsCopy
 //          Saves the copy of specified document in custom way.
