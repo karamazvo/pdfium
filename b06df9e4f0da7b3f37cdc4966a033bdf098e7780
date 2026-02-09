@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5749f3da_5b5203ef",
+        "filename": "fpdfsdk/fpdf_save.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-09T19:37:29Z",
+      "side": 1,
+      "message": "The diff is a bit weird since FPDF_SaveWithParams() is very similar. Hope it\u0027s still fairly easy to read.",
+      "revId": "b06df9e4f0da7b3f37cdc4966a033bdf098e7780",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

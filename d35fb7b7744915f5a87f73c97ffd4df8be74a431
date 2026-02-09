@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0c55722b_08ee36d7",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 380,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-09T19:37:29Z",
+      "side": 1,
+      "message": "Will update test expectations if they differ across platforms.",
+      "revId": "d35fb7b7744915f5a87f73c97ffd4df8be74a431",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
