@@ -3,6 +3,52 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "71c3b050_07fce27c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 11
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-09T21:09:15Z",
+      "side": 1,
+      "message": "Since this is PDFium, it doesn\u0027t make as much sense to add a tag for a Chromium project. This API can benefit all PDFium embedders, and isn\u0027t solely for Chromium.",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 20
+      },
+      "revId": "d35fb7b7744915f5a87f73c97ffd4df8be74a431",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "956cba8d_05a9dac4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 11
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-09T21:09:15Z",
+      "side": 1,
+      "message": "Instead of adding a new API, how about just adding more flags for FPDF_SaveAsCopy()?\n\nMany APIs treat the flags as a set of bits, but FPDF_REMOVE_SECURITY is broken in that it\u0027s 11b, which is the same as FPDF_INCREMENTAL | FPDF_NO_INCREMENTAL. One way to fix this is to have FPDF_REMOVE_SECURITY_DEPRECATED \u003d 3 and add FPDF_REMOVE_SECURITY \u003d 4. Then this CL can use 8 as the next bit.\n\nThere\u0027s also crbug.com/42270430, which I optomistically assigned to myself in April 2020. I guess I got distracted.",
+      "range": {
+        "startLine": 7,
+        "startChar": 25,
+        "endLine": 7,
+        "endChar": 44
+      },
+      "revId": "d35fb7b7744915f5a87f73c97ffd4df8be74a431",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0c55722b_08ee36d7",
         "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
         "patchSetId": 11
