@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_EDIT_CPDF_CREATOR_H_
 #define CORE_FPDFAPI_EDIT_CPDF_CREATOR_H_
 
+#include <stdint.h>
+
 #include <map>
 #include <memory>
 #include <vector>
@@ -25,16 +27,25 @@ class CPDF_Parser;
 
 #define FPDFCREATE_INCREMENTAL 1
 #define FPDFCREATE_NO_ORIGINAL 2
+#define FPDFCREATE_REMOVE_SECURITY 3
 
 class CPDF_Creator {
  public:
+  // Options to customize the `Create()` operation.
+  struct CreateOptions {
+    // Optional flags (see above).
+    uint32_t flags = 0;
+
+    // The PDF file version. File version: 14 for 1.4, 15 for 1.5, ... Leave as
+    // 0 to use the original file version.
+    int file_version = 0;
+  };
+
   CPDF_Creator(CPDF_Document* doc,
                RetainPtr<IFX_RetainableWriteStream> archive);
   ~CPDF_Creator();
 
-  void RemoveSecurity();
-  bool Create(uint32_t flags);
-  bool SetFileVersion(int32_t fileVersion);
+  bool Create(const CreateOptions& options);
 
  private:
   enum class Stage {
@@ -69,6 +80,8 @@ class CPDF_Creator {
   bool WriteOldObjs();
   bool WriteNewObjs();
   bool WriteIndirectObj(uint32_t objnum, const CPDF_Object* pObj);
+
+  void RemoveSecurity();
 
   CPDF_CryptoHandler* GetCryptoHandler();
 
