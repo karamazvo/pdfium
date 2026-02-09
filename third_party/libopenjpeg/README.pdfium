@@ -32,3 +32,16 @@ Local Modifications:
 0039-opj_mqc_renorme.patch: Remove unused opj_mqc_renorme().
 0041-remove_opj_clock.patch: Remove unused opj_clock.h include.
 0046-func-ptr-mixup.patch: Prevent mixing up function pointer types.
+<<<<<<< HEAD   (40111e6fed154aeab93ea26a3e0a691745d13419 Change UseTTCharmapUnicode to prefer MSSymbol)
+||||||| BASE   (051cbf295d73b794c1ed60229edf42eb26c0a41a Make VerifyUnicodeForFontDescriptor() a CFGAS_FontDescriptor)
+
+Note:
+
+Also update the version numbers in opj_config*.
+=======
+0047-opj_j2k_read_sod.patch: Fix out of bounds read.
+
+Note:
+
+Also update the version numbers in opj_config*.
+>>>>>>> CHANGE (40e5a93503adcdd4b9b3fdc085a31a58b7b0f2dd Fix indexing in opj_j2k_read_sod())
