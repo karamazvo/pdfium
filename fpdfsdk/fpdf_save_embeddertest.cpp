@@ -37,6 +37,18 @@ TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocWithVersion) {
   EXPECT_EQ(805u, GetString().size());
 }
 
+TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocWithParams) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+
+  FPDF_SAVE_PARAMS params = {.version = 1,
+                             .flags = FPDF_NO_INCREMENTAL,
+                             .file_version = 15,
+                             .subset_new_fonts = false};
+  EXPECT_TRUE(FPDF_SaveWithParams(document(), this, &params));
+  EXPECT_THAT(GetString(), StartsWith("%PDF-1.5\r\n"));
+  EXPECT_EQ(805u, GetString().size());
+}
+
 TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocWithBadVersion) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   EXPECT_TRUE(FPDF_SaveWithVersion(document(), this, 0, -1));
@@ -300,4 +312,14 @@ TEST_F(FPDFSaveEmbedderTest, IncrementalSaveWithModifications) {
 
   // Verify the text object exists after the save
   EXPECT_EQ(1, count_text_objects(saved_page.get()));
+}
+
+TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocWithParamsWithBadVersion) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+
+  FPDF_SAVE_PARAMS params = {.version = 0,
+                             .flags = FPDF_NO_INCREMENTAL,
+                             .file_version = 15,
+                             .subset_new_fonts = false};
+  EXPECT_FALSE(FPDF_SaveWithParams(document(), this, &params));
 }
