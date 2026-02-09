@@ -306,6 +306,11 @@ TEST_F(FPDFSaveEmbedderTest, IncrementalSaveWithModifications) {
 
 class FPDFSaveWithParamsEmbedderTest : public FPDFSaveEmbedderTest {
  public:
+  static constexpr char kSaveNewTextFilename[] = "save_new_text";
+  static constexpr FPDF_SAVE_PARAMS kSaveParamsWithSubset{.version = 1,
+                                                   .flags = 0,
+                                                   .file_version = 15,
+                                                   .subset_new_fonts = true};
   static constexpr FPDF_SAVE_PARAMS kSaveParamsWithoutSubset{
       .version = 1,
       .flags = 0,
@@ -376,5 +381,25 @@ TEST_F(FPDFSaveWithParamsEmbedderTest, SaveWithoutSubsetWithNewText) {
 
   // Verify the text is visible.
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
-  CompareBitmapToPng(bitmap.get(), "save_new_text");
+  CompareBitmapToPng(bitmap.get(), kSaveNewTextFilename);
+}
+
+TEST_F(FPDFSaveWithParamsEmbedderTest, SaveWithSubsetWithNewText) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ScopedFPDFFont font = LoadTestFont();
+  ASSERT_TRUE(font);
+
+  InsertNewTextObject(page.get(), font.get());
+
+  // Verify the file size is smaller with font subsetting.
+  EXPECT_TRUE(FPDF_SaveWithParams(document(), this, &kSaveParamsWithSubset));
+  EXPECT_THAT(GetString(), StartsWith("%PDF-1.5\r\n"));
+  EXPECT_EQ(4939u, GetString().size());
+
+  // Verify the text is visible.
+  ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
+  CompareBitmapToPng(bitmap.get(), kSaveNewTextFilename);
 }

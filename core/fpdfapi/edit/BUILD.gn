@@ -9,6 +9,8 @@ source_set("edit") {
   sources = [
     "cpdf_creator.cpp",
     "cpdf_creator.h",
+    "cpdf_fontsubsetter.cpp",
+    "cpdf_fontsubsetter.h",
     "cpdf_npagetooneexporter.cpp",
     "cpdf_npagetooneexporter.h",
     "cpdf_pagecontentgenerator.cpp",
@@ -21,6 +23,8 @@ source_set("edit") {
     "cpdf_pageorganizer.h",
     "cpdf_stringarchivestream.cpp",
     "cpdf_stringarchivestream.h",
+    "cpdf_unicode_util.cpp",
+    "cpdf_unicode_util.h",
   ]
   configs += [
     "../../../:pdfium_strict_config",
@@ -33,6 +37,7 @@ source_set("edit") {
     "../font",
     "../page",
     "../parser",
+    "//third_party/harfbuzz-ng",
   ]
   visibility = [ "../../../*" ]
 }
