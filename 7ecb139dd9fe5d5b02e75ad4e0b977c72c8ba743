@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0918bc8a_832fa9c5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 12
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-09T19:42:01Z",
+      "side": 1,
+      "message": "Not sure if we want to copy this script, too? I tried it and it ran past the Chromium DEPS.",
+      "revId": "7ecb139dd9fe5d5b02e75ad4e0b977c72c8ba743",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "91a1819a_f7e22a92",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 12
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-09T19:42:01Z",
+      "side": 1,
+      "message": "Previous versions failed to subset some fonts. The config is closer to Chromium\u0027s, now, and can subset these fonts.",
+      "revId": "7ecb139dd9fe5d5b02e75ad4e0b977c72c8ba743",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e69f0d2c_fca96246",
+        "filename": "third_party/harfbuzz-ng/README.pdfium",
+        "patchSetId": 12
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-09T19:42:01Z",
+      "side": 1,
+      "message": "Copied verbatim, but maybe we should omit?",
+      "revId": "7ecb139dd9fe5d5b02e75ad4e0b977c72c8ba743",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
