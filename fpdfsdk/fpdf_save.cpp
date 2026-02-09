@@ -186,8 +186,11 @@ bool DoDocSave(FPDF_DOCUMENT document,
   if (version.has_value()) {
     file_maker.SetFileVersion(version.value());
   }
-  if (flags == FPDF_REMOVE_SECURITY) {
-    flags = 0;
+  bool remove_security_deprecated = flags == FPDF_REMOVE_SECURITY_DEPRECATED;
+  if (remove_security_deprecated || flags == FPDF_REMOVE_SECURITY) {
+    if (remove_security_deprecated) {
+      flags = 0;
+    }
     file_maker.RemoveSecurity();
   }
 
