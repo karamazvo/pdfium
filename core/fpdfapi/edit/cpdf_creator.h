@@ -39,6 +39,9 @@ class CPDF_Creator {
     // The PDF file version. File version: 14 for 1.4, 15 for 1.5, ... Leave as
     // 0 to use the original file version.
     int file_version = 0;
+
+    // Whether fonts for new text objects should be subsetted or not.
+    bool subset_new_fonts = false;
   };
 
   CPDF_Creator(CPDF_Document* doc,
@@ -99,6 +102,7 @@ class CPDF_Creator {
   std::map<uint32_t, FX_FILESIZE> object_offsets_;
   std::vector<uint32_t> new_obj_num_array_;  // Sorted, ascending.
   RetainPtr<CPDF_Array> id_array_;
+  std::map<uint32_t, RetainPtr<const CPDF_Object>> font_obj_overrides_;
   int32_t file_version_ = 0;
   bool security_changed_ = false;
   bool is_incremental_ = false;
