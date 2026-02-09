@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1a918444_4b9a0aa5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-09T13:44:40Z",
+      "side": 1,
+      "message": "Hi, updated pdfium_diff to also output the number of pixels that differ.\nInitially when I was checking if the test in https://pdfium-review.googlesource.com/c/pdfium/+/141950 could be fuzzy, I used pdfium_diff on the mac and mac_x86 images to get:\n\n`diff: 0.00% failed`\n\nWhich could be confusing. On one hand there is a diff of 0.00% which implies a success, meanwhile the function said \"failed\".\n\nLooking further into this, I noticed that if there is a small number of differing pixels, the percentage gets calculated as lower than 0.005%, which is still enough to cause the fail. Hence thought that printing the number of differing pixels would work better (alongside percentages).\n\nThe current output for the 2 images with this patch is:\n`diff: 0.00% failed (2 pixels differ)`\n\nWhich adds clarification to why the failure took place.\n\nHad a few other ideas such as:\n`Failed because 2 pixles (0.00%) differ`\nor `diff: 2 pixels differ (0.00%)`\n\nBut the bot said that the first approach which is currently outputted is the best.\n\nEither way let me know if I should update this output print to something else.",
+      "revId": "13cf143c0169023ef32d306581a7f28a7e9da219",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
