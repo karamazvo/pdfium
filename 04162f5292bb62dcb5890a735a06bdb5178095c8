@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "331df895_b50fa4ce",
+        "filename": "core/fxcrt/cfx_read_only_container_stream.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-09T18:47:02Z",
+      "side": 1,
+      "message": "Should this be scoped within CFX_ReadOnlyContainerStream?",
+      "revId": "04162f5292bb62dcb5890a735a06bdb5178095c8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
