@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0c65fa0d_1f3b08c6",
+        "filename": "public/fpdf_save.h",
+        "patchSetId": 18
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-10T18:45:53Z",
+      "side": 1,
+      "message": "Also briefly document what it does.",
+      "revId": "36d64fee1736cf4bc4e7f4fa72389b4bb070b7cf",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

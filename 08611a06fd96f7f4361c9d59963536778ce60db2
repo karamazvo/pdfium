@@ -179,6 +179,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "06704562_815033d6",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 391,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-10T18:45:53Z",
+      "side": 1,
+      "message": "Marked as unresolved.But it isn\u0027t NotoSansCJK/NotoSansSC-Regular.subset.otf already subset, so what\u0027s the plan for making it smaller still?",
+      "parentUuid": "6fb1701c_2b317835",
+      "revId": "08611a06fd96f7f4361c9d59963536778ce60db2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c8d6cb16_0a095944",
         "filename": "public/fpdf_save.h",
         "patchSetId": 17
