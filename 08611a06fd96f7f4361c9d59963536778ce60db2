@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "18e266b3_95ce1eaf",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-10T18:37:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8f43c6c6_923c5e79",
+      "range": {
+        "startLine": 337,
+        "startChar": 48,
+        "endLine": 337,
+        "endChar": 71
+      },
+      "revId": "08611a06fd96f7f4361c9d59963536778ce60db2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "77757d92_d17ac83e",
@@ -37,6 +61,30 @@
       "writtenOn": "2026-02-10T03:36:55Z",
       "side": 1,
       "message": "Just ASSERT_TRUE() everywhere in this method, and then wrap the call in ASSERT_NO_FATAL_FAILURE()?",
+      "range": {
+        "startLine": 342,
+        "startChar": 4,
+        "endLine": 342,
+        "endChar": 15
+      },
+      "revId": "08611a06fd96f7f4361c9d59963536778ce60db2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4fcbc4fc_3d395347",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-10T18:37:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "77757d92_d17ac83e",
       "range": {
         "startLine": 342,
         "startChar": 4,
@@ -70,6 +118,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "09659a61_69aa6431",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 351,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-10T18:37:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e8035851_23bc683a",
+      "range": {
+        "startLine": 351,
+        "startChar": 47,
+        "endLine": 351,
+        "endChar": 60
+      },
+      "revId": "08611a06fd96f7f4361c9d59963536778ce60db2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cca96e49_478a04fd",
@@ -87,6 +159,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6fb1701c_2b317835",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 391,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-10T18:37:47Z",
+      "side": 1,
+      "message": "Added comments to clarify.",
+      "parentUuid": "cca96e49_478a04fd",
+      "revId": "08611a06fd96f7f4361c9d59963536778ce60db2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c8d6cb16_0a095944",
@@ -100,6 +190,24 @@
       "writtenOn": "2026-02-10T03:36:55Z",
       "side": 1,
       "message": "Mention this is experimental.",
+      "revId": "08611a06fd96f7f4361c9d59963536778ce60db2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "11786389_da82e5fb",
+        "filename": "public/fpdf_save.h",
+        "patchSetId": 17
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-10T18:37:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c8d6cb16_0a095944",
       "revId": "08611a06fd96f7f4361c9d59963536778ce60db2",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
