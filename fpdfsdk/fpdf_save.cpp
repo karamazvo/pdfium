@@ -6,6 +6,8 @@
 
 #include "public/fpdf_save.h"
 
+#include <stdint.h>
+
 #include <optional>
 #include <utility>
 #include <vector>
@@ -186,22 +188,9 @@ bool DoDocSave(FPDF_DOCUMENT document,
 
   CPDF_Creator file_maker(
       doc, pdfium::MakeRetain<CPDFSDK_FileWriteAdapter>(file_write));
-  if (version.has_value()) {
-    file_maker.SetFileVersion(version.value());
-  }
-
-  if (flags == FPDF_REMOVE_SECURITY_DEPRECATED ||
-      (flags & FPDF_REMOVE_SECURITY)) {
-    flags &= ~FPDF_REMOVE_SECURITY;
-    file_maker.RemoveSecurity();
-  }
-
-  if ((flags & FPDF_INCREMENTAL) && (flags & FPDF_NO_INCREMENTAL)) {
-    flags &= ~(FPDF_INCREMENTAL | FPDF_NO_INCREMENTAL);
-  }
-
   // TODO(crbug.com/476127152): Subset new fonts.
-  bool create_result = file_maker.Create(static_cast<uint32_t>(flags));
+  bool create_result =
+      file_maker.Create(static_cast<uint32_t>(flags), version.value_or(0));
 
 #ifdef PDF_ENABLE_XFA
   if (context) {
