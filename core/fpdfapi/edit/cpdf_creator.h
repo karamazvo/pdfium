@@ -29,6 +29,7 @@ class CPDF_Parser;
 #define FPDFCREATE_NO_ORIGINAL (1 << 1)
 #define FPDFCREATE_REMOVE_SECURITY_DEPRECATED 3
 #define FPDFCREATE_REMOVE_SECURITY (1 << 2)
+#define FPDFCREATE_SUBSET_NEW_FONTS (1 << 3)
 
 class CPDF_Creator {
  public:
@@ -94,6 +95,7 @@ class CPDF_Creator {
   bool security_changed_ = false;
   bool is_incremental_ = false;
   bool is_original_ = false;
+  bool subset_new_fonts_ = false;
 };
 
 #endif  // CORE_FPDFAPI_EDIT_CPDF_CREATOR_H_
