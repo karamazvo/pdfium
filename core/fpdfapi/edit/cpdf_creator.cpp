@@ -592,7 +592,22 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage4() {
   return stage_;
 }
 
-bool CPDF_Creator::Create(uint32_t flags) {
+bool CPDF_Creator::Create(uint32_t flags, int32_t file_version) {
+  bool remove_security_deprecated =
+      flags == FPDFCREATE_REMOVE_SECURITY_DEPRECATED;
+  if (remove_security_deprecated || flags & FPDFCREATE_REMOVE_SECURITY) {
+    if (remove_security_deprecated) {
+      flags = 0;
+    } else {
+      flags &= ~FPDFCREATE_REMOVE_SECURITY;
+    }
+    RemoveSecurity();
+  }
+
+  if (file_version >= 10 && file_version <= 17) {
+    file_version_ = file_version;
+  }
+
   is_incremental_ = !!(flags & FPDFCREATE_INCREMENTAL);
   is_original_ = !(flags & FPDFCREATE_NO_ORIGINAL);
 
@@ -679,14 +694,6 @@ bool CPDF_Creator::Continue() {
   }
 
   return stage_ > Stage::kInvalid;
-}
-
-bool CPDF_Creator::SetFileVersion(int32_t fileVersion) {
-  if (fileVersion < 10 || fileVersion > 17) {
-    return false;
-  }
-  file_version_ = fileVersion;
-  return true;
 }
 
 void CPDF_Creator::RemoveSecurity() {
