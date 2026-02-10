@@ -213,6 +213,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "897e953d_3e3dd8d3",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 391,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-10T18:58:01Z",
+      "side": 1,
+      "message": "Got it. I forgot the subset font is for a string with a second sentence.",
+      "parentUuid": "2fabfec3_dd603e41",
+      "revId": "08611a06fd96f7f4361c9d59963536778ce60db2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c8d6cb16_0a095944",
