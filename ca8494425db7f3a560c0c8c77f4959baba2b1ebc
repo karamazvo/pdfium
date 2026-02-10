@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "833996eb_e3457a32",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-10T12:43:18Z",
+      "side": 1,
+      "message": "Slight typo here, message says fpdf_edit_embeddertest.cpp, but fpdf_formfill_embeddertest.cpp was edited.\n\n```suggestion\nReplace checksums with images in fpdf_formfill_embeddertest.cpp\n\nUse more image-based comparisons in pdfium_embeddertests. Replace the\nchecksum-based comparisons in fpdf_formfill_embeddertest.cpp.\n```",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 57
+      },
+      "revId": "ca8494425db7f3a560c0c8c77f4959baba2b1ebc",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
