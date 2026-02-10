@@ -1,0 +1,107 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8f43c6c6_923c5e79",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-10T03:36:55Z",
+      "side": 1,
+      "message": "Given the hard coded text below, why not just call LoadTestFont() in this method and remove this parameter?",
+      "range": {
+        "startLine": 337,
+        "startChar": 48,
+        "endLine": 337,
+        "endChar": 71
+      },
+      "revId": "08611a06fd96f7f4361c9d59963536778ce60db2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "77757d92_d17ac83e",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-10T03:36:55Z",
+      "side": 1,
+      "message": "Just ASSERT_TRUE() everywhere in this method, and then wrap the call in ASSERT_NO_FATAL_FAILURE()?",
+      "range": {
+        "startLine": 342,
+        "startChar": 4,
+        "endLine": 342,
+        "endChar": 15
+      },
+      "revId": "08611a06fd96f7f4361c9d59963536778ce60db2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e8035851_23bc683a",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 351,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-10T03:36:55Z",
+      "side": 1,
+      "message": "The name says WithoutSubset, but line 353 uses FPDF_SUBSET_NEW_FONTS.",
+      "range": {
+        "startLine": 351,
+        "startChar": 47,
+        "endLine": 351,
+        "endChar": 60
+      },
+      "revId": "08611a06fd96f7f4361c9d59963536778ce60db2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cca96e49_478a04fd",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 391,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-10T03:36:55Z",
+      "side": 1,
+      "message": "Which font is going to get subset? The /F1 font in hello_world.pdf? /F2? Or `font1?",
+      "revId": "08611a06fd96f7f4361c9d59963536778ce60db2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c8d6cb16_0a095944",
+        "filename": "public/fpdf_save.h",
+        "patchSetId": 17
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-10T03:36:55Z",
+      "side": 1,
+      "message": "Mention this is experimental.",
+      "revId": "08611a06fd96f7f4361c9d59963536778ce60db2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
