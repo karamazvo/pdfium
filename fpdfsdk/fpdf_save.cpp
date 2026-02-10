@@ -188,7 +188,6 @@ bool DoDocSave(FPDF_DOCUMENT document,
 
   CPDF_Creator file_maker(
       doc, pdfium::MakeRetain<CPDFSDK_FileWriteAdapter>(file_write));
-  // TODO(crbug.com/476127152): Subset new fonts.
   bool create_result =
       file_maker.Create(static_cast<uint32_t>(flags), version.value_or(0));
 

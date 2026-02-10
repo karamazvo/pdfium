@@ -29,6 +29,7 @@ class CPDF_Parser;
 #define FPDFCREATE_NO_ORIGINAL (1 << 1)
 #define FPDFCREATE_REMOVE_SECURITY_DEPRECATED 3
 #define FPDFCREATE_REMOVE_SECURITY (1 << 2)
+#define FPDFCREATE_SUBSET_NEW_FONTS (1 << 3)
 
 class CPDF_Creator {
  public:
@@ -90,6 +91,7 @@ class CPDF_Creator {
   std::map<uint32_t, FX_FILESIZE> object_offsets_;
   std::vector<uint32_t> new_obj_num_array_;  // Sorted, ascending.
   RetainPtr<CPDF_Array> id_array_;
+  std::map<uint32_t, RetainPtr<const CPDF_Object>> font_obj_overrides_;
   int32_t file_version_ = 0;
   bool security_changed_ = false;
   bool is_incremental_ = false;
