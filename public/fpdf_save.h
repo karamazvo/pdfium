@@ -49,6 +49,8 @@ typedef struct FPDF_FILEWRITE_ {
  // TODO(crbug.com/42270430): Remove FPDF_REMOVE_SECURITY_DEPRECATED.
 #define FPDF_REMOVE_SECURITY_DEPRECATED 3
 #define FPDF_REMOVE_SECURITY (1 << 2)
+// Experimental.
+#define FPDF_SUBSET_NEW_FONTS (1 << 3)
 
 // Function: FPDF_SaveAsCopy
 //          Saves the copy of specified document in custom way.
