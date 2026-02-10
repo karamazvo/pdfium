@@ -20,6 +20,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "24eafbd9_9a652a7a",
+        "filename": "fpdfsdk/fpdf_save.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-10T02:00:35Z",
+      "side": 1,
+      "message": "Comment applied, although I refactored the code to make it clearer that it\u0027s actually removing the flags if both FPDF_INCREMENTAL and FPDF_NO_INCREMENTAL are set.",
+      "parentUuid": "da133ae6_81d85ee1",
+      "revId": "b7af88c8fa0b8ebc0702aa6b47056277141c2231",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "79f7267e_fc230b7b",
         "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
         "patchSetId": 2
@@ -48,6 +66,24 @@
       "writtenOn": "2026-02-10T00:24:03Z",
       "side": 1,
       "message": "Let\u0027s break up this comment:\n\n// FPDF_INCREMENTAL and FPDF_NO_INCREMENTAL cannot be used together.\n#define FPDF_INCREMENTAL (1 \u003c\u003c 0)\n...\n// Deprecated. Use FPDF_REMOVE_SECURITY instead. TODO(...\n#define FPDF_REMOVE_SECURITY_DEPRECATED 3\n...",
+      "revId": "b7af88c8fa0b8ebc0702aa6b47056277141c2231",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "700fefce_f48e3d45",
+        "filename": "public/fpdf_save.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-10T02:00:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bac23621_e82b41e6",
       "revId": "b7af88c8fa0b8ebc0702aa6b47056277141c2231",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
