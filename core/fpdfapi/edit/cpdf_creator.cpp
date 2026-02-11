@@ -39,6 +39,9 @@ namespace {
 
 const size_t kArchiveBufferSize = 32768;
 
+constexpr int kAllValidFlags = FPDFCREATE_INCREMENTAL | FPDFCREATE_NO_ORIGINAL |
+                               FPDFCREATE_REMOVE_SECURITY;
+
 class CFX_FileBufferArchive final : public IFX_ArchiveStream {
  public:
   explicit CFX_FileBufferArchive(RetainPtr<IFX_RetainableWriteStream> file);
@@ -592,9 +595,27 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage4() {
   return stage_;
 }
 
-bool CPDF_Creator::Create(uint32_t flags) {
+bool CPDF_Creator::Create(uint32_t flags, int32_t file_version) {
+  if (flags > kAllValidFlags) {
+    flags = 0;
+  }
+
+  if (flags == FPDFCREATE_REMOVE_SECURITY_DEPRECATED ||
+      (flags & FPDFCREATE_REMOVE_SECURITY)) {
+    flags &= ~FPDFCREATE_REMOVE_SECURITY;
+    RemoveSecurity();
+  }
+
+  if ((flags & FPDFCREATE_INCREMENTAL) && (flags & FPDFCREATE_NO_ORIGINAL)) {
+    flags &= ~(FPDFCREATE_INCREMENTAL | FPDFCREATE_NO_ORIGINAL);
+  }
+
   is_incremental_ = !!(flags & FPDFCREATE_INCREMENTAL);
   is_original_ = !(flags & FPDFCREATE_NO_ORIGINAL);
+
+  if (file_version >= 10 && file_version <= 17) {
+    file_version_ = file_version;
+  }
 
   stage_ = Stage::kInit0;
   last_obj_num_ = document_->GetLastObjNum();
@@ -679,14 +700,6 @@ bool CPDF_Creator::Continue() {
   }
 
   return stage_ > Stage::kInvalid;
-}
-
-bool CPDF_Creator::SetFileVersion(int32_t fileVersion) {
-  if (fileVersion < 10 || fileVersion > 17) {
-    return false;
-  }
-  file_version_ = fileVersion;
-  return true;
 }
 
 void CPDF_Creator::RemoveSecurity() {
