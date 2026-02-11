@@ -23,8 +23,12 @@ class CPDF_Document;
 class CPDF_Object;
 class CPDF_Parser;
 
-#define FPDFCREATE_INCREMENTAL 1
-#define FPDFCREATE_NO_ORIGINAL 2
+#define FPDFCREATE_INCREMENTAL (1 << 0)
+#define FPDFCREATE_NO_ORIGINAL (1 << 1)
+// TODO(crbug.com/42270430): Implement the flags below.
+#define FPDFCREATE_REMOVE_SECURITY_DEPRECATED 3
+#define FPDFCREATE_REMOVE_SECURITY (1 << 2)
+#define FPDFCREATE_SUBSET_NEW_FONTS (1 << 3)
 
 class CPDF_Creator {
  public:
