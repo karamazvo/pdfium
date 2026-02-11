@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_EDIT_CPDF_CREATOR_H_
 #define CORE_FPDFAPI_EDIT_CPDF_CREATOR_H_
 
+#include <stdint.h>
+
 #include <map>
 #include <memory>
 #include <vector>
@@ -23,8 +25,12 @@ class CPDF_Document;
 class CPDF_Object;
 class CPDF_Parser;
 
-#define FPDFCREATE_INCREMENTAL 1
-#define FPDFCREATE_NO_ORIGINAL 2
+#define FPDFCREATE_INCREMENTAL (1 << 0)
+#define FPDFCREATE_NO_ORIGINAL (1 << 1)
+#define FPDFCREATE_REMOVE_SECURITY_DEPRECATED 3
+#define FPDFCREATE_REMOVE_SECURITY (1 << 2)
+// TODO(crbug.com/42270430): Implement font subsetting.
+#define FPDFCREATE_SUBSET_NEW_FONTS (1 << 3)
 
 class CPDF_Creator {
  public:
@@ -32,9 +38,7 @@ class CPDF_Creator {
                RetainPtr<IFX_RetainableWriteStream> archive);
   ~CPDF_Creator();
 
-  void RemoveSecurity();
-  bool Create(uint32_t flags);
-  bool SetFileVersion(int32_t fileVersion);
+  bool Create(uint32_t flags, int32_t file_version);
 
  private:
   enum class Stage {
@@ -69,6 +73,8 @@ class CPDF_Creator {
   bool WriteOldObjs();
   bool WriteNewObjs();
   bool WriteIndirectObj(uint32_t objnum, const CPDF_Object* pObj);
+
+  void RemoveSecurity();
 
   CPDF_CryptoHandler* GetCryptoHandler();
 

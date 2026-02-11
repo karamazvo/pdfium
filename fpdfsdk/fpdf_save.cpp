@@ -6,6 +6,8 @@
 
 #include "public/fpdf_save.h"
 
+#include <stdint.h>
+
 #include <optional>
 #include <utility>
 #include <vector>
@@ -31,10 +33,14 @@
 #include "public/fpdf_formfill.h"
 #endif
 
-namespace {
+static_assert(FPDF_INCREMENTAL == FPDFCREATE_INCREMENTAL);
+static_assert(FPDF_NO_INCREMENTAL == FPDFCREATE_NO_ORIGINAL);
+static_assert(FPDF_REMOVE_SECURITY_DEPRECATED ==
+              FPDFCREATE_REMOVE_SECURITY_DEPRECATED);
+static_assert(FPDF_REMOVE_SECURITY == FPDFCREATE_REMOVE_SECURITY);
+static_assert(FPDF_SUBSET_NEW_FONTS == FPDFCREATE_SUBSET_NEW_FONTS);
 
-constexpr int kAllValidFlags = FPDF_INCREMENTAL | FPDF_NO_INCREMENTAL |
-                               FPDF_REMOVE_SECURITY | FPDF_SUBSET_NEW_FONTS;
+namespace {
 
 #ifdef PDF_ENABLE_XFA
 bool SaveXFADocumentData(
@@ -180,28 +186,10 @@ bool DoDocSave(FPDF_DOCUMENT document,
   }
 #endif  // PDF_ENABLE_XFA
 
-  if (flags > kAllValidFlags) {
-    flags = 0;
-  }
-
   CPDF_Creator file_maker(
       doc, pdfium::MakeRetain<CPDFSDK_FileWriteAdapter>(file_write));
-  if (version.has_value()) {
-    file_maker.SetFileVersion(version.value());
-  }
-
-  if (flags == FPDF_REMOVE_SECURITY_DEPRECATED ||
-      (flags & FPDF_REMOVE_SECURITY)) {
-    flags &= ~FPDF_REMOVE_SECURITY;
-    file_maker.RemoveSecurity();
-  }
-
-  if ((flags & FPDF_INCREMENTAL) && (flags & FPDF_NO_INCREMENTAL)) {
-    flags &= ~(FPDF_INCREMENTAL | FPDF_NO_INCREMENTAL);
-  }
-
-  // TODO(crbug.com/476127152): Subset new fonts.
-  bool create_result = file_maker.Create(static_cast<uint32_t>(flags));
+  bool create_result =
+      file_maker.Create(static_cast<uint32_t>(flags), version.value_or(0));
 
 #ifdef PDF_ENABLE_XFA
   if (context) {
