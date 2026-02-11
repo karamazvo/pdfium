@@ -3,6 +3,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "6117d541_c6629760",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 17
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-11T00:05:24Z",
+      "side": 1,
+      "message": "If you want to make the two identical, and have it work, first change the Chromium copy to make the `import(\"//testing/libfuzzer/fuzzer_test.gni\")` line conditional.",
+      "range": {
+        "startLine": 13,
+        "startChar": 27,
+        "endLine": 13,
+        "endChar": 33
+      },
+      "revId": "0a74becbd7f9bdf4bab9b4b5e096a969b76f0205",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "fde96fc8_2a22dff2",
         "filename": "third_party/harfbuzz-ng/harfbuzz.gni",
         "patchSetId": 17
