@@ -145,7 +145,10 @@ source_set("test_environments") {
 
 source_set("unit_test_support") {
   testonly = true
-  sources = []
+  sources = [
+    "temporary_file_test.cpp",
+    "temporary_file_test.h",
+  ]
   deps = []
   configs += [
     "../:pdfium_strict_config",
@@ -161,6 +164,7 @@ source_set("unit_test_support") {
       "fxv8_unittest.h",
     ]
     deps += [
+      "../core/fxcrt",
       "../fxjs",
       "//testing/gtest",
     ]

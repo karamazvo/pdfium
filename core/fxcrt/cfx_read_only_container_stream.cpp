@@ -7,4 +7,5 @@
 // Instantiate.
 template class CFX_ReadOnlyContainerStream<DataVector<uint8_t>>;
 template class CFX_ReadOnlyContainerStream<FixedSizeDataVector<uint8_t>>;
+template class CFX_ReadOnlyContainerStream<std::unique_ptr<MappedDataBytes>>;
 template class CFX_ReadOnlyContainerStream<ByteString>;
