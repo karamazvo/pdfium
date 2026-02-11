@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6e466c17_263acfb4",
+        "filename": "core/fpdfapi/edit/cpdf_creator.h",
+        "patchSetId": 17
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-11T18:22:26Z",
+      "side": 1,
+      "message": "Leaning towards (2) to keep the values in sync. Done in https://pdfium-review.googlesource.com/c/pdfium/+/142690.",
+      "parentUuid": "98048edb_c3d30d0b",
+      "revId": "c4a4512c4bf2596cdb5ea4c2b9a66a53226fd882",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1f0bec88_fa6d6ec5",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-02-11T00:12:11Z",
       "side": 1,
       "message": "Should this move into Create() as well?",
+      "revId": "c4a4512c4bf2596cdb5ea4c2b9a66a53226fd882",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0e82b0ea_4db18680",
+        "filename": "fpdfsdk/fpdf_save.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-11T18:22:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1f0bec88_fa6d6ec5",
       "revId": "c4a4512c4bf2596cdb5ea4c2b9a66a53226fd882",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
