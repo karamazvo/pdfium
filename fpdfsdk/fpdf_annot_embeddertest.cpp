@@ -2587,14 +2587,25 @@ TEST_F(FPDFAnnotEmbedderTest, SetFontColor) {
 
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
-  ASSERT_TRUE(OpenSavedDocument());
-  FPDF_PAGE saved_page = LoadSavedPage(0);
+  ScopedSavedDoc saved_doc = OpenScopedSavedDocument();
+  ASSERT_TRUE(saved_doc);
+  ScopedSavedPage saved_page = LoadScopedSavedPage(0);
   ASSERT_TRUE(saved_page);
+<<<<<<< PATCH SET (57576370a07cea111af475f51b192aa4e4f5c6b7 Update Load/Open SavedPage() calls to use Load/Open ScopedSa)
+  VerifySavedRendering(saved_page.get(), kDimension, kDimension,
+                       modified_checksum);
+||||||| BASE      (c4eeb683dd95977d2c17bf7eec59d029ee72cc86 Suppress compilation warning on write() syscall)
+  VerifySavedRendering(saved_page, kDimension, kDimension, modified_checksum);
+
+  CloseSavedPage(saved_page);
+  CloseSavedDocument();
+=======
   VerifySavedRenderingWithExpectationSuffix(
       saved_page, kFreetextAnnotationWithoutDaModifiedPng);
 
   CloseSavedPage(saved_page);
   CloseSavedDocument();
+>>>>>>> BASE      (af81ee9241fd6b5362499f5e09792f5b3484ae59 Shorten the names for EmbedderTest::CompareBitmapToPng() and)
 }
 
 TEST_F(FPDFAnnotEmbedderTest, SetFontColorNegative) {

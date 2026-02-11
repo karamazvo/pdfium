@@ -654,18 +654,38 @@ TEST_F(FPDFPPOEmbedderTest, ImportIntoDocWithWrongPageType) {
   ASSERT_TRUE(OpenSavedDocument());
   EXPECT_EQ(2, FPDF_GetPageCount(saved_document()));
   {
-    FPDF_PAGE page = LoadSavedPage(0);
+    ScopedSavedPage page = LoadScopedSavedPage(0);
     ASSERT_TRUE(page);
+<<<<<<< PATCH SET (57576370a07cea111af475f51b192aa4e4f5c6b7 Update Load/Open SavedPage() calls to use Load/Open ScopedSa)
+    ScopedFPDFBitmap bitmap = RenderPage(page.get());
+    CompareBitmapToPngWithExpectationSuffix(bitmap.get(),
+                                            "bad_page_type_new_page1");
+||||||| BASE      (c4eeb683dd95977d2c17bf7eec59d029ee72cc86 Suppress compilation warning on write() syscall)
+    ScopedFPDFBitmap bitmap = RenderPage(page);
+    CompareBitmapToPngWithExpectationSuffix(bitmap.get(),
+                                            "bad_page_type_new_page1");
+    CloseSavedPage(page);
+=======
     ScopedFPDFBitmap bitmap = RenderPage(page);
     CompareBitmapWithExpectationSuffix(bitmap.get(), "bad_page_type_new_page1");
     CloseSavedPage(page);
+>>>>>>> BASE      (af81ee9241fd6b5362499f5e09792f5b3484ae59 Shorten the names for EmbedderTest::CompareBitmapToPng() and)
   }
   {
-    FPDF_PAGE page = LoadSavedPage(1);
+    ScopedSavedPage page = LoadScopedSavedPage(1);
     ASSERT_TRUE(page);
+<<<<<<< PATCH SET (57576370a07cea111af475f51b192aa4e4f5c6b7 Update Load/Open SavedPage() calls to use Load/Open ScopedSa)
+    ScopedFPDFBitmap bitmap = RenderPage(page.get());
+    CompareBitmapToPng(bitmap.get(), "bad_page_type_new_page2");
+||||||| BASE      (c4eeb683dd95977d2c17bf7eec59d029ee72cc86 Suppress compilation warning on write() syscall)
+    ScopedFPDFBitmap bitmap = RenderPage(page);
+    CompareBitmapToPng(bitmap.get(), "bad_page_type_new_page2");
+    CloseSavedPage(page);
+=======
     ScopedFPDFBitmap bitmap = RenderPage(page);
     CompareBitmap(bitmap.get(), "bad_page_type_new_page2");
     CloseSavedPage(page);
+>>>>>>> BASE      (af81ee9241fd6b5362499f5e09792f5b3484ae59 Shorten the names for EmbedderTest::CompareBitmapToPng() and)
   }
 }
 

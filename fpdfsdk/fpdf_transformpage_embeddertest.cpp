@@ -237,26 +237,41 @@ TEST_F(FPDFTransformEmbedderTest, SetCropBox) {
     // Save a copy, open the copy, and render it.
     // Note that it renders the rotation.
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-    ASSERT_TRUE(OpenSavedDocument());
-    FPDF_PAGE saved_page = LoadSavedPage(0);
+    ScopedSavedDoc saved_document = OpenScopedSavedDocument();
+    ASSERT_TRUE(saved_document);
+    ScopedSavedPage saved_page = LoadScopedSavedPage(0);
     ASSERT_TRUE(saved_page);
 
     FS_RECTF cropbox;
-    EXPECT_TRUE(FPDFPage_GetCropBox(saved_page, &cropbox.left, &cropbox.bottom,
-                                    &cropbox.right, &cropbox.top));
+    EXPECT_TRUE(FPDFPage_GetCropBox(saved_page.get(), &cropbox.left,
+                                    &cropbox.bottom, &cropbox.right,
+                                    &cropbox.top));
     EXPECT_EQ(10, cropbox.left);
     EXPECT_EQ(20, cropbox.bottom);
     EXPECT_EQ(100, cropbox.right);
     EXPECT_EQ(150, cropbox.top);
-    const int page_width = static_cast<int>(FPDF_GetPageWidth(saved_page));
-    const int page_height = static_cast<int>(FPDF_GetPageHeight(saved_page));
+    const int page_width =
+        static_cast<int>(FPDF_GetPageWidth(saved_page.get()));
+    const int page_height =
+        static_cast<int>(FPDF_GetPageHeight(saved_page.get()));
     EXPECT_EQ(90, page_width);
     EXPECT_EQ(130, page_height);
+<<<<<<< PATCH SET (57576370a07cea111af475f51b192aa4e4f5c6b7 Update Load/Open SavedPage() calls to use Load/Open ScopedSa)
+    ScopedFPDFBitmap bitmap = RenderSavedPage(saved_page.get());
+    CompareBitmapToPngWithExpectationSuffix(bitmap.get(), "rectangles_cropped");
+||||||| BASE      (c4eeb683dd95977d2c17bf7eec59d029ee72cc86 Suppress compilation warning on write() syscall)
+    ScopedFPDFBitmap bitmap = RenderSavedPage(saved_page);
+    CompareBitmapToPngWithExpectationSuffix(bitmap.get(), "rectangles_cropped");
+
+    CloseSavedPage(saved_page);
+    CloseSavedDocument();
+=======
     ScopedFPDFBitmap bitmap = RenderSavedPage(saved_page);
     CompareBitmapWithExpectationSuffix(bitmap.get(), "rectangles_cropped");
 
     CloseSavedPage(saved_page);
     CloseSavedDocument();
+>>>>>>> BASE      (af81ee9241fd6b5362499f5e09792f5b3484ae59 Shorten the names for EmbedderTest::CompareBitmapToPng() and)
   }
 }
 
@@ -307,27 +322,43 @@ TEST_F(FPDFTransformEmbedderTest, SetMediaBox) {
     // Save a copy, open the copy, and render it.
     // Note that it renders the rotation.
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-    ASSERT_TRUE(OpenSavedDocument());
-    FPDF_PAGE saved_page = LoadSavedPage(0);
+    ScopedSavedDoc saved_document = OpenScopedSavedDocument();
+    ASSERT_TRUE(saved_document);
+    ScopedSavedPage saved_page = LoadScopedSavedPage(0);
     ASSERT_TRUE(saved_page);
 
     FS_RECTF mediabox;
-    EXPECT_TRUE(FPDFPage_GetMediaBox(saved_page, &mediabox.left,
+    EXPECT_TRUE(FPDFPage_GetMediaBox(saved_page.get(), &mediabox.left,
                                      &mediabox.bottom, &mediabox.right,
                                      &mediabox.top));
     EXPECT_EQ(20, mediabox.left);
     EXPECT_EQ(30, mediabox.bottom);
     EXPECT_EQ(100, mediabox.right);
     EXPECT_EQ(150, mediabox.top);
-    const int page_width = static_cast<int>(FPDF_GetPageWidth(saved_page));
-    const int page_height = static_cast<int>(FPDF_GetPageHeight(saved_page));
+    const int page_width =
+        static_cast<int>(FPDF_GetPageWidth(saved_page.get()));
+    const int page_height =
+        static_cast<int>(FPDF_GetPageHeight(saved_page.get()));
     EXPECT_EQ(80, page_width);
     EXPECT_EQ(120, page_height);
+<<<<<<< PATCH SET (57576370a07cea111af475f51b192aa4e4f5c6b7 Update Load/Open SavedPage() calls to use Load/Open ScopedSa)
+    ScopedFPDFBitmap bitmap = RenderSavedPage(saved_page.get());
+    CompareBitmapToPngWithExpectationSuffix(bitmap.get(),
+                                            "rectangles_media_box");
+||||||| BASE      (c4eeb683dd95977d2c17bf7eec59d029ee72cc86 Suppress compilation warning on write() syscall)
+    ScopedFPDFBitmap bitmap = RenderSavedPage(saved_page);
+    CompareBitmapToPngWithExpectationSuffix(bitmap.get(),
+                                            "rectangles_media_box");
+
+    CloseSavedPage(saved_page);
+    CloseSavedDocument();
+=======
     ScopedFPDFBitmap bitmap = RenderSavedPage(saved_page);
     CompareBitmapWithExpectationSuffix(bitmap.get(), "rectangles_media_box");
 
     CloseSavedPage(saved_page);
     CloseSavedDocument();
+>>>>>>> BASE      (af81ee9241fd6b5362499f5e09792f5b3484ae59 Shorten the names for EmbedderTest::CompareBitmapToPng() and)
   }
 }
 
@@ -420,19 +451,33 @@ TEST_F(FPDFTransformEmbedderTest, TransFormWithClipAndSave) {
     // Save a copy, open the copy, and render it.
     // Note that it renders the transform.
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-    ASSERT_TRUE(OpenSavedDocument());
-    FPDF_PAGE saved_page = LoadSavedPage(0);
+    ScopedSavedDoc saved_document = OpenScopedSavedDocument();
+    ASSERT_TRUE(saved_document);
+    ScopedSavedPage saved_page = LoadScopedSavedPage(0);
     ASSERT_TRUE(saved_page);
 
-    const int page_width = static_cast<int>(FPDF_GetPageWidth(saved_page));
-    const int page_height = static_cast<int>(FPDF_GetPageHeight(saved_page));
+    const int page_width =
+        static_cast<int>(FPDF_GetPageWidth(saved_page.get()));
+    const int page_height =
+        static_cast<int>(FPDF_GetPageHeight(saved_page.get()));
     EXPECT_EQ(200, page_width);
     EXPECT_EQ(300, page_height);
+<<<<<<< PATCH SET (57576370a07cea111af475f51b192aa4e4f5c6b7 Update Load/Open SavedPage() calls to use Load/Open ScopedSa)
+    ScopedFPDFBitmap bitmap = RenderSavedPage(saved_page.get());
+    CompareBitmapToPngWithExpectationSuffix(bitmap.get(), "rectangles_shrunk");
+||||||| BASE      (c4eeb683dd95977d2c17bf7eec59d029ee72cc86 Suppress compilation warning on write() syscall)
+    ScopedFPDFBitmap bitmap = RenderSavedPage(saved_page);
+    CompareBitmapToPngWithExpectationSuffix(bitmap.get(), "rectangles_shrunk");
+
+    CloseSavedPage(saved_page);
+    CloseSavedDocument();
+=======
     ScopedFPDFBitmap bitmap = RenderSavedPage(saved_page);
     CompareBitmapWithExpectationSuffix(bitmap.get(), "rectangles_shrunk");
 
     CloseSavedPage(saved_page);
     CloseSavedDocument();
+>>>>>>> BASE      (af81ee9241fd6b5362499f5e09792f5b3484ae59 Shorten the names for EmbedderTest::CompareBitmapToPng() and)
   }
 }
 
@@ -477,19 +522,33 @@ TEST_F(FPDFTransformEmbedderTest, TransFormWithClipAndSaveWithLocale) {
     // Save a copy, open the copy, and render it.
     // Note that it renders the transform.
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-    ASSERT_TRUE(OpenSavedDocument());
-    FPDF_PAGE saved_page = LoadSavedPage(0);
+    ScopedSavedDoc saved_document = OpenScopedSavedDocument();
+    ASSERT_TRUE(saved_document);
+    ScopedSavedPage saved_page = LoadScopedSavedPage(0);
     ASSERT_TRUE(saved_page);
 
-    const int page_width = static_cast<int>(FPDF_GetPageWidth(saved_page));
-    const int page_height = static_cast<int>(FPDF_GetPageHeight(saved_page));
+    const int page_width =
+        static_cast<int>(FPDF_GetPageWidth(saved_page.get()));
+    const int page_height =
+        static_cast<int>(FPDF_GetPageHeight(saved_page.get()));
     EXPECT_EQ(200, page_width);
     EXPECT_EQ(300, page_height);
+<<<<<<< PATCH SET (57576370a07cea111af475f51b192aa4e4f5c6b7 Update Load/Open SavedPage() calls to use Load/Open ScopedSa)
+    ScopedFPDFBitmap bitmap = RenderSavedPage(saved_page.get());
+    CompareBitmapToPngWithExpectationSuffix(bitmap.get(), "rectangles_shrunk");
+||||||| BASE      (c4eeb683dd95977d2c17bf7eec59d029ee72cc86 Suppress compilation warning on write() syscall)
+    ScopedFPDFBitmap bitmap = RenderSavedPage(saved_page);
+    CompareBitmapToPngWithExpectationSuffix(bitmap.get(), "rectangles_shrunk");
+
+    CloseSavedPage(saved_page);
+    CloseSavedDocument();
+=======
     ScopedFPDFBitmap bitmap = RenderSavedPage(saved_page);
     CompareBitmapWithExpectationSuffix(bitmap.get(), "rectangles_shrunk");
 
     CloseSavedPage(saved_page);
     CloseSavedDocument();
+>>>>>>> BASE      (af81ee9241fd6b5362499f5e09792f5b3484ae59 Shorten the names for EmbedderTest::CompareBitmapToPng() and)
   }
 }
 #endif  // BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)

@@ -50,17 +50,23 @@ class CPDFSecurityHandlerEmbedderTest : public EmbedderTest {
 
   void VerifySavedHelloWorldDocumentWithPassword(const char* password) {
     ASSERT_TRUE(OpenSavedDocumentWithPassword(password));
-    FPDF_PAGE page = LoadSavedPage(0);
-    VerifyHelloWorldPage(page);
-    CloseSavedPage(page);
+    // TODO(crbug.com/407147676): Remove this after
+    // OpenSavedDocumentWithPassword() is migrated to a Scoped method.
+    {
+      ScopedSavedPage page = LoadScopedSavedPage(0);
+      VerifyHelloWorldPage(page.get());
+    }
     CloseSavedDocument();
   }
 
   void VerifySavedModifiedHelloWorldDocumentWithPassword(const char* password) {
     ASSERT_TRUE(OpenSavedDocumentWithPassword(password));
-    FPDF_PAGE page = LoadSavedPage(0);
-    VerifyModifiedHelloWorldPage(page);
-    CloseSavedPage(page);
+    // TODO(crbug.com/407147676): Remove this after
+    // OpenSavedDocumentWithPassword() is migrated to a Scoped method.
+    {
+      ScopedSavedPage page = LoadScopedSavedPage(0);
+      VerifyModifiedHelloWorldPage(page.get());
+    }
     CloseSavedDocument();
   }
 
@@ -173,13 +179,30 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, PasswordAfterGenerateSave) {
   } tests[] = {{"1234", 0xFFFFF2C0}, {"5678", 0xFFFFFFFC}};
 
   for (const auto& test : tests) {
+    // TODO(crbug.com/407147676): Replace with a scoped method.
     ASSERT_TRUE(OpenSavedDocumentWithPassword(test.password));
+<<<<<<< PATCH SET (57576370a07cea111af475f51b192aa4e4f5c6b7 Update Load/Open SavedPage() calls to use Load/Open ScopedSa)
+    {
+      ScopedSavedPage page = LoadScopedSavedPage(0);
+      ASSERT_TRUE(page);
+      VerifySavedRenderingToPngWithExpectationSuffix(page.get(), kBasename);
+      EXPECT_EQ(test.permissions, FPDF_GetDocPermissions(saved_document()));
+    }
+||||||| BASE      (c4eeb683dd95977d2c17bf7eec59d029ee72cc86 Suppress compilation warning on write() syscall)
+    FPDF_PAGE page = LoadSavedPage(0);
+    ASSERT_TRUE(page);
+    VerifySavedRenderingToPngWithExpectationSuffix(page, kBasename);
+    EXPECT_EQ(test.permissions, FPDF_GetDocPermissions(saved_document()));
+
+    CloseSavedPage(page);
+=======
     FPDF_PAGE page = LoadSavedPage(0);
     ASSERT_TRUE(page);
     VerifySavedRenderingWithExpectationSuffix(page, kBasename);
     EXPECT_EQ(test.permissions, FPDF_GetDocPermissions(saved_document()));
 
     CloseSavedPage(page);
+>>>>>>> BASE      (af81ee9241fd6b5362499f5e09792f5b3484ae59 Shorten the names for EmbedderTest::CompareBitmapToPng() and)
     CloseSavedDocument();
   }
 }
