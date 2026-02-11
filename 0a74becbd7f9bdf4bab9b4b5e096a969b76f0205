@@ -72,6 +72,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "780131af_aa9f6317",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 17
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-11T18:25:09Z",
+      "side": 1,
+      "message": "I uploaded https://crrev.com/c/7568244 and updated here. Will wait until that\u0027s landed.",
+      "parentUuid": "34cd488d_e927d2d2",
+      "range": {
+        "startLine": 13,
+        "startChar": 27,
+        "endLine": 13,
+        "endChar": 33
+      },
+      "revId": "0a74becbd7f9bdf4bab9b4b5e096a969b76f0205",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fde96fc8_2a22dff2",
@@ -85,6 +109,30 @@
       "writtenOn": "2026-02-11T00:01:05Z",
       "side": 1,
       "message": "\"Standalone PDFium\"",
+      "range": {
+        "startLine": 6,
+        "startChar": 4,
+        "endLine": 6,
+        "endChar": 9
+      },
+      "revId": "0a74becbd7f9bdf4bab9b4b5e096a969b76f0205",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "daea3cdb_28237865",
+        "filename": "third_party/harfbuzz-ng/harfbuzz.gni",
+        "patchSetId": 17
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-11T18:25:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fde96fc8_2a22dff2",
       "range": {
         "startLine": 6,
         "startChar": 4,
