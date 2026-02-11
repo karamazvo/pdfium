@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b8d5efac_484bd4f9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-11T18:39:49Z",
+      "side": 1,
+      "message": "Thanks, note that we may be a bit slow in getting to these reviews over the next week or so.",
+      "revId": "c1386787e3e6b8e8fd1be91288727fa4dbaa05ab",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fbf84c24_027af484",
+        "filename": "core/fpdfapi/parser/cpdf_security_handler_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-11T18:39:49Z",
+      "side": 1,
+      "message": "nit: Unfortunately, our style guide insists that these link to a bug, perhaps even the one that this CL is associated with, as in\nTODO(crbug.com/407147676): Remove this ....",
+      "range": {
+        "startLine": 53,
+        "startChar": 8,
+        "endLine": 53,
+        "endChar": 12
+      },
+      "revId": "c1386787e3e6b8e8fd1be91288727fa4dbaa05ab",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
