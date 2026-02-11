@@ -657,19 +657,17 @@ TEST_F(FPDFPPOEmbedderTest, ImportIntoDocWithWrongPageType) {
   ASSERT_TRUE(OpenSavedDocument());
   EXPECT_EQ(2, FPDF_GetPageCount(saved_document()));
   {
-    FPDF_PAGE page = LoadSavedPage(0);
+    ScopedSavedPage page = LoadScopedSavedPage(0);
     ASSERT_TRUE(page);
-    ScopedFPDFBitmap bitmap = RenderPage(page);
+    ScopedFPDFBitmap bitmap = RenderPage(page.get());
     CompareBitmapToPngWithExpectationSuffix(bitmap.get(),
                                             "bad_page_type_new_page1");
-    CloseSavedPage(page);
   }
   {
-    FPDF_PAGE page = LoadSavedPage(1);
+    ScopedSavedPage page = LoadScopedSavedPage(1);
     ASSERT_TRUE(page);
-    ScopedFPDFBitmap bitmap = RenderPage(page);
+    ScopedFPDFBitmap bitmap = RenderPage(page.get());
     CompareBitmapToPng(bitmap.get(), "bad_page_type_new_page2");
-    CloseSavedPage(page);
   }
 }
 
