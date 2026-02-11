@@ -52,6 +52,24 @@
       "parentUuid": "aa8f7ae0_1600d810",
       "revId": "010af336df3a91ce448b81702afe2b4652d08005",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b195e33c_24d625be",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-11T16:36:10Z",
+      "side": 1,
+      "message": "Correction: In the meantime, I did run a failing test from the last run.",
+      "parentUuid": "382bda63_df480277",
+      "revId": "010af336df3a91ce448b81702afe2b4652d08005",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
