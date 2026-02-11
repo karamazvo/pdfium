@@ -98,6 +98,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "2ab6f9d8_0c06eada",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 17
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-11T19:22:35Z",
+      "side": 1,
+      "message": "If the BUILD.gn files end up being identical, then update the comment.",
+      "parentUuid": "780131af_aa9f6317",
+      "range": {
+        "startLine": 13,
+        "startChar": 27,
+        "endLine": 13,
+        "endChar": 33
+      },
+      "revId": "0a74becbd7f9bdf4bab9b4b5e096a969b76f0205",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "fde96fc8_2a22dff2",
         "filename": "third_party/harfbuzz-ng/harfbuzz.gni",
         "patchSetId": 17
