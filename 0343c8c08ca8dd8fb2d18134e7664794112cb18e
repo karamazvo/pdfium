@@ -22,6 +22,30 @@
       },
       "revId": "0343c8c08ca8dd8fb2d18134e7664794112cb18e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d27d95b9_f904d79b",
+        "filename": "fpdfsdk/fpdf_save.cpp",
+        "patchSetId": 22
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-11T22:12:38Z",
+      "side": 1,
+      "message": "Fails `-Wshorten-64-to-32`:\n\n```\n../../fpdfsdk/fpdf_save.cpp:195:64: error: implicit conversion loses integer precision: \u0027FPDF_DWORD\u0027 (aka \u0027unsigned long\u0027) to \u0027UnderlyingType\u0027 (aka \u0027unsigned int\u0027) [-Werror,-Wshorten-64-to-32]\n  195 |       Mask\u003cCPDF_Creator::CreateFlags\u003e::FromUnderlyingUnchecked(flags),\n      |       ~~~~                                                     ^~~~~\n1 error generated.\n```",
+      "parentUuid": "21be310b_853f9519",
+      "range": {
+        "startLine": 196,
+        "startChar": 10,
+        "endLine": 196,
+        "endChar": 32
+      },
+      "revId": "0343c8c08ca8dd8fb2d18134e7664794112cb18e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
