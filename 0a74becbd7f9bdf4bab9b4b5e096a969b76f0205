@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fde96fc8_2a22dff2",
+        "filename": "third_party/harfbuzz-ng/harfbuzz.gni",
+        "patchSetId": 17
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-11T00:01:05Z",
+      "side": 1,
+      "message": "\"Standalone PDFium\"",
+      "range": {
+        "startLine": 6,
+        "startChar": 4,
+        "endLine": 6,
+        "endChar": 9
+      },
+      "revId": "0a74becbd7f9bdf4bab9b4b5e096a969b76f0205",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
