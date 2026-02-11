@@ -18,6 +18,23 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ad81102a_28116087",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-11T20:03:19Z",
+      "side": 1,
+      "message": "Thanks for working on this. Note that there\u0027s also CompareBitmap() changes going around, so that\u0027s causing merge conflicts. Maybe hold off on the files that still have CompareBitmap() calls for now?",
+      "revId": "c1386787e3e6b8e8fd1be91288727fa4dbaa05ab",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fbf84c24_027af484",
