@@ -80,6 +80,30 @@
       },
       "revId": "13cf143c0169023ef32d306581a7f28a7e9da219",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "92867b14_c0fffc6f",
+        "filename": "testing/image_diff/image_diff.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-11T00:08:27Z",
+      "side": 1,
+      "message": "Taking as-is.",
+      "parentUuid": "ca9e405d_c3ff08a0",
+      "range": {
+        "startLine": 149,
+        "startChar": 0,
+        "endLine": 149,
+        "endChar": 3
+      },
+      "revId": "13cf143c0169023ef32d306581a7f28a7e9da219",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
