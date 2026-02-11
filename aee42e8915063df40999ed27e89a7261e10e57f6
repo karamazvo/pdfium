@@ -52,6 +52,24 @@
       "parentUuid": "87410909_1e39dc64",
       "revId": "aee42e8915063df40999ed27e89a7261e10e57f6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bda5afd5_7b7659f3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-11T16:21:46Z",
+      "side": 1,
+      "message": "Hi, tested this locally, the test still seems to pass regardless of whether the rest of the patch is there or not.\n\nMaybe consider updating the test to something that compares to images.\n\nFor reference, you can look at some of the tests above: notice how they run\n\n`FPDF_SaveAsCopy()` and then `VerifySavedDocumentToPngWithExpectationSuffix()`\n\nYou could maybe try something similar.\n\nYou can get these PNG images to compare to by adding these 2 for filenames that don\u0027t exist, running them on the bots to get the images and then adding images for those.\n\nThere could be a more optimal solution, just suggesting one way in which this can be done. Maybe try this out!",
+      "parentUuid": "1f60ebe5_d5a9bf99",
+      "revId": "aee42e8915063df40999ed27e89a7261e10e57f6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }

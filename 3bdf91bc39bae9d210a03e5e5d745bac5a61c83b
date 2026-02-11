@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f26bf298_fb7afb2a",
+        "filename": "fpdfsdk/fpdf_flatten_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-11T16:21:46Z",
+      "side": 1,
+      "message": "Hi, just a suggestion: Try to remember to source format before cl upload. The command is:\n\n`git cl format`.\n\nLine 130 also needs to be similarly wrapped after \"screen\". This should also be automatically done.\n\nIf `git cl format` doesn\u0027t do anything, then I believe these are the only 2 changes that it suggests, so you could also manually edit them.\n\nAnother general suggestion: some lines of code already explain what they are doing, adding additional comments may just make the test longer/harder to read.",
+      "range": {
+        "startLine": 150,
+        "startChar": 0,
+        "endLine": 150,
+        "endChar": 2
+      },
+      "revId": "3bdf91bc39bae9d210a03e5e5d745bac5a61c83b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
