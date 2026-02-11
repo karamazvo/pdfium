@@ -36,6 +36,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "dec93b47_0d0d7ae2",
+        "filename": "core/fpdfapi/edit/cpdf_creator.h",
+        "patchSetId": 17
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-11T21:34:08Z",
+      "side": 1,
+      "message": "Now, I think fxcrt::Mask is needed?",
+      "parentUuid": "6e466c17_263acfb4",
+      "revId": "c4a4512c4bf2596cdb5ea4c2b9a66a53226fd882",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1f0bec88_fa6d6ec5",
