@@ -1,0 +1,146 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b05b352f_9ca7c060",
+        "filename": "core/fpdfapi/edit/cpdf_creator.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-11T01:07:40Z",
+      "side": 1,
+      "message": "Does `new_obj_num_array_` need to be put into a set? Does it contain duplicate values?",
+      "revId": "786e87107a717fad3040130f4a0dbfe1cd4d789d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "03aec871_f91fa80d",
+        "filename": "core/fpdfapi/edit/cpdf_creator.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-11T01:07:40Z",
+      "side": 1,
+      "message": "Use a ternary operator here:\n\n```\nauto it \u003d font_obj_overrides.find(objnum);\nconst CPDF_Object* obj_to_write \u003d it !\u003d font_obj_overrides.end()\n    ? it-\u003esecond.Get(): obj.Get();\n```",
+      "range": {
+        "startLine": 218,
+        "startChar": 0,
+        "endLine": 224,
+        "endChar": 5
+      },
+      "revId": "786e87107a717fad3040130f4a0dbfe1cd4d789d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f1453650_c7c6a482",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-11T01:07:40Z",
+      "side": 1,
+      "message": "Is this the best way to include HarfBuzz includes?",
+      "revId": "786e87107a717fad3040130f4a0dbfe1cd4d789d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dc678326_fc055dc3",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-11T01:07:40Z",
+      "side": 1,
+      "message": "As-is: Use a non-const/non-ref parameter and std::move() here. Or pass in the vector (span?) from the caller and uniquify internally. Either way will avoid a copy.",
+      "revId": "786e87107a717fad3040130f4a0dbfe1cd4d789d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bf753490_473c5c48",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-11T01:07:40Z",
+      "side": 1,
+      "message": "If this is true, then `font` can be casted to CPDF_CIDFont, right? In which case, does that mean `descendants` will never be null, since CPDF_CIDFont::Load() presumably succeeded?\n\nMore generally, can CPDF_Font and subclasses help simplify the code here?",
+      "revId": "786e87107a717fad3040130f4a0dbfe1cd4d789d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "83d6d129_43d8d8d2",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-11T01:07:40Z",
+      "side": 1,
+      "message": "sort",
+      "revId": "786e87107a717fad3040130f4a0dbfe1cd4d789d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fab804dd_6c509abe",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-11T01:07:40Z",
+      "side": 1,
+      "message": "May be slightly more intuitive to order the parameters to follow the ordering in the comment.",
+      "revId": "786e87107a717fad3040130f4a0dbfe1cd4d789d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "60434d28_542112a8",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-11T01:07:40Z",
+      "side": 1,
+      "message": "Is the key a PDF object number?",
+      "revId": "786e87107a717fad3040130f4a0dbfe1cd4d789d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
