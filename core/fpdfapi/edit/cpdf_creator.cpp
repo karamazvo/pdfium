@@ -592,9 +592,9 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage4() {
   return stage_;
 }
 
-bool CPDF_Creator::Create(uint32_t flags) {
-  is_incremental_ = !!(flags & FPDFCREATE_INCREMENTAL);
-  is_original_ = !(flags & FPDFCREATE_NO_ORIGINAL);
+bool CPDF_Creator::Create(SaveFlags flags) {
+  is_incremental_ = !!(flags & SaveFlags::kIncremental);
+  is_original_ = !(flags & SaveFlags::kNoOriginal);
 
   stage_ = Stage::kInit0;
   last_obj_num_ = document_->GetLastObjNum();
