@@ -56,18 +56,12 @@ class CFX_Face final : public Retainable, public Observable {
                                  pdfium::span<const uint8_t> data,
                                  uint32_t face_index);
 
-#if defined(PDF_ENABLE_XFA)
+#if defined(PDF_ENABLE_XFA) || BUILDFLAG(IS_ANDROID)
   static RetainPtr<CFX_Face> NewFromVectorStream(
       CFX_FontMgr* font_mgr,
       const RetainPtr<CFX_ReadOnlyFixedSizeDataVectorStream>& font_stream,
       uint32_t face_index);
-#endif
-
-#if BUILDFLAG(IS_ANDROID)
-  static RetainPtr<CFX_Face> OpenFromFilePath(CFX_FontMgr* font_mgr,
-                                              ByteStringView path,
-                                              int32_t face_index);
-#endif
+#endif  // defined(PDF_ENABLE_XFA) || BUILDFLAG(IS_ANDROID)
 
   bool HasGlyphNames() const;
   bool IsTtOt() const;
