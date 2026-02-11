@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "97c0dd9c_6bbc2ecc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-11T03:06:12Z",
+      "side": 1,
+      "message": "Hi again, found this old-ish report about updating FooSavedPage() to FooScopedSavedPage(), so I decided to make another python script to do this, and then cleaned up some things it might have messed up (If you perchance see .get() added to random comment lines, I probably forgot to clean that up).\n\nI added a few scopes for a few cases where a raw-replacement for scoped would cause some kind of trace trap (I imagine it is because the DTOR runs twice because of the variable being redefined as scoped.\n\nLet me know if I should also send in the python script as well (may make this easier to review).\n\nSorry in advance for the large diff :) But I think aside from about 10-15 places where I had to change scoping a bit, the rest of it should be mechanical-ish.",
+      "revId": "6044091fed95d32a9444dd80a613d76a66ef04ee",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
