@@ -31,6 +31,13 @@
 #include "public/fpdf_formfill.h"
 #endif
 
+static_assert(FPDF_INCREMENTAL == FPDFCREATE_INCREMENTAL);
+static_assert(FPDF_NO_INCREMENTAL == FPDFCREATE_NO_ORIGINAL);
+static_assert(FPDF_REMOVE_SECURITY_DEPRECATED ==
+              FPDFCREATE_REMOVE_SECURITY_DEPRECATED);
+static_assert(FPDF_REMOVE_SECURITY == FPDFCREATE_REMOVE_SECURITY);
+static_assert(FPDF_SUBSET_NEW_FONTS == FPDFCREATE_SUBSET_NEW_FONTS);
+
 namespace {
 
 constexpr int kAllValidFlags = FPDF_INCREMENTAL | FPDF_NO_INCREMENTAL |
@@ -192,7 +199,6 @@ bool DoDocSave(FPDF_DOCUMENT document,
 
   if (flags == FPDF_REMOVE_SECURITY_DEPRECATED ||
       (flags & FPDF_REMOVE_SECURITY)) {
-    flags &= ~FPDF_REMOVE_SECURITY;
     file_maker.RemoveSecurity();
   }
 
