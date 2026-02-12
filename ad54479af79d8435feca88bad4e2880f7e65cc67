@@ -16,6 +16,63 @@
       "message": "Hello,\n\nThis is my first PDFium CL. Unfortunately I am not a dry-runner yet, so I could not trigger a test build.\n\nThe purpose of this CL is to make the document language available for embedders.\n\nIt is intended to work in tandem with a change on Chromium to populate the document language in the accessibility tree:\n\nhttps://chromium-review.googlesource.com/c/chromium/src/+/7534929\n\nThank you for your feedback.\n\nBest,\nFelipe",
       "revId": "ad54479af79d8435feca88bad4e2880f7e65cc67",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dacfb5d7_2fc33a8b",
+        "filename": "fpdfsdk/fpdf_catalog.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-12T08:17:13Z",
+      "side": 1,
+      "message": "Should this return 2 and set `buffer` to L\u0027\\0\u0027 instead?",
+      "revId": "ad54479af79d8435feca88bad4e2880f7e65cc67",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9c6e7656_0a97de2b",
+        "filename": "public/fpdf_catalog.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-12T08:17:13Z",
+      "side": 1,
+      "message": "nit: Put the getter above the setter.",
+      "revId": "ad54479af79d8435feca88bad4e2880f7e65cc67",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dad4a9ed_2d19e1d3",
+        "filename": "public/fpdf_catalog.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-12T08:17:13Z",
+      "side": 1,
+      "message": "How about FPDF_WCHAR here?",
+      "range": {
+        "startLine": 57,
+        "startChar": 24,
+        "endLine": 57,
+        "endChar": 28
+      },
+      "revId": "ad54479af79d8435feca88bad4e2880f7e65cc67",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
