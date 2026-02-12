@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "895b6ba9_f536a0df",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-12T16:26:05Z",
+      "side": 1,
+      "message": "Hi guys, added this small patch so that we can consider making Bug 457855936 a good-first issue. I already added an explainer of how to fix it as well, hence I think it would be a good place for contributors to get started. @thestig@chromium.org Consider adding the hotlist as well.",
+      "revId": "e33fe4356fe1f757984197bc4845c3bdc94ef712",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
