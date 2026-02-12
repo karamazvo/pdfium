@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7534853d_b5cb35cc",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1633,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-12T21:01:18Z",
+      "side": 1,
+      "message": "Text was removed from the original PDF, so maybe include that in the filename.",
+      "range": {
+        "startLine": 1633,
+        "startChar": 7,
+        "endLine": 1633,
+        "endChar": 32
+      },
+      "revId": "56d90d3e02ad5b5e3ae358ed949b1e92d996c728",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "03cf444f_a9b6b944",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1821,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-12T21:01:18Z",
+      "side": 1,
+      "message": "Does this need to be fuzzy matching? Line 1791 doesn\u0027t fuzzy match.",
+      "revId": "56d90d3e02ad5b5e3ae358ed949b1e92d996c728",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3359f0a7_fc237fff",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 4359,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-12T21:01:18Z",
+      "side": 1,
+      "message": "Not scaled?",
+      "range": {
+        "startLine": 4359,
+        "startChar": 64,
+        "endLine": 4359,
+        "endChar": 70
+      },
+      "revId": "56d90d3e02ad5b5e3ae358ed949b1e92d996c728",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7b816761_9bdf955e",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 4962,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-12T21:01:18Z",
+      "side": 1,
+      "message": "with a new path?",
+      "range": {
+        "startLine": 4962,
+        "startChar": 7,
+        "endLine": 4962,
+        "endChar": 31
+      },
+      "revId": "56d90d3e02ad5b5e3ae358ed949b1e92d996c728",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
