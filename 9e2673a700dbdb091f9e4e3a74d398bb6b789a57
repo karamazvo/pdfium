@@ -22,6 +22,30 @@
       },
       "revId": "9e2673a700dbdb091f9e4e3a74d398bb6b789a57",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3250a253_c7653a5c",
+        "filename": "testing/embedder_test.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-12T09:25:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7f4e779_a05ddcf8",
+      "range": {
+        "startLine": 97,
+        "startChar": 4,
+        "endLine": 97,
+        "endChar": 12
+      },
+      "revId": "9e2673a700dbdb091f9e4e3a74d398bb6b789a57",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
