@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "31044359_ff18747f",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1633,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-12T21:55:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7534853d_b5cb35cc",
+      "range": {
+        "startLine": 1633,
+        "startChar": 7,
+        "endLine": 1633,
+        "endChar": 32
+      },
+      "revId": "56d90d3e02ad5b5e3ae358ed949b1e92d996c728",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "03cf444f_a9b6b944",
@@ -37,6 +61,24 @@
       "writtenOn": "2026-02-12T21:01:18Z",
       "side": 1,
       "message": "Does this need to be fuzzy matching? Line 1791 doesn\u0027t fuzzy match.",
+      "revId": "56d90d3e02ad5b5e3ae358ed949b1e92d996c728",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "96ab9482_d67f3507",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1821,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-12T21:55:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "03cf444f_a9b6b944",
       "revId": "56d90d3e02ad5b5e3ae358ed949b1e92d996c728",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -64,6 +106,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ddb7c770_03c6b486",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 4359,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-12T21:55:35Z",
+      "side": 1,
+      "message": "It is relative to embedded_images_33.png, but I renamed it.",
+      "parentUuid": "3359f0a7_fc237fff",
+      "range": {
+        "startLine": 4359,
+        "startChar": 64,
+        "endLine": 4359,
+        "endChar": 70
+      },
+      "revId": "56d90d3e02ad5b5e3ae358ed949b1e92d996c728",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7b816761_9bdf955e",
@@ -77,6 +143,30 @@
       "writtenOn": "2026-02-12T21:01:18Z",
       "side": 1,
       "message": "with a new path?",
+      "range": {
+        "startLine": 4962,
+        "startChar": 7,
+        "endLine": 4962,
+        "endChar": 31
+      },
+      "revId": "56d90d3e02ad5b5e3ae358ed949b1e92d996c728",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8f4ff409_43dbe5c6",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 4962,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-12T21:55:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7b816761_9bdf955e",
       "range": {
         "startLine": 4962,
         "startChar": 7,
