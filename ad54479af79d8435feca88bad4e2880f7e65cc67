@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c69c2b2a_12509cfa",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4603647
+      },
+      "writtenOn": "2026-02-12T04:14:34Z",
+      "side": 1,
+      "message": "Hello,\n\nThis is my first PDFium CL. Unfortunately I am not a dry-runner yet, so I could not trigger a test build.\n\nThe purpose of this CL is to make the document language available for embedders.\n\nIt is intended to work in tandem with a change on Chromium to populate the document language in the accessibility tree:\n\nhttps://chromium-review.googlesource.com/c/chromium/src/+/7534929\n\nThank you for your feedback.\n\nBest,\nFelipe",
+      "revId": "ad54479af79d8435feca88bad4e2880f7e65cc67",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
