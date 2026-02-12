@@ -480,9 +480,9 @@ std::string EncodeBase64Png(FPDF_BITMAP bitmap) {
   return EncodeBase64(EncodePng(bitmap));
 }
 
-void CompareBitmapToPngData(FPDF_BITMAP bitmap,
-                            pdfium::span<const uint8_t> png_data,
-                            int max_pixel_per_channel_delta) {
+void CompareBitmapData(FPDF_BITMAP bitmap,
+                       pdfium::span<const uint8_t> png_data,
+                       int max_pixel_per_channel_delta) {
   DecodedPng decoded_png = DecodePngData(png_data);
   ASSERT_GT(decoded_png.width, 0);
   ASSERT_GT(decoded_png.height, 0);
@@ -1032,26 +1032,24 @@ void EmbedderTest::CloseSavedPage(FPDF_PAGE page) {
   saved_page_map_.erase(page_index);
 }
 
-void EmbedderTest::VerifySavedRenderingToPng(
-    FPDF_PAGE page,
-    std::string_view expectation_png_name) {
+void EmbedderTest::VerifySavedRendering(FPDF_PAGE page,
+                                        std::string_view expectation_png_name) {
   ScopedFPDFBitmap bitmap = VerifySavedRenderingCommon(page);
-  CompareBitmapToPng(bitmap.get(), expectation_png_name);
+  CompareBitmap(bitmap.get(), expectation_png_name);
 }
 
-void EmbedderTest::VerifySavedRenderingToPngWithExpectationSuffix(
+void EmbedderTest::VerifySavedRenderingWithExpectationSuffix(
     FPDF_PAGE page,
     std::string_view expectation_png_name) {
   ScopedFPDFBitmap bitmap = VerifySavedRenderingCommon(page);
-  CompareBitmapToPngWithExpectationSuffix(bitmap.get(), expectation_png_name);
+  CompareBitmapWithExpectationSuffix(bitmap.get(), expectation_png_name);
 }
 
-void EmbedderTest::VerifySavedRenderingToPngWithFuzzyExpectationSuffix(
+void EmbedderTest::VerifySavedRenderingWithFuzzyExpectationSuffix(
     FPDF_PAGE page,
     std::string_view expectation_png_name) {
   ScopedFPDFBitmap bitmap = VerifySavedRenderingCommon(page);
-  CompareBitmapToPngWithFuzzyExpectationSuffix(bitmap.get(),
-                                               expectation_png_name);
+  CompareBitmapWithFuzzyExpectationSuffix(bitmap.get(), expectation_png_name);
 }
 
 ScopedFPDFBitmap EmbedderTest::VerifySavedRenderingCommon(FPDF_PAGE page) {
@@ -1060,23 +1058,21 @@ ScopedFPDFBitmap EmbedderTest::VerifySavedRenderingCommon(FPDF_PAGE page) {
   return RenderSavedPageWithFlags(page, FPDF_ANNOT);
 }
 
-void EmbedderTest::VerifySavedDocumentToPng(
-    std::string_view expectation_png_name) {
+void EmbedderTest::VerifySavedDocument(std::string_view expectation_png_name) {
   ScopedFPDFBitmap bitmap = VerifySavedDocumentCommon();
-  CompareBitmapToPng(bitmap.get(), expectation_png_name);
+  CompareBitmap(bitmap.get(), expectation_png_name);
 }
 
-void EmbedderTest::VerifySavedDocumentToPngWithExpectationSuffix(
+void EmbedderTest::VerifySavedDocumentWithExpectationSuffix(
     std::string_view expectation_png_name) {
   ScopedFPDFBitmap bitmap = VerifySavedDocumentCommon();
-  CompareBitmapToPngWithExpectationSuffix(bitmap.get(), expectation_png_name);
+  CompareBitmapWithExpectationSuffix(bitmap.get(), expectation_png_name);
 }
 
-void EmbedderTest::VerifySavedDocumentToPngWithFuzzyExpectationSuffix(
+void EmbedderTest::VerifySavedDocumentWithFuzzyExpectationSuffix(
     std::string_view expectation_png_name) {
   ScopedFPDFBitmap bitmap = VerifySavedDocumentCommon();
-  CompareBitmapToPngWithFuzzyExpectationSuffix(bitmap.get(),
-                                               expectation_png_name);
+  CompareBitmapWithFuzzyExpectationSuffix(bitmap.get(), expectation_png_name);
 }
 
 ScopedFPDFBitmap EmbedderTest::VerifySavedDocumentCommon() {
@@ -1138,23 +1134,23 @@ void EmbedderTest::WriteBitmapToPng(FPDF_BITMAP bitmap,
 }
 
 // static
-void EmbedderTest::CompareBitmapToPng(FPDF_BITMAP bitmap,
-                                      std::string_view expectation_png_name) {
+void EmbedderTest::CompareBitmap(FPDF_BITMAP bitmap,
+                                 std::string_view expectation_png_name) {
   std::string png_path = GetEmbedderTestExpectationPath(expectation_png_name);
   std::vector<uint8_t> png_data = GetFileContents(png_path.c_str());
   ASSERT_FALSE(png_data.empty())
       << "No expectation file matching " << expectation_png_name
       << ", Actual pixels (open in browser):\n"
       << EncodeBase64Png(bitmap);
-  SCOPED_TRACE(testing::Message() << "CompareBitmapToPng() with " << png_path);
-  CompareBitmapToPngData(bitmap, png_data, /*max_pixel_per_channel_delta=*/0);
+  SCOPED_TRACE(testing::Message() << "CompareBitmap() with " << png_path);
+  CompareBitmapData(bitmap, png_data, /*max_pixel_per_channel_delta=*/0);
   if (EmbedderTestEnvironment::GetInstance()->write_pngs()) {
     WriteBitmapToPng(bitmap, png_path);
   }
 }
 
 // static
-void EmbedderTest::CompareBitmapToPngWithExpectationSuffix(
+void EmbedderTest::CompareBitmapWithExpectationSuffix(
     FPDF_BITMAP bitmap,
     std::string_view expectation_png_name,
     int max_pixel_per_channel_delta) {
@@ -1166,10 +1162,9 @@ void EmbedderTest::CompareBitmapToPngWithExpectationSuffix(
     }
 
     SCOPED_TRACE(testing::Message()
-                 << "CompareBitmapToPngWithExpectationSuffix() with "
-                 << png_path);
-    CompareBitmapToPngData(bitmap, GetFileContents(png_path.c_str()),
-                           max_pixel_per_channel_delta);
+                 << "CompareBitmapWithExpectationSuffix() with " << png_path);
+    CompareBitmapData(bitmap, GetFileContents(png_path.c_str()),
+                      max_pixel_per_channel_delta);
     if (EmbedderTestEnvironment::GetInstance()->write_pngs()) {
       WriteBitmapToPng(bitmap, png_path);
     }
@@ -1182,11 +1177,11 @@ void EmbedderTest::CompareBitmapToPngWithExpectationSuffix(
 }
 
 // static
-void EmbedderTest::CompareBitmapToPngWithFuzzyExpectationSuffix(
+void EmbedderTest::CompareBitmapWithFuzzyExpectationSuffix(
     FPDF_BITMAP bitmap,
     std::string_view expectation_png_name) {
-  CompareBitmapToPngWithExpectationSuffix(bitmap, expectation_png_name,
-                                          GetPlatformMaxPixelDelta());
+  CompareBitmapWithExpectationSuffix(bitmap, expectation_png_name,
+                                     GetPlatformMaxPixelDelta());
 }
 
 // static
