@@ -16,6 +16,29 @@
       "message": "Hi guys, started scoping some of these methods, this would be useful for the OpenSavedPage() things, I created a bug report to update a lot of these methods to being Scoped, if we decide to do this, lets try keep it in the same chain.",
       "revId": "7e2e1071bed2561c1e06e64f3f94ff77d4f9e474",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4c44b949_46da50f2",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-12T05:29:51Z",
+      "side": 1,
+      "message": "Unneeded import, will fix after dry. (Perhaps my VS Code auto added it)\n\n\n\n```suggestion\n#include \"core/fxge/dib/fx_dib.h\"\n#include \"fpdfsdk/cpdfsdk_helpers.h\"\n```",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 36
+      },
+      "revId": "7e2e1071bed2561c1e06e64f3f94ff77d4f9e474",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
