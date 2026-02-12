@@ -39,6 +39,30 @@
       },
       "revId": "7e2e1071bed2561c1e06e64f3f94ff77d4f9e474",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aeb2db7e_eb46776d",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-12T07:13:21Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "4c44b949_46da50f2",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 36
+      },
+      "revId": "7e2e1071bed2561c1e06e64f3f94ff77d4f9e474",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
