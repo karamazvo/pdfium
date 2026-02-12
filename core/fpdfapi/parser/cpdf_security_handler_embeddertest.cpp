@@ -49,25 +49,17 @@ class CPDFSecurityHandlerEmbedderTest : public EmbedderTest {
   }
 
   void VerifySavedHelloWorldDocumentWithPassword(const char* password) {
-    ASSERT_TRUE(OpenSavedDocumentWithPassword(password));
-    // TODO(crbug.com/407147676): Remove this after
-    // OpenSavedDocumentWithPassword() is migrated to a Scoped method.
-    {
-      ScopedSavedPage page = LoadScopedSavedPage(0);
-      VerifyHelloWorldPage(page.get());
-    }
-    CloseSavedDocument();
+    ScopedSavedDoc doc = OpenScopedSavedDocumentWithPassword(password);
+    ASSERT_TRUE(doc);
+    ScopedSavedPage page = LoadScopedSavedPage(0);
+    VerifyHelloWorldPage(page.get());
   }
 
   void VerifySavedModifiedHelloWorldDocumentWithPassword(const char* password) {
-    ASSERT_TRUE(OpenSavedDocumentWithPassword(password));
-    // TODO(crbug.com/407147676): Remove this after
-    // OpenSavedDocumentWithPassword() is migrated to a Scoped method.
-    {
-      ScopedSavedPage page = LoadScopedSavedPage(0);
-      VerifyModifiedHelloWorldPage(page.get());
-    }
-    CloseSavedDocument();
+    ScopedSavedDoc doc = OpenScopedSavedDocumentWithPassword(password);
+    ASSERT_TRUE(doc);
+    ScopedSavedPage page = LoadScopedSavedPage(0);
+    VerifyModifiedHelloWorldPage(page.get());
   }
 
   void RemoveTrailerIdFromDocument() {
@@ -179,6 +171,24 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, PasswordAfterGenerateSave) {
   } tests[] = {{"1234", 0xFFFFF2C0}, {"5678", 0xFFFFFFFC}};
 
   for (const auto& test : tests) {
+<<<<<<< PATCH SET (55e3bd7404ad6224f04eae68ceede1074c0d439a Add OpenScopedSavedDocumentWithPassword() method)
+    ScopedSavedDoc doc = OpenScopedSavedDocumentWithPassword(test.password);
+    ASSERT_TRUE(doc);
+    ScopedSavedPage page = LoadScopedSavedPage(0);
+    ASSERT_TRUE(page);
+    VerifySavedRenderingToPngWithExpectationSuffix(page.get(), kBasename);
+    EXPECT_EQ(test.permissions, FPDF_GetDocPermissions(saved_document()));
+||||||| BASE      (6c93d8495628f94607cfff02481e140e7014f190 Update Load/Open SavedPage() calls to use Load/Open ScopedSa)
+    // TODO: Replace with a scoped method.
+    ASSERT_TRUE(OpenSavedDocumentWithPassword(test.password));
+    {
+      ScopedSavedPage page = LoadScopedSavedPage(0);
+      ASSERT_TRUE(page);
+      VerifySavedRenderingToPngWithExpectationSuffix(page.get(), kBasename);
+      EXPECT_EQ(test.permissions, FPDF_GetDocPermissions(saved_document()));
+    }
+    CloseSavedDocument();
+=======
     // TODO(crbug.com/407147676): Replace with a scoped method.
     ASSERT_TRUE(OpenSavedDocumentWithPassword(test.password));
     {
@@ -188,6 +198,7 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, PasswordAfterGenerateSave) {
       EXPECT_EQ(test.permissions, FPDF_GetDocPermissions(saved_document()));
     }
     CloseSavedDocument();
+>>>>>>> BASE      (57576370a07cea111af475f51b192aa4e4f5c6b7 Update Load/Open SavedPage() calls to use Load/Open ScopedSa)
   }
 }
 
