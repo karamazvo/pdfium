@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ba7a26ac_b505e950",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 9
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T12:19:59Z",
+      "side": 1,
+      "message": "Your commit message broke again 😊\nSuggestion: download the branch and start from there when amending and pushing next.",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 4
+      },
+      "revId": "97302c2ef879e9b5f4316fd8760c13722873b324",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
