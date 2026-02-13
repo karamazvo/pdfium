@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a73d1fa6_87992877",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 677,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T12:06:09Z",
+      "side": 1,
+      "message": "You might want to edit the header of CPDF_parser to make it a bool there too.",
+      "range": {
+        "startLine": 677,
+        "startChar": 18,
+        "endLine": 677,
+        "endChar": 42
+      },
+      "revId": "45904355959bba7531881ec258ec79d6e71cdf64",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "23bd4bb4_ee622c96",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 699,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T12:06:09Z",
+      "side": 1,
+      "message": "Where\u0027s the return true?",
+      "revId": "45904355959bba7531881ec258ec79d6e71cdf64",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bdb763ad_98c3981a",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 947,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T12:06:09Z",
+      "side": 1,
+      "message": "This returns a bool, but nothing takes it and detects if this fails.",
+      "range": {
+        "startLine": 947,
+        "startChar": 18,
+        "endLine": 947,
+        "endChar": 44
+      },
+      "revId": "45904355959bba7531881ec258ec79d6e71cdf64",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

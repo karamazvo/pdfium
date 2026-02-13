@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "19b4973a_fc6354fd",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 687,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T12:06:09Z",
+      "side": 1,
+      "message": "clang format/cl format please. If this is not working I can",
+      "range": {
+        "startLine": 687,
+        "startChar": 0,
+        "endLine": 687,
+        "endChar": 6
+      },
+      "revId": "53d4ce261351fa77c5cf36a1af0299b40bbeae34",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
