@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2b516bff_22b21c2b",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-13T22:32:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ffe104c8_06b10223",
+      "revId": "50d6d8066a84518aa2133a14170bc6ea61e71ce4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5aab780e_51689d5b",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-02-13T22:22:17Z",
       "side": 1,
       "message": "Just call VerifySavedDocumentWithExpectationSuffix()?",
+      "revId": "50d6d8066a84518aa2133a14170bc6ea61e71ce4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3be346ac_ec0c3343",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-13T22:32:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5aab780e_51689d5b",
       "revId": "50d6d8066a84518aa2133a14170bc6ea61e71ce4",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
