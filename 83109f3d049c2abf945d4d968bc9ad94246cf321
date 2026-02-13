@@ -72,6 +72,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "09d1bb36_c9819e6c",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 743,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T19:20:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e10f83e3_27e339c7",
+      "range": {
+        "startLine": 743,
+        "startChar": 28,
+        "endLine": 743,
+        "endChar": 40
+      },
+      "revId": "83109f3d049c2abf945d4d968bc9ad94246cf321",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9fb1aaf2_5d42fdd9",
@@ -85,6 +109,30 @@
       "writtenOn": "2026-02-13T19:08:14Z",
       "side": 1,
       "message": "these are now all working pdfs (at least in a universe where this is fixed).",
+      "range": {
+        "startLine": 747,
+        "startChar": 2,
+        "endLine": 747,
+        "endChar": 40
+      },
+      "revId": "83109f3d049c2abf945d4d968bc9ad94246cf321",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dc6b249f_09226645",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 747,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T19:20:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9fb1aaf2_5d42fdd9",
       "range": {
         "startLine": 747,
         "startChar": 2,
@@ -131,6 +179,30 @@
       "writtenOn": "2026-02-13T19:08:14Z",
       "side": 1,
       "message": "and just strike this.",
+      "range": {
+        "startLine": 762,
+        "startChar": 0,
+        "endLine": 765,
+        "endChar": 0
+      },
+      "revId": "83109f3d049c2abf945d4d968bc9ad94246cf321",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6952f809_e7b79f62",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 765,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T19:20:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1f21df06_6ae6ba45",
       "range": {
         "startLine": 762,
         "startChar": 0,
