@@ -45,6 +45,54 @@
       },
       "revId": "92697dcc4783f5c15a2e37865bbe3d22dde536ba",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "be6aaf70_0cb3629a",
+        "filename": "fpdfsdk/fpdf_catalog_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 4603647
+      },
+      "writtenOn": "2026-02-13T05:50:40Z",
+      "side": 1,
+      "message": "Done.\n```\nstd::vector\u003cFPDF_WCHAR\u003e buffer \u003d GetFPDFWideStringBuffer(size);\n```",
+      "parentUuid": "25913835_590c5239",
+      "range": {
+        "startLine": 93,
+        "startChar": 36,
+        "endLine": 93,
+        "endChar": 68
+      },
+      "revId": "92697dcc4783f5c15a2e37865bbe3d22dde536ba",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "436298cd_eb9542fb",
+        "filename": "fpdfsdk/fpdf_catalog_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 4603647
+      },
+      "writtenOn": "2026-02-13T05:50:40Z",
+      "side": 1,
+      "message": "Done, I\u0027ve used `FPDF_WCHAR` on both files.",
+      "parentUuid": "2509c586_ecfef901",
+      "range": {
+        "startLine": 93,
+        "startChar": 14,
+        "endLine": 93,
+        "endChar": 28
+      },
+      "revId": "92697dcc4783f5c15a2e37865bbe3d22dde536ba",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
