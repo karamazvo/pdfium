@@ -37,6 +37,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "ff3bc27b_f57c400e",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 674,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T13:46:49Z",
+      "side": 1,
+      "message": "This function expects an input of a `const std::vector\u003cCrossRefObjData\u003e`\n\nperhaps pass in objects to this?",
+      "range": {
+        "startLine": 674,
+        "startChar": 34,
+        "endLine": 674,
+        "endChar": 35
+      },
+      "revId": "4083f7fdbd09dbf84fe7f33ce6082dbccfa6e085",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0d99c247_35afb7ea",
         "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
         "patchSetId": 11
@@ -53,6 +76,29 @@
         "startChar": 8,
         "endLine": 693,
         "endChar": 14
+      },
+      "revId": "4083f7fdbd09dbf84fe7f33ce6082dbccfa6e085",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "66a67075_39852499",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 943,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T13:46:49Z",
+      "side": 1,
+      "message": "Oh yeah, this is also a return inside a for. This should be resolved too.",
+      "range": {
+        "startLine": 943,
+        "startChar": 13,
+        "endLine": 943,
+        "endChar": 17
       },
       "revId": "4083f7fdbd09dbf84fe7f33ce6082dbccfa6e085",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
