@@ -739,3 +739,28 @@ TEST_F(FPDFPPOEmbedderTest, XFAMoveTest) {
   EXPECT_EQ(GetPageChecksum(document(), 3), target_doc_checksums[0]);
   EXPECT_EQ(GetPageChecksum(document(), 4), target_doc_checksums[4]);
 }
+
+TEST_F(FPDFPPOEmbedderTest, Bug474670216) {
+  // TODO(crbug.com/474670216): Move PDFs from Crashing to Working as they are
+  // fixed.
+  static const char* kWorkingPDFs[] = {};
+  static const char* kCrashingPDFs[] = {
+      "bug_474670216_issue_1.pdf",  "bug_474670216_issue_2.pdf",
+      "bug_474670216_issue_3.pdf",  "bug_474670216_issue_4.pdf",
+      "bug_474670216_issue_5.pdf",  "bug_474670216_issue_6.pdf",
+      "bug_474670216_issue_7.pdf",  "bug_474670216_issue_8.pdf",
+      "bug_474670216_issue_9.pdf",  "bug_474670216_issue_10.pdf",
+      "bug_474670216_issue_11.pdf", "bug_474670216_issue_12.pdf",
+      "bug_474670216_issue_13.pdf", "bug_474670216_issue_14.pdf",
+      "bug_474670216_issue_15.pdf", "bug_474670216_issue_16.pdf",
+      "bug_474670216_issue_17.pdf"};
+
+  for (const char* filename : kWorkingPDFs) {
+    ASSERT_TRUE(OpenDocument(filename));
+    ASSERT_TRUE(document());
+  }
+
+  for (const char* filename : kCrashingPDFs) {
+    ASSERT_DEATH(OpenDocument(filename), "");
+  }
+}
