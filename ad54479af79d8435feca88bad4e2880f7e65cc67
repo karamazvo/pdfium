@@ -37,6 +37,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "2e0fac4d_4b0cd5ab",
+        "filename": "fpdfsdk/fpdf_catalog.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 4603647
+      },
+      "writtenOn": "2026-02-13T01:27:59Z",
+      "side": 1,
+      "message": "Replaced with\n```c\n  return Utf16EncodeMaybeCopyAndReturnLength(\n      catalog-\u003eGetUnicodeTextFor(\"Lang\"),\n      UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));\n```\n\nUnit test updated accordingly.",
+      "parentUuid": "dacfb5d7_2fc33a8b",
+      "revId": "ad54479af79d8435feca88bad4e2880f7e65cc67",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "9c6e7656_0a97de2b",
         "filename": "public/fpdf_catalog.h",
         "patchSetId": 1
@@ -54,6 +72,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "0020ac47_981f8e2f",
+        "filename": "public/fpdf_catalog.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 4603647
+      },
+      "writtenOn": "2026-02-13T01:27:59Z",
+      "side": 1,
+      "message": "Reordered. Now `FPDFCatalog_GetLanguage` comes before `FPDFCatalog_SetLanguage`.",
+      "parentUuid": "9c6e7656_0a97de2b",
+      "revId": "ad54479af79d8435feca88bad4e2880f7e65cc67",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "dad4a9ed_2d19e1d3",
         "filename": "public/fpdf_catalog.h",
         "patchSetId": 1
@@ -65,6 +101,30 @@
       "writtenOn": "2026-02-12T08:17:13Z",
       "side": 1,
       "message": "How about FPDF_WCHAR here?",
+      "range": {
+        "startLine": 57,
+        "startChar": 24,
+        "endLine": 57,
+        "endChar": 28
+      },
+      "revId": "ad54479af79d8435feca88bad4e2880f7e65cc67",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "702d3876_29d2006c",
+        "filename": "public/fpdf_catalog.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 4603647
+      },
+      "writtenOn": "2026-02-13T01:27:59Z",
+      "side": 1,
+      "message": "Replaced with\n```c\nFPDF_EXPORT unsigned long FPDF_CALLCONV\nFPDFCatalog_GetLanguage(FPDF_DOCUMENT document,\n                        FPDF_WCHAR* buffer,\n                        unsigned long buflen)\n```",
+      "parentUuid": "dad4a9ed_2d19e1d3",
       "range": {
         "startLine": 57,
         "startChar": 24,
