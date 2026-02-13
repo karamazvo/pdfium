@@ -155,7 +155,7 @@ class CPDF_Parser {
       std::vector<FX_FILESIZE>& xref_list,
       std::vector<FX_FILESIZE>& xref_stream_list);
   bool LoadCrossRefStream(FX_FILESIZE* pos, bool is_main_xref);
-  void ProcessCrossRefStreamEntry(pdfium::span<const uint8_t> entry_span,
+  bool ProcessCrossRefStreamEntry(pdfium::span<const uint8_t> entry_span,
                                   pdfium::span<const uint32_t> field_widths,
                                   uint32_t obj_num);
   RetainPtr<CPDF_Dictionary> LoadTrailer();
@@ -182,7 +182,7 @@ class CPDF_Parser {
       uint32_t count,
       std::vector<CrossRefObjData>* out_objects);
   bool ParseCrossRefTable(std::vector<CrossRefObjData>* out_objects);
-  void MergeCrossRefObjectsData(const std::vector<CrossRefObjData>& objects);
+  bool MergeCrossRefObjectsData(const std::vector<CrossRefObjData>& objects);
 
   bool InitSyntaxParser(RetainPtr<CPDF_ReadValidator> validator);
   bool ParseFileVersion();
