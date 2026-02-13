@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ffe104c8_06b10223",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-13T22:22:17Z",
+      "side": 1,
+      "message": "It\u0027ll still be good to check the in-memory rendering and make sure that\u0027s correct. So move line 372-373 here?",
+      "revId": "50d6d8066a84518aa2133a14170bc6ea61e71ce4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5aab780e_51689d5b",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-13T22:22:17Z",
+      "side": 1,
+      "message": "Just call VerifySavedDocumentWithExpectationSuffix()?",
+      "revId": "50d6d8066a84518aa2133a14170bc6ea61e71ce4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
