@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "25d2bbf2_501d46d1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 11
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T13:03:52Z",
+      "side": 1,
+      "message": "```\nstdout:\n../../core/fpdfapi/parser/cpdf_parser.cpp:674:35: error: too few arguments to function call, single argument \u0027objects\u0027 was not specified\n  674 |   return MergeCrossRefObjectsData();\n      |          ~~~~~~~~~~~~~~~~~~~~~~~~ ^\n../../core/fpdfapi/parser/cpdf_parser.h:185:8: note: \u0027MergeCrossRefObjectsData\u0027 declared here\n  185 |   bool MergeCrossRefObjectsData(const std::vector\u003cCrossRefObjData\u003e\u0026 objects);\n      |        ^                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n../../core/fpdfapi/parser/cpdf_parser.cpp:939:11: error: invalid argument type \u0027void\u0027 to unary expression\n  939 |       if (!ProcessCrossRefStreamEntry(seg_span.subspan(i * total_width, total_width),\n      |           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n  940 |                                  field_widths, obj_num)){\n      |                                  ~~~~~~~~~~~~~~~~~~~~~~\n../../core/fpdfapi/parser/cpdf_parser.cpp:951:19: error: return type of out-of-line definition of \u0027CPDF_Parser::ProcessCrossRefStreamEntry\u0027 differs from that in the declaration\n  951 | bool CPDF_Parser::ProcessCrossRefStreamEntry(\n      | ~~~~              ^\n../../core/fpdfapi/parser/cpdf_parser.h:158:8: note: previous declaration is here\n  158 |   void ProcessCrossRefStreamEntry(pdfium::span\u003cconst uint8_t\u003e entry_span,\n      |   ~~~~ ^\n3 errors generated.\n```\n\nErrors from the failing check if you want to try debug it yourself",
+      "revId": "4083f7fdbd09dbf84fe7f33ce6082dbccfa6e085",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0d99c247_35afb7ea",
