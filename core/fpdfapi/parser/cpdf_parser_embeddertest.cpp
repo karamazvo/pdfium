@@ -84,5 +84,5 @@ TEST_F(CPDFParserEmbedderTest, InvalidDictionaryKeys) {
 TEST_F(CPDFParserEmbedderTest, Bug457855936) {
   // TODO(crbug.com/457855936): After this is fixed, change to ASSERT_FALSE as
   // it should now fail gracefully.
-  ASSERT_DEATH(OpenDocument("bug_457855936.pdf"), "");
+  ASSERT_FALSE(OpenDocument("bug_457855936.pdf"), "");
 }
