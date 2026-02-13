@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c0327ac7_dd38cea1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-13T23:05:34Z",
+      "side": 1,
+      "message": "Or maybe we should just merge fpdf_catalog_unittest.cpp into fpdf_catalog_embeddertest.cpp and have all the tests in one place.",
+      "revId": "36bd7c60b3bc390886060965fbed6e4c39c8d104",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
