@@ -671,8 +671,10 @@ bool CPDF_Parser::LoadCrossRefTable(FX_FILESIZE pos, bool skip) {
   if (!ParseCrossRefTable(skip ? nullptr : &objects)) {
     return false;
   }
-
-  MergeCrossRefObjectsData(objects);
+  bool success = MergeCrossRefObjectsData(objects);
+  if (!success){
+    return false;
+  }
   return true;
 }
 
@@ -686,9 +688,12 @@ void CPDF_Parser::MergeCrossRefObjectsData(
         }
         break;
       case ObjectType::kNormal:
-        cross_ref_table_->AddNormal(obj.obj_num, obj.info.gennum,
+      bool success = cross_ref_table_->AddNormal(obj.obj_num, obj.info.gennum,
                                     obj.info.is_object_stream_flag,
                                     obj.info.pos);
+        if (!success){
+          return false;
+        }
         break;
       case ObjectType::kCompressed:
         cross_ref_table_->AddCompressed(obj.obj_num, obj.info.archive.obj_num,
@@ -809,8 +814,11 @@ bool CPDF_Parser::RebuildCrossRef() {
       }
 
       if (obj_num <= kMaxObjectNumber) {
-        cross_ref_table->AddNormal(obj_num, gen_num, /*is_object_stream=*/false,
+        bool success = cross_ref_table->AddNormal(obj_num, gen_num, /*is_object_stream=*/false,
                                    obj_pos);
+        if (!success){
+          return false;
+        }
         const auto object_stream =
             CPDF_ObjectStream::Create(std::move(pStream));
         if (object_stream) {
@@ -977,8 +985,11 @@ void CPDF_Parser::ProcessCrossRefStreamEntry(
     const uint32_t gen_num = GetThirdXRefStreamEntry(entry_span, field_widths);
     if (pdfium::IsValueInRangeForNumericType<FX_FILESIZE>(offset) &&
         pdfium::IsValueInRangeForNumericType<uint16_t>(gen_num)) {
-      cross_ref_table_->AddNormal(obj_num, gen_num, /*is_object_stream=*/false,
+          bool success = cross_ref_table_->AddNormal(obj_num, gen_num, /*is_object_stream=*/false,
                                   offset);
+          if (!success){
+            return false;
+          }
     }
     return;
   }
