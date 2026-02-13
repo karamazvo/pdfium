@@ -185,6 +185,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "ba563a3a_2b3f4117",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T12:38:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7551c40_1fa70c28",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 6
+      },
+      "revId": "2ce1910bc29f8b9424d366084674076efc14c45b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "ee20dea8_fdcaa244",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 2
@@ -671,6 +695,30 @@
       "writtenOn": "2026-02-13T11:16:53Z",
       "side": 1,
       "message": "Same here, you don\u0027t need the local variable, you can put it straight in to the if.",
+      "range": {
+        "startLine": 817,
+        "startChar": 13,
+        "endLine": 817,
+        "endChar": 20
+      },
+      "revId": "2ce1910bc29f8b9424d366084674076efc14c45b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "953cf747_26bc0af8",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 817,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T12:38:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4f95d7e5_c5250bba",
       "range": {
         "startLine": 817,
         "startChar": 13,

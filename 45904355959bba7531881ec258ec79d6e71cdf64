@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5c1aa3b7_5b57fb56",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 677,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T12:38:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a73d1fa6_87992877",
+      "range": {
+        "startLine": 677,
+        "startChar": 18,
+        "endLine": 677,
+        "endChar": 42
+      },
+      "revId": "45904355959bba7531881ec258ec79d6e71cdf64",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "23bd4bb4_ee622c96",
@@ -41,6 +65,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0a3f74cd_a7aa27fa",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 699,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T12:38:14Z",
+      "side": 1,
+      "message": "Done, moved to new thread.",
+      "parentUuid": "23bd4bb4_ee622c96",
+      "revId": "45904355959bba7531881ec258ec79d6e71cdf64",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bdb763ad_98c3981a",
@@ -54,6 +96,30 @@
       "writtenOn": "2026-02-13T12:06:09Z",
       "side": 1,
       "message": "This returns a bool, but nothing takes it and detects if this fails.",
+      "range": {
+        "startLine": 947,
+        "startChar": 18,
+        "endLine": 947,
+        "endChar": 44
+      },
+      "revId": "45904355959bba7531881ec258ec79d6e71cdf64",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b2f472a4_6043698a",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 947,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T12:38:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bdb763ad_98c3981a",
       "range": {
         "startLine": 947,
         "startChar": 18,

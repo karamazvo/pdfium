@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0d99c247_35afb7ea",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 693,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T12:38:14Z",
+      "side": 1,
+      "message": "so... this returns true for each object? And so it only ever executes object 1? This is an issue, can you fix it.",
+      "range": {
+        "startLine": 693,
+        "startChar": 8,
+        "endLine": 693,
+        "endChar": 14
+      },
+      "revId": "4083f7fdbd09dbf84fe7f33ce6082dbccfa6e085",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "37c766da_7f95f18a",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 963,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T12:38:14Z",
+      "side": 1,
+      "message": "This should be a return false; since it used to be a void earlier, and this is a failing condition.",
+      "range": {
+        "startLine": 963,
+        "startChar": 6,
+        "endLine": 963,
+        "endChar": 12
+      },
+      "revId": "4083f7fdbd09dbf84fe7f33ce6082dbccfa6e085",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ea573fcc_4c4920db",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 978,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T12:38:14Z",
+      "side": 1,
+      "message": "return true;",
+      "range": {
+        "startLine": 978,
+        "startChar": 4,
+        "endLine": 978,
+        "endChar": 10
+      },
+      "revId": "4083f7fdbd09dbf84fe7f33ce6082dbccfa6e085",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d0c434d7_b12a2b03",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 992,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T12:38:14Z",
+      "side": 1,
+      "message": "return true;",
+      "range": {
+        "startLine": 992,
+        "startChar": 4,
+        "endLine": 992,
+        "endChar": 10
+      },
+      "revId": "4083f7fdbd09dbf84fe7f33ce6082dbccfa6e085",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "df8cc5b2_39892902",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 999,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T12:38:14Z",
+      "side": 1,
+      "message": "return false;",
+      "range": {
+        "startLine": 999,
+        "startChar": 4,
+        "endLine": 999,
+        "endChar": 10
+      },
+      "revId": "4083f7fdbd09dbf84fe7f33ce6082dbccfa6e085",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b921b52c_82833a27",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 1004,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T12:38:14Z",
+      "side": 1,
+      "message": "With, I think a final return true; here.",
+      "range": {
+        "startLine": 1004,
+        "startChar": 78,
+        "endLine": 1004,
+        "endChar": 79
+      },
+      "revId": "4083f7fdbd09dbf84fe7f33ce6082dbccfa6e085",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "164042c7_c677da9e",
+        "filename": "core/fpdfapi/parser/cpdf_parser.h",
+        "patchSetId": 11
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T12:38:14Z",
+      "side": 1,
+      "message": "bool.",
+      "range": {
+        "startLine": 158,
+        "startChar": 0,
+        "endLine": 158,
+        "endChar": 2
+      },
+      "revId": "4083f7fdbd09dbf84fe7f33ce6082dbccfa6e085",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
