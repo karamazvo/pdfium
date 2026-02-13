@@ -388,8 +388,7 @@ TEST_F(FPDFSaveWithFontSubsetEmbedderTest, SaveWithSubsetWithNewText) {
   // font.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, FPDF_SUBSET_NEW_FONTS));
   EXPECT_THAT(GetString(), StartsWith("%PDF-1.7\r\n"));
-  // TODO(crbug.com/476127152): File size increase should be smaller.
-  EXPECT_EQ(5001u, GetString().size());
+  EXPECT_EQ(4481u, GetString().size());
 
   // Verify the text is visible.
   ScopedSavedDoc saved_doc = OpenScopedSavedDocument();
