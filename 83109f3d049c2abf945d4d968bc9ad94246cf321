@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "5fd8aca8_863e9894",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 743,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T19:13:47Z",
+      "side": 1,
+      "message": "@tsepez@chromium.org Issue is, if this is is disabled, how can you verify if just one of them is solved, without re enabling it?\n\nI believe that the issues were different across all of these PDFs.\n\nMaybe have all tests as separate so that we can enable and disable as we need?",
+      "parentUuid": "633cade1_444223cf",
+      "range": {
+        "startLine": 743,
+        "startChar": 28,
+        "endLine": 743,
+        "endChar": 40
+      },
+      "revId": "83109f3d049c2abf945d4d968bc9ad94246cf321",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "9fb1aaf2_5d42fdd9",
         "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
         "patchSetId": 2
