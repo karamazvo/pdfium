@@ -50,6 +50,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e10f83e3_27e339c7",
+        "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 743,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-13T19:15:15Z",
+      "side": 1,
+      "message": "yep. Separate.",
+      "parentUuid": "5fd8aca8_863e9894",
+      "range": {
+        "startLine": 743,
+        "startChar": 28,
+        "endLine": 743,
+        "endChar": 40
+      },
+      "revId": "83109f3d049c2abf945d4d968bc9ad94246cf321",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "9fb1aaf2_5d42fdd9",
         "filename": "fpdfsdk/fpdf_ppo_embeddertest.cpp",
         "patchSetId": 2
