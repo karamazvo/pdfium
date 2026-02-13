@@ -18,6 +18,7 @@
 #include "core/fxcrt/widestring.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/cpp/fpdf_scopers.h"
+#include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 class PDFCatalogTest : public TestWithPageModule {
@@ -105,4 +106,11 @@ TEST_F(PDFCatalogTest, GetLanguage) {
   std::vector<FPDF_WCHAR> buffer(size / sizeof(FPDF_WCHAR));
   EXPECT_EQ(size, FPDFCatalog_GetLanguage(doc(), buffer.data(), size));
   EXPECT_EQ(L"en-US", WideString::FromUTF16LE(pdfium::as_byte_span(buffer)));
+}
+
+TEST_F(PDFCatalogTest, SetLanguageInvalidDocument) {
+  // Fails if there is no catalog.
+  ASSERT_FALSE(test_doc()->GetRoot());
+  ScopedFPDFWideString en_us_str = GetFPDFWideString(L"en-US");
+  EXPECT_FALSE(FPDFCatalog_SetLanguage(doc(), en_us_str.get()));
 }
