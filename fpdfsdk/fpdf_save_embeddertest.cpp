@@ -369,8 +369,12 @@ TEST_F(FPDFSaveWithFontSubsetEmbedderTest, SaveWithoutSubsetWithNewText) {
   EXPECT_EQ(5001u, GetString().size());
 
   // Verify the text is visible.
-  ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
-  CompareBitmapWithExpectationSuffix(bitmap.get(), kSaveNewTextFilename);
+  ScopedSavedDoc saved_doc = OpenScopedSavedDocument();
+  ASSERT_TRUE(saved_doc);
+  ScopedSavedPage saved_page = LoadScopedSavedPage(0);
+  ASSERT_TRUE(saved_page);
+  VerifySavedRenderingWithExpectationSuffix(saved_page.get(),
+                                            kSaveNewTextFilename);
 }
 
 TEST_F(FPDFSaveWithFontSubsetEmbedderTest, SaveWithSubsetWithNewText) {
@@ -388,6 +392,10 @@ TEST_F(FPDFSaveWithFontSubsetEmbedderTest, SaveWithSubsetWithNewText) {
   EXPECT_EQ(5001u, GetString().size());
 
   // Verify the text is visible.
-  ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
-  CompareBitmapWithExpectationSuffix(bitmap.get(), kSaveNewTextFilename);
+  ScopedSavedDoc saved_doc = OpenScopedSavedDocument();
+  ASSERT_TRUE(saved_doc);
+  ScopedSavedPage saved_page = LoadScopedSavedPage(0);
+  ASSERT_TRUE(saved_page);
+  VerifySavedRenderingWithExpectationSuffix(saved_page.get(),
+                                            kSaveNewTextFilename);
 }
