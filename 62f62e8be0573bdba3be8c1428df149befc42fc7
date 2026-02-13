@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d50d0941_261abec4",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter_embeddertest.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-13T23:05:45Z",
+      "side": 1,
+      "message": "PDFium has all 3 ways of testing:\n\n1) Only fpdfsdk/ embedder tests, but they cheat and cast to CPDF objects.\n2) Separate fpdfsdk/ embedder tests and core/ embedder tests.\n3) Separate fpdfsdk/ embedder tests and core/ unit tests.\n\nIf it\u0027s easier to group everything together, maybe just do (1)?",
+      "parentUuid": "33411667_95545d77",
+      "revId": "62f62e8be0573bdba3be8c1428df149befc42fc7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0fb590fa_288de02e",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-02-13T21:41:18Z",
       "side": 1,
       "message": "Is there a better way to do these new object numbers?",
+      "revId": "62f62e8be0573bdba3be8c1428df149befc42fc7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fbe196f0_7a8dbd4d",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter_embeddertest.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-13T23:05:45Z",
+      "side": 1,
+      "message": "std::iota()?",
+      "parentUuid": "0fb590fa_288de02e",
       "revId": "62f62e8be0573bdba3be8c1428df149befc42fc7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
