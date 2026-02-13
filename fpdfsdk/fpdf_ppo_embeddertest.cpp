@@ -739,3 +739,90 @@ TEST_F(FPDFPPOEmbedderTest, XFAMoveTest) {
   EXPECT_EQ(GetPageChecksum(document(), 3), target_doc_checksums[0]);
   EXPECT_EQ(GetPageChecksum(document(), 4), target_doc_checksums[4]);
 }
+
+// TODO(crbug.com/474670216): Re-enable these tests once the bug for each issue
+// is fixed.
+TEST_F(FPDFPPOEmbedderTest, DISABLED_Bug474670216_Issue1) {
+  ASSERT_TRUE(OpenDocument("bug_474670216_issue_1.pdf"));
+  ASSERT_TRUE(document());
+}
+
+TEST_F(FPDFPPOEmbedderTest, DISABLED_Bug474670216_Issue2) {
+  ASSERT_TRUE(OpenDocument("bug_474670216_issue_2.pdf"));
+  ASSERT_TRUE(document());
+}
+
+TEST_F(FPDFPPOEmbedderTest, DISABLED_Bug474670216_Issue3) {
+  ASSERT_TRUE(OpenDocument("bug_474670216_issue_3.pdf"));
+  ASSERT_TRUE(document());
+}
+
+TEST_F(FPDFPPOEmbedderTest, DISABLED_Bug474670216_Issue4) {
+  ASSERT_TRUE(OpenDocument("bug_474670216_issue_4.pdf"));
+  ASSERT_TRUE(document());
+}
+
+TEST_F(FPDFPPOEmbedderTest, DISABLED_Bug474670216_Issue5) {
+  ASSERT_TRUE(OpenDocument("bug_474670216_issue_5.pdf"));
+  ASSERT_TRUE(document());
+}
+
+TEST_F(FPDFPPOEmbedderTest, DISABLED_Bug474670216_Issue6) {
+  ASSERT_TRUE(OpenDocument("bug_474670216_issue_6.pdf"));
+  ASSERT_TRUE(document());
+}
+
+TEST_F(FPDFPPOEmbedderTest, DISABLED_Bug474670216_Issue7) {
+  ASSERT_TRUE(OpenDocument("bug_474670216_issue_7.pdf"));
+  ASSERT_TRUE(document());
+}
+
+TEST_F(FPDFPPOEmbedderTest, DISABLED_Bug474670216_Issue8) {
+  ASSERT_TRUE(OpenDocument("bug_474670216_issue_8.pdf"));
+  ASSERT_TRUE(document());
+}
+
+TEST_F(FPDFPPOEmbedderTest, DISABLED_Bug474670216_Issue9) {
+  ASSERT_TRUE(OpenDocument("bug_474670216_issue_9.pdf"));
+  ASSERT_TRUE(document());
+}
+
+TEST_F(FPDFPPOEmbedderTest, DISABLED_Bug474670216_Issue10) {
+  ASSERT_TRUE(OpenDocument("bug_474670216_issue_10.pdf"));
+  ASSERT_TRUE(document());
+}
+
+TEST_F(FPDFPPOEmbedderTest, DISABLED_Bug474670216_Issue11) {
+  ASSERT_TRUE(OpenDocument("bug_474670216_issue_11.pdf"));
+  ASSERT_TRUE(document());
+}
+
+TEST_F(FPDFPPOEmbedderTest, DISABLED_Bug474670216_Issue12) {
+  ASSERT_TRUE(OpenDocument("bug_474670216_issue_12.pdf"));
+  ASSERT_TRUE(document());
+}
+
+TEST_F(FPDFPPOEmbedderTest, DISABLED_Bug474670216_Issue13) {
+  ASSERT_TRUE(OpenDocument("bug_474670216_issue_13.pdf"));
+  ASSERT_TRUE(document());
+}
+
+TEST_F(FPDFPPOEmbedderTest, DISABLED_Bug474670216_Issue14) {
+  ASSERT_TRUE(OpenDocument("bug_474670216_issue_14.pdf"));
+  ASSERT_TRUE(document());
+}
+
+TEST_F(FPDFPPOEmbedderTest, DISABLED_Bug474670216_Issue15) {
+  ASSERT_TRUE(OpenDocument("bug_474670216_issue_15.pdf"));
+  ASSERT_TRUE(document());
+}
+
+TEST_F(FPDFPPOEmbedderTest, DISABLED_Bug474670216_Issue16) {
+  ASSERT_TRUE(OpenDocument("bug_474670216_issue_16.pdf"));
+  ASSERT_TRUE(document());
+}
+
+TEST_F(FPDFPPOEmbedderTest, DISABLED_Bug474670216_Issue17) {
+  ASSERT_TRUE(OpenDocument("bug_474670216_issue_17.pdf"));
+  ASSERT_TRUE(document());
+}
