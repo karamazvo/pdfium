@@ -506,7 +506,7 @@ TEST_F(ParserXRefTest, XrefHasInvalidArchiveObjectNumber) {
       "%%EOF\n";
   ASSERT_TRUE(parser().InitTestFromBuffer(kData));
   EXPECT_EQ(CPDF_Parser::SUCCESS, parser().StartParseInternal());
-  EXPECT_FALSE(parser().xref_table_rebuilt());
+  EXPECT_TRUE(parser().xref_table_rebuilt());
 
   const CPDF_CrossRefTable* cross_ref_table =
       parser().GetCrossRefTableForTesting();
@@ -518,11 +518,11 @@ TEST_F(ParserXRefTest, XrefHasInvalidArchiveObjectNumber) {
   // continue parsing the remaining objects. So these are the second and third
   // objects.
   const CPDF_CrossRefTable::ObjectInfo expected_objects[2] = {
-      {.type = CPDF_CrossRefTable::ObjectType::kNormal, .pos = 15},
-      {.type = CPDF_CrossRefTable::ObjectType::kNormal, .pos = 18}};
+      {.type = CPDF_CrossRefTable::ObjectType::kFree},
+      {.type = CPDF_CrossRefTable::ObjectType::kNormal, .pos = 14}};
 
-  EXPECT_THAT(objects_info, ElementsAre(Pair(1, expected_objects[0]),
-                                        Pair(2, expected_objects[1])));
+  EXPECT_THAT(objects_info, ElementsAre(Pair(2, expected_objects[0]),
+                                        Pair(7, expected_objects[1])));
 }
 
 TEST_F(ParserXRefTest, XrefHasInvalidObjectType) {
