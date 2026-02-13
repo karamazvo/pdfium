@@ -60,21 +60,24 @@ void CPDF_CrossRefTable::AddCompressed(uint32_t obj_num,
   objects_info_[archive_obj_num].is_object_stream_flag = true;
 }
 
-void CPDF_CrossRefTable::AddNormal(uint32_t obj_num,
+bool CPDF_CrossRefTable::AddNormal(uint32_t obj_num,
                                    uint16_t gen_num,
                                    bool is_object_stream,
                                    FX_FILESIZE pos) {
-  CHECK_LE(obj_num, CPDF_Parser::kMaxObjectNumber);
-
-  auto& info = objects_info_[obj_num];
+  if (obj_num > CPDF_Parser::kMaxObjectNumber) {
+    return false;
+  } else{
+    auto& info = objects_info_[obj_num];
   if (info.gennum > gen_num) {
-    return;
+    return false;
   }
 
   info.type = ObjectType::kNormal;
   info.is_object_stream_flag |= is_object_stream;
   info.gennum = gen_num;
   info.pos = pos;
+  return true;
+  }  
 }
 
 void CPDF_CrossRefTable::SetFree(uint32_t obj_num, uint16_t gen_num) {
