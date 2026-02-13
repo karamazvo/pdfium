@@ -53,6 +53,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cdfaeee8_f130e4c2",
+        "filename": "fpdfsdk/fpdf_catalog.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-13T01:43:22Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "2e0fac4d_4b0cd5ab",
+      "revId": "ad54479af79d8435feca88bad4e2880f7e65cc67",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9c6e7656_0a97de2b",
@@ -84,6 +102,24 @@
       "side": 1,
       "message": "Reordered. Now `FPDFCatalog_GetLanguage` comes before `FPDFCatalog_SetLanguage`.",
       "parentUuid": "9c6e7656_0a97de2b",
+      "revId": "ad54479af79d8435feca88bad4e2880f7e65cc67",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "39cce84b_764c6871",
+        "filename": "public/fpdf_catalog.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-13T01:43:22Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "0020ac47_981f8e2f",
       "revId": "ad54479af79d8435feca88bad4e2880f7e65cc67",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -125,6 +161,30 @@
       "side": 1,
       "message": "Replaced with\n```c\nFPDF_EXPORT unsigned long FPDF_CALLCONV\nFPDFCatalog_GetLanguage(FPDF_DOCUMENT document,\n                        FPDF_WCHAR* buffer,\n                        unsigned long buflen)\n```",
       "parentUuid": "dad4a9ed_2d19e1d3",
+      "range": {
+        "startLine": 57,
+        "startChar": 24,
+        "endLine": 57,
+        "endChar": 28
+      },
+      "revId": "ad54479af79d8435feca88bad4e2880f7e65cc67",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3674f948_9b1b2477",
+        "filename": "public/fpdf_catalog.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-13T01:43:22Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "702d3876_29d2006c",
       "range": {
         "startLine": 57,
         "startChar": 24,

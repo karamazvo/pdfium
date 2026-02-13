@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2509c586_ecfef901",
+        "filename": "fpdfsdk/fpdf_catalog_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-13T01:43:22Z",
+      "side": 1,
+      "message": "Here and in fpdf_catalog_unittest.cpp, how about using FPDF_WCHAR as the type?",
+      "range": {
+        "startLine": 93,
+        "startChar": 14,
+        "endLine": 93,
+        "endChar": 28
+      },
+      "revId": "92697dcc4783f5c15a2e37865bbe3d22dde536ba",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "25913835_590c5239",
+        "filename": "fpdfsdk/fpdf_catalog_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-13T01:43:22Z",
+      "side": 1,
+      "message": "Use GetFPDFWideStringBuffer() and let it do the calculation.",
+      "range": {
+        "startLine": 93,
+        "startChar": 36,
+        "endLine": 93,
+        "endChar": 68
+      },
+      "revId": "92697dcc4783f5c15a2e37865bbe3d22dde536ba",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
