@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "95c825fa_ae627804",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T12:08:19Z",
+      "side": 1,
+      "message": "Note: also add yourself to AUTHORS.",
+      "revId": "0dd4580a0a30e91e96563c6f81184dd518f5c116",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
