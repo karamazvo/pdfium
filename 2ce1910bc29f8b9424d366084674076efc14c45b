@@ -87,6 +87,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "5a62cc76_ab876261",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T11:21:28Z",
+      "side": 1,
+      "message": "`Bug: 457855936` to be more exact if you needed help finding it.",
+      "parentUuid": "08134bfb_039bc4eb",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 6
+      },
+      "revId": "2ce1910bc29f8b9424d366084674076efc14c45b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "ee20dea8_fdcaa244",
