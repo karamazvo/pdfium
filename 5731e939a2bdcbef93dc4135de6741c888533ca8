@@ -16,6 +16,29 @@
       "message": "Git cl format command is not working right now, I will reformat code using clang.",
       "revId": "5731e939a2bdcbef93dc4135de6741c888533ca8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a2cadb06_a3b713da",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 992,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-13T16:58:53Z",
+      "side": 1,
+      "message": "just:\n\n`return cross_ref_table_-\u003eAddNormal(...)` maybe?\n\nThe if statement is just doing a \n\n\"If false, return false\".",
+      "range": {
+        "startLine": 992,
+        "startChar": 11,
+        "endLine": 992,
+        "endChar": 15
+      },
+      "revId": "5731e939a2bdcbef93dc4135de6741c888533ca8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
