@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3d51e580_7da3d6e2",
+        "filename": "xfa/fxfa/layout/cxfa_contentlayoutprocessor.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1745,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-14T14:33:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "68866eda_3b12a17e",
+      "range": {
+        "startLine": 1745,
+        "startChar": 16,
+        "endLine": 1745,
+        "endChar": 28
+      },
+      "revId": "1158208bf646ce3c593774b48d6f4b7e9fbec619",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "aee7a959_b59fe575",
@@ -61,6 +85,30 @@
       "side": 1,
       "message": "Update: realized they are called \"Ternaries\" not \"Turnips\".",
       "parentUuid": "aee7a959_b59fe575",
+      "range": {
+        "startLine": 4144,
+        "startChar": 7,
+        "endLine": 4144,
+        "endChar": 19
+      },
+      "revId": "1158208bf646ce3c593774b48d6f4b7e9fbec619",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "22b98be8_e5f77c15",
+        "filename": "xfa/fxfa/parser/cxfa_node.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 4144,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-14T14:33:34Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "47549834_d8090e72",
       "range": {
         "startLine": 4144,
         "startChar": 7,
