@@ -1742,8 +1742,10 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
           break;
         case Stage::kBreakBefore: {
           for (auto& item : array_keep_items_) {
-            layout_item_->RemoveChild(item);
-            calculated_size.height -= item->s_size_.height;
+            if (layout_item_ && item) {
+              layout_item_->RemoveChild(item);
+              calculated_size.height -= item->s_size_.height;
+            }
           }
 
           if (!bUseBreakControl || !view_layout_processor_) {
