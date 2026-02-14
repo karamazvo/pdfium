@@ -359,10 +359,45 @@ RetainPtr<CFX_Face> CFX_Face::New(CFX_FontMgr* font_mgr,
   return face;
 }
 
-#if defined(PDF_ENABLE_XFA) || BUILDFLAG(IS_ANDROID)
-RetainPtr<CFX_Face> CFX_Face::NewFromSpanStream(
+#if BUILDFLAG(IS_ANDROID)
+RetainPtr<CFX_Face> CFX_Face::OpenFromFilePath(CFX_FontMgr* font_mgr,
+                                               ByteStringView path,
+                                               int32_t face_index) {
+  if (path.IsEmpty()) {
+    return nullptr;
+  }
+
+  if (face_index < 0) {
+    return nullptr;
+  }
+
+  FXFT_LibraryRec* library = font_mgr->GetFTLibrary();
+  if (!library) {
+    return nullptr;
+  }
+
+  FT_Open_Args args;
+  args.flags = FT_OPEN_PATHNAME;
+  args.pathname = const_cast<FT_String*>(path.unterminated_c_str());
+
+  FXFT_FaceRec* face_rec = nullptr;
+  if (FT_Open_Face(library, &args, pdfium::checked_cast<FT_Long>(face_index),
+                   &face_rec) != 0) {
+    return nullptr;
+  }
+
+  // Private ctor.
+  RetainPtr<CFX_Face> face =
+      pdfium::WrapRetain(new CFX_Face(face_rec, nullptr));
+  face->SetPixelSize(0, 64);
+  return face;
+}
+#endif
+
+#if defined(PDF_ENABLE_XFA)
+RetainPtr<CFX_Face> CFX_Face::NewFromVectorStream(
     CFX_FontMgr* font_mgr,
-    const RetainPtr<CFX_ReadOnlySpanStream>& font_stream,
+    const RetainPtr<CFX_ReadOnlyFixedSizeDataVectorStream>& font_stream,
     uint32_t face_index) {
   if (!font_stream) {
     return nullptr;
@@ -376,7 +411,7 @@ RetainPtr<CFX_Face> CFX_Face::NewFromSpanStream(
   face->owned_font_stream_ = std::move(font_stream);
   return face;
 }
-#endif  // defined(PDF_ENABLE_XFA) || BUILDFLAG(IS_ANDROID)
+#endif
 
 bool CFX_Face::HasGlyphNames() const {
   return !!(GetRec()->face_flags & FT_FACE_FLAG_GLYPH_NAMES);
