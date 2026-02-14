@@ -67,6 +67,24 @@
       "message": "clang format is not working for me right now",
       "revId": "495304894c57bb8d99cbb5af3732f43aec3b5e4f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b0c78f21_ed7b0c9b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 13
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-14T12:38:26Z",
+      "side": 1,
+      "message": "Ok, there is a workaround to get cl format working by downloading JUST the PDFium sub repo. I\u0027ll explain that to you later, but for now, I\u0027ll send you a git diff of what cl format wants changed\n\n```\ndiff --git a/core/fpdfapi/parser/cpdf_cross_ref_table.cpp b/core/fpdfapi/parser/cpdf_cross_ref_table.cpp\nindex 9ecf5f545..dec699811 100644\n--- a/core/fpdfapi/parser/cpdf_cross_ref_table.cpp\n+++ b/core/fpdfapi/parser/cpdf_cross_ref_table.cpp\n@@ -67,7 +67,7 @@ bool CPDF_CrossRefTable::AddNormal(uint32_t obj_num,\n   if (obj_num \u003e CPDF_Parser::kMaxObjectNumber) {\n     return false;\n   }\n-    auto\u0026 info \u003d objects_info_[obj_num];\n+  auto\u0026 info \u003d objects_info_[obj_num];\n   if (info.gennum \u003e gen_num) {\n     return false;\n   }\ndiff --git a/core/fpdfapi/parser/cpdf_parser.cpp b/core/fpdfapi/parser/cpdf_parser.cpp\nindex bda7c9349..6357d0256 100644\n--- a/core/fpdfapi/parser/cpdf_parser.cpp\n+++ b/core/fpdfapi/parser/cpdf_parser.cpp\n@@ -685,12 +685,12 @@ bool CPDF_Parser::MergeCrossRefObjectsData(\n         break;\n       case ObjectType::kNormal:\n         if (!cross_ref_table_-\u003eAddNormal(obj.obj_num, obj.info.gennum,\n-                                    obj.info.is_object_stream_flag,\n-                                    obj.info.pos)){\n+                                         obj.info.is_object_stream_flag,\n+                                         obj.info.pos)) {\n           return false;\n         }\n         break;\n-        \n+\n       case ObjectType::kCompressed:\n         cross_ref_table_-\u003eAddCompressed(obj.obj_num, obj.info.archive.obj_num,\n                                         obj.info.archive.obj_index);\n@@ -812,7 +812,8 @@ bool CPDF_Parser::RebuildCrossRef() {\n       }\n \n       if (obj_num \u003c\u003d kMaxObjectNumber) {\n-        if (!cross_ref_table-\u003eAddNormal(obj_num, gen_num, /*is_object_stream\u003d*/false,obj_pos)){\n+        if (!cross_ref_table-\u003eAddNormal(obj_num, gen_num,\n+                                        /*is_object_stream\u003d*/false, obj_pos)) {\n           return false;\n         }\n         const auto object_stream \u003d\n@@ -936,11 +937,12 @@ bool CPDF_Parser::LoadCrossRefStream(FX_FILESIZE* pos, bool is_main_xref) {\n       if (obj_num \u003e kMaxObjectNumber) {\n         return false;\n       }\n-      \n-      if (!ProcessCrossRefStreamEntry(seg_span.subspan(i * total_width, total_width),\n-                                 field_widths, obj_num)){\n-                                  return false;\n-                                 }\n+\n+      if (!ProcessCrossRefStreamEntry(\n+              seg_span.subspan(i * total_width, total_width), field_widths,\n+              obj_num)) {\n+        return false;\n+      }\n     }\n \n     segindex +\u003d index.obj_count;\n@@ -983,11 +985,11 @@ bool CPDF_Parser::ProcessCrossRefStreamEntry(\n     const uint32_t gen_num \u003d GetThirdXRefStreamEntry(entry_span, field_widths);\n     if (pdfium::IsValueInRangeForNumericType\u003cFX_FILESIZE\u003e(offset) \u0026\u0026\n         pdfium::IsValueInRangeForNumericType\u003cuint16_t\u003e(gen_num)) {\n-          bool success \u003d cross_ref_table_-\u003eAddNormal(obj_num, gen_num, /*is_object_stream\u003d*/false,\n-                                  offset);\n-          if (!success){\n-            return false;\n-          }\n+      bool success \u003d cross_ref_table_-\u003eAddNormal(\n+          obj_num, gen_num, /*is_object_stream\u003d*/false, offset);\n+      if (!success) {\n+        return false;\n+      }\n     }\n     return true;\n   }\n```",
+      "parentUuid": "f3b62930_38f0cf3d",
+      "revId": "495304894c57bb8d99cbb5af3732f43aec3b5e4f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
