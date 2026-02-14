@@ -50,6 +50,23 @@
       "message": "Hi @thestig@chromium.org @tsepez@chromium.org\n\nWanted a quick suggestion on something:\nParserXRefTest.XrefHasInvalidArchiveObjectNumber\n\nWith this version which returns these bools for any failures, it doesn\u0027t skip objects, it instead reports a failure and calls for he rebuild (of the Xref table). Do we update the test to account for this rebuild (change it to expect the rebuild of the Xref table) or do we update the logic so that these are skipped as usual.\n\nPersonally would say it is an improvement (Trying to fix the broken PDF is likely better than skipping objects, but just wanted your opinion on it).\n\nThanks!",
       "revId": "495304894c57bb8d99cbb5af3732f43aec3b5e4f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f3b62930_38f0cf3d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 13
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4626747
+      },
+      "writtenOn": "2026-02-14T11:50:13Z",
+      "side": 1,
+      "message": "clang format is not working for me right now",
+      "revId": "495304894c57bb8d99cbb5af3732f43aec3b5e4f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
