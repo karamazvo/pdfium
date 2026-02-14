@@ -1527,9 +1527,11 @@ bool CXFA_ContentLayoutProcessor::ProcessKeepForSplit(
                        &keepLayoutItems)) {
     array_keep_items_.clear();
     for (CXFA_ContentLayoutItem* item : keepLayoutItems) {
-      layout_item_->RemoveChild(item);
-      *fContentCurRowY -= item->s_size_.height;
-      array_keep_items_.push_back(item);
+      if (item) {
+        layout_item_->RemoveChild(item);
+        *fContentCurRowY -= item->s_size_.height;
+        array_keep_items_.push_back(item);
+      }
     }
     *bAddedItemInRow = true;
     *bForceEndPage = true;
@@ -1741,9 +1743,14 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
         case Stage::kNone:
           break;
         case Stage::kBreakBefore: {
+          if (!layout_item_) {
+            break;
+          }
           for (auto& item : array_keep_items_) {
-            layout_item_->RemoveChild(item);
-            calculated_size.height -= item->s_size_.height;
+            if (item) {
+              layout_item_->RemoveChild(item);
+              calculated_size.height -= item->s_size_.height;
+            }
           }
 
           if (!bUseBreakControl || !view_layout_processor_) {
@@ -2636,7 +2643,9 @@ CXFA_ContentLayoutProcessor::InsertFlowedItem(
           pProcessor->ExtractLayoutItem();
       if (ExistContainerKeep(pProcessor->GetFormNode(), false) &&
           pProcessor->GetFormNode()->GetIntact() == XFA_AttributeValue::None) {
-        array_keep_items_.push_back(pChildLayoutItem);
+        if (pChildLayoutItem) {
+          array_keep_items_.push_back(pChildLayoutItem);
+        }
       } else {
         array_keep_items_.clear();
       }

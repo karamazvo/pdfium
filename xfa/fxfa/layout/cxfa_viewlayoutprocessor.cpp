@@ -559,13 +559,21 @@ void CXFA_ViewLayoutProcessor::RemoveLayoutRecord(
   }
 }
 
-void CXFA_ViewLayoutProcessor::SubmitContentItem(
+bool CXFA_ViewLayoutProcessor::SubmitContentItem(
     CXFA_ContentLayoutItem* pContentLayoutItem,
     CXFA_ContentLayoutProcessor::Result eStatus) {
   if (pContentLayoutItem) {
     CXFA_ViewRecord* pViewRecord = GetCurrentViewRecord();
     if (!pViewRecord) {
-      return;
+      // If no view record exists, there is no active container to update.
+      // Return true to skip submission but allow the processor to continue.
+      return true;
+    }
+    if (!pViewRecord->pCurContentArea) {
+      // Missing content area within an active record is a structural failure.
+      // Return false to signal the parent processor to abort layout and
+      // prevent a null pointer dereference in AppendLastChild().
+      return false;
     }
 
     pViewRecord->pCurContentArea->AppendLastChild(pContentLayoutItem);
@@ -579,6 +587,7 @@ void CXFA_ViewLayoutProcessor::SubmitContentItem(
     current_view_record_iter_ = GetTailPosition();
     cur_page_area_ = GetCurrentViewRecord()->pCurPageArea->GetFormNode();
   }
+  return true;
 }
 
 float CXFA_ViewLayoutProcessor::GetAvailHeight() {
@@ -1632,8 +1641,11 @@ bool CXFA_ViewLayoutProcessor::GetNextAvailContentHeight(float fChildHeight) {
   if (!pViewRecord) {
     return false;
   }
-
-  CXFA_Node* pCurContentNode = pViewRecord->pCurContentArea->GetFormNode();
+  CXFA_ViewLayoutItem* pLayoutItem = pViewRecord->pCurContentArea;
+  if (!pLayoutItem) {
+    return false;
+  }
+  CXFA_Node* pCurContentNode = pLayoutItem->GetFormNode();
   if (!pCurContentNode) {
     return false;
   }
