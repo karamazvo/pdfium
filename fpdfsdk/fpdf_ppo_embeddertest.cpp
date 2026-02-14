@@ -747,22 +747,22 @@ TEST_F(FPDFPPOEmbedderTest, DISABLED_Bug474670216_Issue1) {
   ASSERT_TRUE(document());
 }
 
-TEST_F(FPDFPPOEmbedderTest, DISABLED_Bug474670216_Issue2) {
+TEST_F(FPDFPPOEmbedderTest, Bug474670216_Issue2) {
   ASSERT_TRUE(OpenDocument("bug_474670216_issue_2.pdf"));
   ASSERT_TRUE(document());
 }
 
-TEST_F(FPDFPPOEmbedderTest, DISABLED_Bug474670216_Issue3) {
+TEST_F(FPDFPPOEmbedderTest, Bug474670216_Issue3) {
   ASSERT_TRUE(OpenDocument("bug_474670216_issue_3.pdf"));
   ASSERT_TRUE(document());
 }
 
-TEST_F(FPDFPPOEmbedderTest, DISABLED_Bug474670216_Issue4) {
+TEST_F(FPDFPPOEmbedderTest, Bug474670216_Issue4) {
   ASSERT_TRUE(OpenDocument("bug_474670216_issue_4.pdf"));
   ASSERT_TRUE(document());
 }
 
-TEST_F(FPDFPPOEmbedderTest, DISABLED_Bug474670216_Issue5) {
+TEST_F(FPDFPPOEmbedderTest, Bug474670216_Issue5) {
   ASSERT_TRUE(OpenDocument("bug_474670216_issue_5.pdf"));
   ASSERT_TRUE(document());
 }
@@ -812,7 +812,7 @@ TEST_F(FPDFPPOEmbedderTest, DISABLED_Bug474670216_Issue14) {
   ASSERT_TRUE(document());
 }
 
-TEST_F(FPDFPPOEmbedderTest, DISABLED_Bug474670216_Issue15) {
+TEST_F(FPDFPPOEmbedderTest, Bug474670216_Issue15) {
   ASSERT_TRUE(OpenDocument("bug_474670216_issue_15.pdf"));
   ASSERT_TRUE(document());
 }
