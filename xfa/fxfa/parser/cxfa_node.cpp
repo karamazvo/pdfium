@@ -4131,24 +4131,46 @@ bool CXFA_Node::LoadCaption(CXFA_FFDoc* doc) {
 }
 
 CXFA_TextLayout* CXFA_Node::GetCaptionTextLayout() {
-  return layout_data_ ? layout_data_->AsFieldLayoutData()->cap_text_layout_
-                      : nullptr;
+  if (!layout_data_) {
+    return nullptr;
+  }
+  if (!layout_data_->AsFieldLayoutData()) {
+    return nullptr;
+  }
+  return layout_data_->AsFieldLayoutData()->cap_text_layout_;
 }
 
 CXFA_TextLayout* CXFA_Node::GetTextLayout() {
-  return layout_data_ ? layout_data_->AsTextLayoutData()->GetTextLayout()
-                      : nullptr;
+  if (!layout_data_) {
+    return nullptr;
+  }
+  if (!layout_data_->AsTextLayoutData()) {
+    return nullptr;
+  }
+  return layout_data_->AsTextLayoutData()->GetTextLayout();
 }
 
 RetainPtr<CFX_DIBitmap> CXFA_Node::GetLayoutImage() {
-  return layout_data_ ? layout_data_->AsImageLayoutData()->GetBitmap()
-                      : nullptr;
+  if (!layout_data_) {
+    return nullptr;
+  }
+  if (!layout_data_->AsImageLayoutData()) {
+    return nullptr;
+  }
+  return layout_data_->AsImageLayoutData()->GetBitmap();
 }
 
 RetainPtr<CFX_DIBitmap> CXFA_Node::GetEditImage() {
-  return layout_data_
-             ? layout_data_->AsFieldLayoutData()->AsImageEditData()->GetBitmap()
-             : nullptr;
+  if (!layout_data_) {
+    return nullptr;
+  }
+  if (!layout_data_->AsFieldLayoutData()) {
+    return nullptr;
+  }
+  if (!layout_data_->AsFieldLayoutData()->AsImageEditData()) {
+    return nullptr;
+  }
+  return layout_data_->AsFieldLayoutData()->AsImageEditData()->GetBitmap();
 }
 
 void CXFA_Node::SetLayoutImage(RetainPtr<CFX_DIBitmap> newImage) {
