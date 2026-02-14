@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0786da15_6d6fdd65",
+        "filename": "xfa/fxfa/layout/cxfa_layoutitem_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-14T18:16:11Z",
+      "side": 1,
+      "message": "Would say this is an improvement overall. Let me know if there is any reason otherwise (I don\u0027t have much context of the original test; the git blame redirects me to some kind of manual roll, so i just looked at the pdf).",
+      "range": {
+        "startLine": 39,
+        "startChar": 45,
+        "endLine": 39,
+        "endChar": 46
+      },
+      "revId": "e2396064b41ec523027f78f5eacf8e619e982734",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
