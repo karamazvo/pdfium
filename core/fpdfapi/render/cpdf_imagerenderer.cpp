@@ -228,8 +228,8 @@ bool CPDF_ImageRenderer::IsPrinting() const {
   }
 
   // Make sure the assumption that no printer device supports blend mode holds.
-  CHECK(
-      !(render_status_->GetRenderDevice()->GetRenderCaps() & FXRC_BLEND_MODE));
+  CHECK(!(render_status_->GetRenderDevice()->GetRenderCaps() &
+          RenderCapsFlag::kBlendMode));
   return true;
 }
 

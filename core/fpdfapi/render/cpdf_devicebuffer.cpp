@@ -16,6 +16,7 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
+#include "core/fxge/render_defines.h"
 
 #if BUILDFLAG(IS_WIN)
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
@@ -41,13 +42,13 @@ CFX_Matrix CPDF_DeviceBuffer::CalculateMatrix(CFX_RenderDevice* pDevice,
   CFX_Matrix matrix;
   matrix.Translate(-rect.left, -rect.top);
   if (scale) {
-    int horz_size = pDevice->GetDeviceCaps(FXDC_HORZ_SIZE);
-    int vert_size = pDevice->GetDeviceCaps(FXDC_VERT_SIZE);
+    int horz_size = pDevice->GetDeviceCaps(DeviceCapsId::kHorzSize);
+    int vert_size = pDevice->GetDeviceCaps(DeviceCapsId::kVertSize);
     if (horz_size && vert_size && max_dpi) {
-      int dpih =
-          pDevice->GetDeviceCaps(FXDC_PIXEL_WIDTH) * 254 / (horz_size * 10);
-      int dpiv =
-          pDevice->GetDeviceCaps(FXDC_PIXEL_HEIGHT) * 254 / (vert_size * 10);
+      int dpih = pDevice->GetDeviceCaps(DeviceCapsId::kPixelWidth) * 254 /
+                 (horz_size * 10);
+      int dpiv = pDevice->GetDeviceCaps(DeviceCapsId::kPixelHeight) * 254 /
+                 (vert_size * 10);
       if (dpih > max_dpi) {
         matrix.Scale(static_cast<float>(max_dpi) / dpih, 1.0f);
       }
@@ -89,7 +90,8 @@ RetainPtr<CFX_DIBitmap> CPDF_DeviceBuffer::Initialize() {
 }
 
 void CPDF_DeviceBuffer::OutputToDevice() {
-  if (device_->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_GET_BITS) {
+  if (device_->GetDeviceCaps(DeviceCapsId::kRenderCaps) &
+      static_cast<int>(RenderCapsFlag::kGetBits)) {
     if (matrix_.a == 1.0f && matrix_.d == 1.0f) {
       device_->SetDIBits(bitmap_, rect_.left, rect_.top);
       return;

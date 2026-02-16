@@ -22,7 +22,7 @@ CXFA_ImageRenderer::CXFA_ImageRenderer(CFX_RenderDevice* device,
       bitmap_(std::move(bitmap)) {
   // Assume this always draws into CFX_DefaultRenderDevice.
   CHECK(device_);
-  CHECK(device_->GetRenderCaps() & FXRC_GET_BITS);
+  CHECK(device_->GetRenderCaps() & static_cast<int>(RenderCapsFlag::kGetBits));
   CHECK(bitmap_);
 }
 
