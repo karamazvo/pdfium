@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ec53be44_4c251222",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 15
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-16T04:14:56Z",
+      "side": 1,
+      "message": "FYI: ParserXRefTest.XrefHasInvalidArchiveObjectNumber needs to also be updated.\n\nHere are the failure logs for some additional help.\n```\n../../core/fpdfapi/parser/cpdf_parser_unittest.cpp:509: Failure\nValue of: parser().xref_table_rebuilt()\n  Actual: true\nExpected: false\n\n../../core/fpdfapi/parser/cpdf_parser_unittest.cpp:525: Failure\nValue of: objects_info\nExpected: has 2 elements where\nelement #0 has a first field that is equal to 1, and has a second field that is equal to (Normal object, pos: 15, obj_stream\u003d0, gennum: 0),\nelement #1 has a first field that is equal to 2, and has a second field that is equal to (Normal object, pos: 18, obj_stream\u003d0, gennum: 0)\n  Actual: { (2, (Free object, gennum: 0)), (7, (Normal object, pos: 14, obj_stream\u003d0, gennum: 0)) }, whose element #0 ((2, (Free object, gennum: 0))) has a first field that isn\u0027t equal to 1, or has a second field that isn\u0027t equal to (Normal object, pos: 15, obj_stream\u003d0, gennum: 0), whose first field does not match\n\n[  FAILED  ] ParserXRefTest.XrefHasInvalidArchiveObjectNumber (1 ms)```",
+      "revId": "6135288e1e03cca40d47a0d0d38955687b08368e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
