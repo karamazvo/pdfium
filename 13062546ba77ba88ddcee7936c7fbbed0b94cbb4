@@ -62,6 +62,30 @@
       },
       "revId": "13062546ba77ba88ddcee7936c7fbbed0b94cbb4",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b1af5581_21f22c21",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 988,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-16T10:35:28Z",
+      "side": 1,
+      "message": "Update: do \n\n```return cross_ref_table_-\u003eAddNormal(obj_num, gen_num, /*is_object_stream\u003d*/false, offset);```\n directly (note you probably need to cl format.",
+      "parentUuid": "c0e2d956_59cf6ffb",
+      "range": {
+        "startLine": 988,
+        "startChar": 11,
+        "endLine": 988,
+        "endChar": 18
+      },
+      "revId": "13062546ba77ba88ddcee7936c7fbbed0b94cbb4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
