@@ -370,7 +370,7 @@ CGdiDeviceDriver::CGdiDeviceDriver(HDC hDC, DeviceType device_type)
     height_ = ::GetDeviceCaps(dc_handle_, VERTRES);
   }
   if (device_type_ == DeviceType::kDisplay) {
-    render_caps_ = FXRC_GET_BITS;
+    render_caps_ = static_cast<int>(RenderCapsFlag::kGetBits);
   } else {
     render_caps_ = 0;
   }
@@ -382,15 +382,15 @@ DeviceType CGdiDeviceDriver::GetDeviceType() const {
   return device_type_;
 }
 
-int CGdiDeviceDriver::GetDeviceCaps(int caps_id) const {
+int CGdiDeviceDriver::GetDeviceCaps(DeviceCapsId caps_id) const {
   switch (caps_id) {
-    case FXDC_PIXEL_WIDTH:
+    case DeviceCapsId::kPixelWidth:
       return width_;
-    case FXDC_PIXEL_HEIGHT:
+    case DeviceCapsId::kPixelHeight:
       return height_;
-    case FXDC_BITS_PIXEL:
+    case DeviceCapsId::kBitsPixel:
       return bits_per_pixel_;
-    case FXDC_RENDER_CAPS:
+    case DeviceCapsId::kRenderCaps:
       return render_caps_;
     default:
       NOTREACHED();
