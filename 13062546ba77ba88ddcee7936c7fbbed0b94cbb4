@@ -16,6 +16,52 @@
       "message": "Going well! I think it\u0027s pretty much just the tests now, would have a glance through just to make sure.",
       "revId": "13062546ba77ba88ddcee7936c7fbbed0b94cbb4",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f943021d_798c8853",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 702,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-16T04:28:19Z",
+      "side": 1,
+      "message": "newline edit here:\n\n\n\n```suggestion\n        if (!cross_ref_table_-\u003eAddNormal(obj.obj_num, obj.info.gennum,\n                                         obj.info.is_object_stream_flag,\n                                         obj.info.pos)) {\n          return false;\n        }\n        break;\n      case ObjectType::kCompressed:\n        cross_ref_table_-\u003eAddCompressed(obj.obj_num, obj.info.archive.obj_num,\n                                        obj.info.archive.obj_index);\n        break;\n    }\n  }\n  return true;\n}\n```",
+      "range": {
+        "startLine": 687,
+        "startChar": 0,
+        "endLine": 702,
+        "endChar": 1
+      },
+      "revId": "13062546ba77ba88ddcee7936c7fbbed0b94cbb4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c0e2d956_59cf6ffb",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 988,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-16T04:28:19Z",
+      "side": 1,
+      "message": "Fix this if.\nwe don\u0027t need the success, and we can just directly return the add normal thing.",
+      "range": {
+        "startLine": 988,
+        "startChar": 11,
+        "endLine": 988,
+        "endChar": 18
+      },
+      "revId": "13062546ba77ba88ddcee7936c7fbbed0b94cbb4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
