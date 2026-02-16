@@ -33,6 +33,7 @@
 #include "core/fxge/cfx_textrenderoptions.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_font.h"
+#include "core/fxge/render_defines.h"
 #include "core/fxge/renderdevicedriver_iface.h"
 #include "core/fxge/text_char_pos.h"
 #include "core/fxge/text_glyph_pos.h"
@@ -491,15 +492,16 @@ bool GetZeroAreaPath(pdfium::span<const CFX_Path::Point> points,
 
 FXDIB_Format GetCreateCompatibleBitmapFormat(int render_caps,
                                              bool use_argb_premul) {
-  if (render_caps & FXRC_BYTEMASK_OUTPUT) {
+  if (render_caps & static_cast<int>(RenderCapsFlag::kByteMaskOutput)) {
     return FXDIB_Format::k8bppMask;
   }
 #if defined(PDF_USE_SKIA)
-  if (use_argb_premul && (render_caps & FXRC_PREMULTIPLIED_ALPHA)) {
+  if (use_argb_premul &&
+      (render_caps & static_cast<int>(RenderCapsFlag::kPremultipliedAlpha))) {
     return FXDIB_Format::kBgraPremul;
   }
 #endif
-  if (render_caps & FXRC_ALPHA_OUTPUT) {
+  if (render_caps & static_cast<int>(RenderCapsFlag::kAlphaOutput)) {
     return FXDIB_Format::kBgra;
   }
   return CFX_DIBBase::kPlatformRGBFormat;
@@ -530,10 +532,10 @@ void CFX_RenderDevice::SetDeviceDriver(
 }
 
 void CFX_RenderDevice::InitDeviceInfo() {
-  width_ = device_driver_->GetDeviceCaps(FXDC_PIXEL_WIDTH);
-  height_ = device_driver_->GetDeviceCaps(FXDC_PIXEL_HEIGHT);
-  bpp_ = device_driver_->GetDeviceCaps(FXDC_BITS_PIXEL);
-  render_caps_ = device_driver_->GetDeviceCaps(FXDC_RENDER_CAPS);
+  width_ = device_driver_->GetDeviceCaps(DeviceCapsId::kPixelWidth);
+  height_ = device_driver_->GetDeviceCaps(DeviceCapsId::kPixelHeight);
+  bpp_ = device_driver_->GetDeviceCaps(DeviceCapsId::kBitsPixel);
+  render_caps_ = device_driver_->GetDeviceCaps(DeviceCapsId::kRenderCaps);
   device_type_ = device_driver_->GetDeviceType();
   clip_box_ = device_driver_->GetClipBox();
 }
@@ -549,7 +551,7 @@ void CFX_RenderDevice::RestoreState(bool bKeepSaved) {
   }
 }
 
-int CFX_RenderDevice::GetDeviceCaps(int caps_id) const {
+int CFX_RenderDevice::GetDeviceCaps(DeviceCapsId caps_id) const {
   return device_driver_->GetDeviceCaps(caps_id);
 }
 
@@ -738,7 +740,7 @@ bool CFX_RenderDevice::DrawPath(const CFX_Path& path,
 
   if (fill && fill_alpha && stroke_alpha < 0xff && fill_options.stroke) {
 #if defined(PDF_USE_SKIA)
-    if (render_caps_ & FXRC_FILLSTROKE_PATH) {
+    if (render_caps_ & static_cast<int>(RenderCapsFlag::kFillStrokePath)) {
       const bool using_skia = CFX_DefaultRenderDevice::UseSkiaRenderer();
       if (using_skia) {
         device_driver_->SetGroupKnockout(true);
@@ -770,7 +772,7 @@ bool CFX_RenderDevice::DrawFillStrokePath(
     uint32_t fill_color,
     uint32_t stroke_color,
     const CFX_FillRenderOptions& fill_options) {
-  if (!(render_caps_ & FXRC_GET_BITS)) {
+  if (!(render_caps_ & static_cast<int>(RenderCapsFlag::kGetBits))) {
     return false;
   }
   CFX_FloatRect bbox;
@@ -826,7 +828,7 @@ bool CFX_RenderDevice::FillRect(const FX_RECT& rect, uint32_t fill_color) {
     return true;
   }
 
-  if (!(render_caps_ & FXRC_GET_BITS)) {
+  if (!(render_caps_ & static_cast<int>(RenderCapsFlag::kGetBits))) {
     return false;
   }
 
@@ -909,7 +911,7 @@ void CFX_RenderDevice::DrawZeroAreaPath(
 bool CFX_RenderDevice::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
                                  int left,
                                  int top) const {
-  return (render_caps_ & FXRC_GET_BITS) &&
+  return (render_caps_ & static_cast<int>(RenderCapsFlag::kGetBits)) &&
          device_driver_->GetDIBits(std::move(bitmap), left, top);
 }
 
@@ -938,12 +940,14 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(RetainPtr<const CFX_DIBBase> bitmap,
   FX_RECT src_rect(dest_rect.left - left, dest_rect.top - top,
                    dest_rect.left - left + dest_rect.Width(),
                    dest_rect.top - top + dest_rect.Height());
-  if ((blend_mode == BlendMode::kNormal || (render_caps_ & FXRC_BLEND_MODE)) &&
-      (!bitmap->IsAlphaFormat() || (render_caps_ & FXRC_ALPHA_IMAGE))) {
+  if ((blend_mode == BlendMode::kNormal ||
+       (render_caps_ & static_cast<int>(RenderCapsFlag::kBlendMode))) &&
+      (!bitmap->IsAlphaFormat() ||
+       (render_caps_ & static_cast<int>(RenderCapsFlag::kAlphaImage)))) {
     return device_driver_->SetDIBits(std::move(bitmap), /*color=*/0, src_rect,
                                      dest_rect.left, dest_rect.top, blend_mode);
   }
-  if (!(render_caps_ & FXRC_GET_BITS)) {
+  if (!(render_caps_ & static_cast<int>(RenderCapsFlag::kGetBits))) {
     return false;
   }
 
@@ -1108,7 +1112,8 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
           // anti-aliasing as well.
           text_options.aliasing_type = CFX_TextRenderOptions::kAntiAliasing;
         }
-      } else if ((render_caps_ & FXRC_ALPHA_OUTPUT)) {
+      } else if ((render_caps_ &
+                  static_cast<int>(RenderCapsFlag::kAlphaOutput))) {
         // Whether Skia uses LCD optimization should strictly follow the
         // rendering options provided by |text_options|. No change needs to be
         // done for |text_options| here.
