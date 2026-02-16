@@ -38,17 +38,17 @@ DeviceType CTextOnlyPrinterDriver::GetDeviceType() const {
 
 int CTextOnlyPrinterDriver::GetDeviceCaps(int caps_id) const {
   switch (caps_id) {
-    case FXDC_PIXEL_WIDTH:
+    case DeviceCapsId::kPixelWidth:
       return width_;
-    case FXDC_PIXEL_HEIGHT:
+    case DeviceCapsId::kPixelHeight:
       return height_;
-    case FXDC_BITS_PIXEL:
+    case DeviceCapsId::kBitsPixel:
       return bits_per_pixel_;
-    case FXDC_RENDER_CAPS:
+    case DeviceCapsId::kRenderCaps:
       return 0;
-    case FXDC_HORZ_SIZE:
+    case DeviceCapsId::kHorzSize:
       return horz_size_;
-    case FXDC_VERT_SIZE:
+    case DeviceCapsId::kVertSize:
       return vert_size_;
     default:
       NOTREACHED();
