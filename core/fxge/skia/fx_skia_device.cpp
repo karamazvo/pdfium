@@ -1,3 +1,4 @@
+#include "core/fxcrt/cxx23_to_underlying.h"
 // Copyright 2014 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -51,6 +52,7 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cstretchengine.h"
 #include "core/fxge/dib/fx_dib.h"
+#include "core/fxge/render_defines.h"
 #include "core/fxge/text_char_pos.h"
 #include "third_party/skia/include/core/SkBlendMode.h"
 #include "third_party/skia/include/core/SkCanvas.h"
@@ -107,7 +109,7 @@ void DebugShowSkiaPath(const SkPath& path) {
   path.dump(&stream, false);
   DataVector<char> storage(stream.bytesWritten());
   stream.copyTo(storage.data());
-  printf("%.*s", static_cast<int>(storage.size()), storage.data());
+  printf("%.*s", fxcrt::to_underlying(storage.size()), storage.data());
 #endif  // SHOW_SKIA_PATH_SHORTHAND
 #endif  // SHOW_SKIA_PATH
 }
@@ -1022,23 +1024,31 @@ DeviceType CFX_SkiaDeviceDriver::GetDeviceType() const {
   return DeviceType::kDisplay;
 }
 
-int CFX_SkiaDeviceDriver::GetDeviceCaps(int caps_id) const {
+int CFX_SkiaDeviceDriver::GetDeviceCaps(DeviceCapsId caps_id) const {
   switch (caps_id) {
-    case FXDC_PIXEL_WIDTH:
+    case DeviceCapsId::kPixelWidth:
       return canvas_->imageInfo().width();
-    case FXDC_PIXEL_HEIGHT:
+    case DeviceCapsId::kPixelHeight:
       return canvas_->imageInfo().height();
-    case FXDC_BITS_PIXEL:
+    case DeviceCapsId::kBitsPixel:
       return 32;
-    case FXDC_HORZ_SIZE:
-    case FXDC_VERT_SIZE:
+    case DeviceCapsId::kHorzSize:
+    case DeviceCapsId::kVertSize:
       return 0;
-    case FXDC_RENDER_CAPS:
-      return FXRC_GET_BITS | FXRC_ALPHA_PATH | FXRC_ALPHA_IMAGE |
-             FXRC_BLEND_MODE | FXRC_SOFT_CLIP | FXRC_ALPHA_OUTPUT |
-             FXRC_FILLSTROKE_PATH | FXRC_SHADING | FXRC_PREMULTIPLIED_ALPHA;
-    default:
-      NOTREACHED();
+    case DeviceCapsId::kRenderCaps:
+      constexpr Mask<RenderCapsFlag> output = {
+          RenderCapsFlag::kGetBits,
+          RenderCapsFlag::kAlphaPath,
+          RenderCapsFlag::kAlphaImage,
+          RenderCapsFlag::kBlendMode,
+          RenderCapsFlag::kSoftClip,
+          RenderCapsFlag::kAlphaOutput,
+          RenderCapsFlag::kFillStrokePath,
+          RenderCapsFlag::kShading,
+          RenderCapsFlag::kPremultipliedAlpha,
+      };
+
+      return output.UncheckedValue();
   }
 }
 
@@ -1066,9 +1076,9 @@ bool CFX_SkiaDeviceDriver::SetClip_PathFill(
     std::optional<CFX_FloatRect> maybe_rectf = path.GetRect(&deviceMatrix);
     if (maybe_rectf.has_value()) {
       CFX_FloatRect& rectf = maybe_rectf.value();
-      rectf.Intersect(CFX_FloatRect(0, 0,
-                                    (float)GetDeviceCaps(FXDC_PIXEL_WIDTH),
-                                    (float)GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
+      rectf.Intersect(
+          CFX_FloatRect(0, 0, (float)GetDeviceCaps(DeviceCapsId::kPixelWidth),
+                        (float)GetDeviceCaps(DeviceCapsId::kPixelHeight)));
       FX_RECT outer = rectf.GetOuterRect();
       // note that PDF's y-axis goes up; Skia's y-axis goes down
       skClipPathBuilder.addRect({(float)outer.left, (float)outer.bottom,

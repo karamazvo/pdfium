@@ -33,11 +33,11 @@ CGdiPrinterDriver::CGdiPrinterDriver(HDC hDC)
 
 CGdiPrinterDriver::~CGdiPrinterDriver() = default;
 
-int CGdiPrinterDriver::GetDeviceCaps(int caps_id) const {
-  if (caps_id == FXDC_HORZ_SIZE) {
+int CGdiPrinterDriver::GetDeviceCaps(DeviceCapsId caps_id) const {
+  if (caps_id == DeviceCapsId::kHorzSize) {
     return horz_size_;
   }
-  if (caps_id == FXDC_VERT_SIZE) {
+  if (caps_id == DeviceCapsId::kVertSize) {
     return vert_size_;
   }
   return CGdiDeviceDriver::GetDeviceCaps(caps_id);

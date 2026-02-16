@@ -1,3 +1,4 @@
+#include "core/fxcrt/cxx23_to_underlying.h"
 // Copyright 2018 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -13,6 +14,7 @@
 #include "core/fxge/agg/cfx_agg_imagerenderer.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
+#include "core/fxge/render_defines.h"
 
 CXFA_ImageRenderer::CXFA_ImageRenderer(CFX_RenderDevice* device,
                                        RetainPtr<CFX_DIBitmap> bitmap,
@@ -22,7 +24,8 @@ CXFA_ImageRenderer::CXFA_ImageRenderer(CFX_RenderDevice* device,
       bitmap_(std::move(bitmap)) {
   // Assume this always draws into CFX_DefaultRenderDevice.
   CHECK(device_);
-  CHECK(device_->GetRenderCaps() & FXRC_GET_BITS);
+  CHECK(device_->GetRenderCaps() &
+        fxcrt::to_underlying(RenderCapsFlag::kGetBits));
   CHECK(bitmap_);
 }
 

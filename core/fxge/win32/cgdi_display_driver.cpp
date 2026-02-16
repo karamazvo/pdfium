@@ -23,14 +23,16 @@ CGdiDisplayDriver::CGdiDisplayDriver(HDC hDC)
   auto* pPlatform =
       static_cast<CWin32Platform*>(CFX_GEModule::Get()->GetPlatform());
   if (pPlatform->gdiplus_ext_.IsAvailable()) {
-    render_caps_ |= FXRC_ALPHA_PATH | FXRC_ALPHA_IMAGE;
+    render_caps_ |= static_cast<int>(RenderCapsFlag::kAlphaPath |
+                                     RenderCapsFlag::kAlphaImage);
   }
 }
 
 CGdiDisplayDriver::~CGdiDisplayDriver() = default;
 
-int CGdiDisplayDriver::GetDeviceCaps(int caps_id) const {
-  if (caps_id == FXDC_HORZ_SIZE || caps_id == FXDC_VERT_SIZE) {
+int CGdiDisplayDriver::GetDeviceCaps(DeviceCapsId caps_id) const {
+  if (caps_id == DeviceCapsId::kHorzSize ||
+      caps_id == DeviceCapsId::kVertSize) {
     return 0;
   }
   return CGdiDeviceDriver::GetDeviceCaps(caps_id);

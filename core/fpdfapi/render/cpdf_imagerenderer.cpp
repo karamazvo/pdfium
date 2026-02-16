@@ -1,3 +1,4 @@
+#include "core/fxcrt/cxx23_to_underlying.h"
 // Copyright 2016 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -42,6 +43,7 @@
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
+#include "core/fxge/render_defines.h"
 
 #if BUILDFLAG(IS_WIN)
 #include "core/fxge/dib/cfx_imagetransformer.h"
@@ -228,8 +230,8 @@ bool CPDF_ImageRenderer::IsPrinting() const {
   }
 
   // Make sure the assumption that no printer device supports blend mode holds.
-  CHECK(
-      !(render_status_->GetRenderDevice()->GetRenderCaps() & FXRC_BLEND_MODE));
+  CHECK(!(render_status_->GetRenderDevice()->GetRenderCaps() &
+          fxcrt::to_underlying(RenderCapsFlag::kBlendMode)));
   return true;
 }
 

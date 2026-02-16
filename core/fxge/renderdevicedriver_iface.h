@@ -16,6 +16,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
 #include "core/fxge/dib/fx_dib.h"
+#include "core/fxge/render_defines.h"
 
 class CFX_AggImageRenderer;
 class CFX_DIBBase;
@@ -60,7 +61,7 @@ class RenderDeviceDriverIface {
   virtual ~RenderDeviceDriverIface();
 
   virtual DeviceType GetDeviceType() const = 0;
-  virtual int GetDeviceCaps(int caps_id) const = 0;
+  virtual int GetDeviceCaps(DeviceCapsId caps_id) const = 0;
 
   virtual void SaveState() = 0;
   virtual void RestoreState(bool bKeepSaved) = 0;

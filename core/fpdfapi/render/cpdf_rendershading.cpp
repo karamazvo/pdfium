@@ -1,3 +1,4 @@
+#include "core/fxcrt/cxx23_to_underlying.h"
 // Copyright 2019 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -39,6 +40,7 @@
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
+#include "core/fxge/render_defines.h"
 
 namespace {
 
@@ -1034,7 +1036,8 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
         mtMatrix.TransformRect(dict->GetRectFor("BBox")).GetOuterRect());
   }
 #if defined(PDF_USE_SKIA)
-  if ((pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SHADING) &&
+  if ((pDevice->GetDeviceCaps(DeviceCapsId::kRenderCaps) &
+       fxcrt::to_underlying(RenderCapsFlag::kShading)) &&
       pDevice->DrawShading(*pPattern, mtMatrix, clip_rect_bbox, alpha)) {
     return;
   }
