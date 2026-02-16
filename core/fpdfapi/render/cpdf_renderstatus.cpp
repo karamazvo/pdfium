@@ -69,6 +69,7 @@
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_font.h"
+#include "core/fxge/render_defines.h"
 #include "core/fxge/renderdevicedriver_iface.h"
 #include "core/fxge/text_char_pos.h"
 #include "core/fxge/text_glyph_pos.h"
@@ -350,7 +351,8 @@ void CPDF_RenderStatus::DrawObjWithBackground(CPDF_PageObject* pObj,
   }
 
   const bool needs_buffer =
-      !(device_->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_GET_BITS);
+      !(device_->GetDeviceCaps(DeviceCapsId::kRenderCaps) &
+        static_cast<int>(RenderCapsFlag::kGetBits));
   if (!needs_buffer) {
     DrawObjWithBackgroundToDevice(pObj, mtObj2Device, device_, CFX_Matrix());
     return;
@@ -566,8 +568,8 @@ void CPDF_RenderStatus::ProcessClipPath(const CPDF_ClipPath& ClipPath,
     return;
   }
 
-  if (!IsPrint() &&
-      !(device_->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SOFT_CLIP)) {
+  if (!IsPrint() && !(device_->GetDeviceCaps(DeviceCapsId::kRenderCaps) &
+                      static_cast<int>(RenderCapsFlag::kSoftClip))) {
     return;
   }
 
@@ -651,7 +653,8 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   }
   bool bTextClip = !IsPrint() && pPageObj->clip_path().HasRef() &&
                    pPageObj->clip_path().GetTextCount() > 0 &&
-                   !(device_->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SOFT_CLIP);
+                   !(device_->GetDeviceCaps(DeviceCapsId::kRenderCaps) &
+                     static_cast<int>(RenderCapsFlag::kSoftClip));
   if (!pSMaskDict && group_alpha == 1.0f && blend_type == BlendMode::kNormal &&
       !bTextClip && !bGroupTransparent && initial_alpha == 1.0f) {
     return false;
@@ -673,7 +676,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   CFX_DefaultRenderDevice bitmap_device;
   RetainPtr<CFX_DIBitmap> backdrop;
   if (!transparency.IsIsolated() &&
-      (device_->GetRenderCaps() & FXRC_GET_BITS)) {
+      (device_->GetRenderCaps() & static_cast<int>(RenderCapsFlag::kGetBits))) {
     backdrop = pdfium::MakeRetain<CFX_DIBitmap>();
     if (!device_->CreateCompatibleBitmap(backdrop, width, height)) {
       return true;
@@ -774,8 +777,9 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::GetBackdrop(
     }
   }
 
-  const int cap_to_check =
-      backdrop->IsAlphaFormat() ? FXRC_ALPHA_OUTPUT : FXRC_GET_BITS;
+  const int cap_to_check = backdrop->IsAlphaFormat()
+                               ? static_cast<int>(RenderCapsFlag::kAlphaOutput)
+                               : static_cast<int>(RenderCapsFlag::kGetBits);
   if (device_->GetRenderCaps() & cap_to_check) {
     device_->GetDIBits(backdrop, bbox.left, bbox.top);
     return backdrop;
@@ -1331,10 +1335,13 @@ void CPDF_RenderStatus::CompositeDIBitmap(
   bool bIsolated = transparency.IsIsolated();
   bool bBackAlphaRequired =
       blend_mode != BlendMode::kNormal && bIsolated && !drop_objects_;
-  bool bGetBackGround =
-      ((device_->GetRenderCaps() & FXRC_ALPHA_OUTPUT)) ||
-      (!(device_->GetRenderCaps() & FXRC_ALPHA_OUTPUT) &&
-       (device_->GetRenderCaps() & FXRC_GET_BITS) && !bBackAlphaRequired);
+  bool bGetBackGround = ((device_->GetRenderCaps() &
+                          static_cast<int>(RenderCapsFlag::kAlphaOutput))) ||
+                        (!(device_->GetRenderCaps() &
+                           static_cast<int>(RenderCapsFlag::kAlphaOutput)) &&
+                         (device_->GetRenderCaps() &
+                          static_cast<int>(RenderCapsFlag::kGetBits)) &&
+                         !bBackAlphaRequired);
   if (bGetBackGround) {
     if (bIsolated || !transparency.IsGroup()) {
       if (!bitmap->IsMaskFormat()) {
@@ -1569,7 +1576,8 @@ FX_ARGB CPDF_RenderStatus::GetBackgroundColor(
 
 FXDIB_Format CPDF_RenderStatus::GetCompatibleArgbFormat() const {
 #if defined(PDF_USE_SKIA)
-  if (device_->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_PREMULTIPLIED_ALPHA) {
+  if (device_->GetDeviceCaps(DeviceCapsId::kRenderCaps) &
+      static_cast<int>(RenderCapsFlag::kPremultipliedAlpha)) {
     return FXDIB_Format::kBgraPremul;
   }
 #endif

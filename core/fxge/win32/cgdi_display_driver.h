@@ -26,7 +26,7 @@ class CGdiDisplayDriver final : public CGdiDeviceDriver {
 
  private:
   // CGdiDisplayDriver:
-  int GetDeviceCaps(int caps_id) const override;
+  int GetDeviceCaps(DeviceCapsId caps_id) const override;
   bool GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
                  int left,
                  int top) const override;
