@@ -23,7 +23,7 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
 
   // RenderDeviceDriverIface:
   DeviceType GetDeviceType() const override;
-  int GetDeviceCaps(int caps_id) const override;
+  int GetDeviceCaps(DeviceCapsId caps_id) const override;
   void SaveState() override;
   void RestoreState(bool bKeepSaved) override;
   void SetBaseClip(const FX_RECT& rect) override;
