@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5b4aa7c4_4ab723f4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-16T16:05:01Z",
+      "side": 1,
+      "message": "Dry run time?",
+      "revId": "48b4c1e9805fae802e7a02d64d6dcafaf9f1d439",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b147540d_595e264a",
+        "filename": "core/fpdfapi/render/cpdf_renderstatus.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 1341,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-16T16:05:01Z",
+      "side": 1,
+      "message": "What about having the functions return `RenderCapsFlag`? These casts look a bit ugly. Let me know if this should be changed.",
+      "range": {
+        "startLine": 1341,
+        "startChar": 27,
+        "endLine": 1341,
+        "endChar": 38
+      },
+      "revId": "48b4c1e9805fae802e7a02d64d6dcafaf9f1d439",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
