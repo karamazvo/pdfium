@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ac9b6be0_4c98e0c1",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-16T15:52:00Z",
+      "side": 1,
+      "message": "Import in all .cpp files.",
+      "range": {
+        "startLine": 36,
+        "startChar": 20,
+        "endLine": 36,
+        "endChar": 34
+      },
+      "revId": "d1e433e78a14457d761cbe7499f5c4a6ab3a5a15",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
