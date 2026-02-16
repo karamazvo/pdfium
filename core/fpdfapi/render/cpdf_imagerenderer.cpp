@@ -42,6 +42,7 @@
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
+#include "core/fxge/render_defines.h"
 
 #if BUILDFLAG(IS_WIN)
 #include "core/fxge/dib/cfx_imagetransformer.h"
@@ -228,8 +229,8 @@ bool CPDF_ImageRenderer::IsPrinting() const {
   }
 
   // Make sure the assumption that no printer device supports blend mode holds.
-  CHECK(
-      !(render_status_->GetRenderDevice()->GetRenderCaps() & FXRC_BLEND_MODE));
+  CHECK(!(render_status_->GetRenderDevice()->GetRenderCaps() &
+          static_cast<int>(RenderCapsFlag::kBlendMode)));
   return true;
 }
 
