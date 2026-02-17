@@ -351,12 +351,7 @@ RetainPtr<CFX_Face> CFX_Face::New(CFX_FontMgr* font_mgr,
     return nullptr;
   }
   // Private ctor.
-  auto face = pdfium::WrapRetain(new CFX_Face(face_rec, std::move(desc)));
-  if (!face->SetPixelSize(64, 64)) {
-    return nullptr;
-  }
-
-  return face;
+  return pdfium::WrapRetain(new CFX_Face(face_rec, std::move(desc)));
 }
 
 #if defined(PDF_ENABLE_XFA) || BUILDFLAG(IS_ANDROID)
@@ -372,7 +367,6 @@ RetainPtr<CFX_Face> CFX_Face::NewFromSpanStream(
   if (!face) {
     return nullptr;
   }
-  face->SetPixelSize(0, 64);
   face->owned_font_stream_ = std::move(font_stream);
   return face;
 }
@@ -778,9 +772,6 @@ std::optional<FX_RECT> CFX_Face::GetFontGlyphBBox(uint32_t glyph_index) {
     result.top = std::min(result.top, static_cast<int>(GetAscender()));
     result.bottom = std::max(result.bottom, static_cast<int>(GetDescender()));
     FT_Done_Glyph(glyph);
-    if (!SetPixelSize(0, 64)) {
-      return std::nullopt;
-    }
     return result;
   }
   if (LoadGlyph(glyph_index, /*scale=*/false) != 0) {
@@ -924,11 +915,6 @@ void CFX_Face::SetCharMapByIndex(size_t index) {
 
 bool CFX_Face::SelectCharMap(fxge::FontEncoding encoding) {
   FT_Error error = FT_Select_Charmap(GetRec(), ToFTEncoding(encoding));
-  return !error;
-}
-
-bool CFX_Face::SetPixelSize(uint32_t width, uint32_t height) {
-  FT_Error error = FT_Set_Pixel_Sizes(GetRec(), width, height);
   return !error;
 }
 
