@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "61930e55_9e2f85e2",
+        "filename": "core/fxge/render_defines.h",
+        "patchSetId": 13
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-17T22:53:45Z",
+      "side": 0,
+      "message": "Please preserve the comment.",
+      "revId": "fe3d48e14f2c706ee2a5052087bff9482f11b629",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
