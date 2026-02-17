@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5c967164_f1e18f74",
+        "filename": "core/fxge/render_defines.h",
+        "patchSetId": 13
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-17T19:56:18Z",
+      "side": 1,
+      "message": "nit: constexpr inline?",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 6
+      },
+      "revId": "20643ad0a1b51d615ef314f43453ce1e3d110e14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6ce96da6_c24e66df",
+        "filename": "core/fxge/render_defines.h",
+        "patchSetId": 13
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-17T19:56:18Z",
+      "side": 1,
+      "message": "I think this needs to be an int, otherwise we confuse the compiler about what the set of values that are possible for rendercapsflag might be.\n\nSee https://source.chromium.org/chromium/chromium/src/+/main:third_party/pdfium/core/fxcrt/mask_unittest.cpp;l\u003d12;drc\u003d6d3e2ca997ca3ef995f719b22a1658a250a22d1e;bpv\u003d1;bpt\u003d1\n\nfor an example of the lengths we went to make this work for other bitfields (and we resorted to this because the original code was mixing these up too frequently).",
+      "range": {
+        "startLine": 34,
+        "startChar": 7,
+        "endLine": 34,
+        "endChar": 21
+      },
+      "revId": "20643ad0a1b51d615ef314f43453ce1e3d110e14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
