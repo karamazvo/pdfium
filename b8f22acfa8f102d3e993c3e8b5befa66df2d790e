@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a43f7b86_5fc7fc11",
+        "filename": "DEPS",
+        "patchSetId": 12
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-17T18:59:20Z",
+      "side": 1,
+      "message": "LGTM. Just leaving comment as reminder to update pdfium_tests_revision.",
+      "range": {
+        "startLine": 219,
+        "startChar": 28,
+        "endLine": 219,
+        "endChar": 52
+      },
+      "revId": "b8f22acfa8f102d3e993c3e8b5befa66df2d790e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
