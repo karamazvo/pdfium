@@ -16,6 +16,69 @@
       "message": "Hello,\n\nThis CL adds API to retrieve the /E (Expansion) attribute.\n\nIt will be used on the Chromium side by:\n\n  https://chromium-review.googlesource.com/c/chromium/src/+/7588633\n\nThank you for your feedback.\n\nBest,\nFelipe",
       "revId": "daa42847c47c4e82f8877483a869e14dd8ce1894",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d0824406_4f373d05",
+        "filename": "fpdfsdk/fpdf_structtree_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-18T17:48:31Z",
+      "side": 1,
+      "message": "Use backticks in new code outside of the public/ directory.",
+      "range": {
+        "startLine": 148,
+        "startChar": 61,
+        "endLine": 148,
+        "endChar": 62
+      },
+      "revId": "daa42847c47c4e82f8877483a869e14dd8ce1894",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "277f2953_d30e1138",
+        "filename": "testing/resources/tagged_expansion.in",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-18T17:48:31Z",
+      "side": 1,
+      "message": "Delete this empty object. I recommend mapping the objects as follows:\n\n8 -\u003e 6\n6 -\u003e 7\n9 -\u003e 8\n10 -\u003e 9\n\nThen regenerate the PDF.",
+      "revId": "daa42847c47c4e82f8877483a869e14dd8ce1894",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bee9b06d_bc40709b",
+        "filename": "testing/resources/tagged_expansion.in",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-18T17:48:31Z",
+      "side": 1,
+      "message": "A slightly shorter string will suffice.",
+      "range": {
+        "startLine": 82,
+        "startChar": 6,
+        "endLine": 82,
+        "endChar": 106
+      },
+      "revId": "daa42847c47c4e82f8877483a869e14dd8ce1894",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
