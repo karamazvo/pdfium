@@ -118,9 +118,6 @@ def get_properties_by_name(name):
     if renderers:
         properties.update({"renderers": renderers})
 
-    if name.endswith("cxx23"):
-      properties.update({"use_cxx23": True})
-
     return properties
 
 def get_rbe_properties(name, bucket):
@@ -477,7 +474,6 @@ add_entries_for_builder(name = "linux_xfa_rel", category = "xfa|linux", short_na
 add_entries_for_builder(name = "linux_xfa_skia", category = "skia|linux", short_name = "xfa", swarm_tests = True)
 add_entries_for_builder(name = "linux_xfa_skia_asan_lsan", category = "skia|linux", short_name = "asan", swarm_tests = True)
 add_entries_for_builder(name = "linux_xfa_skia_component", category = "skia|linux", short_name = "comp", swarm_tests = True)
-add_entries_for_builder(name = "linux_xfa_skia_cxx23", category = "skia|linux", short_name = "cxx23", swarm_tests = True)
 add_entries_for_builder(name = "linux_xfa_skia_msan", category = "skia|linux", short_name = "msan", swarm_tests = True)
 add_entries_for_builder(name = "linux_xfa_skia_no_partition_alloc", category = "skia|linux", swarm_tests = True)
 add_entries_for_builder(name = "linux_xfa_skia_ubsan", category = "skia|linux", short_name = "ubsan", swarm_tests = True)
