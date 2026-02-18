@@ -10,8 +10,10 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/render/cpdf_devicebuffer.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
+#include "core/fxcrt/cxx23_to_underlying.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
+#include "core/fxge/render_defines.h"
 
 namespace {
 
@@ -33,8 +35,8 @@ bool CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* context,
                                          int max_dpi) {
   matrix_ = CPDF_DeviceBuffer::CalculateMatrix(device_, rect_, max_dpi,
                                                /*scale=*/true);
-  bool bIsAlpha =
-      !!(device_->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_ALPHA_OUTPUT);
+  bool bIsAlpha = !!(device_->GetDeviceCaps(DeviceCapsId::kRenderCaps) &
+                     fxcrt::to_underlying(RenderCapsFlag::kAlphaOutput));
   FXDIB_Format dibFormat = bIsAlpha ? FXDIB_Format::kBgra : FXDIB_Format::kBgr;
   while (true) {
     FX_RECT bitmap_rect =

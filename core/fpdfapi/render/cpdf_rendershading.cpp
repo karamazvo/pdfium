@@ -27,6 +27,7 @@
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/cxx23_to_underlying.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/numerics/clamped_math.h"
@@ -39,6 +40,7 @@
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
+#include "core/fxge/render_defines.h"
 
 namespace {
 
@@ -1034,7 +1036,8 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
         mtMatrix.TransformRect(dict->GetRectFor("BBox")).GetOuterRect());
   }
 #if defined(PDF_USE_SKIA)
-  if ((pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SHADING) &&
+  if ((pDevice->GetDeviceCaps(DeviceCapsId::kRenderCaps) &
+       fxcrt::to_underlying(RenderCapsFlag::kShading)) &&
       pDevice->DrawShading(*pPattern, mtMatrix, clip_rect_bbox, alpha)) {
     return;
   }

@@ -10,9 +10,11 @@
 
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/cxx23_to_underlying.h"
 #include "core/fxge/agg/cfx_agg_imagerenderer.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
+#include "core/fxge/render_defines.h"
 
 CXFA_ImageRenderer::CXFA_ImageRenderer(CFX_RenderDevice* device,
                                        RetainPtr<CFX_DIBitmap> bitmap,
@@ -22,7 +24,8 @@ CXFA_ImageRenderer::CXFA_ImageRenderer(CFX_RenderDevice* device,
       bitmap_(std::move(bitmap)) {
   // Assume this always draws into CFX_DefaultRenderDevice.
   CHECK(device_);
-  CHECK(device_->GetRenderCaps() & FXRC_GET_BITS);
+  CHECK(device_->GetRenderCaps() &
+        fxcrt::to_underlying(RenderCapsFlag::kGetBits));
   CHECK(bitmap_);
 }
 
