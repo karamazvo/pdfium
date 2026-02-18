@@ -91,6 +91,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d928e9ae_9e0f27e2",
+        "filename": "core/fpdfapi/render/cpdf_devicebuffer.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-18T11:37:02Z",
+      "side": 1,
+      "message": "FYI: __to_underlying() does exist in the current version but just plain `std::to_underlying()` doesn\u0027t exist below 23 I think.",
+      "parentUuid": "334e397b_173374c8",
+      "revId": "20643ad0a1b51d615ef314f43453ce1e3d110e14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "06e3536f_6ac955f6",
         "filename": "core/fxge/render_defines.h",
         "patchSetId": 13
