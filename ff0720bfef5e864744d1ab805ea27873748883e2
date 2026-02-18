@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3ff588ba_6d26a825",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T18:54:53Z",
+      "side": 1,
+      "message": "nit: missing period at end of sentence, but I\u0027d strike this whole clause.",
+      "range": {
+        "startLine": 9,
+        "startChar": 46,
+        "endLine": 10,
+        "endChar": 42
+      },
+      "revId": "ff0720bfef5e864744d1ab805ea27873748883e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1d48061c_d4afe4ca",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T18:54:53Z",
+      "side": 1,
+      "message": "nit: I\u0027d strike and say \"The test does not yet pass but will be fixed in a subsequent CL.\"",
+      "range": {
+        "startLine": 11,
+        "startChar": 32,
+        "endLine": 12,
+        "endChar": 51
+      },
+      "revId": "ff0720bfef5e864744d1ab805ea27873748883e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a9d73e59_bb19ca92",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T18:54:53Z",
+      "side": 1,
+      "message": "Just nit-picking the wording of the commit message. Thanks!",
+      "revId": "ff0720bfef5e864744d1ab805ea27873748883e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
