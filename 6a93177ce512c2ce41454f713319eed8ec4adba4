@@ -16,6 +16,69 @@
       "message": "PTAL",
       "revId": "6a93177ce512c2ce41454f713319eed8ec4adba4",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "225399a6_cb49fa74",
+        "filename": "testing/tools/adb_push_tests.sh",
+        "patchSetId": 12
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-18T18:00:17Z",
+      "side": 1,
+      "message": "go/avoid-we",
+      "range": {
+        "startLine": 18,
+        "startChar": 37,
+        "endLine": 18,
+        "endChar": 39
+      },
+      "revId": "6a93177ce512c2ce41454f713319eed8ec4adba4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b5cacf37_79354ed0",
+        "filename": "testing/tools/adb_push_tests.sh",
+        "patchSetId": 12
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-18T18:00:17Z",
+      "side": 1,
+      "message": "Is the goal to set up an already clean emulator, or to clean an existing emulator? Please clarify the comment.",
+      "range": {
+        "startLine": 18,
+        "startChar": 40,
+        "endLine": 18,
+        "endChar": 68
+      },
+      "revId": "6a93177ce512c2ce41454f713319eed8ec4adba4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "03431df8_35066eb7",
+        "filename": "testing/tools/adb_push_tests.sh",
+        "patchSetId": 12
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-18T18:00:17Z",
+      "side": 1,
+      "message": "Is it necessary to send to the device again, or can this instead move the binary that line 22 already sent to the right location?",
+      "revId": "6a93177ce512c2ce41454f713319eed8ec4adba4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
