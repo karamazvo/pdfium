@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "25d64bf7_432168c7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 12
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T00:16:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a3f61bd9_e2dd422e",
+      "range": {
+        "startLine": 19,
+        "startChar": 50,
+        "endLine": 19,
+        "endChar": 56
+      },
+      "revId": "1284014379b51240432a6762ade16386a4c1d6c9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d6309416_4d9f770f",
@@ -37,6 +61,24 @@
       "writtenOn": "2026-02-18T00:04:44Z",
       "side": 1,
       "message": "Can this line, line 37, and line 46 all return nullptr instead?",
+      "revId": "1284014379b51240432a6762ade16386a4c1d6c9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "87f0e86b_ccd07c90",
+        "filename": "core/fpdfapi/parser/cpdf_hint_tables_unittest.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T00:16:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d6309416_4d9f770f",
       "revId": "1284014379b51240432a6762ade16386a4c1d6c9",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -58,6 +100,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0c488fc3_48987be7",
+        "filename": "core/fxge/android/fx_android_impl.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T00:16:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "879a8476_d8ede259",
+      "revId": "1284014379b51240432a6762ade16386a4c1d6c9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6565e605_95f1c3d2",
@@ -75,6 +135,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bc888ca8_fef06f75",
+        "filename": "core/fxge/android/fx_android_impl.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T00:16:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6565e605_95f1c3d2",
+      "revId": "1284014379b51240432a6762ade16386a4c1d6c9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "495eea08_63b26aab",
@@ -88,6 +166,30 @@
       "writtenOn": "2026-02-18T00:04:44Z",
       "side": 1,
       "message": "Can this be Destroy() for consistency with line 42?",
+      "range": {
+        "startLine": 32,
+        "startChar": 17,
+        "endLine": 32,
+        "endChar": 21
+      },
+      "revId": "1284014379b51240432a6762ade16386a4c1d6c9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "20503f59_b877fb05",
+        "filename": "core/fxge/cfx_gemodule.h",
+        "patchSetId": 12
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T00:16:10Z",
+      "side": 1,
+      "message": "In my tiny mind, Destroy is the opposite of Create, and Term is the opposite of Init. One should be able to Init() / Term() / Init() / Term() without any issues, so this isn\u0027t really a destroy.",
+      "parentUuid": "495eea08_63b26aab",
       "range": {
         "startLine": 32,
         "startChar": 17,
