@@ -127,6 +127,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "fa4b98d0_61e0ece5",
+        "filename": "core/fpdfapi/render/cpdf_devicebuffer.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-18T16:57:58Z",
+      "side": 1,
+      "message": "Oh, I forgot about that. I guess this can\u0027t use std::to_underyling() yet.",
+      "parentUuid": "e2d821dc_91d80bb5",
+      "revId": "20643ad0a1b51d615ef314f43453ce1e3d110e14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "06e3536f_6ac955f6",
         "filename": "core/fxge/render_defines.h",
         "patchSetId": 13
