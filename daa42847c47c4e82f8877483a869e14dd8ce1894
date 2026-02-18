@@ -18,6 +18,69 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "562b3634_443aec3a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T18:50:54Z",
+      "side": 1,
+      "message": "Thanks for the effort. Feel free to ignore the pre-existing stuff.",
+      "revId": "daa42847c47c4e82f8877483a869e14dd8ce1894",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cf440004_070e48b4",
+        "filename": "fpdfsdk/fpdf_structtree_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T18:50:54Z",
+      "side": 1,
+      "message": "nit: pre-existing: this really ought be the first include as tests should include the test file header first, but I\u0027m not sure clang-format is able to handle this without noise.",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 35
+      },
+      "revId": "daa42847c47c4e82f8877483a869e14dd8ce1894",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f1975757_36259d24",
+        "filename": "fpdfsdk/fpdf_structtree_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T18:50:54Z",
+      "side": 1,
+      "message": "nit: pre-existing: probably missing includes of gtest and gmock.",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 42
+      },
+      "revId": "daa42847c47c4e82f8877483a869e14dd8ce1894",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d0824406_4f373d05",
@@ -36,6 +99,29 @@
         "startChar": 61,
         "endLine": 148,
         "endChar": 62
+      },
+      "revId": "daa42847c47c4e82f8877483a869e14dd8ce1894",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4725e77d_bc35c4d5",
+        "filename": "fpdfsdk/fpdf_structtree_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T18:50:54Z",
+      "side": 1,
+      "message": "nit: probably should be EXPECT_THAT(buffer, testing::Each(0u));",
+      "range": {
+        "startLine": 151,
+        "startChar": 4,
+        "endLine": 152,
+        "endChar": 23
       },
       "revId": "daa42847c47c4e82f8877483a869e14dd8ce1894",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
