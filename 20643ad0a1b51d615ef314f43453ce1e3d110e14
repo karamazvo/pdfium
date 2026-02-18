@@ -109,6 +109,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e2d821dc_91d80bb5",
+        "filename": "core/fpdfapi/render/cpdf_devicebuffer.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-18T12:32:26Z",
+      "side": 1,
+      "message": "IMO: The bot update might be a better idea, considering chromium already uses c++ 23 presumably as I\u0027ve seen it used frequently in some blink stuff.\n\nCreating CLs for these just in case (for a learning experience), LMK if we should go ahead with them.",
+      "parentUuid": "d928e9ae_9e0f27e2",
+      "revId": "20643ad0a1b51d615ef314f43453ce1e3d110e14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "06e3536f_6ac955f6",
         "filename": "core/fxge/render_defines.h",
         "patchSetId": 13
