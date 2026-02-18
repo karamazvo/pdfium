@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cd37e7ad_a7bde776",
+        "filename": "testing/tools/adb_push_tests.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-18T00:34:22Z",
+      "side": 1,
+      "message": "Just to double check, is this really intended to only be used from a Chromium checkout?",
+      "range": {
+        "startLine": 6,
+        "startChar": 38,
+        "endLine": 6,
+        "endChar": 46
+      },
+      "revId": "5fb05a4effa04cce3d82999d3d971c83320a41c4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d626f8bb_21fede8d",
+        "filename": "testing/tools/adb_push_tests.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-18T00:34:22Z",
+      "side": 1,
+      "message": "Would a pdfium sub-dir inside tmp/ make it easier to clean up?",
+      "range": {
+        "startLine": 13,
+        "startChar": 31,
+        "endLine": 13,
+        "endChar": 47
+      },
+      "revId": "5fb05a4effa04cce3d82999d3d971c83320a41c4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "429e91c2_146ef1e1",
+        "filename": "testing/tools/adb_push_tests.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-18T00:34:22Z",
+      "side": 1,
+      "message": "Put this in a variable and reuse below. Same for the destination temp dir.",
+      "range": {
+        "startLine": 13,
+        "startChar": 16,
+        "endLine": 13,
+        "endChar": 28
+      },
+      "revId": "5fb05a4effa04cce3d82999d3d971c83320a41c4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a9a415b6_702edde4",
+        "filename": "testing/utils/path_service.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-18T00:34:22Z",
+      "side": 1,
+      "message": "I can put together a CL to do this properly if you can wait a bit.",
+      "revId": "5fb05a4effa04cce3d82999d3d971c83320a41c4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
