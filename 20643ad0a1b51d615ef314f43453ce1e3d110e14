@@ -96,6 +96,30 @@
       },
       "revId": "20643ad0a1b51d615ef314f43453ce1e3d110e14",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "329584f8_d0350a34",
+        "filename": "core/fxge/render_defines.h",
+        "patchSetId": 13
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T00:50:53Z",
+      "side": 1,
+      "message": "To be clear, I think we ought remove the operator| and convert this all to Mask\u003cRenderCapsFlag\u003e .",
+      "parentUuid": "6ce96da6_c24e66df",
+      "range": {
+        "startLine": 34,
+        "startChar": 7,
+        "endLine": 34,
+        "endChar": 21
+      },
+      "revId": "20643ad0a1b51d615ef314f43453ce1e3d110e14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
