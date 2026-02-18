@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "892f0423_6cadd389",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4603647
+      },
+      "writtenOn": "2026-02-18T14:01:41Z",
+      "side": 1,
+      "message": "Hello,\n\nThis CL adds API to retrieve the /E (Expansion) attribute.\n\nIt will be used on the Chromium side by:\n\n  https://chromium-review.googlesource.com/c/chromium/src/+/7588633\n\nThank you for your feedback.\n\nBest,\nFelipe",
+      "revId": "daa42847c47c4e82f8877483a869e14dd8ce1894",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
