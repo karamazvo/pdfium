@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e90b5f96_6b490bf1",
+        "filename": "core/fxcrt/cxx23_to_underlying.h",
+        "patchSetId": 19
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-18T18:07:22Z",
+      "side": 1,
+      "message": "File should be listed in core/fxcrt/BUILD.gn.",
+      "revId": "feb35cc5b46c3d7de4b51ac595ecd0e66d465bc3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "227fe848_93a0569b",
+        "filename": "core/fxcrt/cxx23_to_underlying.h",
+        "patchSetId": 19
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-18T18:07:22Z",
+      "side": 1,
+      "message": "Add bug number to TODO.",
+      "revId": "feb35cc5b46c3d7de4b51ac595ecd0e66d465bc3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
