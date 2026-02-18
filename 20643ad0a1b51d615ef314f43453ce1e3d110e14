@@ -37,6 +37,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "6848d6df_d855d427",
+        "filename": "core/fpdfapi/render/cpdf_devicebuffer.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-18T08:15:55Z",
+      "side": 1,
+      "message": "Isn\u0027t that C++ 23? Do the bots support it?",
+      "parentUuid": "7391dedd_d7854f84",
+      "revId": "20643ad0a1b51d615ef314f43453ce1e3d110e14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "06e3536f_6ac955f6",
         "filename": "core/fxge/render_defines.h",
         "patchSetId": 13
