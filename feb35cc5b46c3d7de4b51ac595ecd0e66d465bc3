@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5bf029b0_eeb88047",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 19
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T18:35:26Z",
+      "side": 1,
+      "message": "This is a good CL against a dubious API. See the comment in cfx_agg_devicedriver about maybe a larger restructuring.  Lei, thoughts?",
+      "revId": "feb35cc5b46c3d7de4b51ac595ecd0e66d465bc3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e90b5f96_6b490bf1",
@@ -31,6 +48,259 @@
       "writtenOn": "2026-02-18T18:07:22Z",
       "side": 1,
       "message": "Add bug number to TODO.",
+      "revId": "feb35cc5b46c3d7de4b51ac595ecd0e66d465bc3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bdcedef0_e5737d55",
+        "filename": "core/fxcrt/mask.h",
+        "patchSetId": 19
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T18:35:26Z",
+      "side": 1,
+      "message": "Let\u0027s do this cleanup to mask.h as a separate CL prior to this one.\n\nThere\u0027s some subtlety that is lost here in that the types of the subsequent Es will be deduced by the compiler and could be different than the first E. Which means we could mix and match constants, which is what this class is trying to make impossible.\n\nWe wrote this prior to C++20, so we couldn\u0027t write the following \n```\ntemplate \u003cstd::same_as\u003cE\u003e... Args\u003e\nconstexpr Mask(E first, Args... rest)\n    : val_((static_cast\u003cUnderlyingType\u003e(first) | ... | static_cast\u003cUnderlyingType\u003e(rest))) {}\n```\n\nwhich is what I think we want.",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 27
+      },
+      "revId": "feb35cc5b46c3d7de4b51ac595ecd0e66d465bc3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "08affb03_69e2aed1",
+        "filename": "core/fxge/agg/cfx_agg_devicedriver.h",
+        "patchSetId": 19
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T18:35:26Z",
+      "side": 1,
+      "message": "Ideally, this would be more strongly typed so we could return a Mask\u003c\u003e in the mask case and avoid some casting later on.\n\nThis long-existing API isn\u0027t great in that we seem to always call it with a fixed constant (and not a variable). Generally, that suggests that this should have been split into GetDeviceWidth(), GetDeviceHeight(), etc.\n\nDoing so would allow us to remove the DeviceCapsId enum.\n\nAlternatively, this could return std::variant\u003cint, Mask\u003c...\u003e, ...\u003e if we keep the enum.",
+      "range": {
+        "startLine": 46,
+        "startChar": 20,
+        "endLine": 46,
+        "endChar": 32
+      },
+      "revId": "feb35cc5b46c3d7de4b51ac595ecd0e66d465bc3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ec2cef08_a37c9705",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 494,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T18:35:26Z",
+      "side": 1,
+      "message": "This should be Mask\u003c\u003e, right?",
+      "range": {
+        "startLine": 494,
+        "startChar": 45,
+        "endLine": 494,
+        "endChar": 49
+      },
+      "revId": "feb35cc5b46c3d7de4b51ac595ecd0e66d465bc3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7711e2b2_ce6fc1e3",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 496,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T18:35:26Z",
+      "side": 1,
+      "message": "Once this is Mask, we should be able to write render_caps \u0026 RenderCapsFlag::kByteMaskOutput relying on implicit conversion of the second arg to Mask and applying the Mask\u0027s \u0026-operator under the covers.\n\nThis should avoid a bunch of to-underlying.",
+      "range": {
+        "startLine": 496,
+        "startChar": 6,
+        "endLine": 496,
+        "endChar": 74
+      },
+      "revId": "feb35cc5b46c3d7de4b51ac595ecd0e66d465bc3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6d199ed5_946c003f",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 556,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T18:35:26Z",
+      "side": 1,
+      "message": "pre-existing: I\u0027m left wondering why this doesnt use cached values as set in lines 537 above.  BUT don\u0027t fix this until a follow-on CL.  It may not work.",
+      "range": {
+        "startLine": 556,
+        "startChar": 0,
+        "endLine": 556,
+        "endChar": 58
+      },
+      "revId": "feb35cc5b46c3d7de4b51ac595ecd0e66d465bc3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a94388fe_3cbb83ff",
+        "filename": "core/fxge/render_defines.h",
+        "patchSetId": 19
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T18:35:26Z",
+      "side": 1,
+      "message": "nit: Unless there\u0027s something weird going on here, I think remove this \u0027)\u0027 ...",
+      "range": {
+        "startLine": 45,
+        "startChar": 56,
+        "endLine": 45,
+        "endChar": 57
+      },
+      "revId": "feb35cc5b46c3d7de4b51ac595ecd0e66d465bc3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ae869f70_3191fe48",
+        "filename": "core/fxge/render_defines.h",
+        "patchSetId": 19
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T18:35:26Z",
+      "side": 1,
+      "message": "... this becomes ...\n```\n, \nRenderCapsFlag::kFillStrokePath,\n...\n```",
+      "range": {
+        "startLine": 47,
+        "startChar": 0,
+        "endLine": 47,
+        "endChar": 59
+      },
+      "revId": "feb35cc5b46c3d7de4b51ac595ecd0e66d465bc3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cba362ef_32da8172",
+        "filename": "core/fxge/render_defines.h",
+        "patchSetId": 19
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T18:35:26Z",
+      "side": 1,
+      "message": ".. and the \u0027)\u0027 goes here.",
+      "range": {
+        "startLine": 51,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 5
+      },
+      "revId": "feb35cc5b46c3d7de4b51ac595ecd0e66d465bc3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8d559edd_756964b8",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T18:35:26Z",
+      "side": 1,
+      "message": "Nope. Looks like a tad bit aggressive with search and replace :).  storage.size() is a size_t and needs to be shortened to int to match the \u0027.\u0027 in the directive.",
+      "range": {
+        "startLine": 112,
+        "startChar": 17,
+        "endLine": 112,
+        "endChar": 53
+      },
+      "revId": "feb35cc5b46c3d7de4b51ac595ecd0e66d465bc3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dff70cea_a49f0ef4",
+        "filename": "core/fxge/win32/cgdi_display_driver.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T18:35:26Z",
+      "side": 1,
+      "message": "Again, making this a mask would allow us to or-in another mask.",
+      "range": {
+        "startLine": 26,
+        "startChar": 4,
+        "endLine": 26,
+        "endChar": 16
+      },
+      "revId": "feb35cc5b46c3d7de4b51ac595ecd0e66d465bc3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dbd717c8_742158f7",
+        "filename": "core/fxge/win32/ctext_only_printer_driver.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T18:35:26Z",
+      "side": 1,
+      "message": "nit: if you wanted to modernize this, these could go inline in the .h file.",
+      "range": {
+        "startLine": 25,
+        "startChar": 1,
+        "endLine": 30,
+        "endChar": 26
+      },
       "revId": "feb35cc5b46c3d7de4b51ac595ecd0e66d465bc3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
