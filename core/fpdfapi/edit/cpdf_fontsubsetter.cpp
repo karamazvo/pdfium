@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <map>
 #include <memory>
+#include <random>
 #include <set>
 #include <vector>
 
@@ -20,9 +21,11 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
+#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -85,6 +88,26 @@ std::vector<uint8_t> GenerateFontSubset(CPDF_Document* doc,
   return std::vector<uint8_t>(out_data, UNSAFE_BUFFERS(out_data + out_len));
 }
 
+// 9.6.4 Font Subsets: the font name must begin with a tag followed by a plus
+// sign (+). The tag must consist of six uppercase letters.
+ByteString GenerateFontSubsetName(const ByteString& base_font_name) {
+  static constexpr int kTagLength = 6;
+  static constexpr auto kCharset = std::to_array<char>(
+      {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+       'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'});
+
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_int_distribution<> dis(0, kCharset.size() - 1);
+
+  ByteString tag;
+  for (int i = 0; i < kTagLength; ++i) {
+    tag += kCharset[dis(gen)];
+  }
+
+  return tag + "+" + base_font_name;
+}
+
 }  // namespace
 
 CPDF_FontSubsetter::CPDF_FontSubsetter(CPDF_Document* doc) : doc_(doc) {}
@@ -120,6 +143,26 @@ CPDF_FontSubsetter::GenerateObjectOverrides(
     new_stream->GetMutableDict()->SetNewFor<CPDF_Number>(
         "Length1", static_cast<int>(new_font_data.size()));
     overrides[obj_num] = new_stream;
+
+    // Override the root font dict.
+    RetainPtr<CPDF_Object> new_root_font = candidate.root_font->Clone();
+    new_root_font->AsMutableDictionary()->SetNewFor<CPDF_Name>(
+        "BaseFont", candidate.subset_font_name);
+    overrides[candidate.root_font->GetObjNum()] = new_root_font;
+
+    // Override the CID font dict if necessary.
+    if (candidate.cid_font) {
+      RetainPtr<CPDF_Object> new_cid_font = candidate.cid_font->Clone();
+      new_cid_font->AsMutableDictionary()->SetNewFor<CPDF_Name>(
+          "BaseFont", candidate.subset_font_name);
+      overrides[candidate.cid_font->GetObjNum()] = new_cid_font;
+    }
+
+    // Override the font descriptor.
+    RetainPtr<CPDF_Object> new_descriptor = candidate.descriptor->Clone();
+    new_descriptor->AsMutableDictionary()->SetNewFor<CPDF_Name>(
+        "FontName", candidate.subset_font_name);
+    overrides[candidate.descriptor->GetObjNum()] = new_descriptor;
   }
   return overrides;
 }
@@ -166,12 +209,13 @@ void CPDF_FontSubsetter::CollectSubsetCandidatesFromPage(
       continue;
     }
 
+    RetainPtr<const CPDF_Dictionary> cid_font;
     RetainPtr<const CPDF_Dictionary> descriptor;
     if (font->IsCIDFont()) {
       RetainPtr<const CPDF_Array> descendants =
           root_font->GetArrayFor("DescendantFonts");
       CHECK(descendants);
-      RetainPtr<const CPDF_Dictionary> cid_font = descendants->GetDictAt(0);
+      cid_font = descendants->GetDictAt(0);
       CHECK(cid_font);
       descriptor = cid_font->GetDictFor("FontDescriptor");
     } else {
@@ -190,7 +234,12 @@ void CPDF_FontSubsetter::CollectSubsetCandidatesFromPage(
     uint32_t obj_num = font_stream->GetObjNum();
     auto& candidate = candidates_[obj_num];
     if (!candidate.font_stream) {
+      candidate.subset_font_name =
+          GenerateFontSubsetName(font->GetBaseFontName());
       candidate.font_stream = font_stream;
+      candidate.root_font = root_font;
+      candidate.cid_font = cid_font;
+      candidate.descriptor = descriptor;
     }
     AddUsedText(text, font, candidate);
   }

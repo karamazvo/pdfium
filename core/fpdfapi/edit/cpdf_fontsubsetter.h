@@ -10,11 +10,13 @@
 #include <map>
 #include <set>
 
+#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Document;
+class CPDF_Dictionary;
 class CPDF_Font;
 class CPDF_Object;
 class CPDF_Page;
@@ -43,10 +45,14 @@ class CPDF_FontSubsetter {
     SubsetCandidate();
     ~SubsetCandidate();
 
+    // The new font name after subsetting.
+    ByteString subset_font_name;
+
     // PDF font-related objects that need to be overridden during the save.
-    // TODO(crbug.com/476127152): Override the root font, CID font, and
-    // descriptor.
     RetainPtr<const CPDF_Stream> font_stream;
+    RetainPtr<const CPDF_Dictionary> root_font;
+    RetainPtr<const CPDF_Dictionary> cid_font;
+    RetainPtr<const CPDF_Dictionary> descriptor;
 
     // The set of GIDs used by text.
     std::set<uint32_t> used_gids;
