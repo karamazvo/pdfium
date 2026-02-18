@@ -179,6 +179,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "30ab8f3c_62867356",
+        "filename": "core/fpdfapi/render/cpdf_devicebuffer.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-18T17:57:02Z",
+      "side": 1,
+      "message": "Should be done. Let me know if i should move this to base instead. Chose this directory since /base was gitignored.",
+      "parentUuid": "c464c5c3_61631c94",
+      "revId": "20643ad0a1b51d615ef314f43453ce1e3d110e14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "06e3536f_6ac955f6",
