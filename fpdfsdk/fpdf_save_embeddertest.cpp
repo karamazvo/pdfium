@@ -313,13 +313,7 @@ class FPDFSaveWithFontSubsetEmbedderTest : public FPDFSaveEmbedderTest {
  public:
   static constexpr char kSaveNewTextFilename[] = "save_new_text";
 
-  ScopedFPDFFont LoadTestFont() {
-    std::string font_path = PathService::GetThirdPartyFilePath(
-        "NotoSansCJK/NotoSansSC-Regular.subset.otf");
-    if (font_path.empty()) {
-      return nullptr;
-    }
-
+  ScopedFPDFFont LoadTestFont(const std::string& font_path) {
     std::vector<uint8_t> font_data = GetFileContents(font_path.c_str());
     if (font_data.empty()) {
       return nullptr;
@@ -330,18 +324,17 @@ class FPDFSaveWithFontSubsetEmbedderTest : public FPDFSaveEmbedderTest {
         /*cid=*/true));
   }
 
-  void InsertNewTextObject(const FPDF_PAGE& page) {
-    ScopedFPDFFont font = LoadTestFont();
-    ASSERT_TRUE(font);
-
+  void InsertNewTextObject(const FPDF_PAGE& page,
+                           FPDF_FONT font,
+                           FPDF_WIDESTRING text,
+                           float x,
+                           float y) {
     FPDF_PAGEOBJECT text_obj =
-        FPDFPageObj_CreateTextObj(document(), font.get(), 24.0f);
+        FPDFPageObj_CreateTextObj(document(), font, 24.0f);
 
-    // `text` only contains a subset of the characters in the test font.
-    ScopedFPDFWideString text = GetFPDFWideString(L"这是第一句。");
-    ASSERT_TRUE(FPDFText_SetText(text_obj, text.get()));
+    ASSERT_TRUE(FPDFText_SetText(text_obj, text));
 
-    const FS_MATRIX matrix{1, 0, 0, 1, 10, 10};
+    const FS_MATRIX matrix{1.0f, 0.0f, 0.0f, 1.0f, x, y};
     ASSERT_TRUE(FPDFPageObj_TransformF(text_obj, &matrix));
     FPDFPage_InsertObject(page, text_obj);
     ASSERT_TRUE(FPDFPage_GenerateContent(page));
@@ -360,7 +353,13 @@ TEST_F(FPDFSaveWithFontSubsetEmbedderTest, SaveWithoutSubsetWithNewText) {
   ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  ASSERT_NO_FATAL_FAILURE(InsertNewTextObject(page.get()));
+  ScopedFPDFFont font = LoadTestFont(PathService::GetThirdPartyFilePath(
+      "NotoSansCJK/NotoSansSC-Regular.subset.otf"));
+  ASSERT_TRUE(font);
+
+  ScopedFPDFWideString text = GetFPDFWideString(L"这是第一句。");
+  ASSERT_NO_FATAL_FAILURE(InsertNewTextObject(
+      page.get(), font.get(), text.get(), /*x=*/10.0f, /*y=*/10.0f));
 
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
   CompareBitmapWithExpectationSuffix(bitmap.get(), kSaveNewTextFilename);
@@ -380,7 +379,13 @@ TEST_F(FPDFSaveWithFontSubsetEmbedderTest, SaveWithSubsetWithNewText) {
   ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  ASSERT_NO_FATAL_FAILURE(InsertNewTextObject(page.get()));
+  ScopedFPDFFont font = LoadTestFont(PathService::GetThirdPartyFilePath(
+      "NotoSansCJK/NotoSansSC-Regular.subset.otf"));
+  ASSERT_TRUE(font);
+
+  ScopedFPDFWideString text = GetFPDFWideString(L"这是第一句。");
+  ASSERT_NO_FATAL_FAILURE(InsertNewTextObject(
+      page.get(), font.get(), text.get(), /*x=*/10.0f, /*y=*/10.0f));
 
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
   CompareBitmapWithExpectationSuffix(bitmap.get(), kSaveNewTextFilename);
@@ -389,9 +394,44 @@ TEST_F(FPDFSaveWithFontSubsetEmbedderTest, SaveWithSubsetWithNewText) {
   // font.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, FPDF_SUBSET_NEW_FONTS));
   EXPECT_THAT(GetString(), StartsWith("%PDF-1.7\r\n"));
-  // TODO(crbug.com/476127152): File size increase should be smaller.
-  EXPECT_EQ(5001u, GetString().size());
+  EXPECT_EQ(4481u, GetString().size());
 
   // Verify the text is visible.
   VerifySavedDocumentWithExpectationSuffix(kSaveNewTextFilename);
+}
+
+TEST_F(FPDFSaveWithFontSubsetEmbedderTest,
+       SaveWithSubsetMultipleFontsMultipleTexts) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ScopedFPDFFont font1 = LoadTestFont(PathService::GetThirdPartyFilePath(
+      "NotoSansCJK/NotoSansSC-Regular.subset.otf"));
+  ASSERT_TRUE(font1);
+
+  ScopedFPDFWideString text1 = GetFPDFWideString(L"这是第一句。");
+  ASSERT_NO_FATAL_FAILURE(InsertNewTextObject(
+      page.get(), font1.get(), text1.get(), /*x=*/10.0f, /*y=*/10.0f));
+
+  ScopedFPDFFont font2 = LoadTestFont(PathService::GetThirdPartyFilePath(
+      "test_fonts/test_fonts/Arimo-Regular.ttf"));
+  ASSERT_TRUE(font2);
+
+  ScopedFPDFWideString text2 = GetFPDFWideString(L"Hello again.");
+  ASSERT_NO_FATAL_FAILURE(InsertNewTextObject(
+      page.get(), font2.get(), text2.get(), /*x=*/10.0f, /*y=*/150.0f));
+
+  constexpr char kSaveMultipleFontsFilename[] = "save_multiple_fonts";
+  ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
+  CompareBitmapWithExpectationSuffix(bitmap.get(), kSaveMultipleFontsFilename);
+
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, FPDF_SUBSET_NEW_FONTS));
+  EXPECT_THAT(GetString(), StartsWith("%PDF-1.7\r\n"));
+  // Subsetting reduces the file from ~259KB to ~24.3KB. Allow a tolerance of
+  // +/- 500 bytes to accommodate any potential internal changes.
+  EXPECT_NEAR(GetString().size(), 24300u, 500u);
+
+  // Verify the text is visible.
+  VerifySavedDocumentWithExpectationSuffix(kSaveMultipleFontsFilename);
 }
