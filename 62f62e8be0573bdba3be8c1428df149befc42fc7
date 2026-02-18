@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "99eebdcc_3ae7a41a",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-18T23:49:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e94b0ed8_abb4b5c8",
+      "range": {
+        "startLine": 170,
+        "startChar": 9,
+        "endLine": 170,
+        "endChar": 27
+      },
+      "revId": "62f62e8be0573bdba3be8c1428df149befc42fc7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1872a106_c3abf2f0",
@@ -37,6 +61,30 @@
       "writtenOn": "2026-02-13T23:09:19Z",
       "side": 1,
       "message": "`const uint32_t` if CPDF_FontSubsetter is only reading the span.",
+      "range": {
+        "startLine": 39,
+        "startChar": 19,
+        "endLine": 39,
+        "endChar": 27
+      },
+      "revId": "62f62e8be0573bdba3be8c1428df149befc42fc7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e6d45879_ec8f9885",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.h",
+        "patchSetId": 15
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-18T23:49:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1872a106_c3abf2f0",
       "range": {
         "startLine": 39,
         "startChar": 19,
@@ -117,6 +165,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f34acbb8_5a989259",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter_embeddertest.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-18T23:49:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fbe196f0_7a8dbd4d",
+      "revId": "62f62e8be0573bdba3be8c1428df149befc42fc7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6ee4e17a_8524844c",
@@ -152,6 +218,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9f125fa4_a1a9bf34",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter_embeddertest.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-18T23:49:13Z",
+      "side": 1,
+      "message": "Decided to keep the tests as-is and have the rendering/text extraction tests occur in fpdf_save_embeddertest.cpp. CPDFFontSubsetterTest can test dictionary values and stream lengths.",
+      "parentUuid": "134285f3_ebcb91cf",
+      "revId": "62f62e8be0573bdba3be8c1428df149befc42fc7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8df81045_2c117461",
@@ -165,6 +249,24 @@
       "writtenOn": "2026-02-13T21:41:18Z",
       "side": 1,
       "message": "Hardcoded to find a specific object number. Not sure how to avoid. This will get worse when the root font, CID font, and font descriptor objects are added to the overrides list.",
+      "revId": "62f62e8be0573bdba3be8c1428df149befc42fc7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cd5d4702_13164081",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter_embeddertest.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-18T23:49:13Z",
+      "side": 1,
+      "message": "For input: using a large range of new obj nums.\nFor output: using gMock matchers.",
+      "parentUuid": "8df81045_2c117461",
       "revId": "62f62e8be0573bdba3be8c1428df149befc42fc7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
