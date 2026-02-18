@@ -145,6 +145,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "014da2f7_2cdef1fe",
+        "filename": "core/fpdfapi/render/cpdf_devicebuffer.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-18T16:58:00Z",
+      "side": 1,
+      "message": "Ok in that case we have a few real options:\n\n1. Hold of on this CL until c++23\n2. Use static_cast\u003cint\u003e\n3. Create our own version of the to_underlying() api so that we can replace with std:: when we go to c++23\n\nThoughts?",
+      "parentUuid": "e2d821dc_91d80bb5",
+      "revId": "20643ad0a1b51d615ef314f43453ce1e3d110e14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "06e3536f_6ac955f6",
         "filename": "core/fxge/render_defines.h",
         "patchSetId": 13
