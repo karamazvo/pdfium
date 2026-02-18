@@ -192,6 +192,10 @@ std::string PathService::GetThirdPartyFilePath(const std::string& file_name) {
   std::string potential_path = path;
   potential_path.append("third_party");
 
+#if defined(ANDROID)
+  potential_path.append(PATH_SEPARATOR + file_name);
+  return potential_path;
+#else
   // Use third_party/bigint as a way to distinguish PDFium's vs. other's.
   std::string bigint = potential_path + PATH_SEPARATOR + "bigint";
   if (PathService::DirectoryExists(bigint)) {
@@ -212,4 +216,5 @@ std::string PathService::GetThirdPartyFilePath(const std::string& file_name) {
   }
 
   return std::string();
+#endif
 }
