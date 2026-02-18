@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "273f17af_8f373b5a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 13
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-18T08:29:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0d8606fc_d1606ce3",
+      "revId": "20643ad0a1b51d615ef314f43453ce1e3d110e14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7391dedd_d7854f84",
@@ -55,6 +73,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "334e397b_173374c8",
+        "filename": "core/fpdfapi/render/cpdf_devicebuffer.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-18T08:29:14Z",
+      "side": 1,
+      "message": "Alright so, I tested it once, and it seems like the bots fail\n\nLMK if we should update bots to c++ 23 or undo the latest commit.",
+      "parentUuid": "6848d6df_d855d427",
+      "revId": "20643ad0a1b51d615ef314f43453ce1e3d110e14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "06e3536f_6ac955f6",
         "filename": "core/fxge/render_defines.h",
         "patchSetId": 13
@@ -66,6 +102,24 @@
       "writtenOn": "2026-02-17T22:53:45Z",
       "side": 1,
       "message": "Can this use `#if defined(PDF_USE_SKIA)` like the pre-existing code?",
+      "revId": "20643ad0a1b51d615ef314f43453ce1e3d110e14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5a0c0a4d_643dfda9",
+        "filename": "core/fxge/render_defines.h",
+        "patchSetId": 13
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-18T08:29:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "06e3536f_6ac955f6",
       "revId": "20643ad0a1b51d615ef314f43453ce1e3d110e14",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -130,6 +184,54 @@
       "side": 1,
       "message": "To be clear, I think we ought remove the operator| and convert this all to Mask\u003cRenderCapsFlag\u003e .",
       "parentUuid": "6ce96da6_c24e66df",
+      "range": {
+        "startLine": 34,
+        "startChar": 7,
+        "endLine": 34,
+        "endChar": 21
+      },
+      "revId": "20643ad0a1b51d615ef314f43453ce1e3d110e14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e11ecc5d_d64090a4",
+        "filename": "core/fxge/render_defines.h",
+        "patchSetId": 13
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-18T08:29:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5c967164_f1e18f74",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 6
+      },
+      "revId": "20643ad0a1b51d615ef314f43453ce1e3d110e14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1b70513a_6e19544c",
+        "filename": "core/fxge/render_defines.h",
+        "patchSetId": 13
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-18T08:29:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "329584f8_d0350a34",
       "range": {
         "startLine": 34,
         "startChar": 7,
