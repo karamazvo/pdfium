@@ -16,6 +16,24 @@
       "message": "Hey guys, removed the linux cxx23 bot if we are planning to move all the bots to cxx23. Adding the link for the chromium end for reference.\n\nhttps://chromium-review.googlesource.com/c/chromium/tools/build/+/7588614",
       "revId": "ec9fa89023cb7ffa12d0370e1ac5372a239a78df",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0e4b019d_36970eaa",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-18T16:48:49Z",
+      "side": 1,
+      "message": "Same as that CL. PDFium is not ready to move to C++23 by default yet.",
+      "parentUuid": "cd948770_f4b73b20",
+      "revId": "ec9fa89023cb7ffa12d0370e1ac5372a239a78df",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
