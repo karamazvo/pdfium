@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7d87843e_7a9c65f0",
+        "filename": "testing/BUILD.gn",
+        "patchSetId": 1
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-18T00:52:46Z",
+      "side": 1,
+      "message": "nit blank line before",
+      "range": {
+        "startLine": 255,
+        "startChar": 0,
+        "endLine": 255,
+        "endChar": 6
+      },
+      "revId": "c0e1655dd72671232c1be4cee987e0991c1317f9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
