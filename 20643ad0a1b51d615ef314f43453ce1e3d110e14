@@ -163,6 +163,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "c464c5c3_61631c94",
+        "filename": "core/fpdfapi/render/cpdf_devicebuffer.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-18T17:02:17Z",
+      "side": 1,
+      "message": "Create your own so they can become std::to_underlying() later? Here\u0027s the previous Chromium implementation: https://chromium.googlesource.com/chromium/src/+/d982140f13a0430ed14b5d3de426555890b87cfe/base/types/cxx23_to_underlying.h",
+      "parentUuid": "014da2f7_2cdef1fe",
+      "revId": "20643ad0a1b51d615ef314f43453ce1e3d110e14",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "06e3536f_6ac955f6",
         "filename": "core/fxge/render_defines.h",
         "patchSetId": 13
