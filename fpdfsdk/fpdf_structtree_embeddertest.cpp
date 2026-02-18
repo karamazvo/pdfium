@@ -118,6 +118,45 @@ TEST_F(FPDFStructTreeEmbedderTest, GetActualText) {
   }
 }
 
+TEST_F(FPDFStructTreeEmbedderTest, GetExpansion) {
+  ASSERT_TRUE(OpenDocument("tagged_expansion.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page.get()));
+    ASSERT_TRUE(struct_tree);
+    ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
+
+    EXPECT_EQ(0U, FPDF_StructElement_GetExpansion(nullptr, nullptr, 0));
+
+    FPDF_STRUCTELEMENT element =
+        FPDF_StructTree_GetChildAtIndex(struct_tree.get(), 0);
+    ASSERT_TRUE(element);
+    // Document element has no /E attribute.
+    EXPECT_EQ(0U, FPDF_StructElement_GetExpansion(element, nullptr, 0));
+
+    ASSERT_EQ(1, FPDF_StructElement_CountChildren(element));
+    FPDF_STRUCTELEMENT child_element =
+        FPDF_StructElement_GetChildAtIndex(element, 0);
+    ASSERT_TRUE(child_element);
+    // Span element has /E set to "Portable Document Format".
+    ASSERT_EQ(50U,
+              FPDF_StructElement_GetExpansion(child_element, nullptr, 0));
+
+    unsigned short buffer[25] = {};
+    // Deliberately pass in a small buffer size to make sure |buffer| remains
+    // untouched.
+    ASSERT_EQ(50U, FPDF_StructElement_GetExpansion(child_element, buffer, 1));
+    for (unsigned short b : buffer) {
+      EXPECT_EQ(0U, b);
+    }
+    ASSERT_EQ(50U, FPDF_StructElement_GetExpansion(child_element, buffer,
+                                                   sizeof(buffer)));
+    EXPECT_EQ(L"Portable Document Format", GetPlatformWString(buffer));
+  }
+}
+
 TEST_F(FPDFStructTreeEmbedderTest, GetStringAttribute) {
   ASSERT_TRUE(OpenDocument("tagged_table.pdf"));
   ScopedPage page = LoadScopedPage(0);
