@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "51477817_06ed2479",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 18
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-18T17:39:27Z",
+      "side": 1,
+      "message": "FYI, having some PDFium cl format things, just pushed some changes so that they dont get destroyed while I reinstall the repo. Not fully done yet.",
+      "revId": "a33395da8685d82dc3510fe6bf0f9a444563c66e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
