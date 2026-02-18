@@ -1,0 +1,101 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a3f61bd9_e2dd422e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 12
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-18T00:04:44Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 19,
+        "startChar": 50,
+        "endLine": 19,
+        "endChar": 56
+      },
+      "revId": "1284014379b51240432a6762ade16386a4c1d6c9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d6309416_4d9f770f",
+        "filename": "core/fpdfapi/parser/cpdf_hint_tables_unittest.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-18T00:04:44Z",
+      "side": 1,
+      "message": "Can this line, line 37, and line 46 all return nullptr instead?",
+      "revId": "1284014379b51240432a6762ade16386a4c1d6c9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "879a8476_d8ede259",
+        "filename": "core/fxge/android/fx_android_impl.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-18T00:04:44Z",
+      "side": 1,
+      "message": "Can probably `CHECK(!device_module_);`",
+      "revId": "1284014379b51240432a6762ade16386a4c1d6c9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6565e605_95f1c3d2",
+        "filename": "core/fxge/android/fx_android_impl.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-18T00:04:44Z",
+      "side": 1,
+      "message": "And omit this.",
+      "revId": "1284014379b51240432a6762ade16386a4c1d6c9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "495eea08_63b26aab",
+        "filename": "core/fxge/cfx_gemodule.h",
+        "patchSetId": 12
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-18T00:04:44Z",
+      "side": 1,
+      "message": "Can this be Destroy() for consistency with line 42?",
+      "range": {
+        "startLine": 32,
+        "startChar": 17,
+        "endLine": 32,
+        "endChar": 21
+      },
+      "revId": "1284014379b51240432a6762ade16386a4c1d6c9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
