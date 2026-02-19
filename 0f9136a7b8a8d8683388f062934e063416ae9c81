@@ -16,6 +16,46 @@
       "message": "@thestig@chromium.org @andyphan@chromium.org ptal when free.",
       "revId": "0f9136a7b8a8d8683388f062934e063416ae9c81",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "722f0c44_c0a05fe9",
+        "filename": "xfa/fxfa/layout/cxfa_contentlayoutprocessor.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 1748,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-19T21:51:23Z",
+      "side": 1,
+      "message": "Can we instead ensure that `array_keep_items_` never contains nullptr?",
+      "range": {
+        "startLine": 1748,
+        "startChar": 12,
+        "endLine": 1748,
+        "endChar": 23
+      },
+      "revId": "0f9136a7b8a8d8683388f062934e063416ae9c81",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "37df47ce_58003c31",
+        "filename": "xfa/fxfa/layout/cxfa_viewlayoutprocessor.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 568,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-19T21:51:23Z",
+      "side": 1,
+      "message": "I\u0027m not familiar with this code, so just eyeballing, but why does this return true here? It doesn\u0027t seem like it submitted anything. Consider leaving a comment.",
+      "revId": "0f9136a7b8a8d8683388f062934e063416ae9c81",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
