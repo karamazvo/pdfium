@@ -16,6 +16,24 @@
       "message": "We have a kind of test in Chrome called a nocompile test that proves that certain bad forms won\u0027t pass the compiler.  I was trying to write one for the mismatched enum case here, but we don\u0027t have the infrastructure copied over from Chrome to do so.  So what I ask is that you try something locally like\n\nenum A { kA1, kA2 };\nenum B ( kB1, kB2 };\n\nMask\u003cA\u003e(kA1, kB2);\n\nand double-check that compilation breaks because of no matching template. Once you\u0027ve done that, you\u0027re good to go.",
       "revId": "b60898d7ba7691dc9210a20e4e88576d81aa6f22",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5f0ec141_2204bb2b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 22
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-19T17:59:41Z",
+      "side": 1,
+      "message": "Yep, tried that out:\n```\n[0/230] 6.44s F CXX obj/fpdfsdk/pwl/pwl/cpwl_combo_box.o\n...\nstderr:\nIn file included from ../../fpdfsdk/pwl/cpwl_combo_box.cpp:7:\nIn file included from ../../fpdfsdk/pwl/cpwl_combo_box.h:13:\nIn file included from ../../fpdfsdk/pwl/cpwl_wnd.h:14:\n../../core/fxcrt/mask.h:85:12: error: expected \u0027)\u0027\n   85 | Mask\u003cA\u003e(kA1, kB2);\n      |            ^\n../../core/fxcrt/mask.h:85:8: note: to match this \u0027(\u0027\n   85 | Mask\u003cA\u003e(kA1, kB2);\n      |        ^\n../../core/fxcrt/mask.h:85:9: error: redefinition of \u0027kA1\u0027 as different kind of symbol\n   85 | Mask\u003cA\u003e(kA1, kB2);\n      |         ^\n../../core/fxcrt/mask.h:82:10: note: previous definition is here\n   82 | enum A { kA1, kA2 };\n      |          ^\n2 errors generated.\n```\n\nSeems to work.",
+      "parentUuid": "ac7e5eed_5b14b574",
+      "revId": "b60898d7ba7691dc9210a20e4e88576d81aa6f22",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
