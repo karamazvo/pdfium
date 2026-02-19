@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f193d870_a9498750",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter_embeddertest.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-19T00:24:45Z",
+      "side": 1,
+      "message": "BTW, I think this still has to be an embedder test for FPDFText_LoadFont.",
+      "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
