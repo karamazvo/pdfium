@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "461cc343_caf60332",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-19T22:17:47Z",
+      "side": 1,
+      "message": "Just generate some random numbers in the range [0, 25], and then add \u0027A\u0027?",
+      "revId": "d3440e64bd7254925d79773c1023ca27611d5d29",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "25a61d16_270b4add",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-19T22:17:47Z",
+      "side": 1,
+      "message": "BTW, CPDF_SimpleFont::LoadCommon() has similar but not quite the same logic. There\u0027s also RemoveSubsettedFontPrefix() living inside core/fxge/cfx_fontmapper.cpp.",
+      "revId": "d3440e64bd7254925d79773c1023ca27611d5d29",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9ea273e4_aaab27d9",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.h",
+        "patchSetId": 9
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-19T22:17:47Z",
+      "side": 1,
+      "message": "Can this use core/fxcrt/fx_random.h instead?",
+      "revId": "d3440e64bd7254925d79773c1023ca27611d5d29",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
