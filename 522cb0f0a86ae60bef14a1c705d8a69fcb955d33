@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cdd6453b_24c6ef94",
+        "filename": "core/fxge/cfx_substfont.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-19T20:56:14Z",
+      "side": 1,
+      "message": "subst_font is gone, so update comment to refer to `this`?",
+      "range": {
+        "startLine": 32,
+        "startChar": 20,
+        "endLine": 32,
+        "endChar": 30
+      },
+      "revId": "522cb0f0a86ae60bef14a1c705d8a69fcb955d33",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
