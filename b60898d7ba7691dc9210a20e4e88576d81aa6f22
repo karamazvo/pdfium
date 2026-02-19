@@ -70,6 +70,24 @@
       "parentUuid": "0a58a283_43237427",
       "revId": "b60898d7ba7691dc9210a20e4e88576d81aa6f22",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "67e6f2cb_c02cafaf",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 22
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-19T18:39:25Z",
+      "side": 1,
+      "message": "```\n  template \u003cstd::same_as\u003cE\u003e... Args\u003e\n  constexpr Mask(E first, Args... rest)\n      : val_((static_cast\u003cUnderlyingType\u003e(first) | ... |\n              static_cast\u003cUnderlyingType\u003e(rest))) {}\n```\n\nThis is the code I am currently using.\n\nThe test itself is later in the same file. Which I have in there for testing, although i also have a similar test outside in another file that imports it, to test if that is causing anything.",
+      "parentUuid": "df513c8e_e0c1a775",
+      "revId": "b60898d7ba7691dc9210a20e4e88576d81aa6f22",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
