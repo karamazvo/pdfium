@@ -1,6 +1,171 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "fa4eeb4a_9266e027",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-19T22:07:47Z",
+      "side": 1,
+      "message": "Return DataVector\u003cuint8_t\u003e instead. Then use the CPDF_Stream ctor that takes a DataVector\u003cuint8_t\u003e (+ dictionary with /Length1 set) to avoid a copy.",
+      "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "124fdbd5_a1de6fc6",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-19T22:07:47Z",
+      "side": 1,
+      "message": "Instead of separately getting the length this way, use the second parameter of hb_blob_get_data().",
+      "range": {
+        "startLine": 79,
+        "startChar": 25,
+        "endLine": 79,
+        "endChar": 43
+      },
+      "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fc4819f3_8cb61fab",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-19T22:07:47Z",
+      "side": 1,
+      "message": "Maybe \"old\" and \"new\" can be \"original\" and \"subsetted\", respectively.",
+      "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3f721234_718480b2",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-19T22:07:47Z",
+      "side": 1,
+      "message": "I think this can call AsText() like line 154 here, and then skip the entry if `text` is null.",
+      "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e569a4f2_9a1a6ee5",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-19T22:07:47Z",
+      "side": 1,
+      "message": "Based on other GetFont() callers, this shouldn\u0027t ever happen.",
+      "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8dc4506e_e00c5cff",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-19T22:07:47Z",
+      "side": 1,
+      "message": "Same. Never happens except during FPDF_DestroyLibrary().",
+      "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "859ba9ac_c7b42b6d",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.h",
+        "patchSetId": 23
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-19T22:07:47Z",
+      "side": 1,
+      "message": "Can the caller call this method multiple times without issues? Should `candidates_` be cleared at the start of the method, or should it be created on the stack and passed around?",
+      "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f211fea1_bd137110",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.h",
+        "patchSetId": 23
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-19T22:07:47Z",
+      "side": 1,
+      "message": "Isn\u0027t `font` always `text-\u003eGetFont()`? Omit?",
+      "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ef8b779f_8b1d03eb",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.h",
+        "patchSetId": 23
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-19T22:07:47Z",
+      "side": 1,
+      "message": "Can be shortened, like line 68.",
+      "range": {
+        "startLine": 73,
+        "startChar": 21,
+        "endLine": 73,
+        "endChar": 41
+      },
+      "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "f193d870_a9498750",
@@ -14,6 +179,40 @@
       "writtenOn": "2026-02-19T00:24:45Z",
       "side": 1,
       "message": "BTW, I think this still has to be an embedder test for FPDFText_LoadFont.",
+      "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8f154336_d5a3a323",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 327,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-19T22:07:47Z",
+      "side": 1,
+      "message": "Some of the test refactoring can happen separately.",
+      "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9d74d825_d0717e22",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-19T22:07:47Z",
+      "side": 1,
+      "message": "Use a CFX_PointF for x and y coordinates.",
       "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
