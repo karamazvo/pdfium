@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "80b20e78_87de14e8",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-19T23:13:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa4eeb4a_9266e027",
+      "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "124fdbd5_a1de6fc6",
@@ -31,6 +49,30 @@
       "writtenOn": "2026-02-19T22:07:47Z",
       "side": 1,
       "message": "Instead of separately getting the length this way, use the second parameter of hb_blob_get_data().",
+      "range": {
+        "startLine": 79,
+        "startChar": 25,
+        "endLine": 79,
+        "endChar": 43
+      },
+      "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aa909746_78da74da",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-19T23:13:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "124fdbd5_a1de6fc6",
       "range": {
         "startLine": 79,
         "startChar": 25,
@@ -58,6 +100,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f87b01e7_9dd3e84c",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-19T23:13:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fc4819f3_8cb61fab",
+      "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3f721234_718480b2",
@@ -71,6 +131,24 @@
       "writtenOn": "2026-02-19T22:07:47Z",
       "side": 1,
       "message": "I think this can call AsText() like line 154 here, and then skip the entry if `text` is null.",
+      "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "983a213c_edec1989",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-19T23:13:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3f721234_718480b2",
       "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -92,6 +170,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6ab7c0a7_e71519ff",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-19T23:13:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e569a4f2_9a1a6ee5",
+      "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8dc4506e_e00c5cff",
@@ -105,6 +201,24 @@
       "writtenOn": "2026-02-19T22:07:47Z",
       "side": 1,
       "message": "Same. Never happens except during FPDF_DestroyLibrary().",
+      "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d528515c_31000e58",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-19T23:13:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8dc4506e_e00c5cff",
       "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -126,6 +240,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "63727f8a_6724e88e",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.h",
+        "patchSetId": 23
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-19T23:13:21Z",
+      "side": 1,
+      "message": "At the moment, it won\u0027t cause any issues, but it will in future CLs. So clearing at start of method.",
+      "parentUuid": "859ba9ac_c7b42b6d",
+      "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f211fea1_bd137110",
@@ -143,6 +275,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9bfc975a_4acad65c",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.h",
+        "patchSetId": 23
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-19T23:13:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f211fea1_bd137110",
+      "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ef8b779f_8b1d03eb",
@@ -156,6 +306,30 @@
       "writtenOn": "2026-02-19T22:07:47Z",
       "side": 1,
       "message": "Can be shortened, like line 68.",
+      "range": {
+        "startLine": 73,
+        "startChar": 21,
+        "endLine": 73,
+        "endChar": 41
+      },
+      "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ef8bb865_5bc6f875",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.h",
+        "patchSetId": 23
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-19T23:13:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ef8b779f_8b1d03eb",
       "range": {
         "startLine": 73,
         "startChar": 21,
@@ -200,6 +374,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3e89f2f9_dc377984",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 327,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-19T23:13:21Z",
+      "side": 1,
+      "message": "Done at https://pdfium-review.googlesource.com/c/pdfium/+/143410.",
+      "parentUuid": "8f154336_d5a3a323",
+      "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9d74d825_d0717e22",
@@ -213,6 +405,24 @@
       "writtenOn": "2026-02-19T22:07:47Z",
       "side": 1,
       "message": "Use a CFX_PointF for x and y coordinates.",
+      "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ba666f38_37f7dee3",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-19T23:13:21Z",
+      "side": 1,
+      "message": "Done at https://pdfium-review.googlesource.com/c/pdfium/+/143410 and here.",
+      "parentUuid": "9d74d825_d0717e22",
       "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
