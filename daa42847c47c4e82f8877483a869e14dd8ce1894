@@ -58,6 +58,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5f4e4f0a_dc4004c6",
+        "filename": "fpdfsdk/fpdf_structtree_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 4603647
+      },
+      "writtenOn": "2026-02-19T01:45:29Z",
+      "side": 1,
+      "message": "Moved to be the first include, clang-format was happy with the change.",
+      "parentUuid": "cf440004_070e48b4",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 35
+      },
+      "revId": "daa42847c47c4e82f8877483a869e14dd8ce1894",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f1975757_36259d24",
@@ -71,6 +95,30 @@
       "writtenOn": "2026-02-18T18:50:54Z",
       "side": 1,
       "message": "nit: pre-existing: probably missing includes of gtest and gmock.",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 42
+      },
+      "revId": "daa42847c47c4e82f8877483a869e14dd8ce1894",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9dae3a17_ec15d36c",
+        "filename": "fpdfsdk/fpdf_structtree_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 4603647
+      },
+      "writtenOn": "2026-02-19T01:45:29Z",
+      "side": 1,
+      "message": "Yes, I have included them.",
+      "parentUuid": "f1975757_36259d24",
       "range": {
         "startLine": 13,
         "startChar": 0,
@@ -104,6 +152,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "803c441c_dacbe57d",
+        "filename": "fpdfsdk/fpdf_structtree_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 4603647
+      },
+      "writtenOn": "2026-02-19T01:45:29Z",
+      "side": 1,
+      "message": "Done.\n```\n    // Deliberately pass in a small buffer size to make sure `buffer` remains\n    // untouched.\n```",
+      "parentUuid": "d0824406_4f373d05",
+      "range": {
+        "startLine": 148,
+        "startChar": 61,
+        "endLine": 148,
+        "endChar": 62
+      },
+      "revId": "daa42847c47c4e82f8877483a869e14dd8ce1894",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4725e77d_bc35c4d5",
@@ -117,6 +189,30 @@
       "writtenOn": "2026-02-18T18:50:54Z",
       "side": 1,
       "message": "nit: probably should be EXPECT_THAT(buffer, testing::Each(0u));",
+      "range": {
+        "startLine": 151,
+        "startChar": 4,
+        "endLine": 152,
+        "endChar": 23
+      },
+      "revId": "daa42847c47c4e82f8877483a869e14dd8ce1894",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "42191cd8_d2dc9d1e",
+        "filename": "fpdfsdk/fpdf_structtree_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 4603647
+      },
+      "writtenOn": "2026-02-19T01:45:29Z",
+      "side": 1,
+      "message": "Done. Replaced with:\n```\nEXPECT_THAT(buffer, testing::Each(0u));\n```",
+      "parentUuid": "4725e77d_bc35c4d5",
       "range": {
         "startLine": 151,
         "startChar": 4,
@@ -144,6 +240,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "24ed46be_366ac260",
+        "filename": "testing/resources/tagged_expansion.in",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 4603647
+      },
+      "writtenOn": "2026-02-19T01:45:29Z",
+      "side": 1,
+      "message": "Done.\n\nI have removed\n```\n{{object 7 0}} \u003c\u003c\n\u003e\u003e\nendobj\n```\nand updated the mapping as suggested.",
+      "parentUuid": "277f2953_d30e1138",
+      "revId": "daa42847c47c4e82f8877483a869e14dd8ce1894",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bee9b06d_bc40709b",
@@ -157,6 +271,30 @@
       "writtenOn": "2026-02-18T17:48:31Z",
       "side": 1,
       "message": "A slightly shorter string will suffice.",
+      "range": {
+        "startLine": 82,
+        "startChar": 6,
+        "endLine": 82,
+        "endChar": 106
+      },
+      "revId": "daa42847c47c4e82f8877483a869e14dd8ce1894",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "94fedcce_1a0166c5",
+        "filename": "testing/resources/tagged_expansion.in",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 4603647
+      },
+      "writtenOn": "2026-02-19T01:45:29Z",
+      "side": 1,
+      "message": "Done.\n\nReplaced with \"Expansion\".",
+      "parentUuid": "bee9b06d_bc40709b",
       "range": {
         "startLine": 82,
         "startChar": 6,
