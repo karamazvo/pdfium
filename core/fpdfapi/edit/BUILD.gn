@@ -81,6 +81,7 @@ pdfium_embeddertest_source_set("embeddertests") {
   ]
   deps = [
     ":edit",
+    "../font",
     "../parser",
   ]
   pdfium_root_dir = "../../../"
