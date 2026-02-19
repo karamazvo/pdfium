@@ -16,6 +16,23 @@
       "message": "Alright take 2.",
       "revId": "59d59fdb63687fbe6774c8b0f52cd5fe35adb3d3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "54575ab9_0d3bd848",
+        "filename": "testing/embedder_test.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 402,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-19T20:02:50Z",
+      "side": 1,
+      "message": "There\u0027s no way for external callers to access these private methods, so please rephrase this.",
+      "revId": "59d59fdb63687fbe6774c8b0f52cd5fe35adb3d3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
