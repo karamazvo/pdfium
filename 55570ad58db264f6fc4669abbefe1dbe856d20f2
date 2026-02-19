@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8693656c_1dc5cedc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-19T11:29:07Z",
+      "side": 1,
+      "message": "Hey guys, made the old non-scoped things private. Updated some of the comments as well to be able to redirect people to the scoped methods more clearly.\n\nDo let me know if we should leave the old API as public in case some tests in future may want to exercise them, or if we should make it private as is. Also was considering removing the \"Scoped\" from the name to make it cleaner, but let us consider that in a separate CL if so.\n\nThanks!",
+      "revId": "55570ad58db264f6fc4669abbefe1dbe856d20f2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
