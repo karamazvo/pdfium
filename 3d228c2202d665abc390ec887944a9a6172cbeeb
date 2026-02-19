@@ -34,6 +34,24 @@
       "parentUuid": "6cb8f20f_b7698091",
       "revId": "3d228c2202d665abc390ec887944a9a6172cbeeb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "317eedbe_b57e81cd",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-19T22:25:36Z",
+      "side": 1,
+      "message": "I haven\u0027t manually created a PDF yet, but FPDFText_LoadFont() creates another font file stream when given the exact same font data. With FPDF_SUBSET_NEW_FONTS only, the mapping is probably always 1:1.\n\nIf we implement subsetting all fonts, that will likely change.",
+      "parentUuid": "14dee5ee_2c68276b",
+      "revId": "3d228c2202d665abc390ec887944a9a6172cbeeb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
