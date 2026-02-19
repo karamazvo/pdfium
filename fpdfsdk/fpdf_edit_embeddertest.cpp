@@ -3870,7 +3870,7 @@ TEST_F(FPDFEditEmbedderTest, AddMarkedTextWithFloat) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
   // Re-open the file and check the changes were kept in the saved .pdf.
-  ASSERT_TRUE(OpenSavedDocument());
+  ASSERT_TRUE(OpenScopedSavedDocument());
   {
     ScopedSavedPage saved_page = LoadScopedSavedPage(0);
     ASSERT_TRUE(saved_page);
@@ -3886,7 +3886,6 @@ TEST_F(FPDFEditEmbedderTest, AddMarkedTextWithFloat) {
     EXPECT_TRUE(FPDFPageObjMark_GetParamFloatValue(mark, "Pi", &float_value));
     EXPECT_FLOAT_EQ(3.14159f, float_value);
   }
-  CloseSavedDocument();
 }
 
 TEST_F(FPDFEditEmbedderTest, MarkGetName) {

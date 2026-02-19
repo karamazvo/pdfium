@@ -353,9 +353,6 @@ class EmbedderTest : public ::testing::Test,
   // See comments in the respective non-Saved versions of these methods.
   ScopedSavedDoc OpenScopedSavedDocument();
   ScopedSavedDoc OpenScopedSavedDocumentWithPassword(const char* password);
-  FPDF_DOCUMENT OpenSavedDocument();
-  FPDF_DOCUMENT OpenSavedDocumentWithPassword(const char* password);
-  void CloseSavedDocument();
   ScopedSavedPage LoadScopedSavedPage(int page_index);
   FPDF_PAGE LoadSavedPage(int page_index);
   void CloseSavedPage(FPDF_PAGE page);
@@ -401,6 +398,16 @@ class EmbedderTest : public ::testing::Test,
 
   // Same as GetPageNumberForLoadedPage(), but with `saved_page_map_`.
   int GetPageNumberForSavedPage(FPDF_PAGE page) const;
+
+  // Manual memory management versions of OpenScopedSavedDocument*(). These are
+  // deprecated for general use; prefer the Scoped* variants to ensure
+  // automatic resource cleanup.
+  FPDF_DOCUMENT OpenSavedDocument();
+  FPDF_DOCUMENT OpenSavedDocumentWithPassword(const char* password);
+
+  // Only for use with documents opened via OpenSavedDocument(). ScopedSavedDoc
+  // handles this automatically via its destructor.
+  void CloseSavedDocument();
 
   void UnloadPageCommon(FPDF_PAGE page, bool do_events);
   FPDF_PAGE LoadPageCommon(int page_index, bool do_events);

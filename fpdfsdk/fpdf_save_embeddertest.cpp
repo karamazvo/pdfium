@@ -207,9 +207,8 @@ TEST_F(FPDFSaveEmbedderTest, SaveXFADoc) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   EXPECT_THAT(GetString(), StartsWith("%PDF-1.7\r\n"));
-  ASSERT_TRUE(OpenSavedDocument());
+  ASSERT_TRUE(OpenScopedSavedDocument());
   // TODO(tsepez): check for XFA forms in document
-  CloseSavedDocument();
 }
 #endif  // PDF_ENABLE_XFA
 

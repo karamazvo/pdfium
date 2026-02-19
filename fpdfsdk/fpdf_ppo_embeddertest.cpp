@@ -204,7 +204,7 @@ TEST_F(FPDFPPOEmbedderTest, ImportPageToXObject) {
   }
 
   static constexpr int kExpectedPageCount = 2;
-  ASSERT_TRUE(OpenSavedDocument());
+  ASSERT_TRUE(OpenScopedSavedDocument());
 
   std::array<FPDF_PAGE, kExpectedPageCount> saved_pages;
   std::array<FPDF_PAGEOBJECT, kExpectedPageCount> xobjects;
@@ -255,8 +255,6 @@ TEST_F(FPDFPPOEmbedderTest, ImportPageToXObject) {
   for (FPDF_PAGE saved_page : saved_pages) {
     CloseSavedPage(saved_page);
   }
-
-  CloseSavedDocument();
 }
 
 TEST_F(FPDFPPOEmbedderTest, ImportPageToXObjectWithSameDoc) {
@@ -651,7 +649,7 @@ TEST_F(FPDFPPOEmbedderTest, ImportIntoDocWithWrongPageType) {
 
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
-  ASSERT_TRUE(OpenSavedDocument());
+  ASSERT_TRUE(OpenScopedSavedDocument());
   EXPECT_EQ(2, FPDF_GetPageCount(saved_document()));
   {
     ScopedSavedPage page = LoadScopedSavedPage(0);
