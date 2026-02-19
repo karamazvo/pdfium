@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "988fe38a_65f7cd1d",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 992,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-19T11:50:11Z",
+      "side": 1,
+      "message": "nit: As I mentioned in another comment chain.\ni.e.: I feel it looks cleaner, but you can choose not to do it as well.\n\n```suggestion\n  if (type \u003d\u003d ObjectType::kNormal) {\n    const uint32_t offset \u003d GetSecondXRefStreamEntry(entry_span, field_widths);\n    const uint32_t gen_num \u003d GetThirdXRefStreamEntry(entry_span, field_widths);\n    if (pdfium::IsValueInRangeForNumericType\u003cFX_FILESIZE\u003e(offset) \u0026\u0026\n        pdfium::IsValueInRangeForNumericType\u003cuint16_t\u003e(gen_num)) {\n      return cross_ref_table_-\u003eAddNormal(obj_num, gen_num,\n                                         /*is_object_stream\u003d*/false, offset);\n    }\n    return true;\n  }\n```",
+      "range": {
+        "startLine": 981,
+        "startChar": 0,
+        "endLine": 992,
+        "endChar": 3
+      },
+      "revId": "08232b787b5e9f5cab77c2e7f936691f7b61fcfd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f14b8398_b2de4e31",
+        "filename": "core/fpdfapi/parser/cpdf_parser_embeddertest.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-19T11:50:11Z",
+      "side": 1,
+      "message": "You can remove this TODO now as there is no longer anything to do. 😊",
+      "range": {
+        "startLine": 85,
+        "startChar": 5,
+        "endLine": 85,
+        "endChar": 9
+      },
+      "revId": "08232b787b5e9f5cab77c2e7f936691f7b61fcfd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
