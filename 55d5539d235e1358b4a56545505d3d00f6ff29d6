@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a8b68134_d1775965",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-19T21:27:29Z",
+      "side": 1,
+      "message": "This CL is adding 7 MB worth of test PDFs. Most PDFs in testing/resources/ are under 100 KB. It would be nice to keep it this way. Some options:\n\n1. Look into the PDFs and try to minimize its contents. Most time-consuming.\n2. Remove some of these PDFs. They might have the same root cause, especially if they have the same stack trace. Adding more of the PDFs for the same root cause would be redundant. They can be added back as needed if there\u0027s a different cause.\n3. A mix of (1) and (2).\n\nInvestigating some of the PDFs might help decide which is better.",
+      "revId": "55d5539d235e1358b4a56545505d3d00f6ff29d6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
