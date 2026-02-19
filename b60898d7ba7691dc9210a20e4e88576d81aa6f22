@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ac7e5eed_5b14b574",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 22
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-19T17:38:37Z",
+      "side": 1,
+      "message": "We have a kind of test in Chrome called a nocompile test that proves that certain bad forms won\u0027t pass the compiler.  I was trying to write one for the mismatched enum case here, but we don\u0027t have the infrastructure copied over from Chrome to do so.  So what I ask is that you try something locally like\n\nenum A { kA1, kA2 };\nenum B ( kB1, kB2 };\n\nMask\u003cA\u003e(kA1, kB2);\n\nand double-check that compilation breaks because of no matching template. Once you\u0027ve done that, you\u0027re good to go.",
+      "revId": "b60898d7ba7691dc9210a20e4e88576d81aa6f22",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
