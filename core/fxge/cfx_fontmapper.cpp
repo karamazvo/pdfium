@@ -21,6 +21,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/unowned_ptr_exclusion.h"
+#include "core/fxge/cfx_font_util.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
@@ -361,26 +362,6 @@ FX_Charset GetCharset(FX_CodePage code_page, int base_font, uint32_t flags) {
   return FX_Charset::kANSI;
 }
 
-bool IsStrUpper(const ByteString& str) {
-  for (char ch : str) {
-    if (!FXSYS_IsUpperASCII(ch)) {
-      return false;
-    }
-  }
-  return true;
-}
-
-// Removes the "XXXXXX+" prefix from a subsetted font name if present. The
-// prefix must be 6 uppercase ASCII letters followed by a '+'.
-void MaybeRemoveSubsettedFontPrefix(ByteString& font_name) {
-  static constexpr size_t kPrefixLength = 6;
-  if (font_name.GetLength() > kPrefixLength &&
-      font_name[kPrefixLength] == '+' &&
-      IsStrUpper(font_name.First(kPrefixLength))) {
-    font_name = font_name.Substr(kPrefixLength + 1);
-  }
-}
-
 ByteString GetSubstName(const ByteString& name, bool is_truetype) {
   ByteString subst_name = name;
   if (is_truetype && name.Front() == '@') {
@@ -388,7 +369,7 @@ ByteString GetSubstName(const ByteString& name, bool is_truetype) {
   } else {
     subst_name.Remove(' ');
   }
-  MaybeRemoveSubsettedFontPrefix(subst_name);
+  fxge::MaybeRemoveSubsettedFontPrefix(subst_name);
   CFX_FontMapper::GetStandardFontName(&subst_name);
   return subst_name;
 }
