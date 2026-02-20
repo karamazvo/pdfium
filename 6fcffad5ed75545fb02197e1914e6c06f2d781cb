@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2fac80e0_2edebadc",
+        "filename": "core/fpdfapi/parser/cpdf_security_handler.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 704,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-20T19:50:00Z",
+      "side": 1,
+      "message": "Done with fxcrt::reinterpret_span\u003c\u003e()",
+      "parentUuid": "7bc0b85b_4624267a",
+      "revId": "6fcffad5ed75545fb02197e1914e6c06f2d781cb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "caed01d8_fb0a07a9",
@@ -31,6 +49,30 @@
       "writtenOn": "2026-02-20T19:09:24Z",
       "side": 1,
       "message": "Wrap this entire snippet in backticks?",
+      "range": {
+        "startLine": 115,
+        "startChar": 9,
+        "endLine": 115,
+        "endChar": 20
+      },
+      "revId": "6fcffad5ed75545fb02197e1914e6c06f2d781cb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "999ed7b0_d6b593ad",
+        "filename": "core/fxcrt/fx_random.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-20T19:50:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "caed01d8_fb0a07a9",
       "range": {
         "startLine": 115,
         "startChar": 9,
