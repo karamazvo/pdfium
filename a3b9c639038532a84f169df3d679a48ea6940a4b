@@ -111,6 +111,30 @@
       },
       "revId": "a3b9c639038532a84f169df3d679a48ea6940a4b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c2f75067_4fd9a6ab",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 843,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-20T03:09:35Z",
+      "side": 1,
+      "message": "I\u0027m fine with reverting.",
+      "parentUuid": "9206f369_14e7f0a0",
+      "range": {
+        "startLine": 843,
+        "startChar": 10,
+        "endLine": 843,
+        "endChar": 19
+      },
+      "revId": "a3b9c639038532a84f169df3d679a48ea6940a4b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
