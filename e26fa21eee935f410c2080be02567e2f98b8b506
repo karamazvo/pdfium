@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5253d6c6_9d3fecbf",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-20T21:50:34Z",
+      "side": 1,
+      "message": "If it passed, why does the text expectation need to be updated?",
+      "range": {
+        "startLine": 9,
+        "startChar": 68,
+        "endLine": 9,
+        "endChar": 72
+      },
+      "revId": "e26fa21eee935f410c2080be02567e2f98b8b506",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "01d5906d_925cc4e1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-20T21:50:34Z",
+      "side": 1,
+      "message": "Unsuppress",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 9
+      },
+      "revId": "e26fa21eee935f410c2080be02567e2f98b8b506",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
