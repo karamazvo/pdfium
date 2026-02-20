@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d3514024_8cbd7299",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 394,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-20T01:13:52Z",
+      "side": 1,
+      "message": "\"font, since `text` only contains a subset of the characters in the test font.\"\n\nCarry over pre-existing line 340, which got lost.",
+      "revId": "79e08c77fa0ae408581f6925771008679c819eee",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
