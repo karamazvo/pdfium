@@ -4,6 +4,7 @@
 
 #include "build/build_config.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
+#include "public/fpdf_annot.h"
 #include "public/fpdf_flatten.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
@@ -123,4 +124,58 @@ TEST_F(FPDFFlattenEmbedderTest, Bug896366) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
   VerifySavedDocumentWithExpectationSuffix("bug_896366");
+}
+
+TEST_F(FPDFFlattenEmbedderTest, FlattenNoViewAnnotation) {
+  // Use a PDF with a visible annotation (red square) that has an AP stream.
+  ASSERT_TRUE(OpenDocument("flatten_noview_annot.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  const int initial_annot_count = FPDFPage_GetAnnotCount(page.get());
+  ASSERT_EQ(1, initial_annot_count);
+
+  // Set NoView flag only. The annotation should not be flattened for screen
+  // display.
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
+    ASSERT_TRUE(annot);
+    EXPECT_TRUE(FPDFAnnot_SetFlags(annot.get(), FPDF_ANNOT_FLAG_NOVIEW));
+  }
+
+  // Flatten for normal display. With the fix (using kNoView instead of
+  // kInvisible), the NoView annotation should be skipped.
+  EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page.get(), FLAT_NORMALDISPLAY));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+
+  // The annotation had NoView, so it should NOT be flattened into the page.
+  // The saved document should render as a blank page.
+  VerifySavedDocumentWithExpectationSuffix("flatten_noview_annot_normal");
+}
+
+TEST_F(FPDFFlattenEmbedderTest, FlattenNoViewPrintAnnotation) {
+  // Use a PDF with a visible annotation (red square) that has an AP stream.
+  ASSERT_TRUE(OpenDocument("flatten_noview_annot.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  const int initial_annot_count = FPDFPage_GetAnnotCount(page.get());
+  ASSERT_EQ(1, initial_annot_count);
+
+  // Set both NoView and Print flags. The annotation should still be flattened
+  // for printing since the Print flag is set.
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
+    ASSERT_TRUE(annot);
+    EXPECT_TRUE(FPDFAnnot_SetFlags(
+        annot.get(), FPDF_ANNOT_FLAG_NOVIEW | FPDF_ANNOT_FLAG_PRINT));
+  }
+
+  // Flatten for print. NoView does not affect print flattening.
+  EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page.get(), FLAT_PRINT));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+
+  // The annotation had Print set, so it SHOULD be flattened into the page.
+  // The saved document should render with the red square visible.
+  VerifySavedDocumentWithExpectationSuffix("flatten_noview_annot_print");
 }

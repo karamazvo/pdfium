@@ -1,0 +1,59 @@
+%PDF-1.7
+1 0 obj <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+2 0 obj <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+3 0 obj <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 200 200]
+  /Annots [4 0 R]
+>>
+endobj
+% Annotation: a red square with Normal AP stream.
+% /F 4 means Print flag is set.
+4 0 obj <<
+  /Type /Annot
+  /Subtype /Square
+  /Rect [50 50 150 150]
+  /C [1 0 0]
+  /F 4
+  /AP <<
+    /N 5 0 R
+  >>
+>>
+endobj
+5 0 obj <<
+  /Type /XObject
+  /Subtype /Form
+  /BBox [50 50 150 150]
+  /Length 27
+>>
+stream
+1 0 0 rg
+50 50 100 100 re
+f
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000062 00000 n 
+0000000125 00000 n 
+0000000302 00000 n 
+0000000428 00000 n 
+trailer <<
+  /Root 1 0 R
+  /Size 6
+>>
+startxref
+565
+%%EOF
