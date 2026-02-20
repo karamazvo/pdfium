@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ba6d2cfa_36d69dc7",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-20T17:17:19Z",
+      "side": 1,
+      "message": "OK without the RetainPtr wrapper?",
+      "revId": "5e9536f66b66855fd4a8dc1a581409d557768375",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
