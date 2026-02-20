@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7c08d7b5_9a4ed226",
+        "filename": "core/fpdfapi/parser/cpdf_cross_ref_table.cpp",
+        "patchSetId": 26
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-20T04:21:25Z",
+      "side": 1,
+      "message": "nit: More newlines (sorry)\n\n\n```suggestion\nbool CPDF_CrossRefTable::AddNormal(uint32_t obj_num,\n                                   uint16_t gen_num,\n                                   bool is_object_stream,\n                                   FX_FILESIZE pos) {\n  if (obj_num \u003e CPDF_Parser::kMaxObjectNumber) {\n    return false;\n  }\n\n  auto\u0026 info \u003d objects_info_[obj_num];\n  if (info.gennum \u003e gen_num) {\n    return false;\n  }\n\n  info.type \u003d ObjectType::kNormal;\n  info.is_object_stream_flag |\u003d is_object_stream;\n  info.gennum \u003d gen_num;\n  info.pos \u003d pos;\n  return true;\n}\n```",
+      "range": {
+        "startLine": 63,
+        "startChar": 0,
+        "endLine": 79,
+        "endChar": 1
+      },
+      "revId": "cb0c9ec77a1430e8c7cb2bd842b7dcae08c51eba",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
