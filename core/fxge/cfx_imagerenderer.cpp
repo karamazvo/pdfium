@@ -12,6 +12,7 @@
 #include <utility>
 
 #include "core/fxcrt/fx_system.h"
+#include "core/fxge/agg/cfx_agg_bitmapcomposer.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
@@ -28,6 +29,7 @@ CFX_ImageRenderer::CFX_ImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
     : device_(pDevice),
       clip_rgn_(pClipRgn),
       matrix_(matrix),
+      composer_(std::make_unique<CFX_AggBitmapComposer>()),
       alpha_(alpha),
       mask_color_(mask_color),
       rgb_byte_order_(bRgbByteOrder) {
@@ -53,12 +55,12 @@ CFX_ImageRenderer::CFX_ImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
                                                matrix_.c > 0, matrix_.b < 0);
       const bool flip_x = matrix_.c > 0;
       const bool flip_y = matrix_.b < 0;
-      composer_.Compose(pDevice, pClipRgn, alpha, mask_color, clip_box_,
-                        /*bVertical=*/true, flip_x, flip_y, rgb_byte_order_,
-                        BlendMode::kNormal);
+      composer_->Compose(pDevice, pClipRgn, alpha, mask_color, clip_box_,
+                         /*bVertical=*/true, flip_x, flip_y, rgb_byte_order_,
+                         BlendMode::kNormal);
       stretcher_ = std::make_unique<CFX_ImageStretcher>(
-          &composer_, std::move(source), dest_height, dest_width, bitmap_clip,
-          options);
+          composer_.get(), std::move(source), dest_height, dest_width,
+          bitmap_clip, options);
       if (stretcher_->Start()) {
         state_ = State::kStretching;
       }
@@ -86,12 +88,12 @@ CFX_ImageRenderer::CFX_ImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
 
   FX_RECT bitmap_clip = clip_box_;
   bitmap_clip.Offset(-image_rect.left, -image_rect.top);
-  composer_.Compose(pDevice, pClipRgn, alpha, mask_color, clip_box_,
-                    /*bVertical=*/false, /*bFlipX=*/false, /*bFlipY=*/false,
-                    rgb_byte_order_, BlendMode::kNormal);
+  composer_->Compose(pDevice, pClipRgn, alpha, mask_color, clip_box_,
+                     /*bVertical=*/false, /*bFlipX=*/false, /*bFlipY=*/false,
+                     rgb_byte_order_, BlendMode::kNormal);
   state_ = State::kStretching;
   stretcher_ = std::make_unique<CFX_ImageStretcher>(
-      &composer_, std::move(source), dest_width, dest_height, bitmap_clip,
+      composer_.get(), std::move(source), dest_width, dest_height, bitmap_clip,
       options);
   stretcher_->Start();
 }

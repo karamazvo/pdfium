@@ -12,13 +12,15 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "core/fxge/agg/cfx_agg_bitmapcomposer.h"
 
+class CFX_ClipRgn;
 class CFX_DIBBase;
 class CFX_DIBitmap;
 class CFX_ImageTransformer;
 class CFX_ImageStretcher;
 class PauseIndicatorIface;
+class ScanlineComposerIface;
+struct FXDIB_ResampleOptions;
 
 class CFX_ImageRenderer {
  public:
@@ -42,7 +44,7 @@ class CFX_ImageRenderer {
   const CFX_Matrix matrix_;
   std::unique_ptr<CFX_ImageTransformer> transformer_;
   std::unique_ptr<CFX_ImageStretcher> stretcher_;
-  CFX_AggBitmapComposer composer_;
+  std::unique_ptr<ScanlineComposerIface> composer_;
   FX_RECT clip_box_;
   const float alpha_;
   uint32_t mask_color_;

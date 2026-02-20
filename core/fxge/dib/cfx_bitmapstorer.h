@@ -21,6 +21,16 @@ class CFX_BitmapStorer final : public ScanlineComposerIface {
   ~CFX_BitmapStorer() override;
 
   // ScanlineComposerIface:
+  void Compose(const RetainPtr<CFX_DIBitmap>& pDest,
+               const CFX_ClipRgn* pClipRgn,
+               float alpha,
+               uint32_t mask_color,
+               const FX_RECT& dest_rect,
+               bool bVertical,
+               bool bFlipX,
+               bool bFlipY,
+               bool bRgbByteOrder,
+               BlendMode blend_mode) override;
   void ComposeScanline(int line, pdfium::span<const uint8_t> scanline) override;
   bool SetInfo(int width,
                int height,

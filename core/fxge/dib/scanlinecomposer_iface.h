@@ -8,12 +8,28 @@
 #define CORE_FXGE_DIB_SCANLINECOMPOSER_IFACE_H_
 
 #include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
 #include "core/fxge/dib/fx_dib.h"
+
+class CFX_DIBitmap;
+class CFX_ClipRgn;
 
 class ScanlineComposerIface {
  public:
   virtual ~ScanlineComposerIface() = default;
+
+  virtual void Compose(const RetainPtr<CFX_DIBitmap>& pDest,
+                       const CFX_ClipRgn* pClipRgn,
+                       float alpha,
+                       uint32_t mask_color,
+                       const FX_RECT& dest_rect,
+                       bool bVertical,
+                       bool bFlipX,
+                       bool bFlipY,
+                       bool bRgbByteOrder,
+                       BlendMode blend_mode) = 0;
 
   virtual void ComposeScanline(int line,
                                pdfium::span<const uint8_t> scanline) = 0;
