@@ -16,6 +16,24 @@
       "message": "\"font, since `text` only contains a subset of the characters in the test font.\"\n\nCarry over pre-existing line 340, which got lost.",
       "revId": "79e08c77fa0ae408581f6925771008679c819eee",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "116d4c14_bdb1943c",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 394,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-20T20:10:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d3514024_8cbd7299",
+      "revId": "79e08c77fa0ae408581f6925771008679c819eee",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
