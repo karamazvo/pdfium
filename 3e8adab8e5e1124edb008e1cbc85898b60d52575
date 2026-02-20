@@ -70,6 +70,30 @@
       },
       "revId": "3e8adab8e5e1124edb008e1cbc85898b60d52575",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6676bd7f_07b5d9f9",
+        "filename": "core/fxcrt/fx_random.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-20T20:22:00Z",
+      "side": 1,
+      "message": "Done, although had to make kN public.",
+      "parentUuid": "b2feb5e1_34fb2ccb",
+      "range": {
+        "startLine": 84,
+        "startChar": 0,
+        "endLine": 88,
+        "endChar": 3
+      },
+      "revId": "3e8adab8e5e1124edb008e1cbc85898b60d52575",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
