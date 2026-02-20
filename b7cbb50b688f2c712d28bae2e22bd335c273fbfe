@@ -62,6 +62,30 @@
       },
       "revId": "b7cbb50b688f2c712d28bae2e22bd335c273fbfe",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a842e0cf_dda1d66a",
+        "filename": "core/fxge/dib/cfx_dibbase.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-20T18:53:23Z",
+      "side": 1,
+      "message": "Using this as an example, if one looks at the callers and callers\u0027 callers, only the AGG .cpp files pass in non-null arguments. Other files either pass in nullptr, or pass in a value that was passed to them.",
+      "parentUuid": "c1bd1008_05b071de",
+      "range": {
+        "startLine": 115,
+        "startChar": 28,
+        "endLine": 115,
+        "endChar": 39
+      },
+      "revId": "b7cbb50b688f2c712d28bae2e22bd335c273fbfe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
