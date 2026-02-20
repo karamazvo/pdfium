@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7d14be54_d94c4561",
+        "filename": "core/fxcrt/fx_random.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-20T19:33:26Z",
+      "side": 1,
+      "message": "Can get rid of `g_global_seed_initialized` with:\n\n`static uint32_t global_seed \u003d []() -\u003e uint32_t { lambda_for_lines_68_to_74 }();`",
+      "revId": "e64bb0f154973c93f924e8bf93b33e7ec6764241",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a303edf6_5f603636",
+        "filename": "core/fxcrt/fx_random.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-20T19:33:26Z",
+      "side": 1,
+      "message": "Maybe \"result\"?",
+      "range": {
+        "startLine": 102,
+        "startChar": 11,
+        "endLine": 102,
+        "endChar": 15
+      },
+      "revId": "e64bb0f154973c93f924e8bf93b33e7ec6764241",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
