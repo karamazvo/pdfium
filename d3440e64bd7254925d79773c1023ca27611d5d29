@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2d9db8a0_afa8acbe",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-20T23:54:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "461cc343_caf60332",
+      "revId": "d3440e64bd7254925d79773c1023ca27611d5d29",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "25a61d16_270b4add",
@@ -35,6 +53,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "881ca137_50ea3f07",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-20T23:54:04Z",
+      "side": 1,
+      "message": "Using MaybeRemoveSubsettedFontPrefix() after moving in https://pdfium-review.googlesource.com/c/pdfium/+/143592.",
+      "parentUuid": "25a61d16_270b4add",
+      "revId": "d3440e64bd7254925d79773c1023ca27611d5d29",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9ea273e4_aaab27d9",
@@ -48,6 +84,24 @@
       "writtenOn": "2026-02-19T22:17:47Z",
       "side": 1,
       "message": "Can this use core/fxcrt/fx_random.h instead?",
+      "revId": "d3440e64bd7254925d79773c1023ca27611d5d29",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1d68de57_141e459b",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.h",
+        "patchSetId": 9
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-20T23:54:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9ea273e4_aaab27d9",
       "revId": "d3440e64bd7254925d79773c1023ca27611d5d29",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
