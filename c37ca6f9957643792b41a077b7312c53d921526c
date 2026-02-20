@@ -46,6 +46,30 @@
       },
       "revId": "c37ca6f9957643792b41a077b7312c53d921526c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0589c5ef_f164a9d1",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 2386,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-20T14:15:30Z",
+      "side": 1,
+      "message": "Resolving this. Reopen if it is still regressing on the full chromium build.",
+      "parentUuid": "fd057ecd_41fb6234",
+      "range": {
+        "startLine": 2386,
+        "startChar": 12,
+        "endLine": 2386,
+        "endChar": 16
+      },
+      "revId": "c37ca6f9957643792b41a077b7312c53d921526c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
