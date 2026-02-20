@@ -1,0 +1,124 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "278cc7d7_36b8fd15",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-20T01:40:32Z",
+      "side": 1,
+      "message": "Local variable no longer needed. Just assign directly.",
+      "range": {
+        "startLine": 125,
+        "startChar": 4,
+        "endLine": 125,
+        "endChar": 25
+      },
+      "revId": "14165b4750a5de6552e1fd502dfc79ea3cd54314",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f1c0d3d6_2162ca76",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter_embeddertest.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-20T01:40:32Z",
+      "side": 1,
+      "message": "Probably don\u0027t need this variable, just pass `{}` and GetTestNewObjNums() in directly.",
+      "revId": "14165b4750a5de6552e1fd502dfc79ea3cd54314",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "20a25e34_330d63dc",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter_embeddertest.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-20T01:40:32Z",
+      "side": 1,
+      "message": "\"Not a text object.\" ?",
+      "revId": "14165b4750a5de6552e1fd502dfc79ea3cd54314",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3018417f_dc9ad906",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter_embeddertest.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-20T01:40:32Z",
+      "side": 1,
+      "message": "Make this const. More below.",
+      "revId": "14165b4750a5de6552e1fd502dfc79ea3cd54314",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d062b372_c3e061e9",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter_embeddertest.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-20T01:40:32Z",
+      "side": 1,
+      "message": "Can probably put in a larger number here. Also line 167. An exact number comparion is probably ok, since the test fonts rarely changes. If they do change, it might affect the tests anyway and someone may want to adjust the numbers. More below.",
+      "range": {
+        "startLine": 139,
+        "startChar": 27,
+        "endLine": 139,
+        "endChar": 29
+      },
+      "revId": "14165b4750a5de6552e1fd502dfc79ea3cd54314",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a4679e5b_9dc710a3",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter_embeddertest.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-20T01:40:32Z",
+      "side": 1,
+      "message": "But there\u0027s only 1 element in the vector. More below.",
+      "range": {
+        "startLine": 153,
+        "startChar": 25,
+        "endLine": 153,
+        "endChar": 45
+      },
+      "revId": "14165b4750a5de6552e1fd502dfc79ea3cd54314",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

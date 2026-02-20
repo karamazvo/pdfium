@@ -357,6 +357,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8ad2938d_ee8f1621",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter_embeddertest.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-20T01:40:32Z",
+      "side": 1,
+      "message": "OK. Copying the relevant part of FPDFText_LoadFont() itself actually isn\u0027t that bad, but it would be unreasonable to copy LoadCompositeFont().",
+      "parentUuid": "f193d870_a9498750",
+      "revId": "908d35985f2c1ccfe60054950fbd7f952eb786fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8f154336_d5a3a323",
