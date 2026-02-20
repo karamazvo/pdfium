@@ -88,6 +88,29 @@
       "parentUuid": "8492f774_ee5d0f81",
       "revId": "a3b9c639038532a84f169df3d679a48ea6940a4b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9206f369_14e7f0a0",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 843,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-20T02:58:35Z",
+      "side": 1,
+      "message": "For the regression, perhaps this is the culprit.\nThis should run despite the length of the string passed in.\nIf a line with just \" \" is passed in, in the context of this regression it should return nothing.\n\nHowever, that breaks whitespace.pdf. We currently have 2, sort of conflicting cases.\n\nSomething like \"if there is a next line after this in the stream\", then run for str.GetLength() \u003e 1 as well.\n\nSo we could do option a. which is pushing this fix.\nor option b. push a revert to fix this ASAP and then fix this later on.\n\nI\u0027d say option b, where we push a revert and then look into this later.",
+      "range": {
+        "startLine": 843,
+        "startChar": 10,
+        "endLine": 843,
+        "endChar": 19
+      },
+      "revId": "a3b9c639038532a84f169df3d679a48ea6940a4b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
