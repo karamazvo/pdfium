@@ -156,7 +156,7 @@ void DebugShowSkiaDrawRect(CFX_SkiaDeviceDriver* driver,
 #endif  // SHOW_SKIA_PATH
 }
 
-void DebugValidate(const RetainPtr<CFX_DIBitmap>& bitmap) {
+void DebugValidate(const CFX_DIBitmap* bitmap) {
 #if DCHECK_IS_ON()
   DCHECK(bitmap);
   DCHECK(bitmap->GetBPP() == 8 || bitmap->GetBPP() == 32);

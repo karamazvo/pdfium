@@ -270,7 +270,7 @@ FXDIB_Format FXDIBFormatFromFPDFFormat(int format);
 //   its pre-multiplied state.
 // - When Skia is not available or not enabled at runtime, make sure `bitmap` is
 //   not pre-multiplied.
-void ValidateBitmapPremultiplyState(CFX_DIBitmap* bitmap);
+void ValidateBitmapPremultiplyState(const CFX_DIBitmap* bitmap);
 
 CPDFSDK_InteractiveForm* FormHandleToInteractiveForm(FPDF_FORMHANDLE hHandle);
 

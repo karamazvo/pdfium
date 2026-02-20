@@ -914,11 +914,10 @@ void ProgressiveDecoder::SetTransMethod() {
   }
 }
 
-void ProgressiveDecoder::ResampleScanline(
-    const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
-    int dest_line,
-    pdfium::span<uint8_t> src_span,
-    FXCodec_Format src_format) {
+void ProgressiveDecoder::ResampleScanline(CFX_DIBitmap* pDeviceBitmap,
+                                          int dest_line,
+                                          pdfium::span<uint8_t> src_span,
+                                          FXCodec_Format src_format) {
   uint8_t* src_scan = src_span.data();
   uint8_t* dest_scan = pDeviceBitmap->GetWritableScanline(dest_line).data();
   const int src_bytes_per_pixel = (src_format & 0xff) / 8;
@@ -1083,7 +1082,7 @@ void ProgressiveDecoder::ResampleScanline(
   }
 }
 
-void ProgressiveDecoder::Resample(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
+void ProgressiveDecoder::Resample(CFX_DIBitmap* pDeviceBitmap,
                                   int32_t src_line,
                                   uint8_t* src_scan,
                                   FXCodec_Format src_format) {

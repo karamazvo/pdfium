@@ -64,7 +64,7 @@ void DoAlphaMerge(T& pixel, int src_r, int src_g, int src_b, int src_alpha) {
   pixel.blue = FXDIB_ALPHA_MERGE(pixel.blue, src_b, src_alpha);
 }
 
-void RgbByteOrderCompositeRect(const RetainPtr<CFX_DIBitmap>& bitmap,
+void RgbByteOrderCompositeRect(CFX_DIBitmap* bitmap,
                                int left,
                                int top,
                                int width,
@@ -379,7 +379,7 @@ RetainPtr<CFX_DIBitmap> GetClipMaskFromRegion(const CFX_AggClipRgn* r) {
   return (r && r->GetType() == CFX_AggClipRgn::kMaskF) ? r->GetMask() : nullptr;
 }
 
-FX_RECT GetClipBoxFromRegion(const RetainPtr<CFX_DIBitmap>& device,
+FX_RECT GetClipBoxFromRegion(const CFX_DIBitmap* device,
                              const CFX_AggClipRgn* region) {
   if (region) {
     return region->GetBox();
@@ -389,8 +389,8 @@ FX_RECT GetClipBoxFromRegion(const RetainPtr<CFX_DIBitmap>& device,
 
 class CFX_AggRenderer {
  public:
-  CFX_AggRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
-                  const RetainPtr<CFX_DIBitmap>& pBackdropDevice,
+  CFX_AggRenderer(RetainPtr<CFX_DIBitmap> pDevice,
+                  RetainPtr<CFX_DIBitmap> pBackdropDevice,
                   const CFX_AggClipRgn* pClipRgn,
                   uint32_t color,
                   bool bFullCover,
@@ -440,8 +440,7 @@ class CFX_AggRenderer {
                         const uint8_t* cover_scan,
                         const uint8_t* clip_scan);
 
-  static CompositeSpanFunc GetCompositeSpanFunc(
-      const RetainPtr<CFX_DIBitmap>& device) {
+  static CompositeSpanFunc GetCompositeSpanFunc(const CFX_DIBitmap* device) {
     CHECK_NE(device->GetBPP(), 1);
     if (device->GetBPP() == 8) {
       return &CFX_AggRenderer::CompositeSpanGray;
@@ -790,8 +789,8 @@ void CFX_AggRenderer::CompositeSpanRGB(uint8_t* dest_scan,
   });
 }
 
-CFX_AggRenderer::CFX_AggRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
-                                 const RetainPtr<CFX_DIBitmap>& pBackdropDevice,
+CFX_AggRenderer::CFX_AggRenderer(RetainPtr<CFX_DIBitmap> pDevice,
+                                 RetainPtr<CFX_DIBitmap> pBackdropDevice,
                                  const CFX_AggClipRgn* pClipRgn,
                                  uint32_t color,
                                  bool bFullCover,
@@ -801,9 +800,9 @@ CFX_AggRenderer::CFX_AggRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
       full_cover_(bFullCover),
       rgb_byte_order_(bRgbByteOrder),
       clip_box_(GetClipBoxFromRegion(pDevice, pClipRgn)),
-      backdrop_device_(pBackdropDevice),
+      backdrop_device_(std::move(pBackdropDevice)),
       clip_mask_(GetClipMaskFromRegion(pClipRgn)),
-      device_(pDevice),
+      device_(std::move(pDevice)),
       clip_rgn_(pClipRgn),
       composite_span_func_(GetCompositeSpanFunc(device_)) {
   if (device_->GetBPP() == 8) {
@@ -1155,8 +1154,8 @@ void CFX_AggDeviceDriver::RenderRasterizer(
     bool bFullCover,
     bool bGroupKnockout) {
   RetainPtr<CFX_DIBitmap> pt = bGroupKnockout ? backdrop_bitmap_ : nullptr;
-  CFX_AggRenderer render(bitmap_, pt, clip_rgn_.get(), color, bFullCover,
-                         rgb_byte_order_);
+  CFX_AggRenderer render(bitmap_, std::move(pt), clip_rgn_.get(), color,
+                         bFullCover, rgb_byte_order_);
   agg::scanline_u8 scanline;
   agg::render_scanlines(rasterizer, scanline, render,
                         fill_options_.aliased_path);

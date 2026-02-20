@@ -64,7 +64,7 @@ class CFX_RenderDevice {
   int GetDeviceCaps(int id) const;
   RetainPtr<CFX_DIBitmap> GetBitmap();
   RetainPtr<const CFX_DIBitmap> GetBitmap() const;
-  [[nodiscard]] bool CreateCompatibleBitmap(const RetainPtr<CFX_DIBitmap>& pDIB,
+  [[nodiscard]] bool CreateCompatibleBitmap(CFX_DIBitmap* pDIB,
                                             int width,
                                             int height) const;
   const FX_RECT& GetClipBox() const { return clip_box_; }

@@ -10,7 +10,6 @@
 #include <CoreGraphics/CoreGraphics.h>
 #include <stdint.h>
 
-#include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
 #include "core/fxge/dib/fx_dib.h"
 
@@ -19,7 +18,7 @@ class CFX_Matrix;
 
 class CQuartz2D {
  public:
-  void* CreateGraphics(const RetainPtr<CFX_DIBitmap>& bitmap);
+  void* CreateGraphics(CFX_DIBitmap* bitmap);
   void DestroyGraphics(void* graphics);
 
   void* CreateFont(pdfium::span<const uint8_t> font_data);

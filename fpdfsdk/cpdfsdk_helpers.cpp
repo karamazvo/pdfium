@@ -243,7 +243,7 @@ FXDIB_Format FXDIBFormatFromFPDFFormat(int format) {
   }
 }
 
-void ValidateBitmapPremultiplyState(CFX_DIBitmap* bitmap) {
+void ValidateBitmapPremultiplyState(const CFX_DIBitmap* bitmap) {
 #if defined(PDF_USE_SKIA)
   const bool should_be_premultiplied =
       CFX_DefaultRenderDevice::UseSkiaRenderer() &&
