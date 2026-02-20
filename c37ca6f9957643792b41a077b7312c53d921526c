@@ -22,6 +22,30 @@
       },
       "revId": "c37ca6f9957643792b41a077b7312c53d921526c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fd057ecd_41fb6234",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 2386,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-20T14:14:41Z",
+      "side": 1,
+      "message": "Edit: We are removing the additional spaces at the top (causing the regression) the other spaces remain as is and rest should work as expected. Not 100% sure if the regression is fixed when building chromium. Please let me know if building the full chromium with this fixes this regression. Thanks!",
+      "parentUuid": "635a7176_e3c407e6",
+      "range": {
+        "startLine": 2386,
+        "startChar": 12,
+        "endLine": 2386,
+        "endChar": 16
+      },
+      "revId": "c37ca6f9957643792b41a077b7312c53d921526c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
