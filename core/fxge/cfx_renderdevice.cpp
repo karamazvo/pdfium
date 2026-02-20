@@ -204,7 +204,7 @@ void SetAlpha(bool has_alpha, pdfium::span<uint8_t> alpha) {
   }
 }
 
-void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
+void DrawNormalTextHelper(CFX_DIBitmap* bitmap,
                           const CFX_DIBitmap* pGlyph,
                           int nrows,
                           int left,
@@ -565,10 +565,9 @@ void CFX_RenderDevice::SetBitmap(RetainPtr<CFX_DIBitmap> bitmap) {
   bitmap_ = std::move(bitmap);
 }
 
-bool CFX_RenderDevice::CreateCompatibleBitmap(
-    const RetainPtr<CFX_DIBitmap>& pDIB,
-    int width,
-    int height) const {
+bool CFX_RenderDevice::CreateCompatibleBitmap(CFX_DIBitmap* pDIB,
+                                              int width,
+                                              int height) const {
   return pDIB->Create(
       width, height,
       GetCreateCompatibleBitmapFormat(render_caps_, /*use_argb_premul=*/true));

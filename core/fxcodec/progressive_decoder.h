@@ -174,11 +174,11 @@ class ProgressiveDecoder final :
 
   void SetTransMethod();
 
-  void ResampleScanline(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
+  void ResampleScanline(CFX_DIBitmap* pDeviceBitmap,
                         int32_t dest_line,
                         pdfium::span<uint8_t> src_span,
                         FXCodec_Format src_format);
-  void Resample(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
+  void Resample(CFX_DIBitmap* pDeviceBitmap,
                 int32_t src_line,
                 uint8_t* src_scan,
                 FXCodec_Format src_format);

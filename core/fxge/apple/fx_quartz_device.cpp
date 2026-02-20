@@ -23,14 +23,11 @@
 
 FX_DATA_PARTITION_EXCEPTION(CGPoint);
 
-void* CQuartz2D::CreateGraphics(const RetainPtr<CFX_DIBitmap>& pBitmap) {
-  if (!pBitmap) {
-    return nullptr;
-  }
-  CGBitmapInfo bmpInfo = kCGBitmapByteOrder32Little;
+void* CQuartz2D::CreateGraphics(CFX_DIBitmap* pBitmap) {
+  CGBitmapInfo bitmap_info = kCGBitmapByteOrder32Little;
   switch (pBitmap->GetFormat()) {
     case FXDIB_Format::kBgrx:
-      bmpInfo |= kCGImageAlphaNoneSkipFirst;
+      bitmap_info |= kCGImageAlphaNoneSkipFirst;
       break;
     case FXDIB_Format::kBgra:
     default:
@@ -39,7 +36,7 @@ void* CQuartz2D::CreateGraphics(const RetainPtr<CFX_DIBitmap>& pBitmap) {
   CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
   CGContextRef context = CGBitmapContextCreate(
       pBitmap->GetWritableBuffer().data(), pBitmap->GetWidth(),
-      pBitmap->GetHeight(), 8, pBitmap->GetPitch(), colorSpace, bmpInfo);
+      pBitmap->GetHeight(), 8, pBitmap->GetPitch(), colorSpace, bitmap_info);
   CGColorSpaceRelease(colorSpace);
   return context;
 }

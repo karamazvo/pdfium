@@ -25,7 +25,7 @@ class CFX_AggBitmapComposer final : public ScanlineComposerIface {
   CFX_AggBitmapComposer();
   ~CFX_AggBitmapComposer() override;
 
-  void Compose(const RetainPtr<CFX_DIBitmap>& pDest,
+  void Compose(RetainPtr<CFX_DIBitmap> pDest,
                const CFX_AggClipRgn* pClipRgn,
                float alpha,
                uint32_t mask_color,

@@ -9,6 +9,7 @@
 #include <stddef.h>
 
 #include <algorithm>
+#include <utility>
 
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/compiler_specific.h"
@@ -23,7 +24,7 @@ CFX_AggBitmapComposer::CFX_AggBitmapComposer() = default;
 
 CFX_AggBitmapComposer::~CFX_AggBitmapComposer() = default;
 
-void CFX_AggBitmapComposer::Compose(const RetainPtr<CFX_DIBitmap>& pDest,
+void CFX_AggBitmapComposer::Compose(RetainPtr<CFX_DIBitmap> pDest,
                                     const CFX_AggClipRgn* pClipRgn,
                                     float alpha,
                                     uint32_t mask_color,
@@ -33,7 +34,7 @@ void CFX_AggBitmapComposer::Compose(const RetainPtr<CFX_DIBitmap>& pDest,
                                     bool bFlipY,
                                     bool bRgbByteOrder,
                                     BlendMode blend_mode) {
-  bitmap_ = pDest;
+  bitmap_ = std::move(pDest);
   clip_rgn_ = pClipRgn;
   dest_left_ = dest_rect.left;
   dest_top_ = dest_rect.top;

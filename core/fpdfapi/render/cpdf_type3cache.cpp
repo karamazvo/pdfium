@@ -50,7 +50,7 @@ bool IsScanLineBpp(int bpp, pdfium::span<const uint8_t> line, size_t width) {
   return IsScanLine8bpp(line, width);
 }
 
-int DetectFirstScan(const RetainPtr<CFX_DIBitmap>& bitmap) {
+int DetectFirstScan(const CFX_DIBitmap* bitmap) {
   const int height = bitmap->GetHeight();
   const size_t width = pdfium::checked_cast<size_t>(bitmap->GetWidth());
   const int bpp = bitmap->GetBPP();
@@ -62,7 +62,7 @@ int DetectFirstScan(const RetainPtr<CFX_DIBitmap>& bitmap) {
   return -1;
 }
 
-int DetectLastScan(const RetainPtr<CFX_DIBitmap>& bitmap) {
+int DetectLastScan(const CFX_DIBitmap* bitmap) {
   const int height = bitmap->GetHeight();
   const int bpp = bitmap->GetBPP();
   const int width = bitmap->GetWidth();
@@ -118,7 +118,7 @@ std::unique_ptr<CFX_GlyphBitmap> CPDF_Type3Cache::RenderGlyph(
     return nullptr;
   }
 
-  RetainPtr<CFX_DIBitmap> pBitmap = pChar->GetBitmap();
+  RetainPtr<const CFX_DIBitmap> pBitmap = pChar->GetBitmap();
   if (!pBitmap) {
     return nullptr;
   }

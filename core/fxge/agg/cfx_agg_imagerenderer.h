@@ -22,7 +22,7 @@ class PauseIndicatorIface;
 
 class CFX_AggImageRenderer {
  public:
-  CFX_AggImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
+  CFX_AggImageRenderer(RetainPtr<CFX_DIBitmap> pDevice,
                        const CFX_AggClipRgn* pClipRgn,
                        RetainPtr<const CFX_DIBBase> source,
                        float alpha,

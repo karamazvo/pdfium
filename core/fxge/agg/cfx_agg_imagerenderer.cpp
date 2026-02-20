@@ -17,16 +17,15 @@
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/dib/cfx_imagetransformer.h"
 
-CFX_AggImageRenderer::CFX_AggImageRenderer(
-    const RetainPtr<CFX_DIBitmap>& pDevice,
-    const CFX_AggClipRgn* pClipRgn,
-    RetainPtr<const CFX_DIBBase> source,
-    float alpha,
-    uint32_t mask_color,
-    const CFX_Matrix& matrix,
-    const FXDIB_ResampleOptions& options,
-    bool bRgbByteOrder)
-    : device_(pDevice),
+CFX_AggImageRenderer::CFX_AggImageRenderer(RetainPtr<CFX_DIBitmap> pDevice,
+                                           const CFX_AggClipRgn* pClipRgn,
+                                           RetainPtr<const CFX_DIBBase> source,
+                                           float alpha,
+                                           uint32_t mask_color,
+                                           const CFX_Matrix& matrix,
+                                           const FXDIB_ResampleOptions& options,
+                                           bool bRgbByteOrder)
+    : device_(std::move(pDevice)),
       clip_rgn_(pClipRgn),
       matrix_(matrix),
       alpha_(alpha),
@@ -35,7 +34,7 @@ CFX_AggImageRenderer::CFX_AggImageRenderer(
   FX_RECT image_rect = matrix_.GetUnitRect().GetOuterRect();
   clip_box_ = pClipRgn
                   ? pClipRgn->GetBox()
-                  : FX_RECT(0, 0, pDevice->GetWidth(), pDevice->GetHeight());
+                  : FX_RECT(0, 0, device_->GetWidth(), device_->GetHeight());
   clip_box_.Intersect(image_rect);
   if (clip_box_.IsEmpty()) {
     return;
@@ -54,7 +53,7 @@ CFX_AggImageRenderer::CFX_AggImageRenderer(
                                                matrix_.c > 0, matrix_.b < 0);
       const bool flip_x = matrix_.c > 0;
       const bool flip_y = matrix_.b < 0;
-      composer_.Compose(pDevice, pClipRgn, alpha, mask_color, clip_box_,
+      composer_.Compose(device_, pClipRgn, alpha, mask_color, clip_box_,
                         /*bVertical=*/true, flip_x, flip_y, rgb_byte_order_,
                         BlendMode::kNormal);
       stretcher_ = std::make_unique<CFX_ImageStretcher>(
@@ -87,7 +86,7 @@ CFX_AggImageRenderer::CFX_AggImageRenderer(
 
   FX_RECT bitmap_clip = clip_box_;
   bitmap_clip.Offset(-image_rect.left, -image_rect.top);
-  composer_.Compose(pDevice, pClipRgn, alpha, mask_color, clip_box_,
+  composer_.Compose(device_, pClipRgn, alpha, mask_color, clip_box_,
                     /*bVertical=*/false, /*bFlipX=*/false, /*bFlipY=*/false,
                     rgb_byte_order_, BlendMode::kNormal);
   state_ = State::kStretching;
