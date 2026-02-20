@@ -46,6 +46,30 @@
       },
       "revId": "3e8adab8e5e1124edb008e1cbc85898b60d52575",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b2feb5e1_34fb2ccb",
+        "filename": "core/fxcrt/fx_random.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-20T20:07:12Z",
+      "side": 1,
+      "message": "I was thinking Init() can be in the anonymous namespace and return `std::array\u003cuint32_t, kN\u003e`.",
+      "parentUuid": "13133318_e55c942d",
+      "range": {
+        "startLine": 84,
+        "startChar": 0,
+        "endLine": 88,
+        "endChar": 3
+      },
+      "revId": "3e8adab8e5e1124edb008e1cbc85898b60d52575",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
