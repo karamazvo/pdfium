@@ -978,12 +978,12 @@ void CPDF_StreamContentParser::Handle_BeginImageData() {}
 
 void CPDF_StreamContentParser::Handle_SetLineJoin() {
   cur_states_->mutable_graph_state().SetLineJoin(
-      static_cast<CFX_GraphStateData::LineJoin>(GetInteger(0)));
+      static_cast<CFX_GraphStateData::LineJoin>(GetInteger(0).value_or(0)));
 }
 
 void CPDF_StreamContentParser::Handle_SetLineCap() {
   cur_states_->mutable_graph_state().SetLineCap(
-      static_cast<CFX_GraphStateData::LineCap>(GetInteger(0)));
+      static_cast<CFX_GraphStateData::LineCap>(GetInteger(0).value_or(0)));
 }
 
 void CPDF_StreamContentParser::Handle_SetCMYKColor_Fill() {
@@ -1461,7 +1461,7 @@ void CPDF_StreamContentParser::OnChangeTextMatrix() {
 
 void CPDF_StreamContentParser::Handle_SetTextRenderMode() {
   TextRenderingMode mode;
-  if (SetTextRenderingModeFromInt(GetInteger(0), &mode)) {
+  if (SetTextRenderingModeFromInt(GetInteger(0).value_or(0), &mode)) {
     cur_states_->mutable_text_state().SetTextMode(mode);
   }
 }
