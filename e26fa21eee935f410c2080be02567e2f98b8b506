@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d3099646_d923fb32",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-20T21:59:42Z",
+      "side": 1,
+      "message": "The checked -in expectation is wrong.",
+      "parentUuid": "5253d6c6_9d3fecbf",
+      "range": {
+        "startLine": 9,
+        "startChar": 68,
+        "endLine": 9,
+        "endChar": 72
+      },
+      "revId": "e26fa21eee935f410c2080be02567e2f98b8b506",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "01d5906d_925cc4e1",
@@ -37,6 +61,30 @@
       "writtenOn": "2026-02-20T21:50:34Z",
       "side": 1,
       "message": "Unsuppress",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 9
+      },
+      "revId": "e26fa21eee935f410c2080be02567e2f98b8b506",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "45b6ddf0_e8bf8ecf",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-20T21:59:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "01d5906d_925cc4e1",
       "range": {
         "startLine": 11,
         "startChar": 0,
