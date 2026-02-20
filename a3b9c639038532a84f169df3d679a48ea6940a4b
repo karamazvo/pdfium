@@ -135,6 +135,30 @@
       },
       "revId": "a3b9c639038532a84f169df3d679a48ea6940a4b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "72beb275_2a70496a",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 843,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-20T13:17:11Z",
+      "side": 1,
+      "message": "Update, got a fix-ish thing working. It is not exactly ideal, but keeps most of the test cases working: notable exception being whitespace.pdf. I\u0027d say we still explore it post-revert but still will upload it for reference.",
+      "parentUuid": "c2f75067_4fd9a6ab",
+      "range": {
+        "startLine": 843,
+        "startChar": 10,
+        "endLine": 843,
+        "endChar": 19
+      },
+      "revId": "a3b9c639038532a84f169df3d679a48ea6940a4b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
