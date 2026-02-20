@@ -51,6 +51,7 @@ source_set("fxcrt") {
     "containers/adapters.h",
     "containers/contains.h",
     "containers/unique_ptr_adapters.h",
+    "cxx23_to_underlying.h",
     "data_vector.h",
     "debug/alias.cc",
     "debug/alias.h",
