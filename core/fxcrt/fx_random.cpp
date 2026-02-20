@@ -87,6 +87,8 @@ std::array<uint32_t, FX_Random::kStateSize> InitState(uint32_t seed) {
 
 }  // namespace
 
+FX_Random::FX_Random() : FX_Random(GetNextGlobalSeed()) {}
+
 FX_Random::FX_Random(uint32_t seed)
     : next_index_(kStateSize), state_(InitState(seed)) {}
 

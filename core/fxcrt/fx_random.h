@@ -19,6 +19,9 @@ class FX_Random {
  public:
   static constexpr size_t kStateSize = 848;
 
+  // Chooses a random seed for the caller.
+  FX_Random();
+
   explicit FX_Random(uint32_t seed);
 
   FX_Random(const FX_Random&) = delete;
