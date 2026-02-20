@@ -854,6 +854,15 @@ void CPDF_TextPage::CloseTempLine() {
     }
     bPrevSpace = true;
   }
+
+  if (!str.IsEmpty()) {
+    const size_t last_idx = str.GetLength() - 1;
+    if (str[last_idx] == ' ') {
+      temp_text_buf_.Delete(last_idx, 1);
+      temp_char_list_.pop_back();
+      str.Delete(last_idx);
+    }
+  }
   CFX_BidiString bidi(str);
   if (rtl_) {
     bidi.SetOverallDirectionRight();
@@ -880,12 +889,23 @@ void CPDF_TextPage::CloseTempLine() {
   temp_text_buf_.Delete(0, temp_text_buf_.GetLength());
 }
 
+bool CPDF_TextPage::RemoveSpaceAtLineEnd(const CPDF_TextObject* pTextObj) {
+  if (pTextObj->CountItems() == 1) {
+    CPDF_TextObject::Item item = pTextObj->GetItemInfo(0);
+    if (item.char_code_ == 32 &&
+        fabs(pTextObj->GetRect().Width()) < kSizeEpsilon) {
+      return false;
+    }
+  }
+  return true;
+}
+
 void CPDF_TextPage::ProcessTextObject(
     CPDF_TextObject* pTextObj,
     const CFX_Matrix& form_matrix,
     const CPDF_PageObjectHolder* pObjList,
     CPDF_PageObjectHolder::const_iterator ObjPos) {
-  if (fabs(pTextObj->GetRect().Width()) < kSizeEpsilon) {
+  if (!RemoveSpaceAtLineEnd(pTextObj)) {
     return;
   }
 
@@ -1083,7 +1103,7 @@ void CPDF_TextPage::SwapTempTextBuf(size_t iCharListStartAppend,
 
 void CPDF_TextPage::ProcessTextObject(const TransformedTextObject& obj) {
   CPDF_TextObject* const pTextObj = obj.text_obj_;
-  if (fabs(pTextObj->GetRect().Width()) < kSizeEpsilon) {
+  if (!RemoveSpaceAtLineEnd(pTextObj)) {
     return;
   }
 

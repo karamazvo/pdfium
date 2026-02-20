@@ -140,6 +140,7 @@ class CPDF_TextPage {
 
   void Init();
   bool IsHyphen(wchar_t curChar) const;
+  bool RemoveSpaceAtLineEnd(const CPDF_TextObject* pTextObj);
   void ProcessObject();
   void ProcessFormObject(CPDF_FormObject* pFormObj,
                          const CFX_Matrix& form_matrix);
