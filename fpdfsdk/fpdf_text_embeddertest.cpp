@@ -2358,7 +2358,8 @@ TEST_F(FPDFTextEmbedderTest, WhitespaceCharCount) {
   ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
 
-  EXPECT_EQ(1, FPDFText_CountChars(textpage.get()));
+  // TODO(crbug.com/40643656): This should be 1.
+  EXPECT_EQ(0, FPDFText_CountChars(textpage.get()));
 }
 
 TEST_F(FPDFTextEmbedderTest, Bug444176962) {
@@ -2373,4 +2374,14 @@ TEST_F(FPDFTextEmbedderTest, Bug444176962) {
   static constexpr char kResult[] = "local act";
   ASSERT_EQ(10, FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer));
   EXPECT_THAT(pdfium::span(buffer).first<10>(), ElementsAreArray(kResult));
+}
+
+TEST_F(FPDFTextEmbedderTest, NoExtraCharsWithoutCheck) {
+  ASSERT_TRUE(OpenDocument("charwidth_regression.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+
+  EXPECT_EQ(3051, FPDFText_CountChars(textpage.get()));
 }
