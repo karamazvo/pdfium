@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "635a7176_e3c407e6",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 2386,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-20T14:10:32Z",
+      "side": 1,
+      "message": "I checked with a healthy amount of logging; we\u0027re successfully nuking the spaces, even if the CRLFs are still hanging around to keep the count at 3051.\n\nMy laptop’s fans are currently staging a protest against the chromium build process (although PDFium builds and tests pass). Can someone verify this looks good on the chromium-end. Thanks!",
+      "range": {
+        "startLine": 2386,
+        "startChar": 12,
+        "endLine": 2386,
+        "endChar": 16
+      },
+      "revId": "c37ca6f9957643792b41a077b7312c53d921526c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
