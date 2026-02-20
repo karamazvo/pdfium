@@ -840,28 +840,27 @@ void CPDF_TextPage::CloseTempLine() {
   }
 
   WideString str = temp_text_buf_.MakeString();
-  if (str.GetLength() > 1) {
-    bool bPrevSpace = false;
-    for (size_t i = 0; i < str.GetLength(); ++i) {
-      if (str[i] != ' ') {
-        bPrevSpace = false;
-        continue;
-      }
-      if (bPrevSpace) {
-        temp_text_buf_.Delete(i, 1);
-        temp_char_list_.erase(temp_char_list_.begin() + i);
-        str.Delete(i);
-        --i;
-      }
-      bPrevSpace = true;
+  bool bPrevSpace = false;
+  for (size_t i = 0; i < str.GetLength(); ++i) {
+    if (str[i] != ' ') {
+      bPrevSpace = false;
+      continue;
     }
+    if (bPrevSpace) {
+      temp_text_buf_.Delete(i, 1);
+      temp_char_list_.erase(temp_char_list_.begin() + i);
+      str.Delete(i);
+      --i;
+    }
+    bPrevSpace = true;
+  }
 
-    const size_t last_idx = str.GetLength() - 1;
-    if (bPrevSpace && last_idx > 0 && str[last_idx] == ' ') {
-      temp_text_buf_.Delete(last_idx, 1);
-      temp_char_list_.erase(temp_char_list_.begin() + last_idx);
-      str.Delete(last_idx);
-    }
+  const size_t last_idx = str.GetLength() - 1;
+  DCHECK(!str.IsEmpty());
+  if (str[last_idx] == ' ') {
+    temp_text_buf_.Delete(last_idx, 1);
+    temp_char_list_.erase(temp_char_list_.begin() + last_idx);
+    str.Delete(last_idx);
   }
   CFX_BidiString bidi(str);
   if (rtl_) {
