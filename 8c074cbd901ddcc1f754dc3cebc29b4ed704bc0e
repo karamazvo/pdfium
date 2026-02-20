@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e87816e5_047719d1",
+        "filename": "core/fxge/cfx_glyphbitmap.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-20T00:24:03Z",
+      "side": 1,
+      "message": "Maybe delegate to the new ctor.",
+      "revId": "8c074cbd901ddcc1f754dc3cebc29b4ed704bc0e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
