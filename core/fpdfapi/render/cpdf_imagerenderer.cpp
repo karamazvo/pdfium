@@ -438,11 +438,8 @@ bool CPDF_ImageRenderer::StartDIBBase() {
           blend_type_);
   if (result.result == RenderDeviceDriverIface::Result::kSuccess) {
     device_handle_ = std::move(result.agg_image_renderer);
-    if (device_handle_) {
-      mode_ = Mode::kBlend;
-      return true;
-    }
-    return false;
+    mode_ = Mode::kBlend;
+    return true;
   }
 
 #if BUILDFLAG(IS_WIN)
