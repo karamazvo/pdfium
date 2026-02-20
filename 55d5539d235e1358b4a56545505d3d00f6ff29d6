@@ -16,6 +16,24 @@
       "message": "This CL is adding 7 MB worth of test PDFs. Most PDFs in testing/resources/ are under 100 KB. It would be nice to keep it this way. Some options:\n\n1. Look into the PDFs and try to minimize its contents. Most time-consuming.\n2. Remove some of these PDFs. They might have the same root cause, especially if they have the same stack trace. Adding more of the PDFs for the same root cause would be redundant. They can be added back as needed if there\u0027s a different cause.\n3. A mix of (1) and (2).\n\nInvestigating some of the PDFs might help decide which is better.",
       "revId": "55d5539d235e1358b4a56545505d3d00f6ff29d6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dc41e257_eee0b80a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-20T08:09:28Z",
+      "side": 1,
+      "message": "Will look at optimizing these first: They seem to differ quite a bit in terms of root cause and the stack trace.\n\nOr perhaps, instead of testing all cases of this bug, we can test only a few.\n\nWhat do you think?\n\nI tried using a compressor and that fails to compress due to some malformed objects.",
+      "parentUuid": "a8b68134_d1775965",
+      "revId": "55d5539d235e1358b4a56545505d3d00f6ff29d6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
