@@ -17,6 +17,7 @@
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_face.h"
+#include "core/fxge/cfx_font_util.h"
 #include "core/fxge/fx_font.h"
 
 namespace {
@@ -245,9 +246,7 @@ bool CPDF_SimpleFont::LoadCommon() {
   }
   LoadCharWidths(font_desc.Get());
   if (font_file_) {
-    if (base_font_name_.GetLength() > 7 && base_font_name_[6] == '+') {
-      base_font_name_ = base_font_name_.Last(base_font_name_.GetLength() - 7);
-    }
+    fxge::MaybeRemoveSubsettedFontPrefix(base_font_name_);
   } else {
     LoadSubstFont();
   }
