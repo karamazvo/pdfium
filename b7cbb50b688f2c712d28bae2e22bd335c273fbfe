@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "abdda52f_3fef1829",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1054,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-20T18:44:41Z",
+      "side": 1,
+      "message": "This was one of the layering violations behind this CL.",
+      "range": {
+        "startLine": 1054,
+        "startChar": 38,
+        "endLine": 1054,
+        "endChar": 55
+      },
+      "revId": "b7cbb50b688f2c712d28bae2e22bd335c273fbfe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c1bd1008_05b071de",
+        "filename": "core/fxge/dib/cfx_dibbase.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-20T18:44:41Z",
+      "side": 1,
+      "message": "Layering here, too. You get the idea.",
+      "range": {
+        "startLine": 115,
+        "startChar": 28,
+        "endLine": 115,
+        "endChar": 39
+      },
+      "revId": "b7cbb50b688f2c712d28bae2e22bd335c273fbfe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
