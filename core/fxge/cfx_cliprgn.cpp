@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/agg/cfx_agg_cliprgn.h"
+#include "core/fxge/cfx_cliprgn.h"
 
 #include <stdint.h>
 
@@ -14,14 +14,13 @@
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 
-CFX_AggClipRgn::CFX_AggClipRgn(int width, int height)
-    : box_(0, 0, width, height) {}
+CFX_ClipRgn::CFX_ClipRgn(int width, int height) : box_(0, 0, width, height) {}
 
-CFX_AggClipRgn::CFX_AggClipRgn(const CFX_AggClipRgn& src) = default;
+CFX_ClipRgn::CFX_ClipRgn(const CFX_ClipRgn& src) = default;
 
-CFX_AggClipRgn::~CFX_AggClipRgn() = default;
+CFX_ClipRgn::~CFX_ClipRgn() = default;
 
-void CFX_AggClipRgn::IntersectRect(const FX_RECT& rect) {
+void CFX_ClipRgn::IntersectRect(const FX_RECT& rect) {
   if (type_ == kRectI) {
     box_.Intersect(rect);
     return;
@@ -29,9 +28,9 @@ void CFX_AggClipRgn::IntersectRect(const FX_RECT& rect) {
   IntersectMaskRect(rect, box_, mask_);
 }
 
-void CFX_AggClipRgn::IntersectMaskRect(FX_RECT rect,
-                                       FX_RECT mask_rect,
-                                       RetainPtr<CFX_DIBitmap> pOldMask) {
+void CFX_ClipRgn::IntersectMaskRect(FX_RECT rect,
+                                    FX_RECT mask_rect,
+                                    RetainPtr<CFX_DIBitmap> pOldMask) {
   type_ = kMaskF;
   box_ = rect;
   box_.Intersect(mask_rect);
@@ -57,9 +56,9 @@ void CFX_AggClipRgn::IntersectMaskRect(FX_RECT rect,
   }
 }
 
-void CFX_AggClipRgn::IntersectMaskF(int left,
-                                    int top,
-                                    RetainPtr<CFX_DIBitmap> pMask) {
+void CFX_ClipRgn::IntersectMaskF(int left,
+                                 int top,
+                                 RetainPtr<CFX_DIBitmap> pMask) {
   FX_RECT mask_box(left, top, left + pMask->GetWidth(),
                    top + pMask->GetHeight());
   if (!mask_box.IsEmpty()) {

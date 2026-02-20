@@ -4,21 +4,21 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_AGG_CFX_AGG_CLIPRGN_H_
-#define CORE_FXGE_AGG_CFX_AGG_CLIPRGN_H_
+#ifndef CORE_FXGE_CFX_CLIPRGN_H_
+#define CORE_FXGE_CFX_CLIPRGN_H_
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
 
 class CFX_DIBitmap;
 
-class CFX_AggClipRgn {
+class CFX_ClipRgn {
  public:
   enum ClipType : bool { kRectI, kMaskF };
 
-  CFX_AggClipRgn(int device_width, int device_height);
-  CFX_AggClipRgn(const CFX_AggClipRgn& src);
-  ~CFX_AggClipRgn();
+  CFX_ClipRgn(int device_width, int device_height);
+  CFX_ClipRgn(const CFX_ClipRgn& src);
+  ~CFX_ClipRgn();
 
   ClipType GetType() const { return type_; }
   const FX_RECT& GetBox() const { return box_; }
@@ -37,4 +37,4 @@ class CFX_AggClipRgn {
   RetainPtr<CFX_DIBitmap> mask_;
 };
 
-#endif  // CORE_FXGE_AGG_CFX_AGG_CLIPRGN_H_
+#endif  // CORE_FXGE_CFX_CLIPRGN_H_

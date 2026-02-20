@@ -10,7 +10,7 @@
 
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
-#include "core/fxge/agg/cfx_agg_imagerenderer.h"
+#include "core/fxge/cfx_imagerenderer.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 
