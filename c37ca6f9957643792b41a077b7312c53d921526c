@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cf0b5172_7b689121",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-20T18:26:27Z",
+      "side": 1,
+      "message": "Would abandon and make this a reland so that it avoids the merge conflicting.",
+      "revId": "c37ca6f9957643792b41a077b7312c53d921526c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "635a7176_e3c407e6",
