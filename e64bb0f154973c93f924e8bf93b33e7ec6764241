@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6eefcf7b_def98a95",
+        "filename": "core/fxcrt/fx_random.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-20T19:51:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7d14be54_d94c4561",
+      "revId": "e64bb0f154973c93f924e8bf93b33e7ec6764241",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a303edf6_5f603636",
@@ -31,6 +49,30 @@
       "writtenOn": "2026-02-20T19:33:26Z",
       "side": 1,
       "message": "Maybe \"result\"?",
+      "range": {
+        "startLine": 102,
+        "startChar": 11,
+        "endLine": 102,
+        "endChar": 15
+      },
+      "revId": "e64bb0f154973c93f924e8bf93b33e7ec6764241",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7722f91d_13912e0f",
+        "filename": "core/fxcrt/fx_random.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-20T19:51:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a303edf6_5f603636",
       "range": {
         "startLine": 102,
         "startChar": 11,
