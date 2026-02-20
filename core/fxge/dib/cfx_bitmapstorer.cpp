@@ -24,6 +24,19 @@ void CFX_BitmapStorer::Replace(RetainPtr<CFX_DIBitmap>&& pBitmap) {
   bitmap_ = std::move(pBitmap);
 }
 
+void CFX_BitmapStorer::Compose(const RetainPtr<CFX_DIBitmap>& pDest,
+                               const CFX_ClipRgn* pClipRgn,
+                               float alpha,
+                               uint32_t mask_color,
+                               const FX_RECT& dest_rect,
+                               bool bVertical,
+                               bool bFlipX,
+                               bool bFlipY,
+                               bool bRgbByteOrder,
+                               BlendMode blend_mode) {
+  // Not supported.
+}
+
 void CFX_BitmapStorer::ComposeScanline(int line,
                                        pdfium::span<const uint8_t> scanline) {
   pdfium::span<uint8_t> dest_buf = bitmap_->GetWritableScanline(line);

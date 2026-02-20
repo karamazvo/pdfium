@@ -21,6 +21,7 @@
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "core/fxcrt/zip.h"
+#include "core/fxge/agg/cfx_agg_bitmapcomposer.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_graphstatedata.h"
@@ -1373,9 +1374,11 @@ RenderDeviceDriverIface::StartResult CFX_AggDeviceDriver::StartDIBits(
     return {Result::kSuccess, nullptr};
   }
 
-  return {Result::kSuccess, std::make_unique<CFX_ImageRenderer>(
-                                bitmap_, clip_rgn_.get(), std::move(bitmap),
-                                alpha, argb, matrix, options, rgb_byte_order_)};
+  return {
+      Result::kSuccess,
+      std::make_unique<CFX_ImageRenderer>(
+          bitmap_, std::make_unique<CFX_AggBitmapComposer>(), clip_rgn_.get(),
+          std::move(bitmap), alpha, argb, matrix, options, rgb_byte_order_)};
 }
 
 bool CFX_AggDeviceDriver::ContinueDIBits(CFX_ImageRenderer* pHandle,

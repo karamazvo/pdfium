@@ -25,6 +25,7 @@ class CFX_AggBitmapComposer final : public ScanlineComposerIface {
   CFX_AggBitmapComposer();
   ~CFX_AggBitmapComposer() override;
 
+  // ScanlineComposerIface:
   void Compose(const RetainPtr<CFX_DIBitmap>& pDest,
                const CFX_ClipRgn* pClipRgn,
                float alpha,
@@ -34,9 +35,7 @@ class CFX_AggBitmapComposer final : public ScanlineComposerIface {
                bool bFlipX,
                bool bFlipY,
                bool bRgbByteOrder,
-               BlendMode blend_mode);
-
-  // ScanlineComposerIface:
+               BlendMode blend_mode) override;
   bool SetInfo(int width,
                int height,
                FXDIB_Format src_format,
