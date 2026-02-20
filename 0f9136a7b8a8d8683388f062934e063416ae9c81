@@ -67,6 +67,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "b676cc3f_5a64a199",
+        "filename": "xfa/fxfa/layout/cxfa_contentlayoutprocessor.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 1748,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-20T18:49:36Z",
+      "side": 1,
+      "message": "It\u0027s better to make sure `array_keep_items_` doesn\u0027t include nullptr, since it doesn\u0027t really make sense to have it and otherwise, we\u0027d always have to have the nullptr check whenever we access it. CXFA_ContentLayoutProcessor::InsertKeepLayoutItems() for example accesses it and assumes no nullptr.\n\nOnce we do, then this conditional can be removed.",
+      "parentUuid": "8b98dd21_fa33be85",
+      "range": {
+        "startLine": 1748,
+        "startChar": 12,
+        "endLine": 1748,
+        "endChar": 23
+      },
+      "revId": "0f9136a7b8a8d8683388f062934e063416ae9c81",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "37df47ce_58003c31",
         "filename": "xfa/fxfa/layout/cxfa_viewlayoutprocessor.cpp",
         "patchSetId": 11

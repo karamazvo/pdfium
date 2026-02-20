@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "84831902_d439b6d1",
+        "filename": "xfa/fxfa/layout/cxfa_contentlayoutprocessor.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 1530,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-20T18:49:36Z",
+      "side": 1,
+      "message": "JudgePutNextPage() doesn\u0027t put any nullptrs in keepLayoutItems, so this condition isn\u0027t needed.\n\nInside JudgePutNextPage:\n```\n    CXFA_ContentLayoutItem* pChildLayoutItem \u003d pIter-\u003eAsContentLayoutItem();\n    if (!pChildLayoutItem) {\n      continue;\n    }\n    \n    if (ExistContainerKeep(pChildLayoutItem-\u003eGetFormNode(), false)) {\n      pKeepItems-\u003epush_back(pChildLayoutItem);\n      ...\n    } else {\n      pKeepItems-\u003eclear();\n      ...\n    }\n```",
+      "revId": "314e3b48e812c365b087fce52f83c2d8ed51a7a1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "66a20726_6e209b87",
+        "filename": "xfa/fxfa/layout/cxfa_viewlayoutprocessor.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 575,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-20T18:49:36Z",
+      "side": 1,
+      "message": "Nit: probably unneeded, it\u0027s pretty well understood that this would avoid a null pointer deref.\n\n```\nif (!foo) {\n  return;\n}\nfoo-\u003eBar();\n```",
+      "range": {
+        "startLine": 574,
+        "startChar": 68,
+        "endLine": 575,
+        "endChar": 64
+      },
+      "revId": "314e3b48e812c365b087fce52f83c2d8ed51a7a1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
