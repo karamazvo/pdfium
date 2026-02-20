@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/agg/cfx_agg_imagerenderer.h"
+#include "core/fxge/cfx_imagerenderer.h"
 
 #include <math.h>
 
@@ -12,20 +12,19 @@
 #include <utility>
 
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/agg/cfx_agg_cliprgn.h"
+#include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/dib/cfx_imagetransformer.h"
 
-CFX_AggImageRenderer::CFX_AggImageRenderer(
-    const RetainPtr<CFX_DIBitmap>& pDevice,
-    const CFX_AggClipRgn* pClipRgn,
-    RetainPtr<const CFX_DIBBase> source,
-    float alpha,
-    uint32_t mask_color,
-    const CFX_Matrix& matrix,
-    const FXDIB_ResampleOptions& options,
-    bool bRgbByteOrder)
+CFX_ImageRenderer::CFX_ImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
+                                     const CFX_ClipRgn* pClipRgn,
+                                     RetainPtr<const CFX_DIBBase> source,
+                                     float alpha,
+                                     uint32_t mask_color,
+                                     const CFX_Matrix& matrix,
+                                     const FXDIB_ResampleOptions& options,
+                                     bool bRgbByteOrder)
     : device_(pDevice),
       clip_rgn_(pClipRgn),
       matrix_(matrix),
@@ -97,9 +96,9 @@ CFX_AggImageRenderer::CFX_AggImageRenderer(
   stretcher_->Start();
 }
 
-CFX_AggImageRenderer::~CFX_AggImageRenderer() = default;
+CFX_ImageRenderer::~CFX_ImageRenderer() = default;
 
-bool CFX_AggImageRenderer::Continue(PauseIndicatorIface* pPause) {
+bool CFX_ImageRenderer::Continue(PauseIndicatorIface* pPause) {
   if (state_ == State::kStretching) {
     return stretcher_->Continue(pPause);
   }

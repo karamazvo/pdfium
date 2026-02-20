@@ -16,7 +16,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/agg/cfx_agg_cliprgn.h"
+#include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 
 CFX_AggBitmapComposer::CFX_AggBitmapComposer() = default;
@@ -24,7 +24,7 @@ CFX_AggBitmapComposer::CFX_AggBitmapComposer() = default;
 CFX_AggBitmapComposer::~CFX_AggBitmapComposer() = default;
 
 void CFX_AggBitmapComposer::Compose(const RetainPtr<CFX_DIBitmap>& pDest,
-                                    const CFX_AggClipRgn* pClipRgn,
+                                    const CFX_ClipRgn* pClipRgn,
                                     float alpha,
                                     uint32_t mask_color,
                                     const FX_RECT& dest_rect,
@@ -42,7 +42,7 @@ void CFX_AggBitmapComposer::Compose(const RetainPtr<CFX_DIBitmap>& pDest,
   alpha_ = alpha;
   mask_color_ = mask_color;
   clip_mask_ = nullptr;
-  if (pClipRgn && pClipRgn->GetType() != CFX_AggClipRgn::kRectI) {
+  if (pClipRgn && pClipRgn->GetType() != CFX_ClipRgn::kRectI) {
     clip_mask_ = pClipRgn->GetMask();
   }
   vertical_ = bVertical;

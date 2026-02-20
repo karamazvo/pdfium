@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_AGG_CFX_AGG_IMAGERENDERER_H_
-#define CORE_FXGE_AGG_CFX_AGG_IMAGERENDERER_H_
+#ifndef CORE_FXGE_CFX_IMAGERENDERER_H_
+#define CORE_FXGE_CFX_IMAGERENDERER_H_
 
 #include <memory>
 
@@ -20,17 +20,17 @@ class CFX_ImageTransformer;
 class CFX_ImageStretcher;
 class PauseIndicatorIface;
 
-class CFX_AggImageRenderer {
+class CFX_ImageRenderer {
  public:
-  CFX_AggImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
-                       const CFX_AggClipRgn* pClipRgn,
-                       RetainPtr<const CFX_DIBBase> source,
-                       float alpha,
-                       uint32_t mask_color,
-                       const CFX_Matrix& matrix,
-                       const FXDIB_ResampleOptions& options,
-                       bool bRgbByteOrder);
-  ~CFX_AggImageRenderer();
+  CFX_ImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
+                    const CFX_ClipRgn* pClipRgn,
+                    RetainPtr<const CFX_DIBBase> source,
+                    float alpha,
+                    uint32_t mask_color,
+                    const CFX_Matrix& matrix,
+                    const FXDIB_ResampleOptions& options,
+                    bool bRgbByteOrder);
+  ~CFX_ImageRenderer();
 
   bool Continue(PauseIndicatorIface* pPause);
 
@@ -38,7 +38,7 @@ class CFX_AggImageRenderer {
   enum class State : uint8_t { kInitial = 0, kStretching, kTransforming };
 
   RetainPtr<CFX_DIBitmap> const device_;
-  UnownedPtr<const CFX_AggClipRgn> const clip_rgn_;
+  UnownedPtr<const CFX_ClipRgn> const clip_rgn_;
   const CFX_Matrix matrix_;
   std::unique_ptr<CFX_ImageTransformer> transformer_;
   std::unique_ptr<CFX_ImageStretcher> stretcher_;
@@ -50,4 +50,4 @@ class CFX_AggImageRenderer {
   const bool rgb_byte_order_;
 };
 
-#endif  // CORE_FXGE_AGG_CFX_AGG_IMAGERENDERER_H_
+#endif  // CORE_FXGE_CFX_IMAGERENDERER_H_

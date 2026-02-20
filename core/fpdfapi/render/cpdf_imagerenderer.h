@@ -16,7 +16,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
 
-class CFX_AggImageRenderer;
+class CFX_ImageRenderer;
 class CFX_DIBBase;
 class CFX_DIBitmap;
 class CFX_DefaultRenderDevice;
@@ -99,7 +99,7 @@ class CPDF_ImageRenderer {
 #if BUILDFLAG(IS_WIN)
   std::unique_ptr<CFX_ImageTransformer> transformer_;
 #endif
-  std::unique_ptr<CFX_AggImageRenderer> device_handle_;
+  std::unique_ptr<CFX_ImageRenderer> device_handle_;
   Mode mode_ = Mode::kNone;
   float alpha_ = 0.0f;
   BlendMode blend_type_ = BlendMode::kNormal;
