@@ -34,12 +34,8 @@ class FX_Random {
  private:
   static constexpr size_t kN = 848;
 
-  struct MTContext {
-    uint32_t mti;
-    std::array<uint32_t, kN> mt;
-  };
-
-  MTContext context_;
+  uint32_t mti_;
+  std::array<uint32_t, kN> mt_;
 };
 
 #endif  // CORE_FXCRT_FX_RANDOM_H_
