@@ -1051,7 +1051,7 @@ RenderDeviceDriverIface::StartResult CFX_RenderDevice::StartDIBitsWithBlend(
                                      options, blend_mode);
 }
 
-bool CFX_RenderDevice::ContinueDIBits(CFX_AggImageRenderer* handle,
+bool CFX_RenderDevice::ContinueDIBits(CFX_ImageRenderer* handle,
                                       PauseIndicatorIface* pPause) {
   return device_driver_->ContinueDIBits(handle, pPause);
 }

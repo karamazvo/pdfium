@@ -24,8 +24,8 @@
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
-#include "core/fxge/agg/cfx_agg_cliprgn.h"
 #include "core/fxge/calculate_pitch.h"
+#include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/dib/cfx_scanlinecompositor.h"
 
@@ -570,7 +570,7 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
                                    int src_left,
                                    int src_top,
                                    BlendMode blend_type,
-                                   const CFX_AggClipRgn* pClipRgn,
+                                   const CFX_ClipRgn* pClipRgn,
                                    bool bRgbByteOrder) {
   // Should have called CompositeMask().
   CHECK(!source->IsMaskFormat());
@@ -590,7 +590,7 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
 
   RetainPtr<CFX_DIBitmap> pClipMask;
   FX_RECT clip_box;
-  if (pClipRgn && pClipRgn->GetType() != CFX_AggClipRgn::kRectI) {
+  if (pClipRgn && pClipRgn->GetType() != CFX_ClipRgn::kRectI) {
     pClipMask = pClipRgn->GetMask();
     clip_box = pClipRgn->GetBox();
   }
@@ -638,7 +638,7 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
                                  int src_left,
                                  int src_top,
                                  BlendMode blend_type,
-                                 const CFX_AggClipRgn* pClipRgn,
+                                 const CFX_ClipRgn* pClipRgn,
                                  bool bRgbByteOrder) {
   // Should have called CompositeBitmap().
   CHECK(pMask->IsMaskFormat());
@@ -663,7 +663,7 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
 
   RetainPtr<CFX_DIBitmap> pClipMask;
   FX_RECT clip_box;
-  if (pClipRgn && pClipRgn->GetType() != CFX_AggClipRgn::kRectI) {
+  if (pClipRgn && pClipRgn->GetType() != CFX_ClipRgn::kRectI) {
     pClipMask = pClipRgn->GetMask();
     clip_box = pClipRgn->GetBox();
   }

@@ -17,7 +17,7 @@
 #include "core/fxcrt/span.h"
 #include "core/fxge/dib/fx_dib.h"
 
-class CFX_AggImageRenderer;
+class CFX_ImageRenderer;
 class CFX_DIBBase;
 class CFX_DIBitmap;
 class CFX_Font;
@@ -50,11 +50,11 @@ class RenderDeviceDriverIface {
 
   struct StartResult {
     StartResult(Result result,
-                std::unique_ptr<CFX_AggImageRenderer> agg_image_renderer);
+                std::unique_ptr<CFX_ImageRenderer> agg_image_renderer);
     ~StartResult();
 
     const Result result;
-    std::unique_ptr<CFX_AggImageRenderer> agg_image_renderer;
+    std::unique_ptr<CFX_ImageRenderer> agg_image_renderer;
   };
 
   virtual ~RenderDeviceDriverIface();
@@ -109,7 +109,7 @@ class RenderDeviceDriverIface {
                                   const CFX_Matrix& matrix,
                                   const FXDIB_ResampleOptions& options,
                                   BlendMode blend_type) = 0;
-  virtual bool ContinueDIBits(CFX_AggImageRenderer* handle,
+  virtual bool ContinueDIBits(CFX_ImageRenderer* handle,
                               PauseIndicatorIface* pPause);
   virtual bool DrawDeviceText(pdfium::span<const TextCharPos> pCharPos,
                               CFX_Font* font,
