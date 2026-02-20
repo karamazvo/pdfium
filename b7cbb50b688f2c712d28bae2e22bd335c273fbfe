@@ -20,6 +20,23 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "08bdac5b_70d405fc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-20T19:25:48Z",
+      "side": 1,
+      "message": "Yeah, this might be made to work, but searching for agg really shouldn\u0027t give any hits outside of agg ...",
+      "revId": "b7cbb50b688f2c712d28bae2e22bd335c273fbfe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "abdda52f_3fef1829",
         "filename": "core/fxge/cfx_renderdevice.cpp",
         "patchSetId": 3
@@ -83,6 +100,75 @@
         "startChar": 28,
         "endLine": 115,
         "endChar": 39
+      },
+      "revId": "b7cbb50b688f2c712d28bae2e22bd335c273fbfe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "31774f6c_d9321c5b",
+        "filename": "core/fxge/renderdevicedriver_iface.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-20T19:25:48Z",
+      "side": 1,
+      "message": "This kinda feels like a layering  violation as well.",
+      "range": {
+        "startLine": 53,
+        "startChar": 51,
+        "endLine": 53,
+        "endChar": 69
+      },
+      "revId": "b7cbb50b688f2c712d28bae2e22bd335c273fbfe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fbac96ff_30619407",
+        "filename": "testing/fuzzers/pdf_scanlinecompositor_fuzzer.cc",
+        "patchSetId": 3
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-20T19:25:48Z",
+      "side": 1,
+      "message": "this would be a layering violation as well.",
+      "range": {
+        "startLine": 80,
+        "startChar": 0,
+        "endLine": 80,
+        "endChar": 40
+      },
+      "revId": "b7cbb50b688f2c712d28bae2e22bd335c273fbfe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2da54cff_6b6434d8",
+        "filename": "xfa/fxfa/cxfa_imagerenderer.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-20T19:25:48Z",
+      "side": 1,
+      "message": "This feels like a layering violation as well.",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 52
       },
       "revId": "b7cbb50b688f2c712d28bae2e22bd335c273fbfe",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
