@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9e0cbc63_cbb1e614",
+        "filename": "testing/resources/charwidth_regression.pdf",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-21T00:02:04Z",
+      "side": 1,
+      "message": "I can\u0027t see which file this is since Gerrit is treating it as a binary blob, but I wrote https://pdfium-review.google.com/143572 to add a test with a simpler PDF.",
+      "revId": "fb62585ac246756e514932b32af54b43b92c7ea2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
