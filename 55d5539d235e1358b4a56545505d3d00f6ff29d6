@@ -88,6 +88,24 @@
       "parentUuid": "71e1a53b_0f852775",
       "revId": "55d5539d235e1358b4a56545505d3d00f6ff29d6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c906e39e_b8015637",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-21T04:22:15Z",
+      "side": 1,
+      "message": "Abandoning this CL, have moved the parent CL to be rebased on main.",
+      "parentUuid": "97212ae0_d870567c",
+      "revId": "55d5539d235e1358b4a56545505d3d00f6ff29d6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
