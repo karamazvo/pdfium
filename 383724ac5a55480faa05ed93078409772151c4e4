@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2e89d167_38ff1664",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-21T00:31:23Z",
+      "side": 1,
+      "message": "Call `tag.Reserve(kTagLength.+ base_font_name.GetLength() + 1);` since the final string length is known. Then keep appending to `tag` and return `tag`.",
+      "revId": "383724ac5a55480faa05ed93078409772151c4e4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3a5e9e9e_cf66706e",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-21T00:31:23Z",
+      "side": 1,
+      "message": "Put the new entries above this one, since if one starts traversing the objects from `root_font` at the top, the font file is one of the bottom leaf nodes.",
+      "revId": "383724ac5a55480faa05ed93078409772151c4e4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f194804a_29d8c866",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-21T00:31:23Z",
+      "side": 1,
+      "message": "Write the ISO standard number here, as the paragraphs/sections are not always the same across different PDF spec versions.",
+      "range": {
+        "startLine": 74,
+        "startChar": 28,
+        "endLine": 74,
+        "endChar": 34
+      },
+      "revId": "383724ac5a55480faa05ed93078409772151c4e4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e0f95341_a448408a",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-21T00:31:23Z",
+      "side": 1,
+      "message": "Can this live in the anonymous namespace now? Or be a const method?",
+      "revId": "383724ac5a55480faa05ed93078409772151c4e4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0996cc15_8eb29c39",
+        "filename": "core/fxcrt/fx_random.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-21T00:31:23Z",
+      "side": 1,
+      "message": "Just use Fill() to generate some random numbers?",
+      "revId": "383724ac5a55480faa05ed93078409772151c4e4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
