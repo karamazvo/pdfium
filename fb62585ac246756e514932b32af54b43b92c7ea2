@@ -52,6 +52,24 @@
       "parentUuid": "61f2aef1_af5a76af",
       "revId": "fb62585ac246756e514932b32af54b43b92c7ea2",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "54462562_0bb7114d",
+        "filename": "testing/resources/charwidth_regression.pdf",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-21T17:56:13Z",
+      "side": 1,
+      "message": "nvm, i had a look at the test and it considers that, instead looking at the chars in each line: a bit more debugging suggests that one of the objects doesnt even call CloseTempLine();\n\nMaybe the space check needs to be moved further ahead, perhaps where the old kSizeEpsilon checks used to be?\n\nMade a couple changes along those lines. Should work now.",
+      "parentUuid": "e0b99fc1_6b4ea8f2",
+      "revId": "fb62585ac246756e514932b32af54b43b92c7ea2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
