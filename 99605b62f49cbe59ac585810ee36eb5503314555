@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6f087cd6_5a12dd90",
+        "filename": "core/fxge/cfx_font_util.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-21T00:38:24Z",
+      "side": 1,
+      "message": "Not sure what convention we want here for util functions. I chose fxge namespace. I saw some other util files using a class instead.",
+      "revId": "99605b62f49cbe59ac585810ee36eb5503314555",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
