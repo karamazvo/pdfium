@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9a8cef51_569715ef",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1470,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-21T00:35:16Z",
+      "side": 1,
+      "message": "Something like that. Done.",
+      "parentUuid": "9e4debe7_40a7ffa9",
+      "range": {
+        "startLine": 1470,
+        "startChar": 12,
+        "endLine": 1470,
+        "endChar": 13
+      },
+      "revId": "31c37f7a4e09c86cefa20092a9289f0f4f83675f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9ab8d3d6_94ca5d76",
@@ -37,6 +61,30 @@
       "writtenOn": "2026-02-21T00:25:24Z",
       "side": 1,
       "message": "This param is supposed to be the length of the buffer, which is nullptr. Just set to 0?",
+      "range": {
+        "startLine": 1477,
+        "startChar": 67,
+        "endLine": 1477,
+        "endChar": 68
+      },
+      "revId": "31c37f7a4e09c86cefa20092a9289f0f4f83675f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5e27eb36_09f2512d",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1477,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-21T00:35:16Z",
+      "side": 1,
+      "message": "Whoops. Done.",
+      "parentUuid": "9ab8d3d6_94ca5d76",
       "range": {
         "startLine": 1477,
         "startChar": 67,
