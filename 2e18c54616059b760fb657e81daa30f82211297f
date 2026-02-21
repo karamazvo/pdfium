@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f48ce54e_4e65a9aa",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-21T01:04:05Z",
+      "side": 1,
+      "message": "PTAL assuming https://pdfium-review.googlesource.com/c/pdfium_tests/+/143510 looks ok.",
+      "revId": "2e18c54616059b760fb657e81daa30f82211297f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "82edfa7d_da4076f6",
+        "filename": "DEPS",
+        "patchSetId": 4
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-21T01:04:05Z",
+      "side": 1,
+      "message": "Reminder to self to update.",
+      "revId": "2e18c54616059b760fb657e81daa30f82211297f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
