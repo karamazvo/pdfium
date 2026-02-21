@@ -16,6 +16,24 @@
       "message": "It\u0027s also different because it expects the name to be at least \"??????+?\", while MaybeRemoveSubsettedFontPrefix() is trying to match \"XXXXXX+\".",
       "revId": "6249daffcbf21acdbce133081344e00c69a714a6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f683722f_26f0e039",
+        "filename": "core/fpdfapi/font/cpdf_simplefont.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-21T01:12:17Z",
+      "side": 0,
+      "message": "I can re-add the length check.",
+      "parentUuid": "55c3b260_a562112c",
+      "revId": "6249daffcbf21acdbce133081344e00c69a714a6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
