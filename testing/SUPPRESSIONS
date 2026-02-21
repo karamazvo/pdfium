@@ -346,6 +346,7 @@ bug_668762.pdf mac_x86 * * skia
 en_14_foxit_products.pdf mac_x86 * * skia
 en_fqa.pdf mac_x86 * * skia
 example_042.pdf mac_x86 * * skia
+example_058.pdf mac_x86 * * skia
 font_1_embedded_font_en_feature.pdf mac_x86 * * skia
 font_2_embedded_font_en_size14.pdf mac_x86 * * skia
 transparent1.pdf mac_x86 * * skia
