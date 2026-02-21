@@ -142,6 +142,24 @@
       "parentUuid": "6965270c_d243c6f1",
       "revId": "b60898d7ba7691dc9210a20e4e88576d81aa6f22",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4b031411_5d65a38e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 22
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-21T04:17:23Z",
+      "side": 1,
+      "message": "Yes: works for 2 as well.\n```\nstderr:\nIn file included from ../../xfa/fxfa/parser/cxfa_overflow.cpp:7:\nIn file included from ../../xfa/fxfa/parser/cxfa_overflow.h:10:\nIn file included from ../../xfa/fxfa/parser/cxfa_node.h:18:\n../../core/fxcrt/mask.h:86:26: error: no matching constructor for initialization of \u0027Mask\u003cA\u003e\u0027\n   86 | auto pleaseDontCompile \u003d Mask\u003cA\u003e(kA1, kB2);\n      |                          ^       ~~~~~~~~\n../../core/fxcrt/mask.h:30:13: note: candidate template ignored: constraints not satisfied [with Args \u003d \u003cB\u003e]\n   30 |   constexpr Mask(E first, Args... rest)\n      |             ^\n../../core/fxcrt/mask.h:29:13: note: because \u0027std::same_as\u003cB, A\u003e\u0027 evaluated to false\n   29 |   template \u003cstd::same_as\u003cE\u003e... Args\u003e\n      |             ^\ngen/third_party/libc++/src/include/__concepts/same_as.h:29:19: note: because \u0027__same_as_impl\u003cB, A\u003e\u0027 evaluated to false\n   29 | concept same_as \u003d __same_as_impl\u003c_Tp, _Up\u003e \u0026\u0026 __same_as_impl\u003c_Up, _Tp\u003e;\n      |                   ^\ngen/third_party/libc++/src/include/__concepts/same_as.h:26:26: note: because \u0027_IsSame\u003cB, A\u003e::value\u0027 evaluated to false\n   26 | concept __same_as_impl \u003d _IsSame\u003c_Tp, _Up\u003e::value;\n      |                          ^\n../../core/fxcrt/mask.h:24:13: note: candidate constructor not viable: requires single argument \u0027that\u0027, but 2 arguments were provided\n   24 |   constexpr Mask(const Mask\u0026 that) \u003d default;\n      |             ^    ~~~~~~~~~~~~~~~~\n../../core/fxcrt/mask.h:27:13: note: candidate constructor not viable: requires single argument \u0027val\u0027, but 2 arguments were provided\n   27 |   constexpr Mask(E val) : val_(static_cast\u003cUnderlyingType\u003e(val)) {}\n      |             ^    ~~~~~\n../../core/fxcrt/mask.h:73:22: note: candidate constructor not viable: requires single argument \u0027val\u0027, but 2 arguments were provided\n   73 |   explicit constexpr Mask(UnderlyingType val) : val_(val) {}\n      |                      ^    ~~~~~~~~~~~~~~~~~~\n../../core/fxcrt/mask.h:23:13: note: candidate constructor not viable: requires 0 arguments, but 2 were provided\n   23 |   constexpr Mask() \u003d default;\n      |             ^\n1 error generated.\n```\n\nwith code:\n\n```\nenum A { kA1, kA2 };\nenum B { kB1, kB2 };\n\nauto pleaseDontCompile \u003d Mask\u003cA\u003e(kA1, kB2);\n```",
+      "parentUuid": "2cee57e1_a519a12c",
+      "revId": "b60898d7ba7691dc9210a20e4e88576d81aa6f22",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
