@@ -1741,6 +1741,9 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
         case Stage::kNone:
           break;
         case Stage::kBreakBefore: {
+          if (!layout_item_) {
+            break;
+          }
           for (auto& item : array_keep_items_) {
             layout_item_->RemoveChild(item);
             calculated_size.height -= item->s_size_.height;
@@ -2636,7 +2639,9 @@ CXFA_ContentLayoutProcessor::InsertFlowedItem(
           pProcessor->ExtractLayoutItem();
       if (ExistContainerKeep(pProcessor->GetFormNode(), false) &&
           pProcessor->GetFormNode()->GetIntact() == XFA_AttributeValue::None) {
-        array_keep_items_.push_back(pChildLayoutItem);
+        if (pChildLayoutItem) {
+          array_keep_items_.push_back(pChildLayoutItem);
+        }
       } else {
         array_keep_items_.clear();
       }
