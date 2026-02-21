@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "419ea47a_fe82a980",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-21T00:44:23Z",
+      "side": 1,
+      "message": "WDYT about moving to core/fxge/fx_font.h instead?",
+      "revId": "634b81a7f12a5d8f12408d65deff510065156c54",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
