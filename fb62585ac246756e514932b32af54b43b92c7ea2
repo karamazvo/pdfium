@@ -34,6 +34,24 @@
       "parentUuid": "9e0cbc63_cbb1e614",
       "revId": "fb62585ac246756e514932b32af54b43b92c7ea2",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e0b99fc1_6b4ea8f2",
+        "filename": "testing/resources/charwidth_regression.pdf",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-21T04:46:58Z",
+      "side": 1,
+      "message": "\u003e I applied my CL mentioned above, along with this CL. Combined, the regression test in that CL fails.\n\nThis might be because \\r\\n\u0027s are added, maybe not spaces. Since the spaces are no longer removed in CPDF_TextPage::ProcessTextObject(), rather only in only at the end, in CPDF_TextPage::CloseTempLine() it is treated as a new line with no characters and gives \"\\r\\n\" in any of the lines which have these \"extra spaces\".\n\nIt shouldn\u0027t be creating a space I think. Will debug and check.",
+      "parentUuid": "61f2aef1_af5a76af",
+      "revId": "fb62585ac246756e514932b32af54b43b92c7ea2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
