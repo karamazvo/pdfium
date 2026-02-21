@@ -57,7 +57,8 @@ class CXFA_ViewLayoutProcessor
   bool PrepareFirstPage(CXFA_Node* pRootSubform);
   float GetAvailHeight();
   bool GetNextAvailContentHeight(float fChildHeight);
-  void SubmitContentItem(CXFA_ContentLayoutItem* pContentLayoutItem,
+  // Returns true to continue processing, false to abort layout immediately.
+  bool SubmitContentItem(CXFA_ContentLayoutItem* pContentLayoutItem,
                          CXFA_ContentLayoutProcessor::Result eStatus);
   void FinishPaginatedPageSets();
   void SyncLayoutData();
