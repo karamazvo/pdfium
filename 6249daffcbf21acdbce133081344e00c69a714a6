@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "55c3b260_a562112c",
+        "filename": "core/fpdfapi/font/cpdf_simplefont.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-21T00:46:40Z",
+      "side": 0,
+      "message": "It\u0027s also different because it expects the name to be at least \"??????+?\", while MaybeRemoveSubsettedFontPrefix() is trying to match \"XXXXXX+\".",
+      "revId": "6249daffcbf21acdbce133081344e00c69a714a6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
