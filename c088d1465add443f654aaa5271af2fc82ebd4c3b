@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bc268d1e_7f50971d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-21T00:14:57Z",
+      "side": 1,
+      "message": "Double colon.",
+      "range": {
+        "startLine": 7,
+        "startChar": 43,
+        "endLine": 7,
+        "endChar": 44
+      },
+      "revId": "c088d1465add443f654aaa5271af2fc82ebd4c3b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "efd03255_e028f52f",
+        "filename": "core/fxge/renderdevicedriver_iface.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-21T00:14:57Z",
+      "side": 1,
+      "message": "Rename to \"continuation\" here and in .cpp files.",
+      "range": {
+        "startLine": 116,
+        "startChar": 44,
+        "endLine": 116,
+        "endChar": 50
+      },
+      "revId": "c088d1465add443f654aaa5271af2fc82ebd4c3b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
