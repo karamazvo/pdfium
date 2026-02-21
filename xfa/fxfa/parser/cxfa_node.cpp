@@ -4131,24 +4131,34 @@ bool CXFA_Node::LoadCaption(CXFA_FFDoc* doc) {
 }
 
 CXFA_TextLayout* CXFA_Node::GetCaptionTextLayout() {
-  return layout_data_ ? layout_data_->AsFieldLayoutData()->cap_text_layout_
-                      : nullptr;
+  return layout_data_ && layout_data_->AsFieldLayoutData()
+             ? layout_data_->AsFieldLayoutData()->cap_text_layout_
+             : nullptr;
 }
 
 CXFA_TextLayout* CXFA_Node::GetTextLayout() {
-  return layout_data_ ? layout_data_->AsTextLayoutData()->GetTextLayout()
-                      : nullptr;
+  return layout_data_ && layout_data_->AsTextLayoutData()
+             ? layout_data_->AsTextLayoutData()->GetTextLayout()
+             : nullptr;
 }
 
 RetainPtr<CFX_DIBitmap> CXFA_Node::GetLayoutImage() {
-  return layout_data_ ? layout_data_->AsImageLayoutData()->GetBitmap()
-                      : nullptr;
+  return layout_data_ && layout_data_->AsImageLayoutData()
+             ? layout_data_->AsImageLayoutData()->GetBitmap()
+             : nullptr;
 }
 
 RetainPtr<CFX_DIBitmap> CXFA_Node::GetEditImage() {
-  return layout_data_
-             ? layout_data_->AsFieldLayoutData()->AsImageEditData()->GetBitmap()
-             : nullptr;
+  if (!layout_data_) {
+    return nullptr;
+  }
+  if (!layout_data_->AsFieldLayoutData()) {
+    return nullptr;
+  }
+  if (!layout_data_->AsFieldLayoutData()->AsImageEditData()) {
+    return nullptr;
+  }
+  return layout_data_->AsFieldLayoutData()->AsImageEditData()->GetBitmap();
 }
 
 void CXFA_Node::SetLayoutImage(RetainPtr<CFX_DIBitmap> newImage) {
