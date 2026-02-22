@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f9598c0f_10c809c3",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 862,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-22T16:52:49Z",
+      "side": 1,
+      "message": "@thestig@chromium.org @tsepez@chromium.org @andyphan@chromium.org What do you think about `.pop_back()`. It avoids the pointer arithmetic and more clearly shows intent.\n\nLeaving an edit here, in case.\n\n```suggestion\n      temp_char_list_.pop_back()\n```",
+      "range": {
+        "startLine": 862,
+        "startChar": 22,
+        "endLine": 862,
+        "endChar": 27
+      },
+      "revId": "eea8ebc13cb86b01b5554e615529c43bacc7a7fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
