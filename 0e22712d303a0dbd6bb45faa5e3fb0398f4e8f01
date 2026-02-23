@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a485a275_87ad435c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 11
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-23T23:55:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ee74b4e0_239b2221",
+      "range": {
+        "startLine": 9,
+        "startChar": 17,
+        "endLine": 9,
+        "endChar": 32
+      },
+      "revId": "0e22712d303a0dbd6bb45faa5e3fb0398f4e8f01",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "abbc9d0a_15f74e30",
@@ -47,6 +71,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8b43d558_6b7c81fb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 11
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-23T23:55:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "abbc9d0a_15f74e30",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 2
+      },
+      "revId": "0e22712d303a0dbd6bb45faa5e3fb0398f4e8f01",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d37998f1_d3730c0b",
@@ -60,6 +108,24 @@
       "writtenOn": "2026-02-23T20:54:04Z",
       "side": 1,
       "message": "Maybe move `kPrefixLength` from core/fxge/fx_font.cpp to fx_font.h and reuse here.",
+      "revId": "0e22712d303a0dbd6bb45faa5e3fb0398f4e8f01",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "493fc65f_2b6488d9",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-23T23:55:08Z",
+      "side": 1,
+      "message": "Done, and reused in embedder test.",
+      "parentUuid": "d37998f1_d3730c0b",
       "revId": "0e22712d303a0dbd6bb45faa5e3fb0398f4e8f01",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
