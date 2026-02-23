@@ -112,7 +112,8 @@ void CPDF_DeviceBuffer::OutputToDevice() {
   }
   context_->GetBackgroundToBitmap(buffer, object_, matrix_);
   buffer->CompositeBitmap(0, 0, buffer->GetWidth(), buffer->GetHeight(),
-                          bitmap_, 0, 0, BlendMode::kNormal, nullptr, false);
+                          bitmap_, 0, 0, BlendMode::kNormal, nullptr, nullptr,
+                          false);
   device_->StretchDIBits(std::move(buffer), rect_.left, rect_.top,
                          rect_.Width(), rect_.Height());
 #else

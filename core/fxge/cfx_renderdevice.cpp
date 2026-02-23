@@ -958,9 +958,9 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(RetainPtr<const CFX_DIBBase> bitmap,
     return false;
   }
 
-  if (!background->CompositeBitmap(0, 0, bg_pixel_width, bg_pixel_height,
-                                   std::move(bitmap), src_rect.left,
-                                   src_rect.top, blend_mode, nullptr, false)) {
+  if (!background->CompositeBitmap(
+          0, 0, bg_pixel_width, bg_pixel_height, std::move(bitmap),
+          src_rect.left, src_rect.top, blend_mode, nullptr, nullptr, false)) {
     return false;
   }
   FX_RECT rect(0, 0, bg_pixel_width, bg_pixel_height);
@@ -1264,7 +1264,7 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
     if (anti_alias == FontAntiAliasingMode::kNormal) {
       if (!bitmap->CompositeMask(point.value().x, point.value().y, ncols, nrows,
                                  pGlyph, fill_color, 0, 0, BlendMode::kNormal,
-                                 nullptr, false)) {
+                                 nullptr, nullptr, false)) {
         return false;
       }
       continue;
