@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2259f771_4a158786",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-23T17:40:16Z",
+      "side": 1,
+      "message": "Added SK_ENABLE_LEGACY_SHADERCONTEXT instead.",
+      "parentUuid": "f48ce54e_4e65a9aa",
+      "revId": "2e18c54616059b760fb657e81daa30f82211297f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "82edfa7d_da4076f6",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-02-21T01:04:05Z",
       "side": 1,
       "message": "Reminder to self to update.",
+      "revId": "2e18c54616059b760fb657e81daa30f82211297f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ec23ec1b_38b6e308",
+        "filename": "DEPS",
+        "patchSetId": 4
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-23T17:40:16Z",
+      "side": 1,
+      "message": "No longer needed.",
+      "parentUuid": "82edfa7d_da4076f6",
       "revId": "2e18c54616059b760fb657e81daa30f82211297f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
