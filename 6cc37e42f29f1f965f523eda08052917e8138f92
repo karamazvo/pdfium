@@ -56,6 +56,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "405b753c_4452957a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-23T17:21:30Z",
+      "side": 1,
+      "message": "SUre, but you can create issues too. Please go ahead and do that. I\u0027ll add it as a child issue of crbug.com/486228086 when ready.",
+      "parentUuid": "6f6ef386_eca4e89f",
+      "revId": "6cc37e42f29f1f965f523eda08052917e8138f92",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "0f73d81a_7acf381a",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 5
