@@ -70,6 +70,24 @@
       "parentUuid": "317eedbe_b57e81cd",
       "revId": "3d228c2202d665abc390ec887944a9a6172cbeeb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9a0efa20_bb759436",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-23T20:06:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "551a862c_eada3d32",
+      "revId": "3d228c2202d665abc390ec887944a9a6172cbeeb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
