@@ -16,6 +16,24 @@
       "message": "Hi, I\u0027ve uploaded Patchset 7 which fixes the issues in the test file. Could you please take another look and initiate a CQ Dry Run? Let me know if any further improvements are needed. Thanks!",
       "revId": "3f6b237e3e24aae6b95517c7850f21069ad70820",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4ea9c5b9_36a8ca70",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-23T11:03:51Z",
+      "side": 1,
+      "message": "Hi, I can\u0027t dry run (only the reviewers can), but I can run a few bots to verify. Will first want to look through this first.",
+      "parentUuid": "9083bcd1_68614dec",
+      "revId": "3f6b237e3e24aae6b95517c7850f21069ad70820",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
