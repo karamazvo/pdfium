@@ -119,16 +119,18 @@ bool CFX_AggImageRenderer::Continue(PauseIndicatorIface* pPause) {
     if (alpha_ != 1.0f) {
       mask_color_ = FXARGB_MUL_ALPHA(mask_color_, FXSYS_roundf(alpha_ * 255));
     }
-    device_->CompositeMask(transformer_->result().left,
-                           transformer_->result().top, pBitmap->GetWidth(),
-                           pBitmap->GetHeight(), pBitmap, mask_color_, 0, 0,
-                           BlendMode::kNormal, clip_rgn_, rgb_byte_order_);
+    device_->CompositeMask(
+        transformer_->result().left, transformer_->result().top,
+        pBitmap->GetWidth(), pBitmap->GetHeight(), pBitmap, mask_color_, 0, 0,
+        BlendMode::kNormal, clip_rgn_ ? &clip_rgn_->GetBox() : nullptr,
+        clip_rgn_ ? clip_rgn_->GetMask() : nullptr, rgb_byte_order_);
   } else {
     pBitmap->MultiplyAlpha(alpha_);
-    device_->CompositeBitmap(transformer_->result().left,
-                             transformer_->result().top, pBitmap->GetWidth(),
-                             pBitmap->GetHeight(), pBitmap, 0, 0,
-                             BlendMode::kNormal, clip_rgn_, rgb_byte_order_);
+    device_->CompositeBitmap(
+        transformer_->result().left, transformer_->result().top,
+        pBitmap->GetWidth(), pBitmap->GetHeight(), pBitmap, 0, 0,
+        BlendMode::kNormal, clip_rgn_ ? &clip_rgn_->GetBox() : nullptr,
+        clip_rgn_ ? clip_rgn_->GetMask() : nullptr, rgb_byte_order_);
   }
   return false;
 }
