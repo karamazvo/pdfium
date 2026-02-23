@@ -3,6 +3,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "b9f35f55_f8d7c6b1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-23T12:03:11Z",
+      "side": 1,
+      "message": "Suggestion: use optipng to make the images smaller in terms of filesize as well.",
+      "revId": "10cbf8dbe7bf321e28dc547328f9bcf9c6cb3500",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "d16859c3_c5c9c45c",
         "filename": "testing/resources/embedder_tests/flatten_noview_annot_normal_display_skia.png",
         "patchSetId": 8
