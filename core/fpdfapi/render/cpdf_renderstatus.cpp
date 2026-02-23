@@ -1106,7 +1106,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
     bitmap->CompositeMask(
         point->x, point->y, glyph.glyph_->GetBitmap()->GetWidth(),
         glyph.glyph_->GetBitmap()->GetHeight(), glyph.glyph_->GetBitmap(),
-        fill_argb, 0, 0, BlendMode::kNormal, nullptr, false);
+        fill_argb, 0, 0, BlendMode::kNormal, nullptr, nullptr, false);
   }
   device_->SetBitMask(std::move(bitmap), rect.left, rect.top, fill_argb);
   return true;
@@ -1353,7 +1353,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
 
       pClone->CompositeBitmap(0, 0, pClone->GetWidth(), pClone->GetHeight(),
                               device_->GetBitmap(), rect.left, rect.top,
-                              BlendMode::kNormal, nullptr, false);
+                              BlendMode::kNormal, nullptr, nullptr, false);
       left = std::min(left, 0);
       top = std::min(top, 0);
       if (bitmap->IsMaskFormat()) {
@@ -1366,7 +1366,8 @@ void CPDF_RenderStatus::CompositeDIBitmap(
 #endif
       } else {
         pClone->CompositeBitmap(0, 0, pClone->GetWidth(), pClone->GetHeight(),
-                                bitmap, left, top, blend_mode, nullptr, false);
+                                bitmap, left, top, blend_mode, nullptr, nullptr,
+                                false);
       }
     } else {
       pClone = bitmap;
@@ -1403,16 +1404,16 @@ void CPDF_RenderStatus::CompositeDIBitmap(
   } else {
     backdrop->CompositeBitmap(left - bbox.left, top - bbox.top, width, height,
                               std::move(bitmap), 0, 0, blend_mode, nullptr,
-                              false);
+                              nullptr, false);
   }
 
   auto new_backdrop = pdfium::MakeRetain<CFX_DIBitmap>();
   CHECK(new_backdrop->Create(backdrop->GetWidth(), backdrop->GetHeight(),
                              FXDIB_Format::kBgrx));
   new_backdrop->Clear(0xffffffff);
-  new_backdrop->CompositeBitmap(0, 0, new_backdrop->GetWidth(),
-                                new_backdrop->GetHeight(), std::move(backdrop),
-                                0, 0, BlendMode::kNormal, nullptr, false);
+  new_backdrop->CompositeBitmap(
+      0, 0, new_backdrop->GetWidth(), new_backdrop->GetHeight(),
+      std::move(backdrop), 0, 0, BlendMode::kNormal, nullptr, nullptr, false);
   device_->SetDIBits(std::move(new_backdrop), bbox.left, bbox.top);
 }
 
