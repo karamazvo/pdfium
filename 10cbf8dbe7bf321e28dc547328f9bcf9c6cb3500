@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d16859c3_c5c9c45c",
+        "filename": "testing/resources/embedder_tests/flatten_noview_annot_normal_display_skia.png",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-23T12:01:51Z",
+      "side": 1,
+      "message": "These tests would likely fail without any corresponding agg (agg is another renderer like skia) expectation images: As can be seen from the linux-skia bot and some of the other ones.\n\nOne more thing is that these skia images differ platform to platform.\n\nYou may need to add the other images for different renderers and platforms.\n\nYou can check the bot for the exact failure messages I assume. In there you would see they failed in `19. embeddertests (agg) or 20. embeddertests (skia)`\n\nOver there, if you view stdout, at a point you\u0027d see some message like:\n\n```\n../../testing/embedder_test.cpp:1179: Failure\nFailed\nNo expectation file matching flatten_noview_annot_normal_display, Actual pixels (open in browser):\n```\n\nYou\u0027d see a line that says something like ```data:image/png;base64,iVBORw0KG...```\nYou can paste that link in your address bar to get the image for agg or skia.\n\nDo the same for the other test that failed in embeddertests (agg), and then it should work.\n\nNote that these images for agg and skia in this case also differ across platform. So I also have run the bots for Win and Mac as well. You may need to do the same thing for those images.\n\nHere is the naming convention for an example:\nIf we have an image for skia on macos\nit would be called: `file_name_skia_mac.png`\n\nsimilarly for agg (non-skia) on linux\nit would be called `file_name_agg_linux.png`",
+      "revId": "10cbf8dbe7bf321e28dc547328f9bcf9c6cb3500",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
