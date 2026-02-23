@@ -16,6 +16,24 @@
       "message": "nit: newline after.",
       "revId": "8eb01dc591c1b2dd7597c0a851be4a2fdb2ea136",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0a180c6f_06fa5c3d",
+        "filename": "third_party/BUILD.gn",
+        "patchSetId": 4
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-23T21:52:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7cf91a29_2f5f9405",
+      "revId": "8eb01dc591c1b2dd7597c0a851be4a2fdb2ea136",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
