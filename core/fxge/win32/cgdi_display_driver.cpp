@@ -93,7 +93,7 @@ bool CGdiDisplayDriver::SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
           !GetDIBits(background, left, top) ||
           !background->CompositeMask(0, 0, width, height, std::move(bitmap),
                                      color, 0, 0, BlendMode::kNormal, nullptr,
-                                     false)) {
+                                     nullptr, false)) {
         return false;
       }
       FX_RECT alpha_src_rect(0, 0, width, height);
@@ -112,9 +112,9 @@ bool CGdiDisplayDriver::SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
     auto rgb_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
     if (!rgb_bitmap->Create(width, height, FXDIB_Format::kBgr) ||
         !GetDIBits(rgb_bitmap, left, top) ||
-        !rgb_bitmap->CompositeBitmap(0, 0, width, height, std::move(bitmap),
-                                     src_rect.left, src_rect.top,
-                                     BlendMode::kNormal, nullptr, false)) {
+        !rgb_bitmap->CompositeBitmap(
+            0, 0, width, height, std::move(bitmap), src_rect.left, src_rect.top,
+            BlendMode::kNormal, nullptr, nullptr, false)) {
       return false;
     }
     FX_RECT alpha_src_rect(0, 0, width, height);
@@ -190,9 +190,9 @@ bool CGdiDisplayDriver::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
     if (!background->Create(clip_width, clip_height, FXDIB_Format::kBgrx) ||
         !GetDIBits(background, image_rect.left + clip_rect.left,
                    image_rect.top + clip_rect.top) ||
-        !background->CompositeMask(0, 0, clip_width, clip_height,
-                                   std::move(bitmap), color, 0, 0,
-                                   BlendMode::kNormal, nullptr, false)) {
+        !background->CompositeMask(
+            0, 0, clip_width, clip_height, std::move(bitmap), color, 0, 0,
+            BlendMode::kNormal, nullptr, nullptr, false)) {
       return false;
     }
 

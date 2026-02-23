@@ -1243,7 +1243,7 @@ bool CFX_AggDeviceDriver::FillRect(const FX_RECT& rect, uint32_t fill_color) {
                            draw_rect.Height(), clip_rgn_->GetMask(), fill_color,
                            draw_rect.left - clip_rect.left,
                            draw_rect.top - clip_rect.top, BlendMode::kNormal,
-                           nullptr, rgb_byte_order_);
+                           nullptr, nullptr, rgb_byte_order_);
   } else if (rgb_byte_order_) {
     RgbByteOrderCompositeRect(bitmap_, draw_rect.left, draw_rect.top,
                               draw_rect.Width(), draw_rect.Height(),
@@ -1279,7 +1279,7 @@ bool CFX_AggDeviceDriver::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
     }
 
     pBack->CompositeBitmap(0, 0, pBack->GetWidth(), pBack->GetHeight(), bitmap_,
-                           0, 0, BlendMode::kNormal, nullptr, false);
+                           0, 0, BlendMode::kNormal, nullptr, nullptr, false);
   } else {
     pBack = bitmap_->ClipTo(rect);
     if (!pBack) {
@@ -1313,15 +1313,17 @@ bool CFX_AggDeviceDriver::SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
   }
 
   if (bitmap->IsMaskFormat()) {
-    return bitmap_->CompositeMask(left, top, src_rect.Width(),
-                                  src_rect.Height(), std::move(bitmap), argb,
-                                  src_rect.left, src_rect.top, blend_type,
-                                  clip_rgn_.get(), rgb_byte_order_);
+    return bitmap_->CompositeMask(
+        left, top, src_rect.Width(), src_rect.Height(), std::move(bitmap), argb,
+        src_rect.left, src_rect.top, blend_type,
+        clip_rgn_ ? &clip_rgn_->GetBox() : nullptr,
+        clip_rgn_ ? clip_rgn_->GetMask() : nullptr, rgb_byte_order_);
   }
-  return bitmap_->CompositeBitmap(left, top, src_rect.Width(),
-                                  src_rect.Height(), std::move(bitmap),
-                                  src_rect.left, src_rect.top, blend_type,
-                                  clip_rgn_.get(), rgb_byte_order_);
+  return bitmap_->CompositeBitmap(
+      left, top, src_rect.Width(), src_rect.Height(), std::move(bitmap),
+      src_rect.left, src_rect.top, blend_type,
+      clip_rgn_ ? &clip_rgn_->GetBox() : nullptr,
+      clip_rgn_ ? clip_rgn_->GetMask() : nullptr, rgb_byte_order_);
 }
 
 bool CFX_AggDeviceDriver::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
