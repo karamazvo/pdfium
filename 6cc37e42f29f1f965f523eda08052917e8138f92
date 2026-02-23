@@ -38,6 +38,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "6f6ef386_eca4e89f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-23T12:26:35Z",
+      "side": 1,
+      "message": "@thestig@chromium.org can you create a sub-issue for this to migrate static_cast\u003cints\u003e in enums to fxcrt::to_underlying for better type checking, and so that when we are on c++ 23 we can finally just find-replace all fxcrt::to_underlying calls to std::to_underlying?",
+      "parentUuid": "0b1a66c8_892f8639",
+      "revId": "6cc37e42f29f1f965f523eda08052917e8138f92",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "0f73d81a_7acf381a",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 5
