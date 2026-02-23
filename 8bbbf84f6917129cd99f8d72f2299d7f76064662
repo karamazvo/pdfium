@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5a1cd9e4_29d3821a",
+        "filename": "core/fxge/dib/cfx_dibitmap.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-23T21:00:29Z",
+      "side": 1,
+      "message": "Since passing in (nullptr, nullptr, false) is very common, how about adding an CompositeBitmap() overload that omits these 3 parameters. Then the callers are slightly simpler, and one can more easily see which callers actually use these extra parameters?",
+      "range": {
+        "startLine": 124,
+        "startChar": 0,
+        "endLine": 126,
+        "endChar": 43
+      },
+      "revId": "8bbbf84f6917129cd99f8d72f2299d7f76064662",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
