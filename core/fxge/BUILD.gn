@@ -115,13 +115,6 @@ source_set("fxge") {
     defines += [ "DEFINE_PS_TABLES_DATA" ]
   }
 
-  if (pdf_enable_xfa) {
-    sources += [
-      "cfx_unicodeencodingex.cpp",
-      "cfx_unicodeencodingex.h",
-    ]
-  }
-
   if (pdf_use_agg) {
     sources += [
       "agg/cfx_agg_bitmapcomposer.cpp",

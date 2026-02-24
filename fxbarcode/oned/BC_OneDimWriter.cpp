@@ -35,7 +35,7 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "core/fxge/cfx_unicodeencodingex.h"
+#include "core/fxge/cfx_unicodeencoding.h"
 #include "core/fxge/text_char_pos.h"
 #include "fxbarcode/BC_Writer.h"
 
@@ -109,9 +109,7 @@ void CBC_OneDimWriter::CalcTextInfo(const ByteString& text,
                                     float geWidth,
                                     int32_t fontSize,
                                     float& charsLen) {
-  std::unique_ptr<CFX_UnicodeEncoding> encoding =
-      FX_CreateFontEncodingEx(cFont);
-
+  auto encoding = std::make_unique<CFX_UnicodeEncoding>(cFont);
   const size_t length = text.GetLength();
   std::vector<uint32_t> charcodes(length);
   float charWidth = 0;
