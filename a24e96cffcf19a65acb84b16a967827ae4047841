@@ -78,6 +78,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "1710670f_30483059",
+        "filename": "core/fpdfapi/parser/cpdf_cross_ref_table.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-24T03:07:12Z",
+      "side": 1,
+      "message": "Other functions also would need this edit, maybe even things like CPDF_CrossRefTable::SetFree. Let us make it a follow up for each individual function, instead of having 1 CL that is very large.",
+      "parentUuid": "8ecd82a4_5eab5061",
+      "revId": "a24e96cffcf19a65acb84b16a967827ae4047841",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "30c2b5b0_38196ea4",
         "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
         "patchSetId": 27
