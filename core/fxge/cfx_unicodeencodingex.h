@@ -24,9 +24,6 @@ class CFX_UnicodeEncodingEx final : public CFX_UnicodeEncoding {
   // CFX_UnicodeEncoding:
   uint32_t GlyphFromCharCode(uint32_t charcode) override;
 
-  // Returns |kInvalidCharCode| on error.
-  uint32_t CharCodeFromUnicode(wchar_t Unicode) const;
-
  private:
   fxge::FontEncoding encoding_id_;
 };
