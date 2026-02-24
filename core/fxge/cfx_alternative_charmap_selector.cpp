@@ -4,10 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/cfx_unicodeencodingex.h"
+#include "core/fxge/cfx_alternative_charmap_selector.h"
 
 #include <memory>
 
+#include "core/fxcrt/ptr_util.h"
 #include "core/fxge/cfx_face.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/fx_font.h"
@@ -25,24 +26,16 @@ constexpr fxge::FontEncoding kEncodingIDs[] = {
     fxge::FontEncoding::kAppleRoman,
 };
 
-std::unique_ptr<CFX_UnicodeEncodingEx> FXFM_CreateFontEncoding(
-    CFX_Font* font,
-    fxge::FontEncoding encoding_id) {
-  if (!font->GetFace()->SelectCharMap(encoding_id)) {
-    return nullptr;
-  }
-  return std::make_unique<CFX_UnicodeEncodingEx>(font, encoding_id);
-}
-
 }  // namespace
 
-CFX_UnicodeEncodingEx::CFX_UnicodeEncodingEx(CFX_Font* font,
-                                             fxge::FontEncoding encoding_id)
-    : CFX_UnicodeEncoding(font), encoding_id_(encoding_id) {}
+CFX_AlternativeCharmapSelector::CFX_AlternativeCharmapSelector(
+    CFX_Font* font,
+    fxge::FontEncoding encoding_id)
+    : font_(font), encoding_id_(encoding_id) {}
 
-CFX_UnicodeEncodingEx::~CFX_UnicodeEncodingEx() = default;
+CFX_AlternativeCharmapSelector::~CFX_AlternativeCharmapSelector() = default;
 
-uint32_t CFX_UnicodeEncodingEx::GlyphFromCharCode(uint32_t charcode) {
+uint32_t CFX_AlternativeCharmapSelector::GlyphFromCharCode(uint32_t charcode) {
   RetainPtr<CFX_Face> face = font_->GetFace();
   uint32_t char_index = face->GetCharIndex(charcode);
   if (char_index > 0) {
@@ -69,7 +62,8 @@ uint32_t CFX_UnicodeEncodingEx::GlyphFromCharCode(uint32_t charcode) {
   return 0;
 }
 
-uint32_t CFX_UnicodeEncodingEx::CharCodeFromUnicode(wchar_t Unicode) const {
+uint32_t CFX_AlternativeCharmapSelector::CharCodeFromUnicode(
+    wchar_t Unicode) const {
   if (encoding_id_ == fxge::FontEncoding::kUnicode ||
       encoding_id_ == fxge::FontEncoding::kSymbol) {
     return Unicode;
@@ -85,15 +79,16 @@ uint32_t CFX_UnicodeEncodingEx::CharCodeFromUnicode(wchar_t Unicode) const {
   return kInvalidCharCode;
 }
 
-std::unique_ptr<CFX_UnicodeEncodingEx> FX_CreateFontEncodingEx(CFX_Font* font) {
+// static
+std::unique_ptr<CFX_AlternativeCharmapSelector>
+CFX_AlternativeCharmapSelector::Create(CFX_Font* font) {
   if (!font || !font->GetFace()) {
     return nullptr;
   }
-
   for (fxge::FontEncoding id : kEncodingIDs) {
-    auto font_encoding = FXFM_CreateFontEncoding(font, id);
-    if (font_encoding) {
-      return font_encoding;
+    if (font->GetFace()->SelectCharMap(id)) {
+      // Private ctor.
+      return pdfium::WrapUnique(new CFX_AlternativeCharmapSelector(font, id));
     }
   }
   return nullptr;

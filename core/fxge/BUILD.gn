@@ -44,8 +44,8 @@ source_set("fxge") {
     "cfx_substfont.cpp",
     "cfx_substfont.h",
     "cfx_textrenderoptions.h",
-    "cfx_unicodeencoding.cpp",
-    "cfx_unicodeencoding.h",
+    "cfx_unicode_charmap_selector.cpp",
+    "cfx_unicode_charmap_selector.h",
     "dib/blend.cpp",
     "dib/blend.h",
     "dib/cfx_bitmapstorer.cpp",
@@ -117,8 +117,8 @@ source_set("fxge") {
 
   if (pdf_enable_xfa) {
     sources += [
-      "cfx_unicodeencodingex.cpp",
-      "cfx_unicodeencodingex.h",
+      "cfx_alternative_charmap_selector.cpp",
+      "cfx_alternative_charmap_selector.h",
     ]
   }
 

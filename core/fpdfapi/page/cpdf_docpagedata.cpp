@@ -43,7 +43,7 @@
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/cfx_substfont.h"
-#include "core/fxge/cfx_unicodeencoding.h"
+#include "core/fxge/cfx_unicode_charmap_selector.h"
 #include "core/fxge/fx_font.h"
 
 namespace {
@@ -88,7 +88,7 @@ ByteString GetPSNameFromTT(HDC hDC) {
 #endif  // BUILDFLAG(IS_WIN)
 
 void InsertWidthArray1(CFX_Font* font,
-                       CFX_UnicodeEncoding* pEncoding,
+                       CFX_UnicodeCharmapSelector* pEncoding,
                        wchar_t start,
                        wchar_t end,
                        CPDF_Array* pWidthArray) {
@@ -558,7 +558,7 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::AddFont(std::unique_ptr<CFX_Font> font,
   auto pBaseDict = GetDocument()->NewIndirect<CPDF_Dictionary>();
   pBaseDict->SetNewFor<CPDF_Name>("Type", "Font");
 
-  auto pEncoding = std::make_unique<CFX_UnicodeEncoding>(font.get());
+  auto pEncoding = std::make_unique<CFX_UnicodeCharmapSelector>(font.get());
   RetainPtr<CPDF_Dictionary> font_dict = pBaseDict;
   if (!bCJK) {
     auto pWidths = pdfium::MakeRetain<CPDF_Array>();

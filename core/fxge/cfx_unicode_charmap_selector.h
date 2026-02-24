@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_CFX_UNICODEENCODING_H_
-#define CORE_FXGE_CFX_UNICODEENCODING_H_
+#ifndef CORE_FXGE_CFX_UNICODE_CHARMAP_SELECTOR_H_
+#define CORE_FXGE_CFX_UNICODE_CHARMAP_SELECTOR_H_
 
 #include <stdint.h>
 
@@ -13,10 +13,10 @@
 
 class CFX_Font;
 
-class CFX_UnicodeEncoding {
+class CFX_UnicodeCharmapSelector {
  public:
-  explicit CFX_UnicodeEncoding(const CFX_Font* font);
-  virtual ~CFX_UnicodeEncoding();
+  explicit CFX_UnicodeCharmapSelector(const CFX_Font* font);
+  virtual ~CFX_UnicodeCharmapSelector();
 
   virtual uint32_t GlyphFromCharCode(uint32_t charcode);
 
@@ -24,4 +24,4 @@ class CFX_UnicodeEncoding {
   UnownedPtr<const CFX_Font> const font_;
 };
 
-#endif  // CORE_FXGE_CFX_UNICODEENCODING_H_
+#endif  // CORE_FXGE_CFX_UNICODE_CHARMAP_SELECTOR_H_

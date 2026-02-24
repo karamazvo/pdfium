@@ -19,7 +19,7 @@
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "core/fxge/cfx_unicodeencoding.h"
+#include "core/fxge/cfx_unicode_charmap_selector.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "xfa/fgas/graphics/cfgas_gecolor.h"
 #include "xfa/fgas/graphics/cfgas_gepath.h"

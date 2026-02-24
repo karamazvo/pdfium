@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/cfx_unicodeencoding.h"
+#include "core/fxge/cfx_unicode_charmap_selector.h"
 
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_font.h"
@@ -12,11 +12,12 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_fontencoding.h"
 
-CFX_UnicodeEncoding::CFX_UnicodeEncoding(const CFX_Font* font) : font_(font) {}
+CFX_UnicodeCharmapSelector::CFX_UnicodeCharmapSelector(const CFX_Font* font)
+    : font_(font) {}
 
-CFX_UnicodeEncoding::~CFX_UnicodeEncoding() = default;
+CFX_UnicodeCharmapSelector::~CFX_UnicodeCharmapSelector() = default;
 
-uint32_t CFX_UnicodeEncoding::GlyphFromCharCode(uint32_t charcode) {
+uint32_t CFX_UnicodeCharmapSelector::GlyphFromCharCode(uint32_t charcode) {
   RetainPtr<CFX_Face> face = font_->GetFace();
   if (!face) {
     return charcode;

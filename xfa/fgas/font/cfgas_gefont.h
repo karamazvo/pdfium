@@ -23,7 +23,7 @@
 #include "core/fxcrt/retain_ptr.h"
 
 class CFX_Font;
-class CFX_UnicodeEncodingEx;
+class CFX_AlternativeCharmapSelector;
 class CPDF_Document;
 class CPDF_Font;
 
@@ -75,7 +75,7 @@ class CFGAS_GEFont final : public Retainable {
   std::optional<uint32_t> log_font_style_;
   RetainPtr<CPDF_Font> pdffont_;  // Must come before |font_|.
   MaybeOwned<CFX_Font> font_;     // Must come before |font_encoding_|.
-  std::unique_ptr<CFX_UnicodeEncodingEx> font_encoding_;
+  std::unique_ptr<CFX_AlternativeCharmapSelector> font_encoding_;
   std::map<wchar_t, std::optional<uint16_t>> char_width_map_;
   std::map<wchar_t, FX_RECT> bbox_map_;
   std::vector<RetainPtr<CFGAS_GEFont>> subst_fonts_;

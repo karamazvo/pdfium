@@ -29,13 +29,13 @@
 #include <vector>
 
 #include "build/build_config.h"
+#include "core/fxge/cfx_alternative_charmap_selector.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "core/fxge/cfx_unicodeencodingex.h"
 #include "core/fxge/text_char_pos.h"
 #include "fxbarcode/BC_Writer.h"
 
@@ -109,8 +109,8 @@ void CBC_OneDimWriter::CalcTextInfo(const ByteString& text,
                                     float geWidth,
                                     int32_t fontSize,
                                     float& charsLen) {
-  std::unique_ptr<CFX_UnicodeEncodingEx> encoding =
-      FX_CreateFontEncodingEx(cFont);
+  std::unique_ptr<CFX_AlternativeCharmapSelector> encoding =
+      CFX_AlternativeCharmapSelector::Create(cFont);
 
   const size_t length = text.GetLength();
   std::vector<uint32_t> charcodes(length);
