@@ -1,6 +1,29 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "c48a84d7_48179859",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 27
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-24T00:52:01Z",
+      "side": 1,
+      "message": "Higher?",
+      "range": {
+        "startLine": 11,
+        "startChar": 64,
+        "endLine": 11,
+        "endChar": 69
+      },
+      "revId": "a24e96cffcf19a65acb84b16a967827ae4047841",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "4c7bdb08_14899c44",
@@ -14,6 +37,103 @@
       "writtenOn": "2026-02-20T14:05:46Z",
       "side": 1,
       "message": "Just going to resolve this for you.",
+      "revId": "a24e96cffcf19a65acb84b16a967827ae4047841",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cb1fd90d_964318a0",
+        "filename": "core/fpdfapi/parser/cpdf_cross_ref_table.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-24T00:52:01Z",
+      "side": 1,
+      "message": "Should AddCompressed() and its callers have the same changes?",
+      "revId": "a24e96cffcf19a65acb84b16a967827ae4047841",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "30c2b5b0_38196ea4",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 812,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-24T00:52:01Z",
+      "side": 1,
+      "message": "This outer `if` is now redundant, since AddNormal() already makes that check.",
+      "revId": "a24e96cffcf19a65acb84b16a967827ae4047841",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c3137872_4a1daf36",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 823,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-24T00:52:01Z",
+      "side": 1,
+      "message": "This would also be redundant if AddCompressed() has a similar change.",
+      "revId": "a24e96cffcf19a65acb84b16a967827ae4047841",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "369095da_226317c7",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 986,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-24T00:52:01Z",
+      "side": 1,
+      "message": "Too many indents.",
+      "range": {
+        "startLine": 986,
+        "startChar": 0,
+        "endLine": 986,
+        "endChar": 10
+      },
+      "revId": "a24e96cffcf19a65acb84b16a967827ae4047841",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "14e6ae3f_5f5cf591",
+        "filename": "core/fpdfapi/parser/cpdf_parser_unittest.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 519,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-24T00:52:01Z",
+      "side": 1,
+      "message": "This comment is now out of date.",
+      "range": {
+        "startLine": 518,
+        "startChar": 62,
+        "endLine": 519,
+        "endChar": 13
+      },
       "revId": "a24e96cffcf19a65acb84b16a967827ae4047841",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
