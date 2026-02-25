@@ -33,6 +33,29 @@
       "message": "Yeah, this seems like a good first step.",
       "revId": "c029bad29f1ba45aca8adcb8beef23f4348e55eb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8413d178_d669584b",
+        "filename": "public/fpdfview.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-25T20:38:51Z",
+      "side": 1,
+      "message": "note somewhere that fontations -\u003e skia.  We don\u0027t want a fontations + agg mashup.  Let\u0027s Document and Test that.",
+      "range": {
+        "startLine": 302,
+        "startChar": 0,
+        "endLine": 302,
+        "endChar": 29
+      },
+      "revId": "c029bad29f1ba45aca8adcb8beef23f4348e55eb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
