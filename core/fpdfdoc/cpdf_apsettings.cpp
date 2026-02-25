@@ -12,7 +12,31 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
-#include "core/fpdfdoc/cpdf_formcontrol.h"
+
+namespace {
+
+CPDF_ApSettings::TextPosition ToTextPosition(int value) {
+  switch (value) {
+    case static_cast<int>(CPDF_ApSettings::TextPosition::kCaption):
+      return CPDF_ApSettings::TextPosition::kCaption;
+    case static_cast<int>(CPDF_ApSettings::TextPosition::kIcon):
+      return CPDF_ApSettings::TextPosition::kIcon;
+    case static_cast<int>(CPDF_ApSettings::TextPosition::kBelow):
+      return CPDF_ApSettings::TextPosition::kBelow;
+    case static_cast<int>(CPDF_ApSettings::TextPosition::kAbove):
+      return CPDF_ApSettings::TextPosition::kAbove;
+    case static_cast<int>(CPDF_ApSettings::TextPosition::kRight):
+      return CPDF_ApSettings::TextPosition::kRight;
+    case static_cast<int>(CPDF_ApSettings::TextPosition::kLeft):
+      return CPDF_ApSettings::TextPosition::kLeft;
+    case static_cast<int>(CPDF_ApSettings::TextPosition::kOverlaid):
+      return CPDF_ApSettings::TextPosition::kOverlaid;
+    default:
+      return CPDF_ApSettings::TextPosition::kCaption;
+  }
+}
+
+}  // namespace
 
 CPDF_ApSettings::CPDF_ApSettings(RetainPtr<CPDF_Dictionary> dict)
     : dict_(std::move(dict)) {}
@@ -112,6 +136,9 @@ CPDF_IconFit CPDF_ApSettings::GetIconFit() const {
   return CPDF_IconFit(dict_ ? dict_->GetDictFor("IF") : nullptr);
 }
 
-int CPDF_ApSettings::GetTextPosition() const {
-  return dict_ ? dict_->GetIntegerFor("TP", TEXTPOS_CAPTION) : TEXTPOS_CAPTION;
+CPDF_ApSettings::TextPosition CPDF_ApSettings::GetTextPosition() const {
+  constexpr int kCaption =
+      static_cast<int>(CPDF_ApSettings::TextPosition::kCaption);
+  return ToTextPosition(dict_ ? dict_->GetIntegerFor("TP", kCaption)
+                              : kCaption);
 }
