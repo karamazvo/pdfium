@@ -37,6 +37,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "77c2b8d9_824bf77e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-25T12:33:34Z",
+      "side": 1,
+      "message": "For some more clarification: in the stdout logs you would see \"Expected pixels\" and \"Actual pixels\", make sure you add the image under \"Actual pixels\".",
+      "parentUuid": "ea887def_98a2c57c",
+      "revId": "b22bfb8d54263b0a8c055e396138c2d3ef33d254",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "3e00ffab_3d03012f",
         "filename": "fpdfsdk/fpdf_flatten_embeddertest.cpp",
         "patchSetId": 9
