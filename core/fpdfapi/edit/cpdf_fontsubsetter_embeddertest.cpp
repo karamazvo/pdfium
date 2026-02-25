@@ -15,6 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_extension.h"
@@ -106,6 +107,16 @@ bool IsSubsetFontName(const ByteString& actual_name,
 MATCHER_P2(StreamSizeIsWithinRange, min_size, max_size, "") {
   const auto& [_, obj] = arg;
   if (!obj || !obj->IsStream()) {
+    return false;
+  }
+
+  RetainPtr<const CPDF_Number> length1 =
+      obj->GetDict()->GetNumberFor("Length1");
+  if (!length1) {
+    return false;
+  }
+  int length = length1->GetInteger();
+  if (length < min_size || length >= max_size) {
     return false;
   }
 
