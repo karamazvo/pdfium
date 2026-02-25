@@ -15,9 +15,11 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/fx_font.h"
 #include "public/fpdf_edit.h"
@@ -111,6 +113,13 @@ MATCHER_P2(StreamSizeIsWithinRange, min_size, max_size, "") {
 
   size_t actual_size = obj->AsStream()->GetRawSize();
   if (actual_size < min_size || actual_size >= max_size) {
+    return false;
+  }
+
+  RetainPtr<const CPDF_Number> length1 =
+      obj->GetDict()->GetNumberFor("Length1");
+  if (!length1 ||
+      pdfium::checked_cast<size_t>(length1->GetInteger()) != actual_size) {
     return false;
   }
   return true;
