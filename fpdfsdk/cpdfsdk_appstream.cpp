@@ -1149,25 +1149,25 @@ void CPDFSDK_AppStream::SetAsPushButton() {
   CFX_FloatRect rcWindow = widget_->GetRotatedRect();
   ButtonStyle nLayout = ButtonStyle::kLabel;
   switch (pControl->GetTextPosition()) {
-    case TEXTPOS_ICON:
+    case CPDF_ApSettings::TextPosition::kIcon:
       nLayout = ButtonStyle::kIcon;
       break;
-    case TEXTPOS_BELOW:
+    case CPDF_ApSettings::TextPosition::kBelow:
       nLayout = ButtonStyle::kIconTopLabelBottom;
       break;
-    case TEXTPOS_ABOVE:
+    case CPDF_ApSettings::TextPosition::kAbove:
       nLayout = ButtonStyle::kIconBottomLabelTop;
       break;
-    case TEXTPOS_RIGHT:
+    case CPDF_ApSettings::TextPosition::kRight:
       nLayout = ButtonStyle::kIconLeftLabelRight;
       break;
-    case TEXTPOS_LEFT:
+    case CPDF_ApSettings::TextPosition::kLeft:
       nLayout = ButtonStyle::kIconRightLabelLeft;
       break;
-    case TEXTPOS_OVERLAID:
+    case CPDF_ApSettings::TextPosition::kOverlaid:
       nLayout = ButtonStyle::kLabelOverIcon;
       break;
-    default:
+    case CPDF_ApSettings::TextPosition::kCaption:
       nLayout = ButtonStyle::kLabel;
       break;
   }
