@@ -26,13 +26,17 @@
 #include "third_party/skia/include/core/SkTypeface.h"        // nogncheck
 #include "third_party/skia/include/ports/SkFontMgr_empty.h"  // nogncheck
 
+#if defined(PDF_ENABLE_FONTATIONS)
+#include "third_party/skia/include/ports/SkFontMgr_Fontations.h"  // nogncheck
+#endif  // defined(PDF_ENABLE_FONTATIONS)
+
 #if BUILDFLAG(IS_WIN)
 #include "third_party/skia/include/ports/SkTypeface_win.h"  // nogncheck
 #elif BUILDFLAG(IS_APPLE)
 #include "third_party/skia/include/ports/SkFontMgr_mac_ct.h"  // nogncheck
-#endif
+#endif  // BUILDFLAG(IS_WIN)
 
-#endif
+#endif  // PDF_USE_SKIA
 
 #if BUILDFLAG(IS_APPLE)
 #include "core/fxge/cfx_textrenderoptions.h"
@@ -231,6 +235,9 @@ SkFontMgr* g_fontmgr = nullptr;
 sk_sp<SkFontMgr> CreateSkiaFontManager() {
 #if defined(PDF_USE_SKIA_CUSTOM_FONT_MANAGER)
   return pdfium_skia_custom_font_manager();
+#elif defined(PDF_ENABLE_FONTATIONS)
+  // This is a SkFontMgr which will use Fontations to decode font data.
+  return SkFontMgr_New_Fontations_Empty();
 #else
   // This is a SkFontMgr which will use FreeType to decode font data.
   return SkFontMgr_New_Custom_Empty();
