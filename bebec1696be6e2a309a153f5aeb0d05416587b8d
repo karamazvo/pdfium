@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "03e94a5e_2cd00a99",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8946
+      },
+      "writtenOn": "2026-02-25T15:23:22Z",
+      "side": 1,
+      "message": "Roll d3 on Gerrit-suggested owners -\u003e 2 -\u003e Nicolás to review, please.",
+      "revId": "bebec1696be6e2a309a153f5aeb0d05416587b8d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
