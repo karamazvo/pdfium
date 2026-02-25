@@ -46,6 +46,30 @@
       },
       "revId": "eea8ebc13cb86b01b5554e615529c43bacc7a7fe",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "67452328_fbf0d1b9",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 862,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-25T18:15:55Z",
+      "side": 1,
+      "message": "Yes, please use pop_back() to erase only the last element.",
+      "parentUuid": "851c9f0a_99cd6a6b",
+      "range": {
+        "startLine": 862,
+        "startChar": 22,
+        "endLine": 862,
+        "endChar": 27
+      },
+      "revId": "eea8ebc13cb86b01b5554e615529c43bacc7a7fe",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
