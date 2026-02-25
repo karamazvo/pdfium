@@ -96,6 +96,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "2bc30eea_a4c00982",
+        "filename": "core/fpdfapi/parser/cpdf_cross_ref_table.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-25T03:28:41Z",
+      "side": 1,
+      "message": "If you want, but this CL is already small and the AddFoo() functions will be asymmetrical until the follow up lands.",
+      "parentUuid": "1710670f_30483059",
+      "revId": "a24e96cffcf19a65acb84b16a967827ae4047841",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "30c2b5b0_38196ea4",
         "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
         "patchSetId": 27
