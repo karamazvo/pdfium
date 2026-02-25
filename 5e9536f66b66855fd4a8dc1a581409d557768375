@@ -16,6 +16,24 @@
       "message": "OK without the RetainPtr wrapper?",
       "revId": "5e9536f66b66855fd4a8dc1a581409d557768375",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e991ed50_3dd21999",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-25T00:55:40Z",
+      "side": 1,
+      "message": "Sure.",
+      "parentUuid": "ba6d2cfa_36d69dc7",
+      "revId": "5e9536f66b66855fd4a8dc1a581409d557768375",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
