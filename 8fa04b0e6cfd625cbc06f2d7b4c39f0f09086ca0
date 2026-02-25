@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a4bccedc_5fa8a6ce",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-25T21:13:36Z",
+      "side": 1,
+      "message": "Should `length` be the same as `actual_size`?",
+      "revId": "8fa04b0e6cfd625cbc06f2d7b4c39f0f09086ca0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
