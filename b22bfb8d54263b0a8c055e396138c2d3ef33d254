@@ -33,6 +33,29 @@
       "message": "Few of the tests failed, maybe you may have swapped some images?\n\nI\u0027d suggest you remove the skia images for win/mac and re-add them again from the \"actual result\" for these.\n\nLinux images seem fine though.",
       "revId": "b22bfb8d54263b0a8c055e396138c2d3ef33d254",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3e00ffab_3d03012f",
+        "filename": "fpdfsdk/fpdf_flatten_embeddertest.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-25T12:10:22Z",
+      "side": 1,
+      "message": "nit: I\u0027d suggest you reduce some comments here, the other tests often have very little.\n@thestig@chromium.org @tsepez@chromium.org thoughts? Or is this fine.",
+      "range": {
+        "startLine": 132,
+        "startChar": 5,
+        "endLine": 132,
+        "endChar": 9
+      },
+      "revId": "b22bfb8d54263b0a8c055e396138c2d3ef33d254",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
