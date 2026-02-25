@@ -584,8 +584,8 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(
     return nullptr;
   }
   int dib_width = bitmap.width;
-  auto pGlyphBitmap =
-      std::make_unique<CFX_GlyphBitmap>(glyph->bitmap_left, glyph->bitmap_top);
+  auto pGlyphBitmap = std::make_unique<CFX_GlyphBitmap>(
+      CFX_Point(glyph->bitmap_left, glyph->bitmap_top));
   const FXDIB_Format format = anti_alias == FontAntiAliasingMode::kMono
                                   ? FXDIB_Format::k1bppMask
                                   : FXDIB_Format::k8bppMask;
