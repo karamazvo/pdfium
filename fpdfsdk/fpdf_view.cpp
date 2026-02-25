@@ -232,7 +232,12 @@ FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* config) {
   pdfium::InitializePageModule();
 
 #if defined(PDF_USE_SKIA)
-  CFX_GlyphCache::InitializeGlobals();
+  CFX_GlyphCache::FontBackend backend = CFX_GlyphCache::FontBackend::kFreeType;
+  if (config && config->version >= 5 &&
+      config->m_FontLibraryType == FPDF_FONTBACKENDTYPE_FONTATIONS) {
+    backend = CFX_GlyphCache::FontBackend::kFontations;
+  }
+  CFX_GlyphCache::InitializeGlobals(backend);
 #endif
 
 #ifdef PDF_ENABLE_XFA

@@ -181,6 +181,7 @@ struct Options {
   bool save_thumbnails = false;
   bool save_thumbnails_decoded = false;
   bool save_thumbnails_raw = false;
+  bool use_fontations_backend = false;
   RendererType use_renderer_type = RendererType::kDefault;
 #ifdef PDF_ENABLE_V8
   bool disable_javascript = false;
@@ -567,6 +568,8 @@ bool ParseCommandLine(const std::vector<std::string>& args,
 #if defined(PDF_ENABLE_SKIA)
     } else if (cur_arg == "--render-premultiplied") {
       options->render_premultiplied_alpha = true;
+    } else if (cur_arg == "--fontations") {
+      options->use_fontations_backend = true;
 #endif  // defined(PDF_ENABLE_SKIA)
 #ifdef PDF_ENABLE_V8
     } else if (cur_arg == "--disable-javascript") {
@@ -775,6 +778,11 @@ bool ParseCommandLine(const std::vector<std::string>& args,
       options->use_renderer_type != RendererType::kSkia) {
     fprintf(stderr,
             "Cannot use --render_premultiplied with selected renderer\n");
+    return false;
+  }
+  if (options->use_fontations_backend &&
+      options->use_renderer_type != RendererType::kSkia) {
+    fprintf(stderr, "Cannot use --fontations with selected renderer\n");
     return false;
   }
 #endif  // defined(PDF_ENABLE_SKIA)
@@ -1880,6 +1888,7 @@ constexpr char kUsageString[] =
 #endif  // _WIN32
     "  --render-premultiplied - render image using premultiplied alpha when "
     "the renderer is Skia\n"
+    " -- fontations           - Use fontations back-end library\n"
 #else
 #ifdef _WIN32
     "  --use-renderer         - renderer to use, one of [agg | gdi]\n"
