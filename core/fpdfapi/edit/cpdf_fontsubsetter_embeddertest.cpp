@@ -103,26 +103,55 @@ bool IsSubsetFontName(const ByteString& actual_name,
          expected_base_name;
 }
 
-// Matcher that verifies the stream size is strictly within the range min
-// inclusive, max exclusive.
-MATCHER_P2(StreamSizeIsWithinRange, min_size, max_size, "") {
-  const auto& obj = arg.second;
+// See `StreamSizeIsWithinRange` and its relevant matchers.
+bool IsMatchingStream(const RetainPtr<const CPDF_Object>& obj,
+                      size_t min_size,
+                      size_t max_size) {
   if (!obj || !obj->IsStream()) {
     return false;
   }
 
   size_t actual_size = obj->AsStream()->GetRawSize();
-  if (actual_size < min_size || actual_size >= max_size) {
+  return actual_size >= min_size && actual_size < max_size;
+}
+
+// Matcher that verifies the stream does not contain a subtype and that the
+// stream size is strictly within the range min inclusive, max exclusive.
+MATCHER_P2(StreamSizeIsWithinRange, min_size, max_size, "") {
+  const auto& obj = arg.second;
+  if (!IsMatchingStream(obj, min_size, max_size)) {
+    return false;
+  }
+
+  const CPDF_Dictionary* dict = obj->GetDict();
+  if (dict->KeyExist("Subtype")) {
     return false;
   }
 
   RetainPtr<const CPDF_Number> length1 =
       obj->GetDict()->GetNumberFor("Length1");
-  if (!length1 ||
-      pdfium::checked_cast<size_t>(length1->GetInteger()) != actual_size) {
+  if (!length1) {
     return false;
   }
-  return true;
+
+  return pdfium::checked_cast<size_t>(length1->GetInteger()) ==
+         obj->AsStream()->GetRawSize();
+}
+
+// Same as `StreamSizeIsWithinRange`, but checks for a subtype of "OpenType" and
+// excludes the Length1 entry instead.
+MATCHER_P2(OpenTypeCFFStreamSizeIsWithinRange, min_size, max_size, "") {
+  const auto& obj = arg.second;
+  if (!IsMatchingStream(obj, min_size, max_size)) {
+    return false;
+  }
+
+  const CPDF_Dictionary* dict = obj->GetDict();
+  if (dict->GetNameFor("Subtype") != "OpenType") {
+    return false;
+  }
+
+  return !dict->GetNumberFor("Length1");
 }
 
 // Matches the Root Font, checking for a valid subset font name.
@@ -143,37 +172,81 @@ MATCHER_P(IsRootFont, expected_base_name, "") {
   return IsSubsetFontName(dict->GetNameFor("BaseFont"), expected_base_name);
 }
 
-// Matches the CID Font, checking for a valid subset font name.
-MATCHER_P(IsCIDFont, expected_base_name, "") {
-  const auto& obj = arg.second;
+// See `IsCIDFont` and its relevant matchers.
+bool IsMatchingCIDFont(const RetainPtr<const CPDF_Object>& obj,
+                       ByteStringView expected_base_name,
+                       ByteStringView expected_subtype) {
   if (!obj || !obj->IsDictionary()) {
     return false;
   }
 
   const CPDF_Dictionary* dict = obj->AsDictionary();
-  if (dict->GetNameFor("Type") != "Font" ||
-      dict->GetNameFor("Subtype") != "CIDFontType2" ||
-      !dict->KeyExist("CIDSystemInfo")) {
+  if (dict->GetNameFor("Type") != "Font" || !dict->KeyExist("CIDSystemInfo")) {
     return false;
   }
 
-  return IsSubsetFontName(dict->GetNameFor("BaseFont"), expected_base_name);
+  return IsSubsetFontName(dict->GetNameFor("BaseFont"), expected_base_name) &&
+         dict->GetNameFor("Subtype") == expected_subtype;
 }
 
-// Matches the FontDescriptor, checking for a valid subset font name.
-MATCHER_P(IsFontDescriptor, expected_base_name, "") {
+// Matches the CID Font, checking for a valid subset font name and a subtype of
+// "CIDFontType2".
+MATCHER_P(IsCIDFont, expected_base_name, "") {
   const auto& obj = arg.second;
+  return IsMatchingCIDFont(obj, expected_base_name, "CIDFontType2");
+}
+
+// Same as `IsCIDFont`, but checks for a subtype of "CIDFontType0" instead.
+MATCHER_P(IsOpenTypeCFFCIDFont, expected_base_name, "") {
+  const auto& obj = arg.second;
+  return IsMatchingCIDFont(obj, expected_base_name, "CIDFontType0");
+}
+
+// See `IsFontDescriptor` and its relevant matchers.
+bool IsMatchingFontDescriptor(const RetainPtr<const CPDF_Object>& obj,
+                              ByteStringView expected_base_name) {
   if (!obj || !obj->IsDictionary()) {
     return false;
   }
 
   const CPDF_Dictionary* dict = obj->AsDictionary();
-  if (dict->GetNameFor("Type") != "FontDescriptor" ||
-      !dict->KeyExist("FontFile2")) {
+  if (dict->GetNameFor("Type") != "FontDescriptor") {
     return false;
   }
 
   return IsSubsetFontName(dict->GetNameFor("FontName"), expected_base_name);
+}
+
+// Matches the FontDescriptor, checking for a valid subset font name and an
+// entry for "FontFile2".
+MATCHER_P(IsFontDescriptor, expected_base_name, "") {
+  const auto& obj = arg.second;
+  if (!(IsMatchingFontDescriptor(obj, expected_base_name))) {
+    return false;
+  }
+
+  const CPDF_Dictionary* dict = obj->AsDictionary();
+  return dict->KeyExist("FontFile2") && !dict->KeyExist("FontFile3");
+}
+
+// Same as `IsFontDescriptor`, but checks for entries in "Flags" and "FontFile3"
+// instead.
+MATCHER_P(IsOpenTypeCFFFontDescriptor, expected_base_name, "") {
+  const auto& obj = arg.second;
+  if (!(IsMatchingFontDescriptor(obj, expected_base_name))) {
+    return false;
+  }
+
+  const CPDF_Dictionary* dict = obj->AsDictionary();
+
+  // See ISO 32000-1:2008 section 9.8.2 "Font Descriptor Flags".
+  RetainPtr<const CPDF_Number> flags = dict->GetNumberFor("Flags");
+  int flags_int = flags->GetInteger();
+  if (!(flags_int & 0x04) || !!(flags_int & 0x20)) {
+    return false;
+  }
+
+  return !dict->KeyExist("FontFile2") && dict->KeyExist("FontFile3");
 }
 
 }  // namespace
@@ -288,10 +361,11 @@ TEST_F(CPDFFontSubsetterTest, OpenType) {
   // Subset size is ~2.5% of the original font file, i.e. ~450 KB.
   EXPECT_THAT(
       overrides,
-      UnorderedElementsAre(
-          StreamSizeIsWithinRange(original_size * 0.02, original_size * 0.03),
-          IsRootFont(kNotoSansBaseFontName), IsCIDFont(kNotoSansBaseFontName),
-          IsFontDescriptor(kNotoSansBaseFontName)));
+      UnorderedElementsAre(OpenTypeCFFStreamSizeIsWithinRange(
+                               original_size * 0.02, original_size * 0.03),
+                           IsRootFont(kNotoSansBaseFontName),
+                           IsOpenTypeCFFCIDFont(kNotoSansBaseFontName),
+                           IsOpenTypeCFFFontDescriptor(kNotoSansBaseFontName)));
 }
 
 TEST_F(CPDFFontSubsetterTest, TrueType) {
