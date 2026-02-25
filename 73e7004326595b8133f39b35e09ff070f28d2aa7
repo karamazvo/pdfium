@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c395b617_b22ee402",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-25T23:53:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2c2e32b4_012991d7",
+      "revId": "73e7004326595b8133f39b35e09ff070f28d2aa7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "720ecd82_ef79ecc2",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-02-25T22:56:55Z",
       "side": 1,
       "message": "Do OpenType fonts require /Length1 ?",
+      "revId": "73e7004326595b8133f39b35e09ff070f28d2aa7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b4dcdfa5_b6b201e3",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-25T23:53:36Z",
+      "side": 1,
+      "message": "No. Added to comment.",
+      "parentUuid": "720ecd82_ef79ecc2",
       "revId": "73e7004326595b8133f39b35e09ff070f28d2aa7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -60,6 +96,54 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "780cd03a_91e93db2",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-25T23:53:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "656e1d74_19426759",
+      "range": {
+        "startLine": 169,
+        "startChar": 43,
+        "endLine": 169,
+        "endChar": 62
+      },
+      "revId": "73e7004326595b8133f39b35e09ff070f28d2aa7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "297d9d00_7bbb962d",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-25T23:53:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "656e1d74_19426759",
+      "range": {
+        "startLine": 169,
+        "startChar": 43,
+        "endLine": 169,
+        "endChar": 62
+      },
+      "revId": "73e7004326595b8133f39b35e09ff070f28d2aa7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "db120018_e8f37645",
         "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
         "patchSetId": 5
@@ -71,6 +155,24 @@
       "writtenOn": "2026-02-25T22:56:55Z",
       "side": 1,
       "message": "Was ok before since `mutable_root_font` is still only used once? But maybe ok for consistency. But also see the ToDictionary() comment above.",
+      "revId": "73e7004326595b8133f39b35e09ff070f28d2aa7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d4b8d2b8_58eb75bc",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-25T23:53:36Z",
+      "side": 1,
+      "message": "Applied ToDictionary() comment.",
+      "parentUuid": "db120018_e8f37645",
       "revId": "73e7004326595b8133f39b35e09ff070f28d2aa7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -88,6 +190,24 @@
       "writtenOn": "2026-02-25T22:56:55Z",
       "side": 1,
       "message": "Are other PDF viewers ok with this?",
+      "revId": "73e7004326595b8133f39b35e09ff070f28d2aa7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "41e365c0_68009001",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-25T23:53:36Z",
+      "side": 1,
+      "message": "From ISO 32000-1:2008 section 9.8.2:\n\n\u003e ... any font whose character set is not a subset of the Adobe standard character set shall be considered to be symbolic. This influences the font\u0027s implicit base encoding and may affect a conforming reader\u0027s font substitution strategies.\n\nThe flag affects encoding and font substitution, which I believe should not be used in this case, even if the resulting font is a subset of the char set. I adjusted the comment to highlight this.",
+      "parentUuid": "12836247_570e2aea",
       "revId": "73e7004326595b8133f39b35e09ff070f28d2aa7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
