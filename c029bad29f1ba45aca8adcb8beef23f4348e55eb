@@ -56,6 +56,30 @@
       },
       "revId": "c029bad29f1ba45aca8adcb8beef23f4348e55eb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ec877d43_8b300798",
+        "filename": "public/fpdfview.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-25T21:58:59Z",
+      "side": 1,
+      "message": "Mentioned it in the comment, but since nothing use the variable yet, I\u0027ll add the check later.",
+      "parentUuid": "8413d178_d669584b",
+      "range": {
+        "startLine": 302,
+        "startChar": 0,
+        "endLine": 302,
+        "endChar": 29
+      },
+      "revId": "c029bad29f1ba45aca8adcb8beef23f4348e55eb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
