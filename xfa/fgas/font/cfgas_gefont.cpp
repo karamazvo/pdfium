@@ -12,10 +12,11 @@
 #include "build/build_config.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fxcrt/check.h"
+#include "core/fxge/cfx_charmap_resolver.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_substfont.h"
-#include "core/fxge/cfx_unicodeencodingex.h"
 #include "core/fxge/fx_font.h"
+#include "core/fxge/fx_fontencoding.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gemodule.h"
 #include "xfa/fgas/font/fgas_fontutils.h"
@@ -125,12 +126,10 @@ bool CFGAS_GEFont::InitFont() {
   if (!font_) {
     return false;
   }
-
   if (font_encoding_) {
     return true;
   }
-
-  font_encoding_ = FX_CreateFontEncodingEx(font_.Get());
+  font_encoding_ = CFX_CharmapResolver::CreateAlternate(font_.Get());
   return !!font_encoding_;
 }
 
