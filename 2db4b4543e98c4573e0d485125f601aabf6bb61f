@@ -69,6 +69,24 @@
       "parentUuid": "6c87d0f2_0b67ebaf",
       "revId": "2db4b4543e98c4573e0d485125f601aabf6bb61f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "703e93ba_493d9b7d",
+        "filename": "core/fxge/cfx_glyphcache.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-25T20:49:12Z",
+      "side": 1,
+      "message": "OK. Do you need to reapply the recipe change to make the build green?",
+      "parentUuid": "c85f48ab_7d21512c",
+      "revId": "2db4b4543e98c4573e0d485125f601aabf6bb61f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
