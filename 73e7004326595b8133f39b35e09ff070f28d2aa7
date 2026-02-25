@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2c2e32b4_012991d7",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-25T22:56:55Z",
+      "side": 1,
+      "message": "Use CFX_FontMapper::MakeTag() and compare to that. FXBSTR_ID() seems to do roughly the same thing, but since this is a font tag, go with CFX_FontMapper::MakeTag().",
+      "revId": "73e7004326595b8133f39b35e09ff070f28d2aa7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "720ecd82_ef79ecc2",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-25T22:56:55Z",
+      "side": 1,
+      "message": "Do OpenType fonts require /Length1 ?",
+      "revId": "73e7004326595b8133f39b35e09ff070f28d2aa7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "656e1d74_19426759",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-25T22:56:55Z",
+      "side": 1,
+      "message": "Can thuis use the ToDictionary() variant that converts to `RetainPtr\u003cCPDF_Dictionary\u003e`? Then no need for a separate mutable pointer.",
+      "range": {
+        "startLine": 169,
+        "startChar": 43,
+        "endLine": 169,
+        "endChar": 62
+      },
+      "revId": "73e7004326595b8133f39b35e09ff070f28d2aa7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "db120018_e8f37645",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-25T22:56:55Z",
+      "side": 1,
+      "message": "Was ok before since `mutable_root_font` is still only used once? But maybe ok for consistency. But also see the ToDictionary() comment above.",
+      "revId": "73e7004326595b8133f39b35e09ff070f28d2aa7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "12836247_570e2aea",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-25T22:56:55Z",
+      "side": 1,
+      "message": "Are other PDF viewers ok with this?",
+      "revId": "73e7004326595b8133f39b35e09ff070f28d2aa7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
