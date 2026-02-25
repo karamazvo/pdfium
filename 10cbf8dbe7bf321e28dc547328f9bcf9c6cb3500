@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3a434133_8a80fbf0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4596105
+      },
+      "writtenOn": "2026-02-25T10:34:06Z",
+      "side": 1,
+      "message": "Done, thanks.",
+      "parentUuid": "b9f35f55_f8d7c6b1",
+      "revId": "10cbf8dbe7bf321e28dc547328f9bcf9c6cb3500",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d16859c3_c5c9c45c",
@@ -49,6 +67,24 @@
       "side": 1,
       "message": "Clarification: by fail I meant they would fail on the bots.",
       "parentUuid": "d16859c3_c5c9c45c",
+      "revId": "10cbf8dbe7bf321e28dc547328f9bcf9c6cb3500",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aa23d80a_41706087",
+        "filename": "testing/resources/embedder_tests/flatten_noview_annot_normal_display_skia.png",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4596105
+      },
+      "writtenOn": "2026-02-25T10:34:06Z",
+      "side": 1,
+      "message": "Okay, I added the pngs for each platform and used optipng as suggested, let me know if there\u0027s anything I need to add. Can you please run the bots again to check? Thanks!",
+      "parentUuid": "10da5cb2_e4c25d32",
       "revId": "10cbf8dbe7bf321e28dc547328f9bcf9c6cb3500",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
