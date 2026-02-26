@@ -16,6 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
+#include "core/fpdfapi/parser/cpdf_simple_parser.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_extension.h"
@@ -254,6 +255,19 @@ MATCHER_P(IsOpenTypeCFFFontDescriptor, expected_base_name, "") {
   return !dict->KeyExist("FontFile2") && dict->GetStreamFor("FontFile3");
 }
 
+MATCHER(IsToUnicode, "") {
+  RetainPtr<const CPDF_Stream> stream = ToStream(arg.second);
+  if (!stream) {
+    return false;
+  }
+
+  auto stream_acc = pdfium::MakeRetain<CPDF_StreamAcc>(stream);
+  stream_acc->LoadAllDataFiltered();
+  CPDF_SimpleParser parser(stream_acc->GetSpan());
+  return parser.GetWord() == "/CIDInit" && parser.GetWord() == "/ProcSet" &&
+         parser.GetWord() == "findresource" && parser.GetWord() == "begin";
+}
+
 }  // namespace
 
 // Prints overrides nicely for debugging purposes.
@@ -361,16 +375,16 @@ TEST_F(CPDFFontSubsetterTest, OpenType) {
 
   CPDF_FontSubsetter subsetter(CPDFDocumentFromFPDFDocument(document()));
   auto overrides = subsetter.GenerateObjectOverrides(GetTestNewObjNums());
-  ASSERT_EQ(4u, overrides.size());
+  ASSERT_EQ(5u, overrides.size());
 
   // Subset size is ~2.5% of the original font file, i.e. ~450 KB.
-  EXPECT_THAT(
-      overrides,
-      UnorderedElementsAre(OpenTypeCFFStreamSizeIsWithinRange(
-                               original_size * 0.02, original_size * 0.03),
-                           IsRootFont(kNotoSansBaseFontName),
-                           IsOpenTypeCFFCIDFont(kNotoSansBaseFontName),
-                           IsOpenTypeCFFFontDescriptor(kNotoSansBaseFontName)));
+  EXPECT_THAT(overrides, UnorderedElementsAre(
+                             OpenTypeCFFStreamSizeIsWithinRange(
+                                 original_size * 0.02, original_size * 0.03),
+                             IsRootFont(kNotoSansBaseFontName),
+                             IsOpenTypeCFFCIDFont(kNotoSansBaseFontName),
+                             IsOpenTypeCFFFontDescriptor(kNotoSansBaseFontName),
+                             IsToUnicode()));
 }
 
 TEST_F(CPDFFontSubsetterTest, TrueType) {
@@ -394,7 +408,7 @@ TEST_F(CPDFFontSubsetterTest, TrueType) {
 
   CPDF_FontSubsetter subsetter(CPDFDocumentFromFPDFDocument(document()));
   auto overrides = subsetter.GenerateObjectOverrides(GetTestNewObjNums());
-  ASSERT_EQ(4u, overrides.size());
+  ASSERT_EQ(5u, overrides.size());
 
   // Subset size is ~3% of the original font file, i.e. ~13 KB.
   EXPECT_THAT(
@@ -402,7 +416,7 @@ TEST_F(CPDFFontSubsetterTest, TrueType) {
       UnorderedElementsAre(
           StreamSizeIsWithinRange(original_size * 0.025, original_size * 0.035),
           IsRootFont(kArimoBaseFontName), IsCIDFont(kArimoBaseFontName),
-          IsFontDescriptor(kArimoBaseFontName)));
+          IsFontDescriptor(kArimoBaseFontName), IsToUnicode()));
 }
 
 TEST_F(CPDFFontSubsetterTest, SingleFontMultipleTexts) {
@@ -428,7 +442,7 @@ TEST_F(CPDFFontSubsetterTest, SingleFontMultipleTexts) {
 
   CPDF_FontSubsetter subsetter(CPDFDocumentFromFPDFDocument(document()));
   auto overrides = subsetter.GenerateObjectOverrides(GetTestNewObjNums());
-  ASSERT_EQ(4u, overrides.size());
+  ASSERT_EQ(5u, overrides.size());
 
   // Subset size is ~3.5% of the original font file, i.e. ~15 KB.
   EXPECT_THAT(
@@ -436,7 +450,7 @@ TEST_F(CPDFFontSubsetterTest, SingleFontMultipleTexts) {
       UnorderedElementsAre(
           StreamSizeIsWithinRange(original_size * 0.03, original_size * 0.04),
           IsRootFont(kArimoBaseFontName), IsCIDFont(kArimoBaseFontName),
-          IsFontDescriptor(kArimoBaseFontName)));
+          IsFontDescriptor(kArimoBaseFontName), IsToUnicode()));
 }
 
 TEST_F(CPDFFontSubsetterTest, MultipleFontsMultipleTexts) {
@@ -471,7 +485,7 @@ TEST_F(CPDFFontSubsetterTest, MultipleFontsMultipleTexts) {
 
   CPDF_FontSubsetter subsetter(CPDFDocumentFromFPDFDocument(document()));
   auto overrides = subsetter.GenerateObjectOverrides(GetTestNewObjNums());
-  ASSERT_EQ(8u, overrides.size());
+  ASSERT_EQ(10u, overrides.size());
 
   // Subset size for `font_data1` is ~6% of the original file, i.e. ~3 KB.
   // Subset size for `font_data2` is ~3% of the original file, i.e. ~13.3 KB.
@@ -481,11 +495,11 @@ TEST_F(CPDFFontSubsetterTest, MultipleFontsMultipleTexts) {
                                           original_size1 * 0.065),
                   IsRootFont(kLohitTamilBaseFontName),
                   IsCIDFont(kLohitTamilBaseFontName),
-                  IsFontDescriptor(kLohitTamilBaseFontName),
+                  IsFontDescriptor(kLohitTamilBaseFontName), IsToUnicode(),
                   StreamSizeIsWithinRange(original_size2 * 0.025,
                                           original_size2 * 0.035),
                   IsRootFont(kArimoBaseFontName), IsCIDFont(kArimoBaseFontName),
-                  IsFontDescriptor(kArimoBaseFontName)));
+                  IsFontDescriptor(kArimoBaseFontName), IsToUnicode()));
 }
 
 TEST_F(CPDFFontSubsetterTest, ReplaceExistingPrefix) {
@@ -516,7 +530,7 @@ TEST_F(CPDFFontSubsetterTest, ReplaceExistingPrefix) {
 
   CPDF_FontSubsetter subsetter(CPDFDocumentFromFPDFDocument(document()));
   auto overrides = subsetter.GenerateObjectOverrides(GetTestNewObjNums());
-  ASSERT_EQ(4u, overrides.size());
+  ASSERT_EQ(5u, overrides.size());
 
   // Subset size is ~3% of the original font file, i.e. ~13 KB.
   EXPECT_THAT(
@@ -524,5 +538,5 @@ TEST_F(CPDFFontSubsetterTest, ReplaceExistingPrefix) {
       UnorderedElementsAre(
           StreamSizeIsWithinRange(original_size * 0.025, original_size * 0.035),
           IsRootFont(kArimoBaseFontName), IsCIDFont(kArimoBaseFontName),
-          IsFontDescriptor(kArimoBaseFontName)));
+          IsFontDescriptor(kArimoBaseFontName), IsToUnicode()));
 }
