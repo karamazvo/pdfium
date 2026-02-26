@@ -13,6 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_linearized_header.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fpdfapi/parser/cpdf_null.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
@@ -151,6 +152,34 @@ class CPDF_TestDocumentAllowSetParser final : public CPDF_TestDocument {
   CPDF_TestDocumentAllowSetParser() = default;
 
   using CPDF_Document::SetParser;
+};
+
+class CPDF_TestDocumentWithNullPageInKids final : public CPDF_TestDocument {
+ public:
+  CPDF_TestDocumentWithNullPageInKids() {
+    // Create a flat page tree with 3 entries in /Kids, but one is a null
+    // object reference. This mimics corrupt PDFs where /Kids contains
+    // references to non-existent objects.
+    auto kids = pdfium::MakeRetain<CPDF_Array>();
+    kids->AppendNew<CPDF_Reference>(
+        this, AddIndirectObject(CreateNumberedPage(0)));
+    kids->AppendNew<CPDF_Reference>(
+        this, AddIndirectObject(pdfium::MakeRetain<CPDF_Null>()));
+    kids->AppendNew<CPDF_Reference>(
+        this, AddIndirectObject(CreateNumberedPage(1)));
+
+    uint32_t kids_objnum = AddIndirectObject(kids);
+    auto pages_dict = NewIndirect<CPDF_Dictionary>();
+    pages_dict->SetNewFor<CPDF_Name>("Type", "Pages");
+    pages_dict->SetNewFor<CPDF_Reference>("Kids", this, kids_objnum);
+    // Deliberately set /Count to 3 (wrong -- only 2 valid pages).
+    pages_dict->SetNewFor<CPDF_Number>("Count", 3);
+
+    SetRootForTesting(NewIndirect<CPDF_Dictionary>());
+    GetMutableRoot()->SetNewFor<CPDF_Reference>("Pages", this,
+                                                pages_dict->GetObjNum());
+    ResizePageListForTesting(2);
+  }
 };
 
 }  // namespace
@@ -306,4 +335,19 @@ TEST_F(DocumentTest, PagesWithoutKids) {
   }
 
   EXPECT_TRUE(doc->GetPageDictionary(0));
+}
+
+TEST_F(DocumentTest, NullPageInKids) {
+  auto document = std::make_unique<CPDF_TestDocumentWithNullPageInKids>();
+  // /Count was 3 but one kid is null, so only 2 valid pages.
+  EXPECT_EQ(2, document->GetPageCount());
+  // Both valid pages should be accessible.
+  for (int i = 0; i < 2; i++) {
+    RetainPtr<const CPDF_Dictionary> page = document->GetPageDictionary(i);
+    ASSERT_TRUE(page);
+    ASSERT_TRUE(page->KeyExist("PageNumbering"));
+    EXPECT_EQ(i, page->GetIntegerFor("PageNumbering"));
+  }
+  // One past the last valid page should return null.
+  EXPECT_FALSE(document->GetPageDictionary(2));
 }
