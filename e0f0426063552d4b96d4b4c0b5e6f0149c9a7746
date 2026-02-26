@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "eaf92199_b8dd0c23",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 17
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-26T01:53:15Z",
+      "side": 1,
+      "message": "Ready.",
+      "revId": "e0f0426063552d4b96d4b4c0b5e6f0149c9a7746",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "28410bc2_50bce8ff",
@@ -14,6 +31,24 @@
       "writtenOn": "2026-02-26T01:16:46Z",
       "side": 1,
       "message": "Redundant with line 223.",
+      "revId": "e0f0426063552d4b96d4b4c0b5e6f0149c9a7746",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "16c74286_ff533f90",
+        "filename": "core/fxge/cfx_glyphcache.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-26T01:53:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "28410bc2_50bce8ff",
       "revId": "e0f0426063552d4b96d4b4c0b5e6f0149c9a7746",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -35,6 +70,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e840308f_c6eb1afe",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-26T01:53:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c14d3b86_5c48c251",
+      "revId": "e0f0426063552d4b96d4b4c0b5e6f0149c9a7746",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7cf4c475_115690bc",
@@ -48,6 +101,24 @@
       "writtenOn": "2026-02-26T01:16:46Z",
       "side": 1,
       "message": "SetRendererType() will CHECK() that the caller selected one of the available types. This can do so as well and be similarly strict.",
+      "revId": "e0f0426063552d4b96d4b4c0b5e6f0149c9a7746",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a9e0c8c9_7a954f68",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-26T01:53:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7cf4c475_115690bc",
       "revId": "e0f0426063552d4b96d4b4c0b5e6f0149c9a7746",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -69,6 +140,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a65c99ce_b4f999d0",
+        "filename": "testing/embedder_test_environment.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-26T01:53:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9ea9ef60_9db61812",
+      "revId": "e0f0426063552d4b96d4b4c0b5e6f0149c9a7746",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "29ae0304_df185477",
@@ -82,6 +171,24 @@
       "writtenOn": "2026-02-26T01:16:46Z",
       "side": 1,
       "message": "Make this consistently Skia-only.",
+      "revId": "e0f0426063552d4b96d4b4c0b5e6f0149c9a7746",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ffcc1ae4_fb5ea6f3",
+        "filename": "testing/pdfium_test.cc",
+        "patchSetId": 17
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-26T01:53:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "29ae0304_df185477",
       "revId": "e0f0426063552d4b96d4b4c0b5e6f0149c9a7746",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
