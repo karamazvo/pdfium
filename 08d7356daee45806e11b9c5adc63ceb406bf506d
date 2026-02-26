@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "05bd0cba_4946512e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 11
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-26T02:53:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0aed9e66_808d6fd3",
+      "revId": "08d7356daee45806e11b9c5adc63ceb406bf506d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d285c9fb_cced0987",
@@ -52,6 +70,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3555b693_bfade2ae",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 2394,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-26T02:53:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7be666e0_d651a744",
+      "revId": "08d7356daee45806e11b9c5adc63ceb406bf506d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "139b9df0_adeb30c8",
@@ -65,6 +101,24 @@
       "writtenOn": "2026-02-25T18:15:55Z",
       "side": 1,
       "message": "This CL no longer tried to fix crbug.com/40643656, so remove that from the CL description?",
+      "revId": "08d7356daee45806e11b9c5adc63ceb406bf506d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9d3a736a_b0115fa0",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 2395,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-26T02:53:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "139b9df0_adeb30c8",
       "revId": "08d7356daee45806e11b9c5adc63ceb406bf506d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
