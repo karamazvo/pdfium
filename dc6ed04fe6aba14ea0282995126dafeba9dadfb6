@@ -1,0 +1,141 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4c3928d1_de0f5508",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T18:32:29Z",
+      "side": 1,
+      "message": "Just the bug number is sufficient.",
+      "range": {
+        "startLine": 9,
+        "startChar": 5,
+        "endLine": 9,
+        "endChar": 49
+      },
+      "revId": "dc6ed04fe6aba14ea0282995126dafeba9dadfb6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d27a3075_7ae4e0bb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T18:32:29Z",
+      "side": 1,
+      "message": "Thanks for putting this CL together.",
+      "revId": "dc6ed04fe6aba14ea0282995126dafeba9dadfb6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0aec84ce_879ee888",
+        "filename": "core/fpdfapi/parser/cpdf_document.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T18:32:29Z",
+      "side": 1,
+      "message": "Can this be an ordinary ASCII 45 dash instead?",
+      "range": {
+        "startLine": 71,
+        "startChar": 24,
+        "endLine": 71,
+        "endChar": 25
+      },
+      "revId": "dc6ed04fe6aba14ea0282995126dafeba9dadfb6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "176212fc_45c42a08",
+        "filename": "core/fpdfapi/parser/cpdf_document_unittest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T18:32:29Z",
+      "side": 1,
+      "message": "Probably not necessary given the comment above. Line 168 is fairly clear that this is different from the other 2 AppendNew() calls.",
+      "revId": "dc6ed04fe6aba14ea0282995126dafeba9dadfb6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5eb309c5_ca99099f",
+        "filename": "core/fpdfapi/parser/cpdf_document_unittest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T18:32:29Z",
+      "side": 1,
+      "message": "Prefer Google C++ style naming in new code: pages_dict",
+      "range": {
+        "startLine": 173,
+        "startChar": 9,
+        "endLine": 173,
+        "endChar": 18
+      },
+      "revId": "dc6ed04fe6aba14ea0282995126dafeba9dadfb6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e3816738_e69a6d5d",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 573,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T18:32:29Z",
+      "side": 1,
+      "message": "The EmbedderTest class has its own LoadScopedPage() to manage page loading.",
+      "revId": "dc6ed04fe6aba14ea0282995126dafeba9dadfb6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "190fefaf_22120177",
+        "filename": "testing/resources/page_tree_null_kid.in",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T18:32:29Z",
+      "side": 1,
+      "message": "Can this list be 3 4 5? Then adjust line 19 and 20 accordingly and regenerate the PDF.",
+      "revId": "dc6ed04fe6aba14ea0282995126dafeba9dadfb6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
