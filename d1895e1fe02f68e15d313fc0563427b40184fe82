@@ -16,6 +16,24 @@
       "message": "If the check is to just make sure /FontFile3 does not exist, then KeyExist() is suffcient. OTOH, the check that /FontFile2 does exist can become a bit stronger if it also checks the object in the dictionary is of the right type.",
       "revId": "d1895e1fe02f68e15d313fc0563427b40184fe82",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7413f5c4_df4a2758",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter_embeddertest.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-26T02:20:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cb56dc6e_222b9fc3",
+      "revId": "d1895e1fe02f68e15d313fc0563427b40184fe82",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
