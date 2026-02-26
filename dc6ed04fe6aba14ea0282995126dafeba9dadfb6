@@ -58,6 +58,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "be3d7805_82589c62",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4671245
+      },
+      "writtenOn": "2026-02-26T20:34:16Z",
+      "side": 1,
+      "message": "Hi Tom,\n\nI benchmarked PdfDocument() init (which calls LoadPages() -\u003e CountPages()) across a few PDFs ranging from 37KB/1 page to 43MB/754 pages, 20 iterations each:\n\n  - 754 pages: 6.29ms median\n  - 492 pages: 0.36ms median\n  - 85 pages: 0.13ms median\n  - 1 page: 0.13ms median\n\nThe /Kids traversal in CountPages() is O(pages) and runs once at document init. \n\nFor this 754-page reference manual, the overhead is under 7ms. The cost is dominated by I/O and parsing, not page tree walking. This one had a complex page structure: https://www.nxp.com/docs/en/reference-manual/MCF5235RM.pdf",
+      "parentUuid": "c86df45a_784b7180",
+      "revId": "dc6ed04fe6aba14ea0282995126dafeba9dadfb6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0aec84ce_879ee888",
