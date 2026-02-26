@@ -36,6 +36,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3190005e_25e17cf5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-26T23:43:07Z",
+      "side": 1,
+      "message": "Could also live in core/fpdfapi/font/? Naming is hard.\n\nI have it as cpdf_font_util.h in the latest patchset.",
+      "parentUuid": "acf0c47b_db31da85",
+      "revId": "b7ed0e75328b64b030109d2b381417bd7a7202d1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "041a78ba_cb363016",
@@ -49,6 +67,42 @@
       "writtenOn": "2026-02-26T22:59:41Z",
       "side": 1,
       "message": "Existing: Just return here.",
+      "revId": "b7ed0e75328b64b030109d2b381417bd7a7202d1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "573e526f_c68b084a",
+        "filename": "core/fpdfapi/edit/cpdf_unicode_util.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-26T23:43:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "041a78ba_cb363016",
+      "revId": "b7ed0e75328b64b030109d2b381417bd7a7202d1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7a5c54de_35a46b00",
+        "filename": "core/fpdfapi/edit/cpdf_unicode_util.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-26T23:43:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "041a78ba_cb363016",
       "revId": "b7ed0e75328b64b030109d2b381417bd7a7202d1",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
