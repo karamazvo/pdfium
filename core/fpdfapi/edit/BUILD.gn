@@ -23,6 +23,8 @@ source_set("edit") {
     "cpdf_pageorganizer.h",
     "cpdf_stringarchivestream.cpp",
     "cpdf_stringarchivestream.h",
+    "cpdf_unicode_util.cpp",
+    "cpdf_unicode_util.h",
   ]
   configs += [
     "../../../:pdfium_strict_config",
