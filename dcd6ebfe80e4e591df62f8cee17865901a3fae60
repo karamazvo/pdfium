@@ -77,6 +77,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e165fbe1_d2b24938",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T01:00:41Z",
+      "side": 1,
+      "message": "Maybe prepend a CL to use ToStream() and ToDictionary().",
+      "parentUuid": "5bb73ce7_790a8e2e",
+      "revId": "dcd6ebfe80e4e591df62f8cee17865901a3fae60",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "035d5b19_ec4f9e31",
         "filename": "core/fpdfapi/edit/cpdf_fontsubsetter_embeddertest.cpp",
         "patchSetId": 6
