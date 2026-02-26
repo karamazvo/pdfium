@@ -35,6 +35,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "44733c68_d969b9bb",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-26T01:25:33Z",
+      "side": 1,
+      "message": "1. Done\n2. ATM, only subsetting if the original font had \"FontFile2\". So \"FontFile\" isn\u0027t possible.",
+      "parentUuid": "3d179dcb_695efd38",
+      "revId": "dcd6ebfe80e4e591df62f8cee17865901a3fae60",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "afe8dbf1_394a72b4",
@@ -48,6 +66,30 @@
       "writtenOn": "2026-02-26T01:00:10Z",
       "side": 1,
       "message": "Just `const CPDF_Object* obj` here?",
+      "range": {
+        "startLine": 107,
+        "startChar": 22,
+        "endLine": 107,
+        "endChar": 62
+      },
+      "revId": "dcd6ebfe80e4e591df62f8cee17865901a3fae60",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e2ba6834_5f3a202b",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-26T01:25:33Z",
+      "side": 1,
+      "message": "Done (also for PrintTo())",
+      "parentUuid": "afe8dbf1_394a72b4",
       "range": {
         "startLine": 107,
         "startChar": 22,
@@ -93,6 +135,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6ebed3bd_c0623adf",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-26T01:25:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e165fbe1_d2b24938",
+      "revId": "dcd6ebfe80e4e591df62f8cee17865901a3fae60",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "035d5b19_ec4f9e31",
@@ -106,6 +166,24 @@
       "writtenOn": "2026-02-26T01:00:10Z",
       "side": 1,
       "message": "Over-parenthesized. Also line 237.",
+      "revId": "dcd6ebfe80e4e591df62f8cee17865901a3fae60",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0add9600_b269d5bb",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-26T01:25:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "035d5b19_ec4f9e31",
       "revId": "dcd6ebfe80e4e591df62f8cee17865901a3fae60",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
