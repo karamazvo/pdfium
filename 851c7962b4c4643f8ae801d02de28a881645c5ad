@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "ced406f0_2dd2a202",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T17:28:53Z",
+      "side": 1,
+      "message": "Wrap :)",
+      "revId": "851c7962b4c4643f8ae801d02de28a881645c5ad",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "74275b9b_bbace60f",
@@ -14,6 +31,74 @@
       "writtenOn": "2026-02-25T04:11:46Z",
       "side": 1,
       "message": "@thestig@chromium.org @tsepez@chromium.org PTAL when free.",
+      "revId": "851c7962b4c4643f8ae801d02de28a881645c5ad",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "673ef71d_7a467da7",
+        "filename": "xfa/fxfa/layout/cxfa_contentlayoutprocessor.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 1745,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T17:28:53Z",
+      "side": 1,
+      "message": "If this breaks early, then line 1772 always evaluates to true. Possible alternative is to only run the line 1747 for-loop if `layout_item_` is not null.",
+      "revId": "851c7962b4c4643f8ae801d02de28a881645c5ad",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7425720a_c4f42cb4",
+        "filename": "xfa/fxfa/layout/cxfa_viewlayoutprocessor.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 1643,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T17:28:53Z",
+      "side": 1,
+      "message": "This line declares a new local variable. Line 572 is the same check, but without a new variable. Be consistent. If both methods end up adding new local variables, please use Google C++ style naming.",
+      "revId": "851c7962b4c4643f8ae801d02de28a881645c5ad",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "69dd4ce5_12745e48",
+        "filename": "xfa/fxfa/layout/cxfa_viewlayoutprocessor.h",
+        "patchSetId": 16
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T17:28:53Z",
+      "side": 1,
+      "message": "\"Returns whether the caller should continue processing.\"",
+      "revId": "851c7962b4c4643f8ae801d02de28a881645c5ad",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4030e6fd_4b64f243",
+        "filename": "xfa/fxfa/parser/cxfa_node.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 4140,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T17:28:53Z",
+      "side": 1,
+      "message": "Is this change necessary to fix the crashes at hand? Same for the ones below.",
       "revId": "851c7962b4c4643f8ae801d02de28a881645c5ad",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
