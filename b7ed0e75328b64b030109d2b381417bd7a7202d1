@@ -16,6 +16,24 @@
       "message": "Or... fpdf_unicode_util.h?",
       "revId": "b7ed0e75328b64b030109d2b381417bd7a7202d1",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "acf0c47b_db31da85",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-26T22:34:54Z",
+      "side": 1,
+      "message": "Looking ahead to subsetting /W, this function seems mostly reusable: [1].\n\nMaybe core/fpdfapi/edit/fpdf_font_util.h then?\n\n[1] https://source.chromium.org/chromium/_/pdfium/pdfium/+/e7bc1f3ec6602850a0c7e1b11089e56c7c483570:fpdfsdk/fpdf_edittext.cpp;l\u003d182-219;drc\u003d275f6d5ffa15e8c74eed1fecde5b9378ea23d622;bpv\u003d0;bpt\u003d0",
+      "parentUuid": "74ad09d1_3bdc3270",
+      "revId": "b7ed0e75328b64b030109d2b381417bd7a7202d1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
