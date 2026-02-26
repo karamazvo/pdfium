@@ -53,7 +53,8 @@ void EmbedderTestEnvironment::SetUp() {
 #endif  // PDF_ENABLE_V8
 
       .m_RendererType = renderer_type_,
-      .m_FontLibraryType = FPDF_FONTBACKENDTYPE_FREETYPE,
+      .m_FontLibraryType = fontations_ ? FPDF_FONTBACKENDTYPE_FONTATIONS
+                                       : FPDF_FONTBACKENDTYPE_FREETYPE,
   };
 
   FPDF_InitLibraryWithConfig(&config);
@@ -76,6 +77,7 @@ void EmbedderTestEnvironment::AddFlag(const std::string& flag) {
     write_pngs_ = true;
     return;
   }
+
 #if defined(PDF_USE_SKIA)
   std::string value;
   if (ParseSwitchKeyValue(flag, "--use-renderer=", &value)) {
@@ -87,6 +89,11 @@ void EmbedderTestEnvironment::AddFlag(const std::string& flag) {
       std::cerr << "Invalid --use-renderer argument, value must be one of agg "
                    "or skia\n";
     }
+    return;
+  }
+  if (flag == "--fontations") {
+    renderer_type_ = FPDF_RENDERERTYPE_SKIA;
+    fontations_ = true;
     return;
   }
 #endif  // defined(PDF_USE_SKIA)
