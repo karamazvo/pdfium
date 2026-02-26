@@ -16,6 +16,24 @@
       "message": "See other comment. If GetTextPosition() only returns the enum values, then the default case should be handled as NOTREACHED(). Otherwise leave it as it was and default to the label case.",
       "revId": "707d00c215fe0aada5a54969737aa9996ebc0718",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f14812b7_7c0753a8",
+        "filename": "fpdfsdk/cpdfsdk_appstream.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1170,
+      "author": {
+        "id": 3600789
+      },
+      "writtenOn": "2026-02-26T23:18:03Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "ada89244_3933df63",
+      "revId": "707d00c215fe0aada5a54969737aa9996ebc0718",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
