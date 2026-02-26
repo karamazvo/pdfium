@@ -16,6 +16,24 @@
       "message": "Any better ways to test this? Aka getting text from the PDF and checking its content.",
       "revId": "12d329fb743715c02e898cfb8be57199b30f98c0",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "56f3fd27_ae1bfb37",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 318,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T22:43:46Z",
+      "side": 1,
+      "message": "There\u0027s `pdfium_test --txt`, but pdfium_test does not subset and there\u0027s no test framework built around it for text testing.",
+      "parentUuid": "d41f32bb_acb096e2",
+      "revId": "12d329fb743715c02e898cfb8be57199b30f98c0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
