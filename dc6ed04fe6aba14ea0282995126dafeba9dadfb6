@@ -76,6 +76,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "990eca88_6af63069",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T21:10:50Z",
+      "side": 1,
+      "message": "I have some version of the ARM architecture manual laying around. This copy is only 78 MB but has 12940 pages. My micro-benchmark is:\n\n```\nTEST_F(FPDFViewEmbedderTest, Foo) {\n  ASSERT_TRUE(OpenDocument(\"arm.pdf\"));\n  EXPECT_EQ(12940, FPDF_GetPageCount(document()));\n}\n```\n\nIn a release build without V8, it\u0027s ~100 ms without this CL vs. 250 ms with.",
+      "parentUuid": "be3d7805_82589c62",
+      "revId": "dc6ed04fe6aba14ea0282995126dafeba9dadfb6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0aec84ce_879ee888",
