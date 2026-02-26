@@ -1,0 +1,40 @@
+%PDF-1.7
+% ò¤ô
+1 0 obj <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+2 0 obj <<
+  /Type /Pages
+  /Count 3
+  /Kids [3 0 R 4 0 R 5 0 R]
+  /MediaBox [0 0 200 200]
+>>
+endobj
+3 0 obj <<
+  /Type /Page
+  /Parent 2 0 R
+>>
+endobj
+% Object 4 is referenced in /Kids but never defined (null reference).
+5 0 obj <<
+  /Type /Page
+  /Parent 2 0 R
+>>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000068 00000 n 
+0000000169 00000 n 
+0000000000 65535 f 
+0000000290 00000 n 
+trailer <<
+  /Root 1 0 R
+  /Size 6
+>>
+startxref
+341
+%%EOF

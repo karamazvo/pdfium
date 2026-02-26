@@ -68,12 +68,10 @@ NodeType GetNodeType(RetainPtr<CPDF_Dictionary> kid_dict) {
 std::optional<int> CountPages(
     RetainPtr<CPDF_Dictionary> pages_dict,
     std::set<RetainPtr<CPDF_Dictionary>>* visited_pages) {
-  // Required. See ISO 32000-1:2008 spec, table 29, but tolerate page tree nodes
-  // that violate the spec.
-  int count_from_dict = pages_dict->GetIntegerFor("Count");
-  if (count_from_dict > 0 && count_from_dict < CPDF_Document::kPageMaxNum) {
-    return count_from_dict;
-  }
+  // Required. See ISO 32000-1:2008 spec, table 29, but tolerate page tree
+  // nodes that violate the spec. Don't trust /Count -- it may not match the
+  // actual number of valid kids (e.g. when /Kids contains null object
+  // references). Always validate by counting from the /Kids array below.
 
   RetainPtr<CPDF_Array> kids_array = pages_dict->GetMutableArrayFor("Kids");
   if (!kids_array) {
@@ -285,7 +283,6 @@ RetainPtr<CPDF_Dictionary> CPDF_Document::TraversePDFPages(int iPage,
     pKidList->ConvertToIndirectObjectAt(i, this);
     RetainPtr<CPDF_Dictionary> pKid = pKidList->GetMutableDictAt(i);
     if (!pKid) {
-      (*nPagesToGo)--;
       tree_traversal_[level].second++;
       continue;
     }

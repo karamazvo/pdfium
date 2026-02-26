@@ -564,6 +564,17 @@ TEST_F(FPDFViewEmbedderTest, DocumentWithEmptyPageTreeNode) {
   ASSERT_EQ(2, FPDF_GetPageCount(document()));
 }
 
+TEST_F(FPDFViewEmbedderTest, DocumentWithNullKidInPageTree) {
+  ASSERT_TRUE(OpenDocument("page_tree_null_kid.pdf"));
+  // /Count says 3 but one kid references a non-existent object.
+  ASSERT_EQ(2, FPDF_GetPageCount(document()));
+  // Both valid pages should load successfully.
+  for (int i = 0; i < 2; i++) {
+    ScopedPage page = LoadScopedPage(i);
+    EXPECT_TRUE(page);
+  }
+}
+
 // See https://crbug.com/42271445
 TEST_F(FPDFViewEmbedderTest, EmptyDocument) {
   CreateEmptyDocument();
