@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "756202f0_4a94a9ca",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 911,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-26T05:25:15Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "d144f8fc_60d70e9a",
+      "range": {
+        "startLine": 910,
+        "startChar": 1,
+        "endLine": 911,
+        "endChar": 38
+      },
+      "revId": "96b59be1f97ae7c203fc065fe5900d570c44a359",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d797fea0_12d1a89f",
@@ -37,6 +61,30 @@
       "writtenOn": "2026-02-26T05:24:39Z",
       "side": 1,
       "message": "More newlines\n\n\n```suggestion\n  CPDF_TextObject* const pTextObj \u003d obj.text_obj_;\n  if (!RemoveSpaceAtLineEnd(pTextObj)) {\n    return;\n  }\n\n  const CFX_Matrix form_matrix \u003d obj.form_matrix_;\n```",
+      "range": {
+        "startLine": 1104,
+        "startChar": 1,
+        "endLine": 1109,
+        "endChar": 50
+      },
+      "revId": "96b59be1f97ae7c203fc065fe5900d570c44a359",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b09747cf_4723cbed",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 1109,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-26T05:25:15Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "d797fea0_12d1a89f",
       "range": {
         "startLine": 1104,
         "startChar": 1,
