@@ -53,6 +53,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a6d9ec66_b2280506",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 1099,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-26T05:24:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d285c9fb_cced0987",
+      "revId": "08d7356daee45806e11b9c5adc63ceb406bf506d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7be666e0_d651a744",
