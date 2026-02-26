@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8b86eae3_204c9326",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 327,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T22:55:19Z",
+      "side": 1,
+      "message": "Since this is mostly a repeat of `kExpectedSingleTextAdded`, maybe this constant can just have the data from line 337. Then the test that uses it can create a vector and do \"strcat\".",
+      "revId": "8921462b044d62123393788f1f1cc6bc9460392f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e0ac2a51_989900a7",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 365,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T22:55:19Z",
+      "side": 1,
+      "message": "I would just not include the NUL terminator to make \"strcat\" easier. (See other comment) Then line 375 does not need to worry about integer underflow. Then adjust line 383 accordingly and separately check the last element of `actual_buffer` is NUL.",
+      "revId": "8921462b044d62123393788f1f1cc6bc9460392f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "67c07aae_d548a923",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T22:55:19Z",
+      "side": 1,
+      "message": "Also `FPDF_WCHAR` here?",
+      "range": {
+        "startLine": 366,
+        "startChar": 44,
+        "endLine": 366,
+        "endChar": 58
+      },
+      "revId": "8921462b044d62123393788f1f1cc6bc9460392f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
