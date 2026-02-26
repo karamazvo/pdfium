@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f0e0eb42_c3ad9789",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T23:47:33Z",
+      "side": 1,
+      "message": "Maybe append_range() someday.",
+      "revId": "ab10c879c9f05ace9dd9becfcf8576a9d90cf3bf",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
