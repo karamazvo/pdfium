@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "28410bc2_50bce8ff",
+        "filename": "core/fxge/cfx_glyphcache.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T01:16:46Z",
+      "side": 1,
+      "message": "Redundant with line 223.",
+      "revId": "e0f0426063552d4b96d4b4c0b5e6f0149c9a7746",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c14d3b86_5c48c251",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T01:16:46Z",
+      "side": 1,
+      "message": "Can probably CHECK() this if the caller selected Fontations.",
+      "revId": "e0f0426063552d4b96d4b4c0b5e6f0149c9a7746",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7cf4c475_115690bc",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T01:16:46Z",
+      "side": 1,
+      "message": "SetRendererType() will CHECK() that the caller selected one of the available types. This can do so as well and be similarly strict.",
+      "revId": "e0f0426063552d4b96d4b4c0b5e6f0149c9a7746",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9ea9ef60_9db61812",
+        "filename": "testing/embedder_test_environment.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T01:16:46Z",
+      "side": 1,
+      "message": "Should this be consistent with pdfium_test.cc and instead reject if the caller selected AGG?",
+      "revId": "e0f0426063552d4b96d4b4c0b5e6f0149c9a7746",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "29ae0304_df185477",
+        "filename": "testing/pdfium_test.cc",
+        "patchSetId": 17
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T01:16:46Z",
+      "side": 1,
+      "message": "Make this consistently Skia-only.",
+      "revId": "e0f0426063552d4b96d4b4c0b5e6f0149c9a7746",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
