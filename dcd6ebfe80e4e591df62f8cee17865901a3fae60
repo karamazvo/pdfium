@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a9c69102_ff395a1b",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T01:00:10Z",
+      "side": 1,
+      "message": "Maybe if the font data is less than say, 128 bytes, then it\u0027s likely invalid / not even worth subsetting.",
+      "revId": "dcd6ebfe80e4e591df62f8cee17865901a3fae60",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3d179dcb_695efd38",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T01:00:10Z",
+      "side": 1,
+      "message": "1) Add newline above since this is not related to the flags.\n2) Should /FontFile get removed as well?",
+      "revId": "dcd6ebfe80e4e591df62f8cee17865901a3fae60",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "afe8dbf1_394a72b4",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T01:00:10Z",
+      "side": 1,
+      "message": "Just `const CPDF_Object* obj` here?",
+      "range": {
+        "startLine": 107,
+        "startChar": 22,
+        "endLine": 107,
+        "endChar": 62
+      },
+      "revId": "dcd6ebfe80e4e591df62f8cee17865901a3fae60",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5bb73ce7_790a8e2e",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T01:00:10Z",
+      "side": 1,
+      "message": "Can use `inline const CPDF_Stream* ToStream(const CPDF_Object* obj)` to safely handle null `obj` and get back a `CPDF_Stream*`. Then check the stream pointer to see if it is null.",
+      "revId": "dcd6ebfe80e4e591df62f8cee17865901a3fae60",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "035d5b19_ec4f9e31",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T01:00:10Z",
+      "side": 1,
+      "message": "Over-parenthesized. Also line 237.",
+      "revId": "dcd6ebfe80e4e591df62f8cee17865901a3fae60",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
