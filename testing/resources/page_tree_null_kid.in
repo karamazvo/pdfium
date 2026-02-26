@@ -1,0 +1,28 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 3
+  /Kids [3 0 R 5 0 R 4 0 R]
+  /MediaBox [0 0 200 200]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+>>
+endobj
+% Object 5 is referenced in /Kids but never defined (null reference).
+{{object 4 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
