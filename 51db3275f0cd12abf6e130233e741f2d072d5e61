@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6ad0f2cd_5476c2e7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T00:46:30Z",
+      "side": 1,
+      "message": "Unnecessary\n\nblank line. :)",
+      "revId": "51db3275f0cd12abf6e130233e741f2d072d5e61",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "758187eb_117f4356",
+        "filename": "core/fpdfdoc/cpdf_apsettings.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T00:46:30Z",
+      "side": 1,
+      "message": "https://pdfium-review.googlesource.com/c/pdfium/+/143351 just added fxcrt::to_underlying(), so it\u0027s possible to use that here now.",
+      "revId": "51db3275f0cd12abf6e130233e741f2d072d5e61",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3afbbbd1_8935bf30",
+        "filename": "core/fpdfdoc/cpdf_apsettings.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T00:46:30Z",
+      "side": 1,
+      "message": "Keep in mind that GetIntegerFor() can read the dictionary and get `/TP 99`, so this can return a value that the enum does not represent. So in order to make the change in CPDFSDK_AppStream::SetAsPushButton() which removes the `default` case, this needs to sanity check the value is in range.\n\nAlternatively, this does not sanity check and the callers handle it.",
+      "revId": "51db3275f0cd12abf6e130233e741f2d072d5e61",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
