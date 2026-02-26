@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "16be1060_a635b3f8",
+        "filename": "core/fpdfdoc/cpdf_apsettings.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T23:45:37Z",
+      "side": 1,
+      "message": "I would suggest following the pattern in (random example) ash/accelerators/accelerator_controller_impl.h in Chromium and put kMinxValue/kMaxValue into the enum itself. Then if the enum changes, it will be obvious that the min/max values need to be updated. It may also be helpful to add kDefaultValue, and use that here in place of kCaption.",
+      "revId": "d9b29bbff35e695ec6fddf299010efdc8e6036d3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6eceff6e_e260f377",
+        "filename": "fpdfsdk/cpdfsdk_appstream.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 1150,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-26T23:45:37Z",
+      "side": 1,
+      "message": "How about moving the switch statement to a helper function, and then this line can call it. In the helper, it can be:\n\n```\nHelper(... input) {\n  switch (input) {\n     case kFoo:\n        return foo;\n     ...\n     // no default case\n  };\n  NOTREACHED();\n}\n```\n\nThen that helper will trigger a compiler warning if a new enum value gets added, and it will also make sure the text position is valid.",
+      "revId": "d9b29bbff35e695ec6fddf299010efdc8e6036d3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
