@@ -41,6 +41,23 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c86df45a_784b7180",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-26T18:35:15Z",
+      "side": 1,
+      "message": "Hi, and welcome! This seems reasonable, but my only concern is how this might affect the load time of a large PDF. Have you tested this against large input?",
+      "revId": "dc6ed04fe6aba14ea0282995126dafeba9dadfb6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0aec84ce_879ee888",
@@ -54,6 +71,29 @@
       "writtenOn": "2026-02-26T18:32:29Z",
       "side": 1,
       "message": "Can this be an ordinary ASCII 45 dash instead?",
+      "range": {
+        "startLine": 71,
+        "startChar": 24,
+        "endLine": 71,
+        "endChar": 25
+      },
+      "revId": "dc6ed04fe6aba14ea0282995126dafeba9dadfb6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eac3f0ee_4df5f65c",
+        "filename": "core/fpdfapi/parser/cpdf_document.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-02-26T18:35:15Z",
+      "side": 1,
+      "message": "nit: use ascii dash rather than unicode dash.",
       "range": {
         "startLine": 71,
         "startChar": 24,
