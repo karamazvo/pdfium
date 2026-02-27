@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "426dcc12_0b40b810",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-27T18:10:31Z",
+      "side": 1,
+      "message": "BTW, I wonder if this check is still necessary, considering line 389 checks for 6 elements.",
+      "revId": "1f0971d801ef3aa3af01c80e931f1bc7a003944c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2c7ad308_49b1e72b",
+        "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 476,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-27T18:10:31Z",
+      "side": 1,
+      "message": "Nice size reduction here.",
+      "range": {
+        "startLine": 476,
+        "startChar": 49,
+        "endLine": 476,
+        "endChar": 53
+      },
+      "revId": "1f0971d801ef3aa3af01c80e931f1bc7a003944c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
