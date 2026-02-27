@@ -54,6 +54,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a5e4daa5_1c3fb04d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-27T00:34:40Z",
+      "side": 1,
+      "message": "There\u0027s [2] later in the chain for moving CreateWidthsArray() to the same file.\n\n[2] https://pdfium-review.googlesource.com/c/pdfium/+/143892",
+      "parentUuid": "3190005e_25e17cf5",
+      "revId": "b7ed0e75328b64b030109d2b381417bd7a7202d1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "041a78ba_cb363016",
