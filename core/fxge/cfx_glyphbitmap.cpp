@@ -8,19 +8,27 @@
 
 #include "core/fxge/dib/cfx_dibitmap.h"
 
-CFX_GlyphBitmap::CFX_GlyphBitmap(int left, int top)
-    : CFX_GlyphBitmap(left, top, pdfium::MakeRetain<CFX_DIBitmap>()) {}
+#if defined(PDF_USE_SKIA)
+#include "third_party/skia/include/core/SkImageInfo.h"
+#endif  // defined(PDF_USE_SKIA)
 
 CFX_GlyphBitmap::CFX_GlyphBitmap(int left,
                                  int top,
                                  RetainPtr<CFX_DIBitmap> bitmap)
-    : left_(left), top_(top), bitmap_(std::move(bitmap)) {}
+    : left_(left), top_(top), bitmap_(std::move(bitmap)) {
+#if defined(PDF_USE_SKIA)
+  pdfium::span<uint8_t> bitmap_span = bitmap->GetWritableBuffer();
+  if (!bitmap_span.empty()) {
+    SkImageInfo info =
+        SkImageInfo::MakeN32Premul(bitmap->GetWidth(), bitmap->GetHeight());
+    // Assuming 4 bytes per pixel (RGBA/BGRA)
+    const size_t row_bytes = bitmap->GetPitch() * 4;
+    sk_bitmap_.installPixels(info, bitmap_span.data(), row_bytes);
+  }
+#endif
+}
 
 CFX_GlyphBitmap::~CFX_GlyphBitmap() = default;
-
-RetainPtr<CFX_DIBitmap> CFX_GlyphBitmap::GetWritableBitmap() {
-  return bitmap_;
-}
 
 RetainPtr<const CFX_DIBitmap> CFX_GlyphBitmap::GetBitmap() const {
   return bitmap_;
