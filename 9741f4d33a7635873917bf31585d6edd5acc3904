@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3f6ff938_9254eecd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-27T18:19:45Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 9
+      },
+      "revId": "9741f4d33a7635873917bf31585d6edd5acc3904",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9900b070_609e7e96",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-27T18:19:45Z",
+      "side": 1,
+      "message": "```\n   \u003c\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003e\n   \n\u003c\u003d\u003d\u003e   \u003c\u003d\u003d\u003e  \u003c\u003d\u003d\u003e\n\n  V     V\n  \n\n     ^\n    ^\n  A \n\n```",
+      "range": {
+        "startLine": 9,
+        "startChar": 13,
+        "endLine": 9,
+        "endChar": 22
+      },
+      "revId": "9741f4d33a7635873917bf31585d6edd5acc3904",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
