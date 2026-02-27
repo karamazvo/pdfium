@@ -16,6 +16,24 @@
       "message": "If the only thing changed in patchset 11 was code comments, there is an issue with mac_skia (agg) this time.",
       "revId": "4f5882acdf203d214b3153261fc2d5cfd67d5864",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "deb48f89_9f58f3fd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 11
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-27T15:43:21Z",
+      "side": 1,
+      "message": "Correction: there is a failure during the agg tests on mac (not the skia tests - the bot itself is called mac_skia but it runs tests on both agg and skia).\n\nFrom what I remember, the images in patchset 9 for agg were fine. Would suggest you download the ..._agg_mac.png images from there and use those.",
+      "parentUuid": "31f91d11_8697eeff",
+      "revId": "4f5882acdf203d214b3153261fc2d5cfd67d5864",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
