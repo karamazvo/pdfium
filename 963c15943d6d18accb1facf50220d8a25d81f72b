@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "b7c7f5c8_04222d50",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-27T20:12:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "efb04f33_bf4834e4",
+      "range": {
+        "startLine": 12,
+        "startChar": 11,
+        "endLine": 12,
+        "endChar": 20
+      },
+      "revId": "963c15943d6d18accb1facf50220d8a25d81f72b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "094a1891_756edd35",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1
@@ -71,6 +95,24 @@
       "writtenOn": "2026-02-27T20:03:44Z",
       "side": 1,
       "message": "Would it be helpful to keep the raw pointer version of PrintTo(), and then have a second PrintTo() with this signature explicitly call RetainPtr::Get() to forward to the first one?",
+      "revId": "963c15943d6d18accb1facf50220d8a25d81f72b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b8ea4697_65cc3677",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-27T20:12:39Z",
+      "side": 1,
+      "message": "I think that\u0027ll just be unnecessary boilerplate, as gtest won\u0027t ever use the raw pointer version directly.",
+      "parentUuid": "7d23ed36_17820837",
       "revId": "963c15943d6d18accb1facf50220d8a25d81f72b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
