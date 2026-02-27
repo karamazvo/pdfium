@@ -70,6 +70,24 @@
       "parentUuid": "5d483e2d_8a7c1f47",
       "revId": "4f5882acdf203d214b3153261fc2d5cfd67d5864",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "963a5f4b_8c940193",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 11
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-27T17:44:57Z",
+      "side": 1,
+      "message": "The few bots I added do pass, so the PNGs are correct now. Am verifying that the test indeed does fail on main.",
+      "parentUuid": "8dd7b517_2c970f4c",
+      "revId": "4f5882acdf203d214b3153261fc2d5cfd67d5864",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
