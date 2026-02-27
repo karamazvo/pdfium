@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8cf63f09_b00745c0",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-02-27T00:45:08Z",
+      "side": 1,
+      "message": "If this switches to AddIndirectObject(), then use the object number it returns on line 319.\n\n`font_dict-\u003eSetNewFor\u003cCPDF_Reference\u003e(..., doc-\u003eAddIndirectObject(LoadUnicode(...)));`",
+      "revId": "4a4a00c8909a02058dac028454c4b304382ecc41",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
