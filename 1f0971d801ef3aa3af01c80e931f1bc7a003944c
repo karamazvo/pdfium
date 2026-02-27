@@ -20,6 +20,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "cd2c4865_fa7168c3",
+        "filename": "core/fpdfapi/edit/cpdf_fontsubsetter_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-27T18:33:59Z",
+      "side": 1,
+      "message": "It\u0027s nice for readability, especially for the mapping with 12 elements. If we want to remove it, I can address this in a follow-up CL.",
+      "parentUuid": "426dcc12_0b40b810",
+      "revId": "1f0971d801ef3aa3af01c80e931f1bc7a003944c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "2c7ad308_49b1e72b",
         "filename": "fpdfsdk/fpdf_save_embeddertest.cpp",
         "patchSetId": 4
