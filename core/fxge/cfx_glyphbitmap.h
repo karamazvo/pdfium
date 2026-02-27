@@ -9,17 +9,22 @@
 
 #include "core/fxcrt/retain_ptr.h"
 
+#if defined(PDF_USE_SKIA)
+#include "third_party/skia/include/core/SkBitmap.h"
+#endif  // defined(PDF_USE_SKIA)
+
 class CFX_DIBitmap;
 
 class CFX_GlyphBitmap {
  public:
-  CFX_GlyphBitmap(int left, int top);
   CFX_GlyphBitmap(int left, int top, RetainPtr<CFX_DIBitmap> bitmap);
   CFX_GlyphBitmap(const CFX_GlyphBitmap&) = delete;
   CFX_GlyphBitmap& operator=(const CFX_GlyphBitmap&) = delete;
   ~CFX_GlyphBitmap();
 
-  RetainPtr<CFX_DIBitmap> GetWritableBitmap();
+#if defined(PDF_USE_SKIA)
+  SkBitmap& GetSkBitmap() { return sk_bitmap_; }
+#endif  // defined(PDF_USE_SKIA)
   RetainPtr<const CFX_DIBitmap> GetBitmap() const;
   int left() const { return left_; }
   int top() const { return top_; }
@@ -27,7 +32,10 @@ class CFX_GlyphBitmap {
  private:
   const int left_;
   const int top_;
-  const RetainPtr<CFX_DIBitmap> bitmap_;
+  const RetainPtr<CFX_DIBitmap> bitmap_;  // Must outlive `sk_bitmap_`.
+#if defined(PDF_USE_SKIA)
+  SkBitmap sk_bitmap_;
+#endif  // defined(PDF_USE_SKIA)
 };
 
 #endif  // CORE_FXGE_CFX_GLYPHBITMAP_H_
