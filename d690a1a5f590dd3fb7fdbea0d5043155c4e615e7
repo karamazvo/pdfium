@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "06bab2b1_00f93d36",
+        "filename": "core/fpdfapi/edit/cpdf_font_util.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-02-27T00:04:20Z",
+      "side": 1,
+      "message": "Actually, I\u0027m going to make the caller do this, to avoid creating a new indirect obj in the document during font subsetting.",
+      "revId": "d690a1a5f590dd3fb7fdbea0d5043155c4e615e7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
