@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "801de3e7_e72b5196",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-27T15:35:28Z",
+      "side": 1,
+      "message": "Hi, got started on replacing existing static_cast\u003cint\u003e(s) with the new fxcrt::to_underlying() function. Was thinking we work on existing enums before creating brand new ones. This would probably remain something that is ongoing for quite some time (as there are quite a few enums).",
+      "revId": "3b99a27d071b908f0cacac4e344eae33231d4fb0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
