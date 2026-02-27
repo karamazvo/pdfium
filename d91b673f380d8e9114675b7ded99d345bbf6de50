@@ -116,6 +116,24 @@
       "parentUuid": "384e4529_d4679804",
       "revId": "d91b673f380d8e9114675b7ded99d345bbf6de50",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "33b60832_29049063",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 908,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-27T10:06:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a0539151_a3285d28",
+      "revId": "d91b673f380d8e9114675b7ded99d345bbf6de50",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
