@@ -88,6 +88,24 @@
       "parentUuid": "8dd7b517_2c970f4c",
       "revId": "4f5882acdf203d214b3153261fc2d5cfd67d5864",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "55437250_1e6af455",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 11
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-02-27T17:58:32Z",
+      "side": 1,
+      "message": "The first test \"FPDFFlattenEmbedderTest.FlattenNoViewAnnotation\" does fail on main and hence show broken behaviour.\n\nThe second test \"FPDFFlattenEmbedderTest.FlattenNoViewPrintAnnotation\" passes on main and sort of seems to act as a test that \"the existing behaviour stays as is\", which is good to have.\n\nI think the tests should work as intended. @thestig@chromium.org @tsepez@chromium.org let me know if there is anything else I am missing here.",
+      "parentUuid": "963a5f4b_8c940193",
+      "revId": "4f5882acdf203d214b3153261fc2d5cfd67d5864",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
