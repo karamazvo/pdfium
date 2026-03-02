@@ -24,7 +24,6 @@
 #if defined(PDF_USE_SKIA)
 #include "third_party/skia/include/core/SkFontMgr.h"         // nogncheck
 #include "third_party/skia/include/core/SkStream.h"          // nogncheck
-#include "third_party/skia/include/core/SkTypeface.h"        // nogncheck
 #include "third_party/skia/include/ports/SkFontMgr_empty.h"  // nogncheck
 
 #if defined(PDF_ENABLE_FONTATIONS)
@@ -276,22 +275,23 @@ void CFX_GlyphCache::DestroyGlobals() {
   g_fontmgr = nullptr;
 }
 
-SkTypeface* CFX_GlyphCache::GetSkTypeface(const CFX_Font* font) {
-  if (!typeface_ && g_fontmgr) {
+sk_sp<SkTypeface> CFX_GlyphCache::MakeSkTypeface(const CFX_Font* font) {
+  sk_sp<SkTypeface> result;
+  if (g_fontmgr) {
     pdfium::span<const uint8_t> span = font->GetFontSpan();
-    typeface_ = g_fontmgr->makeFromStream(
+    result = g_fontmgr->makeFromStream(
         std::make_unique<SkMemoryStream>(span.data(), span.size()));
   }
 #if BUILDFLAG(IS_WIN) || BUILDFLAG(IS_APPLE)
   // If DirectWrite or CoreText didn't work, try a fallback font manager.
-  if (!typeface_) {
+  if (!result) {
     sk_sp<SkFontMgr> freetype_mgr = CreateSkiaFontManager();
     pdfium::span<const uint8_t> span = font->GetFontSpan();
-    typeface_ = freetype_mgr->makeFromStream(
+    result = freetype_mgr->makeFromStream(
         std::make_unique<SkMemoryStream>(span.data(), span.size()));
   }
 #endif  // BUILDFLAG(IS_WIN) || BUILDFLAG(IS_APPLE)
-  return typeface_.get();
+  return result;
 }
 #endif  // defined(PDF_USE_SKIA)
 

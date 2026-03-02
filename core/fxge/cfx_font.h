@@ -33,7 +33,8 @@ class CFX_SubstFont;
 struct CFX_TextRenderOptions;
 
 #if defined(PDF_USE_SKIA)
-class SkTypeface;
+#include "third_party/skia/include/core/SkRefCnt.h"    // nogncheck
+#include "third_party/skia/include/core/SkTypeface.h"  // nogncheck
 #endif
 
 class CFX_Font {
@@ -150,6 +151,9 @@ class CFX_Font {
 
   mutable RetainPtr<CFX_Face> face_;
   mutable RetainPtr<CFX_GlyphCache> glyph_cache_;
+#if defined(PDF_USE_SKIA)
+  mutable sk_sp<SkTypeface> typeface_;
+#endif
   std::unique_ptr<CFX_SubstFont> subst_font_;
   DataVector<uint8_t> font_data_allocation_;
   pdfium::raw_span<uint8_t> font_data_;

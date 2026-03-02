@@ -502,6 +502,9 @@ pdfium_fuzzer("pdf_cmap_fuzzer") {
     "../../core/fpdfapi/font",
     "../../core/fxcrt",
   ]
+  if (pdf_use_skia) {
+    deps += [ "//skia" ]
+  }
 }
 
 pdfium_fuzzer("pdf_codec_a85_fuzzer") {
