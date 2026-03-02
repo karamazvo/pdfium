@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b74c5860_29227995",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 599,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-02T21:06:14Z",
+      "side": 1,
+      "message": "Maybe just checked_cast here?",
+      "range": {
+        "startLine": 599,
+        "startChar": 29,
+        "endLine": 599,
+        "endChar": 32
+      },
+      "revId": "754444073611ddcbd2e2b2c2876054336a508b09",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
