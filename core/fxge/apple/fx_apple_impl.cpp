@@ -46,8 +46,7 @@ bool CGDrawGlyphRun(CGContextRef context,
 
   CFX_Matrix new_matrix = mtObject2Device;
   CQuartz2D& quartz2d =
-      static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatform())
-          ->quartz_2d_;
+      static_cast<CApplePlatform*>(CFX_GEModule::GetPlatform())->quartz_2d_;
   if (!font->GetPlatformFont()) {
     if (font->GetPsName() == "DFHeiStd-W5") {
       return false;
@@ -89,15 +88,13 @@ namespace pdfium {
 
 void CFX_AggDeviceDriver::InitPlatform() {
   CQuartz2D& quartz2d =
-      static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatform())
-          ->quartz_2d_;
+      static_cast<CApplePlatform*>(CFX_GEModule::GetPlatform())->quartz_2d_;
   platform_graphics_ = quartz2d.CreateGraphics(bitmap_);
 }
 
 void CFX_AggDeviceDriver::DestroyPlatform() {
   CQuartz2D& quartz2d =
-      static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatform())
-          ->quartz_2d_;
+      static_cast<CApplePlatform*>(CFX_GEModule::GetPlatform())->quartz_2d_;
   if (platform_graphics_) {
     quartz2d.DestroyGraphics(platform_graphics_);
     platform_graphics_ = nullptr;
@@ -180,8 +177,7 @@ bool CFX_AggDeviceDriver::DrawDeviceText(
 void CFX_Font::ReleasePlatformResource() {
   if (platform_font_) {
     CQuartz2D& quartz2d =
-        static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatform())
-            ->quartz_2d_;
+        static_cast<CApplePlatform*>(CFX_GEModule::GetPlatform())->quartz_2d_;
     quartz2d.DestroyFont(platform_font_);
     platform_font_ = nullptr;
   }

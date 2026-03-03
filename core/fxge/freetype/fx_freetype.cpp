@@ -83,8 +83,7 @@ pdfium::span<const FT_Var_Axis> GetVariationAxis(
 }  // namespace
 
 void FXFTMMVarDeleter::operator()(FT_MM_Var* variation_desc) {
-  FT_Done_MM_Var(CFX_GEModule::Get()->GetFontMgr()->GetFTLibrary(),
-                 variation_desc);
+  FT_Done_MM_Var(CFX_GEModule::GetFontMgr()->GetFTLibrary(), variation_desc);
 }
 
 ScopedFXFTMMVar::ScopedFXFTMMVar(FT_FaceRec* face)

@@ -143,7 +143,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
       bCoreText = false;
     }
 
-    auto* pPlatform = CFX_GEModule::Get()->GetPlatform();
+    auto* pPlatform = CFX_GEModule::GetPlatform();
     pdfium::span<const uint8_t> span = font_.GetFontSpan();
     font_.SetPlatformFont(pPlatform->CreatePlatformFont(span));
     if (!font_.GetPlatformFont()) {

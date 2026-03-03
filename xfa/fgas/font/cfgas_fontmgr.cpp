@@ -455,7 +455,7 @@ RetainPtr<CFX_ReadOnlyFixedSizeDataVectorStream> CreateFontStream(
 
 RetainPtr<CFX_ReadOnlyFixedSizeDataVectorStream> CreateFontStream(
     const ByteString& bsFaceName) {
-  CFX_FontMgr* font_mgr = CFX_GEModule::Get()->GetFontMgr();
+  CFX_FontMgr* font_mgr = CFX_GEModule::GetFontMgr();
   CFX_FontMapper* font_mapper = font_mgr->GetBuiltinMapper();
   font_mapper->LoadInstalledFonts();
 
@@ -568,7 +568,7 @@ bool CFGAS_FontDescriptor::VerifyUnicode(wchar_t unicode) {
       return false;
     }
     RetainPtr<CFX_Face> ft_face = CFX_Face::NewFromSpanStream(
-        CFX_GEModule::Get()->GetFontMgr(), file_read, face_index_);
+        CFX_GEModule::GetFontMgr(), file_read, face_index_);
     if (!ft_face) {
       return false;
     }
@@ -591,8 +591,7 @@ void CFGAS_FontMgr::EnsureFontsEnumerated() {
 }
 
 bool CFGAS_FontMgr::EnumFontsFromFontMapper() {
-  CFX_FontMapper* font_mapper =
-      CFX_GEModule::Get()->GetFontMgr()->GetBuiltinMapper();
+  CFX_FontMapper* font_mapper = CFX_GEModule::GetFontMgr()->GetBuiltinMapper();
   font_mapper->LoadInstalledFonts();
 
   for (size_t i = 0; i < font_mapper->GetFaceSize(); ++i) {
@@ -730,7 +729,7 @@ void CFGAS_FontMgr::RegisterFaces(
   int num_faces = 0;
   do {
     RetainPtr<CFX_Face> face = CFX_Face::NewFromSpanStream(
-        CFX_GEModule::Get()->GetFontMgr(), font_stream, index);
+        CFX_GEModule::GetFontMgr(), font_stream, index);
     if (!face) {
       ++index;
       continue;

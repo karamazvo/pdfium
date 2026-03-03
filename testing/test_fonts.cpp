@@ -107,7 +107,7 @@ TestFonts::TestFonts() {
 TestFonts::~TestFonts() = default;
 
 void TestFonts::InstallFontMapper() {
-  auto* font_mapper = CFX_GEModule::Get()->GetFontMgr()->GetBuiltinMapper();
+  auto* font_mapper = CFX_GEModule::GetFontMgr()->GetBuiltinMapper();
   font_mapper->SetSystemFontInfo(std::make_unique<SystemFontInfoWrapper>(
       font_mapper->TakeSystemFontInfo()));
 }
