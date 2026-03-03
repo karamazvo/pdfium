@@ -50,7 +50,12 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
 
   // RenderDeviceDriverIface:
   DeviceType GetDeviceType() const override;
-  int GetDeviceCaps(int caps_id) const override;
+  int GetPixelWidth();
+  int GetPixelHeight();
+  int GetBitsPerPixel();
+  int GetHorzSize();
+  int GetVertSize();
+  int GetRenderCaps();
   void SaveState() override;
   void RestoreState(bool bKeepSaved) override;
   bool SetClip_PathFill(const CFX_Path& path,
