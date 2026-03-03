@@ -118,6 +118,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7c699886_f762072c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-03T22:13:40Z",
+      "side": 1,
+      "message": "Given most PDFs have far fewer pages, the additional time spent traversing the tree (~86 pages per ms on a modern workstation CPU core) seems ok to me.",
+      "parentUuid": "990eca88_6af63069",
+      "revId": "dc6ed04fe6aba14ea0282995126dafeba9dadfb6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0aec84ce_879ee888",
