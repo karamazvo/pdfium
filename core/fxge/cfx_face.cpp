@@ -30,6 +30,10 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_fontencoding.h"
 
+#if defined(PDF_USE_SKIA)
+#include "third_party/skia/include/core/SkTypeface.h"  // nogncheck
+#endif
+
 #define EM_ADJUST(em, a) (em == 0 ? (a) : (a) * 1000 / em)
 
 namespace {
@@ -935,6 +939,15 @@ bool CFX_Face::CanEmbed() {
   FT_UShort fstype = FT_Get_FSType_Flags(GetRec());
   return (fstype & (FT_FSTYPE_RESTRICTED_LICENSE_EMBEDDING |
                     FT_FSTYPE_BITMAP_EMBEDDING_ONLY)) == 0;
+}
+#endif
+
+#if defined(PDF_USE_SKIA)
+SkTypeface* CFX_Face::GetOrCreateSkTypeface(const CFX_Font* font) {
+  if (!skia_typeface_) {
+    skia_typeface_ = font->MakeSkTypeface();
+  }
+  return skia_typeface_.get();
 }
 #endif
 

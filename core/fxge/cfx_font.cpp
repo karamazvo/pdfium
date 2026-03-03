@@ -28,6 +28,10 @@
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
 
+#if defined(PDF_USE_SKIA)
+#include "third_party/skia/include/core/SkTypeface.h"  // nogncheck
+#endif
+
 namespace {
 
 const CFX_Font::CharsetFontMap kDefaultTTFMap[] = {
@@ -408,7 +412,7 @@ const CFX_Path* CFX_Font::LoadGlyphPath(uint32_t glyph_index,
 }
 
 #if defined(PDF_USE_SKIA)
-SkTypeface* CFX_Font::GetSkTypeface() const {
-  return GetOrCreateGlyphCache()->GetSkTypeface(this);
+sk_sp<SkTypeface> CFX_Font::MakeSkTypeface() const {
+  return GetOrCreateGlyphCache()->MakeSkTypeface(this);
 }
 #endif
