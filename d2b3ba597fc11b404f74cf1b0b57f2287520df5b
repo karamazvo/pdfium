@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "75d63143_bf7af9ef",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 2123,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-03-03T20:49:13Z",
+      "side": 1,
+      "message": "Nit: newline above line 2123 to keep consistency.",
+      "revId": "d2b3ba597fc11b404f74cf1b0b57f2287520df5b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
