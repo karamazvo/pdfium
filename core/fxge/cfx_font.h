@@ -26,6 +26,10 @@
 #include "core/fxge/cfx_face.h"
 #include "core/fxge/fx_font.h"
 
+#if defined(PDF_USE_SKIA)
+#include "third_party/skia/include/core/SkRefCnt.h"  // nogncheck
+#endif
+
 class CFX_GlyphBitmap;
 class CFX_GlyphCache;
 class CFX_Path;
@@ -149,6 +153,9 @@ class CFX_Font {
   ByteString GetFamilyNameOrUntitled() const;
 
   mutable RetainPtr<CFX_Face> face_;
+#if defined(PDF_USE_SKIA)
+  mutable sk_sp<SkTypeface> skia_typeface_;
+#endif
   mutable RetainPtr<CFX_GlyphCache> glyph_cache_;
   std::unique_ptr<CFX_SubstFont> subst_font_;
   DataVector<uint8_t> font_data_allocation_;

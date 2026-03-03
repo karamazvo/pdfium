@@ -30,6 +30,10 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_fontencoding.h"
 
+#if defined(PDF_USE_SKIA)
+#include "third_party/skia/include/core/SkTypeface.h"  // nogncheck
+#endif
+
 #define EM_ADJUST(em, a) (em == 0 ? (a) : (a) * 1000 / em)
 
 namespace {
