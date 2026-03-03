@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "f2fea3cb_3790a0df",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-03T21:44:11Z",
+      "side": 1,
+      "message": "To address this comment, please run `git cl description` locally with the branch associated with this Change List checked out, or use the web interface to edit the CL description.",
+      "parentUuid": "4c3928d1_de0f5508",
+      "range": {
+        "startLine": 9,
+        "startChar": 5,
+        "endLine": 9,
+        "endChar": 49
+      },
+      "revId": "dc6ed04fe6aba14ea0282995126dafeba9dadfb6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "d27a3075_7ae4e0bb",
@@ -140,6 +164,54 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "831e749c_7e6cf8f4",
+        "filename": "core/fpdfapi/parser/cpdf_document.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-03T21:44:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eac3f0ee_4df5f65c",
+      "range": {
+        "startLine": 71,
+        "startChar": 24,
+        "endLine": 71,
+        "endChar": 25
+      },
+      "revId": "dc6ed04fe6aba14ea0282995126dafeba9dadfb6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4282016c_81a6a385",
+        "filename": "core/fpdfapi/parser/cpdf_document.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-03T21:44:11Z",
+      "side": 1,
+      "message": "Looks like you made this change. In the future, please use the web interface and click the \"Done\" button to create draft comments, and then send out all the drafts so these get marked as resolved.",
+      "parentUuid": "0aec84ce_879ee888",
+      "range": {
+        "startLine": 71,
+        "startChar": 24,
+        "endLine": 71,
+        "endChar": 25
+      },
+      "revId": "dc6ed04fe6aba14ea0282995126dafeba9dadfb6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "176212fc_45c42a08",
@@ -153,6 +225,24 @@
       "writtenOn": "2026-02-26T18:32:29Z",
       "side": 1,
       "message": "Probably not necessary given the comment above. Line 168 is fairly clear that this is different from the other 2 AppendNew() calls.",
+      "revId": "dc6ed04fe6aba14ea0282995126dafeba9dadfb6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "68e5e398_d7e6973a",
+        "filename": "core/fpdfapi/parser/cpdf_document_unittest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-03T21:44:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "176212fc_45c42a08",
       "revId": "dc6ed04fe6aba14ea0282995126dafeba9dadfb6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -180,6 +270,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ad795d9b_6acba5ee",
+        "filename": "core/fpdfapi/parser/cpdf_document_unittest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-03T21:44:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5eb309c5_ca99099f",
+      "range": {
+        "startLine": 173,
+        "startChar": 9,
+        "endLine": 173,
+        "endChar": 18
+      },
+      "revId": "dc6ed04fe6aba14ea0282995126dafeba9dadfb6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e3816738_e69a6d5d",
@@ -197,6 +311,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cc184a1f_3c096dcd",
+        "filename": "fpdfsdk/fpdf_view_embeddertest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 573,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-03T21:44:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e3816738_e69a6d5d",
+      "revId": "dc6ed04fe6aba14ea0282995126dafeba9dadfb6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "190fefaf_22120177",
@@ -210,6 +342,24 @@
       "writtenOn": "2026-02-26T18:32:29Z",
       "side": 1,
       "message": "Can this list be 3 4 5? Then adjust line 19 and 20 accordingly and regenerate the PDF.",
+      "revId": "dc6ed04fe6aba14ea0282995126dafeba9dadfb6",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "663058f3_b53fd7cc",
+        "filename": "testing/resources/page_tree_null_kid.in",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-03T21:44:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "190fefaf_22120177",
       "revId": "dc6ed04fe6aba14ea0282995126dafeba9dadfb6",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
