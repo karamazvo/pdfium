@@ -622,8 +622,7 @@ bool CGdiDeviceDriver::DrawPath(const CFX_Path& path,
                                 uint32_t fill_color,
                                 uint32_t stroke_color,
                                 const CFX_FillRenderOptions& fill_options) {
-  auto* pPlatform =
-      static_cast<CWin32Platform*>(CFX_GEModule::Get()->GetPlatform());
+  auto* pPlatform = static_cast<CWin32Platform*>(CFX_GEModule::GetPlatform());
   if (!(pGraphState || stroke_color == 0) &&
       !pPlatform->gdiplus_ext_.IsAvailable()) {
     CFX_FloatRect bbox_f = path.GetBoundingBox();

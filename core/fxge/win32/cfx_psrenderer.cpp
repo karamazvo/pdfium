@@ -789,7 +789,7 @@ void CFX_PSRenderer::DrawTextAsType3Font(int char_count,
                                          float font_size,
                                          fxcrt::ostringstream& buf) {
   RetainPtr<CFX_GlyphCache> pGlyphCache =
-      CFX_GEModule::Get()->GetFontMgr()->GetGlyphCache(font);
+      CFX_GEModule::GetFontMgr()->GetGlyphCache(font);
   int last_fontnum = -1;
   UNSAFE_TODO({
     for (int i = 0; i < char_count; i++) {

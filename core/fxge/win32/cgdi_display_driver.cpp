@@ -19,8 +19,7 @@
 
 CGdiDisplayDriver::CGdiDisplayDriver(HDC hDC)
     : CGdiDeviceDriver(hDC, DeviceType::kDisplay) {
-  auto* pPlatform =
-      static_cast<CWin32Platform*>(CFX_GEModule::Get()->GetPlatform());
+  auto* pPlatform = static_cast<CWin32Platform*>(CFX_GEModule::GetPlatform());
   if (pPlatform->gdiplus_ext_.IsAvailable()) {
     render_caps_ |= FXRC_ALPHA_PATH | FXRC_ALPHA_IMAGE;
   }
@@ -200,8 +199,7 @@ bool CGdiDisplayDriver::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                      image_rect.top + clip_rect.top, BlendMode::kNormal);
   }
   if (bitmap->IsAlphaFormat()) {
-    auto* pPlatform =
-        static_cast<CWin32Platform*>(CFX_GEModule::Get()->GetPlatform());
+    auto* pPlatform = static_cast<CWin32Platform*>(CFX_GEModule::GetPlatform());
     if (pPlatform->gdiplus_ext_.IsAvailable()) {
       return pPlatform->gdiplus_ext_.StretchDIBits(
           dc_handle_, std::move(bitmap), dest_left, dest_top, dest_width,

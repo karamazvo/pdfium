@@ -159,7 +159,7 @@ bool CFX_Font::LoadFromSpanStream(
     const RetainPtr<CFX_ReadOnlySpanStream>& stream,
     int face_index) {
   object_tag_ = 0;
-  face_ = CFX_Face::NewFromSpanStream(CFX_GEModule::Get()->GetFontMgr(), stream,
+  face_ = CFX_Face::NewFromSpanStream(CFX_GEModule::GetFontMgr(), stream,
                                       face_index);
   return !!face_;
 }
@@ -192,7 +192,7 @@ bool CFX_Font::LoadFaceFromSpan(pdfium::span<const uint8_t> src_span,
   vertical_ = force_vertical;
   object_tag_ = object_tag;
   font_data_allocation_ = DataVector<uint8_t>(src_span.begin(), src_span.end());
-  face_ = CFX_Face::New(CFX_GEModule::Get()->GetFontMgr(), nullptr,
+  face_ = CFX_Face::New(CFX_GEModule::GetFontMgr(), nullptr,
                         font_data_allocation_, 0);
   font_data_ = font_data_allocation_;
   return !!face_;
@@ -208,7 +208,7 @@ void CFX_Font::LoadSubstFace(const ByteString& face_name,
   vertical_ = bVertical;
   object_tag_ = 0;
   subst_font_ = std::make_unique<CFX_SubstFont>();
-  face_ = CFX_GEModule::Get()->GetFontMgr()->GetBuiltinMapper()->FindSubstFace(
+  face_ = CFX_GEModule::GetFontMgr()->GetBuiltinMapper()->FindSubstFace(
       face_name, bTrueType, flags, weight, italic_angle, code_page,
       subst_font_.get());
   if (face_) {
@@ -371,7 +371,7 @@ std::optional<FX_RECT> CFX_Font::GetBBox() const {
 
 RetainPtr<CFX_GlyphCache> CFX_Font::GetOrCreateGlyphCache() const {
   if (!glyph_cache_) {
-    glyph_cache_ = CFX_GEModule::Get()->GetFontMgr()->GetGlyphCache(this);
+    glyph_cache_ = CFX_GEModule::GetFontMgr()->GetGlyphCache(this);
   }
   return glyph_cache_;
 }

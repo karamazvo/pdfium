@@ -154,7 +154,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_AddInstalledFont(void* mapper,
 
 FPDF_EXPORT void FPDF_CALLCONV
 FPDF_SetSystemFontInfo(FPDF_SYSFONTINFO* font_infoExt) {
-  auto* mapper = CFX_GEModule::Get()->GetFontMgr()->GetBuiltinMapper();
+  auto* mapper = CFX_GEModule::GetFontMgr()->GetBuiltinMapper();
   if (!font_infoExt) {
     std::unique_ptr<SystemFontInfoIface> info = mapper->TakeSystemFontInfo();
     // Delete `info` when it goes out of scope here.
@@ -275,7 +275,7 @@ static void DefaultDeleteFont(struct _FPDF_SYSFONTINFO* pThis, void* hFont) {
 
 FPDF_EXPORT FPDF_SYSFONTINFO* FPDF_CALLCONV FPDF_GetDefaultSystemFontInfo() {
   std::unique_ptr<SystemFontInfoIface> font_info =
-      CFX_GEModule::Get()->GetPlatform()->CreateDefaultSystemFontInfo();
+      CFX_GEModule::GetPlatform()->CreateDefaultSystemFontInfo();
   if (!font_info) {
     return nullptr;
   }

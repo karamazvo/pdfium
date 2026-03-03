@@ -481,7 +481,7 @@ void CWin32Platform::Terminate() {}
 
 std::unique_ptr<SystemFontInfoIface>
 CWin32Platform::CreateDefaultSystemFontInfo() {
-  auto** user_paths = CFX_GEModule::Get()->GetUserFontPaths();
+  auto** user_paths = CFX_GEModule::GetUserFontPaths();
   if (user_paths) {
     auto font_info = std::make_unique<CFX_Win32FallbackFontInfo>();
     UNSAFE_TODO({

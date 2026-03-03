@@ -1095,7 +1095,7 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
   CFX_TextRenderOptions text_options(options);
   if (is_text_smooth) {
     if (GetDeviceType() == DeviceType::kDisplay && bpp_ > 1) {
-      if (!CFX_GEModule::Get()->GetFontMgr()->FTLibrarySupportsHinting()) {
+      if (!CFX_GEModule::GetFontMgr()->FTLibrarySupportsHinting()) {
         // Some Freetype implementations (like the one packaged with Fedora) do
         // not support hinting due to patents 6219025, 6239783, 6307566,
         // 6225973, 6243070, 6393145, 6421054, 6282327, and 6624828; the latest

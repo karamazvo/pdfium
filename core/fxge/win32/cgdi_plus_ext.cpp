@@ -191,8 +191,7 @@ Gdiplus::GpFillMode FillType2Gdip(CFX_FillRenderOptions::FillType fill_type) {
 }
 
 const CGdiplusExt& GetGdiplusExt() {
-  auto* pData =
-      static_cast<CWin32Platform*>(CFX_GEModule::Get()->GetPlatform());
+  auto* pData = static_cast<CWin32Platform*>(CFX_GEModule::GetPlatform());
   return pData->gdiplus_ext_;
 }
 

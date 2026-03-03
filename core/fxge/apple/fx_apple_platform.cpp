@@ -160,7 +160,7 @@ void CApplePlatform::Terminate() {}
 std::unique_ptr<SystemFontInfoIface>
 CApplePlatform::CreateDefaultSystemFontInfo() {
   auto pInfo = std::make_unique<CFX_MacFontInfo>();
-  if (!pInfo->ParseFontCfg(CFX_GEModule::Get()->GetUserFontPaths())) {
+  if (!pInfo->ParseFontCfg(CFX_GEModule::GetUserFontPaths())) {
     pInfo->AddPath("~/Library/Fonts");
     pInfo->AddPath("/Library/Fonts");
     pInfo->AddPath("/System/Library/Fonts");

@@ -49,7 +49,7 @@ class MockSystemFontInfo : public SystemFontInfoIface {
 // Class that exposes private CFX_FontMapper methods.
 class TestFontMapper : public CFX_FontMapper {
  public:
-  TestFontMapper() : CFX_FontMapper(CFX_GEModule::Get()->GetFontMgr()) {}
+  TestFontMapper() : CFX_FontMapper(CFX_GEModule::GetFontMgr()) {}
 
   using CFX_FontMapper::GetCachedFace;
   using CFX_FontMapper::GetCachedTTCFace;

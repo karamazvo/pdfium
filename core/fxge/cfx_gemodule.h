@@ -40,15 +40,16 @@ class CFX_GEModule {
 
   static void Create(const char** pUserFontPaths);
   static void Destroy();
-  static CFX_GEModule* Get();
 
-  CFX_FontMgr* GetFontMgr() const { return font_mgr_.get(); }
-  PlatformIface* GetPlatform() const { return platform_.get(); }
-  const char** GetUserFontPaths() const { return user_font_paths_; }
+  static CFX_FontMgr* GetFontMgr() { return Get()->font_mgr_.get(); }
+  static PlatformIface* GetPlatform() { return Get()->platform_.get(); }
+  static const char** GetUserFontPaths() { return Get()->user_font_paths_; }
 
  private:
   explicit CFX_GEModule(const char** pUserFontPaths);
   ~CFX_GEModule();
+
+  static CFX_GEModule* Get();
 
   std::unique_ptr<PlatformIface> const platform_;  // Must outlive `font_mgr_`.
   std::unique_ptr<CFX_FontMgr> const font_mgr_;

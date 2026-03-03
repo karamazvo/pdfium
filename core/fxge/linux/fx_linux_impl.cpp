@@ -179,7 +179,7 @@ class CLinuxPlatform : public CFX_GEModule::PlatformIface {
 
   std::unique_ptr<SystemFontInfoIface> CreateDefaultSystemFontInfo() override {
     auto pInfo = std::make_unique<CFX_LinuxFontInfo>();
-    if (!pInfo->ParseFontCfg(CFX_GEModule::Get()->GetUserFontPaths())) {
+    if (!pInfo->ParseFontCfg(CFX_GEModule::GetUserFontPaths())) {
       pInfo->AddPath("/usr/share/fonts");
       pInfo->AddPath("/usr/share/X11/fonts/Type1");
       pInfo->AddPath("/usr/share/X11/fonts/TTF");
