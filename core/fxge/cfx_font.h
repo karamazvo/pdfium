@@ -26,6 +26,10 @@
 #include "core/fxge/cfx_face.h"
 #include "core/fxge/fx_font.h"
 
+#if defined(PDF_USE_SKIA)
+#include "third_party/skia/include/core/SkRefCnt.h"  // nogncheck
+#endif
+
 class CFX_GlyphBitmap;
 class CFX_GlyphCache;
 class CFX_Path;
@@ -131,7 +135,7 @@ class CFX_Font {
   int GetGlyphWidthImpl(uint32_t glyph_index, int dest_width, int weight) const;
 
 #if defined(PDF_USE_SKIA)
-  SkTypeface* GetSkTypeface() const;
+  sk_sp<SkTypeface> MakeSkTypeface() const;
   bool IsSubstFontBold() const;
 #endif
 
