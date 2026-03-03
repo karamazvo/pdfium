@@ -46,6 +46,30 @@
       },
       "revId": "7ba8c53c73b4a8c7d44de1877a9d8a0f4d895ade",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "52bf2f68_9b0f9063",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2104,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-03T08:25:19Z",
+      "side": 1,
+      "message": "Agree, it would still abort in the next ASSERT, but still might cause a bit more confusion, which could be better if it was assert.\n\nWould be a lot clearly to see 1 message saying the count chars wasn\u0027t right.\n\nInstead of seeing a couple more that all originate due to the first expect.\n\nShould have prob explained that clearer mb.",
+      "parentUuid": "dc0e99d9_ad922686",
+      "range": {
+        "startLine": 2104,
+        "startChar": 2,
+        "endLine": 2104,
+        "endChar": 11
+      },
+      "revId": "7ba8c53c73b4a8c7d44de1877a9d8a0f4d895ade",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
