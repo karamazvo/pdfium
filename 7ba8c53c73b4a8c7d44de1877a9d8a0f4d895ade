@@ -22,6 +22,30 @@
       },
       "revId": "7ba8c53c73b4a8c7d44de1877a9d8a0f4d895ade",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dc0e99d9_ad922686",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2104,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-03T06:01:30Z",
+      "side": 1,
+      "message": "In that case, it\u0027ll abort either way.",
+      "parentUuid": "d514dce6_40b882a4",
+      "range": {
+        "startLine": 2104,
+        "startChar": 2,
+        "endLine": 2104,
+        "endChar": 11
+      },
+      "revId": "7ba8c53c73b4a8c7d44de1877a9d8a0f4d895ade",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
