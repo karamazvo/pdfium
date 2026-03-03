@@ -593,7 +593,7 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(
     return nullptr;
   }
   auto pGlyphBitmap = std::make_unique<CFX_GlyphBitmap>(
-      glyph->bitmap_left, glyph->bitmap_top, new_bitmap);
+      CFX_Point(glyph->bitmap_left, glyph->bitmap_top), new_bitmap);
 
   const uint32_t dest_pitch = new_bitmap->GetPitch();
   const uint32_t src_pitch = abs(ft_bitmap.pitch);
