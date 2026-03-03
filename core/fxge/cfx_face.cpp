@@ -339,10 +339,15 @@ class ScopedFaceTransform {
 }  // namespace
 
 // static
-RetainPtr<CFX_Face> CFX_Face::New(CFX_FontMgr* font_mgr,
-                                  RetainPtr<Retainable> desc,
-                                  pdfium::span<const uint8_t> data,
-                                  uint32_t face_index) {
+RetainPtr<CFX_Face> CFX_Face::New(
+    CFX_FontMgr* font_mgr,
+    RetainPtr<Retainable> desc,
+    const RetainPtr<CFX_ReadOnlySpanStream>& font_stream,
+    uint32_t face_index) {
+  if (!font_stream) {
+    return nullptr;
+  }
+  pdfium::span<const uint8_t> data = font_stream->span();
   FT_FaceRec* face_rec = nullptr;
   if (FT_New_Memory_Face(font_mgr->GetFTLibrary(), data.data(),
                          pdfium::checked_cast<FT_Long>(data.size()),
@@ -356,26 +361,10 @@ RetainPtr<CFX_Face> CFX_Face::New(CFX_FontMgr* font_mgr,
   if (FT_Set_Pixel_Sizes(face->GetRec(), 64, 64) != 0) {
     return nullptr;
   }
-  return face;
-}
 
-#if defined(PDF_ENABLE_XFA) || BUILDFLAG(IS_ANDROID)
-RetainPtr<CFX_Face> CFX_Face::NewFromSpanStream(
-    CFX_FontMgr* font_mgr,
-    const RetainPtr<CFX_ReadOnlySpanStream>& font_stream,
-    uint32_t face_index) {
-  if (!font_stream) {
-    return nullptr;
-  }
-  RetainPtr<CFX_Face> face =
-      New(font_mgr, nullptr, font_stream->span(), face_index);
-  if (!face) {
-    return nullptr;
-  }
   face->owned_font_stream_ = std::move(font_stream);
   return face;
 }
-#endif  // defined(PDF_ENABLE_XFA) || BUILDFLAG(IS_ANDROID)
 
 bool CFX_Face::HasGlyphNames() const {
   return !!(GetRec()->face_flags & FT_FACE_FLAG_GLYPH_NAMES);

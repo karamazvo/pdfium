@@ -51,17 +51,11 @@ class CFX_Face final : public Retainable, public Observable {
   static constexpr CharMapId kWindowsSymbolCmapId{3, 0};
   static constexpr CharMapId kWindowsUnicodeCmapId{3, 1};
 
-  static RetainPtr<CFX_Face> New(CFX_FontMgr* font_mgr,
-                                 RetainPtr<Retainable> desc,
-                                 pdfium::span<const uint8_t> data,
-                                 uint32_t face_index);
-
-#if defined(PDF_ENABLE_XFA) || BUILDFLAG(IS_ANDROID)
-  static RetainPtr<CFX_Face> NewFromSpanStream(
+  static RetainPtr<CFX_Face> New(
       CFX_FontMgr* font_mgr,
+      RetainPtr<Retainable> desc,
       const RetainPtr<CFX_ReadOnlySpanStream>& font_stream,
       uint32_t face_index);
-#endif  // defined(PDF_ENABLE_XFA) || BUILDFLAG(IS_ANDROID)
 
   bool HasGlyphNames() const;
   bool IsTtOt() const;
