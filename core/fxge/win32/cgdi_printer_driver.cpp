@@ -32,14 +32,28 @@ CGdiPrinterDriver::CGdiPrinterDriver(HDC hDC)
 
 CGdiPrinterDriver::~CGdiPrinterDriver() = default;
 
-int CGdiPrinterDriver::GetDeviceCaps(int caps_id) const {
-  if (caps_id == FXDC_HORZ_SIZE) {
-    return horz_size_;
-  }
-  if (caps_id == FXDC_VERT_SIZE) {
-    return vert_size_;
-  }
-  return CGdiDeviceDriver::GetDeviceCaps(caps_id);
+int CGdiPrinterDriver::GetPixelWidth() const {
+  return CGdiDeviceDriver::GetPixelWidth();
+}
+
+int CGdiPrinterDriver::GetPixelHeight() const {
+  return CGdiDeviceDriver::GetPixelHeight();
+}
+
+int CGdiPrinterDriver::GetBitsPerPixel() const {
+  return CGdiDeviceDriver::GetBitsPerPixel();
+}
+
+int CGdiPrinterDriver::GetRenderCaps() const {
+  return CGdiDeviceDriver::GetRenderCaps();
+}
+
+int CGdiPrinterDriver::GetHorzSize() const {
+  return horz_size_;
+}
+
+int CGdiPrinterDriver::GetVertSize() const {
+  return vert_size_;
 }
 
 bool CGdiPrinterDriver::SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
