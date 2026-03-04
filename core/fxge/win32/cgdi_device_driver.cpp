@@ -388,19 +388,28 @@ DeviceType CGdiDeviceDriver::GetDeviceType() const {
   return device_type_;
 }
 
-int CGdiDeviceDriver::GetDeviceCaps(int caps_id) const {
-  switch (caps_id) {
-    case FXDC_PIXEL_WIDTH:
-      return width_;
-    case FXDC_PIXEL_HEIGHT:
-      return height_;
-    case FXDC_BITS_PIXEL:
-      return bits_per_pixel_;
-    case FXDC_RENDER_CAPS:
-      return render_caps_;
-    default:
-      NOTREACHED();
-  }
+int CGdiDeviceDriver::GetPixelWidth() const {
+  return width_;
+}
+
+int CGdiDeviceDriver::GetPixelHeight() const {
+  return height_;
+}
+
+int CGdiDeviceDriver::GetBitsPerPixel() const {
+  return bits_per_pixel_;
+}
+
+int CGdiDeviceDriver::GetRenderCaps() const {
+  return 0;
+}
+
+int CGdiDeviceDriver::GetHorzSize() const {
+  return horz_size_;
+}
+
+int CGdiDeviceDriver::GetVertSize() const {
+  return vert_size_;
 }
 
 void CGdiDeviceDriver::SaveState() {

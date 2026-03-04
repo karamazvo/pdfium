@@ -530,10 +530,10 @@ void CFX_RenderDevice::SetDeviceDriver(
 }
 
 void CFX_RenderDevice::InitDeviceInfo() {
-  width_ = device_driver_->GetDeviceCaps(FXDC_PIXEL_WIDTH);
-  height_ = device_driver_->GetDeviceCaps(FXDC_PIXEL_HEIGHT);
-  bpp_ = device_driver_->GetDeviceCaps(FXDC_BITS_PIXEL);
-  render_caps_ = device_driver_->GetDeviceCaps(FXDC_RENDER_CAPS);
+  width_ = device_driver_->GetPixelWidth();
+  height_ = device_driver_->GetPixelHeight();
+  bpp_ = device_driver_->GetBitsPerPixel();
+  render_caps_ = device_driver_->GetRenderCaps();
   device_type_ = device_driver_->GetDeviceType();
   clip_box_ = device_driver_->GetClipBox();
 }
@@ -549,8 +549,24 @@ void CFX_RenderDevice::RestoreState(bool bKeepSaved) {
   }
 }
 
-int CFX_RenderDevice::GetDeviceCaps(int caps_id) const {
-  return device_driver_->GetDeviceCaps(caps_id);
+int CFX_RenderDevice::GetPixelWidth() {
+  return device_driver_->GetPixelWidth();
+}
+
+int CFX_RenderDevice::GetPixelHeight() {
+  return device_driver_->GetPixelHeight();
+}
+
+int CFX_RenderDevice::GetBitsPerPixel() {
+  return device_driver_->GetBitsPerPixel();
+}
+
+int CFX_RenderDevice::GetHorzSize() {
+  return device_driver_->GetHorzSize();
+}
+
+int CFX_RenderDevice::GetVertSize() {
+  return device_driver_->GetVertSize();
 }
 
 RetainPtr<CFX_DIBitmap> CFX_RenderDevice::GetBitmap() {
