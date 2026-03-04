@@ -814,6 +814,29 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
                                                       double* width,
                                                       double* height);
 
+// Experimental API.
+// Function: FPDF_GetDocFonts
+//          Get handles to all the fonts in the document.
+// Parameters:
+//          document              - Handle to the document.
+//          fonts_buffer          - Buffer for the handles to all the fonts.
+//          fonts_buffer_len      - Number of handles |fonts_buffer| can hold.
+//          out_fonts_buffer_len  - Pointer to the variable that will receive
+//                                  the minimum buffer size needed to hold all
+//                                  the font handles.
+// Return value:
+//          Whether the operation succeeded or not.
+//
+// |document| must be valid and |out_fonts_buffer_len| must be non-NULL.
+// |fonts_buffer| can be NULL if the caller just wants to know how many font
+// handles there are.
+// The handles received in |fonts_buffer| must be closed with FPDFFont_Close().
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDF_GetDocFonts(FPDF_DOCUMENT document,
+                 FPDF_FONT* fonts_buffer,
+                 size_t fonts_buffer_len,
+                 size_t* out_fonts_buffer_len);
+
 // Page rendering flags. They can be combined with bit-wise OR.
 //
 // Set if annotations are to be rendered.

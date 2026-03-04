@@ -158,6 +158,7 @@ struct Options {
   Options() = default;
 
   bool show_config = false;
+  bool show_fonts = false;
   bool show_metadata = false;
   bool send_events = false;
   bool use_load_mem_document = false;
@@ -494,6 +495,8 @@ bool ParseCommandLine(const std::vector<std::string>& args,
     const std::string& cur_arg = args[cur_idx];
     if (cur_arg == "--show-config") {
       options->show_config = true;
+    } else if (cur_arg == "--show-fonts") {
+      options->show_fonts = true;
     } else if (cur_arg == "--show-metadata") {
       options->show_metadata = true;
     } else if (cur_arg == "--send-events") {
@@ -861,6 +864,24 @@ FPDF_BOOL NeedToPauseNow(IFSDK_PAUSE* p) {
   return true;
 }
 
+// Returns the page index that had loading problems, if any.
+std::optional<int> CheckPagesAvail(int first_page,
+                                   int last_page,
+                                   FPDF_AVAIL pdf_avail,
+                                   FX_DOWNLOADHINTS* hints) {
+  for (int i = first_page; i < last_page; ++i) {
+    int avail_status = PDF_DATA_NOTAVAIL;
+    while (avail_status == PDF_DATA_NOTAVAIL) {
+      avail_status = FPDFAvail_IsPageAvail(pdf_avail, i, hints);
+    }
+
+    if (avail_status == PDF_DATA_ERROR) {
+      return i;
+    }
+  }
+  return std::nullopt;
+}
+
 class Processor final {
  public:
   Processor(const Options* options, const std::function<void()>* idler)
@@ -915,6 +936,7 @@ class PdfProcessor final {
   }
 
   bool ProcessPage(int page_index);
+  void ProcessPageRenderOnly(int page_index);
 
  private:
   // Per processor state.
@@ -1633,6 +1655,27 @@ bool PdfProcessor::ProcessPage(const int page_index) {
   return renderer->HasOutput();
 }
 
+void PdfProcessor::ProcessPageRenderOnly(const int page_index) {
+  FPDF_PAGE page = GetPage(page_index);
+  if (!page) {
+    return;
+  }
+
+  auto renderer = std::make_unique<ProgressiveBitmapPageRenderer>(
+      page, /*width=*/FPDF_GetPageWidthF(page),
+      /*height=*/FPDF_GetPageHeightF(page), /*flags=*/0, idler(),
+      /*writer=*/nullptr, /*color_scheme_=*/nullptr);
+
+  if (renderer->Start()) {
+    while (renderer->Continue()) {
+      continue;
+    }
+    renderer->Finish(form());
+  }
+
+  Idle();
+}
+
 void Processor::ProcessPdf(const std::string& name,
                            pdfium::span<const uint8_t> data,
                            const std::string& events) {
@@ -1783,19 +1826,17 @@ void Processor::ProcessPdf(const std::string& name,
                              &form_callbacks);
 
   for (int repetition = 0; repetition < render_repeats; ++repetition) {
-    for (int i = first_page; i < last_page; ++i) {
-      if (is_linearized) {
-        int avail_status = PDF_DATA_NOTAVAIL;
-        while (avail_status == PDF_DATA_NOTAVAIL) {
-          avail_status = FPDFAvail_IsPageAvail(pdf_avail.get(), i, &hints);
-        }
-
-        if (avail_status == PDF_DATA_ERROR) {
-          fprintf(stderr,
-                  "Unknown error in checking if page %d is available.\n", i);
-          return;
-        }
+    if (is_linearized) {
+      std::optional<int> page_with_error =
+          CheckPagesAvail(first_page, last_page, pdf_avail.get(), &hints);
+      if (page_with_error.has_value()) {
+        fprintf(stderr, "Unknown error in checking if page %d is available.\n",
+                page_with_error.value());
+        return;
       }
+    }
+
+    for (int i = first_page; i < last_page; ++i) {
       if (pdf_processor.ProcessPage(i)) {
         ++processed_pages;
       } else {
@@ -1807,6 +1848,23 @@ void Processor::ProcessPdf(const std::string& name,
 
   FORM_DoDocumentAAction(form.get(), FPDFDOC_AACTION_WC);
   Idle();
+
+  if (options().show_fonts) {
+    // Process all pages if there may be unprocessed pages.
+    if (first_page != 0 || last_page != page_count) {
+      std::optional<int> page_with_error =
+          CheckPagesAvail(0, page_count, pdf_avail.get(), &hints);
+      if (page_with_error.has_value()) {
+        fprintf(stderr, "Unknown error in checking if page %d is available.\n",
+                page_with_error.value());
+        return;
+      }
+      for (int i = 0; i < page_count; ++i) {
+        pdf_processor.ProcessPageRenderOnly(i);
+      }
+    }
+    DumpFonts(doc.get());
+  }
 
   fprintf(stderr, "Processed %d pages.\n", processed_pages);
   if (bad_pages) {
@@ -1847,6 +1905,7 @@ void ShowConfig() {
 constexpr char kUsageString[] =
     "Usage: pdfium_test [OPTION] [FILE]...\n"
     "  --show-config          - print build options and exit\n"
+    "  --show-fonts           - print the list of fonts\n"
     "  --show-metadata        - print the file metadata\n"
     "  --show-pageinfo        - print information about pages\n"
     "  --show-structure       - print the structure elements from the "

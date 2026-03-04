@@ -1140,6 +1140,33 @@ FPDF_GetPageSizeByIndexF(FPDF_DOCUMENT document,
   return true;
 }
 
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDF_GetDocFonts(FPDF_DOCUMENT document,
+                 FPDF_FONT* fonts_buffer,
+                 size_t fonts_buffer_len,
+                 size_t* out_fonts_buffer_len) {
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc || !out_fonts_buffer_len) {
+    return false;
+  }
+
+  auto* page_data = CPDF_DocPageData::FromDocument(doc);
+  const auto& font_map = page_data->GetFontMap();
+  if (fonts_buffer && fonts_buffer_len >= font_map.size()) {
+    // SAFETY: required from caller.
+    auto fonts_buffer_span =
+        UNSAFE_BUFFERS(pdfium::span(fonts_buffer, fonts_buffer_len));
+    size_t i = 0;
+    for (auto& it : font_map) {
+      fonts_buffer_span[i] = FPDFFontFromCPDFFont(it.second);
+      ++i;
+    }
+  }
+
+  *out_fonts_buffer_len = font_map.size();
+  return true;
+}
+
 FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
                                                       int page_index,
                                                       double* width,
