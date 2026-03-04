@@ -59,8 +59,12 @@ class CFX_RenderDevice {
   int GetWidth() const { return width_; }
   int GetHeight() const { return height_; }
   DeviceType GetDeviceType() const { return device_type_; }
-  int GetRenderCaps() const { return render_caps_; }
   int GetDeviceCaps(int id) const;
+  int GetPixelWidth() const;
+  int GetPixelHeight() const;
+  int GetBitsPerPixel() const;
+  int GetHorzSize() const;
+  int GetVertSize() const;
   RetainPtr<CFX_DIBitmap> GetBitmap();
   RetainPtr<const CFX_DIBitmap> GetBitmap() const;
   [[nodiscard]] bool CreateCompatibleBitmap(const RetainPtr<CFX_DIBitmap>& pDIB,

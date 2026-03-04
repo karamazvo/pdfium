@@ -28,11 +28,28 @@ CGdiDisplayDriver::CGdiDisplayDriver(HDC hDC)
 
 CGdiDisplayDriver::~CGdiDisplayDriver() = default;
 
-int CGdiDisplayDriver::GetDeviceCaps(int caps_id) const {
-  if (caps_id == FXDC_HORZ_SIZE || caps_id == FXDC_VERT_SIZE) {
-    return 0;
-  }
+int CGdiDisplayDriver::GetPixelWidth() const {
+  return CGdiDeviceDriver::GetPixelWidth();
+}
+
+int CGdiDisplayDriver::GetPixelHeight() const {
+  return CGdiDeviceDriver::GetPixelHeight();
+}
+
+int CGdiDisplayDriver::GetBitsPerPixel() const {
+  return CGdiDeviceDriver::GetBitsPerPixel();
+}
+
+CGdiDisplayDriver::GetDeviceCaps(int caps_id) const {
   return CGdiDeviceDriver::GetDeviceCaps(caps_id);
+}
+
+int CGdiDisplayDriver::GetHorzSize() const {
+  return 0;
+}
+
+int CGdiDisplayDriver::GetVertSize() const {
+  return 0;
 }
 
 bool CGdiDisplayDriver::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,

@@ -671,7 +671,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   CFX_DefaultRenderDevice bitmap_device;
   RetainPtr<CFX_DIBitmap> backdrop;
   if (!transparency.IsIsolated() &&
-      (device_->GetRenderCaps() & FXRC_GET_BITS)) {
+      (device_->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_GET_BITS)) {
     backdrop = pdfium::MakeRetain<CFX_DIBitmap>();
     if (!device_->CreateCompatibleBitmap(backdrop, width, height)) {
       return true;
@@ -774,7 +774,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::GetBackdrop(
 
   const int cap_to_check =
       backdrop->IsAlphaFormat() ? FXRC_ALPHA_OUTPUT : FXRC_GET_BITS;
-  if (device_->GetRenderCaps() & cap_to_check) {
+  if (device_->GetDeviceCaps(FXDC_RENDER_CAPS) & cap_to_check) {
     device_->GetDIBits(backdrop, bbox.left, bbox.top);
     return backdrop;
   }
@@ -1335,9 +1335,10 @@ void CPDF_RenderStatus::CompositeDIBitmap(
   bool bBackAlphaRequired =
       blend_mode != BlendMode::kNormal && bIsolated && !drop_objects_;
   bool bGetBackGround =
-      ((device_->GetRenderCaps() & FXRC_ALPHA_OUTPUT)) ||
-      (!(device_->GetRenderCaps() & FXRC_ALPHA_OUTPUT) &&
-       (device_->GetRenderCaps() & FXRC_GET_BITS) && !bBackAlphaRequired);
+      ((device_->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_ALPHA_OUTPUT)) ||
+      (!(device_->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_ALPHA_OUTPUT) &&
+       (device_->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_GET_BITS) &&
+       !bBackAlphaRequired);
   if (bGetBackGround) {
     if (bIsolated || !transparency.IsGroup()) {
       if (!bitmap->IsMaskFormat()) {

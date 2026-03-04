@@ -26,7 +26,12 @@ class CGdiDisplayDriver final : public CGdiDeviceDriver {
 
  private:
   // CGdiDisplayDriver:
+  int GetPixelWidth() const override;
+  int GetPixelHeight() const override;
+  int GetBitsPerPixel() const override;
   int GetDeviceCaps(int caps_id) const override;
+  int GetHorzSize() const override;
+  int GetVertSize() const override;
   bool GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
                  int left,
                  int top) const override;
