@@ -3,6 +3,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "c7def119_6daf1034",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 29
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-04T07:40:06Z",
+      "side": 1,
+      "message": "nit: Either make this \"CHECKs\" or \"a CHECK\"",
+      "range": {
+        "startLine": 10,
+        "startChar": 11,
+        "endLine": 10,
+        "endChar": 16
+      },
+      "revId": "049805ea78eec7b51bc08a8079efa92b3d96e3ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "70162851_28c2b8cd",
         "filename": "/COMMIT_MSG",
         "patchSetId": 29
@@ -20,6 +43,23 @@
         "endLine": 11,
         "endChar": 50
       },
+      "revId": "049805ea78eec7b51bc08a8079efa92b3d96e3ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "77bda5e0_74ef5c1d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 29
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-04T07:40:06Z",
+      "side": 1,
+      "message": "nit: perhaps update this line?\n\nTo propagate the failure signal, the CL also works to:\n(OWWTE)",
       "revId": "049805ea78eec7b51bc08a8079efa92b3d96e3ef",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
