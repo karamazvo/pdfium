@@ -156,6 +156,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "1bb352cd_4d22ba66",
+        "filename": "core/fpdfapi/parser/cpdf_cross_ref_table.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-04T02:23:49Z",
+      "side": 1,
+      "message": "Another option is to just prepare the follow-up CLs and chain them together. Then they can all land around the same time and the asymmetry will be temporary.",
+      "parentUuid": "5e14b739_506756ed",
+      "revId": "a24e96cffcf19a65acb84b16a967827ae4047841",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "30c2b5b0_38196ea4",
         "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
         "patchSetId": 27

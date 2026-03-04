@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "70162851_28c2b8cd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 29
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-04T02:23:49Z",
+      "side": 1,
+      "message": "\"and also rejects\"",
+      "range": {
+        "startLine": 11,
+        "startChar": 39,
+        "endLine": 11,
+        "endChar": 50
+      },
+      "revId": "049805ea78eec7b51bc08a8079efa92b3d96e3ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4d65af97_5bfa2119",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 29
+      },
+      "lineNbr": 813,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-04T02:23:49Z",
+      "side": 1,
+      "message": "So this aborts if AddNormal() fails. Another possibly is to ignore an AddNormal() failure and continue parsing. Thoughts?",
+      "revId": "049805ea78eec7b51bc08a8079efa92b3d96e3ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
