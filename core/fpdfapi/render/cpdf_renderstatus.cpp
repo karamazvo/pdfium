@@ -348,7 +348,7 @@ void CPDF_RenderStatus::DrawObjWithBackground(CPDF_PageObject* pObj,
   }
 
   const bool needs_buffer =
-      !(device_->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_GET_BITS);
+      !(device_->GetRenderCaps() & FXRC_GET_BITS);
   if (!needs_buffer) {
     DrawObjWithBackgroundToDevice(pObj, mtObj2Device, device_, CFX_Matrix());
     return;
@@ -565,7 +565,7 @@ void CPDF_RenderStatus::ProcessClipPath(const CPDF_ClipPath& ClipPath,
   }
 
   if (!IsPrint() &&
-      !(device_->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SOFT_CLIP)) {
+      !(device_->GetRenderCaps() & FXRC_SOFT_CLIP)) {
     return;
   }
 
@@ -649,7 +649,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   }
   bool bTextClip = !IsPrint() && pPageObj->clip_path().HasRef() &&
                    pPageObj->clip_path().GetTextCount() > 0 &&
-                   !(device_->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SOFT_CLIP);
+                   !(device_->GetRenderCaps() & FXRC_SOFT_CLIP);
   if (!pSMaskDict && group_alpha == 1.0f && blend_type == BlendMode::kNormal &&
       !bTextClip && !bGroupTransparent && initial_alpha == 1.0f) {
     return false;
@@ -1337,7 +1337,8 @@ void CPDF_RenderStatus::CompositeDIBitmap(
   bool bGetBackGround =
       ((device_->GetRenderCaps() & FXRC_ALPHA_OUTPUT)) ||
       (!(device_->GetRenderCaps() & FXRC_ALPHA_OUTPUT) &&
-       (device_->GetRenderCaps() & FXRC_GET_BITS) && !bBackAlphaRequired);
+       (device_->GetRenderCaps() & FXRC_GET_BITS) &&
+       !bBackAlphaRequired);
   if (bGetBackGround) {
     if (bIsolated || !transparency.IsGroup()) {
       if (!bitmap->IsMaskFormat()) {
@@ -1569,7 +1570,7 @@ FX_ARGB CPDF_RenderStatus::GetBackgroundColor(
 
 FXDIB_Format CPDF_RenderStatus::GetCompatibleArgbFormat() const {
 #if defined(PDF_USE_SKIA)
-  if (device_->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_PREMULTIPLIED_ALPHA) {
+  if (device_->GetRenderCaps() & FXRC_PREMULTIPLIED_ALPHA) {
     return FXDIB_Format::kBgraPremul;
   }
 #endif
