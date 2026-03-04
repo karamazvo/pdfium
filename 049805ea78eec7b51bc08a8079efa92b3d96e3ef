@@ -39,6 +39,24 @@
       "message": "So this aborts if AddNormal() fails. Another possibly is to ignore an AddNormal() failure and continue parsing. Thoughts?",
       "revId": "049805ea78eec7b51bc08a8079efa92b3d96e3ef",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b440a6bb_4fa88076",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 29
+      },
+      "lineNbr": 813,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-04T05:41:38Z",
+      "side": 1,
+      "message": "In my opinion, it would make more sense to return during an illegal state instead of parsing on.\n\nThe check initially exited (more specifically, crashed but still exited nevertheless) in the old behaviour. To me, it would make more sense to avoid confusion by matching this previous behaviour by exiting parsing.\n\nThe goal was to make this a graceful exit as per the initial report, I do not think changing it to continue parsing in this case would be a good idea.\n\nFor the `info.gennum \u003e gen_num` thing though, maybe let\u0027s make that `return true;` instead of false so that parsing continues instead of failing (matching previous behaviour).\n\n@thestig@chromium.org wdyt?",
+      "parentUuid": "4d65af97_5bfa2119",
+      "revId": "049805ea78eec7b51bc08a8079efa92b3d96e3ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
