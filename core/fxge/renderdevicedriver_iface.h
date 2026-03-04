@@ -64,7 +64,12 @@ class RenderDeviceDriverIface {
   virtual ~RenderDeviceDriverIface();
 
   virtual DeviceType GetDeviceType() const = 0;
-  virtual int GetDeviceCaps(int caps_id) const = 0;
+  virtual int GetPixelWidth() const = 0;
+  virtual int GetPixelHeight() const = 0;
+  virtual int GetBitsPerPixel() const = 0;
+  virtual int GetRenderCaps() const = 0;
+  virtual int GetHorzSize() const = 0;
+  virtual int GetVertSize() const = 0;
 
   virtual void SaveState() = 0;
   virtual void RestoreState(bool bKeepSaved) = 0;
