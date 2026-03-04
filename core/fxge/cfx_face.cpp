@@ -634,6 +634,7 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(
     return nullptr;
   }
 
+<<<<<<< HEAD   (67cf48602b0c8aaa9807cd185212ee078eb30b21 M146: Revert "Remove character width check from cpdf_textpag)
   int dest_pitch = pGlyphBitmap->GetBitmap()->GetPitch();
   uint8_t* pDestBuf = pGlyphBitmap->GetBitmap()->GetWritableBuffer().data();
   const uint8_t* pSrcBuf = bitmap.buffer;
@@ -649,6 +650,37 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(
             pDestBuf[i * dest_pitch + n * bytes + b] = data;
           }
         }
+||||||| BASE   (f456c190d5f1ec03e86dcf0bcc13f3d71fc0bf3d Spanify source data in CFX_Face::RenderGlyph())
+  const uint32_t dest_pitch = new_bitmap->GetPitch();
+  const uint32_t src_pitch = abs(ft_bitmap.pitch);
+  pdfium::span<uint8_t> dest_span = new_bitmap->GetWritableBuffer();
+  pdfium::span<const uint8_t> src_span =
+      UNSAFE_TODO(pdfium::span<const uint8_t>(ft_bitmap.buffer,
+                                              src_pitch * ft_bitmap.rows));
+
+  if (anti_alias != FontAntiAliasingMode::kMono &&
+      ft_bitmap.pixel_mode == FT_PIXEL_MODE_MONO) {
+    unsigned int bytes = anti_alias == FontAntiAliasingMode::kLcd ? 3 : 1;
+    for (unsigned int i = 0; i < ft_bitmap.rows; i++) {
+      for (unsigned int n = 0; n < ft_bitmap.width; n++) {
+        uint8_t data = (src_span[n / 8] & (0x80 >> (n % 8))) ? 255 : 0;
+        for (unsigned int b = 0; b < bytes; b++) {
+          dest_span[n * bytes + b] = data;
+        }
+=======
+  const uint32_t dest_pitch = new_bitmap->GetPitch();
+  const uint32_t src_pitch = abs(ft_bitmap.pitch);
+  pdfium::span<uint8_t> dest_span = new_bitmap->GetWritableBuffer();
+  pdfium::span<const uint8_t> src_span =
+      UNSAFE_TODO(pdfium::span<const uint8_t>(ft_bitmap.buffer,
+                                              src_pitch * ft_bitmap.rows));
+
+  if (anti_alias != FontAntiAliasingMode::kMono &&
+      ft_bitmap.pixel_mode == FT_PIXEL_MODE_MONO) {
+    for (unsigned int i = 0; i < ft_bitmap.rows; i++) {
+      for (unsigned int n = 0; n < ft_bitmap.width; n++) {
+        dest_span[n] = (src_span[n / 8] & (0x80 >> (n % 8))) ? 255 : 0;
+>>>>>>> CHANGE (ee83ca8ef7b8804ef7ed735b200a1e27c5285bac Avoid mismatch between k8bppMask and 3 byte constant.)
       }
     } else {
       FXSYS_memset(pDestBuf, 0, dest_pitch * bitmap.rows);
