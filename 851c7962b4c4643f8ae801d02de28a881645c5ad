@@ -191,6 +191,24 @@
       "parentUuid": "4030e6fd_4b64f243",
       "revId": "851c7962b4c4643f8ae801d02de28a881645c5ad",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "688ae865_e7b44655",
+        "filename": "xfa/fxfa/parser/cxfa_node.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 4140,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-04T01:08:01Z",
+      "side": 1,
+      "message": "Looks like all changes in this file got revert, but IIRC, the GetCaptionTextLayout() change is necessary to fix at least one of the crashes.",
+      "parentUuid": "d17208c0_7c530015",
+      "revId": "851c7962b4c4643f8ae801d02de28a881645c5ad",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
