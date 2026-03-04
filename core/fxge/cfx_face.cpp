@@ -634,6 +634,7 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(
     return nullptr;
   }
 
+<<<<<<< HEAD   (67cf48602b0c8aaa9807cd185212ee078eb30b21 M146: Revert "Remove character width check from cpdf_textpag)
   int dest_pitch = pGlyphBitmap->GetBitmap()->GetPitch();
   uint8_t* pDestBuf = pGlyphBitmap->GetBitmap()->GetWritableBuffer().data();
   const uint8_t* pSrcBuf = bitmap.buffer;
@@ -648,8 +649,41 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(
           for (unsigned int b = 0; b < bytes; b++) {
             pDestBuf[i * dest_pitch + n * bytes + b] = data;
           }
+||||||| BASE   (0c38b00a3baf045da95b6ea5ab33c4eb108a20f6 Roll Depot Tools from 6235028c6b18 to 55659c2bf434 (35 revis)
+  const int dest_pitch = new_bitmap->GetPitch();
+  uint8_t* pDestBuf = new_bitmap->GetWritableBuffer().data();
+  const uint8_t* pSrcBuf = ft_bitmap.buffer;
+  UNSAFE_TODO({
+    if (anti_alias != FontAntiAliasingMode::kMono &&
+        ft_bitmap.pixel_mode == FT_PIXEL_MODE_MONO) {
+      unsigned int bytes = anti_alias == FontAntiAliasingMode::kLcd ? 3 : 1;
+      for (unsigned int i = 0; i < ft_bitmap.rows; i++) {
+        for (unsigned int n = 0; n < ft_bitmap.width; n++) {
+          uint8_t data =
+              (pSrcBuf[i * ft_bitmap.pitch + n / 8] & (0x80 >> (n % 8))) ? 255
+                                                                         : 0;
+          for (unsigned int b = 0; b < bytes; b++) {
+            pDestBuf[i * dest_pitch + n * bytes + b] = data;
+          }
+=======
+  const int dest_pitch = new_bitmap->GetPitch();
+  pdfium::span<uint8_t> dest_span = new_bitmap->GetWritableBuffer();
+  const uint8_t* pSrcBuf = ft_bitmap.buffer;
+  if (anti_alias != FontAntiAliasingMode::kMono &&
+      ft_bitmap.pixel_mode == FT_PIXEL_MODE_MONO) {
+    unsigned int bytes = anti_alias == FontAntiAliasingMode::kLcd ? 3 : 1;
+    for (unsigned int i = 0; i < ft_bitmap.rows; i++) {
+      for (unsigned int n = 0; n < ft_bitmap.width; n++) {
+        uint8_t data = (UNSAFE_TODO(pSrcBuf[i * ft_bitmap.pitch + n / 8]) &
+                        (0x80 >> (n % 8)))
+                           ? 255
+                           : 0;
+        for (unsigned int b = 0; b < bytes; b++) {
+          dest_span[i * dest_pitch + n * bytes + b] = data;
+>>>>>>> CHANGE (1765e514c52f0bbda24041e37fd1c61d09bda831 Spanify more of CFX_Face::RenderGlyph().)
         }
       }
+<<<<<<< HEAD   (67cf48602b0c8aaa9807cd185212ee078eb30b21 M146: Revert "Remove character width check from cpdf_textpag)
     } else {
       FXSYS_memset(pDestBuf, 0, dest_pitch * bitmap.rows);
       int rowbytes = std::min(abs(bitmap.pitch), dest_pitch);
@@ -657,8 +691,26 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(
         FXSYS_memcpy(pDestBuf + row * dest_pitch, pSrcBuf + row * bitmap.pitch,
                      rowbytes);
       }
+||||||| BASE   (0c38b00a3baf045da95b6ea5ab33c4eb108a20f6 Roll Depot Tools from 6235028c6b18 to 55659c2bf434 (35 revis)
+    } else {
+      FXSYS_memset(pDestBuf, 0, dest_pitch * ft_bitmap.rows);
+      int rowbytes = std::min(abs(ft_bitmap.pitch), dest_pitch);
+      for (unsigned int row = 0; row < ft_bitmap.rows; row++) {
+        FXSYS_memcpy(pDestBuf + row * dest_pitch,
+                     pSrcBuf + row * ft_bitmap.pitch, rowbytes);
+      }
+=======
+>>>>>>> CHANGE (1765e514c52f0bbda24041e37fd1c61d09bda831 Spanify more of CFX_Face::RenderGlyph().)
     }
-  });
+  } else {
+    std::ranges::fill(dest_span.first(dest_pitch * ft_bitmap.rows), 0);
+    int rowbytes = std::min(abs(ft_bitmap.pitch), dest_pitch);
+    for (unsigned int row = 0; row < ft_bitmap.rows; row++) {
+      fxcrt::spancpy(dest_span.subspan(row * dest_pitch),
+                     UNSAFE_TODO(pdfium::span(pSrcBuf + row * ft_bitmap.pitch,
+                                              static_cast<size_t>(rowbytes))));
+    }
+  }
   return pGlyphBitmap;
 }
 
