@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "72a0380c_b8101d57",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 18
+      },
+      "lineNbr": 2223,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-04T01:17:18Z",
+      "side": 0,
+      "message": "Added 42270780 to the `Bug:` line in the CL description?",
+      "range": {
+        "startLine": 2223,
+        "startChar": 20,
+        "endLine": 2223,
+        "endChar": 28
+      },
+      "revId": "f1cba6f5d96f5ac005b4b4af0aa065501140f484",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
