@@ -34,6 +34,9 @@ class TestLoader;
 
 // This class is used to load a PDF document, and then run programatic
 // API tests against it.
+
+// Macro used for charboxes in fpdf_text_embeddertest.cpp
+#define EXPECT_NEAR_THREE_PLACES(a, b) EXPECT_NEAR((a), (b), 0.001)
 class EmbedderTest : public ::testing::Test,
                      public UNSUPPORT_INFO,
                      public IPDF_JSPLATFORM,
