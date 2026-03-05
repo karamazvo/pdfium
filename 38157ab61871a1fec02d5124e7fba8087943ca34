@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "253cea13_88cc409a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 34
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-05T07:33:16Z",
+      "side": 1,
+      "message": "Hint: Look at your diff between patchset 31 and 35: would that change whether this passes or fails, specifically did the expectation update as needed?",
+      "parentUuid": "3eca1364_8f8d97e5",
+      "revId": "38157ab61871a1fec02d5124e7fba8087943ca34",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "6503f270_60158d5b",
         "filename": "core/fpdfapi/parser/cpdf_parser_unittest.cpp",
         "patchSetId": 34
