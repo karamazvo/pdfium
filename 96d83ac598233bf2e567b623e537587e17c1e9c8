@@ -54,6 +54,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "38bacabe_27394336",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-05T17:27:16Z",
+      "side": 1,
+      "message": "True, but I am also looking at this from a standpoint of \"where is that one function defined\".\n\nHaving it in the testing/ files could make sense but considering its only specific to this file i think having it \"right there\" would be more clear.\n\nMoving it though, I guess it also makes sense for the test stuff to be with more test stuff.",
+      "parentUuid": "62d43d36_66f9197d",
+      "revId": "96d83ac598233bf2e567b623e537587e17c1e9c8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a7330ea2_b962a5d1",
