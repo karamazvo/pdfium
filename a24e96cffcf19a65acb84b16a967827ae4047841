@@ -234,6 +234,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "048bed13_b710e9cf",
+        "filename": "core/fpdfapi/parser/cpdf_cross_ref_table.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-05T07:26:10Z",
+      "side": 1,
+      "message": "Ack. Update when done!",
+      "parentUuid": "cf79c8b2_4a4ee1dc",
+      "revId": "a24e96cffcf19a65acb84b16a967827ae4047841",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "30c2b5b0_38196ea4",
         "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
         "patchSetId": 27
