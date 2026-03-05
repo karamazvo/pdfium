@@ -341,8 +341,9 @@ class ScopedFaceTransform {
 // static
 RetainPtr<CFX_Face> CFX_Face::New(CFX_FontMgr* font_mgr,
                                   RetainPtr<Retainable> desc,
-                                  pdfium::span<const uint8_t> data,
+                                  RetainPtr<CFX_ReadOnlySpanStream> font_stream,
                                   uint32_t face_index) {
+  pdfium::span<const uint8_t> data = font_stream->span();
   FT_FaceRec* face_rec = nullptr;
   if (FT_New_Memory_Face(font_mgr->GetFTLibrary(), data.data(),
                          pdfium::checked_cast<FT_Long>(data.size()),
@@ -350,32 +351,13 @@ RetainPtr<CFX_Face> CFX_Face::New(CFX_FontMgr* font_mgr,
                          &face_rec) != 0) {
     return nullptr;
   }
-
+  if (FT_Set_Pixel_Sizes(face_rec, 64, 64) != 0) {
+    return nullptr;
+  }
   // Private ctor.
-  auto face = pdfium::WrapRetain(new CFX_Face(face_rec, std::move(desc)));
-  if (FT_Set_Pixel_Sizes(face->GetRec(), 64, 64) != 0) {
-    return nullptr;
-  }
-  return face;
+  return pdfium::WrapRetain(
+      new CFX_Face(face_rec, std::move(desc), std::move(font_stream)));
 }
-
-#if defined(PDF_ENABLE_XFA) || BUILDFLAG(IS_ANDROID)
-RetainPtr<CFX_Face> CFX_Face::NewFromSpanStream(
-    CFX_FontMgr* font_mgr,
-    const RetainPtr<CFX_ReadOnlySpanStream>& font_stream,
-    uint32_t face_index) {
-  if (!font_stream) {
-    return nullptr;
-  }
-  RetainPtr<CFX_Face> face =
-      New(font_mgr, nullptr, font_stream->span(), face_index);
-  if (!face) {
-    return nullptr;
-  }
-  face->owned_font_stream_ = std::move(font_stream);
-  return face;
-}
-#endif  // defined(PDF_ENABLE_XFA) || BUILDFLAG(IS_ANDROID)
 
 bool CFX_Face::HasGlyphNames() const {
   return !!(GetRec()->face_flags & FT_FACE_FLAG_GLYPH_NAMES);
@@ -938,8 +920,12 @@ bool CFX_Face::CanEmbed() {
 }
 #endif
 
-CFX_Face::CFX_Face(FT_FaceRec* rec, RetainPtr<Retainable> pDesc)
-    : rec_(rec), desc_(std::move(pDesc)) {
+CFX_Face::CFX_Face(FT_FaceRec* rec,
+                   RetainPtr<Retainable> pDesc,
+                   RetainPtr<CFX_ReadOnlySpanStream> font_stream)
+    : owned_font_stream_(std::move(font_stream)),
+      rec_(rec),
+      desc_(std::move(pDesc)) {
   DCHECK(rec_);
 }
 
