@@ -70,6 +70,30 @@
       },
       "revId": "cb0c9ec77a1430e8c7cb2bd842b7dcae08c51eba",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "812a7c32_a1839e22",
+        "filename": "core/fpdfapi/parser/cpdf_cross_ref_table.cpp",
+        "patchSetId": 26
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 4626747
+      },
+      "writtenOn": "2026-03-05T07:12:42Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "7c08d7b5_9a4ed226",
+      "range": {
+        "startLine": 63,
+        "startChar": 0,
+        "endLine": 79,
+        "endChar": 1
+      },
+      "revId": "cb0c9ec77a1430e8c7cb2bd842b7dcae08c51eba",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }

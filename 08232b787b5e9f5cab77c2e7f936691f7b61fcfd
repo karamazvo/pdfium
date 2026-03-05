@@ -48,6 +48,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "05f03006_a7e22782",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 23
+      },
+      "lineNbr": 992,
+      "author": {
+        "id": 4626747
+      },
+      "writtenOn": "2026-03-05T07:12:42Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "988fe38a_65f7cd1d",
+      "range": {
+        "startLine": 981,
+        "startChar": 0,
+        "endLine": 992,
+        "endChar": 3
+      },
+      "revId": "08232b787b5e9f5cab77c2e7f936691f7b61fcfd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f14b8398_b2de4e31",

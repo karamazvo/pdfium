@@ -50,6 +50,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "cc57d4cc_4ee5e786",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 27
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 4626747
+      },
+      "writtenOn": "2026-03-05T07:12:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e6945ba5_a4480dc6",
+      "range": {
+        "startLine": 11,
+        "startChar": 64,
+        "endLine": 11,
+        "endChar": 69
+      },
+      "revId": "a24e96cffcf19a65acb84b16a967827ae4047841",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "4c7bdb08_14899c44",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 27
@@ -186,6 +210,24 @@
       "side": 1,
       "message": "@thestig@chromium.org how about we leave the choice of whether they edit this CL to do that (which may take longer) or have someone make a follow up, upto the patchset author. Both seem to be valid approaches.\n\n\n@sresht1994@gmail.com, I know this CL has become quite large and might end up requiring a bit more refactoring: let me know which you are more comfortable with.\n\na. Refactoring this CL (probably a better learning experience, but may take more time)\n\nb. Have someone else create a follow up which lands with your CL (might be easier in the short term)\n\nTell me what works better for you!",
       "parentUuid": "1bb352cd_4d22ba66",
+      "revId": "a24e96cffcf19a65acb84b16a967827ae4047841",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cf79c8b2_4a4ee1dc",
+        "filename": "core/fpdfapi/parser/cpdf_cross_ref_table.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 4626747
+      },
+      "writtenOn": "2026-03-05T07:12:42Z",
+      "side": 1,
+      "message": "I\u0027ll go with refactoring the CL",
+      "parentUuid": "fd7d5cba_a0e72869",
       "revId": "a24e96cffcf19a65acb84b16a967827ae4047841",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
