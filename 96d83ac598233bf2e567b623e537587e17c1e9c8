@@ -34,6 +34,24 @@
       "parentUuid": "139b4e3d_b8222bfd",
       "revId": "96d83ac598233bf2e567b623e537587e17c1e9c8",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "62d43d36_66f9197d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-03-05T17:22:11Z",
+      "side": 1,
+      "message": "Alas, macros are a vestige from the 1970s and aren\u0027t namespaced no matter where declared.",
+      "parentUuid": "dd4a11b7_cb2c5acc",
+      "revId": "96d83ac598233bf2e567b623e537587e17c1e9c8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
