@@ -323,6 +323,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "3807befa_f4eeac1f",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 812,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-03-05T18:08:32Z",
+      "side": 1,
+      "message": "If the other comment gets applied, then this can be changed to\n\n```\n  if (cross_ref_table_-\u003eAddNormal(...)) {\n    ...\n  }\n```\n\nOtherwise it would have to reverted, yeah.",
+      "parentUuid": "998d403e_13825d31",
+      "revId": "a24e96cffcf19a65acb84b16a967827ae4047841",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c3137872_4a1daf36",
         "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
         "patchSetId": 27

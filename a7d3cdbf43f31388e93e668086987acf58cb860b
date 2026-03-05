@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6a5728c0_8a77fcb9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 35
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-03-05T18:08:32Z",
+      "side": 1,
+      "message": "ATM, isn\u0027t it rejecting lower generation numbers?",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 6
+      },
+      "revId": "a7d3cdbf43f31388e93e668086987acf58cb860b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9cd7a820_e68006db",
+        "filename": "core/fpdfapi/parser/cpdf_cross_ref_table.cpp",
+        "patchSetId": 35
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-03-05T18:08:32Z",
+      "side": 1,
+      "message": "Should this return true? IIUC we\u0027re scanning through cross ref tables backwards, so incremental PDFs will hit this and fail.",
+      "revId": "a7d3cdbf43f31388e93e668086987acf58cb860b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0c8e4bbf_8b6a9f38",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 35
+      },
+      "lineNbr": 984,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-03-05T18:08:32Z",
+      "side": 1,
+      "message": "Too many indents",
+      "range": {
+        "startLine": 984,
+        "startChar": 41,
+        "endLine": 984,
+        "endChar": 42
+      },
+      "revId": "a7d3cdbf43f31388e93e668086987acf58cb860b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
