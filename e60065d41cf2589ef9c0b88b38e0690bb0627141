@@ -41,6 +41,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9ba433ba_5e246c5f",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-05T02:35:21Z",
+      "side": 1,
+      "message": "Do not think so, space is 32 in many of the encodings I checked,\nConverting to Unicode before checking is perhaps a better option if you\u0027d like, but this should work fine as is.\n\nLet me know if you would want it changed. Thanks!",
+      "parentUuid": "c39708e3_814ed771",
+      "range": {
+        "startLine": 344,
+        "startChar": 27,
+        "endLine": 344,
+        "endChar": 29
+      },
+      "revId": "e60065d41cf2589ef9c0b88b38e0690bb0627141",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8fab50e5_bb5347d3",
@@ -54,6 +78,24 @@
       "writtenOn": "2026-03-05T00:17:27Z",
       "side": 1,
       "message": "Can there be multiple trailing whitespaces? Does it matter?",
+      "revId": "e60065d41cf2589ef9c0b88b38e0690bb0627141",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1a79bd75_e2c01885",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 870,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-05T02:35:21Z",
+      "side": 1,
+      "message": "The for loop above already sanitizes duplicate spaces:\u2028\u2028\nExample inputs:\u2028\u2028“Hello   “ (with 3 spaces)\u2028\n\nThe for loop runs, for the character after o, bPrevSpace is false but becomes true as this character is a space, for the next space, bPrevSpace is true hence it is removed, finally for the third space bPrevSpace is true hence it is also removed.\u2028\u2028\n\nThis gives “Hello “ after the for loop\u2028\nAnd then just “Hello” after the if statement.\n\nI do not think this matters as well as this matches implimentations such as acrobat which also removes trailing spaces.",
+      "parentUuid": "8fab50e5_bb5347d3",
       "revId": "e60065d41cf2589ef9c0b88b38e0690bb0627141",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
