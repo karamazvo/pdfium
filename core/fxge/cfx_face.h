@@ -53,15 +53,8 @@ class CFX_Face final : public Retainable, public Observable {
 
   static RetainPtr<CFX_Face> New(CFX_FontMgr* font_mgr,
                                  RetainPtr<Retainable> desc,
-                                 pdfium::span<const uint8_t> data,
+                                 RetainPtr<CFX_ReadOnlySpanStream> font_stream,
                                  uint32_t face_index);
-
-#if defined(PDF_ENABLE_XFA) || BUILDFLAG(IS_ANDROID)
-  static RetainPtr<CFX_Face> NewFromSpanStream(
-      CFX_FontMgr* font_mgr,
-      const RetainPtr<CFX_ReadOnlySpanStream>& font_stream,
-      uint32_t face_index);
-#endif  // defined(PDF_ENABLE_XFA) || BUILDFLAG(IS_ANDROID)
 
   bool HasGlyphNames() const;
   bool IsTtOt() const;
@@ -145,7 +138,9 @@ class CFX_Face final : public Retainable, public Observable {
   bool HasFaceRec() const { return !!GetRec(); }
 
  private:
-  CFX_Face(FT_FaceRec* pRec, RetainPtr<Retainable> pDesc);
+  CFX_Face(FT_FaceRec* pRec,
+           RetainPtr<Retainable> pDesc,
+           RetainPtr<CFX_ReadOnlySpanStream> font_stream);
   ~CFX_Face() override;
 
   FT_FaceRec* GetRec() { return rec_.get(); }
