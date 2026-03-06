@@ -905,18 +905,18 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedTTCFace(void* font_handle,
     cache_entry = font_mgr_->AddTTCFontCacheEntry(ttc_size, checksum,
                                                   std::move(font_data));
   }
+  CHECK_EQ(ttc_size, cache_entry->FontData().size());
   size_t font_offset = ttc_size - data_size;
-  uint32_t face_index =
-      GetTTCIndex(cache_entry->FontData().first(ttc_size), font_offset);
+  uint32_t face_index = GetTTCIndex(cache_entry->FontData(), font_offset);
   RetainPtr<CFX_Face> face(cache_entry->GetFace(face_index));
   if (face) {
     return face;
   }
 
-  face = CFX_Face::New(font_mgr_, cache_entry,
-                       pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
-                           cache_entry->FontData().first(ttc_size)),
-                       face_index);
+  face = CFX_Face::New(
+      font_mgr_, cache_entry,
+      pdfium::MakeRetain<CFX_ReadOnlySpanStream>(cache_entry->FontData()),
+      face_index);
   if (!face) {
     return nullptr;
   }
