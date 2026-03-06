@@ -52,7 +52,6 @@ class CFX_Face final : public Retainable, public Observable {
   static constexpr CharMapId kWindowsUnicodeCmapId{3, 1};
 
   static RetainPtr<CFX_Face> New(CFX_FontMgr* font_mgr,
-                                 RetainPtr<Retainable> desc,
                                  RetainPtr<CFX_ReadOnlySpanStream> font_stream,
                                  uint32_t face_index);
 
@@ -138,9 +137,7 @@ class CFX_Face final : public Retainable, public Observable {
   bool HasFaceRec() const { return !!GetRec(); }
 
  private:
-  CFX_Face(FT_FaceRec* pRec,
-           RetainPtr<Retainable> pDesc,
-           RetainPtr<CFX_ReadOnlySpanStream> font_stream);
+  CFX_Face(FT_FaceRec* pRec, RetainPtr<CFX_ReadOnlySpanStream> font_stream);
   ~CFX_Face() override;
 
   FT_FaceRec* GetRec() { return rec_.get(); }
@@ -155,12 +152,8 @@ class CFX_Face final : public Retainable, public Observable {
   std::optional<std::array<uint8_t, 2>> GetOs2Panose();
 #endif
 
-  // `desc` must oultive `owned_font_stream_`
-  RetainPtr<Retainable> const desc_;
-
   // `owned_font_stream_` must outlive `rec_`.
   RetainPtr<CFX_ReadOnlySpanStream> owned_font_stream_;
-
   ScopedFXFTFaceRec const rec_;
 };
 
