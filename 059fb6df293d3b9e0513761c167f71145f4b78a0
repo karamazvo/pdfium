@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c43e3ff2_12f2e7aa",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 2139,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-03-06T22:26:58Z",
+      "side": 1,
+      "message": "In some places, we\u0027re comparing floats with doubles now...",
+      "revId": "059fb6df293d3b9e0513761c167f71145f4b78a0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f5d05078_14aaae81",
+        "filename": "testing/embedder_test.h",
+        "patchSetId": 11
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-03-06T22:26:58Z",
+      "side": 1,
+      "message": "How about:\n```\n// Helper macro for common equality assertions with a fixed tolerance of 0.001.\n```",
+      "revId": "059fb6df293d3b9e0513761c167f71145f4b78a0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a1f1b282_b78bf9c7",
+        "filename": "testing/embedder_test.h",
+        "patchSetId": 11
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-03-06T22:26:58Z",
+      "side": 1,
+      "message": "Maybe place the macro above comment 35. Right now, it looks this is the comment for the EmbedderTest class.",
+      "revId": "059fb6df293d3b9e0513761c167f71145f4b78a0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
