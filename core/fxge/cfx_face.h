@@ -22,15 +22,22 @@
 #include "core/fxge/freetype/fx_freetype.h"
 #include "core/fxge/fx_font.h"
 
+#if defined(PDF_USE_SKIA)
+#include "third_party/skia/include/core/SkRefCnt.h"  // nogncheck
+#endif
+
 namespace fxge {
 enum class FontEncoding : uint32_t;
 }
 
 class CFX_Font;
-class CFX_FontMgr;
 class CFX_GlyphBitmap;
 class CFX_Path;
 class CFX_SubstFont;
+
+#if defined(PDF_USE_SKIA)
+class SkTypeface;
+#endif
 
 class CFX_Face final : public Retainable, public Observable {
  public:
@@ -51,14 +58,12 @@ class CFX_Face final : public Retainable, public Observable {
   static constexpr CharMapId kWindowsSymbolCmapId{3, 0};
   static constexpr CharMapId kWindowsUnicodeCmapId{3, 1};
 
-  static RetainPtr<CFX_Face> New(CFX_FontMgr* font_mgr,
-                                 RetainPtr<Retainable> desc,
+  static RetainPtr<CFX_Face> New(RetainPtr<Retainable> desc,
                                  pdfium::span<const uint8_t> data,
                                  uint32_t face_index);
 
 #if defined(PDF_ENABLE_XFA) || BUILDFLAG(IS_ANDROID)
   static RetainPtr<CFX_Face> NewFromSpanStream(
-      CFX_FontMgr* font_mgr,
       const RetainPtr<CFX_ReadOnlySpanStream>& font_stream,
       uint32_t face_index);
 #endif  // defined(PDF_ENABLE_XFA) || BUILDFLAG(IS_ANDROID)
@@ -142,7 +147,9 @@ class CFX_Face final : public Retainable, public Observable {
   bool CanEmbed();
 #endif
 
-  bool HasFaceRec() const { return !!GetRec(); }
+#if defined(PDF_USE_SKIA)
+  SkTypeface* GetOrCreateSkTypeface();
+#endif
 
  private:
   CFX_Face(FT_FaceRec* pRec, RetainPtr<Retainable> pDesc);
@@ -160,9 +167,12 @@ class CFX_Face final : public Retainable, public Observable {
   std::optional<std::array<uint8_t, 2>> GetOs2Panose();
 #endif
 
-  // `owned_font_stream_` must outlive `rec_`.
+  // `owned_font_stream_` must outlive `rec_` and `skia_typeface_`
   RetainPtr<CFX_ReadOnlySpanStream> owned_font_stream_;
   ScopedFXFTFaceRec const rec_;
+#if defined(PDF_USE_SKIA)
+  sk_sp<SkTypeface> skia_typeface_;
+#endif  // defined(PDF_USE_SKIA)
   RetainPtr<Retainable> const desc_;
 };
 

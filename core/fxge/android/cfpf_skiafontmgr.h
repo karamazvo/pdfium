@@ -19,11 +19,10 @@
 
 class CFPF_SkiaFont;
 class CFPF_SkiaPathFont;
-class CFX_FontMgr;
 
 class CFPF_SkiaFontMgr {
  public:
-  explicit CFPF_SkiaFontMgr(CFX_FontMgr* font_mgr);
+  CFPF_SkiaFontMgr();
   ~CFPF_SkiaFontMgr();
 
   void LoadFonts(const char** user_paths);
@@ -41,7 +40,6 @@ class CFPF_SkiaFontMgr {
                                                 int face_index);
 
   bool loaded_fonts_ = false;
-  UnownedPtr<CFX_FontMgr> const font_mgr_;
   std::vector<std::unique_ptr<CFPF_SkiaPathFont>> font_faces_;
   // Key is a hash based on CreateFont() parameters.
   std::map<uint32_t, std::unique_ptr<CFPF_SkiaFont>> family_font_map_;
