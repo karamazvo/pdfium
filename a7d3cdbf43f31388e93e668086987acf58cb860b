@@ -26,6 +26,47 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "71c89b11_660114d7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 35
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-06T02:25:33Z",
+      "side": 1,
+      "message": "@sresht1994@gmail.com this part should probably talk about object numbers not gen numbers.\n\n\nPerhaps:\nThe method now validates\nthe object number against kMaxObjectNumber and also rejects entries with\nhigher object numbers, returning false when the input is invalid.",
+      "parentUuid": "6a5728c0_8a77fcb9",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 6
+      },
+      "revId": "a7d3cdbf43f31388e93e668086987acf58cb860b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8fd0693c_24802ea3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 35
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-06T02:25:33Z",
+      "side": 1,
+      "message": "Just resolving some duplicated threads.",
+      "revId": "a7d3cdbf43f31388e93e668086987acf58cb860b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "9cd7a820_e68006db",
         "filename": "core/fpdfapi/parser/cpdf_cross_ref_table.cpp",
         "patchSetId": 35
@@ -43,6 +84,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d9803d99_2f19bc32",
+        "filename": "core/fpdfapi/parser/cpdf_cross_ref_table.cpp",
+        "patchSetId": 35
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-06T02:25:33Z",
+      "side": 1,
+      "message": "I\u0027d agree, I had mentioned this earlier in another comment as well.",
+      "parentUuid": "9cd7a820_e68006db",
+      "revId": "a7d3cdbf43f31388e93e668086987acf58cb860b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0c8e4bbf_8b6a9f38",
         "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
         "patchSetId": 35
@@ -54,6 +113,30 @@
       "writtenOn": "2026-03-05T18:08:32Z",
       "side": 1,
       "message": "Too many indents",
+      "range": {
+        "startLine": 984,
+        "startChar": 41,
+        "endLine": 984,
+        "endChar": 42
+      },
+      "revId": "a7d3cdbf43f31388e93e668086987acf58cb860b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "088e0c08_462c1d8e",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 35
+      },
+      "lineNbr": 984,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-06T02:25:33Z",
+      "side": 1,
+      "message": "@sresht1994@gmail.com\n```suggestion\n                                         /*is_object_stream\u003d*/false, offset);\n```",
+      "parentUuid": "0c8e4bbf_8b6a9f38",
       "range": {
         "startLine": 984,
         "startChar": 41,
