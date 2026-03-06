@@ -32,10 +32,6 @@ class CFX_Path;
 class CFX_SubstFont;
 struct CFX_TextRenderOptions;
 
-#if defined(PDF_USE_SKIA)
-class SkTypeface;
-#endif
-
 class CFX_Font {
  public:
   // This struct should be the same as FPDF_CharsetFontMap.
@@ -76,7 +72,6 @@ class CFX_Font {
 
   RetainPtr<CFX_Face> GetFace() const { return face_; }
   bool HasFace() const { return !!face_; }
-  bool HasFaceRec() const { return face_ && face_->HasFaceRec(); }
   CFX_SubstFont* GetSubstFont() const { return subst_font_.get(); }
   int GetSubstFontItalicAngle() const;
   std::vector<CharCodeAndIndex> GetCharCodesAndIndices(char32_t max_char);
@@ -131,7 +126,6 @@ class CFX_Font {
   int GetGlyphWidthImpl(uint32_t glyph_index, int dest_width, int weight) const;
 
 #if defined(PDF_USE_SKIA)
-  SkTypeface* GetSkTypeface() const;
   bool IsSubstFontBold() const;
 #endif
 

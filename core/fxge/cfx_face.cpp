@@ -23,12 +23,17 @@
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_glyphbitmap.h"
+#include "core/fxge/cfx_glyphcache.h"
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_fontencoding.h"
+
+#if defined(PDF_USE_SKIA)
+#include "third_party/skia/include/core/SkTypeface.h"  // nogncheck
+#endif
 
 #define EM_ADJUST(em, a) (em == 0 ? (a) : (a) * 1000 / em)
 
@@ -339,10 +344,10 @@ class ScopedFaceTransform {
 }  // namespace
 
 // static
-RetainPtr<CFX_Face> CFX_Face::New(CFX_FontMgr* font_mgr,
-                                  RetainPtr<Retainable> desc,
+RetainPtr<CFX_Face> CFX_Face::New(RetainPtr<Retainable> desc,
                                   pdfium::span<const uint8_t> data,
                                   uint32_t face_index) {
+  CFX_FontMgr* font_mgr = CFX_GEModule::Get()->GetFontMgr();
   FT_FaceRec* face_rec = nullptr;
   if (FT_New_Memory_Face(font_mgr->GetFTLibrary(), data.data(),
                          pdfium::checked_cast<FT_Long>(data.size()),
@@ -350,25 +355,25 @@ RetainPtr<CFX_Face> CFX_Face::New(CFX_FontMgr* font_mgr,
                          &face_rec) != 0) {
     return nullptr;
   }
-
-  // Private ctor.
-  auto face = pdfium::WrapRetain(new CFX_Face(face_rec, std::move(desc)));
-  if (FT_Set_Pixel_Sizes(face->GetRec(), 64, 64) != 0) {
+  if (FT_Set_Pixel_Sizes(face_rec, 64, 64) != 0) {
     return nullptr;
   }
-  return face;
+  // Private ctor.
+  auto result = pdfium::WrapRetain(new CFX_Face(face_rec, std::move(desc)));
+#if defined(PDF_USE_SKIA)
+  CHECK(result->GetOrCreateSkTypeface());
+#endif
+  return result;
 }
 
 #if defined(PDF_ENABLE_XFA) || BUILDFLAG(IS_ANDROID)
 RetainPtr<CFX_Face> CFX_Face::NewFromSpanStream(
-    CFX_FontMgr* font_mgr,
     const RetainPtr<CFX_ReadOnlySpanStream>& font_stream,
     uint32_t face_index) {
   if (!font_stream) {
     return nullptr;
   }
-  RetainPtr<CFX_Face> face =
-      New(font_mgr, nullptr, font_stream->span(), face_index);
+  RetainPtr<CFX_Face> face = New(nullptr, font_stream->span(), face_index);
   if (!face) {
     return nullptr;
   }
@@ -390,6 +395,12 @@ bool CFX_Face::IsTricky() const {
 }
 
 bool CFX_Face::IsFixedWidth() const {
+#if defined(PDF_USE_SKIA)
+  const_cast<CFX_Face*>(this)->GetOrCreateSkTypeface();
+  if (skia_typeface_) {
+    return skia_typeface_->isFixedPitch();
+  }
+#endif
   return !!(GetRec()->face_flags & FT_FACE_FLAG_FIXED_WIDTH);
 }
 
@@ -400,14 +411,34 @@ bool CFX_Face::IsScalable() const {
 #endif
 
 bool CFX_Face::IsItalic() const {
+#if defined(PDF_USE_SKIA)
+  const_cast<CFX_Face*>(this)->GetOrCreateSkTypeface();
+  if (skia_typeface_) {
+    return skia_typeface_->isItalic();
+  }
+#endif
   return !!(GetRec()->style_flags & FT_STYLE_FLAG_ITALIC);
 }
 
 bool CFX_Face::IsBold() const {
+#if defined(PDF_USE_SKIA)
+  const_cast<CFX_Face*>(this)->GetOrCreateSkTypeface();
+  if (skia_typeface_) {
+    return skia_typeface_->isBold();
+  }
+#endif
   return !!(GetRec()->style_flags & FT_STYLE_FLAG_BOLD);
 }
 
 ByteString CFX_Face::GetFamilyName() const {
+#if defined(PDF_USE_SKIA)
+  const_cast<CFX_Face*>(this)->GetOrCreateSkTypeface();
+  if (skia_typeface_) {
+    SkString name;
+    skia_typeface_->getFamilyName(&name);
+    return ByteString(name.c_str());
+  }
+#endif
   return ByteString(GetRec()->family_name);
 }
 
@@ -423,6 +454,12 @@ FX_RECT CFX_Face::GetBBox() const {
 }
 
 uint16_t CFX_Face::GetUnitsPerEm() const {
+#if defined(PDF_USE_SKIA)
+  const_cast<CFX_Face*>(this)->GetOrCreateSkTypeface();
+  if (skia_typeface_) {
+    return pdfium::checked_cast<uint16_t>(skia_typeface_->getUnitsPerEm());
+  }
+#endif
   return pdfium::checked_cast<uint16_t>(GetRec()->units_per_EM);
 }
 
@@ -441,6 +478,14 @@ pdfium::span<uint8_t> CFX_Face::GetData() const {
 }
 
 size_t CFX_Face::GetSfntTable(uint32_t table, pdfium::span<uint8_t> buffer) {
+#if defined(PDF_USE_SKIA)
+  if (GetOrCreateSkTypeface()) {
+    if (buffer.empty()) {
+      return skia_typeface_->getTableSize(table);
+    }
+    return skia_typeface_->getTableData(table, 0, buffer.size(), buffer.data());
+  }
+#endif
   unsigned long length = pdfium::checked_cast<unsigned long>(buffer.size());
   if (length) {
     int error = FT_Load_Sfnt_Table(GetRec(), table, 0, buffer.data(), &length);
@@ -490,6 +535,12 @@ std::optional<std::array<uint8_t, 2>> CFX_Face::GetOs2Panose() {
 #endif  // defined(PDF_ENABLE_XFA) || BUILDFLAG(IS_ANDROID)
 
 int CFX_Face::GetGlyphCount() const {
+#if defined(PDF_USE_SKIA)
+  const_cast<CFX_Face*>(this)->GetOrCreateSkTypeface();
+  if (skia_typeface_) {
+    return skia_typeface_->countGlyphs();
+  }
+#endif
   return pdfium::checked_cast<int>(GetRec()->num_glyphs);
 }
 
@@ -571,8 +622,8 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(
             36655;
     FT_Outline_Embolden(&glyph->outline, level.ValueOrDefault(0));
   }
-  FT_Library_SetLcdFilter(CFX_GEModule::Get()->GetFontMgr()->GetFTLibrary(),
-                          FT_LCD_FILTER_DEFAULT);
+  CFX_FontMgr* font_mgr = CFX_GEModule::Get()->GetFontMgr();
+  FT_Library_SetLcdFilter(font_mgr->GetFTLibrary(), FT_LCD_FILTER_DEFAULT);
   error =
       FT_Render_Glyph(glyph, FtRenderModeFromFontAntiAliasingMode(anti_alias));
   if (error) {
@@ -742,6 +793,14 @@ int CFX_Face::LoadGlyph(uint32_t glyph_index, bool scale) {
 }
 
 ByteString CFX_Face::GetPostscriptName() {
+#if defined(PDF_USE_SKIA)
+  if (GetOrCreateSkTypeface()) {
+    SkString name;
+    if (skia_typeface_->getPostScriptName(&name)) {
+      return ByteString(name.c_str());
+    }
+  }
+#endif
   return FT_Get_Postscript_Name(GetRec());
 }
 
@@ -935,6 +994,16 @@ bool CFX_Face::CanEmbed() {
   FT_UShort fstype = FT_Get_FSType_Flags(GetRec());
   return (fstype & (FT_FSTYPE_RESTRICTED_LICENSE_EMBEDDING |
                     FT_FSTYPE_BITMAP_EMBEDDING_ONLY)) == 0;
+}
+#endif
+
+#if defined(PDF_USE_SKIA)
+SkTypeface* CFX_Face::GetOrCreateSkTypeface() {
+  if (!skia_typeface_) {
+    CFX_FontMgr* font_mgr = CFX_GEModule::Get()->GetFontMgr();
+    skia_typeface_ = font_mgr->MakeSkTypeface(GetData());
+  }
+  return skia_typeface_.get();
 }
 #endif
 
