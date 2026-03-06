@@ -340,7 +340,6 @@ class ScopedFaceTransform {
 
 // static
 RetainPtr<CFX_Face> CFX_Face::New(CFX_FontMgr* font_mgr,
-                                  RetainPtr<Retainable> desc,
                                   RetainPtr<CFX_ReadOnlySpanStream> font_stream,
                                   uint32_t face_index) {
   pdfium::span<const uint8_t> data = font_stream->span();

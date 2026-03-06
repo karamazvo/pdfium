@@ -524,7 +524,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::UseInternalSubst(
   if (base_font < kNumStandardFonts) {
     if (!standard_faces_[base_font]) {
       standard_faces_[base_font] =
-          CFX_Face::New(font_mgr_, nullptr,
+          CFX_Face::New(font_mgr_,
                         pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
                             font_mgr_->GetStandardFont(base_font)),
                         0);
@@ -541,7 +541,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::UseInternalSubst(
     subst_font->UseChromeSerif();
     if (!generic_serif_face_) {
       generic_serif_face_ =
-          CFX_Face::New(font_mgr_, nullptr,
+          CFX_Face::New(font_mgr_,
                         pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
                             font_mgr_->GetGenericSerifFont()),
                         0);
@@ -551,7 +551,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::UseInternalSubst(
   subst_font->family_ = "Chrome Sans";
   if (!generic_sans_face_) {
     generic_sans_face_ =
-        CFX_Face::New(font_mgr_, nullptr,
+        CFX_Face::New(font_mgr_,
                       pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
                           font_mgr_->GetGenericSansFont()),
                       0);
@@ -913,10 +913,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedTTCFace(void* font_handle,
     return face;
   }
 
-  face = CFX_Face::New(
-      font_mgr_, cache_entry,
-      pdfium::MakeRetain<CFX_ReadOnlySpanStream>(cache_entry->FontData()),
-      face_index);
+  face = CFX_Face::New(font_mgr_, cache_entry->FontStream, face_index);
   if (!face) {
     return nullptr;
   }
@@ -947,10 +944,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedFace(void* font_handle,
     return face;
   }
 
-  face = CFX_Face::New(font_mgr_, cache_entry,
-                       pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
-                           cache_entry->FontData().first(data_size)),
-                       0);
+  face = CFX_Face::New(font_mgr_, cache_entry->FontStream(), 0);
   if (!face) {
     return nullptr;
   }
