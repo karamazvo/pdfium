@@ -535,7 +535,13 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(const CFX_Font* pFont,
   UNSAFE_TODO({
     if (anti_alias != FT_RENDER_MODE_MONO &&
         bitmap.pixel_mode == FT_PIXEL_MODE_MONO) {
+<<<<<<< HEAD   (cf433ae5520d061db56391155b59b34e67484f39 Avoid a case of float-int-float conversion in CPDF_Page)
       unsigned int bytes = anti_alias == FT_RENDER_MODE_LCD ? 3 : 1;
+||||||| BASE   (67cf48602b0c8aaa9807cd185212ee078eb30b21 M146: Revert "Remove character width check from cpdf_textpag)
+      unsigned int bytes = anti_alias == FontAntiAliasingMode::kLcd ? 3 : 1;
+=======
+      unsigned int bytes = 1;
+>>>>>>> CHANGE (bccc616f83aaed08f65d4a707dfe00e24133772b [M146] Manually patch logic for k8bppmask and 3 byte constan)
       for (unsigned int i = 0; i < bitmap.rows; i++) {
         for (unsigned int n = 0; n < bitmap.width; n++) {
           uint8_t data =
