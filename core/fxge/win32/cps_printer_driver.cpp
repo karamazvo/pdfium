@@ -22,6 +22,7 @@
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/win32/cpsoutput.h"
+#include "core/fxge/win32/win32_devicecaps.h"
 
 namespace {
 
@@ -59,11 +60,11 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
           ? CPSOutput::OutputMode::kGdiComment
           : CPSOutput::OutputMode::kExtEscape;
 
-  horz_size_ = ::GetDeviceCaps(dc_handle_, HORZSIZE);
-  vert_size_ = ::GetDeviceCaps(dc_handle_, VERTSIZE);
-  width_ = ::GetDeviceCaps(dc_handle_, HORZRES);
-  height_ = ::GetDeviceCaps(dc_handle_, VERTRES);
-  bits_per_pixel_ = ::GetDeviceCaps(dc_handle_, BITSPIXEL);
+  horz_size_ = w32_capsGetHorzSize(dc_handle_);
+  vert_size_ = w32_capsGetVertSize(dc_handle_);
+  width_ = w32_capsGetWidth(dc_handle_);
+  height_ = w32_capsGetHeight(dc_handle_);
+  bits_per_pixel_ = w32_capsGetBitsPerPixel(dc_handle_);
 
   psrenderer_.Init(pdfium::MakeRetain<CPSOutput>(dc_handle_, output_mode),
                    level, width_, height_);
