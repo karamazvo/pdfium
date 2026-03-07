@@ -197,6 +197,7 @@ source_set("fxge") {
       "win32/ctext_only_printer_driver.h",
       "win32/cwin32_platform.cpp",
       "win32/cwin32_platform.h",
+      "win32/win32_devicecaps.h",
     ]
     configs -= [ "//build/config/win:lean_and_mean" ]
   }
