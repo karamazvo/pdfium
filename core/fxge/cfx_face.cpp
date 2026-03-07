@@ -524,6 +524,8 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(
       }
     }
     if (pSubstFont->IsBuiltInGenericFont()) {
+      CHECK_EQ(font->GetFace(), this);
+      CHECK_EQ(font->GetSubstFont(), pSubstFont);
       font->GetFace()->AdjustVariationParams(glyph_index, dest_width,
                                              font->GetSubstFont()->weight_);
     }
