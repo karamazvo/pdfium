@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "69ba2943_05220670",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 2139,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-07T01:43:34Z",
+      "side": 1,
+      "message": "The original EXPECT_NEAR() in the same places did the same things though.\n\nMaybe a separate CL for this?",
+      "parentUuid": "c43e3ff2_12f2e7aa",
+      "revId": "059fb6df293d3b9e0513761c167f71145f4b78a0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f5d05078_14aaae81",
