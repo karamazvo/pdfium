@@ -23,6 +23,7 @@
 #include "core/fxge/cfx_face.h"
 #include "core/fxge/freetype/fx_freetype.h"
 
+class CFX_Font;
 class CFX_FontMapper;
 class CFX_GlyphCache;
 

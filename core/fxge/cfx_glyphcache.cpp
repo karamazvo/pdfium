@@ -121,18 +121,18 @@ CFX_GlyphCache::CFX_GlyphCache(RetainPtr<CFX_Face> face)
 CFX_GlyphCache::~CFX_GlyphCache() = default;
 
 std::unique_ptr<CFX_GlyphBitmap> CFX_GlyphCache::RenderGlyph(
-    const CFX_Font* font,
     uint32_t glyph_index,
     bool bFontStyle,
+    bool bIsVertical,
     const CFX_Matrix& matrix,
     int dest_width,
-    FontAntiAliasingMode anti_alias) {
+    FontAntiAliasingMode anti_alias,
+    const CFX_SubstFont* pSubstFont) {
   if (!face_) {
     return nullptr;
   }
-
-  return face_->RenderGlyph(font, glyph_index, bFontStyle, matrix, dest_width,
-                            anti_alias);
+  return face_->RenderGlyph(glyph_index, bFontStyle, bIsVertical, matrix,
+                            dest_width, anti_alias, pSubstFont);
 }
 
 const CFX_Path* CFX_GlyphCache::LoadGlyphPath(const CFX_Font* font,
@@ -317,8 +317,9 @@ CFX_GlyphBitmap* CFX_GlyphCache::LookUpGlyphBitmap(
     return it2->second.get();
   }
 
-  std::unique_ptr<CFX_GlyphBitmap> pGlyphBitmap = RenderGlyph(
-      font, glyph_index, bFontStyle, matrix, dest_width, anti_alias);
+  std::unique_ptr<CFX_GlyphBitmap> pGlyphBitmap =
+      RenderGlyph(glyph_index, bFontStyle, font->IsVertical(), matrix,
+                  dest_width, anti_alias, font->GetSubstFont());
   CFX_GlyphBitmap* pResult = pGlyphBitmap.get();
   (*pSizeCache)[glyph_index] = std::move(pGlyphBitmap);
   return pResult;
