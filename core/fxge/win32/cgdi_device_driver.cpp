@@ -27,6 +27,7 @@
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/render_defines.h"
+#include "core/fxge/win32/win32_devicecaps.h"
 #include "core/fxge/win32/cwin32_platform.h"
 
 #if defined(PDF_USE_AGG)
@@ -371,9 +372,9 @@ CGdiDeviceDriver::CGdiDeviceDriver(HDC hDC, DeviceType device_type)
     hBitmap = (HBITMAP)SelectObject(dc_handle_, hBitmap);
     DeleteObject(hBitmap);
   } else {
-    bits_per_pixel_ = ::GetDeviceCaps(dc_handle_, BITSPIXEL);
-    width_ = ::GetDeviceCaps(dc_handle_, HORZRES);
-    height_ = ::GetDeviceCaps(dc_handle_, VERTRES);
+    bits_per_pixel_ = w32_capsGetBitsPerPixel(dc_handle_);
+    width_ = w32_capsGetWidth(dc_handle_);
+    height_ = w32_capsGetHeight(dc_handle_);
   }
   if (device_type_ == DeviceType::kDisplay) {
     render_caps_ = FXRC_GET_BITS;
