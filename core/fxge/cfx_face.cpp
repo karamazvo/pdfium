@@ -19,7 +19,6 @@
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/numerics/safe_math.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_glyphbitmap.h"
@@ -494,19 +493,19 @@ int CFX_Face::GetGlyphCount() const {
 }
 
 std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(
-    const CFX_Font* font,
     uint32_t glyph_index,
     bool bFontStyle,
+    bool bIsVertical,
     const CFX_Matrix& matrix,
     int dest_width,
-    FontAntiAliasingMode anti_alias) {
+    FontAntiAliasingMode anti_alias,
+    const CFX_SubstFont* pSubstFont) {
   FT_Matrix ft_matrix;
   ft_matrix.xx = matrix.a / 64 * 65536;
   ft_matrix.xy = matrix.c / 64 * 65536;
   ft_matrix.yx = matrix.b / 64 * 65536;
   ft_matrix.yy = matrix.d / 64 * 65536;
   bool bUseCJKSubFont = false;
-  const CFX_SubstFont* pSubstFont = font->GetSubstFont();
   if (pSubstFont) {
     bUseCJKSubFont = pSubstFont->subst_cjk_ && bFontStyle;
     int angle;
@@ -517,15 +516,14 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(
     }
     if (angle) {
       int skew = GetSkewFromAngle(angle);
-      if (font->IsVertical()) {
+      if (bIsVertical) {
         ft_matrix.yx += ft_matrix.yy * skew / 100;
       } else {
         ft_matrix.xy -= ft_matrix.xx * skew / 100;
       }
     }
     if (pSubstFont->IsBuiltInGenericFont()) {
-      font->GetFace()->AdjustVariationParams(glyph_index, dest_width,
-                                             font->GetSubstFont()->weight_);
+      AdjustVariationParams(glyph_index, dest_width, pSubstFont->weight_);
     }
   }
 
