@@ -13,6 +13,7 @@
 #include "core/fxge/win32/cgdi_printer_driver.h"
 #include "core/fxge/win32/cps_printer_driver.h"
 #include "core/fxge/win32/ctext_only_printer_driver.h"
+#include "core/fxge/win32/win32_devicecaps.h"
 
 namespace {
 
@@ -20,7 +21,7 @@ std::unique_ptr<RenderDeviceDriverIface> CreateDriver(
     HDC hDC,
     CFX_PSFontTracker* ps_font_tracker,
     const EncoderIface* encoder_iface) {
-  int device_type = ::GetDeviceCaps(hDC, TECHNOLOGY);
+  int device_type = w32_caps::GetDeviceType(hDC);
   int obj_type = ::GetObjectType(hDC);
   bool use_printer = device_type == DT_RASPRINTER ||
                      device_type == DT_PLOTTER ||
