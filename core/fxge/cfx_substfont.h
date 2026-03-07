@@ -10,6 +10,8 @@
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_codepage.h"
 
+// Represents substitutions to apply on top of an existing face to
+// convert it for use with an alternative font.
 class CFX_SubstFont {
  public:
   CFX_SubstFont();
