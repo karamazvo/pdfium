@@ -17,6 +17,7 @@
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/text_char_pos.h"
+#include "core/fxge/win32/win32_devicecaps.h"
 
 CTextOnlyPrinterDriver::CTextOnlyPrinterDriver(HDC hDC)
     : dc_handle_(hDC),
@@ -26,7 +27,7 @@ CTextOnlyPrinterDriver::CTextOnlyPrinterDriver(HDC hDC)
       vert_size_(INT_MAX),
       origin_y_(0.0f),
       set_origin_(false) {
-  bits_per_pixel_ = ::GetDeviceCaps(dc_handle_, BITSPIXEL);
+  bits_per_pixel_ = w32_caps::GetBitsPerPixel(dc_handle_);
 }
 
 CTextOnlyPrinterDriver::~CTextOnlyPrinterDriver() = default;
