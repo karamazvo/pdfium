@@ -24,11 +24,12 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/render_defines.h"
 #include "core/fxge/text_char_pos.h"
+#include "core/fxge/win32/cwin32_devicecaps.h"
 
 CGdiPrinterDriver::CGdiPrinterDriver(HDC hDC)
     : CGdiDeviceDriver(hDC, DeviceType::kPrinter),
-      horz_size_(::GetDeviceCaps(dc_handle_, HORZSIZE)),
-      vert_size_(::GetDeviceCaps(dc_handle_, VERTSIZE)) {}
+      horz_size_(DeviceCapsAPI::GetHorzSize(hDC)),
+      vert_size_(DeviceCapsAPI::GetVertSize(hDC)) {}
 
 CGdiPrinterDriver::~CGdiPrinterDriver() = default;
 
