@@ -42,6 +42,10 @@
 #include "opj_includes.h"
 #include "opj_common.h"
 
+#ifdef __ARM_NEON
+#include <arm_neon.h>
+#endif
+
 // #define DEBUG_RATE_ALLOC
 
 /* ----------------------------------------------------------------------- */
@@ -2339,6 +2343,39 @@ static OPJ_BOOL opj_tcd_dc_level_shift_decode(opj_tcd_t *p_tcd)
             }
         } else {
             for (j = 0; j < l_height; ++j) {
+#ifdef __ARM_NEON
+                /* NEON: process 4 pixels at a time. The data buffer holds
+                   floats reinterpreted as int32, so we load as float,
+                   round, convert to int32, add DC shift, and clamp. */
+                {
+                    const int32x4_t vshift = vdupq_n_s32(l_tccp->m_dc_level_shift);
+                    const int32x4_t vmin = vdupq_n_s32(l_min);
+                    const int32x4_t vmax = vdupq_n_s32(l_max);
+                    OPJ_UINT32 k = 0;
+                    for (; k + 4 <= l_width; k += 4) {
+                        float32x4_t vf = vld1q_f32((const OPJ_FLOAT32 *)(l_current_ptr + k));
+                        float32x4_t vrounded = vrndnq_f32(vf);
+                        int32x4_t vi = vcvtq_s32_f32(vrounded);
+                        vi = vaddq_s32(vi, vshift);
+                        vi = vmaxq_s32(vminq_s32(vi, vmax), vmin);
+                        vst1q_s32(l_current_ptr + k, vi);
+                    }
+                    /* Handle remaining pixels. */
+                    for (; k < l_width; ++k) {
+                        OPJ_FLOAT32 l_value = *((OPJ_FLOAT32 *)(l_current_ptr + k));
+                        if (l_value > (OPJ_FLOAT32)INT_MAX) {
+                            l_current_ptr[k] = l_max;
+                        } else if (l_value < INT_MIN) {
+                            l_current_ptr[k] = l_min;
+                        } else {
+                            OPJ_INT64 l_value_int = (OPJ_INT64)opj_lrintf(l_value);
+                            l_current_ptr[k] = (OPJ_INT32)opj_int64_clamp(
+                                                   l_value_int + l_tccp->m_dc_level_shift, l_min, l_max);
+                        }
+                    }
+                    l_current_ptr += l_width;
+                }
+#else
                 for (i = 0; i < l_width; ++i) {
                     OPJ_FLOAT32 l_value = *((OPJ_FLOAT32 *) l_current_ptr);
                     if (l_value > (OPJ_FLOAT32)INT_MAX) {
@@ -2353,6 +2390,7 @@ static OPJ_BOOL opj_tcd_dc_level_shift_decode(opj_tcd_t *p_tcd)
                     }
                     ++l_current_ptr;
                 }
+#endif
                 l_current_ptr += l_stride;
             }
         }
