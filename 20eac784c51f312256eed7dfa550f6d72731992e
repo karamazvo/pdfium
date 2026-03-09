@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4a2c3502_d423eee1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-09T07:44:19Z",
+      "side": 1,
+      "message": "Hey guys! Decided to move the ::GetDeviceCaps() to another file to act as a sort of \"translation\" layer for this. There are a couple reasons I did this that I think I should discuss.\n\nImportant reasons:\n1. Now the rest of PDFium uses these split up methods, perhaps ensuring that all bits of PDFium including these win32 drivers also use the same methods to interface better with the rest of the codebase.\n2. It would be better to isolate everything in the global namespace to one file so if one thing changes then not many changes are required across different files.\n\nLess important/psychological-ish reasons:\n3. Having the win32 api in the global namespace creates confusion between this and the old GetDeviceCaps() method imo, so having it more clean and isolated would be better.\n\nThanks!",
+      "revId": "20eac784c51f312256eed7dfa550f6d72731992e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
