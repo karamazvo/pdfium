@@ -16,6 +16,23 @@
       "message": "tsepez@: I\u0027m evaluating this CL for M138 LTS. But I don\u0027t have permission to run trybots. Could you please run the Dry-run instead?",
       "revId": "d4da7d4ce6857502bf1f36562b44bc5db4c93c49",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2a236d3c_7e0df372",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-03-09T16:04:09Z",
+      "side": 1,
+      "message": "Looks like the bots won\u0027t handle this, let me know if you\u0027d like me to land it directly.",
+      "revId": "d4da7d4ce6857502bf1f36562b44bc5db4c93c49",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
