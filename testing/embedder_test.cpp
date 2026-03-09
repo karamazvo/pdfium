@@ -481,8 +481,13 @@ std::string EncodeBase64Png(FPDF_BITMAP bitmap) {
 }
 
 void CompareBitmapToPngData(FPDF_BITMAP bitmap,
-                            pdfium::span<const uint8_t> png_data,
+                            std::string png_path,
                             int max_pixel_per_channel_delta) {
+  std::vector<uint8_t> png_data = GetFileContents(png_path.c_str());
+  ASSERT_FALSE(png_data.empty())
+      << "No expectation file matching " << png_path << "\n"
+      << "Actual pixels (open in browser):\n"
+      << EncodeBase64Png(bitmap);
   DecodedPng decoded_png = DecodePngData(png_data);
   ASSERT_GT(decoded_png.width, 0);
   ASSERT_GT(decoded_png.height, 0);
@@ -527,10 +532,19 @@ void CompareBitmapToPngData(FPDF_BITMAP bitmap,
       // Support other formats as-needed.
       NOTREACHED();
   }
-  EXPECT_EQ(pixels_different, 0)
-      << ", Actual pixels (open in browser):\n"
-      << EncodeBase64Png(bitmap) << "\nExpected pixels (open in browser):\n"
-      << EncodeBase64(png_data);
+  if (pixels_different > 0) {
+    size_t pos = png_path.find("testing/");
+    std::string ref =
+        (pos != std::string::npos) ? png_path.substr(pos) : png_path;
+    std::cout << "Image Comparison Failed!\n"
+              << "Actual pixels (open in browser):\n"
+              << EncodeBase64Png(bitmap)
+              << "\nExpected pixels (open in browser):\n"
+              << EncodeBase64(png_data) << "\n"
+              << "Reference: " << ref << "\n"
+              << "Total pixels different: " << pixels_different << "\n";
+  }
+  EXPECT_EQ(pixels_different, 0);
 }
 
 }  // namespace
@@ -1142,13 +1156,8 @@ void EmbedderTest::WriteBitmapToPng(FPDF_BITMAP bitmap,
 void EmbedderTest::CompareBitmap(FPDF_BITMAP bitmap,
                                  std::string_view expectation_png_name) {
   std::string png_path = GetEmbedderTestExpectationPath(expectation_png_name);
-  std::vector<uint8_t> png_data = GetFileContents(png_path.c_str());
-  ASSERT_FALSE(png_data.empty())
-      << "No expectation file matching " << expectation_png_name
-      << ", Actual pixels (open in browser):\n"
-      << EncodeBase64Png(bitmap);
   SCOPED_TRACE(testing::Message() << "CompareBitmap() with " << png_path);
-  CompareBitmapToPngData(bitmap, png_data, /*max_pixel_per_channel_delta=*/0);
+  CompareBitmapToPngData(bitmap, png_path, /*max_pixel_per_channel_delta=*/0);
   if (EmbedderTestEnvironment::GetInstance()->write_pngs()) {
     WriteBitmapToPng(bitmap, png_path);
   }
@@ -1168,7 +1177,7 @@ void EmbedderTest::CompareBitmapWithExpectationSuffix(
 
     SCOPED_TRACE(testing::Message()
                  << "CompareBitmapWithExpectationSuffix() with " << png_path);
-    CompareBitmapToPngData(bitmap, GetFileContents(png_path.c_str()),
+    CompareBitmapToPngData(bitmap, png_path.c_str(),
                            max_pixel_per_channel_delta);
     if (EmbedderTestEnvironment::GetInstance()->write_pngs()) {
       WriteBitmapToPng(bitmap, png_path);
