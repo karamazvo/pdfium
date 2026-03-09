@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e25af664_3a627fea",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-09T15:13:44Z",
+      "side": 1,
+      "message": "Hi guys, improved the test logs from the image comparision to align more closely with the logs for pdf_unittests. Thought these logs could be made a bit clearer and a decent bit more similar to those.\n\nHere\u0027s a quick look at what the new failure logs look like:\n```\n../../testing/embedder_test.cpp:547: Failure\nExpected equality of these values:\n  pixels_different\n    Which is: 1848\n  0\nImage Comparison Failed!\nActual pixels (open in browser):\n…\nExpected pixels (open in browser):\n…\nReference: testing/resources/embedder_tests/annotation_stamp_with_ap_agg_mac.png\nTotal pixels different: 1848\nGoogle Test trace:\n../../testing/embedder_test.cpp:1175: CompareBitmapWithExpectationSuffix() with /Users/aryankrishnan/repo/pdfium/out/pdfiumtest/../../testing/resources/embedder_tests/stamp_with_color_scheme_agg_mac.png\n```\n\nThis is just a sample format and hence the image paths are inconsistent.\n\n```\nPutting this in a textbox as it seems to create random headings outside the box.\nMain motivators:\n - Consistency with pdf_unittests\n - More clear link to a reference image rather than a full path\n - More human-readable and clearer output\n```\n\nThanks!",
+      "revId": "e5e25224ecc1bf3e0018b544875ff25b69f7c343",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
