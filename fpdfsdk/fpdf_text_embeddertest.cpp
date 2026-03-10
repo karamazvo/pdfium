@@ -2451,7 +2451,28 @@ TEST_F(FPDFTextEmbedderTest, Bug444176962) {
   ASSERT_TRUE(textpage);
 
   unsigned short buffer[128] = {};
-  static constexpr char kResult[] = "local act";
-  ASSERT_EQ(10, FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer));
-  EXPECT_THAT(pdfium::span(buffer).first<10>(), ElementsAreArray(kResult));
+  static constexpr char kExpected[] = "local act";
+  static constexpr int kExpectedLength = std::size(kExpected);
+  ASSERT_EQ(kExpectedLength,
+            FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer));
+  EXPECT_THAT(pdfium::span(buffer).first<kExpectedLength>(),
+              ElementsAreArray(kExpected));
+}
+
+TEST_F(FPDFTextEmbedderTest, Bug491161396) {
+  ASSERT_TRUE(OpenDocument("bug_491161396.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+
+  unsigned short buffer[128] = {};
+  // TODO(crbug.com/491161396): Should not contain "\r\n".
+  static constexpr char kExpected[] = "Hello, world!\r\n";
+  static constexpr int kExpectedLength = std::size(kExpected);
+  ASSERT_EQ(kExpectedLength,
+            FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer));
+  EXPECT_THAT(pdfium::span(buffer).first<kExpectedLength>(),
+              ElementsAreArray(kExpected));
 }
