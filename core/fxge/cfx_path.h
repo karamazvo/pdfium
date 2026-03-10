@@ -66,6 +66,8 @@ class CFX_Path {
   void AppendPointAndClose(const CFX_PointF& point, Point::Type type);
   void ClosePath();
 
+  void PrintDifferences(const CFX_Path& other) const;
+
  private:
   std::vector<Point> points_;
 };
