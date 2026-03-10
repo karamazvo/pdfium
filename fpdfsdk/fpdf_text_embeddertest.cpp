@@ -2476,3 +2476,21 @@ TEST_F(FPDFTextEmbedderTest, Bug491161396) {
   EXPECT_THAT(pdfium::span(buffer).first<kExpectedLength>(),
               ElementsAreArray(kExpected));
 }
+
+TEST_F(FPDFTextEmbedderTest, Bug491516663) {
+  ASSERT_TRUE(OpenDocument("bug_491516663.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+
+  unsigned short buffer[128] = {};
+  // TODO(crbug.com/491516663): Should not contain "\x200b".
+  static constexpr wchar_t kExpected[] = L"Hello,\x200b world!";
+  static constexpr int kExpectedLength = std::size(kExpected);
+  ASSERT_EQ(kExpectedLength,
+            FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer));
+  EXPECT_THAT(pdfium::span(buffer).first<kExpectedLength>(),
+              ElementsAreArray(kExpected));
+}
