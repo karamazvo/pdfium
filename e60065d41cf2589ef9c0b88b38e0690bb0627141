@@ -172,6 +172,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b3c26b5b_7d6be0e0",
+        "filename": "core/fpdftext/cpdf_textpage.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-11T00:31:31Z",
+      "side": 1,
+      "message": "I have PDFs where it\u0027s not 32. As another example, the ZWSP character (U+200B) in https://pdfium-review.googlesource.com/c/pdfium/+/144590 has the char code 0x0001, which is arbitrary.",
+      "parentUuid": "9ba433ba_5e246c5f",
+      "range": {
+        "startLine": 344,
+        "startChar": 27,
+        "endLine": 344,
+        "endChar": 29
+      },
+      "revId": "e60065d41cf2589ef9c0b88b38e0690bb0627141",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8fab50e5_bb5347d3",
