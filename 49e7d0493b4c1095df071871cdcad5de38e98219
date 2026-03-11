@@ -16,6 +16,24 @@
       "message": "Add Bug: entry for Fontations-related work?",
       "revId": "49e7d0493b4c1095df071871cdcad5de38e98219",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "46eb2adb_6fdd80a9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-03-11T16:41:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b7b065ff_50be5edb",
+      "revId": "49e7d0493b4c1095df071871cdcad5de38e98219",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
