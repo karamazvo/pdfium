@@ -2458,7 +2458,26 @@ TEST_F(FPDFTextEmbedderTest, Bug444176962) {
   // kMissingSpaceResult should be replaced with kResult as "local act"
   unsigned short buffer[128] = {};
   static constexpr char kMissingSpaceResult[] = "localact";
-  ASSERT_EQ(9, FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer));
-  EXPECT_THAT(pdfium::span(buffer).first<9>(),
+  static constexpr int kExpectedLength = std::size(kMissingSpaceResult);
+  ASSERT_EQ(kExpectedLength,
+            FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer));
+  EXPECT_THAT(pdfium::span(buffer).first<kExpectedLength>(),
               ElementsAreArray(kMissingSpaceResult));
+}
+
+TEST_F(FPDFTextEmbedderTest, Bug491161396) {
+  ASSERT_TRUE(OpenDocument("bug_491161396.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+
+  unsigned short buffer[128] = {};
+  static constexpr char kExpected[] = "Hello, world!";
+  static constexpr int kExpectedLength = std::size(kExpected);
+  ASSERT_EQ(kExpectedLength,
+            FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer));
+  EXPECT_THAT(pdfium::span(buffer).first<kExpectedLength>(),
+              ElementsAreArray(kExpected));
 }
