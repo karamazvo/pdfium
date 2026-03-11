@@ -1,0 +1,158 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2e5f45fd_8b90ef6f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-11T19:01:22Z",
+      "side": 1,
+      "message": "omit",
+      "range": {
+        "startLine": 7,
+        "startChar": 36,
+        "endLine": 7,
+        "endChar": 39
+      },
+      "revId": "9b1dc9946cfe92e5d4a664d472e050555d40a9d2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "eb0399f5_9259bd11",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-11T19:01:22Z",
+      "side": 1,
+      "message": "Sure, but needs a bit of human love (爱) ...",
+      "revId": "9b1dc9946cfe92e5d4a664d472e050555d40a9d2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fddfcb76_cc2ea15b",
+        "filename": "core/README.md",
+        "patchSetId": 7
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-11T19:01:22Z",
+      "side": 1,
+      "message": "lowercase, maybe with a slash after, so readers can see it\u0027s a directory named core and not a CPU core.",
+      "revId": "9b1dc9946cfe92e5d4a664d472e050555d40a9d2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4828e3fb_09c0d230",
+        "filename": "core/README.md",
+        "patchSetId": 7
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-11T19:01:22Z",
+      "side": 1,
+      "message": "Link to the other README.",
+      "revId": "9b1dc9946cfe92e5d4a664d472e050555d40a9d2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "88833175_720c3a4b",
+        "filename": "core/README.md",
+        "patchSetId": 7
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-11T19:01:22Z",
+      "side": 1,
+      "message": "Chromium classes are often called \"life of a ...\"",
+      "range": {
+        "startLine": 17,
+        "startChar": 27,
+        "endLine": 17,
+        "endChar": 31
+      },
+      "revId": "9b1dc9946cfe92e5d4a664d472e050555d40a9d2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eae758f4_a924bd82",
+        "filename": "core/fpdfapi/README.md",
+        "patchSetId": 7
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-11T19:01:22Z",
+      "side": 1,
+      "message": "lowercase, maybe with a slash after.",
+      "range": {
+        "startLine": 1,
+        "startChar": 2,
+        "endLine": 1,
+        "endChar": 9
+      },
+      "revId": "9b1dc9946cfe92e5d4a664d472e050555d40a9d2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ccb84ee3_610c6df1",
+        "filename": "core/fpdfapi/README.md",
+        "patchSetId": 7
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-11T19:01:22Z",
+      "side": 1,
+      "message": "Wrap?",
+      "revId": "9b1dc9946cfe92e5d4a664d472e050555d40a9d2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "642c6ee4_8b48683b",
+        "filename": "core/fpdfapi/README.md",
+        "patchSetId": 7
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-11T19:01:22Z",
+      "side": 1,
+      "message": "Sort",
+      "revId": "9b1dc9946cfe92e5d4a664d472e050555d40a9d2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
