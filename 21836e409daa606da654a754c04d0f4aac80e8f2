@@ -16,6 +16,24 @@
       "message": "Add `CHECK(face_rec);` here to document the assumption that FT_New_Memory_Face() populated `face_rec`?",
       "revId": "21836e409daa606da654a754c04d0f4aac80e8f2",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c0166ce2_1abe4e55",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 358,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-03-11T20:04:46Z",
+      "side": 1,
+      "message": "eh, we didn\u0027t do that in the old code.",
+      "parentUuid": "c47680c0_247c6329",
+      "revId": "21836e409daa606da654a754c04d0f4aac80e8f2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
