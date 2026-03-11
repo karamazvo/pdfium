@@ -1,6 +1,29 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "dd1fb8bd_1bfb40da",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-11T21:40:03Z",
+      "side": 1,
+      "message": "omit",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 11
+      },
+      "revId": "e5e25224ecc1bf3e0018b544875ff25b69f7c343",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "e25af664_3a627fea",
@@ -14,6 +37,86 @@
       "writtenOn": "2026-03-09T15:13:44Z",
       "side": 1,
       "message": "Hi guys, improved the test logs from the image comparision to align more closely with the logs for pdf_unittests. Thought these logs could be made a bit clearer and a decent bit more similar to those.\n\nHere\u0027s a quick look at what the new failure logs look like:\n```\n../../testing/embedder_test.cpp:547: Failure\nExpected equality of these values:\n  pixels_different\n    Which is: 1848\n  0\nImage Comparison Failed!\nActual pixels (open in browser):\n…\nExpected pixels (open in browser):\n…\nReference: testing/resources/embedder_tests/annotation_stamp_with_ap_agg_mac.png\nTotal pixels different: 1848\nGoogle Test trace:\n../../testing/embedder_test.cpp:1175: CompareBitmapWithExpectationSuffix() with /Users/aryankrishnan/repo/pdfium/out/pdfiumtest/../../testing/resources/embedder_tests/stamp_with_color_scheme_agg_mac.png\n```\n\nThis is just a sample format and hence the image paths are inconsistent.\n\n```\nPutting this in a textbox as it seems to create random headings outside the box.\nMain motivators:\n - Consistency with pdf_unittests\n - More clear link to a reference image rather than a full path\n - More human-readable and clearer output\n```\n\nThanks!",
+      "revId": "e5e25224ecc1bf3e0018b544875ff25b69f7c343",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0a4081cf_5357c779",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-11T21:40:03Z",
+      "side": 1,
+      "message": "Rename?",
+      "revId": "e5e25224ecc1bf3e0018b544875ff25b69f7c343",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c083c079_64e88b78",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 488,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-11T21:40:03Z",
+      "side": 1,
+      "message": "It\u0027s probably fine to just print \"No matching expectation file\" here, as the caller will print the path.",
+      "range": {
+        "startLine": 488,
+        "startChar": 0,
+        "endLine": 488,
+        "endChar": 55
+      },
+      "revId": "e5e25224ecc1bf3e0018b544875ff25b69f7c343",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "46623966_89504ac9",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 540,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-11T21:40:03Z",
+      "side": 1,
+      "message": "This actually deviates from Chromium behavior and is no longer consistent with line 489.",
+      "range": {
+        "startLine": 540,
+        "startChar": 16,
+        "endLine": 540,
+        "endChar": 25
+      },
+      "revId": "e5e25224ecc1bf3e0018b544875ff25b69f7c343",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c1927704_90ec4678",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 542,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-11T21:40:03Z",
+      "side": 1,
+      "message": "Similarly not needed since the caller prints it.",
       "revId": "e5e25224ecc1bf3e0018b544875ff25b69f7c343",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
