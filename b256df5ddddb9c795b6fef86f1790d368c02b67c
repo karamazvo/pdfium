@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "907c7124_eb9c2262",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-11T02:11:40Z",
+      "side": 1,
+      "message": "go/avoid-we",
+      "range": {
+        "startLine": 10,
+        "startChar": 24,
+        "endLine": 10,
+        "endChar": 26
+      },
+      "revId": "b256df5ddddb9c795b6fef86f1790d368c02b67c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4a23da1c_574cf6a7",
+        "filename": "core/fxge/cfx_fontmgr.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-11T02:11:40Z",
+      "side": 1,
+      "message": "Can probably remove this. Then the 2 callers in core/fxge/cfx_fontmapper.cpp can access the data via FontStream().",
+      "revId": "b256df5ddddb9c795b6fef86f1790d368c02b67c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
