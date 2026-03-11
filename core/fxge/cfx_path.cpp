@@ -7,8 +7,10 @@
 #include "core/fxge/cfx_path.h"
 
 #include <math.h>
+#include <stdio.h>
 
 #include <algorithm>
+
 #include <array>
 #include <iterator>
 
@@ -479,4 +481,36 @@ CFX_RetainablePath::~CFX_RetainablePath() = default;
 
 RetainPtr<CFX_RetainablePath> CFX_RetainablePath::Clone() const {
   return pdfium::MakeRetain<CFX_RetainablePath>(*this);
+}
+
+void CFX_Path::PrintDifferences(const CFX_Path& other) const {
+  if (points_.size() != other.points_.size()) {
+    printf("Path diff: size %zu != %zu\n", points_.size(),
+           other.points_.size());
+    return;
+  }
+
+  for (size_t i = 0; i < points_.size(); ++i) {
+    const auto& p1 = points_[i];
+    const auto& p2 = other.points_[i];
+    bool type_diff = p1.type_ != p2.type_;
+    bool close_diff = p1.close_figure_ != p2.close_figure_;
+    bool coord_diff = fabs(p1.point_.x - p2.point_.x) > 0.000001 ||
+                      fabs(p1.point_.y - p2.point_.y) > 0.000001;
+
+    if (type_diff || close_diff || coord_diff) {
+      printf("Path diff at index %zu:\n", i);
+      if (type_diff) {
+        printf("  Type: %d != %d\n", static_cast<int>(p1.type_),
+               static_cast<int>(p2.type_));
+      }
+      if (close_diff) {
+        printf("  Close: %d != %d\n", p1.close_figure_, p2.close_figure_);
+      }
+      if (coord_diff) {
+        printf("  Coord: (%f, %f) != (%f, %f)\n", p1.point_.x, p1.point_.y,
+               p2.point_.x, p2.point_.y);
+      }
+    }
+  }
 }

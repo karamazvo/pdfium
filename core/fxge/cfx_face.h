@@ -102,6 +102,17 @@ class CFX_Face final : public Retainable, public Observable {
                                           int dest_width,
                                           bool is_vertical,
                                           const CFX_SubstFont* subst_font);
+  std::unique_ptr<CFX_Path> LoadGlyphPathFT(uint32_t glyph_index,
+                                            int dest_width,
+                                            bool is_vertical,
+                                            const CFX_SubstFont* subst_font);
+#if defined(PDF_USE_SKIA)
+  std::unique_ptr<CFX_Path> LoadGlyphPathSkia(uint32_t glyph_index,
+                                              int dest_width,
+                                              bool is_vertical,
+                                              const CFX_SubstFont* subst_font);
+#endif
+
   int GetGlyphTTWidth() const;
   int GetGlyphWidth(uint32_t glyph_index,
                     int dest_width,

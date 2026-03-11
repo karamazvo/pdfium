@@ -32,6 +32,11 @@
 #include "core/fxge/fx_fontencoding.h"
 
 #if defined(PDF_USE_SKIA)
+#include "third_party/skia/include/core/SkCanvas.h"   // nogncheck
+#include "third_party/skia/include/core/SkFont.h"     // nogncheck
+#include "third_party/skia/include/core/SkPaint.h"    // nogncheck
+#include "third_party/skia/include/core/SkPath.h"     // nogncheck
+#include "third_party/skia/include/core/SkSurface.h"  // nogncheck
 #include "third_party/skia/include/core/SkTypeface.h"  // nogncheck
 #endif
 
@@ -343,6 +348,16 @@ class ScopedFaceTransform {
 
 }  // namespace
 
+#if defined(PDF_USE_SKIA)
+SkTypeface* CFX_Face::GetOrCreateSkTypeface() {
+  if (!skia_typeface_) {
+    skia_typeface_ =
+        CFX_GEModule::Get()->GetFontMgr()->MakeSkTypeface(GetData());
+  }
+  return skia_typeface_.get();
+}
+#endif
+
 // static
 RetainPtr<CFX_Face> CFX_Face::New(RetainPtr<Retainable> desc,
                                   pdfium::span<const uint8_t> data,
@@ -501,6 +516,94 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(
     const CFX_Matrix& matrix,
     int dest_width,
     FontAntiAliasingMode anti_alias) {
+#if defined(PDF_USE_SKIA_LATER)
+  if (SkTypeface* typeface = GetOrCreateSkTypeface()) {
+    const CFX_SubstFont* pSubstFont = font->GetSubstFont();
+    if (!(pSubstFont && pSubstFont->IsBuiltInGenericFont())) {
+      SkFont sk_font(sk_ref_sp(typeface), 64.0f);
+      sk_font.setHinting(SkFontHinting::kNone);
+      if (pSubstFont) {
+        int angle = pSubstFont->subst_cjk_ && bFontStyle
+                        ? -15
+                        : pSubstFont->italic_angle_;
+        if (angle) {
+          sk_font.setSkewX(tanf(angle * FXSYS_PI / 180.0));
+        }
+      }
+
+      const float horizontal_flip = matrix.a < 0 ? -1.f : 1.f;
+      const float vertical_flip = matrix.d < 0 ? 1.f : -1.f;
+      SkMatrix skMatrix;
+      skMatrix.setAll(matrix.a * horizontal_flip / 64.0f,
+                      -matrix.c * horizontal_flip / 64.0f, 0,
+                      matrix.b * vertical_flip / 64.0f,
+                      -matrix.d * vertical_flip / 64.0f, 0, 0, 0, 1);
+
+      SkGlyphID sk_glyph = glyph_index;
+      SkScalar width;
+      sk_font.getWidths(SkSpan(&sk_glyph, 1), SkSpan(&width, 1));
+
+      std::optional<SkPath> skPathOpt = sk_font.getPath(sk_glyph);
+      if (skPathOpt.has_value()) {
+        SkPath skPath = skPathOpt.value();
+        SkRect bounds = skPath.getBounds();
+        skMatrix.mapRect(&bounds);
+        SkIRect ir;
+        bounds.roundOut(&ir);
+
+        int dib_width = ir.width();
+        int dib_height = ir.height();
+        if (dib_width <= kMaxGlyphDimension &&
+            dib_height <= kMaxGlyphDimension) {
+          const FXDIB_Format format = anti_alias == FontAntiAliasingMode::kMono
+                                          ? FXDIB_Format::k1bppMask
+                                          : FXDIB_Format::k8bppMask;
+          RetainPtr<CFX_DIBitmap> new_bitmap =
+              pdfium::MakeRetain<CFX_DIBitmap>();
+          if (new_bitmap->Create(dib_width, dib_height, format)) {
+            SkImageInfo info =
+                SkImageInfo::Make(dib_width, dib_height, kAlpha_8_SkColorType,
+                                  kPremul_SkAlphaType);
+            sk_sp<SkSurface> surface = SkSurfaces::WrapPixels(
+                info, new_bitmap->GetWritableBuffer().data(),
+                new_bitmap->GetPitch());
+            if (surface) {
+              SkCanvas* canvas = surface->getCanvas();
+              canvas->clear(SK_ColorTRANSPARENT);
+
+              SkPaint paint;
+              paint.setAntiAlias(anti_alias != FontAntiAliasingMode::kMono);
+              paint.setColor(SK_ColorBLACK);
+
+              int weight = pSubstFont && pSubstFont->subst_cjk_ && bFontStyle
+                               ? pSubstFont->weight_cjk_
+                           : pSubstFont ? pSubstFont->weight_
+                                        : 0;
+              if (pSubstFont && !pSubstFont->IsBuiltInGenericFont() &&
+                  weight > 400) {
+                paint.setStyle(SkPaint::kStrokeAndFill_Style);
+                uint32_t index = (weight - 400) / 10;
+                pdfium::CheckedNumeric<signed long> level =
+                    GetWeightLevel(pSubstFont->charset_, index);
+                float stroke_width =
+                    static_cast<float>(level.ValueOrDefault(0)) *
+                    (std::abs(matrix.a) + std::abs(matrix.c)) / 36655.0f;
+                paint.setStrokeWidth(stroke_width);
+              }
+
+              canvas->concat(skMatrix);
+              canvas->translate(-ir.left(), -ir.top());
+              canvas->drawPath(skPath, paint);
+
+              return std::make_unique<CFX_GlyphBitmap>(ir.left(), -ir.top(),
+                                                       std::move(new_bitmap));
+            }
+          }
+        }
+      }
+    }
+  }
+#endif
   FT_Matrix ft_matrix;
   ft_matrix.xx = matrix.a / 64 * 65536;
   ft_matrix.xy = matrix.c / 64 * 65536;
@@ -629,6 +732,26 @@ std::unique_ptr<CFX_Path> CFX_Face::LoadGlyphPath(
     int dest_width,
     bool is_vertical,
     const CFX_SubstFont* subst_font) {
+  auto ft_path =
+      LoadGlyphPathFT(glyph_index, dest_width, is_vertical, subst_font);
+#if defined(PDF_USE_SKIA)
+  auto skia_path =
+      LoadGlyphPathSkia(glyph_index, dest_width, is_vertical, subst_font);
+  if (skia_path && ft_path) {
+    skia_path->PrintDifferences(*ft_path);
+    return skia_path;
+  }
+  CHECK(!ft_path);
+  CHECK(!skia_path);
+#endif
+  return ft_path;
+}
+
+std::unique_ptr<CFX_Path> CFX_Face::LoadGlyphPathFT(
+    uint32_t glyph_index,
+    int dest_width,
+    bool is_vertical,
+    const CFX_SubstFont* subst_font) {
   FT_FaceRec* rec = GetRec();
   FT_Set_Pixel_Sizes(rec, 0, 64);
   FT_Matrix ft_matrix = {65536, 0, 0, 65536};
@@ -674,21 +797,94 @@ std::unique_ptr<CFX_Path> CFX_Face::LoadGlyphPath(
   funcs.shift = 0;
   funcs.delta = 0;
 
-  auto pPath = std::make_unique<CFX_Path>();
+  auto ft_path = std::make_unique<CFX_Path>();
   OUTLINE_PARAMS params;
-  params.path_ = pPath.get();
+  params.path_ = ft_path.get();
   params.cur_x_ = params.cur_y_ = 0;
   params.coord_unit_ = 64 * 64.0;
 
   FT_Outline_Decompose(&rec->glyph->outline, &funcs, &params);
-  if (pPath->GetPoints().empty()) {
+  if (ft_path->GetPoints().empty()) {
     return nullptr;
   }
 
   Outline_CheckEmptyContour(&params);
-  pPath->ClosePath();
-  return pPath;
+  ft_path->ClosePath();
+  return ft_path;
 }
+
+#if defined(PDF_USE_SKIA)
+std::unique_ptr<CFX_Path> CFX_Face::LoadGlyphPathSkia(
+    uint32_t glyph_index,
+    int dest_width,
+    bool is_vertical,
+    const CFX_SubstFont* subst_font) {
+  std::unique_ptr<CFX_Path> skia_path;
+  if (SkTypeface* typeface = GetOrCreateSkTypeface()) {
+    const CFX_SubstFont* pSubstFont = subst_font;
+    if (!(pSubstFont && pSubstFont->IsBuiltInGenericFont())) {
+      SkFont sk_font(sk_ref_sp(typeface), 64.0f);
+      sk_font.setHinting(SkFontHinting::kNone);
+      if (pSubstFont) {
+        int angle = pSubstFont->subst_cjk_ ? -15 : pSubstFont->italic_angle_;
+        if (angle) {
+          sk_font.setSkewX(tanf(angle * FXSYS_PI / 180.0));
+        }
+      }
+      SkGlyphID sk_glyph = glyph_index;
+      std::optional<SkPath> skPathOpt = sk_font.getPath(sk_glyph);
+      if (skPathOpt.has_value()) {
+        SkPath skPath = skPathOpt.value();
+        skia_path = std::make_unique<CFX_Path>();
+
+        SkPath::RawIter iter(skPath);
+        std::array<SkPoint, 4> sk_pts;
+        std::array<FT_Vector, 4> pts;
+        SkPath::Verb verb;
+        bool bHaveContour = false;
+        OUTLINE_PARAMS params;
+        params.path_ = skia_path.get();
+        params.cur_x_ = params.cur_y_ = 0;
+        params.coord_unit_ = 64 * 64.0;
+
+        while ((verb = iter.next(sk_pts.data())) != SkPath::kDone_Verb) {
+          for (size_t i = 0; i < 4; ++i) {
+            pts[i].x = (long)(sk_pts[i].fX * 64.0f);
+            pts[i].y = (long)(-sk_pts[i].fY * 64.0f);
+          }
+          switch (verb) {
+            case SkPath::kMove_Verb:
+              Outline_MoveTo(&pts[0], &params);
+              break;
+            case SkPath::kLine_Verb:
+              Outline_LineTo(&pts[1], &params);
+              break;
+            case SkPath::kQuad_Verb:
+              Outline_ConicTo(&pts[1], &pts[2], &params);
+              break;
+            case SkPath::kCubic_Verb:
+              Outline_CubicTo(&pts[1], &pts[2], &pts[2], &params);
+              break;
+            case SkPath::kClose_Verb:
+              skia_path->ClosePath();
+              bHaveContour = false;
+              break;
+            default:
+              break;
+          }
+        }
+        if (bHaveContour) {
+          skia_path->ClosePath();
+        }
+        if (skia_path->GetPoints().empty()) {
+          skia_path.reset();
+        }
+      }
+    }
+  }
+  return skia_path;
+}
+#endif
 
 int CFX_Face::GetGlyphTTWidth() const {
   const auto* fontglyph = GetRec()->glyph;
@@ -939,15 +1135,6 @@ bool CFX_Face::CanEmbed() {
 }
 #endif
 
-#if defined(PDF_USE_SKIA)
-SkTypeface* CFX_Face::GetOrCreateSkTypeface() {
-  if (!skia_typeface_) {
-    CFX_FontMgr* font_mgr = CFX_GEModule::Get()->GetFontMgr();
-    skia_typeface_ = font_mgr->MakeSkTypeface(GetData());
-  }
-  return skia_typeface_.get();
-}
-#endif
 
 CFX_Face::CFX_Face(FT_FaceRec* rec, RetainPtr<Retainable> pDesc)
     : rec_(rec), desc_(std::move(pDesc)) {
