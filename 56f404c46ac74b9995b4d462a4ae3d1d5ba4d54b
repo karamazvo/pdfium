@@ -36,6 +36,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "523549e5_32765e5f",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-03-11T22:28:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a5e3bb7f_3cd58c5e",
+      "revId": "56f404c46ac74b9995b4d462a4ae3d1d5ba4d54b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bfe2e6f7_cad9c85b",
@@ -49,6 +67,30 @@
       "writtenOn": "2026-03-11T02:07:42Z",
       "side": 1,
       "message": "typo",
+      "range": {
+        "startLine": 158,
+        "startChar": 17,
+        "endLine": 158,
+        "endChar": 24
+      },
+      "revId": "56f404c46ac74b9995b4d462a4ae3d1d5ba4d54b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2ee35224_567629cf",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 5
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-03-11T22:28:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bfe2e6f7_cad9c85b",
       "range": {
         "startLine": 158,
         "startChar": 17,
