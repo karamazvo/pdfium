@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5ca1a9f2_6d3bce99",
+        "filename": "core/fxge/cfx_fontmgr.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-03-11T17:43:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2f1abfa8_6f101503",
+      "revId": "3ca8d3f50c6ce119a88f9edc176cc15c61b9f45c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ee987f9e_d1e6861d",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-03-11T16:25:22Z",
       "side": 1,
       "message": "Mark as const / no need to initialize here.",
+      "revId": "3ca8d3f50c6ce119a88f9edc176cc15c61b9f45c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e424be2e_a5d70de4",
+        "filename": "core/fxge/cfx_fontmgr.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-03-11T17:43:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ee987f9e_d1e6861d",
       "revId": "3ca8d3f50c6ce119a88f9edc176cc15c61b9f45c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
