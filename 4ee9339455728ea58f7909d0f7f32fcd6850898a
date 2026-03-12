@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9da0d110_273ef77f",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1347,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-12T23:30:52Z",
+      "side": 1,
+      "message": "The only ways for FPDFPage_RemoveObject() to fail here are:\n\n1) `page` is invalid, but that shouldn\u0027t happen and the test would probably have failed or crashed before getting here.\n2) `page_object` is null. In which case, there\u0027s no chance of a double free.",
+      "parentUuid": "c3e9b39f_8c1c4891",
+      "revId": "4ee9339455728ea58f7909d0f7f32fcd6850898a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6583dba9_c961bb62",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-03-12T22:48:13Z",
       "side": 1,
       "message": "Is this a little more dangerous? Could there be a double free possible on test failure?",
+      "revId": "4ee9339455728ea58f7909d0f7f32fcd6850898a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b6b5faaa_bf57e3ee",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2232,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-12T23:30:52Z",
+      "side": 1,
+      "message": "There\u0027s no ASSERT_FOO() call between here and line 2243, but I can release() here.",
+      "parentUuid": "6583dba9_c961bb62",
       "revId": "4ee9339455728ea58f7909d0f7f32fcd6850898a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
