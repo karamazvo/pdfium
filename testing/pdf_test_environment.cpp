@@ -12,8 +12,13 @@ PDFTestEnvironment::~PDFTestEnvironment() = default;
 
 // testing::Environment:
 void PDFTestEnvironment::SetUp() {
+#if defined(PDF_USE_SKIA)
+  CFX_GEModule::Create(test_fonts_.font_paths(), CFX_GEModule::kDefaultRenderer,
+                       CFX_FontMgr::FontBackend::kFreeType);
+#else
   CFX_GEModule::Create(test_fonts_.font_paths(),
                        CFX_FontMgr::FontBackend::kFreeType);
+#endif
 }
 
 void PDFTestEnvironment::TearDown() {
