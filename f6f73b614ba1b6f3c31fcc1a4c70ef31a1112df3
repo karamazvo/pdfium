@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "90d04e9e_7b5522c1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 12
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-12T23:44:20Z",
+      "side": 1,
+      "message": "I think that was there to avoid writing so many ifdefs, but ok.",
+      "revId": "f6f73b614ba1b6f3c31fcc1a4c70ef31a1112df3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ba7ee737_8a76d942",
+        "filename": "core/fxge/cfx_gemodule.h",
+        "patchSetId": 12
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-12T23:44:20Z",
+      "side": 1,
+      "message": "Maybe wrap in `#if defined(PDF_USE_SKIA)` since it\u0027s only read in UseSkiaRenderer()? Or just leave it, since mucking with conditional initializer lists is not fun.",
+      "revId": "f6f73b614ba1b6f3c31fcc1a4c70ef31a1112df3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cef8089b_3aa24730",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-12T23:44:20Z",
+      "side": 1,
+      "message": "CHECK() like before?",
+      "revId": "f6f73b614ba1b6f3c31fcc1a4c70ef31a1112df3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
