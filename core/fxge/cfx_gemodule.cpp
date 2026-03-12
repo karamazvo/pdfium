@@ -13,11 +13,22 @@ namespace {
 
 CFX_GEModule* g_GEModule = nullptr;
 
+#if defined(PDF_USE_SKIA)
+CFX_GEModule::RendererType g_renderer_type = CFX_GEModule::kDefaultRenderer;
+#endif
+
 }  // namespace
 
 // static
+#if defined(PDF_USE_SKIA)
+void CFX_GEModule::Create(const char** pUserFontPaths,
+                          RendererType renderer_type,
+                          CFX_FontMgr::FontBackend backend) {
+  g_renderer_type = renderer_type;
+#else
 void CFX_GEModule::Create(const char** pUserFontPaths,
                           CFX_FontMgr::FontBackend backend) {
+#endif
   DCHECK(!g_GEModule);
   g_GEModule = new CFX_GEModule(pUserFontPaths, backend);
   g_GEModule->platform_->Init();
@@ -38,6 +49,22 @@ CFX_GEModule* CFX_GEModule::Get() {
   DCHECK(g_GEModule);
   return g_GEModule;
 }
+
+// static
+bool CFX_GEModule::UseSkiaRenderer() {
+#if defined(PDF_USE_SKIA)
+  return g_renderer_type == RendererType::kSkia;
+#else
+  return false;
+#endif
+}
+
+#if defined(PDF_USE_SKIA)
+// static
+void CFX_GEModule::SetRendererType(RendererType renderer_type) {
+  g_renderer_type = renderer_type;
+}
+#endif
 
 CFX_GEModule::CFX_GEModule(const char** pUserFontPaths,
                            CFX_FontMgr::FontBackend backend)
