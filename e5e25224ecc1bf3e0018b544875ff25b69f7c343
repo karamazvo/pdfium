@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "db43941f_f9cce2cc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-12T04:47:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dd1fb8bd_1bfb40da",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 11
+      },
+      "revId": "e5e25224ecc1bf3e0018b544875ff25b69f7c343",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "e25af664_3a627fea",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 3
@@ -83,6 +107,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "1fb50c57_c2dddb30",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 488,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-12T04:47:47Z",
+      "side": 1,
+      "message": "The idea was to print the relative path here instead of the full path including /Users/abcd/..., would be something shorter and visible at a glance instead of having to look through a full path that is quite long. Kind of like how pdf_unittests does that instead of the full path.",
+      "parentUuid": "c083c079_64e88b78",
+      "range": {
+        "startLine": 488,
+        "startChar": 0,
+        "endLine": 488,
+        "endChar": 55
+      },
+      "revId": "e5e25224ecc1bf3e0018b544875ff25b69f7c343",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "46623966_89504ac9",
         "filename": "testing/embedder_test.cpp",
         "patchSetId": 3
@@ -94,6 +142,30 @@
       "writtenOn": "2026-03-11T21:40:03Z",
       "side": 1,
       "message": "This actually deviates from Chromium behavior and is no longer consistent with line 489.",
+      "range": {
+        "startLine": 540,
+        "startChar": 16,
+        "endLine": 540,
+        "endChar": 25
+      },
+      "revId": "e5e25224ecc1bf3e0018b544875ff25b69f7c343",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c9f2d925_41fa37cd",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 540,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-12T04:47:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "46623966_89504ac9",
       "range": {
         "startLine": 540,
         "startChar": 16,
@@ -117,6 +189,24 @@
       "writtenOn": "2026-03-11T21:40:03Z",
       "side": 1,
       "message": "Similarly not needed since the caller prints it.",
+      "revId": "e5e25224ecc1bf3e0018b544875ff25b69f7c343",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9121e18e_843a0848",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 542,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-12T04:47:47Z",
+      "side": 1,
+      "message": "The idea was to print the relative path here instead of the full path including /Users/abcd/..., would be something shorter and visible at a glance instead of having to look through a full path that is quite long. Kind of like how pdf_unittests does that instead of the full path.",
+      "parentUuid": "c1927704_90ec4678",
       "revId": "e5e25224ecc1bf3e0018b544875ff25b69f7c343",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
