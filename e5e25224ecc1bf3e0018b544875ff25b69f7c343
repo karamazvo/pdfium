@@ -118,6 +118,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fa1c2c24_14dad8ca",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-12T18:36:45Z",
+      "side": 1,
+      "message": "Maybe let\u0027s go for something that doesn\u0027t talk about PNGs at all. PNG comparison has become the default anyway, and none of the other CompareBitmap methods have ToPng anymore, so it sounds slightly off with this one being the only one with ToPng()",
+      "parentUuid": "47ced82b_00794383",
+      "revId": "e5e25224ecc1bf3e0018b544875ff25b69f7c343",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c083c079_64e88b78",
@@ -237,6 +255,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "08b12564_6a84e10b",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 488,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-12T18:36:45Z",
+      "side": 1,
+      "message": "Done, re-added the SCOPED_TRACE(s) and removed the refs and png_path\u0027s. Still taking it as a function argument so all of the processing of png_name -\u003e png_data can happen in one place instead of 3 being there in each caller.",
+      "parentUuid": "1a73d87a_5dba90d4",
+      "range": {
+        "startLine": 488,
+        "startChar": 0,
+        "endLine": 488,
+        "endChar": 55
+      },
+      "revId": "e5e25224ecc1bf3e0018b544875ff25b69f7c343",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "46623966_89504ac9",
@@ -298,6 +340,30 @@
       "side": 1,
       "message": "The encoded PNG data should be on its own line. Please actually try out this code with a deliberate failure and see how it compares with Chromium code.",
       "parentUuid": "c9f2d925_41fa37cd",
+      "range": {
+        "startLine": 540,
+        "startChar": 16,
+        "endLine": 540,
+        "endChar": 25
+      },
+      "revId": "e5e25224ecc1bf3e0018b544875ff25b69f7c343",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9eaca02f_01d7b896",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 540,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-12T18:36:45Z",
+      "side": 1,
+      "message": "Done (forgot the \\n there). Readded it, and here is some example output.\n\n```\n../../testing/embedder_test.cpp:534: Failure\nExpected equality of these values:\n  pixels_different\n    Which is: 723\n  0\nPixels do not match!\nActual pixels (open in browser):\ndata:image/png;base64,...\nExpected pixels (open in browser):\ndata:image/png;base64,...\nNumber of pixels with an error: 723\nGoogle Test trace:\n../../testing/embedder_test.cpp:1174: CompareBitmapWithExpectationSuffix() with /Users/aryankrishnan/repo/pdfium/out/pdfiumtest/../../testing/resources/embedder_tests/annotation_stamp_with_ap_agg_mac.png\n```\n\nStill feels pretty off to have 723 twice, I think it does make this easier to read, but at the same time it just duplicates content twice.\n\nWdyt? Remove the number of pixels with an error and just have this cl change the rest of the logs (like Actual pixels) to match chromium?",
+      "parentUuid": "e504f851_4bd4a1cf",
       "range": {
         "startLine": 540,
         "startChar": 16,
