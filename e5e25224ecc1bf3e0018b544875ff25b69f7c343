@@ -100,6 +100,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "47ced82b_00794383",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-12T17:38:28Z",
+      "side": 1,
+      "message": "How about CompareBitmapToPngFile?",
+      "parentUuid": "2a867ac9_676b65bd",
+      "revId": "e5e25224ecc1bf3e0018b544875ff25b69f7c343",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c083c079_64e88b78",
@@ -197,6 +215,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "1a73d87a_5dba90d4",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 488,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-12T17:38:28Z",
+      "side": 1,
+      "message": "Nothing changed here, but I see this is \"done\" by removing the SCOPED_TRACE() calls. I would actually prefer to keep the SCOPED_TRACE() calls and remove this, as SCOPED_TRACE() will trigger for all the ASSERT_FOO() failures below.",
+      "parentUuid": "208e8b6c_385eab73",
+      "range": {
+        "startLine": 488,
+        "startChar": 0,
+        "endLine": 488,
+        "endChar": 55
+      },
+      "revId": "e5e25224ecc1bf3e0018b544875ff25b69f7c343",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "46623966_89504ac9",
         "filename": "testing/embedder_test.cpp",
         "patchSetId": 3
@@ -232,6 +274,30 @@
       "side": 1,
       "message": "Done",
       "parentUuid": "46623966_89504ac9",
+      "range": {
+        "startLine": 540,
+        "startChar": 16,
+        "endLine": 540,
+        "endChar": 25
+      },
+      "revId": "e5e25224ecc1bf3e0018b544875ff25b69f7c343",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e504f851_4bd4a1cf",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 540,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-12T17:38:28Z",
+      "side": 1,
+      "message": "The encoded PNG data should be on its own line. Please actually try out this code with a deliberate failure and see how it compares with Chromium code.",
+      "parentUuid": "c9f2d925_41fa37cd",
       "range": {
         "startLine": 540,
         "startChar": 16,
