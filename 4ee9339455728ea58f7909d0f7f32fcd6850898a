@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c3e9b39f_8c1c4891",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1347,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-03-12T22:48:13Z",
+      "side": 1,
+      "message": "On a similar note, should this line occur after the FPDFPage_RemoveObject call? And should it be changed to ASSERT_TRUE?",
+      "revId": "4ee9339455728ea58f7909d0f7f32fcd6850898a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6583dba9_c961bb62",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2232,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-03-12T22:48:13Z",
+      "side": 1,
+      "message": "Is this a little more dangerous? Could there be a double free possible on test failure?",
+      "revId": "4ee9339455728ea58f7909d0f7f32fcd6850898a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
