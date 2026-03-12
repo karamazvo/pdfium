@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ff44daf1_547b9671",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-03-12T18:06:33Z",
+      "side": 1,
+      "message": "Last one in this chain (well, rebased onto main).",
+      "revId": "e26ddd17277adc1ef2e109917371385cf35a3742",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
