@@ -34,6 +34,24 @@
       "parentUuid": "b2fcc207_1a41d73e",
       "revId": "169b9f78644b5c3ede92a0249b6597d540789124",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "01ba8b0c_ce54037a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-12T17:21:00Z",
+      "side": 1,
+      "message": "For consistency, see https://pdfium-review.googlesource.com/142170 for the prior V8 DEPS roll.",
+      "parentUuid": "8393ba1b_74cbc6e3",
+      "revId": "169b9f78644b5c3ede92a0249b6597d540789124",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
