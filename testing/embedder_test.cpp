@@ -21,7 +21,7 @@
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxcrt/zip.h"
-#include "core/fxge/cfx_defaultrenderdevice.h"
+#include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/cpp/fpdf_scopers.h"
@@ -315,7 +315,7 @@ std::vector<std::string> GetEmbedderTestExpectationsWithSuffixPath(
     std::string_view expectation_png_name) {
   const std::string basename(expectation_png_name);
   const std::string renderer =
-      CFX_DefaultRenderDevice::UseSkiaRenderer() ? "_skia" : "_agg";
+      CFX_GEModule::UseSkiaRenderer() ? "_skia" : "_agg";
   const std::string platform_suffix(GetPlatformNameSuffix());
   const std::string cpu_arch_suffix(GetCpuArchSuffix());
   const bool has_cpu_arch_suffix = !cpu_arch_suffix.empty();
