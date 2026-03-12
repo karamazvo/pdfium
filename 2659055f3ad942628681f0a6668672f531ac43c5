@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8880f508_be89a682",
+        "filename": "skia/BUILD.gn",
+        "patchSetId": 2
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2026-03-12T20:20:20Z",
+      "side": 0,
+      "message": "This file was deleted in https://skia.googlesource.com/skia/+/bf1db1c757042184fa6e2d7d9f4382485c80979f",
+      "revId": "2659055f3ad942628681f0a6668672f531ac43c5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
