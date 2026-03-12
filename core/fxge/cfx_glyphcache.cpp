@@ -14,8 +14,8 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/to_underlying.h"
-#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_font.h"
+#include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_glyphbitmap.h"
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_substfont.h"
@@ -161,7 +161,7 @@ const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(
 
 #if BUILDFLAG(IS_APPLE)
   const bool bDoLookUp =
-      !text_options->native_text || CFX_DefaultRenderDevice::UseSkiaRenderer();
+      !text_options->native_text || CFX_GEModule::Get()->UseSkiaRenderer();
 #else
   const bool bDoLookUp = true;
 #endif
@@ -171,7 +171,7 @@ const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(
   }
 
 #if BUILDFLAG(IS_APPLE)
-  DCHECK(!CFX_DefaultRenderDevice::UseSkiaRenderer());
+  DCHECK(!CFX_GEModule::Get()->UseSkiaRenderer());
 
   auto it = size_map_.find(FaceGlyphsKey);
   if (it != size_map_.end()) {
