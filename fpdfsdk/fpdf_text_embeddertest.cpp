@@ -1207,9 +1207,9 @@ TEST_F(FPDFTextEmbedderTest, Bug921) {
   static constexpr auto kData = std::to_array<const unsigned int>(
       {1095, 1077, 1083, 1086, 1074, 1077, 1095, 1077, 1089, 1082, 1086, 1077,
        32,   1089, 1090, 1088, 1072, 1076, 1072, 1085, 1080, 1077, 46,   32});
-  static constexpr int kStartIndex = 238;
+  static constexpr int kStartIndex = 248;
 
-  ASSERT_EQ(268, FPDFText_CountChars(textpage.get()));
+  ASSERT_EQ(278, FPDFText_CountChars(textpage.get()));
   for (size_t i = 0; i < std::size(kData); ++i) {
     EXPECT_EQ(kData[i], FPDFText_GetUnicode(textpage.get(), kStartIndex + i));
   }
@@ -2270,14 +2270,9 @@ TEST_F(FPDFTextEmbedderTest, Bug1769) {
   ASSERT_TRUE(textpage);
 
   unsigned short buffer[128] = {};
-  // TODO(crbug.com/42270780): Improve text extraction.
-  // The first instance of "world" is visible to the human eye and should be
-  // extracted as is. The second instance is not, so how it should be
-  // extracted is debatable.
-  static constexpr char kNeedsImprovementResult[] = "wo d wo d";
-  ASSERT_EQ(10, FPDFText_GetText(textpage.get(), 0, 128, buffer));
-  EXPECT_THAT(pdfium::span(buffer).first(10u),
-              ElementsAreArray(kNeedsImprovementResult));
+  static constexpr char kResult[] = "world world";
+  ASSERT_EQ(12, FPDFText_GetText(textpage.get(), 0, 128, buffer));
+  EXPECT_THAT(pdfium::span(buffer).first(12u), ElementsAreArray(kResult));
 }
 
 TEST_F(FPDFTextEmbedderTest, Bug384770169) {
@@ -2445,6 +2440,7 @@ TEST_F(FPDFTextEmbedderTest, WhitespaceCharCount) {
 
   ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
+
   // TODO(crbug.com/40643656): FPDFText_CountChars() should return 1.
   EXPECT_EQ(0, FPDFText_CountChars(textpage.get()));
 }
@@ -2457,15 +2453,24 @@ TEST_F(FPDFTextEmbedderTest, Bug444176962) {
   ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
 
-  // TODO(crbug.com/444176962): FPDFText_GetText() should return 10.
-  // kMissingSpaceResult should be replaced with kResult as "local act"
   unsigned short buffer[128] = {};
+<<<<<<< PATCH SET (5a87594f3c5eefd86fc91cec0e3291e83952e899 Reland "Reland "Remove character width check from cpdf_textp)
+  static constexpr char kResult[] = "local act";
+  ASSERT_EQ(10, FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer));
+  EXPECT_THAT(pdfium::span(buffer).first<10>(), ElementsAreArray(kResult));
+||||||| BASE      (4a298961558e1e54fde965d133d61f90df2431bc Revert "Reland "Remove character width check from cpdf_textp)
+  static constexpr char kMissingSpaceResult[] = "localact";
+  ASSERT_EQ(9, FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer));
+  EXPECT_THAT(pdfium::span(buffer).first<9>(),
+              ElementsAreArray(kMissingSpaceResult));
+=======
   static constexpr char kMissingSpaceResult[] = "localact";
   static constexpr int kExpectedSize = std::size(kMissingSpaceResult);
   ASSERT_EQ(kExpectedSize,
             FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer));
   EXPECT_THAT(pdfium::span(buffer).first<kExpectedSize>(),
               ElementsAreArray(kMissingSpaceResult));
+>>>>>>> BASE      (0464426e8e6a1fe45a23ad01cfcd9ddc28373d50 Roll build, clang, rust, siso, etc)
 }
 
 TEST_F(FPDFTextEmbedderTest, Bug491161396) {
