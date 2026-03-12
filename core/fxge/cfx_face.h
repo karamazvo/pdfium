@@ -141,7 +141,8 @@ class CFX_Face final : public Retainable, public Observable {
 #endif
 
 #if defined(PDF_USE_SKIA)
-  SkTypeface* GetOrCreateSkTypeface();
+  SkTypeface* GetSkTypeface() { return skia_typeface_.get(); }
+  const SkTypeface* GetSkTypeface() const { return skia_typeface_.get(); }
 #endif
 
  private:
