@@ -63,6 +63,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
+#include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_glyphbitmap.h"
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
@@ -134,7 +135,7 @@ FXDIB_Format GetFormatForLuminosity(bool is_luminosity) {
 #if BUILDFLAG(IS_APPLE)
   return FXDIB_Format::kBgrx;
 #else
-  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+  if (CFX_GEModule::UseSkiaRenderer()) {
     return FXDIB_Format::kBgrx;
   }
   return FXDIB_Format::kBgr;
@@ -1317,7 +1318,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
 #endif
     } else {
       if (alpha != 1.0f) {
-        if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+        if (CFX_GEModule::UseSkiaRenderer()) {
           CFX_Matrix matrix = CFX_RenderDevice::GetFlipMatrix(
               bitmap->GetWidth(), bitmap->GetHeight(), left, top);
           device_->StartDIBits(std::move(bitmap), alpha, /*argb=*/0, matrix,

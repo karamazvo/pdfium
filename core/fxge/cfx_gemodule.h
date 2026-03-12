@@ -38,10 +38,36 @@ class CFX_GEModule {
 #endif
   };
 
+#if defined(PDF_USE_SKIA)
+  // This internal definition of renderer types must stay updated with respect
+  // to the public definition of `FPDF_RENDERER_TYPE` in `fpdfview.h`.
+  enum class RendererType {
+    kAgg = 0,
+    kSkia = 1,
+  };
+
+  // When Skia is enabled at compile time, this constant is assigned as the
+  // default value UseSkiaRenderer() returns. SetRendererType() may override it.
+  static constexpr RendererType kDefaultRenderer = RendererType::kSkia;
+#endif
+
+#if defined(PDF_USE_SKIA)
+  static void Create(const char** pUserFontPaths,
+                     RendererType renderer_type,
+                     CFX_FontMgr::FontBackend backend);
+#else
   static void Create(const char** pUserFontPaths,
                      CFX_FontMgr::FontBackend backend);
+#endif
   static void Destroy();
   static CFX_GEModule* Get();
+
+  // Runtime check to see if Skia is the renderer variant in use.
+  static bool UseSkiaRenderer();
+
+#if defined(PDF_USE_SKIA)
+  static void SetRendererType(RendererType renderer_type);
+#endif
 
   CFX_FontMgr* GetFontMgr() const { return font_mgr_.get(); }
   PlatformIface* GetPlatform() const { return platform_.get(); }
