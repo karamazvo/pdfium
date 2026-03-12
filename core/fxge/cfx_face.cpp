@@ -353,8 +353,14 @@ RetainPtr<CFX_Face> CFX_Face::New(RetainPtr<CFX_ReadOnlySpanStream> font_stream,
   if (FT_Set_Pixel_Sizes(face_rec, 64, 64) != 0) {
     return nullptr;
   }
+
   // Private ctor.
-  return pdfium::WrapRetain(new CFX_Face(std::move(font_stream), face_rec));
+  auto result =
+      pdfium::WrapRetain(new CFX_Face(std::move(font_stream), face_rec));
+#if defined(PDF_USE_SKIA)
+  result->skia_typeface_ = font_mgr->MakeSkTypeface(result->GetData());
+#endif
+  return result;
 }
 
 bool CFX_Face::HasGlyphNames() const {
@@ -924,16 +930,6 @@ CFX_Face::CFX_Face(RetainPtr<CFX_ReadOnlySpanStream> font_stream,
     : owned_font_stream_(std::move(font_stream)), rec_(rec) {
   DCHECK(rec_);
 }
-
-#if defined(PDF_USE_SKIA)
-SkTypeface* CFX_Face::GetOrCreateSkTypeface() {
-  if (!skia_typeface_) {
-    skia_typeface_ =
-        CFX_GEModule::Get()->GetFontMgr()->MakeSkTypeface(GetData());
-  }
-  return skia_typeface_.get();
-}
-#endif
 
 CFX_Face::~CFX_Face() = default;
 
