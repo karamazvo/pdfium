@@ -35,6 +35,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e776fe94_dfafeeec",
+        "filename": "core/fxge/cfx_gemodule.h",
+        "patchSetId": 12
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-03-12T23:54:50Z",
+      "side": 1,
+      "message": "Exactly.  Makes calls ugly.",
+      "parentUuid": "ba7ee737_8a76d942",
+      "revId": "f6f73b614ba1b6f3c31fcc1a4c70ef31a1112df3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cef8089b_3aa24730",
@@ -48,6 +66,24 @@
       "writtenOn": "2026-03-12T23:44:20Z",
       "side": 1,
       "message": "CHECK() like before?",
+      "revId": "f6f73b614ba1b6f3c31fcc1a4c70ef31a1112df3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5ddee6fc_3174d6a6",
+        "filename": "fpdfsdk/fpdf_view.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-03-12T23:54:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cef8089b_3aa24730",
       "revId": "f6f73b614ba1b6f3c31fcc1a4c70ef31a1112df3",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
