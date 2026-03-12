@@ -131,6 +131,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d11db851_f8275d99",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 488,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-12T05:33:30Z",
+      "side": 1,
+      "message": "If you want to print a shortened path, that\u0027s fine, but right now this CL ends up printing it twice.",
+      "parentUuid": "1fb50c57_c2dddb30",
+      "range": {
+        "startLine": 488,
+        "startChar": 0,
+        "endLine": 488,
+        "endChar": 55
+      },
+      "revId": "e5e25224ecc1bf3e0018b544875ff25b69f7c343",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "46623966_89504ac9",
         "filename": "testing/embedder_test.cpp",
         "patchSetId": 3
