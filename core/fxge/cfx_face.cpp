@@ -354,7 +354,12 @@ RetainPtr<CFX_Face> CFX_Face::New(RetainPtr<CFX_ReadOnlySpanStream> font_stream,
     return nullptr;
   }
   // Private ctor.
-  return pdfium::WrapRetain(new CFX_Face(std::move(font_stream), face_rec));
+  auto result =
+      pdfium::WrapRetain(new CFX_Face(std::move(font_stream), face_rec));
+#if defined(PDF_ENABLE_FONTATIONS)
+  result->skia_typeface_ = font_mgr->MakeSkTypeface(result->GetData());
+#endif
+  return result;
 }
 
 bool CFX_Face::HasGlyphNames() const {
