@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4d7e5a0c_58eb6281",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 5122,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-13T23:44:18Z",
+      "side": 0,
+      "message": "Whoops, wrong bug number added in the previous CL. Deleting it now.",
+      "range": {
+        "startLine": 5122,
+        "startChar": 20,
+        "endLine": 5122,
+        "endChar": 29
+      },
+      "revId": "8947a4dd8fc9bde6fa91e605ffbbe465df31a50e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
