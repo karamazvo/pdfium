@@ -154,6 +154,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9bb405eb_e3a357ff",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-13T04:29:56Z",
+      "side": 1,
+      "message": "Ok, got it. Done.",
+      "parentUuid": "93c5ca64_ed16a873",
+      "revId": "e5e25224ecc1bf3e0018b544875ff25b69f7c343",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c083c079_64e88b78",
@@ -406,6 +424,30 @@
       "side": 1,
       "message": "It does seem redundant, so please remove it.",
       "parentUuid": "9eaca02f_01d7b896",
+      "range": {
+        "startLine": 540,
+        "startChar": 16,
+        "endLine": 540,
+        "endChar": 25
+      },
+      "revId": "e5e25224ecc1bf3e0018b544875ff25b69f7c343",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0c92d3ff_f03a66ce",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 540,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-13T04:29:56Z",
+      "side": 1,
+      "message": "Done. Removed the \"Number of pixels with an error:\" line. Let me know if you would rather have the expected equality and onward not printed but keep the \"Number of pixels with an error:\" line",
+      "parentUuid": "3f6efc6d_d12267b9",
       "range": {
         "startLine": 540,
         "startChar": 16,
