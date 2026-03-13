@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5c499a07_c1307c1d",
+        "filename": "core/fxge/cfx_face.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 361,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-13T02:05:41Z",
+      "side": 1,
+      "message": "Comment is in the wrong place.",
+      "range": {
+        "startLine": 361,
+        "startChar": 18,
+        "endLine": 361,
+        "endChar": 33
+      },
+      "revId": "8928761a90c689b2f196c263adf178071b95a3f8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
