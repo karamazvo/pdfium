@@ -138,6 +138,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "93c5ca64_ed16a873",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-13T03:27:33Z",
+      "side": 1,
+      "message": "Why hide the fact that it is comparing to PNGs? Helper is generic and doesn\u0027t explain what it does. CompareBGRxBitmapToPng() still exists, so ToPng is still a thing.",
+      "parentUuid": "fa1c2c24_14dad8ca",
+      "revId": "e5e25224ecc1bf3e0018b544875ff25b69f7c343",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c083c079_64e88b78",
         "filename": "testing/embedder_test.cpp",
         "patchSetId": 3
@@ -364,6 +382,30 @@
       "side": 1,
       "message": "Done (forgot the \\n there). Readded it, and here is some example output.\n\n```\n../../testing/embedder_test.cpp:534: Failure\nExpected equality of these values:\n  pixels_different\n    Which is: 723\n  0\nPixels do not match!\nActual pixels (open in browser):\ndata:image/png;base64,...\nExpected pixels (open in browser):\ndata:image/png;base64,...\nNumber of pixels with an error: 723\nGoogle Test trace:\n../../testing/embedder_test.cpp:1174: CompareBitmapWithExpectationSuffix() with /Users/aryankrishnan/repo/pdfium/out/pdfiumtest/../../testing/resources/embedder_tests/annotation_stamp_with_ap_agg_mac.png\n```\n\nStill feels pretty off to have 723 twice, I think it does make this easier to read, but at the same time it just duplicates content twice.\n\nWdyt? Remove the number of pixels with an error and just have this cl change the rest of the logs (like Actual pixels) to match chromium?",
       "parentUuid": "e504f851_4bd4a1cf",
+      "range": {
+        "startLine": 540,
+        "startChar": 16,
+        "endLine": 540,
+        "endChar": 25
+      },
+      "revId": "e5e25224ecc1bf3e0018b544875ff25b69f7c343",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3f6efc6d_d12267b9",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 540,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-13T03:27:33Z",
+      "side": 1,
+      "message": "It does seem redundant, so please remove it.",
+      "parentUuid": "9eaca02f_01d7b896",
       "range": {
         "startLine": 540,
         "startChar": 16,

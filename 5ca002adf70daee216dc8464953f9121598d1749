@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "36c849da_03f7cf81",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 1168,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-13T03:27:33Z",
+      "side": 1,
+      "message": "This is still an awkward way to achieve what you are trying to do. Consider refactoring the code that prints the error message into a separate function.",
+      "revId": "5ca002adf70daee216dc8464953f9121598d1749",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
