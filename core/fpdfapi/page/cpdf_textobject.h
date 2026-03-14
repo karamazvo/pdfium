@@ -66,6 +66,7 @@ class CPDF_TextObject final : public CPDF_PageObject {
   void SetPosition(const CFX_PointF& pos) { pos_ = pos; }
 
   const std::vector<uint32_t>& GetCharCodes() const { return char_codes_; }
+  const std::vector<float>& GetCharKernings() const { return char_kernings_; }
   const std::vector<float>& GetCharPositions() const { return char_positions_; }
 
   // Caller is expected to call SetDirty(true) when done changing the object.
@@ -80,7 +81,16 @@ class CPDF_TextObject final : public CPDF_PageObject {
   float CalcPositionDataInternal(const RetainPtr<CPDF_Font>& font);
 
   CFX_PointF pos_;
+
+  // For a text object with N characters:
+  // - `char_codes_` has N elements.
+  // - `char_kernings_` has N elements, where each value is the adjustment
+  //   applied after the character at the same index.
+  // - `char_positions_` has N - 1 elements, representing the horizontal
+  //   offsets for all characters except the first. The first character's
+  //   offset is always 0.
   std::vector<uint32_t> char_codes_;
+  std::vector<float> char_kernings_;
   std::vector<float> char_positions_;
 };
 
