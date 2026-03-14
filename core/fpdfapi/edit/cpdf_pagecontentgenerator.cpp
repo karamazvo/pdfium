@@ -999,21 +999,14 @@ void CPDF_PageContentGenerator::ProcessText(fxcrt::ostringstream* buf,
 
   *buf << "[";
   const std::vector<uint32_t>& char_codes = pTextObj->GetCharCodes();
-  const std::vector<float>& char_pos = pTextObj->GetCharPositions();
+  const std::vector<float>& char_kernings = pTextObj->GetCharKernings();
   ByteString text;
   for (size_t i = 0; i < char_codes.size(); ++i) {
-    uint32_t charcode = char_codes[i];
-    if (charcode != CPDF_Font::kInvalidCharCode) {
-      font->AppendChar(&text, charcode);
-      continue;
-    }
-
-    if (!text.IsEmpty()) {
+    font->AppendChar(&text, char_codes[i]);
+    if (char_kernings[i] != 0) {
       *buf << PDF_HexEncodeString(text.AsStringView()) << " ";
       text.clear();
-    }
-    if (i > 0) {
-      WriteFloat(*buf, char_pos[i - 1]) << " ";
+      WriteFloat(*buf, char_kernings[i]) << " ";
     }
   }
   if (!text.IsEmpty()) {
