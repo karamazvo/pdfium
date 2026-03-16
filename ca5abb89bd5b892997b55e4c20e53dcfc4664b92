@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7c632209_eef6ab94",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-16T21:58:52Z",
+      "side": 1,
+      "message": "Lousy human can\u0027t refactor code correctly...",
+      "revId": "ca5abb89bd5b892997b55e4c20e53dcfc4664b92",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
