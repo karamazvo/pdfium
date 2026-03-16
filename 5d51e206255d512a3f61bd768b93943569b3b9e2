@@ -22,6 +22,30 @@
       },
       "revId": "5d51e206255d512a3f61bd768b93943569b3b9e2",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "637389bf_1a88d154",
+        "filename": "core/fpdfapi/page/cpdf_textobject.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-16T21:54:35Z",
+      "side": 1,
+      "message": "Probably, but it makes code that loops through the elements more complicated. I actually went in the opporsite direction and changed `char_positions_` to have N elements as well. See patchsets 5..7.",
+      "parentUuid": "6e3cc91f_dadeb05f",
+      "range": {
+        "startLine": 87,
+        "startChar": 28,
+        "endLine": 87,
+        "endChar": 38
+      },
+      "revId": "5d51e206255d512a3f61bd768b93943569b3b9e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
