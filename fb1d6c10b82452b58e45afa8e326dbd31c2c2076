@@ -41,6 +41,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3b793d49_910801ba",
+        "filename": "core/fpdfapi/page/cpdf_textobject.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-16T17:12:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c6b44046_52246d56",
+      "range": {
+        "startLine": 85,
+        "startChar": 21,
+        "endLine": 85,
+        "endChar": 23
+      },
+      "revId": "fb1d6c10b82452b58e45afa8e326dbd31c2c2076",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3473a29b_28c09de8",
@@ -54,6 +78,30 @@
       "writtenOn": "2026-03-16T17:04:30Z",
       "side": 1,
       "message": "Want to rename this one too?",
+      "range": {
+        "startLine": 191,
+        "startChar": 9,
+        "endLine": 191,
+        "endChar": 15
+      },
+      "revId": "fb1d6c10b82452b58e45afa8e326dbd31c2c2076",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "89fec716_57e8fa63",
+        "filename": "core/fpdfapi/page/cpdf_textobject.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-16T17:12:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3473a29b_28c09de8",
       "range": {
         "startLine": 191,
         "startChar": 9,
