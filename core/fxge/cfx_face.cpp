@@ -32,6 +32,11 @@
 #include "core/fxge/fx_fontencoding.h"
 
 #if defined(PDF_USE_SKIA)
+#include "third_party/skia/include/core/SkCanvas.h"    // nogncheck
+#include "third_party/skia/include/core/SkFont.h"      // nogncheck
+#include "third_party/skia/include/core/SkPaint.h"     // nogncheck
+#include "third_party/skia/include/core/SkPath.h"      // nogncheck
+#include "third_party/skia/include/core/SkSurface.h"   // nogncheck
 #include "third_party/skia/include/core/SkTypeface.h"  // nogncheck
 
 // Define the following to enable additional runtime checks during
@@ -617,6 +622,21 @@ std::unique_ptr<CFX_Path> CFX_Face::LoadGlyphPath(
     int dest_width,
     bool is_vertical,
     const CFX_SubstFont* subst_font) {
+  auto ft_path =
+      LoadGlyphPathFT(glyph_index, dest_width, is_vertical, subst_font);
+#if defined(PDF_ENABLE_SKIA_TYPEFACE_CHECKS)
+  auto skia_path =
+      LoadGlyphPathSkia(glyph_index, dest_width, is_vertical, subst_font);
+  CHECK_EQ(ft_path, skia_path);
+#endif
+  return ft_path;
+}
+
+std::unique_ptr<CFX_Path> CFX_Face::LoadGlyphPathFT(
+    uint32_t glyph_index,
+    int dest_width,
+    bool is_vertical,
+    const CFX_SubstFont* subst_font) {
   FT_FaceRec* rec = GetRec();
   FT_Set_Pixel_Sizes(rec, 0, 64);
   FT_Matrix ft_matrix = {65536, 0, 0, 65536};
@@ -662,22 +682,96 @@ std::unique_ptr<CFX_Path> CFX_Face::LoadGlyphPath(
   funcs.shift = 0;
   funcs.delta = 0;
 
-  auto pPath = std::make_unique<CFX_Path>();
+  auto ft_path = std::make_unique<CFX_Path>();
   OUTLINE_PARAMS params = {
-      .path_ = pPath.get(),
+      .path_ = ft_path.get(),
       .cur_x_ = 0,
       .cur_y_ = 0,
   };
 
   FT_Outline_Decompose(&rec->glyph->outline, &funcs, &params);
-  if (pPath->GetPoints().empty()) {
+  if (ft_path->GetPoints().empty()) {
     return nullptr;
   }
 
   Outline_CheckEmptyContour(&params);
-  pPath->ClosePath();
-  return pPath;
+  ft_path->ClosePath();
+  return ft_path;
 }
+
+#if defined(PDF_USE_SKIA)
+std::unique_ptr<CFX_Path> CFX_Face::LoadGlyphPathSkia(
+    uint32_t glyph_index,
+    int dest_width,
+    bool is_vertical,
+    const CFX_SubstFont* subst_font) {
+  std::unique_ptr<CFX_Path> skia_path;
+  if (SkTypeface* typeface = GetOrCreateSkTypeface()) {
+    const CFX_SubstFont* pSubstFont = subst_font;
+    if (!(pSubstFont && pSubstFont->IsBuiltInGenericFont())) {
+      SkFont sk_font(sk_ref_sp(typeface), 64.0f);
+      sk_font.setHinting(SkFontHinting::kNone);
+      if (pSubstFont) {
+        int angle = pSubstFont->subst_cjk_ ? -15 : pSubstFont->italic_angle_;
+        if (angle) {
+          sk_font.setSkewX(tanf(angle * FXSYS_PI / 180.0));
+        }
+      }
+      SkGlyphID sk_glyph = glyph_index;
+      std::optional<SkPath> skPathOpt = sk_font.getPath(sk_glyph);
+      if (skPathOpt.has_value()) {
+        SkPath skPath = skPathOpt.value();
+        skia_path = std::make_unique<CFX_Path>();
+
+        SkPath::RawIter iter(skPath);
+        std::array<SkPoint, 4> sk_pts;
+        std::array<FT_Vector, 4> pts;
+        SkPath::Verb verb;
+        bool bHaveContour = false;
+        OUTLINE_PARAMS params = {
+            .path_ = skia_path.get(),
+            .cur_x_ = 0,
+            .cur_y_ = 0,
+        };
+
+        while ((verb = iter.next(sk_pts.data())) != SkPath::kDone_Verb) {
+          for (size_t i = 0; i < 4; ++i) {
+            pts[i].x = (long)(sk_pts[i].fX * 64.0f);
+            pts[i].y = (long)(-sk_pts[i].fY * 64.0f);
+          }
+          switch (verb) {
+            case SkPath::kMove_Verb:
+              Outline_MoveTo(&pts[0], &params);
+              break;
+            case SkPath::kLine_Verb:
+              Outline_LineTo(&pts[1], &params);
+              break;
+            case SkPath::kQuad_Verb:
+              Outline_ConicTo(&pts[1], &pts[2], &params);
+              break;
+            case SkPath::kCubic_Verb:
+              Outline_CubicTo(&pts[1], &pts[2], &pts[2], &params);
+              break;
+            case SkPath::kClose_Verb:
+              skia_path->ClosePath();
+              bHaveContour = false;
+              break;
+            default:
+              break;
+          }
+        }
+        if (bHaveContour) {
+          skia_path->ClosePath();
+        }
+        if (skia_path->GetPoints().empty()) {
+          skia_path.reset();
+        }
+      }
+    }
+  }
+  return skia_path;
+}
+#endif
 
 int CFX_Face::GetGlyphTTWidth() const {
   const auto* fontglyph = GetRec()->glyph;
