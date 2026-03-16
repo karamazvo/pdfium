@@ -16,6 +16,24 @@
       "message": "Still got more here.",
       "revId": "13387458cf282b8f4bafc6f29925ce345e9e5d1c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e1e2cba2_56fd06ba",
+        "filename": "core/fxge/cfx_glyphcache.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-03-16T23:22:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "651420c5_a6a93b02",
+      "revId": "13387458cf282b8f4bafc6f29925ce345e9e5d1c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
