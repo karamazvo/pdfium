@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "93f5fb4e_e9e85ed7",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 9
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-03-16T22:18:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a2d344ee_dee4536a",
+      "revId": "a25f9694133c8437acc9b7f7206fa8bf597851c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0ec93d70_5b64ac19",
@@ -31,6 +49,30 @@
       "writtenOn": "2026-03-16T21:57:22Z",
       "side": 1,
       "message": "Avoid going back to Hungarian Notation.",
+      "range": {
+        "startLine": 97,
+        "startChar": 63,
+        "endLine": 97,
+        "endChar": 73
+      },
+      "revId": "a25f9694133c8437acc9b7f7206fa8bf597851c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1ec0049e_80049f57",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 9
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-03-16T22:18:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0ec93d70_5b64ac19",
       "range": {
         "startLine": 97,
         "startChar": 63,
