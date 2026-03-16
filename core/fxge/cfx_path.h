@@ -26,6 +26,8 @@ class CFX_Path {
     Point(const Point& other);
     ~Point();
 
+    bool operator==(const Point& that) const = default;
+
     bool IsTypeAndOpen(Type type) const {
       return type_ == type && !close_figure_;
     }
@@ -39,6 +41,8 @@ class CFX_Path {
   CFX_Path(const CFX_Path& src);
   CFX_Path(CFX_Path&& src) noexcept;
   ~CFX_Path();
+
+  bool operator==(const CFX_Path& that) const = default;
 
   void Clear();
 
