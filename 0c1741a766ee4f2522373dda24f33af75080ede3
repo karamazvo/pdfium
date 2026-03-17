@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "57bcce1a_00f65f6f",
+        "filename": "core/fpdfapi/parser/cpdf_parser_unittest.cpp",
+        "patchSetId": 39
+      },
+      "lineNbr": 518,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-17T07:50:03Z",
+      "side": 1,
+      "message": "There\u0027s some extra whitespace here. Probably needs format?",
+      "range": {
+        "startLine": 518,
+        "startChar": 92,
+        "endLine": 518,
+        "endChar": 93
+      },
+      "revId": "0c1741a766ee4f2522373dda24f33af75080ede3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1003f4ed_5e28e803",
+        "filename": "core/fpdfapi/parser/cpdf_parser_unittest.cpp",
+        "patchSetId": 39
+      },
+      "lineNbr": 520,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-17T07:50:03Z",
+      "side": 1,
+      "message": "Lets maybe remove this extra newline?",
+      "revId": "0c1741a766ee4f2522373dda24f33af75080ede3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
