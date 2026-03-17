@@ -404,6 +404,12 @@ source_set("fx_libopenjpeg") {
     # Must be after no_chromium_code for warning flags to be ordered correctly.
     ":fx_libopenjpeg_warnings",
   ]
+  defines = []
+  if (is_win) {
+    defines += [ "MUTEX_win32" ]
+  } else {
+    defines += [ "MUTEX_pthread" ]
+  }
   sources = [
     "libopenjpeg/bio.c",
     "libopenjpeg/cio.c",

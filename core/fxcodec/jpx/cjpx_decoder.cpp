@@ -484,6 +484,12 @@ bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data,
     return false;
   }
 
+  if (opj_has_thread_support()) {
+    // TODO(crbug.com/pdfium/2143): Consider using a shared thread pool.
+    // 4 threads was found to be a sweet spot on some machines.
+    opj_codec_set_threads(codec_.get(), 4);
+  }
+
   if (color_space_option_ == ColorSpaceOption::kIndexed) {
     parameters_.flags |= OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG;
   }
