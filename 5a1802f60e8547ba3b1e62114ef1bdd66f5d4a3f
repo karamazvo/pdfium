@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "07be58b1_4359a7f4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-03-17T22:21:06Z",
+      "side": 1,
+      "message": "PS3 passes the tests with PDF_ENABLE_SKIA_TYPEFACE_CHECKS enabled, PS4 resets this.",
+      "revId": "5a1802f60e8547ba3b1e62114ef1bdd66f5d4a3f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
