@@ -1445,11 +1445,8 @@ TEST_F(FPDFViewEmbedderTest, LoadDocumentWithEmptyXRefConsistently) {
 
 TEST_F(FPDFViewEmbedderTest, RenderBug664284WithNoNativeText) {
   // For Skia, since the font used in bug_664284.pdf is not a CID font,
-  // ShouldDrawDeviceText() will always return true. Therefore
-  // FPDF_NO_NATIVETEXT and the font widths defined in the PDF determines
-  // whether to go through the rendering path in
-  // CFX_SkiaDeviceDriver::DrawDeviceText(). In this case, it returns false and
-  // affects the rendering results across all platforms.
+  // ShouldDrawDeviceText() will always return true. Therefore, it
+  // tries the rendering path in CFX_SkiaDeviceDriver::DrawDeviceText().
 
   // For AGG, since CFX_AggDeviceDriver::DrawDeviceText() is only implemented
   // for macOS, FPDF_NO_NATIVETEXT will not affect the device-specific rendering
