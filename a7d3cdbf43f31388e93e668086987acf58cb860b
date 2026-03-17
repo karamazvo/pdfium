@@ -50,6 +50,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "71f385f3_ac6a95d9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 35
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 4626747
+      },
+      "writtenOn": "2026-03-17T06:37:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "71c89b11_660114d7",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 6
+      },
+      "revId": "a7d3cdbf43f31388e93e668086987acf58cb860b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "8fd0693c_24802ea3",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 35
@@ -96,6 +120,24 @@
       "side": 1,
       "message": "I\u0027d agree, I had mentioned this earlier in another comment as well.",
       "parentUuid": "9cd7a820_e68006db",
+      "revId": "a7d3cdbf43f31388e93e668086987acf58cb860b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7fb37a80_a5edffa9",
+        "filename": "core/fpdfapi/parser/cpdf_cross_ref_table.cpp",
+        "patchSetId": 35
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 4626747
+      },
+      "writtenOn": "2026-03-17T06:37:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d9803d99_2f19bc32",
       "revId": "a7d3cdbf43f31388e93e668086987acf58cb860b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -160,6 +202,30 @@
       "writtenOn": "2026-03-16T05:08:04Z",
       "side": 1,
       "message": "This comment is fixed. so @sresht1994@gmail.com which button are you supposed to press?\n\nHint: It starts with \"D\" 😊",
+      "parentUuid": "088e0c08_462c1d8e",
+      "range": {
+        "startLine": 984,
+        "startChar": 41,
+        "endLine": 984,
+        "endChar": 42
+      },
+      "revId": "a7d3cdbf43f31388e93e668086987acf58cb860b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bcd6cd71_63edf22d",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 35
+      },
+      "lineNbr": 984,
+      "author": {
+        "id": 4626747
+      },
+      "writtenOn": "2026-03-17T06:37:24Z",
+      "side": 1,
+      "message": "Fix applied.",
       "parentUuid": "088e0c08_462c1d8e",
       "range": {
         "startLine": 984,
