@@ -39,6 +39,24 @@
       "message": "Oh, I remember playing with this. I wanted to plumb the number of CPUs in somehow and never got around to doing that.",
       "revId": "5e15ca5ec9480bf38a9100d05fa676d3263c39e2",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c000f780_aebfdff6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-17T19:28:32Z",
+      "side": 1,
+      "message": "Or punt the problem and add a public API and let the PDFium embedder provide the thread count.",
+      "parentUuid": "edafe809_bf299a15",
+      "revId": "5e15ca5ec9480bf38a9100d05fa676d3263c39e2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
