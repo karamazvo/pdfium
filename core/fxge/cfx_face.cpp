@@ -35,7 +35,7 @@
 
 // Define the following to enable additional runtime checks during
 // the development process.
-// #define PDF_ENABLE_SKIA_TYPEFACE_CHECKS 1
+#define PDF_ENABLE_SKIA_TYPEFACE_CHECKS 1
 #endif
 
 #define EM_ADJUST(em, a) (em == 0 ? (a) : (a) * 1000 / em)
@@ -361,7 +361,8 @@ RetainPtr<CFX_Face> CFX_Face::New(RetainPtr<Retainable> cache_entry,
   auto result = pdfium::WrapRetain(
       new CFX_Face(std::move(cache_entry), std::move(font_stream), face_rec));
 #if defined(PDF_ENABLE_SKIA_TYPEFACE_CHECKS)
-  result->skia_typeface_ = font_mgr->MakeSkTypeface(result->GetData());
+  result->skia_typeface_ =
+      font_mgr->MakeSkTypeface(result->font_stream_->span());
 #endif
   return result;
 }
