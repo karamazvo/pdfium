@@ -739,15 +739,14 @@ bool CFX_RenderDevice::DrawPath(const CFX_Path& path,
   if (fill && fill_alpha && stroke_alpha < 0xff && fill_options.stroke) {
 #if defined(PDF_USE_SKIA)
     if (render_caps_ & FXRC_FILLSTROKE_PATH) {
-      const bool using_skia = CFX_GEModule::Get()->UseSkiaRenderer();
-      if (using_skia) {
+      const bool use_skia = CFX_GEModule::Get()->UseSkiaRenderer();
+      if (use_skia) {
         device_driver_->SetGroupKnockout(true);
       }
       bool draw_fillstroke_path_result =
           device_driver_->DrawPath(path, pObject2Device, pGraphState,
                                    fill_color, stroke_color, fill_options);
-
-      if (using_skia) {
+      if (use_skia) {
         // Restore the group knockout status for `device_driver_` after
         // finishing painting a fill-and-stroke path.
         device_driver_->SetGroupKnockout(false);
@@ -1086,6 +1085,12 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
                                       const CFX_Matrix& mtText2Device,
                                       uint32_t fill_color,
                                       const CFX_TextRenderOptions& options) {
+#if defined(PDF_USE_SKIA)
+  const bool use_skia = CFX_GEModule::Get()->UseSkiaRenderer();
+#else
+  const bool use_skia = false;
+#endif
+
   // `anti_alias` and `normalize` don't affect Skia rendering.
   FontAntiAliasingMode anti_alias = FontAntiAliasingMode::kMono;
   bool normalize = false;
@@ -1103,7 +1108,7 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
         // instead fall back on NORMAL anti-aliasing.
         anti_alias = FontAntiAliasingMode::kNormal;
 #if defined(PDF_USE_SKIA)
-        if (CFX_GEModule::Get()->UseSkiaRenderer()) {
+        if (use_skia) {
           // Since |anti_alias| doesn't affect Skia rendering, and Skia only
           // follows strictly to the options provided by |text_options|, we need
           // to update |text_options| so that Skia falls back on normal
@@ -1154,7 +1159,7 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
   }
 #endif
 
-  if (try_native_text && options.native_text) {
+  if ((try_native_text && options.native_text) || use_skia) {
     if (ShouldDrawDeviceText(font, options) &&
         device_driver_->DrawDeviceText(pCharPos, font, mtText2Device, font_size,
                                        fill_color, text_options)) {
