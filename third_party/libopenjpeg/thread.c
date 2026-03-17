@@ -622,8 +622,15 @@ static opj_worker_thread_job_t* opj_thread_pool_get_next_job(
     opj_worker_thread_t* worker_thread,
     OPJ_BOOL signal_job_finished);
 
+static opj_thread_pool_t* g_shared_tp = NULL;
+static int g_shared_tp_refcount = 0;
+
 opj_thread_pool_t* opj_thread_pool_create(int num_threads)
 {
+    if (g_shared_tp) {
+        g_shared_tp_refcount++;
+        return g_shared_tp;
+    }
     opj_thread_pool_t* tp;
 
     tp = (opj_thread_pool_t*) opj_calloc(1, sizeof(opj_thread_pool_t));
@@ -650,6 +657,8 @@ opj_thread_pool_t* opj_thread_pool_create(int num_threads)
         opj_thread_pool_destroy(tp);
         return NULL;
     }
+    g_shared_tp = tp;
+    g_shared_tp_refcount = 1;
     return tp;
 }
 
@@ -920,6 +929,10 @@ void opj_thread_pool_destroy(opj_thread_pool_t* tp)
 {
     if (!tp) {
         return;
+    }
+    if (tp == g_shared_tp) {
+        if (--g_shared_tp_refcount > 0) return;
+        g_shared_tp = NULL;
     }
     if (tp->cond) {
         int i;
