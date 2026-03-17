@@ -58,7 +58,8 @@ class CFX_Face final : public Retainable, public Observable {
   static constexpr CharMapId kWindowsUnicodeCmapId{3, 1};
 
   static RetainPtr<CFX_Face> New(RetainPtr<CFX_ReadOnlySpanStream> font_stream,
-                                 uint32_t face_index);
+                                 uint32_t face_index,
+                                 RetainPtr<Retainable> desc = nullptr);
 
   bool HasGlyphNames() const;
   bool IsTtOt() const;
@@ -145,7 +146,9 @@ class CFX_Face final : public Retainable, public Observable {
 #endif
 
  private:
-  CFX_Face(RetainPtr<CFX_ReadOnlySpanStream> font_stream, FT_FaceRec* rec);
+  CFX_Face(RetainPtr<CFX_ReadOnlySpanStream> font_stream,
+           FT_FaceRec* rec,
+           RetainPtr<Retainable> desc);
   ~CFX_Face() override;
 
   FT_FaceRec* GetRec() { return rec_.get(); }
@@ -163,6 +166,7 @@ class CFX_Face final : public Retainable, public Observable {
   // `owned_font_stream_` must outlive `rec_` and `skia_typeface_`
   RetainPtr<CFX_ReadOnlySpanStream> owned_font_stream_;
   ScopedFXFTFaceRec const rec_;
+  RetainPtr<Retainable> desc_;
 #if defined(PDF_USE_SKIA)
   sk_sp<SkTypeface> skia_typeface_;
 #endif  // defined(PDF_USE_SKIA)

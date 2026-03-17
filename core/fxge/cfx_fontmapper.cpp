@@ -917,7 +917,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedTTCFace(void* font_handle,
     return face;
   }
 
-  face = CFX_Face::New(cache_entry->FontStream(), face_index);
+  face = CFX_Face::New(cache_entry->FontStream(), face_index, cache_entry);
   if (!face) {
     return nullptr;
   }
@@ -949,7 +949,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedFace(void* font_handle,
     return face;
   }
 
-  face = CFX_Face::New(cache_entry->FontStream(), 0);
+  face = CFX_Face::New(cache_entry->FontStream(), 0, cache_entry);
   if (!face) {
     return nullptr;
   }
