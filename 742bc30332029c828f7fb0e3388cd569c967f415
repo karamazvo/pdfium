@@ -33,6 +33,23 @@
       "message": "PTAL when free. Thanks!",
       "revId": "742bc30332029c828f7fb0e3388cd569c967f415",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f0b6ca49_0ed17b1a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 12
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-18T18:47:06Z",
+      "side": 1,
+      "message": "Can you split this CL by keeping all the changes except FXDC_RENDER_CAPS? Then work on FXDC_RENDER_CAPS in a separate CL. In that CL, consider similarly changing GetRenderCaps() to set of methods that each return a boolean.",
+      "revId": "742bc30332029c828f7fb0e3388cd569c967f415",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
