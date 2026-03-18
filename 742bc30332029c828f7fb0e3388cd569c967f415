@@ -50,6 +50,24 @@
       "message": "Can you split this CL by keeping all the changes except FXDC_RENDER_CAPS? Then work on FXDC_RENDER_CAPS in a separate CL. In that CL, consider similarly changing GetRenderCaps() to set of methods that each return a boolean.",
       "revId": "742bc30332029c828f7fb0e3388cd569c967f415",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9b55076e_1414ae49",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 12
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-18T19:32:51Z",
+      "side": 1,
+      "message": "Not sure exactly what you meant here, but I\u0027m going to try respond based on what I think you meant.\n\nGetRenderCaps() is exactly identical to GetDeviceCaps(FXDC_RENDER_CAPS) as of now, no behavioural changes should be there, just purely a rename. In the next CL the plan would be to change GetRenderCaps() as a whole to booleans/masks.\n\nThe reason for GetRenderCaps() rather than having it a part of GetDeviceCaps() were a few things as we end up in one of 2 possibilities.\n\n1. We end up passing an int to GetDeviceCaps() and then have only one case which makes the work look half-done.\n\n2. We end up with a GetDeviceCaps() that calls all these individual functions and has to be replaced in CL2 leading to CL2 being very large.\n\nTL;DR: None of the Render Caps behaviour changed here, just renamed GetDeviceCaps(FXDC_RENDER_CAPS) to GetRenderCaps() here.\n\nIf you want me to revert this let me know, but I feel reverting this could cause more problems later on. Let me know if I missed something here. Thanks!",
+      "parentUuid": "f0b6ca49_0ed17b1a",
+      "revId": "742bc30332029c828f7fb0e3388cd569c967f415",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
