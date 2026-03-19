@@ -1,0 +1,107 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "da5cc028_57c80349",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 42
+      },
+      "lineNbr": 812,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-03-19T22:39:55Z",
+      "side": 1,
+      "message": "Indents are off again.",
+      "revId": "e900fa876a64c980ad2374ac8cd3403a3f6f2520",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "70e6cb0f_7abd4860",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 42
+      },
+      "lineNbr": 816,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-03-19T22:39:55Z",
+      "side": 1,
+      "message": "Lines 817-824 are no longer in the if block at line 811. Please format the code, and this would be caught more easily.",
+      "revId": "e900fa876a64c980ad2374ac8cd3403a3f6f2520",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8b771b35_73c632a3",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 42
+      },
+      "lineNbr": 988,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-03-19T22:39:55Z",
+      "side": 1,
+      "message": "Should this be false? Same with line 977. Otherwise, we\u0027re silently ignoring invalid offsets and gen_nums?",
+      "range": {
+        "startLine": 988,
+        "startChar": 11,
+        "endLine": 988,
+        "endChar": 15
+      },
+      "revId": "e900fa876a64c980ad2374ac8cd3403a3f6f2520",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ade556dd_3a8cbd23",
+        "filename": "core/fpdfapi/parser/cpdf_parser_unittest.cpp",
+        "patchSetId": 42
+      },
+      "lineNbr": 509,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-03-19T22:39:55Z",
+      "side": 1,
+      "message": "@thestig@chromium.org, does it make sense for the xref to be rebuilt here? Related to the other comment.",
+      "range": {
+        "startLine": 509,
+        "startChar": 2,
+        "endLine": 509,
+        "endChar": 13
+      },
+      "revId": "e900fa876a64c980ad2374ac8cd3403a3f6f2520",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6ebf6f6e_6183322f",
+        "filename": "core/fpdfapi/parser/cpdf_parser_unittest.cpp",
+        "patchSetId": 42
+      },
+      "lineNbr": 519,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-03-19T22:39:55Z",
+      "side": 1,
+      "message": "\"parse the third and eighth objects, while skipping the rest.\"?",
+      "range": {
+        "startLine": 517,
+        "startChar": 42,
+        "endLine": 519,
+        "endChar": 55
+      },
+      "revId": "e900fa876a64c980ad2374ac8cd3403a3f6f2520",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

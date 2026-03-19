@@ -181,6 +181,24 @@
       "parentUuid": "b440a6bb_4fa88076",
       "revId": "049805ea78eec7b51bc08a8079efa92b3d96e3ef",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "30aaedb9_2f2e45c9",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 29
+      },
+      "lineNbr": 813,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-03-19T22:39:55Z",
+      "side": 1,
+      "message": "If it\u0027s causing xrefs to be rebuilt, can this potentially cause a performance regression on certain large PDFs that are mostly correct, but have one invalid object? Or are these PDFs already guaranteed to crash?",
+      "parentUuid": "99b112ae_f9c6351c",
+      "revId": "049805ea78eec7b51bc08a8079efa92b3d96e3ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
