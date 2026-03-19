@@ -682,7 +682,9 @@ void CPDF_Parser::MergeCrossRefObjectsData(
     switch (obj.info.type) {
       case ObjectType::kFree:
         if (obj.info.gennum > 0) {
-          cross_ref_table_->SetFree(obj.obj_num, obj.info.gennum);
+          if (!cross_ref_table_->SetFree(obj.obj_num, obj.info.gennum)) {
+            return false;
+          }
         }
         break;
       case ObjectType::kNormal:
@@ -691,8 +693,11 @@ void CPDF_Parser::MergeCrossRefObjectsData(
                                     obj.info.pos);
         break;
       case ObjectType::kCompressed:
-        cross_ref_table_->AddCompressed(obj.obj_num, obj.info.archive.obj_num,
-                                        obj.info.archive.obj_index);
+        if (!cross_ref_table_->AddCompressed(obj.obj_num,
+                                             obj.info.archive.obj_num,
+                                             obj.info.archive.obj_index)) {
+          return false;
+        }
         break;
     }
   }
@@ -807,6 +812,32 @@ bool CPDF_Parser::RebuildCrossRef() {
                 ToDictionary(pStream->GetDict()->Clone()),
                 pStream->GetObjNum()));
       }
+<<<<<<< PATCH SET (9d0e36b2b4f659028b4e98b507af4e72e0f88459 Ensure AddCompressed and SetFree fail gracefully in CPDF_Cro)
+      if (!cross_ref_table->AddNormal(obj_num, gen_num,
+                                      /*is_object_stream=*/false, obj_pos)) {
+        return false;
+      }
+      const auto object_stream = CPDF_ObjectStream::Create(std::move(pStream));
+      if (object_stream) {
+        const auto& object_info = object_stream->object_info();
+        for (size_t i = 0; i < object_info.size(); ++i) {
+          const auto& info = object_info[i];
+          cross_ref_table->AddCompressed(info.obj_num, obj_num, i);
+||||||| BASE      (97fbf9a309923abd1af616cfa08da60c1adeb9d2 Fail gracefully on invalid cross-ref entries)
+      if (!cross_ref_table->AddNormal(obj_num, gen_num,
+                                      /*is_object_stream=*/false, obj_pos)) {
+        return false;
+      }
+      const auto object_stream =
+          CPDF_ObjectStream::Create(std::move(pStream));
+      if (object_stream) {
+        const auto& object_info = object_stream->object_info();
+        for (size_t i = 0; i < object_info.size(); ++i) {
+          const auto& info = object_info[i];
+          if (info.obj_num <= kMaxObjectNumber) {
+            cross_ref_table->AddCompressed(info.obj_num, obj_num, i);
+          }
+=======
 
       if (obj_num <= kMaxObjectNumber) {
         cross_ref_table->AddNormal(obj_num, gen_num, /*is_object_stream=*/false,
@@ -821,6 +852,7 @@ bool CPDF_Parser::RebuildCrossRef() {
               cross_ref_table->AddCompressed(info.obj_num, obj_num, i);
             }
           }
+>>>>>>> BASE      (80066750f4707c39fb9d14b0a48a249bb04d13d8 Improve bitmap comparison failure reporting in embedder test)
         }
       }
     }
@@ -967,7 +999,9 @@ void CPDF_Parser::ProcessCrossRefStreamEntry(
   if (type == ObjectType::kFree) {
     const uint32_t gen_num = GetThirdXRefStreamEntry(entry_span, field_widths);
     if (pdfium::IsValueInRangeForNumericType<uint16_t>(gen_num)) {
-      cross_ref_table_->SetFree(obj_num, gen_num);
+      if (!cross_ref_table_->SetFree(obj_num, gen_num)) {
+        return false;
+      }
     }
     return;
   }
@@ -992,7 +1026,15 @@ void CPDF_Parser::ProcessCrossRefStreamEntry(
 
   const uint32_t archive_obj_index =
       GetThirdXRefStreamEntry(entry_span, field_widths);
+<<<<<<< PATCH SET (9d0e36b2b4f659028b4e98b507af4e72e0f88459 Ensure AddCompressed and SetFree fail gracefully in CPDF_Cro)
+  return cross_ref_table_->AddCompressed(obj_num, archive_obj_num,
+                                         archive_obj_index);
+||||||| BASE      (97fbf9a309923abd1af616cfa08da60c1adeb9d2 Fail gracefully on invalid cross-ref entries)
   cross_ref_table_->AddCompressed(obj_num, archive_obj_num, archive_obj_index);
+  return true;
+=======
+  cross_ref_table_->AddCompressed(obj_num, archive_obj_num, archive_obj_index);
+>>>>>>> BASE      (80066750f4707c39fb9d14b0a48a249bb04d13d8 Improve bitmap comparison failure reporting in embedder test)
 }
 
 RetainPtr<const CPDF_Array> CPDF_Parser::GetIDArray() const {
