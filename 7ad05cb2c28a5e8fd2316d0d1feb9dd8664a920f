@@ -1,0 +1,107 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fccad8ab_18b3cd9e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 18
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-19T21:19:15Z",
+      "side": 1,
+      "message": "Mention FXDC_RENDER_CAPS will be handled separately in a follow-up CL.",
+      "revId": "7ad05cb2c28a5e8fd2316d0d1feb9dd8664a920f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d328ac51_455c6079",
+        "filename": "core/fxge/renderdevicedriver_iface.h",
+        "patchSetId": 18
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-19T21:19:15Z",
+      "side": 1,
+      "message": "Add a default implementation that returns 0, since that is a common implementation.",
+      "range": {
+        "startLine": 71,
+        "startChar": 0,
+        "endLine": 72,
+        "endChar": 38
+      },
+      "revId": "7ad05cb2c28a5e8fd2316d0d1feb9dd8664a920f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "90e51b7a_46e1da6f",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 18
+      },
+      "lineNbr": 1025,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-19T21:19:15Z",
+      "side": 1,
+      "message": "Rewrite these as:\n\n```\nCHECK_EQ(caps_id, FXDC_RENDER_CAPS);\nreturn ...;\n```",
+      "revId": "7ad05cb2c28a5e8fd2316d0d1feb9dd8664a920f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b2bbffca_9b99f8a9",
+        "filename": "core/fxge/win32/cgdi_display_driver.cpp",
+        "patchSetId": 18
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-19T21:19:15Z",
+      "side": 1,
+      "message": "Same here. Not needed.",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 1
+      },
+      "revId": "7ad05cb2c28a5e8fd2316d0d1feb9dd8664a920f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1c3dfb7e_dd15be2a",
+        "filename": "core/fxge/win32/cgdi_printer_driver.cpp",
+        "patchSetId": 18
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-19T21:19:15Z",
+      "side": 1,
+      "message": "Not needed. Class inheritance will automatically call the base class implementations.",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 50,
+        "endChar": 0
+      },
+      "revId": "7ad05cb2c28a5e8fd2316d0d1feb9dd8664a920f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
