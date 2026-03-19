@@ -51,6 +51,24 @@
       "parentUuid": "e6869a53_1941f70b",
       "revId": "3482adc0c758c4d5946dfd6ca6aab9fa654f1c55",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4670c1cb_45093123",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-19T21:11:58Z",
+      "side": 1,
+      "message": "IT\u0027s fine to refactor RenderDeviceDriverIface::GetDeviceCaps(), but win32 GetDeviceCaps() is what it is. Trying to hide it behind a wrapper doesn\u0027t do much.",
+      "parentUuid": "ad6120cf_0381131d",
+      "revId": "3482adc0c758c4d5946dfd6ca6aab9fa654f1c55",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
