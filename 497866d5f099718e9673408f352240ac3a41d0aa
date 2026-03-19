@@ -22,6 +22,30 @@
       },
       "revId": "497866d5f099718e9673408f352240ac3a41d0aa",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "78ab0208_62c4c067",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2026-03-19T18:20:12Z",
+      "side": 1,
+      "message": "Correct. That (stack overflow) bug is fixed by Freetype commit 6dc8088 which is included in this DEPS roll.",
+      "parentUuid": "c2e2c28f_59dd797f",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 14
+      },
+      "revId": "497866d5f099718e9673408f352240ac3a41d0aa",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
