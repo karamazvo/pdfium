@@ -199,6 +199,24 @@
       "parentUuid": "99b112ae_f9c6351c",
       "revId": "049805ea78eec7b51bc08a8079efa92b3d96e3ef",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a4a99d1e_58cd0c47",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 29
+      },
+      "lineNbr": 813,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-20T06:02:41Z",
+      "side": 1,
+      "message": "In my opinion the confusion of where to return true; and where to return false; needs to be addressed. Let\u0027s make it so that return false is in fatal states only and nowhere else (i.e. anything that would have crashed earlier now fails/rebuilds) but everything else stays as is.\n\nIt\u0027s great the CL mostly follows that, but there is one specific place where it is incorrect and fixes the rebuild.\n\nThe place where it is incorrect however is line 962 of cpdf_parser.cpp, and indeed, changing that makes the test work again.\n\nThis means that the rebuild would only happen on PDFs that used to crash before (after the change to 962).",
+      "parentUuid": "30aaedb9_2f2e45c9",
+      "revId": "049805ea78eec7b51bc08a8079efa92b3d96e3ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
