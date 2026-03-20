@@ -3,6 +3,40 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "34d9aee5_a8d90b85",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 44
+      },
+      "lineNbr": 673,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-20T06:39:20Z",
+      "side": 1,
+      "message": "nit: Newline after this to match base.",
+      "revId": "3f4b1a8404f4a07962a8903b0966760eea6c3fa4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "921f4315_354604a1",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 44
+      },
+      "lineNbr": 810,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-20T06:39:20Z",
+      "side": 1,
+      "message": "nit: Here too, newline after this to match base.",
+      "revId": "3f4b1a8404f4a07962a8903b0966760eea6c3fa4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "076b7fa0_3085a329",
         "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
         "patchSetId": 44
