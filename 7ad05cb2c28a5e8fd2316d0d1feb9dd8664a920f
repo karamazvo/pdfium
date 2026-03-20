@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "75fe6a08_469e1414",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 18
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-20T08:31:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fccad8ab_18b3cd9e",
+      "revId": "7ad05cb2c28a5e8fd2316d0d1feb9dd8664a920f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d328ac51_455c6079",
@@ -31,6 +49,30 @@
       "writtenOn": "2026-03-19T21:19:15Z",
       "side": 1,
       "message": "Add a default implementation that returns 0, since that is a common implementation.",
+      "range": {
+        "startLine": 71,
+        "startChar": 0,
+        "endLine": 72,
+        "endChar": 38
+      },
+      "revId": "7ad05cb2c28a5e8fd2316d0d1feb9dd8664a920f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c61f9126_2ae08632",
+        "filename": "core/fxge/renderdevicedriver_iface.h",
+        "patchSetId": 18
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-20T08:31:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d328ac51_455c6079",
       "range": {
         "startLine": 71,
         "startChar": 0,
@@ -58,6 +100,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "24f7810f_94575d79",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 18
+      },
+      "lineNbr": 1025,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-20T08:31:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "90e51b7a_46e1da6f",
+      "revId": "7ad05cb2c28a5e8fd2316d0d1feb9dd8664a920f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b2bbffca_9b99f8a9",
@@ -81,6 +141,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "68bbd0c4_cb85dfc4",
+        "filename": "core/fxge/win32/cgdi_display_driver.cpp",
+        "patchSetId": 18
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-20T08:31:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b2bbffca_9b99f8a9",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 1
+      },
+      "revId": "7ad05cb2c28a5e8fd2316d0d1feb9dd8664a920f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1c3dfb7e_dd15be2a",
@@ -94,6 +178,30 @@
       "writtenOn": "2026-03-19T21:19:15Z",
       "side": 1,
       "message": "Not needed. Class inheritance will automatically call the base class implementations.",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 50,
+        "endChar": 0
+      },
+      "revId": "7ad05cb2c28a5e8fd2316d0d1feb9dd8664a920f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4cc5e8c9_8c1753e8",
+        "filename": "core/fxge/win32/cgdi_printer_driver.cpp",
+        "patchSetId": 18
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-20T08:31:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1c3dfb7e_dd15be2a",
       "range": {
         "startLine": 35,
         "startChar": 0,
