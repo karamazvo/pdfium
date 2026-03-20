@@ -235,6 +235,24 @@
       "parentUuid": "a4a99d1e_58cd0c47",
       "revId": "049805ea78eec7b51bc08a8079efa92b3d96e3ef",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "13fa219f_9fc74c69",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 29
+      },
+      "lineNbr": 813,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-20T06:21:54Z",
+      "side": 1,
+      "message": "Correction - Not 962 it\u0027s 995 (the section below)\n\n```\n  if (!IsValidObjectNumber(archive_obj_num)) {\n    return false;\n  }\n```\n\nAgain, when this is true (or removed entirely) the table is not rebuilt.\n\nAgain its a question of whether we want to ignore failures or not here. (sorry for the earlier confusion). I\u0027d say we should stay in line with the prior behaviour and return true; here.",
+      "parentUuid": "97b36a07_6de220a1",
+      "revId": "049805ea78eec7b51bc08a8079efa92b3d96e3ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
