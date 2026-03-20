@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "de732dbd_1f207f3f",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 42
+      },
+      "lineNbr": 812,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-20T04:07:57Z",
+      "side": 1,
+      "message": "@sresht1994@gmail.com might be worth also downloading the standalone PDFium repo, because CL format actually works there. If you do it in chromium it seems to always try run it in the chromium/src dir. Since you already have depot tools you can skip the first few steps.\n\nhttps://pdfium.googlesource.com/pdfium/+/HEAD/README.md",
+      "parentUuid": "da5cc028_57c80349",
+      "revId": "e900fa876a64c980ad2374ac8cd3403a3f6f2520",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "70e6cb0f_7abd4860",
         "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
         "patchSetId": 42
