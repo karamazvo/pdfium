@@ -217,6 +217,24 @@
       "parentUuid": "30aaedb9_2f2e45c9",
       "revId": "049805ea78eec7b51bc08a8079efa92b3d96e3ef",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "97b36a07_6de220a1",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 29
+      },
+      "lineNbr": 813,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-20T06:09:45Z",
+      "side": 1,
+      "message": "Overall there are 2 choices there:\n\nreturn true; - Stop rebuilding xref tables and silently ignore the fact that there is no valid object type. (like before)\nreturn false; - Rebuild xref tables for the case where there is no valid object type.\n\nWould say return true; as it sticks to existing behaviour. If we return true the changes to the unittest need to be reverted. @andyphan@chromium.org @thestig@chromium.org wdyt",
+      "parentUuid": "a4a99d1e_58cd0c47",
+      "revId": "049805ea78eec7b51bc08a8079efa92b3d96e3ef",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
