@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "131ff2bf_fbf72dc4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-21T14:55:14Z",
+      "side": 1,
+      "message": "Hey guys, added some more tests for text extraction that the bot spat out, some of these are regression tests and a decent chunk of these do fail and need to be updated. Still need to create the crbug links FYI and update them, but just wanted a confirmation of whether the expectations are right first. Thanks!\n\nAlso, @andyphan@chromium.org, I think for adding more readme coverage thing, if not already done so would be a good priority to add readies to the testing folder; took some time to explain scoped text pages to the bot, and had to correct it quite a lot while it was making these tests. It also started typing up whole novels in code comments. Maybe some general guidelines as well.\n\nWant to point out as well that the behaviour of these tests isn\u0027t caused by the new CL and the performance is identical regardless.\n\nHaven\u0027t put the issues up on the bug tracker yet, or tested on other renderers yet will do that when I get back. Am dry running anyway.",
+      "revId": "83a2983150d890a6f5550d9704ee94da28a1b8bf",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
