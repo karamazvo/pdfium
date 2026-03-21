@@ -2497,3 +2497,158 @@ TEST_F(FPDFTextEmbedderTest, Bug491516663) {
   EXPECT_THAT(pdfium::span(buffer).first<kHelloWorldTextSize>(),
               ElementsAreArray(kHelloWorldText));
 }
+
+TEST_F(FPDFTextEmbedderTest, KernSubThresholdNoSpace) {
+  ASSERT_TRUE(OpenDocument("kern_sub_threshold.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+  // TODO(crbug.com/XXXX): kResult should be "Hello"
+  static constexpr char kExtraSpaceResult[] = "Hel lo";
+  unsigned short buffer[std::size(kExtraSpaceResult) + 1] = {};
+  ASSERT_EQ(static_cast<int>(std::size(kExtraSpaceResult)),
+            FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer));
+  EXPECT_THAT(pdfium::span(buffer).first<std::size(kExtraSpaceResult)>(),
+              ElementsAreArray(kExtraSpaceResult));
+}
+
+TEST_F(FPDFTextEmbedderTest, KernAboveThresholdInsertsSpace) {
+  ASSERT_TRUE(OpenDocument("kern_above_threshold.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+
+  static constexpr char kResult[] = "Hel lo";
+  unsigned short buffer[std::size(kResult) + 1] = {};
+  ASSERT_EQ(static_cast<int>(std::size(kResult)),
+            FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer));
+  EXPECT_THAT(pdfium::span(buffer).first<std::size(kResult)>(),
+              ElementsAreArray(kResult));
+}
+
+TEST_F(FPDFTextEmbedderTest, KernBoundaryThreshold) {
+  ASSERT_TRUE(OpenDocument("kern_boundary_threshold.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+
+  static constexpr char kResult[] = "Hel lo";
+  unsigned short buffer[std::size(kResult) + 1] = {};
+  ASSERT_EQ(static_cast<int>(std::size(kResult)),
+            FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer));
+  EXPECT_THAT(pdfium::span(buffer).first<std::size(kResult)>(),
+              ElementsAreArray(kResult));
+}
+
+TEST_F(FPDFTextEmbedderTest, ShadowTextDedup) {
+  ASSERT_TRUE(OpenDocument("shadow_text_dedup.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+
+  static constexpr char kResult[] = "Shadow";
+  unsigned short buffer[std::size(kResult) + 1] = {};
+  ASSERT_EQ(static_cast<int>(std::size(kResult)),
+            FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer));
+  EXPECT_THAT(pdfium::span(buffer).first<std::size(kResult)>(),
+              ElementsAreArray(kResult));
+}
+
+TEST_F(FPDFTextEmbedderTest, SpaceAtNonstandardCodepoint) {
+  ASSERT_TRUE(OpenDocument("space_at_nonstandard_codepoint.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+
+  static constexpr char kResult[] = "Hello World";
+  unsigned short buffer[std::size(kResult) + 1] = {};
+  ASSERT_EQ(static_cast<int>(std::size(kResult)),
+            FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer));
+  EXPECT_THAT(pdfium::span(buffer).first<std::size(kResult)>(),
+              ElementsAreArray(kResult));
+}
+
+TEST_F(FPDFTextEmbedderTest, TwoFontsDifferentSpaceEncoding) {
+  ASSERT_TRUE(OpenDocument("two_fonts_different_space_encoding.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+
+  // TODO(crbug.com/XXXX): kResult should be "Hello  World".
+  static constexpr char kMissingSpaceResult[] = "Hello World";
+  unsigned short buffer[std::size(kMissingSpaceResult) + 1] = {};
+  ASSERT_EQ(static_cast<int>(std::size(kMissingSpaceResult)),
+            FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer));
+  EXPECT_THAT(pdfium::span(buffer).first<std::size(kMissingSpaceResult)>(),
+              ElementsAreArray(kMissingSpaceResult));
+}
+
+TEST_F(FPDFTextEmbedderTest, LigatureMulticharToUnicode) {
+  ASSERT_TRUE(OpenDocument("ligature_multichar_tounicode.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+
+  static constexpr char kResult[] = "ofice";
+  unsigned short buffer[std::size(kResult) + 1] = {};
+  ASSERT_EQ(static_cast<int>(std::size(kResult)),
+            FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer));
+  EXPECT_THAT(pdfium::span(buffer).first<std::size(kResult)>(),
+              ElementsAreArray(kResult));
+
+  // 'f' and 'i' expand from the same ligature glyph, same bounding box.
+  double f_l, f_r, f_b, f_t;
+  double i_l, i_r, i_b, i_t;
+  ASSERT_TRUE(FPDFText_GetCharBox(textpage.get(), 1, &f_l, &f_r, &f_b, &f_t));
+  ASSERT_TRUE(FPDFText_GetCharBox(textpage.get(), 2, &i_l, &i_r, &i_b, &i_t));
+  EXPECT_DOUBLE_EQ(f_l, i_l);
+  EXPECT_DOUBLE_EQ(f_r, i_r);
+}
+
+TEST_F(FPDFTextEmbedderTest, RawCRInTjString) {
+  ASSERT_TRUE(OpenDocument("raw_cr_in_string.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+
+  // CR must not be stripped or truncate parsing. LF normalisation is ok.
+  ASSERT_EQ(17, FPDFText_CountChars(textpage.get()));
+  const unsigned int cr_char = FPDFText_GetUnicode(textpage.get(), 8);
+  EXPECT_TRUE(cr_char == 0x000Du || cr_char == 0x000Au)
+      << "Expected 0x000D or 0x000A, got: " << cr_char;
+}
+
+TEST_F(FPDFTextEmbedderTest, SoftHyphenNotPromotedToHardHyphen) {
+  ASSERT_TRUE(OpenDocument("soft_hyphen_line_end.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+  ASSERT_GT(FPDFText_CountChars(textpage.get()), 6);
+  // TODO(crbug.com/xxxx): should be 0x00AD
+  EXPECT_EQ(0x0002u, FPDFText_GetUnicode(textpage.get(), 7));
+}
+
+TEST_F(FPDFTextEmbedderTest, ZWSPCoincidentWithKernGap) {
+  ASSERT_TRUE(OpenDocument("zwsp_coincident_with_kern_gap.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+
+  // TODO(crbug.com/XXXX): kSpuriousSpaceResult should be "Hello".
+  static constexpr char kSpuriousSpaceResult[] = "Hel lo";
+  unsigned short buffer[std::size(kSpuriousSpaceResult) + 1] = {};
+  ASSERT_EQ(static_cast<int>(std::size(kSpuriousSpaceResult)),
+            FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer));
+  EXPECT_THAT(pdfium::span(buffer).first<std::size(kSpuriousSpaceResult)>(),
+              ElementsAreArray(kSpuriousSpaceResult));
+}
