@@ -54,6 +54,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "51bb524a_4108a24b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 18
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-21T01:00:03Z",
+      "side": 1,
+      "message": "I remember the message had it, perhaps it got reset by a commit somehow?\n\nSeemed like it got reverted somewhere between PS 19 and 23. Readded.",
+      "parentUuid": "9c8b1ea7_612e2358",
+      "revId": "7ad05cb2c28a5e8fd2316d0d1feb9dd8664a920f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d328ac51_455c6079",
