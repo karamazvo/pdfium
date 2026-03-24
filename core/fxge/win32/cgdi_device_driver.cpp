@@ -26,7 +26,6 @@
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
-#include "core/fxge/render_defines.h"
 #include "core/fxge/win32/cwin32_platform.h"
 
 #if defined(PDF_USE_AGG)
@@ -375,10 +374,20 @@ CGdiDeviceDriver::CGdiDeviceDriver(HDC hDC, DeviceType device_type)
     width_ = ::GetDeviceCaps(dc_handle_, HORZRES);
     height_ = ::GetDeviceCaps(dc_handle_, VERTRES);
   }
+  render_cap_get_bits_ = false;
+  render_cap_alpha_path_ = false;
+  render_cap_alpha_image_ = false;
+  render_cap_blend_mode_ = false;
+  render_cap_soft_clip_ = false;
+  render_cap_alpha_output_ = false;
+  render_cap_bytemask_output_ = false;
+#if defined(PDF_USE_SKIA)
+  render_cap_fillstroke_path_ = false;
+  render_cap_shading_ = false;
+  render_cap_premultiplied_alpha_ = false;
+#endif
   if (device_type_ == DeviceType::kDisplay) {
-    render_caps_ = FXRC_GET_BITS;
-  } else {
-    render_caps_ = 0;
+    render_cap_get_bits_ = true;
   }
 }
 
@@ -388,10 +397,47 @@ DeviceType CGdiDeviceDriver::GetDeviceType() const {
   return device_type_;
 }
 
-int CGdiDeviceDriver::GetDeviceCaps(int caps_id) const {
-  CHECK_EQ(caps_id, FXDC_RENDER_CAPS);
-  return render_caps_;
+bool CGdiDeviceDriver::RenderCapGetBits() const {
+  return render_cap_get_bits_;
 }
+
+bool CGdiDeviceDriver::RenderCapAlphaPath() const {
+  return render_cap_alpha_path_;
+}
+
+bool CGdiDeviceDriver::RenderCapAlphaImage() const {
+  return render_cap_alpha_image_;
+}
+
+bool CGdiDeviceDriver::RenderCapBlendMode() const {
+  return render_cap_blend_mode_;
+}
+
+bool CGdiDeviceDriver::RenderCapSoftClip() const {
+  return render_cap_soft_clip_;
+}
+
+bool CGdiDeviceDriver::RenderCapAlphaOutput() const {
+  return render_cap_alpha_output_;
+}
+
+bool CGdiDeviceDriver::RenderCapByteMaskOutput() const {
+  return render_cap_bytemask_output_;
+}
+
+#if defined(PDF_USE_SKIA)
+bool CGdiDeviceDriver::RenderCapFillStrokePath() const {
+  return render_cap_fillstroke_path_;
+}
+
+bool CGdiDeviceDriver::RenderCapShading() const {
+  return render_cap_shading_;
+}
+
+bool CGdiDeviceDriver::RenderCapPremultipliedAlpha() const {
+  return render_cap_premultiplied_alpha_;
+}
+#endif
 
 int CGdiDeviceDriver::GetPixelWidth() const {
   return width_;
