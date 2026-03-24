@@ -36,7 +36,7 @@ enum WordBreakMask : uint16_t {
       1 << static_cast<int>(WordBreakProperty::kExtendNumLet),
 };
 
-constexpr uint16_t kWordBreakTableData[] = {
+constexpr auto kWordBreakTable = std::to_array<uint16_t>({
     // WordBreakProperty::kNone
     0xFFFF,
 
@@ -82,9 +82,7 @@ constexpr uint16_t kWordBreakTableData[] = {
     static_cast<uint16_t>(~(kWordBreakMaskLF | kWordBreakMaskKataKana |
                             kWordBreakMaskALetter | kWordBreakMaskNumeric |
                             kWordBreakMaskExtendNumLet)),
-};
-
-const span<const uint16_t> kWordBreakTable{kWordBreakTableData};
+});
 
 // Table of |WordBreakProperty| for each of the possible uint16_t values,
 // packed as nibbles, with the low nibble first.
