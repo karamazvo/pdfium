@@ -16,6 +16,29 @@
       "message": "Hi, decided to finish off replacing the FXRC_RENDER_CAPS as well with the individual bool functions. Had the default set to false and all trues should override it. Furthermore also deleted render_defines.h and the associated build.gn entry.",
       "revId": "b34549e31875ca0e909a8093b09bd710b0d93b6b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0eaff402_fad1be2a",
+        "filename": "core/fxge/cfx_renderdevice.h",
+        "patchSetId": 21
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-24T14:10:22Z",
+      "side": 1,
+      "message": "Struct? LMK What you think @thestig@chromium.org @tsepez@chromium.org @andyphan@chromium.org.",
+      "range": {
+        "startLine": 252,
+        "startChar": 0,
+        "endLine": 261,
+        "endChar": 47
+      },
+      "revId": "b34549e31875ca0e909a8093b09bd710b0d93b6b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
