@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "426fa2e0_d1e1a642",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-24T14:07:49Z",
+      "side": 1,
+      "message": "Hi guys, decided to replace all of these defines with a struct for this, it seems to be quite a lot more readable than the individual bools. Either way, let me know if it should be done a different way instead of the struct (perhaps mask? or plain bools?).",
+      "revId": "8c6e3c8b27b66d94ab1b1fdc7909157b9dfc4924",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
