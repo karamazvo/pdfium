@@ -33,7 +33,7 @@ TEST(BinaryBuffer, MoveConstruct) {
 
   EXPECT_FALSE(buffer2.IsEmpty());
   EXPECT_EQ(1u, buffer2.GetSize());
-  EXPECT_EQ(1u, buffer2.GetLength());
+  ASSERT_EQ(1u, buffer2.GetLength());
   EXPECT_EQ(65u, buffer2.GetSpan()[0]);
 }
 
@@ -72,7 +72,7 @@ TEST(BinaryBuffer, AppendSpans) {
   buffer.AppendSpan(bbb);
   EXPECT_FALSE(buffer.IsEmpty());
   EXPECT_EQ(6u, buffer.GetSize());
-  EXPECT_EQ(6u, buffer.GetLength());
+  ASSERT_EQ(6u, buffer.GetLength());
   EXPECT_EQ(65u, buffer.GetSpan()[0]);
   EXPECT_EQ(65u, buffer.GetSpan()[1]);
   EXPECT_EQ(65u, buffer.GetSpan()[2]);
@@ -88,7 +88,7 @@ TEST(BinaryBuffer, AppendBlocks) {
   buffer.AppendSpan(aaa);
   buffer.AppendSpan(bbb);
   EXPECT_EQ(6u, buffer.GetSize());
-  EXPECT_EQ(6u, buffer.GetLength());
+  ASSERT_EQ(6u, buffer.GetLength());
   EXPECT_EQ(65u, buffer.GetSpan()[0]);
   EXPECT_EQ(65u, buffer.GetSpan()[1]);
   EXPECT_EQ(65u, buffer.GetSpan()[2]);
@@ -102,7 +102,7 @@ TEST(BinaryBuffer, AppendStrings) {
   buffer.AppendString("AA");
   buffer.AppendString("BB");
   EXPECT_EQ(4u, buffer.GetSize());
-  EXPECT_EQ(4u, buffer.GetLength());
+  ASSERT_EQ(4u, buffer.GetLength());
   EXPECT_EQ(65u, buffer.GetSpan()[0]);
   EXPECT_EQ(65u, buffer.GetSpan()[1]);
   EXPECT_EQ(66u, buffer.GetSpan()[2]);
@@ -114,7 +114,7 @@ TEST(BinaryBuffer, AppendBytes) {
   buffer.AppendUint8(65u);
   buffer.AppendUint8(66u);
   EXPECT_EQ(2u, buffer.GetSize());
-  EXPECT_EQ(2u, buffer.GetLength());
+  ASSERT_EQ(2u, buffer.GetLength());
   EXPECT_EQ(65u, buffer.GetSpan()[0]);
   EXPECT_EQ(66u, buffer.GetSpan()[1]);
 }
@@ -134,7 +134,7 @@ TEST(BinaryBuffer, AppendUint32) {
   BinaryBuffer buffer;
   buffer.AppendUint32(0x87654321);
   EXPECT_EQ(4u, buffer.GetSize());
-  EXPECT_EQ(4u, buffer.GetLength());
+  ASSERT_EQ(4u, buffer.GetLength());
   EXPECT_EQ(0x21u, buffer.GetSpan()[0]);
   EXPECT_EQ(0x43u, buffer.GetSpan()[1]);
   EXPECT_EQ(0x65u, buffer.GetSpan()[2]);

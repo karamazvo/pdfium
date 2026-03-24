@@ -231,10 +231,11 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
       auto color_table_span = pdfium::span(color_table);
       for (size_t i = 0; i < palette_size; i++) {
         uint32_t argb = pBitmap->GetPaletteArgb(i);
-        color_table_span[0] = FXARGB_R(argb);
-        color_table_span[1] = FXARGB_G(argb);
-        color_table_span[2] = FXARGB_B(argb);
-        color_table_span = color_table_span.subspan<3u>();
+        auto [current, next] = color_table_span.split_at<3u>();
+        current[0] = FXARGB_R(argb);
+        current[1] = FXARGB_G(argb);
+        current[2] = FXARGB_B(argb);
+        color_table_span = next;
       }
       auto pNewDict = document_->New<CPDF_Dictionary>();
       auto pCTS = document_->NewIndirect<CPDF_Stream>(std::move(color_table),

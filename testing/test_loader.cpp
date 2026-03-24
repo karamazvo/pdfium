@@ -17,11 +17,9 @@ int TestLoader::GetBlock(void* param,
                          unsigned long pos,
                          unsigned char* pBuf,
                          unsigned long size) {
+  static_assert(sizeof(size_t) >= sizeof(unsigned long));
   TestLoader* pLoader = static_cast<TestLoader*>(param);
-  pdfium::CheckedNumeric<size_t> end = pos;
-  end += size;
-  CHECK_LE(end.ValueOrDie(), pLoader->span_.size());
-
-  FXSYS_memcpy(pBuf, &pLoader->span_[pos], size);
+  auto span = pLoader->span_.subspan(pos, size);
+  FXSYS_memcpy(pBuf, span.data(), span.size());
   return 1;
 }

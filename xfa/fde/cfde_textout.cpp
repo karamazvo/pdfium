@@ -472,7 +472,7 @@ void CFDE_TextOut::Reload(const CFX_RectF& rect) {
 }
 
 void CFDE_TextOut::ReloadLinePiece(Line* line, const CFX_RectF& rect) {
-  span<const wchar_t> text_span = text_.span();
+  pdfium::span<const wchar_t> text_span = text_.span();
   size_t start_char = 0;
   size_t piece_count = line->GetSize();
   int32_t piece_widths = 0;
@@ -482,17 +482,16 @@ void CFDE_TextOut::ReloadLinePiece(Line* line, const CFX_RectF& rect) {
     if (piece_index == 0) {
       line_pos_ = piece->bounds.top;
     }
-
     start_char = piece->start_char;
-    const size_t end = piece->start_char + piece->char_count;
-    for (size_t char_index = start_char; char_index < end; ++char_index) {
-      break_status = txt_break_->AppendChar(text_span[char_index]);
+    pdfium::span<const wchar_t> text_subspan =
+        text_span.subspan(start_char, piece->char_count);
+    for (wchar_t wc : text_subspan) {
+      break_status = txt_break_->AppendChar(wc);
       if (!CFX_BreakTypeNoneOrPiece(break_status)) {
         RetrievePieces(break_status, true, rect, &start_char, &piece_widths);
       }
     }
   }
-
   break_status = txt_break_->EndBreak(CFGAS_Char::BreakType::kParagraph);
   if (!CFX_BreakTypeNoneOrPiece(break_status)) {
     RetrievePieces(break_status, true, rect, &start_char, &piece_widths);
