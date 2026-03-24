@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b95d83f3_be61dd7a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-03-24T23:03:29Z",
+      "side": 1,
+      "message": "No need to review, I will split those changes that work into new CLs.",
+      "revId": "9fe83b0710b6d3b16473731731ddf1eb4839f92f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
