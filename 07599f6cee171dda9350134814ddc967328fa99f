@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1e0a4311_de919769",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-03-24T17:19:38Z",
+      "side": 1,
+      "message": "Found this while playing with the compiler trying to prove that span operator[] bounds checks are always elided.",
+      "revId": "07599f6cee171dda9350134814ddc967328fa99f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
