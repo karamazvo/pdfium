@@ -375,10 +375,18 @@ CGdiDeviceDriver::CGdiDeviceDriver(HDC hDC, DeviceType device_type)
     width_ = ::GetDeviceCaps(dc_handle_, HORZRES);
     height_ = ::GetDeviceCaps(dc_handle_, VERTRES);
   }
+  render_cap_get_bits_ = false;
+  render_cap_alpha_path_ = false;
+  render_cap_alpha_image_ = false;
+  render_cap_blend_mode_ = false;
+  render_cap_soft_clip_ = false;
+  render_cap_alpha_output_ = false;
+  render_cap_bytemask_output_ = false;
+  render_cap_fillstroke_path_ = false;
+  render_cap_shading_ = false;
+  render_cap_premultiplied_alpha_ = false;
   if (device_type_ == DeviceType::kDisplay) {
-    render_caps_ = FXRC_GET_BITS;
-  } else {
-    render_caps_ = 0;
+    render_cap_get_bits_ = true;
   }
 }
 
@@ -388,9 +396,35 @@ DeviceType CGdiDeviceDriver::GetDeviceType() const {
   return device_type_;
 }
 
-int CGdiDeviceDriver::GetDeviceCaps(int caps_id) const {
-  CHECK_EQ(caps_id, FXDC_RENDER_CAPS);
-  return render_caps_;
+bool CGdiDeviceDriver::GetRenderCapGetBits() const {
+  return render_cap_get_bits_;
+}
+bool CGdiDeviceDriver::GetRenderCapAlphaPath() const {
+  return render_cap_alpha_path_;
+}
+bool CGdiDeviceDriver::GetRenderCapAlphaImage() const {
+  return render_cap_alpha_image_;
+}
+bool CGdiDeviceDriver::GetRenderCapBlendMode() const {
+  return render_cap_blend_mode_;
+}
+bool CGdiDeviceDriver::GetRenderCapSoftClip() const {
+  return render_cap_soft_clip_;
+}
+bool CGdiDeviceDriver::GetRenderCapAlphaOutput() const {
+  return render_cap_alpha_output_;
+}
+bool CGdiDeviceDriver::GetRenderCapByteMaskOutput() const {
+  return render_cap_bytemask_output_;
+}
+bool CGdiDeviceDriver::GetRenderCapFillStrokePath() const {
+  return render_cap_fillstroke_path_;
+}
+bool CGdiDeviceDriver::GetRenderCapShading() const {
+  return render_cap_shading_;
+}
+bool CGdiDeviceDriver::GetRenderCapPremultipliedAlpha() const {
+  return render_cap_premultiplied_alpha_;
 }
 
 int CGdiDeviceDriver::GetPixelWidth() const {
