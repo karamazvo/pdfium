@@ -23,7 +23,18 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
 
   // RenderDeviceDriverIface:
   DeviceType GetDeviceType() const override;
-  int GetDeviceCaps(int caps_id) const override;
+  bool RenderCapGetBits() const override;
+  bool RenderCapAlphaPath() const override;
+  bool RenderCapAlphaImage() const override;
+  bool RenderCapBlendMode() const override;
+  bool RenderCapSoftClip() const override;
+  bool RenderCapAlphaOutput() const override;
+  bool RenderCapByteMaskOutput() const override;
+#if defined(PDF_USE_SKIA)
+  bool RenderCapFillStrokePath() const override;
+  bool RenderCapShading() const override;
+  bool RenderCapPremultipliedAlpha() const override;
+#endif
   int GetPixelWidth() const override;
   int GetPixelHeight() const override;
   int GetBitsPerPixel() const override;
@@ -75,7 +86,18 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
   int height_;
   int bits_per_pixel_;
   const DeviceType device_type_;
-  int render_caps_;
+  bool render_cap_get_bits_ = false;
+  bool render_cap_alpha_path_ = false;
+  bool render_cap_alpha_image_ = false;
+  bool render_cap_blend_mode_ = false;
+  bool render_cap_soft_clip_ = false;
+  bool render_cap_alpha_output_ = false;
+  bool render_cap_bytemask_output_ = false;
+#if defined(PDF_USE_SKIA)
+  bool render_cap_fillstroke_path_ = false;
+  bool render_cap_shading_ = false;
+  bool render_cap_premultiplied_alpha_ = false;
+#endif
   std::optional<FX_RECT> base_clip_box_;
 };
 
