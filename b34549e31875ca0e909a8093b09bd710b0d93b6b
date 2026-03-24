@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "12947790_0fd54dae",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 21
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-24T09:39:18Z",
+      "side": 1,
+      "message": "Hi, decided to finish off replacing the FXRC_RENDER_CAPS as well with the individual bool functions. Had the default set to false and all trues should override it. Furthermore also deleted render_defines.h and the associated build.gn entry.",
+      "revId": "b34549e31875ca0e909a8093b09bd710b0d93b6b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

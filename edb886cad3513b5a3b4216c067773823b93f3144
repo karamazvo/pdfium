@@ -71,6 +71,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "02d6b487_dfe26108",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 1042,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-24T09:39:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "631e0fde_6b94871b",
+      "range": {
+        "startLine": 1042,
+        "startChar": 0,
+        "endLine": 1042,
+        "endChar": 4
+      },
+      "revId": "edb886cad3513b5a3b4216c067773823b93f3144",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6a651af4_fa2d42f8",
@@ -225,6 +249,30 @@
       "writtenOn": "2026-03-24T09:01:08Z",
       "side": 1,
       "message": "probably rename this var?",
+      "range": {
+        "startLine": 493,
+        "startChar": 50,
+        "endLine": 493,
+        "endChar": 63
+      },
+      "revId": "edb886cad3513b5a3b4216c067773823b93f3144",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "54e545bc_b4422d7c",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 493,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-24T09:39:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a825cf70_b3464a38",
       "range": {
         "startLine": 493,
         "startChar": 50,
