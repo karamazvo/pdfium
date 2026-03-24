@@ -1,0 +1,234 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1e12ac2d_10372b3f",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 1037,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-24T09:01:08Z",
+      "side": 1,
+      "message": "Might as well refactor this hungarian variable in the process...",
+      "range": {
+        "startLine": 1037,
+        "startChar": 7,
+        "endLine": 1037,
+        "endChar": 14
+      },
+      "revId": "edb886cad3513b5a3b4216c067773823b93f3144",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "631e0fde_6b94871b",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 1042,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-24T09:01:08Z",
+      "side": 1,
+      "message": "CL format",
+      "range": {
+        "startLine": 1042,
+        "startChar": 0,
+        "endLine": 1042,
+        "endChar": 4
+      },
+      "revId": "edb886cad3513b5a3b4216c067773823b93f3144",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6a651af4_fa2d42f8",
+        "filename": "core/fpdfapi/render/cpdf_renderstatus.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 353,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-24T09:01:08Z",
+      "side": 1,
+      "message": "Probably can drop this bracket?",
+      "range": {
+        "startLine": 353,
+        "startChar": 28,
+        "endLine": 353,
+        "endChar": 59
+      },
+      "revId": "edb886cad3513b5a3b4216c067773823b93f3144",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f5e821d4_525b4faa",
+        "filename": "core/fpdfapi/render/cpdf_renderstatus.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 569,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-24T09:01:08Z",
+      "side": 1,
+      "message": "Same here",
+      "range": {
+        "startLine": 569,
+        "startChar": 0,
+        "endLine": 569,
+        "endChar": 54
+      },
+      "revId": "edb886cad3513b5a3b4216c067773823b93f3144",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "59e1bd1c_b4219dc2",
+        "filename": "core/fpdfapi/render/cpdf_renderstatus.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 653,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-24T09:01:08Z",
+      "side": 1,
+      "message": "And here",
+      "range": {
+        "startLine": 653,
+        "startChar": 0,
+        "endLine": 653,
+        "endChar": 51
+      },
+      "revId": "edb886cad3513b5a3b4216c067773823b93f3144",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a825cf70_b3464a38",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 493,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-24T09:01:08Z",
+      "side": 1,
+      "message": "probably rename this var?",
+      "range": {
+        "startLine": 493,
+        "startChar": 50,
+        "endLine": 493,
+        "endChar": 63
+      },
+      "revId": "edb886cad3513b5a3b4216c067773823b93f3144",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7daa6a3a_124843fb",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 764,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-24T09:01:08Z",
+      "side": 1,
+      "message": "Probably revert this back to\n\n```suggestion\n      const bool using_skia \u003d CFX_GEModule::Get()-\u003eUseSkiaRenderer();\n```",
+      "range": {
+        "startLine": 764,
+        "startChar": 6,
+        "endLine": 764,
+        "endChar": 73
+      },
+      "revId": "edb886cad3513b5a3b4216c067773823b93f3144",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cf5992b1_391d962f",
+        "filename": "core/fxge/renderdevicedriver_iface.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-24T09:01:08Z",
+      "side": 1,
+      "message": "Line gaps\n\n\n\n```suggestion\nbool RenderDeviceDriverIface::RenderCapGetBits() const {\n  return false;\n}\n\nbool RenderDeviceDriverIface::RenderCapAlphaPath() const {\n  return false;\n}\n\nbool RenderDeviceDriverIface::RenderCapAlphaImage() const {\n  return false;\n}\n\nbool RenderDeviceDriverIface::RenderCapBlendMode() const {\n  return false;\n}\n\nbool RenderDeviceDriverIface::RenderCapSoftClip() const {\n  return false;\n}\n\nbool RenderDeviceDriverIface::RenderCapAlphaOutput() const {\n  return false;\n}\n\nbool RenderDeviceDriverIface::RenderCapByteMaskOutput() const {\n  return false;\n}\n\nbool RenderDeviceDriverIface::RenderCapFillStrokePath() const {\n  return false;\n}\n\nbool RenderDeviceDriverIface::RenderCapShading() const {\n  return false;\n}\n\nbool RenderDeviceDriverIface::RenderCapPremultipliedAlpha() const {\n  return false;\n}\n\n```",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 47,
+        "endChar": 0
+      },
+      "revId": "edb886cad3513b5a3b4216c067773823b93f3144",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fb53044c_d21f16c5",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 1052,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-24T09:01:08Z",
+      "side": 1,
+      "message": "More line gaps\n\n\n\n```suggestion\nbool CFX_SkiaDeviceDriver::RenderCapGetBits() const {\n  return true;\n}\n\nbool CFX_SkiaDeviceDriver::RenderCapAlphaPath() const {\n  return true;\n}\n\nbool CFX_SkiaDeviceDriver::RenderCapAlphaImage() const {\n  return true;\n}\n\nbool CFX_SkiaDeviceDriver::RenderCapBlendMode() const {\n  return true;\n}\n\nbool CFX_SkiaDeviceDriver::RenderCapSoftClip() const {\n  return true;\n}\n\nbool CFX_SkiaDeviceDriver::RenderCapAlphaOutput() const {\n  return true;\n}\n\nbool CFX_SkiaDeviceDriver::RenderCapFillStrokePath() const {\n  return true;\n}\n\nbool CFX_SkiaDeviceDriver::RenderCapShading() const {\n  return true;\n}\n\nbool CFX_SkiaDeviceDriver::RenderCapPremultipliedAlpha() const {\n  return true;\n}\n```",
+      "range": {
+        "startLine": 1026,
+        "startChar": 0,
+        "endLine": 1052,
+        "endChar": 1
+      },
+      "revId": "edb886cad3513b5a3b4216c067773823b93f3144",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fece8737_79cd0d7f",
+        "filename": "core/fxge/win32/cgdi_device_driver.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 428,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-24T09:01:08Z",
+      "side": 1,
+      "message": "More line gaps\n\n\n```suggestion\n\nbool CGdiDeviceDriver::RenderCapGetBits() const {\n  return render_cap_get_bits_;\n}\n\nbool CGdiDeviceDriver::RenderCapAlphaPath() const {\n  return render_cap_alpha_path_;\n}\n\nbool CGdiDeviceDriver::RenderCapAlphaImage() const {\n  return render_cap_alpha_image_;\n}\n\nbool CGdiDeviceDriver::RenderCapBlendMode() const {\n  return render_cap_blend_mode_;\n}\n\nbool CGdiDeviceDriver::RenderCapSoftClip() const {\n  return render_cap_soft_clip_;\n}\n\nbool CGdiDeviceDriver::RenderCapAlphaOutput() const {\n  return render_cap_alpha_output_;\n}\n\nbool CGdiDeviceDriver::RenderCapByteMaskOutput() const {\n  return render_cap_bytemask_output_;\n}\n\nbool CGdiDeviceDriver::RenderCapFillStrokePath() const {\n  return render_cap_fillstroke_path_;\n}\n\nbool CGdiDeviceDriver::RenderCapShading() const {\n  return render_cap_shading_;\n}\n\nbool CGdiDeviceDriver::RenderCapPremultipliedAlpha() const {\n  return render_cap_premultiplied_alpha_;\n}\n\n```",
+      "range": {
+        "startLine": 397,
+        "startChar": 0,
+        "endLine": 428,
+        "endChar": 0
+      },
+      "revId": "edb886cad3513b5a3b4216c067773823b93f3144",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
