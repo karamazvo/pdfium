@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0cde0eb2_d23d7029",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 25
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-24T05:25:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "25f1713d_c73cfcb0",
+      "range": {
+        "startLine": 9,
+        "startChar": 8,
+        "endLine": 9,
+        "endChar": 9
+      },
+      "revId": "c7c6ec03dee140955bcdc582a6a12bdae0d6ea44",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ec690f66_e2f51d9b",
@@ -41,6 +65,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2e7b4bad_a2f076e2",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 557,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-24T05:25:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ec690f66_e2f51d9b",
+      "revId": "c7c6ec03dee140955bcdc582a6a12bdae0d6ea44",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f7d67a64_8e4e66e5",
@@ -54,6 +96,24 @@
       "writtenOn": "2026-03-24T00:01:45Z",
       "side": 1,
       "message": "Could we just use GetWidth() and GetHeight()?",
+      "revId": "c7c6ec03dee140955bcdc582a6a12bdae0d6ea44",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6e4473b7_c4344812",
+        "filename": "core/fxge/cfx_renderdevice.h",
+        "patchSetId": 25
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-24T05:25:55Z",
+      "side": 1,
+      "message": "I think this is done.",
+      "parentUuid": "f7d67a64_8e4e66e5",
       "revId": "c7c6ec03dee140955bcdc582a6a12bdae0d6ea44",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
