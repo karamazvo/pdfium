@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c41f9082_301360b7",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 977,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-24T14:26:43Z",
+      "side": 1,
+      "message": "Just this? Weighing readability vs length here... wdyt?\n\n```suggestion\n      return cross_ref_table_-\u003eSetFree(obj_num, gen_num);\n    }\n    return true;\n```",
+      "range": {
+        "startLine": 973,
+        "startChar": 0,
+        "endLine": 977,
+        "endChar": 16
+      },
+      "revId": "65181f3319546866772a8c1e86ff6e5b953bbba2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
