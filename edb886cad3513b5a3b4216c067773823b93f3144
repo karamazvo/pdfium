@@ -162,6 +162,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a425cc15_5f166b4e",
+        "filename": "core/fxge/cfx_renderdevice.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 764,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-24T09:01:49Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "7daa6a3a_124843fb",
+      "range": {
+        "startLine": 764,
+        "startChar": 6,
+        "endLine": 764,
+        "endChar": 73
+      },
+      "revId": "edb886cad3513b5a3b4216c067773823b93f3144",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cf5992b1_391d962f",
@@ -175,6 +199,30 @@
       "writtenOn": "2026-03-24T09:01:08Z",
       "side": 1,
       "message": "Line gaps\n\n\n\n```suggestion\nbool RenderDeviceDriverIface::RenderCapGetBits() const {\n  return false;\n}\n\nbool RenderDeviceDriverIface::RenderCapAlphaPath() const {\n  return false;\n}\n\nbool RenderDeviceDriverIface::RenderCapAlphaImage() const {\n  return false;\n}\n\nbool RenderDeviceDriverIface::RenderCapBlendMode() const {\n  return false;\n}\n\nbool RenderDeviceDriverIface::RenderCapSoftClip() const {\n  return false;\n}\n\nbool RenderDeviceDriverIface::RenderCapAlphaOutput() const {\n  return false;\n}\n\nbool RenderDeviceDriverIface::RenderCapByteMaskOutput() const {\n  return false;\n}\n\nbool RenderDeviceDriverIface::RenderCapFillStrokePath() const {\n  return false;\n}\n\nbool RenderDeviceDriverIface::RenderCapShading() const {\n  return false;\n}\n\nbool RenderDeviceDriverIface::RenderCapPremultipliedAlpha() const {\n  return false;\n}\n\n```",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 47,
+        "endChar": 0
+      },
+      "revId": "edb886cad3513b5a3b4216c067773823b93f3144",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4c47dcee_0448d809",
+        "filename": "core/fxge/renderdevicedriver_iface.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-24T09:01:49Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "cf5992b1_391d962f",
       "range": {
         "startLine": 17,
         "startChar": 0,
@@ -208,6 +256,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cbd4efaf_08ec5c5f",
+        "filename": "core/fxge/skia/fx_skia_device.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 1052,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-24T09:01:49Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "fb53044c_d21f16c5",
+      "range": {
+        "startLine": 1026,
+        "startChar": 0,
+        "endLine": 1052,
+        "endChar": 1
+      },
+      "revId": "edb886cad3513b5a3b4216c067773823b93f3144",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fece8737_79cd0d7f",
@@ -221,6 +293,30 @@
       "writtenOn": "2026-03-24T09:01:08Z",
       "side": 1,
       "message": "More line gaps\n\n\n```suggestion\n\nbool CGdiDeviceDriver::RenderCapGetBits() const {\n  return render_cap_get_bits_;\n}\n\nbool CGdiDeviceDriver::RenderCapAlphaPath() const {\n  return render_cap_alpha_path_;\n}\n\nbool CGdiDeviceDriver::RenderCapAlphaImage() const {\n  return render_cap_alpha_image_;\n}\n\nbool CGdiDeviceDriver::RenderCapBlendMode() const {\n  return render_cap_blend_mode_;\n}\n\nbool CGdiDeviceDriver::RenderCapSoftClip() const {\n  return render_cap_soft_clip_;\n}\n\nbool CGdiDeviceDriver::RenderCapAlphaOutput() const {\n  return render_cap_alpha_output_;\n}\n\nbool CGdiDeviceDriver::RenderCapByteMaskOutput() const {\n  return render_cap_bytemask_output_;\n}\n\nbool CGdiDeviceDriver::RenderCapFillStrokePath() const {\n  return render_cap_fillstroke_path_;\n}\n\nbool CGdiDeviceDriver::RenderCapShading() const {\n  return render_cap_shading_;\n}\n\nbool CGdiDeviceDriver::RenderCapPremultipliedAlpha() const {\n  return render_cap_premultiplied_alpha_;\n}\n\n```",
+      "range": {
+        "startLine": 397,
+        "startChar": 0,
+        "endLine": 428,
+        "endChar": 0
+      },
+      "revId": "edb886cad3513b5a3b4216c067773823b93f3144",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7f68be51_775d50ec",
+        "filename": "core/fxge/win32/cgdi_device_driver.cpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 428,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-24T09:01:49Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "fece8737_79cd0d7f",
       "range": {
         "startLine": 397,
         "startChar": 0,
