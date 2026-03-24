@@ -16,6 +16,24 @@
       "message": "Hi guys, thought about getting rid of the defines in widestring.cpp, in the mean time also decided to do some refactoring with the case-switching and replaced it with some if-elses that made it a decent bit shorter. Let me know if I should split this up or should go in a different direction for the split or the define-replacement. Thanks!",
       "revId": "ab94e52c42f63e59c111ea5c3f86f9d3641a986e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5bd2fff0_5e1379db",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-24T23:57:13Z",
+      "side": 1,
+      "message": "It would be better to focus just on getting rid of the #defines in this CL.",
+      "parentUuid": "a2589ae8_5aef93a9",
+      "revId": "ab94e52c42f63e59c111ea5c3f86f9d3641a986e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
