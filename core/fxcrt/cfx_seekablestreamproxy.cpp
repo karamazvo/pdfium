@@ -74,6 +74,8 @@ std::pair<size_t, size_t> UTF8Decode(pdfium::span<const uint8_t> pSrc,
 void UTF16ToWChar(pdfium::span<wchar_t> buffer) {
 #if defined(WCHAR_T_IS_32_BIT)
   auto src = fxcrt::reinterpret_span<uint16_t>(buffer);
+  // Compiler seems to need this hint to elide src bounds checks.
+  CHECK_GE(src.size(), buffer.size());
   // Perform self-intersecting copy in reverse order.
   for (size_t i = buffer.size(); i > 0; --i) {
     buffer[i - 1] = static_cast<wchar_t>(src[i - 1]);

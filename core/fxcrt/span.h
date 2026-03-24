@@ -47,6 +47,7 @@
 
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/elided_check.h"
 #include "core/fxcrt/numerics/integral_constant_like.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 
@@ -847,11 +848,13 @@ class GSL_POINTER span {
   // and while `ENABLE_IF_ATTR` can be used to work around those for Clang, that
   // would leave the gcc build broken. The consequence of not upgrading this is
   // that some errors will only be detected at runtime instead of compile time.
-  constexpr reference operator[](size_type idx) const
+  constexpr reference operator[](size_type idx MAYBE_TRAILING_LINE_ARG) const
     requires(extent > 0)
   {
+    ELIDED_CHECK(size_type{idx} < size(), line);
     return at(idx);
   }
+
   // When `idx` is outside the span, the underlying call will `CHECK()`.
   constexpr reference at(StrictNumeric<size_type> idx) const
     requires(extent > 0)
@@ -865,7 +868,6 @@ class GSL_POINTER span {
   constexpr pointer get_at(StrictNumeric<size_type> idx) const
     requires(extent > 0)
   {
-    CHECK(size_type{idx} < extent);
     // SAFETY: `data()` points to at least `extent` elements, so `idx` must be
     // the index of a valid element.
     return UNSAFE_BUFFERS(data() + size_type{idx});
@@ -1298,7 +1300,10 @@ class GSL_POINTER span<ElementType, dynamic_extent, InternalPtrType> {
   //
   // Intentionally does not take `StrictNumeric<size_type>`; see comments on
   // fixed-extent version for rationale.
-  constexpr reference operator[](size_type idx) const { return at(idx); }
+  constexpr reference operator[](size_type idx MAYBE_TRAILING_LINE_ARG) const {
+    ELIDED_CHECK(size_type{idx} < size(), line);
+    return at(idx);
+  }
 
   // When `idx` is outside the span, the underlying call will `CHECK()`.
   constexpr reference at(StrictNumeric<size_type> idx) const {
@@ -1309,7 +1314,6 @@ class GSL_POINTER span<ElementType, dynamic_extent, InternalPtrType> {
   //
   // (Not in `std::`; necessary when underlying memory is not yet initialized.)
   constexpr pointer get_at(StrictNumeric<size_type> idx) const {
-    CHECK(size_type{idx} < size());
     // SAFETY: `data()` points to at least `size()` elements, so `idx` must be
     // the index of a valid element.
     return UNSAFE_BUFFERS(data() + size_type{idx});
@@ -1317,9 +1321,13 @@ class GSL_POINTER span<ElementType, dynamic_extent, InternalPtrType> {
 
   // Reference to first/last elements.
   // When `empty()`, the underlying call will `CHECK()`.
-  constexpr reference front() const { return operator[](0); }
+  constexpr reference front(MAYBE_LINE_ARG) const {
+    return operator[](0 MAYBE_PASS_LINE);
+  }
   // When `empty()`, the underlying call will `CHECK()`.
-  constexpr reference back() const { return operator[](size() - 1); }
+  constexpr reference back(MAYBE_LINE_ARG) const {
+    return operator[](size() - 1 MAYBE_PASS_LINE);
+  }
 
   // Underlying memory.
   constexpr pointer data() const noexcept { return data_; }

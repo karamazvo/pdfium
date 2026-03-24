@@ -54,6 +54,7 @@ source_set("fxcrt") {
     "data_vector.h",
     "debug/alias.cc",
     "debug/alias.h",
+    "elided_check.h",
     "fileaccess_iface.h",
     "fixed_size_data_vector.h",
     "fx_2d_size.h",

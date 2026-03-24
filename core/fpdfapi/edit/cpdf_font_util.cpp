@@ -229,11 +229,13 @@ RetainPtr<CPDF_Stream> LoadUnicode(
         buffer << " ";
         AddCharcode(buffer, charcode_range.second);
         buffer << " [";
-        auto unicodes = pdfium::span(it->second);
-        AddUnicode(buffer, unicodes[0]);
-        for (uint32_t code : unicodes.subspan(1u)) {
-          buffer << " ";
+        bool first = true;
+        for (uint32_t code : it->second) {
+          if (!first) {
+            buffer << " ";
+          }
           AddUnicode(buffer, code);
+          first = false;
         }
         buffer << "]\n";
         ++it;

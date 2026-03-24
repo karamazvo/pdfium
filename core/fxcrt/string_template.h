@@ -12,6 +12,7 @@
 #include <type_traits>
 
 #include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/elided_check.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/string_data_template.h"
@@ -114,9 +115,9 @@ class StringTemplate {
   bool IsValidLength(size_t length) const { return length <= GetLength(); }
 
   // CHECK() if index is out of range (via span's operator[]).
-  CharType operator[](const size_t index) const {
+  CharType operator[](const size_t index MAYBE_TRAILING_LINE_ARG) const {
     CHECK(data_);
-    return data_->span()[index];
+    return data_->span()[index MAYBE_PASS_LINE];
   }
 
   // Unlike std::wstring::front(), this is always safe and returns a

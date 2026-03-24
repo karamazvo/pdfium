@@ -579,10 +579,8 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::AddFont(std::unique_ptr<CFX_Font> font,
     } else {
       size_t i = CalculateEncodingDict(charset, pBaseDict.Get());
       if (i < std::size(kFX_CharsetUnicodes)) {
-        pdfium::span<const uint16_t> pUnicodes =
-            kFX_CharsetUnicodes[i].unicodes_;
-        for (int j = 0; j < 128; j++) {
-          int glyph_index = charmap_resolver->GlyphFromCharCode(pUnicodes[j]);
+        for (uint16_t code : kFX_CharsetUnicodes[i].unicodes_) {
+          int glyph_index = charmap_resolver->GlyphFromCharCode(code);
           int char_width = font->GetGlyphWidth(glyph_index);
           pWidths->AppendNew<CPDF_Number>(char_width);
         }
@@ -738,11 +736,11 @@ size_t CPDF_DocPageData::CalculateEncodingDict(FX_Charset charset,
   auto pArray = pEncodingDict->SetNewFor<CPDF_Array>("Differences");
   pArray->AppendNew<CPDF_Number>(128);
 
-  pdfium::span<const uint16_t> pUnicodes = kFX_CharsetUnicodes[i].unicodes_;
-  for (int j = 0; j < 128; j++) {
-    ByteString name = AdobeNameFromUnicode(pUnicodes[j]);
+  for (uint16_t code : kFX_CharsetUnicodes[i].unicodes_) {
+    ByteString name = AdobeNameFromUnicode(code);
     pArray->AppendNew<CPDF_Name>(name.IsEmpty() ? ".notdef" : name);
   }
+
   pBaseDict->SetNewFor<CPDF_Reference>("Encoding", GetDocument(),
                                        pEncodingDict->GetObjNum());
   return i;

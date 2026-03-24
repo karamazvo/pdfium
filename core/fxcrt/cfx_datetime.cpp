@@ -6,32 +6,37 @@
 
 #include "core/fxcrt/cfx_datetime.h"
 
+#include <array>
+
 #include "build/build_config.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/span.h"
 
 namespace {
 
-constexpr uint8_t kDaysPerMonth[12] = {31, 28, 31, 30, 31, 30,
-                                       31, 31, 30, 31, 30, 31};
-constexpr uint8_t kDaysPerLeapMonth[12] = {31, 29, 31, 30, 31, 30,
-                                           31, 31, 30, 31, 30, 31};
-constexpr int32_t kDaysBeforeMonth[12] = {0,   31,  59,  90,  120, 151,
-                                          181, 212, 243, 273, 304, 334};
-constexpr int32_t kDaysBeforeLeapMonth[12] = {0,   31,  60,  91,  121, 152,
-                                              182, 213, 244, 274, 305, 335};
+constexpr std::array<uint8_t, 12> kDaysPerMonth = {
+    31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31,
+};
+constexpr std::array<uint8_t, 12> kDaysPerLeapMonth = {
+    31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31,
+};
+constexpr std::array<int32_t, 12> kDaysBeforeMonth = {
+    0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334,
+};
+constexpr std::array<int32_t, 12> kDaysBeforeLeapMonth = {
+    0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335,
+};
 constexpr int32_t kDaysPerYear = 365;
 constexpr int32_t kDaysPerLeapYear = 366;
 
-int32_t DaysBeforeMonthInYear(int32_t iYear, uint8_t iMonth) {
-  DCHECK(iYear != 0);
-  pdfium::span<const int32_t> p = FX_IsLeapYear(iYear)
-                                      ? pdfium::span(kDaysBeforeLeapMonth)
-                                      : pdfium::span(kDaysBeforeMonth);
-  // Note: iMonth is one-based.
-  return p[iMonth - 1];
+int32_t DaysBeforeMonthInYear(int32_t year, uint8_t month) {
+  DCHECK(year != 0);
+  DCHECK(month != 0);  // Note: month is one-based.
+  if (FX_IsLeapYear(year)) {
+    return kDaysBeforeLeapMonth[month - 1];
+  }
+  return kDaysBeforeMonth[month - 1];
 }
 
 int32_t DaysInYear(int32_t iYear) {
@@ -67,13 +72,13 @@ int64_t DateToDays(int32_t iYear,
 
 }  // namespace
 
-uint8_t FX_DaysInMonth(int32_t iYear, uint8_t iMonth) {
-  DCHECK(iYear != 0);
-  pdfium::span<const uint8_t> p = FX_IsLeapYear(iYear)
-                                      ? pdfium::span(kDaysPerLeapMonth)
-                                      : pdfium::span(kDaysPerMonth);
-  // Note: iMonth is one-based.
-  return p[iMonth - 1];
+uint8_t FX_DaysInMonth(int32_t year, uint8_t month) {
+  DCHECK(year != 0);
+  DCHECK(month != 0);  // Note: month is one-based.
+  if (FX_IsLeapYear(year)) {
+    return kDaysPerLeapMonth[month - 1];
+  }
+  return kDaysPerMonth[month - 1];
 }
 
 bool FX_IsLeapYear(int32_t iYear) {
