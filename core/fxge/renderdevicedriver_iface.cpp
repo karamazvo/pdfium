@@ -14,6 +14,55 @@
 
 RenderDeviceDriverIface::~RenderDeviceDriverIface() = default;
 
+<<<<<<< PATCH SET (f390c46f226aeb6e9b780562f28530d2d7ea3f49 Replace render caps with individual boolean functions)
+bool RenderDeviceDriverIface::RenderCapGetBits() const {
+  return false;
+}
+bool RenderDeviceDriverIface::RenderCapAlphaPath() const {
+  return false;
+}
+bool RenderDeviceDriverIface::RenderCapAlphaImage() const {
+  return false;
+}
+bool RenderDeviceDriverIface::RenderCapBlendMode() const {
+  return false;
+}
+bool RenderDeviceDriverIface::RenderCapSoftClip() const {
+  return false;
+}
+bool RenderDeviceDriverIface::RenderCapAlphaOutput() const {
+  return false;
+}
+bool RenderDeviceDriverIface::RenderCapByteMaskOutput() const {
+  return false;
+}
+bool RenderDeviceDriverIface::RenderCapFillStrokePath() const {
+  return false;
+}
+bool RenderDeviceDriverIface::RenderCapShading() const {
+  return false;
+}
+bool RenderDeviceDriverIface::RenderCapPremultipliedAlpha() const {
+  return false;
+}
+
+int RenderDeviceDriverIface::GetHorzSize() const {
+  return 0;
+}
+int RenderDeviceDriverIface::GetVertSize() const {
+  return 0;
+}
+
+||||||| BASE      (ea6858c6be4f3b4539c8df38deb3f0941002555a Replace GetDeviceCaps with specific getter methods)
+int RenderDeviceDriverIface::GetHorzSize() const {
+  return 0;
+}
+int RenderDeviceDriverIface::GetVertSize() const {
+  return 0;
+}
+
+=======
+>>>>>>> BASE      (5ee52dc9cede873a800675b6faba773773c75c29 Add test for importing page with OCGs into new document)
 bool RenderDeviceDriverIface::SetClip_PathStroke(
     const CFX_Path& path,
     const CFX_Matrix* pObject2Device,

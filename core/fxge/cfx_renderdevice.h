@@ -59,8 +59,32 @@ class CFX_RenderDevice {
   int GetWidth() const { return width_; }
   int GetHeight() const { return height_; }
   DeviceType GetDeviceType() const { return device_type_; }
+<<<<<<< PATCH SET (f390c46f226aeb6e9b780562f28530d2d7ea3f49 Replace render caps with individual boolean functions)
+  bool RenderCapGetBits() const { return render_cap_get_bits_; }
+  bool RenderCapAlphaPath() const { return render_cap_alpha_path_; }
+  bool RenderCapAlphaImage() const { return render_cap_alpha_image_; }
+  bool RenderCapBlendMode() const { return render_cap_blend_mode_; }
+  bool RenderCapSoftClip() const { return render_cap_soft_clip_; }
+  bool RenderCapAlphaOutput() const { return render_cap_alpha_output_; }
+  bool RenderCapByteMaskOutput() const { return render_cap_bytemask_output_; }
+  bool RenderCapFillStrokePath() const { return render_cap_fillstroke_path_; }
+  bool RenderCapShading() const { return render_cap_shading_; }
+  bool RenderCapPremultipliedAlpha() const {
+    return render_cap_premultiplied_alpha_;
+  }
+  int GetBitsPerPixel() const;
+  int GetHorzSize() const;
+  int GetVertSize() const;
+||||||| BASE      (ea6858c6be4f3b4539c8df38deb3f0941002555a Replace GetDeviceCaps with specific getter methods)
   int GetRenderCaps() const { return render_caps_; }
   int GetDeviceCaps(int id) const;
+  int GetBitsPerPixel() const;
+  int GetHorzSize() const;
+  int GetVertSize() const;
+=======
+  int GetRenderCaps() const { return render_caps_; }
+  int GetDeviceCaps(int id) const;
+>>>>>>> BASE      (5ee52dc9cede873a800675b6faba773773c75c29 Add test for importing page with OCGs into new document)
   RetainPtr<CFX_DIBitmap> GetBitmap();
   RetainPtr<const CFX_DIBitmap> GetBitmap() const;
   [[nodiscard]] bool CreateCompatibleBitmap(const RetainPtr<CFX_DIBitmap>& pDIB,
@@ -237,7 +261,16 @@ class CFX_RenderDevice {
   int width_ = 0;
   int height_ = 0;
   int bpp_ = 0;
-  int render_caps_ = 0;
+  bool render_cap_get_bits_ = false;
+  bool render_cap_alpha_path_ = false;
+  bool render_cap_alpha_image_ = false;
+  bool render_cap_blend_mode_ = false;
+  bool render_cap_soft_clip_ = false;
+  bool render_cap_alpha_output_ = false;
+  bool render_cap_bytemask_output_ = false;
+  bool render_cap_fillstroke_path_ = false;
+  bool render_cap_shading_ = false;
+  bool render_cap_premultiplied_alpha_ = false;
   DeviceType device_type_ = DeviceType::kDisplay;
   FX_RECT clip_box_;
   std::unique_ptr<RenderDeviceDriverIface> device_driver_;

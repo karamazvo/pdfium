@@ -23,7 +23,28 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
 
   // RenderDeviceDriverIface:
   DeviceType GetDeviceType() const override;
+<<<<<<< PATCH SET (f390c46f226aeb6e9b780562f28530d2d7ea3f49 Replace render caps with individual boolean functions)
+  bool RenderCapGetBits() const;
+  bool RenderCapAlphaPath() const;
+  bool RenderCapAlphaImage() const;
+  bool RenderCapBlendMode() const;
+  bool RenderCapSoftClip() const;
+  bool RenderCapAlphaOutput() const;
+  bool RenderCapByteMaskOutput() const;
+  bool RenderCapFillStrokePath() const;
+  bool RenderCapShading() const;
+  bool RenderCapPremultipliedAlpha() const;
+  int GetPixelWidth() const override;
+  int GetPixelHeight() const override;
+  int GetBitsPerPixel() const override;
+||||||| BASE      (ea6858c6be4f3b4539c8df38deb3f0941002555a Replace GetDeviceCaps with specific getter methods)
   int GetDeviceCaps(int caps_id) const override;
+  int GetPixelWidth() const override;
+  int GetPixelHeight() const override;
+  int GetBitsPerPixel() const override;
+=======
+  int GetDeviceCaps(int caps_id) const override;
+>>>>>>> BASE      (5ee52dc9cede873a800675b6faba773773c75c29 Add test for importing page with OCGs into new document)
   void SaveState() override;
   void RestoreState(bool bKeepSaved) override;
   void SetBaseClip(const FX_RECT& rect) override;
@@ -72,7 +93,16 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
   int height_;
   int bits_per_pixel_;
   const DeviceType device_type_;
-  int render_caps_;
+  bool render_cap_get_bits_ = false;
+  bool render_cap_alpha_path_ = false;
+  bool render_cap_alpha_image_ = false;
+  bool render_cap_blend_mode_ = false;
+  bool render_cap_soft_clip_ = false;
+  bool render_cap_alpha_output_ = false;
+  bool render_cap_bytemask_output_ = false;
+  bool render_cap_fillstroke_path_ = false;
+  bool render_cap_shading_ = false;
+  bool render_cap_premultiplied_alpha_ = false;
   std::optional<FX_RECT> base_clip_box_;
 };
 

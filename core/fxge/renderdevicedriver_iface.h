@@ -64,7 +64,32 @@ class RenderDeviceDriverIface {
   virtual ~RenderDeviceDriverIface();
 
   virtual DeviceType GetDeviceType() const = 0;
+<<<<<<< PATCH SET (f390c46f226aeb6e9b780562f28530d2d7ea3f49 Replace render caps with individual boolean functions)
+  virtual bool RenderCapGetBits() const;
+  virtual bool RenderCapAlphaPath() const;
+  virtual bool RenderCapAlphaImage() const;
+  virtual bool RenderCapBlendMode() const;
+  virtual bool RenderCapSoftClip() const;
+  virtual bool RenderCapAlphaOutput() const;
+  virtual bool RenderCapByteMaskOutput() const;
+  virtual bool RenderCapFillStrokePath() const;
+  virtual bool RenderCapShading() const;
+  virtual bool RenderCapPremultipliedAlpha() const;
+  virtual int GetPixelWidth() const = 0;
+  virtual int GetPixelHeight() const = 0;
+  virtual int GetBitsPerPixel() const = 0;
+  virtual int GetHorzSize() const;
+  virtual int GetVertSize() const;
+||||||| BASE      (ea6858c6be4f3b4539c8df38deb3f0941002555a Replace GetDeviceCaps with specific getter methods)
   virtual int GetDeviceCaps(int caps_id) const = 0;
+  virtual int GetPixelWidth() const = 0;
+  virtual int GetPixelHeight() const = 0;
+  virtual int GetBitsPerPixel() const = 0;
+  virtual int GetHorzSize() const;
+  virtual int GetVertSize() const;
+=======
+  virtual int GetDeviceCaps(int caps_id) const = 0;
+>>>>>>> BASE      (5ee52dc9cede873a800675b6faba773773c75c29 Add test for importing page with OCGs into new document)
 
   virtual void SaveState() = 0;
   virtual void RestoreState(bool bKeepSaved) = 0;

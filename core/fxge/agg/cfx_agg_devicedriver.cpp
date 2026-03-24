@@ -1003,6 +1003,65 @@ DeviceType CFX_AggDeviceDriver::GetDeviceType() const {
   return DeviceType::kDisplay;
 }
 
+<<<<<<< PATCH SET (f390c46f226aeb6e9b780562f28530d2d7ea3f49 Replace render caps with individual boolean functions)
+bool CFX_AggDeviceDriver::RenderCapGetBits() const {
+  return true;
+}
+bool CFX_AggDeviceDriver::RenderCapAlphaPath() const {
+  return true;
+}
+bool CFX_AggDeviceDriver::RenderCapAlphaImage() const {
+  return true;
+}
+bool CFX_AggDeviceDriver::RenderCapBlendMode() const {
+  return true;
+}
+bool CFX_AggDeviceDriver::RenderCapSoftClip() const {
+  return true;
+}
+bool CFX_AggDeviceDriver::RenderCapAlphaOutput() const {
+  return bitmap_->IsAlphaFormat();
+}
+bool CFX_AggDeviceDriver::RenderCapByteMaskOutput() const {
+  CHECK_NE(bitmap_->GetBPP(), 1);
+  return bitmap_->IsMaskFormat();
+}
+
+int CFX_AggDeviceDriver::GetPixelWidth() const {
+  return bitmap_->GetWidth();
+}
+
+int CFX_AggDeviceDriver::GetPixelHeight() const {
+  return bitmap_->GetHeight();
+}
+
+int CFX_AggDeviceDriver::GetBitsPerPixel() const {
+  return bitmap_->GetBPP();
+||||||| BASE      (ea6858c6be4f3b4539c8df38deb3f0941002555a Replace GetDeviceCaps with specific getter methods)
+int CFX_AggDeviceDriver::GetDeviceCaps(int caps_id) const {
+  CHECK_EQ(caps_id, FXDC_RENDER_CAPS);
+  int flags = FXRC_GET_BITS | FXRC_ALPHA_PATH | FXRC_ALPHA_IMAGE |
+              FXRC_BLEND_MODE | FXRC_SOFT_CLIP;
+  if (bitmap_->IsAlphaFormat()) {
+    flags |= FXRC_ALPHA_OUTPUT;
+  } else if (bitmap_->IsMaskFormat()) {
+    CHECK_NE(bitmap_->GetBPP(), 1);  // Matches format CHECKs in the ctor.
+    flags |= FXRC_BYTEMASK_OUTPUT;
+  }
+  return flags;
+}
+
+int CFX_AggDeviceDriver::GetPixelWidth() const {
+  return bitmap_->GetWidth();
+}
+
+int CFX_AggDeviceDriver::GetPixelHeight() const {
+  return bitmap_->GetHeight();
+}
+
+int CFX_AggDeviceDriver::GetBitsPerPixel() const {
+  return bitmap_->GetBPP();
+=======
 int CFX_AggDeviceDriver::GetDeviceCaps(int caps_id) const {
   switch (caps_id) {
     case FXDC_PIXEL_WIDTH:
@@ -1028,6 +1087,7 @@ int CFX_AggDeviceDriver::GetDeviceCaps(int caps_id) const {
     default:
       NOTREACHED();
   }
+>>>>>>> BASE      (5ee52dc9cede873a800675b6faba773773c75c29 Add test for importing page with OCGs into new document)
 }
 
 void CFX_AggDeviceDriver::SaveState() {

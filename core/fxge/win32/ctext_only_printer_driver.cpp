@@ -35,6 +35,50 @@ DeviceType CTextOnlyPrinterDriver::GetDeviceType() const {
   return DeviceType::kPrinter;
 }
 
+<<<<<<< PATCH SET (f390c46f226aeb6e9b780562f28530d2d7ea3f49 Replace render caps with individual boolean functions)
+int CTextOnlyPrinterDriver::GetPixelWidth() const {
+  return width_;
+}
+
+int CTextOnlyPrinterDriver::GetPixelHeight() const {
+  return height_;
+}
+
+int CTextOnlyPrinterDriver::GetBitsPerPixel() const {
+  return bits_per_pixel_;
+}
+
+int CTextOnlyPrinterDriver::GetHorzSize() const {
+  return horz_size_;
+}
+
+int CTextOnlyPrinterDriver::GetVertSize() const {
+  return vert_size_;
+||||||| BASE      (ea6858c6be4f3b4539c8df38deb3f0941002555a Replace GetDeviceCaps with specific getter methods)
+int CTextOnlyPrinterDriver::GetDeviceCaps(int caps_id) const {
+  CHECK_EQ(caps_id, FXDC_RENDER_CAPS);
+  return 0;
+}
+
+int CTextOnlyPrinterDriver::GetPixelWidth() const {
+  return width_;
+}
+
+int CTextOnlyPrinterDriver::GetPixelHeight() const {
+  return height_;
+}
+
+int CTextOnlyPrinterDriver::GetBitsPerPixel() const {
+  return bits_per_pixel_;
+}
+
+int CTextOnlyPrinterDriver::GetHorzSize() const {
+  return horz_size_;
+}
+
+int CTextOnlyPrinterDriver::GetVertSize() const {
+  return vert_size_;
+=======
 int CTextOnlyPrinterDriver::GetDeviceCaps(int caps_id) const {
   switch (caps_id) {
     case FXDC_PIXEL_WIDTH:
@@ -52,6 +96,7 @@ int CTextOnlyPrinterDriver::GetDeviceCaps(int caps_id) const {
     default:
       NOTREACHED();
   }
+>>>>>>> BASE      (5ee52dc9cede873a800675b6faba773773c75c29 Add test for importing page with OCGs into new document)
 }
 
 void CTextOnlyPrinterDriver::SaveState() {}

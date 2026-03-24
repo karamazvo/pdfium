@@ -375,10 +375,18 @@ CGdiDeviceDriver::CGdiDeviceDriver(HDC hDC, DeviceType device_type)
     width_ = ::GetDeviceCaps(dc_handle_, HORZRES);
     height_ = ::GetDeviceCaps(dc_handle_, VERTRES);
   }
+  render_cap_get_bits_ = false;
+  render_cap_alpha_path_ = false;
+  render_cap_alpha_image_ = false;
+  render_cap_blend_mode_ = false;
+  render_cap_soft_clip_ = false;
+  render_cap_alpha_output_ = false;
+  render_cap_bytemask_output_ = false;
+  render_cap_fillstroke_path_ = false;
+  render_cap_shading_ = false;
+  render_cap_premultiplied_alpha_ = false;
   if (device_type_ == DeviceType::kDisplay) {
-    render_caps_ = FXRC_GET_BITS;
-  } else {
-    render_caps_ = 0;
+    render_cap_get_bits_ = true;
   }
 }
 
@@ -388,6 +396,65 @@ DeviceType CGdiDeviceDriver::GetDeviceType() const {
   return device_type_;
 }
 
+<<<<<<< PATCH SET (f390c46f226aeb6e9b780562f28530d2d7ea3f49 Replace render caps with individual boolean functions)
+bool CGdiDeviceDriver::RenderCapGetBits() const {
+  return render_cap_get_bits_;
+}
+bool CGdiDeviceDriver::RenderCapAlphaPath() const {
+  return render_cap_alpha_path_;
+}
+bool CGdiDeviceDriver::RenderCapAlphaImage() const {
+  return render_cap_alpha_image_;
+}
+bool CGdiDeviceDriver::RenderCapBlendMode() const {
+  return render_cap_blend_mode_;
+}
+bool CGdiDeviceDriver::RenderCapSoftClip() const {
+  return render_cap_soft_clip_;
+}
+bool CGdiDeviceDriver::RenderCapAlphaOutput() const {
+  return render_cap_alpha_output_;
+}
+bool CGdiDeviceDriver::RenderCapByteMaskOutput() const {
+  return render_cap_bytemask_output_;
+}
+bool CGdiDeviceDriver::RenderCapFillStrokePath() const {
+  return render_cap_fillstroke_path_;
+}
+bool CGdiDeviceDriver::RenderCapShading() const {
+  return render_cap_shading_;
+}
+bool CGdiDeviceDriver::RenderCapPremultipliedAlpha() const {
+  return render_cap_premultiplied_alpha_;
+}
+
+int CGdiDeviceDriver::GetPixelWidth() const {
+  return width_;
+}
+
+int CGdiDeviceDriver::GetPixelHeight() const {
+  return height_;
+}
+
+int CGdiDeviceDriver::GetBitsPerPixel() const {
+  return bits_per_pixel_;
+||||||| BASE      (ea6858c6be4f3b4539c8df38deb3f0941002555a Replace GetDeviceCaps with specific getter methods)
+int CGdiDeviceDriver::GetDeviceCaps(int caps_id) const {
+  CHECK_EQ(caps_id, FXDC_RENDER_CAPS);
+  return render_caps_;
+}
+
+int CGdiDeviceDriver::GetPixelWidth() const {
+  return width_;
+}
+
+int CGdiDeviceDriver::GetPixelHeight() const {
+  return height_;
+}
+
+int CGdiDeviceDriver::GetBitsPerPixel() const {
+  return bits_per_pixel_;
+=======
 int CGdiDeviceDriver::GetDeviceCaps(int caps_id) const {
   switch (caps_id) {
     case FXDC_PIXEL_WIDTH:
@@ -401,6 +468,7 @@ int CGdiDeviceDriver::GetDeviceCaps(int caps_id) const {
     default:
       NOTREACHED();
   }
+>>>>>>> BASE      (5ee52dc9cede873a800675b6faba773773c75c29 Add test for importing page with OCGs into new document)
 }
 
 void CGdiDeviceDriver::SaveState() {

@@ -489,17 +489,19 @@ bool GetZeroAreaPath(pdfium::span<const CFX_Path::Point> points,
   return new_path_size != 0;
 }
 
-FXDIB_Format GetCreateCompatibleBitmapFormat(int render_caps,
+FXDIB_Format GetCreateCompatibleBitmapFormat(bool bytemask_output,
+                                             bool premult_alpha,
+                                             bool alpha_output,
                                              bool use_argb_premul) {
-  if (render_caps & FXRC_BYTEMASK_OUTPUT) {
+  if (bytemask_output) {
     return FXDIB_Format::k8bppMask;
   }
 #if defined(PDF_USE_SKIA)
-  if (use_argb_premul && (render_caps & FXRC_PREMULTIPLIED_ALPHA)) {
+  if (use_argb_premul && premult_alpha) {
     return FXDIB_Format::kBgraPremul;
   }
 #endif
-  if (render_caps & FXRC_ALPHA_OUTPUT) {
+  if (alpha_output) {
     return FXDIB_Format::kBgra;
   }
   return CFX_DIBBase::kPlatformRGBFormat;
@@ -530,10 +532,32 @@ void CFX_RenderDevice::SetDeviceDriver(
 }
 
 void CFX_RenderDevice::InitDeviceInfo() {
+<<<<<<< PATCH SET (f390c46f226aeb6e9b780562f28530d2d7ea3f49 Replace render caps with individual boolean functions)
+  width_ = device_driver_->GetPixelWidth();
+  height_ = device_driver_->GetPixelHeight();
+  bpp_ = device_driver_->GetBitsPerPixel();
+  render_cap_get_bits_ = device_driver_->RenderCapGetBits();
+  render_cap_alpha_path_ = device_driver_->RenderCapAlphaPath();
+  render_cap_alpha_image_ = device_driver_->RenderCapAlphaImage();
+  render_cap_blend_mode_ = device_driver_->RenderCapBlendMode();
+  render_cap_soft_clip_ = device_driver_->RenderCapSoftClip();
+  render_cap_alpha_output_ = device_driver_->RenderCapAlphaOutput();
+  render_cap_bytemask_output_ = device_driver_->RenderCapByteMaskOutput();
+  render_cap_fillstroke_path_ = device_driver_->RenderCapFillStrokePath();
+  render_cap_shading_ = device_driver_->RenderCapShading();
+  render_cap_premultiplied_alpha_ =
+      device_driver_->RenderCapPremultipliedAlpha();
+||||||| BASE      (ea6858c6be4f3b4539c8df38deb3f0941002555a Replace GetDeviceCaps with specific getter methods)
+  width_ = device_driver_->GetPixelWidth();
+  height_ = device_driver_->GetPixelHeight();
+  bpp_ = device_driver_->GetBitsPerPixel();
+  render_caps_ = device_driver_->GetDeviceCaps(FXDC_RENDER_CAPS);
+=======
   width_ = device_driver_->GetDeviceCaps(FXDC_PIXEL_WIDTH);
   height_ = device_driver_->GetDeviceCaps(FXDC_PIXEL_HEIGHT);
   bpp_ = device_driver_->GetDeviceCaps(FXDC_BITS_PIXEL);
   render_caps_ = device_driver_->GetDeviceCaps(FXDC_RENDER_CAPS);
+>>>>>>> BASE      (5ee52dc9cede873a800675b6faba773773c75c29 Add test for importing page with OCGs into new document)
   device_type_ = device_driver_->GetDeviceType();
   clip_box_ = device_driver_->GetClipBox();
 }
@@ -549,8 +573,36 @@ void CFX_RenderDevice::RestoreState(bool bKeepSaved) {
   }
 }
 
+<<<<<<< PATCH SET (f390c46f226aeb6e9b780562f28530d2d7ea3f49 Replace render caps with individual boolean functions)
+int CFX_RenderDevice::GetBitsPerPixel() const {
+  return device_driver_->GetBitsPerPixel();
+}
+
+int CFX_RenderDevice::GetHorzSize() const {
+  return device_driver_->GetHorzSize();
+}
+
+int CFX_RenderDevice::GetVertSize() const {
+  return device_driver_->GetVertSize();
+||||||| BASE      (ea6858c6be4f3b4539c8df38deb3f0941002555a Replace GetDeviceCaps with specific getter methods)
 int CFX_RenderDevice::GetDeviceCaps(int caps_id) const {
   return device_driver_->GetDeviceCaps(caps_id);
+}
+
+int CFX_RenderDevice::GetBitsPerPixel() const {
+  return device_driver_->GetBitsPerPixel();
+}
+
+int CFX_RenderDevice::GetHorzSize() const {
+  return device_driver_->GetHorzSize();
+}
+
+int CFX_RenderDevice::GetVertSize() const {
+  return device_driver_->GetVertSize();
+=======
+int CFX_RenderDevice::GetDeviceCaps(int caps_id) const {
+  return device_driver_->GetDeviceCaps(caps_id);
+>>>>>>> BASE      (5ee52dc9cede873a800675b6faba773773c75c29 Add test for importing page with OCGs into new document)
 }
 
 RetainPtr<CFX_DIBitmap> CFX_RenderDevice::GetBitmap() {
@@ -571,7 +623,9 @@ bool CFX_RenderDevice::CreateCompatibleBitmap(
     int height) const {
   return pDIB->Create(
       width, height,
-      GetCreateCompatibleBitmapFormat(render_caps_, /*use_argb_premul=*/true));
+      GetCreateCompatibleBitmapFormat(
+          render_cap_bytemask_output_, render_cap_premultiplied_alpha_,
+          render_cap_alpha_output_, /*use_argb_premul=*/true));
 }
 
 void CFX_RenderDevice::SetBaseClip(const FX_RECT& rect) {
@@ -738,8 +792,16 @@ bool CFX_RenderDevice::DrawPath(const CFX_Path& path,
 
   if (fill && fill_alpha && stroke_alpha < 0xff && fill_options.stroke) {
 #if defined(PDF_USE_SKIA)
+<<<<<<< PATCH SET (f390c46f226aeb6e9b780562f28530d2d7ea3f49 Replace render caps with individual boolean functions)
+    if (render_cap_fillstroke_path_) {
+      const bool using_skia = CFX_DefaultRenderDevice::UseSkiaRenderer();
+||||||| BASE      (ea6858c6be4f3b4539c8df38deb3f0941002555a Replace GetDeviceCaps with specific getter methods)
+    if (render_caps_ & FXRC_FILLSTROKE_PATH) {
+      const bool using_skia = CFX_DefaultRenderDevice::UseSkiaRenderer();
+=======
     if (render_caps_ & FXRC_FILLSTROKE_PATH) {
       const bool using_skia = CFX_GEModule::Get()->UseSkiaRenderer();
+>>>>>>> BASE      (5ee52dc9cede873a800675b6faba773773c75c29 Add test for importing page with OCGs into new document)
       if (using_skia) {
         device_driver_->SetGroupKnockout(true);
       }
@@ -770,7 +832,7 @@ bool CFX_RenderDevice::DrawFillStrokePath(
     uint32_t fill_color,
     uint32_t stroke_color,
     const CFX_FillRenderOptions& fill_options) {
-  if (!(render_caps_ & FXRC_GET_BITS)) {
+  if (!render_cap_get_bits_) {
     return false;
   }
   CFX_FloatRect bbox;
@@ -826,7 +888,7 @@ bool CFX_RenderDevice::FillRect(const FX_RECT& rect, uint32_t fill_color) {
     return true;
   }
 
-  if (!(render_caps_ & FXRC_GET_BITS)) {
+  if (!render_cap_get_bits_) {
     return false;
   }
 
@@ -909,7 +971,7 @@ void CFX_RenderDevice::DrawZeroAreaPath(
 bool CFX_RenderDevice::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
                                  int left,
                                  int top) const {
-  return (render_caps_ & FXRC_GET_BITS) &&
+  return render_cap_get_bits_ &&
          device_driver_->GetDIBits(std::move(bitmap), left, top);
 }
 
@@ -938,12 +1000,12 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(RetainPtr<const CFX_DIBBase> bitmap,
   FX_RECT src_rect(dest_rect.left - left, dest_rect.top - top,
                    dest_rect.left - left + dest_rect.Width(),
                    dest_rect.top - top + dest_rect.Height());
-  if ((blend_mode == BlendMode::kNormal || (render_caps_ & FXRC_BLEND_MODE)) &&
-      (!bitmap->IsAlphaFormat() || (render_caps_ & FXRC_ALPHA_IMAGE))) {
+  if ((blend_mode == BlendMode::kNormal || render_cap_blend_mode_) &&
+      (!bitmap->IsAlphaFormat() || render_cap_alpha_image_)) {
     return device_driver_->SetDIBits(std::move(bitmap), /*color=*/0, src_rect,
                                      dest_rect.left, dest_rect.top, blend_mode);
   }
-  if (!(render_caps_ & FXRC_GET_BITS)) {
+  if (!render_cap_get_bits_) {
     return false;
   }
 
@@ -1110,8 +1172,14 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
           // anti-aliasing as well.
           text_options.aliasing_type = CFX_TextRenderOptions::kAntiAliasing;
         }
+<<<<<<< PATCH SET (f390c46f226aeb6e9b780562f28530d2d7ea3f49 Replace render caps with individual boolean functions)
+      } else if (render_cap_alpha_output_) {
+||||||| BASE      (ea6858c6be4f3b4539c8df38deb3f0941002555a Replace GetDeviceCaps with specific getter methods)
+      } else if ((render_caps_ & FXRC_ALPHA_OUTPUT)) {
+=======
 #endif
       } else if ((render_caps_ & FXRC_ALPHA_OUTPUT)) {
+>>>>>>> BASE      (5ee52dc9cede873a800675b6faba773773c75c29 Add test for importing page with OCGs into new document)
         // Whether Skia uses LCD optimization should strictly follow the
         // rendering options provided by |text_options|. No change needs to be
         // done for |text_options| here.
@@ -1233,9 +1301,11 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
   } else {
     // TODO(crbug.com/42271020): Switch to CreateCompatibleBitmap() once
     // DrawNormalTextHelper() supports `FXDIB_Format::kBgraPremul`.
-    if (!bitmap->Create(pixel_width, pixel_height,
-                        GetCreateCompatibleBitmapFormat(
-                            render_caps_, /*use_argb_premul=*/false))) {
+    if (!bitmap->Create(
+            pixel_width, pixel_height,
+            GetCreateCompatibleBitmapFormat(
+                render_cap_bytemask_output_, render_cap_premultiplied_alpha_,
+                render_cap_alpha_output_, /*use_argb_premul=*/false))) {
       return false;
     }
   }

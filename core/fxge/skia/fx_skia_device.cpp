@@ -1023,6 +1023,64 @@ DeviceType CFX_SkiaDeviceDriver::GetDeviceType() const {
   return DeviceType::kDisplay;
 }
 
+<<<<<<< PATCH SET (f390c46f226aeb6e9b780562f28530d2d7ea3f49 Replace render caps with individual boolean functions)
+bool CFX_SkiaDeviceDriver::RenderCapGetBits() const {
+  return true;
+}
+bool CFX_SkiaDeviceDriver::RenderCapAlphaPath() const {
+  return true;
+}
+bool CFX_SkiaDeviceDriver::RenderCapAlphaImage() const {
+  return true;
+}
+bool CFX_SkiaDeviceDriver::RenderCapBlendMode() const {
+  return true;
+}
+bool CFX_SkiaDeviceDriver::RenderCapSoftClip() const {
+  return true;
+}
+bool CFX_SkiaDeviceDriver::RenderCapAlphaOutput() const {
+  return true;
+}
+bool CFX_SkiaDeviceDriver::RenderCapFillStrokePath() const {
+  return true;
+}
+bool CFX_SkiaDeviceDriver::RenderCapShading() const {
+  return true;
+}
+bool CFX_SkiaDeviceDriver::RenderCapPremultipliedAlpha() const {
+  return true;
+}
+
+int CFX_SkiaDeviceDriver::GetPixelWidth() const {
+  return canvas_->imageInfo().width();
+}
+
+int CFX_SkiaDeviceDriver::GetPixelHeight() const {
+  return canvas_->imageInfo().height();
+}
+
+int CFX_SkiaDeviceDriver::GetBitsPerPixel() const {
+  return 32;
+||||||| BASE      (ea6858c6be4f3b4539c8df38deb3f0941002555a Replace GetDeviceCaps with specific getter methods)
+int CFX_SkiaDeviceDriver::GetDeviceCaps(int caps_id) const {
+  CHECK_EQ(caps_id, FXDC_RENDER_CAPS);
+  return FXRC_GET_BITS | FXRC_ALPHA_PATH | FXRC_ALPHA_IMAGE | FXRC_BLEND_MODE |
+         FXRC_SOFT_CLIP | FXRC_ALPHA_OUTPUT | FXRC_FILLSTROKE_PATH |
+         FXRC_SHADING | FXRC_PREMULTIPLIED_ALPHA;
+}
+
+int CFX_SkiaDeviceDriver::GetPixelWidth() const {
+  return canvas_->imageInfo().width();
+}
+
+int CFX_SkiaDeviceDriver::GetPixelHeight() const {
+  return canvas_->imageInfo().height();
+}
+
+int CFX_SkiaDeviceDriver::GetBitsPerPixel() const {
+  return 32;
+=======
 int CFX_SkiaDeviceDriver::GetDeviceCaps(int caps_id) const {
   switch (caps_id) {
     case FXDC_PIXEL_WIDTH:
@@ -1041,6 +1099,7 @@ int CFX_SkiaDeviceDriver::GetDeviceCaps(int caps_id) const {
     default:
       NOTREACHED();
   }
+>>>>>>> BASE      (5ee52dc9cede873a800675b6faba773773c75c29 Add test for importing page with OCGs into new document)
 }
 
 void CFX_SkiaDeviceDriver::SaveState() {

@@ -43,7 +43,25 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
 
   // RenderDeviceDriverIface:
   DeviceType GetDeviceType() const override;
+<<<<<<< PATCH SET (f390c46f226aeb6e9b780562f28530d2d7ea3f49 Replace render caps with individual boolean functions)
+  bool RenderCapGetBits() const override;
+  bool RenderCapAlphaPath() const override;
+  bool RenderCapAlphaImage() const override;
+  bool RenderCapBlendMode() const override;
+  bool RenderCapSoftClip() const override;
+  bool RenderCapAlphaOutput() const override;
+  bool RenderCapByteMaskOutput() const override;
+  int GetPixelWidth() const override;
+  int GetPixelHeight() const override;
+  int GetBitsPerPixel() const override;
+||||||| BASE      (ea6858c6be4f3b4539c8df38deb3f0941002555a Replace GetDeviceCaps with specific getter methods)
   int GetDeviceCaps(int caps_id) const override;
+  int GetPixelWidth() const override;
+  int GetPixelHeight() const override;
+  int GetBitsPerPixel() const override;
+=======
+  int GetDeviceCaps(int caps_id) const override;
+>>>>>>> BASE      (5ee52dc9cede873a800675b6faba773773c75c29 Add test for importing page with OCGs into new document)
   void SaveState() override;
   void RestoreState(bool bKeepSaved) override;
   bool SetClip_PathFill(const CFX_Path& path,
