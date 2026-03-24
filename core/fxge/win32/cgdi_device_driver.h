@@ -23,7 +23,10 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
 
   // RenderDeviceDriverIface:
   DeviceType GetDeviceType() const override;
-  int GetDeviceCaps(int caps_id) const override;
+  bool RenderCapGetBits() const override;
+  bool RenderCapAlphaPath() const override;
+  bool RenderCapAlphaImage() const override;
+  bool RenderCapAlphaOutput() const override;
   int GetPixelWidth() const override;
   int GetPixelHeight() const override;
   int GetBitsPerPixel() const override;
@@ -75,7 +78,10 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
   int height_;
   int bits_per_pixel_;
   const DeviceType device_type_;
-  int render_caps_;
+  bool render_cap_get_bits_ = false;
+  bool render_cap_alpha_path_ = false;
+  bool render_cap_alpha_image_ = false;
+  bool render_cap_alpha_output_ = false;
   std::optional<FX_RECT> base_clip_box_;
 };
 
