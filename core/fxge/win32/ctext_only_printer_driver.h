@@ -20,7 +20,16 @@ class CTextOnlyPrinterDriver final : public RenderDeviceDriverIface {
  private:
   // RenderDeviceDriverIface:
   DeviceType GetDeviceType() const override;
-  int GetDeviceCaps(int caps_id) const override;
+  bool RenderCapGetBits() const;
+  bool RenderCapAlphaPath() const;
+  bool RenderCapAlphaImage() const;
+  bool RenderCapBlendMode() const;
+  bool RenderCapSoftClip() const;
+  bool RenderCapAlphaOutput() const;
+  bool RenderCapByteMaskOutput() const;
+  bool RenderCapFillStrokePath() const;
+  bool RenderCapShading() const;
+  bool RenderCapPremultipliedAlpha() const;
   int GetPixelWidth() const override;
   int GetPixelHeight() const override;
   int GetBitsPerPixel() const override;
