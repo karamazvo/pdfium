@@ -32,9 +32,11 @@ template class fxcrt::StringViewTemplate<wchar_t>;
 template class fxcrt::StringPoolTemplate<WideString>;
 template struct std::hash<WideString>;
 
-#define FORCE_ANSI 0x10000
-#define FORCE_UNICODE 0x20000
-#define FORCE_INT64 0x40000
+struct WSTRModifiers {
+  bool force_ansi = false;
+  bool force_unicode = false;
+  bool force_int64 = false;
+};
 
 namespace {
 
@@ -109,91 +111,44 @@ std::optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
       return std::nullopt;
     }
     uint32_t nPrecision = static_cast<uint32_t>(iPrecision);
-    int nModifier = 0;
+    WSTRModifiers nModifier;
+    char c = view.Front();
     if (view.First(3u) == L"I64") {
       view = view.Substr(3u);
-      nModifier = FORCE_INT64;
+      nModifier.force_int64 = true;
     } else {
-      switch (view.Front()) {
-        case 'h':
-          nModifier = FORCE_ANSI;
-          view = view.Substr(1u);
-          break;
-        case 'l':
-          nModifier = FORCE_UNICODE;
-          view = view.Substr(1u);
-          break;
-        case 'F':
-        case 'N':
-        case 'L':
-          view = view.Substr(1u);
-          break;
+      if (c == 'h' || c == 'l' || c == 'F' || c == 'N' || c == 'L') {
+        if (c == 'h') {
+          nModifier.force_ansi = true;
+        } else if (c == 'l') {
+          nModifier.force_unicode = true;
+        }
+        view = view.Substr(1u);
       }
     }
     size_t nItemLen = 0;
-    switch (view.Front() | nModifier) {
-      case 'c':
-      case 'C':
-        nItemLen = 2;
-        va_arg(argList, int);
-        break;
-      case 'c' | FORCE_ANSI:
-      case 'C' | FORCE_ANSI:
-        nItemLen = 2;
-        va_arg(argList, int);
-        break;
-      case 'c' | FORCE_UNICODE:
-      case 'C' | FORCE_UNICODE:
-        nItemLen = 2;
-        va_arg(argList, int);
-        break;
-      case 's': {
-        const wchar_t* pstrNextArg = va_arg(argList, const wchar_t*);
-        if (pstrNextArg) {
-          nItemLen = wcslen(pstrNextArg);
-          if (nItemLen < 1) {
-            nItemLen = 1;
-          }
-        } else {
-          nItemLen = 6;
-        }
-      } break;
-      case 'S': {
-        const char* pstrNextArg = va_arg(argList, const char*);
-        if (pstrNextArg) {
-          nItemLen = strlen(pstrNextArg);
-          if (nItemLen < 1) {
-            nItemLen = 1;
-          }
-        } else {
-          nItemLen = 6;
-        }
-      } break;
-      case 's' | FORCE_ANSI:
-      case 'S' | FORCE_ANSI: {
-        const char* pstrNextArg = va_arg(argList, const char*);
-        if (pstrNextArg) {
-          nItemLen = strlen(pstrNextArg);
-          if (nItemLen < 1) {
-            nItemLen = 1;
-          }
-        } else {
-          nItemLen = 6;
-        }
-      } break;
-      case 's' | FORCE_UNICODE:
-      case 'S' | FORCE_UNICODE: {
-        const wchar_t* pstrNextArg = va_arg(argList, wchar_t*);
-        if (pstrNextArg) {
-          nItemLen = wcslen(pstrNextArg);
-          if (nItemLen < 1) {
-            nItemLen = 1;
-          }
-        } else {
-          nItemLen = 6;
-        }
-      } break;
+    if (c == 'c' || c == 'C') {
+      nItemLen = 2;
+      va_arg(argList, int);
+    } else if (c == 's' || c == 'S') {
+      bool bUseWide = false;
+      if (nModifier.force_unicode) {
+        bUseWide = true;
+      } else if (nModifier.force_ansi) {
+        bUseWide = false;
+      } else {
+        bUseWide = (c == 's');
+      }
+
+      if (bUseWide) {
+        const wchar_t* pStr = va_arg(argList, const wchar_t*);
+        nItemLen = pStr ? std::max<size_t>(1, wcslen(pStr)) : 6;
+      } else {
+        const char* pStr = va_arg(argList, const char*);
+        nItemLen = pStr ? std::max<size_t>(1, strlen(pStr)) : 6;
+      }
     }
+
     if (nItemLen != 0) {
       if (nPrecision != 0 && nItemLen > nPrecision) {
         nItemLen = nPrecision;
@@ -202,57 +157,43 @@ std::optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
         nItemLen = nWidth;
       }
     } else {
-      switch (view.Front()) {
-        case 'd':
-        case 'i':
-        case 'u':
-        case 'x':
-        case 'X':
-        case 'o':
-          if (nModifier & FORCE_INT64) {
-            va_arg(argList, int64_t);
-          } else {
-            va_arg(argList, int);
-          }
-          nItemLen = 32;
-          if (nItemLen < nWidth + nPrecision) {
-            nItemLen = nWidth + nPrecision;
-          }
-          break;
-        case 'a':
-        case 'A':
-        case 'e':
-        case 'E':
-        case 'g':
-        case 'G':
-          va_arg(argList, double);
-          nItemLen = 128;
-          if (nItemLen < nWidth + nPrecision) {
-            nItemLen = nWidth + nPrecision;
-          }
-          break;
-        case 'f':
-          if (nWidth + nPrecision > 100) {
-            nItemLen = nPrecision + nWidth + 128;
-          } else {
-            double f;
-            char pszTemp[256];
-            f = va_arg(argList, double);
-            FXSYS_snprintf(pszTemp, sizeof(pszTemp), "%*.*f", nWidth,
-                           nPrecision + 6, f);
-            nItemLen = strlen(pszTemp);
-          }
-          break;
-        case 'p':
-          va_arg(argList, void*);
-          nItemLen = 32;
-          if (nItemLen < nWidth + nPrecision) {
-            nItemLen = nWidth + nPrecision;
-          }
-          break;
-        case 'n':
-          va_arg(argList, int*);
-          break;
+      if (c == 'd' || c == 'i' || c == 'u' || c == 'x' || c == 'X' ||
+          c == 'o') {
+        if (nModifier.force_int64) {
+          va_arg(argList, int64_t);
+        } else {
+          va_arg(argList, int);
+        }
+        nItemLen = 32;
+        if (nItemLen < nWidth + nPrecision) {
+          nItemLen = nWidth + nPrecision;
+        }
+      } else if (c == 'a' || c == 'A' || c == 'e' || c == 'E' || c == 'g' ||
+                 c == 'G') {
+        va_arg(argList, double);
+        nItemLen = 128;
+        if (nItemLen < nWidth + nPrecision) {
+          nItemLen = nWidth + nPrecision;
+        }
+      } else if (c == 'f') {
+        if (nWidth + nPrecision > 100) {
+          nItemLen = nPrecision + nWidth + 128;
+        } else {
+          double f;
+          char pszTemp[256];
+          f = va_arg(argList, double);
+          FXSYS_snprintf(pszTemp, sizeof(pszTemp), "%*.*f", nWidth,
+                         nPrecision + 6, f);
+          nItemLen = strlen(pszTemp);
+        }
+      } else if (c == 'p') {
+        va_arg(argList, void*);
+        nItemLen = 32;
+        if (nItemLen < nWidth + nPrecision) {
+          nItemLen = nWidth + nPrecision;
+        }
+      } else if (c == 'n') {
+        va_arg(argList, int*);
       }
     }
     nMaxLen += nItemLen;
