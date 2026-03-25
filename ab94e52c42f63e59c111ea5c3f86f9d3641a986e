@@ -70,6 +70,24 @@
       "parentUuid": "795fcf5e_373c2be5",
       "revId": "ab94e52c42f63e59c111ea5c3f86f9d3641a986e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1be1b005_772996a6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-25T18:26:35Z",
+      "side": 1,
+      "message": "Some of the refactoring could have been performed first to simplify the code and prepare it for the enum change, but the CL is small enough to review, so it\u0027s ok.",
+      "parentUuid": "7b0f5cc0_38c775b1",
+      "revId": "ab94e52c42f63e59c111ea5c3f86f9d3641a986e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }

@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2bd96e3e_181015c6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 8
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-25T18:26:35Z",
+      "side": 1,
+      "message": "As always, reminder to rewrite the CL description to match the actual code.",
+      "revId": "a6b9bf0c5353558ff17eca12eb3dfd03130f7104",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3c3dd06c_191c272c",
+        "filename": "core/fxcrt/widestring.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-25T18:26:35Z",
+      "side": 1,
+      "message": "Can skip this computation:\n\n```\nbool wide;\nif (nModifier \u003d\u003d WSTRModifier::kForceUnicode) {\n  wide \u003d true;\n} else if (nModifier \u003d\u003d WSTRModifier::kForceAnsi) {\n  wide \u003d false;\n} else {\n  wide \u003d (view.Front() \u003d\u003d \u0027s\u0027);\n}\n```",
+      "revId": "a6b9bf0c5353558ff17eca12eb3dfd03130f7104",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
