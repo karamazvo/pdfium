@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b57dcb1f_658364f8",
+        "filename": "core/fpdfapi/render/cpdf_imagerenderer.cpp",
+        "patchSetId": 22
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-25T17:15:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f1ca0e73_5ff65866",
+      "revId": "20b2c8389a16c05cf97325becebe353374ba3b06",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "21b983ee_7d9ebc67",
@@ -35,6 +53,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "36d503b4_e486b53a",
+        "filename": "core/fpdfapi/render/cpdf_renderstatus.cpp",
+        "patchSetId": 22
+      },
+      "lineNbr": 775,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-25T17:15:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "21b983ee_7d9ebc67",
+      "revId": "20b2c8389a16c05cf97325becebe353374ba3b06",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "07f0a30c_d7dc1ed7",
@@ -48,6 +84,24 @@
       "writtenOn": "2026-03-25T16:14:43Z",
       "side": 1,
       "message": "If this value ever going to be set to true? If not, then remove this field. Please check all the other fields.",
+      "revId": "20b2c8389a16c05cf97325becebe353374ba3b06",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "af3285c4_9009fa38",
+        "filename": "core/fxge/win32/cgdi_device_driver.h",
+        "patchSetId": 22
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-25T17:15:54Z",
+      "side": 1,
+      "message": "Unless I am missing something here, this can be true.\n\n`CFX_RenderDevice::InitDeviceInfo()` does:\n\n`render_cap_soft_clip_ \u003d device_driver_-\u003eRenderCapSoftClip();`\n\nand particularly this (on AGG) calls:\n\n```\nbool CFX_AggDeviceDriver::RenderCapSoftClip() const {\n  return true;\n}\n```\nand this (on Skia) calls:\n\n```\nbool CFX_SkiaDeviceDriver::RenderCapSoftClip() const {\n  return true;\n}\n```\n\nBoth of which return true and set the variable to true. This is true for all other variables here.",
+      "parentUuid": "07f0a30c_d7dc1ed7",
       "revId": "20b2c8389a16c05cf97325becebe353374ba3b06",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
