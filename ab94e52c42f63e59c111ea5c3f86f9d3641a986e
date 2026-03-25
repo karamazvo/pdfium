@@ -52,6 +52,24 @@
       "parentUuid": "5bd2fff0_5e1379db",
       "revId": "ab94e52c42f63e59c111ea5c3f86f9d3641a986e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7b0f5cc0_38c775b1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-25T14:34:50Z",
+      "side": 1,
+      "message": "Still had to keep a bit of the refactor to have the change to the struct work.",
+      "parentUuid": "795fcf5e_373c2be5",
+      "revId": "ab94e52c42f63e59c111ea5c3f86f9d3641a986e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
