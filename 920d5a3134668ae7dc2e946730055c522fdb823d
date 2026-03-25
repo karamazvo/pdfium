@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b669abbe_29fe2f46",
+        "filename": "core/fpdfapi/render/cpdf_renderstatus.cpp",
+        "patchSetId": 29
+      },
+      "lineNbr": 569,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-25T20:47:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1e5a318f_4015b998",
+      "revId": "920d5a3134668ae7dc2e946730055c522fdb823d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d5fb6a4b_72a8d3d6",
@@ -31,6 +49,30 @@
       "writtenOn": "2026-03-25T20:11:55Z",
       "side": 1,
       "message": "This name doesn\u0027t make sense anymore.",
+      "range": {
+        "startLine": 774,
+        "startChar": 7,
+        "endLine": 774,
+        "endChar": 19
+      },
+      "revId": "920d5a3134668ae7dc2e946730055c522fdb823d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "22fa1278_8901f779",
+        "filename": "core/fpdfapi/render/cpdf_renderstatus.cpp",
+        "patchSetId": 29
+      },
+      "lineNbr": 774,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-25T20:47:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d5fb6a4b_72a8d3d6",
       "range": {
         "startLine": 774,
         "startChar": 7,
@@ -58,6 +100,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fbfb71de_49e9db82",
+        "filename": "core/fpdfapi/render/cpdf_scaledrenderbuffer.cpp",
+        "patchSetId": 29
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-25T20:47:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a1d1c648_03409930",
+      "revId": "920d5a3134668ae7dc2e946730055c522fdb823d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1e7095cc_a1ab08db",
@@ -71,6 +131,24 @@
       "writtenOn": "2026-03-25T20:11:55Z",
       "side": 1,
       "message": "Comment is in the wrong place.",
+      "revId": "920d5a3134668ae7dc2e946730055c522fdb823d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "16972ca9_1080a8df",
+        "filename": "core/fxge/agg/cfx_agg_devicedriver.cpp",
+        "patchSetId": 29
+      },
+      "lineNbr": 445,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-25T20:47:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1e7095cc_a1ab08db",
       "revId": "920d5a3134668ae7dc2e946730055c522fdb823d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -92,6 +170,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6e09d6b2_b8e0876d",
+        "filename": "core/fxge/agg/cfx_agg_devicedriver.cpp",
+        "patchSetId": 29
+      },
+      "lineNbr": 1008,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-25T20:47:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "31c123fc_5fbc1e26",
+      "revId": "920d5a3134668ae7dc2e946730055c522fdb823d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "39f6a695_be6826a8",
@@ -105,6 +201,24 @@
       "writtenOn": "2026-03-25T20:11:55Z",
       "side": 1,
       "message": "Can these be Skia-only? i.e. Match core/fxge/renderdevicedriver_iface.h.",
+      "revId": "920d5a3134668ae7dc2e946730055c522fdb823d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "adf4df93_9e133693",
+        "filename": "core/fxge/cfx_renderdevice.h",
+        "patchSetId": 29
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-25T20:47:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "39f6a695_be6826a8",
       "revId": "920d5a3134668ae7dc2e946730055c522fdb823d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -126,6 +240,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c181d14b_f49546d8",
+        "filename": "core/fxge/cfx_renderdevice.h",
+        "patchSetId": 29
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-25T20:47:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6213a15f_b6b529ca",
+      "revId": "920d5a3134668ae7dc2e946730055c522fdb823d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "581a69e5_49f388e5",
@@ -139,6 +271,24 @@
       "writtenOn": "2026-03-25T20:11:55Z",
       "side": 1,
       "message": "core/fxge/skia/fx_skia_device.h is by definition only used when this is true.",
+      "revId": "920d5a3134668ae7dc2e946730055c522fdb823d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "adca64ba_38306582",
+        "filename": "core/fxge/skia/fx_skia_device.h",
+        "patchSetId": 29
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-25T20:47:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "581a69e5_49f388e5",
       "revId": "920d5a3134668ae7dc2e946730055c522fdb823d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -160,6 +310,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e805f035_6b74386d",
+        "filename": "core/fxge/win32/cgdi_device_driver.cpp",
+        "patchSetId": 29
+      },
+      "lineNbr": 380,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-25T20:47:18Z",
+      "side": 1,
+      "message": "It\u0027s not, may have confused it with render_cap_alpha_image_ while grepping. Done.",
+      "parentUuid": "72d45ef5_48b72249",
+      "revId": "920d5a3134668ae7dc2e946730055c522fdb823d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "72535c27_b4e83a7f",
@@ -173,6 +341,30 @@
       "writtenOn": "2026-03-25T20:11:55Z",
       "side": 1,
       "message": "Combine with line 377.",
+      "range": {
+        "startLine": 381,
+        "startChar": 0,
+        "endLine": 383,
+        "endChar": 3
+      },
+      "revId": "920d5a3134668ae7dc2e946730055c522fdb823d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "37058b48_dfc4ae2c",
+        "filename": "core/fxge/win32/cgdi_device_driver.cpp",
+        "patchSetId": 29
+      },
+      "lineNbr": 383,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-25T20:47:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "72535c27_b4e83a7f",
       "range": {
         "startLine": 381,
         "startChar": 0,
