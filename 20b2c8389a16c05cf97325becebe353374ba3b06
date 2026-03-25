@@ -122,6 +122,24 @@
       "parentUuid": "af3285c4_9009fa38",
       "revId": "20b2c8389a16c05cf97325becebe353374ba3b06",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ffc0e8c1_35e34257",
+        "filename": "core/fxge/win32/cgdi_device_driver.h",
+        "patchSetId": 22
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-25T18:46:17Z",
+      "side": 1,
+      "message": "Oh yep, mb. Done.",
+      "parentUuid": "2ab58582_f98fa2fa",
+      "revId": "20b2c8389a16c05cf97325becebe353374ba3b06",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
