@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "caff23f0_50f95fc2",
+        "filename": "core/fxge/agg/cfx_agg_devicedriver.cpp",
+        "patchSetId": 22
+      },
+      "lineNbr": 1013,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-25T16:14:43Z",
+      "side": 0,
+      "message": "Preserve this comment.",
+      "range": {
+        "startLine": 1013,
+        "startChar": 37,
+        "endLine": 1013,
+        "endChar": 74
+      },
+      "revId": "673e86511b28987fd3b1e3df46fe0de9d9cb58a9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bcfd6717_1e3a477b",
+        "filename": "core/fxge/render_defines.h",
+        "patchSetId": 22
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-25T16:14:43Z",
+      "side": 0,
+      "message": "Preserve this conditional.",
+      "revId": "673e86511b28987fd3b1e3df46fe0de9d9cb58a9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
