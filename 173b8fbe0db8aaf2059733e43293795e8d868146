@@ -16,6 +16,24 @@
       "message": "Since only one of these 3 bits can be true at any time, is this the best way to represent it?",
       "revId": "173b8fbe0db8aaf2059733e43293795e8d868146",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4d43e065_fe66e89b",
+        "filename": "core/fxcrt/widestring.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-25T17:24:12Z",
+      "side": 1,
+      "message": "If that is the case, enum probably works best. Done.",
+      "parentUuid": "b6a72a46_bb15674f",
+      "revId": "173b8fbe0db8aaf2059733e43293795e8d868146",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
