@@ -51,6 +51,24 @@
       "message": "Can skip this computation:\n\n```\nbool wide;\nif (nModifier \u003d\u003d WSTRModifier::kForceUnicode) {\n  wide \u003d true;\n} else if (nModifier \u003d\u003d WSTRModifier::kForceAnsi) {\n  wide \u003d false;\n} else {\n  wide \u003d (view.Front() \u003d\u003d \u0027s\u0027);\n}\n```",
       "revId": "a6b9bf0c5353558ff17eca12eb3dfd03130f7104",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "62ad7a9a_0dddcd4f",
+        "filename": "core/fxcrt/widestring.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-25T18:32:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3c3dd06c_191c272c",
+      "revId": "a6b9bf0c5353558ff17eca12eb3dfd03130f7104",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
