@@ -43,41 +43,44 @@ CPWL_Wnd::CreateParams CFFL_TextField::GetCreateParam() {
   CPWL_Wnd::CreateParams cp = CFFL_TextObject::GetCreateParam();
   int nFlags = widget_->GetFieldFlags();
   if (nFlags & pdfium::form_flags::kTextPassword) {
-    cp.dwFlags |= PES_PASSWORD;
+    cp.dwFlags.es_password = true;
   }
 
   if (nFlags & pdfium::form_flags::kTextMultiline) {
-    cp.dwFlags |= PES_MULTILINE | PES_AUTORETURN | PES_TOP;
+    cp.dwFlags.es_multiline = true;
+    cp.dwFlags.es_auto_return = true;
+    cp.dwFlags.es_top = true;
     if (!(nFlags & pdfium::form_flags::kTextDoNotScroll)) {
-      cp.dwFlags |= PWS_VSCROLL | PES_AUTOSCROLL;
+      cp.dwFlags.win_vscroll = true;
+      cp.dwFlags.es_auto_scroll = true;
     }
   } else {
-    cp.dwFlags |= PES_CENTER;
+    cp.dwFlags.es_center = true;
     if (!(nFlags & pdfium::form_flags::kTextDoNotScroll)) {
-      cp.dwFlags |= PES_AUTOSCROLL;
+      cp.dwFlags.es_auto_scroll = true;
     }
   }
 
   if (nFlags & pdfium::form_flags::kTextComb) {
-    cp.dwFlags |= PES_CHARARRAY;
+    cp.dwFlags.es_char_array = true;
   }
 
   if (nFlags & pdfium::form_flags::kTextRichText) {
-    cp.dwFlags |= PES_RICH;
+    cp.dwFlags.es_rich = true;
   }
 
-  cp.dwFlags |= PES_UNDO;
+  cp.dwFlags.es_undo = true;
 
   switch (widget_->GetAlignment()) {
     default:
     case kLeft:
-      cp.dwFlags |= PES_LEFT;
+      cp.dwFlags.es_left = true;
       break;
     case kCenter:
-      cp.dwFlags |= PES_MIDDLE;
+      cp.dwFlags.es_middle = true;
       break;
     case kRight:
-      cp.dwFlags |= PES_RIGHT;
+      cp.dwFlags.es_right = true;
       break;
   }
   cp.font_map = GetOrCreateFontMap();
@@ -94,7 +97,7 @@ std::unique_ptr<CPWL_Wnd> CFFL_TextField::NewPWLWindow(
   int32_t nMaxLen = widget_->GetMaxLen();
   WideString swValue = widget_->GetValue();
   if (nMaxLen > 0) {
-    if (pWnd->HasFlag(PES_CHARARRAY)) {
+    if (pWnd->GetCreationParams()->dwFlags.es_char_array) {
       pWnd->SetCharArray(nMaxLen);
       pWnd->SetAlignFormatVerticalCenter();
     } else {
