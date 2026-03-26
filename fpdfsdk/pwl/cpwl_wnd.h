@@ -26,37 +26,39 @@ class CPWL_ScrollBar;
 class IPVT_FontMap;
 struct PWL_SCROLL_INFO;
 
-// window styles
-#define PWS_BORDER 0x40000000L
-#define PWS_BACKGROUND 0x20000000L
-#define PWS_VSCROLL 0x08000000L
-#define PWS_VISIBLE 0x04000000L
-#define PWS_READONLY 0x01000000L
-#define PWS_AUTOFONTSIZE 0x00800000L
-#define PWS_AUTOTRANSPARENT 0x00400000L
-#define PWS_NOREFRESHCLIP 0x00200000L
+struct PStyles {
+  // window styles
+  bool win_border = false;
+  bool win_background = false;
+  bool win_vscroll = false;
+  bool win_visible = false;
+  bool win_read_only = false;
+  bool win_auto_font_size = false;
+  bool win_auto_transparent = false;
+  bool win_no_refresh_clip = false;
 
-// edit and label styles
-#define PES_MULTILINE 0x0001L
-#define PES_PASSWORD 0x0002L
-#define PES_LEFT 0x0004L
-#define PES_RIGHT 0x0008L
-#define PES_MIDDLE 0x0010L
-#define PES_TOP 0x0020L
-#define PES_CENTER 0x0080L
-#define PES_CHARARRAY 0x0100L
-#define PES_AUTOSCROLL 0x0200L
-#define PES_AUTORETURN 0x0400L
-#define PES_UNDO 0x0800L
-#define PES_RICH 0x1000L
-#define PES_TEXTOVERFLOW 0x4000L
+  // edit and label styles
+  bool es_multiline = false;
+  bool es_password = false;
+  bool es_left = false;
+  bool es_right = false;
+  bool es_middle = false;
+  bool es_top = false;
+  bool es_center = false;
+  bool es_char_array = false;
+  bool es_auto_scroll = false;
+  bool es_auto_return = false;
+  bool es_undo = false;
+  bool es_rich = false;
+  bool es_text_overflow = false;
 
-// listbox styles
-#define PLBS_MULTIPLESEL 0x0001L
-#define PLBS_HOVERSEL 0x0008L
+  // listbox styles
+  bool ls_multiple_sel = false;
+  bool ls_hover_sel = false;
 
-// combobox styles
-#define PCBS_ALLOWCUSTOMTEXT 0x0001L
+  // combobox styles
+  bool cs_allow_custom_text = false;
+};
 
 struct CPWL_Dash {
   int32_t nDash;
@@ -99,7 +101,7 @@ class CPWL_Wnd : public Observable {
     ObservedPtr<ProviderIface> pProvider;
 
     // Optional:
-    uint32_t dwFlags = 0;
+    PStyles dwFlags;
     CFX_Color sBackgroundColor;
     BorderStyle nBorderStyle = BorderStyle::kSolid;
     int32_t dwBorderWidth = 1;
@@ -192,8 +194,6 @@ class CPWL_Wnd : public Observable {
   CFX_FloatRect GetWindowRect() const;
 
   bool IsVisible() const { return visible_; }
-  bool HasFlag(uint32_t dwFlags) const;
-  void RemoveFlag(uint32_t dwFlags);
   void SetClipRect(const CFX_FloatRect& rect);
 
   IPWL_FillerNotify::PerWindowData* GetAttachedData() const {
