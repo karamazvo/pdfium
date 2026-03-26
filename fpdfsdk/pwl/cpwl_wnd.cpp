@@ -25,6 +25,29 @@ constexpr float kDefaultFontSize = 9.0f;
 
 }  // namespace
 
+PStyles::PStyles() = default;
+PStyles::~PStyles() = default;
+PStyles::PStyles(const PStyles&) = default;
+void PStyles::RemoveSubStyles() {
+  // Equivalent to masking with 0xFFFF0000L.
+  es_multiline = false;
+  es_password = false;
+  es_left = false;
+  es_right = false;
+  es_middle = false;
+  es_top = false;
+  es_center = false;
+  es_char_array = false;
+  es_auto_scroll = false;
+  es_auto_return = false;
+  es_undo = false;
+  es_rich = false;
+  es_text_overflow = false;
+  ls_multiple_sel = false;
+  ls_hover_sel = false;
+  cs_allow_custom_text = false;
+}
+
 // static
 const CFX_Color CPWL_Wnd::kDefaultBlackColor =
     CFX_Color(CFX_Color::Type::kGray, 0);
@@ -170,10 +193,10 @@ void CPWL_Wnd::Realize() {
   CreateSharedCaptureFocusState();
 
   CreateParams ccp = creation_params_;
-  ccp.dwFlags &= 0xFFFF0000L;  // remove sub styles
+  ccp.dwFlags.RemoveSubStyles();
   CreateVScrollBar(ccp);
   CreateChildWnd(ccp);
-  visible_ = HasFlag(PWS_VISIBLE);
+  visible_ = creation_params_.dwFlags.win_visible;
   OnCreated();
   if (!RepositionChildWnd()) {
     return;
@@ -258,13 +281,13 @@ void CPWL_Wnd::DrawThisAppearance(CFX_RenderDevice* pDevice,
     return;
   }
 
-  if (HasFlag(PWS_BACKGROUND)) {
+  if (creation_params_.dwFlags.win_background) {
     float width = static_cast<float>(GetBorderWidth() + GetInnerBorderWidth());
     pDevice->DrawFillRect(&mtUser2Device, rectWnd.GetDeflated(width, width),
                           GetBackgroundColor(), GetTransparency());
   }
 
-  if (HasFlag(PWS_BORDER)) {
+  if (creation_params_.dwFlags.win_border) {
     pDevice->DrawBorder(&mtUser2Device, rectWnd,
                         static_cast<float>(GetBorderWidth()), GetBorderColor(),
                         GetBorderLeftTopColor(GetBorderStyle()),
@@ -286,7 +309,7 @@ bool CPWL_Wnd::InvalidateRect(const CFX_FloatRect* pRect) {
     return true;
   }
   CFX_FloatRect rcRefresh = pRect ? *pRect : this_observed->GetWindowRect();
-  if (!this_observed->HasFlag(PWS_NOREFRESHCLIP)) {
+  if (!creation_params_.dwFlags.win_no_refresh_clip) {
     CFX_FloatRect rcClip = this_observed->GetClipRect();
     if (!rcClip.IsEmpty()) {
       rcRefresh.Intersect(rcClip);
@@ -476,14 +499,6 @@ CFX_PointF CPWL_Wnd::GetCenterPoint() const {
                     (rcClient.top + rcClient.bottom) * 0.5f);
 }
 
-bool CPWL_Wnd::HasFlag(uint32_t dwFlags) const {
-  return (creation_params_.dwFlags & dwFlags) != 0;
-}
-
-void CPWL_Wnd::RemoveFlag(uint32_t dwFlags) {
-  creation_params_.dwFlags &= ~dwFlags;
-}
-
 CFX_Color CPWL_Wnd::GetBackgroundColor() const {
   return creation_params_.sBackgroundColor;
 }
@@ -497,7 +512,8 @@ BorderStyle CPWL_Wnd::GetBorderStyle() const {
 }
 
 int32_t CPWL_Wnd::GetBorderWidth() const {
-  return HasFlag(PWS_BORDER) ? creation_params_.dwBorderWidth : 0;
+  return creation_params_.dwFlags.win_border ? creation_params_.dwBorderWidth
+                                             : 0;
 }
 
 int32_t CPWL_Wnd::GetInnerBorderWidth() const {
@@ -505,7 +521,8 @@ int32_t CPWL_Wnd::GetInnerBorderWidth() const {
 }
 
 CFX_Color CPWL_Wnd::GetBorderColor() const {
-  return HasFlag(PWS_BORDER) ? creation_params_.sBorderColor : CFX_Color();
+  return creation_params_.dwFlags.win_border ? creation_params_.sBorderColor
+                                             : CFX_Color();
 }
 
 const CPWL_Dash& CPWL_Wnd::GetBorderDash() const {
@@ -513,16 +530,19 @@ const CPWL_Dash& CPWL_Wnd::GetBorderDash() const {
 }
 
 CPWL_ScrollBar* CPWL_Wnd::GetVScrollBar() const {
-  return HasFlag(PWS_VSCROLL) ? vscroll_bar_ : nullptr;
+  return creation_params_.dwFlags.win_vscroll ? vscroll_bar_ : nullptr;
 }
 
 void CPWL_Wnd::CreateVScrollBar(const CreateParams& cp) {
-  if (vscroll_bar_ || !HasFlag(PWS_VSCROLL)) {
+  if (vscroll_bar_ || !creation_params_.dwFlags.win_vscroll) {
     return;
   }
 
   CreateParams scp = cp;
-  scp.dwFlags = PWS_BACKGROUND | PWS_AUTOTRANSPARENT | PWS_NOREFRESHCLIP;
+  scp.dwFlags.win_background = true;
+  scp.dwFlags.win_auto_transparent = true;
+  scp.dwFlags.win_no_refresh_clip = true;
+
   scp.sBackgroundColor = kDefaultWhiteColor;
   scp.eCursorType = IPWL_FillerNotify::CursorStyle::kArrow;
   scp.nTransparency = CPWL_ScrollBar::kTransparency;
@@ -626,7 +646,7 @@ const CFX_FloatRect& CPWL_Wnd::GetClipRect() const {
 }
 
 bool CPWL_Wnd::IsReadOnly() const {
-  return HasFlag(PWS_READONLY);
+  return creation_params_.dwFlags.win_read_only;
 }
 
 bool CPWL_Wnd::RepositionChildWnd() {
