@@ -60,11 +60,18 @@ bool CPDF_ExpIntFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
 
 bool CPDF_ExpIntFunc::v_Call(pdfium::span<const float> inputs,
                              pdfium::span<float> results) const {
-  for (uint32_t i = 0; i < inputs_; i++) {
-    for (uint32_t j = 0; j < orig_outputs_; j++) {
-      results[i * orig_outputs_ + j] =
-          begin_values_[j] +
-          powf(inputs[i], exponent_) * (end_values_[j] - begin_values_[j]);
+  pdfium::span<const float> inputs_span = inputs.first(inputs_);
+  pdfium::span<float> results_span = results.first(inputs_ * orig_outputs_);
+  pdfium::span<const float> begin_span =
+      pdfium::span<const float>(begin_values_).first(orig_outputs_);
+  pdfium::span<const float> end_span =
+      pdfium::span<const float>(end_values_).first(orig_outputs_);
+
+  for (uint32_t i = 0; i < inputs_span.size(); i++) {
+    auto results_chunk = results_span.subspan(i * orig_outputs_, orig_outputs_);
+    for (uint32_t j = 0; j < begin_span.size(); j++) {
+      results_chunk[j] = begin_span[j] + powf(inputs_span[i], exponent_) *
+                                             (end_span[j] - begin_span[j]);
     }
   }
   return true;

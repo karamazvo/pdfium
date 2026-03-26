@@ -432,9 +432,14 @@ constexpr std::array<uint32_t, 256> D3 = {{
     0xcb84617b, 0x32b670d5, 0x6c5c7448, 0xb85742d0,
 }};
 
-#define ADD_ROUND_KEY_4()                                                     \
-  (block[0] ^= keysched[0], block[1] ^= keysched[1], block[2] ^= keysched[2], \
-   block[3] ^= keysched[3], keysched = keysched.subspan<4u>())
+#define ADD_ROUND_KEY_4()                \
+  do {                                   \
+    auto ks4 = keysched.take_first<4>(); \
+    block[0] ^= ks4[0];                  \
+    block[1] ^= ks4[1];                  \
+    block[2] ^= ks4[2];                  \
+    block[3] ^= ks4[3];                  \
+  } while (0)
 #define MOVEWORD(i) (block[i] = newstate[i])
 #define FMAKEWORD(i)                                        \
   (newstate[i] = (E0[(block[i] >> 24) & 0xFF] ^             \
