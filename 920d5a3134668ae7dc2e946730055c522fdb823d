@@ -258,6 +258,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e25f753c_50e72318",
+        "filename": "core/fxge/cfx_renderdevice.h",
+        "patchSetId": 29
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-26T03:23:53Z",
+      "side": 1,
+      "message": "@thestig@chromium.org, some agg builds fail with:\n\n```\n../../core/fxge/cfx_renderdevice.cpp:597:40: error: use of undeclared identifier \u0027render_cap_premultiplied_alpha_\u0027\n  597 |           render_cap_bytemask_output_, render_cap_premultiplied_alpha_,\n      |                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n../../core/fxge/cfx_renderdevice.cpp:1263:46: error: use of undeclared identifier \u0027render_cap_premultiplied_alpha_\u0027\n 1263 |                 render_cap_bytemask_output_, render_cap_premultiplied_alpha_,\n      |                                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n2 errors generated.\n```\n\nReverting this check and the change to the functions above",
+      "parentUuid": "c181d14b_f49546d8",
+      "revId": "920d5a3134668ae7dc2e946730055c522fdb823d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "581a69e5_49f388e5",
