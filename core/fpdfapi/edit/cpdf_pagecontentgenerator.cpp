@@ -531,7 +531,7 @@ ByteString CPDF_PageContentGenerator::RealizeResource(
   ByteString name;
   int idnum = 1;
   while (true) {
-    name = ByteString::Format("FX%c%d", type[0], idnum);
+    name = ByteString::Format("FX%c%d", type.First(1)[0], idnum);
     // Avoid name collisions with existing `resource_dict` entries.
     if (resource_dict->KeyExist(name.AsStringView())) {
       idnum++;
@@ -760,17 +760,21 @@ void CPDF_PageContentGenerator::ProcessPathPoints(fxcrt::ostringstream* buf,
     } else if (point_type == CFX_Path::Point::Type::kLine) {
       *buf << " l";
     } else if (point_type == CFX_Path::Point::Type::kBezier) {
-      if (i + 2 >= points.size() ||
-          !points[i].IsTypeAndOpen(CFX_Path::Point::Type::kBezier) ||
-          !points[i + 1].IsTypeAndOpen(CFX_Path::Point::Type::kBezier) ||
-          points[i + 2].type_ != CFX_Path::Point::Type::kBezier) {
+      if (i + 2 >= points.size()) {
+        *buf << " h";
+        break;
+      }
+      auto points_next3 = points.subspan(i).first<3>();
+      if (!points_next3[0].IsTypeAndOpen(CFX_Path::Point::Type::kBezier) ||
+          !points_next3[1].IsTypeAndOpen(CFX_Path::Point::Type::kBezier) ||
+          points_next3[2].type_ != CFX_Path::Point::Type::kBezier) {
         // If format is not supported, close the path and paint
         *buf << " h";
         break;
       }
       *buf << " ";
-      WritePoint(*buf, points[i + 1].point_) << " ";
-      WritePoint(*buf, points[i + 2].point_) << " c";
+      WritePoint(*buf, points_next3[1].point_) << " ";
+      WritePoint(*buf, points_next3[2].point_) << " c";
       i += 2;
     }
     if (points[i].close_figure_) {

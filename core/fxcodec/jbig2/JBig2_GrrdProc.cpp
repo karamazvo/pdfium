@@ -183,22 +183,22 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate0Opt(
     uint32_t line1 = 0;
     if (!is_first_line) {
       row_prev = GRREG->GetLine(h - 1);
-      line1 = row_prev.front() << 4;
+      line1 = row_prev.first<1u>()[0] << 4;
     }
     const int32_t reference_h = h - GRREFERENCEDY;
     std::array<pdfium::span<const uint8_t>, 3> row_refs_dy;
     std::array<uint32_t, 3> refs = {};
     if (reference_h > 0 && reference_h < GRHR + 1) {
       row_refs_dy[0] = GRREFERENCE->GetLine(reference_h - 1);
-      refs[0] = row_refs_dy[0].front();
+      refs[0] = row_refs_dy[0].first<1u>()[0];
     }
     if (reference_h > -1 && reference_h < GRHR) {
       row_refs_dy[1] = GRREFERENCE->GetLine(reference_h);
-      refs[1] = row_refs_dy[1].front();
+      refs[1] = row_refs_dy[1].first<1u>()[0];
     }
     if (reference_h > -2 && reference_h < GRHR - 1) {
       row_refs_dy[2] = GRREFERENCE->GetLine(reference_h + 1);
-      refs[2] = row_refs_dy[2].front();
+      refs[2] = row_refs_dy[2].first<1u>()[0];
     }
 
     if (!LTP) {

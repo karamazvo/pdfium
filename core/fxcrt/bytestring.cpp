@@ -283,7 +283,7 @@ bool ByteString::EqualNoCase(ByteStringView str) const {
   pdfium::span<const uint8_t> that_span = str.unsigned_span();
   while (!this_span.empty()) {
     uint8_t this_char = this_span.front();
-    uint8_t that_char = that_span.front();
+    uint8_t that_char = that_span.first<1u>()[0];
     if (this_char != that_char && tolower(this_char) != tolower(that_char)) {
       return false;
     }

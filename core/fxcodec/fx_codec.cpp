@@ -39,7 +39,7 @@ void ReverseRGB(pdfium::span<uint8_t> pDestBuf,
   }
 
   for (const auto& src_pix : src_span) {
-    auto& dst_pix = dst_span.front();
+    auto& dst_pix = dst_span.first<1u>()[0];
     dst_pix.red = src_pix.blue;
     dst_pix.green = src_pix.green;
     dst_pix.blue = src_pix.red;

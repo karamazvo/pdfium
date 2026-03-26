@@ -708,8 +708,7 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
     } else {
       wch = pStr.Front();
       pStr = pStr.Substr(1);
-      iWidth = pWidths.front();
-      pWidths = pWidths.subspan<1u>();
+      iWidth = pWidths.take_first_elem();
     }
 
     FX_CHARTYPE chartype = pdfium::unicode::GetCharType(wch);
@@ -949,8 +948,7 @@ std::vector<CFX_RectF> CFGAS_TxtBreak::GetCharRects(const Run& run) const {
     } else {
       wch = pStr.Front();
       pStr = pStr.Substr(1);
-      iCharSize = pWidths.front();
-      pWidths = pWidths.subspan<1u>();
+      iCharSize = pWidths.take_first_elem();
     }
     float fCharSize = static_cast<float>(iCharSize) / kConversionFactor;
     bool bRet = (!bSingleLine && IsCtrlCode(wch));

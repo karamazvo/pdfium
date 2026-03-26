@@ -442,13 +442,13 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
         } else if (index >= kShadingSteps) {
           index = kShadingSteps - 1;
         }
-        dib_span.front() = (*shading_steps)[index];
+        dib_span.first<1u>()[0] = (*shading_steps)[index];
       } else {
         g_result += g_unit;
         b_result += b_unit;
-        dib_span.front() = ArgbEncode(alpha, static_cast<int>(r_result * 255),
-                                      static_cast<int>(g_result * 255),
-                                      static_cast<int>(b_result * 255));
+        dib_span.first<1u>()[0] = ArgbEncode(
+            alpha, static_cast<int>(r_result * 255),
+            static_cast<int>(g_result * 255), static_cast<int>(b_result * 255));
       }
       dib_span = dib_span.subspan<1u>();
     }

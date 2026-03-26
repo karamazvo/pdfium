@@ -452,8 +452,9 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
           return false;
         }
 
-        uint32_t src_val = FromBE32(src.subspan(src_offset).front()) << shift;
-        uint32_t& dest_elem = dest.subspan(dest_offset).front();
+        uint32_t src_val = FromBE32(src.subspan(src_offset).first<1u>()[0])
+                           << shift;
+        uint32_t& dest_elem = dest.subspan(dest_offset).first<1u>()[0];
         dest_elem = FromBE32(
             DoComposeWithMask(op, src_val, FromBE32(dest_elem), maskM));
       }
@@ -468,8 +469,9 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
           return false;
         }
 
-        uint32_t src_val = FromBE32(src.subspan(src_offset).front()) >> shift;
-        uint32_t& dest_elem = dest.subspan(dest_offset).front();
+        uint32_t src_val =
+            FromBE32(src.subspan(src_offset).first<1u>()[0]) >> shift;
+        uint32_t& dest_elem = dest.subspan(dest_offset).first<1u>()[0];
         dest_elem = FromBE32(
             DoComposeWithMask(op, src_val, FromBE32(dest_elem), maskM));
       }
@@ -487,8 +489,8 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
 
         src = src.subspan(src_offset);
         uint32_t src_val = (FromBE32(src.take_first_elem()) << shift1) |
-                           (FromBE32(src.front()) >> shift2);
-        uint32_t& dest_elem = dest.subspan(dest_offset).front();
+                           (FromBE32(src.first<1u>()[0]) >> shift2);
+        uint32_t& dest_elem = dest.subspan(dest_offset).first<1u>()[0];
         dest_elem = FromBE32(
             DoComposeWithMask(op, src_val, FromBE32(dest_elem), maskM));
       }
@@ -535,7 +537,7 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
           if (!src.empty()) {
             src_val |= FromBE32(src.front()) >> shift2;
           }
-          uint32_t& dest_elem = dest_remaining.front();
+          uint32_t& dest_elem = dest_remaining.first<1u>()[0];
           dest_elem = FromBE32(
               DoComposeWithMask(op, src_val, FromBE32(dest_elem), maskR));
         }
@@ -566,8 +568,8 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
         }
         if (d2 != 0) {
           src = src.subspan(middle_elem_count);
-          uint32_t src_val = FromBE32(src.front());
-          uint32_t& dest_elem = dest_remaining.front();
+          uint32_t src_val = FromBE32(src.first<1u>()[0]);
+          uint32_t& dest_elem = dest_remaining.first<1u>()[0];
           dest_elem = FromBE32(
               DoComposeWithMask(op, src_val, FromBE32(dest_elem), maskR));
         }
@@ -612,7 +614,7 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
           if (!src.empty()) {
             src_val |= FromBE32(src.front()) >> shift1;
           }
-          uint32_t& dest_elem = dest_remaining.front();
+          uint32_t& dest_elem = dest_remaining.first<1u>()[0];
           dest_elem = FromBE32(
               DoComposeWithMask(op, src_val, FromBE32(dest_elem), maskR));
         }

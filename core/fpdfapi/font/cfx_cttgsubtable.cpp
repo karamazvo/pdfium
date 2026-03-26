@@ -155,14 +155,11 @@ int CFX_CTTGSUBTable::GetCoverageIndex(const CoverageFormat& coverage,
 }
 
 uint8_t CFX_CTTGSUBTable::GetUInt8(pdfium::span<const uint8_t>& p) const {
-  uint8_t ret = p.front();
-  p = p.subspan<1u>();
-  return ret;
+  return p.take_first_elem();
 }
 
 int16_t CFX_CTTGSUBTable::GetInt16(pdfium::span<const uint8_t>& p) const {
-  uint16_t ret = fxcrt::GetUInt16MSBFirst(p.first<2u>());
-  p = p.subspan<2u>();
+  uint16_t ret = fxcrt::GetUInt16MSBFirst(p.take_first<2u>());
   return static_cast<int16_t>(ret);
 }
 
