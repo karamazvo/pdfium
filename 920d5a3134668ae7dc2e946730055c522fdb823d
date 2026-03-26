@@ -278,6 +278,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "dde5c637_35158d56",
+        "filename": "core/fxge/cfx_renderdevice.h",
+        "patchSetId": 29
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-26T17:23:01Z",
+      "side": 1,
+      "message": "They can still be Skia-only. In GetCreateCompatibleBitmapFormat(), try to instead combine `supports_premult_alpha` and `use_argb_premul` into a single parameter. Then update the callers to pass in the appropriate value.",
+      "parentUuid": "e25f753c_50e72318",
+      "revId": "920d5a3134668ae7dc2e946730055c522fdb823d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "581a69e5_49f388e5",
         "filename": "core/fxge/skia/fx_skia_device.h",
         "patchSetId": 29
