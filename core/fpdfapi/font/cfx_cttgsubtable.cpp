@@ -155,33 +155,25 @@ int CFX_CTTGSUBTable::GetCoverageIndex(const CoverageFormat& coverage,
 }
 
 uint8_t CFX_CTTGSUBTable::GetUInt8(pdfium::span<const uint8_t>& p) const {
-  uint8_t ret = p.front();
-  p = p.subspan<1u>();
-  return ret;
+  return p.take_first_elem();
 }
 
 int16_t CFX_CTTGSUBTable::GetInt16(pdfium::span<const uint8_t>& p) const {
-  uint16_t ret = fxcrt::GetUInt16MSBFirst(p.first<2u>());
-  p = p.subspan<2u>();
+  uint16_t ret = fxcrt::GetUInt16MSBFirst(p.take_first<2u>());
   return static_cast<int16_t>(ret);
 }
 
 uint16_t CFX_CTTGSUBTable::GetUInt16(pdfium::span<const uint8_t>& p) const {
-  uint16_t ret = fxcrt::GetUInt16MSBFirst(p.first<2u>());
-  p = p.subspan<2u>();
-  return ret;
+  return fxcrt::GetUInt16MSBFirst(p.take_first<2u>());
 }
 
 int32_t CFX_CTTGSUBTable::GetInt32(pdfium::span<const uint8_t>& p) const {
-  uint32_t ret = fxcrt::GetUInt32MSBFirst(p.first<4u>());
-  p = p.subspan<4u>();
+  uint32_t ret = fxcrt::GetUInt32MSBFirst(p.take_first<4u>());
   return static_cast<int32_t>(ret);
 }
 
 uint32_t CFX_CTTGSUBTable::GetUInt32(pdfium::span<const uint8_t>& p) const {
-  uint32_t ret = fxcrt::GetUInt32MSBFirst(p.first<4u>());
-  p = p.subspan<4u>();
-  return ret;
+  return fxcrt::GetUInt32MSBFirst(p.take_first<4u>());
 }
 
 void CFX_CTTGSUBTable::Parse(pdfium::span<const uint8_t> scriptlist,
