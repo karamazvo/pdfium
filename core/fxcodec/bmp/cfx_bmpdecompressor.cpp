@@ -310,18 +310,20 @@ BmpDecoder::Status CFX_BmpDecompressor::ReadBmpPalette() {
           fxcrt::reinterpret_span<FX_BGR_STRUCT<uint8_t>, uint8_t>(
               pdfium::span<uint8_t>(src_pal));
       for (auto& dest : palette_) {
-        const auto& entry = src_pal_data.front();
+        auto [first, rest] = src_pal_data.split_at<1u>();
+        src_pal_data = rest;
+        const auto& entry = first[0];
         dest = ArgbEncode(0x00, entry.red, entry.green, entry.blue);
-        src_pal_data = src_pal_data.subspan<1u>();
       }
     } else {
       auto src_pal_data =
           fxcrt::reinterpret_span<FX_BGRA_STRUCT<uint8_t>, uint8_t>(
               pdfium::span<uint8_t>(src_pal));
       for (auto& dest : palette_) {
-        const auto& entry = src_pal_data.front();
+        auto [first, rest] = src_pal_data.split_at<1u>();
+        src_pal_data = rest;
+        const auto& entry = first[0];
         dest = ArgbEncode(entry.alpha, entry.red, entry.green, entry.blue);
-        src_pal_data = src_pal_data.subspan<1u>();
       }
     }
   }
@@ -447,14 +449,15 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRGB() {
         green_bits -= 8;
         red_bits -= 8;
         for (uint32_t col = 0; col < width_; ++col) {
-          buf.front() = fxcrt::FromLE16(buf.front());
+          auto [first, rest] = buf.split_at<1u>();
+          buf = rest;
+          first[0] = fxcrt::FromLE16(first[0]);
           out_row_buffer_[idx++] =
-              static_cast<uint8_t>((buf.front() & mask_blue_) << blue_bits);
+              static_cast<uint8_t>((first[0] & mask_blue_) << blue_bits);
           out_row_buffer_[idx++] =
-              static_cast<uint8_t>((buf.front() & mask_green_) >> green_bits);
+              static_cast<uint8_t>((first[0] & mask_green_) >> green_bits);
           out_row_buffer_[idx++] =
-              static_cast<uint8_t>((buf.front() & mask_red_) >> red_bits);
-          buf = buf.subspan<1u>();
+              static_cast<uint8_t>((first[0] & mask_red_) >> red_bits);
         }
         break;
       }

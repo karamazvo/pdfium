@@ -181,8 +181,9 @@ DataAndBytesConsumed A85Decode(pdfium::span<const uint8_t> src_span) {
     }
 
     for (size_t i = 0; i < 4; ++i) {
-      dest_span.front() = GetA85Result(res, i);
-      dest_span = dest_span.subspan<1u>();
+      auto [first, rest] = dest_span.split_at<1u>();
+      dest_span = rest;
+      first[0] = GetA85Result(res, i);
     }
     state = 0;
     res = 0;
@@ -193,8 +194,9 @@ DataAndBytesConsumed A85Decode(pdfium::span<const uint8_t> src_span) {
       res = res * 85 + 84;
     }
     for (size_t i = 0; i < state - 1; ++i) {
-      dest_span.front() = GetA85Result(res, i);
-      dest_span = dest_span.subspan<1u>();
+      auto [first, rest] = dest_span.split_at<1u>();
+      dest_span = rest;
+      first[0] = GetA85Result(res, i);
     }
   }
   if (pos < src_span.size() && src_span[pos] == '>') {
@@ -236,8 +238,9 @@ DataAndBytesConsumed HexDecode(pdfium::span<const uint8_t> src_span) {
     if (is_first) {
       dest_span.front() = digit * 16;
     } else {
-      dest_span.front() += digit;
-      dest_span = dest_span.subspan<1u>();
+      auto [first, rest] = dest_span.split_at<1u>();
+      dest_span = rest;
+      first[0] += digit;
     }
     is_first = !is_first;
   }

@@ -155,9 +155,9 @@ int CFX_CTTGSUBTable::GetCoverageIndex(const CoverageFormat& coverage,
 }
 
 uint8_t CFX_CTTGSUBTable::GetUInt8(pdfium::span<const uint8_t>& p) const {
-  uint8_t ret = p.front();
-  p = p.subspan<1u>();
-  return ret;
+  auto [first, rest] = p.split_at<1u>();
+  p = rest;
+  return first[0];
 }
 
 int16_t CFX_CTTGSUBTable::GetInt16(pdfium::span<const uint8_t>& p) const {
