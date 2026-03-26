@@ -294,6 +294,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d090f47d_511ae507",
+        "filename": "core/fxge/cfx_renderdevice.h",
+        "patchSetId": 29
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-26T17:59:30Z",
+      "side": 1,
+      "message": "Done. Created a function for this, looking at both if Skia is enabled and render_cap_premultiplied_alpha_.",
+      "parentUuid": "dde5c637_35158d56",
+      "revId": "920d5a3134668ae7dc2e946730055c522fdb823d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "581a69e5_49f388e5",
