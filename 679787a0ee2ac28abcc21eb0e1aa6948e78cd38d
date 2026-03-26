@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ec27d208_de9de64c",
+        "filename": "core/fxge/cfx_renderdevice.h",
+        "patchSetId": 34
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-26T18:09:44Z",
+      "side": 1,
+      "message": "I was hoping this can be put back.",
+      "revId": "679787a0ee2ac28abcc21eb0e1aa6948e78cd38d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "282241ee_135fba41",
+        "filename": "core/fxge/cfx_renderdevice.h",
+        "patchSetId": 34
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-26T18:09:44Z",
+      "side": 1,
+      "message": "Put back.",
+      "revId": "679787a0ee2ac28abcc21eb0e1aa6948e78cd38d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
