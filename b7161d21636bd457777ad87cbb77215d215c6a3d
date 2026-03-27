@@ -46,6 +46,30 @@
       },
       "revId": "b7161d21636bd457777ad87cbb77215d215c6a3d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4c7da23d_0356c326",
+        "filename": "third_party/libtiff/0034-tiff-jpeg-overflow.patch",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-03-27T21:51:17Z",
+      "side": 1,
+      "message": "Or it\u0027s what their gitlab account shows.",
+      "parentUuid": "366b9c4b_a300ed56",
+      "range": {
+        "startLine": 2,
+        "startChar": 8,
+        "endLine": 2,
+        "endChar": 52
+      },
+      "revId": "b7161d21636bd457777ad87cbb77215d215c6a3d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
