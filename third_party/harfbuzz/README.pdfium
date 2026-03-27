@@ -1,5 +1,5 @@
-Name: harfbuzz-ng
-Short Name: harfbuzz-ng
+Name: harfbuzz
+Short Name: harfbuzz
 URL: http://harfbuzz.org
 Version: 12.3.0-20
 CPEPrefix: cpe:/a:harfbuzz_project:harfbuzz:12.3.0
@@ -12,7 +12,7 @@ License: MIT-Modern-Variant
 License File: src/COPYING
 
 Description:
-This is harfbuzz-ng, a new implementation of harfbuzz with a different
+This is harfbuzz, a new implementation of harfbuzz with a different
 API from the old one.
 
 Currently we are intentionally not building the following files from
