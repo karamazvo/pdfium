@@ -10,6 +10,7 @@
 #include <stdint.h>
 
 #include <map>
+#include <set>
 
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -50,16 +51,27 @@ class CPDF_PageOrganizer {
       RetainPtr<const CPDF_Dictionary> dict,
       ByteStringView src_tag);
 
+  void CopyOCProperties();
+
  private:
   bool InitDestDoc();
 
   uint32_t GetNewObjId(CPDF_Reference* ref);
+
+  // Updates OCG references in `obj` and prunes those not in
+  // `object_number_map_`. Containers like arrays and dictionaries are
+  // recursively updated and pruned. Returns true if `obj` should be kept, false
+  // if it should be removed.
+  bool UpdateReferenceOCProps(RetainPtr<CPDF_Object> obj,
+                              std::set<const CPDF_Object*>& visited);
 
   UnownedPtr<CPDF_Document> const dest_doc_;
   UnownedPtr<CPDF_Document> const src_doc_;
 
   // Mapping of source object number to destination object number.
   std::map<uint32_t, uint32_t> object_number_map_;
+
+  bool has_ocg_ = false;
 };
 
 #endif  // CORE_FPDFAPI_EDIT_CPDF_PAGEORGANIZER_H_

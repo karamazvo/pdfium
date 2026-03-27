@@ -21,6 +21,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/containers/adapters.h"
 
 CPDF_PageOrganizer::CPDF_PageOrganizer(CPDF_Document* dest_doc,
                                        CPDF_Document* src_doc)
@@ -150,6 +151,9 @@ uint32_t CPDF_PageOrganizer::GetNewObjId(CPDF_Reference* ref) {
     if (type.EqualNoCase("Page")) {
       return 0;
     }
+    if (type.EqualNoCase("OCG")) {
+      has_ocg_ = true;
+    }
   }
 
   new_obj_num = dest()->AddIndirectObject(clone);
@@ -220,4 +224,91 @@ RetainPtr<const CPDF_Object> CPDF_PageOrganizer::PageDictGetInheritableTag(
         pp->GetObjectFor(pdfium::page_object::kParent)->GetDirect());
   }
   return nullptr;
+}
+
+void CPDF_PageOrganizer::CopyOCProperties() {
+  if (!has_ocg_) {
+    return;
+  }
+
+  RetainPtr<const CPDF_Dictionary> src_oc_props =
+      src()->GetRoot()->GetDictFor("OCProperties");
+  if (!src_oc_props) {
+    return;
+  }
+
+  RetainPtr<CPDF_Dictionary> dest_root = dest()->GetMutableRoot();
+  if (dest_root->KeyExist("OCProperties")) {
+    // TODO(crbug.com/40162073): Merge OCProperties.
+    return;
+  }
+
+  RetainPtr<CPDF_Dictionary> cloned_props = ToDictionary(src_oc_props->Clone());
+  CHECK(cloned_props);
+
+  std::set<const CPDF_Object*> visited;
+  UpdateReferenceOCProps(cloned_props, visited);
+  RetainPtr<const CPDF_Array> ocgs = cloned_props->GetArrayFor("OCGs");
+  if (!ocgs || ocgs->IsEmpty()) {
+    return;
+  }
+
+  dest_root->SetNewFor<CPDF_Reference>("OCProperties", dest(),
+                                       dest()->AddIndirectObject(cloned_props));
+}
+
+bool CPDF_PageOrganizer::UpdateReferenceOCProps(
+    RetainPtr<CPDF_Object> obj,
+    std::set<const CPDF_Object*>& visited) {
+  if (!obj) {
+    return false;
+  }
+
+  bool inserted = visited.insert(obj.Get()).second;
+  if (!inserted) {
+    return true;
+  }
+
+  switch (obj->GetType()) {
+    case CPDF_Object::kArray: {
+      CPDF_Array* array = obj->AsMutableArray();
+      std::vector<size_t> indices_to_remove;
+      for (size_t i = 0; i < array->size(); ++i) {
+        if (!UpdateReferenceOCProps(array->GetMutableObjectAt(i), visited)) {
+          indices_to_remove.push_back(i);
+        }
+      }
+      for (size_t i : pdfium::Reversed(indices_to_remove)) {
+        array->RemoveAt(i);
+      }
+      return !array->IsEmpty();
+    }
+    case CPDF_Object::kDictionary: {
+      CPDF_Dictionary* dict = obj->AsMutableDictionary();
+      std::vector<ByteString> keys_to_remove;
+      {
+        CPDF_DictionaryLocker locker(dict);
+        for (const auto& it : locker) {
+          if (!UpdateReferenceOCProps(it.second, visited)) {
+            keys_to_remove.push_back(it.first);
+          }
+        }
+      }
+      for (const auto& key : keys_to_remove) {
+        dict->RemoveFor(key.AsStringView());
+      }
+      return !dict->IsEmpty();
+    }
+    case CPDF_Object::kReference: {
+      uint32_t old_id = obj->AsReference()->GetRefObjNum();
+      auto it = object_number_map_.find(old_id);
+      if (it == object_number_map_.end()) {
+        return false;
+      }
+      obj->AsMutableReference()->SetRef(dest(), it->second);
+      return true;
+    }
+    default:
+      return true;
+  }
 }

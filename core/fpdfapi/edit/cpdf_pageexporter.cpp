@@ -88,5 +88,6 @@ bool CPDF_PageExporter::ExportPages(pdfium::span<const uint32_t> page_indices,
     ++curpage;
   }
 
+  CopyOCProperties();
   return true;
 }
