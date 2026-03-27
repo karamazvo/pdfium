@@ -16,6 +16,52 @@
       "message": "@tsepez@chromium.org @andyphan@chromium.org PTAL when free. Thanks!",
       "revId": "3b313d2f89de9e07f2c0ee4125b346250b8e628c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "76b9bb0d_225051de",
+        "filename": "core/fxcrt/widestring.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-03-27T19:04:58Z",
+      "side": 1,
+      "message": "Consider omitting \"Force\" here, so it\u0027s just `kNone`.",
+      "range": {
+        "startLine": 57,
+        "startChar": 3,
+        "endLine": 57,
+        "endChar": 8
+      },
+      "revId": "3b313d2f89de9e07f2c0ee4125b346250b8e628c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "90c127bd_9e64d8f8",
+        "filename": "core/fxcrt/widestring.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-03-27T19:04:58Z",
+      "side": 1,
+      "message": "Thoughts on also omitting \"Force\" for the other entries?",
+      "range": {
+        "startLine": 58,
+        "startChar": 3,
+        "endLine": 58,
+        "endChar": 8
+      },
+      "revId": "3b313d2f89de9e07f2c0ee4125b346250b8e628c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
