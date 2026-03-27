@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3fb5cb5e_d8ed012c",
+        "filename": "third_party/libtiff/0034-tiff-jpeg-overflow.patch",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-03-27T21:34:29Z",
+      "side": 1,
+      "message": "Not sure where the author name is pulled from, but from the link, it shows it was committed by a \"tyler92\".",
+      "range": {
+        "startLine": 2,
+        "startChar": 8,
+        "endLine": 2,
+        "endChar": 52
+      },
+      "revId": "b7161d21636bd457777ad87cbb77215d215c6a3d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
