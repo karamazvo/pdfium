@@ -588,8 +588,7 @@ TEST_F(FPDFPPOEmbedderTest, Bug40162073) {
   ScopedFPDFPage new_page(FPDF_LoadPage(new_doc.get(), 0));
   ASSERT_TRUE(new_page);
   ScopedFPDFBitmap new_bitmap = RenderPage(new_page.get());
-  // TODO(crbug.com/40162073): Should render with "bug_40162073" expectation.
-  CompareBitmap(new_bitmap.get(), "bug_40162073_wrong");
+  CompareBitmap(new_bitmap.get(), "bug_40162073");
 }
 
 TEST_F(FPDFPPOEmbedderTest, ImportWithZeroLengthStream) {

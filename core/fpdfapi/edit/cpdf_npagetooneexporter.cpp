@@ -207,6 +207,7 @@ bool CPDF_NPageToOneExporter::ExportNPagesToOne(
     ++curpage;
   }
 
+  CopyOCProperties();
   return true;
 }
 
