@@ -41,6 +41,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3b113124_06bd95f8",
+        "filename": "core/fxcrt/widestring.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-28T01:44:58Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "76b9bb0d_225051de",
+      "range": {
+        "startLine": 57,
+        "startChar": 3,
+        "endLine": 57,
+        "endChar": 8
+      },
+      "revId": "3b313d2f89de9e07f2c0ee4125b346250b8e628c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "90c127bd_9e64d8f8",
@@ -54,6 +78,30 @@
       "writtenOn": "2026-03-27T19:04:58Z",
       "side": 1,
       "message": "Thoughts on also omitting \"Force\" for the other entries?",
+      "range": {
+        "startLine": 58,
+        "startChar": 3,
+        "endLine": 58,
+        "endChar": 8
+      },
+      "revId": "3b313d2f89de9e07f2c0ee4125b346250b8e628c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "72786200_16933da2",
+        "filename": "core/fxcrt/widestring.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-03-28T01:44:58Z",
+      "side": 1,
+      "message": "I\u0027d say for these lets keep it, the old #defines were named as `FORCE_SOMETHING`, so I think we should include the force to try keep the name consistent @thestig@chromium.org?",
+      "parentUuid": "90c127bd_9e64d8f8",
       "range": {
         "startLine": 58,
         "startChar": 3,
