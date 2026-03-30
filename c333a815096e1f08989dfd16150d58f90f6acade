@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e599b60b_78b56c52",
+        "filename": "core/fpdfapi/page/cpdf_dib.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 693,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-03-30T20:41:05Z",
+      "side": 1,
+      "message": "To fully avoid interleaved loads and prevent reading `input.alpha` twice, consider moving all the local variable loads above the `push_back` call. A function call like `push_back` could potentially act as a compiler barrier and interfere with the optimal loads you are trying to achieve here.\n\n```cpp\nconst uint8_t blue \u003d input.blue;\nconst uint8_t green \u003d input.green;\nconst uint8_t red \u003d input.red;\nconst uint8_t alpha \u003d input.alpha;\njpx_inline_data_.data.push_back(alpha);\n\n// Compiler can\u0027t conclude src/dest don\u0027t overlap.\n// ...\n```",
+      "range": {
+        "startLine": 693,
+        "startChar": 0,
+        "endLine": 693,
+        "endChar": 0
+      },
+      "revId": "c333a815096e1f08989dfd16150d58f90f6acade",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "396ed3ef_49db76b7",
+        "filename": "core/fpdfapi/page/cpdf_dib.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 714,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-03-30T20:41:05Z",
+      "side": 1,
+      "message": "Nit: `FX_BGR_STRUCT` is ordered blue, green, red. For consistency with the other changes in this PR (e.g., in `cfx_dibbase.cpp`), consider reading and assigning these in BGR order.",
+      "range": {
+        "startLine": 714,
+        "startChar": 0,
+        "endLine": 714,
+        "endChar": 0
+      },
+      "revId": "c333a815096e1f08989dfd16150d58f90f6acade",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "03fa1091_832281e9",
+        "filename": "core/fxge/agg/cfx_agg_devicedriver.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-03-30T20:41:05Z",
+      "side": 1,
+      "message": "Nit: Compile -\u003e Compiler",
+      "range": {
+        "startLine": 184,
+        "startChar": 0,
+        "endLine": 184,
+        "endChar": 0
+      },
+      "revId": "c333a815096e1f08989dfd16150d58f90f6acade",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
