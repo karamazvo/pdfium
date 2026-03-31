@@ -75,9 +75,8 @@ const CFX_CSSData::Property* CFX_CSSData::GetPropertyByName(
 const CFX_CSSData::Property* CFX_CSSData::GetPropertyByEnum(
     CFX_CSSProperty property) {
   auto index = static_cast<size_t>(property);
-  CHECK_LT(index, std::size(kPropertyTable));
-  // SAFETY: CHECK() on previous line ensures index is in bounds.
-  return UNSAFE_BUFFERS(&kPropertyTable[index]);
+  SAFE_BUFFERS(index < std::size(kPropertyTable),
+               return &kPropertyTable[index]);
 }
 
 const CFX_CSSData::PropertyValue* CFX_CSSData::GetPropertyValueByName(

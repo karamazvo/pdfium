@@ -143,6 +143,14 @@
 // TODO(crbug.com/42271176): remove all usage.
 #define UNSAFE_TODO(...) UNSAFE_BUFFERS(__VA_ARGS__)
 
+// Convenience macro to use when CHECK(condition) proves that the following
+// expressions are safe.
+#define SAFE_BUFFERS(condition, ...) \
+  do {                               \
+    CHECK(condition);                \
+    UNSAFE_BUFFERS(__VA_ARGS__);     \
+  } while (0)
+
 // Annotates a function restricting its availability based on compile-time
 // information in the evaluated context. Useful to convert runtime errors to
 // compile-time errors if functions' arguments are always known at compile time.

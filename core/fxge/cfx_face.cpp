@@ -901,9 +901,8 @@ void CFX_Face::SetCharMap(CharMap map) {
 }
 
 void CFX_Face::SetCharMapByIndex(size_t index) {
-  CHECK_LT(index, GetCharMapCount());
-  // SAFETY: required from library as enforced by check above.
-  SetCharMap(UNSAFE_BUFFERS(GetRec()->charmaps[index]));
+  SAFE_BUFFERS(index < GetCharMapCount(),
+               SetCharMap(GetRec()->charmaps[index]));
 }
 
 bool CFX_Face::SelectCharMap(fxge::FontEncoding encoding) {

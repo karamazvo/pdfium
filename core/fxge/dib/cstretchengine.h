@@ -52,26 +52,22 @@ class CStretchEngine {
     }
 
     uint32_t GetWeightForPosition(int position) const {
-      CHECK_GE(position, src_start_);
-      CHECK_LE(position, src_end_);
-      // SAFETY: enforced by checks above.
-      return UNSAFE_BUFFERS(weights_[position - src_start_]);
+      SAFE_BUFFERS(position >= src_start_ && position <= src_end_,
+                   return weights_[position - src_start_]);
     }
 
     void SetWeightForPosition(int position, uint32_t weight) {
-      CHECK_GE(position, src_start_);
-      CHECK_LE(position, src_end_);
-      // SAFETY: enforced by checks above.
-      UNSAFE_BUFFERS(weights_[position - src_start_] = weight);
+      SAFE_BUFFERS(position >= src_start_ && position <= src_end_,
+                   weights_[position - src_start_] = weight);
     }
 
     // NOTE: relies on defined behaviour for unsigned overflow to
     // decrement the previous position, as needed.
     void RemoveLastWeightAndAdjust(uint32_t weight_change) {
-      CHECK_GT(src_end_, src_start_);
-      --src_end_;
-      // SAFETY: enforced by checks above.
-      UNSAFE_BUFFERS(weights_[src_end_ - src_start_] += weight_change);
+      SAFE_BUFFERS(src_end_ > src_start_, {
+        --src_end_;
+        weights_[src_end_ - src_start_] += weight_change;
+      });
     }
 
     int src_start_;
