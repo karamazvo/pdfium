@@ -16,6 +16,24 @@
       "message": "Hah, neat. I wonder if you could accomplish something similar with Clang\u0027s `error` function attribute? https://clang.llvm.org/docs/AttributeReference.html#error-warning",
       "revId": "fb7a197eb5b09b8880ae541fb2ff61b9fdda427d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "869d2263_7f745674",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-03-31T19:57:23Z",
+      "side": 1,
+      "message": "I recall trying that, and didn\u0027t get it to work.\n\nBut it seems to work now as far as I can tell.  The -fdiagnostics-show-inlining-chain flag that makes this comprehensible seems to not be released just yet.",
+      "parentUuid": "1ed4df7f_7a11e7a9",
+      "revId": "fb7a197eb5b09b8880ae541fb2ff61b9fdda427d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
