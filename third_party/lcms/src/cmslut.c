@@ -547,7 +547,7 @@ cmsStage* CMSEXPORT cmsStageAllocCLut16bitGranular(cmsContext ContextID,
                                          cmsUInt32Number outputChan,
                                          const cmsUInt16Number* Table)
 {
-    cmsUInt32Number i, n;
+    cmsUInt32Number i, n, cs;
     _cmsStageCLutData* NewElem;
     cmsStage* NewMPE;
 
@@ -571,7 +571,16 @@ cmsStage* CMSEXPORT cmsStageAllocCLut16bitGranular(cmsContext ContextID,
 
     NewMPE ->Data  = (void*) NewElem;
 
-    NewElem -> nEntries = n = outputChan * CubeSize(clutPoints, inputChan);
+    cs = CubeSize(clutPoints, inputChan);
+    n = outputChan * cs;
+
+    if (n == 0 || n / outputChan != cs)  // Check for overflow.
+    {
+        cmsStageFree(NewMPE);
+        return NULL;
+    }
+
+    NewElem -> nEntries = n;
     NewElem -> HasFloatValues = FALSE;
 
     if (n == 0) {
@@ -638,7 +647,7 @@ cmsStage* CMSEXPORT cmsStageAllocCLutFloat(cmsContext ContextID,
 
 cmsStage* CMSEXPORT cmsStageAllocCLutFloatGranular(cmsContext ContextID, const cmsUInt32Number clutPoints[], cmsUInt32Number inputChan, cmsUInt32Number outputChan, const cmsFloat32Number* Table)
 {
-    cmsUInt32Number i, n;
+    cmsUInt32Number i, n, cs;
     _cmsStageCLutData* NewElem;
     cmsStage* NewMPE;
 
@@ -662,14 +671,17 @@ cmsStage* CMSEXPORT cmsStageAllocCLutFloatGranular(cmsContext ContextID, const c
 
     NewMPE ->Data  = (void*) NewElem;
 
-    // There is a potential integer overflow on conputing n and nEntries.
-    NewElem -> nEntries = n = outputChan * CubeSize(clutPoints, inputChan);
-    NewElem -> HasFloatValues = TRUE;
+    cs = CubeSize(clutPoints, inputChan);
+    n = outputChan * cs;
 
-    if (n == 0) {
+    if (n == 0 || n / outputChan != cs)  // Check for overflow.
+    {
         cmsStageFree(NewMPE);
         return NULL;
     }
+
+    NewElem -> nEntries = n;
+    NewElem -> HasFloatValues = TRUE;
 
     NewElem ->Tab.TFloat  = (cmsFloat32Number*) _cmsCalloc(ContextID, n, sizeof(cmsFloat32Number));
     if (NewElem ->Tab.TFloat == NULL) {
