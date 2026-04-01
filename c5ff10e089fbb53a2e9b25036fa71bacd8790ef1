@@ -16,6 +16,52 @@
       "message": "Nicolas, looks like you\u0027re still an owner and not OOO ...",
       "revId": "c5ff10e089fbb53a2e9b25036fa71bacd8790ef1",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "41f86290_7a3472ed",
+        "filename": "third_party/lcms/src/cmslut.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 578,
+      "author": {
+        "id": 6295
+      },
+      "writtenOn": "2026-04-01T18:15:53Z",
+      "side": 1,
+      "message": "can `outputChan` be 0? Then we would divide by 0 here",
+      "range": {
+        "startLine": 578,
+        "startChar": 12,
+        "endLine": 578,
+        "endChar": 22
+      },
+      "revId": "c5ff10e089fbb53a2e9b25036fa71bacd8790ef1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f9a5d83b_cd26996d",
+        "filename": "third_party/lcms/src/cmslut.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 675,
+      "author": {
+        "id": 6295
+      },
+      "writtenOn": "2026-04-01T18:15:53Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 675,
+        "startChar": 12,
+        "endLine": 675,
+        "endChar": 22
+      },
+      "revId": "c5ff10e089fbb53a2e9b25036fa71bacd8790ef1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
