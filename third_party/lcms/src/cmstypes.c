@@ -1488,7 +1488,7 @@ void *Type_MLU_Read(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, cmsU
     cmsMLU* mlu;
     cmsUInt32Number Count, RecLen, NumOfWchar;
     cmsUInt32Number SizeOfHeader;
-    cmsUInt32Number  Len, Offset;
+    cmsUInt32Number  Len, Offset, WideLen, WideSizeOfTag;
     cmsUInt32Number  i;
     wchar_t*         Block;
     cmsUInt32Number  BeginOfThisString, EndOfThisString, LargestPosition;
@@ -1534,7 +1534,12 @@ void *Type_MLU_Read(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, cmsU
         BeginOfThisString = Offset - SizeOfHeader - 8;
 
         // Adjust to wchar_t elements
-        mlu ->Entries[i].Len = (Len * sizeof(wchar_t)) / sizeof(cmsUInt16Number);
+        WideLen = Len * sizeof(wchar_t);
+
+        // Check for overflow.
+        if (WideLen / sizeof(wchar_t) != Len) goto Error;
+
+        mlu ->Entries[i].Len = WideLen / sizeof(cmsUInt16Number);
         mlu ->Entries[i].StrW = (BeginOfThisString * sizeof(wchar_t)) / sizeof(cmsUInt16Number);
 
         // To guess maximum size, add offset + len
@@ -1544,7 +1549,12 @@ void *Type_MLU_Read(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, cmsU
     }
 
     // Now read the remaining of tag and fill all strings. Subtract the directory
-    SizeOfTag   = (LargestPosition * sizeof(wchar_t)) / sizeof(cmsUInt16Number);
+    WideSizeOfTag = LargestPosition * sizeof(wchar_t);
+
+    // Check for overflow
+    if (WideSizeOfTag / sizeof(wchar_t) != LargestPosition) goto Error;
+
+    SizeOfTag = WideSizeOfTag / sizeof(cmsUInt16Number);
     if (SizeOfTag == 0)
     {
         Block = NULL;
@@ -5128,7 +5138,7 @@ static
 cmsBool ReadOneWChar(cmsIOHANDLER* io,  _cmsDICelem* e, cmsUInt32Number i, wchar_t ** wcstr)
 {
 
-    cmsUInt32Number nChars;
+      cmsUInt32Number nChars, nBytes;
 
       // Special case for undefined strings (see ICC Votable
       // Proposal Submission, Dictionary Type and Metadata TAG Definition)
@@ -5141,9 +5151,12 @@ cmsBool ReadOneWChar(cmsIOHANDLER* io,  _cmsDICelem* e, cmsUInt32Number i, wchar
       if (!io -> Seek(io, e -> Offsets[i])) return FALSE;
 
       nChars = e ->Sizes[i] / sizeof(cmsUInt16Number);
+      nBytes = (nChars + 1) * sizeof(wchar_t);
 
+      // Check for overflow
+      if (nBytes / sizeof(wchar_t) != nChars + 1) return FALSE:
 
-      *wcstr = (wchar_t*) _cmsMallocZero(e ->ContextID, (nChars + 1) * sizeof(wchar_t));
+      *wcstr = (wchar_t*) _cmsMallocZero(e ->ContextID, nBytes);
       if (*wcstr == NULL) return FALSE;
 
       if (!_cmsReadWCharArray(io, nChars, *wcstr)) {

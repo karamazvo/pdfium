@@ -2463,6 +2463,10 @@ cmsHANDLE  CMSEXPORT cmsIT8LoadFromMem(cmsContext ContextID, const void *Ptr, cm
     if (!hIT8) return NULL;
 
     it8 = (cmsIT8*) hIT8;
+
+    // Check for overflow
+    if (len + 1 == 0) return NULL;
+
     it8 ->MemoryBlock = (char*) _cmsMalloc(ContextID, len + 1);
     if (it8->MemoryBlock == NULL)
     {
