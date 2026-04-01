@@ -18,6 +18,29 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c6f5780c_ed403c2e",
+        "filename": "third_party/lcms/src/cmscgats.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 2468,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-01T18:19:02Z",
+      "side": 1,
+      "message": "If this check triggers, `hIT8` will be leaked. You should call `cmsIT8Free(hIT8);` before returning, similar to the `_cmsMalloc` failure case just below.",
+      "range": {
+        "startLine": 2468,
+        "startChar": -1,
+        "endLine": 2468,
+        "endChar": 0
+      },
+      "revId": "c5ff10e089fbb53a2e9b25036fa71bacd8790ef1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "41f86290_7a3472ed",
@@ -31,6 +54,53 @@
       "writtenOn": "2026-04-01T18:15:53Z",
       "side": 1,
       "message": "can `outputChan` be 0? Then we would divide by 0 here",
+      "range": {
+        "startLine": 578,
+        "startChar": 12,
+        "endLine": 578,
+        "endChar": 22
+      },
+      "revId": "c5ff10e089fbb53a2e9b25036fa71bacd8790ef1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b9f81857_358047f8",
+        "filename": "third_party/lcms/src/cmslut.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 578,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-01T18:19:02Z",
+      "side": 1,
+      "message": "There are two issues here:\n1. **Division by zero**: If `outputChan` is `0`, this check will cause a division by zero crash. Moving the `if (n \u003d\u003d 0)` block from line 583 to before this check will protect against it (since `n` will be `0` if `outputChan` is `0`).\n2. **Memory Leak**: If this check triggers and returns `NULL`, `NewMPE` is leaked. You should call `cmsStageFree(NewMPE);` before returning.",
+      "range": {
+        "startLine": 578,
+        "startChar": -1,
+        "endLine": 578,
+        "endChar": 0
+      },
+      "revId": "c5ff10e089fbb53a2e9b25036fa71bacd8790ef1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "963cc5f1_56b68fb4",
+        "filename": "third_party/lcms/src/cmslut.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 578,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-01T18:19:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "41f86290_7a3472ed",
       "range": {
         "startLine": 578,
         "startChar": 12,
@@ -59,6 +129,53 @@
         "startChar": 12,
         "endLine": 675,
         "endChar": 22
+      },
+      "revId": "c5ff10e089fbb53a2e9b25036fa71bacd8790ef1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ea0da52e_c7f9f690",
+        "filename": "third_party/lcms/src/cmslut.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 675,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-01T18:19:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f9a5d83b_cd26996d",
+      "range": {
+        "startLine": 675,
+        "startChar": 12,
+        "endLine": 675,
+        "endChar": 22
+      },
+      "revId": "c5ff10e089fbb53a2e9b25036fa71bacd8790ef1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "99890145_3f596290",
+        "filename": "third_party/lcms/src/cmslut.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 675,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-01T18:19:02Z",
+      "side": 1,
+      "message": "Same issues as above: potential division by zero if `outputChan \u003d\u003d 0`, and a memory leak of `NewMPE` when returning `NULL`. Moving the `if (n \u003d\u003d 0)` block above this and calling `cmsStageFree(NewMPE);` on overflow will resolve both.",
+      "range": {
+        "startLine": 675,
+        "startChar": -1,
+        "endLine": 675,
+        "endChar": 0
       },
       "revId": "c5ff10e089fbb53a2e9b25036fa71bacd8790ef1",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
