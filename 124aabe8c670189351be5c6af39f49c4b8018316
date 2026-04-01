@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "16db7e86_a1dd7e31",
+        "filename": "third_party/lcms/src/cmstypes.c",
+        "patchSetId": 6
+      },
+      "lineNbr": 1543,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-01T18:59:13Z",
+      "side": 1,
+      "message": "`BeginOfThisString * sizeof(wchar_t)` can overflow here, resulting in an incorrect `StrW` offset.\n\nFor example, if `Offset` is read as a small value (e.g., `0`), `BeginOfThisString \u003d Offset - SizeOfHeader - 8` can underflow to a very large value, which will then overflow when multiplied by `sizeof(wchar_t)`. \nAdditionally, if `BeginOfThisString` is large, `EndOfThisString \u003d BeginOfThisString + Len` could wrap around, causing `LargestPosition` to be under-calculated and bypassing the later `WideSizeOfTag` overflow check.\n\nAdding an overflow check for `BeginOfThisString * sizeof(wchar_t)` similar to the one for `WideLen` above would protect `StrW` and also ensure `EndOfThisString` does not wrap around.\n\nSuggestion:\n```c\n        cmsUInt32Number WideOffset \u003d BeginOfThisString * sizeof(wchar_t);\n        if (WideOffset / sizeof(wchar_t) !\u003d BeginOfThisString) goto Error;\n        mlu -\u003eEntries[i].StrW \u003d WideOffset / sizeof(cmsUInt16Number);\n```",
+      "range": {
+        "startLine": 1543,
+        "startChar": -1,
+        "endLine": 1543,
+        "endChar": 0
+      },
+      "revId": "124aabe8c670189351be5c6af39f49c4b8018316",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "73f98644_199b45aa",
+        "filename": "third_party/lcms/src/cmstypes.c",
+        "patchSetId": 6
+      },
+      "lineNbr": 5141,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-01T18:59:13Z",
+      "side": 1,
+      "message": "Nit: Indentation looks off here (6 spaces instead of 4).",
+      "range": {
+        "startLine": 5141,
+        "startChar": -1,
+        "endLine": 5141,
+        "endChar": 0
+      },
+      "revId": "124aabe8c670189351be5c6af39f49c4b8018316",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
