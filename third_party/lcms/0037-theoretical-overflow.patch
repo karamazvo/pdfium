@@ -1,0 +1,136 @@
+diff --git a/third_party/lcms/src/cmscgats.c b/third_party/lcms/src/cmscgats.c
+index 71692641a..bc405ba64 100644
+--- a/third_party/lcms/src/cmscgats.c
++++ b/third_party/lcms/src/cmscgats.c
+@@ -2463,6 +2463,10 @@ cmsHANDLE  CMSEXPORT cmsIT8LoadFromMem(cmsContext ContextID, const void *Ptr, cm
+     if (!hIT8) return NULL;
+ 
+     it8 = (cmsIT8*) hIT8;
++
++    // Check for overflow
++    if (len + 1 == 0) return NULL;
++
+     it8 ->MemoryBlock = (char*) _cmsMalloc(ContextID, len + 1);
+     if (it8->MemoryBlock == NULL)
+     {
+diff --git a/third_party/lcms/src/cmslut.c b/third_party/lcms/src/cmslut.c
+index 11361de45..28b8c4078 100644
+--- a/third_party/lcms/src/cmslut.c
++++ b/third_party/lcms/src/cmslut.c
+@@ -638,7 +638,7 @@ cmsStage* CMSEXPORT cmsStageAllocCLutFloat(cmsContext ContextID,
+ 
+ cmsStage* CMSEXPORT cmsStageAllocCLutFloatGranular(cmsContext ContextID, const cmsUInt32Number clutPoints[], cmsUInt32Number inputChan, cmsUInt32Number outputChan, const cmsFloat32Number* Table)
+ {
+-    cmsUInt32Number i, n;
++    cmsUInt32Number i, n, cs;
+     _cmsStageCLutData* NewElem;
+     cmsStage* NewMPE;
+ 
+@@ -662,8 +662,13 @@ cmsStage* CMSEXPORT cmsStageAllocCLutFloatGranular(cmsContext ContextID, const c
+ 
+     NewMPE ->Data  = (void*) NewElem;
+ 
+-    // There is a potential integer overflow on conputing n and nEntries.
+-    NewElem -> nEntries = n = outputChan * CubeSize(clutPoints, inputChan);
++    cs = CubeSize(clutPoints, inputChan);
++    n = outputChan * cs;
++
++    // Check for overflow.
++    if (n / outputChan != cs) return NULL;
++
++    NewElem -> nEntries = n;
+     NewElem -> HasFloatValues = TRUE;
+ 
+     if (n == 0) {
+diff --git a/third_party/lcms/src/cmsnamed.c b/third_party/lcms/src/cmsnamed.c
+index 54d1abf91..50cc6b349 100644
+--- a/third_party/lcms/src/cmsnamed.c
++++ b/third_party/lcms/src/cmsnamed.c
+@@ -92,7 +92,7 @@ cmsBool GrowMLUpool(cmsMLU* mlu)
+ static
+ cmsBool GrowMLUtable(cmsMLU* mlu)
+ {
+-    cmsUInt32Number AllocatedEntries;
++    cmsUInt32Number AllocatedEntries, AllocatedBytes;
+     _cmsMLUentry *NewPtr;
+ 
+     // Sanity check
+@@ -103,8 +103,13 @@ cmsBool GrowMLUtable(cmsMLU* mlu)
+     // Check for overflow
+     if (AllocatedEntries / 2 != mlu ->AllocatedEntries) return FALSE;
+ 
++    AllocatedBytes = AllocatedEntries * sizeof(_cmsMLUentry);
++
++    // Check for overflow
++    if (AllocatedBytes / sizeof(_cmsMLUentry) != AllocatedEntries) return FALSE;
++
+     // Reallocate the memory
+-    NewPtr = (_cmsMLUentry*)_cmsRealloc(mlu ->ContextID, mlu ->Entries, AllocatedEntries*sizeof(_cmsMLUentry));
++    NewPtr = (_cmsMLUentry*)_cmsRealloc(mlu ->ContextID, mlu ->Entries, AllocatedBytes);
+     if (NewPtr == NULL) return FALSE;
+ 
+     mlu ->Entries          = NewPtr;
+diff --git a/third_party/lcms/src/cmstypes.c b/third_party/lcms/src/cmstypes.c
+index ec1909f8d..c3e7d8645 100644
+--- a/third_party/lcms/src/cmstypes.c
++++ b/third_party/lcms/src/cmstypes.c
+@@ -1488,7 +1488,7 @@ void *Type_MLU_Read(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, cmsU
+     cmsMLU* mlu;
+     cmsUInt32Number Count, RecLen, NumOfWchar;
+     cmsUInt32Number SizeOfHeader;
+-    cmsUInt32Number  Len, Offset;
++    cmsUInt32Number  Len, Offset, WideLen, WideSizeOfTag;
+     cmsUInt32Number  i;
+     wchar_t*         Block;
+     cmsUInt32Number  BeginOfThisString, EndOfThisString, LargestPosition;
+@@ -1534,7 +1534,12 @@ void *Type_MLU_Read(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, cmsU
+         BeginOfThisString = Offset - SizeOfHeader - 8;
+ 
+         // Adjust to wchar_t elements
+-        mlu ->Entries[i].Len = (Len * sizeof(wchar_t)) / sizeof(cmsUInt16Number);
++        WideLen = Len * sizeof(wchar_t);
++
++        // Check for overflow.
++        if (WideLen / sizeof(wchar_t) != Len) goto Error;
++
++        mlu ->Entries[i].Len = WideLen / sizeof(cmsUInt16Number);
+         mlu ->Entries[i].StrW = (BeginOfThisString * sizeof(wchar_t)) / sizeof(cmsUInt16Number);
+ 
+         // To guess maximum size, add offset + len
+@@ -1544,7 +1549,12 @@ void *Type_MLU_Read(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, cmsU
+     }
+ 
+     // Now read the remaining of tag and fill all strings. Subtract the directory
+-    SizeOfTag   = (LargestPosition * sizeof(wchar_t)) / sizeof(cmsUInt16Number);
++    WideSizeOfTag = LargestPosition * sizeof(wchar_t);
++
++    // Check for overflow
++    if (WideSizeOfTag / sizeof(wchar_t) != LargestPosition) goto Error;
++
++    SizeOfTag = WideSizeOfTag / sizeof(cmsUInt16Number);
+     if (SizeOfTag == 0)
+     {
+         Block = NULL;
+@@ -5128,7 +5138,7 @@ static
+ cmsBool ReadOneWChar(cmsIOHANDLER* io,  _cmsDICelem* e, cmsUInt32Number i, wchar_t ** wcstr)
+ {
+ 
+-    cmsUInt32Number nChars;
++      cmsUInt32Number nChars, nBytes;
+ 
+       // Special case for undefined strings (see ICC Votable
+       // Proposal Submission, Dictionary Type and Metadata TAG Definition)
+@@ -5141,9 +5151,12 @@ cmsBool ReadOneWChar(cmsIOHANDLER* io,  _cmsDICelem* e, cmsUInt32Number i, wchar
+       if (!io -> Seek(io, e -> Offsets[i])) return FALSE;
+ 
+       nChars = e ->Sizes[i] / sizeof(cmsUInt16Number);
++      nBytes = (nChars + 1) * sizeof(wchar_t);
+ 
++      // Check for overflow
++      if (nBytes / sizeof(wchar_t) != nChars + 1) return FALSE;
+ 
+-      *wcstr = (wchar_t*) _cmsMallocZero(e ->ContextID, (nChars + 1) * sizeof(wchar_t));
++      *wcstr = (wchar_t*) _cmsMallocZero(e ->ContextID, nBytes);
+       if (*wcstr == NULL) return FALSE;
+ 
+       if (!_cmsReadWCharArray(io, nChars, *wcstr)) {
