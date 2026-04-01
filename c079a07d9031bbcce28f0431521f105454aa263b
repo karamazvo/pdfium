@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "44e26508_55ab4198",
+        "filename": "third_party/lcms/src/cmscgats.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 2460,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-01T18:39:20Z",
+      "side": 1,
+      "message": "While `len + 1 \u003d\u003d 0` relies on well-defined unsigned integer wrap-around and works perfectly on our target architectures (where `unsigned int` is 32-bit), using `len \u003d\u003d UINT32_MAX` or `len \u003d\u003d 0xFFFFFFFF` is generally considered more explicit and avoids any theoretical issues on exotic architectures where `int` might be wider than 32 bits.",
+      "range": {
+        "startLine": 2460,
+        "startChar": -1,
+        "endLine": 2460,
+        "endChar": 0
+      },
+      "revId": "c079a07d9031bbcce28f0431521f105454aa263b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
