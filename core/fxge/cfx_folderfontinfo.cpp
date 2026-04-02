@@ -115,20 +115,20 @@ ByteString LoadTableFromTT(FILE* pFile,
   return ByteString();
 }
 
-uint32_t GetCharset(FX_Charset charset) {
+CharsetFlags GetCharset(FX_Charset charset) {
   switch (charset) {
     case FX_Charset::kShiftJIS:
-      return CHARSET_FLAG_SHIFTJIS;
+      return {.shiftjis = true};
     case FX_Charset::kChineseSimplified:
-      return CHARSET_FLAG_GB;
+      return {.GB = true};
     case FX_Charset::kChineseTraditional:
-      return CHARSET_FLAG_BIG5;
+      return {.big5 = true};
     case FX_Charset::kHangul:
-      return CHARSET_FLAG_KOREAN;
+      return {.korean = true};
     case FX_Charset::kSymbol:
-      return CHARSET_FLAG_SYMBOL;
+      return {.symbol = true};
     case FX_Charset::kANSI:
-      return CHARSET_FLAG_ANSI;
+      return {.ansi = true};
     default:
       break;
   }
@@ -286,27 +286,27 @@ void CFX_FolderFontInfo::ReportFace(const ByteString& path,
     uint32_t codepages = fxcrt::GetUInt32MSBFirst(p.first<4u>());
     if (codepages & (1U << 17)) {
       mapper_->AddInstalledFont(facename, FX_Charset::kShiftJIS);
-      pInfo->charsets_ |= CHARSET_FLAG_SHIFTJIS;
+      pInfo->charsets_.shiftjis = true;
     }
     if (codepages & (1U << 18)) {
       mapper_->AddInstalledFont(facename, FX_Charset::kChineseSimplified);
-      pInfo->charsets_ |= CHARSET_FLAG_GB;
+      pInfo->charsets_.GB = true;
     }
     if (codepages & (1U << 20)) {
       mapper_->AddInstalledFont(facename, FX_Charset::kChineseTraditional);
-      pInfo->charsets_ |= CHARSET_FLAG_BIG5;
+      pInfo->charsets_.big5 = true;
     }
     if ((codepages & (1U << 19)) || (codepages & (1U << 21))) {
       mapper_->AddInstalledFont(facename, FX_Charset::kHangul);
-      pInfo->charsets_ |= CHARSET_FLAG_KOREAN;
+      pInfo->charsets_.korean = true;
     }
     if (codepages & (1U << 31)) {
       mapper_->AddInstalledFont(facename, FX_Charset::kSymbol);
-      pInfo->charsets_ |= CHARSET_FLAG_SYMBOL;
+      pInfo->charsets_.symbol = true;
     }
   }
   mapper_->AddInstalledFont(facename, FX_Charset::kANSI);
-  pInfo->charsets_ |= CHARSET_FLAG_ANSI;
+  pInfo->charsets_.ansi = true;
   pInfo->styles_ = 0;
   if (style.Contains("Bold")) {
     pInfo->styles_ |= pdfium::kFontStyleForceBold;
