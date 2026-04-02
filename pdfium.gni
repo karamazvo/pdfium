@@ -70,6 +70,10 @@ declare_args() {
   # Note that `pdf_enable_rust_png` requires Skia and Rust support.
   pdf_enable_rust_png = pdf_enable_rust_png_override
 
+  # Build PDFium with Rust-based JPEG XL (JXL) decoder (jxl-rs).
+  # Note: requires Rust support.
+  pdf_enable_rust_jxl = pdf_enable_rust_jxl_override
+
   # Build PDFium standalone. Now only controls whether the test binaries
   # are built. Most logic is conditioned by build_with_chromium.
   pdf_is_standalone = false
@@ -109,3 +113,7 @@ assert(
 assert(
     !pdf_enable_rust_png || (enable_rust && enable_rust_cxx && pdf_use_skia),
     "pdf_enable_rust_png=true requires enable_rust=true, enable_rust_cxx=true, and pdf_use_skia=true")
+
+assert(
+    !pdf_enable_rust_jxl || (enable_rust && enable_rust_cxx),
+    "pdf_enable_rust_jxl=true requires enable_rust=true and enable_rust_cxx=true")

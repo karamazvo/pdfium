@@ -82,6 +82,10 @@ source_set("fxcodec") {
     "//third_party:jpeg",
   ]
   defines = []
+  if (pdf_enable_rust_jxl) {
+    deps += [ "jxl" ]
+  }
+
   if (pdf_enable_xfa) {
     sources += [
       "cfx_codec_memory.cpp",

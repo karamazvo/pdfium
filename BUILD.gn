@@ -47,6 +47,10 @@ config("pdfium_common_config") {
     defines += [ "PDF_ENABLE_RUST_PNG" ]
   }
 
+  if (pdf_enable_rust_jxl) {
+    defines += [ "PDF_ENABLE_RUST_JXL" ]
+  }
+
   if (pdf_use_partition_alloc) {
     defines += [ "PDF_USE_PARTITION_ALLOC" ]
   }

@@ -1,0 +1,12 @@
+# Checkdeps rules for the Rust JXL decoder glue.
+
+specific_include_rules = {
+  # Allow including the generated C++ header from the cxx bridge wrapper.
+  # This is analogous to other Rust-backed features in Chromium.
+  "jxl_decoder\\.cc": [
+    "+third_party/rust/jxl/v0_3/wrapper/lib.rs.h",
+  ],
+  "jxl_rs_stub\\.cc": [
+    "+third_party/rust/jxl/v0_3/wrapper/lib.rs.h",
+  ],
+}
