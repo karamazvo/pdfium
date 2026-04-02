@@ -16,12 +16,14 @@
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/systemfontinfo_iface.h"
 
-#define CHARSET_FLAG_ANSI (1 << 0)
-#define CHARSET_FLAG_SYMBOL (1 << 1)
-#define CHARSET_FLAG_SHIFTJIS (1 << 2)
-#define CHARSET_FLAG_BIG5 (1 << 3)
-#define CHARSET_FLAG_GB (1 << 4)
-#define CHARSET_FLAG_KOREAN (1 << 5)
+struct CharsetFlags {
+  bool ansi = false;
+  bool symbol = false;
+  bool shiftjis = false;
+  bool big5 = false;
+  bool GB = false;
+  bool korean = false;
+};
 
 class CFX_FolderFontInfo : public SystemFontInfoIface {
  public:
@@ -70,7 +72,7 @@ class CFX_FolderFontInfo : public SystemFontInfoIface {
     const uint32_t font_offset_;
     const uint32_t file_size_;
     uint32_t styles_ = 0;
-    uint32_t charsets_ = 0;
+    CharsetFlags charsets_;
   };
 
   void ScanPath(const ByteString& path);
