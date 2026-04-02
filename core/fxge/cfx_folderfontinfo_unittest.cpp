@@ -34,15 +34,18 @@ constexpr char kComicSansMS[] = "Comic Sans MS";
 class CFXFolderFontInfoTest : public ::testing::Test {
  public:
   CFXFolderFontInfoTest() {
-    AddDummyFont(kArial, CHARSET_FLAG_ANSI);
-    AddDummyFont(kCourierNew, CHARSET_FLAG_ANSI);
-    AddDummyFont(kTimesNewRoman, 0);
-    AddDummyFont(kBookshelfSymbol7, CHARSET_FLAG_SYMBOL);
-    AddDummyFont(kSymbol, CHARSET_FLAG_SYMBOL);
-    AddDummyFont(kTofuBold, CHARSET_FLAG_SYMBOL);
-    AddDummyFont(kLatoUltraBold, CHARSET_FLAG_ANSI);
-    AddDummyFont(kOxygenSansSansBold, CHARSET_FLAG_ANSI);
-    AddDummyFont(kComicSansMS, CHARSET_FLAG_ANSI);
+    constexpr CharsetFlags kNoneTrue;
+    constexpr CharsetFlags kAnsiTrue = {.ansi = true};
+    constexpr CharsetFlags kSymbolTrue = {.symbol = true};
+    AddDummyFont(kArial, kAnsiTrue);
+    AddDummyFont(kCourierNew, kAnsiTrue);
+    AddDummyFont(kTimesNewRoman, kNoneTrue);
+    AddDummyFont(kBookshelfSymbol7, kSymbolTrue);
+    AddDummyFont(kSymbol, kSymbolTrue);
+    AddDummyFont(kTofuBold, kSymbolTrue);
+    AddDummyFont(kLatoUltraBold, kAnsiTrue);
+    AddDummyFont(kOxygenSansSansBold, kAnsiTrue);
+    AddDummyFont(kComicSansMS, kAnsiTrue);
   }
 
   void* FindFont(int weight,
@@ -60,7 +63,7 @@ class CFXFolderFontInfoTest : public ::testing::Test {
   }
 
  private:
-  void AddDummyFont(const char* font_name, uint32_t charsets) {
+  void AddDummyFont(const char* font_name, CharsetFlags charsets) {
     auto info = std::make_unique<CFX_FolderFontInfo::FontFaceInfo>(
         /*filePath=*/"", font_name, /*fontTables=*/"",
         /*fontOffset=*/0, /*fileSize=*/0);
