@@ -75,8 +75,9 @@ CBC_HighLevelEncoder::Encoding CBC_ASCIIEncoder::GetEncodingMode() {
 bool CBC_ASCIIEncoder::Encode(CBC_EncoderContext* context) {
   size_t n = DetermineConsecutiveDigitCount(context->msg_, context->pos_);
   if (n >= 2) {
-    std::optional<wchar_t> code = EncodeASCIIDigits(
-        context->msg_[context->pos_], context->msg_[context->pos_ + 1]);
+    std::optional<wchar_t> code =
+        EncodeASCIIDigits(context->msg_.span()[context->pos_],
+                          context->msg_.span()[context->pos_ + 1]);
     if (!code.has_value()) {
       return false;
     }
@@ -88,7 +89,7 @@ bool CBC_ASCIIEncoder::Encode(CBC_EncoderContext* context) {
 
   wchar_t c = context->getCurrentChar();
   CBC_HighLevelEncoder::Encoding newMode = CBC_HighLevelEncoder::LookAheadTest(
-      context->msg_, context->pos_, GetEncodingMode());
+      context->msg_.AsStringView(), context->pos_, GetEncodingMode());
   if (newMode != GetEncodingMode()) {
     switch (newMode) {
       case CBC_HighLevelEncoder::Encoding::BASE256:

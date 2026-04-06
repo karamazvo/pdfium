@@ -149,7 +149,7 @@ constexpr std::array<uint8_t, 256> ALOG = {
      3,   6,   12,  24,  48,  96,  192, 173, 119, 238, 241, 207, 179, 75,  150,
      0}};
 
-WideString CreateECCBlock(const WideString& codewords, size_t numECWords) {
+WideString CreateECCBlock(WideStringView codewords, size_t numECWords) {
   DCHECK(numECWords > 0);
 
   const size_t len = codewords.GetLength();
@@ -194,13 +194,13 @@ WideString CreateECCBlock(const WideString& codewords, size_t numECWords) {
 
 }  // namespace
 
-WideString CBC_ErrorCorrection::EncodeECC200(const WideString& codewords,
+WideString CBC_ErrorCorrection::EncodeECC200(WideStringView codewords,
                                              const CBC_SymbolInfo* symbolInfo) {
   if (codewords.GetLength() != symbolInfo->data_capacity()) {
     return WideString();
   }
 
-  WideString sb = codewords;
+  WideString sb(codewords);
   size_t blockCount = symbolInfo->GetInterleavedBlockCount();
   if (blockCount == 1) {
     WideString ecc = CreateECCBlock(codewords, symbolInfo->error_codewords());
@@ -234,14 +234,14 @@ WideString CBC_ErrorCorrection::EncodeECC200(const WideString& codewords,
         temp.InsertAtBack(static_cast<wchar_t>(codewords[d]));
       }
 
-      WideString ecc = CreateECCBlock(temp, errorSizes[block]);
+      WideString ecc = CreateECCBlock(temp.AsStringView(), errorSizes[block]);
       if (ecc.IsEmpty()) {
         return WideString();
       }
 
       for (size_t pos = 0, i = block; i < errorSizes[block] * blockCount;
            ++pos, i += blockCount) {
-        sb.SetAt(symbolInfo->data_capacity() + i, ecc[pos]);
+        sb.SetAt(symbolInfo->data_capacity() + i, ecc.span()[pos]);
       }
     }
   }

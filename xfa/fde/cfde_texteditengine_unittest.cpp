@@ -206,12 +206,12 @@ TEST_F(CFDETextEditEngineTest, InsertGrowGap) {
   }
   WideString result = engine()->GetText();
   ASSERT_EQ(result.GetLength(), 1024u);
-  EXPECT_EQ(result[0], L'|');
-  EXPECT_EQ(result[1], L'a');
-  EXPECT_EQ(result[2], L'a');
+  EXPECT_EQ(result.CharAt(0), L'|');
+  EXPECT_EQ(result.CharAt(1), L'a');
+  EXPECT_EQ(result.CharAt(2), L'a');
   // ...
-  EXPECT_EQ(result[1022], L'a');
-  EXPECT_EQ(result[1023], L'|');
+  EXPECT_EQ(result.CharAt(1022), L'a');
+  EXPECT_EQ(result.CharAt(1023), L'|');
 }
 
 TEST_F(CFDETextEditEngineTest, Delete) {

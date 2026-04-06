@@ -302,11 +302,11 @@ WideString CJS_Util::StringPrintx(const WideString& wsFormat,
   while (iFormatIdx < wsFormat.GetLength()) {
     if (bEscaped) {
       bEscaped = false;
-      wsResult += wsFormat[iFormatIdx];
+      wsResult += wsFormat.CharAt(iFormatIdx);
       ++iFormatIdx;
       continue;
     }
-    switch (wsFormat[iFormatIdx]) {
+    switch (wsFormat.CharAt(iFormatIdx)) {
       case '\\': {
         bEscaped = true;
         ++iFormatIdx;
@@ -325,15 +325,16 @@ WideString CJS_Util::StringPrintx(const WideString& wsFormat,
       } break;
       case '?': {
         if (iSourceIdx < wsSource.GetLength()) {
-          wsResult += TranslateCase(wsSource[iSourceIdx], eCaseMode);
+          wsResult += TranslateCase(wsSource.CharAt(iSourceIdx), eCaseMode);
           ++iSourceIdx;
         }
         ++iFormatIdx;
       } break;
       case 'X': {
         if (iSourceIdx < wsSource.GetLength()) {
-          if (isascii(wsSource[iSourceIdx]) && isalnum(wsSource[iSourceIdx])) {
-            wsResult += TranslateCase(wsSource[iSourceIdx], eCaseMode);
+          if (isascii(wsSource.CharAt(iSourceIdx)) &&
+              isalnum(wsSource.CharAt(iSourceIdx))) {
+            wsResult += TranslateCase(wsSource.CharAt(iSourceIdx), eCaseMode);
             ++iFormatIdx;
           }
           ++iSourceIdx;
@@ -343,8 +344,9 @@ WideString CJS_Util::StringPrintx(const WideString& wsFormat,
       } break;
       case 'A': {
         if (iSourceIdx < wsSource.GetLength()) {
-          if (isascii(wsSource[iSourceIdx]) && isalpha(wsSource[iSourceIdx])) {
-            wsResult += TranslateCase(wsSource[iSourceIdx], eCaseMode);
+          if (isascii(wsSource.CharAt(iSourceIdx)) &&
+              isalpha(wsSource.CharAt(iSourceIdx))) {
+            wsResult += TranslateCase(wsSource.CharAt(iSourceIdx), eCaseMode);
             ++iFormatIdx;
           }
           ++iSourceIdx;
@@ -354,8 +356,8 @@ WideString CJS_Util::StringPrintx(const WideString& wsFormat,
       } break;
       case '9': {
         if (iSourceIdx < wsSource.GetLength()) {
-          if (FXSYS_IsDecimalDigit(wsSource[iSourceIdx])) {
-            wsResult += wsSource[iSourceIdx];
+          if (FXSYS_IsDecimalDigit(wsSource.CharAt(iSourceIdx))) {
+            wsResult += wsSource.CharAt(iSourceIdx);
             ++iFormatIdx;
           }
           ++iSourceIdx;
@@ -365,14 +367,14 @@ WideString CJS_Util::StringPrintx(const WideString& wsFormat,
       } break;
       case '*': {
         if (iSourceIdx < wsSource.GetLength()) {
-          wsResult += TranslateCase(wsSource[iSourceIdx], eCaseMode);
+          wsResult += TranslateCase(wsSource.CharAt(iSourceIdx), eCaseMode);
           ++iSourceIdx;
         } else {
           ++iFormatIdx;
         }
       } break;
       default: {
-        wsResult += wsFormat[iFormatIdx];
+        wsResult += wsFormat.CharAt(iFormatIdx);
         ++iFormatIdx;
       } break;
     }
@@ -390,8 +392,9 @@ CJS_Result CJS_Util::scand(CJS_Runtime* pRuntime,
   WideString sDate = pRuntime->ToWideString(params[1]);
   double dDate = FX_GetDateTime();
   if (sDate.GetLength() > 0) {
-    dDate = CJS_PublicMethods::ParseDateUsingFormat(pRuntime->GetIsolate(),
-                                                    sDate, sFormat, nullptr);
+    dDate = CJS_PublicMethods::ParseDateUsingFormat(
+        pRuntime->GetIsolate(), sDate.AsStringView(), sFormat.AsStringView(),
+        nullptr);
   }
   if (isnan(dDate)) {
     return CJS_Result::Success(pRuntime->NewUndefined());
@@ -424,7 +427,7 @@ CJS_Util::DataType CJS_Util::ParseDataType(WideString* sFormat) {
   size_t precision_digits = 0;
   size_t i = 0;
   while (i < sFormat->GetLength()) {
-    wchar_t c = (*sFormat)[i];
+    wchar_t c = sFormat->CharAt(i);
     switch (state) {
       case kBefore:
         if (c == L'%') {

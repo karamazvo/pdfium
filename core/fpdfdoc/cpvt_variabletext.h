@@ -91,7 +91,7 @@ class CPVT_VariableText {
 
   void RearrangeAll();
   void RearrangePart(const CPVT_WordRange& PlaceRange);
-  void SetText(const WideString& text);
+  void SetText(WideStringView text);
   CPVT_WordPlace InsertWord(const CPVT_WordPlace& place,
                             uint16_t word,
                             FX_Charset charset);

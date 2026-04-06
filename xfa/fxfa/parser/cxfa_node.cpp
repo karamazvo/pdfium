@@ -664,7 +664,7 @@ WideString FormatNumStr(const WideString& wsValue, LocaleIface* pLocale) {
   WideString wsSrcNum = wsValue;
   WideString wsGroupSymbol = pLocale->GetGroupingSymbol();
   bool bNeg = false;
-  if (wsSrcNum[0] == '-') {
+  if (wsSrcNum.Front() == '-') {
     bNeg = true;
     wsSrcNum.Delete(0, 1);
   }
@@ -680,8 +680,7 @@ WideString FormatNumStr(const WideString& wsValue, LocaleIface* pLocale) {
     if (i % 3 == nPos && i != 0) {
       wsOutput += wsGroupSymbol;
     }
-
-    wsOutput += wsSrcNum[i];
+    wsOutput += wsSrcNum.CharAt(i);
   }
   if (dot_index < wsSrcNum.GetLength()) {
     wsOutput += pLocale->GetDecimalSymbol();
@@ -1894,7 +1893,7 @@ CXFA_Node* CXFA_Node::GetInstanceMgrOfSubform() {
         WideString wsName = JSObject()->GetCData(XFA_Attribute::Name);
         WideString wsInstName =
             pNode->JSObject()->GetCData(XFA_Attribute::Name);
-        if (wsInstName.GetLength() > 0 && wsInstName[0] == '_' &&
+        if (wsInstName.GetLength() > 0 && wsInstName.Front() == '_' &&
             wsInstName.Last(wsInstName.GetLength() - 1) == wsName) {
           pInstanceMgr = pNode;
         }
@@ -1987,7 +1986,7 @@ CXFA_Node* CXFA_Node::GetItemIfExists(int32_t index) {
     if (iCount == 0) {
       WideString wsName = pNode->JSObject()->GetCData(XFA_Attribute::Name);
       WideString wsInstName = JSObject()->GetCData(XFA_Attribute::Name);
-      if (wsInstName.GetLength() < 1 || wsInstName[0] != '_' ||
+      if (wsInstName.GetLength() < 1 || wsInstName.Front() != '_' ||
           wsInstName.Last(wsInstName.GetLength() - 1) != wsName) {
         return nullptr;
       }
@@ -2021,7 +2020,7 @@ int32_t CXFA_Node::GetCount() {
     if (iCount == 0) {
       WideString wsName = pNode->JSObject()->GetCData(XFA_Attribute::Name);
       WideString wsInstName = JSObject()->GetCData(XFA_Attribute::Name);
-      if (wsInstName.GetLength() < 1 || wsInstName[0] != '_' ||
+      if (wsInstName.GetLength() < 1 || wsInstName.Front() != '_' ||
           wsInstName.Last(wsInstName.GetLength() - 1) != wsName) {
         return iCount;
       }
@@ -5288,7 +5287,7 @@ WideString CXFA_Node::NormalizeNumStr(const WideString& wsValue) {
     wsOutput.TrimBack(L"0");
     wsOutput.TrimBack(L".");
   }
-  if (wsOutput.IsEmpty() || wsOutput[0] == '.') {
+  if (wsOutput.IsEmpty() || wsOutput.Front() == '.') {
     wsOutput.InsertAtFront('0');
   }
 
@@ -5317,7 +5316,7 @@ WideString CXFA_Node::NumericLimit(const WideString& wsValue) {
 
   WideString wsRet;
   int32_t i = 0;
-  if (wsValue[i] == L'-') {
+  if (wsValue.CharAt(i) == L'-') {
     wsRet += L'-';
     i++;
   }
@@ -5325,7 +5324,7 @@ WideString CXFA_Node::NumericLimit(const WideString& wsValue) {
   int32_t iLead2 = 0;
   int32_t iTread2 = -1;
   for (; i < iCount; i++) {
-    wchar_t wc = wsValue[i];
+    wchar_t wc = wsValue.CharAt(i);
     if (FXSYS_IsDecimalDigit(wc)) {
       if (iLead >= 0) {
         iLead2++;

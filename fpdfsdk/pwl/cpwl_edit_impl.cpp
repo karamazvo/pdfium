@@ -916,9 +916,9 @@ CPVT_WordRange CPWL_EditImpl::GetSelectWordRange() const {
   return sel_state_.ConvertToWordRange();
 }
 
-void CPWL_EditImpl::SetText(const WideString& sText) {
+void CPWL_EditImpl::SetText(WideStringView text) {
   Clear();
-  DoInsertText(CPVT_WordPlace(0, 0, -1), sText, FX_Charset::kDefault);
+  DoInsertText(CPVT_WordPlace(0, 0, -1), text, FX_Charset::kDefault);
 }
 
 bool CPWL_EditImpl::InsertWord(uint16_t word, FX_Charset charset) {
@@ -1818,7 +1818,7 @@ void CPWL_EditImpl::InsertText(const WideString& sText,
   }
 
   vt_->UpdateWordPlace(wp_caret_);
-  SetCaret(DoInsertText(wp_caret_, sText, charset));
+  SetCaret(DoInsertText(wp_caret_, sText.AsStringView(), charset));
   sel_state_.Set(wp_caret_, wp_caret_);
   if (wp_caret_ == wp_old_caret_) {
     return;
@@ -2005,19 +2005,19 @@ void CPWL_EditImpl::EnableUndo(bool bUndo) {
 }
 
 CPVT_WordPlace CPWL_EditImpl::DoInsertText(const CPVT_WordPlace& place,
-                                           const WideString& sText,
+                                           WideStringView text,
                                            FX_Charset charset) {
   if (!vt_->IsValid()) {
     return place;
   }
 
   CPVT_WordPlace wp = place;
-  for (size_t i = 0; i < sText.GetLength(); ++i) {
-    uint16_t word = sText[i];
+  for (size_t i = 0; i < text.GetLength(); ++i) {
+    uint16_t word = text[i];
     switch (word) {
       case '\r':
         wp = vt_->InsertSection(wp);
-        if (i + 1 < sText.GetLength() && sText[i + 1] == '\n') {
+        if (i + 1 < text.GetLength() && text[i + 1] == '\n') {
           i++;
         }
         break;

@@ -17,7 +17,7 @@ class CBC_ErrorCorrection {
   ~CBC_ErrorCorrection() = delete;
 
   // Returns an empty string on failure.
-  static WideString EncodeECC200(const WideString& codewords,
+  static WideString EncodeECC200(WideStringView codewords,
                                  const CBC_SymbolInfo* symbolInfo);
 };
 

@@ -69,7 +69,7 @@ bool FindFamilyNameMatch(ByteStringView family_name,
   // For example: "Univers" and "Universal" are not a match because they have
   // different family names, but "Univers" and "Univers Bold" are a match.
   if (installed_font_name.IsValidIndex(next_index) &&
-      FXSYS_IsLowerASCII(installed_font_name[next_index])) {
+      FXSYS_IsLowerASCII(installed_font_name.CharAt(next_index))) {
     return false;
   }
 

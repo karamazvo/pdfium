@@ -108,7 +108,7 @@ bool CBC_DataMatrixWriter::SetErrorCorrectionLevel(int32_t level) {
   return true;
 }
 
-DataVector<uint8_t> CBC_DataMatrixWriter::Encode(const WideString& contents,
+DataVector<uint8_t> CBC_DataMatrixWriter::Encode(WideStringView contents,
                                                  int32_t* pOutWidth,
                                                  int32_t* pOutHeight) {
   WideString encoded = CBC_HighLevelEncoder::EncodeHighLevel(contents);
@@ -123,7 +123,7 @@ DataVector<uint8_t> CBC_DataMatrixWriter::Encode(const WideString& contents,
   }
 
   WideString codewords =
-      CBC_ErrorCorrection::EncodeECC200(encoded, pSymbolInfo);
+      CBC_ErrorCorrection::EncodeECC200(encoded.AsStringView(), pSymbolInfo);
   if (codewords.IsEmpty()) {
     return DataVector<uint8_t>();
   }

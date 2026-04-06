@@ -123,15 +123,19 @@ WideString CBC_OnedCodaBarWriter::FilterContents(WideStringView contents) {
   return filtercontents;
 }
 
-DataVector<uint8_t> CBC_OnedCodaBarWriter::Encode(const ByteString& contents) {
-  ByteString data = ch_start_ + contents + ch_end_;
+DataVector<uint8_t> CBC_OnedCodaBarWriter::Encode(ByteStringView contents) {
+  ByteString data({
+      ByteStringView(ch_start_),
+      contents,
+      ByteStringView(ch_end_),
+  });
   content_len_ = data.GetLength();
   DataVector<uint8_t> result(
       Fx2DSizeOrDie(wide_narr_ratio_ * 7, data.GetLength()));
   char ch;
   int32_t position = 0;
   for (size_t index = 0; index < data.GetLength(); index++) {
-    ch = FXSYS_ToUpperASCII(data[index]);
+    ch = FXSYS_ToUpperASCII(data.span()[index]);
     switch (ch) {
       case 'T':
         ch = 'A';

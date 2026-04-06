@@ -77,7 +77,7 @@ int32_t GetAlphaNumericCode(int32_t code) {
   return kAlphaNumericTable[code_index];
 }
 
-bool AppendNumericBytes(const ByteString& content, CBC_QRCoderBitVector* bits) {
+bool AppendNumericBytes(ByteStringView content, CBC_QRCoderBitVector* bits) {
   size_t length = content.GetLength();
   size_t i = 0;
   while (i < length) {
@@ -99,7 +99,7 @@ bool AppendNumericBytes(const ByteString& content, CBC_QRCoderBitVector* bits) {
   return true;
 }
 
-bool AppendAlphaNumericBytes(const ByteString& content,
+bool AppendAlphaNumericBytes(ByteStringView content,
                              CBC_QRCoderBitVector* bits) {
   size_t length = content.GetLength();
   size_t i = 0;
@@ -108,13 +108,11 @@ bool AppendAlphaNumericBytes(const ByteString& content,
     if (code1 == -1) {
       return false;
     }
-
     if (i + 1 < length) {
       int32_t code2 = GetAlphaNumericCode(content[i + 1]);
       if (code2 == -1) {
         return false;
       }
-
       bits->AppendBits(code1 * 45 + code2, 11);
       i += 2;
     } else {
@@ -125,7 +123,7 @@ bool AppendAlphaNumericBytes(const ByteString& content,
   return true;
 }
 
-bool Append8BitBytes(const ByteString& content, CBC_QRCoderBitVector* bits) {
+bool Append8BitBytes(ByteStringView content, CBC_QRCoderBitVector* bits) {
   for (char c : content) {
     bits->AppendBits(c, 8);
   }
@@ -156,7 +154,7 @@ bool AppendLengthInfo(int32_t numLetters,
   return true;
 }
 
-bool AppendBytes(const ByteString& content,
+bool AppendBytes(ByteStringView content,
                  CBC_QRCoderMode* mode,
                  CBC_QRCoderBitVector* bits) {
   if (mode == CBC_QRCoderMode::sNUMERIC) {
@@ -297,13 +295,13 @@ bool TerminateBits(int32_t numDataBytes, CBC_QRCoderBitVector* bits) {
   return bits->Size() == capacity;
 }
 
-CBC_QRCoderMode* ChooseMode(const ByteString& content) {
+CBC_QRCoderMode* ChooseMode(ByteStringView content) {
   bool hasNumeric = false;
   bool hasAlphaNumeric = false;
   for (size_t i = 0; i < content.GetLength(); i++) {
-    if (FXSYS_IsDecimalDigit(content[i])) {
+    if (FXSYS_IsDecimalDigit((char)content[i])) {
       hasNumeric = true;
-    } else if (GetAlphaNumericCode(content[i]) != -1) {
+    } else if (GetAlphaNumericCode((char)content[i]) != -1) {
       hasAlphaNumeric = true;
     } else {
       return CBC_QRCoderMode::sBYTE;
@@ -402,9 +400,9 @@ bool CBC_QRCoderEncoder::Encode(WideStringView content,
                                 const CBC_QRCoderErrorCorrectionLevel* ecLevel,
                                 CBC_QRCoder* qrCode) {
   ByteString utf8Data = FX_UTF8Encode(content);
-  CBC_QRCoderMode* mode = ChooseMode(utf8Data);
+  CBC_QRCoderMode* mode = ChooseMode(utf8Data.AsStringView());
   CBC_QRCoderBitVector dataBits;
-  if (!AppendBytes(utf8Data, mode, &dataBits)) {
+  if (!AppendBytes(utf8Data.AsStringView(), mode, &dataBits)) {
     return false;
   }
   int32_t numInputBytes = dataBits.sizeInBytes();

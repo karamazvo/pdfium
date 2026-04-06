@@ -25,12 +25,12 @@ bool CFXJSE_NodeHelper::CreateNodeForCondition(const WideString& wsCondition) {
     create_flag_ = CFXJSE_Engine::ResolveResult::Type::kCreateNodeOne;
     return false;
   }
-  if (wsCondition[0] != '[') {
+  if (wsCondition.Front() != '[') {
     return false;
   }
   size_t i = 1;
   for (; i < szLen; ++i) {
-    wchar_t ch = wsCondition[i];
+    wchar_t ch = wsCondition.CharAt(i);
     if (ch == '*') {
       create_flag_ = CFXJSE_Engine::ResolveResult::Type::kCreateNodeAll;
       create_count_ = 1;

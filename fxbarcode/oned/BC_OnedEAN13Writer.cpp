@@ -96,23 +96,23 @@ WideString CBC_OnedEAN13Writer::FilterContents(WideStringView contents) {
 }
 
 int32_t CBC_OnedEAN13Writer::CalcChecksum(const ByteString& contents) {
-  return EANCalcChecksum(contents);
+  return EANCalcChecksum(contents.AsStringView());
 }
 
-DataVector<uint8_t> CBC_OnedEAN13Writer::Encode(const ByteString& contents) {
+DataVector<uint8_t> CBC_OnedEAN13Writer::Encode(ByteStringView contents) {
   if (contents.GetLength() != 13) {
     return DataVector<uint8_t>();
   }
 
   data_length_ = 13;
-  int32_t firstDigit = FXSYS_DecimalCharToInt(contents.Front());
+  int32_t firstDigit = FXSYS_DecimalCharToInt((char)contents[0]);
   int32_t parities = kFirstDigitEncodings[firstDigit];
   DataVector<uint8_t> result(code_width_);
   auto result_span = pdfium::span(result);
   result_span = AppendPattern(result_span, kOnedEAN13StartPattern, true);
 
   for (int i = 1; i <= 6; i++) {
-    int32_t digit = FXSYS_DecimalCharToInt(contents[i]);
+    int32_t digit = FXSYS_DecimalCharToInt((char)contents[i]);
     if ((parities >> (6 - i) & 1) == 1) {
       digit += 10;
     }
@@ -122,7 +122,7 @@ DataVector<uint8_t> CBC_OnedEAN13Writer::Encode(const ByteString& contents) {
   result_span = AppendPattern(result_span, kOnedEAN13MiddlePattern, false);
 
   for (int i = 7; i <= 12; i++) {
-    int32_t digit = FXSYS_DecimalCharToInt(contents[i]);
+    int32_t digit = FXSYS_DecimalCharToInt((char)contents[i]);
     result_span =
         AppendPattern(result_span, kOnedEAN13LPatternTable[digit], true);
   }
@@ -170,8 +170,8 @@ bool CBC_OnedEAN13Writer::ShowChars(WideStringView contents,
   int32_t strWidth = static_cast<int32_t>(kWidth * output_hscale_);
 
   pdfium::span<TextCharPos> charpos_span = pdfium::span(charpos);
-  CalcTextInfo(tempStr, charpos_span.subspan<1u>(), font_, (float)strWidth,
-               iFontSize);
+  CalcTextInfo(tempStr.AsStringView(), charpos_span.subspan<1u>(), font_,
+               (float)strWidth, iFontSize);
   {
     CFX_Matrix affine_matrix1(1.0, 0.0, 0.0, -1.0,
                               kLeftPosition * output_hscale_,
@@ -183,8 +183,8 @@ bool CBC_OnedEAN13Writer::ShowChars(WideStringView contents,
   }
   tempStr = str.Substr(7, 6);
   length = tempStr.GetLength();
-  CalcTextInfo(tempStr, charpos_span.subspan<7u>(), font_, (float)strWidth,
-               iFontSize);
+  CalcTextInfo(tempStr.AsStringView(), charpos_span.subspan<7u>(), font_,
+               (float)strWidth, iFontSize);
   {
     CFX_Matrix affine_matrix1(1.0, 0.0, 0.0, -1.0,
                               (kLeftPosition + 47) * output_hscale_,
@@ -198,7 +198,8 @@ bool CBC_OnedEAN13Writer::ShowChars(WideStringView contents,
   length = tempStr.GetLength();
   strWidth = 7 * static_cast<int32_t>(strWidth * output_hscale_);
 
-  CalcTextInfo(tempStr, charpos, font_, (float)strWidth, iFontSize);
+  CalcTextInfo(tempStr.AsStringView(), charpos, font_, (float)strWidth,
+               iFontSize);
   {
     CFX_Matrix affine_matrix1(1.0, 0.0, 0.0, -1.0, 0.0,
                               (float)(height_ - iTextHeight + iFontSize));

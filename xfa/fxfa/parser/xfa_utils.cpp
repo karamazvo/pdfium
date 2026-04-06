@@ -31,11 +31,11 @@ namespace {
 
 const char kFormNS[] = "http://www.xfa.org/schema/xfa-form/";
 
-WideString ExportEncodeAttribute(const WideString& str) {
+WideString ExportEncodeAttribute(WideStringView str) {
   WideString textBuf;
   textBuf.Reserve(str.GetLength());  // Result always at least as big as input.
-  for (size_t i = 0; i < str.GetLength(); i++) {
-    switch (str[i]) {
+  for (wchar_t ch : str) {
+    switch (ch) {
       case '&':
         textBuf += L"&amp;";
         break;
@@ -52,7 +52,7 @@ WideString ExportEncodeAttribute(const WideString& str) {
         textBuf += L"&quot;";
         break;
       default:
-        textBuf += str[i];
+        textBuf += ch;
     }
   }
   return textBuf;
@@ -63,7 +63,7 @@ bool IsXMLValidChar(wchar_t ch) {
          (ch >= 0x20 && ch <= 0xD7FF) || (ch >= 0xE000 && ch <= 0xFFFD);
 }
 
-WideString ExportEncodeContent(const WideString& str) {
+WideString ExportEncodeContent(WideStringView str) {
   WideTextBuffer textBuf;
   size_t iLen = str.GetLength();
   for (size_t i = 0; i < iLen; i++) {
@@ -71,7 +71,6 @@ WideString ExportEncodeContent(const WideString& str) {
     if (!IsXMLValidChar(ch)) {
       continue;
     }
-
     if (ch == '&') {
       textBuf << "&amp;";
     } else if (ch == '<') {
@@ -89,7 +88,7 @@ WideString ExportEncodeContent(const WideString& str) {
         textBuf << "&#x20;";
       }
     } else {
-      textBuf.AppendChar(str[i]);
+      textBuf.AppendChar(ch);
     }
   }
   return textBuf.MakeString();
@@ -154,7 +153,7 @@ WideString SaveAttribute(CXFA_Node* pNode,
     return WideString();
   }
 
-  WideString wsEncoded = ExportEncodeAttribute(value.value());
+  WideString wsEncoded = ExportEncodeAttribute(value->AsStringView());
   return WideString{L" ", wsName, L"=\"", wsEncoded.AsStringView(), L"\""};
 }
 
@@ -236,7 +235,8 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
 
         buf << "<" << bodyTagName << " xmlns=\"\">\n";
         for (const WideString& text : wsSelTextArray) {
-          buf << "<value>" << ExportEncodeContent(text) << "</value>\n";
+          buf << "<value>" << ExportEncodeContent(text.AsStringView())
+              << "</value>\n";
         }
         buf << "</" << bodyTagName << ">\n";
         wsChildren += buf.AsStringView();
@@ -244,7 +244,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
       } else {
         WideString wsValue =
             pRawValueNode->JSObject()->GetCData(XFA_Attribute::Value);
-        wsChildren += ExportEncodeContent(wsValue);
+        wsChildren += ExportEncodeContent(wsValue.AsStringView());
       }
       break;
     }
@@ -252,7 +252,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
     case XFA_ObjectType::NodeC:
     case XFA_ObjectType::NodeV: {
       WideString wsValue = pNode->JSObject()->GetCData(XFA_Attribute::Value);
-      wsChildren += ExportEncodeContent(wsValue);
+      wsChildren += ExportEncodeContent(wsValue.AsStringView());
       break;
     }
     default:

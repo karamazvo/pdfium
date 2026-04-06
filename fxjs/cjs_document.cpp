@@ -996,7 +996,7 @@ CJS_Result CJS_Document::get_document_file_name(CJS_Runtime* pRuntime) {
   WideString wsFilePath = form_fill_env_->JS_docGetFilePath();
   size_t i = wsFilePath.GetLength();
   for (; i > 0; i--) {
-    if (wsFilePath[i - 1] == L'\\' || wsFilePath[i - 1] == L'/') {
+    if (wsFilePath.CharAt(i - 1) == L'\\' || wsFilePath.CharAt(i - 1) == L'/') {
       break;
     }
   }

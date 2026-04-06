@@ -86,7 +86,7 @@ class CPWL_Edit final : public CPWL_Wnd {
   void SetCharArray(int32_t nCharArray);
   void SetLimitChar(int32_t nLimitChar);
   bool CanSelectAll() const;
-  void SetText(const WideString& csText);
+  void SetText(WideStringView text);
   bool IsTextFull() const;
   void SetMaxUndoItemsForTest(size_t items);
 

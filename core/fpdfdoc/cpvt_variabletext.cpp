@@ -283,7 +283,7 @@ CPVT_WordPlace CPVT_VariableText::BackSpaceWord(const CPVT_WordPlace& place) {
   return ClearLeftWord(PrevLineHeaderPlace(place));
 }
 
-void CPVT_VariableText::SetText(const WideString& swText) {
+void CPVT_VariableText::SetText(WideStringView swText) {
   DeleteWords(CPVT_WordRange(GetBeginWordPlace(), GetEndWordPlace()));
   CPVT_WordPlace wp(0, 0, -1);
   if (!section_array_.empty()) {

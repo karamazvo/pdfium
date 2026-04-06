@@ -34,7 +34,7 @@
 
 namespace {
 
-WideString EncodeToC40Codewords(const WideString& sb) {
+WideString EncodeToC40Codewords(WideStringView sb) {
   wchar_t c1 = sb[0];
   wchar_t c2 = sb[1];
   wchar_t c3 = sb[2];
@@ -94,8 +94,8 @@ bool CBC_C40Encoder::Encode(CBC_EncoderContext* context) {
     size_t count = buffer.GetLength();
     if ((count % 3) == 0) {
       CBC_HighLevelEncoder::Encoding newMode =
-          CBC_HighLevelEncoder::LookAheadTest(context->msg_, context->pos_,
-                                              GetEncodingMode());
+          CBC_HighLevelEncoder::LookAheadTest(context->msg_.AsStringView(),
+                                              context->pos_, GetEncodingMode());
       if (newMode != GetEncodingMode()) {
         context->SignalEncoderChange(newMode);
         break;
@@ -107,7 +107,7 @@ bool CBC_C40Encoder::Encode(CBC_EncoderContext* context) {
 
 void CBC_C40Encoder::WriteNextTriplet(CBC_EncoderContext* context,
                                       WideString* buffer) {
-  context->writeCodewords(EncodeToC40Codewords(*buffer));
+  context->writeCodewords(EncodeToC40Codewords(buffer->AsStringView()));
   buffer->Delete(0, 3);
 }
 

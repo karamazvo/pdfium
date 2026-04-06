@@ -131,7 +131,7 @@ void CBC_DefaultPlacement::SetModule(int32_t row,
     col += numcols_;
     row += 4 - ((numcols_ + 4) % 8);
   }
-  int32_t v = codewords_[pos];
+  int32_t v = codewords_.span()[pos];
   v &= 1 << (8 - bit);
   SetBit(col, row, v != 0);
 }

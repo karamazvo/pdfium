@@ -139,7 +139,7 @@ int32_t CBC_PDF417ErrorCorrection::GetErrorCorrectionCodewordCount(
 
 // static
 std::optional<WideString> CBC_PDF417ErrorCorrection::GenerateErrorCorrection(
-    const WideString& dataCodewords,
+    WideStringView dataCodewords,
     int32_t errorCorrectionLevel) {
   int32_t k = GetErrorCorrectionCodewordCount(errorCorrectionLevel);
   if (k < 0) {

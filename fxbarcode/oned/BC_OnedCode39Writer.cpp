@@ -60,7 +60,7 @@ bool IsInOnedCode39Alphabet(wchar_t ch) {
          ch == L'+' || ch == L'%';
 }
 
-char CalcCheckSum(const ByteString& contents) {
+char CalcCheckSum(ByteStringView contents) {
   if (contents.GetLength() > 80) {
     return '*';
   }
@@ -151,7 +151,7 @@ bool CBC_OnedCode39Writer::SetWideNarrowRatio(int8_t ratio) {
   return true;
 }
 
-DataVector<uint8_t> CBC_OnedCode39Writer::Encode(const ByteString& contents) {
+DataVector<uint8_t> CBC_OnedCode39Writer::Encode(ByteStringView contents) {
   char checksum = CalcCheckSum(contents);
   if (checksum == '*') {
     return DataVector<uint8_t>();
@@ -160,7 +160,7 @@ DataVector<uint8_t> CBC_OnedCode39Writer::Encode(const ByteString& contents) {
   std::array<uint8_t, kArraySize> widths = {};
   static constexpr int32_t kWideStrideNum = 3;
   static constexpr int32_t kNarrowStrideNum = kArraySize - kWideStrideNum;
-  ByteString encodedContents = contents;
+  ByteString encodedContents(contents);
   if (calc_checksum_) {
     encodedContents += checksum;
   }
@@ -170,7 +170,7 @@ DataVector<uint8_t> CBC_OnedCode39Writer::Encode(const ByteString& contents) {
       content_len_;
   for (size_t j = 0; j < content_len_; j++) {
     for (size_t i = 0; i < kOnedCode39AlphabetLen; i++) {
-      if (kOnedCode39Alphabet[i] != encodedContents[j]) {
+      if (kOnedCode39Alphabet[i] != encodedContents.span()[j]) {
         continue;
       }
       ToIntArray(kOnedCode39CharacterEncoding[i], wide_narr_ratio_, widths);
@@ -189,7 +189,7 @@ DataVector<uint8_t> CBC_OnedCode39Writer::Encode(const ByteString& contents) {
 
   for (int32_t l = content_len_ - 1; l >= 0; l--) {
     for (size_t i = 0; i < kOnedCode39AlphabetLen; i++) {
-      if (kOnedCode39Alphabet[i] != encodedContents[l]) {
+      if (kOnedCode39Alphabet[i] != encodedContents.span()[l]) {
         continue;
       }
       ToIntArray(kOnedCode39CharacterEncoding[i], wide_narr_ratio_, widths);
@@ -214,8 +214,7 @@ bool CBC_OnedCode39Writer::encodedContents(WideStringView contents,
   if (calc_checksum_ && print_checksum_) {
     WideString checksumContent = FilterContents(contents);
     ByteString str = checksumContent.ToUTF8();
-    char checksum;
-    checksum = CalcCheckSum(str);
+    char checksum = CalcCheckSum(str.AsStringView());
     if (checksum == '*') {
       return false;
     }

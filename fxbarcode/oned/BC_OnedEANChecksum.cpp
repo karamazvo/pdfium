@@ -6,15 +6,15 @@
 
 #include "core/fxcrt/fx_extension.h"
 
-int32_t EANCalcChecksum(const ByteString& contents) {
+int32_t EANCalcChecksum(ByteStringView contents) {
   int32_t odd = 0;
   int32_t even = 0;
   size_t parity = 1;
   for (size_t i = contents.GetLength(); i > 0; i--) {
     if (parity % 2) {
-      odd += FXSYS_DecimalCharToInt(contents[i - 1]);
+      odd += FXSYS_DecimalCharToInt(contents.CharAt(i - 1));
     } else {
-      even += FXSYS_DecimalCharToInt(contents[i - 1]);
+      even += FXSYS_DecimalCharToInt(contents.CharAt(i - 1));
     }
     parity++;
   }

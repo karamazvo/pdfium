@@ -57,8 +57,8 @@ bool CBC_Base256Encoder::Encode(CBC_EncoderContext* context) {
     buffer += c;
     context->pos_++;
     CBC_HighLevelEncoder::Encoding newMode =
-        CBC_HighLevelEncoder::LookAheadTest(context->msg_, context->pos_,
-                                            GetEncodingMode());
+        CBC_HighLevelEncoder::LookAheadTest(context->msg_.AsStringView(),
+                                            context->pos_, GetEncodingMode());
     if (newMode != GetEncodingMode()) {
       context->SignalEncoderChange(newMode);
       break;

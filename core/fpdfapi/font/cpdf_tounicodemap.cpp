@@ -28,11 +28,11 @@ constexpr uint32_t kCidLimit = 0xffff;
 // but not too high to prevent fuzzers from slowing down fuzzing.
 constexpr int kOutOfSpecBFLimit = 160000;
 
-WideString StringDataAdd(WideString str) {
+WideString StringDataAdd(WideStringView str) {
   WideString ret;
   wchar_t value = 1;
   for (size_t i = str.GetLength(); i > 0; --i) {
-    wchar_t ch = str[i - 1] + value;
+    auto ch = str[i - 1] + value;
     if (ch < str[i - 1]) {
       ret.InsertAtFront(0);
     } else {
@@ -301,7 +301,7 @@ ByteStringView CPDF_ToUnicodeMap::HandleBeginBFRange(
 
     WideString destcode = StringToWideString(start);
     if (destcode.GetLength() == 1) {
-      uint32_t start_value = pdfium::checked_cast<uint32_t>(destcode[0]);
+      uint32_t start_value = pdfium::checked_cast<uint32_t>(destcode.Front());
       CHECK_LE(start_value, 0xffff);
       ranges.push_back(MultimapSingleDestRange{.low_code = lowcode,
                                                .high_code = highcode,
@@ -312,7 +312,8 @@ ByteStringView CPDF_ToUnicodeMap::HandleBeginBFRange(
       range.retcodes.reserve(1 + highcode - lowcode);
       range.retcodes.push_back(destcode);
       for (uint32_t code = lowcode + 1; code <= highcode; ++code) {
-        WideString retcode = StringDataAdd(range.retcodes.back());
+        WideString retcode =
+            StringDataAdd(range.retcodes.back().AsStringView());
         range.retcodes.push_back(std::move(retcode));
       }
       ranges.push_back(std::move(range));
@@ -364,13 +365,12 @@ void CPDF_ToUnicodeMap::SetCode(uint32_t srccode, WideString destcode) {
   if (len == 0) {
     return;
   }
-
   if (len == 1) {
-    InsertIntoMaps(srccode, destcode[0]);
-  } else {
-    InsertIntoMaps(srccode, GetMultiCharIndexIndicator());
-    multi_char_vec_.push_back(destcode);
+    InsertIntoMaps(srccode, destcode.Front());
+    return;
   }
+  InsertIntoMaps(srccode, GetMultiCharIndexIndicator());
+  multi_char_vec_.push_back(destcode);
 }
 
 void CPDF_ToUnicodeMap::InsertIntoMaps(uint32_t code, uint32_t destcode) {

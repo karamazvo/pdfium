@@ -21,13 +21,13 @@ class CBC_OnedCode128Writer final : public CBC_OneDimWriter {
   ~CBC_OnedCode128Writer() override;
 
   // Exposed for testing.
-  static int32_t Encode128B(const ByteString& contents,
+  static int32_t Encode128B(ByteStringView contents,
                             std::vector<int32_t>* patterns);
-  static int32_t Encode128C(const ByteString& contents,
+  static int32_t Encode128C(ByteStringView contents,
                             std::vector<int32_t>* patterns);
 
   // CBC_OneDimWriter
-  DataVector<uint8_t> Encode(const ByteString& contents) override;
+  DataVector<uint8_t> Encode(ByteStringView contents) override;
   bool CheckContentValidity(WideStringView contents) override;
   WideString FilterContents(WideStringView contents) override;
   void SetTextLocation(BC_TEXT_LOC location) override;

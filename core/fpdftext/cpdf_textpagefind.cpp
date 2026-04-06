@@ -38,7 +38,7 @@ bool IsIgnoreSpaceCharacter(wchar_t curChar) {
   return true;
 }
 
-bool IsMatchWholeWord(const WideString& csPageText,
+bool IsMatchWholeWord(WideStringView csPageText,
                       size_t startPos,
                       size_t endPos) {
   if (startPos > endPos) {
@@ -77,11 +77,11 @@ bool IsMatchWholeWord(const WideString& csPageText,
   }
   if (char_count > 0) {
     if (FXSYS_IsDecimalDigit(char_left) &&
-        FXSYS_IsDecimalDigit(csPageText[startPos])) {
+        FXSYS_IsDecimalDigit(csPageText.CharAt(startPos))) {
       return false;
     }
     if (FXSYS_IsDecimalDigit(char_right) &&
-        FXSYS_IsDecimalDigit(csPageText[endPos])) {
+        FXSYS_IsDecimalDigit(csPageText.CharAt(endPos))) {
       return false;
     }
   }
@@ -131,7 +131,7 @@ std::vector<WideString> ExtractFindWhat(const WideString& findwhat) {
   size_t len = findwhat.GetLength();
   size_t i = 0;
   for (i = 0; i < len; ++i) {
-    if (findwhat[i] != ' ') {
+    if (findwhat.CharAt(i) != ' ') {
       break;
     }
   }
@@ -156,7 +156,7 @@ std::vector<WideString> ExtractFindWhat(const WideString& findwhat) {
     size_t pos = 0;
     while (pos < word->GetLength()) {
       WideString curStr = word->Substr(pos, 1);
-      wchar_t curChar = word.value()[pos];
+      wchar_t curChar = word->CharAt(pos);
       if (IsIgnoreSpaceCharacter(curChar)) {
         if (pos > 0 && curChar == pdfium::unicode::kRightSingleQuotationMark) {
           pos++;
@@ -247,7 +247,7 @@ bool CPDF_TextPageFind::FindNext() {
         if (nStartPos >= strLen) {
           return false;
         }
-        wchar_t strInsert = str_text_[nStartPos];
+        wchar_t strInsert = str_text_.CharAt(nStartPos);
         if (strInsert == L'\n' || strInsert == L' ' || strInsert == L'\r' ||
             strInsert == kNonBreakingSpace) {
           nResultPos = nStartPos + 1;
@@ -271,7 +271,7 @@ bool CPDF_TextPageFind::FindNext() {
     bool bMatch = true;
     if (iWord != 0 && !bSpaceStart) {
       size_t PreResEndPos = nStartPos;
-      int curChar = csWord[0];
+      int curChar = csWord.Front();
       WideString lastWord = find_what_array_[iWord - 1];
       int lastChar = lastWord.Back();
       if (nStartPos == nResultPos.value() &&
@@ -280,7 +280,7 @@ bool CPDF_TextPageFind::FindNext() {
         bMatch = false;
       }
       for (size_t d = PreResEndPos; d < nResultPos.value(); d++) {
-        wchar_t strInsert = str_text_[d];
+        wchar_t strInsert = str_text_.CharAt(d);
         if (strInsert != L'\n' && strInsert != L' ' && strInsert != L'\r' &&
             strInsert != kNonBreakingSpace) {
           bMatch = false;
@@ -289,7 +289,7 @@ bool CPDF_TextPageFind::FindNext() {
       }
     } else if (bSpaceStart) {
       if (nResultPos.value() > 0) {
-        wchar_t strInsert = str_text_[nResultPos.value() - 1];
+        wchar_t strInsert = str_text_.CharAt(nResultPos.value() - 1);
         if (strInsert != L'\n' && strInsert != L' ' && strInsert != L'\r' &&
             strInsert != kNonBreakingSpace) {
           bMatch = false;
@@ -300,7 +300,8 @@ bool CPDF_TextPageFind::FindNext() {
       }
     }
     if (options_.bMatchWholeWord && bMatch) {
-      bMatch = IsMatchWholeWord(str_text_, nResultPos.value(), endIndex);
+      bMatch = IsMatchWholeWord(str_text_.AsStringView(), nResultPos.value(),
+                                endIndex);
     }
 
     if (bMatch) {

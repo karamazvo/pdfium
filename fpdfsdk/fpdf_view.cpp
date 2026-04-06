@@ -388,11 +388,11 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_GetFileVersion(FPDF_DOCUMENT doc,
       // Check for valid PDF version format "X.Y"
       const bool has_valid_length = version.GetLength() == 3;
       const bool has_valid_format =
-          has_valid_length && FXSYS_IsDecimalDigit(version[0]) &&
-          version[1] == '.' && FXSYS_IsDecimalDigit(version[2]);
+          has_valid_length && FXSYS_IsDecimalDigit(version.CharAt(0)) &&
+          version.CharAt(1) == '.' && FXSYS_IsDecimalDigit(version.CharAt(2));
       if (has_valid_format) {
-        const int major = FXSYS_DecimalCharToInt(version[0]);
-        const int minor = FXSYS_DecimalCharToInt(version[2]);
+        const int major = FXSYS_DecimalCharToInt(version.CharAt(0));
+        const int minor = FXSYS_DecimalCharToInt(version.CharAt(2));
         *fileVersion = major * 10 + minor;
       }
     }

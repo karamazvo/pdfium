@@ -30,7 +30,7 @@ bool CBC_EANCode::Encode(WideStringView contents) {
   ByteString str = render_contents_.ToUTF8();
   pWriter->InitEANWriter();
   return pWriter->RenderResult(render_contents_.AsStringView(),
-                               pWriter->Encode(str));
+                               pWriter->Encode(str.AsStringView()));
 }
 
 bool CBC_EANCode::RenderDevice(CFX_RenderDevice* device,

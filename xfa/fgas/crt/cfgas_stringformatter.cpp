@@ -200,7 +200,7 @@ WideString GetLiteralTextReverse(pdfium::span<const wchar_t> spStrPattern,
       size_t iLen = std::min<size_t>(wsOutput.GetLength(), 5);
       size_t i = 1;
       for (; i < iLen; i++) {
-        wchar_t ch = wsOutput[i];
+        wchar_t ch = wsOutput.CharAt(i);
         iKeyValue = ConvertHex(iKeyValue, ch);
       }
       if (iKeyValue != 0) {
@@ -297,7 +297,7 @@ bool ParseLocaleDate(const WideString& wsDate,
     WideString symbol;
     symbol.Reserve(4);
     symbol += spDatePattern[ccf++];
-    while (ccf < spDatePattern.size() && spDatePattern[ccf] == symbol[0]) {
+    while (ccf < spDatePattern.size() && spDatePattern[ccf] == symbol.Front()) {
       symbol += spDatePattern[ccf++];
     }
     if (symbol.EqualsASCII("D") || symbol.EqualsASCII("DD")) {
@@ -426,7 +426,7 @@ bool ParseLocaleTime(const WideString& wsTime,
     WideString symbol;
     symbol.Reserve(4);
     symbol += spTimePattern[ccf++];
-    while (ccf < spTimePattern.size() && spTimePattern[ccf] == symbol[0]) {
+    while (ccf < spTimePattern.size() && spTimePattern[ccf] == symbol.Front()) {
       symbol += spTimePattern[ccf++];
     }
 
@@ -643,7 +643,7 @@ WideString DateFormat(const WideString& wsDatePattern,
     WideString symbol;
     symbol.Reserve(4);
     symbol += spDatePattern[ccf++];
-    while (ccf < spDatePattern.size() && spDatePattern[ccf] == symbol[0]) {
+    while (ccf < spDatePattern.size() && spDatePattern[ccf] == symbol.Front()) {
       symbol += spDatePattern[ccf++];
     }
 
@@ -714,7 +714,7 @@ WideString TimeFormat(const WideString& wsTimePattern,
     WideString symbol;
     symbol.Reserve(4);
     symbol += spTimePattern[ccf++];
-    while (ccf < spTimePattern.size() && spTimePattern[ccf] == symbol[0]) {
+    while (ccf < spTimePattern.size() && spTimePattern[ccf] == symbol.Front()) {
       symbol += spTimePattern[ccf++];
     }
 
@@ -2018,7 +2018,7 @@ bool CFGAS_StringFormatter::FormatNum(LocaleMgrIface* pLocaleMgr,
   pdfium::span<const wchar_t> spNumFormat = wsNumFormat.span();
   WideString wsSrcNum = wsInputNum;
   wsSrcNum.TrimFront('0');
-  if (wsSrcNum.IsEmpty() || wsSrcNum[0] == '.') {
+  if (wsSrcNum.IsEmpty() || wsSrcNum.Front() == '.') {
     wsSrcNum.InsertAtFront('0');
   }
 
@@ -2091,7 +2091,7 @@ bool CFGAS_StringFormatter::FormatNum(LocaleMgrIface* pLocaleMgr,
 
   WideString wsGroupSymbol = pLocale->GetGroupingSymbol();
   bool bNeg = false;
-  if (wsSrcNum[0] == '-') {
+  if (wsSrcNum.Front() == '-') {
     bNeg = true;
     wsSrcNum.Delete(0, 1);
   }
@@ -2230,7 +2230,7 @@ bool CFGAS_StringFormatter::FormatNum(LocaleMgrIface* pLocaleMgr,
       if (i % 3 == nPos && i != 0) {
         *wsOutput += wsGroupSymbol;
       }
-      *wsOutput += wsSrcNum[i];
+      *wsOutput += wsSrcNum.CharAt(i);
     }
     if (dot_index.value() < spSrcNum.size()) {
       *wsOutput += pLocale->GetDecimalSymbol();

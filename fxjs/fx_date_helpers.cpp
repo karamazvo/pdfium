@@ -171,7 +171,7 @@ int DateFromTime(double t) {
   }
 }
 
-size_t FindSubWordLength(const WideString& str, size_t nStart) {
+size_t FindSubWordLength(WideStringView str, size_t nStart) {
   pdfium::span<const wchar_t> data = str.span();
   size_t i = nStart;
   while (i < data.size() && iswalnum(data[i])) {
@@ -285,7 +285,7 @@ double FX_MakeDate(double day, double time) {
   return day * 86400000 + time;
 }
 
-int FX_ParseStringInteger(const WideString& str,
+int FX_ParseStringInteger(WideStringView str,
                           size_t nStart,
                           size_t* pSkip,
                           size_t nMaxStep) {
@@ -312,8 +312,8 @@ int FX_ParseStringInteger(const WideString& str,
   return nRet;
 }
 
-ConversionStatus FX_ParseDateUsingFormat(const WideString& value,
-                                         const WideString& format,
+ConversionStatus FX_ParseDateUsingFormat(WideStringView value,
+                                         WideStringView format,
                                          double* result) {
   double dt = FX_GetDateTime();
   if (format.IsEmpty() || value.IsEmpty()) {
@@ -339,7 +339,7 @@ ConversionStatus FX_ParseDateUsingFormat(const WideString& value,
       break;
     }
 
-    wchar_t c = format[i];
+    auto c = format[i];
     switch (c) {
       case ':':
       case '.':
@@ -454,7 +454,7 @@ ConversionStatus FX_ParseDateUsingFormat(const WideString& value,
               bool bFind = false;
               nSkip = FindSubWordLength(value, j);
               if (nSkip == KMonthAbbreviationLength) {
-                WideString sMonth = value.Substr(j, KMonthAbbreviationLength);
+                WideString sMonth(value.Substr(j, KMonthAbbreviationLength));
                 for (size_t m = 0; m < std::size(kMonths); ++m) {
                   if (sMonth.EqualsASCIINoCase(kMonths[m])) {
                     nMonth = static_cast<int>(m) + 1;
@@ -490,7 +490,7 @@ ConversionStatus FX_ParseDateUsingFormat(const WideString& value,
               bool bFind = false;
               nSkip = FindSubWordLength(value, j);
               if (nSkip <= kLongestFullMonthLength) {
-                WideString sMonth = value.Substr(j, nSkip);
+                WideString sMonth(value.Substr(j, nSkip));
                 sMonth.MakeLower();
                 for (size_t m = 0; m < std::size(kFullMonths); ++m) {
                   auto sFullMonths = WideString::FromASCII(kFullMonths[m]);

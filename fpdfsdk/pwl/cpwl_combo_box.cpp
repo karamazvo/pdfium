@@ -101,13 +101,13 @@ WideString CPWL_ComboBox::GetText() {
   return edit_ ? edit_->GetText() : WideString();
 }
 
-void CPWL_ComboBox::SetText(const WideString& text) {
+void CPWL_ComboBox::SetText(WideStringView text) {
   if (edit_) {
     edit_->SetText(text);
   }
 }
 
-void CPWL_ComboBox::AddString(const WideString& str) {
+void CPWL_ComboBox::AddString(WideStringView str) {
   if (list_) {
     list_->AddString(str);
   }
@@ -121,8 +121,7 @@ void CPWL_ComboBox::SetSelect(int32_t nItemIndex) {
   if (list_) {
     list_->Select(nItemIndex);
   }
-
-  edit_->SetText(list_->GetText());
+  edit_->SetText(list_->GetText().AsStringView());
   select_item_ = nItemIndex;
 }
 

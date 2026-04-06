@@ -48,7 +48,7 @@ std::unique_ptr<CPWL_Wnd> CFFL_ListBox::NewPWLWindow(
   pWnd->Realize();
 
   for (int32_t i = 0, sz = widget_->CountOptions(); i < sz; i++) {
-    pWnd->AddString(widget_->GetOptionLabel(i));
+    pWnd->AddString(widget_->GetOptionLabel(i).AsStringView());
   }
 
   if (pWnd->HasFlag(PLBS_MULTIPLESEL)) {

@@ -41,8 +41,8 @@ CPWL_Edit::~CPWL_Edit() {
   DCHECK(!focus_);
 }
 
-void CPWL_Edit::SetText(const WideString& csText) {
-  edit_impl_->SetText(csText);
+void CPWL_Edit::SetText(WideStringView text) {
+  edit_impl_->SetText(text);
   edit_impl_->Paint();
 }
 

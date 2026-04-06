@@ -169,7 +169,7 @@ bool IsRightToLeft(const CPDF_TextObject& text_obj) {
   for (size_t i = 0; i < nItems; ++i) {
     CPDF_TextObject::Item item = text_obj.GetItemInfo(i);
     WideString unicode = font->UnicodeFromCharCode(item.char_code_);
-    wchar_t wChar = !unicode.IsEmpty() ? unicode[0] : 0;
+    wchar_t wChar = unicode.Front();  // Front() safe when empty.
     if (wChar == 0) {
       wChar = item.char_code_;
     }
@@ -836,7 +836,7 @@ void CPDF_TextPage::CloseTempLine() {
   WideString str = temp_text_buf_.MakeString();
   bool bPrevSpace = false;
   for (size_t i = 0; i < str.GetLength(); ++i) {
-    if (str[i] != ' ') {
+    if (str.CharAt(i) != ' ') {
       bPrevSpace = false;
       continue;
     }
@@ -859,14 +859,14 @@ void CPDF_TextPage::CloseTempLine() {
          eCurrentDirection == CFX_BidiChar::Direction::kRight)) {
       eCurrentDirection = CFX_BidiChar::Direction::kRight;
       for (int m = segment.start + segment.count; m > segment.start; --m) {
-        AddCharInfoByRLDirection(str[m - 1], temp_char_list_[m - 1]);
+        AddCharInfoByRLDirection(str.CharAt(m - 1), temp_char_list_[m - 1]);
       }
     } else {
       if (segment.direction != CFX_BidiChar::Direction::kLeftWeak) {
         eCurrentDirection = CFX_BidiChar::Direction::kLeft;
       }
       for (int m = segment.start; m < segment.start + segment.count; ++m) {
-        AddCharInfoByLRDirection(str[m], temp_char_list_[m]);
+        AddCharInfoByLRDirection(str.CharAt(m), temp_char_list_[m]);
       }
     }
   }
@@ -983,19 +983,13 @@ CPDF_TextPage::MarkedContentState CPDF_TextPage::PreMarkedContent(
     return MarkedContentState::kPass;
   }
 
-  bExist = false;
-  for (size_t i = 0; i < actual_text.GetLength(); ++i) {
-    wchar_t wChar = actual_text[i];
+  for (wchar_t wChar : actual_text) {
     if ((wChar > 0x80 && wChar < 0xFFFD) || (wChar <= 0x80 && isprint(wChar))) {
-      bExist = true;
-      break;
+      return MarkedContentState::kDelay;
     }
   }
-  if (!bExist) {
-    return MarkedContentState::kDone;
-  }
 
-  return MarkedContentState::kDelay;
+  return MarkedContentState::kDone;
 }
 
 void CPDF_TextPage::ProcessMarkedContent(const TransformedTextObject& obj) {
@@ -1029,7 +1023,7 @@ void CPDF_TextPage::ProcessMarkedContent(const TransformedTextObject& obj) {
 
   RetainPtr<CPDF_Font> const font = pTextObj->GetFont();
   for (size_t k = 0; k < actual_text.GetLength(); ++k) {
-    wchar_t wChar = actual_text[k];
+    wchar_t wChar = actual_text.CharAt(k);
     if (wChar <= 0x80 && !isprint(wChar)) {
       wChar = 0x20;
     }
@@ -1218,7 +1212,7 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
     unicode += static_cast<wchar_t>(item.char_code_);
   }
 
-  wchar_t curChar = unicode[0];
+  wchar_t curChar = unicode.Front();
   if (WritingMode == TextOrientation::kHorizontal) {
     if (EndHorizontalLine(this_rect, prev_rect)) {
       return IsHyphen(curChar) ? GenerateCharacter::kHyphen
@@ -1346,7 +1340,7 @@ bool CPDF_TextPage::ProcessGenerateCharacter(GenerateCharacter type,
         if (unicode.IsEmpty()) {
           unicode += static_cast<wchar_t>(item.char_code_);
         }
-        wchar_t curChar = unicode[0];
+        wchar_t curChar = unicode.Front();
         if (IsHyphenCode(curChar)) {
           return false;
         }

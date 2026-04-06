@@ -775,7 +775,8 @@ void CXFA_TextLayout::LoadText(CXFA_Node* pNode,
 
   WideString wsText = pNode->JSObject()->GetContent(false);
   wsText.TrimBack(L" ");
-  bool bRet = AppendChar(wsText, pLinePos, fSpaceAbove, bSavePieces);
+  bool bRet =
+      AppendChar(wsText.AsStringView(), pLinePos, fSpaceAbove, bSavePieces);
   if (bRet && loader_) {
     loader_->pNode = pNode;
   } else {
@@ -906,7 +907,7 @@ bool CXFA_TextLayout::LoadRichText(const CFX_XMLNode* pXMLNode,
           break_->SetUserData(pUserData);
         }
 
-        if (AppendChar(wsText, pLinePos, 0, bSavePieces)) {
+        if (AppendChar(wsText.AsStringView(), pLinePos, 0, bSavePieces)) {
           if (loader_) {
             loader_->bFilterSpace = false;
           }
@@ -974,7 +975,7 @@ bool CXFA_TextLayout::LoadRichText(const CFX_XMLNode* pXMLNode,
   return false;
 }
 
-bool CXFA_TextLayout::AppendChar(const WideString& wsText,
+bool CXFA_TextLayout::AppendChar(WideStringView wsText,
                                  float* pLinePos,
                                  float fSpaceAbove,
                                  bool bSavePieces) {
@@ -1073,7 +1074,7 @@ void CXFA_TextLayout::DoTabstops(CFX_CSSComputedStyle* pStyle,
       } else if (dwAlign == FX_HashCode_GetW(L"decimal")) {
         int32_t iChars = pPiece->iChars;
         for (int32_t i = 0; i < iChars; i++) {
-          if (pPiece->szText[i] == L'.') {
+          if (pPiece->szText.CharAt(i) == L'.') {
             break;
           }
 

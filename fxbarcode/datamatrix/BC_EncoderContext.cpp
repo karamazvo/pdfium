@@ -28,14 +28,14 @@
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
 
-CBC_EncoderContext::CBC_EncoderContext(const WideString& msg) {
-  ByteString dststr = msg.ToUTF8();
+CBC_EncoderContext::CBC_EncoderContext(WideStringView msg) {
+  ByteString dststr = FX_UTF8Encode(msg);
   size_t c = dststr.GetLength();
   WideString sb;
   sb.Reserve(c);
   for (size_t i = 0; i < c; i++) {
-    wchar_t ch = static_cast<wchar_t>(dststr[i] & 0xff);
-    if (ch == '?' && dststr[i] != '?') {
+    wchar_t ch = static_cast<wchar_t>(dststr.span()[i] & 0xff);
+    if (ch == '?' && dststr.span()[i] != '?') {
       has_characters_outside_iso88591_encoding_ = true;
     }
     sb += ch;
@@ -49,11 +49,13 @@ CBC_EncoderContext::~CBC_EncoderContext() = default;
 void CBC_EncoderContext::setSkipAtEnd(int32_t count) {
   skip_at_end_ = count;
 }
+
 wchar_t CBC_EncoderContext::getCurrentChar() {
-  return msg_[pos_];
+  return msg_.CharAt(pos_);
 }
+
 wchar_t CBC_EncoderContext::getCurrent() {
-  return msg_[pos_];
+  return msg_.CharAt(pos_);
 }
 
 void CBC_EncoderContext::writeCodewords(const WideString& codewords) {

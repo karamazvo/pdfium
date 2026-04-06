@@ -113,8 +113,11 @@ class StringTemplate {
   bool IsValidIndex(size_t index) const { return index < GetLength(); }
   bool IsValidLength(size_t length) const { return length <= GetLength(); }
 
-  // CHECK() if index is out of range (via span's operator[]).
-  CharType operator[](const size_t index) const {
+  // CHECK() if index is out of range (via span's operator[]). This is
+  // called CharAt() rather than operator[] to indicate it is expensive
+  // vs indexing a string view or span, and that the optimizer has a
+  // hard time eliding the bounds checks.
+  CharType CharAt(const size_t index) const {
     CHECK(data_);
     return data_->span()[index];
   }

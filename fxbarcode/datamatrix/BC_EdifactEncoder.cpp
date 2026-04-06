@@ -31,7 +31,7 @@
 
 namespace {
 
-WideString EncodeToEdifactCodewords(const WideString& sb) {
+WideString EncodeToEdifactCodewords(WideStringView sb) {
   size_t len = sb.GetLength();
   if (len == 0) {
     return WideString();
@@ -75,7 +75,7 @@ bool HandleEOD(CBC_EncoderContext* context, const WideString& buffer) {
   }
 
   int32_t restChars = count - 1;
-  WideString encoded = EncodeToEdifactCodewords(buffer);
+  WideString encoded = EncodeToEdifactCodewords(buffer.AsStringView());
   if (encoded.IsEmpty()) {
     return false;
   }
@@ -143,7 +143,7 @@ bool CBC_EdifactEncoder::Encode(CBC_EncoderContext* context) {
     context->pos_++;
     size_t count = buffer.GetLength();
     if (count >= 4) {
-      WideString encoded = EncodeToEdifactCodewords(buffer);
+      WideString encoded = EncodeToEdifactCodewords(buffer.AsStringView());
       if (encoded.IsEmpty()) {
         return false;
       }
@@ -151,8 +151,8 @@ bool CBC_EdifactEncoder::Encode(CBC_EncoderContext* context) {
       context->writeCodewords(encoded);
       buffer.Delete(0, 4);
       CBC_HighLevelEncoder::Encoding newMode =
-          CBC_HighLevelEncoder::LookAheadTest(context->msg_, context->pos_,
-                                              GetEncodingMode());
+          CBC_HighLevelEncoder::LookAheadTest(context->msg_.AsStringView(),
+                                              context->pos_, GetEncodingMode());
       if (newMode != GetEncodingMode()) {
         context->SignalEncoderChange(CBC_HighLevelEncoder::Encoding::ASCII);
         break;

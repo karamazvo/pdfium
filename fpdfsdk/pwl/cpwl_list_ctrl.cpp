@@ -29,7 +29,7 @@ void CPWL_ListCtrl::Item::SetFontMap(IPVT_FontMap* font_map) {
   edit_->SetFontMap(font_map);
 }
 
-void CPWL_ListCtrl::Item::SetText(const WideString& text) {
+void CPWL_ListCtrl::Item::SetText(WideStringView text) {
   edit_->SetText(text);
   edit_->Paint();
 }
@@ -316,7 +316,7 @@ CFX_FloatRect CPWL_ListCtrl::GetItemRectInternal(int32_t nIndex) const {
   return InnerToOuter(rcItem);
 }
 
-void CPWL_ListCtrl::AddString(const WideString& str) {
+void CPWL_ListCtrl::AddString(WideStringView str) {
   AddItem(str);
   ReArrange(GetCount() - 1);
 }
@@ -579,7 +579,7 @@ WideString CPWL_ListCtrl::GetText() const {
   return GetItemText(sel_item_);
 }
 
-void CPWL_ListCtrl::AddItem(const WideString& str) {
+void CPWL_ListCtrl::AddItem(WideStringView str) {
   auto pListItem = std::make_unique<Item>();
   pListItem->SetFontMap(font_map_);
   pListItem->SetFontSize(font_size_);

@@ -1085,9 +1085,11 @@ CXFA_LocaleMgr::LangID GetLanguageID(WideString wsLanguage) {
   }
 
   wsLanguage.MakeLower();
-  uint32_t dwIDFirst = wsLanguage[0] << 8 | wsLanguage[1];
-  uint32_t dwIDSecond =
-      wsLanguage.GetLength() >= 5 ? wsLanguage[3] << 8 | wsLanguage[4] : 0;
+  uint32_t dwIDFirst = wsLanguage.CharAt(0) << 8 | wsLanguage.CharAt(1);
+  uint32_t dwIDSecond = wsLanguage.GetLength() >= 5
+                            ? wsLanguage.CharAt(3) << 8 | wsLanguage.CharAt(4)
+                            : 0;
+
   switch (dwIDFirst) {
     case FXBSTR_ID(0, 0, 'z', 'h'):
       if (dwIDSecond == FXBSTR_ID(0, 0, 'c', 'n')) {

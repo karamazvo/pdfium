@@ -796,7 +796,7 @@ ByteString GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
   }
 
   pEdit->Initialize();
-  pEdit->SetText(sLabel);
+  pEdit->SetText(sLabel.AsStringView());
   pEdit->Paint();
 
   CFX_FloatRect rcLabelContent = pEdit->GetContentRect();
@@ -1139,7 +1139,7 @@ std::optional<CheckStyle> CheckStyleFromCaption(const WideString& caption) {
   }
 
   // Character values are ZapfDingbats encodings of named glyphs.
-  switch (caption[0]) {
+  switch (caption.Front()) {
     case L'4':
       return CheckStyle::kCheck;
     case L'8':
@@ -1557,13 +1557,13 @@ void CPDFSDK_AppStream::SetAsComboBox(std::optional<WideString> sValue) {
 
   pEdit->Initialize();
   if (sValue.has_value()) {
-    pEdit->SetText(sValue.value());
+    pEdit->SetText(sValue->AsStringView());
   } else {
     int32_t nCurSel = pField->GetSelectedIndex(0);
     if (nCurSel < 0) {
-      pEdit->SetText(pField->GetValue());
+      pEdit->SetText(pField->GetValue().AsStringView());
     } else {
-      pEdit->SetText(pField->GetOptionLabel(nCurSel));
+      pEdit->SetText(pField->GetOptionLabel(nCurSel).AsStringView());
     }
   }
   pEdit->Paint();
@@ -1629,7 +1629,7 @@ void CPDFSDK_AppStream::SetAsListBox() {
       }
     }
 
-    pEdit->SetText(pField->GetOptionLabel(i));
+    pEdit->SetText(pField->GetOptionLabel(i).AsStringView());
     pEdit->Paint();
 
     CFX_FloatRect rcContent = pEdit->GetContentRect();
@@ -1741,7 +1741,7 @@ void CPDFSDK_AppStream::SetAsTextField(std::optional<WideString> sValue) {
   }
 
   pEdit->Initialize();
-  pEdit->SetText(sValue.value_or(pField->GetValue()));
+  pEdit->SetText(sValue.value_or(pField->GetValue()).AsStringView());
   pEdit->Paint();
 
   CFX_FloatRect rcContent = pEdit->GetContentRect();

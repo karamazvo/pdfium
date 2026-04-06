@@ -53,11 +53,11 @@ std::unique_ptr<CPWL_Wnd> CFFL_ComboBox::NewPWLWindow(
   }
 
   for (int32_t i = 0, sz = widget_->CountOptions(); i < sz; i++) {
-    pWnd->AddString(widget_->GetOptionLabel(i));
+    pWnd->AddString(widget_->GetOptionLabel(i).AsStringView());
   }
 
   pWnd->SetSelect(nCurSel);
-  pWnd->SetText(swText);
+  pWnd->SetText(swText.AsStringView());
   return pWnd;
 }
 
@@ -205,7 +205,7 @@ void CFFL_ComboBox::RecreatePWLWindowFromSavedState(
     return;
   }
 
-  pEdit->SetText(state_.sValue);
+  pEdit->SetText(state_.sValue.AsStringView());
   pEdit->SetSelection(state_.nStart, state_.nEnd);
 }
 

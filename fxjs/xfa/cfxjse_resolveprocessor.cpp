@@ -48,7 +48,7 @@ bool CFXJSE_ResolveProcessor::Resolve(v8::Isolate* pIsolate, NodeData& rnd) {
   }
 
   if (rnd.name_.GetLength()) {
-    wchar_t wch = rnd.name_[0];
+    wchar_t wch = rnd.name_.Front();
     switch (wch) {
       case '$':
         return ResolveDollar(pIsolate, rnd);
@@ -623,7 +623,7 @@ void CFXJSE_ResolveProcessor::ConditionArray(size_t iCurIndex,
   bool bAll = false;
   size_t i = 1;
   for (; i < iLen; ++i) {
-    wchar_t ch = wsCondition[i];
+    wchar_t ch = wsCondition.CharAt(i);
     if (ch == ' ') {
       continue;
     }
@@ -714,13 +714,14 @@ void CFXJSE_ResolveProcessor::FilterCondition(v8::Isolate* pIsolate,
     return;
   }
 
-  wchar_t wTypeChar = wsCondition[0];
+  wchar_t wTypeChar = wsCondition.Front();
   switch (wTypeChar) {
     case '[':
       ConditionArray(iCurIndex, wsCondition, iFoundCount, pRnd);
       return;
     case '.':
-      if (nLen > 1 && (wsCondition[1] == '[' || wsCondition[1] == '(')) {
+      if (nLen > 1 &&
+          (wsCondition.CharAt(1) == '[' || wsCondition.CharAt(1) == '(')) {
         DoPredicateFilter(pIsolate, wsCondition, iFoundCount, pRnd);
       }
       return;

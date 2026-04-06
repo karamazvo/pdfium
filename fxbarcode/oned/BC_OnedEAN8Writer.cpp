@@ -96,10 +96,10 @@ WideString CBC_OnedEAN8Writer::FilterContents(WideStringView contents) {
 }
 
 int32_t CBC_OnedEAN8Writer::CalcChecksum(const ByteString& contents) {
-  return EANCalcChecksum(contents);
+  return EANCalcChecksum(contents.AsStringView());
 }
 
-DataVector<uint8_t> CBC_OnedEAN8Writer::Encode(const ByteString& contents) {
+DataVector<uint8_t> CBC_OnedEAN8Writer::Encode(ByteStringView contents) {
   if (contents.GetLength() != 8) {
     return {};
   }
@@ -109,14 +109,14 @@ DataVector<uint8_t> CBC_OnedEAN8Writer::Encode(const ByteString& contents) {
   result_span = AppendPattern(result_span, kOnedEAN8StartPattern, true);
 
   for (int i = 0; i <= 3; i++) {
-    int32_t digit = FXSYS_DecimalCharToInt(contents[i]);
+    int32_t digit = FXSYS_DecimalCharToInt((char)contents[i]);
     result_span =
         AppendPattern(result_span, kOnedEAN8LPatternTable[digit], false);
   }
   result_span = AppendPattern(result_span, kOnedEAN8MiddlePattern, false);
 
   for (int i = 4; i <= 7; i++) {
-    int32_t digit = FXSYS_DecimalCharToInt(contents[i]);
+    int32_t digit = FXSYS_DecimalCharToInt((char)contents[i]);
     result_span =
         AppendPattern(result_span, kOnedEAN8LPatternTable[digit], true);
   }
@@ -158,7 +158,8 @@ bool CBC_OnedEAN8Writer::ShowChars(WideStringView contents,
   int32_t strWidth = static_cast<int32_t>(kWidth * output_hscale_);
 
   pdfium::span<TextCharPos> charpos_span = pdfium::span(charpos);
-  CalcTextInfo(tempStr, charpos, font_, (float)strWidth, iFontSize);
+  CalcTextInfo(tempStr.AsStringView(), charpos, font_, (float)strWidth,
+               iFontSize);
   {
     CFX_Matrix affine_matrix1(1.0, 0.0, 0.0, -1.0,
                               kLeftPosition * output_hscale_,
@@ -170,8 +171,8 @@ bool CBC_OnedEAN8Writer::ShowChars(WideStringView contents,
   }
   tempStr = str.Substr(4, 4);
   iLen = tempStr.GetLength();
-  CalcTextInfo(tempStr, charpos_span.subspan<4u>(), font_, (float)strWidth,
-               iFontSize);
+  CalcTextInfo(tempStr.AsStringView(), charpos_span.subspan<4u>(), font_,
+               (float)strWidth, iFontSize);
   {
     CFX_Matrix affine_matrix1(1.0, 0.0, 0.0, -1.0,
                               (kLeftPosition + 33) * output_hscale_,

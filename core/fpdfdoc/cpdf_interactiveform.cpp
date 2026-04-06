@@ -136,7 +136,7 @@ ByteString GetNativeFontName(FX_Charset charset, void* log_font) {
 }
 
 ByteString GenerateNewFontResourceName(const CPDF_Dictionary* resource_dict,
-                                       ByteString prefix) {
+                                       ByteStringView prefix) {
   static constexpr auto kDummyFontName = pdfium::span_from_cstring("ZiTi");
   if (prefix.IsEmpty()) {
     prefix = ByteStringView(kDummyFontName);
@@ -163,7 +163,6 @@ ByteString GenerateNewFontResourceName(const CPDF_Dictionary* resource_dict,
     if (!dict->KeyExist(key.AsStringView())) {
       return key;
     }
-
     if (m < prefix_length) {
       actual_prefix += prefix[m++];
     } else {
@@ -292,7 +291,7 @@ void AddFont(CPDF_Dictionary* form_dict,
   }
 
   name_tag->Remove(' ');
-  *name_tag = GenerateNewFontResourceName(pDR.Get(), *name_tag);
+  *name_tag = GenerateNewFontResourceName(pDR.Get(), name_tag->AsStringView());
   font_dict->SetNewFor<CPDF_Reference>(*name_tag, document,
                                        font->GetFontDictObjNum());
 }
@@ -377,15 +376,13 @@ class CFieldNameExtractor {
 
   WideStringView GetNext() {
     size_t start_pos = cur_;
-    while (cur_ < full_name_.GetLength() && full_name_[cur_] != L'.') {
+    while (cur_ < full_name_.GetLength() && full_name_.span()[cur_] != L'.') {
       ++cur_;
     }
-
     size_t length = cur_ - start_pos;
-    if (cur_ < full_name_.GetLength() && full_name_[cur_] == L'.') {
+    if (cur_ < full_name_.GetLength() && full_name_.span()[cur_] == L'.') {
       ++cur_;
     }
-
     return full_name_.AsStringView().Substr(start_pos, length);
   }
 
