@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "98e79d2f_b938f589",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-06T23:11:26Z",
+      "side": 1,
+      "message": "Just metadata updates in the nasm dir.",
+      "revId": "7828e6813fc68accf933ddc0eadc7e8d7d5c613b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
