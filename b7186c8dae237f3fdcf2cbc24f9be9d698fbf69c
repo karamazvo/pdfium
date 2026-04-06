@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a8006a19_4d98001b",
+        "filename": "core/fxge/win32/cfx_psrenderer.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 623,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-06T20:41:29Z",
+      "side": 1,
+      "message": "Pre-existing: I wonder if this should just use `bitmap-\u003eGetPitch()` instead.",
+      "revId": "b7186c8dae237f3fdcf2cbc24f9be9d698fbf69c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "65a9286e_13ff2804",
+        "filename": "core/fxge/win32/cfx_psrenderer.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 627,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-06T20:41:29Z",
+      "side": 1,
+      "message": "And if `bitmap` has valid dimensions and pitch, then will this ever fail?",
+      "revId": "b7186c8dae237f3fdcf2cbc24f9be9d698fbf69c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
