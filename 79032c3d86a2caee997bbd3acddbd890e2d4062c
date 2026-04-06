@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cbc3dd41_28d60408",
+        "filename": "core/fpdfapi/render/cpdf_rendershading.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 884,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-06T18:48:03Z",
+      "side": 1,
+      "message": "Use the constant here as well?",
+      "range": {
+        "startLine": 884,
+        "startChar": 22,
+        "endLine": 884,
+        "endChar": 24
+      },
+      "revId": "79032c3d86a2caee997bbd3acddbd890e2d4062c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
