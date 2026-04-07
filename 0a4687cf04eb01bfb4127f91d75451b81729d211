@@ -16,6 +16,24 @@
       "message": "Can that be a separate CL?",
       "revId": "0a4687cf04eb01bfb4127f91d75451b81729d211",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c5a8bca2_0d7a2220",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-07T23:27:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bba6622f_e4e97763",
+      "revId": "0a4687cf04eb01bfb4127f91d75451b81729d211",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
