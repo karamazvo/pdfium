@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5499f2a7_8dd4de98",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-07T20:59:01Z",
+      "side": 1,
+      "message": "Maybe write \"Add a test to demonstrate a PDF flattening bug\"\n\nAnd then write a brief CL description to mention it is intentionally broken.",
+      "revId": "dd2b9501149316358817f6a797bf6e08afc7c7da",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b9cf6971_ff46f71a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-07T20:59:01Z",
+      "side": 1,
+      "message": "Flip with line 9.",
+      "revId": "dd2b9501149316358817f6a797bf6e08afc7c7da",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "15830ba1_610114de",
+        "filename": "fpdfsdk/fpdf_flatten_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-07T20:59:01Z",
+      "side": 1,
+      "message": "Maybe \"FlattenShouldRemoveAcroForm\"",
+      "range": {
+        "startLine": 128,
+        "startChar": 32,
+        "endLine": 128,
+        "endChar": 40
+      },
+      "revId": "dd2b9501149316358817f6a797bf6e08afc7c7da",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
