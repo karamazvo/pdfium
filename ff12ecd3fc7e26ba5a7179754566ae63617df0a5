@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "221e6e33_d1517cf7",
+        "filename": "core/fpdfapi/page/cpdf_streamcontentparser.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1269,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-07T23:15:39Z",
+      "side": 1,
+      "message": "This is a perfectly accurate mechanical translation of the original code, but it seems to highlight a pre-existing bug!\n\n`name` starts with the 6-character prefix \"Device\" (as seen in the `if` condition above).\n`Substr(7)` skips the first 7 characters. For \"DeviceGray\" (length 10), it skips the \u0027G\u0027 at index 6 and returns \"ray\", resulting in `defname` becoming \"Defaultray\". \nFor \"DeviceRGB\", it results in \"DefaultGB\", and for \"DeviceCMYK\" it results in \"DefaultMYK\".\n\nThe intent here is clearly to look up \"DefaultGray\", \"DefaultRGB\", and \"DefaultCMYK\". The author of the original code likely used `7` by mistake, perhaps confusing the length of \"Default\" (7) with the length of \"Device\" (6). \n\nSince you\u0027re modifying this line, consider fixing this by changing it to `name.Substr(6)`.",
+      "range": {
+        "startLine": 1269,
+        "startChar": 0,
+        "endLine": 1269,
+        "endChar": 0
+      },
+      "revId": "ff12ecd3fc7e26ba5a7179754566ae63617df0a5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
