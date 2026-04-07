@@ -36,6 +36,63 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "4089953a_365203e8",
+        "filename": "core/fxge/cfx_folderfontinfo.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-07T21:25:10Z",
+      "side": 1,
+      "message": "Have you considered using fxcrt::Mask?",
+      "revId": "a714840cd815aa99b273ef21df9e6794d43d15a2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e00ab1ff_0e0e53ff",
+        "filename": "core/fxge/cfx_folderfontinfo.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-07T21:25:10Z",
+      "side": 1,
+      "message": "Can this be part of FontFaceInfo instead of being in the global namespace?",
+      "revId": "a714840cd815aa99b273ef21df9e6794d43d15a2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b2a4da21_08b50186",
+        "filename": "core/fxge/cfx_folderfontinfo.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-07T21:25:10Z",
+      "side": 1,
+      "message": "Make this consistently lowercase.",
+      "range": {
+        "startLine": 24,
+        "startChar": 7,
+        "endLine": 24,
+        "endChar": 9
+      },
+      "revId": "a714840cd815aa99b273ef21df9e6794d43d15a2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "56af44f8_bd600ab2",
