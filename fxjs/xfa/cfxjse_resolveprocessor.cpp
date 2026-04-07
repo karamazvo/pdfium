@@ -48,7 +48,7 @@ bool CFXJSE_ResolveProcessor::Resolve(v8::Isolate* pIsolate, NodeData& rnd) {
   }
 
   if (rnd.name_.GetLength()) {
-    wchar_t wch = rnd.name_[0];
+    wchar_t wch = rnd.name_.Front();
     switch (wch) {
       case '$':
         return ResolveDollar(pIsolate, rnd);
@@ -714,7 +714,7 @@ void CFXJSE_ResolveProcessor::FilterCondition(v8::Isolate* pIsolate,
     return;
   }
 
-  wchar_t wTypeChar = wsCondition[0];
+  wchar_t wTypeChar = wsCondition.Front();
   switch (wTypeChar) {
     case '[':
       ConditionArray(iCurIndex, wsCondition, iFoundCount, pRnd);
