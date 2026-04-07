@@ -71,6 +71,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2531b9ed_a2dd271f",
+        "filename": "core/fxge/win32/cfx_psrenderer.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 623,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-07T21:44:09Z",
+      "side": 1,
+      "message": "My other idea is to use `bitmap-\u003eGetPitch()` and `bitmap-\u003eGetBuffer().size()` to get `src_pitch` and `output_size`, respectively.",
+      "parentUuid": "41d88515_ceca1937",
+      "revId": "b7186c8dae237f3fdcf2cbc24f9be9d698fbf69c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "65a9286e_13ff2804",
@@ -102,6 +120,24 @@
       "side": 1,
       "message": "See linked issue for discussion.",
       "parentUuid": "65a9286e_13ff2804",
+      "revId": "b7186c8dae237f3fdcf2cbc24f9be9d698fbf69c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8923becf_a51a06c9",
+        "filename": "core/fxge/win32/cfx_psrenderer.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 627,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-07T21:44:09Z",
+      "side": 1,
+      "message": "Oh, I guess it\u0027s because it\u0027s using int here instead of uint32_t. I guess we might as well go with FX_SAFE_UINT32.",
+      "parentUuid": "50f35d86_4571c984",
       "revId": "b7186c8dae237f3fdcf2cbc24f9be9d698fbf69c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
