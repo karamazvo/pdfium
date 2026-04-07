@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5f085c21_6e483a78",
+        "filename": "core/fpdfapi/page/cpdf_transferfuncdib.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-07T17:23:52Z",
+      "side": 1,
+      "message": "Since these really point into the members of `transfer_func_`, which are `const FixedSizeDataVector\u003cuint8_t\u003e`, I\u0027m not expecting any UAFs here.",
+      "revId": "abfbcd02b7b0c27e0b681e275ac184cc4f07383b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
