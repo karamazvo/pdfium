@@ -30,10 +30,10 @@ TEST(ByteString, ElementAccess) {
   EXPECT_EQ('\0', empty_span_with_terminator[0]);
 
   const ByteString abc("abc");
-  EXPECT_EQ('a', abc[0]);
-  EXPECT_EQ('b', abc[1]);
-  EXPECT_EQ('c', abc[2]);
-  EXPECT_DEATH_IF_SUPPORTED({ abc[3]; }, "");
+  EXPECT_EQ('a', abc.span()[0]);
+  EXPECT_EQ('b', abc.span()[1]);
+  EXPECT_EQ('c', abc.span()[2]);
+  EXPECT_DEATH_IF_SUPPORTED({ abc.span()[3]; }, "");
 
   pdfium::span<const char> abc_span = abc.span();
   EXPECT_EQ(3u, abc_span.size());
@@ -56,9 +56,9 @@ TEST(ByteString, ElementAccess) {
 
   ByteString mutable_abc = abc;
   EXPECT_EQ(abc.c_str(), mutable_abc.c_str());
-  EXPECT_EQ('a', mutable_abc[0]);
-  EXPECT_EQ('b', mutable_abc[1]);
-  EXPECT_EQ('c', mutable_abc[2]);
+  EXPECT_EQ('a', mutable_abc.span()[0]);
+  EXPECT_EQ('b', mutable_abc.span()[1]);
+  EXPECT_EQ('c', mutable_abc.span()[2]);
   EXPECT_EQ(abc.c_str(), mutable_abc.c_str());
   EXPECT_EQ("abc", abc);
 

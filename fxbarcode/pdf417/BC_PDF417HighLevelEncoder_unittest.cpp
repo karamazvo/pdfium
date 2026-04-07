@@ -197,7 +197,7 @@ TEST(PDF417HighLevelEncoderTest, ConsecutiveDigitCount) {
     WideString input(testcase.input);
     int actual_count =
         CBC_PDF417HighLevelEncoder::DetermineConsecutiveDigitCount(
-            input, testcase.offset);
+            input.AsStringView(), testcase.offset);
     EXPECT_EQ(testcase.expected_count, actual_count)
         << " for case number " << i;
     ++i;
@@ -258,7 +258,7 @@ TEST(PDF417HighLevelEncoderTest, ConsecutiveTextCount) {
     WideString input(testcase.input);
     int actual_count =
         CBC_PDF417HighLevelEncoder::DetermineConsecutiveTextCount(
-            input, testcase.offset);
+            input.AsStringView(), testcase.offset);
     EXPECT_EQ(testcase.expected_count, actual_count)
         << " for case number " << i;
     ++i;

@@ -234,7 +234,7 @@ CFX_FloatRect CPWL_ListBox::GetFocusRect() const {
   return CPWL_Wnd::GetFocusRect();
 }
 
-void CPWL_ListBox::AddString(const WideString& str) {
+void CPWL_ListBox::AddString(WideStringView str) {
   list_ctrl_->AddString(str);
 }
 

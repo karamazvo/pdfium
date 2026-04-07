@@ -364,7 +364,7 @@ v8::Local<v8::Array> CJS_PublicMethods::AF_MakeArrayFromList(
 }
 
 double CJS_PublicMethods::ParseDate(v8::Isolate* isolate,
-                                    const WideString& value,
+                                    WideStringView value,
                                     bool* bWrongFormat) {
   double dt = FX_GetDateTime();
   int nYear = FX_GetYearFromTime(dt);
@@ -444,12 +444,13 @@ double CJS_PublicMethods::ParseDate(v8::Isolate* isolate,
   // TODO(thestig): Should we set |bWrongFormat| to false here too?
   return JS_DateParse(
       isolate, WideString::Format(L"%d/%d/%d %d:%d:%d", nMonth, nDay, nYear,
-                                  nHour, nMin, nSec));
+                                  nHour, nMin, nSec)
+                   .AsStringView());
 }
 
 double CJS_PublicMethods::ParseDateUsingFormat(v8::Isolate* isolate,
-                                               const WideString& value,
-                                               const WideString& format,
+                                               WideStringView value,
+                                               WideStringView format,
                                                bool* bWrongFormat) {
   double dRet = nan("");
   fxjs::ConversionStatus status = FX_ParseDateUsingFormat(value, format, &dRet);
@@ -474,7 +475,7 @@ double CJS_PublicMethods::ParseDateUsingFormat(v8::Isolate* isolate,
 }
 
 WideString CJS_PublicMethods::PrintDateUsingFormat(double dDate,
-                                                   const WideString& format) {
+                                                   WideStringView format) {
   WideString sRet;
   WideString sPart;
 
@@ -499,7 +500,7 @@ WideString CJS_PublicMethods::PrintDateUsingFormat(double dDate,
       case 'M':
       case 's':
       case 't':
-        if (remaining == 0 || format[i + 1] != c) {
+        if (remaining == 0 || (wchar_t)format[i + 1] != c) {
           switch (c) {
             case 'y':
               sPart += c;
@@ -528,7 +529,7 @@ WideString CJS_PublicMethods::PrintDateUsingFormat(double dDate,
               break;
           }
           i++;
-        } else if (remaining == 1 || format[i + 2] != c) {
+        } else if (remaining == 1 || (wchar_t)format[i + 2] != c) {
           switch (c) {
             case 'y':
               sPart = WideString::Format(L"%02d", nYear - (nYear / 100) * 100);
@@ -557,7 +558,7 @@ WideString CJS_PublicMethods::PrintDateUsingFormat(double dDate,
               break;
           }
           i += 2;
-        } else if (remaining == 2 || format[i + 3] != c) {
+        } else if (remaining == 2 || (wchar_t)format[i + 3] != c) {
           switch (c) {
             case 'm':
               i += 3;
@@ -572,7 +573,7 @@ WideString CJS_PublicMethods::PrintDateUsingFormat(double dDate,
               sPart += c;
               break;
           }
-        } else if (remaining == 3 || format[i + 4] != c) {
+        } else if (remaining == 3 || (wchar_t)format[i + 4] != c) {
           switch (c) {
             case 'y':
               sPart = WideString::Format(L"%04d", nYear);
@@ -782,7 +783,7 @@ CJS_Result CJS_PublicMethods::AFNumber_Keystroke(
 
   bool bHasSep = wstrValue.Contains(cSep);
   for (size_t i = 0; i < wstrChange.GetLength(); ++i) {
-    if (wstrChange[i] == cSep) {
+    if (wstrChange.CharAt(i) == cSep) {
       if (bHasSep) {
         context->Rc() = false;
         return CJS_Result::Success();
@@ -790,7 +791,7 @@ CJS_Result CJS_PublicMethods::AFNumber_Keystroke(
       bHasSep = true;
       continue;
     }
-    if (wstrChange[i] == L'-') {
+    if (wstrChange.CharAt(i) == L'-') {
       if (bHasSign) {
         context->Rc() = false;
         return CJS_Result::Success();
@@ -808,7 +809,7 @@ CJS_Result CJS_PublicMethods::AFNumber_Keystroke(
       continue;
     }
 
-    if (!FXSYS_IsDecimalDigit(wstrChange[i])) {
+    if (!FXSYS_IsDecimalDigit(wstrChange.CharAt(i))) {
       context->Rc() = false;
       return CJS_Result::Success();
     }
@@ -945,8 +946,9 @@ CJS_Result CJS_PublicMethods::AFDate_FormatEx(
     // e.g. "Tue Aug 11 14:24:16 GMT+08002009"
     dDate = ParseDateAsGMT(pRuntime->GetIsolate(), strValue);
   } else {
-    dDate = ParseDateUsingFormat(pRuntime->GetIsolate(), strValue, sFormat,
-                                 nullptr);
+    dDate =
+        ParseDateUsingFormat(pRuntime->GetIsolate(), strValue.AsStringView(),
+                             sFormat.AsStringView(), nullptr);
   }
 
   if (isnan(dDate)) {
@@ -956,7 +958,7 @@ CJS_Result CJS_PublicMethods::AFDate_FormatEx(
     return CJS_Result::Failure(JSMessage::kParseDateError);
   }
 
-  val = PrintDateUsingFormat(dDate, sFormat);
+  val = PrintDateUsingFormat(dDate, sFormat.AsStringView());
   return CJS_Result::Success();
 }
 
@@ -993,7 +995,7 @@ double CJS_PublicMethods::ParseDateAsGMT(v8::Isolate* isolate,
   double dRet = FX_MakeDate(FX_MakeDay(nYear, nMonth - 1, nDay),
                             FX_MakeTime(nHour, nMin, nSec, 0));
   if (isnan(dRet)) {
-    dRet = JS_DateParse(isolate, strValue);
+    dRet = JS_DateParse(isolate, strValue.AsStringView());
   }
 
   return dRet;
@@ -1024,8 +1026,9 @@ CJS_Result CJS_PublicMethods::AFDate_KeystrokeEx(
 
   bool bWrongFormat = false;
   WideString sFormat = pRuntime->ToWideString(params[0]);
-  double dRet = ParseDateUsingFormat(pRuntime->GetIsolate(), strValue, sFormat,
-                                     &bWrongFormat);
+  double dRet =
+      ParseDateUsingFormat(pRuntime->GetIsolate(), strValue.AsStringView(),
+                           sFormat.AsStringView(), &bWrongFormat);
   if (bWrongFormat || isnan(dRet)) {
     WideString swMsg = WideString::Format(
         JSGetStringFromID(JSMessage::kParseDateError).c_str(), sFormat.c_str());
@@ -1176,7 +1179,7 @@ CJS_Result CJS_PublicMethods::AFSpecial_KeystrokeEx(
 
     size_t index = 0;
     for (index = 0; index < valEvent.GetLength(); ++index) {
-      if (!MaskSatisfied(valEvent[index], wstrMask[index])) {
+      if (!MaskSatisfied(valEvent.CharAt(index), wstrMask.CharAt(index))) {
         break;
       }
     }
@@ -1218,12 +1221,11 @@ CJS_Result CJS_PublicMethods::AFSpecial_KeystrokeEx(
       pEvent->Rc() = false;
       return CJS_Result::Success();
     }
-    wchar_t wMask = wstrMask[mask_index];
+    wchar_t wMask = wstrMask.CharAt(mask_index);
     if (!IsReservedMaskChar(wMask)) {
       wChange.SetAt(i, wMask);
     }
-
-    if (!MaskSatisfied(wChange[i], wMask)) {
+    if (!MaskSatisfied(wChange.CharAt(i), wMask)) {
       pEvent->Rc() = false;
       return CJS_Result::Success();
     }
@@ -1303,7 +1305,8 @@ CJS_Result CJS_PublicMethods::AFParseDateEx(
   WideString sValue = pRuntime->ToWideString(params[0]);
   WideString sFormat = pRuntime->ToWideString(params[1]);
   double dDate =
-      ParseDateUsingFormat(pRuntime->GetIsolate(), sValue, sFormat, nullptr);
+      ParseDateUsingFormat(pRuntime->GetIsolate(), sValue.AsStringView(),
+                           sFormat.AsStringView(), nullptr);
   if (isnan(dDate)) {
     WideString swMsg = WideString::Format(
         JSGetStringFromID(JSMessage::kParseDateError).c_str(), sFormat.c_str());

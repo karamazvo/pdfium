@@ -680,8 +680,7 @@ WideString FormatNumStr(const WideString& wsValue, LocaleIface* pLocale) {
     if (i % 3 == nPos && i != 0) {
       wsOutput += wsGroupSymbol;
     }
-
-    wsOutput += wsSrcNum[i];
+    wsOutput += wsSrcNum.CharAt(i);
   }
   if (dot_index < wsSrcNum.GetLength()) {
     wsOutput += pLocale->GetDecimalSymbol();
@@ -5317,7 +5316,7 @@ WideString CXFA_Node::NumericLimit(const WideString& wsValue) {
 
   WideString wsRet;
   int32_t i = 0;
-  if (wsValue[i] == L'-') {
+  if (wsValue.CharAt(i) == L'-') {
     wsRet += L'-';
     i++;
   }
@@ -5325,7 +5324,7 @@ WideString CXFA_Node::NumericLimit(const WideString& wsValue) {
   int32_t iLead2 = 0;
   int32_t iTread2 = -1;
   for (; i < iCount; i++) {
-    wchar_t wc = wsValue[i];
+    wchar_t wc = wsValue.CharAt(i);
     if (FXSYS_IsDecimalDigit(wc)) {
       if (iLead >= 0) {
         iLead2++;

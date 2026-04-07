@@ -37,13 +37,13 @@ double FX_MakeDay(int nYear, int nMonth, int nDay);
 double FX_MakeTime(int nHour, int nMin, int nSec, int nMs);
 double FX_MakeDate(double day, double time);
 
-int FX_ParseStringInteger(const WideString& str,
+int FX_ParseStringInteger(WideStringView str,
                           size_t nStart,
                           size_t* pSkip,
                           size_t nMaxStep);
 
-ConversionStatus FX_ParseDateUsingFormat(const WideString& value,
-                                         const WideString& format,
+ConversionStatus FX_ParseDateUsingFormat(WideStringView value,
+                                         WideStringView format,
                                          double* result);
 
 }  // namespace fxjs

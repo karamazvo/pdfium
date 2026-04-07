@@ -121,7 +121,7 @@ size_t EncoderIndex(CBC_HighLevelEncoder::Encoding encoding) {
 }  // namespace
 
 // static
-WideString CBC_HighLevelEncoder::EncodeHighLevel(const WideString& msg) {
+WideString CBC_HighLevelEncoder::EncodeHighLevel(WideStringView msg) {
   // Per spec. Alpha numeric input is even shorter.
   static constexpr size_t kMaxNumericInputLength = 3116;
 
@@ -136,7 +136,7 @@ WideString CBC_HighLevelEncoder::EncodeHighLevel(const WideString& msg) {
   }
 
   if (msg.Back() == kMacroTrailer) {
-    WideString left = msg.First(6);
+    WideString left(msg.First(6));
     if (left == kMacro05Header) {
       context.writeCodeword(kMacro05);
       context.setSkipAtEnd(2);
@@ -192,7 +192,7 @@ WideString CBC_HighLevelEncoder::EncodeHighLevel(const WideString& msg) {
 
 // static
 CBC_HighLevelEncoder::Encoding CBC_HighLevelEncoder::LookAheadTest(
-    const WideString& msg,
+    WideStringView msg,
     size_t startpos,
     CBC_HighLevelEncoder::Encoding currentMode) {
   if (startpos >= msg.GetLength()) {

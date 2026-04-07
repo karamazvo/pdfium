@@ -160,7 +160,7 @@ bool CXFA_FMStringExpression::ToJavaScript(WideTextBuffer* js,
 
   *js << "\"";
   for (size_t i = 1; i < tempStr.GetLength() - 1; i++) {
-    wchar_t oneChar = tempStr[i];
+    wchar_t oneChar = tempStr.span()[i];
     switch (oneChar) {
       case L'\"':
         ++i;

@@ -16,7 +16,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
     auto span = UNSAFE_BUFFERS(pdfium::span(data, size));
     WideString input1 = WideString::FromUTF16LE(span.first(len1));
     WideString input2 = WideString::FromUTF16LE(span.subspan(len1));
-    FX_ParseDateUsingFormat(input1, input2, &ignore);
+    FX_ParseDateUsingFormat(input1.AsStringView(), input2.AsStringView(),
+                            &ignore);
   }
   return 0;
 }

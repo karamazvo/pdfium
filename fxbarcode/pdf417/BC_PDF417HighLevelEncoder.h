@@ -25,7 +25,7 @@ class CBC_PDF417HighLevelEncoder {
 
   enum class SubMode { kAlpha = 0, kLower, kMixed, kPunctuation };
 
-  static SubMode EncodeText(const WideString& msg,
+  static SubMode EncodeText(WideStringView msg,
                             size_t startpos,
                             size_t count,
                             SubMode initialSubmode,
@@ -39,10 +39,12 @@ class CBC_PDF417HighLevelEncoder {
                             size_t startpos,
                             size_t count,
                             WideString* sb);
-  static size_t DetermineConsecutiveDigitCount(WideString msg, size_t startpos);
-  static size_t DetermineConsecutiveTextCount(WideString msg, size_t startpos);
+  static size_t DetermineConsecutiveDigitCount(WideStringView msg,
+                                               size_t startpos);
+  static size_t DetermineConsecutiveTextCount(WideStringView msg,
+                                              size_t startpos);
   static std::optional<size_t> DetermineConsecutiveBinaryCount(
-      WideString msg,
+      WideStringView msg,
       pdfium::span<const uint8_t> bytes,
       size_t startpos);
 

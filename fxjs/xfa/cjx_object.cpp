@@ -68,21 +68,19 @@ uint32_t GetMapKey_Element(XFA_Element eType, XFA_Attribute eAttribute) {
           (static_cast<uint32_t>(eAttribute) << 8) | XFA_KEYTYPE_Element);
 }
 
-std::tuple<int32_t, int32_t, int32_t> StrToRGB(const WideString& strRGB) {
+std::tuple<int32_t, int32_t, int32_t> StrToRGB(WideStringView str_rgb) {
   int32_t r = 0;
   int32_t g = 0;
   int32_t b = 0;
-
   size_t index = 0;
-  for (size_t i = 0; i < strRGB.GetLength(); ++i) {
-    wchar_t ch = strRGB[i];
+
+  for (wchar_t ch : str_rgb) {
     if (ch == L',') {
       ++index;
     }
     if (index > 2) {
       break;
     }
-
     int32_t iValue = ch - L'0';
     if (iValue >= 0 && iValue <= 9) {
       switch (index) {
@@ -1156,8 +1154,8 @@ void CJX_Object::ScriptSomFontColor(v8::Isolate* pIsolate,
   }
 
   if (bSetting) {
-    auto [r, g, b] =
-        StrToRGB(fxv8::ReentrantToWideStringHelper(pIsolate, *pValue));
+    auto [r, g, b] = StrToRGB(
+        fxv8::ReentrantToWideStringHelper(pIsolate, *pValue).AsStringView());
     FX_ARGB color = ArgbEncode(0xff, r, g, b);
     font->SetColor(color);
     return;
@@ -1177,8 +1175,8 @@ void CJX_Object::ScriptSomFillColor(v8::Isolate* pIsolate,
   }
 
   if (bSetting) {
-    auto [r, g, b] =
-        StrToRGB(fxv8::ReentrantToWideStringHelper(pIsolate, *pValue));
+    auto [r, g, b] = StrToRGB(
+        fxv8::ReentrantToWideStringHelper(pIsolate, *pValue).AsStringView());
     FX_ARGB color = ArgbEncode(0xff, r, g, b);
     borderfill->SetColor(color);
     return;
@@ -1194,8 +1192,8 @@ void CJX_Object::ScriptSomBorderColor(v8::Isolate* pIsolate,
   CXFA_Border* border = ToNode(object_.Get())->GetOrCreateBorderIfPossible();
   int32_t iSize = border->CountEdges();
   if (bSetting) {
-    auto [r, g, b] =
-        StrToRGB(fxv8::ReentrantToWideStringHelper(pIsolate, *pValue));
+    auto [r, g, b] = StrToRGB(
+        fxv8::ReentrantToWideStringHelper(pIsolate, *pValue).AsStringView());
     FX_ARGB rgb = ArgbEncode(100, r, g, b);
     for (int32_t i = 0; i < iSize; ++i) {
       CXFA_Edge* edge = border->GetEdgeIfExists(i);

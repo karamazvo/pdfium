@@ -15,7 +15,7 @@ class CBC_SymbolInfo;
 
 class CBC_EncoderContext {
  public:
-  explicit CBC_EncoderContext(const WideString& msg);
+  explicit CBC_EncoderContext(WideStringView msg);
   ~CBC_EncoderContext();
 
   void setSkipAtEnd(int32_t count);

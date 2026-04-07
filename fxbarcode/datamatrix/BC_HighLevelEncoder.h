@@ -26,9 +26,9 @@ class CBC_HighLevelEncoder {
   ~CBC_HighLevelEncoder() = delete;
 
   // Returns an empty string on failure.
-  static WideString EncodeHighLevel(const WideString& msg);
+  static WideString EncodeHighLevel(WideStringView msg);
 
-  static Encoding LookAheadTest(const WideString& msg,
+  static Encoding LookAheadTest(WideStringView msg,
                                 size_t startpos,
                                 Encoding currentMode);
   static bool IsExtendedASCII(wchar_t ch);

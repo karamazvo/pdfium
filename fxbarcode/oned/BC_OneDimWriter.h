@@ -48,7 +48,7 @@ class CBC_OneDimWriter : public CBC_Writer {
   void SetFontStyle(int32_t style);
   void SetFontColor(FX_ARGB color);
 
-  virtual DataVector<uint8_t> Encode(const ByteString& contents) = 0;
+  virtual DataVector<uint8_t> Encode(ByteStringView contents) = 0;
   bool RenderDeviceResult(CFX_RenderDevice* device,
                           const CFX_Matrix& matrix,
                           WideStringView contents);
@@ -68,7 +68,7 @@ class CBC_OneDimWriter : public CBC_Writer {
                        float locY,
                        int32_t barWidth);
   // Returns the total char width.
-  float CalcTextInfo(const ByteString& text,
+  float CalcTextInfo(ByteStringView text,
                      pdfium::span<TextCharPos> charPos,
                      CFX_Font* cFont,
                      float geWidth,

@@ -120,7 +120,7 @@ void CBC_OnedCode128Writer::SetTextLocation(BC_TEXT_LOC location) {
   loc_text_loc_ = location;
 }
 
-DataVector<uint8_t> CBC_OnedCode128Writer::Encode(const ByteString& contents) {
+DataVector<uint8_t> CBC_OnedCode128Writer::Encode(ByteStringView contents) {
   if (contents.GetLength() < 1 || contents.GetLength() > 80) {
     return DataVector<uint8_t>();
   }
@@ -153,7 +153,7 @@ DataVector<uint8_t> CBC_OnedCode128Writer::Encode(const ByteString& contents) {
 }
 
 // static
-int32_t CBC_OnedCode128Writer::Encode128B(const ByteString& contents,
+int32_t CBC_OnedCode128Writer::Encode128B(ByteStringView contents,
                                           std::vector<int32_t>* patterns) {
   int32_t checkWeight = 1;
   patterns->push_back(CODE_START_B);
@@ -167,22 +167,21 @@ int32_t CBC_OnedCode128Writer::Encode128B(const ByteString& contents,
 }
 
 // static
-int32_t CBC_OnedCode128Writer::Encode128C(const ByteString& contents,
+int32_t CBC_OnedCode128Writer::Encode128C(ByteStringView contents,
                                           std::vector<int32_t>* patterns) {
   int32_t checkWeight = 1;
   patterns->push_back(CODE_START_C);
   int32_t checkSum = CODE_START_C * checkWeight;
   size_t position = 0;
-  const ByteStringView view = contents.AsStringView();
-  while (position < view.GetLength()) {
+  while (position < contents.GetLength()) {
     int32_t patternIndex;
-    char ch = view.CharAt(position);
+    char ch = contents.CharAt(position);
     if (FXSYS_IsDecimalDigit(ch)) {
-      patternIndex = StringToInt(
-          view.Substr(position, view.IsValidIndex(position + 1) ? 2 : 1));
+      patternIndex = StringToInt(contents.Substr(
+          position, contents.IsValidIndex(position + 1) ? 2 : 1));
       ++position;
-      if (position < view.GetLength() &&
-          FXSYS_IsDecimalDigit(view.CharAt(position))) {
+      if (position < contents.GetLength() &&
+          FXSYS_IsDecimalDigit(contents.CharAt(position))) {
         ++position;
       }
     } else {

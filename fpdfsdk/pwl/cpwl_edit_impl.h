@@ -92,7 +92,7 @@ class CPWL_EditImpl {
   void OnVK_RIGHT(bool bShift);
   void OnVK_HOME(bool bShift, bool bCtrl);
   void OnVK_END(bool bShift, bool bCtrl);
-  void SetText(const WideString& sText);
+  void SetText(WideStringView sText);
   bool InsertWord(uint16_t word, FX_Charset charset);
   void InsertReturn();
   void Backspace();
@@ -239,7 +239,7 @@ class CPWL_EditImpl {
   bool IsTextOverflow() const;
   bool Clear();
   CPVT_WordPlace DoInsertText(const CPVT_WordPlace& place,
-                              const WideString& sText,
+                              WideStringView text,
                               FX_Charset charset);
   FX_Charset GetCharSetFromUnicode(uint16_t word, FX_Charset nOldCharset);
   int32_t GetTotalLines() const;

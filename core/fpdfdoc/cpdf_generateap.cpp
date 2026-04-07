@@ -594,7 +594,7 @@ ByteString GetPopupContentsString(CPDF_Document* doc,
   vt.SetAutoReturn(true);
   vt.SetMultiLine(true);
   vt.Initialize();
-  vt.SetText(value);
+  vt.SetText(value.AsStringView());
   vt.RearrangeAll();
 
   CFX_PointF offset(3.0f, -3.0f);
@@ -800,7 +800,7 @@ ByteString GenerateTextFieldAP(const CPDF_Dictionary* annot_dict,
   }
 
   vt.Initialize();
-  vt.SetText(value);
+  vt.SetText(value.AsStringView());
   vt.RearrangeAll();
   CFX_PointF offset;
   if (!is_multi_line) {
@@ -832,7 +832,7 @@ ByteString GenerateComboBoxAP(const CPDF_Dictionary* annot_dict,
   SetVtFontSize(font_size, vt);
 
   vt.Initialize();
-  vt.SetText(value);
+  vt.SetText(value.AsStringView());
   vt.RearrangeAll();
   CFX_FloatRect content_rect = vt.GetContentRect();
   CFX_PointF offset =
@@ -928,7 +928,7 @@ ByteString GenerateListBoxAP(const CPDF_Dictionary* annot_dict,
           CFX_FloatRect(body_rect.left, 0.0f, body_rect.right, 0.0f));
       vt.SetFontSize(FXSYS_IsFloatZero(font_size) ? 12.0f : font_size);
       vt.Initialize();
-      vt.SetText(item);
+      vt.SetText(item.AsStringView());
       vt.RearrangeAll();
 
       const float item_height = vt.GetContentRect().Height();
@@ -1103,7 +1103,8 @@ bool GenerateFreeTextAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
   SetVtFontSize(default_appearance_info.value().font_size, vt);
 
   vt.Initialize();
-  vt.SetText(annot_dict->GetUnicodeTextFor(pdfium::annotation::kContents));
+  vt.SetText(annot_dict->GetUnicodeTextFor(pdfium::annotation::kContents)
+                 .AsStringView());
   vt.RearrangeAll();
   const CFX_FloatRect content_rect = vt.GetContentRect();
   CFX_PointF offset(0.0f, (content_rect.Height() - body_rect.Height()) / 2.0f);

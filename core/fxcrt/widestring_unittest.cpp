@@ -30,10 +30,10 @@ TEST(WideString, ElementAccess) {
   EXPECT_EQ(L'\0', empty_span_with_terminator[0]);
 
   const WideString abc(L"abc");
-  EXPECT_EQ(L'a', abc[0]);
-  EXPECT_EQ(L'b', abc[1]);
-  EXPECT_EQ(L'c', abc[2]);
-  EXPECT_DEATH_IF_SUPPORTED({ abc[4]; }, "");
+  EXPECT_EQ(L'a', abc.CharAt(0));
+  EXPECT_EQ(L'b', abc.CharAt(1));
+  EXPECT_EQ(L'c', abc.CharAt(2));
+  EXPECT_DEATH_IF_SUPPORTED({ abc.CharAt(4); }, "");
 
   pdfium::span<const wchar_t> abc_span = abc.span();
   EXPECT_EQ(3u, abc_span.size());
@@ -47,9 +47,9 @@ TEST(WideString, ElementAccess) {
 
   WideString mutable_abc = abc;
   EXPECT_EQ(abc.c_str(), mutable_abc.c_str());
-  EXPECT_EQ(L'a', mutable_abc[0]);
-  EXPECT_EQ(L'b', mutable_abc[1]);
-  EXPECT_EQ(L'c', mutable_abc[2]);
+  EXPECT_EQ(L'a', mutable_abc.CharAt(0));
+  EXPECT_EQ(L'b', mutable_abc.CharAt(1));
+  EXPECT_EQ(L'c', mutable_abc.CharAt(2));
   EXPECT_EQ(abc.c_str(), mutable_abc.c_str());
   EXPECT_EQ(L"abc", abc);
 

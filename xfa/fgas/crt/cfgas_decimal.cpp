@@ -384,7 +384,7 @@ WideString CFGAS_Decimal::ToWideString() const {
     if (idx == (outputlen - scale) && scale != 0) {
       retString += '.';
     }
-    retString += tmpbuf[outputlen - 1 - idx];
+    retString += tmpbuf.span()[outputlen - 1 - idx];
   }
   return retString;
 }

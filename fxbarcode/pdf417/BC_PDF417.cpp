@@ -407,15 +407,15 @@ bool CBC_PDF417::GenerateBarcodeLogic(WideStringView msg,
 
   WideString dataCodewords(sb);
   std::optional<WideString> ec =
-      CBC_PDF417ErrorCorrection::GenerateErrorCorrection(dataCodewords,
-                                                         errorCorrectionLevel);
+      CBC_PDF417ErrorCorrection::GenerateErrorCorrection(
+          dataCodewords.AsStringView(), errorCorrectionLevel);
   if (!ec.has_value()) {
     return false;
   }
 
   WideString fullCodewords = dataCodewords + ec.value();
   barcode_matrix_ = std::make_unique<CBC_BarcodeMatrix>(cols, rows);
-  encodeLowLevel(fullCodewords, cols, rows, errorCorrectionLevel,
+  encodeLowLevel(fullCodewords.AsStringView(), cols, rows, errorCorrectionLevel,
                  barcode_matrix_.get());
   return true;
 }
@@ -466,7 +466,7 @@ void CBC_PDF417::encodeChar(int32_t pattern,
   logic->AddBar(last, width);
 }
 
-void CBC_PDF417::encodeLowLevel(WideString fullCodewords,
+void CBC_PDF417::encodeLowLevel(WideStringView fullCodewords,
                                 int32_t c,
                                 int32_t r,
                                 int32_t errorCorrectionLevel,

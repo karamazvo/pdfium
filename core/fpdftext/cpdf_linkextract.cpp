@@ -21,7 +21,7 @@ namespace {
 // |end|. The purpose of this function is to separate url from the surrounding
 // context characters, we do not intend to fully validate the url. |str|
 // contains lower case characters only.
-size_t FindWebLinkEnding(const WideString& str, size_t start, size_t end) {
+size_t FindWebLinkEnding(WideString str, size_t start, size_t end) {
   if (str.Contains(L'/', start)) {
     // When there is a path and query after '/', most ASCII chars are allowed.
     // We don't sanitize in this case.
@@ -30,7 +30,7 @@ size_t FindWebLinkEnding(const WideString& str, size_t start, size_t end) {
 
   // When there is no path, it only has IP address or host name.
   // Port is optional at the end.
-  if (str[start] == L'[') {
+  if (str.CharAt(start) == L'[') {
     // IPv6 reference.
     // Find the end of the reference.
     auto result = str.Find(L']', start + 1);
@@ -39,9 +39,9 @@ size_t FindWebLinkEnding(const WideString& str, size_t start, size_t end) {
       if (end > start + 1) {  // Has content inside brackets.
         size_t len = str.GetLength();
         size_t off = end + 1;
-        if (off < len && str[off] == L':') {
+        if (off < len && str.CharAt(off) == L':') {
           off++;
-          while (off < len && FXSYS_IsDecimalDigit(str[off])) {
+          while (off < len && FXSYS_IsDecimalDigit(str.CharAt(off))) {
             off++;
           }
           if (off > end + 2 &&
@@ -57,9 +57,10 @@ size_t FindWebLinkEnding(const WideString& str, size_t start, size_t end) {
   // According to RFC1123, host name only has alphanumeric chars, hyphens,
   // and periods. Hyphen should not at the end though.
   // Non-ASCII chars are ignored during checking.
-  while (end > start && str[end] < 0x80) {
-    if (FXSYS_IsDecimalDigit(str[end]) ||
-        (str[end] >= L'a' && str[end] <= L'z') || str[end] == L'.') {
+  while (end > start && str.CharAt(end) < 0x80) {
+    if (FXSYS_IsDecimalDigit(str.CharAt(end)) ||
+        (str.CharAt(end) >= L'a' && str.CharAt(end) <= L'z') ||
+        str.CharAt(end) == L'.') {
       break;
     }
     end--;
@@ -70,12 +71,12 @@ size_t FindWebLinkEnding(const WideString& str, size_t start, size_t end) {
 // Remove characters from the end of |str|, delimited by |start| and |end|, up
 // to and including |charToFind|. No-op if |charToFind| is not present. Updates
 // |end| if characters were removed.
-void TrimBackwardsToChar(const WideString& str,
+void TrimBackwardsToChar(WideStringView str,
                          wchar_t charToFind,
                          size_t start,
                          size_t* end) {
   for (size_t pos = *end; pos >= start; pos--) {
-    if (str[pos] == charToFind) {
+    if ((wchar_t)str[pos] == charToFind) {
       *end = pos - 1;
       break;
     }
@@ -90,18 +91,19 @@ size_t TrimExternalBracketsFromWebLink(const WideString& str,
                                        size_t start,
                                        size_t end) {
   for (size_t pos = 0; pos < start; pos++) {
-    if (str[pos] == '(') {
-      TrimBackwardsToChar(str, ')', start, &end);
-    } else if (str[pos] == '[') {
-      TrimBackwardsToChar(str, ']', start, &end);
-    } else if (str[pos] == '{') {
-      TrimBackwardsToChar(str, '}', start, &end);
-    } else if (str[pos] == '<') {
-      TrimBackwardsToChar(str, '>', start, &end);
-    } else if (str[pos] == '"') {
-      TrimBackwardsToChar(str, '"', start, &end);
-    } else if (str[pos] == '\'') {
-      TrimBackwardsToChar(str, '\'', start, &end);
+    wchar_t wc = str.CharAt(pos);
+    if (wc == '(') {
+      TrimBackwardsToChar(str.AsStringView(), ')', start, &end);
+    } else if (wc == '[') {
+      TrimBackwardsToChar(str.AsStringView(), ']', start, &end);
+    } else if (wc == '{') {
+      TrimBackwardsToChar(str.AsStringView(), '}', start, &end);
+    } else if (wc == '<') {
+      TrimBackwardsToChar(str.AsStringView(), '>', start, &end);
+    } else if (wc == '"') {
+      TrimBackwardsToChar(str.AsStringView(), '"', start, &end);
+    } else if (wc == '\'') {
+      TrimBackwardsToChar(str.AsStringView(), '\'', start, &end);
     }
   }
   return end;
@@ -193,10 +195,11 @@ std::optional<CPDF_LinkExtract::Link> CPDF_LinkExtract::CheckWebLink(
   if (start.has_value()) {
     size_t off = start.value() + kHttpScheme.GetLength();  // move after "http".
     if (str.GetLength() > off + 4) {  // At least "://<char>" follows.
-      if (str[off] == L's') {         // "https" scheme is accepted.
+      if (str.CharAt(off) == L's') {  // "https" scheme is accepted.
         off++;
       }
-      if (str[off] == L':' && str[off + 1] == L'/' && str[off + 2] == L'/') {
+      if (str.CharAt(off) == L':' && str.CharAt(off + 1) == L'/' &&
+          str.CharAt(off + 2) == L'/') {
         off += 3;
         const size_t end =
             FindWebLinkEnding(str, off,
@@ -242,7 +245,7 @@ bool CPDF_LinkExtract::CheckMailLink(WideString* str) {
   // Check the local part.
   size_t pPos = aPos.value();  // Used to track the position of '@' or '.'.
   for (size_t i = aPos.value(); i > 0; i--) {
-    wchar_t ch = (*str)[i - 1];
+    wchar_t ch = str->CharAt(i - 1);
     if (ch == L'_' || ch == L'-' || FXSYS_iswalnum(ch)) {
       continue;
     }
@@ -281,7 +284,7 @@ bool CPDF_LinkExtract::CheckMailLink(WideString* str) {
   size_t nLen = str->GetLength();
   pPos = 0;  // Used to track the position of '.'.
   for (size_t i = aPos.value() + 1; i < nLen; i++) {
-    wchar_t wch = (*str)[i];
+    wchar_t wch = str->CharAt(i);
     if (wch == L'-' || FXSYS_iswalnum(wch)) {
       continue;
     }

@@ -38,8 +38,7 @@ bool CBC_DataMatrix::Encode(WideStringView contents) {
   int32_t width;
   int32_t height;
   auto* pWriter = GetDataMatrixWriter();
-  DataVector<uint8_t> data =
-      pWriter->Encode(WideString(contents), &width, &height);
+  DataVector<uint8_t> data = pWriter->Encode(contents, &width, &height);
   return pWriter->RenderResult(data, width, height);
 }
 

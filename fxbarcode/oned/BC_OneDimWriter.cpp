@@ -103,7 +103,7 @@ pdfium::span<uint8_t> CBC_OneDimWriter::AppendPattern(
   return target.subspan(added);
 }
 
-float CBC_OneDimWriter::CalcTextInfo(const ByteString& text,
+float CBC_OneDimWriter::CalcTextInfo(ByteStringView text,
                                      pdfium::span<TextCharPos> charPos,
                                      CFX_Font* cFont,
                                      float geWidth,
@@ -192,7 +192,8 @@ bool CBC_OneDimWriter::ShowChars(WideStringView contents,
   }
   int32_t iFontSize = static_cast<int32_t>(fabs(font_size_));
   int32_t iTextHeight = iFontSize + 1;
-  float char_width = CalcTextInfo(str, charpos, font_, geWidth, iFontSize);
+  float char_width =
+      CalcTextInfo(str.AsStringView(), charpos, font_, geWidth, iFontSize);
   if (char_width < 1) {
     return true;
   }

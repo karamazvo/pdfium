@@ -200,7 +200,7 @@ WideString GetLiteralTextReverse(pdfium::span<const wchar_t> spStrPattern,
       size_t iLen = std::min<size_t>(wsOutput.GetLength(), 5);
       size_t i = 1;
       for (; i < iLen; i++) {
-        wchar_t ch = wsOutput[i];
+        wchar_t ch = wsOutput.CharAt(i);
         iKeyValue = ConvertHex(iKeyValue, ch);
       }
       if (iKeyValue != 0) {
@@ -2230,7 +2230,7 @@ bool CFGAS_StringFormatter::FormatNum(LocaleMgrIface* pLocaleMgr,
       if (i % 3 == nPos && i != 0) {
         *wsOutput += wsGroupSymbol;
       }
-      *wsOutput += wsSrcNum[i];
+      *wsOutput += wsSrcNum.CharAt(i);
     }
     if (dot_index.value() < spSrcNum.size()) {
       *wsOutput += pLocale->GetDecimalSymbol();

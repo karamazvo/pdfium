@@ -774,7 +774,7 @@ size_t CFGAS_RTFBreak::GetDisplayPos(const CFGAS_TextPiece* pPiece,
   size_t szCount = 0;
   for (int32_t i = 0; i < pPiece->iChars; ++i) {
     TextCharPos& current_char_pos = pCharPos[szCount];
-    wchar_t wch = pPiece->szText[i];
+    wchar_t wch = pPiece->szText.CharAt(i);
     int32_t iWidth = pPiece->Widths[i];
     FX_CHARTYPE dwCharType = pdfium::unicode::GetCharType(wch);
     if (iWidth == 0) {
@@ -795,9 +795,9 @@ size_t CFGAS_RTFBreak::GetDisplayPos(const CFGAS_TextPiece* pPiece,
     wchar_t wForm = wch;
     if (dwCharType >= FX_CHARTYPE::kArabicAlef) {
       if (i + 1 < pPiece->iChars) {
-        wNext = pPiece->szText[i + 1];
+        wNext = pPiece->szText.CharAt(i + 1);
         if (pPiece->Widths[i + 1] < 0 && i + 2 < pPiece->iChars) {
-          wNext = pPiece->szText[i + 2];
+          wNext = pPiece->szText.CharAt(i + 2);
         }
       } else {
         wNext = pdfium::unicode::kZeroWidthNoBreakSpace;

@@ -20,7 +20,7 @@ class CBC_PDF417ErrorCorrection {
 
   static int32_t GetErrorCorrectionCodewordCount(int32_t errorCorrectionLevel);
   static std::optional<WideString> GenerateErrorCorrection(
-      const WideString& dataCodewords,
+      WideStringView dataCodewords,
       int32_t errorCorrectionLevel);
 };
 

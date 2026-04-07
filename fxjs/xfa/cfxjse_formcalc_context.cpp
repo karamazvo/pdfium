@@ -328,7 +328,7 @@ void AlternateDateTimeSymbols(WideString* pPattern,
   int32_t i = 0;
   UNSAFE_TODO({
     while (i < nLength) {
-      wchar_t wc = (*pPattern)[i];
+      wchar_t wc = pPattern->CharAt(i);
       if (wc == L'\'') {
         bInConstRange = !bInConstRange;
         if (bEscape) {
@@ -343,7 +343,7 @@ void AlternateDateTimeSymbols(WideString* pPattern,
       if (!bInConstRange && wc >= L'A' && wc <= L'a') {
         uint8_t nAlt = pAltTable[wc - L'A'];
         if (nAlt != 255) {
-          pPattern->SetAt(i, wsAltSymbols[nAlt]);
+          pPattern->SetAt(i, wsAltSymbols.CharAt(nAlt));
         }
       }
       i++;
@@ -744,17 +744,17 @@ WideString EncodeURL(const ByteString& bsURL) {
     int32_t index = 0;
     if (iLen % 2 != 0) {
       encode_buffer[1] = '0';
-      encode_buffer[2] = wsBuffer[iLen - 1];
+      encode_buffer[2] = wsBuffer.CharAt(iLen - 1);
       index = iLen - 2;
     } else {
-      encode_buffer[1] = wsBuffer[iLen - 1];
-      encode_buffer[2] = wsBuffer[iLen - 2];
+      encode_buffer[1] = wsBuffer.CharAt(iLen - 1);
+      encode_buffer[2] = wsBuffer.CharAt(iLen - 2);
       index = iLen - 3;
     }
     wsResultBuf << WideStringView(encode_buffer);
     while (index > 0) {
-      encode_buffer[1] = wsBuffer[index];
-      encode_buffer[2] = wsBuffer[index - 1];
+      encode_buffer[1] = wsBuffer.CharAt(index);
+      encode_buffer[2] = wsBuffer.CharAt(index - 1);
       index -= 2;
       wsResultBuf << WideStringView(encode_buffer);
     }

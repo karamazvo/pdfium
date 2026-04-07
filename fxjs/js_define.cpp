@@ -27,7 +27,7 @@ void JSDestructor(v8::Local<v8::Object> obj) {
   CFXJS_Engine::SetBinding(obj, nullptr);
 }
 
-double JS_DateParse(v8::Isolate* pIsolate, const WideString& str) {
+double JS_DateParse(v8::Isolate* pIsolate, WideStringView str) {
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::HandleScope scope(pIsolate);
 
@@ -50,9 +50,7 @@ double JS_DateParse(v8::Isolate* pIsolate, const WideString& str) {
 
   v8::Local<v8::Function> func = value.As<v8::Function>();
   static constexpr int argc = 1;
-  v8::Local<v8::Value> argv[argc] = {
-      fxv8::NewStringHelper(pIsolate, str.AsStringView()),
-  };
+  v8::Local<v8::Value> argv[argc] = {fxv8::NewStringHelper(pIsolate, str)};
   maybe_value = func->Call(context, context->Global(), argc, argv);
   if (!maybe_value.ToLocal(&value) || !value->IsNumber()) {
     return 0;

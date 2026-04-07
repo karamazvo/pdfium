@@ -38,9 +38,9 @@ bool CBC_Codabar::Encode(WideStringView contents) {
   }
 
   render_contents_ = pWriter->FilterContents(contents);
-  ByteString byteString = render_contents_.ToUTF8();
+  ByteString byte_string = render_contents_.ToUTF8();
   return pWriter->RenderResult(render_contents_.AsStringView(),
-                               pWriter->Encode(byteString));
+                               pWriter->Encode(byte_string.AsStringView()));
 }
 
 bool CBC_Codabar::RenderDevice(CFX_RenderDevice* device,

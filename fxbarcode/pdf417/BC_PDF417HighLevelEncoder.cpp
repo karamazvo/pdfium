@@ -82,25 +82,26 @@ bool IsText(wchar_t ch) {
 std::optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
     WideStringView msg) {
   const ByteString bytes = FX_UTF8Encode(msg);
-  size_t len = bytes.GetLength();
+  const ByteStringView bytes_view = bytes.AsStringView();
+  size_t len = bytes_view.GetLength();
   WideString result;
   result.Reserve(len);
   for (size_t i = 0; i < len; i++) {
-    wchar_t ch = bytes[i] & 0xff;
-    if (ch == '?' && bytes[i] != '?') {
+    wchar_t ch = bytes_view[i] & 0xff;
+    if (ch == '?' && bytes_view[i] != '?') {
       return std::nullopt;
     }
-
     result += ch;
   }
   len = result.GetLength();
+
   WideString sb;
   sb.Reserve(len);
   size_t p = 0;
   SubMode textSubMode = SubMode::kAlpha;
   EncodingMode encodingMode = EncodingMode::kUnknown;
   while (p < len) {
-    size_t n = DetermineConsecutiveDigitCount(result, p);
+    size_t n = DetermineConsecutiveDigitCount(result.AsStringView(), p);
     if (n >= 13) {
       sb += kLatchToNumeric;
       encodingMode = EncodingMode::kNumeric;
@@ -108,18 +109,18 @@ std::optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
       EncodeNumeric(result, p, n, &sb);
       p += n;
     } else {
-      size_t t = DetermineConsecutiveTextCount(result, p);
+      size_t t = DetermineConsecutiveTextCount(result.AsStringView(), p);
       if (t >= 5 || n == len) {
         if (encodingMode != EncodingMode::kText) {
           sb += kLatchToText;
           encodingMode = EncodingMode::kText;
           textSubMode = SubMode::kAlpha;
         }
-        textSubMode = EncodeText(result, p, t, textSubMode, &sb);
+        textSubMode = EncodeText(result.AsStringView(), p, t, textSubMode, &sb);
         p += t;
       } else {
-        std::optional<size_t> b =
-            DetermineConsecutiveBinaryCount(result, bytes.unsigned_span(), p);
+        std::optional<size_t> b = DetermineConsecutiveBinaryCount(
+            result.AsStringView(), bytes.unsigned_span(), p);
         if (!b.has_value()) {
           return std::nullopt;
         }
@@ -143,7 +144,7 @@ std::optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
 }
 
 CBC_PDF417HighLevelEncoder::SubMode CBC_PDF417HighLevelEncoder::EncodeText(
-    const WideString& msg,
+    WideStringView msg,
     size_t startpos,
     size_t count,
     SubMode initialSubmode,
@@ -247,10 +248,10 @@ CBC_PDF417HighLevelEncoder::SubMode CBC_PDF417HighLevelEncoder::EncodeText(
   for (size_t i = 0; i < len; i++) {
     bool odd = (i % 2) != 0;
     if (odd) {
-      h = (h * 30) + tmp[i];
+      h = (h * 30) + tmp.span()[i];
       *sb += h;
     } else {
-      h = tmp[i];
+      h = tmp.span()[i];
     }
   }
   if ((len % 2) != 0) {
@@ -314,14 +315,14 @@ void CBC_PDF417HighLevelEncoder::EncodeNumeric(const WideString& msg,
       bigint = bigint / num900;
     } while (!bigint.isZero());
     for (size_t i = tmp.GetLength(); i >= 1; i--) {
-      *sb += tmp[i - 1];
+      *sb += tmp.span()[i - 1];
     }
     idx += len;
   }
 }
 
 size_t CBC_PDF417HighLevelEncoder::DetermineConsecutiveDigitCount(
-    WideString msg,
+    WideStringView msg,
     size_t startpos) {
   size_t count = 0;
   size_t len = msg.GetLength();
@@ -340,7 +341,7 @@ size_t CBC_PDF417HighLevelEncoder::DetermineConsecutiveDigitCount(
 }
 
 size_t CBC_PDF417HighLevelEncoder::DetermineConsecutiveTextCount(
-    WideString msg,
+    WideStringView msg,
     size_t startpos) {
   size_t len = msg.GetLength();
   size_t idx = startpos;
@@ -371,7 +372,7 @@ size_t CBC_PDF417HighLevelEncoder::DetermineConsecutiveTextCount(
 
 std::optional<size_t>
 CBC_PDF417HighLevelEncoder::DetermineConsecutiveBinaryCount(
-    WideString msg,
+    WideStringView msg,
     pdfium::span<const uint8_t> bytes,
     size_t startpos) {
   size_t len = msg.GetLength();

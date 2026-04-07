@@ -146,7 +146,7 @@ class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
                     bool bEndBreak,
                     bool bIsOl,
                     int32_t iLiCount);
-  bool AppendChar(const WideString& wsText,
+  bool AppendChar(WideStringView wsText,
                   float* pLinePos,
                   float fSpaceAbove,
                   bool bSavePieces);

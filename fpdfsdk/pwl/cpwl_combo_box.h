@@ -48,8 +48,8 @@ class CPWL_ComboBox final : public CPWL_Wnd {
   bool Undo() override;
   bool Redo() override;
 
-  void SetText(const WideString& text);
-  void AddString(const WideString& str);
+  void SetText(WideStringView text);
+  void AddString(WideStringView str);
   int32_t GetSelect() const;
   void SetSelect(int32_t nItemIndex);
 

@@ -503,19 +503,19 @@ void CFX_XMLParser::ProcessTextChar(wchar_t character) {
     if (iLen > 0) {
       if (csEntity.Front() == L'#') {
         uint32_t ch = 0;
-        if (iLen > 1 && csEntity[1] == L'x') {
+        if (iLen > 1 && csEntity.CharAt(1) == L'x') {
           for (size_t i = 2; i < iLen; i++) {
-            if (!FXSYS_IsHexDigit(csEntity[i])) {
+            if (!FXSYS_IsHexDigit(csEntity.CharAt(i))) {
               break;
             }
-            ch = (ch << 4) + FXSYS_HexCharToInt(csEntity[i]);
+            ch = (ch << 4) + FXSYS_HexCharToInt(csEntity.CharAt(i));
           }
         } else {
           for (size_t i = 1; i < iLen; i++) {
-            if (!FXSYS_IsDecimalDigit(csEntity[i])) {
+            if (!FXSYS_IsDecimalDigit(csEntity.CharAt(i))) {
               break;
             }
-            ch = ch * 10 + FXSYS_DecimalCharToInt(csEntity[i]);
+            ch = ch * 10 + FXSYS_DecimalCharToInt(csEntity.CharAt(i));
           }
         }
         if (ch > kMaxCharRange) {

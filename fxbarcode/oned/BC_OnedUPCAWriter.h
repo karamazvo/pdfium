@@ -25,7 +25,7 @@ class CBC_OnedUPCAWriter final : public CBC_OneDimEANWriter {
   ~CBC_OnedUPCAWriter() override;
 
   // CBC_OneDimEANWriter:
-  DataVector<uint8_t> Encode(const ByteString& contents) override;
+  DataVector<uint8_t> Encode(ByteStringView contents) override;
   bool CheckContentValidity(WideStringView contents) override;
   WideString FilterContents(WideStringView contents) override;
   void InitEANWriter() override;

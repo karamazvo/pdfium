@@ -41,7 +41,7 @@ bool CBC_Code39::Encode(WideStringView contents) {
   render_contents_ = pWriter->RenderTextContents(contents);
   ByteString byteString = filtercontents.ToUTF8();
   return pWriter->RenderResult(render_contents_.AsStringView(),
-                               pWriter->Encode(byteString));
+                               pWriter->Encode(byteString.AsStringView()));
 }
 
 bool CBC_Code39::RenderDevice(CFX_RenderDevice* device,

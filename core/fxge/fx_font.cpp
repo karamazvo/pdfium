@@ -185,7 +185,7 @@ int NormalizeFontMetric(int64_t value, uint16_t upem) {
 
 void MaybeRemoveSubsettedFontPrefix(ByteString& font_name) {
   if (font_name.GetLength() > kSubsettedFontPrefixLength &&
-      font_name[kSubsettedFontPrefixLength] == '+' &&
+      font_name.span()[kSubsettedFontPrefixLength] == '+' &&
       IsStrUpper(font_name.First(kSubsettedFontPrefixLength))) {
     font_name = font_name.Substr(kSubsettedFontPrefixLength + 1);
   }

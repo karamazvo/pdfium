@@ -56,7 +56,7 @@ class CPWL_ListBox : public CPWL_Wnd, public CPWL_ListCtrl::NotifyIface {
 
   bool OnNotifySelectionChanged(bool bKeyDown, Mask<FWL_EVENTFLAG> nFlag);
 
-  void AddString(const WideString& str);
+  void AddString(WideStringView str);
   void SetTopVisibleIndex(int32_t nItemIndex);
   void ScrollToListItem(int32_t nItemIndex);
 

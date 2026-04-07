@@ -101,7 +101,7 @@ std::unique_ptr<CPWL_Wnd> CFFL_TextField::NewPWLWindow(
       pWnd->SetLimitChar(nMaxLen);
     }
   }
-  pWnd->SetText(swValue);
+  pWnd->SetText(swValue.AsStringView());
   return pWnd;
 }
 
@@ -237,7 +237,7 @@ void CFFL_TextField::RecreatePWLWindowFromSavedState(
     return;
   }
 
-  pWnd->SetText(state_.sValue);
+  pWnd->SetText(state_.sValue.AsStringView());
   pWnd->SetSelection(state_.nStart, state_.nEnd);
 }
 

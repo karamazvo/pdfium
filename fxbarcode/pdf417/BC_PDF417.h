@@ -42,7 +42,7 @@ class CBC_PDF417 {
                                          int32_t c,
                                          int32_t r);
   static void encodeChar(int32_t pattern, int32_t len, CBC_BarcodeRow* logic);
-  void encodeLowLevel(WideString fullCodewords,
+  void encodeLowLevel(WideStringView fullCodewords,
                       int32_t c,
                       int32_t r,
                       int32_t errorCorrectionLevel,
