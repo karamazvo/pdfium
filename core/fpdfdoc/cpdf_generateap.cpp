@@ -141,7 +141,7 @@ BorderStyleInfo GetBorderStyleInfo(const CPDF_Dictionary* border_style_dict) {
   const ByteString border_style_string =
       border_style_dict->GetByteStringFor("S");
   if (border_style_string.GetLength()) {
-    switch (border_style_string[0]) {
+    switch (border_style_string.Front()) {
       case 'S':
         border_style_info.style = BorderStyle::kSolid;
         break;
