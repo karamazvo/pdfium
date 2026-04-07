@@ -1139,7 +1139,7 @@ std::optional<CheckStyle> CheckStyleFromCaption(const WideString& caption) {
   }
 
   // Character values are ZapfDingbats encodings of named glyphs.
-  switch (caption[0]) {
+  switch (caption.Front()) {
     case L'4':
       return CheckStyle::kCheck;
     case L'8':
