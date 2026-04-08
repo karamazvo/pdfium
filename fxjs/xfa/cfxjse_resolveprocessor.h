@@ -40,7 +40,9 @@ class CFXJSE_ResolveProcessor {
   ~CFXJSE_ResolveProcessor();
 
   bool Resolve(v8::Isolate* pIsolate, NodeData& rnd);
-  int32_t GetFilter(WideStringView wsExpression, int32_t nStart, NodeData& rnd);
+  int32_t GetFilter(WideStringView wsExpression,
+                    uint32_t nStart,
+                    NodeData& rnd);
   int32_t IndexForDataBind(const WideString& wsNextCondition, int32_t iCount);
   void SetCurStart(int32_t start) { cur_start_ = start; }
 

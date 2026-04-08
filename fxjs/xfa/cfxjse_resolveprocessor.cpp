@@ -529,31 +529,29 @@ bool CFXJSE_ResolveProcessor::ResolveAsterisk(NodeData& rnd) {
 }
 
 int32_t CFXJSE_ResolveProcessor::GetFilter(WideStringView wsExpression,
-                                           int32_t nStart,
+                                           uint32_t nStart,
                                            NodeData& rnd) {
-  DCHECK(nStart > -1);
-
-  int32_t iLength = wsExpression.GetLength();
-  if (nStart >= iLength) {
+  if (nStart >= wsExpression.GetLength()) {
     return 0;
   }
 
+  const size_t count = wsExpression.GetLength() - nStart;
   WideString& wsName = rnd.name_;
   WideString& wsCondition = rnd.condition_;
   int32_t nNameCount = 0;
   int32_t nConditionCount = 0;
+
   {
     // Span's lifetime must end before ReleaseBuffer() below.
-    pdfium::span<wchar_t> pNameBuf = wsName.GetBuffer(iLength - nStart);
-    pdfium::span<wchar_t> pConditionBuf =
-        wsCondition.GetBuffer(iLength - nStart);
+    pdfium::span<wchar_t> pNameBuf = wsName.GetBuffer(count);
+    pdfium::span<wchar_t> pConditionBuf = wsCondition.GetBuffer(count);
     pdfium::span<const wchar_t> pSrc = wsExpression.span();
     std::vector<int32_t> stack;
     int32_t nType = -1;
     wchar_t wPrev = 0;
     wchar_t wCur;
     bool bIsCondition = false;
-    while (nStart < iLength) {
+    while (nStart < pSrc.size()) {
       wCur = pSrc[nStart++];
       if (wCur == '.') {
         if (nNameCount == 0) {
@@ -564,15 +562,14 @@ int32_t CFXJSE_ResolveProcessor::GetFilter(WideStringView wsExpression,
           pNameBuf[nNameCount - 1] = wPrev = '.';
           continue;
         }
-
-        wchar_t wLookahead = nStart < iLength ? pSrc[nStart] : 0;
+        wchar_t wLookahead = nStart < pSrc.size() ? pSrc[nStart] : 0;
         if (wLookahead != '[' && wLookahead != '(' && nType < 0) {
           break;
         }
       }
       if (wCur == '[' || wCur == '(') {
         bIsCondition = true;
-      } else if (wCur == '.' && nStart < iLength &&
+      } else if (wCur == '.' && nStart < pSrc.size() &&
                  (pSrc[nStart] == '[' || pSrc[nStart] == '(')) {
         bIsCondition = true;
       }
