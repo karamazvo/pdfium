@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6533d745_3435f324",
+        "filename": "core/fpdfdoc/cpdf_generateap.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-08T22:12:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2d83d0b3_697a90c3",
+      "revId": "fda0e6eb658846c9898258d5e2fe1a05137f6de9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b7181fcd_6c5a0f96",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-04-08T21:55:24Z",
       "side": 1,
       "message": "No longer needed?",
+      "revId": "fda0e6eb658846c9898258d5e2fe1a05137f6de9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "36bcee49_75656f4b",
+        "filename": "fpdfsdk/cpdfsdk_appstream.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 1137,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-08T22:12:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b7181fcd_6c5a0f96",
       "revId": "fda0e6eb658846c9898258d5e2fe1a05137f6de9",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -58,6 +94,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b7c1ab46_422ac548",
+        "filename": "fxjs/cjs_publicmethods.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 1522,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-08T22:12:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "42c8438d_3eceacb8",
+      "range": {
+        "startLine": 1522,
+        "startChar": 6,
+        "endLine": 1522,
+        "endChar": 29
+      },
+      "revId": "fda0e6eb658846c9898258d5e2fe1a05137f6de9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "63f76238_1f5ef552",
@@ -71,6 +131,24 @@
       "writtenOn": "2026-04-08T21:55:24Z",
       "side": 1,
       "message": "No longer needed?",
+      "revId": "fda0e6eb658846c9898258d5e2fe1a05137f6de9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "45c37ef5_5120e35b",
+        "filename": "fxjs/xfa/cfxjse_resolveprocessor.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-08T22:12:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "63f76238_1f5ef552",
       "revId": "fda0e6eb658846c9898258d5e2fe1a05137f6de9",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -92,6 +170,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "25875564_1a34f1ed",
+        "filename": "fxjs/xfa/cfxjse_resolveprocessor.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-08T22:12:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4c4b9d16_e558c48b",
+      "revId": "fda0e6eb658846c9898258d5e2fe1a05137f6de9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e99c9d27_a69bf789",
@@ -105,6 +201,30 @@
       "writtenOn": "2026-04-08T22:00:24Z",
       "side": 1,
       "message": "No longer needed?",
+      "range": {
+        "startLine": 79,
+        "startChar": 6,
+        "endLine": 79,
+        "endChar": 25
+      },
+      "revId": "fda0e6eb658846c9898258d5e2fe1a05137f6de9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a45c94c9_91215c71",
+        "filename": "xfa/fxfa/formcalc/cxfa_fmexpression.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-08T22:12:44Z",
+      "side": 1,
+      "message": "Empty check helps with substr bounds elision later, typically.",
+      "parentUuid": "e99c9d27_a69bf789",
       "range": {
         "startLine": 79,
         "startChar": 6,
@@ -138,6 +258,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8bed5b13_b82e59ad",
+        "filename": "xfa/fxfa/parser/cxfa_node.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 1897,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-08T22:12:44Z",
+      "side": 1,
+      "message": "Length check helpful for substr().",
+      "parentUuid": "15992f63_d134413f",
+      "range": {
+        "startLine": 1897,
+        "startChar": 12,
+        "endLine": 1897,
+        "endChar": 42
+      },
+      "revId": "fda0e6eb658846c9898258d5e2fe1a05137f6de9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c1e1544f_f3ccb7aa",
@@ -161,6 +305,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "aff9a7b4_6fc6756f",
+        "filename": "xfa/fxfa/parser/cxfa_node.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 1990,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-08T22:12:44Z",
+      "side": 1,
+      "message": "Length check may help elide bounds check in substr().",
+      "parentUuid": "c1e1544f_f3ccb7aa",
+      "range": {
+        "startLine": 1990,
+        "startChar": 10,
+        "endLine": 1990,
+        "endChar": 40
+      },
+      "revId": "fda0e6eb658846c9898258d5e2fe1a05137f6de9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a8177bbe_842a0611",
@@ -174,6 +342,30 @@
       "writtenOn": "2026-04-08T22:00:24Z",
       "side": 1,
       "message": "No longer needed?",
+      "range": {
+        "startLine": 2024,
+        "startChar": 10,
+        "endLine": 2024,
+        "endChar": 39
+      },
+      "revId": "fda0e6eb658846c9898258d5e2fe1a05137f6de9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4c566b6a_5b7f654f",
+        "filename": "xfa/fxfa/parser/cxfa_node.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 2024,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-08T22:12:44Z",
+      "side": 1,
+      "message": "ditto",
+      "parentUuid": "a8177bbe_842a0611",
       "range": {
         "startLine": 2024,
         "startChar": 10,
