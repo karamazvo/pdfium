@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fade49d1_53ee8152",
+        "filename": "core/fpdfapi/render/cpdf_renderstatus.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1524,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-08T22:02:40Z",
+      "side": 1,
+      "message": "Maybe reassign to `src_buf` on line 1522, get rid of `size`, and then use `src_buf` here and line line 1530.",
+      "range": {
+        "startLine": 1524,
+        "startChar": 37,
+        "endLine": 1524,
+        "endChar": 56
+      },
+      "revId": "8b83c74e19e20fde43d5212e5fa667d2bddf6679",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
