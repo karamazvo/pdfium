@@ -20,6 +20,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e1c1579d_accdbeac",
+        "filename": "fpdfsdk/pwl/cpwl_wnd.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-08T17:29:16Z",
+      "side": 1,
+      "message": "Probably fxcrt::mask this as well. WIP for now.",
+      "range": {
+        "startLine": 43,
+        "startChar": 7,
+        "endLine": 43,
+        "endChar": 26
+      },
+      "revId": "27f3cb984134ef02ae54fd64b75c8ad7a2032f96",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0b9ef51e_17e535c5",
         "filename": "fpdfsdk/pwl/cpwl_wnd.h",
         "patchSetId": 8
