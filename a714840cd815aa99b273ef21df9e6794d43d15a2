@@ -70,6 +70,42 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "905e0e1d_431dec5f",
+        "filename": "core/fxge/cfx_folderfontinfo.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-08T13:53:14Z",
+      "side": 1,
+      "message": "GetCharset() is in an anonymous namespace (not in the class), yet needs to use these variables. Moving this to the class just makes it fail. To address this am moving GetCharset() into the class as a private: method",
+      "parentUuid": "e00ab1ff_0e0e53ff",
+      "revId": "a714840cd815aa99b273ef21df9e6794d43d15a2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d638c6da_40e0dab7",
+        "filename": "core/fxge/cfx_folderfontinfo.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-08T13:53:14Z",
+      "side": 1,
+      "message": "Right, that would have worked better here. Done.",
+      "parentUuid": "4089953a_365203e8",
+      "revId": "a714840cd815aa99b273ef21df9e6794d43d15a2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b2a4da21_08b50186",
@@ -83,6 +119,30 @@
       "writtenOn": "2026-04-07T21:25:10Z",
       "side": 1,
       "message": "Make this consistently lowercase.",
+      "range": {
+        "startLine": 24,
+        "startChar": 7,
+        "endLine": 24,
+        "endChar": 9
+      },
+      "revId": "a714840cd815aa99b273ef21df9e6794d43d15a2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d85aedb4_efa67710",
+        "filename": "core/fxge/cfx_folderfontinfo.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-08T13:53:14Z",
+      "side": 1,
+      "message": "Thought GB (I assumed Great Britain) was an acronym and hence should be all-caps. Edited now.",
+      "parentUuid": "b2a4da21_08b50186",
       "range": {
         "startLine": 24,
         "startChar": 7,
