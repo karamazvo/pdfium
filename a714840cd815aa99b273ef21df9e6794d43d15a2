@@ -106,6 +106,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ea6261ea_986083cd",
+        "filename": "core/fxge/cfx_folderfontinfo.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-08T14:15:54Z",
+      "side": 1,
+      "message": "Edit, it can\u0027t be public in FontFaceInfo, had to make it private due to accessors outside of FontFaceInfo but in the file.",
+      "parentUuid": "905e0e1d_431dec5f",
+      "revId": "a714840cd815aa99b273ef21df9e6794d43d15a2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b2a4da21_08b50186",
