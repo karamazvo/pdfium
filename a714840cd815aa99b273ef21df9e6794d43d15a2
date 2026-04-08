@@ -124,6 +124,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "61b3ad0d_232e1c60",
+        "filename": "core/fxge/cfx_folderfontinfo.h",
+        "patchSetId": 8
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-08T15:39:43Z",
+      "side": 1,
+      "message": "Edit: replace public with private and private with public",
+      "parentUuid": "ea6261ea_986083cd",
+      "revId": "a714840cd815aa99b273ef21df9e6794d43d15a2",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b2a4da21_08b50186",
