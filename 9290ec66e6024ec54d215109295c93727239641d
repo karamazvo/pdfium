@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "96f9415c_fdc469e0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-08T16:30:43Z",
+      "side": 1,
+      "message": "Let\u0027s just go with the API as-is, with only 1D positioning. The PDF `TJ` operator only supports 1D positioning. To move glyphs on the other axis, one would need to change the origin and use a separate `Tj` / `TJ` operator. Which then corresponds to having 2 different text FPDF_PAGEOBJECTs.",
+      "revId": "9290ec66e6024ec54d215109295c93727239641d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
