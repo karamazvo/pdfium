@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8b1ea5b1_5e854030",
+        "filename": "core/fxcrt/widestring.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-09T20:22:03Z",
+      "side": 1,
+      "message": "Need to update this so the latest patchset compiles.",
+      "range": {
+        "startLine": 115,
+        "startChar": 43,
+        "endLine": 115,
+        "endChar": 53
+      },
+      "revId": "e8574e6b2ae274555c8c1677c3c8cca7197e252c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
