@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "39612546_f24efa05",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-09T16:02:26Z",
+      "side": 1,
+      "message": "Sides instead of CharBoxPositions (its no longer for just CharBoxes)",
+      "range": {
+        "startLine": 79,
+        "startChar": 7,
+        "endLine": 79,
+        "endChar": 23
+      },
+      "revId": "f50ac0ffc91988fd087ae677e47c51ee721f0820",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9aa0d846_4beb0281",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-09T16:02:26Z",
+      "side": 1,
+      "message": "Somewhere along the way I probably swapped bottom, top with top, bottom - now about 12 instances have this...",
+      "range": {
+        "startLine": 322,
+        "startChar": 1,
+        "endLine": 322,
+        "endChar": 74
+      },
+      "revId": "f50ac0ffc91988fd087ae677e47c51ee721f0820",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7d909812_c8a8385a",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 797,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-09T16:02:26Z",
+      "side": 1,
+      "message": "These should be exact (797 and 805)",
+      "range": {
+        "startLine": 797,
+        "startChar": 2,
+        "endLine": 797,
+        "endChar": 13
+      },
+      "revId": "f50ac0ffc91988fd087ae677e47c51ee721f0820",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
