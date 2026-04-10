@@ -708,7 +708,7 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
       if (unicode == 0) {
         WideString unicode_str = UnicodeFromCharCode(charcode);
         if (!unicode_str.IsEmpty()) {
-          unicode = unicode_str.Front();
+          unicode = unicode_str[0];
         }
       }
     }
@@ -826,7 +826,8 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
       if (unicode_str.IsEmpty()) {
         return -1;
       }
-      charcode = unicode_str.Front();
+
+      charcode = unicode_str[0];
     }
     return GetGlyphIndex(charcode, pVertGlyph);
   }

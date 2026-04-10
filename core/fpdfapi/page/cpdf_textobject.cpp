@@ -89,7 +89,11 @@ int CPDF_TextObject::CountWords() const {
   int word_count = 0;
   for (uint32_t char_code : char_codes_) {
     WideString unicode_str = font->UnicodeFromCharCode(char_code);
-    uint16_t unicode = unicode_str.Front();  // Front() safe when empty.
+    uint16_t unicode = 0;
+    if (unicode_str.GetLength() > 0) {
+      unicode = unicode_str[0];
+    }
+
     bool is_latin = ISLATINWORD(unicode);
     if (is_latin && is_in_latin_word) {
       continue;
@@ -111,8 +115,12 @@ WideString CPDF_TextObject::GetWordString(int word_index) const {
   bool is_in_latin_word = false;
   for (uint32_t char_code : char_codes_) {
     WideString unicode_str = font->UnicodeFromCharCode(char_code);
-    uint16_t unicode = unicode_str.Front();  // Front() safe when empty.
-    const bool is_latin = ISLATINWORD(unicode);
+    uint16_t unicode = 0;
+    if (unicode_str.GetLength() > 0) {
+      unicode = unicode_str[0];
+    }
+
+    bool is_latin = ISLATINWORD(unicode);
     if (!is_latin || !is_in_latin_word) {
       is_in_latin_word = is_latin;
       if (unicode != 0x20) {

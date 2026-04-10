@@ -301,7 +301,7 @@ ByteStringView CPDF_ToUnicodeMap::HandleBeginBFRange(
 
     WideString destcode = StringToWideString(start);
     if (destcode.GetLength() == 1) {
-      uint32_t start_value = pdfium::checked_cast<uint32_t>(destcode.Front());
+      uint32_t start_value = pdfium::checked_cast<uint32_t>(destcode[0]);
       CHECK_LE(start_value, 0xffff);
       ranges.push_back(MultimapSingleDestRange{.low_code = lowcode,
                                                .high_code = highcode,
@@ -364,8 +364,9 @@ void CPDF_ToUnicodeMap::SetCode(uint32_t srccode, WideString destcode) {
   if (len == 0) {
     return;
   }
+
   if (len == 1) {
-    InsertIntoMaps(srccode, destcode.Front());
+    InsertIntoMaps(srccode, destcode[0]);
   } else {
     InsertIntoMaps(srccode, GetMultiCharIndexIndicator());
     multi_char_vec_.push_back(destcode);

@@ -25,7 +25,7 @@ bool CFXJSE_NodeHelper::CreateNodeForCondition(const WideString& wsCondition) {
     create_flag_ = CFXJSE_Engine::ResolveResult::Type::kCreateNodeOne;
     return false;
   }
-  if (wsCondition.Front() != '[') {
+  if (wsCondition[0] != '[') {
     return false;
   }
   size_t i = 1;

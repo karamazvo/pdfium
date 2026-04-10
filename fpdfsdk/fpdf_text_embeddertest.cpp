@@ -76,6 +76,48 @@ int GetRotatedText90FirstCharIndexForQuadrant(int quadrant) {
   }
 }
 
+struct Sides {
+  double left;
+  double right;
+  double bottom;
+  double top;
+};
+
+struct RectEdges {
+  float left;
+  float right;
+  float bottom;
+  float top;
+};
+
+void VerifySides(Sides expected, Sides actual) {
+  EXPECT_NEAR_THREE_PLACES(expected.left, actual.left);
+  EXPECT_NEAR_THREE_PLACES(expected.right, actual.right);
+  EXPECT_NEAR_THREE_PLACES(expected.bottom, actual.bottom);
+  EXPECT_NEAR_THREE_PLACES(expected.top, actual.top);
+}
+
+void VerifySidesExact(Sides expected, Sides actual) {
+  EXPECT_DOUBLE_EQ(expected.left, actual.left);
+  EXPECT_DOUBLE_EQ(expected.right, actual.right);
+  EXPECT_DOUBLE_EQ(expected.bottom, actual.bottom);
+  EXPECT_DOUBLE_EQ(expected.top, actual.top);
+}
+
+void VerifyRectExact(RectEdges expected, FS_RECTF actual) {
+  EXPECT_FLOAT_EQ(expected.left, actual.left);
+  EXPECT_FLOAT_EQ(expected.right, actual.right);
+  EXPECT_FLOAT_EQ(expected.bottom, actual.bottom);
+  EXPECT_FLOAT_EQ(expected.top, actual.top);
+}
+
+void VerifyRect(RectEdges expected, FS_RECTF actual) {
+  EXPECT_NEAR_THREE_PLACES(expected.left, actual.left);
+  EXPECT_NEAR_THREE_PLACES(expected.right, actual.right);
+  EXPECT_NEAR_THREE_PLACES(expected.bottom, actual.bottom);
+  EXPECT_NEAR_THREE_PLACES(expected.top, actual.top);
+}
+
 }  // namespace
 
 class FPDFTextEmbedderTest : public EmbedderTest {};
@@ -139,22 +181,13 @@ TEST_F(FPDFTextEmbedderTest, Text) {
   double bottom = 3.0;
   double top = 4.0;
   EXPECT_FALSE(FPDFText_GetCharBox(nullptr, 4, &left, &right, &bottom, &top));
-  EXPECT_DOUBLE_EQ(1.0, left);
-  EXPECT_DOUBLE_EQ(2.0, right);
-  EXPECT_DOUBLE_EQ(3.0, bottom);
-  EXPECT_DOUBLE_EQ(4.0, top);
+  VerifySidesExact({1, 2, 3, 4}, {left, right, bottom, top});
   EXPECT_FALSE(
       FPDFText_GetCharBox(textpage.get(), -1, &left, &right, &bottom, &top));
-  EXPECT_DOUBLE_EQ(1.0, left);
-  EXPECT_DOUBLE_EQ(2.0, right);
-  EXPECT_DOUBLE_EQ(3.0, bottom);
-  EXPECT_DOUBLE_EQ(4.0, top);
+  VerifySidesExact({1, 2, 3, 4}, {left, right, bottom, top});
   EXPECT_FALSE(
       FPDFText_GetCharBox(textpage.get(), 55, &left, &right, &bottom, &top));
-  EXPECT_DOUBLE_EQ(1.0, left);
-  EXPECT_DOUBLE_EQ(2.0, right);
-  EXPECT_DOUBLE_EQ(3.0, bottom);
-  EXPECT_DOUBLE_EQ(4.0, top);
+  VerifySidesExact({1, 2, 3, 4}, {left, right, bottom, top});
   EXPECT_FALSE(
       FPDFText_GetCharBox(textpage.get(), 4, nullptr, &right, &bottom, &top));
   EXPECT_FALSE(
@@ -168,34 +201,19 @@ TEST_F(FPDFTextEmbedderTest, Text) {
 
   EXPECT_TRUE(
       FPDFText_GetCharBox(textpage.get(), 4, &left, &right, &bottom, &top));
-  EXPECT_NEAR_THREE_PLACES(41.120, left);
-  EXPECT_NEAR_THREE_PLACES(46.208, right);
-  EXPECT_NEAR_THREE_PLACES(49.892, bottom);
-  EXPECT_NEAR_THREE_PLACES(55.652, top);
+  VerifySides({41.12, 46.208, 49.892, 55.652}, {left, right, bottom, top});
 
   FS_RECTF rect = {4.0f, 1.0f, 3.0f, 2.0f};
   EXPECT_FALSE(FPDFText_GetLooseCharBox(nullptr, 4, &rect));
-  EXPECT_FLOAT_EQ(4.0f, rect.left);
-  EXPECT_FLOAT_EQ(3.0f, rect.right);
-  EXPECT_FLOAT_EQ(2.0f, rect.bottom);
-  EXPECT_FLOAT_EQ(1.0f, rect.top);
+  VerifyRectExact({4.0f, 3.0f, 2.0f, 1.0f}, rect);
   EXPECT_FALSE(FPDFText_GetLooseCharBox(textpage.get(), -1, &rect));
-  EXPECT_FLOAT_EQ(4.0f, rect.left);
-  EXPECT_FLOAT_EQ(3.0f, rect.right);
-  EXPECT_FLOAT_EQ(2.0f, rect.bottom);
-  EXPECT_FLOAT_EQ(1.0f, rect.top);
+  VerifyRectExact({4.0f, 3.0f, 2.0f, 1.0f}, rect);
   EXPECT_FALSE(FPDFText_GetLooseCharBox(textpage.get(), 55, &rect));
-  EXPECT_FLOAT_EQ(4.0f, rect.left);
-  EXPECT_FLOAT_EQ(3.0f, rect.right);
-  EXPECT_FLOAT_EQ(2.0f, rect.bottom);
-  EXPECT_FLOAT_EQ(1.0f, rect.top);
+  VerifyRectExact({4.0f, 3.0f, 2.0f, 1.0f}, rect);
   EXPECT_FALSE(FPDFText_GetLooseCharBox(textpage.get(), 4, nullptr));
 
   EXPECT_TRUE(FPDFText_GetLooseCharBox(textpage.get(), 4, &rect));
-  EXPECT_FLOAT_EQ(40.664001f, rect.left);
-  EXPECT_FLOAT_EQ(46.664001f, rect.right);
-  EXPECT_FLOAT_EQ(47.419998f, rect.bottom);
-  EXPECT_FLOAT_EQ(60.692001f, rect.top);
+  VerifyRectExact({40.664001f, 46.664001f, 47.419998f, 60.692001f}, rect);
 
   double x = 0.0;
   double y = 0.0;
@@ -225,10 +243,7 @@ TEST_F(FPDFTextEmbedderTest, Text) {
   top = 0.0;
   EXPECT_TRUE(
       FPDFText_GetRect(textpage.get(), 1, &left, &top, &right, &bottom));
-  EXPECT_NEAR_THREE_PLACES(20.800, left);
-  EXPECT_NEAR_THREE_PLACES(135.040, right);
-  EXPECT_NEAR_THREE_PLACES(96.688, bottom);
-  EXPECT_NEAR_THREE_PLACES(111.600, top);
+  VerifySides({20.800, 135.040, 96.688, 111.600}, {left, right, bottom, top});
 
   // Test out of range indicies set outputs to (0.0, 0.0, 0.0, 0.0).
   left = -1.0;
@@ -237,10 +252,7 @@ TEST_F(FPDFTextEmbedderTest, Text) {
   top = -1.0;
   EXPECT_FALSE(
       FPDFText_GetRect(textpage.get(), -1, &left, &top, &right, &bottom));
-  EXPECT_EQ(0.0, left);
-  EXPECT_EQ(0.0, right);
-  EXPECT_EQ(0.0, bottom);
-  EXPECT_EQ(0.0, top);
+  VerifySidesExact({0.0, 0.0, 0.0, 0.0}, {left, right, bottom, top});
 
   left = -2.0;
   right = -2.0;
@@ -248,10 +260,7 @@ TEST_F(FPDFTextEmbedderTest, Text) {
   top = -2.0;
   EXPECT_FALSE(
       FPDFText_GetRect(textpage.get(), 2, &left, &top, &right, &bottom));
-  EXPECT_EQ(0.0, left);
-  EXPECT_EQ(0.0, right);
-  EXPECT_EQ(0.0, bottom);
-  EXPECT_EQ(0.0, top);
+  VerifySidesExact({0.0, 0.0, 0.0, 0.0}, {left, right, bottom, top});
 
   EXPECT_EQ(9, FPDFText_GetBoundedText(textpage.get(), 41.0, 56.0, 82.0, 48.0,
                                        nullptr, 0));
@@ -310,44 +319,24 @@ TEST_F(FPDFTextEmbedderTest, TextVertical) {
   EXPECT_TRUE(
       FPDFText_GetCharBox(textpage.get(), 1, &left, &right, &bottom, &top));
 #if BUILDFLAG(IS_MAC)
-  EXPECT_NEAR_THREE_PLACES(7.168, left);
+  VerifySides({7.168, 12.808, 171.4, 178.06}, {left, right, bottom, top});
 #else
-  EXPECT_NEAR_THREE_PLACES(7.276, left);
-#endif
-  EXPECT_NEAR_THREE_PLACES(12.808, right);
-#if BUILDFLAG(IS_MAC)
-  EXPECT_NEAR_THREE_PLACES(171.4, bottom);
-  EXPECT_NEAR_THREE_PLACES(178.06, top);
-#else
-  EXPECT_NEAR_THREE_PLACES(171.364, bottom);
-  EXPECT_NEAR_THREE_PLACES(178.288, top);
+  VerifySides({7.276, 12.808, 171.364, 178.288}, {left, right, bottom, top});
 #endif
   EXPECT_TRUE(
       FPDFText_GetCharBox(textpage.get(), 2, &left, &right, &bottom, &top));
 #if BUILDFLAG(IS_MAC)
-  EXPECT_NEAR_THREE_PLACES(9.472, left);
-  EXPECT_NEAR_THREE_PLACES(10.528, right);
-  EXPECT_NEAR_THREE_PLACES(160.492, bottom);
-  EXPECT_NEAR_THREE_PLACES(169.324, top);
+  VerifySides({9.472, 10.528, 160.492, 169.324}, {left, right, bottom, top});
 #else
-  EXPECT_NEAR_THREE_PLACES(9.772, left);
-  EXPECT_NEAR_THREE_PLACES(11.56, right);
-  EXPECT_NEAR_THREE_PLACES(160.348, bottom);
-  EXPECT_NEAR_THREE_PLACES(170.188, top);
+  VerifySides({9.772, 11.56, 160.348, 170.188}, {left, right, bottom, top});
 #endif
 
   FS_RECTF rect;
   EXPECT_TRUE(FPDFText_GetLooseCharBox(textpage.get(), 1, &rect));
-  EXPECT_NEAR_THREE_PLACES(4, rect.left);
-  EXPECT_NEAR_THREE_PLACES(16, rect.right);
-  EXPECT_NEAR_THREE_PLACES(170.308, rect.bottom);
-  EXPECT_NEAR_THREE_PLACES(178.984, rect.top);
+  VerifyRect({4, 16, 170.308, 178.984}, rect);
 
   EXPECT_TRUE(FPDFText_GetLooseCharBox(textpage.get(), 2, &rect));
-  EXPECT_NEAR_THREE_PLACES(4, rect.left);
-  EXPECT_NEAR_THREE_PLACES(16, rect.right);
-  EXPECT_NEAR_THREE_PLACES(159.292, rect.bottom);
-  EXPECT_NEAR_THREE_PLACES(170.308, rect.top);
+  VerifyRect({4, 16, 159.292, 170.308}, rect);
 }
 
 TEST_F(FPDFTextEmbedderTest, TextHebrewMirrored) {
@@ -796,34 +785,24 @@ TEST_F(FPDFTextEmbedderTest, WebLinks) {
   double right = 0.0;
   double top = 0.0;
   double bottom = 0.0;
-  EXPECT_TRUE(FPDFLink_GetRect(pagelink, 0, 0, &left, &top, &right, &bottom));
-  EXPECT_NEAR_THREE_PLACES(50.828, left);
-  EXPECT_NEAR_THREE_PLACES(187.904, right);
-  EXPECT_NEAR_THREE_PLACES(97.516, bottom);
-  EXPECT_NEAR_THREE_PLACES(108.700, top);
+  EXPECT_TRUE(FPDFLink_GetRect(pagelink, 0, 0, &left, &bottom, &right, &top));
+  VerifySides({50.828, 187.904, 108.700, 97.516}, {left, right, bottom, top});
 
   // Check that valid link with invalid rect index leaves parameters unchanged.
   left = -1.0;
   right = -1.0;
   top = -1.0;
   bottom = -1.0;
-  EXPECT_FALSE(FPDFLink_GetRect(pagelink, 0, 1, &left, &top, &right, &bottom));
-  EXPECT_EQ(-1.0, left);
-  EXPECT_EQ(-1.0, right);
-  EXPECT_EQ(-1.0, bottom);
-  EXPECT_EQ(-1.0, top);
+  EXPECT_FALSE(FPDFLink_GetRect(pagelink, 0, 1, &left, &bottom, &right, &top));
+  VerifySidesExact({-1.0, -1.0, -1.0, -1.0}, {left, right, bottom, top});
 
   // Check that invalid link index leaves parameters unchanged.
   left = -2.0;
   right = -2.0;
   top = -2.0;
   bottom = -2.0;
-  EXPECT_FALSE(FPDFLink_GetRect(pagelink, -1, 0, &left, &top, &right, &bottom));
-  EXPECT_EQ(-2.0, left);
-  EXPECT_EQ(-2.0, right);
-  EXPECT_EQ(-2.0, bottom);
-  EXPECT_EQ(-2.0, top);
-
+  EXPECT_FALSE(FPDFLink_GetRect(pagelink, -1, 0, &left, &bottom, &right, &top));
+  VerifySidesExact({-2.0, -2.0, -2.0, -2.0}, {left, right, bottom, top});
   FPDFLink_CloseWebLinks(pagelink);
 }
 
@@ -972,10 +951,7 @@ TEST_F(FPDFTextEmbedderTest, AnnotLinks) {
     } else if (start_pos == 3) {  // points to PDF Spec URL
       FS_RECTF link_rect;
       EXPECT_TRUE(FPDFLink_GetAnnotRect(link_annot, &link_rect));
-      EXPECT_NEAR_THREE_PLACES(66.0, link_rect.left);
-      EXPECT_NEAR_THREE_PLACES(544.0, link_rect.top);
-      EXPECT_NEAR_THREE_PLACES(196.0, link_rect.right);
-      EXPECT_NEAR_THREE_PLACES(529.0, link_rect.bottom);
+      VerifyRect({66.0, 196.0, 529.0, 544.0}, link_rect);
     } else if (start_pos == 4) {  // this link has quad points
       int quad_point_count = FPDFLink_CountQuadPoints(link_annot);
       EXPECT_EQ(1, quad_point_count);
@@ -2166,34 +2142,26 @@ TEST_F(FPDFTextEmbedderTest, SmallType3Glyph) {
   double top;
   ASSERT_TRUE(
       FPDFText_GetCharBox(text_page.get(), 0, &left, &right, &bottom, &top));
-  EXPECT_DOUBLE_EQ(63.439998626708984, left);
-  EXPECT_DOUBLE_EQ(65.360000610351562, right);
-  EXPECT_DOUBLE_EQ(50.0, bottom);
-  EXPECT_DOUBLE_EQ(61.520000457763672, top);
+  VerifySidesExact(
+      {63.439998626708984, 65.360000610351562, 50, 61.520000457763672},
+      {left, right, bottom, top});
   ASSERT_TRUE(
       FPDFText_GetCharBox(text_page.get(), 1, &left, &right, &bottom, &top));
-  EXPECT_DOUBLE_EQ(62.007999420166016, left);
-  EXPECT_DOUBLE_EQ(62.007999420166016, right);
-  EXPECT_DOUBLE_EQ(50.0, bottom);
-  EXPECT_DOUBLE_EQ(50.0, top);
+  VerifySidesExact({62.007999420166016, 62.007999420166016, 50.0, 50.0},
+                   {left, right, bottom, top});
   ASSERT_TRUE(
       FPDFText_GetCharBox(text_page.get(), 2, &left, &right, &bottom, &top));
-  EXPECT_DOUBLE_EQ(86.0, left);
-  EXPECT_DOUBLE_EQ(88.400001525878906, right);
-  EXPECT_DOUBLE_EQ(50.0, bottom);
-  EXPECT_DOUBLE_EQ(50.240001678466797, top);
+  VerifySidesExact({86.0, 88.400001525878906, 50.0, 50.240001678466797},
+                   {left, right, bottom, top});
   ASSERT_TRUE(
       FPDFText_GetCharBox(text_page.get(), 3, &left, &right, &bottom, &top));
-  EXPECT_DOUBLE_EQ(86.010002136230469, left);
-  EXPECT_DOUBLE_EQ(86.010002136230469, right);
-  EXPECT_DOUBLE_EQ(50.0, bottom);
-  EXPECT_DOUBLE_EQ(50.0, top);
+  VerifySidesExact({86.010002136230469, 86.010002136230469, 50.0, 50.0},
+                   {left, right, bottom, top});
   ASSERT_TRUE(
       FPDFText_GetCharBox(text_page.get(), 4, &left, &right, &bottom, &top));
-  EXPECT_DOUBLE_EQ(99.44000244140625, left);
-  EXPECT_DOUBLE_EQ(101.36000061035156, right);
-  EXPECT_DOUBLE_EQ(50.0, bottom);
-  EXPECT_DOUBLE_EQ(61.520000457763672, top);
+  VerifySidesExact(
+      {99.44000244140625, 101.36000061035156, 50.0, 61.520000457763672},
+      {left, right, bottom, top});
 }
 
 TEST_F(FPDFTextEmbedderTest, BigtableTextExtraction) {
@@ -2254,10 +2222,9 @@ TEST_F(FPDFTextEmbedderTest, BigtableTextRects) {
     TextRect result;
     ASSERT_TRUE(FPDFText_GetRect(textpage.get(), i, &result.left, &result.top,
                                  &result.right, &result.bottom));
-    EXPECT_NEAR_THREE_PLACES(kExpectedRects[i].left, result.left);
-    EXPECT_NEAR_THREE_PLACES(kExpectedRects[i].top, result.top);
-    EXPECT_NEAR_THREE_PLACES(kExpectedRects[i].right, result.right);
-    EXPECT_NEAR_THREE_PLACES(kExpectedRects[i].bottom, result.bottom);
+    VerifySides({kExpectedRects[i].left, kExpectedRects[i].right,
+                 kExpectedRects[i].top, kExpectedRects[i].bottom},
+                {result.left, result.right, result.top, result.bottom});
   }
 }
 
