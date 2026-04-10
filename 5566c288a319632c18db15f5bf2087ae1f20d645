@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d48e207a_b1ee1742",
+        "filename": "core/fxge/cfx_folderfontinfo.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-10T04:54:55Z",
+      "side": 1,
+      "message": "Done. Same for the test helper as well AddDummyFont().",
+      "parentUuid": "df97347e_e2fdfa31",
+      "revId": "5566c288a319632c18db15f5bf2087ae1f20d645",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d9e84aa0_903df7e0",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-04-10T00:24:02Z",
       "side": 1,
       "message": "Auto-format?",
+      "revId": "5566c288a319632c18db15f5bf2087ae1f20d645",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "48c04236_034bfee4",
+        "filename": "core/fxge/cfx_folderfontinfo.h",
+        "patchSetId": 15
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-10T04:54:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d9e84aa0_903df7e0",
       "revId": "5566c288a319632c18db15f5bf2087ae1f20d645",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
