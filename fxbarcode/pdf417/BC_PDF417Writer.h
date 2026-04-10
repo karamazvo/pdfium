@@ -16,15 +16,6 @@
 
 class CBC_PDF417Writer final : public CBC_TwoDimWriter {
  public:
-  struct EncodeResult {
-    EncodeResult(DataVector<uint8_t> data, int32_t width, int32_t height);
-    ~EncodeResult();
-
-    DataVector<uint8_t> data;
-    int32_t width;
-    int32_t height;
-  };
-
   CBC_PDF417Writer();
   ~CBC_PDF417Writer() override;
 
