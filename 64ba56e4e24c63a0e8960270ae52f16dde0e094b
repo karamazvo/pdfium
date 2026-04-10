@@ -16,6 +16,29 @@
       "message": "Hey guys - more helper functions here as well, I think since this method is already common across 2 (presumably more) files might be worth adding rect and side comparison helpers to testing/embedder_test.cpp perhaps.",
       "revId": "64ba56e4e24c63a0e8960270ae52f16dde0e094b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4c47913d_38a84549",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-10T05:18:11Z",
+      "side": 1,
+      "message": "Had writers block while naming this - any suggestions?\n\nAlso thoughts on template initialisation with the next struct?",
+      "range": {
+        "startLine": 79,
+        "startChar": 7,
+        "endLine": 79,
+        "endChar": 12
+      },
+      "revId": "64ba56e4e24c63a0e8960270ae52f16dde0e094b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
