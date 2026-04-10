@@ -136,7 +136,6 @@ void CPDFXFA_Context::SetFormFillEnv(
     xfadoc_view_.Clear();
     xfadoc_.Clear();
     xfaapp_.Clear();
-    FXGC_ForceGarbageCollection(gc_heap_.get());
   }
   form_fill_env_.Reset(pFormFillEnv);
 }
