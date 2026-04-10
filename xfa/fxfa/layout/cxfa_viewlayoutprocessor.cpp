@@ -1003,8 +1003,10 @@ bool CXFA_ViewLayoutProcessor::BreakOverflow(const CXFA_Node* pOverflowNode,
                                              bool bCreatePage,
                                              CXFA_Node** pLeaderTemplate,
                                              CXFA_Node** pTrailerTemplate) {
+  CXFA_Node* pParent = pOverflowNode->GetContainerParent();
   CXFA_Node* pContainer =
-      pOverflowNode->GetContainerParent()->GetTemplateNodeIfExists();
+      pParent ? pParent->GetTemplateNodeIfExists() : nullptr;
+
   if (pOverflowNode->GetElementType() == XFA_Element::Break) {
     WideString wsOverflowLeader =
         pOverflowNode->JSObject()->GetCData(XFA_Attribute::OverflowLeader);
