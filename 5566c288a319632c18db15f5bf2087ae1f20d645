@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "df97347e_e2fdfa31",
+        "filename": "core/fxge/cfx_folderfontinfo.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-10T00:24:02Z",
+      "side": 1,
+      "message": "Should this return a singular value and not a Mask? Same for IsEligibleForFindFont().",
+      "revId": "5566c288a319632c18db15f5bf2087ae1f20d645",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d9e84aa0_903df7e0",
+        "filename": "core/fxge/cfx_folderfontinfo.h",
+        "patchSetId": 15
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-10T00:24:02Z",
+      "side": 1,
+      "message": "Auto-format?",
+      "revId": "5566c288a319632c18db15f5bf2087ae1f20d645",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
