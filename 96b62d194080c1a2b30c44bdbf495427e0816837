@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d3ba9ed3_cfe6870a",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 327,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-10T05:00:01Z",
+      "side": 1,
+      "message": "Order is messed up here...",
+      "range": {
+        "startLine": 327,
+        "startChar": 45,
+        "endLine": 327,
+        "endChar": 76
+      },
+      "revId": "96b62d194080c1a2b30c44bdbf495427e0816837",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "163ace1b_e37be23f",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 2164,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-10T05:00:01Z",
+      "side": 1,
+      "message": "And all of these",
+      "range": {
+        "startLine": 2145,
+        "startChar": 0,
+        "endLine": 2164,
+        "endChar": 34
+      },
+      "revId": "96b62d194080c1a2b30c44bdbf495427e0816837",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
