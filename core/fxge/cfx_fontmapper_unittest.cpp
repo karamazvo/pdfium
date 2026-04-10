@@ -267,6 +267,63 @@ TEST_F(CFXFontMapperSystemFontInfoTest, SetSubstFontNameWhenGetFaceNameFails) {
   EXPECT_EQ("Noto Sans SC Regular", subst_font.family_);
 }
 
+TEST_F(CFXFontMapperSystemFontInfoTest,
+       FindSubstFaceForRegularStandardFontWithBoldWeight) {
+  std::string font_path = PathService::GetThirdPartyFilePath(
+      "NotoSansCJK/NotoSansSC-Regular.subset.otf");
+  ASSERT_FALSE(font_path.empty());
+  const std::vector<uint8_t> font_data = GetFileContents(font_path.c_str());
+  ASSERT_FALSE(font_data.empty());
+
+  void* const kFontHandle = reinterpret_cast<void*>(12345);
+
+  {
+    static constexpr char kExpectedFamily[] = "Helvetica-Oblique";
+    // TODO(crbug.com/500640684): Should be 400.
+    static constexpr int kExpectedWeight = 700;
+    static constexpr auto kExpectedCharset = FX_Charset::kANSI;
+    static constexpr int kExpectedPitchFamily = 0;
+
+    InSequence s;
+    EXPECT_CALL(system_font_info(), EnumFontList(&font_mapper()));
+    EXPECT_CALL(system_font_info(),
+                MapFont(kExpectedWeight, /*bItalic=*/true, kExpectedCharset,
+                        kExpectedPitchFamily, ByteString(kExpectedFamily)))
+        .WillOnce(Return(kFontHandle));
+    EXPECT_CALL(system_font_info(), GetFaceName(kFontHandle, _))
+        .WillOnce(Return(false));
+    EXPECT_CALL(system_font_info(), GetFontData(kFontHandle, kTableTTCF, _))
+        .WillOnce(Return(0));
+    EXPECT_CALL(system_font_info(), GetFontData(kFontHandle, 0, _))
+        .WillOnce(DoAll(WithArg<2>([&](pdfium::span<uint8_t> buffer) {
+                          EXPECT_EQ(0u, buffer.size());
+                        }),
+                        Return(font_data.size())));
+    EXPECT_CALL(system_font_info(), GetFontData(kFontHandle, 0, _))
+        .WillOnce(DoAll(WithArg<2>([&](pdfium::span<uint8_t> buffer) {
+                          ASSERT_EQ(font_data.size(), buffer.size());
+                          fxcrt::spancpy(buffer, pdfium::span(font_data));
+                        }),
+                        Return(font_data.size())));
+    EXPECT_CALL(system_font_info(), DeleteFont(kFontHandle));
+  }
+
+  static constexpr char kFaceName[] = "Arial-ItalicMT";
+  static constexpr int kBoldWeight = 700;
+  static constexpr int kItalicAngle = 0;
+  static constexpr auto kCodePage = FX_CodePage::kDefANSI;
+
+  CFX_SubstFont subst_font;
+  RetainPtr<CFX_Face> face = font_mapper().FindSubstFace(
+      kFaceName,
+      /*is_truetype=*/true,
+      /*flags=*/FXFONT_USEEXTERNATTR,
+      /*weight=*/kBoldWeight,
+      /*italic_angle=*/kItalicAngle, kCodePage, &subst_font);
+  EXPECT_TRUE(face);
+  EXPECT_EQ("Noto Sans SC Regular", subst_font.family_);
+}
+
 TEST(CFXFontMapperTest, LoadInstalledFontsWithEnumeration) {
   CFX_FontMapper font_mapper;
   auto system_font_info = std::make_unique<MockSystemFontInfo>();
@@ -274,7 +331,7 @@ TEST(CFXFontMapperTest, LoadInstalledFontsWithEnumeration) {
   font_mapper.SetSystemFontInfo(std::move(system_font_info));
 
   // Default behavior: EnumFontList should be called
-  EXPECT_CALL(*mock_font_info, EnumFontList(&font_mapper)).Times(1);
+  EXPECT_CALL(*mock_font_info, EnumFontList(&font_mapper));
   font_mapper.LoadInstalledFonts();
 }
 
@@ -300,7 +357,7 @@ TEST(CFXFontMapperTest, LoadInstalledFontsCalledOnlyOnce) {
 
   // EnumFontList should be called only once even if LoadInstalledFonts is
   // called multiple times
-  EXPECT_CALL(*mock_font_info, EnumFontList(&font_mapper)).Times(1);
+  EXPECT_CALL(*mock_font_info, EnumFontList(&font_mapper));
   font_mapper.LoadInstalledFonts();
   font_mapper.LoadInstalledFonts();
   font_mapper.LoadInstalledFonts();
