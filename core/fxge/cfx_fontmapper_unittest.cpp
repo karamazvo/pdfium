@@ -279,8 +279,7 @@ TEST_F(CFXFontMapperSystemFontInfoTest,
 
   {
     static constexpr char kExpectedFamily[] = "Helvetica-Oblique";
-    // TODO(crbug.com/500640684): Should be 400.
-    static constexpr int kExpectedWeight = 700;
+    static constexpr int kExpectedWeight = 400;
     static constexpr auto kExpectedCharset = FX_Charset::kANSI;
     static constexpr int kExpectedPitchFamily = 0;
 

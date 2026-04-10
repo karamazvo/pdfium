@@ -352,6 +352,27 @@ int AdjustBaseFontForStyle(int base_font, uint32_t style) {
   return base_font;
 }
 
+struct StandardFontsAdjustments {
+  std::optional<bool> is_bold;
+  std::optional<bool> is_italic;
+};
+
+StandardFontsAdjustments GetStandardFontsAdjustments(int base_font) {
+  StandardFontsAdjustments results;
+  // Ignore Symbol and ZapfDingbats.
+  if (base_font < 12) {
+    // For each standard typeface, the positions are:
+    // 0: Regular
+    // 1: Bold
+    // 2: BoldOblique
+    // 3: Oblique
+    const int position = base_font % 4;
+    results.is_bold = (position == 1 || position == 2);
+    results.is_italic = (position == 2 || position == 3);
+  }
+  return results;
+}
+
 FX_Charset GetCharset(FX_CodePage code_page, int base_font, uint32_t flags) {
   if (code_page != FX_CodePage::kDefANSI) {
     return FX_GetCharsetFromCodePage(code_page);
@@ -761,6 +782,15 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFace(const ByteString& name,
     if (base_font < kNumStandardFonts) {
       base_font = AdjustBaseFontForStyle(base_font, nStyle);
       family = kBase14FontNames[base_font];
+      StandardFontsAdjustments adjustments =
+          GetStandardFontsAdjustments(base_font);
+      if (adjustments.is_bold.has_value()) {
+        weight = adjustments.is_bold.value() ? pdfium::kFontWeightBold
+                                             : pdfium::kFontWeightNormal;
+      }
+      if (adjustments.is_italic.has_value()) {
+        is_italic = adjustments.is_italic.value();
+      }
     }
   } else if (FontStyleIsItalic(flags)) {
     is_italic = true;
