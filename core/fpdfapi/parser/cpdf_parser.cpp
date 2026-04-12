@@ -679,6 +679,10 @@ bool CPDF_Parser::LoadCrossRefTable(FX_FILESIZE pos, bool skip) {
 void CPDF_Parser::MergeCrossRefObjectsData(
     const std::vector<CrossRefObjData>& objects) {
   for (const auto& obj : objects) {
+    // Skip objects with high object numbers to prevent CHECK() failures.
+    if (obj.obj_num > kMaxObjectNumber) {
+      continue;
+    }
     switch (obj.info.type) {
       case ObjectType::kFree:
         if (obj.info.gennum > 0) {
