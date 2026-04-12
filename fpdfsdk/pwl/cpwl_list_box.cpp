@@ -29,11 +29,11 @@ void CPWL_ListBox::OnCreated() {
   list_ctrl_->SetFontMap(GetFontMap());
   list_ctrl_->SetNotify(this);
 
-  SetHoverSel(HasFlag(PLBS_HOVERSEL));
-  list_ctrl_->SetMultipleSel(HasFlag(PLBS_MULTIPLESEL));
+  SetHoverSel(HasFlag(PStyles::kPlbsHoverSel));
+  list_ctrl_->SetMultipleSel(HasFlag(PStyles::kPlbsMultipleSel));
   list_ctrl_->SetFontSize(GetCreationParams()->fFontSize);
 
-  hover_sel_ = HasFlag(PLBS_HOVERSEL);
+  hover_sel_ = HasFlag(PStyles::kPlbsHoverSel);
 }
 
 void CPWL_ListBox::OnDestroy() {
