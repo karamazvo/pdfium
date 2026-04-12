@@ -485,6 +485,37 @@ TEST_F(ParserXRefTest, XrefObjectIndicesTooBig) {
   EXPECT_EQ(CPDF_Parser::FORMAT_ERROR, parser().StartParseInternal());
 }
 
+TEST_F(ParserXRefTest, XrefTableObjectIndicesTooBig) {
+  // Traditional XRef table (not stream): start_objnum = kMaxObjectNumber,
+  // count = 2. The second entry has obj_num = kMaxObjectNumber + 1, which
+  // exceeds the limit. MergeCrossRefObjectsData() should silently skip it,
+  // consistent with the behavior of LoadCrossRefStream(). Regression test for
+  // the incomplete fix of crbug.com/439237853.
+  static_assert(CPDF_Parser::kMaxObjectNumber == 25165824,
+                "Unexpected kMaxObjectNumber");
+  const unsigned char kData[] =
+      "%PDF-1.0\n"          // offset 0 (9 bytes)
+      "xref\n"              // offset 9  <-- startxref points here
+      "0 1\n"
+      "0000000000 65535 f\r\n"
+      "25165824 2\n"
+      "0000000001 00000 n\r\n"   // obj 25165824 (== kMaxObjectNumber): kept
+      "0000000002 00000 n\r\n"   // obj 25165825 (> kMaxObjectNumber): skipped
+      "trailer\n"
+      "<</Size 1 /Root 1 0 R>>\n"
+      "startxref\n"
+      "9\n"
+      "%%EOF\n";
+  ASSERT_TRUE(parser().InitTestFromBuffer(kData));
+  EXPECT_EQ(CPDF_Parser::SUCCESS, parser().StartParseInternal());
+  EXPECT_FALSE(parser().xref_table_rebuilt());
+  ASSERT_TRUE(parser().GetCrossRefTableForTesting());
+  const auto& objects_info =
+      parser().GetCrossRefTableForTesting()->objects_info();
+  // obj_num > kMaxObjectNumber must not appear in the cross-reference table.
+  EXPECT_EQ(objects_info.end(), objects_info.find(25165825u));
+}
+
 TEST_F(ParserXRefTest, XrefHasInvalidArchiveObjectNumber) {
   // 0xFF in the first object in the xref object stream is invalid.
   const unsigned char kData[] =
