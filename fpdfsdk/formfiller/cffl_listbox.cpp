@@ -26,12 +26,12 @@ CPWL_Wnd::CreateParams CFFL_ListBox::GetCreateParam() {
   CPWL_Wnd::CreateParams cp = CFFL_TextObject::GetCreateParam();
   uint32_t dwFieldFlag = widget_->GetFieldFlags();
   if (dwFieldFlag & pdfium::form_flags::kChoiceMultiSelect) {
-    cp.dwFlags |= PLBS_MULTIPLESEL;
+    cp.dwFlags |= PStyles::kPlbsMultipleSel;
   }
 
-  cp.dwFlags |= PWS_VSCROLL;
+  cp.dwFlags |= PStyles::kPwsVScroll;
 
-  if (cp.dwFlags & PWS_AUTOFONTSIZE) {
+  if (cp.dwFlags & PStyles::kPwsAutoFontSize) {
     static constexpr float kDefaultListBoxFontSize = 12.0f;
     cp.fFontSize = kDefaultListBoxFontSize;
   }
@@ -51,7 +51,7 @@ std::unique_ptr<CPWL_Wnd> CFFL_ListBox::NewPWLWindow(
     pWnd->AddString(widget_->GetOptionLabel(i));
   }
 
-  if (pWnd->HasFlag(PLBS_MULTIPLESEL)) {
+  if (pWnd->HasFlag(PStyles::kPlbsMultipleSel)) {
     original_selections_.clear();
 
     bool bSetCaret = false;
