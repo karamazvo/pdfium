@@ -43,41 +43,42 @@ CPWL_Wnd::CreateParams CFFL_TextField::GetCreateParam() {
   CPWL_Wnd::CreateParams cp = CFFL_TextObject::GetCreateParam();
   int nFlags = widget_->GetFieldFlags();
   if (nFlags & pdfium::form_flags::kTextPassword) {
-    cp.dwFlags |= PES_PASSWORD;
+    cp.dwFlags |= PStyles::kPesPassword;
   }
 
   if (nFlags & pdfium::form_flags::kTextMultiline) {
-    cp.dwFlags |= PES_MULTILINE | PES_AUTORETURN | PES_TOP;
+    cp.dwFlags |=
+        {PStyles::kPesMultiline, PStyles::kPesAutoReturn, PStyles::kPesTop};
     if (!(nFlags & pdfium::form_flags::kTextDoNotScroll)) {
-      cp.dwFlags |= PWS_VSCROLL | PES_AUTOSCROLL;
+      cp.dwFlags |= {PStyles::kPwsVScroll, PStyles::kPesAutoScroll};
     }
   } else {
-    cp.dwFlags |= PES_CENTER;
+    cp.dwFlags |= PStyles::kPesCenter;
     if (!(nFlags & pdfium::form_flags::kTextDoNotScroll)) {
-      cp.dwFlags |= PES_AUTOSCROLL;
+      cp.dwFlags |= PStyles::kPesAutoScroll;
     }
   }
 
   if (nFlags & pdfium::form_flags::kTextComb) {
-    cp.dwFlags |= PES_CHARARRAY;
+    cp.dwFlags |= PStyles::kPesCharArray;
   }
 
   if (nFlags & pdfium::form_flags::kTextRichText) {
-    cp.dwFlags |= PES_RICH;
+    cp.dwFlags |= PStyles::kPesRich;
   }
 
-  cp.dwFlags |= PES_UNDO;
+  cp.dwFlags |= PStyles::kPesUndo;
 
   switch (widget_->GetAlignment()) {
     default:
     case kLeft:
-      cp.dwFlags |= PES_LEFT;
+      cp.dwFlags |= PStyles::kPesLeft;
       break;
     case kCenter:
-      cp.dwFlags |= PES_MIDDLE;
+      cp.dwFlags |= PStyles::kPesMiddle;
       break;
     case kRight:
-      cp.dwFlags |= PES_RIGHT;
+      cp.dwFlags |= PStyles::kPesRight;
       break;
   }
   cp.font_map = GetOrCreateFontMap();
@@ -94,7 +95,7 @@ std::unique_ptr<CPWL_Wnd> CFFL_TextField::NewPWLWindow(
   int32_t nMaxLen = widget_->GetMaxLen();
   WideString swValue = widget_->GetValue();
   if (nMaxLen > 0) {
-    if (pWnd->HasFlag(PES_CHARARRAY)) {
+    if (pWnd->HasFlag(PStyles::kPesCharArray)) {
       pWnd->SetCharArray(nMaxLen);
       pWnd->SetAlignFormatVerticalCenter();
     } else {

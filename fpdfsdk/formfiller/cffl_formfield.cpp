@@ -334,10 +334,11 @@ CPWL_Wnd::CreateParams CFFL_FormField::GetCreateParam() {
 
   cp.rcRectWnd = GetPDFAnnotRect();
 
-  uint32_t dwCreateFlags = PWS_BORDER | PWS_BACKGROUND | PWS_VISIBLE;
+  fxcrt::Mask<PStyles> dwCreateFlags = {
+      PStyles::kPwsBorder, PStyles::kPwsBackground, PStyles::kPwsVisible};
   uint32_t dwFieldFlag = widget_->GetFieldFlags();
   if (dwFieldFlag & pdfium::form_flags::kReadOnly) {
-    dwCreateFlags |= PWS_READONLY;
+    dwCreateFlags |= PStyles::kPwsReadOnly;
   }
 
   std::optional<FX_COLORREF> color = widget_->GetFillColor();
@@ -373,7 +374,7 @@ CPWL_Wnd::CreateParams CFFL_FormField::GetCreateParam() {
   }
 
   if (cp.fFontSize <= 0) {
-    dwCreateFlags |= PWS_AUTOFONTSIZE;
+    dwCreateFlags |= PStyles::kPwsAutoFontSize;
   }
 
   cp.dwFlags = dwCreateFlags;
