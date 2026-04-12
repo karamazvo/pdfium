@@ -679,6 +679,13 @@ bool CPDF_Parser::LoadCrossRefTable(FX_FILESIZE pos, bool skip) {
 void CPDF_Parser::MergeCrossRefObjectsData(
     const std::vector<CrossRefObjData>& objects) {
   for (const auto& obj : objects) {
+    // Skip objects with obj_num exceeding the allowed range, consistent with
+    // the guard in LoadCrossRefStream() and RebuildCrossRef(). Without this,
+    // CHECK_LE() in AddNormal()/SetFree()/AddCompressed() can fire on crafted
+    // XRef table input. crbug.com/439237853 fixed LoadCrossRefStream() but
+    // did not update this function.
+    if (obj.obj_num > kMaxObjectNumber)
+      continue;
     switch (obj.info.type) {
       case ObjectType::kFree:
         if (obj.info.gennum > 0) {
