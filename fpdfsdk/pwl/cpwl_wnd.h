@@ -26,37 +26,36 @@ class CPWL_ScrollBar;
 class IPVT_FontMap;
 struct PWL_SCROLL_INFO;
 
-// window styles
-#define PWS_BORDER 0x40000000L
-#define PWS_BACKGROUND 0x20000000L
-#define PWS_VSCROLL 0x08000000L
-#define PWS_VISIBLE 0x04000000L
-#define PWS_READONLY 0x01000000L
-#define PWS_AUTOFONTSIZE 0x00800000L
-#define PWS_AUTOTRANSPARENT 0x00400000L
-#define PWS_NOREFRESHCLIP 0x00200000L
-
-// edit and label styles
-#define PES_MULTILINE 0x0001L
-#define PES_PASSWORD 0x0002L
-#define PES_LEFT 0x0004L
-#define PES_RIGHT 0x0008L
-#define PES_MIDDLE 0x0010L
-#define PES_TOP 0x0020L
-#define PES_CENTER 0x0080L
-#define PES_CHARARRAY 0x0100L
-#define PES_AUTOSCROLL 0x0200L
-#define PES_AUTORETURN 0x0400L
-#define PES_UNDO 0x0800L
-#define PES_RICH 0x1000L
-#define PES_TEXTOVERFLOW 0x4000L
-
-// listbox styles
-#define PLBS_MULTIPLESEL 0x0001L
-#define PLBS_HOVERSEL 0x0008L
-
-// combobox styles
-#define PCBS_ALLOWCUSTOMTEXT 0x0001L
+enum PStyles {
+  // window styles
+  kPwsBorder = 0x40000000L,
+  kPwsBackground = 0x20000000L,
+  kPwsVScroll = 0x08000000L,
+  kPwsVisible = 0x04000000L,
+  kPwsReadOnly = 0x01000000L,
+  kPwsAutoFontSize = 0x00800000L,
+  kPwsAutoTransparent = 0x00400000L,
+  kPwsNoRefreshClip = 0x00200000L,
+  // edit and label styles
+  kPesMultiline = 0x0001L,
+  kPesPassword = 0x0002L,
+  kPesLeft = 0x0004L,
+  kPesRight = 0x0008L,
+  kPesMiddle = 0x0010L,
+  kPesTop = 0x0020L,
+  kPesCenter = 0x0080L,
+  kPesCharArray = 0x0100L,
+  kPesAutoScroll = 0x0200L,
+  kPesAutoReturn = 0x0400L,
+  kPesUndo = 0x0800L,
+  kPesRich = 0x1000L,
+  kPesTextOverflow = 0x4000L,
+  // listbox styles
+  kPlbsMultipleSel = 0x0001L,
+  kPlbsHoverSel = 0x0008L,
+  // combobox styles
+  kPcbsAllowCustomText = 0x0001L,
+};
 
 struct CPWL_Dash {
   int32_t nDash;
@@ -99,7 +98,7 @@ class CPWL_Wnd : public Observable {
     ObservedPtr<ProviderIface> pProvider;
 
     // Optional:
-    uint32_t dwFlags = 0;
+    fxcrt::Mask<PStyles> dwFlags;
     CFX_Color sBackgroundColor;
     BorderStyle nBorderStyle = BorderStyle::kSolid;
     int32_t dwBorderWidth = 1;
@@ -192,8 +191,8 @@ class CPWL_Wnd : public Observable {
   CFX_FloatRect GetWindowRect() const;
 
   bool IsVisible() const { return visible_; }
-  bool HasFlag(uint32_t dwFlags) const;
-  void RemoveFlag(uint32_t dwFlags);
+  bool HasFlag(fxcrt::Mask<PStyles> dwFlags) const;
+  void RemoveFlag(fxcrt::Mask<PStyles> dwFlags);
   void SetClipRect(const CFX_FloatRect& rect);
 
   IPWL_FillerNotify::PerWindowData* GetAttachedData() const {
