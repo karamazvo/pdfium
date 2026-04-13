@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ac9ee5bf_9aa89372",
+        "filename": "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-13T16:47:18Z",
+      "side": 1,
+      "message": "It\u0027s weird considering CPDFSDK_FormFillEnvironment::GetLanguage() and GetPlatform() do call into their respecitve FPDF_FORMFILLINFO APIs. Maybe we should plumb it through as a follow-up.",
+      "revId": "99e09826a7776175c5acd0b029f12d0a19e15acb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
