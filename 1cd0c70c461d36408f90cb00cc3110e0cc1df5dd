@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8dac5dea_50ec0cf8",
+        "filename": "fxbarcode/cbc_pdf417i.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-13T19:09:29Z",
+      "side": 0,
+      "message": "nit: Maybe the newline back here?",
+      "revId": "1cd0c70c461d36408f90cb00cc3110e0cc1df5dd",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "55209244_0f29d068",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-13T19:09:29Z",
+      "side": 1,
+      "message": "Hey Tom, I was looking through this and noticed a few issues that seem to be causing the check issues. Thanks!",
+      "revId": "7180b9d80fcb602361ec7da4d237993d9f2dd866",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1caf5d21_6dff7be3",
+        "filename": "fxbarcode/datamatrix/BC_DataMatrixWriter.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-13T19:09:29Z",
+      "side": 1,
+      "message": "A missing # here probably",
+      "revId": "7180b9d80fcb602361ec7da4d237993d9f2dd866",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ea7b8eb4_6409f49d",
+        "filename": "fxbarcode/datamatrix/BC_DataMatrixWriter.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-13T19:09:29Z",
+      "side": 1,
+      "message": "Maybe its indented to be intended back a bit.",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 4
+      },
+      "revId": "7180b9d80fcb602361ec7da4d237993d9f2dd866",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
