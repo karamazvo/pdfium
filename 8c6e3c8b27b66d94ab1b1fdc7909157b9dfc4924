@@ -33,6 +33,29 @@
       "message": "Also want to point out that there are a couple of these FXFA_* defines in public headers which can also be turned into structs/masks or something of that sort... question is do we:\n\na. Ignore them; let\u0027s not deal with defines in public headers.\nb. Add the new ones, leave the old ones marking them as \"deprecated\" and remove it after (not sure what the exact period is)\n\nLet me know which works best.\n\nAlso is there any design doc, other documentation or anything of the sort needed for this? Thanks!",
       "revId": "8c6e3c8b27b66d94ab1b1fdc7909157b9dfc4924",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4e0982b3_5a2caac6",
+        "filename": "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-13T12:48:26Z",
+      "side": 1,
+      "message": "fxcrt::mask probably",
+      "range": {
+        "startLine": 36,
+        "startChar": 7,
+        "endLine": 36,
+        "endChar": 23
+      },
+      "revId": "8c6e3c8b27b66d94ab1b1fdc7909157b9dfc4924",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
