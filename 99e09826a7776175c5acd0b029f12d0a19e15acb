@@ -34,6 +34,24 @@
       "parentUuid": "ac9ee5bf_9aa89372",
       "revId": "99e09826a7776175c5acd0b029f12d0a19e15acb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6b9a1c77_2ec2068c",
+        "filename": "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-13T17:13:13Z",
+      "side": 1,
+      "message": "V2 is experimental, so there is flexibility to fix the XFA portion.",
+      "parentUuid": "0bf966f9_ac065bc7",
+      "revId": "99e09826a7776175c5acd0b029f12d0a19e15acb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
