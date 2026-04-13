@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "da9d5f8e_08430a17",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-13T23:16:18Z",
+      "side": 1,
+      "message": "This code is not built by default and has bitrotted. I would suggest just deleting everything that is guarded by PDF_XFA_ELEMENT_SUBMIT_ENABLED.",
+      "revId": "5598aaf23da48125f8827838b12b2123a0929c15",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
