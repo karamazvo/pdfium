@@ -86,6 +86,24 @@
       "message": "Remove - no longer directly used.",
       "revId": "1bfd5513fffd221628acb48304ae342a8a114fe9",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2368577c_704c67b0",
+        "filename": "fxbarcode/qrcode/BC_QRCodeWriter.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-13T18:47:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "025319cd_5cc0c5e2",
+      "revId": "1bfd5513fffd221628acb48304ae342a8a114fe9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
