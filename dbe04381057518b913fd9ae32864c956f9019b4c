@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5a2ce485_5e2f6e03",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-13T03:43:28Z",
+      "side": 1,
+      "message": "Or let me know if you want the claude.md to be committed instead - its purpose is to help other claude code instances after all. In my opinion it\u0027s still just generated files which we can filter out.",
+      "revId": "dbe04381057518b913fd9ae32864c956f9019b4c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
