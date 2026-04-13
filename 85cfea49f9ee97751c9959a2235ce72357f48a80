@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f96aaf26_c1340d05",
+        "filename": "xfa/fxfa/layout/cxfa_viewlayoutprocessor.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1006,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-13T17:16:01Z",
+      "side": 1,
+      "message": "Rename to `parent`.",
+      "range": {
+        "startLine": 1006,
+        "startChar": 13,
+        "endLine": 1006,
+        "endChar": 20
+      },
+      "revId": "85cfea49f9ee97751c9959a2235ce72357f48a80",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
