@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9e8421ea_bfd8ed93",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2026-04-13T21:01:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5499f2a7_8dd4de98",
+      "revId": "dd2b9501149316358817f6a797bf6e08afc7c7da",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b9cf6971_ff46f71a",
@@ -35,6 +53,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "005f541f_8b99a745",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2026-04-13T21:01:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b9cf6971_ff46f71a",
+      "revId": "dd2b9501149316358817f6a797bf6e08afc7c7da",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "15830ba1_610114de",
@@ -48,6 +84,30 @@
       "writtenOn": "2026-04-07T20:59:01Z",
       "side": 1,
       "message": "Maybe \"FlattenShouldRemoveAcroForm\"",
+      "range": {
+        "startLine": 128,
+        "startChar": 32,
+        "endLine": 128,
+        "endChar": 40
+      },
+      "revId": "dd2b9501149316358817f6a797bf6e08afc7c7da",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "95c0d526_8a539cce",
+        "filename": "fpdfsdk/fpdf_flatten_embeddertest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2026-04-13T21:01:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "15830ba1_610114de",
       "range": {
         "startLine": 128,
         "startChar": 32,
