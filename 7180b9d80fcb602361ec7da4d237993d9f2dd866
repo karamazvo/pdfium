@@ -35,6 +35,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6916d244_d8eded3c",
+        "filename": "fxbarcode/datamatrix/BC_DataMatrixWriter.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-13T19:10:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1caf5d21_6dff7be3",
+      "revId": "7180b9d80fcb602361ec7da4d237993d9f2dd866",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ea7b8eb4_6409f49d",
@@ -48,6 +66,30 @@
       "writtenOn": "2026-04-13T19:09:29Z",
       "side": 1,
       "message": "Maybe its indented to be intended back a bit.",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 4
+      },
+      "revId": "7180b9d80fcb602361ec7da4d237993d9f2dd866",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "52048d43_7dd7301d",
+        "filename": "fxbarcode/datamatrix/BC_DataMatrixWriter.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-13T19:10:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ea7b8eb4_6409f49d",
       "range": {
         "startLine": 15,
         "startChar": 0,
