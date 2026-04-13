@@ -14,6 +14,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/mask.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
@@ -33,15 +34,22 @@
   "fields\r\n(highlighted) before continuing."
 
 // submit
-#define FXFA_CONFIG 0x00000001
-#define FXFA_TEMPLATE 0x00000010
-#define FXFA_LOCALESET 0x00000100
-#define FXFA_DATASETS 0x00001000
-#define FXFA_XMPMETA 0x00010000
-#define FXFA_XFDF 0x00100000
-#define FXFA_FORM 0x01000000
-#define FXFA_PDF 0x10000000
-#define FXFA_XFA_ALL 0x01111111
+enum class XfaSubmitOptions : uint8_t {
+  kConfig = 1 << 0,
+  kTemplate = 1 << 1,
+  kLocaleSet = 1 << 2,
+  kDatasets = 1 << 3,
+  kXmpmeta = 1 << 4,
+  kXfdf = 1 << 5,
+  kForm = 1 << 6,
+  kPdf = 1 << 7
+};
+
+constexpr fxcrt::mask<XfaSubmitOptions> kXfaAll = {
+    XfaSubmitOptions::kConfig,    XfaSubmitOptions::kTemplate,
+    XfaSubmitOptions::kLocaleSet, XfaSubmitOptions::kDatasets,
+    XfaSubmitOptions::kXmpmeta,   XfaSubmitOptions::kXfdf,
+    XfaSubmitOptions::kForm};
 
 // Although there isn't direct casting between these types at present,
 // keep the internal and exernal types in sync.
@@ -804,7 +812,7 @@ bool CPDFXFA_DocEnvironment::MailToInfo(WideString& csURL,
 bool CPDFXFA_DocEnvironment::ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
                                               int fileType,
                                               FPDF_DWORD encodeType,
-                                              FPDF_DWORD flag) {
+                                              fxcrt::mask<XfaSubmitOptions> flag) {
   if (!context_->GetXFADocView()) {
     return false;
   }
@@ -829,8 +837,7 @@ bool CPDFXFA_DocEnvironment::ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
   }
 
   if (!flag) {
-    flag = FXFA_CONFIG | FXFA_TEMPLATE | FXFA_LOCALESET | FXFA_DATASETS |
-           FXFA_XMPMETA | FXFA_XFDF | FXFA_FORM;
+    flag = kXfaAll;
   }
   if (!context_->GetPDFDoc()) {
     fileStream->Flush();
@@ -870,25 +877,25 @@ bool CPDFXFA_DocEnvironment::ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
       continue;
     }
     ByteString bsType = pPrePDFObj->GetString();
-    if (bsType == "config" && !(flag & FXFA_CONFIG)) {
+    if (bsType == "config" && !(flag & XfaSubmitOptions::kConfig)) {
       continue;
     }
-    if (bsType == "template" && !(flag & FXFA_TEMPLATE)) {
+    if (bsType == "template" && !(flag & XfaSubmitOptions::kTemplate)) {
       continue;
     }
-    if (bsType == "localeSet" && !(flag & FXFA_LOCALESET)) {
+    if (bsType == "localeSet" && !(flag & XfaSubmitOptions:: kLocaleSet)) {
       continue;
     }
-    if (bsType == "datasets" && !(flag & FXFA_DATASETS)) {
+    if (bsType == "datasets" && !(flag & XfaSubmitOptions::kDatasets)) {
       continue;
     }
-    if (bsType == "xmpmeta" && !(flag & FXFA_XMPMETA)) {
+    if (bsType == "xmpmeta" && !(flag & XfaSubmitOptions::kXmpmeta)) {
       continue;
     }
-    if (bsType == "xfdf" && !(flag & FXFA_XFDF)) {
+    if (bsType == "xfdf" && !(flag & XfaSubmitOptions::kXfdf)) {
       continue;
     }
-    if (bsType == "form" && !(flag & FXFA_FORM)) {
+    if (bsType == "form" && !(flag & XfaSubmitOptions::kForm)) {
       continue;
     }
 
@@ -906,31 +913,30 @@ bool CPDFXFA_DocEnvironment::ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
 }
 
 void CPDFXFA_DocEnvironment::ToXFAContentFlags(WideString csSrcContent,
-                                               FPDF_DWORD& flag) {
+                                               fxcrt::mask<XfaSubmitOptions>& flag) {
   if (csSrcContent.Contains(L" config ")) {
-    flag |= FXFA_CONFIG;
+    flag |= XfaSubmitOptions::kConfig;
   }
   if (csSrcContent.Contains(L" template ")) {
-    flag |= FXFA_TEMPLATE;
+    flag |= XfaSubmitOptions::kTemplate;
   }
   if (csSrcContent.Contains(L" localeSet ")) {
-    flag |= FXFA_LOCALESET;
+    flag |= XfaSubmitOptions:: kLocaleSet;
   }
   if (csSrcContent.Contains(L" datasets ")) {
-    flag |= FXFA_DATASETS;
+    flag |= XfaSubmitOptions::kDatasets;
   }
   if (csSrcContent.Contains(L" xmpmeta ")) {
-    flag |= FXFA_XMPMETA;
+    flag |= XfaSubmitOptions::kXmpmeta;
   }
   if (csSrcContent.Contains(L" xfdf ")) {
-    flag |= FXFA_XFDF;
+    flag |= XfaSubmitOptions::kXfdf;
   }
   if (csSrcContent.Contains(L" form ")) {
-    flag |= FXFA_FORM;
+    flag |= XfaSubmitOptions::kForm;
   }
   if (flag == 0) {
-    flag = FXFA_CONFIG | FXFA_TEMPLATE | FXFA_LOCALESET | FXFA_DATASETS |
-           FXFA_XMPMETA | FXFA_XFDF | FXFA_FORM;
+    flag = kXfaAll;
   }
 }
 
@@ -1039,9 +1045,9 @@ bool CPDFXFA_DocEnvironment::SubmitInternal(CXFA_FFDoc* hDoc,
 
       WideString space = WideString::FromDefANSI(" ");
       csContent = space + csContent + space;
-      FPDF_DWORD flag = 0;
+      fxcrt::mask<XfaSubmitOptions> flag = 0;
       if (submit->IsSubmitEmbedPDF()) {
-        flag |= FXFA_PDF;
+        flag |= XfaSubmitOptions::kPdf;
       }
 
       ToXFAContentFlags(csContent, flag);
@@ -1053,14 +1059,14 @@ bool CPDFXFA_DocEnvironment::SubmitInternal(CXFA_FFDoc* hDoc,
     case XFA_AttributeValue::Xml:
       pFileHandler = pFormFillEnv->OpenFile(FXFA_SAVEAS_XML, nullptr, "wb");
       fileFlag = FXFA_SAVEAS_XML;
-      ExportSubmitFile(pFileHandler, FXFA_SAVEAS_XML, 0, FXFA_XFA_ALL);
+      ExportSubmitFile(pFileHandler, FXFA_SAVEAS_XML, 0, kXfaAll);
       break;
     case XFA_AttributeValue::Pdf:
       break;
     case XFA_AttributeValue::Urlencoded:
       pFileHandler = pFormFillEnv->OpenFile(FXFA_SAVEAS_XML, nullptr, "wb");
       fileFlag = FXFA_SAVEAS_XML;
-      ExportSubmitFile(pFileHandler, FXFA_SAVEAS_XML, 0, FXFA_XFA_ALL);
+      ExportSubmitFile(pFileHandler, FXFA_SAVEAS_XML, 0, kXfaAll);
       break;
     default:
       return false;
