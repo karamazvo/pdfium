@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "792cd435_ed21ece7",
+        "filename": "fxbarcode/datamatrix/BC_DataMatrixWriter.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-13T18:47:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "01fd577b_342f4f40",
+      "revId": "1bfd5513fffd221628acb48304ae342a8a114fe9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "83ed2168_e72e437e",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-04-13T18:28:57Z",
       "side": 1,
       "message": "Remove - no longer directly used.",
+      "revId": "1bfd5513fffd221628acb48304ae342a8a114fe9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "50e839f2_a6fc373f",
+        "filename": "fxbarcode/pdf417/BC_PDF417Writer.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-13T18:47:08Z",
+      "side": 1,
+      "message": "Done. Also stddef as no size_t, only stdint types.",
+      "parentUuid": "83ed2168_e72e437e",
       "revId": "1bfd5513fffd221628acb48304ae342a8a114fe9",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
