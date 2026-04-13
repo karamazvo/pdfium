@@ -16,6 +16,24 @@
       "message": "Hi guys, got my hands on claude code recently when I got some api credits - and wanted to try it out to see what the hype is all about.\n\nSpoiler alert: I don\u0027t see myself using this again (except maybe for making readmes) because it genuinely struggled for 30 minutes with editing a .gitignore (even to the point where it almost gave up and tried to cl upload its whole memory).\n\nAnyway though, after another 15 minutes of fixing its errors, got a quick change done for this.\n\nLikewise: This CL\u0027s code is written claude code (its 1 line but... it compiles).",
       "revId": "c7263e1123405d47d9a1c91ae51e4b8fa6275071",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c6846961_5a697887",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-13T03:44:58Z",
+      "side": 1,
+      "message": "Clarification on memory, it tried making new files with notes to self... removed them from this CL upload though.",
+      "parentUuid": "e1e869f0_ef79b12c",
+      "revId": "c7263e1123405d47d9a1c91ae51e4b8fa6275071",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
