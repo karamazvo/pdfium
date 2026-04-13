@@ -9,20 +9,17 @@
 
 #include <stdint.h>
 
-#include "core/fxcrt/data_vector.h"
-#include "core/fxcrt/widestring.h"
+include "core/fxcrt/widestring.h"
 #include "fxbarcode/BC_TwoDimWriter.h"
 
-class CBC_DataMatrixWriter final : public CBC_TwoDimWriter {
+    class CBC_DataMatrixWriter final : public CBC_TwoDimWriter {
  public:
   CBC_DataMatrixWriter();
   ~CBC_DataMatrixWriter() override;
 
-  DataVector<uint8_t> Encode(const WideString& contents,
-                             int32_t* pOutWidth,
-                             int32_t* pOutHeight);
+  EncodeResult Encode(const WideString& contents);
 
-  // CBC_TwoDimWriter
+  // CBC_TwoDimWriter:
   bool SetErrorCorrectionLevel(int32_t level) override;
 };
 
