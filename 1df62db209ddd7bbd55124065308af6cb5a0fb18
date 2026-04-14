@@ -3,6 +3,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "5140471e_50dd574f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-14T05:50:22Z",
+      "side": 1,
+      "message": "You also can perhaps omit chromium:",
+      "range": {
+        "startLine": 23,
+        "startChar": 5,
+        "endLine": 23,
+        "endChar": 23
+      },
+      "revId": "1df62db209ddd7bbd55124065308af6cb5a0fb18",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "f6b2faf0_da0b7a4c",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 6
@@ -14,6 +37,161 @@
       "writtenOn": "2026-04-14T05:16:36Z",
       "side": 1,
       "message": "If this is your first CL, please add your name and email to the AUTHORS file at the repo root. Thanks!",
+      "revId": "1df62db209ddd7bbd55124065308af6cb5a0fb18",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2eba2610_79138521",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-14T05:50:22Z",
+      "side": 1,
+      "message": "Some suggestions",
+      "revId": "1df62db209ddd7bbd55124065308af6cb5a0fb18",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "810b702b_34d69d84",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 685,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-14T05:50:22Z",
+      "side": 1,
+      "message": "Perhaps this can be made shorter. Thanks! A decent chunk of this detail can be found by just exploring the code\n\nmaybe `// Skip objects with high object numbers to prevent CHECK() failures.`?\n\n@thestig@chromium.org?",
+      "range": {
+        "startLine": 682,
+        "startChar": 0,
+        "endLine": 685,
+        "endChar": 24
+      },
+      "revId": "1df62db209ddd7bbd55124065308af6cb5a0fb18",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "734f0fda_cb560576",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 687,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-14T05:50:22Z",
+      "side": 1,
+      "message": "What if the objects aren\u0027t added but referenced later. It could end up causing some unpredictable behaviour. Should we instead consider failing and rebuilding the cross-ref table. In which case there are already a few CLs that work on this.\n@thestig@chromium.org wdyt, do we ignore the failures or do we have the whole bool-return path.",
+      "range": {
+        "startLine": 686,
+        "startChar": 0,
+        "endLine": 687,
+        "endChar": 15
+      },
+      "revId": "1df62db209ddd7bbd55124065308af6cb5a0fb18",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "34bd4ee6_393847bc",
+        "filename": "core/fpdfapi/parser/cpdf_parser_unittest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 492,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-14T05:50:22Z",
+      "side": 1,
+      "message": "Perhaps:\n`// Tests whether objects with obj_num \u003e kMaxObjectNumber are skipped as intended.`",
+      "range": {
+        "startLine": 489,
+        "startChar": 0,
+        "endLine": 492,
+        "endChar": 80
+      },
+      "revId": "1df62db209ddd7bbd55124065308af6cb5a0fb18",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c04a5936_75c5f328",
+        "filename": "core/fpdfapi/parser/cpdf_parser_unittest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 496,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-14T05:50:22Z",
+      "side": 1,
+      "message": "Perhaps 1.7 to match all the other tests?",
+      "range": {
+        "startLine": 496,
+        "startChar": 12,
+        "endLine": 496,
+        "endChar": 15
+      },
+      "revId": "1df62db209ddd7bbd55124065308af6cb5a0fb18",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "955d4d8c_07deebb2",
+        "filename": "core/fpdfapi/parser/cpdf_parser_unittest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 497,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-14T05:50:22Z",
+      "side": 1,
+      "message": "nit (although it is fine as is): remove the comments here, the initial documentation prior to kData\u0027s definition should likely suffice.",
+      "range": {
+        "startLine": 497,
+        "startChar": 28,
+        "endLine": 497,
+        "endChar": 66
+      },
+      "revId": "1df62db209ddd7bbd55124065308af6cb5a0fb18",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d177d257_c4e2feeb",
+        "filename": "core/fpdfapi/parser/cpdf_parser_unittest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 513,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-14T05:50:22Z",
+      "side": 1,
+      "message": "nit (fine with it as is as well): Instead of getting this twice how about having it similar to some of the other tests: i.e.\n\n```\nconst CPDF_CrossRefTable* cross_ref_table \u003d\n      parser().GetCrossRefTableForTesting();\nASSERT_TRUE(cross_ref_table);\nconst auto\u0026 objects_info \u003d cross_ref_table-\u003eobjects_info();\n```",
+      "range": {
+        "startLine": 511,
+        "startChar": 2,
+        "endLine": 513,
+        "endChar": 60
+      },
       "revId": "1df62db209ddd7bbd55124065308af6cb5a0fb18",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
