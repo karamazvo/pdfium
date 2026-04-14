@@ -106,6 +106,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d37cc94b_03536b3f",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 687,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-14T13:49:13Z",
+      "side": 1,
+      "message": "Also small suggestion, keep the {}\n\n      if (!pStartNumObj) {\n        continue;\n      }\n\n      RetainPtr\u003cconst CPDF_Number\u003e pCountObj \u003d array-\u003eGetNumberAt(i * 2 + 1);\n      if (!pCountObj) {\n        continue;\n      }\n\nAs done by most of the other if-continue loops.\n```suggestion\n    if (obj.obj_num \u003e kMaxObjectNumber) {\n      continue;\n    }\n```",
+      "range": {
+        "startLine": 686,
+        "startChar": 0,
+        "endLine": 687,
+        "endChar": 15
+      },
+      "revId": "1df62db209ddd7bbd55124065308af6cb5a0fb18",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c82784af_34248640",
         "filename": "core/fpdfapi/parser/cpdf_parser_unittest.cpp",
         "patchSetId": 6
