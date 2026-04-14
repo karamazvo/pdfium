@@ -243,6 +243,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "45f73d64_b9d12866",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 687,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-14T17:36:27Z",
+      "side": 1,
+      "message": "Yes, the rest of the codebase did function in this way, Just thinking about whether it is the best decision to ignore these failures rather than reporting them to the other functions.\n\nMaybe we can have the existing CHECK_LE() is replaced with a return and have the functions propagate the failures instead. Refer to the approach I mentioned in comment #6 of the bug-thread perhaps.\n\nI would personally feel a rebuild is better in such a fatal case that would have crashed as it minimises the likelihood of unpredictable behaviour as mentioned earlier.\n\nPS: If you look at the initial report, comment #3 (by @thestig@chromium.org I think) also mentions a preference for passing the failure upward instead. Would be nice if this CL can do it specifically for AddNormal(); if that is fine. I have another CL that does this for AddCompressed(); and SetFree();\n\n@thestig@chromium.org LMK if you would want to pass failures up or have them ignored to prevent rebuild.",
+      "parentUuid": "014a8844_a3e540e9",
+      "range": {
+        "startLine": 686,
+        "startChar": 0,
+        "endLine": 687,
+        "endChar": 15
+      },
+      "revId": "1df62db209ddd7bbd55124065308af6cb5a0fb18",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c82784af_34248640",
         "filename": "core/fpdfapi/parser/cpdf_parser_unittest.cpp",
         "patchSetId": 6
