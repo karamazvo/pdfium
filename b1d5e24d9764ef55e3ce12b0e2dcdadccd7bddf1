@@ -48,6 +48,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "aac497df_ae7b2326",
+        "filename": "fpdfsdk/formfiller/cffl_formfield.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-14T04:42:06Z",
+      "side": 1,
+      "message": "Marked as resolved. LMK what you think.",
+      "parentUuid": "f4c4eb78_6f6b9afd",
+      "range": {
+        "startLine": 337,
+        "startChar": 23,
+        "endLine": 337,
+        "endChar": 36
+      },
+      "revId": "b1d5e24d9764ef55e3ce12b0e2dcdadccd7bddf1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "eaa76c31_c4be7329",
