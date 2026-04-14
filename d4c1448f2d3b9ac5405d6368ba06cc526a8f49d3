@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "237d3245_98895385",
+        "filename": "fpdfsdk/pwl/cpwl_scroll_bar.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-14T17:59:30Z",
+      "side": 1,
+      "message": "Since `CPWL_ScrollBar` inherits from `CPWL_Wnd`, this can also just be `Styles`. Same goes for all the other `CPWL_` classes. (But not the `CFFL_` classes.)",
+      "range": {
+        "startLine": 198,
+        "startChar": 14,
+        "endLine": 198,
+        "endChar": 30
+      },
+      "revId": "d4c1448f2d3b9ac5405d6368ba06cc526a8f49d3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eaeefe99_235081ad",
+        "filename": "fpdfsdk/pwl/cpwl_wnd.h",
+        "patchSetId": 14
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-14T17:59:30Z",
+      "side": 1,
+      "message": "Can just use `Styles` inside `CPWL_Wnd`.",
+      "range": {
+        "startLine": 194,
+        "startChar": 27,
+        "endLine": 194,
+        "endChar": 43
+      },
+      "revId": "d4c1448f2d3b9ac5405d6368ba06cc526a8f49d3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "71e14a22_44cce051",
+        "filename": "fpdfsdk/pwl/cpwl_wnd.h",
+        "patchSetId": 14
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-14T17:59:30Z",
+      "side": 1,
+      "message": "Consistently use `Mask`.",
+      "range": {
+        "startLine": 194,
+        "startChar": 15,
+        "endLine": 194,
+        "endChar": 26
+      },
+      "revId": "d4c1448f2d3b9ac5405d6368ba06cc526a8f49d3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
