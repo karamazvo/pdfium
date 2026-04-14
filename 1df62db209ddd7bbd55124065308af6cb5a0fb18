@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "dfa2104a_bfa8718e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 4756662
+      },
+      "writtenOn": "2026-04-14T17:03:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5140471e_50dd574f",
+      "range": {
+        "startLine": 23,
+        "startChar": 5,
+        "endLine": 23,
+        "endChar": 23
+      },
+      "revId": "1df62db209ddd7bbd55124065308af6cb5a0fb18",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f6b2faf0_da0b7a4c",
@@ -58,6 +82,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "952699c4_924d1d58",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4756662
+      },
+      "writtenOn": "2026-04-14T17:03:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f6b2faf0_da0b7a4c",
+      "revId": "1df62db209ddd7bbd55124065308af6cb5a0fb18",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "810b702b_34d69d84",
@@ -71,6 +113,30 @@
       "writtenOn": "2026-04-14T05:50:22Z",
       "side": 1,
       "message": "Perhaps this can be made shorter. Thanks! A decent chunk of this detail can be found by just exploring the code\n\nmaybe `// Skip objects with high object numbers to prevent CHECK() failures.`?\n\n@thestig@chromium.org?",
+      "range": {
+        "startLine": 682,
+        "startChar": 0,
+        "endLine": 685,
+        "endChar": 24
+      },
+      "revId": "1df62db209ddd7bbd55124065308af6cb5a0fb18",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "63105bfd_a6749666",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 685,
+      "author": {
+        "id": 4756662
+      },
+      "writtenOn": "2026-04-14T17:03:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "810b702b_34d69d84",
       "range": {
         "startLine": 682,
         "startChar": 0,
@@ -127,6 +193,54 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "eb2d69ed_5dcff4b2",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 687,
+      "author": {
+        "id": 4756662
+      },
+      "writtenOn": "2026-04-14T17:03:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d37cc94b_03536b3f",
+      "range": {
+        "startLine": 686,
+        "startChar": 0,
+        "endLine": 687,
+        "endChar": 15
+      },
+      "revId": "1df62db209ddd7bbd55124065308af6cb5a0fb18",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "014a8844_a3e540e9",
+        "filename": "core/fpdfapi/parser/cpdf_parser.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 687,
+      "author": {
+        "id": 4756662
+      },
+      "writtenOn": "2026-04-14T17:03:35Z",
+      "side": 1,
+      "message": "LoadCrossRefStream() (line 936) uses break, and RebuildCrossRef() (lines 815, 824) uses an inverted condition (if (obj_num \u003c\u003d kMaxObjectNumber)). Both silently skip entries that exceed the limit without triggering a rebuild. This CL keeps continue to stay consistent with those existing patterns.\n\nIf the preferred direction is to unify all three paths to return false and trigger a rebuild, I\u0027m happy to do that as a follow-up refactoring CL that updates all three sites together. What do you think?",
+      "parentUuid": "734f0fda_cb560576",
+      "range": {
+        "startLine": 686,
+        "startChar": 0,
+        "endLine": 687,
+        "endChar": 15
+      },
+      "revId": "1df62db209ddd7bbd55124065308af6cb5a0fb18",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c82784af_34248640",
@@ -140,6 +254,30 @@
       "writtenOn": "2026-04-14T06:14:06Z",
       "side": 1,
       "message": "`CPDFParserEmbedderTest.Bug457855936` was made a while back to cover a very similar scenario. Likewise this test could be removed if you want and the expectations there need an update as well.\n\nIf you\u0027d want to go ahead with removing the unittest the further comments about this unittest become moot.",
+      "range": {
+        "startLine": 488,
+        "startChar": 23,
+        "endLine": 488,
+        "endChar": 51
+      },
+      "revId": "1df62db209ddd7bbd55124065308af6cb5a0fb18",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "192a8d1a_5fa3f33c",
+        "filename": "core/fpdfapi/parser/cpdf_parser_unittest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 488,
+      "author": {
+        "id": 4756662
+      },
+      "writtenOn": "2026-04-14T17:03:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c82784af_34248640",
       "range": {
         "startLine": 488,
         "startChar": 23,
@@ -173,6 +311,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5920cdd6_6daea027",
+        "filename": "core/fpdfapi/parser/cpdf_parser_unittest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 492,
+      "author": {
+        "id": 4756662
+      },
+      "writtenOn": "2026-04-14T17:03:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "34bd4ee6_393847bc",
+      "range": {
+        "startLine": 489,
+        "startChar": 0,
+        "endLine": 492,
+        "endChar": 80
+      },
+      "revId": "1df62db209ddd7bbd55124065308af6cb5a0fb18",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c04a5936_75c5f328",
@@ -186,6 +348,30 @@
       "writtenOn": "2026-04-14T05:50:22Z",
       "side": 1,
       "message": "Perhaps 1.7 to match all the other tests?",
+      "range": {
+        "startLine": 496,
+        "startChar": 12,
+        "endLine": 496,
+        "endChar": 15
+      },
+      "revId": "1df62db209ddd7bbd55124065308af6cb5a0fb18",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ffccc59e_b3990a0a",
+        "filename": "core/fpdfapi/parser/cpdf_parser_unittest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 496,
+      "author": {
+        "id": 4756662
+      },
+      "writtenOn": "2026-04-14T17:03:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c04a5936_75c5f328",
       "range": {
         "startLine": 496,
         "startChar": 12,
@@ -219,6 +405,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2cb24275_f500e824",
+        "filename": "core/fpdfapi/parser/cpdf_parser_unittest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 497,
+      "author": {
+        "id": 4756662
+      },
+      "writtenOn": "2026-04-14T17:03:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "955d4d8c_07deebb2",
+      "range": {
+        "startLine": 497,
+        "startChar": 28,
+        "endLine": 497,
+        "endChar": 66
+      },
+      "revId": "1df62db209ddd7bbd55124065308af6cb5a0fb18",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2116c72b_be4fa2d1",
@@ -242,6 +452,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a41e32c1_f2ad7049",
+        "filename": "core/fpdfapi/parser/cpdf_parser_unittest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 510,
+      "author": {
+        "id": 4756662
+      },
+      "writtenOn": "2026-04-14T17:03:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2116c72b_be4fa2d1",
+      "range": {
+        "startLine": 510,
+        "startChar": 2,
+        "endLine": 510,
+        "endChar": 14
+      },
+      "revId": "1df62db209ddd7bbd55124065308af6cb5a0fb18",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d177d257_c4e2feeb",
@@ -255,6 +489,30 @@
       "writtenOn": "2026-04-14T05:50:22Z",
       "side": 1,
       "message": "nit (fine with it as is as well): Instead of getting this twice how about having it similar to some of the other tests: i.e.\n\n```\nconst CPDF_CrossRefTable* cross_ref_table \u003d\n      parser().GetCrossRefTableForTesting();\nASSERT_TRUE(cross_ref_table);\nconst auto\u0026 objects_info \u003d cross_ref_table-\u003eobjects_info();\n```",
+      "range": {
+        "startLine": 511,
+        "startChar": 2,
+        "endLine": 513,
+        "endChar": 60
+      },
+      "revId": "1df62db209ddd7bbd55124065308af6cb5a0fb18",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5541a97a_cd089cc1",
+        "filename": "core/fpdfapi/parser/cpdf_parser_unittest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 513,
+      "author": {
+        "id": 4756662
+      },
+      "writtenOn": "2026-04-14T17:03:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d177d257_c4e2feeb",
       "range": {
         "startLine": 511,
         "startChar": 2,
