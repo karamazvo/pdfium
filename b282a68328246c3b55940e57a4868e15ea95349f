@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f73d0363_8f361c32",
+        "filename": "core/fxge/cfx_folderfontinfo.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-14T04:40:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e5f88c8d_871e9fa2",
+      "revId": "b282a68328246c3b55940e57a4868e15ea95349f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e293a9e8_11453636",
@@ -31,6 +49,30 @@
       "writtenOn": "2026-04-13T22:51:16Z",
       "side": 1,
       "message": "Maybe this should be \"CharsetFlag\" since it\u0027s a single flag.",
+      "range": {
+        "startLine": 342,
+        "startChar": 16,
+        "endLine": 342,
+        "endChar": 28
+      },
+      "revId": "b282a68328246c3b55940e57a4868e15ea95349f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "abb30f6a_c5525d4f",
+        "filename": "core/fxge/cfx_folderfontinfo.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-14T04:40:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e293a9e8_11453636",
       "range": {
         "startLine": 342,
         "startChar": 16,
@@ -64,6 +106,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "29349163_fe9c9c87",
+        "filename": "core/fxge/cfx_folderfontinfo.h",
+        "patchSetId": 16
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-14T04:40:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da17ff29_6af69186",
+      "range": {
+        "startLine": 79,
+        "startChar": 4,
+        "endLine": 79,
+        "endChar": 11
+      },
+      "revId": "b282a68328246c3b55940e57a4868e15ea95349f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4b2b05e8_b40876b5",
@@ -77,6 +143,30 @@
       "writtenOn": "2026-04-13T22:51:16Z",
       "side": 1,
       "message": "Since it\u0027s more obvious from this CL that this is singular, rename to \"charset\".",
+      "range": {
+        "startLine": 72,
+        "startChar": 67,
+        "endLine": 72,
+        "endChar": 75
+      },
+      "revId": "b282a68328246c3b55940e57a4868e15ea95349f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "03331df7_b50c49d4",
+        "filename": "core/fxge/cfx_folderfontinfo_unittest.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-14T04:40:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4b2b05e8_b40876b5",
       "range": {
         "startLine": 72,
         "startChar": 67,
