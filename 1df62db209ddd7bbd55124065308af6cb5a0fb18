@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f6b2faf0_da0b7a4c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-14T05:16:36Z",
+      "side": 1,
+      "message": "If this is your first CL, please add your name and email to the AUTHORS file at the repo root. Thanks!",
+      "revId": "1df62db209ddd7bbd55124065308af6cb5a0fb18",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
