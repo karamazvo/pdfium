@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "f4c4eb78_6f6b9afd",
+        "filename": "fpdfsdk/formfiller/cffl_formfield.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-14T04:22:41Z",
+      "side": 1,
+      "message": "Diff is already adding around +140 -111 lines across multiple files. Having the variables use the normal snake naming would probably make the cl much larger. Would much prefer having this as a follow up cl.",
+      "parentUuid": "83e3e99e_7df31fe5",
+      "range": {
+        "startLine": 337,
+        "startChar": 23,
+        "endLine": 337,
+        "endChar": 36
+      },
+      "revId": "b1d5e24d9764ef55e3ce12b0e2dcdadccd7bddf1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "eaa76c31_c4be7329",
         "filename": "fpdfsdk/pwl/cpwl_wnd.h",
         "patchSetId": 13
@@ -37,6 +61,24 @@
       "writtenOn": "2026-04-13T23:21:38Z",
       "side": 1,
       "message": "Can this become CPWL_Wnd::Styles?",
+      "revId": "b1d5e24d9764ef55e3ce12b0e2dcdadccd7bddf1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b0497eed_65f02a45",
+        "filename": "fpdfsdk/pwl/cpwl_wnd.h",
+        "patchSetId": 13
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-14T04:22:41Z",
+      "side": 1,
+      "message": "Yes, but this makes the accessors a decent bit longer. Done anyway.",
+      "parentUuid": "eaa76c31_c4be7329",
       "revId": "b1d5e24d9764ef55e3ce12b0e2dcdadccd7bddf1",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -64,6 +106,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3a661e3c_c249c3ac",
+        "filename": "fpdfsdk/pwl/cpwl_wnd.h",
+        "patchSetId": 13
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-14T04:22:41Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "10abfdee_2712c678",
+      "range": {
+        "startLine": 57,
+        "startChar": 3,
+        "endLine": 57,
+        "endChar": 7
+      },
+      "revId": "b1d5e24d9764ef55e3ce12b0e2dcdadccd7bddf1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "01ef6744_6e275311",
@@ -77,6 +143,30 @@
       "writtenOn": "2026-04-13T23:21:38Z",
       "side": 1,
       "message": "Omit",
+      "range": {
+        "startLine": 101,
+        "startChar": 4,
+        "endLine": 101,
+        "endChar": 11
+      },
+      "revId": "b1d5e24d9764ef55e3ce12b0e2dcdadccd7bddf1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4a892d9a_2b6c57f2",
+        "filename": "fpdfsdk/pwl/cpwl_wnd.h",
+        "patchSetId": 13
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-14T04:22:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "01ef6744_6e275311",
       "range": {
         "startLine": 101,
         "startChar": 4,
