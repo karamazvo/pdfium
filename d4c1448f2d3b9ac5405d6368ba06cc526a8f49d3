@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "18ff5ae4_4925f935",
+        "filename": "fpdfsdk/pwl/cpwl_scroll_bar.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-15T12:35:02Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "237d3245_98895385",
+      "range": {
+        "startLine": 198,
+        "startChar": 14,
+        "endLine": 198,
+        "endChar": 30
+      },
+      "revId": "d4c1448f2d3b9ac5405d6368ba06cc526a8f49d3",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "eaeefe99_235081ad",
