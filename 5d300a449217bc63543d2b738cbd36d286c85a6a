@@ -16,6 +16,24 @@
       "message": "Thanks for the effort, but we need not muck with these as none of these offests can be affected by the caller\u0027s inputs.",
       "revId": "5d300a449217bc63543d2b738cbd36d286c85a6a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "144317f0_49b8339f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-16T16:09:12Z",
+      "side": 1,
+      "message": "So are you suggesting leaving it as is and removing the UNSAFE_BUFFERS(), just clarifying.",
+      "parentUuid": "c7bd4c9f_90b03c77",
+      "revId": "5d300a449217bc63543d2b738cbd36d286c85a6a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
