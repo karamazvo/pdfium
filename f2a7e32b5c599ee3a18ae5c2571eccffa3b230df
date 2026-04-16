@@ -16,6 +16,24 @@
       "message": "Also wanted to ask something else whenever you guys are more free:\n\nHey guys, ive worked on this thing for almost 50 Cls atp and I wanted to know (since you all have reviewed almost all of the 50) a few points:\n\n- What are a few things I have to mainly work on to be able to grow in the codebase? I\u0027ll try to keep this a focus over the next few CLs.\n\n- Any specific points or areas you\u0027d suggest I work on that need to be improved. Ive developed a liking toward fpdftext/ over the space saga but am open to other areas if there are things to work on there. Furthermore, any issues you\u0027d suggest me to work on?\n\n- Are there any additional resources you\u0027d be able to share to be able to understand the pdf architecture or codebase more? Would be interested in reading through these.\n\nThank you guys for helping me grow over the last few CLs. Ive learned a lot not just repo-specific but rather about writing better code as a whole. Thanks for all of the mentorship and dealing with me forgetting to wrap.",
       "revId": "f2a7e32b5c599ee3a18ae5c2571eccffa3b230df",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bf1beecc_fb0b9062",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 13
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-16T21:08:10Z",
+      "side": 1,
+      "message": "Thanks for asking. I\u0027ll write you an email at some point and not use the code review tool as a discussion forum.",
+      "parentUuid": "9c90b1a9_9efdffb8",
+      "revId": "f2a7e32b5c599ee3a18ae5c2571eccffa3b230df",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ],
   "submitRequirementResults": [
