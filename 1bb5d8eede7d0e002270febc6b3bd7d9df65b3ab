@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cd5da70a_a96626a8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-16T18:24:54Z",
+      "side": 1,
+      "message": "Hey guys just another quick change to remove some more macros from fx_crypt_sha.cpp. Got some of the paths updated to use spans as well (because of a decent bit of unsafe buffers here and there). Going to continue with refactoring this file a bit to remove the macros and some repetitive elements. Thanks!",
+      "revId": "1bb5d8eede7d0e002270febc6b3bd7d9df65b3ab",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
