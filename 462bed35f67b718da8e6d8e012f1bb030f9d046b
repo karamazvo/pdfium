@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f5b72a03_37f4ab0c",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-16T18:19:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d2e5e7c1_53c639d9",
+      "range": {
+        "startLine": 76,
+        "startChar": 0,
+        "endLine": 77,
+        "endChar": 78
+      },
+      "revId": "462bed35f67b718da8e6d8e012f1bb030f9d046b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4d2cf5c2_e996bde9",
@@ -37,6 +61,30 @@
       "writtenOn": "2026-04-16T14:55:35Z",
       "side": 1,
       "message": "Probably again could just make this go back into the helper.",
+      "range": {
+        "startLine": 457,
+        "startChar": 0,
+        "endLine": 460,
+        "endChar": 5
+      },
+      "revId": "462bed35f67b718da8e6d8e012f1bb030f9d046b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "020ded2d_22669130",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 460,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-16T18:19:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4d2cf5c2_e996bde9",
       "range": {
         "startLine": 457,
         "startChar": 0,
@@ -70,6 +118,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d199b29e_b2c782b6",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 528,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-16T18:19:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "37c78d7f_83e09056",
+      "range": {
+        "startLine": 525,
+        "startChar": 0,
+        "endLine": 528,
+        "endChar": 5
+      },
+      "revId": "462bed35f67b718da8e6d8e012f1bb030f9d046b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5f34b2cb_54522c5f",
@@ -83,6 +155,30 @@
       "writtenOn": "2026-04-16T14:55:35Z",
       "side": 1,
       "message": "again - use the helper here.",
+      "range": {
+        "startLine": 572,
+        "startChar": 0,
+        "endLine": 575,
+        "endChar": 5
+      },
+      "revId": "462bed35f67b718da8e6d8e012f1bb030f9d046b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f68ac325_d08ccc65",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 575,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-16T18:19:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5f34b2cb_54522c5f",
       "range": {
         "startLine": 572,
         "startChar": 0,
