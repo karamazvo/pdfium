@@ -104,6 +104,24 @@
       "parentUuid": "ae881ac8_bd92795c",
       "revId": "bc183d8135bc83f9c69403bb689dbc04a9248539",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c2164763_78a85530",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-16T04:56:49Z",
+      "side": 1,
+      "message": "Specifically for `i`, since `b` is a span, the span will CHECK() in its `operator[]`, so the bounds check for `i` is redundant.",
+      "parentUuid": "be1cf235_2bd0fb36",
+      "revId": "bc183d8135bc83f9c69403bb689dbc04a9248539",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
