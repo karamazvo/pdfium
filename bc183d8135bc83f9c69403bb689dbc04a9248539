@@ -50,6 +50,24 @@
       "message": "The checks are not necessary. Just remove UNSAFE_BUFFERS(). The compiler can already work out this is safe.",
       "revId": "bc183d8135bc83f9c69403bb689dbc04a9248539",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2052c42e_8b0ac24b",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-16T04:39:07Z",
+      "side": 1,
+      "message": "It can cause issues if someone else adds another call for this function that doesn\u0027t.\nsomething like having i \u003d 1000 on b having 3 elements.\n\nEven if the compiler would accept without it - the human factor is somewhat important for this.\n\nThat being said, I understand the preference with removing the checks, and let me know if that human factor is not really a concern (or just me being pedantic).",
+      "parentUuid": "69455d87_5d3a04b8",
+      "revId": "bc183d8135bc83f9c69403bb689dbc04a9248539",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
