@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aff3f399_9afdffdb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-16T03:28:18Z",
+      "side": 1,
+      "message": "Hey guys, decided to update this one fdrm folder which I found which seems to contain a lot of UNSAFE_BUFFERS() and Marcos. Going to try modernise this a bit with inline functions instead of all of these macros throughout the file over the new few cls. However this CL in particular fixes the UNSAFE_BUFFERS() in here with an additional check. Thanks!",
+      "revId": "bc183d8135bc83f9c69403bb689dbc04a9248539",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
