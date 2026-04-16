@@ -140,6 +140,24 @@
       "parentUuid": "c2164763_78a85530",
       "revId": "bc183d8135bc83f9c69403bb689dbc04a9248539",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8d969872_df73daaf",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-16T10:42:14Z",
+      "side": 1,
+      "message": "Most of the checks can be removed yes, but R(t) does need the check or else, this happens:\n\n```\n../../core/fdrm/fx_crypt_sha.cpp:82:15: note: expanded from macro \u0027R\u0027\n   82 |     W[t] \u003d S1(W[t - 2]) + W[t - 7] + S0(W[t - 15]) + W[t - 16]; \\\n      |               ^\n../../core/fdrm/fx_crypt_sha.cpp:250:3: note: See //docs/unsafe_buffers.md for help.\n../../core/fdrm/fx_crypt_sha.cpp:82:15: note: expanded from macro \u0027R\u0027\n   82 |     W[t] \u003d S1(W[t - 2]) + W[t - 7] + S0(W[t - 15]) + W[t - 16]; \\\n      |               ^\n../../core/fdrm/fx_crypt_sha.cpp:250:3: error: unsafe buffer access [-Werror,-Wunsafe-buffer-usage]\n  250 |   R(10000);\n      |   ^~~~~~~~\n...\n```\n\nDone.",
+      "parentUuid": "ac80f1ba_ed04dcac",
+      "revId": "bc183d8135bc83f9c69403bb689dbc04a9248539",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
