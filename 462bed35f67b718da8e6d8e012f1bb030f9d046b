@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d2e5e7c1_53c639d9",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-16T14:55:35Z",
+      "side": 1,
+      "message": "Not really an out parameter because span.",
+      "range": {
+        "startLine": 76,
+        "startChar": 0,
+        "endLine": 77,
+        "endChar": 78
+      },
+      "revId": "462bed35f67b718da8e6d8e012f1bb030f9d046b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4d2cf5c2_e996bde9",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 460,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-16T14:55:35Z",
+      "side": 1,
+      "message": "Probably again could just make this go back into the helper.",
+      "range": {
+        "startLine": 457,
+        "startChar": 0,
+        "endLine": 460,
+        "endChar": 5
+      },
+      "revId": "462bed35f67b718da8e6d8e012f1bb030f9d046b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "37c78d7f_83e09056",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 528,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-16T14:55:35Z",
+      "side": 1,
+      "message": "use the helper here.",
+      "range": {
+        "startLine": 525,
+        "startChar": 0,
+        "endLine": 528,
+        "endChar": 5
+      },
+      "revId": "462bed35f67b718da8e6d8e012f1bb030f9d046b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5f34b2cb_54522c5f",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 575,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-16T14:55:35Z",
+      "side": 1,
+      "message": "again - use the helper here.",
+      "range": {
+        "startLine": 572,
+        "startChar": 0,
+        "endLine": 575,
+        "endChar": 5
+      },
+      "revId": "462bed35f67b718da8e6d8e012f1bb030f9d046b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

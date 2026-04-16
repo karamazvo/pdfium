@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ce574dd5_5c078cc6",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-16T14:55:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b816d8e9_a66939b5",
+      "revId": "b84af4f925f242336523ce6051744eb6c9cd3b3c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ccfc826f_c505b60d",
@@ -31,6 +49,30 @@
       "writtenOn": "2026-04-16T14:46:33Z",
       "side": 1,
       "message": "TODO: when this becomes a span instead of an array we can add the getters back and loop through that way to dry a bit more. Probably good to clarify this in a comment.",
+      "range": {
+        "startLine": 522,
+        "startChar": 0,
+        "endLine": 527,
+        "endChar": 3
+      },
+      "revId": "b84af4f925f242336523ce6051744eb6c9cd3b3c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "65632809_276fbc0e",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 527,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-16T14:55:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ccfc826f_c505b60d",
       "range": {
         "startLine": 522,
         "startChar": 0,
