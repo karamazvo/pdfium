@@ -48,6 +48,45 @@ if (pdf_enable_fontations) {
       "//build/config/compiler:no_chromium_code",
     ]
   }
+
+  config("skrifa_cxx_config") {
+    include_dirs = [
+      "//skia/include",
+      "//third_party/rust/chromium_crates_io/vendor/skrifa_cxx/src",
+      "$root_gen_dir/third_party/rust/chromium_crates_io/vendor/skrifa_cxx/src",
+    ]
+  }
+
+  rust_static_library("skrifa_cxx") {
+    crate_name = "skrifa_cxx"
+    allow_unsafe = true
+    crate_root =
+        "//third_party/rust/chromium_crates_io/vendor/skrifa_cxx/src/main.rs"
+    sources = [ crate_root ]
+    cxx_bindings = [ crate_root ]
+    deps = [
+      "//build/rust:cxx_cppdeps",
+      "//third_party/rust/read_fonts/v0_39:lib",
+      "//third_party/rust/skrifa/v0_42:lib",
+    ]
+    configs += [ ":skrifa_cxx_config" ]
+  }
+
+  source_set("skrifa_cxx_cpp") {
+    sources = [
+      "//third_party/rust/chromium_crates_io/vendor/skrifa_cxx/src/outlines.cpp",
+      "//third_party/rust/chromium_crates_io/vendor/skrifa_cxx/src/outlines.h",
+    ]
+    deps = [
+      ":skrifa_cxx",
+      "//build/rust:cxx_cppdeps",
+    ]
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [
+      "//build/config/compiler:no_chromium_code",
+      ":skrifa_cxx_config",
+    ]
+  }
 }
 
 if (pdf_enable_rust_png) {
@@ -364,6 +403,7 @@ component("skia") {
     deps += [
       ":bridge_rust_side",
       ":path_bridge",
+      ":skrifa_cxx_cpp",
     ]
   }
 
