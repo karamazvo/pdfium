@@ -122,6 +122,24 @@
       "parentUuid": "be1cf235_2bd0fb36",
       "revId": "bc183d8135bc83f9c69403bb689dbc04a9248539",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ac80f1ba_ed04dcac",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-16T06:04:54Z",
+      "side": 1,
+      "message": "Thanks for the help - will test through this locally and remove the checks.",
+      "parentUuid": "c2164763_78a85530",
+      "revId": "bc183d8135bc83f9c69403bb689dbc04a9248539",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
