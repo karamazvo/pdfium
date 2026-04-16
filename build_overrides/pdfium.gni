@@ -4,11 +4,6 @@
 
 # This file contains PDFium-related build overrides.
 
-# Build PDFium either using a bundled FreeType library, or using the FreeType
-# target defined in //build/config/freetype.
-# Default: Use a bundled FreeType.
-pdf_bundle_freetype_override = true
-
 # Build PDFium either with or without v8 support.
 # Default: With V8 support.
 pdf_enable_v8_override = true
@@ -32,12 +27,6 @@ pdf_use_skia_override = false
 # manager target that is used to override the pre-chosen font manager.
 # Default: No override. Use the pre-chosen font manager.
 pdf_skia_font_manager_target_override = ""
-
-# Build PDFium with experimental Fontations library support.
-# If enabled, coexists in build with FreeType library and the default font
-# library is selectable at runtime.
-# The default is to use FreeType when `pdf_enable_fontations_override` is false.
-pdf_enable_fontations_override = false
 
 # Build PDFium with Rust-based PNG decoder and encoder.
 # If enabled, it ensures that PDFium doesn't depend on `libpng`.

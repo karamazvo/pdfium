@@ -276,7 +276,6 @@ if (pdf_enable_v8) {
     pdfium_fuzzer("pdf_bidi_fuzzer") {
       sources = [ "pdf_bidi_fuzzer.cc" ]
       deps = [
-        "../../:freetype_common",
         "../../core/fxcrt",
         "../../core/fxge",
         "../../xfa/fgas/font",
@@ -498,7 +497,6 @@ if (is_clang) {
 pdfium_fuzzer("pdf_cmap_fuzzer") {
   sources = [ "pdf_cmap_fuzzer.cc" ]
   deps = [
-    "../../:freetype_common",
     "../../core/fpdfapi/font",
     "../../core/fxcrt",
     "../../core/fxge",

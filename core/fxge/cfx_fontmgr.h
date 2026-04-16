@@ -22,7 +22,6 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
 #include "core/fxge/cfx_face.h"
-#include "core/fxge/freetype/fx_freetype.h"
 
 #if defined(PDF_USE_SKIA)
 #include "third_party/skia/include/core/SkRefCnt.h"  // nogncheck
@@ -88,8 +87,6 @@ class CFX_FontMgr {
   // Always present.
   CFX_FontMapper* GetBuiltinMapper() const { return builtin_mapper_.get(); }
 
-  FXFT_LibraryRec* GetFTLibrary() const { return ft_library_.get(); }
-  bool FTLibrarySupportsHinting() const { return ft_library_supports_hinting_; }
 
 #if defined(PDF_USE_SKIA)
   sk_sp<SkTypeface> MakeSkTypeface(pdfium::span<const uint8_t> font_span);
@@ -100,7 +97,6 @@ class CFX_FontMgr {
   using SizeChecksum = std::tuple<size_t, uint32_t>;
 
   // Must come before |builtin_mapper_| and |face_map_|.
-  ScopedFXFTLibraryRec const ft_library_;
 #if defined(PDF_USE_SKIA)
   const FontBackend font_backend_;
   sk_sp<SkFontMgr> skia_fontmgr_;
@@ -110,7 +106,6 @@ class CFX_FontMgr {
   std::map<NameWeightItalic, ObservedPtr<FontCacheEntry>> face_map_;
   std::map<SizeChecksum, ObservedPtr<FontCacheEntry>> ttc_face_map_;
   std::map<CFX_Face*, ObservedPtr<CFX_GlyphCache>> glyph_cache_map_;
-  const bool ft_library_supports_hinting_;
 };
 
 #if defined(PDF_USE_SKIA) && defined(PDF_USE_SKIA_CUSTOM_FONT_MANAGER)

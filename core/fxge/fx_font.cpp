@@ -16,7 +16,6 @@
 #include "core/fxcrt/widestring.h"
 #include "core/fxge/cfx_glyphbitmap.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
-#include "core/fxge/freetype/fx_freetype.h"
 #include "core/fxge/text_glyph_pos.h"
 
 namespace {
@@ -165,13 +164,11 @@ uint32_t GetTTCIndex(pdfium::span<const uint8_t> font_data,
 }
 
 wchar_t UnicodeFromAdobeName(const char* name) {
-  return (wchar_t)(FXFT_unicode_from_adobe_name(name) & 0x7FFFFFFF);
+  return 0;
 }
 
 ByteString AdobeNameFromUnicode(wchar_t unicode) {
-  char glyph_name[64];
-  FXFT_adobe_name_from_unicode(glyph_name, unicode);
-  return ByteString(glyph_name);
+  return ByteString();
 }
 
 int NormalizeFontMetric(int64_t value, uint16_t upem) {

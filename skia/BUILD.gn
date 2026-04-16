@@ -19,14 +19,12 @@ if (current_cpu == "mipsel" || current_cpu == "mips64el") {
   import("//build/config/mips.gni")
 }
 
-if (pdf_enable_fontations || pdf_enable_rust_png) {
-  import("//build/rust/rust_static_library.gni")
-}
+import("//build/rust/rust_static_library.gni")
 
 skia_use_ganesh_backend = !is_ios
 skia_support_pdf = false
 
-if (pdf_enable_fontations) {
+if (true) {
   source_set("path_bridge") {
     sources = skia_fontations_path_bridge_sources
   }
@@ -162,7 +160,7 @@ config("skia_config") {
     defines += [ "GR_GL_FUNCTION_TYPE=__stdcall" ]
   }
 
-  if (pdf_enable_fontations || pdf_enable_rust_png) {
+  if (true) {
     include_dirs += [ "$root_gen_dir/third_party/skia" ]
   }
 
@@ -184,12 +182,6 @@ config("skia_library_config") {
     "SKIA_IMPLEMENTATION=1",
   ]
 
-  if (use_blink && !use_system_freetype) {
-    defines += [ "SK_FREETYPE_MINIMUM_RUNTIME_VERSION=(((FREETYPE_MAJOR) * 0x01000000) | ((FREETYPE_MINOR) * 0x00010000) | ((FREETYPE_PATCH) * 0x00000100))" ]
-  }
-  if (use_blink) {
-    defines += [ "SK_TYPEFACE_FACTORY_FREETYPE" ]
-  }
   if (is_win) {
     defines += [ "SK_TYPEFACE_FACTORY_DIRECTWRITE" ]
   }
@@ -305,9 +297,6 @@ component("skia") {
 
   # FreeType is needed everywhere (except on iOS), on Linux and Android as main
   # font backend, on Windows and Mac as fallback backend for Variations.
-  if (!is_ios) {
-    sources += skia_ports_freetype_sources
-  }
 
   if (is_win) {
     # See SK_TYPEFACE_FACTORY_DIRECTWRITE
@@ -329,10 +318,6 @@ component("skia") {
   }
 
   if (is_linux || is_chromeos) {
-    sources += skia_ports_fci_sources
-    sources += skia_ports_fontmgr_custom_sources
-    sources += skia_ports_fontmgr_empty_sources
-    sources += skia_ports_typeface_proxy_sources
   }
 
   if (is_android) {
@@ -352,11 +337,9 @@ component("skia") {
 
   if (is_win || (is_apple && use_blink)) {
     # Add the FreeType custom font manager as a fallback backend for variable fonts.
-    sources += skia_ports_fontmgr_custom_sources
-    sources += skia_ports_fontmgr_empty_sources
   }
 
-  if (pdf_enable_fontations) {
+  if (true) {
     sources += skia_ports_typeface_fontations_sources
     sources += skia_ports_fontmgr_fontations_sources
 
@@ -386,7 +369,6 @@ component("skia") {
     ":skcms",
     ":skia_opts",
     "../third_party:zlib",
-    "//:freetype_common",
   ]
   public_deps = [ ":skia_core_and_effects" ]
 

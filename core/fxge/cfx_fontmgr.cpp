@@ -27,9 +27,7 @@
 #include "third_party/skia/include/core/SkTypeface.h"        // nogncheck
 #include "third_party/skia/include/ports/SkFontMgr_empty.h"  // nogncheck
 
-#if defined(PDF_ENABLE_FONTATIONS)
-#include "third_party/skia/include/ports/SkFontMgr_Fontations.h"  // nogncheck
-#endif  // defined(PDF_ENABLE_FONTATIONS)
+#include "third_party/skia/include/ports/SkFontMgr_Fontations.h"
 
 #if BUILDFLAG(IS_WIN)
 #include "third_party/skia/include/ports/SkTypeface_win.h"  // nogncheck
@@ -71,13 +69,9 @@ sk_sp<SkFontMgr> CreateSkiaFontManagerFallback(
   return pdfium_skia_custom_font_manager();
 #else  // defined(PDF_USE_SKIA_CUSTOM_FONT_MANAGER)
 #if defined(PDF_ENABLE_FONTATIONS)
-  if (backend == CFX_FontMgr::FontBackend::kFontations) {
-    // This is a SkFontMgr which will use Fontations to decode font data.
-    return SkFontMgr_New_Fontations_Empty();
-  }
 #endif  // defined(PDF_ENABLE_FONTATIONS)
   // This is a SkFontMgr which will use FreeType to decode font data.
-  return SkFontMgr_New_Custom_Empty();
+  return SkFontMgr_New_Fontations_Empty();
 #endif  // defined(PDF_USE_SKIA_CUSTOM_FONT_MANAGER)
 }
 
@@ -112,15 +106,13 @@ CFX_Face* CFX_FontMgr::FontCacheEntry::GetFace(uint32_t face_index) const {
 }
 
 CFX_FontMgr::CFX_FontMgr(FontBackend backend)
-    : ft_library_(InitializeFreeType()),
 #if defined(PDF_USE_SKIA)
-      font_backend_(backend),
+    : font_backend_(backend),
       skia_fontmgr_(CreateSkiaFontManager(font_backend_)),
+      builtin_mapper_(std::make_unique<CFX_FontMapper>()) {
+#else
+    : builtin_mapper_(std::make_unique<CFX_FontMapper>()) {
 #endif
-      builtin_mapper_(std::make_unique<CFX_FontMapper>()),
-      ft_library_supports_hinting_(
-          FreeTypeSetLcdFilterMode(ft_library_.get()) ||
-          FreeTypeVersionSupportsHinting(ft_library_.get())) {
 }
 
 CFX_FontMgr::~CFX_FontMgr() = default;

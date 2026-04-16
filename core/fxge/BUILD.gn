@@ -84,8 +84,6 @@ source_set("fxge") {
     "fontdata/chromefontdata/FoxitSerifMM.cpp",
     "fontdata/chromefontdata/FoxitSymbol.cpp",
     "fontdata/chromefontdata/chromefontdata.h",
-    "freetype/fx_freetype.cpp",
-    "freetype/fx_freetype.h",
     "fx_font.cpp",
     "fx_font.h",
     "fx_fontencoding.h",

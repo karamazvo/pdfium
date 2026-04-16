@@ -15,15 +15,6 @@ group("default") {
   }
 }
 
-group("freetype_common") {
-  public_deps = []
-  if (pdf_bundle_freetype) {
-    public_deps += [ "third_party:fx_freetype" ]
-  } else {
-    public_deps += [ "//build/config/freetype" ]
-  }
-}
-
 config("pdfium_common_config") {
   cflags = []
   cflags_cc = []
@@ -37,10 +28,6 @@ config("pdfium_common_config") {
 
   if (pdf_enable_click_logging) {
     defines += [ "PDF_ENABLE_CLICK_LOGGING" ]
-  }
-
-  if (pdf_use_skia && pdf_enable_fontations) {
-    defines += [ "PDF_ENABLE_FONTATIONS" ]
   }
 
   if (pdf_use_skia && pdf_enable_rust_png) {

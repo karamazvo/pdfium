@@ -1125,39 +1125,6 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
   CFX_TextRenderOptions text_options(options);
   if (is_text_smooth) {
     if (GetDeviceType() == DeviceType::kDisplay && bpp_ > 1) {
-      if (!CFX_GEModule::Get()->GetFontMgr()->FTLibrarySupportsHinting()) {
-        // Some Freetype implementations (like the one packaged with Fedora) do
-        // not support hinting due to patents 6219025, 6239783, 6307566,
-        // 6225973, 6243070, 6393145, 6421054, 6282327, and 6624828; the latest
-        // one expires 10/7/19.  This makes LCD anti-aliasing very ugly, so we
-        // instead fall back on NORMAL anti-aliasing.
-        anti_alias = FontAntiAliasingMode::kNormal;
-#if defined(PDF_USE_SKIA)
-        if (CFX_GEModule::Get()->UseSkiaRenderer()) {
-          // Since |anti_alias| doesn't affect Skia rendering, and Skia only
-          // follows strictly to the options provided by |text_options|, we need
-          // to update |text_options| so that Skia falls back on normal
-          // anti-aliasing as well.
-          text_options.aliasing_type = CFX_TextRenderOptions::kAntiAliasing;
-        }
-#endif
-      } else if (render_cap_alpha_output_) {
-        // Whether Skia uses LCD optimization should strictly follow the
-        // rendering options provided by |text_options|. No change needs to be
-        // done for |text_options| here.
-        anti_alias = FontAntiAliasingMode::kLcd;
-        normalize = true;
-      } else if (bpp_ < 16) {
-        // This case doesn't apply to Skia since Skia always have |bpp_| = 32.
-        anti_alias = FontAntiAliasingMode::kNormal;
-      } else {
-        // Whether Skia uses LCD optimization should strictly follow the
-        // rendering options provided by |text_options|. No change needs to be
-        // done for |text_options| here.
-        anti_alias = FontAntiAliasingMode::kLcd;
-        normalize = !font->HasFace() ||
-                    options.aliasing_type != CFX_TextRenderOptions::kLcd;
-      }
     }
   }
 
