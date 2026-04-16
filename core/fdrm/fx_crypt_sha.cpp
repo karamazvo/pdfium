@@ -13,13 +13,13 @@
 #include "core/fxcrt/stl_util.h"
 
 #define SHA_GET_UINT32(n, b, i)                                         \
-  UNSAFE_BUFFERS({                                                      \
+  ({                                                                    \
     (n) = ((uint32_t)(b)[(i)] << 24) | ((uint32_t)(b)[(i) + 1] << 16) | \
           ((uint32_t)(b)[(i) + 2] << 8) | ((uint32_t)(b)[(i) + 3]);     \
   })
 
 #define SHA_PUT_UINT32(n, b, i)          \
-  UNSAFE_BUFFERS({                       \
+  ({                                     \
     (b)[(i)] = (uint8_t)((n) >> 24);     \
     (b)[(i) + 1] = (uint8_t)((n) >> 16); \
     (b)[(i) + 2] = (uint8_t)((n) >> 8);  \
@@ -27,7 +27,7 @@
   })
 
 #define SHA_GET_UINT64(n, b, i)                                             \
-  UNSAFE_BUFFERS({                                                          \
+  ({                                                                        \
     (n) = ((uint64_t)(b)[(i)] << 56) | ((uint64_t)(b)[(i) + 1] << 48) |     \
           ((uint64_t)(b)[(i) + 2] << 40) | ((uint64_t)(b)[(i) + 3] << 32) | \
           ((uint64_t)(b)[(i) + 4] << 24) | ((uint64_t)(b)[(i) + 5] << 16) | \
@@ -35,7 +35,7 @@
   })
 
 #define SHA_PUT_UINT64(n, b, i)          \
-  UNSAFE_BUFFERS({                       \
+  ({                                     \
     (b)[(i)] = (uint8_t)((n) >> 56);     \
     (b)[(i) + 1] = (uint8_t)((n) >> 48); \
     (b)[(i) + 2] = (uint8_t)((n) >> 40); \
