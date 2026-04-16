@@ -16,6 +16,46 @@
       "message": "Hey guys just another quick change to remove some more macros from fx_crypt_sha.cpp. Got some of the paths updated to use spans as well (because of a decent bit of unsafe buffers here and there). Going to continue with refactoring this file a bit to remove the macros and some repetitive elements. Thanks!",
       "revId": "1bb5d8eede7d0e002270febc6b3bd7d9df65b3ab",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "53227800_3604d0a8",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-16T19:10:16Z",
+      "side": 1,
+      "message": "Just do this in the caller and pass in a fixed-size span into ShaGetUint32()?",
+      "range": {
+        "startLine": 62,
+        "startChar": 22,
+        "endLine": 62,
+        "endChar": 47
+      },
+      "revId": "1bb5d8eede7d0e002270febc6b3bd7d9df65b3ab",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e9bb96ed_b4b4fc53",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-16T19:10:16Z",
+      "side": 1,
+      "message": "Why is this necessary? Compare with line 287-288.",
+      "revId": "1bb5d8eede7d0e002270febc6b3bd7d9df65b3ab",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
