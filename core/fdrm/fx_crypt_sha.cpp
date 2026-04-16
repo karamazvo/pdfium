@@ -12,40 +12,6 @@
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/stl_util.h"
 
-#define SHA_GET_UINT32(n, b, i)                                         \
-  {                                                                     \
-    (n) = ((uint32_t)(b)[(i)] << 24) | ((uint32_t)(b)[(i) + 1] << 16) | \
-          ((uint32_t)(b)[(i) + 2] << 8) | ((uint32_t)(b)[(i) + 3]);     \
-  }
-
-#define SHA_PUT_UINT32(n, b, i)          \
-  {                                      \
-    (b)[(i)] = (uint8_t)((n) >> 24);     \
-    (b)[(i) + 1] = (uint8_t)((n) >> 16); \
-    (b)[(i) + 2] = (uint8_t)((n) >> 8);  \
-    (b)[(i) + 3] = (uint8_t)((n));       \
-  }
-
-#define SHA_GET_UINT64(n, b, i)                                             \
-  {                                                                         \
-    (n) = ((uint64_t)(b)[(i)] << 56) | ((uint64_t)(b)[(i) + 1] << 48) |     \
-          ((uint64_t)(b)[(i) + 2] << 40) | ((uint64_t)(b)[(i) + 3] << 32) | \
-          ((uint64_t)(b)[(i) + 4] << 24) | ((uint64_t)(b)[(i) + 5] << 16) | \
-          ((uint64_t)(b)[(i) + 6] << 8) | ((uint64_t)(b)[(i) + 7]);         \
-  }
-
-#define SHA_PUT_UINT64(n, b, i)          \
-  {                                      \
-    (b)[(i)] = (uint8_t)((n) >> 56);     \
-    (b)[(i) + 1] = (uint8_t)((n) >> 48); \
-    (b)[(i) + 2] = (uint8_t)((n) >> 40); \
-    (b)[(i) + 3] = (uint8_t)((n) >> 32); \
-    (b)[(i) + 4] = (uint8_t)((n) >> 24); \
-    (b)[(i) + 5] = (uint8_t)((n) >> 16); \
-    (b)[(i) + 6] = (uint8_t)((n) >> 8);  \
-    (b)[(i) + 7] = (uint8_t)((n));       \
-  }
-
 #define SHA384_F0(x, y, z) ((x & y) | (z & (x | y)))
 #define SHA384_F1(x, y, z) (z ^ (x & (y ^ z)))
 #define SHA384_SHR(x, n) (x >> n)
@@ -86,6 +52,18 @@
   }
 
 namespace {
+
+void ShaSetUint32(uint64_t n, pdfium::span<uint8_t> buffer, size_t index) {
+  for (size_t i = 0; i < 4; ++i) {
+    buffer[index + i] = static_cast<uint8_t>(n >> (24 - 8 * i));
+  }
+}
+
+void ShaSetUint64(uint64_t n, pdfium::span<uint8_t> buffer, size_t index) {
+  for (size_t i = 0; i < 8; ++i) {
+    buffer[index + i] = static_cast<uint8_t>(n >> (56 - 8 * i));
+  }
+}
 
 void SHA_Core_Init(pdfium::span<uint32_t, 5> h) {
   h[0] = 0x67452301;
@@ -152,23 +130,14 @@ void SHATransform(pdfium::span<uint32_t> digest, pdfium::span<uint32_t> block) {
 
 void sha256_process(CRYPT_sha2_context* ctx,
                     pdfium::span<const uint8_t, 64> data) {
-  uint32_t W[64];
-  SHA_GET_UINT32(W[0], data, 0);
-  SHA_GET_UINT32(W[1], data, 4);
-  SHA_GET_UINT32(W[2], data, 8);
-  SHA_GET_UINT32(W[3], data, 12);
-  SHA_GET_UINT32(W[4], data, 16);
-  SHA_GET_UINT32(W[5], data, 20);
-  SHA_GET_UINT32(W[6], data, 24);
-  SHA_GET_UINT32(W[7], data, 28);
-  SHA_GET_UINT32(W[8], data, 32);
-  SHA_GET_UINT32(W[9], data, 36);
-  SHA_GET_UINT32(W[10], data, 40);
-  SHA_GET_UINT32(W[11], data, 44);
-  SHA_GET_UINT32(W[12], data, 48);
-  SHA_GET_UINT32(W[13], data, 52);
-  SHA_GET_UINT32(W[14], data, 56);
-  SHA_GET_UINT32(W[15], data, 60);
+  std::array<uint32_t, 64> W;
+  for (size_t i = 0; i < 16; ++i) {
+    uint32_t val = 0;
+    for (uint8_t byte : data.subspan(4 * i, 4u)) {
+      val = (val << 8) | byte;
+    }
+    W[i] = val;
+  }
 
   uint32_t A = static_cast<uint32_t>(ctx->state[0]);
   uint32_t B = static_cast<uint32_t>(ctx->state[1]);
@@ -299,22 +268,13 @@ constexpr auto constants = std::to_array<const uint64_t>({
 void sha384_process(CRYPT_sha2_context* ctx,
                     pdfium::span<const uint8_t, 128> data) {
   std::array<uint64_t, 80> W;
-  SHA_GET_UINT64(W[0], data, 0);
-  SHA_GET_UINT64(W[1], data, 8);
-  SHA_GET_UINT64(W[2], data, 16);
-  SHA_GET_UINT64(W[3], data, 24);
-  SHA_GET_UINT64(W[4], data, 32);
-  SHA_GET_UINT64(W[5], data, 40);
-  SHA_GET_UINT64(W[6], data, 48);
-  SHA_GET_UINT64(W[7], data, 56);
-  SHA_GET_UINT64(W[8], data, 64);
-  SHA_GET_UINT64(W[9], data, 72);
-  SHA_GET_UINT64(W[10], data, 80);
-  SHA_GET_UINT64(W[11], data, 88);
-  SHA_GET_UINT64(W[12], data, 96);
-  SHA_GET_UINT64(W[13], data, 104);
-  SHA_GET_UINT64(W[14], data, 112);
-  SHA_GET_UINT64(W[15], data, 120);
+  for (size_t i = 0; i < 16; ++i) {
+    uint64_t val = 0;
+    for (uint8_t byte : data.subspan(8 * i, 8u)) {
+      val = (val << 8) | byte;
+    }
+    W[i] = val;
+  }
   uint64_t A = ctx->state[0];
   uint64_t B = ctx->state[1];
   uint64_t C = ctx->state[2];
@@ -479,19 +439,14 @@ void CRYPT_SHA256Finish(CRYPT_sha2_context* context,
                         pdfium::span<uint8_t, 32> digest) {
   uint8_t msglen[8];
   uint64_t total_bits = 8 * context->total_bytes;  // Prior to padding.
-  SHA_PUT_UINT64(total_bits, msglen, 0);
+  ShaSetUint64(total_bits, pdfium::span(msglen), 0);
   uint32_t last = context->total_bytes & 0x3F;
   uint32_t padn = (last < 56) ? (56 - last) : (120 - last);
   CRYPT_SHA256Update(context, pdfium::span(kSha256Padding).first(padn));
   CRYPT_SHA256Update(context, msglen);
-  SHA_PUT_UINT32(context->state[0], digest, 0);
-  SHA_PUT_UINT32(context->state[1], digest, 4);
-  SHA_PUT_UINT32(context->state[2], digest, 8);
-  SHA_PUT_UINT32(context->state[3], digest, 12);
-  SHA_PUT_UINT32(context->state[4], digest, 16);
-  SHA_PUT_UINT32(context->state[5], digest, 20);
-  SHA_PUT_UINT32(context->state[6], digest, 24);
-  SHA_PUT_UINT32(context->state[7], digest, 28);
+  for (size_t i = 0; i < 8; ++i) {
+    ShaSetUint32(context->state[i], digest, 4 * i);
+  }
 }
 
 DataVector<uint8_t> CRYPT_SHA256Generate(pdfium::span<const uint8_t> data) {
@@ -545,18 +500,15 @@ void CRYPT_SHA384Finish(CRYPT_sha2_context* context,
                         pdfium::span<uint8_t, 48> digest) {
   uint8_t msglen[16];
   uint64_t total_bits = 8 * context->total_bytes;  // Prior to padding.
-  SHA_PUT_UINT64(0ULL, msglen, 0);
-  SHA_PUT_UINT64(total_bits, msglen, 8);
+  ShaSetUint64(0ULL, pdfium::span(msglen), 0);
+  ShaSetUint64(total_bits, pdfium::span(msglen), 8);
   uint32_t last = context->total_bytes & 0x7F;
   uint32_t padn = (last < 112) ? (112 - last) : (240 - last);
   CRYPT_SHA384Update(context, pdfium::span(kSha384Padding).first(padn));
   CRYPT_SHA384Update(context, msglen);
-  SHA_PUT_UINT64(context->state[0], digest, 0);
-  SHA_PUT_UINT64(context->state[1], digest, 8);
-  SHA_PUT_UINT64(context->state[2], digest, 16);
-  SHA_PUT_UINT64(context->state[3], digest, 24);
-  SHA_PUT_UINT64(context->state[4], digest, 32);
-  SHA_PUT_UINT64(context->state[5], digest, 40);
+  for (size_t i = 0; i < 6; ++i) {
+    ShaSetUint64(context->state[i], digest, 8 * i);
+  }
 }
 
 DataVector<uint8_t> CRYPT_SHA384Generate(pdfium::span<const uint8_t> data) {
@@ -591,20 +543,15 @@ void CRYPT_SHA512Finish(CRYPT_sha2_context* context,
                         pdfium::span<uint8_t, 64> digest) {
   uint8_t msglen[16];
   uint64_t total_bits = 8 * context->total_bytes;
-  SHA_PUT_UINT64(0ULL, msglen, 0);
-  SHA_PUT_UINT64(total_bits, msglen, 8);
+  ShaSetUint64(0ULL, pdfium::span(msglen), 0);
+  ShaSetUint64(total_bits, pdfium::span(msglen), 8);
   uint32_t last = context->total_bytes & 0x7F;
   uint32_t padn = (last < 112) ? (112 - last) : (240 - last);
   CRYPT_SHA512Update(context, pdfium::span(kSha384Padding).first(padn));
   CRYPT_SHA512Update(context, msglen);
-  SHA_PUT_UINT64(context->state[0], digest, 0);
-  SHA_PUT_UINT64(context->state[1], digest, 8);
-  SHA_PUT_UINT64(context->state[2], digest, 16);
-  SHA_PUT_UINT64(context->state[3], digest, 24);
-  SHA_PUT_UINT64(context->state[4], digest, 32);
-  SHA_PUT_UINT64(context->state[5], digest, 40);
-  SHA_PUT_UINT64(context->state[6], digest, 48);
-  SHA_PUT_UINT64(context->state[7], digest, 56);
+  for (size_t i = 0; i < 8; ++i) {
+    ShaSetUint64(context->state[i], digest, 8 * i);
+  }
 }
 
 DataVector<uint8_t> CRYPT_SHA512Generate(pdfium::span<const uint8_t> data) {
