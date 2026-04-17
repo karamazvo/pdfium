@@ -12,46 +12,99 @@
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/stl_util.h"
 
+namespace sha384 {
 
-#define SHA384_F0(x, y, z) ((x & y) | (z & (x | y)))
-#define SHA384_F1(x, y, z) (z ^ (x & (y ^ z)))
-#define SHA384_SHR(x, n) (x >> n)
-#define SHA384_ROTR(x, n) (SHA384_SHR(x, n) | x << (64 - n))
-#define SHA384_S0(x) (SHA384_ROTR(x, 1) ^ SHA384_ROTR(x, 8) ^ SHA384_SHR(x, 7))
-#define SHA384_S1(x) \
-  (SHA384_ROTR(x, 19) ^ SHA384_ROTR(x, 61) ^ SHA384_SHR(x, 6))
-#define SHA384_S2(x) \
-  (SHA384_ROTR(x, 28) ^ SHA384_ROTR(x, 34) ^ SHA384_ROTR(x, 39))
-#define SHA384_S3(x) \
-  (SHA384_ROTR(x, 14) ^ SHA384_ROTR(x, 18) ^ SHA384_ROTR(x, 41))
-#define SHA384_P(a, b, c, d, e, f, g, h, x, K)                      \
-  {                                                                 \
-    uint64_t temp1 = h + SHA384_S3(e) + SHA384_F1(e, f, g) + K + x; \
-    uint64_t temp2 = SHA384_S2(a) + SHA384_F0(a, b, c);             \
-    d += temp1;                                                     \
-    h = temp1 + temp2;                                              \
-  }
-#define SHA384_R(t) \
-  (W[t] = SHA384_S1(W[t - 2]) + W[t - 7] + SHA384_S0(W[t - 15]) + W[t - 16])
+constexpr uint64_t Maj(uint64_t x, uint64_t y, uint64_t z) {
+  return (x & y) | (z & (x | y));
+}
 
-#define rol(x, y) (((x) << (y)) | (((uint32_t)x) >> (32 - y)))
-#define SHR(x, n) ((x & 0xFFFFFFFF) >> n)
-#define ROTR(x, n) (SHR(x, n) | (x << (32 - n)))
-#define S0(x) (ROTR(x, 7) ^ ROTR(x, 18) ^ SHR(x, 3))
-#define S1(x) (ROTR(x, 17) ^ ROTR(x, 19) ^ SHR(x, 10))
-#define S2(x) (ROTR(x, 2) ^ ROTR(x, 13) ^ ROTR(x, 22))
-#define S3(x) (ROTR(x, 6) ^ ROTR(x, 11) ^ ROTR(x, 25))
-#define F0(x, y, z) ((x & y) | (z & (x | y)))
-#define F1(x, y, z) (z ^ (x & (y ^ z)))
-#define R(t) \
-  UNSAFE_BUFFERS((W[t] = S1(W[t - 2]) + W[t - 7] + S0(W[t - 15]) + W[t - 16]))
-#define PS(a, b, c, d, e, f, g, h, x, K)              \
-  {                                                   \
-    uint32_t temp1 = h + S3(e) + F1(e, f, g) + K + x; \
-    uint32_t temp2 = S2(a) + F0(a, b, c);             \
-    d += temp1;                                       \
-    h = temp1 + temp2;                                \
-  }
+constexpr uint64_t Ch(uint64_t x, uint64_t y, uint64_t z) {
+  return z ^ (x & (y ^ z));
+}
+
+constexpr uint64_t Shr(uint64_t x, int n) {
+  return x >> n;
+}
+
+constexpr uint64_t Rotr(uint64_t x, int n) {
+  return Shr(x, n) | (x << (64 - n));
+}
+
+// NIST: σ0
+constexpr uint64_t LowerSigma0(uint64_t x) {
+  return Rotr(x, 1) ^ Rotr(x, 8) ^ Shr(x, 7);
+}
+
+// NIST: σ1
+constexpr uint64_t LowerSigma1(uint64_t x) {
+  return Rotr(x, 19) ^ Rotr(x, 61) ^ Shr(x, 6);
+}
+
+// NIST: Σ0
+constexpr uint64_t UpperSigma0(uint64_t x) {
+  return Rotr(x, 28) ^ Rotr(x, 34) ^ Rotr(x, 39);
+}
+
+// NIST: Σ1
+constexpr uint64_t UpperSigma1(uint64_t x) {
+  return Rotr(x, 14) ^ Rotr(x, 18) ^ Rotr(x, 41);
+}
+
+uint64_t ExpandWord(pdfium::span<uint64_t> W, size_t t) {
+  W[t] = LowerSigma1(W[t - 2]) + W[t - 7] + LowerSigma0(W[t - 15]) + W[t - 16];
+  return W[t];
+}
+
+}  // namespace sha384
+
+namespace sha256 {
+
+constexpr uint32_t Shr(uint32_t x, int n) {
+  return (x & 0xFFFFFFFF) >> n;
+}
+
+constexpr uint32_t Rotr(uint32_t x, int n) {
+  return Shr(x, n) | (x << (32 - n));
+}
+
+constexpr uint32_t Rol(uint32_t x, int n) {
+  return (x << n) | (x >> (32 - n));
+}
+
+constexpr uint32_t Maj(uint32_t x, uint32_t y, uint32_t z) {
+  return (x & y) | (z & (x | y));
+}
+
+constexpr uint32_t Ch(uint32_t x, uint32_t y, uint32_t z) {
+  return z ^ (x & (y ^ z));
+}
+
+// NIST: σ0
+constexpr uint32_t LowerSigma0(uint32_t x) {
+  return Rotr(x, 7) ^ Rotr(x, 18) ^ Shr(x, 3);
+}
+
+// NIST: σ1
+constexpr uint32_t LowerSigma1(uint32_t x) {
+  return Rotr(x, 17) ^ Rotr(x, 19) ^ Shr(x, 10);
+}
+
+// NIST: Σ0
+constexpr uint32_t UpperSigma0(uint32_t x) {
+  return Rotr(x, 2) ^ Rotr(x, 13) ^ Rotr(x, 22);
+}
+
+// NIST: Σ1
+constexpr uint32_t UpperSigma1(uint32_t x) {
+  return Rotr(x, 6) ^ Rotr(x, 11) ^ Rotr(x, 25);
+}
+
+uint32_t ExpandWord(pdfium::span<uint32_t> W, size_t t) {
+  W[t] = LowerSigma1(W[t - 2]) + W[t - 7] + LowerSigma0(W[t - 15]) + W[t - 16];
+  return W[t];
+}
+
+}  // namespace sha256
 
 namespace {
 
@@ -83,7 +136,7 @@ void SHATransform(pdfium::span<uint32_t> digest, pdfium::span<uint32_t> block) {
   }
   for (t = 16; t < 80; t++) {
     uint32_t tmp = w[t - 3] ^ w[t - 8] ^ w[t - 14] ^ w[t - 16];
-    w[t] = rol(tmp, 1);
+    w[t] = sha256::Rol(tmp, 1);
   }
   uint32_t a = digest[0];
   uint32_t b = digest[1];
@@ -91,35 +144,36 @@ void SHATransform(pdfium::span<uint32_t> digest, pdfium::span<uint32_t> block) {
   uint32_t d = digest[3];
   uint32_t e = digest[4];
   for (t = 0; t < 20; t++) {
-    uint32_t tmp = rol(a, 5) + ((b & c) | (d & ~b)) + e + w[t] + 0x5a827999;
+    uint32_t tmp =
+        sha256::Rol(a, 5) + ((b & c) | (d & ~b)) + e + w[t] + 0x5a827999;
     e = d;
     d = c;
-    c = rol(b, 30);
+    c = sha256::Rol(b, 30);
     b = a;
     a = tmp;
   }
   for (t = 20; t < 40; t++) {
-    uint32_t tmp = rol(a, 5) + (b ^ c ^ d) + e + w[t] + 0x6ed9eba1;
+    uint32_t tmp = sha256::Rol(a, 5) + (b ^ c ^ d) + e + w[t] + 0x6ed9eba1;
     e = d;
     d = c;
-    c = rol(b, 30);
+    c = sha256::Rol(b, 30);
     b = a;
     a = tmp;
   }
   for (t = 40; t < 60; t++) {
-    uint32_t tmp =
-        rol(a, 5) + ((b & c) | (b & d) | (c & d)) + e + w[t] + 0x8f1bbcdc;
+    uint32_t tmp = sha256::Rol(a, 5) + ((b & c) | (b & d) | (c & d)) + e +
+                   w[t] + 0x8f1bbcdc;
     e = d;
     d = c;
-    c = rol(b, 30);
+    c = sha256::Rol(b, 30);
     b = a;
     a = tmp;
   }
   for (t = 60; t < 80; t++) {
-    uint32_t tmp = rol(a, 5) + (b ^ c ^ d) + e + w[t] + 0xca62c1d6;
+    uint32_t tmp = sha256::Rol(a, 5) + (b ^ c ^ d) + e + w[t] + 0xca62c1d6;
     e = d;
     d = c;
-    c = rol(b, 30);
+    c = sha256::Rol(b, 30);
     b = a;
     a = tmp;
   }
@@ -129,113 +183,6 @@ void SHATransform(pdfium::span<uint32_t> digest, pdfium::span<uint32_t> block) {
   digest[3] += d;
   digest[4] += e;
 }
-
-void sha256_process(CRYPT_sha2_context* ctx,
-                    pdfium::span<const uint8_t, 64> data) {
-  std::array<uint32_t, 64> W;
-  for (size_t i = 0; i < 16; ++i) {
-    uint32_t val = 0;
-    for (uint8_t byte : data.subspan(4 * i, 4u)) {
-      val = (val << 8) | byte;
-    }
-    W[i] = val;
-  }
-
-  uint32_t A = static_cast<uint32_t>(ctx->state[0]);
-  uint32_t B = static_cast<uint32_t>(ctx->state[1]);
-  uint32_t C = static_cast<uint32_t>(ctx->state[2]);
-  uint32_t D = static_cast<uint32_t>(ctx->state[3]);
-  uint32_t E = static_cast<uint32_t>(ctx->state[4]);
-  uint32_t F = static_cast<uint32_t>(ctx->state[5]);
-  uint32_t G = static_cast<uint32_t>(ctx->state[6]);
-  uint32_t H = static_cast<uint32_t>(ctx->state[7]);
-  PS(A, B, C, D, E, F, G, H, W[0], 0x428A2F98);
-  PS(H, A, B, C, D, E, F, G, W[1], 0x71374491);
-  PS(G, H, A, B, C, D, E, F, W[2], 0xB5C0FBCF);
-  PS(F, G, H, A, B, C, D, E, W[3], 0xE9B5DBA5);
-  PS(E, F, G, H, A, B, C, D, W[4], 0x3956C25B);
-  PS(D, E, F, G, H, A, B, C, W[5], 0x59F111F1);
-  PS(C, D, E, F, G, H, A, B, W[6], 0x923F82A4);
-  PS(B, C, D, E, F, G, H, A, W[7], 0xAB1C5ED5);
-  PS(A, B, C, D, E, F, G, H, W[8], 0xD807AA98);
-  PS(H, A, B, C, D, E, F, G, W[9], 0x12835B01);
-  PS(G, H, A, B, C, D, E, F, W[10], 0x243185BE);
-  PS(F, G, H, A, B, C, D, E, W[11], 0x550C7DC3);
-  PS(E, F, G, H, A, B, C, D, W[12], 0x72BE5D74);
-  PS(D, E, F, G, H, A, B, C, W[13], 0x80DEB1FE);
-  PS(C, D, E, F, G, H, A, B, W[14], 0x9BDC06A7);
-  PS(B, C, D, E, F, G, H, A, W[15], 0xC19BF174);
-  PS(A, B, C, D, E, F, G, H, R(16), 0xE49B69C1);
-  PS(H, A, B, C, D, E, F, G, R(17), 0xEFBE4786);
-  PS(G, H, A, B, C, D, E, F, R(18), 0x0FC19DC6);
-  PS(F, G, H, A, B, C, D, E, R(19), 0x240CA1CC);
-  PS(E, F, G, H, A, B, C, D, R(20), 0x2DE92C6F);
-  PS(D, E, F, G, H, A, B, C, R(21), 0x4A7484AA);
-  PS(C, D, E, F, G, H, A, B, R(22), 0x5CB0A9DC);
-  PS(B, C, D, E, F, G, H, A, R(23), 0x76F988DA);
-  PS(A, B, C, D, E, F, G, H, R(24), 0x983E5152);
-  PS(H, A, B, C, D, E, F, G, R(25), 0xA831C66D);
-  PS(G, H, A, B, C, D, E, F, R(26), 0xB00327C8);
-  PS(F, G, H, A, B, C, D, E, R(27), 0xBF597FC7);
-  PS(E, F, G, H, A, B, C, D, R(28), 0xC6E00BF3);
-  PS(D, E, F, G, H, A, B, C, R(29), 0xD5A79147);
-  PS(C, D, E, F, G, H, A, B, R(30), 0x06CA6351);
-  PS(B, C, D, E, F, G, H, A, R(31), 0x14292967);
-  PS(A, B, C, D, E, F, G, H, R(32), 0x27B70A85);
-  PS(H, A, B, C, D, E, F, G, R(33), 0x2E1B2138);
-  PS(G, H, A, B, C, D, E, F, R(34), 0x4D2C6DFC);
-  PS(F, G, H, A, B, C, D, E, R(35), 0x53380D13);
-  PS(E, F, G, H, A, B, C, D, R(36), 0x650A7354);
-  PS(D, E, F, G, H, A, B, C, R(37), 0x766A0ABB);
-  PS(C, D, E, F, G, H, A, B, R(38), 0x81C2C92E);
-  PS(B, C, D, E, F, G, H, A, R(39), 0x92722C85);
-  PS(A, B, C, D, E, F, G, H, R(40), 0xA2BFE8A1);
-  PS(H, A, B, C, D, E, F, G, R(41), 0xA81A664B);
-  PS(G, H, A, B, C, D, E, F, R(42), 0xC24B8B70);
-  PS(F, G, H, A, B, C, D, E, R(43), 0xC76C51A3);
-  PS(E, F, G, H, A, B, C, D, R(44), 0xD192E819);
-  PS(D, E, F, G, H, A, B, C, R(45), 0xD6990624);
-  PS(C, D, E, F, G, H, A, B, R(46), 0xF40E3585);
-  PS(B, C, D, E, F, G, H, A, R(47), 0x106AA070);
-  PS(A, B, C, D, E, F, G, H, R(48), 0x19A4C116);
-  PS(H, A, B, C, D, E, F, G, R(49), 0x1E376C08);
-  PS(G, H, A, B, C, D, E, F, R(50), 0x2748774C);
-  PS(F, G, H, A, B, C, D, E, R(51), 0x34B0BCB5);
-  PS(E, F, G, H, A, B, C, D, R(52), 0x391C0CB3);
-  PS(D, E, F, G, H, A, B, C, R(53), 0x4ED8AA4A);
-  PS(C, D, E, F, G, H, A, B, R(54), 0x5B9CCA4F);
-  PS(B, C, D, E, F, G, H, A, R(55), 0x682E6FF3);
-  PS(A, B, C, D, E, F, G, H, R(56), 0x748F82EE);
-  PS(H, A, B, C, D, E, F, G, R(57), 0x78A5636F);
-  PS(G, H, A, B, C, D, E, F, R(58), 0x84C87814);
-  PS(F, G, H, A, B, C, D, E, R(59), 0x8CC70208);
-  PS(E, F, G, H, A, B, C, D, R(60), 0x90BEFFFA);
-  PS(D, E, F, G, H, A, B, C, R(61), 0xA4506CEB);
-  PS(C, D, E, F, G, H, A, B, R(62), 0xBEF9A3F7);
-  PS(B, C, D, E, F, G, H, A, R(63), 0xC67178F2);
-  ctx->state[0] += A;
-  ctx->state[1] += B;
-  ctx->state[2] += C;
-  ctx->state[3] += D;
-  ctx->state[4] += E;
-  ctx->state[5] += F;
-  ctx->state[6] += G;
-  ctx->state[7] += H;
-}
-
-const uint8_t kSha256Padding[64] = {
-    0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
-const uint8_t kSha384Padding[128] = {
-    0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-};
 
 constexpr auto constants = std::to_array<const uint64_t>({
     0x428a2f98d728ae22ULL, 0x7137449123ef65cdULL, 0xb5c0fbcfec4d3b2fULL,
@@ -267,6 +214,48 @@ constexpr auto constants = std::to_array<const uint64_t>({
     0x5fcb6fab3ad6faecULL, 0x6c44198c4a475817ULL,
 });
 
+const uint8_t kSha256Padding[64] = {0x80};
+const uint8_t kSha384Padding[128] = {0x80};
+
+void sha256_process(CRYPT_sha2_context* ctx,
+                    pdfium::span<const uint8_t, 64> data) {
+  std::array<uint32_t, 64> W;
+  for (size_t i = 0; i < 16; ++i) {
+    uint32_t val = 0;
+    for (uint8_t byte : data.subspan(4 * i, 4u)) {
+      val = (val << 8) | byte;
+    }
+    W[i] = val;
+  }
+  std::array<uint32_t, 8> letters;
+  for (size_t i = 0; i < 8; i++) {
+    letters[i] = static_cast<uint32_t>(ctx->state[i]);
+  }
+  for (size_t i = 0; i < 64; ++i) {
+    uint32_t word = (i < 16) ? W[i] : sha256::ExpandWord(W, i);
+
+    // temp1 uses H, E, F, G.
+    // If H is (15-i)%8, then E is (12-i)%8, F is (13-i)%8, G is (14-i)%8.
+    uint32_t temp1 = letters[(15 - i) % 8] +
+                     sha256::UpperSigma1(letters[(12 - i) % 8]) +
+                     sha256::Ch(letters[(12 - i) % 8], letters[(13 - i) % 8],
+                                letters[(14 - i) % 8]) +
+                     word + static_cast<uint32_t>(constants[i] >> 32);
+
+    // (8-i % 8) maps to the first thing passed in the cyclical register.
+    // Consequently (9-i % 8) maps to the second (10-i % 8) to the third etc.
+    uint32_t temp2 = sha256::UpperSigma0(letters[(8 - i) % 8]) +
+                     sha256::Maj(letters[(8 - i) % 8], letters[(9 - i) % 8],
+                                 letters[(10 - i) % 8]);
+
+    letters[(11 - i) % 8] += temp1;
+    letters[(15 - i) % 8] = temp1 + temp2;
+  }
+  for (size_t i = 0; i < 8; ++i) {
+    ctx->state[i] += letters[i];
+  }
+}
+
 void sha384_process(CRYPT_sha2_context* ctx,
                     pdfium::span<const uint8_t, 128> data) {
   std::array<uint64_t, 80> W;
@@ -277,52 +266,29 @@ void sha384_process(CRYPT_sha2_context* ctx,
     }
     W[i] = val;
   }
-  uint64_t A = ctx->state[0];
-  uint64_t B = ctx->state[1];
-  uint64_t C = ctx->state[2];
-  uint64_t D = ctx->state[3];
-  uint64_t E = ctx->state[4];
-  uint64_t F = ctx->state[5];
-  uint64_t G = ctx->state[6];
-  uint64_t H = ctx->state[7];
-  for (int i = 0; i < 10; ++i) {
-    uint64_t temp[8];
-    if (i < 2) {
-      temp[0] = W[i * 8];
-      temp[1] = W[i * 8 + 1];
-      temp[2] = W[i * 8 + 2];
-      temp[3] = W[i * 8 + 3];
-      temp[4] = W[i * 8 + 4];
-      temp[5] = W[i * 8 + 5];
-      temp[6] = W[i * 8 + 6];
-      temp[7] = W[i * 8 + 7];
-    } else {
-      temp[0] = SHA384_R(i * 8);
-      temp[1] = SHA384_R(i * 8 + 1);
-      temp[2] = SHA384_R(i * 8 + 2);
-      temp[3] = SHA384_R(i * 8 + 3);
-      temp[4] = SHA384_R(i * 8 + 4);
-      temp[5] = SHA384_R(i * 8 + 5);
-      temp[6] = SHA384_R(i * 8 + 6);
-      temp[7] = SHA384_R(i * 8 + 7);
-    }
-    SHA384_P(A, B, C, D, E, F, G, H, temp[0], constants[i * 8]);
-    SHA384_P(H, A, B, C, D, E, F, G, temp[1], constants[i * 8 + 1]);
-    SHA384_P(G, H, A, B, C, D, E, F, temp[2], constants[i * 8 + 2]);
-    SHA384_P(F, G, H, A, B, C, D, E, temp[3], constants[i * 8 + 3]);
-    SHA384_P(E, F, G, H, A, B, C, D, temp[4], constants[i * 8 + 4]);
-    SHA384_P(D, E, F, G, H, A, B, C, temp[5], constants[i * 8 + 5]);
-    SHA384_P(C, D, E, F, G, H, A, B, temp[6], constants[i * 8 + 6]);
-    SHA384_P(B, C, D, E, F, G, H, A, temp[7], constants[i * 8 + 7]);
+  std::array<uint64_t, 8> letters;
+  for (size_t i = 0; i < 8; ++i) {
+    letters[i] = ctx->state[i];
   }
-  ctx->state[0] += A;
-  ctx->state[1] += B;
-  ctx->state[2] += C;
-  ctx->state[3] += D;
-  ctx->state[4] += E;
-  ctx->state[5] += F;
-  ctx->state[6] += G;
-  ctx->state[7] += H;
+  for (size_t i = 0; i < 80; ++i) {
+    uint64_t word = (i < 16) ? W[i] : sha384::ExpandWord(W, i);
+
+    uint64_t temp1 = letters[(15 - i) % 8] +
+                     sha384::UpperSigma1(letters[(12 - i) % 8]) +
+                     sha384::Ch(letters[(12 - i) % 8], letters[(13 - i) % 8],
+                                letters[(14 - i) % 8]) +
+                     word + constants[i];
+
+    uint64_t temp2 = sha384::UpperSigma0(letters[(8 - i) % 8]) +
+                     sha384::Maj(letters[(8 - i) % 8], letters[(9 - i) % 8],
+                                 letters[(10 - i) % 8]);
+
+    letters[(11 - i) % 8] += temp1;
+    letters[(15 - i) % 8] = temp1 + temp2;
+  }
+  for (size_t i = 0; i < 8; ++i) {
+    ctx->state[i] += letters[i];
+  }
 }
 
 }  // namespace
