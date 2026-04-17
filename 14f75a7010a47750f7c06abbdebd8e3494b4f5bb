@@ -87,6 +87,24 @@
       "parentUuid": "beb33baa_3328ebac",
       "revId": "14f75a7010a47750f7c06abbdebd8e3494b4f5bb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ea1a59c1_1bbfe30b",
+        "filename": "skia/include/rust/cxx.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-17T20:09:59Z",
+      "side": 1,
+      "message": "My other question is, why have skia/include/rust/cxx.h wrap third_party/rust/cxx/v1/cxx.h? Why not just include third_party/rust/cxx/v1/cxx.h directly where needed?",
+      "parentUuid": "f2006df4_b6624382",
+      "revId": "14f75a7010a47750f7c06abbdebd8e3494b4f5bb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
