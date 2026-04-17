@@ -105,6 +105,24 @@
       "parentUuid": "f2006df4_b6624382",
       "revId": "14f75a7010a47750f7c06abbdebd8e3494b4f5bb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3b8ea824_83563f78",
+        "filename": "skia/include/rust/cxx.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-17T22:32:10Z",
+      "side": 1,
+      "message": "wanted to avoid modifying the vendor files.  But now we vend them ourselves. Hoo hah.",
+      "parentUuid": "ea1a59c1_1bbfe30b",
+      "revId": "14f75a7010a47750f7c06abbdebd8e3494b4f5bb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
