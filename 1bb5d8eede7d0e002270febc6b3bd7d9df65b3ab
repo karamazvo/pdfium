@@ -41,6 +41,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "98720b4b_60b0a01f",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-17T02:04:08Z",
+      "side": 1,
+      "message": "Actually was considering removing these functions altogether; unlike the UInt64 setter they are only present in one place, why don\u0027t we also move the `val \u003d (val \u003c\u003c 8) | byte;` to the caller as well, seems pretty wasteful to have a function used only once with just this one line. Done.",
+      "parentUuid": "53227800_3604d0a8",
+      "range": {
+        "startLine": 62,
+        "startChar": 22,
+        "endLine": 62,
+        "endChar": 47
+      },
+      "revId": "1bb5d8eede7d0e002270febc6b3bd7d9df65b3ab",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e9bb96ed_b4b4fc53",
@@ -54,6 +78,24 @@
       "writtenOn": "2026-04-16T19:10:16Z",
       "side": 1,
       "message": "Why is this necessary? Compare with line 287-288.",
+      "revId": "1bb5d8eede7d0e002270febc6b3bd7d9df65b3ab",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "74b92502_36558957",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-17T02:04:08Z",
+      "side": 1,
+      "message": "Oh right - I think I needed to change this to std::array\u003c\u003e instead but might\u0027ve forgot. Updating.",
+      "parentUuid": "e9bb96ed_b4b4fc53",
       "revId": "1bb5d8eede7d0e002270febc6b3bd7d9df65b3ab",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
