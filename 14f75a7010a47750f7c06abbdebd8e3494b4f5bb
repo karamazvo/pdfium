@@ -69,6 +69,24 @@
       "parentUuid": "27127e47_c0fa071e",
       "revId": "14f75a7010a47750f7c06abbdebd8e3494b4f5bb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f2006df4_b6624382",
+        "filename": "skia/include/rust/cxx.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-17T18:17:20Z",
+      "side": 1,
+      "message": "And yet both belong to the chrome/pdfium repository directly and not skia repo.  So it sounds like both would need update.  Noted.",
+      "parentUuid": "beb33baa_3328ebac",
+      "revId": "14f75a7010a47750f7c06abbdebd8e3494b4f5bb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
