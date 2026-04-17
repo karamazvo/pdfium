@@ -364,6 +364,7 @@ component("skia") {
     deps += [
       ":bridge_rust_side",
       ":path_bridge",
+      "//core/fxge:skrifa_cxx_cpp",
     ]
   }
 
