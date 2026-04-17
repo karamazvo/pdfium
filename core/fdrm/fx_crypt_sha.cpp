@@ -202,60 +202,43 @@ void SHA_Core_Init(pdfium::span<uint32_t, 5> h) {
   h[4] = 0xc3d2e1f0;
 }
 
-void SHATransform(pdfium::span<uint32_t> digest, pdfium::span<uint32_t> block) {
+void SHA1Transform(pdfium::span<uint32_t, 5> digest,
+                   pdfium::span<const uint32_t, 16> block) {
   std::array<uint32_t, 80> w;
-  int t;
-  for (t = 0; t < 16; t++) {
-    w[t] = block[t];
+  fxcrt::Copy(block, w);
+  for (size_t t = 16; t < 80; ++t) {
+    w[t] = sha256::Rol(w[t - 3] ^ w[t - 8] ^ w[t - 14] ^ w[t - 16], 1);
   }
-  for (t = 16; t < 80; t++) {
-    uint32_t tmp = w[t - 3] ^ w[t - 8] ^ w[t - 14] ^ w[t - 16];
-    w[t] = sha256::Rol(tmp, 1);
+  std::array<uint32_t, 5> dig;
+  fxcrt::Copy(digest, dig);
+  uint32_t tmp_logic;
+  uint32_t tmp_const;
+
+  for (size_t t = 0; t < 80; ++t) {
+    if (t < 20) {
+      tmp_logic = (dig[1] & dig[2]) | (~dig[1] & dig[3]);
+      tmp_const = 0x5a827999;
+    } else if (t < 40) {
+      tmp_logic = dig[1] ^ dig[2] ^ dig[3];
+      tmp_const = 0x6ed9eba1;
+    } else if (t < 60) {
+      tmp_logic = (dig[1] & dig[2]) | (dig[1] & dig[3]) | (dig[2] & dig[3]);
+      tmp_const = 0x8f1bbcdc;
+    } else {
+      tmp_logic = dig[1] ^ dig[2] ^ dig[3];
+      tmp_const = 0xca62c1d6;
+    }
+    const uint32_t tmp =
+        sha256::Rol(dig[0], 5) + tmp_logic + dig[4] + w[t] + tmp_const;
+    dig[4] = dig[3];
+    dig[3] = dig[2];
+    dig[2] = sha256::Rol(dig[1], 30);
+    dig[1] = dig[0];
+    dig[0] = tmp;
   }
-  uint32_t a = digest[0];
-  uint32_t b = digest[1];
-  uint32_t c = digest[2];
-  uint32_t d = digest[3];
-  uint32_t e = digest[4];
-  for (t = 0; t < 20; t++) {
-    uint32_t tmp =
-        sha256::Rol(a, 5) + ((b & c) | (d & ~b)) + e + w[t] + 0x5a827999;
-    e = d;
-    d = c;
-    c = sha256::Rol(b, 30);
-    b = a;
-    a = tmp;
+  for (size_t i = 0; i < 5; ++i) {
+    digest[i] += dig[i];
   }
-  for (t = 20; t < 40; t++) {
-    uint32_t tmp = sha256::Rol(a, 5) + (b ^ c ^ d) + e + w[t] + 0x6ed9eba1;
-    e = d;
-    d = c;
-    c = sha256::Rol(b, 30);
-    b = a;
-    a = tmp;
-  }
-  for (t = 40; t < 60; t++) {
-    uint32_t tmp = sha256::Rol(a, 5) + ((b & c) | (b & d) | (c & d)) + e +
-                   w[t] + 0x8f1bbcdc;
-    e = d;
-    d = c;
-    c = sha256::Rol(b, 30);
-    b = a;
-    a = tmp;
-  }
-  for (t = 60; t < 80; t++) {
-    uint32_t tmp = sha256::Rol(a, 5) + (b ^ c ^ d) + e + w[t] + 0xca62c1d6;
-    e = d;
-    d = c;
-    c = sha256::Rol(b, 30);
-    b = a;
-    a = tmp;
-  }
-  digest[0] += a;
-  digest[1] += b;
-  digest[2] += c;
-  digest[3] += d;
-  digest[4] += e;
 }
 
 constexpr auto constants = std::to_array<const uint64_t>({
@@ -393,7 +376,7 @@ void CRYPT_SHA1Update(CRYPT_sha1_context* context,
                      (((uint32_t)context->block[i * 4 + 2]) << 8) |
                      (((uint32_t)context->block[i * 4 + 3]) << 0);
     }
-    SHATransform(context->h, wordblock);
+    SHA1Transform(context->h, wordblock);
     context->blkused = 0;
   }
   fxcrt::Copy(data, block_span);
