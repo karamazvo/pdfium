@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "96b6b4a3_d10de9d6",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-17T18:11:43Z",
+      "side": 1,
+      "message": "What do you guys think about fxcrt::Copy() instead of this for loop thing. The only reason I didn\u0027t do this from the start is because it would be inconsistent if sha384 has fxcrt::Copy() but 256 does not. Although we can change it to instead write the uint32_t casted values to another buffer and then copying that just uses more memory as a whole. WDYT?",
+      "range": {
+        "startLine": 271,
+        "startChar": 4,
+        "endLine": 271,
+        "endChar": 29
+      },
+      "revId": "f2c246dd76e84531d47bd2f917784e2a00938a01",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
