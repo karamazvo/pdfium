@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c86871c1_2c57a2f6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-17T18:22:14Z",
+      "side": 1,
+      "message": "Hi guys, continuing on with the fdrm refactoring, decided to remove a lot of the common code in SHATransform (now called SHA1Transform, to better reflect its specific use in SHA1). Just combined some of the for loops to do the common bits. Thanks!",
+      "revId": "8d4d63a2df75dd507b32565c46dadfbbe6ccea02",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
