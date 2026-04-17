@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ad5933a1_af1bbfc7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-17T15:01:07Z",
+      "side": 1,
+      "message": "Hi guys - continuing on with updating core/fdrm to remove all the function macros this time and simplify the SHA-256 and 384 to remove mostly repetitive code. For the function Namings I tried to mostly follow [1] - was also a good opportunity to learn a bit about how SHA works. Anyway added some loops and used mods to be able to access the buffer in a single loop instead of repeating lines. Also noticed the SHA256 constants are just a list of the upper uint32_t of the uint64_t constants, updated SHA256 to use that as well.\n\n[1] - https://www.ietf.org/rfc/rfc4634#section-8.2",
+      "revId": "5c9a4f8b51fefa3bfb261661e4ea2d268a6059a0",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
