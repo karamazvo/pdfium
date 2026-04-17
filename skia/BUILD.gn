@@ -48,6 +48,43 @@ if (pdf_enable_fontations) {
       "//build/config/compiler:no_chromium_code",
     ]
   }
+
+  config("skrifa_cxx_config") {
+    include_dirs = [
+      "//core/fxge/skrifa/src",
+      "$root_gen_dir/core/fxge/skrifa/src",
+    ]
+  }
+
+  rust_static_library("skrifa_cxx") {
+    crate_name = "skrifa_cxx"
+    allow_unsafe = true
+    crate_root = "//core/fxge/skrifa/src/main.rs"
+    sources = [ crate_root ]
+    cxx_bindings = [ crate_root ]
+    deps = [
+      "//build/rust:cxx_cppdeps",
+      "//third_party/rust/read_fonts/v0_39:lib",
+      "//third_party/rust/skrifa/v0_42:lib",
+    ]
+    configs += [ ":skrifa_cxx_config" ]
+  }
+
+  source_set("skrifa_cxx_cpp") {
+    sources = [
+      "//core/fxge/skrifa/src/outlines.cpp",
+      "//core/fxge/skrifa/src/outlines.h",
+    ]
+    deps = [
+      ":skrifa_cxx",
+      "//build/rust:cxx_cppdeps",
+    ]
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [
+      "//build/config/compiler:no_chromium_code",
+      ":skrifa_cxx_config",
+    ]
+  }
 }
 
 if (pdf_enable_rust_png) {
@@ -364,6 +401,7 @@ component("skia") {
     deps += [
       ":bridge_rust_side",
       ":path_bridge",
+      ":skrifa_cxx_cpp",
     ]
   }
 
