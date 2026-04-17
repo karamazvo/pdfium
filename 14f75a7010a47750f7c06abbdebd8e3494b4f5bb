@@ -33,6 +33,24 @@
       "message": "I don\u0027t see this in Chromium //skia. How does Chromium handle this?",
       "revId": "14f75a7010a47750f7c06abbdebd8e3494b4f5bb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "27127e47_c0fa071e",
+        "filename": "skia/include/rust/cxx.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-17T18:10:15Z",
+      "side": 1,
+      "message": "Chromium: thought this was //third_party/pdfium/skia, as opposed to //skia, //third_party/skia, or //third_party/pdfium/third_party/skia.\n\nToo many skias. thoughts?  the bot cobbled this up to fix some fixed include path stuff.",
+      "parentUuid": "63448e96_293bd394",
+      "revId": "14f75a7010a47750f7c06abbdebd8e3494b4f5bb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
