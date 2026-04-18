@@ -1,0 +1,1037 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fbfec3ef_a6096248",
+        "filename": "core/fdrm/BUILD.gn",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Maybe add a seperate file for all the data arrays - sort of like how there is one for unicode tables.",
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a260b019_53053f3c",
+        "filename": "core/fdrm/BUILD.gn",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Maybe one for the SHA and AES math operations. Allows us to keep these files having the main behaviour.",
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a9714cca_a24b0f2b",
+        "filename": "core/fdrm/fx_crypt.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Lets keep just the first, rest should fill in w 0s on its own.",
+      "range": {
+        "startLine": 18,
+        "startChar": 4,
+        "endLine": 18,
+        "endChar": 8
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cf304ae4_e32baab1",
+        "filename": "core/fdrm/fx_crypt.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "lets start with an empty array and loop through to fill it.",
+      "range": {
+        "startLine": 24,
+        "startChar": 13,
+        "endLine": 24,
+        "endChar": 30
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e883748c_c9e45b1e",
+        "filename": "core/fdrm/fx_crypt.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Why A, B, C, D? Lets just access them with ctx-\u003estate[], if they need to be mutated (which it seems like from P) we can fxcrt::Copy() it into another array.",
+      "range": {
+        "startLine": 41,
+        "startChar": 2,
+        "endLine": 44,
+        "endChar": 29
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5520c4a5_18978bcc",
+        "filename": "core/fdrm/fx_crypt.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Make these actual functions.",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 38
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b3f978b9_220fcc95",
+        "filename": "core/fdrm/fx_crypt.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "More magic numbers that can be an array.",
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9b28dc10_4e42d0ed",
+        "filename": "core/fdrm/fx_crypt.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Loop with modulo-ing",
+      "range": {
+        "startLine": 55,
+        "startChar": 2,
+        "endLine": 55,
+        "endChar": 3
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2c5328bc_aa25ad90",
+        "filename": "core/fdrm/fx_crypt.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "If it is defined every 15 or so we can have if statements inside P that works for the behaviour of F instead of redefining.",
+      "range": {
+        "startLine": 69,
+        "startChar": 0,
+        "endLine": 69,
+        "endChar": 38
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c4961811_476ea99e",
+        "filename": "core/fdrm/fx_crypt.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Can just be a loop again.",
+      "range": {
+        "startLine": 123,
+        "startChar": 0,
+        "endLine": 126,
+        "endChar": 21
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "34e84608_d4cf9d28",
+        "filename": "core/fdrm/fx_crypt.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "More loop",
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9107e031_51a678b5",
+        "filename": "core/fdrm/fx_crypt.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Also why dont we just have MD5 in a seperate file?",
+      "range": {
+        "startLine": 221,
+        "startChar": 5,
+        "endLine": 221,
+        "endChar": 22
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dfbd911b_a205f096",
+        "filename": "core/fdrm/fx_crypt.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Naming conventions",
+      "range": {
+        "startLine": 38,
+        "startChar": 5,
+        "endLine": 38,
+        "endChar": 20
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2e3b5892_7305ae2b",
+        "filename": "core/fdrm/fx_crypt_aes.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Should be a normal function",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 61
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "58a6dae4_9e8953d5",
+        "filename": "core/fdrm/fx_crypt_aes.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Maybe let\u0027s move these tables to another file.",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 9
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5c1547a5_30d4e2d5",
+        "filename": "core/fdrm/fx_crypt_aes.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Probably more descriptive naming?",
+      "range": {
+        "startLine": 68,
+        "startChar": 42,
+        "endLine": 68,
+        "endChar": 44
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d262d2b9_a696b432",
+        "filename": "core/fdrm/fx_crypt_aes.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 435,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Lets make these actual functions,",
+      "range": {
+        "startLine": 435,
+        "startChar": 1,
+        "endLine": 435,
+        "endChar": 7
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a0ad8e84_a0173d41",
+        "filename": "core/fdrm/fx_crypt_aes.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 454,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Naming",
+      "range": {
+        "startLine": 451,
+        "startChar": 0,
+        "endLine": 454,
+        "endChar": 19
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e8bf3afa_64901ee4",
+        "filename": "core/fdrm/fx_crypt_aes.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 479,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "dry",
+      "range": {
+        "startLine": 459,
+        "startChar": 0,
+        "endLine": 479,
+        "endChar": 1
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "33751cae_f4ba8add",
+        "filename": "core/fdrm/fx_crypt_aes.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 492,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Instead of undef-ing and redefining how about 2 seperate functions - one for encrypt one for decrypt.",
+      "range": {
+        "startLine": 480,
+        "startChar": 0,
+        "endLine": 492,
+        "endChar": 58
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a7ceeda4_4f3b84bf",
+        "filename": "core/fdrm/fx_crypt_aes.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 531,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Also probably naming... what is Nk?",
+      "range": {
+        "startLine": 531,
+        "startChar": 15,
+        "endLine": 531,
+        "endChar": 17
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "08e6acf4_679f62b5",
+        "filename": "core/fdrm/fx_crypt_aes.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 549,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "This and line 552 could also probably be simplified - maybe a function or something\n\nEdit: also 569 onward",
+      "range": {
+        "startLine": 542,
+        "startChar": 8,
+        "endLine": 549,
+        "endChar": 37
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7ed98e93_96778035",
+        "filename": "core/fdrm/fx_crypt_aes.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Naming again",
+      "range": {
+        "startLine": 16,
+        "startChar": 7,
+        "endLine": 16,
+        "endChar": 24
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f8bdefd2_e004435f",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Make all of these defines actual functions (In progress).",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 87,
+        "endChar": 3
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "be3b11f9_57c30a8a",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Rename if its only used for SHA1",
+      "range": {
+        "startLine": 99,
+        "startChar": 5,
+        "endLine": 99,
+        "endChar": 17
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c214566b_4f08f9b1",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Naming, also why not an array? (In progress)",
+      "range": {
+        "startLine": 109,
+        "startChar": 11,
+        "endLine": 109,
+        "endChar": 12
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c1d2dd04_1ba71f3f",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Repetition of this block a couple times across this function (In progress)",
+      "range": {
+        "startLine": 116,
+        "startChar": 3,
+        "endLine": 120,
+        "endChar": 12
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f2d7c30a_a0a454cb",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Make this a loop (in progress)",
+      "range": {
+        "startLine": 157,
+        "startChar": 2,
+        "endLine": 157,
+        "endChar": 16
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2b42d5fe_7e3e4a44",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Array (in progress)",
+      "range": {
+        "startLine": 174,
+        "startChar": 2,
+        "endLine": 181,
+        "endChar": 52
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ebbb973e_4d0d28d1",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Loop and maybe make an array of these magic numbers. (In progress)",
+      "range": {
+        "startLine": 209,
+        "startChar": 2,
+        "endLine": 209,
+        "endChar": 48
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "62c1b1ea_b7cfa873",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Also instead of array lets spanify to remove the out params, or maybe even remove the function entirely. (in progress)",
+      "range": {
+        "startLine": 210,
+        "startChar": 2,
+        "endLine": 210,
+        "endChar": 48
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c4240607_0e6130b7",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "If we put one element the rest should initialised with 0s anyway. (In progress)",
+      "range": {
+        "startLine": 256,
+        "startChar": 0,
+        "endLine": 268,
+        "endChar": 2
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5612af66_fd63482b",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 298,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Lets move this before because the Upper uint32_ts of this array uint64_ts matches up with the SHA256 magic numbers. (In progress)",
+      "range": {
+        "startLine": 270,
+        "startChar": 0,
+        "endLine": 298,
+        "endChar": 3
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "986cce1f_eaa7459f",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Loop (In progress)",
+      "range": {
+        "startLine": 303,
+        "startChar": 2,
+        "endLine": 303,
+        "endChar": 32
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dab46241_81488c07",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Array (In progress)",
+      "range": {
+        "startLine": 319,
+        "startChar": 2,
+        "endLine": 319,
+        "endChar": 29
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b3dafcaf_00a96380",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "More loop... (In progress)",
+      "range": {
+        "startLine": 330,
+        "startChar": 6,
+        "endLine": 330,
+        "endChar": 25
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "762d7698_31a7008d",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 348,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Probably could do some modulo-ing to get it done directly. (In progress)",
+      "range": {
+        "startLine": 348,
+        "startChar": 3,
+        "endLine": 348,
+        "endChar": 64
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bad96d1c_cef3c182",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 359,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Loop instead; DRY. (In progress).",
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3ce3ba58_20a51213",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 390,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "hmmmm maybe a loop?",
+      "range": {
+        "startLine": 390,
+        "startChar": 24,
+        "endLine": 390,
+        "endChar": 32
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5c1a92bd_9e30f9b6",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 415,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "naming and loop",
+      "range": {
+        "startLine": 415,
+        "startChar": 2,
+        "endLine": 415,
+        "endChar": 3
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8aacf34c_1d4f8067",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 426,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Maybe also a loop",
+      "range": {
+        "startLine": 426,
+        "startChar": 4,
+        "endLine": 426,
+        "endChar": 10
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d1e1ccaf_2707dedc",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 490,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "More loop (In progress)",
+      "range": {
+        "startLine": 490,
+        "startChar": 2,
+        "endLine": 490,
+        "endChar": 16
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bc18c7b2_6d8992ac",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 557,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Loop (In progress)",
+      "range": {
+        "startLine": 557,
+        "startChar": 2,
+        "endLine": 557,
+        "endChar": 16
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cad19aa0_4a351a9b",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 603,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "More loop (In progress).",
+      "range": {
+        "startLine": 603,
+        "startChar": 2,
+        "endLine": 603,
+        "endChar": 16
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "11d77364_51fc821e",
+        "filename": "core/fdrm/fx_crypt_sha.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "More naming",
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c0ce91a6_ed6128aa",
+        "filename": "core/fdrm/fx_crypt_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Do we need these local vars or can we just pass them in",
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b8d00b1f_ebf1b702",
+        "filename": "core/fdrm/fx_crypt_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 733,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T12:40:05Z",
+      "side": 1,
+      "message": "Not sure if there are tests for SHA and AES. Correct me if not, but if this is the case lets add tests for these as well perhaps with an array of pairs of input and outputs.",
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
