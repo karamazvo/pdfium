@@ -67,6 +67,29 @@
       "message": "Also move the math to another file?",
       "revId": "1c7c953389088e0183c0360a615d12fee3bf8460",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7d9571fb_4d01ca00",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 411,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T16:07:28Z",
+      "side": 1,
+      "message": "Maybe this block can be a ternary. Done.",
+      "range": {
+        "startLine": 406,
+        "startChar": 2,
+        "endLine": 411,
+        "endChar": 3
+      },
+      "revId": "1c7c953389088e0183c0360a615d12fee3bf8460",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }

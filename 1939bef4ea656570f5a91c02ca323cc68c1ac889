@@ -1246,6 +1246,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "483953cc_700df1c8",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 390,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T16:07:28Z",
+      "side": 1,
+      "message": "Not worth it for 4 lines.",
+      "parentUuid": "3ce3ba58_20a51213",
+      "range": {
+        "startLine": 390,
+        "startChar": 24,
+        "endLine": 390,
+        "endChar": 32
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5c1a92bd_9e30f9b6",
@@ -1259,6 +1283,30 @@
       "writtenOn": "2026-04-18T12:40:05Z",
       "side": 1,
       "message": "naming and loop",
+      "range": {
+        "startLine": 415,
+        "startChar": 2,
+        "endLine": 415,
+        "endChar": 3
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1b97b175_a451b44e",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 415,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T16:07:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5c1a92bd_9e30f9b6",
       "range": {
         "startLine": 415,
         "startChar": 2,
@@ -1287,6 +1335,53 @@
         "startChar": 4,
         "endLine": 426,
         "endChar": 10
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3794db41_22496214",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 426,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T16:07:28Z",
+      "side": 1,
+      "message": "Not worth it for 4 lines.",
+      "parentUuid": "8aacf34c_1d4f8067",
+      "range": {
+        "startLine": 426,
+        "startChar": 4,
+        "endLine": 426,
+        "endChar": 10
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "64d78e4d_309cffd2",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T16:07:28Z",
+      "side": 1,
+      "message": "Same here",
+      "range": {
+        "startLine": 447,
+        "startChar": 22,
+        "endLine": 447,
+        "endChar": 32
       },
       "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
@@ -1341,6 +1436,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "ae4665e1_7f08791f",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 514,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T16:07:28Z",
+      "side": 1,
+      "message": "Could probably do something here like the other comment",
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "bc18c7b2_6d8992ac",
         "filename": "core/fdrm/fx_crypt_sha.cpp",
         "patchSetId": 1
@@ -1382,6 +1494,23 @@
         "endLine": 557,
         "endChar": 16
       },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9b4dc19f_f0f8ea0e",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 578,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T16:07:28Z",
+      "side": 1,
+      "message": "Probably could do something will this - will spend some time thinking about this, maybe fxcrt::Copy(",
       "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
