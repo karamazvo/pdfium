@@ -14,116 +14,66 @@
 
 namespace {
 
-const uint8_t md5_padding[64] = {
-    0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+const uint8_t md5_padding[64] = {0x80};
+
+uint32_t F(uint32_t x, uint32_t y, uint32_t z, size_t i) {
+  return i == 0   ? (z ^ (x & (y ^ z)))
+         : i == 1 ? (y ^ (z & (x ^ y)))
+         : i == 2 ? (x ^ y ^ z)
+                  : (y ^ (x | ~z));
+}
+
+size_t GetK(size_t i) {
+  return i < 16   ? i
+         : i < 32 ? (1 + 5 * i) % 16
+         : i < 48 ? (5 + 3 * i) % 16
+                  : (7 * i) % 16;
+}
+
+uint32_t S(uint32_t x, size_t n) {
+  return ((x << n) | ((x & 0xFFFFFFFF) >> (32 - n)));
+}
 
 void md5_process(CRYPT_md5_context* ctx, pdfium::span<const uint8_t, 64> data) {
-  uint32_t X[16] = {
-      fxcrt::GetUInt32LSBFirst(data.subspan<0, 4>()),
-      fxcrt::GetUInt32LSBFirst(data.subspan<4, 4>()),
-      fxcrt::GetUInt32LSBFirst(data.subspan<8, 4>()),
-      fxcrt::GetUInt32LSBFirst(data.subspan<12, 4>()),
-      fxcrt::GetUInt32LSBFirst(data.subspan<16, 4>()),
-      fxcrt::GetUInt32LSBFirst(data.subspan<20, 4>()),
-      fxcrt::GetUInt32LSBFirst(data.subspan<24, 4>()),
-      fxcrt::GetUInt32LSBFirst(data.subspan<28, 4>()),
-      fxcrt::GetUInt32LSBFirst(data.subspan<32, 4>()),
-      fxcrt::GetUInt32LSBFirst(data.subspan<36, 4>()),
-      fxcrt::GetUInt32LSBFirst(data.subspan<40, 4>()),
-      fxcrt::GetUInt32LSBFirst(data.subspan<44, 4>()),
-      fxcrt::GetUInt32LSBFirst(data.subspan<48, 4>()),
-      fxcrt::GetUInt32LSBFirst(data.subspan<52, 4>()),
-      fxcrt::GetUInt32LSBFirst(data.subspan<56, 4>()),
-      fxcrt::GetUInt32LSBFirst(data.subspan<60, 4>()),
-  };
-  uint32_t A = ctx->state[0];
-  uint32_t B = ctx->state[1];
-  uint32_t C = ctx->state[2];
-  uint32_t D = ctx->state[3];
-#define S(x, n) ((x << n) | ((x & 0xFFFFFFFF) >> (32 - n)))
-#define P(a, b, c, d, k, s, t)  \
-  {                             \
-    a += F(b, c, d) + X[k] + t; \
-    a = S(a, s) + b;            \
+  uint32_t data_32[16] = {};
+  for (size_t i = 0; i < 16; ++i) {
+    data_32[i] =
+        fxcrt::GetUInt32LSBFirst(data.subspan(4 * i).template first<4>());
   }
-#define F(x, y, z) (z ^ (x & (y ^ z)))
-  P(A, B, C, D, 0, 7, 0xD76AA478);
-  P(D, A, B, C, 1, 12, 0xE8C7B756);
-  P(C, D, A, B, 2, 17, 0x242070DB);
-  P(B, C, D, A, 3, 22, 0xC1BDCEEE);
-  P(A, B, C, D, 4, 7, 0xF57C0FAF);
-  P(D, A, B, C, 5, 12, 0x4787C62A);
-  P(C, D, A, B, 6, 17, 0xA8304613);
-  P(B, C, D, A, 7, 22, 0xFD469501);
-  P(A, B, C, D, 8, 7, 0x698098D8);
-  P(D, A, B, C, 9, 12, 0x8B44F7AF);
-  P(C, D, A, B, 10, 17, 0xFFFF5BB1);
-  P(B, C, D, A, 11, 22, 0x895CD7BE);
-  P(A, B, C, D, 12, 7, 0x6B901122);
-  P(D, A, B, C, 13, 12, 0xFD987193);
-  P(C, D, A, B, 14, 17, 0xA679438E);
-  P(B, C, D, A, 15, 22, 0x49B40821);
-#undef F
-#define F(x, y, z) (y ^ (z & (x ^ y)))
-  P(A, B, C, D, 1, 5, 0xF61E2562);
-  P(D, A, B, C, 6, 9, 0xC040B340);
-  P(C, D, A, B, 11, 14, 0x265E5A51);
-  P(B, C, D, A, 0, 20, 0xE9B6C7AA);
-  P(A, B, C, D, 5, 5, 0xD62F105D);
-  P(D, A, B, C, 10, 9, 0x02441453);
-  P(C, D, A, B, 15, 14, 0xD8A1E681);
-  P(B, C, D, A, 4, 20, 0xE7D3FBC8);
-  P(A, B, C, D, 9, 5, 0x21E1CDE6);
-  P(D, A, B, C, 14, 9, 0xC33707D6);
-  P(C, D, A, B, 3, 14, 0xF4D50D87);
-  P(B, C, D, A, 8, 20, 0x455A14ED);
-  P(A, B, C, D, 13, 5, 0xA9E3E905);
-  P(D, A, B, C, 2, 9, 0xFCEFA3F8);
-  P(C, D, A, B, 7, 14, 0x676F02D9);
-  P(B, C, D, A, 12, 20, 0x8D2A4C8A);
-#undef F
-#define F(x, y, z) (x ^ y ^ z)
-  P(A, B, C, D, 5, 4, 0xFFFA3942);
-  P(D, A, B, C, 8, 11, 0x8771F681);
-  P(C, D, A, B, 11, 16, 0x6D9D6122);
-  P(B, C, D, A, 14, 23, 0xFDE5380C);
-  P(A, B, C, D, 1, 4, 0xA4BEEA44);
-  P(D, A, B, C, 4, 11, 0x4BDECFA9);
-  P(C, D, A, B, 7, 16, 0xF6BB4B60);
-  P(B, C, D, A, 10, 23, 0xBEBFBC70);
-  P(A, B, C, D, 13, 4, 0x289B7EC6);
-  P(D, A, B, C, 0, 11, 0xEAA127FA);
-  P(C, D, A, B, 3, 16, 0xD4EF3085);
-  P(B, C, D, A, 6, 23, 0x04881D05);
-  P(A, B, C, D, 9, 4, 0xD9D4D039);
-  P(D, A, B, C, 12, 11, 0xE6DB99E5);
-  P(C, D, A, B, 15, 16, 0x1FA27CF8);
-  P(B, C, D, A, 2, 23, 0xC4AC5665);
-#undef F
-#define F(x, y, z) (y ^ (x | ~z))
-  P(A, B, C, D, 0, 6, 0xF4292244);
-  P(D, A, B, C, 7, 10, 0x432AFF97);
-  P(C, D, A, B, 14, 15, 0xAB9423A7);
-  P(B, C, D, A, 5, 21, 0xFC93A039);
-  P(A, B, C, D, 12, 6, 0x655B59C3);
-  P(D, A, B, C, 3, 10, 0x8F0CCC92);
-  P(C, D, A, B, 10, 15, 0xFFEFF47D);
-  P(B, C, D, A, 1, 21, 0x85845DD1);
-  P(A, B, C, D, 8, 6, 0x6FA87E4F);
-  P(D, A, B, C, 15, 10, 0xFE2CE6E0);
-  P(C, D, A, B, 6, 15, 0xA3014314);
-  P(B, C, D, A, 13, 21, 0x4E0811A1);
-  P(A, B, C, D, 4, 6, 0xF7537E82);
-  P(D, A, B, C, 11, 10, 0xBD3AF235);
-  P(C, D, A, B, 2, 15, 0x2AD7D2BB);
-  P(B, C, D, A, 9, 21, 0xEB86D391);
-#undef F
-  ctx->state[0] += A;
-  ctx->state[1] += B;
-  ctx->state[2] += C;
-  ctx->state[3] += D;
+
+  std::array<uint32_t, 4> state;
+  fxcrt::Copy(ctx->state, state);
+  static constexpr std::array<uint32_t, 64> kMd5Constants = {
+      0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee, 0xf57c0faf, 0x4787c62a,
+      0xa8304613, 0xfd469501, 0x698098d8, 0x8b44f7af, 0xffff5bb1, 0x895cd7be,
+      0x6b901122, 0xfd987193, 0xa679438e, 0x49b40821, 0xf61e2562, 0xc040b340,
+      0x265e5a51, 0xe9b6c7aa, 0xd62f105d, 0x02441453, 0xd8a1e681, 0xe7d3fbc8,
+      0x21e1cde6, 0xc33707d6, 0xf4d50d87, 0x455a14ed, 0xa9e3e905, 0xfcefa3f8,
+      0x676f02d9, 0x8d2a4c8a, 0xfffa3942, 0x8771f681, 0x6d9d6122, 0xfde5380c,
+      0xa4beea44, 0x4bdecfa9, 0xf6bb4b60, 0xbebfbc70, 0x289b7ec6, 0xeaa127fa,
+      0xd4ef3085, 0x04881d05, 0xd9d4d039, 0xe6db99e5, 0x1fa27cf8, 0xc4ac5665,
+      0xf4292244, 0x432aff97, 0xab9423a7, 0xfc93a039, 0x655b59c3, 0x8f0ccc92,
+      0xffeff47d, 0x85845dd1, 0x6fa87e4f, 0xfe2ce6e0, 0xa3014314, 0x4e0811a1,
+      0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391,
+  };
+  static constexpr uint32_t kShifts[4][4] = {
+      {7, 12, 17, 22},
+      {5, 9, 14, 20},
+      {4, 11, 16, 23},
+      {6, 10, 15, 21},
+  };
+  for (size_t i = 0; i < 64; ++i) {
+    // ((64-i) % 4) maps to the first thing passed in the cyclical register.
+    // Consequently ((65-i) % 4) maps to the second and so on.
+    state[(64 - i) % 4] += F(state[(65 - i) % 4], state[(66 - i) % 4],
+                             state[(67 - i) % 4], i / 16) +
+                           data_32[GetK(i)] + kMd5Constants[i];
+    state[(64 - i) % 4] =
+        S(state[(64 - i) % 4], kShifts[i / 16][i % 4]) + state[(65 - i) % 4];
+  }
+  for (size_t i = 0; i < 4; ++i) {
+    ctx->state[i] += state[i];
+  }
 }
 
 }  // namespace
@@ -212,10 +162,10 @@ void CRYPT_MD5Finish(CRYPT_md5_context* context,
   uint32_t padn = (last < 56) ? (56 - last) : (120 - last);
   CRYPT_MD5Update(context, pdfium::span(md5_padding).first(padn));
   CRYPT_MD5Update(context, msglen);
-  fxcrt::PutUInt32LSBFirst(context->state[0], digest.subspan<0, 4>());
-  fxcrt::PutUInt32LSBFirst(context->state[1], digest.subspan<4, 4>());
-  fxcrt::PutUInt32LSBFirst(context->state[2], digest.subspan<8, 4>());
-  fxcrt::PutUInt32LSBFirst(context->state[3], digest.subspan<12, 4>());
+  for (size_t i = 0; i < 4; ++i) {
+    fxcrt::PutUInt32LSBFirst(context->state[i],
+                             digest.subspan(4 * i).template first<4>());
+  }
 }
 
 void CRYPT_MD5Generate(pdfium::span<const uint8_t> data,
