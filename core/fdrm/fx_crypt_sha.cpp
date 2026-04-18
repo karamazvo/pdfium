@@ -196,7 +196,7 @@ constexpr auto constants = std::to_array<const uint64_t>({
 const uint8_t kSha256Padding[64] = {0x80};
 const uint8_t kSha384Padding[128] = {0x80};
 
-void sha256_process(CRYPT_sha2_context* ctx,
+void sha256_process(CryptSha2Context* ctx,
                     pdfium::span<const uint8_t, 64> data) {
   std::array<uint32_t, 64> W;
   for (size_t i = 0; i < 16; ++i) {
@@ -235,7 +235,7 @@ void sha256_process(CRYPT_sha2_context* ctx,
   }
 }
 
-void sha384_process(CRYPT_sha2_context* ctx,
+void sha384_process(CryptSha2Context* ctx,
                     pdfium::span<const uint8_t, 128> data) {
   std::array<uint64_t, 80> W;
   for (size_t i = 0; i < 16; ++i) {
@@ -272,14 +272,14 @@ void sha384_process(CRYPT_sha2_context* ctx,
 
 }  // namespace
 
-void CRYPT_SHA1Start(CRYPT_sha1_context* context) {
+void CryptSha1Start(CryptSha1Context* context) {
   SHA_Core_Init(context->h);
   context->total_bytes = 0;
   context->blkused = 0;
 }
 
-void CRYPT_SHA1Update(CRYPT_sha1_context* context,
-                      pdfium::span<const uint8_t> data) {
+void CryptSha1Update(CryptSha1Context* context,
+                     pdfium::span<const uint8_t> data) {
   const auto block_span = pdfium::span(context->block);
   context->total_bytes += data.size();
   if (context->blkused && data.size() < 64 - context->blkused) {
@@ -305,18 +305,18 @@ void CRYPT_SHA1Update(CRYPT_sha1_context* context,
   context->blkused = static_cast<uint32_t>(data.size());
 }
 
-void CRYPT_SHA1Finish(CRYPT_sha1_context* context,
-                      pdfium::span<uint8_t, 20> digest) {
+void CryptSha1Finish(CryptSha1Context* context,
+                     pdfium::span<uint8_t, 20> digest) {
   uint64_t total_bits = 8 * context->total_bytes;  // Prior to padding.
   std::array<uint8_t, 64> data;
   uint8_t pad = (context->blkused >= 56 ? 120 : 56) - context->blkused;
   std::ranges::fill(pdfium::span(data).first(pad), 0);
   data[0] = 0x80;
-  CRYPT_SHA1Update(context, pdfium::span(data).first(pad));
+  CryptSha1Update(context, pdfium::span(data).first(pad));
   for (size_t i = 0; i < 8; ++i) {
     data[i] = (total_bits >> (56 - 8 * i)) & 0xFF;
   }
-  CRYPT_SHA1Update(context, pdfium::span(data).first<8u>());
+  CryptSha1Update(context, pdfium::span(data).first<8u>());
   for (int i = 0; i < 5; i++) {
     digest[i * 4] = (context->h[i] >> 24) & 0xFF;
     digest[i * 4 + 1] = (context->h[i] >> 16) & 0xFF;
@@ -325,25 +325,25 @@ void CRYPT_SHA1Finish(CRYPT_sha1_context* context,
   }
 }
 
-DataVector<uint8_t> CRYPT_SHA1Generate(pdfium::span<const uint8_t> data) {
-  CRYPT_sha1_context s;
-  CRYPT_SHA1Start(&s);
-  CRYPT_SHA1Update(&s, data);
+DataVector<uint8_t> CryptSha1Generate(pdfium::span<const uint8_t> data) {
+  CryptSha1Context s;
+  CryptSha1Start(&s);
+  CryptSha1Update(&s, data);
 
   DataVector<uint8_t> digest(20);
-  CRYPT_SHA1Finish(&s, pdfium::span<uint8_t>(digest).first<20u>());
+  CryptSha1Finish(&s, pdfium::span<uint8_t>(digest).first<20u>());
   return digest;
 }
 
-void CRYPT_SHA256Start(CRYPT_sha2_context* context) {
+void CryptSha256Start(CryptSha2Context* context) {
   context->total_bytes = 0;
   context->state = {0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
                     0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19};
   std::ranges::fill(context->buffer, 0);
 }
 
-void CRYPT_SHA256Update(CRYPT_sha2_context* context,
-                        pdfium::span<const uint8_t> data) {
+void CryptSha256Update(CryptSha2Context* context,
+                       pdfium::span<const uint8_t> data) {
   if (data.empty()) {
     return;
   }
@@ -366,31 +366,31 @@ void CRYPT_SHA256Update(CRYPT_sha2_context* context,
   }
 }
 
-void CRYPT_SHA256Finish(CRYPT_sha2_context* context,
-                        pdfium::span<uint8_t, 32> digest) {
+void CryptSha256Finish(CryptSha2Context* context,
+                       pdfium::span<uint8_t, 32> digest) {
   uint8_t msglen[8];
   uint64_t total_bits = 8 * context->total_bytes;  // Prior to padding.
   ShaSetUint64(total_bits, pdfium::span(msglen), 0);
   uint32_t last = context->total_bytes & 0x3F;
   uint32_t padn = (last < 56) ? (56 - last) : (120 - last);
-  CRYPT_SHA256Update(context, pdfium::span(kSha256Padding).first(padn));
-  CRYPT_SHA256Update(context, msglen);
+  CryptSha256Update(context, pdfium::span(kSha256Padding).first(padn));
+  CryptSha256Update(context, msglen);
   for (size_t i = 0; i < 8; ++i) {
     ShaSetUint32(context->state[i], digest, 4 * i);
   }
 }
 
-DataVector<uint8_t> CRYPT_SHA256Generate(pdfium::span<const uint8_t> data) {
-  CRYPT_sha2_context ctx;
-  CRYPT_SHA256Start(&ctx);
-  CRYPT_SHA256Update(&ctx, data);
+DataVector<uint8_t> CryptSha256Generate(pdfium::span<const uint8_t> data) {
+  CryptSha2Context ctx;
+  CryptSha256Start(&ctx);
+  CryptSha256Update(&ctx, data);
 
   DataVector<uint8_t> digest(32);
-  CRYPT_SHA256Finish(&ctx, pdfium::span<uint8_t>(digest).first<32u>());
+  CryptSha256Finish(&ctx, pdfium::span<uint8_t>(digest).first<32u>());
   return digest;
 }
 
-void CRYPT_SHA384Start(CRYPT_sha2_context* context) {
+void CryptSha384Start(CryptSha2Context* context) {
   context->total_bytes = 0;
   context->state = {0xcbbb9d5dc1059ed8ULL, 0x629a292a367cd507ULL,
                     0x9159015a3070dd17ULL, 0x152fecd8f70e5939ULL,
@@ -399,8 +399,8 @@ void CRYPT_SHA384Start(CRYPT_sha2_context* context) {
   std::ranges::fill(context->buffer, 0);
 }
 
-void CRYPT_SHA384Update(CRYPT_sha2_context* context,
-                        pdfium::span<const uint8_t> data) {
+void CryptSha384Update(CryptSha2Context* context,
+                       pdfium::span<const uint8_t> data) {
   if (data.empty()) {
     return;
   }
@@ -423,32 +423,32 @@ void CRYPT_SHA384Update(CRYPT_sha2_context* context,
   }
 }
 
-void CRYPT_SHA384Finish(CRYPT_sha2_context* context,
-                        pdfium::span<uint8_t, 48> digest) {
+void CryptSha384Finish(CryptSha2Context* context,
+                       pdfium::span<uint8_t, 48> digest) {
   uint8_t msglen[16];
   uint64_t total_bits = 8 * context->total_bytes;  // Prior to padding.
   ShaSetUint64(0ULL, pdfium::span(msglen), 0);
   ShaSetUint64(total_bits, pdfium::span(msglen), 8);
   uint32_t last = context->total_bytes & 0x7F;
   uint32_t padn = (last < 112) ? (112 - last) : (240 - last);
-  CRYPT_SHA384Update(context, pdfium::span(kSha384Padding).first(padn));
-  CRYPT_SHA384Update(context, msglen);
+  CryptSha384Update(context, pdfium::span(kSha384Padding).first(padn));
+  CryptSha384Update(context, msglen);
   for (size_t i = 0; i < 6; ++i) {
     ShaSetUint64(context->state[i], digest, 8 * i);
   }
 }
 
-DataVector<uint8_t> CRYPT_SHA384Generate(pdfium::span<const uint8_t> data) {
-  CRYPT_sha2_context context;
-  CRYPT_SHA384Start(&context);
-  CRYPT_SHA384Update(&context, data);
+DataVector<uint8_t> CryptSha384Generate(pdfium::span<const uint8_t> data) {
+  CryptSha2Context context;
+  CryptSha384Start(&context);
+  CryptSha384Update(&context, data);
 
   DataVector<uint8_t> digest(48);
-  CRYPT_SHA384Finish(&context, pdfium::span<uint8_t>(digest).first<48u>());
+  CryptSha384Finish(&context, pdfium::span<uint8_t>(digest).first<48u>());
   return digest;
 }
 
-void CRYPT_SHA512Start(CRYPT_sha2_context* context) {
+void CryptSha512Start(CryptSha2Context* context) {
   context->total_bytes = 0;
   context->state = {0x6a09e667f3bcc908ULL, 0xbb67ae8584caa73bULL,
                     0x3c6ef372fe94f82bULL, 0xa54ff53a5f1d36f1ULL,
@@ -457,32 +457,32 @@ void CRYPT_SHA512Start(CRYPT_sha2_context* context) {
   std::ranges::fill(context->buffer, 0);
 }
 
-void CRYPT_SHA512Update(CRYPT_sha2_context* context,
-                        pdfium::span<const uint8_t> data) {
-  CRYPT_SHA384Update(context, data);
+void CryptSha512Update(CryptSha2Context* context,
+                       pdfium::span<const uint8_t> data) {
+  CryptSha384Update(context, data);
 }
 
-void CRYPT_SHA512Finish(CRYPT_sha2_context* context,
-                        pdfium::span<uint8_t, 64> digest) {
+void CryptSha512Finish(CryptSha2Context* context,
+                       pdfium::span<uint8_t, 64> digest) {
   uint8_t msglen[16];
   uint64_t total_bits = 8 * context->total_bytes;
   ShaSetUint64(0ULL, pdfium::span(msglen), 0);
   ShaSetUint64(total_bits, pdfium::span(msglen), 8);
   uint32_t last = context->total_bytes & 0x7F;
   uint32_t padn = (last < 112) ? (112 - last) : (240 - last);
-  CRYPT_SHA512Update(context, pdfium::span(kSha384Padding).first(padn));
-  CRYPT_SHA512Update(context, msglen);
+  CryptSha512Update(context, pdfium::span(kSha384Padding).first(padn));
+  CryptSha512Update(context, msglen);
   for (size_t i = 0; i < 8; ++i) {
     ShaSetUint64(context->state[i], digest, 8 * i);
   }
 }
 
-DataVector<uint8_t> CRYPT_SHA512Generate(pdfium::span<const uint8_t> data) {
-  CRYPT_sha2_context context;
-  CRYPT_SHA512Start(&context);
-  CRYPT_SHA512Update(&context, data);
+DataVector<uint8_t> CryptSha512Generate(pdfium::span<const uint8_t> data) {
+  CryptSha2Context context;
+  CryptSha512Start(&context);
+  CryptSha512Update(&context, data);
 
   DataVector<uint8_t> digest(64);
-  CRYPT_SHA512Finish(&context, pdfium::span<uint8_t>(digest).first<64u>());
+  CryptSha512Finish(&context, pdfium::span<uint8_t>(digest).first<64u>());
   return digest;
 }
