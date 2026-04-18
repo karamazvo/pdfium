@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e54b04d0_dac9836c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T16:41:51Z",
+      "side": 1,
+      "message": "Hey guys, decided to continue on the refactor by using fxcrt::Copy() to copy out the arrays instead of assigning each individual element which different magic values. There is one more location of this, will dry run after that is changed.",
+      "revId": "69446086cafef06ba07b5d83c57099fa88f1e28d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
