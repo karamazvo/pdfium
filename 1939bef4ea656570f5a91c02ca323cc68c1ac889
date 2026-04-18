@@ -253,6 +253,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bd87bd24_fe6ccc5e",
+        "filename": "core/fdrm/fx_crypt.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T15:13:23Z",
+      "side": 1,
+      "message": "Not really valid.",
+      "parentUuid": "9107e031_51a678b5",
+      "range": {
+        "startLine": 221,
+        "startChar": 5,
+        "endLine": 221,
+        "endChar": 22
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "dfbd911b_a205f096",
