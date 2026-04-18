@@ -194,7 +194,7 @@ TEST(FXCRYPT, ContextWithStringData) {
 TEST(FXCRYPT, Sha1Empty) {
   static const char kInput[] = "";
   DataVector<uint8_t> actual =
-      CRYPT_SHA1Generate(ByteStringView(kInput).unsigned_span());
+      CryptSha1Generate(ByteStringView(kInput).unsigned_span());
   EXPECT_THAT(actual, ElementsAre(0xda, 0x39, 0xa3, 0xee, 0x5e, 0x6b, 0x4b,
                                   0x0d, 0x32, 0x55, 0xbf, 0xef, 0x95, 0x60,
                                   0x18, 0x90, 0xaf, 0xd8, 0x07, 0x09));
@@ -205,7 +205,7 @@ TEST(FXCRYPT, Sha1TestA1) {
   // Example A.1 from FIPS 180-2: one-block message.
   static const char kInput[] = "abc";
   DataVector<uint8_t> actual =
-      CRYPT_SHA1Generate(ByteStringView(kInput).unsigned_span());
+      CryptSha1Generate(ByteStringView(kInput).unsigned_span());
   EXPECT_THAT(actual, ElementsAre(0xa9, 0x99, 0x3e, 0x36, 0x47, 0x06, 0x81,
                                   0x6a, 0xba, 0x3e, 0x25, 0x71, 0x78, 0x50,
                                   0xc2, 0x6c, 0x9c, 0xd0, 0xd8, 0x9d));
@@ -216,7 +216,7 @@ TEST(FXCRYPT, Sha1TestA2) {
   static const char kInput[] =
       "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq";
   DataVector<uint8_t> actual =
-      CRYPT_SHA1Generate(ByteStringView(kInput).unsigned_span());
+      CryptSha1Generate(ByteStringView(kInput).unsigned_span());
   EXPECT_THAT(actual, ElementsAre(0x84, 0x98, 0x3e, 0x44, 0x1c, 0x3b, 0xd2,
                                   0x6e, 0xba, 0xae, 0x4a, 0xa1, 0xf9, 0x51,
                                   0x29, 0xe5, 0xe5, 0x46, 0x70, 0xf1));
@@ -226,7 +226,7 @@ TEST(FXCRYPT, Sha256Empty) {
   static const char kInput[] = "";
   DataVector<uint8_t> actual =
 
-      CRYPT_SHA256Generate(ByteStringView(kInput).unsigned_span());
+      CryptSha256Generate(ByteStringView(kInput).unsigned_span());
   EXPECT_THAT(actual,
               ElementsAre(0xe3, 0xb0, 0xc4, 0x42, 0x98, 0xfc, 0x1c, 0x14, 0x9a,
                           0xfb, 0xf4, 0xc8, 0x99, 0x6f, 0xb9, 0x24, 0x27, 0xae,
@@ -238,7 +238,7 @@ TEST(FXCRYPT, Sha256TestB1) {
   // Example B.1 from FIPS 180-2: one-block message.
   static const char kInput[] = "abc";
   DataVector<uint8_t> actual =
-      CRYPT_SHA256Generate(ByteStringView(kInput).unsigned_span());
+      CryptSha256Generate(ByteStringView(kInput).unsigned_span());
   EXPECT_THAT(actual,
               ElementsAre(0xba, 0x78, 0x16, 0xbf, 0x8f, 0x01, 0xcf, 0xea, 0x41,
                           0x41, 0x40, 0xde, 0x5d, 0xae, 0x22, 0x23, 0xb0, 0x03,
@@ -251,7 +251,7 @@ TEST(FXCRYPT, Sha256TestB2) {
   static const char kInput[] =
       "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq";
   DataVector<uint8_t> actual =
-      CRYPT_SHA256Generate(ByteStringView(kInput).unsigned_span());
+      CryptSha256Generate(ByteStringView(kInput).unsigned_span());
   EXPECT_THAT(actual,
               ElementsAre(0x24, 0x8d, 0x6a, 0x61, 0xd2, 0x06, 0x38, 0xb8, 0xe5,
                           0xc0, 0x26, 0x93, 0x0c, 0x3e, 0x60, 0x39, 0xa3, 0x3c,
@@ -508,7 +508,7 @@ TEST(FXCRYPT, CRYPTArcFourCrypt) {
 TEST(FXCRYPT, Sha384Empty) {
   static const char kInput[] = "";
   DataVector<uint8_t> actual =
-      CRYPT_SHA384Generate(ByteStringView(kInput).unsigned_span());
+      CryptSha384Generate(ByteStringView(kInput).unsigned_span());
   EXPECT_THAT(
       actual,
       ElementsAre(0x38, 0xb0, 0x60, 0xa7, 0x51, 0xac, 0x96, 0x38, 0x4c, 0xd9,
@@ -523,7 +523,7 @@ TEST(FXCRYPT, Sha384Test) {
   static const char kInput[] =
       "This is a simple test. To see whether it is getting correct value.";
   DataVector<uint8_t> actual =
-      CRYPT_SHA384Generate(ByteStringView(kInput).unsigned_span());
+      CryptSha384Generate(ByteStringView(kInput).unsigned_span());
   EXPECT_THAT(
       actual,
       ElementsAre(0x95, 0x54, 0xff, 0xd3, 0x89, 0xf0, 0xd6, 0x42, 0xe9, 0x33,
@@ -540,7 +540,7 @@ TEST(FXCRYPT, Sha384Pad112) {
       "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
   EXPECT_EQ(112u, strlen(kInput));
   DataVector<uint8_t> actual =
-      CRYPT_SHA384Generate(ByteStringView(kInput).unsigned_span());
+      CryptSha384Generate(ByteStringView(kInput).unsigned_span());
   EXPECT_THAT(
       actual,
       ElementsAre(0x18, 0x7d, 0x4e, 0x07, 0xcb, 0x30, 0x61, 0x03, 0xc6, 0x99,
@@ -553,7 +553,7 @@ TEST(FXCRYPT, Sha384Pad112) {
 TEST(FXCRYPT, Sha512Empty) {
   static const char kInput[] = "";
   DataVector<uint8_t> actual =
-      CRYPT_SHA512Generate(ByteStringView(kInput).unsigned_span());
+      CryptSha512Generate(ByteStringView(kInput).unsigned_span());
   EXPECT_THAT(
       actual,
       ElementsAre(0xcf, 0x83, 0xe1, 0x35, 0x7e, 0xef, 0xb8, 0xbd, 0xf1, 0x54,
@@ -570,7 +570,7 @@ TEST(FXCRYPT, Sha512Test) {
   static const char kInput[] =
       "This is a simple test. To see whether it is getting correct value.";
   DataVector<uint8_t> actual =
-      CRYPT_SHA512Generate(ByteStringView(kInput).unsigned_span());
+      CryptSha512Generate(ByteStringView(kInput).unsigned_span());
   EXPECT_THAT(
       actual,
       ElementsAre(0x86, 0xB5, 0x05, 0x63, 0xA2, 0x6F, 0xD6, 0xFA, 0xEB, 0x9B,
@@ -589,7 +589,7 @@ TEST(FXCRYPT, Sha512Pad112) {
       "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
   EXPECT_EQ(112u, strlen(kInput));
   DataVector<uint8_t> actual =
-      CRYPT_SHA512Generate(ByteStringView(kInput).unsigned_span());
+      CryptSha512Generate(ByteStringView(kInput).unsigned_span());
   EXPECT_THAT(
       actual,
       ElementsAre(0xc0, 0x1d, 0x08, 0x0e, 0xfd, 0x49, 0x27, 0x76, 0xa1, 0xc4,
