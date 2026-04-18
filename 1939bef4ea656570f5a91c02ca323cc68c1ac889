@@ -529,6 +529,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3c0ab277_821f9f26",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T13:55:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f8bdefd2_e004435f",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 87,
+        "endChar": 3
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "be3b11f9_57c30a8a",
@@ -542,6 +566,30 @@
       "writtenOn": "2026-04-18T12:40:05Z",
       "side": 1,
       "message": "Rename if its only used for SHA1",
+      "range": {
+        "startLine": 99,
+        "startChar": 5,
+        "endLine": 99,
+        "endChar": 17
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "49ec898f_4cc80aea",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T13:55:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "be3b11f9_57c30a8a",
       "range": {
         "startLine": 99,
         "startChar": 5,
@@ -575,6 +623,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b81acaaa_a6840a01",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T13:55:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c214566b_4f08f9b1",
+      "range": {
+        "startLine": 109,
+        "startChar": 11,
+        "endLine": 109,
+        "endChar": 12
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c1d2dd04_1ba71f3f",
@@ -588,6 +660,30 @@
       "writtenOn": "2026-04-18T12:40:05Z",
       "side": 1,
       "message": "Repetition of this block a couple times across this function (In progress)",
+      "range": {
+        "startLine": 116,
+        "startChar": 3,
+        "endLine": 120,
+        "endChar": 12
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a0e6b7c5_d81a53f6",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T13:55:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c1d2dd04_1ba71f3f",
       "range": {
         "startLine": 116,
         "startChar": 3,
@@ -621,6 +717,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fc5ef28b_b5ec66a3",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T13:55:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f2d7c30a_a0a454cb",
+      "range": {
+        "startLine": 157,
+        "startChar": 2,
+        "endLine": 157,
+        "endChar": 16
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2b42d5fe_7e3e4a44",
@@ -634,6 +754,30 @@
       "writtenOn": "2026-04-18T12:40:05Z",
       "side": 1,
       "message": "Array (in progress)",
+      "range": {
+        "startLine": 174,
+        "startChar": 2,
+        "endLine": 181,
+        "endChar": 52
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "86b6fba7_beeaa9c2",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T13:55:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2b42d5fe_7e3e4a44",
       "range": {
         "startLine": 174,
         "startChar": 2,
@@ -667,6 +811,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6f3ba39f_815bd48c",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T13:55:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ebbb973e_4d0d28d1",
+      "range": {
+        "startLine": 209,
+        "startChar": 2,
+        "endLine": 209,
+        "endChar": 48
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "62c1b1ea_b7cfa873",
@@ -680,6 +848,30 @@
       "writtenOn": "2026-04-18T12:40:05Z",
       "side": 1,
       "message": "Also instead of array lets spanify to remove the out params, or maybe even remove the function entirely. (in progress)",
+      "range": {
+        "startLine": 210,
+        "startChar": 2,
+        "endLine": 210,
+        "endChar": 48
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e111e3d7_440f8a27",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T13:55:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "62c1b1ea_b7cfa873",
       "range": {
         "startLine": 210,
         "startChar": 2,
@@ -713,6 +905,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "41b79d4c_2be00573",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T13:55:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c4240607_0e6130b7",
+      "range": {
+        "startLine": 256,
+        "startChar": 0,
+        "endLine": 268,
+        "endChar": 2
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5612af66_fd63482b",
@@ -726,6 +942,30 @@
       "writtenOn": "2026-04-18T12:40:05Z",
       "side": 1,
       "message": "Lets move this before because the Upper uint32_ts of this array uint64_ts matches up with the SHA256 magic numbers. (In progress)",
+      "range": {
+        "startLine": 270,
+        "startChar": 0,
+        "endLine": 298,
+        "endChar": 3
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fa337b73_300f4490",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 298,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T13:55:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5612af66_fd63482b",
       "range": {
         "startLine": 270,
         "startChar": 0,
@@ -759,6 +999,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6e8725ab_fe34eb71",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T13:55:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "986cce1f_eaa7459f",
+      "range": {
+        "startLine": 303,
+        "startChar": 2,
+        "endLine": 303,
+        "endChar": 32
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "dab46241_81488c07",
@@ -772,6 +1036,30 @@
       "writtenOn": "2026-04-18T12:40:05Z",
       "side": 1,
       "message": "Array (In progress)",
+      "range": {
+        "startLine": 319,
+        "startChar": 2,
+        "endLine": 319,
+        "endChar": 29
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0c92188e_0ea4223e",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T13:55:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dab46241_81488c07",
       "range": {
         "startLine": 319,
         "startChar": 2,
@@ -805,6 +1093,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6c42a6a0_5cac7211",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T13:55:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b3dafcaf_00a96380",
+      "range": {
+        "startLine": 330,
+        "startChar": 6,
+        "endLine": 330,
+        "endChar": 25
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "762d7698_31a7008d",
@@ -828,6 +1140,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b686eb0f_3af2f215",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 348,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T13:55:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "762d7698_31a7008d",
+      "range": {
+        "startLine": 348,
+        "startChar": 3,
+        "endLine": 348,
+        "endChar": 64
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bad96d1c_cef3c182",
@@ -841,6 +1177,24 @@
       "writtenOn": "2026-04-18T12:40:05Z",
       "side": 1,
       "message": "Loop instead; DRY. (In progress).",
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b008ac1d_ea0d08e5",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 359,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T13:55:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bad96d1c_cef3c182",
       "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -937,6 +1291,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8b578c26_738f7cb8",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 490,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T13:55:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d1e1ccaf_2707dedc",
+      "range": {
+        "startLine": 490,
+        "startChar": 2,
+        "endLine": 490,
+        "endChar": 16
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bc18c7b2_6d8992ac",
@@ -960,6 +1338,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c04dc368_4d8f5df8",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 557,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T13:55:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bc18c7b2_6d8992ac",
+      "range": {
+        "startLine": 557,
+        "startChar": 2,
+        "endLine": 557,
+        "endChar": 16
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cad19aa0_4a351a9b",
@@ -973,6 +1375,30 @@
       "writtenOn": "2026-04-18T12:40:05Z",
       "side": 1,
       "message": "More loop (In progress).",
+      "range": {
+        "startLine": 603,
+        "startChar": 2,
+        "endLine": 603,
+        "endChar": 16
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b3370f98_93ae5897",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 603,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T13:55:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cad19aa0_4a351a9b",
       "range": {
         "startLine": 603,
         "startChar": 2,

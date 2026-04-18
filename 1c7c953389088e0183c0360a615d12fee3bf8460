@@ -33,6 +33,40 @@
       "message": "Hi guys, this CL is just a list of everything that can be changed for the core/fdrm directory. Just a full list of things useful for us to do. Add on any points you feel would be good to change, and we can discuss through some points which we maybe don\u0027t want to change.",
       "revId": "1c7c953389088e0183c0360a615d12fee3bf8460",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "289666a8_67d669eb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T13:55:00Z",
+      "side": 1,
+      "message": "Thought i\u0027d resolve everything in progress to avoid confusion.",
+      "revId": "1c7c953389088e0183c0360a615d12fee3bf8460",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1aff751a_4d753ccd",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T13:55:00Z",
+      "side": 1,
+      "message": "Also move the math to another file?",
+      "revId": "1c7c953389088e0183c0360a615d12fee3bf8460",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
