@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e0837061_c6dc0727",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T17:48:49Z",
+      "side": 1,
+      "message": "Hi guys, created this CL to update the naming which used CRYPT_SHA* to use UpperCamelCase as per the style guide as a part of the core/fdrm refactor. With that most of fx_crypt_sha.cpp should be completed (unless we chose to template the SHA functions). Thanks!",
+      "revId": "6deea9683a59b3580c7cb4b975cadbe27cfa801f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
