@@ -90,6 +90,29 @@
       },
       "revId": "1c7c953389088e0183c0360a615d12fee3bf8460",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fc043529_bb0151f9",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 479,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-18T17:23:37Z",
+      "side": 1,
+      "message": "Thoughts on templating a lot of this - will be harder to read but far shorter if the SHA functions are all one template. Considering not doing it, mainly due to the first argument, and not sure if it would make this that much shorter. \n\n@thestig@chromium.org @tsepez@chromium.org @andyphan@chromium.org wdyt?",
+      "range": {
+        "startLine": 479,
+        "startChar": 5,
+        "endLine": 479,
+        "endChar": 23
+      },
+      "revId": "1c7c953389088e0183c0360a615d12fee3bf8460",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
