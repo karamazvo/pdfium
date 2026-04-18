@@ -401,25 +401,25 @@ void CryptSha1Update(CryptSha1Context* context,
 void CryptSha1Finish(CryptSha1Context* context,
                      pdfium::span<uint8_t, 20> digest) {
   uint64_t total_bits = 8 * context->total_bytes;  // Prior to padding.
-  std::array<uint8_t, 64> c;
+  std::array<uint8_t, 64> data;
   uint8_t pad;
   if (context->blkused >= 56) {
     pad = 56 + 64 - context->blkused;
   } else {
     pad = 56 - context->blkused;
   }
-  std::ranges::fill(pdfium::span(c).first(pad), 0);
-  c[0] = 0x80;
-  CryptSha1Update(context, pdfium::span(c).first(pad));
-  c[0] = (total_bits >> 56) & 0xFF;
-  c[1] = (total_bits >> 48) & 0xFF;
-  c[2] = (total_bits >> 40) & 0xFF;
-  c[3] = (total_bits >> 32) & 0xFF;
-  c[4] = (total_bits >> 24) & 0xFF;
-  c[5] = (total_bits >> 16) & 0xFF;
-  c[6] = (total_bits >> 8) & 0xFF;
-  c[7] = (total_bits >> 0) & 0xFF;
-  CryptSha1Update(context, pdfium::span(c).first<8u>());
+  std::ranges::fill(pdfium::span(data).first(pad), 0);
+  data[0] = 0x80;
+  CryptSha1Update(context, pdfium::span(data).first(pad));
+  data[0] = (total_bits >> 56) & 0xFF;
+  data[1] = (total_bits >> 48) & 0xFF;
+  data[2] = (total_bits >> 40) & 0xFF;
+  data[3] = (total_bits >> 32) & 0xFF;
+  data[4] = (total_bits >> 24) & 0xFF;
+  data[5] = (total_bits >> 16) & 0xFF;
+  data[6] = (total_bits >> 8) & 0xFF;
+  data[7] = (total_bits >> 0) & 0xFF;
+  CryptSha1Update(context, pdfium::span(data).first<8u>());
   for (int i = 0; i < 5; i++) {
     digest[i * 4] = (context->h[i] >> 24) & 0xFF;
     digest[i * 4 + 1] = (context->h[i] >> 16) & 0xFF;
