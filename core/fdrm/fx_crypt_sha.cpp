@@ -121,11 +121,9 @@ void ShaSetUint64(uint64_t n, pdfium::span<uint8_t> buffer, size_t index) {
 }
 
 void SHA_Core_Init(pdfium::span<uint32_t, 5> h) {
-  h[0] = 0x67452301;
-  h[1] = 0xefcdab89;
-  h[2] = 0x98badcfe;
-  h[3] = 0x10325476;
-  h[4] = 0xc3d2e1f0;
+  fxcrt::Copy(pdfium::span<const uint32_t>(
+                  {0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0}),
+              h);
 }
 
 void SHA1Transform(pdfium::span<uint32_t, 5> digest,
@@ -341,14 +339,8 @@ DataVector<uint8_t> CRYPT_SHA1Generate(pdfium::span<const uint8_t> data) {
 
 void CRYPT_SHA256Start(CRYPT_sha2_context* context) {
   context->total_bytes = 0;
-  context->state[0] = 0x6A09E667;
-  context->state[1] = 0xBB67AE85;
-  context->state[2] = 0x3C6EF372;
-  context->state[3] = 0xA54FF53A;
-  context->state[4] = 0x510E527F;
-  context->state[5] = 0x9B05688C;
-  context->state[6] = 0x1F83D9AB;
-  context->state[7] = 0x5BE0CD19;
+  context->state = {0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
+                    0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19};
   std::ranges::fill(context->buffer, 0);
 }
 
@@ -402,14 +394,10 @@ DataVector<uint8_t> CRYPT_SHA256Generate(pdfium::span<const uint8_t> data) {
 
 void CRYPT_SHA384Start(CRYPT_sha2_context* context) {
   context->total_bytes = 0;
-  context->state[0] = 0xcbbb9d5dc1059ed8ULL;
-  context->state[1] = 0x629a292a367cd507ULL;
-  context->state[2] = 0x9159015a3070dd17ULL;
-  context->state[3] = 0x152fecd8f70e5939ULL;
-  context->state[4] = 0x67332667ffc00b31ULL;
-  context->state[5] = 0x8eb44a8768581511ULL;
-  context->state[6] = 0xdb0c2e0d64f98fa7ULL;
-  context->state[7] = 0x47b5481dbefa4fa4ULL;
+  context->state = {0xcbbb9d5dc1059ed8ULL, 0x629a292a367cd507ULL,
+                    0x9159015a3070dd17ULL, 0x152fecd8f70e5939ULL,
+                    0x67332667ffc00b31ULL, 0x8eb44a8768581511ULL,
+                    0xdb0c2e0d64f98fa7ULL, 0x47b5481dbefa4fa4ULL};
   std::ranges::fill(context->buffer, 0);
 }
 
@@ -464,14 +452,10 @@ DataVector<uint8_t> CRYPT_SHA384Generate(pdfium::span<const uint8_t> data) {
 
 void CRYPT_SHA512Start(CRYPT_sha2_context* context) {
   context->total_bytes = 0;
-  context->state[0] = 0x6a09e667f3bcc908ULL;
-  context->state[1] = 0xbb67ae8584caa73bULL;
-  context->state[2] = 0x3c6ef372fe94f82bULL;
-  context->state[3] = 0xa54ff53a5f1d36f1ULL;
-  context->state[4] = 0x510e527fade682d1ULL;
-  context->state[5] = 0x9b05688c2b3e6c1fULL;
-  context->state[6] = 0x1f83d9abfb41bd6bULL;
-  context->state[7] = 0x5be0cd19137e2179ULL;
+  context->state = {0x6a09e667f3bcc908ULL, 0xbb67ae8584caa73bULL,
+                    0x3c6ef372fe94f82bULL, 0xa54ff53a5f1d36f1ULL,
+                    0x510e527fade682d1ULL, 0x9b05688c2b3e6c1fULL,
+                    0x1f83d9abfb41bd6bULL, 0x5be0cd19137e2179ULL};
   std::ranges::fill(context->buffer, 0);
 }
 
