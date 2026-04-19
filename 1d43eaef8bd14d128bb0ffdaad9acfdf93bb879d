@@ -1,0 +1,78 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1cac1586_aa9f99f1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6715
+      },
+      "writtenOn": "2026-04-19T15:59:05Z",
+      "side": 1,
+      "message": "As an example, this works well. Might need some tuning on specifically indicating errors vs. empty values.",
+      "revId": "1d43eaef8bd14d128bb0ffdaad9acfdf93bb879d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cf9e2727_bea3d4a4",
+        "filename": "core/fxge/skrifa/build.rs",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6715
+      },
+      "writtenOn": "2026-04-19T15:59:05Z",
+      "side": 1,
+      "message": "Do we need this if we use GN for CXX builds?",
+      "revId": "1d43eaef8bd14d128bb0ffdaad9acfdf93bb879d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8dc3c70d_a9c06cf1",
+        "filename": "core/fxge/skrifa/src/main.rs",
+        "patchSetId": 8
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 6715
+      },
+      "writtenOn": "2026-04-19T15:59:05Z",
+      "side": 1,
+      "message": "Intentional to return to empty string on error? Or do you need to separate that from an empty name in the font?",
+      "range": {
+        "startLine": 140,
+        "startChar": 4,
+        "endLine": 140,
+        "endChar": 26
+      },
+      "revId": "1d43eaef8bd14d128bb0ffdaad9acfdf93bb879d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a8835c64_582a474b",
+        "filename": "core/fxge/skrifa/src/main.rs",
+        "patchSetId": 8
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 6715
+      },
+      "writtenOn": "2026-04-19T15:59:05Z",
+      "side": 1,
+      "message": "Optional for later: might make sense to keep the encoding() as state.",
+      "revId": "1d43eaef8bd14d128bb0ffdaad9acfdf93bb879d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
