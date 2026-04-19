@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fad38247_32276078",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 11
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-19T04:06:46Z",
+      "side": 1,
+      "message": "Hey guys refactoring fx_crypt.cpp now to remove duplicate code. Worked on making the macros into functions and a few other changes to remove repetitive code and out-params. Had some issues w making the spans compile time, and it is possible that this could cause a performance regression - Will check and get back w how significant that regression is.",
+      "revId": "56df16c61fbcb810fe1f5dfec1b15c3f4e1a2b34",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "87c077bc_a6bb1cb7",
+        "filename": "core/fdrm/fx_crypt.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-19T04:06:46Z",
+      "side": 1,
+      "message": "Any easier approach I missed here?",
+      "range": {
+        "startLine": 41,
+        "startChar": 8,
+        "endLine": 41,
+        "endChar": 74
+      },
+      "revId": "56df16c61fbcb810fe1f5dfec1b15c3f4e1a2b34",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
