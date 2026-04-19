@@ -58,6 +58,54 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d303c3df_9d0455b9",
+        "filename": "core/fdrm/fx_crypt.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-19T05:08:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a9714cca_a24b0f2b",
+      "range": {
+        "startLine": 18,
+        "startChar": 4,
+        "endLine": 18,
+        "endChar": 8
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e186f8ee_d28cde86",
+        "filename": "core/fdrm/fx_crypt.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-19T05:08:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a9714cca_a24b0f2b",
+      "range": {
+        "startLine": 18,
+        "startChar": 4,
+        "endLine": 18,
+        "endChar": 8
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cf304ae4_e32baab1",
@@ -71,6 +119,54 @@
       "writtenOn": "2026-04-18T12:40:05Z",
       "side": 1,
       "message": "lets start with an empty array and loop through to fill it.",
+      "range": {
+        "startLine": 24,
+        "startChar": 13,
+        "endLine": 24,
+        "endChar": 30
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a8d1a5c8_f3ce51f8",
+        "filename": "core/fdrm/fx_crypt.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-19T05:08:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cf304ae4_e32baab1",
+      "range": {
+        "startLine": 24,
+        "startChar": 13,
+        "endLine": 24,
+        "endChar": 30
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cbf6c43d_a3307ea3",
+        "filename": "core/fdrm/fx_crypt.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-19T05:08:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cf304ae4_e32baab1",
       "range": {
         "startLine": 24,
         "startChar": 13,
@@ -104,6 +200,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2566f140_76a6a6f9",
+        "filename": "core/fdrm/fx_crypt.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-19T05:08:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e883748c_c9e45b1e",
+      "range": {
+        "startLine": 41,
+        "startChar": 2,
+        "endLine": 44,
+        "endChar": 29
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5520c4a5_18978bcc",
@@ -117,6 +237,30 @@
       "writtenOn": "2026-04-18T12:40:05Z",
       "side": 1,
       "message": "Make these actual functions.",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 38
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "60c1592e_6ebf28f3",
+        "filename": "core/fdrm/fx_crypt.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-19T05:08:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5520c4a5_18978bcc",
       "range": {
         "startLine": 45,
         "startChar": 0,
@@ -144,6 +288,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3e8a242d_c0744608",
+        "filename": "core/fdrm/fx_crypt.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-19T05:08:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b3f978b9_220fcc95",
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9b28dc10_4e42d0ed",
@@ -157,6 +319,30 @@
       "writtenOn": "2026-04-18T12:40:05Z",
       "side": 1,
       "message": "Loop with modulo-ing",
+      "range": {
+        "startLine": 55,
+        "startChar": 2,
+        "endLine": 55,
+        "endChar": 3
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "50e72267_c77a4f3b",
+        "filename": "core/fdrm/fx_crypt.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-19T05:08:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9b28dc10_4e42d0ed",
       "range": {
         "startLine": 55,
         "startChar": 2,
@@ -190,6 +376,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "13ca835e_82e1a21a",
+        "filename": "core/fdrm/fx_crypt.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-19T05:08:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2c5328bc_aa25ad90",
+      "range": {
+        "startLine": 69,
+        "startChar": 0,
+        "endLine": 69,
+        "endChar": 38
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c4961811_476ea99e",
@@ -213,6 +423,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6d76f6b9_ded703cd",
+        "filename": "core/fdrm/fx_crypt.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-19T05:08:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c4961811_476ea99e",
+      "range": {
+        "startLine": 123,
+        "startChar": 0,
+        "endLine": 126,
+        "endChar": 21
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "34e84608_d4cf9d28",
@@ -226,6 +460,24 @@
       "writtenOn": "2026-04-18T12:40:05Z",
       "side": 1,
       "message": "More loop",
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "66d62a85_76108f2d",
+        "filename": "core/fdrm/fx_crypt.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-19T05:08:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "34e84608_d4cf9d28",
       "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
