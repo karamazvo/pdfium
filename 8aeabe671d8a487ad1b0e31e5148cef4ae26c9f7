@@ -39,6 +39,24 @@
       "message": "Hey guys, I tried asking this in another thread but I think it might have closed before we could talk.\n\nI wanted to ask (since you all have reviewed almost all of the CLs) a few questions about how I can do better overall:\n\nWhat are a few things I have to mainly work on to be able to grow in the codebase? I\u0027ll try to keep this a focus over the next few CLs.\n\nAny specific points or areas you\u0027d suggest I work on that need to be improved. Ive developed a liking toward fpdftext/ over the space saga but am open to other areas if there are things to work on there. Furthermore, any issues you\u0027d suggest me to work on?\n\nAre there any additional resources you\u0027d be able to share to be able to understand the pdf architecture or codebase more? Would be interested in reading through these.\n\nThank you guys for helping me grow over the last few CLs. Ive learned a lot not just repo-specific but rather about writing better code as a whole. Thanks for all of the mentorship and dealing with me forgetting to wrap :).\n\nLet me know when you guys get the time (sorry If I may be pinging too much).",
       "revId": "8aeabe671d8a487ad1b0e31e5148cef4ae26c9f7",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "66273020_dbad2bdf",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 16
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-19T12:42:41Z",
+      "side": 1,
+      "message": "Mb this was discussed elsewhere srry for the repeated pings, take your time.",
+      "parentUuid": "3e3d4908_b9c2cc1e",
+      "revId": "8aeabe671d8a487ad1b0e31e5148cef4ae26c9f7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
