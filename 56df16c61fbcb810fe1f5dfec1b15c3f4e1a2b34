@@ -38,6 +38,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "79302756_500e37b3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 11
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-19T06:41:01Z",
+      "side": 1,
+      "message": "With 5 trials:\n```\n\u003d\u003d\u003d main \u003d\u003d\u003d\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (25516 ms total)\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (25166 ms total)\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (23679 ms total)\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (24334 ms total)\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (24040 ms total)\n\n\u003d\u003d\u003d change-146452 \u003d\u003d\u003d\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (30520 ms total)\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (29315 ms total)\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (29190 ms total)\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (30209 ms total)\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (29605 ms total)\n```\n\nAbout 21% slower. Going to try improve this a bit.",
+      "parentUuid": "fee65c66_537bcfc7",
+      "revId": "56df16c61fbcb810fe1f5dfec1b15c3f4e1a2b34",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "87c077bc_a6bb1cb7",
         "filename": "core/fdrm/fx_crypt.cpp",
         "patchSetId": 11
