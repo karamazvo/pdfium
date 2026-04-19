@@ -16,6 +16,23 @@
       "message": "Conflict",
       "revId": "d28e7c7d2e337fd624ed9fa1bacc428651e62a48",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7bb90f75_3695afe6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-19T08:47:57Z",
+      "side": 1,
+      "message": "@thestig@chromium.org this is causing a performance regression\n\nWith 5 trials:\n\n\u003d\u003d\u003d main \u003d\u003d\u003d\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (25516 ms total)\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (25166 ms total)\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (23679 ms total)\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (24334 ms total)\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (24040 ms total)\n\n\u003d\u003d\u003d change-146430 \u003d\u003d\u003d\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (30520 ms total)\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (29315 ms total)\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (29190 ms total)\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (30209 ms total)\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (29605 ms total)\n\nAnd it seems to be from making some of these letters into lists.\n\nSo there are 2 conflicting parts here - dryness and speed. WDYT? Revert the A, B, C, D thing back or keep it as is.",
+      "revId": "d28e7c7d2e337fd624ed9fa1bacc428651e62a48",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
