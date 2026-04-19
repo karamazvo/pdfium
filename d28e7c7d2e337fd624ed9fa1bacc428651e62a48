@@ -33,6 +33,24 @@
       "message": "@thestig@chromium.org this is causing a performance regression\n\nWith 5 trials:\n\n\u003d\u003d\u003d main \u003d\u003d\u003d\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (25516 ms total)\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (25166 ms total)\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (23679 ms total)\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (24334 ms total)\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (24040 ms total)\n\n\u003d\u003d\u003d change-146430 \u003d\u003d\u003d\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (30520 ms total)\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (29315 ms total)\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (29190 ms total)\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (30209 ms total)\n[\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] 31 tests from 1 test suite ran. (29605 ms total)\n\nAnd it seems to be from making some of these letters into lists.\n\nSo there are 2 conflicting parts here - dryness and speed. WDYT? Revert the A, B, C, D thing back or keep it as is.",
       "revId": "d28e7c7d2e337fd624ed9fa1bacc428651e62a48",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "41275f18_c2703566",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-19T09:29:58Z",
+      "side": 1,
+      "message": "Did a bit more checking and even with all of these changes and a couple more optimisations that make the code far less readable, the speedup from those is so insignificant that I am not even Sure whether it is a speedup or just random error (apparently it takes up about \u003c 1% of the 21% speed loss).\n\nIt is very much possible that it would be less slow in a release-build rather than a debug build: I assume release build should reduce the function-calling overhead... Building a release build is going to take me some time though.\n\nThis is probably my best guess of what is going on, wdy all think? Do we leave them as macros? That is the main contributing factor I believe.\n\nResolving this for now, let us open this thread back up if we need any further discussion on it.",
+      "parentUuid": "7bb90f75_3695afe6",
+      "revId": "d28e7c7d2e337fd624ed9fa1bacc428651e62a48",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
