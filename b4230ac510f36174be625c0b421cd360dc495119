@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f2a0b8d6_90d4e08e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-20T07:02:24Z",
+      "side": 1,
+      "message": "Hey guys continuing the refactoring to change the names up this time to follow UpperCamelCase. With this fx_crypt.h/cpp should be completed. Thanks.",
+      "revId": "b4230ac510f36174be625c0b421cd360dc495119",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
