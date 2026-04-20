@@ -30,22 +30,27 @@ struct NodeToInsert {
   int index = -1;
 };
 
-std::pair<WideString, WideString> GetNodeLimitsAndSanitize(
-    CPDF_Array* pLimits) {
-  DCHECK(pLimits);
-  WideString csLeft = pLimits->GetUnicodeTextAt(0);
-  WideString csRight = pLimits->GetUnicodeTextAt(1);
-  // If the lower limit is greater than the upper limit, swap them.
-  if (csLeft.Compare(csRight) > 0) {
-    pLimits->SetNewAt<CPDF_String>(0, csRight.AsStringView());
-    pLimits->SetNewAt<CPDF_String>(1, csLeft.AsStringView());
-    csLeft = pLimits->GetUnicodeTextAt(0);
-    csRight = pLimits->GetUnicodeTextAt(1);
+std::pair<WideString, WideString> GetNodeLimits(CPDF_Array* limits) {
+  DCHECK(limits);
+  WideString left = limits->GetUnicodeTextAt(0);
+  WideString right = limits->GetUnicodeTextAt(1);
+
+  // If the lower limit is greater than the upper limit, fix them.
+  if (left.Compare(right) > 0) {
+    std::swap(left, right);
+    limits->SetNewAt<CPDF_String>(0, left.AsStringView());
+    limits->SetNewAt<CPDF_String>(1, right.AsStringView());
   }
-  while (pLimits->size() > 2) {
-    pLimits->RemoveAt(pLimits->size() - 1);
+
+  return {std::move(left), std::move(right)};
+}
+
+std::pair<WideString, WideString> GetNodeLimitsAndTrim(CPDF_Array* limits) {
+  auto [left, right] = GetNodeLimits(limits);
+  while (limits->size() > 2) {
+    limits->RemoveAt(limits->size() - 1);
   }
-  return {csLeft, csRight};
+  return {std::move(left), std::move(right)};
 }
 
 // Get the limit arrays that leaf array |pFind| is under in the tree with root
@@ -108,7 +113,7 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
   WideString csLeft;
   WideString csRight;
   if (pLimits) {
-    std::tie(csLeft, csRight) = GetNodeLimitsAndSanitize(pLimits.Get());
+    std::tie(csLeft, csRight) = GetNodeLimitsAndTrim(pLimits.Get());
   }
 
   RetainPtr<const CPDF_Array> pNames = pNode->GetArrayFor("Names");
@@ -242,7 +247,15 @@ RetainPtr<const CPDF_Object> SearchNameNodeByNameInternal(
   }
 
   if (pLimits) {
-    auto [csLeft, csRight] = GetNodeLimitsAndSanitize(pLimits.Get());
+    WideString csLeft;
+    WideString csRight;
+    if (node_to_insert) {
+      std::tie(csLeft, csRight) = GetNodeLimitsAndTrim(pLimits.Get());
+    } else {
+      // Lookup only: do not truncate the /Limits array.
+      std::tie(csLeft, csRight) = GetNodeLimits(pLimits.Get());
+    }
+
     // Skip this node if the name to look for is smaller than its lower limit.
     if (csName.Compare(csLeft) < 0) {
       return nullptr;
