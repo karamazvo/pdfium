@@ -1138,14 +1138,14 @@ std::string EmbedderTest::HashBitmap(FPDF_BITMAP bitmap) {
   auto span = pdfium::span(static_cast<uint8_t*>(FPDFBitmap_GetBuffer(bitmap)),
                            static_cast<size_t>(stride) * height);
 
-  CRYPT_md5_context context = CRYPT_MD5Start();
+  CryptMd5Context context = CryptMd5Start();
   for (int i = 0; i < height; ++i) {
-    CRYPT_MD5Update(&context,
-                    span.subspan(static_cast<size_t>(i * stride),
-                                 static_cast<size_t>(usable_bytes_per_row)));
+    CryptMd5Update(&context,
+                   span.subspan(static_cast<size_t>(i * stride),
+                                static_cast<size_t>(usable_bytes_per_row)));
   }
   uint8_t digest[16];
-  CRYPT_MD5Finish(&context, digest);
+  CryptMd5Finish(&context, digest);
   return CryptToBase16(digest);
 }
 
