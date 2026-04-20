@@ -242,7 +242,19 @@ RetainPtr<const CPDF_Object> SearchNameNodeByNameInternal(
   }
 
   if (pLimits) {
-    auto [csLeft, csRight] = GetNodeLimitsAndSanitize(pLimits.Get());
+    WideString csLeft;
+    WideString csRight;
+    if (node_to_insert) {
+      std::tie(csLeft, csRight) = GetNodeLimitsAndSanitize(pLimits.Get());
+    } else {
+      // Read-only lookup: do not mutate the /Limits array.
+      csLeft = pLimits->GetUnicodeTextAt(0);
+      csRight = pLimits->GetUnicodeTextAt(1);
+      if (csLeft.Compare(csRight) > 0) {
+        std::swap(csLeft, csRight);
+      }
+    }
+
     // Skip this node if the name to look for is smaller than its lower limit.
     if (csName.Compare(csLeft) < 0) {
       return nullptr;
