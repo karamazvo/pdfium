@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5e9b347f_2cfd2db7",
+        "filename": "core/fpdfdoc/cpdf_nametree.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-20T18:40:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "95c520f3_63351a86",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 0
+      },
+      "revId": "eaf8b3e6911373affd2612124755c74c1bbda814",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "af71743b_f5d47bd7",
@@ -37,6 +61,30 @@
       "writtenOn": "2026-04-20T18:35:57Z",
       "side": 1,
       "message": "You can simplify this entire `if`/`else` statement using a ternary operator and structured bindings. This also avoids the need to call the default constructors for `csLeft` and `csRight`:\n\n```cpp\n    auto [csLeft, csRight] \u003d\n        node_to_insert ? GetNodeLimitsAndTrim(pLimits.Get())\n                       : GetNodeLimits(pLimits.Get());\n```",
+      "range": {
+        "startLine": 250,
+        "startChar": 0,
+        "endLine": 250,
+        "endChar": 0
+      },
+      "revId": "eaf8b3e6911373affd2612124755c74c1bbda814",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ad7dd072_09233f07",
+        "filename": "core/fpdfdoc/cpdf_nametree.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-20T18:40:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "af71743b_f5d47bd7",
       "range": {
         "startLine": 250,
         "startChar": 0,
