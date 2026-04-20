@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "95c520f3_63351a86",
+        "filename": "core/fpdfdoc/cpdf_nametree.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-20T18:35:57Z",
+      "side": 1,
+      "message": "There is no need to destruct the pair into `left` and `right` just to reconstruct it at the return statement. You can simplify this by storing and returning the pair directly:\n\n```cpp\nstd::pair\u003cWideString, WideString\u003e GetNodeLimitsAndTrim(CPDF_Array* limits) {\n  auto limits_pair \u003d GetNodeLimits(limits);\n  while (limits-\u003esize() \u003e 2) {\n    limits-\u003eRemoveAt(limits-\u003esize() - 1);\n  }\n  return limits_pair;\n}\n```",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 0
+      },
+      "revId": "eaf8b3e6911373affd2612124755c74c1bbda814",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "af71743b_f5d47bd7",
+        "filename": "core/fpdfdoc/cpdf_nametree.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-20T18:35:57Z",
+      "side": 1,
+      "message": "You can simplify this entire `if`/`else` statement using a ternary operator and structured bindings. This also avoids the need to call the default constructors for `csLeft` and `csRight`:\n\n```cpp\n    auto [csLeft, csRight] \u003d\n        node_to_insert ? GetNodeLimitsAndTrim(pLimits.Get())\n                       : GetNodeLimits(pLimits.Get());\n```",
+      "range": {
+        "startLine": 250,
+        "startChar": 0,
+        "endLine": 250,
+        "endChar": 0
+      },
+      "revId": "eaf8b3e6911373affd2612124755c74c1bbda814",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
