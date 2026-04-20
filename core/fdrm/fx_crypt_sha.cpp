@@ -372,7 +372,7 @@ void CryptSha1Start(CryptSha1Context* context) {
 }
 
 void CryptSha1Update(CryptSha1Context* context,
-                      pdfium::span<const uint8_t> data) {
+                     pdfium::span<const uint8_t> data) {
   const auto block_span = pdfium::span(context->block);
   context->total_bytes += data.size();
   if (context->blkused && data.size() < 64 - context->blkused) {
@@ -399,7 +399,7 @@ void CryptSha1Update(CryptSha1Context* context,
 }
 
 void CryptSha1Finish(CryptSha1Context* context,
-                      pdfium::span<uint8_t, 20> digest) {
+                     pdfium::span<uint8_t, 20> digest) {
   uint64_t total_bits = 8 * context->total_bytes;  // Prior to padding.
   std::array<uint8_t, 64> c;
   uint8_t pad;
@@ -452,7 +452,7 @@ void CryptSha256Start(CryptSha2Context* context) {
 }
 
 void CryptSha256Update(CryptSha2Context* context,
-                        pdfium::span<const uint8_t> data) {
+                       pdfium::span<const uint8_t> data) {
   if (data.empty()) {
     return;
   }
@@ -476,7 +476,7 @@ void CryptSha256Update(CryptSha2Context* context,
 }
 
 void CryptSha256Finish(CryptSha2Context* context,
-                        pdfium::span<uint8_t, 32> digest) {
+                       pdfium::span<uint8_t, 32> digest) {
   uint8_t msglen[8];
   uint64_t total_bits = 8 * context->total_bytes;  // Prior to padding.
   SHA_PUT_UINT64(total_bits, msglen, 0);
@@ -518,7 +518,7 @@ void CryptSha384Start(CryptSha2Context* context) {
 }
 
 void CryptSha384Update(CryptSha2Context* context,
-                        pdfium::span<const uint8_t> data) {
+                       pdfium::span<const uint8_t> data) {
   if (data.empty()) {
     return;
   }
@@ -542,7 +542,7 @@ void CryptSha384Update(CryptSha2Context* context,
 }
 
 void CryptSha384Finish(CryptSha2Context* context,
-                        pdfium::span<uint8_t, 48> digest) {
+                       pdfium::span<uint8_t, 48> digest) {
   uint8_t msglen[16];
   uint64_t total_bits = 8 * context->total_bytes;  // Prior to padding.
   SHA_PUT_UINT64(0ULL, msglen, 0);
@@ -583,12 +583,12 @@ void CryptSha512Start(CryptSha2Context* context) {
 }
 
 void CryptSha512Update(CryptSha2Context* context,
-                        pdfium::span<const uint8_t> data) {
+                       pdfium::span<const uint8_t> data) {
   CryptSha384Update(context, data);
 }
 
 void CryptSha512Finish(CryptSha2Context* context,
-                        pdfium::span<uint8_t, 64> digest) {
+                       pdfium::span<uint8_t, 64> digest) {
   uint8_t msglen[16];
   uint64_t total_bits = 8 * context->total_bytes;
   SHA_PUT_UINT64(0ULL, msglen, 0);
