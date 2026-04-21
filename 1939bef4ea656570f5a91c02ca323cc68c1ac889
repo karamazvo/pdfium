@@ -714,6 +714,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "dcd802f7_3a00a07c",
+        "filename": "core/fdrm/fx_crypt_aes.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 479,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-21T14:08:21Z",
+      "side": 1,
+      "message": "Can\u0027t really do much... for looping it wont do much.",
+      "parentUuid": "e8bf3afa_64901ee4",
+      "range": {
+        "startLine": 459,
+        "startChar": 0,
+        "endLine": 479,
+        "endChar": 1
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "33751cae_f4ba8add",
@@ -773,6 +797,30 @@
       "writtenOn": "2026-04-18T12:40:05Z",
       "side": 1,
       "message": "This and line 552 could also probably be simplified - maybe a function or something\n\nEdit: also 569 onward",
+      "range": {
+        "startLine": 542,
+        "startChar": 8,
+        "endLine": 549,
+        "endChar": 37
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6a491ccc_0ca274b1",
+        "filename": "core/fdrm/fx_crypt_aes.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 549,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-21T14:08:21Z",
+      "side": 1,
+      "message": "Again nothing much to do here.",
+      "parentUuid": "08e6acf4_679f62b5",
       "range": {
         "startLine": 542,
         "startChar": 8,
