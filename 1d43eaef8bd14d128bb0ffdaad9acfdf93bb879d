@@ -35,6 +35,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ba005fe5_26c9b3aa",
+        "filename": "core/fxge/skrifa/build.rs",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-21T21:28:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cf9e2727_bea3d4a4",
+      "revId": "1d43eaef8bd14d128bb0ffdaad9acfdf93bb879d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8dc3c70d_a9c06cf1",
@@ -58,6 +76,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c6ced02d_3f997fb9",
+        "filename": "core/fxge/skrifa/src/main.rs",
+        "patchSetId": 8
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-21T21:28:46Z",
+      "side": 1,
+      "message": "Unclear at present. I\u0027m going to try with it like this.",
+      "parentUuid": "8dc3c70d_a9c06cf1",
+      "range": {
+        "startLine": 140,
+        "startChar": 4,
+        "endLine": 140,
+        "endChar": 26
+      },
+      "revId": "1d43eaef8bd14d128bb0ffdaad9acfdf93bb879d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a8835c64_582a474b",
@@ -71,6 +113,24 @@
       "writtenOn": "2026-04-19T15:59:05Z",
       "side": 1,
       "message": "Optional for later: might make sense to keep the encoding() as state.",
+      "revId": "1d43eaef8bd14d128bb0ffdaad9acfdf93bb879d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a0d66690_12890486",
+        "filename": "core/fxge/skrifa/src/main.rs",
+        "patchSetId": 8
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-21T21:28:46Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "a8835c64_582a474b",
       "revId": "1d43eaef8bd14d128bb0ffdaad9acfdf93bb879d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
