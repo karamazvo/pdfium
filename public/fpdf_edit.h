@@ -184,7 +184,9 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetRotation(FPDF_PAGE page, int rotate);
 //   page        - handle to a page
 //   page_object - handle to a page object. The |page_object| will be
 //                 automatically freed.
-FPDF_EXPORT void FPDF_CALLCONV
+//
+// Returns true if successful.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPage_InsertObject(FPDF_PAGE page, FPDF_PAGEOBJECT page_object);
 
 // Insert |page_object| into |page| at the specified |index|.
