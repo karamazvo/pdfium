@@ -78,7 +78,7 @@ mod skrifa_ffi {
     }
 
     unsafe extern "C++" {
-        include!("outlines.h");
+        include!("core/fxge/skrifa/src/outlines.h");
 
         fn run(font_path: &str);
     }

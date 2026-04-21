@@ -8,6 +8,48 @@ import("../../testing/test.gni")
 
 if (pdf_enable_fontations) {
   import("//build/rust/rust_static_library.gni")
+
+  config("skrifa_cxx_config") {
+    include_dirs = [
+      "skrifa/src",
+      "$root_gen_dir/core/fxge/skrifa/src",
+    ]
+  }
+
+  rust_static_library("skrifa_cxx") {
+    crate_name = "skrifa_cxx"
+    allow_unsafe = true
+    crate_root = "skrifa/src/main.rs"
+    sources = [ crate_root ]
+    cxx_bindings = [ crate_root ]
+    features = [ "agl" ]
+    deps = [
+      "//build/rust:cxx_cppdeps",
+      "//third_party/rust/read_fonts/v0_39:lib",
+      "//third_party/rust/skrifa/v0_42:lib",
+    ]
+    configs += [ ":skrifa_cxx_config" ]
+  }
+
+  source_set("skrifa_cxx_cpp") {
+    sources = [
+      "skrifa/src/outlines.cpp",
+      "skrifa/src/outlines.h",
+    ]
+    deps = [
+      ":skrifa_cxx",
+      "//build/rust:cxx_cppdeps",
+    ]
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [
+      "//build/config/compiler:no_chromium_code",
+      ":skrifa_cxx_config",
+    ]
+    visibility = [
+      ":*",
+      "//skia:*",
+    ]
+  }
 }
 
 source_set("fxge") {
@@ -204,51 +246,16 @@ source_set("fxge") {
     configs -= [ "//build/config/win:lean_and_mean" ]
   }
 
-  visibility = [ "../../*" ]
-}
-
-if (pdf_enable_fontations) {
-  config("skrifa_cxx_config") {
-    include_dirs = [
-      "skrifa/src",
-      "$root_gen_dir/core/fxge/skrifa/src",
-    ]
-  }
-
-  rust_static_library("skrifa_cxx") {
-    crate_name = "skrifa_cxx"
-    allow_unsafe = true
-    crate_root = "skrifa/src/main.rs"
-    sources = [ crate_root ]
-    cxx_bindings = [ crate_root ]
-    features = [ "agl" ]
-    deps = [
+  if (pdf_enable_fontations) {
+    deps += [
+      ":skrifa_cxx",
+      ":skrifa_cxx_cpp",
       "//build/rust:cxx_cppdeps",
-      "//third_party/rust/read_fonts/v0_39:lib",
-      "//third_party/rust/skrifa/v0_42:lib",
     ]
     configs += [ ":skrifa_cxx_config" ]
   }
 
-  source_set("skrifa_cxx_cpp") {
-    sources = [
-      "skrifa/src/outlines.cpp",
-      "skrifa/src/outlines.h",
-    ]
-    deps = [
-      ":skrifa_cxx",
-      "//build/rust:cxx_cppdeps",
-    ]
-    configs -= [ "//build/config/compiler:chromium_code" ]
-    configs += [
-      "//build/config/compiler:no_chromium_code",
-      ":skrifa_cxx_config",
-    ]
-    visibility = [
-      ":*",
-      "//skia:*",
-    ]
-  }
+  visibility = [ "../../*" ]
 }
 
 pdfium_unittest_source_set("unittests") {

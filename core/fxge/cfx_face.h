@@ -38,6 +38,13 @@ class CFX_SubstFont;
 class SkTypeface;
 #endif
 
+#if defined(PDF_ENABLE_FONTATIONS)
+#include "third_party/rust/cxx/v1/cxx.h"
+namespace skrifa {
+struct PsFont;
+}
+#endif
+
 class CFX_Face final : public Retainable, public Observable {
  public:
   using CharMap = void*;
@@ -179,6 +186,9 @@ class CFX_Face final : public Retainable, public Observable {
 #if defined(PDF_USE_SKIA)
   sk_sp<SkTypeface> skia_typeface_;
 #endif  // defined(PDF_USE_SKIA)
+#if defined(PDF_ENABLE_FONTATIONS)
+  skrifa::PsFont* skrifa_font_ = nullptr;
+#endif
 };
 
 #endif  // CORE_FXGE_CFX_FACE_H_

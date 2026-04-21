@@ -38,6 +38,14 @@
 // #define PDF_ENABLE_SKIA_TYPEFACE_CHECKS 1
 #endif
 
+#if defined(PDF_ENABLE_FONTATIONS)
+#include "core/fxge/skrifa/src/main.rs.h"
+
+// Define the following to enable additional runtime checks during
+// the development process.
+#define PDF_ENABLE_FONTATIONS_TYPEFACE_CHECKS 1
+#endif
+
 #define EM_ADJUST(em, a) (em == 0 ? (a) : (a) * 1000 / em)
 
 namespace {
@@ -363,6 +371,12 @@ RetainPtr<CFX_Face> CFX_Face::New(RetainPtr<Retainable> cache_entry,
 #if defined(PDF_ENABLE_SKIA_TYPEFACE_CHECKS)
   result->skia_typeface_ = font_mgr->MakeSkTypeface(result->GetData());
 #endif
+#if defined(PDF_ENABLE_FONTATIONS)
+  auto data_span = result->GetData();
+  rust::Slice<const uint8_t> slice((const uint8_t*)data_span.data(),
+                                   data_span.size());
+  result->skrifa_font_ = skrifa::new_ps_font(slice).into_raw();
+#endif
   return result;
 }
 
@@ -477,6 +491,12 @@ std::optional<std::array<uint8_t, 2>> CFX_Face::GetOs2Panose() {
 #endif  // defined(PDF_ENABLE_XFA) || BUILDFLAG(IS_ANDROID)
 
 int CFX_Face::GetGlyphCount() const {
+#if defined(PDF_ENABLE_FONTATIONS_TYPEFACE_CHECKS)
+  if (skrifa_font_ && skrifa_font_->is_ok()) {
+    DCHECK_EQ(pdfium::checked_cast<int>(GetRec()->num_glyphs),
+              pdfium::checked_cast<int>(skrifa_font_->num_glyphs()));
+  }
+#endif
   return pdfium::checked_cast<int>(GetRec()->num_glyphs);
 }
 
@@ -673,6 +693,72 @@ std::unique_ptr<CFX_Path> CFX_Face::LoadGlyphPath(
 
   Outline_CheckEmptyContour(&params);
   pPath->ClosePath();
+
+#if defined(PDF_ENABLE_FONTATIONS_TYPEFACE_CHECKS)
+  if (skrifa_font_ && skrifa_font_->is_ok()) {
+    skrifa::Outline outline;
+    if (skrifa_font_->unscaled_outline(glyph_index, outline)) {
+      auto skrifa_path = std::make_unique<CFX_Path>();
+      auto point_idx = 0;
+      CFX_PointF current_point(0, 0);
+      for (auto verb : outline.verbs) {
+        switch (verb) {
+          case skrifa::PathVerb::MoveTo: {
+            auto p = outline.points[point_idx++];
+            current_point = CFX_PointF(p.x, p.y);
+            skrifa_path->AppendPoint(current_point,
+                                     CFX_Path::Point::Type::kMove);
+            break;
+          }
+          case skrifa::PathVerb::LineTo: {
+            auto p = outline.points[point_idx++];
+            current_point = CFX_PointF(p.x, p.y);
+            skrifa_path->AppendPoint(current_point,
+                                     CFX_Path::Point::Type::kLine);
+            break;
+          }
+          case skrifa::PathVerb::QuadTo: {
+            auto c0 = outline.points[point_idx++];
+            auto p = outline.points[point_idx++];
+            // Convert quadratic to cubic bezier to match FreeType
+            // decomposition.
+            skrifa_path->AppendPoint(
+                CFX_PointF(current_point.x + (c0.x - current_point.x) * 2 / 3,
+                           current_point.y + (c0.y - current_point.y) * 2 / 3),
+                CFX_Path::Point::Type::kBezier);
+            skrifa_path->AppendPoint(
+                CFX_PointF(c0.x + (p.x - c0.x) / 3, c0.y + (p.y - c0.y) / 3),
+                CFX_Path::Point::Type::kBezier);
+            current_point = CFX_PointF(p.x, p.y);
+            skrifa_path->AppendPoint(current_point,
+                                     CFX_Path::Point::Type::kBezier);
+            break;
+          }
+          case skrifa::PathVerb::CurveTo: {
+            auto c0 = outline.points[point_idx++];
+            auto c1 = outline.points[point_idx++];
+            auto p = outline.points[point_idx++];
+            skrifa_path->AppendPoint(CFX_PointF(c0.x, c0.y),
+                                     CFX_Path::Point::Type::kBezier);
+            skrifa_path->AppendPoint(CFX_PointF(c1.x, c1.y),
+                                     CFX_Path::Point::Type::kBezier);
+            current_point = CFX_PointF(p.x, p.y);
+            skrifa_path->AppendPoint(current_point,
+                                     CFX_Path::Point::Type::kBezier);
+            break;
+          }
+          case skrifa::PathVerb::Close:
+            skrifa_path->ClosePath();
+            break;
+        }
+      }
+      // Note: `skrifa_path` is constructed but its contents are not strictly
+      // verified against `pPath` yet due to scale/translation differences that
+      // might exist.
+    }
+  }
+#endif
+
   return pPath;
 }
 
@@ -729,6 +815,13 @@ int CFX_Face::LoadGlyph(uint32_t glyph_index, bool scale) {
 }
 
 ByteString CFX_Face::GetPostscriptName() {
+#if defined(PDF_ENABLE_FONTATIONS_TYPEFACE_CHECKS)
+  if (skrifa_font_ && skrifa_font_->is_ok()) {
+    std::string ps_name((std::string)skrifa_font_->name());
+    DCHECK_EQ(ByteString(FT_Get_Postscript_Name(GetRec())),
+              ByteString(ps_name.c_str()));
+  }
+#endif
   return FT_Get_Postscript_Name(GetRec());
 }
 
@@ -944,7 +1037,13 @@ SkTypeface* CFX_Face::GetOrCreateSkTypeface() {
 }
 #endif
 
-CFX_Face::~CFX_Face() = default;
+CFX_Face::~CFX_Face() {
+#if defined(PDF_ENABLE_FONTATIONS)
+  if (skrifa_font_) {
+    rust::Box<skrifa::PsFont>::from_raw(skrifa_font_);
+  }
+#endif
+}
 
 void CFX_Face::AdjustVariationParams(int glyph_index,
                                      int dest_width,
