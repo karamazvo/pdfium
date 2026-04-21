@@ -63,6 +63,7 @@ class CFX_Face final : public Retainable, public Observable {
 
   bool HasGlyphNames() const;
   bool IsTtOt() const;
+  const char* GetFontFormat();
   bool IsFixedWidth() const;
   bool IsItalic() const;
   bool IsBold() const;

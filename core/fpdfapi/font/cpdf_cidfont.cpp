@@ -539,9 +539,11 @@ bool CPDF_CIDFont::Load() {
     }
   }
 
-  // TODO(thestig): Better identify font types and identify more font types.
-  if (font_type_ == CIDFontType::kTrueType && IsEmbedded()) {
-    font_.SetFontType(CFX_Font::FontType::kCIDTrueType);
+  if (font_type_ == CIDFontType::kTrueType && IsEmbedded() && face) {
+    const char* format = face->GetFontFormat();
+    if (format && ByteStringView(format) == "TrueType") {
+      font_.SetFontType(CFX_Font::FontType::kCIDTrueType);
+    }
   }
 
   return true;
