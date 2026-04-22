@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f20b0db9_d8f43905",
+        "filename": "core/fpdfapi/page/cpdf_page.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-04-22T23:33:31Z",
+      "side": 1,
+      "message": "This leads to some redundant lookups, but I suppose they\u0027re small enough that the tradeoff for cleaner code is acceptable.",
+      "range": {
+        "startLine": 47,
+        "startChar": 20,
+        "endLine": 47,
+        "endChar": 28
+      },
+      "revId": "26f4199794f614fd038641fc243c2ba1fab813aa",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
