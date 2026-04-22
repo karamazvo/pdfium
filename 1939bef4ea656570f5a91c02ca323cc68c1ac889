@@ -599,6 +599,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6aec6d93_dfde85e8",
+        "filename": "core/fdrm/fx_crypt_aes.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-22T13:21:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2e3b5892_7305ae2b",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 61
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "58a6dae4_9e8953d5",
@@ -645,6 +669,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "05d2e506_cddd9dbd",
+        "filename": "core/fdrm/fx_crypt_aes.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-22T13:21:29Z",
+      "side": 1,
+      "message": "Added a common table, that should be enough.",
+      "parentUuid": "5c1547a5_30d4e2d5",
+      "range": {
+        "startLine": 68,
+        "startChar": 42,
+        "endLine": 68,
+        "endChar": 44
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d262d2b9_a696b432",
@@ -668,6 +716,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9ccebd00_4fe01f19",
+        "filename": "core/fdrm/fx_crypt_aes.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 435,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-22T13:21:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d262d2b9_a696b432",
+      "range": {
+        "startLine": 435,
+        "startChar": 1,
+        "endLine": 435,
+        "endChar": 7
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a0ad8e84_a0173d41",
@@ -681,6 +753,30 @@
       "writtenOn": "2026-04-18T12:40:05Z",
       "side": 1,
       "message": "Naming",
+      "range": {
+        "startLine": 451,
+        "startChar": 0,
+        "endLine": 454,
+        "endChar": 19
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "df6d9d9b_62a8541d",
+        "filename": "core/fdrm/fx_crypt_aes.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 454,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-22T13:21:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a0ad8e84_a0173d41",
       "range": {
         "startLine": 451,
         "startChar": 0,
@@ -761,6 +857,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "dfceb545_9deed3de",
+        "filename": "core/fdrm/fx_crypt_aes.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 492,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-22T13:21:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "33751cae_f4ba8add",
+      "range": {
+        "startLine": 480,
+        "startChar": 0,
+        "endLine": 492,
+        "endChar": 58
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a7ceeda4_4f3b84bf",
@@ -774,6 +894,30 @@
       "writtenOn": "2026-04-18T12:40:05Z",
       "side": 1,
       "message": "Also probably naming... what is Nk?",
+      "range": {
+        "startLine": 531,
+        "startChar": 15,
+        "endLine": 531,
+        "endChar": 17
+      },
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ae761aa0_94747d17",
+        "filename": "core/fdrm/fx_crypt_aes.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 531,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-22T13:21:29Z",
+      "side": 1,
+      "message": "Googled it: it is self explanatory enough for now.",
+      "parentUuid": "a7ceeda4_4f3b84bf",
       "range": {
         "startLine": 531,
         "startChar": 15,
