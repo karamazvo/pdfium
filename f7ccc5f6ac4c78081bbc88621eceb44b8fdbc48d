@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "228ab88f_53888ec9",
+        "filename": "core/fpdfapi/page/cpdf_page.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-04-22T23:23:52Z",
+      "side": 1,
+      "message": "Optionally: `Has a /Type key with name value /Page.`? Then can be shortened even further by removing the numbered list.",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 57,
+        "endChar": 56
+      },
+      "revId": "f7ccc5f6ac4c78081bbc88621eceb44b8fdbc48d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
