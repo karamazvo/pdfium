@@ -37,6 +37,52 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "2e159499_2ec7feb7",
+        "filename": "core/fxge/BUILD.gn",
+        "patchSetId": 10
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-22T16:42:23Z",
+      "side": 1,
+      "message": "Using `\u003d` instead of `+\u003d` drops all the default configurations for the `unittests` target (such as default include paths, warning flags, and optimization settings). This should be `configs +\u003d [ \":skrifa_cxx_config\" ]`.",
+      "range": {
+        "startLine": 287,
+        "startChar": 0,
+        "endLine": 287,
+        "endChar": 0
+      },
+      "revId": "2673f6c907880da87ceab8d46d7bc12d9af0071d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1ef6b8ba_235c9178",
+        "filename": "core/fxge/skrifa/src/outlines.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-22T16:42:23Z",
+      "side": 1,
+      "message": "`period_name` is uninitialized. Because `agl_unicode_to_name` doesn\u0027t write a null terminator and `std::string_view` constructed with just a pointer implicitly calls `strlen()`, this will read uninitialized memory and likely cause undefined behavior. \n\nZero-initializing this array (e.g., `uint8_t period_name[64] \u003d {};`) will ensure a null terminator is present after the characters are written.",
+      "range": {
+        "startLine": 79,
+        "startChar": 0,
+        "endLine": 79,
+        "endChar": 0
+      },
+      "revId": "2673f6c907880da87ceab8d46d7bc12d9af0071d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "d1171707_ff359415",
         "filename": "skia/DEPS",
         "patchSetId": 10
