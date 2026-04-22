@@ -13,8 +13,6 @@
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/stl_util.h"
 
-#define mulby2(x) (((x & 0x7F) << 1) ^ (x & 0x80 ? 0x1B : 0))
-
 namespace {
 
 constexpr std::array<const uint8_t, 256> Sbox = {
@@ -111,7 +109,7 @@ constexpr std::array<const uint32_t, 256> E0 = {{
     0x7bb0b0cb, 0xa85454fc, 0x6dbbbbd6, 0x2c16163a,
 }};
 
-constexpr std::array<uint32_t, 256> E1 = {{
+constexpr std::array<const uint32_t, 256> E1 = {{
     0xa5c66363, 0x84f87c7c, 0x99ee7777, 0x8df67b7b, 0x0dfff2f2, 0xbdd66b6b,
     0xb1de6f6f, 0x5491c5c5, 0x50603030, 0x03020101, 0xa9ce6767, 0x7d562b2b,
     0x19e7fefe, 0x62b5d7d7, 0xe64dabab, 0x9aec7676, 0x458fcaca, 0x9d1f8282,
@@ -157,7 +155,7 @@ constexpr std::array<uint32_t, 256> E1 = {{
     0xcb7bb0b0, 0xfca85454, 0xd66dbbbb, 0x3a2c1616,
 }};
 
-constexpr std::array<uint32_t, 256> E2 = {{
+constexpr std::array<const uint32_t, 256> E2 = {{
     0x63a5c663, 0x7c84f87c, 0x7799ee77, 0x7b8df67b, 0xf20dfff2, 0x6bbdd66b,
     0x6fb1de6f, 0xc55491c5, 0x30506030, 0x01030201, 0x67a9ce67, 0x2b7d562b,
     0xfe19e7fe, 0xd762b5d7, 0xabe64dab, 0x769aec76, 0xca458fca, 0x829d1f82,
@@ -203,7 +201,7 @@ constexpr std::array<uint32_t, 256> E2 = {{
     0xb0cb7bb0, 0x54fca854, 0xbbd66dbb, 0x163a2c16,
 }};
 
-constexpr std::array<uint32_t, 256> E3 = {{
+constexpr std::array<const uint32_t, 256> E3 = {{
     0x6363a5c6, 0x7c7c84f8, 0x777799ee, 0x7b7b8df6, 0xf2f20dff, 0x6b6bbdd6,
     0x6f6fb1de, 0xc5c55491, 0x30305060, 0x01010302, 0x6767a9ce, 0x2b2b7d56,
     0xfefe19e7, 0xd7d762b5, 0xababe64d, 0x76769aec, 0xcaca458f, 0x82829d1f,
@@ -249,7 +247,7 @@ constexpr std::array<uint32_t, 256> E3 = {{
     0xb0b0cb7b, 0x5454fca8, 0xbbbbd66d, 0x16163a2c,
 }};
 
-constexpr std::array<uint32_t, 256> D0 = {{
+constexpr std::array<const uint32_t, 256> D0 = {{
     0x51f4a750, 0x7e416553, 0x1a17a4c3, 0x3a275e96, 0x3bab6bcb, 0x1f9d45f1,
     0xacfa58ab, 0x4be30393, 0x2030fa55, 0xad766df6, 0x88cc7691, 0xf5024c25,
     0x4fe5d7fc, 0xc52acbd7, 0x26354480, 0xb562a38f, 0xdeb15a49, 0x25ba1b67,
@@ -294,7 +292,7 @@ constexpr std::array<uint32_t, 256> D0 = {{
     0x283c498b, 0xff0d9541, 0x39a80171, 0x080cb3de, 0xd8b4e49c, 0x6456c190,
     0x7bcb8461, 0xd532b670, 0x486c5c74, 0xd0b85742,
 }};
-constexpr std::array<uint32_t, 256> D1 = {{
+constexpr std::array<const uint32_t, 256> D1 = {{
     0x5051f4a7, 0x537e4165, 0xc31a17a4, 0x963a275e, 0xcb3bab6b, 0xf11f9d45,
     0xabacfa58, 0x934be303, 0x552030fa, 0xf6ad766d, 0x9188cc76, 0x25f5024c,
     0xfc4fe5d7, 0xd7c52acb, 0x80263544, 0x8fb562a3, 0x49deb15a, 0x6725ba1b,
@@ -340,7 +338,7 @@ constexpr std::array<uint32_t, 256> D1 = {{
     0x617bcb84, 0x70d532b6, 0x74486c5c, 0x42d0b857,
 }};
 
-constexpr std::array<uint32_t, 256> D2 = {{
+constexpr std::array<const uint32_t, 256> D2 = {{
     0xa75051f4, 0x65537e41, 0xa4c31a17, 0x5e963a27, 0x6bcb3bab, 0x45f11f9d,
     0x58abacfa, 0x03934be3, 0xfa552030, 0x6df6ad76, 0x769188cc, 0x4c25f502,
     0xd7fc4fe5, 0xcbd7c52a, 0x44802635, 0xa38fb562, 0x5a49deb1, 0x1b6725ba,
@@ -386,7 +384,7 @@ constexpr std::array<uint32_t, 256> D2 = {{
     0x84617bcb, 0xb670d532, 0x5c74486c, 0x5742d0b8,
 }};
 
-constexpr std::array<uint32_t, 256> D3 = {{
+constexpr std::array<const uint32_t, 256> D3 = {{
     0xf4a75051, 0x4165537e, 0x17a4c31a, 0x275e963a, 0xab6bcb3b, 0x9d45f11f,
     0xfa58abac, 0xe303934b, 0x30fa5520, 0x766df6ad, 0xcc769188, 0x024c25f5,
     0xe5d7fc4f, 0x2acbd7c5, 0x35448026, 0x62a38fb5, 0xb15a49de, 0xba1b6725,
@@ -432,97 +430,93 @@ constexpr std::array<uint32_t, 256> D3 = {{
     0xcb84617b, 0x32b670d5, 0x6c5c7448, 0xb85742d0,
 }};
 
-#define ADD_ROUND_KEY_4()                                                     \
-  (block[0] ^= keysched[0], block[1] ^= keysched[1], block[2] ^= keysched[2], \
-   block[3] ^= keysched[3], keysched = keysched.subspan<4u>())
-#define MOVEWORD(i) (block[i] = newstate[i])
-#define FMAKEWORD(i)                                        \
-  (newstate[i] = (E0[(block[i] >> 24) & 0xFF] ^             \
-                  E1[(block[(i + C1) % Nb] >> 16) & 0xFF] ^ \
-                  E2[(block[(i + C2) % Nb] >> 8) & 0xFF] ^  \
-                  E3[block[(i + C3) % Nb] & 0xFF]))
-#define LASTWORD(i)                                                  \
-  (newstate[i] = (Sbox[(block[i] >> 24) & 0xFF] << 24) |             \
-                 (Sbox[(block[(i + C1) % Nb] >> 16) & 0xFF] << 16) | \
-                 (Sbox[(block[(i + C2) % Nb] >> 8) & 0xFF] << 8) |   \
-                 (Sbox[(block[(i + C3) % Nb]) & 0xFF]))
+int MulBy2(int x) {
+  return ((x & 0x7F) << 1) ^ (x & 0x80 ? 0x1B : 0);
+}
+
+pdfium::span<uint32_t> AddRoundKey4(pdfium::span<uint32_t, 4> block,
+                                    pdfium::span<uint32_t> keysched) {
+  for (size_t i = 0; i < 4; ++i) {
+    block[i] ^= keysched[i];
+  }
+  return keysched.subspan<4u>();
+}
+
+constexpr std::array<std::array<const uint32_t, 256>, 4> kEncryptTables = {
+    E0, E1, E2, E3};
+
+constexpr std::array<std::array<const uint32_t, 256>, 4> kDecryptTables = {
+    D0, D1, D2, D3};
+
+uint32_t FMakeWord(size_t i,
+                   pdfium::span<uint32_t, 4> block,
+                   bool decrypt = false) {
+  const auto& tables = decrypt ? kDecryptTables : kEncryptTables;
+  uint32_t result = 0;
+  for (size_t j = 0; j < 4; ++j) {
+    // block_idx handles ShiftRows: (i + j) for Encrypt, (i - j) for Decrypt.
+    size_t block_idx = decrypt ? (4 + i - j) % 4 : (i + j) % 4;
+    result ^= tables[j][block[block_idx] >> (24 - 8 * j) & 0xFF];
+  }
+  return result;
+}
+
+uint32_t LastWord(size_t i,
+                  pdfium::span<uint32_t, 4> block,
+                  bool decrypt = false) {
+  const auto& tables = decrypt ? Sboxinv : Sbox;
+  uint32_t result = 0;
+  for (size_t j = 0; j < 4; ++j) {
+    // block_idx handles ShiftRows: (i + j) for Encrypt, (i - j) for Decrypt.
+    size_t block_idx = decrypt ? (4 + i - j) % 4 : (i + j) % 4;
+    result |= tables[block[block_idx] >> (24 - 8 * j) & 0xFF] << (24 - 8 * j);
+  }
+  return result;
+}
 
 void aes_encrypt_nb_4(CRYPT_aes_context* ctx, pdfium::span<uint32_t, 4> block) {
-  const int C1 = 1;
-  const int C2 = 2;
-  const int C3 = 3;
-  const int Nb = 4;
   pdfium::span<uint32_t> keysched(ctx->keysched);
   std::array<uint32_t, 4> newstate;
   CHECK_NE(ctx->Nr, 0u);
-  for (size_t i = 0; i < ctx->Nr - 1; i++) {
-    ADD_ROUND_KEY_4();
-    FMAKEWORD(0);
-    FMAKEWORD(1);
-    FMAKEWORD(2);
-    FMAKEWORD(3);
-    MOVEWORD(0);
-    MOVEWORD(1);
-    MOVEWORD(2);
-    MOVEWORD(3);
+  for (size_t i = 0; i < ctx->Nr; i++) {
+    keysched = AddRoundKey4(block, keysched);
+    if (i == ctx->Nr - 1) {
+      for (size_t j = 0; j < 4; ++j) {
+        newstate[j] = LastWord(j, block, /*decrypt=*/false);
+      }
+    } else {
+      for (size_t j = 0; j < 4; ++j) {
+        newstate[j] = FMakeWord(j, block, /*decrypt=*/false);
+      }
+    }
+    for (size_t j = 0; j < 4; ++j) {
+      block[j] = newstate[j];
+    }
   }
-  ADD_ROUND_KEY_4();
-  LASTWORD(0);
-  LASTWORD(1);
-  LASTWORD(2);
-  LASTWORD(3);
-  MOVEWORD(0);
-  MOVEWORD(1);
-  MOVEWORD(2);
-  MOVEWORD(3);
-  ADD_ROUND_KEY_4();
+  keysched = AddRoundKey4(block, keysched);
 }
-#undef FMAKEWORD
-#undef LASTWORD
-
-#define FMAKEWORD(i)                                        \
-  (newstate[i] = (D0[(block[i] >> 24) & 0xFF] ^             \
-                  D1[(block[(i + C1) % Nb] >> 16) & 0xFF] ^ \
-                  D2[(block[(i + C2) % Nb] >> 8) & 0xFF] ^  \
-                  D3[block[(i + C3) % Nb] & 0xFF]))
-#define LASTWORD(i)                                                     \
-  (newstate[i] = (Sboxinv[(block[i] >> 24) & 0xFF] << 24) |             \
-                 (Sboxinv[(block[(i + C1) % Nb] >> 16) & 0xFF] << 16) | \
-                 (Sboxinv[(block[(i + C2) % Nb] >> 8) & 0xFF] << 8) |   \
-                 (Sboxinv[(block[(i + C3) % Nb]) & 0xFF]))
 
 void aes_decrypt_nb_4(CRYPT_aes_context* ctx, pdfium::span<uint32_t, 4> block) {
-  const int C1 = 4 - 1;
-  const int C2 = 4 - 2;
-  const int C3 = 4 - 3;
-  const int Nb = 4;
   pdfium::span<uint32_t> keysched(ctx->invkeysched);
   std::array<uint32_t, 4> newstate;
   CHECK_NE(ctx->Nr, 0);
-  for (size_t i = 0; i < ctx->Nr - 1; i++) {
-    ADD_ROUND_KEY_4();
-    FMAKEWORD(0);
-    FMAKEWORD(1);
-    FMAKEWORD(2);
-    FMAKEWORD(3);
-    MOVEWORD(0);
-    MOVEWORD(1);
-    MOVEWORD(2);
-    MOVEWORD(3);
+  for (size_t i = 0; i < ctx->Nr; i++) {
+    keysched = AddRoundKey4(block, keysched);
+    if (i == ctx->Nr - 1) {
+      for (size_t j = 0; j < 4; ++j) {
+        newstate[j] = LastWord(j, block, /*decrypt=*/true);
+      }
+    } else {
+      for (size_t j = 0; j < 4; ++j) {
+        newstate[j] = FMakeWord(j, block, /*decrypt=*/true);
+      }
+    }
+    for (size_t j = 0; j < 4; ++j) {
+      block[j] = newstate[j];
+    }
   }
-  ADD_ROUND_KEY_4();
-  LASTWORD(0);
-  LASTWORD(1);
-  LASTWORD(2);
-  LASTWORD(3);
-  MOVEWORD(0);
-  MOVEWORD(1);
-  MOVEWORD(2);
-  MOVEWORD(3);
-  ADD_ROUND_KEY_4();
+  keysched = AddRoundKey4(block, keysched);
 }
-#undef FMAKEWORD
-#undef LASTWORD
 
 }  // namespace
 
@@ -547,7 +541,7 @@ void CRYPT_AESSetKey(CRYPT_aes_context* ctx, pdfium::span<const uint8_t> key) {
         temp = (temp << 8) | Sbox[b];
         temp = (temp << 8) | Sbox[c];
         temp = (temp << 8) | Sbox[d];
-        rconst = mulby2(rconst);
+        rconst = MulBy2(rconst);
       } else if (i % Nk == 4 && Nk > 6) {
         int a = (temp >> 24) & 0xFF;
         int b = (temp >> 16) & 0xFF;
