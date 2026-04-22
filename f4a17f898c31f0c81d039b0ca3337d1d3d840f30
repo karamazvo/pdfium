@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "99cb8263_e1922737",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-22T18:24:55Z",
+      "side": 1,
+      "message": "nit: document the state of the page_object after failed return.",
+      "range": {
+        "startLine": 188,
+        "startChar": 29,
+        "endLine": 188,
+        "endChar": 30
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "60968561_9bc8f2ee",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "public/fpdf_edit.h",
+              "range": {
+                "startLine": 185,
+                "startChar": 0,
+                "endLine": 187,
+                "endChar": 0
+              },
+              "replacement": "//   page_object - handle to a page object. Ownership of the object is\n//                 transferred to the page upon successful insertion.\n"
+            },
+            {
+              "path": "public/fpdf_edit.h",
+              "range": {
+                "startLine": 1,
+                "startChar": 0,
+                "endLine": 1,
+                "endChar": 0
+              },
+              "replacement": "//\n// The |page_object| will be automatically freed when the page is closed.\n"
+            }
+          ]
+        }
+      ],
+      "revId": "f4a17f898c31f0c81d039b0ca3337d1d3d840f30",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
