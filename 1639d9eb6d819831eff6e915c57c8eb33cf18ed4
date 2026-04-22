@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7782b2c1_178da75e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 13
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-22T12:54:38Z",
+      "side": 1,
+      "message": "Small fix, local var makes it more readable though I am happy to revert to the .template first\u003c4\u003e idea.",
+      "revId": "1639d9eb6d819831eff6e915c57c8eb33cf18ed4",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
