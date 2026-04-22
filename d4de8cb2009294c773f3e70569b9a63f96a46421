@@ -1,0 +1,45 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8abd959f_54a368f4",
+        "filename": "core/fxge/cfx_face.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-22T16:37:28Z",
+      "side": 1,
+      "message": "would prefer a bytestringview return to put length caclucation at API boundary, but meh.",
+      "range": {
+        "startLine": 66,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 30
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "a8191413_498fd821",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxge/cfx_face.h",
+              "range": {
+                "startLine": 66,
+                "startChar": 0,
+                "endLine": 67,
+                "endChar": 0
+              },
+              "replacement": "  ByteStringView GetFontFormat();\n"
+            }
+          ]
+        }
+      ],
+      "revId": "d4de8cb2009294c773f3e70569b9a63f96a46421",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
