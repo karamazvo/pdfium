@@ -33,6 +33,24 @@
       "message": "Is this needed, or is it resetting the default configuration? I think this can be removed.",
       "revId": "7239bf6cffaffb222514127c739ac92a6125cb4a",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "54daa6bb_17a6a959",
+        "filename": "core/fxge/BUILD.gn",
+        "patchSetId": 11
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-22T18:01:07Z",
+      "side": 1,
+      "message": "Gemini griped about the assignment, rather than +\u003d in the conditional. GN then hit the error:\nERROR at //core/fxge/BUILD.gn:284:5: Undefined identifier.\n    configs +\u003d [ \":skrifa_cxx_config\" ]\n    ^------\nSee //BUILD.gn:242:5: which caused the file to be included.\n    \"core/fxge\",\n    ^----------",
+      "parentUuid": "8b88ee74_84c532b2",
+      "revId": "7239bf6cffaffb222514127c739ac92a6125cb4a",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
