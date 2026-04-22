@@ -3,6 +3,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "fd70c6d5_9797c8b7",
+        "filename": "core/fpdfapi/page/cpdf_page.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-04-22T23:32:13Z",
+      "side": 1,
+      "message": "Also, could just check if `CPDF_Dictionary::GetObjectFor()` at line 50 returns nullptr to avoid an extra key lookup.",
+      "range": {
+        "startLine": 46,
+        "startChar": 32,
+        "endLine": 46,
+        "endChar": 40
+      },
+      "revId": "f7ccc5f6ac4c78081bbc88621eceb44b8fdbc48d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "228ab88f_53888ec9",
         "filename": "core/fpdfapi/page/cpdf_page.h",
         "patchSetId": 6
