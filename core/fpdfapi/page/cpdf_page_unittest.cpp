@@ -46,3 +46,34 @@ TEST_F(CPDF_PageTest, IsValidPageDictReference) {
                                        doc.AddIndirectObject(page_type_name));
   EXPECT_TRUE(CPDF_Page::IsValidPageDict(page_dict));
 }
+
+TEST_F(CPDF_PageTest, IsValidPageDictLoose) {
+  EXPECT_FALSE(CPDF_Page::IsValidPageDictLoose(nullptr));
+
+  auto page_dict = pdfium::MakeRetain<CPDF_Dictionary>();
+  EXPECT_TRUE(CPDF_Page::IsValidPageDictLoose(page_dict));
+
+  page_dict->SetNewFor<CPDF_Name>(pdfium::page_object::kType, "Page");
+  EXPECT_TRUE(CPDF_Page::IsValidPageDictLoose(page_dict));
+}
+
+TEST_F(CPDF_PageTest, IsValidPageDictLooseWrongTypes) {
+  auto page_dict = pdfium::MakeRetain<CPDF_Dictionary>();
+  page_dict->SetNewFor<CPDF_Name>(pdfium::page_object::kType, "Font");
+  EXPECT_FALSE(CPDF_Page::IsValidPageDictLoose(page_dict));
+
+  page_dict->SetNewFor<CPDF_String>(pdfium::page_object::kType, "Page");
+  EXPECT_FALSE(CPDF_Page::IsValidPageDictLoose(page_dict));
+
+  page_dict->SetNewFor<CPDF_Null>(pdfium::page_object::kType);
+  EXPECT_FALSE(CPDF_Page::IsValidPageDictLoose(page_dict));
+}
+
+TEST_F(CPDF_PageTest, IsValidPageDictLooseReference) {
+  auto page_type_name = pdfium::MakeRetain<CPDF_Name>(nullptr, "Page");
+  auto page_dict = pdfium::MakeRetain<CPDF_Dictionary>();
+  CPDF_TestDocument doc;
+  page_dict->SetNewFor<CPDF_Reference>(pdfium::page_object::kType, &doc,
+                                       doc.AddIndirectObject(page_type_name));
+  EXPECT_TRUE(CPDF_Page::IsValidPageDictLoose(page_dict));
+}
