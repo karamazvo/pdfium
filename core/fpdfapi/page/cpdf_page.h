@@ -51,6 +51,12 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
 
   CONSTRUCT_VIA_MAKE_RETAIN;
 
+  // Ensures `page_dict` satisfies all of these conditions:
+  // 1. Is non-null.
+  // 2. Has a /Type key.
+  // 3. The /Type value is a name and the name is /Page.
+  static bool IsValidPageDict(const CPDF_Dictionary* page_dict);
+
   // IPDF_Page:
   CPDF_Page* AsPDFPage() override;
   CPDFXFA_Page* AsXFAPage() override;
