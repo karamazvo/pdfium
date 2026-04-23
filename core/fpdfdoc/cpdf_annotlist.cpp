@@ -100,24 +100,82 @@ std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Document* document,
 
   CFX_FloatRect rect = pParentDict->GetRectFor(pdfium::annotation::kRect);
   rect.Normalize();
-  CFX_FloatRect popupRect(0, 0, 200, 200);
-  // Note that if the popup can set its own dimensions, then we will need to
-  // make sure that it isn't larger than the page size.
-  if (rect.left + popupRect.Width() > pPage->GetPageWidth() &&
-      rect.bottom - popupRect.Height() < 0) {
-    // If the annotation is on the bottom-right corner of the page, then place
-    // the popup above and to the left of the annotation.
-    popupRect.Translate(rect.right - popupRect.Width(), rect.top);
-  } else {
-    // Place the popup below and to the right of the annotation without getting
-    // clipped by page edges.
-    popupRect.Translate(
-        std::min(rect.left, pPage->GetPageWidth() - popupRect.Width()),
-        std::max(rect.bottom - popupRect.Height(), 0.f));
+
+  // Define the pivot point so that it does not overlap `rect` after the
+  // `NoRotate` counter-rotation.
+  CFX_PointF pivot;
+  switch (pPage->GetPageRotation() % 4) {
+    case 1:
+      pivot = CFX_PointF(rect.left, rect.top);
+      break;
+    case 2:
+      pivot = CFX_PointF(rect.right, rect.top);
+      break;
+    case 3:
+      pivot = CFX_PointF(rect.right, rect.bottom);
+      break;
+    default:
+      pivot = CFX_PointF(rect.left, rect.bottom);
+      break;
   }
 
+  const float popupSize = 200;
+  CFX_FloatRect popupRect(pivot.x, pivot.y - popupSize, pivot.x + popupSize,
+                          pivot.y);
+
+  const float pageWidth = pPage->GetPageWidth();
+  const float pageHeight = pPage->GetPageHeight();
+  // Define the page rotation matrix, but without flipping the Y axis.
+  // The result is 'user space' coordinates after rotation.
+  CFX_Matrix pageRotationM;
+  switch (pPage->GetPageRotation() % 4) {
+    case 1:
+      pageRotationM = CFX_Matrix(0, -1, 1, 0, 0, pageHeight);
+      break;
+    case 2:
+      pageRotationM = CFX_Matrix(-1, 0, 0, -1, pageWidth, pageHeight);
+      break;
+    case 3:
+      pageRotationM = CFX_Matrix(0, 1, -1, 0, pageWidth, 0);
+      break;
+    default:
+      pageRotationM = CFX_Matrix(1, 0, 0, 1, 0, 0);
+      break;
+  }
+  CFX_FloatRect rotatedRect = pageRotationM.TransformRect(rect);
+  CFX_FloatRect rotatedPopupRect = pageRotationM.TransformRect(popupRect);
+  CFX_PointF rotatedPivot = pageRotationM.Transform(pivot);
+
+  CFX_Matrix pivotRotationM{};
+  // Rotation matrix around the popup rect's pivot point.
+  pivotRotationM.Translate(-rotatedPivot.x, -rotatedPivot.y);
+  pivotRotationM.Rotate(FXSYS_PI / 2 * pPage->GetPageRotation());
+  pivotRotationM.Translate(rotatedPivot.x, rotatedPivot.y);
+  rotatedPopupRect = pivotRotationM.TransformRect(rotatedPopupRect);
+
+  // Check bounds
+  CFX_PointF rotatedNewPos = rotatedPivot;
+  if (rotatedPopupRect.bottom < 0) {
+    rotatedNewPos.y = rotatedRect.top + popupSize;
+  }
+  if (rotatedPopupRect.top > pageHeight) {
+    rotatedNewPos.y = rotatedRect.bottom - popupSize;
+  }
+  if (rotatedPopupRect.left < 0) {
+    rotatedNewPos.x = rotatedRect.right + popupSize;
+  }
+  if (rotatedPopupRect.right > pageWidth) {
+    rotatedNewPos.x = rotatedRect.left - popupSize;
+  }
+
+  CFX_PointF newPos = pageRotationM.GetInverse().Transform(rotatedNewPos);
+  popupRect.Translate(newPos.x - pivot.x, newPos.y - pivot.y);
   pAnnotDict->SetRectFor(pdfium::annotation::kRect, popupRect);
-  pAnnotDict->SetNewFor<CPDF_Number>(pdfium::annotation::kF, 0);
+
+  uint32_t flags = 0;
+  flags |= pdfium::annotation_flags::kNoRotate;
+  pAnnotDict->SetNewFor<CPDF_Number>(pdfium::annotation::kF,
+                                     static_cast<int>(flags));
 
   auto pPopupAnnot =
       std::make_unique<CPDF_Annot>(std::move(pAnnotDict), document);
