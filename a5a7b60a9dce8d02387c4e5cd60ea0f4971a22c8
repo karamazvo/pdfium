@@ -18,6 +18,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d26130dc_836a465d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-23T18:49:31Z",
+      "side": 1,
+      "message": "Here\u0027s a table with the 4 standard Helvetica fonts:\n\n```\nFont                  | Bold | Italic\n----------------------+------+-------\nHelvetica             | N    | N\nHelvetica-Bold        | Y    | N\nHelvetica-Oblique     | N    | Y\nHelvetica-BoldOblique | Y    | Y\n```\n\nHelvetica-Oblique should map to a sans-serif italic font, not a sans-serif bold+italic font.",
+      "parentUuid": "804239e5_617f6b9e",
+      "revId": "a5a7b60a9dce8d02387c4e5cd60ea0f4971a22c8",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a17fda9a_095c0b90",
