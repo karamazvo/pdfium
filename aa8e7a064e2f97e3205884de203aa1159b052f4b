@@ -69,6 +69,24 @@
       "parentUuid": "f22ae63c_3490f621",
       "revId": "aa8e7a064e2f97e3205884de203aa1159b052f4b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d74aedcc_d693ec7b",
+        "filename": "fpdfsdk/pwl/cpwl_wnd.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-23T17:34:34Z",
+      "side": 1,
+      "message": "Done, had to add Mask(flag) for one of them to support operator~, let me know if you\u0027d want me to rather make the function input a Mask\u003cStyles\u003e instead.",
+      "parentUuid": "788f369a_1547672c",
+      "revId": "aa8e7a064e2f97e3205884de203aa1159b052f4b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
