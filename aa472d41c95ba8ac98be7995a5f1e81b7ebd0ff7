@@ -1,0 +1,68 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cb4ce4bf_09009e94",
+        "filename": "core/fpdfapi/page/cpdf_page.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-04-23T00:13:20Z",
+      "side": 1,
+      "message": "super nit: `validates`",
+      "range": {
+        "startLine": 29,
+        "startChar": 31,
+        "endLine": 29,
+        "endChar": 39
+      },
+      "revId": "aa472d41c95ba8ac98be7995a5f1e81b7ebd0ff7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "62b4ffde_8806604e",
+        "filename": "core/fpdfapi/page/cpdf_page.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-04-23T00:13:20Z",
+      "side": 1,
+      "message": "What about doing `!mutable_page_dict-\u003eKeyExist(pdfium::page_object::kType)` instead?",
+      "range": {
+        "startLine": 33,
+        "startChar": 6,
+        "endLine": 33,
+        "endChar": 41
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "9812d062_3eb1fa8b",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fpdfapi/page/cpdf_page.cpp",
+              "range": {
+                "startLine": 33,
+                "startChar": 0,
+                "endLine": 34,
+                "endChar": 0
+              },
+              "replacement": "  if (!mutable_page_dict-\u003eKeyExist(pdfium::page_object::kType)) {\n"
+            }
+          ]
+        }
+      ],
+      "revId": "aa472d41c95ba8ac98be7995a5f1e81b7ebd0ff7",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
