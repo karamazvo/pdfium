@@ -1,0 +1,45 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6c82e655_4ace7098",
+        "filename": "fpdfsdk/pwl/cpwl_wnd.cpp",
+        "patchSetId": 20
+      },
+      "lineNbr": 492,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-04-23T18:10:19Z",
+      "side": 1,
+      "message": "For consistency, add explicit template argument: `Mask\u003cStyles\u003e(flag)`.",
+      "range": {
+        "startLine": 492,
+        "startChar": 31,
+        "endLine": 492,
+        "endChar": 41
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "f62cba93_3f4d1388",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "fpdfsdk/pwl/cpwl_wnd.cpp",
+              "range": {
+                "startLine": 492,
+                "startChar": 0,
+                "endLine": 493,
+                "endChar": 0
+              },
+              "replacement": "  creation_params_.dwFlags \u0026\u003d ~Mask\u003cStyles\u003e(flag);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "7c59843347382aa228ea800f911ca3bdedea0dc9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

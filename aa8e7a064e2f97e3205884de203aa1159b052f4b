@@ -87,6 +87,24 @@
       "parentUuid": "788f369a_1547672c",
       "revId": "aa8e7a064e2f97e3205884de203aa1159b052f4b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "07dbd411_42a3682f",
+        "filename": "fpdfsdk/pwl/cpwl_wnd.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-04-23T18:10:19Z",
+      "side": 1,
+      "message": "Probably ok for now.",
+      "parentUuid": "d74aedcc_d693ec7b",
+      "revId": "aa8e7a064e2f97e3205884de203aa1159b052f4b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
