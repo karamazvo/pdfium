@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c0680c02_ed0d7014",
+        "filename": "core/fpdfapi/page/cpdf_page.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-23T16:19:29Z",
+      "side": 1,
+      "message": "Will do in a separate CL, so this CL remains move-only.",
+      "parentUuid": "fd70c6d5_9797c8b7",
+      "range": {
+        "startLine": 46,
+        "startChar": 32,
+        "endLine": 46,
+        "endChar": 40
+      },
+      "revId": "f7ccc5f6ac4c78081bbc88621eceb44b8fdbc48d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "228ab88f_53888ec9",
@@ -37,6 +61,30 @@
       "writtenOn": "2026-04-22T23:23:52Z",
       "side": 1,
       "message": "Optionally: `Has a /Type key with name value /Page.`? Then can be shortened even further by removing the numbered list.",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 57,
+        "endChar": 56
+      },
+      "revId": "f7ccc5f6ac4c78081bbc88621eceb44b8fdbc48d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "821c177d_84155fb6",
+        "filename": "core/fpdfapi/page/cpdf_page.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-23T16:19:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "228ab88f_53888ec9",
       "range": {
         "startLine": 56,
         "startChar": 0,
