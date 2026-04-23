@@ -51,6 +51,24 @@
       "message": "Existing, but the name is misleading in that this returns true if any bit matches, not all bits.",
       "revId": "aa8e7a064e2f97e3205884de203aa1159b052f4b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "788f369a_1547672c",
+        "filename": "fpdfsdk/pwl/cpwl_wnd.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-23T17:15:03Z",
+      "side": 1,
+      "message": "I did a quick search and I don\u0027t think it is called with more than one flag, I think we should instead just change \n\nMask\u003cStyles\u003e dwFlags to\n\nStyles flag (also fixing the Hungarian while we\u0027re at it).",
+      "parentUuid": "f22ae63c_3490f621",
+      "revId": "aa8e7a064e2f97e3205884de203aa1159b052f4b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
