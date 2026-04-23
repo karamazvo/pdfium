@@ -1,0 +1,68 @@
+% The text is in the middle of the page
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+  /MediaBox [0 0 612 792]
+  /CropBox [0 0 612 792]
+  /Resources <<
+    /Font <<
+      /F1 7 0 R
+    >>
+  >>
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /Annots [6 0 R]
+  /Rotate 90
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+BT
+300 300 Td
+/F1 18 Tf
+(Hello World) Tj
+ET
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /Annot
+  /Subtype /Popup
+  /Parent 6 0 R
+  /Rect [0 0 0 0] % will get overridden
+>>
+endobj
+{{object 6 0}} <<
+  /Type /Annot
+  /Subtype /Highlight
+  /Popup 5 0 R
+  /Contents (Text Note)
+  /Rect [240 300 360 324]
+  /QuadPoints [240 300 360 300 240 324 360 324]
+  /P 3 0 R
+  /C [0.14902 0.90196 0]
+  /F 4
+>>
+endobj
+{{object 7 0}} <<
+  /Type /Font
+  /Subtype /Type1
+  /BaseFont /Times-Roman
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
