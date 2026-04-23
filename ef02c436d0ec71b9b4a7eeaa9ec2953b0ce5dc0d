@@ -159,6 +159,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "93796ab8_b925f494",
+        "filename": "core/fpdfdoc/cpdf_nametree.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-23T16:30:33Z",
+      "side": 1,
+      "message": "Makes sense, yes let\u0027s not delve into that (at least not in this CL). Thanks for the clarification.",
+      "parentUuid": "27ae16e8_cd990d0b",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 3
+      },
+      "revId": "ef02c436d0ec71b9b4a7eeaa9ec2953b0ce5dc0d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8824a11a_98d19c01",
@@ -196,6 +220,30 @@
       "side": 1,
       "message": "Leave for later.  We\u0027re not really refactoring this particular method and there\u0027s a lot more to cleanup than just `left`/`right`.",
       "parentUuid": "8824a11a_98d19c01",
+      "range": {
+        "startLine": 115,
+        "startChar": 4,
+        "endLine": 115,
+        "endChar": 61
+      },
+      "revId": "ef02c436d0ec71b9b4a7eeaa9ec2953b0ce5dc0d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4eca038e_c56f982c",
+        "filename": "core/fpdfdoc/cpdf_nametree.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-23T16:30:33Z",
+      "side": 1,
+      "message": "Got it. Thanks!",
+      "parentUuid": "7ee4d5d0_0619723a",
       "range": {
         "startLine": 115,
         "startChar": 4,

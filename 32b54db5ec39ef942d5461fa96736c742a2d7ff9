@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f00026cd_a3e5a543",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 13
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-23T16:30:33Z",
+      "side": 1,
+      "message": "Thanks for the explanations! I don\u0027t have anything else to add on from my end.",
+      "revId": "32b54db5ec39ef942d5461fa96736c742a2d7ff9",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
