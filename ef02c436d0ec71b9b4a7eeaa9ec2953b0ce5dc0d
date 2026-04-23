@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "eb2423b8_4a36d66d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 12
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-23T05:58:28Z",
+      "side": 1,
+      "message": "A few more (mostly nits) - feel free to ignore them - most of this is just me being curious :).",
+      "revId": "ef02c436d0ec71b9b4a7eeaa9ec2953b0ce5dc0d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e6dd095e_3668b823",
+        "filename": "core/fpdfdoc/cpdf_nametree.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-23T05:58:28Z",
+      "side": 1,
+      "message": "Can we remove this DCHECK() as is with TrimNodeLimits, the callers of this anyway just have an if check before this.",
+      "range": {
+        "startLine": 34,
+        "startChar": 2,
+        "endLine": 34,
+        "endChar": 17
+      },
+      "revId": "ef02c436d0ec71b9b4a7eeaa9ec2953b0ce5dc0d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6dcfdb5e_4a928fce",
+        "filename": "core/fpdfdoc/cpdf_nametree.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-23T05:58:28Z",
+      "side": 1,
+      "message": "Minor nit: Maybe this could be \"swap\" like it was before perhaps?",
+      "range": {
+        "startLine": 38,
+        "startChar": 57,
+        "endLine": 38,
+        "endChar": 60
+      },
+      "revId": "ef02c436d0ec71b9b4a7eeaa9ec2953b0ce5dc0d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "30683e05_c240c7f3",
+        "filename": "core/fpdfdoc/cpdf_nametree.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-23T05:58:28Z",
+      "side": 1,
+      "message": "Thoughts on some optimisation here?\n\nThis would have a time of O(n), what about having a new array with index 0 and index 1 and setting the limits array to that?\n\nMight be longer but time goes down to O(1) for the additional space which, although doubles still remains constant and independent of n.",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 3
+      },
+      "revId": "ef02c436d0ec71b9b4a7eeaa9ec2953b0ce5dc0d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8824a11a_98d19c01",
+        "filename": "core/fpdfdoc/cpdf_nametree.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-23T05:58:28Z",
+      "side": 1,
+      "message": "More hungarian (didn\u0027t spot this earlier), sorry!",
+      "range": {
+        "startLine": 115,
+        "startChar": 4,
+        "endLine": 115,
+        "endChar": 61
+      },
+      "revId": "ef02c436d0ec71b9b4a7eeaa9ec2953b0ce5dc0d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
