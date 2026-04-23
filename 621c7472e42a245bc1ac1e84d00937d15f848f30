@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b71cfff8_44744b04",
+        "filename": "testing/utils/compare_coordinates.cc",
+        "patchSetId": 8
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-23T17:47:20Z",
+      "side": 1,
+      "message": "Header",
+      "range": {
+        "startLine": 27,
+        "startChar": 5,
+        "endLine": 27,
+        "endChar": 33
+      },
+      "revId": "621c7472e42a245bc1ac1e84d00937d15f848f30",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
