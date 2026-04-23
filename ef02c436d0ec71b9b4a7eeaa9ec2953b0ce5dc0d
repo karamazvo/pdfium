@@ -41,6 +41,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "266d1388_feec11bd",
+        "filename": "core/fpdfdoc/cpdf_nametree.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-23T15:43:40Z",
+      "side": 1,
+      "message": "Sure.  I dislike DCHECKing pointers when you get a segv \"for free\" on subsequent lines.  Others will argue that it documents that the ptr can not be null and hence should be kept as is.",
+      "parentUuid": "e6dd095e_3668b823",
+      "range": {
+        "startLine": 34,
+        "startChar": 2,
+        "endLine": 34,
+        "endChar": 17
+      },
+      "revId": "ef02c436d0ec71b9b4a7eeaa9ec2953b0ce5dc0d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6dcfdb5e_4a928fce",
@@ -54,6 +78,30 @@
       "writtenOn": "2026-04-23T05:58:28Z",
       "side": 1,
       "message": "Minor nit: Maybe this could be \"swap\" like it was before perhaps?",
+      "range": {
+        "startLine": 38,
+        "startChar": 57,
+        "endLine": 38,
+        "endChar": 60
+      },
+      "revId": "ef02c436d0ec71b9b4a7eeaa9ec2953b0ce5dc0d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aa5c6422_de683830",
+        "filename": "core/fpdfdoc/cpdf_nametree.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-23T15:43:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6dcfdb5e_4a928fce",
       "range": {
         "startLine": 38,
         "startChar": 57,
@@ -87,6 +135,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "27ae16e8_cd990d0b",
+        "filename": "core/fpdfdoc/cpdf_nametree.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-23T15:43:40Z",
+      "side": 1,
+      "message": "Sorry, no, we\u0027d need to find all the places that reference the old array and update those references.",
+      "parentUuid": "30683e05_c240c7f3",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 3
+      },
+      "revId": "ef02c436d0ec71b9b4a7eeaa9ec2953b0ce5dc0d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8824a11a_98d19c01",
@@ -100,6 +172,30 @@
       "writtenOn": "2026-04-23T05:58:28Z",
       "side": 1,
       "message": "More hungarian (didn\u0027t spot this earlier), sorry!",
+      "range": {
+        "startLine": 115,
+        "startChar": 4,
+        "endLine": 115,
+        "endChar": 61
+      },
+      "revId": "ef02c436d0ec71b9b4a7eeaa9ec2953b0ce5dc0d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7ee4d5d0_0619723a",
+        "filename": "core/fpdfdoc/cpdf_nametree.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-04-23T15:43:40Z",
+      "side": 1,
+      "message": "Leave for later.  We\u0027re not really refactoring this particular method and there\u0027s a lot more to cleanup than just `left`/`right`.",
+      "parentUuid": "8824a11a_98d19c01",
       "range": {
         "startLine": 115,
         "startChar": 4,
