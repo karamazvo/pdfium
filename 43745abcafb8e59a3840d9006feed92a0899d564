@@ -1,5 +1,63 @@
 {
-  "comments": [],
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3a0614cb_338b0199",
+        "filename": "core/fpdfapi/page/cpdf_textobject.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-04-24T21:23:33Z",
+      "side": 1,
+      "message": "To be consistent with the requirement that char_positions.size() must equal char_codes_.size(), should this occur above line 171?",
+      "revId": "43745abcafb8e59a3840d9006feed92a0899d564",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cf14a20b_5f4bdb0a",
+        "filename": "fpdfsdk/fpdf_edittext.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 418,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-04-24T21:23:33Z",
+      "side": 1,
+      "message": "Any reason to support count\u003d0 case anyway?",
+      "revId": "43745abcafb8e59a3840d9006feed92a0899d564",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0c4df71c_a9db5233",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 1333,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-04-24T21:23:33Z",
+      "side": 1,
+      "message": "What happens with vertical text?",
+      "range": {
+        "startLine": 1333,
+        "startChar": 50,
+        "endLine": 1333,
+        "endChar": 60
+      },
+      "revId": "43745abcafb8e59a3840d9006feed92a0899d564",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ],
   "submitRequirementResults": [
     {
       "submitRequirement": {
