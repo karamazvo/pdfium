@@ -16,6 +16,23 @@
       "message": "Should work now.",
       "revId": "733ac3a390bd36f7b343b2502eecde3e15027992",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a93ec315_47652eb8",
+        "filename": "testing/utils/compare_coordinates.h",
+        "patchSetId": 14
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-24T17:23:55Z",
+      "side": 1,
+      "message": "Please make this LTRB. Aside from FPDFText_GetCharBox(), all the other APIs that use doubles are LTRB. e.g. FPDFLink_GetRect() and FPDFText_GetBoundedText().",
+      "revId": "733ac3a390bd36f7b343b2502eecde3e15027992",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
