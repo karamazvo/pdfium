@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "93ad0de1_92f7bf4c",
+        "filename": "core/fpdfdoc/cpdf_annotlist.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-24T01:19:42Z",
+      "side": 1,
+      "message": "Use constexpr for true constants.",
+      "range": {
+        "startLine": 122,
+        "startChar": 2,
+        "endLine": 122,
+        "endChar": 7
+      },
+      "revId": "6dded069a4b14deeeec83cfe9bd2da78e21cbc3e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b259c6f1_449ad69e",
+        "filename": "core/fpdfdoc/cpdf_annotlist.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-24T01:19:42Z",
+      "side": 1,
+      "message": "Please use Google C++ style naming for new code. variable_name, and kConstantName.",
+      "range": {
+        "startLine": 122,
+        "startChar": 14,
+        "endLine": 122,
+        "endChar": 23
+      },
+      "revId": "6dded069a4b14deeeec83cfe9bd2da78e21cbc3e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d935ea49_361b68e2",
+        "filename": "core/fpdfdoc/cpdf_annotlist.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-24T01:19:42Z",
+      "side": 1,
+      "message": "Just do nothing here since the matrix starts out as the identity matrix.",
+      "revId": "6dded069a4b14deeeec83cfe9bd2da78e21cbc3e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c1a7867b_66a3a0bc",
+        "filename": "core/fpdfdoc/cpdf_annotlist.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-24T01:19:42Z",
+      "side": 1,
+      "message": "Just declare the variable like line 130.",
+      "range": {
+        "startLine": 149,
+        "startChar": 27,
+        "endLine": 149,
+        "endChar": 29
+      },
+      "revId": "6dded069a4b14deeeec83cfe9bd2da78e21cbc3e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1e2b031c_ed7309ef",
+        "filename": "core/fpdfdoc/cpdf_annotlist.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-24T01:19:42Z",
+      "side": 1,
+      "message": "Combine",
+      "range": {
+        "startLine": 175,
+        "startChar": 0,
+        "endLine": 176,
+        "endChar": 47
+      },
+      "revId": "6dded069a4b14deeeec83cfe9bd2da78e21cbc3e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
