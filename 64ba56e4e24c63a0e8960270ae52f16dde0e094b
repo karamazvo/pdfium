@@ -84,6 +84,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d2727e59_cf11cc06",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-24T01:44:37Z",
+      "side": 1,
+      "message": "Name this RectDouble or something like that and put it in testing/utils/compare_coordinates.h. Then put the double comparison function there as well.",
+      "parentUuid": "eb426fc5_6699997f",
+      "range": {
+        "startLine": 79,
+        "startChar": 7,
+        "endLine": 79,
+        "endChar": 12
+      },
+      "revId": "64ba56e4e24c63a0e8960270ae52f16dde0e094b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "fdc52e97_7305d26d",
         "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
         "patchSetId": 6
@@ -113,6 +137,24 @@
       "side": 1,
       "message": "No real difference, removed it.",
       "parentUuid": "fdc52e97_7305d26d",
+      "revId": "64ba56e4e24c63a0e8960270ae52f16dde0e094b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cff127ba_363844b8",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-24T01:44:37Z",
+      "side": 1,
+      "message": "Well, FS_RECTF is LTRB and this is LRBT. So can\u0027t just simply swap them. Thus the red bots.",
+      "parentUuid": "a2591b41_5203c84f",
       "revId": "64ba56e4e24c63a0e8960270ae52f16dde0e094b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -148,6 +190,24 @@
       "side": 1,
       "message": "Thanks for letting me know. Using that version instead. Also found a slight issue with it (bottom was not compared, instead top was compared twice). Fixed that in the process. Also added the approximate version there too.",
       "parentUuid": "ff08cb74_c6b26971",
+      "revId": "64ba56e4e24c63a0e8960270ae52f16dde0e094b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d66fedf1_0cb717f8",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-24T01:44:37Z",
+      "side": 1,
+      "message": "Oy. Thanks for fixing the bad comparison.",
+      "parentUuid": "ae20d292_39e483c2",
       "revId": "64ba56e4e24c63a0e8960270ae52f16dde0e094b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
