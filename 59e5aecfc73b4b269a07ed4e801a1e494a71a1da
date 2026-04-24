@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2d4f9e29_22a0422f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-24T01:11:03Z",
+      "side": 1,
+      "message": "Thanks for putting this together.",
+      "revId": "59e5aecfc73b4b269a07ed4e801a1e494a71a1da",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a1062889_7c8bacd7",
+        "filename": "testing/resources/pixel/bug_504284794_1.in",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-24T01:11:03Z",
+      "side": 1,
+      "message": "Optional, so just omit?",
+      "revId": "59e5aecfc73b4b269a07ed4e801a1e494a71a1da",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dd4c73f5_53737597",
+        "filename": "testing/resources/pixel/bug_504284794_1.in",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-24T01:11:03Z",
+      "side": 1,
+      "message": "Just to double check - who is overwriting it?",
+      "revId": "59e5aecfc73b4b269a07ed4e801a1e494a71a1da",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e9e69ef8_79f24b67",
+        "filename": "testing/resources/pixel/bug_504284794_1.in",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-24T01:11:03Z",
+      "side": 1,
+      "message": "Since this is the parent object, how about making it object 5 0?",
+      "revId": "59e5aecfc73b4b269a07ed4e801a1e494a71a1da",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5a0e5e2e_117ce883",
+        "filename": "testing/resources/pixel/bug_504284794_1_expected.pdf.0.png",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-24T01:11:03Z",
+      "side": 1,
+      "message": "Need to include per-platform expectations. See https://ci.chromium.org/ui/p/pdfium/builders/try/linux_no_v8/32152/overview for example.",
+      "revId": "59e5aecfc73b4b269a07ed4e801a1e494a71a1da",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
