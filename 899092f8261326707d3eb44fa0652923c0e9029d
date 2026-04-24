@@ -22,6 +22,30 @@
       },
       "revId": "899092f8261326707d3eb44fa0652923c0e9029d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4b92b76a_c5e6de4a",
+        "filename": "testing/utils/compare_coordinates.cc",
+        "patchSetId": 9
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-24T04:53:58Z",
+      "side": 1,
+      "message": "Seperate CL",
+      "parentUuid": "9ecef811_e9f61015",
+      "range": {
+        "startLine": 27,
+        "startChar": 5,
+        "endLine": 27,
+        "endChar": 33
+      },
+      "revId": "899092f8261326707d3eb44fa0652923c0e9029d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }

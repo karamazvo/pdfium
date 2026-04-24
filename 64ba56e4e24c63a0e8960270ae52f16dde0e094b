@@ -106,6 +106,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d1bb7f5c_173ea553",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-24T04:53:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d2727e59_cf11cc06",
+      "range": {
+        "startLine": 79,
+        "startChar": 7,
+        "endLine": 79,
+        "endChar": 12
+      },
+      "revId": "64ba56e4e24c63a0e8960270ae52f16dde0e094b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fdc52e97_7305d26d",
@@ -173,6 +197,24 @@
       "side": 1,
       "message": "Unresolving this as something to fix.",
       "parentUuid": "cff127ba_363844b8",
+      "revId": "64ba56e4e24c63a0e8960270ae52f16dde0e094b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "040b48bf_db1c391f",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-24T04:53:58Z",
+      "side": 1,
+      "message": "I think I probably fell asleep before the bots completed and didn\u0027t see this - fixing.\n\nDone.",
+      "parentUuid": "71c2684e_56c067a7",
       "revId": "64ba56e4e24c63a0e8960270ae52f16dde0e094b",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
