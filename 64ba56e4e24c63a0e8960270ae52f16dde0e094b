@@ -161,6 +161,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "71c2684e_56c067a7",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-24T04:04:58Z",
+      "side": 1,
+      "message": "Unresolving this as something to fix.",
+      "parentUuid": "cff127ba_363844b8",
+      "revId": "64ba56e4e24c63a0e8960270ae52f16dde0e094b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "ff08cb74_c6b26971",
         "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
         "patchSetId": 6
