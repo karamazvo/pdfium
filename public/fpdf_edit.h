@@ -1314,7 +1314,8 @@ FPDFPageObj_NewTextObj(FPDF_DOCUMENT document,
 // text_object  - handle to the text object.
 // text         - the UTF-16LE encoded string containing the text to be added.
 //
-// Returns TRUE on success
+// Returns TRUE on success. Fails if |text_object| is null or if |text| is
+// empty.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFText_SetText(FPDF_PAGEOBJECT text_object, FPDF_WIDESTRING text);
 
@@ -1326,10 +1327,30 @@ FPDFText_SetText(FPDF_PAGEOBJECT text_object, FPDF_WIDESTRING text);
 // charcodes    - pointer to an array of charcodes to be added.
 // count        - number of elements in |charcodes|.
 //
-// Returns TRUE on success
+// Returns TRUE on success. Fails if |text_object| or |charcodes| is null, or
+// |count| is 0.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFText_SetCharcodes(FPDF_PAGEOBJECT text_object,
                       const uint32_t* charcodes,
+                      size_t count);
+
+// Experimental API.
+// Set the character positions for a text object.
+//
+// text_object  - handle to the text object.
+// positions    - pointer to an array of relative advances to be set.
+// count        - number of elements in |positions|.
+//
+// The |positions| array specifies the relative advances in points for each
+// character. The direction is either horizontal or vertical, depending on the
+// direction of text in |text_object|.
+//
+// For a text object with N characters, |count| must be N.
+//
+// Returns TRUE on success.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFText_SetPositions(FPDF_PAGEOBJECT text_object,
+                      const float* positions,
                       size_t count);
 
 // Returns a font object loaded from a stream of data. The font is loaded
