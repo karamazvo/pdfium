@@ -780,6 +780,19 @@ TEST_F(FPDFEditEmbedderTest, SetText) {
   }
 }
 
+TEST_F(FPDFEditEmbedderTest, SetTextBadParams) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  // Get the "Hello, world!" text object and change it.
+  ASSERT_EQ(2, FPDFPage_CountObjects(page.get()));
+  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page.get(), 0);
+  ASSERT_TRUE(page_object);
+  ScopedFPDFWideString empty_text = GetFPDFWideString(L"");
+  EXPECT_FALSE(FPDFText_SetText(page_object, empty_text.get()));
+}
+
 TEST_F(FPDFEditEmbedderTest, SetCharcodesBadParams) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   ScopedPage page = LoadScopedPage(0);
@@ -795,6 +808,7 @@ TEST_F(FPDFEditEmbedderTest, SetCharcodesBadParams) {
   EXPECT_FALSE(FPDFText_SetCharcodes(nullptr, &kDummyValue, 0));
   EXPECT_FALSE(FPDFText_SetCharcodes(nullptr, &kDummyValue, 1));
   EXPECT_FALSE(FPDFText_SetCharcodes(page_object, nullptr, 1));
+  EXPECT_FALSE(FPDFText_SetCharcodes(page_object, nullptr, 0));
 }
 
 TEST_F(FPDFEditEmbedderTest, SetTextKeepClippingPath) {
