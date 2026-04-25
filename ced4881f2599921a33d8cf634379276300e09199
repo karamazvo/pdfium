@@ -16,6 +16,29 @@
       "message": "Sorry for the delay, had a math report that was due.",
       "revId": "ced4881f2599921a33d8cf634379276300e09199",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "df89fd05_5bd9f016",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-25T17:52:49Z",
+      "side": 1,
+      "message": "Also do I change the definition order of these variables btw, or leave them as is for now?",
+      "range": {
+        "startLine": 137,
+        "startChar": 0,
+        "endLine": 140,
+        "endChar": 19
+      },
+      "revId": "ced4881f2599921a33d8cf634379276300e09199",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
