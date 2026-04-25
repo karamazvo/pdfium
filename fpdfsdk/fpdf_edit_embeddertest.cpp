@@ -780,6 +780,85 @@ TEST_F(FPDFEditEmbedderTest, SetText) {
   }
 }
 
+TEST_F(FPDFEditEmbedderTest, SetPositions) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  // Get the "Hello, world!" text object and change its character spacing.
+  ASSERT_EQ(2, FPDFPage_CountObjects(page.get()));
+  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page.get(), 0);
+  ASSERT_TRUE(page_object);
+  static constexpr auto kRelativePositions = std::to_array<const float>({
+      9.863999f,
+      5.328f,
+      5.736f,
+      3.336001f,
+      4.200001f,
+      3.0f,
+      3.0f,
+      8.663997f,
+      6.0f,
+      3.995998f,
+      3.336001f,
+      12.0f,
+      10.0f,
+  });
+  ASSERT_TRUE(FPDFText_SetPositions(page_object, kRelativePositions.data(),
+                                    kRelativePositions.size()));
+
+  // Remove the other text object, just like in the Bug410996566 test case.
+  {
+    ScopedFPDFPageObject obj(FPDFPage_GetObject(page.get(), 1));
+    ASSERT_TRUE(FPDFPage_RemoveObject(page.get(), obj.get()));
+  }
+  ASSERT_TRUE(FPDFPage_GenerateContent(page.get()));
+
+  // `empty_text_object` has no characters, so passing in 0 characters succeeds,
+  // even though it is a no-op.
+  ScopedFPDFPageObject empty_text_object(
+      FPDFPageObj_NewTextObj(document(), "Arial", 12.0f));
+  EXPECT_TRUE(FPDFText_SetPositions(empty_text_object.get(), nullptr, 0));
+
+  static constexpr char kExpected[] = "bug_410996566";
+  {
+    ScopedFPDFBitmap bitmap = RenderPage(page.get());
+    CompareBitmapWithExpectationSuffix(bitmap.get(), kExpected);
+  }
+
+  ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedDocumentWithExpectationSuffix(kExpected);
+}
+
+TEST_F(FPDFEditEmbedderTest, SetPositionsVertical) {
+  ASSERT_TRUE(OpenDocument("vertical_text.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ASSERT_EQ(3, FPDFPage_CountObjects(page.get()));
+  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page.get(), 0);
+  ASSERT_TRUE(page_object);
+  static constexpr auto kRelativePositions = std::to_array<const float>({
+      -12.216003f,
+      -7.476002f,
+      -11.016003f,
+      -13.416003f,
+      -8.676002f,
+      0.0f,
+  });
+  ASSERT_TRUE(FPDFText_SetPositions(page_object, kRelativePositions.data(),
+                                    kRelativePositions.size()));
+
+  static constexpr char kExpected[] = "vertical_text_positioned";
+  {
+    ScopedFPDFBitmap bitmap = RenderPage(page.get());
+    CompareBitmapWithExpectationSuffix(bitmap.get(), kExpected);
+  }
+
+  ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedDocumentWithExpectationSuffix(kExpected);
+}
+
 TEST_F(FPDFEditEmbedderTest, SetTextBadParams) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   ScopedPage page = LoadScopedPage(0);
@@ -802,13 +881,47 @@ TEST_F(FPDFEditEmbedderTest, SetCharcodesBadParams) {
   FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page.get(), 0);
   ASSERT_TRUE(page_object);
 
-  const uint32_t kDummyValue = 42;
+  const uint32_t kSampleValue = 42;
   EXPECT_FALSE(FPDFText_SetCharcodes(nullptr, nullptr, 0));
   EXPECT_FALSE(FPDFText_SetCharcodes(nullptr, nullptr, 1));
-  EXPECT_FALSE(FPDFText_SetCharcodes(nullptr, &kDummyValue, 0));
-  EXPECT_FALSE(FPDFText_SetCharcodes(nullptr, &kDummyValue, 1));
+  EXPECT_FALSE(FPDFText_SetCharcodes(nullptr, &kSampleValue, 0));
+  EXPECT_FALSE(FPDFText_SetCharcodes(nullptr, &kSampleValue, 1));
   EXPECT_FALSE(FPDFText_SetCharcodes(page_object, nullptr, 1));
   EXPECT_FALSE(FPDFText_SetCharcodes(page_object, nullptr, 0));
+}
+
+TEST_F(FPDFEditEmbedderTest, SetPositionsBadParams) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ASSERT_EQ(2, FPDFPage_CountObjects(page.get()));
+  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page.get(), 0);
+  ASSERT_TRUE(page_object);
+
+  ASSERT_EQ(2, FPDFPage_CountObjects(page.get()));
+  static constexpr auto kSamplePositions =
+      std::to_array<const float>({1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f,
+                                  8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f});
+  EXPECT_FALSE(FPDFText_SetPositions(nullptr, nullptr, 0));
+  EXPECT_FALSE(
+      FPDFText_SetPositions(nullptr, nullptr, kSamplePositions.size()));
+  EXPECT_FALSE(FPDFText_SetPositions(nullptr, kSamplePositions.data(), 0));
+  EXPECT_FALSE(FPDFText_SetPositions(nullptr, kSamplePositions.data(),
+                                     kSamplePositions.size()));
+  EXPECT_FALSE(FPDFText_SetPositions(page_object, nullptr, 1));
+
+  // "Hello, world!" has 13 characters, so it needs exactly 13 positions.
+  // Deliberately pass in the wrong positions count to make the API fail.
+  EXPECT_FALSE(FPDFText_SetPositions(page_object, kSamplePositions.data(), 12));
+  EXPECT_FALSE(FPDFText_SetPositions(page_object, kSamplePositions.data(), 14));
+
+  // `empty_text_object` has no characters, so passing in 13 positions fails.
+  ScopedFPDFPageObject empty_text_object(
+      FPDFPageObj_NewTextObj(document(), "Arial", 12.0f));
+  EXPECT_FALSE(FPDFText_SetPositions(empty_text_object.get(),
+                                     kSamplePositions.data(),
+                                     kSamplePositions.size()));
 }
 
 TEST_F(FPDFEditEmbedderTest, SetTextKeepClippingPath) {

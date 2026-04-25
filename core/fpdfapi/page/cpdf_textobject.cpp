@@ -14,6 +14,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
+#include "core/fxcrt/zip.h"
 
 #define ISLATINWORD(u) (u != 0x20 && u <= 0x28FF)
 
@@ -155,6 +156,35 @@ CPDF_TextObject* CPDF_TextObject::AsText() {
 
 const CPDF_TextObject* CPDF_TextObject::AsText() const {
   return this;
+}
+
+bool CPDF_TextObject::SetCharPositions(
+    pdfium::span<const float> char_positions) {
+  if (char_positions.size() != char_codes_.size()) {
+    return false;
+  }
+
+  if (char_codes_.empty()) {
+    return true;
+  }
+
+  RetainPtr<CPDF_Font> font = GetFont();
+  const float font_size = GetFontSize();
+  const CPDF_CIDFont* cid_font = font->AsCIDFont();
+  const float char_space = text_state().GetCharSpace();
+  const float word_space = text_state().GetWordSpace();
+
+  for (auto [char_code, position, kerning] :
+       fxcrt::Zip(char_codes_, char_positions, char_kernings_)) {
+    float new_position = GetCharWidth(char_code);
+    new_position += GetWordSpaceIfNeeded(cid_font, char_code, word_space);
+    new_position += char_space;
+
+    kerning = ((new_position - position) * 1000) / font_size;
+  }
+
+  CalcPositionDataInternal(font);
+  return true;
 }
 
 CFX_Matrix CPDF_TextObject::GetTextMatrix() const {
