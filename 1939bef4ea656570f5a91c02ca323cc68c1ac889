@@ -2258,6 +2258,24 @@
       "message": "Not sure if there are tests for SHA and AES. Correct me if not, but if this is the case lets add tests for these as well perhaps with an array of pairs of input and outputs.",
       "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "81496d61_e784179c",
+        "filename": "core/fdrm/fx_crypt_unittest.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 733,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-27T13:27:40Z",
+      "side": 1,
+      "message": "Nevermind they are already here.",
+      "parentUuid": "b8d00b1f_ebf1b702",
+      "revId": "1939bef4ea656570f5a91c02ca323cc68c1ac889",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
