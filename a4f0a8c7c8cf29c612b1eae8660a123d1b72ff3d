@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f961b570_196be8f2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 14
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-27T22:02:00Z",
+      "side": 1,
+      "message": "ask@ said the API should take the advance and offset separately from HarfBuzz. I\u0027ll probably change this API in response.",
+      "revId": "a4f0a8c7c8cf29c612b1eae8660a123d1b72ff3d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

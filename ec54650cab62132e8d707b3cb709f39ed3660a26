@@ -22,6 +22,30 @@
       },
       "revId": "ec54650cab62132e8d707b3cb709f39ed3660a26",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2b9ebb31_4324c80b",
+        "filename": "core/fpdfapi/page/cpdf_textobject.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-27T22:02:00Z",
+      "side": 1,
+      "message": "Can also happen with `/FontName 0 Tf`. It now fails.",
+      "parentUuid": "04fa70c8_73b93710",
+      "range": {
+        "startLine": 183,
+        "startChar": 51,
+        "endLine": 183,
+        "endChar": 60
+      },
+      "revId": "ec54650cab62132e8d707b3cb709f39ed3660a26",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
