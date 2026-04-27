@@ -35,6 +35,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0b939dd6_4a18e09d",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 793,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-27T18:55:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "478204a5_63bde7b2",
+      "revId": "80ddf8e932bbc6faf768d037c77cd836e95f7e5c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ea373b0a_80030bb7",
@@ -48,6 +66,24 @@
       "writtenOn": "2026-04-27T17:52:43Z",
       "side": 1,
       "message": "Should we test non-null and 0 count as well for completeness?",
+      "revId": "80ddf8e932bbc6faf768d037c77cd836e95f7e5c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "28d06976_a4ff9825",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 811,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-27T18:55:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ea373b0a_80030bb7",
       "revId": "80ddf8e932bbc6faf768d037c77cd836e95f7e5c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
