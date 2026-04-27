@@ -1334,6 +1334,26 @@ FPDFText_SetCharcodes(FPDF_PAGEOBJECT text_object,
                       const uint32_t* charcodes,
                       size_t count);
 
+// Experimental API.
+// Set the character positions for a text object.
+//
+// text_object  - handle to the text object.
+// positions    - pointer to an array of relative advances to be set.
+// count        - number of elements in |positions|.
+//
+// The |positions| array specifies the relative advances in points for each
+// character. The direction is either horizontal or vertical, depending on the
+// direction of text in |text_object|.
+//
+// For a text object with N characters, |count| must be N. The text object also
+// needs to have a non-zero font size.
+//
+// Returns TRUE on success.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFText_SetPositions(FPDF_PAGEOBJECT text_object,
+                      const float* positions,
+                      size_t count);
+
 // Returns a font object loaded from a stream of data. The font is loaded
 // into the document. Various font data structures, such as the ToUnicode data,
 // are auto-generated based on the inputs.
