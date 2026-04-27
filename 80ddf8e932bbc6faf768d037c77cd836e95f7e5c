@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7959e478_51d8fc89",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2026-04-27T17:52:43Z",
+      "side": 1,
+      "message": "LGTM",
+      "revId": "80ddf8e932bbc6faf768d037c77cd836e95f7e5c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "478204a5_63bde7b2",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 793,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2026-04-27T17:52:43Z",
+      "side": 1,
+      "message": "You should also test calling it with nullptr since that\u0027s documented",
+      "revId": "80ddf8e932bbc6faf768d037c77cd836e95f7e5c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ea373b0a_80030bb7",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 811,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2026-04-27T17:52:43Z",
+      "side": 1,
+      "message": "Should we test non-null and 0 count as well for completeness?",
+      "revId": "80ddf8e932bbc6faf768d037c77cd836e95f7e5c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
