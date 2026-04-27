@@ -39,6 +39,30 @@
       },
       "revId": "ced4881f2599921a33d8cf634379276300e09199",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e3b9aa32_305ac34c",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-27T16:18:08Z",
+      "side": 1,
+      "message": "It\u0027s fine to leave this as-is, since FPDFText_GetCharBox() takes them in this order.",
+      "parentUuid": "df89fd05_5bd9f016",
+      "range": {
+        "startLine": 137,
+        "startChar": 0,
+        "endLine": 140,
+        "endChar": 19
+      },
+      "revId": "ced4881f2599921a33d8cf634379276300e09199",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
