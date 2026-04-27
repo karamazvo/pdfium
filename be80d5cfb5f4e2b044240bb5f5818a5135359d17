@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e85c7187_ff6290f0",
+        "filename": "core/fdrm/fx_crypt_sha_unittest.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-27T13:01:31Z",
+      "side": 1,
+      "message": "string_view?",
+      "range": {
+        "startLine": 22,
+        "startChar": 2,
+        "endLine": 22,
+        "endChar": 26
+      },
+      "revId": "be80d5cfb5f4e2b044240bb5f5818a5135359d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aa772f2a_daedae4a",
+        "filename": "core/fdrm/fx_crypt_sha_unittest.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-27T13:01:31Z",
+      "side": 1,
+      "message": "// Commonly used text samples",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 32
+      },
+      "revId": "be80d5cfb5f4e2b044240bb5f5818a5135359d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2976ce23_b66e200b",
+        "filename": "core/fdrm/fx_crypt_sha_unittest.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-27T13:01:31Z",
+      "side": 1,
+      "message": "// Text samples for streaming tests",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 18
+      },
+      "revId": "be80d5cfb5f4e2b044240bb5f5818a5135359d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bd974ac1_7ef6c42d",
+        "filename": "core/fdrm/fx_crypt_sha_unittest.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-27T13:01:31Z",
+      "side": 1,
+      "message": "static constexpr?",
+      "range": {
+        "startLine": 54,
+        "startChar": 2,
+        "endLine": 54,
+        "endChar": 11
+      },
+      "revId": "be80d5cfb5f4e2b044240bb5f5818a5135359d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "99d48118_7882c07a",
+        "filename": "core/fdrm/fx_crypt_sha_unittest.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-27T13:01:31Z",
+      "side": 1,
+      "message": "This could be heavily dried by taking it common as a helper.",
+      "range": {
+        "startLine": 62,
+        "startChar": 0,
+        "endLine": 67,
+        "endChar": 3
+      },
+      "revId": "be80d5cfb5f4e2b044240bb5f5818a5135359d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
