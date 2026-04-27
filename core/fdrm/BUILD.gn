@@ -23,7 +23,10 @@ source_set("fdrm") {
 }
 
 pdfium_unittest_source_set("unittests") {
-  sources = [ "fx_crypt_unittest.cpp" ]
+  sources = [
+    "fx_crypt_sha_unittest.cpp",
+    "fx_crypt_unittest.cpp",
+  ]
   deps = [ ":fdrm" ]
   pdfium_root_dir = "../../"
 }
