@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8736a6a2_1da507a8",
+        "filename": "core/fdrm/fx_crypt_sha_unittest.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-27T13:17:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e85c7187_ff6290f0",
+      "range": {
+        "startLine": 22,
+        "startChar": 2,
+        "endLine": 22,
+        "endChar": 26
+      },
+      "revId": "be80d5cfb5f4e2b044240bb5f5818a5135359d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "aa772f2a_daedae4a",
@@ -37,6 +61,30 @@
       "writtenOn": "2026-04-27T13:01:31Z",
       "side": 1,
       "message": "// Commonly used text samples",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 32
+      },
+      "revId": "be80d5cfb5f4e2b044240bb5f5818a5135359d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "99f5fb71_58bf0001",
+        "filename": "core/fdrm/fx_crypt_sha_unittest.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-27T13:17:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aa772f2a_daedae4a",
       "range": {
         "startLine": 25,
         "startChar": 0,
@@ -70,6 +118,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "dd137273_88fdcefb",
+        "filename": "core/fdrm/fx_crypt_sha_unittest.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-27T13:17:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2976ce23_b66e200b",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 18
+      },
+      "revId": "be80d5cfb5f4e2b044240bb5f5818a5135359d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bd974ac1_7ef6c42d",
@@ -93,6 +165,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "dd7c2ddd_a83f26f8",
+        "filename": "core/fdrm/fx_crypt_sha_unittest.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-27T13:17:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bd974ac1_7ef6c42d",
+      "range": {
+        "startLine": 54,
+        "startChar": 2,
+        "endLine": 54,
+        "endChar": 11
+      },
+      "revId": "be80d5cfb5f4e2b044240bb5f5818a5135359d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "99d48118_7882c07a",
@@ -106,6 +202,30 @@
       "writtenOn": "2026-04-27T13:01:31Z",
       "side": 1,
       "message": "This could be heavily dried by taking it common as a helper.",
+      "range": {
+        "startLine": 62,
+        "startChar": 0,
+        "endLine": 67,
+        "endChar": 3
+      },
+      "revId": "be80d5cfb5f4e2b044240bb5f5818a5135359d17",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "14dc1dc4_bf5779cf",
+        "filename": "core/fdrm/fx_crypt_sha_unittest.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-27T13:17:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "99d48118_7882c07a",
       "range": {
         "startLine": 62,
         "startChar": 0,
