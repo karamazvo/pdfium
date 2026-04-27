@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "04fa70c8_73b93710",
+        "filename": "core/fpdfapi/page/cpdf_textobject.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-04-27T17:24:51Z",
+      "side": 1,
+      "message": "FPDFPageObj_NewTextObj() accepts font sizes of 0, so we should guard against divide by zero.",
+      "range": {
+        "startLine": 183,
+        "startChar": 51,
+        "endLine": 183,
+        "endChar": 60
+      },
+      "revId": "ec54650cab62132e8d707b3cb709f39ed3660a26",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
