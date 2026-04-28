@@ -34,6 +34,24 @@
       "parentUuid": "f961b570_196be8f2",
       "revId": "a4f0a8c7c8cf29c612b1eae8660a123d1b72ff3d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "61251087_0acabfb0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 14
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2026-04-28T16:14:48Z",
+      "side": 1,
+      "message": "For 2D offset there is 9.3.7 Text rise (Ts) in the PDF spec but you can only have one per Tj. Ideally we would be able to split a CPDF_TextObject into multiple Tj, TJ and Ts operators internally. So then users could just pass in the the 2D offset.",
+      "parentUuid": "45a5fd22_96e39e7a",
+      "revId": "a4f0a8c7c8cf29c612b1eae8660a123d1b72ff3d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
