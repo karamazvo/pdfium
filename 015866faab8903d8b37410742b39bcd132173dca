@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2521eb22_eabf8074",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3293871
+      },
+      "writtenOn": "2026-04-28T12:23:47Z",
+      "side": 1,
+      "message": "Hi Tom and Lei! PTAL at this trivial CL",
+      "revId": "015866faab8903d8b37410742b39bcd132173dca",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
