@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8bdb10c0_416d7dba",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-28T21:37:27Z",
+      "side": 1,
+      "message": "This version of the API has been updated based on comments from the relative positioning API CL. The test cases are nearly identical, except inputs have been adjusted to work with absolute positioning.",
+      "revId": "6dfa7031ec151ebfc76a3fbb6104f9b0a2621b27",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
