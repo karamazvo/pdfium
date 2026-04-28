@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "145c2d9b_b781e9e2",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-28T12:59:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6b68bdab_4e77b3aa",
+      "range": {
+        "startLine": 142,
+        "startChar": 25,
+        "endLine": 142,
+        "endChar": 26
+      },
+      "revId": "42e2511e3bdbedf36236078c5bb002a96e685b0f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5cde7f4e_ccd3f565",
@@ -47,6 +71,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2c7e759d_a5695f69",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 752,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-28T12:59:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5cde7f4e_ccd3f565",
+      "range": {
+        "startLine": 752,
+        "startChar": 55,
+        "endLine": 752,
+        "endChar": 61
+      },
+      "revId": "42e2511e3bdbedf36236078c5bb002a96e685b0f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d9d42fbe_2a2b34df",
@@ -60,6 +108,24 @@
       "writtenOn": "2026-04-27T17:36:01Z",
       "side": 1,
       "message": "Nit: any reason why there\u0027s different ordering of EXPECTs between these functions?",
+      "revId": "42e2511e3bdbedf36236078c5bb002a96e685b0f",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3307bf1b_ce966080",
+        "filename": "testing/utils/compare_coordinates.cc",
+        "patchSetId": 17
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-28T12:59:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d9d42fbe_2a2b34df",
       "revId": "42e2511e3bdbedf36236078c5bb002a96e685b0f",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
