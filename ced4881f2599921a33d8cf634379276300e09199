@@ -110,6 +110,23 @@
       },
       "revId": "ced4881f2599921a33d8cf634379276300e09199",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0b7a5cea_728c326c",
+        "filename": "fpdfsdk/fpdf_text_embeddertest.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-28T19:59:23Z",
+      "side": 1,
+      "message": "Thanks for resolving the merge conflict.",
+      "revId": "ced4881f2599921a33d8cf634379276300e09199",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
