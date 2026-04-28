@@ -52,6 +52,24 @@
       "parentUuid": "45a5fd22_96e39e7a",
       "revId": "a4f0a8c7c8cf29c612b1eae8660a123d1b72ff3d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "42910a76_8e76c9e9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 14
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-28T16:39:27Z",
+      "side": 1,
+      "message": "I previously mentioned offline that it can\u0027t be split internally. It\u0027s a 1:1 mapping between a text FPDF_PAGEOBJECT and a CPDF_TextObject. The latest patchset has examples of glyphs that have x and y offsets, and the test case shows how it\u0027s handled with multiple text FPDF_PAGEOBJECTs.",
+      "parentUuid": "61251087_0acabfb0",
+      "revId": "a4f0a8c7c8cf29c612b1eae8660a123d1b72ff3d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
