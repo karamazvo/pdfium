@@ -16,6 +16,24 @@
       "message": "ask@ said the API should take the advance and offset separately from HarfBuzz. I\u0027ll probably change this API in response.",
       "revId": "a4f0a8c7c8cf29c612b1eae8660a123d1b72ff3d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "45a5fd22_96e39e7a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 14
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2026-04-28T16:01:44Z",
+      "side": 1,
+      "message": "Right, it should take glyph advance (which affects the position of the next glyph) and glyph offset (which affects the position of the current glyph) separately. \n\nHarfbuzz returns offset in 2D but I believe that can\u0027t be done within a single text object in a PDF so we can take 1D offset and a flag for whether it\u0027s vertical or horizontal (applying to both advance and offset). I think it would be fine if we do is_horizontal in a separate CL later.\n\nOtherwise users calling Harfbuzz directly will have to first convert to absolute then back to relative or do some otherwise tricky math to get the offsets added into the relative advance numbers.",
+      "parentUuid": "f961b570_196be8f2",
+      "revId": "a4f0a8c7c8cf29c612b1eae8660a123d1b72ff3d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
