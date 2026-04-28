@@ -69,7 +69,13 @@ class CPDF_TextObject final : public CPDF_PageObject {
   const std::vector<float>& GetCharKernings() const { return char_kernings_; }
   const std::vector<float>& GetCharPositions() const { return char_positions_; }
 
-  // Caller is expected to call SetDirty(true) when done changing the object.
+  // Caller is expected to call SetDirty(true) when done changing the object
+  // using these setters.
+  //
+  // Returns false if `advances` or `offsets` is not the same size as
+  // `char_codes_`.
+  bool SetCharPositions(pdfium::span<const float> advances,
+                        pdfium::span<const float> offsets);
   void SetTextMatrix(const CFX_Matrix& matrix);
 
   void SetSegments(pdfium::span<const ByteString> strings,

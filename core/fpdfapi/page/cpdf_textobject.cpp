@@ -14,6 +14,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
+#include "core/fxcrt/zip.h"
 
 #define ISLATINWORD(u) (u != 0x20 && u <= 0x28FF)
 
@@ -155,6 +156,56 @@ CPDF_TextObject* CPDF_TextObject::AsText() {
 
 const CPDF_TextObject* CPDF_TextObject::AsText() const {
   return this;
+}
+
+bool CPDF_TextObject::SetCharPositions(pdfium::span<const float> advances,
+                                       pdfium::span<const float> offsets) {
+  const size_t count = char_codes_.size();
+  if (advances.size() != count || offsets.size() != count) {
+    return false;
+  }
+
+  if (count == 0) {
+    return true;
+  }
+
+  const float font_size = GetFontSize();
+  if (font_size == 0.0f) {
+    return false;
+  }
+
+  RetainPtr<CPDF_Font> font = GetFont();
+  const CPDF_CIDFont* cid_font = font->AsCIDFont();
+  const float char_space = text_state().GetCharSpace();
+  const float word_space = text_state().GetWordSpace();
+
+  if (offsets[0] != 0.0f) {
+    const CFX_Matrix matrix = GetTextMatrix();
+    const bool is_vertical = IsVertWritingCIDFont(cid_font);
+    if (is_vertical) {
+      pos_ += matrix.Transform(CFX_PointF(0, offsets[0])) -
+              matrix.Transform(CFX_PointF());
+    } else {
+      pos_ += matrix.Transform(CFX_PointF(offsets[0], 0)) -
+              matrix.Transform(CFX_PointF());
+    }
+  }
+
+  for (size_t i = 0; i < count; ++i) {
+    float standard_advance =
+        GetCharWidth(char_codes_[i]) +
+        GetWordSpaceIfNeeded(cid_font, char_codes_[i], word_space) + char_space;
+    float actual_advance = advances[i] - offsets[i];
+    if (i < count - 1) {
+      actual_advance += offsets[i + 1];
+    }
+
+    char_kernings_[i] =
+        ((standard_advance - actual_advance) * 1000) / font_size;
+  }
+
+  CalcPositionDataInternal(font);
+  return true;
 }
 
 CFX_Matrix CPDF_TextObject::GetTextMatrix() const {
