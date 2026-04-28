@@ -7,6 +7,7 @@
 #include <array>
 #include <limits>
 #include <memory>
+#include <numeric>
 #include <ostream>
 #include <string>
 #include <utility>
@@ -350,6 +351,163 @@ TEST_F(FPDFEditEmbedderTest, EmbedNotoSansSCFontWithCharcodes) {
 
   ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedDocumentWithExpectationSuffix(kNotoSansScPng);
+}
+
+TEST_F(FPDFEditEmbedderTest, SetPositionsBengali2) {
+  CreateEmptyDocument();
+  ScopedFPDFPage page(FPDFPage_New(document(), 0, 200, 200));
+
+  std::string font_path = PathService::GetThirdPartyFilePath(
+      "NotoSansBengali2/NotoSansBengali-Regular.subset.ttf");
+  ASSERT_FALSE(font_path.empty());
+  std::vector<uint8_t> font_data = GetFileContents(font_path.c_str());
+  ASSERT_FALSE(font_data.empty());
+
+  ScopedFPDFFont font(FPDFText_LoadFont(document(), font_data.data(),
+                                        font_data.size(), FPDF_FONT_TRUETYPE,
+                                        /*cid=*/true));
+  ASSERT_TRUE(font);
+
+  static constexpr float kFontSize = 20.0f;
+  static constexpr int kUpem = 1000;
+
+  // Calculated by HarfBuzz for "পরিকল্পনা". Then normalize to points.
+  static constexpr auto kCharCodes =
+      std::to_array<const uint32_t>({3, 9, 5, 1, 30, 2, 8});
+  static constexpr auto kAdvances = std::to_array<const float>(
+      {716 * kFontSize / kUpem, 266 * kFontSize / kUpem,
+       596 * kFontSize / kUpem, 807 * kFontSize / kUpem,
+       748 * kFontSize / kUpem, 604 * kFontSize / kUpem,
+       266 * kFontSize / kUpem});
+  static constexpr auto kOffsets =
+      std::to_array<const float>({0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f});
+  static_assert(kAdvances.size() == kOffsets.size());
+
+  ScopedFPDFPageObject text_object(
+      FPDFPageObj_CreateTextObj(document(), font.get(), kFontSize));
+  ASSERT_TRUE(text_object);
+  EXPECT_TRUE(FPDFText_SetCharcodes(text_object.get(), kCharCodes.data(),
+                                    kCharCodes.size()));
+  EXPECT_TRUE(FPDFText_SetPositions(text_object.get(), kAdvances.data(),
+                                    kOffsets.data(), kAdvances.size()));
+
+  static constexpr FS_MATRIX kMatrix{1.0f, 0.0f, 0.0f, 1.0f, 40.0f, 60.0f};
+  ASSERT_TRUE(FPDFPageObj_TransformF(text_object.get(), &kMatrix));
+  EXPECT_TRUE(FPDFPage_InsertObject(page.get(), text_object.release()));
+
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+
+  static constexpr char kExpected[] = "set_positions_bengali2";
+  ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
+  CompareBitmapWithExpectationSuffix(page_bitmap.get(), kExpected);
+
+  ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedDocumentWithExpectationSuffix(kExpected);
+}
+
+TEST_F(FPDFEditEmbedderTest, SetPositionsBengali3) {
+  CreateEmptyDocument();
+  ScopedFPDFPage page(FPDFPage_New(document(), 0, 200, 200));
+
+  std::string font_path = PathService::GetThirdPartyFilePath(
+      "NotoSansBengali3/NotoSansBengali-Regular.subset.ttf");
+  ASSERT_FALSE(font_path.empty());
+  std::vector<uint8_t> font_data = GetFileContents(font_path.c_str());
+  ASSERT_FALSE(font_data.empty());
+
+  ScopedFPDFFont font(FPDFText_LoadFont(document(), font_data.data(),
+                                        font_data.size(), FPDF_FONT_TRUETYPE,
+                                        /*cid=*/true));
+  ASSERT_TRUE(font);
+
+  static constexpr FS_POINTF kStartPosition{40.0f, 60.0f};
+  static constexpr float kFontSize = 20.0f;
+  static constexpr int kUpem = 1000;
+
+  // Calculated by HarfBuzz for "পরিকল্পনা". Then normalize to points.
+  static constexpr auto kCharCodes1 =
+      std::to_array<const uint32_t>({4, 10, 6, 2, 21, 24});
+  static constexpr auto kCharCodes2 = std::to_array<const uint32_t>({36});
+  static constexpr auto kCharCodes3 = std::to_array<const uint32_t>({3, 9});
+  static constexpr auto kAdvances1 = std::to_array<const float>(
+      {716 * kFontSize / kUpem, 266 * kFontSize / kUpem,
+       596 * kFontSize / kUpem, 807 * kFontSize / kUpem,
+       402 * kFontSize / kUpem, 264 * kFontSize / kUpem});
+  static constexpr auto kAdvances2 = std::to_array<const float>({0});
+  static constexpr auto kAdvances3 = std::to_array<const float>(
+      {602 * kFontSize / kUpem, 266 * kFontSize / kUpem});
+  static constexpr auto kOffsets1 =
+      std::to_array<const float>({0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f});
+  static constexpr auto kOffsets2 =
+      std::to_array<const float>({-614 * kFontSize / kUpem});
+  static constexpr auto kOffsetsY2 = -80 * kFontSize / kUpem;
+  static constexpr auto kOffsets3 = std::to_array<const float>({0.0f, 0.0f});
+  static_assert(kAdvances1.size() == kOffsets1.size());
+  static_assert(kAdvances2.size() == kOffsets2.size());
+  static_assert(kAdvances3.size() == kOffsets3.size());
+
+  {
+    ScopedFPDFPageObject text_object(
+        FPDFPageObj_CreateTextObj(document(), font.get(), kFontSize));
+    ASSERT_TRUE(text_object);
+    EXPECT_TRUE(FPDFText_SetCharcodes(text_object.get(), kCharCodes1.data(),
+                                      kCharCodes1.size()));
+    EXPECT_TRUE(FPDFText_SetPositions(text_object.get(), kAdvances1.data(),
+                                      kOffsets1.data(), kAdvances1.size()));
+
+    static constexpr FS_MATRIX kMatrix{
+        1.0f, 0.0f, 0.0f, 1.0f, kStartPosition.x, kStartPosition.y};
+    ASSERT_TRUE(FPDFPageObj_TransformF(text_object.get(), &kMatrix));
+    EXPECT_TRUE(FPDFPage_InsertObject(page.get(), text_object.release()));
+  }
+  {
+    ScopedFPDFPageObject text_object(
+        FPDFPageObj_CreateTextObj(document(), font.get(), kFontSize));
+    ASSERT_TRUE(text_object);
+    EXPECT_TRUE(FPDFText_SetCharcodes(text_object.get(), kCharCodes2.data(),
+                                      kCharCodes2.size()));
+    EXPECT_TRUE(FPDFText_SetPositions(text_object.get(), kAdvances2.data(),
+                                      kOffsets2.data(), kAdvances2.size()));
+
+    static constexpr FS_MATRIX kMatrix{
+        1.0f,
+        0.0f,
+        0.0f,
+        1.0f,
+        std::accumulate(kAdvances1.begin(), kAdvances1.end(), kStartPosition.x),
+        kStartPosition.y + kOffsetsY2};
+    ASSERT_TRUE(FPDFPageObj_TransformF(text_object.get(), &kMatrix));
+    EXPECT_TRUE(FPDFPage_InsertObject(page.get(), text_object.release()));
+  }
+  {
+    ScopedFPDFPageObject text_object(
+        FPDFPageObj_CreateTextObj(document(), font.get(), kFontSize));
+    ASSERT_TRUE(text_object);
+    EXPECT_TRUE(FPDFText_SetCharcodes(text_object.get(), kCharCodes3.data(),
+                                      kCharCodes3.size()));
+    EXPECT_TRUE(FPDFText_SetPositions(text_object.get(), kAdvances3.data(),
+                                      kOffsets3.data(), kAdvances3.size()));
+
+    static constexpr FS_MATRIX kMatrix{
+        1.0f,
+        0.0f,
+        0.0f,
+        1.0f,
+        std::accumulate(kAdvances1.begin(), kAdvances1.end(), kStartPosition.x),
+        kStartPosition.y};
+    ASSERT_TRUE(FPDFPageObj_TransformF(text_object.get(), &kMatrix));
+    EXPECT_TRUE(FPDFPage_InsertObject(page.get(), text_object.release()));
+  }
+
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+
+  static constexpr char kExpected[] = "set_positions_bengali3";
+  ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
+  CompareBitmapWithExpectationSuffix(page_bitmap.get(), kExpected);
+
+  // OpenPDFFileForWrite("b.pdf");
+  ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedDocumentWithExpectationSuffix(kExpected);
 }
 
 TEST_F(FPDFEditEmbedderTest, Bug2094) {
@@ -780,6 +938,220 @@ TEST_F(FPDFEditEmbedderTest, SetText) {
   }
 }
 
+TEST_F(FPDFEditEmbedderTest, SetPositions) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  // Get the "Hello, world!" text object and change its character spacing.
+  ASSERT_EQ(2, FPDFPage_CountObjects(page.get()));
+  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page.get(), 0);
+  ASSERT_TRUE(page_object);
+
+  static constexpr auto kAdvances = std::to_array<const float>({
+      9.863999f,
+      5.328f,
+      5.736f,
+      3.336001f,
+      4.200001f,
+      3.0f,
+      3.0f,
+      8.663997f,
+      6.0f,
+      3.995998f,
+      3.336001f,
+      12.0f,
+      10.0f,
+  });
+  static constexpr auto kOffsets = std::to_array<const float>({
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+  });
+  static_assert(kAdvances.size() == kOffsets.size());
+  ASSERT_TRUE(FPDFText_SetPositions(page_object, kAdvances.data(),
+                                    kOffsets.data(), kAdvances.size()));
+
+  // Remove the other text object, just like in the Bug410996566 test case.
+  {
+    ScopedFPDFPageObject obj(FPDFPage_GetObject(page.get(), 1));
+    ASSERT_TRUE(FPDFPage_RemoveObject(page.get(), obj.get()));
+  }
+  ASSERT_TRUE(FPDFPage_GenerateContent(page.get()));
+
+  // `empty_text_object` has no characters, so passing in 0 characters succeeds,
+  // even though it is a no-op.
+  ScopedFPDFPageObject empty_text_object(
+      FPDFPageObj_NewTextObj(document(), "Arial", 12.0f));
+  EXPECT_TRUE(
+      FPDFText_SetPositions(empty_text_object.get(), nullptr, nullptr, 0));
+
+  static constexpr char kExpected[] = "bug_410996566";
+  {
+    ScopedFPDFBitmap bitmap = RenderPage(page.get());
+    CompareBitmapWithExpectationSuffix(bitmap.get(), kExpected);
+  }
+
+  ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedDocumentWithExpectationSuffix(kExpected);
+}
+
+TEST_F(FPDFEditEmbedderTest, SetPositionsNonZeroOffset) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ASSERT_EQ(2, FPDFPage_CountObjects(page.get()));
+  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page.get(), 0);
+  ASSERT_TRUE(page_object);
+
+  static constexpr FS_MATRIX kMatrix{1.0f, 0.0f, 0.0f, 1.0f, 14.9f, 50.0f};
+  ASSERT_TRUE(FPDFPageObj_SetMatrix(page_object, &kMatrix));
+
+  static constexpr auto kAdvances = std::to_array<const float>({
+      14.963999f,
+      5.328f,
+      5.736f,
+      3.336001f,
+      4.200001f,
+      3.0f,
+      3.0f,
+      8.663997f,
+      6.0f,
+      3.995998f,
+      3.336001f,
+      12.0f,
+      10.0f,
+  });
+  static constexpr auto kOffsets = std::to_array<const float>({
+      5.1f,
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+  });
+  static_assert(kAdvances.size() == kOffsets.size());
+  ASSERT_TRUE(FPDFText_SetPositions(page_object, kAdvances.data(),
+                                    kOffsets.data(), kAdvances.size()));
+
+  // Remove the other text object, just like in the Bug410996566 test case.
+  {
+    ScopedFPDFPageObject obj(FPDFPage_GetObject(page.get(), 1));
+    ASSERT_TRUE(FPDFPage_RemoveObject(page.get(), obj.get()));
+  }
+  ASSERT_TRUE(FPDFPage_GenerateContent(page.get()));
+
+  static constexpr char kExpected[] = "bug_410996566";
+  {
+    ScopedFPDFBitmap bitmap = RenderPage(page.get());
+    CompareBitmapWithExpectationSuffix(bitmap.get(), kExpected);
+  }
+
+  ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedDocumentWithExpectationSuffix(kExpected);
+}
+
+TEST_F(FPDFEditEmbedderTest, SetPositionsZeroFontSize) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  FPDF_PAGEOBJECT text_object_size_zero =
+      FPDFPageObj_NewTextObj(document(), "Arial", 0.0f);
+  ASSERT_TRUE(text_object_size_zero);
+  FPDFPage_InsertObject(page.get(), text_object_size_zero);
+
+  static constexpr auto kCharCodes = std::to_array<const uint32_t>({
+      'H',
+      'e',
+      'l',
+      'l',
+      'o',
+  });
+  ASSERT_TRUE(FPDFText_SetCharcodes(text_object_size_zero, kCharCodes.data(),
+                                    kCharCodes.size()));
+
+  static constexpr auto kAdvances = std::to_array<const float>({
+      1.0f,
+      2.0f,
+      3.0f,
+      4.0f,
+      5.0f,
+  });
+  static constexpr auto kOffsets = std::to_array<const float>({
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+  });
+  static_assert(kAdvances.size() == kOffsets.size());
+  // This fails because the font size is 0.
+  EXPECT_FALSE(FPDFText_SetPositions(text_object_size_zero, kAdvances.data(),
+                                     kOffsets.data(), kAdvances.size()));
+}
+
+TEST_F(FPDFEditEmbedderTest, SetPositionsVertical) {
+  ASSERT_TRUE(OpenDocument("vertical_text.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ASSERT_EQ(3, FPDFPage_CountObjects(page.get()));
+  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page.get(), 0);
+  ASSERT_TRUE(page_object);
+
+  static constexpr FS_MATRIX kMatrix{1.0f, 0.0f, 0.0f, 1.0f, 10.0f, 180.0f};
+  ASSERT_TRUE(FPDFPageObj_SetMatrix(page_object, &kMatrix));
+
+  static constexpr auto kAdvances = std::to_array<const float>({
+      -2.216003f,
+      -7.476002f,
+      -11.016003f,
+      -13.416003f,
+      -8.676002f,
+      0.0f,
+  });
+  static constexpr auto kOffsets = std::to_array<const float>({
+      10.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+      0.0f,
+  });
+  static_assert(kAdvances.size() == kOffsets.size());
+  ASSERT_TRUE(FPDFText_SetPositions(page_object, kAdvances.data(),
+                                    kOffsets.data(), kAdvances.size()));
+
+  static constexpr char kExpected[] = "vertical_text_positioned";
+  {
+    ScopedFPDFBitmap bitmap = RenderPage(page.get());
+    CompareBitmapWithFuzzyExpectationSuffix(bitmap.get(), kExpected);
+  }
+  ASSERT_TRUE(FPDFPage_GenerateContent(page.get()));
+
+  ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedDocumentWithFuzzyExpectationSuffix(kExpected);
+}
+
 TEST_F(FPDFEditEmbedderTest, SetTextBadParams) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   ScopedPage page = LoadScopedPage(0);
@@ -817,6 +1189,48 @@ TEST_F(FPDFEditEmbedderTest, SetCharcodesBadParams) {
   EXPECT_FALSE(FPDFText_SetCharcodes(page_object, nullptr, 0));
   EXPECT_FALSE(FPDFText_SetCharcodes(page_object, nullptr, 1));
   EXPECT_FALSE(FPDFText_SetCharcodes(page_object, &kPlaceholderValue, 0));
+}
+
+TEST_F(FPDFEditEmbedderTest, SetPositionsBadParams) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ASSERT_EQ(2, FPDFPage_CountObjects(page.get()));
+  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page.get(), 0);
+  ASSERT_TRUE(page_object);
+
+  ASSERT_EQ(2, FPDFPage_CountObjects(page.get()));
+  static constexpr auto kSampleAdvances =
+      std::to_array<const float>({1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f,
+                                  8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f});
+  EXPECT_FALSE(FPDFText_SetPositions(nullptr, nullptr, nullptr, 0));
+  EXPECT_FALSE(
+      FPDFText_SetPositions(nullptr, nullptr, nullptr, kSampleAdvances.size()));
+  EXPECT_FALSE(FPDFText_SetPositions(nullptr, kSampleAdvances.data(),
+                                     kSampleAdvances.data(), 0));
+  EXPECT_FALSE(FPDFText_SetPositions(nullptr, kSampleAdvances.data(),
+                                     kSampleAdvances.data(),
+                                     kSampleAdvances.size()));
+  EXPECT_FALSE(FPDFText_SetPositions(page_object, nullptr, nullptr, 1));
+  EXPECT_FALSE(
+      FPDFText_SetPositions(page_object, kSampleAdvances.data(), nullptr, 13));
+  EXPECT_FALSE(
+      FPDFText_SetPositions(page_object, nullptr, kSampleAdvances.data(), 13));
+
+  // "Hello, world!" has 13 characters, so it needs exactly 13 positions.
+  // Deliberately pass in the wrong positions count to make the API fail.
+  EXPECT_FALSE(FPDFText_SetPositions(page_object, kSampleAdvances.data(),
+                                     kSampleAdvances.data(), 12));
+  EXPECT_FALSE(FPDFText_SetPositions(page_object, kSampleAdvances.data(),
+                                     kSampleAdvances.data(), 14));
+
+  // `empty_text_object` has no characters, so passing in 13 positions fails.
+  ScopedFPDFPageObject empty_text_object(
+      FPDFPageObj_NewTextObj(document(), "Arial", 12.0f));
+  EXPECT_FALSE(
+      FPDFText_SetPositions(empty_text_object.get(), kSampleAdvances.data(),
+                            kSampleAdvances.data(), kSampleAdvances.size()));
 }
 
 TEST_F(FPDFEditEmbedderTest, SetTextKeepClippingPath) {
