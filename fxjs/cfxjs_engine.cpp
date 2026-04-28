@@ -213,7 +213,7 @@ class CFXJS_ObjDefinition {
 
   void DefineProperty(v8::Local<v8::String> sPropName,
                       v8::AccessorNameGetterCallback pPropGet,
-                      v8::AccessorNameSetterCallback pPropPut) {
+                      v8::AccessorNameSetterCallbackV2 pPropPut) {
     GetInstanceTemplate()->SetNativeDataProperty(sPropName, pPropGet, pPropPut);
   }
 
@@ -227,7 +227,7 @@ class CFXJS_ObjDefinition {
 
   void DefineAllProperties(v8::NamedPropertyQueryCallback pPropQurey,
                            v8::NamedPropertyGetterCallback pPropGet,
-                           v8::NamedPropertySetterCallback pPropPut,
+                           v8::NamedPropertySetterCallbackV2 pPropPut,
                            v8::NamedPropertyDeleterCallback pPropDel,
                            v8::NamedPropertyEnumeratorCallback pPropEnum) {
     GetInstanceTemplate()->SetHandler(v8::NamedPropertyHandlerConfiguration(
@@ -452,10 +452,11 @@ void CFXJS_Engine::DefineObjMethod(uint32_t nObjDefnID,
   pObjDef->DefineMethod(NewString(sMethodName), pMethodCall);
 }
 
-void CFXJS_Engine::DefineObjProperty(uint32_t nObjDefnID,
-                                     const char* sPropName,
-                                     v8::AccessorNameGetterCallback pPropGet,
-                                     v8::AccessorNameSetterCallback pPropPut) {
+void CFXJS_Engine::DefineObjProperty(
+    uint32_t nObjDefnID,
+    const char* sPropName,
+    v8::AccessorNameGetterCallback pPropGet,
+    v8::AccessorNameSetterCallbackV2 pPropPut) {
   v8::Isolate::Scope isolate_scope(GetIsolate());
   v8::HandleScope handle_scope(GetIsolate());
   CFXJS_PerIsolateData* pIsolateData = CFXJS_PerIsolateData::Get(GetIsolate());
@@ -467,7 +468,7 @@ void CFXJS_Engine::DefineObjAllProperties(
     uint32_t nObjDefnID,
     v8::NamedPropertyQueryCallback pPropQurey,
     v8::NamedPropertyGetterCallback pPropGet,
-    v8::NamedPropertySetterCallback pPropPut,
+    v8::NamedPropertySetterCallbackV2 pPropPut,
     v8::NamedPropertyDeleterCallback pPropDel,
     v8::NamedPropertyEnumeratorCallback pPropEnum) {
   v8::Isolate::Scope isolate_scope(GetIsolate());

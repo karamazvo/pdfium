@@ -100,7 +100,7 @@ v8::Intercepted CJS_Global::getprop_static(
 v8::Intercepted CJS_Global::putprop_static(
     v8::Local<v8::Name> property,
     v8::Local<v8::Value> value,
-    const v8::PropertyCallbackInfo<void>& info) {
+    const v8::PropertyCallbackInfo<v8::Boolean>& info) {
   auto pObj = JSGetObject<CJS_Global>(info.GetIsolate(), info.HolderV2());
   if (!pObj) {
     return v8::Intercepted::kNo;

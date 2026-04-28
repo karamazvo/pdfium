@@ -256,7 +256,7 @@ v8::Intercepted NamedPropertyGetterCallback(
 v8::Intercepted NamedPropertySetterCallback(
     v8::Local<v8::Name> property,
     v8::Local<v8::Value> value,
-    const v8::PropertyCallbackInfo<void>& info) {
+    const v8::PropertyCallbackInfo<v8::Boolean>& info) {
   const FXJSE_CLASS_DESCRIPTOR* pClass =
       AsClassDescriptor(info.Data().As<v8::External>()->Value(
           v8::kExternalPointerTypeTagDefault));

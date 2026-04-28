@@ -135,11 +135,11 @@ class CFXJS_Engine : public CFX_V8 {
   void DefineObjProperty(uint32_t nObjDefnID,
                          const char* sPropName,
                          v8::AccessorNameGetterCallback pPropGet,
-                         v8::AccessorNameSetterCallback pPropPut);
+                         v8::AccessorNameSetterCallbackV2 pPropPut);
   void DefineObjAllProperties(uint32_t nObjDefnID,
                               v8::NamedPropertyQueryCallback pPropQurey,
                               v8::NamedPropertyGetterCallback pPropGet,
-                              v8::NamedPropertySetterCallback pPropPut,
+                              v8::NamedPropertySetterCallbackV2 pPropPut,
                               v8::NamedPropertyDeleterCallback pPropDel,
                               v8::NamedPropertyEnumeratorCallback pPropEnum);
   void DefineObjConst(uint32_t nObjDefnID,

@@ -262,7 +262,7 @@ TEST_F(CFXV8UnitTest, ThrowFromSetter) {
           ->SetNativeDataProperty(
               context, name, nullptr,
               [](v8::Local<v8::Name> property, v8::Local<v8::Value> value,
-                 const v8::PropertyCallbackInfo<void>& info) {
+                 const v8::PropertyCallbackInfo<v8::Boolean>& info) {
                 setter_sentinel = true;
                 info.GetIsolate()->ThrowException(property);
               })
