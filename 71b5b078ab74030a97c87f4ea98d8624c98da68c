@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "23f266ce_4359807e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-29T17:01:24Z",
+      "side": 1,
+      "message": "Hey guys, another small (pretty mechanical) edit, found this issue to replace some of the char pointers with ByteStrings. Would want to update FPDF_BYTESTRING to be of a type such that I dont need to .c_str() when calling it, but not sure what the policy for updating public api is. Do let me know if I should do so in this cl, add a comment that the type is to be changed or something similar. Thanks!",
+      "revId": "71b5b078ab74030a97c87f4ea98d8624c98da68c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
