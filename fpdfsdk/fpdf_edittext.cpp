@@ -414,6 +414,29 @@ FPDFText_SetCharcodes(FPDF_PAGEOBJECT text_object,
   return true;
 }
 
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFText_SetPositions(FPDF_PAGEOBJECT text_object,
+                      const float* positions,
+                      size_t count) {
+  CPDF_TextObject* text_obj = CPDFTextObjectFromFPDFPageObject(text_object);
+  if (!text_obj) {
+    return false;
+  }
+
+  if (!positions && count) {
+    return false;
+  }
+
+  // SAFETY: required from caller.
+  auto positions_span = UNSAFE_BUFFERS(pdfium::span(positions, count));
+  if (!text_obj->SetAbsolutePositions(positions_span)) {
+    return false;
+  }
+
+  text_obj->SetDirty(true);
+  return true;
+}
+
 FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFText_LoadFont(FPDF_DOCUMENT document,
                                                       const uint8_t* data,
                                                       uint32_t size,
