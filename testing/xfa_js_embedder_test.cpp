@@ -59,7 +59,7 @@ v8::Local<v8::Value> XFAJSEmbedderTest::GetValue() const {
 
 bool XFAJSEmbedderTest::OpenDocumentWithOptions(
     const std::string& filename,
-    const char* password,
+    const ByteString& password,
     LinearizeOption linearize_option,
     JavaScriptOption javascript_option) {
   // JS required for XFA.

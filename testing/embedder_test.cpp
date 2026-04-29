@@ -605,7 +605,7 @@ bool EmbedderTest::OpenDocumentLinearized(const std::string& filename) {
 }
 
 bool EmbedderTest::OpenDocumentWithPassword(const std::string& filename,
-                                            const char* password) {
+                                            const ByteString& password) {
   return OpenDocumentWithOptions(filename, password,
                                  LinearizeOption::kDefaultLinearize,
                                  JavaScriptOption::kEnableJavaScript);
@@ -618,7 +618,7 @@ bool EmbedderTest::OpenDocumentWithoutJavaScript(const std::string& filename) {
 }
 
 bool EmbedderTest::OpenDocumentWithOptions(const std::string& filename,
-                                           const char* password,
+                                           const ByteString& password,
                                            LinearizeOption linearize_option,
                                            JavaScriptOption javascript_option) {
   std::string file_path = PathService::GetTestFilePath(filename);
@@ -646,7 +646,7 @@ bool EmbedderTest::OpenDocumentWithOptions(const std::string& filename,
                             &form_handle_);
 }
 
-bool EmbedderTest::OpenDocumentHelper(const char* password,
+bool EmbedderTest::OpenDocumentHelper(const ByteString& password,
                                       LinearizeOption linearize_option,
                                       JavaScriptOption javascript_option,
                                       FakeFileAccess* network_simulator,
@@ -670,7 +670,7 @@ bool EmbedderTest::OpenDocumentHelper(const char* password,
       return false;
     }
 
-    document->reset(FPDFAvail_GetDocument(avail_ptr, password));
+    document->reset(FPDFAvail_GetDocument(avail_ptr, password.c_str()));
     document_ptr = document->get();
     if (!document_ptr) {
       return false;
@@ -703,8 +703,8 @@ bool EmbedderTest::OpenDocumentHelper(const char* password,
       return false;
     }
     network_simulator->SetWholeFileAvailable();
-    document->reset(
-        FPDF_LoadCustomDocument(network_simulator->GetFileAccess(), password));
+    document->reset(FPDF_LoadCustomDocument(network_simulator->GetFileAccess(),
+                                            password.c_str()));
     document_ptr = document->get();
     if (!document_ptr) {
       return false;
@@ -979,7 +979,7 @@ EmbedderTest::ScopedSavedDoc EmbedderTest::OpenScopedSavedDocument() {
 }
 
 EmbedderTest::ScopedSavedDoc EmbedderTest::OpenScopedSavedDocumentWithPassword(
-    const char* password) {
+    const ByteString& password) {
   return ScopedSavedDoc(this, password);
 }
 
@@ -995,7 +995,7 @@ int EmbedderTest::BytesPerPixelForFormat(int format) {
 }
 
 FPDF_DOCUMENT EmbedderTest::OpenSavedDocumentWithPassword(
-    const char* password) {
+    const ByteString& password) {
   // Copy data to prevent clearing it before saved document close.
   saved_document_file_data_ = data_string_;
   saved_file_access_ = {
@@ -1268,7 +1268,7 @@ EmbedderTest::ScopedSavedDoc::ScopedSavedDoc(EmbedderTest* test)
     : test_(test), doc_(test->OpenSavedDocument()) {}
 
 EmbedderTest::ScopedSavedDoc::ScopedSavedDoc(EmbedderTest* test,
-                                             const char* password)
+                                             const ByteString& password)
     : test_(test), doc_(test->OpenSavedDocumentWithPassword(password)) {}
 
 EmbedderTest::ScopedSavedDoc::ScopedSavedDoc(ScopedSavedDoc&& that) noexcept
