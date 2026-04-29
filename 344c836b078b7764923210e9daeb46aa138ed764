@@ -54,6 +54,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1d174e03_d492aa20",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 1035,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-29T17:39:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "faaf68fe_f70b3308",
+      "revId": "344c836b078b7764923210e9daeb46aa138ed764",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a641d823_20d9879b",
@@ -71,6 +89,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6b359149_96cc2dce",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 1066,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-29T17:39:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a641d823_20d9879b",
+      "revId": "344c836b078b7764923210e9daeb46aa138ed764",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ac1dd658_16b9a029",
@@ -84,6 +120,30 @@
       "writtenOn": "2026-04-28T23:41:51Z",
       "side": 1,
       "message": "or vertical, depending on the direction of text.",
+      "range": {
+        "startLine": 1344,
+        "startChar": 39,
+        "endLine": 1344,
+        "endChar": 49
+      },
+      "revId": "344c836b078b7764923210e9daeb46aa138ed764",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "daacbbc9_09a7a2aa",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 10
+      },
+      "lineNbr": 1344,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-29T17:39:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ac1dd658_16b9a029",
       "range": {
         "startLine": 1344,
         "startChar": 39,
