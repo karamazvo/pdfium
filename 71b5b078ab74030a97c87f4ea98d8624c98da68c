@@ -51,6 +51,24 @@
       "message": "Got red bots.",
       "revId": "71b5b078ab74030a97c87f4ea98d8624c98da68c",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "15fa45df_724f6a39",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-29T17:43:12Z",
+      "side": 1,
+      "message": "Right thanks for the update, found these other xfa_js_embedder_test files that needed the char* change too.",
+      "parentUuid": "99c2b2d3_c0892444",
+      "revId": "71b5b078ab74030a97c87f4ea98d8624c98da68c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
