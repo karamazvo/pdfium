@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "60f24630_40d284ec",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 11
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2026-04-29T20:50:16Z",
+      "side": 1,
+      "message": "lgtm let\u0027s submit this one",
+      "revId": "1c55cafb7654eedebff18573facf7f07b1b157f1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3f1221ea_a7e5cd50",
+        "filename": "core/fpdfapi/page/cpdf_textobject.h",
+        "patchSetId": 11
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2026-04-29T20:50:16Z",
+      "side": 1,
+      "message": "Might make sense to rename this to SetAbsolutePositions just because of the private member named char_positions_ which this function does not directly set.",
+      "revId": "1c55cafb7654eedebff18573facf7f07b1b157f1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ded8c9b2_df1b8b5d",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 887,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2026-04-29T20:50:16Z",
+      "side": 1,
+      "message": "Maybe it makes sense to make more of these arrays on one line just to save space. I don\u0027t think anyone is actually reading the numbers.",
+      "revId": "1c55cafb7654eedebff18573facf7f07b1b157f1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e42fb6a1_f83b03e6",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 1057,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2026-04-29T20:50:16Z",
+      "side": 1,
+      "message": "It would be good to test a TextObj with only one charcode",
+      "revId": "1c55cafb7654eedebff18573facf7f07b1b157f1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "adc39050_36b000ca",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 11
+      },
+      "lineNbr": 1355,
+      "author": {
+        "id": 4336344
+      },
+      "writtenOn": "2026-04-29T20:50:16Z",
+      "side": 1,
+      "message": "Should we make it FPDFText_SetGlyphPositions or do you think FPDFText_SetPositions is clear enough? I wonder if people might thing SetPositions is the position of the text object but the doc comment does make it clear.",
+      "revId": "1c55cafb7654eedebff18573facf7f07b1b157f1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
