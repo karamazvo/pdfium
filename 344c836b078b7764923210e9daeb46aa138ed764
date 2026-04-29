@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "faaf68fe_f70b3308",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 1035,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-29T17:32:20Z",
+      "side": 1,
+      "message": "Thanks for the suggestion, but I tried that in another CL [1] and it didn\u0027t work. [2] I know there\u0027s a red bot here and will fix it soon.\n\n[1] https://pdfium-review.googlesource.com/c/pdfium/+/144910/19/fpdfsdk/fpdf_edit_embeddertest.cpp#1148\n[2] https://ci.chromium.org/ui/p/pdfium/builders/try/mac_xfa_skia_rust_x86/1438",
+      "parentUuid": "200df44b_d06c7027",
+      "revId": "344c836b078b7764923210e9daeb46aa138ed764",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a641d823_20d9879b",
         "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
         "patchSetId": 10
