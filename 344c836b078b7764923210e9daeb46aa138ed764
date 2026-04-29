@@ -3,6 +3,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "200df44b_d06c7027",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 1035,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-29T13:10:36Z",
+      "side": 1,
+      "message": "I think this should have been Fuzzy (like line 1032). This may be the reason for the red x86 mac bot.\n\n```suggestion\n  VerifySavedDocumentWithFuzzyExpectationSuffix(kExpected);\n```",
+      "revId": "344c836b078b7764923210e9daeb46aa138ed764",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a641d823_20d9879b",
         "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
         "patchSetId": 10
