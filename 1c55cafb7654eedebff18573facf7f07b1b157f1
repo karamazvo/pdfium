@@ -105,6 +105,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "26787b31_1779268c",
+        "filename": "fpdfsdk/fpdf_edit_embeddertest.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 1057,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-29T21:18:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e42fb6a1_f83b03e6",
+      "revId": "1c55cafb7654eedebff18573facf7f07b1b157f1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "adc39050_36b000ca",
@@ -154,6 +172,24 @@
       "side": 1,
       "message": "We could use SetCharcodePositions since it would match SetCharcodes. SetPositions is fine too though. Whichever you like better.",
       "parentUuid": "2e53db0e_4e6bbf9f",
+      "revId": "1c55cafb7654eedebff18573facf7f07b1b157f1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "89445bce_1b7d109f",
+        "filename": "public/fpdf_edit.h",
+        "patchSetId": 11
+      },
+      "lineNbr": 1355,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-04-29T21:18:17Z",
+      "side": 1,
+      "message": "I\u0027m going to stick with the slightly vague SetPositions. An embedder can potentially use it with FPDFText_SetText().",
+      "parentUuid": "26d53bef_abd23f5c",
       "revId": "1c55cafb7654eedebff18573facf7f07b1b157f1",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
