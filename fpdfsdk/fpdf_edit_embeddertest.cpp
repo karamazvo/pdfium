@@ -2149,6 +2149,54 @@ TEST_F(FPDFEditEmbedderTest, InsertObjectAtIndex) {
   EXPECT_FALSE(FPDFPage_InsertObjectAtIndex(nullptr, img6, 0));
 }
 
+TEST_F(FPDFEditEmbedderTest, InsertObjectAtIndexZeroPersistsOrder) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  // hello_world.pdf has 2 existing text objects.
+  ASSERT_EQ(2, FPDFPage_CountObjects(page.get()));
+  ASSERT_EQ(FPDF_PAGEOBJ_TEXT,
+            FPDFPageObj_GetType(FPDFPage_GetObject(page.get(), 0)));
+  ASSERT_EQ(FPDF_PAGEOBJ_TEXT,
+            FPDFPageObj_GetType(FPDFPage_GetObject(page.get(), 1)));
+
+  // Insert a rectangle at index 0; this should be drawn first (underneath the
+  // existing text).
+  FPDF_PAGEOBJECT red_rect = FPDFPageObj_CreateNewRect(20, 100, 50, 50);
+  EXPECT_TRUE(FPDFPageObj_SetFillColor(red_rect, 255, 0, 0, 255));
+  EXPECT_TRUE(FPDFPath_SetDrawMode(red_rect, FPDF_FILLMODE_ALTERNATE, 0));
+  EXPECT_TRUE(FPDFPage_InsertObjectAtIndex(page.get(), red_rect, 0));
+
+  // In-memory ordering is correct.
+  ASSERT_EQ(3, FPDFPage_CountObjects(page.get()));
+  EXPECT_EQ(FPDF_PAGEOBJ_PATH,
+            FPDFPageObj_GetType(FPDFPage_GetObject(page.get(), 0)));
+  EXPECT_EQ(FPDF_PAGEOBJ_TEXT,
+            FPDFPageObj_GetType(FPDFPage_GetObject(page.get(), 1)));
+  EXPECT_EQ(FPDF_PAGEOBJ_TEXT,
+            FPDFPageObj_GetType(FPDFPage_GetObject(page.get(), 2)));
+
+  // Save and reopen.
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+
+  ScopedSavedDoc saved_document = OpenScopedSavedDocument();
+  ASSERT_TRUE(saved_document);
+  ScopedSavedPage saved_page = LoadScopedSavedPage(0);
+  ASSERT_TRUE(saved_page);
+
+  // After save+reopen, the inserted rectangle must still be at index 0,
+  // followed by the two existing text objects.
+  ASSERT_EQ(3, FPDFPage_CountObjects(saved_page.get()));
+  EXPECT_EQ(FPDF_PAGEOBJ_PATH,
+            FPDFPageObj_GetType(FPDFPage_GetObject(saved_page.get(), 0)));
+  EXPECT_EQ(FPDF_PAGEOBJ_TEXT,
+            FPDFPageObj_GetType(FPDFPage_GetObject(saved_page.get(), 1)));
+  EXPECT_EQ(FPDF_PAGEOBJ_TEXT,
+            FPDFPageObj_GetType(FPDFPage_GetObject(saved_page.get(), 2)));
+}
+
 TEST_F(FPDFEditEmbedderTest, InsertAndRemoveLargeFile) {
   const int kOriginalObjectCount = 600;
 
