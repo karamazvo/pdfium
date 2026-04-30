@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a65987d5_5f6db7fb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-30T02:32:19Z",
+      "side": 1,
+      "message": "Also had a quick question - was working on adding a bunch of new public apis for dictionary access per issue [1], do these (similarly to other user-facing features) need design docs?\n\n[1] - https://issues.chromium.org/issues/42270701",
+      "revId": "f946cacd85454656c568f1b1894b77bc1204e230",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
