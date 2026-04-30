@@ -24,6 +24,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "19c49572_decbfcc2",
+        "filename": "testing/embedder_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 987,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-30T02:13:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "985443dc_2b7d7829",
+      "range": {
+        "startLine": 987,
+        "startChar": 39,
+        "endLine": 987,
+        "endChar": 46
+      },
+      "revId": "41a5135daa8b2728a83ef41589432f9c6fa1fa36",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3d9dec45_fba8107f",
@@ -37,6 +61,30 @@
       "writtenOn": "2026-04-29T18:59:40Z",
       "side": 1,
       "message": "Comment needs updating.",
+      "range": {
+        "startLine": 186,
+        "startChar": 64,
+        "endLine": 187,
+        "endChar": 15
+      },
+      "revId": "41a5135daa8b2728a83ef41589432f9c6fa1fa36",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d57b72dd_5ec9bbcd",
+        "filename": "testing/embedder_test.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-30T02:13:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3d9dec45_fba8107f",
       "range": {
         "startLine": 186,
         "startChar": 64,
