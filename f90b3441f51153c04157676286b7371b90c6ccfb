@@ -16,6 +16,29 @@
       "message": "Hey guys, saw this (pretty old) issue about page dictionaries and found an existing CPDF_ api for this so I thought about making it public (while also adding a set of tests for public API and a few more things. Let me know if we:\n\na. Need any documentation/design docs of any kind\nb. If there needs to be any discussion on whether to go ahead with the feature.\n\nThe page dictionary is likely just a start and after this I\u0027d want to give a shot at some of the other dictionaries.\nThanks!",
       "revId": "f90b3441f51153c04157676286b7371b90c6ccfb",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bac4bb51_dc19d8d6",
+        "filename": "fpdfsdk/fpdf_dict.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-30T16:52:27Z",
+      "side": 1,
+      "message": "This could probably UAF, so need to find a way around it, might consider the buffer/buflen that a lot of other apis use.",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 6
+      },
+      "revId": "f90b3441f51153c04157676286b7371b90c6ccfb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
