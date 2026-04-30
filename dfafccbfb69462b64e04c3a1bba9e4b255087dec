@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a4895c19_45c2d3c6",
+        "filename": "third_party/NotoSansBengali2/README.pdfium",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 9307
+      },
+      "writtenOn": "2026-04-30T04:34:27Z",
+      "side": 1,
+      "message": "It\u0027s not enforced yet, but eventually the presubmits will complain if there isn\u0027t an exception against things that are static. \n\nhttps://chromium.googlesource.com/chromium/src/+/HEAD/docs/adding_to_third_party.md#Static-Static_HardFork\n\nIf you file the bugs with a justification, please just assign them to me and I\u0027ll approve them since we don\u0027t really want to roll test fonts. Sorry for the busywork here, exception management is a real pain.",
+      "revId": "dfafccbfb69462b64e04c3a1bba9e4b255087dec",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}

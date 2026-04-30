@@ -16,6 +16,24 @@
       "message": "renewitt@: Just wanted to get a review and make sure:\n\n1) It is ok to have 2 versions of a test font checked in. AFAIKChromium-related projects don\u0027t have an \"one version\" rule, right? They are sufficiently different that it makes sense to test with both an older style font from 2020 and a newer style font from the last 1-2 years.\n2) The README files are correct.",
       "revId": "9b77ee5e8ff609b3408a3c9292248c4203d9d47e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c2c63bf6_f0ec7a9f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9307
+      },
+      "writtenOn": "2026-04-30T04:34:27Z",
+      "side": 1,
+      "message": "Yes, all good to have two versions if they\u0027re needed. No one version policy in sight for us. Left a future proofing comment against the update mechanism. I will also ask @rop@google.com when they get back to roll out the readme validator to this GoB host to make this checking more automated. Filed",
+      "parentUuid": "16cf5e26_e20379b2",
+      "revId": "9b77ee5e8ff609b3408a3c9292248c4203d9d47e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
