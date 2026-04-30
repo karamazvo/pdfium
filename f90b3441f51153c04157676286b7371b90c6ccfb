@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bddcb7fd_818fbd31",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-04-30T10:46:50Z",
+      "side": 1,
+      "message": "Hey guys, saw this (pretty old) issue about page dictionaries and found an existing CPDF_ api for this so I thought about making it public (while also adding a set of tests for public API and a few more things. Let me know if we:\n\na. Need any documentation/design docs of any kind\nb. If there needs to be any discussion on whether to go ahead with the feature.\n\nThe page dictionary is likely just a start and after this I\u0027d want to give a shot at some of the other dictionaries.\nThanks!",
+      "revId": "f90b3441f51153c04157676286b7371b90c6ccfb",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
