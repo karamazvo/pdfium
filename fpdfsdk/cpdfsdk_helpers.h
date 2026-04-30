@@ -106,6 +106,13 @@ inline CPDF_Dictionary* CPDFDictionaryFromFPDFBookmark(FPDF_BOOKMARK bookmark) {
   return reinterpret_cast<CPDF_Dictionary*>(bookmark);
 }
 
+CPDF_Dictionary* CPDFDictFromFPDFDict(FPDF_DICTIONARY dict) {
+  return reinterpret_cast<CPDF_Dictionary*>(dict);
+}
+FPDF_DICTIONARY FPDFDictFromCPDFDict(CPDF_Dictionary* dict) {
+  return reinterpret_cast<FPDF_DICTIONARY>(dict);
+}
+
 inline FPDF_CLIPPATH FPDFClipPathFromCPDFClipPath(CPDF_ClipPath* path) {
   return reinterpret_cast<FPDF_CLIPPATH>(path);
 }

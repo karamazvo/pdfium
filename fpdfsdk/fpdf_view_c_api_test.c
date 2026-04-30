@@ -136,6 +136,16 @@ int CheckPDFiumCApi() {
     CHK(FPDFAvail_IsLinearized);
     CHK(FPDFAvail_IsPageAvail);
 
+    // fpdf_dict.h
+    CHK(FPDF_DictionaryGetBool);
+    CHK(FPDF_DictionaryGetDict);
+    CHK(FPDF_DictionaryGetFloat);
+    CHK(FPDF_DictionaryGetInt);
+    CHK(FPDF_DictionaryGetMatrix);
+    CHK(FPDF_DictionaryGetRect);
+    CHK(FPDF_DictionaryGetString);
+    CHK(FPDF_GetPageDictionary);
+
     // fpdf_doc.h
     CHK(FPDFAction_GetDest);
     CHK(FPDFAction_GetFilePath);
