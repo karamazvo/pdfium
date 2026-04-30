@@ -13,6 +13,7 @@
 #include "public/fpdf_attachment.h"
 #include "public/fpdf_catalog.h"
 #include "public/fpdf_dataavail.h"
+#include "public/fpdf_dict.h"
 #include "public/fpdf_doc.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdf_ext.h"
@@ -135,6 +136,16 @@ int CheckPDFiumCApi() {
     CHK(FPDFAvail_IsFormAvail);
     CHK(FPDFAvail_IsLinearized);
     CHK(FPDFAvail_IsPageAvail);
+
+    // fpdf_dict.h
+    CHK(FPDF_DictionaryGetBool);
+    CHK(FPDF_DictionaryGetDict);
+    CHK(FPDF_DictionaryGetFloat);
+    CHK(FPDF_DictionaryGetInt);
+    CHK(FPDF_DictionaryGetMatrix);
+    CHK(FPDF_DictionaryGetRect);
+    CHK(FPDF_DictionaryGetString);
+    CHK(FPDF_GetPageDictionary);
 
     // fpdf_doc.h
     CHK(FPDFAction_GetDest);
