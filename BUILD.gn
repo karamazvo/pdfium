@@ -198,6 +198,7 @@ source_set("pdfium_public_headers_impl") {
     "public/fpdf_attachment.h",
     "public/fpdf_catalog.h",
     "public/fpdf_dataavail.h",
+    "public/fpdf_dict.h",
     "public/fpdf_doc.h",
     "public/fpdf_edit.h",
     "public/fpdf_ext.h",
