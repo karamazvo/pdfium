@@ -18,6 +18,7 @@
 #include "core/fxcrt/span.h"
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/dib/fx_dib.h"
+#include "public/fpdf_dict.h"
 #include "public/fpdf_doc.h"
 #include "public/fpdf_ext.h"
 #include "public/fpdfview.h"
@@ -104,6 +105,13 @@ inline FPDF_BOOKMARK FPDFBookmarkFromCPDFDictionary(
 }
 inline CPDF_Dictionary* CPDFDictionaryFromFPDFBookmark(FPDF_BOOKMARK bookmark) {
   return reinterpret_cast<CPDF_Dictionary*>(bookmark);
+}
+
+inline const CPDF_Dictionary* CPDFDictFromFPDFDict(FPDF_DICTIONARY dict) {
+  return reinterpret_cast<const CPDF_Dictionary*>(dict);
+}
+inline FPDF_DICTIONARY FPDFDictFromCPDFDict(const CPDF_Dictionary* dict) {
+  return reinterpret_cast<FPDF_DICTIONARY>(dict);
 }
 
 inline FPDF_CLIPPATH FPDFClipPathFromCPDFClipPath(CPDF_ClipPath* path) {
