@@ -4,7 +4,7 @@
  *
  *   PostScript glyph names.
  *
- * Copyright (C) 2005-2025 by
+ * Copyright (C) 2005-2026 by
  * David Turner, Robert Wilhelm, and Werner Lemberg.
  *
  * This file is part of the FreeType project, and may only be used,
@@ -15,9 +15,7 @@
  *
  */
 
-
-  /* This file has been generated automatically -- do not edit! */
-
+/* This file has been generated automatically -- do not edit! */
 
 #ifndef  DEFINE_PS_TABLES_DATA
 #ifdef  __cplusplus
