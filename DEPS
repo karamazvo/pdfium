@@ -232,7 +232,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling siso
   # and whatever else without interference from each other.
-  'siso_version': 'git_revision:7bcc56206d234b3024df08ffd4ee6d40eea32623',
+  'siso_version': 'git_revision:8629cde6728d25cde0f6fc1e6ae6b5886e0ebe41',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling skia
   # and whatever else without interference from each other.
