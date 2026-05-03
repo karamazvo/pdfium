@@ -47,6 +47,54 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6484ece4_68c75c5d",
+        "filename": "core/fpdfdoc/cpdf_annotlist.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 4788551
+      },
+      "writtenOn": "2026-05-03T20:58:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "93ad0de1_92f7bf4c",
+      "range": {
+        "startLine": 122,
+        "startChar": 2,
+        "endLine": 122,
+        "endChar": 7
+      },
+      "revId": "6dded069a4b14deeeec83cfe9bd2da78e21cbc3e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f96fce17_0357ec0f",
+        "filename": "core/fpdfdoc/cpdf_annotlist.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 4788551
+      },
+      "writtenOn": "2026-05-03T20:58:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b259c6f1_449ad69e",
+      "range": {
+        "startLine": 122,
+        "startChar": 14,
+        "endLine": 122,
+        "endChar": 23
+      },
+      "revId": "6dded069a4b14deeeec83cfe9bd2da78e21cbc3e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d935ea49_361b68e2",
@@ -60,6 +108,24 @@
       "writtenOn": "2026-04-24T01:19:42Z",
       "side": 1,
       "message": "Just do nothing here since the matrix starts out as the identity matrix.",
+      "revId": "6dded069a4b14deeeec83cfe9bd2da78e21cbc3e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c7700946_7521f578",
+        "filename": "core/fpdfdoc/cpdf_annotlist.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 4788551
+      },
+      "writtenOn": "2026-05-03T20:58:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d935ea49_361b68e2",
       "revId": "6dded069a4b14deeeec83cfe9bd2da78e21cbc3e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
@@ -87,6 +153,30 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7f3c1744_c8e1c928",
+        "filename": "core/fpdfdoc/cpdf_annotlist.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 4788551
+      },
+      "writtenOn": "2026-05-03T20:58:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c1a7867b_66a3a0bc",
+      "range": {
+        "startLine": 149,
+        "startChar": 27,
+        "endLine": 149,
+        "endChar": 29
+      },
+      "revId": "6dded069a4b14deeeec83cfe9bd2da78e21cbc3e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1e2b031c_ed7309ef",
@@ -100,6 +190,30 @@
       "writtenOn": "2026-04-24T01:19:42Z",
       "side": 1,
       "message": "Combine",
+      "range": {
+        "startLine": 175,
+        "startChar": 0,
+        "endLine": 176,
+        "endChar": 47
+      },
+      "revId": "6dded069a4b14deeeec83cfe9bd2da78e21cbc3e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "87343037_53027714",
+        "filename": "core/fpdfdoc/cpdf_annotlist.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 4788551
+      },
+      "writtenOn": "2026-05-03T20:58:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1e2b031c_ed7309ef",
       "range": {
         "startLine": 175,
         "startChar": 0,
