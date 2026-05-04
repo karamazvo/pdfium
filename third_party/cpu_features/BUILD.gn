@@ -26,6 +26,9 @@ source_set("cpuinfo") {
     "src/src/stack_line_reader.c",
     "src/src/string_view.c",
   ]
+  if (is_linux || is_android) {
+    sources += [ "src/src/hwcaps_linux_or_android.c" ]
+  }
   if (current_cpu == "x86" || current_cpu == "x64") {
     sources += [
       "src/src/impl_x86__base_implementation.inl",
