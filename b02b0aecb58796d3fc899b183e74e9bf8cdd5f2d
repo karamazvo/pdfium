@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f46f8091_a2a08048",
+        "filename": "core/fpdfdoc/cpdf_annotlist.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-05-05T02:02:57Z",
+      "side": 1,
+      "message": "Should this be:\n\n```\n  if (rotated_popup_rect.bottom \u003c 0) {\n    rotated_new_pos.y \u003d rotated_rect.top + kPopupSize;\n  } else if (rotated_popup_rect.top \u003e page_height) {\n    rotated_new_pos.y \u003d rotated_rect.bottom - kPopupSize;\n  }\n```\n\nto avoid setting `y` twice when the page size is too small?",
+      "range": {
+        "startLine": 158,
+        "startChar": 0,
+        "endLine": 163,
+        "endChar": 3
+      },
+      "revId": "b02b0aecb58796d3fc899b183e74e9bf8cdd5f2d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "513d31c4_ecee3fa8",
+        "filename": "core/fpdfdoc/cpdf_annotlist.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-05-05T02:02:57Z",
+      "side": 1,
+      "message": "Would it be slightly better to handle left/right before top/down?",
+      "revId": "b02b0aecb58796d3fc899b183e74e9bf8cdd5f2d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3b086c86_85134c8f",
+        "filename": "core/fpdfdoc/cpdf_annotlist.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-05-05T02:02:57Z",
+      "side": 1,
+      "message": "One more snake_case here.",
+      "range": {
+        "startLine": 171,
+        "startChar": 13,
+        "endLine": 171,
+        "endChar": 19
+      },
+      "revId": "b02b0aecb58796d3fc899b183e74e9bf8cdd5f2d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
