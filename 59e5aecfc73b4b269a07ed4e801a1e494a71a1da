@@ -88,6 +88,24 @@
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0cc83fc9_d53e52a6",
+        "filename": "testing/resources/pixel/bug_504284794_1.in",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-05-05T02:03:43Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "e9266143_71631715",
+      "revId": "59e5aecfc73b4b269a07ed4e801a1e494a71a1da",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e9e69ef8_79f24b67",
@@ -154,6 +172,24 @@
       "side": 1,
       "message": "Done. I hope that I didn\u0027t mess that up",
       "parentUuid": "5a0e5e2e_117ce883",
+      "revId": "59e5aecfc73b4b269a07ed4e801a1e494a71a1da",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "75aab0aa_104e9bcf",
+        "filename": "testing/resources/pixel/bug_504284794_1_expected.pdf.0.png",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-05-05T02:03:43Z",
+      "side": 1,
+      "message": "Still got an unhappy bot.",
+      "parentUuid": "49cd6000_02dda788",
       "revId": "59e5aecfc73b4b269a07ed4e801a1e494a71a1da",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
