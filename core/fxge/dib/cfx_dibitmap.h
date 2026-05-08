@@ -171,7 +171,10 @@ class CFX_DIBitmap final : public CFX_DIBBase {
                      int height,
                      uint32_t color);
 
-  void ConvertColorScale(uint32_t forecolor, uint32_t backcolor);
+  // When `is_white_on_black` is true, the foreground is white and the
+  // background is black. When `is_white_on_black` is false, the colors are
+  // flipped.
+  void ConvertColorScale(bool is_white_on_black);
 
   // |width| and |height| must be greater than 0.
   // |format| must have a valid bits per pixel count.
@@ -198,7 +201,8 @@ class CFX_DIBitmap final : public CFX_DIBBase {
   CFX_DIBitmap(const CFX_DIBitmap& src);
   ~CFX_DIBitmap() override;
 
-  void ConvertBGRColorScale(uint32_t forecolor, uint32_t backcolor);
+  // See comment for `ConvertColorScale()`.
+  void ConvertBGRColorScale(bool is_white_on_black);
   bool TransferWithUnequalFormats(FXDIB_Format dest_format,
                                   int dest_left,
                                   int dest_top,
