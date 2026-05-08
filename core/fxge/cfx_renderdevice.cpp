@@ -569,6 +569,7 @@ void CFX_RenderDevice::RestoreState(bool bKeepSaved) {
   }
 }
 
+#if BUILDFLAG(IS_WIN)
 int CFX_RenderDevice::GetHorzSize() const {
   return device_driver_->GetHorzSize();
 }
@@ -576,6 +577,7 @@ int CFX_RenderDevice::GetHorzSize() const {
 int CFX_RenderDevice::GetVertSize() const {
   return device_driver_->GetVertSize();
 }
+#endif
 
 RetainPtr<CFX_DIBitmap> CFX_RenderDevice::GetBitmap() {
   return bitmap_;
