@@ -61,7 +61,6 @@ class CFX_RenderDevice {
   int GetHeight() const { return height_; }
   DeviceType GetDeviceType() const { return device_type_; }
   bool RenderCapGetBits() const { return render_cap_get_bits_; }
-  bool RenderCapAlphaPath() const { return render_cap_alpha_path_; }
   bool RenderCapAlphaImage() const { return render_cap_alpha_image_; }
   bool RenderCapBlendMode() const { return render_cap_blend_mode_; }
   bool RenderCapSoftClip() const { return render_cap_soft_clip_; }
@@ -254,7 +253,6 @@ class CFX_RenderDevice {
   int height_ = 0;
   int bpp_ = 0;
   bool render_cap_get_bits_ = false;
-  bool render_cap_alpha_path_ = false;
   bool render_cap_alpha_image_ = false;
   bool render_cap_blend_mode_ = false;
   bool render_cap_soft_clip_ = false;
