@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "83ba9839_e85d1b3c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 20
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-05-08T17:43:54Z",
+      "side": 1,
+      "message": "Again, we\u0027re just going to leave this as-is or replace with base, as the crypto impl is kind of a no-go zone. Sorry to disappoint.",
+      "revId": "0165630fe07d4b6f9f4d6a5481b89271c8cd7f48",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
