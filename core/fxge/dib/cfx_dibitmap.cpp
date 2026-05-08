@@ -457,16 +457,9 @@ uint32_t CFX_DIBitmap::GetPixelForTesting(int x, int y) const {
 }
 #endif  // defined(PDF_USE_SKIA)
 
-void CFX_DIBitmap::ConvertBGRColorScale(uint32_t forecolor,
-                                        uint32_t backcolor) {
-  int fr = FXSYS_GetRValue(forecolor);
-  int fg = FXSYS_GetGValue(forecolor);
-  int fb = FXSYS_GetBValue(forecolor);
-  int br = FXSYS_GetRValue(backcolor);
-  int bg = FXSYS_GetGValue(backcolor);
-  int bb = FXSYS_GetBValue(backcolor);
+void CFX_DIBitmap::ConvertBGRColorScale(bool is_white_on_black) {
   if (GetBPP() <= 8) {
-    if (forecolor == 0 && backcolor == 0xffffff && !HasPalette()) {
+    if (!is_white_on_black && !HasPalette()) {
       return;
     }
 
@@ -475,25 +468,10 @@ void CFX_DIBitmap::ConvertBGRColorScale(uint32_t forecolor,
     for (int i = 0; i < size; ++i) {
       int gray = FXRGB2GRAY(FXARGB_R(palette_[i]), FXARGB_G(palette_[i]),
                             FXARGB_B(palette_[i]));
-      palette_[i] =
-          ArgbEncode(0xff, br + (fr - br) * gray / 255,
-                     bg + (fg - bg) * gray / 255, bb + (fb - bb) * gray / 255);
-    }
-    return;
-  }
-  if (forecolor == 0 && backcolor == 0xffffff) {
-    for (int row = 0; row < GetHeight(); ++row) {
-      UNSAFE_TODO({
-        uint8_t* scanline = buffer_.Get() + row * GetPitch();
-        const int gap = GetBPP() / 8 - 2;
-        for (int col = 0; col < GetWidth(); ++col) {
-          int gray = FXRGB2GRAY(scanline[2], scanline[1], scanline[0]);
-          *scanline++ = gray;
-          *scanline++ = gray;
-          *scanline = gray;
-          scanline += gap;
-        }
-      });
+      if (!is_white_on_black) {
+        gray = 255 - gray;
+      }
+      palette_[i] = ArgbEncode(0xff, gray, gray, gray);
     }
     return;
   }
@@ -503,18 +481,18 @@ void CFX_DIBitmap::ConvertBGRColorScale(uint32_t forecolor,
       const int gap = GetBPP() / 8 - 2;
       for (int col = 0; col < GetWidth(); ++col) {
         int gray = FXRGB2GRAY(scanline[2], scanline[1], scanline[0]);
-        *scanline++ = bb + (fb - bb) * gray / 255;
-        *scanline++ = bg + (fg - bg) * gray / 255;
-        *scanline = br + (fr - br) * gray / 255;
+        *scanline++ = gray;
+        *scanline++ = gray;
+        *scanline = gray;
         scanline += gap;
       }
     });
   }
 }
 
-void CFX_DIBitmap::ConvertColorScale(uint32_t forecolor, uint32_t backcolor) {
+void CFX_DIBitmap::ConvertColorScale(bool is_white_on_black) {
   if (buffer_ && !IsMaskFormat()) {
-    ConvertBGRColorScale(forecolor, backcolor);
+    ConvertBGRColorScale(is_white_on_black);
   }
 }
 
