@@ -61,19 +61,12 @@ class CFX_RenderDevice {
   int GetHeight() const { return height_; }
   DeviceType GetDeviceType() const { return device_type_; }
   bool RenderCapGetBits() const { return render_cap_get_bits_; }
-  bool RenderCapAlphaImage() const { return render_cap_alpha_image_; }
   bool RenderCapBlendMode() const { return render_cap_blend_mode_; }
   bool RenderCapSoftClip() const { return render_cap_soft_clip_; }
   bool RenderCapAlphaOutput() const { return render_cap_alpha_output_; }
-  bool RenderCapByteMaskOutput() const { return render_cap_bytemask_output_; }
 #if defined(PDF_USE_SKIA)
-  bool RenderCapFillStrokePath() const { return render_cap_fillstroke_path_; }
   bool RenderCapShading() const { return render_cap_shading_; }
-  bool RenderCapPremultipliedAlpha() const {
-    return render_cap_premultiplied_alpha_;
-  }
 #endif
-  int GetBitsPerPixel() const;
   int GetHorzSize() const;
   int GetVertSize() const;
   RetainPtr<CFX_DIBitmap> GetBitmap();

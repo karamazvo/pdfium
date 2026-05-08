@@ -569,10 +569,6 @@ void CFX_RenderDevice::RestoreState(bool bKeepSaved) {
   }
 }
 
-int CFX_RenderDevice::GetBitsPerPixel() const {
-  return device_driver_->GetBitsPerPixel();
-}
-
 int CFX_RenderDevice::GetHorzSize() const {
   return device_driver_->GetHorzSize();
 }
