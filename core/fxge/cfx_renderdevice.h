@@ -67,8 +67,10 @@ class CFX_RenderDevice {
 #if defined(PDF_USE_SKIA)
   bool RenderCapShading() const { return render_cap_shading_; }
 #endif
+#if BUILDFLAG(IS_WIN)
   int GetHorzSize() const;
   int GetVertSize() const;
+#endif
   RetainPtr<CFX_DIBitmap> GetBitmap();
   RetainPtr<const CFX_DIBitmap> GetBitmap() const;
   [[nodiscard]] bool CreateCompatibleBitmap(const RetainPtr<CFX_DIBitmap>& pDIB,
