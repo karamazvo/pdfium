@@ -165,11 +165,13 @@ class CFX_DIBitmap final : public CFX_DIBBase {
                            int src_left,
                            int src_top);
 
+#if BUILDFLAG(IS_WIN) || defined(PDF_USE_AGG)
   bool CompositeRect(int dest_left,
                      int dest_top,
                      int width,
                      int height,
                      uint32_t color);
+#endif
 
   void ConvertColorScale(uint32_t forecolor, uint32_t backcolor);
 

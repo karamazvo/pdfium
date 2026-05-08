@@ -856,6 +856,7 @@ bool CFX_RenderDevice::FillRect(const FX_RECT& rect, uint32_t fill_color) {
     return true;
   }
 
+#if BUILDFLAG(IS_WIN)
   if (!render_cap_get_bits_) {
     return false;
   }
@@ -877,6 +878,10 @@ bool CFX_RenderDevice::FillRect(const FX_RECT& rect, uint32_t fill_color) {
   device_driver_->SetDIBits(std::move(bitmap), /*color=*/0, src_rect, rect.left,
                             rect.top, BlendMode::kNormal);
   return true;
+#else
+  CHECK(!render_cap_get_bits_);
+  return false;
+#endif
 }
 
 bool CFX_RenderDevice::DrawCosmeticLine(
