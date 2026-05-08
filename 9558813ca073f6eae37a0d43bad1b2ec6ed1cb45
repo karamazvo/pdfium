@@ -16,6 +16,23 @@
       "message": "Hate to say this, but crypto is kind of a no-go zone. We\u0027ve (I\u0027ve) changed a few things in the past, but we ought just leave this or convert to something from chrome\u0027s //base down the road.  Sorry to disappoint.",
       "revId": "9558813ca073f6eae37a0d43bad1b2ec6ed1cb45",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "74b8589a_dd6b74aa",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 17
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-05-08T17:56:40Z",
+      "side": 1,
+      "message": "Understood - no issue. Didn\u0027t know this was a \"no-refactor-zone\". Thanks for pointing it out 😊!",
+      "revId": "9558813ca073f6eae37a0d43bad1b2ec6ed1cb45",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
