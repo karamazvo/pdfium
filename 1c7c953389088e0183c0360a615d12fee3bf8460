@@ -20,6 +20,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "359170c1_a5ad37de",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-05-08T18:04:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fd411383_aa582c01",
+      "revId": "1c7c953389088e0183c0360a615d12fee3bf8460",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "3675fc4e_f86d3b5f",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 2
@@ -105,6 +123,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "5a57c2f9_1e24e585",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-05-08T18:04:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1aff751a_4d753ccd",
+      "revId": "1c7c953389088e0183c0360a615d12fee3bf8460",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "7d9571fb_4d01ca00",
         "filename": "core/fdrm/fx_crypt_sha.cpp",
         "patchSetId": 2
@@ -139,6 +175,30 @@
       "writtenOn": "2026-04-18T17:23:37Z",
       "side": 1,
       "message": "Thoughts on templating a lot of this - will be harder to read but far shorter if the SHA functions are all one template. Considering not doing it, mainly due to the first argument, and not sure if it would make this that much shorter. \n\n@thestig@chromium.org @tsepez@chromium.org @andyphan@chromium.org wdyt?",
+      "range": {
+        "startLine": 479,
+        "startChar": 5,
+        "endLine": 479,
+        "endChar": 23
+      },
+      "revId": "1c7c953389088e0183c0360a615d12fee3bf8460",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "59be7751_89c9d76b",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 479,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-05-08T18:04:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fc043529_bb0151f9",
       "range": {
         "startLine": 479,
         "startChar": 5,
