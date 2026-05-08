@@ -457,7 +457,11 @@ uint32_t CFX_DIBitmap::GetPixelForTesting(int x, int y) const {
 }
 #endif  // defined(PDF_USE_SKIA)
 
-void CFX_DIBitmap::ConvertBGRColorScale(bool is_white_on_black) {
+void CFX_DIBitmap::ConvertColorScale(bool is_white_on_black) {
+  if (!buffer_ || IsMaskFormat()) {
+    return;
+  }
+
   if (GetBPP() <= 8) {
     if (!is_white_on_black && !HasPalette()) {
       return;
@@ -487,12 +491,6 @@ void CFX_DIBitmap::ConvertBGRColorScale(bool is_white_on_black) {
         scanline += gap;
       }
     });
-  }
-}
-
-void CFX_DIBitmap::ConvertColorScale(bool is_white_on_black) {
-  if (buffer_ && !IsMaskFormat()) {
-    ConvertBGRColorScale(is_white_on_black);
   }
 }
 

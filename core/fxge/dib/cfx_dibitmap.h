@@ -201,8 +201,6 @@ class CFX_DIBitmap final : public CFX_DIBBase {
   CFX_DIBitmap(const CFX_DIBitmap& src);
   ~CFX_DIBitmap() override;
 
-  // See comment for `ConvertColorScale()`.
-  void ConvertBGRColorScale(bool is_white_on_black);
   bool TransferWithUnequalFormats(FXDIB_Format dest_format,
                                   int dest_left,
                                   int dest_top,
