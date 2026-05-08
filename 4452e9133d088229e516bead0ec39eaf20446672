@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6770bc7f_21e452e4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-05-08T16:42:35Z",
+      "side": 1,
+      "message": "nit: maybe another newline between content and change-id? Keeping it as is fine as well I just feel the newline looks cleaner.",
+      "revId": "4452e9133d088229e516bead0ec39eaf20446672",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1612b38b_75d3aeb0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-05-08T16:42:35Z",
+      "side": 1,
+      "message": "Based on the build logs also seems like cpdf_scaledrenderbuffer.cpp needs an update to remove the scale arg.",
+      "revId": "4452e9133d088229e516bead0ec39eaf20446672",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
