@@ -52,12 +52,15 @@ bool RenderDeviceDriverIface::RenderCapPremultipliedAlpha() const {
 }
 #endif
 
+#if BUILDFLAG(IS_WIN)
 int RenderDeviceDriverIface::GetHorzSize() const {
   return 0;
 }
+
 int RenderDeviceDriverIface::GetVertSize() const {
   return 0;
 }
+#endif
 
 bool RenderDeviceDriverIface::SetClip_PathStroke(
     const CFX_Path& path,

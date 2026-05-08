@@ -78,8 +78,10 @@ class RenderDeviceDriverIface {
   virtual int GetPixelWidth() const = 0;
   virtual int GetPixelHeight() const = 0;
   virtual int GetBitsPerPixel() const = 0;
+#if BUILDFLAG(IS_WIN)
   virtual int GetHorzSize() const;
   virtual int GetVertSize() const;
+#endif
 
   virtual void SaveState() = 0;
   virtual void RestoreState(bool bKeepSaved) = 0;
