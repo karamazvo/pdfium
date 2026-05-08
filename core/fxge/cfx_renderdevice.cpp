@@ -543,7 +543,6 @@ void CFX_RenderDevice::InitDeviceInfo() {
   height_ = device_driver_->GetPixelHeight();
   bpp_ = device_driver_->GetBitsPerPixel();
   render_cap_get_bits_ = device_driver_->RenderCapGetBits();
-  render_cap_alpha_path_ = device_driver_->RenderCapAlphaPath();
   render_cap_alpha_image_ = device_driver_->RenderCapAlphaImage();
   render_cap_blend_mode_ = device_driver_->RenderCapBlendMode();
   render_cap_soft_clip_ = device_driver_->RenderCapSoftClip();

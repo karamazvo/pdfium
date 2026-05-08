@@ -65,7 +65,6 @@ class RenderDeviceDriverIface {
 
   virtual DeviceType GetDeviceType() const = 0;
   virtual bool RenderCapGetBits() const;
-  virtual bool RenderCapAlphaPath() const;
   virtual bool RenderCapAlphaImage() const;
   virtual bool RenderCapBlendMode() const;
   virtual bool RenderCapSoftClip() const;

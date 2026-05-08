@@ -1031,10 +1031,6 @@ bool CFX_AggDeviceDriver::RenderCapGetBits() const {
   return true;
 }
 
-bool CFX_AggDeviceDriver::RenderCapAlphaPath() const {
-  return true;
-}
-
 bool CFX_AggDeviceDriver::RenderCapAlphaImage() const {
   return true;
 }

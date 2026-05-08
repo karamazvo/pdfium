@@ -18,10 +18,6 @@ bool RenderDeviceDriverIface::RenderCapGetBits() const {
   return false;
 }
 
-bool RenderDeviceDriverIface::RenderCapAlphaPath() const {
-  return false;
-}
-
 bool RenderDeviceDriverIface::RenderCapAlphaImage() const {
   return false;
 }
