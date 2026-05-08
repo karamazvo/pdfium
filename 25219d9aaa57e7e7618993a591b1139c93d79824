@@ -16,6 +16,23 @@
       "message": "Yeah, sorry, see previous comments on other CLs.",
       "revId": "25219d9aaa57e7e7618993a591b1139c93d79824",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "647b2896_a725bf94",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 20
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-05-08T17:53:33Z",
+      "side": 1,
+      "message": "Understood, no issue - wasn\u0027t aware crypto was a no touch area here 😅.\n\nI\u0027ll avoid cleanup here if the main goal is to move toward //base. Thanks!",
+      "revId": "25219d9aaa57e7e7618993a591b1139c93d79824",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
