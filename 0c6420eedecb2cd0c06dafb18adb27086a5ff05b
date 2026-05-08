@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "15b36b44_91da2efa",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-05-08T17:41:02Z",
+      "side": 1,
+      "message": "This one, however, is OK as its cosmetic.  Thanks for the change.",
+      "revId": "0c6420eedecb2cd0c06dafb18adb27086a5ff05b",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
