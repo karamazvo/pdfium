@@ -40,6 +40,30 @@
       ],
       "revId": "85f188a9ea25ac39582155dae73de198c40732c1",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "51c62e77_8b886cb3",
+        "filename": "core/fxge/renderdevicedriver_iface.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-05-08T17:27:48Z",
+      "side": 1,
+      "message": "Just eyeballing, but I think that means the AGG and Skia drivers have to implement them for Windows.",
+      "parentUuid": "672bd674_73a68257",
+      "range": {
+        "startLine": 82,
+        "startChar": 0,
+        "endLine": 82,
+        "endChar": 34
+      },
+      "revId": "85f188a9ea25ac39582155dae73de198c40732c1",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
