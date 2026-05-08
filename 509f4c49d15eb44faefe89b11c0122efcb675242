@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "96f943f9_de06eb44",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-05-08T16:43:15Z",
+      "side": 1,
+      "message": "Nit: Newline between change ID and text.",
+      "revId": "509f4c49d15eb44faefe89b11c0122efcb675242",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
