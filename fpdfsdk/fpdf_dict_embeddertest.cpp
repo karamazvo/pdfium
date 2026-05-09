@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "core/fpdfapi/font/cpdf_font.h"
+#include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdf_dict.h"
 #include "testing/embedder_test.h"
 #include "testing/fx_string_testhelpers.h"
@@ -151,4 +153,82 @@ TEST_F(FPDFDictEmbedderTest, GetPageCountFromDict) {
   FPDF_RESULT_INT count = FPDF_DictionaryGetInt(parent_dict, "Count");
   EXPECT_TRUE(count.success);
   EXPECT_EQ(1, count.value);
+}
+
+TEST_F(FPDFDictEmbedderTest, PublicAPIFontDictType1) {
+  CreateEmptyDocumentWithoutFormFillEnvironment();
+  CPDF_Document* cpdf_doc = CPDFDocumentFromFPDFDocument(document());
+  RetainPtr<CPDF_Font> stock_font =
+      CPDF_Font::GetStockFont(cpdf_doc, "Times-Bold");
+  pdfium::span<const uint8_t> span = stock_font->GetFont()->GetFontSpan();
+  ScopedFPDFFont font(FPDFText_LoadFont(document(), span.data(), span.size(),
+                                        FPDF_FONT_TYPE1, false));
+  ASSERT_TRUE(font);
+  FPDF_DICTIONARY font_dict = FPDF_GetFontDictionary(std::move(font.get()));
+  ASSERT_TRUE(font_dict);
+
+  unsigned short buf[128];
+  FPDF_DictionaryGetString(font_dict, "Type", buf, sizeof(buf));
+  EXPECT_EQ(L"Font", GetPlatformWString(buf));
+
+  FPDF_DictionaryGetString(font_dict, "Subtype", buf, sizeof(buf));
+  EXPECT_EQ(L"Type1", GetPlatformWString(buf));
+
+  EXPECT_EQ(32, FPDF_DictionaryGetInt(font_dict, "FirstChar").value);
+  EXPECT_EQ(255, FPDF_DictionaryGetInt(font_dict, "LastChar").value);
+
+  FPDF_DICTIONARY desc_dict =
+      FPDF_DictionaryGetDict(font_dict, "FontDescriptor");
+  ASSERT_TRUE(desc_dict);
+
+  FPDF_DictionaryGetString(desc_dict, "Type", buf, sizeof(buf));
+  EXPECT_EQ(L"FontDescriptor", GetPlatformWString(buf));
+  EXPECT_TRUE(FPDF_DictionaryGetFloat(desc_dict, "ItalicAngle").success);
+}
+
+TEST_F(FPDFDictEmbedderTest, PublicAPIFontDictTrueType) {
+  CreateEmptyDocumentWithoutFormFillEnvironment();
+  CPDF_Document* cpdf_doc = CPDFDocumentFromFPDFDocument(document());
+  RetainPtr<CPDF_Font> stock_font =
+      CPDF_Font::GetStockFont(cpdf_doc, "Courier");
+  pdfium::span<const uint8_t> span = stock_font->GetFont()->GetFontSpan();
+
+  ScopedFPDFFont font(FPDFText_LoadFont(document(), span.data(), span.size(),
+                                        FPDF_FONT_TRUETYPE, false));
+  ASSERT_TRUE(font);
+
+  FPDF_DICTIONARY font_dict = FPDF_GetFontDictionary(std::move(font.get()));
+  ASSERT_TRUE(font_dict);
+
+  unsigned short buf[128];
+  FPDF_DictionaryGetString(font_dict, "BaseFont", buf, sizeof(buf));
+  EXPECT_EQ(L"Cousine-Regular", GetPlatformWString(buf));
+
+  FPDF_DICTIONARY desc_dict =
+      FPDF_DictionaryGetDict(font_dict, "FontDescriptor");
+  ASSERT_TRUE(desc_dict);
+
+  auto flags = FPDF_DictionaryGetInt(desc_dict, "Flags");
+  EXPECT_TRUE(flags.success);
+  EXPECT_GT(flags.value, 0);
+}
+
+TEST_F(FPDFDictEmbedderTest, PublicAPIFontDictDeepNavigation) {
+  CreateEmptyDocumentWithoutFormFillEnvironment();
+  CPDF_Document* cpdf_doc = CPDFDocumentFromFPDFDocument(document());
+  RetainPtr<CPDF_Font> stock_font =
+      CPDF_Font::GetStockFont(cpdf_doc, "Times-Roman");
+  pdfium::span<const uint8_t> span = stock_font->GetFont()->GetFontSpan();
+
+  ScopedFPDFFont font(FPDFText_LoadFont(document(), span.data(), span.size(),
+                                        FPDF_FONT_TYPE1, true));
+  ASSERT_TRUE(font);
+  FPDF_DICTIONARY font_dict = FPDF_GetFontDictionary(std::move(font.get()));
+  unsigned short buf[128];
+
+  FPDF_DictionaryGetString(font_dict, "Subtype", buf, sizeof(buf));
+  EXPECT_EQ(L"Type0", GetPlatformWString(buf));
+
+  FPDF_DICTIONARY missing_dict = FPDF_DictionaryGetDict(font_dict, "NotAKey");
+  EXPECT_EQ(nullptr, missing_dict);
 }

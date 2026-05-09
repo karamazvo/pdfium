@@ -3,10 +3,13 @@
 // found in the LICENSE file.
 
 #include "public/fpdf_dict.h"
+
+#include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
+#include "public/fpdf_edit.h"
 #include "public/fpdfview.h"
 
 extern "C" {
@@ -17,6 +20,15 @@ FPDF_GetPageDictionary(FPDF_DOCUMENT doc, int page_index) {
     return nullptr;
   }
   return FPDFDictFromCPDFDict(document->GetPageDictionary(page_index).Get());
+}
+
+FPDF_EXPORT FPDF_DICTIONARY FPDF_CALLCONV
+FPDF_GetFontDictionary(FPDF_FONT font) {
+  CPDF_Font* cpdf_font = CPDFFontFromFPDFFont(font);
+  if (!cpdf_font) {
+    return nullptr;
+  }
+  return FPDFDictFromCPDFDict(cpdf_font->GetFontDict());
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
