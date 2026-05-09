@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "71e330a8_0d47a963",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-05-09T12:44:27Z",
+      "side": 1,
+      "message": "Hey guys added a CL to also maybe add the font dictionary to public API, although I\u0027m aware it is possible to traverse through the Page dict to manage to somehow get to font info, adding a specific getter in case one only has an FPDF_FONT available. This could have quite a few applications to get to know font types (Type0, Type1 etc), what the encoding is, and maybe help know if the font is CID or not. Thanks!\n\nGot a couple more nested dictionaries we could add such as the Root dictionary which I did see a builtin function for.\n\nThanks!",
+      "revId": "cd1e7d34308da264fa8c5bed28d51ac1f78d5e4c",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
