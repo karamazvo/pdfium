@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------
 //
 //  Little Color Management System
-//  Copyright (c) 1998-2023 Marti Maria Saguer
+//  Copyright (c) 1998-2026 Marti Maria Saguer
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -460,7 +460,8 @@ void EvaluateCLUTfloatIn16(const cmsFloat32Number In[], cmsFloat32Number Out[], 
 static
 cmsUInt32Number CubeSize(const cmsUInt32Number Dims[], cmsUInt32Number b)
 {
-    cmsUInt32Number rv, dim;
+    cmsUInt32Number dim;
+    cmsUInt64Number rv;
 
     _cmsAssert(Dims != NULL);
 
@@ -475,7 +476,10 @@ cmsUInt32Number CubeSize(const cmsUInt32Number Dims[], cmsUInt32Number b)
         rv *= dim;
     }
 
-    return rv;
+    // Again, prevent overflow
+    if (rv > UINT_MAX / 15) return 0;
+
+    return (cmsUInt32Number) rv;
 }
 
 static
@@ -547,7 +551,7 @@ cmsStage* CMSEXPORT cmsStageAllocCLut16bitGranular(cmsContext ContextID,
                                          cmsUInt32Number outputChan,
                                          const cmsUInt16Number* Table)
 {
-    cmsUInt32Number i, n, cs;
+    cmsUInt32Number i, n;
     _cmsStageCLutData* NewElem;
     cmsStage* NewMPE;
 
@@ -571,17 +575,14 @@ cmsStage* CMSEXPORT cmsStageAllocCLut16bitGranular(cmsContext ContextID,
 
     NewMPE ->Data  = (void*) NewElem;
 
-    cs = CubeSize(clutPoints, inputChan);
-    n = outputChan * cs;
+    NewElem -> nEntries = n = outputChan * CubeSize(clutPoints, inputChan);
+    NewElem -> HasFloatValues = FALSE;
 
-    if (n == 0 || n / outputChan != cs)  // Check for overflow.
-    {
+    if (n == 0) {
         cmsStageFree(NewMPE);
         return NULL;
     }
 
-    NewElem -> nEntries = n;
-    NewElem -> HasFloatValues = FALSE;
 
     NewElem ->Tab.T  = (cmsUInt16Number*) _cmsCalloc(ContextID, n, sizeof(cmsUInt16Number));
     if (NewElem ->Tab.T == NULL) {
@@ -641,7 +642,7 @@ cmsStage* CMSEXPORT cmsStageAllocCLutFloat(cmsContext ContextID,
 
 cmsStage* CMSEXPORT cmsStageAllocCLutFloatGranular(cmsContext ContextID, const cmsUInt32Number clutPoints[], cmsUInt32Number inputChan, cmsUInt32Number outputChan, const cmsFloat32Number* Table)
 {
-    cmsUInt32Number i, n, cs;
+    cmsUInt32Number i, n;
     _cmsStageCLutData* NewElem;
     cmsStage* NewMPE;
 
@@ -665,17 +666,14 @@ cmsStage* CMSEXPORT cmsStageAllocCLutFloatGranular(cmsContext ContextID, const c
 
     NewMPE ->Data  = (void*) NewElem;
 
-    cs = CubeSize(clutPoints, inputChan);
-    n = outputChan * cs;
+    // There is a potential integer overflow on conputing n and nEntries.
+    NewElem -> nEntries = n = outputChan * CubeSize(clutPoints, inputChan);
+    NewElem -> HasFloatValues = TRUE;
 
-    if (n == 0 || n / outputChan != cs)  // Check for overflow.
-    {
+    if (n == 0) {
         cmsStageFree(NewMPE);
         return NULL;
     }
-
-    NewElem -> nEntries = n;
-    NewElem -> HasFloatValues = TRUE;
 
     NewElem ->Tab.TFloat  = (cmsFloat32Number*) _cmsCalloc(ContextID, n, sizeof(cmsFloat32Number));
     if (NewElem ->Tab.TFloat == NULL) {
@@ -820,7 +818,13 @@ cmsBool CMSEXPORT cmsStageSampleCLutFloat(cmsStage* mpe, cmsSAMPLERFLOAT Sampler
     cmsUInt32Number nInputs, nOutputs;
     cmsUInt32Number* nSamples;
     cmsFloat32Number In[MAX_INPUT_DIMENSIONS+1], Out[MAX_STAGE_CHANNELS];
-    _cmsStageCLutData* clut = (_cmsStageCLutData*) mpe->Data;
+    _cmsStageCLutData* clut;
+
+    if (mpe == NULL) return FALSE;
+
+    clut = (_cmsStageCLutData*)mpe->Data;
+
+    if (clut == NULL) return FALSE;
 
     nSamples = clut->Params ->nSamples;
     nInputs  = clut->Params ->nInputs;
@@ -1077,7 +1081,7 @@ cmsStage* _cmsStageNormalizeFromLabFloat(cmsContext ContextID)
     return mpe;
 }
 
-// Fom XYZ to floating point PCS
+// From XYZ to floating point PCS
 cmsStage* _cmsStageNormalizeFromXyzFloat(cmsContext ContextID)
 {
 #define n (32768.0/65535.0)
@@ -1326,7 +1330,7 @@ void _LUTeval16(CMSREGISTER const cmsUInt16Number In[], CMSREGISTER cmsUInt16Num
 {
     cmsPipeline* lut = (cmsPipeline*) D;
     cmsStage *mpe;
-    cmsFloat32Number Storage[2][MAX_STAGE_CHANNELS] = {0.0f};
+    cmsFloat32Number Storage[2][MAX_STAGE_CHANNELS];
     int Phase = 0, NextPhase;
 
     From16ToFloat(In, &Storage[Phase][0], lut ->InputChannels);
@@ -1352,7 +1356,7 @@ void _LUTevalFloat(const cmsFloat32Number In[], cmsFloat32Number Out[], const vo
 {
     cmsPipeline* lut = (cmsPipeline*) D;
     cmsStage *mpe;
-    cmsFloat32Number Storage[2][MAX_STAGE_CHANNELS] = {0.0f};
+    cmsFloat32Number Storage[2][MAX_STAGE_CHANNELS];
     int Phase = 0, NextPhase;
 
     memmove(&Storage[Phase][0], In, lut ->InputChannels  * sizeof(cmsFloat32Number));

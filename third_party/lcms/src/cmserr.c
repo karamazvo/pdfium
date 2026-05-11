@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------
 //
 //  Little Color Management System
-//  Copyright (c) 1998-2023 Marti Maria Saguer
+//  Copyright (c) 1998-2026 Marti Maria Saguer
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -25,8 +25,6 @@
 
 #include "lcms2_internal.h"
 
-#include "core/fxcrt/fx_memory.h"
-#include "core/fxcrt/fx_system.h"
 
 // This function is here to help applications to prevent mixing lcms versions on header and shared objects.
 int CMSEXPORT cmsGetEncodedCMMversion(void)
@@ -50,94 +48,203 @@ int CMSEXPORT cmsstrcasecmp(const char* s1, const char* s2)
     return (toupper(*us1) - toupper(*--us2));
 }
 
-// long int because C99 specifies ftell in such way (7.19.9.2)
-long int CMSEXPORT cmsfilelength(FILE* f)
+#ifdef CMS_LARGE_FILE_SUPPORT
+
+long long int CMSEXPORT cmsfilelength(FILE* f)
 {
-    long int p , n;
+    long long int p, n;
 
-    p = ftell(f); // register current file position
-    if (p == -1L) 
-        return -1L;
+#ifdef CMS_IS_WINDOWS_
+    p = _ftelli64(f);
+    if (p == -1LL)
+        return -1LL;
 
-    if (fseek(f, 0, SEEK_END) != 0) {
-        return -1L;
-    }
+    if (_fseeki64(f, 0, SEEK_END) != 0)
+        return -1LL;
 
-    n = ftell(f);
-    fseek(f, p, SEEK_SET); // file position restored
+    n = _ftelli64(f);
+
+    if (_fseeki64(f, p, SEEK_SET) != 0)
+        return -1LL;
+#else
+    p = (long long int) ftello(f);
+    if (p < 0)
+        return -1LL;
+
+    if (fseeko(f, 0, SEEK_END) != 0)
+        return -1LL;
+
+    n = (long long int) ftello(f);
+
+    if (fseeko(f, (off_t) p, SEEK_SET) != 0)
+        return -1LL;
+#endif
 
     return n;
 }
 
-cmsBool  _cmsRegisterMemHandlerPlugin(cmsContext ContextID, cmsPluginBase* Plugin)
+#else
+
+// long int because C99 specifies ftell in such way (7.19.9.2)
+long int CMSEXPORT cmsfilelength(FILE* f)
 {
-    return TRUE;
+    long int p, n;
+
+    p = ftell(f);
+    if (p == -1L)
+        return -1L;
+
+    if (fseek(f, 0, SEEK_END) != 0)
+        return -1L;
+
+    n = ftell(f);
+
+    if (fseek(f, p, SEEK_SET) != 0)
+        return -1L;
+
+    return n;
 }
 
-// Generic allocate
-void* CMSEXPORT _cmsMalloc(cmsContext ContextID, cmsUInt32Number size)
+#endif
+
+// Memory handling ------------------------------------------------------------------
+//
+// This is the interface to low-level memory management routines. By default a simple
+// wrapping to malloc/free/realloc is provided, although there is a limit on the max
+// amount of memory that can be reclaimed. This is mostly as a safety feature to prevent 
+// bogus or evil code to allocate huge blocks that otherwise lcms would never need.
+
+#ifdef CMS_LARGE_FILE_SUPPORT
+#   define MAX_MEMORY_FOR_ALLOC  ((cmsUInt32Number)(1024U*1024U*2048U))
+#else
+#   define MAX_MEMORY_FOR_ALLOC  ((cmsUInt32Number)(1024U*1024U*512U))
+#endif
+
+// User may override this behaviour by using a memory plug-in, which basically replaces
+// the default memory management functions. In this case, no check is performed and it
+// is up to the plug-in writer to keep in the safe side. There are only three functions
+// required to be implemented: malloc, realloc and free, although the user may want to
+// replace the optional mallocZero, calloc and dup as well.
+
+cmsBool   _cmsRegisterMemHandlerPlugin(cmsContext ContextID, cmsPluginBase* Plugin);
+
+// *********************************************************************************
+
+// This is the default memory allocation function. It does a very coarse
+// check of amount of memory, just to prevent exploits
+static
+void* _cmsMallocDefaultFn(cmsContext ContextID, cmsUInt32Number size)
 {
-    return FXMEM_DefaultAlloc(size);
+    // Never allow 0 or over maximum
+    if (size == 0 || size > MAX_MEMORY_FOR_ALLOC) return NULL;
+
+    return (void*) malloc(size);
+
+    cmsUNUSED_PARAMETER(ContextID);
 }
 
 // Generic allocate & zero
-void* CMSEXPORT _cmsMallocZero(cmsContext ContextID, cmsUInt32Number size)
+static
+void* _cmsMallocZeroDefaultFn(cmsContext ContextID, cmsUInt32Number size)
 {
-    void* p = FXMEM_DefaultAlloc(size);
-    if (p) memset(p, 0, size);
-    return p;
+    void *pt = _cmsMalloc(ContextID, size);
+    if (pt == NULL) return NULL;
+
+    memset(pt, 0, size);
+    return pt;
 }
 
-// Generic calloc
-void* CMSEXPORT _cmsCalloc(cmsContext ContextID, cmsUInt32Number num, cmsUInt32Number size)
+
+// The default free function. The only check proformed is against NULL pointers
+static
+void _cmsFreeDefaultFn(cmsContext ContextID, void *Ptr)
 {
-    cmsUInt32Number total = num * size;
-    if (total == 0 || total / size != num || total >= 512 * 1024 * 1024)
+    // free(NULL) is defined a no-op by C99, therefore it is safe to
+    // avoid the check, but it is here just in case...
+
+    if (Ptr) free(Ptr);
+
+    cmsUNUSED_PARAMETER(ContextID);
+}
+
+// The default realloc function. Again it checks for exploits. If Ptr is NULL,
+// realloc behaves the same way as malloc and allocates a new block of size bytes.
+static
+void* _cmsReallocDefaultFn(cmsContext ContextID, void* Ptr, cmsUInt32Number size)
+{
+
+    if (size > MAX_MEMORY_FOR_ALLOC) return NULL;  // Never realloc over 512Mb
+
+    return realloc(Ptr, size);
+
+    cmsUNUSED_PARAMETER(ContextID);
+}
+
+
+// The default calloc function. Allocates an array of num elements, each one of size bytes
+// all memory is initialized to zero.
+static
+void* _cmsCallocDefaultFn(cmsContext ContextID, cmsUInt32Number num, cmsUInt32Number size)
+{
+    cmsUInt32Number Total = num * size;
+
+    // Preserve calloc behaviour
+    if (Total == 0) return NULL;
+
+    // Safe check for overflow.
+    if (num >= UINT_MAX / size) return NULL;
+
+    // Check for overflow
+    if (Total < num || Total < size) {
         return NULL;
+    }
 
-    return _cmsMallocZero(ContextID, num * size);
-}
+    if (Total > MAX_MEMORY_FOR_ALLOC) return NULL;  // Never alloc over 512Mb
 
-// Generic reallocate
-void* CMSEXPORT _cmsRealloc(cmsContext ContextID, void* Ptr, cmsUInt32Number size)
-{
-    return FXMEM_DefaultRealloc(Ptr, size);
-}
-
-// Generic free memory
-void CMSEXPORT _cmsFree(cmsContext ContextID, void* Ptr)
-{
-    if (Ptr != NULL) FXMEM_DefaultFree(Ptr);
+    return _cmsMallocZero(ContextID, Total);
 }
 
 // Generic block duplication
-void* CMSEXPORT _cmsDupMem(cmsContext ContextID, const void* Org, cmsUInt32Number size)
+static
+void* _cmsDupDefaultFn(cmsContext ContextID, const void* Org, cmsUInt32Number size)
 {
-    void* p = FXMEM_DefaultAlloc(size);
-    memmove(p, Org, size);
-    return p;
+    void* mem;
+
+    if (size > MAX_MEMORY_FOR_ALLOC) return NULL;  // Never dup over 512Mb
+
+    mem = _cmsMalloc(ContextID, size);
+
+    if (mem != NULL && Org != NULL)
+        memmove(mem, Org, size);
+
+    return mem;
 }
 
-_cmsMemPluginChunkType _cmsMemPluginChunk = {_cmsMalloc, _cmsMallocZero, _cmsFree,
-                                             _cmsRealloc, _cmsCalloc,    _cmsDupMem
+
+// Pointers to memory manager functions in Context0
+_cmsMemPluginChunkType _cmsMemPluginChunk = { _cmsMallocDefaultFn, _cmsMallocZeroDefaultFn, _cmsFreeDefaultFn, 
+                                              _cmsReallocDefaultFn, _cmsCallocDefaultFn,    _cmsDupDefaultFn
                                             };
 
+
+// Reset and duplicate memory manager
 void _cmsAllocMemPluginChunk(struct _cmsContext_struct* ctx, const struct _cmsContext_struct* src)
 {
     _cmsAssert(ctx != NULL);
 
-    if (src != NULL) {
+    if (src != NULL) {    
 
         // Duplicate
-        ctx ->chunks[MemPlugin] = _cmsSubAllocDup(ctx ->MemPool, src ->chunks[MemPlugin], sizeof(_cmsMemPluginChunkType));
+        ctx ->chunks[MemPlugin] = _cmsSubAllocDup(ctx ->MemPool, src ->chunks[MemPlugin], sizeof(_cmsMemPluginChunkType));  
     }
     else {
 
         // To reset it, we use the default allocators, which cannot be overridden
         ctx ->chunks[MemPlugin] = &ctx ->DefaultMemoryManager;
-    }
+    } 
 }
 
+// Auxiliary to fill memory management functions from plugin (or context 0 defaults)
 void _cmsInstallAllocFunctions(cmsPluginMemHandler* Plugin, _cmsMemPluginChunkType* ptr)
 {
     if (Plugin == NULL) {
@@ -151,15 +258,94 @@ void _cmsInstallAllocFunctions(cmsPluginMemHandler* Plugin, _cmsMemPluginChunkTy
         ptr ->ReallocPtr = Plugin -> ReallocPtr;
 
         // Make sure we revert to defaults
-        ptr ->MallocZeroPtr= _cmsMallocZero;
-        ptr ->CallocPtr    = _cmsCalloc;
-        ptr ->DupPtr       = _cmsDupMem;
-
+        ptr ->MallocZeroPtr= _cmsMallocZeroDefaultFn;
+        ptr ->CallocPtr    = _cmsCallocDefaultFn;
+        ptr ->DupPtr       = _cmsDupDefaultFn;
+      
         if (Plugin ->MallocZeroPtr != NULL) ptr ->MallocZeroPtr = Plugin -> MallocZeroPtr;
         if (Plugin ->CallocPtr != NULL)     ptr ->CallocPtr     = Plugin -> CallocPtr;
         if (Plugin ->DupPtr != NULL)        ptr ->DupPtr        = Plugin -> DupPtr;
-
+        
     }
+}
+
+
+// Plug-in replacement entry
+cmsBool  _cmsRegisterMemHandlerPlugin(cmsContext ContextID, cmsPluginBase *Data)
+{
+    cmsPluginMemHandler* Plugin = (cmsPluginMemHandler*) Data;     
+    _cmsMemPluginChunkType* ptr;
+
+    // NULL forces to reset to defaults. In this special case, the defaults are stored in the context structure. 
+    // Remaining plug-ins does NOT have any copy in the context structure, but this is somehow special as the
+    // context internal data should be malloc'ed by using those functions. 
+    if (Data == NULL) {
+
+       struct _cmsContext_struct* ctx = ( struct _cmsContext_struct*) ContextID;
+
+       // Return to the default allocators
+        if (ContextID != NULL) {
+            ctx->chunks[MemPlugin] = (void*) &ctx->DefaultMemoryManager;
+        }
+        return TRUE;
+    }
+
+    // Check for required callbacks
+    if (Plugin -> MallocPtr == NULL ||
+        Plugin -> FreePtr == NULL ||
+        Plugin -> ReallocPtr == NULL) return FALSE;
+
+    // Set replacement functions
+    ptr = (_cmsMemPluginChunkType*) _cmsContextGetClientChunk(ContextID, MemPlugin);
+    if (ptr == NULL) 
+        return FALSE;
+
+    _cmsInstallAllocFunctions(Plugin, ptr);
+    return TRUE;
+}
+
+// Generic allocate
+void* CMSEXPORT _cmsMalloc(cmsContext ContextID, cmsUInt32Number size)
+{
+    _cmsMemPluginChunkType* ptr = (_cmsMemPluginChunkType*) _cmsContextGetClientChunk(ContextID, MemPlugin);
+    return ptr ->MallocPtr(ContextID, size);
+}
+
+// Generic allocate & zero
+void* CMSEXPORT _cmsMallocZero(cmsContext ContextID, cmsUInt32Number size)
+{
+    _cmsMemPluginChunkType* ptr = (_cmsMemPluginChunkType*) _cmsContextGetClientChunk(ContextID, MemPlugin);
+    return ptr->MallocZeroPtr(ContextID, size);
+}
+
+// Generic calloc
+void* CMSEXPORT _cmsCalloc(cmsContext ContextID, cmsUInt32Number num, cmsUInt32Number size)
+{
+    _cmsMemPluginChunkType* ptr = (_cmsMemPluginChunkType*) _cmsContextGetClientChunk(ContextID, MemPlugin);
+    return ptr->CallocPtr(ContextID, num, size);
+}
+
+// Generic reallocate
+void* CMSEXPORT _cmsRealloc(cmsContext ContextID, void* Ptr, cmsUInt32Number size)
+{
+    _cmsMemPluginChunkType* ptr = (_cmsMemPluginChunkType*) _cmsContextGetClientChunk(ContextID, MemPlugin);
+    return ptr->ReallocPtr(ContextID, Ptr, size);
+}
+
+// Generic free memory
+void CMSEXPORT _cmsFree(cmsContext ContextID, void* Ptr)
+{
+    if (Ptr != NULL) {
+        _cmsMemPluginChunkType* ptr = (_cmsMemPluginChunkType*) _cmsContextGetClientChunk(ContextID, MemPlugin);
+        ptr ->FreePtr(ContextID, Ptr);
+    }
+}
+
+// Generic block duplication
+void* CMSEXPORT _cmsDupMem(cmsContext ContextID, const void* Org, cmsUInt32Number size)
+{
+    _cmsMemPluginChunkType* ptr = (_cmsMemPluginChunkType*) _cmsContextGetClientChunk(ContextID, MemPlugin);
+    return ptr ->DupPtr(ContextID, Org, size);
 }
 
 // ********************************************************************************************
