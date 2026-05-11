@@ -33,6 +33,24 @@
       "message": "Need to auto-format the code.",
       "revId": "d3e62a8120520e9988ebdd2d9340e3901d617673",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a8843f74_f251fac1",
+        "filename": "core/fdrm/fx_crypt_sha.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 375,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-05-11T16:56:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2e2fa2de_3ebf6ac0",
+      "revId": "d3e62a8120520e9988ebdd2d9340e3901d617673",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
