@@ -16,6 +16,23 @@
       "message": "Conflict",
       "revId": "1c7bb1126300837a99b436c95f351d2608aca785",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dae33755_1296bc48",
+        "filename": "core/fdrm/fx_crypt.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-05-11T16:51:04Z",
+      "side": 1,
+      "message": "Auto-format to fit on one line.",
+      "revId": "1c7bb1126300837a99b436c95f351d2608aca785",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
