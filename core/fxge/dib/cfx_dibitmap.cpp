@@ -752,7 +752,7 @@ bool CFX_DIBitmap::CompositeRect(int left,
           FXSYS_memset(dest_scan, gray, width);
         } else {
           for (int col = 0; col < width; col++) {
-            *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, gray, src_alpha);
+            *dest_scan = AlphaMerge(*dest_scan, gray, src_alpha);
             dest_scan++;
           }
         }
@@ -857,12 +857,10 @@ bool CFX_DIBitmap::CompositeRect(int left,
         const uint8_t dest_alpha =
             back_alpha + src_alpha - back_alpha * src_alpha / 255;
         const int alpha_ratio = src_alpha * 255 / dest_alpha;
-        dest.blue =
-            FXDIB_ALPHA_MERGE(dest.blue, UNSAFE_TODO(color_p[0]), alpha_ratio);
+        dest.blue = AlphaMerge(dest.blue, UNSAFE_TODO(color_p[0]), alpha_ratio);
         dest.green =
-            FXDIB_ALPHA_MERGE(dest.green, UNSAFE_TODO(color_p[1]), alpha_ratio);
-        dest.red =
-            FXDIB_ALPHA_MERGE(dest.red, UNSAFE_TODO(color_p[2]), alpha_ratio);
+            AlphaMerge(dest.green, UNSAFE_TODO(color_p[1]), alpha_ratio);
+        dest.red = AlphaMerge(dest.red, UNSAFE_TODO(color_p[2]), alpha_ratio);
         dest.alpha = dest_alpha;
       }
     }
@@ -879,7 +877,7 @@ bool CFX_DIBitmap::CompositeRect(int left,
             *dest_scan++ = 255;
             continue;
           }
-          *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, color_p[comps], src_alpha);
+          *dest_scan = AlphaMerge(*dest_scan, color_p[comps], src_alpha);
           dest_scan++;
         }
       }
