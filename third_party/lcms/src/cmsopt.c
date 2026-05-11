@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------
 //
 //  Little Color Management System
-//  Copyright (c) 1998-2023 Marti Maria Saguer
+//  Copyright (c) 1998-2026 Marti Maria Saguer
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -100,51 +100,9 @@ typedef struct {
 
 } Curves16Data;
 
-// A simple adapter to prevent _cmsPipelineEval16Fn vs. _cmsInterpFn16
-// confusion, which trips up UBSAN.
-static
-void Lerp16Adapter(CMSREGISTER const cmsUInt16Number in[],
-                   CMSREGISTER cmsUInt16Number out[],
-                   const void* data) {
-    cmsInterpParams* params = (cmsInterpParams*)data;
-    params->Interpolation.Lerp16(in, out, params);
-}
 
 // Simple optimizations ----------------------------------------------------------------------------------------------------------
 
-
-// Clamp a fixed point integer to signed 28 bits to avoid overflow in
-// calculations.  Clamp is intended for use with colorants, requiring one bit
-// for a colorant and another two bits to avoid overflow when combining the
-// colors.
-cmsINLINE cmsS1Fixed14Number _FixedClamp(cmsS1Fixed14Number n) {
-  const cmsS1Fixed14Number max_positive = 268435455;  // 0x0FFFFFFF;
-  const cmsS1Fixed14Number max_negative = -268435456; // 0xF0000000;
-  // Normally expect the provided number to be in the range [0..1] (but in
-  // fixed 1.14 format), so can perform a quick check for this typical case
-  // to reduce number of compares.
-  const cmsS1Fixed14Number typical_range_mask = 0xFFFF8000;
-
-  if (!(n & typical_range_mask))
-    return n;
-  if (n < max_negative)
-     return max_negative;
-  if (n > max_positive)
-    return max_positive;
-  return n;
-}
-
-// Perform one row of matrix multiply with translation for MatShaperEval16().
-cmsINLINE cmsInt64Number _MatShaperEvaluateRow(cmsS1Fixed14Number* mat,
-                                               cmsS1Fixed14Number off,
-                                               cmsS1Fixed14Number r,
-                                               cmsS1Fixed14Number g,
-                                               cmsS1Fixed14Number b) {
-  return ((cmsInt64Number)mat[0] * r +
-          (cmsInt64Number)mat[1] * g +
-          (cmsInt64Number)mat[2] * b +
-          off + 0x2000) >> 14;
-}
 
 // Remove an element in linked chain
 static
@@ -225,6 +183,7 @@ cmsBool  isFloatMatrixIdentity(const cmsMAT3* a)
 
        return TRUE;
 }
+
 // if two adjacent matrices are found, multiply them. 
 static
 cmsBool _MultiplyMatrix(cmsPipeline* Lut)
@@ -709,12 +668,17 @@ cmsBool OptimizeByResampling(cmsPipeline** Lut, cmsUInt32Number Intent, cmsUInt3
     // Color space must be specified
     if (ColorSpace == (cmsColorSpaceSignature)0 ||
         OutputColorSpace == (cmsColorSpaceSignature)0) return FALSE;
-
-    nGridPoints = _cmsReasonableGridpointsByColorspace(ColorSpace, *dwFlags);
-
+       
     // For empty LUTs, 2 points are enough
     if (cmsPipelineStageCount(*Lut) == 0)
         nGridPoints = 2;
+    else
+    {
+        nGridPoints = _cmsReasonableGridpointsByColorspace(ColorSpace, *dwFlags);
+
+        // Lab16 as input cannot be optimized by a CLUT due to centering issues, thanks to Mike Chaney for discovering this.
+        if (!(*dwFlags & cmsFLAGS_FORCE_CLUT) && (ColorSpace == cmsSigLabData) && (T_BYTES(*InputFormat) == 2)) return FALSE;
+    }
 
     Src = *Lut;
 
@@ -814,7 +778,7 @@ Error:
 
     if (DataSetIn == NULL && DataSetOut == NULL) {
 
-        _cmsPipelineSetOptimizationParameters(Dest, Lerp16Adapter, DataCLUT->Params, NULL, NULL);
+        _cmsPipelineSetOptimizationParameters(Dest, (_cmsPipelineEval16Fn) DataCLUT->Params->Interpolation.Lerp16, DataCLUT->Params, NULL, NULL);
     }
     else {
 
@@ -824,6 +788,11 @@ Error:
             DataSetIn,
             Dest ->OutputChannels,
             DataSetOut);
+
+        if (p16 == NULL) {
+            cmsPipelineFree(Dest);
+            return FALSE;
+        }
 
         _cmsPipelineSetOptimizationParameters(Dest, PrelinEval16, (void*) p16, PrelinOpt16free, Prelin16dup);
     }
@@ -1155,14 +1124,17 @@ cmsBool OptimizeByComputingLinearization(cmsPipeline** Lut, cmsUInt32Number Inte
 
         // Store result in curve
         for (t=0; t < OriginalLut ->InputChannels; t++)
-            Trans[t] ->Table16[i] = _cmsQuickSaturateWord(Out[t] * 65535.0);
+        {
+            if (Trans[t]->Table16 != NULL)
+                Trans[t] ->Table16[i] = _cmsQuickSaturateWord(Out[t] * 65535.0);
+        }
     }
 
     // Slope-limit the obtained curves
     for (t = 0; t < OriginalLut ->InputChannels; t++)
         SlopeLimiting(Trans[t]);
 
-    // Check for validity
+    // Check for validity. lIsLinear is here for debug purposes
     lIsSuitable = TRUE;
     lIsLinear   = TRUE;
     for (t=0; (lIsSuitable && (t < OriginalLut ->InputChannels)); t++) {
@@ -1220,10 +1192,13 @@ cmsBool OptimizeByComputingLinearization(cmsPipeline** Lut, cmsUInt32Number Inte
 
         if (Trans[t]) cmsFreeToneCurve(Trans[t]);
         if (TransReverse[t]) cmsFreeToneCurve(TransReverse[t]);
+
+        Trans[t] = NULL;
+        TransReverse[t] = NULL;
     }
 
     cmsPipelineFree(LutPlusCurves);
-
+    LutPlusCurves = NULL;
 
     OptimizedPrelinCurves = _cmsStageGetPtrToCurveSet(OptimizedPrelinMpe);
     OptimizedPrelinCLUT   = (_cmsStageCLutData*) OptimizedCLUTmpe ->Data;
@@ -1234,7 +1209,7 @@ cmsBool OptimizeByComputingLinearization(cmsPipeline** Lut, cmsUInt32Number Inte
         Prelin8Data* p8 = PrelinOpt8alloc(OptimizedLUT ->ContextID,
                                                 OptimizedPrelinCLUT ->Params,
                                                 OptimizedPrelinCurves);
-        if (p8 == NULL) return FALSE;
+        if (p8 == NULL) goto Error;
 
         _cmsPipelineSetOptimizationParameters(OptimizedLUT, PrelinEval8, (void*) p8, Prelin8free, Prelin8dup);
 
@@ -1244,7 +1219,8 @@ cmsBool OptimizeByComputingLinearization(cmsPipeline** Lut, cmsUInt32Number Inte
         Prelin16Data* p16 = PrelinOpt16alloc(OptimizedLUT ->ContextID,
             OptimizedPrelinCLUT ->Params,
             3, OptimizedPrelinCurves, 3, NULL);
-        if (p16 == NULL) return FALSE;
+
+        if (p16 == NULL) goto Error;
 
         _cmsPipelineSetOptimizationParameters(OptimizedLUT, PrelinEval16, (void*) p16, PrelinOpt16free, Prelin16dup);
 
@@ -1258,7 +1234,7 @@ cmsBool OptimizeByComputingLinearization(cmsPipeline** Lut, cmsUInt32Number Inte
 
         if (!FixWhiteMisalignment(OptimizedLUT, ColorSpace, OutputColorSpace)) {
 
-            return FALSE;
+           goto Error;
         }
     }
 
@@ -1568,8 +1544,7 @@ void MatShaperEval16(CMSREGISTER const cmsUInt16Number In[],
                      CMSREGISTER const void* D)
 {
     MatShaper8Data* p = (MatShaper8Data*) D;
-    cmsS1Fixed14Number r, g, b;
-    cmsInt64Number l1, l2, l3;
+    cmsS1Fixed14Number l1, l2, l3, r, g, b;
     cmsUInt32Number ri, gi, bi;
 
     // In this case (and only in this case!) we can use this simplification since
@@ -1579,14 +1554,14 @@ void MatShaperEval16(CMSREGISTER const cmsUInt16Number In[],
     bi = In[2] & 0xFFU;
 
     // Across first shaper, which also converts to 1.14 fixed point
-    r = _FixedClamp(p->Shaper1R[ri]);
-    g = _FixedClamp(p->Shaper1G[gi]);
-    b = _FixedClamp(p->Shaper1B[bi]);
+    r = p->Shaper1R[ri];
+    g = p->Shaper1G[gi];
+    b = p->Shaper1B[bi];
 
     // Evaluate the matrix in 1.14 fixed point
-    l1 = _MatShaperEvaluateRow(p->Mat[0], p->Off[0], r, g, b);
-    l2 = _MatShaperEvaluateRow(p->Mat[1], p->Off[1], r, g, b);
-    l3 = _MatShaperEvaluateRow(p->Mat[2], p->Off[2], r, g, b);
+    l1 =  (p->Mat[0][0] * r + p->Mat[0][1] * g + p->Mat[0][2] * b + p->Off[0] + 0x2000) >> 14;
+    l2 =  (p->Mat[1][0] * r + p->Mat[1][1] * g + p->Mat[1][2] * b + p->Off[1] + 0x2000) >> 14;
+    l3 =  (p->Mat[2][0] * r + p->Mat[2][1] * g + p->Mat[2][2] * b + p->Off[2] + 0x2000) >> 14;
 
     // Now we have to clip to 0..1.0 range
     ri = (l1 < 0) ? 0 : ((l1 > 16384) ? 16384U : (cmsUInt32Number) l1);
@@ -1767,6 +1742,8 @@ cmsBool OptimizeMatrixShaper(cmsPipeline** Lut, cmsUInt32Number Intent, cmsUInt3
 
                      _cmsStageMatrixData* Data = (_cmsStageMatrixData*)cmsStageData(Matrix1);
 
+                     if (Matrix1->InputChannels != 3 || Matrix1->OutputChannels != 3) return FALSE;
+
                      // Copy the matrix to our result
                      memcpy(&res, Data->Double, sizeof(res));
 
@@ -1811,7 +1788,7 @@ cmsBool OptimizeMatrixShaper(cmsPipeline** Lut, cmsUInt32Number Intent, cmsUInt3
         _cmsStageToneCurvesData* mpeC2 = (_cmsStageToneCurvesData*) cmsStageData(Curve2);
 
         // In this particular optimization, cache does not help as it takes more time to deal with
-        // the cache that with the pixel handling
+        // the cache than with the pixel handling
         *dwFlags |= cmsFLAGS_NOCACHE;
 
         // Setup the optimizarion routines
@@ -1967,8 +1944,8 @@ cmsBool CMSEXPORT _cmsOptimizePipeline(cmsContext ContextID,
     // Named color pipelines cannot be optimized 
     for (mpe = cmsPipelineGetPtrToFirstStage(*PtrLut);
         mpe != NULL;
-        mpe = cmsStageNext(mpe)) {
-        if (cmsStageType(mpe) == cmsSigNamedColorElemType) return FALSE;
+        mpe = cmsStageNext(mpe)) {        
+            if (cmsStageType(mpe) == cmsSigNamedColorElemType) return FALSE;
     }
 
     // Try to get rid of identities and trivial conversions.
