@@ -16,6 +16,24 @@
       "message": "Ok, but Captain Entropy worries about that this is not namespaced, and removing the FX prefix may someday lead to a collision during link of unrelated code.",
       "revId": "a8df422d3f57f8c8bb3f4df21ee8bdec4ac6148d",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5a0a2d11_f2e12f5c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-05-12T19:14:35Z",
+      "side": 1,
+      "message": "Will put the entire header in a namespace in a follow-up.",
+      "parentUuid": "945ecce6_5cafd630",
+      "revId": "a8df422d3f57f8c8bb3f4df21ee8bdec4ac6148d",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
