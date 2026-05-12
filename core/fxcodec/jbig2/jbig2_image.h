@@ -110,6 +110,7 @@ class CJBig2_Image {
   int32_t width_ = 0;   // 1-bit pixels
   int32_t height_ = 0;  // lines
   int32_t stride_ = 0;  // bytes, must be multiple of 4.
+  size_t data_size_ = 0;  // Total cached span size
 };
 
 #endif  // CORE_FXCODEC_JBIG2_JBIG2_IMAGE_H_
