@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fc19caa2_ee2b4800",
+        "filename": "core/fxcrt/maybe_owned_data_vector.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-05-12T19:41:12Z",
+      "side": 1,
+      "message": "maybe make this a template argument, with Data vector\u003cT\u003e as a default, so you can pass in other foo types like FixedSizeDataVector.",
+      "range": {
+        "startLine": 19,
+        "startChar": 8,
+        "endLine": 19,
+        "endChar": 33
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "ac17ceb3_fb88c0fc",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxcrt/maybe_owned_data_vector.h",
+              "range": {
+                "startLine": 16,
+                "startChar": 0,
+                "endLine": 17,
+                "endChar": 0
+              },
+              "replacement": "template \u003ctypename T, typename OwnedType \u003d DataVector\u003cT\u003e\u003e\n"
+            },
+            {
+              "path": "core/fxcrt/maybe_owned_data_vector.h",
+              "range": {
+                "startLine": 19,
+                "startChar": 0,
+                "endLine": 20,
+                "endChar": 0
+              },
+              "replacement": ""
+            }
+          ]
+        }
+      ],
+      "revId": "e8ce8a4bf9e5dbda946b8f0f10638479b2f6edb5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
