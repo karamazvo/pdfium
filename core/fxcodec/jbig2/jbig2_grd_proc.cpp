@@ -123,6 +123,17 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithOpt3(
     return nullptr;
   }
 
+  // The compiler has trouble figuring out `OPT` is never out of bounds. Get the
+  // values now to avoid bound checking in the for-loops below.
+  const uint16_t opt_const1 = kOptConstant1[OPT];
+  const uint16_t opt_const2 = kOptConstant2[OPT];
+  const uint16_t opt_const3 = kOptConstant3[OPT];
+  const uint16_t opt_const4 = kOptConstant4[OPT];
+  const uint16_t opt_const5 = kOptConstant5[OPT];
+  const uint16_t opt_const6 = kOptConstant6[OPT];
+  const uint16_t opt_const7 = kOptConstant7[OPT];
+  const uint16_t opt_const8 = kOptConstant8[OPT];
+
   int LTP = 0;
   const LineLayout layout = GetLineLayout(GBW);
   // TODO(npm): Why is the height only trimmed when OPT is 0?
@@ -139,7 +150,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithOpt3(
         return nullptr;
       }
 
-      LTP = LTP ^ pArithDecoder->Decode(&gbContexts[kOptConstant1[OPT]]);
+      LTP = LTP ^ pArithDecoder->Decode(&gbContexts[opt_const1]);
       if (LTP) {
         GBREG->CopyLine(row_write, row_prev1);
         continue;
@@ -152,8 +163,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithOpt3(
       if (is_second_line) {
         val_prev = row_prev1[0];
       }
-      uint32_t CONTEXT =
-          ((val_prev >> kOptConstant4[OPT]) & kOptConstant5[OPT]);
+      uint32_t CONTEXT = ((val_prev >> opt_const4) & opt_const5);
       for (uint32_t cc = 0; cc < layout.full_bytes; ++cc) {
         if (is_second_line) {
           val_prev = (val_prev << 8) | row_prev1[cc + 1];
@@ -166,9 +176,8 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithOpt3(
 
           int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
           cVal |= bVal << k;
-          CONTEXT =
-              (((CONTEXT & kOptConstant6[OPT]) << 1) | bVal |
-               ((val_prev >> (k + kOptConstant4[OPT])) & kOptConstant8[OPT]));
+          CONTEXT = (((CONTEXT & opt_const6) << 1) | bVal |
+                     ((val_prev >> (k + opt_const4)) & opt_const8));
         }
         row_write[cc] = cVal;
       }
@@ -181,24 +190,23 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithOpt3(
 
         int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
         cVal1 |= bVal << (7 - k);
-        CONTEXT = (((CONTEXT & kOptConstant6[OPT]) << 1) | bVal |
-                   (((val_prev >> (7 + kOptConstant4[OPT] - k))) &
-                    kOptConstant8[OPT]));
+        CONTEXT = (((CONTEXT & opt_const6) << 1) | bVal |
+                   (((val_prev >> (7 + opt_const4 - k))) & opt_const8));
       }
       row_write[layout.full_bytes] = cVal1;
       continue;
     }
 
-    uint32_t val_prev2 = row_prev2[0] << kOptConstant2[OPT];
+    uint32_t val_prev2 = row_prev2[0] << opt_const2;
     uint32_t val_prev1 = row_prev1[0];
-    uint32_t CONTEXT = (val_prev2 & kOptConstant3[OPT]) |
-                       ((val_prev1 >> kOptConstant4[OPT]) & kOptConstant5[OPT]);
+    uint32_t CONTEXT =
+        (val_prev2 & opt_const3) | ((val_prev1 >> opt_const4) & opt_const5);
     auto row_write_zip = row_write.first(layout.full_bytes);
     auto row_prev1_zip = row_prev1.subspan<1u>();
     auto row_prev2_zip = row_prev2.subspan<1u>();
     for (auto [elem_write, elem_prev1, elem_prev2] :
          fxcrt::Zip(row_write_zip, row_prev1_zip, row_prev2_zip)) {
-      val_prev2 = (val_prev2 << 8) | (elem_prev2 << kOptConstant2[OPT]);
+      val_prev2 = (val_prev2 << 8) | (elem_prev2 << opt_const2);
       val_prev1 = (val_prev1 << 8) | elem_prev1;
       uint8_t cVal = 0;
       for (int32_t k = 7; k >= 0; --k) {
@@ -208,10 +216,9 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithOpt3(
 
         int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
         cVal |= bVal << k;
-        CONTEXT =
-            (((CONTEXT & kOptConstant6[OPT]) << 1) | bVal |
-             ((val_prev2 >> k) & kOptConstant7[OPT]) |
-             ((val_prev1 >> (k + kOptConstant4[OPT])) & kOptConstant8[OPT]));
+        CONTEXT = (((CONTEXT & opt_const6) << 1) | bVal |
+                   ((val_prev2 >> k) & opt_const7) |
+                   ((val_prev1 >> (k + opt_const4)) & opt_const8));
       }
       elem_write = cVal;
     }
@@ -225,10 +232,9 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithOpt3(
 
       int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
       cVal1 |= bVal << (7 - k);
-      CONTEXT =
-          (((CONTEXT & kOptConstant6[OPT]) << 1) | bVal |
-           ((val_prev2 >> (7 - k)) & kOptConstant7[OPT]) |
-           ((val_prev1 >> (7 + kOptConstant4[OPT] - k)) & kOptConstant8[OPT]));
+      CONTEXT = (((CONTEXT & opt_const6) << 1) | bVal |
+                 ((val_prev2 >> (7 - k)) & opt_const7) |
+                 ((val_prev1 >> (7 + opt_const4 - k)) & opt_const8));
     }
     row_write[layout.full_bytes] = cVal1;
   }
@@ -243,6 +249,14 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplateUnopt(
   if (!GBREG->has_data()) {
     return nullptr;
   }
+
+  // The compiler has trouble figuring out `OPT` is never out of bounds. Get the
+  // values now to avoid bound checking in the for-loops below.
+  const uint16_t opt_const1 = kOptConstant1[UNOPT];
+  const uint16_t opt_const9 = kOptConstant9[UNOPT];
+  const uint16_t opt_const10 = kOptConstant10[UNOPT];
+  const uint16_t opt_const11 = kOptConstant11[UNOPT];
+  const uint16_t opt_const12 = kOptConstant12[UNOPT];
 
   GBREG->Fill(false);
   int LTP = 0;
@@ -261,7 +275,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplateUnopt(
         return nullptr;
       }
 
-      LTP = LTP ^ pArithDecoder->Decode(&gbContexts[kOptConstant1[UNOPT]]);
+      LTP = LTP ^ pArithDecoder->Decode(&gbContexts[opt_const1]);
       if (LTP) {
         GBREG->CopyLine(row_write, row_prev1);
         continue;
@@ -303,7 +317,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplateUnopt(
         uint32_t CONTEXT = val_current;
         CONTEXT |= GBREG->GetPixel(w + GBAT[0], row_gbat0) << SHIFT;
         CONTEXT |= val_prev1 << (SHIFT + 1);
-        CONTEXT |= val_prev2 << kOptConstant9[UNOPT];
+        CONTEXT |= val_prev2 << opt_const9;
         if (UNOPT == 0) {
           CONTEXT |= GBREG->GetPixel(w + GBAT[2], row_gbat1) << 10;
           CONTEXT |= GBREG->GetPixel(w + GBAT[4], row_gbat2) << 11;
@@ -316,11 +330,11 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplateUnopt(
       }
       val_prev2 =
           ((val_prev2 << 1) | GBREG->GetPixel(w + 2 + MOD2, row_prev2)) &
-          kOptConstant10[UNOPT];
+          opt_const10;
       val_prev1 =
           ((val_prev1 << 1) | GBREG->GetPixel(w + 3 - DIV2, row_prev1)) &
-          kOptConstant11[UNOPT];
-      val_current = ((val_current << 1) | bVal) & kOptConstant12[UNOPT];
+          opt_const11;
+      val_current = ((val_current << 1) | bVal) & opt_const12;
     }
   }
   return GBREG;
