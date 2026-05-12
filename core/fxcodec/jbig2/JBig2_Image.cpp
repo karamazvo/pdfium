@@ -82,8 +82,9 @@ CJBig2_Image::CJBig2_Image(int32_t w, int32_t h) {
   height_ = h;
   stride_ = stride_pixels / 8;
   CHECK_GE(stride_, 0);
-  data_.Reset(std::unique_ptr<uint8_t, FxFreeDeleter>(
-      FX_Alloc2D(uint8_t, stride_, height_)));
+  data_size_ = Fx2DSizeOrDie(stride_, height_);
+  data_.Reset(
+      std::unique_ptr<uint8_t, FxFreeDeleter>(FX_Alloc(uint8_t, data_size_)));
 }
 
 CJBig2_Image::CJBig2_Image(int32_t w,
@@ -112,18 +113,22 @@ CJBig2_Image::CJBig2_Image(int32_t w,
   height_ = h;
   stride_ = stride;
   CHECK_GE(stride_, 0);
+  data_size_ = Fx2DSizeOrDie(stride_, height_);
   data_.Reset(pBuf.data());
 }
 
 CJBig2_Image::CJBig2_Image(const CJBig2_Image& other)
-    : width_(other.width_), height_(other.height_), stride_(other.stride_) {
+    : width_(other.width_),
+      height_(other.height_),
+      stride_(other.stride_),
+      data_size_(other.data_size_) {
   auto other_span = other.span();
   if (other_span.empty()) {
     return;
   }
 
-  data_.Reset(std::unique_ptr<uint8_t, FxFreeDeleter>(
-      FX_Alloc2D(uint8_t, stride_, height_)));
+  data_.Reset(
+      std::unique_ptr<uint8_t, FxFreeDeleter>(FX_Alloc(uint8_t, data_size_)));
   fxcrt::spancpy(span(), other_span);
 }
 
@@ -138,14 +143,12 @@ pdfium::span<const uint8_t> CJBig2_Image::span() const {
   // SAFETY: If `data_` is owned, then `this` must have allocate the right
   // amount. If `data_` is not owned, then safety requires correctness from the
   // caller that constructed `this`.
-  return UNSAFE_BUFFERS(
-      pdfium::span(data_.Get(), Fx2DSizeOrDie(stride_, height_)));
+  return UNSAFE_BUFFERS(pdfium::span(data_.Get(), data_size_));
 }
 
 pdfium::span<uint8_t> CJBig2_Image::span() {
   // SAFETY: Same as const-version of span() above.
-  return UNSAFE_BUFFERS(
-      pdfium::span(data_.Get(), Fx2DSizeOrDie(stride_, height_)));
+  return UNSAFE_BUFFERS(pdfium::span(data_.Get(), data_size_));
 }
 
 int CJBig2_Image::GetPixel(int32_t x, pdfium::span<const uint8_t> line) const {
@@ -272,9 +275,8 @@ std::optional<size_t> CJBig2_Image::GetLineOffset(int32_t y) const {
     return std::nullopt;
   }
 
-  FX_SAFE_SIZE_T size = stride_;
-  size *= y;
-  return size.ValueOrDie();
+  // Since `y` is in [0, height), this is safe without `FX_SAFE_SIZE_T`.
+  return static_cast<size_t>(stride_) * static_cast<size_t>(y);
 }
 
 void CJBig2_Image::SubImageFast(uint32_t x,
@@ -333,7 +335,7 @@ void CJBig2_Image::Expand(int32_t h, bool v) {
     return;
   }
 
-  // Won't die unless kMaxImageBytes were to be increased someday.
+  // Won't die unless `kMaxImageBytes` were to be increased someday.
   const size_t current_size = Fx2DSizeOrDie(height_, stride_);
   const size_t desired_size = Fx2DSizeOrDie(h, stride_);
 
@@ -346,10 +348,11 @@ void CJBig2_Image::Expand(int32_t h, bool v) {
         FX_Alloc(uint8_t, desired_size)));
     fxcrt::spancpy(span(), external_buffer);
   }
-  // NOTE: Must update `height_` first, so a subsequent span() call will create
-  // a span that includes the expanded portion of memory, which needs to be
-  // filled. Do not reuse other spans here.
+  // NOTE: Must update `data_size_` first, so a subsequent span() call will
+  // create a span that includes the expanded portion of memory, which needs to
+  // be filled. Do not reuse other spans here.
   height_ = h;
+  data_size_ = desired_size;
   std::ranges::fill(span().subspan(current_size), v ? 0xff : 0);
 }
 
