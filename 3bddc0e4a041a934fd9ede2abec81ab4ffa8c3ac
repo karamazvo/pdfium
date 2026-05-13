@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fa055207_2f573f90",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 15
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-05-13T13:19:43Z",
+      "side": 1,
+      "message": "Ping + Let me know about\n1. If it is fine for us to go in this direction with a public read-only api?\n2. Any design documentation or anything else of the sort needed?\n3. If I should split this up (initially did not because if I add to the header then they need c++, which needs tests), although I can have the tests in a separate cl.",
+      "revId": "3bddc0e4a041a934fd9ede2abec81ab4ffa8c3ac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
