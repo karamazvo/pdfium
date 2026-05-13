@@ -16,6 +16,24 @@
       "message": "This is in the list above unconditionally in Chromium\u0027s build. Just match that?",
       "revId": "8e03da28cc6d3d27ef5507572dfc8423fd26f10e",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bc0b8cd7_10ec02d3",
+        "filename": "third_party/cpu_features/BUILD.gn",
+        "patchSetId": 4
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 9051
+      },
+      "writtenOn": "2026-05-13T22:52:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "61a2e333_31b18a4e",
+      "revId": "8e03da28cc6d3d27ef5507572dfc8423fd26f10e",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
