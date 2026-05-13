@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "84f54d5f_f5bd601b",
+        "filename": "core/fxge/dib/cfx_scanlinecompositor_unittest.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-05-13T23:49:23Z",
+      "side": 1,
+      "message": "maybe this lives in the .h file despite being only used for tests.",
+      "range": {
+        "startLine": 106,
+        "startChar": 1,
+        "endLine": 112,
+        "endChar": 1
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "1f1c570a_b339a87d",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxge/dib/cfx_scanlinecompositor_unittest.cpp",
+              "range": {
+                "startLine": 1,
+                "startChar": 0,
+                "endLine": 1,
+                "endChar": 0
+              },
+              "replacement": "inline bool operator\u003d\u003d(const FX_BGRA_STRUCT\u003cuint8_t\u003e\u0026 lhs,\n                       const FX_BGRA_STRUCT\u003cuint8_t\u003e\u0026 rhs) {\n  return lhs.blue \u003d\u003d rhs.blue \u0026\u0026 lhs.green \u003d\u003d rhs.green \u0026\u0026 lhs.red \u003d\u003d rhs.red \u0026\u0026\n         lhs.alpha \u003d\u003d rhs.alpha;\n}\n\n"
+            },
+            {
+              "path": "core/fxge/dib/cfx_scanlinecompositor_unittest.cpp",
+              "range": {
+                "startLine": 106,
+                "startChar": 0,
+                "endLine": 116,
+                "endChar": 0
+              },
+              "replacement": ""
+            }
+          ]
+        }
+      ],
+      "revId": "afb3db1cad1c335da5560a79b54490c147c7d753",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
