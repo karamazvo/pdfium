@@ -49,6 +49,7 @@ vars = {
   # purposes, by adding the following line to src.git's .gclient entry:
   #      "custom_vars": { "checkout_configuration": "small" },
   'checkout_configuration': 'default',
+  'android_ndk_version': Str('2@30.0.14608247'),
 
   # By default, don't check out android. Will be overridden by gclient
   # variables.
@@ -974,7 +975,7 @@ deps = {
       'packages': [
             {
                 'package': 'chromium/third_party/android_toolchain/android_toolchain',
-                'version': 'KXOia11cm9lVdUdPlbGLu8sCz6Y4ey_HV2s8_8qeqhgC',
+                'version': 'version:' + Var('android_ndk_version'),
             },
       ],
       'condition': 'checkout_android and non_git_source',
@@ -1496,6 +1497,7 @@ use_relative_paths = True
 
 gclient_gn_args_file = 'build/config/gclient_args.gni'
 gclient_gn_args = [
+  'android_ndk_version',
   'build_with_chromium',
   'checkout_android',
   'checkout_skia',
@@ -1567,9 +1569,9 @@ vars = {
   # and whatever else without interference from each other.
   'abseil_revision': '14a5b78f39684f85a19690e63c722d6bb680f2cd',
   # Three lines of non-changing comments so that
-  # the commit queue can handle CLs rolling android_toolchain
+  # the commit queue can handle CLs rolling android_ndk
   # and whatever else without interference from each other.
-  'android_toolchain_version': 'KXOia11cm9lVdUdPlbGLu8sCz6Y4ey_HV2s8_8qeqhgC',
+  'android_ndk_version': Str('2@30.0.14608247'),
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling brotli
   # and whatever else without interference from each other.
@@ -1837,7 +1839,7 @@ deps = {
     'packages': [
       {
         'package': 'chromium/third_party/android_toolchain/android_toolchain',
-        'version': Var('android_toolchain_version'),
+        'version': 'version:' + Var('android_ndk_version'),
       },
     ],
     'condition': 'checkout_android_native_support',
@@ -2401,7 +2403,7 @@ class RollDepTest(unittest.TestCase):
 
   def testCipdDepsRollsNothingToRoll(self):
     success, message = roll_dep(CHROMIUM_DEPS, PDFIUM_DEPS,
-                                'android_toolchain_version')
+                                'android_ndk_version')
     self.assertTrue(success)
     self.assertEqual('Revisions are the same.', message)
 
