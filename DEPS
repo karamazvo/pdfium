@@ -2,6 +2,7 @@ use_relative_paths = True
 
 gclient_gn_args_file = 'build/config/gclient_args.gni'
 gclient_gn_args = [
+  'android_ndk_version',
   'build_with_chromium',
   'checkout_android',
   'checkout_skia',
@@ -84,9 +85,9 @@ vars = {
   # and whatever else without interference from each other.
   'abseil_revision': 'dd4432fb02583b7a5b2b4fbf2012f7053e286ce0',
   # Three lines of non-changing comments so that
-  # the commit queue can handle CLs rolling android_toolchain
+  # the commit queue can handle CLs rolling android_ndk
   # and whatever else without interference from each other.
-  'android_toolchain_version': 'KXOia11cm9lVdUdPlbGLu8sCz6Y4ey_HV2s8_8qeqhgC',
+  'android_ndk_version': Str('2@30.0.14608247'),
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling brotli
   # and whatever else without interference from each other.
@@ -354,7 +355,7 @@ deps = {
     'packages': [
       {
         'package': 'chromium/third_party/android_toolchain/android_toolchain',
-        'version': Var('android_toolchain_version'),
+        'version': 'version:' + Var('android_ndk_version'),
       },
     ],
     'condition': 'checkout_android_native_support',
