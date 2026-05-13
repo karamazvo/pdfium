@@ -16,6 +16,23 @@
       "message": "I tried a bunch of other ways but can\u0027t nudge the compiler into avoiding bounds checks. I could restructure all the constants into a struct, but it\u0027s a bit more churn.",
       "revId": "2dd3c8ad7babd5799cf574328947eeb517cccb96",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "14c3413c_b3ee9bb5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5045
+      },
+      "writtenOn": "2026-05-13T14:55:00Z",
+      "side": 1,
+      "message": "Didn\u0027t have the correct build flags / figured out something that could be better.",
+      "revId": "2dd3c8ad7babd5799cf574328947eeb517cccb96",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
