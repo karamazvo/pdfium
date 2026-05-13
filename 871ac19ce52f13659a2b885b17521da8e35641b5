@@ -1,0 +1,109 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7889d04b_c254ec22",
+        "filename": "core/fxge/dib/cfx_dibitmap.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-05-13T23:58:18Z",
+      "side": 1,
+      "message": "We used to also copy the bytes in the padding between width and pitch, now we don\u0027t.  Probably doesn\u0027t matter.",
+      "range": {
+        "startLine": 95,
+        "startChar": 53,
+        "endLine": 95,
+        "endChar": 64
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "64e3293c_55d36a0b",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxge/dib/cfx_dibitmap.cpp",
+              "range": {
+                "startLine": 95,
+                "startChar": 0,
+                "endLine": 96,
+                "endChar": 0
+              },
+              "replacement": "    size_t bytes_in_width \u003d\n        static_cast\u003csize_t\u003e(source-\u003eGetWidth()) * source-\u003eGetBPP() / 8;\n    fxcrt::spancpy(GetWritableScanline(row).first(bytes_in_width), source-\u003eGetScanline(row).first(bytes_in_width));\n"
+            }
+          ]
+        }
+      ],
+      "revId": "871ac19ce52f13659a2b885b17521da8e35641b5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6cb6ad2c_205e7967",
+        "filename": "core/fxge/dib/cfx_dibitmap.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-05-13T23:58:18Z",
+      "side": 1,
+      "message": "nit: probably can be .subspan(src_row_offset, bytes_to_copy);",
+      "range": {
+        "startLine": 284,
+        "startChar": 56,
+        "endLine": 284,
+        "endChar": 70
+      },
+      "fixSuggestions": [
+        {
+          "fixId": "1c2ee6ff_c8557413",
+          "description": "prompt_to_edit API",
+          "replacements": [
+            {
+              "path": "core/fxge/dib/cfx_dibitmap.cpp",
+              "range": {
+                "startLine": 284,
+                "startChar": 0,
+                "endLine": 286,
+                "endChar": 0
+              },
+              "replacement": "                                               .subspan(src_row_offset,\n                                                        bytes_to_copy);\n"
+            }
+          ]
+        }
+      ],
+      "revId": "871ac19ce52f13659a2b885b17521da8e35641b5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4565f949_cbf536b2",
+        "filename": "core/fxge/dib/cfx_dibitmap.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 752,
+      "author": {
+        "id": 5495
+      },
+      "writtenOn": "2026-05-13T23:58:18Z",
+      "side": 1,
+      "message": "nit: again, two-arg subspan()",
+      "range": {
+        "startLine": 752,
+        "startChar": 18,
+        "endLine": 752,
+        "endChar": 56
+      },
+      "revId": "871ac19ce52f13659a2b885b17521da8e35641b5",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    }
+  ]
+}
