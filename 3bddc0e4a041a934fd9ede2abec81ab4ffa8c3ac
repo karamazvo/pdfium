@@ -33,6 +33,24 @@
       "message": "I was wondering if a similar API could be added for document level? e.g. `FPDF_GetDocDictionary()`.",
       "revId": "3bddc0e4a041a934fd9ede2abec81ab4ffa8c3ac",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f3ab2883_e8f38d86",
+        "filename": "fpdfsdk/fpdf_dict.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 8751
+      },
+      "writtenOn": "2026-05-14T16:30:44Z",
+      "side": 1,
+      "message": "i.e. I\u0027d be looking for something similar to pikepdf\u0027s `Pdf.Root` or `Pdf.objects`.",
+      "parentUuid": "64cea980_790fc608",
+      "revId": "3bddc0e4a041a934fd9ede2abec81ab4ffa8c3ac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
