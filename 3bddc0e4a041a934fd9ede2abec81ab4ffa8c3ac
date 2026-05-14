@@ -69,6 +69,24 @@
       "parentUuid": "64cea980_790fc608",
       "revId": "3bddc0e4a041a934fd9ede2abec81ab4ffa8c3ac",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9b0176bd_ad5b252c",
+        "filename": "fpdfsdk/fpdf_dict.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-05-14T16:35:31Z",
+      "side": 1,
+      "message": "I\u0027d be happy to add those soon but would want to go CL by CL for this instead of adding many the dictionaries in one CL. Maybe it also is a good idea to fragment the bug to \"Add dictionary support\" for each individual dictionary we are interested in.",
+      "parentUuid": "b575983e_4759b5dc",
+      "revId": "3bddc0e4a041a934fd9ede2abec81ab4ffa8c3ac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
