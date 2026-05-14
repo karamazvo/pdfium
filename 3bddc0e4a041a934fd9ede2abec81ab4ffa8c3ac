@@ -51,6 +51,24 @@
       "parentUuid": "64cea980_790fc608",
       "revId": "3bddc0e4a041a934fd9ede2abec81ab4ffa8c3ac",
       "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b575983e_4759b5dc",
+        "filename": "fpdfsdk/fpdf_dict.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 4258968
+      },
+      "writtenOn": "2026-05-14T16:31:59Z",
+      "side": 1,
+      "message": "Hm good point, the original bug reported was about Page Dictionaries however. Which is why I added that first. I am working on a couple follow ups (such as the next one which adds the font dictionary). Will work on DocDictionary/RootDictionary next.",
+      "parentUuid": "64cea980_790fc608",
+      "revId": "3bddc0e4a041a934fd9ede2abec81ab4ffa8c3ac",
+      "serverId": "fca2d64a-0420-3532-b200-12848c95a47b"
     }
   ]
 }
