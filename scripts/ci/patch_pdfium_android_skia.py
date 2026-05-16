@@ -32,14 +32,21 @@ def parse_gn_block(text: str, start_token: str):
 
     raise RuntimeError(f"Could not parse block: {start_token}")
 
+def try_remove_block(text: str, start_token: str) -> str:
+    start = text.find(start_token)
+    if start == -1:
+        return text
+    s, e, _ = parse_gn_block(text, start_token)
+    return text[:s] + text[e:]
+
 def find_skia_target_block(text: str):
+    # Current PDFium may use component("skia"), static_library("skia"), or source_set("skia").
     for token in [
         'component("skia")',
         'static_library("skia")',
         'source_set("skia")',
     ]:
-        start = text.find(token)
-        if start != -1:
+        if token in text:
             s, e, block = parse_gn_block(text, token)
             return token, s, e, block
 
@@ -142,7 +149,7 @@ build_gn.write_text(s)
 skia_gn = ROOT / "skia/BUILD.gn"
 s = skia_gn.read_text()
 
-# Remove older wrong manual-source patch if present.
+# Remove older wrong manual source patch if present.
 s = s.replace("""
     # Required by SkFontMgr_android.cpp in the real Android font-manager path.
     sources += [
@@ -168,7 +175,22 @@ s = re.sub(
     flags=re.X,
 )
 
+# Remove old compat target versions if present.
+# Some earlier versions used source_set(...) with deps on //third_party/skia,
+# which causes duplicate Skia build-arg declarations. Burn that bridge.
+for token in [
+    'source_set("pdfium_android_skia_compat")',
+    'skia_source_set("pdfium_android_skia_compat")',
+]:
+    while token in s:
+        s = try_remove_block(s, token)
+
 # 3.1 Add correct Android Skia source groups to //skia.
+#
+# We intentionally DO NOT add SkTypeface_proxy via skia_ports_typeface_proxy_sources
+# here. In this CI build, we compile SkTypeface_proxy.cpp through a separate
+# local skia_source_set compat target. That avoids duplicate object files while
+# avoiding imports from //third_party/skia.
 anchor = "    sources += skia_ports_fontmgr_android_sources"
 
 android_block_match = re.search(
@@ -181,18 +203,21 @@ if not android_block_match:
 
 block = android_block_match.group(0)
 
+# Remove old typeface source-group line if previous patch inserted it.
+block = block.replace("\n    sources += skia_ports_typeface_proxy_sources", "")
+
 required_group_lines = [
     "    sources += skia_ports_fontmgr_android_parser_sources",
     "    sources += skia_ports_fontmgr_custom_sources",
     "    sources += skia_ports_fontmgr_empty_sources",
-    "    sources += skia_ports_typeface_proxy_sources",
 ]
 
 missing_group_lines = [line for line in required_group_lines if line not in block]
 
 if missing_group_lines:
-    new_block = block.replace(anchor, anchor + "\n" + "\n".join(missing_group_lines))
-    s = s[:android_block_match.start()] + new_block + s[android_block_match.end():]
+    block = block.replace(anchor, anchor + "\n" + "\n".join(missing_group_lines))
+
+s = s[:android_block_match.start()] + block + s[android_block_match.end():]
 
 # 3.2 Remove only the invalid Android optimization block inside skia_opts.
 start, end, skia_opts = parse_gn_block(s, 'skia_source_set("skia_opts")')
@@ -213,38 +238,29 @@ else:
 
 s = s[:start] + skia_opts2 + s[end:]
 
-# 3.3 Add separate compat source_set for SkTypeface_proxy.
+# 3.3 Add local compat source_set through PDFium's local skia_source_set template.
 #
-# Why separate target?
-# Some source groups are already included in //skia and directly adding files can
-# trigger duplicate object errors. A separate source_set gives a different object
-# path and safely contributes the missing vtable/method definitions.
+# Critical:
+# - Do NOT depend on //third_party/skia:* here.
+# - That imports third_party/skia/gn/skia.gni and collides with PDFium's
+#   skia/features.gni build args, e.g. skia_use_dawn.
+# - skia_source_set is defined in this file and already carries the right
+#   PDFium/Skia configs.
 compat_target = '''
 # PDFium standalone Android Skia compatibility target.
-# Kept separate from //skia sources to avoid duplicate object names when
-# upstream Skia source-group variables already include some files.
-source_set("pdfium_android_skia_compat") {
+# Uses the local skia_source_set template to avoid importing //third_party/skia
+# GN targets, which would duplicate Skia build-arg declarations.
+skia_source_set("pdfium_android_skia_compat") {
   sources = [
     "//third_party/skia/src/ports/SkTypeface_proxy.cpp",
   ]
-
-  deps = [
-    "//third_party/skia:skia_core_and_effects",
-  ]
-
-  public_deps = [
-    "//third_party/skia:skia_core_public",
-  ]
-
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [ "//build/config/compiler:no_chromium_code" ]
 }
 '''
 
-if 'source_set("pdfium_android_skia_compat")' not in s:
+if 'skia_source_set("pdfium_android_skia_compat")' not in s:
     s = s.rstrip() + "\n\n" + compat_target + "\n"
 
-# 3.4 Wire compat target into the real //skia target, regardless of target type.
+# 3.4 Wire compat target into the real //skia target.
 skia_token, skia_start, skia_end, skia_block = find_skia_target_block(s)
 print(f"Found Skia target: {skia_token}")
 
@@ -279,13 +295,20 @@ for token in [
     "skia_ports_fontmgr_android_parser_sources",
     "skia_ports_fontmgr_custom_sources",
     "skia_ports_fontmgr_empty_sources",
-    "skia_ports_typeface_proxy_sources",
-    'source_set("pdfium_android_skia_compat")',
+    'skia_source_set("pdfium_android_skia_compat")',
     "SkTypeface_proxy.cpp",
     ':pdfium_android_skia_compat',
 ]:
     if token not in patched:
         raise RuntimeError(f"Patch failed: missing {token}")
+
+# This exact bad dependency must never appear in compat.
+compat_start, compat_end, compat_block = parse_gn_block(
+    patched,
+    'skia_source_set("pdfium_android_skia_compat")',
+)
+if "//third_party/skia:" in compat_block:
+    raise RuntimeError("Patch failed: compat target must not depend on //third_party/skia:*")
 
 _, _, final_skia_opts = parse_gn_block(patched, 'skia_source_set("skia_opts")')
 if (
@@ -299,8 +322,8 @@ print()
 print("=== Android Skia block ===")
 run("grep -n -A24 -B4 'skia_ports_fontmgr_android_sources' skia/BUILD.gn")
 print()
-print("=== Real Skia target + compat wiring ===")
-run("grep -n -A35 -B6 'pdfium_android_skia_compat' skia/BUILD.gn")
+print("=== Compat target ===")
+run("grep -n -A18 -B4 'pdfium_android_skia_compat' skia/BUILD.gn")
 print()
 print("=== skia_opts block ===")
 run("grep -n -A45 -B5 'skia_source_set(\"skia_opts\")' skia/BUILD.gn")
