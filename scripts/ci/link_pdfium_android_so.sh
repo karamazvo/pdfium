@@ -15,7 +15,7 @@ test -x "$CC"
 test -d "$SYSROOT"
 test -f "$BUILTINS"
 
-echo "=== Collect project dependency closure from GN ==="
+echo "=== Collect project static-library closure from GN ==="
 
 mapfile -t PROJECT_TARGETS < <(
   {
@@ -26,44 +26,43 @@ mapfile -t PROJECT_TARGETS < <(
   } | sed '/^[[:space:]]*$/d' | sort -u
 )
 
-PROJECT_INPUTS=()
+PROJECT_ARCHIVES=()
 for t in "${PROJECT_TARGETS[@]}"; do
   while IFS= read -r out; do
     p="${out#//}"
     case "$p" in
-      out/android_arm64/*.a|out/android_arm64/*.o)
-        PROJECT_INPUTS+=("$p")
+      out/android_arm64/*.a)
+        PROJECT_ARCHIVES+=("$p")
         ;;
     esac
   done < <(gn desc "$OUT" "$t" outputs 2>/dev/null || true)
 done
 
-mapfile -t PROJECT_INPUTS_UNIQ < <(
-  printf '%s\n' "${PROJECT_INPUTS[@]}" \
+mapfile -t PROJECT_ARCHIVES_UNIQ < <(
+  printf '%s\n' "${PROJECT_ARCHIVES[@]}" \
     | sort -u \
     | grep -v '^out/android_arm64/obj/libpdfium\.a$'
 )
 
-echo "Project inputs:"
-printf '  %s\n' "${PROJECT_INPUTS_UNIQ[@]}"
+echo "PDFium archive:"
+echo "  $PDFIUM_A"
+echo
+echo "Project archives:"
+printf '  %s\n' "${PROJECT_ARCHIVES_UNIQ[@]}"
 
 echo
-echo "=== Build missing project inputs ==="
+echo "=== Sanity: required Skia providers inside libskia.a ==="
 
-MISSING_PROJECT=()
-for p in "${PROJECT_INPUTS_UNIQ[@]}"; do
-  if [ ! -f "$p" ]; then
-    MISSING_PROJECT+=("${p#$OUT/}")
-  fi
-done
+LLVM_NM="third_party/llvm-build/Release+Asserts/bin/llvm-nm"
+SKIA_A="$OUT/obj/skia/libskia.a"
 
-if [ "${#MISSING_PROJECT[@]}" -gt 0 ]; then
-  printf 'Need to build project inputs:\n'
-  printf '  %s\n' "${MISSING_PROJECT[@]}"
-  ninja -C "$OUT" "${MISSING_PROJECT[@]}"
-else
-  echo "All project inputs already exist."
-fi
+"$LLVM_NM" -A -C "$SKIA_A" 2>/dev/null \
+  | grep -E ' [TWDV] (SkFontMgr_New_Custom_Empty\(\)|vtable for SkTypeface_proxy)$' \
+  || {
+    echo "ERROR: libskia.a does not contain required Android Skia providers." >&2
+    echo "Check gn desc out/android_arm64 //skia sources." >&2
+    exit 1
+  }
 
 echo
 echo "=== Collect shared-library runtime closure from GN ==="
@@ -131,24 +130,6 @@ if [ "${#LIBUNWIND_OBJECTS[@]}" -eq 0 ]; then
 fi
 
 echo
-echo "=== Sanity: look for SkFontMgr_New_Custom_Empty provider ==="
-FOUND_EMPTY=0
-for p in "${PROJECT_INPUTS_UNIQ[@]}"; do
-  if [ -f "$p" ]; then
-    if third_party/llvm-build/Release+Asserts/bin/llvm-nm -C "$p" 2>/dev/null \
-      | grep -E ' [TWDV] SkFontMgr_New_Custom_Empty\(\)$' >/dev/null; then
-      echo "Found provider: $p"
-      FOUND_EMPTY=1
-    fi
-  fi
-done
-
-if [ "$FOUND_EMPTY" = "0" ]; then
-  echo "WARNING: did not find SkFontMgr_New_Custom_Empty() in collected project inputs."
-  echo "The final link may still fail."
-fi
-
-echo
 echo "=== Link final libpdfium.so ==="
 
 rm -f "$SO"
@@ -164,7 +145,7 @@ rm -f "$SO"
     "$PDFIUM_A" \
   -Wl,--no-whole-archive \
   -Wl,--start-group \
-    "${PROJECT_INPUTS_UNIQ[@]}" \
+    "${PROJECT_ARCHIVES_UNIQ[@]}" \
     "${RUNTIME_INPUTS_UNIQ[@]}" \
     "${LIBUNWIND_OBJECTS[@]}" \
   -Wl,--end-group \
@@ -172,6 +153,8 @@ rm -f "$SO"
   -Wl,--no-undefined \
   -Wl,--export-dynamic-symbol=FPDF* \
   -Wl,--export-dynamic-symbol=FORM_* \
+  -Wl,--undefined=FPDF_InitLibrary \
+  -Wl,--undefined=FPDF_InitLibraryWithConfig \
   -Wl,--wrap=getcwd \
   -Wl,--wrap=realpath \
   -Wl,-z,max-page-size=16384 \
