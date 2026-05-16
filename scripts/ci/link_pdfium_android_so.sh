@@ -53,7 +53,7 @@ echo "Project archives:"
 printf '  %s\n' "${PROJECT_ARCHIVES_UNIQ[@]}"
 
 echo
-echo "=== Sanity: required Skia providers across all project archives ==="
+echo "=== Sanity: required Android Skia providers across project archives ==="
 
 ALL_PROJECT_ARCHIVES=(
   "$PDFIUM_A"
@@ -61,12 +61,10 @@ ALL_PROJECT_ARCHIVES=(
 )
 
 FOUND_EMPTY=0
-FOUND_PROXY=0
+FOUND_PROXY_IMPL=0
 
 for a in "${ALL_PROJECT_ARCHIVES[@]}"; do
-  if [ ! -f "$a" ]; then
-    continue
-  fi
+  [ -f "$a" ] || continue
 
   if "$LLVM_NM" -A -C "$a" 2>/dev/null \
     | grep -E ' [TWDV] SkFontMgr_New_Custom_Empty\(\)$' >/dev/null; then
@@ -74,15 +72,19 @@ for a in "${ALL_PROJECT_ARCHIVES[@]}"; do
     FOUND_EMPTY=1
   fi
 
+  # Do not require "vtable for SkTypeface_proxy" here.
+  # Depending on compiler/linkage details, the fragile vtable symbol check can
+  # fail even though SkTypeface_proxy.o and its implementation methods exist.
+  # The final --no-undefined link is the real correctness check.
   if "$LLVM_NM" -A -C "$a" 2>/dev/null \
-    | grep -E ' [TWDV] vtable for SkTypeface_proxy$' >/dev/null; then
-    echo "Found SkTypeface_proxy vtable provider in: $a"
-    FOUND_PROXY=1
+    | grep -E 'SkTypeface_proxy\.o:.*SkScalerContext_proxy::generateImage|SkTypeface_proxy\.o:.*SkScalerContext_proxy::generateMetrics|SkTypeface_proxy\.o:.*SkTypeface_proxy::' >/dev/null; then
+    echo "Found SkTypeface_proxy implementation object in: $a"
+    FOUND_PROXY_IMPL=1
   fi
 done
 
 if [ "$FOUND_EMPTY" = "0" ]; then
-  echo "ERROR: no SkFontMgr_New_Custom_Empty() provider found in final project archives." >&2
+  echo "ERROR: no SkFontMgr_New_Custom_Empty() provider found in project archives." >&2
   echo
   echo "=== Debug: //skia sources ==="
   gn desc "$OUT" //skia sources | grep -E 'SkFontMgr_custom|SkFontMgr_custom_empty|SkTypeface_proxy|SkFontMgr_android_parser' || true
@@ -95,8 +97,8 @@ if [ "$FOUND_EMPTY" = "0" ]; then
   exit 1
 fi
 
-if [ "$FOUND_PROXY" = "0" ]; then
-  echo "ERROR: no SkTypeface_proxy vtable provider found in final project archives." >&2
+if [ "$FOUND_PROXY_IMPL" = "0" ]; then
+  echo "ERROR: no SkTypeface_proxy implementation object found in project archives." >&2
   echo
   echo "=== Debug: //skia sources ==="
   gn desc "$OUT" //skia sources | grep -E 'SkTypeface_proxy|SkFontMgr_custom|SkFontMgr_custom_empty|SkFontMgr_android_parser' || true
@@ -104,7 +106,7 @@ if [ "$FOUND_PROXY" = "0" ]; then
   echo "=== Debug: symbols mentioning SkTypeface_proxy ==="
   for a in "${ALL_PROJECT_ARCHIVES[@]}"; do
     [ -f "$a" ] || continue
-    "$LLVM_NM" -A -C "$a" 2>/dev/null | grep 'SkTypeface_proxy' | head -40 || true
+    "$LLVM_NM" -A -C "$a" 2>/dev/null | grep 'SkTypeface_proxy' | head -80 || true
   done
   exit 1
 fi
@@ -174,6 +176,9 @@ if [ "${#LIBUNWIND_OBJECTS[@]}" -eq 0 ]; then
   exit 1
 fi
 
+echo "libunwind objects:"
+printf '  %s\n' "${LIBUNWIND_OBJECTS[@]}"
+
 echo
 echo "=== Link final libpdfium.so ==="
 
@@ -209,3 +214,32 @@ echo
 echo "=== Final shared library ==="
 ls -lh "$SO"
 file "$SO"
+
+echo
+echo "=== Validate final .so: no known-bad unresolved symbols ==="
+
+if "$LLVM_NM" -D -C "$SO" 2>/dev/null \
+  | grep ' U ' \
+  | grep -E 'SkTypeface_proxy|SkFontMgr_New_Custom_Empty|SkFontMgr_Android_Parser|SkLanguage::getParent|__real_|std::get_new_handler|__cxa_guard_|_Unwind_'; then
+  echo "ERROR: unresolved known-bad symbols remain in final libpdfium.so" >&2
+  exit 1
+fi
+
+echo "OK: no known-bad unresolved symbols."
+
+echo
+echo "=== Validate exported PDFium APIs ==="
+
+if "$LLVM_NM" -D --defined-only -C "$SO" 2>/dev/null \
+  | grep -E ' (FPDF_InitLibrary|FPDF_InitLibraryWithConfig|FPDF_LoadDocument|FPDF_RenderPageBitmap)' >/dev/null; then
+  "$LLVM_NM" -D --defined-only -C "$SO" 2>/dev/null \
+    | grep -E ' (FPDF_InitLibrary|FPDF_InitLibraryWithConfig|FPDF_LoadDocument|FPDF_RenderPageBitmap)' \
+    | head -20
+else
+  echo "ERROR: expected FPDF_* APIs are not exported." >&2
+  exit 1
+fi
+
+echo
+echo "=== Dynamic dependencies ==="
+readelf -d "$SO" | grep NEEDED || true
