@@ -12,10 +12,25 @@ def run(cmd: str):
     print(f"$ {cmd}")
     subprocess.run(cmd, shell=True, check=True)
 
-def replace_once(text: str, old: str, new: str, label: str) -> str:
-    if old not in text:
-        raise RuntimeError(f"Could not find block: {label}")
-    return text.replace(old, new, 1)
+def parse_gn_block(text: str, start_token: str):
+    start = text.find(start_token)
+    if start == -1:
+        raise RuntimeError(f"Could not find block start: {start_token}")
+
+    brace = text.find("{", start)
+    if brace == -1:
+        raise RuntimeError(f"Could not find opening brace for: {start_token}")
+
+    depth = 0
+    for i in range(brace, len(text)):
+        if text[i] == "{":
+            depth += 1
+        elif text[i] == "}":
+            depth -= 1
+            if depth == 0:
+                return start, i + 1, text[start:i + 1]
+
+    raise RuntimeError(f"Could not parse block: {start_token}")
 
 # =============================================================================
 # 1. Vendor standalone expat
@@ -82,7 +97,7 @@ static_library("expat") {
 """))
 
 # =============================================================================
-# 2. Export FPDF_* APIs from static-build final .so
+# 2. Export public FPDF_* APIs
 # =============================================================================
 
 build_gn = ROOT / "BUILD.gn"
@@ -98,7 +113,9 @@ new_public = '''config("pdfium_public_config") {
   ]'''
 
 if new_public not in s:
-    s = replace_once(s, old_public, new_public, "pdfium_public_config")
+    if old_public not in s:
+        raise RuntimeError("Could not find pdfium_public_config block")
+    s = s.replace(old_public, new_public, 1)
 
 build_gn.write_text(s)
 
@@ -109,7 +126,16 @@ build_gn.write_text(s)
 skia_gn = ROOT / "skia/BUILD.gn"
 s = skia_gn.read_text()
 
-# 3.1 Complete Android Skia source groups.
+# Remove older wrong manual source patch if present.
+s = s.replace("""
+    # Required by SkFontMgr_android.cpp in the real Android font-manager path.
+    sources += [
+      "//third_party/skia/src/ports/SkFontMgr_android_parser.cpp",
+      "//third_party/skia/src/core/SkPaintOptionsAndroid.cpp",
+    ]
+""", "\n")
+
+# 3.1 Find the Android font-manager block inside //skia.
 anchor = "    sources += skia_ports_fontmgr_android_sources"
 
 android_block_match = re.search(
@@ -122,45 +148,46 @@ if not android_block_match:
 
 block = android_block_match.group(0)
 
-needed_lines = [
+# Use BOTH source groups and exact source files.
+# The exact files are the important part. This prevents CI from reaching link
+# without SkTypeface_proxy.o / SkFontMgr_custom_empty.o / Android parser objects.
+required_group_lines = [
     "    sources += skia_ports_fontmgr_android_parser_sources",
     "    sources += skia_ports_fontmgr_custom_sources",
     "    sources += skia_ports_fontmgr_empty_sources",
     "    sources += skia_ports_typeface_proxy_sources",
 ]
 
-missing_lines = [line for line in needed_lines if line not in block]
+required_exact_sources = [
+    '      "//third_party/skia/src/ports/SkFontMgr_android_parser.cpp",',
+    '      "//third_party/skia/src/ports/SkFontMgr_custom.cpp",',
+    '      "//third_party/skia/src/ports/SkFontMgr_custom_empty.cpp",',
+    '      "//third_party/skia/src/ports/SkTypeface_proxy.cpp",',
+]
 
-if missing_lines:
-    new_block = block.replace(anchor, anchor + "\n" + "\n".join(missing_lines))
+insert_lines = []
+
+for line in required_group_lines:
+    if line not in block:
+        insert_lines.append(line)
+
+missing_exact = [line for line in required_exact_sources if line not in block]
+if missing_exact:
+    insert_lines.extend([
+        "",
+        "    # Standalone PDFium Android + Skia: force required implementation files.",
+        "    # These must be compiled, not merely referenced through Skia headers.",
+        "    sources += [",
+        *missing_exact,
+        "    ]",
+    ])
+
+if insert_lines:
+    new_block = block.replace(anchor, anchor + "\n" + "\n".join(insert_lines))
     s = s[:android_block_match.start()] + new_block + s[android_block_match.end():]
 
 # 3.2 Remove only the invalid Android optimization block inside skia_opts.
-start = s.find('skia_source_set("skia_opts")')
-if start == -1:
-    raise RuntimeError('Could not find skia_source_set("skia_opts") block')
-
-brace = s.find("{", start)
-if brace == -1:
-    raise RuntimeError("Could not find opening brace of skia_opts")
-
-depth = 0
-end = None
-for i in range(brace, len(s)):
-    if s[i] == "{":
-        depth += 1
-    elif s[i] == "}":
-        depth -= 1
-        if depth == 0:
-            end = i + 1
-            break
-
-if end is None:
-    raise RuntimeError("Could not parse skia_opts block")
-
-before = s[:start]
-skia_opts = s[start:end]
-after = s[end:]
+start, end, skia_opts = parse_gn_block(s, 'skia_source_set("skia_opts")')
 
 bad_android_opt = re.compile(
     r'\n\s*if\s*\(\s*is_android\s*&&\s*!is_debug\s*\)\s*\{\s*'
@@ -171,54 +198,45 @@ bad_android_opt = re.compile(
 )
 
 skia_opts2, count = bad_android_opt.subn("\n", skia_opts, count=1)
-if count == 0:
-    print("No invalid Android optimization block found inside skia_opts, maybe upstream changed it.")
-else:
+if count:
     print("Removed invalid Android optimization block inside skia_opts.")
+else:
+    print("No invalid Android optimization block inside skia_opts, maybe upstream already changed.")
 
-s = before + skia_opts2 + after
+s = s[:start] + skia_opts2 + s[end:]
 skia_gn.write_text(s)
 
 # =============================================================================
-# 4. Verify patch
+# 4. Verify patch file contents before GN
 # =============================================================================
 
 patched = skia_gn.read_text()
 
-for required in [
+for token in [
     "skia_ports_fontmgr_android_parser_sources",
     "skia_ports_fontmgr_custom_sources",
     "skia_ports_fontmgr_empty_sources",
     "skia_ports_typeface_proxy_sources",
+    "SkFontMgr_android_parser.cpp",
+    "SkFontMgr_custom.cpp",
+    "SkFontMgr_custom_empty.cpp",
+    "SkTypeface_proxy.cpp",
 ]:
-    if required not in patched:
-        raise RuntimeError(f"Patch failed: missing {required}")
+    if token not in patched:
+        raise RuntimeError(f"Patch failed: missing {token}")
 
-start = patched.find('skia_source_set("skia_opts")')
-brace = patched.find("{", start)
-depth = 0
-end = None
-for i in range(brace, len(patched)):
-    if patched[i] == "{":
-        depth += 1
-    elif patched[i] == "}":
-        depth -= 1
-        if depth == 0:
-            end = i + 1
-            break
-
-skia_opts_final = patched[start:end]
+_, _, final_skia_opts = parse_gn_block(patched, 'skia_source_set("skia_opts")')
 
 if (
-    "if (is_android && !is_debug)" in skia_opts_final
-    and 'configs -= [ "//build/config/compiler:default_optimization" ]' in skia_opts_final
+    "is_android && !is_debug" in final_skia_opts
+    and 'configs -= [ "//build/config/compiler:default_optimization" ]' in final_skia_opts
 ):
-    raise RuntimeError("Patch failed: bad Android default_optimization block remains inside skia_opts")
+    raise RuntimeError("Patch failed: invalid Android default_optimization block remains inside skia_opts")
 
 print("Patch complete.")
 print()
 print("=== Android Skia block ===")
-run("grep -n -A18 -B4 'skia_ports_fontmgr_android_sources' skia/BUILD.gn")
+run("grep -n -A28 -B4 'skia_ports_fontmgr_android_sources' skia/BUILD.gn")
 print()
 print("=== skia_opts block ===")
 run("grep -n -A45 -B5 'skia_source_set(\"skia_opts\")' skia/BUILD.gn")
