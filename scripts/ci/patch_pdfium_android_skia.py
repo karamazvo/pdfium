@@ -32,26 +32,11 @@ def parse_gn_block(text: str, start_token: str):
 
     raise RuntimeError(f"Could not parse block: {start_token}")
 
-def try_remove_block(text: str, start_token: str) -> str:
+def remove_block_if_exists(text: str, start_token: str) -> str:
     while start_token in text:
         s, e, _ = parse_gn_block(text, start_token)
         text = text[:s] + text[e:]
     return text
-
-def find_skia_target_block(text: str):
-    for token in [
-        'component("skia")',
-        'static_library("skia")',
-        'source_set("skia")',
-    ]:
-        if token in text:
-            s, e, block = parse_gn_block(text, token)
-            return token, s, e, block
-
-    raise RuntimeError(
-        'Could not find //skia target. Expected component("skia"), '
-        'static_library("skia"), or source_set("skia").'
-    )
 
 # =============================================================================
 # 1. Vendor standalone expat
@@ -84,6 +69,9 @@ run(
 )
 
 (expat / "BUILD.gn").write_text(dedent("""\
+# Standalone production-only expat target for PDFium Android Skia.
+# We intentionally avoid Chromium-only fuzzing/test infrastructure.
+
 config("expat_public_config") {
   include_dirs = [
     "src/expat/lib",
@@ -118,16 +106,38 @@ static_library("expat") {
 """))
 
 # =============================================================================
-# 2. Export public FPDF_* APIs
+# 2. Patch root BUILD.gn
 # =============================================================================
 
 build_gn = ROOT / "BUILD.gn"
 s = build_gn.read_text()
 
+# Undo older wrong root patch if present.
+bad_root_patch = '''  # Android Skia build: if the Skia backend is requested, make it a real
+  # dependency of the root PDFium target so the final shared library is linked
+  # from one complete GN graph.
+  if (defined(checkout_skia) && checkout_skia && pdf_use_skia) {
+    deps += [ "//skia" ]
+  }'''
+
+upstream_root_block = '''  # TODO(crbug.com/pdfium/1832): Remove !is_android when //third_party/expat is
+  # available.
+  if (defined(checkout_skia) && checkout_skia && !is_android) {
+    deps += [ "//skia" ]
+  }'''
+
+if bad_root_patch in s:
+    s = s.replace(bad_root_patch, upstream_root_block, 1)
+
+# Export public FPDF_* APIs from the manually linked final .so.
 old_public = '''config("pdfium_public_config") {
   defines = []'''
 
 new_public = '''config("pdfium_public_config") {
+  # Standalone Android shared-library build:
+  # Keep is_component_build=false for the supported static build graph,
+  # but make public FPDF_* APIs compile with default visibility so they can
+  # be exported from the manually linked final libpdfium.so.
   defines = [
     "COMPONENT_BUILD",
     "FPDF_IMPLEMENTATION",
@@ -141,13 +151,13 @@ if new_public not in s:
 build_gn.write_text(s)
 
 # =============================================================================
-# 3. Patch skia/BUILD.gn
+# 3. Patch skia/BUILD.gn exactly like the successful notebook
 # =============================================================================
 
 skia_gn = ROOT / "skia/BUILD.gn"
 s = skia_gn.read_text()
 
-# Remove old bad patches if present.
+# Remove earlier failed direct-file patch.
 s = s.replace("""
     # Required by SkFontMgr_android.cpp in the real Android font-manager path.
     sources += [
@@ -156,10 +166,14 @@ s = s.replace("""
     ]
 """, "\n")
 
+# Remove all previous compat target attempts. The successful build did not need them.
+s = remove_block_if_exists(s, 'source_set("pdfium_android_skia_compat")')
+s = remove_block_if_exists(s, 'skia_source_set("pdfium_android_skia_compat")')
+
+# Remove any old direct forced sources inside the Android block.
 s = re.sub(
     r'''
-\s*#\s*Standalone PDFium Android \+ Skia: force required implementation files\.\n
-\s*#\s*These must be compiled, not merely referenced through Skia headers\.\n
+\s*#\s*Standalone PDFium Android \+ Skia: force required implementation files.*?
 \s*sources \+= \[\n
 (?:\s*"//third_party/skia/src/ports/SkFontMgr_android_parser\.cpp",\n)?
 (?:\s*"//third_party/skia/src/ports/SkFontMgr_custom\.cpp",\n)?
@@ -169,48 +183,34 @@ s = re.sub(
 ''',
     "\n",
     s,
-    flags=re.X,
+    flags=re.S | re.X,
 )
 
-# Remove old compat target versions completely.
-for token in [
-    'source_set("pdfium_android_skia_compat")',
-    'skia_source_set("pdfium_android_skia_compat")',
-]:
-    s = try_remove_block(s, token)
-
-# 3.1 Add Android Skia source groups to //skia.
-anchor = "    sources += skia_ports_fontmgr_android_sources"
-
-android_block_match = re.search(
-    r'if \(is_android\) \{.*?' + re.escape(anchor) + r'.*?\n  \}',
-    s,
+# Add the proven source groups into the Android font-manager block.
+pattern = re.compile(
+    r'if \(is_android\) \{.*?sources \+= skia_ports_fontmgr_android_sources.*?\n  \}',
     re.S,
 )
-if not android_block_match:
+m = pattern.search(s)
+if not m:
     raise RuntimeError("Could not find Android font-manager block in skia/BUILD.gn")
 
-block = android_block_match.group(0)
-
-# Do not add typeface_proxy source group here. We compile it in compat.
-# Keeping parser/custom/empty groups is harmless if upstream uses them,
-# but the real guaranteed providers below are in compat.
-block = block.replace("\n    sources += skia_ports_typeface_proxy_sources", "")
-
-required_group_lines = [
+block = m.group(0)
+needed = [
     "    sources += skia_ports_fontmgr_android_parser_sources",
     "    sources += skia_ports_fontmgr_custom_sources",
     "    sources += skia_ports_fontmgr_empty_sources",
+    "    sources += skia_ports_typeface_proxy_sources",
 ]
 
-missing_group_lines = [line for line in required_group_lines if line not in block]
+missing = [line for line in needed if line not in block]
 
-if missing_group_lines:
-    block = block.replace(anchor, anchor + "\n" + "\n".join(missing_group_lines))
+if missing:
+    anchor = "    sources += skia_ports_fontmgr_android_sources"
+    block = block.replace(anchor, anchor + "\n" + "\n".join(missing))
+    s = s[:m.start()] + block + s[m.end():]
 
-s = s[:android_block_match.start()] + block + s[android_block_match.end():]
-
-# 3.2 Remove invalid Android optimization block inside skia_opts.
+# Remove invalid Android optimization block inside skia_opts.
 start, end, skia_opts = parse_gn_block(s, 'skia_source_set("skia_opts")')
 
 bad_android_opt = re.compile(
@@ -221,59 +221,11 @@ bad_android_opt = re.compile(
     re.S,
 )
 
-skia_opts2, count = bad_android_opt.subn("\n", skia_opts, count=1)
-if count:
+skia_opts, removed = bad_android_opt.subn("\n", skia_opts, count=1)
+if removed:
     print("Removed invalid Android optimization block inside skia_opts.")
-else:
-    print("No invalid Android optimization block inside skia_opts, maybe upstream already changed.")
 
-s = s[:start] + skia_opts2 + s[end:]
-
-# 3.3 Add local compat target using PDFium's skia_source_set template.
-#
-# This is the key fix for current CI:
-# - SkTypeface_proxy.cpp provides SkTypeface_proxy vtable/methods.
-# - SkFontMgr_custom_empty.cpp provides SkFontMgr_New_Custom_Empty().
-#
-# Do NOT depend on //third_party/skia:* here, because that imports Skia's own
-# GN world and duplicates build arguments like skia_use_dawn.
-compat_target = '''
-# PDFium standalone Android Skia compatibility target.
-# Uses the local skia_source_set template to avoid importing //third_party/skia
-# GN targets, which would duplicate Skia build-arg declarations.
-skia_source_set("pdfium_android_skia_compat") {
-  sources = [
-    "//third_party/skia/src/ports/SkFontMgr_custom_empty.cpp",
-    "//third_party/skia/src/ports/SkTypeface_proxy.cpp",
-  ]
-}
-'''
-
-s = s.rstrip() + "\n\n" + compat_target + "\n"
-
-# 3.4 Wire compat target into the real //skia target.
-skia_token, skia_start, skia_end, skia_block = find_skia_target_block(s)
-print(f"Found Skia target: {skia_token}")
-
-if ':pdfium_android_skia_compat' not in skia_block:
-    deps_match = re.search(r'\n\s*deps\s*=\s*\[', skia_block)
-    if deps_match:
-        insert_pos = deps_match.end()
-        skia_block2 = (
-            skia_block[:insert_pos]
-            + '\n    ":pdfium_android_skia_compat",'
-            + skia_block[insert_pos:]
-        )
-    else:
-        brace_pos = skia_block.find("{")
-        skia_block2 = (
-            skia_block[:brace_pos + 1]
-            + '\n  deps = [ ":pdfium_android_skia_compat" ]'
-            + skia_block[brace_pos + 1:]
-        )
-
-    s = s[:skia_start] + skia_block2 + s[skia_end:]
-
+s = s[:start] + skia_opts + s[end:]
 skia_gn.write_text(s)
 
 # =============================================================================
@@ -286,20 +238,13 @@ for token in [
     "skia_ports_fontmgr_android_parser_sources",
     "skia_ports_fontmgr_custom_sources",
     "skia_ports_fontmgr_empty_sources",
-    'skia_source_set("pdfium_android_skia_compat")',
-    "SkFontMgr_custom_empty.cpp",
-    "SkTypeface_proxy.cpp",
-    ':pdfium_android_skia_compat',
+    "skia_ports_typeface_proxy_sources",
 ]:
     if token not in patched:
         raise RuntimeError(f"Patch failed: missing {token}")
 
-_, _, compat_block = parse_gn_block(
-    patched,
-    'skia_source_set("pdfium_android_skia_compat")',
-)
-if "//third_party/skia:" in compat_block:
-    raise RuntimeError("Patch failed: compat target must not depend on //third_party/skia:*")
+if "pdfium_android_skia_compat" in patched:
+    raise RuntimeError("Patch failed: compat target should not exist in golden-path patch")
 
 _, _, final_skia_opts = parse_gn_block(patched, 'skia_source_set("skia_opts")')
 if (
@@ -312,9 +257,6 @@ print("Patch complete.")
 print()
 print("=== Android Skia block ===")
 run("grep -n -A24 -B4 'skia_ports_fontmgr_android_sources' skia/BUILD.gn")
-print()
-print("=== Compat target ===")
-run("grep -n -A18 -B4 'pdfium_android_skia_compat' skia/BUILD.gn")
 print()
 print("=== skia_opts block ===")
 run("grep -n -A45 -B5 'skia_source_set(\"skia_opts\")' skia/BUILD.gn")
