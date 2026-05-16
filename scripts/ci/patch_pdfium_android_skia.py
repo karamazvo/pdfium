@@ -70,7 +70,7 @@ run(
 
 (expat / "BUILD.gn").write_text(dedent("""\
 # Standalone production-only expat target for PDFium Android Skia.
-# We intentionally avoid Chromium-only fuzzing/test infrastructure.
+# Avoids Chromium-only fuzzing/test infrastructure.
 
 config("expat_public_config") {
   include_dirs = [
@@ -106,7 +106,7 @@ static_library("expat") {
 """))
 
 # =============================================================================
-# 2. Patch root BUILD.gn
+# 2. Patch root BUILD.gn for exported FPDF_* APIs
 # =============================================================================
 
 build_gn = ROOT / "BUILD.gn"
@@ -129,15 +129,13 @@ upstream_root_block = '''  # TODO(crbug.com/pdfium/1832): Remove !is_android whe
 if bad_root_patch in s:
     s = s.replace(bad_root_patch, upstream_root_block, 1)
 
-# Export public FPDF_* APIs from the manually linked final .so.
 old_public = '''config("pdfium_public_config") {
   defines = []'''
 
 new_public = '''config("pdfium_public_config") {
   # Standalone Android shared-library build:
-  # Keep is_component_build=false for the supported static build graph,
-  # but make public FPDF_* APIs compile with default visibility so they can
-  # be exported from the manually linked final libpdfium.so.
+  # Keep is_component_build=false for the static GN graph,
+  # but make public FPDF_* APIs visible in the final manually linked .so.
   defines = [
     "COMPONENT_BUILD",
     "FPDF_IMPLEMENTATION",
@@ -151,26 +149,17 @@ if new_public not in s:
 build_gn.write_text(s)
 
 # =============================================================================
-# 3. Patch skia/BUILD.gn exactly like the successful notebook
+# 3. Patch skia/BUILD.gn
 # =============================================================================
 
 skia_gn = ROOT / "skia/BUILD.gn"
 s = skia_gn.read_text()
 
-# Remove earlier failed direct-file patch.
-s = s.replace("""
-    # Required by SkFontMgr_android.cpp in the real Android font-manager path.
-    sources += [
-      "//third_party/skia/src/ports/SkFontMgr_android_parser.cpp",
-      "//third_party/skia/src/core/SkPaintOptionsAndroid.cpp",
-    ]
-""", "\n")
-
-# Remove all previous compat target attempts. The successful build did not need them.
+# Remove all previous failed compat target attempts.
 s = remove_block_if_exists(s, 'source_set("pdfium_android_skia_compat")')
 s = remove_block_if_exists(s, 'skia_source_set("pdfium_android_skia_compat")')
 
-# Remove any old direct forced sources inside the Android block.
+# Remove previous direct-force block attempts.
 s = re.sub(
     r'''
 \s*#\s*Standalone PDFium Android \+ Skia: force required implementation files.*?
@@ -186,7 +175,16 @@ s = re.sub(
     flags=re.S | re.X,
 )
 
-# Add the proven source groups into the Android font-manager block.
+# Remove earlier wrong parser direct-add block.
+s = s.replace("""
+    # Required by SkFontMgr_android.cpp in the real Android font-manager path.
+    sources += [
+      "//third_party/skia/src/ports/SkFontMgr_android_parser.cpp",
+      "//third_party/skia/src/core/SkPaintOptionsAndroid.cpp",
+    ]
+""", "\n")
+
+# Find the Android font-manager block.
 pattern = re.compile(
     r'if \(is_android\) \{.*?sources \+= skia_ports_fontmgr_android_sources.*?\n  \}',
     re.S,
@@ -196,19 +194,44 @@ if not m:
     raise RuntimeError("Could not find Android font-manager block in skia/BUILD.gn")
 
 block = m.group(0)
-needed = [
-    "    sources += skia_ports_fontmgr_android_parser_sources",
+
+# Important:
+# - Keep parser source group, because CI already shows it correctly enters //skia.
+# - Remove custom/empty/proxy source groups, because in GitHub CI they do NOT
+#   expand into //skia sources, but may cause future duplicate weirdness.
+# - Directly add only the missing implementation .cpp files.
+for line in [
     "    sources += skia_ports_fontmgr_custom_sources",
     "    sources += skia_ports_fontmgr_empty_sources",
     "    sources += skia_ports_typeface_proxy_sources",
-]
+]:
+    block = block.replace("\n" + line, "")
 
-missing = [line for line in needed if line not in block]
+anchor = "    sources += skia_ports_fontmgr_android_sources"
 
-if missing:
-    anchor = "    sources += skia_ports_fontmgr_android_sources"
-    block = block.replace(anchor, anchor + "\n" + "\n".join(missing))
-    s = s[:m.start()] + block + s[m.end():]
+if "    sources += skia_ports_fontmgr_android_parser_sources" not in block:
+    block = block.replace(
+        anchor,
+        anchor + "\n    sources += skia_ports_fontmgr_android_parser_sources"
+    )
+
+direct_block = '''    # Standalone PDFium Android + Skia:
+    # force the missing implementation providers into //skia.
+    # Do NOT add SkFontMgr_android_parser.cpp here; it is already provided
+    # by skia_ports_fontmgr_android_parser_sources and would duplicate.
+    sources += [
+      "//third_party/skia/src/ports/SkFontMgr_custom.cpp",
+      "//third_party/skia/src/ports/SkFontMgr_custom_empty.cpp",
+      "//third_party/skia/src/ports/SkTypeface_proxy.cpp",
+    ]'''
+
+if "SkFontMgr_custom_empty.cpp" not in block:
+    block = block.replace(
+        "    sources += skia_ports_fontmgr_android_parser_sources",
+        "    sources += skia_ports_fontmgr_android_parser_sources\n\n" + direct_block
+    )
+
+s = s[:m.start()] + block + s[m.end():]
 
 # Remove invalid Android optimization block inside skia_opts.
 start, end, skia_opts = parse_gn_block(s, 'skia_source_set("skia_opts")')
@@ -236,15 +259,15 @@ patched = skia_gn.read_text()
 
 for token in [
     "skia_ports_fontmgr_android_parser_sources",
-    "skia_ports_fontmgr_custom_sources",
-    "skia_ports_fontmgr_empty_sources",
-    "skia_ports_typeface_proxy_sources",
+    "SkFontMgr_custom.cpp",
+    "SkFontMgr_custom_empty.cpp",
+    "SkTypeface_proxy.cpp",
 ]:
     if token not in patched:
         raise RuntimeError(f"Patch failed: missing {token}")
 
 if "pdfium_android_skia_compat" in patched:
-    raise RuntimeError("Patch failed: compat target should not exist in golden-path patch")
+    raise RuntimeError("Patch failed: compat target should not exist")
 
 _, _, final_skia_opts = parse_gn_block(patched, 'skia_source_set("skia_opts")')
 if (
@@ -256,7 +279,7 @@ if (
 print("Patch complete.")
 print()
 print("=== Android Skia block ===")
-run("grep -n -A24 -B4 'skia_ports_fontmgr_android_sources' skia/BUILD.gn")
+run("grep -n -A30 -B4 'skia_ports_fontmgr_android_sources' skia/BUILD.gn")
 print()
 print("=== skia_opts block ===")
 run("grep -n -A45 -B5 'skia_source_set(\"skia_opts\")' skia/BUILD.gn")
