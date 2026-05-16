@@ -32,6 +32,22 @@ def parse_gn_block(text: str, start_token: str):
 
     raise RuntimeError(f"Could not parse block: {start_token}")
 
+def find_skia_target_block(text: str):
+    for token in [
+        'component("skia")',
+        'static_library("skia")',
+        'source_set("skia")',
+    ]:
+        start = text.find(token)
+        if start != -1:
+            s, e, block = parse_gn_block(text, token)
+            return token, s, e, block
+
+    raise RuntimeError(
+        'Could not find //skia target. Expected component("skia"), '
+        'static_library("skia"), or source_set("skia").'
+    )
+
 # =============================================================================
 # 1. Vendor standalone expat
 # =============================================================================
@@ -197,15 +213,12 @@ else:
 
 s = s[:start] + skia_opts2 + s[end:]
 
-# 3.3 Add a separate compat source_set for fallback implementation files.
+# 3.3 Add separate compat source_set for SkTypeface_proxy.
 #
-# Important:
-# Do NOT add these directly to //skia sources, because some may already be
-# included by Skia source-group variables. Direct addition can produce:
-#   Duplicate object file: SkFontMgr_android_parser.o
-#
-# A separate target gives separate object paths:
-#   obj/skia/pdfium_android_skia_compat/*.o
+# Why separate target?
+# Some source groups are already included in //skia and directly adding files can
+# trigger duplicate object errors. A separate source_set gives a different object
+# path and safely contributes the missing vtable/method definitions.
 compat_target = '''
 # PDFium standalone Android Skia compatibility target.
 # Kept separate from //skia sources to avoid duplicate object names when
@@ -231,22 +244,27 @@ source_set("pdfium_android_skia_compat") {
 if 'source_set("pdfium_android_skia_compat")' not in s:
     s = s.rstrip() + "\n\n" + compat_target + "\n"
 
-# 3.4 Wire compat target into //skia deps.
-skia_start, skia_end, skia_block = parse_gn_block(s, 'static_library("skia")')
+# 3.4 Wire compat target into the real //skia target, regardless of target type.
+skia_token, skia_start, skia_end, skia_block = find_skia_target_block(s)
+print(f"Found Skia target: {skia_token}")
+
 if ':pdfium_android_skia_compat' not in skia_block:
-    # Prefer appending to an existing deps list if present.
     deps_match = re.search(r'\n\s*deps\s*=\s*\[', skia_block)
     if deps_match:
         insert_pos = deps_match.end()
-        skia_block2 = skia_block[:insert_pos] + '\n    ":pdfium_android_skia_compat",' + skia_block[insert_pos:]
+        skia_block2 = (
+            skia_block[:insert_pos]
+            + '\n    ":pdfium_android_skia_compat",'
+            + skia_block[insert_pos:]
+        )
     else:
-        # Fallback: add deps block near top of static_library("skia").
         brace_pos = skia_block.find("{")
         skia_block2 = (
             skia_block[:brace_pos + 1]
             + '\n  deps = [ ":pdfium_android_skia_compat" ]'
             + skia_block[brace_pos + 1:]
         )
+
     s = s[:skia_start] + skia_block2 + s[skia_end:]
 
 skia_gn.write_text(s)
@@ -281,8 +299,8 @@ print()
 print("=== Android Skia block ===")
 run("grep -n -A24 -B4 'skia_ports_fontmgr_android_sources' skia/BUILD.gn")
 print()
-print("=== Compat target ===")
-run("grep -n -A28 -B4 'pdfium_android_skia_compat' skia/BUILD.gn")
+print("=== Real Skia target + compat wiring ===")
+run("grep -n -A35 -B6 'pdfium_android_skia_compat' skia/BUILD.gn")
 print()
 print("=== skia_opts block ===")
 run("grep -n -A45 -B5 'skia_source_set(\"skia_opts\")' skia/BUILD.gn")
