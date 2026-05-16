@@ -33,14 +33,12 @@ def parse_gn_block(text: str, start_token: str):
     raise RuntimeError(f"Could not parse block: {start_token}")
 
 def try_remove_block(text: str, start_token: str) -> str:
-    start = text.find(start_token)
-    if start == -1:
-        return text
-    s, e, _ = parse_gn_block(text, start_token)
-    return text[:s] + text[e:]
+    while start_token in text:
+        s, e, _ = parse_gn_block(text, start_token)
+        text = text[:s] + text[e:]
+    return text
 
 def find_skia_target_block(text: str):
-    # Current PDFium may use component("skia"), static_library("skia"), or source_set("skia").
     for token in [
         'component("skia")',
         'static_library("skia")',
@@ -149,7 +147,7 @@ build_gn.write_text(s)
 skia_gn = ROOT / "skia/BUILD.gn"
 s = skia_gn.read_text()
 
-# Remove older wrong manual source patch if present.
+# Remove old bad patches if present.
 s = s.replace("""
     # Required by SkFontMgr_android.cpp in the real Android font-manager path.
     sources += [
@@ -158,7 +156,6 @@ s = s.replace("""
     ]
 """, "\n")
 
-# Remove previous direct-force patch if present.
 s = re.sub(
     r'''
 \s*#\s*Standalone PDFium Android \+ Skia: force required implementation files\.\n
@@ -175,22 +172,14 @@ s = re.sub(
     flags=re.X,
 )
 
-# Remove old compat target versions if present.
-# Some earlier versions used source_set(...) with deps on //third_party/skia,
-# which causes duplicate Skia build-arg declarations. Burn that bridge.
+# Remove old compat target versions completely.
 for token in [
     'source_set("pdfium_android_skia_compat")',
     'skia_source_set("pdfium_android_skia_compat")',
 ]:
-    while token in s:
-        s = try_remove_block(s, token)
+    s = try_remove_block(s, token)
 
-# 3.1 Add correct Android Skia source groups to //skia.
-#
-# We intentionally DO NOT add SkTypeface_proxy via skia_ports_typeface_proxy_sources
-# here. In this CI build, we compile SkTypeface_proxy.cpp through a separate
-# local skia_source_set compat target. That avoids duplicate object files while
-# avoiding imports from //third_party/skia.
+# 3.1 Add Android Skia source groups to //skia.
 anchor = "    sources += skia_ports_fontmgr_android_sources"
 
 android_block_match = re.search(
@@ -203,7 +192,9 @@ if not android_block_match:
 
 block = android_block_match.group(0)
 
-# Remove old typeface source-group line if previous patch inserted it.
+# Do not add typeface_proxy source group here. We compile it in compat.
+# Keeping parser/custom/empty groups is harmless if upstream uses them,
+# but the real guaranteed providers below are in compat.
 block = block.replace("\n    sources += skia_ports_typeface_proxy_sources", "")
 
 required_group_lines = [
@@ -219,7 +210,7 @@ if missing_group_lines:
 
 s = s[:android_block_match.start()] + block + s[android_block_match.end():]
 
-# 3.2 Remove only the invalid Android optimization block inside skia_opts.
+# 3.2 Remove invalid Android optimization block inside skia_opts.
 start, end, skia_opts = parse_gn_block(s, 'skia_source_set("skia_opts")')
 
 bad_android_opt = re.compile(
@@ -238,27 +229,27 @@ else:
 
 s = s[:start] + skia_opts2 + s[end:]
 
-# 3.3 Add local compat source_set through PDFium's local skia_source_set template.
+# 3.3 Add local compat target using PDFium's skia_source_set template.
 #
-# Critical:
-# - Do NOT depend on //third_party/skia:* here.
-# - That imports third_party/skia/gn/skia.gni and collides with PDFium's
-#   skia/features.gni build args, e.g. skia_use_dawn.
-# - skia_source_set is defined in this file and already carries the right
-#   PDFium/Skia configs.
+# This is the key fix for current CI:
+# - SkTypeface_proxy.cpp provides SkTypeface_proxy vtable/methods.
+# - SkFontMgr_custom_empty.cpp provides SkFontMgr_New_Custom_Empty().
+#
+# Do NOT depend on //third_party/skia:* here, because that imports Skia's own
+# GN world and duplicates build arguments like skia_use_dawn.
 compat_target = '''
 # PDFium standalone Android Skia compatibility target.
 # Uses the local skia_source_set template to avoid importing //third_party/skia
 # GN targets, which would duplicate Skia build-arg declarations.
 skia_source_set("pdfium_android_skia_compat") {
   sources = [
+    "//third_party/skia/src/ports/SkFontMgr_custom_empty.cpp",
     "//third_party/skia/src/ports/SkTypeface_proxy.cpp",
   ]
 }
 '''
 
-if 'skia_source_set("pdfium_android_skia_compat")' not in s:
-    s = s.rstrip() + "\n\n" + compat_target + "\n"
+s = s.rstrip() + "\n\n" + compat_target + "\n"
 
 # 3.4 Wire compat target into the real //skia target.
 skia_token, skia_start, skia_end, skia_block = find_skia_target_block(s)
@@ -286,7 +277,7 @@ if ':pdfium_android_skia_compat' not in skia_block:
 skia_gn.write_text(s)
 
 # =============================================================================
-# 4. Verify patch file contents before GN
+# 4. Verify patch before GN
 # =============================================================================
 
 patched = skia_gn.read_text()
@@ -296,14 +287,14 @@ for token in [
     "skia_ports_fontmgr_custom_sources",
     "skia_ports_fontmgr_empty_sources",
     'skia_source_set("pdfium_android_skia_compat")',
+    "SkFontMgr_custom_empty.cpp",
     "SkTypeface_proxy.cpp",
     ':pdfium_android_skia_compat',
 ]:
     if token not in patched:
         raise RuntimeError(f"Patch failed: missing {token}")
 
-# This exact bad dependency must never appear in compat.
-compat_start, compat_end, compat_block = parse_gn_block(
+_, _, compat_block = parse_gn_block(
     patched,
     'skia_source_set("pdfium_android_skia_compat")',
 )
