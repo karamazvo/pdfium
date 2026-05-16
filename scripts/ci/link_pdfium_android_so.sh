@@ -9,11 +9,13 @@ CC="third_party/llvm-build/Release+Asserts/bin/clang"
 TARGET="aarch64-linux-android29"
 SYSROOT="third_party/android_toolchain/ndk/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
 BUILTINS="third_party/llvm-build/Release+Asserts/lib/clang/23/lib/linux/libclang_rt.builtins-aarch64-android.a"
+LLVM_NM="third_party/llvm-build/Release+Asserts/bin/llvm-nm"
 
 test -f "$PDFIUM_A"
 test -x "$CC"
 test -d "$SYSROOT"
 test -f "$BUILTINS"
+test -x "$LLVM_NM"
 
 echo "=== Collect project static-library closure from GN ==="
 
@@ -51,18 +53,61 @@ echo "Project archives:"
 printf '  %s\n' "${PROJECT_ARCHIVES_UNIQ[@]}"
 
 echo
-echo "=== Sanity: required Skia providers inside libskia.a ==="
+echo "=== Sanity: required Skia providers across all project archives ==="
 
-LLVM_NM="third_party/llvm-build/Release+Asserts/bin/llvm-nm"
-SKIA_A="$OUT/obj/skia/libskia.a"
+ALL_PROJECT_ARCHIVES=(
+  "$PDFIUM_A"
+  "${PROJECT_ARCHIVES_UNIQ[@]}"
+)
 
-"$LLVM_NM" -A -C "$SKIA_A" 2>/dev/null \
-  | grep -E ' [TWDV] (SkFontMgr_New_Custom_Empty\(\)|vtable for SkTypeface_proxy)$' \
-  || {
-    echo "ERROR: libskia.a does not contain required Android Skia providers." >&2
-    echo "Check gn desc out/android_arm64 //skia sources." >&2
-    exit 1
-  }
+FOUND_EMPTY=0
+FOUND_PROXY=0
+
+for a in "${ALL_PROJECT_ARCHIVES[@]}"; do
+  if [ ! -f "$a" ]; then
+    continue
+  fi
+
+  if "$LLVM_NM" -A -C "$a" 2>/dev/null \
+    | grep -E ' [TWDV] SkFontMgr_New_Custom_Empty\(\)$' >/dev/null; then
+    echo "Found SkFontMgr_New_Custom_Empty provider in: $a"
+    FOUND_EMPTY=1
+  fi
+
+  if "$LLVM_NM" -A -C "$a" 2>/dev/null \
+    | grep -E ' [TWDV] vtable for SkTypeface_proxy$' >/dev/null; then
+    echo "Found SkTypeface_proxy vtable provider in: $a"
+    FOUND_PROXY=1
+  fi
+done
+
+if [ "$FOUND_EMPTY" = "0" ]; then
+  echo "ERROR: no SkFontMgr_New_Custom_Empty() provider found in final project archives." >&2
+  echo
+  echo "=== Debug: //skia sources ==="
+  gn desc "$OUT" //skia sources | grep -E 'SkFontMgr_custom|SkFontMgr_custom_empty|SkTypeface_proxy|SkFontMgr_android_parser' || true
+  echo
+  echo "=== Debug: symbols mentioning SkFontMgr_New_Custom_Empty ==="
+  for a in "${ALL_PROJECT_ARCHIVES[@]}"; do
+    [ -f "$a" ] || continue
+    "$LLVM_NM" -A -C "$a" 2>/dev/null | grep 'SkFontMgr_New_Custom_Empty' || true
+  done
+  exit 1
+fi
+
+if [ "$FOUND_PROXY" = "0" ]; then
+  echo "ERROR: no SkTypeface_proxy vtable provider found in final project archives." >&2
+  echo
+  echo "=== Debug: //skia sources ==="
+  gn desc "$OUT" //skia sources | grep -E 'SkTypeface_proxy|SkFontMgr_custom|SkFontMgr_custom_empty|SkFontMgr_android_parser' || true
+  echo
+  echo "=== Debug: symbols mentioning SkTypeface_proxy ==="
+  for a in "${ALL_PROJECT_ARCHIVES[@]}"; do
+    [ -f "$a" ] || continue
+    "$LLVM_NM" -A -C "$a" 2>/dev/null | grep 'SkTypeface_proxy' | head -40 || true
+  done
+  exit 1
+fi
 
 echo
 echo "=== Collect shared-library runtime closure from GN ==="
