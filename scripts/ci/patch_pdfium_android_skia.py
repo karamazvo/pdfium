@@ -12,6 +12,10 @@ def run(cmd: str):
     print(f"$ {cmd}")
     subprocess.run(cmd, shell=True, check=True)
 
+# =============================================================================
+# 1. Vendor standalone expat
+# =============================================================================
+
 expat = ROOT / "third_party/expat"
 if expat.exists():
     shutil.rmtree(expat)
@@ -66,6 +70,10 @@ static_library("expat") {
 }
 """))
 
+# =============================================================================
+# 2. Export FPDF_* APIs
+# =============================================================================
+
 build_gn = ROOT / "BUILD.gn"
 s = build_gn.read_text()
 
@@ -82,18 +90,33 @@ if new not in s:
     if old not in s:
         raise RuntimeError("pdfium_public_config block not found")
     s = s.replace(old, new, 1)
+
 build_gn.write_text(s)
+
+# =============================================================================
+# 3. Patch skia/BUILD.gn
+# =============================================================================
 
 skia_gn = ROOT / "skia/BUILD.gn"
 s = skia_gn.read_text()
 
+# Remove older wrong manual patch if present.
+s = s.replace("""
+    # Required by SkFontMgr_android.cpp in the real Android font-manager path.
+    sources += [
+      "//third_party/skia/src/ports/SkFontMgr_android_parser.cpp",
+      "//third_party/skia/src/core/SkPaintOptionsAndroid.cpp",
+    ]
+""", "\n")
+
+# Add missing Android Skia source groups.
 fontmgr_pattern = re.compile(
     r'if \(is_android\) \{.*?sources \+= skia_ports_fontmgr_android_sources.*?\n  \}',
     re.S,
 )
 m = fontmgr_pattern.search(s)
 if not m:
-    raise RuntimeError("Android font-manager block not found")
+    raise RuntimeError("Android font-manager block not found in skia/BUILD.gn")
 
 block = m.group(0)
 needed = [
@@ -109,19 +132,57 @@ if missing:
     block2 = block.replace(anchor, anchor + "\n" + "\n".join(missing))
     s = s[:m.start()] + block2 + s[m.end():]
 
-opt_pattern = re.compile(r'''
-(\s*skia_source_set\("skia_opts"\)\s*\{.*?)
-\s*if \(is_android && !is_debug\) \{
-\s*configs -= \[ "//build/config/compiler:default_optimization" \]
-\s*configs \+= \[ "//build/config/compiler:optimize_max" \]
-\s*\}
-(.*?\n\s*\})
-''', re.S | re.X)
+# Robustly remove the invalid Android-only configs block inside skia_opts.
+# This block causes:
+# ERROR at //skia/BUILD.gn:521:5: Undefined identifier. configs -= ...
+bad_block = '''  if (is_android && !is_debug) {
+    configs -= [ "//build/config/compiler:default_optimization" ]
+    configs += [ "//build/config/compiler:optimize_max" ]
+  }
+'''
 
-mo = opt_pattern.search(s)
-if mo:
-    s = s[:mo.start()] + mo.group(1) + mo.group(2) + s[mo.end():]
+if bad_block in s:
+    s = s.replace(bad_block, "", 1)
+else:
+    # Fallback: remove same block even if spacing changed.
+    s2 = re.sub(
+        r'\n\s*if\s*\(\s*is_android\s*&&\s*!is_debug\s*\)\s*\{\s*'
+        r'configs\s*-=\s*\[\s*"//build/config/compiler:default_optimization"\s*\]\s*'
+        r'configs\s*\+=\s*\[\s*"//build/config/compiler:optimize_max"\s*\]\s*'
+        r'\}\s*',
+        "\n",
+        s,
+        count=1,
+        flags=re.S,
+    )
+    if s2 == s:
+        print("WARNING: invalid skia_opts Android configs block not found; maybe upstream already removed it.")
+    s = s2
 
 skia_gn.write_text(s)
 
+# =============================================================================
+# 4. Hard verification before GN gen
+# =============================================================================
+
+patched = skia_gn.read_text()
+
+if 'configs -= [ "//build/config/compiler:default_optimization" ]' in patched:
+    raise RuntimeError("Patch failed: invalid default_optimization configs block still exists in skia/BUILD.gn")
+
+for required in [
+    "skia_ports_fontmgr_android_parser_sources",
+    "skia_ports_fontmgr_custom_sources",
+    "skia_ports_fontmgr_empty_sources",
+    "skia_ports_typeface_proxy_sources",
+]:
+    if required not in patched:
+        raise RuntimeError(f"Patch failed: missing {required}")
+
 print("Patch complete.")
+print()
+print("=== Android Skia block ===")
+run("grep -n -A18 -B4 'skia_ports_fontmgr_android_sources' skia/BUILD.gn")
+print()
+print("=== skia_opts bad block check ===")
+run("grep -n 'default_optimization' skia/BUILD.gn || true")
