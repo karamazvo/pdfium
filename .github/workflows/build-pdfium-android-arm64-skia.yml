@@ -2,8 +2,6 @@ name: Build PDFium Android arm64 Skia
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ main, master ]
 
 jobs:
   build:
