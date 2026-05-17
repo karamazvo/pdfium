@@ -69,15 +69,32 @@ s = replace_once(
     "initial DCT decoder creation forwards resolution_levels_to_skip",
 )
 
-s = replace_once(
-    s,
-    """  decoder_ = JpegModule::CreateDecoder(src_span, GetWidth(), GetHeight(),
-                                       components_, info.color_transform);""",
-    """  decoder_ = JpegModule::CreateDecoder(src_span, GetWidth(), GetHeight(),
+# Retry path after detecting JPEG color transform info.
+# PDFium formatting can vary slightly across revisions, so patch both known forms.
+retry_old_1 = """  decoder_ = JpegModule::CreateDecoder(src_span, GetWidth(), GetHeight(),
+                                       components_, info.color_transform);"""
+
+retry_new_1 = """  decoder_ = JpegModule::CreateDecoder(src_span, GetWidth(), GetHeight(),
                                        components_, resolution_levels_to_skip,
-                                       info.color_transform);""",
-    "retry DCT decoder creation forwards resolution_levels_to_skip",
-)
+                                       info.color_transform);"""
+
+retry_old_2 = """    decoder_ = JpegModule::CreateDecoder(src_span, GetWidth(), GetHeight(),
+                                         components_, info.color_transform);"""
+
+retry_new_2 = """    decoder_ = JpegModule::CreateDecoder(src_span, GetWidth(), GetHeight(),
+                                         components_, resolution_levels_to_skip,
+                                         info.color_transform);"""
+
+if retry_new_1 in s or retry_new_2 in s:
+    print("Already patched: retry DCT decoder creation forwards resolution_levels_to_skip")
+elif retry_old_1 in s:
+    s = s.replace(retry_old_1, retry_new_1, 1)
+    print("Patch: retry DCT decoder creation forwards resolution_levels_to_skip")
+elif retry_old_2 in s:
+    s = s.replace(retry_old_2, retry_new_2, 1)
+    print("Patch: retry DCT decoder creation forwards resolution_levels_to_skip")
+else:
+    raise RuntimeError("Could not find retry DCT decoder creation block")
 
 write(path, s)
 
