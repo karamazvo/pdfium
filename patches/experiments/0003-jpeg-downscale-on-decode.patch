@@ -1,6 +1,6 @@
 From: xPDFSDK team <noreply@xpdfsdk.local>
 Date: 2026-05-17
-Subject: [PATCH v2] Plumb resolution_levels_to_skip into JPEG (DCTDecode) decoder
+Subject: [PATCH v3] Plumb resolution_levels_to_skip into JPEG (DCTDecode) decoder
 
 Background
 ==========
@@ -16,8 +16,8 @@ For image-heavy PDFs (magazines, picture books, print-ready content) this is the
 dominant cost -- a 6000x8000 embedded JPEG decodes to ~24 MB even when the target
 viewport only needs 750x1000.
 
-This patch (v2 -- supersedes 0001)
-==================================
+This patch (v3 -- supersedes 0001 and 0002)
+===========================================
 1. JpegModule::CreateDecoder gains a `resolution_levels_to_skip` parameter.
 2. JpegDecoder::Create applies libjpeg's scale_num=1, scale_denom=2^skip and
    sets the ScanlineDecoder base class output_width_/output_height_ to the
@@ -29,10 +29,29 @@ This patch (v2 -- supersedes 0001)
    cinfo.image_width (without this, the scanline buffer is sized for full-res
    and pitch math is wrong -- images render as garbage / black).
 5. CPDF_DIB::CreateDCTDecoder forwards the skip value through both
-   initial-create and retry paths.
+   initial-create and retry paths, AND downscales the DIB's own
+   GetWidth()/GetHeight() to match the decoder's scaled output (mirrors what
+   LoadJpxBitmap() already does for JPX). Without this, the DIB allocates
+   full-res pixel storage but the decoder only writes scaled rows -- pixels
+   past the scaled width never get filled and the bitmap renders blank.
 6. CPDF_StreamParser passes 0 (no skip -- inline images are already tiny).
 
-Why v2 supersedes 0001
+Why v3 supersedes v2
+====================
+v2 fixed JpegDecoder internals (output_width_, Rewind preservation, CalcPitch)
+but missed that CPDF_DIB itself stores its own width/height in the CFX_DIBBase
+base class and uses them for pixel-storage allocation. After v2, the decoder
+produces scaled rows but the DIB allocates full-res storage. Most images
+rendered fine because the skip was 0 for typical viewport sizes. Large
+embedded images (e.g. 2550x3300 cover art) at skip >= 1 hit this mismatch
+and rendered blank -- specifically the first-page cover image of
+image-heavy PDFs.
+
+v3 adds the SetWidth/SetHeight downscale in CreateDCTDecoder, mirroring the
+exact pattern used by LoadJpxBitmap (cpdf_dib.cpp:598-599).
+Verified on device 2026-05-17.
+
+Why v2 superseded 0001
 ======================
 0001 set scale_num/scale_denom in Create() but missed two downstream sites:
   - Rewind() reset output_width_/output_height_ back to orig_*, so the
@@ -40,18 +59,18 @@ Why v2 supersedes 0001
     the caller (CFX_DIBitmap allocated full-res, downstream wrote garbage).
   - CalcPitch() used cinfo.image_width (always unscaled), over-allocating
     the scanline buffer and producing wrong pitch.
-v2 fixes both. Verified on device 2026-05-17.
 
 Risk
 ====
 Low. scale_num/scale_denom is a documented libjpeg API. Output dimensions become
-ceil(orig / scale_denom). CPDF_DIB::CreateDCTDecoder propagates the (possibly
-smaller) post-scale dims via SetWidth/SetHeight, so CFX_DIBitmap allocation
-matches the decoded data. Tested values: scale_denom in {1, 2, 4, 8}.
+ceil(orig / scale_denom). CPDF_DIB::CreateDCTDecoder now propagates the
+post-scale dims via SetWidth/SetHeight on BOTH the success and retry paths,
+so CFX_DIBitmap allocation matches the decoded data. Tested values:
+scale_denom in {1, 2, 4, 8}.
 
 ---
 diff --git a/core/fpdfapi/page/cpdf_dib.cpp b/core/fpdfapi/page/cpdf_dib.cpp
-index 5803a22..ec54787 100644
+index 5803a22..77dcdda 100644
 --- a/core/fpdfapi/page/cpdf_dib.cpp
 +++ b/core/fpdfapi/page/cpdf_dib.cpp
 @@ -476,7 +476,7 @@ CPDF_DIB::LoadState CPDF_DIB::CreateDecoder(uint8_t resolution_levels_to_skip) {
@@ -63,20 +82,53 @@ index 5803a22..ec54787 100644
        return LoadState::kFail;
      }
    }
-@@ -501,9 +501,11 @@ CPDF_DIB::LoadState CPDF_DIB::CreateDecoder(uint8_t resolution_levels_to_skip) {
+@@ -501,11 +501,27 @@ CPDF_DIB::LoadState CPDF_DIB::CreateDecoder(uint8_t resolution_levels_to_skip) {
  }
  
  bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
 -                                const CPDF_Dictionary* pParams) {
 +                                const CPDF_Dictionary* pParams,
 +                                uint8_t resolution_levels_to_skip) {
++  // Compute scale_denom the same way JpegDecoder::Create does, so we can
++  // downscale the DIB's own width/height to match the decoder's output.
++  // Without this, the DIB allocates full-res pixel storage while the
++  // decoder writes scaled rows -- pixels past the scaled width never get
++  // filled and the bitmap renders blank/garbage. See LoadJpxBitmap()
++  // below for the same pattern on the JPX path.
++  const uint32_t dct_scale_denom =
++      1u << std::min<uint8_t>(resolution_levels_to_skip, 3);
    decoder_ = JpegModule::CreateDecoder(
        src_span, GetWidth(), GetHeight(), components_,
 +      resolution_levels_to_skip,
        !pParams || pParams->GetIntegerFor("ColorTransform", 1));
    if (decoder_) {
++    if (dct_scale_denom > 1) {
++      SetWidth((GetWidth() + static_cast<int>(dct_scale_denom) - 1) /
++               static_cast<int>(dct_scale_denom));
++      SetHeight((GetHeight() + static_cast<int>(dct_scale_denom) - 1) /
++                static_cast<int>(dct_scale_denom));
++    }
      return true;
-@@ -526,8 +528,9 @@ bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
+   }
+ 
+@@ -516,8 +532,14 @@ bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
+   }
+ 
+   const JpegModule::ImageInfo& info = info_opt.value();
+-  SetWidth(info.width);
+-  SetHeight(info.height);
++  // SetWidth/SetHeight to scaled dims so DIB allocation matches decoder
++  // output (same reason as above).
++  SetWidth((static_cast<int>(info.width) + static_cast<int>(dct_scale_denom) -
++            1) /
++           static_cast<int>(dct_scale_denom));
++  SetHeight((static_cast<int>(info.height) + static_cast<int>(dct_scale_denom) -
++             1) /
++            static_cast<int>(dct_scale_denom));
+ 
+   if (!CPDF_Image::IsValidJpegComponent(info.num_components) ||
+       !CPDF_Image::IsValidJpegBitsPerComponent(info.bits_per_components)) {
+@@ -526,8 +548,9 @@ bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
  
    if (components_ == static_cast<uint32_t>(info.num_components)) {
      bpc_ = info.bits_per_components;
@@ -88,7 +140,7 @@ index 5803a22..ec54787 100644
      return true;
    }
  
-@@ -577,7 +580,8 @@ bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
+@@ -577,7 +600,8 @@ bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
  
    bpc_ = info.bits_per_components;
    decoder_ = JpegModule::CreateDecoder(src_span, GetWidth(), GetHeight(),

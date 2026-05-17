@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PATCH_FILE="patches/experiments/0002-jpeg-downscale-on-decode.patch"
+PATCH_FILE="patches/experiments/0003-jpeg-downscale-on-decode.patch"
 
-echo "=== Apply JPEG downscale-on-decode experiment v2 ==="
+echo "=== Apply JPEG downscale-on-decode experiment v3 ==="
 
 if [ ! -f "$PATCH_FILE" ]; then
   echo "ERROR: missing patch file: $PATCH_FILE" >&2
