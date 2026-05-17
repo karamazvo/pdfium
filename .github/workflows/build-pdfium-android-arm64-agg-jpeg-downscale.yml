@@ -55,6 +55,11 @@ jobs:
 
           gclient sync --no-history
 
+      - name: Patch public PDFium API exports
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+          python3 "$GITHUB_WORKSPACE/repo/scripts/ci/patch_pdfium_public_exports.py"
+
       - name: Apply JPEG downscale experiment patch
         run: |
           cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
