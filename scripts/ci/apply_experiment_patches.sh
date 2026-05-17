@@ -205,22 +205,49 @@ write(path, s)
 path = "core/fxcodec/jpeg/jpegmodule.cpp"
 s = read(path)
 
-# 5.1 JpegDecoder::Create signature.
+# 5.1 JpegDecoder::Create declaration inside class.
+# Claude's required change:
+#   int nComps,
+#   uint8_t resolution_levels_to_skip,
+#   bool ColorTransform);
 s = replace_once(
     s,
-    """                         uint32_t width,
+    """  bool Create(pdfium::span<const uint8_t> src_span,
+              uint32_t width,
+              uint32_t height,
+              int nComps,
+              bool ColorTransform);""",
+    """  bool Create(pdfium::span<const uint8_t> src_span,
+              uint32_t width,
+              uint32_t height,
+              int nComps,
+              uint8_t resolution_levels_to_skip,
+              bool ColorTransform);""",
+    "JpegDecoder::Create class declaration gains resolution_levels_to_skip",
+)
+
+# 5.2 JpegDecoder::Create out-of-line implementation signature.
+# Claude's required change:
+#   int nComps,
+#   uint8_t resolution_levels_to_skip,
+#   bool ColorTransform) {
+s = replace_once(
+    s,
+    """bool JpegDecoder::Create(pdfium::span<const uint8_t> src_span,
+                         uint32_t width,
                          uint32_t height,
                          int nComps,
                          bool ColorTransform) {""",
-    """                         uint32_t width,
+    """bool JpegDecoder::Create(pdfium::span<const uint8_t> src_span,
+                         uint32_t width,
                          uint32_t height,
                          int nComps,
                          uint8_t resolution_levels_to_skip,
                          bool ColorTransform) {""",
-    "JpegDecoder::Create signature gains resolution_levels_to_skip",
+    "JpegDecoder::Create implementation signature gains resolution_levels_to_skip",
 )
 
-# 5.2 Add scale denominator after src_span validation.
+# 5.3 Add scale denominator after src_span validation.
 s = replace_once(
     s,
     """  src_span_ = JpegScanSOI(src_span);
@@ -243,7 +270,7 @@ s = replace_once(
     "compute JPEG decode scale denominator",
 )
 
-# 5.3 Apply libjpeg scaling after header validation and before CalcPitch.
+# 5.4 Apply libjpeg scaling before CalcPitch.
 s = replace_once(
     s,
     """  if (common_.cinfo.image_width < width) {
@@ -268,14 +295,18 @@ s = replace_once(
     "apply JPEG decode-time downscale before CalcPitch",
 )
 
-# 5.4 JpegModule::CreateDecoder signature.
+# 5.5 JpegModule::CreateDecoder public factory signature.
 s = replace_once(
     s,
-    """    uint32_t width,
+    """std::unique_ptr<ScanlineDecoder> JpegModule::CreateDecoder(
+    pdfium::span<const uint8_t> src_span,
+    uint32_t width,
     uint32_t height,
     int nComps,
     bool ColorTransform) {""",
-    """    uint32_t width,
+    """std::unique_ptr<ScanlineDecoder> JpegModule::CreateDecoder(
+    pdfium::span<const uint8_t> src_span,
+    uint32_t width,
     uint32_t height,
     int nComps,
     uint8_t resolution_levels_to_skip,
@@ -283,7 +314,7 @@ s = replace_once(
     "JpegModule::CreateDecoder definition gains resolution_levels_to_skip",
 )
 
-# 5.5 Forward param into JpegDecoder::Create.
+# 5.6 Forward resolution_levels_to_skip into JpegDecoder::Create.
 s = replace_once(
     s,
     """  if (!pDecoder->Create(src_span, width, height, nComps, ColorTransform)) {""",
@@ -291,6 +322,18 @@ s = replace_once(
                         resolution_levels_to_skip, ColorTransform)) {""",
     "JpegModule forwards resolution_levels_to_skip to JpegDecoder",
 )
+
+# Hard validation for this file.
+if """int nComps,
+              bool ColorTransform);""" in s:
+    raise RuntimeError("JpegDecoder::Create class declaration still has old 5-arg signature")
+
+if """int nComps,
+                         bool ColorTransform) {""" in s:
+    raise RuntimeError("JpegDecoder::Create implementation still has old 5-arg signature")
+
+if "uint8_t resolution_levels_to_skip" not in s:
+    raise RuntimeError("jpegmodule.cpp missing resolution_levels_to_skip after patch")
 
 write(path, s)
 
