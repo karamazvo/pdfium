@@ -65,8 +65,8 @@ jobs:
           cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
 
           mkdir -p patches/experiments
-          cp "$GITHUB_WORKSPACE/repo/patches/experiments/0002-jpeg-downscale-on-decode.patch" \
-             patches/experiments/0002-jpeg-downscale-on-decode.patch
+          cp "$GITHUB_WORKSPACE/repo/patches/experiments/0003-jpeg-downscale-on-decode.patch" \
+             patches/experiments/0003-jpeg-downscale-on-decode.patch
 
           bash "$GITHUB_WORKSPACE/repo/scripts/ci/apply_experiment_patches.sh"
 
