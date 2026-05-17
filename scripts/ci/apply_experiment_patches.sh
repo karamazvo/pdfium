@@ -96,6 +96,43 @@ elif retry_old_2 in s:
 else:
     raise RuntimeError("Could not find retry DCT decoder creation block")
 
+# Final safety pass for cpdf_dib.cpp:
+# Patch any remaining 5-argument JpegModule::CreateDecoder(...) calls.
+# This catches formatting variants that exact string replacements may miss.
+import re
+
+def patch_remaining_cpdf_dib_create_decoder_calls(text: str) -> str:
+    pattern = re.compile(
+        r'(JpegModule::CreateDecoder\(\s*'
+        r'src_span\s*,\s*'
+        r'GetWidth\(\)\s*,\s*'
+        r'GetHeight\(\)\s*,\s*'
+        r'components_\s*,\s*)'
+        r'([^\)]*?color_transform)'
+        r'(\s*\))',
+        re.S,
+    )
+
+    def repl(m):
+        full = m.group(0)
+        if "resolution_levels_to_skip" in full:
+            return full
+        return m.group(1) + "resolution_levels_to_skip,\n                                       " + m.group(2) + m.group(3)
+
+    text2, count = pattern.subn(repl, text)
+    print(f"Safety patched remaining cpdf_dib.cpp CreateDecoder calls: {count}")
+    return text2
+
+s = patch_remaining_cpdf_dib_create_decoder_calls(s)
+
+# Hard fail if cpdf_dib.cpp still contains the old 5-argument retry call.
+if re.search(
+    r'JpegModule::CreateDecoder\(\s*src_span\s*,\s*GetWidth\(\)\s*,\s*GetHeight\(\)\s*,\s*components_\s*,\s*info\.color_transform\s*\)',
+    s,
+    re.S,
+):
+    raise RuntimeError("cpdf_dib.cpp still has an old 5-arg JpegModule::CreateDecoder retry call")
+
 write(path, s)
 
 # =============================================================================
