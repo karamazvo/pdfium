@@ -2,12 +2,6 @@ name: Build PDFium Android arm64 AGG JPEG Downscale
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ main, master ]
-    paths:
-      - ".github/workflows/build-pdfium-android-arm64-agg-jpeg-downscale.yml"
-      - "scripts/ci/**"
-      - "patches/experiments/**"
 
 jobs:
   build:
