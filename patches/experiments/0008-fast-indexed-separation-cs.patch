@@ -1,6 +1,6 @@
 From: xPDFSDK team <noreply@xpdfsdk.local>
 Date: 2026-05-18
-Subject: [PATCH 0008] Fast TranslateImageLine for IndexedCS + SeparationCS
+Subject: [PATCH 0008 v2] Fast TranslateImageLine for IndexedCS + SeparationCS
 
 Background
 ==========
@@ -23,7 +23,7 @@ print-prep photo workflows). For a 1275-wide image at 1.4 us/pixel
 the slow path costs ~1.4 ms/scanline -- compared to ~5 ns/pixel for
 a simple byte-indexed BGR lookup, that is ~280x slower than necessary.
 
-This patch (0008 -- applies on top of 0003+0004+0005+0007)
+This patch (0008 v2 -- applies on top of 0003+0004+0005+0007)
 =================================================================
 Adds fast `TranslateImageLine` overrides for `CPDF_IndexedCS` and
 `CPDF_SeparationCS` that precompute a BGR lookup table once at first
@@ -42,6 +42,15 @@ floats. No virtual dispatch. No allocations.
 Output is bit-identical to the current slow path -- the precomputed
 table entries are exactly what the base-class loop would compute per
 pixel. This is a pure speed optimization, not a color change.
+
+v2 fix
+======
+The initial v1 patch failed to compile in CI:
+  error: no matching function for call to 'strict_cast'
+    pdfium::span<const float>(&src_f, 1)
+PDFium's `pdfium::span<T>` constructor takes a `StrictNumeric<size_t>`
+extent, which won't implicitly convert from a signed `int` literal.
+v2 fixes this by passing `size_t{1}` explicitly at both call sites.
 
 Memory
 ======
@@ -76,7 +85,7 @@ time is ~50-200ms.
 
 ---
 diff --git a/core/fpdfapi/page/cpdf_colorspace.cpp b/core/fpdfapi/page/cpdf_colorspace.cpp
-index a619476..c1ce538 100644
+index a619476..f765332 100644
 --- a/core/fpdfapi/page/cpdf_colorspace.cpp
 +++ b/core/fpdfapi/page/cpdf_colorspace.cpp
 @@ -294,9 +294,26 @@ class CPDF_SeparationCS final : public CPDF_BasedCS {
@@ -124,7 +133,7 @@ index a619476..c1ce538 100644
 +  bgr_lookup_ = DataVector<uint8_t>(256 * 3);
 +  for (int i = 0; i < 256; ++i) {
 +    float src_f = static_cast<float>(i) / 255.0f;
-+    auto rgb_opt = GetRGB(pdfium::span<const float>(&src_f, 1));
++    auto rgb_opt = GetRGB(pdfium::span<const float>(&src_f, size_t{1}));
 +    if (!rgb_opt.has_value()) {
 +      bgr_lookup_[i * 3 + 0] = 0;
 +      bgr_lookup_[i * 3 + 1] = 0;
@@ -170,7 +179,7 @@ index a619476..c1ce538 100644
  
  CPDF_DeviceNCS::~CPDF_DeviceNCS() = default;
 diff --git a/core/fpdfapi/page/cpdf_indexedcs.cpp b/core/fpdfapi/page/cpdf_indexedcs.cpp
-index 54426e7..55f4b8d 100644
+index 54426e7..9c99ce3 100644
 --- a/core/fpdfapi/page/cpdf_indexedcs.cpp
 +++ b/core/fpdfapi/page/cpdf_indexedcs.cpp
 @@ -6,6 +6,20 @@
@@ -224,7 +233,7 @@ index 54426e7..55f4b8d 100644
 +  // rather than once per pixel.
 +  for (size_t idx = 0; idx < n_entries; ++idx) {
 +    float src_f = static_cast<float>(idx);
-+    auto rgb_opt = GetRGB(pdfium::span<const float>(&src_f, 1));
++    auto rgb_opt = GetRGB(pdfium::span<const float>(&src_f, size_t{1}));
 +    if (!rgb_opt.has_value()) {
 +      // Index out-of-bounds for the palette; emit black. Matches what
 +      // the base class loop does via GetRGBOrZerosOnError.
