@@ -1,0 +1,251 @@
+From: xPDFSDK team <noreply@xpdfsdk.local>
+Date: 2026-05-18
+Subject: [PATCH 0005] Deep ATrace markers inside CPDF_DIB load + scanline path
+
+Background
+==========
+Patch 0004 added ATrace markers at the top-level entry points
+(FPDF_RenderPageBitmap, RenderObjectList, ProcessImage, etc.). On the
+picture-book test PDF, profiling shows `pdfium.StartGetCachedBitmap`
+at 4.6 s wall clock with NO `pdfium.JpegRewind` child visible.
+
+That means JPEG decode is NOT being driven from `JpegDecoder::Rewind`
+(which only sets up libjpeg state). The actual decode happens later
+via `ScanlineDecoder::GetScanline` -> `JpegDecoder::GetNextLine`,
+driven from `CFX_DIBBase::Realize` / `ClipToInternal` (the scanline
+copy loop inside Realize).
+
+This patch (0005 -- applies on top of 0003 + 0004)
+==================================================
+Adds markers along the rest of the load+decode call chain so the
+trace shows definitively where time goes inside the 4.6 s slice:
+
+  core/fpdfapi/page/cpdf_dib.cpp
+    - pdfium.StartLoadDIBBase          (whole load phase)
+    - pdfium.LoadInternal              (image dict + colorspace + ICC parse)
+    - pdfium.CreateDecoder             (decoder construction)
+    - pdfium.TranslateScanline24bpp    (per-row ICC color transform)
+
+  core/fpdfapi/page/cpdf_pageimagecache.cpp
+    - pdfium.Entry::StartGetCachedBitmap (per-entry cache lookup)
+    - pdfium.ContinueGetCachedBitmap   (post-decode realize step)
+    - pdfium.MakeCachedImage           (Realize() driver -- runs decode)
+
+  core/fxcodec/scanlinedecoder.cpp
+    - pdfium.ScanlineDecoder.GetScanline  (per-row driver)
+
+  core/fxge/dib/cfx_dibbase.cpp
+    - pdfium.DIBBase::ClipToInternal   (Realize body -- scanline copy loop)
+
+Reading the resulting trace
+===========================
+Inside the wide `pdfium.StartGetCachedBitmap`, we expect to see one of:
+
+a. Wide `pdfium.MakeCachedImage` containing wide `pdfium.DIBBase::ClipToInternal`
+   -> Realize() is the killer; many scanline reads. Look at cumulative
+   `pdfium.ScanlineDecoder.GetScanline` width = JPEG decode cost.
+
+b. Wide `pdfium.LoadInternal` -> image dict / colorspace / ICC profile
+   parse dominates. Common on CMYK with embedded ICC.
+
+c. Wide cumulative `pdfium.TranslateScanline24bpp` (per-row, sums up) ->
+   ICC color transform dominates per-pixel.
+
+d. Wide `pdfium.StartLoadDIBBase` but narrow children -> something not
+   yet instrumented (need 0006). Unlikely.
+
+Cost
+====
+All markers gated `#if defined(__ANDROID__)`. ScanlineDecoder.GetScanline
+is the highest-volume marker (one slice per row, ~1650 per cover image
+on the test PDF). That's well within Perfetto's slice budget.
+
+When tracing disabled: ATrace_beginSection is a single bitmask check.
+On a 7-second render with ~1650 scanline calls per image and ~5 images
+per page, total overhead under 50 ms when tracing ON, negligible OFF.
+
+---
+diff --git a/core/fpdfapi/page/cpdf_dib.cpp b/core/fpdfapi/page/cpdf_dib.cpp
+index 77dcdda..6b46c8c 100644
+--- a/core/fpdfapi/page/cpdf_dib.cpp
++++ b/core/fpdfapi/page/cpdf_dib.cpp
+@@ -14,6 +14,20 @@
+ #include <utility>
+ #include <vector>
+ 
++// xPDFSDK 0005: native Perfetto/atrace markers for DIB load + decode path.
++#if defined(__ANDROID__)
++#include <android/trace.h>
++namespace {
++struct XpdfScopedTrace {
++  XpdfScopedTrace(const char* name) { ::ATrace_beginSection(name); }
++  ~XpdfScopedTrace() { ::ATrace_endSection(); }
++};
++}  // namespace
++#define XPDF_ATRACE_SCOPED(name) XpdfScopedTrace xpdf_st_(name)
++#else
++#define XPDF_ATRACE_SCOPED(name) ((void)0)
++#endif
++
+ #include "core/fpdfapi/page/cpdf_colorspace.h"
+ #include "core/fpdfapi/page/cpdf_docpagedata.h"
+ #include "core/fpdfapi/page/cpdf_image.h"
+@@ -184,6 +198,10 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadDIBBase(
+     CPDF_ColorSpace::Family GroupFamily,
+     bool bLoadMask,
+     const CFX_Size& max_size_required) {
++  // xPDFSDK 0005: dominant cost on image-heavy pages lands inside this
++  // function (LoadInternal + CreateDecoder + ContinueToLoadMask). Wrap
++  // it so we can see the whole load phase as one slice on the trace.
++  XPDF_ATRACE_SCOPED("pdfium.StartLoadDIBBase");
+   std_cs_ = bStdCS;
+   has_mask_ = bHasMask;
+   group_family_ = GroupFamily;
+@@ -439,6 +457,10 @@ bool CPDF_DIB::GetDecodeAndMaskArray() {
+ }
+ 
+ CPDF_DIB::LoadState CPDF_DIB::CreateDecoder(uint8_t resolution_levels_to_skip) {
++  // xPDFSDK 0005: decoder construction. For DCTDecode this calls
++  // JpegModule::CreateDecoder which builds the libjpeg state (cheap;
++  // the real decode work happens later via GetScanline).
++  XPDF_ATRACE_SCOPED("pdfium.CreateDecoder");
+   ByteString decoder = stream_acc_->GetImageDecoder();
+   if (decoder.IsEmpty()) {
+     return LoadState::kSuccess;
+@@ -748,6 +770,10 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::ConvertArgbJpxBitmapToRgb(
+ 
+ bool CPDF_DIB::LoadInternal(const CPDF_Dictionary* pFormResources,
+                             const CPDF_Dictionary* pPageResources) {
++  // xPDFSDK 0005: image dict parsing + color-space loading + decode array
++  // setup. On CMYK / ICC-based images this can be material because
++  // CPDF_ColorSpace::Load parses and caches the embedded ICC profile.
++  XPDF_ATRACE_SCOPED("pdfium.LoadInternal");
+   if (!stream_) {
+     return false;
+   }
+@@ -984,6 +1010,10 @@ bool CPDF_DIB::ValidateDictParam(const ByteString& filter) {
+ void CPDF_DIB::TranslateScanline24bpp(
+     pdfium::span<uint8_t> dest_scan,
+     pdfium::span<const uint8_t> src_scan) const {
++  // xPDFSDK 0005: per-row colorspace translation. For CMYK / ICC-based
++  // images this applies the ICC transform per scanline -- expensive.
++  // One slice per row; cumulative width = ICC transform cost.
++  XPDF_ATRACE_SCOPED("pdfium.TranslateScanline24bpp");
+   if (bpc_ == 0) {
+     return;
+   }
+diff --git a/core/fpdfapi/page/cpdf_pageimagecache.cpp b/core/fpdfapi/page/cpdf_pageimagecache.cpp
+index 82ea9e3..bab1580 100644
+--- a/core/fpdfapi/page/cpdf_pageimagecache.cpp
++++ b/core/fpdfapi/page/cpdf_pageimagecache.cpp
+@@ -115,6 +115,10 @@ class CachedImage final : public CFX_DIBBase {
+ // be beneficial to realize `image` before caching.
+ RetainPtr<CFX_DIBBase> MakeCachedImage(RetainPtr<CFX_DIBBase> image,
+                                        bool realize_hint) {
++  // xPDFSDK 0005: this is where Realize() drives the scanline loop and
++  // ultimately calls libjpeg's GetNextLine for every row. Width on the
++  // trace tells us how much of StartGetCachedBitmap's time is decode.
++  XPDF_ATRACE_SCOPED("pdfium.MakeCachedImage");
+ #if defined(PDF_USE_SKIA)
+   if (CFX_GEModule::Get()->UseSkiaRenderer()) {
+     // Ignore `realize_hint`, as `RealizeSkImage()` doesn't benefit from it.
+@@ -291,6 +295,10 @@ CPDF_DIB::LoadState CPDF_PageImageCache::Entry::StartGetCachedBitmap(
+     CPDF_ColorSpace::Family eFamily,
+     bool bLoadMask,
+     const CFX_Size& max_size_required) {
++  // xPDFSDK 0005: per-entry cache lookup. Fast path returns cached
++  // bitmap; slow path calls StartLoadDIBBase which triggers the JPEG
++  // decoder construction.
++  XPDF_ATRACE_SCOPED("pdfium.Entry::StartGetCachedBitmap");
+   if (cached_bitmap_ && IsCacheValid(max_size_required)) {
+     cur_bitmap_ = cached_bitmap_;
+     cur_mask_ = cached_mask_;
+@@ -334,6 +342,10 @@ bool CPDF_PageImageCache::Entry::Continue(
+ 
+ void CPDF_PageImageCache::Entry::ContinueGetCachedBitmap(
+     CPDF_PageImageCache* pPageImageCache) {
++  // xPDFSDK 0005: post-decode bitmap realization. MakeCachedImage may
++  // call CFX_DIBBase::Realize which drives the entire scanline loop --
++  // this is where libjpeg IDCT actually runs.
++  XPDF_ATRACE_SCOPED("pdfium.ContinueGetCachedBitmap");
+   matte_color_ = cur_bitmap_.AsRaw<CPDF_DIB>()->GetMatteColor();
+   cur_mask_ = cur_bitmap_.AsRaw<CPDF_DIB>()->DetachMask();
+   time_count_ = pPageImageCache->GetTimeCount();
+diff --git a/core/fxcodec/scanlinedecoder.cpp b/core/fxcodec/scanlinedecoder.cpp
+index 640e3c9..73d8551 100644
+--- a/core/fxcodec/scanlinedecoder.cpp
++++ b/core/fxcodec/scanlinedecoder.cpp
+@@ -8,6 +8,20 @@
+ 
+ #include "core/fxcrt/pauseindicator_iface.h"
+ 
++// xPDFSDK 0005: trace markers around the scanline driver.
++#if defined(__ANDROID__)
++#include <android/trace.h>
++namespace {
++struct XpdfScopedTrace {
++  XpdfScopedTrace(const char* name) { ::ATrace_beginSection(name); }
++  ~XpdfScopedTrace() { ::ATrace_endSection(); }
++};
++}  // namespace
++#define XPDF_ATRACE_SCOPED(name) XpdfScopedTrace xpdf_st_(name)
++#else
++#define XPDF_ATRACE_SCOPED(name) ((void)0)
++#endif
++
+ namespace fxcodec {
+ 
+ ScanlineDecoder::ScanlineDecoder() : ScanlineDecoder(0, 0, 0, 0, 0, 0, 0) {}
+@@ -30,6 +44,11 @@ ScanlineDecoder::ScanlineDecoder(int nOrigWidth,
+ ScanlineDecoder::~ScanlineDecoder() = default;
+ 
+ pdfium::span<const uint8_t> ScanlineDecoder::GetScanline(int line) {
++  // xPDFSDK 0005: one slice per scanline call. Cumulative width over a
++  // row range tells us the JPEG decode cost for that range. The
++  // immediate-prev fast path returns without entering the loop, so its
++  // slice is essentially zero-width and easy to ignore on the trace.
++  XPDF_ATRACE_SCOPED("pdfium.ScanlineDecoder.GetScanline");
+   if (next_line_ == line + 1) {
+     return last_scanline_;
+   }
+diff --git a/core/fxge/dib/cfx_dibbase.cpp b/core/fxge/dib/cfx_dibbase.cpp
+index c1f12bd..4673b41 100644
+--- a/core/fxge/dib/cfx_dibbase.cpp
++++ b/core/fxge/dib/cfx_dibbase.cpp
+@@ -10,6 +10,22 @@
+ #include <array>
+ #include <utility>
+ 
++// xPDFSDK 0005: native Perfetto/atrace markers for the scanline-copy
++// hot loop. This file owns CFX_DIBBase::Realize / ClipToInternal which
++// is where libjpeg IDCT actually runs (one scanline per row in the loop).
++#if defined(__ANDROID__)
++#include <android/trace.h>
++namespace {
++struct XpdfScopedTrace {
++  XpdfScopedTrace(const char* name) { ::ATrace_beginSection(name); }
++  ~XpdfScopedTrace() { ::ATrace_endSection(); }
++};
++}  // namespace
++#define XPDF_ATRACE_SCOPED(name) XpdfScopedTrace xpdf_st_(name)
++#else
++#define XPDF_ATRACE_SCOPED(name) ((void)0)
++#endif
++
+ #include "core/fxcrt/check.h"
+ #include "core/fxcrt/check_op.h"
+ #include "core/fxcrt/data_vector.h"
+@@ -572,6 +588,10 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::ClipTo(const FX_RECT& rect) const {
+ 
+ RetainPtr<CFX_DIBitmap> CFX_DIBBase::ClipToInternal(
+     const FX_RECT* pClip) const {
++  // xPDFSDK 0005: ClipToInternal IS Realize() for the no-clip case
++  // (Realize calls ClipToInternal(nullptr)). The per-row GetScanline
++  // loop is the consumer side of libjpeg decode for DCT images.
++  XPDF_ATRACE_SCOPED("pdfium.DIBBase::ClipToInternal");
+   FX_RECT rect(0, 0, GetWidth(), GetHeight());
+   if (pClip) {
+     rect.Intersect(*pClip);
+
+--
+2.30.0
