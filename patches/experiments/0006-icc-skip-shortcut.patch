@@ -1,0 +1,220 @@
+From: xPDFSDK team <noreply@xpdfsdk.local>
+Date: 2026-05-18
+Subject: [PATCH 0006] Diagnostic: bypass per-pixel ICC color transform
+
+Background
+==========
+0005's deep trace markers showed that on the image-heavy picture-book
+PDF, `pdfium.TranslateScanline24bpp` consumes ~1.4 ms per scanline
+while `pdfium.ScanlineDecoder.GetScanline` (JPEG IDCT) consumes only
+~5-25 us. ICC color transform via lcms2 is the wall-time bottleneck,
+not JPEG decode. Swapping to Skia did not help because both AGG and
+Skia consume the already-translated 24bpp output from this same
+upstream path -- they share the same lcms2 cost.
+
+This patch
+==========
+Adds a debug-prop-gated short-circuit that bypasses lcms2 entirely
+and writes a cheap approximation:
+
+  4-component source (CMYK): R=255-(C+K), G=255-(M+K), B=255-(Y+K)
+  3-component source: BGR byte-swap (already what the slow path
+                                     produces for DeviceRGB)
+  1-component source: replicate gray to all 3 channels
+  Other: take the first 3 channels as-is
+
+Colors will be visibly wrong on truly CMYK content; that is the
+WHOLE POINT. If render time collapses with this flag on, we've
+confirmed ICC transform is the bottleneck and the real fix is
+either:
+
+  - vectorized CMS (NEON SIMD) for matrix-based ICC profiles
+  - per-image disk cache of post-ICC RGB pixels
+  - profile-aware fast-path detection (sRGB-equivalent profiles
+    bypass ICC)
+
+Applies on top of 0003 + 0004 + 0005. Bypass is gated on:
+
+  adb shell setprop debug.xpdf.skipIccTransform 1
+  adb shell am force-stop com.xapper.pdf.reader
+
+Cached once per process (force-stop to re-read).
+
+Two slow-path sites are patched:
+
+  1. `TranslateScanline24bppDefaultDecode` -- the
+     `color_space_->TranslateImageLine(...)` call for the
+     non-DeviceRGB default-decode path. This is the path the
+     picture book hits (CMYK with default decode array).
+
+  2. `TranslateScanline24bpp` -- the full per-pixel
+     `color_space_->GetRGBOrZerosOnError(...)` loop. Fires when
+     the image has a non-default decode array (rarer).
+
+The fast paths (DeviceRGB, CalRGB, default decode + sRGB) are
+unchanged.
+
+---
+diff --git a/core/fpdfapi/page/cpdf_dib.cpp b/core/fpdfapi/page/cpdf_dib.cpp
+index 6b46c8c..480bd9a 100644
+--- a/core/fpdfapi/page/cpdf_dib.cpp
++++ b/core/fpdfapi/page/cpdf_dib.cpp
+@@ -28,6 +28,44 @@ struct XpdfScopedTrace {
+ #define XPDF_ATRACE_SCOPED(name) ((void)0)
+ #endif
+ 
++// xPDFSDK 0006: diagnostic short-circuit for the ICC color transform.
++//
++// On image-heavy CMYK PDFs (picture books, magazines), 0005's trace
++// markers showed `pdfium.TranslateScanline24bpp` taking ~1.4 ms per
++// scanline while `pdfium.ScanlineDecoder.GetScanline` (JPEG IDCT)
++// takes ~5-25 us. That is, ICC color transform via lcms2 is ~300-700x
++// slower than JPEG decode per scanline and dominates wall time.
++//
++// To CONFIRM this is the root cause, we add a debug toggle that
++// bypasses the ICC slow path and writes a cheap "best-effort" RGB
++// approximation instead. Colors WILL be wrong on truly-CMYK content;
++// that is intentional. If render time collapses with this flag on,
++// ICC transform is confirmed as the bottleneck and we know to invest
++// in a vectorized CMS path or a profile-cache optimization.
++//
++// Toggle via:
++//   adb shell setprop debug.xpdf.skipIccTransform 1
++//   adb shell am force-stop com.xapper.pdf.reader
++//
++// Cached once per process; force-stop to re-read.
++#if defined(__ANDROID__)
++#include <sys/system_properties.h>
++namespace {
++bool XpdfSkipIccTransform() {
++  static const bool kEnabled = []() {
++    char buf[PROP_VALUE_MAX] = {0};
++    int len = __system_property_get("debug.xpdf.skipIccTransform", buf);
++    return len > 0 && buf[0] == '1';
++  }();
++  return kEnabled;
++}
++}  // namespace
++#else
++namespace {
++bool XpdfSkipIccTransform() { return false; }
++}  // namespace
++#endif
++
+ #include "core/fpdfapi/page/cpdf_colorspace.h"
+ #include "core/fpdfapi/page/cpdf_docpagedata.h"
+ #include "core/fpdfapi/page/cpdf_image.h"
+@@ -1022,6 +1060,62 @@ void CPDF_DIB::TranslateScanline24bpp(
+     return;
+   }
+ 
++  // xPDFSDK 0006 short-circuit: bypass the per-pixel ICC transform.
++  // Approximates CMYK->RGB as R=255-C, G=255-M, B=255-Y (drops K).
++  // For other multi-component sources, takes the first 3 channels as
++  // pseudo-RGB. Colors will be visibly wrong on true CMYK content --
++  // that is intentional. The only purpose of this branch is to confirm
++  // that color-space transform is the wall-time bottleneck.
++  if (XpdfSkipIccTransform()) {
++    const int width = GetWidth();
++    const bool bpp8 = bpc_ == 8;
++    size_t src_byte_pos = 0;
++    uint64_t src_bit_pos = 0;
++    size_t dest_byte_pos = 0;
++    for (int column = 0; column < width; column++) {
++      uint8_t c0 = 0, c1 = 0, c2 = 0, c3 = 0;
++      if (bpp8) {
++        if (components_ >= 1) c0 = src_scan[src_byte_pos++];
++        if (components_ >= 2) c1 = src_scan[src_byte_pos++];
++        if (components_ >= 3) c2 = src_scan[src_byte_pos++];
++        if (components_ >= 4) c3 = src_scan[src_byte_pos++];
++        for (uint32_t k = 4; k < components_; ++k) src_byte_pos++;
++      } else {
++        auto take = [&]() -> uint8_t {
++          unsigned int v = GetBits8(src_scan, src_bit_pos, bpc_);
++          src_bit_pos += bpc_;
++          const unsigned int max_data = (1u << bpc_) - 1u;
++          return static_cast<uint8_t>(
++              max_data ? (std::min(v, max_data) * 255u / max_data) : 0u);
++        };
++        if (components_ >= 1) c0 = take();
++        if (components_ >= 2) c1 = take();
++        if (components_ >= 3) c2 = take();
++        if (components_ >= 4) c3 = take();
++        for (uint32_t k = 4; k < components_; ++k) (void)take();
++      }
++      uint8_t R, G, B;
++      if (components_ >= 4) {
++        // Treat as CMYK: R=255-(C+K), G=255-(M+K), B=255-(Y+K), clamped.
++        const int K = c3;
++        R = static_cast<uint8_t>(255 - std::min(255, c0 + K));
++        G = static_cast<uint8_t>(255 - std::min(255, c1 + K));
++        B = static_cast<uint8_t>(255 - std::min(255, c2 + K));
++      } else if (components_ == 3) {
++        R = c0; G = c1; B = c2;
++      } else {
++        R = G = B = c0;
++      }
++      // Output is BGR per the rest of this function (see slow path
++      // below, which writes B,G,R into dest_byte_pos+0,+1,+2).
++      dest_scan[dest_byte_pos + 0] = B;
++      dest_scan[dest_byte_pos + 1] = G;
++      dest_scan[dest_byte_pos + 2] = R;
++      dest_byte_pos += 3;
++    }
++    return;
++  }
++
+   // Using at least 16 elements due to the call color_space_->GetRGB().
+   std::vector<float> color_values(std::max(components_, 16u));
+   FX_RGB_STRUCT<float> rgb = {};
+@@ -1074,6 +1168,47 @@ bool CPDF_DIB::TranslateScanline24bppDefaultDecode(
+     }
+ 
+     if (components_ == color_space_->ComponentCount()) {
++      // xPDFSDK 0006 short-circuit: bypass lcms2 transform inside
++      // CPDF_ColorSpace::TranslateImageLine. Write a naive CMYK->RGB
++      // (or pass-through-as-RGB for 3-comp) approximation instead.
++      // Colors are visibly wrong on true CMYK content; this exists
++      // only to confirm ICC is the wall-time bottleneck.
++      if (XpdfSkipIccTransform()) {
++        const int width = GetWidth();
++        const uint8_t* sp = src_scan.data();
++        uint8_t* dp = dest_scan.data();
++        if (components_ >= 4) {
++          // Treat as CMYK; assume 4-bytes-per-pixel input.
++          for (int x = 0; x < width; ++x) {
++            const int C = sp[x * 4 + 0];
++            const int M = sp[x * 4 + 1];
++            const int Y = sp[x * 4 + 2];
++            const int K = sp[x * 4 + 3];
++            const int R = 255 - std::min(255, C + K);
++            const int G = 255 - std::min(255, M + K);
++            const int B = 255 - std::min(255, Y + K);
++            dp[x * 3 + 0] = static_cast<uint8_t>(B);
++            dp[x * 3 + 1] = static_cast<uint8_t>(G);
++            dp[x * 3 + 2] = static_cast<uint8_t>(R);
++          }
++        } else if (components_ == 3) {
++          // RGB-ish source: BGR-swap (matches PDFium output convention).
++          for (int x = 0; x < width; ++x) {
++            dp[x * 3 + 0] = sp[x * 3 + 2];
++            dp[x * 3 + 1] = sp[x * 3 + 1];
++            dp[x * 3 + 2] = sp[x * 3 + 0];
++          }
++        } else if (components_ == 1) {
++          for (int x = 0; x < width; ++x) {
++            const uint8_t v = sp[x];
++            dp[x * 3 + 0] = v;
++            dp[x * 3 + 1] = v;
++            dp[x * 3 + 2] = v;
++          }
++        }
++        return true;
++      }
++
+       color_space_->TranslateImageLine(dest_scan, src_scan, GetWidth(),
+                                        GetWidth(), GetHeight(), TransMask());
+     }
+
+--
+2.30.0
