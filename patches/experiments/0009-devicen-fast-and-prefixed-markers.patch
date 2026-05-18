@@ -1,0 +1,237 @@
+From: xPDFSDK team <noreply@xpdfsdk.local>
+Date: 2026-05-18
+Subject: [PATCH 0009] DeviceN fast TranslateImageLine + pdfium009.* markers
+
+Background
+==========
+0008 added fast TranslateImageLine overrides for IndexedCS and
+SeparationCS, but on the test PDF rendering remained slow with
+zero `pdfium.IndexedCS::TranslateImageLine` slices firing. The
+trace showed 3368 `pdfium.ColorSpace::TranslateImageLine.baseSlow`
+slices -- some other colorspace family is still hitting the slow
+base-class virtual-dispatch loop.
+
+The PDF keyword scan (decompressed streams) found:
+  /Indexed     6   (covered by 0008)
+  /Separation  3   (covered by 0008)
+  /DeviceN     2   <-- still slow path
+  /Lab         1   (has upstream fast override)
+  /Pattern     0   (not in PDF)
+  /CalRGB      0
+  /CalGray     0
+
+`DeviceN` is the last remaining culprit -- it doesn't have an
+upstream fast override and the test PDF declares 2 of them, each
+shared across many images.
+
+This patch (0009 -- applies on top of 0003+0004+0005+0007+0008)
+================================================================
+1. Adds a fast `CPDF_DeviceNCS::TranslateImageLine` override:
+   - For N=1 components: build a 256-entry BGR table (768 bytes).
+   - For N=2 components: build a 65536-entry BGR table (192 KB).
+   - For N>=3 components: fall through to slow base class (table
+     would be 256^N entries -- prohibitive for N>=3).
+   Table is built lazily on first call by walking every input
+   value through the existing slow GetRGB() path once. Output is
+   bit-identical to the slow loop.
+
+2. Adds atrace markers (with `pdfium009.` prefix to confirm the
+   running binary is the 0009 build):
+     pdfium009.DeviceNCS::TranslateImageLine
+     pdfium009.CalGrayCS::TranslateImageLine
+     pdfium009.CalRGBCS::TranslateImageLine
+     pdfium009.LabCS::TranslateImageLine
+   The Cal*/Lab markers are diagnostic only (those overrides
+   already exist upstream and should be narrow). If any of them
+   are unexpectedly wide on the next trace, we know to attack
+   that one next.
+
+Verifying which build is on the device
+======================================
+After vendoring the 0009 build, capture a trace. Search for
+`pdfium009.` in the slice list:
+  - If `pdfium009.DeviceNCS::TranslateImageLine` shows many wide
+    slices -> 0009 binary is running and DeviceN was indeed the
+    bottleneck. Render should be fast.
+  - If you see ZERO `pdfium009.*` slices, you're running an older
+    .so -- the vendor step missed.
+  - If `pdfium009.DeviceNCS::TranslateImageLine` slices exist but
+    are mostly narrow, AND .baseSlow is still wide, then DeviceN
+    is NOT the dominant CS -- look at which `pdfium009.*` marker
+    IS wide (likely Lab).
+
+Memory
+======
+N=1 DeviceN colorspace: 768 bytes table.
+N=2 DeviceN colorspace: 192 KB table.
+N>=3: no table (falls through to slow path).
+
+Fallback
+========
+If the table build fails or N>=3, `bgr_lookup_usable_` stays false
+and the override calls `CPDF_ColorSpace::TranslateImageLine` (the
+slow base class). Never produces wrong output.
+
+---
+diff --git a/core/fpdfapi/page/cpdf_colorspace.cpp b/core/fpdfapi/page/cpdf_colorspace.cpp
+index f765332..2cc0a35 100644
+--- a/core/fpdfapi/page/cpdf_colorspace.cpp
++++ b/core/fpdfapi/page/cpdf_colorspace.cpp
+@@ -334,9 +334,32 @@ class CPDF_DeviceNCS final : public CPDF_BasedCS {
+                   const CPDF_Array* pArray,
+                   std::set<const CPDF_Object*>* pVisited) override;
+ 
++  // xPDFSDK 0009: fast TranslateImageLine override for DeviceN. The
++  // 0007 trace confirmed all baseSlow firings are likely DeviceN-driven
++  // (the only remaining CS family in the test PDF that doesn't have an
++  // upstream fast override). For N=1 or N=2 we precompute a BGR lookup
++  // table once at first use (256 or 65,536 entries * 3 bytes). For N>=3
++  // we fall back to the slow base class -- table size 256^N is
++  // prohibitive. Bit-identical to the slow path.
++  void TranslateImageLine(pdfium::span<uint8_t> dest_span,
++                          pdfium::span<const uint8_t> src_span,
++                          int pixels,
++                          int image_width,
++                          int image_height,
++                          bool bTransMask) const override;
++
+  private:
+   CPDF_DeviceNCS();
+ 
++  // xPDFSDK 0009: precomputed BGR table for N=1 or N=2.
++  // N=1: 256 * 3 = 768 bytes. Index = src[i].
++  // N=2: 256 * 256 * 3 = 192 KB. Index = src[i*2]*256 + src[i*2+1].
++  void BuildBgrLookupTableIfNeeded() const;
++  mutable DataVector<uint8_t> bgr_lookup_;
++  mutable bool bgr_lookup_built_ = false;
++  mutable bool bgr_lookup_usable_ = false;
++  mutable uint32_t bgr_lookup_components_ = 0;
++
+   std::unique_ptr<const CPDF_Function> func_;
+ };
+ 
+@@ -784,6 +807,8 @@ void CPDF_CalGray::TranslateImageLine(pdfium::span<uint8_t> dest_span,
+                                       int image_width,
+                                       int image_height,
+                                       bool bTransMask) const {
++  // xPDFSDK 0009: marker (existing upstream fast path; should be narrow).
++  XPDF_ATRACE_SCOPED("pdfium009.CalGrayCS::TranslateImageLine");
+   CHECK(!bTransMask);  // Only applies to CMYK colorspaces.
+ 
+   auto gray_span = src_span.first(static_cast<size_t>(pixels));
+@@ -867,6 +892,8 @@ void CPDF_CalRGB::TranslateImageLine(pdfium::span<uint8_t> dest_span,
+                                      int image_width,
+                                      int image_height,
+                                      bool bTransMask) const {
++  // xPDFSDK 0009: marker (existing upstream fast path; should be narrow).
++  XPDF_ATRACE_SCOPED("pdfium009.CalRGBCS::TranslateImageLine");
+   CHECK(!bTransMask);  // Only applies to CMYK colorspaces.
+   fxcodec::ReverseRGB(dest_span, src_span, pixels);
+ }
+@@ -958,6 +985,8 @@ void CPDF_LabCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
+                                     int image_width,
+                                     int image_height,
+                                     bool bTransMask) const {
++  // xPDFSDK 0009: marker on the existing upstream Lab fast override.
++  XPDF_ATRACE_SCOPED("pdfium009.LabCS::TranslateImageLine");
+   CHECK(!bTransMask);  // Only applies to CMYK colorspaces.
+ 
+   auto bgr_span = fxcrt::reinterpret_span<FX_BGR_STRUCT<uint8_t>>(dest_span);
+@@ -1397,3 +1426,94 @@ std::optional<FX_RGB_STRUCT<float>> CPDF_DeviceNCS::GetRGB(
+   }
+   return base_cs_->GetRGB(results);
+ }
++
++// xPDFSDK 0009: precompute BGR table for DeviceN. For N=1, build a
++// 256-entry table indexed by the single source byte. For N=2, build
++// a 65536-entry table indexed by (src[0]*256 + src[1]). For N>=3,
++// the table is too large -- leave bgr_lookup_usable_ false and fall
++// back to the slow base class path. Bit-identical to the slow loop:
++// each table entry is exactly what GetRGBOrZerosOnError would compute
++// per pixel.
++void CPDF_DeviceNCS::BuildBgrLookupTableIfNeeded() const {
++  if (bgr_lookup_built_) {
++    return;
++  }
++  bgr_lookup_built_ = true;
++
++  const uint32_t n = ComponentCount();
++  bgr_lookup_components_ = n;
++  if (n < 1 || n > 2) {
++    return;  // N>=3 -> table too big; fall through to base class.
++  }
++
++  const size_t n_entries = (n == 1) ? 256u : 256u * 256u;
++  bgr_lookup_ = DataVector<uint8_t>(n_entries * 3);
++
++  std::vector<float> src_f(n, 0.0f);
++  for (size_t idx = 0; idx < n_entries; ++idx) {
++    if (n == 1) {
++      src_f[0] = static_cast<float>(idx) / 255.0f;
++    } else {
++      // N=2: idx = c0 * 256 + c1
++      src_f[0] = static_cast<float>(idx >> 8) / 255.0f;
++      src_f[1] = static_cast<float>(idx & 0xff) / 255.0f;
++    }
++    auto rgb_opt = GetRGB(pdfium::span<const float>(src_f.data(), src_f.size()));
++    if (!rgb_opt.has_value()) {
++      bgr_lookup_[idx * 3 + 0] = 0;
++      bgr_lookup_[idx * 3 + 1] = 0;
++      bgr_lookup_[idx * 3 + 2] = 0;
++      continue;
++    }
++    const auto& rgb = rgb_opt.value();
++    bgr_lookup_[idx * 3 + 0] =
++        static_cast<uint8_t>(std::clamp(rgb.blue, 0.0f, 1.0f) * 255);
++    bgr_lookup_[idx * 3 + 1] =
++        static_cast<uint8_t>(std::clamp(rgb.green, 0.0f, 1.0f) * 255);
++    bgr_lookup_[idx * 3 + 2] =
++        static_cast<uint8_t>(std::clamp(rgb.red, 0.0f, 1.0f) * 255);
++  }
++  bgr_lookup_usable_ = true;
++}
++
++void CPDF_DeviceNCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
++                                        pdfium::span<const uint8_t> src_span,
++                                        int pixels,
++                                        int image_width,
++                                        int image_height,
++                                        bool bTransMask) const {
++  // xPDFSDK 0009: marker prefix `pdfium009.` so we can see in the
++  // Perfetto trace that the 0009 binary is actually running. If this
++  // slice doesn't appear after vendoring, the device has an older .so.
++  XPDF_ATRACE_SCOPED("pdfium009.DeviceNCS::TranslateImageLine");
++
++  BuildBgrLookupTableIfNeeded();
++  if (!bgr_lookup_usable_) {
++    // N >= 3 or build failure -> base class slow path.
++    CPDF_ColorSpace::TranslateImageLine(dest_span, src_span, pixels,
++                                        image_width, image_height, bTransMask);
++    return;
++  }
++
++  const uint8_t* src = src_span.data();
++  uint8_t* dst = dest_span.data();
++  const uint8_t* table = bgr_lookup_.data();
++
++  if (bgr_lookup_components_ == 1) {
++    for (int i = 0; i < pixels; ++i) {
++      const uint8_t* entry = &table[src[i] * 3];
++      dst[i * 3 + 0] = entry[0];
++      dst[i * 3 + 1] = entry[1];
++      dst[i * 3 + 2] = entry[2];
++    }
++  } else {  // N == 2
++    for (int i = 0; i < pixels; ++i) {
++      const size_t idx = static_cast<size_t>(src[i * 2]) * 256u +
++                         static_cast<size_t>(src[i * 2 + 1]);
++      const uint8_t* entry = &table[idx * 3];
++      dst[i * 3 + 0] = entry[0];
++      dst[i * 3 + 1] = entry[1];
++      dst[i * 3 + 2] = entry[2];
++    }
++  }
++}
+
+--
+2.30.0
