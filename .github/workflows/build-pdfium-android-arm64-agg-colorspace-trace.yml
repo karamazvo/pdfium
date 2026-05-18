@@ -1,0 +1,220 @@
+name: Build PDFium Android arm64 AGG + Colorspace Dispatch Trace
+
+# Applies 0003 + 0004 + 0005 + 0007.
+#
+# 0007 adds trace markers inside CPDF_ColorSpace and CPDF_ICCBasedCS
+# and CPDF_DeviceCS TranslateImageLine paths so we can see exactly
+# which inner branch consumes the 1.4 ms/scanline cost observed in
+# the 0005 trace.
+#
+# 0006 (the ICC-bypass diagnostic) is intentionally NOT included --
+# it produced wrong colors. This is a pure observability build.
+#
+# NOT a ship build.
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout workflow scripts
+        uses: actions/checkout@v4
+        with:
+          path: repo
+
+      - name: Install minimal host tools
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y git curl python3 ca-certificates unzip zip file binutils rsync
+
+      - name: Checkout depot_tools
+        run: |
+          git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git "$GITHUB_WORKSPACE/depot_tools"
+          echo "$GITHUB_WORKSPACE/depot_tools" >> "$GITHUB_PATH"
+
+      - name: Fetch PDFium fork with Android deps
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/pdfium_build"
+          cd "$GITHUB_WORKSPACE/pdfium_build"
+
+          cat > .gclient <<GCLEOF
+          solutions = [
+            {
+              "name": "pdfium",
+              "url": "https://github.com/${{ github.repository }}.git",
+              "managed": False,
+              "revision": "${{ github.sha }}",
+              "custom_deps": {},
+              "custom_vars": {
+                "checkout_android": True,
+                "checkout_configuration": "default",
+                "checkout_rust": False,
+              },
+            },
+          ]
+          target_os = ["android"]
+          GCLEOF
+
+          gclient sync --no-history
+
+      - name: Patch public PDFium API exports
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+          python3 "$GITHUB_WORKSPACE/repo/scripts/ci/patch_pdfium_public_exports.py"
+
+      - name: Apply 0003 + 0004 + 0005 + 0007 patches
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+
+          mkdir -p patches/experiments
+          for p in \
+              0003-jpeg-downscale-on-decode.patch \
+              0004-native-trace-markers.patch \
+              0005-native-trace-markers-deep.patch \
+              0007-colorspace-dispatch-markers.patch \
+              ; do
+            cp "$GITHUB_WORKSPACE/repo/patches/experiments/$p" \
+               "patches/experiments/$p"
+          done
+
+          bash "$GITHUB_WORKSPACE/repo/scripts/ci/apply_experiment_patches_colorspace.sh"
+
+      - name: Generate GN args for AGG no-V8 build
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+          mkdir -p out/android_arm64_agg
+
+          cat > out/android_arm64_agg/args.gn <<'EOFARGS'
+          target_os = "android"
+          target_cpu = "arm64"
+
+          is_debug = false
+          is_component_build = false
+          symbol_level = 0
+          strip_debug_info = true
+          treat_warnings_as_errors = false
+
+          clang_use_chrome_plugins = false
+          use_remoteexec = false
+
+          pdf_enable_v8 = false
+          pdf_enable_xfa = false
+
+          pdf_use_skia = false
+          pdf_use_agg = true
+
+          pdf_is_complete_lib = true
+          pdf_is_standalone = false
+
+          pdf_enable_fontations = false
+          pdf_enable_rust_png = false
+          EOFARGS
+
+          gn gen out/android_arm64_agg
+
+      - name: Build static PDFium AGG
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+          ninja -C out/android_arm64_agg pdfium -j"$(nproc)"
+
+      - name: Verify all patches compiled in
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+
+          LLVM_NM="$(pwd)/third_party/llvm-build/Release+Asserts/bin/llvm-nm"
+          PDFIUM_A=out/android_arm64_agg/obj/libpdfium.a
+
+          echo "=== ATrace_beginSection referenced ==="
+          if "$LLVM_NM" -A "$PDFIUM_A" 2>/dev/null | grep -q 'ATrace_beginSection'; then
+            echo "OK"
+          else
+            echo "ERROR: ATrace_beginSection NOT referenced" >&2
+            exit 1
+          fi
+
+          echo
+          echo "=== Verify 0007 slice strings in archive ==="
+          for slice in \
+              pdfium.ColorSpace::TranslateImageLine.baseSlow \
+              pdfium.ICCBasedCS::TranslateImageLine \
+              pdfium.ICCBased.sRGBfast \
+              pdfium.ICCBased.baseFallback \
+              pdfium.ICCBased.profileTranslate \
+              pdfium.ICCBased.cachePath \
+              pdfium.ICCBased.cacheBuild \
+              pdfium.DeviceCS::TranslateImageLine \
+              ; do
+            if strings "$PDFIUM_A" 2>/dev/null | grep -Fq "$slice"; then
+              echo "  OK $slice"
+            else
+              echo "  MISSING $slice" >&2
+              exit 1
+            fi
+          done
+
+      - name: Link final AGG libpdfium.so
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+          bash "$GITHUB_WORKSPACE/repo/scripts/ci/link_pdfium_android_agg_so.sh"
+
+      - name: Validate AGG libpdfium.so
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+
+          LLVM_NM="$(pwd)/third_party/llvm-build/Release+Asserts/bin/llvm-nm"
+          SO=out/android_arm64_agg/libpdfium.so
+
+          if "$LLVM_NM" -D -C "$SO" 2>/dev/null \
+            | grep ' U ' \
+            | grep -E 'SkTypeface_proxy|SkFontMgr_New_Custom_Empty|SkLanguage::getParent|__real_|std::get_new_handler|__cxa_guard_|_Unwind_'; then
+            echo "ERROR: unresolved known-bad symbols remain" >&2
+            exit 1
+          fi
+          echo "OK no unresolved known-bad symbols"
+
+          if ! "$LLVM_NM" -D -C "$SO" 2>/dev/null | grep -qE ' U ATrace_(beginSection|endSection)'; then
+            echo "ERROR: ATrace_* not undefined-dynamic" >&2
+            exit 1
+          fi
+          echo "OK ATrace_* present as runtime-resolved symbols"
+
+          echo
+          echo "Exported core APIs:"
+          "$LLVM_NM" -D --defined-only -C "$SO" 2>/dev/null \
+            | grep -E ' (FPDF_InitLibrary|FPDF_LoadDocument|FPDF_RenderPageBitmap)' \
+            | head -10
+
+      - name: Package artifact
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+          mkdir -p "$GITHUB_WORKSPACE/artifacts/arm64-v8a"
+          VERSION="$(date -u +%Y%m%d-%H%M%S)-${GITHUB_SHA::8}"
+
+          cp out/android_arm64_agg/libpdfium.so "$GITHUB_WORKSPACE/artifacts/arm64-v8a/libpdfium.so"
+          sha256sum "$GITHUB_WORKSPACE/artifacts/arm64-v8a/libpdfium.so" > "$GITHUB_WORKSPACE/artifacts/SHA256SUMS.txt"
+
+          cat > "$GITHUB_WORKSPACE/artifacts/build-info.json" <<INFOEOF
+          {
+            "variant": "android-arm64-agg-no-v8-colorspace-dispatch-trace",
+            "renderer": "agg",
+            "patches_applied": ["0003", "0004", "0005", "0007"],
+            "jpeg_downscale_experiment": true,
+            "native_trace_markers": true,
+            "deep_trace_markers": true,
+            "colorspace_dispatch_markers": true,
+            "icc_skip_diagnostic": false,
+            "ship_safe": false,
+            "purpose": "Observability build. Trace shows which inner branch of TranslateScanline24bpp consumes the 1.4 ms/scanline cost. No behavior change; same correctness as 0005 build.",
+            "commit": "${GITHUB_SHA}",
+            "version": "$VERSION"
+          }
+          INFOEOF
+
+      - name: Upload AGG + colorspace dispatch trace libpdfium.so
+        uses: actions/upload-artifact@v4
+        with:
+          name: libpdfium-android-arm64-agg-colorspace-dispatch-trace
+          path: artifacts/

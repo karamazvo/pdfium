@@ -1,0 +1,220 @@
+From: xPDFSDK team <noreply@xpdfsdk.local>
+Date: 2026-05-18
+Subject: [PATCH 0007] Colorspace-dispatch trace markers
+
+Background
+==========
+The 0005 trace markers showed `pdfium.TranslateScanline24bpp` at
+~1.4 ms per scanline on a picture-book PDF, BUT the PDF uses only
+DeviceRGB/DeviceGray + a single embedded sRGB-fingerprinted ICC
+profile. Both paths SHOULD be fast (DeviceRGB byte-swap, ICCBased
+IsSRGB() fast path -> ReverseRGB). Yet the wall time says otherwise.
+
+This patch
+==========
+Adds nested ATrace markers inside the colorspace dispatch so the
+next trace shows exactly which inner branch runs and how long it
+takes:
+
+  core/fpdfapi/page/cpdf_colorspace.cpp
+    - pdfium.ColorSpace::TranslateImageLine.baseSlow
+        (the per-pixel GetRGBOrZerosOnError() loop -- the SLOW base
+         class fallback. Should not fire for DeviceRGB/ICCBased-sRGB.)
+    - pdfium.ICCBasedCS::TranslateImageLine
+        (the outer ICCBased dispatch)
+    - pdfium.ICCBased.sRGBfast
+        (IsSRGB() == true branch -- calls ReverseRGB, fast)
+    - pdfium.ICCBased.baseFallback
+        (profile not supported -- defers to base_cs_)
+    - pdfium.ICCBased.profileTranslate
+        (LUT translate via profile_->TranslateScanline)
+    - pdfium.ICCBased.cachePath
+        (quantized-cache lookup; expensive first-touch)
+    - pdfium.ICCBased.cacheBuild
+        (one-time cache table construction via lcms2)
+
+  core/fpdfapi/page/cpdf_devicecs.cpp
+    - pdfium.DeviceCS::TranslateImageLine
+        (DeviceRGB/Gray/CMYK fast dispatch)
+
+Reading the trace
+=================
+Inside the slow `pdfium.TranslateScanline24bpp` slice from 0005,
+exactly one of these new markers will be the dominant child:
+
+  - sRGBfast wide   -> ReverseRGB itself is slow (unlikely, but
+                       possible if dest_span is huge)
+  - profileTranslate wide -> lcms2 LUT path firing despite IsSRGB
+                            (would indicate a logic bug)
+  - cachePath/cacheBuild wide -> coarse-cache path
+  - baseSlow wide   -> we're on the per-pixel virtual dispatch path
+                       (the suspect on indexed/CalRGB/Lab)
+  - DeviceCS::TranslateImageLine wide -> DeviceRGB byte-swap itself slow
+                                         (unlikely)
+  - NONE of the above fire  -> the slow path is NOT via TranslateImageLine
+                               and we're looking at a different code
+                               path entirely (e.g., the outer slow loop
+                               in CPDF_DIB::TranslateScanline24bpp body
+                               at line 1025+)
+
+This is a pure observability patch -- no behavior change. Builds on
+0003 + 0004 + 0005.
+
+---
+diff --git a/core/fpdfapi/page/cpdf_colorspace.cpp b/core/fpdfapi/page/cpdf_colorspace.cpp
+index e49d7af..a619476 100644
+--- a/core/fpdfapi/page/cpdf_colorspace.cpp
++++ b/core/fpdfapi/page/cpdf_colorspace.cpp
+@@ -18,6 +18,34 @@
+ #include <utility>
+ #include <vector>
+ 
++// xPDFSDK 0007: native Perfetto/atrace markers inside the per-image
++// colorspace dispatch. Used to determine whether the slow
++// pdfium.TranslateScanline24bpp slice we saw in 0005 is:
++//   a) all inside CPDF_ColorSpace::TranslateImageLine (base-class
++//      per-pixel slow loop), OR
++//   b) inside CPDF_ICCBasedCS::TranslateImageLine (and which inner
++//      branch -- IsSRGB fast path vs profile_->TranslateScanline LUT),
++//      OR
++//   c) somewhere else entirely.
++//
++// 0007 builds on 0003 + 0004 + 0005.
++#if defined(__ANDROID__)
++#include <android/trace.h>
++namespace {
++struct XpdfScopedTrace {
++  XpdfScopedTrace(const char* name) { ::ATrace_beginSection(name); }
++  ~XpdfScopedTrace() { ::ATrace_endSection(); }
++};
++}  // namespace
++#define XPDF_ATRACE_SCOPED(name) XpdfScopedTrace xpdf_st_(name)
++#define XPDF_ATRACE_BEGIN(name) ::ATrace_beginSection(name)
++#define XPDF_ATRACE_END() ::ATrace_endSection()
++#else
++#define XPDF_ATRACE_SCOPED(name) ((void)0)
++#define XPDF_ATRACE_BEGIN(name) ((void)0)
++#define XPDF_ATRACE_END() ((void)0)
++#endif
++
+ #include "core/fpdfapi/page/cpdf_devicecs.h"
+ #include "core/fpdfapi/page/cpdf_docpagedata.h"
+ #include "core/fpdfapi/page/cpdf_function.h"
+@@ -643,6 +671,13 @@ void CPDF_ColorSpace::TranslateImageLine(pdfium::span<uint8_t> dest_span,
+                                          int image_width,
+                                          int image_height,
+                                          bool bTransMask) const {
++  // xPDFSDK 0007: this is the SLOW base-class fallback. It runs the
++  // per-pixel GetRGBOrZerosOnError() loop. If this slice shows wall
++  // time on the trace, the bottleneck is colorspaces that don't
++  // override TranslateImageLine (CalGray, CalRGB if not overridden,
++  // Lab, Separation, DeviceN, Indexed). For a pure DeviceRGB or
++  // ICCBased-sRGB image this should NOT fire.
++  XPDF_ATRACE_SCOPED("pdfium.ColorSpace::TranslateImageLine.baseSlow");
+   // Only applies to CMYK colorspaces. None of the colorspaces that use this
+   // generic base implementation are CMYK.
+   CHECK(!bTransMask);
+@@ -998,17 +1033,28 @@ void CPDF_ICCBasedCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
+                                          int image_width,
+                                          int image_height,
+                                          bool bTransMask) const {
++  // xPDFSDK 0007: the OUTER ICCBased dispatch. If the slow path is
++  // here, then ICCBased is being used. The nested markers below
++  // separate the fast sRGB path from the slow LUT/profile path.
++  XPDF_ATRACE_SCOPED("pdfium.ICCBasedCS::TranslateImageLine");
+   CHECK(!bTransMask);  // Only applies to CMYK colorspaces.
+ 
+   if (profile_->IsSRGB()) {
++    // Fast path: detected sRGB, just byte-swap.
++    XPDF_ATRACE_BEGIN("pdfium.ICCBased.sRGBfast");
+     fxcodec::ReverseRGB(dest_span, src_span, pixels);
++    XPDF_ATRACE_END();
+     return;
+   }
+   if (!profile_->IsSupported()) {
++    // Profile is non-sRGB AND not supported -> fall through to base_cs_.
++    // Wrap with a marker so we can distinguish this from the real slow path.
++    XPDF_ATRACE_BEGIN("pdfium.ICCBased.baseFallback");
+     if (base_cs_) {
+       base_cs_->TranslateImageLine(dest_span, src_span, pixels, image_width,
+                                    image_height, false);
+     }
++    XPDF_ATRACE_END();
+     return;
+   }
+ 
+@@ -1029,10 +1075,18 @@ void CPDF_ICCBasedCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
+     }
+   }
+   if (bTranslate && profile_->IsSupported()) {
++    // Direct ICC transform via lcms2-style transform_ (slow per-scanline).
++    XPDF_ATRACE_BEGIN("pdfium.ICCBased.profileTranslate");
+     profile_->TranslateScanline(dest_span, src_span, pixels);
++    XPDF_ATRACE_END();
+     return;
+   }
++  // Quantized-cache LUT path: build a coarse lookup table of nMaxColors
++  // (52^N) entries once, then per-pixel index into it. Fast steady-state
++  // but expensive first-touch (the full table is built via lcms2).
++  XPDF_ATRACE_BEGIN("pdfium.ICCBased.cachePath");
+   if (cache_.empty()) {
++    XPDF_ATRACE_BEGIN("pdfium.ICCBased.cacheBuild");
+     cache_.resize(Fx2DSizeOrDie(nMaxColors, 3));
+     DataVector<uint8_t> temp_src(Fx2DSizeOrDie(nMaxColors, nComponents));
+     size_t src_index = 0;
+@@ -1048,6 +1102,7 @@ void CPDF_ICCBasedCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
+     if (profile_->IsSupported()) {
+       profile_->TranslateScanline(cache_, temp_src, nMaxColors);
+     }
++    XPDF_ATRACE_END();
+   }
+   uint8_t* pDestBuf = dest_span.data();
+   const uint8_t* pSrcBuf = src_span.data();
+@@ -1064,6 +1119,7 @@ void CPDF_ICCBasedCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
+       *pDestBuf++ = cache_[index + 2];
+     }
+   });
++  XPDF_ATRACE_END();
+ }
+ 
+ bool CPDF_ICCBasedCS::IsNormal() const {
+diff --git a/core/fpdfapi/page/cpdf_devicecs.cpp b/core/fpdfapi/page/cpdf_devicecs.cpp
+index 822c521..b22d371 100644
+--- a/core/fpdfapi/page/cpdf_devicecs.cpp
++++ b/core/fpdfapi/page/cpdf_devicecs.cpp
+@@ -8,6 +8,20 @@
+ 
+ #include <algorithm>
+ 
++// xPDFSDK 0007: trace marker on the fast-path DeviceCS dispatch.
++#if defined(__ANDROID__)
++#include <android/trace.h>
++namespace {
++struct XpdfScopedTrace {
++  XpdfScopedTrace(const char* name) { ::ATrace_beginSection(name); }
++  ~XpdfScopedTrace() { ::ATrace_endSection(); }
++};
++}  // namespace
++#define XPDF_ATRACE_SCOPED(name) XpdfScopedTrace xpdf_st_(name)
++#else
++#define XPDF_ATRACE_SCOPED(name) ((void)0)
++#endif
++
+ #include "core/fpdfapi/parser/cpdf_array.h"
+ #include "core/fpdfapi/parser/cpdf_dictionary.h"
+ #include "core/fpdfapi/parser/cpdf_document.h"
+@@ -84,6 +98,11 @@ void CPDF_DeviceCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
+                                        int image_width,
+                                        int image_height,
+                                        bool bTransMask) const {
++  // xPDFSDK 0007: DeviceCS fast paths (DeviceRGB byte-swap, DeviceGray
++  // gray-replicate, DeviceCMYK std-conversion). If this slice is wide
++  // on the trace, DeviceCS dispatch itself is the bottleneck (unlikely
++  // -- those paths are ReverseRGB or simple loops).
++  XPDF_ATRACE_SCOPED("pdfium.DeviceCS::TranslateImageLine");
+   auto rgb_out = fxcrt::reinterpret_span<FX_RGB_STRUCT<uint8_t>>(dest_span);
+   switch (GetFamily()) {
+     case Family::kDeviceGray:
+
+--
+2.30.0
