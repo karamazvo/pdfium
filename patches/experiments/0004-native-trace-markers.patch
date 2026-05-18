@@ -1,0 +1,355 @@
+From: xPDFSDK team <noreply@xpdfsdk.local>
+Date: 2026-05-17
+Subject: [PATCH] Add Android ATrace markers inside AGG renderer + JPEG decoder
+
+Background
+==========
+On image-heavy PDFs (picture books, magazines), single-page renders can
+take 7+ seconds even after the JPEG downscale-on-decode patch (0003).
+Perfetto traces of `xpdf.renderBitmap.region[N]` show the time is 100%
+spent inside `FPDF_RenderPageBitmap` with the session thread fully
+CPU-bound. The Kotlin-side trace markers cannot tell us *what inside
+PDFium* consumes the time -- we need markers inside PDFium itself.
+
+This patch (0004 -- applies on top of 0003)
+===========================================
+Adds `ATrace_beginSection / ATrace_endSection` markers around the hot
+code paths inside the AGG rasterizer. Each marker appears as a slice
+named `pdfium.*` in any Perfetto / systrace capture, nested under the
+existing `xpdf.renderBitmap.*` slice from the Kotlin layer. The slice
+widths directly reveal which inner stage dominates wall time.
+
+Markers added
+=============
+  fpdfsdk/fpdf_view.cpp
+    - pdfium.FPDF_RenderPageBitmap   (outermost entry point)
+
+  core/fpdfapi/render/cpdf_renderstatus.cpp
+    - pdfium.RenderObjectList        (per-form page-object walk)
+    - pdfium.ProcessText             (text-run draw)
+    - pdfium.ProcessPath             (vector path draw)
+    - pdfium.ProcessImage            (image draw)
+    - pdfium.ProcessShading          (shading patterns)
+    - pdfium.ProcessForm             (nested XObject form)
+    - pdfium.DrawObjWithBackground   (fallback object draw)
+    - pdfium.ProcessTransparency     (SMask / alpha-group setup)
+    - pdfium.LoadSMask               (soft-mask image decode)
+
+  core/fpdfapi/page/cpdf_pageimagecache.cpp
+    - pdfium.StartGetCachedBitmap    (image cache lookup; miss = decode)
+
+  core/fxcodec/jpeg/jpegmodule.cpp
+    - pdfium.JpegRewind              (libjpeg jpeg_start_decompress +
+                                      scanline IDCT pass; this is the
+                                      core decode cost)
+
+Implementation notes
+====================
+1. All markers are gated `#if defined(__ANDROID__)`. On non-Android
+   builds (desktop PDFium, Chromium, ChromeOS) they compile to nothing.
+2. The `<android/trace.h>` header is part of the NDK sysroot at API 23+
+   and matches our minSdk -- no extra dependency.
+3. A small RAII helper `XpdfScopedTrace` is added in each .cpp where
+   needed so functions with many early returns (e.g. ProcessTransparency,
+   LoadSMask) get a single begin/end pair regardless of which branch
+   returns.
+4. The BUILD.gn change adds `libs += [ "android" ]` to the `pdfium`
+   component on Android, so the NDK's libandroid.so is linked at build
+   time (it contains the ATrace_* symbols).
+
+Cost
+====
+- When tracing disabled (kernel trace gate off): `ATrace_beginSection`
+  is a single bitmask check + early return. Sub-microsecond per call.
+- When tracing enabled: ~1-5 µs per begin/end pair.
+
+Net cost on a 7-second render with hundreds of objects: well under 10ms
+overhead when tracing is on. Effectively free when off.
+
+Usage
+=====
+After building with this patch applied:
+
+  adb shell setprop debug.xpdf.trace 1
+  adb shell am force-stop com.xapper.pdf.reader
+  bash android/meta/profile/capture_perfetto_render.sh 15
+  # Open picture-book PDF and scroll while it records.
+  # Drag the resulting .perfetto-trace into https://ui.perfetto.dev
+
+The `pdfium.*` slices appear as children of the existing `xpdf.*`
+slices on the xpdf-session thread. Hover or click to see exact ns
+durations.
+
+---
+diff --git a/BUILD.gn b/BUILD.gn
+index e025aad..a7cda3e 100644
+--- a/BUILD.gn
++++ b/BUILD.gn
+@@ -229,6 +229,14 @@ group("pdfium_public_headers") {
+ component("pdfium") {
+   output_name = "pdfium"
+   libs = []
++  # xPDFSDK: link `libandroid.so` on Android so the AGG/JPEG ATrace_*
++  # markers added in core/fpdfapi/render/cpdf_renderstatus.cpp and
++  # core/fxcodec/jpeg/jpegmodule.cpp resolve at load time. ATrace_* is
++  # part of the NDK system library and incurs zero cost when tracing
++  # is disabled.
++  if (is_android) {
++    libs += [ "android" ]
++  }
+   configs += [ ":pdfium_strict_config" ]
+   public_configs = [ ":pdfium_public_config" ]
+ 
+diff --git a/core/fpdfapi/page/cpdf_pageimagecache.cpp b/core/fpdfapi/page/cpdf_pageimagecache.cpp
+index abe248e..82ea9e3 100644
+--- a/core/fpdfapi/page/cpdf_pageimagecache.cpp
++++ b/core/fpdfapi/page/cpdf_pageimagecache.cpp
+@@ -13,6 +13,20 @@
+ #include <utility>
+ #include <vector>
+ 
++// xPDFSDK: native Perfetto/atrace markers.
++#if defined(__ANDROID__)
++#include <android/trace.h>
++namespace {
++struct XpdfScopedTrace {
++  XpdfScopedTrace(const char* name) { ::ATrace_beginSection(name); }
++  ~XpdfScopedTrace() { ::ATrace_endSection(); }
++};
++}  // namespace
++#define XPDF_ATRACE_SCOPED(name) XpdfScopedTrace xpdf_st_(name)
++#else
++#define XPDF_ATRACE_SCOPED(name) ((void)0)
++#endif
++
+ #include "core/fpdfapi/page/cpdf_dib.h"
+ #include "core/fpdfapi/page/cpdf_image.h"
+ #include "core/fpdfapi/page/cpdf_page.h"
+@@ -175,6 +189,10 @@ bool CPDF_PageImageCache::StartGetCachedBitmap(
+     CPDF_ColorSpace::Family eFamily,
+     bool bLoadMask,
+     const CFX_Size& max_size_required) {
++  // xPDFSDK: image cache lookup -- fast on cache hit (just a map find),
++  // slow on cache miss (triggers the JPEG decode + ICC transform). The
++  // narrow-vs-wide width on the Perfetto trace will tell us instantly.
++  XPDF_ATRACE_SCOPED("pdfium.StartGetCachedBitmap");
+   // A cross-document image may have come from the embedder.
+   if (page_->GetDocument() != pImage->GetDocument()) {
+     return false;
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 3fb69b6..205d810 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -15,6 +15,27 @@
+ #include <utility>
+ #include <vector>
+ 
++// xPDFSDK: native Perfetto/atrace markers inside the AGG rasterizer.
++// Gated to Android only; the header is in the NDK sysroot at API 23+.
++#if defined(__ANDROID__)
++#include <android/trace.h>
++#define XPDF_ATRACE_BEGIN(name) ::ATrace_beginSection(name)
++#define XPDF_ATRACE_END() ::ATrace_endSection()
++namespace {
++// Scoped trace helper -- RAII begin/end so functions with many early
++// returns don't need an XPDF_ATRACE_END() at each exit path.
++struct XpdfScopedTrace {
++  XpdfScopedTrace(const char* name) { ::ATrace_beginSection(name); }
++  ~XpdfScopedTrace() { ::ATrace_endSection(); }
++};
++}  // namespace
++#define XPDF_ATRACE_SCOPED(name) XpdfScopedTrace xpdf_st_(name)
++#else
++#define XPDF_ATRACE_BEGIN(name) ((void)0)
++#define XPDF_ATRACE_END() ((void)0)
++#define XPDF_ATRACE_SCOPED(name) ((void)0)
++#endif
++
+ #include "build/build_config.h"
+ #include "constants/transparency.h"
+ #include "core/fpdfapi/font/cpdf_font.h"
+@@ -213,11 +234,13 @@ void CPDF_RenderStatus::Initialize(const CPDF_RenderStatus* pParentStatus,
+ void CPDF_RenderStatus::RenderObjectList(
+     const CPDF_PageObjectHolder* pObjectHolder,
+     const CFX_Matrix& mtObj2Device) {
++  XPDF_ATRACE_BEGIN("pdfium.RenderObjectList");
+   CFX_FloatRect clip_rect = mtObj2Device.GetInverse().TransformRect(
+       CFX_FloatRect(device_->GetClipBox()));
+   for (const auto& pCurObj : *pObjectHolder) {
+     if (pCurObj.get() == stop_obj_) {
+       stopped_ = true;
++      XPDF_ATRACE_END();
+       return;
+     }
+     if (!pCurObj || !pCurObj->IsActive()) {
+@@ -232,9 +255,11 @@ void CPDF_RenderStatus::RenderObjectList(
+     }
+     RenderSingleObject(pCurObj.get(), mtObj2Device);
+     if (stopped_) {
++      XPDF_ATRACE_END();
+       return;
+     }
+   }
++  XPDF_ATRACE_END();
+ }
+ 
+ void CPDF_RenderStatus::RenderSingleObject(CPDF_PageObject* pObj,
+@@ -306,26 +331,40 @@ FX_RECT CPDF_RenderStatus::GetObjectClippedRect(
+ 
+ void CPDF_RenderStatus::ProcessObjectNoClip(CPDF_PageObject* pObj,
+                                             const CFX_Matrix& mtObj2Device) {
++  // xPDFSDK: trace the object-type dispatch so we can see in the
++  // Perfetto trace whether image / text / path / form dominates time.
+   bool bRet = false;
+   switch (pObj->GetType()) {
+     case CPDF_PageObject::Type::kText:
++      XPDF_ATRACE_BEGIN("pdfium.ProcessText");
+       bRet = ProcessText(pObj->AsText(), mtObj2Device, nullptr);
++      XPDF_ATRACE_END();
+       break;
+     case CPDF_PageObject::Type::kPath:
++      XPDF_ATRACE_BEGIN("pdfium.ProcessPath");
+       bRet = ProcessPath(pObj->AsPath(), mtObj2Device);
++      XPDF_ATRACE_END();
+       break;
+     case CPDF_PageObject::Type::kImage:
++      XPDF_ATRACE_BEGIN("pdfium.ProcessImage");
+       bRet = ProcessImage(pObj->AsImage(), mtObj2Device);
++      XPDF_ATRACE_END();
+       break;
+     case CPDF_PageObject::Type::kShading:
++      XPDF_ATRACE_BEGIN("pdfium.ProcessShading");
+       ProcessShading(pObj->AsShading(), mtObj2Device);
++      XPDF_ATRACE_END();
+       return;
+     case CPDF_PageObject::Type::kForm:
++      XPDF_ATRACE_BEGIN("pdfium.ProcessForm");
+       bRet = ProcessForm(pObj->AsForm(), mtObj2Device);
++      XPDF_ATRACE_END();
+       break;
+   }
+   if (!bRet) {
++    XPDF_ATRACE_BEGIN("pdfium.DrawObjWithBackground");
+     DrawObjWithBackground(pObj, mtObj2Device);
++    XPDF_ATRACE_END();
+   }
+ }
+ 
+@@ -627,6 +666,10 @@ bool CPDF_RenderStatus::SelectClipPath(const CPDF_PathObject* path_obj,
+ 
+ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
+                                             const CFX_Matrix& mtObj2Device) {
++  // xPDFSDK: scoped trace -- this function has many early-return paths
++  // (SMask, alpha groups, isolated forms, text clips). RAII keeps a
++  // single begin/end pair regardless of which branch returns.
++  XPDF_ATRACE_SCOPED("pdfium.ProcessTransparency");
+   const BlendMode blend_type = pPageObj->general_state().GetBlendType();
+   RetainPtr<CPDF_Dictionary> pSMaskDict =
+       pPageObj->mutable_general_state().GetMutableSoftMask();
+@@ -1426,6 +1469,11 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
+     CPDF_Dictionary* smask_dict,
+     const FX_RECT& clip_rect,
+     const CFX_Matrix& smask_matrix) {
++  // xPDFSDK: SMask loading involves decoding a separate image stream
++  // (often the same size as the main image) and converting it to an
++  // 8bpp alpha mask. On image-heavy PDFs with paired 1-comp + 3-comp
++  // JPEG streams, this is a major cost.
++  XPDF_ATRACE_SCOPED("pdfium.LoadSMask");
+   RetainPtr<CPDF_Stream> pGroup =
+       smask_dict->GetMutableStreamFor(pdfium::transparency::kG);
+   if (!pGroup) {
+diff --git a/core/fxcodec/jpeg/jpegmodule.cpp b/core/fxcodec/jpeg/jpegmodule.cpp
+index 2cc196b..51ec1cc 100644
+--- a/core/fxcodec/jpeg/jpegmodule.cpp
++++ b/core/fxcodec/jpeg/jpegmodule.cpp
+@@ -11,6 +11,17 @@
+ #include <type_traits>
+ #include <utility>
+ 
++// xPDFSDK: native Perfetto/atrace markers around libjpeg decompress.
++// Gated to Android only; the header is in the NDK sysroot at API 23+.
++#if defined(__ANDROID__)
++#include <android/trace.h>
++#define XPDF_ATRACE_BEGIN(name) ::ATrace_beginSection(name)
++#define XPDF_ATRACE_END() ::ATrace_endSection()
++#else
++#define XPDF_ATRACE_BEGIN(name) ((void)0)
++#define XPDF_ATRACE_END() ((void)0)
++#endif
++
+ #include "build/build_config.h"
+ #include "core/fxcodec/cfx_codec_memory.h"
+ #include "core/fxcodec/jpeg/jpeg_common.h"
+@@ -267,9 +278,13 @@ bool JpegDecoder::Create(pdfium::span<const uint8_t> src_span,
+ }
+ 
+ bool JpegDecoder::Rewind() {
++  // xPDFSDK: trace marker around the actual JPEG decompress -- this is
++  // where libjpeg does the IDCT pass and produces scanlines.
++  XPDF_ATRACE_BEGIN("pdfium.JpegRewind");
+   if (started_) {
+     jpeg_common_destroy_decompress(&common_);
+     if (!InitDecode(/*bAcceptKnownBadHeader=*/false)) {
++      XPDF_ATRACE_END();
+       return false;
+     }
+   }
+@@ -286,14 +301,18 @@ bool JpegDecoder::Rewind() {
+       (orig_height_ + default_scale_denom_ - 1) / default_scale_denom_;
+   if (!jpeg_common_start_decompress(&common_)) {
+     jpeg_common_destroy_decompress(&common_);
++    XPDF_ATRACE_END();
+     return false;
+   }
+   CHECK_LE(static_cast<int>(common_.cinfo.output_width), orig_width_);
+   started_ = true;
++  XPDF_ATRACE_END();
+   return true;
+ }
+ 
+ pdfium::span<uint8_t> JpegDecoder::GetNextLine() {
++  // xPDFSDK: hot per-scanline IDCT call. One marker per call would
++  // dominate trace volume; instead aggregate at the Rewind level above.
+   uint8_t* row_array[] = {scanline_buf_.data()};
+   int nlines = jpeg_common_read_scanlines(&common_, row_array, 1u);
+   if (nlines <= 0) {
+diff --git a/fpdfsdk/fpdf_view.cpp b/fpdfsdk/fpdf_view.cpp
+index 2b2f253..ded0ddc 100644
+--- a/fpdfsdk/fpdf_view.cpp
++++ b/fpdfsdk/fpdf_view.cpp
+@@ -11,6 +11,20 @@
+ #include <utility>
+ #include <vector>
+ 
++// xPDFSDK: native Perfetto/atrace marker on the public render entry point.
++#if defined(__ANDROID__)
++#include <android/trace.h>
++namespace {
++struct XpdfScopedTrace {
++  XpdfScopedTrace(const char* name) { ::ATrace_beginSection(name); }
++  ~XpdfScopedTrace() { ::ATrace_endSection(); }
++};
++}  // namespace
++#define XPDF_ATRACE_SCOPED(name) XpdfScopedTrace xpdf_st_(name)
++#else
++#define XPDF_ATRACE_SCOPED(name) ((void)0)
++#endif
++
+ #include "build/build_config.h"
+ #include "core/fpdfapi/page/cpdf_docpagedata.h"
+ #include "core/fpdfapi/page/cpdf_occontext.h"
+@@ -727,6 +741,11 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
+                                                      int size_y,
+                                                      int rotate,
+                                                      int flags) {
++  // xPDFSDK: outermost render marker -- the slice width on the trace
++  // equals the wall-time of one JNI render call. Inner pdfium.* slices
++  // (RenderObjectList, ProcessImage, ProcessTransparency, etc.) nest
++  // under this so we can read off the breakdown.
++  XPDF_ATRACE_SCOPED("pdfium.FPDF_RenderPageBitmap");
+   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+   if (!pPage) {
+     return;
+
+--
+2.30.0

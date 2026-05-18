@@ -1,0 +1,250 @@
+name: Build PDFium Android arm64 AGG JPEG Downscale + Trace Markers
+
+# Diagnostic build only -- adds Android ATrace markers inside PDFium's
+# AGG renderer + JPEG decoder so a Perfetto capture shows exactly which
+# inner stage of FPDF_RenderPageBitmap consumes wall-clock time on
+# image-heavy PDFs.
+#
+# NOT a ship build. The trace-instrumented .so links libandroid.so for
+# ATrace_* and incurs a small startup cost we don't want in production.
+# Use the sibling workflow `build-pdfium-android-arm64-agg-jpeg-downscale.yml`
+# for the production AGG build.
+#
+# Manual trigger only. Diagnostic builds are rare and intentional.
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout workflow scripts
+        uses: actions/checkout@v4
+        with:
+          path: repo
+
+      - name: Install minimal host tools
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y git curl python3 ca-certificates unzip zip file binutils rsync
+
+      - name: Checkout depot_tools
+        run: |
+          git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git "$GITHUB_WORKSPACE/depot_tools"
+          echo "$GITHUB_WORKSPACE/depot_tools" >> "$GITHUB_PATH"
+
+      - name: Fetch PDFium fork with Android deps
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/pdfium_build"
+          cd "$GITHUB_WORKSPACE/pdfium_build"
+
+          cat > .gclient <<GCLEOF
+          solutions = [
+            {
+              "name": "pdfium",
+              "url": "https://github.com/${{ github.repository }}.git",
+              "managed": False,
+              "revision": "${{ github.sha }}",
+              "custom_deps": {},
+              "custom_vars": {
+                "checkout_android": True,
+                "checkout_configuration": "default",
+                "checkout_rust": False,
+              },
+            },
+          ]
+          target_os = ["android"]
+          GCLEOF
+
+          gclient sync --no-history
+
+      - name: Patch public PDFium API exports
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+          python3 "$GITHUB_WORKSPACE/repo/scripts/ci/patch_pdfium_public_exports.py"
+
+      - name: Apply JPEG downscale + native trace markers patches
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+
+          mkdir -p patches/experiments
+          cp "$GITHUB_WORKSPACE/repo/patches/experiments/0003-jpeg-downscale-on-decode.patch" \
+             patches/experiments/0003-jpeg-downscale-on-decode.patch
+          cp "$GITHUB_WORKSPACE/repo/patches/experiments/0004-native-trace-markers.patch" \
+             patches/experiments/0004-native-trace-markers.patch
+
+          bash "$GITHUB_WORKSPACE/repo/scripts/ci/apply_experiment_patches_with_trace.sh"
+
+      - name: Generate GN args for AGG no-V8 build
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+          mkdir -p out/android_arm64_agg
+
+          cat > out/android_arm64_agg/args.gn <<'EOFARGS'
+          target_os = "android"
+          target_cpu = "arm64"
+
+          is_debug = false
+          is_component_build = false
+          symbol_level = 0
+          strip_debug_info = true
+          treat_warnings_as_errors = false
+
+          clang_use_chrome_plugins = false
+          use_remoteexec = false
+
+          pdf_enable_v8 = false
+          pdf_enable_xfa = false
+
+          # Control variant: default AGG renderer, no Skia.
+          pdf_use_skia = false
+          pdf_use_agg = true
+
+          pdf_is_complete_lib = true
+          pdf_is_standalone = false
+
+          pdf_enable_fontations = false
+          pdf_enable_rust_png = false
+          EOFARGS
+
+          gn gen out/android_arm64_agg
+
+          echo "=== Effective args ==="
+          gn args out/android_arm64_agg --list --short \
+            | grep -E '^(target_os|target_cpu|pdf_enable_v8|pdf_enable_xfa|pdf_use_skia|pdf_use_agg|pdf_is_complete_lib|pdf_enable_fontations|pdf_enable_rust_png) ='
+
+      - name: Build static PDFium AGG
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+          ninja -C out/android_arm64_agg pdfium -j"$(nproc)"
+
+      - name: Verify JPEG downscale + trace markers compiled
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+
+          LLVM_NM="$(pwd)/third_party/llvm-build/Release+Asserts/bin/llvm-nm"
+          PDFIUM_A=out/android_arm64_agg/obj/libpdfium.a
+
+          echo "=== Verify JPEG decoder symbols ==="
+          "$LLVM_NM" -A -C "$PDFIUM_A" 2>/dev/null \
+            | grep -E 'JpegModule|JpegDecoder|CJpeg' \
+            | head -40 || {
+              echo "ERROR: JPEG decoder symbols not found in libpdfium.a" >&2
+              exit 1
+            }
+
+          echo
+          echo "=== Verify patched source contains downscale logic ==="
+          grep -R "scale_denom" core/fxcodec/jpeg/jpegmodule.cpp | head -5
+          grep -R "resolution_levels_to_skip" \
+            core/fxcodec/jpeg/jpegmodule.cpp \
+            core/fpdfapi/page/cpdf_dib.cpp \
+            core/fpdfapi/page/cpdf_streamparser.cpp | head -10
+
+          echo
+          echo "=== Verify ATrace_beginSection references in static archive ==="
+          # On Android the macro expands to ATrace_beginSection -- if 0004 didn't
+          # compile in, no such reference will appear.
+          if "$LLVM_NM" -A "$PDFIUM_A" 2>/dev/null | grep -q 'ATrace_beginSection'; then
+            echo "OK: ATrace_beginSection referenced in libpdfium.a"
+            "$LLVM_NM" -A "$PDFIUM_A" 2>/dev/null \
+              | grep 'ATrace_beginSection' | head -10
+          else
+            echo "ERROR: ATrace_beginSection NOT referenced in libpdfium.a." >&2
+            echo "0004 trace markers did not compile in. Check that:" >&2
+            echo "  - the patch applied cleanly (see earlier step)" >&2
+            echo "  - target_os was 'android' in args.gn (so #if __ANDROID__ took the trace branch)" >&2
+            exit 1
+          fi
+
+          echo
+          echo "=== Verify expected pdfium.* slice strings present in archive ==="
+          # The slice names are in .rodata as string literals -- strings should find them.
+          for slice in pdfium.FPDF_RenderPageBitmap pdfium.RenderObjectList \
+                       pdfium.ProcessImage pdfium.ProcessTransparency \
+                       pdfium.LoadSMask pdfium.JpegRewind \
+                       pdfium.StartGetCachedBitmap; do
+            if strings "$PDFIUM_A" 2>/dev/null | grep -Fq "$slice"; then
+              echo "  OK $slice"
+            else
+              echo "  MISSING $slice" >&2
+              exit 1
+            fi
+          done
+
+      - name: Link final AGG libpdfium.so
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+          bash "$GITHUB_WORKSPACE/repo/scripts/ci/link_pdfium_android_agg_so.sh"
+
+      - name: Validate AGG libpdfium.so
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+
+          LLVM_NM="$(pwd)/third_party/llvm-build/Release+Asserts/bin/llvm-nm"
+          SO=out/android_arm64_agg/libpdfium.so
+
+          echo "=== No unresolved known-bad symbols ==="
+          if "$LLVM_NM" -D -C "$SO" 2>/dev/null \
+            | grep ' U ' \
+            | grep -E 'SkTypeface_proxy|SkFontMgr_New_Custom_Empty|SkFontMgr_Android_Parser|SkLanguage::getParent|__real_|std::get_new_handler|__cxa_guard_|_Unwind_'; then
+            echo "ERROR: unresolved known-bad symbols remain" >&2
+            exit 1
+          fi
+
+          echo "OK"
+
+          echo
+          echo "=== ATrace_* must be present as UNDEFINED dynamic symbol (resolved at runtime from libandroid.so) ==="
+          if "$LLVM_NM" -D -C "$SO" 2>/dev/null | grep -E ' U ATrace_(beginSection|endSection)'; then
+            echo "OK: ATrace_* unresolved (will bind to libandroid.so at runtime)"
+          else
+            echo "ERROR: ATrace_* not present as undefined dynamic symbol in final .so" >&2
+            echo "       The trace markers will not work on device." >&2
+            exit 1
+          fi
+
+          echo
+          echo "=== Exported PDFium APIs ==="
+          "$LLVM_NM" -D --defined-only -C "$SO" 2>/dev/null \
+            | grep -E ' (FPDF_InitLibrary|FPDF_InitLibraryWithConfig|FPDF_LoadDocument|FPDF_RenderPageBitmap)' \
+            | head -20
+
+          echo
+          echo "=== Dynamic dependencies (expect libandroid.so + liblog.so among NEEDED) ==="
+          readelf -d "$SO" | grep NEEDED || true
+
+      - name: Package artifact
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+
+          mkdir -p "$GITHUB_WORKSPACE/artifacts/arm64-v8a"
+
+          VERSION="$(date -u +%Y%m%d-%H%M%S)-${GITHUB_SHA::8}"
+
+          cp out/android_arm64_agg/libpdfium.so "$GITHUB_WORKSPACE/artifacts/arm64-v8a/libpdfium.so"
+          sha256sum "$GITHUB_WORKSPACE/artifacts/arm64-v8a/libpdfium.so" > "$GITHUB_WORKSPACE/artifacts/SHA256SUMS.txt"
+
+          cat > "$GITHUB_WORKSPACE/artifacts/build-info.json" <<INFOEOF
+          {
+            "variant": "android-arm64-agg-no-v8-no-xfa-jpeg-downscale-trace-experiment",
+            "renderer": "agg",
+            "skia": false,
+            "v8": false,
+            "xfa": false,
+            "jpeg_downscale_experiment": true,
+            "native_trace_markers": true,
+            "ship_safe": false,
+            "purpose": "Perfetto/atrace diagnostic build. Vendor only for tracing experiments, not for end users.",
+            "commit": "${GITHUB_SHA}",
+            "version": "$VERSION"
+          }
+          INFOEOF
+
+      - name: Upload AGG + trace libpdfium.so
+        uses: actions/upload-artifact@v4
+        with:
+          name: libpdfium-android-arm64-agg-no-v8-jpeg-downscale-trace-experiment
+          path: artifacts/
