@@ -333,6 +333,18 @@ jobs:
           #
           # If any FPDF/FORM symbol is missing in the final .so it means
           # the linker GC'd too aggressively. We verify that below.
+
+          # --wrap is only needed when partition_alloc's allocator_shim
+          # is linked (Variant B disables partition_alloc, so Variant C
+          # also does -- nothing provides __wrap_realpath / __wrap_getcwd).
+          WRAP_FLAGS=()
+          if printf '%s\n' "${PROJECT_ARCHIVES_UNIQ[@]}" | grep -q 'liballocator_shim\.a'; then
+            WRAP_FLAGS=(-Wl,--wrap=getcwd -Wl,--wrap=realpath)
+            echo "Variant C: liballocator_shim present -> using --wrap"
+          else
+            echo "Variant C: liballocator_shim NOT present -> dropping --wrap"
+          fi
+
           "$CC" \
             --target="$TARGET" \
             --sysroot="$SYSROOT" \
@@ -361,8 +373,7 @@ jobs:
             -Wl,--undefined=FPDF_ClosePage \
             -Wl,--undefined=FPDF_CloseDocument \
             -Wl,--undefined=FPDF_DestroyLibrary \
-            -Wl,--wrap=getcwd \
-            -Wl,--wrap=realpath \
+            "${WRAP_FLAGS[@]}" \
             -Wl,-z,max-page-size=16384 \
             -llog -landroid -ldl -lm
 

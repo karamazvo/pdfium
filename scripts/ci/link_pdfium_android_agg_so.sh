@@ -225,6 +225,28 @@ LIBUNWIND_LINK_FLAGS=("${LIBUNWIND_OBJECTS[@]}" "${LIBCXX_OBJECTS[@]}" "${LIBCXX
 echo "Total runtime .o files to link: ${#LIBUNWIND_LINK_FLAGS[@]}"
 
 echo
+echo "=== Detect whether partition_alloc is linked ==="
+# `-Wl,--wrap=realpath` and `-Wl,--wrap=getcwd` are needed only when
+# partition_alloc's allocator_shim is linked -- it provides the
+# corresponding `__wrap_realpath` / `__wrap_getcwd` symbols that
+# intercept libc allocator-related calls.
+#
+# If partition_alloc is NOT in PROJECT_ARCHIVES_UNIQ (e.g. the build
+# disabled `pdf_use_partition_alloc`), `--wrap` would cause the
+# linker to redirect plain libc calls in libc++/icu into
+# `__wrap_<name>` symbols that no archive provides -- link fails
+# with "undefined __wrap_realpath".
+#
+# So make the --wrap flags conditional.
+WRAP_FLAGS=()
+if printf '%s\n' "${PROJECT_ARCHIVES_UNIQ[@]}" | grep -q 'liballocator_shim\.a'; then
+  WRAP_FLAGS=(-Wl,--wrap=getcwd -Wl,--wrap=realpath)
+  echo "partition_alloc liballocator_shim.a present -> using --wrap"
+else
+  echo "partition_alloc liballocator_shim.a NOT present -> dropping --wrap"
+fi
+
+echo
 echo "=== Link final AGG libpdfium.so ==="
 
 rm -f "$SO"
@@ -249,8 +271,7 @@ rm -f "$SO"
   -Wl,--export-dynamic-symbol=FORM_* \
   -Wl,--undefined=FPDF_InitLibrary \
   -Wl,--undefined=FPDF_InitLibraryWithConfig \
-  -Wl,--wrap=getcwd \
-  -Wl,--wrap=realpath \
+  "${WRAP_FLAGS[@]}" \
   -Wl,-z,max-page-size=16384 \
   -llog -landroid -ldl -lm
 
