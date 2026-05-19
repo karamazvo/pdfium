@@ -131,68 +131,71 @@ echo "--start-group / --end-group at link time."
 echo
 echo "=== Collect Chromium in-tree libunwind source-set objects ==="
 
-# The libunwind layout has shifted over PDFium revisions. Search
-# for the canonical location first, then fall back to a broader
-# find. We accept any directory whose name contains "libunwind".
-LIBUNWIND_DIR=""
-for candidate in \
-    "$OUT/obj/buildtools/third_party/libunwind/libunwind" \
-    "$OUT/obj/third_party/libunwind/libunwind" \
-    "$OUT/obj/buildtools/third_party/libunwind/libunwind_a" \
-    ; do
-  if [ -d "$candidate" ] && find "$candidate" -maxdepth 2 -name '*.o' | grep -q .; then
-    LIBUNWIND_DIR="$candidate"
-    break
-  fi
+# Simpler, deeper search: find every .o under any directory whose
+# path contains "libunwind". This handles all PDFium layout shifts:
+#   obj/buildtools/third_party/libunwind/libunwind/Unwind-EHABI.o
+#   obj/buildtools/third_party/libunwind/Unwind-EHABI.o     (current)
+#   obj/buildtools/third_party/libunwind/libunwind_a/...
+#   obj/third_party/libunwind/...
+# Also previously-built targets in any of the above paths.
+LIBUNWIND_ROOTS=()
+while IFS= read -r d; do
+  [ -d "$d" ] && LIBUNWIND_ROOTS+=("$d")
+done < <(find "$OUT/obj" -type d -name 'libunwind*' 2>/dev/null | sort -u)
+
+echo "Candidate libunwind roots (${#LIBUNWIND_ROOTS[@]}):"
+printf '  %s\n' "${LIBUNWIND_ROOTS[@]}"
+
+LIBUNWIND_OBJECTS=()
+for root in "${LIBUNWIND_ROOTS[@]}"; do
+  while IFS= read -r o; do
+    LIBUNWIND_OBJECTS+=("$o")
+  done < <(find "$root" -type f -name '*.o' 2>/dev/null | sort)
 done
 
-# If still not found, try building one of several plausible target
-# names and search again.
-if [ -z "$LIBUNWIND_DIR" ]; then
-  echo "libunwind not pre-built at any known path; attempting ninja build..."
+# If we still have nothing, try ninja-building one of several
+# plausible target names and search again.
+if [ "${#LIBUNWIND_OBJECTS[@]}" -eq 0 ]; then
+  echo "No libunwind .o files found; attempting ninja build..."
   for tgt in \
       'obj/buildtools/third_party/libunwind/libunwind.stamp' \
       'obj/third_party/libunwind/libunwind.stamp' \
-      '//buildtools/third_party/libunwind:libunwind' \
+      'obj/buildtools/third_party/libunwind' \
       ; do
-    if ninja -C "$OUT" "$tgt" 2>/dev/null; then
-      echo "  built target: $tgt"
-      break
-    fi
+    ninja -C "$OUT" "$tgt" 2>/dev/null || true
   done
-  # Now search again across the whole obj tree.
-  CANDIDATE_DIR="$(find "$OUT/obj" -type d -name 'libunwind*' 2>/dev/null \
-    | while read -r d; do
-        if find "$d" -maxdepth 2 -name '*.o' 2>/dev/null | grep -q .; then
-          echo "$d"
-          break
-        fi
-      done)"
-  if [ -n "$CANDIDATE_DIR" ]; then
-    LIBUNWIND_DIR="$CANDIDATE_DIR"
-  fi
+  for root in "${LIBUNWIND_ROOTS[@]}"; do
+    while IFS= read -r o; do
+      LIBUNWIND_OBJECTS+=("$o")
+    done < <(find "$root" -type f -name '*.o' 2>/dev/null | sort)
+  done
 fi
 
-if [ -z "$LIBUNWIND_DIR" ]; then
-  echo "ERROR: could not locate libunwind .o files under $OUT/obj" >&2
-  echo "Candidate dirs found:" >&2
-  find "$OUT/obj" -type d -name 'libunwind*' 2>/dev/null | head -10 >&2
-  exit 1
+# Deduplicate.
+if [ "${#LIBUNWIND_OBJECTS[@]}" -gt 0 ]; then
+  mapfile -t LIBUNWIND_OBJECTS < <(
+    printf '%s\n' "${LIBUNWIND_OBJECTS[@]}" | sort -u
+  )
 fi
-
-echo "libunwind dir: $LIBUNWIND_DIR"
-
-mapfile -t LIBUNWIND_OBJECTS < <(
-  find "$LIBUNWIND_DIR" -maxdepth 2 -type f -name '*.o' | sort
-)
 
 if [ "${#LIBUNWIND_OBJECTS[@]}" -eq 0 ]; then
-  echo "ERROR: $LIBUNWIND_DIR has no .o files" >&2
+  echo "ERROR: could not locate libunwind .o files under $OUT/obj" >&2
+  echo "Candidate dirs found:" >&2
+  printf '  %s\n' "${LIBUNWIND_ROOTS[@]}" >&2
+  echo
+  echo "Contents of each candidate dir (max 30 entries):" >&2
+  for d in "${LIBUNWIND_ROOTS[@]}"; do
+    echo "  ${d}:" >&2
+    find "$d" -maxdepth 3 2>/dev/null | head -30 | sed 's|^|    |' >&2
+  done
   exit 1
 fi
 
-echo "libunwind objects:"
-printf '  %s\n' "${LIBUNWIND_OBJECTS[@]}"
+echo "libunwind objects (${#LIBUNWIND_OBJECTS[@]}):"
+printf '  %s\n' "${LIBUNWIND_OBJECTS[@]:0:10}"
+if [ "${#LIBUNWIND_OBJECTS[@]}" -gt 10 ]; then
+  echo "  ... ($((${#LIBUNWIND_OBJECTS[@]} - 10)) more)"
+fi
 
 echo
 echo "=== Link final AGG libpdfium.so ==="
