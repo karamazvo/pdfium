@@ -131,63 +131,86 @@ echo "--start-group / --end-group at link time."
 echo
 echo "=== Collect Chromium in-tree libunwind source-set objects ==="
 
-# Simpler, deeper search: find every .o under any directory whose
-# path contains "libunwind". This handles all PDFium layout shifts:
-#   obj/buildtools/third_party/libunwind/libunwind/Unwind-EHABI.o
-#   obj/buildtools/third_party/libunwind/Unwind-EHABI.o     (current)
-#   obj/buildtools/third_party/libunwind/libunwind_a/...
-#   obj/third_party/libunwind/...
-# Also previously-built targets in any of the above paths.
-LIBUNWIND_ROOTS=()
-while IFS= read -r d; do
-  [ -d "$d" ] && LIBUNWIND_ROOTS+=("$d")
-done < <(find "$OUT/obj" -type d -name 'libunwind*' 2>/dev/null | sort -u)
+# Strategy:
+#  1. Ask GN for the libunwind target's outputs (its compiled .o files).
+#  2. If that fails (source_sets don't report outputs), force-build the
+#     target by name -- `ninja //buildtools/third_party/libunwind:libunwind`
+#     translates the GN label into whatever the current build rule
+#     emits.
+#  3. After forcing the build, walk the filesystem for .o files.
+#
+# This is robust to PDFium layout shifts because we let GN/ninja
+# resolve the path themselves.
 
-echo "Candidate libunwind roots (${#LIBUNWIND_ROOTS[@]}):"
-printf '  %s\n' "${LIBUNWIND_ROOTS[@]}"
-
-LIBUNWIND_OBJECTS=()
-for root in "${LIBUNWIND_ROOTS[@]}"; do
-  while IFS= read -r o; do
-    LIBUNWIND_OBJECTS+=("$o")
-  done < <(find "$root" -type f -name '*.o' 2>/dev/null | sort)
+# Locate the libunwind target. Check the gn target list (this comes
+# from "gn ls" which lists every target ninja knows about).
+LIBUNWIND_TARGET=""
+LIBUNWIND_TARGET_CANDIDATES=(
+  '//buildtools/third_party/libunwind:libunwind'
+  '//buildtools/third_party/libunwind:libunwind_a'
+  '//third_party/libunwind:libunwind'
+)
+for cand in "${LIBUNWIND_TARGET_CANDIDATES[@]}"; do
+  if gn desc "$OUT" "$cand" type >/dev/null 2>&1; then
+    LIBUNWIND_TARGET="$cand"
+    LIBUNWIND_TYPE="$(gn desc "$OUT" "$cand" type 2>/dev/null)"
+    echo "libunwind GN target: $LIBUNWIND_TARGET (type=$LIBUNWIND_TYPE)"
+    break
+  fi
 done
 
-# If we still have nothing, try ninja-building one of several
-# plausible target names and search again.
-if [ "${#LIBUNWIND_OBJECTS[@]}" -eq 0 ]; then
-  echo "No libunwind .o files found; attempting ninja build..."
-  for tgt in \
-      'obj/buildtools/third_party/libunwind/libunwind.stamp' \
-      'obj/third_party/libunwind/libunwind.stamp' \
-      'obj/buildtools/third_party/libunwind' \
-      ; do
-    ninja -C "$OUT" "$tgt" 2>/dev/null || true
-  done
-  for root in "${LIBUNWIND_ROOTS[@]}"; do
-    while IFS= read -r o; do
-      LIBUNWIND_OBJECTS+=("$o")
-    done < <(find "$root" -type f -name '*.o' 2>/dev/null | sort)
-  done
+if [ -z "$LIBUNWIND_TARGET" ]; then
+  echo "WARNING: no libunwind GN target found via known paths"
+  # Last resort: grep the build.ninja file.
+  GREP_TARGET="$(grep -lE 'libunwind/(Unwind|libunwind).*\.o' "$OUT"/*.ninja "$OUT"/obj/**/*.ninja 2>/dev/null | head -1 || true)"
+  if [ -n "$GREP_TARGET" ]; then
+    echo "  found build.ninja with libunwind objects: $GREP_TARGET"
+  fi
 fi
 
-# Deduplicate.
-if [ "${#LIBUNWIND_OBJECTS[@]}" -gt 0 ]; then
-  mapfile -t LIBUNWIND_OBJECTS < <(
-    printf '%s\n' "${LIBUNWIND_OBJECTS[@]}" | sort -u
-  )
+# Force-build libunwind. Try the GN label form, then a few plausible
+# ninja target name forms.
+echo "Force-building libunwind..."
+if [ -n "$LIBUNWIND_TARGET" ]; then
+  # ninja accepts GN labels with a colon (e.g.
+  # "buildtools/third_party/libunwind:libunwind" without the leading //)
+  NINJA_TGT="${LIBUNWIND_TARGET#//}"
+  echo "  trying: ninja $NINJA_TGT"
+  ninja -C "$OUT" "$NINJA_TGT" 2>&1 | tail -20 || true
 fi
+# Also try a stamp file if it exists in the .ninja rules.
+for tgt in \
+    'obj/buildtools/third_party/libunwind/libunwind/libunwind.stamp' \
+    'obj/buildtools/third_party/libunwind/libunwind.stamp' \
+    'obj/third_party/libunwind/libunwind.stamp' \
+    ; do
+  ninja -C "$OUT" "$tgt" 2>/dev/null || true
+done
+
+# Now walk the filesystem for any .o file whose path contains the
+# string "libunwind" -- this catches both nested and flat layouts.
+mapfile -t LIBUNWIND_OBJECTS < <(
+  find "$OUT/obj" -type f -name '*.o' 2>/dev/null \
+    | grep '/libunwind' \
+    | sort -u
+)
 
 if [ "${#LIBUNWIND_OBJECTS[@]}" -eq 0 ]; then
-  echo "ERROR: could not locate libunwind .o files under $OUT/obj" >&2
-  echo "Candidate dirs found:" >&2
-  printf '  %s\n' "${LIBUNWIND_ROOTS[@]}" >&2
+  echo "ERROR: could not produce libunwind .o files" >&2
   echo
-  echo "Contents of each candidate dir (max 30 entries):" >&2
-  for d in "${LIBUNWIND_ROOTS[@]}"; do
-    echo "  ${d}:" >&2
-    find "$d" -maxdepth 3 2>/dev/null | head -30 | sed 's|^|    |' >&2
-  done
+  echo "Build artifacts under $OUT/obj/buildtools (3 levels):" >&2
+  find "$OUT/obj/buildtools" -maxdepth 4 2>/dev/null | head -60 | sed 's|^|  |' >&2
+  echo
+  echo "Search for any .o file with 'unwind' in its name:" >&2
+  find "$OUT/obj" -type f -name '*.o' 2>/dev/null | grep -i unwind | head -20 | sed 's|^|  |' >&2
+  echo
+  echo "All .ninja files under $OUT (first 10):" >&2
+  find "$OUT" -type f -name '*.ninja' 2>/dev/null | head -10 | sed 's|^|  |' >&2
+  echo
+  echo "Grep build.ninja for libunwind build rules:" >&2
+  if [ -f "$OUT/build.ninja" ]; then
+    grep -B 1 -A 2 'libunwind' "$OUT/build.ninja" 2>/dev/null | head -30 | sed 's|^|  |' >&2
+  fi
   exit 1
 fi
 
