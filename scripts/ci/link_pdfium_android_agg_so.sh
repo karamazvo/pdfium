@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-OUT=out/android_arm64_agg
+# Allow callers to override the build dir (e.g. the size-experiment
+# workflow builds into out/variant_baseline / out/variant_b / etc.).
+# Default is the production release path.
+OUT="${PDFIUM_AGG_BUILD_DIR:-out/android_arm64_agg}"
 PDFIUM_A="$OUT/obj/libpdfium.a"
 SO="$OUT/libpdfium.so"
 
@@ -18,20 +21,54 @@ test -f "$BUILTINS"
 test -x "$LLVM_NM"
 
 echo "=== Collect AGG project static-library closure from GN ==="
+echo "Build dir (OUT): $OUT"
+echo "Build dir contents:"
+ls -la "$OUT" 2>&1 | head -20
+
+echo
+echo "=== gn desc //:pdfium deps --all ==="
+GN_DESC_RAW="$(gn desc "$OUT" //:pdfium deps --all 2>&1 || true)"
+echo "$GN_DESC_RAW" | head -50
+echo "  ... ($(echo "$GN_DESC_RAW" | wc -l) lines total)"
 
 mapfile -t PROJECT_TARGETS < <(
   {
     echo "//:pdfium"
-    gn desc "$OUT" //:pdfium deps --all
+    gn desc "$OUT" //:pdfium deps --all 2>/dev/null || true
   } | sed '/^[[:space:]]*$/d' | sort -u
 )
+
+echo
+echo "PROJECT_TARGETS (${#PROJECT_TARGETS[@]} entries):"
+printf '  %s\n' "${PROJECT_TARGETS[@]:0:10}"
+if [ "${#PROJECT_TARGETS[@]}" -gt 10 ]; then
+  echo "  ... (${#PROJECT_TARGETS[@]} total)"
+fi
+
+# If gn desc gave us only `//:pdfium` itself (1 entry), something is
+# wrong -- a non-trivial PDFium build has dozens of deps. Fail fast
+# with diagnostic info so we don't silently produce a broken .so.
+if [ "${#PROJECT_TARGETS[@]}" -lt 2 ]; then
+  echo "ERROR: gn desc reported zero transitive deps for //:pdfium" >&2
+  echo "       This means the build dir is in an unexpected state." >&2
+  echo
+  echo "Build dir tree (3 levels):"
+  find "$OUT" -maxdepth 3 -type d 2>/dev/null | head -30
+  echo
+  echo "gn args (effective):"
+  gn args "$OUT" --list --short 2>&1 | head -30 || true
+  echo
+  echo "Direct gn desc invocation:"
+  gn desc "$OUT" //:pdfium 2>&1 | head -30 || true
+  exit 1
+fi
 
 PROJECT_ARCHIVES=()
 for t in "${PROJECT_TARGETS[@]}"; do
   while IFS= read -r out; do
     p="${out#//}"
     case "$p" in
-      out/android_arm64_agg/*.a)
+      "$OUT"/*.a)
         PROJECT_ARCHIVES+=("$p")
         ;;
     esac
@@ -39,9 +76,11 @@ for t in "${PROJECT_TARGETS[@]}"; do
 done
 
 mapfile -t PROJECT_ARCHIVES_UNIQ < <(
-  printf '%s\n' "${PROJECT_ARCHIVES[@]}" \
-    | sort -u \
-    | grep -v '^out/android_arm64_agg/obj/libpdfium\.a$'
+  if [ "${#PROJECT_ARCHIVES[@]}" -gt 0 ]; then
+    printf '%s\n' "${PROJECT_ARCHIVES[@]}" \
+      | sort -u \
+      | grep -v "^${OUT}/obj/libpdfium\.a$"
+  fi
 )
 
 echo "PDFium archive:"
@@ -78,7 +117,7 @@ for t in "${RUNTIME_TARGETS[@]}"; do
   while IFS= read -r out; do
     p="${out#//}"
     case "$p" in
-      out/android_arm64_agg/*.a|out/android_arm64_agg/*.o)
+      "$OUT"/*.a|"$OUT"/*.o)
         RUNTIME_INPUTS+=("$p")
         ;;
     esac
@@ -86,7 +125,9 @@ for t in "${RUNTIME_TARGETS[@]}"; do
 done
 
 mapfile -t RUNTIME_INPUTS_UNIQ < <(
-  printf '%s\n' "${RUNTIME_INPUTS[@]}" | sort -u
+  if [ "${#RUNTIME_INPUTS[@]}" -gt 0 ]; then
+    printf '%s\n' "${RUNTIME_INPUTS[@]}" | sort -u
+  fi
 )
 
 echo "Runtime inputs:"
