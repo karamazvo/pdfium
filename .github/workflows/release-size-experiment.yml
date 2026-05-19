@@ -1,0 +1,434 @@
+name: Release Size Experiment (4 variants, side-by-side)
+
+# ===========================================================================
+# Measures the .so size impact of three independent size-shrink levers,
+# all relative to the existing release config. Builds four .so files in
+# one CI run on the same PDFium SHA / same 3 ship patches:
+#
+#   variant_baseline -- current release config, no extra strip
+#   variant_a        -- baseline + `llvm-strip --strip-unneeded`
+#   variant_b        -- A + `pdf_use_partition_alloc = false` in args.gn
+#   variant_c        -- B + drop --whole-archive, add --gc-sections at link
+#
+# All four use the same patches/ship/01..03 and the same PDFium SHA, so
+# size differences are 100% attributable to the build/link levers.
+#
+# Output: 4 .so files + 4 sha256 hashes + a size-report.txt comparing
+# them. You pick the winner and promote it into release-pdfium-android-
+# arm64-agg.yml.
+#
+# Manual trigger only.
+# ===========================================================================
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout workflow scripts
+        uses: actions/checkout@v4
+        with:
+          path: repo
+
+      - name: Install minimal host tools
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y git curl python3 ca-certificates unzip zip file binutils rsync
+
+      - name: Checkout depot_tools
+        run: |
+          git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git "$GITHUB_WORKSPACE/depot_tools"
+          echo "$GITHUB_WORKSPACE/depot_tools" >> "$GITHUB_PATH"
+
+      - name: Fetch PDFium fork with Android deps
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/pdfium_build"
+          cd "$GITHUB_WORKSPACE/pdfium_build"
+
+          cat > .gclient <<GCLEOF
+          solutions = [
+            {
+              "name": "pdfium",
+              "url": "https://github.com/${{ github.repository }}.git",
+              "managed": False,
+              "revision": "${{ github.sha }}",
+              "custom_deps": {},
+              "custom_vars": {
+                "checkout_android": True,
+                "checkout_configuration": "default",
+                "checkout_rust": False,
+              },
+            },
+          ]
+          target_os = ["android"]
+          GCLEOF
+
+          gclient sync --no-history
+
+      - name: Patch public PDFium API exports
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+          python3 "$GITHUB_WORKSPACE/repo/scripts/ci/patch_pdfium_public_exports.py"
+
+      - name: Apply ship patches (01, 02, 03)
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+
+          mkdir -p patches/ship
+          for p in \
+              01-jpeg-downscale-on-decode.patch \
+              02-indexed-separation-fast.patch \
+              03-devicen-fast.patch \
+              ; do
+            cp "$GITHUB_WORKSPACE/repo/patches/ship/$p" "patches/ship/$p"
+          done
+
+          for p in patches/ship/01-jpeg-downscale-on-decode.patch \
+                   patches/ship/02-indexed-separation-fast.patch \
+                   patches/ship/03-devicen-fast.patch \
+                   ; do
+            echo "=== Apply $p ==="
+            git apply --check "$p"
+            git apply "$p"
+          done
+
+          # Guard: confirm no diagnostic ATrace leaks (same guard as
+          # the production release workflow).
+          if grep -RIE 'XPDF_ATRACE_SCOPED|ATrace_beginSection' \
+              core/ fpdfsdk/ 2>/dev/null; then
+            echo "ERROR: diagnostic markers present" >&2
+            exit 1
+          fi
+
+      # ----------------------------------------------------------------
+      # The four variants are built sequentially, each into its own
+      # out/ subdirectory. We invoke `gn gen` + `ninja` per variant,
+      # then link + (optionally) strip into artifacts/<variant>/.
+      # ----------------------------------------------------------------
+
+      - name: Variant BASELINE -- gn gen + build (current release args)
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+          mkdir -p out/variant_baseline
+          cat > out/variant_baseline/args.gn <<'EOFARGS'
+          target_os = "android"
+          target_cpu = "arm64"
+
+          is_debug = false
+          is_component_build = false
+          symbol_level = 0
+          strip_debug_info = true
+          treat_warnings_as_errors = false
+
+          clang_use_chrome_plugins = false
+          use_remoteexec = false
+
+          pdf_enable_v8 = false
+          pdf_enable_xfa = false
+
+          pdf_use_skia = false
+          pdf_use_agg = true
+
+          pdf_is_complete_lib = true
+          pdf_is_standalone = false
+
+          pdf_enable_fontations = false
+          pdf_enable_rust_png = false
+          EOFARGS
+          gn gen out/variant_baseline
+          ninja -C out/variant_baseline pdfium -j"$(nproc)"
+
+      - name: Variant BASELINE -- link (current link script, no extra strip)
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+          # The link script hard-codes out/android_arm64_agg. Use a
+          # symlink so we don't have to fork the script per variant.
+          rm -rf out/android_arm64_agg
+          ln -s variant_baseline out/android_arm64_agg
+          bash "$GITHUB_WORKSPACE/repo/scripts/ci/link_pdfium_android_agg_so.sh"
+          mkdir -p "$GITHUB_WORKSPACE/artifacts/baseline/arm64-v8a"
+          cp out/android_arm64_agg/libpdfium.so \
+             "$GITHUB_WORKSPACE/artifacts/baseline/arm64-v8a/libpdfium.so"
+          rm out/android_arm64_agg
+
+      - name: Variant A -- relink existing build + llvm-strip --strip-unneeded
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+          LLVM_STRIP="$(pwd)/third_party/llvm-build/Release+Asserts/bin/llvm-strip"
+
+          # Variant A uses the same build artifacts as BASELINE but
+          # additionally strips the final .so. So we copy the baseline
+          # .so and run strip on it. No relink needed.
+          mkdir -p "$GITHUB_WORKSPACE/artifacts/variant_a/arm64-v8a"
+          cp "$GITHUB_WORKSPACE/artifacts/baseline/arm64-v8a/libpdfium.so" \
+             "$GITHUB_WORKSPACE/artifacts/variant_a/arm64-v8a/libpdfium.so"
+          "$LLVM_STRIP" --strip-unneeded \
+            "$GITHUB_WORKSPACE/artifacts/variant_a/arm64-v8a/libpdfium.so"
+
+      - name: Variant B -- gn gen with partition_alloc=false + build + strip
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+          LLVM_STRIP="$(pwd)/third_party/llvm-build/Release+Asserts/bin/llvm-strip"
+
+          mkdir -p out/variant_b
+          cat > out/variant_b/args.gn <<'EOFARGS'
+          target_os = "android"
+          target_cpu = "arm64"
+
+          is_debug = false
+          is_component_build = false
+          symbol_level = 0
+          strip_debug_info = true
+          treat_warnings_as_errors = false
+
+          clang_use_chrome_plugins = false
+          use_remoteexec = false
+
+          pdf_enable_v8 = false
+          pdf_enable_xfa = false
+
+          pdf_use_skia = false
+          pdf_use_agg = true
+
+          pdf_is_complete_lib = true
+          pdf_is_standalone = false
+
+          pdf_enable_fontations = false
+          pdf_enable_rust_png = false
+
+          # Variant B lever: disable partition_alloc.
+          # System allocator (malloc/new) is used instead. Should be a
+          # transparent change for code that simply allocates memory.
+          pdf_use_partition_alloc = false
+          EOFARGS
+          gn gen out/variant_b
+          ninja -C out/variant_b pdfium -j"$(nproc)"
+
+          rm -rf out/android_arm64_agg
+          ln -s variant_b out/android_arm64_agg
+          bash "$GITHUB_WORKSPACE/repo/scripts/ci/link_pdfium_android_agg_so.sh"
+
+          mkdir -p "$GITHUB_WORKSPACE/artifacts/variant_b/arm64-v8a"
+          cp out/android_arm64_agg/libpdfium.so \
+             "$GITHUB_WORKSPACE/artifacts/variant_b/arm64-v8a/libpdfium.so"
+          "$LLVM_STRIP" --strip-unneeded \
+            "$GITHUB_WORKSPACE/artifacts/variant_b/arm64-v8a/libpdfium.so"
+
+          rm out/android_arm64_agg
+
+      - name: Variant C -- B + custom link (no --whole-archive, +--gc-sections)
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+          LLVM_STRIP="$(pwd)/third_party/llvm-build/Release+Asserts/bin/llvm-strip"
+          LLVM_NM="$(pwd)/third_party/llvm-build/Release+Asserts/bin/llvm-nm"
+
+          # Reuses out/variant_b/ build artifacts (same args.gn).
+          OUT=out/variant_b
+          PDFIUM_A="$OUT/obj/libpdfium.a"
+          SO="$OUT/libpdfium.variant_c.so"
+          CC="third_party/llvm-build/Release+Asserts/bin/clang"
+          TARGET="aarch64-linux-android29"
+          SYSROOT="third_party/android_toolchain/ndk/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
+          BUILTINS="third_party/llvm-build/Release+Asserts/lib/clang/23/lib/linux/libclang_rt.builtins-aarch64-android.a"
+
+          # Reuse the discovery logic from link_pdfium_android_agg_so.sh
+          # for PROJECT_ARCHIVES + RUNTIME_INPUTS + LIBUNWIND.
+          mapfile -t PROJECT_TARGETS < <(
+            {
+              echo "//:pdfium"
+              gn desc "$OUT" //:pdfium deps --all
+            } | sed '/^[[:space:]]*$/d' | sort -u
+          )
+          PROJECT_ARCHIVES=()
+          for t in "${PROJECT_TARGETS[@]}"; do
+            while IFS= read -r out; do
+              p="${out#//}"
+              case "$p" in
+                $OUT/*.a) PROJECT_ARCHIVES+=("$p") ;;
+              esac
+            done < <(gn desc "$OUT" "$t" outputs 2>/dev/null || true)
+          done
+          mapfile -t PROJECT_ARCHIVES_UNIQ < <(
+            printf '%s\n' "${PROJECT_ARCHIVES[@]}" \
+              | sort -u \
+              | grep -v "^$OUT/obj/libpdfium\.a$"
+          )
+          mapfile -t RUNTIME_TARGETS < <(
+            {
+              echo "//build/config:shared_library_deps"
+              gn desc "$OUT" //build/config:shared_library_deps deps --all
+            } | sed '/^[[:space:]]*$/d' | sort -u
+          )
+          RUNTIME_INPUTS=()
+          for t in "${RUNTIME_TARGETS[@]}"; do
+            while IFS= read -r out; do
+              p="${out#//}"
+              case "$p" in
+                $OUT/*.a|$OUT/*.o) RUNTIME_INPUTS+=("$p") ;;
+              esac
+            done < <(gn desc "$OUT" "$t" outputs 2>/dev/null || true)
+          done
+          mapfile -t RUNTIME_INPUTS_UNIQ < <(
+            printf '%s\n' "${RUNTIME_INPUTS[@]}" | sort -u
+          )
+          MISSING_RUNTIME=()
+          for p in "${RUNTIME_INPUTS_UNIQ[@]}"; do
+            [ ! -f "$p" ] && MISSING_RUNTIME+=("${p#$OUT/}")
+          done
+          if [ "${#MISSING_RUNTIME[@]}" -gt 0 ]; then
+            ninja -C "$OUT" "${MISSING_RUNTIME[@]}"
+          fi
+
+          LIBUNWIND_DIR="$OUT/obj/buildtools/third_party/libunwind/libunwind"
+          if [ ! -d "$LIBUNWIND_DIR" ] || ! find "$LIBUNWIND_DIR" -maxdepth 1 -name '*.o' | grep -q .; then
+            ninja -C "$OUT" obj/buildtools/third_party/libunwind/libunwind.stamp
+          fi
+          mapfile -t LIBUNWIND_OBJECTS < <(
+            find "$LIBUNWIND_DIR" -maxdepth 1 -type f -name '*.o' | sort
+          )
+
+          # Variant C link levers:
+          #  - drop -Wl,--whole-archive on $PDFIUM_A (let linker GC dead code)
+          #  - add -Wl,--gc-sections (free unreferenced sections)
+          #  - Keep public APIs alive via --export-dynamic-symbol FPDF* / FORM_*
+          #    and explicit --undefined for InitLibrary entry points (same as
+          #    the existing link script).
+          #
+          # If any FPDF/FORM symbol is missing in the final .so it means
+          # the linker GC'd too aggressively. We verify that below.
+          "$CC" \
+            --target="$TARGET" \
+            --sysroot="$SYSROOT" \
+            -shared \
+            -o "$SO" \
+            -nostdlib++ \
+            --unwindlib=none \
+            "$PDFIUM_A" \
+            -Wl,--start-group \
+              "${PROJECT_ARCHIVES_UNIQ[@]}" \
+              "${RUNTIME_INPUTS_UNIQ[@]}" \
+              "${LIBUNWIND_OBJECTS[@]}" \
+            -Wl,--end-group \
+            "$BUILTINS" \
+            -Wl,--no-undefined \
+            -Wl,--gc-sections \
+            -Wl,--export-dynamic-symbol=FPDF* \
+            -Wl,--export-dynamic-symbol=FORM_* \
+            -Wl,--undefined=FPDF_InitLibrary \
+            -Wl,--undefined=FPDF_InitLibraryWithConfig \
+            -Wl,--undefined=FPDF_LoadDocument \
+            -Wl,--undefined=FPDF_LoadMemDocument \
+            -Wl,--undefined=FPDF_RenderPageBitmap \
+            -Wl,--undefined=FPDF_RenderPageBitmapWithMatrix \
+            -Wl,--undefined=FPDF_GetPageCount \
+            -Wl,--undefined=FPDF_LoadPage \
+            -Wl,--undefined=FPDF_ClosePage \
+            -Wl,--undefined=FPDF_CloseDocument \
+            -Wl,--undefined=FPDF_DestroyLibrary \
+            -Wl,--wrap=getcwd \
+            -Wl,--wrap=realpath \
+            -Wl,-z,max-page-size=16384 \
+            -llog -landroid -ldl -lm
+
+          # Sanity: confirm public FPDF/FORM API survived the GC.
+          MISSING_APIS=()
+          for api in FPDF_InitLibrary FPDF_InitLibraryWithConfig \
+                     FPDF_LoadDocument FPDF_LoadMemDocument \
+                     FPDF_RenderPageBitmap FPDF_RenderPageBitmapWithMatrix \
+                     FPDF_GetPageCount FPDF_LoadPage FPDF_ClosePage \
+                     FPDF_CloseDocument FPDF_DestroyLibrary; do
+            if ! "$LLVM_NM" -D --defined-only -C "$SO" 2>/dev/null \
+                | grep -E " T $api(\b|@)" >/dev/null; then
+              MISSING_APIS+=("$api")
+            fi
+          done
+          if [ "${#MISSING_APIS[@]}" -gt 0 ]; then
+            echo "ERROR: Variant C GC'd these public APIs:" >&2
+            printf '  %s\n' "${MISSING_APIS[@]}" >&2
+            echo "Will need to add more --undefined entries." >&2
+            exit 1
+          fi
+
+          mkdir -p "$GITHUB_WORKSPACE/artifacts/variant_c/arm64-v8a"
+          cp "$SO" "$GITHUB_WORKSPACE/artifacts/variant_c/arm64-v8a/libpdfium.so"
+          "$LLVM_STRIP" --strip-unneeded \
+            "$GITHUB_WORKSPACE/artifacts/variant_c/arm64-v8a/libpdfium.so"
+
+      - name: Generate size report
+        run: |
+          cd "$GITHUB_WORKSPACE/artifacts"
+
+          {
+            echo "=========================================="
+            echo "PDFium Android arm64 size experiment"
+            echo "=========================================="
+            echo "Commit: $GITHUB_SHA"
+            echo "PDFium ship patches: 01, 02, 03"
+            echo ""
+            echo "Variant sizes (bytes / human-readable):"
+            echo ""
+            printf "%-12s %15s   %s\n" "VARIANT" "BYTES" "DESCRIPTION"
+            printf "%-12s %15s   %s\n" "--------" "-----" "-----------"
+            for v in baseline variant_a variant_b variant_c; do
+              SO="$v/arm64-v8a/libpdfium.so"
+              if [ -f "$SO" ]; then
+                BYTES=$(stat -c %s "$SO")
+                HUMAN=$(ls -lh "$SO" | awk '{print $5}')
+                case "$v" in
+                  baseline)  DESC="current release: complete_lib + whole-archive, no strip" ;;
+                  variant_a) DESC="baseline + llvm-strip --strip-unneeded" ;;
+                  variant_b) DESC="A + pdf_use_partition_alloc=false" ;;
+                  variant_c) DESC="B + drop --whole-archive + --gc-sections" ;;
+                esac
+                printf "%-12s %15s   %s  [%s]\n" "$v" "$BYTES" "$HUMAN" "$DESC"
+              else
+                printf "%-12s %15s   %s\n" "$v" "MISSING" "(build failed)"
+              fi
+            done
+            echo ""
+            echo "Deltas vs baseline:"
+            if [ -f baseline/arm64-v8a/libpdfium.so ]; then
+              B=$(stat -c %s baseline/arm64-v8a/libpdfium.so)
+              for v in variant_a variant_b variant_c; do
+                SO="$v/arm64-v8a/libpdfium.so"
+                if [ -f "$SO" ]; then
+                  X=$(stat -c %s "$SO")
+                  DELTA=$((X - B))
+                  PCT=$(awk "BEGIN{printf \"%.1f\", ($X - $B) / $B * 100}")
+                  printf "  %-12s %15s bytes (%s%%)\n" "$v" "$DELTA" "$PCT"
+                fi
+              done
+            fi
+            echo ""
+            echo "SHA-256 of each .so:"
+            for v in baseline variant_a variant_b variant_c; do
+              SO="$v/arm64-v8a/libpdfium.so"
+              if [ -f "$SO" ]; then
+                sha256sum "$SO"
+              fi
+            done
+            echo ""
+            echo "Public API spot-check (each variant should export FPDF_RenderPageBitmap):"
+            LLVM_NM="$GITHUB_WORKSPACE/pdfium_build/pdfium/third_party/llvm-build/Release+Asserts/bin/llvm-nm"
+            for v in baseline variant_a variant_b variant_c; do
+              SO="$v/arm64-v8a/libpdfium.so"
+              if [ -f "$SO" ]; then
+                if "$LLVM_NM" -D --defined-only -C "$SO" 2>/dev/null \
+                    | grep -qE ' T FPDF_RenderPageBitmap\b'; then
+                  echo "  $v: FPDF_RenderPageBitmap OK"
+                else
+                  echo "  $v: FPDF_RenderPageBitmap MISSING -- broken build" >&2
+                fi
+              fi
+            done
+          } | tee size-report.txt
+
+      - name: Upload all four variants + size report
+        uses: actions/upload-artifact@v4
+        with:
+          name: pdfium-android-arm64-size-experiment
+          path: artifacts/
