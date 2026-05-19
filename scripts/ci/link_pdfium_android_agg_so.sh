@@ -129,97 +129,100 @@ echo "All static archives (.a) under $OUT/obj are included via"
 echo "--start-group / --end-group at link time."
 
 echo
-echo "=== Resolve libunwind for link ==="
-
-# History: this script previously linked Chromium's in-tree libunwind
-# source_set as a pile of .o files. That worked when PDFium's `pdfium`
-# library target depended on libunwind. Modern PDFium has decoupled
-# them -- libunwind is now only a dep of test binaries like
-# pdfium_test, not of //:pdfium. So when we build `ninja -C $OUT pdfium`
-# nothing builds libunwind, and our discovery returns 0 .o files.
+echo "=== Resolve C++ runtime + libunwind archives ==="
 #
-# The correct fix: use the libunwind that ships with the clang/NDK
-# toolchain. clang's resource directory contains a prebuilt
-# libunwind-<arch>-android.a; the NDK sysroot also has a
-# libunwind.a in usr/lib/<triple>/<api>/.
+# Why we resolve these manually:
+#   This script links with `-nostdlib++` and `--unwindlib=none`, which
+#   tells clang NOT to auto-link libc++/libc++abi/libunwind. That's
+#   because Chromium's in-tree libc++ supplies a custom allocator
+#   wired into partition_alloc, and we want to use that exact one
+#   (not the NDK sysroot's libc++). For libunwind, modern PDFium has
+#   decoupled libunwind from //:pdfium so we have to build it ourselves
+#   or use a prebuilt.
 #
-# Locate one and link it via -l. Fall back to building Chromium's
-# in-tree libunwind if no prebuilt is found.
+# The most robust approach: read the .ninja files Chromium GENERATED
+# for these source_sets and force-ninja-build their declared .o
+# outputs. Works on every PDFium revision because GN regenerates the
+# .ninja files for the current source tree.
 
-LIBUNWIND_LINK_FLAGS=()
+RUNTIME_RESOLUTION_TARGETS=()
+NINJA_RULE_FILES=(
+  # libunwind
+  "$OUT/obj/buildtools/third_party/libunwind/libunwind.ninja"
+  "$OUT/obj/third_party/libunwind/libunwind.ninja"
+  # libc++
+  "$OUT/obj/buildtools/third_party/libc++/libc++.ninja"
+  "$OUT/obj/third_party/libc++/libc++.ninja"
+  # libc++abi
+  "$OUT/obj/buildtools/third_party/libc++abi/libc++abi.ninja"
+  "$OUT/obj/third_party/libc++abi/libc++abi.ninja"
+)
 
-# Candidate 1: clang's compiler-rt prebuilt libunwind.
-CLANG_LIB_DIR="$(dirname "$BUILTINS")"
-echo "Searching clang resource dir: $CLANG_LIB_DIR"
-CLANG_LIBUNWIND="$(find "$CLANG_LIB_DIR" -maxdepth 1 -type f -name 'libunwind*aarch64*android*.a' 2>/dev/null | head -1)"
-if [ -z "$CLANG_LIBUNWIND" ]; then
-  CLANG_LIBUNWIND="$(find "$CLANG_LIB_DIR" -maxdepth 1 -type f -name 'libunwind*.a' 2>/dev/null | head -1)"
-fi
-
-# Candidate 2: NDK sysroot libunwind for android29 / aarch64.
-SYSROOT_LIB="$SYSROOT/usr/lib/aarch64-linux-android"
-NDK_LIBUNWIND="$(find "$SYSROOT_LIB" -maxdepth 3 -type f -name 'libunwind.a' 2>/dev/null | head -1)"
-
-# Candidate 3: NDK lib root, anywhere.
-if [ -z "$NDK_LIBUNWIND" ]; then
-  NDK_LIBUNWIND="$(find "$SYSROOT/usr/lib" -type f -name 'libunwind*.a' 2>/dev/null \
-                    | grep -E 'aarch64' | head -1 || true)"
-fi
-
-echo "Candidate libunwind archives:"
-echo "  clang compiler-rt: ${CLANG_LIBUNWIND:-(not found)}"
-echo "  NDK sysroot:       ${NDK_LIBUNWIND:-(not found)}"
-
-if [ -n "$CLANG_LIBUNWIND" ]; then
-  LIBUNWIND_LINK_FLAGS=("$CLANG_LIBUNWIND")
-  echo "Using clang compiler-rt libunwind: $CLANG_LIBUNWIND"
-elif [ -n "$NDK_LIBUNWIND" ]; then
-  LIBUNWIND_LINK_FLAGS=("$NDK_LIBUNWIND")
-  echo "Using NDK sysroot libunwind: $NDK_LIBUNWIND"
-else
-  # Last-ditch: try to force-build Chromium's in-tree libunwind.
-  # This is unlikely to succeed because nothing links libunwind in
-  # the AGG build, but try in case the rules can produce .o files
-  # standalone.
-  echo "No prebuilt libunwind archive found in toolchain or sysroot."
-  echo "Trying to force-build Chromium's in-tree libunwind objects..."
-  if [ -f "$OUT/obj/buildtools/third_party/libunwind/libunwind.ninja" ]; then
-    # Read the .ninja file's `build` lines to learn what outputs it
-    # produces, then ask the main ninja to build them.
-    NINJA_OUTPUTS="$(grep -E '^build ' "$OUT/obj/buildtools/third_party/libunwind/libunwind.ninja" \
-      | sed -E 's/^build ([^:]+):.*/\1/' \
-      | tr ' ' '\n' \
-      | grep -E '\.o$' \
-      | head -30 || true)"
-    if [ -n "$NINJA_OUTPUTS" ]; then
-      echo "Outputs declared by libunwind.ninja:"
-      echo "$NINJA_OUTPUTS" | head -10 | sed 's|^|  |'
-      while IFS= read -r tgt; do
-        [ -z "$tgt" ] && continue
-        ninja -C "$OUT" "$tgt" 2>&1 | tail -5 || true
-      done <<< "$NINJA_OUTPUTS"
-    fi
-  fi
-  mapfile -t LIBUNWIND_OBJECTS < <(
-    find "$OUT/obj" -type f -name '*.o' 2>/dev/null | grep '/libunwind' | sort -u
+for nf in "${NINJA_RULE_FILES[@]}"; do
+  [ -f "$nf" ] || continue
+  echo "Reading $nf:"
+  # Parse `build <output>: rule deps...` lines. We want the output
+  # paths that end in .o.
+  while IFS= read -r tgt; do
+    [ -z "$tgt" ] && continue
+    RUNTIME_RESOLUTION_TARGETS+=("$tgt")
+  done < <(
+    grep -E '^build [^:]+\.o:' "$nf" \
+      | sed -E 's/^build ([^:]+\.o):.*/\1/'
   )
-  if [ "${#LIBUNWIND_OBJECTS[@]}" -gt 0 ]; then
-    echo "Built ${#LIBUNWIND_OBJECTS[@]} libunwind .o files from Chromium in-tree libunwind"
-    LIBUNWIND_LINK_FLAGS=("${LIBUNWIND_OBJECTS[@]}")
-  else
-    echo "ERROR: no libunwind archive available" >&2
-    echo
-    echo "All .a files under clang resource dir:" >&2
-    find "$CLANG_LIB_DIR" -maxdepth 2 -type f -name '*.a' 2>/dev/null | head -30 | sed 's|^|  |' >&2
-    echo
-    echo "All libunwind* under NDK sysroot:" >&2
-    find "$SYSROOT" -type f -name 'libunwind*' 2>/dev/null | head -10 | sed 's|^|  |' >&2
-    exit 1
-  fi
+done
+
+# De-dupe.
+if [ "${#RUNTIME_RESOLUTION_TARGETS[@]}" -gt 0 ]; then
+  mapfile -t RUNTIME_RESOLUTION_TARGETS < <(
+    printf '%s\n' "${RUNTIME_RESOLUTION_TARGETS[@]}" | sort -u
+  )
 fi
 
-echo "libunwind link inputs (${#LIBUNWIND_LINK_FLAGS[@]}):"
-printf '  %s\n' "${LIBUNWIND_LINK_FLAGS[@]:0:5}"
+echo "Total runtime .o targets to build: ${#RUNTIME_RESOLUTION_TARGETS[@]}"
+if [ "${#RUNTIME_RESOLUTION_TARGETS[@]}" -gt 0 ]; then
+  echo "Sample:"
+  printf '  %s\n' "${RUNTIME_RESOLUTION_TARGETS[@]:0:8}"
+fi
+
+# Force ninja to build them all in one invocation (much faster than
+# per-target, and avoids redundant graph traversal).
+if [ "${#RUNTIME_RESOLUTION_TARGETS[@]}" -gt 0 ]; then
+  echo "Force-building C++ runtime + libunwind .o files..."
+  ninja -C "$OUT" "${RUNTIME_RESOLUTION_TARGETS[@]}" 2>&1 | tail -10 || true
+fi
+
+# Collect the built .o files. Filter by directory name so we know
+# which library each one came from (useful for diagnostics if the
+# link still fails).
+mapfile -t LIBUNWIND_OBJECTS < <(
+  find "$OUT/obj" -type f -name '*.o' 2>/dev/null | grep '/libunwind/' | sort -u
+)
+mapfile -t LIBCXX_OBJECTS < <(
+  find "$OUT/obj" -type f -name '*.o' 2>/dev/null | grep '/libc++/' | grep -v 'libc++abi' | sort -u
+)
+mapfile -t LIBCXXABI_OBJECTS < <(
+  find "$OUT/obj" -type f -name '*.o' 2>/dev/null | grep '/libc++abi/' | sort -u
+)
+
+echo "Built libunwind objects: ${#LIBUNWIND_OBJECTS[@]}"
+echo "Built libc++    objects: ${#LIBCXX_OBJECTS[@]}"
+echo "Built libc++abi objects: ${#LIBCXXABI_OBJECTS[@]}"
+
+if [ "${#LIBUNWIND_OBJECTS[@]}" -eq 0 ] \
+   || [ "${#LIBCXX_OBJECTS[@]}" -eq 0 ] \
+   || [ "${#LIBCXXABI_OBJECTS[@]}" -eq 0 ]; then
+  echo "ERROR: missing C++ runtime or libunwind objects" >&2
+  echo
+  echo ".ninja files available under $OUT/obj/buildtools (3 levels):" >&2
+  find "$OUT/obj/buildtools" -maxdepth 4 2>/dev/null | head -40 | sed 's|^|  |' >&2
+  exit 1
+fi
+
+# Combine. Order matters less inside --start-group, but keep grouped
+# for readability.
+LIBUNWIND_LINK_FLAGS=("${LIBUNWIND_OBJECTS[@]}" "${LIBCXX_OBJECTS[@]}" "${LIBCXXABI_OBJECTS[@]}")
+echo "Total runtime .o files to link: ${#LIBUNWIND_LINK_FLAGS[@]}"
 
 echo
 echo "=== Link final AGG libpdfium.so ==="

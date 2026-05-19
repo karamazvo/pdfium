@@ -276,28 +276,53 @@ jobs:
           )
           echo "Variant C: PROJECT_ARCHIVES_UNIQ has ${#PROJECT_ARCHIVES_UNIQ[@]} entries"
 
-          # libunwind: in modern PDFium libunwind is only built when
-          # binary targets like pdfium_test link. For our shared-lib
-          # link we use the libunwind shipped with the clang toolchain
-          # or the NDK sysroot. Same resolution as
-          # link_pdfium_android_agg_so.sh.
-          CLANG_LIB_DIR="$(dirname "$BUILTINS")"
-          CLANG_LIBUNWIND="$(find "$CLANG_LIB_DIR" -maxdepth 1 -type f -name 'libunwind*aarch64*android*.a' 2>/dev/null | head -1)"
-          if [ -z "$CLANG_LIBUNWIND" ]; then
-            CLANG_LIBUNWIND="$(find "$CLANG_LIB_DIR" -maxdepth 1 -type f -name 'libunwind*.a' 2>/dev/null | head -1)"
+          # Read .ninja rule files from libunwind/libc++/libc++abi
+          # source_sets, force-build their .o outputs, then collect
+          # them. Same approach as link_pdfium_android_agg_so.sh --
+          # see comments there for rationale.
+          RUNTIME_RESOLUTION_TARGETS=()
+          for nf in \
+              "$OUT/obj/buildtools/third_party/libunwind/libunwind.ninja" \
+              "$OUT/obj/buildtools/third_party/libc++/libc++.ninja" \
+              "$OUT/obj/buildtools/third_party/libc++abi/libc++abi.ninja" \
+              ; do
+            [ -f "$nf" ] || continue
+            while IFS= read -r tgt; do
+              [ -z "$tgt" ] && continue
+              RUNTIME_RESOLUTION_TARGETS+=("$tgt")
+            done < <(
+              grep -E '^build [^:]+\.o:' "$nf" \
+                | sed -E 's/^build ([^:]+\.o):.*/\1/'
+            )
+          done
+          if [ "${#RUNTIME_RESOLUTION_TARGETS[@]}" -gt 0 ]; then
+            mapfile -t RUNTIME_RESOLUTION_TARGETS < <(
+              printf '%s\n' "${RUNTIME_RESOLUTION_TARGETS[@]}" | sort -u
+            )
+            echo "Variant C: building ${#RUNTIME_RESOLUTION_TARGETS[@]} runtime .o targets"
+            ninja -C "$OUT" "${RUNTIME_RESOLUTION_TARGETS[@]}" 2>&1 | tail -5 || true
           fi
-          NDK_LIBUNWIND="$(find "$SYSROOT/usr/lib/aarch64-linux-android" -maxdepth 3 -type f -name 'libunwind.a' 2>/dev/null | head -1)"
-          LIBUNWIND_LINK_FLAGS=()
-          if [ -n "$CLANG_LIBUNWIND" ]; then
-            LIBUNWIND_LINK_FLAGS=("$CLANG_LIBUNWIND")
-            echo "Variant C: using clang libunwind: $CLANG_LIBUNWIND"
-          elif [ -n "$NDK_LIBUNWIND" ]; then
-            LIBUNWIND_LINK_FLAGS=("$NDK_LIBUNWIND")
-            echo "Variant C: using NDK libunwind: $NDK_LIBUNWIND"
-          else
-            echo "ERROR: Variant C cannot find libunwind archive" >&2
+          mapfile -t LIBUNWIND_OBJECTS < <(
+            find "$OUT/obj" -type f -name '*.o' 2>/dev/null | grep '/libunwind/' | sort -u
+          )
+          mapfile -t LIBCXX_OBJECTS < <(
+            find "$OUT/obj" -type f -name '*.o' 2>/dev/null | grep '/libc++/' | grep -v 'libc++abi' | sort -u
+          )
+          mapfile -t LIBCXXABI_OBJECTS < <(
+            find "$OUT/obj" -type f -name '*.o' 2>/dev/null | grep '/libc++abi/' | sort -u
+          )
+          echo "Variant C runtime: libunwind=${#LIBUNWIND_OBJECTS[@]}, libc++=${#LIBCXX_OBJECTS[@]}, libc++abi=${#LIBCXXABI_OBJECTS[@]}"
+          if [ "${#LIBUNWIND_OBJECTS[@]}" -eq 0 ] \
+             || [ "${#LIBCXX_OBJECTS[@]}" -eq 0 ] \
+             || [ "${#LIBCXXABI_OBJECTS[@]}" -eq 0 ]; then
+            echo "ERROR: Variant C missing runtime .o files" >&2
             exit 1
           fi
+          LIBUNWIND_LINK_FLAGS=(
+            "${LIBUNWIND_OBJECTS[@]}"
+            "${LIBCXX_OBJECTS[@]}"
+            "${LIBCXXABI_OBJECTS[@]}"
+          )
 
           # Variant C link levers:
           #  - drop -Wl,--whole-archive on $PDFIUM_A (let linker GC dead code)
