@@ -158,6 +158,7 @@ jobs:
       - name: Variant A -- relink existing build + llvm-strip --strip-unneeded
         run: |
           cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+          LLVM_NM="$(pwd)/third_party/llvm-build/Release+Asserts/bin/llvm-nm"
           LLVM_STRIP="$(pwd)/third_party/llvm-build/Release+Asserts/bin/llvm-strip"
 
           # Variant A uses the same build artifacts as BASELINE but
@@ -166,6 +167,24 @@ jobs:
           mkdir -p "$GITHUB_WORKSPACE/artifacts/variant_a/arm64-v8a"
           cp "$GITHUB_WORKSPACE/artifacts/baseline/arm64-v8a/libpdfium.so" \
              "$GITHUB_WORKSPACE/artifacts/variant_a/arm64-v8a/libpdfium.so"
+
+          # BEFORE stripping: verify the ship-patch overrides are present
+          # as symbols. After llvm-strip --strip-unneeded, local C++
+          # virtual-table function symbols are removed (code stays but
+          # symbol names are gone), so the same nm check would yield a
+          # false-positive "missing" result on the stripped .so.
+          for sym in 'CPDF_IndexedCS::TranslateImageLine' \
+                     'CPDF_SeparationCS::TranslateImageLine' \
+                     'CPDF_DeviceNCS::TranslateImageLine' \
+                     ; do
+            if ! "$LLVM_NM" -C \
+                "$GITHUB_WORKSPACE/artifacts/variant_a/arm64-v8a/libpdfium.so" 2>/dev/null \
+                | grep -F "$sym" >/dev/null; then
+              echo "FATAL: variant_a pre-strip missing $sym" >&2
+              exit 1
+            fi
+          done
+
           "$LLVM_STRIP" --strip-unneeded \
             "$GITHUB_WORKSPACE/artifacts/variant_a/arm64-v8a/libpdfium.so"
 
@@ -215,6 +234,23 @@ jobs:
           mkdir -p "$GITHUB_WORKSPACE/artifacts/variant_b/arm64-v8a"
           cp out/android_arm64_agg/libpdfium.so \
              "$GITHUB_WORKSPACE/artifacts/variant_b/arm64-v8a/libpdfium.so"
+
+          # Verify the ship-patch overrides survived link BEFORE we
+          # strip the .so (strip removes virtual-table local symbol
+          # names even though the code is still present).
+          LLVM_NM="$(pwd)/third_party/llvm-build/Release+Asserts/bin/llvm-nm"
+          for sym in 'CPDF_IndexedCS::TranslateImageLine' \
+                     'CPDF_SeparationCS::TranslateImageLine' \
+                     'CPDF_DeviceNCS::TranslateImageLine' \
+                     ; do
+            if ! "$LLVM_NM" -C \
+                "$GITHUB_WORKSPACE/artifacts/variant_b/arm64-v8a/libpdfium.so" 2>/dev/null \
+                | grep -F "$sym" >/dev/null; then
+              echo "FATAL: variant_b pre-strip missing $sym" >&2
+              exit 1
+            fi
+          done
+
           "$LLVM_STRIP" --strip-unneeded \
             "$GITHUB_WORKSPACE/artifacts/variant_b/arm64-v8a/libpdfium.so"
 
@@ -334,7 +370,7 @@ jobs:
             -Wl,-z,max-page-size=16384 \
             -llog -landroid -ldl -lm
 
-          # Sanity: confirm public FPDF/FORM API survived the GC.
+          # Sanity 1: confirm public FPDF/FORM API survived the GC.
           MISSING_APIS=()
           for api in FPDF_InitLibrary FPDF_InitLibraryWithConfig \
                      FPDF_LoadDocument FPDF_LoadMemDocument \
@@ -353,10 +389,72 @@ jobs:
             exit 1
           fi
 
+          # Sanity 2: confirm the 3 ship-patch overrides survived.
+          # These are virtual-table entries (override an existing
+          # virtual in CPDF_ColorSpace), so the vtable for each
+          # subclass must reference them -- as long as the subclass
+          # itself isn't GC'd, the override symbol must exist.
+          # If --gc-sections drops a colorspace subclass entirely,
+          # PDFium would silently fall back to the slow base-class
+          # path on every image that uses that colorspace -- a
+          # functional REGRESSION (slow renders) rather than a
+          # link failure. So we have to check explicitly.
+          MISSING_OVERRIDES=()
+          for sym in 'CPDF_IndexedCS::TranslateImageLine' \
+                     'CPDF_SeparationCS::TranslateImageLine' \
+                     'CPDF_DeviceNCS::TranslateImageLine' \
+                     ; do
+            if ! "$LLVM_NM" -C "$SO" 2>/dev/null \
+                | grep -F "$sym" >/dev/null; then
+              MISSING_OVERRIDES+=("$sym")
+            fi
+          done
+          if [ "${#MISSING_OVERRIDES[@]}" -gt 0 ]; then
+            echo "ERROR: Variant C --gc-sections dropped these ship-patch overrides:" >&2
+            printf '  %s\n' "${MISSING_OVERRIDES[@]}" >&2
+            echo "These are virtual-table entries; if they're gone the linker GC'd" >&2
+            echo "their entire subclass and PDFium will fall back to the slow base" >&2
+            echo "path -- functional regression, NOT a build failure normally." >&2
+            echo "Add corresponding -Wl,--undefined entries to keep them alive." >&2
+            exit 1
+          fi
+
+          # Sanity 3: confirm the source still has the build patches
+          # applied. Catches the rare case where a patch silently
+          # reverted between Apply and Variant C link.
+          for pat in 'CPDF_IndexedCS::BuildBgrLookupTableIfNeeded' \
+                     'CPDF_SeparationCS::BuildBgrLookupTableIfNeeded' \
+                     'CPDF_DeviceNCS::BuildBgrLookupTableIfNeeded' \
+                     ; do
+            if ! grep -RFq "$pat" \
+                core/fpdfapi/page/cpdf_indexedcs.cpp \
+                core/fpdfapi/page/cpdf_colorspace.cpp 2>/dev/null; then
+              echo "ERROR: Variant C source missing patch helper: $pat" >&2
+              exit 1
+            fi
+          done
+
           mkdir -p "$GITHUB_WORKSPACE/artifacts/variant_c/arm64-v8a"
           cp "$SO" "$GITHUB_WORKSPACE/artifacts/variant_c/arm64-v8a/libpdfium.so"
           "$LLVM_STRIP" --strip-unneeded \
             "$GITHUB_WORKSPACE/artifacts/variant_c/arm64-v8a/libpdfium.so"
+
+          # Final survival check on the STRIPPED .so. llvm-strip can
+          # discard symbols that --gc-sections kept. We need the
+          # overrides AND the public APIs to be present after stripping.
+          SO_STRIPPED="$GITHUB_WORKSPACE/artifacts/variant_c/arm64-v8a/libpdfium.so"
+          POST_STRIP_MISSING=()
+          for api in FPDF_InitLibrary FPDF_LoadDocument FPDF_RenderPageBitmap; do
+            if ! "$LLVM_NM" -D --defined-only -C "$SO_STRIPPED" 2>/dev/null \
+                | grep -E " T $api(\b|@)" >/dev/null; then
+              POST_STRIP_MISSING+=("$api")
+            fi
+          done
+          if [ "${#POST_STRIP_MISSING[@]}" -gt 0 ]; then
+            echo "ERROR: Variant C post-strip dropped public APIs:" >&2
+            printf '  %s\n' "${POST_STRIP_MISSING[@]}" >&2
+            exit 1
+          fi
 
       - name: Generate size report
         run: |
@@ -425,6 +523,16 @@ jobs:
                 fi
               fi
             done
+            echo ""
+            echo "Ship-patch override pre-strip verification:"
+            echo "  Each variant's pre-strip step already verified that"
+            echo "  the 3 colorspace TranslateImageLine overrides are"
+            echo "  present BEFORE llvm-strip --strip-unneeded ran."
+            echo "  (Post-strip the symbol names disappear because the"
+            echo "  overrides are virtual-table-only references; the"
+            echo "  code is still present and reachable via the vtable.)"
+            echo "  If you saw 'FATAL: variant_X pre-strip missing ...'"
+            echo "  above, the override was GC'd at link time."
           } | tee size-report.txt
 
       - name: Upload all four variants + size report
