@@ -1,20 +1,34 @@
 # xPDFSDK PDFium Patch Status
 
-**Last updated:** 2026-05-18
+**Last updated:** 2026-05-19
 
 ## TL;DR
 
-To build the **production-ready** Android arm64 PDFium with all performance
-fixes:
+To build the **production release** Android arm64 PDFium:
+
+> Run workflow: **`Release PDFium Android arm64 AGG`**
+>
+> File: `.github/workflows/release-pdfium-android-arm64-agg.yml`
+> Artifact: `libpdfium-android-arm64-agg-release`
+
+This applies the three independent, self-contained patches under
+`patches/ship/` (01 JPEG downscale, 02 IndexedCS+SeparationCS fast,
+03 DeviceNCS fast). No diagnostic markers; no Android-specific
+ATrace dependency; smallest possible `.so`. This is what to vendor
+into the app for end users.
+
+For a build with diagnostic trace markers (useful for future
+performance investigations, but slightly larger `.so`):
 
 > Run workflow: **`Build PDFium Android arm64 AGG + DeviceN Fast (0009)`**
 >
 > File: `.github/workflows/build-pdfium-android-arm64-agg-devicen-fast.yml`
 > Artifact: `libpdfium-android-arm64-agg-devicen-fast`
 
-This applies all three production-relevant fixes (0003 + 0008 + 0009) plus
-the trace-marker patches (0004 + 0005 + 0007) which are zero-cost at runtime
-and useful for diagnosing future regressions.
+This applies the experiment-numbered patches (0003 + 0004 + 0005 + 0007
++ 0008 + 0009) including all the `pdfium.*` / `pdfium009.*` ATrace markers.
+Zero-cost at runtime when tracing is disabled, but adds string literals
+and the `libandroid.so` runtime dependency.
 
 ---
 
@@ -38,7 +52,8 @@ and useful for diagnosing future regressions.
 
 | Workflow file | Trigger | Status |
 |---|---|---|
-| `build-pdfium-android-arm64-agg-devicen-fast.yml` | `workflow_dispatch` | **CURRENT SHIP BUILD.** Applies 0003+0004+0005+0007+0008+0009. |
+| `release-pdfium-android-arm64-agg.yml` | `workflow_dispatch` | **CURRENT PRODUCTION RELEASE BUILD.** Applies only the 3 ship patches (`patches/ship/01..03`). Minimal `.so`, no diagnostic markers, no `libandroid.so` dependency. Audit step rejects the build if any `XPDF_ATRACE_SCOPED` leaks in. |
+| `build-pdfium-android-arm64-agg-devicen-fast.yml` | `workflow_dispatch` | Diagnostic ship build. Applies 0003+0004+0005+0007+0008+0009, retains trace markers. Use for future perf investigations. |
 | `build-pdfium-android-arm64-agg-jpeg-downscale.yml` | `workflow_dispatch` | Minimal historical ship (0003 only). Kept for rollback. |
 | `build-pdfium-android-arm64-agg-jpeg-downscale-trace.yml` | `workflow_dispatch` | Diagnostic (0003+0004). |
 | `build-pdfium-android-arm64-agg-jpeg-downscale-trace-deep.yml` | `workflow_dispatch` | Diagnostic (0003+0004+0005). |
