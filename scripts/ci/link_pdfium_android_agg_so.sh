@@ -63,13 +63,45 @@ if [ "${#PROJECT_TARGETS[@]}" -lt 2 ]; then
   exit 1
 fi
 
+# Sample what `gn desc <target> outputs` actually produces. The
+# previous run had 237 PROJECT_TARGETS but 0 archives matched the
+# case pattern -- something about the output format isn't what we
+# expect.
+echo
+echo "=== Sample 'gn desc outputs' format (//:pdfium + first 5 archive targets) ==="
+for t in //:pdfium \
+         //core/fpdfdoc:fpdfdoc \
+         //core/fpdftext:fpdftext \
+         //core/fxcodec:fxcodec \
+         //core/fxcrt:fxcrt \
+         //core/fxge:fxge \
+         ; do
+  echo "--- $t ---"
+  gn desc "$OUT" "$t" outputs 2>&1 | head -5
+done
+
 PROJECT_ARCHIVES=()
 for t in "${PROJECT_TARGETS[@]}"; do
   while IFS= read -r out; do
-    p="${out#//}"
+    # gn desc outputs paths in 3 possible forms:
+    #   //path/in/source/tree           (source files, ignore)
+    #   //out/<builddir>/...            (build outputs)
+    #   path/relative/to/builddir       (no // prefix, build outputs)
+    # Normalize: strip a leading // if present, then strip a
+    # `out/<builddir>/` prefix to leave a builddir-relative path.
+    # We accept the entry if it ends in .a -- the archive format
+    # check is more reliable than path matching.
+    raw="$out"
+    p="${raw#//}"
+    # Accept any path that ends in .a (static archive).
     case "$p" in
-      "$OUT"/*.a)
-        PROJECT_ARCHIVES+=("$p")
+      *.a)
+        # Build a path relative to $OUT. p might already start with
+        # $OUT/, in which case keep it. Otherwise prepend $OUT/.
+        case "$p" in
+          "$OUT"/*) PROJECT_ARCHIVES+=("$p") ;;
+          *)        PROJECT_ARCHIVES+=("$OUT/$p") ;;
+        esac
         ;;
     esac
   done < <(gn desc "$OUT" "$t" outputs 2>/dev/null || true)
@@ -115,10 +147,15 @@ mapfile -t RUNTIME_TARGETS < <(
 RUNTIME_INPUTS=()
 for t in "${RUNTIME_TARGETS[@]}"; do
   while IFS= read -r out; do
-    p="${out#//}"
+    raw="$out"
+    p="${raw#//}"
+    # Accept any path that ends in .a or .o.
     case "$p" in
-      "$OUT"/*.a|"$OUT"/*.o)
-        RUNTIME_INPUTS+=("$p")
+      *.a|*.o)
+        case "$p" in
+          "$OUT"/*) RUNTIME_INPUTS+=("$p") ;;
+          *)        RUNTIME_INPUTS+=("$OUT/$p") ;;
+        esac
         ;;
     esac
   done < <(gn desc "$OUT" "$t" outputs 2>/dev/null || true)
@@ -154,18 +191,63 @@ fi
 echo
 echo "=== Collect Chromium in-tree libunwind source-set objects ==="
 
-LIBUNWIND_DIR="$OUT/obj/buildtools/third_party/libunwind/libunwind"
+# The libunwind layout has shifted over PDFium revisions. Search
+# for the canonical location first, then fall back to a broader
+# find. We accept any directory whose name contains "libunwind".
+LIBUNWIND_DIR=""
+for candidate in \
+    "$OUT/obj/buildtools/third_party/libunwind/libunwind" \
+    "$OUT/obj/third_party/libunwind/libunwind" \
+    "$OUT/obj/buildtools/third_party/libunwind/libunwind_a" \
+    ; do
+  if [ -d "$candidate" ] && find "$candidate" -maxdepth 2 -name '*.o' | grep -q .; then
+    LIBUNWIND_DIR="$candidate"
+    break
+  fi
+done
 
-if [ ! -d "$LIBUNWIND_DIR" ] || ! find "$LIBUNWIND_DIR" -maxdepth 1 -name '*.o' | grep -q .; then
-  ninja -C "$OUT" obj/buildtools/third_party/libunwind/libunwind.stamp
+# If still not found, try building one of several plausible target
+# names and search again.
+if [ -z "$LIBUNWIND_DIR" ]; then
+  echo "libunwind not pre-built at any known path; attempting ninja build..."
+  for tgt in \
+      'obj/buildtools/third_party/libunwind/libunwind.stamp' \
+      'obj/third_party/libunwind/libunwind.stamp' \
+      '//buildtools/third_party/libunwind:libunwind' \
+      ; do
+    if ninja -C "$OUT" "$tgt" 2>/dev/null; then
+      echo "  built target: $tgt"
+      break
+    fi
+  done
+  # Now search again across the whole obj tree.
+  CANDIDATE_DIR="$(find "$OUT/obj" -type d -name 'libunwind*' 2>/dev/null \
+    | while read -r d; do
+        if find "$d" -maxdepth 2 -name '*.o' 2>/dev/null | grep -q .; then
+          echo "$d"
+          break
+        fi
+      done)"
+  if [ -n "$CANDIDATE_DIR" ]; then
+    LIBUNWIND_DIR="$CANDIDATE_DIR"
+  fi
 fi
 
+if [ -z "$LIBUNWIND_DIR" ]; then
+  echo "ERROR: could not locate libunwind .o files under $OUT/obj" >&2
+  echo "Candidate dirs found:" >&2
+  find "$OUT/obj" -type d -name 'libunwind*' 2>/dev/null | head -10 >&2
+  exit 1
+fi
+
+echo "libunwind dir: $LIBUNWIND_DIR"
+
 mapfile -t LIBUNWIND_OBJECTS < <(
-  find "$LIBUNWIND_DIR" -maxdepth 1 -type f -name '*.o' | sort
+  find "$LIBUNWIND_DIR" -maxdepth 2 -type f -name '*.o' | sort
 )
 
 if [ "${#LIBUNWIND_OBJECTS[@]}" -eq 0 ]; then
-  echo "ERROR: no Chromium libunwind objects found" >&2
+  echo "ERROR: $LIBUNWIND_DIR has no .o files" >&2
   exit 1
 fi
 
