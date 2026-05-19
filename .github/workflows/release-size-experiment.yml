@@ -145,15 +145,12 @@ jobs:
       - name: Variant BASELINE -- link (current link script, no extra strip)
         run: |
           cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
-          # The link script hard-codes out/android_arm64_agg. Use a
-          # symlink so we don't have to fork the script per variant.
-          rm -rf out/android_arm64_agg
-          ln -s variant_baseline out/android_arm64_agg
-          bash "$GITHUB_WORKSPACE/repo/scripts/ci/link_pdfium_android_agg_so.sh"
+          # The link script now respects PDFIUM_AGG_BUILD_DIR.
+          PDFIUM_AGG_BUILD_DIR=out/variant_baseline \
+            bash "$GITHUB_WORKSPACE/repo/scripts/ci/link_pdfium_android_agg_so.sh"
           mkdir -p "$GITHUB_WORKSPACE/artifacts/baseline/arm64-v8a"
-          cp out/android_arm64_agg/libpdfium.so \
+          cp out/variant_baseline/libpdfium.so \
              "$GITHUB_WORKSPACE/artifacts/baseline/arm64-v8a/libpdfium.so"
-          rm out/android_arm64_agg
 
       - name: Variant A -- relink existing build + llvm-strip --strip-unneeded
         run: |
@@ -227,12 +224,11 @@ jobs:
           gn gen out/variant_b
           ninja -C out/variant_b pdfium -j"$(nproc)"
 
-          rm -rf out/android_arm64_agg
-          ln -s variant_b out/android_arm64_agg
-          bash "$GITHUB_WORKSPACE/repo/scripts/ci/link_pdfium_android_agg_so.sh"
+          PDFIUM_AGG_BUILD_DIR=out/variant_b \
+            bash "$GITHUB_WORKSPACE/repo/scripts/ci/link_pdfium_android_agg_so.sh"
 
           mkdir -p "$GITHUB_WORKSPACE/artifacts/variant_b/arm64-v8a"
-          cp out/android_arm64_agg/libpdfium.so \
+          cp out/variant_b/libpdfium.so \
              "$GITHUB_WORKSPACE/artifacts/variant_b/arm64-v8a/libpdfium.so"
 
           # Verify the ship-patch overrides survived link BEFORE we
@@ -254,8 +250,6 @@ jobs:
           "$LLVM_STRIP" --strip-unneeded \
             "$GITHUB_WORKSPACE/artifacts/variant_b/arm64-v8a/libpdfium.so"
 
-          rm out/android_arm64_agg
-
       - name: Variant C -- B + custom link (no --whole-archive, +--gc-sections)
         run: |
           cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
@@ -271,60 +265,45 @@ jobs:
           SYSROOT="third_party/android_toolchain/ndk/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
           BUILTINS="third_party/llvm-build/Release+Asserts/lib/clang/23/lib/linux/libclang_rt.builtins-aarch64-android.a"
 
-          # Reuse the discovery logic from link_pdfium_android_agg_so.sh
-          # for PROJECT_ARCHIVES + RUNTIME_INPUTS + LIBUNWIND.
-          mapfile -t PROJECT_TARGETS < <(
-            {
-              echo "//:pdfium"
-              gn desc "$OUT" //:pdfium deps --all
-            } | sed '/^[[:space:]]*$/d' | sort -u
-          )
-          PROJECT_ARCHIVES=()
-          for t in "${PROJECT_TARGETS[@]}"; do
-            while IFS= read -r out; do
-              p="${out#//}"
-              case "$p" in
-                $OUT/*.a) PROJECT_ARCHIVES+=("$p") ;;
-              esac
-            done < <(gn desc "$OUT" "$t" outputs 2>/dev/null || true)
-          done
+          # Filesystem-based discovery (PDFium now uses source_sets,
+          # so `gn desc <target> outputs` errors with
+          # "Don't know how to display outputs for source_set". The
+          # filesystem walk is more robust.)
           mapfile -t PROJECT_ARCHIVES_UNIQ < <(
-            printf '%s\n' "${PROJECT_ARCHIVES[@]}" \
-              | sort -u \
-              | grep -v "^$OUT/obj/libpdfium\.a$"
+            find "$OUT/obj" -type f -name '*.a' 2>/dev/null \
+              | grep -v "^${OUT}/obj/libpdfium\.a$" \
+              | sort -u
           )
-          mapfile -t RUNTIME_TARGETS < <(
-            {
-              echo "//build/config:shared_library_deps"
-              gn desc "$OUT" //build/config:shared_library_deps deps --all
-            } | sed '/^[[:space:]]*$/d' | sort -u
-          )
-          RUNTIME_INPUTS=()
-          for t in "${RUNTIME_TARGETS[@]}"; do
-            while IFS= read -r out; do
-              p="${out#//}"
-              case "$p" in
-                $OUT/*.a|$OUT/*.o) RUNTIME_INPUTS+=("$p") ;;
-              esac
-            done < <(gn desc "$OUT" "$t" outputs 2>/dev/null || true)
-          done
-          mapfile -t RUNTIME_INPUTS_UNIQ < <(
-            printf '%s\n' "${RUNTIME_INPUTS[@]}" | sort -u
-          )
-          MISSING_RUNTIME=()
-          for p in "${RUNTIME_INPUTS_UNIQ[@]}"; do
-            [ ! -f "$p" ] && MISSING_RUNTIME+=("${p#$OUT/}")
-          done
-          if [ "${#MISSING_RUNTIME[@]}" -gt 0 ]; then
-            ninja -C "$OUT" "${MISSING_RUNTIME[@]}"
-          fi
+          echo "Variant C: PROJECT_ARCHIVES_UNIQ has ${#PROJECT_ARCHIVES_UNIQ[@]} entries"
 
-          LIBUNWIND_DIR="$OUT/obj/buildtools/third_party/libunwind/libunwind"
-          if [ ! -d "$LIBUNWIND_DIR" ] || ! find "$LIBUNWIND_DIR" -maxdepth 1 -name '*.o' | grep -q .; then
-            ninja -C "$OUT" obj/buildtools/third_party/libunwind/libunwind.stamp
+          # libunwind: search canonical paths first, fall back to
+          # broad find.
+          LIBUNWIND_DIR=""
+          for candidate in \
+              "$OUT/obj/buildtools/third_party/libunwind/libunwind" \
+              "$OUT/obj/third_party/libunwind/libunwind" \
+              ; do
+            if [ -d "$candidate" ] \
+                && find "$candidate" -maxdepth 2 -name '*.o' 2>/dev/null | grep -q .; then
+              LIBUNWIND_DIR="$candidate"
+              break
+            fi
+          done
+          if [ -z "$LIBUNWIND_DIR" ]; then
+            CANDIDATE_DIR="$(find "$OUT/obj" -type d -name 'libunwind*' 2>/dev/null \
+              | while read -r d; do
+                  if find "$d" -maxdepth 2 -name '*.o' 2>/dev/null | grep -q .; then
+                    echo "$d"; break
+                  fi
+                done)"
+            [ -n "$CANDIDATE_DIR" ] && LIBUNWIND_DIR="$CANDIDATE_DIR"
+          fi
+          if [ -z "$LIBUNWIND_DIR" ]; then
+            echo "ERROR: Variant C cannot locate libunwind .o files" >&2
+            exit 1
           fi
           mapfile -t LIBUNWIND_OBJECTS < <(
-            find "$LIBUNWIND_DIR" -maxdepth 1 -type f -name '*.o' | sort
+            find "$LIBUNWIND_DIR" -maxdepth 2 -type f -name '*.o' | sort
           )
 
           # Variant C link levers:
@@ -346,7 +325,6 @@ jobs:
             "$PDFIUM_A" \
             -Wl,--start-group \
               "${PROJECT_ARCHIVES_UNIQ[@]}" \
-              "${RUNTIME_INPUTS_UNIQ[@]}" \
               "${LIBUNWIND_OBJECTS[@]}" \
             -Wl,--end-group \
             "$BUILTINS" \

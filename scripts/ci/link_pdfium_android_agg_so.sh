@@ -63,57 +63,39 @@ if [ "${#PROJECT_TARGETS[@]}" -lt 2 ]; then
   exit 1
 fi
 
-# Sample what `gn desc <target> outputs` actually produces. The
-# previous run had 237 PROJECT_TARGETS but 0 archives matched the
-# case pattern -- something about the output format isn't what we
-# expect.
-echo
-echo "=== Sample 'gn desc outputs' format (//:pdfium + first 5 archive targets) ==="
-for t in //:pdfium \
-         //core/fpdfdoc:fpdfdoc \
-         //core/fpdftext:fpdftext \
-         //core/fxcodec:fxcodec \
-         //core/fxcrt:fxcrt \
-         //core/fxge:fxge \
-         ; do
-  echo "--- $t ---"
-  gn desc "$OUT" "$t" outputs 2>&1 | head -5
-done
-
-PROJECT_ARCHIVES=()
-for t in "${PROJECT_TARGETS[@]}"; do
-  while IFS= read -r out; do
-    # gn desc outputs paths in 3 possible forms:
-    #   //path/in/source/tree           (source files, ignore)
-    #   //out/<builddir>/...            (build outputs)
-    #   path/relative/to/builddir       (no // prefix, build outputs)
-    # Normalize: strip a leading // if present, then strip a
-    # `out/<builddir>/` prefix to leave a builddir-relative path.
-    # We accept the entry if it ends in .a -- the archive format
-    # check is more reliable than path matching.
-    raw="$out"
-    p="${raw#//}"
-    # Accept any path that ends in .a (static archive).
-    case "$p" in
-      *.a)
-        # Build a path relative to $OUT. p might already start with
-        # $OUT/, in which case keep it. Otherwise prepend $OUT/.
-        case "$p" in
-          "$OUT"/*) PROJECT_ARCHIVES+=("$p") ;;
-          *)        PROJECT_ARCHIVES+=("$OUT/$p") ;;
-        esac
-        ;;
-    esac
-  done < <(gn desc "$OUT" "$t" outputs 2>/dev/null || true)
-done
-
+# Discover static archives directly from the filesystem.
+#
+# History: this used to use `gn desc <target> outputs` to walk the
+# dependency graph. That worked when most PDFium subdirs built
+# static_library targets, but modern PDFium has refactored most of
+# them to `source_set` -- and `gn desc <source_set> outputs` errors
+# with "Don't know how to display outputs for source_set", because
+# a source_set rolls into its parent's archive instead of producing
+# its own .a.
+#
+# The simpler and more robust approach: find every .a file the build
+# system actually produced under $OUT/obj, then exclude libpdfium.a
+# itself (we add that separately via --whole-archive). This catches
+# everything ninja actually built: third-party deps like
+# libfreetype.a, libabsl_*.a, libjpeg.a, lcms2.a, libopenjpeg2.a,
+# partition_alloc.a, zlib.a, plus anything else still emitted as a
+# static_library.
 mapfile -t PROJECT_ARCHIVES_UNIQ < <(
-  if [ "${#PROJECT_ARCHIVES[@]}" -gt 0 ]; then
-    printf '%s\n' "${PROJECT_ARCHIVES[@]}" \
-      | sort -u \
-      | grep -v "^${OUT}/obj/libpdfium\.a$"
-  fi
+  find "$OUT/obj" -type f -name '*.a' 2>/dev/null \
+    | grep -v "^${OUT}/obj/libpdfium\.a$" \
+    | sort -u
 )
+
+echo
+echo "Discovered project archives ($((${#PROJECT_ARCHIVES_UNIQ[@]})) files):"
+if [ "${#PROJECT_ARCHIVES_UNIQ[@]}" -gt 0 ]; then
+  printf '  %s\n' "${PROJECT_ARCHIVES_UNIQ[@]:0:15}"
+  if [ "${#PROJECT_ARCHIVES_UNIQ[@]}" -gt 15 ]; then
+    echo "  ... ($((${#PROJECT_ARCHIVES_UNIQ[@]} - 15)) more)"
+  fi
+else
+  echo "  (none)"
+fi
 
 echo "PDFium archive:"
 echo "  $PDFIUM_A"
@@ -135,58 +117,16 @@ if "$LLVM_NM" -A -C "$PDFIUM_A" 2>/dev/null | grep -E 'SkTypeface_proxy|SkFontMg
 fi
 
 echo
-echo "=== Collect shared-library runtime closure from GN ==="
-
-mapfile -t RUNTIME_TARGETS < <(
-  {
-    echo "//build/config:shared_library_deps"
-    gn desc "$OUT" //build/config:shared_library_deps deps --all
-  } | sed '/^[[:space:]]*$/d' | sort -u
-)
-
-RUNTIME_INPUTS=()
-for t in "${RUNTIME_TARGETS[@]}"; do
-  while IFS= read -r out; do
-    raw="$out"
-    p="${raw#//}"
-    # Accept any path that ends in .a or .o.
-    case "$p" in
-      *.a|*.o)
-        case "$p" in
-          "$OUT"/*) RUNTIME_INPUTS+=("$p") ;;
-          *)        RUNTIME_INPUTS+=("$OUT/$p") ;;
-        esac
-        ;;
-    esac
-  done < <(gn desc "$OUT" "$t" outputs 2>/dev/null || true)
-done
-
-mapfile -t RUNTIME_INPUTS_UNIQ < <(
-  if [ "${#RUNTIME_INPUTS[@]}" -gt 0 ]; then
-    printf '%s\n' "${RUNTIME_INPUTS[@]}" | sort -u
-  fi
-)
-
-echo "Runtime inputs:"
-printf '  %s\n' "${RUNTIME_INPUTS_UNIQ[@]}"
-
-echo
-echo "=== Build missing runtime inputs ==="
-
-MISSING_RUNTIME=()
-for p in "${RUNTIME_INPUTS_UNIQ[@]}"; do
-  if [ ! -f "$p" ]; then
-    MISSING_RUNTIME+=("${p#$OUT/}")
-  fi
-done
-
-if [ "${#MISSING_RUNTIME[@]}" -gt 0 ]; then
-  printf 'Need to build runtime inputs:\n'
-  printf '  %s\n' "${MISSING_RUNTIME[@]}"
-  ninja -C "$OUT" "${MISSING_RUNTIME[@]}"
-else
-  echo "All runtime inputs already exist."
-fi
+echo "=== Shared-library runtime closure ==="
+# Previously this was a separate `gn desc //build/config:shared_library_deps`
+# discovery walk. Same source_set problem as PROJECT_ARCHIVES: most
+# runtime targets are source_sets now. The filesystem-based discovery
+# above already captures every .a file under $OUT/obj, which includes
+# libc++.a, libc++abi.a, libabsl_*.a, partition_alloc.a, and every
+# other runtime dependency. So we don't need a second discovery loop.
+echo "Folded into PROJECT_ARCHIVES_UNIQ above."
+echo "All static archives (.a) under $OUT/obj are included via"
+echo "--start-group / --end-group at link time."
 
 echo
 echo "=== Collect Chromium in-tree libunwind source-set objects ==="
@@ -271,7 +211,6 @@ rm -f "$SO"
   -Wl,--no-whole-archive \
   -Wl,--start-group \
     "${PROJECT_ARCHIVES_UNIQ[@]}" \
-    "${RUNTIME_INPUTS_UNIQ[@]}" \
     "${LIBUNWIND_OBJECTS[@]}" \
   -Wl,--end-group \
   "$BUILTINS" \
