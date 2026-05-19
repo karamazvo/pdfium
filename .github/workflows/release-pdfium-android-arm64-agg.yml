@@ -190,7 +190,16 @@ jobs:
           echo "OK"
 
           # Patch 02: IndexedCS + SeparationCS fast TranslateImageLine.
-          # The override symbol must exist in the static archive.
+          #
+          # Verification strategy:
+          #  * the public override symbol must exist in the static
+          #    archive (catches "patch silently dropped"),
+          #  * the source must contain the BuildBgrLookupTableIfNeeded
+          #    helper definition (catches "patch reverted or partial").
+          # We do NOT require the helper as a separate ELF symbol --
+          # clang's LTO/inliner is allowed to fold it into the override
+          # and the standalone symbol disappears. That's correctness-
+          # neutral.
           echo
           echo "=== Patch 02: IndexedCS + SeparationCS fast ==="
           for sym in 'CPDF_IndexedCS::TranslateImageLine' \
@@ -198,41 +207,46 @@ jobs:
                      ; do
             if "$LLVM_NM" -A -C "$PDFIUM_A" 2>/dev/null \
                 | grep -F "$sym" >/dev/null; then
-              echo "  OK $sym"
+              echo "  OK $sym  (override symbol present)"
             else
               echo "  MISSING $sym" >&2
               "$LLVM_NM" -A -C "$PDFIUM_A" 2>/dev/null | grep -E 'IndexedCS|SeparationCS' | head -10
               exit 1
             fi
           done
-          # Confirm BuildBgrLookupTableIfNeeded helpers landed.
-          for sym in 'CPDF_IndexedCS::BuildBgrLookupTableIfNeeded' \
-                     'CPDF_SeparationCS::BuildBgrLookupTableIfNeeded' \
-                     ; do
-            if "$LLVM_NM" -A -C "$PDFIUM_A" 2>/dev/null \
-                | grep -F "$sym" >/dev/null; then
-              echo "  OK $sym"
-            else
-              echo "  MISSING $sym" >&2
-              exit 1
-            fi
-          done
+          # Source-side check: the helper definitions are in the
+          # patched .cpp files. If they're absent, the patch was not
+          # applied correctly.
+          if ! grep -q '::BuildBgrLookupTableIfNeeded() const' \
+              core/fpdfapi/page/cpdf_indexedcs.cpp; then
+            echo "  MISSING CPDF_IndexedCS::BuildBgrLookupTableIfNeeded definition in source" >&2
+            exit 1
+          fi
+          echo "  OK CPDF_IndexedCS::BuildBgrLookupTableIfNeeded  (defn in source)"
+          if ! grep -q 'CPDF_SeparationCS::BuildBgrLookupTableIfNeeded' \
+              core/fpdfapi/page/cpdf_colorspace.cpp; then
+            echo "  MISSING CPDF_SeparationCS::BuildBgrLookupTableIfNeeded definition in source" >&2
+            exit 1
+          fi
+          echo "  OK CPDF_SeparationCS::BuildBgrLookupTableIfNeeded  (defn in source)"
 
-          # Patch 03: DeviceNCS fast TranslateImageLine.
+          # Patch 03: DeviceNCS fast TranslateImageLine. Same strategy.
           echo
           echo "=== Patch 03: DeviceNCS fast ==="
-          for sym in 'CPDF_DeviceNCS::TranslateImageLine' \
-                     'CPDF_DeviceNCS::BuildBgrLookupTableIfNeeded' \
-                     ; do
-            if "$LLVM_NM" -A -C "$PDFIUM_A" 2>/dev/null \
-                | grep -F "$sym" >/dev/null; then
-              echo "  OK $sym"
-            else
-              echo "  MISSING $sym" >&2
-              "$LLVM_NM" -A -C "$PDFIUM_A" 2>/dev/null | grep -E 'DeviceNCS' | head -10
-              exit 1
-            fi
-          done
+          if "$LLVM_NM" -A -C "$PDFIUM_A" 2>/dev/null \
+              | grep -F 'CPDF_DeviceNCS::TranslateImageLine' >/dev/null; then
+            echo "  OK CPDF_DeviceNCS::TranslateImageLine  (override symbol present)"
+          else
+            echo "  MISSING CPDF_DeviceNCS::TranslateImageLine" >&2
+            "$LLVM_NM" -A -C "$PDFIUM_A" 2>/dev/null | grep -E 'DeviceNCS' | head -10
+            exit 1
+          fi
+          if ! grep -q 'CPDF_DeviceNCS::BuildBgrLookupTableIfNeeded' \
+              core/fpdfapi/page/cpdf_colorspace.cpp; then
+            echo "  MISSING CPDF_DeviceNCS::BuildBgrLookupTableIfNeeded definition in source" >&2
+            exit 1
+          fi
+          echo "  OK CPDF_DeviceNCS::BuildBgrLookupTableIfNeeded  (defn in source)"
 
           # Sanity: ATrace MUST NOT be referenced. If it is, a
           # diagnostic patch leaked into ship.
