@@ -300,6 +300,39 @@ jobs:
             | head -10
 
           echo
+          echo "=== Verify JNI-imported APIs survived link ==="
+          # If the link command ever drops --whole-archive or adds
+          # --gc-sections (as Variant C of the size-experiment did),
+          # internal PDFium APIs the JNI wrapper imports could be
+          # silently GC'd -- dlopen would then fail at runtime with
+          # "cannot locate symbol FPDFText_LoadPage" or similar.
+          # Check a representative sample here so the .so never ships
+          # with that regression.
+          MISSING_JNI_APIS=()
+          for api in \
+              FPDF_InitLibrary FPDF_LoadDocument FPDF_RenderPageBitmap \
+              FPDFText_LoadPage FPDFText_CountChars \
+              FPDFAnnot_GetSubtype FPDFAnnot_GetRect \
+              FPDFLink_LoadWebLinks FPDFLink_GetURL \
+              FPDFBookmark_GetFirstChild \
+              FPDFPage_GetRotation FPDFPageObj_GetType \
+              FPDF_GetMetaText FPDF_GetPageSizeByIndex \
+              FORM_OnLButtonDown FORM_DoDocumentOpenAction \
+              ; do
+            if ! "$LLVM_NM" -D --defined-only -C "$SO" 2>/dev/null \
+                | grep -E " T $api(\b|@)" >/dev/null; then
+              MISSING_JNI_APIS+=("$api")
+            fi
+          done
+          if [ "${#MISSING_JNI_APIS[@]}" -gt 0 ]; then
+            echo "ERROR: release .so missing JNI-imported APIs:" >&2
+            printf '  %s\n' "${MISSING_JNI_APIS[@]}" >&2
+            echo "dlopen() at runtime would fail with UnsatisfiedLinkError." >&2
+            exit 1
+          fi
+          echo "OK: all sampled JNI-imported APIs present"
+
+          echo
           echo "=== Dynamic dependencies (NEEDED) ==="
           readelf -d "$SO" | grep NEEDED || true
 

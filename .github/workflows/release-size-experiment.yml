@@ -345,6 +345,24 @@ jobs:
             echo "Variant C: liballocator_shim NOT present -> dropping --wrap"
           fi
 
+          # Build the full list of public FPDF_* and FORM_* symbols
+          # from libpdfium.a. Each must be passed as -Wl,--undefined to
+          # survive --gc-sections. Without this, only the ~10 hand-
+          # listed APIs are kept and dlopen fails with errors like:
+          #   cannot locate symbol "FPDFText_LoadPage"
+          # The JNI wrapper (libpdfiumandroid.so) imports many more
+          # FPDF_* APIs than we can hand-maintain a list of.
+          UNDEFINED_FLAGS=()
+          while IFS= read -r sym; do
+            UNDEFINED_FLAGS+=("-Wl,--undefined=$sym")
+          done < <(
+            "$LLVM_NM" -A --defined-only "$PDFIUM_A" 2>/dev/null \
+              | awk '{print $NF}' \
+              | grep -E '^(FPDF|FORM_|FSDK_)' \
+              | sort -u
+          )
+          echo "Variant C: preserving ${#UNDEFINED_FLAGS[@]} FPDF_*/FORM_*/FSDK_* symbols from libpdfium.a"
+
           "$CC" \
             --target="$TARGET" \
             --sysroot="$SYSROOT" \
@@ -362,28 +380,39 @@ jobs:
             -Wl,--gc-sections \
             -Wl,--export-dynamic-symbol=FPDF* \
             -Wl,--export-dynamic-symbol=FORM_* \
-            -Wl,--undefined=FPDF_InitLibrary \
-            -Wl,--undefined=FPDF_InitLibraryWithConfig \
-            -Wl,--undefined=FPDF_LoadDocument \
-            -Wl,--undefined=FPDF_LoadMemDocument \
-            -Wl,--undefined=FPDF_RenderPageBitmap \
-            -Wl,--undefined=FPDF_RenderPageBitmapWithMatrix \
-            -Wl,--undefined=FPDF_GetPageCount \
-            -Wl,--undefined=FPDF_LoadPage \
-            -Wl,--undefined=FPDF_ClosePage \
-            -Wl,--undefined=FPDF_CloseDocument \
-            -Wl,--undefined=FPDF_DestroyLibrary \
+            "${UNDEFINED_FLAGS[@]}" \
             "${WRAP_FLAGS[@]}" \
             -Wl,-z,max-page-size=16384 \
             -llog -landroid -ldl -lm
 
-          # Sanity 1: confirm public FPDF/FORM API survived the GC.
+          # Sanity 1: confirm a broad set of public APIs survived the
+          # GC. The 0517 test build crashed at dlopen time with
+          # "cannot locate symbol FPDFText_LoadPage" -- the JNI
+          # wrapper imports many APIs from families we didn't
+          # explicitly preserve. Include one canonical symbol from
+          # every public PDFium header family.
           MISSING_APIS=()
-          for api in FPDF_InitLibrary FPDF_InitLibraryWithConfig \
-                     FPDF_LoadDocument FPDF_LoadMemDocument \
-                     FPDF_RenderPageBitmap FPDF_RenderPageBitmapWithMatrix \
-                     FPDF_GetPageCount FPDF_LoadPage FPDF_ClosePage \
-                     FPDF_CloseDocument FPDF_DestroyLibrary; do
+          for api in \
+              FPDF_InitLibrary FPDF_InitLibraryWithConfig \
+              FPDF_LoadDocument FPDF_LoadMemDocument \
+              FPDF_RenderPageBitmap FPDF_RenderPageBitmapWithMatrix \
+              FPDF_GetPageCount FPDF_LoadPage FPDF_ClosePage \
+              FPDF_CloseDocument FPDF_DestroyLibrary \
+              FPDFText_LoadPage FPDFText_CountChars FPDFText_GetCharBox \
+              FPDFAnnot_GetSubtype FPDFAnnot_GetRect FPDFAnnot_CountAttachmentPoints \
+              FPDFLink_LoadWebLinks FPDFLink_GetURL FPDFLink_GetTextRange \
+              FPDFBookmark_GetFirstChild FPDFBookmark_GetTitle \
+              FPDFDest_GetDestPageIndex \
+              FPDFAction_GetType FPDFAction_GetURIPath \
+              FPDFDoc_GetPageMode FPDFDoc_GetAttachmentCount \
+              FPDF_GetMetaText FPDF_GetFileVersion FPDF_GetSecurityHandlerRevision \
+              FPDFPage_GetRotation FPDFPage_HasTransparency \
+              FPDFPageObj_GetType FPDFPage_CountObjects \
+              FPDFImageObj_GetImagePixelSize \
+              FPDF_StructTree_GetForPage FPDF_StructElement_GetType \
+              FPDF_GetPageSizeByIndex \
+              FORM_OnLButtonDown FORM_OnKeyDown FORM_DoDocumentOpenAction \
+              ; do
             if ! "$LLVM_NM" -D --defined-only -C "$SO" 2>/dev/null \
                 | grep -E " T $api(\b|@)" >/dev/null; then
               MISSING_APIS+=("$api")
@@ -392,7 +421,10 @@ jobs:
           if [ "${#MISSING_APIS[@]}" -gt 0 ]; then
             echo "ERROR: Variant C GC'd these public APIs:" >&2
             printf '  %s\n' "${MISSING_APIS[@]}" >&2
-            echo "Will need to add more --undefined entries." >&2
+            echo "The auto-generated UNDEFINED_FLAGS should have caught these." >&2
+            echo "Check the link command -- one of:" >&2
+            echo "  - libpdfium.a doesn't actually define them" >&2
+            echo "  - llvm-nm's output format is unexpected" >&2
             exit 1
           fi
 
