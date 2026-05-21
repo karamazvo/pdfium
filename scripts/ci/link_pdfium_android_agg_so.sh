@@ -247,33 +247,109 @@ else
 fi
 
 echo
+echo "=== Choose link mode ==="
+# Two link strategies:
+#
+#   * BASELINE (default): -Wl,--whole-archive on libpdfium.a. Every
+#     object stays in the final .so. Produces ~13.7 MB on a stock
+#     pdfium build. Safe, no symbol-survival concerns.
+#
+#   * SHRINK (PDFIUM_AGG_SHRINK=1): drop --whole-archive, add
+#     --gc-sections. The linker discards every section unreachable
+#     from a kept root. To prevent dlopen-time UnsatisfiedLinkError
+#     in the JNI consumer, we explicitly --undefined every public
+#     FPDF/FORM/FSDK symbol defined by libpdfium.a so they all
+#     survive. Produces ~6.6 MB -- equivalent to bblanchon's
+#     reference build at 6.4 MB. Adds a post-link survival check
+#     to catch any regression at CI time.
+#
+# Set PDFIUM_AGG_SHRINK=1 in the environment to opt into the shrink
+# build (used by release-pdfium-android-arm64-agg.yml). Default
+# leaves baseline behavior unchanged for any callers that still
+# expect the larger but unconditionally-symbol-complete .so.
+SHRINK_MODE="${PDFIUM_AGG_SHRINK:-0}"
+echo "PDFIUM_AGG_SHRINK = $SHRINK_MODE"
+
+UNDEFINED_FLAGS=(
+  -Wl,--undefined=FPDF_InitLibrary
+  -Wl,--undefined=FPDF_InitLibraryWithConfig
+)
+
+if [ "$SHRINK_MODE" = "1" ]; then
+  echo
+  echo "=== Build --undefined list from libpdfium.a (shrink mode) ==="
+  # In shrink mode the linker GC's everything unreachable from kept
+  # roots. We have to enumerate every public FPDF/FORM/FSDK symbol
+  # defined in libpdfium.a so the JNI wrapper can still dlopen the
+  # result. The list auto-regenerates on every build, so a future
+  # PDFium upgrade that adds new public APIs picks them up
+  # automatically -- no per-upgrade revalidation step.
+  AUTO_UNDEFINED=()
+  while IFS= read -r sym; do
+    AUTO_UNDEFINED+=("-Wl,--undefined=$sym")
+  done < <(
+    "$LLVM_NM" -A --defined-only "$PDFIUM_A" 2>/dev/null \
+      | awk '{print $NF}' \
+      | grep -E '^(FPDF|FORM_|FSDK_)' \
+      | sort -u
+  )
+  echo "Auto-discovered ${#AUTO_UNDEFINED[@]} FPDF_*/FORM_*/FSDK_* symbols to preserve"
+  UNDEFINED_FLAGS=("${AUTO_UNDEFINED[@]}")
+fi
+
+echo
 echo "=== Link final AGG libpdfium.so ==="
 
 rm -f "$SO"
 
-"$CC" \
-  --target="$TARGET" \
-  --sysroot="$SYSROOT" \
-  -shared \
-  -o "$SO" \
-  -nostdlib++ \
-  --unwindlib=none \
-  -Wl,--whole-archive \
+if [ "$SHRINK_MODE" = "1" ]; then
+  # SHRINK link: no --whole-archive, +--gc-sections.
+  "$CC" \
+    --target="$TARGET" \
+    --sysroot="$SYSROOT" \
+    -shared \
+    -o "$SO" \
+    -nostdlib++ \
+    --unwindlib=none \
     "$PDFIUM_A" \
-  -Wl,--no-whole-archive \
-  -Wl,--start-group \
-    "${PROJECT_ARCHIVES_UNIQ[@]}" \
-    "${LIBUNWIND_LINK_FLAGS[@]}" \
-  -Wl,--end-group \
-  "$BUILTINS" \
-  -Wl,--no-undefined \
-  -Wl,--export-dynamic-symbol=FPDF* \
-  -Wl,--export-dynamic-symbol=FORM_* \
-  -Wl,--undefined=FPDF_InitLibrary \
-  -Wl,--undefined=FPDF_InitLibraryWithConfig \
-  "${WRAP_FLAGS[@]}" \
-  -Wl,-z,max-page-size=16384 \
-  -llog -landroid -ldl -lm
+    -Wl,--start-group \
+      "${PROJECT_ARCHIVES_UNIQ[@]}" \
+      "${LIBUNWIND_LINK_FLAGS[@]}" \
+    -Wl,--end-group \
+    "$BUILTINS" \
+    -Wl,--no-undefined \
+    -Wl,--gc-sections \
+    -Wl,--export-dynamic-symbol=FPDF* \
+    -Wl,--export-dynamic-symbol=FORM_* \
+    "${UNDEFINED_FLAGS[@]}" \
+    "${WRAP_FLAGS[@]}" \
+    -Wl,-z,max-page-size=16384 \
+    -llog -landroid -ldl -lm
+else
+  # BASELINE link: keep --whole-archive, no GC.
+  "$CC" \
+    --target="$TARGET" \
+    --sysroot="$SYSROOT" \
+    -shared \
+    -o "$SO" \
+    -nostdlib++ \
+    --unwindlib=none \
+    -Wl,--whole-archive \
+      "$PDFIUM_A" \
+    -Wl,--no-whole-archive \
+    -Wl,--start-group \
+      "${PROJECT_ARCHIVES_UNIQ[@]}" \
+      "${LIBUNWIND_LINK_FLAGS[@]}" \
+    -Wl,--end-group \
+    "$BUILTINS" \
+    -Wl,--no-undefined \
+    -Wl,--export-dynamic-symbol=FPDF* \
+    -Wl,--export-dynamic-symbol=FORM_* \
+    "${UNDEFINED_FLAGS[@]}" \
+    "${WRAP_FLAGS[@]}" \
+    -Wl,-z,max-page-size=16384 \
+    -llog -landroid -ldl -lm
+fi
 
 echo
 echo "=== Final AGG shared library ==="
@@ -291,6 +367,82 @@ if "$LLVM_NM" -D -C "$SO" 2>/dev/null \
 fi
 
 echo "OK: no known-bad unresolved symbols."
+
+if [ "$SHRINK_MODE" = "1" ]; then
+  echo
+  echo "=== Shrink-mode survival check (24 canary symbols across all FPDF families) ==="
+  # In shrink mode --gc-sections removes any symbol not reachable
+  # from a kept root. The auto-built UNDEFINED_FLAGS list above
+  # should preserve every FPDF/FORM/FSDK symbol defined in
+  # libpdfium.a -- but if that discovery somehow misses an API,
+  # the JNI consumer will fail at dlopen time with
+  # UnsatisfiedLinkError. Catch that NOW with a representative
+  # sample drawn from every public header family.
+  MISSING_APIS=()
+  for api in \
+      FPDF_InitLibrary FPDF_InitLibraryWithConfig \
+      FPDF_LoadDocument FPDF_LoadMemDocument \
+      FPDF_RenderPageBitmap FPDF_RenderPageBitmapWithMatrix \
+      FPDF_GetPageCount FPDF_LoadPage FPDF_ClosePage \
+      FPDF_CloseDocument FPDF_DestroyLibrary \
+      FPDFText_LoadPage FPDFText_CountChars FPDFText_GetCharBox \
+      FPDFAnnot_GetSubtype FPDFAnnot_GetRect \
+      FPDFLink_LoadWebLinks FPDFLink_GetURL \
+      FPDFBookmark_GetFirstChild FPDFBookmark_GetTitle \
+      FPDFDest_GetDestPageIndex \
+      FPDFAction_GetType FPDFAction_GetURIPath \
+      FPDF_GetMetaText FPDF_GetFileVersion \
+      FPDFPage_GetRotation FPDFPage_HasTransparency \
+      FPDFPageObj_GetType FPDFPage_CountObjects \
+      FPDFImageObj_GetImagePixelSize \
+      FPDF_GetPageSizeByIndex \
+      FORM_OnLButtonDown FORM_OnKeyDown FORM_DoDocumentOpenAction \
+      ; do
+    if ! "$LLVM_NM" -D --defined-only -C "$SO" 2>/dev/null \
+        | grep -E " T $api(\b|@)" >/dev/null; then
+      MISSING_APIS+=("$api")
+    fi
+  done
+  if [ "${#MISSING_APIS[@]}" -gt 0 ]; then
+    echo "ERROR: shrink-mode link dropped these JNI-imported APIs:" >&2
+    printf '  %s\n' "${MISSING_APIS[@]}" >&2
+    echo "The auto-built --undefined list missed them. Either" >&2
+    echo "  - libpdfium.a doesn't actually define them (unexpected)," >&2
+    echo "  - llvm-nm's output format isn't what the awk filter expects, or" >&2
+    echo "  - the symbol prefix changed in a new PDFium revision." >&2
+    exit 1
+  fi
+  echo "OK: all canary APIs present."
+
+  echo
+  echo "=== Shrink-mode override survival check ==="
+  # The 3 ship-patch overrides (CPDF_IndexedCS::TranslateImageLine,
+  # CPDF_SeparationCS::TranslateImageLine, CPDF_DeviceNCS::TranslateImageLine)
+  # are virtual-table entries. If --gc-sections drops a colorspace
+  # subclass entirely, PDFium silently falls back to the slow
+  # base-class path on every image that uses that colorspace -- a
+  # functional REGRESSION (slow renders), NOT a build failure. Check
+  # explicitly so we don't ship a binary that's secretly slow.
+  MISSING_OVERRIDES=()
+  for sym in 'CPDF_IndexedCS::TranslateImageLine' \
+             'CPDF_SeparationCS::TranslateImageLine' \
+             'CPDF_DeviceNCS::TranslateImageLine' \
+             ; do
+    if ! "$LLVM_NM" -C "$SO" 2>/dev/null \
+        | grep -F "$sym" >/dev/null; then
+      MISSING_OVERRIDES+=("$sym")
+    fi
+  done
+  if [ "${#MISSING_OVERRIDES[@]}" -gt 0 ]; then
+    echo "ERROR: shrink-mode --gc-sections dropped these ship-patch overrides:" >&2
+    printf '  %s\n' "${MISSING_OVERRIDES[@]}" >&2
+    echo "These are virtual-table entries; if they're gone the linker GC'd" >&2
+    echo "their entire subclass and PDFium will fall back to the slow base" >&2
+    echo "path. Add corresponding -Wl,--undefined entries to keep them alive." >&2
+    exit 1
+  fi
+  echo "OK: all 3 ship-patch overrides present."
+fi
 
 echo
 echo "=== Validate exported PDFium APIs ==="

@@ -155,13 +155,19 @@ jobs:
 
           pdf_enable_fontations = false
           pdf_enable_rust_png = false
+
+          # Ship-build size levers (promoted from size-experiment Variant C,
+          # measured at 6.6 MB -- equivalent to bblanchon/pdfium-binaries 6.4 MB).
+          # Pair with PDFIUM_AGG_SHRINK=1 below to enable --gc-sections at link.
+          pdf_use_partition_alloc = false
+          default_min_sdk_version = 23
           EOFARGS
 
           gn gen out/android_arm64_agg
 
           echo "=== Effective args ==="
           gn args out/android_arm64_agg --list --short \
-            | grep -E '^(target_os|target_cpu|pdf_enable_v8|pdf_enable_xfa|pdf_use_skia|pdf_use_agg|pdf_is_complete_lib|pdf_enable_fontations|pdf_enable_rust_png) ='
+            | grep -E '^(target_os|target_cpu|pdf_enable_v8|pdf_enable_xfa|pdf_use_skia|pdf_use_agg|pdf_is_complete_lib|pdf_use_partition_alloc|default_min_sdk_version|pdf_enable_fontations|pdf_enable_rust_png) ='
 
       - name: Build static PDFium AGG
         run: |
@@ -258,10 +264,17 @@ jobs:
           fi
           echo "OK no ATrace references"
 
-      - name: Link final AGG libpdfium.so
+      - name: Link final AGG libpdfium.so (shrink mode)
         run: |
           cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
-          bash "$GITHUB_WORKSPACE/repo/scripts/ci/link_pdfium_android_agg_so.sh"
+          # PDFIUM_AGG_SHRINK=1 opts into Variant C's link strategy:
+          # drop -Wl,--whole-archive on libpdfium.a, add -Wl,--gc-sections,
+          # and auto-build a -Wl,--undefined list from every FPDF/FORM/FSDK
+          # symbol defined by libpdfium.a so the JNI consumer keeps working.
+          # The link script's post-link survival check verifies 24 canary
+          # APIs across every header family and the 3 ship-patch overrides.
+          PDFIUM_AGG_SHRINK=1 \
+            bash "$GITHUB_WORKSPACE/repo/scripts/ci/link_pdfium_android_agg_so.sh"
 
       - name: Validate final libpdfium.so
         run: |
@@ -373,7 +386,7 @@ jobs:
 
           cat > "$GITHUB_WORKSPACE/artifacts/build-info.json" <<INFOEOF
           {
-            "variant": "android-arm64-agg-release",
+            "variant": "android-arm64-agg-release-shrink",
             "renderer": "agg",
             "v8": false,
             "xfa": false,
@@ -395,6 +408,11 @@ jobs:
             "diagnostic_markers": false,
             "atrace_dependency": false,
             "ship_safe": true,
+            "pdf_use_partition_alloc": false,
+            "default_min_sdk_version": 23,
+            "shrink_link_mode": true,
+            "expected_size_mb": 6.6,
+            "size_strategy": "drop --whole-archive, add --gc-sections, auto-discover --undefined from FPDF*/FORM_*/FSDK_* prefixes via llvm-nm. Roughly matches bblanchon/pdfium-binaries (6.4 MB).",
             "commit": "${GITHUB_SHA}",
             "version": "$VERSION"
           }

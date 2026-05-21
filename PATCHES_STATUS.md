@@ -1,6 +1,6 @@
 # xPDFSDK PDFium Patch Status
 
-**Last updated:** 2026-05-19
+**Last updated:** 2026-05-21
 
 ## TL;DR
 
@@ -16,6 +16,31 @@ This applies the three independent, self-contained patches under
 03 DeviceNCS fast). No diagnostic markers; no Android-specific
 ATrace dependency; smallest possible `.so`. This is what to vendor
 into the app for end users.
+
+**Release build size: ~6.6 MB** (down from a ~13.7 MB baseline).
+This is achieved by the shrink link strategy promoted from the
+size-experiment workflow's Variant C:
+
+  - `pdf_use_partition_alloc = false` in args.gn (drops Chromium's
+    allocator shim; PDFium uses the libc allocator).
+  - `default_min_sdk_version = 23` (avoids `__INTRODUCED_IN_<api>`
+    shim symbols, matching bblanchon/pdfium-binaries).
+  - At link time: drop `--whole-archive`, add `--gc-sections`, and
+    auto-build a `--undefined=<sym>` list from every `FPDF_*`,
+    `FORM_*`, `FSDK_*` symbol defined in `libpdfium.a` (via
+    `llvm-nm`). The linker then GC's only code unreachable from
+    that root set — bit-identical content, ~50% size reduction.
+
+This roughly matches bblanchon/pdfium-binaries (~6.4 MB) for the
+same configuration; the ~200 KB delta is PDFium revision drift and
+third-party version pins, not actionable from our side.
+
+**Per-PDFium-roll cost:** zero. The `--undefined` set is rebuilt
+from `llvm-nm` on every build, so newly added FPDF/FORM/FSDK APIs
+are automatically preserved. A 24-API survival check in the link
+script (and another in the post-link strip step) fails the build
+loudly if any canary API is GC'd. If that check ever fires, fix
+the root cause — do not add ad-hoc symbol exceptions.
 
 For a build with diagnostic trace markers (useful for future
 performance investigations, but slightly larger `.so`):
@@ -52,7 +77,8 @@ and the `libandroid.so` runtime dependency.
 
 | Workflow file | Trigger | Status |
 |---|---|---|
-| `release-pdfium-android-arm64-agg.yml` | `workflow_dispatch` | **CURRENT PRODUCTION RELEASE BUILD.** Applies only the 3 ship patches (`patches/ship/01..03`). Minimal `.so`, no diagnostic markers, no `libandroid.so` dependency. Audit step rejects the build if any `XPDF_ATRACE_SCOPED` leaks in. |
+| `release-pdfium-android-arm64-agg.yml` | `workflow_dispatch` | **CURRENT PRODUCTION RELEASE BUILD.** Applies only the 3 ship patches (`patches/ship/01..03`). Uses the Variant C shrink link config (`pdf_use_partition_alloc=false`, `default_min_sdk_version=23`, `--gc-sections` + auto-`--undefined` for `FPDF_*`/`FORM_*`/`FSDK_*`). Minimal `.so` (~6.6 MB), no diagnostic markers, no `libandroid.so` dependency. Audit step rejects the build if any `XPDF_ATRACE_SCOPED` leaks in; canary-API survival check rejects the build if `--gc-sections` ever drops a public entry point. |
+| `release-size-experiment.yml` | `workflow_dispatch` | Side-by-side size comparison (baseline / A / B / C). Variant C is the current ship config. Run this when a future PDFium roll or build refactor unexpectedly changes the size profile — it isolates which lever moved. |
 | `build-pdfium-android-arm64-agg-devicen-fast.yml` | `workflow_dispatch` | Diagnostic ship build. Applies 0003+0004+0005+0007+0008+0009, retains trace markers. Use for future perf investigations. |
 | `build-pdfium-android-arm64-agg-jpeg-downscale.yml` | `workflow_dispatch` | Minimal historical ship (0003 only). Kept for rollback. |
 | `build-pdfium-android-arm64-agg-jpeg-downscale-trace.yml` | `workflow_dispatch` | Diagnostic (0003+0004). |

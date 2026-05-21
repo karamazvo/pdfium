@@ -1,4 +1,4 @@
-name: Release Size Experiment (5 variants, side-by-side)
+name: Release Size Experiment (4 variants, side-by-side)
 
 # ===========================================================================
 # Measures the .so size impact of three independent size-shrink levers,
@@ -9,13 +9,16 @@ name: Release Size Experiment (5 variants, side-by-side)
 #   variant_a        -- baseline + `llvm-strip --strip-unneeded`
 #   variant_b        -- A + `pdf_use_partition_alloc = false` in args.gn
 #   variant_c        -- B + drop --whole-archive, add --gc-sections at link
+#                       (this is now the production ship config; ~6.6 MB,
+#                        roughly matches bblanchon/pdfium-binaries 6.4 MB)
 #
 # All four use the same patches/ship/01..03 and the same PDFium SHA, so
 # size differences are 100% attributable to the build/link levers.
 #
 # Output: 4 .so files + 4 sha256 hashes + a size-report.txt comparing
-# them. You pick the winner and promote it into release-pdfium-android-
-# arm64-agg.yml.
+# them. Variant C is the current shipping config; this workflow now
+# serves as a regression-tracking harness — if a future PDFium roll or
+# refactor changes the size profile, rerun it to see which lever moved.
 #
 # Manual trigger only.
 # ===========================================================================
@@ -504,121 +507,6 @@ jobs:
             exit 1
           fi
 
-      - name: Variant D -- B + optimize_for_size + aggressive symbol-keep strip
-        run: |
-          # Variant D explores the cheap, content-risk-free size levers
-          # on top of Variant B's working ~11 MB result:
-          #
-          #   1. `optimize_for_size = true` in args.gn -- compiler emits
-          #      -Oz style code (size-optimized, marginally slower).
-          #      bblanchon/pdfium-binaries uses this; expected -5-10%.
-          #   2. `llvm-strip --strip-all --keep-symbol='FPDF*' \
-          #      --keep-symbol='FORM_*' --keep-symbol='FSDK_*'` instead
-          #      of `--strip-unneeded`. Removes EVERY non-dynamic symbol
-          #      EXCEPT the JNI-imported FPDF/FORM/FSDK entry points.
-          #      Trade-off: PDFium-internal stack traces from production
-          #      crashes are just addresses. Acceptable for prod.
-          #
-          # No --whole-archive change, no --gc-sections. Less aggressive
-          # than C, but Variant C's auto-undefined list approach proved
-          # tricky; D is the safer "ship-candidate" build.
-          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
-          LLVM_STRIP="$(pwd)/third_party/llvm-build/Release+Asserts/bin/llvm-strip"
-          LLVM_NM="$(pwd)/third_party/llvm-build/Release+Asserts/bin/llvm-nm"
-
-          mkdir -p out/variant_d
-          cat > out/variant_d/args.gn <<'EOFARGS'
-          target_os = "android"
-          target_cpu = "arm64"
-
-          is_debug = false
-          is_component_build = false
-          symbol_level = 0
-          strip_debug_info = true
-          treat_warnings_as_errors = false
-
-          clang_use_chrome_plugins = false
-          use_remoteexec = false
-
-          pdf_enable_v8 = false
-          pdf_enable_xfa = false
-
-          pdf_use_skia = false
-          pdf_use_agg = true
-
-          pdf_is_complete_lib = true
-          pdf_is_standalone = false
-
-          pdf_enable_fontations = false
-          pdf_enable_rust_png = false
-
-          # Variant B lever (carried forward).
-          pdf_use_partition_alloc = false
-
-          # bblanchon-style API baseline (carried forward from B).
-          default_min_sdk_version = 23
-
-          # Variant D lever: size-optimized codegen.
-          optimize_for_size = true
-          EOFARGS
-          gn gen out/variant_d
-          ninja -C out/variant_d pdfium -j"$(nproc)"
-
-          PDFIUM_AGG_BUILD_DIR=out/variant_d \
-            bash "$GITHUB_WORKSPACE/repo/scripts/ci/link_pdfium_android_agg_so.sh"
-
-          mkdir -p "$GITHUB_WORKSPACE/artifacts/variant_d/arm64-v8a"
-          cp out/variant_d/libpdfium.so \
-             "$GITHUB_WORKSPACE/artifacts/variant_d/arm64-v8a/libpdfium.so"
-
-          # Pre-strip override survival check (same as variants A and B).
-          for sym in 'CPDF_IndexedCS::TranslateImageLine' \
-                     'CPDF_SeparationCS::TranslateImageLine' \
-                     'CPDF_DeviceNCS::TranslateImageLine' \
-                     ; do
-            if ! "$LLVM_NM" -C \
-                "$GITHUB_WORKSPACE/artifacts/variant_d/arm64-v8a/libpdfium.so" 2>/dev/null \
-                | grep -F "$sym" >/dev/null; then
-              echo "FATAL: variant_d pre-strip missing $sym" >&2
-              exit 1
-            fi
-          done
-
-          # Aggressive strip: drop every non-dynamic symbol except the
-          # JNI-imported FPDF/FORM/FSDK entry points. The wildcards
-          # match because --keep-symbol takes glob patterns.
-          "$LLVM_STRIP" --strip-all \
-            --keep-symbol='FPDF*' \
-            --keep-symbol='FORM_*' \
-            --keep-symbol='FSDK_*' \
-            "$GITHUB_WORKSPACE/artifacts/variant_d/arm64-v8a/libpdfium.so"
-
-          # Post-strip survival check: every JNI-imported public API
-          # must still resolve via the dynamic symbol table.
-          POST_STRIP_MISSING_D=()
-          for api in FPDF_InitLibrary FPDF_InitLibraryWithConfig \
-                     FPDF_LoadDocument FPDF_LoadMemDocument \
-                     FPDF_RenderPageBitmap FPDF_RenderPageBitmapWithMatrix \
-                     FPDF_GetPageCount FPDF_LoadPage FPDF_ClosePage \
-                     FPDF_CloseDocument FPDF_DestroyLibrary \
-                     FPDFText_LoadPage FPDFText_ClosePage \
-                     FPDFText_CountChars FPDFText_GetText \
-                     FORM_OnAfterLoadPage FORM_OnBeforeClosePage \
-                     ; do
-            if ! "$LLVM_NM" -D --defined-only -C \
-                "$GITHUB_WORKSPACE/artifacts/variant_d/arm64-v8a/libpdfium.so" 2>/dev/null \
-                | grep -E " T $api(\b|@)" >/dev/null; then
-              POST_STRIP_MISSING_D+=("$api")
-            fi
-          done
-          if [ "${#POST_STRIP_MISSING_D[@]}" -gt 0 ]; then
-            echo "ERROR: Variant D post-strip dropped public APIs:" >&2
-            printf '  %s\n' "${POST_STRIP_MISSING_D[@]}" >&2
-            echo "The --keep-symbol globs failed to preserve them." >&2
-            exit 1
-          fi
-          echo "Variant D: all 16 sampled JNI APIs survived strip."
-
       - name: Generate size report
         run: |
           cd "$GITHUB_WORKSPACE/artifacts"
@@ -634,7 +522,7 @@ jobs:
             echo ""
             printf "%-12s %15s   %s\n" "VARIANT" "BYTES" "DESCRIPTION"
             printf "%-12s %15s   %s\n" "--------" "-----" "-----------"
-            for v in baseline variant_a variant_b variant_c variant_d; do
+            for v in baseline variant_a variant_b variant_c; do
               SO="$v/arm64-v8a/libpdfium.so"
               if [ -f "$SO" ]; then
                 BYTES=$(stat -c %s "$SO")
@@ -643,8 +531,7 @@ jobs:
                   baseline)  DESC="current release: complete_lib + whole-archive, no strip" ;;
                   variant_a) DESC="baseline + llvm-strip --strip-unneeded" ;;
                   variant_b) DESC="A + pdf_use_partition_alloc=false" ;;
-                  variant_c) DESC="B + drop --whole-archive + --gc-sections" ;;
-                  variant_d) DESC="B + optimize_for_size=true + --strip-all --keep-symbol='FPDF*|FORM_*|FSDK_*'" ;;
+                  variant_c) DESC="B + drop --whole-archive + --gc-sections (ship config)" ;;
                 esac
                 printf "%-12s %15s   %s  [%s]\n" "$v" "$BYTES" "$HUMAN" "$DESC"
               else
@@ -655,7 +542,7 @@ jobs:
             echo "Deltas vs baseline:"
             if [ -f baseline/arm64-v8a/libpdfium.so ]; then
               B=$(stat -c %s baseline/arm64-v8a/libpdfium.so)
-              for v in variant_a variant_b variant_c variant_d; do
+              for v in variant_a variant_b variant_c; do
                 SO="$v/arm64-v8a/libpdfium.so"
                 if [ -f "$SO" ]; then
                   X=$(stat -c %s "$SO")
@@ -667,7 +554,7 @@ jobs:
             fi
             echo ""
             echo "SHA-256 of each .so:"
-            for v in baseline variant_a variant_b variant_c variant_d; do
+            for v in baseline variant_a variant_b variant_c; do
               SO="$v/arm64-v8a/libpdfium.so"
               if [ -f "$SO" ]; then
                 sha256sum "$SO"
@@ -676,7 +563,7 @@ jobs:
             echo ""
             echo "Public API spot-check (each variant should export FPDF_RenderPageBitmap):"
             LLVM_NM="$GITHUB_WORKSPACE/pdfium_build/pdfium/third_party/llvm-build/Release+Asserts/bin/llvm-nm"
-            for v in baseline variant_a variant_b variant_c variant_d; do
+            for v in baseline variant_a variant_b variant_c; do
               SO="$v/arm64-v8a/libpdfium.so"
               if [ -f "$SO" ]; then
                 if "$LLVM_NM" -D --defined-only -C "$SO" 2>/dev/null \
