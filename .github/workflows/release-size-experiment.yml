@@ -220,6 +220,15 @@ jobs:
           # System allocator (malloc/new) is used instead. Should be a
           # transparent change for code that simply allocates memory.
           pdf_use_partition_alloc = false
+
+          # Match bblanchon/pdfium-binaries: target Android API 23 as
+          # the baseline. The clang driver omits __INTRODUCED_IN_<api>
+          # availability shims for APIs already present at the baseline,
+          # shaving a small amount of code (~50-100 KB). Functionally
+          # equivalent to our link's `--target=aarch64-linux-android29`
+          # because the runtime device is API >= 29; this lever only
+          # affects what the compiler considers "the new stuff."
+          default_min_sdk_version = 23
           EOFARGS
           gn gen out/variant_b
           ninja -C out/variant_b pdfium -j"$(nproc)"
@@ -545,6 +554,9 @@ jobs:
 
           # Variant B lever (carried forward).
           pdf_use_partition_alloc = false
+
+          # bblanchon-style API baseline (carried forward from B).
+          default_min_sdk_version = 23
 
           # Variant D lever: size-optimized codegen.
           optimize_for_size = true
