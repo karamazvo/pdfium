@@ -1,0 +1,484 @@
+name: Release PDFium Android arm64 Veloce
+
+# ===========================================================================
+# Production RELEASE build.
+#
+# Applies the four SHIP patches from patches/ship/ and produces a final
+# libpdfium.so suitable for vendoring into the xPDFSDK Android app. Unlike
+# the various build-pdfium-android-arm64-agg-*.yml diagnostic workflows,
+# this one:
+#
+#   * Applies ONLY the production ship patches plus the Veloce internal-access
+#     export patch (no diagnostic markers, no
+#     debug toggles, no Android-specific ATrace dependency).
+#   * Builds the smallest, cleanest .so (no extra string literals, no
+#     libandroid.so NEEDED entry).
+#   * Verifies each ship patch by name + verifies their unique symbols
+#     made it into the static archive and the final shared object.
+#   * Emits a build-info.json that lists exactly which 4 patches landed
+#     and what each was for.
+#
+# Manual trigger only. Re-run when:
+#   * a ship patch changes
+#   * the PDFium fork tip moves
+#   * a new release of the Android app needs a fresh .so
+# ===========================================================================
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Optional tag/label for the artifact (e.g. v1.0.0-veloce). Defaults to date+sha.'
+        required: false
+        default: ''
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout workflow scripts
+        uses: actions/checkout@v4
+        with:
+          path: repo
+
+      - name: Install minimal host tools
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y git curl python3 ca-certificates unzip zip file binutils rsync
+
+      - name: Checkout depot_tools
+        run: |
+          git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git "$GITHUB_WORKSPACE/depot_tools"
+          echo "$GITHUB_WORKSPACE/depot_tools" >> "$GITHUB_PATH"
+
+      - name: Fetch PDFium fork with Android deps
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/pdfium_build"
+          cd "$GITHUB_WORKSPACE/pdfium_build"
+
+          cat > .gclient <<GCLEOF
+          solutions = [
+            {
+              "name": "pdfium",
+              "url": "https://github.com/${{ github.repository }}.git",
+              "managed": False,
+              "revision": "${{ github.sha }}",
+              "custom_deps": {},
+              "custom_vars": {
+                "checkout_android": True,
+                "checkout_configuration": "default",
+                "checkout_rust": False,
+              },
+            },
+          ]
+          target_os = ["android"]
+          GCLEOF
+
+          gclient sync --no-history
+
+      - name: Patch public PDFium API exports
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+          python3 "$GITHUB_WORKSPACE/repo/scripts/ci/patch_pdfium_public_exports.py"
+
+      - name: Apply ship patches (01, 02, 03, 04 -- order-independent)
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+
+          # These four patches are deliberately independent: each
+          # applies on its own to a clean PDFium HEAD, and applying
+          # them in any order produces the same result. We use the
+          # numeric order purely for readability.
+          mkdir -p patches/ship
+          for p in \
+              01-jpeg-downscale-on-decode.patch \
+              02-indexed-separation-fast.patch \
+              03-devicen-fast.patch \
+              04-veloce-internal-access.patch \
+              ; do
+            cp "$GITHUB_WORKSPACE/repo/patches/ship/$p" "patches/ship/$p"
+          done
+
+          for p in patches/ship/01-jpeg-downscale-on-decode.patch \
+                   patches/ship/02-indexed-separation-fast.patch \
+                   patches/ship/03-devicen-fast.patch \
+                   patches/ship/04-veloce-internal-access.patch \
+                   ; do
+            echo "=== Apply $p ==="
+            grep '^Subject:' "$p" || true
+            git apply --check "$p"
+            git apply "$p"
+          done
+
+          echo
+          echo "=== Combined diff stat ==="
+          git diff --stat
+
+          # Sanity: the experiments/ atrace markers MUST NOT have leaked
+          # into the ship build. If we see XPDF_ATRACE_SCOPED or
+          # ATrace_beginSection anywhere in the patched source tree, fail
+          # the build -- something pulled in a diagnostic patch.
+          echo
+          echo "=== Ensure no diagnostic ATrace markers leaked in ==="
+          if grep -RIE 'XPDF_ATRACE_SCOPED|ATrace_beginSection' \
+              core/ fpdfsdk/ 2>/dev/null; then
+            echo "ERROR: diagnostic ATrace markers present in ship build" >&2
+            exit 1
+          fi
+          echo "OK no diagnostic markers"
+
+      - name: Generate GN args for AGG no-V8 build
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+          mkdir -p out/android_arm64_agg
+
+          cat > out/android_arm64_agg/args.gn <<'EOFARGS'
+          target_os = "android"
+          target_cpu = "arm64"
+
+          is_debug = false
+          is_component_build = false
+          symbol_level = 0
+          strip_debug_info = true
+          treat_warnings_as_errors = false
+
+          clang_use_chrome_plugins = false
+          use_remoteexec = false
+
+          pdf_enable_v8 = false
+          pdf_enable_xfa = false
+
+          pdf_use_skia = false
+          pdf_use_agg = true
+
+          pdf_is_complete_lib = true
+          pdf_is_standalone = false
+
+          pdf_enable_fontations = false
+          pdf_enable_rust_png = false
+
+          # Ship-build size levers (promoted from size-experiment Variant C,
+          # measured at 6.6 MB -- equivalent to bblanchon/pdfium-binaries 6.4 MB).
+          # Pair with PDFIUM_AGG_SHRINK=1 below to enable --gc-sections at link.
+          pdf_use_partition_alloc = false
+          default_min_sdk_version = 23
+          EOFARGS
+
+          gn gen out/android_arm64_agg
+
+          echo "=== Effective args ==="
+          gn args out/android_arm64_agg --list --short \
+            | grep -E '^(target_os|target_cpu|pdf_enable_v8|pdf_enable_xfa|pdf_use_skia|pdf_use_agg|pdf_is_complete_lib|pdf_use_partition_alloc|default_min_sdk_version|pdf_enable_fontations|pdf_enable_rust_png) ='
+
+      - name: Build static PDFium AGG
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+          ninja -C out/android_arm64_agg pdfium -j"$(nproc)"
+
+      - name: Verify each ship patch compiled in
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+
+          LLVM_NM="$(pwd)/third_party/llvm-build/Release+Asserts/bin/llvm-nm"
+          PDFIUM_A=out/android_arm64_agg/obj/libpdfium.a
+
+          # Patch 01: JPEG downscale. The decoder factory signature
+          # changed -- look for the new `uint8_t` parameter in the
+          # mangled name. Easier: confirm the source has the new
+          # downscale logic.
+          echo "=== Patch 01: JPEG downscale ==="
+          grep -R 'resolution_levels_to_skip' \
+            core/fxcodec/jpeg/jpegmodule.cpp \
+            core/fpdfapi/page/cpdf_dib.cpp \
+            core/fpdfapi/page/cpdf_streamparser.cpp \
+            | head -5 || { echo "MISSING" >&2; exit 1; }
+          grep -R 'scale_denom' core/fxcodec/jpeg/jpegmodule.cpp | head -3 \
+            || { echo "MISSING scale_denom" >&2; exit 1; }
+          echo "OK"
+
+          # Patch 02: IndexedCS + SeparationCS fast TranslateImageLine.
+          #
+          # Verification strategy:
+          #  * the public override symbol must exist in the static
+          #    archive (catches "patch silently dropped"),
+          #  * the source must contain the BuildBgrLookupTableIfNeeded
+          #    helper definition (catches "patch reverted or partial").
+          # We do NOT require the helper as a separate ELF symbol --
+          # clang's LTO/inliner is allowed to fold it into the override
+          # and the standalone symbol disappears. That's correctness-
+          # neutral.
+          echo
+          echo "=== Patch 02: IndexedCS + SeparationCS fast ==="
+          for sym in 'CPDF_IndexedCS::TranslateImageLine' \
+                     'CPDF_SeparationCS::TranslateImageLine' \
+                     ; do
+            if "$LLVM_NM" -A -C "$PDFIUM_A" 2>/dev/null \
+                | grep -F "$sym" >/dev/null; then
+              echo "  OK $sym  (override symbol present)"
+            else
+              echo "  MISSING $sym" >&2
+              "$LLVM_NM" -A -C "$PDFIUM_A" 2>/dev/null | grep -E 'IndexedCS|SeparationCS' | head -10
+              exit 1
+            fi
+          done
+          # Source-side check: the helper definitions are in the
+          # patched .cpp files. If they're absent, the patch was not
+          # applied correctly.
+          if ! grep -q '::BuildBgrLookupTableIfNeeded() const' \
+              core/fpdfapi/page/cpdf_indexedcs.cpp; then
+            echo "  MISSING CPDF_IndexedCS::BuildBgrLookupTableIfNeeded definition in source" >&2
+            exit 1
+          fi
+          echo "  OK CPDF_IndexedCS::BuildBgrLookupTableIfNeeded  (defn in source)"
+          if ! grep -q 'CPDF_SeparationCS::BuildBgrLookupTableIfNeeded' \
+              core/fpdfapi/page/cpdf_colorspace.cpp; then
+            echo "  MISSING CPDF_SeparationCS::BuildBgrLookupTableIfNeeded definition in source" >&2
+            exit 1
+          fi
+          echo "  OK CPDF_SeparationCS::BuildBgrLookupTableIfNeeded  (defn in source)"
+
+          # Patch 03: DeviceNCS fast TranslateImageLine. Same strategy.
+          echo
+          echo "=== Patch 03: DeviceNCS fast ==="
+          if "$LLVM_NM" -A -C "$PDFIUM_A" 2>/dev/null \
+              | grep -F 'CPDF_DeviceNCS::TranslateImageLine' >/dev/null; then
+            echo "  OK CPDF_DeviceNCS::TranslateImageLine  (override symbol present)"
+          else
+            echo "  MISSING CPDF_DeviceNCS::TranslateImageLine" >&2
+            "$LLVM_NM" -A -C "$PDFIUM_A" 2>/dev/null | grep -E 'DeviceNCS' | head -10
+            exit 1
+          fi
+          if ! grep -q 'CPDF_DeviceNCS::BuildBgrLookupTableIfNeeded' \
+              core/fpdfapi/page/cpdf_colorspace.cpp; then
+            echo "  MISSING CPDF_DeviceNCS::BuildBgrLookupTableIfNeeded definition in source" >&2
+            exit 1
+          fi
+          echo "  OK CPDF_DeviceNCS::BuildBgrLookupTableIfNeeded  (defn in source)"
+
+          # Patch 04: Veloce internal-access exports.
+          #
+          # Verification strategy:
+          #  * every new FPDF_*Ex_* export must be present as a T symbol in
+          #    libpdfium.a, which also proves the auto --undefined discovery
+          #    can preserve it in the final shrink-linked .so;
+          #  * the source must contain the ABI sentinel definition, catching a
+          #    partial or reverted patch before link.
+          echo
+          echo "=== Patch 04: Veloce internal-access ==="
+          for sym in \
+              FPDFPageObjEx_GetBlendMode \
+              FPDFPageObjEx_GetFillAlpha \
+              FPDFPageObjEx_GetStrokeAlpha \
+              FPDFPageObjEx_HasSoftMask \
+              FPDFPageEx_GetObjectFast \
+              FPDFPageEx_GetAllObjects \
+              FPDFClipPathEx_GetAxisAlignedRect \
+              FPDFFormObjEx_HasTransparencyGroup \
+              FPDFFormObjEx_IsIsolatedGroup \
+              FPDFFormObjEx_GetContentPage \
+              FPDFEx_CheckAbiSentinels \
+              ; do
+            if "$LLVM_NM" -A "$PDFIUM_A" 2>/dev/null \
+                | grep -E " T $sym(\b|@)" >/dev/null; then
+              echo "  OK $sym  (T symbol present in libpdfium.a)"
+            else
+              echo "  MISSING $sym" >&2
+              "$LLVM_NM" -A "$PDFIUM_A" 2>/dev/null | grep -E "$sym" | head -3
+              exit 1
+            fi
+          done
+          if ! grep -q 'FPDFEx_CheckAbiSentinels' \
+              fpdfsdk/fpdf_editpage.cpp; then
+            echo "  MISSING FPDFEx_CheckAbiSentinels definition in source" >&2
+            exit 1
+          fi
+          echo "  OK FPDFEx_CheckAbiSentinels  (defn in source)"
+
+          # Sanity: ATrace MUST NOT be referenced. If it is, a
+          # diagnostic patch leaked into ship.
+          echo
+          echo "=== Confirm no ATrace references (ship build is clean) ==="
+          if "$LLVM_NM" -A "$PDFIUM_A" 2>/dev/null | grep -q 'ATrace_beginSection\|ATrace_endSection'; then
+            echo "ERROR: ATrace_* referenced in ship libpdfium.a -- diagnostic patch leaked" >&2
+            exit 1
+          fi
+          echo "OK no ATrace references"
+
+      - name: Link final AGG libpdfium.so (shrink mode)
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+          # PDFIUM_AGG_SHRINK=1 opts into Variant C's link strategy:
+          # drop -Wl,--whole-archive on libpdfium.a, add -Wl,--gc-sections,
+          # and auto-build a -Wl,--undefined list from every FPDF/FORM/FSDK
+          # symbol defined by libpdfium.a so the JNI consumer keeps working.
+          # The link script's post-link survival check verifies 24 canary
+          # APIs across every header family and the 3 ship-patch overrides.
+          PDFIUM_AGG_SHRINK=1 \
+            bash "$GITHUB_WORKSPACE/repo/scripts/ci/link_pdfium_android_agg_so.sh"
+
+      - name: Validate final libpdfium.so
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+
+          LLVM_NM="$(pwd)/third_party/llvm-build/Release+Asserts/bin/llvm-nm"
+          SO=out/android_arm64_agg/libpdfium.so
+
+          echo "=== No unresolved known-bad symbols ==="
+          if "$LLVM_NM" -D -C "$SO" 2>/dev/null \
+            | grep ' U ' \
+            | grep -E 'SkTypeface_proxy|SkFontMgr_New_Custom_Empty|SkFontMgr_Android_Parser|SkLanguage::getParent|__real_|std::get_new_handler|__cxa_guard_|_Unwind_'; then
+            echo "ERROR: unresolved known-bad symbols remain" >&2
+            exit 1
+          fi
+          echo "OK"
+
+          # Ship build SHOULD NOT depend on libandroid.so for ATrace.
+          # (The link script may still pass -landroid for other reasons,
+          # but no ATrace_* symbols should appear as undefined dynamic
+          # symbols in the final .so.)
+          echo
+          echo "=== Confirm no ATrace_* symbols in final .so ==="
+          if "$LLVM_NM" -D -C "$SO" 2>/dev/null | grep -E ' U ATrace_(beginSection|endSection)'; then
+            echo "WARNING: ATrace_* present in final .so -- a diagnostic patch leaked"
+            echo "        The link script passes -landroid unconditionally so this"
+            echo "        may still build, but the ship binary should not need it."
+          else
+            echo "OK no ATrace symbols (ship-clean)"
+          fi
+
+          echo
+          echo "=== Exported PDFium APIs (sample) ==="
+          "$LLVM_NM" -D --defined-only -C "$SO" 2>/dev/null \
+            | grep -E ' (FPDF_InitLibrary|FPDF_InitLibraryWithConfig|FPDF_LoadDocument|FPDF_RenderPageBitmap|FORM_DoDocumentAAction)' \
+            | head -10
+
+          echo
+          echo "=== Verify JNI-imported APIs survived link ==="
+          # If the link command ever drops --whole-archive or adds
+          # --gc-sections (as Variant C of the size-experiment did),
+          # internal PDFium APIs the JNI wrapper imports could be
+          # silently GC'd -- dlopen would then fail at runtime with
+          # "cannot locate symbol FPDFText_LoadPage" or similar.
+          # Check a representative sample here so the .so never ships
+          # with that regression.
+          MISSING_JNI_APIS=()
+          for api in \
+              FPDF_InitLibrary FPDF_LoadDocument FPDF_RenderPageBitmap \
+              FPDFText_LoadPage FPDFText_CountChars \
+              FPDFAnnot_GetSubtype FPDFAnnot_GetRect \
+              FPDFLink_LoadWebLinks FPDFLink_GetURL \
+              FPDFBookmark_GetFirstChild \
+              FPDFPage_GetRotation FPDFPageObj_GetType \
+              FPDF_GetMetaText FPDF_GetPageSizeByIndex \
+              FORM_OnLButtonDown FORM_DoDocumentOpenAction \
+              FPDFPageObjEx_GetBlendMode \
+              FPDFPageObjEx_GetFillAlpha \
+              FPDFPageObjEx_GetStrokeAlpha \
+              FPDFPageObjEx_HasSoftMask \
+              FPDFPageEx_GetObjectFast \
+              FPDFPageEx_GetAllObjects \
+              FPDFClipPathEx_GetAxisAlignedRect \
+              FPDFFormObjEx_HasTransparencyGroup \
+              FPDFFormObjEx_IsIsolatedGroup \
+              FPDFFormObjEx_GetContentPage \
+              FPDFEx_CheckAbiSentinels \
+              ; do
+            if ! "$LLVM_NM" -D --defined-only -C "$SO" 2>/dev/null \
+                | grep -E " T $api(\b|@)" >/dev/null; then
+              MISSING_JNI_APIS+=("$api")
+            fi
+          done
+          if [ "${#MISSING_JNI_APIS[@]}" -gt 0 ]; then
+            echo "ERROR: release .so missing JNI-imported APIs:" >&2
+            printf '  %s\n' "${MISSING_JNI_APIS[@]}" >&2
+            echo "dlopen() at runtime would fail with UnsatisfiedLinkError." >&2
+            exit 1
+          fi
+          echo "OK: all sampled JNI-imported APIs present"
+
+          echo
+          echo "=== Dynamic dependencies (NEEDED) ==="
+          readelf -d "$SO" | grep NEEDED || true
+
+          echo
+          echo "=== .so size ==="
+          ls -lh "$SO"
+          stat -c 'size=%s bytes' "$SO" 2>/dev/null || stat -f 'size=%z bytes' "$SO"
+
+      - name: Package artifact
+        run: |
+          cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
+
+          mkdir -p "$GITHUB_WORKSPACE/artifacts/arm64-v8a"
+
+          TAG_INPUT='${{ inputs.tag }}'
+          if [ -n "$TAG_INPUT" ]; then
+            VERSION="${TAG_INPUT}-${GITHUB_SHA::8}"
+          else
+            VERSION="$(date -u +%Y%m%d-%H%M%S)-${GITHUB_SHA::8}"
+          fi
+
+          cp out/android_arm64_agg/libpdfium.so "$GITHUB_WORKSPACE/artifacts/arm64-v8a/libpdfium.so"
+          sha256sum "$GITHUB_WORKSPACE/artifacts/arm64-v8a/libpdfium.so" \
+            > "$GITHUB_WORKSPACE/artifacts/SHA256SUMS.txt"
+
+          # Capture which 4 ship patches were applied; used by the
+          # consumer to verify provenance.
+          mkdir -p "$GITHUB_WORKSPACE/artifacts/patches"
+          for p in 01-jpeg-downscale-on-decode.patch \
+                   02-indexed-separation-fast.patch \
+                   03-devicen-fast.patch \
+                   04-veloce-internal-access.patch \
+                   ; do
+            cp "$GITHUB_WORKSPACE/repo/patches/ship/$p" \
+               "$GITHUB_WORKSPACE/artifacts/patches/$p"
+          done
+          cp "$GITHUB_WORKSPACE/repo/patches/ship/README.md" \
+             "$GITHUB_WORKSPACE/artifacts/patches/README.md"
+
+          cat > "$GITHUB_WORKSPACE/artifacts/build-info.json" <<INFOEOF
+          {
+            "variant": "android-arm64-agg-veloce-release-shrink",
+            "renderer": "agg",
+            "v8": false,
+            "xfa": false,
+            "skia": false,
+            "ship_patches": [
+              {
+                "file": "01-jpeg-downscale-on-decode.patch",
+                "summary": "Plumb resolution_levels_to_skip into JPEG decoder so embedded JPEGs decode at target render size via libjpeg scale_denom"
+              },
+              {
+                "file": "02-indexed-separation-fast.patch",
+                "summary": "Fast TranslateImageLine override for CPDF_IndexedCS and CPDF_SeparationCS via precomputed BGR table (bit-identical output)"
+              },
+              {
+                "file": "03-devicen-fast.patch",
+                "summary": "Fast TranslateImageLine override for CPDF_DeviceNCS N=1 and N=2 (bit-identical output)"
+              },
+              {
+                "file": "04-veloce-internal-access.patch",
+                "summary": "Veloce internal-access exports: 11 thin C wrappers around CPDF_PageObject internal accessors (blend/alpha/clip/form-group/page-object iteration) plus FPDFEx_CheckAbiSentinels for runtime ABI drift detection"
+              }
+            ],
+            "veloce_internal_access": true,
+            "diagnostic_markers": false,
+            "atrace_dependency": false,
+            "ship_safe": true,
+            "pdf_use_partition_alloc": false,
+            "default_min_sdk_version": 23,
+            "shrink_link_mode": true,
+            "expected_size_mb": 6.6,
+            "size_strategy": "drop --whole-archive, add --gc-sections, auto-discover --undefined from FPDF*/FORM_*/FSDK_* prefixes via llvm-nm. Roughly matches bblanchon/pdfium-binaries (6.4 MB).",
+            "commit": "${GITHUB_SHA}",
+            "version": "$VERSION"
+          }
+          INFOEOF
+
+      - name: Upload release libpdfium.so
+        uses: actions/upload-artifact@v4
+        with:
+          name: libpdfium-android-arm64-veloce-release
+          path: artifacts/

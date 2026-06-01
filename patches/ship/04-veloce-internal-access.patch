@@ -1,0 +1,418 @@
+From: xPDFSDK team <noreply@xpdfsdk.local>
+Date: 2026-06-01
+Subject: [PATCH ship-4/4] Veloce internal-access exports
+
+Background
+==========
+The Veloce rendering engine needs access to PDFium's per-object
+graphics state and Form-XObject transparency-group state. The public C API
+exposes only coarse transparency aggregation, which is too broad for strict
+VIR admission and too slow for parser-bypass experiments on dense pages.
+
+This patch
+==========
+Adds 11 FPDF_*Ex_* exports that thin-wrap existing internal accessors on
+CPDF_PageObject, CPDF_GeneralState, CPDF_ClipPath, CPDF_FormObject, and
+CPDF_PageObjectHolder. The wrappers return primitive C types or existing
+opaque FPDF handles and do not change PDFium rendering semantics.
+
+Safety
+======
+The Veloce shim calls FPDFEx_CheckAbiSentinels() at load. If the sentinel
+fails, Veloce disables internal-access and falls back to public-API
+extraction. The Form content-page handle is a tagged read-only handle that
+must only be used with FPDFPageEx_GetObjectFast() and
+FPDFPageEx_GetAllObjects(), never FPDF_ClosePage().
+
+What is NOT in this patch
+=========================
+* No PDFium rendering semantics change.
+* No new dependencies.
+* No changes to existing FPDF_* public API behavior.
+* No glyph cache / font cache exports.
+
+ABI risk
+========
+The exports depend on PDFium internal classes. If those internals drift on a
+future PDFium roll, the sentinel catches the default-state mismatch at load
+and callers can fall back before using the fast path.
+
+---
+diff --git a/fpdfsdk/fpdf_editpage.cpp b/fpdfsdk/fpdf_editpage.cpp
+index 0a0d11579..a70c054ba 100644
+--- a/fpdfsdk/fpdf_editpage.cpp
++++ b/fpdfsdk/fpdf_editpage.cpp
+@@ -7,12 +7,14 @@
+ #include "public/fpdf_edit.h"
+
+ #include <algorithm>
++#include <cstdint>
+ #include <memory>
+ #include <utility>
+ #include <vector>
+
+ #include "constants/page_object.h"
+ #include "core/fpdfapi/edit/cpdf_pagecontentgenerator.h"
++#include "core/fpdfapi/page/cpdf_clippath.h"
+ #include "core/fpdfapi/page/cpdf_colorspace.h"
+ #include "core/fpdfapi/page/cpdf_docpagedata.h"
+ #include "core/fpdfapi/page/cpdf_form.h"
+@@ -143,6 +145,34 @@ const CPDF_PageObjectHolder* CPDFPageObjHolderFromFPDFFormObject(
+   return pFormObject ? pFormObject->form() : nullptr;
+ }
+
++CPDF_PageObjectHolder* CPDFPageObjectHolderFromFPDFPageEx(FPDF_PAGE page) {
++  if (!page) {
++    return nullptr;
++  }
++
++  const std::uintptr_t raw = reinterpret_cast<std::uintptr_t>(page);
++  if (raw & 1u) {
++    CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(
++        reinterpret_cast<FPDF_PAGEOBJECT>(raw & ~std::uintptr_t{1}));
++    CPDF_FormObject* pFormObject = pPageObj ? pPageObj->AsForm() : nullptr;
++    return pFormObject ? pFormObject->form() : nullptr;
++  }
++
++  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
++  return IsPageObject(pPage) ? pPage : nullptr;
++}
++
++FPDF_PAGE FPDFPageExFromCPDFFormObject(CPDF_FormObject* form_object) {
++  if (!form_object || !form_object->form()) {
++    return nullptr;
++  }
++
++  const std::uintptr_t raw =
++      reinterpret_cast<std::uintptr_t>(FPDFPageObjectFromCPDFPageObject(
++          form_object));
++  return reinterpret_cast<FPDF_PAGE>(raw | std::uintptr_t{1});
++}
++
+ RetainPtr<const CPDF_Object> GetParamObject(void* out_value,
+                                             FPDF_PAGEOBJECTMARK mark,
+                                             FPDF_BYTESTRING key) {
+@@ -350,6 +380,47 @@ FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV FPDFPage_GetObject(FPDF_PAGE page,
+   return FPDFPageObjectFromCPDFPageObject(pPage->GetPageObjectByIndex(index));
+ }
+
++FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
++FPDFPageEx_GetObjectFast(FPDF_PAGE page,
++                         int index,
++                         FPDF_PAGEOBJECT* out_object) {
++  if (!out_object || index < 0) {
++    return false;
++  }
++  *out_object = nullptr;
++
++  CPDF_PageObjectHolder* holder = CPDFPageObjectHolderFromFPDFPageEx(page);
++  if (!holder || static_cast<size_t>(index) >= holder->GetPageObjectCount()) {
++    return false;
++  }
++
++  *out_object =
++      FPDFPageObjectFromCPDFPageObject(holder->GetPageObjectByIndex(index));
++  return !!*out_object;
++}
++
++FPDF_EXPORT int FPDF_CALLCONV FPDFPageEx_GetAllObjects(
++    FPDF_PAGE page,
++    FPDF_PAGEOBJECT* out_buf,
++    int capacity) {
++  if (!out_buf || capacity <= 0) {
++    return 0;
++  }
++
++  CPDF_PageObjectHolder* holder = CPDFPageObjectHolderFromFPDFPageEx(page);
++  if (!holder) {
++    return 0;
++  }
++
++  const size_t count =
++      std::min(holder->GetPageObjectCount(), static_cast<size_t>(capacity));
++  for (size_t i = 0; i < count; ++i) {
++    out_buf[i] =
++        FPDFPageObjectFromCPDFPageObject(holder->GetPageObjectByIndex(i));
++  }
++  return pdfium::checked_cast<int>(count);
++}
++
+ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_HasTransparency(FPDF_PAGE page) {
+   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+   return pPage && pPage->BackgroundAlphaNeeded();
+@@ -593,6 +664,79 @@ FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT page_object) {
+   return trans.IsGroup() || trans.IsIsolated();
+ }
+
++FPDF_EXPORT int FPDF_CALLCONV
++FPDFPageObjEx_GetBlendMode(FPDF_PAGEOBJECT page_object) {
++  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
++  if (!pPageObj) {
++    return -1;
++  }
++
++  return static_cast<int>(pPageObj->general_state().GetBlendType());
++}
++
++FPDF_EXPORT float FPDF_CALLCONV
++FPDFPageObjEx_GetFillAlpha(FPDF_PAGEOBJECT page_object) {
++  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
++  if (!pPageObj) {
++    return -1.0f;
++  }
++
++  return pPageObj->general_state().GetFillAlpha();
++}
++
++FPDF_EXPORT float FPDF_CALLCONV
++FPDFPageObjEx_GetStrokeAlpha(FPDF_PAGEOBJECT page_object) {
++  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
++  if (!pPageObj) {
++    return -1.0f;
++  }
++
++  return pPageObj->general_state().GetStrokeAlpha();
++}
++
++FPDF_EXPORT int FPDF_CALLCONV
++FPDFPageObjEx_HasSoftMask(FPDF_PAGEOBJECT page_object) {
++  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
++  if (!pPageObj) {
++    return -1;
++  }
++
++  return pPageObj->general_state().GetSoftMask() ? 1 : 0;
++}
++
++FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
++FPDFClipPathEx_GetAxisAlignedRect(FPDF_CLIPPATH clip_path,
++                                  float* out_left,
++                                  float* out_bottom,
++                                  float* out_right,
++                                  float* out_top) {
++  if (!out_left || !out_bottom || !out_right || !out_top) {
++    return false;
++  }
++
++  CPDF_ClipPath* pClipPath = CPDFClipPathFromFPDFClipPath(clip_path);
++  if (!pClipPath || !pClipPath->HasRef() || pClipPath->GetPathCount() != 1 ||
++      pClipPath->GetTextCount() != 0) {
++    return false;
++  }
++
++  CPDF_Path path = pClipPath->GetPath(0);
++  if (!path.IsRect()) {
++    return false;
++  }
++
++  CFX_FloatRect rect = path.GetBoundingBox();
++  if (rect.IsEmpty()) {
++    return false;
++  }
++
++  *out_left = rect.left;
++  *out_bottom = rect.bottom;
++  *out_right = rect.right;
++  *out_top = rect.top;
++  return true;
++}
++
+ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+ FPDFPageObjMark_SetIntParam(FPDF_DOCUMENT document,
+                             FPDF_PAGEOBJECT page_object,
+@@ -1178,6 +1322,32 @@ FPDFFormObj_GetObject(FPDF_PAGEOBJECT form_object, unsigned long index) {
+       pObjectList->GetPageObjectByIndex(index));
+ }
+
++FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
++FPDFFormObjEx_HasTransparencyGroup(FPDF_PAGEOBJECT form_object) {
++  CPDF_FormObject* pFormObject = CPDFFormObjectFromFPDFPageObject(form_object);
++  if (!pFormObject || !pFormObject->form()) {
++    return false;
++  }
++
++  return pFormObject->form()->GetTransparency().IsGroup();
++}
++
++FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
++FPDFFormObjEx_IsIsolatedGroup(FPDF_PAGEOBJECT form_object) {
++  CPDF_FormObject* pFormObject = CPDFFormObjectFromFPDFPageObject(form_object);
++  if (!pFormObject || !pFormObject->form()) {
++    return false;
++  }
++
++  return pFormObject->form()->GetTransparency().IsIsolated();
++}
++
++FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV
++FPDFFormObjEx_GetContentPage(FPDF_PAGEOBJECT form_object) {
++  return FPDFPageExFromCPDFFormObject(
++      CPDFFormObjectFromFPDFPageObject(form_object));
++}
++
+ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+ FPDFFormObj_RemoveObject(FPDF_PAGEOBJECT form_object,
+                          FPDF_PAGEOBJECT page_object) {
+@@ -1207,3 +1377,54 @@ FPDFFormObj_RemoveObject(FPDF_PAGEOBJECT form_object,
+   removed_object.release();
+   return true;
+ }
++
++FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFEx_CheckAbiSentinels(void) {
++  FPDF_DOCUMENT doc = FPDF_CreateNewDocument();
++  if (!doc) {
++    return false;
++  }
++
++  FPDF_PAGE page = FPDFPage_New(doc, 0, 100.0, 100.0);
++  if (!page) {
++    FPDF_CloseDocument(doc);
++    return false;
++  }
++
++  FPDF_PAGEOBJECT obj = FPDFPageObj_CreateNewPath(0.0f, 0.0f);
++  if (!obj) {
++    FPDF_ClosePage(page);
++    FPDF_CloseDocument(doc);
++    return false;
++  }
++
++  FPDFPage_InsertObject(page, obj);
++
++  FPDF_BOOL ok = true;
++  if (FPDFPageObjEx_GetBlendMode(obj) != 0) {
++    ok = false;
++  }
++  if (FPDFPageObjEx_GetFillAlpha(obj) != 1.0f) {
++    ok = false;
++  }
++  if (FPDFPageObjEx_GetStrokeAlpha(obj) != 1.0f) {
++    ok = false;
++  }
++  if (FPDFPageObjEx_HasSoftMask(obj) != 0) {
++    ok = false;
++  }
++
++  FPDF_PAGEOBJECT fast_obj = nullptr;
++  if (!FPDFPageEx_GetObjectFast(page, 0, &fast_obj) || fast_obj != obj) {
++    ok = false;
++  }
++
++  FPDF_PAGEOBJECT obj_buf[1] = {};
++  if (FPDFPageEx_GetAllObjects(page, obj_buf, 1) != 1 || obj_buf[0] != obj) {
++    ok = false;
++  }
++
++  FPDFPage_GenerateContent(page);
++  FPDF_ClosePage(page);
++  FPDF_CloseDocument(doc);
++  return ok;
++}
+diff --git a/public/fpdf_edit.h b/public/fpdf_edit.h
+index d723b81a5..e0c2d8299 100644
+--- a/public/fpdf_edit.h
++++ b/public/fpdf_edit.h
+@@ -242,6 +242,24 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_CountObjects(FPDF_PAGE page);
+ FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV FPDFPage_GetObject(FPDF_PAGE page,
+                                                              int index);
+
++// Veloce extension API.
++// Like FPDFPage_GetObject(), but writes the result into |out_object| and
++// returns TRUE on success. This also accepts virtual Form content-page handles
++// returned by FPDFFormObjEx_GetContentPage().
++FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
++FPDFPageEx_GetObjectFast(FPDF_PAGE page,
++                         int index,
++                         FPDF_PAGEOBJECT* out_object);
++
++// Veloce extension API.
++// Fills |out_buf| with up to |capacity| page-object handles in iteration order.
++// Returns the number of handles written. This also accepts virtual Form
++// content-page handles returned by FPDFFormObjEx_GetContentPage().
++FPDF_EXPORT int FPDF_CALLCONV FPDFPageEx_GetAllObjects(
++    FPDF_PAGE page,
++    FPDF_PAGEOBJECT* out_buf,
++    int capacity);
++
+ // Checks if |page| contains transparency.
+ //
+ //   page - handle to a page.
+@@ -276,6 +294,39 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPageObj_Destroy(FPDF_PAGEOBJECT page_object);
+ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+ FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT page_object);
+
++// Veloce extension API.
++// Returns the object's internal BlendMode enum value, or -1 if |page_object| is
++// null. Veloce treats 0 as Normal and any positive value as non-Normal.
++FPDF_EXPORT int FPDF_CALLCONV
++FPDFPageObjEx_GetBlendMode(FPDF_PAGEOBJECT page_object);
++
++// Veloce extension API.
++// Returns fill alpha in [0.0, 1.0], or -1.0 if |page_object| is null.
++FPDF_EXPORT float FPDF_CALLCONV
++FPDFPageObjEx_GetFillAlpha(FPDF_PAGEOBJECT page_object);
++
++// Veloce extension API.
++// Returns stroke alpha in [0.0, 1.0], or -1.0 if |page_object| is null.
++FPDF_EXPORT float FPDF_CALLCONV
++FPDFPageObjEx_GetStrokeAlpha(FPDF_PAGEOBJECT page_object);
++
++// Veloce extension API.
++// Returns 1 if the object's general state has a soft mask, 0 if not, or -1 if
++// |page_object| is null.
++FPDF_EXPORT int FPDF_CALLCONV
++FPDFPageObjEx_HasSoftMask(FPDF_PAGEOBJECT page_object);
++
++// Veloce extension API.
++// Returns TRUE if |clip_path| is exactly one axis-aligned rectangle and writes
++// its bounds in PDF user space. Returns FALSE for absent, complex, or text clip
++// paths, or when any out parameter is null.
++FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
++FPDFClipPathEx_GetAxisAlignedRect(FPDF_CLIPPATH clip_path,
++                                  float* out_left,
++                                  float* out_bottom,
++                                  float* out_right,
++                                  float* out_top);
++
+ // Get type of |page_object|.
+ //
+ //   page_object - handle to a page object.
+@@ -1700,6 +1751,25 @@ FPDFFormObj_CountObjects(FPDF_PAGEOBJECT form_object);
+ FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV
+ FPDFFormObj_GetObject(FPDF_PAGEOBJECT form_object, unsigned long index);
+
++// Veloce extension API.
++// Returns TRUE if |form_object| is a Form XObject whose Group dictionary has
++// /S /Transparency.
++FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
++FPDFFormObjEx_HasTransparencyGroup(FPDF_PAGEOBJECT form_object);
++
++// Veloce extension API.
++// Returns TRUE if |form_object| is an isolated Form transparency group.
++FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
++FPDFFormObjEx_IsIsolatedGroup(FPDF_PAGEOBJECT form_object);
++
++// Veloce extension API.
++// Returns a virtual read-only FPDF_PAGE handle for a Form XObject's parsed
++// content. The handle is only valid while |form_object| and its owning page are
++// alive. It must not be passed to FPDF_ClosePage(); use only with
++// FPDFPageEx_GetObjectFast() and FPDFPageEx_GetAllObjects().
++FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV
++FPDFFormObjEx_GetContentPage(FPDF_PAGEOBJECT form_object);
++
+ // Experimental API.
+ //
+ // Remove |page_object| from |form_object|.
+@@ -1715,6 +1785,12 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+ FPDFFormObj_RemoveObject(FPDF_PAGEOBJECT form_object,
+                          FPDF_PAGEOBJECT page_object);
+
++// Veloce extension API.
++// Returns TRUE if the Veloce internal-access ABI sentinel checks pass. Callers
++// should disable Veloce internal-access and fall back to public APIs if this
++// returns FALSE.
++FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFEx_CheckAbiSentinels(void);
++
+ #ifdef __cplusplus
+ }  // extern "C"
+ #endif  // __cplusplus
