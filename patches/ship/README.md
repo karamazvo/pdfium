@@ -1,22 +1,24 @@
 # Production PDFium patches (ship-quality)
 
-This directory contains the **four independent, self-contained patches**
-that ship in production builds. Unlike the `experiments/` directory,
+This directory contains the **five independent, self-contained patches**
+used by the Veloce PDFium build. Unlike the `experiments/` directory,
 these patches:
 
 - Are **complete and self-contained** — each applies to a clean PDFium
   HEAD without depending on the others.
 - Are **order-independent** — apply them in any sequence (1→2→3,
   3→2→1, etc.) and the result is identical.
-- Contain **no diagnostic / debug-only code** — no ATrace markers, no
-  Android-specific includes. Each is portable to any platform PDFium
-  supports.
+- Contain **no ATrace markers** and no Android-specific includes. Patches
+  01-04 are production-safe by default. Patch 05 is diagnostic/default-off:
+  it only changes rendering when `FPDFEx_SetSkipRasterization()` is
+  explicitly enabled by a measurement harness.
 - Are **bit-identical output** versus baseline PDFium where it matters
   (patches 02 and 03 are pure speedups; patch 01's libjpeg scale path
   produces visually-equivalent output via libjpeg's documented API; patch
-  04 adds exports only and does not change renderer behavior).
+  04 adds exports only and does not change renderer behavior; patch 05
+  preserves normal output while its toggle remains disabled).
 
-## The four patches
+## The five patches
 
 | # | File | Effect |
 |---|---|---|
@@ -24,6 +26,7 @@ these patches:
 | 02 | `02-indexed-separation-fast.patch` | Adds fast `TranslateImageLine` overrides for `CPDF_IndexedCS` and `CPDF_SeparationCS` via precomputed BGR lookup tables. Replaces per-pixel virtual `GetRGB()` dispatch + float math with a 1-byte-index → 3-byte memcpy. Bit-identical output. ~50-200× per-scanline speedup. |
 | 03 | `03-devicen-fast.patch` | Same fast-table pattern for `CPDF_DeviceNCS` (N=1 and N=2 component variants; N≥3 falls through to the existing slow path). Bit-identical output. ~50-200× per-scanline speedup. |
 | 04 | `04-veloce-internal-access.patch` | Adds Veloce internal-access exports for graphics-state proof, rectangular clip detection, Form transparency groups, fast object iteration, and ABI sentinels. No rendering semantics change. |
+| 05 | `05-veloce-skip-rasterization-probe.patch` | Adds the R12 diagnostic export `FPDFEx_SetSkipRasterization()`. When enabled, `FPDF_RenderPageBitmap()` walks page objects and cheap visibility rejection but skips `RenderSingleObject()`, producing a blank/unchanged bitmap for rasterizer-cost measurement. Default disabled. |
 
 ## Why this directory exists
 
@@ -41,6 +44,7 @@ git apply patches/ship/01-jpeg-downscale-on-decode.patch
 git apply patches/ship/02-indexed-separation-fast.patch
 git apply patches/ship/03-devicen-fast.patch
 git apply patches/ship/04-veloce-internal-access.patch
+git apply patches/ship/05-veloce-skip-rasterization-probe.patch
 ```
 
 (Any order works.)
@@ -57,6 +61,8 @@ On a representative image-heavy picture-book PDF, applying patches 01-03:
 Visual quality: bit-identical output for patches 02 and 03; libjpeg
 scale_denom path (patch 01) produces standard downsampled output per
 the documented libjpeg API. Patch 04 does not affect rendering output.
+Patch 05 does not affect rendering output unless its diagnostic toggle is
+explicitly enabled.
 
 ## Files changed by each patch
 
@@ -69,6 +75,11 @@ the documented libjpeg API. Patch 04 does not affect rendering output.
 - **03 DeviceNCS**: `core/fpdfapi/page/cpdf_colorspace.cpp` (DeviceNCS only).
 - **04 Veloce internal access**: `public/fpdf_edit.h`,
   `fpdfsdk/fpdf_editpage.cpp`.
+- **05 Veloce skip rasterization probe**:
+  `core/fpdfapi/render/cpdf_renderstatus.cpp`,
+  `core/fpdfapi/render/veloce_skip_rasterization.h`,
+  `fpdfsdk/fpdf_view.cpp`,
+  `public/fpdfview.h`.
 
 No two patches touch the same lines. Patches 02 and 03 both touch
 `cpdf_colorspace.cpp`, but in different sections (SeparationCS vs.
@@ -79,7 +90,10 @@ DeviceNCS), so they coexist cleanly.
 Patches 01-03 are independently suitable for upstream PRs to the PDFium
 project. Patch 04 is intentionally xPDFSDK/Veloce-specific because it
 exports internal PDFium state for a local rendering accelerator.
+Patch 05 is intentionally xPDFSDK/Veloce-specific and diagnostic-only.
 
 The patches in `experiments/` (0001–0009) are **NOT** upstreamable —
-they include Android-specific ATrace dependencies and diagnostic debug
-toggles. Production builds should use only this `ship/` directory.
+they include Android-specific ATrace dependencies and ad hoc diagnostic
+debug toggles. The Veloce workflow uses this `ship/` directory because
+patch 05 is a narrow, named, default-off probe with explicit artifact
+provenance and symbol verification.

@@ -1,0 +1,168 @@
+From: xPDFSDK team <noreply@xpdfsdk.local>
+Date: 2026-06-02
+Subject: [PATCH ship-5/5] Veloce skip-rasterization probe
+
+Background
+==========
+R11 measured error.pdf first paint at roughly 18 seconds total, with
+FPDF_LoadPage at roughly 260 ms and nearly all remaining time inside
+FPDF_RenderPageBitmap. The remaining question is whether that render
+time lives in PDFium's final per-object draw/raster path or in setup
+work before drawing.
+
+This patch
+==========
+Adds a process-wide diagnostic toggle:
+
+  FPDFEx_SetSkipRasterization(int enabled)
+
+When enabled, CPDF_RenderStatus::RenderObjectList still walks page
+objects and performs the cheap active-object / clip-rectangle rejection
+checks, but skips RenderSingleObject(). That bypasses ProcessClipPath,
+ProcessTransparency, ProcessObjectNoClip, ProcessPath/Image/Text/Form,
+and the device draw/composite calls below them.
+
+The output bitmap is intentionally blank or left with whatever pixels
+the caller initialized. This patch is diagnostic-only; the default state
+is disabled and normal PDFium rendering is unchanged.
+
+Expected interpretation
+=======================
+Measure three paths on the same page:
+
+  * FPDF_LoadPage alone
+  * FPDF_RenderPageBitmap with skip=1
+  * FPDF_RenderPageBitmap with skip=0
+
+If skip=1 is close to FPDF_LoadPage cost, then first-render cost is in
+the per-object render/raster path. If skip=1 is still multi-second,
+setup before RenderSingleObject is not the cost and the cut needs to go
+deeper.
+
+---
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 3fb69b636..2739e05c0 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -6,6 +6,7 @@
+ 
+ #include "core/fpdfapi/render/cpdf_renderstatus.h"
+ 
++#include <atomic>
+ #include <stdint.h>
+ 
+ #include <algorithm>
+@@ -48,6 +49,7 @@
+ #include "core/fpdfapi/render/cpdf_rendershading.h"
+ #include "core/fpdfapi/render/cpdf_rendertiling.h"
+ #include "core/fpdfapi/render/cpdf_textrenderer.h"
++#include "core/fpdfapi/render/veloce_skip_rasterization.h"
+ #include "core/fpdfapi/render/cpdf_type3cache.h"
+ #include "core/fxcrt/autorestorer.h"
+ #include "core/fxcrt/check.h"
+@@ -81,6 +83,7 @@ namespace {
+ 
+ constexpr int kRenderMaxRecursionDepth = 64;
+ int g_CurrentRecursionDepth = 0;
++std::atomic<bool> g_skip_rasterization{false};
+ 
+ CFX_FillRenderOptions GetFillOptionsForDrawPathWithBlend(
+     const CPDF_RenderOptions::Options& options,
+@@ -177,6 +180,14 @@ bool Type3CharMissingStrokeColor(const CPDF_Type3Char* pChar,
+ 
+ }  // namespace
+ 
++bool VeloceShouldSkipRasterizationForProbe() {
++  return g_skip_rasterization.load(std::memory_order_relaxed);
++}
++
++void VeloceSetSkipRasterizationForProbe(bool enabled) {
++  g_skip_rasterization.store(enabled, std::memory_order_relaxed);
++}
++
+ CPDF_RenderStatus::CPDF_RenderStatus(CPDF_RenderContext* context,
+                                      CFX_RenderDevice* pDevice)
+     : context_(context), device_(pDevice) {}
+@@ -230,6 +241,12 @@ void CPDF_RenderStatus::RenderObjectList(
+         pCurObj->GetRect().top < clip_rect.bottom) {
+       continue;
+     }
++    // R12 Veloce diagnostic: preserve the page-object walk and cheap
++    // visibility rejection above, then skip the expensive per-object render
++    // stack below RenderSingleObject().
++    if (VeloceShouldSkipRasterizationForProbe()) {
++      continue;
++    }
+     RenderSingleObject(pCurObj.get(), mtObj2Device);
+     if (stopped_) {
+       return;
+diff --git a/core/fpdfapi/render/veloce_skip_rasterization.h b/core/fpdfapi/render/veloce_skip_rasterization.h
+new file mode 100644
+index 000000000..5188f4260
+--- /dev/null
++++ b/core/fpdfapi/render/veloce_skip_rasterization.h
+@@ -0,0 +1,14 @@
++// Copyright 2026 The xPDFSDK Authors
++// Use of this source code is governed by the PDFium BSD-style license.
++
++#ifndef CORE_FPDFAPI_RENDER_VELOCE_SKIP_RASTERIZATION_H_
++#define CORE_FPDFAPI_RENDER_VELOCE_SKIP_RASTERIZATION_H_
++
++// R12 Veloce diagnostic toggle. When enabled, RenderObjectList walks page
++// objects but skips RenderSingleObject(), producing a blank/unchanged bitmap.
++// Default is false and normal PDFium rendering is unchanged.
++bool VeloceShouldSkipRasterizationForProbe();
++
++void VeloceSetSkipRasterizationForProbe(bool enabled);
++
++#endif  // CORE_FPDFAPI_RENDER_VELOCE_SKIP_RASTERIZATION_H_
+diff --git a/fpdfsdk/fpdf_view.cpp b/fpdfsdk/fpdf_view.cpp
+index 2b2f253a7..2af70a2c2 100644
+--- a/fpdfsdk/fpdf_view.cpp
++++ b/fpdfsdk/fpdf_view.cpp
+@@ -29,6 +29,7 @@
+ #include "core/fpdfapi/render/cpdf_pagerendercontext.h"
+ #include "core/fpdfapi/render/cpdf_rendercontext.h"
+ #include "core/fpdfapi/render/cpdf_renderoptions.h"
++#include "core/fpdfapi/render/veloce_skip_rasterization.h"
+ #include "core/fpdfdoc/cpdf_nametree.h"
+ #include "core/fpdfdoc/cpdf_viewerpreferences.h"
+ #include "core/fxcrt/cfx_fileaccess_stream.h"
+@@ -106,6 +107,11 @@ static_assert(static_cast<int>(CFX_GEModule::RendererType::kSkia) ==
+               FPDF_RENDERERTYPE_SKIA);
+ #endif  // defined(PDF_USE_SKIA)
+ 
++FPDF_EXPORT void FPDF_CALLCONV
++FPDFEx_SetSkipRasterization(int enabled) {
++  VeloceSetSkipRasterizationForProbe(enabled != 0);
++}
++
+ namespace {
+ 
+ bool g_bLibraryInitialized = false;
+diff --git a/public/fpdfview.h b/public/fpdfview.h
+index 4910eac66..0e2cc58c7 100644
+--- a/public/fpdfview.h
++++ b/public/fpdfview.h
+@@ -952,6 +952,21 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
+                                 const FS_RECTF* clipping,
+                                 int flags);
+ 
++// Veloce diagnostic API.
++// Function: FPDFEx_SetSkipRasterization
++//          Controls a process-wide diagnostic toggle that makes subsequent
++//          FPDF_RenderPageBitmap() / FPDF_RenderPageBitmapWithMatrix() calls
++//          walk page objects and perform cheap visibility rejection, but skip
++//          RenderSingleObject() for every object.
++// Parameters:
++//          enabled    -   Non-zero enables the diagnostic skip; zero restores
++//                         normal rendering.
++// Comments:
++//          This is a measurement-only API. When enabled, output bitmaps are
++//          blank/unchanged by design. Default is disabled.
++FPDF_EXPORT void FPDF_CALLCONV
++FPDFEx_SetSkipRasterization(int enabled);
++
+ #if defined(PDF_USE_SKIA)
+ // Experimental API.
+ // Function: FPDF_RenderPageSkia
