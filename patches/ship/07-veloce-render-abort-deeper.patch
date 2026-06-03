@@ -1,0 +1,218 @@
+From: xPDFSDK team <noreply@xpdfsdk.local>
+Date: 2026-06-03
+Subject: [PATCH ship-7/7] Veloce deeper render-abort checkpoints
+
+Background
+==========
+Patch 06 added `FPDFEx_SetRenderAbort()` and checked the abort flag at
+`CPDF_RenderStatus::RenderObjectList()` page-object boundaries. That is
+enough when a page contains many small top-level objects, but not when a
+single top-level object is a large Form XObject, transparency group, image,
+or text/path object. In that case PDFium can spend seconds inside
+`RenderSingleObject()` after xPDFSDK has already requested cancellation.
+
+This patch
+==========
+Adds abort checks inside the expensive per-object render path:
+
+  * before `RenderSingleObject()` starts object work,
+  * after visibility / clip / transparency phase boundaries,
+  * before and after `ProcessObjectNoClip()`,
+  * inside `ContinueSingleObject()` for progressive/image continuation,
+  * before Form XObject recursion and after the recursive object list,
+  * after transparency offscreen rendering and soft-mask rendering,
+  * after Type3 glyph Form rendering,
+  * after soft-mask Form rendering.
+
+The checks are phase-boundary checks, not per-pixel checks. They keep the
+patch low-risk and preserve PDFium's internal invariants while making
+cancellation observe more than just top-level page-object boundaries.
+
+Expected interpretation
+=======================
+Measure cancel-request to native-return time on error.pdf pages 2/3.
+If this patch drops cancellation latency from multi-second to near the
+watchdog budget, the slow path was Form/transparency recursion below
+`RenderSingleObject()`. If cancellation is still multi-second, the hot spot
+is inside one lower-level primitive such as image decode/composite, path
+stroking/fill, glyph rendering, or bitmap blending; patch 08 should add
+bounded checks in that specific primitive.
+
+---
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index d989eb38e..f0a7342c1 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -240,6 +240,10 @@ void CPDF_RenderStatus::RenderObjectList(
+ 
+ void CPDF_RenderStatus::RenderSingleObject(CPDF_PageObject* pObj,
+                                            const CFX_Matrix& mtObj2Device) {
++  if (VeloceShouldAbortRenderForProbe()) {
++    stopped_ = true;
++    return;
++  }
+   AutoRestorer<int> restorer(&g_CurrentRecursionDepth);
+   if (++g_CurrentRecursionDepth > kRenderMaxRecursionDepth) {
+     return;
+@@ -249,11 +253,26 @@ void CPDF_RenderStatus::RenderSingleObject(CPDF_PageObject* pObj,
+   if (!options_.CheckPageObjectVisible(pObj)) {
+     return;
+   }
++  if (VeloceShouldAbortRenderForProbe()) {
++    stopped_ = true;
++    return;
++  }
+   ProcessClipPath(pObj->clip_path(), mtObj2Device);
++  if (VeloceShouldAbortRenderForProbe()) {
++    stopped_ = true;
++    return;
++  }
+   if (ProcessTransparency(pObj, mtObj2Device)) {
+     return;
+   }
++  if (VeloceShouldAbortRenderForProbe()) {
++    stopped_ = true;
++    return;
++  }
+   ProcessObjectNoClip(pObj, mtObj2Device);
++  if (VeloceShouldAbortRenderForProbe()) {
++    stopped_ = true;
++  }
+ }
+ 
+ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
+@@ -262,6 +282,11 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
+                                              PauseIndicatorIface* pPause) {
+   if (image_renderer_) {
+     if (image_renderer_->Continue(pPause)) {
++      if (VeloceShouldAbortRenderForProbe()) {
++        stopped_ = true;
++        image_renderer_.reset();
++        return false;
++      }
+       return true;
+     }
+ 
+@@ -272,6 +296,10 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
+     return false;
+   }
+ 
++  if (VeloceShouldAbortRenderForProbe()) {
++    stopped_ = true;
++    return false;
++  }
+   cur_obj_ = pObj;
+   if (!options_.CheckPageObjectVisible(pObj)) {
+     return false;
+@@ -279,11 +307,18 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
+ 
+   ProcessClipPath(pObj->clip_path(), mtObj2Device);
+   if (ProcessTransparency(pObj, mtObj2Device)) {
+     return false;
+   }
+ 
++  if (VeloceShouldAbortRenderForProbe()) {
++    stopped_ = true;
++    return false;
++  }
+   if (!pObj->IsImage()) {
+     ProcessObjectNoClip(pObj, mtObj2Device);
++    if (VeloceShouldAbortRenderForProbe()) {
++      stopped_ = true;
++    }
+     return false;
+   }
+ 
+@@ -307,6 +343,10 @@ FX_RECT CPDF_RenderStatus::GetObjectClippedRect(
+ void CPDF_RenderStatus::ProcessObjectNoClip(CPDF_PageObject* pObj,
+                                             const CFX_Matrix& mtObj2Device) {
+   bool bRet = false;
++  if (VeloceShouldAbortRenderForProbe()) {
++    stopped_ = true;
++    return;
++  }
+   switch (pObj->GetType()) {
+     case CPDF_PageObject::Type::kText:
+       bRet = ProcessText(pObj->AsText(), mtObj2Device, nullptr);
+@@ -328,6 +368,10 @@ void CPDF_RenderStatus::ProcessObjectNoClip(CPDF_PageObject* pObj,
+       break;
+   }
+   if (!bRet) {
++    if (VeloceShouldAbortRenderForProbe()) {
++      stopped_ = true;
++      return;
++    }
+     DrawObjWithBackground(pObj, mtObj2Device);
+   }
+ }
+@@ -395,5 +439,9 @@ void CPDF_RenderStatus::DrawObjWithBackgroundToDevice(
+ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
+                                     const CFX_Matrix& mtObj2Device) {
++  if (VeloceShouldAbortRenderForProbe()) {
++    stopped_ = true;
++    return true;
++  }
+   RetainPtr<const CPDF_Dictionary> pOC =
+       pFormObj->form()->GetDict()->GetDictFor("OC");
+   if (pOC && !options_.CheckOCGDictVisible(pOC.Get())) {
+@@ -420,6 +468,9 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
+     status.RenderObjectList(pFormObj->form(), matrix);
+     stopped_ = status.stopped_;
+   }
++  if (VeloceShouldAbortRenderForProbe()) {
++    stopped_ = true;
++  }
+   return true;
+ }
+ 
+@@ -723,12 +774,20 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
+   bitmap_render.SetInGroup(transparency.IsGroup());
+   bitmap_render.Initialize(nullptr, nullptr);
+   bitmap_render.ProcessObjectNoClip(pPageObj, new_matrix);
+   stopped_ = bitmap_render.stopped_;
++  if (stopped_ || VeloceShouldAbortRenderForProbe()) {
++    stopped_ = true;
++    return true;
++  }
+   if (pSMaskDict) {
+     CFX_Matrix smask_matrix =
+         *pPageObj->general_state().GetSMaskMatrix() * mtObj2Device;
+     RetainPtr<CFX_DIBitmap> smask_bitmap =
+         LoadSMask(pSMaskDict.Get(), rect, smask_matrix);
++    if (VeloceShouldAbortRenderForProbe()) {
++      stopped_ = true;
++      return true;
++    }
+     if (smask_bitmap) {
+       bitmap_device.MultiplyAlphaMask(std::move(smask_bitmap));
+     }
+@@ -1010,6 +1069,9 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
+ 
+         CFX_RenderDevice::StateRestorer restorer(device_);
+         status.RenderObjectList(pForm, matrix);
++        if (status.stopped_ || VeloceShouldAbortRenderForProbe()) {
++          return true;
++        }
+       } else {
+         FX_RECT rect =
+             matrix.TransformRect(pForm->CalcBoundingBox()).GetOuterRect();
+@@ -1036,6 +1098,9 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
+         status.type3_font_cache_.emplace_back(pType3Font);
+         matrix.Translate(-rect.left, -rect.top);
+         status.RenderObjectList(pForm, matrix);
++        if (status.stopped_ || VeloceShouldAbortRenderForProbe()) {
++          return true;
++        }
+         device_->SetDIBits(bitmap_device.GetBitmap(), rect.left, rect.top);
+       }
+     } else if (pType3Char->GetBitmap()) {
+@@ -1480,6 +1545,9 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
+   status.SetDropObjects(drop_objects_);
+   status.Initialize(nullptr, nullptr);
+   status.RenderObjectList(&form, matrix);
++  if (status.stopped_ || VeloceShouldAbortRenderForProbe()) {
++    return nullptr;
++  }
+ 
+   auto result_mask = pdfium::MakeRetain<CFX_DIBitmap>();
+   if (!result_mask->Create(width, height, FXDIB_Format::k8bppMask)) {

@@ -3,14 +3,14 @@ name: Release PDFium Android arm64 Veloce
 # ===========================================================================
 # Production RELEASE build.
 #
-# Applies the six Veloce patches from patches/ship/ and produces a final
+# Applies the seven Veloce patches from patches/ship/ and produces a final
 # libpdfium.so suitable for vendoring into the xPDFSDK Android app. Unlike
 # the various build-pdfium-android-arm64-agg-*.yml diagnostic workflows,
 # this one:
 #
 #   * Applies ONLY the production ship patches, the Veloce internal-access
 #     export patch, the R12 skip-rasterization probe, and the R18/R19
-#     render-abort probe (no diagnostic markers, no Android-specific ATrace
+#     render-abort probes (no diagnostic markers, no Android-specific ATrace
 #     dependency). The R12/R18 toggles are default-off and only change
 #     rendering when explicitly enabled by the measurement harness / JNI
 #     cancellation bridge.
@@ -18,7 +18,7 @@ name: Release PDFium Android arm64 Veloce
 #     libandroid.so NEEDED entry).
 #   * Verifies each ship patch by name + verifies their unique symbols
 #     made it into the static archive and the final shared object.
-#   * Emits a build-info.json that lists exactly which 6 patches landed
+#   * Emits a build-info.json that lists exactly which 7 patches landed
 #     and what each was for.
 #
 # Manual trigger only. Re-run when:
@@ -86,13 +86,14 @@ jobs:
           cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
           python3 "$GITHUB_WORKSPACE/repo/scripts/ci/patch_pdfium_public_exports.py"
 
-      - name: Apply ship patches (01, 02, 03, 04, 05, 06)
+      - name: Apply ship patches (01, 02, 03, 04, 05, 06, 07)
         run: |
           cd "$GITHUB_WORKSPACE/pdfium_build/pdfium"
 
           # Patches 01-04 are independent. Patch 05 adds the default-off
-          # skip-rasterization probe, and patch 06 layers the render-abort
-          # probe on top of the same render/export surface. Keep numeric order.
+          # skip-rasterization probe. Patch 06 adds the render-abort export
+          # and top-level object-boundary checks. Patch 07 layers deeper
+          # render-abort checkpoints inside RenderSingleObject. Keep numeric order.
           mkdir -p patches/ship
           for p in \
               01-jpeg-downscale-on-decode.patch \
@@ -101,6 +102,7 @@ jobs:
               04-veloce-internal-access.patch \
               05-veloce-skip-rasterization-probe.patch \
               06-veloce-render-abort-probe.patch \
+              07-veloce-render-abort-deeper.patch \
               ; do
             cp "$GITHUB_WORKSPACE/repo/patches/ship/$p" "patches/ship/$p"
           done
@@ -111,6 +113,7 @@ jobs:
                    patches/ship/04-veloce-internal-access.patch \
                    patches/ship/05-veloce-skip-rasterization-probe.patch \
                    patches/ship/06-veloce-render-abort-probe.patch \
+                   patches/ship/07-veloce-render-abort-deeper.patch \
                    ; do
             echo "=== Apply $p ==="
             grep '^Subject:' "$p" || true
@@ -350,6 +353,27 @@ jobs:
           fi
           echo "  OK VeloceShouldAbortRenderForProbe  (defn in source)"
 
+          # Patch 07: deeper Veloce render-abort checkpoints.
+          #
+          # Verification strategy:
+          #  * the source must contain many more abort checks than patch 06
+          #    alone and the recursive-render stopped_ propagation pattern,
+          #    catching partial patch application before link.
+          echo
+          echo "=== Patch 07: Veloce deeper render-abort checkpoints ==="
+          ABORT_CHECK_COUNT="$(grep -c 'VeloceShouldAbortRenderForProbe' core/fpdfapi/render/cpdf_renderstatus.cpp || true)"
+          if [ "$ABORT_CHECK_COUNT" -lt 12 ]; then
+            echo "  MISSING deeper abort checkpoints in cpdf_renderstatus.cpp (count=$ABORT_CHECK_COUNT)" >&2
+            exit 1
+          fi
+          echo "  OK VeloceShouldAbortRenderForProbe checkpoint count=$ABORT_CHECK_COUNT"
+          if ! grep -q 'status.stopped_ || VeloceShouldAbortRenderForProbe()' \
+              core/fpdfapi/render/cpdf_renderstatus.cpp; then
+            echo "  MISSING recursive stopped_ propagation in cpdf_renderstatus.cpp" >&2
+            exit 1
+          fi
+          echo "  OK recursive stopped_ propagation  (defn in source)"
+
           # Sanity: ATrace MUST NOT be referenced. If it is, a
           # diagnostic patch leaked into ship.
           echo
@@ -480,7 +504,7 @@ jobs:
           sha256sum "$GITHUB_WORKSPACE/artifacts/arm64-v8a/libpdfium.so" \
             > "$GITHUB_WORKSPACE/artifacts/SHA256SUMS.txt"
 
-          # Capture which 6 Veloce patches were applied; used by the
+          # Capture which 7 Veloce patches were applied; used by the
           # consumer to verify provenance.
           mkdir -p "$GITHUB_WORKSPACE/artifacts/patches"
           for p in 01-jpeg-downscale-on-decode.patch \
@@ -489,6 +513,7 @@ jobs:
                    04-veloce-internal-access.patch \
                    05-veloce-skip-rasterization-probe.patch \
                    06-veloce-render-abort-probe.patch \
+                   07-veloce-render-abort-deeper.patch \
                    ; do
             cp "$GITHUB_WORKSPACE/repo/patches/ship/$p" \
                "$GITHUB_WORKSPACE/artifacts/patches/$p"
@@ -527,6 +552,10 @@ jobs:
               {
                 "file": "06-veloce-render-abort-probe.patch",
                 "summary": "Veloce diagnostic/cancellation toggle FPDFEx_SetRenderAbort. When enabled, CPDF_RenderStatus::RenderObjectList returns early at page-object boundaries so cancelled progressive renders can release xPDFSDK's single render lane."
+              },
+              {
+                "file": "07-veloce-render-abort-deeper.patch",
+                "summary": "Deeper Veloce render-abort checkpoints inside RenderSingleObject, progressive image continuation, Form XObject recursion, transparency rendering, Type3 Form rendering, and soft-mask rendering."
               }
             ],
             "veloce_internal_access": true,
