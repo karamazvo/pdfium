@@ -1,0 +1,167 @@
+From: xPDFSDK team <noreply@xpdfsdk.local>
+Date: 2026-06-03
+Subject: [PATCH ship-6/6] Veloce render-abort probe
+
+Background
+==========
+R12 proved that the pathological error.pdf pages spend almost all visible
+latency inside FPDF_RenderPageBitmap(), not FPDF_LoadPage() / page-size
+lookup. The Android wrapper already uses PDFium's progressive API when a
+PdfRenderCancellationSignal is supplied, but PDFium's public progressive
+pause callback is only observed at PDFium-defined pause checkpoints. A
+single expensive RenderSingleObject() path can still hold the render lane
+long enough that user-perceived content remains blocked.
+
+This patch
+==========
+Adds a process-wide diagnostic / cancellation toggle:
+
+  FPDFEx_SetRenderAbort(int enabled)
+
+When enabled, CPDF_RenderStatus::RenderObjectList returns early before
+starting the next page object, and again immediately after each object
+returns. This mirrors the R12 skip-rasterization cut point, but instead of
+skipping every draw unconditionally it acts as an out-of-band abort request
+that the Android JNI cancellation bridge can flip from another thread.
+
+Default state is disabled. Normal PDFium rendering is unchanged unless the
+embedder explicitly sets the flag.
+
+Expected interpretation
+=======================
+Measure three times for error.pdf pages 2/3:
+
+  * cancel requested time from Kotlin / watchdog
+  * FPDF_RenderPageBitmap_Start / Continue return time
+  * final render-task lane release time
+
+If this patch makes the lane release near the cancel request, the stale
+render was stuck between PDFium progressive pause checkpoints but still
+returns between page objects or recursive Form objects. If cancellation is
+still multi-second, the expensive work lives inside one object draw (image
+decode/composite, transparency group, glyph/path draw), and the next cut
+must move deeper than RenderObjectList.
+
+---
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 2739e05c0..d989eb38e 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -49,7 +49,8 @@
+ #include "core/fpdfapi/render/cpdf_rendershading.h"
+ #include "core/fpdfapi/render/cpdf_rendertiling.h"
+ #include "core/fpdfapi/render/cpdf_textrenderer.h"
+ #include "core/fpdfapi/render/veloce_skip_rasterization.h"
++#include "core/fpdfapi/render/veloce_render_abort.h"
+ #include "core/fpdfapi/render/cpdf_type3cache.h"
+ #include "core/fxcrt/autorestorer.h"
+ #include "core/fxcrt/check.h"
+@@ -222,6 +223,10 @@ void CPDF_RenderStatus::RenderObjectList(
+   CFX_FloatRect clip_rect = mtObj2Device.GetInverse().TransformRect(
+       CFX_FloatRect(device_->GetClipBox()));
+   for (const auto& pCurObj : *pObjectHolder) {
++    if (VeloceShouldAbortRenderForProbe()) {
++      stopped_ = true;
++      return;
++    }
+     if (pCurObj.get() == stop_obj_) {
+       stopped_ = true;
+       return;
+@@ -247,7 +251,11 @@ void CPDF_RenderStatus::RenderObjectList(
+     if (VeloceShouldSkipRasterizationForProbe()) {
+       continue;
+     }
+     RenderSingleObject(pCurObj.get(), mtObj2Device);
++    if (VeloceShouldAbortRenderForProbe()) {
++      stopped_ = true;
++      return;
++    }
+     if (stopped_) {
+       return;
+     }
+diff --git a/core/fpdfapi/render/veloce_render_abort.h b/core/fpdfapi/render/veloce_render_abort.h
+new file mode 100644
+index 000000000..e6b8dfc7e
+--- /dev/null
++++ b/core/fpdfapi/render/veloce_render_abort.h
+@@ -0,0 +1,26 @@
++// Copyright 2026 The xPDFSDK Authors
++// Use of this source code is governed by the PDFium BSD-style license.
++
++#ifndef CORE_FPDFAPI_RENDER_VELOCE_RENDER_ABORT_H_
++#define CORE_FPDFAPI_RENDER_VELOCE_RENDER_ABORT_H_
++
++#include <atomic>
++
++// R18/R19 Veloce diagnostic abort flag. When enabled, RenderObjectList
++// returns early at page-object boundaries. This is intentionally process-wide:
++// xPDFSDK uses a single PDFium render lane, and the flag is reset by the JNI
++// wrapper before and after each render call.
++inline std::atomic<bool>& VeloceRenderAbortFlagForProbe() {
++  static std::atomic<bool> flag{false};
++  return flag;
++}
++
++inline bool VeloceShouldAbortRenderForProbe() {
++  return VeloceRenderAbortFlagForProbe().load(std::memory_order_relaxed);
++}
++
++inline void VeloceSetRenderAbortForProbe(bool enabled) {
++  VeloceRenderAbortFlagForProbe().store(enabled, std::memory_order_relaxed);
++}
++
++#endif  // CORE_FPDFAPI_RENDER_VELOCE_RENDER_ABORT_H_
+diff --git a/fpdfsdk/fpdf_view.cpp b/fpdfsdk/fpdf_view.cpp
+index 2af70a2c2..63b9161f9 100644
+--- a/fpdfsdk/fpdf_view.cpp
++++ b/fpdfsdk/fpdf_view.cpp
+@@ -29,7 +29,8 @@
+ #include "core/fpdfapi/render/cpdf_pagerendercontext.h"
+ #include "core/fpdfapi/render/cpdf_rendercontext.h"
+ #include "core/fpdfapi/render/cpdf_renderoptions.h"
+ #include "core/fpdfapi/render/veloce_skip_rasterization.h"
++#include "core/fpdfapi/render/veloce_render_abort.h"
+ #include "core/fpdfdoc/cpdf_nametree.h"
+ #include "core/fpdfdoc/cpdf_viewerpreferences.h"
+ #include "core/fxcrt/cfx_fileaccess_stream.h"
+@@ -110,6 +110,11 @@ FPDF_EXPORT void FPDF_CALLCONV
+ FPDFEx_SetSkipRasterization(int enabled) {
+   VeloceSetSkipRasterizationForProbe(enabled != 0);
+ }
+ 
++FPDF_EXPORT void FPDF_CALLCONV
++FPDFEx_SetRenderAbort(int enabled) {
++  VeloceSetRenderAbortForProbe(enabled != 0);
++}
++
+ namespace {
+ 
+ bool g_bLibraryInitialized = false;
+diff --git a/public/fpdfview.h b/public/fpdfview.h
+index 0e2cc58c7..6fc51f66c 100644
+--- a/public/fpdfview.h
++++ b/public/fpdfview.h
+@@ -967,4 +967,21 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
+ FPDF_EXPORT void FPDF_CALLCONV
+ FPDFEx_SetSkipRasterization(int enabled);
+ 
++// Veloce diagnostic / cancellation API.
++// Function: FPDFEx_SetRenderAbort
++//          Controls a process-wide diagnostic abort flag checked by
++//          CPDF_RenderStatus::RenderObjectList while rendering subsequent
++//          FPDF_RenderPageBitmap() / FPDF_RenderPageBitmapWithMatrix() calls.
++// Parameters:
++//          enabled    -   Non-zero asks active/future renders to return early
++//                         at page-object boundaries; zero restores normal
++//                         rendering.
++// Comments:
++//          This is an embedder-owned cancellation bridge, not a replacement
++//          for PDFium's progressive API. xPDFSDK uses it together with
++//          FPDF_RenderPageBitmap_Start() / FPDF_RenderPage_Continue() so a
++//          stale render can release the single render lane promptly.
++FPDF_EXPORT void FPDF_CALLCONV
++FPDFEx_SetRenderAbort(int enabled);
++
+ #if defined(PDF_USE_SKIA)
+ // Experimental API.
+ // Function: FPDF_RenderPageSkia

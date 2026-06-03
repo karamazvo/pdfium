@@ -1,13 +1,14 @@
 # Production PDFium patches (ship-quality)
 
-This directory contains the **five independent, self-contained patches**
+This directory contains the **six self-contained patches**
 used by the Veloce PDFium build. Unlike the `experiments/` directory,
 these patches:
 
-- Are **complete and self-contained** — each applies to a clean PDFium
-  HEAD without depending on the others.
-- Are **order-independent** — apply them in any sequence (1→2→3,
-  3→2→1, etc.) and the result is identical.
+- Are **complete and audit-ready**. Patches 01-04 apply independently to a
+  clean PDFium HEAD. Patch 05 applies to clean PDFium HEAD. Patch 06 is
+  intentionally layered after patch 05 because it extends the same Veloce
+  render-loop/export surface.
+- Are applied in numeric order by the Veloce release workflow.
 - Contain **no ATrace markers** and no Android-specific includes. Patches
   01-04 are production-safe by default. Patch 05 is diagnostic/default-off:
   it only changes rendering when `FPDFEx_SetSkipRasterization()` is
@@ -17,8 +18,10 @@ these patches:
   produces visually-equivalent output via libjpeg's documented API; patch
   04 adds exports only and does not change renderer behavior; patch 05
   preserves normal output while its toggle remains disabled).
+  Patch 06 also preserves normal output while its abort flag remains
+  disabled.
 
-## The five patches
+## The six patches
 
 | # | File | Effect |
 |---|---|---|
@@ -27,6 +30,7 @@ these patches:
 | 03 | `03-devicen-fast.patch` | Same fast-table pattern for `CPDF_DeviceNCS` (N=1 and N=2 component variants; N≥3 falls through to the existing slow path). Bit-identical output. ~50-200× per-scanline speedup. |
 | 04 | `04-veloce-internal-access.patch` | Adds Veloce internal-access exports for graphics-state proof, rectangular clip detection, Form transparency groups, fast object iteration, and ABI sentinels. No rendering semantics change. |
 | 05 | `05-veloce-skip-rasterization-probe.patch` | Adds the R12 diagnostic export `FPDFEx_SetSkipRasterization()`. When enabled, `FPDF_RenderPageBitmap()` walks page objects and cheap visibility rejection but skips `RenderSingleObject()`, producing a blank/unchanged bitmap for rasterizer-cost measurement. Default disabled. |
+| 06 | `06-veloce-render-abort-probe.patch` | Adds the R18/R19 diagnostic export `FPDFEx_SetRenderAbort()`. When enabled, `CPDF_RenderStatus::RenderObjectList()` returns early at page-object boundaries so a cancelled progressive render can release xPDFSDK's single render lane. Default disabled. |
 
 ## Why this directory exists
 
@@ -45,9 +49,11 @@ git apply patches/ship/02-indexed-separation-fast.patch
 git apply patches/ship/03-devicen-fast.patch
 git apply patches/ship/04-veloce-internal-access.patch
 git apply patches/ship/05-veloce-skip-rasterization-probe.patch
+git apply patches/ship/06-veloce-render-abort-probe.patch
 ```
 
-(Any order works.)
+Patch 06 depends on patch 05 and must be applied after it. The release
+workflow applies the numeric order shown above.
 
 ## Cumulative effect (measured)
 
@@ -62,7 +68,8 @@ Visual quality: bit-identical output for patches 02 and 03; libjpeg
 scale_denom path (patch 01) produces standard downsampled output per
 the documented libjpeg API. Patch 04 does not affect rendering output.
 Patch 05 does not affect rendering output unless its diagnostic toggle is
-explicitly enabled.
+explicitly enabled. Patch 06 does not affect rendering output unless its
+abort flag is explicitly enabled.
 
 ## Files changed by each patch
 
@@ -80,17 +87,27 @@ explicitly enabled.
   `core/fpdfapi/render/veloce_skip_rasterization.h`,
   `fpdfsdk/fpdf_view.cpp`,
   `public/fpdfview.h`.
+- **06 Veloce render abort probe**:
+  `core/fpdfapi/render/cpdf_renderstatus.cpp`,
+  `core/fpdfapi/render/veloce_render_abort.h`,
+  `fpdfsdk/fpdf_view.cpp`,
+  `public/fpdfview.h`.
 
-No two patches touch the same lines. Patches 02 and 03 both touch
+Patches 02 and 03 both touch
 `cpdf_colorspace.cpp`, but in different sections (SeparationCS vs.
 DeviceNCS), so they coexist cleanly.
+Patches 05 and 06 both touch `cpdf_renderstatus.cpp`, `fpdf_view.cpp`,
+and `fpdfview.h`. Patch 06 is authored against the post-05 source: 05 skips
+rasterization for measurement; 06 aborts rendering only when the embedder
+sets its cancellation flag.
 
 ## Upstreaming
 
 Patches 01-03 are independently suitable for upstream PRs to the PDFium
 project. Patch 04 is intentionally xPDFSDK/Veloce-specific because it
 exports internal PDFium state for a local rendering accelerator.
-Patch 05 is intentionally xPDFSDK/Veloce-specific and diagnostic-only.
+Patches 05 and 06 are intentionally xPDFSDK/Veloce-specific and
+diagnostic-only.
 
 The patches in `experiments/` (0001–0009) are **NOT** upstreamable —
 they include Android-specific ATrace dependencies and ad hoc diagnostic

@@ -1,21 +1,26 @@
 # xPDFSDK PDFium Patch Status
 
-**Last updated:** 2026-05-21
+**Last updated:** 2026-06-03
 
 ## TL;DR
 
-To build the **production release** Android arm64 PDFium:
+To build the **Veloce release** Android arm64 PDFium used by the
+visible-first / VIR experiments:
 
-> Run workflow: **`Release PDFium Android arm64 AGG`**
+> Run workflow: **`Release PDFium Android arm64 Veloce`**
 >
-> File: `.github/workflows/release-pdfium-android-arm64-agg.yml`
-> Artifact: `libpdfium-android-arm64-agg-release`
+> File: `.github/workflows/release-pdfium-android-arm64-veloce.yml`
+> Artifact: `libpdfium-android-arm64-veloce-release`
 
-This applies the three independent, self-contained patches under
-`patches/ship/` (01 JPEG downscale, 02 IndexedCS+SeparationCS fast,
-03 DeviceNCS fast). No diagnostic markers; no Android-specific
-ATrace dependency; smallest possible `.so`. This is what to vendor
-into the app for end users.
+This applies the six ship patches under `patches/ship/`: the three
+production render-speed patches, the Veloce internal-access exports,
+the R12 skip-rasterization probe, and the R18/R19 render-abort probe.
+No diagnostic ATrace markers are included. The skip-rasterization and
+render-abort toggles are default-off, so normal PDFium rendering is
+unchanged unless xPDFSDK explicitly enables them.
+
+For a minimal end-user-only PDFium without Veloce internal access or
+diagnostic toggles, use `release-pdfium-android-arm64-agg.yml` instead.
 
 **Release build size: ~6.6 MB** (down from a ~13.7 MB baseline).
 This is achieved by the shrink link strategy promoted from the
@@ -70,6 +75,9 @@ and the `libandroid.so` runtime dependency.
 | 0007 | DIAGNOSTIC | `0007-colorspace-dispatch-markers.patch` | Colorspace-dispatch markers (`pdfium.IndexedCS::*`, `pdfium.ICCBasedCS::*`, etc.). Pinpointed `CPDF_ColorSpace::TranslateImageLine.baseSlow` as the hot path. Safe to ship. |
 | **0008** | **SHIP** | `0008-fast-indexed-separation-cs.patch` | Fast `CPDF_IndexedCS::TranslateImageLine` + `CPDF_SeparationCS::TranslateImageLine` overrides. Precomputed BGR lookup tables (max 768 bytes per CS). Bit-identical output. |
 | **0009** | **SHIP** | `0009-devicen-fast-and-prefixed-markers.patch` | Fast `CPDF_DeviceNCS::TranslateImageLine` override (table for N=1/N=2, fall through for N>=3). Plus `pdfium009.*` prefixed markers so traces verify which build is running. This was the patch that finally hit the dominant bottleneck on the test picture-book PDF: ~5000ms/page render -> ~135ms/page render. |
+| ship 04 | VELOCE SHIP | `patches/ship/04-veloce-internal-access.patch` | Thin C exports for page-object metadata needed by VIR admission and replay: blend/alpha/soft-mask/form-group/page-object iteration, plus ABI sentinels. |
+| ship 05 | VELOCE DIAGNOSTIC | `patches/ship/05-veloce-skip-rasterization-probe.patch` | Default-off `FPDFEx_SetSkipRasterization()` probe. Walks page objects but skips `RenderSingleObject()` to isolate rasterizer cost. |
+| ship 06 | VELOCE DIAGNOSTIC | `patches/ship/06-veloce-render-abort-probe.patch` | Default-off `FPDFEx_SetRenderAbort()` probe. Lets xPDFSDK ask PDFium to return early at `RenderObjectList()` page-object boundaries after a progressive render is cancelled. |
 
 ---
 
@@ -78,6 +86,7 @@ and the `libandroid.so` runtime dependency.
 | Workflow file | Trigger | Status |
 |---|---|---|
 | `release-pdfium-android-arm64-agg.yml` | `workflow_dispatch` | **CURRENT PRODUCTION RELEASE BUILD.** Applies only the 3 ship patches (`patches/ship/01..03`). Uses the Variant C shrink link config (`pdf_use_partition_alloc=false`, `default_min_sdk_version=23`, `--gc-sections` + auto-`--undefined` for `FPDF_*`/`FORM_*`/`FSDK_*`). Minimal `.so` (~6.6 MB), no diagnostic markers, no `libandroid.so` dependency. Audit step rejects the build if any `XPDF_ATRACE_SCOPED` leaks in; canary-API survival check rejects the build if `--gc-sections` ever drops a public entry point. |
+| `release-pdfium-android-arm64-veloce.yml` | `workflow_dispatch` | **CURRENT VELOCE RELEASE BUILD.** Applies ship patches `01..06`, including internal-access exports, skip-rasterization, and render-abort probes. Use this for VIR admission/replay work and cancellation experiments. |
 | `release-size-experiment.yml` | `workflow_dispatch` | Side-by-side size comparison (baseline / A / B / C). Variant C is the current ship config. Run this when a future PDFium roll or build refactor unexpectedly changes the size profile — it isolates which lever moved. |
 | `build-pdfium-android-arm64-agg-devicen-fast.yml` | `workflow_dispatch` | Diagnostic ship build. Applies 0003+0004+0005+0007+0008+0009, retains trace markers. Use for future perf investigations. |
 | `build-pdfium-android-arm64-agg-jpeg-downscale.yml` | `workflow_dispatch` | Minimal historical ship (0003 only). Kept for rollback. |
