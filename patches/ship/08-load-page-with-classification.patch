@@ -1,0 +1,238 @@
+From: xPDFSDK team <noreply@xpdfsdk.local>
+Date: 2026-06-06
+Subject: [PATCH ship-8/8] Veloce load-page classification export
+
+Background
+==========
+The xPDFSDK Android renderer can route a page to PDFium or to Veloce/Skia
+replay. Before this patch, routing for pathological CAD/vector pages was
+reactive: the first PDFium render had to be slow before the app knew to route
+that page elsewhere.
+
+This patch
+==========
+Adds:
+
+  FPDFEx_LoadPageWithClassification(FPDF_DOCUMENT, int,
+                                    FPDFEx_PageClassification*)
+
+The function returns the same kind of FPDF_PAGE handle as FPDF_LoadPage(), but
+also fills a fixed 64-byte classification struct with page-object counts,
+soft-mask/transparency-group flags, and the largest path segment count. It
+uses the parsed CPDF_PageObjectHolder already built by FPDF_LoadPage() and
+does not decode or parse page content a second time.
+
+Safety
+======
+FPDF_LoadPage() itself is unchanged. The classification struct is caller-owned,
+zeroed before population, and not cached on the page handle. Existing API and
+ABI surfaces are not modified except for appending a new public struct and
+symbol.
+
+---
+diff --git a/fpdfsdk/fpdf_view.cpp b/fpdfsdk/fpdf_view.cpp
+index 63b9161f9..91b46f9e6 100644
+--- a/fpdfsdk/fpdf_view.cpp
++++ b/fpdfsdk/fpdf_view.cpp
+@@ -7,6 +7,7 @@
+ #include "public/fpdfview.h"
+ 
+ #include <algorithm>
++#include <cstring>
+ #include <memory>
+ #include <utility>
+ #include <vector>
+@@ -16,9 +17,12 @@
+ #include "build/build_config.h"
+ #include "core/fpdfapi/page/cpdf_docpagedata.h"
++#include "core/fpdfapi/page/cpdf_form.h"
++#include "core/fpdfapi/page/cpdf_formobject.h"
+ #include "core/fpdfapi/page/cpdf_occontext.h"
+ #include "core/fpdfapi/page/cpdf_page.h"
+ #include "core/fpdfapi/page/cpdf_pageimagecache.h"
+ #include "core/fpdfapi/page/cpdf_pagemodule.h"
++#include "core/fpdfapi/page/cpdf_pathobject.h"
+ #include "core/fpdfapi/parser/cpdf_array.h"
+ #include "core/fpdfapi/parser/cpdf_dictionary.h"
+ #include "core/fpdfapi/parser/cpdf_document.h"
+@@ -107,6 +110,8 @@ static_assert(static_cast<int>(CFX_GEModule::RendererType::kSkia) ==
+               FPDF_RENDERERTYPE_SKIA);
+ #endif  // defined(PDF_USE_SKIA)
+ 
++static_assert(sizeof(FPDFEx_PageClassification) == 64);
++
+ FPDF_EXPORT void FPDF_CALLCONV
+ FPDFEx_SetSkipRasterization(int enabled) {
+   VeloceSetSkipRasterizationForProbe(enabled != 0);
+@@ -173,6 +178,61 @@ FPDF_DOCUMENT LoadDocumentImpl(RetainPtr<IFX_SeekableReadStream> pFileAccess,
+   return FPDFDocumentFromCPDFDocument(document.release());
+ }
+ 
++void PopulatePageClassification(const CPDF_Page& page,
++                                FPDFEx_PageClassification* out) {
++  std::memset(out, 0, sizeof(*out));
++
++  const CPDF_PageObjectHolder& holder = page;
++  if (holder.GetTransparency().IsGroup()) {
++    out->has_transparency_group = 1;
++  }
++
++  int max_path_segments = 0;
++  for (const auto& page_object : holder) {
++    if (!page_object) {
++      continue;
++    }
++
++    ++out->total_object_count;
++    switch (page_object->GetType()) {
++      case CPDF_PageObject::Type::kText:
++        ++out->text_object_count;
++        break;
++      case CPDF_PageObject::Type::kPath: {
++        ++out->path_object_count;
++        const CPDF_PathObject* path_object = page_object->AsPath();
++        if (path_object) {
++          const int segment_count =
++              static_cast<int>(path_object->path().GetPoints().size());
++          max_path_segments = std::max(max_path_segments, segment_count);
++        }
++        break;
++      }
++      case CPDF_PageObject::Type::kImage:
++        ++out->image_object_count;
++        break;
++      case CPDF_PageObject::Type::kShading:
++        ++out->shading_object_count;
++        break;
++      case CPDF_PageObject::Type::kForm: {
++        ++out->form_object_count;
++        const CPDF_FormObject* form_object = page_object->AsForm();
++        if (form_object && form_object->form() &&
++            form_object->form()->GetTransparency().IsGroup()) {
++          out->has_transparency_group = 1;
++        }
++        break;
++      }
++    }
++
++    if (page_object->general_state().GetSoftMask()) {
++      out->has_soft_mask = 1;
++    }
++  }
++
++  out->max_path_segment_count = max_path_segments;
++}
++
+ }  // namespace
+ 
+ FPDF_EXPORT void FPDF_CALLCONV FPDF_InitLibrary() {
+@@ -464,6 +524,24 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDF_LoadPage(FPDF_DOCUMENT document,
+   return FPDFPageFromIPDFPage(pPage.Leak());
+ }
+ 
++FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV
++FPDFEx_LoadPageWithClassification(
++    FPDF_DOCUMENT document,
++    int page_index,
++    FPDFEx_PageClassification* out_classification) {
++  if (!out_classification) {
++    return nullptr;
++  }
++
++  std::memset(out_classification, 0, sizeof(*out_classification));
++  FPDF_PAGE page = FPDF_LoadPage(document, page_index);
++  CPDF_Page* cpdf_page = CPDFPageFromFPDFPage(page);
++  if (cpdf_page) {
++    PopulatePageClassification(*cpdf_page, out_classification);
++  }
++  return page;
++}
++
+ FPDF_EXPORT float FPDF_CALLCONV FPDF_GetPageWidthF(FPDF_PAGE page) {
+   IPDF_Page* pPage = IPDFPageFromFPDFPage(page);
+   return pPage ? pPage->GetPageWidth() : 0.0f;
+diff --git a/public/fpdfview.h b/public/fpdfview.h
+index 6fc51f66c..3a81a1918 100644
+--- a/public/fpdfview.h
++++ b/public/fpdfview.h
+@@ -705,7 +705,49 @@ FPDF_EXPORT int FPDF_CALLCONV
+ // Return value:
+ //          Total number of pages in the document.
+ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageCount(FPDF_DOCUMENT document);
+ 
++// Veloce extension API.
++// ABI: stable. New fields may be appended; existing fields never change
++// offset or meaning. This struct must remain exactly 64 bytes.
++typedef struct FPDFEx_PageClassification_ {
++  // Total number of page objects in the page content stream.
++  int total_object_count;
++
++  // Count of CPDF_PageObject::Type::kPath objects.
++  int path_object_count;
++
++  // Count of CPDF_PageObject::Type::kImage objects.
++  int image_object_count;
++
++  // Count of CPDF_PageObject::Type::kText objects.
++  int text_object_count;
++
++  // Count of CPDF_PageObject::Type::kForm objects.
++  int form_object_count;
++
++  // Count of CPDF_PageObject::Type::kShading objects.
++  int shading_object_count;
++
++  // 0 or 1. 1 iff any page object has a soft mask.
++  int has_soft_mask;
++
++  // 0 or 1. 1 iff the page or any top-level Form XObject declares a
++  // transparency group.
++  int has_transparency_group;
++
++  // Largest point/segment count of any single path object on the page.
++  int max_path_segment_count;
++
++  // Reserved for future classification signals. Always zeroed.
++  int reserved_0;
++  int reserved_1;
++  int reserved_2;
++  int reserved_3;
++  int reserved_4;
++  int reserved_5;
++  int reserved_6;
++} FPDFEx_PageClassification;
++
+ // Function: FPDF_LoadPage
+ //          Load a page inside the document.
+ // Parameters:
+@@ -718,6 +760,30 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageCount(FPDF_DOCUMENT document);
+ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDF_LoadPage(FPDF_DOCUMENT document,
+                                                   int page_index);
+ 
++// Veloce extension API.
++// Function: FPDFEx_LoadPageWithClassification
++//          Load a page and write a classification summary for first-render
++//          backend routing.
++// Parameters:
++//          document    -   Handle to document. Returned by FPDF_LoadDocument.
++//          page_index  -   Index number of the page. 0 for the first page.
++//          out_classification
++//                      -   Non-null caller-owned output struct. The function
++//                          zeroes it before populating counts and flags.
++// Return value:
++//          A handle to the loaded page, or NULL if page load fails.
++// Comments:
++//          The returned page handle is semantically identical to a page
++//          returned by FPDF_LoadPage() and must be closed with
++//          FPDF_ClosePage(). Classification is produced from the
++//          CPDF_PageObjectHolder built during load; no classification data is
++//          cached on the page handle.
++FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV
++FPDFEx_LoadPageWithClassification(
++    FPDF_DOCUMENT document,
++    int page_index,
++    FPDFEx_PageClassification* out_classification);
++
+ // Experimental API
+ // Function: FPDF_GetPageWidthF
+ //          Get page width.

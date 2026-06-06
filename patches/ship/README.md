@@ -1,13 +1,14 @@
 # Production PDFium patches (ship-quality)
 
-This directory contains the **seven self-contained patches**
+This directory contains the **eight self-contained patches**
 used by the Veloce PDFium build. Unlike the `experiments/` directory,
 these patches:
 
 - Are **complete and audit-ready**. Patches 01-04 apply independently to a
   clean PDFium HEAD. Patch 05 applies to clean PDFium HEAD. Patches 06 and
   07 are intentionally layered after patch 05 because they extend the same
-  Veloce render-loop/export surface.
+  Veloce render-loop/export surface. Patch 08 is layered after the Veloce
+  fpdfview export patches and adds first-render page classification.
 - Are applied in numeric order by the Veloce release workflow.
 - Contain **no ATrace markers** and no Android-specific includes. Patches
   01-04 are production-safe by default. Patch 05 is diagnostic/default-off:
@@ -21,7 +22,7 @@ these patches:
   Patches 06 and 07 also preserve normal output while the abort flag remains
   disabled.
 
-## The seven patches
+## The eight patches
 
 | # | File | Effect |
 |---|---|---|
@@ -32,6 +33,7 @@ these patches:
 | 05 | `05-veloce-skip-rasterization-probe.patch` | Adds the R12 diagnostic export `FPDFEx_SetSkipRasterization()`. When enabled, `FPDF_RenderPageBitmap()` walks page objects and cheap visibility rejection but skips `RenderSingleObject()`, producing a blank/unchanged bitmap for rasterizer-cost measurement. Default disabled. |
 | 06 | `06-veloce-render-abort-probe.patch` | Adds the R18/R19 diagnostic export `FPDFEx_SetRenderAbort()`. When enabled, `CPDF_RenderStatus::RenderObjectList()` returns early at page-object boundaries so a cancelled progressive render can release xPDFSDK's single render lane. Default disabled. |
 | 07 | `07-veloce-render-abort-deeper.patch` | Adds deeper abort checkpoints inside `RenderSingleObject()`, progressive image continuation, Form XObject recursion, transparency rendering, Type3 Form rendering, and soft-mask rendering. Default disabled through patch 06's abort flag. |
+| 08 | `08-load-page-with-classification.patch` | Adds `FPDFEx_LoadPageWithClassification()` plus the fixed 64-byte `FPDFEx_PageClassification` ABI so xPDFSDK can route path-dense pages on the first render. No rendering semantics change. |
 
 ## Why this directory exists
 
@@ -52,11 +54,13 @@ git apply patches/ship/04-veloce-internal-access.patch
 git apply patches/ship/05-veloce-skip-rasterization-probe.patch
 git apply patches/ship/06-veloce-render-abort-probe.patch
 git apply patches/ship/07-veloce-render-abort-deeper.patch
+git apply patches/ship/08-load-page-with-classification.patch
 ```
 
 Patches 06 and 07 depend on patch 05 and must be applied after it.
-Patch 07 also depends on patch 06. The release workflow applies the
-numeric order shown above.
+Patch 07 also depends on patch 06. Patch 08 depends on the fpdfview export
+surface after patches 05 and 06. The release workflow applies the numeric
+order shown above.
 
 ## Cumulative effect (measured)
 
@@ -72,7 +76,9 @@ scale_denom path (patch 01) produces standard downsampled output per
 the documented libjpeg API. Patch 04 does not affect rendering output.
 Patch 05 does not affect rendering output unless its diagnostic toggle is
 explicitly enabled. Patches 06 and 07 do not affect rendering output unless
-the abort flag is explicitly enabled.
+the abort flag is explicitly enabled. Patch 08 does not alter
+`FPDF_LoadPage()` behavior; callers must opt in by resolving and calling the
+new `FPDFEx_LoadPageWithClassification()` symbol.
 
 ## Files changed by each patch
 
@@ -97,6 +103,8 @@ the abort flag is explicitly enabled.
   `public/fpdfview.h`.
 - **07 Veloce deeper render abort checkpoints**:
   `core/fpdfapi/render/cpdf_renderstatus.cpp`.
+- **08 Veloce load-page classification**:
+  `fpdfsdk/fpdf_view.cpp`, `public/fpdfview.h`.
 
 Patches 02 and 03 both touch
 `cpdf_colorspace.cpp`, but in different sections (SeparationCS vs.
@@ -106,6 +114,8 @@ against the post-05 source, and patch 07 is authored against the post-06
 source. Patch 05 skips rasterization for measurement; patch 06 exposes the
 abort flag and checks top-level object boundaries; patch 07 checks deeper
 phase boundaries inside `RenderSingleObject()`.
+Patch 08 touches `fpdf_view.cpp` and `fpdfview.h`; it is authored after the
+Veloce fpdfview exports from patches 05 and 06.
 
 ## Upstreaming
 
