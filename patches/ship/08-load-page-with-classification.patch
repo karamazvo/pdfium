@@ -19,22 +19,23 @@ Adds:
 The function returns the same kind of FPDF_PAGE handle as FPDF_LoadPage(), but
 also fills a fixed 64-byte classification struct with page-object counts,
 soft-mask/transparency-group flags, and the largest path segment count. It
-uses the parsed CPDF_PageObjectHolder already built by FPDF_LoadPage() and
-does not decode or parse page content a second time.
+uses the parsed CPDF_PageObjectHolder already built by the same private load
+implementation as FPDF_LoadPage() and does not decode or parse page content a
+second time.
 
 Safety
 ======
-FPDF_LoadPage() itself is unchanged. The classification struct is caller-owned,
-zeroed before population, and not cached on the page handle. Existing API and
-ABI surfaces are not modified except for appending a new public struct and
-symbol.
+FPDF_LoadPage() behavior is unchanged. The classification struct is
+caller-owned, zeroed before population, and not cached on the page handle.
+Existing API and ABI surfaces are not modified except for appending a new
+public struct and symbol.
 
 ---
 diff --git a/fpdfsdk/fpdf_view.cpp b/fpdfsdk/fpdf_view.cpp
-index 63b9161f9..91b46f9e6 100644
+index f35e1d48e..3063cc102 100644
 --- a/fpdfsdk/fpdf_view.cpp
 +++ b/fpdfsdk/fpdf_view.cpp
-@@ -7,6 +7,7 @@
+@@ -7,16 +7,20 @@
  #include "public/fpdfview.h"
  
  #include <algorithm>
@@ -42,7 +43,7 @@ index 63b9161f9..91b46f9e6 100644
  #include <memory>
  #include <utility>
  #include <vector>
-@@ -16,9 +17,12 @@
+ 
  #include "build/build_config.h"
  #include "core/fpdfapi/page/cpdf_docpagedata.h"
 +#include "core/fpdfapi/page/cpdf_form.h"
@@ -55,7 +56,7 @@ index 63b9161f9..91b46f9e6 100644
  #include "core/fpdfapi/parser/cpdf_array.h"
  #include "core/fpdfapi/parser/cpdf_dictionary.h"
  #include "core/fpdfapi/parser/cpdf_document.h"
-@@ -107,6 +110,8 @@ static_assert(static_cast<int>(CFX_GEModule::RendererType::kSkia) ==
+@@ -108,6 +112,8 @@ static_assert(static_cast<int>(CFX_GEModule::RendererType::kSkia) ==
                FPDF_RENDERERTYPE_SKIA);
  #endif  // defined(PDF_USE_SKIA)
  
@@ -64,10 +65,39 @@ index 63b9161f9..91b46f9e6 100644
  FPDF_EXPORT void FPDF_CALLCONV
  FPDFEx_SetSkipRasterization(int enabled) {
    VeloceSetSkipRasterizationForProbe(enabled != 0);
-@@ -173,6 +178,61 @@ FPDF_DOCUMENT LoadDocumentImpl(RetainPtr<IFX_SeekableReadStream> pFileAccess,
+@@ -198,6 +204,90 @@ FPDF_DOCUMENT LoadDocumentImpl(RetainPtr<IFX_SeekableReadStream> pFileAccess,
    return FPDFDocumentFromCPDFDocument(document.release());
  }
  
++FPDF_PAGE LoadPageImpl(FPDF_DOCUMENT document, int page_index) {
++  auto* doc = CPDFDocumentFromFPDFDocument(document);
++  if (!doc) {
++    return nullptr;
++  }
++
++  if (page_index < 0 || page_index >= FPDF_GetPageCount(document)) {
++    return nullptr;
++  }
++
++#ifdef PDF_ENABLE_XFA
++  auto* context = static_cast<CPDFXFA_Context*>(doc->GetExtension());
++  if (context) {
++    return FPDFPageFromIPDFPage(context->GetOrCreateXFAPage(page_index).Leak());
++  }
++#endif  // PDF_ENABLE_XFA
++
++  RetainPtr<CPDF_Dictionary> dict = doc->GetMutablePageDictionary(page_index);
++  if (!CPDF_Page::IsValidPageDictLoose(dict)) {
++    return nullptr;
++  }
++
++  auto pPage = pdfium::MakeRetain<CPDF_Page>(doc, std::move(dict));
++  pPage->AddPageImageCache();
++  pPage->ParseContent();
++
++  return FPDFPageFromIPDFPage(pPage.Leak());
++}
++
 +void PopulatePageClassification(const CPDF_Page& page,
 +                                FPDFEx_PageClassification* out) {
 +  std::memset(out, 0, sizeof(*out));
@@ -126,37 +156,58 @@ index 63b9161f9..91b46f9e6 100644
  }  // namespace
  
  FPDF_EXPORT void FPDF_CALLCONV FPDF_InitLibrary() {
-@@ -464,6 +524,24 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDF_LoadPage(FPDF_DOCUMENT document,
-   return FPDFPageFromIPDFPage(pPage.Leak());
- }
+@@ -454,32 +544,25 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageCount(FPDF_DOCUMENT document) {
  
+ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDF_LoadPage(FPDF_DOCUMENT document,
+                                                   int page_index) {
+-  auto* doc = CPDFDocumentFromFPDFDocument(document);
+-  if (!doc) {
+-    return nullptr;
+-  }
++  return LoadPageImpl(document, page_index);
++}
+ 
+-  if (page_index < 0 || page_index >= FPDF_GetPageCount(document)) {
 +FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV
 +FPDFEx_LoadPageWithClassification(
 +    FPDF_DOCUMENT document,
 +    int page_index,
 +    FPDFEx_PageClassification* out_classification) {
 +  if (!out_classification) {
-+    return nullptr;
-+  }
-+
+     return nullptr;
+   }
+ 
+-#ifdef PDF_ENABLE_XFA
+-  auto* context = static_cast<CPDFXFA_Context*>(doc->GetExtension());
+-  if (context) {
+-    return FPDFPageFromIPDFPage(context->GetOrCreateXFAPage(page_index).Leak());
+-  }
+-#endif  // PDF_ENABLE_XFA
+-
+-  RetainPtr<CPDF_Dictionary> dict = doc->GetMutablePageDictionary(page_index);
+-  if (!CPDF_Page::IsValidPageDictLoose(dict)) {
+-    return nullptr;
 +  std::memset(out_classification, 0, sizeof(*out_classification));
-+  FPDF_PAGE page = FPDF_LoadPage(document, page_index);
++  FPDF_PAGE page = LoadPageImpl(document, page_index);
 +  CPDF_Page* cpdf_page = CPDFPageFromFPDFPage(page);
 +  if (cpdf_page) {
 +    PopulatePageClassification(*cpdf_page, out_classification);
-+  }
+   }
+-
+-  auto pPage = pdfium::MakeRetain<CPDF_Page>(doc, std::move(dict));
+-  pPage->AddPageImageCache();
+-  pPage->ParseContent();
+-
+-  return FPDFPageFromIPDFPage(pPage.Leak());
 +  return page;
-+}
-+
+ }
+ 
  FPDF_EXPORT float FPDF_CALLCONV FPDF_GetPageWidthF(FPDF_PAGE page) {
-   IPDF_Page* pPage = IPDFPageFromFPDFPage(page);
-   return pPage ? pPage->GetPageWidth() : 0.0f;
 diff --git a/public/fpdfview.h b/public/fpdfview.h
-index 6fc51f66c..3a81a1918 100644
+index 4209c2fc2..ddf565295 100644
 --- a/public/fpdfview.h
 +++ b/public/fpdfview.h
-@@ -705,7 +705,49 @@ FPDF_EXPORT int FPDF_CALLCONV
- // Return value:
+@@ -702,6 +702,48 @@ FPDF_GetSecurityHandlerRevision(FPDF_DOCUMENT document);
  //          Total number of pages in the document.
  FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageCount(FPDF_DOCUMENT document);
  
@@ -205,7 +256,7 @@ index 6fc51f66c..3a81a1918 100644
  // Function: FPDF_LoadPage
  //          Load a page inside the document.
  // Parameters:
-@@ -718,6 +760,30 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageCount(FPDF_DOCUMENT document);
+@@ -715,6 +757,30 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageCount(FPDF_DOCUMENT document);
  FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDF_LoadPage(FPDF_DOCUMENT document,
                                                    int page_index);
  
