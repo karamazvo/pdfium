@@ -38,7 +38,7 @@ these patches:
 ## Why this directory exists
 
 During development the patches went through many iterations under
-`patches/experiments/` (numbered 0001..0009). Many of those were
+`patches/experiments/` (numbered 0001..0010). Many of those were
 diagnostic-only (trace markers, ICC bypass, etc.) and depend on each
 other. The `ship/` directory is the **clean, audit-ready, upstreamable**
 subset.
