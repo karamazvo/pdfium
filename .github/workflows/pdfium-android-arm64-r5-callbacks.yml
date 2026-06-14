@@ -29,7 +29,7 @@ jobs:
       DIST_DIR: ${{ github.workspace }}/artifacts/libpdfium-android-arm64-r5
 
     steps:
-      - name: Checkout xPDFSDK
+      - name: Checkout PDFium patch repo
         uses: actions/checkout@v4
 
       - name: Install host packages
@@ -59,8 +59,6 @@ jobs:
       - name: Checkout PDFium
         run: |
           export PATH="$WORK_ROOT/depot_tools:$PATH"
-          export DEPOT_TOOLS_UPDATE=0
-          export VPYTHON_BYPASS="manually managed python"
 
           mkdir -p "$WORK_ROOT/checkout"
           cd "$WORK_ROOT/checkout"
@@ -87,23 +85,18 @@ jobs:
       - name: Install PDFium build dependencies
         run: |
           export PATH="$WORK_ROOT/depot_tools:$PATH"
-          export DEPOT_TOOLS_UPDATE=0
-          export VPYTHON_BYPASS="manually managed python"
           cd "$WORK_ROOT/checkout/pdfium"
           build/install-build-deps.sh --android --no-prompt --unsupported
 
       - name: Run gclient hooks
         run: |
           export PATH="$WORK_ROOT/depot_tools:$PATH"
-          export DEPOT_TOOLS_UPDATE=0
-          export VPYTHON_BYPASS="manually managed python"
           cd "$WORK_ROOT/checkout"
           gclient runhooks
 
       - name: Generate GN files
         run: |
           export PATH="$WORK_ROOT/depot_tools:$PATH"
-          export DEPOT_TOOLS_UPDATE=0
           PDFIUM_DIR="$WORK_ROOT/checkout/pdfium"
           cd "$PDFIUM_DIR"
           gn gen "$OUT_DIR" --args='
@@ -126,7 +119,6 @@ jobs:
       - name: Build static PDFium
         run: |
           export PATH="$WORK_ROOT/depot_tools:$PATH"
-          export DEPOT_TOOLS_UPDATE=0
           cd "$WORK_ROOT/checkout/pdfium"
           autoninja -C "$OUT_DIR" pdfium
 
