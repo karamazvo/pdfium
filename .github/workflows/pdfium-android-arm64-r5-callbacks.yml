@@ -2,11 +2,6 @@ name: Build patched PDFium Android arm64 r5 callbacks
 
 on:
   workflow_dispatch:
-    inputs:
-      android_api_level:
-        description: Android API level used for the shared-library link
-        required: true
-        default: "24"
 
 permissions:
   contents: read
@@ -19,8 +14,7 @@ jobs:
 
     env:
       WORK_ROOT: /tmp/pdfium-r5
-      ANDROID_API_LEVEL: ${{ inputs.android_api_level }}
-      OUT_DIR: out/android-arm64-skia-r5
+      OUT_DIR: out/android_arm64_agg
       DIST_DIR: ${{ github.workspace }}/artifacts/libpdfium-android-arm64-r5
 
     steps:
@@ -80,15 +74,27 @@ jobs:
 
           gclient sync --no-history --nohooks
 
+      - name: Patch public PDFium API exports
+        run: |
+          cd "$WORK_ROOT/pdfium_build/pdfium"
+          python3 "$GITHUB_WORKSPACE/repo/scripts/ci/patch_pdfium_public_exports.py"
+
       - name: Apply xPDFSDK PDFium patches
         run: |
           PDFIUM_DIR="$WORK_ROOT/pdfium_build/pdfium"
           for patch in "$GITHUB_WORKSPACE"/repo/patches/ship/0[1-9]-*.patch; do
             echo "Applying ${patch#$GITHUB_WORKSPACE/repo/}"
-            git -C "$PDFIUM_DIR" apply --3way "$patch"
+            git -C "$PDFIUM_DIR" apply --check "$patch"
+            git -C "$PDFIUM_DIR" apply "$patch"
           done
-          git -C "$PDFIUM_DIR" diff --cached --check
-          git -C "$PDFIUM_DIR" diff --cached --stat
+          git -C "$PDFIUM_DIR" diff --check
+          git -C "$PDFIUM_DIR" diff --stat
+
+          if grep -RIE 'XPDF_ATRACE_SCOPED|ATrace_beginSection' \
+              "$PDFIUM_DIR/core/" "$PDFIUM_DIR/fpdfsdk/" 2>/dev/null; then
+            echo "ERROR: diagnostic ATrace markers present in r5 callback build" >&2
+            exit 1
+          fi
 
       - name: Install PDFium build dependencies
         run: |
@@ -111,18 +117,26 @@ jobs:
             target_os = "android"
             target_cpu = "arm64"
             is_debug = false
-            is_official_build = true
             is_component_build = false
+            strip_debug_info = true
             use_remoteexec = false
             symbol_level = 0
             treat_warnings_as_errors = false
+            clang_use_chrome_plugins = false
             android_static_analysis = "off"
-            pdf_is_standalone = true
+            pdf_is_standalone = false
             pdf_is_complete_lib = true
-            pdf_use_skia = true
+            pdf_use_skia = false
+            pdf_use_agg = true
             pdf_enable_v8 = false
             pdf_enable_xfa = false
+            pdf_enable_fontations = false
+            pdf_enable_rust_png = false
+            pdf_use_partition_alloc = false
+            default_min_sdk_version = 23
           '
+          gn args "$OUT_DIR" --list --short \
+            | grep -E '^(target_os|target_cpu|pdf_enable_v8|pdf_enable_xfa|pdf_use_skia|pdf_use_agg|pdf_is_complete_lib|pdf_use_partition_alloc|default_min_sdk_version|pdf_enable_fontations|pdf_enable_rust_png) ='
 
       - name: Build static PDFium
         run: |
@@ -130,63 +144,74 @@ jobs:
           cd "$WORK_ROOT/pdfium_build/pdfium"
           autoninja -C "$OUT_DIR" pdfium
 
+      - name: Verify r5 callback patch compiled in
+        run: |
+          cd "$WORK_ROOT/pdfium_build/pdfium"
+
+          LLVM_NM="$(pwd)/third_party/llvm-build/Release+Asserts/bin/llvm-nm"
+          PDFIUM_A="$OUT_DIR/obj/libpdfium.a"
+
+          for api in FPDFEx_SetRenderAbort FPDFEx_SetRenderCallbacks; do
+            if ! "$LLVM_NM" -A "$PDFIUM_A" 2>/dev/null \
+                | grep -E " T $api(\b|@)" >/dev/null; then
+              echo "MISSING $api in libpdfium.a" >&2
+              "$LLVM_NM" -A "$PDFIUM_A" 2>/dev/null | grep -E 'FPDFEx_SetRender|RenderCallbacks|RenderAbort' | head -20
+              exit 1
+            fi
+            echo "OK $api"
+          done
+
+          grep -q 'ShouldCancelRender' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'VeloceGetRenderCallbacks' core/fpdfapi/render/cpdf_renderstatus.cpp
+
       - name: Link Android shared library
         run: |
-          PDFIUM_DIR="$WORK_ROOT/pdfium_build/pdfium"
-          cd "$PDFIUM_DIR"
-          STATIC_LIB="$(find "$OUT_DIR" -type f -name 'libpdfium.a' -print | head -n1)"
-          if [[ -z "$STATIC_LIB" ]]; then
-            echo "libpdfium.a was not produced" >&2
-            exit 1
-          fi
+          export PATH="$WORK_ROOT/depot_tools:$PATH"
+          cd "$WORK_ROOT/pdfium_build/pdfium"
+          PDFIUM_AGG_SHRINK=1 \
+            bash "$GITHUB_WORKSPACE/repo/scripts/ci/link_pdfium_android_agg_so.sh"
 
-          CLANGXX="$(find "$PDFIUM_DIR/third_party" -path '*/toolchains/llvm/prebuilt/*/bin/clang++' -print | sort | head -n1)"
-          if [[ -z "$CLANGXX" ]]; then
-            echo "Android NDK clang++ was not found after gclient hooks" >&2
-            exit 1
-          fi
+      - name: Verify exported symbols
+        run: |
+          cd "$WORK_ROOT/pdfium_build/pdfium"
 
-          TOOLCHAIN_BIN="$(dirname "$CLANGXX")"
-          TARGET_TRIPLE="aarch64-linux-android${ANDROID_API_LEVEL}"
-          mkdir -p "$DIST_DIR/include"
+          LLVM_NM="$(pwd)/third_party/llvm-build/Release+Asserts/bin/llvm-nm"
+          SO="$OUT_DIR/libpdfium.so"
 
-          "$CLANGXX" \
-            --target="$TARGET_TRIPLE" \
-            -shared \
-            -fPIC \
-            -Wl,-soname,libpdfium.so \
-            -Wl,-z,defs \
-            -Wl,--gc-sections \
-            -Wl,--exclude-libs,ALL \
-            -Wl,--whole-archive "$STATIC_LIB" -Wl,--no-whole-archive \
-            -static-libstdc++ \
-            -landroid \
-            -latomic \
-            -ldl \
-            -llog \
-            -lm \
-            -o "$DIST_DIR/libpdfium.unstripped.so"
+          for api in \
+              FPDF_RenderPageBitmap \
+              FPDFEx_SetRenderAbort \
+              FPDFEx_SetRenderCallbacks \
+              FPDFEx_LoadPageWithClassification \
+              ; do
+            if ! "$LLVM_NM" -D --defined-only -C "$SO" 2>/dev/null \
+                | grep -E " T $api(\b|@)" >/dev/null; then
+              echo "MISSING exported $api in libpdfium.so" >&2
+              exit 1
+            fi
+            echo "OK exported $api"
+          done
 
-          if [[ -x "$TOOLCHAIN_BIN/llvm-strip" ]]; then
-            "$TOOLCHAIN_BIN/llvm-strip" --strip-unneeded "$DIST_DIR/libpdfium.unstripped.so" -o "$DIST_DIR/libpdfium.so"
-          else
-            cp "$DIST_DIR/libpdfium.unstripped.so" "$DIST_DIR/libpdfium.so"
-          fi
+      - name: Package artifact
+        run: |
+          cd "$WORK_ROOT/pdfium_build/pdfium"
 
-          cp "$STATIC_LIB" "$DIST_DIR/libpdfium.a"
-          cp -R "$PDFIUM_DIR/public/." "$DIST_DIR/include/"
+          mkdir -p "$DIST_DIR/include" "$DIST_DIR/patches"
+          cp "$OUT_DIR/libpdfium.so" "$DIST_DIR/libpdfium.so"
+          cp "$OUT_DIR/obj/libpdfium.a" "$DIST_DIR/libpdfium.a"
+          cp -R public/. "$DIST_DIR/include/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0[1-9]-*.patch "$DIST_DIR/patches/"
+          sha256sum "$DIST_DIR/libpdfium.so" > "$DIST_DIR/SHA256SUMS.txt"
+
           {
             printf 'pdfium_repository=%s\n' "$GITHUB_REPOSITORY"
             printf 'workflow_sha=%s\n' "$GITHUB_SHA"
             printf 'pdfium_revision=%s\n' "$(git rev-parse HEAD)"
-            printf 'android_api_level=%s\n' "$ANDROID_API_LEVEL"
+            printf 'renderer=agg\n'
+            printf 'pgo=disabled\n'
+            printf 'official_build=false\n'
             printf 'patches=patches/ship/01..09\n'
           } > "$DIST_DIR/build-info.txt"
-
-      - name: Verify exported symbols
-        run: |
-          readelf -Ws "$DIST_DIR/libpdfium.so" | grep 'FPDFEx_SetRenderAbort'
-          readelf -Ws "$DIST_DIR/libpdfium.so" | grep 'FPDFEx_SetRenderCallbacks'
 
       - name: Upload libpdfium artifact
         uses: actions/upload-artifact@v4
