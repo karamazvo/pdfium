@@ -1,0 +1,193 @@
+name: Build patched PDFium Android arm64 r5 callbacks
+
+on:
+  workflow_dispatch:
+    inputs:
+      pdfium_ref:
+        description: PDFium branch, tag, or commit
+        required: true
+        default: main
+      android_api_level:
+        description: Android API level used for the shared-library link
+        required: true
+        default: "24"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build libpdfium.so
+    runs-on: ubuntu-22.04
+    timeout-minutes: 180
+
+    env:
+      WORK_ROOT: ${{ runner.temp }}/pdfium-r5
+      PDFIUM_REF: ${{ inputs.pdfium_ref }}
+      ANDROID_API_LEVEL: ${{ inputs.android_api_level }}
+      OUT_DIR: out/android-arm64-skia-r5
+      DIST_DIR: ${{ github.workspace }}/artifacts/libpdfium-android-arm64-r5
+
+    steps:
+      - name: Checkout xPDFSDK
+        uses: actions/checkout@v4
+
+      - name: Install host packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            binutils \
+            ca-certificates \
+            curl \
+            file \
+            git \
+            lsb-release \
+            openjdk-17-jdk-headless \
+            python3 \
+            python3-pkg-resources \
+            python3-setuptools \
+            unzip \
+            xz-utils \
+            zip
+
+      - name: Fetch depot_tools
+        run: |
+          mkdir -p "$WORK_ROOT"
+          git clone --depth=1 https://chromium.googlesource.com/chromium/tools/depot_tools.git "$WORK_ROOT/depot_tools"
+          echo "$WORK_ROOT/depot_tools" >> "$GITHUB_PATH"
+
+      - name: Checkout PDFium
+        run: |
+          export PATH="$WORK_ROOT/depot_tools:$PATH"
+          export DEPOT_TOOLS_UPDATE=0
+          export VPYTHON_BYPASS="manually managed python"
+
+          mkdir -p "$WORK_ROOT/checkout"
+          cd "$WORK_ROOT/checkout"
+          gclient config --unmanaged https://pdfium.googlesource.com/pdfium.git
+          printf "\ntarget_os = [ 'android' ]\n" >> .gclient
+          gclient sync --no-history --nohooks
+
+          cd pdfium
+          git fetch origin --tags
+          git checkout "$PDFIUM_REF"
+          cd "$WORK_ROOT/checkout"
+          gclient sync --no-history --nohooks
+
+      - name: Apply xPDFSDK PDFium patches
+        run: |
+          PDFIUM_DIR="$WORK_ROOT/checkout/pdfium"
+          for patch in "$GITHUB_WORKSPACE"/patches/ship/0[1-9]-*.patch; do
+            echo "Applying ${patch#$GITHUB_WORKSPACE/}"
+            git -C "$PDFIUM_DIR" apply --3way "$patch"
+          done
+          git -C "$PDFIUM_DIR" diff --cached --check
+          git -C "$PDFIUM_DIR" diff --cached --stat
+
+      - name: Install PDFium build dependencies
+        run: |
+          export PATH="$WORK_ROOT/depot_tools:$PATH"
+          export DEPOT_TOOLS_UPDATE=0
+          export VPYTHON_BYPASS="manually managed python"
+          cd "$WORK_ROOT/checkout/pdfium"
+          build/install-build-deps.sh --android --no-prompt --unsupported
+
+      - name: Run gclient hooks
+        run: |
+          export PATH="$WORK_ROOT/depot_tools:$PATH"
+          export DEPOT_TOOLS_UPDATE=0
+          export VPYTHON_BYPASS="manually managed python"
+          cd "$WORK_ROOT/checkout"
+          gclient runhooks
+
+      - name: Generate GN files
+        run: |
+          export PATH="$WORK_ROOT/depot_tools:$PATH"
+          export DEPOT_TOOLS_UPDATE=0
+          PDFIUM_DIR="$WORK_ROOT/checkout/pdfium"
+          cd "$PDFIUM_DIR"
+          gn gen "$OUT_DIR" --args='
+            target_os = "android"
+            target_cpu = "arm64"
+            is_debug = false
+            is_official_build = true
+            is_component_build = false
+            use_remoteexec = false
+            symbol_level = 0
+            treat_warnings_as_errors = false
+            android_static_analysis = "off"
+            pdf_is_standalone = true
+            pdf_is_complete_lib = true
+            pdf_use_skia = true
+            pdf_enable_v8 = false
+            pdf_enable_xfa = false
+          '
+
+      - name: Build static PDFium
+        run: |
+          export PATH="$WORK_ROOT/depot_tools:$PATH"
+          export DEPOT_TOOLS_UPDATE=0
+          cd "$WORK_ROOT/checkout/pdfium"
+          autoninja -C "$OUT_DIR" pdfium
+
+      - name: Link Android shared library
+        run: |
+          PDFIUM_DIR="$WORK_ROOT/checkout/pdfium"
+          cd "$PDFIUM_DIR"
+          STATIC_LIB="$(find "$OUT_DIR" -type f -name 'libpdfium.a' -print | head -n1)"
+          if [[ -z "$STATIC_LIB" ]]; then
+            echo "libpdfium.a was not produced" >&2
+            exit 1
+          fi
+
+          CLANGXX="$(find "$PDFIUM_DIR/third_party" -path '*/toolchains/llvm/prebuilt/*/bin/clang++' -print | sort | head -n1)"
+          if [[ -z "$CLANGXX" ]]; then
+            echo "Android NDK clang++ was not found after gclient hooks" >&2
+            exit 1
+          fi
+
+          TOOLCHAIN_BIN="$(dirname "$CLANGXX")"
+          TARGET_TRIPLE="aarch64-linux-android${ANDROID_API_LEVEL}"
+          mkdir -p "$DIST_DIR/include"
+
+          "$CLANGXX" \
+            --target="$TARGET_TRIPLE" \
+            -shared \
+            -fPIC \
+            -Wl,-soname,libpdfium.so \
+            -Wl,-z,defs \
+            -Wl,--gc-sections \
+            -Wl,--exclude-libs,ALL \
+            -Wl,--whole-archive "$STATIC_LIB" -Wl,--no-whole-archive \
+            -static-libstdc++ \
+            -landroid \
+            -latomic \
+            -ldl \
+            -llog \
+            -lm \
+            -o "$DIST_DIR/libpdfium.unstripped.so"
+
+          if [[ -x "$TOOLCHAIN_BIN/llvm-strip" ]]; then
+            "$TOOLCHAIN_BIN/llvm-strip" --strip-unneeded "$DIST_DIR/libpdfium.unstripped.so" -o "$DIST_DIR/libpdfium.so"
+          else
+            cp "$DIST_DIR/libpdfium.unstripped.so" "$DIST_DIR/libpdfium.so"
+          fi
+
+          cp "$STATIC_LIB" "$DIST_DIR/libpdfium.a"
+          cp -R "$PDFIUM_DIR/public/." "$DIST_DIR/include/"
+          {
+            printf 'pdfium_ref=%s\n' "$PDFIUM_REF"
+            printf 'pdfium_revision=%s\n' "$(git rev-parse HEAD)"
+            printf 'android_api_level=%s\n' "$ANDROID_API_LEVEL"
+            printf 'patches=patches/ship/01..09\n'
+          } > "$DIST_DIR/build-info.txt"
+
+      - name: Verify exported symbols
+        run: |
+          readelf -Ws "$DIST_DIR/libpdfium.so" | grep -E 'FPDFEx_SetRenderAbort|FPDFEx_SetRenderCallbacks'
+
+      - name: Upload libpdfium artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: libpdfium-android-arm64-r5-callbacks
+          path: artifacts/libpdfium-android-arm64-r5

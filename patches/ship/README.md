@@ -34,6 +34,7 @@ these patches:
 | 06 | `06-veloce-render-abort-probe.patch` | Adds the R18/R19 diagnostic export `FPDFEx_SetRenderAbort()`. When enabled, `CPDF_RenderStatus::RenderObjectList()` returns early at page-object boundaries so a cancelled progressive render can release xPDFSDK's single render lane. Default disabled. |
 | 07 | `07-veloce-render-abort-deeper.patch` | Adds deeper abort checkpoints inside `RenderSingleObject()`, progressive image continuation, Form XObject recursion, transparency rendering, Type3 Form rendering, and soft-mask rendering. Default disabled through patch 06's abort flag. |
 | 08 | `08-load-page-with-classification.patch` | Adds `FPDFEx_LoadPageWithClassification()` plus the fixed 64-byte `FPDFEx_PageClassification` ABI so xPDFSDK can route path-dense pages on the first render. No rendering semantics change. |
+| 09 | `09-render-callbacks-scoped-cancel.patch` | Adds `FPDFEx_SetRenderCallbacks()` and a per-render scoped cancellation callback table layered on the existing 06/07 abort checkpoints. Existing `FPDFEx_SetRenderAbort()` remains supported. |
 
 ## Why this directory exists
 
@@ -55,12 +56,14 @@ git apply patches/ship/05-veloce-skip-rasterization-probe.patch
 git apply patches/ship/06-veloce-render-abort-probe.patch
 git apply patches/ship/07-veloce-render-abort-deeper.patch
 git apply patches/ship/08-load-page-with-classification.patch
+git apply patches/ship/09-render-callbacks-scoped-cancel.patch
 ```
 
 Patches 06 and 07 depend on patch 05 and must be applied after it.
 Patch 07 also depends on patch 06. Patch 08 depends on the fpdfview export
-surface after patches 05 and 06. The release workflow applies the numeric
-order shown above.
+surface after patches 05 and 06. Patch 09 depends on patches 06 and 07 because
+it reuses their render-abort checkpoints. The release workflow applies the
+numeric order shown above.
 
 ## Cumulative effect (measured)
 

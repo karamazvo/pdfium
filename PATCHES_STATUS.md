@@ -1,6 +1,6 @@
 # xPDFSDK PDFium Patch Status
 
-**Last updated:** 2026-06-03
+**Last updated:** 2026-06-14
 
 ## TL;DR
 
@@ -35,6 +35,18 @@ This applies the same seven Veloce patches plus
 `patches/ship/08-load-page-with-classification.patch`, verifies the new
 symbol in both `libpdfium.a` and the final `libpdfium.so`, and verifies the
 `FPDFEx_PageClassification` ABI remains 64 bytes.
+
+To build the r5 scoped-cancel binary:
+
+> Run workflow: **`Build patched PDFium Android arm64 r5 callbacks`**
+>
+> File: `.github/workflows/pdfium-android-arm64-r5-callbacks.yml`
+> Artifact: `libpdfium-android-arm64-r5-callbacks`
+
+This applies ship patches `01..09`: the previous Veloce stack plus
+`patches/ship/09-render-callbacks-scoped-cancel.patch`, which adds
+`FPDFEx_SetRenderCallbacks()` while preserving the existing
+`FPDFEx_SetRenderAbort()` bridge.
 
 **Release build size: ~6.6 MB** (down from a ~13.7 MB baseline).
 This is achieved by the shrink link strategy promoted from the
@@ -94,6 +106,7 @@ and the `libandroid.so` runtime dependency.
 | ship 06 | VELOCE DIAGNOSTIC | `patches/ship/06-veloce-render-abort-probe.patch` | Default-off `FPDFEx_SetRenderAbort()` probe. Lets xPDFSDK ask PDFium to return early at `RenderObjectList()` page-object boundaries after a progressive render is cancelled. |
 | ship 07 | VELOCE DIAGNOSTIC | `patches/ship/07-veloce-render-abort-deeper.patch` | Extends the default-off render-abort probe deeper into `RenderSingleObject()`, progressive image continuation, Form XObject recursion, transparency rendering, Type3 Form rendering, and soft-mask rendering. |
 | ship 08 | VELOCE SHIP | `patches/ship/08-load-page-with-classification.patch` | Adds `FPDFEx_LoadPageWithClassification()` and the 64-byte `FPDFEx_PageClassification` ABI so xPDFSDK can classify pages at load time and route path-dense pages before the first render. |
+| ship 09 | VELOCE SHIP | `patches/ship/09-render-callbacks-scoped-cancel.patch` | Adds `FPDFEx_SetRenderCallbacks()` and a per-render scoped cancellation callback table layered on the existing 06/07 abort checkpoints. |
 
 ---
 
@@ -104,6 +117,7 @@ and the `libandroid.so` runtime dependency.
 | `release-pdfium-android-arm64-agg.yml` | `workflow_dispatch` | **CURRENT PRODUCTION RELEASE BUILD.** Applies only the 3 ship patches (`patches/ship/01..03`). Uses the Variant C shrink link config (`pdf_use_partition_alloc=false`, `default_min_sdk_version=23`, `--gc-sections` + auto-`--undefined` for `FPDF_*`/`FORM_*`/`FSDK_*`). Minimal `.so` (~6.6 MB), no diagnostic markers, no `libandroid.so` dependency. Audit step rejects the build if any `XPDF_ATRACE_SCOPED` leaks in; canary-API survival check rejects the build if `--gc-sections` ever drops a public entry point. |
 | `release-pdfium-android-arm64-veloce.yml` | `workflow_dispatch` | **CURRENT VELOCE RELEASE BUILD.** Applies ship patches `01..07`, including internal-access exports, skip-rasterization, and render-abort probes. Use this for VIR admission/replay work and cancellation experiments. |
 | `libpdfium_patch_build.yml` | `workflow_dispatch` | **NEXT VELOCE CLASSIFICATION BUILD.** Applies ship patches `01..08`, including `FPDFEx_LoadPageWithClassification`. Verifies all Veloce symbols, the new classification export, and the 64-byte classification struct ABI before packaging `libpdfium.so`. |
+| `pdfium-android-arm64-r5-callbacks.yml` | `workflow_dispatch` | **R5 SCOPED-CANCEL BUILD.** Applies ship patches `01..09`, including the scoped render callback API. Verifies `FPDFEx_SetRenderAbort` and `FPDFEx_SetRenderCallbacks` in the final shared object. |
 | `libpdfium_experiment_profile_build.yml` | `workflow_dispatch` | **EXPERIMENT PROFILE BUILD.** Applies ship patches `01..08` plus `patches/experiments/0010-render-profile-and-content-skip.patch`. Use this to measure per-stage `FPDF_RenderPageBitmap()` costs and test skip-text/path/image/shading/Form/transparency/soft-mask speedups on selected PDFs. Artifact: `libpdfium-android-arm64-veloce-render-profile-experiment`. |
 | `release-size-experiment.yml` | `workflow_dispatch` | Side-by-side size comparison (baseline / A / B / C). Variant C is the current ship config. Run this when a future PDFium roll or build refactor unexpectedly changes the size profile — it isolates which lever moved. |
 | `build-pdfium-android-arm64-agg-devicen-fast.yml` | `workflow_dispatch` | Diagnostic ship build. Applies 0003+0004+0005+0007+0008+0009, retains trace markers. Use for future perf investigations. |

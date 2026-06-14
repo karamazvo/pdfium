@@ -1,0 +1,422 @@
+diff --git a/BUILD.gn b/BUILD.gn
+index e025aad7d..dac96ed0b 100644
+--- a/BUILD.gn
++++ b/BUILD.gn
+@@ -200,6 +200,7 @@ source_set("pdfium_public_headers_impl") {
+     "public/fpdf_dataavail.h",
+     "public/fpdf_doc.h",
+     "public/fpdf_edit.h",
++    "public/fpdfex_render_callbacks.h",
+     "public/fpdf_ext.h",
+     "public/fpdf_flatten.h",
+     "public/fpdf_formfill.h",
+diff --git a/core/fpdfapi/render/BUILD.gn b/core/fpdfapi/render/BUILD.gn
+index 65186eafa..89d1ad5ec 100644
+--- a/core/fpdfapi/render/BUILD.gn
++++ b/core/fpdfapi/render/BUILD.gn
+@@ -33,6 +33,8 @@ source_set("render") {
+     "cpdf_type3cache.h",
+     "cpdf_type3glyphmap.cpp",
+     "cpdf_type3glyphmap.h",
++    "veloce_render_callbacks.cpp",
++    "veloce_render_callbacks.h",
+   ]
+   configs += [
+     "../../../:pdfium_strict_config",
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index f0721d52f..747b082ec 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -51,6 +51,7 @@
+ #include "core/fpdfapi/render/cpdf_textrenderer.h"
+ #include "core/fpdfapi/render/veloce_skip_rasterization.h"
+ #include "core/fpdfapi/render/veloce_render_abort.h"
++#include "core/fpdfapi/render/veloce_render_callbacks.h"
+ #include "core/fpdfapi/render/cpdf_type3cache.h"
+ #include "core/fxcrt/autorestorer.h"
+ #include "core/fxcrt/check.h"
+@@ -191,10 +192,20 @@ void VeloceSetSkipRasterizationForProbe(bool enabled) {
+ 
+ CPDF_RenderStatus::CPDF_RenderStatus(CPDF_RenderContext* context,
+                                      CFX_RenderDevice* pDevice)
+-    : context_(context), device_(pDevice) {}
++    : context_(context),
++      device_(pDevice),
++      render_callbacks_(VeloceGetRenderCallbacks()) {}
+ 
+ CPDF_RenderStatus::~CPDF_RenderStatus() = default;
+ 
++bool CPDF_RenderStatus::ShouldCancelRender() const {
++  if (VeloceShouldAbortRenderForProbe()) {
++    return true;
++  }
++  return render_callbacks_ && render_callbacks_->cancel_check &&
++         render_callbacks_->cancel_check(render_callbacks_->user_data);
++}
++
+ void CPDF_RenderStatus::Initialize(const CPDF_RenderStatus* pParentStatus,
+                                    const CPDF_GraphicStates* pInitialStates) {
+ #if BUILDFLAG(IS_WIN)
+@@ -228,7 +239,7 @@ void CPDF_RenderStatus::RenderObjectList(
+   CFX_FloatRect clip_rect = mtObj2Device.GetInverse().TransformRect(
+       CFX_FloatRect(device_->GetClipBox()));
+   for (const auto& pCurObj : *pObjectHolder) {
+-    if (VeloceShouldAbortRenderForProbe()) {
++    if (ShouldCancelRender()) {
+       stopped_ = true;
+       return;
+     }
+@@ -253,7 +264,7 @@ void CPDF_RenderStatus::RenderObjectList(
+       continue;
+     }
+     RenderSingleObject(pCurObj.get(), mtObj2Device);
+-    if (VeloceShouldAbortRenderForProbe()) {
++    if (ShouldCancelRender()) {
+       stopped_ = true;
+       return;
+     }
+@@ -265,7 +276,7 @@ void CPDF_RenderStatus::RenderObjectList(
+ 
+ void CPDF_RenderStatus::RenderSingleObject(CPDF_PageObject* pObj,
+                                            const CFX_Matrix& mtObj2Device) {
+-  if (VeloceShouldAbortRenderForProbe()) {
++  if (ShouldCancelRender()) {
+     stopped_ = true;
+     return;
+   }
+@@ -277,24 +288,24 @@ void CPDF_RenderStatus::RenderSingleObject(CPDF_PageObject* pObj,
+   if (!options_.CheckPageObjectVisible(pObj)) {
+     return;
+   }
+-  if (VeloceShouldAbortRenderForProbe()) {
++  if (ShouldCancelRender()) {
+     stopped_ = true;
+     return;
+   }
+   ProcessClipPath(pObj->clip_path(), mtObj2Device);
+-  if (VeloceShouldAbortRenderForProbe()) {
++  if (ShouldCancelRender()) {
+     stopped_ = true;
+     return;
+   }
+   if (ProcessTransparency(pObj, mtObj2Device)) {
+     return;
+   }
+-  if (VeloceShouldAbortRenderForProbe()) {
++  if (ShouldCancelRender()) {
+     stopped_ = true;
+     return;
+   }
+   ProcessObjectNoClip(pObj, mtObj2Device);
+-  if (VeloceShouldAbortRenderForProbe()) {
++  if (ShouldCancelRender()) {
+     stopped_ = true;
+   }
+ }
+@@ -304,7 +315,7 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
+                                              PauseIndicatorIface* pPause) {
+   if (image_renderer_) {
+     if (image_renderer_->Continue(pPause)) {
+-      if (VeloceShouldAbortRenderForProbe()) {
++      if (ShouldCancelRender()) {
+         stopped_ = true;
+         image_renderer_.reset();
+         return false;
+@@ -319,7 +330,7 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
+     return false;
+   }
+ 
+-  if (VeloceShouldAbortRenderForProbe()) {
++  if (ShouldCancelRender()) {
+     stopped_ = true;
+     return false;
+   }
+@@ -333,13 +344,13 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
+     return false;
+   }
+ 
+-  if (VeloceShouldAbortRenderForProbe()) {
++  if (ShouldCancelRender()) {
+     stopped_ = true;
+     return false;
+   }
+   if (!pObj->IsImage()) {
+     ProcessObjectNoClip(pObj, mtObj2Device);
+-    if (VeloceShouldAbortRenderForProbe()) {
++    if (ShouldCancelRender()) {
+       stopped_ = true;
+     }
+     return false;
+@@ -368,7 +379,7 @@ FX_RECT CPDF_RenderStatus::GetObjectClippedRect(
+ void CPDF_RenderStatus::ProcessObjectNoClip(CPDF_PageObject* pObj,
+                                             const CFX_Matrix& mtObj2Device) {
+   bool bRet = false;
+-  if (VeloceShouldAbortRenderForProbe()) {
++  if (ShouldCancelRender()) {
+     stopped_ = true;
+     return;
+   }
+@@ -390,7 +401,7 @@ void CPDF_RenderStatus::ProcessObjectNoClip(CPDF_PageObject* pObj,
+       break;
+   }
+   if (!bRet) {
+-    if (VeloceShouldAbortRenderForProbe()) {
++    if (ShouldCancelRender()) {
+       stopped_ = true;
+       return;
+     }
+@@ -465,7 +476,7 @@ void CPDF_RenderStatus::DrawObjWithBackgroundToDevice(
+ 
+ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
+                                     const CFX_Matrix& mtObj2Device) {
+-  if (VeloceShouldAbortRenderForProbe()) {
++  if (ShouldCancelRender()) {
+     stopped_ = true;
+     return true;
+   }
+@@ -491,7 +502,7 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
+     status.RenderObjectList(pFormObj->form(), matrix);
+     stopped_ = status.stopped_;
+   }
+-  if (VeloceShouldAbortRenderForProbe()) {
++  if (ShouldCancelRender()) {
+     stopped_ = true;
+   }
+   return true;
+@@ -797,7 +808,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
+   bitmap_render.Initialize(nullptr, nullptr);
+   bitmap_render.ProcessObjectNoClip(pPageObj, new_matrix);
+   stopped_ = bitmap_render.stopped_;
+-  if (stopped_ || VeloceShouldAbortRenderForProbe()) {
++  if (stopped_ || ShouldCancelRender()) {
+     stopped_ = true;
+     return true;
+   }
+@@ -806,7 +817,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
+         *pPageObj->general_state().GetSMaskMatrix() * mtObj2Device;
+     RetainPtr<CFX_DIBitmap> smask_bitmap =
+         LoadSMask(pSMaskDict.Get(), rect, smask_matrix);
+-    if (VeloceShouldAbortRenderForProbe()) {
++    if (ShouldCancelRender()) {
+       stopped_ = true;
+       return true;
+     }
+@@ -1092,7 +1103,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
+ 
+         CFX_RenderDevice::StateRestorer restorer(device_);
+         status.RenderObjectList(pForm, matrix);
+-        if (status.stopped_ || VeloceShouldAbortRenderForProbe()) {
++        if (status.stopped_ || ShouldCancelRender()) {
+           return true;
+         }
+       } else {
+@@ -1121,7 +1132,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
+         status.type3_font_cache_.emplace_back(pType3Font);
+         matrix.Translate(-rect.left, -rect.top);
+         status.RenderObjectList(pForm, matrix);
+-        if (status.stopped_ || VeloceShouldAbortRenderForProbe()) {
++        if (status.stopped_ || ShouldCancelRender()) {
+           return true;
+         }
+         device_->SetDIBits(bitmap_device.GetBitmap(), rect.left, rect.top);
+@@ -1568,7 +1579,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
+   status.SetDropObjects(drop_objects_);
+   status.Initialize(nullptr, nullptr);
+   status.RenderObjectList(&form, matrix);
+-  if (status.stopped_ || VeloceShouldAbortRenderForProbe()) {
++  if (status.stopped_ || ShouldCancelRender()) {
+     return nullptr;
+   }
+ 
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.h b/core/fpdfapi/render/cpdf_renderstatus.h
+index b002aa312..46c60122b 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.h
++++ b/core/fpdfapi/render/cpdf_renderstatus.h
+@@ -42,6 +42,7 @@ class CPDF_TransferFunc;
+ class CPDF_Type3Char;
+ class CPDF_Type3Font;
+ class PauseIndicatorIface;
++struct VeloceRenderCallbacks;
+ 
+ class CPDF_RenderStatus {
+  public:
+@@ -190,6 +191,7 @@ class CPDF_RenderStatus {
+                                const CFX_Matrix& mtObj2Device) const;
+   // Returns the format that is compatible with `device_`.
+   FXDIB_Format GetCompatibleArgbFormat() const;
++  bool ShouldCancelRender() const;
+ 
+   CPDF_RenderOptions options_;
+   RetainPtr<const CPDF_Dictionary> form_resource_;
+@@ -197,6 +199,7 @@ class CPDF_RenderStatus {
+   std::vector<UnownedPtr<const CPDF_Type3Font>> type3_font_cache_;
+   UnownedPtr<CPDF_RenderContext> const context_;
+   UnownedPtr<CFX_RenderDevice> const device_;
++  UnownedPtr<const VeloceRenderCallbacks> const render_callbacks_;
+   CFX_Matrix device_matrix_;
+   CPDF_ClipPath last_clip_path_;
+   UnownedPtr<const CPDF_PageObject> cur_obj_;
+diff --git a/core/fpdfapi/render/veloce_render_callbacks.cpp b/core/fpdfapi/render/veloce_render_callbacks.cpp
+new file mode 100644
+index 000000000..6f719d564
+--- /dev/null
++++ b/core/fpdfapi/render/veloce_render_callbacks.cpp
+@@ -0,0 +1,34 @@
++// Copyright 2026 The xPDFSDK Authors
++// Use of this source code is governed by the PDFium BSD-style license.
++
++#include "core/fpdfapi/render/veloce_render_callbacks.h"
++
++#include <algorithm>
++#include <cstddef>
++#include <cstring>
++
++namespace {
++
++thread_local VeloceRenderCallbacks g_render_callbacks = {};
++
++constexpr uint32_t kMinRenderableCallbacksSize =
++    static_cast<uint32_t>(offsetof(VeloceRenderCallbacks, cancel_check) +
++                          sizeof(VeloceRenderCancelCheckFn));
++
++}  // namespace
++
++const VeloceRenderCallbacks* VeloceGetRenderCallbacks() {
++  return g_render_callbacks.cancel_check ? &g_render_callbacks : nullptr;
++}
++
++void VeloceSetRenderCallbacks(const VeloceRenderCallbacks* callbacks) {
++  std::memset(&g_render_callbacks, 0, sizeof(g_render_callbacks));
++  if (!callbacks || callbacks->struct_size < kMinRenderableCallbacksSize) {
++    return;
++  }
++
++  const size_t bytes_to_copy =
++      std::min<size_t>(callbacks->struct_size, sizeof(g_render_callbacks));
++  std::memcpy(&g_render_callbacks, callbacks, bytes_to_copy);
++  g_render_callbacks.struct_size = sizeof(g_render_callbacks);
++}
+diff --git a/core/fpdfapi/render/veloce_render_callbacks.h b/core/fpdfapi/render/veloce_render_callbacks.h
+new file mode 100644
+index 000000000..540746bde
+--- /dev/null
++++ b/core/fpdfapi/render/veloce_render_callbacks.h
+@@ -0,0 +1,25 @@
++// Copyright 2026 The xPDFSDK Authors
++// Use of this source code is governed by the PDFium BSD-style license.
++
++#ifndef CORE_FPDFAPI_RENDER_VELOCE_RENDER_CALLBACKS_H_
++#define CORE_FPDFAPI_RENDER_VELOCE_RENDER_CALLBACKS_H_
++
++#include <stdint.h>
++
++using VeloceRenderCancelCheckFn = int (*)(void* user_data);
++
++struct VeloceRenderCallbacks {
++  uint32_t struct_size;
++  uint32_t feature_flags;
++  void* user_data;
++  VeloceRenderCancelCheckFn cancel_check;
++  void* reserved0;
++  void* reserved1;
++  void* reserved2;
++  void* reserved3;
++};
++
++const VeloceRenderCallbacks* VeloceGetRenderCallbacks();
++void VeloceSetRenderCallbacks(const VeloceRenderCallbacks* callbacks);
++
++#endif  // CORE_FPDFAPI_RENDER_VELOCE_RENDER_CALLBACKS_H_
+diff --git a/fpdfsdk/BUILD.gn b/fpdfsdk/BUILD.gn
+index fa21e2046..c3215cd49 100644
+--- a/fpdfsdk/BUILD.gn
++++ b/fpdfsdk/BUILD.gn
+@@ -44,6 +44,7 @@ source_set("fpdfsdk") {
+     "fpdf_editpage.cpp",
+     "fpdf_editpath.cpp",
+     "fpdf_edittext.cpp",
++    "fpdfex_render_callbacks.cpp",
+     "fpdf_ext.cpp",
+     "fpdf_flatten.cpp",
+     "fpdf_formfill.cpp",
+diff --git a/fpdfsdk/fpdfex_render_callbacks.cpp b/fpdfsdk/fpdfex_render_callbacks.cpp
+new file mode 100644
+index 000000000..cd5142078
+--- /dev/null
++++ b/fpdfsdk/fpdfex_render_callbacks.cpp
+@@ -0,0 +1,30 @@
++// Copyright 2026 The xPDFSDK Authors
++// Use of this source code is governed by the PDFium BSD-style license.
++
++#include "public/fpdfex_render_callbacks.h"
++
++#include <cstddef>
++
++#include "core/fpdfapi/render/veloce_render_callbacks.h"
++
++namespace {
++
++static_assert(sizeof(FPDFEx_RenderCallbacks) == sizeof(VeloceRenderCallbacks));
++static_assert(offsetof(FPDFEx_RenderCallbacks, struct_size) ==
++              offsetof(VeloceRenderCallbacks, struct_size));
++static_assert(offsetof(FPDFEx_RenderCallbacks, feature_flags) ==
++              offsetof(VeloceRenderCallbacks, feature_flags));
++static_assert(offsetof(FPDFEx_RenderCallbacks, user_data) ==
++              offsetof(VeloceRenderCallbacks, user_data));
++static_assert(offsetof(FPDFEx_RenderCallbacks, cancel_check) ==
++              offsetof(VeloceRenderCallbacks, cancel_check));
++
++}  // namespace
++
++FPDF_EXPORT void FPDF_CALLCONV
++FPDFEx_SetRenderCallbacks(FPDF_PAGE page,
++                          const FPDFEx_RenderCallbacks* callbacks) {
++  (void)page;
++  VeloceSetRenderCallbacks(
++      reinterpret_cast<const VeloceRenderCallbacks*>(callbacks));
++}
+diff --git a/public/fpdfex_render_callbacks.h b/public/fpdfex_render_callbacks.h
+new file mode 100644
+index 000000000..db8e1f924
+--- /dev/null
++++ b/public/fpdfex_render_callbacks.h
+@@ -0,0 +1,39 @@
++// Copyright 2026 The xPDFSDK Authors
++// Use of this source code is governed by the PDFium BSD-style license.
++
++#ifndef PUBLIC_FPDFEX_RENDER_CALLBACKS_H_
++#define PUBLIC_FPDFEX_RENDER_CALLBACKS_H_
++
++#include <stddef.h>
++#include <stdint.h>
++
++#include "public/fpdfview.h"
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++typedef int (*FPDFEx_RenderCancelCheckFn)(void* user_data);
++
++#define FPDFEX_FEATURE_NONE 0u
++
++typedef struct FPDFEx_RenderCallbacks {
++  uint32_t struct_size;
++  uint32_t feature_flags;
++  void* user_data;
++  FPDFEx_RenderCancelCheckFn cancel_check;
++  void* reserved0;
++  void* reserved1;
++  void* reserved2;
++  void* reserved3;
++} FPDFEx_RenderCallbacks;
++
++FPDF_EXPORT void FPDF_CALLCONV
++FPDFEx_SetRenderCallbacks(FPDF_PAGE page,
++                          const FPDFEx_RenderCallbacks* callbacks);
++
++#ifdef __cplusplus
++}  // extern "C"
++#endif
++
++#endif  // PUBLIC_FPDFEX_RENDER_CALLBACKS_H_
