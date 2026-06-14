@@ -142,7 +142,7 @@ jobs:
         run: |
           export PATH="$WORK_ROOT/depot_tools:$PATH"
           cd "$WORK_ROOT/pdfium_build/pdfium"
-          autoninja -C "$OUT_DIR" pdfium
+          ninja -C "$OUT_DIR" pdfium -j"$(nproc)"
 
       - name: Verify r5 callback patch compiled in
         run: |
