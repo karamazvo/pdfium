@@ -22,7 +22,7 @@ jobs:
     timeout-minutes: 180
 
     env:
-      WORK_ROOT: ${{ runner.temp }}/pdfium-r5
+      WORK_ROOT: /tmp/pdfium-r5
       PDFIUM_REF: ${{ inputs.pdfium_ref }}
       ANDROID_API_LEVEL: ${{ inputs.android_api_level }}
       OUT_DIR: out/android-arm64-skia-r5
