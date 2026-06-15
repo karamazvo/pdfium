@@ -1,0 +1,202 @@
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 88032df78..868e0df4a 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -358,6 +358,11 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
+     return false;
+   }
+ 
++  if (VeloceShouldDeferImage(pObj->AsImage())) {
++    FillImagePlaceholder(pObj, mtObj2Device);
++    return false;
++  }
++
+   image_renderer_ = std::make_unique<CPDF_ImageRenderer>(this);
+   if (!image_renderer_->Start(pObj->AsImage(), mtObj2Device,
+                               /*bStdCS=*/false)) {
+@@ -1395,8 +1400,36 @@ void CPDF_RenderStatus::ProcessPathPattern(
+   }
+ }
+ 
++bool CPDF_RenderStatus::VeloceShouldDeferImage(
++    const CPDF_ImageObject* pImageObj) const {
++  if (!(render_skip_mask_ & kVeloceRenderSkipHugeImage)) {
++    return false;
++  }
++  RetainPtr<CPDF_Image> image = pImageObj->GetImage();
++  if (!image || image->IsMask()) {
++    return false;
++  }
++  const int64_t pixels = static_cast<int64_t>(image->GetPixelWidth()) *
++                         static_cast<int64_t>(image->GetPixelHeight());
++  return pixels > static_cast<int64_t>(VeloceGetHugeImagePixelThreshold());
++}
++
++void CPDF_RenderStatus::FillImagePlaceholder(CPDF_PageObject* pImageObj,
++                                             const CFX_Matrix& mtObj2Device) {
++  FX_RECT rect = GetObjectClippedRect(pImageObj, mtObj2Device);
++  if (rect.IsEmpty()) {
++    return;
++  }
++  constexpr FX_ARGB kHugeImagePlaceholderColor = 0xFFC8C8C8;
++  device_->FillRect(rect, kHugeImagePlaceholderColor);
++}
++
+ bool CPDF_RenderStatus::ProcessImage(CPDF_ImageObject* pImageObj,
+                                      const CFX_Matrix& mtObj2Device) {
++  if (VeloceShouldDeferImage(pImageObj)) {
++    FillImagePlaceholder(pImageObj, mtObj2Device);
++    return true;
++  }
+   CPDF_ImageRenderer render(this);
+   if (render.Start(pImageObj, mtObj2Device, std_cs_)) {
+     render.Continue(nullptr);
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.h b/core/fpdfapi/render/cpdf_renderstatus.h
+index 054ddd7a4..a45ae8a83 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.h
++++ b/core/fpdfapi/render/cpdf_renderstatus.h
+@@ -160,6 +160,14 @@ class CPDF_RenderStatus {
+                       bool stroke);
+   bool ProcessImage(CPDF_ImageObject* pImageObj,
+                     const CFX_Matrix& mtObj2Device);
++  // Returns true if `pImageObj` should be skipped by CPDF_ImageRenderer and
++  // filled with a placeholder instead, per FPDFEX_RENDER_SKIP_HUGE_IMAGE.
++  bool VeloceShouldDeferImage(const CPDF_ImageObject* pImageObj) const;
++  // Fills `pImageObj`'s clipped device-space bbox with a flat placeholder
++  // color. Used by both ProcessImage and ContinueSingleObject when
++  // VeloceShouldDeferImage() is true.
++  void FillImagePlaceholder(CPDF_PageObject* pImageObj,
++                            const CFX_Matrix& mtObj2Device);
+   void ProcessShading(const CPDF_ShadingObject* pShadingObj,
+                       const CFX_Matrix& mtObj2Device);
+   bool ProcessType3Text(CPDF_TextObject* textobj,
+diff --git a/core/fpdfapi/render/veloce_render_skip_mask.cpp b/core/fpdfapi/render/veloce_render_skip_mask.cpp
+index eae5e518a..3dc1aaa2b 100644
+--- a/core/fpdfapi/render/veloce_render_skip_mask.cpp
++++ b/core/fpdfapi/render/veloce_render_skip_mask.cpp
+@@ -5,6 +5,8 @@
+ 
+ namespace {
+ thread_local uint32_t g_skip_mask = 0;
++thread_local uint32_t g_huge_image_pixel_threshold =
++    kVeloceDefaultHugeImagePixelThreshold;
+ }  // namespace
+ 
+ uint32_t VeloceGetRenderSkipMask() {
+@@ -14,3 +16,14 @@ uint32_t VeloceGetRenderSkipMask() {
+ void VeloceSetRenderSkipMask(uint32_t skip_mask) {
+   g_skip_mask = skip_mask;
+ }
++
++uint32_t VeloceGetHugeImagePixelThreshold() {
++  return g_huge_image_pixel_threshold;
++}
++
++void VeloceSetHugeImagePixelThreshold(uint32_t pixel_threshold) {
++  if (pixel_threshold == 0) {
++    return;
++  }
++  g_huge_image_pixel_threshold = pixel_threshold;
++}
+diff --git a/core/fpdfapi/render/veloce_render_skip_mask.h b/core/fpdfapi/render/veloce_render_skip_mask.h
+index 3258d7f7d..528a5d29b 100644
+--- a/core/fpdfapi/render/veloce_render_skip_mask.h
++++ b/core/fpdfapi/render/veloce_render_skip_mask.h
+@@ -7,9 +7,16 @@
+ #include <stdint.h>
+ 
+ constexpr uint32_t kVeloceRenderSkipForm = 0x00000010u;
++constexpr uint32_t kVeloceRenderSkipHugeImage = 0x00000020u;
++
++constexpr uint32_t kVeloceDefaultHugeImagePixelThreshold = 4000000u;
+ 
+ // Thread-local; see public/fpdfex_render_skip_mask.h for full contract.
+ uint32_t VeloceGetRenderSkipMask();
+ void VeloceSetRenderSkipMask(uint32_t skip_mask);
+ 
++// Thread-local; see public/fpdfex_render_skip_mask.h for full contract.
++uint32_t VeloceGetHugeImagePixelThreshold();
++void VeloceSetHugeImagePixelThreshold(uint32_t pixel_threshold);
++
+ #endif  // CORE_FPDFAPI_RENDER_VELOCE_RENDER_SKIP_MASK_H_
+diff --git a/fpdfsdk/fpdfex_render_skip_mask.cpp b/fpdfsdk/fpdfex_render_skip_mask.cpp
+index 72ec8e716..a3ce94793 100644
+--- a/fpdfsdk/fpdfex_render_skip_mask.cpp
++++ b/fpdfsdk/fpdfex_render_skip_mask.cpp
+@@ -7,8 +7,14 @@
+ 
+ namespace {
+ static_assert(FPDFEX_RENDER_SKIP_FORM == kVeloceRenderSkipForm);
++static_assert(FPDFEX_RENDER_SKIP_HUGE_IMAGE == kVeloceRenderSkipHugeImage);
+ }  // namespace
+ 
+ FPDF_EXPORT void FPDF_CALLCONV FPDFEx_SetRenderSkipMask(uint32_t skip_mask) {
+   VeloceSetRenderSkipMask(skip_mask);
+ }
++
++FPDF_EXPORT void FPDF_CALLCONV
++FPDFEx_SetHugeImagePixelThreshold(uint32_t pixel_threshold) {
++  VeloceSetHugeImagePixelThreshold(pixel_threshold);
++}
+diff --git a/public/fpdfex_render_skip_mask.h b/public/fpdfex_render_skip_mask.h
+index 235682985..e15e4e21e 100644
+--- a/public/fpdfex_render_skip_mask.h
++++ b/public/fpdfex_render_skip_mask.h
+@@ -23,13 +23,37 @@ extern "C" {
+ // bitmap at those pixels -- typically the initial fill color -- shows
+ // through).
+ //
+-// v1 defines only the FORM bit (form-deferred first paint). The remaining
+-// bit positions are reserved for symmetry with the patches/experiments/0010
+-// draft (TEXT/PATH/IMAGE/SHADING/TRANSPARENCY/SOFT_MASK) but are NOT
+-// implemented by this patch -- setting them has no effect. Do not rely on
+-// them until a future patch documents and implements them.
++// v1 defines the FORM bit (form-deferred first paint) and the HUGE_IMAGE
++// bit (image-deferred first paint, added by patch 0012 -- see below). The
++// remaining bit positions are reserved for symmetry with the
++// patches/experiments/0010 draft (TEXT/PATH/SHADING/TRANSPARENCY/SOFT_MASK)
++// but are NOT implemented by this patch -- setting them has no effect. Do
++// not rely on them until a future patch documents and implements them.
+ #define FPDFEX_RENDER_SKIP_FORM 0x00000010u
+ 
++// When set, CPDF_ImageObjects whose backing CPDF_Image reports
++// GetPixelWidth() * GetPixelHeight() greater than the threshold configured
++// via FPDFEx_SetHugeImagePixelThreshold() are not decoded/composited by
++// CPDF_ImageRenderer. Instead, a flat placeholder color is filled into the
++// image's clipped device-space bbox (see
++// core/fpdfapi/render/cpdf_renderstatus.cpp's FillImagePlaceholder), and the
++// object is otherwise treated as handled (no DrawObjWithBackground call).
++//
++// Unlike FPDFEX_RENDER_SKIP_FORM (which omits an entire Form XObject,
++// including any images nested inside it), this bit operates at
++// CPDF_ImageObject granularity and fires at any Form-recursion depth --
++// images nested inside Form XObjects (via ProcessForm's RenderObjectList)
++// reach the same ProcessObjectNoClip/ProcessImage chokepoint as top-level
++// images. Mask images (CPDF_Image::IsMask()) are never deferred regardless
++// of size, since they participate in clipping/compositing rather than being
++// directly visible.
++//
++// Rest of the page renders normally -- this is intended to let pass 1 of a
++// two-pass render show real page content (text, vector graphics, small
++// images) immediately, while only the few huge images are placeholder'd,
++// with pass 2 (skip_mask = 0) filling them in.
++#define FPDFEX_RENDER_SKIP_HUGE_IMAGE 0x00000020u
++
+ // Thread-local skip mask for subsequent FPDF_RenderPageBitmap() /
+ // FPDF_RenderPageBitmap_Start() / FPDF_RenderPage_Continue() calls on the
+ // calling thread, until changed again. Default 0 (skip nothing -- behavior
+@@ -48,6 +72,14 @@ extern "C" {
+ // nonzero mask.
+ FPDF_EXPORT void FPDF_CALLCONV FPDFEx_SetRenderSkipMask(uint32_t skip_mask);
+ 
++// Sets the thread-local pixel-count threshold (width * height) used by
++// FPDFEX_RENDER_SKIP_HUGE_IMAGE to decide whether a CPDF_ImageObject is
++// "huge". Default is 4,000,000 (e.g. ~2000x2000). A value of 0 is rejected
++// (no-op) to avoid accidentally deferring every image. Same thread-local /
++// snapshot-at-construction semantics as FPDFEx_SetRenderSkipMask().
++FPDF_EXPORT void FPDF_CALLCONV
++FPDFEx_SetHugeImagePixelThreshold(uint32_t pixel_threshold);
++
+ #ifdef __cplusplus
+ }  // extern "C"
+ #endif

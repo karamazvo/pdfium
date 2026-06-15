@@ -36,6 +36,7 @@ these patches:
 | 08 | `08-load-page-with-classification.patch` | Adds `FPDFEx_LoadPageWithClassification()` plus the fixed 64-byte `FPDFEx_PageClassification` ABI so xPDFSDK can route path-dense pages on the first render. No rendering semantics change. |
 | 09 | `09-render-callbacks-scoped-cancel.patch` | Adds `FPDFEx_SetRenderCallbacks()` and a per-render scoped cancellation callback table layered on the existing 06/07 abort checkpoints. Existing `FPDFEx_SetRenderAbort()` remains supported. |
 | 0011 | `0011-veloce-form-skip-mask.patch` | Adds `FPDFEx_SetRenderSkipMask(FPDFEX_RENDER_SKIP_FORM)` so callers can render a first pass that omits Form XObjects, then run a full pass later. Default mask is zero, so normal rendering is unchanged. |
+| 0012 | `0012-veloce-image-skip-mask.patch` | Adds the `FPDFEX_RENDER_SKIP_HUGE_IMAGE` bit to the same skip mask plus `FPDFEx_SetHugeImagePixelThreshold()`. When set, any non-mask image whose decoded pixel count exceeds the threshold (default 4,000,000 px, ~2000×2000) is skipped and replaced with a flat gray placeholder rect, at any Form-recursion depth. Default mask is zero, so normal rendering is unchanged. |
 
 ## Why this directory exists
 
@@ -59,6 +60,7 @@ git apply patches/ship/07-veloce-render-abort-deeper.patch
 git apply patches/ship/08-load-page-with-classification.patch
 git apply patches/ship/09-render-callbacks-scoped-cancel.patch
 git apply patches/ship/0011-veloce-form-skip-mask.patch
+git apply patches/ship/0012-veloce-image-skip-mask.patch
 ```
 
 Patches 06 and 07 depend on patch 05 and must be applied after it.
@@ -66,8 +68,11 @@ Patch 07 also depends on patch 06. Patch 08 depends on the fpdfview export
 surface after patches 05 and 06. Patch 09 depends on patches 06 and 07 because
 it reuses their render-abort checkpoints. Patch 0011 depends on patch 09
 because it adds a sibling `CPDF_RenderStatus` snapshot and is authored against
-the post-09 render-status layout. The release workflow applies the numeric
-order shown above.
+the post-09 render-status layout. Patch 0012 depends on patch 0011: it adds a
+second bit (`FPDFEX_RENDER_SKIP_HUGE_IMAGE`) and threshold setter to the same
+`render_skip_mask_`/`veloce_render_skip_mask.{h,cpp}` surface that 0011
+introduced, and is authored against the post-0011 `cpdf_renderstatus.{h,cpp}`
+layout. The release workflow applies the numeric order shown above.
 
 ## Cumulative effect (measured)
 
@@ -124,6 +129,13 @@ new `FPDFEx_LoadPageWithClassification()` symbol.
   `core/fpdfapi/render/veloce_render_skip_mask.{h,cpp}`,
   `fpdfsdk/BUILD.gn`, `fpdfsdk/fpdfex_render_skip_mask.cpp`,
   `public/fpdfex_render_skip_mask.h`.
+- **0012 Veloce image skip mask**:
+  `core/fpdfapi/render/cpdf_renderstatus.{h,cpp}`,
+  `core/fpdfapi/render/veloce_render_skip_mask.{h,cpp}`,
+  `fpdfsdk/fpdfex_render_skip_mask.cpp`,
+  `public/fpdfex_render_skip_mask.h`.
+  No `BUILD.gn` changes — all touched files were already registered as build
+  sources by patch 0011.
 
 Patches 02 and 03 both touch
 `cpdf_colorspace.cpp`, but in different sections (SeparationCS vs.
@@ -137,6 +149,9 @@ Patch 08 touches `fpdf_view.cpp` and `fpdfview.h`; it is authored after the
 Veloce fpdfview exports from patches 05 and 06.
 Patch 09 and 0011 both extend the render-status surface and add public
 extension headers/symbols. Patch 0011 is authored after patch 09.
+Patch 0012 extends 0011's skip-mask surface with a second bit
+(`FPDFEX_RENDER_SKIP_HUGE_IMAGE`) for per-image (rather than per-Form)
+deferral, and is authored after 0011.
 
 ## Upstreaming
 
