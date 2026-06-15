@@ -1,0 +1,215 @@
+diff --git a/BUILD.gn b/BUILD.gn
+index dac96ed0b..507b8152d 100644
+--- a/BUILD.gn
++++ b/BUILD.gn
+@@ -200,6 +200,7 @@ source_set("pdfium_public_headers_impl") {
+     "public/fpdf_dataavail.h",
+     "public/fpdf_doc.h",
+     "public/fpdf_edit.h",
++    "public/fpdfex_render_skip_mask.h",
+     "public/fpdfex_render_callbacks.h",
+     "public/fpdf_ext.h",
+     "public/fpdf_flatten.h",
+diff --git a/core/fpdfapi/render/BUILD.gn b/core/fpdfapi/render/BUILD.gn
+index 89d1ad5ec..caa339234 100644
+--- a/core/fpdfapi/render/BUILD.gn
++++ b/core/fpdfapi/render/BUILD.gn
+@@ -33,6 +33,8 @@ source_set("render") {
+     "cpdf_type3cache.h",
+     "cpdf_type3glyphmap.cpp",
+     "cpdf_type3glyphmap.h",
++    "veloce_render_skip_mask.cpp",
++    "veloce_render_skip_mask.h",
+     "veloce_render_callbacks.cpp",
+     "veloce_render_callbacks.h",
+   ]
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 747b082ec..88032df78 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -51,6 +51,7 @@
+ #include "core/fpdfapi/render/cpdf_textrenderer.h"
+ #include "core/fpdfapi/render/veloce_skip_rasterization.h"
+ #include "core/fpdfapi/render/veloce_render_abort.h"
++#include "core/fpdfapi/render/veloce_render_skip_mask.h"
+ #include "core/fpdfapi/render/veloce_render_callbacks.h"
+ #include "core/fpdfapi/render/cpdf_type3cache.h"
+ #include "core/fxcrt/autorestorer.h"
+@@ -194,4 +195,5 @@ CPDF_RenderStatus::CPDF_RenderStatus(CPDF_RenderContext* context,
+                                      CFX_RenderDevice* pDevice)
+     : context_(context),
+       device_(pDevice),
++      render_skip_mask_(VeloceGetRenderSkipMask()),
+       render_callbacks_(VeloceGetRenderCallbacks()) {}
+@@ -383,6 +385,13 @@ void CPDF_RenderStatus::ProcessObjectNoClip(CPDF_PageObject* pObj,
+     stopped_ = true;
+     return;
+   }
++  if (pObj->GetType() == CPDF_PageObject::Type::kForm &&
++      (render_skip_mask_ & kVeloceRenderSkipForm)) {
++    // Form is omitted from this render pass entirely: no Process{...}
++    // dispatch, no DrawObjWithBackground. Whatever is already in the
++    // bitmap at this object's bbox (the initial fill) shows through.
++    return;
++  }
+   switch (pObj->GetType()) {
+     case CPDF_PageObject::Type::kText:
+       bRet = ProcessText(pObj->AsText(), mtObj2Device, nullptr);
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.h b/core/fpdfapi/render/cpdf_renderstatus.h
+index 46c60122b..054ddd7a4 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.h
++++ b/core/fpdfapi/render/cpdf_renderstatus.h
+@@ -10,3 +10,4 @@
++#include <stdint.h>
+ #include <memory>
+ #include <utility>
+ #include <vector>
+@@ -199,6 +200,12 @@ class CPDF_RenderStatus {
+   std::vector<UnownedPtr<const CPDF_Type3Font>> type3_font_cache_;
+   UnownedPtr<CPDF_RenderContext> const context_;
+   UnownedPtr<CFX_RenderDevice> const device_;
++  // Snapshot of VeloceGetRenderSkipMask() taken at construction time. Using
++  // a per-instance snapshot (rather than re-reading the thread_local on
++  // every ProcessObjectNoClip call) means a render's skip behavior is fixed
++  // for its whole lifetime, even if FPDFEx_SetRenderSkipMask() is called
++  // again on this thread before this CPDF_RenderStatus is destroyed.
++  const uint32_t render_skip_mask_;
+   UnownedPtr<const VeloceRenderCallbacks> const render_callbacks_;
+   CFX_Matrix device_matrix_;
+   CPDF_ClipPath last_clip_path_;
+diff --git a/core/fpdfapi/render/veloce_render_skip_mask.cpp b/core/fpdfapi/render/veloce_render_skip_mask.cpp
+new file mode 100644
+index 000000000..eae5e518a
+--- /dev/null
++++ b/core/fpdfapi/render/veloce_render_skip_mask.cpp
+@@ -0,0 +1,16 @@
++// Copyright 2026 The xPDFSDK Authors
++// Use of this source code is governed by the PDFium BSD-style license.
++
++#include "core/fpdfapi/render/veloce_render_skip_mask.h"
++
++namespace {
++thread_local uint32_t g_skip_mask = 0;
++}  // namespace
++
++uint32_t VeloceGetRenderSkipMask() {
++  return g_skip_mask;
++}
++
++void VeloceSetRenderSkipMask(uint32_t skip_mask) {
++  g_skip_mask = skip_mask;
++}
+diff --git a/core/fpdfapi/render/veloce_render_skip_mask.h b/core/fpdfapi/render/veloce_render_skip_mask.h
+new file mode 100644
+index 000000000..3258d7f7d
+--- /dev/null
++++ b/core/fpdfapi/render/veloce_render_skip_mask.h
+@@ -0,0 +1,15 @@
++// Copyright 2026 The xPDFSDK Authors
++// Use of this source code is governed by the PDFium BSD-style license.
++
++#ifndef CORE_FPDFAPI_RENDER_VELOCE_RENDER_SKIP_MASK_H_
++#define CORE_FPDFAPI_RENDER_VELOCE_RENDER_SKIP_MASK_H_
++
++#include <stdint.h>
++
++constexpr uint32_t kVeloceRenderSkipForm = 0x00000010u;
++
++// Thread-local; see public/fpdfex_render_skip_mask.h for full contract.
++uint32_t VeloceGetRenderSkipMask();
++void VeloceSetRenderSkipMask(uint32_t skip_mask);
++
++#endif  // CORE_FPDFAPI_RENDER_VELOCE_RENDER_SKIP_MASK_H_
+diff --git a/fpdfsdk/BUILD.gn b/fpdfsdk/BUILD.gn
+index c3215cd49..c4a2d6d58 100644
+--- a/fpdfsdk/BUILD.gn
++++ b/fpdfsdk/BUILD.gn
+@@ -44,6 +44,7 @@ source_set("fpdfsdk") {
+     "fpdf_editpage.cpp",
+     "fpdf_editpath.cpp",
+     "fpdf_edittext.cpp",
++    "fpdfex_render_skip_mask.cpp",
+     "fpdfex_render_callbacks.cpp",
+     "fpdf_ext.cpp",
+     "fpdf_flatten.cpp",
+diff --git a/fpdfsdk/fpdfex_render_skip_mask.cpp b/fpdfsdk/fpdfex_render_skip_mask.cpp
+new file mode 100644
+index 000000000..29d9ab947
+--- /dev/null
++++ b/fpdfsdk/fpdfex_render_skip_mask.cpp
+@@ -0,0 +1,14 @@
++// Copyright 2026 The xPDFSDK Authors
++// Use of this source code is governed by the PDFium BSD-style license.
++
++#include "public/fpdfex_render_skip_mask.h"
++
++#include "core/fpdfapi/render/veloce_render_skip_mask.h"
++
++namespace {
++static_assert(FPDFEX_RENDER_SKIP_FORM == kVeloceRenderSkipForm);
++}  // namespace
++
++FPDF_EXPORT void FPDF_CALLCONV FPDFEx_SetRenderSkipMask(uint32_t skip_mask) {
++  VeloceSetRenderSkipMask(skip_mask);
++}
+diff --git a/public/fpdfex_render_skip_mask.h b/public/fpdfex_render_skip_mask.h
+new file mode 100644
+index 000000000..235682985
+--- /dev/null
++++ b/public/fpdfex_render_skip_mask.h
+@@ -0,0 +1,55 @@
++// Copyright 2026 The xPDFSDK Authors
++// Use of this source code is governed by the PDFium BSD-style license.
++
++#ifndef PUBLIC_FPDFEX_RENDER_SKIP_MASK_H_
++#define PUBLIC_FPDFEX_RENDER_SKIP_MASK_H_
++
++#include <stdint.h>
++
++#include "public/fpdfview.h"
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++// Object-type bits for FPDFEx_SetRenderSkipMask(). When a bit is set, page
++// objects of that type are walked (counted toward CPDF_RenderStatus's normal
++// bookkeeping) but never drawn -- ProcessObjectNoClip returns early before
++// dispatching to Process{Text,Path,Image,Shading,Form}, and the object is
++// omitted from this render pass entirely (no DrawObjWithBackground call --
++// see core/fpdfapi/render/cpdf_renderstatus.cpp's ProcessObjectNoClip). The
++// output bitmap is therefore complete and well-formed, just missing that
++// object type's pixels within their bboxes (whatever was already in the
++// bitmap at those pixels -- typically the initial fill color -- shows
++// through).
++//
++// v1 defines only the FORM bit (form-deferred first paint). The remaining
++// bit positions are reserved for symmetry with the patches/experiments/0010
++// draft (TEXT/PATH/IMAGE/SHADING/TRANSPARENCY/SOFT_MASK) but are NOT
++// implemented by this patch -- setting them has no effect. Do not rely on
++// them until a future patch documents and implements them.
++#define FPDFEX_RENDER_SKIP_FORM 0x00000010u
++
++// Thread-local skip mask for subsequent FPDF_RenderPageBitmap() /
++// FPDF_RenderPageBitmap_Start() / FPDF_RenderPage_Continue() calls on the
++// calling thread, until changed again. Default 0 (skip nothing -- behavior
++// identical to a libpdfium.so without this patch).
++//
++// Thread-safety: g_skip_mask is `thread_local uint32_t`, mirroring patch
++// 09's `thread_local VeloceRenderCallbacks g_render_callbacks`. Each
++// CPDF_RenderStatus snapshots VeloceGetRenderSkipMask() once at construction
++// time (same pattern patch 09 uses for render_callbacks_), so a render in
++// progress is unaffected by a later FPDFEx_SetRenderSkipMask() call on the
++// same or another thread -- it always sees the value that was current when
++// it started.
++//
++// Callers MUST reset skip_mask to 0 after pass 1 so a later render on the
++// same thread that doesn't intend to skip anything doesn't inherit a stale
++// nonzero mask.
++FPDF_EXPORT void FPDF_CALLCONV FPDFEx_SetRenderSkipMask(uint32_t skip_mask);
++
++#ifdef __cplusplus
++}  // extern "C"
++#endif
++
++#endif  // PUBLIC_FPDFEX_RENDER_SKIP_MASK_H_

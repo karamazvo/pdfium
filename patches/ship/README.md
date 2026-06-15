@@ -1,6 +1,6 @@
 # Production PDFium patches (ship-quality)
 
-This directory contains the **eight self-contained patches**
+This directory contains the **production PDFium patch series**
 used by the Veloce PDFium build. Unlike the `experiments/` directory,
 these patches:
 
@@ -22,7 +22,7 @@ these patches:
   Patches 06 and 07 also preserve normal output while the abort flag remains
   disabled.
 
-## The eight patches
+## The patches
 
 | # | File | Effect |
 |---|---|---|
@@ -35,6 +35,7 @@ these patches:
 | 07 | `07-veloce-render-abort-deeper.patch` | Adds deeper abort checkpoints inside `RenderSingleObject()`, progressive image continuation, Form XObject recursion, transparency rendering, Type3 Form rendering, and soft-mask rendering. Default disabled through patch 06's abort flag. |
 | 08 | `08-load-page-with-classification.patch` | Adds `FPDFEx_LoadPageWithClassification()` plus the fixed 64-byte `FPDFEx_PageClassification` ABI so xPDFSDK can route path-dense pages on the first render. No rendering semantics change. |
 | 09 | `09-render-callbacks-scoped-cancel.patch` | Adds `FPDFEx_SetRenderCallbacks()` and a per-render scoped cancellation callback table layered on the existing 06/07 abort checkpoints. Existing `FPDFEx_SetRenderAbort()` remains supported. |
+| 0011 | `0011-veloce-form-skip-mask.patch` | Adds `FPDFEx_SetRenderSkipMask(FPDFEX_RENDER_SKIP_FORM)` so callers can render a first pass that omits Form XObjects, then run a full pass later. Default mask is zero, so normal rendering is unchanged. |
 
 ## Why this directory exists
 
@@ -57,13 +58,16 @@ git apply patches/ship/06-veloce-render-abort-probe.patch
 git apply patches/ship/07-veloce-render-abort-deeper.patch
 git apply patches/ship/08-load-page-with-classification.patch
 git apply patches/ship/09-render-callbacks-scoped-cancel.patch
+git apply patches/ship/0011-veloce-form-skip-mask.patch
 ```
 
 Patches 06 and 07 depend on patch 05 and must be applied after it.
 Patch 07 also depends on patch 06. Patch 08 depends on the fpdfview export
 surface after patches 05 and 06. Patch 09 depends on patches 06 and 07 because
-it reuses their render-abort checkpoints. The release workflow applies the
-numeric order shown above.
+it reuses their render-abort checkpoints. Patch 0011 depends on patch 09
+because it adds a sibling `CPDF_RenderStatus` snapshot and is authored against
+the post-09 render-status layout. The release workflow applies the numeric
+order shown above.
 
 ## Cumulative effect (measured)
 
@@ -108,6 +112,18 @@ new `FPDFEx_LoadPageWithClassification()` symbol.
   `core/fpdfapi/render/cpdf_renderstatus.cpp`.
 - **08 Veloce load-page classification**:
   `fpdfsdk/fpdf_view.cpp`, `public/fpdfview.h`.
+- **09 Veloce scoped render callbacks**:
+  `BUILD.gn`, `core/fpdfapi/render/BUILD.gn`,
+  `core/fpdfapi/render/cpdf_renderstatus.{h,cpp}`,
+  `core/fpdfapi/render/veloce_render_callbacks.{h,cpp}`,
+  `fpdfsdk/BUILD.gn`, `fpdfsdk/fpdfex_render_callbacks.cpp`,
+  `public/fpdfex_render_callbacks.h`.
+- **0011 Veloce form skip mask**:
+  `BUILD.gn`, `core/fpdfapi/render/BUILD.gn`,
+  `core/fpdfapi/render/cpdf_renderstatus.{h,cpp}`,
+  `core/fpdfapi/render/veloce_render_skip_mask.{h,cpp}`,
+  `fpdfsdk/BUILD.gn`, `fpdfsdk/fpdfex_render_skip_mask.cpp`,
+  `public/fpdfex_render_skip_mask.h`.
 
 Patches 02 and 03 both touch
 `cpdf_colorspace.cpp`, but in different sections (SeparationCS vs.
@@ -119,6 +135,8 @@ abort flag and checks top-level object boundaries; patch 07 checks deeper
 phase boundaries inside `RenderSingleObject()`.
 Patch 08 touches `fpdf_view.cpp` and `fpdfview.h`; it is authored after the
 Veloce fpdfview exports from patches 05 and 06.
+Patch 09 and 0011 both extend the render-status surface and add public
+extension headers/symbols. Patch 0011 is authored after patch 09.
 
 ## Upstreaming
 

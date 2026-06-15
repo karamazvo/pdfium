@@ -82,7 +82,10 @@ jobs:
       - name: Apply xPDFSDK PDFium patches
         run: |
           PDFIUM_DIR="$WORK_ROOT/pdfium_build/pdfium"
-          for patch in "$GITHUB_WORKSPACE"/repo/patches/ship/0[1-9]-*.patch; do
+          for patch in \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0[1-9]-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0011-*.patch \
+              ; do
             echo "Applying ${patch#$GITHUB_WORKSPACE/repo/}"
             git -C "$PDFIUM_DIR" apply --check "$patch"
             git -C "$PDFIUM_DIR" apply "$patch"
@@ -151,11 +154,11 @@ jobs:
           LLVM_NM="$(pwd)/third_party/llvm-build/Release+Asserts/bin/llvm-nm"
           PDFIUM_A="$OUT_DIR/obj/libpdfium.a"
 
-          for api in FPDFEx_SetRenderAbort FPDFEx_SetRenderCallbacks; do
+          for api in FPDFEx_SetRenderAbort FPDFEx_SetRenderCallbacks FPDFEx_SetRenderSkipMask; do
             if ! "$LLVM_NM" -A "$PDFIUM_A" 2>/dev/null \
                 | grep -E " T $api(\b|@)" >/dev/null; then
               echo "MISSING $api in libpdfium.a" >&2
-              "$LLVM_NM" -A "$PDFIUM_A" 2>/dev/null | grep -E 'FPDFEx_SetRender|RenderCallbacks|RenderAbort' | head -20
+              "$LLVM_NM" -A "$PDFIUM_A" 2>/dev/null | grep -E 'FPDFEx_SetRender|RenderCallbacks|RenderAbort|RenderSkipMask' | head -20
               exit 1
             fi
             echo "OK $api"
@@ -163,6 +166,8 @@ jobs:
 
           grep -q 'ShouldCancelRender' core/fpdfapi/render/cpdf_renderstatus.cpp
           grep -q 'VeloceGetRenderCallbacks' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'render_skip_mask_' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'g_skip_mask' core/fpdfapi/render/veloce_render_skip_mask.cpp
 
       - name: Link Android shared library
         run: |
@@ -183,6 +188,7 @@ jobs:
               FPDFEx_SetRenderAbort \
               FPDFEx_SetRenderCallbacks \
               FPDFEx_LoadPageWithClassification \
+              FPDFEx_SetRenderSkipMask \
               ; do
             if ! "$LLVM_NM" -D --defined-only -C "$SO" 2>/dev/null \
                 | grep -E " T $api(\b|@)" >/dev/null; then
@@ -201,6 +207,7 @@ jobs:
           cp "$OUT_DIR/obj/libpdfium.a" "$DIST_DIR/libpdfium.a"
           cp -R public/. "$DIST_DIR/include/"
           cp "$GITHUB_WORKSPACE"/repo/patches/ship/0[1-9]-*.patch "$DIST_DIR/patches/"
+          cp "$GITHUB_WORKSPACE"/repo/patches/ship/0011-*.patch "$DIST_DIR/patches/"
           sha256sum "$DIST_DIR/libpdfium.so" > "$DIST_DIR/SHA256SUMS.txt"
 
           {
@@ -210,7 +217,7 @@ jobs:
             printf 'renderer=agg\n'
             printf 'pgo=disabled\n'
             printf 'official_build=false\n'
-            printf 'patches=patches/ship/01..09\n'
+            printf 'patches=patches/ship/01..09,0011\n'
           } > "$DIST_DIR/build-info.txt"
 
       - name: Upload libpdfium artifact
