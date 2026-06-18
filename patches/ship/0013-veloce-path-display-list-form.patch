@@ -49,7 +49,7 @@ index caa339234..32ab43317 100644
      "veloce_render_skip_mask.h",
      "veloce_render_callbacks.cpp",
 diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
-index 868e0df4a..2fa6c640c 100644
+index 868e0df4a..fd1acfa90 100644
 --- a/core/fpdfapi/render/cpdf_renderstatus.cpp
 +++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
 @@ -49,6 +49,7 @@
@@ -60,7 +60,18 @@ index 868e0df4a..2fa6c640c 100644
  #include "core/fpdfapi/render/veloce_skip_rasterization.h"
  #include "core/fpdfapi/render/veloce_render_abort.h"
  #include "core/fpdfapi/render/veloce_render_skip_mask.h"
-@@ -513,7 +514,15 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
+@@ -208,6 +209,10 @@ bool CPDF_RenderStatus::ShouldCancelRender() const {
+          render_callbacks_->cancel_check(render_callbacks_->user_data);
+ }
+ 
++uint32_t CPDF_RenderStatus::GetRenderFeatureFlags() const {
++  return render_callbacks_ ? render_callbacks_->feature_flags : 0;
++}
++
+ void CPDF_RenderStatus::Initialize(const CPDF_RenderStatus* pParentStatus,
+                                    const CPDF_GraphicStates* pInitialStates) {
+ #if BUILDFLAG(IS_WIN)
+@@ -513,7 +518,15 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
    status.Initialize(this, &pFormObj->graphic_states());
    {
      CFX_RenderDevice::StateRestorer restorer(device_);
@@ -78,16 +89,14 @@ index 868e0df4a..2fa6c640c 100644
    }
    if (ShouldCancelRender()) {
 diff --git a/core/fpdfapi/render/cpdf_renderstatus.h b/core/fpdfapi/render/cpdf_renderstatus.h
-index a45ae8a83..75bf9982d 100644
+index a45ae8a83..6d83d3430 100644
 --- a/core/fpdfapi/render/cpdf_renderstatus.h
 +++ b/core/fpdfapi/render/cpdf_renderstatus.h
-@@ -201,6 +201,9 @@ class CPDF_RenderStatus {
+@@ -201,6 +201,7 @@ class CPDF_RenderStatus {
    // Returns the format that is compatible with `device_`.
    FXDIB_Format GetCompatibleArgbFormat() const;
    bool ShouldCancelRender() const;
-+  uint32_t GetRenderFeatureFlags() const {
-+    return render_callbacks_ ? render_callbacks_->feature_flags : 0;
-+  }
++  uint32_t GetRenderFeatureFlags() const;
  
    CPDF_RenderOptions options_;
    RetainPtr<const CPDF_Dictionary> form_resource_;
