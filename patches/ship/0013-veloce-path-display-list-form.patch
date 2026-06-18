@@ -1,0 +1,446 @@
+From: xPDFSDK team <noreply@xpdfsdk.local>
+Date: 2026-06-18
+Subject: [PATCH ship-0013] Add a path display-list fast path for Form XObjects
+
+Background
+==========
+Some PDFs, including the `/Meta20` case from `error.pdf`, wrap tens of
+thousands of simple filled path objects inside one Form XObject. PDFium's
+normal Form path enters `CPDF_RenderStatus::ProcessForm()` and then replays
+the Form through `RenderObjectList()`, paying the full per-object render
+dispatch stack for every child path. Progressive rendering does not help this
+case because the expensive Form render is one atomic PDFium call with no useful
+pause boundary inside the path-heavy Form body.
+
+This patch
+==========
+1. Adds `core/fpdfapi/render/veloce_path_display_list.{h,cpp}` as a separate
+   implementation unit for the native display-list experiment.
+2. Adds the default-off `FPDFEX_FEATURE_PATH_DISPLAY_LIST_FORM` feature bit to
+   `FPDFEx_RenderCallbacks::feature_flags`.
+3. Hooks `CPDF_RenderStatus::ProcessForm()` so eligible Form XObjects can be
+   compiled into a compact path display list and replayed into the same
+   `CFX_RenderDevice` bitmap.
+4. Fails closed: if the Form contains non-path objects, strokes, pattern paint,
+   transparency, complex clips, forced-color mode, or an unsupported state, the
+   code returns `kNotEligible` before drawing and the original
+   `RenderObjectList()` path runs unchanged.
+5. Retains `CPDF_Path` values in the path table. `CPDF_Path` is copy-on-write,
+   so this keeps the original path data shared instead of deep-copying every
+   `CFX_Path` point vector.
+6. Checks the existing scoped render cancellation callback every 64 display-list
+   nodes during replay.
+
+The initial v1 target is the Meta20-class fill-only path workload. It does not
+cache compiled lists across renders yet and it does not replace the general
+PDFium renderer.
+
+diff --git a/core/fpdfapi/render/BUILD.gn b/core/fpdfapi/render/BUILD.gn
+index caa339234..32ab43317 100644
+--- a/core/fpdfapi/render/BUILD.gn
++++ b/core/fpdfapi/render/BUILD.gn
+@@ -33,6 +33,8 @@ source_set("render") {
+     "cpdf_type3cache.h",
+     "cpdf_type3glyphmap.cpp",
+     "cpdf_type3glyphmap.h",
++    "veloce_path_display_list.cpp",
++    "veloce_path_display_list.h",
+     "veloce_render_skip_mask.cpp",
+     "veloce_render_skip_mask.h",
+     "veloce_render_callbacks.cpp",
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 868e0df4a..2fa6c640c 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -49,6 +49,7 @@
+ #include "core/fpdfapi/render/cpdf_rendershading.h"
+ #include "core/fpdfapi/render/cpdf_rendertiling.h"
+ #include "core/fpdfapi/render/cpdf_textrenderer.h"
++#include "core/fpdfapi/render/veloce_path_display_list.h"
+ #include "core/fpdfapi/render/veloce_skip_rasterization.h"
+ #include "core/fpdfapi/render/veloce_render_abort.h"
+ #include "core/fpdfapi/render/veloce_render_skip_mask.h"
+@@ -513,7 +514,15 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
+   status.Initialize(this, &pFormObj->graphic_states());
+   {
+     CFX_RenderDevice::StateRestorer restorer(device_);
+-    status.RenderObjectList(pFormObj->form(), matrix);
++    const VelocePathDisplayListResult path_dl_result =
++        VeloceTryRenderPathDisplayList(&status, pFormObj->form(), matrix);
++    if (path_dl_result == VelocePathDisplayListResult::kCancelled) {
++      stopped_ = true;
++      return true;
++    }
++    if (path_dl_result == VelocePathDisplayListResult::kNotEligible) {
++      status.RenderObjectList(pFormObj->form(), matrix);
++    }
+     stopped_ = status.stopped_;
+   }
+   if (ShouldCancelRender()) {
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.h b/core/fpdfapi/render/cpdf_renderstatus.h
+index a45ae8a83..75bf9982d 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.h
++++ b/core/fpdfapi/render/cpdf_renderstatus.h
+@@ -201,6 +201,9 @@ class CPDF_RenderStatus {
+   // Returns the format that is compatible with `device_`.
+   FXDIB_Format GetCompatibleArgbFormat() const;
+   bool ShouldCancelRender() const;
++  uint32_t GetRenderFeatureFlags() const {
++    return render_callbacks_ ? render_callbacks_->feature_flags : 0;
++  }
+ 
+   CPDF_RenderOptions options_;
+   RetainPtr<const CPDF_Dictionary> form_resource_;
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+new file mode 100644
+index 000000000..21db163f8
+--- /dev/null
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -0,0 +1,296 @@
++// Copyright 2026 The xPDFSDK Authors
++// Use of this source code is governed by the PDFium BSD-style license.
++
++#include "core/fpdfapi/render/veloce_path_display_list.h"
++
++#include <stdint.h>
++
++#include <limits>
++#include <optional>
++#include <utility>
++#include <vector>
++
++#include "constants/transparency.h"
++#include "core/fpdfapi/page/cpdf_clippath.h"
++#include "core/fpdfapi/page/cpdf_color.h"
++#include "core/fpdfapi/page/cpdf_colorstate.h"
++#include "core/fpdfapi/page/cpdf_generalstate.h"
++#include "core/fpdfapi/page/cpdf_pageobject.h"
++#include "core/fpdfapi/page/cpdf_pageobjectholder.h"
++#include "core/fpdfapi/page/cpdf_pathobject.h"
++#include "core/fpdfapi/render/cpdf_renderoptions.h"
++#include "core/fpdfapi/render/cpdf_renderstatus.h"
++#include "core/fpdfapi/render/veloce_render_callbacks.h"
++#include "core/fxge/cfx_fillrenderoptions.h"
++#include "core/fxge/cfx_path.h"
++#include "core/fxge/cfx_renderdevice.h"
++
++namespace {
++
++constexpr uint32_t kVeloceFeaturePathDisplayListForm = 0x00000001u;
++constexpr uint32_t kNoClipKey = std::numeric_limits<uint32_t>::max();
++constexpr uint32_t kMaxClipPathCount = 16;
++constexpr uint32_t kCancelCheckNodeInterval = 64;
++
++struct PathDlPaint {
++  CFX_FillRenderOptions fill_options;
++  uint32_t fill_argb = 0;
++};
++
++struct PathDlNode {
++  CFX_FloatRect holder_space_bbox;
++  CFX_Matrix path_to_holder;
++  uint32_t path_index = 0;
++  uint32_t paint_key = 0;
++  uint32_t clip_key = kNoClipKey;
++};
++
++struct NativePathDisplayList {
++  std::vector<CPDF_Path> path_table;
++  std::vector<PathDlPaint> paint_table;
++  std::vector<CPDF_ClipPath> clip_table;
++  std::vector<PathDlNode> nodes;
++};
++
++bool IsPathDisplayListFeatureEnabled(const CPDF_RenderStatus* status) {
++  return (status->GetRenderFeatureFlags() & kVeloceFeaturePathDisplayListForm) !=
++         0;
++}
++
++bool HasOnlySimplePathClip(const CPDF_ClipPath& clip_path) {
++  if (!clip_path.HasRef()) {
++    return true;
++  }
++  if (clip_path.GetTextCount() != 0) {
++    return false;
++  }
++  if (clip_path.GetPathCount() > kMaxClipPathCount) {
++    return false;
++  }
++  for (size_t i = 0; i < clip_path.GetPathCount(); ++i) {
++    CPDF_Path path = clip_path.GetPath(i);
++    if (!path.GetObject()) {
++      return false;
++    }
++  }
++  return true;
++}
++
++bool RequiresTransparency(const CPDF_PageObject* obj) {
++  const CPDF_GeneralState& general_state = obj->general_state();
++  if (general_state.GetSoftMask()) {
++    return true;
++  }
++  if (general_state.GetBlendType() != BlendMode::kNormal) {
++    return true;
++  }
++  if (general_state.GetFillAlpha() != 1.0f) {
++    return true;
++  }
++  if (general_state.GetStrokeAlpha() != 1.0f) {
++    return true;
++  }
++  return false;
++}
++
++bool HasPatternPaint(const CPDF_PathObject* path_obj,
++                     CFX_FillRenderOptions::FillType fill_type,
++                     bool stroke) {
++  if (fill_type != CFX_FillRenderOptions::FillType::kNoFill) {
++    const CPDF_Color* fill_color = path_obj->color_state().GetFillColor();
++    if (!fill_color || fill_color->IsPattern()) {
++      return true;
++    }
++  }
++  if (stroke) {
++    const CPDF_Color* stroke_color = path_obj->color_state().GetStrokeColor();
++    if (!stroke_color || stroke_color->IsPattern()) {
++      return true;
++    }
++  }
++  return false;
++}
++
++std::optional<uint32_t> AddClipKey(NativePathDisplayList* list,
++                                   const CPDF_ClipPath& clip_path) {
++  if (!clip_path.HasRef()) {
++    return kNoClipKey;
++  }
++  for (uint32_t i = 0; i < list->clip_table.size(); ++i) {
++    if (list->clip_table[i] == clip_path) {
++      return i;
++    }
++  }
++  if (list->clip_table.size() >= std::numeric_limits<uint32_t>::max()) {
++    return std::nullopt;
++  }
++  list->clip_table.push_back(clip_path);
++  return static_cast<uint32_t>(list->clip_table.size() - 1);
++}
++
++std::optional<uint32_t> AddPaintKey(NativePathDisplayList* list,
++                                    const PathDlPaint& paint) {
++  for (uint32_t i = 0; i < list->paint_table.size(); ++i) {
++    const PathDlPaint& existing = list->paint_table[i];
++    if (existing.fill_options == paint.fill_options &&
++        existing.fill_argb == paint.fill_argb) {
++      return i;
++    }
++  }
++  if (list->paint_table.size() >= std::numeric_limits<uint32_t>::max()) {
++    return std::nullopt;
++  }
++  list->paint_table.push_back(paint);
++  return static_cast<uint32_t>(list->paint_table.size() - 1);
++}
++
++bool CompilePathDisplayList(CPDF_RenderStatus* status,
++                            const CPDF_PageObjectHolder* holder,
++                            NativePathDisplayList* list) {
++  if (status->GetRenderOptions().ColorModeIs(CPDF_RenderOptions::kForcedColor)) {
++    return false;
++  }
++
++  for (const auto& obj : *holder) {
++    if (!obj || !obj->IsActive()) {
++      continue;
++    }
++    if (!status->GetRenderOptions().CheckPageObjectVisible(obj.get())) {
++      continue;
++    }
++    if (!obj->IsPath()) {
++      return false;
++    }
++    if (!HasOnlySimplePathClip(obj->clip_path())) {
++      return false;
++    }
++    if (RequiresTransparency(obj.get())) {
++      return false;
++    }
++
++    auto* path_obj = obj->AsPath();
++    CFX_FillRenderOptions::FillType fill_type = path_obj->filltype();
++    const bool stroke = path_obj->stroke();
++    if (stroke) {
++      // v1 optimizes the Meta20-class fill-only workload. Stroke support can
++      // be added once graph-state side-table replay is pixel-diffed.
++      return false;
++    }
++    if (fill_type == CFX_FillRenderOptions::FillType::kNoFill) {
++      continue;
++    }
++    if (HasPatternPaint(path_obj, fill_type, stroke)) {
++      return false;
++    }
++    CPDF_Path path = path_obj->path();
++    if (!path.GetObject()) {
++      return false;
++    }
++
++    std::optional<uint32_t> clip_key = AddClipKey(list, obj->clip_path());
++    if (!clip_key.has_value()) {
++      return false;
++    }
++
++    CFX_FillRenderOptions fill_options(fill_type);
++    fill_options.aliased_path =
++        status->GetRenderOptions().GetOptions().bNoPathSmooth;
++    PathDlPaint paint;
++    paint.fill_options = fill_options;
++    paint.fill_argb = status->GetFillArgb(path_obj);
++    std::optional<uint32_t> paint_key = AddPaintKey(list, paint);
++    if (!paint_key.has_value()) {
++      return false;
++    }
++    if (list->path_table.size() >= std::numeric_limits<uint32_t>::max()) {
++      return false;
++    }
++
++    list->path_table.push_back(path);
++
++    PathDlNode node;
++    node.holder_space_bbox = obj->GetRect();
++    node.path_to_holder = path_obj->matrix();
++    node.path_index = static_cast<uint32_t>(list->path_table.size() - 1);
++    node.paint_key = paint_key.value();
++    node.clip_key = clip_key.value();
++    list->nodes.push_back(std::move(node));
++  }
++
++  return !list->nodes.empty();
++}
++
++bool IntersectsDeviceClip(const PathDlNode& node,
++                          const CFX_Matrix& holder_to_device,
++                          CFX_RenderDevice* device) {
++  FX_RECT rect = holder_to_device.TransformRect(node.holder_space_bbox)
++                     .GetOuterRect();
++  rect.Intersect(device->GetClipBox());
++  return !rect.IsEmpty();
++}
++
++VelocePathDisplayListResult ReplayPathDisplayList(
++    CPDF_RenderStatus* status,
++    const NativePathDisplayList& list,
++    const CFX_Matrix& holder_to_device) {
++  CFX_RenderDevice* device = status->GetRenderDevice();
++  CFX_RenderDevice::StateRestorer restorer(device);
++
++  uint32_t current_clip_key = kNoClipKey;
++  bool have_clip_state = false;
++  CPDF_ClipPath empty_clip;
++
++  for (uint32_t i = 0; i < list.nodes.size(); ++i) {
++    if ((i % kCancelCheckNodeInterval) == 0 && status->ShouldCancelRender()) {
++      return VelocePathDisplayListResult::kCancelled;
++    }
++
++    const PathDlNode& node = list.nodes[i];
++    if (!IntersectsDeviceClip(node, holder_to_device, device)) {
++      continue;
++    }
++
++    if (!have_clip_state || current_clip_key != node.clip_key) {
++      if (node.clip_key == kNoClipKey) {
++        status->ProcessClipPath(empty_clip, holder_to_device);
++      } else {
++        status->ProcessClipPath(list.clip_table[node.clip_key],
++                                holder_to_device);
++      }
++      have_clip_state = true;
++      current_clip_key = node.clip_key;
++    }
++
++    const PathDlPaint& paint = list.paint_table[node.paint_key];
++    const CFX_Path* path = list.path_table[node.path_index].GetObject();
++    if (!path) {
++      continue;
++    }
++    CFX_Matrix path_matrix = node.path_to_holder * holder_to_device;
++    device->DrawPath(*path, &path_matrix, nullptr, paint.fill_argb,
++                     /*stroke_color=*/0, paint.fill_options);
++  }
++
++  if (status->ShouldCancelRender()) {
++    return VelocePathDisplayListResult::kCancelled;
++  }
++  return VelocePathDisplayListResult::kRendered;
++}
++
++}  // namespace
++
++VelocePathDisplayListResult VeloceTryRenderPathDisplayList(
++    CPDF_RenderStatus* status,
++    const CPDF_PageObjectHolder* holder,
++    const CFX_Matrix& holder_to_device) {
++  if (!status || !holder || !IsPathDisplayListFeatureEnabled(status)) {
++    return VelocePathDisplayListResult::kNotEligible;
++  }
++
++  NativePathDisplayList list;
++  if (!CompilePathDisplayList(status, holder, &list)) {
++    return VelocePathDisplayListResult::kNotEligible;
++  }
++
++  return ReplayPathDisplayList(status, list, holder_to_device);
++}
+diff --git a/core/fpdfapi/render/veloce_path_display_list.h b/core/fpdfapi/render/veloce_path_display_list.h
+new file mode 100644
+index 000000000..26503980a
+--- /dev/null
++++ b/core/fpdfapi/render/veloce_path_display_list.h
+@@ -0,0 +1,28 @@
++// Copyright 2026 The xPDFSDK Authors
++// Use of this source code is governed by the PDFium BSD-style license.
++
++#ifndef CORE_FPDFAPI_RENDER_VELOCE_PATH_DISPLAY_LIST_H_
++#define CORE_FPDFAPI_RENDER_VELOCE_PATH_DISPLAY_LIST_H_
++
++class CFX_Matrix;
++class CPDF_PageObjectHolder;
++class CPDF_RenderStatus;
++
++enum class VelocePathDisplayListResult {
++  kNotEligible,
++  kRendered,
++  kCancelled,
++};
++
++// Attempts to render a path-only object holder through a compact internal
++// display list into `status`'s current CFX_RenderDevice.
++//
++// This is intentionally conservative: unsupported objects or paint states
++// return kNotEligible before drawing, so callers can fall back to legacy
++// CPDF_RenderStatus::RenderObjectList().
++VelocePathDisplayListResult VeloceTryRenderPathDisplayList(
++    CPDF_RenderStatus* status,
++    const CPDF_PageObjectHolder* holder,
++    const CFX_Matrix& holder_to_device);
++
++#endif  // CORE_FPDFAPI_RENDER_VELOCE_PATH_DISPLAY_LIST_H_
+diff --git a/public/fpdfex_render_callbacks.h b/public/fpdfex_render_callbacks.h
+index db8e1f924..d1f1966e6 100644
+--- a/public/fpdfex_render_callbacks.h
++++ b/public/fpdfex_render_callbacks.h
+@@ -17,6 +17,12 @@ typedef int (*FPDFEx_RenderCancelCheckFn)(void* user_data);
+ 
+ #define FPDFEX_FEATURE_NONE 0u
+ 
++// Enables the experimental path-only Form XObject display-list fast path.
++// When set, eligible path-only Forms may be compiled to an internal display
++// list and replayed into the current render device. Unsupported content falls
++// back to legacy PDFium rendering before drawing.
++#define FPDFEX_FEATURE_PATH_DISPLAY_LIST_FORM 0x00000001u
++
+ typedef struct FPDFEx_RenderCallbacks {
+   uint32_t struct_size;
+   uint32_t feature_flags;

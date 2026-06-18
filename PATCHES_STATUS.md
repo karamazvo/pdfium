@@ -1,6 +1,6 @@
 # xPDFSDK PDFium Patch Status
 
-**Last updated:** 2026-06-14
+**Last updated:** 2026-06-18
 
 ## TL;DR
 
@@ -47,6 +47,19 @@ This applies ship patches `01..09`: the previous Veloce stack plus
 `patches/ship/09-render-callbacks-scoped-cancel.patch`, which adds
 `FPDFEx_SetRenderCallbacks()` while preserving the existing
 `FPDFEx_SetRenderAbort()` bridge.
+
+To build the r7 path-display-list binary:
+
+> Run workflow: **`Build patched PDFium Android arm64 r7 path display list`**
+>
+> File: `.github/workflows/pdfium-android-arm64-r7-path-display-list.yml`
+> Artifact: `libpdfium-android-arm64-r7-path-display-list`
+
+This applies ship patches `01..09,0011,0012,0013`. Patch 0013 adds the
+default-off `FPDFEX_FEATURE_PATH_DISPLAY_LIST_FORM` feature bit and a
+separate native path display-list implementation for eligible fill-only
+path Form XObjects such as `/Meta20`. Unsupported content falls back to
+PDFium's original `RenderObjectList()` path before drawing.
 
 **Release build size: ~6.6 MB** (down from a ~13.7 MB baseline).
 This is achieved by the shrink link strategy promoted from the
@@ -107,6 +120,9 @@ and the `libandroid.so` runtime dependency.
 | ship 07 | VELOCE DIAGNOSTIC | `patches/ship/07-veloce-render-abort-deeper.patch` | Extends the default-off render-abort probe deeper into `RenderSingleObject()`, progressive image continuation, Form XObject recursion, transparency rendering, Type3 Form rendering, and soft-mask rendering. |
 | ship 08 | VELOCE SHIP | `patches/ship/08-load-page-with-classification.patch` | Adds `FPDFEx_LoadPageWithClassification()` and the 64-byte `FPDFEx_PageClassification` ABI so xPDFSDK can classify pages at load time and route path-dense pages before the first render. |
 | ship 09 | VELOCE SHIP | `patches/ship/09-render-callbacks-scoped-cancel.patch` | Adds `FPDFEx_SetRenderCallbacks()` and a per-render scoped cancellation callback table layered on the existing 06/07 abort checkpoints. |
+| ship 0011 | VELOCE SHIP | `patches/ship/0011-veloce-form-skip-mask.patch` | Adds the default-off `FPDFEX_RENDER_SKIP_FORM` skip-mask bit for Form-omitting first-pass experiments. |
+| ship 0012 | VELOCE SHIP | `patches/ship/0012-veloce-image-skip-mask.patch` | Adds the default-off `FPDFEX_RENDER_SKIP_HUGE_IMAGE` skip-mask bit and threshold setter for huge image placeholder first-pass experiments. |
+| ship 0013 | VELOCE EXPERIMENTAL | `patches/ship/0013-veloce-path-display-list-form.patch` | Adds `FPDFEX_FEATURE_PATH_DISPLAY_LIST_FORM` and an isolated path display-list fast path hooked from `ProcessForm()`. Eligible fill-only path Forms replay directly into the same render device; unsupported content falls back to normal PDFium rendering before drawing. |
 
 ---
 
@@ -118,6 +134,8 @@ and the `libandroid.so` runtime dependency.
 | `release-pdfium-android-arm64-veloce.yml` | `workflow_dispatch` | **CURRENT VELOCE RELEASE BUILD.** Applies ship patches `01..07`, including internal-access exports, skip-rasterization, and render-abort probes. Use this for VIR admission/replay work and cancellation experiments. |
 | `libpdfium_patch_build.yml` | `workflow_dispatch` | **NEXT VELOCE CLASSIFICATION BUILD.** Applies ship patches `01..08`, including `FPDFEx_LoadPageWithClassification`. Verifies all Veloce symbols, the new classification export, and the 64-byte classification struct ABI before packaging `libpdfium.so`. |
 | `pdfium-android-arm64-r5-callbacks.yml` | `workflow_dispatch` | **R5 SCOPED-CANCEL BUILD.** Applies ship patches `01..09`, including the scoped render callback API. Verifies `FPDFEx_SetRenderAbort` and `FPDFEx_SetRenderCallbacks` in the final shared object. |
+| `pdfium-android-arm64-r6-image-skip.yml` | `workflow_dispatch` | **R6 IMAGE-SKIP BUILD.** Applies ship patches `01..09,0011,0012`, including Form skip-mask and huge-image placeholder deferral. Verifies skip-mask APIs and image deferral hooks before packaging. |
+| `pdfium-android-arm64-r7-path-display-list.yml` | `workflow_dispatch` | **R7 PATH DISPLAY-LIST BUILD.** Applies ship patches `01..09,0011,0012,0013`, including the default-off path-only Form display-list fast path. Verifies the feature flag, `ProcessForm()` hook, separate implementation file, and cancellation checkpoint token before packaging. |
 | `libpdfium_experiment_profile_build.yml` | `workflow_dispatch` | **EXPERIMENT PROFILE BUILD.** Applies ship patches `01..08` plus `patches/experiments/0010-render-profile-and-content-skip.patch`. Use this to measure per-stage `FPDF_RenderPageBitmap()` costs and test skip-text/path/image/shading/Form/transparency/soft-mask speedups on selected PDFs. Artifact: `libpdfium-android-arm64-veloce-render-profile-experiment`. |
 | `release-size-experiment.yml` | `workflow_dispatch` | Side-by-side size comparison (baseline / A / B / C). Variant C is the current ship config. Run this when a future PDFium roll or build refactor unexpectedly changes the size profile — it isolates which lever moved. |
 | `build-pdfium-android-arm64-agg-devicen-fast.yml` | `workflow_dispatch` | Diagnostic ship build. Applies 0003+0004+0005+0007+0008+0009, retains trace markers. Use for future perf investigations. |
