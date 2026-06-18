@@ -28,9 +28,9 @@ This patch
 5. Retains `CPDF_Path` values in the path table. `CPDF_Path` is copy-on-write,
    so this keeps the original path data shared instead of deep-copying every
    `CFX_Path` point vector.
-6. Keeps `CPDF_RenderStatus` helpers private; the display-list entrypoint is a
-   narrow friend so replay can use the existing scoped cancellation and feature
-   flag plumbing without widening the class public API.
+6. Exposes the existing render cancellation helper and new feature-flag helper
+   as internal `CPDF_RenderStatus` methods so the separate display-list
+   implementation can use the same render-scoped callback plumbing.
 7. Checks the existing scoped render cancellation callback every 64 display-list
    nodes during replay.
 
@@ -92,34 +92,23 @@ index 868e0df4a..fd1acfa90 100644
    }
    if (ShouldCancelRender()) {
 diff --git a/core/fpdfapi/render/cpdf_renderstatus.h b/core/fpdfapi/render/cpdf_renderstatus.h
-index a45ae8a83..a76e0d0b3 100644
+index a45ae8a83..756fb8422 100644
 --- a/core/fpdfapi/render/cpdf_renderstatus.h
 +++ b/core/fpdfapi/render/cpdf_renderstatus.h
-@@ -44,6 +44,7 @@ class CPDF_Type3Char;
- class CPDF_Type3Font;
- class PauseIndicatorIface;
- struct VeloceRenderCallbacks;
-+enum class VelocePathDisplayListResult;
+@@ -103,6 +103,8 @@ class CPDF_RenderStatus {
+   }
+   CFX_RenderDevice* GetRenderDevice() const { return device_; }
+   const CPDF_RenderOptions& GetRenderOptions() const { return options_; }
++  bool ShouldCancelRender() const;
++  uint32_t GetRenderFeatureFlags() const;
  
- class CPDF_RenderStatus {
-  public:
-@@ -132,6 +133,11 @@ class CPDF_RenderStatus {
-       bool stroke);
- 
-  private:
-+  friend VelocePathDisplayListResult VeloceTryRenderPathDisplayList(
-+      CPDF_RenderStatus* status,
-+      const CPDF_PageObjectHolder* holder,
-+      const CFX_Matrix& holder_to_device);
-+
-   bool ProcessTransparency(CPDF_PageObject* PageObj,
-                            const CFX_Matrix& mtObj2Device);
-   void ProcessObjectNoClip(CPDF_PageObject* pObj,
-@@ -201,6 +207,7 @@ class CPDF_RenderStatus {
+   RetainPtr<CPDF_TransferFunc> GetTransferFunc(
+       RetainPtr<const CPDF_Object> pObject) const;
+@@ -200,7 +202,6 @@ class CPDF_RenderStatus {
+                                const CFX_Matrix& mtObj2Device) const;
    // Returns the format that is compatible with `device_`.
    FXDIB_Format GetCompatibleArgbFormat() const;
-   bool ShouldCancelRender() const;
-+  uint32_t GetRenderFeatureFlags() const;
+-  bool ShouldCancelRender() const;
  
    CPDF_RenderOptions options_;
    RetainPtr<const CPDF_Dictionary> form_resource_;
