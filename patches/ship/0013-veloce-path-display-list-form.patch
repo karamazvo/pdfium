@@ -117,18 +117,24 @@ new file mode 100644
 index 000000000..21db163f8
 --- /dev/null
 +++ b/core/fpdfapi/render/veloce_path_display_list.cpp
-@@ -0,0 +1,296 @@
+@@ -0,0 +1,406 @@
 +// Copyright 2026 The xPDFSDK Authors
 +// Use of this source code is governed by the PDFium BSD-style license.
 +
 +#include "core/fpdfapi/render/veloce_path_display_list.h"
 +
++#include <inttypes.h>
 +#include <stdint.h>
 +
++#include <chrono>
 +#include <limits>
 +#include <optional>
 +#include <utility>
 +#include <vector>
++
++#if defined(__ANDROID__)
++#include <android/log.h>
++#endif
 +
 +#include "constants/transparency.h"
 +#include "core/fpdfapi/page/cpdf_clippath.h"
@@ -151,6 +157,23 @@ index 000000000..21db163f8
 +constexpr uint32_t kNoClipKey = std::numeric_limits<uint32_t>::max();
 +constexpr uint32_t kMaxClipPathCount = 16;
 +constexpr uint32_t kCancelCheckNodeInterval = 64;
++
++enum class PathDlRejectReason {
++  kNone,
++  kFeatureDisabled,
++  kForcedColor,
++  kInactiveOrInvisibleOnly,
++  kNonPathObject,
++  kComplexClip,
++  kTransparency,
++  kStroke,
++  kNoFillOnly,
++  kPatternPaint,
++  kInvalidPath,
++  kClipTableOverflow,
++  kPaintTableOverflow,
++  kPathTableOverflow,
++};
 +
 +struct PathDlPaint {
 +  CFX_FillRenderOptions fill_options;
@@ -175,6 +198,68 @@ index 000000000..21db163f8
 +bool IsPathDisplayListFeatureEnabled(const CPDF_RenderStatus* status) {
 +  return (status->GetRenderFeatureFlags() & kVeloceFeaturePathDisplayListForm) !=
 +         0;
++}
++
++int64_t NowNs() {
++  return std::chrono::duration_cast<std::chrono::nanoseconds>(
++             std::chrono::steady_clock::now().time_since_epoch())
++      .count();
++}
++
++int64_t ElapsedMs(int64_t start_ns) {
++  return (NowNs() - start_ns) / 1000000;
++}
++
++const char* RejectReasonName(PathDlRejectReason reason) {
++  switch (reason) {
++    case PathDlRejectReason::kNone:
++      return "none";
++    case PathDlRejectReason::kFeatureDisabled:
++      return "feature_disabled";
++    case PathDlRejectReason::kForcedColor:
++      return "forced_color";
++    case PathDlRejectReason::kInactiveOrInvisibleOnly:
++      return "inactive_or_invisible_only";
++    case PathDlRejectReason::kNonPathObject:
++      return "non_path_object";
++    case PathDlRejectReason::kComplexClip:
++      return "complex_clip";
++    case PathDlRejectReason::kTransparency:
++      return "transparency";
++    case PathDlRejectReason::kStroke:
++      return "stroke";
++    case PathDlRejectReason::kNoFillOnly:
++      return "no_fill_only";
++    case PathDlRejectReason::kPatternPaint:
++      return "pattern_paint";
++    case PathDlRejectReason::kInvalidPath:
++      return "invalid_path";
++    case PathDlRejectReason::kClipTableOverflow:
++      return "clip_table_overflow";
++    case PathDlRejectReason::kPaintTableOverflow:
++      return "paint_table_overflow";
++    case PathDlRejectReason::kPathTableOverflow:
++      return "path_table_overflow";
++  }
++  return "unknown";
++}
++
++void LogPathDisplayListAttempt(const char* result,
++                               PathDlRejectReason reason,
++                               const CPDF_PageObjectHolder* holder,
++                               const NativePathDisplayList* list,
++                               int64_t compile_ms,
++                               int64_t replay_ms) {
++#if defined(__ANDROID__)
++  __android_log_print(
++      ANDROID_LOG_INFO, "VelocePathDL",
++      "result=%s reason=%s holder=%p nodes=%zu paths=%zu paints=%zu clips=%zu "
++      "compileMs=%" PRId64 " replayMs=%" PRId64,
++      result, RejectReasonName(reason), holder,
++      list ? list->nodes.size() : 0u, list ? list->path_table.size() : 0u,
++      list ? list->paint_table.size() : 0u, list ? list->clip_table.size() : 0u,
++      compile_ms, replay_ms);
++#endif
 +}
 +
 +bool HasOnlySimplePathClip(const CPDF_ClipPath& clip_path) {
@@ -266,9 +351,16 @@ index 000000000..21db163f8
 +
 +bool CompilePathDisplayList(CPDF_RenderStatus* status,
 +                            const CPDF_PageObjectHolder* holder,
-+                            NativePathDisplayList* list) {
-+  if (status->GetRenderOptions().ColorModeIs(CPDF_RenderOptions::kForcedColor)) {
++                            NativePathDisplayList* list,
++                            PathDlRejectReason* reject_reason) {
++  auto reject = [reject_reason](PathDlRejectReason reason) {
++    if (reject_reason) {
++      *reject_reason = reason;
++    }
 +    return false;
++  };
++  if (status->GetRenderOptions().ColorModeIs(CPDF_RenderOptions::kForcedColor)) {
++    return reject(PathDlRejectReason::kForcedColor);
 +  }
 +
 +  for (const auto& obj : *holder) {
@@ -279,13 +371,13 @@ index 000000000..21db163f8
 +      continue;
 +    }
 +    if (!obj->IsPath()) {
-+      return false;
++      return reject(PathDlRejectReason::kNonPathObject);
 +    }
 +    if (!HasOnlySimplePathClip(obj->clip_path())) {
-+      return false;
++      return reject(PathDlRejectReason::kComplexClip);
 +    }
 +    if (RequiresTransparency(obj.get())) {
-+      return false;
++      return reject(PathDlRejectReason::kTransparency);
 +    }
 +
 +    auto* path_obj = obj->AsPath();
@@ -294,22 +386,22 @@ index 000000000..21db163f8
 +    if (stroke) {
 +      // v1 optimizes the Meta20-class fill-only workload. Stroke support can
 +      // be added once graph-state side-table replay is pixel-diffed.
-+      return false;
++      return reject(PathDlRejectReason::kStroke);
 +    }
 +    if (fill_type == CFX_FillRenderOptions::FillType::kNoFill) {
 +      continue;
 +    }
 +    if (HasPatternPaint(path_obj, fill_type, stroke)) {
-+      return false;
++      return reject(PathDlRejectReason::kPatternPaint);
 +    }
 +    CPDF_Path path = path_obj->path();
 +    if (!path.GetObject()) {
-+      return false;
++      return reject(PathDlRejectReason::kInvalidPath);
 +    }
 +
 +    std::optional<uint32_t> clip_key = AddClipKey(list, obj->clip_path());
 +    if (!clip_key.has_value()) {
-+      return false;
++      return reject(PathDlRejectReason::kClipTableOverflow);
 +    }
 +
 +    CFX_FillRenderOptions fill_options(fill_type);
@@ -320,10 +412,10 @@ index 000000000..21db163f8
 +    paint.fill_argb = status->GetFillArgb(path_obj);
 +    std::optional<uint32_t> paint_key = AddPaintKey(list, paint);
 +    if (!paint_key.has_value()) {
-+      return false;
++      return reject(PathDlRejectReason::kPaintTableOverflow);
 +    }
 +    if (list->path_table.size() >= std::numeric_limits<uint32_t>::max()) {
-+      return false;
++      return reject(PathDlRejectReason::kPathTableOverflow);
 +    }
 +
 +    list->path_table.push_back(path);
@@ -337,7 +429,9 @@ index 000000000..21db163f8
 +    list->nodes.push_back(std::move(node));
 +  }
 +
-+  return !list->nodes.empty();
++  return !list->nodes.empty()
++             ? true
++             : reject(PathDlRejectReason::kInactiveOrInvisibleOnly);
 +}
 +
 +bool IntersectsDeviceClip(const PathDlNode& node,
@@ -403,16 +497,32 @@ index 000000000..21db163f8
 +    CPDF_RenderStatus* status,
 +    const CPDF_PageObjectHolder* holder,
 +    const CFX_Matrix& holder_to_device) {
-+  if (!status || !holder || !IsPathDisplayListFeatureEnabled(status)) {
++  if (!status || !holder) {
++    return VelocePathDisplayListResult::kNotEligible;
++  }
++  if (!IsPathDisplayListFeatureEnabled(status)) {
 +    return VelocePathDisplayListResult::kNotEligible;
 +  }
 +
 +  NativePathDisplayList list;
-+  if (!CompilePathDisplayList(status, holder, &list)) {
++  PathDlRejectReason reject_reason = PathDlRejectReason::kNone;
++  const int64_t compile_start_ns = NowNs();
++  if (!CompilePathDisplayList(status, holder, &list, &reject_reason)) {
++    LogPathDisplayListAttempt("not_eligible", reject_reason, holder, &list,
++                              ElapsedMs(compile_start_ns), 0);
 +    return VelocePathDisplayListResult::kNotEligible;
 +  }
++  const int64_t compile_ms = ElapsedMs(compile_start_ns);
 +
-+  return ReplayPathDisplayList(status, list, holder_to_device);
++  const int64_t replay_start_ns = NowNs();
++  const VelocePathDisplayListResult result =
++      ReplayPathDisplayList(status, list, holder_to_device);
++  LogPathDisplayListAttempt(
++      result == VelocePathDisplayListResult::kRendered ? "rendered"
++                                                       : "cancelled",
++      PathDlRejectReason::kNone, holder, &list, compile_ms,
++      ElapsedMs(replay_start_ns));
++  return result;
 +}
 diff --git a/core/fpdfapi/render/veloce_path_display_list.h b/core/fpdfapi/render/veloce_path_display_list.h
 new file mode 100644
