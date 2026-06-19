@@ -117,7 +117,7 @@ new file mode 100644
 index 000000000..21db163f8
 --- /dev/null
 +++ b/core/fpdfapi/render/veloce_path_display_list.cpp
-@@ -0,0 +1,406 @@
+@@ -0,0 +1,493 @@
 +// Copyright 2026 The xPDFSDK Authors
 +// Use of this source code is governed by the PDFium BSD-style license.
 +
@@ -127,6 +127,7 @@ index 000000000..21db163f8
 +#include <stdint.h>
 +
 +#include <chrono>
++#include <cstring>
 +#include <limits>
 +#include <optional>
 +#include <utility>
@@ -193,6 +194,19 @@ index 000000000..21db163f8
 +  std::vector<PathDlPaint> paint_table;
 +  std::vector<CPDF_ClipPath> clip_table;
 +  std::vector<PathDlNode> nodes;
++  size_t scanned_objects = 0;
++  size_t skipped_inactive = 0;
++  size_t skipped_invisible = 0;
++  size_t skipped_no_fill = 0;
++};
++
++struct PathDlReplayStats {
++  size_t visited_nodes = 0;
++  size_t culled_nodes = 0;
++  size_t missing_path_nodes = 0;
++  size_t drawn_nodes = 0;
++  size_t clip_switches = 0;
++  size_t cancel_checks = 0;
 +};
 +
 +bool IsPathDisplayListFeatureEnabled(const CPDF_RenderStatus* status) {
@@ -244,21 +258,65 @@ index 000000000..21db163f8
 +  return "unknown";
 +}
 +
++bool DisplayListIntegrityOk(const NativePathDisplayList& list) {
++  if (list.nodes.empty() || list.path_table.empty() || list.paint_table.empty()) {
++    return false;
++  }
++  for (const PathDlNode& node : list.nodes) {
++    if (node.path_index >= list.path_table.size()) {
++      return false;
++    }
++    if (node.paint_key >= list.paint_table.size()) {
++      return false;
++    }
++    if (node.clip_key != kNoClipKey && node.clip_key >= list.clip_table.size()) {
++      return false;
++    }
++  }
++  return true;
++}
++
 +void LogPathDisplayListAttempt(const char* result,
 +                               PathDlRejectReason reason,
 +                               const CPDF_PageObjectHolder* holder,
 +                               const NativePathDisplayList* list,
++                               const PathDlReplayStats* replay_stats,
 +                               int64_t compile_ms,
 +                               int64_t replay_ms) {
 +#if defined(__ANDROID__)
++  constexpr size_t kZero = 0;
++  const bool integrity_ok = list && DisplayListIntegrityOk(*list);
++  const bool legacy_skipped =
++      list && result && std::strcmp(result, "rendered") == 0;
++  const bool legacy_fallback =
++      result && std::strcmp(result, "not_eligible") == 0;
 +  __android_log_print(
 +      ANDROID_LOG_INFO, "VelocePathDL",
-+      "result=%s reason=%s holder=%p nodes=%zu paths=%zu paints=%zu clips=%zu "
-+      "compileMs=%" PRId64 " replayMs=%" PRId64,
++      "result=%s reason=%s holder=%p integrity=%s legacySkipped=%d "
++      "legacyFallback=%d nodes=%zu paths=%zu paints=%zu clips=%zu "
++      "scanned=%zu skippedInactive=%zu skippedInvisible=%zu skippedNoFill=%zu "
++      "visited=%zu culled=%zu missingPath=%zu drawn=%zu clipSwitches=%zu "
++      "cancelChecks=%zu compileMs=%" PRId64 " replayMs=%" PRId64
++      " totalFastMs=%" PRId64 " estimatedDispatchAvoided=%zu",
 +      result, RejectReasonName(reason), holder,
-+      list ? list->nodes.size() : 0u, list ? list->path_table.size() : 0u,
-+      list ? list->paint_table.size() : 0u, list ? list->clip_table.size() : 0u,
-+      compile_ms, replay_ms);
++      integrity_ok ? "ok" : "bad", legacy_skipped ? 1 : 0,
++      legacy_fallback ? 1 : 0,
++      list ? list->nodes.size() : kZero,
++      list ? list->path_table.size() : kZero,
++      list ? list->paint_table.size() : kZero,
++      list ? list->clip_table.size() : kZero,
++      list ? list->scanned_objects : kZero,
++      list ? list->skipped_inactive : kZero,
++      list ? list->skipped_invisible : kZero,
++      list ? list->skipped_no_fill : kZero,
++      replay_stats ? replay_stats->visited_nodes : kZero,
++      replay_stats ? replay_stats->culled_nodes : kZero,
++      replay_stats ? replay_stats->missing_path_nodes : kZero,
++      replay_stats ? replay_stats->drawn_nodes : kZero,
++      replay_stats ? replay_stats->clip_switches : kZero,
++      replay_stats ? replay_stats->cancel_checks : kZero, compile_ms,
++      replay_ms, compile_ms + replay_ms,
++      list ? list->nodes.size() : kZero);
 +#endif
 +}
 +
@@ -364,10 +422,13 @@ index 000000000..21db163f8
 +  }
 +
 +  for (const auto& obj : *holder) {
++    list->scanned_objects++;
 +    if (!obj || !obj->IsActive()) {
++      list->skipped_inactive++;
 +      continue;
 +    }
 +    if (!status->GetRenderOptions().CheckPageObjectVisible(obj.get())) {
++      list->skipped_invisible++;
 +      continue;
 +    }
 +    if (!obj->IsPath()) {
@@ -389,6 +450,7 @@ index 000000000..21db163f8
 +      return reject(PathDlRejectReason::kStroke);
 +    }
 +    if (fill_type == CFX_FillRenderOptions::FillType::kNoFill) {
++      list->skipped_no_fill++;
 +      continue;
 +    }
 +    if (HasPatternPaint(path_obj, fill_type, stroke)) {
@@ -446,7 +508,8 @@ index 000000000..21db163f8
 +VelocePathDisplayListResult ReplayPathDisplayList(
 +    CPDF_RenderStatus* status,
 +    const NativePathDisplayList& list,
-+    const CFX_Matrix& holder_to_device) {
++    const CFX_Matrix& holder_to_device,
++    PathDlReplayStats* replay_stats) {
 +  CFX_RenderDevice* device = status->GetRenderDevice();
 +  CFX_RenderDevice::StateRestorer restorer(device);
 +
@@ -455,12 +518,23 @@ index 000000000..21db163f8
 +  CPDF_ClipPath empty_clip;
 +
 +  for (uint32_t i = 0; i < list.nodes.size(); ++i) {
-+    if ((i % kCancelCheckNodeInterval) == 0 && status->ShouldCancelRender()) {
-+      return VelocePathDisplayListResult::kCancelled;
++    if ((i % kCancelCheckNodeInterval) == 0) {
++      if (replay_stats) {
++        replay_stats->cancel_checks++;
++      }
++      if (status->ShouldCancelRender()) {
++        return VelocePathDisplayListResult::kCancelled;
++      }
 +    }
 +
++    if (replay_stats) {
++      replay_stats->visited_nodes++;
++    }
 +    const PathDlNode& node = list.nodes[i];
 +    if (!IntersectsDeviceClip(node, holder_to_device, device)) {
++      if (replay_stats) {
++        replay_stats->culled_nodes++;
++      }
 +      continue;
 +    }
 +
@@ -471,6 +545,9 @@ index 000000000..21db163f8
 +        status->ProcessClipPath(list.clip_table[node.clip_key],
 +                                holder_to_device);
 +      }
++      if (replay_stats) {
++        replay_stats->clip_switches++;
++      }
 +      have_clip_state = true;
 +      current_clip_key = node.clip_key;
 +    }
@@ -478,13 +555,22 @@ index 000000000..21db163f8
 +    const PathDlPaint& paint = list.paint_table[node.paint_key];
 +    const CFX_Path* path = list.path_table[node.path_index].GetObject();
 +    if (!path) {
++      if (replay_stats) {
++        replay_stats->missing_path_nodes++;
++      }
 +      continue;
 +    }
 +    CFX_Matrix path_matrix = node.path_to_holder * holder_to_device;
 +    device->DrawPath(*path, &path_matrix, nullptr, paint.fill_argb,
 +                     /*stroke_color=*/0, paint.fill_options);
++    if (replay_stats) {
++      replay_stats->drawn_nodes++;
++    }
 +  }
 +
++  if (replay_stats) {
++    replay_stats->cancel_checks++;
++  }
 +  if (status->ShouldCancelRender()) {
 +    return VelocePathDisplayListResult::kCancelled;
 +  }
@@ -509,18 +595,19 @@ index 000000000..21db163f8
 +  const int64_t compile_start_ns = NowNs();
 +  if (!CompilePathDisplayList(status, holder, &list, &reject_reason)) {
 +    LogPathDisplayListAttempt("not_eligible", reject_reason, holder, &list,
-+                              ElapsedMs(compile_start_ns), 0);
++                              nullptr, ElapsedMs(compile_start_ns), 0);
 +    return VelocePathDisplayListResult::kNotEligible;
 +  }
 +  const int64_t compile_ms = ElapsedMs(compile_start_ns);
 +
++  PathDlReplayStats replay_stats;
 +  const int64_t replay_start_ns = NowNs();
 +  const VelocePathDisplayListResult result =
-+      ReplayPathDisplayList(status, list, holder_to_device);
++      ReplayPathDisplayList(status, list, holder_to_device, &replay_stats);
 +  LogPathDisplayListAttempt(
 +      result == VelocePathDisplayListResult::kRendered ? "rendered"
 +                                                       : "cancelled",
-+      PathDlRejectReason::kNone, holder, &list, compile_ms,
++      PathDlRejectReason::kNone, holder, &list, &replay_stats, compile_ms,
 +      ElapsedMs(replay_start_ns));
 +  return result;
 +}
