@@ -38,6 +38,7 @@ these patches:
 | 0011 | `0011-veloce-form-skip-mask.patch` | Adds `FPDFEx_SetRenderSkipMask(FPDFEX_RENDER_SKIP_FORM)` so callers can render a first pass that omits Form XObjects, then run a full pass later. Default mask is zero, so normal rendering is unchanged. |
 | 0012 | `0012-veloce-image-skip-mask.patch` | Adds the `FPDFEX_RENDER_SKIP_HUGE_IMAGE` bit to the same skip mask plus `FPDFEx_SetHugeImagePixelThreshold()`. When set, any non-mask image whose decoded pixel count exceeds the threshold (default 4,000,000 px, ~2000×2000) is skipped and replaced with a flat gray placeholder rect, at any Form-recursion depth. Default mask is zero, so normal rendering is unchanged. |
 | 0013 | `0013-veloce-path-display-list-form.patch` | Adds an experimental `FPDFEX_FEATURE_PATH_DISPLAY_LIST_FORM` feature bit. When set, eligible fill-only path Form XObjects are compiled into a compact internal display list and replayed into the current `CFX_RenderDevice`; unsupported content falls back before drawing. Default feature flags are zero, so normal rendering is unchanged. |
+| 0014 | `0014-veloce-path-display-list-cache.patch` | Extends 0013 with a bounded process-local cache for compiled Form path display lists, keyed by document, holder, holder dictionary object number, and path-smoothing mode. Repeated renders of the same eligible Form replay from cache and log `cache=hit|miss`; compile cancellation returns `kCancelled` instead of falling back to legacy rendering. |
 
 ## Why this directory exists
 
@@ -63,6 +64,7 @@ git apply patches/ship/09-render-callbacks-scoped-cancel.patch
 git apply patches/ship/0011-veloce-form-skip-mask.patch
 git apply patches/ship/0012-veloce-image-skip-mask.patch
 git apply patches/ship/0013-veloce-path-display-list-form.patch
+git apply patches/ship/0014-veloce-path-display-list-cache.patch
 ```
 
 Patches 06 and 07 depend on patch 05 and must be applied after it.
@@ -148,6 +150,10 @@ new `FPDFEx_LoadPageWithClassification()` symbol.
   `public/fpdfex_render_callbacks.h`.
   The implementation is isolated in separate display-list files and is gated
   by `FPDFEX_FEATURE_PATH_DISPLAY_LIST_FORM`.
+- **0014 Veloce path display-list cache**:
+  `core/fpdfapi/render/veloce_path_display_list.cpp`.
+  Adds a bounded internal cache and `cache=hit|miss` telemetry. No public API
+  or build file changes.
 
 Patches 02 and 03 both touch
 `cpdf_colorspace.cpp`, but in different sections (SeparationCS vs.
@@ -169,6 +175,9 @@ Patch 0013 extends patch 09's callback feature flags with
 Form contains anything outside the v1 eligibility envelope (non-path objects,
 strokes, pattern paint, transparency, complex clips, or forced-color render
 mode), it returns to the existing `RenderObjectList()` path before drawing.
+Patch 0014 is authored after 0013 and only changes
+`veloce_path_display_list.cpp`; it keeps the same feature flag and fallback
+contract while avoiding repeated compile cost for cached eligible Forms.
 
 ## Upstreaming
 

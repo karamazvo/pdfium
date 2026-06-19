@@ -1,0 +1,275 @@
+From: xPDFSDK team <noreply@xpdfsdk.local>
+Date: 2026-06-19
+Subject: [PATCH ship-0014] Cache Veloce Form path display lists
+
+Background
+==========
+The r7 path display-list patch made the `/Meta20` Form XObject render through a
+compact native path list, but it still compiled that list inside every visible
+render call. Device logs showed the problem clearly: even a 256px preview paid
+roughly 1.1-1.3s of `compileMs` before replay could begin.
+
+This patch
+==========
+1. Adds a small process-local LRU cache for compiled `NativePathDisplayList`
+   instances.
+2. Keys the cache by document pointer, `CPDF_PageObjectHolder*`, holder
+   dictionary object number, and the path-smoothing render option that affects
+   compiled paint state.
+3. Reuses the compiled list on subsequent preview/tile renders so the visible
+   render path can replay rather than recompile the Form.
+4. Adds `cache=hit|miss` telemetry to the existing `VelocePathDL` log line.
+5. Checks cancellation during compile every 64 scanned objects. A cancelled
+   compile returns `kCancelled` instead of falling back to legacy rendering.
+
+This is intentionally still conservative. Unsupported Forms remain ineligible
+and fall back before drawing. The cache is bounded to 32 entries and does not
+change public PDFium API.
+
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index 951822a85..815b4d4ce 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -9,7 +9,10 @@
+ #include <chrono>
+ #include <cstring>
+ #include <limits>
++#include <memory>
++#include <mutex>
+ #include <optional>
++#include <unordered_map>
+ #include <utility>
+ #include <vector>
+ 
+@@ -38,9 +41,11 @@ constexpr uint32_t kVeloceFeaturePathDisplayListForm = 0x00000001u;
+ constexpr uint32_t kNoClipKey = std::numeric_limits<uint32_t>::max();
+ constexpr uint32_t kMaxClipPathCount = 16;
+ constexpr uint32_t kCancelCheckNodeInterval = 64;
++constexpr size_t kMaxCachedPathDisplayLists = 32;
+ 
+ enum class PathDlRejectReason {
+   kNone,
++  kCancelled,
+   kFeatureDisabled,
+   kForcedColor,
+   kInactiveOrInvisibleOnly,
+@@ -80,6 +85,37 @@ struct NativePathDisplayList {
+   size_t skipped_no_fill = 0;
+ };
+ 
++struct PathDisplayListCacheKey {
++  const CPDF_Document* document = nullptr;
++  const CPDF_PageObjectHolder* holder = nullptr;
++  uint32_t holder_dict_obj_num = 0;
++  bool aliased_path = false;
++
++  bool operator==(const PathDisplayListCacheKey& other) const {
++    return document == other.document && holder == other.holder &&
++           holder_dict_obj_num == other.holder_dict_obj_num &&
++           aliased_path == other.aliased_path;
++  }
++};
++
++struct PathDisplayListCacheKeyHash {
++  size_t operator()(const PathDisplayListCacheKey& key) const {
++    size_t hash = std::hash<const CPDF_Document*>()(key.document);
++    hash ^= std::hash<const CPDF_PageObjectHolder*>()(key.holder) +
++            0x9e3779b97f4a7c15ull + (hash << 6) + (hash >> 2);
++    hash ^= std::hash<uint32_t>()(key.holder_dict_obj_num) +
++            0x9e3779b97f4a7c15ull + (hash << 6) + (hash >> 2);
++    hash ^= std::hash<bool>()(key.aliased_path) + 0x9e3779b97f4a7c15ull +
++            (hash << 6) + (hash >> 2);
++    return hash;
++  }
++};
++
++struct PathDisplayListCacheEntry {
++  std::shared_ptr<const NativePathDisplayList> list;
++  uint64_t last_use = 0;
++};
++
+ struct PathDlReplayStats {
+   size_t visited_nodes = 0;
+   size_t culled_nodes = 0;
+@@ -108,6 +144,8 @@ const char* RejectReasonName(PathDlRejectReason reason) {
+   switch (reason) {
+     case PathDlRejectReason::kNone:
+       return "none";
++    case PathDlRejectReason::kCancelled:
++      return "cancelled";
+     case PathDlRejectReason::kFeatureDisabled:
+       return "feature_disabled";
+     case PathDlRejectReason::kForcedColor:
+@@ -157,6 +195,7 @@ bool DisplayListIntegrityOk(const NativePathDisplayList& list) {
+ }
+ 
+ void LogPathDisplayListAttempt(const char* result,
++                               const char* cache_state,
+                                PathDlRejectReason reason,
+                                const CPDF_PageObjectHolder* holder,
+                                const NativePathDisplayList* list,
+@@ -176,7 +215,7 @@ void LogPathDisplayListAttempt(const char* result,
+       "legacyFallback=%d nodes=%zu paths=%zu paints=%zu clips=%zu "
+       "scanned=%zu skippedInactive=%zu skippedInvisible=%zu skippedNoFill=%zu "
+       "visited=%zu culled=%zu missingPath=%zu drawn=%zu clipSwitches=%zu "
+-      "cancelChecks=%zu compileMs=%" PRId64 " replayMs=%" PRId64
++      "cancelChecks=%zu cache=%s compileMs=%" PRId64 " replayMs=%" PRId64
+       " totalFastMs=%" PRId64 " estimatedDispatchAvoided=%zu",
+       result, RejectReasonName(reason), holder,
+       integrity_ok ? "ok" : "bad", legacy_skipped ? 1 : 0,
+@@ -194,12 +233,90 @@ void LogPathDisplayListAttempt(const char* result,
+       replay_stats ? replay_stats->missing_path_nodes : kZero,
+       replay_stats ? replay_stats->drawn_nodes : kZero,
+       replay_stats ? replay_stats->clip_switches : kZero,
+-      replay_stats ? replay_stats->cancel_checks : kZero, compile_ms,
++      replay_stats ? replay_stats->cancel_checks : kZero,
++      cache_state ? cache_state : "none", compile_ms,
+       replay_ms, compile_ms + replay_ms,
+       list ? list->nodes.size() : kZero);
+ #endif
+ }
+ 
++std::mutex& PathDisplayListCacheMutex() {
++  static std::mutex* mutex = new std::mutex();
++  return *mutex;
++}
++
++std::unordered_map<PathDisplayListCacheKey,
++                   PathDisplayListCacheEntry,
++                   PathDisplayListCacheKeyHash>&
++PathDisplayListCache() {
++  static auto* cache = new std::unordered_map<PathDisplayListCacheKey,
++                                              PathDisplayListCacheEntry,
++                                              PathDisplayListCacheKeyHash>();
++  return *cache;
++}
++
++uint64_t& PathDisplayListCacheUseCounter() {
++  static uint64_t* counter = new uint64_t(0);
++  return *counter;
++}
++
++PathDisplayListCacheKey MakePathDisplayListCacheKey(
++    CPDF_RenderStatus* status,
++    const CPDF_PageObjectHolder* holder) {
++  PathDisplayListCacheKey key;
++  key.document = holder->GetDocument();
++  key.holder = holder;
++  RetainPtr<const CPDF_Dictionary> dict = holder->GetDict();
++  key.holder_dict_obj_num = dict ? dict->GetObjNum() : 0;
++  key.aliased_path = status->GetRenderOptions().GetOptions().bNoPathSmooth;
++  return key;
++}
++
++std::shared_ptr<const NativePathDisplayList> FindCachedPathDisplayList(
++    const PathDisplayListCacheKey& key) {
++  std::lock_guard<std::mutex> lock(PathDisplayListCacheMutex());
++  auto& cache = PathDisplayListCache();
++  auto it = cache.find(key);
++  if (it == cache.end()) {
++    return nullptr;
++  }
++  it->second.last_use = ++PathDisplayListCacheUseCounter();
++  return it->second.list;
++}
++
++void EvictOnePathDisplayListLocked() {
++  auto& cache = PathDisplayListCache();
++  if (cache.empty()) {
++    return;
++  }
++  auto oldest = cache.begin();
++  for (auto it = cache.begin(); it != cache.end(); ++it) {
++    if (it->second.last_use < oldest->second.last_use) {
++      oldest = it;
++    }
++  }
++  cache.erase(oldest);
++}
++
++std::shared_ptr<const NativePathDisplayList> StoreCachedPathDisplayList(
++    const PathDisplayListCacheKey& key,
++    std::unique_ptr<NativePathDisplayList> list) {
++  auto shared = std::shared_ptr<const NativePathDisplayList>(std::move(list));
++  std::lock_guard<std::mutex> lock(PathDisplayListCacheMutex());
++  auto& cache = PathDisplayListCache();
++  auto existing = cache.find(key);
++  if (existing != cache.end()) {
++    existing->second.last_use = ++PathDisplayListCacheUseCounter();
++    return existing->second.list;
++  }
++  if (cache.size() >= kMaxCachedPathDisplayLists) {
++    EvictOnePathDisplayListLocked();
++  }
++  cache.emplace(key, PathDisplayListCacheEntry{
++                         shared, ++PathDisplayListCacheUseCounter()});
++  return shared;
++}
++
+ bool HasOnlySimplePathClip(const CPDF_ClipPath& clip_path) {
+   if (!clip_path.HasRef()) {
+     return true;
+@@ -303,6 +420,10 @@ bool CompilePathDisplayList(CPDF_RenderStatus* status,
+ 
+   for (const auto& obj : *holder) {
+     list->scanned_objects++;
++    if ((list->scanned_objects % kCancelCheckNodeInterval) == 0 &&
++        status->ShouldCancelRender()) {
++      return reject(PathDlRejectReason::kCancelled);
++    }
+     if (!obj || !obj->IsActive()) {
+       list->skipped_inactive++;
+       continue;
+@@ -470,24 +591,42 @@ VelocePathDisplayListResult VeloceTryRenderPathDisplayList(
+     return VelocePathDisplayListResult::kNotEligible;
+   }
+ 
+-  NativePathDisplayList list;
++  const PathDisplayListCacheKey cache_key =
++      MakePathDisplayListCacheKey(status, holder);
++  std::shared_ptr<const NativePathDisplayList> cached_list =
++      FindCachedPathDisplayList(cache_key);
+   PathDlRejectReason reject_reason = PathDlRejectReason::kNone;
+-  const int64_t compile_start_ns = NowNs();
+-  if (!CompilePathDisplayList(status, holder, &list, &reject_reason)) {
+-    LogPathDisplayListAttempt("not_eligible", reject_reason, holder, &list,
+-                              nullptr, ElapsedMs(compile_start_ns), 0);
+-    return VelocePathDisplayListResult::kNotEligible;
++  int64_t compile_ms = 0;
++
++  if (!cached_list) {
++    auto compiled_list = std::make_unique<NativePathDisplayList>();
++    const int64_t compile_start_ns = NowNs();
++    if (!CompilePathDisplayList(status, holder, compiled_list.get(),
++                                &reject_reason)) {
++      compile_ms = ElapsedMs(compile_start_ns);
++      if (reject_reason == PathDlRejectReason::kCancelled) {
++        LogPathDisplayListAttempt("cancelled", "miss", reject_reason, holder,
++                                  compiled_list.get(), nullptr, compile_ms, 0);
++        return VelocePathDisplayListResult::kCancelled;
++      }
++      LogPathDisplayListAttempt("not_eligible", "miss", reject_reason, holder,
++                                compiled_list.get(), nullptr, compile_ms, 0);
++      return VelocePathDisplayListResult::kNotEligible;
++    }
++    compile_ms = ElapsedMs(compile_start_ns);
++    cached_list =
++        StoreCachedPathDisplayList(cache_key, std::move(compiled_list));
+   }
+-  const int64_t compile_ms = ElapsedMs(compile_start_ns);
+ 
+   PathDlReplayStats replay_stats;
+   const int64_t replay_start_ns = NowNs();
+   const VelocePathDisplayListResult result =
+-      ReplayPathDisplayList(status, list, holder_to_device, &replay_stats);
++      ReplayPathDisplayList(status, *cached_list, holder_to_device,
++                            &replay_stats);
+   LogPathDisplayListAttempt(
+       result == VelocePathDisplayListResult::kRendered ? "rendered"
+                                                        : "cancelled",
+-      PathDlRejectReason::kNone, holder, &list, &replay_stats, compile_ms,
+-      ElapsedMs(replay_start_ns));
++      compile_ms == 0 ? "hit" : "miss", PathDlRejectReason::kNone, holder,
++      cached_list.get(), &replay_stats, compile_ms, ElapsedMs(replay_start_ns));
+   return result;
+ }
