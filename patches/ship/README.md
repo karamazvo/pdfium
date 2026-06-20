@@ -39,6 +39,7 @@ these patches:
 | 0012 | `0012-veloce-image-skip-mask.patch` | Adds the `FPDFEX_RENDER_SKIP_HUGE_IMAGE` bit to the same skip mask plus `FPDFEx_SetHugeImagePixelThreshold()`. When set, any non-mask image whose decoded pixel count exceeds the threshold (default 4,000,000 px, ~2000×2000) is skipped and replaced with a flat gray placeholder rect, at any Form-recursion depth. Default mask is zero, so normal rendering is unchanged. |
 | 0013 | `0013-veloce-path-display-list-form.patch` | Adds an experimental `FPDFEX_FEATURE_PATH_DISPLAY_LIST_FORM` feature bit. When set, eligible fill-only path Form XObjects are compiled into a compact internal display list and replayed into the current `CFX_RenderDevice`; unsupported content falls back before drawing. Default feature flags are zero, so normal rendering is unchanged. |
 | 0014 | `0014-veloce-path-display-list-cache.patch` | Extends 0013 with a bounded process-local cache for compiled Form path display lists, keyed by document, holder, holder dictionary object number, and path-smoothing mode. Repeated renders of the same eligible Form replay from cache and log `cache=hit|miss`; compile cancellation returns `kCancelled` instead of falling back to legacy rendering. |
+| 0015 | `0015-veloce-path-display-list-noop-clip.patch` | Extends 0014 with compile-time no-op clip normalization. If an eligible node's clip is one rectangle that contains the object's bounds, the display list stores `kNoClipKey` instead of replaying that clip state and logs `noopClips`. |
 
 ## Why this directory exists
 
@@ -65,6 +66,7 @@ git apply patches/ship/0011-veloce-form-skip-mask.patch
 git apply patches/ship/0012-veloce-image-skip-mask.patch
 git apply patches/ship/0013-veloce-path-display-list-form.patch
 git apply patches/ship/0014-veloce-path-display-list-cache.patch
+git apply patches/ship/0015-veloce-path-display-list-noop-clip.patch
 ```
 
 Patches 06 and 07 depend on patch 05 and must be applied after it.
@@ -79,6 +81,9 @@ introduced, and is authored against the post-0011 `cpdf_renderstatus.{h,cpp}`
 layout. Patch 0013 depends on patch 09's render callback feature flags and
 patch 0012's post-skip-mask render-status layout. It adds a default-off
 path-only Form XObject display-list fast path for Meta20-class workloads.
+Patch 0014 depends on patch 0013 and avoids repeated compile cost for cached
+eligible Forms. Patch 0015 depends on patch 0014 and avoids repeated clip setup
+cost for path nodes whose rectangular clip contains the node bounds.
 The release workflow applies the numeric order shown above.
 
 ## Cumulative effect (measured)
@@ -154,6 +159,10 @@ new `FPDFEx_LoadPageWithClassification()` symbol.
   `core/fpdfapi/render/veloce_path_display_list.cpp`.
   Adds a bounded internal cache and `cache=hit|miss` telemetry. No public API
   or build file changes.
+- **0015 Veloce path display-list no-op clips**:
+  `core/fpdfapi/render/veloce_path_display_list.cpp`.
+  Adds no-op rectangular clip normalization and `noopClips` telemetry. No
+  public API or build file changes.
 
 Patches 02 and 03 both touch
 `cpdf_colorspace.cpp`, but in different sections (SeparationCS vs.
@@ -178,6 +187,10 @@ mode), it returns to the existing `RenderObjectList()` path before drawing.
 Patch 0014 is authored after 0013 and only changes
 `veloce_path_display_list.cpp`; it keeps the same feature flag and fallback
 contract while avoiding repeated compile cost for cached eligible Forms.
+Patch 0015 is authored after 0014 and only changes
+`veloce_path_display_list.cpp`; it keeps the same feature flag and fallback
+contract while avoiding repeated clip setup cost for path nodes whose clip
+rectangle contains the node bounds.
 
 ## Upstreaming
 

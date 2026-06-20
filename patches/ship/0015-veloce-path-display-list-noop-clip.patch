@@ -1,0 +1,120 @@
+From: xPDFSDK team <noreply@xpdfsdk.local>
+Date: 2026-06-20
+Subject: [PATCH ship-0015] Elide no-op clips in path display list
+
+Background
+==========
+R8 proved that the `/Meta20` Form path display-list cache is active, but
+device logs still showed slow renders with `cache=hit compileMs=0` and
+`replayMs=15-20s`. The same log lines showed `clips=28071` and
+`clipSwitches=28071`, which means replay was still paying a full PDFium clip
+state transition for every path node.
+
+This patch
+==========
+1. Keeps the original path-display-list feature flag and fallback contract.
+2. During display-list compile, detects a conservative no-op clip shape:
+   a single rectangle clip with no text that contains the path object's own
+   bounds.
+3. Stores `kNoClipKey` for that node instead of adding the clip to the replay
+   clip table.
+4. Adds `noopClips` telemetry to the existing `VelocePathDL` log line.
+
+For Meta20-class pages, the expected validation signal is high `noopClips`,
+lower `clips` / `clipSwitches`, and lower `replayMs`. If `noopClips=0`, this
+patch is not matching the document's actual clip geometry and the next target
+is direct fast replay of simple rectangular clips rather than more caching.
+
+---
+ .../render/veloce_path_display_list.cpp       | 41 +++++++++++++++++--
+ 1 file changed, 37 insertions(+), 4 deletions(-)
+
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index 815b4d4ce..418fdb9b0 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -83,6 +83,7 @@ struct NativePathDisplayList {
+   size_t skipped_inactive = 0;
+   size_t skipped_invisible = 0;
+   size_t skipped_no_fill = 0;
++  size_t elided_noop_clips = 0;
+ };
+ 
+ struct PathDisplayListCacheKey {
+@@ -214,8 +215,9 @@ void LogPathDisplayListAttempt(const char* result,
+       "result=%s reason=%s holder=%p integrity=%s legacySkipped=%d "
+       "legacyFallback=%d nodes=%zu paths=%zu paints=%zu clips=%zu "
+       "scanned=%zu skippedInactive=%zu skippedInvisible=%zu skippedNoFill=%zu "
+-      "visited=%zu culled=%zu missingPath=%zu drawn=%zu clipSwitches=%zu "
+-      "cancelChecks=%zu cache=%s compileMs=%" PRId64 " replayMs=%" PRId64
++      "noopClips=%zu visited=%zu culled=%zu missingPath=%zu drawn=%zu "
++      "clipSwitches=%zu cancelChecks=%zu cache=%s compileMs=%" PRId64
++      " replayMs=%" PRId64
+       " totalFastMs=%" PRId64 " estimatedDispatchAvoided=%zu",
+       result, RejectReasonName(reason), holder,
+       integrity_ok ? "ok" : "bad", legacy_skipped ? 1 : 0,
+@@ -228,6 +230,7 @@ void LogPathDisplayListAttempt(const char* result,
+       list ? list->skipped_inactive : kZero,
+       list ? list->skipped_invisible : kZero,
+       list ? list->skipped_no_fill : kZero,
++      list ? list->elided_noop_clips : kZero,
+       replay_stats ? replay_stats->visited_nodes : kZero,
+       replay_stats ? replay_stats->culled_nodes : kZero,
+       replay_stats ? replay_stats->missing_path_nodes : kZero,
+@@ -336,6 +339,27 @@ bool HasOnlySimplePathClip(const CPDF_ClipPath& clip_path) {
+   return true;
+ }
+ 
++bool ClipPathIsNoOpForObjectBounds(const CPDF_ClipPath& clip_path,
++                                   const CFX_FloatRect& object_bounds) {
++  if (!clip_path.HasRef()) {
++    return true;
++  }
++  if (clip_path.GetTextCount() != 0 || clip_path.GetPathCount() != 1) {
++    return false;
++  }
++
++  CPDF_Path clip_path_data = clip_path.GetPath(0);
++  if (!clip_path_data.GetObject() || !clip_path_data.IsRect()) {
++    return false;
++  }
++
++  CFX_FloatRect clip_bounds = clip_path_data.GetBoundingBox();
++  CFX_FloatRect normalized_object_bounds = object_bounds;
++  clip_bounds.Normalize();
++  normalized_object_bounds.Normalize();
++  return clip_bounds.Contains(normalized_object_bounds);
++}
++
+ bool RequiresTransparency(const CPDF_PageObject* obj) {
+   const CPDF_GeneralState& general_state = obj->general_state();
+   if (general_state.GetSoftMask()) {
+@@ -462,7 +486,16 @@ bool CompilePathDisplayList(CPDF_RenderStatus* status,
+       return reject(PathDlRejectReason::kInvalidPath);
+     }
+ 
+-    std::optional<uint32_t> clip_key = AddClipKey(list, obj->clip_path());
++    const CFX_FloatRect object_bounds = obj->GetRect();
++    std::optional<uint32_t> clip_key;
++    if (ClipPathIsNoOpForObjectBounds(obj->clip_path(), object_bounds)) {
++      clip_key = kNoClipKey;
++      if (obj->clip_path().HasRef()) {
++        list->elided_noop_clips++;
++      }
++    } else {
++      clip_key = AddClipKey(list, obj->clip_path());
++    }
+     if (!clip_key.has_value()) {
+       return reject(PathDlRejectReason::kClipTableOverflow);
+     }
+@@ -484,7 +517,7 @@ bool CompilePathDisplayList(CPDF_RenderStatus* status,
+     list->path_table.push_back(path);
+ 
+     PathDlNode node;
+-    node.holder_space_bbox = obj->GetRect();
++    node.holder_space_bbox = object_bounds;
+     node.path_to_holder = path_obj->matrix();
+     node.path_index = static_cast<uint32_t>(list->path_table.size() - 1);
+     node.paint_key = paint_key.value();
+-- 
+2.39.5 (Apple Git-154)
