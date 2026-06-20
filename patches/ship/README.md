@@ -40,6 +40,7 @@ these patches:
 | 0013 | `0013-veloce-path-display-list-form.patch` | Adds an experimental `FPDFEX_FEATURE_PATH_DISPLAY_LIST_FORM` feature bit. When set, eligible fill-only path Form XObjects are compiled into a compact internal display list and replayed into the current `CFX_RenderDevice`; unsupported content falls back before drawing. Default feature flags are zero, so normal rendering is unchanged. |
 | 0014 | `0014-veloce-path-display-list-cache.patch` | Extends 0013 with a bounded process-local cache for compiled Form path display lists, keyed by document, holder, holder dictionary object number, and path-smoothing mode. Repeated renders of the same eligible Form replay from cache and log `cache=hit|miss`; compile cancellation returns `kCancelled` instead of falling back to legacy rendering. |
 | 0015 | `0015-veloce-path-display-list-noop-clip.patch` | Extends 0014 with compile-time no-op clip normalization. If an eligible node's clip is one rectangle that contains the object's bounds, the display list stores `kNoClipKey` instead of replaying that clip state and logs `noopClips`. |
+| 0016 | `0016-veloce-path-display-list-stacked-rect-noop-clip.patch` | Extends 0015 to support stacked rectangle-like clip components. It intersects all rectangle clips and elides the clip if that intersection contains the path object's bounds. |
 
 ## Why this directory exists
 
@@ -67,6 +68,7 @@ git apply patches/ship/0012-veloce-image-skip-mask.patch
 git apply patches/ship/0013-veloce-path-display-list-form.patch
 git apply patches/ship/0014-veloce-path-display-list-cache.patch
 git apply patches/ship/0015-veloce-path-display-list-noop-clip.patch
+git apply patches/ship/0016-veloce-path-display-list-stacked-rect-noop-clip.patch
 ```
 
 Patches 06 and 07 depend on patch 05 and must be applied after it.
@@ -84,6 +86,8 @@ path-only Form XObject display-list fast path for Meta20-class workloads.
 Patch 0014 depends on patch 0013 and avoids repeated compile cost for cached
 eligible Forms. Patch 0015 depends on patch 0014 and avoids repeated clip setup
 cost for path nodes whose rectangular clip contains the node bounds.
+Patch 0016 depends on patch 0015 and handles inherited rectangle clip stacks
+by intersecting their bounds before deciding whether the clip is no-op.
 The release workflow applies the numeric order shown above.
 
 ## Cumulative effect (measured)
@@ -163,6 +167,10 @@ new `FPDFEx_LoadPageWithClassification()` symbol.
   `core/fpdfapi/render/veloce_path_display_list.cpp`.
   Adds no-op rectangular clip normalization and `noopClips` telemetry. No
   public API or build file changes.
+- **0016 Veloce path display-list stacked rectangle no-op clips**:
+  `core/fpdfapi/render/veloce_path_display_list.cpp`.
+  Extends no-op clip normalization to inherited rectangle clip stacks. No
+  public API or build file changes.
 
 Patches 02 and 03 both touch
 `cpdf_colorspace.cpp`, but in different sections (SeparationCS vs.
@@ -191,6 +199,10 @@ Patch 0015 is authored after 0014 and only changes
 `veloce_path_display_list.cpp`; it keeps the same feature flag and fallback
 contract while avoiding repeated clip setup cost for path nodes whose clip
 rectangle contains the node bounds.
+Patch 0016 is authored after 0015 and only changes
+`veloce_path_display_list.cpp`; it keeps the same feature flag and fallback
+contract while handling multi-component rectangle clips created by inherited
+Form/page clipping.
 
 ## Upstreaming
 

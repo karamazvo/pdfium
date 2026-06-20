@@ -1,0 +1,80 @@
+From: xPDFSDK team <noreply@xpdfsdk.local>
+Date: 2026-06-20
+Subject: [PATCH ship-0016] Handle stacked rectangle no-op clips
+
+Background
+==========
+R9 added no-op clip elision for a single rectangle clip, but device logs for
+`error.pdf` p2/p3 showed `noopClips=0` while `/Meta20` still had
+`clips=28071` and `clipSwitches=28071`. Inspecting the decoded QDF stream
+showed a Form-wide rectangular clip near the start of `/Meta20`, but PDFium's
+parsed `CPDF_ClipPath` can hold stacked inherited clip components rather than
+one path.
+
+This patch
+==========
+1. Keeps the same feature flag, fallback behavior, and `noopClips` telemetry.
+2. Extends `ClipPathIsNoOpForObjectBounds()` from one rectangle path to a stack
+   of rectangle-like clip paths.
+3. Computes the intersection of those clip rectangles and elides the clip only
+   if the intersection still contains the path object's bounds.
+4. Still fails closed for text clips, empty clips, or any non-rectangle clip
+   component.
+
+For the Meta20 stream sampled from `error.pdf`, this is the narrower fix for
+R9's miss: inherited rectangle clipping should become a no-op for each tiny
+path node, collapsing `clips` / `clipSwitches` and lowering `replayMs`.
+
+---
+ .../render/veloce_path_display_list.cpp       | 28 +++++++++++++++----
+ 1 file changed, 22 insertions(+), 6 deletions(-)
+
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index 418fdb9b0..c47ec912a 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -344,20 +344,36 @@ bool ClipPathIsNoOpForObjectBounds(const CPDF_ClipPath& clip_path,
+   if (!clip_path.HasRef()) {
+     return true;
+   }
+-  if (clip_path.GetTextCount() != 0 || clip_path.GetPathCount() != 1) {
++  if (clip_path.GetTextCount() != 0 || clip_path.GetPathCount() == 0) {
+     return false;
+   }
+ 
+-  CPDF_Path clip_path_data = clip_path.GetPath(0);
+-  if (!clip_path_data.GetObject() || !clip_path_data.IsRect()) {
++  std::optional<CFX_FloatRect> clip_bounds;
++  for (size_t i = 0; i < clip_path.GetPathCount(); ++i) {
++    CPDF_Path clip_path_data = clip_path.GetPath(i);
++    const CFX_Path* path = clip_path_data.GetObject();
++    if (!path) {
++      return false;
++    }
++    std::optional<CFX_FloatRect> rect = path->GetRect(nullptr);
++    if (!rect.has_value()) {
++      return false;
++    }
++    if (clip_bounds.has_value()) {
++      clip_bounds->Intersect(rect.value());
++    } else {
++      clip_bounds = rect.value();
++    }
++  }
++
++  if (!clip_bounds.has_value()) {
+     return false;
+   }
+ 
+-  CFX_FloatRect clip_bounds = clip_path_data.GetBoundingBox();
+   CFX_FloatRect normalized_object_bounds = object_bounds;
+-  clip_bounds.Normalize();
++  clip_bounds->Normalize();
+   normalized_object_bounds.Normalize();
+-  return clip_bounds.Contains(normalized_object_bounds);
++  return clip_bounds->Contains(normalized_object_bounds);
+ }
+ 
+ bool RequiresTransparency(const CPDF_PageObject* obj) {
+-- 
+2.39.5 (Apple Git-154)

@@ -75,6 +75,19 @@ own bounds to `kNoClipKey`. On Meta20-class pages, the expected validation
 signal is high `noopClips`, much lower `clips` / `clipSwitches`, and lower
 `replayMs` in the `VelocePathDL` log line.
 
+To build the r10 path-display-list stacked-rectangle no-op clip binary:
+
+> Run workflow: **`Build patched PDFium Android arm64 r10 path display-list stacked rect no-op clip`**
+>
+> File: `.github/workflows/pdfium-android-arm64-r10-path-display-list-stacked-rect-noop-clip.yml`
+> Artifact: `libpdfium-android-arm64-r10-path-display-list-stacked-rect-noop-clip`
+
+This applies ship patches `01..09,0011,0012,0013,0014,0015,0016`. Patch 0016
+extends R9's no-op clip detector from a single rectangle path to stacked
+rectangle-like clip components. This targets the decoded `/Meta20` stream shape
+seen in `error.pdf`, where inherited Form/page clips can be represented as a
+multi-component `CPDF_ClipPath`.
+
 **Release build size: ~6.6 MB** (down from a ~13.7 MB baseline).
 This is achieved by the shrink link strategy promoted from the
 size-experiment workflow's Variant C:
@@ -139,6 +152,7 @@ and the `libandroid.so` runtime dependency.
 | ship 0013 | VELOCE EXPERIMENTAL | `patches/ship/0013-veloce-path-display-list-form.patch` | Adds `FPDFEX_FEATURE_PATH_DISPLAY_LIST_FORM` and an isolated path display-list fast path hooked from `ProcessForm()`. Eligible fill-only path Forms replay directly into the same render device; unsupported content falls back to normal PDFium rendering before drawing. |
 | ship 0014 | VELOCE EXPERIMENTAL | `patches/ship/0014-veloce-path-display-list-cache.patch` | Extends the path display-list fast path with a bounded process-local cache keyed by document, Form holder, holder dictionary object number, and path-smoothing mode. Subsequent renders log `cache=hit` and skip visible-lane compile cost. |
 | ship 0015 | VELOCE EXPERIMENTAL | `patches/ship/0015-veloce-path-display-list-noop-clip.patch` | Normalizes single-rectangle clips that contain the path object's bounds to `kNoClipKey` during display-list compile. This avoids replaying thousands of no-op clip state transitions and logs `noopClips`. |
+| ship 0016 | VELOCE EXPERIMENTAL | `patches/ship/0016-veloce-path-display-list-stacked-rect-noop-clip.patch` | Extends 0015 to treat stacked rectangle-like clip paths as one intersection. If the intersection contains the path object's bounds, the display-list node stores `kNoClipKey`. |
 
 ---
 
@@ -154,6 +168,7 @@ and the `libandroid.so` runtime dependency.
 | `pdfium-android-arm64-r7-path-display-list.yml` | `workflow_dispatch` | **R7 PATH DISPLAY-LIST BUILD.** Applies ship patches `01..09,0011,0012,0013`, including the default-off path-only Form display-list fast path. Verifies the feature flag, `ProcessForm()` hook, separate implementation file, and cancellation checkpoint token before packaging. |
 | `pdfium-android-arm64-r8-path-display-list-cache.yml` | `workflow_dispatch` | **R8 PATH DISPLAY-LIST CACHE BUILD.** Applies ship patches `01..09,0011,0012,0013,0014`, including cached eligible Form path display lists. Verifies cache symbols and `cache=hit|miss` telemetry before packaging. |
 | `pdfium-android-arm64-r9-path-display-list-noop-clip.yml` | `workflow_dispatch` | **R9 PATH DISPLAY-LIST NO-OP CLIP BUILD.** Applies ship patches `01..09,0011,0012,0013,0014,0015`, including no-op rectangular clip normalization for eligible path display-list nodes. Verifies `noopClips` telemetry before packaging. |
+| `pdfium-android-arm64-r10-path-display-list-stacked-rect-noop-clip.yml` | `workflow_dispatch` | **R10 PATH DISPLAY-LIST STACKED RECT NO-OP CLIP BUILD.** Applies ship patches `01..09,0011,0012,0013,0014,0015,0016`, including stacked rectangle clip normalization. Verifies the rectangle-intersection code token before packaging. |
 | `libpdfium_experiment_profile_build.yml` | `workflow_dispatch` | **EXPERIMENT PROFILE BUILD.** Applies ship patches `01..08` plus `patches/experiments/0010-render-profile-and-content-skip.patch`. Use this to measure per-stage `FPDF_RenderPageBitmap()` costs and test skip-text/path/image/shading/Form/transparency/soft-mask speedups on selected PDFs. Artifact: `libpdfium-android-arm64-veloce-render-profile-experiment`. |
 | `release-size-experiment.yml` | `workflow_dispatch` | Side-by-side size comparison (baseline / A / B / C). Variant C is the current ship config. Run this when a future PDFium roll or build refactor unexpectedly changes the size profile — it isolates which lever moved. |
 | `build-pdfium-android-arm64-agg-devicen-fast.yml` | `workflow_dispatch` | Diagnostic ship build. Applies 0003+0004+0005+0007+0008+0009, retains trace markers. Use for future perf investigations. |
