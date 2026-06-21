@@ -1,0 +1,66 @@
+From 9572c4717ec8a8518f7256ca52ef3c5dab3228c7 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Sun, 21 Jun 2026 18:10:00 +0800
+Subject: [PATCH] Veloce path display list hooks progressive root renders
+
+Patch 0017 added a root-page hook in `CPDF_RenderStatus::RenderObjectList()`,
+and patch 0018 corrected that hook's root-holder test. Device logs for
+`11.pdf` still showed no `holderKind=root_page` telemetry because the Android
+`FPDF_RenderPageBitmap()` path uses `CPDF_ProgressiveRenderer::Continue()` for
+root page rendering. That renderer walks the current layer's page objects
+directly through `ContinueSingleObject()` and bypasses `RenderObjectList()`.
+
+This patch adds the same all-or-nothing root holder attempt at the progressive
+layer boundary:
+
+1. Create and initialize the normal `CPDF_RenderStatus`.
+2. Save the render-device state, matching the existing progressive lifetime.
+3. Try the Veloce root holder path display list before the per-object loop.
+4. If rendered, restore state, mark the layer complete, and continue.
+5. If cancelled, restore state and stop the render without legacy fallback.
+6. If not eligible, fall through to the existing progressive object loop.
+
+This keeps `error.pdf` Form handling unchanged and is the missing hook for
+path-only root pages such as `11.pdf`.
+
+diff --git a/core/fpdfapi/render/cpdf_progressiverenderer.cpp b/core/fpdfapi/render/cpdf_progressiverenderer.cpp
+index 3139b9374..143378c3b 100644
+--- a/core/fpdfapi/render/cpdf_progressiverenderer.cpp
++++ b/core/fpdfapi/render/cpdf_progressiverenderer.cpp
+@@ -14,6 +14,7 @@
+ #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
+ #include "core/fpdfapi/render/cpdf_renderoptions.h"
+ #include "core/fpdfapi/render/cpdf_renderstatus.h"
++#include "core/fpdfapi/render/veloce_path_display_list.h"
+ #include "core/fxcrt/check.h"
+ #include "core/fxcrt/pauseindicator_iface.h"
+ #include "core/fxge/cfx_renderdevice.h"
+@@ -62,6 +63,28 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
+       device_->SaveState();
+       clip_rect_ = current_layer_->GetMatrix().GetInverse().TransformRect(
+           CFX_FloatRect(device_->GetClipBox()));
++      const VelocePathDisplayListResult path_dl_result =
++          VeloceTryRenderPathDisplayListForHolder(
++              render_status_.get(), current_layer_->GetObjectHolder(),
++              current_layer_->GetMatrix(),
++              VelocePathDisplayListHolderKind::kRootPage);
++      if (path_dl_result == VelocePathDisplayListResult::kCancelled) {
++        render_status_.reset();
++        device_->RestoreState(false);
++        current_layer_ = nullptr;
++        status_ = kDone;
++        return;
++      }
++      if (path_dl_result == VelocePathDisplayListResult::kRendered) {
++        render_status_.reset();
++        device_->RestoreState(false);
++        current_layer_ = nullptr;
++        layer_index_++;
++        if (pPause && pPause->NeedToPauseNow()) {
++          return;
++        }
++        continue;
++      }
+     }
+     CPDF_PageObjectHolder::const_iterator iter;
+     CPDF_PageObjectHolder::const_iterator iterEnd =

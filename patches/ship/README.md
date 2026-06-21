@@ -43,6 +43,7 @@ these patches:
 | 0016 | `0016-veloce-path-display-list-stacked-rect-noop-clip.patch` | Extends 0015 to support stacked rectangle-like clip components. It intersects all rectangle clips and elides the clip if that intersection contains the path object's bounds. |
 | 0017 | `0017-veloce-holder-root-page-path-display-list.patch` | Extends the same native path display-list renderer from Form holders to root page holders. Path-only dense root pages such as `11.pdf` can now use native Veloce instead of the app-level Skia replay path, while Form-heavy pages such as `error.pdf` `/Meta20` continue through the same implementation. Adds `holderKind=root_page|form` telemetry. |
 | 0018 | `0018-veloce-root-holder-context-layer.patch` | Corrects the root-page hook to identify top-level render-context layer holders instead of relying on `pObjectHolder->IsPage()`. This preserves the Form hook while allowing root path-only pages such as `11.pdf` to emit `holderKind=root_page`. |
+| 0019 | `0019-veloce-progressive-root-path-display-list.patch` | Adds the missing root-page hook to `CPDF_ProgressiveRenderer::Continue()`, which is the Android `FPDF_RenderPageBitmap()` root-page path. This lets `11.pdf` emit `holderKind=root_page` instead of bypassing Veloce and walking every root page object. |
 
 ## Why this directory exists
 
@@ -73,6 +74,7 @@ git apply patches/ship/0015-veloce-path-display-list-noop-clip.patch
 git apply patches/ship/0016-veloce-path-display-list-stacked-rect-noop-clip.patch
 git apply patches/ship/0017-veloce-holder-root-page-path-display-list.patch
 git apply patches/ship/0018-veloce-root-holder-context-layer.patch
+git apply patches/ship/0019-veloce-progressive-root-path-display-list.patch
 ```
 
 Patches 06 and 07 depend on patch 05 and must be applied after it.
@@ -94,7 +96,9 @@ Patch 0016 depends on patch 0015 and handles inherited rectangle clip stacks
 by intersecting their bounds before deciding whether the clip is no-op.
 Patch 0017 depends on patch 0016 and extends the display-list path from Form
 holders to root page holders. Patch 0018 depends on patch 0017 and corrects
-the root holder gate to use render-context layer identity.
+the root holder gate to use render-context layer identity. Patch 0019 depends
+on patch 0018 and adds the same root holder attempt to PDFium's progressive
+root-page renderer.
 The release workflow applies the numeric order shown above.
 
 ## Cumulative effect (measured)
@@ -187,6 +191,10 @@ new `FPDFEx_LoadPageWithClassification()` symbol.
   `core/fpdfapi/render/cpdf_renderstatus.cpp`.
   Changes the root-page hook gate from `IsPage()` to render-context layer
   holder identity. No public API or build file changes.
+- **0019 Veloce progressive root path display list**:
+  `core/fpdfapi/render/cpdf_progressiverenderer.cpp`.
+  Adds the root-page display-list attempt before the progressive renderer's
+  root page-object loop. No public API or build file changes.
 
 Patches 02 and 03 both touch
 `cpdf_colorspace.cpp`, but in different sections (SeparationCS vs.
@@ -226,6 +234,9 @@ Form holders to root page holders.
 Patch 0018 is authored after 0017 and changes only `cpdf_renderstatus.cpp`;
 it keeps the same all-or-nothing fallback contract while making the root
 holder check match the actual `CPDF_RenderContext::Render()` layer boundary.
+Patch 0019 is authored after 0018 and changes only
+`cpdf_progressiverenderer.cpp`; it keeps the same all-or-nothing fallback
+contract while covering the Android `FPDF_RenderPageBitmap()` root render path.
 
 ## Upstreaming
 
