@@ -42,6 +42,7 @@ these patches:
 | 0015 | `0015-veloce-path-display-list-noop-clip.patch` | Extends 0014 with compile-time no-op clip normalization. If an eligible node's clip is one rectangle that contains the object's bounds, the display list stores `kNoClipKey` instead of replaying that clip state and logs `noopClips`. |
 | 0016 | `0016-veloce-path-display-list-stacked-rect-noop-clip.patch` | Extends 0015 to support stacked rectangle-like clip components. It intersects all rectangle clips and elides the clip if that intersection contains the path object's bounds. |
 | 0017 | `0017-veloce-holder-root-page-path-display-list.patch` | Extends the same native path display-list renderer from Form holders to root page holders. Path-only dense root pages such as `11.pdf` can now use native Veloce instead of the app-level Skia replay path, while Form-heavy pages such as `error.pdf` `/Meta20` continue through the same implementation. Adds `holderKind=root_page|form` telemetry. |
+| 0018 | `0018-veloce-root-holder-context-layer.patch` | Corrects the root-page hook to identify top-level render-context layer holders instead of relying on `pObjectHolder->IsPage()`. This preserves the Form hook while allowing root path-only pages such as `11.pdf` to emit `holderKind=root_page`. |
 
 ## Why this directory exists
 
@@ -70,6 +71,8 @@ git apply patches/ship/0013-veloce-path-display-list-form.patch
 git apply patches/ship/0014-veloce-path-display-list-cache.patch
 git apply patches/ship/0015-veloce-path-display-list-noop-clip.patch
 git apply patches/ship/0016-veloce-path-display-list-stacked-rect-noop-clip.patch
+git apply patches/ship/0017-veloce-holder-root-page-path-display-list.patch
+git apply patches/ship/0018-veloce-root-holder-context-layer.patch
 ```
 
 Patches 06 and 07 depend on patch 05 and must be applied after it.
@@ -89,6 +92,9 @@ eligible Forms. Patch 0015 depends on patch 0014 and avoids repeated clip setup
 cost for path nodes whose rectangular clip contains the node bounds.
 Patch 0016 depends on patch 0015 and handles inherited rectangle clip stacks
 by intersecting their bounds before deciding whether the clip is no-op.
+Patch 0017 depends on patch 0016 and extends the display-list path from Form
+holders to root page holders. Patch 0018 depends on patch 0017 and corrects
+the root holder gate to use render-context layer identity.
 The release workflow applies the numeric order shown above.
 
 ## Cumulative effect (measured)
@@ -177,6 +183,10 @@ new `FPDFEx_LoadPageWithClassification()` symbol.
   `core/fpdfapi/render/veloce_path_display_list.{h,cpp}`.
   Adds the root-page `RenderObjectList()` hook and holder-kind telemetry. No
   public API or build file changes.
+- **0018 Veloce root holder context layer gate**:
+  `core/fpdfapi/render/cpdf_renderstatus.cpp`.
+  Changes the root-page hook gate from `IsPage()` to render-context layer
+  holder identity. No public API or build file changes.
 
 Patches 02 and 03 both touch
 `cpdf_colorspace.cpp`, but in different sections (SeparationCS vs.
@@ -213,6 +223,9 @@ Patch 0017 is authored after 0016 and changes `cpdf_renderstatus.cpp` plus
 `veloce_path_display_list.{h,cpp}`; it keeps the same feature flag and
 all-or-nothing fallback contract while extending the holder fast path from
 Form holders to root page holders.
+Patch 0018 is authored after 0017 and changes only `cpdf_renderstatus.cpp`;
+it keeps the same all-or-nothing fallback contract while making the root
+holder check match the actual `CPDF_RenderContext::Render()` layer boundary.
 
 ## Upstreaming
 

@@ -1,0 +1,50 @@
+From 6dc4dd7729c7c53681f7fb637f0f9ccf69cf9b6b Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Sun, 21 Jun 2026 15:10:00 +0800
+Subject: [PATCH] Veloce root holder uses render-context layer identity
+
+Patch 0017 attempted to route path-only root pages through the same native
+Veloce path display-list compiler/replay path used by eligible Form XObjects.
+On device, `error.pdf` produced `holderKind=form` telemetry, but `11.pdf`
+never produced `holderKind=root_page`.
+
+The problem is the root gate. `RenderObjectList()` receives the top-level
+holder from the active `CPDF_RenderContext::Layer`; requiring
+`pObjectHolder->IsPage()` is too strict for the path used by current Android
+renders. The robust boundary is context identity: if the holder being rendered
+is one of the render context's top-level layer holders, it is a root-layer
+render attempt. Nested Form renders are not layer holders and still use the
+explicit `ProcessForm()` hook from patch 0017.
+
+This keeps the blast radius small:
+
+1. `error.pdf` `/Meta20` continues to use `holderKind=form`.
+2. `11.pdf` path-only dense root pages can now enter `holderKind=root_page`.
+3. Pattern, Type3, transparency, and nested Form holders are not promoted by
+   this root hook unless PDFium added them as top-level render-context layers.
+4. Unsupported root-layer content still falls back before drawing because the
+   display-list compiler's eligibility checks remain unchanged.
+
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index ad73d7fb4..b59c9778c 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -243,7 +243,17 @@ void CPDF_RenderStatus::Initialize(const CPDF_RenderStatus* pParentStatus,
+ void CPDF_RenderStatus::RenderObjectList(
+     const CPDF_PageObjectHolder* pObjectHolder,
+     const CFX_Matrix& mtObj2Device) {
+-  if (pObjectHolder->IsPage()) {
++  bool is_context_layer_holder = false;
++  if (context_) {
++    for (size_t i = 0; i < context_->CountLayers(); ++i) {
++      if (pObjectHolder == context_->GetLayer(i)->GetObjectHolder()) {
++        is_context_layer_holder = true;
++        break;
++      }
++    }
++  }
++
++  if (is_context_layer_holder) {
+     const VelocePathDisplayListResult path_dl_result =
+         VeloceTryRenderPathDisplayListForHolder(
+             this, pObjectHolder, mtObj2Device,
