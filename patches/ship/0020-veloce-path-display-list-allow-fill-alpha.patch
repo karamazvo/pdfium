@@ -1,0 +1,73 @@
+From 73fb1f4fb059a2894359b3fd2105e32bfbcb78d4 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Sun, 21 Jun 2026 19:05:00 +0800
+Subject: [PATCH] Veloce path display list allows normal fill alpha
+
+Device testing with r13 showed the native root hook was reached for `11.pdf`,
+but the compiler rejected the first path:
+
+  VelocePathDL result=not_eligible holderKind=root_page reason=transparency
+
+That rejection was too broad. PDFium's `ProcessTransparency()` does not treat
+ordinary fill alpha on a non-Form path as an offscreen-transparency case. It
+returns false when there is no soft mask, blend mode is Normal, there is no
+text clip, and the group/initial alpha cases do not apply. The normal path
+then calls `GetFillArgb()` and `DrawPath()`, which already carry fill alpha in
+the ARGB color.
+
+The Veloce replay path also uses `status->GetFillArgb(path_obj)` and
+`device->DrawPath()`, so fill alpha is representable in the display list
+without changing replay semantics.
+
+This patch keeps fallback for real unsupported transparency:
+
+1. Soft masks still reject.
+2. Non-normal blend modes still reject.
+3. Stroke alpha still rejects if stroke replay is ever enabled.
+4. Fill alpha is allowed for fill-only path nodes.
+
+This is the narrow native fix for dense path-only pages whose path colors use
+ordinary alpha.
+
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index dd119a501..a7d40c7f7 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -387,7 +387,7 @@ bool ClipPathIsNoOpForObjectBounds(const CPDF_ClipPath& clip_path,
+   return clip_bounds->Contains(normalized_object_bounds);
+ }
+
+-bool RequiresTransparency(const CPDF_PageObject* obj) {
++bool RequiresUnsupportedTransparency(const CPDF_PageObject* obj, bool stroke) {
+   const CPDF_GeneralState& general_state = obj->general_state();
+   if (general_state.GetSoftMask()) {
+     return true;
+@@ -395,10 +395,7 @@ bool RequiresTransparency(const CPDF_PageObject* obj) {
+   if (general_state.GetBlendType() != BlendMode::kNormal) {
+     return true;
+   }
+-  if (general_state.GetFillAlpha() != 1.0f) {
+-    return true;
+-  }
+-  if (general_state.GetStrokeAlpha() != 1.0f) {
++  if (stroke && general_state.GetStrokeAlpha() != 1.0f) {
+     return true;
+   }
+   return false;
+@@ -489,13 +486,12 @@ bool CompilePathDisplayList(CPDF_RenderStatus* status,
+     if (!HasOnlySimplePathClip(obj->clip_path())) {
+       return reject(PathDlRejectReason::kComplexClip);
+     }
+-    if (RequiresTransparency(obj.get())) {
+-      return reject(PathDlRejectReason::kTransparency);
+-    }
+-
+     auto* path_obj = obj->AsPath();
+     CFX_FillRenderOptions::FillType fill_type = path_obj->filltype();
+     const bool stroke = path_obj->stroke();
++    if (RequiresUnsupportedTransparency(obj.get(), stroke)) {
++      return reject(PathDlRejectReason::kTransparency);
++    }
+     if (stroke) {
+       // v1 optimizes the Meta20-class fill-only workload. Stroke support can
+       // be added once graph-state side-table replay is pixel-diffed.
