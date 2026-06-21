@@ -1,0 +1,205 @@
+From 232d6cb3a5d05efa2896b128280ef2dea6c206cd Mon Sep 17 00:00:00 2001
+From: "sh.chao" <sh.chao@gmail.com>
+Date: Sun, 21 Jun 2026 18:45:55 +0800
+Subject: [PATCH] Veloce path display list supports stroked paths
+
+---
+ .../render/veloce_path_display_list.cpp       | 84 +++++++++++++++----
+ 1 file changed, 68 insertions(+), 16 deletions(-)
+
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index a7d40c7f7..9e37c39d3 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -32,6 +32,7 @@
+ #include "core/fpdfapi/render/cpdf_renderstatus.h"
+ #include "core/fpdfapi/render/veloce_render_callbacks.h"
+ #include "core/fxge/cfx_fillrenderoptions.h"
++#include "core/fxge/cfx_graphstatedata.h"
+ #include "core/fxge/cfx_path.h"
+ #include "core/fxge/cfx_renderdevice.h"
+ 
+@@ -39,6 +40,7 @@ namespace {
+ 
+ constexpr uint32_t kVeloceFeaturePathDisplayListForm = 0x00000001u;
+ constexpr uint32_t kNoClipKey = std::numeric_limits<uint32_t>::max();
++constexpr uint32_t kNoGraphStateKey = std::numeric_limits<uint32_t>::max();
+ constexpr uint32_t kMaxClipPathCount = 16;
+ constexpr uint32_t kCancelCheckNodeInterval = 64;
+ constexpr size_t kMaxCachedPathDisplayLists = 32;
+@@ -64,6 +66,8 @@ enum class PathDlRejectReason {
+ struct PathDlPaint {
+   CFX_FillRenderOptions fill_options;
+   uint32_t fill_argb = 0;
++  uint32_t stroke_argb = 0;
++  uint32_t graph_state_key = kNoGraphStateKey;
+ };
+ 
+ struct PathDlNode {
+@@ -77,6 +81,7 @@ struct PathDlNode {
+ struct NativePathDisplayList {
+   std::vector<CPDF_Path> path_table;
+   std::vector<PathDlPaint> paint_table;
++  std::vector<CFX_GraphStateData> graph_state_table;
+   std::vector<CPDF_ClipPath> clip_table;
+   std::vector<PathDlNode> nodes;
+   size_t scanned_objects = 0;
+@@ -201,6 +206,11 @@ bool DisplayListIntegrityOk(const NativePathDisplayList& list) {
+     if (node.clip_key != kNoClipKey && node.clip_key >= list.clip_table.size()) {
+       return false;
+     }
++    const PathDlPaint& paint = list.paint_table[node.paint_key];
++    if (paint.graph_state_key != kNoGraphStateKey &&
++        paint.graph_state_key >= list.graph_state_table.size()) {
++      return false;
++    }
+   }
+   return true;
+ }
+@@ -224,7 +234,7 @@ void LogPathDisplayListAttempt(const char* result,
+   __android_log_print(
+       ANDROID_LOG_INFO, "VelocePathDL",
+       "result=%s holderKind=%s reason=%s holder=%p integrity=%s legacySkipped=%d "
+-      "legacyFallback=%d nodes=%zu paths=%zu paints=%zu clips=%zu "
++      "legacyFallback=%d nodes=%zu paths=%zu paints=%zu graphStates=%zu clips=%zu "
+       "scanned=%zu skippedInactive=%zu skippedInvisible=%zu skippedNoFill=%zu "
+       "noopClips=%zu visited=%zu culled=%zu missingPath=%zu drawn=%zu "
+       "clipSwitches=%zu cancelChecks=%zu cache=%s compileMs=%" PRId64
+@@ -236,6 +246,7 @@ void LogPathDisplayListAttempt(const char* result,
+       list ? list->nodes.size() : kZero,
+       list ? list->path_table.size() : kZero,
+       list ? list->paint_table.size() : kZero,
++      list ? list->graph_state_table.size() : kZero,
+       list ? list->clip_table.size() : kZero,
+       list ? list->scanned_objects : kZero,
+       list ? list->skipped_inactive : kZero,
+@@ -387,7 +398,7 @@ bool ClipPathIsNoOpForObjectBounds(const CPDF_ClipPath& clip_path,
+   return clip_bounds->Contains(normalized_object_bounds);
+ }
+ 
+-bool RequiresUnsupportedTransparency(const CPDF_PageObject* obj, bool stroke) {
++bool RequiresUnsupportedTransparency(const CPDF_PageObject* obj) {
+   const CPDF_GeneralState& general_state = obj->general_state();
+   if (general_state.GetSoftMask()) {
+     return true;
+@@ -395,12 +406,19 @@ bool RequiresUnsupportedTransparency(const CPDF_PageObject* obj, bool stroke) {
+   if (general_state.GetBlendType() != BlendMode::kNormal) {
+     return true;
+   }
+-  if (stroke && general_state.GetStrokeAlpha() != 1.0f) {
+-    return true;
+-  }
+   return false;
+ }
+ 
++bool GraphStateEquals(const CFX_GraphStateData& lhs,
++                      const CFX_GraphStateData& rhs) {
++  return lhs.line_cap() == rhs.line_cap() &&
++         lhs.line_join() == rhs.line_join() &&
++         lhs.miter_limit() == rhs.miter_limit() &&
++         lhs.line_width() == rhs.line_width() &&
++         lhs.dash_phase() == rhs.dash_phase() &&
++         lhs.dash_array() == rhs.dash_array();
++}
++
+ bool HasPatternPaint(const CPDF_PathObject* path_obj,
+                      CFX_FillRenderOptions::FillType fill_type,
+                      bool stroke) {
+@@ -441,7 +459,9 @@ std::optional<uint32_t> AddPaintKey(NativePathDisplayList* list,
+   for (uint32_t i = 0; i < list->paint_table.size(); ++i) {
+     const PathDlPaint& existing = list->paint_table[i];
+     if (existing.fill_options == paint.fill_options &&
+-        existing.fill_argb == paint.fill_argb) {
++        existing.fill_argb == paint.fill_argb &&
++        existing.stroke_argb == paint.stroke_argb &&
++        existing.graph_state_key == paint.graph_state_key) {
+       return i;
+     }
+   }
+@@ -452,6 +472,20 @@ std::optional<uint32_t> AddPaintKey(NativePathDisplayList* list,
+   return static_cast<uint32_t>(list->paint_table.size() - 1);
+ }
+ 
++std::optional<uint32_t> AddGraphStateKey(NativePathDisplayList* list,
++                                         const CFX_GraphStateData& graph_state) {
++  for (uint32_t i = 0; i < list->graph_state_table.size(); ++i) {
++    if (GraphStateEquals(list->graph_state_table[i], graph_state)) {
++      return i;
++    }
++  }
++  if (list->graph_state_table.size() >= std::numeric_limits<uint32_t>::max()) {
++    return std::nullopt;
++  }
++  list->graph_state_table.push_back(graph_state);
++  return static_cast<uint32_t>(list->graph_state_table.size() - 1);
++}
++
+ bool CompilePathDisplayList(CPDF_RenderStatus* status,
+                             const CPDF_PageObjectHolder* holder,
+                             NativePathDisplayList* list,
+@@ -489,15 +523,10 @@ bool CompilePathDisplayList(CPDF_RenderStatus* status,
+     auto* path_obj = obj->AsPath();
+     CFX_FillRenderOptions::FillType fill_type = path_obj->filltype();
+     const bool stroke = path_obj->stroke();
+-    if (RequiresUnsupportedTransparency(obj.get(), stroke)) {
++    if (RequiresUnsupportedTransparency(obj.get())) {
+       return reject(PathDlRejectReason::kTransparency);
+     }
+-    if (stroke) {
+-      // v1 optimizes the Meta20-class fill-only workload. Stroke support can
+-      // be added once graph-state side-table replay is pixel-diffed.
+-      return reject(PathDlRejectReason::kStroke);
+-    }
+-    if (fill_type == CFX_FillRenderOptions::FillType::kNoFill) {
++    if (fill_type == CFX_FillRenderOptions::FillType::kNoFill && !stroke) {
+       list->skipped_no_fill++;
+       continue;
+     }
+@@ -526,9 +555,28 @@ bool CompilePathDisplayList(CPDF_RenderStatus* status,
+     CFX_FillRenderOptions fill_options(fill_type);
+     fill_options.aliased_path =
+         status->GetRenderOptions().GetOptions().bNoPathSmooth;
++    fill_options.adjust_stroke = path_obj->general_state().GetStrokeAdjust();
++    fill_options.stroke = stroke;
+     PathDlPaint paint;
+     paint.fill_options = fill_options;
+-    paint.fill_argb = status->GetFillArgb(path_obj);
++    paint.fill_argb =
++        fill_type != CFX_FillRenderOptions::FillType::kNoFill
++            ? status->GetFillArgb(path_obj)
++            : 0;
++    paint.stroke_argb = stroke ? status->GetStrokeArgb(path_obj) : 0;
++    if (stroke) {
++      const CFX_GraphStateData* graph_state =
++          path_obj->graph_state().GetObject();
++      if (!graph_state) {
++        return reject(PathDlRejectReason::kStroke);
++      }
++      std::optional<uint32_t> graph_state_key =
++          AddGraphStateKey(list, *graph_state);
++      if (!graph_state_key.has_value()) {
++        return reject(PathDlRejectReason::kPaintTableOverflow);
++      }
++      paint.graph_state_key = graph_state_key.value();
++    }
+     std::optional<uint32_t> paint_key = AddPaintKey(list, paint);
+     if (!paint_key.has_value()) {
+       return reject(PathDlRejectReason::kPaintTableOverflow);
+@@ -618,8 +666,12 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+       continue;
+     }
+     CFX_Matrix path_matrix = node.path_to_holder * holder_to_device;
+-    device->DrawPath(*path, &path_matrix, nullptr, paint.fill_argb,
+-                     /*stroke_color=*/0, paint.fill_options);
++    const CFX_GraphStateData* graph_state =
++        paint.graph_state_key == kNoGraphStateKey
++            ? nullptr
++            : &list.graph_state_table[paint.graph_state_key];
++    device->DrawPath(*path, &path_matrix, graph_state, paint.fill_argb,
++                     paint.stroke_argb, paint.fill_options);
+     if (replay_stats) {
+       replay_stats->drawn_nodes++;
+     }
+-- 
+2.39.5 (Apple Git-154)
+

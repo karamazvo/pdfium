@@ -45,6 +45,7 @@ these patches:
 | 0018 | `0018-veloce-root-holder-context-layer.patch` | Corrects the root-page hook to identify top-level render-context layer holders instead of relying on `pObjectHolder->IsPage()`. This preserves the Form hook while allowing root path-only pages such as `11.pdf` to emit `holderKind=root_page`. |
 | 0019 | `0019-veloce-progressive-root-path-display-list.patch` | Adds the missing root-page hook to `CPDF_ProgressiveRenderer::Continue()`, which is the Android `FPDF_RenderPageBitmap()` root-page path. This lets `11.pdf` emit `holderKind=root_page` instead of bypassing Veloce and walking every root page object. |
 | 0020 | `0020-veloce-path-display-list-allow-fill-alpha.patch` | Allows ordinary fill alpha on fill-only path nodes. PDFium's normal path carries this through `GetFillArgb()` and `DrawPath()` rather than `ProcessTransparency()`, so Veloce can replay it while still rejecting soft masks and non-normal blend modes. |
+| 0021 | `0021-veloce-path-display-list-stroke-replay.patch` | Adds native stroked-path replay. Stroke color and graph state are deduplicated in side tables and replayed through the same `DrawPath()` call PDFium uses for `ProcessPath()`. |
 
 ## Why this directory exists
 
@@ -77,6 +78,7 @@ git apply patches/ship/0017-veloce-holder-root-page-path-display-list.patch
 git apply patches/ship/0018-veloce-root-holder-context-layer.patch
 git apply patches/ship/0019-veloce-progressive-root-path-display-list.patch
 git apply patches/ship/0020-veloce-path-display-list-allow-fill-alpha.patch
+git apply patches/ship/0021-veloce-path-display-list-stroke-replay.patch
 ```
 
 Patches 06 and 07 depend on patch 05 and must be applied after it.
@@ -101,7 +103,9 @@ holders to root page holders. Patch 0018 depends on patch 0017 and corrects
 the root holder gate to use render-context layer identity. Patch 0019 depends
 on patch 0018 and adds the same root holder attempt to PDFium's progressive
 root-page renderer. Patch 0020 depends on patch 0019 and narrows the
-transparency reject rule so normal fill alpha remains eligible.
+transparency reject rule so normal fill alpha remains eligible. Patch 0021
+depends on patch 0020 and adds stroked-path replay using graph-state side
+tables.
 The release workflow applies the numeric order shown above.
 
 ## Cumulative effect (measured)
@@ -203,6 +207,11 @@ new `FPDFEx_LoadPageWithClassification()` symbol.
   Allows normal fill alpha because replay uses `GetFillArgb()` and
   `DrawPath()`, while keeping soft-mask and non-normal blend fallback. No
   public API or build file changes.
+- **0021 Veloce path display-list stroke replay**:
+  `core/fpdfapi/render/veloce_path_display_list.cpp`.
+  Adds stroke colors plus deduplicated `CFX_GraphStateData` side-table replay,
+  and removes the incorrect stroke-alpha-as-transparency reject. No public API
+  or build file changes.
 
 Patches 02 and 03 both touch
 `cpdf_colorspace.cpp`, but in different sections (SeparationCS vs.
@@ -248,6 +257,9 @@ contract while covering the Android `FPDF_RenderPageBitmap()` root render path.
 Patch 0020 is authored after 0019 and changes only
 `veloce_path_display_list.cpp`; it keeps the all-or-nothing fallback contract
 for real unsupported transparency while allowing ordinary fill alpha.
+Patch 0021 is authored after 0020 and changes only
+`veloce_path_display_list.cpp`; it keeps the same fallback contract while
+allowing dense path-only pages whose paths are stroked.
 
 ## Upstreaming
 
