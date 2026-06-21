@@ -41,6 +41,7 @@ these patches:
 | 0014 | `0014-veloce-path-display-list-cache.patch` | Extends 0013 with a bounded process-local cache for compiled Form path display lists, keyed by document, holder, holder dictionary object number, and path-smoothing mode. Repeated renders of the same eligible Form replay from cache and log `cache=hit|miss`; compile cancellation returns `kCancelled` instead of falling back to legacy rendering. |
 | 0015 | `0015-veloce-path-display-list-noop-clip.patch` | Extends 0014 with compile-time no-op clip normalization. If an eligible node's clip is one rectangle that contains the object's bounds, the display list stores `kNoClipKey` instead of replaying that clip state and logs `noopClips`. |
 | 0016 | `0016-veloce-path-display-list-stacked-rect-noop-clip.patch` | Extends 0015 to support stacked rectangle-like clip components. It intersects all rectangle clips and elides the clip if that intersection contains the path object's bounds. |
+| 0017 | `0017-veloce-holder-root-page-path-display-list.patch` | Extends the same native path display-list renderer from Form holders to root page holders. Path-only dense root pages such as `11.pdf` can now use native Veloce instead of the app-level Skia replay path, while Form-heavy pages such as `error.pdf` `/Meta20` continue through the same implementation. Adds `holderKind=root_page|form` telemetry. |
 
 ## Why this directory exists
 
@@ -171,6 +172,11 @@ new `FPDFEx_LoadPageWithClassification()` symbol.
   `core/fpdfapi/render/veloce_path_display_list.cpp`.
   Extends no-op clip normalization to inherited rectangle clip stacks. No
   public API or build file changes.
+- **0017 Veloce holder-level root page path display list**:
+  `core/fpdfapi/render/cpdf_renderstatus.cpp`,
+  `core/fpdfapi/render/veloce_path_display_list.{h,cpp}`.
+  Adds the root-page `RenderObjectList()` hook and holder-kind telemetry. No
+  public API or build file changes.
 
 Patches 02 and 03 both touch
 `cpdf_colorspace.cpp`, but in different sections (SeparationCS vs.
@@ -203,6 +209,10 @@ Patch 0016 is authored after 0015 and only changes
 `veloce_path_display_list.cpp`; it keeps the same feature flag and fallback
 contract while handling multi-component rectangle clips created by inherited
 Form/page clipping.
+Patch 0017 is authored after 0016 and changes `cpdf_renderstatus.cpp` plus
+`veloce_path_display_list.{h,cpp}`; it keeps the same feature flag and
+all-or-nothing fallback contract while extending the holder fast path from
+Form holders to root page holders.
 
 ## Upstreaming
 
