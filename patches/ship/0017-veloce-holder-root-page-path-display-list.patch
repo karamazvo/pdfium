@@ -1,0 +1,187 @@
+From: xPDFSDK team <noreply@xpdfsdk.local>
+Date: 2026-06-21
+Subject: [PATCH ship-0017] Extend Veloce path display list to root page holders
+
+Background
+==========
+R10 handles the `error.pdf` `/Meta20` workload because the dense path list is
+inside a Form XObject and the Veloce path display-list hook runs from
+`CPDF_RenderStatus::ProcessForm()`. A path-only dense root page such as
+`11.pdf` still enters the ordinary root `RenderObjectList()` loop and therefore
+depends on xPDFSDK's app-level Skia replay path for fast zoom tiles.
+
+This patch
+==========
+1. Generalizes the Veloce entry point from a Form-specific call to a holder
+   call with explicit holder kind telemetry.
+2. Tries the same native path display-list fast path at the root page holder
+   boundary before the ordinary PDFium object loop.
+3. Keeps the existing explicit Form hook, now passing `holderKind=form`.
+4. Preserves the all-or-nothing invariant: if the root page holder is not
+   path-only-safe, Veloce returns `kNotEligible` before drawing and the original
+   PDFium loop runs unchanged.
+5. Adds `holderKind=root_page|form` to `VelocePathDL` logs so device testing can
+   prove whether `11.pdf` is handled by native root-holder Veloce and
+   `error.pdf` p2/p3 are still handled at the Form holder.
+
+This patch does not change public API. The same feature flag
+`FPDFEX_FEATURE_PATH_DISPLAY_LIST_FORM` gates both Form and root-page holder
+attempts for the experiment; a later cleanup can rename the public macro once
+the holder-level behavior is validated.
+
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index fd1acfa90..ad73d7fb4 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -243,6 +243,20 @@ void CPDF_RenderStatus::Initialize(const CPDF_RenderStatus* pParentStatus,
+ void CPDF_RenderStatus::RenderObjectList(
+     const CPDF_PageObjectHolder* pObjectHolder,
+     const CFX_Matrix& mtObj2Device) {
++  if (pObjectHolder->IsPage()) {
++    const VelocePathDisplayListResult path_dl_result =
++        VeloceTryRenderPathDisplayListForHolder(
++            this, pObjectHolder, mtObj2Device,
++            VelocePathDisplayListHolderKind::kRootPage);
++    if (path_dl_result == VelocePathDisplayListResult::kCancelled) {
++      stopped_ = true;
++      return;
++    }
++    if (path_dl_result == VelocePathDisplayListResult::kRendered) {
++      return;
++    }
++  }
++
+   CFX_FloatRect clip_rect = mtObj2Device.GetInverse().TransformRect(
+       CFX_FloatRect(device_->GetClipBox()));
+   for (const auto& pCurObj : *pObjectHolder) {
+@@ -519,7 +533,9 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
+   {
+     CFX_RenderDevice::StateRestorer restorer(device_);
+     const VelocePathDisplayListResult path_dl_result =
+-        VeloceTryRenderPathDisplayList(&status, pFormObj->form(), matrix);
++        VeloceTryRenderPathDisplayListForHolder(
++            &status, pFormObj->form(), matrix,
++            VelocePathDisplayListHolderKind::kForm);
+     if (path_dl_result == VelocePathDisplayListResult::kCancelled) {
+       stopped_ = true;
+       return true;
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index c47ec912a..dd119a501 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -177,6 +177,16 @@ const char* RejectReasonName(PathDlRejectReason reason) {
+   return "unknown";
+ }
+ 
++const char* HolderKindName(VelocePathDisplayListHolderKind holder_kind) {
++  switch (holder_kind) {
++    case VelocePathDisplayListHolderKind::kRootPage:
++      return "root_page";
++    case VelocePathDisplayListHolderKind::kForm:
++      return "form";
++  }
++  return "unknown";
++}
++
+ bool DisplayListIntegrityOk(const NativePathDisplayList& list) {
+   if (list.nodes.empty() || list.path_table.empty() || list.paint_table.empty()) {
+     return false;
+@@ -196,6 +206,7 @@ bool DisplayListIntegrityOk(const NativePathDisplayList& list) {
+ }
+ 
+ void LogPathDisplayListAttempt(const char* result,
++                               VelocePathDisplayListHolderKind holder_kind,
+                                const char* cache_state,
+                                PathDlRejectReason reason,
+                                const CPDF_PageObjectHolder* holder,
+@@ -212,14 +223,14 @@ void LogPathDisplayListAttempt(const char* result,
+       result && std::strcmp(result, "not_eligible") == 0;
+   __android_log_print(
+       ANDROID_LOG_INFO, "VelocePathDL",
+-      "result=%s reason=%s holder=%p integrity=%s legacySkipped=%d "
++      "result=%s holderKind=%s reason=%s holder=%p integrity=%s legacySkipped=%d "
+       "legacyFallback=%d nodes=%zu paths=%zu paints=%zu clips=%zu "
+       "scanned=%zu skippedInactive=%zu skippedInvisible=%zu skippedNoFill=%zu "
+       "noopClips=%zu visited=%zu culled=%zu missingPath=%zu drawn=%zu "
+       "clipSwitches=%zu cancelChecks=%zu cache=%s compileMs=%" PRId64
+       " replayMs=%" PRId64
+       " totalFastMs=%" PRId64 " estimatedDispatchAvoided=%zu",
+-      result, RejectReasonName(reason), holder,
++      result, HolderKindName(holder_kind), RejectReasonName(reason), holder,
+       integrity_ok ? "ok" : "bad", legacy_skipped ? 1 : 0,
+       legacy_fallback ? 1 : 0,
+       list ? list->nodes.size() : kZero,
+@@ -629,10 +640,11 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+ 
+ }  // namespace
+ 
+-VelocePathDisplayListResult VeloceTryRenderPathDisplayList(
++VelocePathDisplayListResult VeloceTryRenderPathDisplayListForHolder(
+     CPDF_RenderStatus* status,
+     const CPDF_PageObjectHolder* holder,
+-    const CFX_Matrix& holder_to_device) {
++    const CFX_Matrix& holder_to_device,
++    VelocePathDisplayListHolderKind holder_kind) {
+   if (!status || !holder) {
+     return VelocePathDisplayListResult::kNotEligible;
+   }
+@@ -654,12 +666,14 @@ VelocePathDisplayListResult VeloceTryRenderPathDisplayList(
+                                 &reject_reason)) {
+       compile_ms = ElapsedMs(compile_start_ns);
+       if (reject_reason == PathDlRejectReason::kCancelled) {
+-        LogPathDisplayListAttempt("cancelled", "miss", reject_reason, holder,
+-                                  compiled_list.get(), nullptr, compile_ms, 0);
++        LogPathDisplayListAttempt("cancelled", holder_kind, "miss",
++                                  reject_reason, holder, compiled_list.get(),
++                                  nullptr, compile_ms, 0);
+         return VelocePathDisplayListResult::kCancelled;
+       }
+-      LogPathDisplayListAttempt("not_eligible", "miss", reject_reason, holder,
+-                                compiled_list.get(), nullptr, compile_ms, 0);
++      LogPathDisplayListAttempt("not_eligible", holder_kind, "miss",
++                                reject_reason, holder, compiled_list.get(),
++                                nullptr, compile_ms, 0);
+       return VelocePathDisplayListResult::kNotEligible;
+     }
+     compile_ms = ElapsedMs(compile_start_ns);
+@@ -675,7 +689,8 @@ VelocePathDisplayListResult VeloceTryRenderPathDisplayList(
+   LogPathDisplayListAttempt(
+       result == VelocePathDisplayListResult::kRendered ? "rendered"
+                                                        : "cancelled",
+-      compile_ms == 0 ? "hit" : "miss", PathDlRejectReason::kNone, holder,
+-      cached_list.get(), &replay_stats, compile_ms, ElapsedMs(replay_start_ns));
++      holder_kind, compile_ms == 0 ? "hit" : "miss",
++      PathDlRejectReason::kNone, holder, cached_list.get(), &replay_stats,
++      compile_ms, ElapsedMs(replay_start_ns));
+   return result;
+ }
+diff --git a/core/fpdfapi/render/veloce_path_display_list.h b/core/fpdfapi/render/veloce_path_display_list.h
+index 26503980a..851e78e0c 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.h
++++ b/core/fpdfapi/render/veloce_path_display_list.h
+@@ -14,15 +14,21 @@ enum class VelocePathDisplayListResult {
+   kCancelled,
+ };
+ 
++enum class VelocePathDisplayListHolderKind {
++  kRootPage,
++  kForm,
++};
++
+ // Attempts to render a path-only object holder through a compact internal
+ // display list into `status`'s current CFX_RenderDevice.
+ //
+ // This is intentionally conservative: unsupported objects or paint states
+ // return kNotEligible before drawing, so callers can fall back to legacy
+ // CPDF_RenderStatus::RenderObjectList().
+-VelocePathDisplayListResult VeloceTryRenderPathDisplayList(
++VelocePathDisplayListResult VeloceTryRenderPathDisplayListForHolder(
+     CPDF_RenderStatus* status,
+     const CPDF_PageObjectHolder* holder,
+-    const CFX_Matrix& holder_to_device);
++    const CFX_Matrix& holder_to_device,
++    VelocePathDisplayListHolderKind holder_kind);
+ 
+ #endif  // CORE_FPDFAPI_RENDER_VELOCE_PATH_DISPLAY_LIST_H_
+-- 
+2.39.5 (Apple Git-154)
