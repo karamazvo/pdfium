@@ -208,6 +208,7 @@ new `FPDFEx_LoadPageWithClassification()` symbol.
   `DrawPath()`, while keeping soft-mask and non-normal blend fallback. No
   public API or build file changes.
 - **0021 Veloce path display-list stroke replay**:
+  `core/fpdfapi/render/cpdf_renderstatus.h`,
   `core/fpdfapi/render/veloce_path_display_list.cpp`.
   Adds stroke colors plus deduplicated `CFX_GraphStateData` side-table replay,
   and removes the incorrect stroke-alpha-as-transparency reject. No public API
@@ -258,8 +259,8 @@ Patch 0020 is authored after 0019 and changes only
 `veloce_path_display_list.cpp`; it keeps the all-or-nothing fallback contract
 for real unsupported transparency while allowing ordinary fill alpha.
 Patch 0021 is authored after 0020 and changes only
-`veloce_path_display_list.cpp`; it keeps the same fallback contract while
-allowing dense path-only pages whose paths are stroked.
+`cpdf_renderstatus.h` plus `veloce_path_display_list.cpp`; it keeps the same
+fallback contract while allowing dense path-only pages whose paths are stroked.
 
 ## Upstreaming
 

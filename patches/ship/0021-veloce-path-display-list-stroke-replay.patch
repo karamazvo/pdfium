@@ -1,12 +1,33 @@
-From 232d6cb3a5d05efa2896b128280ef2dea6c206cd Mon Sep 17 00:00:00 2001
+From a0749fbaa6db0a46043a68c8b5029395dd0159a1 Mon Sep 17 00:00:00 2001
 From: "sh.chao" <sh.chao@gmail.com>
 Date: Sun, 21 Jun 2026 18:45:55 +0800
 Subject: [PATCH] Veloce path display list supports stroked paths
 
 ---
+ core/fpdfapi/render/cpdf_renderstatus.h       |  2 +-
  .../render/veloce_path_display_list.cpp       | 84 +++++++++++++++----
- 1 file changed, 68 insertions(+), 16 deletions(-)
+ 2 files changed, 69 insertions(+), 17 deletions(-)
 
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.h b/core/fpdfapi/render/cpdf_renderstatus.h
+index 756fb8422..e94b8eddc 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.h
++++ b/core/fpdfapi/render/cpdf_renderstatus.h
+@@ -111,6 +111,7 @@ class CPDF_RenderStatus {
+ 
+   FX_ARGB GetFillArgb(CPDF_PageObject* pObj) const;
+   FX_ARGB GetFillArgbForType3(CPDF_PageObject* pObj) const;
++  FX_ARGB GetStrokeArgb(CPDF_PageObject* pObj) const;
+ 
+   void DrawTilingPattern(CPDF_TilingPattern* pattern,
+                          CPDF_PageObject* pPageObj,
+@@ -197,7 +198,6 @@ class CPDF_RenderStatus {
+   FX_ARGB GetBackgroundColor(const CPDF_Dictionary* pSMaskDict,
+                              const CPDF_Dictionary* group_dict,
+                              CPDF_ColorSpace::Family* pCSFamily);
+-  FX_ARGB GetStrokeArgb(CPDF_PageObject* pObj) const;
+   FX_RECT GetObjectClippedRect(const CPDF_PageObject* pObj,
+                                const CFX_Matrix& mtObj2Device) const;
+   // Returns the format that is compatible with `device_`.
 diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
 index a7d40c7f7..9e37c39d3 100644
 --- a/core/fpdfapi/render/veloce_path_display_list.cpp
