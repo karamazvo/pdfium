@@ -1,7 +1,6 @@
 diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
-index 3f924c6f7..3b712e60f 100644
---- a/core/fpdfapi/render/veloce_path_display_list.cpp
-+++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp	2026-06-22 14:20:17
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp	2026-06-22 17:14:50
 @@ -9,6 +9,7 @@
  #include <chrono>
  #include <cstring>
@@ -10,7 +9,7 @@ index 3f924c6f7..3b712e60f 100644
  #include <memory>
  #include <mutex>
  #include <optional>
-@@ -137,6 +138,8 @@ struct PathDlReplayStats {
+@@ -137,6 +138,8 @@
    size_t drawn_nodes = 0;
    size_t clip_switches = 0;
    size_t cancel_checks = 0;
@@ -19,31 +18,7 @@ index 3f924c6f7..3b712e60f 100644
  };
  
  bool IsPathDisplayListFeatureEnabled(const CPDF_RenderStatus* status) {
-@@ -230,9 +233,20 @@ bool DisplayListIntegrityOk(const NativePathDisplayList& list) {
- }
- 
- bool CanDrawBlendNodeWithMask(const PathDlPaint& paint) {
--  return paint.blend_mode != BlendMode::kNormal && paint.stroke_argb == 0 &&
--         paint.fill_options.fill_type !=
--             CFX_FillRenderOptions::FillType::kNoFill;
-+  if (paint.blend_mode == BlendMode::kNormal) {
-+    return false;
-+  }
-+
-+  const bool has_fill = paint.fill_options.fill_type !=
-+                        CFX_FillRenderOptions::FillType::kNoFill;
-+  const bool has_stroke = paint.stroke_argb != 0;
-+  if (!has_fill && !has_stroke) {
-+    return false;
-+  }
-+  if (has_fill && has_stroke && paint.fill_argb != paint.stroke_argb) {
-+    return false;
-+  }
-+  return true;
- }
- 
- size_t CountScratchBlendNodes(const NativePathDisplayList& list) {
-@@ -286,7 +300,8 @@ void LogPathDisplayListAttempt(const char* result,
+@@ -297,7 +300,8 @@
        "legacyFallback=%d nodes=%zu paths=%zu paints=%zu graphStates=%zu clips=%zu "
        "scanned=%zu skippedInactive=%zu skippedInvisible=%zu skippedNoFill=%zu "
        "noopClips=%zu blendNodes=%zu scratchBlendNodes=%zu visited=%zu culled=%zu missingPath=%zu drawn=%zu "
@@ -53,7 +28,7 @@ index 3f924c6f7..3b712e60f 100644
        " replayMs=%" PRId64
        " totalFastMs=%" PRId64 " estimatedDispatchAvoided=%zu",
        result, HolderKindName(holder_kind), RejectReasonName(reason), holder,
-@@ -310,6 +325,8 @@ void LogPathDisplayListAttempt(const char* result,
+@@ -321,6 +325,8 @@
        replay_stats ? replay_stats->drawn_nodes : kZero,
        replay_stats ? replay_stats->clip_switches : kZero,
        replay_stats ? replay_stats->cancel_checks : kZero,
@@ -62,13 +37,14 @@ index 3f924c6f7..3b712e60f 100644
        cache_state ? cache_state : "none", compile_ms,
        replay_ms, compile_ms + replay_ms,
        list ? list->nodes.size() : kZero);
-@@ -711,24 +728,41 @@ bool DrawPathNodeWithBlend(CFX_RenderDevice* device,
+@@ -722,25 +728,41 @@
                                      paint.blend_mode);
  }
  
 -bool DrawFillPathNodeWithBlendMask(CFX_RenderDevice* device,
 -                                   const CFX_Path& path,
 -                                   const CFX_Matrix& path_matrix,
+-                                   const CFX_GraphStateData* graph_state,
 -                                   const PathDlPaint& paint,
 -                                   const PathDlNode& node,
 -                                   const CFX_Matrix& holder_to_device) {
@@ -117,16 +93,11 @@ index 3f924c6f7..3b712e60f 100644
      return false;
    }
  
-@@ -738,17 +772,49 @@ bool DrawFillPathNodeWithBlendMask(CFX_RenderDevice* device,
+@@ -750,24 +772,51 @@
    }
    mask_device.Clear(0);
  
 -  CFX_FillRenderOptions mask_fill_options = paint.fill_options;
--  mask_fill_options.stroke = false;
--  CFX_Matrix mask_matrix = path_matrix;
--  mask_matrix.Translate(-rect.left, -rect.top);
--  if (!mask_device.DrawPath(path, &mask_matrix, nullptr, 0xff000000, 0,
--                            mask_fill_options)) {
 +  for (const MaskBatchEntry& entry : batch.entries) {
 +    CFX_Matrix mask_matrix = entry.path_matrix;
 +    mask_matrix.Translate(-batch.clip_rect.left, -batch.clip_rect.top);
@@ -140,8 +111,15 @@ index 3f924c6f7..3b712e60f 100644
 +  }
 +
 +  const PathDlPaint& paint = list.paint_table[batch.paint_key];
-+  const bool has_fill = paint.fill_options.fill_type !=
-+                        CFX_FillRenderOptions::FillType::kNoFill;
+   const bool has_fill = paint.fill_options.fill_type !=
+                         CFX_FillRenderOptions::FillType::kNoFill;
+-  const bool has_stroke = paint.stroke_argb != 0;
+-  CFX_Matrix mask_matrix = path_matrix;
+-  mask_matrix.Translate(-rect.left, -rect.top);
+-  if (!mask_device.DrawPath(path, &mask_matrix, graph_state,
+-                            has_fill ? 0xff000000 : 0,
+-                            has_stroke ? 0xff000000 : 0,
+-                            mask_fill_options)) {
 +  const uint32_t blend_argb = has_fill ? paint.fill_argb : paint.stroke_argb;
 +  if (!device->SetMaskBitsWithBlend(std::move(mask), blend_argb,
 +                                    batch.clip_rect.left, batch.clip_rect.top,
@@ -149,15 +127,16 @@ index 3f924c6f7..3b712e60f 100644
      return false;
    }
  
--  return device->SetMaskBitsWithBlend(std::move(mask), paint.fill_argb,
--                                      rect.left, rect.top, paint.blend_mode);
+-  const uint32_t blend_argb = has_fill ? paint.fill_argb : paint.stroke_argb;
+-  return device->SetMaskBitsWithBlend(std::move(mask), blend_argb, rect.left,
+-                                      rect.top, paint.blend_mode);
 +  if (replay_stats) {
 +    replay_stats->batched_mask_composites++;
 +    replay_stats->batched_mask_nodes += batch.entries.size();
 +  }
 +  return true;
-+}
-+
+ }
+ 
 +// Flushes all pending batches in painter's order (map iteration is by key,
 +// which encodes paint_key — order within a clip group is stable because all
 +// same-paint nodes share the same color and Darken is idempotent on overlap).
@@ -172,10 +151,12 @@ index 3f924c6f7..3b712e60f 100644
 +  }
 +  batches.clear();
 +  return true;
- }
- 
++}
++
  VelocePathDisplayListResult ReplayPathDisplayList(
-@@ -766,6 +832,10 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+     CPDF_RenderStatus* status,
+     const NativePathDisplayList& list,
+@@ -783,6 +832,10 @@
    bool have_clip_state = false;
    CPDF_ClipPath empty_clip;
  
@@ -186,7 +167,7 @@ index 3f924c6f7..3b712e60f 100644
    for (uint32_t i = 0; i < list.nodes.size(); ++i) {
      if ((i % kCancelCheckNodeInterval) == 0) {
        if (replay_stats) {
-@@ -788,6 +858,13 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+@@ -805,6 +858,13 @@
      }
  
      if (!have_clip_state || current_clip_key != node.clip_key) {
@@ -200,7 +181,7 @@ index 3f924c6f7..3b712e60f 100644
        if (node.clip_key == kNoClipKey) {
          status->ProcessClipPath(empty_clip, holder_to_device);
        } else {
-@@ -814,13 +891,36 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+@@ -831,14 +891,36 @@
          paint.graph_state_key == kNoGraphStateKey
              ? nullptr
              : &list.graph_state_table[paint.graph_state_key];
@@ -215,8 +196,9 @@ index 3f924c6f7..3b712e60f 100644
        device->DrawPath(*path, &path_matrix, graph_state, paint.fill_argb,
                         paint.stroke_argb, paint.fill_options);
      } else if (CanDrawBlendNodeWithMask(paint)) {
--      if (!DrawFillPathNodeWithBlendMask(device, *path, path_matrix, paint,
--                                         node, holder_to_device)) {
+-      if (!DrawFillPathNodeWithBlendMask(device, *path, path_matrix,
+-                                         graph_state, paint, node,
+-                                         holder_to_device)) {
 -        return VelocePathDisplayListResult::kCancelled;
 +      // Accumulate into the batch for this paint_key within the current clip
 +      // group. The batch bbox expands to cover this node's device-space rect.
@@ -240,7 +222,7 @@ index 3f924c6f7..3b712e60f 100644
        }
      } else if (!DrawPathNodeWithBlend(device, *path, path_matrix, graph_state,
                                        paint, node, holder_to_device)) {
-@@ -831,6 +931,11 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+@@ -849,6 +931,11 @@
      }
    }
  
