@@ -189,22 +189,21 @@ jobs:
           grep -q 'MaskBlendBatch' core/fpdfapi/render/veloce_path_display_list.cpp
           grep -q 'FlushAllMaskBatches' core/fpdfapi/render/veloce_path_display_list.cpp
           grep -q 'batchedMaskComposites=%zu' core/fpdfapi/render/veloce_path_display_list.cpp
-          # r22-specific: packed path run + clip-group mask reuse
-          grep -q 'FlushPackedPathBatch' core/fpdfapi/render/veloce_path_display_list.cpp
-          grep -q 'packed_path_draws' core/fpdfapi/render/veloce_path_display_list.cpp
-          grep -q 'packedPathDraws=%zu' core/fpdfapi/render/veloce_path_display_list.cpp
-          grep -q 'packed\.Append' core/fpdfapi/render/veloce_path_display_list.cpp
+          # r22-specific: clip-group mask reuse
+          grep -q 'FlushPerNodePathBatch' core/fpdfapi/render/veloce_path_display_list.cpp
+          grep -q 'mask_draw_calls' core/fpdfapi/render/veloce_path_display_list.cpp
+          grep -q 'maskDrawCalls=%zu' core/fpdfapi/render/veloce_path_display_list.cpp
           grep -q 'group_rect' core/fpdfapi/render/veloce_path_display_list.cpp
           grep -q 'group_rect_valid' core/fpdfapi/render/veloce_path_display_list.cpp
           if grep -q 'DrawFillPathNodeWithBlendMask' core/fpdfapi/render/veloce_path_display_list.cpp; then
             echo "ERROR: DrawFillPathNodeWithBlendMask should not be present in r22" >&2
             exit 1
           fi
-          if grep -q 'entry\.graph_state\b' core/fpdfapi/render/veloce_path_display_list.cpp; then
-            echo "ERROR: per-entry graph_state field should be gone in r22" >&2
+          if grep -q 'packed\.Append\b' core/fpdfapi/render/veloce_path_display_list.cpp; then
+            echo "ERROR: CFX_Path::Append must not be used in the mask replay path (winding interaction risk)" >&2
             exit 1
           fi
-          echo "All r22 packed path run guards passed"
+          echo "All r22 clip-group mask reuse guards passed"
 
       - name: Link Android shared library
         run: |

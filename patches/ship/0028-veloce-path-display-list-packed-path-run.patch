@@ -1,11 +1,11 @@
 diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
 --- a/core/fpdfapi/render/veloce_path_display_list.cpp	2026-06-22 17:35:43
-+++ b/core/fpdfapi/render/veloce_path_display_list.cpp	2026-06-22 18:05:47
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp	2026-06-22 18:26:11
 @@ -140,6 +140,7 @@
    size_t cancel_checks = 0;
    size_t batched_mask_composites = 0;
    size_t batched_mask_nodes = 0;
-+  size_t packed_path_draws = 0;
++  size_t mask_draw_calls = 0;
  };
  
  bool IsPathDisplayListFeatureEnabled(const CPDF_RenderStatus* status) {
@@ -14,7 +14,7 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
        "scanned=%zu skippedInactive=%zu skippedInvisible=%zu skippedNoFill=%zu "
        "noopClips=%zu blendNodes=%zu scratchBlendNodes=%zu visited=%zu culled=%zu missingPath=%zu drawn=%zu "
 -      "clipSwitches=%zu cancelChecks=%zu batchedMaskComposites=%zu batchedMaskNodes=%zu "
-+      "clipSwitches=%zu cancelChecks=%zu batchedMaskComposites=%zu batchedMaskNodes=%zu packedPathDraws=%zu "
++      "clipSwitches=%zu cancelChecks=%zu batchedMaskComposites=%zu batchedMaskNodes=%zu maskDrawCalls=%zu "
        "cache=%s compileMs=%" PRId64
        " replayMs=%" PRId64
        " totalFastMs=%" PRId64 " estimatedDispatchAvoided=%zu",
@@ -22,7 +22,7 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
        replay_stats ? replay_stats->cancel_checks : kZero,
        replay_stats ? replay_stats->batched_mask_composites : kZero,
        replay_stats ? replay_stats->batched_mask_nodes : kZero,
-+      replay_stats ? replay_stats->packed_path_draws : kZero,
++      replay_stats ? replay_stats->mask_draw_calls : kZero,
        cache_state ? cache_state : "none", compile_ms,
        replay_ms, compile_ms + replay_ms,
        list ? list->nodes.size() : kZero);
@@ -48,7 +48,7 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
  struct MaskBlendBatch {
    uint32_t paint_key = 0;
    FX_RECT clip_rect;
-@@ -747,72 +745,144 @@
+@@ -747,72 +745,130 @@
    std::vector<MaskBatchEntry> entries;
  };
  
@@ -58,27 +58,34 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
 -                         const NativePathDisplayList& list,
 -                         const MaskBlendBatch& batch,
 -                         PathDlReplayStats* replay_stats) {
-+// Flushes one paint batch into |mask_device| (already attached to a shared
-+// mask covering |clip_rect|) using path run packing: appends all node paths
-+// into one CFX_Path in mask-local coordinates, then calls DrawPath once.
++// Rasterizes all entries in |batch| into |mask_device| (already attached to
++// a shared mask covering |group_rect|) using one DrawPath call per node.
++// Each path is drawn in mask-local coordinates relative to group_rect.
 +// The mask is NOT cleared here — caller clears before each paint key.
-+bool FlushPackedPathBatch(CFX_DefaultRenderDevice& mask_device,
-+                          const NativePathDisplayList& list,
-+                          const MaskBlendBatch& batch,
-+                          PathDlReplayStats* replay_stats) {
++//
++// Note: CFX_Path::Append() concatenates subpath arrays without isolation.
++// Under even-odd or winding fill rules, subpaths from different PDF objects
++// interact after append, potentially canceling regions that should be opaque.
++// Per-node DrawPath() is the correct approach: each PDF path object is
++// independent and its winding is self-contained.
++bool FlushPerNodePathBatch(CFX_DefaultRenderDevice& mask_device,
++                           const NativePathDisplayList& list,
++                           const MaskBlendBatch& batch,
++                           const FX_RECT& group_rect,
++                           PathDlReplayStats* replay_stats) {
    if (batch.entries.empty()) {
      return true;
-   }
+-  }
 -  if (!batch.clip_rect_valid || batch.clip_rect.IsEmpty()) {
 -    return true;
 -  }
- 
+-
 -  auto mask = pdfium::MakeRetain<CFX_DIBitmap>();
 -  if (!mask->Create(batch.clip_rect.Width(), batch.clip_rect.Height(),
 -                    FXDIB_Format::k8bppMask)) {
 -    return false;
--  }
--
+   }
+ 
 -  CFX_DefaultRenderDevice mask_device;
 -  if (!mask_device.Attach(mask)) {
 -    return false;
@@ -93,26 +100,27 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
 +      paint.fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill;
 +  const bool has_stroke = paint.stroke_argb != 0;
  
-+  // Build one composite path in mask-local space by appending each node's
-+  // path with its mask-translated matrix baked in.
-+  CFX_Path packed;
    for (const MaskBatchEntry& entry : batch.entries) {
 +    const CFX_Path* src = list.path_table[entry.path_index].GetObject();
 +    if (!src) {
 +      continue;
 +    }
      CFX_Matrix mask_matrix = entry.path_matrix;
-     mask_matrix.Translate(-batch.clip_rect.left, -batch.clip_rect.top);
+-    mask_matrix.Translate(-batch.clip_rect.left, -batch.clip_rect.top);
 -    if (!mask_device.DrawPath(*list.path_table[entry.path_index].GetObject(),
 -                              &mask_matrix, entry.graph_state,
 -                              entry.has_fill ? 0xff000000 : 0,
 -                              entry.has_stroke ? 0xff000000 : 0,
 -                              entry.fill_options)) {
--      return false;
--    }
-+    packed.Append(*src, &mask_matrix);
-   }
- 
++    mask_matrix.Translate(-group_rect.left, -group_rect.top);
++    if (!mask_device.DrawPath(*src, &mask_matrix, graph_state,
++                              has_fill ? 0xff000000 : 0,
++                              has_stroke ? 0xff000000 : 0,
++                              paint.fill_options)) {
+       return false;
+     }
+-  }
+-
 -  const PathDlPaint& paint = list.paint_table[batch.paint_key];
 -  const bool has_fill = paint.fill_options.fill_type !=
 -                        CFX_FillRenderOptions::FillType::kNoFill;
@@ -120,22 +128,15 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
 -  if (!device->SetMaskBitsWithBlend(std::move(mask), blend_argb,
 -                                    batch.clip_rect.left, batch.clip_rect.top,
 -                                    paint.blend_mode)) {
-+  if (packed.GetPoints().empty()) {
-+    return true;
-+  }
-+
-+  // One DrawPath call for the entire paint group.
-+  if (!mask_device.DrawPath(packed, nullptr, graph_state,
-+                            has_fill ? 0xff000000 : 0,
-+                            has_stroke ? 0xff000000 : 0,
-+                            paint.fill_options)) {
-     return false;
-   }
- 
-   if (replay_stats) {
+-    return false;
+-  }
+-
+-  if (replay_stats) {
 -    replay_stats->batched_mask_composites++;
 -    replay_stats->batched_mask_nodes += batch.entries.size();
-+    replay_stats->packed_path_draws++;
++    if (replay_stats) {
++      replay_stats->mask_draw_calls++;
++    }
    }
    return true;
  }
@@ -151,6 +152,8 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
                           const NativePathDisplayList& list,
                           std::map<uint32_t, MaskBlendBatch>& batches,
                           PathDlReplayStats* replay_stats) {
+-  for (auto& [paint_key, batch] : batches) {
+-    if (!FlushMaskBlendBatch(device, list, batch, replay_stats)) {
 +  if (batches.empty()) {
 +    return true;
 +  }
@@ -189,31 +192,20 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
 +    return false;
 +  }
 +
-   for (auto& [paint_key, batch] : batches) {
--    if (!FlushMaskBlendBatch(device, list, batch, replay_stats)) {
++  for (const auto& [paint_key, batch] : batches) {
 +    if (!batch.clip_rect_valid || batch.clip_rect.IsEmpty() ||
 +        batch.entries.empty()) {
 +      continue;
 +    }
 +
-+    // Adjust each batch's clip_rect to be relative to group_rect origin so
-+    // the packed paths land in the right position within the shared mask.
-+    // We do this by rewriting clip_rect in group-local coordinates and
-+    // adjusting the Translate in FlushPackedPathBatch accordingly.
-+    // Simplest approach: keep batch.clip_rect absolute; FlushPackedPathBatch
-+    // translates by -batch.clip_rect.left/top, but the mask_device covers
-+    // group_rect. So we need to shift by (batch.clip_rect - group_rect).
-+    // We achieve this by temporarily overriding clip_rect to group_rect so
-+    // the translation bakes coordinates relative to group_rect.left/top.
-+    FX_RECT saved_clip_rect = batch.clip_rect;
-+    batch.clip_rect = group_rect;
-+
++    // Each paint key gets a fresh clear of the shared mask before rasterizing.
++    // Paths are drawn into mask-local coordinates relative to group_rect so all
++    // paint batches in this clip group map into the same shared bitmap.
 +    mask_device.Clear(0);
-+    if (!FlushPackedPathBatch(mask_device, list, batch, replay_stats)) {
++    if (!FlushPerNodePathBatch(mask_device, list, batch, group_rect,
++                               replay_stats)) {
        return false;
      }
-+
-+    batch.clip_rect = saved_clip_rect;
 +
 +    const PathDlPaint& paint = list.paint_table[paint_key];
 +    const bool has_fill =
@@ -233,7 +225,7 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
    batches.clear();
    return true;
  }
-@@ -919,11 +989,7 @@
+@@ -919,11 +975,7 @@
            batch.clip_rect.right = std::max(batch.clip_rect.right, node_rect.right);
            batch.clip_rect.bottom = std::max(batch.clip_rect.bottom, node_rect.bottom);
          }
