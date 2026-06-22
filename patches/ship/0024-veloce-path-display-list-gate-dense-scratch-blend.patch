@@ -1,0 +1,66 @@
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index 80b28340a..053ed9b00 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -46,6 +46,7 @@ constexpr uint32_t kNoGraphStateKey = std::numeric_limits<uint32_t>::max();
+ constexpr uint32_t kMaxClipPathCount = 16;
+ constexpr uint32_t kCancelCheckNodeInterval = 64;
+ constexpr size_t kMaxCachedPathDisplayLists = 32;
++constexpr size_t kMaxScratchBlendNodes = 512;
+ 
+ enum class PathDlRejectReason {
+   kNone,
+@@ -65,6 +66,7 @@ enum class PathDlRejectReason {
+   kClipTableOverflow,
+   kPaintTableOverflow,
+   kPathTableOverflow,
++  kBlendScratchReplayTooLarge,
+ };
+ 
+ struct PathDlPaint {
+@@ -188,6 +190,8 @@ const char* RejectReasonName(PathDlRejectReason reason) {
+       return "paint_table_overflow";
+     case PathDlRejectReason::kPathTableOverflow:
+       return "path_table_overflow";
++    case PathDlRejectReason::kBlendScratchReplayTooLarge:
++      return "blend_scratch_replay_too_large";
+   }
+   return "unknown";
+ }
+@@ -225,6 +229,20 @@ bool DisplayListIntegrityOk(const NativePathDisplayList& list) {
+   return true;
+ }
+ 
++bool ShouldRejectScratchBlendReplay(
++    const NativePathDisplayList& list,
++    VelocePathDisplayListHolderKind holder_kind) {
++  if (list.blend_nodes <= kMaxScratchBlendNodes) {
++    return false;
++  }
++
++  // r17's Darken support composites each blended node through its own
++  // temporary BGRA bitmap. Dense root pages such as 11.pdf have tens of
++  // thousands of Darken nodes, which makes replay slower than legacy PDFium.
++  // Reject before drawing so callers can use the original renderer unchanged.
++  return holder_kind == VelocePathDisplayListHolderKind::kRootPage;
++}
++
+ void LogPathDisplayListAttempt(const char* result,
+                                VelocePathDisplayListHolderKind holder_kind,
+                                const char* cache_state,
+@@ -798,6 +816,15 @@ VelocePathDisplayListResult VeloceTryRenderPathDisplayListForHolder(
+         StoreCachedPathDisplayList(cache_key, std::move(compiled_list));
+   }
+ 
++  if (ShouldRejectScratchBlendReplay(*cached_list, holder_kind)) {
++    LogPathDisplayListAttempt("not_eligible", holder_kind,
++                              compile_ms == 0 ? "hit" : "miss",
++                              PathDlRejectReason::kBlendScratchReplayTooLarge,
++                              holder, cached_list.get(), nullptr, compile_ms,
++                              0);
++    return VelocePathDisplayListResult::kNotEligible;
++  }
++
+   PathDlReplayStats replay_stats;
+   const int64_t replay_start_ns = NowNs();
+   const VelocePathDisplayListResult result =

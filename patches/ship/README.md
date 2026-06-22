@@ -48,6 +48,8 @@ these patches:
 | 0021 | `0021-veloce-path-display-list-stroke-replay.patch` | Adds native stroked-path replay. Stroke color and graph state are deduplicated in side tables and replayed through the same `DrawPath()` call PDFium uses for `ProcessPath()`. |
 | 0022 | `0022-veloce-path-display-list-split-transparency-rejects.patch` | Splits the broad `transparency` reject telemetry into `soft_mask` and `blend_mode`. Rendering behavior is unchanged. |
 | 0023 | `0023-veloce-path-display-list-darken-blend-replay.patch` | Allows `/BM /Darken` path nodes in the native Veloce path display list by rendering each blended node into a temporary BGRA bitmap and compositing it back through PDFium's existing `SetDIBitsWithBlend()` path. |
+| 0024 | `0024-veloce-path-display-list-gate-dense-scratch-blend.patch` | Adds a fail-closed gate for dense root-page Darken scratch replay. If Veloce would route more than 512 blended nodes through the temporary BGRA bitmap path, it returns `not_eligible` before drawing so legacy PDFium/app routing can avoid the r17 `11.pdf` regression. |
+| 0025 | `0025-veloce-path-display-list-mask-blend-replay.patch` | Adds a native mask-composite replay path for fill-only blended path nodes. Veloce renders the path coverage into an 8-bit mask and composites that mask through PDFium's existing scanline blend compositor, avoiding per-node BGRA scratch bitmaps for `11.pdf`-style fill-only `/BM /Darken` paths. Adds `scratchBlendNodes` telemetry. |
 
 ## Why this directory exists
 
@@ -83,6 +85,8 @@ git apply patches/ship/0020-veloce-path-display-list-allow-fill-alpha.patch
 git apply patches/ship/0021-veloce-path-display-list-stroke-replay.patch
 git apply patches/ship/0022-veloce-path-display-list-split-transparency-rejects.patch
 git apply patches/ship/0023-veloce-path-display-list-darken-blend-replay.patch
+git apply patches/ship/0024-veloce-path-display-list-gate-dense-scratch-blend.patch
+git apply patches/ship/0025-veloce-path-display-list-mask-blend-replay.patch
 ```
 
 Patches 06 and 07 depend on patch 05 and must be applied after it.
@@ -113,6 +117,10 @@ tables. Patch 0022 depends on patch 0021 and only splits reject telemetry.
 Patch 0023 depends on patch 0022 and allows the specific `/BM /Darken` blend
 mode by routing blended path nodes through temporary bitmap compositing while
 leaving other blend modes and soft masks in the legacy fallback path.
+Patch 0024 depends on patch 0023 and prevents dense root-page workloads from
+using that temporary bitmap path when it is predictably slower than fallback.
+Patch 0025 depends on patch 0024 and replaces the common fill-only blended
+node case with 8-bit mask compositing through PDFium's scanline compositor.
 The release workflow applies the numeric order shown above.
 
 ## Cumulative effect (measured)
