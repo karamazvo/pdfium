@@ -1,6 +1,6 @@
 # xPDFSDK PDFium Patch Status
 
-**Last updated:** 2026-06-20
+**Last updated:** 2026-06-22
 
 ## TL;DR
 
@@ -158,6 +158,8 @@ and the `libandroid.so` runtime dependency.
 | ship 0019 | VELOCE EXPERIMENTAL | `patches/ship/0019-veloce-progressive-root-path-display-list.patch` | Adds the missing root holder hook to `CPDF_ProgressiveRenderer::Continue()`, the Android `FPDF_RenderPageBitmap()` root-page path. This lets path-only root pages such as `11.pdf` enter `holderKind=root_page` before the progressive per-object loop. |
 | ship 0020 | VELOCE EXPERIMENTAL | `patches/ship/0020-veloce-path-display-list-allow-fill-alpha.patch` | Narrows the transparency reject rule so ordinary fill alpha remains eligible for fill-only path replay. Soft masks and non-normal blend modes still fall back to PDFium. |
 | ship 0021 | VELOCE EXPERIMENTAL | `patches/ship/0021-veloce-path-display-list-stroke-replay.patch` | Adds native stroked-path replay to the Veloce path display list. Stroke color and graph state are stored in side tables and replayed through PDFium's existing `DrawPath()` primitive; soft masks, blend modes, and pattern paint still fall back. |
+| ship 0022 | VELOCE EXPERIMENTAL | `patches/ship/0022-veloce-path-display-list-split-transparency-rejects.patch` | Splits the broad path display-list `transparency` rejection into `soft_mask` and `blend_mode` telemetry. Rendering behavior is unchanged; this identifies pages like `11.pdf` as blend-mode blocked. |
+| ship 0023 | VELOCE EXPERIMENTAL | `patches/ship/0023-veloce-path-display-list-darken-blend-replay.patch` | Allows `/BM /Darken` path nodes in the native Veloce path display list. Darken paths render into a temporary BGRA bitmap and composite back into the same PDFium render device through `SetDIBitsWithBlend()`, preserving blend semantics instead of treating Darken as normal paint. |
 
 ---
 
@@ -179,6 +181,8 @@ and the `libandroid.so` runtime dependency.
 | `pdfium-android-arm64-r13-progressive-root-path-display-list.yml` | `workflow_dispatch` | **R13 PROGRESSIVE ROOT PATH DISPLAY-LIST BUILD.** Applies ship patches `01..09,0011,0012,0013,0014,0015,0016,0017,0018,0019`, including the progressive renderer root-page hook required by `FPDF_RenderPageBitmap()`. Verifies the `cpdf_progressiverenderer.cpp` Veloce root call before packaging. |
 | `pdfium-android-arm64-r14-path-alpha-display-list.yml` | `workflow_dispatch` | **R14 PATH ALPHA DISPLAY-LIST BUILD.** Applies ship patches `01..09,0011,0012,0013,0014,0015,0016,0017,0018,0019,0020`, including the normal fill-alpha eligibility fix for native Veloce root/path replay. Verifies fill alpha is no longer a hard reject before packaging. |
 | `pdfium-android-arm64-r15-stroke-path-display-list.yml` | `workflow_dispatch` | **R15 STROKE PATH DISPLAY-LIST BUILD.** Applies ship patches `01..09,0011,0012,0013,0014,0015,0016,0017,0018,0019,0020,0021`, including native stroked-path replay for dense root pages such as `11.pdf`. Verifies stroke alpha is replayed through `DrawPath()` instead of rejected as transparency. |
+| `pdfium-android-arm64-r16-transparency-reject-diagnostics.yml` | `workflow_dispatch` | **R16 TRANSPARENCY REJECT DIAGNOSTICS BUILD.** Applies ship patches `01..09,0011,0012,0013,0014,0015,0016,0017,0018,0019,0020,0021,0022`. Rendering behavior is unchanged, but `VelocePathDL` now reports `reason=blend_mode` or `reason=soft_mask` instead of the broad `reason=transparency`. |
+| `pdfium-android-arm64-r17-darken-blend-path-display-list.yml` | `workflow_dispatch` | **R17 DARKEN BLEND PATH DISPLAY-LIST BUILD.** Applies ship patches `01..09,0011,0012,0013,0014,0015,0016,0017,0018,0019,0020,0021,0022,0023`. This is the first correctness-preserving native Veloce attempt for `11.pdf`-class `/BM /Darken` dense path pages. Expected log: `holderKind=root_page`, `result=rendered`, and nonzero `blendNodes`. |
 | `libpdfium_experiment_profile_build.yml` | `workflow_dispatch` | **EXPERIMENT PROFILE BUILD.** Applies ship patches `01..08` plus `patches/experiments/0010-render-profile-and-content-skip.patch`. Use this to measure per-stage `FPDF_RenderPageBitmap()` costs and test skip-text/path/image/shading/Form/transparency/soft-mask speedups on selected PDFs. Artifact: `libpdfium-android-arm64-veloce-render-profile-experiment`. |
 | `release-size-experiment.yml` | `workflow_dispatch` | Side-by-side size comparison (baseline / A / B / C). Variant C is the current ship config. Run this when a future PDFium roll or build refactor unexpectedly changes the size profile — it isolates which lever moved. |
 | `build-pdfium-android-arm64-agg-devicen-fast.yml` | `workflow_dispatch` | Diagnostic ship build. Applies 0003+0004+0005+0007+0008+0009, retains trace markers. Use for future perf investigations. |

@@ -46,6 +46,8 @@ these patches:
 | 0019 | `0019-veloce-progressive-root-path-display-list.patch` | Adds the missing root-page hook to `CPDF_ProgressiveRenderer::Continue()`, which is the Android `FPDF_RenderPageBitmap()` root-page path. This lets `11.pdf` emit `holderKind=root_page` instead of bypassing Veloce and walking every root page object. |
 | 0020 | `0020-veloce-path-display-list-allow-fill-alpha.patch` | Allows ordinary fill alpha on fill-only path nodes. PDFium's normal path carries this through `GetFillArgb()` and `DrawPath()` rather than `ProcessTransparency()`, so Veloce can replay it while still rejecting soft masks and non-normal blend modes. |
 | 0021 | `0021-veloce-path-display-list-stroke-replay.patch` | Adds native stroked-path replay. Stroke color and graph state are deduplicated in side tables and replayed through the same `DrawPath()` call PDFium uses for `ProcessPath()`. |
+| 0022 | `0022-veloce-path-display-list-split-transparency-rejects.patch` | Splits the broad `transparency` reject telemetry into `soft_mask` and `blend_mode`. Rendering behavior is unchanged. |
+| 0023 | `0023-veloce-path-display-list-darken-blend-replay.patch` | Allows `/BM /Darken` path nodes in the native Veloce path display list by rendering each blended node into a temporary BGRA bitmap and compositing it back through PDFium's existing `SetDIBitsWithBlend()` path. |
 
 ## Why this directory exists
 
@@ -79,6 +81,8 @@ git apply patches/ship/0018-veloce-root-holder-context-layer.patch
 git apply patches/ship/0019-veloce-progressive-root-path-display-list.patch
 git apply patches/ship/0020-veloce-path-display-list-allow-fill-alpha.patch
 git apply patches/ship/0021-veloce-path-display-list-stroke-replay.patch
+git apply patches/ship/0022-veloce-path-display-list-split-transparency-rejects.patch
+git apply patches/ship/0023-veloce-path-display-list-darken-blend-replay.patch
 ```
 
 Patches 06 and 07 depend on patch 05 and must be applied after it.
@@ -105,7 +109,10 @@ on patch 0018 and adds the same root holder attempt to PDFium's progressive
 root-page renderer. Patch 0020 depends on patch 0019 and narrows the
 transparency reject rule so normal fill alpha remains eligible. Patch 0021
 depends on patch 0020 and adds stroked-path replay using graph-state side
-tables.
+tables. Patch 0022 depends on patch 0021 and only splits reject telemetry.
+Patch 0023 depends on patch 0022 and allows the specific `/BM /Darken` blend
+mode by routing blended path nodes through temporary bitmap compositing while
+leaving other blend modes and soft masks in the legacy fallback path.
 The release workflow applies the numeric order shown above.
 
 ## Cumulative effect (measured)
@@ -213,6 +220,16 @@ new `FPDFEx_LoadPageWithClassification()` symbol.
   Adds stroke colors plus deduplicated `CFX_GraphStateData` side-table replay,
   and removes the incorrect stroke-alpha-as-transparency reject. No public API
   or build file changes.
+- **0022 Veloce path display-list reject diagnostics**:
+  `core/fpdfapi/render/veloce_path_display_list.cpp`.
+  Splits broad transparency rejection into `soft_mask` and `blend_mode`
+  telemetry. No rendering behavior, public API, or build file changes.
+- **0023 Veloce path display-list Darken blend replay**:
+  `core/fpdfapi/render/veloce_path_display_list.{h,cpp}`.
+  Allows `BlendMode::kDarken` in eligibility, stores blend mode in the paint
+  side table, logs `blendNodes`, and replays blended path nodes through a
+  temporary BGRA render device plus `SetDIBitsWithBlend()`. No public API or
+  build file changes.
 
 Patches 02 and 03 both touch
 `cpdf_colorspace.cpp`, but in different sections (SeparationCS vs.
@@ -261,6 +278,13 @@ for real unsupported transparency while allowing ordinary fill alpha.
 Patch 0021 is authored after 0020 and changes only
 `cpdf_renderstatus.h` plus `veloce_path_display_list.cpp`; it keeps the same
 fallback contract while allowing dense path-only pages whose paths are stroked.
+Patch 0022 is authored after 0021 and changes only
+`veloce_path_display_list.cpp`; it preserves fallback behavior while making
+the next unsupported feature visible in logs.
+Patch 0023 is authored after 0022 and changes only
+`veloce_path_display_list.{h,cpp}`; it keeps `kNotEligible` as a pre-draw
+fallback result and returns `kCancelled` for any replay-time blend failure so
+callers do not draw legacy content over partial Veloce output.
 
 ## Upstreaming
 

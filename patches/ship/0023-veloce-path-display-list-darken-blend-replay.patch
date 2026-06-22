@@ -1,0 +1,200 @@
+From 2a67be97b6481e8bf19fbbf8757301be3a9d89d2 Mon Sep 17 00:00:00 2001
+From: "sh.chao" <sh.chao@gmail.com>
+Date: Mon, 22 Jun 2026 10:32:37 +0800
+Subject: [PATCH] Add Veloce Darken path blend replay
+
+---
+ .../render/veloce_path_display_list.cpp       | 75 +++++++++++++++++--
+ .../fpdfapi/render/veloce_path_display_list.h |  3 +-
+ 2 files changed, 71 insertions(+), 7 deletions(-)
+
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index 5292152b6..80b28340a 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -31,10 +31,12 @@
+ #include "core/fpdfapi/render/cpdf_renderoptions.h"
+ #include "core/fpdfapi/render/cpdf_renderstatus.h"
+ #include "core/fpdfapi/render/veloce_render_callbacks.h"
++#include "core/fxge/cfx_defaultrenderdevice.h"
+ #include "core/fxge/cfx_fillrenderoptions.h"
+ #include "core/fxge/cfx_graphstatedata.h"
+ #include "core/fxge/cfx_path.h"
+ #include "core/fxge/cfx_renderdevice.h"
++#include "core/fxge/dib/cfx_dibitmap.h"
+ 
+ namespace {
+ 
+@@ -67,6 +69,7 @@ enum class PathDlRejectReason {
+ 
+ struct PathDlPaint {
+   CFX_FillRenderOptions fill_options;
++  BlendMode blend_mode = BlendMode::kNormal;
+   uint32_t fill_argb = 0;
+   uint32_t stroke_argb = 0;
+   uint32_t graph_state_key = kNoGraphStateKey;
+@@ -91,6 +94,7 @@ struct NativePathDisplayList {
+   size_t skipped_invisible = 0;
+   size_t skipped_no_fill = 0;
+   size_t elided_noop_clips = 0;
++  size_t blend_nodes = 0;
+ };
+ 
+ struct PathDisplayListCacheKey {
+@@ -242,7 +246,7 @@ void LogPathDisplayListAttempt(const char* result,
+       "result=%s holderKind=%s reason=%s holder=%p integrity=%s legacySkipped=%d "
+       "legacyFallback=%d nodes=%zu paths=%zu paints=%zu graphStates=%zu clips=%zu "
+       "scanned=%zu skippedInactive=%zu skippedInvisible=%zu skippedNoFill=%zu "
+-      "noopClips=%zu visited=%zu culled=%zu missingPath=%zu drawn=%zu "
++      "noopClips=%zu blendNodes=%zu visited=%zu culled=%zu missingPath=%zu drawn=%zu "
+       "clipSwitches=%zu cancelChecks=%zu cache=%s compileMs=%" PRId64
+       " replayMs=%" PRId64
+       " totalFastMs=%" PRId64 " estimatedDispatchAvoided=%zu",
+@@ -259,6 +263,7 @@ void LogPathDisplayListAttempt(const char* result,
+       list ? list->skipped_invisible : kZero,
+       list ? list->skipped_no_fill : kZero,
+       list ? list->elided_noop_clips : kZero,
++      list ? list->blend_nodes : kZero,
+       replay_stats ? replay_stats->visited_nodes : kZero,
+       replay_stats ? replay_stats->culled_nodes : kZero,
+       replay_stats ? replay_stats->missing_path_nodes : kZero,
+@@ -409,7 +414,8 @@ PathDlRejectReason GetUnsupportedTransparencyReason(const CPDF_PageObject* obj)
+   if (general_state.GetSoftMask()) {
+     return PathDlRejectReason::kSoftMask;
+   }
+-  if (general_state.GetBlendType() != BlendMode::kNormal) {
++  const BlendMode blend_type = general_state.GetBlendType();
++  if (blend_type != BlendMode::kNormal && blend_type != BlendMode::kDarken) {
+     return PathDlRejectReason::kBlendMode;
+   }
+   return PathDlRejectReason::kNone;
+@@ -465,6 +471,7 @@ std::optional<uint32_t> AddPaintKey(NativePathDisplayList* list,
+   for (uint32_t i = 0; i < list->paint_table.size(); ++i) {
+     const PathDlPaint& existing = list->paint_table[i];
+     if (existing.fill_options == paint.fill_options &&
++        existing.blend_mode == paint.blend_mode &&
+         existing.fill_argb == paint.fill_argb &&
+         existing.stroke_argb == paint.stroke_argb &&
+         existing.graph_state_key == paint.graph_state_key) {
+@@ -567,6 +574,11 @@ bool CompilePathDisplayList(CPDF_RenderStatus* status,
+     fill_options.stroke = stroke;
+     PathDlPaint paint;
+     paint.fill_options = fill_options;
++    paint.blend_mode = path_obj->general_state().GetBlendType();
++    if (paint.blend_mode != BlendMode::kNormal &&
++        !status->GetRenderDevice()->RenderCapGetBits()) {
++      return reject(PathDlRejectReason::kBlendMode);
++    }
+     paint.fill_argb =
+         fill_type != CFX_FillRenderOptions::FillType::kNoFill
+             ? status->GetFillArgb(path_obj)
+@@ -585,6 +597,9 @@ bool CompilePathDisplayList(CPDF_RenderStatus* status,
+       }
+       paint.graph_state_key = graph_state_key.value();
+     }
++    if (paint.blend_mode != BlendMode::kNormal) {
++      list->blend_nodes++;
++    }
+     std::optional<uint32_t> paint_key = AddPaintKey(list, paint);
+     if (!paint_key.has_value()) {
+       return reject(PathDlRejectReason::kPaintTableOverflow);
+@@ -618,12 +633,53 @@ bool IntersectsDeviceClip(const PathDlNode& node,
+   return !rect.IsEmpty();
+ }
+ 
++bool DrawPathNodeWithBlend(CFX_RenderDevice* device,
++                           const CFX_Path& path,
++                           const CFX_Matrix& path_matrix,
++                           const CFX_GraphStateData* graph_state,
++                           const PathDlPaint& paint,
++                           const PathDlNode& node,
++                           const CFX_Matrix& holder_to_device) {
++  FX_RECT rect =
++      holder_to_device.TransformRect(node.holder_space_bbox).GetOuterRect();
++  rect.Intersect(device->GetClipBox());
++  if (rect.IsEmpty()) {
++    return true;
++  }
++  if (!rect.Valid()) {
++    return false;
++  }
++
++  auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
++  if (!bitmap->Create(rect.Width(), rect.Height(), FXDIB_Format::kBgra)) {
++    return false;
++  }
++
++  CFX_DefaultRenderDevice bitmap_device;
++  if (!bitmap_device.Attach(bitmap)) {
++    return false;
++  }
++  bitmap_device.Clear(0);
++
++  CFX_Matrix blend_matrix = path_matrix;
++  blend_matrix.Translate(-rect.left, -rect.top);
++  if (!bitmap_device.DrawPath(path, &blend_matrix, graph_state, paint.fill_argb,
++                              paint.stroke_argb, paint.fill_options)) {
++    return false;
++  }
++  return device->SetDIBitsWithBlend(std::move(bitmap), rect.left, rect.top,
++                                    paint.blend_mode);
++}
++
+ VelocePathDisplayListResult ReplayPathDisplayList(
+     CPDF_RenderStatus* status,
+     const NativePathDisplayList& list,
+     const CFX_Matrix& holder_to_device,
+     PathDlReplayStats* replay_stats) {
+   CFX_RenderDevice* device = status->GetRenderDevice();
++  if (list.blend_nodes > 0 && !device->RenderCapGetBits()) {
++    return VelocePathDisplayListResult::kNotEligible;
++  }
+   CFX_RenderDevice::StateRestorer restorer(device);
+ 
+   uint32_t current_clip_key = kNoClipKey;
+@@ -678,8 +734,13 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+         paint.graph_state_key == kNoGraphStateKey
+             ? nullptr
+             : &list.graph_state_table[paint.graph_state_key];
+-    device->DrawPath(*path, &path_matrix, graph_state, paint.fill_argb,
+-                     paint.stroke_argb, paint.fill_options);
++    if (paint.blend_mode == BlendMode::kNormal) {
++      device->DrawPath(*path, &path_matrix, graph_state, paint.fill_argb,
++                       paint.stroke_argb, paint.fill_options);
++    } else if (!DrawPathNodeWithBlend(device, *path, path_matrix, graph_state,
++                                      paint, node, holder_to_device)) {
++      return VelocePathDisplayListResult::kCancelled;
++    }
+     if (replay_stats) {
+       replay_stats->drawn_nodes++;
+     }
+@@ -743,8 +804,10 @@ VelocePathDisplayListResult VeloceTryRenderPathDisplayListForHolder(
+       ReplayPathDisplayList(status, *cached_list, holder_to_device,
+                             &replay_stats);
+   LogPathDisplayListAttempt(
+-      result == VelocePathDisplayListResult::kRendered ? "rendered"
+-                                                       : "cancelled",
++      result == VelocePathDisplayListResult::kRendered
++          ? "rendered"
++          : (result == VelocePathDisplayListResult::kCancelled ? "cancelled"
++                                                               : "not_eligible"),
+       holder_kind, compile_ms == 0 ? "hit" : "miss",
+       PathDlRejectReason::kNone, holder, cached_list.get(), &replay_stats,
+       compile_ms, ElapsedMs(replay_start_ns));
+diff --git a/core/fpdfapi/render/veloce_path_display_list.h b/core/fpdfapi/render/veloce_path_display_list.h
+index 851e78e0c..e5a46595d 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.h
++++ b/core/fpdfapi/render/veloce_path_display_list.h
+@@ -24,7 +24,8 @@ enum class VelocePathDisplayListHolderKind {
+ //
+ // This is intentionally conservative: unsupported objects or paint states
+ // return kNotEligible before drawing, so callers can fall back to legacy
+-// CPDF_RenderStatus::RenderObjectList().
++// CPDF_RenderStatus::RenderObjectList(). Any failure after replay has started
++// returns kCancelled so callers do not draw legacy content over partial output.
+ VelocePathDisplayListResult VeloceTryRenderPathDisplayListForHolder(
+     CPDF_RenderStatus* status,
+     const CPDF_PageObjectHolder* holder,
+-- 
+2.39.5 (Apple Git-154)
+

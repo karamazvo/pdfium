@@ -1,0 +1,69 @@
+From 29bd50347c23f31c5c87f9706de653069a4b9f99 Mon Sep 17 00:00:00 2001
+From: "sh.chao" <sh.chao@gmail.com>
+Date: Mon, 22 Jun 2026 10:19:08 +0800
+Subject: [PATCH] Split Veloce path display-list transparency rejects
+
+---
+ .../render/veloce_path_display_list.cpp       | 20 +++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
+
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index 9e37c39d3..5292152b6 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -54,6 +54,8 @@ enum class PathDlRejectReason {
+   kNonPathObject,
+   kComplexClip,
+   kTransparency,
++  kSoftMask,
++  kBlendMode,
+   kStroke,
+   kNoFillOnly,
+   kPatternPaint,
+@@ -164,6 +166,10 @@ const char* RejectReasonName(PathDlRejectReason reason) {
+       return "complex_clip";
+     case PathDlRejectReason::kTransparency:
+       return "transparency";
++    case PathDlRejectReason::kSoftMask:
++      return "soft_mask";
++    case PathDlRejectReason::kBlendMode:
++      return "blend_mode";
+     case PathDlRejectReason::kStroke:
+       return "stroke";
+     case PathDlRejectReason::kNoFillOnly:
+@@ -398,15 +404,15 @@ bool ClipPathIsNoOpForObjectBounds(const CPDF_ClipPath& clip_path,
+   return clip_bounds->Contains(normalized_object_bounds);
+ }
+ 
+-bool RequiresUnsupportedTransparency(const CPDF_PageObject* obj) {
++PathDlRejectReason GetUnsupportedTransparencyReason(const CPDF_PageObject* obj) {
+   const CPDF_GeneralState& general_state = obj->general_state();
+   if (general_state.GetSoftMask()) {
+-    return true;
++    return PathDlRejectReason::kSoftMask;
+   }
+   if (general_state.GetBlendType() != BlendMode::kNormal) {
+-    return true;
++    return PathDlRejectReason::kBlendMode;
+   }
+-  return false;
++  return PathDlRejectReason::kNone;
+ }
+ 
+ bool GraphStateEquals(const CFX_GraphStateData& lhs,
+@@ -523,8 +529,10 @@ bool CompilePathDisplayList(CPDF_RenderStatus* status,
+     auto* path_obj = obj->AsPath();
+     CFX_FillRenderOptions::FillType fill_type = path_obj->filltype();
+     const bool stroke = path_obj->stroke();
+-    if (RequiresUnsupportedTransparency(obj.get())) {
+-      return reject(PathDlRejectReason::kTransparency);
++    PathDlRejectReason transparency_reason =
++        GetUnsupportedTransparencyReason(obj.get());
++    if (transparency_reason != PathDlRejectReason::kNone) {
++      return reject(transparency_reason);
+     }
+     if (fill_type == CFX_FillRenderOptions::FillType::kNoFill && !stroke) {
+       list->skipped_no_fill++;
+-- 
+2.39.5 (Apple Git-154)
+
