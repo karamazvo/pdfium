@@ -1,0 +1,74 @@
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index 3f924c6f7..cfa49ecd8 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -230,9 +230,20 @@ bool DisplayListIntegrityOk(const NativePathDisplayList& list) {
+ }
+ 
+ bool CanDrawBlendNodeWithMask(const PathDlPaint& paint) {
+-  return paint.blend_mode != BlendMode::kNormal && paint.stroke_argb == 0 &&
+-         paint.fill_options.fill_type !=
+-             CFX_FillRenderOptions::FillType::kNoFill;
++  if (paint.blend_mode == BlendMode::kNormal) {
++    return false;
++  }
++
++  const bool has_fill = paint.fill_options.fill_type !=
++                        CFX_FillRenderOptions::FillType::kNoFill;
++  const bool has_stroke = paint.stroke_argb != 0;
++  if (!has_fill && !has_stroke) {
++    return false;
++  }
++  if (has_fill && has_stroke && paint.fill_argb != paint.stroke_argb) {
++    return false;
++  }
++  return true;
+ }
+ 
+ size_t CountScratchBlendNodes(const NativePathDisplayList& list) {
+@@ -714,6 +725,7 @@ bool DrawPathNodeWithBlend(CFX_RenderDevice* device,
+ bool DrawFillPathNodeWithBlendMask(CFX_RenderDevice* device,
+                                    const CFX_Path& path,
+                                    const CFX_Matrix& path_matrix,
++                                   const CFX_GraphStateData* graph_state,
+                                    const PathDlPaint& paint,
+                                    const PathDlNode& node,
+                                    const CFX_Matrix& holder_to_device) {
+@@ -739,16 +751,21 @@ bool DrawFillPathNodeWithBlendMask(CFX_RenderDevice* device,
+   mask_device.Clear(0);
+ 
+   CFX_FillRenderOptions mask_fill_options = paint.fill_options;
+-  mask_fill_options.stroke = false;
++  const bool has_fill = paint.fill_options.fill_type !=
++                        CFX_FillRenderOptions::FillType::kNoFill;
++  const bool has_stroke = paint.stroke_argb != 0;
+   CFX_Matrix mask_matrix = path_matrix;
+   mask_matrix.Translate(-rect.left, -rect.top);
+-  if (!mask_device.DrawPath(path, &mask_matrix, nullptr, 0xff000000, 0,
++  if (!mask_device.DrawPath(path, &mask_matrix, graph_state,
++                            has_fill ? 0xff000000 : 0,
++                            has_stroke ? 0xff000000 : 0,
+                             mask_fill_options)) {
+     return false;
+   }
+ 
+-  return device->SetMaskBitsWithBlend(std::move(mask), paint.fill_argb,
+-                                      rect.left, rect.top, paint.blend_mode);
++  const uint32_t blend_argb = has_fill ? paint.fill_argb : paint.stroke_argb;
++  return device->SetMaskBitsWithBlend(std::move(mask), blend_argb, rect.left,
++                                      rect.top, paint.blend_mode);
+ }
+ 
+ VelocePathDisplayListResult ReplayPathDisplayList(
+@@ -818,8 +835,9 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+       device->DrawPath(*path, &path_matrix, graph_state, paint.fill_argb,
+                        paint.stroke_argb, paint.fill_options);
+     } else if (CanDrawBlendNodeWithMask(paint)) {
+-      if (!DrawFillPathNodeWithBlendMask(device, *path, path_matrix, paint,
+-                                         node, holder_to_device)) {
++      if (!DrawFillPathNodeWithBlendMask(device, *path, path_matrix,
++                                         graph_state, paint, node,
++                                         holder_to_device)) {
+         return VelocePathDisplayListResult::kCancelled;
+       }
+     } else if (!DrawPathNodeWithBlend(device, *path, path_matrix, graph_state,
