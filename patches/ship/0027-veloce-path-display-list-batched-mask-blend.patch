@@ -1,6 +1,6 @@
 diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
---- a/core/fpdfapi/render/veloce_path_display_list.cpp	2026-06-22 14:20:17
-+++ b/core/fpdfapi/render/veloce_path_display_list.cpp	2026-06-22 17:14:50
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp	2026-06-22 17:35:17
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp	2026-06-22 17:33:37
 @@ -9,6 +9,7 @@
  #include <chrono>
  #include <cstring>
@@ -181,7 +181,7 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
        if (node.clip_key == kNoClipKey) {
          status->ProcessClipPath(empty_clip, holder_to_device);
        } else {
-@@ -831,14 +891,36 @@
+@@ -831,14 +891,39 @@
          paint.graph_state_key == kNoGraphStateKey
              ? nullptr
              : &list.graph_state_table[paint.graph_state_key];
@@ -212,7 +212,10 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
 +          batch.clip_rect = node_rect;
 +          batch.clip_rect_valid = true;
 +        } else {
-+          batch.clip_rect.Union(node_rect);
++          batch.clip_rect.left = std::min(batch.clip_rect.left, node_rect.left);
++          batch.clip_rect.top = std::min(batch.clip_rect.top, node_rect.top);
++          batch.clip_rect.right = std::max(batch.clip_rect.right, node_rect.right);
++          batch.clip_rect.bottom = std::max(batch.clip_rect.bottom, node_rect.bottom);
 +        }
 +        const bool has_fill = paint.fill_options.fill_type !=
 +                              CFX_FillRenderOptions::FillType::kNoFill;
@@ -222,7 +225,7 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
        }
      } else if (!DrawPathNodeWithBlend(device, *path, path_matrix, graph_state,
                                        paint, node, holder_to_device)) {
-@@ -849,6 +931,11 @@
+@@ -849,6 +934,11 @@
      }
    }
  
