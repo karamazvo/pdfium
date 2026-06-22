@@ -51,6 +51,7 @@ these patches:
 | 0024 | `0024-veloce-path-display-list-gate-dense-scratch-blend.patch` | Adds a fail-closed gate for dense root-page Darken scratch replay. If Veloce would route more than 512 blended nodes through the temporary BGRA bitmap path, it returns `not_eligible` before drawing so legacy PDFium/app routing can avoid the r17 `11.pdf` regression. |
 | 0025 | `0025-veloce-path-display-list-mask-blend-replay.patch` | Adds a native mask-composite replay path for fill-only blended path nodes. Veloce renders the path coverage into an 8-bit mask and composites that mask through PDFium's existing scanline blend compositor, avoiding per-node BGRA scratch bitmaps for `11.pdf`-style fill-only `/BM /Darken` paths. Adds `scratchBlendNodes` telemetry. |
 | 0026 | `0026-veloce-path-display-list-mask-blend-fill-stroke.patch` | Extends 0025's mask-composite replay to fill+stroke blended path nodes when fill and stroke colors are identical. This keeps correctness for mixed-color fill/stroke paths while allowing `11.pdf`-style Darken paths parsed with stroke state to avoid BGRA scratch replay. |
+| 0027 | _(not yet built)_ | Batched mask-composite replay: instead of one `CFX_DIBitmap` allocation per blend node, accumulates all nodes sharing the same `(paint_key, clip_generation)` into one shared mask and composites once per group. Reduces 28805 alloc/composite cycles to ≤ `clipSwitches × active_paints` per tile. Diagnosis and implementation spec: `android/meta/codex_r20_mask_blend_replay_perf_diagnosis_2026-06-22.md`. |
 
 ## Why this directory exists
 
@@ -89,6 +90,7 @@ git apply patches/ship/0023-veloce-path-display-list-darken-blend-replay.patch
 git apply patches/ship/0024-veloce-path-display-list-gate-dense-scratch-blend.patch
 git apply patches/ship/0025-veloce-path-display-list-mask-blend-replay.patch
 git apply patches/ship/0026-veloce-path-display-list-mask-blend-fill-stroke.patch
+git apply patches/ship/0027-veloce-path-display-list-batched-mask-blend.patch
 ```
 
 Patches 06 and 07 depend on patch 05 and must be applied after it.
@@ -125,6 +127,10 @@ Patch 0025 depends on patch 0024 and replaces the common fill-only blended
 node case with 8-bit mask compositing through PDFium's scanline compositor.
 Patch 0026 depends on patch 0025 and broadens that mask path to same-color
 fill+stroke nodes while leaving different fill/stroke colors on fallback.
+Patch 0027 depends on patch 0026 and replaces the per-node mask allocation
+loop with a deferred-compositing pass: nodes sharing the same `(paint_key,
+clip_generation)` are accumulated into one shared mask and composited once per
+group, reducing O(drawn_nodes) allocations to O(clipSwitches × active_paints).
 The release workflow applies the numeric order shown above.
 
 ## Cumulative effect (measured)
