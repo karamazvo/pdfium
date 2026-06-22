@@ -51,8 +51,9 @@ these patches:
 | 0024 | `0024-veloce-path-display-list-gate-dense-scratch-blend.patch` | Adds a fail-closed gate for dense root-page Darken scratch replay. If Veloce would route more than 512 blended nodes through the temporary BGRA bitmap path, it returns `not_eligible` before drawing so legacy PDFium/app routing can avoid the r17 `11.pdf` regression. |
 | 0025 | `0025-veloce-path-display-list-mask-blend-replay.patch` | Adds a native mask-composite replay path for fill-only blended path nodes. Veloce renders the path coverage into an 8-bit mask and composites that mask through PDFium's existing scanline blend compositor, avoiding per-node BGRA scratch bitmaps for `11.pdf`-style fill-only `/BM /Darken` paths. Adds `scratchBlendNodes` telemetry. |
 | 0026 | `0026-veloce-path-display-list-mask-blend-fill-stroke.patch` | Extends 0025's mask-composite replay to fill+stroke blended path nodes when fill and stroke colors are identical. This keeps correctness for mixed-color fill/stroke paths while allowing `11.pdf`-style Darken paths parsed with stroke state to avoid BGRA scratch replay. |
-| 0027 | `0027-veloce-path-display-list-batched-mask-blend.patch` | Batched mask-composite replay: instead of one `CFX_DIBitmap` allocation per blend node, accumulates all nodes sharing the same `(paint_key, clip_generation)` into one shared mask and composites once per group. Reduces 28805 alloc/composite cycles to ≤ `clipSwitches × active_paints` per tile. Adds `batchedMaskComposites` and `batchedMaskNodes` telemetry. Validated r21: `replayMs` 10573ms→569ms (preview), 54641ms→1891ms (dense tile). |
-| 0028 | `0028-veloce-path-display-list-packed-path-run.patch` | Clip-group mask reuse. All paint batches within one clip group share one `CFX_DIBitmap` allocation (cleared between paint keys) instead of one allocation per `(paint_key, clip_generation)` batch. Each PDF path object is still drawn with its own `DrawPath` call — `CFX_Path::Append` is explicitly not used because it merges subpath winding across independent PDF objects, which changes fill semantics under even-odd/winding rules. Reduces bitmap allocations from O(batchedMaskComposites) to O(clipSwitches). Adds `maskDrawCalls` telemetry. |
+| ~~0027~~ | ~~`0027-veloce-path-display-list-batched-mask-blend.patch`~~ | **DEPRECATED — do not apply.** Groups nodes by `(paint_key, clip_generation)` across the whole clip group and flushes in paint-key order, violating PDF painter order when different paint keys interleave in the display list. Produces wrong output on PDFs with interleaved blend nodes of different paint keys. Validated on `11.pdf` only (single-paint-key workload; reordering had no visible effect there). Superseded by 0029. |
+| ~~0028~~ | ~~`0028-veloce-path-display-list-packed-path-run.patch`~~ | **DEPRECATED — do not apply.** Inherits 0027's painter-order flaw and adds clip-group mask reuse on top of the same incorrect grouping. Superseded by 0029. |
+| 0029 | `0029-veloce-path-display-list-consecutive-run-blend.patch` | Consecutive-run mask batching. Batches only adjacent blend nodes that share the same `paint_key`, `clip_key`, fill rule, graph state, and blend mode. Flushes the run on any painter-order boundary (paint/clip/normal/scratch-blend change). Allocates one mask per run, draws all nodes in original display-list order, composites once. Preserves PDF painter order exactly. Adds `maskRunComposites`, `maskRunNodes`, `maxMaskRunNodes`, `runFlushReasons` telemetry. |
 
 ## Why this directory exists
 
@@ -91,9 +92,11 @@ git apply patches/ship/0023-veloce-path-display-list-darken-blend-replay.patch
 git apply patches/ship/0024-veloce-path-display-list-gate-dense-scratch-blend.patch
 git apply patches/ship/0025-veloce-path-display-list-mask-blend-replay.patch
 git apply patches/ship/0026-veloce-path-display-list-mask-blend-fill-stroke.patch
-git apply patches/ship/0027-veloce-path-display-list-batched-mask-blend.patch
-git apply patches/ship/0028-veloce-path-display-list-packed-path-run.patch
+git apply patches/ship/0029-veloce-path-display-list-consecutive-run-blend.patch
 ```
+
+> **Note:** patches 0027 and 0028 are deprecated and must NOT be applied.
+> They violate PDF painter order. Apply 0026 → 0029 directly.
 
 Patches 06 and 07 depend on patch 05 and must be applied after it.
 Patch 07 also depends on patch 06. Patch 08 depends on the fpdfview export
@@ -129,18 +132,14 @@ Patch 0025 depends on patch 0024 and replaces the common fill-only blended
 node case with 8-bit mask compositing through PDFium's scanline compositor.
 Patch 0026 depends on patch 0025 and broadens that mask path to same-color
 fill+stroke nodes while leaving different fill/stroke colors on fallback.
-Patch 0027 depends on patch 0026 and replaces the per-node mask allocation
-loop with a deferred-compositing pass: nodes sharing the same `(paint_key,
-clip_generation)` are accumulated into one shared mask and composited once per
-group, reducing O(drawn_nodes) allocations to O(clipSwitches × active_paints).
-Patch 0028 depends on patch 0027 and adds clip-group mask reuse: all paint
-batches within one clip group share one `CFX_DIBitmap` allocation, cleared
-between paint keys. Each PDF path object is still drawn with its own
-`DrawPath` call — `CFX_Path::Append` is not used because merging subpaths
-from independent PDF objects changes fill semantics under even-odd/winding
-rules. Reduces bitmap allocations from O(batchedMaskComposites) to
-O(clipSwitches).
-The release workflow applies the numeric order shown above.
+Patches 0027 and 0028 are deprecated (painter-order violation) and are
+skipped by the release workflow. Do not apply them.
+Patch 0029 depends on patch 0026 and replaces the r20 per-node mask path
+with consecutive-run batching: only adjacent blend nodes sharing the same
+paint key, clip key, fill rule, graph state, and blend mode are batched.
+The run is flushed on any painter-order boundary. Painter order is preserved
+exactly because no nodes are reordered across the display list.
+The release workflow applies the numeric order shown above, skipping 0027/0028.
 
 ## Cumulative effect (measured)
 
