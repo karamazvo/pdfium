@@ -54,7 +54,8 @@ these patches:
 | ~~0027~~ | ~~`0027-veloce-path-display-list-batched-mask-blend.patch`~~ | **DEPRECATED — do not apply.** Groups nodes by `(paint_key, clip_generation)` across the whole clip group and flushes in paint-key order, violating PDF painter order when different paint keys interleave in the display list. Produces wrong output on PDFs with interleaved blend nodes of different paint keys. Validated on `11.pdf` only (single-paint-key workload; reordering had no visible effect there). Superseded by 0029. |
 | ~~0028~~ | ~~`0028-veloce-path-display-list-packed-path-run.patch`~~ | **DEPRECATED — do not apply.** Inherits 0027's painter-order flaw and adds clip-group mask reuse on top of the same incorrect grouping. Superseded by 0029. |
 | 0029 | `0029-veloce-path-display-list-consecutive-run-blend.patch` | Consecutive-run mask batching. Batches only adjacent blend nodes that share the same `paint_key`. Flushes the run on any painter-order boundary (paint/clip/normal/scratch-blend change). Allocates one mask per run, draws all nodes in original display-list order, composites once. Adds `maskRunComposites`, `maskRunNodes`, `maxMaskRunNodes`, `runFlushPaint/Clip/Normal/Scratch/Cancel/End` telemetry. Has three correctness issues fixed by 0030. |
-| 0030 | `0030-veloce-path-display-list-run-correctness-fixes.patch` | Three correctness fixes to 0029. **P1:** adds a conservative bbox overlap gate — flushes the run before accumulating a node whose device-space rect intersects the current run rect, preventing per-node vs. per-run mask compositing divergence at overlapping/antialiased edges. Logged as `runFlushOverlap`. **P2:** removes the flush-on-cancel path — cancelled output is discarded, so writing partial mask content to the bitmap is wasted work; the run is now just reset. **P3:** counts the end-of-loop drain as `runFlushEnd` instead of `runFlushPaint` so flush-reason telemetry is unambiguous. |
+| 0030 | `0030-veloce-path-display-list-run-correctness-fixes.patch` | Three correctness fixes to 0029. **P1:** adds a conservative bbox overlap gate (later superseded by 0031's group-buffer approach). **P2:** removes the flush-on-cancel path — cancelled output is discarded, so writing partial content to the bitmap is wasted work; the run is now just reset. **P3:** counts the end-of-loop drain as `runFlushEnd` instead of `runFlushPaint` so flush-reason telemetry is unambiguous. |
+| 0031 | `0031-veloce-path-display-list-group-buffer-blend.patch` | Replaces the 8-bit mask + `SetMaskBitsWithBlend` flush with a BGRA group buffer + `SetDIBitsWithBlend`, matching MuPDF's transparency group model. Each run allocates one BGRA bitmap covering the union rect of all node rects; paths rasterize into it with normal blend (as MuPDF does inside `fz_draw_begin_group`); the completed group composites onto the destination once with `SetDIBitsWithBlend(blend_mode)` (as MuPDF does at `fz_draw_end_group`). Overlapping paths are correct because they accumulate under normal blend inside the group before the single blend-mode composite. Removes the P1 bbox overlap gate (no longer needed — overlaps are safe in the group buffer). Renames telemetry to `groupRunComposites`, `groupRunNodes`, `maxGroupRunNodes`. |
 
 ## Why this directory exists
 
@@ -95,6 +96,7 @@ git apply patches/ship/0025-veloce-path-display-list-mask-blend-replay.patch
 git apply patches/ship/0026-veloce-path-display-list-mask-blend-fill-stroke.patch
 git apply patches/ship/0029-veloce-path-display-list-consecutive-run-blend.patch
 git apply patches/ship/0030-veloce-path-display-list-run-correctness-fixes.patch
+git apply patches/ship/0031-veloce-path-display-list-group-buffer-blend.patch
 ```
 
 > **Note:** patches 0027 and 0028 are deprecated and must NOT be applied.
@@ -140,6 +142,10 @@ Patch 0029 depends on patch 0026 and replaces the r20 per-node mask path
 with consecutive-run batching. Patch 0030 depends on patch 0029 and fixes
 three correctness issues: a bbox overlap gate (P1), no flush on cancel (P2),
 and a separate runFlushEnd counter for the end-of-loop drain (P3).
+Patch 0031 depends on patch 0030 and replaces the 8-bit mask approach with
+a BGRA group buffer matching MuPDF's transparency group model. The P1 bbox
+overlap gate from 0030 is removed — overlapping paths accumulate correctly
+inside the group buffer under normal blend before the single blend composite.
 The release workflow applies the numeric order shown above, skipping 0027/0028.
 
 ## Cumulative effect (measured)

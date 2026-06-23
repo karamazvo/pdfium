@@ -1,0 +1,237 @@
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp	2026-06-23 09:52:42
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp	2026-06-23 12:28:52
+@@ -137,14 +137,13 @@
+   size_t drawn_nodes = 0;
+   size_t clip_switches = 0;
+   size_t cancel_checks = 0;
+-  size_t mask_run_composites = 0;
+-  size_t mask_run_nodes = 0;
+-  size_t max_mask_run_nodes = 0;
++  size_t group_run_composites = 0;
++  size_t group_run_nodes = 0;
++  size_t max_group_run_nodes = 0;
+   size_t run_flush_paint_change = 0;
+   size_t run_flush_clip_change = 0;
+   size_t run_flush_normal_node = 0;
+   size_t run_flush_scratch_blend = 0;
+-  size_t run_flush_overlap = 0;
+   size_t run_flush_end = 0;
+ };
+ 
+@@ -306,8 +305,8 @@
+       "legacyFallback=%d nodes=%zu paths=%zu paints=%zu graphStates=%zu clips=%zu "
+       "scanned=%zu skippedInactive=%zu skippedInvisible=%zu skippedNoFill=%zu "
+       "noopClips=%zu blendNodes=%zu scratchBlendNodes=%zu visited=%zu culled=%zu missingPath=%zu drawn=%zu "
+-      "clipSwitches=%zu cancelChecks=%zu maskRunComposites=%zu maskRunNodes=%zu maxMaskRunNodes=%zu "
+-      "runFlushPaint=%zu runFlushClip=%zu runFlushNormal=%zu runFlushScratch=%zu runFlushOverlap=%zu runFlushEnd=%zu "
++      "clipSwitches=%zu cancelChecks=%zu groupRunComposites=%zu groupRunNodes=%zu maxGroupRunNodes=%zu "
++      "runFlushPaint=%zu runFlushClip=%zu runFlushNormal=%zu runFlushScratch=%zu runFlushEnd=%zu "
+       "cache=%s compileMs=%" PRId64
+       " replayMs=%" PRId64
+       " totalFastMs=%" PRId64 " estimatedDispatchAvoided=%zu",
+@@ -332,14 +331,13 @@
+       replay_stats ? replay_stats->drawn_nodes : kZero,
+       replay_stats ? replay_stats->clip_switches : kZero,
+       replay_stats ? replay_stats->cancel_checks : kZero,
+-      replay_stats ? replay_stats->mask_run_composites : kZero,
+-      replay_stats ? replay_stats->mask_run_nodes : kZero,
+-      replay_stats ? replay_stats->max_mask_run_nodes : kZero,
++      replay_stats ? replay_stats->group_run_composites : kZero,
++      replay_stats ? replay_stats->group_run_nodes : kZero,
++      replay_stats ? replay_stats->max_group_run_nodes : kZero,
+       replay_stats ? replay_stats->run_flush_paint_change : kZero,
+       replay_stats ? replay_stats->run_flush_clip_change : kZero,
+       replay_stats ? replay_stats->run_flush_normal_node : kZero,
+       replay_stats ? replay_stats->run_flush_scratch_blend : kZero,
+-      replay_stats ? replay_stats->run_flush_overlap : kZero,
+       replay_stats ? replay_stats->run_flush_end : kZero,
+       cache_state ? cache_state : "none", compile_ms,
+       replay_ms, compile_ms + replay_ms,
+@@ -749,33 +747,39 @@
+   FX_RECT node_rect;  // device-space bbox, already intersected with clip box
+ };
+ 
+-// Accumulates consecutive blend nodes eligible for mask-composite batching.
++// Accumulates consecutive blend nodes eligible for group-buffer batching.
+ // All entries share the same paint_key (and therefore the same blend_mode,
+ // fill_options, graph_state_key, fill_argb, stroke_argb). The run is
+ // flushed — and this struct reset — at any painter-order boundary.
+ struct MaskRun {
+   uint32_t paint_key = kNoClipKey;  // kNoClipKey used as sentinel for "empty"
+-  FX_RECT mask_rect;
+-  bool mask_rect_valid = false;
++  FX_RECT group_rect;
++  bool group_rect_valid = false;
+   std::vector<MaskRunEntry> entries;
+ 
+   bool empty() const { return entries.empty(); }
+   void reset() {
+     paint_key = kNoClipKey;
+-    mask_rect_valid = false;
++    group_rect_valid = false;
+     entries.clear();
+   }
+ };
+ 
+-// Rasterizes all entries in |run| into a single 8-bit mask and composites
+-// once via SetMaskBitsWithBlend(). Each PDF path object is drawn with its own
+-// DrawPath() call to preserve independent fill/winding semantics.
+-// Returns false on allocation or render failure.
+-bool FlushMaskRun(CFX_RenderDevice* device,
+-                  const NativePathDisplayList& list,
+-                  const MaskRun& run,
+-                  PathDlReplayStats* replay_stats) {
+-  if (run.empty() || !run.mask_rect_valid || run.mask_rect.IsEmpty()) {
++// MuPDF-equivalent group-buffer flush. Allocates one BGRA off-screen bitmap
++// covering the union of all node rects, rasterizes every path into it with
++// normal blend (exactly as MuPDF fills paths inside a transparency group),
++// then composites the entire group onto the destination with the run's blend
++// mode via SetDIBitsWithBlend() — one composite for the whole run.
++//
++// This is correct for overlapping paths: paths accumulate inside the group
++// buffer under normal blend semantics before the single blend-mode composite.
++// This matches the PDF spec's transparency group model and MuPDF's
++// fz_draw_begin_group / fz_draw_fill_path / fz_draw_end_group sequence.
++bool FlushGroupRun(CFX_RenderDevice* device,
++                   const NativePathDisplayList& list,
++                   const MaskRun& run,
++                   PathDlReplayStats* replay_stats) {
++  if (run.empty() || !run.group_rect_valid || run.group_rect.IsEmpty()) {
+     return true;
+   }
+ 
+@@ -784,45 +788,46 @@
+       paint.graph_state_key == kNoGraphStateKey
+           ? nullptr
+           : &list.graph_state_table[paint.graph_state_key];
+-  const bool has_fill =
+-      paint.fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill;
+-  const bool has_stroke = paint.stroke_argb != 0;
+ 
+-  auto mask = pdfium::MakeRetain<CFX_DIBitmap>();
+-  if (!mask->Create(run.mask_rect.Width(), run.mask_rect.Height(),
+-                    FXDIB_Format::k8bppMask)) {
++  // Allocate a BGRA group buffer — transparent black, matching an isolated
++  // transparency group's initial state.
++  auto group = pdfium::MakeRetain<CFX_DIBitmap>();
++  if (!group->Create(run.group_rect.Width(), run.group_rect.Height(),
++                     FXDIB_Format::kBgra)) {
+     return false;
+   }
+-  CFX_DefaultRenderDevice mask_device;
+-  if (!mask_device.Attach(mask)) {
++  CFX_DefaultRenderDevice group_device;
++  if (!group_device.Attach(group)) {
+     return false;
+   }
+-  mask_device.Clear(0);
++  group_device.Clear(0);
+ 
++  // Rasterize each path into the group buffer using normal blend.
++  // Multiple paths may overlap freely — they accumulate with normal
++  // compositing inside the group, exactly as in MuPDF's group model.
+   for (const MaskRunEntry& entry : run.entries) {
+-    CFX_Matrix mask_matrix = entry.path_matrix;
+-    mask_matrix.Translate(-run.mask_rect.left, -run.mask_rect.top);
+-    if (!mask_device.DrawPath(*list.path_table[entry.path_index].GetObject(),
+-                              &mask_matrix, graph_state,
+-                              has_fill ? 0xff000000 : 0,
+-                              has_stroke ? 0xff000000 : 0,
+-                              paint.fill_options)) {
++    CFX_Matrix group_matrix = entry.path_matrix;
++    group_matrix.Translate(-run.group_rect.left, -run.group_rect.top);
++    if (!group_device.DrawPath(*list.path_table[entry.path_index].GetObject(),
++                               &group_matrix, graph_state, paint.fill_argb,
++                               paint.stroke_argb, paint.fill_options)) {
+       return false;
+     }
+   }
+ 
+-  const uint32_t blend_argb = has_fill ? paint.fill_argb : paint.stroke_argb;
+-  if (!device->SetMaskBitsWithBlend(std::move(mask), blend_argb,
+-                                    run.mask_rect.left, run.mask_rect.top,
+-                                    paint.blend_mode)) {
++  // Composite the group onto the destination with the run's blend mode —
++  // one SetDIBitsWithBlend call for the entire run, matching MuPDF's
++  // fz_blend_pixmap at end_group.
++  if (!device->SetDIBitsWithBlend(std::move(group), run.group_rect.left,
++                                  run.group_rect.top, paint.blend_mode)) {
+     return false;
+   }
+ 
+   if (replay_stats) {
+-    replay_stats->mask_run_composites++;
+-    replay_stats->mask_run_nodes += run.entries.size();
+-    if (run.entries.size() > replay_stats->max_mask_run_nodes) {
+-      replay_stats->max_mask_run_nodes = run.entries.size();
++    replay_stats->group_run_composites++;
++    replay_stats->group_run_nodes += run.entries.size();
++    if (run.entries.size() > replay_stats->max_group_run_nodes) {
++      replay_stats->max_group_run_nodes = run.entries.size();
+     }
+   }
+   return true;
+@@ -852,7 +857,7 @@
+     if (run.empty()) {
+       return VelocePathDisplayListResult::kRendered;
+     }
+-    if (!FlushMaskRun(device, list, run, replay_stats)) {
++    if (!FlushGroupRun(device, list, run, replay_stats)) {
+       return VelocePathDisplayListResult::kCancelled;
+     }
+     if (replay_stats && reason_counter) {
+@@ -943,41 +948,23 @@
+           return r;
+         }
+       }
+-      // Accumulate into the run.
++      // Accumulate into the group run. Overlapping paths are allowed — they
++      // will be composited normally inside the BGRA group buffer, matching
++      // the PDF transparency group model. No overlap gate needed.
+       FX_RECT node_rect =
+           holder_to_device.TransformRect(node.holder_space_bbox).GetOuterRect();
+       node_rect.Intersect(device->GetClipBox());
+       if (!node_rect.IsEmpty()) {
+-        // P1: conservative overlap gate. Drawing two paths into the same mask
+-        // then compositing once differs from compositing each path separately
+-        // when paths overlap — the union mask covers pixels that only one path
+-        // touches, and at antialiased edges the accumulated coverage may differ
+-        // from per-node compositing. Flush the run if this node's bbox
+-        // intersects the current run's accumulated bbox. This is conservative
+-        // (bbox overlap does not imply path overlap) but fail-closed: a false
+-        // positive only reduces run length, never produces wrong output.
+-        if (run.mask_rect_valid) {
+-          FX_RECT intersection = run.mask_rect;
+-          intersection.Intersect(node_rect);
+-          if (!intersection.IsEmpty()) {
+-            if (auto r = flush_run(replay_stats
+-                                       ? &replay_stats->run_flush_overlap
+-                                       : nullptr);
+-                r != VelocePathDisplayListResult::kRendered) {
+-              return r;
+-            }
+-          }
+-        }
+-        run.paint_key = node.paint_key;
+-        if (!run.mask_rect_valid) {
+-          run.mask_rect = node_rect;
+-          run.mask_rect_valid = true;
++        run.paint_key = node.paint_key;
++        if (!run.group_rect_valid) {
++          run.group_rect = node_rect;
++          run.group_rect_valid = true;
+         } else {
+-          run.mask_rect.left = std::min(run.mask_rect.left, node_rect.left);
+-          run.mask_rect.top = std::min(run.mask_rect.top, node_rect.top);
+-          run.mask_rect.right = std::max(run.mask_rect.right, node_rect.right);
+-          run.mask_rect.bottom =
+-              std::max(run.mask_rect.bottom, node_rect.bottom);
++          run.group_rect.left = std::min(run.group_rect.left, node_rect.left);
++          run.group_rect.top = std::min(run.group_rect.top, node_rect.top);
++          run.group_rect.right = std::max(run.group_rect.right, node_rect.right);
++          run.group_rect.bottom =
++              std::max(run.group_rect.bottom, node_rect.bottom);
+         }
+         run.entries.push_back({node.path_index, path_matrix, node_rect});
+       }
