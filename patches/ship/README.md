@@ -59,6 +59,8 @@ these patches:
 
 | 0032 | `0032-veloce-path-display-list-stroke-run-packing.patch` | Stroke run packing. Consecutive stroke-only normal-blend nodes sharing the same `paint_key` are appended into one `CFX_Path` via `CFX_Path::Append` and drawn with a single `DrawPath` call. Safe because stroke rendering is per-subpath with no winding-rule interaction — unlike filled paths where `Append` changes fill semantics. Targets CAD/engineering PDFs (e.g. DWG exports from Bentley InterPlot) with hundreds of thousands of single-line-segment stroke paths. Adds `strokeRunDraws`, `strokeRunNodes`, `maxStrokeRunNodes` telemetry. |
 
+| 0033 | `0033-veloce-path-display-list-group-buffer-scale-cap.patch` | Caps the BGRA group buffer resolution in `FlushGroupRun` to `kMaxGroupBufferSide=256px` per side. Without capping, `DrawPath` cost inside the group buffer scales with zoom² because `group_rect` is in device pixels. At zoom 9×, a group buffer is ~800K pixels; at zoom 2× it is ~200K pixels — 4× more work for the same page content. With the cap, buffers are at most 256×256 (65K pixels). When downscaled, paths are rasterized at reduced resolution and `StretchDIBitsWithFlagsAndBlend` with bilinear interpolation stretches the result back to device size at composite time. Expected speedup: ~13× at zoom 9×, proportional to (zoom/1)² / (kMaxGroupBufferSide/naturalSize)². |
+
 ## Why this directory exists
 
 During development the patches went through many iterations under
@@ -100,6 +102,7 @@ git apply patches/ship/0029-veloce-path-display-list-consecutive-run-blend.patch
 git apply patches/ship/0030-veloce-path-display-list-run-correctness-fixes.patch
 git apply patches/ship/0031-veloce-path-display-list-group-buffer-blend.patch
 git apply patches/ship/0032-veloce-path-display-list-stroke-run-packing.patch
+git apply patches/ship/0033-veloce-path-display-list-group-buffer-scale-cap.patch
 ```
 
 > **Note:** patches 0027 and 0028 are deprecated and must NOT be applied.

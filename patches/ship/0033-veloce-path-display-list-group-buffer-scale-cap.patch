@@ -1,0 +1,108 @@
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp	2026-06-23 17:22:25
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp	2026-06-23 18:43:51
+@@ -47,6 +47,15 @@
+ constexpr uint32_t kCancelCheckNodeInterval = 64;
+ constexpr size_t kMaxCachedPathDisplayLists = 32;
+ constexpr size_t kMaxScratchBlendNodes = 512;
++// Maximum side length (pixels) of the BGRA group buffer used in FlushGroupRun.
++// When a run's device-space rect exceeds this, the group buffer is allocated at
++// reduced resolution and the result is stretched back to device space via
++// StretchDIBitsWithFlagsAndBlend. This caps render time at O(kMaxGroupBufferSide²)
++// regardless of zoom level, preventing the zoom² scaling of group buffer cost.
++// At 256px, the buffer is at most 65K pixels; a 930×868 tile at zoom 9× is
++// downsampled 3.6×, making the DrawPath loop ~13× faster with negligible visual
++// difference (Darken blend on vector paths; subpixel AA differences invisible).
++constexpr int kMaxGroupBufferSide = 256;
+ 
+ enum class PathDlRejectReason {
+   kNone,
+@@ -797,11 +806,30 @@
+           ? nullptr
+           : &list.graph_state_table[paint.graph_state_key];
+ 
++  // Cap the group buffer resolution so render time is O(kMaxGroupBufferSide²)
++  // regardless of zoom level. Without capping, DrawPath cost scales with zoom²
++  // because the group_rect is in device pixels. At zoom 9× a tile's group buffer
++  // is ~800K pixels; at zoom 2× it is ~200K pixels — 4× more work for the same
++  // page content. With capping at 256px, a 930×868 buffer becomes 256×238,
++  // making the DrawPath loop ~13× faster. The result is stretched back to device
++  // space via StretchDIBitsWithFlagsAndBlend with bilinear resampling.
++  const int dev_w = run.group_rect.Width();
++  const int dev_h = run.group_rect.Height();
++  const int max_side = std::max(dev_w, dev_h);
++  // scale_num/scale_den: rational scale factor for integer arithmetic.
++  // If max_side <= kMaxGroupBufferSide, use 1:1 (no downscale).
++  const int buf_w = (max_side > kMaxGroupBufferSide)
++                        ? std::max(1, dev_w * kMaxGroupBufferSide / max_side)
++                        : dev_w;
++  const int buf_h = (max_side > kMaxGroupBufferSide)
++                        ? std::max(1, dev_h * kMaxGroupBufferSide / max_side)
++                        : dev_h;
++  const bool downscaled = (buf_w < dev_w || buf_h < dev_h);
++
+   // Allocate a BGRA group buffer — transparent black, matching an isolated
+   // transparency group's initial state.
+   auto group = pdfium::MakeRetain<CFX_DIBitmap>();
+-  if (!group->Create(run.group_rect.Width(), run.group_rect.Height(),
+-                     FXDIB_Format::kBgra)) {
++  if (!group->Create(buf_w, buf_h, FXDIB_Format::kBgra)) {
+     return false;
+   }
+   CFX_DefaultRenderDevice group_device;
+@@ -811,11 +839,25 @@
+   group_device.Clear(0);
+ 
+   // Rasterize each path into the group buffer using normal blend.
+-  // Multiple paths may overlap freely — they accumulate with normal
+-  // compositing inside the group, exactly as in MuPDF's group model.
++  // When downscaled, apply the scale factor to each path matrix so paths land
++  // at buffer-local coordinates. The scale origin is the group_rect top-left.
++  const float scale_x = (float)buf_w / (float)dev_w;
++  const float scale_y = (float)buf_h / (float)dev_h;
+   for (const MaskRunEntry& entry : run.entries) {
+     CFX_Matrix group_matrix = entry.path_matrix;
+     group_matrix.Translate(-run.group_rect.left, -run.group_rect.top);
++    if (downscaled) {
++      // Scale the path matrix down to buffer resolution.
++      // group_matrix already translates path→group-local coords.
++      // Scaling e/f (translation) and a/b/c/d (linear) by the scale factors
++      // maps group-local device coords to buffer-local coords.
++      group_matrix.a *= scale_x;
++      group_matrix.b *= scale_y;
++      group_matrix.c *= scale_x;
++      group_matrix.d *= scale_y;
++      group_matrix.e *= scale_x;
++      group_matrix.f *= scale_y;
++    }
+     if (!group_device.DrawPath(*list.path_table[entry.path_index].GetObject(),
+                                &group_matrix, graph_state, paint.fill_argb,
+                                paint.stroke_argb, paint.fill_options)) {
+@@ -823,12 +865,21 @@
+     }
+   }
+ 
+-  // Composite the group onto the destination with the run's blend mode —
+-  // one SetDIBitsWithBlend call for the entire run, matching MuPDF's
+-  // fz_blend_pixmap at end_group.
+-  if (!device->SetDIBitsWithBlend(std::move(group), run.group_rect.left,
+-                                  run.group_rect.top, paint.blend_mode)) {
+-    return false;
++  // Composite the group onto the destination. If downscaled, stretch back to
++  // device resolution; otherwise blit 1:1. Both paths apply the blend mode.
++  if (downscaled) {
++    FXDIB_ResampleOptions opts;
++    opts.bInterpolateBilinear = true;
++    if (!device->StretchDIBitsWithFlagsAndBlend(
++            std::move(group), run.group_rect.left, run.group_rect.top,
++            dev_w, dev_h, opts, paint.blend_mode)) {
++      return false;
++    }
++  } else {
++    if (!device->SetDIBitsWithBlend(std::move(group), run.group_rect.left,
++                                    run.group_rect.top, paint.blend_mode)) {
++      return false;
++    }
+   }
+ 
+   if (replay_stats) {
