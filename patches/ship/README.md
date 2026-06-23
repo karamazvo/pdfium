@@ -53,7 +53,8 @@ these patches:
 | 0026 | `0026-veloce-path-display-list-mask-blend-fill-stroke.patch` | Extends 0025's mask-composite replay to fill+stroke blended path nodes when fill and stroke colors are identical. This keeps correctness for mixed-color fill/stroke paths while allowing `11.pdf`-style Darken paths parsed with stroke state to avoid BGRA scratch replay. |
 | ~~0027~~ | ~~`0027-veloce-path-display-list-batched-mask-blend.patch`~~ | **DEPRECATED — do not apply.** Groups nodes by `(paint_key, clip_generation)` across the whole clip group and flushes in paint-key order, violating PDF painter order when different paint keys interleave in the display list. Produces wrong output on PDFs with interleaved blend nodes of different paint keys. Validated on `11.pdf` only (single-paint-key workload; reordering had no visible effect there). Superseded by 0029. |
 | ~~0028~~ | ~~`0028-veloce-path-display-list-packed-path-run.patch`~~ | **DEPRECATED — do not apply.** Inherits 0027's painter-order flaw and adds clip-group mask reuse on top of the same incorrect grouping. Superseded by 0029. |
-| 0029 | `0029-veloce-path-display-list-consecutive-run-blend.patch` | Consecutive-run mask batching. Batches only adjacent blend nodes that share the same `paint_key`, `clip_key`, fill rule, graph state, and blend mode. Flushes the run on any painter-order boundary (paint/clip/normal/scratch-blend change). Allocates one mask per run, draws all nodes in original display-list order, composites once. Preserves PDF painter order exactly. Adds `maskRunComposites`, `maskRunNodes`, `maxMaskRunNodes`, `runFlushReasons` telemetry. |
+| 0029 | `0029-veloce-path-display-list-consecutive-run-blend.patch` | Consecutive-run mask batching. Batches only adjacent blend nodes that share the same `paint_key`. Flushes the run on any painter-order boundary (paint/clip/normal/scratch-blend change). Allocates one mask per run, draws all nodes in original display-list order, composites once. Adds `maskRunComposites`, `maskRunNodes`, `maxMaskRunNodes`, `runFlushPaint/Clip/Normal/Scratch/Cancel/End` telemetry. Has three correctness issues fixed by 0030. |
+| 0030 | `0030-veloce-path-display-list-run-correctness-fixes.patch` | Three correctness fixes to 0029. **P1:** adds a conservative bbox overlap gate — flushes the run before accumulating a node whose device-space rect intersects the current run rect, preventing per-node vs. per-run mask compositing divergence at overlapping/antialiased edges. Logged as `runFlushOverlap`. **P2:** removes the flush-on-cancel path — cancelled output is discarded, so writing partial mask content to the bitmap is wasted work; the run is now just reset. **P3:** counts the end-of-loop drain as `runFlushEnd` instead of `runFlushPaint` so flush-reason telemetry is unambiguous. |
 
 ## Why this directory exists
 
@@ -93,6 +94,7 @@ git apply patches/ship/0024-veloce-path-display-list-gate-dense-scratch-blend.pa
 git apply patches/ship/0025-veloce-path-display-list-mask-blend-replay.patch
 git apply patches/ship/0026-veloce-path-display-list-mask-blend-fill-stroke.patch
 git apply patches/ship/0029-veloce-path-display-list-consecutive-run-blend.patch
+git apply patches/ship/0030-veloce-path-display-list-run-correctness-fixes.patch
 ```
 
 > **Note:** patches 0027 and 0028 are deprecated and must NOT be applied.
@@ -135,10 +137,9 @@ fill+stroke nodes while leaving different fill/stroke colors on fallback.
 Patches 0027 and 0028 are deprecated (painter-order violation) and are
 skipped by the release workflow. Do not apply them.
 Patch 0029 depends on patch 0026 and replaces the r20 per-node mask path
-with consecutive-run batching: only adjacent blend nodes sharing the same
-paint key, clip key, fill rule, graph state, and blend mode are batched.
-The run is flushed on any painter-order boundary. Painter order is preserved
-exactly because no nodes are reordered across the display list.
+with consecutive-run batching. Patch 0030 depends on patch 0029 and fixes
+three correctness issues: a bbox overlap gate (P1), no flush on cancel (P2),
+and a separate runFlushEnd counter for the end-of-loop drain (P3).
 The release workflow applies the numeric order shown above, skipping 0027/0028.
 
 ## Cumulative effect (measured)

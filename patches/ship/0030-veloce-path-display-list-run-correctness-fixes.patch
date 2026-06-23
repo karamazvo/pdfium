@@ -1,0 +1,97 @@
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp	2026-06-22 18:35:45
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp	2026-06-23 09:52:42
+@@ -144,7 +144,8 @@
+   size_t run_flush_clip_change = 0;
+   size_t run_flush_normal_node = 0;
+   size_t run_flush_scratch_blend = 0;
+-  size_t run_flush_cancel = 0;
++  size_t run_flush_overlap = 0;
++  size_t run_flush_end = 0;
+ };
+ 
+ bool IsPathDisplayListFeatureEnabled(const CPDF_RenderStatus* status) {
+@@ -306,7 +307,7 @@
+       "scanned=%zu skippedInactive=%zu skippedInvisible=%zu skippedNoFill=%zu "
+       "noopClips=%zu blendNodes=%zu scratchBlendNodes=%zu visited=%zu culled=%zu missingPath=%zu drawn=%zu "
+       "clipSwitches=%zu cancelChecks=%zu maskRunComposites=%zu maskRunNodes=%zu maxMaskRunNodes=%zu "
+-      "runFlushPaint=%zu runFlushClip=%zu runFlushNormal=%zu runFlushScratch=%zu runFlushCancel=%zu "
++      "runFlushPaint=%zu runFlushClip=%zu runFlushNormal=%zu runFlushScratch=%zu runFlushOverlap=%zu runFlushEnd=%zu "
+       "cache=%s compileMs=%" PRId64
+       " replayMs=%" PRId64
+       " totalFastMs=%" PRId64 " estimatedDispatchAvoided=%zu",
+@@ -338,7 +339,8 @@
+       replay_stats ? replay_stats->run_flush_clip_change : kZero,
+       replay_stats ? replay_stats->run_flush_normal_node : kZero,
+       replay_stats ? replay_stats->run_flush_scratch_blend : kZero,
+-      replay_stats ? replay_stats->run_flush_cancel : kZero,
++      replay_stats ? replay_stats->run_flush_overlap : kZero,
++      replay_stats ? replay_stats->run_flush_end : kZero,
+       cache_state ? cache_state : "none", compile_ms,
+       replay_ms, compile_ms + replay_ms,
+       list ? list->nodes.size() : kZero);
+@@ -866,12 +868,10 @@
+         replay_stats->cancel_checks++;
+       }
+       if (status->ShouldCancelRender()) {
+-        auto r = flush_run(replay_stats
+-                               ? &replay_stats->run_flush_cancel
+-                               : nullptr);
+-        return r == VelocePathDisplayListResult::kRendered
+-                   ? VelocePathDisplayListResult::kCancelled
+-                   : r;
++        // P2: cancelled output is discarded — do not flush partial run into
++        // the bitmap. Just reset and return kCancelled immediately.
++        run.reset();
++        return VelocePathDisplayListResult::kCancelled;
+       }
+     }
+ 
+@@ -934,8 +934,7 @@
+                        paint.stroke_argb, paint.fill_options);
+ 
+     } else if (CanDrawBlendNodeWithMask(paint)) {
+-      // Mask-eligible blend node. Flush the run if the paint key changes
+-      // (different blend color/mode/options — a painter-order boundary).
++      // Mask-eligible blend node. Flush if the paint key changes.
+       if (!run.empty() && run.paint_key != node.paint_key) {
+         if (auto r = flush_run(replay_stats
+                                    ? &replay_stats->run_flush_paint_change
+@@ -949,6 +948,26 @@
+           holder_to_device.TransformRect(node.holder_space_bbox).GetOuterRect();
+       node_rect.Intersect(device->GetClipBox());
+       if (!node_rect.IsEmpty()) {
++        // P1: conservative overlap gate. Drawing two paths into the same mask
++        // then compositing once differs from compositing each path separately
++        // when paths overlap — the union mask covers pixels that only one path
++        // touches, and at antialiased edges the accumulated coverage may differ
++        // from per-node compositing. Flush the run if this node's bbox
++        // intersects the current run's accumulated bbox. This is conservative
++        // (bbox overlap does not imply path overlap) but fail-closed: a false
++        // positive only reduces run length, never produces wrong output.
++        if (run.mask_rect_valid) {
++          FX_RECT intersection = run.mask_rect;
++          intersection.Intersect(node_rect);
++          if (!intersection.IsEmpty()) {
++            if (auto r = flush_run(replay_stats
++                                       ? &replay_stats->run_flush_overlap
++                                       : nullptr);
++                r != VelocePathDisplayListResult::kRendered) {
++              return r;
++            }
++          }
++        }
+         run.paint_key = node.paint_key;
+         if (!run.mask_rect_valid) {
+           run.mask_rect = node_rect;
+@@ -983,9 +1002,7 @@
+   }
+ 
+   // Flush any run remaining after the last node.
+-  if (auto r =
+-          flush_run(replay_stats ? &replay_stats->run_flush_paint_change
+-                                 : nullptr);
++  if (auto r = flush_run(replay_stats ? &replay_stats->run_flush_end : nullptr);
+       r != VelocePathDisplayListResult::kRendered) {
+     return r;
+   }
