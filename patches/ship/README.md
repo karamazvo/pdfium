@@ -57,6 +57,8 @@ these patches:
 | 0030 | `0030-veloce-path-display-list-run-correctness-fixes.patch` | Three correctness fixes to 0029. **P1:** adds a conservative bbox overlap gate (later superseded by 0031's group-buffer approach). **P2:** removes the flush-on-cancel path — cancelled output is discarded, so writing partial content to the bitmap is wasted work; the run is now just reset. **P3:** counts the end-of-loop drain as `runFlushEnd` instead of `runFlushPaint` so flush-reason telemetry is unambiguous. |
 | 0031 | `0031-veloce-path-display-list-group-buffer-blend.patch` | Replaces the 8-bit mask + `SetMaskBitsWithBlend` flush with a BGRA group buffer + `SetDIBitsWithBlend`, matching MuPDF's transparency group model. Each run allocates one BGRA bitmap covering the union rect of all node rects; paths rasterize into it with normal blend (as MuPDF does inside `fz_draw_begin_group`); the completed group composites onto the destination once with `SetDIBitsWithBlend(blend_mode)` (as MuPDF does at `fz_draw_end_group`). Overlapping paths are correct because they accumulate under normal blend inside the group before the single blend-mode composite. Removes the P1 bbox overlap gate (no longer needed — overlaps are safe in the group buffer). Renames telemetry to `groupRunComposites`, `groupRunNodes`, `maxGroupRunNodes`. |
 
+| 0032 | `0032-veloce-path-display-list-stroke-run-packing.patch` | Stroke run packing. Consecutive stroke-only normal-blend nodes sharing the same `paint_key` are appended into one `CFX_Path` via `CFX_Path::Append` and drawn with a single `DrawPath` call. Safe because stroke rendering is per-subpath with no winding-rule interaction — unlike filled paths where `Append` changes fill semantics. Targets CAD/engineering PDFs (e.g. DWG exports from Bentley InterPlot) with hundreds of thousands of single-line-segment stroke paths. Adds `strokeRunDraws`, `strokeRunNodes`, `maxStrokeRunNodes` telemetry. |
+
 ## Why this directory exists
 
 During development the patches went through many iterations under
@@ -97,6 +99,7 @@ git apply patches/ship/0026-veloce-path-display-list-mask-blend-fill-stroke.patc
 git apply patches/ship/0029-veloce-path-display-list-consecutive-run-blend.patch
 git apply patches/ship/0030-veloce-path-display-list-run-correctness-fixes.patch
 git apply patches/ship/0031-veloce-path-display-list-group-buffer-blend.patch
+git apply patches/ship/0032-veloce-path-display-list-stroke-run-packing.patch
 ```
 
 > **Note:** patches 0027 and 0028 are deprecated and must NOT be applied.
@@ -146,6 +149,12 @@ Patch 0031 depends on patch 0030 and replaces the 8-bit mask approach with
 a BGRA group buffer matching MuPDF's transparency group model. The P1 bbox
 overlap gate from 0030 is removed — overlapping paths accumulate correctly
 inside the group buffer under normal blend before the single blend composite.
+Patch 0032 depends on patch 0031 and adds stroke-only run packing for the
+normal-blend path. Consecutive stroke-only same-paint nodes are accumulated
+via CFX_Path::Append and drawn with one DrawPath call. This is safe for
+stroke-only paths (no winding interaction) and is the primary optimization
+for CAD/DWG-export PDFs with hundreds of thousands of single-line-segment
+stroke operations.
 The release workflow applies the numeric order shown above, skipping 0027/0028.
 
 ## Cumulative effect (measured)
