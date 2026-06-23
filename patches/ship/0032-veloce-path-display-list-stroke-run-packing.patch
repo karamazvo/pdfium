@@ -1,279 +1,41 @@
 diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
 --- a/core/fpdfapi/render/veloce_path_display_list.cpp	2026-06-23 12:28:52
-+++ b/core/fpdfapi/render/veloce_path_display_list.cpp	2026-06-23 16:58:26
-@@ -9,6 +9,7 @@
- #include <chrono>
- #include <cstring>
- #include <limits>
-+#include <map>
- #include <memory>
- #include <mutex>
- #include <optional>
-@@ -137,14 +138,13 @@
-   size_t drawn_nodes = 0;
-   size_t clip_switches = 0;
-   size_t cancel_checks = 0;
--  size_t group_run_composites = 0;
--  size_t group_run_nodes = 0;
--  size_t max_group_run_nodes = 0;
--  size_t run_flush_paint_change = 0;
--  size_t run_flush_clip_change = 0;
--  size_t run_flush_normal_node = 0;
--  size_t run_flush_scratch_blend = 0;
--  size_t run_flush_end = 0;
-+  size_t batched_mask_composites = 0;
-+  size_t batched_mask_nodes = 0;
-+  size_t mask_draw_calls = 0;
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp	2026-06-23 17:22:25
+@@ -145,6 +145,10 @@
+   size_t run_flush_normal_node = 0;
+   size_t run_flush_scratch_blend = 0;
+   size_t run_flush_end = 0;
 +  // Stroke run packing telemetry.
-+  size_t stroke_run_draws = 0;    // number of packed DrawPath calls issued
-+  size_t stroke_run_nodes = 0;    // total nodes consumed by packed runs
-+  size_t max_stroke_run_nodes = 0;// longest consecutive stroke run
++  size_t stroke_run_draws = 0;
++  size_t stroke_run_nodes = 0;
++  size_t max_stroke_run_nodes = 0;
  };
  
  bool IsPathDisplayListFeatureEnabled(const CPDF_RenderStatus* status) {
-@@ -305,8 +305,8 @@
-       "legacyFallback=%d nodes=%zu paths=%zu paints=%zu graphStates=%zu clips=%zu "
-       "scanned=%zu skippedInactive=%zu skippedInvisible=%zu skippedNoFill=%zu "
+@@ -307,6 +311,7 @@
        "noopClips=%zu blendNodes=%zu scratchBlendNodes=%zu visited=%zu culled=%zu missingPath=%zu drawn=%zu "
--      "clipSwitches=%zu cancelChecks=%zu groupRunComposites=%zu groupRunNodes=%zu maxGroupRunNodes=%zu "
--      "runFlushPaint=%zu runFlushClip=%zu runFlushNormal=%zu runFlushScratch=%zu runFlushEnd=%zu "
-+      "clipSwitches=%zu cancelChecks=%zu batchedMaskComposites=%zu batchedMaskNodes=%zu maskDrawCalls=%zu "
+       "clipSwitches=%zu cancelChecks=%zu groupRunComposites=%zu groupRunNodes=%zu maxGroupRunNodes=%zu "
+       "runFlushPaint=%zu runFlushClip=%zu runFlushNormal=%zu runFlushScratch=%zu runFlushEnd=%zu "
 +      "strokeRunDraws=%zu strokeRunNodes=%zu maxStrokeRunNodes=%zu "
        "cache=%s compileMs=%" PRId64
        " replayMs=%" PRId64
        " totalFastMs=%" PRId64 " estimatedDispatchAvoided=%zu",
-@@ -331,14 +331,12 @@
-       replay_stats ? replay_stats->drawn_nodes : kZero,
-       replay_stats ? replay_stats->clip_switches : kZero,
-       replay_stats ? replay_stats->cancel_checks : kZero,
--      replay_stats ? replay_stats->group_run_composites : kZero,
--      replay_stats ? replay_stats->group_run_nodes : kZero,
--      replay_stats ? replay_stats->max_group_run_nodes : kZero,
--      replay_stats ? replay_stats->run_flush_paint_change : kZero,
--      replay_stats ? replay_stats->run_flush_clip_change : kZero,
--      replay_stats ? replay_stats->run_flush_normal_node : kZero,
--      replay_stats ? replay_stats->run_flush_scratch_blend : kZero,
--      replay_stats ? replay_stats->run_flush_end : kZero,
-+      replay_stats ? replay_stats->batched_mask_composites : kZero,
-+      replay_stats ? replay_stats->batched_mask_nodes : kZero,
-+      replay_stats ? replay_stats->mask_draw_calls : kZero,
+@@ -339,6 +344,9 @@
+       replay_stats ? replay_stats->run_flush_normal_node : kZero,
+       replay_stats ? replay_stats->run_flush_scratch_blend : kZero,
+       replay_stats ? replay_stats->run_flush_end : kZero,
 +      replay_stats ? replay_stats->stroke_run_draws : kZero,
 +      replay_stats ? replay_stats->stroke_run_nodes : kZero,
 +      replay_stats ? replay_stats->max_stroke_run_nodes : kZero,
        cache_state ? cache_state : "none", compile_ms,
        replay_ms, compile_ms + replay_ms,
        list ? list->nodes.size() : kZero);
-@@ -740,99 +738,159 @@
-                                     paint.blend_mode);
- }
- 
--// One pending entry in the consecutive mask run.
--struct MaskRunEntry {
-+// Accumulates all blend nodes sharing the same (paint_key, clip_generation).
-+// Entries store only path_index and the pre-device-space path_matrix; all
-+// other per-paint properties are read from the paint table at flush time.
-+struct MaskBatchEntry {
-   uint32_t path_index;
-   CFX_Matrix path_matrix;
--  FX_RECT node_rect;  // device-space bbox, already intersected with clip box
- };
- 
--// Accumulates consecutive blend nodes eligible for group-buffer batching.
--// All entries share the same paint_key (and therefore the same blend_mode,
--// fill_options, graph_state_key, fill_argb, stroke_argb). The run is
--// flushed — and this struct reset — at any painter-order boundary.
--struct MaskRun {
--  uint32_t paint_key = kNoClipKey;  // kNoClipKey used as sentinel for "empty"
--  FX_RECT group_rect;
--  bool group_rect_valid = false;
--  std::vector<MaskRunEntry> entries;
--
--  bool empty() const { return entries.empty(); }
--  void reset() {
--    paint_key = kNoClipKey;
--    group_rect_valid = false;
--    entries.clear();
--  }
-+struct MaskBlendBatch {
-+  uint32_t paint_key = 0;
-+  FX_RECT clip_rect;
-+  bool clip_rect_valid = false;
-+  std::vector<MaskBatchEntry> entries;
- };
- 
--// MuPDF-equivalent group-buffer flush. Allocates one BGRA off-screen bitmap
--// covering the union of all node rects, rasterizes every path into it with
--// normal blend (exactly as MuPDF fills paths inside a transparency group),
--// then composites the entire group onto the destination with the run's blend
--// mode via SetDIBitsWithBlend() — one composite for the whole run.
-+// Rasterizes all entries in |batch| into |mask_device| (already attached to
-+// a shared mask covering |group_rect|) using one DrawPath call per node.
-+// Each path is drawn in mask-local coordinates relative to group_rect.
-+// The mask is NOT cleared here — caller clears before each paint key.
- //
--// This is correct for overlapping paths: paths accumulate inside the group
--// buffer under normal blend semantics before the single blend-mode composite.
--// This matches the PDF spec's transparency group model and MuPDF's
--// fz_draw_begin_group / fz_draw_fill_path / fz_draw_end_group sequence.
--bool FlushGroupRun(CFX_RenderDevice* device,
--                   const NativePathDisplayList& list,
--                   const MaskRun& run,
--                   PathDlReplayStats* replay_stats) {
--  if (run.empty() || !run.group_rect_valid || run.group_rect.IsEmpty()) {
-+// Note: CFX_Path::Append() concatenates subpath arrays without isolation.
-+// Under even-odd or winding fill rules, subpaths from different PDF objects
-+// interact after append, potentially canceling regions that should be opaque.
-+// Per-node DrawPath() is the correct approach: each PDF path object is
-+// independent and its winding is self-contained.
-+bool FlushPerNodePathBatch(CFX_DefaultRenderDevice& mask_device,
-+                           const NativePathDisplayList& list,
-+                           const MaskBlendBatch& batch,
-+                           const FX_RECT& group_rect,
-+                           PathDlReplayStats* replay_stats) {
-+  if (batch.entries.empty()) {
-     return true;
+@@ -831,6 +839,16 @@
+     }
    }
- 
--  const PathDlPaint& paint = list.paint_table[run.paint_key];
-+  const PathDlPaint& paint = list.paint_table[batch.paint_key];
-   const CFX_GraphStateData* graph_state =
-       paint.graph_state_key == kNoGraphStateKey
-           ? nullptr
-           : &list.graph_state_table[paint.graph_state_key];
-+  const bool has_fill =
-+      paint.fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill;
-+  const bool has_stroke = paint.stroke_argb != 0;
- 
--  // Allocate a BGRA group buffer — transparent black, matching an isolated
--  // transparency group's initial state.
--  auto group = pdfium::MakeRetain<CFX_DIBitmap>();
--  if (!group->Create(run.group_rect.Width(), run.group_rect.Height(),
--                     FXDIB_Format::kBgra)) {
--    return false;
-+  for (const MaskBatchEntry& entry : batch.entries) {
-+    const CFX_Path* src = list.path_table[entry.path_index].GetObject();
-+    if (!src) {
-+      continue;
-+    }
-+    CFX_Matrix mask_matrix = entry.path_matrix;
-+    mask_matrix.Translate(-group_rect.left, -group_rect.top);
-+    if (!mask_device.DrawPath(*src, &mask_matrix, graph_state,
-+                              has_fill ? 0xff000000 : 0,
-+                              has_stroke ? 0xff000000 : 0,
-+                              paint.fill_options)) {
-+      return false;
-+    }
-+    if (replay_stats) {
-+      replay_stats->mask_draw_calls++;
-+    }
-   }
--  CFX_DefaultRenderDevice group_device;
--  if (!group_device.Attach(group)) {
--    return false;
-+  return true;
+   return true;
 +}
 +
-+// Flushes all pending batches for one clip group. Allocates ONE mask bitmap
-+// sized to the union of all batch clip_rects in this group, reusing it across
-+// all paint keys (cleared between each paint). This is the clip-group mask
-+// reuse optimisation: O(clipSwitches) allocations instead of O(composites).
-+bool FlushAllMaskBatches(CFX_RenderDevice* device,
-+                         const NativePathDisplayList& list,
-+                         std::map<uint32_t, MaskBlendBatch>& batches,
-+                         PathDlReplayStats* replay_stats) {
-+  if (batches.empty()) {
-+    return true;
-   }
--  group_device.Clear(0);
- 
--  // Rasterize each path into the group buffer using normal blend.
--  // Multiple paths may overlap freely — they accumulate with normal
--  // compositing inside the group, exactly as in MuPDF's group model.
--  for (const MaskRunEntry& entry : run.entries) {
--    CFX_Matrix group_matrix = entry.path_matrix;
--    group_matrix.Translate(-run.group_rect.left, -run.group_rect.top);
--    if (!group_device.DrawPath(*list.path_table[entry.path_index].GetObject(),
--                               &group_matrix, graph_state, paint.fill_argb,
--                               paint.stroke_argb, paint.fill_options)) {
--      return false;
-+  // Compute the union rect of all batches in this clip group.
-+  FX_RECT group_rect;
-+  bool group_rect_valid = false;
-+  for (const auto& [paint_key, batch] : batches) {
-+    if (!batch.clip_rect_valid || batch.clip_rect.IsEmpty()) {
-+      continue;
-     }
-+    if (!group_rect_valid) {
-+      group_rect = batch.clip_rect;
-+      group_rect_valid = true;
-+    } else {
-+      group_rect.left = std::min(group_rect.left, batch.clip_rect.left);
-+      group_rect.top = std::min(group_rect.top, batch.clip_rect.top);
-+      group_rect.right = std::max(group_rect.right, batch.clip_rect.right);
-+      group_rect.bottom = std::max(group_rect.bottom, batch.clip_rect.bottom);
-+    }
-   }
- 
--  // Composite the group onto the destination with the run's blend mode —
--  // one SetDIBitsWithBlend call for the entire run, matching MuPDF's
--  // fz_blend_pixmap at end_group.
--  if (!device->SetDIBitsWithBlend(std::move(group), run.group_rect.left,
--                                  run.group_rect.top, paint.blend_mode)) {
-+  if (!group_rect_valid || group_rect.IsEmpty()) {
-+    batches.clear();
-+    return true;
-+  }
-+
-+  // One mask allocation for the whole clip group.
-+  auto mask = pdfium::MakeRetain<CFX_DIBitmap>();
-+  if (!mask->Create(group_rect.Width(), group_rect.Height(),
-+                    FXDIB_Format::k8bppMask)) {
-     return false;
-   }
-+  CFX_DefaultRenderDevice mask_device;
-+  if (!mask_device.Attach(mask)) {
-+    return false;
-+  }
- 
--  if (replay_stats) {
--    replay_stats->group_run_composites++;
--    replay_stats->group_run_nodes += run.entries.size();
--    if (run.entries.size() > replay_stats->max_group_run_nodes) {
--      replay_stats->max_group_run_nodes = run.entries.size();
-+  for (const auto& [paint_key, batch] : batches) {
-+    if (!batch.clip_rect_valid || batch.clip_rect.IsEmpty() ||
-+        batch.entries.empty()) {
-+      continue;
-     }
-+
-+    // Each paint key gets a fresh clear of the shared mask before rasterizing.
-+    // Paths are drawn into mask-local coordinates relative to group_rect so all
-+    // paint batches in this clip group map into the same shared bitmap.
-+    mask_device.Clear(0);
-+    if (!FlushPerNodePathBatch(mask_device, list, batch, group_rect,
-+                               replay_stats)) {
-+      return false;
-+    }
-+
-+    const PathDlPaint& paint = list.paint_table[paint_key];
-+    const bool has_fill =
-+        paint.fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill;
-+    const uint32_t blend_argb = has_fill ? paint.fill_argb : paint.stroke_argb;
-+    if (!device->SetMaskBitsWithBlend(mask, blend_argb, group_rect.left,
-+                                      group_rect.top, paint.blend_mode)) {
-+      return false;
-+    }
-+
-+    if (replay_stats) {
-+      replay_stats->batched_mask_composites++;
-+      replay_stats->batched_mask_nodes += batch.entries.size();
-+    }
-   }
-+
-+  batches.clear();
-   return true;
- }
- 
 +// Returns true when |paint| describes a pure stroke (no fill) with normal
 +// blend mode. CFX_Path::Append is safe for stroke-only subpaths: the stroke
 +// of a composite path equals the union of strokes of its subpaths because
@@ -282,18 +44,15 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
 +  return paint.blend_mode == BlendMode::kNormal &&
 +         paint.fill_options.fill_type == CFX_FillRenderOptions::FillType::kNoFill &&
 +         paint.stroke_argb != 0;
-+}
-+
- VelocePathDisplayListResult ReplayPathDisplayList(
-     CPDF_RenderStatus* status,
-     const NativePathDisplayList& list,
-@@ -848,34 +906,51 @@
-   bool have_clip_state = false;
-   CPDF_ClipPath empty_clip;
+ }
  
--  // Active consecutive mask run. Non-empty while we are accumulating adjacent
--  // CanDrawBlendNodeWithMask nodes that share the same paint_key and clip_key.
--  MaskRun run;
+ VelocePathDisplayListResult ReplayPathDisplayList(
+@@ -865,6 +883,36 @@
+     }
+     run.reset();
+     return VelocePathDisplayListResult::kRendered;
++  };
++
 +  // Stroke run packing: consecutive stroke-only normal-blend nodes with the
 +  // same paint_key are appended into one CFX_Path and drawn with a single
 +  // DrawPath call. Safe because stroke rendering is per-subpath with no
@@ -301,12 +60,7 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
 +  CFX_Path stroke_run_path;
 +  uint32_t stroke_run_paint_key = kNoClipKey;  // kNoClipKey = sentinel for empty
 +  size_t stroke_run_count = 0;
- 
--  // Flush |run| and record the reason. Returns kCancelled on failure.
--  auto flush_run = [&](size_t* reason_counter) -> VelocePathDisplayListResult {
--    if (run.empty()) {
--      return VelocePathDisplayListResult::kRendered;
-+  // Flush the active stroke run with one DrawPath call.
++
 +  auto flush_stroke_run = [&]() -> bool {
 +    if (stroke_run_count == 0) return true;
 +    const PathDlPaint& run_paint = list.paint_table[stroke_run_paint_key];
@@ -314,186 +68,104 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
 +        run_paint.graph_state_key == kNoGraphStateKey
 +            ? nullptr
 +            : &list.graph_state_table[run_paint.graph_state_key];
-+    if (!device->DrawPath(stroke_run_path, nullptr, gs, 0,
-+                          run_paint.stroke_argb, run_paint.fill_options)) {
-+      // DrawPath returns false on clipped-out draws, not on errors.
-+      // Continue normally — do not treat as failure.
-     }
--    if (!FlushGroupRun(device, list, run, replay_stats)) {
--      return VelocePathDisplayListResult::kCancelled;
++    device->DrawPath(stroke_run_path, nullptr, gs, 0,
++                     run_paint.stroke_argb, run_paint.fill_options);
 +    if (replay_stats) {
 +      replay_stats->stroke_run_draws++;
 +      replay_stats->stroke_run_nodes += stroke_run_count;
 +      if (stroke_run_count > replay_stats->max_stroke_run_nodes) {
 +        replay_stats->max_stroke_run_nodes = stroke_run_count;
 +      }
-     }
--    if (replay_stats && reason_counter) {
--      (*reason_counter)++;
--    }
--    run.reset();
--    return VelocePathDisplayListResult::kRendered;
++    }
 +    stroke_run_path.Clear();
 +    stroke_run_paint_key = kNoClipKey;
 +    stroke_run_count = 0;
 +    return true;
    };
  
-+  // Accumulates CanDrawBlendNodeWithMask nodes within the current clip group,
-+  // keyed by paint_key. Flushed on every clip switch and at end of loop.
-+  std::map<uint32_t, MaskBlendBatch> mask_batches;
-+
    for (uint32_t i = 0; i < list.nodes.size(); ++i) {
-     if ((i % kCancelCheckNodeInterval) == 0) {
-       if (replay_stats) {
+@@ -873,9 +921,10 @@
          replay_stats->cancel_checks++;
        }
        if (status->ShouldCancelRender()) {
 -        // P2: cancelled output is discarded — do not flush partial run into
 -        // the bitmap. Just reset and return kCancelled immediately.
--        run.reset();
-+        flush_stroke_run();
++        // Cancelled output is discarded — reset without flushing.
+         run.reset();
++        stroke_run_path.Clear();
++        stroke_run_count = 0;
          return VelocePathDisplayListResult::kCancelled;
        }
      }
-@@ -891,14 +966,14 @@
+@@ -891,8 +940,9 @@
        continue;
      }
  
 -    // Clip change: flush run before installing new clip state.
++    // Clip change: flush stroke run and blend run before new clip state.
      if (!have_clip_state || current_clip_key != node.clip_key) {
--      if (auto r = flush_run(replay_stats
--                                 ? &replay_stats->run_flush_clip_change
--                                 : nullptr);
--          r != VelocePathDisplayListResult::kRendered) {
--        return r;
-+      // Clip changing: flush stroke run and blend batches before new clip state.
-+      if (!flush_stroke_run()) {
-+        return VelocePathDisplayListResult::kCancelled;
-       }
-+      if (!FlushAllMaskBatches(device, list, mask_batches, replay_stats)) {
-+        return VelocePathDisplayListResult::kCancelled;
-+      }
-       if (node.clip_key == kNoClipKey) {
-         status->ProcessClipPath(empty_clip, holder_to_device);
-       } else {
-@@ -926,73 +1001,71 @@
++      flush_stroke_run();
+       if (auto r = flush_run(replay_stats
+                                  ? &replay_stats->run_flush_clip_change
+                                  : nullptr);
+@@ -926,20 +976,36 @@
              ? nullptr
              : &list.graph_state_table[paint.graph_state_key];
  
 -    if (paint.blend_mode == BlendMode::kNormal) {
 -      // Normal node: flush pending run first (blend must composite before
 -      // the normal node paints over it), then draw directly.
--      if (auto r = flush_run(replay_stats
--                                 ? &replay_stats->run_flush_normal_node
--                                 : nullptr);
--          r != VelocePathDisplayListResult::kRendered) {
--        return r;
 +    if (IsStrokeOnlyNormal(paint)) {
-+      // Stroke run packing: flush and start a new run if the paint key changes.
++      // Stroke run packing: flush if paint key changes, then accumulate.
 +      if (stroke_run_count > 0 && node.paint_key != stroke_run_paint_key) {
-+        if (!flush_stroke_run()) {
-+          return VelocePathDisplayListResult::kCancelled;
-+        }
-       }
-+      // Also flush any pending blend batches — blend content painted before
-+      // this stroke run must composite before the strokes are drawn.
-+      if (!FlushAllMaskBatches(device, list, mask_batches, replay_stats)) {
-+        return VelocePathDisplayListResult::kCancelled;
++        flush_stroke_run();
 +      }
-+      // Append this path into the run. path_matrix already encodes
-+      // holder_to_device, so we pass it as the transform to Append.
++      // Flush blend run — blend content before this stroke must composite first.
+       if (auto r = flush_run(replay_stats
+                                  ? &replay_stats->run_flush_normal_node
+                                  : nullptr);
+           r != VelocePathDisplayListResult::kRendered) {
+         return r;
+       }
 +      stroke_run_path.Append(*path, &path_matrix);
 +      stroke_run_paint_key = node.paint_key;
 +      stroke_run_count++;
 +    } else if (paint.blend_mode == BlendMode::kNormal) {
-+      // Non-stroke-only normal node: flush stroke run and blend batches first.
-+      if (!flush_stroke_run()) {
-+        return VelocePathDisplayListResult::kCancelled;
-+      }
-+      if (!FlushAllMaskBatches(device, list, mask_batches, replay_stats)) {
-+        return VelocePathDisplayListResult::kCancelled;
++      // Non-stroke normal node: flush stroke run and blend run first.
++      flush_stroke_run();
++      if (auto r = flush_run(replay_stats
++                                 ? &replay_stats->run_flush_normal_node
++                                 : nullptr);
++          r != VelocePathDisplayListResult::kRendered) {
++        return r;
 +      }
        device->DrawPath(*path, &path_matrix, graph_state, paint.fill_argb,
                         paint.stroke_argb, paint.fill_options);
--
+ 
      } else if (CanDrawBlendNodeWithMask(paint)) {
 -      // Mask-eligible blend node. Flush if the paint key changes.
--      if (!run.empty() && run.paint_key != node.paint_key) {
--        if (auto r = flush_run(replay_stats
--                                   ? &replay_stats->run_flush_paint_change
--                                   : nullptr);
--            r != VelocePathDisplayListResult::kRendered) {
--          return r;
--        }
-+      // Blend node: flush stroke run first to maintain painter's order.
-+      if (!flush_stroke_run()) {
-+        return VelocePathDisplayListResult::kCancelled;
++      // Mask-eligible blend node. Flush stroke run first, then blend run.
++      flush_stroke_run();
+       if (!run.empty() && run.paint_key != node.paint_key) {
+         if (auto r = flush_run(replay_stats
+                                    ? &replay_stats->run_flush_paint_change
+@@ -970,7 +1036,8 @@
        }
--      // Accumulate into the group run. Overlapping paths are allowed — they
--      // will be composited normally inside the BGRA group buffer, matching
--      // the PDF transparency group model. No overlap gate needed.
-       FX_RECT node_rect =
-           holder_to_device.TransformRect(node.holder_space_bbox).GetOuterRect();
-       node_rect.Intersect(device->GetClipBox());
-       if (!node_rect.IsEmpty()) {
--        run.paint_key = node.paint_key;
--        if (!run.group_rect_valid) {
--          run.group_rect = node_rect;
--          run.group_rect_valid = true;
-+        MaskBlendBatch& batch = mask_batches[node.paint_key];
-+        batch.paint_key = node.paint_key;
-+        if (!batch.clip_rect_valid) {
-+          batch.clip_rect = node_rect;
-+          batch.clip_rect_valid = true;
-         } else {
--          run.group_rect.left = std::min(run.group_rect.left, node_rect.left);
--          run.group_rect.top = std::min(run.group_rect.top, node_rect.top);
--          run.group_rect.right = std::max(run.group_rect.right, node_rect.right);
--          run.group_rect.bottom =
--              std::max(run.group_rect.bottom, node_rect.bottom);
-+          batch.clip_rect.left = std::min(batch.clip_rect.left, node_rect.left);
-+          batch.clip_rect.top = std::min(batch.clip_rect.top, node_rect.top);
-+          batch.clip_rect.right = std::max(batch.clip_rect.right, node_rect.right);
-+          batch.clip_rect.bottom = std::max(batch.clip_rect.bottom, node_rect.bottom);
-         }
--        run.entries.push_back({node.path_index, path_matrix, node_rect});
-+        batch.entries.push_back({node.path_index, path_matrix});
-       }
--
--    } else {
+ 
+     } else {
 -      // Scratch-blend or unsupported: flush run, then draw via per-node BGRA.
--      if (auto r = flush_run(replay_stats
--                                 ? &replay_stats->run_flush_scratch_blend
--                                 : nullptr);
--          r != VelocePathDisplayListResult::kRendered) {
--        return r;
--      }
--      if (!DrawPathNodeWithBlend(device, *path, path_matrix, graph_state,
--                                 paint, node, holder_to_device)) {
--        return VelocePathDisplayListResult::kCancelled;
--      }
-+    } else if (!DrawPathNodeWithBlend(device, *path, path_matrix, graph_state,
-+                                      paint, node, holder_to_device)) {
-+      return VelocePathDisplayListResult::kCancelled;
-     }
--
-     if (replay_stats) {
-       replay_stats->drawn_nodes++;
++      // Scratch-blend or unsupported: flush stroke run and blend run first.
++      flush_stroke_run();
+       if (auto r = flush_run(replay_stats
+                                  ? &replay_stats->run_flush_scratch_blend
+                                  : nullptr);
+@@ -988,7 +1055,8 @@
      }
    }
  
 -  // Flush any run remaining after the last node.
--  if (auto r = flush_run(replay_stats ? &replay_stats->run_flush_end : nullptr);
--      r != VelocePathDisplayListResult::kRendered) {
--    return r;
-+  // Flush stroke run and blend batches at end of list.
-+  if (!flush_stroke_run()) {
-+    return VelocePathDisplayListResult::kCancelled;
-   }
-+  if (!FlushAllMaskBatches(device, list, mask_batches, replay_stats)) {
-+    return VelocePathDisplayListResult::kCancelled;
-+  }
- 
-   if (replay_stats) {
-     replay_stats->cancel_checks++;
++  // Flush stroke run and blend run remaining after the last node.
++  flush_stroke_run();
+   if (auto r = flush_run(replay_stats ? &replay_stats->run_flush_end : nullptr);
+       r != VelocePathDisplayListResult::kRendered) {
+     return r;
