@@ -1,6 +1,6 @@
 diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
 --- a/core/fpdfapi/render/veloce_path_display_list.cpp	2026-06-23 12:28:52
-+++ b/core/fpdfapi/render/veloce_path_display_list.cpp	2026-06-23 16:17:50
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp	2026-06-23 16:58:26
 @@ -9,6 +9,7 @@
  #include <chrono>
  #include <cstring>
@@ -333,7 +333,7 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
 -    }
 -    run.reset();
 -    return VelocePathDisplayListResult::kRendered;
-+    stroke_run_path = CFX_Path();
++    stroke_run_path.Clear();
 +    stroke_run_paint_key = kNoClipKey;
 +    stroke_run_count = 0;
 +    return true;
