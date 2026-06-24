@@ -60,6 +60,7 @@ these patches:
 | 0032 | `0032-veloce-path-display-list-stroke-run-packing.patch` | Stroke run packing. Consecutive stroke-only normal-blend nodes sharing the same `paint_key` are appended into one `CFX_Path` via `CFX_Path::Append` and drawn with a single `DrawPath` call. Safe because stroke rendering is per-subpath with no winding-rule interaction — unlike filled paths where `Append` changes fill semantics. Targets CAD/engineering PDFs (e.g. DWG exports from Bentley InterPlot) with hundreds of thousands of single-line-segment stroke paths. Adds `strokeRunDraws`, `strokeRunNodes`, `maxStrokeRunNodes` telemetry. |
 | ~~0033~~ | _(not shipped)_ | **REVERTED — do not apply.** Reserved for the failed group-buffer resolution-cap experiment. It downscaled large group buffers and stretched them back, but regressed `11.pdf` replay time severely because it added per-composite stretch work while preserving thousands of composites. Kept as a reserved number to avoid patch-history confusion. |
 | 0034 | `0034-veloce-path-display-list-ordered-text-passthrough.patch` | Ordered segmented acceleration. Converts the path-only display list into an ordered segment plan so text objects can remain in painter order between accelerated path runs instead of rejecting the whole holder. P1 supports `PathRun` + text passthrough only; image/Form/shading passthrough still rejects before drawing. Adds `segments`, `pathSegments`, `pathSegmentNodes`, `maxPathSegmentNodes`, `textPassthroughObjects`, and `unsupportedPassthroughObjects` telemetry. |
+| 0035 | `0035-veloce-path-display-list-stroke-run-flush-telemetry.patch` | Stroke-run flush telemetry. Adds reason counters for existing stroke-run flushes (`strokeRunFlushPaint`, `strokeRunFlushColor`, `strokeRunFlushGraphState`, `strokeRunFlushPathStyle`, `strokeRunFlushFillMode`, `strokeRunFlushClip`, `strokeRunFlushBlend`, `strokeRunFlushSegment`, `strokeRunFlushCapacity`, `strokeRunFlushEnd`). Telemetry-only: replay order and draw decisions are unchanged. |
 
 ## Why this directory exists
 
@@ -103,6 +104,7 @@ git apply patches/ship/0030-veloce-path-display-list-run-correctness-fixes.patch
 git apply patches/ship/0031-veloce-path-display-list-group-buffer-blend.patch
 git apply patches/ship/0032-veloce-path-display-list-stroke-run-packing.patch
 git apply patches/ship/0034-veloce-path-display-list-ordered-text-passthrough.patch
+git apply patches/ship/0035-veloce-path-display-list-stroke-run-flush-telemetry.patch
 ```
 
 > **Note:** patches 0027 and 0028 are deprecated and must NOT be applied.
@@ -167,6 +169,11 @@ painter order. The text passthrough calls PDFium's normal `RenderSingleObject()`
 and then clears clip state so the next accelerated path segment installs its
 own clip. Image, Form, and shading passthrough remain unsupported in this P1
 patch and reject before drawing.
+Patch 0035 depends on patch 0034 and is telemetry-only. It records why existing
+stroke runs flush, while preserving r28's hard segment barriers and all replay
+ordering. Use it to decide whether the next optimization should target color
+alternation, graph state/style variation, fill-mode barriers, clip changes,
+blend barriers, segment boundaries, or capacity.
 The release workflow applies the numeric order shown above, skipping 0027/0028.
 
 ## Cumulative effect (measured)
@@ -255,6 +262,10 @@ new `FPDFEx_LoadPageWithClassification()` symbol.
   Adds ordered `PathRun` / text-passthrough segments, text barrier replay via
   `RenderSingleObject()`, and segment/passthrough telemetry. No public API or
   build file changes.
+- **0035 Veloce stroke-run flush telemetry**:
+  `core/fpdfapi/render/veloce_path_display_list.cpp`.
+  Adds stroke-run flush reason counters only. No rendering behavior, public
+  API, or build file changes.
 - **0017 Veloce holder-level root page path display list**:
   `core/fpdfapi/render/cpdf_renderstatus.cpp`,
   `core/fpdfapi/render/veloce_path_display_list.{h,cpp}`.

@@ -1,0 +1,208 @@
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index 3f2c307..283ca70 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -168,6 +168,29 @@ struct PathDlReplayStats {
+   size_t stroke_run_draws = 0;
+   size_t stroke_run_nodes = 0;
+   size_t max_stroke_run_nodes = 0;
++  size_t stroke_run_flush_paint = 0;
++  size_t stroke_run_flush_color = 0;
++  size_t stroke_run_flush_graph_state = 0;
++  size_t stroke_run_flush_path_style = 0;
++  size_t stroke_run_flush_fill_mode = 0;
++  size_t stroke_run_flush_clip = 0;
++  size_t stroke_run_flush_blend = 0;
++  size_t stroke_run_flush_segment = 0;
++  size_t stroke_run_flush_capacity = 0;
++  size_t stroke_run_flush_end = 0;
++};
++
++enum class StrokeRunFlushReason {
++  kPaint,
++  kColor,
++  kGraphState,
++  kPathStyle,
++  kFillMode,
++  kClip,
++  kBlend,
++  kSegment,
++  kCapacity,
++  kEnd,
+ };
+
+ bool IsPathDisplayListFeatureEnabled(const CPDF_RenderStatus* status) {
+@@ -387,6 +410,11 @@ void LogPathDisplayListAttempt(const char* result,
+       "clipSwitches=%zu cancelChecks=%zu groupRunComposites=%zu groupRunNodes=%zu maxGroupRunNodes=%zu "
+       "runFlushPaint=%zu runFlushClip=%zu runFlushNormal=%zu runFlushScratch=%zu runFlushEnd=%zu "
+       "strokeRunDraws=%zu strokeRunNodes=%zu maxStrokeRunNodes=%zu "
++      "strokeRunFlushPaint=%zu strokeRunFlushColor=%zu "
++      "strokeRunFlushGraphState=%zu strokeRunFlushPathStyle=%zu "
++      "strokeRunFlushFillMode=%zu strokeRunFlushClip=%zu "
++      "strokeRunFlushBlend=%zu strokeRunFlushSegment=%zu "
++      "strokeRunFlushCapacity=%zu strokeRunFlushEnd=%zu "
+       "cache=%s compileMs=%" PRId64
+       " replayMs=%" PRId64
+       " totalFastMs=%" PRId64 " estimatedDispatchAvoided=%zu",
+@@ -428,6 +456,16 @@ void LogPathDisplayListAttempt(const char* result,
+       replay_stats ? replay_stats->stroke_run_draws : kZero,
+       replay_stats ? replay_stats->stroke_run_nodes : kZero,
+       replay_stats ? replay_stats->max_stroke_run_nodes : kZero,
++      replay_stats ? replay_stats->stroke_run_flush_paint : kZero,
++      replay_stats ? replay_stats->stroke_run_flush_color : kZero,
++      replay_stats ? replay_stats->stroke_run_flush_graph_state : kZero,
++      replay_stats ? replay_stats->stroke_run_flush_path_style : kZero,
++      replay_stats ? replay_stats->stroke_run_flush_fill_mode : kZero,
++      replay_stats ? replay_stats->stroke_run_flush_clip : kZero,
++      replay_stats ? replay_stats->stroke_run_flush_blend : kZero,
++      replay_stats ? replay_stats->stroke_run_flush_segment : kZero,
++      replay_stats ? replay_stats->stroke_run_flush_capacity : kZero,
++      replay_stats ? replay_stats->stroke_run_flush_end : kZero,
+       cache_state ? cache_state : "none", compile_ms,
+       replay_ms, compile_ms + replay_ms,
+       list ? list->nodes.size() : kZero);
+@@ -966,6 +1004,72 @@ bool IsStrokeOnlyNormal(const PathDlPaint& paint) {
+          paint.stroke_argb != 0;
+ }
+
++StrokeRunFlushReason ClassifyStrokePaintChange(const PathDlPaint& previous,
++                                                const PathDlPaint& next) {
++  const bool color_changed = previous.fill_argb != next.fill_argb ||
++                             previous.stroke_argb != next.stroke_argb;
++  const bool graph_state_changed =
++      previous.graph_state_key != next.graph_state_key;
++  const bool path_style_changed = !(previous.fill_options == next.fill_options);
++  const bool blend_changed = previous.blend_mode != next.blend_mode;
++  const size_t changed_fields = (color_changed ? 1u : 0u) +
++                                (graph_state_changed ? 1u : 0u) +
++                                (path_style_changed ? 1u : 0u) +
++                                (blend_changed ? 1u : 0u);
++  if (changed_fields != 1u) {
++    return StrokeRunFlushReason::kPaint;
++  }
++  if (color_changed) {
++    return StrokeRunFlushReason::kColor;
++  }
++  if (graph_state_changed) {
++    return StrokeRunFlushReason::kGraphState;
++  }
++  if (path_style_changed) {
++    return StrokeRunFlushReason::kPathStyle;
++  }
++  return StrokeRunFlushReason::kBlend;
++}
++
++void RecordStrokeRunFlush(PathDlReplayStats* replay_stats,
++                          StrokeRunFlushReason reason) {
++  if (!replay_stats) {
++    return;
++  }
++  switch (reason) {
++    case StrokeRunFlushReason::kPaint:
++      replay_stats->stroke_run_flush_paint++;
++      break;
++    case StrokeRunFlushReason::kColor:
++      replay_stats->stroke_run_flush_color++;
++      break;
++    case StrokeRunFlushReason::kGraphState:
++      replay_stats->stroke_run_flush_graph_state++;
++      break;
++    case StrokeRunFlushReason::kPathStyle:
++      replay_stats->stroke_run_flush_path_style++;
++      break;
++    case StrokeRunFlushReason::kFillMode:
++      replay_stats->stroke_run_flush_fill_mode++;
++      break;
++    case StrokeRunFlushReason::kClip:
++      replay_stats->stroke_run_flush_clip++;
++      break;
++    case StrokeRunFlushReason::kBlend:
++      replay_stats->stroke_run_flush_blend++;
++      break;
++    case StrokeRunFlushReason::kSegment:
++      replay_stats->stroke_run_flush_segment++;
++      break;
++    case StrokeRunFlushReason::kCapacity:
++      replay_stats->stroke_run_flush_capacity++;
++      break;
++    case StrokeRunFlushReason::kEnd:
++      replay_stats->stroke_run_flush_end++;
++      break;
++  }
++}
++
+ VelocePathDisplayListResult ReplayPathDisplayList(
+     CPDF_RenderStatus* status,
+     const NativePathDisplayList& list,
+@@ -1008,7 +1112,7 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+   uint32_t stroke_run_paint_key = kNoClipKey;  // kNoClipKey = sentinel for empty
+   size_t stroke_run_count = 0;
+
+-  auto flush_stroke_run = [&]() -> bool {
++  auto flush_stroke_run = [&](StrokeRunFlushReason reason) -> bool {
+     if (stroke_run_count == 0) return true;
+     const PathDlPaint& run_paint = list.paint_table[stroke_run_paint_key];
+     const CFX_GraphStateData* gs =
+@@ -1023,6 +1127,7 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+       if (stroke_run_count > replay_stats->max_stroke_run_nodes) {
+         replay_stats->max_stroke_run_nodes = stroke_run_count;
+       }
++      RecordStrokeRunFlush(replay_stats, reason);
+     }
+     stroke_run_path.Clear();
+     stroke_run_paint_key = kNoClipKey;
+@@ -1075,7 +1180,7 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+
+       // Clip change: flush stroke run and blend run before new clip state.
+       if (!have_clip_state || current_clip_key != node.clip_key) {
+-        flush_stroke_run();
++        flush_stroke_run(StrokeRunFlushReason::kClip);
+         if (auto r = flush_run(replay_stats
+                                    ? &replay_stats->run_flush_clip_change
+                                    : nullptr);
+@@ -1112,7 +1217,8 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+       if (IsStrokeOnlyNormal(paint)) {
+         // Stroke run packing: flush if paint key changes, then accumulate.
+         if (stroke_run_count > 0 && node.paint_key != stroke_run_paint_key) {
+-          flush_stroke_run();
++          flush_stroke_run(ClassifyStrokePaintChange(
++              list.paint_table[stroke_run_paint_key], paint));
+         }
+         // Flush blend run — blend content before this stroke must composite first.
+         if (auto r = flush_run(replay_stats
+@@ -1126,7 +1232,7 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+         stroke_run_count++;
+       } else if (paint.blend_mode == BlendMode::kNormal) {
+         // Non-stroke normal node: flush stroke run and blend run first.
+-        flush_stroke_run();
++        flush_stroke_run(StrokeRunFlushReason::kFillMode);
+         if (auto r = flush_run(replay_stats
+                                    ? &replay_stats->run_flush_normal_node
+                                    : nullptr);
+@@ -1138,7 +1244,7 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+
+       } else if (CanDrawBlendNodeWithMask(paint)) {
+         // Mask-eligible blend node. Flush stroke run first, then blend run.
+-        flush_stroke_run();
++        flush_stroke_run(StrokeRunFlushReason::kBlend);
+         if (!run.empty() && run.paint_key != node.paint_key) {
+           if (auto r = flush_run(replay_stats
+                                      ? &replay_stats->run_flush_paint_change
+@@ -1171,7 +1277,7 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+
+       } else {
+         // Scratch-blend or unsupported: flush stroke run and blend run first.
+-        flush_stroke_run();
++        flush_stroke_run(StrokeRunFlushReason::kBlend);
+         if (auto r = flush_run(replay_stats
+                                    ? &replay_stats->run_flush_scratch_blend
+                                    : nullptr);
+@@ -1191,7 +1297,7 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+
+     // Flush stroke run and blend run at the segment boundary before any
+     // passthrough object can paint in painter order.
+-    flush_stroke_run();
++    flush_stroke_run(StrokeRunFlushReason::kSegment);
+     if (auto r =
+             flush_run(replay_stats ? &replay_stats->run_flush_end : nullptr);
+         r != VelocePathDisplayListResult::kRendered) {
