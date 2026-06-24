@@ -1,0 +1,126 @@
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index 283ca70..2049509 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -178,6 +178,8 @@ struct PathDlReplayStats {
+   size_t stroke_run_flush_segment = 0;
+   size_t stroke_run_flush_capacity = 0;
+   size_t stroke_run_flush_end = 0;
++  size_t stroke_run_fill_barriers_crossed = 0;
++  size_t stroke_run_fill_barriers_blocked = 0;
+ };
+
+ enum class StrokeRunFlushReason {
+@@ -415,6 +417,7 @@ void LogPathDisplayListAttempt(const char* result,
+       "strokeRunFlushFillMode=%zu strokeRunFlushClip=%zu "
+       "strokeRunFlushBlend=%zu strokeRunFlushSegment=%zu "
+       "strokeRunFlushCapacity=%zu strokeRunFlushEnd=%zu "
++      "strokeRunFillBarriersCrossed=%zu strokeRunFillBarriersBlocked=%zu "
+       "cache=%s compileMs=%" PRId64
+       " replayMs=%" PRId64
+       " totalFastMs=%" PRId64 " estimatedDispatchAvoided=%zu",
+@@ -466,6 +469,8 @@ void LogPathDisplayListAttempt(const char* result,
+       replay_stats ? replay_stats->stroke_run_flush_segment : kZero,
+       replay_stats ? replay_stats->stroke_run_flush_capacity : kZero,
+       replay_stats ? replay_stats->stroke_run_flush_end : kZero,
++      replay_stats ? replay_stats->stroke_run_fill_barriers_crossed : kZero,
++      replay_stats ? replay_stats->stroke_run_fill_barriers_blocked : kZero,
+       cache_state ? cache_state : "none", compile_ms,
+       replay_ms, compile_ms + replay_ms,
+       list ? list->nodes.size() : kZero);
+@@ -863,6 +868,41 @@ bool IntersectsDeviceClip(const PathDlNode& node,
+   return !rect.IsEmpty();
+ }
+
++FX_RECT GetExpandedClippedDeviceRect(const PathDlNode& node,
++                                     const CFX_Matrix& holder_to_device,
++                                     CFX_RenderDevice* device) {
++  FX_RECT rect =
++      holder_to_device.TransformRect(node.holder_space_bbox).GetOuterRect();
++  if (!rect.IsEmpty()) {
++    rect.left -= 1;
++    rect.top -= 1;
++    rect.right += 1;
++    rect.bottom += 1;
++  }
++  rect.Intersect(device->GetClipBox());
++  return rect;
++}
++
++bool RectsIntersect(const FX_RECT& lhs, const FX_RECT& rhs) {
++  FX_RECT intersection = lhs;
++  intersection.Intersect(rhs);
++  return !intersection.IsEmpty();
++}
++
++void UnionRect(FX_RECT* accumulator, const FX_RECT& rect) {
++  if (rect.IsEmpty()) {
++    return;
++  }
++  if (accumulator->IsEmpty()) {
++    *accumulator = rect;
++    return;
++  }
++  accumulator->left = std::min(accumulator->left, rect.left);
++  accumulator->top = std::min(accumulator->top, rect.top);
++  accumulator->right = std::max(accumulator->right, rect.right);
++  accumulator->bottom = std::max(accumulator->bottom, rect.bottom);
++}
++
+ bool DrawPathNodeWithBlend(CFX_RenderDevice* device,
+                            const CFX_Path& path,
+                            const CFX_Matrix& path_matrix,
+@@ -1111,6 +1151,7 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+   CFX_Path stroke_run_path;
+   uint32_t stroke_run_paint_key = kNoClipKey;  // kNoClipKey = sentinel for empty
+   size_t stroke_run_count = 0;
++  FX_RECT stroke_run_device_rect;
+
+   auto flush_stroke_run = [&](StrokeRunFlushReason reason) -> bool {
+     if (stroke_run_count == 0) return true;
+@@ -1132,6 +1173,7 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+     stroke_run_path.Clear();
+     stroke_run_paint_key = kNoClipKey;
+     stroke_run_count = 0;
++    stroke_run_device_rect = FX_RECT();
+     return true;
+   };
+
+@@ -1140,6 +1182,7 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+     stroke_run_path.Clear();
+     stroke_run_paint_key = kNoClipKey;
+     stroke_run_count = 0;
++    stroke_run_device_rect = FX_RECT();
+   };
+
+   auto replay_path_segment =
+@@ -1230,9 +1273,27 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+         stroke_run_path.Append(*path, &path_matrix);
+         stroke_run_paint_key = node.paint_key;
+         stroke_run_count++;
++        UnionRect(&stroke_run_device_rect,
++                  GetExpandedClippedDeviceRect(node, holder_to_device, device));
+       } else if (paint.blend_mode == BlendMode::kNormal) {
+-        // Non-stroke normal node: flush stroke run and blend run first.
+-        flush_stroke_run(StrokeRunFlushReason::kFillMode);
++        // Non-stroke normal nodes are painter-order barriers unless their
++        // device bounds are disjoint from the pending stroke run. Disjoint
++        // draws commute, so the stroke run may stay packed across the barrier.
++        if (stroke_run_count > 0) {
++          const FX_RECT barrier_rect =
++              GetExpandedClippedDeviceRect(node, holder_to_device, device);
++          if (!stroke_run_device_rect.IsEmpty() && !barrier_rect.IsEmpty() &&
++              !RectsIntersect(stroke_run_device_rect, barrier_rect)) {
++            if (replay_stats) {
++              replay_stats->stroke_run_fill_barriers_crossed++;
++            }
++          } else {
++            if (replay_stats) {
++              replay_stats->stroke_run_fill_barriers_blocked++;
++            }
++            flush_stroke_run(StrokeRunFlushReason::kFillMode);
++          }
++        }
+         if (auto r = flush_run(replay_stats
+                                    ? &replay_stats->run_flush_normal_node
+                                    : nullptr);

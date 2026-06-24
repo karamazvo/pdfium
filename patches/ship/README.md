@@ -61,6 +61,7 @@ these patches:
 | ~~0033~~ | _(not shipped)_ | **REVERTED — do not apply.** Reserved for the failed group-buffer resolution-cap experiment. It downscaled large group buffers and stretched them back, but regressed `11.pdf` replay time severely because it added per-composite stretch work while preserving thousands of composites. Kept as a reserved number to avoid patch-history confusion. |
 | 0034 | `0034-veloce-path-display-list-ordered-text-passthrough.patch` | Ordered segmented acceleration. Converts the path-only display list into an ordered segment plan so text objects can remain in painter order between accelerated path runs instead of rejecting the whole holder. P1 supports `PathRun` + text passthrough only; image/Form/shading passthrough still rejects before drawing. Adds `segments`, `pathSegments`, `pathSegmentNodes`, `maxPathSegmentNodes`, `textPassthroughObjects`, and `unsupportedPassthroughObjects` telemetry. |
 | 0035 | `0035-veloce-path-display-list-stroke-run-flush-telemetry.patch` | Stroke-run flush telemetry. Adds reason counters for existing stroke-run flushes (`strokeRunFlushPaint`, `strokeRunFlushColor`, `strokeRunFlushGraphState`, `strokeRunFlushPathStyle`, `strokeRunFlushFillMode`, `strokeRunFlushClip`, `strokeRunFlushBlend`, `strokeRunFlushSegment`, `strokeRunFlushCapacity`, `strokeRunFlushEnd`). Telemetry-only: replay order and draw decisions are unchanged. |
+| 0036 | `0036-veloce-path-display-list-nonoverlap-fill-barrier-stroke-packing.patch` | Non-overlap fill-barrier stroke packing. Keeps a pending stroke run open across a normal non-stroke path only when expanded clipped device-space bounds prove that the barrier is disjoint from the pending stroke run. Overlapping or unknown barriers still flush. Adds `strokeRunFillBarriersCrossed` and `strokeRunFillBarriersBlocked` telemetry. |
 
 ## Why this directory exists
 
@@ -105,6 +106,7 @@ git apply patches/ship/0031-veloce-path-display-list-group-buffer-blend.patch
 git apply patches/ship/0032-veloce-path-display-list-stroke-run-packing.patch
 git apply patches/ship/0034-veloce-path-display-list-ordered-text-passthrough.patch
 git apply patches/ship/0035-veloce-path-display-list-stroke-run-flush-telemetry.patch
+git apply patches/ship/0036-veloce-path-display-list-nonoverlap-fill-barrier-stroke-packing.patch
 ```
 
 > **Note:** patches 0027 and 0028 are deprecated and must NOT be applied.
@@ -174,6 +176,11 @@ stroke runs flush, while preserving r28's hard segment barriers and all replay
 ordering. Use it to decide whether the next optimization should target color
 alternation, graph state/style variation, fill-mode barriers, clip changes,
 blend barriers, segment boundaries, or capacity.
+Patch 0036 depends on patch 0035. It reduces fill-mode stroke-run fragmentation
+without violating painter order by crossing only disjoint normal non-stroke path
+barriers. The proof is device-space and conservative: expanded barrier bounds
+must not intersect the expanded pending stroke-run bounds. Segment, text, clip,
+blend, and overlapping fill barriers remain hard flush boundaries.
 The release workflow applies the numeric order shown above, skipping 0027/0028.
 
 ## Cumulative effect (measured)
@@ -266,6 +273,10 @@ new `FPDFEx_LoadPageWithClassification()` symbol.
   `core/fpdfapi/render/veloce_path_display_list.cpp`.
   Adds stroke-run flush reason counters only. No rendering behavior, public
   API, or build file changes.
+- **0036 Veloce non-overlap fill-barrier stroke packing**:
+  `core/fpdfapi/render/veloce_path_display_list.cpp`.
+  Allows stroke runs to cross disjoint normal non-stroke barriers, with
+  crossed/blocked telemetry. No public API or build file changes.
 - **0017 Veloce holder-level root page path display list**:
   `core/fpdfapi/render/cpdf_renderstatus.cpp`,
   `core/fpdfapi/render/veloce_path_display_list.{h,cpp}`.
