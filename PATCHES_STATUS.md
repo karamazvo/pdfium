@@ -112,6 +112,19 @@ holder space, queries candidate bins, sorts candidate node ids back into
 display-list order, and then reuses the existing segment/stroke/blend replay.
 Broad preview clips fall back to the old sequential scan.
 
+To build the r32 text-passthrough cache UAF fix path-display-list binary:
+
+> Run workflow: **`r32 text passthrough cache UAF fix path display-list - Build patched PDFium Android arm64`**
+>
+> File: `.github/workflows/pdfium-android-arm64-r32-text-passthrough-cache-uaf-fix-path-display-list.yml`
+> Artifact: `libpdfium-android-arm64-r32-text-passthrough-cache-uaf-fix-path-display-list`
+
+This applies ship patches `01..09,0011,0012,0013,0014,0015,0016,0017,0018,0019,0020,0021,0022,0023,0024,0025,0026,0029,0030,0031,0032,0034,0035,0036,0037,0038`.
+Patch 0038 fixes the r31 text-passthrough cache lifetime hazard: ordered text
+passthrough segments keep raw `CPDF_PageObject*` pointers for current-holder
+replay, so display lists containing text passthrough are no longer inserted into
+the process cache. Path-only cached display lists remain cacheable.
+
 To build the r9 path-display-list no-op clip binary:
 
 > Run workflow: **`Build patched PDFium Android arm64 r9 path display-list no-op clip`**

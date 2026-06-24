@@ -1,0 +1,21 @@
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -1710,8 +1710,16 @@
+       return VelocePathDisplayListResult::kNotEligible;
+     }
+     compile_ms = ElapsedMs(compile_start_ns);
+-    cached_list =
+-        StoreCachedPathDisplayList(cache_key, std::move(compiled_list));
++    if (compiled_list->text_passthrough_objects == 0) {
++      cached_list =
++          StoreCachedPathDisplayList(cache_key, std::move(compiled_list));
++    } else {
++      // Text passthrough segments store raw CPDF_PageObject pointers that are
++      // valid only for this holder replay. Do not retain them in the process
++      // display-list cache across later page/holder lifetimes.
++      cached_list =
++          std::shared_ptr<const NativePathDisplayList>(std::move(compiled_list));
++    }
+   }
+ 
+   if (ShouldRejectScratchBlendReplay(*cached_list, holder_kind)) {
