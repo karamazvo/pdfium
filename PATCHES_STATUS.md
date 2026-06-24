@@ -61,6 +61,19 @@ separate native path display-list implementation for eligible fill-only
 path Form XObjects such as `/Meta20`. Unsupported content falls back to
 PDFium's original `RenderObjectList()` path before drawing.
 
+To build the r28 ordered text-passthrough path-display-list binary:
+
+> Run workflow: **`r28 ordered text passthrough path display-list - Build patched PDFium Android arm64`**
+>
+> File: `.github/workflows/pdfium-android-arm64-r28-ordered-text-passthrough-path-display-list.yml`
+> Artifact: `libpdfium-android-arm64-r28-ordered-text-passthrough-path-display-list`
+
+This applies ship patches `01..09,0011,0012,0013,0014,0015,0016,0017,0018,0019,0020,0021,0022,0023,0024,0025,0026,0029,0030,0031,0032,0034`.
+Patch 0034 keeps the existing Veloce path/stroke/blend replay kernels and adds
+ordered `PathRun` + text-passthrough segments so one text object no longer
+rejects an otherwise accelerable path-dense holder. Image/Form/shading
+passthrough remains unsupported in r28 and rejects before drawing.
+
 To build the r9 path-display-list no-op clip binary:
 
 > Run workflow: **`Build patched PDFium Android arm64 r9 path display-list no-op clip`**
@@ -160,6 +173,8 @@ and the `libandroid.so` runtime dependency.
 | ship 0021 | VELOCE EXPERIMENTAL | `patches/ship/0021-veloce-path-display-list-stroke-replay.patch` | Adds native stroked-path replay to the Veloce path display list. Stroke color and graph state are stored in side tables and replayed through PDFium's existing `DrawPath()` primitive; soft masks, blend modes, and pattern paint still fall back. |
 | ship 0022 | VELOCE EXPERIMENTAL | `patches/ship/0022-veloce-path-display-list-split-transparency-rejects.patch` | Splits the broad path display-list `transparency` rejection into `soft_mask` and `blend_mode` telemetry. Rendering behavior is unchanged; this identifies pages like `11.pdf` as blend-mode blocked. |
 | ship 0023 | VELOCE EXPERIMENTAL | `patches/ship/0023-veloce-path-display-list-darken-blend-replay.patch` | Allows `/BM /Darken` path nodes in the native Veloce path display list. Darken paths render into a temporary BGRA bitmap and composite back into the same PDFium render device through `SetDIBitsWithBlend()`, preserving blend semantics instead of treating Darken as normal paint. |
+| ship 0033 | REVERTED | _(not shipped)_ | Reserved for the reverted group-buffer resolution-cap experiment. Do not reuse this number; r28 intentionally applies `0034` after `0032`. |
+| ship 0034 | VELOCE EXPERIMENTAL | `patches/ship/0034-veloce-path-display-list-ordered-text-passthrough.patch` | Adds ordered path/text segment replay on top of the existing path display-list stack. Text objects are rendered via `RenderSingleObject()` at their original painter-order position, then clip state is cleared so the next accelerated path segment installs its own clip. |
 
 ---
 
@@ -183,6 +198,7 @@ and the `libandroid.so` runtime dependency.
 | `pdfium-android-arm64-r15-stroke-path-display-list.yml` | `workflow_dispatch` | **R15 STROKE PATH DISPLAY-LIST BUILD.** Applies ship patches `01..09,0011,0012,0013,0014,0015,0016,0017,0018,0019,0020,0021`, including native stroked-path replay for dense root pages such as `11.pdf`. Verifies stroke alpha is replayed through `DrawPath()` instead of rejected as transparency. |
 | `pdfium-android-arm64-r16-transparency-reject-diagnostics.yml` | `workflow_dispatch` | **R16 TRANSPARENCY REJECT DIAGNOSTICS BUILD.** Applies ship patches `01..09,0011,0012,0013,0014,0015,0016,0017,0018,0019,0020,0021,0022`. Rendering behavior is unchanged, but `VelocePathDL` now reports `reason=blend_mode` or `reason=soft_mask` instead of the broad `reason=transparency`. |
 | `pdfium-android-arm64-r17-darken-blend-path-display-list.yml` | `workflow_dispatch` | **R17 DARKEN BLEND PATH DISPLAY-LIST BUILD.** Applies ship patches `01..09,0011,0012,0013,0014,0015,0016,0017,0018,0019,0020,0021,0022,0023`. This is the first correctness-preserving native Veloce attempt for `11.pdf`-class `/BM /Darken` dense path pages. Expected log: `holderKind=root_page`, `result=rendered`, and nonzero `blendNodes`. |
+| `pdfium-android-arm64-r28-ordered-text-passthrough-path-display-list.yml` | `workflow_dispatch` | **R28 ORDERED TEXT PASSTHROUGH PATH DISPLAY-LIST BUILD.** Applies ship patches through `0034`, skipping deprecated `0027/0028`. The workflow name starts with `r28` so it is easy to spot in GitHub Actions. Expected log: nonzero `pathSegments` and `textPassthroughObjects` on Q16xxx-class text-barrier pages, with image/Form/shading passthrough still rejected before drawing. |
 | `libpdfium_experiment_profile_build.yml` | `workflow_dispatch` | **EXPERIMENT PROFILE BUILD.** Applies ship patches `01..08` plus `patches/experiments/0010-render-profile-and-content-skip.patch`. Use this to measure per-stage `FPDF_RenderPageBitmap()` costs and test skip-text/path/image/shading/Form/transparency/soft-mask speedups on selected PDFs. Artifact: `libpdfium-android-arm64-veloce-render-profile-experiment`. |
 | `release-size-experiment.yml` | `workflow_dispatch` | Side-by-side size comparison (baseline / A / B / C). Variant C is the current ship config. Run this when a future PDFium roll or build refactor unexpectedly changes the size profile — it isolates which lever moved. |
 | `build-pdfium-android-arm64-agg-devicen-fast.yml` | `workflow_dispatch` | Diagnostic ship build. Applies 0003+0004+0005+0007+0008+0009, retains trace markers. Use for future perf investigations. |
