@@ -1,6 +1,6 @@
 # xPDFSDK PDFium Patch Status
 
-**Last updated:** 2026-06-22
+**Last updated:** 2026-06-24
 
 ## TL;DR
 
@@ -97,6 +97,20 @@ This applies ship patches `01..09,0011,0012,0013,0014,0015,0016,0017,0018,0019,0
 Patch 0036 lets a pending stroke run stay open across a normal non-stroke path
 only when expanded device-space bounds prove the barrier is disjoint from the
 pending stroke run. Overlapping or unknown barriers still flush exactly as r29.
+
+To build the r31 holder-space spatial-index path-display-list binary:
+
+> Run workflow: **`r31 holder-space spatial index path display-list - Build patched PDFium Android arm64`**
+>
+> File: `.github/workflows/pdfium-android-arm64-r31-holder-space-spatial-index-path-display-list.yml`
+> Artifact: `libpdfium-android-arm64-r31-holder-space-spatial-index-path-display-list`
+
+This applies ship patches `01..09,0011,0012,0013,0014,0015,0016,0017,0018,0019,0020,0021,0022,0023,0024,0025,0026,0029,0030,0031,0032,0034,0035,0036,0037`.
+Patch 0037 builds a 32x32 holder-space spatial index once with the cached
+native path display list. Tile replay transforms the device clip back into
+holder space, queries candidate bins, sorts candidate node ids back into
+display-list order, and then reuses the existing segment/stroke/blend replay.
+Broad preview clips fall back to the old sequential scan.
 
 To build the r9 path-display-list no-op clip binary:
 
@@ -201,6 +215,7 @@ and the `libandroid.so` runtime dependency.
 | ship 0034 | VELOCE EXPERIMENTAL | `patches/ship/0034-veloce-path-display-list-ordered-text-passthrough.patch` | Adds ordered path/text segment replay on top of the existing path display-list stack. Text objects are rendered via `RenderSingleObject()` at their original painter-order position, then clip state is cleared so the next accelerated path segment installs its own clip. |
 | ship 0035 | VELOCE TELEMETRY | `patches/ship/0035-veloce-path-display-list-stroke-run-flush-telemetry.patch` | Adds telemetry-only stroke-run flush reason counters (`strokeRunFlushPaint`, `strokeRunFlushColor`, `strokeRunFlushGraphState`, `strokeRunFlushPathStyle`, `strokeRunFlushFillMode`, `strokeRunFlushClip`, `strokeRunFlushBlend`, `strokeRunFlushSegment`, `strokeRunFlushCapacity`, `strokeRunFlushEnd`) without changing replay decisions. |
 | ship 0036 | VELOCE EXPERIMENTAL | `patches/ship/0036-veloce-path-display-list-nonoverlap-fill-barrier-stroke-packing.patch` | Allows stroke-run packing to cross normal non-stroke path barriers only when expanded clipped device bounds prove the pending stroke run and barrier are disjoint. Adds `strokeRunFillBarriersCrossed` and `strokeRunFillBarriersBlocked` telemetry. |
+| ship 0037 | VELOCE EXPERIMENTAL | `patches/ship/0037-veloce-path-display-list-holder-space-spatial-index.patch` | Builds a cached holder-space 32x32 spatial index for path display-list nodes and uses it to query tile candidates before segment replay. Candidate ids are sorted back into original display-list order; segment/text/blend/clip barriers remain the correctness boundary. Adds `spatialIndex*` telemetry. |
 
 ---
 
@@ -227,6 +242,7 @@ and the `libandroid.so` runtime dependency.
 | `pdfium-android-arm64-r28-ordered-text-passthrough-path-display-list.yml` | `workflow_dispatch` | **R28 ORDERED TEXT PASSTHROUGH PATH DISPLAY-LIST BUILD.** Applies ship patches through `0034`, skipping deprecated `0027/0028`. The workflow name starts with `r28` so it is easy to spot in GitHub Actions. Expected log: nonzero `pathSegments` and `textPassthroughObjects` on Q16xxx-class text-barrier pages, with image/Form/shading passthrough still rejected before drawing. |
 | `pdfium-android-arm64-r29-stroke-run-flush-telemetry-path-display-list.yml` | `workflow_dispatch` | **R29 STROKE-RUN FLUSH TELEMETRY PATH DISPLAY-LIST BUILD.** Applies ship patches through `0035`, skipping deprecated `0027/0028`. The workflow name starts with `r29` so it is easy to spot in GitHub Actions. Expected log: the r28 segment counters plus `strokeRunFlush*` counters explaining `strokeRunDraws` on Q16-style CAD pages. |
 | `pdfium-android-arm64-r30-nonoverlap-fill-barrier-stroke-packing-path-display-list.yml` | `workflow_dispatch` | **R30 NON-OVERLAP FILL-BARRIER STROKE PACKING PATH DISPLAY-LIST BUILD.** Applies ship patches through `0036`, skipping deprecated `0027/0028`. The workflow name starts with `r30` so it is easy to spot in GitHub Actions. Expected log: lower `strokeRunFlushFillMode` when fill barriers are disjoint, plus `strokeRunFillBarriersCrossed/Blocked` counters. |
+| `pdfium-android-arm64-r31-holder-space-spatial-index-path-display-list.yml` | `workflow_dispatch` | **R31 HOLDER-SPACE SPATIAL INDEX PATH DISPLAY-LIST BUILD.** Applies ship patches through `0037`, skipping deprecated `0027/0028`. The workflow name starts with `r31` so it is easy to spot in GitHub Actions. Expected log: nonzero `spatialIndexBins`, candidate counts, and large `spatialIndexSkippedByTile` on sparse Q16 zoom tiles while broad preview clips report `spatialIndexFallbackFullScan`. |
 | `libpdfium_experiment_profile_build.yml` | `workflow_dispatch` | **EXPERIMENT PROFILE BUILD.** Applies ship patches `01..08` plus `patches/experiments/0010-render-profile-and-content-skip.patch`. Use this to measure per-stage `FPDF_RenderPageBitmap()` costs and test skip-text/path/image/shading/Form/transparency/soft-mask speedups on selected PDFs. Artifact: `libpdfium-android-arm64-veloce-render-profile-experiment`. |
 | `release-size-experiment.yml` | `workflow_dispatch` | Side-by-side size comparison (baseline / A / B / C). Variant C is the current ship config. Run this when a future PDFium roll or build refactor unexpectedly changes the size profile — it isolates which lever moved. |
 | `build-pdfium-android-arm64-agg-devicen-fast.yml` | `workflow_dispatch` | Diagnostic ship build. Applies 0003+0004+0005+0007+0008+0009, retains trace markers. Use for future perf investigations. |

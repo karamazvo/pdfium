@@ -1,0 +1,641 @@
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index 204950935..9ec8cbaa9 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -8,6 +8,7 @@
+ 
+ #include <chrono>
+ #include <cstring>
++#include <iterator>
+ #include <limits>
+ #include <memory>
+ #include <mutex>
+@@ -47,6 +48,9 @@ constexpr uint32_t kMaxClipPathCount = 16;
+ constexpr uint32_t kCancelCheckNodeInterval = 64;
+ constexpr size_t kMaxCachedPathDisplayLists = 32;
+ constexpr size_t kMaxScratchBlendNodes = 512;
++constexpr uint32_t kSpatialIndexColumns = 32;
++constexpr uint32_t kSpatialIndexRows = 32;
++constexpr uint32_t kMaxSpatialBinsPerNode = 128;
+ 
+ enum class PathDlRejectReason {
+   kNone,
+@@ -101,6 +105,20 @@ struct PathDlSegment {
+   CPDF_PageObject* passthrough_obj = nullptr;
+ };
+ 
++struct PathDlSpatialIndex {
++  CFX_FloatRect bounds;
++  uint32_t columns = 0;
++  uint32_t rows = 0;
++  std::vector<std::vector<uint32_t>> bins;
++  std::vector<uint32_t> overflow_nodes;
++  size_t bin_entries = 0;
++
++  bool valid() const {
++    return columns > 0 && rows > 0 && bins.size() == columns * rows &&
++           !bounds.IsEmpty();
++  }
++};
++
+ struct NativePathDisplayList {
+   std::vector<CPDF_Path> path_table;
+   std::vector<PathDlPaint> paint_table;
+@@ -108,6 +126,7 @@ struct NativePathDisplayList {
+   std::vector<CPDF_ClipPath> clip_table;
+   std::vector<PathDlNode> nodes;
+   std::vector<PathDlSegment> segments;
++  PathDlSpatialIndex spatial_index;
+   size_t scanned_objects = 0;
+   size_t skipped_inactive = 0;
+   size_t skipped_invisible = 0;
+@@ -180,6 +199,12 @@ struct PathDlReplayStats {
+   size_t stroke_run_flush_end = 0;
+   size_t stroke_run_fill_barriers_crossed = 0;
+   size_t stroke_run_fill_barriers_blocked = 0;
++  size_t spatial_index_queries = 0;
++  size_t spatial_index_query_bins = 0;
++  size_t spatial_index_candidates = 0;
++  size_t spatial_index_skipped_by_tile = 0;
++  size_t spatial_index_fallback_full_scan = 0;
++  int64_t spatial_index_query_ms = 0;
+ };
+ 
+ enum class StrokeRunFlushReason {
+@@ -418,6 +443,11 @@ void LogPathDisplayListAttempt(const char* result,
+       "strokeRunFlushBlend=%zu strokeRunFlushSegment=%zu "
+       "strokeRunFlushCapacity=%zu strokeRunFlushEnd=%zu "
+       "strokeRunFillBarriersCrossed=%zu strokeRunFillBarriersBlocked=%zu "
++      "spatialIndexBins=%zu spatialIndexEntries=%zu "
++      "spatialIndexOverflow=%zu spatialIndexQueries=%zu "
++      "spatialIndexQueryBins=%zu spatialIndexCandidates=%zu "
++      "spatialIndexSkippedByTile=%zu spatialIndexFallbackFullScan=%zu "
++      "spatialIndexQueryMs=%" PRId64 " "
+       "cache=%s compileMs=%" PRId64
+       " replayMs=%" PRId64
+       " totalFastMs=%" PRId64 " estimatedDispatchAvoided=%zu",
+@@ -471,6 +501,19 @@ void LogPathDisplayListAttempt(const char* result,
+       replay_stats ? replay_stats->stroke_run_flush_end : kZero,
+       replay_stats ? replay_stats->stroke_run_fill_barriers_crossed : kZero,
+       replay_stats ? replay_stats->stroke_run_fill_barriers_blocked : kZero,
++      list && list->spatial_index.valid() ? list->spatial_index.bins.size()
++                                          : kZero,
++      list && list->spatial_index.valid() ? list->spatial_index.bin_entries
++                                          : kZero,
++      list && list->spatial_index.valid()
++          ? list->spatial_index.overflow_nodes.size()
++          : kZero,
++      replay_stats ? replay_stats->spatial_index_queries : kZero,
++      replay_stats ? replay_stats->spatial_index_query_bins : kZero,
++      replay_stats ? replay_stats->spatial_index_candidates : kZero,
++      replay_stats ? replay_stats->spatial_index_skipped_by_tile : kZero,
++      replay_stats ? replay_stats->spatial_index_fallback_full_scan : kZero,
++      replay_stats ? replay_stats->spatial_index_query_ms : 0,
+       cache_state ? cache_state : "none", compile_ms,
+       replay_ms, compile_ms + replay_ms,
+       list ? list->nodes.size() : kZero);
+@@ -700,6 +743,104 @@ std::optional<uint32_t> AddGraphStateKey(NativePathDisplayList* list,
+   return static_cast<uint32_t>(list->graph_state_table.size() - 1);
+ }
+ 
++uint32_t SpatialIndexCoordToBin(float value,
++                                float min_value,
++                                float span,
++                                uint32_t bin_count) {
++  if (span <= 0 || bin_count == 0 || value <= min_value) {
++    return 0;
++  }
++  const float scaled = (value - min_value) * bin_count / span;
++  if (scaled >= bin_count) {
++    return bin_count - 1;
++  }
++  return static_cast<uint32_t>(scaled);
++}
++
++bool GetSpatialIndexRange(const PathDlSpatialIndex& index,
++                          const CFX_FloatRect& rect,
++                          uint32_t* left_bin,
++                          uint32_t* right_bin,
++                          uint32_t* bottom_bin,
++                          uint32_t* top_bin) {
++  if (!index.valid()) {
++    return false;
++  }
++  CFX_FloatRect clipped = rect;
++  clipped.Normalize();
++  clipped.Intersect(index.bounds);
++  if (clipped.IsEmpty()) {
++    return false;
++  }
++
++  *left_bin = SpatialIndexCoordToBin(clipped.left, index.bounds.left,
++                                     index.bounds.Width(), index.columns);
++  *right_bin = SpatialIndexCoordToBin(clipped.right, index.bounds.left,
++                                      index.bounds.Width(), index.columns);
++  *bottom_bin = SpatialIndexCoordToBin(clipped.bottom, index.bounds.bottom,
++                                       index.bounds.Height(), index.rows);
++  *top_bin = SpatialIndexCoordToBin(clipped.top, index.bounds.bottom,
++                                    index.bounds.Height(), index.rows);
++  return true;
++}
++
++void BuildPathDlSpatialIndex(NativePathDisplayList* list) {
++  if (!list || list->nodes.empty()) {
++    return;
++  }
++
++  bool have_bounds = false;
++  CFX_FloatRect bounds;
++  for (const PathDlNode& node : list->nodes) {
++    CFX_FloatRect rect = node.holder_space_bbox;
++    rect.Normalize();
++    if (rect.IsEmpty()) {
++      continue;
++    }
++    if (have_bounds) {
++      bounds.Union(rect);
++    } else {
++      bounds = rect;
++      have_bounds = true;
++    }
++  }
++  if (!have_bounds || bounds.IsEmpty()) {
++    return;
++  }
++
++  PathDlSpatialIndex index;
++  index.bounds = bounds;
++  index.columns = kSpatialIndexColumns;
++  index.rows = kSpatialIndexRows;
++  index.bins.resize(index.columns * index.rows);
++
++  for (uint32_t node_index = 0; node_index < list->nodes.size();
++       ++node_index) {
++    uint32_t left_bin = 0;
++    uint32_t right_bin = 0;
++    uint32_t bottom_bin = 0;
++    uint32_t top_bin = 0;
++    if (!GetSpatialIndexRange(index, list->nodes[node_index].holder_space_bbox,
++                              &left_bin, &right_bin, &bottom_bin, &top_bin)) {
++      continue;
++    }
++    const uint32_t bin_count =
++        (right_bin - left_bin + 1) * (top_bin - bottom_bin + 1);
++    if (bin_count > kMaxSpatialBinsPerNode) {
++      index.overflow_nodes.push_back(node_index);
++      continue;
++    }
++    for (uint32_t y = bottom_bin; y <= top_bin; ++y) {
++      for (uint32_t x = left_bin; x <= right_bin; ++x) {
++        index.bins[y * index.columns + x].push_back(node_index);
++        index.bin_entries++;
++      }
++    }
++  }
++
++  list->spatial_index = std::move(index);
++}
++
+ bool CompilePathDisplayList(CPDF_RenderStatus* status,
+                             const CPDF_PageObjectHolder* holder,
+                             NativePathDisplayList* list,
+@@ -856,6 +997,7 @@ bool CompilePathDisplayList(CPDF_RenderStatus* status,
+   if (list->segments.empty()) {
+     return reject(PathDlRejectReason::kEmptySegmentPlan);
+   }
++  BuildPathDlSpatialIndex(list);
+   return true;
+ }
+ 
+@@ -903,6 +1045,83 @@ void UnionRect(FX_RECT* accumulator, const FX_RECT& rect) {
+   accumulator->bottom = std::max(accumulator->bottom, rect.bottom);
+ }
+ 
++struct SpatialReplayQuery {
++  bool use_index = false;
++  std::vector<uint32_t> candidates;
++};
++
++SpatialReplayQuery QuerySpatialIndexForReplay(
++    const NativePathDisplayList& list,
++    const CFX_Matrix& holder_to_device,
++    CFX_RenderDevice* device,
++    PathDlReplayStats* replay_stats) {
++  SpatialReplayQuery query;
++  const PathDlSpatialIndex& index = list.spatial_index;
++  if (!index.valid()) {
++    return query;
++  }
++
++  const int64_t query_start_ns = NowNs();
++  if (replay_stats) {
++    replay_stats->spatial_index_queries++;
++  }
++
++  CFX_FloatRect holder_clip = holder_to_device.GetInverse().TransformRect(
++      CFX_FloatRect(device->GetClipBox()));
++  holder_clip.Normalize();
++
++  uint32_t left_bin = 0;
++  uint32_t right_bin = 0;
++  uint32_t bottom_bin = 0;
++  uint32_t top_bin = 0;
++  if (!GetSpatialIndexRange(index, holder_clip, &left_bin, &right_bin,
++                            &bottom_bin, &top_bin)) {
++    query.use_index = true;
++    if (replay_stats) {
++      replay_stats->spatial_index_query_ms += ElapsedMs(query_start_ns);
++    }
++    return query;
++  }
++
++  const size_t touched_bins =
++      static_cast<size_t>(right_bin - left_bin + 1) *
++      static_cast<size_t>(top_bin - bottom_bin + 1);
++  if (replay_stats) {
++    replay_stats->spatial_index_query_bins += touched_bins;
++  }
++
++  // Broad preview renders touch much of the holder. Keep the old sequential
++  // scan for those cases so r31 does not add sort/dedup overhead when there is
++  // little or no tile culling to gain.
++  if (touched_bins > index.bins.size() / 2) {
++    if (replay_stats) {
++      replay_stats->spatial_index_fallback_full_scan++;
++      replay_stats->spatial_index_query_ms += ElapsedMs(query_start_ns);
++    }
++    return query;
++  }
++
++  query.use_index = true;
++  query.candidates.insert(query.candidates.end(), index.overflow_nodes.begin(),
++                          index.overflow_nodes.end());
++  for (uint32_t y = bottom_bin; y <= top_bin; ++y) {
++    for (uint32_t x = left_bin; x <= right_bin; ++x) {
++      const std::vector<uint32_t>& bin = index.bins[y * index.columns + x];
++      query.candidates.insert(query.candidates.end(), bin.begin(), bin.end());
++    }
++  }
++  std::sort(query.candidates.begin(), query.candidates.end());
++  query.candidates.erase(
++      std::unique(query.candidates.begin(), query.candidates.end()),
++      query.candidates.end());
++
++  if (replay_stats) {
++    replay_stats->spatial_index_candidates += query.candidates.size();
++    replay_stats->spatial_index_query_ms += ElapsedMs(query_start_ns);
++  }
++  return query;
++}
++
+ bool DrawPathNodeWithBlend(CFX_RenderDevice* device,
+                            const CFX_Path& path,
+                            const CFX_Matrix& path_matrix,
+@@ -1185,6 +1404,157 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+     stroke_run_device_rect = FX_RECT();
+   };
+ 
++  const SpatialReplayQuery spatial_query =
++      QuerySpatialIndexForReplay(list, holder_to_device, device, replay_stats);
++
++  auto replay_node = [&](uint32_t i) -> VelocePathDisplayListResult {
++    if (replay_stats) {
++      replay_stats->visited_nodes++;
++    }
++    const PathDlNode& node = list.nodes[i];
++    if (!IntersectsDeviceClip(node, holder_to_device, device)) {
++      if (replay_stats) {
++        replay_stats->culled_nodes++;
++      }
++      return VelocePathDisplayListResult::kRendered;
++    }
++
++    // Clip change: flush stroke run and blend run before new clip state.
++    if (!have_clip_state || current_clip_key != node.clip_key) {
++      flush_stroke_run(StrokeRunFlushReason::kClip);
++      if (auto r = flush_run(replay_stats
++                                 ? &replay_stats->run_flush_clip_change
++                                 : nullptr);
++          r != VelocePathDisplayListResult::kRendered) {
++        return r;
++      }
++      if (node.clip_key == kNoClipKey) {
++        status->ProcessClipPath(empty_clip, holder_to_device);
++      } else {
++        status->ProcessClipPath(list.clip_table[node.clip_key],
++                                holder_to_device);
++      }
++      if (replay_stats) {
++        replay_stats->clip_switches++;
++      }
++      have_clip_state = true;
++      current_clip_key = node.clip_key;
++    }
++
++    const PathDlPaint& paint = list.paint_table[node.paint_key];
++    const CFX_Path* path = list.path_table[node.path_index].GetObject();
++    if (!path) {
++      if (replay_stats) {
++        replay_stats->missing_path_nodes++;
++      }
++      return VelocePathDisplayListResult::kRendered;
++    }
++    CFX_Matrix path_matrix = node.path_to_holder * holder_to_device;
++    const CFX_GraphStateData* graph_state =
++        paint.graph_state_key == kNoGraphStateKey
++            ? nullptr
++            : &list.graph_state_table[paint.graph_state_key];
++
++    if (IsStrokeOnlyNormal(paint)) {
++      // Stroke run packing: flush if paint key changes, then accumulate.
++      if (stroke_run_count > 0 && node.paint_key != stroke_run_paint_key) {
++        flush_stroke_run(ClassifyStrokePaintChange(
++            list.paint_table[stroke_run_paint_key], paint));
++      }
++      // Flush blend run: blend content before this stroke must composite first.
++      if (auto r = flush_run(replay_stats
++                                 ? &replay_stats->run_flush_normal_node
++                                 : nullptr);
++          r != VelocePathDisplayListResult::kRendered) {
++        return r;
++      }
++      stroke_run_path.Append(*path, &path_matrix);
++      stroke_run_paint_key = node.paint_key;
++      stroke_run_count++;
++      UnionRect(&stroke_run_device_rect,
++                GetExpandedClippedDeviceRect(node, holder_to_device, device));
++    } else if (paint.blend_mode == BlendMode::kNormal) {
++      // Non-stroke normal nodes are painter-order barriers unless their
++      // device bounds are disjoint from the pending stroke run. Disjoint
++      // draws commute, so the stroke run may stay packed across the barrier.
++      if (stroke_run_count > 0) {
++        const FX_RECT barrier_rect =
++            GetExpandedClippedDeviceRect(node, holder_to_device, device);
++        if (!stroke_run_device_rect.IsEmpty() && !barrier_rect.IsEmpty() &&
++            !RectsIntersect(stroke_run_device_rect, barrier_rect)) {
++          if (replay_stats) {
++            replay_stats->stroke_run_fill_barriers_crossed++;
++          }
++        } else {
++          if (replay_stats) {
++            replay_stats->stroke_run_fill_barriers_blocked++;
++          }
++          flush_stroke_run(StrokeRunFlushReason::kFillMode);
++        }
++      }
++      if (auto r = flush_run(replay_stats
++                                 ? &replay_stats->run_flush_normal_node
++                                 : nullptr);
++          r != VelocePathDisplayListResult::kRendered) {
++        return r;
++      }
++      device->DrawPath(*path, &path_matrix, graph_state, paint.fill_argb,
++                       paint.stroke_argb, paint.fill_options);
++
++    } else if (CanDrawBlendNodeWithMask(paint)) {
++      // Mask-eligible blend node. Flush stroke run first, then blend run.
++      flush_stroke_run(StrokeRunFlushReason::kBlend);
++      if (!run.empty() && run.paint_key != node.paint_key) {
++        if (auto r = flush_run(replay_stats
++                                   ? &replay_stats->run_flush_paint_change
++                                   : nullptr);
++            r != VelocePathDisplayListResult::kRendered) {
++          return r;
++        }
++      }
++      // Accumulate into the group run. Overlapping paths are allowed: they
++      // composite normally inside the BGRA group buffer, matching the PDF
++      // transparency group model. No overlap gate needed.
++      FX_RECT node_rect =
++          holder_to_device.TransformRect(node.holder_space_bbox).GetOuterRect();
++      node_rect.Intersect(device->GetClipBox());
++      if (!node_rect.IsEmpty()) {
++        run.paint_key = node.paint_key;
++        if (!run.group_rect_valid) {
++          run.group_rect = node_rect;
++          run.group_rect_valid = true;
++        } else {
++          run.group_rect.left = std::min(run.group_rect.left, node_rect.left);
++          run.group_rect.top = std::min(run.group_rect.top, node_rect.top);
++          run.group_rect.right =
++              std::max(run.group_rect.right, node_rect.right);
++          run.group_rect.bottom =
++              std::max(run.group_rect.bottom, node_rect.bottom);
++        }
++        run.entries.push_back({node.path_index, path_matrix, node_rect});
++      }
++
++    } else {
++      // Scratch-blend or unsupported: flush stroke run and blend run first.
++      flush_stroke_run(StrokeRunFlushReason::kBlend);
++      if (auto r = flush_run(replay_stats
++                                 ? &replay_stats->run_flush_scratch_blend
++                                 : nullptr);
++          r != VelocePathDisplayListResult::kRendered) {
++        return r;
++      }
++      if (!DrawPathNodeWithBlend(device, *path, path_matrix, graph_state,
++                                 paint, node, holder_to_device)) {
++        return VelocePathDisplayListResult::kCancelled;
++      }
++    }
++
++    if (replay_stats) {
++      replay_stats->drawn_nodes++;
++    }
++    return VelocePathDisplayListResult::kRendered;
++  };
++
+   auto replay_path_segment =
+       [&](uint32_t first_node,
+           uint32_t node_count,
+@@ -1198,161 +1568,52 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+       current_clip_key = kNoClipKey;
+     }
+     const uint32_t end_node = first_node + node_count;
+-    for (uint32_t i = first_node; i < end_node; ++i) {
+-      if ((i % kCancelCheckNodeInterval) == 0) {
++    size_t nodes_considered = 0;
++    auto maybe_cancel = [&]() -> bool {
++      if ((nodes_considered++ % kCancelCheckNodeInterval) == 0) {
+         if (replay_stats) {
+           replay_stats->cancel_checks++;
+         }
+         if (status->ShouldCancelRender()) {
+           // Cancelled output is discarded — reset without flushing.
+           reset_runs_without_flushing();
+-          return VelocePathDisplayListResult::kCancelled;
++          return true;
+         }
+       }
+-
+-      if (replay_stats) {
+-        replay_stats->visited_nodes++;
++      return false;
++    };
++
++    if (spatial_query.use_index) {
++      const auto first_it =
++          std::lower_bound(spatial_query.candidates.begin(),
++                           spatial_query.candidates.end(), first_node);
++      const auto last_it = std::lower_bound(first_it,
++                                            spatial_query.candidates.end(),
++                                            end_node);
++      const size_t candidate_count =
++          static_cast<size_t>(std::distance(first_it, last_it));
++      if (replay_stats && node_count >= candidate_count) {
++        replay_stats->spatial_index_skipped_by_tile +=
++            node_count - candidate_count;
+       }
+-      const PathDlNode& node = list.nodes[i];
+-      if (!IntersectsDeviceClip(node, holder_to_device, device)) {
+-        if (replay_stats) {
+-          replay_stats->culled_nodes++;
++      for (auto it = first_it; it != last_it; ++it) {
++        if (maybe_cancel()) {
++          return VelocePathDisplayListResult::kCancelled;
+         }
+-        continue;
+-      }
+-
+-      // Clip change: flush stroke run and blend run before new clip state.
+-      if (!have_clip_state || current_clip_key != node.clip_key) {
+-        flush_stroke_run(StrokeRunFlushReason::kClip);
+-        if (auto r = flush_run(replay_stats
+-                                   ? &replay_stats->run_flush_clip_change
+-                                   : nullptr);
++        if (auto r = replay_node(*it);
+             r != VelocePathDisplayListResult::kRendered) {
+           return r;
+         }
+-        if (node.clip_key == kNoClipKey) {
+-          status->ProcessClipPath(empty_clip, holder_to_device);
+-        } else {
+-          status->ProcessClipPath(list.clip_table[node.clip_key],
+-                                  holder_to_device);
+-        }
+-        if (replay_stats) {
+-          replay_stats->clip_switches++;
+-        }
+-        have_clip_state = true;
+-        current_clip_key = node.clip_key;
+       }
+-
+-      const PathDlPaint& paint = list.paint_table[node.paint_key];
+-      const CFX_Path* path = list.path_table[node.path_index].GetObject();
+-      if (!path) {
+-        if (replay_stats) {
+-          replay_stats->missing_path_nodes++;
+-        }
+-        continue;
+-      }
+-      CFX_Matrix path_matrix = node.path_to_holder * holder_to_device;
+-      const CFX_GraphStateData* graph_state =
+-          paint.graph_state_key == kNoGraphStateKey
+-              ? nullptr
+-              : &list.graph_state_table[paint.graph_state_key];
+-
+-      if (IsStrokeOnlyNormal(paint)) {
+-        // Stroke run packing: flush if paint key changes, then accumulate.
+-        if (stroke_run_count > 0 && node.paint_key != stroke_run_paint_key) {
+-          flush_stroke_run(ClassifyStrokePaintChange(
+-              list.paint_table[stroke_run_paint_key], paint));
+-        }
+-        // Flush blend run — blend content before this stroke must composite first.
+-        if (auto r = flush_run(replay_stats
+-                                   ? &replay_stats->run_flush_normal_node
+-                                   : nullptr);
+-            r != VelocePathDisplayListResult::kRendered) {
+-          return r;
+-        }
+-        stroke_run_path.Append(*path, &path_matrix);
+-        stroke_run_paint_key = node.paint_key;
+-        stroke_run_count++;
+-        UnionRect(&stroke_run_device_rect,
+-                  GetExpandedClippedDeviceRect(node, holder_to_device, device));
+-      } else if (paint.blend_mode == BlendMode::kNormal) {
+-        // Non-stroke normal nodes are painter-order barriers unless their
+-        // device bounds are disjoint from the pending stroke run. Disjoint
+-        // draws commute, so the stroke run may stay packed across the barrier.
+-        if (stroke_run_count > 0) {
+-          const FX_RECT barrier_rect =
+-              GetExpandedClippedDeviceRect(node, holder_to_device, device);
+-          if (!stroke_run_device_rect.IsEmpty() && !barrier_rect.IsEmpty() &&
+-              !RectsIntersect(stroke_run_device_rect, barrier_rect)) {
+-            if (replay_stats) {
+-              replay_stats->stroke_run_fill_barriers_crossed++;
+-            }
+-          } else {
+-            if (replay_stats) {
+-              replay_stats->stroke_run_fill_barriers_blocked++;
+-            }
+-            flush_stroke_run(StrokeRunFlushReason::kFillMode);
+-          }
+-        }
+-        if (auto r = flush_run(replay_stats
+-                                   ? &replay_stats->run_flush_normal_node
+-                                   : nullptr);
+-            r != VelocePathDisplayListResult::kRendered) {
+-          return r;
+-        }
+-        device->DrawPath(*path, &path_matrix, graph_state, paint.fill_argb,
+-                         paint.stroke_argb, paint.fill_options);
+-
+-      } else if (CanDrawBlendNodeWithMask(paint)) {
+-        // Mask-eligible blend node. Flush stroke run first, then blend run.
+-        flush_stroke_run(StrokeRunFlushReason::kBlend);
+-        if (!run.empty() && run.paint_key != node.paint_key) {
+-          if (auto r = flush_run(replay_stats
+-                                     ? &replay_stats->run_flush_paint_change
+-                                     : nullptr);
+-              r != VelocePathDisplayListResult::kRendered) {
+-            return r;
+-          }
+-        }
+-        // Accumulate into the group run. Overlapping paths are allowed — they
+-        // will be composited normally inside the BGRA group buffer, matching
+-        // the PDF transparency group model. No overlap gate needed.
+-        FX_RECT node_rect = holder_to_device.TransformRect(node.holder_space_bbox)
+-                                .GetOuterRect();
+-        node_rect.Intersect(device->GetClipBox());
+-        if (!node_rect.IsEmpty()) {
+-          run.paint_key = node.paint_key;
+-          if (!run.group_rect_valid) {
+-            run.group_rect = node_rect;
+-            run.group_rect_valid = true;
+-          } else {
+-            run.group_rect.left = std::min(run.group_rect.left, node_rect.left);
+-            run.group_rect.top = std::min(run.group_rect.top, node_rect.top);
+-            run.group_rect.right =
+-                std::max(run.group_rect.right, node_rect.right);
+-            run.group_rect.bottom =
+-                std::max(run.group_rect.bottom, node_rect.bottom);
+-          }
+-          run.entries.push_back({node.path_index, path_matrix, node_rect});
++    } else {
++      for (uint32_t i = first_node; i < end_node; ++i) {
++        if (maybe_cancel()) {
++          return VelocePathDisplayListResult::kCancelled;
+         }
+-
+-      } else {
+-        // Scratch-blend or unsupported: flush stroke run and blend run first.
+-        flush_stroke_run(StrokeRunFlushReason::kBlend);
+-        if (auto r = flush_run(replay_stats
+-                                   ? &replay_stats->run_flush_scratch_blend
+-                                   : nullptr);
++        if (auto r = replay_node(i);
+             r != VelocePathDisplayListResult::kRendered) {
+           return r;
+         }
+-        if (!DrawPathNodeWithBlend(device, *path, path_matrix, graph_state,
+-                                   paint, node, holder_to_device)) {
+-          return VelocePathDisplayListResult::kCancelled;
+-        }
+-      }
+-
+-      if (replay_stats) {
+-        replay_stats->drawn_nodes++;
+       }
+     }
+ 
