@@ -65,6 +65,7 @@ these patches:
 | 0037 | `0037-veloce-path-display-list-holder-space-spatial-index.patch` | Holder-space spatial index. Builds a cached 32x32 grid over path node bboxes in holder/page coordinates, transforms the device tile clip back to holder space at replay time, queries candidate bins, sorts candidate node ids back into display-list order, and then reuses existing segment replay. Broad preview clips fall back to the old full scan. Adds `spatialIndex*` telemetry. |
 | 0038 | `0038-veloce-path-display-list-disable-text-passthrough-cache.patch` | Text-passthrough cache lifetime fix. Display lists containing ordered text passthrough segments still replay for the current holder, but are not stored in the process display-list cache because those segments hold raw `CPDF_PageObject*` pointers whose lifetime is only the live holder replay. Prevents r31 cache-hit use-after-free crashes. |
 | 0039 | `0039-veloce-path-display-list-text-passthrough-index-cache.patch` | Text-passthrough index cache fix. Replaces cached raw text passthrough pointers with holder object indexes, resolves live text objects from the current holder before replay, and restores display-list cache insertion for Q16-style text-barrier pages. |
+| 0040 | `0040-veloce-path-display-list-fill-barrier-telemetry.patch` | Fill-barrier telemetry. Adds compact `VelocePathDLFill` logs for normal barriers that are not pure stroke-run nodes: fill-only/fill+stroke shape, fill rule, rect-like/thin/empty device bounds, path point counts, and pending-stroke overlap/disjoint/unknown counts. Telemetry-only; draw order and packing decisions are unchanged. |
 
 ## Why this directory exists
 
@@ -113,6 +114,7 @@ git apply patches/ship/0036-veloce-path-display-list-nonoverlap-fill-barrier-str
 git apply patches/ship/0037-veloce-path-display-list-holder-space-spatial-index.patch
 git apply patches/ship/0038-veloce-path-display-list-disable-text-passthrough-cache.patch
 git apply patches/ship/0039-veloce-path-display-list-text-passthrough-index-cache.patch
+git apply patches/ship/0040-veloce-path-display-list-fill-barrier-telemetry.patch
 ```
 
 > **Note:** patches 0027 and 0028 are deprecated and must NOT be applied.
@@ -205,6 +207,10 @@ object indexes, replay resolves those indexes from the live holder in one
 forward pass before drawing, and cache insertion is restored for text-barrier
 pages. If the current holder cannot resolve the expected text barrier indexes,
 Veloce returns `not_eligible` before drawing.
+Patch 0040 depends on patch 0039. It is telemetry-only and emits a compact
+`VelocePathDLFill` line when normal non-stroke-only path barriers are
+encountered during replay. It does not change path eligibility, replay order, stroke-run
+packing, or fallback/cancel behavior.
 The release workflow applies the numeric order shown above, skipping 0027/0028.
 
 ## Cumulative effect (measured)
@@ -314,6 +320,10 @@ new `FPDFEx_LoadPageWithClassification()` symbol.
   Stores text passthrough holder object indexes in cached display lists,
   resolves live text objects at replay, and restores process-cache insertion
   for text-passthrough lists. No public API or build file changes.
+- **0040 Veloce fill-barrier telemetry**:
+  `core/fpdfapi/render/veloce_path_display_list.cpp`.
+  Adds compact telemetry for fill-barrier shape and pending-stroke overlap
+  classification. No rendering behavior, public API, or build file changes.
 - **0017 Veloce holder-level root page path display list**:
   `core/fpdfapi/render/cpdf_renderstatus.cpp`,
   `core/fpdfapi/render/veloce_path_display_list.{h,cpp}`.

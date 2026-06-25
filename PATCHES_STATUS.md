@@ -141,6 +141,21 @@ pages. If the current holder cannot resolve the expected text barrier indexes,
 Veloce returns `not_eligible` before drawing instead of dereferencing stale
 page-object pointers.
 
+To build the r34 fill-barrier telemetry path-display-list binary:
+
+> Run workflow: **`r34 fill barrier telemetry path display-list - Build patched PDFium Android arm64`**
+>
+> File: `.github/workflows/pdfium-android-arm64-r34-fill-barrier-telemetry-path-display-list.yml`
+> Artifact: `libpdfium-android-arm64-r34-fill-barrier-telemetry-path-display-list`
+
+This applies ship patches `01..09,0011,0012,0013,0014,0015,0016,0017,0018,0019,0020,0021,0022,0023,0024,0025,0026,0029,0030,0031,0032,0034,0035,0036,0037,0038,0039,0040`.
+Patch 0040 is telemetry-only. It adds compact `VelocePathDLFill` log lines for
+normal barriers that are not pure stroke-run nodes and break Q16-style packing, including
+fill-only/fill+stroke counts, fill rule, rect-like/thin/empty device bounds,
+path point counts, and pending-stroke overlap/disjoint/unknown counts. Rendering
+order, stroke-run packing decisions, cancellation, and fallback behavior are
+unchanged.
+
 To build the r9 path-display-list no-op clip binary:
 
 > Run workflow: **`Build patched PDFium Android arm64 r9 path display-list no-op clip`**
@@ -274,6 +289,7 @@ and the `libandroid.so` runtime dependency.
 | `pdfium-android-arm64-r31-holder-space-spatial-index-path-display-list.yml` | `workflow_dispatch` | **R31 HOLDER-SPACE SPATIAL INDEX PATH DISPLAY-LIST BUILD.** Applies ship patches through `0037`, skipping deprecated `0027/0028`. The workflow name starts with `r31` so it is easy to spot in GitHub Actions. Expected log: nonzero `spatialIndexBins`, candidate counts, and large `spatialIndexSkippedByTile` on sparse Q16 zoom tiles while broad preview clips report `spatialIndexFallbackFullScan`. |
 | `pdfium-android-arm64-r32-text-passthrough-cache-uaf-fix-path-display-list.yml` | `workflow_dispatch` | **R32 TEXT PASSTHROUGH CACHE UAF FIX PATH DISPLAY-LIST BUILD.** Applies ship patches through `0038`, skipping deprecated `0027/0028`. The workflow name starts with `r32` so it is easy to spot in GitHub Actions. Expected log: no cache-hit crash on Q16 text-passthrough pages, while path-only pages remain cached. |
 | `pdfium-android-arm64-r33-text-passthrough-index-cache-path-display-list.yml` | `workflow_dispatch` | **R33 TEXT PASSTHROUGH INDEX CACHE PATH DISPLAY-LIST BUILD.** Applies ship patches through `0039`, skipping deprecated `0027/0028`. The workflow name starts with `r33` so it is easy to spot in GitHub Actions. Expected log: Q16 text-passthrough pages can return to `cache=hit` without retaining raw `CPDF_PageObject*` pointers. |
+| `pdfium-android-arm64-r34-fill-barrier-telemetry-path-display-list.yml` | `workflow_dispatch` | **R34 FILL-BARRIER TELEMETRY PATH DISPLAY-LIST BUILD.** Applies ship patches through `0040`, skipping deprecated `0027/0028`. The workflow name starts with `r34` so it is easy to spot in GitHub Actions. Expected log: compact `VelocePathDLFill` lines explain whether Q16 `strokeRunFlushFillMode` is dominated by fill-only/fill+stroke barriers, rect-like/thin geometry, or real pending-stroke overlap. |
 | `libpdfium_experiment_profile_build.yml` | `workflow_dispatch` | **EXPERIMENT PROFILE BUILD.** Applies ship patches `01..08` plus `patches/experiments/0010-render-profile-and-content-skip.patch`. Use this to measure per-stage `FPDF_RenderPageBitmap()` costs and test skip-text/path/image/shading/Form/transparency/soft-mask speedups on selected PDFs. Artifact: `libpdfium-android-arm64-veloce-render-profile-experiment`. |
 | `release-size-experiment.yml` | `workflow_dispatch` | Side-by-side size comparison (baseline / A / B / C). Variant C is the current ship config. Run this when a future PDFium roll or build refactor unexpectedly changes the size profile — it isolates which lever moved. |
 | `build-pdfium-android-arm64-agg-devicen-fast.yml` | `workflow_dispatch` | Diagnostic ship build. Applies 0003+0004+0005+0007+0008+0009, retains trace markers. Use for future perf investigations. |

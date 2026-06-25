@@ -1,0 +1,154 @@
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -199,6 +199,21 @@
+   size_t stroke_run_flush_end = 0;
+   size_t stroke_run_fill_barriers_crossed = 0;
+   size_t stroke_run_fill_barriers_blocked = 0;
++  size_t fill_barrier_nodes = 0;
++  size_t fill_barrier_fill_only = 0;
++  size_t fill_barrier_fill_stroke = 0;
++  size_t fill_barrier_stroke_only = 0;
++  size_t fill_barrier_even_odd = 0;
++  size_t fill_barrier_winding = 0;
++  size_t fill_barrier_rect_like = 0;
++  size_t fill_barrier_empty_device_rect = 0;
++  size_t fill_barrier_thin_device_rect = 0;
++  size_t fill_barrier_pending_stroke = 0;
++  size_t fill_barrier_pending_overlap = 0;
++  size_t fill_barrier_pending_disjoint = 0;
++  size_t fill_barrier_pending_unknown = 0;
++  size_t fill_barrier_path_points = 0;
++  size_t max_fill_barrier_path_points = 0;
+   size_t spatial_index_queries = 0;
+   size_t spatial_index_query_bins = 0;
+   size_t spatial_index_candidates = 0;
+@@ -561,6 +576,38 @@
+       cache_state ? cache_state : "none", compile_ms,
+       replay_ms, compile_ms + replay_ms,
+       list ? list->nodes.size() : kZero);
++  if (replay_stats && replay_stats->fill_barrier_nodes > 0) {
++    __android_log_print(
++        ANDROID_LOG_INFO, "VelocePathDLFill",
++        "result=%s holderKind=%s cache=%s fillBarriers=%zu fillOnly=%zu "
++        "fillStroke=%zu strokeOnly=%zu evenOdd=%zu winding=%zu rectLike=%zu "
++        "emptyDeviceRect=%zu thinDeviceRect=%zu pendingStroke=%zu "
++        "pendingOverlap=%zu pendingDisjoint=%zu pendingUnknown=%zu "
++        "pathPoints=%zu maxPathPoints=%zu strokeRunDraws=%zu "
++        "strokeRunFlushFillMode=%zu strokeRunFillBarriersCrossed=%zu "
++        "strokeRunFillBarriersBlocked=%zu compileMs=%" PRId64
++        " replayMs=%" PRId64,
++        result, HolderKindName(holder_kind), cache_state ? cache_state : "none",
++        replay_stats->fill_barrier_nodes,
++        replay_stats->fill_barrier_fill_only,
++        replay_stats->fill_barrier_fill_stroke,
++        replay_stats->fill_barrier_stroke_only,
++        replay_stats->fill_barrier_even_odd,
++        replay_stats->fill_barrier_winding,
++        replay_stats->fill_barrier_rect_like,
++        replay_stats->fill_barrier_empty_device_rect,
++        replay_stats->fill_barrier_thin_device_rect,
++        replay_stats->fill_barrier_pending_stroke,
++        replay_stats->fill_barrier_pending_overlap,
++        replay_stats->fill_barrier_pending_disjoint,
++        replay_stats->fill_barrier_pending_unknown,
++        replay_stats->fill_barrier_path_points,
++        replay_stats->max_fill_barrier_path_points,
++        replay_stats->stroke_run_draws,
++        replay_stats->stroke_run_flush_fill_mode,
++        replay_stats->stroke_run_fill_barriers_crossed,
++        replay_stats->stroke_run_fill_barriers_blocked, compile_ms, replay_ms);
++  }
+ #endif
+ }
+
+@@ -1372,7 +1419,66 @@
+     case StrokeRunFlushReason::kEnd:
+       replay_stats->stroke_run_flush_end++;
+       break;
++  }
++}
++
++void RecordFillBarrierTelemetry(PathDlReplayStats* replay_stats,
++                                const PathDlPaint& paint,
++                                const CFX_Path& path,
++                                const FX_RECT& barrier_rect,
++                                bool has_pending_stroke,
++                                bool overlap_known,
++                                bool overlaps_pending_stroke) {
++  if (!replay_stats) {
++    return;
++  }
++
++  replay_stats->fill_barrier_nodes++;
++  const bool has_fill = paint.fill_options.fill_type !=
++                        CFX_FillRenderOptions::FillType::kNoFill;
++  const bool has_stroke = paint.fill_options.stroke;
++  if (has_fill && has_stroke) {
++    replay_stats->fill_barrier_fill_stroke++;
++  } else if (has_fill) {
++    replay_stats->fill_barrier_fill_only++;
++  } else if (has_stroke) {
++    replay_stats->fill_barrier_stroke_only++;
++  }
++
++  if (paint.fill_options.fill_type ==
++      CFX_FillRenderOptions::FillType::kEvenOdd) {
++    replay_stats->fill_barrier_even_odd++;
++  } else if (paint.fill_options.fill_type ==
++             CFX_FillRenderOptions::FillType::kWinding) {
++    replay_stats->fill_barrier_winding++;
++  }
++
++  if (path.IsRect()) {
++    replay_stats->fill_barrier_rect_like++;
++  }
++  const size_t point_count = path.GetPoints().size();
++  replay_stats->fill_barrier_path_points += point_count;
++  if (point_count > replay_stats->max_fill_barrier_path_points) {
++    replay_stats->max_fill_barrier_path_points = point_count;
++  }
++
++  if (barrier_rect.IsEmpty()) {
++    replay_stats->fill_barrier_empty_device_rect++;
++  } else if (barrier_rect.Width() <= 1 || barrier_rect.Height() <= 1) {
++    replay_stats->fill_barrier_thin_device_rect++;
+   }
++
++  if (!has_pending_stroke) {
++    return;
++  }
++  replay_stats->fill_barrier_pending_stroke++;
++  if (!overlap_known) {
++    replay_stats->fill_barrier_pending_unknown++;
++  } else if (overlaps_pending_stroke) {
++    replay_stats->fill_barrier_pending_overlap++;
++  } else {
++    replay_stats->fill_barrier_pending_disjoint++;
++  }
+ }
+
+ VelocePathDisplayListResult ReplayPathDisplayList(
+@@ -1529,11 +1635,19 @@
+       // Non-stroke normal nodes are painter-order barriers unless their
+       // device bounds are disjoint from the pending stroke run. Disjoint
+       // draws commute, so the stroke run may stay packed across the barrier.
++      const FX_RECT barrier_rect =
++          GetExpandedClippedDeviceRect(node, holder_to_device, device);
++      const bool has_pending_stroke = stroke_run_count > 0;
++      const bool overlap_known = has_pending_stroke &&
++                                 !stroke_run_device_rect.IsEmpty() &&
++                                 !barrier_rect.IsEmpty();
++      const bool overlaps_pending_stroke =
++          overlap_known && RectsIntersect(stroke_run_device_rect, barrier_rect);
++      RecordFillBarrierTelemetry(replay_stats, paint, *path, barrier_rect,
++                                 has_pending_stroke, overlap_known,
++                                 overlaps_pending_stroke);
+       if (stroke_run_count > 0) {
+-        const FX_RECT barrier_rect =
+-            GetExpandedClippedDeviceRect(node, holder_to_device, device);
+-        if (!stroke_run_device_rect.IsEmpty() && !barrier_rect.IsEmpty() &&
+-            !RectsIntersect(stroke_run_device_rect, barrier_rect)) {
++        if (overlap_known && !overlaps_pending_stroke) {
+           if (replay_stats) {
+             replay_stats->stroke_run_fill_barriers_crossed++;
+           }
