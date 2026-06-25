@@ -1,0 +1,194 @@
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -51,6 +51,8 @@
+ constexpr uint32_t kSpatialIndexColumns = 32;
+ constexpr uint32_t kSpatialIndexRows = 32;
+ constexpr uint32_t kMaxSpatialBinsPerNode = 128;
++constexpr uint32_t kInvalidPassthroughObjectIndex =
++    std::numeric_limits<uint32_t>::max();
+
+ enum class PathDlRejectReason {
+   kNone,
+@@ -100,9 +102,7 @@
+   PathDlSegmentKind kind = PathDlSegmentKind::kPathRun;
+   uint32_t first_node = 0;
+   uint32_t node_count = 0;
+-  // Non-owning. The holder owns page objects for the duration of compile/replay
+-  // and the cache key is tied to that holder.
+-  CPDF_PageObject* passthrough_obj = nullptr;
++  uint32_t passthrough_obj_index = kInvalidPassthroughObjectIndex;
+ };
+
+ struct PathDlSpatialIndex {
+@@ -318,19 +318,63 @@
+         if (segment.node_count == 0 ||
+             segment.first_node >= list.nodes.size() ||
+             segment.node_count > list.nodes.size() - segment.first_node ||
+-            segment.passthrough_obj) {
++            segment.passthrough_obj_index != kInvalidPassthroughObjectIndex) {
+           return false;
+         }
+         break;
+       case PathDlSegmentKind::kTextPassthrough:
+-        if (segment.node_count != 0 || !segment.passthrough_obj ||
+-            !segment.passthrough_obj->IsText()) {
++        if (segment.node_count != 0 ||
++            segment.passthrough_obj_index == kInvalidPassthroughObjectIndex) {
+           return false;
+         }
+         break;
+     }
+   }
+   return true;
++}
++
++bool ResolveTextPassthroughSegments(
++    const NativePathDisplayList& list,
++    const CPDF_PageObjectHolder* holder,
++    std::vector<CPDF_PageObject*>* resolved_objects) {
++  resolved_objects->clear();
++  std::vector<uint32_t> object_indexes;
++  for (const PathDlSegment& segment : list.segments) {
++    if (segment.kind != PathDlSegmentKind::kTextPassthrough) {
++      continue;
++    }
++    if (!object_indexes.empty() &&
++        segment.passthrough_obj_index <= object_indexes.back()) {
++      return false;
++    }
++    object_indexes.push_back(segment.passthrough_obj_index);
++  }
++  if (object_indexes.empty()) {
++    return true;
++  }
++  if (!holder) {
++    return false;
++  }
++
++  size_t next_index = 0;
++  uint32_t current_object_index = 0;
++  for (const auto& obj : *holder) {
++    if (next_index >= object_indexes.size()) {
++      break;
++    }
++    if (object_indexes[next_index] < current_object_index) {
++      return false;
++    }
++    if (object_indexes[next_index] == current_object_index) {
++      if (!obj || !obj->IsText()) {
++        return false;
++      }
++      resolved_objects->push_back(obj.get());
++      next_index++;
++    }
++    current_object_index++;
++  }
++  return next_index == object_indexes.size();
+ }
+
+ size_t CountPathRunSegments(const NativePathDisplayList& list) {
+@@ -870,7 +914,9 @@
+     pending_path_run_node_count = 0;
+   };
+
++  uint32_t holder_object_index = 0;
+   for (const auto& obj : *holder) {
++    const uint32_t current_object_index = holder_object_index++;
+     list->scanned_objects++;
+     if ((list->scanned_objects % kCancelCheckNodeInterval) == 0 &&
+         status->ShouldCancelRender()) {
+@@ -889,7 +935,7 @@
+         flush_pending_path_run();
+         PathDlSegment segment;
+         segment.kind = PathDlSegmentKind::kTextPassthrough;
+-        segment.passthrough_obj = obj.get();
++        segment.passthrough_obj_index = current_object_index;
+         list->segments.push_back(segment);
+         list->text_passthrough_objects++;
+         continue;
+@@ -1331,6 +1377,7 @@
+
+ VelocePathDisplayListResult ReplayPathDisplayList(
+     CPDF_RenderStatus* status,
++    const CPDF_PageObjectHolder* holder,
+     const NativePathDisplayList& list,
+     const CFX_Matrix& holder_to_device,
+     PathDlReplayStats* replay_stats) {
+@@ -1338,6 +1385,11 @@
+   if (list.blend_nodes > 0 && !device->RenderCapBlendMode()) {
+     return VelocePathDisplayListResult::kNotEligible;
+   }
++  std::vector<CPDF_PageObject*> text_passthrough_objects;
++  if (!ResolveTextPassthroughSegments(list, holder,
++                                      &text_passthrough_objects)) {
++    return VelocePathDisplayListResult::kNotEligible;
++  }
+   CFX_RenderDevice::StateRestorer restorer(device);
+
+   uint32_t current_clip_key = kNoClipKey;
+@@ -1629,6 +1681,7 @@
+   };
+
+   bool force_clip_reinstall = false;
++  size_t text_passthrough_index = 0;
+   for (const PathDlSegment& segment : list.segments) {
+     if (status->ShouldCancelRender()) {
+       reset_runs_without_flushing();
+@@ -1644,8 +1697,12 @@
+         }
+         break;
+       }
+-      case PathDlSegmentKind::kTextPassthrough:
+-        if (!segment.passthrough_obj || !segment.passthrough_obj->IsText()) {
++      case PathDlSegmentKind::kTextPassthrough: {
++        CPDF_PageObject* passthrough_obj =
++            text_passthrough_index < text_passthrough_objects.size()
++                ? text_passthrough_objects[text_passthrough_index++]
++                : nullptr;
++        if (!passthrough_obj || !passthrough_obj->IsText()) {
+           reset_runs_without_flushing();
+           return VelocePathDisplayListResult::kNotEligible;
+         }
+@@ -1653,12 +1710,13 @@
+         // it synchronously at its original painter-order position, then clear
+         // PDFium/Veloce clip state so the next accelerated path segment must
+         // install its own clip rather than inheriting text's clip stack.
+-        status->RenderSingleObject(segment.passthrough_obj, holder_to_device);
++        status->RenderSingleObject(passthrough_obj, holder_to_device);
+         status->ProcessClipPath(empty_clip, holder_to_device);
+         have_clip_state = false;
+         current_clip_key = kNoClipKey;
+         force_clip_reinstall = true;
+         break;
++      }
+     }
+   }
+
+@@ -1710,16 +1768,8 @@
+       return VelocePathDisplayListResult::kNotEligible;
+     }
+     compile_ms = ElapsedMs(compile_start_ns);
+-    if (compiled_list->text_passthrough_objects == 0) {
+-      cached_list =
+-          StoreCachedPathDisplayList(cache_key, std::move(compiled_list));
+-    } else {
+-      // Text passthrough segments store raw CPDF_PageObject pointers that are
+-      // valid only for this holder replay. Do not retain them in the process
+-      // display-list cache across later page/holder lifetimes.
+-      cached_list =
+-          std::shared_ptr<const NativePathDisplayList>(std::move(compiled_list));
+-    }
++    cached_list =
++        StoreCachedPathDisplayList(cache_key, std::move(compiled_list));
+   }
+
+   if (ShouldRejectScratchBlendReplay(*cached_list, holder_kind)) {
+@@ -1734,7 +1784,7 @@
+   PathDlReplayStats replay_stats;
+   const int64_t replay_start_ns = NowNs();
+   const VelocePathDisplayListResult result =
+-      ReplayPathDisplayList(status, *cached_list, holder_to_device,
++      ReplayPathDisplayList(status, holder, *cached_list, holder_to_device,
+                             &replay_stats);
+   LogPathDisplayListAttempt(
+       result == VelocePathDisplayListResult::kRendered

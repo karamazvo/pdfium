@@ -125,6 +125,22 @@ passthrough segments keep raw `CPDF_PageObject*` pointers for current-holder
 replay, so display lists containing text passthrough are no longer inserted into
 the process cache. Path-only cached display lists remain cacheable.
 
+To build the r33 text-passthrough index cache path-display-list binary:
+
+> Run workflow: **`r33 text passthrough index cache path display-list - Build patched PDFium Android arm64`**
+>
+> File: `.github/workflows/pdfium-android-arm64-r33-text-passthrough-index-cache-path-display-list.yml`
+> Artifact: `libpdfium-android-arm64-r33-text-passthrough-index-cache-path-display-list`
+
+This applies ship patches `01..09,0011,0012,0013,0014,0015,0016,0017,0018,0019,0020,0021,0022,0023,0024,0025,0026,0029,0030,0031,0032,0034,0035,0036,0037,0038,0039`.
+Patch 0039 replaces r32's conservative text-passthrough cache disable with a
+cache-safe representation: cached text passthrough segments store holder object
+indexes, replay resolves those indexes from the current live holder before any
+drawing, and process-cache insertion is restored for Q16-style text-barrier
+pages. If the current holder cannot resolve the expected text barrier indexes,
+Veloce returns `not_eligible` before drawing instead of dereferencing stale
+page-object pointers.
+
 To build the r9 path-display-list no-op clip binary:
 
 > Run workflow: **`Build patched PDFium Android arm64 r9 path display-list no-op clip`**
@@ -256,6 +272,8 @@ and the `libandroid.so` runtime dependency.
 | `pdfium-android-arm64-r29-stroke-run-flush-telemetry-path-display-list.yml` | `workflow_dispatch` | **R29 STROKE-RUN FLUSH TELEMETRY PATH DISPLAY-LIST BUILD.** Applies ship patches through `0035`, skipping deprecated `0027/0028`. The workflow name starts with `r29` so it is easy to spot in GitHub Actions. Expected log: the r28 segment counters plus `strokeRunFlush*` counters explaining `strokeRunDraws` on Q16-style CAD pages. |
 | `pdfium-android-arm64-r30-nonoverlap-fill-barrier-stroke-packing-path-display-list.yml` | `workflow_dispatch` | **R30 NON-OVERLAP FILL-BARRIER STROKE PACKING PATH DISPLAY-LIST BUILD.** Applies ship patches through `0036`, skipping deprecated `0027/0028`. The workflow name starts with `r30` so it is easy to spot in GitHub Actions. Expected log: lower `strokeRunFlushFillMode` when fill barriers are disjoint, plus `strokeRunFillBarriersCrossed/Blocked` counters. |
 | `pdfium-android-arm64-r31-holder-space-spatial-index-path-display-list.yml` | `workflow_dispatch` | **R31 HOLDER-SPACE SPATIAL INDEX PATH DISPLAY-LIST BUILD.** Applies ship patches through `0037`, skipping deprecated `0027/0028`. The workflow name starts with `r31` so it is easy to spot in GitHub Actions. Expected log: nonzero `spatialIndexBins`, candidate counts, and large `spatialIndexSkippedByTile` on sparse Q16 zoom tiles while broad preview clips report `spatialIndexFallbackFullScan`. |
+| `pdfium-android-arm64-r32-text-passthrough-cache-uaf-fix-path-display-list.yml` | `workflow_dispatch` | **R32 TEXT PASSTHROUGH CACHE UAF FIX PATH DISPLAY-LIST BUILD.** Applies ship patches through `0038`, skipping deprecated `0027/0028`. The workflow name starts with `r32` so it is easy to spot in GitHub Actions. Expected log: no cache-hit crash on Q16 text-passthrough pages, while path-only pages remain cached. |
+| `pdfium-android-arm64-r33-text-passthrough-index-cache-path-display-list.yml` | `workflow_dispatch` | **R33 TEXT PASSTHROUGH INDEX CACHE PATH DISPLAY-LIST BUILD.** Applies ship patches through `0039`, skipping deprecated `0027/0028`. The workflow name starts with `r33` so it is easy to spot in GitHub Actions. Expected log: Q16 text-passthrough pages can return to `cache=hit` without retaining raw `CPDF_PageObject*` pointers. |
 | `libpdfium_experiment_profile_build.yml` | `workflow_dispatch` | **EXPERIMENT PROFILE BUILD.** Applies ship patches `01..08` plus `patches/experiments/0010-render-profile-and-content-skip.patch`. Use this to measure per-stage `FPDF_RenderPageBitmap()` costs and test skip-text/path/image/shading/Form/transparency/soft-mask speedups on selected PDFs. Artifact: `libpdfium-android-arm64-veloce-render-profile-experiment`. |
 | `release-size-experiment.yml` | `workflow_dispatch` | Side-by-side size comparison (baseline / A / B / C). Variant C is the current ship config. Run this when a future PDFium roll or build refactor unexpectedly changes the size profile — it isolates which lever moved. |
 | `build-pdfium-android-arm64-agg-devicen-fast.yml` | `workflow_dispatch` | Diagnostic ship build. Applies 0003+0004+0005+0007+0008+0009, retains trace markers. Use for future perf investigations. |

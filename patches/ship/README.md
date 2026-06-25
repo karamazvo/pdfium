@@ -64,6 +64,7 @@ these patches:
 | 0036 | `0036-veloce-path-display-list-nonoverlap-fill-barrier-stroke-packing.patch` | Non-overlap fill-barrier stroke packing. Keeps a pending stroke run open across a normal non-stroke path only when expanded clipped device-space bounds prove that the barrier is disjoint from the pending stroke run. Overlapping or unknown barriers still flush. Adds `strokeRunFillBarriersCrossed` and `strokeRunFillBarriersBlocked` telemetry. |
 | 0037 | `0037-veloce-path-display-list-holder-space-spatial-index.patch` | Holder-space spatial index. Builds a cached 32x32 grid over path node bboxes in holder/page coordinates, transforms the device tile clip back to holder space at replay time, queries candidate bins, sorts candidate node ids back into display-list order, and then reuses existing segment replay. Broad preview clips fall back to the old full scan. Adds `spatialIndex*` telemetry. |
 | 0038 | `0038-veloce-path-display-list-disable-text-passthrough-cache.patch` | Text-passthrough cache lifetime fix. Display lists containing ordered text passthrough segments still replay for the current holder, but are not stored in the process display-list cache because those segments hold raw `CPDF_PageObject*` pointers whose lifetime is only the live holder replay. Prevents r31 cache-hit use-after-free crashes. |
+| 0039 | `0039-veloce-path-display-list-text-passthrough-index-cache.patch` | Text-passthrough index cache fix. Replaces cached raw text passthrough pointers with holder object indexes, resolves live text objects from the current holder before replay, and restores display-list cache insertion for Q16-style text-barrier pages. |
 
 ## Why this directory exists
 
@@ -111,6 +112,7 @@ git apply patches/ship/0035-veloce-path-display-list-stroke-run-flush-telemetry.
 git apply patches/ship/0036-veloce-path-display-list-nonoverlap-fill-barrier-stroke-packing.patch
 git apply patches/ship/0037-veloce-path-display-list-holder-space-spatial-index.patch
 git apply patches/ship/0038-veloce-path-display-list-disable-text-passthrough-cache.patch
+git apply patches/ship/0039-veloce-path-display-list-text-passthrough-index-cache.patch
 ```
 
 > **Note:** patches 0027 and 0028 are deprecated and must NOT be applied.
@@ -197,6 +199,12 @@ contract introduced by ordered segmentation: text passthrough segments contain
 raw live `CPDF_PageObject*` pointers, so lists with text passthrough are replayed
 from the freshly compiled list for that render but are not retained in the
 process cache. Path-only lists, including `11.pdf`, remain cacheable.
+Patch 0039 depends on patch 0038. It replaces the temporary r32 cache disable
+with pointer-free text passthrough replay tokens: cached segments store holder
+object indexes, replay resolves those indexes from the live holder in one
+forward pass before drawing, and cache insertion is restored for text-barrier
+pages. If the current holder cannot resolve the expected text barrier indexes,
+Veloce returns `not_eligible` before drawing.
 The release workflow applies the numeric order shown above, skipping 0027/0028.
 
 ## Cumulative effect (measured)
@@ -301,6 +309,11 @@ new `FPDFEx_LoadPageWithClassification()` symbol.
   `core/fpdfapi/render/veloce_path_display_list.cpp`.
   Skips process-cache insertion for display lists containing text passthrough
   raw page-object pointers. No public API or build file changes.
+- **0039 Veloce text-passthrough index cache fix**:
+  `core/fpdfapi/render/veloce_path_display_list.cpp`.
+  Stores text passthrough holder object indexes in cached display lists,
+  resolves live text objects at replay, and restores process-cache insertion
+  for text-passthrough lists. No public API or build file changes.
 - **0017 Veloce holder-level root page path display list**:
   `core/fpdfapi/render/cpdf_renderstatus.cpp`,
   `core/fpdfapi/render/veloce_path_display_list.{h,cpp}`.
