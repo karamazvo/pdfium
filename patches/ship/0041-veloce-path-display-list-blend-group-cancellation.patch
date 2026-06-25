@@ -1,0 +1,126 @@
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -178,6 +178,9 @@ struct PathDlReplayStats {
+   size_t group_run_composites = 0;
+   size_t group_run_nodes = 0;
+   size_t max_group_run_nodes = 0;
++  size_t blend_cancel_checks = 0;
++  size_t blend_cancelled_after_composites = 0;
++  size_t blend_cancelled_after_nodes = 0;
+   size_t run_flush_paint_change = 0;
+   size_t run_flush_clip_change = 0;
+   size_t run_flush_normal_node = 0;
+@@ -494,6 +497,7 @@ void LogPathDisplayListAttempt(const char* result,
+       "scanned=%zu skippedInactive=%zu skippedInvisible=%zu skippedNoFill=%zu "
+       "noopClips=%zu blendNodes=%zu scratchBlendNodes=%zu visited=%zu culled=%zu missingPath=%zu drawn=%zu "
+       "clipSwitches=%zu cancelChecks=%zu groupRunComposites=%zu groupRunNodes=%zu maxGroupRunNodes=%zu "
++      "blendCancelChecks=%zu blendCancelledAfterComposites=%zu blendCancelledAfterNodes=%zu "
+       "runFlushPaint=%zu runFlushClip=%zu runFlushNormal=%zu runFlushScratch=%zu runFlushEnd=%zu "
+       "strokeRunDraws=%zu strokeRunNodes=%zu maxStrokeRunNodes=%zu "
+       "strokeRunFlushPaint=%zu strokeRunFlushColor=%zu "
+@@ -540,6 +544,9 @@ void LogPathDisplayListAttempt(const char* result,
+       replay_stats ? replay_stats->group_run_composites : kZero,
+       replay_stats ? replay_stats->group_run_nodes : kZero,
+       replay_stats ? replay_stats->max_group_run_nodes : kZero,
++      replay_stats ? replay_stats->blend_cancel_checks : kZero,
++      replay_stats ? replay_stats->blend_cancelled_after_composites : kZero,
++      replay_stats ? replay_stats->blend_cancelled_after_nodes : kZero,
+       replay_stats ? replay_stats->run_flush_paint_change : kZero,
+       replay_stats ? replay_stats->run_flush_clip_change : kZero,
+       replay_stats ? replay_stats->run_flush_normal_node : kZero,
+@@ -1288,13 +1295,34 @@ struct MaskRun {
+ // buffer under normal blend semantics before the single blend-mode composite.
+ // This matches the PDF spec's transparency group model and MuPDF's
+ // fz_draw_begin_group / fz_draw_fill_path / fz_draw_end_group sequence.
+-bool FlushGroupRun(CFX_RenderDevice* device,
++bool CheckBlendRunCancel(CPDF_RenderStatus* status,
++                         PathDlReplayStats* replay_stats,
++                         size_t nodes_drawn_in_run) {
++  if (replay_stats) {
++    replay_stats->blend_cancel_checks++;
++  }
++  if (!status->ShouldCancelRender()) {
++    return false;
++  }
++  if (replay_stats) {
++    replay_stats->blend_cancelled_after_composites =
++        replay_stats->group_run_composites;
++    replay_stats->blend_cancelled_after_nodes = nodes_drawn_in_run;
++  }
++  return true;
++}
++
++bool FlushGroupRun(CPDF_RenderStatus* status,
++                   CFX_RenderDevice* device,
+                    const NativePathDisplayList& list,
+                    const MaskRun& run,
+                    PathDlReplayStats* replay_stats) {
+   if (run.empty() || !run.group_rect_valid || run.group_rect.IsEmpty()) {
+     return true;
+   }
++  if (CheckBlendRunCancel(status, replay_stats, 0)) {
++    return false;
++  }
+ 
+   const PathDlPaint& paint = list.paint_table[run.paint_key];
+   const CFX_GraphStateData* graph_state =
+@@ -1305,6 +1333,9 @@ bool FlushGroupRun(CFX_RenderDevice* device,
+   // Allocate a BGRA group buffer — transparent black, matching an isolated
+   // transparency group's initial state.
+   auto group = pdfium::MakeRetain<CFX_DIBitmap>();
++  if (CheckBlendRunCancel(status, replay_stats, 0)) {
++    return false;
++  }
+   if (!group->Create(run.group_rect.Width(), run.group_rect.Height(),
+                      FXDIB_Format::kBgra)) {
+     return false;
+@@ -1318,7 +1349,11 @@ bool FlushGroupRun(CFX_RenderDevice* device,
+   // Rasterize each path into the group buffer using normal blend.
+   // Multiple paths may overlap freely — they accumulate with normal
+   // compositing inside the group, exactly as in MuPDF's group model.
++  size_t nodes_drawn_in_run = 0;
+   for (const MaskRunEntry& entry : run.entries) {
++    if (CheckBlendRunCancel(status, replay_stats, nodes_drawn_in_run)) {
++      return false;
++    }
+     CFX_Matrix group_matrix = entry.path_matrix;
+     group_matrix.Translate(-run.group_rect.left, -run.group_rect.top);
+     if (!group_device.DrawPath(*list.path_table[entry.path_index].GetObject(),
+@@ -1326,11 +1361,18 @@ bool FlushGroupRun(CFX_RenderDevice* device,
+                                paint.stroke_argb, paint.fill_options)) {
+       return false;
+     }
++    nodes_drawn_in_run++;
++    if (CheckBlendRunCancel(status, replay_stats, nodes_drawn_in_run)) {
++      return false;
++    }
+   }
+ 
+   // Composite the group onto the destination with the run's blend mode —
+   // one SetDIBitsWithBlend call for the entire run, matching MuPDF's
+   // fz_blend_pixmap at end_group.
++  if (CheckBlendRunCancel(status, replay_stats, nodes_drawn_in_run)) {
++    return false;
++  }
+   if (!device->SetDIBitsWithBlend(std::move(group), run.group_rect.left,
+                                   run.group_rect.top, paint.blend_mode)) {
+     return false;
+@@ -1343,6 +1385,9 @@ bool FlushGroupRun(CFX_RenderDevice* device,
+       replay_stats->max_group_run_nodes = run.entries.size();
+     }
+   }
++  if (CheckBlendRunCancel(status, replay_stats, nodes_drawn_in_run)) {
++    return false;
++  }
+   return true;
+ }
+ 
+@@ -1511,7 +1556,7 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+     if (run.empty()) {
+       return VelocePathDisplayListResult::kRendered;
+     }
+-    if (!FlushGroupRun(device, list, run, replay_stats)) {
++    if (!FlushGroupRun(status, device, list, run, replay_stats)) {
+       return VelocePathDisplayListResult::kCancelled;
+     }
+     if (replay_stats && reason_counter) {

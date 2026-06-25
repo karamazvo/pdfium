@@ -66,6 +66,7 @@ these patches:
 | 0038 | `0038-veloce-path-display-list-disable-text-passthrough-cache.patch` | Text-passthrough cache lifetime fix. Display lists containing ordered text passthrough segments still replay for the current holder, but are not stored in the process display-list cache because those segments hold raw `CPDF_PageObject*` pointers whose lifetime is only the live holder replay. Prevents r31 cache-hit use-after-free crashes. |
 | 0039 | `0039-veloce-path-display-list-text-passthrough-index-cache.patch` | Text-passthrough index cache fix. Replaces cached raw text passthrough pointers with holder object indexes, resolves live text objects from the current holder before replay, and restores display-list cache insertion for Q16-style text-barrier pages. |
 | 0040 | `0040-veloce-path-display-list-fill-barrier-telemetry.patch` | Fill-barrier telemetry. Adds compact `VelocePathDLFill` logs for normal barriers that are not pure stroke-run nodes: fill-only/fill+stroke shape, fill rule, rect-like/thin/empty device bounds, path point counts, and pending-stroke overlap/disjoint/unknown counts. Telemetry-only; draw order and packing decisions are unchanged. |
+| 0041 | `0041-veloce-path-display-list-blend-group-cancellation.patch` | Blend group cooperative cancellation. Adds cancellation checkpoints inside `BlendGroupRun` group-buffer flushes before allocation, during group rasterization, before final composite, and after composite. Successful renders remain visually unchanged; cancelled renders return `kCancelled` and are discarded by callers. |
 
 ## Why this directory exists
 
@@ -115,6 +116,7 @@ git apply patches/ship/0037-veloce-path-display-list-holder-space-spatial-index.
 git apply patches/ship/0038-veloce-path-display-list-disable-text-passthrough-cache.patch
 git apply patches/ship/0039-veloce-path-display-list-text-passthrough-index-cache.patch
 git apply patches/ship/0040-veloce-path-display-list-fill-barrier-telemetry.patch
+git apply patches/ship/0041-veloce-path-display-list-blend-group-cancellation.patch
 ```
 
 > **Note:** patches 0027 and 0028 are deprecated and must NOT be applied.
@@ -211,6 +213,13 @@ Patch 0040 depends on patch 0039. It is telemetry-only and emits a compact
 `VelocePathDLFill` line when normal non-stroke-only path barriers are
 encountered during replay. It does not change path eligibility, replay order, stroke-run
 packing, or fallback/cancel behavior.
+Patch 0041 depends on patch 0040. It keeps successful `BlendGroupRun` output
+unchanged, but checks `CPDF_RenderStatus::ShouldCancelRender()` inside the
+group-buffer blend flush before allocation, around each group path draw, before
+the destination composite, and after composite. If cancellation is observed,
+Veloce returns `kCancelled`; the partially rendered tile is discarded by the
+existing progressive render caller. Adds `blendCancel*` telemetry to the main
+`VelocePathDL` line.
 The release workflow applies the numeric order shown above, skipping 0027/0028.
 
 ## Cumulative effect (measured)
@@ -324,6 +333,11 @@ new `FPDFEx_LoadPageWithClassification()` symbol.
   `core/fpdfapi/render/veloce_path_display_list.cpp`.
   Adds compact telemetry for fill-barrier shape and pending-stroke overlap
   classification. No rendering behavior, public API, or build file changes.
+- **0041 Veloce blend group cooperative cancellation**:
+  `core/fpdfapi/render/veloce_path_display_list.cpp`.
+  Adds cancellation checkpoints and `blendCancel*` telemetry inside group-buffer
+  blend flushes. Successful render output is unchanged; cancelled replay returns
+  `kCancelled`. No public API or build file changes.
 - **0017 Veloce holder-level root page path display list**:
   `core/fpdfapi/render/cpdf_renderstatus.cpp`,
   `core/fpdfapi/render/veloce_path_display_list.{h,cpp}`.
