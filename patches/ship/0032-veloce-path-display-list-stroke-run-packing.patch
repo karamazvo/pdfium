@@ -1,7 +1,7 @@
 diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
---- a/core/fpdfapi/render/veloce_path_display_list.cpp	2026-06-23 12:28:52
-+++ b/core/fpdfapi/render/veloce_path_display_list.cpp	2026-06-23 17:22:25
-@@ -145,6 +145,10 @@
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -145,6 +145,10 @@ struct PathDlReplayStats {
    size_t run_flush_normal_node = 0;
    size_t run_flush_scratch_blend = 0;
    size_t run_flush_end = 0;
@@ -12,7 +12,7 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
  };
  
  bool IsPathDisplayListFeatureEnabled(const CPDF_RenderStatus* status) {
-@@ -307,6 +311,7 @@
+@@ -307,6 +311,7 @@ void LogPathDisplayListAttempt(const char* result,
        "noopClips=%zu blendNodes=%zu scratchBlendNodes=%zu visited=%zu culled=%zu missingPath=%zu drawn=%zu "
        "clipSwitches=%zu cancelChecks=%zu groupRunComposites=%zu groupRunNodes=%zu maxGroupRunNodes=%zu "
        "runFlushPaint=%zu runFlushClip=%zu runFlushNormal=%zu runFlushScratch=%zu runFlushEnd=%zu "
@@ -20,7 +20,7 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
        "cache=%s compileMs=%" PRId64
        " replayMs=%" PRId64
        " totalFastMs=%" PRId64 " estimatedDispatchAvoided=%zu",
-@@ -339,6 +344,9 @@
+@@ -339,6 +344,9 @@ void LogPathDisplayListAttempt(const char* result,
        replay_stats ? replay_stats->run_flush_normal_node : kZero,
        replay_stats ? replay_stats->run_flush_scratch_blend : kZero,
        replay_stats ? replay_stats->run_flush_end : kZero,
@@ -30,34 +30,34 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
        cache_state ? cache_state : "none", compile_ms,
        replay_ms, compile_ms + replay_ms,
        list ? list->nodes.size() : kZero);
-@@ -831,6 +839,16 @@
-     }
-   }
+@@ -833,6 +841,16 @@ bool FlushGroupRun(CFX_RenderDevice* device,
    return true;
-+}
-+
+ }
+ 
 +// Returns true when |paint| describes a pure stroke (no fill) with normal
-+// blend mode. CFX_Path::Append is safe for stroke-only subpaths: the stroke
-+// of a composite path equals the union of strokes of its subpaths because
-+// stroke rendering is per-subpath with no winding-rule interaction.
++// blend mode. Stroke-run packing is only equivalent when the original path
++// matrix is preserved through DrawPath(); transforming path coordinates before
++// flush would incorrectly detach stroke width/dash scaling from the CTM.
 +bool IsStrokeOnlyNormal(const PathDlPaint& paint) {
 +  return paint.blend_mode == BlendMode::kNormal &&
 +         paint.fill_options.fill_type == CFX_FillRenderOptions::FillType::kNoFill &&
 +         paint.stroke_argb != 0;
- }
- 
- VelocePathDisplayListResult ReplayPathDisplayList(
-@@ -865,6 +883,36 @@
-     }
-     run.reset();
-     return VelocePathDisplayListResult::kRendered;
-+  };
++}
 +
+ VelocePathDisplayListResult ReplayPathDisplayList(
+     CPDF_RenderStatus* status,
+     const NativePathDisplayList& list,
+@@ -867,15 +885,50 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+     return VelocePathDisplayListResult::kRendered;
+   };
+ 
 +  // Stroke run packing: consecutive stroke-only normal-blend nodes with the
-+  // same paint_key are appended into one CFX_Path and drawn with a single
-+  // DrawPath call. Safe because stroke rendering is per-subpath with no
-+  // winding-rule interaction between independently appended subpaths.
++  // same paint_key and path matrix are appended into one CFX_Path and drawn
++  // with a single DrawPath call using that matrix. Keeping the matrix in
++  // DrawPath preserves PDF stroke CTM semantics for line width, dash, and
++  // stroke adjustment.
 +  CFX_Path stroke_run_path;
++  CFX_Matrix stroke_run_matrix;
 +  uint32_t stroke_run_paint_key = kNoClipKey;  // kNoClipKey = sentinel for empty
 +  size_t stroke_run_count = 0;
 +
@@ -68,7 +68,7 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
 +        run_paint.graph_state_key == kNoGraphStateKey
 +            ? nullptr
 +            : &list.graph_state_table[run_paint.graph_state_key];
-+    device->DrawPath(stroke_run_path, nullptr, gs, 0,
++    device->DrawPath(stroke_run_path, &stroke_run_matrix, gs, 0,
 +                     run_paint.stroke_argb, run_paint.fill_options);
 +    if (replay_stats) {
 +      replay_stats->stroke_run_draws++;
@@ -78,13 +78,15 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
 +      }
 +    }
 +    stroke_run_path.Clear();
++    stroke_run_matrix = CFX_Matrix();
 +    stroke_run_paint_key = kNoClipKey;
 +    stroke_run_count = 0;
 +    return true;
-   };
- 
++  };
++
    for (uint32_t i = 0; i < list.nodes.size(); ++i) {
-@@ -873,9 +921,10 @@
+     if ((i % kCancelCheckNodeInterval) == 0) {
+       if (replay_stats) {
          replay_stats->cancel_checks++;
        }
        if (status->ShouldCancelRender()) {
@@ -93,11 +95,12 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
 +        // Cancelled output is discarded — reset without flushing.
          run.reset();
 +        stroke_run_path.Clear();
++        stroke_run_matrix = CFX_Matrix();
 +        stroke_run_count = 0;
          return VelocePathDisplayListResult::kCancelled;
        }
      }
-@@ -891,8 +940,9 @@
+@@ -891,8 +944,9 @@ VelocePathDisplayListResult ReplayPathDisplayList(
        continue;
      }
  
@@ -108,7 +111,7 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
        if (auto r = flush_run(replay_stats
                                   ? &replay_stats->run_flush_clip_change
                                   : nullptr);
-@@ -926,20 +976,36 @@
+@@ -926,9 +980,30 @@ VelocePathDisplayListResult ReplayPathDisplayList(
              ? nullptr
              : &list.graph_state_table[paint.graph_state_key];
  
@@ -116,30 +119,33 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
 -      // Normal node: flush pending run first (blend must composite before
 -      // the normal node paints over it), then draw directly.
 +    if (IsStrokeOnlyNormal(paint)) {
-+      // Stroke run packing: flush if paint key changes, then accumulate.
-+      if (stroke_run_count > 0 && node.paint_key != stroke_run_paint_key) {
++      // Stroke run packing: flush if paint key or CTM changes, then
++      // accumulate the original path. The shared CTM is applied at flush.
++      if (stroke_run_count > 0 &&
++          (node.paint_key != stroke_run_paint_key ||
++           !(path_matrix == stroke_run_matrix))) {
 +        flush_stroke_run();
 +      }
 +      // Flush blend run — blend content before this stroke must composite first.
-       if (auto r = flush_run(replay_stats
-                                  ? &replay_stats->run_flush_normal_node
-                                  : nullptr);
-           r != VelocePathDisplayListResult::kRendered) {
-         return r;
-       }
-+      stroke_run_path.Append(*path, &path_matrix);
-+      stroke_run_paint_key = node.paint_key;
-+      stroke_run_count++;
-+    } else if (paint.blend_mode == BlendMode::kNormal) {
-+      // Non-stroke normal node: flush stroke run and blend run first.
-+      flush_stroke_run();
 +      if (auto r = flush_run(replay_stats
 +                                 ? &replay_stats->run_flush_normal_node
 +                                 : nullptr);
 +          r != VelocePathDisplayListResult::kRendered) {
 +        return r;
 +      }
-       device->DrawPath(*path, &path_matrix, graph_state, paint.fill_argb,
++      if (stroke_run_count == 0) {
++        stroke_run_matrix = path_matrix;
++        stroke_run_paint_key = node.paint_key;
++      }
++      stroke_run_path.Append(*path, nullptr);
++      stroke_run_count++;
++    } else if (paint.blend_mode == BlendMode::kNormal) {
++      // Non-stroke normal node: flush stroke run and blend run first.
++      flush_stroke_run();
+       if (auto r = flush_run(replay_stats
+                                  ? &replay_stats->run_flush_normal_node
+                                  : nullptr);
+@@ -939,7 +1014,8 @@ VelocePathDisplayListResult ReplayPathDisplayList(
                         paint.stroke_argb, paint.fill_options);
  
      } else if (CanDrawBlendNodeWithMask(paint)) {
@@ -149,7 +155,7 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
        if (!run.empty() && run.paint_key != node.paint_key) {
          if (auto r = flush_run(replay_stats
                                     ? &replay_stats->run_flush_paint_change
-@@ -970,7 +1036,8 @@
+@@ -970,7 +1046,8 @@ VelocePathDisplayListResult ReplayPathDisplayList(
        }
  
      } else {
@@ -159,7 +165,7 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
        if (auto r = flush_run(replay_stats
                                   ? &replay_stats->run_flush_scratch_blend
                                   : nullptr);
-@@ -988,7 +1055,8 @@
+@@ -988,7 +1065,8 @@ VelocePathDisplayListResult ReplayPathDisplayList(
      }
    }
  

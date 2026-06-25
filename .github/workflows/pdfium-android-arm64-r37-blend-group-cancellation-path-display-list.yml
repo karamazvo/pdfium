@@ -206,7 +206,8 @@ jobs:
           grep -q 'strokeRunDraws=%zu' core/fpdfapi/render/veloce_path_display_list.cpp
           grep -q 'strokeRunNodes=%zu' core/fpdfapi/render/veloce_path_display_list.cpp
           grep -q 'maxStrokeRunNodes=%zu' core/fpdfapi/render/veloce_path_display_list.cpp
-          grep -q 'stroke_run_path\.Append\|stroke_run_path.Append' core/fpdfapi/render/veloce_path_display_list.cpp
+          grep -q 'stroke_run_path\.Append(\*path, nullptr)' core/fpdfapi/render/veloce_path_display_list.cpp
+          grep -q 'DrawPath(stroke_run_path, &stroke_run_matrix' core/fpdfapi/render/veloce_path_display_list.cpp
           # r28-specific: ordered path/text segments
           grep -q 'PathDlSegmentKind' core/fpdfapi/render/veloce_path_display_list.cpp
           grep -q 'kTextPassthrough' core/fpdfapi/render/veloce_path_display_list.cpp
@@ -223,6 +224,7 @@ jobs:
           grep -q 'strokeRunFlushPaint=%zu' core/fpdfapi/render/veloce_path_display_list.cpp
           grep -q 'strokeRunFlushColor=%zu' core/fpdfapi/render/veloce_path_display_list.cpp
           grep -q 'strokeRunFlushGraphState=%zu' core/fpdfapi/render/veloce_path_display_list.cpp
+          grep -q 'strokeRunFlushMatrix=%zu' core/fpdfapi/render/veloce_path_display_list.cpp
           grep -q 'strokeRunFlushPathStyle=%zu' core/fpdfapi/render/veloce_path_display_list.cpp
           grep -q 'strokeRunFlushFillMode=%zu' core/fpdfapi/render/veloce_path_display_list.cpp
           grep -q 'strokeRunFlushClip=%zu' core/fpdfapi/render/veloce_path_display_list.cpp
@@ -276,6 +278,14 @@ jobs:
           # guard: Append only for stroke runs, not blend paths
           if grep -q 'packed\.Append\b' core/fpdfapi/render/veloce_path_display_list.cpp; then
             echo "ERROR: packed.Append found — Append must only appear in stroke_run_path context" >&2
+            exit 1
+          fi
+          if grep -q 'DrawPath(stroke_run_path, nullptr' core/fpdfapi/render/veloce_path_display_list.cpp; then
+            echo "ERROR: stroke-run DrawPath must preserve the path matrix" >&2
+            exit 1
+          fi
+          if grep -q 'stroke_run_path\.Append(\*path, &path_matrix)' core/fpdfapi/render/veloce_path_display_list.cpp; then
+            echo "ERROR: stroke-run Append must keep original path coordinates" >&2
             exit 1
           fi
           # deprecated symbols must be absent

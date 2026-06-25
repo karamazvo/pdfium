@@ -57,10 +57,10 @@ these patches:
 | 0030 | `0030-veloce-path-display-list-run-correctness-fixes.patch` | Three correctness fixes to 0029. **P1:** adds a conservative bbox overlap gate (later superseded by 0031's group-buffer approach). **P2:** removes the flush-on-cancel path — cancelled output is discarded, so writing partial content to the bitmap is wasted work; the run is now just reset. **P3:** counts the end-of-loop drain as `runFlushEnd` instead of `runFlushPaint` so flush-reason telemetry is unambiguous. |
 | 0031 | `0031-veloce-path-display-list-group-buffer-blend.patch` | Replaces the 8-bit mask + `SetMaskBitsWithBlend` flush with a BGRA group buffer + `SetDIBitsWithBlend`, matching MuPDF's transparency group model. Each run allocates one BGRA bitmap covering the union rect of all node rects; paths rasterize into it with normal blend (as MuPDF does inside `fz_draw_begin_group`); the completed group composites onto the destination once with `SetDIBitsWithBlend(blend_mode)` (as MuPDF does at `fz_draw_end_group`). Overlapping paths are correct because they accumulate under normal blend inside the group before the single blend-mode composite. Removes the P1 bbox overlap gate (no longer needed — overlaps are safe in the group buffer). Renames telemetry to `groupRunComposites`, `groupRunNodes`, `maxGroupRunNodes`. |
 
-| 0032 | `0032-veloce-path-display-list-stroke-run-packing.patch` | Stroke run packing. Consecutive stroke-only normal-blend nodes sharing the same `paint_key` are appended into one `CFX_Path` via `CFX_Path::Append` and drawn with a single `DrawPath` call. Safe because stroke rendering is per-subpath with no winding-rule interaction — unlike filled paths where `Append` changes fill semantics. Targets CAD/engineering PDFs (e.g. DWG exports from Bentley InterPlot) with hundreds of thousands of single-line-segment stroke paths. Adds `strokeRunDraws`, `strokeRunNodes`, `maxStrokeRunNodes` telemetry. |
+| 0032 | `0032-veloce-path-display-list-stroke-run-packing.patch` | Stroke run packing. Consecutive stroke-only normal-blend nodes sharing the same `paint_key` and path matrix are appended into one `CFX_Path` via `CFX_Path::Append` and drawn with a single `DrawPath` call using the preserved matrix. This keeps stroke width, dash, and stroke adjustment tied to the original CTM. Targets CAD/engineering PDFs (e.g. DWG exports from Bentley InterPlot) with hundreds of thousands of single-line-segment stroke paths. Adds `strokeRunDraws`, `strokeRunNodes`, `maxStrokeRunNodes` telemetry. |
 | ~~0033~~ | _(not shipped)_ | **REVERTED — do not apply.** Reserved for the failed group-buffer resolution-cap experiment. It downscaled large group buffers and stretched them back, but regressed `11.pdf` replay time severely because it added per-composite stretch work while preserving thousands of composites. Kept as a reserved number to avoid patch-history confusion. |
 | 0034 | `0034-veloce-path-display-list-ordered-text-passthrough.patch` | Ordered segmented acceleration. Converts the path-only display list into an ordered segment plan so text objects can remain in painter order between accelerated path runs instead of rejecting the whole holder. P1 supports `PathRun` + text passthrough only; image/Form/shading passthrough still rejects before drawing. Adds `segments`, `pathSegments`, `pathSegmentNodes`, `maxPathSegmentNodes`, `textPassthroughObjects`, and `unsupportedPassthroughObjects` telemetry. |
-| 0035 | `0035-veloce-path-display-list-stroke-run-flush-telemetry.patch` | Stroke-run flush telemetry. Adds reason counters for existing stroke-run flushes (`strokeRunFlushPaint`, `strokeRunFlushColor`, `strokeRunFlushGraphState`, `strokeRunFlushPathStyle`, `strokeRunFlushFillMode`, `strokeRunFlushClip`, `strokeRunFlushBlend`, `strokeRunFlushSegment`, `strokeRunFlushCapacity`, `strokeRunFlushEnd`). Telemetry-only: replay order and draw decisions are unchanged. |
+| 0035 | `0035-veloce-path-display-list-stroke-run-flush-telemetry.patch` | Stroke-run flush telemetry. Adds reason counters for existing stroke-run flushes (`strokeRunFlushPaint`, `strokeRunFlushColor`, `strokeRunFlushGraphState`, `strokeRunFlushMatrix`, `strokeRunFlushPathStyle`, `strokeRunFlushFillMode`, `strokeRunFlushClip`, `strokeRunFlushBlend`, `strokeRunFlushSegment`, `strokeRunFlushCapacity`, `strokeRunFlushEnd`). Telemetry-only: replay order and draw decisions are unchanged. |
 | 0036 | `0036-veloce-path-display-list-nonoverlap-fill-barrier-stroke-packing.patch` | Non-overlap fill-barrier stroke packing. Keeps a pending stroke run open across a normal non-stroke path only when expanded clipped device-space bounds prove that the barrier is disjoint from the pending stroke run. Overlapping or unknown barriers still flush. Adds `strokeRunFillBarriersCrossed` and `strokeRunFillBarriersBlocked` telemetry. |
 | 0037 | `0037-veloce-path-display-list-holder-space-spatial-index.patch` | Holder-space spatial index. Builds a cached 32x32 grid over path node bboxes in holder/page coordinates, transforms the device tile clip back to holder space at replay time, queries candidate bins, sorts candidate node ids back into display-list order, and then reuses existing segment replay. Broad preview clips fall back to the old full scan. Adds `spatialIndex*` telemetry. |
 | 0038 | `0038-veloce-path-display-list-disable-text-passthrough-cache.patch` | Text-passthrough cache lifetime fix. Display lists containing ordered text passthrough segments still replay for the current holder, but are not stored in the process display-list cache because those segments hold raw `CPDF_PageObject*` pointers whose lifetime is only the live holder replay. Prevents r31 cache-hit use-after-free crashes. |
@@ -167,11 +167,12 @@ a BGRA group buffer matching MuPDF's transparency group model. The P1 bbox
 overlap gate from 0030 is removed — overlapping paths accumulate correctly
 inside the group buffer under normal blend before the single blend composite.
 Patch 0032 depends on patch 0031 and adds stroke-only run packing for the
-normal-blend path. Consecutive stroke-only same-paint nodes are accumulated
-via CFX_Path::Append and drawn with one DrawPath call. This is safe for
-stroke-only paths (no winding interaction) and is the primary optimization
-for CAD/DWG-export PDFs with hundreds of thousands of single-line-segment
-stroke operations.
+normal-blend path. Consecutive stroke-only nodes are accumulated via
+CFX_Path::Append only when they share paint and path matrix, then drawn with one
+DrawPath call using that preserved matrix. This is safe for stroke-only paths
+(no winding interaction) while preserving stroke CTM semantics for line width,
+dash, and stroke adjustment, and is the primary optimization for CAD/DWG-export
+PDFs with hundreds of thousands of single-line-segment stroke operations.
 Patch 0033 is intentionally absent from the apply list. It was the reverted
 group-buffer resolution-cap experiment and should remain reserved.
 Patch 0034 depends on patch 0032 and adds ordered path/text segmentation.
@@ -182,10 +183,11 @@ and then clears clip state so the next accelerated path segment installs its
 own clip. Image, Form, and shading passthrough remain unsupported in this P1
 patch and reject before drawing.
 Patch 0035 depends on patch 0034 and is telemetry-only. It records why existing
-stroke runs flush, while preserving r28's hard segment barriers and all replay
-ordering. Use it to decide whether the next optimization should target color
-alternation, graph state/style variation, fill-mode barriers, clip changes,
-blend barriers, segment boundaries, or capacity.
+stroke runs flush, including matrix/CTM changes, while preserving r28's hard
+segment barriers and all replay ordering. Use it to decide whether the next
+optimization should target color alternation, graph state/style variation,
+matrix variation, fill-mode barriers, clip changes, blend barriers, segment
+boundaries, or capacity.
 Patch 0036 depends on patch 0035. It reduces fill-mode stroke-run fragmentation
 without violating painter order by crossing only disjoint normal non-stroke path
 barriers. The proof is device-space and conservative: expanded barrier bounds
