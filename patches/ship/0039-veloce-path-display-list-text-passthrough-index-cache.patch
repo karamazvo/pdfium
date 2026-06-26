@@ -156,6 +156,12 @@ diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/ren
          status->ProcessClipPath(empty_clip, holder_to_device);
          have_clip_state = false;
          current_clip_key = kNoClipKey;
+@@ -1668,4 +1725,5 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+         force_clip_reinstall = true;
+         break;
++      }
+     }
+   }
 @@ -1718,16 +1775,8 @@ VelocePathDisplayListResult VeloceTryRenderPathDisplayListForHolder(
        return VelocePathDisplayListResult::kNotEligible;
      }
