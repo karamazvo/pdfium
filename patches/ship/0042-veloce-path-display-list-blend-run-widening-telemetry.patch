@@ -1,0 +1,161 @@
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index beebc78ea..126930687 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -178,6 +178,14 @@ struct PathDlReplayStats {
+   size_t group_run_composites = 0;
+   size_t group_run_nodes = 0;
+   size_t max_group_run_nodes = 0;
++  uint64_t group_run_pixels = 0;
++  uint64_t group_run_node_pixels = 0;
++  uint64_t max_group_run_pixels = 0;
++  size_t blend_paint_change_barriers = 0;
++  size_t blend_paint_change_candidates = 0;
++  size_t blend_paint_change_disjoint = 0;
++  size_t blend_paint_change_overlap = 0;
++  size_t blend_paint_change_unknown = 0;
+   size_t blend_cancel_checks = 0;
+   size_t blend_cancelled_after_composites = 0;
+   size_t blend_cancelled_after_nodes = 0;
+@@ -499,6 +507,9 @@ void LogPathDisplayListAttempt(const char* result,
+       "scanned=%zu skippedInactive=%zu skippedInvisible=%zu skippedNoFill=%zu "
+       "noopClips=%zu blendNodes=%zu scratchBlendNodes=%zu visited=%zu culled=%zu missingPath=%zu drawn=%zu "
+       "clipSwitches=%zu cancelChecks=%zu groupRunComposites=%zu groupRunNodes=%zu maxGroupRunNodes=%zu "
++      "groupRunPixels=%" PRIu64 " groupRunNodePixels=%" PRIu64 " maxGroupRunPixels=%" PRIu64 " "
++      "blendPaintBarriers=%zu blendPaintCandidates=%zu blendPaintDisjoint=%zu "
++      "blendPaintOverlap=%zu blendPaintUnknown=%zu "
+       "blendCancelChecks=%zu blendCancelledAfterComposites=%zu blendCancelledAfterNodes=%zu "
+       "runFlushPaint=%zu runFlushClip=%zu runFlushNormal=%zu runFlushScratch=%zu runFlushEnd=%zu "
+       "strokeRunDraws=%zu strokeRunNodes=%zu maxStrokeRunNodes=%zu "
+@@ -547,6 +558,14 @@ void LogPathDisplayListAttempt(const char* result,
+       replay_stats ? replay_stats->group_run_composites : kZero,
+       replay_stats ? replay_stats->group_run_nodes : kZero,
+       replay_stats ? replay_stats->max_group_run_nodes : kZero,
++      replay_stats ? replay_stats->group_run_pixels : 0,
++      replay_stats ? replay_stats->group_run_node_pixels : 0,
++      replay_stats ? replay_stats->max_group_run_pixels : 0,
++      replay_stats ? replay_stats->blend_paint_change_barriers : kZero,
++      replay_stats ? replay_stats->blend_paint_change_candidates : kZero,
++      replay_stats ? replay_stats->blend_paint_change_disjoint : kZero,
++      replay_stats ? replay_stats->blend_paint_change_overlap : kZero,
++      replay_stats ? replay_stats->blend_paint_change_unknown : kZero,
+       replay_stats ? replay_stats->blend_cancel_checks : kZero,
+       replay_stats ? replay_stats->blend_cancelled_after_composites : kZero,
+       replay_stats ? replay_stats->blend_cancelled_after_nodes : kZero,
+@@ -619,6 +638,31 @@ void LogPathDisplayListAttempt(const char* result,
+         replay_stats->stroke_run_fill_barriers_crossed,
+         replay_stats->stroke_run_fill_barriers_blocked, compile_ms, replay_ms);
+   }
++  if (replay_stats && replay_stats->group_run_composites > 0) {
++    __android_log_print(
++        ANDROID_LOG_INFO, "VelocePathDLBlend",
++        "result=%s holderKind=%s cache=%s composites=%zu nodes=%zu "
++        "maxNodes=%zu groupPixels=%" PRIu64 " nodePixels=%" PRIu64
++        " maxGroupPixels=%" PRIu64 " paintBarriers=%zu "
++        "paintCandidates=%zu paintDisjoint=%zu paintOverlap=%zu "
++        "paintUnknown=%zu cancelChecks=%zu cancelledAfterComposites=%zu "
++        "cancelledAfterNodes=%zu compileMs=%" PRId64 " replayMs=%" PRId64,
++        result, HolderKindName(holder_kind), cache_state ? cache_state : "none",
++        replay_stats->group_run_composites,
++        replay_stats->group_run_nodes,
++        replay_stats->max_group_run_nodes,
++        replay_stats->group_run_pixels,
++        replay_stats->group_run_node_pixels,
++        replay_stats->max_group_run_pixels,
++        replay_stats->blend_paint_change_barriers,
++        replay_stats->blend_paint_change_candidates,
++        replay_stats->blend_paint_change_disjoint,
++        replay_stats->blend_paint_change_overlap,
++        replay_stats->blend_paint_change_unknown,
++        replay_stats->blend_cancel_checks,
++        replay_stats->blend_cancelled_after_composites,
++        replay_stats->blend_cancelled_after_nodes, compile_ms, replay_ms);
++  }
+ #endif
+ }
+ 
+@@ -1149,6 +1193,14 @@ void UnionRect(FX_RECT* accumulator, const FX_RECT& rect) {
+   accumulator->bottom = std::max(accumulator->bottom, rect.bottom);
+ }
+ 
++uint64_t RectPixelArea(const FX_RECT& rect) {
++  if (rect.IsEmpty()) {
++    return 0;
++  }
++  return static_cast<uint64_t>(rect.Width()) *
++         static_cast<uint64_t>(rect.Height());
++}
++
+ struct SpatialReplayQuery {
+   bool use_index = false;
+   std::vector<uint32_t> candidates;
+@@ -1289,6 +1341,31 @@ struct MaskRun {
+   }
+ };
+ 
++void RecordBlendPaintBarrierTelemetry(PathDlReplayStats* replay_stats,
++                                      const NativePathDisplayList& list,
++                                      const MaskRun& pending_run,
++                                      const PathDlPaint& next_paint,
++                                      const FX_RECT& next_rect) {
++  if (!replay_stats) {
++    return;
++  }
++  replay_stats->blend_paint_change_barriers++;
++  if (!pending_run.group_rect_valid || pending_run.group_rect.IsEmpty() ||
++      next_rect.IsEmpty() || pending_run.paint_key >= list.paint_table.size()) {
++    replay_stats->blend_paint_change_unknown++;
++    return;
++  }
++  if (RectsIntersect(pending_run.group_rect, next_rect)) {
++    replay_stats->blend_paint_change_overlap++;
++    return;
++  }
++  replay_stats->blend_paint_change_disjoint++;
++  const PathDlPaint& previous_paint = list.paint_table[pending_run.paint_key];
++  if (previous_paint.blend_mode == next_paint.blend_mode) {
++    replay_stats->blend_paint_change_candidates++;
++  }
++}
++
+ // MuPDF-equivalent group-buffer flush. Allocates one BGRA off-screen bitmap
+ // covering the union of all node rects, rasterizes every path into it with
+ // normal blend (exactly as MuPDF fills paths inside a transparency group),
+@@ -1388,6 +1465,14 @@ bool FlushGroupRun(CPDF_RenderStatus* status,
+     if (run.entries.size() > replay_stats->max_group_run_nodes) {
+       replay_stats->max_group_run_nodes = run.entries.size();
+     }
++    const uint64_t group_pixels = RectPixelArea(run.group_rect);
++    replay_stats->group_run_pixels += group_pixels;
++    if (group_pixels > replay_stats->max_group_run_pixels) {
++      replay_stats->max_group_run_pixels = group_pixels;
++    }
++    for (const MaskRunEntry& entry : run.entries) {
++      replay_stats->group_run_node_pixels += RectPixelArea(entry.node_rect);
++    }
+   }
+   if (CheckBlendRunCancel(status, replay_stats, nodes_drawn_in_run)) {
+     return false;
+@@ -1730,7 +1815,12 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+     } else if (CanDrawBlendNodeWithMask(paint)) {
+       // Mask-eligible blend node. Flush stroke run first, then blend run.
+       flush_stroke_run(StrokeRunFlushReason::kBlend);
++      FX_RECT node_rect =
++          holder_to_device.TransformRect(node.holder_space_bbox).GetOuterRect();
++      node_rect.Intersect(device->GetClipBox());
+       if (!run.empty() && run.paint_key != node.paint_key) {
++        RecordBlendPaintBarrierTelemetry(replay_stats, list, run, paint,
++                                         node_rect);
+         if (auto r = flush_run(replay_stats
+                                    ? &replay_stats->run_flush_paint_change
+                                    : nullptr);
+@@ -1741,9 +1831,6 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+       // Accumulate into the group run. Overlapping paths are allowed: they
+       // composite normally inside the BGRA group buffer, matching the PDF
+       // transparency group model. No overlap gate needed.
+-      FX_RECT node_rect =
+-          holder_to_device.TransformRect(node.holder_space_bbox).GetOuterRect();
+-      node_rect.Intersect(device->GetClipBox());
+       if (!node_rect.IsEmpty()) {
+         run.paint_key = node.paint_key;
+         if (!run.group_rect_valid) {

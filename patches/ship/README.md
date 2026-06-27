@@ -67,6 +67,7 @@ these patches:
 | 0039 | `0039-veloce-path-display-list-text-passthrough-index-cache.patch` | Text-passthrough index cache fix. Replaces cached raw text passthrough pointers with holder object indexes, resolves live text objects from the current holder before replay, and restores display-list cache insertion for Q16-style text-barrier pages. |
 | 0040 | `0040-veloce-path-display-list-fill-barrier-telemetry.patch` | Fill-barrier telemetry. Adds compact `VelocePathDLFill` logs for normal barriers that are not pure stroke-run nodes: fill-only/fill+stroke shape, fill rule, rect-like/thin/empty device bounds, path point counts, and pending-stroke overlap/disjoint/unknown counts. Telemetry-only; draw order and packing decisions are unchanged. |
 | 0041 | `0041-veloce-path-display-list-blend-group-cancellation.patch` | Blend group cooperative cancellation. Adds cancellation checkpoints inside `BlendGroupRun` group-buffer flushes before allocation, during group rasterization, before final composite, and after composite. Successful renders remain visually unchanged; cancelled renders return `kCancelled` and are discarded by callers. |
+| 0042 | `0042-veloce-path-display-list-blend-run-widening-telemetry.patch` | Blend-run widening telemetry. Adds group-buffer pixel cost metrics (`groupRunPixels`, `groupRunNodePixels`, `maxGroupRunPixels`) and paint-change barrier opportunity counters (`blendPaint*`) plus a compact `VelocePathDLBlend` log. Telemetry-only; it does not merge or reorder blend runs. Use this to decide whether a future multi-paint `BlendGroupRun` can safely reduce `11.pdf` successful-tile cost. |
 
 ## Why this directory exists
 
@@ -117,6 +118,7 @@ git apply patches/ship/0038-veloce-path-display-list-disable-text-passthrough-ca
 git apply patches/ship/0039-veloce-path-display-list-text-passthrough-index-cache.patch
 git apply patches/ship/0040-veloce-path-display-list-fill-barrier-telemetry.patch
 git apply patches/ship/0041-veloce-path-display-list-blend-group-cancellation.patch
+git apply patches/ship/0042-veloce-path-display-list-blend-run-widening-telemetry.patch
 ```
 
 > **Note:** patches 0027 and 0028 are deprecated and must NOT be applied.
@@ -222,6 +224,12 @@ the destination composite, and after composite. If cancellation is observed,
 Veloce returns `kCancelled`; the partially rendered tile is discarded by the
 existing progressive render caller. Adds `blendCancel*` telemetry to the main
 `VelocePathDL` line.
+Patch 0042 depends on patch 0041 and is telemetry-only. It measures successful
+`BlendGroupRun` cost in device pixels and records whether paint-change barriers
+between adjacent blend runs are disjoint, overlapping, unknown, or same-blend
+merge candidates. It emits a compact `VelocePathDLBlend` line for `11.pdf`-style
+analysis. It does not change grouping, painter order, cancellation, or blend
+semantics.
 The release workflow applies the numeric order shown above, skipping 0027/0028.
 
 ## Cumulative effect (measured)
