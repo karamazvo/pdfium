@@ -1,0 +1,199 @@
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index 9ad070b08..1fde9e2db 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -52,6 +52,7 @@ constexpr size_t kMaxScratchBlendNodes = 512;
+ constexpr uint32_t kSpatialIndexColumns = 32;
+ constexpr uint32_t kSpatialIndexRows = 32;
+ constexpr uint32_t kMaxSpatialBinsPerNode = 128;
++constexpr size_t kMaxStrokeRunPackedPoints = 65536;
+ constexpr uint32_t kInvalidPassthroughObjectIndex =
+     std::numeric_limits<uint32_t>::max();
+ 
+@@ -220,7 +221,9 @@ struct PathDlReplayStats {
+   // Stroke run packing telemetry.
+   size_t stroke_run_draws = 0;
+   size_t stroke_run_nodes = 0;
++  size_t stroke_run_points = 0;
+   size_t max_stroke_run_nodes = 0;
++  size_t max_stroke_run_points = 0;
+   size_t stroke_run_flush_paint = 0;
+   size_t stroke_run_flush_color = 0;
+   size_t stroke_run_flush_graph_state = 0;
+@@ -242,6 +245,8 @@ struct PathDlReplayStats {
+   size_t stroke_run_flush_matrix_same_linear = 0;
+   size_t stroke_run_flush_matrix_translate_only = 0;
+   size_t stroke_run_flush_matrix_linear_changed = 0;
++  size_t stroke_run_matrix_translation_packed = 0;
++  size_t stroke_run_matrix_translation_rejected_singular = 0;
+   size_t fill_barrier_nodes = 0;
+   size_t fill_barrier_fill_only = 0;
+   size_t fill_barrier_fill_stroke = 0;
+@@ -791,10 +796,11 @@ void LogPathDisplayListAttempt(const char* result,
+                   replay_stats->stroke_run_draws;
+     __android_log_print(
+         ANDROID_LOG_INFO, "VelocePathDLStroke",
+-        "result=%s holderKind=%s cache=%s draws=%zu nodes=%zu "
+-        "avgNodesX1000=%" PRIu64 " maxNodes=%zu single=%zu r2_4=%zu "
+-        "r5_16=%zu r17plus=%zu flushPaint=%zu flushColor=%zu "
+-        "flushGraphState=%zu flushMatrix=%zu matrixSameLinear=%zu "
++        "result=%s holderKind=%s cache=%s draws=%zu nodes=%zu points=%zu "
++        "avgNodesX1000=%" PRIu64 " maxNodes=%zu maxPoints=%zu "
++        "single=%zu r2_4=%zu r5_16=%zu r17plus=%zu flushPaint=%zu "
++        "flushColor=%zu flushGraphState=%zu flushMatrix=%zu "
++        "matrixPacked=%zu matrixSameLinear=%zu matrixRejectedSingular=%zu "
+         "matrixTranslateOnly=%zu matrixLinearChanged=%zu "
+         "flushPathStyle=%zu flushFillMode=%zu flushClip=%zu flushBlend=%zu "
+         "flushSegment=%zu flushCapacity=%zu flushEnd=%zu fillCrossed=%zu "
+@@ -803,8 +809,10 @@ void LogPathDisplayListAttempt(const char* result,
+         result, HolderKindName(holder_kind), cache_state ? cache_state : "none",
+         replay_stats->stroke_run_draws,
+         replay_stats->stroke_run_nodes,
++        replay_stats->stroke_run_points,
+         avg_nodes_x1000,
+         replay_stats->max_stroke_run_nodes,
++        replay_stats->max_stroke_run_points,
+         replay_stats->stroke_run_single_node_draws,
+         replay_stats->stroke_run_2_4_node_draws,
+         replay_stats->stroke_run_5_16_node_draws,
+@@ -813,7 +821,9 @@ void LogPathDisplayListAttempt(const char* result,
+         replay_stats->stroke_run_flush_color,
+         replay_stats->stroke_run_flush_graph_state,
+         replay_stats->stroke_run_flush_matrix,
++        replay_stats->stroke_run_matrix_translation_packed,
+         replay_stats->stroke_run_flush_matrix_same_linear,
++        replay_stats->stroke_run_matrix_translation_rejected_singular,
+         replay_stats->stroke_run_flush_matrix_translate_only,
+         replay_stats->stroke_run_flush_matrix_linear_changed,
+         replay_stats->stroke_run_flush_path_style,
+@@ -1789,6 +1799,26 @@ bool MatrixHasSameLinearPart(const CFX_Matrix& lhs, const CFX_Matrix& rhs) {
+   return lhs.a == rhs.a && lhs.b == rhs.b && lhs.c == rhs.c && lhs.d == rhs.d;
+ }
+ 
++float MatrixLinearDeterminant(const CFX_Matrix& matrix) {
++  return matrix.a * matrix.d - matrix.b * matrix.c;
++}
++
++bool CanPackStrokeRunTranslation(const CFX_Matrix& base,
++                                 const CFX_Matrix& next) {
++  return MatrixHasSameLinearPart(base, next) &&
++         MatrixLinearDeterminant(base) != 0.0f;
++}
++
++CFX_Matrix MakeStrokeRunRelativeTranslation(const CFX_Matrix& base,
++                                            const CFX_Matrix& next) {
++  const float determinant = MatrixLinearDeterminant(base);
++  const float dx = next.e - base.e;
++  const float dy = next.f - base.f;
++  return CFX_Matrix(1.0f, 0.0f, 0.0f, 1.0f,
++                    (base.d * dx - base.c * dy) / determinant,
++                    (base.a * dy - base.b * dx) / determinant);
++}
++
+ void RecordStrokeRunMatrixFlush(PathDlReplayStats* replay_stats,
+                                 const CFX_Matrix& previous,
+                                 const CFX_Matrix& next) {
+@@ -2032,14 +2062,16 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+   };
+ 
+   // Stroke run packing: consecutive stroke-only normal-blend nodes with the
+-  // same paint_key and path matrix are appended into one CFX_Path and drawn
+-  // with a single DrawPath call using that matrix. Keeping the matrix in
+-  // DrawPath preserves PDF stroke CTM semantics for line width, dash, and
+-  // stroke adjustment.
++  // same paint_key and compatible path matrices are appended into one CFX_Path
++  // and drawn with a single DrawPath call using the base matrix. Exact matrix
++  // matches append directly. Translation-only changes with the same linear
++  // part append through a relative coordinate-space translation, preserving PDF
++  // stroke CTM semantics for line width, dash, and stroke adjustment.
+   CFX_Path stroke_run_path;
+   CFX_Matrix stroke_run_matrix;
+   uint32_t stroke_run_paint_key = kNoClipKey;  // kNoClipKey = sentinel for empty
+   size_t stroke_run_count = 0;
++  size_t stroke_run_point_count = 0;
+   FX_RECT stroke_run_device_rect;
+ 
+   auto flush_stroke_run = [&](StrokeRunFlushReason reason) -> bool {
+@@ -2054,9 +2086,13 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+     if (replay_stats) {
+       replay_stats->stroke_run_draws++;
+       replay_stats->stroke_run_nodes += stroke_run_count;
++      replay_stats->stroke_run_points += stroke_run_point_count;
+       if (stroke_run_count > replay_stats->max_stroke_run_nodes) {
+         replay_stats->max_stroke_run_nodes = stroke_run_count;
+       }
++      if (stroke_run_point_count > replay_stats->max_stroke_run_points) {
++        replay_stats->max_stroke_run_points = stroke_run_point_count;
++      }
+       if (stroke_run_count == 1) {
+         replay_stats->stroke_run_single_node_draws++;
+       } else if (stroke_run_count <= 4) {
+@@ -2072,6 +2108,7 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+     stroke_run_matrix = CFX_Matrix();
+     stroke_run_paint_key = kNoClipKey;
+     stroke_run_count = 0;
++    stroke_run_point_count = 0;
+     stroke_run_device_rect = FX_RECT();
+     return true;
+   };
+@@ -2082,6 +2119,7 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+     stroke_run_matrix = CFX_Matrix();
+     stroke_run_paint_key = kNoClipKey;
+     stroke_run_count = 0;
++    stroke_run_point_count = 0;
+     stroke_run_device_rect = FX_RECT();
+   };
+ 
+@@ -2147,14 +2185,36 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+             : &list.graph_state_table[paint.graph_state_key];
+ 
+     if (IsStrokeOnlyNormal(paint)) {
++      const size_t path_point_count =
++          primitive_stats ? primitive_stats->points : path->GetPoints().size();
+       if (stroke_run_count > 0 && node.paint_key != stroke_run_paint_key) {
+         flush_stroke_run(ClassifyStrokePaintChange(
+             list.paint_table[stroke_run_paint_key], paint));
+       }
++      if (stroke_run_count > 0 &&
++          stroke_run_point_count + path_point_count >
++              kMaxStrokeRunPackedPoints) {
++        flush_stroke_run(StrokeRunFlushReason::kCapacity);
++      }
++      CFX_Matrix append_matrix_storage;
++      const CFX_Matrix* append_matrix = nullptr;
+       if (stroke_run_count > 0 && !(path_matrix == stroke_run_matrix)) {
+-        RecordStrokeRunMatrixFlush(replay_stats, stroke_run_matrix,
+-                                   path_matrix);
+-        flush_stroke_run(StrokeRunFlushReason::kMatrix);
++        if (CanPackStrokeRunTranslation(stroke_run_matrix, path_matrix)) {
++          append_matrix_storage =
++              MakeStrokeRunRelativeTranslation(stroke_run_matrix, path_matrix);
++          append_matrix = &append_matrix_storage;
++          if (replay_stats) {
++            replay_stats->stroke_run_matrix_translation_packed++;
++          }
++        } else {
++          if (replay_stats && MatrixHasSameLinearPart(stroke_run_matrix,
++                                                      path_matrix)) {
++            replay_stats->stroke_run_matrix_translation_rejected_singular++;
++          }
++          RecordStrokeRunMatrixFlush(replay_stats, stroke_run_matrix,
++                                     path_matrix);
++          flush_stroke_run(StrokeRunFlushReason::kMatrix);
++        }
+       }
+       // Flush blend run: blend content before this stroke must composite first.
+       if (auto r = flush_run(replay_stats
+@@ -2166,9 +2226,11 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+       if (stroke_run_count == 0) {
+         stroke_run_matrix = path_matrix;
+         stroke_run_paint_key = node.paint_key;
++        append_matrix = nullptr;
+       }
+-      stroke_run_path.Append(*path, nullptr);
++      stroke_run_path.Append(*path, append_matrix);
+       stroke_run_count++;
++      stroke_run_point_count += path_point_count;
+       UnionRect(&stroke_run_device_rect,
+                 GetExpandedClippedDeviceRect(node, holder_to_device, device));
+     } else if (paint.blend_mode == BlendMode::kNormal) {

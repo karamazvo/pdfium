@@ -72,6 +72,7 @@ these patches:
 | 0044 | `0044-veloce-path-display-list-fill-barrier-proof-telemetry.patch` | Fill-barrier proof telemetry. Classifies stroke-run-blocking normal fill barriers by no-pixel, thin, rect-like, same-color, and coarse device-rect containment predicates through `VelocePathDLFillProof`. Telemetry-only; it does not cross additional barriers or change drawing. Use this to decide whether r41/r42 can safely promote a narrow fill-barrier crossing rule. |
 | 0045 | `0045-veloce-path-display-list-same-argb-fill-barrier-crossing.patch` | Same-ARGB fill-barrier crossing. Keeps a pending normal stroke run open across a fill-only normal barrier when the barrier fill ARGB exactly matches the pending stroke ARGB. This promotes the r40 same-color proof into behavior using source-over commutativity, without crossing segment, text, clip, blend, pattern, soft-mask, or fill+stroke barriers. Adds `strokeRunFillBarriersSameArgbCrossed` / `sameArgbCrossed` telemetry. |
 | 0046 | `0046-veloce-path-display-list-stroke-run-compact-telemetry.patch` | Stroke-run compact telemetry. Adds a short `VelocePathDLStroke` log that survives Android log truncation, records actual stroke-run flush reasons, buckets run lengths, and splits matrix flushes into same-linear/translation-only versus linear-change cases. Telemetry-only; rendering order, segment barriers, spatial selection, blend behavior, and draw decisions are unchanged. |
+| 0047 | `0047-veloce-path-display-list-translation-normalized-stroke-run-packing.patch` | Translation-normalized stroke-run packing. Keeps stroke-only normal-blend runs open across same-linear translation-only matrix changes by appending each path through a relative coordinate-space translation and drawing the packed run with the base matrix. A fixed packed-point cap bounds temporary path memory and uses the existing capacity flush. Does not cross paint, graph-state, path-style, clip, blend, text, Form, image, or segment barriers. |
 
 ## Why this directory exists
 
@@ -127,6 +128,7 @@ git apply patches/ship/0043-veloce-path-display-list-primitive-run-telemetry.pat
 git apply patches/ship/0044-veloce-path-display-list-fill-barrier-proof-telemetry.patch
 git apply patches/ship/0045-veloce-path-display-list-same-argb-fill-barrier-crossing.patch
 git apply patches/ship/0046-veloce-path-display-list-stroke-run-compact-telemetry.patch
+git apply patches/ship/0047-veloce-path-display-list-translation-normalized-stroke-run-packing.patch
 ```
 
 > **Note:** patches 0027 and 0028 are deprecated and must NOT be applied.
@@ -264,6 +266,18 @@ hidden by the long main telemetry line, buckets stroke-run lengths, and splits
 matrix flushes into same-linear/translation-only versus linear-change cases.
 It does not change eligibility, draw order, segment boundaries, spatial-index
 candidate selection, blend grouping, cancellation, or stroke packing behavior.
+Patch 0047 depends on patch 0046 and promotes the r42 translation-only matrix
+diagnosis into behavior. Within an existing ordered path segment, a pending
+stroke-only normal-blend run may absorb a later stroke node with the same paint
+key and identical matrix linear part by appending that node's path through a
+relative coordinate-space translation and then drawing the whole packed path
+with the base run matrix. This preserves stroke CTM semantics because stroke
+width, dash, cap, join, miter, and stroke adjustment still see the same linear
+matrix. Singular linear matrices, linear-part changes, paint/graph-state/style
+changes, clips, blend nodes, text passthrough, non-stroke fills, image/Form
+objects, and segment boundaries still flush. Temporary packed paths are capped
+by point count and flush through the existing capacity reason, so the mechanism
+is memory-bounded.
 The release workflow applies the numeric order shown above, skipping 0027/0028.
 
 ## Cumulative effect (measured)
@@ -387,6 +401,11 @@ new `FPDFEx_LoadPageWithClassification()` symbol.
   Adds compact `VelocePathDLStroke` logging, real stroke-run flush reason
   recording, run-length buckets, and matrix-flush classification. No rendering
   behavior, public API, or build file changes.
+- **0047 Veloce translation-normalized stroke-run packing**:
+  `core/fpdfapi/render/veloce_path_display_list.cpp`.
+  Packs same-linear translation-only stroke matrices into the existing stroke
+  run by appending paths through a relative translation. Adds point-cap
+  telemetry and `matrixPacked` counters. No public API or build file changes.
 - **0017 Veloce holder-level root page path display list**:
   `core/fpdfapi/render/cpdf_renderstatus.cpp`,
   `core/fpdfapi/render/veloce_path_display_list.{h,cpp}`.
