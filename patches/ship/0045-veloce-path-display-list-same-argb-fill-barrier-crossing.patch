@@ -1,0 +1,108 @@
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index 48984ae35..eeed1ae87 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -234,6 +234,7 @@ struct PathDlReplayStats {
+   size_t stroke_run_flush_end = 0;
+   size_t stroke_run_fill_barriers_crossed = 0;
+   size_t stroke_run_fill_barriers_blocked = 0;
++  size_t stroke_run_fill_barriers_same_argb_crossed = 0;
+   size_t fill_barrier_nodes = 0;
+   size_t fill_barrier_fill_only = 0;
+   size_t fill_barrier_fill_stroke = 0;
+@@ -663,6 +664,7 @@ void LogPathDisplayListAttempt(const char* result,
+       "strokeRunFlushBlend=%zu strokeRunFlushSegment=%zu "
+       "strokeRunFlushCapacity=%zu strokeRunFlushEnd=%zu "
+       "strokeRunFillBarriersCrossed=%zu strokeRunFillBarriersBlocked=%zu "
++      "strokeRunFillBarriersSameArgbCrossed=%zu "
+       "spatialIndexBins=%zu spatialIndexEntries=%zu "
+       "spatialIndexOverflow=%zu spatialIndexQueries=%zu "
+       "spatialIndexQueryBins=%zu spatialIndexCandidates=%zu "
+@@ -756,6 +758,8 @@ void LogPathDisplayListAttempt(const char* result,
+       replay_stats ? replay_stats->stroke_run_flush_end : kZero,
+       replay_stats ? replay_stats->stroke_run_fill_barriers_crossed : kZero,
+       replay_stats ? replay_stats->stroke_run_fill_barriers_blocked : kZero,
++      replay_stats ? replay_stats->stroke_run_fill_barriers_same_argb_crossed
++                   : kZero,
+       list && list->spatial_index.valid() ? list->spatial_index.bins.size()
+                                           : kZero,
+       list && list->spatial_index.valid() ? list->spatial_index.bin_entries
+@@ -781,7 +785,7 @@ void LogPathDisplayListAttempt(const char* result,
+         "pendingOverlap=%zu pendingDisjoint=%zu pendingUnknown=%zu "
+         "pathPoints=%zu maxPathPoints=%zu strokeRunDraws=%zu "
+         "strokeRunFlushFillMode=%zu strokeRunFillBarriersCrossed=%zu "
+-        "strokeRunFillBarriersBlocked=%zu compileMs=%" PRId64
++        "strokeRunFillBarriersBlocked=%zu sameArgbCrossed=%zu compileMs=%" PRId64
+         " replayMs=%" PRId64,
+         result, HolderKindName(holder_kind), cache_state ? cache_state : "none",
+         replay_stats->fill_barrier_nodes,
+@@ -802,7 +806,9 @@ void LogPathDisplayListAttempt(const char* result,
+         replay_stats->stroke_run_draws,
+         replay_stats->stroke_run_flush_fill_mode,
+         replay_stats->stroke_run_fill_barriers_crossed,
+-        replay_stats->stroke_run_fill_barriers_blocked, compile_ms, replay_ms);
++        replay_stats->stroke_run_fill_barriers_blocked,
++        replay_stats->stroke_run_fill_barriers_same_argb_crossed, compile_ms,
++        replay_ms);
+   }
+   if (replay_stats && replay_stats->fill_barrier_proof_blocked > 0) {
+     __android_log_print(
+@@ -811,6 +817,7 @@ void LogPathDisplayListAttempt(const char* result,
+         "thin=%zu rectLike=%zu sameColor=%zu barrierContainsStroke=%zu "
+         "strokeContainsBarrier=%zu sameColorRectCovered=%zu "
+         "nonzeroAlpha=%zu nonNormalBlend=%zu crossed=%zu "
++        "sameArgbCrossed=%zu "
+         "fillBarriers=%zu compileMs=%" PRId64 " replayMs=%" PRId64,
+         result, HolderKindName(holder_kind), cache_state ? cache_state : "none",
+         replay_stats->fill_barrier_proof_blocked,
+@@ -824,6 +831,7 @@ void LogPathDisplayListAttempt(const char* result,
+         replay_stats->fill_barrier_proof_nonzero_alpha,
+         replay_stats->fill_barrier_proof_non_normal_blend,
+         replay_stats->stroke_run_fill_barriers_crossed,
++        replay_stats->stroke_run_fill_barriers_same_argb_crossed,
+         replay_stats->fill_barrier_nodes, compile_ms, replay_ms);
+   }
+   if (replay_stats && replay_stats->group_run_composites > 0) {
+@@ -1725,6 +1733,21 @@ bool IsStrokeOnlyNormal(const PathDlPaint& paint) {
+          paint.stroke_argb != 0;
+ }
+ 
++bool CanCommuteSameArgbFillBarrier(const PathDlPaint& barrier_paint,
++                                   const PathDlPaint* pending_stroke_paint) {
++  if (!pending_stroke_paint || !IsStrokeOnlyNormal(*pending_stroke_paint)) {
++    return false;
++  }
++  if (barrier_paint.blend_mode != BlendMode::kNormal ||
++      barrier_paint.fill_options.fill_type ==
++          CFX_FillRenderOptions::FillType::kNoFill ||
++      barrier_paint.fill_options.stroke || barrier_paint.stroke_argb != 0 ||
++      barrier_paint.fill_argb == 0) {
++    return false;
++  }
++  return barrier_paint.fill_argb == pending_stroke_paint->stroke_argb;
++}
++
+ StrokeRunFlushReason ClassifyStrokePaintChange(const PathDlPaint& previous,
+                                                 const PathDlPaint& next) {
+   const bool color_changed = previous.fill_argb != next.fill_argb ||
+@@ -2082,6 +2105,8 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+           stroke_run_count > 0 && stroke_run_paint_key < list.paint_table.size()
+               ? &list.paint_table[stroke_run_paint_key]
+               : nullptr;
++      const bool can_cross_same_argb_barrier =
++          CanCommuteSameArgbFillBarrier(paint, pending_stroke_paint);
+       RecordFillBarrierTelemetry(replay_stats, paint, *path, barrier_rect,
+                                  stroke_run_device_rect, pending_stroke_paint,
+                                  has_pending_stroke, overlap_known,
+@@ -2091,6 +2116,11 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+           if (replay_stats) {
+             replay_stats->stroke_run_fill_barriers_crossed++;
+           }
++        } else if (can_cross_same_argb_barrier) {
++          if (replay_stats) {
++            replay_stats->stroke_run_fill_barriers_crossed++;
++            replay_stats->stroke_run_fill_barriers_same_argb_crossed++;
++          }
+         } else {
+           if (replay_stats) {
+             replay_stats->stroke_run_fill_barriers_blocked++;
