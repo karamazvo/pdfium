@@ -212,7 +212,7 @@ jobs:
           grep -q 'strokeRunDraws=%zu' core/fpdfapi/render/veloce_path_display_list.cpp
           grep -q 'strokeRunNodes=%zu' core/fpdfapi/render/veloce_path_display_list.cpp
           grep -q 'maxStrokeRunNodes=%zu' core/fpdfapi/render/veloce_path_display_list.cpp
-          grep -q 'stroke_run_path\.Append(\*path, nullptr)' core/fpdfapi/render/veloce_path_display_list.cpp
+          grep -q 'stroke_run_path\.Append(\*path, append_matrix)' core/fpdfapi/render/veloce_path_display_list.cpp
           grep -q 'DrawPath(stroke_run_path, &stroke_run_matrix' core/fpdfapi/render/veloce_path_display_list.cpp
           # r28-specific: ordered path/text segments
           grep -q 'PathDlSegmentKind' core/fpdfapi/render/veloce_path_display_list.cpp
