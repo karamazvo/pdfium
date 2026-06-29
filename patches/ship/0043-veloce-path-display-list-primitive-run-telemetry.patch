@@ -1,0 +1,319 @@
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index 5b3f44e..55bbf9f 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -6,6 +6,7 @@
+ #include <inttypes.h>
+ #include <stdint.h>
+ 
++#include <algorithm>
+ #include <chrono>
+ #include <cstring>
+ #include <iterator>
+@@ -93,6 +94,15 @@ struct PathDlNode {
+   uint32_t clip_key = kNoClipKey;
+ };
+ 
++struct PathDlPathPrimitiveStats {
++  size_t points = 0;
++  size_t subpaths = 0;
++  size_t moves = 0;
++  size_t lines = 0;
++  size_t beziers = 0;
++  size_t closes = 0;
++};
++
+ enum class PathDlSegmentKind {
+   kPathRun,
+   kTextPassthrough,
+@@ -121,6 +131,7 @@ struct PathDlSpatialIndex {
+ 
+ struct NativePathDisplayList {
+   std::vector<CPDF_Path> path_table;
++  std::vector<PathDlPathPrimitiveStats> path_stats_table;
+   std::vector<PathDlPaint> paint_table;
+   std::vector<CFX_GraphStateData> graph_state_table;
+   std::vector<CPDF_ClipPath> clip_table;
+@@ -135,6 +146,18 @@ struct NativePathDisplayList {
+   size_t blend_nodes = 0;
+   size_t text_passthrough_objects = 0;
+   size_t unsupported_passthrough_objects = 0;
++  size_t path_points = 0;
++  size_t path_subpaths = 0;
++  size_t path_moves = 0;
++  size_t path_lines = 0;
++  size_t path_beziers = 0;
++  size_t path_closes = 0;
++  size_t max_path_points = 0;
++  size_t max_path_subpaths = 0;
++  size_t stroke_only_nodes = 0;
++  size_t fill_only_nodes = 0;
++  size_t fill_stroke_nodes = 0;
++  size_t normal_blend_nodes = 0;
+ };
+ 
+ struct PathDisplayListCacheKey {
+@@ -232,6 +255,17 @@ struct PathDlReplayStats {
+   size_t spatial_index_skipped_by_tile = 0;
+   size_t spatial_index_fallback_full_scan = 0;
+   int64_t spatial_index_query_ms = 0;
++  size_t primitive_candidate_nodes = 0;
++  size_t primitive_candidate_points = 0;
++  size_t primitive_candidate_subpaths = 0;
++  size_t primitive_culled_nodes = 0;
++  size_t primitive_culled_points = 0;
++  size_t primitive_culled_subpaths = 0;
++  size_t primitive_drawn_nodes = 0;
++  size_t primitive_drawn_points = 0;
++  size_t primitive_drawn_subpaths = 0;
++  size_t max_candidate_path_points = 0;
++  size_t max_drawn_path_points = 0;
+ };
+ 
+ enum class StrokeRunFlushReason {
+@@ -321,6 +355,7 @@ const char* HolderKindName(VelocePathDisplayListHolderKind holder_kind) {
+ 
+ bool DisplayListIntegrityOk(const NativePathDisplayList& list) {
+   if (list.nodes.empty() || list.path_table.empty() ||
++      list.path_stats_table.size() != list.path_table.size() ||
+       list.paint_table.empty() || list.segments.empty()) {
+     return false;
+   }
+@@ -361,6 +396,94 @@ bool DisplayListIntegrityOk(const NativePathDisplayList& list) {
+   return true;
+ }
+ 
++PathDlPathPrimitiveStats ComputePathPrimitiveStats(const CFX_Path& path) {
++  PathDlPathPrimitiveStats stats;
++  for (const CFX_Path::Point& point : path.GetPoints()) {
++    stats.points++;
++    if (point.close_figure_) {
++      stats.closes++;
++    }
++    switch (point.type_) {
++      case CFX_Path::Point::Type::kMove:
++        stats.moves++;
++        stats.subpaths++;
++        break;
++      case CFX_Path::Point::Type::kLine:
++        stats.lines++;
++        break;
++      case CFX_Path::Point::Type::kBezier:
++        stats.beziers++;
++        break;
++    }
++  }
++  if (stats.points > 0 && stats.subpaths == 0) {
++    stats.subpaths = 1;
++  }
++  return stats;
++}
++
++void AccumulateCompiledPrimitiveStats(NativePathDisplayList* list,
++                                      const PathDlPaint& paint,
++                                      const PathDlPathPrimitiveStats& stats) {
++  list->path_points += stats.points;
++  list->path_subpaths += stats.subpaths;
++  list->path_moves += stats.moves;
++  list->path_lines += stats.lines;
++  list->path_beziers += stats.beziers;
++  list->path_closes += stats.closes;
++  list->max_path_points = std::max(list->max_path_points, stats.points);
++  list->max_path_subpaths =
++      std::max(list->max_path_subpaths, stats.subpaths);
++
++  const bool has_fill = paint.fill_options.fill_type !=
++                        CFX_FillRenderOptions::FillType::kNoFill;
++  const bool has_stroke = paint.stroke_argb != 0;
++  if (has_fill && has_stroke) {
++    list->fill_stroke_nodes++;
++  } else if (has_fill) {
++    list->fill_only_nodes++;
++  } else if (has_stroke) {
++    list->stroke_only_nodes++;
++  }
++  if (paint.blend_mode == BlendMode::kNormal) {
++    list->normal_blend_nodes++;
++  }
++}
++
++void RecordCandidatePrimitiveStats(PathDlReplayStats* replay_stats,
++                                   const PathDlPathPrimitiveStats& stats) {
++  if (!replay_stats) {
++    return;
++  }
++  replay_stats->primitive_candidate_nodes++;
++  replay_stats->primitive_candidate_points += stats.points;
++  replay_stats->primitive_candidate_subpaths += stats.subpaths;
++  replay_stats->max_candidate_path_points =
++      std::max(replay_stats->max_candidate_path_points, stats.points);
++}
++
++void RecordCulledPrimitiveStats(PathDlReplayStats* replay_stats,
++                                const PathDlPathPrimitiveStats& stats) {
++  if (!replay_stats) {
++    return;
++  }
++  replay_stats->primitive_culled_nodes++;
++  replay_stats->primitive_culled_points += stats.points;
++  replay_stats->primitive_culled_subpaths += stats.subpaths;
++}
++
++void RecordDrawnPrimitiveStats(PathDlReplayStats* replay_stats,
++                               const PathDlPathPrimitiveStats& stats) {
++  if (!replay_stats) {
++    return;
++  }
++  replay_stats->primitive_drawn_nodes++;
++  replay_stats->primitive_drawn_points += stats.points;
++  replay_stats->primitive_drawn_subpaths += stats.subpaths;
++  replay_stats->max_drawn_path_points =
++      std::max(replay_stats->max_drawn_path_points, stats.points);
++}
++
+ bool ResolveTextPassthroughSegments(
+     const NativePathDisplayList& list,
+     const CPDF_PageObjectHolder* holder,
+@@ -505,7 +628,17 @@ void LogPathDisplayListAttempt(const char* result,
+       "segments=%zu pathSegments=%zu pathSegmentNodes=%zu maxPathSegmentNodes=%zu "
+       "textPassthroughObjects=%zu unsupportedPassthroughObjects=%zu "
+       "scanned=%zu skippedInactive=%zu skippedInvisible=%zu skippedNoFill=%zu "
+-      "noopClips=%zu blendNodes=%zu scratchBlendNodes=%zu visited=%zu culled=%zu missingPath=%zu drawn=%zu "
++      "noopClips=%zu blendNodes=%zu scratchBlendNodes=%zu "
++      "pathPoints=%zu pathSubpaths=%zu pathMoves=%zu pathLines=%zu "
++      "pathBeziers=%zu pathCloses=%zu maxPathPoints=%zu "
++      "maxPathSubpaths=%zu strokeOnlyNodes=%zu fillOnlyNodes=%zu "
++      "fillStrokeNodes=%zu normalBlendNodes=%zu "
++      "primitiveCandidateNodes=%zu primitiveCandidatePoints=%zu "
++      "primitiveCandidateSubpaths=%zu primitiveCulledNodes=%zu "
++      "primitiveCulledPoints=%zu primitiveCulledSubpaths=%zu "
++      "primitiveDrawnNodes=%zu primitiveDrawnPoints=%zu "
++      "primitiveDrawnSubpaths=%zu maxCandidatePathPoints=%zu "
++      "maxDrawnPathPoints=%zu visited=%zu culled=%zu missingPath=%zu drawn=%zu "
+       "clipSwitches=%zu cancelChecks=%zu groupRunComposites=%zu groupRunNodes=%zu maxGroupRunNodes=%zu "
+       "groupRunPixels=%" PRIu64 " groupRunNodePixels=%" PRIu64 " maxGroupRunPixels=%" PRIu64 " "
+       "blendPaintBarriers=%zu blendPaintCandidates=%zu blendPaintDisjoint=%zu "
+@@ -549,6 +682,29 @@ void LogPathDisplayListAttempt(const char* result,
+       list ? list->elided_noop_clips : kZero,
+       list ? list->blend_nodes : kZero,
+       list ? CountScratchBlendNodes(*list) : kZero,
++      list ? list->path_points : kZero,
++      list ? list->path_subpaths : kZero,
++      list ? list->path_moves : kZero,
++      list ? list->path_lines : kZero,
++      list ? list->path_beziers : kZero,
++      list ? list->path_closes : kZero,
++      list ? list->max_path_points : kZero,
++      list ? list->max_path_subpaths : kZero,
++      list ? list->stroke_only_nodes : kZero,
++      list ? list->fill_only_nodes : kZero,
++      list ? list->fill_stroke_nodes : kZero,
++      list ? list->normal_blend_nodes : kZero,
++      replay_stats ? replay_stats->primitive_candidate_nodes : kZero,
++      replay_stats ? replay_stats->primitive_candidate_points : kZero,
++      replay_stats ? replay_stats->primitive_candidate_subpaths : kZero,
++      replay_stats ? replay_stats->primitive_culled_nodes : kZero,
++      replay_stats ? replay_stats->primitive_culled_points : kZero,
++      replay_stats ? replay_stats->primitive_culled_subpaths : kZero,
++      replay_stats ? replay_stats->primitive_drawn_nodes : kZero,
++      replay_stats ? replay_stats->primitive_drawn_points : kZero,
++      replay_stats ? replay_stats->primitive_drawn_subpaths : kZero,
++      replay_stats ? replay_stats->max_candidate_path_points : kZero,
++      replay_stats ? replay_stats->max_drawn_path_points : kZero,
+       replay_stats ? replay_stats->visited_nodes : kZero,
+       replay_stats ? replay_stats->culled_nodes : kZero,
+       replay_stats ? replay_stats->missing_path_nodes : kZero,
+@@ -663,6 +819,40 @@ void LogPathDisplayListAttempt(const char* result,
+         replay_stats->blend_cancelled_after_composites,
+         replay_stats->blend_cancelled_after_nodes, compile_ms, replay_ms);
+   }
++  if (list && list->path_points > 0) {
++    __android_log_print(
++        ANDROID_LOG_INFO, "VelocePathDLPrimitive",
++        "result=%s holderKind=%s cache=%s nodes=%zu points=%zu "
++        "subpaths=%zu moves=%zu lines=%zu beziers=%zu closes=%zu "
++        "maxPathPoints=%zu maxPathSubpaths=%zu strokeOnly=%zu "
++        "fillOnly=%zu fillStroke=%zu normalBlend=%zu blendNodes=%zu "
++        "candidateNodes=%zu candidatePoints=%zu candidateSubpaths=%zu "
++        "culledNodes=%zu culledPoints=%zu culledSubpaths=%zu "
++        "drawnNodes=%zu drawnPoints=%zu drawnSubpaths=%zu "
++        "maxCandidatePathPoints=%zu maxDrawnPathPoints=%zu "
++        "spatialCandidates=%zu spatialSkipped=%zu compileMs=%" PRId64
++        " replayMs=%" PRId64,
++        result, HolderKindName(holder_kind), cache_state ? cache_state : "none",
++        list->nodes.size(), list->path_points, list->path_subpaths,
++        list->path_moves, list->path_lines, list->path_beziers,
++        list->path_closes, list->max_path_points, list->max_path_subpaths,
++        list->stroke_only_nodes, list->fill_only_nodes,
++        list->fill_stroke_nodes, list->normal_blend_nodes, list->blend_nodes,
++        replay_stats ? replay_stats->primitive_candidate_nodes : kZero,
++        replay_stats ? replay_stats->primitive_candidate_points : kZero,
++        replay_stats ? replay_stats->primitive_candidate_subpaths : kZero,
++        replay_stats ? replay_stats->primitive_culled_nodes : kZero,
++        replay_stats ? replay_stats->primitive_culled_points : kZero,
++        replay_stats ? replay_stats->primitive_culled_subpaths : kZero,
++        replay_stats ? replay_stats->primitive_drawn_nodes : kZero,
++        replay_stats ? replay_stats->primitive_drawn_points : kZero,
++        replay_stats ? replay_stats->primitive_drawn_subpaths : kZero,
++        replay_stats ? replay_stats->max_candidate_path_points : kZero,
++        replay_stats ? replay_stats->max_drawn_path_points : kZero,
++        replay_stats ? replay_stats->spatial_index_candidates : kZero,
++        replay_stats ? replay_stats->spatial_index_skipped_by_tile : kZero,
++        compile_ms, replay_ms);
++  }
+ #endif
+ }
+ 
+@@ -1064,7 +1254,8 @@ bool CompilePathDisplayList(CPDF_RenderStatus* status,
+       return reject(PathDlRejectReason::kPatternPaint);
+     }
+     CPDF_Path path = path_obj->path();
+-    if (!path.GetObject()) {
++    const CFX_Path* path_geometry = path.GetObject();
++    if (!path_geometry) {
+       return reject(PathDlRejectReason::kInvalidPath);
+     }
+ 
+@@ -1123,7 +1314,11 @@ bool CompilePathDisplayList(CPDF_RenderStatus* status,
+       return reject(PathDlRejectReason::kPathTableOverflow);
+     }
+ 
++    const PathDlPathPrimitiveStats path_stats =
++        ComputePathPrimitiveStats(*path_geometry);
++    AccumulateCompiledPrimitiveStats(list, paint, path_stats);
+     list->path_table.push_back(path);
++    list->path_stats_table.push_back(path_stats);
+ 
+     PathDlNode node;
+     node.holder_space_bbox = object_bounds;
+@@ -1711,10 +1906,20 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+       replay_stats->visited_nodes++;
+     }
+     const PathDlNode& node = list.nodes[i];
++    const PathDlPathPrimitiveStats* primitive_stats =
++        node.path_index < list.path_stats_table.size()
++            ? &list.path_stats_table[node.path_index]
++            : nullptr;
++    if (primitive_stats) {
++      RecordCandidatePrimitiveStats(replay_stats, *primitive_stats);
++    }
+     if (!IntersectsDeviceClip(node, holder_to_device, device)) {
+       if (replay_stats) {
+         replay_stats->culled_nodes++;
+       }
++      if (primitive_stats) {
++        RecordCulledPrimitiveStats(replay_stats, *primitive_stats);
++      }
+       return VelocePathDisplayListResult::kRendered;
+     }
+ 
+@@ -1866,6 +2071,9 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+     }
+ 
+     if (replay_stats) {
++      if (primitive_stats) {
++        RecordDrawnPrimitiveStats(replay_stats, *primitive_stats);
++      }
+       replay_stats->drawn_nodes++;
+     }
+     return VelocePathDisplayListResult::kRendered;
