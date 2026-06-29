@@ -69,6 +69,7 @@ these patches:
 | 0041 | `0041-veloce-path-display-list-blend-group-cancellation.patch` | Blend group cooperative cancellation. Adds cancellation checkpoints inside `BlendGroupRun` group-buffer flushes before allocation, during group rasterization, before final composite, and after composite. Successful renders remain visually unchanged; cancelled renders return `kCancelled` and are discarded by callers. |
 | 0042 | `0042-veloce-path-display-list-blend-run-widening-telemetry.patch` | Blend-run widening telemetry. Adds group-buffer pixel cost metrics (`groupRunPixels`, `groupRunNodePixels`, `maxGroupRunPixels`) and paint-change barrier opportunity counters (`blendPaint*`) plus a compact `VelocePathDLBlend` log. Telemetry-only; it does not merge or reorder blend runs. Use this to decide whether a future multi-paint `BlendGroupRun` can safely reduce `11.pdf` successful-tile cost. |
 | 0043 | `0043-veloce-path-display-list-primitive-run-telemetry.patch` | Primitive/run telemetry. Precomputes path point/subpath counts per cached path and logs candidate/culled/drawn primitive totals during replay through `VelocePathDLPrimitive`. Telemetry-only; it does not change spatial-index selection, replay order, path packing, blend grouping, cancellation, or drawing semantics. Use this to decide whether the next MuPDF-style step should split dense path nodes into smaller indexed primitives. |
+| 0044 | `0044-veloce-path-display-list-fill-barrier-proof-telemetry.patch` | Fill-barrier proof telemetry. Classifies stroke-run-blocking normal fill barriers by no-pixel, thin, rect-like, same-color, and coarse device-rect containment predicates through `VelocePathDLFillProof`. Telemetry-only; it does not cross additional barriers or change drawing. Use this to decide whether r41/r42 can safely promote a narrow fill-barrier crossing rule. |
 
 ## Why this directory exists
 
@@ -121,6 +122,7 @@ git apply patches/ship/0040-veloce-path-display-list-fill-barrier-telemetry.patc
 git apply patches/ship/0041-veloce-path-display-list-blend-group-cancellation.patch
 git apply patches/ship/0042-veloce-path-display-list-blend-run-widening-telemetry.patch
 git apply patches/ship/0043-veloce-path-display-list-primitive-run-telemetry.patch
+git apply patches/ship/0044-veloce-path-display-list-fill-barrier-proof-telemetry.patch
 ```
 
 > **Note:** patches 0027 and 0028 are deprecated and must NOT be applied.
@@ -238,6 +240,11 @@ path points/subpaths were candidate, culled, and drawn during replay. It is the
 measurement bridge for a future MuPDF-style primitive spatial index; replay
 order, barrier semantics, stroke packing, blend grouping, cancellation, and
 fallback behavior are unchanged.
+Patch 0044 depends on patch 0043 and is telemetry-only. It classifies the
+normal fill barriers that still block stroke-run packing, especially Q16-style
+fill-only barriers, without changing crossing behavior. The invariant remains:
+a later patch may cross a fill barrier only when the final pixels are provably
+identical to original painter order.
 The release workflow applies the numeric order shown above, skipping 0027/0028.
 
 ## Cumulative effect (measured)

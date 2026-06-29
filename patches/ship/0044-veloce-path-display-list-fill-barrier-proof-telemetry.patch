@@ -1,0 +1,137 @@
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index 55bbf9f..fd626a7 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -266,6 +266,16 @@ struct PathDlReplayStats {
+   size_t primitive_drawn_subpaths = 0;
+   size_t max_candidate_path_points = 0;
+   size_t max_drawn_path_points = 0;
++  size_t fill_barrier_proof_blocked = 0;
++  size_t fill_barrier_proof_no_pixel = 0;
++  size_t fill_barrier_proof_thin = 0;
++  size_t fill_barrier_proof_rect_like = 0;
++  size_t fill_barrier_proof_same_color = 0;
++  size_t fill_barrier_proof_barrier_contains_stroke = 0;
++  size_t fill_barrier_proof_stroke_contains_barrier = 0;
++  size_t fill_barrier_proof_same_color_rect_covered = 0;
++  size_t fill_barrier_proof_nonzero_alpha = 0;
++  size_t fill_barrier_proof_non_normal_blend = 0;
+ };
+ 
+ enum class StrokeRunFlushReason {
+@@ -794,6 +804,28 @@ void LogPathDisplayListAttempt(const char* result,
+         replay_stats->stroke_run_fill_barriers_crossed,
+         replay_stats->stroke_run_fill_barriers_blocked, compile_ms, replay_ms);
+   }
++  if (replay_stats && replay_stats->fill_barrier_proof_blocked > 0) {
++    __android_log_print(
++        ANDROID_LOG_INFO, "VelocePathDLFillProof",
++        "result=%s holderKind=%s cache=%s blocked=%zu noPixel=%zu "
++        "thin=%zu rectLike=%zu sameColor=%zu barrierContainsStroke=%zu "
++        "strokeContainsBarrier=%zu sameColorRectCovered=%zu "
++        "nonzeroAlpha=%zu nonNormalBlend=%zu crossed=%zu "
++        "fillBarriers=%zu compileMs=%" PRId64 " replayMs=%" PRId64,
++        result, HolderKindName(holder_kind), cache_state ? cache_state : "none",
++        replay_stats->fill_barrier_proof_blocked,
++        replay_stats->fill_barrier_proof_no_pixel,
++        replay_stats->fill_barrier_proof_thin,
++        replay_stats->fill_barrier_proof_rect_like,
++        replay_stats->fill_barrier_proof_same_color,
++        replay_stats->fill_barrier_proof_barrier_contains_stroke,
++        replay_stats->fill_barrier_proof_stroke_contains_barrier,
++        replay_stats->fill_barrier_proof_same_color_rect_covered,
++        replay_stats->fill_barrier_proof_nonzero_alpha,
++        replay_stats->fill_barrier_proof_non_normal_blend,
++        replay_stats->stroke_run_fill_barriers_crossed,
++        replay_stats->fill_barrier_nodes, compile_ms, replay_ms);
++  }
+   if (replay_stats && replay_stats->group_run_composites > 0) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VelocePathDLBlend",
+@@ -1374,6 +1406,14 @@ bool RectsIntersect(const FX_RECT& lhs, const FX_RECT& rhs) {
+   return !intersection.IsEmpty();
+ }
+ 
++bool RectContains(const FX_RECT& outer, const FX_RECT& inner) {
++  if (outer.IsEmpty() || inner.IsEmpty()) {
++    return false;
++  }
++  return outer.left <= inner.left && outer.top <= inner.top &&
++         outer.right >= inner.right && outer.bottom >= inner.bottom;
++}
++
+ void UnionRect(FX_RECT* accumulator, const FX_RECT& rect) {
+   if (rect.IsEmpty()) {
+     return;
+@@ -1758,6 +1798,8 @@ void RecordFillBarrierTelemetry(PathDlReplayStats* replay_stats,
+                                 const PathDlPaint& paint,
+                                 const CFX_Path& path,
+                                 const FX_RECT& barrier_rect,
++                                const FX_RECT& pending_stroke_rect,
++                                const PathDlPaint* pending_stroke_paint,
+                                 bool has_pending_stroke,
+                                 bool overlap_known,
+                                 bool overlaps_pending_stroke) {
+@@ -1811,6 +1853,49 @@ void RecordFillBarrierTelemetry(PathDlReplayStats* replay_stats,
+   } else {
+     replay_stats->fill_barrier_pending_disjoint++;
+   }
++
++  // r40 proof telemetry only. These counters classify barriers that r30/r39
++  // still block so a future behavior patch can promote only pixel-equivalent
++  // crossing cases.
++  if (overlap_known && !overlaps_pending_stroke) {
++    return;
++  }
++  replay_stats->fill_barrier_proof_blocked++;
++  if (barrier_rect.IsEmpty()) {
++    replay_stats->fill_barrier_proof_no_pixel++;
++  }
++  if (!barrier_rect.IsEmpty() &&
++      (barrier_rect.Width() <= 1 || barrier_rect.Height() <= 1)) {
++    replay_stats->fill_barrier_proof_thin++;
++  }
++  if (path.IsRect()) {
++    replay_stats->fill_barrier_proof_rect_like++;
++  }
++  if (paint.blend_mode != BlendMode::kNormal) {
++    replay_stats->fill_barrier_proof_non_normal_blend++;
++  }
++  if (paint.fill_argb != 0) {
++    replay_stats->fill_barrier_proof_nonzero_alpha++;
++  }
++  const bool same_color =
++      pending_stroke_paint && paint.fill_argb != 0 &&
++      paint.fill_argb == pending_stroke_paint->stroke_argb;
++  if (same_color) {
++    replay_stats->fill_barrier_proof_same_color++;
++  }
++  const bool barrier_contains_stroke =
++      RectContains(barrier_rect, pending_stroke_rect);
++  const bool stroke_contains_barrier =
++      RectContains(pending_stroke_rect, barrier_rect);
++  if (barrier_contains_stroke) {
++    replay_stats->fill_barrier_proof_barrier_contains_stroke++;
++  }
++  if (stroke_contains_barrier) {
++    replay_stats->fill_barrier_proof_stroke_contains_barrier++;
++  }
++  if (same_color && (barrier_contains_stroke || stroke_contains_barrier)) {
++    replay_stats->fill_barrier_proof_same_color_rect_covered++;
++  }
+ }
+ 
+ VelocePathDisplayListResult ReplayPathDisplayList(
+@@ -1996,7 +2081,12 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+                                  !barrier_rect.IsEmpty();
+       const bool overlaps_pending_stroke =
+           overlap_known && RectsIntersect(stroke_run_device_rect, barrier_rect);
++      const PathDlPaint* pending_stroke_paint =
++          stroke_run_count > 0 && stroke_run_paint_key < list.paint_table.size()
++              ? &list.paint_table[stroke_run_paint_key]
++              : nullptr;
+       RecordFillBarrierTelemetry(replay_stats, paint, *path, barrier_rect,
++                                 stroke_run_device_rect, pending_stroke_paint,
+                                  has_pending_stroke, overlap_known,
+                                  overlaps_pending_stroke);
+       if (stroke_run_count > 0) {

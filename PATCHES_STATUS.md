@@ -196,6 +196,20 @@ MuPDF-style primitive spatial index: it tells us whether dense Q16/Error tiles
 still spend time because one visible path node contains too many internal
 subpaths or points.
 
+To build the r40 fill-barrier proof telemetry path-display-list binary:
+
+> Run workflow: **`r40 fill barrier proof telemetry path display-list - Build patched PDFium Android arm64`**
+>
+> File: `.github/workflows/pdfium-android-arm64-r40-fill-barrier-proof-telemetry-path-display-list.yml`
+> Artifact: `libpdfium-android-arm64-r40-fill-barrier-proof-telemetry-path-display-list`
+
+This applies ship patches `01..09,0011,0012,0013,0014,0015,0016,0017,0018,0019,0020,0021,0022,0023,0024,0025,0026,0029,0030,0031,0032,0034,0035,0036,0037,0038,0039,0040,0041,0042,0043,0044`.
+Patch 0044 is telemetry-only. It adds `VelocePathDLFillProof` lines that
+classify fill barriers still blocking stroke-run packing by no-pixel, thin,
+rect-like, same-color, and coarse device-rect containment predicates. It does
+not cross any additional barriers; it only measures whether r41/r42 can safely
+promote a narrow pixel-equivalent crossing rule.
+
 To build the r9 path-display-list no-op clip binary:
 
 > Run workflow: **`Build patched PDFium Android arm64 r9 path display-list no-op clip`**
@@ -306,6 +320,7 @@ and the `libandroid.so` runtime dependency.
 | ship 0041 | VELOCE EXPERIMENTAL | `patches/ship/0041-veloce-path-display-list-blend-group-cancellation.patch` | Adds cooperative cancellation checkpoints inside `BlendGroupRun` group-buffer flushes. Successful output is unchanged; cancelled tiles return `kCancelled` and are discarded. |
 | ship 0042 | VELOCE TELEMETRY | `patches/ship/0042-veloce-path-display-list-blend-run-widening-telemetry.patch` | Emits `VelocePathDLBlend` group-buffer pixel cost and blend paint-barrier opportunity counters for future safe `11.pdf` blend-run widening. Telemetry-only. |
 | ship 0043 | VELOCE TELEMETRY | `patches/ship/0043-veloce-path-display-list-primitive-run-telemetry.patch` | Precomputes per-path point/subpath stats and logs candidate/culled/drawn primitive totals through `VelocePathDLPrimitive`, without changing replay or drawing. This decides whether the next MuPDF-style primitive spatial index is worth building. |
+| ship 0044 | VELOCE TELEMETRY | `patches/ship/0044-veloce-path-display-list-fill-barrier-proof-telemetry.patch` | Emits `VelocePathDLFillProof` counters for blocked fill barriers, measuring no-pixel, thin, rect-like, same-color, and device-rect containment predicates. Telemetry-only; no new barrier crossing behavior. |
 
 ---
 
@@ -339,6 +354,7 @@ and the `libandroid.so` runtime dependency.
 | `pdfium-android-arm64-r37-blend-group-cancellation-path-display-list.yml` | `workflow_dispatch` | **R37 BLEND GROUP CANCELLATION PATH DISPLAY-LIST BUILD.** Applies ship patches through `0041`, skipping deprecated `0027/0028`. The workflow name starts with `r37` so it is easy to spot in GitHub Actions. Expected log: `blendCancelChecks` increments on `11.pdf`-style blend tiles, and obsolete tiles can return `cancelled` during group-buffer work. |
 | `pdfium-android-arm64-r38-blend-run-widening-telemetry-path-display-list.yml` | `workflow_dispatch` | **R38 BLEND RUN WIDENING TELEMETRY PATH DISPLAY-LIST BUILD.** Applies ship patches through `0042`, skipping deprecated `0027/0028`. The workflow name starts with `r38` so it is easy to spot in GitHub Actions. Expected log: compact `VelocePathDLBlend` lines with group pixel cost and paint-barrier opportunity counters. |
 | `pdfium-android-arm64-r39-primitive-run-telemetry-path-display-list.yml` | `workflow_dispatch` | **R39 PRIMITIVE RUN TELEMETRY PATH DISPLAY-LIST BUILD.** Applies ship patches through `0043`, skipping deprecated `0027/0028`. The workflow name starts with `r39` so it is easy to spot in GitHub Actions. Expected log: compact `VelocePathDLPrimitive` lines with candidate/culled/drawn path points and subpaths for Q16/Error dense-tile analysis. |
+| `pdfium-android-arm64-r40-fill-barrier-proof-telemetry-path-display-list.yml` | `workflow_dispatch` | **R40 FILL-BARRIER PROOF TELEMETRY PATH DISPLAY-LIST BUILD.** Applies ship patches through `0044`, skipping deprecated `0027/0028`. The workflow name starts with `r40` so it is easy to spot in GitHub Actions. Expected log: compact `VelocePathDLFillProof` lines classifying stroke-run-blocking fill barriers before any crossing behavior is promoted. |
 | `libpdfium_experiment_profile_build.yml` | `workflow_dispatch` | **EXPERIMENT PROFILE BUILD.** Applies ship patches `01..08` plus `patches/experiments/0010-render-profile-and-content-skip.patch`. Use this to measure per-stage `FPDF_RenderPageBitmap()` costs and test skip-text/path/image/shading/Form/transparency/soft-mask speedups on selected PDFs. Artifact: `libpdfium-android-arm64-veloce-render-profile-experiment`. |
 | `release-size-experiment.yml` | `workflow_dispatch` | Side-by-side size comparison (baseline / A / B / C). Variant C is the current ship config. Run this when a future PDFium roll or build refactor unexpectedly changes the size profile — it isolates which lever moved. |
 | `build-pdfium-android-arm64-agg-devicen-fast.yml` | `workflow_dispatch` | Diagnostic ship build. Applies 0003+0004+0005+0007+0008+0009, retains trace markers. Use for future perf investigations. |
