@@ -71,6 +71,7 @@ these patches:
 | 0043 | `0043-veloce-path-display-list-primitive-run-telemetry.patch` | Primitive/run telemetry. Precomputes path point/subpath counts per cached path and logs candidate/culled/drawn primitive totals during replay through `VelocePathDLPrimitive`. Telemetry-only; it does not change spatial-index selection, replay order, path packing, blend grouping, cancellation, or drawing semantics. Use this to decide whether the next MuPDF-style step should split dense path nodes into smaller indexed primitives. |
 | 0044 | `0044-veloce-path-display-list-fill-barrier-proof-telemetry.patch` | Fill-barrier proof telemetry. Classifies stroke-run-blocking normal fill barriers by no-pixel, thin, rect-like, same-color, and coarse device-rect containment predicates through `VelocePathDLFillProof`. Telemetry-only; it does not cross additional barriers or change drawing. Use this to decide whether r41/r42 can safely promote a narrow fill-barrier crossing rule. |
 | 0045 | `0045-veloce-path-display-list-same-argb-fill-barrier-crossing.patch` | Same-ARGB fill-barrier crossing. Keeps a pending normal stroke run open across a fill-only normal barrier when the barrier fill ARGB exactly matches the pending stroke ARGB. This promotes the r40 same-color proof into behavior using source-over commutativity, without crossing segment, text, clip, blend, pattern, soft-mask, or fill+stroke barriers. Adds `strokeRunFillBarriersSameArgbCrossed` / `sameArgbCrossed` telemetry. |
+| 0046 | `0046-veloce-path-display-list-stroke-run-compact-telemetry.patch` | Stroke-run compact telemetry. Adds a short `VelocePathDLStroke` log that survives Android log truncation, records actual stroke-run flush reasons, buckets run lengths, and splits matrix flushes into same-linear/translation-only versus linear-change cases. Telemetry-only; rendering order, segment barriers, spatial selection, blend behavior, and draw decisions are unchanged. |
 
 ## Why this directory exists
 
@@ -125,6 +126,7 @@ git apply patches/ship/0042-veloce-path-display-list-blend-run-widening-telemetr
 git apply patches/ship/0043-veloce-path-display-list-primitive-run-telemetry.patch
 git apply patches/ship/0044-veloce-path-display-list-fill-barrier-proof-telemetry.patch
 git apply patches/ship/0045-veloce-path-display-list-same-argb-fill-barrier-crossing.patch
+git apply patches/ship/0046-veloce-path-display-list-stroke-run-compact-telemetry.patch
 ```
 
 > **Note:** patches 0027 and 0028 are deprecated and must NOT be applied.
@@ -255,6 +257,13 @@ source-over operations commute per pixel, including antialias coverage, so this
 reduces fill-barrier stroke-run fragmentation without introducing page-specific
 logic or crossing text, image, Form, clip, blend, pattern, soft-mask, or
 fill+stroke barriers.
+Patch 0046 depends on patch 0045 and is telemetry-only. It restores actual
+stroke-run flush-reason accounting by recording the flush reason at the single
+stroke-run drain point, emits a compact `VelocePathDLStroke` line that is not
+hidden by the long main telemetry line, buckets stroke-run lengths, and splits
+matrix flushes into same-linear/translation-only versus linear-change cases.
+It does not change eligibility, draw order, segment boundaries, spatial-index
+candidate selection, blend grouping, cancellation, or stroke packing behavior.
 The release workflow applies the numeric order shown above, skipping 0027/0028.
 
 ## Cumulative effect (measured)
@@ -373,6 +382,11 @@ new `FPDFEx_LoadPageWithClassification()` symbol.
   Adds cancellation checkpoints and `blendCancel*` telemetry inside group-buffer
   blend flushes. Successful render output is unchanged; cancelled replay returns
   `kCancelled`. No public API or build file changes.
+- **0046 Veloce stroke-run compact telemetry**:
+  `core/fpdfapi/render/veloce_path_display_list.cpp`.
+  Adds compact `VelocePathDLStroke` logging, real stroke-run flush reason
+  recording, run-length buckets, and matrix-flush classification. No rendering
+  behavior, public API, or build file changes.
 - **0017 Veloce holder-level root page path display list**:
   `core/fpdfapi/render/cpdf_renderstatus.cpp`,
   `core/fpdfapi/render/veloce_path_display_list.{h,cpp}`.

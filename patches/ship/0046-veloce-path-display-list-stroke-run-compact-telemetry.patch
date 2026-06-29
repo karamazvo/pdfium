@@ -1,0 +1,122 @@
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index eeed1ae87..9ad070b08 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -235,6 +235,13 @@ struct PathDlReplayStats {
+   size_t stroke_run_fill_barriers_crossed = 0;
+   size_t stroke_run_fill_barriers_blocked = 0;
+   size_t stroke_run_fill_barriers_same_argb_crossed = 0;
++  size_t stroke_run_single_node_draws = 0;
++  size_t stroke_run_2_4_node_draws = 0;
++  size_t stroke_run_5_16_node_draws = 0;
++  size_t stroke_run_17_plus_node_draws = 0;
++  size_t stroke_run_flush_matrix_same_linear = 0;
++  size_t stroke_run_flush_matrix_translate_only = 0;
++  size_t stroke_run_flush_matrix_linear_changed = 0;
+   size_t fill_barrier_nodes = 0;
+   size_t fill_barrier_fill_only = 0;
+   size_t fill_barrier_fill_stroke = 0;
+@@ -776,6 +783,51 @@ void LogPathDisplayListAttempt(const char* result,
+       cache_state ? cache_state : "none", compile_ms,
+       replay_ms, compile_ms + replay_ms,
+       list ? list->nodes.size() : kZero);
++  if (replay_stats && replay_stats->stroke_run_draws > 0) {
++    const uint64_t avg_nodes_x1000 =
++        replay_stats->stroke_run_draws == 0
++            ? 0
++            : static_cast<uint64_t>(replay_stats->stroke_run_nodes) * 1000u /
++                  replay_stats->stroke_run_draws;
++    __android_log_print(
++        ANDROID_LOG_INFO, "VelocePathDLStroke",
++        "result=%s holderKind=%s cache=%s draws=%zu nodes=%zu "
++        "avgNodesX1000=%" PRIu64 " maxNodes=%zu single=%zu r2_4=%zu "
++        "r5_16=%zu r17plus=%zu flushPaint=%zu flushColor=%zu "
++        "flushGraphState=%zu flushMatrix=%zu matrixSameLinear=%zu "
++        "matrixTranslateOnly=%zu matrixLinearChanged=%zu "
++        "flushPathStyle=%zu flushFillMode=%zu flushClip=%zu flushBlend=%zu "
++        "flushSegment=%zu flushCapacity=%zu flushEnd=%zu fillCrossed=%zu "
++        "fillBlocked=%zu sameArgbCrossed=%zu compileMs=%" PRId64
++        " replayMs=%" PRId64,
++        result, HolderKindName(holder_kind), cache_state ? cache_state : "none",
++        replay_stats->stroke_run_draws,
++        replay_stats->stroke_run_nodes,
++        avg_nodes_x1000,
++        replay_stats->max_stroke_run_nodes,
++        replay_stats->stroke_run_single_node_draws,
++        replay_stats->stroke_run_2_4_node_draws,
++        replay_stats->stroke_run_5_16_node_draws,
++        replay_stats->stroke_run_17_plus_node_draws,
++        replay_stats->stroke_run_flush_paint,
++        replay_stats->stroke_run_flush_color,
++        replay_stats->stroke_run_flush_graph_state,
++        replay_stats->stroke_run_flush_matrix,
++        replay_stats->stroke_run_flush_matrix_same_linear,
++        replay_stats->stroke_run_flush_matrix_translate_only,
++        replay_stats->stroke_run_flush_matrix_linear_changed,
++        replay_stats->stroke_run_flush_path_style,
++        replay_stats->stroke_run_flush_fill_mode,
++        replay_stats->stroke_run_flush_clip,
++        replay_stats->stroke_run_flush_blend,
++        replay_stats->stroke_run_flush_segment,
++        replay_stats->stroke_run_flush_capacity,
++        replay_stats->stroke_run_flush_end,
++        replay_stats->stroke_run_fill_barriers_crossed,
++        replay_stats->stroke_run_fill_barriers_blocked,
++        replay_stats->stroke_run_fill_barriers_same_argb_crossed,
++        compile_ms, replay_ms);
++  }
+   if (replay_stats && replay_stats->fill_barrier_nodes > 0) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VelocePathDLFill",
+@@ -1733,6 +1785,24 @@ bool IsStrokeOnlyNormal(const PathDlPaint& paint) {
+          paint.stroke_argb != 0;
+ }
+-
++
++bool MatrixHasSameLinearPart(const CFX_Matrix& lhs, const CFX_Matrix& rhs) {
++  return lhs.a == rhs.a && lhs.b == rhs.b && lhs.c == rhs.c && lhs.d == rhs.d;
++}
++
++void RecordStrokeRunMatrixFlush(PathDlReplayStats* replay_stats,
++                                const CFX_Matrix& previous,
++                                const CFX_Matrix& next) {
++  if (!replay_stats) {
++    return;
++  }
++  if (MatrixHasSameLinearPart(previous, next)) {
++    replay_stats->stroke_run_flush_matrix_same_linear++;
++    replay_stats->stroke_run_flush_matrix_translate_only++;
++  } else {
++    replay_stats->stroke_run_flush_matrix_linear_changed++;
++  }
++}
++
+ bool CanCommuteSameArgbFillBarrier(const PathDlPaint& barrier_paint,
+                                    const PathDlPaint* pending_stroke_paint) {
+   if (!pending_stroke_paint || !IsStrokeOnlyNormal(*pending_stroke_paint)) {
+@@ -1987,6 +2057,16 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+       if (stroke_run_count > replay_stats->max_stroke_run_nodes) {
+         replay_stats->max_stroke_run_nodes = stroke_run_count;
+       }
++      if (stroke_run_count == 1) {
++        replay_stats->stroke_run_single_node_draws++;
++      } else if (stroke_run_count <= 4) {
++        replay_stats->stroke_run_2_4_node_draws++;
++      } else if (stroke_run_count <= 16) {
++        replay_stats->stroke_run_5_16_node_draws++;
++      } else {
++        replay_stats->stroke_run_17_plus_node_draws++;
++      }
++      RecordStrokeRunFlush(replay_stats, reason);
+     }
+     stroke_run_path.Clear();
+     stroke_run_matrix = CFX_Matrix();
+@@ -2072,6 +2152,8 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+             list.paint_table[stroke_run_paint_key], paint));
+       }
+       if (stroke_run_count > 0 && !(path_matrix == stroke_run_matrix)) {
++        RecordStrokeRunMatrixFlush(replay_stats, stroke_run_matrix,
++                                   path_matrix);
+         flush_stroke_run(StrokeRunFlushReason::kMatrix);
+       }
+       // Flush blend run: blend content before this stroke must composite first.
