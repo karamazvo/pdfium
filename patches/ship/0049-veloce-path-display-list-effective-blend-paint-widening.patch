@@ -1,0 +1,143 @@
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -211,6 +211,8 @@
+   size_t blend_paint_change_disjoint = 0;
+   size_t blend_paint_change_overlap = 0;
+   size_t blend_paint_change_unknown = 0;
++  size_t blend_paint_change_effective_equivalent = 0;
++  size_t blend_paint_change_effective_equivalent_crossed = 0;
+   size_t blend_cancel_checks = 0;
+   size_t blend_cancelled_after_composites = 0;
+   size_t blend_cancelled_after_nodes = 0;
+@@ -896,7 +898,8 @@
+         "groupPixels=%" PRIu64 " nodePixels=%" PRIu64
+         " maxGroupPixels=%" PRIu64 " paintBarriers=%zu "
+         "paintCandidates=%zu paintDisjoint=%zu paintOverlap=%zu "
+-        "paintUnknown=%zu cancelChecks=%zu cancelledAfterComposites=%zu "
++        "paintUnknown=%zu paintEquivalent=%zu paintEquivalentCrossed=%zu "
++        "cancelChecks=%zu cancelledAfterComposites=%zu "
+         "cancelledAfterNodes=%zu compileMs=%" PRId64 " replayMs=%" PRId64,
+         result, HolderKindName(holder_kind), cache_state ? cache_state : "none",
+         replay_stats->group_run_composites,
+@@ -912,6 +915,8 @@
+         replay_stats->blend_paint_change_disjoint,
+         replay_stats->blend_paint_change_overlap,
+         replay_stats->blend_paint_change_unknown,
++        replay_stats->blend_paint_change_effective_equivalent,
++        replay_stats->blend_paint_change_effective_equivalent_crossed,
+         replay_stats->blend_cancel_checks,
+         replay_stats->blend_cancelled_after_composites,
+         replay_stats->blend_cancelled_after_nodes, compile_ms, replay_ms);
+@@ -1631,6 +1636,8 @@
+ struct MaskRun {
+   uint32_t paint_key = kNoClipKey;  // kNoClipKey used as sentinel for "empty"
+   BlendMode blend_mode = BlendMode::kNormal;
++  uint32_t effective_paint_key = kNoClipKey;
++  bool one_effective_paint = true;
+   size_t paint_switches = 0;
+   FX_RECT group_rect;
+   bool group_rect_valid = false;
+@@ -1640,6 +1647,8 @@
+   void reset() {
+     paint_key = kNoClipKey;
+     blend_mode = BlendMode::kNormal;
++    effective_paint_key = kNoClipKey;
++    one_effective_paint = true;
+     paint_switches = 0;
+     group_rect_valid = false;
+     entries.clear();
+@@ -1650,8 +1659,49 @@
+   FX_RECT result = lhs;
+   UnionRect(&result, rhs);
+   return result;
++}
++
++CFX_FillRenderOptions EffectiveFillOnlyBlendOptions(
++    CFX_FillRenderOptions options) {
++  options.adjust_stroke = false;
++  return options;
++}
++
++bool IsFillOnlyBlendPaint(const PathDlPaint& paint) {
++  return paint.blend_mode != BlendMode::kNormal &&
++         paint.fill_options.fill_type !=
++             CFX_FillRenderOptions::FillType::kNoFill &&
++         !paint.fill_options.stroke && paint.stroke_argb == 0;
+ }
+ 
++bool EffectiveBlendPaintEquals(const PathDlPaint& lhs,
++                               const PathDlPaint& rhs) {
++  if (lhs.blend_mode != rhs.blend_mode || lhs.fill_argb != rhs.fill_argb ||
++      lhs.stroke_argb != rhs.stroke_argb) {
++    return false;
++  }
++  if (IsFillOnlyBlendPaint(lhs) && IsFillOnlyBlendPaint(rhs)) {
++    return EffectiveFillOnlyBlendOptions(lhs.fill_options) ==
++           EffectiveFillOnlyBlendOptions(rhs.fill_options);
++  }
++  return lhs.fill_options == rhs.fill_options &&
++         lhs.graph_state_key == rhs.graph_state_key;
++}
++
++bool BlendRunHasOneEffectivePaint(const NativePathDisplayList& list,
++                                  const MaskRun& run,
++                                  const PathDlPaint& next_paint) {
++  if (run.empty()) {
++    return true;
++  }
++  if (!run.one_effective_paint ||
++      run.effective_paint_key >= list.paint_table.size()) {
++    return false;
++  }
++  return EffectiveBlendPaintEquals(list.paint_table[run.effective_paint_key],
++                                   next_paint);
++}
++
+ bool CanAppendPaintChangeToBlendGroupRun(const MaskRun& run,
+                                          const PathDlPaint& next_paint,
+                                          const FX_RECT& next_rect) {
+@@ -1686,6 +1736,9 @@
+       next_rect.IsEmpty() || pending_run.paint_key >= list.paint_table.size()) {
+     replay_stats->blend_paint_change_unknown++;
+     return;
++  }
++  if (BlendRunHasOneEffectivePaint(list, pending_run, next_paint)) {
++    replay_stats->blend_paint_change_effective_equivalent++;
+   }
+   if (RectsIntersect(pending_run.group_rect, next_rect)) {
+     replay_stats->blend_paint_change_overlap++;
+@@ -2275,7 +2328,15 @@
+         if (!run.empty() && run.paint_key != node.paint_key) {
+           RecordBlendPaintBarrierTelemetry(replay_stats, list, run, paint,
+                                            node_rect);
+-          if (!CanAppendPaintChangeToBlendGroupRun(run, paint, node_rect)) {
++          const bool effective_paint_equivalent =
++              BlendRunHasOneEffectivePaint(list, run, paint);
++          if (effective_paint_equivalent) {
++            if (replay_stats) {
++              replay_stats
++                  ->blend_paint_change_effective_equivalent_crossed++;
++            }
++          } else if (!CanAppendPaintChangeToBlendGroupRun(run, paint,
++                                                          node_rect)) {
+             if (auto r = flush_run(replay_stats
+                                        ? &replay_stats->run_flush_paint_change
+                                        : nullptr);
+@@ -2286,8 +2347,16 @@
+         }
+         if (run.empty()) {
+           run.blend_mode = paint.blend_mode;
++          run.effective_paint_key = node.paint_key;
++          run.one_effective_paint = true;
+         } else if (run.paint_key != node.paint_key) {
+           run.paint_switches++;
++          if (run.one_effective_paint &&
++              run.effective_paint_key < list.paint_table.size() &&
++              !EffectiveBlendPaintEquals(
++                  list.paint_table[run.effective_paint_key], paint)) {
++            run.one_effective_paint = false;
++          }
+         }
+         run.paint_key = node.paint_key;
+         if (!run.group_rect_valid) {
