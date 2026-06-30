@@ -363,11 +363,11 @@ jobs:
           # r47-specific: page geometry export reads page dictionary geometry
           # without calling ParseContent(), so app/JNI code can enumerate page
           # dimensions without forcing full page content parse.
-          grep -q 'sizeof(FPDFEx_PageDimensions) == 32' fpdfsdk/fpdf_view.cpp
-          grep -q 'FPDFEx_GetPageDimensions' fpdfsdk/fpdf_view.cpp
-          grep -q 'GetMutablePageDictionary(page_index)' fpdfsdk/fpdf_view.cpp
-          grep -q 'std::memset(out, 0, sizeof(*out))' fpdfsdk/fpdf_view.cpp
-          grep -q 'CHK(FPDFEx_GetPageDimensions)' fpdfsdk/fpdf_view_c_api_test.c
+          grep -F -q 'sizeof(FPDFEx_PageDimensions) == 32' fpdfsdk/fpdf_view.cpp
+          grep -F -q 'FPDFEx_GetPageDimensions' fpdfsdk/fpdf_view.cpp
+          grep -F -q 'GetMutablePageDictionary(page_index)' fpdfsdk/fpdf_view.cpp
+          grep -F -q 'std::memset(out, 0, sizeof(*out))' fpdfsdk/fpdf_view.cpp
+          grep -F -q 'CHK(FPDFEx_GetPageDimensions)' fpdfsdk/fpdf_view_c_api_test.c
           if sed -n '/FPDFEx_GetPageDimensions/,/FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageSizeByIndex/p' \
               fpdfsdk/fpdf_view.cpp | grep -E -q -- '->ParseContent\(|\.ParseContent\('; then
             echo "ERROR: FPDFEx_GetPageDimensions must not parse page content" >&2
