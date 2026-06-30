@@ -1,0 +1,197 @@
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -201,6 +201,8 @@
+   size_t group_run_composites = 0;
+   size_t group_run_nodes = 0;
+   size_t max_group_run_nodes = 0;
++  size_t group_run_paint_switches = 0;
++  size_t max_group_run_paints = 0;
+   uint64_t group_run_pixels = 0;
+   uint64_t group_run_node_pixels = 0;
+   uint64_t max_group_run_pixels = 0;
+@@ -890,7 +892,8 @@
+     __android_log_print(
+         ANDROID_LOG_INFO, "VelocePathDLBlend",
+         "result=%s holderKind=%s cache=%s composites=%zu nodes=%zu "
+-        "maxNodes=%zu groupPixels=%" PRIu64 " nodePixels=%" PRIu64
++        "maxNodes=%zu paintSwitches=%zu maxPaints=%zu "
++        "groupPixels=%" PRIu64 " nodePixels=%" PRIu64
+         " maxGroupPixels=%" PRIu64 " paintBarriers=%zu "
+         "paintCandidates=%zu paintDisjoint=%zu paintOverlap=%zu "
+         "paintUnknown=%zu cancelChecks=%zu cancelledAfterComposites=%zu "
+@@ -899,6 +902,8 @@
+         replay_stats->group_run_composites,
+         replay_stats->group_run_nodes,
+         replay_stats->max_group_run_nodes,
++        replay_stats->group_run_paint_switches,
++        replay_stats->max_group_run_paints,
+         replay_stats->group_run_pixels,
+         replay_stats->group_run_node_pixels,
+         replay_stats->max_group_run_pixels,
+@@ -1614,16 +1619,19 @@
+ // One pending entry in the consecutive mask run.
+ struct MaskRunEntry {
+   uint32_t path_index;
++  uint32_t paint_key;
+   CFX_Matrix path_matrix;
+   FX_RECT node_rect;  // device-space bbox, already intersected with clip box
+ };
+ 
+-// Accumulates consecutive blend nodes eligible for group-buffer batching.
+-// All entries share the same paint_key (and therefore the same blend_mode,
+-// fill_options, graph_state_key, fill_argb, stroke_argb). The run is
+-// flushed — and this struct reset — at any painter-order boundary.
++// Accumulates consecutive blend nodes eligible for group-buffer batching. The
++// run may contain several paint keys when they share one final blend mode; each
++// entry still draws with its own fill/stroke/options inside the isolated group.
++// The run is flushed at painter-order boundaries.
+ struct MaskRun {
+   uint32_t paint_key = kNoClipKey;  // kNoClipKey used as sentinel for "empty"
++  BlendMode blend_mode = BlendMode::kNormal;
++  size_t paint_switches = 0;
+   FX_RECT group_rect;
+   bool group_rect_valid = false;
+   std::vector<MaskRunEntry> entries;
+@@ -1631,11 +1639,40 @@
+   bool empty() const { return entries.empty(); }
+   void reset() {
+     paint_key = kNoClipKey;
++    blend_mode = BlendMode::kNormal;
++    paint_switches = 0;
+     group_rect_valid = false;
+     entries.clear();
+   }
+ };
++
++FX_RECT UnionRectCopy(const FX_RECT& lhs, const FX_RECT& rhs) {
++  FX_RECT result = lhs;
++  UnionRect(&result, rhs);
++  return result;
++}
+ 
++bool CanAppendPaintChangeToBlendGroupRun(const MaskRun& run,
++                                         const PathDlPaint& next_paint,
++                                         const FX_RECT& next_rect) {
++  if (run.empty()) {
++    return true;
++  }
++  if (run.blend_mode != next_paint.blend_mode || !run.group_rect_valid ||
++      run.group_rect.IsEmpty() || next_rect.IsEmpty()) {
++    return false;
++  }
++  if (RectsIntersect(run.group_rect, next_rect)) {
++    return false;
++  }
++
++  const uint64_t current_pixels = RectPixelArea(run.group_rect);
++  const uint64_t next_pixels = RectPixelArea(next_rect);
++  const uint64_t union_pixels = RectPixelArea(UnionRectCopy(run.group_rect,
++                                                            next_rect));
++  return union_pixels <= (current_pixels + next_pixels) * 2u;
++}
++
+ void RecordBlendPaintBarrierTelemetry(PathDlReplayStats* replay_stats,
+                                       const NativePathDisplayList& list,
+                                       const MaskRun& pending_run,
+@@ -1700,12 +1737,6 @@
+     return false;
+   }
+ 
+-  const PathDlPaint& paint = list.paint_table[run.paint_key];
+-  const CFX_GraphStateData* graph_state =
+-      paint.graph_state_key == kNoGraphStateKey
+-          ? nullptr
+-          : &list.graph_state_table[paint.graph_state_key];
+-
+   // Allocate a BGRA group buffer — transparent black, matching an isolated
+   // transparency group's initial state.
+   auto group = pdfium::MakeRetain<CFX_DIBitmap>();
+@@ -1732,9 +1763,16 @@
+     }
+     CFX_Matrix group_matrix = entry.path_matrix;
+     group_matrix.Translate(-run.group_rect.left, -run.group_rect.top);
++    const PathDlPaint& entry_paint = list.paint_table[entry.paint_key];
++    const CFX_GraphStateData* graph_state =
++        entry_paint.graph_state_key == kNoGraphStateKey
++            ? nullptr
++            : &list.graph_state_table[entry_paint.graph_state_key];
+     if (!group_device.DrawPath(*list.path_table[entry.path_index].GetObject(),
+-                               &group_matrix, graph_state, paint.fill_argb,
+-                               paint.stroke_argb, paint.fill_options)) {
++                               &group_matrix, graph_state,
++                               entry_paint.fill_argb,
++                               entry_paint.stroke_argb,
++                               entry_paint.fill_options)) {
+       return false;
+     }
+     nodes_drawn_in_run++;
+@@ -1750,7 +1788,7 @@
+     return false;
+   }
+   if (!device->SetDIBitsWithBlend(std::move(group), run.group_rect.left,
+-                                  run.group_rect.top, paint.blend_mode)) {
++                                  run.group_rect.top, run.blend_mode)) {
+     return false;
+   }
+ 
+@@ -1759,6 +1797,11 @@
+     replay_stats->group_run_nodes += run.entries.size();
+     if (run.entries.size() > replay_stats->max_group_run_nodes) {
+       replay_stats->max_group_run_nodes = run.entries.size();
++    }
++    replay_stats->group_run_paint_switches += run.paint_switches;
++    const size_t paint_count = run.paint_switches + 1;
++    if (paint_count > replay_stats->max_group_run_paints) {
++      replay_stats->max_group_run_paints = paint_count;
+     }
+     const uint64_t group_pixels = RectPixelArea(run.group_rect);
+     replay_stats->group_run_pixels += group_pixels;
+@@ -2225,20 +2268,27 @@
+       FX_RECT node_rect =
+           holder_to_device.TransformRect(node.holder_space_bbox).GetOuterRect();
+       node_rect.Intersect(device->GetClipBox());
+-      if (!run.empty() && run.paint_key != node.paint_key) {
+-        RecordBlendPaintBarrierTelemetry(replay_stats, list, run, paint,
+-                                         node_rect);
+-        if (auto r = flush_run(replay_stats
+-                                   ? &replay_stats->run_flush_paint_change
+-                                   : nullptr);
+-            r != VelocePathDisplayListResult::kRendered) {
+-          return r;
+-        }
+-      }
+       // Accumulate into the group run. Overlapping paths are allowed: they
+       // composite normally inside the BGRA group buffer, matching the PDF
+       // transparency group model. No overlap gate needed.
+       if (!node_rect.IsEmpty()) {
++        if (!run.empty() && run.paint_key != node.paint_key) {
++          RecordBlendPaintBarrierTelemetry(replay_stats, list, run, paint,
++                                           node_rect);
++          if (!CanAppendPaintChangeToBlendGroupRun(run, paint, node_rect)) {
++            if (auto r = flush_run(replay_stats
++                                       ? &replay_stats->run_flush_paint_change
++                                       : nullptr);
++                r != VelocePathDisplayListResult::kRendered) {
++              return r;
++            }
++          }
++        }
++        if (run.empty()) {
++          run.blend_mode = paint.blend_mode;
++        } else if (run.paint_key != node.paint_key) {
++          run.paint_switches++;
++        }
+         run.paint_key = node.paint_key;
+         if (!run.group_rect_valid) {
+           run.group_rect = node_rect;
+@@ -2251,7 +2301,8 @@
+           run.group_rect.bottom =
+               std::max(run.group_rect.bottom, node_rect.bottom);
+         }
+-        run.entries.push_back({node.path_index, path_matrix, node_rect});
++        run.entries.push_back(
++            {node.path_index, node.paint_key, path_matrix, node_rect});
+       }
+ 
+     } else {

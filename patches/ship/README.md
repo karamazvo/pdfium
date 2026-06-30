@@ -73,6 +73,7 @@ these patches:
 | 0045 | `0045-veloce-path-display-list-same-argb-fill-barrier-crossing.patch` | Same-ARGB fill-barrier crossing. Keeps a pending normal stroke run open across a fill-only normal barrier when the barrier fill ARGB exactly matches the pending stroke ARGB. This promotes the r40 same-color proof into behavior using source-over commutativity, without crossing segment, text, clip, blend, pattern, soft-mask, or fill+stroke barriers. Adds `strokeRunFillBarriersSameArgbCrossed` / `sameArgbCrossed` telemetry. |
 | 0046 | `0046-veloce-path-display-list-stroke-run-compact-telemetry.patch` | Stroke-run compact telemetry. Adds a short `VelocePathDLStroke` log that survives Android log truncation, records actual stroke-run flush reasons, buckets run lengths, and splits matrix flushes into same-linear/translation-only versus linear-change cases. Telemetry-only; rendering order, segment barriers, spatial selection, blend behavior, and draw decisions are unchanged. |
 | 0047 | `0047-veloce-path-display-list-translation-normalized-stroke-run-packing.patch` | Translation-normalized stroke-run packing. Keeps stroke-only normal-blend runs open across same-linear translation-only matrix changes by appending each path through a relative coordinate-space translation and drawing the packed run with the base matrix. A fixed packed-point cap bounds temporary path memory and uses the existing capacity flush. Does not cross paint, graph-state, path-style, clip, blend, text, Form, image, or segment barriers. |
+| 0048 | `0048-veloce-path-display-list-safe-blend-paint-widening.patch` | Safe blend paint widening. Lets a `BlendGroupRun` contain multiple paint keys only when the adjacent paint change keeps the same final blend mode, the current group/device rect and next node device rect are disjoint, and the union rect is memory-bounded. Each entry still draws with its own paint inside the isolated group; overlapping different-paint blend objects still flush. Adds `paintSwitches` / `maxPaints` telemetry to `VelocePathDLBlend`. |
 
 ## Why this directory exists
 
@@ -129,6 +130,7 @@ git apply patches/ship/0044-veloce-path-display-list-fill-barrier-proof-telemetr
 git apply patches/ship/0045-veloce-path-display-list-same-argb-fill-barrier-crossing.patch
 git apply patches/ship/0046-veloce-path-display-list-stroke-run-compact-telemetry.patch
 git apply patches/ship/0047-veloce-path-display-list-translation-normalized-stroke-run-packing.patch
+git apply patches/ship/0048-veloce-path-display-list-safe-blend-paint-widening.patch
 ```
 
 > **Note:** patches 0027 and 0028 are deprecated and must NOT be applied.
@@ -278,6 +280,17 @@ changes, clips, blend nodes, text passthrough, non-stroke fills, image/Form
 objects, and segment boundaries still flush. Temporary packed paths are capped
 by point count and flush through the existing capacity reason, so the mechanism
 is memory-bounded.
+Patch 0048 depends on patch 0047 and promotes only the safe part of the r38
+blend-run widening analysis. A pending `BlendGroupRun` may absorb an adjacent
+different-paint blend node only when both nodes use the same final blend mode,
+their clipped device rects are disjoint, and the union group rect does not add
+more than 2x pixel area versus the two separate rects. Each group entry stores
+its own paint key and draws with that paint inside the isolated BGRA group.
+Overlapping different-paint blend nodes still flush because merging them into
+one isolated group is not generally equivalent to per-object PDF blend order.
+The mechanism stays inside the current ordered segment and clip run and does
+not cross normal nodes, text passthrough, unsupported blend, image/Form, or
+segment barriers.
 The release workflow applies the numeric order shown above, skipping 0027/0028.
 
 ## Cumulative effect (measured)
@@ -406,6 +419,11 @@ new `FPDFEx_LoadPageWithClassification()` symbol.
   Packs same-linear translation-only stroke matrices into the existing stroke
   run by appending paths through a relative translation. Adds point-cap
   telemetry and `matrixPacked` counters. No public API or build file changes.
+- **0048 Veloce safe blend paint widening**:
+  `core/fpdfapi/render/veloce_path_display_list.cpp`.
+  Allows disjoint, bounded same-blend paint changes inside a `BlendGroupRun`
+  while drawing every entry with its own paint. Adds `paintSwitches` and
+  `maxPaints` telemetry. No public API or build file changes.
 - **0017 Veloce holder-level root page path display list**:
   `core/fpdfapi/render/cpdf_renderstatus.cpp`,
   `core/fpdfapi/render/veloce_path_display_list.{h,cpp}`.
