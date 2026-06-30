@@ -32,15 +32,15 @@ Android app, JNI, Kotlin, and UI layer worktree:
 Use this worktree only for app/JNI/Kotlin changes. Do not mix app-layer changes
 into the PDFium patch repo.
 
-Current native PDFium HEAD after r45:
+Current native PDFium HEAD after r46:
 
 ```text
-c89d1bee0 Add r45 effective blend paint widening patch
+0c95d6e3c Add r46 blend shape telemetry patch
 ```
 
-Known untracked files currently visible in the native PDFium repo are generated
-source snapshots and one unrelated patch file. They were intentionally not
-staged in r44:
+Known untracked files currently visible in the native PDFium repo include
+generated source snapshots and the original page-dimensions proposal patch.
+They were intentionally not staged as generated sources:
 
 ```text
 core/fpdfapi/render/veloce_path_display_list.cpp
@@ -51,7 +51,9 @@ public/fpdfex_render_*.h
 patches/ship/10-page-dimensions-no-parse.patch
 ```
 
-Do not stage these unless the next task explicitly requires them.
+Do not stage the generated source snapshots. The old
+`10-page-dimensions-no-parse.patch` is kept only as proposal provenance; the
+live r47 patch is `0051-veloce-page-dimensions-no-parse.patch`.
 
 ## 2. Patch Naming And Revision Rules
 
@@ -66,7 +68,8 @@ Use numeric patch order for the patch stack:
 ```text
 0049-veloce-path-display-list-effective-blend-paint-widening.patch
 0050-veloce-path-display-list-blend-shape-telemetry.patch
-0051-<next-name>.patch
+0051-veloce-page-dimensions-no-parse.patch
+0052-<next-name>.patch
 ```
 
 Use revision labels for user/build tracking:
@@ -74,15 +77,16 @@ Use revision labels for user/build tracking:
 ```text
 r45 effective blend paint widening
 r46 blend shape telemetry
-r47 <next revision name>
+r47 page dimensions no parse
+r48 <next revision name>
 ```
 
-The next native patch after r46 should be:
+The r47 native patch after r46 is:
 
 ```text
-patch file: patches/ship/0051-<short-kebab-name>.patch
-workflow:   .github/workflows/pdfium-android-arm64-r47-<short-kebab-name>-path-display-list.yml
-commit:     Add r47 <short readable name> patch
+patch file: patches/ship/0051-veloce-page-dimensions-no-parse.patch
+workflow:   .github/workflows/pdfium-android-arm64-r47-page-dimensions-no-parse-path-display-list.yml
+commit:     Add r47 page dimensions no parse patch
 ```
 
 Keep deprecated patch numbers and names in place. In particular:
@@ -158,6 +162,11 @@ Current native mechanisms:
 - Blend group replay through BGRA isolated group buffers.
 - Cooperative cancellation in blend group flushes.
 - Conservative safe blend paint widening for disjoint same-blend paint changes.
+- Effective-paint blend widening for overlapping paint-key changes only when
+  render-affecting blend paint is equivalent.
+- Compact blend-shape telemetry for Darken/simple-source proof.
+- Page dictionary geometry export for app/JNI page-size enumeration without
+  `FPDF_LoadPage()` content parsing.
 
 The display-list cache is native owned. Replay must tolerate cache hits across
 renders without retaining stale page-object pointers.
@@ -175,12 +184,13 @@ Recent revisions:
 | r43 | `0047-veloce-path-display-list-translation-normalized-stroke-run-packing.patch` | committed | Pack same-linear translation-only stroke matrices. |
 | r44 | `0048-veloce-path-display-list-safe-blend-paint-widening.patch` | committed | Conservative disjoint same-blend paint widening for blend groups. |
 | r45 | `0049-veloce-path-display-list-effective-blend-paint-widening.patch` | committed | Overlapping blend paint-key widening when effective render paint is equivalent. |
-| r46 | `0050-veloce-path-display-list-blend-shape-telemetry.patch` | in progress | Telemetry-only blend shape classification for future direct/simple Darken proof. |
+| r46 | `0050-veloce-path-display-list-blend-shape-telemetry.patch` | committed | Telemetry-only blend shape classification for future direct/simple Darken proof. |
+| r47 | `0051-veloce-page-dimensions-no-parse.patch` | in progress | Export dictionary-only page geometry for app/JNI page-size fast path. |
 
-r45 commit:
+Current native HEAD:
 
 ```text
-c89d1bee0 Add r45 effective blend paint widening patch
+0c95d6e3c Add r46 blend shape telemetry patch
 ```
 
 r46 current files:
@@ -188,11 +198,21 @@ r46 current files:
 ```text
 patches/ship/0050-veloce-path-display-list-blend-shape-telemetry.patch
 .github/workflows/pdfium-android-arm64-r46-blend-shape-telemetry-path-display-list.yml
+patches/ship/0051-veloce-page-dimensions-no-parse.patch
+.github/workflows/pdfium-android-arm64-r47-page-dimensions-no-parse-path-display-list.yml
 ```
 
-## 6. Current Performance Reading
+r47 is not a render-behavior patch. It adds `FPDFEx_GetPageDimensions()` so
+the app/JNI layer can read width, height, effective CropBox, and rotation from
+the page dictionary without `FPDF_LoadPage()` / `ParseContent()`. Claude should
+adopt this API in the app worktree with optional `dlsym` resolution and a slow
+path fallback for unpatched builds.
 
-Q16 after r43:
+## 6. Current Performance Reading And r46 Findings
+
+### Q16 / Large CAD Stroke Pages
+
+Q16 after r43-r46:
 
 - `flushMatrix=0`
 - `matrixPacked` in the millions
@@ -200,6 +220,23 @@ Q16 after r43:
 - small and medium tiles are mostly fast
 - large visible regions are still expensive because millions of nodes are truly
   visible and large packed paths are rebuilt/rasterized per replay
+- r46 has no direct Q16 effect because `blendNodes=0`
+
+r46 Q16 evidence:
+
+```text
+full render:
+draws=203 nodes=2,944,028 matrixPacked=2,942,510
+flushMatrix=0 fillBlocked=0 sameArgbCrossed=220,916
+compileMs=2221 replayMs=2223
+
+large visible region:
+draws=95 nodes=2,739,884 matrixPacked=2,738,258
+replayMs=1982
+
+small visible tiles:
+typical replayMs=5..66 when candidate/drawn node counts are small
+```
 
 Q16 current remaining bottleneck:
 
@@ -214,35 +251,83 @@ cached packed stroke chunks with holder-space bboxes, inside existing segment,
 paint, graph-state, path-style, clip, blend, and passthrough barriers
 ```
 
-11.pdf after r43/r44:
+### 11.pdf / Darken Blend Pages
+
+11.pdf after r44-r46:
 
 - r43 stroke packing does not materially affect it because the stroke path is
   trivial in the log.
 - The dominant cost is still `BlendGroupRun`: many composites, high group pixel
   area, high node pixel area.
-- r44 is intentionally conservative. Because the r43 logs showed most paint
-  barriers overlap, r44 may be modest for 11.pdf. It is still safe and useful
-  telemetry for `paintSwitches` / `maxPaints`.
-- r45 attempts the next safe overlapping case: paint keys that differ but are
-  equivalent for rendering. The first expected win is fill-only blend paths
-  whose keys differ only by stroke-adjust state that does not affect fill
-  pixels.
+- r44 safe disjoint blend paint widening is correct but modest because most
+  paint barriers overlap.
+- r45 effective-paint widening is safe but did not materially help 11.pdf:
+  `paintEquivalent=0` and `paintEquivalentCrossed=0` in r45/r46 logs.
+- r46 proves the real shape: almost all expensive blend work is same-source
+  Darken even when paint keys differ.
+
+r46 11.pdf evidence:
+
+```text
+full render:
+groups=2991 darken=2991 nonDarken=0
+sameSource=2987 simpleDarken=2987
+simpleDarkenNodes=28,792 / 28,805
+simpleDarkenPixels=224,969,571
+replayMs=894
+
+slow tile examples:
+groups=2023 simpleDarken=2022 simpleDarkenPixels=483,164,153 replayMs=1348
+groups=1758 simpleDarken=1758 simpleDarkenPixels=418,727,759 replayMs=1296
+groups=1563 simpleDarken=1563 simpleDarkenPixels=401,351,730 replayMs=1197
+```
 
 11.pdf current remaining bottleneck:
 
 ```text
-overlapping Darken blend group cost
+thousands of same-source Darken group composites and repeated group-pixel work
 ```
 
-Likely future 11.pdf class improvement:
+Likely future 11.pdf class improvement, now proof-backed by r46:
 
 ```text
-proof-backed Darken/span/mask optimization or another equivalent reduction in
-group-buffer composite/pixel work
+same-source Darken BlendGroupRun widening across overlapping paint-key changes,
+while keeping each entry's own graph state and fill options for coverage
 ```
 
 Do not implement unsafe overlapping multi-paint group merging. It is not
 generally equivalent to PDF per-object blend order.
+
+## 6.1 80/20 Next Improvement Candidates
+
+Ranked by current expected value:
+
+1. r48 same-source Darken widening for 11.pdf-class pages.
+   - Expected impact: likely >20% on slow 11.pdf tiles if group count drops
+     without excessive union-rect growth.
+   - Mechanism: allow overlapping paint-key changes to stay inside the current
+     `BlendGroupRun` only when final blend mode is `Darken`, source ARGB is the
+     same, entries remain mask/group eligible, and union rect remains
+     memory-bounded. Each entry still draws with its own graph state and fill
+     options inside the group, preserving coverage.
+   - Invariants: no crossing segment, clip, passthrough, image/Form/shading,
+     unsupported blend, or normal-object barriers. No filename-specific logic.
+
+2. Cached packed stroke chunks for Q16-class huge stroke pages.
+   - Expected impact: likely >20% on large visible-region Q16 renders; small
+     sparse tiles are already fast and should not be the primary target.
+   - Mechanism: cache reusable packed stroke geometry inside existing ordered
+     segment/style/clip/blend barriers, with holder-space bboxes and strict
+     memory caps. Replay only visible chunks.
+   - Risk: higher than r48 because it adds a memory-owned geometry cache and
+     invalidation/lifetime rules.
+
+3. Direct simple-Darken compositor for 11.pdf-class pages.
+   - Expected impact: potentially >30%, but higher proof burden.
+   - Mechanism: specialize simple same-source Darken into a direct mask/span
+     compositor instead of allocating/compositing many BGRA group buffers.
+   - Recommendation: do this only after r48 unless r48 fails to reduce group
+     count enough.
 
 ## 7. Workflow Requirements
 
@@ -264,11 +349,11 @@ Workflow requirements:
 - Verification step keeps safety guards against deprecated symbols and known
   reverted approaches.
 
-For r47, copy the r46 workflow and update:
+For r48 and later, copy the previous revision workflow and update:
 
 ```text
-r46 -> r47
-0050 -> 0051 in apply/copy/build-info
+r47 -> r48
+0051 -> 0052 in apply/copy/build-info
 revision name and guards
 ```
 
@@ -299,12 +384,13 @@ against a clean temp tree that has the previous patch applied.
 
 4. Run local grep guards for the new mechanism.
 
-5. Confirm staged files include only:
+5. Confirm staged files include only native-patch files for the current task:
 
 ```text
 patches/ship/00XX-<name>.patch
 .github/workflows/pdfium-android-arm64-rXX-<name>-path-display-list.yml
 patches/ship/README.md
+patches/ship/VELOCE_PATCH_CONVENTIONS.md
 ```
 
 6. Keep generated source snapshots, unrelated patches, and app worktree changes
@@ -336,13 +422,34 @@ Fix rXX workflow <short cause>
 
 ## 10. Next Patch Direction
 
-The next patch should be chosen by 80/20 value:
+After r47 page-dimensions API export, the recommended next render-performance
+patch is:
 
-- For 11.pdf market-facing blend cost: a future patch should target a proof-backed Darken
-  blend cost reduction. Start with telemetry/proof if equivalence is not yet
-  clear.
-- For Q16 large visible-region cost: a future patch should target cached packed stroke
-  chunks. The invariant is to cache reusable packed geometry inside existing
-  ordered segment/style/clip/blend barriers and replay only visible chunks.
+```text
+r48 / 0052: same-source Darken BlendGroupRun widening
+```
+
+Reason: r46 proves the expensive 11.pdf-class blend workload is almost entirely
+same-source Darken. This is now a narrower, safer behavior patch than a direct
+pixel compositor. It should be attempted before deeper blend math.
+
+r48 must preserve these invariants:
+
+- Same ordered path segment only.
+- Same clip run only.
+- `BlendMode::kDarken` only.
+- Same source ARGB only.
+- Existing mask/group-eligible blend nodes only.
+- Union group rect must stay memory-bounded.
+- Every entry keeps its own graph state and fill options for coverage.
+- No crossing text passthrough, image/Form/shading, unsupported blend, normal
+  node, clip, or segment barriers.
+
+If r48 does not reduce enough successful-tile time, the next 11.pdf-class track
+is direct simple-Darken mask/span compositing.
+
+For Q16-class large visible regions, the separate next track is cached packed
+stroke chunks inside existing ordered segment/style/clip/blend barriers. Do not
+mix this with r48.
 
 Do not mix both tracks in one patch. One mechanism per patch.

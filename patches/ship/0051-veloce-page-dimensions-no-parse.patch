@@ -1,0 +1,130 @@
+diff --git a/fpdfsdk/fpdf_view.cpp b/fpdfsdk/fpdf_view.cpp
+index 3063cc102..d144506e3 100644
+--- a/fpdfsdk/fpdf_view.cpp
++++ b/fpdfsdk/fpdf_view.cpp
+@@ -113,6 +113,7 @@ static_assert(static_cast<int>(CFX_GEModule::RendererType::kSkia) ==
+ #endif  // defined(PDF_USE_SKIA)
+ 
+ static_assert(sizeof(FPDFEx_PageClassification) == 64);
++static_assert(sizeof(FPDFEx_PageDimensions) == 32);
+ 
+ FPDF_EXPORT void FPDF_CALLCONV
+ FPDFEx_SetSkipRasterization(int enabled) {
+@@ -1215,6 +1216,44 @@ FPDF_GetPageSizeByIndexF(FPDF_DOCUMENT document,
+   return true;
+ }
+ 
++FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
++FPDFEx_GetPageDimensions(FPDF_DOCUMENT document,
++                         int page_index,
++                         FPDFEx_PageDimensions* out) {
++  if (!out) {
++    return false;
++  }
++  std::memset(out, 0, sizeof(*out));
++
++  auto* doc = CPDFDocumentFromFPDFDocument(document);
++  if (!doc) {
++    return false;
++  }
++
++  if (page_index < 0 || page_index >= FPDF_GetPageCount(document)) {
++    return false;
++  }
++
++  // GetMutablePageDictionary() reads the page dictionary through PDFium's
++  // page-tree cache. Constructing CPDF_Page updates dimensions from
++  // MediaBox/CropBox/Rotate, but ParseContent() is never called here.
++  RetainPtr<CPDF_Dictionary> dict = doc->GetMutablePageDictionary(page_index);
++  if (!CPDF_Page::IsValidPageDictLoose(dict)) {
++    return false;
++  }
++
++  auto page = pdfium::MakeRetain<CPDF_Page>(doc, std::move(dict));
++  const CFX_FloatRect& bbox = page->GetBBox();
++  out->page_width = page->GetPageWidth();
++  out->page_height = page->GetPageHeight();
++  out->cropbox_left = bbox.left;
++  out->cropbox_bottom = bbox.bottom;
++  out->cropbox_right = bbox.right;
++  out->cropbox_top = bbox.top;
++  out->rotation_quarter_turns = page->GetPageRotation();
++  return true;
++}
++
+ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
+                                                       int page_index,
+                                                       double* width,
+diff --git a/fpdfsdk/fpdf_view_c_api_test.c b/fpdfsdk/fpdf_view_c_api_test.c
+index 282512d13..35273001a 100644
+--- a/fpdfsdk/fpdf_view_c_api_test.c
++++ b/fpdfsdk/fpdf_view_c_api_test.c
+@@ -524,6 +524,7 @@ int CheckPDFiumCApi() {
+     CHK(FPDF_GetPageHeightF);
+     CHK(FPDF_GetPageSizeByIndex);
+     CHK(FPDF_GetPageSizeByIndexF);
++    CHK(FPDFEx_GetPageDimensions);
+     CHK(FPDF_GetPageWidth);
+     CHK(FPDF_GetPageWidthF);
+ #ifdef PDF_ENABLE_V8
+diff --git a/public/fpdfview.h b/public/fpdfview.h
+index ddf565295..ba533a3a1 100644
+--- a/public/fpdfview.h
++++ b/public/fpdfview.h
+@@ -880,6 +880,56 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
+                                                       double* width,
+                                                       double* height);
+ 
++// Struct: FPDFEx_PageDimensions
++//   Exact page geometry read directly from the page dictionary, without
++//   parsing the page content stream. Populated by FPDFEx_GetPageDimensions().
++//   Fixed 32-byte POD layout -- do not reorder or resize fields; add a new
++//   struct/function pair instead if more data is needed later.
++//
++//   page_width / page_height:
++//     Visible page dimensions in points, after applying CropBox intersection
++//     and the Rotate width/height swap. Identical to the values
++//     FPDF_GetPageWidth/Height return for a fully loaded page.
++//
++//   cropbox_{left,bottom,right,top}:
++//     Effective CropBox in PDF user-space coordinates (bottom-left origin,
++//     Y-up): CropBox intersected with MediaBox, or MediaBox verbatim if the
++//     page has no CropBox entry.
++//
++//   rotation_quarter_turns:
++//     Page rotation in quarter-turns clockwise (0, 1, 2, or 3).
++//     Matches FPDFPage_GetRotation().
++typedef struct {
++  float page_width;
++  float page_height;
++  float cropbox_left;
++  float cropbox_bottom;
++  float cropbox_right;
++  float cropbox_top;
++  int rotation_quarter_turns;
++  int reserved;
++} FPDFEx_PageDimensions;
++
++// Function: FPDFEx_GetPageDimensions
++//   Get exact page geometry from the page dictionary without parsing page
++//   content. Skips FPDF_LoadPage's ParseContent() entirely. Does not support
++//   XFA documents; use FPDF_GetPageSizeByIndexF for those.
++//
++// Parameters:
++//   document    - Handle to document. Returned by FPDF_LoadDocument.
++//   page_index  - Page index, zero for the first page.
++//   out         - Pointer to a caller-owned FPDFEx_PageDimensions to receive
++//                 the result. Zeroed by this function before population and
++//                 left zeroed on failure.
++//
++// Return value:
++//   Non-zero on success. Zero if document/page is invalid, the page dictionary
++//   is malformed, or out is null.
++FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
++FPDFEx_GetPageDimensions(FPDF_DOCUMENT document,
++                         int page_index,
++                         FPDFEx_PageDimensions* out);
++
+ // Page rendering flags. They can be combined with bit-wise OR.
+ //
+ // Set if annotations are to be rendered.

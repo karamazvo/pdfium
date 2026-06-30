@@ -76,6 +76,7 @@ these patches:
 | 0048 | `0048-veloce-path-display-list-safe-blend-paint-widening.patch` | Safe blend paint widening. Lets a `BlendGroupRun` contain multiple paint keys only when the adjacent paint change keeps the same final blend mode, the current group/device rect and next node device rect are disjoint, and the union rect is memory-bounded. Each entry still draws with its own paint inside the isolated group; overlapping different-paint blend objects still flush. Adds `paintSwitches` / `maxPaints` telemetry to `VelocePathDLBlend`. |
 | 0049 | `0049-veloce-path-display-list-effective-blend-paint-widening.patch` | Effective blend paint widening. Lets overlapping blend paint-key changes stay inside the current `BlendGroupRun` only when every current group entry has the same render-affecting blend paint as the next node. For fill-only blend paths, stroke-adjust is ignored because no stroke is drawn; non-equivalent overlapping paints still flush. Adds `paintEquivalent` / `paintEquivalentCrossed` telemetry. |
 | 0050 | `0050-veloce-path-display-list-blend-shape-telemetry.patch` | Blend shape telemetry. Adds a compact `VelocePathDLBlendShape` line that classifies existing `BlendGroupRun` composites by blend mode, path paint shape, same source ARGB, and simple Darken candidate cost. Telemetry-only; it does not change grouping, painter order, cancellation, allocation policy, or pixels. |
+| 0051 | `0051-veloce-page-dimensions-no-parse.patch` | Page dimensions no-parse export. Adds fixed 32-byte `FPDFEx_PageDimensions` and `FPDFEx_GetPageDimensions()` so embedders can read page width/height, effective CropBox, and rotation from the page dictionary without `FPDF_LoadPage()` or `ParseContent()`. No rendering semantics change. |
 
 ## Why this directory exists
 
@@ -135,6 +136,7 @@ git apply patches/ship/0047-veloce-path-display-list-translation-normalized-stro
 git apply patches/ship/0048-veloce-path-display-list-safe-blend-paint-widening.patch
 git apply patches/ship/0049-veloce-path-display-list-effective-blend-paint-widening.patch
 git apply patches/ship/0050-veloce-path-display-list-blend-shape-telemetry.patch
+git apply patches/ship/0051-veloce-page-dimensions-no-parse.patch
 ```
 
 > **Note:** patches 0027 and 0028 are deprecated and must NOT be applied.
@@ -310,6 +312,12 @@ paint shape, same source ARGB, and simple Darken candidate pixel cost through
 `VelocePathDLBlendShape`. It piggybacks on the existing per-entry stats loop
 after a group composite and does not change grouping, painter order,
 cancellation, allocation, or rendering behavior.
+Patch 0051 depends on the public extension surface established by patch 08 and
+is independent of the path display-list renderer. It exposes dictionary-only
+page geometry through `FPDFEx_GetPageDimensions()` and intentionally does not
+call `ParseContent()`, `AddPageImageCache()`, or any render entry point. The
+app/JNI layer must resolve this symbol optionally and fall back to the existing
+slow `FPDF_LoadPage()`-based page-size path when the symbol is absent.
 The release workflow applies the numeric order shown above, skipping 0027/0028.
 
 ## Cumulative effect (measured)
@@ -329,6 +337,8 @@ explicitly enabled. Patches 06 and 07 do not affect rendering output unless
 the abort flag is explicitly enabled. Patch 08 does not alter
 `FPDF_LoadPage()` behavior; callers must opt in by resolving and calling the
 new `FPDFEx_LoadPageWithClassification()` symbol.
+Patch 0051 also does not affect rendering output; callers must opt in by
+resolving and calling `FPDFEx_GetPageDimensions()` for page-size enumeration.
 
 ## Files changed by each patch
 
@@ -454,6 +464,12 @@ new `FPDFEx_LoadPageWithClassification()` symbol.
   Adds compact `VelocePathDLBlendShape` telemetry for blend mode, path paint
   shape, same source ARGB, and simple Darken candidate cost. No rendering
   behavior, public API, or build file changes.
+- **0051 Veloce page dimensions no-parse export**:
+  `fpdfsdk/fpdf_view.cpp`, `fpdfsdk/fpdf_view_c_api_test.c`,
+  `public/fpdfview.h`.
+  Adds fixed 32-byte `FPDFEx_PageDimensions` and
+  `FPDFEx_GetPageDimensions()` for dictionary-only page geometry lookup. No
+  rendering behavior or path display-list behavior changes.
 - **0017 Veloce holder-level root page path display list**:
   `core/fpdfapi/render/cpdf_renderstatus.cpp`,
   `core/fpdfapi/render/veloce_path_display_list.{h,cpp}`.
