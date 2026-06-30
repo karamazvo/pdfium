@@ -75,6 +75,7 @@ these patches:
 | 0047 | `0047-veloce-path-display-list-translation-normalized-stroke-run-packing.patch` | Translation-normalized stroke-run packing. Keeps stroke-only normal-blend runs open across same-linear translation-only matrix changes by appending each path through a relative coordinate-space translation and drawing the packed run with the base matrix. A fixed packed-point cap bounds temporary path memory and uses the existing capacity flush. Does not cross paint, graph-state, path-style, clip, blend, text, Form, image, or segment barriers. |
 | 0048 | `0048-veloce-path-display-list-safe-blend-paint-widening.patch` | Safe blend paint widening. Lets a `BlendGroupRun` contain multiple paint keys only when the adjacent paint change keeps the same final blend mode, the current group/device rect and next node device rect are disjoint, and the union rect is memory-bounded. Each entry still draws with its own paint inside the isolated group; overlapping different-paint blend objects still flush. Adds `paintSwitches` / `maxPaints` telemetry to `VelocePathDLBlend`. |
 | 0049 | `0049-veloce-path-display-list-effective-blend-paint-widening.patch` | Effective blend paint widening. Lets overlapping blend paint-key changes stay inside the current `BlendGroupRun` only when every current group entry has the same render-affecting blend paint as the next node. For fill-only blend paths, stroke-adjust is ignored because no stroke is drawn; non-equivalent overlapping paints still flush. Adds `paintEquivalent` / `paintEquivalentCrossed` telemetry. |
+| 0050 | `0050-veloce-path-display-list-blend-shape-telemetry.patch` | Blend shape telemetry. Adds a compact `VelocePathDLBlendShape` line that classifies existing `BlendGroupRun` composites by blend mode, path paint shape, same source ARGB, and simple Darken candidate cost. Telemetry-only; it does not change grouping, painter order, cancellation, allocation policy, or pixels. |
 
 ## Why this directory exists
 
@@ -133,6 +134,7 @@ git apply patches/ship/0046-veloce-path-display-list-stroke-run-compact-telemetr
 git apply patches/ship/0047-veloce-path-display-list-translation-normalized-stroke-run-packing.patch
 git apply patches/ship/0048-veloce-path-display-list-safe-blend-paint-widening.patch
 git apply patches/ship/0049-veloce-path-display-list-effective-blend-paint-widening.patch
+git apply patches/ship/0050-veloce-path-display-list-blend-shape-telemetry.patch
 ```
 
 > **Note:** patches 0027 and 0028 are deprecated and must NOT be applied.
@@ -302,6 +304,12 @@ stroke. Fill type, anti-aliasing, fill ARGB, stroke ARGB, blend mode, and
 stroke graph state remain part of the comparison where they affect pixels.
 Non-equivalent overlapping paint changes still flush, and r44's disjoint
 bounded crossing rule remains unchanged.
+Patch 0050 depends on patch 0049 and is telemetry-only. It classifies the
+already-flushed `BlendGroupRun` composites by final blend mode, fill/stroke
+paint shape, same source ARGB, and simple Darken candidate pixel cost through
+`VelocePathDLBlendShape`. It piggybacks on the existing per-entry stats loop
+after a group composite and does not change grouping, painter order,
+cancellation, allocation, or rendering behavior.
 The release workflow applies the numeric order shown above, skipping 0027/0028.
 
 ## Cumulative effect (measured)
@@ -441,6 +449,11 @@ new `FPDFEx_LoadPageWithClassification()` symbol.
   the effective render paint is equivalent for all entries. Adds
   `paintEquivalent` and `paintEquivalentCrossed` telemetry. No public API or
   build file changes.
+- **0050 Veloce blend shape telemetry**:
+  `core/fpdfapi/render/veloce_path_display_list.cpp`.
+  Adds compact `VelocePathDLBlendShape` telemetry for blend mode, path paint
+  shape, same source ARGB, and simple Darken candidate cost. No rendering
+  behavior, public API, or build file changes.
 - **0017 Veloce holder-level root page path display list**:
   `core/fpdfapi/render/cpdf_renderstatus.cpp`,
   `core/fpdfapi/render/veloce_path_display_list.{h,cpp}`.

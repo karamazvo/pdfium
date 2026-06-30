@@ -1,0 +1,136 @@
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -214,6 +214,18 @@ struct PathDlReplayStats {
+   size_t blend_paint_change_unknown = 0;
+   size_t blend_paint_change_effective_equivalent = 0;
+   size_t blend_paint_change_effective_equivalent_crossed = 0;
++  size_t blend_shape_groups = 0;
++  size_t blend_shape_darken_groups = 0;
++  size_t blend_shape_non_darken_groups = 0;
++  size_t blend_shape_fill_only_groups = 0;
++  size_t blend_shape_stroke_only_groups = 0;
++  size_t blend_shape_same_fill_stroke_groups = 0;
++  size_t blend_shape_mixed_shape_groups = 0;
++  size_t blend_shape_same_source_groups = 0;
++  size_t blend_shape_simple_darken_groups = 0;
++  size_t blend_shape_simple_darken_nodes = 0;
++  uint64_t blend_shape_simple_darken_pixels = 0;
++  uint64_t blend_shape_max_simple_darken_pixels = 0;
+   size_t blend_cancel_checks = 0;
+   size_t blend_cancelled_after_composites = 0;
+   size_t blend_cancelled_after_nodes = 0;
+@@ -931,6 +943,30 @@ void LogPathDisplayListAttempt(const char* result,
+         replay_stats->blend_cancelled_after_composites,
+         replay_stats->blend_cancelled_after_nodes, compile_ms, replay_ms);
+   }
++  if (replay_stats && replay_stats->blend_shape_groups > 0) {
++    __android_log_print(
++        ANDROID_LOG_INFO, "VelocePathDLBlendShape",
++        "result=%s holderKind=%s cache=%s groups=%zu darken=%zu "
++        "nonDarken=%zu fillOnly=%zu strokeOnly=%zu sameFillStroke=%zu "
++        "mixedShape=%zu sameSource=%zu simpleDarken=%zu "
++        "simpleDarkenNodes=%zu simpleDarkenPixels=%" PRIu64
++        " maxSimpleDarkenPixels=%" PRIu64 " compileMs=%" PRId64
++        " replayMs=%" PRId64,
++        result, HolderKindName(holder_kind), cache_state ? cache_state : "none",
++        replay_stats->blend_shape_groups,
++        replay_stats->blend_shape_darken_groups,
++        replay_stats->blend_shape_non_darken_groups,
++        replay_stats->blend_shape_fill_only_groups,
++        replay_stats->blend_shape_stroke_only_groups,
++        replay_stats->blend_shape_same_fill_stroke_groups,
++        replay_stats->blend_shape_mixed_shape_groups,
++        replay_stats->blend_shape_same_source_groups,
++        replay_stats->blend_shape_simple_darken_groups,
++        replay_stats->blend_shape_simple_darken_nodes,
++        replay_stats->blend_shape_simple_darken_pixels,
++        replay_stats->blend_shape_max_simple_darken_pixels, compile_ms,
++        replay_ms);
++  }
+   if (list && list->path_points > 0) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VelocePathDLPrimitive",
+@@ -1684,6 +1720,19 @@ bool IsFillOnlyBlendPaint(const PathDlPaint& paint) {
+          !paint.fill_options.stroke && paint.stroke_argb == 0;
+ }
+ 
++bool BlendPaintHasFill(const PathDlPaint& paint) {
++  return paint.fill_options.fill_type !=
++         CFX_FillRenderOptions::FillType::kNoFill;
++}
++
++bool BlendPaintHasStroke(const PathDlPaint& paint) {
++  return paint.stroke_argb != 0;
++}
++
++uint32_t BlendPaintSourceArgb(const PathDlPaint& paint) {
++  return BlendPaintHasFill(paint) ? paint.fill_argb : paint.stroke_argb;
++}
++
+ bool EffectiveBlendPaintEquals(const PathDlPaint& lhs,
+                                const PathDlPaint& rhs) {
+   if (lhs.blend_mode != rhs.blend_mode || lhs.fill_argb != rhs.fill_argb ||
+@@ -1871,8 +1920,62 @@ bool FlushGroupRun(CPDF_RenderStatus* status,
+     if (group_pixels > replay_stats->max_group_run_pixels) {
+       replay_stats->max_group_run_pixels = group_pixels;
+     }
++    replay_stats->blend_shape_groups++;
++    if (run.blend_mode == BlendMode::kDarken) {
++      replay_stats->blend_shape_darken_groups++;
++    } else {
++      replay_stats->blend_shape_non_darken_groups++;
++    }
++    bool all_fill_only = true;
++    bool all_stroke_only = true;
++    bool all_same_fill_stroke = true;
++    bool same_source_argb = true;
++    bool have_source_argb = false;
++    uint32_t first_source_argb = 0;
+     for (const MaskRunEntry& entry : run.entries) {
+       replay_stats->group_run_node_pixels += RectPixelArea(entry.node_rect);
++      if (entry.paint_key >= list.paint_table.size()) {
++        all_fill_only = false;
++        all_stroke_only = false;
++        all_same_fill_stroke = false;
++        same_source_argb = false;
++        continue;
++      }
++      const PathDlPaint& entry_paint = list.paint_table[entry.paint_key];
++      const bool has_fill = BlendPaintHasFill(entry_paint);
++      const bool has_stroke = BlendPaintHasStroke(entry_paint);
++      all_fill_only = all_fill_only && has_fill && !has_stroke;
++      all_stroke_only = all_stroke_only && !has_fill && has_stroke;
++      all_same_fill_stroke =
++          all_same_fill_stroke && has_fill && has_stroke &&
++          entry_paint.fill_argb == entry_paint.stroke_argb;
++      const uint32_t source_argb = BlendPaintSourceArgb(entry_paint);
++      if (!have_source_argb) {
++        first_source_argb = source_argb;
++        have_source_argb = true;
++      } else if (source_argb != first_source_argb) {
++        same_source_argb = false;
++      }
++    }
++    if (all_fill_only) {
++      replay_stats->blend_shape_fill_only_groups++;
++    } else if (all_stroke_only) {
++      replay_stats->blend_shape_stroke_only_groups++;
++    } else if (all_same_fill_stroke) {
++      replay_stats->blend_shape_same_fill_stroke_groups++;
++    } else {
++      replay_stats->blend_shape_mixed_shape_groups++;
++    }
++    if (same_source_argb) {
++      replay_stats->blend_shape_same_source_groups++;
++    }
++    if (run.blend_mode == BlendMode::kDarken && same_source_argb) {
++      replay_stats->blend_shape_simple_darken_groups++;
++      replay_stats->blend_shape_simple_darken_nodes += run.entries.size();
++      replay_stats->blend_shape_simple_darken_pixels += group_pixels;
++      if (group_pixels > replay_stats->blend_shape_max_simple_darken_pixels) {
++        replay_stats->blend_shape_max_simple_darken_pixels = group_pixels;
++      }
+     }
+   }
+   if (CheckBlendRunCancel(status, replay_stats, nodes_drawn_in_run)) {

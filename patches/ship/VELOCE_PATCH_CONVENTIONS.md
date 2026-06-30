@@ -32,10 +32,10 @@ Android app, JNI, Kotlin, and UI layer worktree:
 Use this worktree only for app/JNI/Kotlin changes. Do not mix app-layer changes
 into the PDFium patch repo.
 
-Current native PDFium HEAD after r44:
+Current native PDFium HEAD after r45:
 
 ```text
-e79b17afd Add r44 safe blend paint widening patch
+c89d1bee0 Add r45 effective blend paint widening patch
 ```
 
 Known untracked files currently visible in the native PDFium repo are generated
@@ -65,22 +65,24 @@ Use numeric patch order for the patch stack:
 
 ```text
 0049-veloce-path-display-list-effective-blend-paint-widening.patch
-0050-<next-name>.patch
+0050-veloce-path-display-list-blend-shape-telemetry.patch
+0051-<next-name>.patch
 ```
 
 Use revision labels for user/build tracking:
 
 ```text
 r45 effective blend paint widening
-r46 <next revision name>
+r46 blend shape telemetry
+r47 <next revision name>
 ```
 
-The next native patch after r45 should be:
+The next native patch after r46 should be:
 
 ```text
-patch file: patches/ship/0050-<short-kebab-name>.patch
-workflow:   .github/workflows/pdfium-android-arm64-r46-<short-kebab-name>-path-display-list.yml
-commit:     Add r46 <short readable name> patch
+patch file: patches/ship/0051-<short-kebab-name>.patch
+workflow:   .github/workflows/pdfium-android-arm64-r47-<short-kebab-name>-path-display-list.yml
+commit:     Add r47 <short readable name> patch
 ```
 
 Keep deprecated patch numbers and names in place. In particular:
@@ -172,19 +174,20 @@ Recent revisions:
 | r42 | `0046-veloce-path-display-list-stroke-run-compact-telemetry.patch` | committed | Compact stroke telemetry and restored flush accounting. |
 | r43 | `0047-veloce-path-display-list-translation-normalized-stroke-run-packing.patch` | committed | Pack same-linear translation-only stroke matrices. |
 | r44 | `0048-veloce-path-display-list-safe-blend-paint-widening.patch` | committed | Conservative disjoint same-blend paint widening for blend groups. |
-| r45 | `0049-veloce-path-display-list-effective-blend-paint-widening.patch` | in progress | Overlapping blend paint-key widening when effective render paint is equivalent. |
+| r45 | `0049-veloce-path-display-list-effective-blend-paint-widening.patch` | committed | Overlapping blend paint-key widening when effective render paint is equivalent. |
+| r46 | `0050-veloce-path-display-list-blend-shape-telemetry.patch` | in progress | Telemetry-only blend shape classification for future direct/simple Darken proof. |
 
-r44 commit:
+r45 commit:
 
 ```text
-e79b17afd Add r44 safe blend paint widening patch
+c89d1bee0 Add r45 effective blend paint widening patch
 ```
 
-r45 current files:
+r46 current files:
 
 ```text
-patches/ship/0049-veloce-path-display-list-effective-blend-paint-widening.patch
-.github/workflows/pdfium-android-arm64-r45-effective-blend-paint-widening-path-display-list.yml
+patches/ship/0050-veloce-path-display-list-blend-shape-telemetry.patch
+.github/workflows/pdfium-android-arm64-r46-blend-shape-telemetry-path-display-list.yml
 ```
 
 ## 6. Current Performance Reading
@@ -261,11 +264,11 @@ Workflow requirements:
 - Verification step keeps safety guards against deprecated symbols and known
   reverted approaches.
 
-For r46, copy the r45 workflow and update:
+For r47, copy the r46 workflow and update:
 
 ```text
-r45 -> r46
-0049 -> 0050 in apply/copy/build-info
+r46 -> r47
+0050 -> 0051 in apply/copy/build-info
 revision name and guards
 ```
 
