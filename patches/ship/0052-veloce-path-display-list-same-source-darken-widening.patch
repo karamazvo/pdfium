@@ -1,0 +1,186 @@
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index 318b05d94..e6593db40 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -214,6 +214,9 @@ struct PathDlReplayStats {
+   size_t blend_paint_change_unknown = 0;
+   size_t blend_paint_change_effective_equivalent = 0;
+   size_t blend_paint_change_effective_equivalent_crossed = 0;
++  size_t blend_paint_change_same_source_darken = 0;
++  size_t blend_paint_change_same_source_darken_crossed = 0;
++  size_t blend_paint_change_same_source_darken_rejected = 0;
+   size_t blend_shape_groups = 0;
+   size_t blend_shape_darken_groups = 0;
+   size_t blend_shape_non_darken_groups = 0;
+@@ -921,6 +924,8 @@ void LogPathDisplayListAttempt(const char* result,
+         " maxGroupPixels=%" PRIu64 " paintBarriers=%zu "
+         "paintCandidates=%zu paintDisjoint=%zu paintOverlap=%zu "
+         "paintUnknown=%zu paintEquivalent=%zu paintEquivalentCrossed=%zu "
++        "sameSourceDarken=%zu sameSourceDarkenCrossed=%zu "
++        "sameSourceDarkenRejected=%zu "
+         "cancelChecks=%zu cancelledAfterComposites=%zu "
+         "cancelledAfterNodes=%zu compileMs=%" PRId64 " replayMs=%" PRId64,
+         result, HolderKindName(holder_kind), cache_state ? cache_state : "none",
+@@ -939,6 +944,9 @@ void LogPathDisplayListAttempt(const char* result,
+         replay_stats->blend_paint_change_unknown,
+         replay_stats->blend_paint_change_effective_equivalent,
+         replay_stats->blend_paint_change_effective_equivalent_crossed,
++        replay_stats->blend_paint_change_same_source_darken,
++        replay_stats->blend_paint_change_same_source_darken_crossed,
++        replay_stats->blend_paint_change_same_source_darken_rejected,
+         replay_stats->blend_cancel_checks,
+         replay_stats->blend_cancelled_after_composites,
+         replay_stats->blend_cancelled_after_nodes, compile_ms, replay_ms);
+@@ -1684,6 +1692,9 @@ struct MaskRun {
+   BlendMode blend_mode = BlendMode::kNormal;
+   uint32_t effective_paint_key = kNoClipKey;
+   bool one_effective_paint = true;
++  uint32_t source_argb = 0;
++  bool source_argb_valid = false;
++  bool one_source_argb = true;
+   size_t paint_switches = 0;
+   FX_RECT group_rect;
+   bool group_rect_valid = false;
+@@ -1695,6 +1706,9 @@ struct MaskRun {
+     blend_mode = BlendMode::kNormal;
+     effective_paint_key = kNoClipKey;
+     one_effective_paint = true;
++    source_argb = 0;
++    source_argb_valid = false;
++    one_source_argb = true;
+     paint_switches = 0;
+     group_rect_valid = false;
+     entries.clear();
+@@ -1733,6 +1747,19 @@ uint32_t BlendPaintSourceArgb(const PathDlPaint& paint) {
+   return BlendPaintHasFill(paint) ? paint.fill_argb : paint.stroke_argb;
+ }
+ 
++void RecordBlendRunSource(MaskRun* run, const PathDlPaint& paint) {
++  const uint32_t source_argb = BlendPaintSourceArgb(paint);
++  if (!run->source_argb_valid) {
++    run->source_argb = source_argb;
++    run->source_argb_valid = true;
++    run->one_source_argb = true;
++    return;
++  }
++  if (run->source_argb != source_argb) {
++    run->one_source_argb = false;
++  }
++}
++
+ bool EffectiveBlendPaintEquals(const PathDlPaint& lhs,
+                                const PathDlPaint& rhs) {
+   if (lhs.blend_mode != rhs.blend_mode || lhs.fill_argb != rhs.fill_argb ||
+@@ -1761,6 +1788,18 @@ bool BlendRunHasOneEffectivePaint(const NativePathDisplayList& list,
+                                    next_paint);
+ }
+ 
++bool BlendGroupUnionIsMemoryBounded(const FX_RECT& current_rect,
++                                    const FX_RECT& next_rect) {
++  if (current_rect.IsEmpty() || next_rect.IsEmpty()) {
++    return false;
++  }
++  const uint64_t current_pixels = RectPixelArea(current_rect);
++  const uint64_t next_pixels = RectPixelArea(next_rect);
++  const uint64_t union_pixels =
++      RectPixelArea(UnionRectCopy(current_rect, next_rect));
++  return union_pixels <= (current_pixels + next_pixels) * 2u;
++}
++
+ bool CanAppendPaintChangeToBlendGroupRun(const MaskRun& run,
+                                          const PathDlPaint& next_paint,
+                                          const FX_RECT& next_rect) {
+@@ -1775,11 +1814,28 @@ bool CanAppendPaintChangeToBlendGroupRun(const MaskRun& run,
+     return false;
+   }
+ 
+-  const uint64_t current_pixels = RectPixelArea(run.group_rect);
+-  const uint64_t next_pixels = RectPixelArea(next_rect);
+-  const uint64_t union_pixels = RectPixelArea(UnionRectCopy(run.group_rect,
+-                                                            next_rect));
+-  return union_pixels <= (current_pixels + next_pixels) * 2u;
++  return BlendGroupUnionIsMemoryBounded(run.group_rect, next_rect);
++}
++
++bool BlendRunHasSameSourceDarken(const MaskRun& run,
++                                 const PathDlPaint& next_paint) {
++  return !run.empty() && run.blend_mode == BlendMode::kDarken &&
++         next_paint.blend_mode == BlendMode::kDarken &&
++         run.source_argb_valid && run.one_source_argb &&
++         run.source_argb == BlendPaintSourceArgb(next_paint);
++}
++
++bool CanAppendSameSourceDarkenToBlendGroupRun(const MaskRun& run,
++                                              const PathDlPaint& next_paint,
++                                              const FX_RECT& next_rect) {
++  if (!BlendRunHasSameSourceDarken(run, next_paint)) {
++    return false;
++  }
++  if (!run.group_rect_valid || run.group_rect.IsEmpty() ||
++      next_rect.IsEmpty()) {
++    return false;
++  }
++  return BlendGroupUnionIsMemoryBounded(run.group_rect, next_rect);
+ }
+ 
+ void RecordBlendPaintBarrierTelemetry(PathDlReplayStats* replay_stats,
+@@ -1799,6 +1855,9 @@ void RecordBlendPaintBarrierTelemetry(PathDlReplayStats* replay_stats,
+   if (BlendRunHasOneEffectivePaint(list, pending_run, next_paint)) {
+     replay_stats->blend_paint_change_effective_equivalent++;
+   }
++  if (BlendRunHasSameSourceDarken(pending_run, next_paint)) {
++    replay_stats->blend_paint_change_same_source_darken++;
++  }
+   if (RectsIntersect(pending_run.group_rect, next_rect)) {
+     replay_stats->blend_paint_change_overlap++;
+     return;
+@@ -2241,8 +2300,8 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+   bool have_clip_state = false;
+   CPDF_ClipPath empty_clip;
+ 
+-  // Active consecutive mask run. Non-empty while we are accumulating adjacent
+-  // CanDrawBlendNodeWithMask nodes that share the same paint_key and clip_key.
++  // Active consecutive blend run. Non-empty while we are accumulating adjacent
++  // CanDrawBlendNodeWithMask nodes inside the current path segment and clip.
+   MaskRun run;
+ 
+   // Flush |run| and record the reason. Returns kCancelled on failure.
+@@ -2495,11 +2554,30 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+                                            node_rect);
+           const bool effective_paint_equivalent =
+               BlendRunHasOneEffectivePaint(list, run, paint);
++          const bool same_source_darken =
++              !effective_paint_equivalent &&
++              BlendRunHasSameSourceDarken(run, paint);
+           if (effective_paint_equivalent) {
+             if (replay_stats) {
+               replay_stats
+                   ->blend_paint_change_effective_equivalent_crossed++;
+             }
++          } else if (same_source_darken &&
++                     CanAppendSameSourceDarkenToBlendGroupRun(run, paint,
++                                                              node_rect)) {
++            if (replay_stats) {
++              replay_stats->blend_paint_change_same_source_darken_crossed++;
++            }
++          } else if (same_source_darken) {
++            if (replay_stats) {
++              replay_stats->blend_paint_change_same_source_darken_rejected++;
++            }
++            if (auto r = flush_run(replay_stats
++                                       ? &replay_stats->run_flush_paint_change
++                                       : nullptr);
++                r != VelocePathDisplayListResult::kRendered) {
++              return r;
++            }
+           } else if (!CanAppendPaintChangeToBlendGroupRun(run, paint,
+                                                           node_rect)) {
+             if (auto r = flush_run(replay_stats
+@@ -2523,6 +2601,7 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+             run.one_effective_paint = false;
+           }
+         }
++        RecordBlendRunSource(&run, paint);
+         run.paint_key = node.paint_key;
+         if (!run.group_rect_valid) {
+           run.group_rect = node_rect;

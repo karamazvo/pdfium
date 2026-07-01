@@ -39,8 +39,8 @@ Current native PDFium HEAD after r46:
 ```
 
 Known untracked files currently visible in the native PDFium repo include
-generated source snapshots and the original page-dimensions proposal patch.
-They were intentionally not staged as generated sources:
+generated source snapshots. They are intentionally not staged as generated
+sources:
 
 ```text
 core/fpdfapi/render/veloce_path_display_list.cpp
@@ -48,12 +48,16 @@ core/fpdfapi/render/veloce_path_display_list.h
 core/fpdfapi/render/veloce_render_*.{h,cpp}
 fpdfsdk/fpdfex_render_*.cpp
 public/fpdfex_render_*.h
-patches/ship/10-page-dimensions-no-parse.patch
 ```
 
-Do not stage the generated source snapshots. The old
-`10-page-dimensions-no-parse.patch` is kept only as proposal provenance; the
-live r47 patch is `0051-veloce-page-dimensions-no-parse.patch`.
+Do not stage the generated source snapshots.
+
+The earlier page-dimensions proposal draft, `10-page-dimensions-no-parse.patch`,
+has been deleted now that it was superseded by the adopted, fully-wired
+`0051-veloce-page-dimensions-no-parse.patch` (in `README.md`'s patch table,
+apply-sequence, and changelog). It no longer exists in this repo and should
+not be referenced as provenance — `0051` is the sole source of truth for this
+feature going forward.
 
 ## 2. Patch Naming And Revision Rules
 
@@ -69,7 +73,7 @@ Use numeric patch order for the patch stack:
 0049-veloce-path-display-list-effective-blend-paint-widening.patch
 0050-veloce-path-display-list-blend-shape-telemetry.patch
 0051-veloce-page-dimensions-no-parse.patch
-0052-<next-name>.patch
+0052-veloce-path-display-list-same-source-darken-widening.patch
 ```
 
 Use revision labels for user/build tracking:
@@ -78,15 +82,15 @@ Use revision labels for user/build tracking:
 r45 effective blend paint widening
 r46 blend shape telemetry
 r47 page dimensions no parse
-r48 <next revision name>
+r48 same-source Darken widening
 ```
 
-The r47 native patch after r46 is:
+The r48 native patch after r47 is:
 
 ```text
-patch file: patches/ship/0051-veloce-page-dimensions-no-parse.patch
-workflow:   .github/workflows/pdfium-android-arm64-r47-page-dimensions-no-parse-path-display-list.yml
-commit:     Add r47 page dimensions no parse patch
+patch file: patches/ship/0052-veloce-path-display-list-same-source-darken-widening.patch
+workflow:   .github/workflows/pdfium-android-arm64-r48-same-source-darken-widening-path-display-list.yml
+commit:     Add r48 same-source Darken widening patch
 ```
 
 Keep deprecated patch numbers and names in place. In particular:
@@ -185,21 +189,24 @@ Recent revisions:
 | r44 | `0048-veloce-path-display-list-safe-blend-paint-widening.patch` | committed | Conservative disjoint same-blend paint widening for blend groups. |
 | r45 | `0049-veloce-path-display-list-effective-blend-paint-widening.patch` | committed | Overlapping blend paint-key widening when effective render paint is equivalent. |
 | r46 | `0050-veloce-path-display-list-blend-shape-telemetry.patch` | committed | Telemetry-only blend shape classification for future direct/simple Darken proof. |
-| r47 | `0051-veloce-page-dimensions-no-parse.patch` | in progress | Export dictionary-only page geometry for app/JNI page-size fast path. |
+| r47 | `0051-veloce-page-dimensions-no-parse.patch` | committed | Export dictionary-only page geometry for app/JNI page-size fast path. |
+| r48 | `0052-veloce-path-display-list-same-source-darken-widening.patch` | in progress | Widen bounded same-source Darken blend groups inside ordered segment/clip barriers. |
 
-Current native HEAD:
+Current native HEAD before r48 is committed:
 
 ```text
-0c95d6e3c Add r46 blend shape telemetry patch
+41ffb668d Fix r47 workflow page dimensions guard
 ```
 
-r46 current files:
+r48 current files:
 
 ```text
 patches/ship/0050-veloce-path-display-list-blend-shape-telemetry.patch
 .github/workflows/pdfium-android-arm64-r46-blend-shape-telemetry-path-display-list.yml
 patches/ship/0051-veloce-page-dimensions-no-parse.patch
 .github/workflows/pdfium-android-arm64-r47-page-dimensions-no-parse-path-display-list.yml
+patches/ship/0052-veloce-path-display-list-same-source-darken-widening.patch
+.github/workflows/pdfium-android-arm64-r48-same-source-darken-widening-path-display-list.yml
 ```
 
 r47 is not a render-behavior patch. It adds `FPDFEx_GetPageDimensions()` so
@@ -207,6 +214,12 @@ the app/JNI layer can read width, height, effective CropBox, and rotation from
 the page dictionary without `FPDF_LoadPage()` / `ParseContent()`. Claude should
 adopt this API in the app worktree with optional `dlsym` resolution and a slow
 path fallback for unpatched builds.
+
+r48 is a render-behavior patch. It keeps a `BlendGroupRun` open across an
+adjacent paint-key change only when the pending run is entirely same-source
+`/BM /Darken`, the next blend node has the same source ARGB, and the union
+device rect stays memory-bounded. It does not cross clip, segment, text,
+normal-object, image/Form/shading, unsupported-blend, or cancellation barriers.
 
 ## 6. Current Performance Reading And r46 Findings
 
@@ -420,10 +433,10 @@ commit the workflow fix separately as:
 Fix rXX workflow <short cause>
 ```
 
-## 10. Next Patch Direction
+## 10. Current And Next Patch Direction
 
-After r47 page-dimensions API export, the recommended next render-performance
-patch is:
+After r47 page-dimensions API export, r48/0052 is the current
+render-performance patch:
 
 ```text
 r48 / 0052: same-source Darken BlendGroupRun widening
@@ -431,7 +444,7 @@ r48 / 0052: same-source Darken BlendGroupRun widening
 
 Reason: r46 proves the expensive 11.pdf-class blend workload is almost entirely
 same-source Darken. This is now a narrower, safer behavior patch than a direct
-pixel compositor. It should be attempted before deeper blend math.
+pixel compositor and should be validated before deeper blend math.
 
 r48 must preserve these invariants:
 
@@ -446,7 +459,10 @@ r48 must preserve these invariants:
   node, clip, or segment barriers.
 
 If r48 does not reduce enough successful-tile time, the next 11.pdf-class track
-is direct simple-Darken mask/span compositing.
+is direct simple-Darken mask/span compositing. Validate r48 first with 11.pdf
+and error.pdf p2/p3 logs; expected signals are lower `groupRunComposites`,
+higher `sameSourceDarkenCrossed`, and bounded/non-dominant
+`sameSourceDarkenRejected`.
 
 For Q16-class large visible regions, the separate next track is cached packed
 stroke chunks inside existing ordered segment/style/clip/blend barriers. Do not

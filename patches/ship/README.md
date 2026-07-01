@@ -77,6 +77,7 @@ these patches:
 | 0049 | `0049-veloce-path-display-list-effective-blend-paint-widening.patch` | Effective blend paint widening. Lets overlapping blend paint-key changes stay inside the current `BlendGroupRun` only when every current group entry has the same render-affecting blend paint as the next node. For fill-only blend paths, stroke-adjust is ignored because no stroke is drawn; non-equivalent overlapping paints still flush. Adds `paintEquivalent` / `paintEquivalentCrossed` telemetry. |
 | 0050 | `0050-veloce-path-display-list-blend-shape-telemetry.patch` | Blend shape telemetry. Adds a compact `VelocePathDLBlendShape` line that classifies existing `BlendGroupRun` composites by blend mode, path paint shape, same source ARGB, and simple Darken candidate cost. Telemetry-only; it does not change grouping, painter order, cancellation, allocation policy, or pixels. |
 | 0051 | `0051-veloce-page-dimensions-no-parse.patch` | Page dimensions no-parse export. Adds fixed 32-byte `FPDFEx_PageDimensions` and `FPDFEx_GetPageDimensions()` so embedders can read page width/height, effective CropBox, and rotation from the page dictionary without `FPDF_LoadPage()` or `ParseContent()`. No rendering semantics change. |
+| 0052 | `0052-veloce-path-display-list-same-source-darken-widening.patch` | Same-source Darken blend widening. Lets an adjacent Darken `BlendGroupRun` paint-key change stay inside the current ordered segment/clip when every pending entry has one source ARGB, the next blend node has that same source ARGB, and the union group rect stays memory-bounded. Each entry still draws with its own path, matrix, graph state, and fill/stroke options inside the isolated group. Adds `sameSourceDarken*` telemetry. |
 
 ## Why this directory exists
 
@@ -137,6 +138,7 @@ git apply patches/ship/0048-veloce-path-display-list-safe-blend-paint-widening.p
 git apply patches/ship/0049-veloce-path-display-list-effective-blend-paint-widening.patch
 git apply patches/ship/0050-veloce-path-display-list-blend-shape-telemetry.patch
 git apply patches/ship/0051-veloce-page-dimensions-no-parse.patch
+git apply patches/ship/0052-veloce-path-display-list-same-source-darken-widening.patch
 ```
 
 > **Note:** patches 0027 and 0028 are deprecated and must NOT be applied.
@@ -318,6 +320,16 @@ page geometry through `FPDFEx_GetPageDimensions()` and intentionally does not
 call `ParseContent()`, `AddPageImageCache()`, or any render entry point. The
 app/JNI layer must resolve this symbol optionally and fall back to the existing
 slow `FPDF_LoadPage()`-based page-size path when the symbol is absent.
+Patch 0052 depends on patch 0050 and promotes the same-source Darken proof into
+behavior. A pending `BlendGroupRun` may absorb an adjacent paint-key change
+when the pending run is entirely `/BM /Darken`, every accumulated entry has one
+source ARGB, the next Darken node has that same source ARGB, and the union
+device rect remains bounded by the existing 2x sparse-area policy. This is an
+ordered-segment optimization only: normal objects, text passthrough, clip
+changes, scratch/unsupported blends, image/Form/shading objects, cancellation,
+and segment boundaries still flush. Each entry keeps its own paint key, path
+matrix, graph state, and fill/stroke options when rasterized inside the BGRA
+group.
 The release workflow applies the numeric order shown above, skipping 0027/0028.
 
 ## Cumulative effect (measured)
@@ -339,6 +351,10 @@ the abort flag is explicitly enabled. Patch 08 does not alter
 new `FPDFEx_LoadPageWithClassification()` symbol.
 Patch 0051 also does not affect rendering output; callers must opt in by
 resolving and calling `FPDFEx_GetPageDimensions()` for page-size enumeration.
+Patch 0052 changes only the grouping of already eligible same-source Darken
+blend paths inside one ordered segment/clip run. It preserves painter-order
+barriers and rasterizes each entry with its original paint state inside the
+isolated group.
 
 ## Files changed by each patch
 
@@ -470,6 +486,11 @@ resolving and calling `FPDFEx_GetPageDimensions()` for page-size enumeration.
   Adds fixed 32-byte `FPDFEx_PageDimensions` and
   `FPDFEx_GetPageDimensions()` for dictionary-only page geometry lookup. No
   rendering behavior or path display-list behavior changes.
+- **0052 Veloce same-source Darken widening**:
+  `core/fpdfapi/render/veloce_path_display_list.cpp`.
+  Adds run-level source-ARGB tracking and allows bounded same-source Darken
+  paint-key changes to remain in one `BlendGroupRun`, reducing repeated group
+  composites on blend-heavy path pages. No public API or build file changes.
 - **0017 Veloce holder-level root page path display list**:
   `core/fpdfapi/render/cpdf_renderstatus.cpp`,
   `core/fpdfapi/render/veloce_path_display_list.{h,cpp}`.
