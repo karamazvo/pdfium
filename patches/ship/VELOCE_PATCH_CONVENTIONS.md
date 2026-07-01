@@ -177,6 +177,12 @@ renders without retaining stale page-object pointers.
 
 ## 5. Current Revision Status
 
+Release workflows:
+
+| Release | Workflow | Patch Contract | Purpose |
+| --- | --- | --- | --- |
+| rel-260701 | `.github/workflows/pdfium-android-arm64-rel-260701-r25-page-dimensions.yml` | r25 rendering stack (`01..09`, `0011..0026`, `0029..0031`) plus `0051` only | Correctness-stable release candidate: restore the last validated rendering behavior while keeping the no-parse page dimensions API. Excludes post-r25 render-behavior patches such as ordered text passthrough, spatial index, stroke-run widening, and blend widening. |
+
 Recent revisions:
 
 | Revision | Patch | Status | Purpose |
