@@ -1,0 +1,185 @@
+From 9f345e4b82fd94d8a0d7f8e3c2a0f4c8b5e1d6aa Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Fri, 3 Jul 2026 19:10:00 +0800
+Subject: [PATCH] Add Veloce RenderPlan ordered segment skeleton
+
+Patch 0053 introduced `VeloceTryRenderPlanForHolder()` as the single
+renderer-facing acceleration boundary, but the facade still had no explicit
+RenderPlan data model. That kept the future architecture implicit.
+
+This patch adds the behavior-preserving skeleton for the ordered plan model:
+
+* `VeloceRenderPlanSegmentKind` records the segment categories that future
+  acceleration can compose: `PathRun`, `PassthroughObject`, `BlendBarrier`, and
+  `UnsupportedBarrier`.
+* `VeloceRenderPlanSegment` records holder object index ranges. It stores
+  indices/counts only, never raw page-object pointers, so future caches do not
+  inherit the earlier UAF class.
+* `VeloceBuildRenderPlanSkeletonForHolder()` performs a single forward holder
+  scan and emits consecutive path objects as `PathRun` segments with non-path
+  objects as ordered passthrough barriers.
+
+The skeleton is intentionally not used by the render facade yet. The current
+render behavior remains identical to 0053: `VeloceTryRenderPlanForHolder()`
+delegates to the existing path-display-list backend. Later patches can switch
+the facade to consume this plan incrementally once replay correctness is
+implemented segment by segment.
+
+diff --git a/core/fpdfapi/render/veloce_render_plan.cpp b/core/fpdfapi/render/veloce_render_plan.cpp
+index b5fc813..b7de994 100644
+--- a/core/fpdfapi/render/veloce_render_plan.cpp
++++ b/core/fpdfapi/render/veloce_render_plan.cpp
+@@ -5,8 +5,13 @@
+ 
+ #include "core/fpdfapi/render/veloce_path_display_list.h"
+ 
++#include "core/fpdfapi/page/cpdf_pageobject.h"
++#include "core/fpdfapi/page/cpdf_pageobjectholder.h"
++
+ namespace {
+ 
++constexpr size_t kNoOpenPathRun = static_cast<size_t>(-1);
++
+ VelocePathDisplayListHolderKind ToPathDisplayListHolderKind(
+     VeloceRenderPlanHolderKind holder_kind) {
+   switch (holder_kind) {
+@@ -30,8 +35,63 @@ VeloceRenderPlanResult ToRenderPlanResult(VelocePathDisplayListResult result) {
+   return VeloceRenderPlanResult::kNotEligible;
+ }
+ 
++void AppendSegment(VeloceRenderPlan* plan,
++                   VeloceRenderPlanSegmentKind kind,
++                   size_t first_object_index,
++                   size_t object_count) {
++  if (!plan || object_count == 0) {
++    return;
++  }
++  plan->segments.push_back({kind, first_object_index, object_count});
++}
++
++bool IsPathRunCandidate(const CPDF_PageObject* object) {
++  return object && object->IsPath();
++}
++
+ }  // namespace
+ 
++VeloceRenderPlan VeloceBuildRenderPlanSkeletonForHolder(
++    const CPDF_PageObjectHolder* holder,
++    VeloceRenderPlanHolderKind holder_kind) {
++  VeloceRenderPlan plan;
++  plan.holder_kind = holder_kind;
++  if (!holder) {
++    return plan;
++  }
++
++  size_t object_index = 0;
++  size_t path_run_start = kNoOpenPathRun;
++  size_t path_run_count = 0;
++
++  auto flush_path_run = [&plan, &path_run_start, &path_run_count]() {
++    if (path_run_start == kNoOpenPathRun) {
++      return;
++    }
++    AppendSegment(&plan, VeloceRenderPlanSegmentKind::kPathRun,
++                  path_run_start, path_run_count);
++    path_run_start = kNoOpenPathRun;
++    path_run_count = 0;
++  };
++
++  for (const auto& object : *holder) {
++    if (IsPathRunCandidate(object.get())) {
++      if (path_run_start == kNoOpenPathRun) {
++        path_run_start = object_index;
++      }
++      ++path_run_count;
++    } else {
++      flush_path_run();
++      AppendSegment(&plan, VeloceRenderPlanSegmentKind::kPassthroughObject,
++                    object_index, 1);
++    }
++    ++object_index;
++  }
++  flush_path_run();
++
++  return plan;
++}
++
+ VeloceRenderPlanResult VeloceTryRenderPlanForHolder(
+     CPDF_RenderStatus* status,
+     const CPDF_PageObjectHolder* holder,
+@@ -49,6 +109,11 @@ VeloceRenderPlanResult VeloceTryRenderPlanForHolder(
+   // list backend. Later ordered RenderPlan patches should compose backends
+   // here rather than adding more hooks to CPDF_RenderStatus or
+   // CPDF_ProgressiveRenderer.
++  //
++  // Patch 0054 adds VeloceBuildRenderPlanSkeletonForHolder(), but deliberately
++  // does not call it here. The skeleton is the future ordered representation;
++  // this patch must add no render-time scan, allocation, or pixel behavior
++  // change by itself.
+   return ToRenderPlanResult(VeloceTryRenderPathDisplayListForHolder(
+       status, holder, holder_to_device,
+       ToPathDisplayListHolderKind(holder_kind)));
+diff --git a/core/fpdfapi/render/veloce_render_plan.h b/core/fpdfapi/render/veloce_render_plan.h
+index 3ddfc53..10ecaaa 100644
+--- a/core/fpdfapi/render/veloce_render_plan.h
++++ b/core/fpdfapi/render/veloce_render_plan.h
+@@ -4,6 +4,10 @@
+ #ifndef CORE_FPDFAPI_RENDER_VELOCE_RENDER_PLAN_H_
+ #define CORE_FPDFAPI_RENDER_VELOCE_RENDER_PLAN_H_
+ 
++#include <stddef.h>
++
++#include <vector>
++
+ #include "core/fxcrt/fx_coordinates.h"
+ 
+ class CPDF_PageObjectHolder;
+@@ -23,6 +27,48 @@ enum class VeloceRenderPlanHolderKind {
+   kForm,
+ };
+ 
++enum class VeloceRenderPlanSegmentKind {
++  // Consecutive holder objects that are path objects and preserve PDF order.
++  kPathRun,
++  // A non-path object that must be rendered at its original position.
++  kPassthroughObject,
++  // Reserved for transparency/blend isolation boundaries.
++  kBlendBarrier,
++  // Reserved for content that future segmented replay must decline.
++  kUnsupportedBarrier,
++};
++
++struct VeloceRenderPlanSegment {
++  VeloceRenderPlanSegmentKind kind =
++      VeloceRenderPlanSegmentKind::kUnsupportedBarrier;
++  // Index into the current live holder's ordered object list. Indices are
++  // cache-safe metadata; do not store raw CPDF_PageObject* in the plan.
++  size_t first_object_index = 0;
++  size_t object_count = 0;
++};
++
++struct VeloceRenderPlan {
++  VeloceRenderPlanHolderKind holder_kind = VeloceRenderPlanHolderKind::kForm;
++  std::vector<VeloceRenderPlanSegment> segments;
++
++  bool empty() const { return segments.empty(); }
++};
++
++// Builds the ordered RenderPlan skeleton for one live holder.
++//
++// This pass is representation-only: it does not draw, cache, or decide final
++// acceleration eligibility. Consecutive path objects become PathRun segments;
++// every non-path object becomes an ordered passthrough barrier. Later patches
++// may refine non-path objects into blend/unsupported barriers and attach
++// segment-level eligibility, but must keep the same painter-order invariant.
++//
++// The returned plan stores holder object indices, never CPDF_PageObject*
++// pointers, so future cache layers can re-resolve against the current live
++// holder instead of persisting object lifetimes accidentally.
++VeloceRenderPlan VeloceBuildRenderPlanSkeletonForHolder(
++    const CPDF_PageObjectHolder* holder,
++    VeloceRenderPlanHolderKind holder_kind);
++
+ // Attempts to render one PDFium holder through the Veloce acceleration layer.
+ //
+ // This is the stable boundary between PDFium's baseline renderer and Veloce.

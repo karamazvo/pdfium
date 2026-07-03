@@ -79,6 +79,7 @@ these patches:
 | 0051 | `0051-veloce-page-dimensions-no-parse.patch` | Page dimensions no-parse export. Adds fixed 32-byte `FPDFEx_PageDimensions` and `FPDFEx_GetPageDimensions()` so embedders can read page width/height, effective CropBox, and rotation from the page dictionary without `FPDF_LoadPage()` or `ParseContent()`. No rendering semantics change. |
 | 0052 | `0052-veloce-path-display-list-same-source-darken-widening.patch` | Same-source Darken blend widening. Lets an adjacent Darken `BlendGroupRun` paint-key change stay inside the current ordered segment/clip when every pending entry has one source ARGB, the next blend node has that same source ARGB, and the union group rect stays memory-bounded. Each entry still draws with its own path, matrix, graph state, and fill/stroke options inside the isolated group. Adds `sameSourceDarken*` telemetry. |
 | 0053 | `0053-veloce-render-plan-interface.patch` | RenderPlan holder interface. Adds `veloce_render_plan.{h,cpp}` as the single renderer-facing boundary between PDFium's baseline pipeline and Veloce acceleration. Behavior-preserving on r25: it delegates to the existing path-display-list backend and only maps result/kind enums. Future acceleration patches should compose behind this fail-closed interface instead of adding direct hooks to `CPDF_RenderStatus` or `CPDF_ProgressiveRenderer`. |
+| 0054 | `0054-veloce-render-plan-skeleton.patch` | RenderPlan ordered segment skeleton. Adds `VeloceRenderPlanSegmentKind`, `VeloceRenderPlanSegment`, `VeloceRenderPlan`, and `VeloceBuildRenderPlanSkeletonForHolder()`. The skeleton stores holder object indices only, groups consecutive path objects into `PathRun` segments, and emits non-path objects as ordered passthrough barriers. Behavior-preserving: the render facade still delegates to the r25 path-display-list backend and does not build the skeleton on the render hot path. |
 
 ## Why this directory exists
 
@@ -141,6 +142,7 @@ git apply patches/ship/0050-veloce-path-display-list-blend-shape-telemetry.patch
 git apply patches/ship/0051-veloce-page-dimensions-no-parse.patch
 git apply patches/ship/0052-veloce-path-display-list-same-source-darken-widening.patch
 git apply patches/ship/0053-veloce-render-plan-interface.patch
+git apply patches/ship/0054-veloce-render-plan-skeleton.patch
 ```
 
 > **Note:** patches 0027 and 0028 are deprecated and must NOT be applied.
@@ -193,6 +195,9 @@ inside the group buffer under normal blend before the single blend composite.
 Patch 0053 can also be applied directly on the rel-260701 stable line after
 patch 0051. It is behavior-preserving and only inserts the `VeloceRenderPlan`
 facade above the existing r25 path-display-list backend.
+Patch 0054 depends on patch 0053 and adds only the ordered segment data model
+and skeleton builder. The render facade deliberately does not call the builder
+yet, so there is no per-render scan, allocation, or pixel behavior change.
 Patch 0032 depends on patch 0031 and adds stroke-only run packing for the
 normal-blend path. Consecutive stroke-only nodes are accumulated via
 CFX_Path::Append only when they share paint and path matrix, then drawn with one
@@ -504,6 +509,11 @@ isolated group.
   Adds the renderer-facing Veloce RenderPlan facade and delegates to the
   existing r25 path-display-list backend. Behavior-preserving; no public API
   changes.
+- **0054 Veloce RenderPlan ordered segment skeleton**:
+  `core/fpdfapi/render/veloce_render_plan.{h,cpp}`.
+  Adds ordered segment data structures and a builder that emits path runs plus
+  passthrough barriers by holder object index. Behavior-preserving; the builder
+  is not called by the render facade yet and no public API changes.
 - **0017 Veloce holder-level root page path display list**:
   `core/fpdfapi/render/cpdf_renderstatus.cpp`,
   `core/fpdfapi/render/veloce_path_display_list.{h,cpp}`.

@@ -197,6 +197,8 @@ Recent revisions:
 | r46 | `0050-veloce-path-display-list-blend-shape-telemetry.patch` | committed | Telemetry-only blend shape classification for future direct/simple Darken proof. |
 | r47 | `0051-veloce-page-dimensions-no-parse.patch` | committed | Export dictionary-only page geometry for app/JNI page-size fast path. |
 | r48 | `0052-veloce-path-display-list-same-source-darken-widening.patch` | in progress | Widen bounded same-source Darken blend groups inside ordered segment/clip barriers. |
+| r25-0053 | `0053-veloce-render-plan-interface.patch` | committed | Behavior-preserving RenderPlan holder facade on the r25 + 0051 stable line. |
+| r25-0054 | `0054-veloce-render-plan-skeleton.patch` | in progress | Behavior-preserving ordered RenderPlan segment data model and skeleton builder. |
 
 Current native HEAD before r48 is committed:
 
@@ -368,11 +370,12 @@ Workflow requirements:
 - Verification step keeps safety guards against deprecated symbols and known
   reverted approaches.
 
-For r48 and later, copy the previous revision workflow and update:
+For r25-0054 and later on the stable RenderPlan line, copy the previous
+`r25-0053` workflow and update:
 
 ```text
-r47 -> r48
-0051 -> 0052 in apply/copy/build-info
+r25-0053 -> r25-0054
+0053 -> 0054 in apply/copy/build-info
 revision name and guards
 ```
 
