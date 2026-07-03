@@ -1,0 +1,464 @@
+From 5a7fc79f5e3d0c98318d9789a4a0d8d26bd7c9b5 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Fri, 3 Jul 2026 20:05:00 +0800
+Subject: [PATCH] Consume RenderPlan path/text segments fail-closed
+
+Patch 0054 added the ordered RenderPlan skeleton but deliberately left the
+render facade delegating to the old whole-holder path-display-list backend.
+This patch is the first segmented consumer behind the facade.
+
+The design remains conservative:
+
+* Path runs are compiled by ordered holder object range, without drawing.
+* Every path run is compiled and replay-validated before the first pixel is
+  drawn.
+* Passthrough is limited to text objects in this phase; images, Forms,
+  shadings, blend barriers, and unsupported barriers decline before drawing.
+* Holder object indices are resolved against the live holder at replay time.
+* Any unsupported segment returns `kNotEligible` before drawing, preserving the
+  canonical PDFium fallback.
+* Any unexpected failure after drawing starts returns `kCancelled`, so callers
+  do not draw canonical PDFium over partial accelerated output.
+
+All-path holders continue to use the existing whole-holder backend so the r25
+cache path remains intact. Mixed path/text holders can now be accelerated as
+ordered path runs with text rendered synchronously at the original position.
+
+diff --git a/core/fpdfapi/render/veloce_path_display_list.h b/core/fpdfapi/render/veloce_path_display_list.h
+index e5a4659..18927e4 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.h
++++ b/core/fpdfapi/render/veloce_path_display_list.h
+@@ -4,6 +4,8 @@
+ #ifndef CORE_FPDFAPI_RENDER_VELOCE_PATH_DISPLAY_LIST_H_
+ #define CORE_FPDFAPI_RENDER_VELOCE_PATH_DISPLAY_LIST_H_
+ 
++#include <stddef.h>
++
+ class CFX_Matrix;
+ class CPDF_PageObjectHolder;
+ class CPDF_RenderStatus;
+@@ -19,6 +21,14 @@ enum class VelocePathDisplayListHolderKind {
+   kForm,
+ };
+ 
++struct VeloceCompiledPathDisplayList;
++
++enum class VelocePathDisplayListCompileResult {
++  kNotEligible,
++  kCompiled,
++  kCancelled,
++};
++
+ // Attempts to render a path-only object holder through a compact internal
+ // display list into `status`'s current CFX_RenderDevice.
+ //
+@@ -32,4 +42,30 @@ VelocePathDisplayListResult VeloceTryRenderPathDisplayListForHolder(
+     const CFX_Matrix& holder_to_device,
+     VelocePathDisplayListHolderKind holder_kind);
+ 
++// Compiles a path-only ordered object range without drawing. The returned
++// handle stores no holder object pointers; callers must destroy it with
++// VeloceDestroyCompiledPathDisplayList().
++VelocePathDisplayListCompileResult
++VeloceCompilePathDisplayListForObjectRange(
++    CPDF_RenderStatus* status,
++    const CPDF_PageObjectHolder* holder,
++    size_t first_object_index,
++    size_t object_count,
++    VeloceCompiledPathDisplayList** out_list);
++
++void VeloceDestroyCompiledPathDisplayList(VeloceCompiledPathDisplayList* list);
++
++// Validates replay-time requirements that can be checked before drawing.
++VelocePathDisplayListResult VeloceValidateCompiledPathDisplayListReplay(
++    CPDF_RenderStatus* status,
++    const VeloceCompiledPathDisplayList* list,
++    VelocePathDisplayListHolderKind holder_kind);
++
++// Replays a previously compiled path-only object range.
++VelocePathDisplayListResult VeloceReplayCompiledPathDisplayList(
++    CPDF_RenderStatus* status,
++    const VeloceCompiledPathDisplayList* list,
++    const CFX_Matrix& holder_to_device,
++    VelocePathDisplayListHolderKind holder_kind);
++
+ #endif  // CORE_FPDFAPI_RENDER_VELOCE_PATH_DISPLAY_LIST_H_
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index b1472ad..40c1111 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -568,21 +568,40 @@ std::optional<uint32_t> AddGraphStateKey(NativePathDisplayList* list,
+   return static_cast<uint32_t>(list->graph_state_table.size() - 1);
+ }
+ 
+-bool CompilePathDisplayList(CPDF_RenderStatus* status,
+-                            const CPDF_PageObjectHolder* holder,
+-                            NativePathDisplayList* list,
+-                            PathDlRejectReason* reject_reason) {
++bool CompilePathDisplayListRange(CPDF_RenderStatus* status,
++                                 const CPDF_PageObjectHolder* holder,
++                                 size_t first_object_index,
++                                 size_t object_count,
++                                 NativePathDisplayList* list,
++                                 PathDlRejectReason* reject_reason) {
+   auto reject = [reject_reason](PathDlRejectReason reason) {
+     if (reject_reason) {
+       *reject_reason = reason;
+     }
+     return false;
+   };
++  if (!holder || !list || object_count == 0) {
++    return reject(PathDlRejectReason::kInactiveOrInvisibleOnly);
++  }
+   if (status->GetRenderOptions().ColorModeIs(CPDF_RenderOptions::kForcedColor)) {
+     return reject(PathDlRejectReason::kForcedColor);
+   }
+ 
++  const size_t max_index = std::numeric_limits<size_t>::max();
++  const size_t end_object_index =
++      object_count > max_index - first_object_index
++          ? max_index
++          : first_object_index + object_count;
++  size_t object_index = 0;
+   for (const auto& obj : *holder) {
++    if (object_index < first_object_index) {
++      ++object_index;
++      continue;
++    }
++    if (object_index >= end_object_index) {
++      break;
++    }
++    ++object_index;
+     list->scanned_objects++;
+     if ((list->scanned_objects % kCancelCheckNodeInterval) == 0 &&
+         status->ShouldCancelRender()) {
+@@ -693,6 +712,15 @@ bool CompilePathDisplayList(CPDF_RenderStatus* status,
+              : reject(PathDlRejectReason::kInactiveOrInvisibleOnly);
+ }
+ 
++bool CompilePathDisplayList(CPDF_RenderStatus* status,
++                            const CPDF_PageObjectHolder* holder,
++                            NativePathDisplayList* list,
++                            PathDlRejectReason* reject_reason) {
++  return CompilePathDisplayListRange(
++      status, holder, 0, std::numeric_limits<size_t>::max(), list,
++      reject_reason);
++}
++
+ bool IntersectsDeviceClip(const PathDlNode& node,
+                           const CFX_Matrix& holder_to_device,
+                           CFX_RenderDevice* device) {
+@@ -1005,6 +1033,80 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+ 
+ }  // namespace
+ 
++struct VeloceCompiledPathDisplayList {
++  NativePathDisplayList list;
++};
++
++VelocePathDisplayListCompileResult
++VeloceCompilePathDisplayListForObjectRange(
++    CPDF_RenderStatus* status,
++    const CPDF_PageObjectHolder* holder,
++    size_t first_object_index,
++    size_t object_count,
++    VeloceCompiledPathDisplayList** out_list) {
++  if (out_list) {
++    *out_list = nullptr;
++  }
++  if (!status || !holder || !out_list || object_count == 0) {
++    return VelocePathDisplayListCompileResult::kNotEligible;
++  }
++  if (!IsPathDisplayListFeatureEnabled(status)) {
++    return VelocePathDisplayListCompileResult::kNotEligible;
++  }
++
++  auto compiled_list = std::make_unique<VeloceCompiledPathDisplayList>();
++  PathDlRejectReason reject_reason = PathDlRejectReason::kNone;
++  if (!CompilePathDisplayListRange(status, holder, first_object_index,
++                                   object_count, &compiled_list->list,
++                                   &reject_reason)) {
++    return reject_reason == PathDlRejectReason::kCancelled
++               ? VelocePathDisplayListCompileResult::kCancelled
++               : VelocePathDisplayListCompileResult::kNotEligible;
++  }
++
++  *out_list = compiled_list.release();
++  return VelocePathDisplayListCompileResult::kCompiled;
++}
++
++void VeloceDestroyCompiledPathDisplayList(VeloceCompiledPathDisplayList* list) {
++  delete list;
++}
++
++VelocePathDisplayListResult VeloceValidateCompiledPathDisplayListReplay(
++    CPDF_RenderStatus* status,
++    const VeloceCompiledPathDisplayList* list,
++    VelocePathDisplayListHolderKind holder_kind) {
++  if (!status || !list) {
++    return VelocePathDisplayListResult::kNotEligible;
++  }
++  if (ShouldRejectScratchBlendReplay(list->list, holder_kind)) {
++    return VelocePathDisplayListResult::kNotEligible;
++  }
++  if (list->list.blend_nodes > 0 &&
++      !status->GetRenderDevice()->RenderCapBlendMode()) {
++    return VelocePathDisplayListResult::kNotEligible;
++  }
++  return VelocePathDisplayListResult::kRendered;
++}
++
++VelocePathDisplayListResult VeloceReplayCompiledPathDisplayList(
++    CPDF_RenderStatus* status,
++    const VeloceCompiledPathDisplayList* list,
++    const CFX_Matrix& holder_to_device,
++    VelocePathDisplayListHolderKind holder_kind) {
++  if (!status || !list) {
++    return VelocePathDisplayListResult::kNotEligible;
++  }
++  const VelocePathDisplayListResult validate_result =
++      VeloceValidateCompiledPathDisplayListReplay(status, list, holder_kind);
++  if (validate_result != VelocePathDisplayListResult::kRendered) {
++    return validate_result;
++  }
++  PathDlReplayStats replay_stats;
++  return ReplayPathDisplayList(status, list->list, holder_to_device,
++                               &replay_stats);
++}
++
+ VelocePathDisplayListResult VeloceTryRenderPathDisplayListForHolder(
+     CPDF_RenderStatus* status,
+     const CPDF_PageObjectHolder* holder,
+diff --git a/core/fpdfapi/render/veloce_render_plan.cpp b/core/fpdfapi/render/veloce_render_plan.cpp
+index b7de994..74b265a 100644
+--- a/core/fpdfapi/render/veloce_render_plan.cpp
++++ b/core/fpdfapi/render/veloce_render_plan.cpp
+@@ -7,6 +7,8 @@
+ 
+ #include "core/fpdfapi/page/cpdf_pageobject.h"
+ #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
++#include "core/fpdfapi/render/cpdf_renderstatus.h"
++#include "core/fxge/cfx_renderdevice.h"
+ 
+ namespace {
+ 
+@@ -49,6 +51,198 @@ bool IsPathRunCandidate(const CPDF_PageObject* object) {
+   return object && object->IsPath();
+ }
+ 
++VelocePathDisplayListHolderKind ToPathDisplayListHolderKind(
++    const VeloceRenderPlan& plan) {
++  return ToPathDisplayListHolderKind(plan.holder_kind);
++}
++
++CPDF_PageObject* FindHolderObjectByIndex(const CPDF_PageObjectHolder* holder,
++                                         size_t object_index) {
++  if (!holder) {
++    return nullptr;
++  }
++  size_t current_index = 0;
++  for (const auto& object : *holder) {
++    if (current_index == object_index) {
++      return object.get();
++    }
++    ++current_index;
++  }
++  return nullptr;
++}
++
++bool ObjectOutsideClip(const CPDF_PageObject* object,
++                       const CFX_FloatRect& holder_clip) {
++  const CFX_FloatRect object_rect = object->GetRect();
++  return object_rect.left > holder_clip.right ||
++         object_rect.right < holder_clip.left ||
++         object_rect.bottom > holder_clip.top ||
++         object_rect.top < holder_clip.bottom;
++}
++
++bool ObjectWouldBeSkippedByRenderObjectList(CPDF_RenderStatus* status,
++                                            const CPDF_PageObject* object,
++                                            const CFX_FloatRect& holder_clip) {
++  if (!object) {
++    return false;
++  }
++  if (!object->IsActive()) {
++    return true;
++  }
++  if (!status->GetRenderOptions().CheckPageObjectVisible(object)) {
++    return true;
++  }
++  return ObjectOutsideClip(object, holder_clip);
++}
++
++bool IsSafeTextPassthrough(CPDF_RenderStatus* status,
++                           const CPDF_PageObject* object,
++                           const CFX_FloatRect& holder_clip) {
++  if (ObjectWouldBeSkippedByRenderObjectList(status, object, holder_clip)) {
++    return true;
++  }
++  return object->IsText();
++}
++
++class ScopedCompiledPathLists {
++ public:
++  explicit ScopedCompiledPathLists(size_t size) : lists_(size, nullptr) {}
++  ~ScopedCompiledPathLists() {
++    for (VeloceCompiledPathDisplayList* list : lists_) {
++      VeloceDestroyCompiledPathDisplayList(list);
++    }
++  }
++
++  VeloceCompiledPathDisplayList*& operator[](size_t index) {
++    return lists_[index];
++  }
++
++  VeloceCompiledPathDisplayList* get(size_t index) const {
++    return lists_[index];
++  }
++
++ private:
++  std::vector<VeloceCompiledPathDisplayList*> lists_;
++};
++
++VeloceRenderPlanResult TryRenderSegmentedPlan(
++    CPDF_RenderStatus* status,
++    const CPDF_PageObjectHolder* holder,
++    const CFX_Matrix& holder_to_device,
++    const VeloceRenderPlan& plan) {
++  if (!status || !holder || plan.empty()) {
++    return VeloceRenderPlanResult::kNotEligible;
++  }
++  if (plan.segments.size() == 1 &&
++      plan.segments[0].kind == VeloceRenderPlanSegmentKind::kPathRun) {
++    return VeloceRenderPlanResult::kNotEligible;
++  }
++
++  const CFX_FloatRect holder_clip =
++      holder_to_device.GetInverse().TransformRect(
++          CFX_FloatRect(status->GetRenderDevice()->GetClipBox()));
++  const VelocePathDisplayListHolderKind path_holder_kind =
++      ToPathDisplayListHolderKind(plan);
++  ScopedCompiledPathLists compiled_lists(plan.segments.size());
++  size_t compiled_path_runs = 0;
++
++  for (size_t segment_index = 0; segment_index < plan.segments.size();
++       ++segment_index) {
++    const VeloceRenderPlanSegment& segment = plan.segments[segment_index];
++    switch (segment.kind) {
++      case VeloceRenderPlanSegmentKind::kPathRun: {
++        VeloceCompiledPathDisplayList* compiled_list = nullptr;
++        const VelocePathDisplayListCompileResult compile_result =
++            VeloceCompilePathDisplayListForObjectRange(
++                status, holder, segment.first_object_index,
++                segment.object_count, &compiled_list);
++        if (compile_result == VelocePathDisplayListCompileResult::kCancelled) {
++          VeloceDestroyCompiledPathDisplayList(compiled_list);
++          return VeloceRenderPlanResult::kCancelled;
++        }
++        if (compile_result != VelocePathDisplayListCompileResult::kCompiled) {
++          VeloceDestroyCompiledPathDisplayList(compiled_list);
++          return VeloceRenderPlanResult::kNotEligible;
++        }
++        const VelocePathDisplayListResult validate_result =
++            VeloceValidateCompiledPathDisplayListReplay(
++                status, compiled_list, path_holder_kind);
++        if (validate_result == VelocePathDisplayListResult::kCancelled) {
++          VeloceDestroyCompiledPathDisplayList(compiled_list);
++          return VeloceRenderPlanResult::kCancelled;
++        }
++        if (validate_result != VelocePathDisplayListResult::kRendered) {
++          VeloceDestroyCompiledPathDisplayList(compiled_list);
++          return VeloceRenderPlanResult::kNotEligible;
++        }
++        compiled_lists[segment_index] = compiled_list;
++        ++compiled_path_runs;
++        break;
++      }
++      case VeloceRenderPlanSegmentKind::kPassthroughObject: {
++        if (segment.object_count != 1) {
++          return VeloceRenderPlanResult::kNotEligible;
++        }
++        CPDF_PageObject* object =
++            FindHolderObjectByIndex(holder, segment.first_object_index);
++        if (!object) {
++          return VeloceRenderPlanResult::kNotEligible;
++        }
++        if (!IsSafeTextPassthrough(status, object, holder_clip)) {
++          return VeloceRenderPlanResult::kNotEligible;
++        }
++        break;
++      }
++      case VeloceRenderPlanSegmentKind::kBlendBarrier:
++      case VeloceRenderPlanSegmentKind::kUnsupportedBarrier:
++        return VeloceRenderPlanResult::kNotEligible;
++    }
++  }
++
++  if (compiled_path_runs == 0) {
++    return VeloceRenderPlanResult::kNotEligible;
++  }
++
++  for (size_t segment_index = 0; segment_index < plan.segments.size();
++       ++segment_index) {
++    const VeloceRenderPlanSegment& segment = plan.segments[segment_index];
++    switch (segment.kind) {
++      case VeloceRenderPlanSegmentKind::kPathRun: {
++        const VelocePathDisplayListResult replay_result =
++            VeloceReplayCompiledPathDisplayList(
++                status, compiled_lists.get(segment_index), holder_to_device,
++                path_holder_kind);
++        if (replay_result == VelocePathDisplayListResult::kRendered) {
++          break;
++        }
++        return VeloceRenderPlanResult::kCancelled;
++      }
++      case VeloceRenderPlanSegmentKind::kPassthroughObject: {
++        CPDF_PageObject* object =
++            FindHolderObjectByIndex(holder, segment.first_object_index);
++        if (!object) {
++          return VeloceRenderPlanResult::kCancelled;
++        }
++        if (ObjectWouldBeSkippedByRenderObjectList(status, object,
++                                                   holder_clip)) {
++          break;
++        }
++        status->RenderSingleObject(object, holder_to_device);
++        if (status->ShouldCancelRender()) {
++          return VeloceRenderPlanResult::kCancelled;
++        }
++        break;
++      }
++      case VeloceRenderPlanSegmentKind::kBlendBarrier:
++      case VeloceRenderPlanSegmentKind::kUnsupportedBarrier:
++        return VeloceRenderPlanResult::kCancelled;
++    }
++  }
++
++  return status->ShouldCancelRender() ? VeloceRenderPlanResult::kCancelled
++                                      : VeloceRenderPlanResult::kRendered;
++}
++
+ }  // namespace
+ 
+ VeloceRenderPlan VeloceBuildRenderPlanSkeletonForHolder(
+@@ -110,10 +304,16 @@ VeloceRenderPlanResult VeloceTryRenderPlanForHolder(
+   // here rather than adding more hooks to CPDF_RenderStatus or
+   // CPDF_ProgressiveRenderer.
+   //
+-  // Patch 0054 adds VeloceBuildRenderPlanSkeletonForHolder(), but deliberately
+-  // does not call it here. The skeleton is the future ordered representation;
+-  // this patch must add no render-time scan, allocation, or pixel behavior
+-  // change by itself.
++  // Prefer ordered segmented replay only when every segment is preflighted as
++  // safe. All unsupported or ambiguous cases fall back before drawing.
++  const VeloceRenderPlan plan =
++      VeloceBuildRenderPlanSkeletonForHolder(holder, holder_kind);
++  const VeloceRenderPlanResult segmented_result =
++      TryRenderSegmentedPlan(status, holder, holder_to_device, plan);
++  if (segmented_result != VeloceRenderPlanResult::kNotEligible) {
++    return segmented_result;
++  }
++
+   return ToRenderPlanResult(VeloceTryRenderPathDisplayListForHolder(
+       status, holder, holder_to_device,
+       ToPathDisplayListHolderKind(holder_kind)));

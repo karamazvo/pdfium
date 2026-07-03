@@ -199,6 +199,7 @@ Recent revisions:
 | r48 | `0052-veloce-path-display-list-same-source-darken-widening.patch` | in progress | Widen bounded same-source Darken blend groups inside ordered segment/clip barriers. |
 | r25-0053 | `0053-veloce-render-plan-interface.patch` | committed | Behavior-preserving RenderPlan holder facade on the r25 + 0051 stable line. |
 | r25-0054 | `0054-veloce-render-plan-skeleton.patch` | in progress | Behavior-preserving ordered RenderPlan segment data model and skeleton builder. |
+| r25-0055 | `0055-veloce-render-plan-segmented-text-passthrough.patch` | in progress | Consume ordered RenderPlan path/text segments with preflighted range path display-list replay. |
 
 Current native HEAD before r48 is committed:
 
@@ -370,12 +371,12 @@ Workflow requirements:
 - Verification step keeps safety guards against deprecated symbols and known
   reverted approaches.
 
-For r25-0054 and later on the stable RenderPlan line, copy the previous
-`r25-0053` workflow and update:
+For r25-0055 and later on the stable RenderPlan line, copy the previous
+stable-line workflow and update:
 
 ```text
-r25-0053 -> r25-0054
-0053 -> 0054 in apply/copy/build-info
+r25-0054 -> r25-0055
+0054 -> 0055 in apply/copy/build-info
 revision name and guards
 ```
 

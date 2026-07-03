@@ -80,6 +80,7 @@ these patches:
 | 0052 | `0052-veloce-path-display-list-same-source-darken-widening.patch` | Same-source Darken blend widening. Lets an adjacent Darken `BlendGroupRun` paint-key change stay inside the current ordered segment/clip when every pending entry has one source ARGB, the next blend node has that same source ARGB, and the union group rect stays memory-bounded. Each entry still draws with its own path, matrix, graph state, and fill/stroke options inside the isolated group. Adds `sameSourceDarken*` telemetry. |
 | 0053 | `0053-veloce-render-plan-interface.patch` | RenderPlan holder interface. Adds `veloce_render_plan.{h,cpp}` as the single renderer-facing boundary between PDFium's baseline pipeline and Veloce acceleration. Behavior-preserving on r25: it delegates to the existing path-display-list backend and only maps result/kind enums. Future acceleration patches should compose behind this fail-closed interface instead of adding direct hooks to `CPDF_RenderStatus` or `CPDF_ProgressiveRenderer`. |
 | 0054 | `0054-veloce-render-plan-skeleton.patch` | RenderPlan ordered segment skeleton. Adds `VeloceRenderPlanSegmentKind`, `VeloceRenderPlanSegment`, `VeloceRenderPlan`, and `VeloceBuildRenderPlanSkeletonForHolder()`. The skeleton stores holder object indices only, groups consecutive path objects into `PathRun` segments, and emits non-path objects as ordered passthrough barriers. Behavior-preserving: the render facade still delegates to the r25 path-display-list backend and does not build the skeleton on the render hot path. |
+| 0055 | `0055-veloce-render-plan-segmented-text-passthrough.patch` | RenderPlan segmented text passthrough. Adds range-based path-display-list compile/replay handles, preflights every `PathRun` before drawing, and consumes ordered `PathRun` + text passthrough segments behind the `VeloceTryRenderPlanForHolder()` facade. Non-text passthrough, blend barriers, unsupported barriers, and any ambiguous replay requirement still fail closed before drawing. All-path holders continue through the existing whole-holder cached backend. |
 
 ## Why this directory exists
 
@@ -143,6 +144,7 @@ git apply patches/ship/0051-veloce-page-dimensions-no-parse.patch
 git apply patches/ship/0052-veloce-path-display-list-same-source-darken-widening.patch
 git apply patches/ship/0053-veloce-render-plan-interface.patch
 git apply patches/ship/0054-veloce-render-plan-skeleton.patch
+git apply patches/ship/0055-veloce-render-plan-segmented-text-passthrough.patch
 ```
 
 > **Note:** patches 0027 and 0028 are deprecated and must NOT be applied.
@@ -198,6 +200,11 @@ facade above the existing r25 path-display-list backend.
 Patch 0054 depends on patch 0053 and adds only the ordered segment data model
 and skeleton builder. The render facade deliberately does not call the builder
 yet, so there is no per-render scan, allocation, or pixel behavior change.
+Patch 0055 depends on patch 0054 and is the first segmented consumer. It
+precompiles and validates every path-run segment before drawing, permits only
+text passthrough in this phase, and returns `kNotEligible` before drawing for
+images, Forms, shadings, blend barriers, unsupported barriers, or ambiguous
+state. All-path holders keep the existing r25 cached whole-holder backend.
 Patch 0032 depends on patch 0031 and adds stroke-only run packing for the
 normal-blend path. Consecutive stroke-only nodes are accumulated via
 CFX_Path::Append only when they share paint and path matrix, then drawn with one
@@ -514,6 +521,12 @@ isolated group.
   Adds ordered segment data structures and a builder that emits path runs plus
   passthrough barriers by holder object index. Behavior-preserving; the builder
   is not called by the render facade yet and no public API changes.
+- **0055 Veloce RenderPlan segmented text passthrough**:
+  `core/fpdfapi/render/veloce_path_display_list.{h,cpp}`,
+  `core/fpdfapi/render/veloce_render_plan.cpp`.
+  Adds object-range path display-list compile/replay APIs and consumes ordered
+  path/text segments in the RenderPlan facade. Fails closed before drawing for
+  unsupported passthrough or replay requirements; no public API changes.
 - **0017 Veloce holder-level root page path display list**:
   `core/fpdfapi/render/cpdf_renderstatus.cpp`,
   `core/fpdfapi/render/veloce_path_display_list.{h,cpp}`.
