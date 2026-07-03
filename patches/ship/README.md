@@ -78,6 +78,7 @@ these patches:
 | 0050 | `0050-veloce-path-display-list-blend-shape-telemetry.patch` | Blend shape telemetry. Adds a compact `VelocePathDLBlendShape` line that classifies existing `BlendGroupRun` composites by blend mode, path paint shape, same source ARGB, and simple Darken candidate cost. Telemetry-only; it does not change grouping, painter order, cancellation, allocation policy, or pixels. |
 | 0051 | `0051-veloce-page-dimensions-no-parse.patch` | Page dimensions no-parse export. Adds fixed 32-byte `FPDFEx_PageDimensions` and `FPDFEx_GetPageDimensions()` so embedders can read page width/height, effective CropBox, and rotation from the page dictionary without `FPDF_LoadPage()` or `ParseContent()`. No rendering semantics change. |
 | 0052 | `0052-veloce-path-display-list-same-source-darken-widening.patch` | Same-source Darken blend widening. Lets an adjacent Darken `BlendGroupRun` paint-key change stay inside the current ordered segment/clip when every pending entry has one source ARGB, the next blend node has that same source ARGB, and the union group rect stays memory-bounded. Each entry still draws with its own path, matrix, graph state, and fill/stroke options inside the isolated group. Adds `sameSourceDarken*` telemetry. |
+| 0053 | `0053-veloce-render-plan-interface.patch` | RenderPlan holder interface. Adds `veloce_render_plan.{h,cpp}` as the single renderer-facing boundary between PDFium's baseline pipeline and Veloce acceleration. Behavior-preserving on r25: it delegates to the existing path-display-list backend and only maps result/kind enums. Future acceleration patches should compose behind this fail-closed interface instead of adding direct hooks to `CPDF_RenderStatus` or `CPDF_ProgressiveRenderer`. |
 
 ## Why this directory exists
 
@@ -139,6 +140,7 @@ git apply patches/ship/0049-veloce-path-display-list-effective-blend-paint-widen
 git apply patches/ship/0050-veloce-path-display-list-blend-shape-telemetry.patch
 git apply patches/ship/0051-veloce-page-dimensions-no-parse.patch
 git apply patches/ship/0052-veloce-path-display-list-same-source-darken-widening.patch
+git apply patches/ship/0053-veloce-render-plan-interface.patch
 ```
 
 > **Note:** patches 0027 and 0028 are deprecated and must NOT be applied.
@@ -188,6 +190,9 @@ Patch 0031 depends on patch 0030 and replaces the 8-bit mask approach with
 a BGRA group buffer matching MuPDF's transparency group model. The P1 bbox
 overlap gate from 0030 is removed — overlapping paths accumulate correctly
 inside the group buffer under normal blend before the single blend composite.
+Patch 0053 can also be applied directly on the rel-260701 stable line after
+patch 0051. It is behavior-preserving and only inserts the `VeloceRenderPlan`
+facade above the existing r25 path-display-list backend.
 Patch 0032 depends on patch 0031 and adds stroke-only run packing for the
 normal-blend path. Consecutive stroke-only nodes are accumulated via
 CFX_Path::Append only when they share paint and path matrix, then drawn with one
@@ -491,6 +496,14 @@ isolated group.
   Adds run-level source-ARGB tracking and allows bounded same-source Darken
   paint-key changes to remain in one `BlendGroupRun`, reducing repeated group
   composites on blend-heavy path pages. No public API or build file changes.
+- **0053 Veloce RenderPlan holder interface**:
+  `core/fpdfapi/render/BUILD.gn`,
+  `core/fpdfapi/render/cpdf_progressiverenderer.cpp`,
+  `core/fpdfapi/render/cpdf_renderstatus.cpp`,
+  `core/fpdfapi/render/veloce_render_plan.{h,cpp}`.
+  Adds the renderer-facing Veloce RenderPlan facade and delegates to the
+  existing r25 path-display-list backend. Behavior-preserving; no public API
+  changes.
 - **0017 Veloce holder-level root page path display list**:
   `core/fpdfapi/render/cpdf_renderstatus.cpp`,
   `core/fpdfapi/render/veloce_path_display_list.{h,cpp}`.

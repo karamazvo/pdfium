@@ -1,0 +1,245 @@
+From 3c6d8cb4d8f1e02cfdd1a64dd877c03a6079071b Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Fri, 3 Jul 2026 18:20:00 +0800
+Subject: [PATCH] Add Veloce RenderPlan holder interface
+
+Patch r25 left the speedup implementation wired directly into PDFium's
+render entry points: `CPDF_RenderStatus::RenderObjectList()`,
+`CPDF_RenderStatus::ProcessForm()`, and
+`CPDF_ProgressiveRenderer::Continue()` all call the path-display-list backend
+directly.
+
+That shape made later experiments harder to reason about because the
+renderer-facing contract and the implementation backend were the same thing.
+This patch introduces a narrow `veloce_render_plan` facade between PDFium's
+ordinary renderer and any Veloce acceleration backend:
+
+* PDFium render entry points call `VeloceTryRenderPlanForHolder()`.
+* The facade returns only `kNotEligible`, `kRendered`, or `kCancelled`.
+* `kNotEligible` means no pixels were drawn and PDFium must continue through
+  the original renderer.
+* `kRendered` means the holder was fully rendered into the current device.
+* `kCancelled` means the caller should stop the current render without legacy
+  fallback.
+* The current r25 implementation is behavior-preserving: the facade delegates
+  to the existing path-display-list backend and only maps result/kind enums.
+
+This is intentionally not a new optimization. It is the stable interface for
+future ordered RenderPlan work so each later speedup can fail closed behind one
+contract instead of adding more direct hooks into PDFium's baseline pipeline.
+
+diff --git a/core/fpdfapi/render/BUILD.gn b/core/fpdfapi/render/BUILD.gn
+index 32ab43317..43e8357c7 100644
+--- a/core/fpdfapi/render/BUILD.gn
++++ b/core/fpdfapi/render/BUILD.gn
+@@ -35,6 +35,8 @@ source_set("render") {
+     "cpdf_type3glyphmap.h",
+     "veloce_path_display_list.cpp",
+     "veloce_path_display_list.h",
++    "veloce_render_plan.cpp",
++    "veloce_render_plan.h",
+     "veloce_render_skip_mask.cpp",
+     "veloce_render_skip_mask.h",
+     "veloce_render_callbacks.cpp",
+diff --git a/core/fpdfapi/render/cpdf_progressiverenderer.cpp b/core/fpdfapi/render/cpdf_progressiverenderer.cpp
+index 143378c3b..af3e517b4 100644
+--- a/core/fpdfapi/render/cpdf_progressiverenderer.cpp
++++ b/core/fpdfapi/render/cpdf_progressiverenderer.cpp
+@@ -14,7 +14,7 @@
+ #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
+ #include "core/fpdfapi/render/cpdf_renderoptions.h"
+ #include "core/fpdfapi/render/cpdf_renderstatus.h"
+-#include "core/fpdfapi/render/veloce_path_display_list.h"
++#include "core/fpdfapi/render/veloce_render_plan.h"
+ #include "core/fxcrt/check.h"
+ #include "core/fxcrt/pauseindicator_iface.h"
+ #include "core/fxge/cfx_renderdevice.h"
+@@ -63,19 +63,19 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
+       device_->SaveState();
+       clip_rect_ = current_layer_->GetMatrix().GetInverse().TransformRect(
+           CFX_FloatRect(device_->GetClipBox()));
+-      const VelocePathDisplayListResult path_dl_result =
+-          VeloceTryRenderPathDisplayListForHolder(
+-              render_status_.get(), current_layer_->GetObjectHolder(),
+-              current_layer_->GetMatrix(),
+-              VelocePathDisplayListHolderKind::kRootPage);
+-      if (path_dl_result == VelocePathDisplayListResult::kCancelled) {
++      const VeloceRenderPlanResult render_plan_result =
++          VeloceTryRenderPlanForHolder(render_status_.get(),
++                                       current_layer_->GetObjectHolder(),
++                                       current_layer_->GetMatrix(),
++                                       VeloceRenderPlanHolderKind::kRootPage);
++      if (render_plan_result == VeloceRenderPlanResult::kCancelled) {
+         render_status_.reset();
+         device_->RestoreState(false);
+         current_layer_ = nullptr;
+         status_ = kDone;
+         return;
+       }
+-      if (path_dl_result == VelocePathDisplayListResult::kRendered) {
++      if (render_plan_result == VeloceRenderPlanResult::kRendered) {
+         render_status_.reset();
+         device_->RestoreState(false);
+         current_layer_ = nullptr;
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index b59c9778c..ced2fd0fd 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -49,7 +49,7 @@
+ #include "core/fpdfapi/render/cpdf_rendershading.h"
+ #include "core/fpdfapi/render/cpdf_rendertiling.h"
+ #include "core/fpdfapi/render/cpdf_textrenderer.h"
+-#include "core/fpdfapi/render/veloce_path_display_list.h"
++#include "core/fpdfapi/render/veloce_render_plan.h"
+ #include "core/fpdfapi/render/veloce_skip_rasterization.h"
+ #include "core/fpdfapi/render/veloce_render_abort.h"
+ #include "core/fpdfapi/render/veloce_render_skip_mask.h"
+@@ -254,15 +254,14 @@ void CPDF_RenderStatus::RenderObjectList(
+   }
+ 
+   if (is_context_layer_holder) {
+-    const VelocePathDisplayListResult path_dl_result =
+-        VeloceTryRenderPathDisplayListForHolder(
+-            this, pObjectHolder, mtObj2Device,
+-            VelocePathDisplayListHolderKind::kRootPage);
+-    if (path_dl_result == VelocePathDisplayListResult::kCancelled) {
++    const VeloceRenderPlanResult render_plan_result =
++        VeloceTryRenderPlanForHolder(this, pObjectHolder, mtObj2Device,
++                                     VeloceRenderPlanHolderKind::kRootPage);
++    if (render_plan_result == VeloceRenderPlanResult::kCancelled) {
+       stopped_ = true;
+       return;
+     }
+-    if (path_dl_result == VelocePathDisplayListResult::kRendered) {
++    if (render_plan_result == VeloceRenderPlanResult::kRendered) {
+       return;
+     }
+   }
+@@ -542,15 +541,14 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
+   status.Initialize(this, &pFormObj->graphic_states());
+   {
+     CFX_RenderDevice::StateRestorer restorer(device_);
+-    const VelocePathDisplayListResult path_dl_result =
+-        VeloceTryRenderPathDisplayListForHolder(
+-            &status, pFormObj->form(), matrix,
+-            VelocePathDisplayListHolderKind::kForm);
+-    if (path_dl_result == VelocePathDisplayListResult::kCancelled) {
++    const VeloceRenderPlanResult render_plan_result =
++        VeloceTryRenderPlanForHolder(&status, pFormObj->form(), matrix,
++                                     VeloceRenderPlanHolderKind::kForm);
++    if (render_plan_result == VeloceRenderPlanResult::kCancelled) {
+       stopped_ = true;
+       return true;
+     }
+-    if (path_dl_result == VelocePathDisplayListResult::kNotEligible) {
++    if (render_plan_result == VeloceRenderPlanResult::kNotEligible) {
+       status.RenderObjectList(pFormObj->form(), matrix);
+     }
+     stopped_ = status.stopped_;
+diff --git a/core/fpdfapi/render/veloce_render_plan.cpp b/core/fpdfapi/render/veloce_render_plan.cpp
+new file mode 100644
+index 000000000..b5fc813f1
+--- /dev/null
++++ b/core/fpdfapi/render/veloce_render_plan.cpp
+@@ -0,0 +1,55 @@
++// Copyright 2026 The xPDFSDK Authors
++// Use of this source code is governed by the PDFium BSD-style license.
++
++#include "core/fpdfapi/render/veloce_render_plan.h"
++
++#include "core/fpdfapi/render/veloce_path_display_list.h"
++
++namespace {
++
++VelocePathDisplayListHolderKind ToPathDisplayListHolderKind(
++    VeloceRenderPlanHolderKind holder_kind) {
++  switch (holder_kind) {
++    case VeloceRenderPlanHolderKind::kRootPage:
++      return VelocePathDisplayListHolderKind::kRootPage;
++    case VeloceRenderPlanHolderKind::kForm:
++      return VelocePathDisplayListHolderKind::kForm;
++  }
++  return VelocePathDisplayListHolderKind::kForm;
++}
++
++VeloceRenderPlanResult ToRenderPlanResult(VelocePathDisplayListResult result) {
++  switch (result) {
++    case VelocePathDisplayListResult::kNotEligible:
++      return VeloceRenderPlanResult::kNotEligible;
++    case VelocePathDisplayListResult::kRendered:
++      return VeloceRenderPlanResult::kRendered;
++    case VelocePathDisplayListResult::kCancelled:
++      return VeloceRenderPlanResult::kCancelled;
++  }
++  return VeloceRenderPlanResult::kNotEligible;
++}
++
++}  // namespace
++
++VeloceRenderPlanResult VeloceTryRenderPlanForHolder(
++    CPDF_RenderStatus* status,
++    const CPDF_PageObjectHolder* holder,
++    const CFX_Matrix& holder_to_device,
++    VeloceRenderPlanHolderKind holder_kind) {
++  // This facade is the only PDFium-renderer-facing acceleration boundary.
++  //
++  // The contract is fail-closed: kNotEligible means no accelerated backend
++  // drew pixels, so the caller must continue through the original PDFium
++  // pipeline. kRendered means the holder is complete in the caller's current
++  // render device. kCancelled means the caller should stop the current render
++  // without legacy fallback because cancellation output will be discarded.
++  //
++  // r25 keeps behavior identical by delegating to the existing path display
++  // list backend. Later ordered RenderPlan patches should compose backends
++  // here rather than adding more hooks to CPDF_RenderStatus or
++  // CPDF_ProgressiveRenderer.
++  return ToRenderPlanResult(VeloceTryRenderPathDisplayListForHolder(
++      status, holder, holder_to_device,
++      ToPathDisplayListHolderKind(holder_kind)));
++}
+diff --git a/core/fpdfapi/render/veloce_render_plan.h b/core/fpdfapi/render/veloce_render_plan.h
+new file mode 100644
+index 000000000..3ddfc5345
+--- /dev/null
++++ b/core/fpdfapi/render/veloce_render_plan.h
+@@ -0,0 +1,40 @@
++// Copyright 2026 The xPDFSDK Authors
++// Use of this source code is governed by the PDFium BSD-style license.
++
++#ifndef CORE_FPDFAPI_RENDER_VELOCE_RENDER_PLAN_H_
++#define CORE_FPDFAPI_RENDER_VELOCE_RENDER_PLAN_H_
++
++#include "core/fxcrt/fx_coordinates.h"
++
++class CPDF_PageObjectHolder;
++class CPDF_RenderStatus;
++
++enum class VeloceRenderPlanResult {
++  // No pixels were drawn; caller must continue with the original PDFium path.
++  kNotEligible,
++  // The full holder was rendered into the caller's current render device.
++  kRendered,
++  // Rendering was cancelled; caller should stop without legacy fallback.
++  kCancelled,
++};
++
++enum class VeloceRenderPlanHolderKind {
++  kRootPage,
++  kForm,
++};
++
++// Attempts to render one PDFium holder through the Veloce acceleration layer.
++//
++// This is the stable boundary between PDFium's baseline renderer and Veloce.
++// Implementations behind this function may compile ordered path/text/blend
++// plans, use bounded caches, or decline the holder. The caller-visible
++// invariant must not change: unsupported content returns kNotEligible before
++// drawing, preserving the original PDFium rendering pipeline as the source of
++// truth.
++VeloceRenderPlanResult VeloceTryRenderPlanForHolder(
++    CPDF_RenderStatus* status,
++    const CPDF_PageObjectHolder* holder,
++    const CFX_Matrix& holder_to_device,
++    VeloceRenderPlanHolderKind holder_kind);
++
++#endif  // CORE_FPDFAPI_RENDER_VELOCE_RENDER_PLAN_H_
