@@ -1,0 +1,377 @@
+From 0000000000000000000000000000000000000057 Mon Sep 17 00:00:00 2001
+From: Veloce PDFium Patches <veloce-pdfium@example.invalid>
+Date: Sat, 4 Jul 2026 00:00:00 +0800
+Subject: [PATCH] Add holder-space spatial index to path display-list replay
+
+Patch 0056 caches ordered RenderPlan skeleton metadata, but each compiled
+PathRun still replays by scanning every path node and then rejecting nodes
+outside the device tile clip. For sparse high-zoom tiles on huge path pages,
+that keeps replay O(total nodes) instead of O(visible candidates).
+
+This patch adds a bounded holder-space grid to the existing path display-list
+backend:
+
+* The index is built once at compile time from each node's holder-space bbox.
+* Replay transforms the device clip back to holder space, queries candidate
+  bins, sorts node ids back into display-list order, then runs the existing
+  replay body unchanged.
+* Broad preview/whole-page clips, tiny lists, invalid matrices, and invalid
+  indexes fall back to the old full scan.
+* Very large node bboxes are tracked as overflow candidates so the grid cannot
+  drop content.
+
+Correctness invariant: the spatial index only selects candidate nodes inside
+one already-compiled ordered PathRun. It never reorders drawing, crosses
+RenderPlan barriers, changes eligibility, changes paint/clip/blend handling, or
+skips the existing device-clip intersection check.
+---
+ core/fpdfapi/render/veloce_path_display_list.cpp | 225 ++++++++++++++++++++++-
+ 1 file changed, 224 insertions(+), 1 deletion(-)
+
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -6,6 +6,7 @@
+ #include <inttypes.h>
+ #include <stdint.h>
+ 
++#include <algorithm>
+ #include <chrono>
+ #include <cstring>
+ #include <limits>
+@@ -47,6 +48,11 @@ constexpr uint32_t kMaxClipPathCount = 16;
+ constexpr uint32_t kCancelCheckNodeInterval = 64;
+ constexpr size_t kMaxCachedPathDisplayLists = 32;
+ constexpr size_t kMaxScratchBlendNodes = 512;
++constexpr uint32_t kSpatialIndexColumns = 32;
++constexpr uint32_t kSpatialIndexRows = 32;
++constexpr uint32_t kSpatialIndexMinNodes = 4096;
++constexpr uint32_t kMaxSpatialBinsPerNode = 128;
++constexpr float kSpatialIndexBroadQueryAreaRatio = 0.75f;
+ 
+ enum class PathDlRejectReason {
+   kNone,
+@@ -85,12 +91,27 @@ struct PathDlNode {
+   uint32_t clip_key = kNoClipKey;
+ };
+ 
++struct PathDlSpatialIndex {
++  CFX_FloatRect bounds;
++  uint32_t columns = 0;
++  uint32_t rows = 0;
++  std::vector<std::vector<uint32_t>> bins;
++  std::vector<uint32_t> overflow_nodes;
++  size_t bin_entries = 0;
++
++  bool valid() const {
++    return columns > 0 && rows > 0 && bins.size() == columns * rows &&
++           !bounds.IsEmpty();
++  }
++};
++
+ struct NativePathDisplayList {
+   std::vector<CPDF_Path> path_table;
+   std::vector<PathDlPaint> paint_table;
+   std::vector<CFX_GraphStateData> graph_state_table;
+   std::vector<CPDF_ClipPath> clip_table;
+   std::vector<PathDlNode> nodes;
++  PathDlSpatialIndex spatial_index;
+   size_t scanned_objects = 0;
+   size_t skipped_inactive = 0;
+   size_t skipped_invisible = 0;
+@@ -145,6 +166,12 @@ struct PathDlReplayStats {
+   size_t run_flush_normal_node = 0;
+   size_t run_flush_scratch_blend = 0;
+   size_t run_flush_end = 0;
++  size_t spatial_index_queries = 0;
++  size_t spatial_index_query_bins = 0;
++  size_t spatial_index_candidates = 0;
++  size_t spatial_index_skipped_by_tile = 0;
++  size_t spatial_index_fallback_full_scan = 0;
++  int64_t spatial_index_query_ms = 0;
+ };
+ 
+ bool IsPathDisplayListFeatureEnabled(const CPDF_RenderStatus* status) {
+@@ -307,6 +334,9 @@ void LogPathDisplayListAttempt(const char* result,
+       "noopClips=%zu blendNodes=%zu scratchBlendNodes=%zu visited=%zu culled=%zu missingPath=%zu drawn=%zu "
+       "clipSwitches=%zu cancelChecks=%zu groupRunComposites=%zu groupRunNodes=%zu maxGroupRunNodes=%zu "
+       "runFlushPaint=%zu runFlushClip=%zu runFlushNormal=%zu runFlushScratch=%zu runFlushEnd=%zu "
++      "spatialIndexBins=%zu spatialIndexEntries=%zu spatialIndexOverflow=%zu "
++      "spatialIndexQueries=%zu spatialIndexQueryBins=%zu spatialIndexCandidates=%zu "
++      "spatialIndexSkippedByTile=%zu spatialIndexFallbackFullScan=%zu spatialIndexQueryMs=%" PRId64 " "
+       "cache=%s compileMs=%" PRId64
+       " replayMs=%" PRId64
+       " totalFastMs=%" PRId64 " estimatedDispatchAvoided=%zu",
+@@ -339,6 +369,19 @@ void LogPathDisplayListAttempt(const char* result,
+       replay_stats ? replay_stats->run_flush_normal_node : kZero,
+       replay_stats ? replay_stats->run_flush_scratch_blend : kZero,
+       replay_stats ? replay_stats->run_flush_end : kZero,
++      list && list->spatial_index.valid() ? list->spatial_index.bins.size()
++                                          : kZero,
++      list && list->spatial_index.valid() ? list->spatial_index.bin_entries
++                                          : kZero,
++      list && list->spatial_index.valid()
++          ? list->spatial_index.overflow_nodes.size()
++          : kZero,
++      replay_stats ? replay_stats->spatial_index_queries : kZero,
++      replay_stats ? replay_stats->spatial_index_query_bins : kZero,
++      replay_stats ? replay_stats->spatial_index_candidates : kZero,
++      replay_stats ? replay_stats->spatial_index_skipped_by_tile : kZero,
++      replay_stats ? replay_stats->spatial_index_fallback_full_scan : kZero,
++      replay_stats ? replay_stats->spatial_index_query_ms : 0,
+       cache_state ? cache_state : "none", compile_ms,
+       replay_ms, compile_ms + replay_ms,
+       list ? list->nodes.size() : kZero);
+@@ -566,8 +609,105 @@ std::optional<uint32_t> AddGraphStateKey(NativePathDisplayList* list,
+   }
+   list->graph_state_table.push_back(graph_state);
+   return static_cast<uint32_t>(list->graph_state_table.size() - 1);
++}
++
++uint32_t SpatialIndexCoordToBin(float value,
++                                float min_value,
++                                float span,
++                                uint32_t bin_count) {
++  if (span <= 0 || bin_count == 0 || value <= min_value) {
++    return 0;
++  }
++  const float scaled = (value - min_value) * bin_count / span;
++  if (scaled >= bin_count) {
++    return bin_count - 1;
++  }
++  return static_cast<uint32_t>(scaled);
++}
++
++bool GetSpatialIndexRange(const PathDlSpatialIndex& index,
++                          CFX_FloatRect rect,
++                          uint32_t* left_bin,
++                          uint32_t* right_bin,
++                          uint32_t* bottom_bin,
++                          uint32_t* top_bin) {
++  if (!index.valid()) {
++    return false;
++  }
++  rect.Normalize();
++  rect.Intersect(index.bounds);
++  if (rect.IsEmpty()) {
++    return false;
++  }
++
++  *left_bin = SpatialIndexCoordToBin(rect.left, index.bounds.left,
++                                     index.bounds.Width(), index.columns);
++  *right_bin = SpatialIndexCoordToBin(rect.right, index.bounds.left,
++                                      index.bounds.Width(), index.columns);
++  *bottom_bin = SpatialIndexCoordToBin(rect.bottom, index.bounds.bottom,
++                                       index.bounds.Height(), index.rows);
++  *top_bin = SpatialIndexCoordToBin(rect.top, index.bounds.bottom,
++                                    index.bounds.Height(), index.rows);
++  return true;
+ }
+ 
++void BuildPathDlSpatialIndex(NativePathDisplayList* list) {
++  if (!list || list->nodes.size() < kSpatialIndexMinNodes) {
++    return;
++  }
++
++  bool have_bounds = false;
++  CFX_FloatRect bounds;
++  for (const PathDlNode& node : list->nodes) {
++    CFX_FloatRect rect = node.holder_space_bbox;
++    rect.Normalize();
++    if (rect.IsEmpty()) {
++      continue;
++    }
++    if (have_bounds) {
++      bounds.Union(rect);
++    } else {
++      bounds = rect;
++      have_bounds = true;
++    }
++  }
++  if (!have_bounds || bounds.IsEmpty()) {
++    return;
++  }
++
++  PathDlSpatialIndex index;
++  index.bounds = bounds;
++  index.columns = kSpatialIndexColumns;
++  index.rows = kSpatialIndexRows;
++  index.bins.resize(index.columns * index.rows);
++
++  for (uint32_t node_index = 0; node_index < list->nodes.size();
++       ++node_index) {
++    uint32_t left_bin = 0;
++    uint32_t right_bin = 0;
++    uint32_t bottom_bin = 0;
++    uint32_t top_bin = 0;
++    if (!GetSpatialIndexRange(index, list->nodes[node_index].holder_space_bbox,
++                              &left_bin, &right_bin, &bottom_bin, &top_bin)) {
++      continue;
++    }
++    const uint32_t bin_count =
++        (right_bin - left_bin + 1) * (top_bin - bottom_bin + 1);
++    if (bin_count > kMaxSpatialBinsPerNode) {
++      index.overflow_nodes.push_back(node_index);
++      continue;
++    }
++    for (uint32_t y = bottom_bin; y <= top_bin; ++y) {
++      for (uint32_t x = left_bin; x <= right_bin; ++x) {
++        index.bins[y * index.columns + x].push_back(node_index);
++        index.bin_entries++;
++      }
++    }
++  }
++
++  list->spatial_index = std::move(index);
++}
++
+ bool CompilePathDisplayListRange(CPDF_RenderStatus* status,
+                                  const CPDF_PageObjectHolder* holder,
+                                  size_t first_object_index,
+@@ -707,9 +847,11 @@ bool CompilePathDisplayListRange(CPDF_RenderStatus* status,
+     list->nodes.push_back(std::move(node));
+   }
+ 
+-  return !list->nodes.empty()
+-             ? true
+-             : reject(PathDlRejectReason::kInactiveOrInvisibleOnly);
++  if (list->nodes.empty()) {
++    return reject(PathDlRejectReason::kInactiveOrInvisibleOnly);
++  }
++  BuildPathDlSpatialIndex(list);
++  return true;
+ }
+ 
+ bool CompilePathDisplayList(CPDF_RenderStatus* status,
+@@ -728,6 +870,95 @@ bool IntersectsDeviceClip(const PathDlNode& node,
+                      .GetOuterRect();
+   rect.Intersect(device->GetClipBox());
+   return !rect.IsEmpty();
++}
++
++bool MatrixIsSafelyInvertible(const CFX_Matrix& matrix) {
++  const float determinant = matrix.a * matrix.d - matrix.b * matrix.c;
++  return determinant > 0.000001f || determinant < -0.000001f;
++}
++
++std::optional<std::vector<uint32_t>> QuerySpatialIndexForReplay(
++    const NativePathDisplayList& list,
++    const CFX_Matrix& holder_to_device,
++    CFX_RenderDevice* device,
++    PathDlReplayStats* replay_stats) {
++  const PathDlSpatialIndex& index = list.spatial_index;
++  if (!index.valid() || !device) {
++    return std::nullopt;
++  }
++
++  const int64_t query_start_ns = NowNs();
++  auto finish_full_scan = [&]() -> std::optional<std::vector<uint32_t>> {
++    if (replay_stats) {
++      replay_stats->spatial_index_fallback_full_scan++;
++      replay_stats->spatial_index_query_ms += ElapsedMs(query_start_ns);
++    }
++    return std::nullopt;
++  };
++
++  if (replay_stats) {
++    replay_stats->spatial_index_queries++;
++  }
++
++  const FX_RECT clip_box = device->GetClipBox();
++  if (clip_box.IsEmpty() || !MatrixIsSafelyInvertible(holder_to_device)) {
++    return finish_full_scan();
++  }
++
++  CFX_FloatRect holder_clip =
++      holder_to_device.GetInverse().TransformRect(CFX_FloatRect(clip_box));
++  holder_clip.Normalize();
++  if (holder_clip.IsEmpty()) {
++    if (replay_stats) {
++      replay_stats->spatial_index_query_ms += ElapsedMs(query_start_ns);
++    }
++    return std::vector<uint32_t>();
++  }
++
++  const float index_area = index.bounds.Width() * index.bounds.Height();
++  const float query_area = holder_clip.Width() * holder_clip.Height();
++  if (index_area <= 0 ||
++      query_area >= index_area * kSpatialIndexBroadQueryAreaRatio) {
++    return finish_full_scan();
++  }
++
++  uint32_t left_bin = 0;
++  uint32_t right_bin = 0;
++  uint32_t bottom_bin = 0;
++  uint32_t top_bin = 0;
++  if (!GetSpatialIndexRange(index, holder_clip, &left_bin, &right_bin,
++                            &bottom_bin, &top_bin)) {
++    if (replay_stats) {
++      replay_stats->spatial_index_query_ms += ElapsedMs(query_start_ns);
++    }
++    return std::vector<uint32_t>();
++  }
++
++  std::vector<uint32_t> candidates;
++  for (uint32_t y = bottom_bin; y <= top_bin; ++y) {
++    for (uint32_t x = left_bin; x <= right_bin; ++x) {
++      const std::vector<uint32_t>& bin = index.bins[y * index.columns + x];
++      candidates.insert(candidates.end(), bin.begin(), bin.end());
++      if (replay_stats) {
++        replay_stats->spatial_index_query_bins++;
++      }
++    }
++  }
++  candidates.insert(candidates.end(), index.overflow_nodes.begin(),
++                    index.overflow_nodes.end());
++
++  std::sort(candidates.begin(), candidates.end());
++  candidates.erase(std::unique(candidates.begin(), candidates.end()),
++                   candidates.end());
++  if (replay_stats) {
++    replay_stats->spatial_index_candidates += candidates.size();
++    replay_stats->spatial_index_skipped_by_tile +=
++        list.nodes.size() >= candidates.size()
++            ? list.nodes.size() - candidates.size()
++            : 0;
++    replay_stats->spatial_index_query_ms += ElapsedMs(query_start_ns);
++  }
++  return candidates;
+ }
+ 
+ bool DrawPathNodeWithBlend(CFX_RenderDevice* device,
+@@ -879,6 +1109,11 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+   // Active consecutive mask run. Non-empty while we are accumulating adjacent
+   // CanDrawBlendNodeWithMask nodes that share the same paint_key and clip_key.
+   MaskRun run;
++  std::optional<std::vector<uint32_t>> spatial_node_indices =
++      QuerySpatialIndexForReplay(list, holder_to_device, device, replay_stats);
++  const size_t replay_node_count =
++      spatial_node_indices.has_value() ? spatial_node_indices->size()
++                                       : list.nodes.size();
+ 
+   // Flush |run| and record the reason. Returns kCancelled on failure.
+   auto flush_run = [&](size_t* reason_counter) -> VelocePathDisplayListResult {
+@@ -895,8 +1130,9 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+     return VelocePathDisplayListResult::kRendered;
+   };
+ 
+-  for (uint32_t i = 0; i < list.nodes.size(); ++i) {
+-    if ((i % kCancelCheckNodeInterval) == 0) {
++  for (size_t replay_index = 0; replay_index < replay_node_count;
++       ++replay_index) {
++    if ((replay_index % kCancelCheckNodeInterval) == 0) {
+       if (replay_stats) {
+         replay_stats->cancel_checks++;
+       }
+@@ -911,6 +1147,9 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+     if (replay_stats) {
+       replay_stats->visited_nodes++;
+     }
++    const uint32_t i = spatial_node_indices.has_value()
++                           ? (*spatial_node_indices)[replay_index]
++                           : static_cast<uint32_t>(replay_index);
+     const PathDlNode& node = list.nodes[i];
+     if (!IntersectsDeviceClip(node, holder_to_device, device)) {
+       if (replay_stats) {
+-- 
+2.39.5

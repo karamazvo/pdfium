@@ -198,9 +198,10 @@ Recent revisions:
 | r47 | `0051-veloce-page-dimensions-no-parse.patch` | committed | Export dictionary-only page geometry for app/JNI page-size fast path. |
 | r48 | `0052-veloce-path-display-list-same-source-darken-widening.patch` | in progress | Widen bounded same-source Darken blend groups inside ordered segment/clip barriers. |
 | r25-0053 | `0053-veloce-render-plan-interface.patch` | committed | Behavior-preserving RenderPlan holder facade on the r25 + 0051 stable line. |
-| r25-0054 | `0054-veloce-render-plan-skeleton.patch` | in progress | Behavior-preserving ordered RenderPlan segment data model and skeleton builder. |
-| r25-0055 | `0055-veloce-render-plan-segmented-text-passthrough.patch` | in progress | Consume ordered RenderPlan path/text segments with preflighted range path display-list replay. |
-| r25-0056 | `0056-veloce-render-plan-bounded-cache.patch` | in progress | Cache immutable RenderPlan segment metadata with bounded LRU; no raw page-object pointers or compiled path-list handles. |
+| r25-0054 | `0054-veloce-render-plan-skeleton.patch` | committed | Behavior-preserving ordered RenderPlan segment data model and skeleton builder. |
+| r25-0055 | `0055-veloce-render-plan-segmented-text-passthrough.patch` | committed | Consume ordered RenderPlan path/text segments with preflighted range path display-list replay. |
+| r25-0056 | `0056-veloce-render-plan-bounded-cache.patch` | committed | Cache immutable RenderPlan segment metadata with bounded LRU; no raw page-object pointers or compiled path-list handles. |
+| r25-0057 | `0057-veloce-render-plan-holder-space-spatial-index.patch` | in progress | Add bounded holder-space candidate selection inside compiled PathRun replay. It preserves original node order, never crosses RenderPlan barriers, and falls back to full scan for broad clips or unsafe transforms. |
 
 Current native HEAD before r48 is committed:
 
@@ -376,10 +377,15 @@ For r25-0056 and later on the stable RenderPlan line, copy the previous
 stable-line workflow and update:
 
 ```text
-r25-0055 -> r25-0056
-0055 -> 0056 in apply/copy/build-info
+r25-00NN -> r25-00NN+1
+00NN -> 00NN+1 in apply/copy/build-info
 revision name and guards
 ```
+
+For r25-0057 specifically, guards must require `PathDlSpatialIndex`,
+`BuildPathDlSpatialIndex`, `QuerySpatialIndexForReplay`, and `spatialIndex*`
+telemetry, while continuing to reject rolled-back post-r25 mechanisms such as
+`StrokeRunFlushReason`, `sameArgbCrossed`, and `sameSourceDarken`.
 
 Be careful with mechanical replacement. In r44, a Perl replacement briefly
 damaged `$GITHUB_WORKSPACE` references; always inspect for broken strings such
