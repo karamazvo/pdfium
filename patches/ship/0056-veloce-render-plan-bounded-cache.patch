@@ -1,0 +1,197 @@
+From 5bc5d7f6c9af6d97eb5df1d5f4d4bd8cc4ef0f2a Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Fri, 3 Jul 2026 21:00:00 +0800
+Subject: [PATCH] Add bounded RenderPlan skeleton cache
+
+Patch 0055 consumes ordered RenderPlan path/text segments, but it builds the
+segment skeleton on every holder render before deciding whether segmented
+replay can proceed. That is safe, but it adds repeated object-list scans on
+zoom/tile rerenders.
+
+This patch adds a bounded process-local RenderPlan cache behind the native
+facade:
+
+* Cache key: PDF document pointer, live holder pointer, holder dictionary object
+  number, and holder kind.
+* Cache value: immutable `VeloceRenderPlan` segment metadata only.
+* The plan stores holder object indices and counts, never `CPDF_PageObject*`.
+* Replay still resolves indices against the current live holder.
+* Cache size is bounded to 64 entries with simple LRU eviction.
+
+No compiled path-display-list handles are cached in this patch. PathRun compile
+and validation remain per-render, preserving the 0055 fail-closed behavior while
+removing repeated skeleton construction for hot visible pages.
+
+diff --git a/core/fpdfapi/render/veloce_render_plan.cpp b/core/fpdfapi/render/veloce_render_plan.cpp
+index 74b265a..f46a4dc 100644
+--- a/core/fpdfapi/render/veloce_render_plan.cpp
++++ b/core/fpdfapi/render/veloce_render_plan.cpp
+@@ -5,14 +5,23 @@
+ 
+ #include "core/fpdfapi/render/veloce_path_display_list.h"
+ 
++#include <stdint.h>
++
++#include <memory>
++#include <mutex>
++#include <unordered_map>
++#include <utility>
++
+ #include "core/fpdfapi/page/cpdf_pageobject.h"
+ #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
++#include "core/fpdfapi/parser/cpdf_dictionary.h"
+ #include "core/fpdfapi/render/cpdf_renderstatus.h"
+ #include "core/fxge/cfx_renderdevice.h"
+ 
+ namespace {
+ 
+ constexpr size_t kNoOpenPathRun = static_cast<size_t>(-1);
++constexpr size_t kMaxCachedRenderPlans = 64;
+ 
+ VelocePathDisplayListHolderKind ToPathDisplayListHolderKind(
+     VeloceRenderPlanHolderKind holder_kind) {
+@@ -51,6 +60,129 @@ bool IsPathRunCandidate(const CPDF_PageObject* object) {
+   return object && object->IsPath();
+ }
+ 
++struct RenderPlanCacheKey {
++  const CPDF_Document* document = nullptr;
++  const CPDF_PageObjectHolder* holder = nullptr;
++  uint32_t holder_dict_obj_num = 0;
++  VeloceRenderPlanHolderKind holder_kind = VeloceRenderPlanHolderKind::kForm;
++
++  bool operator==(const RenderPlanCacheKey& other) const {
++    return document == other.document && holder == other.holder &&
++           holder_dict_obj_num == other.holder_dict_obj_num &&
++           holder_kind == other.holder_kind;
++  }
++};
++
++struct RenderPlanCacheKeyHash {
++  size_t operator()(const RenderPlanCacheKey& key) const {
++    size_t hash = std::hash<const CPDF_Document*>()(key.document);
++    hash ^= std::hash<const CPDF_PageObjectHolder*>()(key.holder) +
++            0x9e3779b97f4a7c15ull + (hash << 6) + (hash >> 2);
++    hash ^= std::hash<uint32_t>()(key.holder_dict_obj_num) +
++            0x9e3779b97f4a7c15ull + (hash << 6) + (hash >> 2);
++    hash ^= std::hash<int>()(static_cast<int>(key.holder_kind)) +
++            0x9e3779b97f4a7c15ull + (hash << 6) + (hash >> 2);
++    return hash;
++  }
++};
++
++struct RenderPlanCacheEntry {
++  std::shared_ptr<const VeloceRenderPlan> plan;
++  uint64_t last_use = 0;
++};
++
++std::mutex& RenderPlanCacheMutex() {
++  static std::mutex* mutex = new std::mutex();
++  return *mutex;
++}
++
++std::unordered_map<RenderPlanCacheKey,
++                   RenderPlanCacheEntry,
++                   RenderPlanCacheKeyHash>&
++RenderPlanCache() {
++  static auto* cache =
++      new std::unordered_map<RenderPlanCacheKey,
++                             RenderPlanCacheEntry,
++                             RenderPlanCacheKeyHash>();
++  return *cache;
++}
++
++uint64_t& RenderPlanCacheClock() {
++  static uint64_t* clock = new uint64_t(0);
++  return *clock;
++}
++
++RenderPlanCacheKey MakeRenderPlanCacheKey(
++    const CPDF_PageObjectHolder* holder,
++    VeloceRenderPlanHolderKind holder_kind) {
++  RenderPlanCacheKey key;
++  key.document = holder ? holder->GetDocument() : nullptr;
++  key.holder = holder;
++  key.holder_kind = holder_kind;
++  if (holder) {
++    auto dict = holder->GetDict();
++    key.holder_dict_obj_num = dict ? dict->GetObjNum() : 0;
++  }
++  return key;
++}
++
++std::shared_ptr<const VeloceRenderPlan> FindCachedRenderPlan(
++    const RenderPlanCacheKey& key) {
++  std::lock_guard<std::mutex> lock(RenderPlanCacheMutex());
++  auto& cache = RenderPlanCache();
++  auto it = cache.find(key);
++  if (it == cache.end()) {
++    return nullptr;
++  }
++  it->second.last_use = ++RenderPlanCacheClock();
++  return it->second.plan;
++}
++
++void EvictRenderPlanCacheIfNeededLocked() {
++  auto& cache = RenderPlanCache();
++  while (cache.size() > kMaxCachedRenderPlans) {
++    auto oldest = cache.end();
++    for (auto it = cache.begin(); it != cache.end(); ++it) {
++      if (oldest == cache.end() ||
++          it->second.last_use < oldest->second.last_use) {
++        oldest = it;
++      }
++    }
++    if (oldest == cache.end()) {
++      return;
++    }
++    cache.erase(oldest);
++  }
++}
++
++std::shared_ptr<const VeloceRenderPlan> StoreCachedRenderPlan(
++    const RenderPlanCacheKey& key,
++    VeloceRenderPlan plan) {
++  auto shared_plan =
++      std::make_shared<const VeloceRenderPlan>(std::move(plan));
++  std::lock_guard<std::mutex> lock(RenderPlanCacheMutex());
++  auto& cache = RenderPlanCache();
++  cache[key] = {shared_plan, ++RenderPlanCacheClock()};
++  EvictRenderPlanCacheIfNeededLocked();
++  return shared_plan;
++}
++
++std::shared_ptr<const VeloceRenderPlan> GetCachedRenderPlanForHolder(
++    const CPDF_PageObjectHolder* holder,
++    VeloceRenderPlanHolderKind holder_kind) {
++  if (!holder) {
++    return nullptr;
++  }
++  const RenderPlanCacheKey key = MakeRenderPlanCacheKey(holder, holder_kind);
++  std::shared_ptr<const VeloceRenderPlan> cached_plan =
++      FindCachedRenderPlan(key);
++  if (cached_plan) {
++    return cached_plan;
++  }
++  return StoreCachedRenderPlan(
++      key, VeloceBuildRenderPlanSkeletonForHolder(holder, holder_kind));
++}
++
+ VelocePathDisplayListHolderKind ToPathDisplayListHolderKind(
+     const VeloceRenderPlan& plan) {
+   return ToPathDisplayListHolderKind(plan.holder_kind);
+@@ -306,10 +438,11 @@ VeloceRenderPlanResult VeloceTryRenderPlanForHolder(
+   //
+   // Prefer ordered segmented replay only when every segment is preflighted as
+   // safe. All unsupported or ambiguous cases fall back before drawing.
+-  const VeloceRenderPlan plan =
+-      VeloceBuildRenderPlanSkeletonForHolder(holder, holder_kind);
++  const std::shared_ptr<const VeloceRenderPlan> plan =
++      GetCachedRenderPlanForHolder(holder, holder_kind);
+   const VeloceRenderPlanResult segmented_result =
+-      TryRenderSegmentedPlan(status, holder, holder_to_device, plan);
++      plan ? TryRenderSegmentedPlan(status, holder, holder_to_device, *plan)
++           : VeloceRenderPlanResult::kNotEligible;
+   if (segmented_result != VeloceRenderPlanResult::kNotEligible) {
+     return segmented_result;
+   }

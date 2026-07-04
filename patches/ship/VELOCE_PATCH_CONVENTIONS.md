@@ -200,6 +200,7 @@ Recent revisions:
 | r25-0053 | `0053-veloce-render-plan-interface.patch` | committed | Behavior-preserving RenderPlan holder facade on the r25 + 0051 stable line. |
 | r25-0054 | `0054-veloce-render-plan-skeleton.patch` | in progress | Behavior-preserving ordered RenderPlan segment data model and skeleton builder. |
 | r25-0055 | `0055-veloce-render-plan-segmented-text-passthrough.patch` | in progress | Consume ordered RenderPlan path/text segments with preflighted range path display-list replay. |
+| r25-0056 | `0056-veloce-render-plan-bounded-cache.patch` | in progress | Cache immutable RenderPlan segment metadata with bounded LRU; no raw page-object pointers or compiled path-list handles. |
 
 Current native HEAD before r48 is committed:
 
@@ -371,12 +372,12 @@ Workflow requirements:
 - Verification step keeps safety guards against deprecated symbols and known
   reverted approaches.
 
-For r25-0055 and later on the stable RenderPlan line, copy the previous
+For r25-0056 and later on the stable RenderPlan line, copy the previous
 stable-line workflow and update:
 
 ```text
-r25-0054 -> r25-0055
-0054 -> 0055 in apply/copy/build-info
+r25-0055 -> r25-0056
+0055 -> 0056 in apply/copy/build-info
 revision name and guards
 ```
 

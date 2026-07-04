@@ -81,6 +81,7 @@ these patches:
 | 0053 | `0053-veloce-render-plan-interface.patch` | RenderPlan holder interface. Adds `veloce_render_plan.{h,cpp}` as the single renderer-facing boundary between PDFium's baseline pipeline and Veloce acceleration. Behavior-preserving on r25: it delegates to the existing path-display-list backend and only maps result/kind enums. Future acceleration patches should compose behind this fail-closed interface instead of adding direct hooks to `CPDF_RenderStatus` or `CPDF_ProgressiveRenderer`. |
 | 0054 | `0054-veloce-render-plan-skeleton.patch` | RenderPlan ordered segment skeleton. Adds `VeloceRenderPlanSegmentKind`, `VeloceRenderPlanSegment`, `VeloceRenderPlan`, and `VeloceBuildRenderPlanSkeletonForHolder()`. The skeleton stores holder object indices only, groups consecutive path objects into `PathRun` segments, and emits non-path objects as ordered passthrough barriers. Behavior-preserving: the render facade still delegates to the r25 path-display-list backend and does not build the skeleton on the render hot path. |
 | 0055 | `0055-veloce-render-plan-segmented-text-passthrough.patch` | RenderPlan segmented text passthrough. Adds range-based path-display-list compile/replay handles, preflights every `PathRun` before drawing, and consumes ordered `PathRun` + text passthrough segments behind the `VeloceTryRenderPlanForHolder()` facade. Non-text passthrough, blend barriers, unsupported barriers, and any ambiguous replay requirement still fail closed before drawing. All-path holders continue through the existing whole-holder cached backend. |
+| 0056 | `0056-veloce-render-plan-bounded-cache.patch` | Bounded RenderPlan skeleton cache. Caches immutable ordered segment metadata only, keyed by document pointer, live holder pointer, holder dictionary object number, and holder kind. Values store holder object indices/counts, never raw page-object pointers or compiled path-display-list handles. Cache is bounded to 64 entries with simple LRU eviction; PathRun compile/replay validation remains per-render. |
 
 ## Why this directory exists
 
@@ -145,6 +146,7 @@ git apply patches/ship/0052-veloce-path-display-list-same-source-darken-widening
 git apply patches/ship/0053-veloce-render-plan-interface.patch
 git apply patches/ship/0054-veloce-render-plan-skeleton.patch
 git apply patches/ship/0055-veloce-render-plan-segmented-text-passthrough.patch
+git apply patches/ship/0056-veloce-render-plan-bounded-cache.patch
 ```
 
 > **Note:** patches 0027 and 0028 are deprecated and must NOT be applied.
@@ -205,6 +207,10 @@ precompiles and validates every path-run segment before drawing, permits only
 text passthrough in this phase, and returns `kNotEligible` before drawing for
 images, Forms, shadings, blend barriers, unsupported barriers, or ambiguous
 state. All-path holders keep the existing r25 cached whole-holder backend.
+Patch 0056 depends on patch 0055 and caches only RenderPlan skeleton metadata.
+It does not cache compiled path lists or page-object pointers; replay still
+resolves indices against the live holder and preflights every PathRun before
+drawing.
 Patch 0032 depends on patch 0031 and adds stroke-only run packing for the
 normal-blend path. Consecutive stroke-only nodes are accumulated via
 CFX_Path::Append only when they share paint and path matrix, then drawn with one
@@ -527,6 +533,11 @@ isolated group.
   Adds object-range path display-list compile/replay APIs and consumes ordered
   path/text segments in the RenderPlan facade. Fails closed before drawing for
   unsupported passthrough or replay requirements; no public API changes.
+- **0056 Veloce RenderPlan bounded cache**:
+  `core/fpdfapi/render/veloce_render_plan.cpp`.
+  Adds a bounded cache for immutable RenderPlan skeleton metadata only. The
+  cache stores no page-object pointers and no compiled display-list handles; no
+  public API changes.
 - **0017 Veloce holder-level root page path display list**:
   `core/fpdfapi/render/cpdf_renderstatus.cpp`,
   `core/fpdfapi/render/veloce_path_display_list.{h,cpp}`.
