@@ -1,0 +1,182 @@
+From 0000000000000000000000000000000000000058 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Sun, 5 Jul 2026 00:00:00 +0800
+Subject: [PATCH] Add RenderPlan facade telemetry
+
+Patch 0057 made RenderPlan path-run replay sublinear for sparse tiles, but
+the native facade still has two execution paths:
+
+* ordered segmented RenderPlan replay for mixed path/text holders;
+* the legacy whole-holder path-display-list backend for single all-path
+  holders, preserving the existing compiled-list cache.
+
+That split is intentional until segmented PathRun handles are cached. Without
+facade-level telemetry, however, device logs cannot distinguish "RenderPlan did
+not run" from "RenderPlan saw the holder but delegated to the legacy cached
+holder backend." That makes 11.pdf and error.pdf p2/p3 analysis ambiguous.
+
+This patch adds a compact Android-only `VeloceRenderPlan` log line at the
+facade boundary. It records holder kind, plan shape, segment counts, segmented
+result, fallback result, and which path produced the final result.
+
+Rendering behavior is unchanged. The telemetry does not change eligibility,
+does not draw anything new, does not allocate replay buffers, does not alter
+the RenderPlan cache, and does not remove the legacy all-path cache path.
+
+diff --git a/core/fpdfapi/render/veloce_render_plan.cpp b/core/fpdfapi/render/veloce_render_plan.cpp
+index f46a4dca..4fe4f456 100644
+--- a/core/fpdfapi/render/veloce_render_plan.cpp
++++ b/core/fpdfapi/render/veloce_render_plan.cpp
+@@ -3,6 +3,10 @@
+ 
+ #include "core/fpdfapi/render/veloce_render_plan.h"
+ 
++#if defined(__ANDROID__)
++#include <android/log.h>
++#endif
++
+ #include "core/fpdfapi/render/veloce_path_display_list.h"
+ 
+ #include <stdint.h>
+@@ -183,6 +187,119 @@ std::shared_ptr<const VeloceRenderPlan> GetCachedRenderPlanForHolder(
+       key, VeloceBuildRenderPlanSkeletonForHolder(holder, holder_kind));
+ }
+ 
++const char* RenderPlanHolderKindName(VeloceRenderPlanHolderKind holder_kind) {
++  switch (holder_kind) {
++    case VeloceRenderPlanHolderKind::kRootPage:
++      return "root_page";
++    case VeloceRenderPlanHolderKind::kForm:
++      return "form";
++  }
++  return "unknown";
++}
++
++const char* RenderPlanResultName(VeloceRenderPlanResult result) {
++  switch (result) {
++    case VeloceRenderPlanResult::kNotEligible:
++      return "not_eligible";
++    case VeloceRenderPlanResult::kRendered:
++      return "rendered";
++    case VeloceRenderPlanResult::kCancelled:
++      return "cancelled";
++  }
++  return "unknown";
++}
++
++struct RenderPlanShape {
++  size_t segments = 0;
++  size_t path_runs = 0;
++  size_t passthrough_objects = 0;
++  size_t blend_barriers = 0;
++  size_t unsupported_barriers = 0;
++};
++
++RenderPlanShape GetRenderPlanShape(const VeloceRenderPlan* plan) {
++  RenderPlanShape shape;
++  if (!plan) {
++    return shape;
++  }
++  shape.segments = plan->segments.size();
++  for (const VeloceRenderPlanSegment& segment : plan->segments) {
++    switch (segment.kind) {
++      case VeloceRenderPlanSegmentKind::kPathRun:
++        ++shape.path_runs;
++        break;
++      case VeloceRenderPlanSegmentKind::kPassthroughObject:
++        ++shape.passthrough_objects;
++        break;
++      case VeloceRenderPlanSegmentKind::kBlendBarrier:
++        ++shape.blend_barriers;
++        break;
++      case VeloceRenderPlanSegmentKind::kUnsupportedBarrier:
++        ++shape.unsupported_barriers;
++        break;
++    }
++  }
++  return shape;
++}
++
++const char* RenderPlanShapeName(const VeloceRenderPlan* plan,
++                                const RenderPlanShape& shape) {
++  if (!plan) {
++    return "no_plan";
++  }
++  if (shape.segments == 0) {
++    return "empty";
++  }
++  if (shape.blend_barriers > 0) {
++    return "blend_barrier";
++  }
++  if (shape.unsupported_barriers > 0) {
++    return "unsupported_barrier";
++  }
++  if (shape.path_runs == 1 && shape.passthrough_objects == 0 &&
++      shape.segments == 1) {
++    return "single_path_run";
++  }
++  if (shape.path_runs > 0 && shape.passthrough_objects > 0) {
++    return "path_passthrough";
++  }
++  if (shape.path_runs > 0) {
++    return "path_only";
++  }
++  return "passthrough_only";
++}
++
++void LogRenderPlanFacadeAttempt(const CPDF_PageObjectHolder* holder,
++                                VeloceRenderPlanHolderKind holder_kind,
++                                const VeloceRenderPlan* plan,
++                                const char* path,
++                                VeloceRenderPlanResult result,
++                                VeloceRenderPlanResult segmented_result,
++                                VeloceRenderPlanResult fallback_result) {
++#if defined(__ANDROID__)
++  const RenderPlanShape shape = GetRenderPlanShape(plan);
++  __android_log_print(
++      ANDROID_LOG_INFO, "VeloceRenderPlan",
++      "result=%s path=%s holderKind=%s holder=%p shape=%s "
++      "segments=%zu pathRuns=%zu passthrough=%zu blendBarriers=%zu "
++      "unsupportedBarriers=%zu segmentedResult=%s fallbackResult=%s",
++      RenderPlanResultName(result), path ? path : "unknown",
++      RenderPlanHolderKindName(holder_kind), holder,
++      RenderPlanShapeName(plan, shape), shape.segments, shape.path_runs,
++      shape.passthrough_objects, shape.blend_barriers,
++      shape.unsupported_barriers, RenderPlanResultName(segmented_result),
++      RenderPlanResultName(fallback_result));
++#else
++  (void)holder;
++  (void)holder_kind;
++  (void)plan;
++  (void)path;
++  (void)result;
++  (void)segmented_result;
++  (void)fallback_result;
++#endif
++}
++
+ VelocePathDisplayListHolderKind ToPathDisplayListHolderKind(
+     const VeloceRenderPlan& plan) {
+   return ToPathDisplayListHolderKind(plan.holder_kind);
+@@ -444,10 +561,18 @@ VeloceRenderPlanResult VeloceTryRenderPlanForHolder(
+       plan ? TryRenderSegmentedPlan(status, holder, holder_to_device, *plan)
+            : VeloceRenderPlanResult::kNotEligible;
+   if (segmented_result != VeloceRenderPlanResult::kNotEligible) {
++    LogRenderPlanFacadeAttempt(
++        holder, holder_kind, plan.get(), "segmented", segmented_result,
++        segmented_result, VeloceRenderPlanResult::kNotEligible);
+     return segmented_result;
+   }
+ 
+-  return ToRenderPlanResult(VeloceTryRenderPathDisplayListForHolder(
+-      status, holder, holder_to_device,
+-      ToPathDisplayListHolderKind(holder_kind)));
++  const VeloceRenderPlanResult fallback_result =
++      ToRenderPlanResult(VeloceTryRenderPathDisplayListForHolder(
++          status, holder, holder_to_device,
++          ToPathDisplayListHolderKind(holder_kind)));
++  LogRenderPlanFacadeAttempt(holder, holder_kind, plan.get(), "legacy_holder",
++                             fallback_result, segmented_result,
++                             fallback_result);
++  return fallback_result;
+ }

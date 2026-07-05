@@ -83,6 +83,7 @@ these patches:
 | 0055 | `0055-veloce-render-plan-segmented-text-passthrough.patch` | RenderPlan segmented text passthrough. Adds range-based path-display-list compile/replay handles, preflights every `PathRun` before drawing, and consumes ordered `PathRun` + text passthrough segments behind the `VeloceTryRenderPlanForHolder()` facade. Non-text passthrough, blend barriers, unsupported barriers, and any ambiguous replay requirement still fail closed before drawing. All-path holders continue through the existing whole-holder cached backend. |
 | 0056 | `0056-veloce-render-plan-bounded-cache.patch` | Bounded RenderPlan skeleton cache. Caches immutable ordered segment metadata only, keyed by document pointer, live holder pointer, holder dictionary object number, and holder kind. Values store holder object indices/counts, never raw page-object pointers or compiled path-display-list handles. Cache is bounded to 64 entries with simple LRU eviction; PathRun compile/replay validation remains per-render. |
 | 0057 | `0057-veloce-render-plan-holder-space-spatial-index.patch` | Holder-space spatial index for compiled PathRun replay. Builds a bounded 32x32 grid over node holder-space bboxes for large path lists, transforms each device tile clip back to holder space, queries candidate bins, sorts node ids into original display-list order, and then reuses the existing replay body and device-clip culling. Broad preview clips and unsafe matrices fall back to the full scan. The index only selects candidates inside an already ordered PathRun; it never crosses RenderPlan barriers or changes eligibility, paint, clip, blend, or draw semantics. |
+| 0058 | `0058-veloce-render-plan-facade-telemetry.patch` | RenderPlan facade telemetry. Emits a compact Android-only `VeloceRenderPlan` line showing holder kind, plan shape, segment counts, segmented result, fallback result, and whether the facade rendered via ordered segmented replay or the legacy whole-holder backend. Behavior-preserving: no eligibility, drawing, cache, allocation, or fallback semantics change. Use this to prove whether `11.pdf` and `error.pdf` p2/p3 are entering RenderPlan and where native completeness work should continue. |
 
 ## Why this directory exists
 
@@ -551,6 +552,11 @@ isolated group.
   Adds bounded holder-space grid candidate selection for large compiled path
   lists. Replay order and rendering semantics remain owned by the existing
   path-display-list replay body; no public API changes.
+- **0058 Veloce RenderPlan facade telemetry**:
+  `core/fpdfapi/render/veloce_render_plan.cpp`.
+  Adds Android-only `VeloceRenderPlan` facade logs that distinguish segmented
+  RenderPlan execution from legacy holder fallback, including plan shape and
+  holder kind. Behavior-preserving; no public API changes.
 - **0017 Veloce holder-level root page path display list**:
   `core/fpdfapi/render/cpdf_renderstatus.cpp`,
   `core/fpdfapi/render/veloce_path_display_list.{h,cpp}`.
