@@ -1,0 +1,83 @@
+From 0000000000000000000000000000000000000059 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Mon, 6 Jul 2026 00:00:00 +0800
+Subject: [PATCH] Treat whole-holder path display list as RenderPlan backend
+
+Patch 0058 exposed that all-path holders reach the RenderPlan facade but are
+reported as `path=legacy_holder` because segmented RenderPlan deliberately
+declines the single-PathRun case to preserve the existing compiled-list cache.
+
+This patch makes that ownership explicit without changing rendering behavior:
+
+* A single `PathRun` RenderPlan is recognized as a complete whole-path plan.
+* The existing cached whole-holder path-display-list backend is invoked as the
+  `whole_path_run` RenderPlan backend for that shape.
+* The old generic holder call remains only as `legacy_holder_fallback` for
+  non-single-PathRun shapes that segmented RenderPlan still cannot own.
+
+This is the first unification step: path-display-list remains the same native
+implementation and keeps its cache, but the normal all-path holder route is no
+longer conceptually outside RenderPlan. The patch does not change eligibility,
+draw order, cache keys, allocation policy, cancellation behavior, blend logic,
+or fallback correctness.
+
+diff --git a/core/fpdfapi/render/veloce_render_plan.cpp b/core/fpdfapi/render/veloce_render_plan.cpp
+index 4fe4f456..1baad1df 100644
+--- a/core/fpdfapi/render/veloce_render_plan.cpp
++++ b/core/fpdfapi/render/veloce_render_plan.cpp
+@@ -269,6 +269,29 @@ const char* RenderPlanShapeName(const VeloceRenderPlan* plan,
+   return "passthrough_only";
+ }
+ 
++bool IsSinglePathRunPlan(const VeloceRenderPlan* plan) {
++  if (!plan || plan->segments.size() != 1) {
++    return false;
++  }
++  const VeloceRenderPlanSegment& segment = plan->segments[0];
++  return segment.kind == VeloceRenderPlanSegmentKind::kPathRun &&
++         segment.object_count > 0;
++}
++
++VeloceRenderPlanResult TryRenderWholePathRunPlan(
++    CPDF_RenderStatus* status,
++    const CPDF_PageObjectHolder* holder,
++    const CFX_Matrix& holder_to_device,
++    VeloceRenderPlanHolderKind holder_kind,
++    const VeloceRenderPlan* plan) {
++  if (!IsSinglePathRunPlan(plan)) {
++    return VeloceRenderPlanResult::kNotEligible;
++  }
++  return ToRenderPlanResult(VeloceTryRenderPathDisplayListForHolder(
++      status, holder, holder_to_device,
++      ToPathDisplayListHolderKind(holder_kind)));
++}
++
+ void LogRenderPlanFacadeAttempt(const CPDF_PageObjectHolder* holder,
+                                 VeloceRenderPlanHolderKind holder_kind,
+                                 const VeloceRenderPlan* plan,
+@@ -567,12 +590,22 @@ VeloceRenderPlanResult VeloceTryRenderPlanForHolder(
+     return segmented_result;
+   }
+ 
++  const VeloceRenderPlanResult whole_path_run_result =
++      TryRenderWholePathRunPlan(status, holder, holder_to_device, holder_kind,
++                                plan.get());
++  if (IsSinglePathRunPlan(plan.get())) {
++    LogRenderPlanFacadeAttempt(holder, holder_kind, plan.get(),
++                               "whole_path_run", whole_path_run_result,
++                               segmented_result, whole_path_run_result);
++    return whole_path_run_result;
++  }
++
+   const VeloceRenderPlanResult fallback_result =
+       ToRenderPlanResult(VeloceTryRenderPathDisplayListForHolder(
+           status, holder, holder_to_device,
+           ToPathDisplayListHolderKind(holder_kind)));
+-  LogRenderPlanFacadeAttempt(holder, holder_kind, plan.get(), "legacy_holder",
+-                             fallback_result, segmented_result,
+-                             fallback_result);
++  LogRenderPlanFacadeAttempt(holder, holder_kind, plan.get(),
++                             "legacy_holder_fallback", fallback_result,
++                             segmented_result, fallback_result);
+   return fallback_result;
+ }

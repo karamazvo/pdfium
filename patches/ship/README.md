@@ -84,6 +84,7 @@ these patches:
 | 0056 | `0056-veloce-render-plan-bounded-cache.patch` | Bounded RenderPlan skeleton cache. Caches immutable ordered segment metadata only, keyed by document pointer, live holder pointer, holder dictionary object number, and holder kind. Values store holder object indices/counts, never raw page-object pointers or compiled path-display-list handles. Cache is bounded to 64 entries with simple LRU eviction; PathRun compile/replay validation remains per-render. |
 | 0057 | `0057-veloce-render-plan-holder-space-spatial-index.patch` | Holder-space spatial index for compiled PathRun replay. Builds a bounded 32x32 grid over node holder-space bboxes for large path lists, transforms each device tile clip back to holder space, queries candidate bins, sorts node ids into original display-list order, and then reuses the existing replay body and device-clip culling. Broad preview clips and unsafe matrices fall back to the full scan. The index only selects candidates inside an already ordered PathRun; it never crosses RenderPlan barriers or changes eligibility, paint, clip, blend, or draw semantics. |
 | 0058 | `0058-veloce-render-plan-facade-telemetry.patch` | RenderPlan facade telemetry. Emits a compact Android-only `VeloceRenderPlan` line showing holder kind, plan shape, segment counts, segmented result, fallback result, and whether the facade rendered via ordered segmented replay or the legacy whole-holder backend. Behavior-preserving: no eligibility, drawing, cache, allocation, or fallback semantics change. Use this to prove whether `11.pdf` and `error.pdf` p2/p3 are entering RenderPlan and where native completeness work should continue. |
+| 0059 | `0059-veloce-render-plan-whole-path-run-backend.patch` | RenderPlan whole-path-run backend. Treats a single-`PathRun` RenderPlan as a complete native plan and invokes the existing cached whole-holder path-display-list implementation as `path=whole_path_run`. The old generic holder call remains only as `path=legacy_holder_fallback` for non-single-PathRun shapes. Behavior-preserving: eligibility, draw order, cache keys, allocation, cancellation, blend handling, and fallback semantics are unchanged. |
 
 ## Why this directory exists
 
@@ -557,6 +558,12 @@ isolated group.
   Adds Android-only `VeloceRenderPlan` facade logs that distinguish segmented
   RenderPlan execution from legacy holder fallback, including plan shape and
   holder kind. Behavior-preserving; no public API changes.
+- **0059 Veloce RenderPlan whole-path-run backend**:
+  `core/fpdfapi/render/veloce_render_plan.cpp`.
+  Makes single-`PathRun` plans use the existing cached whole-holder path
+  display-list implementation as the RenderPlan `whole_path_run` backend,
+  leaving only non-single-PathRun compatibility fallback under
+  `legacy_holder_fallback`. Behavior-preserving; no public API changes.
 - **0017 Veloce holder-level root page path display list**:
   `core/fpdfapi/render/cpdf_renderstatus.cpp`,
   `core/fpdfapi/render/veloce_path_display_list.{h,cpp}`.
