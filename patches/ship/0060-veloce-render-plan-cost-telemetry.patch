@@ -1,0 +1,190 @@
+From 0000000000000000000000000000000000000060 Mon Sep 17 00:00:00 2001
+From: xPDFSDK Automation <dev@xpdfsdk.local>
+Date: Mon, 6 Jul 2026 15:57:00 +0800
+Subject: [PATCH] r25-0060: add RenderPlan cost telemetry
+
+Patch 0059 proved the RenderPlan facade can route whole path-run holders
+through the existing cached path-display-list backend, but Q16 logs still do
+not identify whether slow tiles are dominated by plan lookup/build, segmented
+preflight, whole-path-run replay, or late fallback.
+
+This patch is behavior-preserving. It adds bounded timing and cache-hit fields
+to the existing `VeloceRenderPlan` log line:
+
+* `planCache=hit|miss`
+* `planLookupMs`
+* `segmentedMs`
+* `wholePathRunMs`
+* `legacyFallbackMs`
+* `totalMs`
+
+The telemetry is intentionally sampled at RenderPlan stage boundaries only. It
+does not add any extra holder scan, per-object classification, or allocation
+beyond the existing cached plan lookup/build. The next optimization should use
+these fields together with `VelocePathDL` compile/replay/spatial-index logs to
+pick the true bottleneck.
+---
+ core/fpdfapi/render/veloce_render_plan.cpp | 63 ++++++++++++++++++----
+ 1 file changed, 54 insertions(+), 9 deletions(-)
+
+diff --git a/core/fpdfapi/render/veloce_render_plan.cpp b/core/fpdfapi/render/veloce_render_plan.cpp
+index 1baad1dfd..5d22be4de 100644
+--- a/core/fpdfapi/render/veloce_render_plan.cpp
++++ b/core/fpdfapi/render/veloce_render_plan.cpp
+@@ -11,6 +11,7 @@
+ 
+ #include <stdint.h>
+ 
++#include <chrono>
+ #include <memory>
+ #include <mutex>
+ #include <unordered_map>
+@@ -27,6 +28,12 @@ namespace {
+ constexpr size_t kNoOpenPathRun = static_cast<size_t>(-1);
+ constexpr size_t kMaxCachedRenderPlans = 64;
+ 
++int64_t NowMs() {
++  return std::chrono::duration_cast<std::chrono::milliseconds>(
++             std::chrono::steady_clock::now().time_since_epoch())
++      .count();
++}
++
+ VelocePathDisplayListHolderKind ToPathDisplayListHolderKind(
+     VeloceRenderPlanHolderKind holder_kind) {
+   switch (holder_kind) {
+@@ -173,7 +180,11 @@ std::shared_ptr<const VeloceRenderPlan> StoreCachedRenderPlan(
+ 
+ std::shared_ptr<const VeloceRenderPlan> GetCachedRenderPlanForHolder(
+     const CPDF_PageObjectHolder* holder,
+-    VeloceRenderPlanHolderKind holder_kind) {
++    VeloceRenderPlanHolderKind holder_kind,
++    bool* cache_hit) {
++  if (cache_hit) {
++    *cache_hit = false;
++  }
+   if (!holder) {
+     return nullptr;
+   }
+@@ -181,6 +192,9 @@ std::shared_ptr<const VeloceRenderPlan> GetCachedRenderPlanForHolder(
+   std::shared_ptr<const VeloceRenderPlan> cached_plan =
+       FindCachedRenderPlan(key);
+   if (cached_plan) {
++    if (cache_hit) {
++      *cache_hit = true;
++    }
+     return cached_plan;
+   }
+   return StoreCachedRenderPlan(
+@@ -209,6 +223,15 @@ const char* RenderPlanResultName(VeloceRenderPlanResult result) {
+   return "unknown";
+ }
+ 
++struct RenderPlanCostStats {
++  bool plan_cache_hit = false;
++  int64_t plan_lookup_ms = 0;
++  int64_t segmented_ms = 0;
++  int64_t whole_path_run_ms = 0;
++  int64_t legacy_fallback_ms = 0;
++  int64_t total_ms = 0;
++};
++
+ struct RenderPlanShape {
+   size_t segments = 0;
+   size_t path_runs = 0;
+@@ -298,20 +321,29 @@ void LogRenderPlanFacadeAttempt(const CPDF_PageObjectHolder* holder,
+                                 const char* path,
+                                 VeloceRenderPlanResult result,
+                                 VeloceRenderPlanResult segmented_result,
+-                                VeloceRenderPlanResult fallback_result) {
++                                VeloceRenderPlanResult fallback_result,
++                                const RenderPlanCostStats& cost) {
+ #if defined(__ANDROID__)
+   const RenderPlanShape shape = GetRenderPlanShape(plan);
+   __android_log_print(
+       ANDROID_LOG_INFO, "VeloceRenderPlan",
+       "result=%s path=%s holderKind=%s holder=%p shape=%s "
+       "segments=%zu pathRuns=%zu passthrough=%zu blendBarriers=%zu "
+-      "unsupportedBarriers=%zu segmentedResult=%s fallbackResult=%s",
++      "unsupportedBarriers=%zu segmentedResult=%s fallbackResult=%s "
++      "planCache=%s planLookupMs=%lld segmentedMs=%lld "
++      "wholePathRunMs=%lld legacyFallbackMs=%lld totalMs=%lld",
+       RenderPlanResultName(result), path ? path : "unknown",
+       RenderPlanHolderKindName(holder_kind), holder,
+       RenderPlanShapeName(plan, shape), shape.segments, shape.path_runs,
+       shape.passthrough_objects, shape.blend_barriers,
+       shape.unsupported_barriers, RenderPlanResultName(segmented_result),
+-      RenderPlanResultName(fallback_result));
++      RenderPlanResultName(fallback_result),
++      cost.plan_cache_hit ? "hit" : "miss",
++      static_cast<long long>(cost.plan_lookup_ms),
++      static_cast<long long>(cost.segmented_ms),
++      static_cast<long long>(cost.whole_path_run_ms),
++      static_cast<long long>(cost.legacy_fallback_ms),
++      static_cast<long long>(cost.total_ms));
+ #else
+   (void)holder;
+   (void)holder_kind;
+@@ -320,6 +352,7 @@ void LogRenderPlanFacadeAttempt(const CPDF_PageObjectHolder* holder,
+   (void)result;
+   (void)segmented_result;
+   (void)fallback_result;
++  (void)cost;
+ #endif
+ }
+ 
+@@ -578,34 +611,48 @@ VeloceRenderPlanResult VeloceTryRenderPlanForHolder(
+   //
+   // Prefer ordered segmented replay only when every segment is preflighted as
+   // safe. All unsupported or ambiguous cases fall back before drawing.
++  RenderPlanCostStats cost;
++  const int64_t total_start_ms = NowMs();
++  const int64_t plan_lookup_start_ms = NowMs();
+   const std::shared_ptr<const VeloceRenderPlan> plan =
+-      GetCachedRenderPlanForHolder(holder, holder_kind);
++      GetCachedRenderPlanForHolder(holder, holder_kind, &cost.plan_cache_hit);
++  cost.plan_lookup_ms = NowMs() - plan_lookup_start_ms;
++
++  const int64_t segmented_start_ms = NowMs();
+   const VeloceRenderPlanResult segmented_result =
+       plan ? TryRenderSegmentedPlan(status, holder, holder_to_device, *plan)
+            : VeloceRenderPlanResult::kNotEligible;
++  cost.segmented_ms = NowMs() - segmented_start_ms;
+   if (segmented_result != VeloceRenderPlanResult::kNotEligible) {
++    cost.total_ms = NowMs() - total_start_ms;
+     LogRenderPlanFacadeAttempt(
+         holder, holder_kind, plan.get(), "segmented", segmented_result,
+-        segmented_result, VeloceRenderPlanResult::kNotEligible);
++        segmented_result, VeloceRenderPlanResult::kNotEligible, cost);
+     return segmented_result;
+   }
+ 
++  const int64_t whole_path_run_start_ms = NowMs();
+   const VeloceRenderPlanResult whole_path_run_result =
+       TryRenderWholePathRunPlan(status, holder, holder_to_device, holder_kind,
+                                 plan.get());
++  cost.whole_path_run_ms = NowMs() - whole_path_run_start_ms;
+   if (IsSinglePathRunPlan(plan.get())) {
++    cost.total_ms = NowMs() - total_start_ms;
+     LogRenderPlanFacadeAttempt(holder, holder_kind, plan.get(),
+                                "whole_path_run", whole_path_run_result,
+-                               segmented_result, whole_path_run_result);
++                               segmented_result, whole_path_run_result, cost);
+     return whole_path_run_result;
+   }
+ 
++  const int64_t legacy_fallback_start_ms = NowMs();
+   const VeloceRenderPlanResult fallback_result =
+       ToRenderPlanResult(VeloceTryRenderPathDisplayListForHolder(
+           status, holder, holder_to_device,
+           ToPathDisplayListHolderKind(holder_kind)));
++  cost.legacy_fallback_ms = NowMs() - legacy_fallback_start_ms;
++  cost.total_ms = NowMs() - total_start_ms;
+   LogRenderPlanFacadeAttempt(holder, holder_kind, plan.get(),
+                              "legacy_holder_fallback", fallback_result,
+-                             segmented_result, fallback_result);
++                             segmented_result, fallback_result, cost);
+   return fallback_result;
+ }
+-- 
+2.39.5
+
