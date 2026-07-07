@@ -1,0 +1,522 @@
+From 0000000000000000000000000000000000000061 Mon Sep 17 00:00:00 2001
+From: xPDFSDK Automation <dev@xpdfsdk.local>
+Date: Tue, 7 Jul 2026 11:18:00 +0800
+Subject: [PATCH] r25-0061: cache RenderPlan compiled PathRuns
+
+Patch 0060 showed Q16-like pages are no longer dominated by RenderPlan lookup:
+after the first render `planCache=hit` and `planLookupMs=0`, while each tile
+still spends seconds inside `segmentedMs`. The root cause is that segmented
+RenderPlan replay still recompiles every ordered PathRun for every tile.
+
+This patch adds a bounded native cache for compiled PathRun segments:
+
+* Cache key is document + holder + holder dictionary object number + holder
+  kind + segment object range + path smoothing option.
+* Values are immutable `VeloceCompiledPathDisplayList` handles, never raw
+  `CPDF_PageObject*`.
+* Cache hits still run the existing replay validation before any drawing, so
+  device-capability differences remain fail-closed.
+* Cache is bounded by entry count and compiled node count.
+* Ordered RenderPlan segment barriers are unchanged; this only replaces
+  repeated PathRun compile/preflight work with cached compiled segment reuse.
+
+The existing `VeloceRenderPlan` log gains `compiledPathRunCacheHits`,
+`compiledPathRunCacheMisses`, and `compiledPathRunNodes` so follow-up logs can
+prove whether tiles are replaying cached segments rather than rebuilding them.
+---
+ core/fpdfapi/render/veloce_path_display_list.cpp |   5 +
+ core/fpdfapi/render/veloce_path_display_list.h   |   3 +
+ core/fpdfapi/render/veloce_render_plan.cpp       | 231 +++++++++++++++++++----
+ 3 files changed, 203 insertions(+), 36 deletions(-)
+
+diff --git a/core/fpdfapi/render/veloce_path_display_list.h b/core/fpdfapi/render/veloce_path_display_list.h
+index 18927e43b..f7d601afc 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.h
++++ b/core/fpdfapi/render/veloce_path_display_list.h
+@@ -55,6 +55,9 @@ VeloceCompilePathDisplayListForObjectRange(
+ 
+ void VeloceDestroyCompiledPathDisplayList(VeloceCompiledPathDisplayList* list);
+ 
++size_t VeloceCompiledPathDisplayListNodeCount(
++    const VeloceCompiledPathDisplayList* list);
++
+ // Validates replay-time requirements that can be checked before drawing.
+ VelocePathDisplayListResult VeloceValidateCompiledPathDisplayListReplay(
+     CPDF_RenderStatus* status,
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index b496f0cdd..e08d94c47 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -1312,6 +1312,11 @@ void VeloceDestroyCompiledPathDisplayList(VeloceCompiledPathDisplayList* list) {
+   delete list;
+ }
+ 
++size_t VeloceCompiledPathDisplayListNodeCount(
++    const VeloceCompiledPathDisplayList* list) {
++  return list ? list->list.nodes.size() : 0;
++}
++
+ VelocePathDisplayListResult VeloceValidateCompiledPathDisplayListReplay(
+     CPDF_RenderStatus* status,
+     const VeloceCompiledPathDisplayList* list,
+diff --git a/core/fpdfapi/render/veloce_render_plan.cpp b/core/fpdfapi/render/veloce_render_plan.cpp
+index 5d22be4de..14bcac73f 100644
+--- a/core/fpdfapi/render/veloce_render_plan.cpp
++++ b/core/fpdfapi/render/veloce_render_plan.cpp
+@@ -11,6 +11,7 @@
+ 
+ #include <stdint.h>
+ 
++#include <algorithm>
+ #include <chrono>
+ #include <memory>
+ #include <mutex>
+@@ -27,6 +28,9 @@ namespace {
+ 
+ constexpr size_t kNoOpenPathRun = static_cast<size_t>(-1);
+ constexpr size_t kMaxCachedRenderPlans = 64;
++constexpr size_t kMaxCachedCompiledPathRuns = 160;
++constexpr size_t kMaxCachedCompiledPathRunNodes = 4000000;
++constexpr uint32_t kVeloceRenderPlanPathDisplayListFeature = 0x00000001u;
+ 
+ int64_t NowMs() {
+   return std::chrono::duration_cast<std::chrono::milliseconds>(
+@@ -102,6 +106,50 @@ struct RenderPlanCacheEntry {
+   uint64_t last_use = 0;
+ };
+ 
++struct CompiledPathRunCacheKey {
++  const CPDF_Document* document = nullptr;
++  const CPDF_PageObjectHolder* holder = nullptr;
++  uint32_t holder_dict_obj_num = 0;
++  VeloceRenderPlanHolderKind holder_kind = VeloceRenderPlanHolderKind::kForm;
++  size_t first_object_index = 0;
++  size_t object_count = 0;
++  bool aliased_path = false;
++
++  bool operator==(const CompiledPathRunCacheKey& other) const {
++    return document == other.document && holder == other.holder &&
++           holder_dict_obj_num == other.holder_dict_obj_num &&
++           holder_kind == other.holder_kind &&
++           first_object_index == other.first_object_index &&
++           object_count == other.object_count &&
++           aliased_path == other.aliased_path;
++  }
++};
++
++struct CompiledPathRunCacheKeyHash {
++  size_t operator()(const CompiledPathRunCacheKey& key) const {
++    size_t hash = std::hash<const CPDF_Document*>()(key.document);
++    hash ^= std::hash<const CPDF_PageObjectHolder*>()(key.holder) +
++            0x9e3779b97f4a7c15ull + (hash << 6) + (hash >> 2);
++    hash ^= std::hash<uint32_t>()(key.holder_dict_obj_num) +
++            0x9e3779b97f4a7c15ull + (hash << 6) + (hash >> 2);
++    hash ^= std::hash<int>()(static_cast<int>(key.holder_kind)) +
++            0x9e3779b97f4a7c15ull + (hash << 6) + (hash >> 2);
++    hash ^= std::hash<size_t>()(key.first_object_index) +
++            0x9e3779b97f4a7c15ull + (hash << 6) + (hash >> 2);
++    hash ^= std::hash<size_t>()(key.object_count) + 0x9e3779b97f4a7c15ull +
++            (hash << 6) + (hash >> 2);
++    hash ^= std::hash<bool>()(key.aliased_path) + 0x9e3779b97f4a7c15ull +
++            (hash << 6) + (hash >> 2);
++    return hash;
++  }
++};
++
++struct CompiledPathRunCacheEntry {
++  std::shared_ptr<const VeloceCompiledPathDisplayList> list;
++  size_t node_count = 0;
++  uint64_t last_use = 0;
++};
++
+ std::mutex& RenderPlanCacheMutex() {
+   static std::mutex* mutex = new std::mutex();
+   return *mutex;
+@@ -123,6 +171,32 @@ uint64_t& RenderPlanCacheClock() {
+   return *clock;
+ }
+ 
++std::mutex& CompiledPathRunCacheMutex() {
++  static std::mutex* mutex = new std::mutex();
++  return *mutex;
++}
++
++std::unordered_map<CompiledPathRunCacheKey,
++                   CompiledPathRunCacheEntry,
++                   CompiledPathRunCacheKeyHash>&
++CompiledPathRunCache() {
++  static auto* cache =
++      new std::unordered_map<CompiledPathRunCacheKey,
++                             CompiledPathRunCacheEntry,
++                             CompiledPathRunCacheKeyHash>();
++  return *cache;
++}
++
++uint64_t& CompiledPathRunCacheClock() {
++  static uint64_t* clock = new uint64_t(0);
++  return *clock;
++}
++
++size_t& CompiledPathRunCacheNodeCount() {
++  static size_t* node_count = new size_t(0);
++  return *node_count;
++}
++
+ RenderPlanCacheKey MakeRenderPlanCacheKey(
+     const CPDF_PageObjectHolder* holder,
+     VeloceRenderPlanHolderKind holder_kind) {
+@@ -137,6 +211,26 @@ RenderPlanCacheKey MakeRenderPlanCacheKey(
+   return key;
+ }
+ 
++CompiledPathRunCacheKey MakeCompiledPathRunCacheKey(
++    CPDF_RenderStatus* status,
++    const CPDF_PageObjectHolder* holder,
++    VeloceRenderPlanHolderKind holder_kind,
++    const VeloceRenderPlanSegment& segment) {
++  CompiledPathRunCacheKey key;
++  key.document = holder ? holder->GetDocument() : nullptr;
++  key.holder = holder;
++  key.holder_kind = holder_kind;
++  if (holder) {
++    auto dict = holder->GetDict();
++    key.holder_dict_obj_num = dict ? dict->GetObjNum() : 0;
++  }
++  key.first_object_index = segment.first_object_index;
++  key.object_count = segment.object_count;
++  key.aliased_path =
++      status && status->GetRenderOptions().GetOptions().bNoPathSmooth;
++  return key;
++}
++
+ std::shared_ptr<const VeloceRenderPlan> FindCachedRenderPlan(
+     const RenderPlanCacheKey& key) {
+   std::lock_guard<std::mutex> lock(RenderPlanCacheMutex());
+@@ -149,6 +243,22 @@ std::shared_ptr<const VeloceRenderPlan> FindCachedRenderPlan(
+   return it->second.plan;
+ }
+ 
++std::shared_ptr<const VeloceCompiledPathDisplayList> FindCachedCompiledPathRun(
++    const CompiledPathRunCacheKey& key,
++    size_t* node_count) {
++  std::lock_guard<std::mutex> lock(CompiledPathRunCacheMutex());
++  auto& cache = CompiledPathRunCache();
++  auto it = cache.find(key);
++  if (it == cache.end()) {
++    return nullptr;
++  }
++  it->second.last_use = ++CompiledPathRunCacheClock();
++  if (node_count) {
++    *node_count = it->second.node_count;
++  }
++  return it->second.list;
++}
++
+ void EvictRenderPlanCacheIfNeededLocked() {
+   auto& cache = RenderPlanCache();
+   while (cache.size() > kMaxCachedRenderPlans) {
+@@ -166,6 +276,26 @@ void EvictRenderPlanCacheIfNeededLocked() {
+   }
+ }
+ 
++void EvictCompiledPathRunCacheIfNeededLocked() {
++  auto& cache = CompiledPathRunCache();
++  size_t& total_nodes = CompiledPathRunCacheNodeCount();
++  while (cache.size() > kMaxCachedCompiledPathRuns ||
++         total_nodes > kMaxCachedCompiledPathRunNodes) {
++    auto oldest = cache.end();
++    for (auto it = cache.begin(); it != cache.end(); ++it) {
++      if (oldest == cache.end() ||
++          it->second.last_use < oldest->second.last_use) {
++        oldest = it;
++      }
++    }
++    if (oldest == cache.end()) {
++      return;
++    }
++    total_nodes -= std::min(total_nodes, oldest->second.node_count);
++    cache.erase(oldest);
++  }
++}
++
+ std::shared_ptr<const VeloceRenderPlan> StoreCachedRenderPlan(
+     const RenderPlanCacheKey& key,
+     VeloceRenderPlan plan) {
+@@ -178,6 +308,49 @@ std::shared_ptr<const VeloceRenderPlan> StoreCachedRenderPlan(
+   return shared_plan;
+ }
+ 
++std::shared_ptr<const VeloceCompiledPathDisplayList> MakeSharedCompiledPathRun(
++    VeloceCompiledPathDisplayList* list) {
++  return std::shared_ptr<const VeloceCompiledPathDisplayList>(
++      list, [](const VeloceCompiledPathDisplayList* owned_list) {
++        VeloceDestroyCompiledPathDisplayList(
++            const_cast<VeloceCompiledPathDisplayList*>(owned_list));
++      });
++}
++
++std::shared_ptr<const VeloceCompiledPathDisplayList> StoreCachedCompiledPathRun(
++    const CompiledPathRunCacheKey& key,
++    VeloceCompiledPathDisplayList* list,
++    size_t node_count,
++    bool* stored) {
++  if (stored) {
++    *stored = false;
++  }
++  std::shared_ptr<const VeloceCompiledPathDisplayList> shared =
++      MakeSharedCompiledPathRun(list);
++  if (node_count > kMaxCachedCompiledPathRunNodes) {
++    return shared;
++  }
++
++  std::lock_guard<std::mutex> lock(CompiledPathRunCacheMutex());
++  auto& cache = CompiledPathRunCache();
++  auto existing = cache.find(key);
++  if (existing != cache.end()) {
++    existing->second.last_use = ++CompiledPathRunCacheClock();
++    if (stored) {
++      *stored = true;
++    }
++    return existing->second.list;
++  }
++
++  cache[key] = {shared, node_count, ++CompiledPathRunCacheClock()};
++  CompiledPathRunCacheNodeCount() += node_count;
++  EvictCompiledPathRunCacheIfNeededLocked();
++  if (stored) {
++    *stored = cache.find(key) != cache.end();
++  }
++  return shared;
++}
++
+ std::shared_ptr<const VeloceRenderPlan> GetCachedRenderPlanForHolder(
+     const CPDF_PageObjectHolder* holder,
+     VeloceRenderPlanHolderKind holder_kind,
+@@ -201,6 +374,86 @@ std::shared_ptr<const VeloceRenderPlan> GetCachedRenderPlanForHolder(
+       key, VeloceBuildRenderPlanSkeletonForHolder(holder, holder_kind));
+ }
+ 
++VelocePathDisplayListCompileResult GetCompiledPathRunForSegment(
++    CPDF_RenderStatus* status,
++    const CPDF_PageObjectHolder* holder,
++    VeloceRenderPlanHolderKind holder_kind,
++    VelocePathDisplayListHolderKind path_holder_kind,
++    const VeloceRenderPlanSegment& segment,
++    std::shared_ptr<const VeloceCompiledPathDisplayList>* out_list,
++    bool* cache_hit,
++    size_t* node_count) {
++  if (out_list) {
++    out_list->reset();
++  }
++  if (cache_hit) {
++    *cache_hit = false;
++  }
++  if (node_count) {
++    *node_count = 0;
++  }
++  if (!status || !holder || !out_list || segment.object_count == 0) {
++    return VelocePathDisplayListCompileResult::kNotEligible;
++  }
++  if ((status->GetRenderFeatureFlags() &
++       kVeloceRenderPlanPathDisplayListFeature) == 0) {
++    return VelocePathDisplayListCompileResult::kNotEligible;
++  }
++
++  const CompiledPathRunCacheKey key =
++      MakeCompiledPathRunCacheKey(status, holder, holder_kind, segment);
++  std::shared_ptr<const VeloceCompiledPathDisplayList> cached_list =
++      FindCachedCompiledPathRun(key, node_count);
++  if (cached_list) {
++    const VelocePathDisplayListResult validate_result =
++        VeloceValidateCompiledPathDisplayListReplay(status, cached_list.get(),
++                                                    path_holder_kind);
++    if (validate_result == VelocePathDisplayListResult::kCancelled) {
++      return VelocePathDisplayListCompileResult::kCancelled;
++    }
++    if (validate_result != VelocePathDisplayListResult::kRendered) {
++      return VelocePathDisplayListCompileResult::kNotEligible;
++    }
++    if (cache_hit) {
++      *cache_hit = true;
++    }
++    *out_list = std::move(cached_list);
++    return VelocePathDisplayListCompileResult::kCompiled;
++  }
++
++  VeloceCompiledPathDisplayList* compiled_list = nullptr;
++  const VelocePathDisplayListCompileResult compile_result =
++      VeloceCompilePathDisplayListForObjectRange(
++          status, holder, segment.first_object_index, segment.object_count,
++          &compiled_list);
++  if (compile_result != VelocePathDisplayListCompileResult::kCompiled) {
++    VeloceDestroyCompiledPathDisplayList(compiled_list);
++    return compile_result;
++  }
++
++  const VelocePathDisplayListResult validate_result =
++      VeloceValidateCompiledPathDisplayListReplay(status, compiled_list,
++                                                  path_holder_kind);
++  if (validate_result == VelocePathDisplayListResult::kCancelled) {
++    VeloceDestroyCompiledPathDisplayList(compiled_list);
++    return VelocePathDisplayListCompileResult::kCancelled;
++  }
++  if (validate_result != VelocePathDisplayListResult::kRendered) {
++    VeloceDestroyCompiledPathDisplayList(compiled_list);
++    return VelocePathDisplayListCompileResult::kNotEligible;
++  }
++
++  const size_t compiled_node_count =
++      VeloceCompiledPathDisplayListNodeCount(compiled_list);
++  bool stored = false;
++  *out_list = StoreCachedCompiledPathRun(key, compiled_list,
++                                         compiled_node_count, &stored);
++  if (node_count) {
++    *node_count = compiled_node_count;
++  }
++  return VelocePathDisplayListCompileResult::kCompiled;
++}
++
+ const char* RenderPlanHolderKindName(VeloceRenderPlanHolderKind holder_kind) {
+   switch (holder_kind) {
+     case VeloceRenderPlanHolderKind::kRootPage:
+@@ -230,6 +483,9 @@ struct RenderPlanCostStats {
+   int64_t whole_path_run_ms = 0;
+   int64_t legacy_fallback_ms = 0;
+   int64_t total_ms = 0;
++  size_t compiled_path_run_cache_hits = 0;
++  size_t compiled_path_run_cache_misses = 0;
++  size_t compiled_path_run_nodes = 0;
+ };
+ 
+ struct RenderPlanShape {
+@@ -331,7 +587,9 @@ void LogRenderPlanFacadeAttempt(const CPDF_PageObjectHolder* holder,
+       "segments=%zu pathRuns=%zu passthrough=%zu blendBarriers=%zu "
+       "unsupportedBarriers=%zu segmentedResult=%s fallbackResult=%s "
+       "planCache=%s planLookupMs=%lld segmentedMs=%lld "
+-      "wholePathRunMs=%lld legacyFallbackMs=%lld totalMs=%lld",
++      "wholePathRunMs=%lld legacyFallbackMs=%lld totalMs=%lld "
++      "compiledPathRunCacheHits=%zu compiledPathRunCacheMisses=%zu "
++      "compiledPathRunNodes=%zu",
+       RenderPlanResultName(result), path ? path : "unknown",
+       RenderPlanHolderKindName(holder_kind), holder,
+       RenderPlanShapeName(plan, shape), shape.segments, shape.path_runs,
+@@ -343,7 +601,10 @@ void LogRenderPlanFacadeAttempt(const CPDF_PageObjectHolder* holder,
+       static_cast<long long>(cost.segmented_ms),
+       static_cast<long long>(cost.whole_path_run_ms),
+       static_cast<long long>(cost.legacy_fallback_ms),
+-      static_cast<long long>(cost.total_ms));
++      static_cast<long long>(cost.total_ms),
++      cost.compiled_path_run_cache_hits,
++      cost.compiled_path_run_cache_misses,
++      cost.compiled_path_run_nodes);
+ #else
+   (void)holder;
+   (void)holder_kind;
+@@ -409,32 +670,29 @@ bool IsSafeTextPassthrough(CPDF_RenderStatus* status,
+   return object->IsText();
+ }
+ 
+-class ScopedCompiledPathLists {
++class CompiledPathRunSlots {
+  public:
+-  explicit ScopedCompiledPathLists(size_t size) : lists_(size, nullptr) {}
+-  ~ScopedCompiledPathLists() {
+-    for (VeloceCompiledPathDisplayList* list : lists_) {
+-      VeloceDestroyCompiledPathDisplayList(list);
+-    }
+-  }
++  explicit CompiledPathRunSlots(size_t size) : lists_(size) {}
+ 
+-  VeloceCompiledPathDisplayList*& operator[](size_t index) {
++  std::shared_ptr<const VeloceCompiledPathDisplayList>& operator[](
++      size_t index) {
+     return lists_[index];
+   }
+ 
+-  VeloceCompiledPathDisplayList* get(size_t index) const {
+-    return lists_[index];
++  const VeloceCompiledPathDisplayList* get(size_t index) const {
++    return lists_[index].get();
+   }
+ 
+  private:
+-  std::vector<VeloceCompiledPathDisplayList*> lists_;
++  std::vector<std::shared_ptr<const VeloceCompiledPathDisplayList>> lists_;
+ };
+ 
+ VeloceRenderPlanResult TryRenderSegmentedPlan(
+     CPDF_RenderStatus* status,
+     const CPDF_PageObjectHolder* holder,
+     const CFX_Matrix& holder_to_device,
+-    const VeloceRenderPlan& plan) {
++    const VeloceRenderPlan& plan,
++    RenderPlanCostStats* cost) {
+   if (!status || !holder || plan.empty()) {
+     return VeloceRenderPlanResult::kNotEligible;
+   }
+@@ -448,7 +706,7 @@ VeloceRenderPlanResult TryRenderSegmentedPlan(
+           CFX_FloatRect(status->GetRenderDevice()->GetClipBox()));
+   const VelocePathDisplayListHolderKind path_holder_kind =
+       ToPathDisplayListHolderKind(plan);
+-  ScopedCompiledPathLists compiled_lists(plan.segments.size());
++  CompiledPathRunSlots compiled_lists(plan.segments.size());
+   size_t compiled_path_runs = 0;
+ 
+   for (size_t segment_index = 0; segment_index < plan.segments.size();
+@@ -456,31 +714,26 @@ VeloceRenderPlanResult TryRenderSegmentedPlan(
+     const VeloceRenderPlanSegment& segment = plan.segments[segment_index];
+     switch (segment.kind) {
+       case VeloceRenderPlanSegmentKind::kPathRun: {
+-        VeloceCompiledPathDisplayList* compiled_list = nullptr;
++        bool cache_hit = false;
++        size_t node_count = 0;
+         const VelocePathDisplayListCompileResult compile_result =
+-            VeloceCompilePathDisplayListForObjectRange(
+-                status, holder, segment.first_object_index,
+-                segment.object_count, &compiled_list);
++            GetCompiledPathRunForSegment(
++                status, holder, plan.holder_kind, path_holder_kind, segment,
++                &compiled_lists[segment_index], &cache_hit, &node_count);
+         if (compile_result == VelocePathDisplayListCompileResult::kCancelled) {
+-          VeloceDestroyCompiledPathDisplayList(compiled_list);
+           return VeloceRenderPlanResult::kCancelled;
+         }
+         if (compile_result != VelocePathDisplayListCompileResult::kCompiled) {
+-          VeloceDestroyCompiledPathDisplayList(compiled_list);
+           return VeloceRenderPlanResult::kNotEligible;
+         }
+-        const VelocePathDisplayListResult validate_result =
+-            VeloceValidateCompiledPathDisplayListReplay(
+-                status, compiled_list, path_holder_kind);
+-        if (validate_result == VelocePathDisplayListResult::kCancelled) {
+-          VeloceDestroyCompiledPathDisplayList(compiled_list);
+-          return VeloceRenderPlanResult::kCancelled;
+-        }
+-        if (validate_result != VelocePathDisplayListResult::kRendered) {
+-          VeloceDestroyCompiledPathDisplayList(compiled_list);
+-          return VeloceRenderPlanResult::kNotEligible;
++        if (cost) {
++          if (cache_hit) {
++            ++cost->compiled_path_run_cache_hits;
++          } else {
++            ++cost->compiled_path_run_cache_misses;
++          }
++          cost->compiled_path_run_nodes += node_count;
+         }
+-        compiled_lists[segment_index] = compiled_list;
+         ++compiled_path_runs;
+         break;
+       }
+@@ -620,7 +873,8 @@ VeloceRenderPlanResult VeloceTryRenderPlanForHolder(
+ 
+   const int64_t segmented_start_ms = NowMs();
+   const VeloceRenderPlanResult segmented_result =
+-      plan ? TryRenderSegmentedPlan(status, holder, holder_to_device, *plan)
++      plan ? TryRenderSegmentedPlan(status, holder, holder_to_device, *plan,
++                                    &cost)
+            : VeloceRenderPlanResult::kNotEligible;
+   cost.segmented_ms = NowMs() - segmented_start_ms;
+   if (segmented_result != VeloceRenderPlanResult::kNotEligible) {
+-- 
+2.39.5
+
