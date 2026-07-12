@@ -1,0 +1,201 @@
+diff --git a/core/fpdfapi/render/veloce_render_plan.h b/core/fpdfapi/render/veloce_render_plan.h
+--- a/core/fpdfapi/render/veloce_render_plan.h
++++ b/core/fpdfapi/render/veloce_render_plan.h
+@@ -45,6 +45,8 @@
+   // cache-safe metadata; do not store raw CPDF_PageObject* in the plan.
+   size_t first_object_index = 0;
+   size_t object_count = 0;
++  bool has_holder_space_bbox = false;
++  CFX_FloatRect holder_space_bbox;
+ };
+ 
+ struct VeloceRenderPlan {
+diff --git a/core/fpdfapi/render/veloce_render_plan.cpp b/core/fpdfapi/render/veloce_render_plan.cpp
+--- a/core/fpdfapi/render/veloce_render_plan.cpp
++++ b/core/fpdfapi/render/veloce_render_plan.cpp
+@@ -29,8 +29,9 @@
+ 
+ constexpr size_t kNoOpenPathRun = static_cast<size_t>(-1);
+ constexpr size_t kMaxCachedRenderPlans = 64;
+-constexpr size_t kMaxCachedCompiledPathRuns = 160;
++constexpr size_t kMaxCachedCompiledPathRuns = 512;
+ constexpr size_t kMaxCachedCompiledPathRunNodes = 4000000;
++constexpr size_t kMaxRenderPlanPathRunObjects = 8192;
+ constexpr uint32_t kVeloceRenderPlanPathDisplayListFeature = 0x00000001u;
+ 
+ int64_t NowMs() {
+@@ -65,11 +66,19 @@
+ void AppendSegment(VeloceRenderPlan* plan,
+                    VeloceRenderPlanSegmentKind kind,
+                    size_t first_object_index,
+-                   size_t object_count) {
++                   size_t object_count,
++                   bool has_holder_space_bbox,
++                   const CFX_FloatRect& holder_space_bbox) {
+   if (!plan || object_count == 0) {
+     return;
+   }
+-  plan->segments.push_back({kind, first_object_index, object_count});
++  VeloceRenderPlanSegment segment;
++  segment.kind = kind;
++  segment.first_object_index = first_object_index;
++  segment.object_count = object_count;
++  segment.has_holder_space_bbox = has_holder_space_bbox;
++  segment.holder_space_bbox = holder_space_bbox;
++  plan->segments.push_back(segment);
+ }
+ 
+ bool IsPathRunCandidate(const CPDF_PageObject* object) {
+@@ -486,6 +495,8 @@
+   int64_t legacy_fallback_ms = 0;
+   int64_t total_ms = 0;
+   size_t live_passthrough_objects = 0;
++  size_t clip_skipped_path_runs = 0;
++  size_t clip_skipped_path_objects = 0;
+   size_t compiled_path_run_cache_hits = 0;
+   size_t compiled_path_run_cache_misses = 0;
+   size_t compiled_path_run_nodes = 0;
+@@ -592,6 +603,7 @@
+       "planCache=%s planLookupMs=%lld livePassthroughObjects=%zu "
+       "livePassthroughTableMs=%lld segmentedMs=%lld "
+       "wholePathRunMs=%lld legacyFallbackMs=%lld totalMs=%lld "
++      "clipSkippedPathRuns=%zu clipSkippedPathObjects=%zu "
+       "compiledPathRunCacheHits=%zu compiledPathRunCacheMisses=%zu "
+       "compiledPathRunNodes=%zu",
+       RenderPlanResultName(result), path ? path : "unknown",
+@@ -608,6 +620,8 @@
+       static_cast<long long>(cost.whole_path_run_ms),
+       static_cast<long long>(cost.legacy_fallback_ms),
+       static_cast<long long>(cost.total_ms),
++      cost.clip_skipped_path_runs,
++      cost.clip_skipped_path_objects,
+       cost.compiled_path_run_cache_hits,
+       cost.compiled_path_run_cache_misses,
+       cost.compiled_path_run_nodes);
+@@ -703,6 +717,20 @@
+          object_rect.top < holder_clip.bottom;
+ }
+ 
++bool RectOutsideClip(const CFX_FloatRect& rect,
++                     const CFX_FloatRect& holder_clip) {
++  return rect.left > holder_clip.right || rect.right < holder_clip.left ||
++         rect.bottom > holder_clip.top || rect.top < holder_clip.bottom;
++}
++
++bool SegmentOutsideClip(const VeloceRenderPlanSegment& segment,
++                        const CFX_FloatRect& holder_clip) {
++  return segment.has_holder_space_bbox &&
++         !segment.holder_space_bbox.IsEmpty() &&
++         !holder_clip.IsEmpty() &&
++         RectOutsideClip(segment.holder_space_bbox, holder_clip);
++}
++
+ bool ObjectWouldBeSkippedByRenderObjectList(CPDF_RenderStatus* status,
+                                             const CPDF_PageObject* object,
+                                             const CFX_FloatRect& holder_clip) {
+@@ -758,9 +786,10 @@
+     return VeloceRenderPlanResult::kNotEligible;
+   }
+ 
+-  const CFX_FloatRect holder_clip =
++  CFX_FloatRect holder_clip =
+       holder_to_device.GetInverse().TransformRect(
+           CFX_FloatRect(status->GetRenderDevice()->GetClipBox()));
++  holder_clip.Normalize();
+   const VelocePathDisplayListHolderKind path_holder_kind =
+       ToPathDisplayListHolderKind(plan);
+   LivePassthroughObjectTable passthrough_objects;
+@@ -778,12 +807,21 @@
+   }
+   CompiledPathRunSlots compiled_lists(plan.segments.size());
+   size_t compiled_path_runs = 0;
++  size_t clip_skipped_path_runs = 0;
+ 
+   for (size_t segment_index = 0; segment_index < plan.segments.size();
+        ++segment_index) {
+     const VeloceRenderPlanSegment& segment = plan.segments[segment_index];
+     switch (segment.kind) {
+       case VeloceRenderPlanSegmentKind::kPathRun: {
++        if (SegmentOutsideClip(segment, holder_clip)) {
++          ++clip_skipped_path_runs;
++          if (cost) {
++            ++cost->clip_skipped_path_runs;
++            cost->clip_skipped_path_objects += segment.object_count;
++          }
++          break;
++        }
+         bool cache_hit = false;
+         size_t node_count = 0;
+         const VelocePathDisplayListCompileResult compile_result =
+@@ -827,7 +865,7 @@
+     }
+   }
+ 
+-  if (compiled_path_runs == 0) {
++  if (compiled_path_runs == 0 && clip_skipped_path_runs == 0) {
+     return VeloceRenderPlanResult::kNotEligible;
+   }
+ 
+@@ -836,6 +874,9 @@
+     const VeloceRenderPlanSegment& segment = plan.segments[segment_index];
+     switch (segment.kind) {
+       case VeloceRenderPlanSegmentKind::kPathRun: {
++        if (SegmentOutsideClip(segment, holder_clip)) {
++          break;
++        }
+         const VelocePathDisplayListResult replay_result =
+             VeloceReplayCompiledPathDisplayList(
+                 status, compiled_lists.get(segment_index), holder_to_device,
+@@ -885,15 +926,21 @@
+   size_t object_index = 0;
+   size_t path_run_start = kNoOpenPathRun;
+   size_t path_run_count = 0;
++  bool path_run_has_bbox = false;
++  CFX_FloatRect path_run_bbox;
+ 
+-  auto flush_path_run = [&plan, &path_run_start, &path_run_count]() {
++  auto flush_path_run = [&plan, &path_run_start, &path_run_count,
++                         &path_run_has_bbox, &path_run_bbox]() {
+     if (path_run_start == kNoOpenPathRun) {
+       return;
+     }
+     AppendSegment(&plan, VeloceRenderPlanSegmentKind::kPathRun,
+-                  path_run_start, path_run_count);
++                  path_run_start, path_run_count, path_run_has_bbox,
++                  path_run_bbox);
+     path_run_start = kNoOpenPathRun;
+     path_run_count = 0;
++    path_run_has_bbox = false;
++    path_run_bbox = CFX_FloatRect();
+   };
+ 
+   for (const auto& object : *holder) {
+@@ -901,11 +948,27 @@
+       if (path_run_start == kNoOpenPathRun) {
+         path_run_start = object_index;
+       }
++      CFX_FloatRect object_bbox = object->GetRect();
++      object_bbox.Normalize();
++      if (!object_bbox.IsEmpty()) {
++        if (path_run_has_bbox) {
++          path_run_bbox.Union(object_bbox);
++        } else {
++          path_run_bbox = object_bbox;
++          path_run_has_bbox = true;
++        }
++      }
+       ++path_run_count;
++      if (path_run_count >= kMaxRenderPlanPathRunObjects) {
++        flush_path_run();
++      }
+     } else {
+       flush_path_run();
++      CFX_FloatRect object_bbox =
++          object ? object->GetRect() : CFX_FloatRect();
++      object_bbox.Normalize();
+       AppendSegment(&plan, VeloceRenderPlanSegmentKind::kPassthroughObject,
+-                    object_index, 1);
++                    object_index, 1, !object_bbox.IsEmpty(), object_bbox);
+     }
+     ++object_index;
+   }
