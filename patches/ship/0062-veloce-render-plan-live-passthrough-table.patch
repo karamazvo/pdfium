@@ -1,0 +1,166 @@
+diff --git a/core/fpdfapi/render/veloce_render_plan.cpp b/core/fpdfapi/render/veloce_render_plan.cpp
+--- a/core/fpdfapi/render/veloce_render_plan.cpp
++++ b/core/fpdfapi/render/veloce_render_plan.cpp
+@@ -17,6 +17,7 @@
+ #include <mutex>
+ #include <unordered_map>
+ #include <utility>
++#include <vector>
+ 
+ #include "core/fpdfapi/page/cpdf_pageobject.h"
+ #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
+@@ -479,10 +480,12 @@
+ struct RenderPlanCostStats {
+   bool plan_cache_hit = false;
+   int64_t plan_lookup_ms = 0;
++  int64_t live_passthrough_table_ms = 0;
+   int64_t segmented_ms = 0;
+   int64_t whole_path_run_ms = 0;
+   int64_t legacy_fallback_ms = 0;
+   int64_t total_ms = 0;
++  size_t live_passthrough_objects = 0;
+   size_t compiled_path_run_cache_hits = 0;
+   size_t compiled_path_run_cache_misses = 0;
+   size_t compiled_path_run_nodes = 0;
+@@ -586,7 +589,8 @@
+       "result=%s path=%s holderKind=%s holder=%p shape=%s "
+       "segments=%zu pathRuns=%zu passthrough=%zu blendBarriers=%zu "
+       "unsupportedBarriers=%zu segmentedResult=%s fallbackResult=%s "
+-      "planCache=%s planLookupMs=%lld segmentedMs=%lld "
++      "planCache=%s planLookupMs=%lld livePassthroughObjects=%zu "
++      "livePassthroughTableMs=%lld segmentedMs=%lld "
+       "wholePathRunMs=%lld legacyFallbackMs=%lld totalMs=%lld "
+       "compiledPathRunCacheHits=%zu compiledPathRunCacheMisses=%zu "
+       "compiledPathRunNodes=%zu",
+@@ -598,6 +602,8 @@
+       RenderPlanResultName(fallback_result),
+       cost.plan_cache_hit ? "hit" : "miss",
+       static_cast<long long>(cost.plan_lookup_ms),
++      cost.live_passthrough_objects,
++      static_cast<long long>(cost.live_passthrough_table_ms),
+       static_cast<long long>(cost.segmented_ms),
+       static_cast<long long>(cost.whole_path_run_ms),
+       static_cast<long long>(cost.legacy_fallback_ms),
+@@ -622,21 +628,72 @@
+   return ToPathDisplayListHolderKind(plan.holder_kind);
+ }
+ 
+-CPDF_PageObject* FindHolderObjectByIndex(const CPDF_PageObjectHolder* holder,
+-                                         size_t object_index) {
+-  if (!holder) {
+-    return nullptr;
+-  }
+-  size_t current_index = 0;
+-  for (const auto& object : *holder) {
+-    if (current_index == object_index) {
+-      return object.get();
++class LivePassthroughObjectTable {
++ public:
++  bool Build(const CPDF_PageObjectHolder* holder,
++             const VeloceRenderPlan& plan) {
++    indices_.clear();
++    objects_.clear();
++    if (!holder) {
++      return false;
++    }
++
++    for (const VeloceRenderPlanSegment& segment : plan.segments) {
++      if (segment.kind != VeloceRenderPlanSegmentKind::kPassthroughObject) {
++        continue;
++      }
++      if (segment.object_count != 1) {
++        return false;
++      }
++      indices_.push_back(segment.first_object_index);
+     }
+-    ++current_index;
++
++    if (indices_.empty()) {
++      return true;
++    }
++
++    objects_.assign(indices_.size(), nullptr);
++    size_t wanted_index = 0;
++    size_t holder_index = 0;
++    for (const auto& object : *holder) {
++      if (wanted_index >= indices_.size()) {
++        break;
++      }
++      while (wanted_index < indices_.size() &&
++             indices_[wanted_index] < holder_index) {
++        ++wanted_index;
++      }
++      if (wanted_index < indices_.size() &&
++          indices_[wanted_index] == holder_index) {
++        objects_[wanted_index] = object.get();
++        ++wanted_index;
++      }
++      ++holder_index;
++    }
++
++    return std::all_of(objects_.begin(), objects_.end(),
++                       [](const CPDF_PageObject* object) {
++                         return object != nullptr;
++                       });
+   }
+-  return nullptr;
+-}
+ 
++  CPDF_PageObject* Get(size_t object_index) const {
++    auto it = std::lower_bound(indices_.begin(), indices_.end(), object_index);
++    if (it == indices_.end() || *it != object_index) {
++      return nullptr;
++    }
++    return objects_[static_cast<size_t>(it - indices_.begin())];
++  }
++
++  size_t size() const {
++    return objects_.size();
++  }
++
++ private:
++  std::vector<size_t> indices_;
++  std::vector<CPDF_PageObject*> objects_;
++};
++
+ bool ObjectOutsideClip(const CPDF_PageObject* object,
+                        const CFX_FloatRect& holder_clip) {
+   const CFX_FloatRect object_rect = object->GetRect();
+@@ -706,6 +763,19 @@
+           CFX_FloatRect(status->GetRenderDevice()->GetClipBox()));
+   const VelocePathDisplayListHolderKind path_holder_kind =
+       ToPathDisplayListHolderKind(plan);
++  LivePassthroughObjectTable passthrough_objects;
++  const int64_t passthrough_table_start_ms = NowMs();
++  if (!passthrough_objects.Build(holder, plan)) {
++    if (cost) {
++      cost->live_passthrough_table_ms = NowMs() - passthrough_table_start_ms;
++      cost->live_passthrough_objects = passthrough_objects.size();
++    }
++    return VeloceRenderPlanResult::kNotEligible;
++  }
++  if (cost) {
++    cost->live_passthrough_table_ms = NowMs() - passthrough_table_start_ms;
++    cost->live_passthrough_objects = passthrough_objects.size();
++  }
+   CompiledPathRunSlots compiled_lists(plan.segments.size());
+   size_t compiled_path_runs = 0;
+ 
+@@ -742,7 +812,7 @@
+           return VeloceRenderPlanResult::kNotEligible;
+         }
+         CPDF_PageObject* object =
+-            FindHolderObjectByIndex(holder, segment.first_object_index);
++            passthrough_objects.Get(segment.first_object_index);
+         if (!object) {
+           return VeloceRenderPlanResult::kNotEligible;
+         }
+@@ -777,7 +847,7 @@
+       }
+       case VeloceRenderPlanSegmentKind::kPassthroughObject: {
+         CPDF_PageObject* object =
+-            FindHolderObjectByIndex(holder, segment.first_object_index);
++            passthrough_objects.Get(segment.first_object_index);
+         if (!object) {
+           return VeloceRenderPlanResult::kCancelled;
+         }
