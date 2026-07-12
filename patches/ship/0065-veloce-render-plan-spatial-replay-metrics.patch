@@ -1,0 +1,159 @@
+diff --git a/core/fpdfapi/render/veloce_path_display_list.h b/core/fpdfapi/render/veloce_path_display_list.h
+--- a/core/fpdfapi/render/veloce_path_display_list.h
++++ b/core/fpdfapi/render/veloce_path_display_list.h
+@@ -5,6 +5,7 @@
+ #define CORE_FPDFAPI_RENDER_VELOCE_PATH_DISPLAY_LIST_H_
+ 
+ #include <stddef.h>
++#include <stdint.h>
+ 
+ class CFX_Matrix;
+ class CPDF_PageObjectHolder;
+@@ -23,6 +24,21 @@
+ 
+ struct VeloceCompiledPathDisplayList;
+ 
++// Aggregate replay costs exported to the ordered RenderPlan facade. This is
++// intentionally value-only: compiled display-list internals and holder object
++// lifetimes remain private to the path backend.
++struct VelocePathDisplayListReplayMetrics {
++  size_t visited_nodes = 0;
++  size_t culled_nodes = 0;
++  size_t drawn_nodes = 0;
++  size_t spatial_index_queries = 0;
++  size_t spatial_index_query_bins = 0;
++  size_t spatial_index_candidates = 0;
++  size_t spatial_index_skipped_by_tile = 0;
++  size_t spatial_index_fallback_full_scan = 0;
++  int64_t spatial_index_query_ms = 0;
++};
++
+ enum class VelocePathDisplayListCompileResult {
+   kNotEligible,
+   kCompiled,
+@@ -69,6 +85,7 @@
+     CPDF_RenderStatus* status,
+     const VeloceCompiledPathDisplayList* list,
+     const CFX_Matrix& holder_to_device,
+-    VelocePathDisplayListHolderKind holder_kind);
++    VelocePathDisplayListHolderKind holder_kind,
++    VelocePathDisplayListReplayMetrics* metrics);
+ 
+ #endif  // CORE_FPDFAPI_RENDER_VELOCE_PATH_DISPLAY_LIST_H_
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -1338,7 +1338,8 @@
+     CPDF_RenderStatus* status,
+     const VeloceCompiledPathDisplayList* list,
+     const CFX_Matrix& holder_to_device,
+-    VelocePathDisplayListHolderKind holder_kind) {
++    VelocePathDisplayListHolderKind holder_kind,
++    VelocePathDisplayListReplayMetrics* metrics) {
+   if (!status || !list) {
+     return VelocePathDisplayListResult::kNotEligible;
+   }
+@@ -1348,8 +1349,23 @@
+     return validate_result;
+   }
+   PathDlReplayStats replay_stats;
+-  return ReplayPathDisplayList(status, list->list, holder_to_device,
+-                               &replay_stats);
++  const VelocePathDisplayListResult result =
++      ReplayPathDisplayList(status, list->list, holder_to_device,
++                            &replay_stats);
++  if (metrics) {
++    metrics->visited_nodes = replay_stats.visited_nodes;
++    metrics->culled_nodes = replay_stats.culled_nodes;
++    metrics->drawn_nodes = replay_stats.drawn_nodes;
++    metrics->spatial_index_queries = replay_stats.spatial_index_queries;
++    metrics->spatial_index_query_bins = replay_stats.spatial_index_query_bins;
++    metrics->spatial_index_candidates = replay_stats.spatial_index_candidates;
++    metrics->spatial_index_skipped_by_tile =
++        replay_stats.spatial_index_skipped_by_tile;
++    metrics->spatial_index_fallback_full_scan =
++        replay_stats.spatial_index_fallback_full_scan;
++    metrics->spatial_index_query_ms = replay_stats.spatial_index_query_ms;
++  }
++  return result;
+ }
+ 
+ VelocePathDisplayListResult VeloceTryRenderPathDisplayListForHolder(
+diff --git a/core/fpdfapi/render/veloce_render_plan.cpp b/core/fpdfapi/render/veloce_render_plan.cpp
+--- a/core/fpdfapi/render/veloce_render_plan.cpp
++++ b/core/fpdfapi/render/veloce_render_plan.cpp
+@@ -501,6 +501,15 @@
+   size_t compiled_path_run_cache_hits = 0;
+   size_t compiled_path_run_cache_misses = 0;
+   size_t compiled_path_run_nodes = 0;
++  size_t replay_visited_nodes = 0;
++  size_t replay_culled_nodes = 0;
++  size_t replay_drawn_nodes = 0;
++  size_t spatial_index_queries = 0;
++  size_t spatial_index_query_bins = 0;
++  size_t spatial_index_candidates = 0;
++  size_t spatial_index_skipped_by_tile = 0;
++  size_t spatial_index_fallback_full_scan = 0;
++  int64_t spatial_index_query_ms = 0;
+ };
+ 
+ struct RenderPlanShape {
+@@ -607,7 +616,10 @@
+       "clipSkippedPathRuns=%zu clipSkippedPathObjects=%zu "
+       "renderPlanCancelChecks=%zu "
+       "compiledPathRunCacheHits=%zu compiledPathRunCacheMisses=%zu "
+-      "compiledPathRunNodes=%zu",
++      "compiledPathRunNodes=%zu replayVisited=%zu replayCulled=%zu "
++      "replayDrawn=%zu spatialIndexQueries=%zu spatialIndexQueryBins=%zu "
++      "spatialIndexCandidates=%zu spatialIndexSkippedByTile=%zu "
++      "spatialIndexFallbackFullScan=%zu spatialIndexQueryMs=%lld",
+       RenderPlanResultName(result), path ? path : "unknown",
+       RenderPlanHolderKindName(holder_kind), holder,
+       RenderPlanShapeName(plan, shape), shape.segments, shape.path_runs,
+@@ -627,7 +639,16 @@
+       cost.render_plan_cancel_checks,
+       cost.compiled_path_run_cache_hits,
+       cost.compiled_path_run_cache_misses,
+-      cost.compiled_path_run_nodes);
++      cost.compiled_path_run_nodes,
++      cost.replay_visited_nodes,
++      cost.replay_culled_nodes,
++      cost.replay_drawn_nodes,
++      cost.spatial_index_queries,
++      cost.spatial_index_query_bins,
++      cost.spatial_index_candidates,
++      cost.spatial_index_skipped_by_tile,
++      cost.spatial_index_fallback_full_scan,
++      static_cast<long long>(cost.spatial_index_query_ms));
+ #else
+   (void)holder;
+   (void)holder_kind;
+@@ -897,10 +918,27 @@
+         if (SegmentOutsideClip(segment, holder_clip)) {
+           break;
+         }
++        VelocePathDisplayListReplayMetrics replay_metrics;
+         const VelocePathDisplayListResult replay_result =
+             VeloceReplayCompiledPathDisplayList(
+                 status, compiled_lists.get(segment_index), holder_to_device,
+-                path_holder_kind);
++                path_holder_kind, &replay_metrics);
++        if (cost) {
++          cost->replay_visited_nodes += replay_metrics.visited_nodes;
++          cost->replay_culled_nodes += replay_metrics.culled_nodes;
++          cost->replay_drawn_nodes += replay_metrics.drawn_nodes;
++          cost->spatial_index_queries += replay_metrics.spatial_index_queries;
++          cost->spatial_index_query_bins +=
++              replay_metrics.spatial_index_query_bins;
++          cost->spatial_index_candidates +=
++              replay_metrics.spatial_index_candidates;
++          cost->spatial_index_skipped_by_tile +=
++              replay_metrics.spatial_index_skipped_by_tile;
++          cost->spatial_index_fallback_full_scan +=
++              replay_metrics.spatial_index_fallback_full_scan;
++          cost->spatial_index_query_ms +=
++              replay_metrics.spatial_index_query_ms;
++        }
+         if (replay_result == VelocePathDisplayListResult::kRendered) {
+           break;
+         }
