@@ -1,0 +1,89 @@
+diff --git a/core/fpdfapi/render/veloce_render_plan.cpp b/core/fpdfapi/render/veloce_render_plan.cpp
+--- a/core/fpdfapi/render/veloce_render_plan.cpp
++++ b/core/fpdfapi/render/veloce_render_plan.cpp
+@@ -497,6 +497,7 @@
+   size_t live_passthrough_objects = 0;
+   size_t clip_skipped_path_runs = 0;
+   size_t clip_skipped_path_objects = 0;
++  size_t render_plan_cancel_checks = 0;
+   size_t compiled_path_run_cache_hits = 0;
+   size_t compiled_path_run_cache_misses = 0;
+   size_t compiled_path_run_nodes = 0;
+@@ -604,6 +605,7 @@
+       "livePassthroughTableMs=%lld segmentedMs=%lld "
+       "wholePathRunMs=%lld legacyFallbackMs=%lld totalMs=%lld "
+       "clipSkippedPathRuns=%zu clipSkippedPathObjects=%zu "
++      "renderPlanCancelChecks=%zu "
+       "compiledPathRunCacheHits=%zu compiledPathRunCacheMisses=%zu "
+       "compiledPathRunNodes=%zu",
+       RenderPlanResultName(result), path ? path : "unknown",
+@@ -622,6 +624,7 @@
+       static_cast<long long>(cost.total_ms),
+       cost.clip_skipped_path_runs,
+       cost.clip_skipped_path_objects,
++      cost.render_plan_cancel_checks,
+       cost.compiled_path_run_cache_hits,
+       cost.compiled_path_run_cache_misses,
+       cost.compiled_path_run_nodes);
+@@ -729,6 +732,14 @@
+          !segment.holder_space_bbox.IsEmpty() &&
+          !holder_clip.IsEmpty() &&
+          RectOutsideClip(segment.holder_space_bbox, holder_clip);
++}
++
++bool ShouldCancelRenderPlan(CPDF_RenderStatus* status,
++                            RenderPlanCostStats* cost) {
++  if (cost) {
++    ++cost->render_plan_cancel_checks;
++  }
++  return status && status->ShouldCancelRender();
+ }
+ 
+ bool ObjectWouldBeSkippedByRenderObjectList(CPDF_RenderStatus* status,
+@@ -808,9 +819,15 @@
+   CompiledPathRunSlots compiled_lists(plan.segments.size());
+   size_t compiled_path_runs = 0;
+   size_t clip_skipped_path_runs = 0;
++  if (ShouldCancelRenderPlan(status, cost)) {
++    return VeloceRenderPlanResult::kCancelled;
++  }
+ 
+   for (size_t segment_index = 0; segment_index < plan.segments.size();
+        ++segment_index) {
++    if (ShouldCancelRenderPlan(status, cost)) {
++      return VeloceRenderPlanResult::kCancelled;
++    }
+     const VeloceRenderPlanSegment& segment = plan.segments[segment_index];
+     switch (segment.kind) {
+       case VeloceRenderPlanSegmentKind::kPathRun: {
+@@ -871,6 +888,9 @@
+ 
+   for (size_t segment_index = 0; segment_index < plan.segments.size();
+        ++segment_index) {
++    if (ShouldCancelRenderPlan(status, cost)) {
++      return VeloceRenderPlanResult::kCancelled;
++    }
+     const VeloceRenderPlanSegment& segment = plan.segments[segment_index];
+     switch (segment.kind) {
+       case VeloceRenderPlanSegmentKind::kPathRun: {
+@@ -897,7 +917,7 @@
+           break;
+         }
+         status->RenderSingleObject(object, holder_to_device);
+-        if (status->ShouldCancelRender()) {
++        if (ShouldCancelRenderPlan(status, cost)) {
+           return VeloceRenderPlanResult::kCancelled;
+         }
+         break;
+@@ -908,8 +928,9 @@
+     }
+   }
+ 
+-  return status->ShouldCancelRender() ? VeloceRenderPlanResult::kCancelled
+-                                      : VeloceRenderPlanResult::kRendered;
++  return ShouldCancelRenderPlan(status, cost)
++             ? VeloceRenderPlanResult::kCancelled
++             : VeloceRenderPlanResult::kRendered;
+ }
+ 
+ }  // namespace
