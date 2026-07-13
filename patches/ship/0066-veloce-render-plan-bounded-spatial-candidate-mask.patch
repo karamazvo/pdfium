@@ -1,0 +1,152 @@
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -1151,9 +1151,36 @@
+ 
+ struct SpatialReplayQuery {
+   bool use_index = false;
+-  std::vector<uint32_t> candidates;
++  size_t candidate_count = 0;
++  std::vector<uint64_t> candidate_words;
+ };
++
++constexpr size_t kSpatialCandidateWordBits = sizeof(uint64_t) * 8;
++
++bool HolderClipContainsIndex(const CFX_FloatRect& holder_clip,
++                             const PathDlSpatialIndex& index) {
++  return holder_clip.left <= index.bounds.left &&
++         holder_clip.right >= index.bounds.right &&
++         holder_clip.bottom <= index.bounds.bottom &&
++         holder_clip.top >= index.bounds.top;
++}
+ 
++void MarkSpatialCandidate(uint32_t node_index,
++                          size_t node_count,
++                          SpatialReplayQuery* query) {
++  if (node_index >= node_count) {
++    return;
++  }
++  const size_t word_index = node_index / kSpatialCandidateWordBits;
++  const uint64_t bit =
++      uint64_t{1} << (node_index % kSpatialCandidateWordBits);
++  uint64_t& word = query->candidate_words[word_index];
++  if ((word & bit) == 0) {
++    word |= bit;
++    ++query->candidate_count;
++  }
++}
++
+ SpatialReplayQuery QuerySpatialIndexForReplay(
+     const NativePathDisplayList& list,
+     const CFX_Matrix& holder_to_device,
+@@ -1194,10 +1221,11 @@
+     replay_stats->spatial_index_query_bins += touched_bins;
+   }
+ 
+-  // Broad preview renders touch much of the holder. Keep the old sequential
+-  // scan for those cases so r31 does not add sort/dedup overhead when there is
+-  // little or no tile culling to gain.
+-  if (touched_bins > index.bins.size() / 2) {
++  // A sequential scan is cheaper only when the clip provably contains every
++  // indexed node. Merely touching many bins does not prove high candidate
++  // density: long or thin CAD chunks can span most bins while only a small
++  // fraction of their nodes intersect the tile.
++  if (HolderClipContainsIndex(holder_clip, index)) {
+     if (replay_stats) {
+       replay_stats->spatial_index_fallback_full_scan++;
+       replay_stats->spatial_index_query_ms += ElapsedMs(query_start_ns);
+@@ -1206,21 +1234,24 @@
+   }
+ 
+   query.use_index = true;
+-  query.candidates.insert(query.candidates.end(), index.overflow_nodes.begin(),
+-                          index.overflow_nodes.end());
++  query.candidate_words.assign(
++      (list.nodes.size() + kSpatialCandidateWordBits - 1) /
++          kSpatialCandidateWordBits,
++      0);
++  for (uint32_t node_index : index.overflow_nodes) {
++    MarkSpatialCandidate(node_index, list.nodes.size(), &query);
++  }
+   for (uint32_t y = bottom_bin; y <= top_bin; ++y) {
+     for (uint32_t x = left_bin; x <= right_bin; ++x) {
+       const std::vector<uint32_t>& bin = index.bins[y * index.columns + x];
+-      query.candidates.insert(query.candidates.end(), bin.begin(), bin.end());
++      for (uint32_t node_index : bin) {
++        MarkSpatialCandidate(node_index, list.nodes.size(), &query);
++      }
+     }
+   }
+-  std::sort(query.candidates.begin(), query.candidates.end());
+-  query.candidates.erase(
+-      std::unique(query.candidates.begin(), query.candidates.end()),
+-      query.candidates.end());
+ 
+   if (replay_stats) {
+-    replay_stats->spatial_index_candidates += query.candidates.size();
++    replay_stats->spatial_index_candidates += query.candidate_count;
+     replay_stats->spatial_index_query_ms += ElapsedMs(query_start_ns);
+   }
+   return query;
+@@ -1813,27 +1844,43 @@
+     };
+ 
+     if (spatial_query.use_index) {
+-      const auto first_it =
+-          std::lower_bound(spatial_query.candidates.begin(),
+-                           spatial_query.candidates.end(), first_node);
+-      const auto last_it = std::lower_bound(first_it,
+-                                            spatial_query.candidates.end(),
+-                                            end_node);
+-      const size_t candidate_count =
+-          static_cast<size_t>(std::distance(first_it, last_it));
+-      if (replay_stats && node_count >= candidate_count) {
+-        replay_stats->spatial_index_skipped_by_tile +=
+-            node_count - candidate_count;
+-      }
+-      for (auto it = first_it; it != last_it; ++it) {
+-        if (maybe_cancel()) {
+-          return VelocePathDisplayListResult::kCancelled;
++      size_t segment_candidate_count = 0;
++      if (!spatial_query.candidate_words.empty()) {
++        const size_t first_word = first_node / kSpatialCandidateWordBits;
++        const size_t last_word =
++            (end_node - 1) / kSpatialCandidateWordBits;
++        for (size_t word_index = first_word; word_index <= last_word;
++             ++word_index) {
++          uint64_t candidates = spatial_query.candidate_words[word_index];
++          if (word_index == first_word) {
++            candidates &=
++                ~uint64_t{0} << (first_node % kSpatialCandidateWordBits);
++          }
++          if (word_index == last_word &&
++              (end_node % kSpatialCandidateWordBits) != 0) {
++            candidates &=
++                (uint64_t{1} << (end_node % kSpatialCandidateWordBits)) - 1;
++          }
++          segment_candidate_count += __builtin_popcountll(candidates);
++          while (candidates != 0) {
++            const uint32_t node_index = static_cast<uint32_t>(
++                word_index * kSpatialCandidateWordBits +
++                __builtin_ctzll(candidates));
++            candidates &= candidates - 1;
++            if (maybe_cancel()) {
++              return VelocePathDisplayListResult::kCancelled;
++            }
++            if (auto r = replay_node(node_index);
++                r != VelocePathDisplayListResult::kRendered) {
++              return r;
++            }
++          }
+         }
+-        if (auto r = replay_node(*it);
+-            r != VelocePathDisplayListResult::kRendered) {
+-          return r;
+-        }
+       }
++      if (replay_stats && node_count >= segment_candidate_count) {
++        replay_stats->spatial_index_skipped_by_tile +=
++            node_count - segment_candidate_count;
++      }
+     } else {
+       for (uint32_t i = first_node; i < end_node; ++i) {
+         if (maybe_cancel()) {

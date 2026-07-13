@@ -1,0 +1,182 @@
+--- a/core/fpdfapi/render/veloce_render_plan.cpp
++++ b/core/fpdfapi/render/veloce_render_plan.cpp
+@@ -489,12 +489,12 @@
+ struct RenderPlanCostStats {
+   bool plan_cache_hit = false;
+   int64_t plan_lookup_ms = 0;
+-  int64_t live_passthrough_table_ms = 0;
+   int64_t segmented_ms = 0;
+   int64_t whole_path_run_ms = 0;
+   int64_t legacy_fallback_ms = 0;
+   int64_t total_ms = 0;
+-  size_t live_passthrough_objects = 0;
++  size_t live_passthrough_lookups = 0;
++  size_t clip_skipped_passthrough_objects = 0;
+   size_t clip_skipped_path_runs = 0;
+   size_t clip_skipped_path_objects = 0;
+   size_t render_plan_cancel_checks = 0;
+@@ -610,8 +610,8 @@
+       "result=%s path=%s holderKind=%s holder=%p shape=%s "
+       "segments=%zu pathRuns=%zu passthrough=%zu blendBarriers=%zu "
+       "unsupportedBarriers=%zu segmentedResult=%s fallbackResult=%s "
+-      "planCache=%s planLookupMs=%lld livePassthroughObjects=%zu "
+-      "livePassthroughTableMs=%lld segmentedMs=%lld "
++      "planCache=%s planLookupMs=%lld livePassthroughLookups=%zu "
++      "clipSkippedPassthroughObjects=%zu segmentedMs=%lld "
+       "wholePathRunMs=%lld legacyFallbackMs=%lld totalMs=%lld "
+       "clipSkippedPathRuns=%zu clipSkippedPathObjects=%zu "
+       "renderPlanCancelChecks=%zu "
+@@ -628,8 +628,8 @@
+       RenderPlanResultName(fallback_result),
+       cost.plan_cache_hit ? "hit" : "miss",
+       static_cast<long long>(cost.plan_lookup_ms),
+-      cost.live_passthrough_objects,
+-      static_cast<long long>(cost.live_passthrough_table_ms),
++      cost.live_passthrough_lookups,
++      cost.clip_skipped_passthrough_objects,
+       static_cast<long long>(cost.segmented_ms),
+       static_cast<long long>(cost.whole_path_run_ms),
+       static_cast<long long>(cost.legacy_fallback_ms),
+@@ -665,73 +665,7 @@
+     const VeloceRenderPlan& plan) {
+   return ToPathDisplayListHolderKind(plan.holder_kind);
+ }
+-
+-class LivePassthroughObjectTable {
+- public:
+-  bool Build(const CPDF_PageObjectHolder* holder,
+-             const VeloceRenderPlan& plan) {
+-    indices_.clear();
+-    objects_.clear();
+-    if (!holder) {
+-      return false;
+-    }
+-
+-    for (const VeloceRenderPlanSegment& segment : plan.segments) {
+-      if (segment.kind != VeloceRenderPlanSegmentKind::kPassthroughObject) {
+-        continue;
+-      }
+-      if (segment.object_count != 1) {
+-        return false;
+-      }
+-      indices_.push_back(segment.first_object_index);
+-    }
+ 
+-    if (indices_.empty()) {
+-      return true;
+-    }
+-
+-    objects_.assign(indices_.size(), nullptr);
+-    size_t wanted_index = 0;
+-    size_t holder_index = 0;
+-    for (const auto& object : *holder) {
+-      if (wanted_index >= indices_.size()) {
+-        break;
+-      }
+-      while (wanted_index < indices_.size() &&
+-             indices_[wanted_index] < holder_index) {
+-        ++wanted_index;
+-      }
+-      if (wanted_index < indices_.size() &&
+-          indices_[wanted_index] == holder_index) {
+-        objects_[wanted_index] = object.get();
+-        ++wanted_index;
+-      }
+-      ++holder_index;
+-    }
+-
+-    return std::all_of(objects_.begin(), objects_.end(),
+-                       [](const CPDF_PageObject* object) {
+-                         return object != nullptr;
+-                       });
+-  }
+-
+-  CPDF_PageObject* Get(size_t object_index) const {
+-    auto it = std::lower_bound(indices_.begin(), indices_.end(), object_index);
+-    if (it == indices_.end() || *it != object_index) {
+-      return nullptr;
+-    }
+-    return objects_[static_cast<size_t>(it - indices_.begin())];
+-  }
+-
+-  size_t size() const {
+-    return objects_.size();
+-  }
+-
+- private:
+-  std::vector<size_t> indices_;
+-  std::vector<CPDF_PageObject*> objects_;
+-};
+-
+ bool ObjectOutsideClip(const CPDF_PageObject* object,
+                        const CFX_FloatRect& holder_clip) {
+   const CFX_FloatRect object_rect = object->GetRect();
+@@ -753,6 +687,19 @@
+          !segment.holder_space_bbox.IsEmpty() &&
+          !holder_clip.IsEmpty() &&
+          RectOutsideClip(segment.holder_space_bbox, holder_clip);
++}
++
++CPDF_PageObject* GetLivePassthroughObject(
++    const CPDF_PageObjectHolder* holder,
++    const VeloceRenderPlanSegment& segment,
++    RenderPlanCostStats* cost) {
++  if (!holder || segment.object_count != 1) {
++    return nullptr;
++  }
++  if (cost) {
++    ++cost->live_passthrough_lookups;
++  }
++  return holder->GetPageObjectByIndex(segment.first_object_index);
+ }
+ 
+ bool ShouldCancelRenderPlan(CPDF_RenderStatus* status,
+@@ -824,19 +771,6 @@
+   holder_clip.Normalize();
+   const VelocePathDisplayListHolderKind path_holder_kind =
+       ToPathDisplayListHolderKind(plan);
+-  LivePassthroughObjectTable passthrough_objects;
+-  const int64_t passthrough_table_start_ms = NowMs();
+-  if (!passthrough_objects.Build(holder, plan)) {
+-    if (cost) {
+-      cost->live_passthrough_table_ms = NowMs() - passthrough_table_start_ms;
+-      cost->live_passthrough_objects = passthrough_objects.size();
+-    }
+-    return VeloceRenderPlanResult::kNotEligible;
+-  }
+-  if (cost) {
+-    cost->live_passthrough_table_ms = NowMs() - passthrough_table_start_ms;
+-    cost->live_passthrough_objects = passthrough_objects.size();
+-  }
+   CompiledPathRunSlots compiled_lists(plan.segments.size());
+   size_t compiled_path_runs = 0;
+   size_t clip_skipped_path_runs = 0;
+@@ -887,8 +821,14 @@
+         if (segment.object_count != 1) {
+           return VeloceRenderPlanResult::kNotEligible;
+         }
++        if (SegmentOutsideClip(segment, holder_clip)) {
++          if (cost) {
++            ++cost->clip_skipped_passthrough_objects;
++          }
++          break;
++        }
+         CPDF_PageObject* object =
+-            passthrough_objects.Get(segment.first_object_index);
++            GetLivePassthroughObject(holder, segment, cost);
+         if (!object) {
+           return VeloceRenderPlanResult::kNotEligible;
+         }
+@@ -945,8 +885,11 @@
+         return VeloceRenderPlanResult::kCancelled;
+       }
+       case VeloceRenderPlanSegmentKind::kPassthroughObject: {
++        if (SegmentOutsideClip(segment, holder_clip)) {
++          break;
++        }
+         CPDF_PageObject* object =
+-            passthrough_objects.Get(segment.first_object_index);
++            GetLivePassthroughObject(holder, segment, cost);
+         if (!object) {
+           return VeloceRenderPlanResult::kCancelled;
+         }
