@@ -1,0 +1,251 @@
+From 0000000000000000000000000000000000000068 Mon Sep 17 00:00:00 2001
+From: Veloce PDFium Patches <veloce-pdfium@example.invalid>
+Date: Mon, 13 Jul 2026 16:00:00 +0800
+Subject: [PATCH] Make RenderPlan spatial culling fail closed
+
+The spatial candidate mask introduced by 0066 made the spatial index an
+authority for excluding path nodes, but index construction did not prove that
+every node was represented. Empty, non-finite, or otherwise unindexable bounds
+were silently omitted. RenderPlan segment bounds used the same optimistic
+union rule. A tile could therefore report success while missing objects that
+the later full-scan replay restored.
+
+Make the culling contract explicit and conservative:
+
+* Every path node is represented by one or more bins or by the always-replayed
+  overflow list. Bounds that cannot be indexed are never silently dropped.
+* Spatial queries include overflow nodes even when the regular grid query does
+  not intersect the index bounds.
+* Query clips are expanded by one device pixel before inverse transformation,
+  matching PDFium's outward-rounded device intersection behavior at tile
+  boundaries.
+* A RenderPlan PathRun receives a skippable aggregate bbox only when every
+  object in that run contributed finite, non-empty bounds. Any uncertain
+  object disables segment-level skipping for that run.
+
+Invariant: acceleration may exclude an ordered object only after proving that
+its conservative painted bounds do not intersect the device tile. Uncertain
+geometry remains on the existing replay path. This preserves painter order and
+does not add any bitmap, cache, UI-thread work, or document-specific policy.
+
+---
+ core/fpdfapi/render/veloce_path_display_list.cpp | 56 ++++++++++++++++++------
+ core/fpdfapi/render/veloce_render_plan.cpp       | 35 +++++++++++----
+ 2 files changed, 69 insertions(+), 22 deletions(-)
+
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -7,6 +7,7 @@
+ #include <stdint.h>
+ 
+ #include <algorithm>
++#include <cmath>
+ #include <chrono>
+ #include <cstring>
+ #include <limits>
+@@ -651,17 +652,26 @@ bool GetSpatialIndexRange(const PathDlSpatialIndex& index,
+   return true;
+ }
+ 
++bool NormalizeFiniteSpatialRect(CFX_FloatRect* rect) {
++  if (!rect || !std::isfinite(rect->left) ||
++      !std::isfinite(rect->right) || !std::isfinite(rect->bottom) ||
++      !std::isfinite(rect->top)) {
++    return false;
++  }
++  rect->Normalize();
++  return !rect->IsEmpty();
++}
++
+ void BuildPathDlSpatialIndex(NativePathDisplayList* list) {
+   if (!list || list->nodes.size() < kSpatialIndexMinNodes) {
+     return;
+   }
+ 
+   bool have_bounds = false;
+   CFX_FloatRect bounds;
+   for (const PathDlNode& node : list->nodes) {
+     CFX_FloatRect rect = node.holder_space_bbox;
+-    rect.Normalize();
+-    if (rect.IsEmpty()) {
++    if (!NormalizeFiniteSpatialRect(&rect)) {
+       continue;
+     }
+     if (have_bounds) {
+@@ -687,8 +697,13 @@ void BuildPathDlSpatialIndex(NativePathDisplayList* list) {
+     uint32_t right_bin = 0;
+     uint32_t bottom_bin = 0;
+     uint32_t top_bin = 0;
+-    if (!GetSpatialIndexRange(index, list->nodes[node_index].holder_space_bbox,
+-                              &left_bin, &right_bin, &bottom_bin, &top_bin)) {
++    CFX_FloatRect node_bounds = list->nodes[node_index].holder_space_bbox;
++    if (!NormalizeFiniteSpatialRect(&node_bounds) ||
++        !GetSpatialIndexRange(index, node_bounds, &left_bin, &right_bin,
++                              &bottom_bin, &top_bin)) {
++      // The index is only an exclusion authority if every node is represented.
++      // Unknown bounds therefore remain candidates for every indexed replay.
++      index.overflow_nodes.push_back(node_index);
+       continue;
+     }
+     const uint32_t bin_count =
+@@ -933,19 +948,19 @@ std::optional<std::vector<uint64_t>> QuerySpatialIndexForReplay(
+   }
+ 
+-  const FX_RECT clip_box = device->GetClipBox();
++  FX_RECT clip_box = device->GetClipBox();
+   if (clip_box.IsEmpty() || !MatrixIsSafelyInvertible(holder_to_device)) {
+     return finish_full_scan();
+   }
++  --clip_box.left;
++  --clip_box.top;
++  ++clip_box.right;
++  ++clip_box.bottom;
+ 
+   CFX_FloatRect holder_clip =
+       holder_to_device.GetInverse().TransformRect(CFX_FloatRect(clip_box));
+-  holder_clip.Normalize();
+-  if (holder_clip.IsEmpty()) {
+-    if (replay_stats) {
+-      replay_stats->spatial_index_query_ms += ElapsedMs(query_start_ns);
+-    }
+-    return std::vector<uint64_t>();
++  if (!NormalizeFiniteSpatialRect(&holder_clip)) {
++    return finish_full_scan();
+   }
+ 
+   if (HolderClipContainsIndex(holder_clip, index)) {
+     return finish_full_scan();
+@@ -956,19 +971,28 @@ std::optional<std::vector<uint64_t>> QuerySpatialIndexForReplay(
+   uint32_t right_bin = 0;
+   uint32_t bottom_bin = 0;
+   uint32_t top_bin = 0;
++  std::vector<uint64_t> candidate_words(
++      (list.nodes.size() + kSpatialCandidateWordBits - 1) /
++          kSpatialCandidateWordBits,
++      0);
++  size_t candidate_count = 0;
++  for (uint32_t node_index : index.overflow_nodes) {
++    MarkSpatialCandidate(node_index, list.nodes.size(), &candidate_words,
++                         &candidate_count);
++  }
+   if (!GetSpatialIndexRange(index, holder_clip, &left_bin, &right_bin,
+                             &bottom_bin, &top_bin)) {
+     if (replay_stats) {
++      replay_stats->spatial_index_candidates += candidate_count;
++      replay_stats->spatial_index_skipped_by_tile +=
++          list.nodes.size() >= candidate_count
++              ? list.nodes.size() - candidate_count
++              : 0;
+       replay_stats->spatial_index_query_ms += ElapsedMs(query_start_ns);
+     }
+-    return std::vector<uint64_t>();
++    return candidate_words;
+   }
+ 
+-  std::vector<uint64_t> candidate_words(
+-      (list.nodes.size() + kSpatialCandidateWordBits - 1) /
+-          kSpatialCandidateWordBits,
+-      0);
+-  size_t candidate_count = 0;
+   for (uint32_t y = bottom_bin; y <= top_bin; ++y) {
+     for (uint32_t x = left_bin; x <= right_bin; ++x) {
+       const std::vector<uint32_t>& bin = index.bins[y * index.columns + x];
+@@ -981,10 +1005,6 @@ std::optional<std::vector<uint64_t>> QuerySpatialIndexForReplay(
+       }
+     }
+   }
+-  for (uint32_t node_index : index.overflow_nodes) {
+-    MarkSpatialCandidate(node_index, list.nodes.size(), &candidate_words,
+-                         &candidate_count);
+-  }
+   if (replay_stats) {
+     replay_stats->spatial_index_candidates += candidate_count;
+     replay_stats->spatial_index_skipped_by_tile +=
+diff --git a/core/fpdfapi/render/veloce_render_plan.cpp b/core/fpdfapi/render/veloce_render_plan.cpp
+--- a/core/fpdfapi/render/veloce_render_plan.cpp
++++ b/core/fpdfapi/render/veloce_render_plan.cpp
+@@ -12,6 +12,7 @@
+ #include <stdint.h>
+ 
+ #include <algorithm>
++#include <cmath>
+ #include <chrono>
+ #include <memory>
+ #include <mutex>
+@@ -681,6 +682,16 @@ bool RectOutsideClip(const CFX_FloatRect& rect,
+          rect.bottom > holder_clip.top || rect.top < holder_clip.bottom;
+ }
+ 
++bool NormalizeFiniteBounds(CFX_FloatRect* rect) {
++  if (!rect || !std::isfinite(rect->left) ||
++      !std::isfinite(rect->right) || !std::isfinite(rect->bottom) ||
++      !std::isfinite(rect->top)) {
++    return false;
++  }
++  rect->Normalize();
++  return !rect->IsEmpty();
++}
++
+ bool SegmentOutsideClip(const VeloceRenderPlanSegment& segment,
+                         const CFX_FloatRect& holder_clip) {
+   return segment.has_holder_space_bbox &&
+@@ -930,19 +941,23 @@ VeloceRenderPlan VeloceBuildRenderPlanSkeletonForHolder(
+   size_t path_run_count = 0;
+   bool path_run_has_bbox = false;
+   CFX_FloatRect path_run_bbox;
++  bool path_run_bounds_complete = true;
+ 
+   auto flush_path_run = [&plan, &path_run_start, &path_run_count,
+-                         &path_run_has_bbox, &path_run_bbox]() {
++                         &path_run_has_bbox, &path_run_bbox,
++                         &path_run_bounds_complete]() {
+     if (path_run_start == kNoOpenPathRun) {
+       return;
+     }
+     AppendSegment(&plan, VeloceRenderPlanSegmentKind::kPathRun,
+-                  path_run_start, path_run_count, path_run_has_bbox,
++                  path_run_start, path_run_count,
++                  path_run_has_bbox && path_run_bounds_complete,
+                   path_run_bbox);
+     path_run_start = kNoOpenPathRun;
+     path_run_count = 0;
+     path_run_has_bbox = false;
+     path_run_bbox = CFX_FloatRect();
++    path_run_bounds_complete = true;
+   };
+ 
+   for (const auto& object : *holder) {
+@@ -951,14 +966,15 @@ VeloceRenderPlan VeloceBuildRenderPlanSkeletonForHolder(
+         path_run_start = object_index;
+       }
+       CFX_FloatRect object_bbox = object->GetRect();
+-      object_bbox.Normalize();
+-      if (!object_bbox.IsEmpty()) {
++      if (NormalizeFiniteBounds(&object_bbox)) {
+         if (path_run_has_bbox) {
+           path_run_bbox.Union(object_bbox);
+         } else {
+           path_run_bbox = object_bbox;
+           path_run_has_bbox = true;
+         }
++      } else {
++        path_run_bounds_complete = false;
+       }
+       ++path_run_count;
+       if (path_run_count >= kMaxRenderPlanPathRunObjects) {
+@@ -968,9 +984,9 @@ VeloceRenderPlan VeloceBuildRenderPlanSkeletonForHolder(
+     } else {
+       flush_path_run();
+       CFX_FloatRect object_bbox =
+           object ? object->GetRect() : CFX_FloatRect();
+-      object_bbox.Normalize();
++      const bool has_safe_bbox = NormalizeFiniteBounds(&object_bbox);
+       AppendSegment(&plan, VeloceRenderPlanSegmentKind::kPassthroughObject,
+-                    object_index, 1, !object_bbox.IsEmpty(), object_bbox);
++                    object_index, 1, has_safe_bbox, object_bbox);
+     }
+     ++object_index;
+   }
+-- 
+2.43.0
