@@ -1,0 +1,130 @@
+From d19894128da94dedfae70599c1262c6cbf80b6ad Mon Sep 17 00:00:00 2001
+From: Veloce PDFium Patches <veloce-pdfium@example.invalid>
+Date: Mon, 13 Jul 2026 18:21:50 +0800
+Subject: [PATCH] Veloce: reuse bounded AGG batch scratch storage
+
+Keep r25-0070's exact per-path rasterization and destination compositing, but
+reuse one AGG path storage and one rasterizer inside each bounded stroke-command
+batch. Reset logical contents between paths while retaining allocated blocks,
+eliminating allocator churn for millions of tiny CAD paths.
+
+The scratch lifetime remains one batch dispatch, bounded by r25-0070's 256-path
+and 16384-point caps. Clip, paint, matrix, ordering, antialiasing, alpha,
+cancellation, and fallback behavior are unchanged.
+
+---
+ core/fxge/agg/cfx_agg_devicedriver.cpp | 38 ++++++++++++++++----------
+ third_party/agg23/agg_path_storage.h   |  5 ++++
+ 2 files changed, 28 insertions(+), 15 deletions(-)
+
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.cpp b/core/fxge/agg/cfx_agg_devicedriver.cpp
+index e5f81cbf0..615844445 100644
+--- a/core/fxge/agg/cfx_agg_devicedriver.cpp
++++ b/core/fxge/agg/cfx_agg_devicedriver.cpp
+@@ -933,9 +933,9 @@ class RendererScanLineAaOffset {
+   unsigned top_;
+ };
+ 
+-agg::path_storage BuildAggPath(const CFX_Path& path,
+-                               const CFX_Matrix* pObject2Device) {
+-  agg::path_storage agg_path;
++void BuildAggPathInto(const CFX_Path& path,
++                      const CFX_Matrix* pObject2Device,
++                      agg::path_storage* agg_path) {
+   pdfium::span<const CFX_Path::Point> points = path.GetPoints();
+   for (size_t i = 0; i < points.size(); ++i) {
+     CFX_PointF pos = points[i].point_;
+@@ -946,7 +946,7 @@ agg::path_storage BuildAggPath(const CFX_Path& path,
+     pos = HardClip(pos);
+     CFX_Path::Point::Type point_type = points[i].type_;
+     if (point_type == CFX_Path::Point::Type::kMove) {
+-      agg_path.move_to(pos.x, pos.y);
++      agg_path->move_to(pos.x, pos.y);
+     } else if (point_type == CFX_Path::Point::Type::kLine) {
+       if (i > 0 && points[i - 1].IsTypeAndOpen(CFX_Path::Point::Type::kMove) &&
+           (i + 1 == points.size() ||
+@@ -954,7 +954,7 @@ agg::path_storage BuildAggPath(const CFX_Path& path,
+           points[i].point_ == points[i - 1].point_) {
+         pos.x += 1;
+       }
+-      agg_path.line_to(pos.x, pos.y);
++      agg_path->line_to(pos.x, pos.y);
+     } else if (point_type == CFX_Path::Point::Type::kBezier) {
+       if (i > 0 && i + 2 < points.size()) {
+         CFX_PointF pos0 = points[i - 1].point_;
+@@ -971,13 +971,19 @@ agg::path_storage BuildAggPath(const CFX_Path& path,
+         agg::curve4 curve(pos0.x, pos0.y, pos.x, pos.y, pos2.x, pos2.y, pos3.x,
+                           pos3.y);
+         i += 2;
+-        agg_path.add_path(curve);
++        agg_path->add_path(curve);
+       }
+     }
+     if (points[i].close_figure_) {
+-      agg_path.end_poly();
++      agg_path->end_poly();
+     }
+   }
++}
++
++agg::path_storage BuildAggPath(const CFX_Path& path,
++                               const CFX_Matrix* pObject2Device) {
++  agg::path_storage agg_path;
++  BuildAggPathInto(path, pObject2Device, &agg_path);
+   return agg_path;
+ }
+ 
+@@ -1273,16 +1279,19 @@ bool CFX_AggDeviceDriver::DrawPathBatch(
+   CFX_AggRenderer renderer(bitmap_, backdrop, clip_rgn_.get(), stroke_color,
+                            fill_options.full_cover, rgb_byte_order_);
+   agg::scanline_u8 scanline;
++  agg::path_storage path_data;
++  agg::rasterizer_scanline_aa rasterizer;
++  rasterizer.clip_box(0.0f, 0.0f, static_cast<float>(GetPixelWidth()),
++                      static_cast<float>(GetPixelHeight()));
+ 
+   if (fill_options.zero_area) {
+     for (const CFX_Path* path : paths) {
+       if (!path) {
+         return false;
+       }
+-      agg::path_storage path_data = BuildAggPath(*path, pObject2Device);
+-      agg::rasterizer_scanline_aa rasterizer;
+-      rasterizer.clip_box(0.0f, 0.0f, static_cast<float>(GetPixelWidth()),
+-                          static_cast<float>(GetPixelHeight()));
++      path_data.remove_all();
++      rasterizer.reset();
++      BuildAggPathInto(*path, pObject2Device, &path_data);
+       RasterizeStroke(&rasterizer, &path_data, nullptr, pGraphState, 1,
+                       fill_options.stroke_text_mode);
+       agg::render_scanlines(rasterizer, scanline, renderer,
+@@ -1306,10 +1315,9 @@ bool CFX_AggDeviceDriver::DrawPathBatch(
+     if (!path) {
+       return false;
+     }
+-    agg::path_storage path_data = BuildAggPath(*path, &matrix1);
+-    agg::rasterizer_scanline_aa rasterizer;
+-    rasterizer.clip_box(0.0f, 0.0f, static_cast<float>(GetPixelWidth()),
+-                        static_cast<float>(GetPixelHeight()));
++    path_data.remove_all();
++    rasterizer.reset();
++    BuildAggPathInto(*path, &matrix1, &path_data);
+     RasterizeStroke(&rasterizer, &path_data, &matrix2, pGraphState, matrix1.a,
+                     fill_options.stroke_text_mode);
+     agg::render_scanlines(rasterizer, scanline, renderer,
+diff --git a/third_party/agg23/agg_path_storage.h b/third_party/agg23/agg_path_storage.h
+index 82148061a..0ab539c17 100644
+--- a/third_party/agg23/agg_path_storage.h
++++ b/third_party/agg23/agg_path_storage.h
+@@ -54,6 +54,11 @@ public:
+     path_storage& operator=(path_storage&&) = delete;
+     path_storage(const path_storage&) = delete;
+     path_storage& operator=(const path_storage&) = delete;
++    void remove_all()
++    {
++        m_total_vertices = 0;
++        m_iterator = 0;
++    }
+     unsigned last_vertex(float* x, float* y) const;
+     unsigned prev_vertex(float* x, float* y) const;
+     void move_to(float x, float y);
