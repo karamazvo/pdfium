@@ -1,0 +1,538 @@
+From f89e147d6dd6975dfef5dd42fedae7335e78515e Mon Sep 17 00:00:00 2001
+From: Veloce PDFium Patches <veloce-pdfium@example.invalid>
+Date: Mon, 13 Jul 2026 15:51:31 +0800
+Subject: [PATCH] Veloce: batch exact AGG stroke commands
+
+Replace r25-0069's ineffective disjoint-geometry merge with a bounded command
+batch that preserves every PDF path as a separate AGG raster and destination
+composite operation. Share only immutable matrix decomposition, renderer, and
+scanline setup across adjacent stroke-only commands with identical paint,
+matrix, and clip state.
+
+Keep fills, blends, clip changes, state changes, RenderPlan segments, capacity,
+and cancellation as hard barriers. Bound each dispatch to 256 paths and 16384
+path points. Non-AGG drivers use the exact per-command default implementation.
+Remove the duplicate device-bbox work and overlapping-geometry restriction
+that produced zero saved dispatches in r25-0069 telemetry.
+
+---
+ .../render/veloce_path_display_list.cpp       | 126 ++++++------------
+ .../fpdfapi/render/veloce_path_display_list.h |   2 +-
+ core/fpdfapi/render/veloce_render_plan.cpp    |   9 +-
+ core/fxge/agg/cfx_agg_devicedriver.cpp        |  69 ++++++++++
+ core/fxge/agg/cfx_agg_devicedriver.h          |   6 +
+ core/fxge/cfx_renderdevice.cpp                |  24 ++++
+ core/fxge/cfx_renderdevice.h                  |   6 +
+ core/fxge/renderdevicedriver_iface.cpp        |  16 +++
+ core/fxge/renderdevicedriver_iface.h          |   9 ++
+ 9 files changed, 176 insertions(+), 91 deletions(-)
+
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index e69d97ca9..8473d0219 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -174,7 +174,7 @@ struct PathDlReplayStats {
+   size_t stroke_nodes = 0;
+   size_t stroke_dispatches_saved = 0;
+   size_t max_stroke_batch_nodes = 0;
+-  size_t stroke_overlap_flushes = 0;
++  size_t stroke_state_flushes = 0;
+   size_t stroke_capacity_flushes = 0;
+   size_t spatial_index_queries = 0;
+   size_t spatial_index_query_bins = 0;
+@@ -345,7 +345,7 @@ void LogPathDisplayListAttempt(const char* result,
+       "clipSwitches=%zu cancelChecks=%zu groupRunComposites=%zu groupRunNodes=%zu maxGroupRunNodes=%zu "
+       "runFlushPaint=%zu runFlushClip=%zu runFlushNormal=%zu runFlushScratch=%zu runFlushEnd=%zu "
+       "strokeDrawCalls=%zu strokeNodes=%zu strokeDispatchesSaved=%zu "
+-      "maxStrokeBatchNodes=%zu strokeOverlapFlushes=%zu strokeCapacityFlushes=%zu "
++      "maxStrokeBatchNodes=%zu strokeStateFlushes=%zu strokeCapacityFlushes=%zu "
+       "spatialIndexBins=%zu spatialIndexEntries=%zu spatialIndexOverflow=%zu "
+       "spatialIndexQueries=%zu spatialIndexQueryBins=%zu spatialIndexCandidates=%zu "
+       "spatialIndexSkippedByTile=%zu spatialIndexFallbackFullScan=%zu spatialIndexQueryMs=%" PRId64 " "
+@@ -385,7 +385,7 @@ void LogPathDisplayListAttempt(const char* result,
+       replay_stats ? replay_stats->stroke_nodes : kZero,
+       replay_stats ? replay_stats->stroke_dispatches_saved : kZero,
+       replay_stats ? replay_stats->max_stroke_batch_nodes : kZero,
+-      replay_stats ? replay_stats->stroke_overlap_flushes : kZero,
++      replay_stats ? replay_stats->stroke_state_flushes : kZero,
+       replay_stats ? replay_stats->stroke_capacity_flushes : kZero,
+       list && list->spatial_index.valid() ? list->spatial_index.bins.size()
+                                           : kZero,
+@@ -1168,39 +1168,7 @@ bool IsStrokeOnlyNormal(const PathDlPaint& paint) {
+   return paint.blend_mode == BlendMode::kNormal &&
+          paint.fill_options.fill_type ==
+              CFX_FillRenderOptions::FillType::kNoFill &&
+-         paint.stroke_argb != 0;
+-}
+-
+-FX_RECT GetClippedDeviceBounds(const PathDlNode& node,
+-                               const CFX_Matrix& holder_to_device,
+-                               CFX_RenderDevice* device) {
+-  FX_RECT rect =
+-      holder_to_device.TransformRect(node.holder_space_bbox).GetOuterRect();
+-  rect.Intersect(device->GetClipBox());
+-  return rect;
+-}
+-
+-bool DeviceBoundsArePixelDisjoint(const FX_RECT& lhs, const FX_RECT& rhs) {
+-  if (lhs.IsEmpty() || rhs.IsEmpty() || !lhs.Valid() || !rhs.Valid()) {
+-    return false;
+-  }
+-  // Keep one full device pixel between batches. This conservatively includes
+-  // antialias coverage that can extend beyond geometric stroke bounds.
+-  return static_cast<int64_t>(lhs.right) + 1 <= rhs.left ||
+-         static_cast<int64_t>(rhs.right) + 1 <= lhs.left ||
+-         static_cast<int64_t>(lhs.bottom) + 1 <= rhs.top ||
+-         static_cast<int64_t>(rhs.bottom) + 1 <= lhs.top;
+-}
+-
+-void UnionDeviceBounds(FX_RECT* destination, const FX_RECT& source) {
+-  if (destination->IsEmpty()) {
+-    *destination = source;
+-    return;
+-  }
+-  destination->left = std::min(destination->left, source.left);
+-  destination->top = std::min(destination->top, source.top);
+-  destination->right = std::max(destination->right, source.right);
+-  destination->bottom = std::max(destination->bottom, source.bottom);
++         (paint.stroke_argb & 0xff000000u) != 0;
+ }
+ 
+ VelocePathDisplayListResult ReplayPathDisplayList(
+@@ -1239,55 +1207,35 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+     return VelocePathDisplayListResult::kRendered;
+   };
+ 
+-  // A stroke batch contains only adjacent, same-state, same-matrix stroke
+-  // objects whose conservative device bounds are pairwise disjoint. The
+-  // aggregate-bounds check is intentionally stricter than necessary: it gives
+-  // an O(1) proof that combining paths cannot change source-over accumulation
+-  // or antialias coverage at intersections.
+-  std::array<uint32_t, kMaxStrokeBatchNodes> stroke_batch_path_indices;
++  // Keep each path as a separate AGG raster/composite operation. The batch
++  // shares only immutable setup for adjacent same-state, same-matrix strokes;
++  // it never merges geometry or changes painter order.
++  std::array<const CFX_Path*, kMaxStrokeBatchNodes> stroke_batch_paths;
+   size_t stroke_batch_count = 0;
+   CFX_Matrix stroke_batch_matrix;
+   uint32_t stroke_batch_paint_key = kNoClipKey;
+-  FX_RECT stroke_batch_bounds;
+   size_t stroke_batch_points = 0;
+ 
+   auto reset_stroke_batch = [&]() {
+     stroke_batch_count = 0;
+     stroke_batch_matrix = CFX_Matrix();
+     stroke_batch_paint_key = kNoClipKey;
+-    stroke_batch_bounds = FX_RECT();
+     stroke_batch_points = 0;
+   };
+ 
+-  auto flush_stroke_batch = [&]() {
++  auto flush_stroke_batch = [&]() -> bool {
+     if (stroke_batch_count == 0) {
+-      return;
++      return true;
+     }
+     const PathDlPaint& paint = list.paint_table[stroke_batch_paint_key];
+     const CFX_GraphStateData* graph_state =
+         paint.graph_state_key == kNoGraphStateKey
+             ? nullptr
+             : &list.graph_state_table[paint.graph_state_key];
+-    if (stroke_batch_count == 1) {
+-      const CFX_Path* path =
+-          list.path_table[stroke_batch_path_indices[0]].GetObject();
+-      if (path) {
+-        device->DrawPath(*path, &stroke_batch_matrix, graph_state, 0,
+-                         paint.stroke_argb, paint.fill_options);
+-      }
+-    } else {
+-      CFX_Path combined_path;
+-      for (size_t batch_index = 0; batch_index < stroke_batch_count;
+-           ++batch_index) {
+-        const uint32_t path_index = stroke_batch_path_indices[batch_index];
+-        const CFX_Path* path = list.path_table[path_index].GetObject();
+-        if (path) {
+-          combined_path.Append(*path, nullptr);
+-        }
+-      }
+-      device->DrawPath(combined_path, &stroke_batch_matrix, graph_state, 0,
+-                       paint.stroke_argb, paint.fill_options);
+-    }
++    const bool draw_succeeded = device->DrawPathBatch(
++        pdfium::span(stroke_batch_paths).first(stroke_batch_count),
++        &stroke_batch_matrix, graph_state, 0, paint.stroke_argb,
++        paint.fill_options);
+     if (replay_stats) {
+       const size_t node_count = stroke_batch_count;
+       replay_stats->stroke_draw_calls++;
+@@ -1297,6 +1245,7 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+           std::max(replay_stats->max_stroke_batch_nodes, node_count);
+     }
+     reset_stroke_batch();
++    return draw_succeeded;
+   };
+ 
+   size_t replay_candidate_index = 0;
+@@ -1333,7 +1282,9 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+ 
+     // Clip changes are hard ordered barriers for both batching mechanisms.
+     if (!have_clip_state || current_clip_key != node.clip_key) {
+-      flush_stroke_batch();
++      if (!flush_stroke_batch()) {
++        return VelocePathDisplayListResult::kCancelled;
++      }
+       if (auto r = flush_run(replay_stats
+                                  ? &replay_stats->run_flush_clip_change
+                                  : nullptr);
+@@ -1380,8 +1331,6 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+         return r;
+       }
+ 
+-      const FX_RECT node_bounds =
+-          GetClippedDeviceBounds(node, holder_to_device, device);
+       const size_t node_points = path->GetPoints().size();
+       if (stroke_batch_count > 0) {
+         const bool same_state = node.paint_key == stroke_batch_paint_key &&
+@@ -1391,37 +1340,38 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+             node_points <= kMaxStrokeBatchPoints -
+                                std::min(stroke_batch_points,
+                                         kMaxStrokeBatchPoints);
+-        const bool disjoint = DeviceBoundsArePixelDisjoint(
+-            stroke_batch_bounds, node_bounds);
+-        if (!same_state || !within_capacity || !disjoint) {
+-          if (replay_stats && same_state && within_capacity && !disjoint) {
+-            replay_stats->stroke_overlap_flushes++;
++        if (!same_state || !within_capacity) {
++          if (replay_stats && !same_state) {
++            replay_stats->stroke_state_flushes++;
+           }
+           if (replay_stats && same_state && !within_capacity) {
+             replay_stats->stroke_capacity_flushes++;
+           }
+-          flush_stroke_batch();
++          if (!flush_stroke_batch()) {
++            return VelocePathDisplayListResult::kCancelled;
++          }
+         }
+       }
+       if (stroke_batch_count == 0) {
+         stroke_batch_matrix = path_matrix;
+         stroke_batch_paint_key = node.paint_key;
+-        stroke_batch_bounds = node_bounds;
+-      } else {
+-        UnionDeviceBounds(&stroke_batch_bounds, node_bounds);
+       }
+-      stroke_batch_path_indices[stroke_batch_count++] = node.path_index;
++      stroke_batch_paths[stroke_batch_count++] = path;
+       stroke_batch_points += node_points;
+       if (node_points > kMaxStrokeBatchPoints) {
+         // Oversized paths remain individual draws and never inflate a batch.
+         if (replay_stats) {
+           replay_stats->stroke_capacity_flushes++;
+         }
+-        flush_stroke_batch();
++        if (!flush_stroke_batch()) {
++          return VelocePathDisplayListResult::kCancelled;
++        }
+       }
+     } else if (paint.blend_mode == BlendMode::kNormal) {
+       // Fills and fill+stroke objects are hard painter-order barriers.
+-      flush_stroke_batch();
++      if (!flush_stroke_batch()) {
++        return VelocePathDisplayListResult::kCancelled;
++      }
+       if (auto r = flush_run(replay_stats
+                                  ? &replay_stats->run_flush_normal_node
+                                  : nullptr);
+@@ -1433,7 +1383,9 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+ 
+     } else if (CanDrawBlendNodeWithMask(paint)) {
+       // Blend objects are hard painter-order barriers for stroke batches.
+-      flush_stroke_batch();
++      if (!flush_stroke_batch()) {
++        return VelocePathDisplayListResult::kCancelled;
++      }
+       if (!run.empty() && run.paint_key != node.paint_key) {
+         if (auto r = flush_run(replay_stats
+                                    ? &replay_stats->run_flush_paint_change
+@@ -1465,7 +1417,9 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+ 
+     } else {
+       // Scratch-blend or unsupported objects are hard ordered barriers.
+-      flush_stroke_batch();
++      if (!flush_stroke_batch()) {
++        return VelocePathDisplayListResult::kCancelled;
++      }
+       if (auto r = flush_run(replay_stats
+                                  ? &replay_stats->run_flush_scratch_blend
+                                  : nullptr);
+@@ -1484,7 +1438,9 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+   }
+ 
+   // Flush ordered work remaining after the last node.
+-  flush_stroke_batch();
++  if (!flush_stroke_batch()) {
++    return VelocePathDisplayListResult::kCancelled;
++  }
+   if (auto r = flush_run(replay_stats ? &replay_stats->run_flush_end : nullptr);
+       r != VelocePathDisplayListResult::kRendered) {
+     return r;
+@@ -1588,7 +1544,7 @@ VelocePathDisplayListResult VeloceReplayCompiledPathDisplayList(
+     metrics->stroke_nodes = replay_stats.stroke_nodes;
+     metrics->stroke_dispatches_saved = replay_stats.stroke_dispatches_saved;
+     metrics->max_stroke_batch_nodes = replay_stats.max_stroke_batch_nodes;
+-    metrics->stroke_overlap_flushes = replay_stats.stroke_overlap_flushes;
++    metrics->stroke_state_flushes = replay_stats.stroke_state_flushes;
+     metrics->stroke_capacity_flushes = replay_stats.stroke_capacity_flushes;
+     metrics->spatial_index_queries = replay_stats.spatial_index_queries;
+     metrics->spatial_index_query_bins = replay_stats.spatial_index_query_bins;
+diff --git a/core/fpdfapi/render/veloce_path_display_list.h b/core/fpdfapi/render/veloce_path_display_list.h
+index a9276f56f..963725db6 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.h
++++ b/core/fpdfapi/render/veloce_path_display_list.h
+@@ -35,7 +35,7 @@ struct VelocePathDisplayListReplayMetrics {
+   size_t stroke_nodes = 0;
+   size_t stroke_dispatches_saved = 0;
+   size_t max_stroke_batch_nodes = 0;
+-  size_t stroke_overlap_flushes = 0;
++  size_t stroke_state_flushes = 0;
+   size_t stroke_capacity_flushes = 0;
+   size_t spatial_index_queries = 0;
+   size_t spatial_index_query_bins = 0;
+diff --git a/core/fpdfapi/render/veloce_render_plan.cpp b/core/fpdfapi/render/veloce_render_plan.cpp
+index 7667f0af5..9babbf72f 100644
+--- a/core/fpdfapi/render/veloce_render_plan.cpp
++++ b/core/fpdfapi/render/veloce_render_plan.cpp
+@@ -509,7 +509,7 @@ struct RenderPlanCostStats {
+   size_t stroke_nodes = 0;
+   size_t stroke_dispatches_saved = 0;
+   size_t max_stroke_batch_nodes = 0;
+-  size_t stroke_overlap_flushes = 0;
++  size_t stroke_state_flushes = 0;
+   size_t stroke_capacity_flushes = 0;
+   size_t spatial_index_queries = 0;
+   size_t spatial_index_query_bins = 0;
+@@ -626,7 +626,7 @@ void LogRenderPlanFacadeAttempt(const CPDF_PageObjectHolder* holder,
+       "compiledPathRunNodes=%zu replayVisited=%zu replayCulled=%zu "
+       "replayDrawn=%zu strokeDrawCalls=%zu strokeNodes=%zu "
+       "strokeDispatchesSaved=%zu maxStrokeBatchNodes=%zu "
+-      "strokeOverlapFlushes=%zu strokeCapacityFlushes=%zu "
++      "strokeStateFlushes=%zu strokeCapacityFlushes=%zu "
+       "spatialIndexQueries=%zu spatialIndexQueryBins=%zu "
+       "spatialIndexCandidates=%zu spatialIndexSkippedByTile=%zu "
+       "spatialIndexFallbackFullScan=%zu spatialIndexQueryMs=%lld",
+@@ -657,7 +657,7 @@ void LogRenderPlanFacadeAttempt(const CPDF_PageObjectHolder* holder,
+       cost.stroke_nodes,
+       cost.stroke_dispatches_saved,
+       cost.max_stroke_batch_nodes,
+-      cost.stroke_overlap_flushes,
++      cost.stroke_state_flushes,
+       cost.stroke_capacity_flushes,
+       cost.spatial_index_queries,
+       cost.spatial_index_query_bins,
+@@ -900,8 +900,7 @@ VeloceRenderPlanResult TryRenderSegmentedPlan(
+           cost->max_stroke_batch_nodes =
+               std::max(cost->max_stroke_batch_nodes,
+                        replay_metrics.max_stroke_batch_nodes);
+-          cost->stroke_overlap_flushes +=
+-              replay_metrics.stroke_overlap_flushes;
++          cost->stroke_state_flushes += replay_metrics.stroke_state_flushes;
+           cost->stroke_capacity_flushes +=
+               replay_metrics.stroke_capacity_flushes;
+           cost->spatial_index_queries += replay_metrics.spatial_index_queries;
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.cpp b/core/fxge/agg/cfx_agg_devicedriver.cpp
+index 3c78cd916..e5f81cbf0 100644
+--- a/core/fxge/agg/cfx_agg_devicedriver.cpp
++++ b/core/fxge/agg/cfx_agg_devicedriver.cpp
+@@ -1249,6 +1249,75 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_Path& path,
+   return true;
+ }
+ 
++bool CFX_AggDeviceDriver::DrawPathBatch(
++    pdfium::span<const CFX_Path* const> paths,
++    const CFX_Matrix* pObject2Device,
++    const CFX_GraphStateData* pGraphState,
++    uint32_t fill_color,
++    uint32_t stroke_color,
++    const CFX_FillRenderOptions& fill_options) {
++  if (paths.empty() || bitmap_->GetBuffer().empty()) {
++    return true;
++  }
++  if (fill_options.fill_type !=
++          CFX_FillRenderOptions::FillType::kNoFill ||
++      fill_color != 0 || !pGraphState || FXARGB_A(stroke_color) == 0) {
++    return RenderDeviceDriverIface::DrawPathBatch(
++        paths, pObject2Device, pGraphState, fill_color, stroke_color,
++        fill_options);
++  }
++
++  fill_options_ = fill_options;
++  RetainPtr<CFX_DIBitmap> backdrop =
++      group_knockout_ ? backdrop_bitmap_ : nullptr;
++  CFX_AggRenderer renderer(bitmap_, backdrop, clip_rgn_.get(), stroke_color,
++                           fill_options.full_cover, rgb_byte_order_);
++  agg::scanline_u8 scanline;
++
++  if (fill_options.zero_area) {
++    for (const CFX_Path* path : paths) {
++      if (!path) {
++        return false;
++      }
++      agg::path_storage path_data = BuildAggPath(*path, pObject2Device);
++      agg::rasterizer_scanline_aa rasterizer;
++      rasterizer.clip_box(0.0f, 0.0f, static_cast<float>(GetPixelWidth()),
++                          static_cast<float>(GetPixelHeight()));
++      RasterizeStroke(&rasterizer, &path_data, nullptr, pGraphState, 1,
++                      fill_options.stroke_text_mode);
++      agg::render_scanlines(rasterizer, scanline, renderer,
++                            fill_options.aliased_path);
++    }
++    return true;
++  }
++
++  CFX_Matrix matrix1;
++  CFX_Matrix matrix2;
++  if (pObject2Device) {
++    matrix1.a = std::max(fabs(pObject2Device->a), fabs(pObject2Device->b));
++    matrix1.d = matrix1.a;
++    matrix2 = CFX_Matrix(
++        pObject2Device->a / matrix1.a, pObject2Device->b / matrix1.a,
++        pObject2Device->c / matrix1.d, pObject2Device->d / matrix1.d, 0, 0);
++    matrix1 = *pObject2Device * matrix2.GetInverse();
++  }
++
++  for (const CFX_Path* path : paths) {
++    if (!path) {
++      return false;
++    }
++    agg::path_storage path_data = BuildAggPath(*path, &matrix1);
++    agg::rasterizer_scanline_aa rasterizer;
++    rasterizer.clip_box(0.0f, 0.0f, static_cast<float>(GetPixelWidth()),
++                        static_cast<float>(GetPixelHeight()));
++    RasterizeStroke(&rasterizer, &path_data, &matrix2, pGraphState, matrix1.a,
++                    fill_options.stroke_text_mode);
++    agg::render_scanlines(rasterizer, scanline, renderer,
++                          fill_options.aliased_path);
++  }
++  return true;
++}
++
+ bool CFX_AggDeviceDriver::FillRect(const FX_RECT& rect, uint32_t fill_color) {
+   if (bitmap_->GetBuffer().empty()) {
+     return true;
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.h b/core/fxge/agg/cfx_agg_devicedriver.h
+index 3adfbda73..3d31bbe10 100644
+--- a/core/fxge/agg/cfx_agg_devicedriver.h
++++ b/core/fxge/agg/cfx_agg_devicedriver.h
+@@ -66,6 +66,12 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
+                 uint32_t fill_color,
+                 uint32_t stroke_color,
+                 const CFX_FillRenderOptions& fill_options) override;
++  bool DrawPathBatch(pdfium::span<const CFX_Path* const> paths,
++                     const CFX_Matrix* pObject2Device,
++                     const CFX_GraphStateData* pGraphState,
++                     uint32_t fill_color,
++                     uint32_t stroke_color,
++                     const CFX_FillRenderOptions& fill_options) override;
+   bool FillRect(const FX_RECT& rect, uint32_t fill_color) override;
+   FX_RECT GetClipBox() const override;
+   bool GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
+diff --git a/core/fxge/cfx_renderdevice.cpp b/core/fxge/cfx_renderdevice.cpp
+index a707f1d80..45c7962fe 100644
+--- a/core/fxge/cfx_renderdevice.cpp
++++ b/core/fxge/cfx_renderdevice.cpp
+@@ -788,6 +788,30 @@ bool CFX_RenderDevice::DrawPath(const CFX_Path& path,
+                                   stroke_color, fill_options);
+ }
+ 
++bool CFX_RenderDevice::DrawPathBatch(
++    pdfium::span<const CFX_Path* const> paths,
++    const CFX_Matrix* pObject2Device,
++    const CFX_GraphStateData* pGraphState,
++    uint32_t fill_color,
++    uint32_t stroke_color,
++    const CFX_FillRenderOptions& fill_options) {
++  if (paths.empty()) {
++    return true;
++  }
++  if (!pGraphState || FXARGB_A(stroke_color) == 0 || fill_color != 0 ||
++      fill_options.fill_type !=
++          CFX_FillRenderOptions::FillType::kNoFill) {
++    return false;
++  }
++  for (const CFX_Path* path : paths) {
++    if (!path) {
++      return false;
++    }
++  }
++  return device_driver_->DrawPathBatch(paths, pObject2Device, pGraphState,
++                                       fill_color, stroke_color, fill_options);
++}
++
+ // This can be removed once PDFium entirely relies on Skia
+ bool CFX_RenderDevice::DrawFillStrokePath(
+     const CFX_Path& path,
+diff --git a/core/fxge/cfx_renderdevice.h b/core/fxge/cfx_renderdevice.h
+index e5d30eec1..013cffb36 100644
+--- a/core/fxge/cfx_renderdevice.h
++++ b/core/fxge/cfx_renderdevice.h
+@@ -91,6 +91,12 @@ class CFX_RenderDevice {
+                 uint32_t fill_color,
+                 uint32_t stroke_color,
+                 const CFX_FillRenderOptions& fill_options);
++  bool DrawPathBatch(pdfium::span<const CFX_Path* const> paths,
++                     const CFX_Matrix* pObject2Device,
++                     const CFX_GraphStateData* pGraphState,
++                     uint32_t fill_color,
++                     uint32_t stroke_color,
++                     const CFX_FillRenderOptions& fill_options);
+   bool FillRect(const FX_RECT& rect, uint32_t color);
+ 
+   RetainPtr<const CFX_DIBitmap> GetBackDrop() const;
+diff --git a/core/fxge/renderdevicedriver_iface.cpp b/core/fxge/renderdevicedriver_iface.cpp
+index f3ecba417..9d0c88846 100644
+--- a/core/fxge/renderdevicedriver_iface.cpp
++++ b/core/fxge/renderdevicedriver_iface.cpp
+@@ -14,6 +14,22 @@
+ 
+ RenderDeviceDriverIface::~RenderDeviceDriverIface() = default;
+ 
++bool RenderDeviceDriverIface::DrawPathBatch(
++    pdfium::span<const CFX_Path* const> paths,
++    const CFX_Matrix* pObject2Device,
++    const CFX_GraphStateData* pGraphState,
++    uint32_t fill_color,
++    uint32_t stroke_color,
++    const CFX_FillRenderOptions& fill_options) {
++  for (const CFX_Path* path : paths) {
++    if (!path || !DrawPath(*path, pObject2Device, pGraphState, fill_color,
++                           stroke_color, fill_options)) {
++      return false;
++    }
++  }
++  return true;
++}
++
+ bool RenderDeviceDriverIface::RenderCapGetBits() const {
+   return false;
+ }
+diff --git a/core/fxge/renderdevicedriver_iface.h b/core/fxge/renderdevicedriver_iface.h
+index e82ee93f7..8ac65fccd 100644
+--- a/core/fxge/renderdevicedriver_iface.h
++++ b/core/fxge/renderdevicedriver_iface.h
+@@ -99,6 +99,15 @@ class RenderDeviceDriverIface {
+                         uint32_t fill_color,
+                         uint32_t stroke_color,
+                         const CFX_FillRenderOptions& fill_options) = 0;
++  // Executes DrawPath() for each command in order. Overrides may share setup,
++  // but must preserve separate rasterization and compositing per path.
++  virtual bool DrawPathBatch(
++      pdfium::span<const CFX_Path* const> paths,
++      const CFX_Matrix* pObject2Device,
++      const CFX_GraphStateData* pGraphState,
++      uint32_t fill_color,
++      uint32_t stroke_color,
++      const CFX_FillRenderOptions& fill_options);
+   virtual bool FillRect(const FX_RECT& rect, uint32_t fill_color);
+   virtual bool DrawCosmeticLine(const CFX_PointF& ptMoveTo,
+                                 const CFX_PointF& ptLineTo,
