@@ -1,0 +1,400 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Veloce PDFium Patches <veloce-pdfium@example.invalid>
+Date: Mon, 13 Jul 2026 14:31:19 +0800
+Subject: [PATCH] Veloce: add bounded disjoint stroke batching
+
+Reduce normal-stroke DrawPath dispatches only for adjacent path nodes with
+identical paint and matrix state whose conservative device bounds are
+separated by at least one pixel. Keep clip, fill, blend, state, overlap,
+capacity, and RenderPlan segment boundaries hard.
+
+Use a fixed-size 256-entry batch with a 16384-point cap, retain cancellation
+discard semantics, and export batching telemetry through RenderPlan.
+---
+ .../render/veloce_path_display_list.cpp       | 195 +++++++++++++++++-
+ .../fpdfapi/render/veloce_path_display_list.h |   6 +
+ core/fpdfapi/render/veloce_render_plan.cpp    |  28 ++-
+ 3 files changed, 220 insertions(+), 9 deletions(-)
+
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index 0d619f98a..e69d97ca9 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -7,6 +7,7 @@
+ #include <stdint.h>
+ 
+ #include <algorithm>
++#include <array>
+ #include <cmath>
+ #include <chrono>
+ #include <cstring>
+@@ -54,6 +55,8 @@ constexpr uint32_t kSpatialIndexRows = 32;
+ constexpr uint32_t kSpatialIndexMinNodes = 4096;
+ constexpr uint32_t kMaxSpatialBinsPerNode = 128;
+ constexpr size_t kSpatialCandidateWordBits = sizeof(uint64_t) * 8;
++constexpr size_t kMaxStrokeBatchNodes = 256;
++constexpr size_t kMaxStrokeBatchPoints = 16384;
+ 
+ enum class PathDlRejectReason {
+   kNone,
+@@ -167,6 +170,12 @@ struct PathDlReplayStats {
+   size_t run_flush_normal_node = 0;
+   size_t run_flush_scratch_blend = 0;
+   size_t run_flush_end = 0;
++  size_t stroke_draw_calls = 0;
++  size_t stroke_nodes = 0;
++  size_t stroke_dispatches_saved = 0;
++  size_t max_stroke_batch_nodes = 0;
++  size_t stroke_overlap_flushes = 0;
++  size_t stroke_capacity_flushes = 0;
+   size_t spatial_index_queries = 0;
+   size_t spatial_index_query_bins = 0;
+   size_t spatial_index_candidates = 0;
+@@ -335,6 +344,8 @@ void LogPathDisplayListAttempt(const char* result,
+       "noopClips=%zu blendNodes=%zu scratchBlendNodes=%zu visited=%zu culled=%zu missingPath=%zu drawn=%zu "
+       "clipSwitches=%zu cancelChecks=%zu groupRunComposites=%zu groupRunNodes=%zu maxGroupRunNodes=%zu "
+       "runFlushPaint=%zu runFlushClip=%zu runFlushNormal=%zu runFlushScratch=%zu runFlushEnd=%zu "
++      "strokeDrawCalls=%zu strokeNodes=%zu strokeDispatchesSaved=%zu "
++      "maxStrokeBatchNodes=%zu strokeOverlapFlushes=%zu strokeCapacityFlushes=%zu "
+       "spatialIndexBins=%zu spatialIndexEntries=%zu spatialIndexOverflow=%zu "
+       "spatialIndexQueries=%zu spatialIndexQueryBins=%zu spatialIndexCandidates=%zu "
+       "spatialIndexSkippedByTile=%zu spatialIndexFallbackFullScan=%zu spatialIndexQueryMs=%" PRId64 " "
+@@ -370,6 +381,12 @@ void LogPathDisplayListAttempt(const char* result,
+       replay_stats ? replay_stats->run_flush_normal_node : kZero,
+       replay_stats ? replay_stats->run_flush_scratch_blend : kZero,
+       replay_stats ? replay_stats->run_flush_end : kZero,
++      replay_stats ? replay_stats->stroke_draw_calls : kZero,
++      replay_stats ? replay_stats->stroke_nodes : kZero,
++      replay_stats ? replay_stats->stroke_dispatches_saved : kZero,
++      replay_stats ? replay_stats->max_stroke_batch_nodes : kZero,
++      replay_stats ? replay_stats->stroke_overlap_flushes : kZero,
++      replay_stats ? replay_stats->stroke_capacity_flushes : kZero,
+       list && list->spatial_index.valid() ? list->spatial_index.bins.size()
+                                           : kZero,
+       list && list->spatial_index.valid() ? list->spatial_index.bin_entries
+@@ -1147,6 +1164,45 @@ bool FlushGroupRun(CFX_RenderDevice* device,
+   return true;
+ }
+ 
++bool IsStrokeOnlyNormal(const PathDlPaint& paint) {
++  return paint.blend_mode == BlendMode::kNormal &&
++         paint.fill_options.fill_type ==
++             CFX_FillRenderOptions::FillType::kNoFill &&
++         paint.stroke_argb != 0;
++}
++
++FX_RECT GetClippedDeviceBounds(const PathDlNode& node,
++                               const CFX_Matrix& holder_to_device,
++                               CFX_RenderDevice* device) {
++  FX_RECT rect =
++      holder_to_device.TransformRect(node.holder_space_bbox).GetOuterRect();
++  rect.Intersect(device->GetClipBox());
++  return rect;
++}
++
++bool DeviceBoundsArePixelDisjoint(const FX_RECT& lhs, const FX_RECT& rhs) {
++  if (lhs.IsEmpty() || rhs.IsEmpty() || !lhs.Valid() || !rhs.Valid()) {
++    return false;
++  }
++  // Keep one full device pixel between batches. This conservatively includes
++  // antialias coverage that can extend beyond geometric stroke bounds.
++  return static_cast<int64_t>(lhs.right) + 1 <= rhs.left ||
++         static_cast<int64_t>(rhs.right) + 1 <= lhs.left ||
++         static_cast<int64_t>(lhs.bottom) + 1 <= rhs.top ||
++         static_cast<int64_t>(rhs.bottom) + 1 <= lhs.top;
++}
++
++void UnionDeviceBounds(FX_RECT* destination, const FX_RECT& source) {
++  if (destination->IsEmpty()) {
++    *destination = source;
++    return;
++  }
++  destination->left = std::min(destination->left, source.left);
++  destination->top = std::min(destination->top, source.top);
++  destination->right = std::max(destination->right, source.right);
++  destination->bottom = std::max(destination->bottom, source.bottom);
++}
++
+ VelocePathDisplayListResult ReplayPathDisplayList(
+     CPDF_RenderStatus* status,
+     const NativePathDisplayList& list,
+@@ -1183,6 +1239,66 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+     return VelocePathDisplayListResult::kRendered;
+   };
+ 
++  // A stroke batch contains only adjacent, same-state, same-matrix stroke
++  // objects whose conservative device bounds are pairwise disjoint. The
++  // aggregate-bounds check is intentionally stricter than necessary: it gives
++  // an O(1) proof that combining paths cannot change source-over accumulation
++  // or antialias coverage at intersections.
++  std::array<uint32_t, kMaxStrokeBatchNodes> stroke_batch_path_indices;
++  size_t stroke_batch_count = 0;
++  CFX_Matrix stroke_batch_matrix;
++  uint32_t stroke_batch_paint_key = kNoClipKey;
++  FX_RECT stroke_batch_bounds;
++  size_t stroke_batch_points = 0;
++
++  auto reset_stroke_batch = [&]() {
++    stroke_batch_count = 0;
++    stroke_batch_matrix = CFX_Matrix();
++    stroke_batch_paint_key = kNoClipKey;
++    stroke_batch_bounds = FX_RECT();
++    stroke_batch_points = 0;
++  };
++
++  auto flush_stroke_batch = [&]() {
++    if (stroke_batch_count == 0) {
++      return;
++    }
++    const PathDlPaint& paint = list.paint_table[stroke_batch_paint_key];
++    const CFX_GraphStateData* graph_state =
++        paint.graph_state_key == kNoGraphStateKey
++            ? nullptr
++            : &list.graph_state_table[paint.graph_state_key];
++    if (stroke_batch_count == 1) {
++      const CFX_Path* path =
++          list.path_table[stroke_batch_path_indices[0]].GetObject();
++      if (path) {
++        device->DrawPath(*path, &stroke_batch_matrix, graph_state, 0,
++                         paint.stroke_argb, paint.fill_options);
++      }
++    } else {
++      CFX_Path combined_path;
++      for (size_t batch_index = 0; batch_index < stroke_batch_count;
++           ++batch_index) {
++        const uint32_t path_index = stroke_batch_path_indices[batch_index];
++        const CFX_Path* path = list.path_table[path_index].GetObject();
++        if (path) {
++          combined_path.Append(*path, nullptr);
++        }
++      }
++      device->DrawPath(combined_path, &stroke_batch_matrix, graph_state, 0,
++                       paint.stroke_argb, paint.fill_options);
++    }
++    if (replay_stats) {
++      const size_t node_count = stroke_batch_count;
++      replay_stats->stroke_draw_calls++;
++      replay_stats->stroke_nodes += node_count;
++      replay_stats->stroke_dispatches_saved += node_count - 1;
++      replay_stats->max_stroke_batch_nodes =
++          std::max(replay_stats->max_stroke_batch_nodes, node_count);
++    }
++    reset_stroke_batch();
++  };
++
+   size_t replay_candidate_index = 0;
+   for (size_t replay_index = 0; replay_index < list.nodes.size();
+        ++replay_index) {
+@@ -1199,6 +1315,7 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+         // P2: cancelled output is discarded — do not flush partial run into
+         // the bitmap. Just reset and return kCancelled immediately.
+         run.reset();
++        reset_stroke_batch();
+         return VelocePathDisplayListResult::kCancelled;
+       }
+     }
+@@ -1214,8 +1331,9 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+       continue;
+     }
+ 
+-    // Clip change: flush run before installing new clip state.
++    // Clip changes are hard ordered barriers for both batching mechanisms.
+     if (!have_clip_state || current_clip_key != node.clip_key) {
++      flush_stroke_batch();
+       if (auto r = flush_run(replay_stats
+                                  ? &replay_stats->run_flush_clip_change
+                                  : nullptr);
+@@ -1241,7 +1359,11 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+       if (replay_stats) {
+         replay_stats->missing_path_nodes++;
+       }
+-      continue;
++      // Compiled path ownership should make this impossible. Do not batch
++      // across an unknown ordered object or publish incomplete output.
++      run.reset();
++      reset_stroke_batch();
++      return VelocePathDisplayListResult::kCancelled;
+     }
+     CFX_Matrix path_matrix = node.path_to_holder * holder_to_device;
+     const CFX_GraphStateData* graph_state =
+@@ -1249,9 +1371,57 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+             ? nullptr
+             : &list.graph_state_table[paint.graph_state_key];
+ 
+-    if (paint.blend_mode == BlendMode::kNormal) {
+-      // Normal node: flush pending run first (blend must composite before
+-      // the normal node paints over it), then draw directly.
++    if (IsStrokeOnlyNormal(paint)) {
++      // Any preceding blend group must composite before this normal stroke.
++      if (auto r = flush_run(replay_stats
++                                 ? &replay_stats->run_flush_normal_node
++                                 : nullptr);
++          r != VelocePathDisplayListResult::kRendered) {
++        return r;
++      }
++
++      const FX_RECT node_bounds =
++          GetClippedDeviceBounds(node, holder_to_device, device);
++      const size_t node_points = path->GetPoints().size();
++      if (stroke_batch_count > 0) {
++        const bool same_state = node.paint_key == stroke_batch_paint_key &&
++                                path_matrix == stroke_batch_matrix;
++        const bool within_capacity =
++            stroke_batch_count < kMaxStrokeBatchNodes &&
++            node_points <= kMaxStrokeBatchPoints -
++                               std::min(stroke_batch_points,
++                                        kMaxStrokeBatchPoints);
++        const bool disjoint = DeviceBoundsArePixelDisjoint(
++            stroke_batch_bounds, node_bounds);
++        if (!same_state || !within_capacity || !disjoint) {
++          if (replay_stats && same_state && within_capacity && !disjoint) {
++            replay_stats->stroke_overlap_flushes++;
++          }
++          if (replay_stats && same_state && !within_capacity) {
++            replay_stats->stroke_capacity_flushes++;
++          }
++          flush_stroke_batch();
++        }
++      }
++      if (stroke_batch_count == 0) {
++        stroke_batch_matrix = path_matrix;
++        stroke_batch_paint_key = node.paint_key;
++        stroke_batch_bounds = node_bounds;
++      } else {
++        UnionDeviceBounds(&stroke_batch_bounds, node_bounds);
++      }
++      stroke_batch_path_indices[stroke_batch_count++] = node.path_index;
++      stroke_batch_points += node_points;
++      if (node_points > kMaxStrokeBatchPoints) {
++        // Oversized paths remain individual draws and never inflate a batch.
++        if (replay_stats) {
++          replay_stats->stroke_capacity_flushes++;
++        }
++        flush_stroke_batch();
++      }
++    } else if (paint.blend_mode == BlendMode::kNormal) {
++      // Fills and fill+stroke objects are hard painter-order barriers.
++      flush_stroke_batch();
+       if (auto r = flush_run(replay_stats
+                                  ? &replay_stats->run_flush_normal_node
+                                  : nullptr);
+@@ -1262,7 +1432,8 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+                        paint.stroke_argb, paint.fill_options);
+ 
+     } else if (CanDrawBlendNodeWithMask(paint)) {
+-      // Mask-eligible blend node. Flush if the paint key changes.
++      // Blend objects are hard painter-order barriers for stroke batches.
++      flush_stroke_batch();
+       if (!run.empty() && run.paint_key != node.paint_key) {
+         if (auto r = flush_run(replay_stats
+                                    ? &replay_stats->run_flush_paint_change
+@@ -1293,7 +1464,8 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+       }
+ 
+     } else {
+-      // Scratch-blend or unsupported: flush run, then draw via per-node BGRA.
++      // Scratch-blend or unsupported objects are hard ordered barriers.
++      flush_stroke_batch();
+       if (auto r = flush_run(replay_stats
+                                  ? &replay_stats->run_flush_scratch_blend
+                                  : nullptr);
+@@ -1311,7 +1483,8 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+     }
+   }
+ 
+-  // Flush any run remaining after the last node.
++  // Flush ordered work remaining after the last node.
++  flush_stroke_batch();
+   if (auto r = flush_run(replay_stats ? &replay_stats->run_flush_end : nullptr);
+       r != VelocePathDisplayListResult::kRendered) {
+     return r;
+@@ -1411,6 +1584,12 @@ VelocePathDisplayListResult VeloceReplayCompiledPathDisplayList(
+     metrics->visited_nodes = replay_stats.visited_nodes;
+     metrics->culled_nodes = replay_stats.culled_nodes;
+     metrics->drawn_nodes = replay_stats.drawn_nodes;
++    metrics->stroke_draw_calls = replay_stats.stroke_draw_calls;
++    metrics->stroke_nodes = replay_stats.stroke_nodes;
++    metrics->stroke_dispatches_saved = replay_stats.stroke_dispatches_saved;
++    metrics->max_stroke_batch_nodes = replay_stats.max_stroke_batch_nodes;
++    metrics->stroke_overlap_flushes = replay_stats.stroke_overlap_flushes;
++    metrics->stroke_capacity_flushes = replay_stats.stroke_capacity_flushes;
+     metrics->spatial_index_queries = replay_stats.spatial_index_queries;
+     metrics->spatial_index_query_bins = replay_stats.spatial_index_query_bins;
+     metrics->spatial_index_candidates = replay_stats.spatial_index_candidates;
+diff --git a/core/fpdfapi/render/veloce_path_display_list.h b/core/fpdfapi/render/veloce_path_display_list.h
+index e81709924..a9276f56f 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.h
++++ b/core/fpdfapi/render/veloce_path_display_list.h
+@@ -31,6 +31,12 @@ struct VelocePathDisplayListReplayMetrics {
+   size_t visited_nodes = 0;
+   size_t culled_nodes = 0;
+   size_t drawn_nodes = 0;
++  size_t stroke_draw_calls = 0;
++  size_t stroke_nodes = 0;
++  size_t stroke_dispatches_saved = 0;
++  size_t max_stroke_batch_nodes = 0;
++  size_t stroke_overlap_flushes = 0;
++  size_t stroke_capacity_flushes = 0;
+   size_t spatial_index_queries = 0;
+   size_t spatial_index_query_bins = 0;
+   size_t spatial_index_candidates = 0;
+diff --git a/core/fpdfapi/render/veloce_render_plan.cpp b/core/fpdfapi/render/veloce_render_plan.cpp
+index 49275363f..7667f0af5 100644
+--- a/core/fpdfapi/render/veloce_render_plan.cpp
++++ b/core/fpdfapi/render/veloce_render_plan.cpp
+@@ -505,6 +505,12 @@ struct RenderPlanCostStats {
+   size_t replay_visited_nodes = 0;
+   size_t replay_culled_nodes = 0;
+   size_t replay_drawn_nodes = 0;
++  size_t stroke_draw_calls = 0;
++  size_t stroke_nodes = 0;
++  size_t stroke_dispatches_saved = 0;
++  size_t max_stroke_batch_nodes = 0;
++  size_t stroke_overlap_flushes = 0;
++  size_t stroke_capacity_flushes = 0;
+   size_t spatial_index_queries = 0;
+   size_t spatial_index_query_bins = 0;
+   size_t spatial_index_candidates = 0;
+@@ -618,7 +624,10 @@ void LogRenderPlanFacadeAttempt(const CPDF_PageObjectHolder* holder,
+       "renderPlanCancelChecks=%zu "
+       "compiledPathRunCacheHits=%zu compiledPathRunCacheMisses=%zu "
+       "compiledPathRunNodes=%zu replayVisited=%zu replayCulled=%zu "
+-      "replayDrawn=%zu spatialIndexQueries=%zu spatialIndexQueryBins=%zu "
++      "replayDrawn=%zu strokeDrawCalls=%zu strokeNodes=%zu "
++      "strokeDispatchesSaved=%zu maxStrokeBatchNodes=%zu "
++      "strokeOverlapFlushes=%zu strokeCapacityFlushes=%zu "
++      "spatialIndexQueries=%zu spatialIndexQueryBins=%zu "
+       "spatialIndexCandidates=%zu spatialIndexSkippedByTile=%zu "
+       "spatialIndexFallbackFullScan=%zu spatialIndexQueryMs=%lld",
+       RenderPlanResultName(result), path ? path : "unknown",
+@@ -644,6 +653,12 @@ void LogRenderPlanFacadeAttempt(const CPDF_PageObjectHolder* holder,
+       cost.replay_visited_nodes,
+       cost.replay_culled_nodes,
+       cost.replay_drawn_nodes,
++      cost.stroke_draw_calls,
++      cost.stroke_nodes,
++      cost.stroke_dispatches_saved,
++      cost.max_stroke_batch_nodes,
++      cost.stroke_overlap_flushes,
++      cost.stroke_capacity_flushes,
+       cost.spatial_index_queries,
+       cost.spatial_index_query_bins,
+       cost.spatial_index_candidates,
+@@ -878,6 +893,17 @@ VeloceRenderPlanResult TryRenderSegmentedPlan(
+           cost->replay_visited_nodes += replay_metrics.visited_nodes;
+           cost->replay_culled_nodes += replay_metrics.culled_nodes;
+           cost->replay_drawn_nodes += replay_metrics.drawn_nodes;
++          cost->stroke_draw_calls += replay_metrics.stroke_draw_calls;
++          cost->stroke_nodes += replay_metrics.stroke_nodes;
++          cost->stroke_dispatches_saved +=
++              replay_metrics.stroke_dispatches_saved;
++          cost->max_stroke_batch_nodes =
++              std::max(cost->max_stroke_batch_nodes,
++                       replay_metrics.max_stroke_batch_nodes);
++          cost->stroke_overlap_flushes +=
++              replay_metrics.stroke_overlap_flushes;
++          cost->stroke_capacity_flushes +=
++              replay_metrics.stroke_capacity_flushes;
+           cost->spatial_index_queries += replay_metrics.spatial_index_queries;
+           cost->spatial_index_query_bins +=
+               replay_metrics.spatial_index_query_bins;
