@@ -276,6 +276,10 @@ jobs:
             echo "ERROR: coarse touched-bin full-scan heuristic remains in r25-0067 build" >&2
             exit 1
           fi
+          if grep -q 'kSpatialIndexBroadQueryAreaRatio' core/fpdfapi/render/veloce_path_display_list.cpp; then
+            echo "ERROR: coarse area-ratio full-scan heuristic remains in r25-0067 build" >&2
+            exit 1
+          fi
           if grep -q 'FindHolderObjectByIndex' core/fpdfapi/render/veloce_render_plan.cpp; then
             echo "ERROR: linear passthrough holder lookup helper remains in r25-0067 build" >&2
             exit 1
