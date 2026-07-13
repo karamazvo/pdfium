@@ -1,0 +1,177 @@
+From 1f947427de99b3fc2ef889781d8da83d478209d9 Mon Sep 17 00:00:00 2001
+From: Veloce PDFium Patches <veloce-pdfium@example.invalid>
+Date: Mon, 13 Jul 2026 18:58:54 +0800
+Subject: [PATCH] Veloce: reuse AGG scratch across render dispatches
+
+Move exact batch path, rasterizer, and scanline scratch ownership from each
+DrawPathBatch call to the single-owner AGG device. Allocate it lazily, reset
+logical contents before every path, and retain only high-water capacity for
+the device lifetime.
+
+Add segmented compile and replay timings so cold command compilation and AGG
+execution can be measured independently without node-level instrumentation.
+---
+ core/fpdfapi/render/veloce_render_plan.cpp | 32 ++++++++++++++++++++++
+ core/fxge/agg/cfx_agg_devicedriver.cpp     | 21 ++++++++++++--
+ core/fxge/agg/cfx_agg_devicedriver.h       |  3 ++
+ 3 files changed, 53 insertions(+), 3 deletions(-)
+
+diff --git a/core/fpdfapi/render/veloce_render_plan.cpp b/core/fpdfapi/render/veloce_render_plan.cpp
+index 9babbf72f..6ef15988c 100644
+--- a/core/fpdfapi/render/veloce_render_plan.cpp
++++ b/core/fpdfapi/render/veloce_render_plan.cpp
+@@ -24,6 +24,7 @@
+ #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
+ #include "core/fpdfapi/parser/cpdf_dictionary.h"
+ #include "core/fpdfapi/render/cpdf_renderstatus.h"
++#include "core/fxcrt/unowned_ptr.h"
+ #include "core/fxge/cfx_renderdevice.h"
+ 
+ namespace {
+@@ -491,6 +492,8 @@ struct RenderPlanCostStats {
+   bool plan_cache_hit = false;
+   int64_t plan_lookup_ms = 0;
+   int64_t segmented_ms = 0;
++  int64_t segmented_compile_ms = 0;
++  int64_t segmented_replay_ms = 0;
+   int64_t whole_path_run_ms = 0;
+   int64_t legacy_fallback_ms = 0;
+   int64_t total_ms = 0;
+@@ -519,6 +522,26 @@ struct RenderPlanCostStats {
+   int64_t spatial_index_query_ms = 0;
+ };
+ 
++class ScopedRenderPlanPhaseTimer {
++ public:
++  explicit ScopedRenderPlanPhaseTimer(int64_t* elapsed_ms)
++      : elapsed_ms_(elapsed_ms), start_ms_(NowMs()) {}
++
++  ~ScopedRenderPlanPhaseTimer() { Stop(); }
++
++  void Stop() {
++    if (!elapsed_ms_) {
++      return;
++    }
++    *elapsed_ms_ += NowMs() - start_ms_;
++    elapsed_ms_ = nullptr;
++  }
++
++ private:
++  UnownedPtr<int64_t> elapsed_ms_;
++  const int64_t start_ms_;
++};
++
+ struct RenderPlanShape {
+   size_t segments = 0;
+   size_t path_runs = 0;
+@@ -619,6 +642,7 @@ void LogRenderPlanFacadeAttempt(const CPDF_PageObjectHolder* holder,
+       "unsupportedBarriers=%zu segmentedResult=%s fallbackResult=%s "
+       "planCache=%s planLookupMs=%lld livePassthroughLookups=%zu "
+       "clipSkippedPassthroughObjects=%zu segmentedMs=%lld "
++      "segmentedCompileMs=%lld segmentedReplayMs=%lld "
+       "wholePathRunMs=%lld legacyFallbackMs=%lld totalMs=%lld "
+       "clipSkippedPathRuns=%zu clipSkippedPathObjects=%zu "
+       "renderPlanCancelChecks=%zu "
+@@ -641,6 +665,8 @@ void LogRenderPlanFacadeAttempt(const CPDF_PageObjectHolder* holder,
+       cost.live_passthrough_lookups,
+       cost.clip_skipped_passthrough_objects,
+       static_cast<long long>(cost.segmented_ms),
++      static_cast<long long>(cost.segmented_compile_ms),
++      static_cast<long long>(cost.segmented_replay_ms),
+       static_cast<long long>(cost.whole_path_run_ms),
+       static_cast<long long>(cost.legacy_fallback_ms),
+       static_cast<long long>(cost.total_ms),
+@@ -804,6 +830,8 @@ VeloceRenderPlanResult TryRenderSegmentedPlan(
+     return VeloceRenderPlanResult::kCancelled;
+   }
+ 
++  ScopedRenderPlanPhaseTimer compile_timer(
++      cost ? &cost->segmented_compile_ms : nullptr);
+   for (size_t segment_index = 0; segment_index < plan.segments.size();
+        ++segment_index) {
+     if (ShouldCancelRenderPlan(status, cost)) {
+@@ -868,11 +896,14 @@ VeloceRenderPlanResult TryRenderSegmentedPlan(
+         return VeloceRenderPlanResult::kNotEligible;
+     }
+   }
++  compile_timer.Stop();
+ 
+   if (compiled_path_runs == 0 && clip_skipped_path_runs == 0) {
+     return VeloceRenderPlanResult::kNotEligible;
+   }
+ 
++  ScopedRenderPlanPhaseTimer replay_timer(
++      cost ? &cost->segmented_replay_ms : nullptr);
+   for (size_t segment_index = 0; segment_index < plan.segments.size();
+        ++segment_index) {
+     if (ShouldCancelRenderPlan(status, cost)) {
+@@ -944,6 +975,7 @@ VeloceRenderPlanResult TryRenderSegmentedPlan(
+         return VeloceRenderPlanResult::kCancelled;
+     }
+   }
++  replay_timer.Stop();
+ 
+   return ShouldCancelRenderPlan(status, cost)
+              ? VeloceRenderPlanResult::kCancelled
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.cpp b/core/fxge/agg/cfx_agg_devicedriver.cpp
+index 615844445..9a06b7838 100644
+--- a/core/fxge/agg/cfx_agg_devicedriver.cpp
++++ b/core/fxge/agg/cfx_agg_devicedriver.cpp
+@@ -989,6 +989,16 @@ agg::path_storage BuildAggPath(const CFX_Path& path,
+ 
+ }  // namespace
+ 
++class CFX_AggDeviceDriver::PathBatchScratch {
++ public:
++  PathBatchScratch() = default;
++  ~PathBatchScratch() = default;
++
++  agg::path_storage path_data;
++  agg::rasterizer_scanline_aa rasterizer;
++  agg::scanline_u8 scanline;
++};
++
+ CFX_AggDeviceDriver::CFX_AggDeviceDriver(
+     RetainPtr<CFX_DIBitmap> pBitmap,
+     bool bRgbByteOrder,
+@@ -1278,9 +1288,14 @@ bool CFX_AggDeviceDriver::DrawPathBatch(
+       group_knockout_ ? backdrop_bitmap_ : nullptr;
+   CFX_AggRenderer renderer(bitmap_, backdrop, clip_rgn_.get(), stroke_color,
+                            fill_options.full_cover, rgb_byte_order_);
+-  agg::scanline_u8 scanline;
+-  agg::path_storage path_data;
+-  agg::rasterizer_scanline_aa rasterizer;
++  if (!path_batch_scratch_) {
++    path_batch_scratch_ = std::make_unique<PathBatchScratch>();
++  }
++  agg::path_storage& path_data = path_batch_scratch_->path_data;
++  agg::rasterizer_scanline_aa& rasterizer = path_batch_scratch_->rasterizer;
++  agg::scanline_u8& scanline = path_batch_scratch_->scanline;
++  path_data.remove_all();
++  rasterizer.reset();
+   rasterizer.clip_box(0.0f, 0.0f, static_cast<float>(GetPixelWidth()),
+                       static_cast<float>(GetPixelHeight()));
+ 
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.h b/core/fxge/agg/cfx_agg_devicedriver.h
+index 3d31bbe10..7982fb23a 100644
+--- a/core/fxge/agg/cfx_agg_devicedriver.h
++++ b/core/fxge/agg/cfx_agg_devicedriver.h
+@@ -114,6 +114,8 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
+   void Clear(uint32_t color);
+ 
+  private:
++  class PathBatchScratch;
++
+   void RenderRasterizer(pdfium::agg::rasterizer_scanline_aa& rasterizer,
+                         uint32_t color,
+                         bool bFullCover,
+@@ -131,6 +133,7 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
+   const bool rgb_byte_order_;
+   const bool group_knockout_;
+   RetainPtr<CFX_DIBitmap> backdrop_bitmap_;
++  std::unique_ptr<PathBatchScratch> path_batch_scratch_;
+ };
+ 
+ }  // namespace pdfium
+-- 
+2.39.5 (Apple Git-154)
