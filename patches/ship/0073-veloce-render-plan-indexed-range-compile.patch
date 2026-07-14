@@ -1,0 +1,61 @@
+From 47d6020a1fa8f4348e82944bbf822beda420bfd0 Mon Sep 17 00:00:00 2001
+From: Veloce PDFium Patches <veloce-pdfium@example.invalid>
+Date: Tue, 14 Jul 2026 13:47:00 +0800
+Subject: [PATCH] Veloce: compile RenderPlan ranges by object index
+
+Compile each ordered RenderPlan path-run segment directly from its holder
+object range. The previous range helper restarted iteration at object zero
+for every segment and skipped the preceding prefix, repeating millions of
+object visits on pages split by many passthrough barriers.
+
+Preserve the exact range, object order, eligibility checks, compiled commands,
+and replay behavior. This changes only how the source objects are reached.
+---
+ .../render/veloce_path_display_list.cpp       | 20 ++++++++-----------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
+
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index 8473d0219..5d26c055f 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -764,16 +764,12 @@ bool CompilePathDisplayListRange(CPDF_RenderStatus* status,
+       object_count > max_index - first_object_index
+           ? max_index
+           : first_object_index + object_count;
+-  size_t object_index = 0;
+-  for (const auto& obj : *holder) {
+-    if (object_index < first_object_index) {
+-      ++object_index;
+-      continue;
+-    }
+-    if (object_index >= end_object_index) {
+-      break;
+-    }
+-    ++object_index;
++  const size_t holder_object_count = holder->GetPageObjectCount();
++  const size_t bounded_end_object_index =
++      std::min(end_object_index, holder_object_count);
++  for (size_t object_index = first_object_index;
++       object_index < bounded_end_object_index; ++object_index) {
++    CPDF_PageObject* obj = holder->GetPageObjectByIndex(object_index);
+     list->scanned_objects++;
+     if ((list->scanned_objects % kCancelCheckNodeInterval) == 0 &&
+         status->ShouldCancelRender()) {
+@@ -783,7 +779,7 @@ bool CompilePathDisplayListRange(CPDF_RenderStatus* status,
+       list->skipped_inactive++;
+       continue;
+     }
+-    if (!status->GetRenderOptions().CheckPageObjectVisible(obj.get())) {
++    if (!status->GetRenderOptions().CheckPageObjectVisible(obj)) {
+       list->skipped_invisible++;
+       continue;
+     }
+@@ -797,7 +793,7 @@ bool CompilePathDisplayListRange(CPDF_RenderStatus* status,
+     CFX_FillRenderOptions::FillType fill_type = path_obj->filltype();
+     const bool stroke = path_obj->stroke();
+     PathDlRejectReason transparency_reason =
+-        GetUnsupportedTransparencyReason(obj.get());
++        GetUnsupportedTransparencyReason(obj);
+     if (transparency_reason != PathDlRejectReason::kNone) {
+       return reject(transparency_reason);
+     }
