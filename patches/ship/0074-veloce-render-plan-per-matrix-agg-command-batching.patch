@@ -1,0 +1,363 @@
+From 1c7e7c866845a7cebd57bdc65a9b33cd4d66e869 Mon Sep 17 00:00:00 2001
+From: Veloce PDFium Patches <veloce-pdfium@example.invalid>
+Date: Tue, 14 Jul 2026 17:23:08 +0800
+Subject: [PATCH] Veloce: batch exact strokes across matrix changes
+
+Keep adjacent same-paint stroke commands in one bounded dispatch even when
+their object-to-device matrices differ. Carry one exact matrix per command
+through CFX_RenderDevice and the AGG driver instead of treating every matrix
+change as a batch barrier.
+
+This does not merge path geometry or change painter order. AGG still applies
+each command's original matrix and performs a separate rasterization and
+source-over composite for every path; the packet only reuses immutable paint
+setup and device-owned bounded scratch. Paint, clip, fill, blend,
+passthrough, cancellation, and fixed capacity boundaries remain hard flushes.
+
+Add strokeMatrixChangesBatched telemetry so the Q16 dense-tile bottleneck can
+be validated before any wider state canonicalization is considered.
+
+---
+ .../render/veloce_path_display_list.cpp       | 31 ++++++++++------
+ .../fpdfapi/render/veloce_path_display_list.h |  1 +
+ core/fpdfapi/render/veloce_render_plan.cpp    |  7 +++-
+ core/fxge/agg/cfx_agg_devicedriver.cpp        | 36 ++++++++++---------
+ core/fxge/agg/cfx_agg_devicedriver.h          |  2 +-
+ core/fxge/cfx_renderdevice.cpp                |  7 ++--
+ core/fxge/cfx_renderdevice.h                  |  2 +-
+ core/fxge/renderdevicedriver_iface.cpp        | 12 ++++---
+ core/fxge/renderdevicedriver_iface.h          |  2 +-
+ 9 files changed, 63 insertions(+), 37 deletions(-)
+
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index 5d26c055f..333e99590 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -175,6 +175,7 @@ struct PathDlReplayStats {
+   size_t stroke_dispatches_saved = 0;
+   size_t max_stroke_batch_nodes = 0;
+   size_t stroke_state_flushes = 0;
++  size_t stroke_matrix_changes_batched = 0;
+   size_t stroke_capacity_flushes = 0;
+   size_t spatial_index_queries = 0;
+   size_t spatial_index_query_bins = 0;
+@@ -345,7 +346,8 @@ void LogPathDisplayListAttempt(const char* result,
+       "clipSwitches=%zu cancelChecks=%zu groupRunComposites=%zu groupRunNodes=%zu maxGroupRunNodes=%zu "
+       "runFlushPaint=%zu runFlushClip=%zu runFlushNormal=%zu runFlushScratch=%zu runFlushEnd=%zu "
+       "strokeDrawCalls=%zu strokeNodes=%zu strokeDispatchesSaved=%zu "
+-      "maxStrokeBatchNodes=%zu strokeStateFlushes=%zu strokeCapacityFlushes=%zu "
++      "maxStrokeBatchNodes=%zu strokeStateFlushes=%zu "
++      "strokeMatrixChangesBatched=%zu strokeCapacityFlushes=%zu "
+       "spatialIndexBins=%zu spatialIndexEntries=%zu spatialIndexOverflow=%zu "
+       "spatialIndexQueries=%zu spatialIndexQueryBins=%zu spatialIndexCandidates=%zu "
+       "spatialIndexSkippedByTile=%zu spatialIndexFallbackFullScan=%zu spatialIndexQueryMs=%" PRId64 " "
+@@ -386,6 +388,7 @@ void LogPathDisplayListAttempt(const char* result,
+       replay_stats ? replay_stats->stroke_dispatches_saved : kZero,
+       replay_stats ? replay_stats->max_stroke_batch_nodes : kZero,
+       replay_stats ? replay_stats->stroke_state_flushes : kZero,
++      replay_stats ? replay_stats->stroke_matrix_changes_batched : kZero,
+       replay_stats ? replay_stats->stroke_capacity_flushes : kZero,
+       list && list->spatial_index.valid() ? list->spatial_index.bins.size()
+                                           : kZero,
+@@ -1204,17 +1207,16 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+   };
+ 
+   // Keep each path as a separate AGG raster/composite operation. The batch
+-  // shares only immutable setup for adjacent same-state, same-matrix strokes;
+-  // it never merges geometry or changes painter order.
++  // shares immutable setup for adjacent same-paint strokes while retaining
++  // each command's exact matrix. It never merges geometry or changes order.
+   std::array<const CFX_Path*, kMaxStrokeBatchNodes> stroke_batch_paths;
++  std::array<CFX_Matrix, kMaxStrokeBatchNodes> stroke_batch_matrices;
+   size_t stroke_batch_count = 0;
+-  CFX_Matrix stroke_batch_matrix;
+   uint32_t stroke_batch_paint_key = kNoClipKey;
+   size_t stroke_batch_points = 0;
+ 
+   auto reset_stroke_batch = [&]() {
+     stroke_batch_count = 0;
+-    stroke_batch_matrix = CFX_Matrix();
+     stroke_batch_paint_key = kNoClipKey;
+     stroke_batch_points = 0;
+   };
+@@ -1230,8 +1232,8 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+             : &list.graph_state_table[paint.graph_state_key];
+     const bool draw_succeeded = device->DrawPathBatch(
+         pdfium::span(stroke_batch_paths).first(stroke_batch_count),
+-        &stroke_batch_matrix, graph_state, 0, paint.stroke_argb,
+-        paint.fill_options);
++        pdfium::span(stroke_batch_matrices).first(stroke_batch_count),
++        graph_state, 0, paint.stroke_argb, paint.fill_options);
+     if (replay_stats) {
+       const size_t node_count = stroke_batch_count;
+       replay_stats->stroke_draw_calls++;
+@@ -1329,8 +1331,7 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+ 
+       const size_t node_points = path->GetPoints().size();
+       if (stroke_batch_count > 0) {
+-        const bool same_state = node.paint_key == stroke_batch_paint_key &&
+-                                path_matrix == stroke_batch_matrix;
++        const bool same_state = node.paint_key == stroke_batch_paint_key;
+         const bool within_capacity =
+             stroke_batch_count < kMaxStrokeBatchNodes &&
+             node_points <= kMaxStrokeBatchPoints -
+@@ -1348,11 +1349,17 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+           }
+         }
+       }
++      if (stroke_batch_count > 0 &&
++          !(path_matrix == stroke_batch_matrices[stroke_batch_count - 1]) &&
++          replay_stats) {
++        replay_stats->stroke_matrix_changes_batched++;
++      }
+       if (stroke_batch_count == 0) {
+-        stroke_batch_matrix = path_matrix;
+         stroke_batch_paint_key = node.paint_key;
+       }
+-      stroke_batch_paths[stroke_batch_count++] = path;
++      stroke_batch_paths[stroke_batch_count] = path;
++      stroke_batch_matrices[stroke_batch_count] = path_matrix;
++      stroke_batch_count++;
+       stroke_batch_points += node_points;
+       if (node_points > kMaxStrokeBatchPoints) {
+         // Oversized paths remain individual draws and never inflate a batch.
+@@ -1541,6 +1548,8 @@ VelocePathDisplayListResult VeloceReplayCompiledPathDisplayList(
+     metrics->stroke_dispatches_saved = replay_stats.stroke_dispatches_saved;
+     metrics->max_stroke_batch_nodes = replay_stats.max_stroke_batch_nodes;
+     metrics->stroke_state_flushes = replay_stats.stroke_state_flushes;
++    metrics->stroke_matrix_changes_batched =
++        replay_stats.stroke_matrix_changes_batched;
+     metrics->stroke_capacity_flushes = replay_stats.stroke_capacity_flushes;
+     metrics->spatial_index_queries = replay_stats.spatial_index_queries;
+     metrics->spatial_index_query_bins = replay_stats.spatial_index_query_bins;
+diff --git a/core/fpdfapi/render/veloce_path_display_list.h b/core/fpdfapi/render/veloce_path_display_list.h
+index 963725db6..f7599a329 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.h
++++ b/core/fpdfapi/render/veloce_path_display_list.h
+@@ -36,6 +36,7 @@ struct VelocePathDisplayListReplayMetrics {
+   size_t stroke_dispatches_saved = 0;
+   size_t max_stroke_batch_nodes = 0;
+   size_t stroke_state_flushes = 0;
++  size_t stroke_matrix_changes_batched = 0;
+   size_t stroke_capacity_flushes = 0;
+   size_t spatial_index_queries = 0;
+   size_t spatial_index_query_bins = 0;
+diff --git a/core/fpdfapi/render/veloce_render_plan.cpp b/core/fpdfapi/render/veloce_render_plan.cpp
+index 6ef15988c..9aa7852a2 100644
+--- a/core/fpdfapi/render/veloce_render_plan.cpp
++++ b/core/fpdfapi/render/veloce_render_plan.cpp
+@@ -513,6 +513,7 @@ struct RenderPlanCostStats {
+   size_t stroke_dispatches_saved = 0;
+   size_t max_stroke_batch_nodes = 0;
+   size_t stroke_state_flushes = 0;
++  size_t stroke_matrix_changes_batched = 0;
+   size_t stroke_capacity_flushes = 0;
+   size_t spatial_index_queries = 0;
+   size_t spatial_index_query_bins = 0;
+@@ -650,7 +651,8 @@ void LogRenderPlanFacadeAttempt(const CPDF_PageObjectHolder* holder,
+       "compiledPathRunNodes=%zu replayVisited=%zu replayCulled=%zu "
+       "replayDrawn=%zu strokeDrawCalls=%zu strokeNodes=%zu "
+       "strokeDispatchesSaved=%zu maxStrokeBatchNodes=%zu "
+-      "strokeStateFlushes=%zu strokeCapacityFlushes=%zu "
++      "strokeStateFlushes=%zu strokeMatrixChangesBatched=%zu "
++      "strokeCapacityFlushes=%zu "
+       "spatialIndexQueries=%zu spatialIndexQueryBins=%zu "
+       "spatialIndexCandidates=%zu spatialIndexSkippedByTile=%zu "
+       "spatialIndexFallbackFullScan=%zu spatialIndexQueryMs=%lld",
+@@ -684,6 +686,7 @@ void LogRenderPlanFacadeAttempt(const CPDF_PageObjectHolder* holder,
+       cost.stroke_dispatches_saved,
+       cost.max_stroke_batch_nodes,
+       cost.stroke_state_flushes,
++      cost.stroke_matrix_changes_batched,
+       cost.stroke_capacity_flushes,
+       cost.spatial_index_queries,
+       cost.spatial_index_query_bins,
+@@ -932,6 +935,8 @@ VeloceRenderPlanResult TryRenderSegmentedPlan(
+               std::max(cost->max_stroke_batch_nodes,
+                        replay_metrics.max_stroke_batch_nodes);
+           cost->stroke_state_flushes += replay_metrics.stroke_state_flushes;
++          cost->stroke_matrix_changes_batched +=
++              replay_metrics.stroke_matrix_changes_batched;
+           cost->stroke_capacity_flushes +=
+               replay_metrics.stroke_capacity_flushes;
+           cost->spatial_index_queries += replay_metrics.spatial_index_queries;
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.cpp b/core/fxge/agg/cfx_agg_devicedriver.cpp
+index 9a06b7838..bdefc259d 100644
+--- a/core/fxge/agg/cfx_agg_devicedriver.cpp
++++ b/core/fxge/agg/cfx_agg_devicedriver.cpp
+@@ -1267,7 +1267,7 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_Path& path,
+ 
+ bool CFX_AggDeviceDriver::DrawPathBatch(
+     pdfium::span<const CFX_Path* const> paths,
+-    const CFX_Matrix* pObject2Device,
++    pdfium::span<const CFX_Matrix> object_to_device,
+     const CFX_GraphStateData* pGraphState,
+     uint32_t fill_color,
+     uint32_t stroke_color,
+@@ -1275,11 +1275,14 @@ bool CFX_AggDeviceDriver::DrawPathBatch(
+   if (paths.empty() || bitmap_->GetBuffer().empty()) {
+     return true;
+   }
++  if (paths.size() != object_to_device.size()) {
++    return false;
++  }
+   if (fill_options.fill_type !=
+           CFX_FillRenderOptions::FillType::kNoFill ||
+       fill_color != 0 || !pGraphState || FXARGB_A(stroke_color) == 0) {
+     return RenderDeviceDriverIface::DrawPathBatch(
+-        paths, pObject2Device, pGraphState, fill_color, stroke_color,
++        paths, object_to_device, pGraphState, fill_color, stroke_color,
+         fill_options);
+   }
+ 
+@@ -1300,13 +1303,14 @@ bool CFX_AggDeviceDriver::DrawPathBatch(
+                       static_cast<float>(GetPixelHeight()));
+ 
+   if (fill_options.zero_area) {
+-    for (const CFX_Path* path : paths) {
++    for (size_t i = 0; i < paths.size(); ++i) {
++      const CFX_Path* path = paths[i];
+       if (!path) {
+         return false;
+       }
+       path_data.remove_all();
+       rasterizer.reset();
+-      BuildAggPathInto(*path, pObject2Device, &path_data);
++      BuildAggPathInto(*path, &object_to_device[i], &path_data);
+       RasterizeStroke(&rasterizer, &path_data, nullptr, pGraphState, 1,
+                       fill_options.stroke_text_mode);
+       agg::render_scanlines(rasterizer, scanline, renderer,
+@@ -1315,21 +1319,21 @@ bool CFX_AggDeviceDriver::DrawPathBatch(
+     return true;
+   }
+ 
+-  CFX_Matrix matrix1;
+-  CFX_Matrix matrix2;
+-  if (pObject2Device) {
+-    matrix1.a = std::max(fabs(pObject2Device->a), fabs(pObject2Device->b));
+-    matrix1.d = matrix1.a;
+-    matrix2 = CFX_Matrix(
+-        pObject2Device->a / matrix1.a, pObject2Device->b / matrix1.a,
+-        pObject2Device->c / matrix1.d, pObject2Device->d / matrix1.d, 0, 0);
+-    matrix1 = *pObject2Device * matrix2.GetInverse();
+-  }
+-
+-  for (const CFX_Path* path : paths) {
++  for (size_t i = 0; i < paths.size(); ++i) {
++    const CFX_Path* path = paths[i];
+     if (!path) {
+       return false;
+     }
++    const CFX_Matrix& object_matrix = object_to_device[i];
++    CFX_Matrix matrix1;
++    CFX_Matrix matrix2;
++    matrix1.a = std::max(fabs(object_matrix.a), fabs(object_matrix.b));
++    matrix1.d = matrix1.a;
++    matrix2 = CFX_Matrix(
++        object_matrix.a / matrix1.a, object_matrix.b / matrix1.a,
++        object_matrix.c / matrix1.d, object_matrix.d / matrix1.d, 0, 0);
++    matrix1 = object_matrix * matrix2.GetInverse();
++
+     path_data.remove_all();
+     rasterizer.reset();
+     BuildAggPathInto(*path, &matrix1, &path_data);
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.h b/core/fxge/agg/cfx_agg_devicedriver.h
+index 7982fb23a..7ed047a34 100644
+--- a/core/fxge/agg/cfx_agg_devicedriver.h
++++ b/core/fxge/agg/cfx_agg_devicedriver.h
+@@ -67,7 +67,7 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
+                 uint32_t stroke_color,
+                 const CFX_FillRenderOptions& fill_options) override;
+   bool DrawPathBatch(pdfium::span<const CFX_Path* const> paths,
+-                     const CFX_Matrix* pObject2Device,
++                     pdfium::span<const CFX_Matrix> object_to_device,
+                      const CFX_GraphStateData* pGraphState,
+                      uint32_t fill_color,
+                      uint32_t stroke_color,
+diff --git a/core/fxge/cfx_renderdevice.cpp b/core/fxge/cfx_renderdevice.cpp
+index 45c7962fe..4d441ea26 100644
+--- a/core/fxge/cfx_renderdevice.cpp
++++ b/core/fxge/cfx_renderdevice.cpp
+@@ -790,7 +790,7 @@ bool CFX_RenderDevice::DrawPath(const CFX_Path& path,
+ 
+ bool CFX_RenderDevice::DrawPathBatch(
+     pdfium::span<const CFX_Path* const> paths,
+-    const CFX_Matrix* pObject2Device,
++    pdfium::span<const CFX_Matrix> object_to_device,
+     const CFX_GraphStateData* pGraphState,
+     uint32_t fill_color,
+     uint32_t stroke_color,
+@@ -798,6 +798,9 @@ bool CFX_RenderDevice::DrawPathBatch(
+   if (paths.empty()) {
+     return true;
+   }
++  if (paths.size() != object_to_device.size()) {
++    return false;
++  }
+   if (!pGraphState || FXARGB_A(stroke_color) == 0 || fill_color != 0 ||
+       fill_options.fill_type !=
+           CFX_FillRenderOptions::FillType::kNoFill) {
+@@ -808,7 +811,7 @@ bool CFX_RenderDevice::DrawPathBatch(
+       return false;
+     }
+   }
+-  return device_driver_->DrawPathBatch(paths, pObject2Device, pGraphState,
++  return device_driver_->DrawPathBatch(paths, object_to_device, pGraphState,
+                                        fill_color, stroke_color, fill_options);
+ }
+ 
+diff --git a/core/fxge/cfx_renderdevice.h b/core/fxge/cfx_renderdevice.h
+index 013cffb36..2876860cb 100644
+--- a/core/fxge/cfx_renderdevice.h
++++ b/core/fxge/cfx_renderdevice.h
+@@ -92,7 +92,7 @@ class CFX_RenderDevice {
+                 uint32_t stroke_color,
+                 const CFX_FillRenderOptions& fill_options);
+   bool DrawPathBatch(pdfium::span<const CFX_Path* const> paths,
+-                     const CFX_Matrix* pObject2Device,
++                     pdfium::span<const CFX_Matrix> object_to_device,
+                      const CFX_GraphStateData* pGraphState,
+                      uint32_t fill_color,
+                      uint32_t stroke_color,
+diff --git a/core/fxge/renderdevicedriver_iface.cpp b/core/fxge/renderdevicedriver_iface.cpp
+index 9d0c88846..a3bb6f324 100644
+--- a/core/fxge/renderdevicedriver_iface.cpp
++++ b/core/fxge/renderdevicedriver_iface.cpp
+@@ -16,14 +16,18 @@ RenderDeviceDriverIface::~RenderDeviceDriverIface() = default;
+ 
+ bool RenderDeviceDriverIface::DrawPathBatch(
+     pdfium::span<const CFX_Path* const> paths,
+-    const CFX_Matrix* pObject2Device,
++    pdfium::span<const CFX_Matrix> object_to_device,
+     const CFX_GraphStateData* pGraphState,
+     uint32_t fill_color,
+     uint32_t stroke_color,
+     const CFX_FillRenderOptions& fill_options) {
+-  for (const CFX_Path* path : paths) {
+-    if (!path || !DrawPath(*path, pObject2Device, pGraphState, fill_color,
+-                           stroke_color, fill_options)) {
++  if (paths.size() != object_to_device.size()) {
++    return false;
++  }
++  for (size_t i = 0; i < paths.size(); ++i) {
++    const CFX_Path* path = paths[i];
++    if (!path || !DrawPath(*path, &object_to_device[i], pGraphState,
++                           fill_color, stroke_color, fill_options)) {
+       return false;
+     }
+   }
+diff --git a/core/fxge/renderdevicedriver_iface.h b/core/fxge/renderdevicedriver_iface.h
+index 8ac65fccd..edeea98b3 100644
+--- a/core/fxge/renderdevicedriver_iface.h
++++ b/core/fxge/renderdevicedriver_iface.h
+@@ -103,7 +103,7 @@ class RenderDeviceDriverIface {
+   // but must preserve separate rasterization and compositing per path.
+   virtual bool DrawPathBatch(
+       pdfium::span<const CFX_Path* const> paths,
+-      const CFX_Matrix* pObject2Device,
++      pdfium::span<const CFX_Matrix> object_to_device,
+       const CFX_GraphStateData* pGraphState,
+       uint32_t fill_color,
+       uint32_t stroke_color,
+-- 
+2.39.5 (Apple Git-154)

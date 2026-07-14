@@ -1,5 +1,9 @@
 # Production PDFium patches (ship-quality)
 
+The active RenderPlan architecture, evidence, revision sequence, and proof
+gates are locked in
+[`RENDERPLAN_FIRST_PRINCIPLES_DENSE_TILE_PLAN_2026-07-14.md`](RENDERPLAN_FIRST_PRINCIPLES_DENSE_TILE_PLAN_2026-07-14.md).
+
 This directory contains the **production PDFium patch series**
 used by the Veloce PDFium build. Unlike the `experiments/` directory,
 these patches:
@@ -93,6 +97,13 @@ these patches:
 | 0065 | `0065-veloce-render-plan-spatial-replay-metrics.patch` | RenderPlan spatial replay metrics. Reuses the 0057 path-display-list holder-space index as the single clipping source of truth and exports value-only replay metrics from each compiled PathRun into the facade log: `replayVisited`, `replayCulled`, `replayDrawn`, `spatialIndexQueries`, `spatialIndexQueryBins`, `spatialIndexCandidates`, `spatialIndexSkippedByTile`, `spatialIndexFallbackFullScan`, and `spatialIndexQueryMs`. Behavior-preserving: no new index, object scan, candidate allocation, eligibility rule, draw-order change, or pixel change. It distinguishes unnecessary replay from genuinely dense visible content before changing the clipping algorithm. |
 | 0066 | `0066-veloce-render-plan-bounded-spatial-candidate-mask.patch` | RenderPlan bounded spatial candidate mask. Replaces the coarse "more than half the bins" full-scan heuristic with an exact holder-clip containment gate. Partial clips collect candidates into a bounded one-bit-per-node mask, deduplicate without sorting, and replay set node IDs in original painter order. The mask is at most 1 KiB for an 8192-node RenderPlan chunk and is allocated only for partial-clip queries. Full-page renders retain sequential replay when the clip provably contains the complete chunk bounds. |
 | 0067 | `0067-veloce-render-plan-visible-passthrough-lookup.patch` | RenderPlan visible passthrough lookup. Removes the per-render full-holder scan, temporary raw-pointer table, index vector, and binary searches introduced by 0062. Cached plans continue to store object indices only. Preflight and replay skip passthrough segments whose cached holder-space bbox is outside the current clip; visible segments resolve their object through the live holder's bounds-checked `GetPageObjectByIndex()` immediately before validation or painting. Adds `livePassthroughLookups` and `clipSkippedPassthroughObjects` telemetry. |
+| 0068 | `0068-veloce-render-plan-fail-closed-spatial-culling.patch` | Makes spatial culling conservative: every node is represented by bins or an always-replayed overflow list, uncertain segment bounds disable segment skipping, and query clips expand by one device pixel before inverse transformation. Prevents successful but incomplete tiles. |
+| ~~0069~~ | `0069-veloce-render-plan-bounded-disjoint-stroke-batching.patch` | **REPLACED BY 0070.** Attempted bounded geometry merging only for disjoint adjacent strokes. Telemetry showed no useful dispatch reduction; retained in revision history but superseded by exact command batching. |
+| 0070 | `0070-veloce-render-plan-exact-agg-stroke-command-batching.patch` | Replaces geometry merging with bounded AGG command packets. Every path remains a separate raster and destination composite; only immutable setup is shared for adjacent same-paint, same-matrix strokes. |
+| 0071 | `0071-veloce-render-plan-reuse-agg-batch-scratch-storage.patch` | Reuses path, rasterizer, and scanline storage inside a bounded packet, resetting logical state between exact per-path operations. |
+| 0072 | `0072-veloce-render-plan-device-owned-agg-scratch.patch` | Moves bounded AGG scratch to the single-owner device so capacity is reused across dispatches; also separates compile and replay timings. |
+| 0073 | `0073-veloce-render-plan-indexed-range-compile.patch` | Compiles each RenderPlan range by direct holder object index instead of repeatedly scanning every preceding holder object. |
+| 0074 | `0074-veloce-render-plan-per-matrix-agg-command-batching.patch` | Carries one exact matrix per command so adjacent same-paint strokes stay in a bounded packet across matrix changes. Each command is still transformed, rasterized, and composited separately in painter order. Adds `strokeMatrixChangesBatched` proof telemetry. |
 
 ## Why this directory exists
 

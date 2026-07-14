@@ -1,6 +1,16 @@
 # PDFium Veloce Patch Conventions Handoff
 
-Date: 2026-06-30
+Date: 2026-07-14
+
+Current architecture and performance plan:
+
+```text
+/Users/shchao/Code/xPDFSDK/android/meta/libs/pdfium/patches/ship/RENDERPLAN_FIRST_PRINCIPLES_DENSE_TILE_PLAN_2026-07-14.md
+```
+
+That document supersedes the old r48-era optimization ranking later in this
+handoff. The active native line is r25-0074; revisions 0075+ must follow its
+proof-gated culling, byte-bounded cache, and exact raster-throughput phases.
 
 Purpose: shared context for Codex and Claude when continuing the native PDFium
 Veloce performance patch stack. This document records the current worktree
@@ -26,16 +36,16 @@ This repo owns:
 Android app, JNI, Kotlin, and UI layer worktree:
 
 ```text
-/Users/shchao/Code/xPDFSDK.worktrees/codex-use-r7-pdfium/android
+/Users/shchao/Code/xPDFSDK.worktrees/codex-use-r25-0053-pdfium/android
 ```
 
 Use this worktree only for app/JNI/Kotlin changes. Do not mix app-layer changes
 into the PDFium patch repo.
 
-Current native PDFium HEAD after r46:
+Current committed native PDFium HEAD before the uncommitted r25-0074 files:
 
 ```text
-0c95d6e3c Add r46 blend shape telemetry patch
+2928e01f2 r25-0073 eliminate repeated RenderPlan range scans
 ```
 
 Known untracked files currently visible in the native PDFium repo include
