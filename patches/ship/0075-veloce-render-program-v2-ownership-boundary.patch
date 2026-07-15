@@ -1,0 +1,144 @@
+From 0000000000000000000000000000000000000075 Mon Sep 17 00:00:00 2001
+From: xPDFSDK Automation <dev@xpdfsdk.local>
+Date: Wed, 15 Jul 2026 14:30:00 +0800
+Subject: [PATCH] r25-0075: add holder-owned immutable RenderProgram v2 boundary
+
+Start the replacement RenderProgram architecture from the correctness baseline:
+r25 plus the 0051 page-dimensions API. This patch deliberately has no dependency
+on the experimental 0053-0074 RenderPlan stack.
+
+The long-lived rendering representation needs the same lifetime as the parsed
+page or Form holder. Add that ownership boundary now, before adding recording,
+commands, replay, caches, or renderer hooks:
+
+* Add an opaque `VeloceRenderProgram` type in the page layer. A future parser-
+  owned builder is the only class allowed to construct a program.
+* Let `CPDF_PageObjectHolder` own an optional `unique_ptr<const
+  VeloceRenderProgram>`. The const ownership contract means the holder only
+  receives sealed immutable programs; replay cannot mutate shared program data.
+* Expose narrow get, install, and reset operations for parser completion and
+  future edit invalidation. No raw page-object pointer is stored in the program
+  boundary.
+
+This revision is intentionally behavior-neutral. The optional pointer remains
+null because no builder exists yet. It adds no page scan, classification,
+allocation, cache, render-path branch, lock, log, JNI/API change, or pixel
+change. Patch 0076 will add parser-time recording behind this ownership
+contract.
+---
+ core/fpdfapi/page/BUILD.gn                    |  1 +
+ core/fpdfapi/page/cpdf_pageobjectholder.cpp   | 11 +++++++++++
+ core/fpdfapi/page/cpdf_pageobjectholder.h     |  9 +++++++++
+ core/fpdfapi/page/veloce_render_program.h     | 27 +++++++++++++++++++++++++++
+ 4 files changed, 48 insertions(+)
+ create mode 100644 core/fpdfapi/page/veloce_render_program.h
+
+diff --git a/core/fpdfapi/page/BUILD.gn b/core/fpdfapi/page/BUILD.gn
+index 9f76fe7f7..51357a6d8 100644
+--- a/core/fpdfapi/page/BUILD.gn
++++ b/core/fpdfapi/page/BUILD.gn
+@@ -106,6 +106,7 @@ source_set("page") {
+     "ipdf_page.h",
+     "jpx_decode_conversion.cpp",
+     "jpx_decode_conversion.h",
++    "veloce_render_program.h",
+   ]
+   configs += [ "../../../:pdfium_strict_config" ]
+   public_deps = [
+diff --git a/core/fpdfapi/page/cpdf_pageobjectholder.cpp b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+index 51bdb9a40..16ad74465 100644
+--- a/core/fpdfapi/page/cpdf_pageobjectholder.cpp
++++ b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+@@ -14,5 +14,6 @@
+ #include "core/fpdfapi/page/cpdf_contentparser.h"
+ #include "core/fpdfapi/page/cpdf_pageobject.h"
++#include "core/fpdfapi/page/veloce_render_program.h"
+ #include "core/fpdfapi/parser/cpdf_dictionary.h"
+ #include "core/fpdfapi/parser/cpdf_document.h"
+ #include "core/fxcrt/check.h"
+@@ -54,6 +55,16 @@ CPDF_PageObjectHolder::CPDF_PageObjectHolder(
+ 
+ CPDF_PageObjectHolder::~CPDF_PageObjectHolder() = default;
+ 
++void CPDF_PageObjectHolder::SetVeloceRenderProgram(
++    std::unique_ptr<const VeloceRenderProgram> program) {
++  CHECK(program);
++  veloce_render_program_ = std::move(program);
++}
++
++void CPDF_PageObjectHolder::ResetVeloceRenderProgram() {
++  veloce_render_program_.reset();
++}
++
+ bool CPDF_PageObjectHolder::IsPage() const {
+   return false;
+ }
+diff --git a/core/fpdfapi/page/cpdf_pageobjectholder.h b/core/fpdfapi/page/cpdf_pageobjectholder.h
+index 2052abf72..064afcd52 100644
+--- a/core/fpdfapi/page/cpdf_pageobjectholder.h
++++ b/core/fpdfapi/page/cpdf_pageobjectholder.h
+@@ -28,6 +28,7 @@ class CPDF_ContentParser;
+ class CPDF_Document;
+ class CPDF_PageObject;
+ class PauseIndicatorIface;
++class VeloceRenderProgram;
+ 
+ // These structs are used to keep track of resources that have already been
+ // generated in the page object holder.
+@@ -100,6 +101,13 @@ class CPDF_PageObjectHolder {
+   size_t GetActivePageObjectCount() const;
+   CPDF_PageObject* GetPageObjectByIndex(size_t index) const;
+   void AppendPageObject(std::unique_ptr<CPDF_PageObject> pPageObj);
++
++  const VeloceRenderProgram* GetVeloceRenderProgram() const {
++    return veloce_render_program_.get();
++  }
++  void SetVeloceRenderProgram(
++      std::unique_ptr<const VeloceRenderProgram> program);
++  void ResetVeloceRenderProgram();
+ 
+   bool InsertPageObjectAtIndex(size_t index,
+                                std::unique_ptr<CPDF_PageObject> page_obj);
+@@ -164,6 +174,7 @@ class CPDF_PageObjectHolder {
+   std::vector<CFX_FloatRect> mask_bounding_boxes_;
+   std::unique_ptr<CPDF_ContentParser> parser_;
+   std::deque<std::unique_ptr<CPDF_PageObject>> page_object_list_;
++  std::unique_ptr<const VeloceRenderProgram> veloce_render_program_;
+ 
+   CTMMap all_ctms_;
+ 
+diff --git a/core/fpdfapi/page/veloce_render_program.h b/core/fpdfapi/page/veloce_render_program.h
+new file mode 100644
+index 000000000..d68fbc4cf
+--- /dev/null
++++ b/core/fpdfapi/page/veloce_render_program.h
+@@ -0,0 +1,27 @@
++// Copyright 2026 The xPDFSDK Authors
++// Use of this source code is governed by the PDFium BSD-style license.
++
++#ifndef CORE_FPDFAPI_PAGE_VELOCE_RENDER_PROGRAM_H_
++#define CORE_FPDFAPI_PAGE_VELOCE_RENDER_PROGRAM_H_
++
++class VeloceRenderProgramBuilder;
++
++// Immutable native rendering representation owned by one live page-object
++// holder. PDFium page objects remain authoritative for fidelity and editing.
++//
++// Patch 0075 establishes ownership only. Command storage is intentionally
++// absent until parser-time recording is added by the next revision.
++class VeloceRenderProgram final {
++ public:
++  ~VeloceRenderProgram() = default;
++
++  VeloceRenderProgram(const VeloceRenderProgram&) = delete;
++  VeloceRenderProgram& operator=(const VeloceRenderProgram&) = delete;
++
++ private:
++  friend class VeloceRenderProgramBuilder;
++
++  VeloceRenderProgram() = default;
++};
++
++#endif  // CORE_FPDFAPI_PAGE_VELOCE_RENDER_PROGRAM_H_
+-- 
+2.50.1

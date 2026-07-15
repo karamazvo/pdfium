@@ -104,6 +104,7 @@ these patches:
 | 0072 | `0072-veloce-render-plan-device-owned-agg-scratch.patch` | Moves bounded AGG scratch to the single-owner device so capacity is reused across dispatches; also separates compile and replay timings. |
 | 0073 | `0073-veloce-render-plan-indexed-range-compile.patch` | Compiles each RenderPlan range by direct holder object index instead of repeatedly scanning every preceding holder object. |
 | 0074 | `0074-veloce-render-plan-per-matrix-agg-command-batching.patch` | Carries one exact matrix per command so adjacent same-paint strokes stay in a bounded packet across matrix changes. Each command is still transformed, rasterized, and composited separately in painter order. Adds `strokeMatrixChangesBatched` proof telemetry. |
+| 0075 | `0075-veloce-render-program-v2-ownership-boundary.patch` | Starts the replacement RenderProgram v2 line from the correctness baseline (`r25 + 0051`), not from experimental patches `0053-0074`. Adds an optional holder-owned `unique_ptr<const VeloceRenderProgram>` and narrow install/reset accessors. The program remains unpopulated and has no parser or renderer hook, so this revision adds no scan, allocation, cache, lock, log, public API, or pixel change. |
 
 ## Why this directory exists
 
@@ -219,6 +220,12 @@ Patch 0031 depends on patch 0030 and replaces the 8-bit mask approach with
 a BGRA group buffer matching MuPDF's transparency group model. The P1 bbox
 overlap gate from 0030 is removed — overlapping paths accumulate correctly
 inside the group buffer under normal blend before the single blend composite.
+Patch 0075 starts a separate RenderProgram v2 continuation from the r25 + 0051
+correctness baseline. Its workflow applies `01..09`, `0011..0026`,
+`0029..0031`, `0051`, and `0075`; it deliberately excludes experimental
+RenderPlan v1 patches `0053..0074`. Revision numbering continues for audit
+history, but patch dependency does not. Patch 0075 only establishes immutable
+holder ownership; patch 0076 will add parser-time recording.
 Patch 0053 can also be applied directly on the rel-260701 stable line after
 patch 0051. It is behavior-preserving and only inserts the `VeloceRenderPlan`
 facade above the existing r25 path-display-list backend.

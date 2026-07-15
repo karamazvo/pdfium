@@ -1,6 +1,6 @@
 # PDFium Veloce Patch Conventions Handoff
 
-Date: 2026-07-14
+Date: 2026-07-15
 
 Current architecture and performance plan:
 
@@ -8,9 +8,11 @@ Current architecture and performance plan:
 /Users/shchao/Code/xPDFSDK/android/meta/libs/pdfium/patches/ship/RENDERPLAN_FIRST_PRINCIPLES_DENSE_TILE_PLAN_2026-07-14.md
 ```
 
-That document supersedes the old r48-era optimization ranking later in this
-handoff. The active native line is r25-0074; revisions 0075+ must follow its
-proof-gated culling, byte-bounded cache, and exact raster-throughput phases.
+The r25-0074 measurements proved that dispatch batching was not the dense-tile
+bottleneck. The active native line is now r25-0075 RenderProgram v2. Revision
+numbering continues from 0074 for audit history, but the v2 workflow extends
+the r25 + 0051 correctness baseline and deliberately excludes experimental
+RenderPlan v1 patches 0053-0074.
 
 Purpose: shared context for Codex and Claude when continuing the native PDFium
 Veloce performance patch stack. This document records the current worktree
@@ -42,10 +44,10 @@ Android app, JNI, Kotlin, and UI layer worktree:
 Use this worktree only for app/JNI/Kotlin changes. Do not mix app-layer changes
 into the PDFium patch repo.
 
-Current committed native PDFium HEAD before the uncommitted r25-0074 files:
+Current committed native PDFium HEAD before r25-0075:
 
 ```text
-2928e01f2 r25-0073 eliminate repeated RenderPlan range scans
+b94df06d6 r25-0074 batch exact strokes across matrix changes
 ```
 
 Known untracked files currently visible in the native PDFium repo include
@@ -192,6 +194,7 @@ Release workflows:
 | Release | Workflow | Patch Contract | Purpose |
 | --- | --- | --- | --- |
 | rel-260701 | `.github/workflows/pdfium-android-arm64-rel-260701-r25-page-dimensions.yml` | r25 rendering stack (`01..09`, `0011..0026`, `0029..0031`) plus `0051` only | Correctness-stable release candidate: restore the last validated rendering behavior while keeping the no-parse page dimensions API. Excludes post-r25 render-behavior patches such as ordered text passthrough, spatial index, stroke-run widening, and blend widening. |
+| r25-0075 | `.github/workflows/pdfium-android-arm64-r25-0075-render-program-v2-ownership-boundary.yml` | r25 rendering stack plus `0051` and `0075`; excludes `0053..0074` | Behavior-neutral start of RenderProgram v2. Adds holder-owned immutable program lifetime only; recording and replay remain absent. |
 
 Recent revisions:
 
@@ -212,6 +215,7 @@ Recent revisions:
 | r25-0055 | `0055-veloce-render-plan-segmented-text-passthrough.patch` | committed | Consume ordered RenderPlan path/text segments with preflighted range path display-list replay. |
 | r25-0056 | `0056-veloce-render-plan-bounded-cache.patch` | committed | Cache immutable RenderPlan segment metadata with bounded LRU; no raw page-object pointers or compiled path-list handles. |
 | r25-0057 | `0057-veloce-render-plan-holder-space-spatial-index.patch` | in progress | Add bounded holder-space candidate selection inside compiled PathRun replay. It preserves original node order, never crosses RenderPlan barriers, and falls back to full scan for broad clips or unsafe transforms. |
+| r25-0075 | `0075-veloce-render-program-v2-ownership-boundary.patch` | in progress | Start the clean RenderProgram v2 line from r25 + 0051 with immutable holder ownership and no runtime behavior change. |
 
 Current native HEAD before r48 is committed:
 
