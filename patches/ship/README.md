@@ -105,6 +105,7 @@ these patches:
 | 0073 | `0073-veloce-render-plan-indexed-range-compile.patch` | Compiles each RenderPlan range by direct holder object index instead of repeatedly scanning every preceding holder object. |
 | 0074 | `0074-veloce-render-plan-per-matrix-agg-command-batching.patch` | Carries one exact matrix per command so adjacent same-paint strokes stay in a bounded packet across matrix changes. Each command is still transformed, rasterized, and composited separately in painter order. Adds `strokeMatrixChangesBatched` proof telemetry. |
 | 0075 | `0075-veloce-render-program-v2-ownership-boundary.patch` | Starts the replacement RenderProgram v2 line from the correctness baseline (`r25 + 0051`), not from experimental patches `0053-0074`. Adds an optional holder-owned `unique_ptr<const VeloceRenderProgram>` and narrow install/reset accessors. The program remains unpopulated and has no parser or renderer hook, so this revision adds no scan, allocation, cache, lock, log, public API, or pixel change. |
+| 0076 | `0076-veloce-render-program-parser-command-order.patch` | Records one compact command-kind byte for every page/Form object through the parser's existing central `AppendPageObject()` path, preserving exact painter order with the command index as the implicit live-holder object index. Seals the vector as an immutable holder-owned program only after parsing and clip normalization complete; holder mutation invalidates it. Recording is abandoned above a hard 32 MiB budget, and pre-populated holders fail closed without a program. There is no replay hook, geometry/bounds copy, second holder scan, cache, lock, JNI/API change, or pixel change. |
 
 ## Why this directory exists
 
@@ -225,7 +226,12 @@ correctness baseline. Its workflow applies `01..09`, `0011..0026`,
 `0029..0031`, `0051`, and `0075`; it deliberately excludes experimental
 RenderPlan v1 patches `0053..0074`. Revision numbering continues for audit
 history, but patch dependency does not. Patch 0075 only establishes immutable
-holder ownership; patch 0076 will add parser-time recording.
+holder ownership. Patch 0076 depends on 0075 and records exact parser command
+order in that holder-owned program without changing rendering. The recorder
+uses one byte per object, no copied geometry or explicit object-index array,
+and a 32 MiB hard budget. If the budget is exceeded or the holder is mutated,
+the program is absent and PDFium's canonical object renderer remains the sole
+rendering path.
 Patch 0053 can also be applied directly on the rel-260701 stable line after
 patch 0051. It is behavior-preserving and only inserts the `VeloceRenderPlan`
 facade above the existing r25 path-display-list backend.

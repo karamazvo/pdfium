@@ -9,10 +9,12 @@ Current architecture and performance plan:
 ```
 
 The r25-0074 measurements proved that dispatch batching was not the dense-tile
-bottleneck. The active native line is now r25-0075 RenderProgram v2. Revision
+bottleneck. The active native line is now r25-0076 RenderProgram v2. Revision
 numbering continues from 0074 for audit history, but the v2 workflow extends
 the r25 + 0051 correctness baseline and deliberately excludes experimental
-RenderPlan v1 patches 0053-0074.
+RenderPlan v1 patches 0053-0074. Patch 0076 records compact parser command
+order but does not replay it, so rendering remains behavior-identical to the
+correctness baseline.
 
 Purpose: shared context for Codex and Claude when continuing the native PDFium
 Veloce performance patch stack. This document records the current worktree
@@ -44,10 +46,10 @@ Android app, JNI, Kotlin, and UI layer worktree:
 Use this worktree only for app/JNI/Kotlin changes. Do not mix app-layer changes
 into the PDFium patch repo.
 
-Current committed native PDFium HEAD before r25-0075:
+Current committed native PDFium HEAD before r25-0076:
 
 ```text
-b94df06d6 r25-0074 batch exact strokes across matrix changes
+b94f1c686 r25-0075 start holder-owned RenderProgram v2
 ```
 
 Known untracked files currently visible in the native PDFium repo include
@@ -195,6 +197,7 @@ Release workflows:
 | --- | --- | --- | --- |
 | rel-260701 | `.github/workflows/pdfium-android-arm64-rel-260701-r25-page-dimensions.yml` | r25 rendering stack (`01..09`, `0011..0026`, `0029..0031`) plus `0051` only | Correctness-stable release candidate: restore the last validated rendering behavior while keeping the no-parse page dimensions API. Excludes post-r25 render-behavior patches such as ordered text passthrough, spatial index, stroke-run widening, and blend widening. |
 | r25-0075 | `.github/workflows/pdfium-android-arm64-r25-0075-render-program-v2-ownership-boundary.yml` | r25 rendering stack plus `0051` and `0075`; excludes `0053..0074` | Behavior-neutral start of RenderProgram v2. Adds holder-owned immutable program lifetime only; recording and replay remain absent. |
+| r25-0076 | `.github/workflows/pdfium-android-arm64-r25-0076-render-program-parser-command-order.yml` | r25 rendering stack plus `0051`, `0075`, and `0076`; excludes `0053..0074` | Parser-time recording only. Stores one command-kind byte per object in exact painter order, bounded to 32 MiB, and seals it under holder ownership. No renderer consumes it yet. |
 
 Recent revisions:
 
@@ -215,15 +218,16 @@ Recent revisions:
 | r25-0055 | `0055-veloce-render-plan-segmented-text-passthrough.patch` | committed | Consume ordered RenderPlan path/text segments with preflighted range path display-list replay. |
 | r25-0056 | `0056-veloce-render-plan-bounded-cache.patch` | committed | Cache immutable RenderPlan segment metadata with bounded LRU; no raw page-object pointers or compiled path-list handles. |
 | r25-0057 | `0057-veloce-render-plan-holder-space-spatial-index.patch` | in progress | Add bounded holder-space candidate selection inside compiled PathRun replay. It preserves original node order, never crosses RenderPlan barriers, and falls back to full scan for broad clips or unsafe transforms. |
-| r25-0075 | `0075-veloce-render-program-v2-ownership-boundary.patch` | in progress | Start the clean RenderProgram v2 line from r25 + 0051 with immutable holder ownership and no runtime behavior change. |
+| r25-0075 | `0075-veloce-render-program-v2-ownership-boundary.patch` | committed | Start the clean RenderProgram v2 line from r25 + 0051 with immutable holder ownership and no runtime behavior change. |
+| r25-0076 | `0076-veloce-render-program-parser-command-order.patch` | committed | Record bounded compact object-kind commands during the existing parser append path, seal exact painter order after parse completion, and keep replay disabled. |
 
-Current native HEAD before r48 is committed:
+Historical native HEAD before r48 (not the active line):
 
 ```text
 41ffb668d Fix r47 workflow page dimensions guard
 ```
 
-r48 current files:
+r48 historical files:
 
 ```text
 patches/ship/0050-veloce-path-display-list-blend-shape-telemetry.patch
@@ -466,37 +470,35 @@ Fix rXX workflow <short cause>
 
 ## 10. Current And Next Patch Direction
 
-After r47 page-dimensions API export, r48/0052 is the current
-render-performance patch:
+The active line is RenderProgram v2 on the r25 + 0051 correctness baseline:
 
 ```text
-r48 / 0052: same-source Darken BlendGroupRun widening
+r25-0075: immutable holder ownership boundary
+r25-0076: bounded parser-time command-order recording, no replay
 ```
 
-Reason: r46 proves the expensive 11.pdf-class blend workload is almost entirely
-same-source Darken. This is now a narrower, safer behavior patch than a direct
-pixel compositor and should be validated before deeper blend math.
+0076's invariant is that command `i` describes live holder object `i` in exact
+painter order. It obtains this order from the holder's existing central append
+operation, not from a later classification scan. The program stores no page
+object pointers, copied geometry, explicit indices, device-space state, cache,
+or synchronization. It is sealed only after parsing and clip normalization and
+is invalidated by every supported holder-list mutation. A 32 MiB command-kind
+ceiling makes memory use fail-closed; an absent program always leaves the
+canonical renderer authoritative.
 
-r48 must preserve these invariants:
+The next revision may introduce the first fail-closed consumer, but it must:
 
-- Same ordered path segment only.
-- Same clip run only.
-- `BlendMode::kDarken` only.
-- Same source ARGB only.
-- Existing mask/group-eligible blend nodes only.
-- Union group rect must stay memory-bounded.
-- Every entry keeps its own graph state and fill options for coverage.
-- No crossing text passthrough, image/Form/shading, unsupported blend, normal
-  node, clip, or segment barriers.
+- validate the complete ordered program before drawing any accelerated pixel;
+- preserve non-path objects and unsupported graphics state as hard barriers;
+- use live PDFium objects as the fidelity and editing source of truth;
+- never retain raw page-object pointers beyond the holder lifetime;
+- fall back before drawing when equivalence cannot be proven;
+- keep candidate data holder-space, immutable, and memory-bounded;
+- keep all compilation and replay off the UI thread;
+- avoid a second full-holder scan and avoid duplicating geometry;
+- leave normal pages on the canonical renderer unless the complete plan is
+  proven eligible.
 
-If r48 does not reduce enough successful-tile time, the next 11.pdf-class track
-is direct simple-Darken mask/span compositing. Validate r48 first with 11.pdf
-and error.pdf p2/p3 logs; expected signals are lower `groupRunComposites`,
-higher `sameSourceDarkenCrossed`, and bounded/non-dominant
-`sameSourceDarkenRejected`.
-
-For Q16-class large visible regions, the separate next track is cached packed
-stroke chunks inside existing ordered segment/style/clip/blend barriers. Do not
-mix this with r48.
-
-Do not mix both tracks in one patch. One mechanism per patch.
+Do not reintroduce RenderPlan v1 patches 0053-0074 behind the new interface.
+Useful algorithms must be re-derived against the v2 ownership, ordering,
+correctness, and memory invariants rather than copied as accumulated behavior.

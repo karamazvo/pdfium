@@ -1,0 +1,271 @@
+From 0f7884011e5c5f6f764ef5b80811c33a4d07787e Mon Sep 17 00:00:00 2001
+From: "sh.chao" <sh.chao@gmail.com>
+Date: Wed, 15 Jul 2026 12:23:41 +0800
+Subject: [PATCH] r25-0076 record compact RenderProgram command order
+
+Create one bounded parser-time recorder per empty page or Form holder and append one command-kind byte from the central AppendPageObject path. Seal immutable command order only after parsing and clip normalization complete, use implicit object indices, and abandon recording above a 32 MiB hard ceiling. Pre-populated holders fail closed without a program.
+
+Keep rendering unchanged: no replay hook, geometry copy, bounds index, cache, lock, JNI/API change, classification pass, or second holder scan. Invalidate both in-progress and sealed programs on holder list mutation so later replay cannot observe stale order.
+---
+ core/fpdfapi/page/BUILD.gn                  |  1 +
+ core/fpdfapi/page/cpdf_pageobjectholder.cpp | 23 ++++++++
+ core/fpdfapi/page/cpdf_pageobjectholder.h   |  2 +
+ core/fpdfapi/page/veloce_render_program.cpp | 58 +++++++++++++++++++++
+ core/fpdfapi/page/veloce_render_program.h   | 58 +++++++++++++++++++--
+ 5 files changed, 138 insertions(+), 4 deletions(-)
+ create mode 100644 core/fpdfapi/page/veloce_render_program.cpp
+
+diff --git a/core/fpdfapi/page/BUILD.gn b/core/fpdfapi/page/BUILD.gn
+index e54adba4e..8690d868a 100644
+--- a/core/fpdfapi/page/BUILD.gn
++++ b/core/fpdfapi/page/BUILD.gn
+@@ -108,6 +108,7 @@ source_set("page") {
+     "ipdf_page.h",
+     "jpx_decode_conversion.cpp",
+     "jpx_decode_conversion.h",
++    "veloce_render_program.cpp",
+     "veloce_render_program.h",
+   ]
+   configs += [ "../../../:pdfium_strict_config" ]
+diff --git a/core/fpdfapi/page/cpdf_pageobjectholder.cpp b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+index ef4f6bed1..7bc441072 100644
+--- a/core/fpdfapi/page/cpdf_pageobjectholder.cpp
++++ b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+@@ -60,6 +60,7 @@ void CPDF_PageObjectHolder::SetVeloceRenderProgram(
+ }
+
+ void CPDF_PageObjectHolder::ResetVeloceRenderProgram() {
++  veloce_render_program_builder_.reset();
+   veloce_render_program_.reset();
+ }
+
+@@ -70,6 +71,11 @@ bool CPDF_PageObjectHolder::IsPage() const {
+ void CPDF_PageObjectHolder::StartParse(
+     std::unique_ptr<CPDF_ContentParser> pParser) {
+   DCHECK_EQ(parse_state_, ParseState::kNotParsed);
++  ResetVeloceRenderProgram();
++  if (page_object_list_.empty()) {
++    veloce_render_program_builder_ =
++        std::make_unique<VeloceRenderProgramBuilder>();
++  }
+   parser_ = std::move(pParser);
+   parse_state_ = ParseState::kParsing;
+ }
+@@ -88,6 +94,15 @@ void CPDF_PageObjectHolder::ContinueParse(PauseIndicatorIface* pPause) {
+   document_->IncrementParsedPageCount();
+   all_ctms_ = parser_->TakeAllCTMs();
+
++  if (veloce_render_program_builder_) {
++    std::unique_ptr<const VeloceRenderProgram> program =
++        veloce_render_program_builder_->Finish();
++    veloce_render_program_builder_.reset();
++    if (program) {
++      SetVeloceRenderProgram(std::move(program));
++    }
++  }
++
+   parser_.reset();
+ }
+
+@@ -198,6 +213,11 @@ void CPDF_PageObjectHolder::AppendPageObject(
+     std::unique_ptr<CPDF_PageObject> pPageObj) {
+   CHECK(pPageObj);
+   page_object_list_.push_back(std::move(pPageObj));
++  if (veloce_render_program_builder_) {
++    veloce_render_program_builder_->AppendPageObject(*page_object_list_.back());
++  } else {
++    ResetVeloceRenderProgram();
++  }
+ }
+
+ bool CPDF_PageObjectHolder::InsertPageObjectAtIndex(
+@@ -224,6 +244,7 @@ bool CPDF_PageObjectHolder::InsertPageObjectAtIndex(
+   // std::deque::iterator::operator++() has not been marked as unsafe yet.
+   page_object_list_.insert(UNSAFE_TODO(page_object_list_.begin() + index),
+                            std::move(page_obj));
++  ResetVeloceRenderProgram();
+   return true;
+ }
+
+@@ -237,6 +258,7 @@ std::unique_ptr<CPDF_PageObject> CPDF_PageObjectHolder::RemovePageObject(
+
+   std::unique_ptr<CPDF_PageObject> result = std::move(*it);
+   page_object_list_.erase(it);
++  ResetVeloceRenderProgram();
+
+   int32_t content_stream = pPageObj->GetContentStream();
+   if (content_stream >= 0) {
+@@ -254,5 +276,6 @@ bool CPDF_PageObjectHolder::ErasePageObjectAtIndex(size_t index) {
+   // Unsafe, but the compiler will not complain, because
+   // std::deque::iterator::operator++() has not been marked as unsafe yet.
+   page_object_list_.erase(UNSAFE_TODO(page_object_list_.begin() + index));
++  ResetVeloceRenderProgram();
+   return true;
+ }
+diff --git a/core/fpdfapi/page/cpdf_pageobjectholder.h b/core/fpdfapi/page/cpdf_pageobjectholder.h
+index dceeeee56..d9c8d0e80 100644
+--- a/core/fpdfapi/page/cpdf_pageobjectholder.h
++++ b/core/fpdfapi/page/cpdf_pageobjectholder.h
+@@ -32,6 +32,7 @@ class CPDF_Document;
+ class CPDF_PageObject;
+ class PauseIndicatorIface;
+ class VeloceRenderProgram;
++class VeloceRenderProgramBuilder;
+
+ // These structs are used to keep track of resources that have already been
+ // generated in the page object holder.
+@@ -172,6 +173,7 @@ class CPDF_PageObjectHolder {
+   std::vector<CFX_FloatRect> mask_bounding_boxes_;
+   std::unique_ptr<CPDF_ContentParser> parser_;
+   std::deque<std::unique_ptr<CPDF_PageObject>> page_object_list_;
++  std::unique_ptr<VeloceRenderProgramBuilder> veloce_render_program_builder_;
+   std::unique_ptr<const VeloceRenderProgram> veloce_render_program_;
+
+   CTMMap all_ctms_;
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+new file mode 100644
+index 000000000..2cb02f87a
+--- /dev/null
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -0,0 +1,58 @@
++// Copyright 2026 The xPDFSDK Authors
++// Use of this source code is governed by the PDFium BSD-style license.
++
++#include "core/fpdfapi/page/veloce_render_program.h"
++
++#include <utility>
++
++#include "core/fpdfapi/page/cpdf_pageobject.h"
++
++namespace {
++
++VeloceRenderCommandKind ToRenderCommandKind(
++    const CPDF_PageObject& object) {
++  switch (object.GetType()) {
++    case CPDF_PageObject::Type::kPath:
++      return VeloceRenderCommandKind::kPath;
++    case CPDF_PageObject::Type::kText:
++      return VeloceRenderCommandKind::kText;
++    case CPDF_PageObject::Type::kImage:
++      return VeloceRenderCommandKind::kImage;
++    case CPDF_PageObject::Type::kShading:
++      return VeloceRenderCommandKind::kShading;
++    case CPDF_PageObject::Type::kForm:
++      return VeloceRenderCommandKind::kForm;
++  }
++  return VeloceRenderCommandKind::kUnsupported;
++}
++
++}  // namespace
++
++VeloceRenderProgram::VeloceRenderProgram(
++    std::vector<VeloceRenderCommandKind> command_kinds)
++    : command_kinds_(std::move(command_kinds)) {}
++
++VeloceRenderProgramBuilder::VeloceRenderProgramBuilder() = default;
++VeloceRenderProgramBuilder::~VeloceRenderProgramBuilder() = default;
++
++void VeloceRenderProgramBuilder::AppendPageObject(
++    const CPDF_PageObject& object) {
++  if (exceeded_budget_) {
++    return;
++  }
++  if (command_kinds_.size() >= kMaxCommandBytes) {
++    std::vector<VeloceRenderCommandKind>().swap(command_kinds_);
++    exceeded_budget_ = true;
++    return;
++  }
++  command_kinds_.push_back(ToRenderCommandKind(object));
++}
++
++std::unique_ptr<const VeloceRenderProgram>
++VeloceRenderProgramBuilder::Finish() {
++  if (exceeded_budget_ || command_kinds_.empty()) {
++    return nullptr;
++  }
++  return std::unique_ptr<const VeloceRenderProgram>(
++      new VeloceRenderProgram(std::move(command_kinds_)));
++}
+diff --git a/core/fpdfapi/page/veloce_render_program.h b/core/fpdfapi/page/veloce_render_program.h
+index 960087619..d5037cade 100644
+--- a/core/fpdfapi/page/veloce_render_program.h
++++ b/core/fpdfapi/page/veloce_render_program.h
+@@ -4,13 +4,30 @@
+ #ifndef CORE_FPDFAPI_PAGE_VELOCE_RENDER_PROGRAM_H_
+ #define CORE_FPDFAPI_PAGE_VELOCE_RENDER_PROGRAM_H_
+
+-class VeloceRenderProgramBuilder;
++#include <stddef.h>
++#include <stdint.h>
++
++#include <memory>
++#include <vector>
++
++#include "core/fxcrt/span.h"
++
++class CPDF_PageObject;
++
++enum class VeloceRenderCommandKind : uint8_t {
++  kPath,
++  kText,
++  kImage,
++  kShading,
++  kForm,
++  kUnsupported,
++};
++
++static_assert(sizeof(VeloceRenderCommandKind) == 1);
+
+ // Immutable native rendering representation owned by one live page-object
+ // holder. PDFium page objects remain authoritative for fidelity and editing.
+ //
+-// Patch 0075 establishes ownership only. Command storage is intentionally
+-// absent until parser-time recording is added by the next revision.
+ class VeloceRenderProgram final {
+  public:
+   ~VeloceRenderProgram() = default;
+@@ -18,10 +35,43 @@ class VeloceRenderProgram final {
+   VeloceRenderProgram(const VeloceRenderProgram&) = delete;
+   VeloceRenderProgram& operator=(const VeloceRenderProgram&) = delete;
+
++  pdfium::span<const VeloceRenderCommandKind> commands() const {
++    return command_kinds_;
++  }
++  size_t EstimatedBytes() const {
++    return sizeof(*this) +
++           command_kinds_.capacity() * sizeof(VeloceRenderCommandKind);
++  }
++
+  private:
+   friend class VeloceRenderProgramBuilder;
+
+-  VeloceRenderProgram() = default;
++  explicit VeloceRenderProgram(
++      std::vector<VeloceRenderCommandKind> command_kinds);
++
++  const std::vector<VeloceRenderCommandKind> command_kinds_;
++};
++
++// Single-owner parser-time recorder. It records one byte per appended holder
++// object in exact painter order. Object indices are implicit command indices,
++// so no pointer or duplicate index storage is needed.
++class VeloceRenderProgramBuilder final {
++ public:
++  VeloceRenderProgramBuilder();
++  ~VeloceRenderProgramBuilder();
++
++  VeloceRenderProgramBuilder(const VeloceRenderProgramBuilder&) = delete;
++  VeloceRenderProgramBuilder& operator=(
++      const VeloceRenderProgramBuilder&) = delete;
++
++  void AppendPageObject(const CPDF_PageObject& object);
++  std::unique_ptr<const VeloceRenderProgram> Finish();
++
++ private:
++  static constexpr size_t kMaxCommandBytes = 32u * 1024u * 1024u;
++
++  std::vector<VeloceRenderCommandKind> command_kinds_;
++  bool exceeded_budget_ = false;
+ };
+
+ #endif  // CORE_FPDFAPI_PAGE_VELOCE_RENDER_PROGRAM_H_
