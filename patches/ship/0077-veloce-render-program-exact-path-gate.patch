@@ -1,0 +1,190 @@
+From 103b71e79f28ac09b180a30b8b82989d52ae1d46 Mon Sep 17 00:00:00 2001
+From: "sh.chao" <sh.chao@gmail.com>
+Date: Wed, 15 Jul 2026 13:45:36 +0800
+Subject: [PATCH] r25-0077 gate legacy path compilation with RenderProgram
+
+Record the exact path-command count alongside parser command order and require a complete holder-owned RenderProgram before entering the legacy path-display-list cache or compiler. Missing programs, holder-count mismatches, and mixed command streams fall back before drawing.
+
+This removes redundant failed compilation scans and temporary display-list allocation for normal and Q16-like mixed holders while preserving the existing all-path backend. Extend VelocePathDL telemetry with program command/path counts and explicit program_skip rejection reasons so removed work is directly measurable.
+---
+ core/fpdfapi/page/veloce_render_program.cpp   | 14 ++++--
+ core/fpdfapi/page/veloce_render_program.h     |  7 ++-
+ .../render/veloce_path_display_list.cpp       | 44 ++++++++++++++++++-
+ 3 files changed, 58 insertions(+), 7 deletions(-)
+
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index 2cb02f87a..59462454b 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -29,8 +29,10 @@ VeloceRenderCommandKind ToRenderCommandKind(
+ }  // namespace
+
+ VeloceRenderProgram::VeloceRenderProgram(
+-    std::vector<VeloceRenderCommandKind> command_kinds)
+-    : command_kinds_(std::move(command_kinds)) {}
++    std::vector<VeloceRenderCommandKind> command_kinds,
++    size_t path_command_count)
++    : command_kinds_(std::move(command_kinds)),
++      path_command_count_(path_command_count) {}
+
+ VeloceRenderProgramBuilder::VeloceRenderProgramBuilder() = default;
+ VeloceRenderProgramBuilder::~VeloceRenderProgramBuilder() = default;
+@@ -45,7 +47,11 @@ void VeloceRenderProgramBuilder::AppendPageObject(
+     exceeded_budget_ = true;
+     return;
+   }
+-  command_kinds_.push_back(ToRenderCommandKind(object));
++  const VeloceRenderCommandKind command_kind = ToRenderCommandKind(object);
++  command_kinds_.push_back(command_kind);
++  if (command_kind == VeloceRenderCommandKind::kPath) {
++    ++path_command_count_;
++  }
+ }
+
+ std::unique_ptr<const VeloceRenderProgram>
+@@ -54,5 +60,5 @@ VeloceRenderProgramBuilder::Finish() {
+     return nullptr;
+   }
+   return std::unique_ptr<const VeloceRenderProgram>(
+-      new VeloceRenderProgram(std::move(command_kinds_)));
++      new VeloceRenderProgram(std::move(command_kinds_), path_command_count_));
+ }
+diff --git a/core/fpdfapi/page/veloce_render_program.h b/core/fpdfapi/page/veloce_render_program.h
+index d5037cade..5ac996e48 100644
+--- a/core/fpdfapi/page/veloce_render_program.h
++++ b/core/fpdfapi/page/veloce_render_program.h
+@@ -38,6 +38,8 @@ class VeloceRenderProgram final {
+   pdfium::span<const VeloceRenderCommandKind> commands() const {
+     return command_kinds_;
+   }
++  size_t command_count() const { return command_kinds_.size(); }
++  size_t path_command_count() const { return path_command_count_; }
+   size_t EstimatedBytes() const {
+     return sizeof(*this) +
+            command_kinds_.capacity() * sizeof(VeloceRenderCommandKind);
+@@ -47,9 +49,11 @@ class VeloceRenderProgram final {
+   friend class VeloceRenderProgramBuilder;
+
+   explicit VeloceRenderProgram(
+-      std::vector<VeloceRenderCommandKind> command_kinds);
++      std::vector<VeloceRenderCommandKind> command_kinds,
++      size_t path_command_count);
+
+   const std::vector<VeloceRenderCommandKind> command_kinds_;
++  const size_t path_command_count_;
+ };
+
+ // Single-owner parser-time recorder. It records one byte per appended holder
+@@ -71,6 +75,7 @@ class VeloceRenderProgramBuilder final {
+   static constexpr size_t kMaxCommandBytes = 32u * 1024u * 1024u;
+
+   std::vector<VeloceRenderCommandKind> command_kinds_;
++  size_t path_command_count_ = 0;
+   bool exceeded_budget_ = false;
+ };
+
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index b1472ad76..2ab96db7d 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -28,6 +28,7 @@
+ #include "core/fpdfapi/page/cpdf_pageobject.h"
+ #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
+ #include "core/fpdfapi/page/cpdf_pathobject.h"
++#include "core/fpdfapi/page/veloce_render_program.h"
+ #include "core/fpdfapi/render/cpdf_renderoptions.h"
+ #include "core/fpdfapi/render/cpdf_renderstatus.h"
+ #include "core/fpdfapi/render/veloce_render_callbacks.h"
+@@ -67,6 +68,9 @@ enum class PathDlRejectReason {
+   kPaintTableOverflow,
+   kPathTableOverflow,
+   kBlendScratchReplayTooLarge,
++  kRenderProgramUnavailable,
++  kRenderProgramObjectCountMismatch,
++  kRenderProgramMixedCommands,
+ };
+
+ struct PathDlPaint {
+@@ -200,6 +204,12 @@ const char* RejectReasonName(PathDlRejectReason reason) {
+       return "path_table_overflow";
+     case PathDlRejectReason::kBlendScratchReplayTooLarge:
+       return "blend_scratch_replay_too_large";
++    case PathDlRejectReason::kRenderProgramUnavailable:
++      return "render_program_unavailable";
++    case PathDlRejectReason::kRenderProgramObjectCountMismatch:
++      return "render_program_object_count_mismatch";
++    case PathDlRejectReason::kRenderProgramMixedCommands:
++      return "render_program_mixed_commands";
+   }
+   return "unknown";
+ }
+@@ -214,6 +224,21 @@ const char* HolderKindName(VelocePathDisplayListHolderKind holder_kind) {
+   return "unknown";
+ }
+
++PathDlRejectReason ValidateRenderProgramForPathDisplayList(
++    const CPDF_PageObjectHolder* holder) {
++  const VeloceRenderProgram* program = holder->GetVeloceRenderProgram();
++  if (!program) {
++    return PathDlRejectReason::kRenderProgramUnavailable;
++  }
++  if (program->command_count() != holder->GetPageObjectCount()) {
++    return PathDlRejectReason::kRenderProgramObjectCountMismatch;
++  }
++  if (program->path_command_count() != program->command_count()) {
++    return PathDlRejectReason::kRenderProgramMixedCommands;
++  }
++  return PathDlRejectReason::kNone;
++}
++
+ bool DisplayListIntegrityOk(const NativePathDisplayList& list) {
+   if (list.nodes.empty() || list.path_table.empty() || list.paint_table.empty()) {
+     return false;
+@@ -294,6 +319,8 @@ void LogPathDisplayListAttempt(const char* result,
+                                int64_t replay_ms) {
+ #if defined(__ANDROID__)
+   constexpr size_t kZero = 0;
++  const VeloceRenderProgram* program =
++      holder ? holder->GetVeloceRenderProgram() : nullptr;
+   const bool integrity_ok = list && DisplayListIntegrityOk(*list);
+   const bool legacy_skipped =
+       list && result && std::strcmp(result, "rendered") == 0;
+@@ -302,7 +329,8 @@ void LogPathDisplayListAttempt(const char* result,
+   __android_log_print(
+       ANDROID_LOG_INFO, "VelocePathDL",
+       "result=%s holderKind=%s reason=%s holder=%p integrity=%s legacySkipped=%d "
+-      "legacyFallback=%d nodes=%zu paths=%zu paints=%zu graphStates=%zu clips=%zu "
++      "legacyFallback=%d programCommands=%zu programPaths=%zu "
++      "nodes=%zu paths=%zu paints=%zu graphStates=%zu clips=%zu "
+       "scanned=%zu skippedInactive=%zu skippedInvisible=%zu skippedNoFill=%zu "
+       "noopClips=%zu blendNodes=%zu scratchBlendNodes=%zu visited=%zu culled=%zu missingPath=%zu drawn=%zu "
+       "clipSwitches=%zu cancelChecks=%zu groupRunComposites=%zu groupRunNodes=%zu maxGroupRunNodes=%zu "
+@@ -311,8 +339,11 @@ void LogPathDisplayListAttempt(const char* result,
+       " replayMs=%" PRId64
+       " totalFastMs=%" PRId64 " estimatedDispatchAvoided=%zu",
+       result, HolderKindName(holder_kind), RejectReasonName(reason), holder,
+-      integrity_ok ? "ok" : "bad", legacy_skipped ? 1 : 0,
++      list ? (integrity_ok ? "ok" : "bad") : "none",
++      legacy_skipped ? 1 : 0,
+       legacy_fallback ? 1 : 0,
++      program ? program->command_count() : kZero,
++      program ? program->path_command_count() : kZero,
+       list ? list->nodes.size() : kZero,
+       list ? list->path_table.size() : kZero,
+       list ? list->paint_table.size() : kZero,
+@@ -1017,6 +1048,15 @@ VelocePathDisplayListResult VeloceTryRenderPathDisplayListForHolder(
+     return VelocePathDisplayListResult::kNotEligible;
+   }
+
++  const PathDlRejectReason program_reject_reason =
++      ValidateRenderProgramForPathDisplayList(holder);
++  if (program_reject_reason != PathDlRejectReason::kNone) {
++    LogPathDisplayListAttempt("not_eligible", holder_kind, "program_skip",
++                              program_reject_reason, holder, nullptr, nullptr,
++                              0, 0);
++    return VelocePathDisplayListResult::kNotEligible;
++  }
++
+   const PathDisplayListCacheKey cache_key =
+       MakePathDisplayListCacheKey(status, holder);
+   std::shared_ptr<const NativePathDisplayList> cached_list =

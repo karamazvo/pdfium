@@ -106,6 +106,7 @@ these patches:
 | 0074 | `0074-veloce-render-plan-per-matrix-agg-command-batching.patch` | Carries one exact matrix per command so adjacent same-paint strokes stay in a bounded packet across matrix changes. Each command is still transformed, rasterized, and composited separately in painter order. Adds `strokeMatrixChangesBatched` proof telemetry. |
 | 0075 | `0075-veloce-render-program-v2-ownership-boundary.patch` | Starts the replacement RenderProgram v2 line from the correctness baseline (`r25 + 0051`), not from experimental patches `0053-0074`. Adds an optional holder-owned `unique_ptr<const VeloceRenderProgram>` and narrow install/reset accessors. The program remains unpopulated and has no parser or renderer hook, so this revision adds no scan, allocation, cache, lock, log, public API, or pixel change. |
 | 0076 | `0076-veloce-render-program-parser-command-order.patch` | Records one compact command-kind byte for every page/Form object through the parser's existing central `AppendPageObject()` path, preserving exact painter order with the command index as the implicit live-holder object index. Seals the vector as an immutable holder-owned program only after parsing and clip normalization complete; holder mutation invalidates it. Recording is abandoned above a hard 32 MiB budget, and pre-populated holders fail closed without a program. There is no replay hook, geometry/bounds copy, second holder scan, cache, lock, JNI/API change, or pixel change. |
+| 0077 | `0077-veloce-render-program-exact-path-gate.patch` | First RenderProgram v2 consumer. Records the exact path-command count during the existing parser append and requires a complete, object-count-matched, all-path holder program before the legacy path-display-list cache or compiler can run. Missing, stale-count, and mixed programs fall back before drawing with `cache=program_skip`, `scanned=0`, and `compileMs=0`. All-path rendering remains on the unchanged r25 backend. Adds no second scan, geometry copy, cache, lock, JNI/API change, or pixel operation. |
 
 ## Why this directory exists
 
@@ -232,6 +233,12 @@ uses one byte per object, no copied geometry or explicit object-index array,
 and a 32 MiB hard budget. If the budget is exceeded or the holder is mutated,
 the program is absent and PDFium's canonical object renderer remains the sole
 rendering path.
+Patch 0077 depends on 0076 and makes that absence authoritative: legacy path
+display-list acceleration cannot enter its process cache or compiler without a
+complete holder program. The parser maintains an exact path count while it is
+already appending command kinds, so mixed holders reject in O(1) with no new
+scan or allocation. This removes redundant failed fast-path compilation but
+does not yet replace the all-path path-display-list compiler or replay loop.
 Patch 0053 can also be applied directly on the rel-260701 stable line after
 patch 0051. It is behavior-preserving and only inserts the `VeloceRenderPlan`
 facade above the existing r25 path-display-list backend.
