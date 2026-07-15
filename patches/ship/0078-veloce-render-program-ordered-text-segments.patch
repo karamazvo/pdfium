@@ -1,0 +1,447 @@
+From 0000000000000000000000000000000000000078 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Wed, 15 Jul 2026 16:30:00 +0800
+Subject: [PATCH] r25-0078: replay ordered path runs across live text barriers
+
+Consume the holder-owned RenderProgram v2 for the first mixed-command shape:
+exact path and text streams. One non-path object must not force every tile back
+through a multi-million-object canonical holder walk.
+
+Build a compact segment table while the legacy path display list is compiled:
+consecutive eligible paths become PathRun segments and text commands become
+ordered passthrough barriers. Compile and validate the complete display list
+before drawing. Replay every segment in painter order, resolve text by live
+holder index rather than a cached pointer, and reset PDFium's clip state at
+each acceleration boundary.
+
+The policy remains fail closed. Image, Form, shading, unsupported commands,
+object-kind mismatches, unsupported path paint, and segment-budget overflow
+return before accelerated drawing. Segment storage has a hard one-million-entry
+ceiling. No Kotlin classification, JNI API, UI-thread work, scheduler, or
+document-specific rule is added.
+
+Telemetry reports parser text counts, segment counts, and passthrough counts so
+Q16-like holders can be distinguished from canonical fallback.
+---
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index 59462454b..17dea937e 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -30,9 +30,11 @@ VeloceRenderCommandKind ToRenderCommandKind(
+
+ VeloceRenderProgram::VeloceRenderProgram(
+     std::vector<VeloceRenderCommandKind> command_kinds,
+-    size_t path_command_count)
++    size_t path_command_count,
++    size_t text_command_count)
+     : command_kinds_(std::move(command_kinds)),
+-      path_command_count_(path_command_count) {}
++      path_command_count_(path_command_count),
++      text_command_count_(text_command_count) {}
+
+ VeloceRenderProgramBuilder::VeloceRenderProgramBuilder() = default;
+ VeloceRenderProgramBuilder::~VeloceRenderProgramBuilder() = default;
+@@ -51,6 +53,8 @@ void VeloceRenderProgramBuilder::AppendPageObject(
+   command_kinds_.push_back(command_kind);
+   if (command_kind == VeloceRenderCommandKind::kPath) {
+     ++path_command_count_;
++  } else if (command_kind == VeloceRenderCommandKind::kText) {
++    ++text_command_count_;
+   }
+ }
+
+@@ -60,5 +64,6 @@ VeloceRenderProgramBuilder::Finish() {
+     return nullptr;
+   }
+   return std::unique_ptr<const VeloceRenderProgram>(
+-      new VeloceRenderProgram(std::move(command_kinds_), path_command_count_));
++      new VeloceRenderProgram(std::move(command_kinds_), path_command_count_,
++                              text_command_count_));
+ }
+diff --git a/core/fpdfapi/page/veloce_render_program.h b/core/fpdfapi/page/veloce_render_program.h
+index 5ac996e48..2e1cdb6c2 100644
+--- a/core/fpdfapi/page/veloce_render_program.h
++++ b/core/fpdfapi/page/veloce_render_program.h
+@@ -40,6 +40,7 @@ class VeloceRenderProgram final {
+   }
+   size_t command_count() const { return command_kinds_.size(); }
+   size_t path_command_count() const { return path_command_count_; }
++  size_t text_command_count() const { return text_command_count_; }
+   size_t EstimatedBytes() const {
+     return sizeof(*this) +
+            command_kinds_.capacity() * sizeof(VeloceRenderCommandKind);
+@@ -50,10 +51,12 @@ class VeloceRenderProgram final {
+
+   explicit VeloceRenderProgram(
+       std::vector<VeloceRenderCommandKind> command_kinds,
+-      size_t path_command_count);
++      size_t path_command_count,
++      size_t text_command_count);
+
+   const std::vector<VeloceRenderCommandKind> command_kinds_;
+   const size_t path_command_count_;
++  const size_t text_command_count_;
+ };
+
+ // Single-owner parser-time recorder. It records one byte per appended holder
+@@ -76,6 +79,7 @@ class VeloceRenderProgramBuilder final {
+
+   std::vector<VeloceRenderCommandKind> command_kinds_;
+   size_t path_command_count_ = 0;
++  size_t text_command_count_ = 0;
+   bool exceeded_budget_ = false;
+ };
+
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index 2ab96db7d..02fe4aedf 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -46,8 +46,10 @@ constexpr uint32_t kNoClipKey = std::numeric_limits<uint32_t>::max();
+ constexpr uint32_t kNoGraphStateKey = std::numeric_limits<uint32_t>::max();
+ constexpr uint32_t kMaxClipPathCount = 16;
+ constexpr uint32_t kCancelCheckNodeInterval = 64;
++constexpr uint32_t kInvalidObjectIndex = std::numeric_limits<uint32_t>::max();
+ constexpr size_t kMaxCachedPathDisplayLists = 32;
+ constexpr size_t kMaxScratchBlendNodes = 512;
++constexpr size_t kMaxPathDisplayListSegments = 1u << 20;
+
+ enum class PathDlRejectReason {
+   kNone,
+@@ -71,6 +73,8 @@ enum class PathDlRejectReason {
+   kRenderProgramUnavailable,
+   kRenderProgramObjectCountMismatch,
+   kRenderProgramMixedCommands,
++  kRenderProgramObjectKindMismatch,
++  kSegmentTableOverflow,
+ };
+
+ struct PathDlPaint {
+@@ -89,18 +93,32 @@ struct PathDlNode {
+   uint32_t clip_key = kNoClipKey;
+ };
+
++enum class PathDlSegmentKind {
++  kPathRun,
++  kTextPassthrough,
++};
++
++struct PathDlSegment {
++  PathDlSegmentKind kind = PathDlSegmentKind::kPathRun;
++  uint32_t first_node = 0;
++  uint32_t node_count = 0;
++  uint32_t object_index = kInvalidObjectIndex;
++};
++
+ struct NativePathDisplayList {
+   std::vector<CPDF_Path> path_table;
+   std::vector<PathDlPaint> paint_table;
+   std::vector<CFX_GraphStateData> graph_state_table;
+   std::vector<CPDF_ClipPath> clip_table;
+   std::vector<PathDlNode> nodes;
++  std::vector<PathDlSegment> segments;
+   size_t scanned_objects = 0;
+   size_t skipped_inactive = 0;
+   size_t skipped_invisible = 0;
+   size_t skipped_no_fill = 0;
+   size_t elided_noop_clips = 0;
+   size_t blend_nodes = 0;
++  size_t text_passthrough_objects = 0;
+ };
+
+ struct PathDisplayListCacheKey {
+@@ -210,6 +228,10 @@ const char* RejectReasonName(PathDlRejectReason reason) {
+       return "render_program_object_count_mismatch";
+     case PathDlRejectReason::kRenderProgramMixedCommands:
+       return "render_program_mixed_commands";
++    case PathDlRejectReason::kRenderProgramObjectKindMismatch:
++      return "render_program_object_kind_mismatch";
++    case PathDlRejectReason::kSegmentTableOverflow:
++      return "segment_table_overflow";
+   }
+   return "unknown";
+ }
+@@ -233,14 +255,16 @@ PathDlRejectReason ValidateRenderProgramForPathDisplayList(
+   if (program->command_count() != holder->GetPageObjectCount()) {
+     return PathDlRejectReason::kRenderProgramObjectCountMismatch;
+   }
+-  if (program->path_command_count() != program->command_count()) {
++  if (program->path_command_count() + program->text_command_count() !=
++      program->command_count()) {
+     return PathDlRejectReason::kRenderProgramMixedCommands;
+   }
+   return PathDlRejectReason::kNone;
+ }
+
+ bool DisplayListIntegrityOk(const NativePathDisplayList& list) {
+-  if (list.nodes.empty() || list.path_table.empty() || list.paint_table.empty()) {
++  if (list.nodes.empty() || list.path_table.empty() || list.paint_table.empty() ||
++      list.segments.empty()) {
+     return false;
+   }
+   for (const PathDlNode& node : list.nodes) {
+@@ -259,6 +283,16 @@ bool DisplayListIntegrityOk(const NativePathDisplayList& list) {
+       return false;
+     }
+   }
++  for (const PathDlSegment& segment : list.segments) {
++    if (segment.kind == PathDlSegmentKind::kPathRun) {
++      if (segment.node_count == 0 || segment.first_node >= list.nodes.size() ||
++          segment.node_count > list.nodes.size() - segment.first_node) {
++        return false;
++      }
++    } else if (segment.object_index == kInvalidObjectIndex) {
++      return false;
++    }
++  }
+   return true;
+ }
+
+@@ -329,8 +363,8 @@ void LogPathDisplayListAttempt(const char* result,
+   __android_log_print(
+       ANDROID_LOG_INFO, "VelocePathDL",
+       "result=%s holderKind=%s reason=%s holder=%p integrity=%s legacySkipped=%d "
+-      "legacyFallback=%d programCommands=%zu programPaths=%zu "
+-      "nodes=%zu paths=%zu paints=%zu graphStates=%zu clips=%zu "
++      "legacyFallback=%d programCommands=%zu programPaths=%zu programTexts=%zu "
++      "segments=%zu passthrough=%zu nodes=%zu paths=%zu paints=%zu graphStates=%zu clips=%zu "
+       "scanned=%zu skippedInactive=%zu skippedInvisible=%zu skippedNoFill=%zu "
+       "noopClips=%zu blendNodes=%zu scratchBlendNodes=%zu visited=%zu culled=%zu missingPath=%zu drawn=%zu "
+       "clipSwitches=%zu cancelChecks=%zu groupRunComposites=%zu groupRunNodes=%zu maxGroupRunNodes=%zu "
+@@ -344,6 +378,9 @@ void LogPathDisplayListAttempt(const char* result,
+       legacy_fallback ? 1 : 0,
+       program ? program->command_count() : kZero,
+       program ? program->path_command_count() : kZero,
++      program ? program->text_command_count() : kZero,
++      list ? list->segments.size() : kZero,
++      list ? list->text_passthrough_objects : kZero,
+       list ? list->nodes.size() : kZero,
+       list ? list->path_table.size() : kZero,
+       list ? list->paint_table.size() : kZero,
+@@ -613,13 +650,65 @@ bool CompilePathDisplayList(CPDF_RenderStatus* status,
+     return reject(PathDlRejectReason::kForcedColor);
+   }
+
++  const VeloceRenderProgram* program = holder->GetVeloceRenderProgram();
++  if (!program || program->command_count() != holder->GetPageObjectCount()) {
++    return reject(PathDlRejectReason::kRenderProgramObjectCountMismatch);
++  }
++  const pdfium::span<const VeloceRenderCommandKind> commands =
++      program->commands();
++  uint32_t pending_path_run_first_node = 0;
++  uint32_t pending_path_run_node_count = 0;
++  auto flush_pending_path_run = [&]() -> bool {
++    if (pending_path_run_node_count == 0) {
++      return true;
++    }
++    if (list->segments.size() >= kMaxPathDisplayListSegments) {
++      return false;
++    }
++    PathDlSegment segment;
++    segment.kind = PathDlSegmentKind::kPathRun;
++    segment.first_node = pending_path_run_first_node;
++    segment.node_count = pending_path_run_node_count;
++    list->segments.push_back(segment);
++    pending_path_run_first_node = 0;
++    pending_path_run_node_count = 0;
++    return true;
++  };
++
++  uint32_t holder_object_index = 0;
+   for (const auto& obj : *holder) {
++    const uint32_t current_object_index = holder_object_index++;
+     list->scanned_objects++;
+     if ((list->scanned_objects % kCancelCheckNodeInterval) == 0 &&
+         status->ShouldCancelRender()) {
+       return reject(PathDlRejectReason::kCancelled);
+     }
+-    if (!obj || !obj->IsActive()) {
++    if (!obj) {
++      return reject(PathDlRejectReason::kRenderProgramObjectKindMismatch);
++    }
++    const VeloceRenderCommandKind command_kind =
++        commands[current_object_index];
++    if (command_kind == VeloceRenderCommandKind::kText) {
++      if (!obj->IsText()) {
++        return reject(PathDlRejectReason::kRenderProgramObjectKindMismatch);
++      }
++      if (!flush_pending_path_run()) {
++        return reject(PathDlRejectReason::kSegmentTableOverflow);
++      }
++      if (list->segments.size() >= kMaxPathDisplayListSegments) {
++        return reject(PathDlRejectReason::kSegmentTableOverflow);
++      }
++      PathDlSegment segment;
++      segment.kind = PathDlSegmentKind::kTextPassthrough;
++      segment.object_index = current_object_index;
++      list->segments.push_back(segment);
++      list->text_passthrough_objects++;
++      continue;
++    }
++    if (command_kind != VeloceRenderCommandKind::kPath || !obj->IsPath()) {
++      return reject(PathDlRejectReason::kRenderProgramObjectKindMismatch);
++    }
++    if (!obj->IsActive()) {
+       list->skipped_inactive++;
+       continue;
+     }
+@@ -627,9 +716,6 @@ bool CompilePathDisplayList(CPDF_RenderStatus* status,
+       list->skipped_invisible++;
+       continue;
+     }
+-    if (!obj->IsPath()) {
+-      return reject(PathDlRejectReason::kNonPathObject);
+-    }
+     if (!HasOnlySimplePathClip(obj->clip_path())) {
+       return reject(PathDlRejectReason::kComplexClip);
+     }
+@@ -716,10 +802,17 @@ bool CompilePathDisplayList(CPDF_RenderStatus* status,
+     node.path_index = static_cast<uint32_t>(list->path_table.size() - 1);
+     node.paint_key = paint_key.value();
+     node.clip_key = clip_key.value();
++    if (pending_path_run_node_count == 0) {
++      pending_path_run_first_node = static_cast<uint32_t>(list->nodes.size());
++    }
+     list->nodes.push_back(std::move(node));
++    pending_path_run_node_count++;
+   }
+
+-  return !list->nodes.empty()
++  if (!flush_pending_path_run()) {
++    return reject(PathDlRejectReason::kSegmentTableOverflow);
++  }
++  return !list->nodes.empty() && !list->segments.empty()
+              ? true
+              : reject(PathDlRejectReason::kInactiveOrInvisibleOnly);
+ }
+@@ -864,11 +957,17 @@ bool FlushGroupRun(CFX_RenderDevice* device,
+   return true;
+ }
+
+-VelocePathDisplayListResult ReplayPathDisplayList(
++VelocePathDisplayListResult ReplayPathDisplayListRange(
+     CPDF_RenderStatus* status,
+     const NativePathDisplayList& list,
+     const CFX_Matrix& holder_to_device,
+-    PathDlReplayStats* replay_stats) {
++    PathDlReplayStats* replay_stats,
++    uint32_t first_node,
++    uint32_t node_count) {
++  if (node_count == 0 || first_node >= list.nodes.size() ||
++      node_count > list.nodes.size() - first_node) {
++    return VelocePathDisplayListResult::kNotEligible;
++  }
+   CFX_RenderDevice* device = status->GetRenderDevice();
+   if (list.blend_nodes > 0 && !device->RenderCapBlendMode()) {
+     return VelocePathDisplayListResult::kNotEligible;
+@@ -898,8 +997,10 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+     return VelocePathDisplayListResult::kRendered;
+   };
+
+-  for (uint32_t i = 0; i < list.nodes.size(); ++i) {
+-    if ((i % kCancelCheckNodeInterval) == 0) {
++  const uint32_t end_node = first_node + node_count;
++  uint32_t nodes_considered = 0;
++  for (uint32_t i = first_node; i < end_node; ++i) {
++    if ((nodes_considered++ % kCancelCheckNodeInterval) == 0) {
+       if (replay_stats) {
+         replay_stats->cancel_checks++;
+       }
+@@ -1034,6 +1135,71 @@ VelocePathDisplayListResult ReplayPathDisplayList(
+   return VelocePathDisplayListResult::kRendered;
+ }
+
++bool ObjectOutsideClip(const CPDF_PageObject* object,
++                       const CFX_FloatRect& holder_clip) {
++  const CFX_FloatRect object_rect = object->GetRect();
++  return object_rect.left > holder_clip.right ||
++         object_rect.right < holder_clip.left ||
++         object_rect.bottom > holder_clip.top ||
++         object_rect.top < holder_clip.bottom;
++}
++
++VelocePathDisplayListResult ReplayPathDisplayList(
++    CPDF_RenderStatus* status,
++    const CPDF_PageObjectHolder* holder,
++    const NativePathDisplayList& list,
++    const CFX_Matrix& holder_to_device,
++    PathDlReplayStats* replay_stats) {
++  size_t passthrough_count = 0;
++  for (const PathDlSegment& segment : list.segments) {
++    if (segment.kind != PathDlSegmentKind::kTextPassthrough) {
++      continue;
++    }
++    CPDF_PageObject* object =
++        holder->GetPageObjectByIndex(segment.object_index);
++    if (!object || !object->IsText()) {
++      return VelocePathDisplayListResult::kNotEligible;
++    }
++    ++passthrough_count;
++  }
++  if (passthrough_count != list.text_passthrough_objects) {
++    return VelocePathDisplayListResult::kNotEligible;
++  }
++
++  const CFX_FloatRect holder_clip =
++      holder_to_device.GetInverse().TransformRect(
++          CFX_FloatRect(status->GetRenderDevice()->GetClipBox()));
++  CPDF_ClipPath empty_clip;
++  for (const PathDlSegment& segment : list.segments) {
++    if (status->ShouldCancelRender()) {
++      return VelocePathDisplayListResult::kCancelled;
++    }
++    if (segment.kind == PathDlSegmentKind::kPathRun) {
++      const VelocePathDisplayListResult result = ReplayPathDisplayListRange(
++          status, list, holder_to_device, replay_stats, segment.first_node,
++          segment.node_count);
++      status->ProcessClipPath(empty_clip, holder_to_device);
++      if (result != VelocePathDisplayListResult::kRendered) {
++        return result;
++      }
++      continue;
++    }
++
++    CPDF_PageObject* object =
++        holder->GetPageObjectByIndex(segment.object_index);
++    if (object->IsActive() && !ObjectOutsideClip(object, holder_clip)) {
++      status->RenderSingleObject(object, holder_to_device);
++    }
++    // RenderSingleObject updates CPDF_RenderStatus' clip cache. Return both the
++    // status cache and the device to their baseline before the next path run.
++    status->ProcessClipPath(empty_clip, holder_to_device);
++    if (status->ShouldCancelRender()) {
++      return VelocePathDisplayListResult::kCancelled;
++    }
++  }
++  return VelocePathDisplayListResult::kRendered;
++}
++
+ }  // namespace
+
+ VelocePathDisplayListResult VeloceTryRenderPathDisplayListForHolder(
+@@ -1098,7 +1264,7 @@ VelocePathDisplayListResult VeloceTryRenderPathDisplayListForHolder(
+   PathDlReplayStats replay_stats;
+   const int64_t replay_start_ns = NowNs();
+   const VelocePathDisplayListResult result =
+-      ReplayPathDisplayList(status, *cached_list, holder_to_device,
++      ReplayPathDisplayList(status, holder, *cached_list, holder_to_device,
+                             &replay_stats);
+   LogPathDisplayListAttempt(
+       result == VelocePathDisplayListResult::kRendered
+diff --git a/core/fpdfapi/render/veloce_path_display_list.h b/core/fpdfapi/render/veloce_path_display_list.h
+index e5a46595d..e649056af 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.h
++++ b/core/fpdfapi/render/veloce_path_display_list.h
+@@ -19,8 +19,9 @@ enum class VelocePathDisplayListHolderKind {
+   kForm,
+ };
+
+-// Attempts to render a path-only object holder through a compact internal
+-// display list into `status`'s current CFX_RenderDevice.
++// Attempts to render an ordered path/text object holder through a compact
++// internal display list into `status`'s current CFX_RenderDevice. Consecutive
++// paths are accelerated and live text objects remain painter-order barriers.
+ //
+ // This is intentionally conservative: unsupported objects or paint states
+ // return kNotEligible before drawing, so callers can fall back to legacy
+--
+2.50.1

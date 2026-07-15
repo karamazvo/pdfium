@@ -9,12 +9,13 @@ Current architecture and performance plan:
 ```
 
 The r25-0074 measurements proved that dispatch batching was not the dense-tile
-bottleneck. The active native line is now r25-0077 RenderProgram v2. Revision
+bottleneck. The active native line is now r25-0078 RenderProgram v2. Revision
 numbering continues from 0074 for audit history, but the v2 workflow extends
 the r25 + 0051 correctness baseline and deliberately excludes experimental
-RenderPlan v1 patches 0053-0074. Patch 0077 is the first fail-closed consumer:
-it prevents mixed, absent, or count-mismatched programs from entering the
-legacy path-display-list cache/compiler. All-path replay remains unchanged.
+RenderPlan v1 patches 0053-0074. Patch 0077 installs the first fail-closed
+consumer. Patch 0078 then consumes exact path/text streams as ordered
+accelerated path runs with live text barriers; every other command shape still
+fails closed before drawing.
 
 Purpose: shared context for Codex and Claude when continuing the native PDFium
 Veloce performance patch stack. This document records the current worktree
@@ -46,10 +47,10 @@ Android app, JNI, Kotlin, and UI layer worktree:
 Use this worktree only for app/JNI/Kotlin changes. Do not mix app-layer changes
 into the PDFium patch repo.
 
-Current committed native PDFium HEAD before r25-0077:
+Current committed native PDFium HEAD before r25-0078:
 
 ```text
-3a5d0d453 r25-0076 record bounded parser command order
+003c0caff r25-0077 gate legacy path compile with RenderProgram
 ```
 
 Known untracked files currently visible in the native PDFium repo include
@@ -199,6 +200,7 @@ Release workflows:
 | r25-0075 | `.github/workflows/pdfium-android-arm64-r25-0075-render-program-v2-ownership-boundary.yml` | r25 rendering stack plus `0051` and `0075`; excludes `0053..0074` | Behavior-neutral start of RenderProgram v2. Adds holder-owned immutable program lifetime only; recording and replay remain absent. |
 | r25-0076 | `.github/workflows/pdfium-android-arm64-r25-0076-render-program-parser-command-order.yml` | r25 rendering stack plus `0051`, `0075`, and `0076`; excludes `0053..0074` | Parser-time recording only. Stores one command-kind byte per object in exact painter order, bounded to 32 MiB, and seals it under holder ownership. No renderer consumes it yet. |
 | r25-0077 | `.github/workflows/pdfium-android-arm64-r25-0077-render-program-exact-path-gate.yml` | r25 rendering stack plus `0051` and `0075..0077`; excludes `0053..0074` | First v2 consumer. Uses exact parser summaries to reject absent, stale-count, or mixed programs before legacy cache lookup/compile; all-path backend remains unchanged. |
+| r25-0078 | `.github/workflows/pdfium-android-arm64-r25-0078-render-program-ordered-text-segments.yml` | r25 rendering stack plus `0051` and `0075..0078`; excludes `0053..0074` | First ordered mixed-command replay. Compiles path runs once, keeps text as live holder-index barriers, preserves painter order and clip state, and rejects image/Form/shading/unsupported streams before drawing. |
 
 Recent revisions:
 
@@ -222,6 +224,7 @@ Recent revisions:
 | r25-0075 | `0075-veloce-render-program-v2-ownership-boundary.patch` | committed | Start the clean RenderProgram v2 line from r25 + 0051 with immutable holder ownership and no runtime behavior change. |
 | r25-0076 | `0076-veloce-render-program-parser-command-order.patch` | committed | Record bounded compact object-kind commands during the existing parser append path, seal exact painter order after parse completion, and keep replay disabled. |
 | r25-0077 | `0077-veloce-render-program-exact-path-gate.patch` | committed | Gate the legacy path cache/compiler with exact parser-owned program presence, holder count, and all-path summary before any scan or allocation. |
+| r25-0078 | `0078-veloce-render-program-ordered-text-segments.patch` | implemented, pending build | Replay exact path/text programs as bounded ordered path runs and live text barriers without raw cached page-object pointers. |
 
 Historical native HEAD before r48 (not the active line):
 
@@ -478,6 +481,7 @@ The active line is RenderProgram v2 on the r25 + 0051 correctness baseline:
 r25-0075: immutable holder ownership boundary
 r25-0076: bounded parser-time command-order recording, no replay
 r25-0077: exact O(1) path eligibility gate before legacy compile
+r25-0078: ordered PathRun replay with live text passthrough barriers
 ```
 
 0076's invariant is that command `i` describes live holder object `i` in exact
@@ -490,12 +494,28 @@ ceiling makes memory use fail-closed; an absent program always leaves the
 canonical renderer authoritative.
 
 0077 consumes only exact summary facts recorded by that same append operation.
-It does not classify by filename, page, output size, or Kotlin policy. Missing
-program ownership, command/object count mismatch, or any non-path command is a
-hard fallback before cache lookup and before accelerated drawing. The existing
-r25 compiler/replay remains the backend only for complete all-path holders.
+0078 extends that gate from all-path to exact path/text programs. It compiles
+the complete path display list and ordered segment table before drawing, stores
+text barriers only as holder indices, resolves each barrier from the live
+holder, and resets PDFium clip state at every path/text boundary. Missing
+program ownership, count/type mismatch, image/Form/shading commands, unsupported
+path state, or segment-budget overflow remains a hard pre-draw fallback.
 
-Later revisions may widen consumption beyond the exact all-path gate, but each
+The 0077 Q16 trace recorded 3,165,420 commands: 3,164,996 paths and 424
+non-path commands. The O(1) gate itself cost zero compile/replay milliseconds,
+but whole-holder rejection sent every tile through canonical PDFium. 0078
+removes that poison-holder behavior when all 424 barriers are text. Expected
+successful logs report `programTexts=424`, a bounded `segments` count,
+`passthrough=424`, and `result=rendered`; `cache=hit` should dominate after the
+first compile.
+
+The next Pareto native revision after 0078 is a bounded holder-space spatial
+candidate index inside each PathRun. It must select candidates only, retain
+original node order, never cross text barriers, and fall back to ordered full
+run replay for unsafe transforms or broad queries. This removes the remaining
+per-tile scan of roughly 3.16 million compiled nodes.
+
+Later revisions may widen consumption beyond exact path/text programs, but each
 consumer must:
 
 - validate the complete ordered program before drawing any accelerated pixel;

@@ -107,6 +107,7 @@ these patches:
 | 0075 | `0075-veloce-render-program-v2-ownership-boundary.patch` | Starts the replacement RenderProgram v2 line from the correctness baseline (`r25 + 0051`), not from experimental patches `0053-0074`. Adds an optional holder-owned `unique_ptr<const VeloceRenderProgram>` and narrow install/reset accessors. The program remains unpopulated and has no parser or renderer hook, so this revision adds no scan, allocation, cache, lock, log, public API, or pixel change. |
 | 0076 | `0076-veloce-render-program-parser-command-order.patch` | Records one compact command-kind byte for every page/Form object through the parser's existing central `AppendPageObject()` path, preserving exact painter order with the command index as the implicit live-holder object index. Seals the vector as an immutable holder-owned program only after parsing and clip normalization complete; holder mutation invalidates it. Recording is abandoned above a hard 32 MiB budget, and pre-populated holders fail closed without a program. There is no replay hook, geometry/bounds copy, second holder scan, cache, lock, JNI/API change, or pixel change. |
 | 0077 | `0077-veloce-render-program-exact-path-gate.patch` | First RenderProgram v2 consumer. Records the exact path-command count during the existing parser append and requires a complete, object-count-matched, all-path holder program before the legacy path-display-list cache or compiler can run. Missing, stale-count, and mixed programs fall back before drawing with `cache=program_skip`, `scanned=0`, and `compileMs=0`. All-path rendering remains on the unchanged r25 backend. Adds no second scan, geometry copy, cache, lock, JNI/API change, or pixel operation. |
+| 0078 | `0078-veloce-render-program-ordered-text-segments.patch` | Extends the v2 consumer to exact path/text holders. During the one required path-display-list compile, consecutive paths become ordered `PathRun` segments and text commands become live holder-index barriers. The complete stream is validated before drawing; image/Form/shading/unsupported commands and segment overflow fail closed. Replay preserves painter order, resets clip state at every path/text boundary, stores no raw page-object pointer, and caps segment metadata at one million entries. Adds no Kotlin/JNI policy or UI-thread work. |
 
 ## Why this directory exists
 
@@ -239,6 +240,13 @@ complete holder program. The parser maintains an exact path count while it is
 already appending command kinds, so mixed holders reject in O(1) with no new
 scan or allocation. This removes redundant failed fast-path compilation but
 does not yet replace the all-path path-display-list compiler or replay loop.
+Patch 0078 depends on 0077 and replaces whole-holder rejection only for exact
+path/text programs. It builds path-run and text-barrier metadata during the
+single required path compile, stores text barriers as holder object indices,
+preflights all live text types before drawing, and replays the segments in
+original order. Unsupported command kinds remain a pre-draw fallback. This is
+the v2 implementation of ordered segmentation and does not depend on the
+experimental 0053-0074 RenderPlan v1 stack.
 Patch 0053 can also be applied directly on the rel-260701 stable line after
 patch 0051. It is behavior-preserving and only inserts the `VeloceRenderPlan`
 facade above the existing r25 path-display-list backend.
