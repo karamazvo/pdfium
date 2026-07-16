@@ -1,8 +1,8 @@
 # Production PDFium patches (ship-quality)
 
-The active RenderPlan architecture, evidence, revision sequence, and proof
-gates are locked in
-[`RENDERPLAN_FIRST_PRINCIPLES_DENSE_TILE_PLAN_2026-07-14.md`](RENDERPLAN_FIRST_PRINCIPLES_DENSE_TILE_PLAN_2026-07-14.md).
+The active unified RenderProgram architecture, revision sequence, benchmark
+contract, and correctness gates are locked in
+[`UNIFIED_RENDER_PROGRAM_BACKEND_PLAN_2026-07-16.md`](UNIFIED_RENDER_PROGRAM_BACKEND_PLAN_2026-07-16.md).
 
 This directory contains the **production PDFium patch series**
 used by the Veloce PDFium build. Unlike the `experiments/` directory,
@@ -108,6 +108,7 @@ these patches:
 | 0076 | `0076-veloce-render-program-parser-command-order.patch` | Records one compact command-kind byte for every page/Form object through the parser's existing central `AppendPageObject()` path, preserving exact painter order with the command index as the implicit live-holder object index. Seals the vector as an immutable holder-owned program only after parsing and clip normalization complete; holder mutation invalidates it. Recording is abandoned above a hard 32 MiB budget, and pre-populated holders fail closed without a program. There is no replay hook, geometry/bounds copy, second holder scan, cache, lock, JNI/API change, or pixel change. |
 | 0077 | `0077-veloce-render-program-exact-path-gate.patch` | First RenderProgram v2 consumer. Records the exact path-command count during the existing parser append and requires a complete, object-count-matched, all-path holder program before the legacy path-display-list cache or compiler can run. Missing, stale-count, and mixed programs fall back before drawing with `cache=program_skip`, `scanned=0`, and `compileMs=0`. All-path rendering remains on the unchanged r25 backend. Adds no second scan, geometry copy, cache, lock, JNI/API change, or pixel operation. |
 | 0078 | `0078-veloce-render-program-ordered-text-segments.patch` | Extends the v2 consumer to exact path/text holders. During the one required path-display-list compile, consecutive paths become ordered `PathRun` segments and text commands become live holder-index barriers. The complete stream is validated before drawing; image/Form/shading/unsupported commands and segment overflow fail closed. Replay preserves painter order, resets clip state at every path/text boundary, stores no raw page-object pointer, and caps segment metadata at one million entries. Adds no Kotlin/JNI policy or UI-thread work. |
+| r25-1-0079 | `0079-veloce-unified-render-program-backend-interface.patch` | Starts unified-backend generation 1 from `r25 + 0051 + 0075 + 0076`, deliberately excluding `0053..0074` and the legacy `0077/0078` consumers. Adds one internal complete-holder result contract and value-only performance/memory metrics. The implementation is disabled and has no runtime call site, allocation, lock, log, or pixel change. |
 
 ## Why this directory exists
 
@@ -118,6 +119,24 @@ other. The `ship/` directory is the **clean, audit-ready, upstreamable**
 subset.
 
 ## How to apply
+
+The patch directory contains historical branches and must not be applied by
+blind numeric globbing. For `r25-1-0079`, apply the r25 rendering base through
+0031, then only 0051, 0075, 0076, and 0079:
+
+```bash
+git apply patches/ship/01-jpeg-downscale-on-decode.patch
+# Apply 02..09, 0011..0026, and 0029..0031 in numeric order.
+git apply patches/ship/0051-veloce-page-dimensions-no-parse.patch
+git apply patches/ship/0075-veloce-render-program-v2-ownership-boundary.patch
+git apply patches/ship/0076-veloce-render-program-parser-command-order.patch
+git apply patches/ship/0079-veloce-unified-render-program-backend-interface.patch
+```
+
+Do not apply 0053..0074 or 0077..0078 to an `r25-1-0079` build. The exact
+machine-checked list lives in the revision workflow.
+
+The following legacy list is retained for historical stacks only:
 
 ```bash
 cd /path/to/pdfium
@@ -247,6 +266,14 @@ preflights all live text types before drawing, and replays the segments in
 original order. Unsupported command kinds remain a pre-draw fallback. This is
 the v2 implementation of ordered segmentation and does not depend on the
 experimental 0053-0074 RenderPlan v1 stack.
+Patch 0079 starts the separate `r25-1` unified-backend generation from patch
+0076 and does not depend on patches 0077 or 0078. It adds one internal
+complete-holder execution result contract plus value-only benchmark and memory
+accounting fields. The 0079 implementation always returns `kDisabled` and has
+no render-path call site, so canonical PDFium remains the only execution owner.
+Later `r25-1` revisions must extend this contract rather than call the legacy
+path-display-list consumer or introduce another scheduler, command order,
+spatial index, cache owner, or destination bitmap.
 Patch 0053 can also be applied directly on the rel-260701 stable line after
 patch 0051. It is behavior-preserving and only inserts the `VeloceRenderPlan`
 facade above the existing r25 path-display-list backend.

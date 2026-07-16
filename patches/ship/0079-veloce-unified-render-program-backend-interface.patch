@@ -1,0 +1,144 @@
+From 0000000000000000000000000000000000000079 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Thu, 16 Jul 2026 11:30:00 +0800
+Subject: [PATCH] r25-1-0079: add unified RenderProgram backend interface
+
+Start unified-backend generation 1 from the r25 + 0051 + 0075-0076
+ownership and parser-order baseline. Deliberately do not apply or call the
+0077/0078 legacy path-display-list consumers.
+
+Add one internal holder-level execution contract for normal, mixed-content,
+and path-heavy rendering. The contract defines complete-result semantics and
+a value-only metrics schema for program/index construction, candidate query,
+compile, replay, raster, blend, dispatch, and bounded memory accounting.
+
+This revision is behavior-neutral. The implementation always returns
+kDisabled, has no render-path call site, allocates no storage, takes no lock,
+emits no log, and changes no pixel. It reports only already-owned RenderProgram
+command/byte metadata when an explicit future benchmark calls it. Canonical
+PDFium and the existing r25 renderer remain authoritative.
+
+Later r25-1 patches must extend this single contract rather than adding another
+display list, scheduler, spatial index, cache owner, or destination bitmap.
+---
+ core/fpdfapi/render/BUILD.gn                       |  2 +
+ .../render/veloce_unified_render_backend.cpp       | 24 +++++++++
+ .../fpdfapi/render/veloce_unified_render_backend.h | 63 ++++++++++++++++++++++
+ 3 files changed, 89 insertions(+)
+ create mode 100644 core/fpdfapi/render/veloce_unified_render_backend.cpp
+ create mode 100644 core/fpdfapi/render/veloce_unified_render_backend.h
+
+diff --git a/core/fpdfapi/render/BUILD.gn b/core/fpdfapi/render/BUILD.gn
+index 32ab43317..bba1a8fb1 100644
+--- a/core/fpdfapi/render/BUILD.gn
++++ b/core/fpdfapi/render/BUILD.gn
+@@ -35,6 +35,8 @@ source_set("render") {
+     "cpdf_type3glyphmap.h",
+     "veloce_path_display_list.cpp",
+     "veloce_path_display_list.h",
++    "veloce_unified_render_backend.cpp",
++    "veloce_unified_render_backend.h",
+     "veloce_render_skip_mask.cpp",
+     "veloce_render_skip_mask.h",
+     "veloce_render_callbacks.cpp",
+diff --git a/core/fpdfapi/render/veloce_unified_render_backend.cpp b/core/fpdfapi/render/veloce_unified_render_backend.cpp
+new file mode 100644
+index 000000000..347e88854
+--- /dev/null
++++ b/core/fpdfapi/render/veloce_unified_render_backend.cpp
+@@ -0,0 +1,24 @@
++// Copyright 2026 The xPDFSDK Authors
++// Use of this source code is governed by the PDFium BSD-style license.
++
++#include "core/fpdfapi/render/veloce_unified_render_backend.h"
++
++#include "core/fpdfapi/page/cpdf_pageobjectholder.h"
++#include "core/fpdfapi/page/veloce_render_program.h"
++
++VeloceUnifiedRenderResult VeloceTryRenderUnifiedProgram(
++    CPDF_RenderStatus*,
++    const CPDF_PageObjectHolder* holder,
++    const CFX_Matrix&,
++    VeloceUnifiedRenderMetrics* metrics) {
++  if (metrics) {
++    *metrics = {};
++    const VeloceRenderProgram* program =
++        holder ? holder->GetVeloceRenderProgram() : nullptr;
++    if (program) {
++      metrics->total_commands = program->commands().size();
++      metrics->program_bytes = program->EstimatedBytes();
++    }
++  }
++  return VeloceUnifiedRenderResult::kDisabled;
++}
+diff --git a/core/fpdfapi/render/veloce_unified_render_backend.h b/core/fpdfapi/render/veloce_unified_render_backend.h
+new file mode 100644
+index 000000000..4cb77528d
+--- /dev/null
++++ b/core/fpdfapi/render/veloce_unified_render_backend.h
+@@ -0,0 +1,63 @@
++// Copyright 2026 The xPDFSDK Authors
++// Use of this source code is governed by the PDFium BSD-style license.
++
++#ifndef CORE_FPDFAPI_RENDER_VELOCE_UNIFIED_RENDER_BACKEND_H_
++#define CORE_FPDFAPI_RENDER_VELOCE_UNIFIED_RENDER_BACKEND_H_
++
++#include <stddef.h>
++#include <stdint.h>
++
++class CFX_Matrix;
++class CPDF_PageObjectHolder;
++class CPDF_RenderStatus;
++
++inline constexpr char kVeloceUnifiedRenderBackendRevision[] = "r25-1-0079";
++
++// Result contract for one complete holder request. Disabled and not-eligible
++// results guarantee that no destination pixel was changed. A cancelled result
++// may contain partial work and requires the caller to discard the bitmap.
++enum class VeloceUnifiedRenderResult : uint8_t {
++  kDisabled,
++  kNotEligible,
++  kRendered,
++  kCancelled,
++};
++
++// Value-only benchmark contract shared by every r25-1 backend revision. No
++// metric owns storage or changes execution. Durations use monotonic nanoseconds
++// and byte counters report retained/admitted memory, not allocator capacity
++// guesses hidden from the cache budget.
++struct VeloceUnifiedRenderMetrics {
++  uint64_t program_build_ns = 0;
++  uint64_t index_build_ns = 0;
++  uint64_t compile_ns = 0;
++  uint64_t candidate_query_ns = 0;
++  uint64_t replay_ns = 0;
++  uint64_t raster_ns = 0;
++  uint64_t blend_ns = 0;
++
++  size_t total_commands = 0;
++  size_t candidate_commands = 0;
++  size_t visited_commands = 0;
++  size_t drawn_commands = 0;
++  size_t dispatch_count = 0;
++  size_t program_bytes = 0;
++  size_t cache_bytes = 0;
++  size_t scratch_bytes = 0;
++};
++
++// Unified native execution boundary for normal, mixed-content, and path-heavy
++// holders. The holder-owned RenderProgram is the sole immutable command-order
++// representation; PDFium page objects remain authoritative for fidelity and
++// editing, and `status` owns the destination device.
++
++// r25-1-0079 intentionally returns kDisabled and has no render-path call site.
++// Later revisions may consume this contract only after complete pre-draw
++// validation. They must not delegate to the legacy Veloce path display list.
++VeloceUnifiedRenderResult VeloceTryRenderUnifiedProgram(
++    CPDF_RenderStatus* status,
++    const CPDF_PageObjectHolder* holder,
++    const CFX_Matrix& holder_to_device,
++    VeloceUnifiedRenderMetrics* metrics);
++
++#endif  // CORE_FPDFAPI_RENDER_VELOCE_UNIFIED_RENDER_BACKEND_H_
+--
+2.50.1

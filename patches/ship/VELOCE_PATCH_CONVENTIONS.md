@@ -1,21 +1,22 @@
 # PDFium Veloce Patch Conventions Handoff
 
-Date: 2026-07-15
+Date: 2026-07-16
 
 Current architecture and performance plan:
 
 ```text
-/Users/shchao/Code/xPDFSDK/android/meta/libs/pdfium/patches/ship/RENDERPLAN_FIRST_PRINCIPLES_DENSE_TILE_PLAN_2026-07-14.md
+/Users/shchao/Code/xPDFSDK/android/meta/libs/pdfium/patches/ship/UNIFIED_RENDER_PROGRAM_BACKEND_PLAN_2026-07-16.md
 ```
 
 The r25-0074 measurements proved that dispatch batching was not the dense-tile
-bottleneck. The active native line is now r25-0078 RenderProgram v2. Revision
-numbering continues from 0074 for audit history, but the v2 workflow extends
-the r25 + 0051 correctness baseline and deliberately excludes experimental
-RenderPlan v1 patches 0053-0074. Patch 0077 installs the first fail-closed
-consumer. Patch 0078 then consumes exact path/text streams as ordered
-accelerated path runs with live text barriers; every other command shape still
-fails closed before drawing.
+bottleneck. r25-0078 is now the frozen legacy-consumer reference build. The new
+native line is **r25-1**, unified-backend generation 1. It starts from the r25 +
+0051 correctness baseline and retains only the RenderProgram ownership/order
+foundation in 0075-0076. It deliberately excludes experimental RenderPlan v1
+patches 0053-0074 and the legacy path-display-list consumers 0077-0078.
+
+Global patch numbering remains monotonic for audit history. The first r25-1
+revision is `r25-1-0079`; no old or failed number is reused.
 
 Purpose: shared context for Codex and Claude when continuing the native PDFium
 Veloce performance patch stack. This document records the current worktree
@@ -47,10 +48,10 @@ Android app, JNI, Kotlin, and UI layer worktree:
 Use this worktree only for app/JNI/Kotlin changes. Do not mix app-layer changes
 into the PDFium patch repo.
 
-Current committed native PDFium HEAD before r25-0078:
+Current committed native PDFium reference HEAD:
 
 ```text
-003c0caff r25-0077 gate legacy path compile with RenderProgram
+a5af7646c r25-0078 consume ordered path/text RenderProgram segments
 ```
 
 Known untracked files currently visible in the native PDFium repo include
@@ -90,6 +91,40 @@ Use numeric patch order for the patch stack:
 0051-veloce-page-dimensions-no-parse.patch
 0052-veloce-path-display-list-same-source-darken-widening.patch
 ```
+
+The unified-backend series uses this complete revision identity:
+
+```text
+r25-1-0079
+|  |   |
+|  |   +-- global monotonic patch number
+|  +------ unified-backend generation 1
++--------- r25 correctness baseline
+```
+
+`r25-1` is a Veloce series identifier, not a PDFium upstream version number.
+Use the full identity consistently:
+
+```text
+patch file:       0079-veloce-unified-render-program-backend-interface.patch
+patch subject:    [PATCH] r25-1-0079: add unified RenderProgram backend interface
+workflow file:    pdfium-android-arm64-r25-1-0079-unified-render-program-backend.yml
+workflow name:    r25-1-0079 unified RenderProgram backend - Build libpdfium Android arm64
+artifact prefix:  libpdfium-android-arm64-r25-1-0079-
+runtime revision: r25-1-0079
+```
+
+Workflow and action names must begin with the complete revision so the newest
+series build is immediately visible. Later revisions advance globally:
+
+```text
+r25-1-0080
+r25-1-0081
+r25-1-0082
+```
+
+Do not rename, delete, or reuse 0077/0078. They remain historical evidence for
+the legacy consumer even though the r25-1 workflow does not apply them.
 
 Use revision labels for user/build tracking:
 
@@ -160,35 +195,52 @@ Do not:
 
 ## 4. Current Architecture Invariants
 
-The central architecture is ordered segmented replay:
+The r25-1 central architecture is one holder-owned ordered RenderProgram:
 
 ```text
-PathRunSegment -> TextPassthrough -> PathRunSegment -> ...
+live PDFium holder and editing objects
+              |
+              v
+immutable ordered RenderProgram
+              |
+     bounded holder-space index
+              |
+       visible candidates only
+              |
+ exact bounded execution packets
+              |
+     current PDFium destination bitmap
 ```
 
-Inside a path segment, Veloce may optimize replay. Across segment boundaries,
-passthrough objects, clip changes, unsupported objects, and non-proven barriers,
-it must preserve original PDF order.
+This is one framework for normal, mixed-content, and huge-path holders. It has
+no filename/page classification and no separate huge-path scheduler. Command
+order, clip/group nesting, candidate selection, execution, cancellation, and
+canonical fallback are represented by the same program contract.
 
-Current native mechanisms:
+Non-negotiable boundaries:
 
-- Cached native path display list for root pages/forms.
-- Text passthrough by holder object index, not raw pointer.
-- Holder-space spatial index for visible tile candidate selection.
-- Stroke-run packing inside a segment.
-- Same-ARGB fill-barrier crossing for normal stroke runs.
-- Translation-normalized stroke-run packing for same-linear CTMs.
-- Blend group replay through BGRA isolated group buffers.
-- Cooperative cancellation in blend group flushes.
-- Conservative safe blend paint widening for disjoint same-blend paint changes.
-- Effective-paint blend widening for overlapping paint-key changes only when
-  render-affecting blend paint is equivalent.
-- Compact blend-shape telemetry for Darken/simple-source proof.
-- Page dictionary geometry export for app/JNI page-size enumeration without
-  `FPDF_LoadPage()` content parsing.
+- PDFium page objects remain the fidelity/editing source of truth.
+- The RenderProgram is immutable, holder-owned, and stores no long-lived raw
+  page-object pointer.
+- The complete ordered program is validated before any accelerated pixel is
+  drawn.
+- Candidate selection may remove only provably invisible commands and must
+  return surviving commands in original painter order.
+- Unsupported commands are ordered barriers or cause pre-draw canonical
+  fallback; they do not create a second page model.
+- The app remains the sole visible-region scheduler. Native code executes one
+  requested bitmap/clip and never adds warmup or speculative rendering.
+- Program, index, compiled ranges, caches, packets, and scratch storage have
+  explicit byte/count ceilings.
+- Compilation and replay run off the UI thread, outside cache locks, with
+  bounded cancellation checkpoints.
+- Normal and huge-path content use the same interface. Native structural cost
+  and equivalence determine execution, never Kotlin classification.
 
-The display-list cache is native owned. Replay must tolerate cache hits across
-renders without retaining stale page-object pointers.
+The r25-0078 cached path display list remains a comparison implementation, not
+the r25-1 source of truth. Useful algorithms may be re-derived behind this
+single RenderProgram contract, but its legacy segmented backend must not be
+installed as a parallel execution architecture.
 
 ## 5. Current Revision Status
 
@@ -201,6 +253,7 @@ Release workflows:
 | r25-0076 | `.github/workflows/pdfium-android-arm64-r25-0076-render-program-parser-command-order.yml` | r25 rendering stack plus `0051`, `0075`, and `0076`; excludes `0053..0074` | Parser-time recording only. Stores one command-kind byte per object in exact painter order, bounded to 32 MiB, and seals it under holder ownership. No renderer consumes it yet. |
 | r25-0077 | `.github/workflows/pdfium-android-arm64-r25-0077-render-program-exact-path-gate.yml` | r25 rendering stack plus `0051` and `0075..0077`; excludes `0053..0074` | First v2 consumer. Uses exact parser summaries to reject absent, stale-count, or mixed programs before legacy cache lookup/compile; all-path backend remains unchanged. |
 | r25-0078 | `.github/workflows/pdfium-android-arm64-r25-0078-render-program-ordered-text-segments.yml` | r25 rendering stack plus `0051` and `0075..0078`; excludes `0053..0074` | First ordered mixed-command replay. Compiles path runs once, keeps text as live holder-index barriers, preserves painter order and clip state, and rejects image/Form/shading/unsupported streams before drawing. |
+| r25-1-0079 | `.github/workflows/pdfium-android-arm64-r25-1-0079-unified-render-program-backend.yml` | r25 rendering stack plus `0051`, `0075`, `0076`, and `0079`; excludes `0053..0074` and `0077..0078` | Behavior-neutral start of unified-backend generation 1. Establishes one RenderProgram execution/benchmark contract without invoking the legacy path-display-list consumer. |
 
 Recent revisions:
 
@@ -224,7 +277,8 @@ Recent revisions:
 | r25-0075 | `0075-veloce-render-program-v2-ownership-boundary.patch` | committed | Start the clean RenderProgram v2 line from r25 + 0051 with immutable holder ownership and no runtime behavior change. |
 | r25-0076 | `0076-veloce-render-program-parser-command-order.patch` | committed | Record bounded compact object-kind commands during the existing parser append path, seal exact painter order after parse completion, and keep replay disabled. |
 | r25-0077 | `0077-veloce-render-program-exact-path-gate.patch` | committed | Gate the legacy path cache/compiler with exact parser-owned program presence, holder count, and all-path summary before any scan or allocation. |
-| r25-0078 | `0078-veloce-render-program-ordered-text-segments.patch` | implemented, pending build | Replay exact path/text programs as bounded ordered path runs and live text barriers without raw cached page-object pointers. |
+| r25-0078 | `0078-veloce-render-program-ordered-text-segments.patch` | committed, frozen reference | Replay exact path/text programs as bounded ordered path runs and live text barriers without raw cached page-object pointers. |
+| r25-1-0079 | `0079-veloce-unified-render-program-backend-interface.patch` | implemented, pending build | Start the unified backend from r25 + 0051 + 0075-0076 with a behavior-neutral native execution and benchmark boundary. |
 
 Historical native HEAD before r48 (not the active line):
 
@@ -475,7 +529,8 @@ Fix rXX workflow <short cause>
 
 ## 10. Current And Next Patch Direction
 
-The active line is RenderProgram v2 on the r25 + 0051 correctness baseline:
+The frozen reference line is RenderProgram v2 on the r25 + 0051 correctness
+baseline:
 
 ```text
 r25-0075: immutable holder ownership boundary
@@ -509,26 +564,42 @@ successful logs report `programTexts=424`, a bounded `segments` count,
 `passthrough=424`, and `result=rendered`; `cache=hit` should dominate after the
 first compile.
 
-The next Pareto native revision after 0078 is a bounded holder-space spatial
-candidate index inside each PathRun. It must select candidates only, retain
-original node order, never cross text barriers, and fall back to ordered full
-run replay for unsafe transforms or broad queries. This removes the remaining
-per-tile scan of roughly 3.16 million compiled nodes.
+The r25-1 line starts cleanly from 0076 rather than extending the legacy 0078
+consumer:
 
-Later revisions may widen consumption beyond exact path/text programs, but each
-consumer must:
+```text
+r25-1-0079: behavior-neutral unified execution and benchmark interface
+r25-1-0080: compact ordered command/state representation
+r25-1-0081: bounded conservative holder-space candidate index
+r25-1-0082: exact path/text vertical executor
+r25-1-0083: dense path execution kernel with bounded reusable scratch
+r25-1-0084: clip/image/Form/group/transparency completeness
+r25-1-0085: proof-gated blend kernels
+```
+
+These are revisions of one framework, not separate fast paths. Every revision
+extends the same holder-owned RenderProgram and writes into the same PDFium
+destination bitmap. There is one command order, one bounds/index contract, one
+candidate query, one cancellation contract, one byte-accounted cache policy,
+and one canonical pre-draw fallback boundary.
+
+Each r25-1 consumer must:
 
 - validate the complete ordered program before drawing any accelerated pixel;
-- preserve non-path objects and unsupported graphics state as hard barriers;
+- represent path, text, image, Form, shading, clip, group, and transparency
+  commands in the same ordered program as completeness advances;
+- preserve unsupported commands and non-proven graphics state as hard barriers;
 - use live PDFium objects as the fidelity and editing source of truth;
 - never retain raw page-object pointers beyond the holder lifetime;
 - fall back before drawing when equivalence cannot be proven;
 - keep candidate data holder-space, immutable, and memory-bounded;
 - keep all compilation and replay off the UI thread;
 - avoid a second full-holder scan and avoid duplicating geometry;
-- leave normal pages on the canonical renderer unless the complete plan is
-  proven eligible.
+- make native structural cost decide whether acceleration is profitable;
+- use the same interface for normal and huge-path pages.
 
 Do not reintroduce RenderPlan v1 patches 0053-0074 behind the new interface.
 Useful algorithms must be re-derived against the v2 ownership, ordering,
 correctness, and memory invariants rather than copied as accumulated behavior.
+Do not call the 0077/0078 legacy path display list from r25-1. It remains an A/B
+reference used to prove that the new backend removes work instead of moving it.
