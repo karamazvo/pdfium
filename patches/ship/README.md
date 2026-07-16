@@ -111,6 +111,7 @@ these patches:
 | r25-1-0079 | `0079-veloce-unified-render-program-backend-interface.patch` | Starts unified-backend generation 1 from `r25 + 0051 + 0075 + 0076`, deliberately excluding `0053..0074` and the `0077/0078` consumers. Adds one disabled internal execution/metrics contract. The patch itself has no runtime call site, but the resulting artifact still contains the older `0013..0031` path-display-list executor and is not a canonical-pixel baseline. |
 | r25-1-0080 | `0080-veloce-render-program-compact-command-summary.patch` | Adds fixed O(1) per-kind counts to the existing one-byte ordered command stream. Command position remains the implicit live holder object index; graphics state and geometry are not duplicated. Adds 24 retained bytes per admitted program and keeps the unified backend disabled. The old executor remains active when its feature bit is supplied. |
 | r25-1-0081 | `0081-veloce-disable-legacy-path-display-list.patch` | Establishes the canonical correctness baseline. The legacy holder executor returns `kNotEligible` at its single native entry before cache lookup, allocation, compile, logging, or drawing; the unified executor also remains disabled. Canonical PDFium therefore owns every destination pixel even when callers still supply the old feature bit. |
+| r25-1-0082 | `0082-veloce-render-program-holder-space-candidate-index.patch` | Adds one immutable 32x32 holder-space candidate index to admitted RenderPrograms without enabling replay. Holders below 4096 commands retain no index. Huge holders scan only the bounded 4096-command prefix once, then index during parser append. Ordered postings, always-replay commands, bin coverage, and query output are hard-capped; overflow discards the index and preserves canonical fallback. Queries also require exact live-holder-bounds identity. No geometry or page-object pointer is copied. |
 
 ## Why this directory exists
 
@@ -123,8 +124,8 @@ subset.
 ## How to apply
 
 The patch directory contains historical branches and must not be applied by
-blind numeric globbing. For `r25-1-0081`, apply the r25 rendering base through
-0031, then only 0051, 0075, 0076, and 0079..0081:
+blind numeric globbing. For `r25-1-0082`, apply the r25 rendering base through
+0031, then only 0051, 0075, 0076, and 0079..0082:
 
 ```bash
 git apply patches/ship/01-jpeg-downscale-on-decode.patch
@@ -135,9 +136,10 @@ git apply patches/ship/0076-veloce-render-program-parser-command-order.patch
 git apply patches/ship/0079-veloce-unified-render-program-backend-interface.patch
 git apply patches/ship/0080-veloce-render-program-compact-command-summary.patch
 git apply patches/ship/0081-veloce-disable-legacy-path-display-list.patch
+git apply patches/ship/0082-veloce-render-program-holder-space-candidate-index.patch
 ```
 
-Do not apply 0053..0074 or 0077..0078 to an `r25-1-0081` build. The exact
+Do not apply 0053..0074 or 0077..0078 to an `r25-1-0082` build. The exact
 machine-checked list lives in the revision workflow.
 
 The following legacy list is retained for historical stacks only:
@@ -291,6 +293,13 @@ Patch 0081 depends on 0080 and disables the older path-display-list executor at
 its single holder-level entry before any work or pixel mutation. The unified
 executor remains disabled. This makes canonical PDFium the only pixel owner and
 is the required correctness A/B baseline for every later r25-1 executor.
+Patch 0082 depends on 0081 and adds a behavior-neutral candidate index to the
+same holder-owned program. It performs no spatial work for holders below 4096
+commands. On admission it scans only that bounded prefix, then records path
+postings during existing append operations. Non-path and uncertain commands
+remain always-replayed. Query appends into caller-owned bounded storage, then
+sorts and deduplicates command indices into painter order only when live holder
+bounds still match the index. No renderer consumes the query in this revision.
 Patch 0053 can also be applied directly on the rel-260701 stable line after
 patch 0051. It is behavior-preserving and only inserts the `VeloceRenderPlan`
 facade above the existing r25 path-display-list backend.

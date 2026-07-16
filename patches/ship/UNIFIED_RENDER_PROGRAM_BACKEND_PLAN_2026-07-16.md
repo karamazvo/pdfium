@@ -119,6 +119,29 @@ stores a raw page-object pointer beyond holder lifetime.
 Every revision extends the same data model and execution interface. A revision
 must not install a parallel backend to compensate for a missing command type.
 
+### 6.1 Locked 0082 Index Contract
+
+`0082` implements candidate selection metadata without enabling execution:
+
+- holders below 4096 commands retain no index and perform no bounds work;
+- admission scans only the first 4096 live objects once, never the complete
+  huge holder after parsing;
+- later commands enter the index during the existing parser append operation;
+- one fixed 32x32 holder-space grid stores ordered command indices only;
+- only finite, non-empty, holder-contained path bounds enter spatial bins;
+- every non-path or uncertain command enters the always-replay stream;
+- postings are capped at 4,194,304 and always-replay entries at 1,048,576;
+- a command touching more than 64 bins becomes always-replayed;
+- queries reuse caller-owned bounded candidate storage, then sort and
+  deduplicate into strictly increasing command order without auxiliary
+  containers; live holder bounds must exactly match the index snapshot, and
+  invalid or changed bounds return `kUseFullReplay`;
+- no render call site consumes the index until 0083 validates the complete
+  requested command stream before drawing.
+
+The index is acceleration metadata, not a second display list: command order
+and fidelity remain owned by RenderProgram and live PDFium objects.
+
 ## 7. Performance Proof
 
 Compare canonical r25 PDFium, r25-0078, r25-1, and MuPDF 1.27.2 on the same

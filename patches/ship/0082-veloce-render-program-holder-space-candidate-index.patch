@@ -1,0 +1,579 @@
+From 0000000000000000000000000000000000000082 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Thu, 16 Jul 2026 17:00:00 +0800
+Subject: [PATCH] r25-1-0082: add bounded holder-space candidate index
+
+Extend the holder-owned RenderProgram with one immutable conservative spatial
+candidate index. Keep the unified executor disabled, so this revision cannot
+change destination pixels.
+
+Avoid normal-page overhead by admitting the index only after 4096 commands.
+At admission, scan only that bounded prefix once; subsequent objects are added
+during the existing parser append operation. Use the holder's stable page-space
+bounds and a fixed 32x32 grid. Store ordered command indices rather than copied
+geometry or page-object pointers. Path bounds proven finite and contained enter
+grid postings. Non-path, empty, non-finite, out-of-holder, and broad commands
+enter an always-replay stream and can never be culled.
+
+Cap postings at 4,194,304, always-replay commands at 1,048,576, bin coverage at
+64 bins per command, and query output at the caller's explicit limit. Any build
+or query overflow fails closed to full replay. Query requires the live holder
+bounds to match the immutable index bounds, appends into caller-owned reusable
+storage, then sorts and deduplicates to restore original painter order without
+scanning the complete command stream or allocating auxiliary containers.
+
+Retain no index for small holders or invalid holder bounds. Keep canonical
+PDFium as the sole pixel owner established by 0081; 0083 will be the first
+revision allowed to consume candidates after complete pre-draw validation.
+---
+ core/fpdfapi/page/cpdf_pageobjectholder.cpp        |   3 +-
+ core/fpdfapi/page/veloce_render_program.cpp        | 301 ++++++++++++++++++++-
+ core/fpdfapi/page/veloce_render_program.h          |  71 ++++-
+ .../render/veloce_unified_render_backend.cpp       |   7 +
+ .../fpdfapi/render/veloce_unified_render_backend.h |   7 +-
+ 5 files changed, 378 insertions(+), 11 deletions(-)
+
+diff --git a/core/fpdfapi/page/cpdf_pageobjectholder.cpp b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+index 7bc441072db1fd448a9b06e5fa60ee673fe3b5c9..d0b534e1fc8f0765e80afcd8840b6489230c4d5c 100644
+--- a/core/fpdfapi/page/cpdf_pageobjectholder.cpp
++++ b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+@@ -214,7 +214,8 @@ void CPDF_PageObjectHolder::AppendPageObject(
+   CHECK(pPageObj);
+   page_object_list_.push_back(std::move(pPageObj));
+   if (veloce_render_program_builder_) {
+-    veloce_render_program_builder_->AppendPageObject(*page_object_list_.back());
++    veloce_render_program_builder_->AppendPageObject(
++        *this, *page_object_list_.back());
+   } else {
+     ResetVeloceRenderProgram();
+   }
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index b07832b0ef9a5cd37bfedb1b428dcc2f6a0ec667..accae21299cf43c7ef54df0123ad5cbc8d9b00f1 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -3,12 +3,24 @@
+
+ #include "core/fpdfapi/page/veloce_render_program.h"
+
++#include <algorithm>
++#include <array>
++#include <cmath>
++#include <cstddef>
++#include <cstdint>
+ #include <utility>
++#include <vector>
+
+ #include "core/fpdfapi/page/cpdf_pageobject.h"
++#include "core/fpdfapi/page/cpdf_pageobjectholder.h"
+
+ namespace {
+
++constexpr size_t kMinSpatialIndexCommands = 4096;
++constexpr size_t kMaxSpatialIndexPostings = 4u * 1024u * 1024u;
++constexpr size_t kMaxAlwaysCandidateCommands = 1024u * 1024u;
++constexpr uint32_t kMaxBinsPerCommand = 64;
++
+ VeloceRenderCommandKind ToRenderCommandKind(
+     const CPDF_PageObject& object) {
+   switch (object.GetType()) {
+@@ -26,30 +38,303 @@ VeloceRenderCommandKind ToRenderCommandKind(
+   return VeloceRenderCommandKind::kUnsupported;
+ }
+
++bool IsFiniteRect(const CFX_FloatRect& rect) {
++  return std::isfinite(rect.left) && std::isfinite(rect.bottom) &&
++         std::isfinite(rect.right) && std::isfinite(rect.top);
++}
++
++bool RectsExactlyMatch(const CFX_FloatRect& lhs,
++                       const CFX_FloatRect& rhs) {
++  return lhs.left == rhs.left && lhs.bottom == rhs.bottom &&
++         lhs.right == rhs.right && lhs.top == rhs.top;
++}
++
++uint32_t CoordinateToBin(float coordinate,
++                         float minimum,
++                         float span,
++                         uint32_t bin_count) {
++  if (coordinate <= minimum) {
++    return 0;
++  }
++  const float scaled = (coordinate - minimum) * bin_count / span;
++  if (scaled >= bin_count) {
++    return bin_count - 1;
++  }
++  return static_cast<uint32_t>(scaled);
++}
++
++bool GetBinRange(const CFX_FloatRect& bounds,
++                 CFX_FloatRect rect,
++                 uint32_t* left,
++                 uint32_t* right,
++                 uint32_t* bottom,
++                 uint32_t* top) {
++  rect.Normalize();
++  if (!IsFiniteRect(rect) || rect.IsEmpty()) {
++    return false;
++  }
++  rect.Intersect(bounds);
++  if (rect.IsEmpty()) {
++    return false;
++  }
++
++  *left = CoordinateToBin(rect.left, bounds.left, bounds.Width(),
++                          VeloceSpatialCandidateIndex::kColumns);
++  *right = CoordinateToBin(rect.right, bounds.left, bounds.Width(),
++                           VeloceSpatialCandidateIndex::kColumns);
++  *bottom = CoordinateToBin(rect.bottom, bounds.bottom, bounds.Height(),
++                            VeloceSpatialCandidateIndex::kRows);
++  *top = CoordinateToBin(rect.top, bounds.bottom, bounds.Height(),
++                         VeloceSpatialCandidateIndex::kRows);
++  return true;
++}
++
+ }  // namespace
+
++class VeloceSpatialCandidateIndexBuilder final {
++ public:
++  explicit VeloceSpatialCandidateIndexBuilder(CFX_FloatRect bounds)
++      : bounds_(bounds) {
++    bounds_.Normalize();
++  }
++
++  bool Append(uint32_t command_index,
++              VeloceRenderCommandKind kind,
++              const CPDF_PageObject& object) {
++    // Path bounds already include stroke expansion. Other command families
++    // remain always-replayed until their conservative bounds are proven by
++    // the corresponding vertical executor revision.
++    if (kind != VeloceRenderCommandKind::kPath) {
++      return AppendAlwaysCandidate(command_index);
++    }
++
++    CFX_FloatRect rect = object.GetRect();
++    rect.Normalize();
++    if (!IsFiniteRect(rect) || rect.IsEmpty() || rect.left < bounds_.left ||
++        rect.right > bounds_.right || rect.bottom < bounds_.bottom ||
++        rect.top > bounds_.top) {
++      return AppendAlwaysCandidate(command_index);
++    }
++
++    uint32_t left = 0;
++    uint32_t right = 0;
++    uint32_t bottom = 0;
++    uint32_t top = 0;
++    if (!GetBinRange(bounds_, rect, &left, &right, &bottom, &top)) {
++      return AppendAlwaysCandidate(command_index);
++    }
++    const uint32_t bin_count =
++        (right - left + 1u) * (top - bottom + 1u);
++    if (bin_count > kMaxBinsPerCommand) {
++      return AppendAlwaysCandidate(command_index);
++    }
++    if (posting_count_ > kMaxSpatialIndexPostings - bin_count) {
++      return false;
++    }
++
++    for (uint32_t row = bottom; row <= top; ++row) {
++      for (uint32_t column = left; column <= right; ++column) {
++        bins_[row * VeloceSpatialCandidateIndex::kColumns + column]
++            .push_back(command_index);
++        ++posting_count_;
++      }
++    }
++    return true;
++  }
++
++  std::unique_ptr<const VeloceSpatialCandidateIndex> Finish(
++      uint32_t command_count) {
++    std::vector<uint32_t> bin_offsets;
++    bin_offsets.reserve(VeloceSpatialCandidateIndex::kBinCount + 1u);
++    std::vector<uint32_t> command_indices;
++    command_indices.reserve(posting_count_);
++    bin_offsets.push_back(0);
++    for (const auto& bin : bins_) {
++      command_indices.insert(command_indices.end(), bin.begin(), bin.end());
++      bin_offsets.push_back(static_cast<uint32_t>(command_indices.size()));
++    }
++    return std::unique_ptr<const VeloceSpatialCandidateIndex>(
++        new VeloceSpatialCandidateIndex(
++            bounds_, command_count, std::move(bin_offsets),
++            std::move(command_indices), std::move(always_candidate_indices_)));
++  }
++
++ private:
++  bool AppendAlwaysCandidate(uint32_t command_index) {
++    if (always_candidate_indices_.size() >= kMaxAlwaysCandidateCommands) {
++      return false;
++    }
++    always_candidate_indices_.push_back(command_index);
++    return true;
++  }
++
++  CFX_FloatRect bounds_;
++  std::array<std::vector<uint32_t>,
++             VeloceSpatialCandidateIndex::kBinCount>
++      bins_;
++  std::vector<uint32_t> always_candidate_indices_;
++  size_t posting_count_ = 0;
++};
++
++VeloceSpatialCandidateIndex::VeloceSpatialCandidateIndex(
++    const CFX_FloatRect& bounds,
++    uint32_t command_count,
++    std::vector<uint32_t> bin_offsets,
++    std::vector<uint32_t> command_indices,
++    std::vector<uint32_t> always_candidate_indices)
++    : bounds_(bounds),
++      command_count_(command_count),
++      bin_offsets_(std::move(bin_offsets)),
++      command_indices_(std::move(command_indices)),
++      always_candidate_indices_(std::move(always_candidate_indices)) {}
++
++VeloceSpatialQueryResult VeloceSpatialCandidateIndex::Query(
++    const CFX_FloatRect& current_holder_bounds,
++    const CFX_FloatRect& holder_query,
++    size_t max_candidate_count,
++    std::vector<uint32_t>* candidates) const {
++  if (!candidates || max_candidate_count == 0 ||
++      bin_offsets_.size() != kBinCount + 1u) {
++    return VeloceSpatialQueryResult::kUseFullReplay;
++  }
++  candidates->clear();
++
++  CFX_FloatRect live_bounds = current_holder_bounds;
++  live_bounds.Normalize();
++  if (!IsFiniteRect(live_bounds) || live_bounds.IsEmpty() ||
++      !RectsExactlyMatch(bounds_, live_bounds)) {
++    return VeloceSpatialQueryResult::kUseFullReplay;
++  }
++
++  CFX_FloatRect query = holder_query;
++  query.Normalize();
++  if (!IsFiniteRect(query) || query.IsEmpty()) {
++    return VeloceSpatialQueryResult::kUseFullReplay;
++  }
++
++  const auto append_candidates =
++      [candidates, max_candidate_count](const uint32_t* begin,
++                                        const uint32_t* end) {
++    const size_t count = static_cast<size_t>(end - begin);
++    if (count > max_candidate_count - candidates->size()) {
++      return false;
++    }
++    candidates->insert(candidates->end(), begin, end);
++    return true;
++  };
++
++  if (!always_candidate_indices_.empty() &&
++      !append_candidates(always_candidate_indices_.data(),
++                         always_candidate_indices_.data() +
++                             always_candidate_indices_.size())) {
++    candidates->clear();
++    return VeloceSpatialQueryResult::kUseFullReplay;
++  }
++
++  uint32_t left = 0;
++  uint32_t right = 0;
++  uint32_t bottom = 0;
++  uint32_t top = 0;
++  if (GetBinRange(bounds_, query, &left, &right, &bottom, &top)) {
++    for (uint32_t row = bottom; row <= top; ++row) {
++      for (uint32_t column = left; column <= right; ++column) {
++        const uint32_t bin = row * kColumns + column;
++        const uint32_t first = bin_offsets_[bin];
++        const uint32_t last = bin_offsets_[bin + 1u];
++        if (first > last || last > command_indices_.size()) {
++          candidates->clear();
++          return VeloceSpatialQueryResult::kUseFullReplay;
++        }
++        if (first != last) {
++          if (!append_candidates(command_indices_.data() + first,
++                                 command_indices_.data() + last)) {
++            candidates->clear();
++            return VeloceSpatialQueryResult::kUseFullReplay;
++          }
++        }
++      }
++    }
++  }
++
++  std::ranges::sort(*candidates);
++  candidates->erase(std::ranges::unique(*candidates).begin(),
++                    candidates->end());
++  if (!candidates->empty() && candidates->back() >= command_count_) {
++    candidates->clear();
++    return VeloceSpatialQueryResult::kUseFullReplay;
++  }
++
++  return candidates->empty() ? VeloceSpatialQueryResult::kEmpty
++                             : VeloceSpatialQueryResult::kCandidates;
++}
++
++size_t VeloceSpatialCandidateIndex::EstimatedBytes() const {
++  return sizeof(*this) + bin_offsets_.capacity() * sizeof(uint32_t) +
++         command_indices_.capacity() * sizeof(uint32_t) +
++         always_candidate_indices_.capacity() * sizeof(uint32_t);
++}
++
+ VeloceRenderProgram::VeloceRenderProgram(
+     std::vector<VeloceRenderCommandKind> command_kinds,
+-    std::array<uint32_t, kVeloceRenderCommandKindCount> command_kind_counts)
++    std::array<uint32_t, kVeloceRenderCommandKindCount> command_kind_counts,
++    std::unique_ptr<const VeloceSpatialCandidateIndex> spatial_index)
+     : command_kinds_(std::move(command_kinds)),
+-      command_kind_counts_(command_kind_counts) {}
++      command_kind_counts_(command_kind_counts),
++      spatial_index_(std::move(spatial_index)) {}
+
+ VeloceRenderProgramBuilder::VeloceRenderProgramBuilder() = default;
+ VeloceRenderProgramBuilder::~VeloceRenderProgramBuilder() = default;
+
+ void VeloceRenderProgramBuilder::AppendPageObject(
++    const CPDF_PageObjectHolder& holder,
+     const CPDF_PageObject& object) {
+   if (exceeded_budget_) {
+     return;
+   }
+   if (command_kinds_.size() >= kMaxCommandBytes) {
+     std::vector<VeloceRenderCommandKind>().swap(command_kinds_);
++    spatial_index_builder_.reset();
+     exceeded_budget_ = true;
+     return;
+   }
++
+   const VeloceRenderCommandKind kind = ToRenderCommandKind(object);
+   command_kinds_.push_back(kind);
+   ++command_kind_counts_[static_cast<size_t>(kind)];
++
++  if (spatial_index_builder_) {
++    if (!spatial_index_builder_->Append(
++            static_cast<uint32_t>(command_kinds_.size() - 1u), kind, object)) {
++      spatial_index_builder_.reset();
++      spatial_index_abandoned_ = true;
++    }
++    return;
++  }
++  if (spatial_index_abandoned_ ||
++      command_kinds_.size() != kMinSpatialIndexCommands) {
++    return;
++  }
++
++  CFX_FloatRect holder_bounds = holder.GetBBox();
++  holder_bounds.Normalize();
++  if (!IsFiniteRect(holder_bounds) || holder_bounds.IsEmpty()) {
++    spatial_index_abandoned_ = true;
++    return;
++  }
++
++  spatial_index_builder_ =
++      std::make_unique<VeloceSpatialCandidateIndexBuilder>(holder_bounds);
++  for (uint32_t index = 0; index < command_kinds_.size(); ++index) {
++    const CPDF_PageObject* indexed_object =
++        holder.GetPageObjectByIndex(index);
++    if (!indexed_object ||
++        !spatial_index_builder_->Append(index, command_kinds_[index],
++                                        *indexed_object)) {
++      spatial_index_builder_.reset();
++      spatial_index_abandoned_ = true;
++      return;
++    }
++  }
+ }
+
+ std::unique_ptr<const VeloceRenderProgram>
+@@ -57,7 +342,13 @@ VeloceRenderProgramBuilder::Finish() {
+   if (exceeded_budget_ || command_kinds_.empty()) {
+     return nullptr;
+   }
+-  return std::unique_ptr<const VeloceRenderProgram>(
+-      new VeloceRenderProgram(std::move(command_kinds_),
+-                              command_kind_counts_));
++
++  std::unique_ptr<const VeloceSpatialCandidateIndex> spatial_index;
++  if (spatial_index_builder_) {
++    spatial_index = spatial_index_builder_->Finish(
++        static_cast<uint32_t>(command_kinds_.size()));
++  }
++  return std::unique_ptr<const VeloceRenderProgram>(new VeloceRenderProgram(
++      std::move(command_kinds_), command_kind_counts_,
++      std::move(spatial_index)));
+ }
+diff --git a/core/fpdfapi/page/veloce_render_program.h b/core/fpdfapi/page/veloce_render_program.h
+index 2eccd75ee3ac679533e6cbd2b1cfb4cd66bdaa5d..3a954762d0ff312c2e2a3b16827c5659b1692c20 100644
+--- a/core/fpdfapi/page/veloce_render_program.h
++++ b/core/fpdfapi/page/veloce_render_program.h
+@@ -11,9 +11,12 @@
+ #include <memory>
+ #include <vector>
+
++#include "core/fxcrt/fx_coordinates.h"
+ #include "core/fxcrt/span.h"
+
+ class CPDF_PageObject;
++class CPDF_PageObjectHolder;
++class VeloceSpatialCandidateIndexBuilder;
+
+ enum class VeloceRenderCommandKind : uint8_t {
+   kPath,
+@@ -28,6 +31,59 @@ static_assert(sizeof(VeloceRenderCommandKind) == 1);
+ inline constexpr size_t kVeloceRenderCommandKindCount =
+     static_cast<size_t>(VeloceRenderCommandKind::kUnsupported) + 1u;
+
++enum class VeloceSpatialQueryResult : uint8_t {
++  kCandidates,
++  kEmpty,
++  kUseFullReplay,
++};
++
++// Immutable holder-space lookup. Bin postings contain command indices only;
++// exact graphics state and geometry remain owned by the live holder objects.
++// Every posting stream is painter-ordered, and Query() restores strictly
++// increasing command order while removing duplicates in caller-owned storage.
++class VeloceSpatialCandidateIndex final {
++ public:
++  static constexpr uint32_t kColumns = 32;
++  static constexpr uint32_t kRows = 32;
++  static constexpr uint32_t kBinCount = kColumns * kRows;
++
++  ~VeloceSpatialCandidateIndex() = default;
++
++  VeloceSpatialCandidateIndex(const VeloceSpatialCandidateIndex&) = delete;
++  VeloceSpatialCandidateIndex& operator=(
++      const VeloceSpatialCandidateIndex&) = delete;
++
++  VeloceSpatialQueryResult Query(
++      const CFX_FloatRect& current_holder_bounds,
++      const CFX_FloatRect& holder_query,
++      size_t max_candidate_count,
++      std::vector<uint32_t>* candidates) const;
++
++  const CFX_FloatRect& bounds() const { return bounds_; }
++  uint32_t command_count() const { return command_count_; }
++  size_t posting_count() const { return command_indices_.size(); }
++  size_t always_candidate_count() const {
++    return always_candidate_indices_.size();
++  }
++  size_t EstimatedBytes() const;
++
++ private:
++  friend class VeloceSpatialCandidateIndexBuilder;
++
++  VeloceSpatialCandidateIndex(
++      const CFX_FloatRect& bounds,
++      uint32_t command_count,
++      std::vector<uint32_t> bin_offsets,
++      std::vector<uint32_t> command_indices,
++      std::vector<uint32_t> always_candidate_indices);
++
++  const CFX_FloatRect bounds_;
++  const uint32_t command_count_;
++  const std::vector<uint32_t> bin_offsets_;
++  const std::vector<uint32_t> command_indices_;
++  const std::vector<uint32_t> always_candidate_indices_;
++};
++
+ // Immutable native rendering representation owned by one live page-object
+ // holder. PDFium page objects remain authoritative for fidelity and editing.
+ // A command's position is its live holder object index. Graphics state and
+@@ -50,9 +106,13 @@ class VeloceRenderProgram final {
+   bool HasOnlyCommandKind(VeloceRenderCommandKind kind) const {
+     return command_count() == command_kind_count(kind);
+   }
++  const VeloceSpatialCandidateIndex* spatial_index() const {
++    return spatial_index_.get();
++  }
+   size_t EstimatedBytes() const {
+     return sizeof(*this) +
+-           command_kinds_.capacity() * sizeof(VeloceRenderCommandKind);
++           command_kinds_.capacity() * sizeof(VeloceRenderCommandKind) +
++           (spatial_index_ ? spatial_index_->EstimatedBytes() : 0u);
+   }
+
+  private:
+@@ -61,11 +121,13 @@ class VeloceRenderProgram final {
+   explicit VeloceRenderProgram(
+       std::vector<VeloceRenderCommandKind> command_kinds,
+       std::array<uint32_t, kVeloceRenderCommandKindCount>
+-          command_kind_counts);
++          command_kind_counts,
++      std::unique_ptr<const VeloceSpatialCandidateIndex> spatial_index);
+
+   const std::vector<VeloceRenderCommandKind> command_kinds_;
+   const std::array<uint32_t, kVeloceRenderCommandKindCount>
+       command_kind_counts_;
++  const std::unique_ptr<const VeloceSpatialCandidateIndex> spatial_index_;
+ };
+
+ // Single-owner parser-time recorder. It records one byte and updates one fixed
+@@ -80,7 +142,8 @@ class VeloceRenderProgramBuilder final {
+   VeloceRenderProgramBuilder& operator=(
+       const VeloceRenderProgramBuilder&) = delete;
+
+-  void AppendPageObject(const CPDF_PageObject& object);
++  void AppendPageObject(const CPDF_PageObjectHolder& holder,
++                        const CPDF_PageObject& object);
+   std::unique_ptr<const VeloceRenderProgram> Finish();
+
+  private:
+@@ -88,6 +151,8 @@ class VeloceRenderProgramBuilder final {
+
+   std::vector<VeloceRenderCommandKind> command_kinds_;
+   std::array<uint32_t, kVeloceRenderCommandKindCount> command_kind_counts_{};
++  std::unique_ptr<VeloceSpatialCandidateIndexBuilder> spatial_index_builder_;
++  bool spatial_index_abandoned_ = false;
+   bool exceeded_budget_ = false;
+ };
+
+diff --git a/core/fpdfapi/render/veloce_unified_render_backend.cpp b/core/fpdfapi/render/veloce_unified_render_backend.cpp
+index 9c9e2dda69002dae5965ebb1d5be849ecc56ece7..a493c43e6a137b2bd8b62bb46373211b2efb6c87 100644
+--- a/core/fpdfapi/render/veloce_unified_render_backend.cpp
++++ b/core/fpdfapi/render/veloce_unified_render_backend.cpp
+@@ -18,6 +18,13 @@ VeloceUnifiedRenderResult VeloceTryRenderUnifiedProgram(
+     if (program) {
+       metrics->total_commands = program->command_count();
+       metrics->program_bytes = program->EstimatedBytes();
++      if (program->spatial_index()) {
++        metrics->index_bytes = program->spatial_index()->EstimatedBytes();
++        metrics->index_postings =
++            program->spatial_index()->posting_count();
++        metrics->always_candidate_commands =
++            program->spatial_index()->always_candidate_count();
++      }
+     }
+   }
+   return VeloceUnifiedRenderResult::kDisabled;
+diff --git a/core/fpdfapi/render/veloce_unified_render_backend.h b/core/fpdfapi/render/veloce_unified_render_backend.h
+index 2f722afd4dc66cfe0ab6ae3b239a7c56ed96367a..2b616e75b4d9156f322d0da987b94b64cfb1542a 100644
+--- a/core/fpdfapi/render/veloce_unified_render_backend.h
++++ b/core/fpdfapi/render/veloce_unified_render_backend.h
+@@ -11,7 +11,7 @@ class CFX_Matrix;
+ class CPDF_PageObjectHolder;
+ class CPDF_RenderStatus;
+
+-inline constexpr char kVeloceUnifiedRenderBackendRevision[] = "r25-1-0081";
++inline constexpr char kVeloceUnifiedRenderBackendRevision[] = "r25-1-0082";
+
+ // Result contract for one complete holder request. Disabled and not-eligible
+ // results guarantee that no destination pixel was changed. A cancelled result
+@@ -42,6 +42,9 @@ struct VeloceUnifiedRenderMetrics {
+   size_t drawn_commands = 0;
+   size_t dispatch_count = 0;
+   size_t program_bytes = 0;
++  size_t index_bytes = 0;
++  size_t index_postings = 0;
++  size_t always_candidate_commands = 0;
+   size_t cache_bytes = 0;
+   size_t scratch_bytes = 0;
+ };
+@@ -51,7 +54,7 @@ struct VeloceUnifiedRenderMetrics {
+ // representation; PDFium page objects remain authoritative for fidelity and
+ // editing, and `status` owns the destination device.
+
+-// r25-1-0080 intentionally returns kDisabled and has no render-path call site.
++// r25-1-0082 intentionally returns kDisabled and has no render-path call site.
+ // Later revisions may consume this contract only after complete pre-draw
+ // validation. They must not delegate to the legacy Veloce path display list.
+ VeloceUnifiedRenderResult VeloceTryRenderUnifiedProgram(
+--
+2.50.1
