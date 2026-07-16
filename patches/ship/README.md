@@ -112,6 +112,7 @@ these patches:
 | r25-1-0080 | `0080-veloce-render-program-compact-command-summary.patch` | Adds fixed O(1) per-kind counts to the existing one-byte ordered command stream. Command position remains the implicit live holder object index; graphics state and geometry are not duplicated. Adds 24 retained bytes per admitted program and keeps the unified backend disabled. The old executor remains active when its feature bit is supplied. |
 | r25-1-0081 | `0081-veloce-disable-legacy-path-display-list.patch` | Establishes the canonical correctness baseline. The legacy holder executor returns `kNotEligible` at its single native entry before cache lookup, allocation, compile, logging, or drawing; the unified executor also remains disabled. Canonical PDFium therefore owns every destination pixel even when callers still supply the old feature bit. |
 | r25-1-0082 | `0082-veloce-render-program-holder-space-candidate-index.patch` | Adds one immutable 32x32 holder-space candidate index to admitted RenderPrograms without enabling replay. Holders below 4096 commands retain no index. Huge holders scan only the bounded 4096-command prefix once, then index during parser append. Ordered postings, always-replay commands, bin coverage, and query output are hard-capped; overflow discards the index and preserves canonical fallback. Queries also require exact live-holder-bounds identity. No geometry or page-object pointer is copied. |
+| r25-1-0083 | `0083-veloce-render-program-exact-path-text-executor.patch` | First unified executor. Complete parsed path/text holders with a valid 0082 index query at most 262144 candidates from the current device clip, validate every candidate before drawing, and replay survivors through PDFium's canonical `RenderSingleObject()` in painter order. Text remains always-replayed; only conservatively bounded paths may be omitted. Dense, stale, edited, unsupported, partial, and stop-object requests fall back before drawing. Owned object mutation invalidates program/index metadata in O(1). |
 
 ## Why this directory exists
 
@@ -124,8 +125,8 @@ subset.
 ## How to apply
 
 The patch directory contains historical branches and must not be applied by
-blind numeric globbing. For `r25-1-0082`, apply the r25 rendering base through
-0031, then only 0051, 0075, 0076, and 0079..0082:
+blind numeric globbing. For `r25-1-0083`, apply the r25 rendering base through
+0031, then only 0051, 0075, 0076, and 0079..0083:
 
 ```bash
 git apply patches/ship/01-jpeg-downscale-on-decode.patch
@@ -137,9 +138,10 @@ git apply patches/ship/0079-veloce-unified-render-program-backend-interface.patc
 git apply patches/ship/0080-veloce-render-program-compact-command-summary.patch
 git apply patches/ship/0081-veloce-disable-legacy-path-display-list.patch
 git apply patches/ship/0082-veloce-render-program-holder-space-candidate-index.patch
+git apply patches/ship/0083-veloce-render-program-exact-path-text-executor.patch
 ```
 
-Do not apply 0053..0074 or 0077..0078 to an `r25-1-0082` build. The exact
+Do not apply 0053..0074 or 0077..0078 to an `r25-1-0083` build. The exact
 machine-checked list lives in the revision workflow.
 
 The following legacy list is retained for historical stacks only:
@@ -300,6 +302,19 @@ postings during existing append operations. Non-path and uncertain commands
 remain always-replayed. Query appends into caller-owned bounded storage, then
 sorts and deduplicates command indices into painter order only when live holder
 bounds still match the index. No renderer consumes the query in this revision.
+Patch 0083 depends on 0082 and is the first unified runtime consumer. It admits
+only complete parsed path/text programs whose holder, program, and index counts
+match exactly. The device clip is transformed to holder space and queried with
+a 262144-command ceiling. All returned live objects are type-validated before
+the first draw, then active exact-intersection survivors execute through
+`CPDF_RenderStatus::RenderSingleObject()` in original order. Text remains in
+the index's always-replay stream; no custom path rasterizer or copied graphics
+state is introduced. The same boundary is called by synchronous holder replay
+and progressive root replay. Dense clips, unsupported kinds, stop-object
+renders, missing programs, invalid queries, and stale metadata return to
+canonical PDFium before drawing. Because spatial bounds are parse-time data,
+owned object dirty/matrix/bounds/active mutation invalidates the holder program
+in O(1), avoiding both stale culling and a repeated full-holder edit scan.
 Patch 0053 can also be applied directly on the rel-260701 stable line after
 patch 0051. It is behavior-preserving and only inserts the `VeloceRenderPlan`
 facade above the existing r25 path-display-list backend.

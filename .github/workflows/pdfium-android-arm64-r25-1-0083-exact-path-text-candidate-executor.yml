@@ -1,0 +1,347 @@
+name: r25-1-0083 exact path/text candidate executor - Build libpdfium Android arm64
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build libpdfium.so
+    runs-on: ubuntu-22.04
+    timeout-minutes: 180
+
+    env:
+      WORK_ROOT: /tmp/pdfium-r25-1-0083-exact-path-text-candidate-executor
+      OUT_DIR: out/android_arm64_agg
+      DIST_DIR: ${{ github.workspace }}/artifacts/libpdfium-android-arm64-r25-1-0083-exact-path-text-candidate-executor
+
+    steps:
+      - name: Checkout PDFium patch repo
+        uses: actions/checkout@v4
+        with:
+          path: repo
+
+      - name: Install host packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            binutils \
+            ca-certificates \
+            curl \
+            file \
+            git \
+            lsb-release \
+            openjdk-17-jdk-headless \
+            python3 \
+            python3-pkg-resources \
+            python3-setuptools \
+            unzip \
+            xz-utils \
+            zip
+
+      - name: Fetch depot_tools
+        run: |
+          mkdir -p "$WORK_ROOT"
+          git clone --depth=1 https://chromium.googlesource.com/chromium/tools/depot_tools.git "$WORK_ROOT/depot_tools"
+          echo "$WORK_ROOT/depot_tools" >> "$GITHUB_PATH"
+
+      - name: Fetch PDFium fork with Android deps
+        run: |
+          export PATH="$WORK_ROOT/depot_tools:$PATH"
+          mkdir -p "$WORK_ROOT/pdfium_build"
+          cd "$WORK_ROOT/pdfium_build"
+          cat > .gclient <<GCLEOF
+          solutions = [
+            {
+              "name": "pdfium",
+              "url": "https://github.com/${{ github.repository }}.git",
+              "managed": False,
+              "revision": "${{ github.sha }}",
+              "custom_deps": {},
+              "custom_vars": {
+                "checkout_android": True,
+                "checkout_configuration": "default",
+                "checkout_rust": False,
+              },
+            },
+          ]
+          target_os = ["android"]
+          GCLEOF
+          gclient sync --no-history --nohooks
+
+      - name: Patch public PDFium API exports
+        run: |
+          cd "$WORK_ROOT/pdfium_build/pdfium"
+          python3 "$GITHUB_WORKSPACE/repo/scripts/ci/patch_pdfium_public_exports.py"
+
+      - name: Apply r25 + 0051 + 0075-0076 + r25-1-0079-0083 patches
+        run: |
+          PDFIUM_DIR="$WORK_ROOT/pdfium_build/pdfium"
+          for patch in \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0[1-9]-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0011-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0012-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0013-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0014-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0015-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0016-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0017-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0018-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0019-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0020-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0021-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0022-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0023-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0024-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0025-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0026-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0029-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0030-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0031-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0051-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0075-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0076-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0079-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0080-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0081-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0082-*.patch \
+              "$GITHUB_WORKSPACE"/repo/patches/ship/0083-*.patch \
+              ; do
+            echo "Applying ${patch#$GITHUB_WORKSPACE/repo/}"
+            git -C "$PDFIUM_DIR" apply --check "$patch"
+            git -C "$PDFIUM_DIR" apply "$patch"
+          done
+          git -C "$PDFIUM_DIR" diff --check
+          git -C "$PDFIUM_DIR" diff --stat
+
+          if grep -RIE 'XPDF_ATRACE_SCOPED|ATrace_beginSection' \
+              "$PDFIUM_DIR/core/" "$PDFIUM_DIR/fpdfsdk/" 2>/dev/null; then
+            echo "ERROR: diagnostic ATrace markers present in r25-1-0083 build" >&2
+            exit 1
+          fi
+
+      - name: Install PDFium build dependencies
+        run: |
+          export PATH="$WORK_ROOT/depot_tools:$PATH"
+          cd "$WORK_ROOT/pdfium_build/pdfium"
+          build/install-build-deps.sh --android --no-prompt --unsupported
+
+      - name: Run gclient hooks
+        run: |
+          export PATH="$WORK_ROOT/depot_tools:$PATH"
+          cd "$WORK_ROOT/pdfium_build"
+          gclient runhooks
+
+      - name: Generate GN files
+        run: |
+          export PATH="$WORK_ROOT/depot_tools:$PATH"
+          PDFIUM_DIR="$WORK_ROOT/pdfium_build/pdfium"
+          cd "$PDFIUM_DIR"
+          gn gen "$OUT_DIR" --args='
+            target_os = "android"
+            target_cpu = "arm64"
+            is_debug = false
+            is_component_build = false
+            strip_debug_info = true
+            use_remoteexec = false
+            symbol_level = 0
+            treat_warnings_as_errors = false
+            clang_use_chrome_plugins = false
+            android_static_analysis = "off"
+            pdf_is_standalone = false
+            pdf_is_complete_lib = true
+            pdf_use_skia = false
+            pdf_use_agg = true
+            pdf_enable_v8 = false
+            pdf_enable_xfa = false
+            pdf_enable_fontations = false
+            pdf_enable_rust_png = false
+            pdf_use_partition_alloc = false
+            default_min_sdk_version = 23
+          '
+          gn args "$OUT_DIR" --list --short \
+            | grep -E '^(target_os|target_cpu|pdf_enable_v8|pdf_enable_xfa|pdf_use_skia|pdf_use_agg|pdf_is_complete_lib|pdf_use_partition_alloc|default_min_sdk_version|pdf_enable_fontations|pdf_enable_rust_png) ='
+
+      - name: Build static PDFium
+        run: |
+          export PATH="$WORK_ROOT/depot_tools:$PATH"
+          cd "$WORK_ROOT/pdfium_build/pdfium"
+          ninja -C "$OUT_DIR" pdfium -j"$(nproc)"
+
+      - name: Verify r25-1-0083 exact candidate executor contract
+        run: |
+          cd "$WORK_ROOT/pdfium_build/pdfium"
+          LLVM_NM="$(pwd)/third_party/llvm-build/Release+Asserts/bin/llvm-nm"
+          PDFIUM_A="$OUT_DIR/obj/libpdfium.a"
+
+          for api in \
+              FPDFEx_SetRenderAbort \
+              FPDFEx_SetRenderCallbacks \
+              FPDFEx_LoadPageWithClassification \
+              FPDFEx_SetRenderSkipMask \
+              FPDFEx_SetHugeImagePixelThreshold \
+              FPDFEx_GetPageDimensions \
+              ; do
+            if ! "$LLVM_NM" -A "$PDFIUM_A" 2>/dev/null \
+                | grep -E " T $api(\\b|@)" >/dev/null; then
+              echo "MISSING $api in libpdfium.a" >&2
+              exit 1
+            fi
+            echo "OK $api"
+          done
+
+          grep -q 'veloce_unified_render_backend.cpp' core/fpdfapi/render/BUILD.gn
+          grep -q 'kVeloceUnifiedRenderBackendRevision\[\] = "r25-1-0083"' core/fpdfapi/render/veloce_unified_render_backend.h
+          grep -q 'enum class VeloceUnifiedRenderResult : uint8_t' core/fpdfapi/render/veloce_unified_render_backend.h
+          grep -q 'struct VeloceUnifiedRenderMetrics' core/fpdfapi/render/veloce_unified_render_backend.h
+          grep -q 'candidate_commands = 0' core/fpdfapi/render/veloce_unified_render_backend.h
+          grep -q 'index_bytes = 0' core/fpdfapi/render/veloce_unified_render_backend.h
+          grep -q 'index_postings = 0' core/fpdfapi/render/veloce_unified_render_backend.h
+          grep -q 'always_candidate_commands = 0' core/fpdfapi/render/veloce_unified_render_backend.h
+          grep -q 'cache_bytes = 0' core/fpdfapi/render/veloce_unified_render_backend.h
+          grep -q 'scratch_bytes = 0' core/fpdfapi/render/veloce_unified_render_backend.h
+          grep -q 'VeloceTryRenderUnifiedProgram' core/fpdfapi/render/veloce_unified_render_backend.cpp
+          grep -q 'program->EstimatedBytes()' core/fpdfapi/render/veloce_unified_render_backend.cpp
+          grep -q 'kVeloceRenderCommandKindCount' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'command_count() const' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'command_kind_count(VeloceRenderCommandKind kind) const' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'HasOnlyCommandKind(VeloceRenderCommandKind kind) const' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'std::array<uint32_t, kVeloceRenderCommandKindCount>' core/fpdfapi/page/veloce_render_program.h
+          grep -q '++command_kind_counts_' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'program->command_count()' core/fpdfapi/render/veloce_unified_render_backend.cpp
+          grep -q 'class VeloceSpatialCandidateIndex final' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'kColumns = 32' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'kRows = 32' core/fpdfapi/page/veloce_render_program.h
+          grep -q 'kMinSpatialIndexCommands = 4096' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'kMaxSpatialIndexPostings = 4u \* 1024u \* 1024u' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'kMaxAlwaysCandidateCommands = 1024u \* 1024u' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'kMaxBinsPerCommand = 64' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'kind != VeloceRenderCommandKind::kPath' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'holder.GetPageObjectByIndex(index)' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'VeloceSpatialCandidateIndex::Query' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'const CFX_FloatRect& current_holder_bounds' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q '!RectsExactlyMatch(bounds_, live_bounds)' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'VeloceSpatialQueryResult::kUseFullReplay' core/fpdfapi/page/veloce_render_program.cpp
+          grep -q 'kMaxCandidateCommands = 256u \* 1024u' core/fpdfapi/render/veloce_unified_render_backend.cpp
+          grep -q 'program->command_count() != holder->GetPageObjectCount()' core/fpdfapi/render/veloce_unified_render_backend.cpp
+          grep -q 'program->command_kind_count(VeloceRenderCommandKind::kPath)' core/fpdfapi/render/veloce_unified_render_backend.cpp
+          grep -q 'index->Query(' core/fpdfapi/render/veloce_unified_render_backend.cpp
+          grep -q 'CommandMatchesObject' core/fpdfapi/render/veloce_unified_render_backend.cpp
+          grep -q 'status->RenderSingleObject(object, holder_to_device)' core/fpdfapi/render/veloce_unified_render_backend.cpp
+          grep -q 'return VeloceUnifiedRenderResult::kRendered' core/fpdfapi/render/veloce_unified_render_backend.cpp
+          grep -q 'SetVeloceRenderProgramOwner' core/fpdfapi/page/cpdf_pageobject.cpp
+          grep -q 'InvalidateVeloceRenderProgram' core/fpdfapi/page/cpdf_pageobject.cpp
+          grep -q 'veloce_render_program_owner_->ResetVeloceRenderProgram()' core/fpdfapi/page/cpdf_pageobject.cpp
+          grep -q 'VeloceTryRenderUnifiedProgram(this, pObjectHolder' core/fpdfapi/render/cpdf_renderstatus.cpp
+          grep -q 'VeloceTryRenderUnifiedProgram(' core/fpdfapi/render/cpdf_progressiverenderer.cpp
+          grep -q 'kVeloceLegacyPathDisplayListEnabled = false' core/fpdfapi/render/veloce_path_display_list.h
+          grep -A8 'VeloceTryRenderPathDisplayListForHolder(' \
+              core/fpdfapi/render/veloce_path_display_list.cpp \
+            | grep -q '!kVeloceLegacyPathDisplayListEnabled'
+
+          if ! "$LLVM_NM" -A -C "$PDFIUM_A" 2>/dev/null \
+              | grep -F ' T VeloceTryRenderUnifiedProgram(' >/dev/null; then
+            echo "ERROR: unified backend implementation missing from libpdfium.a" >&2
+            exit 1
+          fi
+          if ! "$LLVM_NM" -A -C "$PDFIUM_A" 2>/dev/null \
+              | grep -F ' T VeloceSpatialCandidateIndex::Query(' >/dev/null; then
+            echo "ERROR: spatial candidate query missing from libpdfium.a" >&2
+            exit 1
+          fi
+
+          if grep -RIE 'VeloceTryRenderUnifiedProgram' fpdfsdk public 2>/dev/null; then
+            echo "ERROR: unified backend leaked into the public API" >&2
+            exit 1
+          fi
+
+          if grep -q 'VeloceRenderProgram\|render_program_' \
+              core/fpdfapi/render/veloce_path_display_list.cpp; then
+            echo "ERROR: legacy 0077/0078 RenderProgram consumer present" >&2
+            exit 1
+          fi
+          if grep -q 'veloce_render_plan.cpp\|veloce_render_plan.h' core/fpdfapi/render/BUILD.gn; then
+            echo "ERROR: experimental RenderPlan v1 present" >&2
+            exit 1
+          fi
+          if grep -RIE 'VeloceTryRenderPlanForHolder|VeloceBuildRenderPlanSkeletonForHolder|DrawPathBatch' \
+              core/fpdfapi/render core/fxge 2>/dev/null; then
+            echo "ERROR: experimental RenderPlan v1 runtime present" >&2
+            exit 1
+          fi
+          if grep -E 'malloc|make_unique|make_shared|mutex|__android_log|DrawPath' \
+              core/fpdfapi/render/veloce_unified_render_backend.cpp; then
+            echo "ERROR: executor introduced an unbounded allocator, lock, log, or second path rasterizer" >&2
+            exit 1
+          fi
+          echo "All r25-1-0083 exact candidate executor guards passed"
+
+      - name: Link Android shared library
+        run: |
+          export PATH="$WORK_ROOT/depot_tools:$PATH"
+          cd "$WORK_ROOT/pdfium_build/pdfium"
+          PDFIUM_AGG_SHRINK=1 \
+            bash "$GITHUB_WORKSPACE/repo/scripts/ci/link_pdfium_android_agg_so.sh"
+
+      - name: Verify exported symbols
+        run: |
+          cd "$WORK_ROOT/pdfium_build/pdfium"
+          LLVM_NM="$(pwd)/third_party/llvm-build/Release+Asserts/bin/llvm-nm"
+          SO="$OUT_DIR/libpdfium.so"
+          for api in \
+              FPDF_RenderPageBitmap \
+              FPDFEx_SetRenderAbort \
+              FPDFEx_SetRenderCallbacks \
+              FPDFEx_LoadPageWithClassification \
+              FPDFEx_SetRenderSkipMask \
+              FPDFEx_SetHugeImagePixelThreshold \
+              FPDFEx_GetPageDimensions \
+              ; do
+            if ! "$LLVM_NM" -D --defined-only -C "$SO" 2>/dev/null \
+                | grep -E " T $api(\\b|@)" >/dev/null; then
+              echo "MISSING exported $api in libpdfium.so" >&2
+              exit 1
+            fi
+            echo "OK exported $api"
+          done
+
+      - name: Package artifact
+        run: |
+          cd "$WORK_ROOT/pdfium_build/pdfium"
+          mkdir -p "$DIST_DIR/include" "$DIST_DIR/patches"
+          cp "$OUT_DIR/libpdfium.so" "$DIST_DIR/libpdfium.so"
+          cp "$OUT_DIR/obj/libpdfium.a" "$DIST_DIR/libpdfium.a"
+          cp -R public/. "$DIST_DIR/include/"
+          for patch in \
+              01 02 03 04 05 06 07 08 09 \
+              0011 0012 0013 0014 0015 0016 0017 0018 0019 \
+              0020 0021 0022 0023 0024 0025 0026 0029 0030 0031 \
+              0051 0075 0076 0079 0080 0081 0082 0083; do
+            cp "$GITHUB_WORKSPACE"/repo/patches/ship/"$patch"-*.patch "$DIST_DIR/patches/"
+          done
+          sha256sum "$DIST_DIR/libpdfium.so" > "$DIST_DIR/SHA256SUMS.txt"
+
+          {
+            printf 'revision=r25-1-0083\n'
+            printf 'series=r25-1-unified-backend-generation-1\n'
+            printf 'pdfium_repository=%s\n' "$GITHUB_REPOSITORY"
+            printf 'workflow_sha=%s\n' "$GITHUB_SHA"
+            printf 'pdfium_revision=%s\n' "$(git rev-parse HEAD)"
+            printf 'renderer=agg\n'
+            printf 'rendering_base=r25+0051+0075+0076+0079+0080+0081+0082+0083\n'
+            printf 'unified_backend=exact-path-text-candidate-replay\n'
+            printf 'index_consumer=unified-path-text-executor\n'
+            printf 'legacy_path_display_list=compiled-disabled-before-work\n'
+            printf 'pixel_owner=canonical-pdfium-object-rendering\n'
+            printf 'patches=01..09,0011..0026,0029,0030,0031,0051,0075,0076,0079,0080,0081,0082,0083\n'
+            printf 'excluded_renderplan_v1=0053..0074\n'
+            printf 'excluded_legacy_consumers=0077,0078\n'
+          } > "$DIST_DIR/build-info.txt"
+
+      - name: Upload libpdfium artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: libpdfium-android-arm64-r25-1-0083-exact-path-text-candidate-executor
+          path: artifacts/libpdfium-android-arm64-r25-1-0083-exact-path-text-candidate-executor

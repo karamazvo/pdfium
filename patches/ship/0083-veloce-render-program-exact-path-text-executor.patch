@@ -1,0 +1,405 @@
+From 0000000000000000000000000000000000000083 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Thu, 16 Jul 2026 17:47:50 +0800
+Subject: [PATCH] r25-1-0083: enable exact path/text candidate replay
+
+Consume the immutable holder-space candidate index only for complete parsed
+path/text RenderPrograms. Validate command identity before drawing, preserve
+painter order, and dispatch each survivor through canonical PDFium
+RenderSingleObject semantics.
+
+Wire the executor into synchronous holder and progressive root rendering with
+bounded 262144-command query storage and per-command cancellation. Dense,
+unsupported, stale, partial, and stop-object renders fall back before drawing.
+
+Invalidate holder-owned RenderProgram metadata in O(1) when an owned page
+object changes dirty, matrix, active, or bounds state so parse-time spatial
+bounds can never cull edited live geometry.
+---
+ core/fpdfapi/page/cpdf_pageobject.cpp         |  31 +++++
+ core/fpdfapi/page/cpdf_pageobject.h           |  14 +-
+ core/fpdfapi/page/cpdf_pageobjectholder.cpp   |   3 +
+ .../render/cpdf_progressiverenderer.cpp       |  22 +++
+ core/fpdfapi/render/cpdf_renderstatus.cpp     |  14 ++
+ .../render/veloce_unified_render_backend.cpp  | 128 ++++++++++++++++--
+ .../render/veloce_unified_render_backend.h    |   8 +-
+ 7 files changed, 198 insertions(+), 22 deletions(-)
+
+diff --git a/core/fpdfapi/page/cpdf_pageobject.cpp b/core/fpdfapi/page/cpdf_pageobject.cpp
+index 41d2512e2..40b8ca5f2 100644
+--- a/core/fpdfapi/page/cpdf_pageobject.cpp
++++ b/core/fpdfapi/page/cpdf_pageobject.cpp
+@@ -8,6 +8,7 @@
+
+ #include <utility>
+
++#include "core/fpdfapi/page/cpdf_pageobjectholder.h"
+ #include "core/fxcrt/fx_coordinates.h"
+
+ CPDF_PageObject::CPDF_PageObject(int32_t content_stream)
+@@ -84,6 +85,36 @@ void CPDF_PageObject::SetDefaultStates() {
+   graphic_states_.SetDefaultStates();
+ }
+
++void CPDF_PageObject::SetDirty(bool value) {
++  dirty_ = value;
++  if (value) {
++    InvalidateVeloceRenderProgram();
++  }
++}
++
++void CPDF_PageObject::SetMatrixDirty(bool value) {
++  matrix_dirty_ = value;
++  if (value) {
++    InvalidateVeloceRenderProgram();
++  }
++}
++
++void CPDF_PageObject::SetRect(const CFX_FloatRect& rect) {
++  rect_ = rect;
++  InvalidateVeloceRenderProgram();
++}
++
++void CPDF_PageObject::SetVeloceRenderProgramOwner(
++    CPDF_PageObjectHolder* owner) {
++  veloce_render_program_owner_ = owner;
++}
++
++void CPDF_PageObject::InvalidateVeloceRenderProgram() {
++  if (veloce_render_program_owner_) {
++    veloce_render_program_owner_->ResetVeloceRenderProgram();
++  }
++}
++
+ void CPDF_PageObject::CopyData(const CPDF_PageObject* pSrc) {
+   graphic_states_ = pSrc->graphic_states_;
+   rect_ = pSrc->rect_;
+diff --git a/core/fpdfapi/page/cpdf_pageobject.h b/core/fpdfapi/page/cpdf_pageobject.h
+index 5b2cb5555..8e05aa5b4 100644
+--- a/core/fpdfapi/page/cpdf_pageobject.h
++++ b/core/fpdfapi/page/cpdf_pageobject.h
+@@ -14,9 +14,11 @@
+ #include "core/fxcrt/bytestring.h"
+ #include "core/fxcrt/fx_coordinates.h"
+ #include "core/fxcrt/span.h"
++#include "core/fxcrt/unowned_ptr.h"
+
+ class CPDF_FormObject;
+ class CPDF_ImageObject;
++class CPDF_PageObjectHolder;
+ class CPDF_PathObject;
+ class CPDF_ShadingObject;
+ class CPDF_TextObject;
+@@ -60,16 +62,16 @@ class CPDF_PageObject {
+   virtual CPDF_FormObject* AsForm();
+   virtual const CPDF_FormObject* AsForm() const;
+
+-  void SetDirty(bool value) { dirty_ = value; }
++  void SetDirty(bool value);
+   bool IsDirty() const { return dirty_ || matrix_dirty_; }
+-  void SetMatrixDirty(bool value) { matrix_dirty_ = value; }
++  void SetMatrixDirty(bool value);
+   void SetIsActive(bool value);
+   bool IsActive() const { return is_active_; }
+   void TransformClipPath(const CFX_Matrix& matrix);
+
+   void SetOriginalRect(const CFX_FloatRect& rect) { original_rect_ = rect; }
+   const CFX_FloatRect& GetOriginalRect() const { return original_rect_; }
+-  void SetRect(const CFX_FloatRect& rect) { rect_ = rect; }
++  void SetRect(const CFX_FloatRect& rect);
+   const CFX_FloatRect& GetRect() const { return rect_; }
+   FX_RECT GetBBox() const;
+   FX_RECT GetTransformedBBox(const CFX_Matrix& matrix) const;
+@@ -143,6 +145,11 @@ class CPDF_PageObject {
+   void InitializeOriginalMatrix(const CFX_Matrix& matrix);
+
+  private:
++  friend class CPDF_PageObjectHolder;
++
++  void SetVeloceRenderProgramOwner(CPDF_PageObjectHolder* owner);
++  void InvalidateVeloceRenderProgram();
++
+   CPDF_GraphicStates graphic_states_;
+   CFX_FloatRect rect_;
+   CFX_FloatRect original_rect_;
+@@ -160,6 +167,7 @@ class CPDF_PageObject {
+   bool matrix_dirty_ = false;
+   bool is_active_ = true;
+   int32_t content_stream_;
++  UnownedPtr<CPDF_PageObjectHolder> veloce_render_program_owner_;
+   // The resource name for this object.
+   ByteString resource_name_;
+ };
+diff --git a/core/fpdfapi/page/cpdf_pageobjectholder.cpp b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+index d0b534e1f..cf78692e6 100644
+--- a/core/fpdfapi/page/cpdf_pageobjectholder.cpp
++++ b/core/fpdfapi/page/cpdf_pageobjectholder.cpp
+@@ -213,6 +213,7 @@ void CPDF_PageObjectHolder::AppendPageObject(
+     std::unique_ptr<CPDF_PageObject> pPageObj) {
+   CHECK(pPageObj);
+   page_object_list_.push_back(std::move(pPageObj));
++  page_object_list_.back()->SetVeloceRenderProgramOwner(this);
+   if (veloce_render_program_builder_) {
+     veloce_render_program_builder_->AppendPageObject(
+         *this, *page_object_list_.back());
+@@ -245,6 +246,7 @@ bool CPDF_PageObjectHolder::InsertPageObjectAtIndex(
+   // std::deque::iterator::operator++() has not been marked as unsafe yet.
+   page_object_list_.insert(UNSAFE_TODO(page_object_list_.begin() + index),
+                            std::move(page_obj));
++  page_object_list_[index]->SetVeloceRenderProgramOwner(this);
+   ResetVeloceRenderProgram();
+   return true;
+ }
+@@ -257,6 +259,7 @@ std::unique_ptr<CPDF_PageObject> CPDF_PageObjectHolder::RemovePageObject(
+     return nullptr;
+   }
+
++  (*it)->SetVeloceRenderProgramOwner(nullptr);
+   std::unique_ptr<CPDF_PageObject> result = std::move(*it);
+   page_object_list_.erase(it);
+   ResetVeloceRenderProgram();
+diff --git a/core/fpdfapi/render/cpdf_progressiverenderer.cpp b/core/fpdfapi/render/cpdf_progressiverenderer.cpp
+index 143378c3b..cb98422ab 100644
+--- a/core/fpdfapi/render/cpdf_progressiverenderer.cpp
++++ b/core/fpdfapi/render/cpdf_progressiverenderer.cpp
+@@ -15,6 +15,7 @@
+ #include "core/fpdfapi/render/cpdf_renderoptions.h"
+ #include "core/fpdfapi/render/cpdf_renderstatus.h"
+ #include "core/fpdfapi/render/veloce_path_display_list.h"
++#include "core/fpdfapi/render/veloce_unified_render_backend.h"
+ #include "core/fxcrt/check.h"
+ #include "core/fxcrt/pauseindicator_iface.h"
+ #include "core/fxge/cfx_renderdevice.h"
+@@ -63,6 +64,27 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
+       device_->SaveState();
+       clip_rect_ = current_layer_->GetMatrix().GetInverse().TransformRect(
+           CFX_FloatRect(device_->GetClipBox()));
++      const VeloceUnifiedRenderResult unified_result =
++          VeloceTryRenderUnifiedProgram(
++              render_status_.get(), current_layer_->GetObjectHolder(),
++              current_layer_->GetMatrix(), nullptr);
++      if (unified_result == VeloceUnifiedRenderResult::kCancelled) {
++        render_status_.reset();
++        device_->RestoreState(false);
++        current_layer_ = nullptr;
++        status_ = kDone;
++        return;
++      }
++      if (unified_result == VeloceUnifiedRenderResult::kRendered) {
++        render_status_.reset();
++        device_->RestoreState(false);
++        current_layer_ = nullptr;
++        layer_index_++;
++        if (pPause && pPause->NeedToPauseNow()) {
++          return;
++        }
++        continue;
++      }
+       const VelocePathDisplayListResult path_dl_result =
+           VeloceTryRenderPathDisplayListForHolder(
+               render_status_.get(), current_layer_->GetObjectHolder(),
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index b59c9778c..aa6126436 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -50,6 +50,7 @@
+ #include "core/fpdfapi/render/cpdf_rendertiling.h"
+ #include "core/fpdfapi/render/cpdf_textrenderer.h"
+ #include "core/fpdfapi/render/veloce_path_display_list.h"
++#include "core/fpdfapi/render/veloce_unified_render_backend.h"
+ #include "core/fpdfapi/render/veloce_skip_rasterization.h"
+ #include "core/fpdfapi/render/veloce_render_abort.h"
+ #include "core/fpdfapi/render/veloce_render_skip_mask.h"
+@@ -243,6 +244,19 @@ void CPDF_RenderStatus::Initialize(const CPDF_RenderStatus* pParentStatus,
+ void CPDF_RenderStatus::RenderObjectList(
+     const CPDF_PageObjectHolder* pObjectHolder,
+     const CFX_Matrix& mtObj2Device) {
++  if (!stop_obj_) {
++    const VeloceUnifiedRenderResult unified_result =
++        VeloceTryRenderUnifiedProgram(this, pObjectHolder, mtObj2Device,
++                                      nullptr);
++    if (unified_result == VeloceUnifiedRenderResult::kCancelled) {
++      stopped_ = true;
++      return;
++    }
++    if (unified_result == VeloceUnifiedRenderResult::kRendered) {
++      return;
++    }
++  }
++
+   bool is_context_layer_holder = false;
+   if (context_) {
+     for (size_t i = 0; i < context_->CountLayers(); ++i) {
+diff --git a/core/fpdfapi/render/veloce_unified_render_backend.cpp b/core/fpdfapi/render/veloce_unified_render_backend.cpp
+index a493c43e6..0dd8ff937 100644
+--- a/core/fpdfapi/render/veloce_unified_render_backend.cpp
++++ b/core/fpdfapi/render/veloce_unified_render_backend.cpp
+@@ -3,29 +3,127 @@
+
+ #include "core/fpdfapi/render/veloce_unified_render_backend.h"
+
++#include <chrono>
++#include <cstdint>
++#include <vector>
++
++#include "core/fpdfapi/page/cpdf_pageobject.h"
+ #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
+ #include "core/fpdfapi/page/veloce_render_program.h"
++#include "core/fpdfapi/render/cpdf_renderstatus.h"
++#include "core/fxge/cfx_renderdevice.h"
++
++namespace {
++
++constexpr size_t kMaxCandidateCommands = 256u * 1024u;
++
++uint64_t MonotonicNanoseconds() {
++  return static_cast<uint64_t>(
++      std::chrono::duration_cast<std::chrono::nanoseconds>(
++          std::chrono::steady_clock::now().time_since_epoch())
++          .count());
++}
++
++bool CommandMatchesObject(VeloceRenderCommandKind kind,
++                          const CPDF_PageObject& object) {
++  return (kind == VeloceRenderCommandKind::kPath && object.IsPath()) ||
++         (kind == VeloceRenderCommandKind::kText && object.IsText());
++}
++
++bool RectIntersects(const CFX_FloatRect& object_rect,
++                    const CFX_FloatRect& clip_rect) {
++  return object_rect.left <= clip_rect.right &&
++         object_rect.right >= clip_rect.left &&
++         object_rect.bottom <= clip_rect.top &&
++         object_rect.top >= clip_rect.bottom;
++}
++
++}  // namespace
+
+ VeloceUnifiedRenderResult VeloceTryRenderUnifiedProgram(
+-    CPDF_RenderStatus*,
++    CPDF_RenderStatus* status,
+     const CPDF_PageObjectHolder* holder,
+-    const CFX_Matrix&,
++    const CFX_Matrix& holder_to_device,
+     VeloceUnifiedRenderMetrics* metrics) {
+   if (metrics) {
+     *metrics = {};
+-    const VeloceRenderProgram* program =
+-        holder ? holder->GetVeloceRenderProgram() : nullptr;
+-    if (program) {
+-      metrics->total_commands = program->command_count();
+-      metrics->program_bytes = program->EstimatedBytes();
+-      if (program->spatial_index()) {
+-        metrics->index_bytes = program->spatial_index()->EstimatedBytes();
+-        metrics->index_postings =
+-            program->spatial_index()->posting_count();
+-        metrics->always_candidate_commands =
+-            program->spatial_index()->always_candidate_count();
+-      }
++  }
++  if (!status || !holder || !status->GetRenderDevice() ||
++      holder->GetParseState() != CPDF_PageObjectHolder::ParseState::kParsed) {
++    return VeloceUnifiedRenderResult::kNotEligible;
++  }
++
++  const VeloceRenderProgram* program = holder->GetVeloceRenderProgram();
++  if (!program) {
++    return VeloceUnifiedRenderResult::kNotEligible;
++  }
++  if (metrics) {
++    metrics->total_commands = program->command_count();
++    metrics->program_bytes = program->EstimatedBytes();
++  }
++
++  const VeloceSpatialCandidateIndex* index = program->spatial_index();
++  if (!index || program->command_count() != holder->GetPageObjectCount() ||
++      index->command_count() != program->command_count() ||
++      program->command_kind_count(VeloceRenderCommandKind::kPath) +
++              program->command_kind_count(VeloceRenderCommandKind::kText) !=
++          program->command_count()) {
++    return VeloceUnifiedRenderResult::kNotEligible;
++  }
++  if (metrics) {
++    metrics->index_bytes = index->EstimatedBytes();
++    metrics->index_postings = index->posting_count();
++    metrics->always_candidate_commands = index->always_candidate_count();
++  }
++
++  CFX_FloatRect holder_clip = holder_to_device.GetInverse().TransformRect(
++      CFX_FloatRect(status->GetRenderDevice()->GetClipBox()));
++  holder_clip.Normalize();
++  std::vector<uint32_t> candidates;
++  const uint64_t query_start = metrics ? MonotonicNanoseconds() : 0;
++  const VeloceSpatialQueryResult query_result = index->Query(
++      holder->GetBBox(), holder_clip, kMaxCandidateCommands, &candidates);
++  if (metrics) {
++    metrics->candidate_query_ns = MonotonicNanoseconds() - query_start;
++    metrics->candidate_commands = candidates.size();
++    metrics->scratch_bytes = candidates.capacity() * sizeof(uint32_t);
++  }
++  if (query_result == VeloceSpatialQueryResult::kUseFullReplay) {
++    return VeloceUnifiedRenderResult::kNotEligible;
++  }
++
++  const auto commands = program->commands();
++  for (uint32_t command_index : candidates) {
++    CPDF_PageObject* object = holder->GetPageObjectByIndex(command_index);
++    if (!object || command_index >= commands.size() ||
++        !CommandMatchesObject(commands[command_index], *object)) {
++      return VeloceUnifiedRenderResult::kNotEligible;
+     }
+   }
+-  return VeloceUnifiedRenderResult::kDisabled;
++
++  const uint64_t replay_start = metrics ? MonotonicNanoseconds() : 0;
++  for (uint32_t command_index : candidates) {
++    if (status->ShouldCancelRender()) {
++      return VeloceUnifiedRenderResult::kCancelled;
++    }
++    CPDF_PageObject* object = holder->GetPageObjectByIndex(command_index);
++    if (metrics) {
++      ++metrics->visited_commands;
++    }
++    if (!object->IsActive() || !RectIntersects(object->GetRect(), holder_clip)) {
++      continue;
++    }
++    status->RenderSingleObject(object, holder_to_device);
++    if (metrics) {
++      ++metrics->drawn_commands;
++      ++metrics->dispatch_count;
++    }
++    if (status->IsStopped() || status->ShouldCancelRender()) {
++      return VeloceUnifiedRenderResult::kCancelled;
++    }
++  }
++  if (metrics) {
++    metrics->replay_ns = MonotonicNanoseconds() - replay_start;
++  }
++  return VeloceUnifiedRenderResult::kRendered;
+ }
+diff --git a/core/fpdfapi/render/veloce_unified_render_backend.h b/core/fpdfapi/render/veloce_unified_render_backend.h
+index 2b616e75b..f3d3fa021 100644
+--- a/core/fpdfapi/render/veloce_unified_render_backend.h
++++ b/core/fpdfapi/render/veloce_unified_render_backend.h
+@@ -11,7 +11,7 @@ class CFX_Matrix;
+ class CPDF_PageObjectHolder;
+ class CPDF_RenderStatus;
+
+-inline constexpr char kVeloceUnifiedRenderBackendRevision[] = "r25-1-0082";
++inline constexpr char kVeloceUnifiedRenderBackendRevision[] = "r25-1-0083";
+
+ // Result contract for one complete holder request. Disabled and not-eligible
+ // results guarantee that no destination pixel was changed. A cancelled result
+@@ -54,9 +54,9 @@ struct VeloceUnifiedRenderMetrics {
+ // representation; PDFium page objects remain authoritative for fidelity and
+ // editing, and `status` owns the destination device.
+
+-// r25-1-0082 intentionally returns kDisabled and has no render-path call site.
+-// Later revisions may consume this contract only after complete pre-draw
+-// validation. They must not delegate to the legacy Veloce path display list.
++// r25-1-0083 executes only completely validated path/text holders through
++// canonical PDFium object rendering. Unsupported, dense, stale, partial, and
++// edited programs return before drawing. The legacy PathDL is never delegated.
+ VeloceUnifiedRenderResult VeloceTryRenderUnifiedProgram(
+     CPDF_RenderStatus* status,
+     const CPDF_PageObjectHolder* holder,

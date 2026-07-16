@@ -51,7 +51,7 @@ into the PDFium patch repo.
 Current committed native PDFium reference HEAD:
 
 ```text
-a5af7646c r25-0078 consume ordered path/text RenderProgram segments
+5a12ae941 r25-1-0082 add bounded holder-space candidate index
 ```
 
 Known untracked files currently visible in the native PDFium repo include
@@ -121,6 +121,7 @@ series build is immediately visible. Later revisions advance globally:
 r25-1-0080
 r25-1-0081
 r25-1-0082
+r25-1-0083
 ```
 
 Do not rename, delete, or reuse 0077/0078. They remain historical evidence for
@@ -257,6 +258,7 @@ Release workflows:
 | r25-1-0080 | `.github/workflows/pdfium-android-arm64-r25-1-0080-compact-command-summary.yml` | r25-1-0079 plus `0080`; excludes `0053..0074` and `0077..0078` | Adds fixed O(1) command-kind summaries and keeps the unified backend disabled. The older executor remains exposed, so this is also not a canonical-pixel baseline. |
 | r25-1-0081 | `.github/workflows/pdfium-android-arm64-r25-1-0081-canonical-correctness-baseline.yml` | r25-1-0080 plus `0081`; excludes `0053..0074` and `0077..0078` | Disables the older `0013..0031` holder executor before cache/compile/draw and keeps the unified backend disabled, making canonical PDFium the sole pixel owner. |
 | r25-1-0082 | `.github/workflows/pdfium-android-arm64-r25-1-0082-holder-space-candidate-index.yml` | r25-1-0081 plus `0082`; excludes `0053..0074` and `0077..0078` | Adds bounded immutable holder-space candidate metadata to huge RenderPrograms while keeping both accelerated executors disabled and canonical PDFium as sole pixel owner. |
+| r25-1-0083 | `.github/workflows/pdfium-android-arm64-r25-1-0083-exact-path-text-candidate-executor.yml` | r25-1-0082 plus `0083`; excludes `0053..0074` and `0077..0078` | Enables the single unified boundary only for complete indexed path/text holders. Candidate omission is conservative, replay calls canonical PDFium object rendering, and dense/edited/unsupported requests fail closed before drawing. |
 
 Recent revisions:
 
@@ -285,6 +287,7 @@ Recent revisions:
 | r25-1-0080 | `0080-veloce-render-program-compact-command-summary.patch` | implemented; not a correctness baseline | Add fixed O(1) command-kind counts during the existing parser append and retain implicit live-object state identity. The unified executor is disabled, but the old holder executor remains available. |
 | r25-1-0081 | `0081-veloce-disable-legacy-path-display-list.patch` | implemented, pending build | Establish the canonical correctness A/B baseline by disabling both old and new accelerated executors before any destination mutation. |
 | r25-1-0082 | `0082-veloce-render-program-holder-space-candidate-index.patch` | implemented, pending build | Build a bounded ordered candidate index only for huge holders, with uncertain commands always replayed and no runtime consumer or pixel behavior change. |
+| r25-1-0083 | `0083-veloce-render-program-exact-path-text-executor.patch` | implemented, pending build | Consume the one index for sparse complete path/text holders, validate candidates before drawing, replay with canonical `RenderSingleObject()`, and invalidate stale spatial metadata on owned object mutation. |
 
 Historical native HEAD before r48 (not the active line):
 

@@ -142,6 +142,40 @@ must not install a parallel backend to compensate for a missing command type.
 The index is acceleration metadata, not a second display list: command order
 and fidelity remain owned by RenderProgram and live PDFium objects.
 
+### 6.2 Locked 0083 Executor Contract
+
+`0083` is the first runtime consumer and deliberately accelerates only the
+subset for which candidate omission and execution are already exact:
+
+- the holder must be fully parsed and retain the immutable program/index;
+- holder, program, and index command counts must match exactly;
+- the complete program may contain only path and text commands;
+- text commands stay in the always-replay stream and are never spatially
+  omitted in this revision;
+- path candidates come only from 0082's finite conservative holder-space
+  bounds and are restored to strict painter order by the one index query;
+- query output is capped at 262144 commands, bounding candidate storage to
+  approximately 1 MiB; denser clips use canonical progressive PDFium;
+- every candidate resolves to the live holder object and matches its immutable
+  command kind before the first destination write;
+- replay performs the same active/exact-bounds rejection as canonical PDFium,
+  then calls `CPDF_RenderStatus::RenderSingleObject()` so clip, path, text,
+  transparency, blend, color, and device semantics remain PDFium-owned;
+- synchronous holder rendering and progressive root rendering call the same
+  executor boundary; there is no native tile scheduler or second bitmap;
+- cancellation is checked between candidate commands and partial output is
+  reported only as `kCancelled`, which the caller must discard;
+- owned object dirty, matrix, active, or bounds mutation invalidates the
+  program and index in O(1), so edited geometry cannot be culled by stale
+  parse-time bounds and rendering does not need a full-holder edit scan;
+- missing, unsupported, stale, stop-object, invalid-query, or dense requests
+  return before drawing and continue through canonical PDFium.
+
+`0083` does not merge paths, compile geometry, replace AGG, cache raster data,
+or claim a dense-preview speedup. Its expected win is removal of the O(n)
+whole-holder walk for sparse visible tiles while preserving canonical object
+execution exactly. Dense execution remains the scoped responsibility of 0084.
+
 ## 7. Performance Proof
 
 Compare canonical r25 PDFium, r25-0078, r25-1, and MuPDF 1.27.2 on the same
