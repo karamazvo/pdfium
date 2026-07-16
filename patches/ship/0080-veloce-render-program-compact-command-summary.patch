@@ -1,0 +1,173 @@
+From 0000000000000000000000000000000000000080 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Thu, 16 Jul 2026 14:30:00 +0800
+Subject: [PATCH] r25-1-0080: add compact RenderProgram command summary
+
+Extend the r25-1-0079 unified backend boundary without enabling rendering.
+Keep the existing one-byte command-kind stream as the sole painter-order
+representation and add one fixed six-counter summary populated in the same
+parser append operation.
+
+Expose O(1) total-count, per-kind-count, and exact single-kind queries so later
+eligibility and execution code does not reconstruct page composition with a
+second holder scan. A command's array position remains its live holder object
+index. Do not copy graphics state, geometry, or page-object pointers: PDFium's
+live object stays the single fidelity and editing source of truth.
+
+The additional retained cost is a fixed 24-byte counter array per admitted
+program. The existing 32 MiB command-stream ceiling remains unchanged. This
+revision still has no runtime call site, cache, lock, log, JNI/API change, or
+pixel behavior. Update the backend revision and metrics accessor only.
+---
+ core/fpdfapi/page/veloce_render_program.cpp        | 13 +++++++----
+ core/fpdfapi/page/veloce_render_program.h          | 27 ++++++++++++++++++----
+ .../render/veloce_unified_render_backend.cpp       |  2 +-
+ .../fpdfapi/render/veloce_unified_render_backend.h |  4 ++--
+ 4 files changed, 34 insertions(+), 12 deletions(-)
+
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index 2cb02f87a..b07832b0e 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -29,8 +29,10 @@ VeloceRenderCommandKind ToRenderCommandKind(
+ }  // namespace
+
+ VeloceRenderProgram::VeloceRenderProgram(
+-    std::vector<VeloceRenderCommandKind> command_kinds)
+-    : command_kinds_(std::move(command_kinds)) {}
++    std::vector<VeloceRenderCommandKind> command_kinds,
++    std::array<uint32_t, kVeloceRenderCommandKindCount> command_kind_counts)
++    : command_kinds_(std::move(command_kinds)),
++      command_kind_counts_(command_kind_counts) {}
+
+ VeloceRenderProgramBuilder::VeloceRenderProgramBuilder() = default;
+ VeloceRenderProgramBuilder::~VeloceRenderProgramBuilder() = default;
+@@ -45,7 +47,9 @@ void VeloceRenderProgramBuilder::AppendPageObject(
+     exceeded_budget_ = true;
+     return;
+   }
+-  command_kinds_.push_back(ToRenderCommandKind(object));
++  const VeloceRenderCommandKind kind = ToRenderCommandKind(object);
++  command_kinds_.push_back(kind);
++  ++command_kind_counts_[static_cast<size_t>(kind)];
+ }
+
+ std::unique_ptr<const VeloceRenderProgram>
+@@ -54,5 +58,6 @@ VeloceRenderProgramBuilder::Finish() {
+     return nullptr;
+   }
+   return std::unique_ptr<const VeloceRenderProgram>(
+-      new VeloceRenderProgram(std::move(command_kinds_)));
++      new VeloceRenderProgram(std::move(command_kinds_),
++                              command_kind_counts_));
+ }
+diff --git a/core/fpdfapi/page/veloce_render_program.h b/core/fpdfapi/page/veloce_render_program.h
+index d5037cade..2eccd75ee 100644
+--- a/core/fpdfapi/page/veloce_render_program.h
++++ b/core/fpdfapi/page/veloce_render_program.h
+@@ -7,6 +7,7 @@
+ #include <stddef.h>
+ #include <stdint.h>
+
++#include <array>
+ #include <memory>
+ #include <vector>
+
+@@ -24,10 +25,14 @@ enum class VeloceRenderCommandKind : uint8_t {
+ };
+
+ static_assert(sizeof(VeloceRenderCommandKind) == 1);
++inline constexpr size_t kVeloceRenderCommandKindCount =
++    static_cast<size_t>(VeloceRenderCommandKind::kUnsupported) + 1u;
+
+ // Immutable native rendering representation owned by one live page-object
+ // holder. PDFium page objects remain authoritative for fidelity and editing.
+-//
++// A command's position is its live holder object index. Graphics state and
++// geometry are deliberately not copied into this program, so there is one
++// state source and no stale duplicate after editing.
+ class VeloceRenderProgram final {
+  public:
+   ~VeloceRenderProgram() = default;
+@@ -38,6 +43,13 @@ class VeloceRenderProgram final {
+   pdfium::span<const VeloceRenderCommandKind> commands() const {
+     return command_kinds_;
+   }
++  size_t command_count() const { return command_kinds_.size(); }
++  size_t command_kind_count(VeloceRenderCommandKind kind) const {
++    return command_kind_counts_[static_cast<size_t>(kind)];
++  }
++  bool HasOnlyCommandKind(VeloceRenderCommandKind kind) const {
++    return command_count() == command_kind_count(kind);
++  }
+   size_t EstimatedBytes() const {
+     return sizeof(*this) +
+            command_kinds_.capacity() * sizeof(VeloceRenderCommandKind);
+@@ -47,14 +59,18 @@ class VeloceRenderProgram final {
+   friend class VeloceRenderProgramBuilder;
+
+   explicit VeloceRenderProgram(
+-      std::vector<VeloceRenderCommandKind> command_kinds);
++      std::vector<VeloceRenderCommandKind> command_kinds,
++      std::array<uint32_t, kVeloceRenderCommandKindCount>
++          command_kind_counts);
+
+   const std::vector<VeloceRenderCommandKind> command_kinds_;
++  const std::array<uint32_t, kVeloceRenderCommandKindCount>
++      command_kind_counts_;
+ };
+
+-// Single-owner parser-time recorder. It records one byte per appended holder
+-// object in exact painter order. Object indices are implicit command indices,
+-// so no pointer or duplicate index storage is needed.
++// Single-owner parser-time recorder. It records one byte and updates one fixed
++// counter per appended holder object in exact painter order. Object indices are
++// implicit command indices, so no pointer or duplicate index storage is needed.
+ class VeloceRenderProgramBuilder final {
+  public:
+   VeloceRenderProgramBuilder();
+@@ -71,6 +87,7 @@ class VeloceRenderProgramBuilder final {
+   static constexpr size_t kMaxCommandBytes = 32u * 1024u * 1024u;
+
+   std::vector<VeloceRenderCommandKind> command_kinds_;
++  std::array<uint32_t, kVeloceRenderCommandKindCount> command_kind_counts_{};
+   bool exceeded_budget_ = false;
+ };
+
+diff --git a/core/fpdfapi/render/veloce_unified_render_backend.cpp b/core/fpdfapi/render/veloce_unified_render_backend.cpp
+index 347e88854..9c9e2dda6 100644
+--- a/core/fpdfapi/render/veloce_unified_render_backend.cpp
++++ b/core/fpdfapi/render/veloce_unified_render_backend.cpp
+@@ -16,7 +16,7 @@ VeloceUnifiedRenderResult VeloceTryRenderUnifiedProgram(
+     const VeloceRenderProgram* program =
+         holder ? holder->GetVeloceRenderProgram() : nullptr;
+     if (program) {
+-      metrics->total_commands = program->commands().size();
++      metrics->total_commands = program->command_count();
+       metrics->program_bytes = program->EstimatedBytes();
+     }
+   }
+diff --git a/core/fpdfapi/render/veloce_unified_render_backend.h b/core/fpdfapi/render/veloce_unified_render_backend.h
+index a8190f0db..31cee5634 100644
+--- a/core/fpdfapi/render/veloce_unified_render_backend.h
++++ b/core/fpdfapi/render/veloce_unified_render_backend.h
+@@ -11,7 +11,7 @@ class CFX_Matrix;
+ class CPDF_PageObjectHolder;
+ class CPDF_RenderStatus;
+
+-inline constexpr char kVeloceUnifiedRenderBackendRevision[] = "r25-1-0079";
++inline constexpr char kVeloceUnifiedRenderBackendRevision[] = "r25-1-0080";
+
+ // Result contract for one complete holder request. Disabled and not-eligible
+ // results guarantee that no destination pixel was changed. A cancelled result
+@@ -51,7 +51,7 @@ struct VeloceUnifiedRenderMetrics {
+ // representation; PDFium page objects remain authoritative for fidelity and
+ // editing, and `status` owns the destination device.
+
+-// r25-1-0079 intentionally returns kDisabled and has no render-path call site.
++// r25-1-0080 intentionally returns kDisabled and has no render-path call site.
+ // Later revisions may consume this contract only after complete pre-draw
+ // validation. They must not delegate to the legacy Veloce path display list.
+ VeloceUnifiedRenderResult VeloceTryRenderUnifiedProgram(
+--
+2.50.1

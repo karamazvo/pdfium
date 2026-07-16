@@ -100,7 +100,7 @@ stores a raw page-object pointer beyond holder lifetime.
 | Revision | Unified extension | Pixel behavior |
 | --- | --- | --- |
 | `r25-1-0079` | Execution interface, benchmark contract, disabled backend | Unchanged |
-| `r25-1-0080` | Compact ordered command/state representation | Unchanged |
+| `r25-1-0080` | Compact command summary and live-object state identity | Unchanged |
 | `r25-1-0081` | Conservative bounded holder-space candidate index | Unchanged until consumed |
 | `r25-1-0082` | Exact path/text vertical executor | Proven subset only |
 | `r25-1-0083` | Dense path execution kernel and bounded scratch reuse | Exact ordered pixels |

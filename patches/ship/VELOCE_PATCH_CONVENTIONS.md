@@ -254,6 +254,7 @@ Release workflows:
 | r25-0077 | `.github/workflows/pdfium-android-arm64-r25-0077-render-program-exact-path-gate.yml` | r25 rendering stack plus `0051` and `0075..0077`; excludes `0053..0074` | First v2 consumer. Uses exact parser summaries to reject absent, stale-count, or mixed programs before legacy cache lookup/compile; all-path backend remains unchanged. |
 | r25-0078 | `.github/workflows/pdfium-android-arm64-r25-0078-render-program-ordered-text-segments.yml` | r25 rendering stack plus `0051` and `0075..0078`; excludes `0053..0074` | First ordered mixed-command replay. Compiles path runs once, keeps text as live holder-index barriers, preserves painter order and clip state, and rejects image/Form/shading/unsupported streams before drawing. |
 | r25-1-0079 | `.github/workflows/pdfium-android-arm64-r25-1-0079-unified-render-program-backend.yml` | r25 rendering stack plus `0051`, `0075`, `0076`, and `0079`; excludes `0053..0074` and `0077..0078` | Behavior-neutral start of unified-backend generation 1. Establishes one RenderProgram execution/benchmark contract without invoking the legacy path-display-list consumer. |
+| r25-1-0080 | `.github/workflows/pdfium-android-arm64-r25-1-0080-compact-command-summary.yml` | r25-1-0079 plus `0080`; excludes `0053..0074` and `0077..0078` | Adds fixed O(1) command-kind summaries and live-object state identity while keeping the unified backend disabled and canonical pixels unchanged. |
 
 Recent revisions:
 
@@ -278,7 +279,8 @@ Recent revisions:
 | r25-0076 | `0076-veloce-render-program-parser-command-order.patch` | committed | Record bounded compact object-kind commands during the existing parser append path, seal exact painter order after parse completion, and keep replay disabled. |
 | r25-0077 | `0077-veloce-render-program-exact-path-gate.patch` | committed | Gate the legacy path cache/compiler with exact parser-owned program presence, holder count, and all-path summary before any scan or allocation. |
 | r25-0078 | `0078-veloce-render-program-ordered-text-segments.patch` | committed, frozen reference | Replay exact path/text programs as bounded ordered path runs and live text barriers without raw cached page-object pointers. |
-| r25-1-0079 | `0079-veloce-unified-render-program-backend-interface.patch` | implemented, pending build | Start the unified backend from r25 + 0051 + 0075-0076 with a behavior-neutral native execution and benchmark boundary. |
+| r25-1-0079 | `0079-veloce-unified-render-program-backend-interface.patch` | committed; native build/link verified | Start the unified backend from r25 + 0051 + 0075-0076 with a behavior-neutral native execution and benchmark boundary. The first workflow run reached packaging; commit `48be9f3f3` fixed that packaging-only glob error. |
+| r25-1-0080 | `0080-veloce-render-program-compact-command-summary.patch` | implemented, pending build | Add fixed O(1) command-kind counts during the existing parser append, retain implicit live-object state identity, and keep rendering disabled. |
 
 Historical native HEAD before r48 (not the active line):
 
@@ -569,7 +571,7 @@ consumer:
 
 ```text
 r25-1-0079: behavior-neutral unified execution and benchmark interface
-r25-1-0080: compact ordered command/state representation
+r25-1-0080: compact command summary and live-object state identity
 r25-1-0081: bounded conservative holder-space candidate index
 r25-1-0082: exact path/text vertical executor
 r25-1-0083: dense path execution kernel with bounded reusable scratch
