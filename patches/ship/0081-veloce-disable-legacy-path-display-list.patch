@@ -1,0 +1,70 @@
+From 0000000000000000000000000000000000000081 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Thu, 16 Jul 2026 15:30:00 +0800
+Subject: [PATCH] r25-1-0081: isolate canonical rendering from legacy PathDL
+
+The r25-1-0079 and 0080 builds introduced a disabled unified RenderProgram
+backend, but still carried and executed the older path-display-list backend
+when callers supplied FPDFEX_FEATURE_PATH_DISPLAY_LIST_FORM. That meant those
+builds were not behavior-neutral relative to canonical PDFium. Normal mixed
+pages could enter the old backend through a path-only Form XObject and publish
+an incomplete bitmap as a successful render.
+
+Establish the correctness baseline required by the new backend series. Keep
+the legacy implementation compiled so the historical patch stack still
+applies, but disable it at its single holder-level entry point before feature
+inspection, cache lookup, allocation, compilation, logging, or drawing. Both
+root-page and Form call sites therefore return kNotEligible and continue via
+canonical PDFium without modifying destination pixels.
+
+Keep the unified backend disabled as well and advance its revision marker.
+This revision intentionally provides no acceleration. Its purpose is to prove
+the canonical pixel baseline before a new executor is enabled incrementally.
+---
+ core/fpdfapi/render/veloce_path_display_list.cpp      | 3 +++
+ core/fpdfapi/render/veloce_path_display_list.h        | 5 +++++
+ core/fpdfapi/render/veloce_unified_render_backend.h   | 2 +-
+ 3 files changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -1913,6 +1913,9 @@ VelocePathDisplayListResult VeloceTryRenderPathDisplayListForHolder(
+     const CPDF_PageObjectHolder* holder,
+     const CFX_Matrix& holder_to_device,
+     VelocePathDisplayListHolderKind holder_kind) {
++  if (!kVeloceLegacyPathDisplayListEnabled) {
++    return VelocePathDisplayListResult::kNotEligible;
++  }
+   if (!status || !holder) {
+     return VelocePathDisplayListResult::kNotEligible;
+   }
+diff --git a/core/fpdfapi/render/veloce_path_display_list.h b/core/fpdfapi/render/veloce_path_display_list.h
+--- a/core/fpdfapi/render/veloce_path_display_list.h
++++ b/core/fpdfapi/render/veloce_path_display_list.h
+@@ -8,6 +8,11 @@ class CFX_Matrix;
+ class CPDF_PageObjectHolder;
+ class CPDF_RenderStatus;
+
++// r25-1 builds use the unified RenderProgram backend as the only future
++// acceleration boundary. Keep the legacy executor compiled for patch-stack
++// compatibility, but make it incapable of owning destination pixels.
++inline constexpr bool kVeloceLegacyPathDisplayListEnabled = false;
++
+ enum class VelocePathDisplayListResult {
+   kNotEligible,
+   kRendered,
+diff --git a/core/fpdfapi/render/veloce_unified_render_backend.h b/core/fpdfapi/render/veloce_unified_render_backend.h
+--- a/core/fpdfapi/render/veloce_unified_render_backend.h
++++ b/core/fpdfapi/render/veloce_unified_render_backend.h
+@@ -12,7 +12,7 @@ class CFX_Matrix;
+ class CPDF_PageObjectHolder;
+ class CPDF_RenderStatus;
+
+-inline constexpr char kVeloceUnifiedRenderBackendRevision[] = "r25-1-0080";
++inline constexpr char kVeloceUnifiedRenderBackendRevision[] = "r25-1-0081";
+
+ // Result contract for one complete holder request. Disabled and not-eligible
+ // results guarantee that no destination pixel was changed. A cancelled result
+--
+2.50.1

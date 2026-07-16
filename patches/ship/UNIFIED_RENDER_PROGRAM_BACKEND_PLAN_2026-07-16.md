@@ -19,6 +19,14 @@ The workflow excludes RenderPlan v1 patches `0053..0074` and legacy
 path-display-list consumers `0077..0078`. Those patches remain immutable A/B
 references and are never renamed or deleted.
 
+Post-baseline correction: the 0079/0080 workflows still included the older
+`0013..0031` path-display-list executor. Device evidence on a mixed normal page
+showed that executor consuming Form holders and returning success while the
+published page was incomplete. Therefore 0079/0080 are interface experiments,
+not canonical correctness baselines. Revision 0081 disables that executor at
+its central native boundary before work; canonical PDFium becomes the sole
+pixel owner until the unified executor proves an eligible complete result.
+
 ## 2. One Framework
 
 ```text
@@ -99,13 +107,14 @@ stores a raw page-object pointer beyond holder lifetime.
 
 | Revision | Unified extension | Pixel behavior |
 | --- | --- | --- |
-| `r25-1-0079` | Execution interface, benchmark contract, disabled backend | Unchanged |
-| `r25-1-0080` | Compact command summary and live-object state identity | Unchanged |
-| `r25-1-0081` | Conservative bounded holder-space candidate index | Unchanged until consumed |
-| `r25-1-0082` | Exact path/text vertical executor | Proven subset only |
-| `r25-1-0083` | Dense path execution kernel and bounded scratch reuse | Exact ordered pixels |
-| `r25-1-0084` | Clip/image/Form/group/transparency completeness | Proven commands only |
-| `r25-1-0085` | Proof-gated blend kernels | Exact eligible blends only |
+| `r25-1-0079` | Execution interface and benchmark contract; unified backend disabled | Patch neutral; artifact still exposes old executor |
+| `r25-1-0080` | Compact command summary and live-object state identity | Unified backend disabled; old executor still exposed |
+| `r25-1-0081` | Disable legacy holder executor before work | Canonical PDFium is sole pixel owner |
+| `r25-1-0082` | Conservative bounded holder-space candidate index | Unchanged until consumed |
+| `r25-1-0083` | Exact path/text vertical executor | Proven subset only |
+| `r25-1-0084` | Dense path execution kernel and bounded scratch reuse | Exact ordered pixels |
+| `r25-1-0085` | Clip/image/Form/group/transparency completeness | Proven commands only |
+| `r25-1-0086` | Proof-gated blend kernels | Exact eligible blends only |
 
 Every revision extends the same data model and execution interface. A revision
 must not install a parallel backend to compensate for a missing command type.
