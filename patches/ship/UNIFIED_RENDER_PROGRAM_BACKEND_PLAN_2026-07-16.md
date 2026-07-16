@@ -112,12 +112,28 @@ stores a raw page-object pointer beyond holder lifetime.
 | `r25-1-0081` | Disable legacy holder executor before work | Canonical PDFium is sole pixel owner |
 | `r25-1-0082` | Conservative bounded holder-space candidate index | Unchanged until consumed |
 | `r25-1-0083` | Exact path/text vertical executor | Proven subset only |
-| `r25-1-0084` | Dense path execution kernel and bounded scratch reuse | Exact ordered pixels |
-| `r25-1-0085` | Clip/image/Form/group/transparency completeness | Proven commands only |
-| `r25-1-0086` | Proof-gated blend kernels | Exact eligible blends only |
+| `r25-1-0084` | Not emitted; revision remains unused | No artifact |
+| `r25-1-0085` | Fail-closed compiled direct-path dispatch into PDFium's existing path renderer | Proven simple paths only |
+| `r25-1-0086` | Bounded dense candidate chunks and reusable query scratch | Exact ordered pixels |
+| `r25-1-0087` | Interned consecutive path-state packets | Proven path state only |
+| `r25-1-0088` | Clip/image/Form/group/transparency completeness | Proven commands only |
+| `r25-1-0089` | Proof-gated blend kernels | Exact eligible blends only |
 
 Every revision extends the same data model and execution interface. A revision
 must not install a parallel backend to compensate for a missing command type.
+
+0085 changes the compact command from one byte of kind to two bytes of
+`kind + exact flags`, retaining the 32 MiB program ceiling. Its first flag is
+compiled only for an unclipped path with simple non-pattern paint, normal
+blend, no soft mask, and no transfer function. The same predicate is rerun on
+the live object before any accelerated pixel is written. Eligible commands
+skip generic recursion, transparency, and object-type dispatch but still use
+`CPDF_RenderStatus::ProcessPath()` and the existing `CFX_RenderDevice`; there
+is no copied geometry or second rasterizer. Text and every unsupported path
+remain ordered canonical commands. Candidate query output is capped at one
+million logical indices and allocator capacity remains metered, so dense
+visible tiles can enter this executor while whole-page overflow still fails
+closed before drawing.
 
 ### 6.1 Locked 0082 Index Contract
 
@@ -174,7 +190,8 @@ subset for which candidate omission and execution are already exact:
 `0083` does not merge paths, compile geometry, replace AGG, cache raster data,
 or claim a dense-preview speedup. Its expected win is removal of the O(n)
 whole-holder walk for sparse visible tiles while preserving canonical object
-execution exactly. Dense execution remains the scoped responsibility of 0084.
+execution exactly. Dense direct execution begins in 0085; bounded chunking and
+scratch reuse remain the scoped responsibility of 0086.
 
 ## 7. Performance Proof
 

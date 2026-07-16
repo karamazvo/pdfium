@@ -1,0 +1,417 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Thu, 16 Jul 2026 22:49:26 +0800
+Subject: [PATCH] r25-1-0085: add fail-closed direct path dispatch
+
+Extend the immutable command record with one exact direct-path flag, compiled and revalidated through a shared predicate. Bypass only generic object, transparency, and type dispatch for simple unclipped normal-blend paths while retaining PDFium visibility, clip reset, color, forced-color, path option, AGG raster, fallback, and cancellation semantics.
+
+Raise bounded candidate scratch from 256K to 1M commands so dense zoom tiles can reach the executor without unbounded memory. Keep text and paths with clips, patterns, transfer functions, soft masks, or non-normal blend on canonical RenderSingleObject.
+---
+ core/fpdfapi/page/veloce_render_program.cpp   | 57 +++++++++++++++----
+ core/fpdfapi/page/veloce_render_program.h     | 36 +++++++++---
+ core/fpdfapi/render/cpdf_renderstatus.cpp     | 36 +++++++++++-
+ core/fpdfapi/render/cpdf_renderstatus.h       |  9 ++-
+ .../render/veloce_unified_render_backend.cpp  | 30 ++++++++--
+ .../render/veloce_unified_render_backend.h    | 11 ++--
+ 6 files changed, 146 insertions(+), 33 deletions(-)
+
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index accae21..0e42309 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -13,6 +13,7 @@
+ 
+ #include "core/fpdfapi/page/cpdf_pageobject.h"
+ #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
++#include "core/fpdfapi/page/cpdf_pathobject.h"
+ 
+ namespace {
+ 
+@@ -91,6 +92,34 @@ bool GetBinRange(const CFX_FloatRect& bounds,
+ 
+ }  // namespace
+ 
++bool VeloceCanDirectDrawPath(const CPDF_PageObject& object) {
++  const CPDF_PathObject* path = object.AsPath();
++  if (!path || path->clip_path().HasRef() || !path->path().GetObject()) {
++    return false;
++  }
++
++  const CPDF_GeneralState& general_state = path->general_state();
++  if (general_state.GetBlendType() != BlendMode::kNormal ||
++      general_state.GetSoftMask() || general_state.GetTR()) {
++    return false;
++  }
++
++  const CPDF_ColorState& color_state = path->color_state();
++  if (!path->has_no_filltype()) {
++    const CPDF_Color* fill = color_state.GetFillColor();
++    if (!fill || fill->IsNull() || fill->IsPattern()) {
++      return false;
++    }
++  }
++  if (path->stroke()) {
++    const CPDF_Color* stroke = color_state.GetStrokeColor();
++    if (!stroke || stroke->IsNull() || stroke->IsPattern()) {
++      return false;
++    }
++  }
++  return true;
++}
++
+ class VeloceSpatialCandidateIndexBuilder final {
+  public:
+   explicit VeloceSpatialCandidateIndexBuilder(CFX_FloatRect bounds)
+@@ -275,10 +304,10 @@ size_t VeloceSpatialCandidateIndex::EstimatedBytes() const {
+ }
+ 
+ VeloceRenderProgram::VeloceRenderProgram(
+-    std::vector<VeloceRenderCommandKind> command_kinds,
++    std::vector<VeloceRenderCommand> commands,
+     std::array<uint32_t, kVeloceRenderCommandKindCount> command_kind_counts,
+     std::unique_ptr<const VeloceSpatialCandidateIndex> spatial_index)
+-    : command_kinds_(std::move(command_kinds)),
++    : commands_(std::move(commands)),
+       command_kind_counts_(command_kind_counts),
+       spatial_index_(std::move(spatial_index)) {}
+ 
+@@ -291,27 +320,31 @@ void VeloceRenderProgramBuilder::AppendPageObject(
+   if (exceeded_budget_) {
+     return;
+   }
+-  if (command_kinds_.size() >= kMaxCommandBytes) {
+-    std::vector<VeloceRenderCommandKind>().swap(command_kinds_);
++  if (commands_.size() >= kMaxProgramBytes / sizeof(VeloceRenderCommand)) {
++    std::vector<VeloceRenderCommand>().swap(commands_);
+     spatial_index_builder_.reset();
+     exceeded_budget_ = true;
+     return;
+   }
+ 
+   const VeloceRenderCommandKind kind = ToRenderCommandKind(object);
+-  command_kinds_.push_back(kind);
++  const uint8_t flags = VeloceCanDirectDrawPath(object)
++                            ? static_cast<uint8_t>(
++                                  VeloceRenderCommandFlag::kDirectPath)
++                            : 0u;
++  commands_.push_back({kind, flags});
+   ++command_kind_counts_[static_cast<size_t>(kind)];
+ 
+   if (spatial_index_builder_) {
+     if (!spatial_index_builder_->Append(
+-            static_cast<uint32_t>(command_kinds_.size() - 1u), kind, object)) {
++            static_cast<uint32_t>(commands_.size() - 1u), kind, object)) {
+       spatial_index_builder_.reset();
+       spatial_index_abandoned_ = true;
+     }
+     return;
+   }
+   if (spatial_index_abandoned_ ||
+-      command_kinds_.size() != kMinSpatialIndexCommands) {
++      commands_.size() != kMinSpatialIndexCommands) {
+     return;
+   }
+ 
+@@ -324,11 +357,11 @@ void VeloceRenderProgramBuilder::AppendPageObject(
+ 
+   spatial_index_builder_ =
+       std::make_unique<VeloceSpatialCandidateIndexBuilder>(holder_bounds);
+-  for (uint32_t index = 0; index < command_kinds_.size(); ++index) {
++  for (uint32_t index = 0; index < commands_.size(); ++index) {
+     const CPDF_PageObject* indexed_object =
+         holder.GetPageObjectByIndex(index);
+     if (!indexed_object ||
+-        !spatial_index_builder_->Append(index, command_kinds_[index],
++        !spatial_index_builder_->Append(index, commands_[index].kind,
+                                         *indexed_object)) {
+       spatial_index_builder_.reset();
+       spatial_index_abandoned_ = true;
+@@ -339,16 +372,16 @@ void VeloceRenderProgramBuilder::AppendPageObject(
+ 
+ std::unique_ptr<const VeloceRenderProgram>
+ VeloceRenderProgramBuilder::Finish() {
+-  if (exceeded_budget_ || command_kinds_.empty()) {
++  if (exceeded_budget_ || commands_.empty()) {
+     return nullptr;
+   }
+ 
+   std::unique_ptr<const VeloceSpatialCandidateIndex> spatial_index;
+   if (spatial_index_builder_) {
+     spatial_index = spatial_index_builder_->Finish(
+-        static_cast<uint32_t>(command_kinds_.size()));
++        static_cast<uint32_t>(commands_.size()));
+   }
+   return std::unique_ptr<const VeloceRenderProgram>(new VeloceRenderProgram(
+-      std::move(command_kinds_), command_kind_counts_,
++      std::move(commands_), command_kind_counts_,
+       std::move(spatial_index)));
+ }
+diff --git a/core/fpdfapi/page/veloce_render_program.h b/core/fpdfapi/page/veloce_render_program.h
+index 3a95476..2c12f81 100644
+--- a/core/fpdfapi/page/veloce_render_program.h
++++ b/core/fpdfapi/page/veloce_render_program.h
+@@ -31,6 +31,26 @@ static_assert(sizeof(VeloceRenderCommandKind) == 1);
+ inline constexpr size_t kVeloceRenderCommandKindCount =
+     static_cast<size_t>(VeloceRenderCommandKind::kUnsupported) + 1u;
+ 
++enum class VeloceRenderCommandFlag : uint8_t {
++  kDirectPath = 1u << 0,
++};
++
++struct VeloceRenderCommand {
++  VeloceRenderCommandKind kind = VeloceRenderCommandKind::kUnsupported;
++  uint8_t flags = 0;
++
++  bool HasFlag(VeloceRenderCommandFlag flag) const {
++    return (flags & static_cast<uint8_t>(flag)) != 0;
++  }
++};
++
++static_assert(sizeof(VeloceRenderCommand) == 2);
++
++// One shared fail-closed predicate is used both when compiling command flags
++// and immediately before replay. A false result always selects canonical
++// PDFium rendering.
++bool VeloceCanDirectDrawPath(const CPDF_PageObject& object);
++
+ enum class VeloceSpatialQueryResult : uint8_t {
+   kCandidates,
+   kEmpty,
+@@ -96,10 +116,10 @@ class VeloceRenderProgram final {
+   VeloceRenderProgram(const VeloceRenderProgram&) = delete;
+   VeloceRenderProgram& operator=(const VeloceRenderProgram&) = delete;
+ 
+-  pdfium::span<const VeloceRenderCommandKind> commands() const {
+-    return command_kinds_;
++  pdfium::span<const VeloceRenderCommand> commands() const {
++    return commands_;
+   }
+-  size_t command_count() const { return command_kinds_.size(); }
++  size_t command_count() const { return commands_.size(); }
+   size_t command_kind_count(VeloceRenderCommandKind kind) const {
+     return command_kind_counts_[static_cast<size_t>(kind)];
+   }
+@@ -111,7 +131,7 @@ class VeloceRenderProgram final {
+   }
+   size_t EstimatedBytes() const {
+     return sizeof(*this) +
+-           command_kinds_.capacity() * sizeof(VeloceRenderCommandKind) +
++           commands_.capacity() * sizeof(VeloceRenderCommand) +
+            (spatial_index_ ? spatial_index_->EstimatedBytes() : 0u);
+   }
+ 
+@@ -119,12 +139,12 @@ class VeloceRenderProgram final {
+   friend class VeloceRenderProgramBuilder;
+ 
+   explicit VeloceRenderProgram(
+-      std::vector<VeloceRenderCommandKind> command_kinds,
++      std::vector<VeloceRenderCommand> commands,
+       std::array<uint32_t, kVeloceRenderCommandKindCount>
+           command_kind_counts,
+       std::unique_ptr<const VeloceSpatialCandidateIndex> spatial_index);
+ 
+-  const std::vector<VeloceRenderCommandKind> command_kinds_;
++  const std::vector<VeloceRenderCommand> commands_;
+   const std::array<uint32_t, kVeloceRenderCommandKindCount>
+       command_kind_counts_;
+   const std::unique_ptr<const VeloceSpatialCandidateIndex> spatial_index_;
+@@ -147,9 +167,9 @@ class VeloceRenderProgramBuilder final {
+   std::unique_ptr<const VeloceRenderProgram> Finish();
+ 
+  private:
+-  static constexpr size_t kMaxCommandBytes = 32u * 1024u * 1024u;
++  static constexpr size_t kMaxProgramBytes = 32u * 1024u * 1024u;
+ 
+-  std::vector<VeloceRenderCommandKind> command_kinds_;
++  std::vector<VeloceRenderCommand> commands_;
+   std::array<uint32_t, kVeloceRenderCommandKindCount> command_kind_counts_{};
+   std::unique_ptr<VeloceSpatialCandidateIndexBuilder> spatial_index_builder_;
+   bool spatial_index_abandoned_ = false;
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index aa61264..647400b 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -355,6 +355,35 @@ void CPDF_RenderStatus::RenderSingleObject(CPDF_PageObject* pObj,
+   }
+ }
+ 
++bool CPDF_RenderStatus::RenderVeloceDirectPath(
++    CPDF_PathObject* path_obj,
++    const CFX_Matrix& mtObj2Device) {
++  if (ShouldCancelRender()) {
++    stopped_ = true;
++    return false;
++  }
++  cur_obj_ = path_obj;
++  if (!options_.CheckPageObjectVisible(path_obj)) {
++    return true;
++  }
++
++  // Even an empty clip is processed so a preceding canonical text command
++  // cannot leak its device clip into this path.
++  ProcessClipPath(path_obj->clip_path(), mtObj2Device);
++  if (ShouldCancelRender()) {
++    stopped_ = true;
++    return false;
++  }
++  if (!ProcessPath(path_obj, mtObj2Device,
++                   /*pattern_proven_absent=*/true)) {
++    DrawObjWithBackground(path_obj, mtObj2Device);
++  }
++  if (ShouldCancelRender()) {
++    stopped_ = true;
++  }
++  return !stopped_;
++}
++
+ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
+                                              const CFX_Matrix& mtObj2Device,
+                                              PauseIndicatorIface* pPause) {
+@@ -576,10 +605,13 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
+ }
+ 
+ bool CPDF_RenderStatus::ProcessPath(CPDF_PathObject* path_obj,
+-                                    const CFX_Matrix& mtObj2Device) {
++                                    const CFX_Matrix& mtObj2Device,
++                                    bool pattern_proven_absent) {
+   CFX_FillRenderOptions::FillType fill_type = path_obj->filltype();
+   bool stroke = path_obj->stroke();
+-  ProcessPathPattern(path_obj, mtObj2Device, &fill_type, &stroke);
++  if (!pattern_proven_absent) {
++    ProcessPathPattern(path_obj, mtObj2Device, &fill_type, &stroke);
++  }
+   if (fill_type == CFX_FillRenderOptions::FillType::kNoFill && !stroke) {
+     return true;
+   }
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.h b/core/fpdfapi/render/cpdf_renderstatus.h
+index e94b8ed..3f90fdd 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.h
++++ b/core/fpdfapi/render/cpdf_renderstatus.h
+@@ -77,6 +77,11 @@ class CPDF_RenderStatus {
+                         const CFX_Matrix& mtObj2Device);
+   void RenderSingleObject(CPDF_PageObject* pObj,
+                           const CFX_Matrix& mtObj2Device);
++  // Internal fast entry for paths already proven to need no transparency or
++  // pattern handling. It retains PDFium's visibility, clip-state, color,
++  // forced-color, path-option, raster, and fallback semantics.
++  bool RenderVeloceDirectPath(CPDF_PathObject* path_obj,
++                              const CFX_Matrix& mtObj2Device);
+   bool ContinueSingleObject(CPDF_PageObject* pObj,
+                             const CFX_Matrix& mtObj2Device,
+                             PauseIndicatorIface* pPause);
+@@ -146,7 +151,9 @@ class CPDF_RenderStatus {
+                                      CFX_RenderDevice* device,
+                                      const CFX_Matrix& device_matrix);
+   bool DrawObjWithBlend(CPDF_PageObject* pObj, const CFX_Matrix& mtObj2Device);
+-  bool ProcessPath(CPDF_PathObject* path_obj, const CFX_Matrix& mtObj2Device);
++  bool ProcessPath(CPDF_PathObject* path_obj,
++                   const CFX_Matrix& mtObj2Device,
++                   bool pattern_proven_absent = false);
+   void ProcessPathPattern(CPDF_PathObject* path_obj,
+                           const CFX_Matrix& mtObj2Device,
+                           CFX_FillRenderOptions::FillType* fill_type,
+diff --git a/core/fpdfapi/render/veloce_unified_render_backend.cpp b/core/fpdfapi/render/veloce_unified_render_backend.cpp
+index 0dd8ff9..719ab31 100644
+--- a/core/fpdfapi/render/veloce_unified_render_backend.cpp
++++ b/core/fpdfapi/render/veloce_unified_render_backend.cpp
+@@ -9,13 +9,14 @@
+ 
+ #include "core/fpdfapi/page/cpdf_pageobject.h"
+ #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
++#include "core/fpdfapi/page/cpdf_pathobject.h"
+ #include "core/fpdfapi/page/veloce_render_program.h"
+ #include "core/fpdfapi/render/cpdf_renderstatus.h"
+ #include "core/fxge/cfx_renderdevice.h"
+ 
+ namespace {
+ 
+-constexpr size_t kMaxCandidateCommands = 256u * 1024u;
++constexpr size_t kMaxCandidateCommands = 1024u * 1024u;
+ 
+ uint64_t MonotonicNanoseconds() {
+   return static_cast<uint64_t>(
+@@ -24,10 +25,10 @@ uint64_t MonotonicNanoseconds() {
+           .count());
+ }
+ 
+-bool CommandMatchesObject(VeloceRenderCommandKind kind,
++bool CommandMatchesObject(const VeloceRenderCommand& command,
+                           const CPDF_PageObject& object) {
+-  return (kind == VeloceRenderCommandKind::kPath && object.IsPath()) ||
+-         (kind == VeloceRenderCommandKind::kText && object.IsText());
++  return (command.kind == VeloceRenderCommandKind::kPath && object.IsPath()) ||
++         (command.kind == VeloceRenderCommandKind::kText && object.IsText());
+ }
+ 
+ bool RectIntersects(const CFX_FloatRect& object_rect,
+@@ -96,7 +97,10 @@ VeloceUnifiedRenderResult VeloceTryRenderUnifiedProgram(
+   for (uint32_t command_index : candidates) {
+     CPDF_PageObject* object = holder->GetPageObjectByIndex(command_index);
+     if (!object || command_index >= commands.size() ||
+-        !CommandMatchesObject(commands[command_index], *object)) {
++        !CommandMatchesObject(commands[command_index], *object) ||
++        (commands[command_index].HasFlag(
++             VeloceRenderCommandFlag::kDirectPath) &&
++         !VeloceCanDirectDrawPath(*object))) {
+       return VeloceUnifiedRenderResult::kNotEligible;
+     }
+   }
+@@ -113,7 +117,21 @@ VeloceUnifiedRenderResult VeloceTryRenderUnifiedProgram(
+     if (!object->IsActive() || !RectIntersects(object->GetRect(), holder_clip)) {
+       continue;
+     }
+-    status->RenderSingleObject(object, holder_to_device);
++    const VeloceRenderCommand& command = commands[command_index];
++    if (command.HasFlag(VeloceRenderCommandFlag::kDirectPath)) {
++      if (metrics) {
++        ++metrics->direct_path_commands;
++      }
++      if (!status->RenderVeloceDirectPath(object->AsPath(),
++                                          holder_to_device)) {
++        return VeloceUnifiedRenderResult::kCancelled;
++      }
++      if (metrics) {
++        ++metrics->direct_path_dispatches;
++      }
++    } else {
++      status->RenderSingleObject(object, holder_to_device);
++    }
+     if (metrics) {
+       ++metrics->drawn_commands;
+       ++metrics->dispatch_count;
+diff --git a/core/fpdfapi/render/veloce_unified_render_backend.h b/core/fpdfapi/render/veloce_unified_render_backend.h
+index f3d3fa0..f18881d 100644
+--- a/core/fpdfapi/render/veloce_unified_render_backend.h
++++ b/core/fpdfapi/render/veloce_unified_render_backend.h
+@@ -11,7 +11,7 @@ class CFX_Matrix;
+ class CPDF_PageObjectHolder;
+ class CPDF_RenderStatus;
+ 
+-inline constexpr char kVeloceUnifiedRenderBackendRevision[] = "r25-1-0083";
++inline constexpr char kVeloceUnifiedRenderBackendRevision[] = "r25-1-0085";
+ 
+ // Result contract for one complete holder request. Disabled and not-eligible
+ // results guarantee that no destination pixel was changed. A cancelled result
+@@ -41,6 +41,8 @@ struct VeloceUnifiedRenderMetrics {
+   size_t visited_commands = 0;
+   size_t drawn_commands = 0;
+   size_t dispatch_count = 0;
++  size_t direct_path_commands = 0;
++  size_t direct_path_dispatches = 0;
+   size_t program_bytes = 0;
+   size_t index_bytes = 0;
+   size_t index_postings = 0;
+@@ -54,9 +56,10 @@ struct VeloceUnifiedRenderMetrics {
+ // representation; PDFium page objects remain authoritative for fidelity and
+ // editing, and `status` owns the destination device.
+ 
+-// r25-1-0083 executes only completely validated path/text holders through
+-// canonical PDFium object rendering. Unsupported, dense, stale, partial, and
+-// edited programs return before drawing. The legacy PathDL is never delegated.
++// r25-1-0085 directly dispatches only fail-closed simple path commands while
++// retaining canonical PDFium rendering for text and every unsupported path.
++// Dense, stale, partial, and edited programs return before drawing. The legacy
++// PathDL is never delegated.
+ VeloceUnifiedRenderResult VeloceTryRenderUnifiedProgram(
+     CPDF_RenderStatus* status,
+     const CPDF_PageObjectHolder* holder,

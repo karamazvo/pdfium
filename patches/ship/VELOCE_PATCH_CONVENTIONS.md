@@ -122,6 +122,7 @@ r25-1-0080
 r25-1-0081
 r25-1-0082
 r25-1-0083
+r25-1-0085
 ```
 
 Do not rename, delete, or reuse 0077/0078. They remain historical evidence for
@@ -259,6 +260,7 @@ Release workflows:
 | r25-1-0081 | `.github/workflows/pdfium-android-arm64-r25-1-0081-canonical-correctness-baseline.yml` | r25-1-0080 plus `0081`; excludes `0053..0074` and `0077..0078` | Disables the older `0013..0031` holder executor before cache/compile/draw and keeps the unified backend disabled, making canonical PDFium the sole pixel owner. |
 | r25-1-0082 | `.github/workflows/pdfium-android-arm64-r25-1-0082-holder-space-candidate-index.yml` | r25-1-0081 plus `0082`; excludes `0053..0074` and `0077..0078` | Adds bounded immutable holder-space candidate metadata to huge RenderPrograms while keeping both accelerated executors disabled and canonical PDFium as sole pixel owner. |
 | r25-1-0083 | `.github/workflows/pdfium-android-arm64-r25-1-0083-exact-path-text-candidate-executor.yml` | r25-1-0082 plus `0083`; excludes `0053..0074` and `0077..0078` | Enables the single unified boundary only for complete indexed path/text holders. Candidate omission is conservative, replay calls canonical PDFium object rendering, and dense/edited/unsupported requests fail closed before drawing. |
+| r25-1-0085 | `.github/workflows/pdfium-android-arm64-r25-1-0085-direct-path-dispatch.yml` | r25-1-0083 plus `0085`; 0084 was not emitted; excludes `0053..0074` and `0077..0078` | Adds a two-byte compiled command record and direct `ProcessPath()` dispatch only for the shared fail-closed simple-path predicate. Text and unsupported paths remain canonical, query output is capped at one million logical indices with allocator capacity metered, and PDFium remains the only rasterizer/pixel owner. |
 
 Recent revisions:
 
@@ -288,6 +290,7 @@ Recent revisions:
 | r25-1-0081 | `0081-veloce-disable-legacy-path-display-list.patch` | implemented, pending build | Establish the canonical correctness A/B baseline by disabling both old and new accelerated executors before any destination mutation. |
 | r25-1-0082 | `0082-veloce-render-program-holder-space-candidate-index.patch` | implemented, pending build | Build a bounded ordered candidate index only for huge holders, with uncertain commands always replayed and no runtime consumer or pixel behavior change. |
 | r25-1-0083 | `0083-veloce-render-program-exact-path-text-executor.patch` | implemented, pending build | Consume the one index for sparse complete path/text holders, validate candidates before drawing, replay with canonical `RenderSingleObject()`, and invalidate stale spatial metadata on owned object mutation. |
+| r25-1-0085 | `0085-veloce-render-program-direct-path-dispatch.patch` | implemented, pending build | Compile and revalidate an exact direct-path flag, bypass generic object/transparency/type dispatch for that subset, retain PDFium path/color/device execution, and admit up to one million ordered candidates with bounded scratch. Revision 0084 was not emitted. |
 
 Historical native HEAD before r48 (not the active line):
 
@@ -582,9 +585,12 @@ r25-1-0080: compact command summary and live-object state identity
 r25-1-0081: canonical correctness isolation; legacy and unified executors disabled
 r25-1-0082: bounded conservative holder-space candidate index
 r25-1-0083: exact path/text vertical executor
-r25-1-0084: dense path execution kernel with bounded reusable scratch
-r25-1-0085: clip/image/Form/group/transparency completeness
-r25-1-0086: proof-gated blend kernels
+r25-1-0084: not emitted; do not reuse this revision
+r25-1-0085: fail-closed direct path dispatch through PDFium ProcessPath
+r25-1-0086: bounded dense candidate chunks and reusable query scratch
+r25-1-0087: interned consecutive path-state packets
+r25-1-0088: clip/image/Form/group/transparency completeness
+r25-1-0089: proof-gated blend kernels
 ```
 
 These are revisions of one framework, not separate fast paths. Every revision
