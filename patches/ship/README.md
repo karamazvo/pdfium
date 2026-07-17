@@ -115,6 +115,7 @@ these patches:
 | r25-1-0083 | `0083-veloce-render-program-exact-path-text-executor.patch` | First unified executor. Complete parsed path/text holders with a valid 0082 index query at most 262144 candidates from the current device clip, validate every candidate before drawing, and replay survivors through PDFium's canonical `RenderSingleObject()` in painter order. Text remains always-replayed; only conservatively bounded paths may be omitted. Dense, stale, edited, unsupported, partial, and stop-object requests fall back before drawing. Owned object mutation invalidates program/index metadata in O(1). |
 | r25-1-0085 | `0085-veloce-render-program-direct-path-dispatch.patch` | Extends each immutable command to two bytes (`kind + exact flags`) under the same 32 MiB ceiling. A shared fail-closed predicate flags only unclipped, simple-paint, normal-blend paths without soft masks or transfer functions, then revalidates the live object before drawing. Those paths skip generic object/transparency/type dispatch but still use PDFium `ProcessPath()` and `CFX_RenderDevice`; text and unsupported paths remain canonical ordered commands. Candidate output rises to a bounded one million logical indices; allocator capacity remains metered. Revision 0084 was not emitted. |
 | r25-1-0086 | `0086-veloce-render-program-streaming-candidate-cursor.patch` | Removes the dense-query allocation/cap cliff. One fixed-size cursor merges selected immutable posting streams into strictly increasing painter order and emits fixed 4096-index stack chunks, deduplicating across chunk boundaries. When selected raw postings are at least the complete command count, the cursor uses exact linear command order because it requires no more source reads. The executor owns no candidate vector, cache, lock, or second rasterizer; live direct-path predicate drift selects canonical per-object rendering, while structural ownership failure cancels and discards partial output. |
+| r25-1-0087 | `0087-veloce-render-program-exact-path-state-packets.patch` | Reduces dense visible stroke execution by collecting consecutive proven stroke-only commands into fixed 256-command, 16384-point packets. Exact live graph-state identity, resolved stroke ARGB, and fill options form packet boundaries. Every path retains its own geometry, matrix, AGG rasterization, and destination composite; only immutable setup and bounded raster scratch are reused. Text, fills, transparent strokes, state changes, capacity, and cancellation remain hard boundaries. |
 
 ## Why this directory exists
 
@@ -127,8 +128,8 @@ subset.
 ## How to apply
 
 The patch directory contains historical branches and must not be applied by
-blind numeric globbing. For `r25-1-0086`, apply the r25 rendering base through
-0031, then only 0051, 0075, 0076, 0079..0083, 0085, and 0086:
+blind numeric globbing. For `r25-1-0087`, apply the r25 rendering base through
+0031, then only 0051, 0075, 0076, 0079..0083, and 0085..0087:
 
 ```bash
 git apply patches/ship/01-jpeg-downscale-on-decode.patch
@@ -143,9 +144,10 @@ git apply patches/ship/0082-veloce-render-program-holder-space-candidate-index.p
 git apply patches/ship/0083-veloce-render-program-exact-path-text-executor.patch
 git apply patches/ship/0085-veloce-render-program-direct-path-dispatch.patch
 git apply patches/ship/0086-veloce-render-program-streaming-candidate-cursor.patch
+git apply patches/ship/0087-veloce-render-program-exact-path-state-packets.patch
 ```
 
-Do not apply 0053..0074, 0077..0078, or an invented 0084 to an `r25-1-0086`
+Do not apply 0053..0074, 0077..0078, or an invented 0084 to an `r25-1-0087`
 build. The exact machine-checked list lives in the revision workflow.
 
 The following legacy list is retained for historical stacks only:
@@ -331,6 +333,12 @@ chunks, and preserves duplicate suppression across chunks. Dense queries use
 the existing compact command order directly only when selected raw postings
 are at least the complete command count, an exact work-count decision. There
 is no new index, copied graphics state, cache, lock, scheduler, or pixel owner.
+Patch 0087 depends on 0086 and targets the remaining dense visible-path cost.
+It resolves exact live stroke state once per bounded packet and reuses AGG
+renderer, path-storage, rasterizer, and scanline setup while executing every
+path as a separate ordered raster/composite operation. It stores no packet in
+the holder, copies no geometry, introduces no cache or lock, and leaves every
+non-proven command on the existing canonical path.
 Patch 0053 can also be applied directly on the rel-260701 stable line after
 patch 0051. It is behavior-preserving and only inserts the `VeloceRenderPlan`
 facade above the existing r25 path-display-list backend.

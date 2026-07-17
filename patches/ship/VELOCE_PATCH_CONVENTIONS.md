@@ -263,6 +263,7 @@ Release workflows:
 | r25-1-0083 | `.github/workflows/pdfium-android-arm64-r25-1-0083-exact-path-text-candidate-executor.yml` | r25-1-0082 plus `0083`; excludes `0053..0074` and `0077..0078` | Enables the single unified boundary only for complete indexed path/text holders. Candidate omission is conservative, replay calls canonical PDFium object rendering, and dense/edited/unsupported requests fail closed before drawing. |
 | r25-1-0085 | `.github/workflows/pdfium-android-arm64-r25-1-0085-direct-path-dispatch.yml` | r25-1-0083 plus `0085`; 0084 was not emitted; excludes `0053..0074` and `0077..0078` | Adds a two-byte compiled command record and direct `ProcessPath()` dispatch only for the shared fail-closed simple-path predicate. Text and unsupported paths remain canonical, query output is capped at one million logical indices with allocator capacity metered, and PDFium remains the only rasterizer/pixel owner. |
 | r25-1-0086 | `.github/workflows/pdfium-android-arm64-r25-1-0086-streaming-candidate-cursor.yml` | r25-1-0085 plus `0086`; excludes `0053..0074` and `0077..0078` | Replaces the dynamic candidate vector and dense cap with one fixed-memory ordered posting cursor and fixed 4096-index replay chunks. Exact dense queries use linear command order; no index, cache, lock, scheduler, graphics-state copy, or pixel owner is added. |
+| r25-1-0087 | `.github/workflows/pdfium-android-arm64-r25-1-0087-exact-path-state-packets.yml` | r25-1-0086 plus `0087`; excludes `0053..0074` and `0077..0078` | Reuses exact live stroke state and bounded AGG scratch across consecutive proven commands while retaining separate geometry, matrix, rasterization, and destination composite for every path. |
 
 Recent revisions:
 
@@ -294,6 +295,7 @@ Recent revisions:
 | r25-1-0083 | `0083-veloce-render-program-exact-path-text-executor.patch` | implemented, pending build | Consume the one index for sparse complete path/text holders, validate candidates before drawing, replay with canonical `RenderSingleObject()`, and invalidate stale spatial metadata on owned object mutation. |
 | r25-1-0085 | `0085-veloce-render-program-direct-path-dispatch.patch` | implemented, pending build | Compile and revalidate an exact direct-path flag, bypass generic object/transparency/type dispatch for that subset, retain PDFium path/color/device execution, and admit up to one million ordered candidates with bounded scratch. Revision 0084 was not emitted. |
 | r25-1-0086 | `0086-veloce-render-program-streaming-candidate-cursor.patch` | implemented, pending build | Stream the exact ordered candidate union through fixed stack storage, remove sort/vector growth and the one-million-candidate fallback cliff, and select exact linear replay when it is no more source work than posting merge. |
+| r25-1-0087 | `0087-veloce-render-program-exact-path-state-packets.patch` | implemented, pending build | Packet consecutive proven stroke-only commands by exact live state, cap packets at 256 commands/16384 points, and reuse AGG scratch without merging geometry or changing per-path compositing. |
 
 Historical native HEAD before r48 (not the active line):
 

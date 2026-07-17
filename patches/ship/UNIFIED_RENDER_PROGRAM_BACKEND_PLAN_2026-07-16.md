@@ -115,7 +115,7 @@ stores a raw page-object pointer beyond holder lifetime.
 | `r25-1-0084` | Not emitted; revision remains unused | No artifact |
 | `r25-1-0085` | Fail-closed compiled direct-path dispatch into PDFium's existing path renderer | Proven simple paths only |
 | `r25-1-0086` | Allocation-free ordered candidate cursor, fixed replay chunks, and exact dense linear mode | Exact ordered pixels |
-| `r25-1-0087` | Interned consecutive path-state packets | Proven path state only |
+| `r25-1-0087` | Fixed exact consecutive stroke-state packets with reusable AGG scratch | Proven stroke state only; separate per-path pixels |
 | `r25-1-0088` | Clip/image/Form/group/transparency completeness | Proven commands only |
 | `r25-1-0089` | Proof-gated blend kernels | Exact eligible blends only |
 
@@ -222,6 +222,27 @@ one-million-candidate fallback/replay duplication. It does not yet reduce the
 cost of rasterizing genuinely visible dense paths; that remains the packet
 executor scope beginning in 0087.
 
+### 6.4 Locked 0087 Packet Contract
+
+`0087` changes dense direct-stroke execution, not command eligibility or
+candidate selection:
+
+- only consecutive live paths already accepted by the 0085 predicate and
+  proven stroke-only enter packet buffering;
+- exact graph-state object identity, resolved stroke ARGB, and complete fill
+  options are packet state; any difference flushes before the next command;
+- text, fills, transparent strokes, unsupported paths, cancellation, and
+  capacity are hard ordered boundaries;
+- one packet holds at most 256 path references and 16384 source points in
+  stack-owned arrays; no packet is retained by the holder or a cache;
+- each path keeps its own live geometry and matrix and performs a separate AGG
+  rasterization and destination composite in painter order;
+- AGG path storage, rasterizer, scanline, and immutable renderer setup are
+  reused only within the bounded packet;
+- non-AGG drivers execute the same ordered per-path `DrawPath()` loop;
+- packet failure returns cancellation so partially written output is discarded
+  rather than replayed over.
+
 ## 7. Performance Proof
 
 Compare canonical r25 PDFium, r25-0078, r25-1, and MuPDF 1.27.2 on the same
@@ -234,6 +255,8 @@ Required cold/warm metrics:
 ```text
 programBuildMs indexBuildMs compileMs candidateQueryMs replayMs rasterMs blendMs
 totalCommands candidateCommands visitedCommands drawnCommands dispatchCount
+pathPacketCommands pathPacketDispatches pathPacketStateFlushes
+pathPacketCapacityFlushes maxPathPacketCommands
 cacheBytes scratchBytes peakRssBytes cancelLatencyMs
 ```
 

@@ -1,0 +1,702 @@
+From 9d8e2a143f8c5a5514545460b5c3c24860c8bf60 Mon Sep 17 00:00:00 2001
+From: "sh.chao" <sh.chao@gmail.com>
+Date: Fri, 17 Jul 2026 12:27:25 +0800
+Subject: [PATCH] r25-1-0087: batch exact path-state packets
+
+Reduce the remaining dense-tile execution cost after 0086 without changing
+candidate selection or pixel ownership. Consecutive visible stroke-only
+commands are collected in fixed 256-command, 16384-point packets. A packet
+shares only resolved stroke color, fill options, graph-state identity, AGG
+renderer setup, and reusable raster scratch.
+
+Every PDF path keeps its own live geometry, matrix, rasterization, and
+destination composite in painter order. Text, fills, unsupported state,
+transparent strokes, state changes, capacity limits, and cancellation remain
+hard boundaries. The existing direct-path predicate is checked immediately
+before buffering; the packet layer does not duplicate it or retain page-object
+pointers beyond one synchronous render call.
+
+Add bounded packet metrics and an exact fallback implementation for non-AGG
+drivers. No Kotlin/JNI policy, cache, scheduler, lock, copied geometry, or
+alternate rasterizer is introduced.
+
+---
+ core/fpdfapi/render/cpdf_renderstatus.cpp     | 168 ++++++++++++++++++
+ core/fpdfapi/render/cpdf_renderstatus.h       |  17 ++
+ .../render/veloce_unified_render_backend.cpp  |  60 ++++++-
+ .../render/veloce_unified_render_backend.h    |  16 +-
+ core/fxge/agg/cfx_agg_devicedriver.cpp        |  95 +++++++++-
+ core/fxge/agg/cfx_agg_devicedriver.h          |   6 +
+ core/fxge/cfx_renderdevice.cpp                |  27 +++
+ core/fxge/cfx_renderdevice.h                  |   6 +
+ core/fxge/renderdevicedriver_iface.cpp        |  20 +++
+ core/fxge/renderdevicedriver_iface.h          |   9 +
+ third_party/agg23/agg_path_storage.h          |   5 +
+ 11 files changed, 411 insertions(+), 18 deletions(-)
+
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 647400b30..f2482d7fe 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -10,6 +10,7 @@
+ #include <stdint.h>
+ 
+ #include <algorithm>
++#include <array>
+ #include <memory>
+ #include <numeric>
+ #include <set>
+@@ -384,6 +385,173 @@ bool CPDF_RenderStatus::RenderVeloceDirectPath(
+   return !stopped_;
+ }
+ 
++bool CPDF_RenderStatus::RenderVeloceDirectPathPacket(
++    pdfium::span<CPDF_PathObject* const> path_objects,
++    const CFX_Matrix& mtObj2Device,
++    VeloceDirectPathPacketMetrics* metrics) {
++  constexpr size_t kMaxPacketCommands = 256;
++  constexpr size_t kMaxPacketPoints = 16u * 1024u;
++
++  if (metrics) {
++    *metrics = {};
++  }
++  if (path_objects.empty()) {
++    return true;
++  }
++  if (!path_objects.front()) {
++    return false;
++  }
++  if (ShouldCancelRender()) {
++    stopped_ = true;
++    return false;
++  }
++
++  // Every packet path is proven clip-free. Reset a clip left by a preceding
++  // canonical command once at the ordered packet boundary, not per path.
++  ProcessClipPath(path_objects.front()->clip_path(), mtObj2Device);
++
++  std::array<CPDF_PathObject*, kMaxPacketCommands> packet_objects;
++  std::array<const CFX_Path*, kMaxPacketCommands> packet_paths;
++  std::array<CFX_Matrix, kMaxPacketCommands> packet_matrices;
++  size_t packet_count = 0;
++  size_t packet_points = 0;
++  const CFX_GraphStateData* packet_graph_state = nullptr;
++  uint32_t packet_stroke_argb = 0;
++  CFX_FillRenderOptions packet_fill_options;
++
++  auto reset_packet = [&]() {
++    packet_count = 0;
++    packet_points = 0;
++    packet_graph_state = nullptr;
++    packet_stroke_argb = 0;
++    packet_fill_options = CFX_FillRenderOptions();
++  };
++
++  auto flush_packet = [&]() -> bool {
++    if (packet_count == 0) {
++      return true;
++    }
++    bool draw_succeeded = false;
++    if (packet_count == 1) {
++      draw_succeeded = device_->DrawPath(
++          *packet_paths[0], &packet_matrices[0], packet_graph_state, 0,
++          packet_stroke_argb, packet_fill_options);
++      if (!draw_succeeded) {
++        cur_obj_ = packet_objects[0];
++        DrawObjWithBackground(packet_objects[0], mtObj2Device);
++        draw_succeeded = !stopped_;
++      }
++    } else {
++      draw_succeeded = device_->DrawPathBatch(
++          pdfium::span(packet_paths).first(packet_count),
++          pdfium::span(packet_matrices).first(packet_count),
++          packet_graph_state, 0, packet_stroke_argb, packet_fill_options);
++    }
++    if (metrics) {
++      metrics->commands += packet_count;
++      ++metrics->dispatches;
++      metrics->max_commands =
++          std::max(metrics->max_commands, packet_count);
++    }
++    reset_packet();
++    return draw_succeeded;
++  };
++
++  for (CPDF_PathObject* path_obj : path_objects) {
++    if (!path_obj || !path_obj->stroke() || !path_obj->has_no_filltype()) {
++      return false;
++    }
++
++    cur_obj_ = path_obj;
++    if (!options_.CheckPageObjectVisible(path_obj)) {
++      continue;
++    }
++
++    const CFX_Path* path = path_obj->path().GetObject();
++    const CFX_GraphStateData* graph_state =
++        path_obj->graph_state().GetObject();
++    CFX_Matrix path_matrix = path_obj->matrix() * mtObj2Device;
++    if (!path || !graph_state || !IsAvailableMatrix(path_matrix)) {
++      if (!flush_packet()) {
++        return false;
++      }
++      if (!RenderVeloceDirectPath(path_obj, mtObj2Device)) {
++        return false;
++      }
++      continue;
++    }
++
++    const uint32_t stroke_argb = GetStrokeArgb(path_obj);
++    CFX_FillRenderOptions fill_options =
++        GetFillOptionsForDrawPathWithBlend(
++            options_.GetOptions(), path_obj,
++            CFX_FillRenderOptions::FillType::kNoFill,
++            /*is_stroke=*/true, type3_char_);
++    if (FXARGB_A(stroke_argb) == 0) {
++      if (!flush_packet()) {
++        return false;
++      }
++      if (!RenderVeloceDirectPath(path_obj, mtObj2Device)) {
++        return false;
++      }
++      continue;
++    }
++    const size_t path_points = path->GetPoints().size();
++    const bool same_state =
++        packet_count == 0 ||
++        (packet_graph_state == graph_state &&
++         packet_stroke_argb == stroke_argb &&
++         packet_fill_options == fill_options);
++    const bool within_capacity =
++        packet_count < kMaxPacketCommands &&
++        path_points <= kMaxPacketPoints -
++                           std::min(packet_points, kMaxPacketPoints);
++    if (!same_state || !within_capacity) {
++      if (metrics) {
++        if (!same_state) {
++          ++metrics->state_flushes;
++        } else {
++          ++metrics->capacity_flushes;
++        }
++      }
++      if (!flush_packet()) {
++        return false;
++      }
++    }
++
++    if (path_points > kMaxPacketPoints) {
++      if (!RenderVeloceDirectPath(path_obj, mtObj2Device)) {
++        return false;
++      }
++      if (metrics) {
++        ++metrics->commands;
++        ++metrics->dispatches;
++        metrics->max_commands = std::max(metrics->max_commands, size_t{1});
++      }
++      continue;
++    }
++
++    if (packet_count == 0) {
++      packet_graph_state = graph_state;
++      packet_stroke_argb = stroke_argb;
++      packet_fill_options = fill_options;
++    }
++    packet_objects[packet_count] = path_obj;
++    packet_paths[packet_count] = path;
++    packet_matrices[packet_count] = path_matrix;
++    ++packet_count;
++    packet_points += path_points;
++  }
++
++  if (!flush_packet()) {
++    return false;
++  }
++  if (ShouldCancelRender()) {
++    stopped_ = true;
++  }
++  return !stopped_;
++}
++
+ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
+                                              const CFX_Matrix& mtObj2Device,
+                                              PauseIndicatorIface* pPause) {
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.h b/core/fpdfapi/render/cpdf_renderstatus.h
+index 3f90fdd2b..81ef6393f 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.h
++++ b/core/fpdfapi/render/cpdf_renderstatus.h
+@@ -7,6 +7,7 @@
+ #ifndef CORE_FPDFAPI_RENDER_CPDF_RENDERSTATUS_H_
+ #define CORE_FPDFAPI_RENDER_CPDF_RENDERSTATUS_H_
+ 
++#include <stddef.h>
+ #include <stdint.h>
+ #include <memory>
+ #include <utility>
+@@ -20,6 +21,7 @@
+ #include "core/fpdfapi/parser/cpdf_dictionary.h"
+ #include "core/fpdfapi/render/cpdf_renderoptions.h"
+ #include "core/fxcrt/retain_ptr.h"
++#include "core/fxcrt/span.h"
+ #include "core/fxcrt/unowned_ptr.h"
+ #include "core/fxge/dib/fx_dib.h"
+ 
+@@ -45,6 +47,14 @@ class CPDF_Type3Font;
+ class PauseIndicatorIface;
+ struct VeloceRenderCallbacks;
+ 
++struct VeloceDirectPathPacketMetrics {
++  size_t commands = 0;
++  size_t dispatches = 0;
++  size_t state_flushes = 0;
++  size_t capacity_flushes = 0;
++  size_t max_commands = 0;
++};
++
+ class CPDF_RenderStatus {
+  public:
+   CPDF_RenderStatus(CPDF_RenderContext* context, CFX_RenderDevice* pDevice);
+@@ -82,6 +92,13 @@ class CPDF_RenderStatus {
+   // forced-color, path-option, raster, and fallback semantics.
+   bool RenderVeloceDirectPath(CPDF_PathObject* path_obj,
+                               const CFX_Matrix& mtObj2Device);
++  // Executes consecutive, already-proven stroke paths in exact painter order.
++  // Each path remains a separate raster/composite operation; only immutable
++  // resolved state and bounded AGG scratch are shared within a packet.
++  bool RenderVeloceDirectPathPacket(
++      pdfium::span<CPDF_PathObject* const> path_objects,
++      const CFX_Matrix& mtObj2Device,
++      VeloceDirectPathPacketMetrics* metrics);
+   bool ContinueSingleObject(CPDF_PageObject* pObj,
+                             const CFX_Matrix& mtObj2Device,
+                             PauseIndicatorIface* pPause);
+diff --git a/core/fpdfapi/render/veloce_unified_render_backend.cpp b/core/fpdfapi/render/veloce_unified_render_backend.cpp
+index 9adaa6a93..c8197a54f 100644
+--- a/core/fpdfapi/render/veloce_unified_render_backend.cpp
++++ b/core/fpdfapi/render/veloce_unified_render_backend.cpp
+@@ -3,6 +3,7 @@
+ 
+ #include "core/fpdfapi/render/veloce_unified_render_backend.h"
+ 
++#include <algorithm>
+ #include <array>
+ #include <chrono>
+ #include <cstdint>
+@@ -17,6 +18,7 @@
+ namespace {
+ 
+ constexpr size_t kCandidateChunkCommands = 4096;
++constexpr size_t kPathPacketCommands = 256;
+ 
+ uint64_t MonotonicNanoseconds() {
+   return static_cast<uint64_t>(
+@@ -96,6 +98,29 @@ VeloceUnifiedRenderResult VeloceTryRenderUnifiedProgram(
+   }
+ 
+   const auto commands = program->commands();
++  std::array<CPDF_PathObject*, kPathPacketCommands> path_packet;
++  size_t path_packet_count = 0;
++  auto flush_path_packet = [&]() -> bool {
++    if (path_packet_count == 0) {
++      return true;
++    }
++    VeloceDirectPathPacketMetrics packet_metrics;
++    const bool rendered = status->RenderVeloceDirectPathPacket(
++        pdfium::span(path_packet).first(path_packet_count), holder_to_device,
++        metrics ? &packet_metrics : nullptr);
++    if (metrics) {
++      metrics->path_packet_commands += packet_metrics.commands;
++      metrics->path_packet_dispatches += packet_metrics.dispatches;
++      metrics->path_packet_state_flushes += packet_metrics.state_flushes;
++      metrics->path_packet_capacity_flushes +=
++          packet_metrics.capacity_flushes;
++      metrics->max_path_packet_commands = std::max(
++          metrics->max_path_packet_commands, packet_metrics.max_commands);
++      metrics->dispatch_count += packet_metrics.dispatches;
++    }
++    path_packet_count = 0;
++    return rendered;
++  };
+   const uint64_t replay_start = metrics ? MonotonicNanoseconds() : 0;
+   while (const size_t chunk_size = cursor.NextChunk(candidate_chunk)) {
+     if (metrics) {
+@@ -127,29 +152,54 @@ VeloceUnifiedRenderResult VeloceTryRenderUnifiedProgram(
+       const bool direct_path =
+           command.HasFlag(VeloceRenderCommandFlag::kDirectPath) &&
+           VeloceCanDirectDrawPath(*object);
+-      if (direct_path) {
++      CPDF_PathObject* path = object->AsPath();
++      const bool packet_path =
++          direct_path && path && path->stroke() && path->has_no_filltype();
++      if (packet_path) {
+         if (metrics) {
+           ++metrics->direct_path_commands;
+         }
+-        if (!status->RenderVeloceDirectPath(object->AsPath(),
+-                                            holder_to_device)) {
++        path_packet[path_packet_count++] = path;
++        if (path_packet_count == path_packet.size() &&
++            !flush_path_packet()) {
+           return VeloceUnifiedRenderResult::kCancelled;
+         }
+         if (metrics) {
+           ++metrics->direct_path_dispatches;
+         }
+       } else {
+-        status->RenderSingleObject(object, holder_to_device);
++        if (!flush_path_packet()) {
++          return VeloceUnifiedRenderResult::kCancelled;
++        }
++        if (direct_path) {
++          if (metrics) {
++            ++metrics->direct_path_commands;
++          }
++          if (!status->RenderVeloceDirectPath(path, holder_to_device)) {
++            return VeloceUnifiedRenderResult::kCancelled;
++          }
++          if (metrics) {
++            ++metrics->direct_path_dispatches;
++            ++metrics->dispatch_count;
++          }
++        } else {
++          status->RenderSingleObject(object, holder_to_device);
++          if (metrics) {
++            ++metrics->dispatch_count;
++          }
++        }
+       }
+       if (metrics) {
+         ++metrics->drawn_commands;
+-        ++metrics->dispatch_count;
+       }
+       if (status->IsStopped() || status->ShouldCancelRender()) {
+         return VeloceUnifiedRenderResult::kCancelled;
+       }
+     }
+   }
++  if (!flush_path_packet()) {
++    return VeloceUnifiedRenderResult::kCancelled;
++  }
+   if (metrics) {
+     metrics->replay_ns = MonotonicNanoseconds() - replay_start;
+   }
+diff --git a/core/fpdfapi/render/veloce_unified_render_backend.h b/core/fpdfapi/render/veloce_unified_render_backend.h
+index ebaeca4eb..0feba32a5 100644
+--- a/core/fpdfapi/render/veloce_unified_render_backend.h
++++ b/core/fpdfapi/render/veloce_unified_render_backend.h
+@@ -11,7 +11,7 @@ class CFX_Matrix;
+ class CPDF_PageObjectHolder;
+ class CPDF_RenderStatus;
+ 
+-inline constexpr char kVeloceUnifiedRenderBackendRevision[] = "r25-1-0086";
++inline constexpr char kVeloceUnifiedRenderBackendRevision[] = "r25-1-0087";
+ 
+ // Result contract for one complete holder request. Disabled and not-eligible
+ // results guarantee that no destination pixel was changed. A cancelled result
+@@ -46,6 +46,11 @@ struct VeloceUnifiedRenderMetrics {
+   size_t dispatch_count = 0;
+   size_t direct_path_commands = 0;
+   size_t direct_path_dispatches = 0;
++  size_t path_packet_commands = 0;
++  size_t path_packet_dispatches = 0;
++  size_t path_packet_state_flushes = 0;
++  size_t path_packet_capacity_flushes = 0;
++  size_t max_path_packet_commands = 0;
+   size_t program_bytes = 0;
+   size_t index_bytes = 0;
+   size_t index_postings = 0;
+@@ -59,11 +64,10 @@ struct VeloceUnifiedRenderMetrics {
+ // representation; PDFium page objects remain authoritative for fidelity and
+ // editing, and `status` owns the destination device.
+ 
+-// r25-1-0086 streams painter-ordered candidates through fixed stack storage.
+-// Dense queries use exact linear command order instead of a candidate cap or
+-// allocation cliff. Direct dispatch remains fail-closed, while live state drift
+-// selects canonical rendering for that command. The legacy PathDL is never
+-// delegated.
++// r25-1-0087 additionally groups consecutive, proven stroke paths into bounded
++// exact-state packets. Every path keeps its own transform, rasterization, and
++// destination composite; only immutable setup and device scratch are reused.
++// Unsupported state remains an ordered canonical barrier.
+ VeloceUnifiedRenderResult VeloceTryRenderUnifiedProgram(
+     CPDF_RenderStatus* status,
+     const CPDF_PageObjectHolder* holder,
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.cpp b/core/fxge/agg/cfx_agg_devicedriver.cpp
+index 3c78cd916..263393cce 100644
+--- a/core/fxge/agg/cfx_agg_devicedriver.cpp
++++ b/core/fxge/agg/cfx_agg_devicedriver.cpp
+@@ -933,9 +933,9 @@ class RendererScanLineAaOffset {
+   unsigned top_;
+ };
+ 
+-agg::path_storage BuildAggPath(const CFX_Path& path,
+-                               const CFX_Matrix* pObject2Device) {
+-  agg::path_storage agg_path;
++void BuildAggPathInto(const CFX_Path& path,
++                      const CFX_Matrix* pObject2Device,
++                      agg::path_storage* agg_path) {
+   pdfium::span<const CFX_Path::Point> points = path.GetPoints();
+   for (size_t i = 0; i < points.size(); ++i) {
+     CFX_PointF pos = points[i].point_;
+@@ -946,7 +946,7 @@ agg::path_storage BuildAggPath(const CFX_Path& path,
+     pos = HardClip(pos);
+     CFX_Path::Point::Type point_type = points[i].type_;
+     if (point_type == CFX_Path::Point::Type::kMove) {
+-      agg_path.move_to(pos.x, pos.y);
++      agg_path->move_to(pos.x, pos.y);
+     } else if (point_type == CFX_Path::Point::Type::kLine) {
+       if (i > 0 && points[i - 1].IsTypeAndOpen(CFX_Path::Point::Type::kMove) &&
+           (i + 1 == points.size() ||
+@@ -954,7 +954,7 @@ agg::path_storage BuildAggPath(const CFX_Path& path,
+           points[i].point_ == points[i - 1].point_) {
+         pos.x += 1;
+       }
+-      agg_path.line_to(pos.x, pos.y);
++      agg_path->line_to(pos.x, pos.y);
+     } else if (point_type == CFX_Path::Point::Type::kBezier) {
+       if (i > 0 && i + 2 < points.size()) {
+         CFX_PointF pos0 = points[i - 1].point_;
+@@ -971,13 +971,19 @@ agg::path_storage BuildAggPath(const CFX_Path& path,
+         agg::curve4 curve(pos0.x, pos0.y, pos.x, pos.y, pos2.x, pos2.y, pos3.x,
+                           pos3.y);
+         i += 2;
+-        agg_path.add_path(curve);
++        agg_path->add_path(curve);
+       }
+     }
+     if (points[i].close_figure_) {
+-      agg_path.end_poly();
++      agg_path->end_poly();
+     }
+   }
++}
++
++agg::path_storage BuildAggPath(const CFX_Path& path,
++                               const CFX_Matrix* pObject2Device) {
++  agg::path_storage agg_path;
++  BuildAggPathInto(path, pObject2Device, &agg_path);
+   return agg_path;
+ }
+ 
+@@ -1249,6 +1255,81 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_Path& path,
+   return true;
+ }
+ 
++bool CFX_AggDeviceDriver::DrawPathBatch(
++    pdfium::span<const CFX_Path* const> paths,
++    pdfium::span<const CFX_Matrix> object_to_device,
++    const CFX_GraphStateData* pGraphState,
++    uint32_t fill_color,
++    uint32_t stroke_color,
++    const CFX_FillRenderOptions& fill_options) {
++  if (paths.empty() || bitmap_->GetBuffer().empty()) {
++    return true;
++  }
++  if (paths.size() != object_to_device.size()) {
++    return false;
++  }
++  if (fill_options.fill_type !=
++          CFX_FillRenderOptions::FillType::kNoFill ||
++      fill_color != 0 || !pGraphState || FXARGB_A(stroke_color) == 0) {
++    return RenderDeviceDriverIface::DrawPathBatch(
++        paths, object_to_device, pGraphState, fill_color, stroke_color,
++        fill_options);
++  }
++
++  fill_options_ = fill_options;
++  RetainPtr<CFX_DIBitmap> backdrop =
++      group_knockout_ ? backdrop_bitmap_ : nullptr;
++  CFX_AggRenderer renderer(bitmap_, backdrop, clip_rgn_.get(), stroke_color,
++                           fill_options.full_cover, rgb_byte_order_);
++  agg::scanline_u8 scanline;
++  agg::path_storage path_data;
++  agg::rasterizer_scanline_aa rasterizer;
++  rasterizer.clip_box(0.0f, 0.0f, static_cast<float>(GetPixelWidth()),
++                      static_cast<float>(GetPixelHeight()));
++
++  if (fill_options.zero_area) {
++    for (size_t i = 0; i < paths.size(); ++i) {
++      const CFX_Path* path = paths[i];
++      if (!path) {
++        return false;
++      }
++      path_data.remove_all();
++      rasterizer.reset();
++      BuildAggPathInto(*path, &object_to_device[i], &path_data);
++      RasterizeStroke(&rasterizer, &path_data, nullptr, pGraphState, 1,
++                      fill_options.stroke_text_mode);
++      agg::render_scanlines(rasterizer, scanline, renderer,
++                            fill_options.aliased_path);
++    }
++    return true;
++  }
++
++  for (size_t i = 0; i < paths.size(); ++i) {
++    const CFX_Path* path = paths[i];
++    if (!path) {
++      return false;
++    }
++    const CFX_Matrix& object_matrix = object_to_device[i];
++    CFX_Matrix matrix1;
++    CFX_Matrix matrix2;
++    matrix1.a = std::max(fabs(object_matrix.a), fabs(object_matrix.b));
++    matrix1.d = matrix1.a;
++    matrix2 = CFX_Matrix(
++        object_matrix.a / matrix1.a, object_matrix.b / matrix1.a,
++        object_matrix.c / matrix1.d, object_matrix.d / matrix1.d, 0, 0);
++    matrix1 = object_matrix * matrix2.GetInverse();
++
++    path_data.remove_all();
++    rasterizer.reset();
++    BuildAggPathInto(*path, &matrix1, &path_data);
++    RasterizeStroke(&rasterizer, &path_data, &matrix2, pGraphState, matrix1.a,
++                    fill_options.stroke_text_mode);
++    agg::render_scanlines(rasterizer, scanline, renderer,
++                          fill_options.aliased_path);
++  }
++  return true;
++}
++
+ bool CFX_AggDeviceDriver::FillRect(const FX_RECT& rect, uint32_t fill_color) {
+   if (bitmap_->GetBuffer().empty()) {
+     return true;
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.h b/core/fxge/agg/cfx_agg_devicedriver.h
+index 3adfbda73..7b89dec35 100644
+--- a/core/fxge/agg/cfx_agg_devicedriver.h
++++ b/core/fxge/agg/cfx_agg_devicedriver.h
+@@ -66,6 +66,12 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
+                 uint32_t fill_color,
+                 uint32_t stroke_color,
+                 const CFX_FillRenderOptions& fill_options) override;
++  bool DrawPathBatch(pdfium::span<const CFX_Path* const> paths,
++                     pdfium::span<const CFX_Matrix> object_to_device,
++                     const CFX_GraphStateData* pGraphState,
++                     uint32_t fill_color,
++                     uint32_t stroke_color,
++                     const CFX_FillRenderOptions& fill_options) override;
+   bool FillRect(const FX_RECT& rect, uint32_t fill_color) override;
+   FX_RECT GetClipBox() const override;
+   bool GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
+diff --git a/core/fxge/cfx_renderdevice.cpp b/core/fxge/cfx_renderdevice.cpp
+index a707f1d80..4d441ea26 100644
+--- a/core/fxge/cfx_renderdevice.cpp
++++ b/core/fxge/cfx_renderdevice.cpp
+@@ -788,6 +788,33 @@ bool CFX_RenderDevice::DrawPath(const CFX_Path& path,
+                                   stroke_color, fill_options);
+ }
+ 
++bool CFX_RenderDevice::DrawPathBatch(
++    pdfium::span<const CFX_Path* const> paths,
++    pdfium::span<const CFX_Matrix> object_to_device,
++    const CFX_GraphStateData* pGraphState,
++    uint32_t fill_color,
++    uint32_t stroke_color,
++    const CFX_FillRenderOptions& fill_options) {
++  if (paths.empty()) {
++    return true;
++  }
++  if (paths.size() != object_to_device.size()) {
++    return false;
++  }
++  if (!pGraphState || FXARGB_A(stroke_color) == 0 || fill_color != 0 ||
++      fill_options.fill_type !=
++          CFX_FillRenderOptions::FillType::kNoFill) {
++    return false;
++  }
++  for (const CFX_Path* path : paths) {
++    if (!path) {
++      return false;
++    }
++  }
++  return device_driver_->DrawPathBatch(paths, object_to_device, pGraphState,
++                                       fill_color, stroke_color, fill_options);
++}
++
+ // This can be removed once PDFium entirely relies on Skia
+ bool CFX_RenderDevice::DrawFillStrokePath(
+     const CFX_Path& path,
+diff --git a/core/fxge/cfx_renderdevice.h b/core/fxge/cfx_renderdevice.h
+index e5d30eec1..2876860cb 100644
+--- a/core/fxge/cfx_renderdevice.h
++++ b/core/fxge/cfx_renderdevice.h
+@@ -91,6 +91,12 @@ class CFX_RenderDevice {
+                 uint32_t fill_color,
+                 uint32_t stroke_color,
+                 const CFX_FillRenderOptions& fill_options);
++  bool DrawPathBatch(pdfium::span<const CFX_Path* const> paths,
++                     pdfium::span<const CFX_Matrix> object_to_device,
++                     const CFX_GraphStateData* pGraphState,
++                     uint32_t fill_color,
++                     uint32_t stroke_color,
++                     const CFX_FillRenderOptions& fill_options);
+   bool FillRect(const FX_RECT& rect, uint32_t color);
+ 
+   RetainPtr<const CFX_DIBitmap> GetBackDrop() const;
+diff --git a/core/fxge/renderdevicedriver_iface.cpp b/core/fxge/renderdevicedriver_iface.cpp
+index f3ecba417..a3bb6f324 100644
+--- a/core/fxge/renderdevicedriver_iface.cpp
++++ b/core/fxge/renderdevicedriver_iface.cpp
+@@ -14,6 +14,26 @@
+ 
+ RenderDeviceDriverIface::~RenderDeviceDriverIface() = default;
+ 
++bool RenderDeviceDriverIface::DrawPathBatch(
++    pdfium::span<const CFX_Path* const> paths,
++    pdfium::span<const CFX_Matrix> object_to_device,
++    const CFX_GraphStateData* pGraphState,
++    uint32_t fill_color,
++    uint32_t stroke_color,
++    const CFX_FillRenderOptions& fill_options) {
++  if (paths.size() != object_to_device.size()) {
++    return false;
++  }
++  for (size_t i = 0; i < paths.size(); ++i) {
++    const CFX_Path* path = paths[i];
++    if (!path || !DrawPath(*path, &object_to_device[i], pGraphState,
++                           fill_color, stroke_color, fill_options)) {
++      return false;
++    }
++  }
++  return true;
++}
++
+ bool RenderDeviceDriverIface::RenderCapGetBits() const {
+   return false;
+ }
+diff --git a/core/fxge/renderdevicedriver_iface.h b/core/fxge/renderdevicedriver_iface.h
+index e82ee93f7..edeea98b3 100644
+--- a/core/fxge/renderdevicedriver_iface.h
++++ b/core/fxge/renderdevicedriver_iface.h
+@@ -99,6 +99,15 @@ class RenderDeviceDriverIface {
+                         uint32_t fill_color,
+                         uint32_t stroke_color,
+                         const CFX_FillRenderOptions& fill_options) = 0;
++  // Executes DrawPath() for each command in order. Overrides may share setup,
++  // but must preserve separate rasterization and compositing per path.
++  virtual bool DrawPathBatch(
++      pdfium::span<const CFX_Path* const> paths,
++      pdfium::span<const CFX_Matrix> object_to_device,
++      const CFX_GraphStateData* pGraphState,
++      uint32_t fill_color,
++      uint32_t stroke_color,
++      const CFX_FillRenderOptions& fill_options);
+   virtual bool FillRect(const FX_RECT& rect, uint32_t fill_color);
+   virtual bool DrawCosmeticLine(const CFX_PointF& ptMoveTo,
+                                 const CFX_PointF& ptLineTo,
+diff --git a/third_party/agg23/agg_path_storage.h b/third_party/agg23/agg_path_storage.h
+index 82148061a..0ab539c17 100644
+--- a/third_party/agg23/agg_path_storage.h
++++ b/third_party/agg23/agg_path_storage.h
+@@ -54,6 +54,11 @@ public:
+     path_storage& operator=(path_storage&&) = delete;
+     path_storage(const path_storage&) = delete;
+     path_storage& operator=(const path_storage&) = delete;
++    void remove_all()
++    {
++        m_total_vertices = 0;
++        m_iterator = 0;
++    }
+     unsigned last_vertex(float* x, float* y) const;
+     unsigned prev_vertex(float* x, float* y) const;
+     void move_to(float x, float y);
+-- 
+2.39.5 (Apple Git-154)
