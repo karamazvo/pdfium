@@ -169,11 +169,11 @@ jobs:
           gn args "$OUT_DIR" --list --short \
             | grep -E '^(target_os|target_cpu|pdf_enable_v8|pdf_enable_xfa|pdf_use_skia|pdf_use_agg|pdf_is_complete_lib|pdf_use_partition_alloc|default_min_sdk_version|pdf_enable_fontations|pdf_enable_rust_png) ='
 
-      - name: Build static PDFium and unit tests
+      - name: Build static PDFium
         run: |
           export PATH="$WORK_ROOT/depot_tools:$PATH"
           cd "$WORK_ROOT/pdfium_build/pdfium"
-          ninja -C "$OUT_DIR" pdfium pdfium_unittests -j"$(nproc)"
+          ninja -C "$OUT_DIR" pdfium -j"$(nproc)"
 
       - name: Verify r25-1-0089 exact Darken span contract
         run: |
@@ -399,6 +399,15 @@ jobs:
             echo "OK exported $api"
           done
 
+      # The custom AGG linker discovers every archive already materialized
+      # under out/obj. Build tests only after libpdfium.so is complete so
+      # libc++.a cannot be selected alongside the same runtime object files.
+      - name: Compile r25-1-0089 unit tests after shared-library link
+        run: |
+          export PATH="$WORK_ROOT/depot_tools:$PATH"
+          cd "$WORK_ROOT/pdfium_build/pdfium"
+          ninja -C "$OUT_DIR" pdfium_unittests -j"$(nproc)"
+
       - name: Package artifact
         run: |
           cd "$WORK_ROOT/pdfium_build/pdfium"
@@ -432,6 +441,7 @@ jobs:
             printf 'darken_pixel_owner=agg-coverage-to-existing-destination\n'
             printf 'darken_allocation=none\n'
             printf 'darken_order=one-raster-composite-per-pdf-object\n'
+            printf 'unit_tests=compiled-after-shared-library-link\n'
             printf 'packet_state=live-graph-identity-resolved-color-and-fill-options\n'
             printf 'legacy_path_display_list=compiled-disabled-before-work\n'
             printf 'pixel_owner=pdfium-process-path-and-render-device\n'
