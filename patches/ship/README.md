@@ -116,6 +116,8 @@ these patches:
 | r25-1-0085 | `0085-veloce-render-program-direct-path-dispatch.patch` | Extends each immutable command to two bytes (`kind + exact flags`) under the same 32 MiB ceiling. A shared fail-closed predicate flags only unclipped, simple-paint, normal-blend paths without soft masks or transfer functions, then revalidates the live object before drawing. Those paths skip generic object/transparency/type dispatch but still use PDFium `ProcessPath()` and `CFX_RenderDevice`; text and unsupported paths remain canonical ordered commands. Candidate output rises to a bounded one million logical indices; allocator capacity remains metered. Revision 0084 was not emitted. |
 | r25-1-0086 | `0086-veloce-render-program-streaming-candidate-cursor.patch` | Removes the dense-query allocation/cap cliff. One fixed-size cursor merges selected immutable posting streams into strictly increasing painter order and emits fixed 4096-index stack chunks, deduplicating across chunk boundaries. When selected raw postings are at least the complete command count, the cursor uses exact linear command order because it requires no more source reads. The executor owns no candidate vector, cache, lock, or second rasterizer; live direct-path predicate drift selects canonical per-object rendering, while structural ownership failure cancels and discards partial output. |
 | r25-1-0087 | `0087-veloce-render-program-exact-path-state-packets.patch` | Reduces dense visible stroke execution by collecting consecutive proven stroke-only commands into fixed 256-command, 16384-point packets. Exact live graph-state identity, resolved stroke ARGB, and fill options form packet boundaries. Every path retains its own geometry, matrix, AGG rasterization, and destination composite; only immutable setup and bounded raster scratch are reused. Text, fills, transparent strokes, state changes, capacity, and cancellation remain hard boundaries. |
+| r25-1-0088 | `0088-veloce-render-program-cost-attribution.patch` | Adds one bounded Android telemetry line for holders with at least 4096 commands. Reports admitted/index lifetime, candidate-query and replay cost, postings, visited/drawn commands, dispatches, packet utilization, fallback reason, and retained memory without changing rendering policy or pixels. |
+| r25-1-0089 | `0089-veloce-render-program-exact-darken-spans.patch` | Adds a fail-closed direct Darken span executor for fill-only or stroke-only paths. Each PDF object keeps its own geometry, AGG rasterization, coverage, Darken composite, and painter-order position; the executor removes only the temporary BGRA transparency bitmap and its second pixel traversal. Object clips, patterns, soft masks, transfer functions, overprint, nested groups, printers, and mixed fill/stroke objects remain canonical. The path allocates no image-sized scratch memory and includes arithmetic equivalence tests across BGR, BGRX, and BGRA destinations. |
 
 ## Why this directory exists
 
@@ -128,8 +130,8 @@ subset.
 ## How to apply
 
 The patch directory contains historical branches and must not be applied by
-blind numeric globbing. For `r25-1-0087`, apply the r25 rendering base through
-0031, then only 0051, 0075, 0076, 0079..0083, and 0085..0087:
+blind numeric globbing. For `r25-1-0089`, apply the r25 rendering base through
+0031, then only 0051, 0075, 0076, 0079..0083, and 0085..0089:
 
 ```bash
 git apply patches/ship/01-jpeg-downscale-on-decode.patch
@@ -145,9 +147,11 @@ git apply patches/ship/0083-veloce-render-program-exact-path-text-executor.patch
 git apply patches/ship/0085-veloce-render-program-direct-path-dispatch.patch
 git apply patches/ship/0086-veloce-render-program-streaming-candidate-cursor.patch
 git apply patches/ship/0087-veloce-render-program-exact-path-state-packets.patch
+git apply patches/ship/0088-veloce-render-program-cost-attribution.patch
+git apply patches/ship/0089-veloce-render-program-exact-darken-spans.patch
 ```
 
-Do not apply 0053..0074, 0077..0078, or an invented 0084 to an `r25-1-0087`
+Do not apply 0053..0074, 0077..0078, or an invented 0084 to an `r25-1-0089`
 build. The exact machine-checked list lives in the revision workflow.
 
 The following legacy list is retained for historical stacks only:
@@ -339,6 +343,13 @@ renderer, path-storage, rasterizer, and scanline setup while executing every
 path as a separate ordered raster/composite operation. It stores no packet in
 the holder, copies no geometry, introduces no cache or lock, and leaves every
 non-proven command on the existing canonical path.
+Patch 0088 depends on 0087 and attributes the remaining cost without changing
+rendering. Patch 0089 depends on 0088 and addresses the measured `11.pdf`
+Darken fallback inside the unified executor. It does not re-enable the legacy
+path-display-list owner or its BGRA group buffers. Every eligible path is still
+rasterized and composited separately with PDFium's existing scanline blend
+equation; only the intermediate object bitmap and second traversal disappear.
+There is no image-sized scratch allocation, cache, or new lock.
 Patch 0053 can also be applied directly on the rel-260701 stable line after
 patch 0051. It is behavior-preserving and only inserts the `VeloceRenderPlan`
 facade above the existing r25 path-display-list backend.

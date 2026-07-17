@@ -1,0 +1,643 @@
+From 45bff0792936f9929ae0e5288ce1668339ecd1d6 Mon Sep 17 00:00:00 2001
+From: "sh.chao" <sh.chao@gmail.com>
+Date: Fri, 17 Jul 2026 18:52:21 +0800
+Subject: [PATCH] r25-1-0089: draw exact Darken coverage spans
+
+Extend the r25-1 unified RenderProgram backend with a fail-closed AGG path for fill-only or stroke-only Darken path objects. Rasterize each PDF object in painter order and feed its coverage directly to PDFium's existing Darken scanline compositor, eliminating the temporary BGRA transparency bitmap and its second pixel pass without grouping objects or changing integer blend semantics. Unsupported transparency, object-clip, pattern, group, printer, destination-format, and mixed fill/stroke cases fall back before destination mutation. Add admission/runtime telemetry and arithmetic equivalence coverage for BGR, BGRX, and BGRA destinations.
+---
+ core/fpdfapi/page/veloce_render_program.cpp   |  35 +++++-
+ core/fpdfapi/page/veloce_render_program.h     |   2 +
+ core/fpdfapi/render/cpdf_renderstatus.cpp     |  55 +++++++++
+ core/fpdfapi/render/cpdf_renderstatus.h       |   5 +
+ .../render/veloce_unified_render_backend.cpp  |  29 +++++
+ .../render/veloce_unified_render_backend.h    |  10 +-
+ core/fxge/agg/cfx_agg_devicedriver.cpp        | 111 +++++++++++++++++-
+ core/fxge/agg/cfx_agg_devicedriver.h          |  11 ++
+ core/fxge/cfx_renderdevice.cpp                |  16 +++
+ core/fxge/cfx_renderdevice.h                  |   7 ++
+ core/fxge/dib/cfx_dibitmap_unittest.cpp       |  45 +++++++
+ core/fxge/renderdevicedriver_iface.cpp        |  11 ++
+ core/fxge/renderdevicedriver_iface.h          |  10 ++
+ 13 files changed, 336 insertions(+), 11 deletions(-)
+
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index 3d87f4a40..79d869441 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -128,6 +128,29 @@ bool VeloceCanDirectDrawPath(const CPDF_PageObject& object) {
+   return true;
+ }
+ 
++bool VeloceCanDirectDrawDarkenPath(const CPDF_PageObject& object) {
++  const CPDF_PathObject* path = object.AsPath();
++  if (!path || path->clip_path().HasRef() || !path->path().GetObject()) {
++    return false;
++  }
++  const bool has_fill = !path->has_no_filltype();
++  const bool has_stroke = path->stroke();
++  if (has_fill == has_stroke) {
++    return false;
++  }
++
++  const CPDF_GeneralState& general_state = path->general_state();
++  if (general_state.GetBlendType() != BlendMode::kDarken ||
++      general_state.GetSoftMask() || general_state.GetTR() ||
++      general_state.GetFillOP() || general_state.GetStrokeOP()) {
++    return false;
++  }
++
++  const CPDF_Color* color = has_fill ? path->color_state().GetFillColor()
++                                     : path->color_state().GetStrokeColor();
++  return color && !color->IsNull() && !color->IsPattern();
++}
++
+ class VeloceSpatialCandidateIndexBuilder final {
+  public:
+   explicit VeloceSpatialCandidateIndexBuilder(CFX_FloatRect bounds)
+@@ -494,10 +517,14 @@ void VeloceRenderProgramBuilder::AppendPageObject(
+   }
+ 
+   const VeloceRenderCommandKind kind = ToRenderCommandKind(object);
+-  const uint8_t flags = VeloceCanDirectDrawPath(object)
+-                            ? static_cast<uint8_t>(
+-                                  VeloceRenderCommandFlag::kDirectPath)
+-                            : 0u;
++  uint8_t flags = 0;
++  if (VeloceCanDirectDrawPath(object)) {
++    flags |= static_cast<uint8_t>(VeloceRenderCommandFlag::kDirectPath);
++  }
++  if (VeloceCanDirectDrawDarkenPath(object)) {
++    flags |=
++        static_cast<uint8_t>(VeloceRenderCommandFlag::kDirectDarkenPath);
++  }
+   commands_.push_back({kind, flags});
+   ++command_kind_counts_[static_cast<size_t>(kind)];
+ 
+diff --git a/core/fpdfapi/page/veloce_render_program.h b/core/fpdfapi/page/veloce_render_program.h
+index 4fdd384da..0ef50aef5 100644
+--- a/core/fpdfapi/page/veloce_render_program.h
++++ b/core/fpdfapi/page/veloce_render_program.h
+@@ -34,6 +34,7 @@ inline constexpr size_t kVeloceRenderCommandKindCount =
+ 
+ enum class VeloceRenderCommandFlag : uint8_t {
+   kDirectPath = 1u << 0,
++  kDirectDarkenPath = 1u << 1,
+ };
+ 
+ struct VeloceRenderCommand {
+@@ -51,6 +52,7 @@ static_assert(sizeof(VeloceRenderCommand) == 2);
+ // and immediately before replay. A false result always selects canonical
+ // PDFium rendering.
+ bool VeloceCanDirectDrawPath(const CPDF_PageObject& object);
++bool VeloceCanDirectDrawDarkenPath(const CPDF_PageObject& object);
+ 
+ enum class VeloceSpatialQueryResult : uint8_t {
+   kCandidates,
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 45266dfc9..b42bf26ce 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -39,6 +39,7 @@
+ #include "core/fpdfapi/page/cpdf_textobject.h"
+ #include "core/fpdfapi/page/cpdf_tilingpattern.h"
+ #include "core/fpdfapi/page/cpdf_transferfunc.h"
++#include "core/fpdfapi/page/veloce_render_program.h"
+ #include "core/fpdfapi/parser/cpdf_array.h"
+ #include "core/fpdfapi/parser/cpdf_document.h"
+ #include "core/fpdfapi/parser/cpdf_stream.h"
+@@ -385,6 +386,60 @@ bool CPDF_RenderStatus::RenderVeloceDirectPath(
+   return !stopped_;
+ }
+ 
++bool CPDF_RenderStatus::RenderVeloceDirectDarkenPath(
++    CPDF_PathObject* path_obj,
++    const CFX_Matrix& mtObj2Device) {
++  if (ShouldCancelRender()) {
++    stopped_ = true;
++    return false;
++  }
++  if (!path_obj || !VeloceCanDirectDrawDarkenPath(*path_obj) ||
++      transparency_.IsGroup() || transparency_.IsIsolated() || in_group_ ||
++      IsPrint() || !device_->RenderCapBlendMode()) {
++    return false;
++  }
++  cur_obj_ = path_obj;
++  if (!options_.CheckPageObjectVisible(path_obj)) {
++    return true;
++  }
++
++  ProcessClipPath(path_obj->clip_path(), mtObj2Device);
++  if (ShouldCancelRender()) {
++    stopped_ = true;
++    return false;
++  }
++
++  CFX_FillRenderOptions::FillType fill_type = path_obj->filltype();
++  bool stroke = path_obj->stroke();
++  CPDF_RenderOptions::Options& options = options_.GetOptions();
++  if (options_.ColorModeIs(CPDF_RenderOptions::Type::kForcedColor) &&
++      options.bConvertFillToStroke &&
++      fill_type != CFX_FillRenderOptions::FillType::kNoFill) {
++    stroke = true;
++    fill_type = CFX_FillRenderOptions::FillType::kNoFill;
++  }
++  if ((fill_type != CFX_FillRenderOptions::FillType::kNoFill) == stroke) {
++    return false;
++  }
++
++  const uint32_t fill_argb =
++      fill_type != CFX_FillRenderOptions::FillType::kNoFill
++          ? GetFillArgb(path_obj)
++          : 0;
++  const uint32_t stroke_argb = stroke ? GetStrokeArgb(path_obj) : 0;
++  CFX_Matrix path_matrix = path_obj->matrix() * mtObj2Device;
++  if (!IsAvailableMatrix(path_matrix)) {
++    return true;
++  }
++  const CFX_FillRenderOptions fill_options =
++      GetFillOptionsForDrawPathWithBlend(options, path_obj, fill_type, stroke,
++                                         type3_char_);
++  return device_->DrawPathWithBlend(
++      *path_obj->path().GetObject(), &path_matrix,
++      path_obj->graph_state().GetObject(), fill_argb, stroke_argb,
++      fill_options, BlendMode::kDarken);
++}
++
+ bool CPDF_RenderStatus::RenderVeloceDirectPathPacket(
+     pdfium::span<CPDF_PathObject* const> path_objects,
+     const CFX_Matrix& mtObj2Device,
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.h b/core/fpdfapi/render/cpdf_renderstatus.h
+index 81ef6393f..aaa8a1d82 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.h
++++ b/core/fpdfapi/render/cpdf_renderstatus.h
+@@ -92,6 +92,11 @@ class CPDF_RenderStatus {
+   // forced-color, path-option, raster, and fallback semantics.
+   bool RenderVeloceDirectPath(CPDF_PathObject* path_obj,
+                               const CFX_Matrix& mtObj2Device);
++  // Draws one proven fill-only or stroke-only Darken path directly through
++  // the destination driver's coverage compositor. False means canonical
++  // fallback is required and no destination pixel was changed.
++  bool RenderVeloceDirectDarkenPath(CPDF_PathObject* path_obj,
++                                    const CFX_Matrix& mtObj2Device);
+   // Executes consecutive, already-proven stroke paths in exact painter order.
+   // Each path remains a separate raster/composite operation; only immutable
+   // resolved state and bounded AGG scratch are shared within a packet.
+diff --git a/core/fpdfapi/render/veloce_unified_render_backend.cpp b/core/fpdfapi/render/veloce_unified_render_backend.cpp
+index 028e333f3..bdee5e47e 100644
+--- a/core/fpdfapi/render/veloce_unified_render_backend.cpp
++++ b/core/fpdfapi/render/veloce_unified_render_backend.cpp
+@@ -113,6 +113,7 @@ void LogMeasuredResult(const CPDF_PageObjectHolder* holder,
+       "holderCommands=%zu commands=%zu paths=%zu texts=%zu postings=%zu "
+       "bins=%zu streams=%zu linear=%zu candidates=%zu chunks=%zu "
+       "visited=%zu drawn=%zu rejected=%zu dispatches=%zu direct=%zu "
++      "directDarken=%zu darkenDispatches=%zu darkenCanonical=%zu "
+       "packetCommands=%zu packetDispatches=%zu stateFlushes=%zu "
+       "capacityFlushes=%zu maxPacket=%zu programBytes=%zu indexBytes=%zu "
+       "indexPostings=%zu always=%zu scratchBytes=%zu",
+@@ -129,6 +130,8 @@ void LogMeasuredResult(const CPDF_PageObjectHolder* holder,
+       metrics.candidate_commands, metrics.candidate_chunks,
+       metrics.visited_commands, metrics.drawn_commands, rejected_commands,
+       metrics.dispatch_count, metrics.direct_path_commands,
++      metrics.direct_darken_commands, metrics.direct_darken_dispatches,
++      metrics.direct_darken_canonical,
+       metrics.path_packet_commands, metrics.path_packet_dispatches,
+       metrics.path_packet_state_flushes,
+       metrics.path_packet_capacity_flushes, metrics.max_path_packet_commands,
+@@ -288,6 +291,10 @@ VeloceUnifiedRenderResult VeloceTryRenderUnifiedProgram(
+       CPDF_PathObject* path = object->AsPath();
+       const bool packet_path =
+           direct_path && path && path->stroke() && path->has_no_filltype();
++      const bool direct_darken =
++          path &&
++          command.HasFlag(VeloceRenderCommandFlag::kDirectDarkenPath) &&
++          VeloceCanDirectDrawDarkenPath(*object);
+       if (packet_path) {
+         if (metrics) {
+           ++metrics->direct_path_commands;
+@@ -300,6 +307,28 @@ VeloceUnifiedRenderResult VeloceTryRenderUnifiedProgram(
+         if (metrics) {
+           ++metrics->direct_path_dispatches;
+         }
++      } else if (direct_darken) {
++        if (!flush_path_packet()) {
++          return VeloceUnifiedRenderResult::kCancelled;
++        }
++        if (metrics) {
++          ++metrics->direct_darken_commands;
++        }
++        if (status->RenderVeloceDirectDarkenPath(path, holder_to_device)) {
++          if (metrics) {
++            ++metrics->direct_darken_dispatches;
++            ++metrics->dispatch_count;
++          }
++        } else {
++          if (status->IsStopped() || status->ShouldCancelRender()) {
++            return VeloceUnifiedRenderResult::kCancelled;
++          }
++          status->RenderSingleObject(object, holder_to_device);
++          if (metrics) {
++            ++metrics->direct_darken_canonical;
++            ++metrics->dispatch_count;
++          }
++        }
+       } else {
+         if (!flush_path_packet()) {
+           return VeloceUnifiedRenderResult::kCancelled;
+diff --git a/core/fpdfapi/render/veloce_unified_render_backend.h b/core/fpdfapi/render/veloce_unified_render_backend.h
+index 3abba52a6..d8c9d3c6a 100644
+--- a/core/fpdfapi/render/veloce_unified_render_backend.h
++++ b/core/fpdfapi/render/veloce_unified_render_backend.h
+@@ -11,7 +11,7 @@ class CFX_Matrix;
+ class CPDF_PageObjectHolder;
+ class CPDF_RenderStatus;
+ 
+-inline constexpr char kVeloceUnifiedRenderBackendRevision[] = "r25-1-0088";
++inline constexpr char kVeloceUnifiedRenderBackendRevision[] = "r25-1-0089";
+ 
+ // Result contract for one complete holder request. Disabled and not-eligible
+ // results guarantee that no destination pixel was changed. A cancelled result
+@@ -64,6 +64,9 @@ struct VeloceUnifiedRenderMetrics {
+   size_t dispatch_count = 0;
+   size_t direct_path_commands = 0;
+   size_t direct_path_dispatches = 0;
++  size_t direct_darken_commands = 0;
++  size_t direct_darken_dispatches = 0;
++  size_t direct_darken_canonical = 0;
+   size_t path_packet_commands = 0;
+   size_t path_packet_dispatches = 0;
+   size_t path_packet_state_flushes = 0;
+@@ -84,9 +87,8 @@ struct VeloceUnifiedRenderMetrics {
+ // representation; PDFium page objects remain authoritative for fidelity and
+ // editing, and `status` owns the destination device.
+ 
+-// r25-1-0088 adds value-only cost attribution around the existing 0087
+-// execution. It does not change eligibility, candidate selection, ordering,
+-// dispatch, rasterization, or destination ownership.
++// r25-1-0089 adds exact per-coverage Darken dispatch for proven single-paint
++// paths. It preserves one raster/composite operation per PDF object.
+ VeloceUnifiedRenderResult VeloceTryRenderUnifiedProgram(
+     CPDF_RenderStatus* status,
+     const CPDF_PageObjectHolder* holder,
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.cpp b/core/fxge/agg/cfx_agg_devicedriver.cpp
+index 263393cce..5b3586638 100644
+--- a/core/fxge/agg/cfx_agg_devicedriver.cpp
++++ b/core/fxge/agg/cfx_agg_devicedriver.cpp
+@@ -28,6 +28,7 @@
+ #include "core/fxge/cfx_path.h"
+ #include "core/fxge/dib/cfx_dibitmap.h"
+ #include "core/fxge/dib/cfx_imagestretcher.h"
++#include "core/fxge/dib/cfx_scanlinecompositor.h"
+ 
+ // Ignore fallthrough warnings in agg23 headers.
+ #if defined(__clang__)
+@@ -418,7 +419,8 @@ class CFX_AggRenderer {
+                   const CFX_AggClipRgn* pClipRgn,
+                   uint32_t color,
+                   bool bFullCover,
+-                  bool bRgbByteOrder);
++                  bool bRgbByteOrder,
++                  BlendMode blend_mode = BlendMode::kNormal);
+ 
+   // Needed for agg caller
+   void prepare(unsigned) {}
+@@ -509,12 +511,14 @@ class CFX_AggRenderer {
+   const uint32_t color_;
+   const bool full_cover_;
+   const bool rgb_byte_order_;
++  const bool direct_blend_;
+   const FX_RECT clip_box_;
+   RetainPtr<CFX_DIBitmap> const backdrop_device_;
+   RetainPtr<CFX_DIBitmap> const clip_mask_;
+   RetainPtr<CFX_DIBitmap> const device_;
+   UnownedPtr<const CFX_AggClipRgn> clip_rgn_;
+   const CompositeSpanFunc composite_span_func_;
++  CFX_ScanlineCompositor blend_compositor_;
+ };
+ 
+ void CFX_AggRenderer::CompositeSpan(uint8_t* dest_scan,
+@@ -814,17 +818,27 @@ CFX_AggRenderer::CFX_AggRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
+                                  const CFX_AggClipRgn* pClipRgn,
+                                  uint32_t color,
+                                  bool bFullCover,
+-                                 bool bRgbByteOrder)
++                                 bool bRgbByteOrder,
++                                 BlendMode blend_mode)
+     : alpha_(FXARGB_A(color)),
+       color_(bRgbByteOrder ? FXARGB_TOBGRORDERDIB(color) : color),
+       full_cover_(bFullCover),
+       rgb_byte_order_(bRgbByteOrder),
++      direct_blend_(blend_mode != BlendMode::kNormal),
+       clip_box_(GetClipBoxFromRegion(pDevice, pClipRgn)),
+       backdrop_device_(pBackdropDevice),
+       clip_mask_(GetClipMaskFromRegion(pClipRgn)),
+       device_(pDevice),
+       clip_rgn_(pClipRgn),
+       composite_span_func_(GetCompositeSpanFunc(device_)) {
++  if (direct_blend_) {
++    CHECK(!full_cover_);
++    CHECK(!backdrop_device_);
++    CHECK(!clip_mask_);
++    CHECK(blend_compositor_.Init(
++        device_->GetFormat(), FXDIB_Format::k8bppMask, {}, color, blend_mode,
++        rgb_byte_order_));
++  }
+   if (device_->GetBPP() == 8) {
+     DCHECK(!rgb_byte_order_);
+     if (device_->IsMaskFormat()) {
+@@ -878,7 +892,24 @@ void CFX_AggRenderer::render(const Scanline& sl) {
+       }
+       const int col_start = GetColStart(x, clip_box_.left);
+       const int col_end = GetColEnd(x, span->len, clip_box_.right);
+-      if (backdrop_pos) {
++      if (direct_blend_) {
++        if (col_end <= col_start) {
++          if (--num_spans == 0) {
++            break;
++          }
++          ++span;
++          continue;
++        }
++        const size_t pixel_count = static_cast<size_t>(col_end - col_start);
++        auto dest_span = device_->GetWritableScanline(y).subspan(
++            static_cast<size_t>(x + col_start) * bytes_per_pixel,
++            pixel_count * bytes_per_pixel);
++        auto cover_span =
++            pdfium::span(span->covers, static_cast<size_t>(span->len))
++                .subspan(static_cast<size_t>(col_start), pixel_count);
++        blend_compositor_.CompositeByteMaskLine(
++            dest_span, cover_span, static_cast<int>(pixel_count), {});
++      } else if (backdrop_pos) {
+         CompositeSpan(dest_pos, backdrop_pos, bytes_per_pixel, bDestAlpha,
+                       col_start, col_end, span->covers, clip_pos);
+       } else {
+@@ -1194,6 +1225,17 @@ void CFX_AggDeviceDriver::RenderRasterizer(
+                         fill_options_.aliased_path);
+ }
+ 
++void CFX_AggDeviceDriver::RenderRasterizerWithBlend(
++    agg::rasterizer_scanline_aa& rasterizer,
++    uint32_t color,
++    BlendMode blend_mode) {
++  CFX_AggRenderer render(bitmap_, nullptr, clip_rgn_.get(), color,
++                         /*bFullCover=*/false, rgb_byte_order_, blend_mode);
++  agg::scanline_u8 scanline;
++  agg::render_scanlines(rasterizer, scanline, render,
++                        fill_options_.aliased_path);
++}
++
+ bool CFX_AggDeviceDriver::DrawPath(const CFX_Path& path,
+                                    const CFX_Matrix* pObject2Device,
+                                    const CFX_GraphStateData* pGraphState,
+@@ -1255,6 +1297,69 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_Path& path,
+   return true;
+ }
+ 
++bool CFX_AggDeviceDriver::DrawPathWithBlend(
++    const CFX_Path& path,
++    const CFX_Matrix* pObject2Device,
++    const CFX_GraphStateData* pGraphState,
++    uint32_t fill_color,
++    uint32_t stroke_color,
++    const CFX_FillRenderOptions& fill_options,
++    BlendMode blend_mode) {
++  const FXDIB_Format destination_format = bitmap_->GetFormat();
++  const bool supported_destination =
++      destination_format == FXDIB_Format::kBgr ||
++      destination_format == FXDIB_Format::kBgrx ||
++      destination_format == FXDIB_Format::kBgra;
++  const bool has_fill =
++      fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill &&
++      FXARGB_A(fill_color) != 0;
++  const bool has_stroke = pGraphState && FXARGB_A(stroke_color) != 0;
++  if (blend_mode != BlendMode::kDarken || !supported_destination ||
++      has_fill == has_stroke || fill_options.full_cover || group_knockout_ ||
++      GetClipMaskFromRegion(clip_rgn_.get())) {
++    return false;
++  }
++  if (bitmap_->GetBuffer().empty()) {
++    return true;
++  }
++
++  fill_options_ = fill_options;
++  agg::rasterizer_scanline_aa rasterizer;
++  rasterizer.clip_box(0.0f, 0.0f, static_cast<float>(GetPixelWidth()),
++                      static_cast<float>(GetPixelHeight()));
++  if (has_fill) {
++    agg::path_storage path_data = BuildAggPath(path, pObject2Device);
++    rasterizer.add_path(path_data);
++    rasterizer.filling_rule(GetAlternateOrWindingFillType(fill_options));
++    RenderRasterizerWithBlend(rasterizer, fill_color, blend_mode);
++    return true;
++  }
++
++  if (fill_options.zero_area) {
++    agg::path_storage path_data = BuildAggPath(path, pObject2Device);
++    RasterizeStroke(&rasterizer, &path_data, nullptr, pGraphState, 1,
++                    fill_options.stroke_text_mode);
++    RenderRasterizerWithBlend(rasterizer, stroke_color, blend_mode);
++    return true;
++  }
++
++  CFX_Matrix matrix1;
++  CFX_Matrix matrix2;
++  if (pObject2Device) {
++    matrix1.a = std::max(fabs(pObject2Device->a), fabs(pObject2Device->b));
++    matrix1.d = matrix1.a;
++    matrix2 = CFX_Matrix(
++        pObject2Device->a / matrix1.a, pObject2Device->b / matrix1.a,
++        pObject2Device->c / matrix1.d, pObject2Device->d / matrix1.d, 0, 0);
++    matrix1 = *pObject2Device * matrix2.GetInverse();
++  }
++  agg::path_storage path_data = BuildAggPath(path, &matrix1);
++  RasterizeStroke(&rasterizer, &path_data, &matrix2, pGraphState, matrix1.a,
++                  fill_options.stroke_text_mode);
++  RenderRasterizerWithBlend(rasterizer, stroke_color, blend_mode);
++  return true;
++}
++
+ bool CFX_AggDeviceDriver::DrawPathBatch(
+     pdfium::span<const CFX_Path* const> paths,
+     pdfium::span<const CFX_Matrix> object_to_device,
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.h b/core/fxge/agg/cfx_agg_devicedriver.h
+index 7b89dec35..324fea929 100644
+--- a/core/fxge/agg/cfx_agg_devicedriver.h
++++ b/core/fxge/agg/cfx_agg_devicedriver.h
+@@ -66,6 +66,13 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
+                 uint32_t fill_color,
+                 uint32_t stroke_color,
+                 const CFX_FillRenderOptions& fill_options) override;
++  bool DrawPathWithBlend(const CFX_Path& path,
++                         const CFX_Matrix* pObject2Device,
++                         const CFX_GraphStateData* pGraphState,
++                         uint32_t fill_color,
++                         uint32_t stroke_color,
++                         const CFX_FillRenderOptions& fill_options,
++                         BlendMode blend_mode) override;
+   bool DrawPathBatch(pdfium::span<const CFX_Path* const> paths,
+                      pdfium::span<const CFX_Matrix> object_to_device,
+                      const CFX_GraphStateData* pGraphState,
+@@ -118,6 +125,10 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
+                         uint32_t color,
+                         bool bFullCover,
+                         bool bGroupKnockout);
++  void RenderRasterizerWithBlend(
++      pdfium::agg::rasterizer_scanline_aa& rasterizer,
++      uint32_t color,
++      BlendMode blend_mode);
+ 
+   void SetClipMask(pdfium::agg::rasterizer_scanline_aa& rasterizer);
+ 
+diff --git a/core/fxge/cfx_renderdevice.cpp b/core/fxge/cfx_renderdevice.cpp
+index 4d441ea26..a0a990cb0 100644
+--- a/core/fxge/cfx_renderdevice.cpp
++++ b/core/fxge/cfx_renderdevice.cpp
+@@ -815,6 +815,22 @@ bool CFX_RenderDevice::DrawPathBatch(
+                                        fill_color, stroke_color, fill_options);
+ }
+ 
++bool CFX_RenderDevice::DrawPathWithBlend(
++    const CFX_Path& path,
++    const CFX_Matrix* pObject2Device,
++    const CFX_GraphStateData* pGraphState,
++    uint32_t fill_color,
++    uint32_t stroke_color,
++    const CFX_FillRenderOptions& fill_options,
++    BlendMode blend_mode) {
++  if (blend_mode == BlendMode::kNormal || !render_cap_blend_mode_) {
++    return false;
++  }
++  return device_driver_->DrawPathWithBlend(
++      path, pObject2Device, pGraphState, fill_color, stroke_color,
++      fill_options, blend_mode);
++}
++
+ // This can be removed once PDFium entirely relies on Skia
+ bool CFX_RenderDevice::DrawFillStrokePath(
+     const CFX_Path& path,
+diff --git a/core/fxge/cfx_renderdevice.h b/core/fxge/cfx_renderdevice.h
+index 2876860cb..b86f245b5 100644
+--- a/core/fxge/cfx_renderdevice.h
++++ b/core/fxge/cfx_renderdevice.h
+@@ -91,6 +91,13 @@ class CFX_RenderDevice {
+                 uint32_t fill_color,
+                 uint32_t stroke_color,
+                 const CFX_FillRenderOptions& fill_options);
++  bool DrawPathWithBlend(const CFX_Path& path,
++                         const CFX_Matrix* pObject2Device,
++                         const CFX_GraphStateData* pGraphState,
++                         uint32_t fill_color,
++                         uint32_t stroke_color,
++                         const CFX_FillRenderOptions& fill_options,
++                         BlendMode blend_mode);
+   bool DrawPathBatch(pdfium::span<const CFX_Path* const> paths,
+                      pdfium::span<const CFX_Matrix> object_to_device,
+                      const CFX_GraphStateData* pGraphState,
+diff --git a/core/fxge/dib/cfx_dibitmap_unittest.cpp b/core/fxge/dib/cfx_dibitmap_unittest.cpp
+index 36fd9b6b4..92e0846d3 100644
+--- a/core/fxge/dib/cfx_dibitmap_unittest.cpp
++++ b/core/fxge/dib/cfx_dibitmap_unittest.cpp
+@@ -6,6 +6,8 @@
+ 
+ #include <stdint.h>
+ 
++#include <algorithm>
++
+ #include "core/fxcrt/fx_coordinates.h"
+ #include "core/fxcrt/span.h"
+ #include "core/fxge/dib/fx_dib.h"
+@@ -133,6 +135,49 @@ TEST(CFXDIBitmapTest, GetScanlineAsWith24Bpp) {
+             bitmap->GetWritableScanlineAs<FX_BGR_STRUCT<uint8_t>>(0).size());
+ }
+ 
++TEST(CFXDIBitmapTest, DarkenCoverageMaskMatchesSingleBgraObject) {
++  constexpr uint32_t kSourceRgb = 0x002850a0;
++  constexpr FXDIB_Format kDestinationFormats[] = {
++      FXDIB_Format::kBgr, FXDIB_Format::kBgrx, FXDIB_Format::kBgra};
++  constexpr uint32_t kDestinations[] = {0xffc86432, 0xff2040e0, 0xffffffff,
++                                        0x80c86432, 0x012040e0, 0x00000000};
++  constexpr uint8_t kSourceAlphas[] = {1, 64, 127, 200, 255};
++  constexpr uint8_t kCoverages[] = {1, 63, 128, 201, 255};
++
++  for (FXDIB_Format destination_format : kDestinationFormats) {
++    for (uint32_t destination : kDestinations) {
++      for (uint8_t source_alpha : kSourceAlphas) {
++        for (uint8_t coverage : kCoverages) {
++          auto baseline = pdfium::MakeRetain<CFX_DIBitmap>();
++          auto direct = pdfium::MakeRetain<CFX_DIBitmap>();
++          auto source = pdfium::MakeRetain<CFX_DIBitmap>();
++          auto mask = pdfium::MakeRetain<CFX_DIBitmap>();
++          ASSERT_TRUE(baseline->Create(1, 1, destination_format));
++          ASSERT_TRUE(direct->Create(1, 1, destination_format));
++          ASSERT_TRUE(source->Create(1, 1, FXDIB_Format::kBgra));
++          ASSERT_TRUE(mask->Create(1, 1, FXDIB_Format::k8bppMask));
++          baseline->Clear(destination);
++          direct->Clear(destination);
++          const uint8_t effective_alpha =
++              static_cast<uint8_t>(source_alpha * coverage / 255);
++          source->Clear((static_cast<uint32_t>(effective_alpha) << 24) |
++                        kSourceRgb);
++          mask->GetWritableScanline(0)[0] = coverage;
++
++          ASSERT_TRUE(baseline->CompositeBitmap(0, 0, 1, 1, source, 0, 0,
++                                                BlendMode::kDarken));
++          ASSERT_TRUE(direct->CompositeMask(
++              0, 0, 1, 1, mask,
++              (static_cast<uint32_t>(source_alpha) << 24) | kSourceRgb, 0, 0,
++              BlendMode::kDarken));
++          EXPECT_TRUE(std::ranges::equal(baseline->GetBuffer(),
++                                         direct->GetBuffer()));
++        }
++      }
++    }
++  }
++}
++
+ #if defined(PDF_USE_SKIA)
+ TEST(CFXDIBitmapTest, UnPreMultiplyFromPreMultiplied) {
+   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+diff --git a/core/fxge/renderdevicedriver_iface.cpp b/core/fxge/renderdevicedriver_iface.cpp
+index a3bb6f324..fc70f7413 100644
+--- a/core/fxge/renderdevicedriver_iface.cpp
++++ b/core/fxge/renderdevicedriver_iface.cpp
+@@ -14,6 +14,17 @@
+ 
+ RenderDeviceDriverIface::~RenderDeviceDriverIface() = default;
+ 
++bool RenderDeviceDriverIface::DrawPathWithBlend(
++    const CFX_Path&,
++    const CFX_Matrix*,
++    const CFX_GraphStateData*,
++    uint32_t,
++    uint32_t,
++    const CFX_FillRenderOptions&,
++    BlendMode) {
++  return false;
++}
++
+ bool RenderDeviceDriverIface::DrawPathBatch(
+     pdfium::span<const CFX_Path* const> paths,
+     pdfium::span<const CFX_Matrix> object_to_device,
+diff --git a/core/fxge/renderdevicedriver_iface.h b/core/fxge/renderdevicedriver_iface.h
+index edeea98b3..62c6f3a4a 100644
+--- a/core/fxge/renderdevicedriver_iface.h
++++ b/core/fxge/renderdevicedriver_iface.h
+@@ -99,6 +99,16 @@ class RenderDeviceDriverIface {
+                         uint32_t fill_color,
+                         uint32_t stroke_color,
+                         const CFX_FillRenderOptions& fill_options) = 0;
++  // Draws one path with direct per-coverage blend semantics. The default
++  // implementation rejects before modifying the destination.
++  virtual bool DrawPathWithBlend(
++      const CFX_Path& path,
++      const CFX_Matrix* pObject2Device,
++      const CFX_GraphStateData* pGraphState,
++      uint32_t fill_color,
++      uint32_t stroke_color,
++      const CFX_FillRenderOptions& fill_options,
++      BlendMode blend_mode);
+   // Executes DrawPath() for each command in order. Overrides may share setup,
+   // but must preserve separate rasterization and compositing per path.
+   virtual bool DrawPathBatch(
+-- 
+2.39.5 (Apple Git-154)
+
