@@ -48,10 +48,10 @@ Android app, JNI, Kotlin, and UI layer worktree:
 Use this worktree only for app/JNI/Kotlin changes. Do not mix app-layer changes
 into the PDFium patch repo.
 
-Current committed native PDFium reference HEAD:
+Committed native PDFium base used to generate the 0086 patch:
 
 ```text
-5a12ae941 r25-1-0082 add bounded holder-space candidate index
+56b12a154 r25-1-0085 add fail-closed direct path dispatch
 ```
 
 Known untracked files currently visible in the native PDFium repo include
@@ -123,6 +123,7 @@ r25-1-0081
 r25-1-0082
 r25-1-0083
 r25-1-0085
+r25-1-0086
 ```
 
 Do not rename, delete, or reuse 0077/0078. They remain historical evidence for
@@ -261,6 +262,7 @@ Release workflows:
 | r25-1-0082 | `.github/workflows/pdfium-android-arm64-r25-1-0082-holder-space-candidate-index.yml` | r25-1-0081 plus `0082`; excludes `0053..0074` and `0077..0078` | Adds bounded immutable holder-space candidate metadata to huge RenderPrograms while keeping both accelerated executors disabled and canonical PDFium as sole pixel owner. |
 | r25-1-0083 | `.github/workflows/pdfium-android-arm64-r25-1-0083-exact-path-text-candidate-executor.yml` | r25-1-0082 plus `0083`; excludes `0053..0074` and `0077..0078` | Enables the single unified boundary only for complete indexed path/text holders. Candidate omission is conservative, replay calls canonical PDFium object rendering, and dense/edited/unsupported requests fail closed before drawing. |
 | r25-1-0085 | `.github/workflows/pdfium-android-arm64-r25-1-0085-direct-path-dispatch.yml` | r25-1-0083 plus `0085`; 0084 was not emitted; excludes `0053..0074` and `0077..0078` | Adds a two-byte compiled command record and direct `ProcessPath()` dispatch only for the shared fail-closed simple-path predicate. Text and unsupported paths remain canonical, query output is capped at one million logical indices with allocator capacity metered, and PDFium remains the only rasterizer/pixel owner. |
+| r25-1-0086 | `.github/workflows/pdfium-android-arm64-r25-1-0086-streaming-candidate-cursor.yml` | r25-1-0085 plus `0086`; excludes `0053..0074` and `0077..0078` | Replaces the dynamic candidate vector and dense cap with one fixed-memory ordered posting cursor and fixed 4096-index replay chunks. Exact dense queries use linear command order; no index, cache, lock, scheduler, graphics-state copy, or pixel owner is added. |
 
 Recent revisions:
 
@@ -291,6 +293,7 @@ Recent revisions:
 | r25-1-0082 | `0082-veloce-render-program-holder-space-candidate-index.patch` | implemented, pending build | Build a bounded ordered candidate index only for huge holders, with uncertain commands always replayed and no runtime consumer or pixel behavior change. |
 | r25-1-0083 | `0083-veloce-render-program-exact-path-text-executor.patch` | implemented, pending build | Consume the one index for sparse complete path/text holders, validate candidates before drawing, replay with canonical `RenderSingleObject()`, and invalidate stale spatial metadata on owned object mutation. |
 | r25-1-0085 | `0085-veloce-render-program-direct-path-dispatch.patch` | implemented, pending build | Compile and revalidate an exact direct-path flag, bypass generic object/transparency/type dispatch for that subset, retain PDFium path/color/device execution, and admit up to one million ordered candidates with bounded scratch. Revision 0084 was not emitted. |
+| r25-1-0086 | `0086-veloce-render-program-streaming-candidate-cursor.patch` | implemented, pending build | Stream the exact ordered candidate union through fixed stack storage, remove sort/vector growth and the one-million-candidate fallback cliff, and select exact linear replay when it is no more source work than posting merge. |
 
 Historical native HEAD before r48 (not the active line):
 
@@ -587,7 +590,7 @@ r25-1-0082: bounded conservative holder-space candidate index
 r25-1-0083: exact path/text vertical executor
 r25-1-0084: not emitted; do not reuse this revision
 r25-1-0085: fail-closed direct path dispatch through PDFium ProcessPath
-r25-1-0086: bounded dense candidate chunks and reusable query scratch
+r25-1-0086: allocation-free ordered candidate cursor and exact dense linear mode
 r25-1-0087: interned consecutive path-state packets
 r25-1-0088: clip/image/Form/group/transparency completeness
 r25-1-0089: proof-gated blend kernels

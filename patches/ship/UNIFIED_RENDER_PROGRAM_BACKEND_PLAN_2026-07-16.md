@@ -114,7 +114,7 @@ stores a raw page-object pointer beyond holder lifetime.
 | `r25-1-0083` | Exact path/text vertical executor | Proven subset only |
 | `r25-1-0084` | Not emitted; revision remains unused | No artifact |
 | `r25-1-0085` | Fail-closed compiled direct-path dispatch into PDFium's existing path renderer | Proven simple paths only |
-| `r25-1-0086` | Bounded dense candidate chunks and reusable query scratch | Exact ordered pixels |
+| `r25-1-0086` | Allocation-free ordered candidate cursor, fixed replay chunks, and exact dense linear mode | Exact ordered pixels |
 | `r25-1-0087` | Interned consecutive path-state packets | Proven path state only |
 | `r25-1-0088` | Clip/image/Form/group/transparency completeness | Proven commands only |
 | `r25-1-0089` | Proof-gated blend kernels | Exact eligible blends only |
@@ -130,10 +130,9 @@ the live object before any accelerated pixel is written. Eligible commands
 skip generic recursion, transparency, and object-type dispatch but still use
 `CPDF_RenderStatus::ProcessPath()` and the existing `CFX_RenderDevice`; there
 is no copied geometry or second rasterizer. Text and every unsupported path
-remain ordered canonical commands. Candidate query output is capped at one
-million logical indices and allocator capacity remains metered, so dense
-visible tiles can enter this executor while whole-page overflow still fails
-closed before drawing.
+remain ordered canonical commands. In 0085 candidate query output is capped at
+one million logical indices and allocator capacity is metered. 0086 removes
+that temporary dense-query cliff without changing the command or pixel owner.
 
 ### 6.1 Locked 0082 Index Contract
 
@@ -192,6 +191,36 @@ or claim a dense-preview speedup. Its expected win is removal of the O(n)
 whole-holder walk for sparse visible tiles while preserving canonical object
 execution exactly. Dense direct execution begins in 0085; bounded chunking and
 scratch reuse remain the scoped responsibility of 0086.
+
+### 6.3 Locked 0086 Cursor Contract
+
+`0086` changes candidate delivery, not candidate eligibility or rasterization:
+
+- one stack-owned cursor represents the exact ordered union of at most 1025
+  immutable streams: 1024 selected grid bins plus the always-replay stream;
+- a fixed binary min-heap merges stream heads by command index and suppresses
+  duplicates across every 4096-index output chunk;
+- the unified executor has no candidate `std::vector`, logical candidate cap,
+  cache, allocator, lock, or retained per-render scratch;
+- if selected raw postings are greater than or equal to the complete command
+  count, the cursor emits the compact command order linearly; this is exact and
+  requires no more source reads than the posting merge it replaces;
+- both merge and linear modes preserve original painter order, and live object
+  bounds still perform final exact visibility rejection before rasterization;
+- direct-path eligibility is a compiled hint and is rerun against live state;
+  predicate drift renders that object canonically rather than abandoning a
+  partially drawn request;
+- a structural holder/program mismatch during streaming returns `kCancelled`,
+  requiring the caller to discard partial pixels; invalid index/bounds state
+  still returns canonical fallback before the first draw;
+- cursor and chunk memory are constant with page size and reported through
+  `scratchBytes`; candidate count, chunk count, stream count, and dense linear
+  mode are exposed as value-only proof metrics.
+
+This removes redundant sort/deduplicate work, repeated vector growth, and the
+one-million-candidate fallback/replay duplication. It does not yet reduce the
+cost of rasterizing genuinely visible dense paths; that remains the packet
+executor scope beginning in 0087.
 
 ## 7. Performance Proof
 

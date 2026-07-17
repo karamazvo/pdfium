@@ -114,6 +114,7 @@ these patches:
 | r25-1-0082 | `0082-veloce-render-program-holder-space-candidate-index.patch` | Adds one immutable 32x32 holder-space candidate index to admitted RenderPrograms without enabling replay. Holders below 4096 commands retain no index. Huge holders scan only the bounded 4096-command prefix once, then index during parser append. Ordered postings, always-replay commands, bin coverage, and query output are hard-capped; overflow discards the index and preserves canonical fallback. Queries also require exact live-holder-bounds identity. No geometry or page-object pointer is copied. |
 | r25-1-0083 | `0083-veloce-render-program-exact-path-text-executor.patch` | First unified executor. Complete parsed path/text holders with a valid 0082 index query at most 262144 candidates from the current device clip, validate every candidate before drawing, and replay survivors through PDFium's canonical `RenderSingleObject()` in painter order. Text remains always-replayed; only conservatively bounded paths may be omitted. Dense, stale, edited, unsupported, partial, and stop-object requests fall back before drawing. Owned object mutation invalidates program/index metadata in O(1). |
 | r25-1-0085 | `0085-veloce-render-program-direct-path-dispatch.patch` | Extends each immutable command to two bytes (`kind + exact flags`) under the same 32 MiB ceiling. A shared fail-closed predicate flags only unclipped, simple-paint, normal-blend paths without soft masks or transfer functions, then revalidates the live object before drawing. Those paths skip generic object/transparency/type dispatch but still use PDFium `ProcessPath()` and `CFX_RenderDevice`; text and unsupported paths remain canonical ordered commands. Candidate output rises to a bounded one million logical indices; allocator capacity remains metered. Revision 0084 was not emitted. |
+| r25-1-0086 | `0086-veloce-render-program-streaming-candidate-cursor.patch` | Removes the dense-query allocation/cap cliff. One fixed-size cursor merges selected immutable posting streams into strictly increasing painter order and emits fixed 4096-index stack chunks, deduplicating across chunk boundaries. When selected raw postings are at least the complete command count, the cursor uses exact linear command order because it requires no more source reads. The executor owns no candidate vector, cache, lock, or second rasterizer; live direct-path predicate drift selects canonical per-object rendering, while structural ownership failure cancels and discards partial output. |
 
 ## Why this directory exists
 
@@ -126,8 +127,8 @@ subset.
 ## How to apply
 
 The patch directory contains historical branches and must not be applied by
-blind numeric globbing. For `r25-1-0085`, apply the r25 rendering base through
-0031, then only 0051, 0075, 0076, 0079..0083, and 0085:
+blind numeric globbing. For `r25-1-0086`, apply the r25 rendering base through
+0031, then only 0051, 0075, 0076, 0079..0083, 0085, and 0086:
 
 ```bash
 git apply patches/ship/01-jpeg-downscale-on-decode.patch
@@ -141,9 +142,10 @@ git apply patches/ship/0081-veloce-disable-legacy-path-display-list.patch
 git apply patches/ship/0082-veloce-render-program-holder-space-candidate-index.patch
 git apply patches/ship/0083-veloce-render-program-exact-path-text-executor.patch
 git apply patches/ship/0085-veloce-render-program-direct-path-dispatch.patch
+git apply patches/ship/0086-veloce-render-program-streaming-candidate-cursor.patch
 ```
 
-Do not apply 0053..0074, 0077..0078, or an invented 0084 to an `r25-1-0085`
+Do not apply 0053..0074, 0077..0078, or an invented 0084 to an `r25-1-0086`
 build. The exact machine-checked list lives in the revision workflow.
 
 The following legacy list is retained for historical stacks only:
@@ -321,6 +323,14 @@ Patch 0085 depends directly on 0083; revision 0084 was not emitted. It keeps
 the same ordered candidate executor and adds one exact command flag plus a
 direct `ProcessPath()` entry. It does not copy path geometry, add another
 rasterizer, or bypass PDFium color/path/device semantics.
+Patch 0086 depends on 0085 and replaces the executor's dynamic candidate vector
+and one-million-entry fallback threshold with one allocation-free ordered
+cursor. The cursor performs an at-most-1025-way min-heap merge over the selected
+32x32-bin posting streams plus the always-replay stream, emits fixed 4096-index
+chunks, and preserves duplicate suppression across chunks. Dense queries use
+the existing compact command order directly only when selected raw postings
+are at least the complete command count, an exact work-count decision. There
+is no new index, copied graphics state, cache, lock, scheduler, or pixel owner.
 Patch 0053 can also be applied directly on the rel-260701 stable line after
 patch 0051. It is behavior-preserving and only inserts the `VeloceRenderPlan`
 facade above the existing r25 path-display-list backend.

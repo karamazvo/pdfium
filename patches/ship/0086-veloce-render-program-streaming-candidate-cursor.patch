@@ -1,0 +1,545 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "sh.chao" <sh.chao@gmail.com>
+Date: Fri, 17 Jul 2026 11:28:47 +0800
+Subject: [PATCH] r25-1-0086: stream bounded spatial candidates
+
+---
+ core/fpdfapi/page/veloce_render_program.cpp   | 219 ++++++++++++++----
+ core/fpdfapi/page/veloce_render_program.h     |  64 ++++-
+ .../render/veloce_unified_render_backend.cpp  |  96 ++++----
+ .../render/veloce_unified_render_backend.h    |  14 +-
+ 4 files changed, 303 insertions(+), 90 deletions(-)
+
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index 0e42309..9be0d3c 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -222,12 +222,53 @@ VeloceSpatialQueryResult VeloceSpatialCandidateIndex::Query(
+     const CFX_FloatRect& holder_query,
+     size_t max_candidate_count,
+     std::vector<uint32_t>* candidates) const {
+-  if (!candidates || max_candidate_count == 0 ||
+-      bin_offsets_.size() != kBinCount + 1u) {
++  if (!candidates || max_candidate_count == 0) {
+     return VeloceSpatialQueryResult::kUseFullReplay;
+   }
+   candidates->clear();
+ 
++  VeloceSpatialCandidateCursor cursor;
++  const VeloceSpatialQueryResult open_result =
++      OpenCursor(current_holder_bounds, holder_query, &cursor);
++  if (open_result != VeloceSpatialQueryResult::kCandidates) {
++    return open_result;
++  }
++
++  std::array<uint32_t, 4096> chunk;
++  while (const size_t count = cursor.NextChunk(chunk)) {
++    if (count > max_candidate_count - candidates->size()) {
++      candidates->clear();
++      return VeloceSpatialQueryResult::kUseFullReplay;
++    }
++    candidates->insert(candidates->end(), chunk.begin(),
++                       chunk.begin() + count);
++  }
++  return candidates->empty() ? VeloceSpatialQueryResult::kEmpty
++                             : VeloceSpatialQueryResult::kCandidates;
++}
++
++VeloceSpatialQueryResult VeloceSpatialCandidateIndex::OpenCursor(
++    const CFX_FloatRect& current_holder_bounds,
++    const CFX_FloatRect& holder_query,
++    VeloceSpatialCandidateCursor* cursor) const {
++  if (!cursor) {
++    return VeloceSpatialQueryResult::kUseFullReplay;
++  }
++  cursor->Reset();
++  if (bin_offsets_.size() != kBinCount + 1u || bin_offsets_.front() != 0u ||
++      bin_offsets_.back() != command_indices_.size() ||
++      (!command_indices_.empty() &&
++       command_indices_.back() >= command_count_) ||
++      (!always_candidate_indices_.empty() &&
++       always_candidate_indices_.back() >= command_count_)) {
++    return VeloceSpatialQueryResult::kUseFullReplay;
++  }
++  for (size_t bin = 0; bin < kBinCount; ++bin) {
++    if (bin_offsets_[bin] > bin_offsets_[bin + 1u]) {
++      return VeloceSpatialQueryResult::kUseFullReplay;
++    }
++  }
++
+   CFX_FloatRect live_bounds = current_holder_bounds;
+   live_bounds.Normalize();
+   if (!IsFiniteRect(live_bounds) || live_bounds.IsEmpty() ||
+@@ -241,60 +282,160 @@ VeloceSpatialQueryResult VeloceSpatialCandidateIndex::Query(
+     return VeloceSpatialQueryResult::kUseFullReplay;
+   }
+ 
+-  const auto append_candidates =
+-      [candidates, max_candidate_count](const uint32_t* begin,
+-                                        const uint32_t* end) {
+-    const size_t count = static_cast<size_t>(end - begin);
+-    if (count > max_candidate_count - candidates->size()) {
+-      return false;
+-    }
+-    candidates->insert(candidates->end(), begin, end);
+-    return true;
+-  };
+-
+-  if (!always_candidate_indices_.empty() &&
+-      !append_candidates(always_candidate_indices_.data(),
+-                         always_candidate_indices_.data() +
+-                             always_candidate_indices_.size())) {
+-    candidates->clear();
+-    return VeloceSpatialQueryResult::kUseFullReplay;
+-  }
+-
+   uint32_t left = 0;
+   uint32_t right = 0;
+   uint32_t bottom = 0;
+   uint32_t top = 0;
+-  if (GetBinRange(bounds_, query, &left, &right, &bottom, &top)) {
++  const bool has_bins =
++      GetBinRange(bounds_, query, &left, &right, &bottom, &top);
++  size_t raw_posting_count = always_candidate_indices_.size();
++  size_t source_stream_count = always_candidate_indices_.empty() ? 0u : 1u;
++  if (has_bins) {
++    for (uint32_t row = bottom; row <= top; ++row) {
++      for (uint32_t column = left; column <= right; ++column) {
++        const uint32_t bin = row * kColumns + column;
++        const size_t count = bin_offsets_[bin + 1u] - bin_offsets_[bin];
++        raw_posting_count += count;
++        source_stream_count += count == 0 ? 0u : 1u;
++      }
++    }
++  }
++
++  // Reading the immutable command array directly is exact and no more work
++  // than merging this many raw postings. Live bounds still perform final
++  // object-level rejection in the executor.
++  if (raw_posting_count >= command_count_) {
++    cursor->UseLinearReplay(command_count_, source_stream_count);
++    return command_count_ == 0 ? VeloceSpatialQueryResult::kEmpty
++                               : VeloceSpatialQueryResult::kCandidates;
++  }
++
++  if (!always_candidate_indices_.empty()) {
++    cursor->AddStream(always_candidate_indices_.data(),
++                      always_candidate_indices_.data() +
++                          always_candidate_indices_.size());
++  }
++  if (has_bins) {
+     for (uint32_t row = bottom; row <= top; ++row) {
+       for (uint32_t column = left; column <= right; ++column) {
+         const uint32_t bin = row * kColumns + column;
+         const uint32_t first = bin_offsets_[bin];
+         const uint32_t last = bin_offsets_[bin + 1u];
+-        if (first > last || last > command_indices_.size()) {
+-          candidates->clear();
+-          return VeloceSpatialQueryResult::kUseFullReplay;
+-        }
+         if (first != last) {
+-          if (!append_candidates(command_indices_.data() + first,
+-                                 command_indices_.data() + last)) {
+-            candidates->clear();
+-            return VeloceSpatialQueryResult::kUseFullReplay;
+-          }
++          cursor->AddStream(command_indices_.data() + first,
++                            command_indices_.data() + last);
+         }
+       }
+     }
+   }
++  return cursor->heap_size_ == 0 ? VeloceSpatialQueryResult::kEmpty
++                                 : VeloceSpatialQueryResult::kCandidates;
++}
+ 
+-  std::ranges::sort(*candidates);
+-  candidates->erase(std::ranges::unique(*candidates).begin(),
+-                    candidates->end());
+-  if (!candidates->empty() && candidates->back() >= command_count_) {
+-    candidates->clear();
+-    return VeloceSpatialQueryResult::kUseFullReplay;
++void VeloceSpatialCandidateCursor::Reset() {
++  linear_next_ = 0;
++  linear_end_ = 0;
++  last_emitted_ = 0;
++  stream_count_ = 0;
++  source_stream_count_ = 0;
++  heap_size_ = 0;
++  uses_linear_replay_ = false;
++  have_last_emitted_ = false;
++}
++
++void VeloceSpatialCandidateCursor::AddStream(const uint32_t* begin,
++                                             const uint32_t* end) {
++  if (begin == end) {
++    return;
+   }
++  const size_t stream_index = stream_count_++;
++  streams_[stream_index] = {begin, end};
++  PushHeap({*begin, static_cast<uint16_t>(stream_index)});
++  source_stream_count_ = stream_count_;
++}
+ 
+-  return candidates->empty() ? VeloceSpatialQueryResult::kEmpty
+-                             : VeloceSpatialQueryResult::kCandidates;
++void VeloceSpatialCandidateCursor::UseLinearReplay(
++    uint32_t command_count,
++    size_t source_stream_count) {
++  Reset();
++  linear_end_ = command_count;
++  source_stream_count_ = source_stream_count;
++  uses_linear_replay_ = true;
++}
++
++bool VeloceSpatialCandidateCursor::ComesBefore(const HeapEntry& lhs,
++                                               const HeapEntry& rhs) {
++  return lhs.command_index < rhs.command_index ||
++         (lhs.command_index == rhs.command_index &&
++          lhs.stream_index < rhs.stream_index);
++}
++
++void VeloceSpatialCandidateCursor::PushHeap(HeapEntry entry) {
++  size_t child = heap_size_++;
++  while (child > 0) {
++    const size_t parent = (child - 1u) / 2u;
++    if (!ComesBefore(entry, heap_[parent])) {
++      break;
++    }
++    heap_[child] = heap_[parent];
++    child = parent;
++  }
++  heap_[child] = entry;
++}
++
++VeloceSpatialCandidateCursor::HeapEntry
++VeloceSpatialCandidateCursor::PopHeap() {
++  const HeapEntry first = heap_[0];
++  const HeapEntry tail = heap_[--heap_size_];
++  if (heap_size_ > 0) {
++    size_t parent = 0;
++    while (true) {
++      const size_t left = parent * 2u + 1u;
++      if (left >= heap_size_) {
++        break;
++      }
++      const size_t right = left + 1u;
++      const size_t child =
++          right < heap_size_ && ComesBefore(heap_[right], heap_[left])
++              ? right
++              : left;
++      if (!ComesBefore(heap_[child], tail)) {
++        break;
++      }
++      heap_[parent] = heap_[child];
++      parent = child;
++    }
++    heap_[parent] = tail;
++  }
++
++  Stream& stream = streams_[first.stream_index];
++  ++stream.current;
++  if (stream.current != stream.end) {
++    PushHeap({*stream.current, first.stream_index});
++  }
++  return first;
++}
++
++size_t VeloceSpatialCandidateCursor::NextChunk(
++    pdfium::span<uint32_t> output) {
++  size_t output_count = 0;
++  if (uses_linear_replay_) {
++    while (output_count < output.size() && linear_next_ < linear_end_) {
++      output[output_count++] = linear_next_++;
++    }
++    return output_count;
++  }
++
++  while (output_count < output.size() && heap_size_ > 0) {
++    const HeapEntry entry = PopHeap();
++    if (have_last_emitted_ && entry.command_index == last_emitted_) {
++      continue;
++    }
++    last_emitted_ = entry.command_index;
++    have_last_emitted_ = true;
++    output[output_count++] = entry.command_index;
++  }
++  return output_count;
+ }
+ 
+ size_t VeloceSpatialCandidateIndex::EstimatedBytes() const {
+diff --git a/core/fpdfapi/page/veloce_render_program.h b/core/fpdfapi/page/veloce_render_program.h
+index 2c12f81..7d10b8d 100644
+--- a/core/fpdfapi/page/veloce_render_program.h
++++ b/core/fpdfapi/page/veloce_render_program.h
+@@ -17,6 +17,7 @@
+ class CPDF_PageObject;
+ class CPDF_PageObjectHolder;
+ class VeloceSpatialCandidateIndexBuilder;
++class VeloceSpatialCandidateCursor;
+ 
+ enum class VeloceRenderCommandKind : uint8_t {
+   kPath,
+@@ -78,6 +79,10 @@ class VeloceSpatialCandidateIndex final {
+       const CFX_FloatRect& holder_query,
+       size_t max_candidate_count,
+       std::vector<uint32_t>* candidates) const;
++  VeloceSpatialQueryResult OpenCursor(
++      const CFX_FloatRect& current_holder_bounds,
++      const CFX_FloatRect& holder_query,
++      VeloceSpatialCandidateCursor* cursor) const;
+ 
+   const CFX_FloatRect& bounds() const { return bounds_; }
+   uint32_t command_count() const { return command_count_; }
+@@ -104,6 +109,58 @@ class VeloceSpatialCandidateIndex final {
+   const std::vector<uint32_t> always_candidate_indices_;
+ };
+ 
++// Allocation-free ordered union of the immutable posting streams selected by
++// one holder-space query. NextChunk() preserves global painter order and
++// removes duplicates across chunk boundaries. Its fixed storage bounds every
++// replay independently of page density.
++class VeloceSpatialCandidateCursor final {
++ public:
++  static constexpr size_t kMaxStreams =
++      VeloceSpatialCandidateIndex::kBinCount + 1u;
++
++  VeloceSpatialCandidateCursor() = default;
++  ~VeloceSpatialCandidateCursor() = default;
++
++  VeloceSpatialCandidateCursor(const VeloceSpatialCandidateCursor&) = delete;
++  VeloceSpatialCandidateCursor& operator=(
++      const VeloceSpatialCandidateCursor&) = delete;
++
++  size_t NextChunk(pdfium::span<uint32_t> output);
++  size_t stream_count() const { return source_stream_count_; }
++  bool uses_linear_replay() const { return uses_linear_replay_; }
++
++ private:
++  friend class VeloceSpatialCandidateIndex;
++
++  struct Stream {
++    const uint32_t* current = nullptr;
++    const uint32_t* end = nullptr;
++  };
++
++  struct HeapEntry {
++    uint32_t command_index = 0;
++    uint16_t stream_index = 0;
++  };
++
++  void Reset();
++  void AddStream(const uint32_t* begin, const uint32_t* end);
++  void UseLinearReplay(uint32_t command_count, size_t source_stream_count);
++  void PushHeap(HeapEntry entry);
++  HeapEntry PopHeap();
++  static bool ComesBefore(const HeapEntry& lhs, const HeapEntry& rhs);
++
++  std::array<Stream, kMaxStreams> streams_{};
++  std::array<HeapEntry, kMaxStreams> heap_{};
++  uint32_t linear_next_ = 0;
++  uint32_t linear_end_ = 0;
++  uint32_t last_emitted_ = 0;
++  size_t stream_count_ = 0;
++  size_t source_stream_count_ = 0;
++  size_t heap_size_ = 0;
++  bool uses_linear_replay_ = false;
++  bool have_last_emitted_ = false;
++};
++
+ // Immutable native rendering representation owned by one live page-object
+ // holder. PDFium page objects remain authoritative for fidelity and editing.
+ // A command's position is its live holder object index. Graphics state and
+@@ -150,9 +207,10 @@ class VeloceRenderProgram final {
+   const std::unique_ptr<const VeloceSpatialCandidateIndex> spatial_index_;
+ };
+ 
+-// Single-owner parser-time recorder. It records one byte and updates one fixed
+-// counter per appended holder object in exact painter order. Object indices are
+-// implicit command indices, so no pointer or duplicate index storage is needed.
++// Single-owner parser-time recorder. It records one compact command and updates
++// one fixed counter per appended holder object in exact painter order. Object
++// indices are implicit command indices, so no pointer or duplicate index
++// storage is needed.
+ class VeloceRenderProgramBuilder final {
+  public:
+   VeloceRenderProgramBuilder();
+diff --git a/core/fpdfapi/render/veloce_unified_render_backend.cpp b/core/fpdfapi/render/veloce_unified_render_backend.cpp
+index 719ab31..9adaa6a 100644
+--- a/core/fpdfapi/render/veloce_unified_render_backend.cpp
++++ b/core/fpdfapi/render/veloce_unified_render_backend.cpp
+@@ -3,9 +3,9 @@
+ 
+ #include "core/fpdfapi/render/veloce_unified_render_backend.h"
+ 
++#include <array>
+ #include <chrono>
+ #include <cstdint>
+-#include <vector>
+ 
+ #include "core/fpdfapi/page/cpdf_pageobject.h"
+ #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
+@@ -16,7 +16,7 @@
+ 
+ namespace {
+ 
+-constexpr size_t kMaxCandidateCommands = 1024u * 1024u;
++constexpr size_t kCandidateChunkCommands = 4096;
+ 
+ uint64_t MonotonicNanoseconds() {
+   return static_cast<uint64_t>(
+@@ -80,64 +80,74 @@ VeloceUnifiedRenderResult VeloceTryRenderUnifiedProgram(
+   CFX_FloatRect holder_clip = holder_to_device.GetInverse().TransformRect(
+       CFX_FloatRect(status->GetRenderDevice()->GetClipBox()));
+   holder_clip.Normalize();
+-  std::vector<uint32_t> candidates;
++  VeloceSpatialCandidateCursor cursor;
++  std::array<uint32_t, kCandidateChunkCommands> candidate_chunk;
+   const uint64_t query_start = metrics ? MonotonicNanoseconds() : 0;
+-  const VeloceSpatialQueryResult query_result = index->Query(
+-      holder->GetBBox(), holder_clip, kMaxCandidateCommands, &candidates);
++  const VeloceSpatialQueryResult query_result =
++      index->OpenCursor(holder->GetBBox(), holder_clip, &cursor);
+   if (metrics) {
+     metrics->candidate_query_ns = MonotonicNanoseconds() - query_start;
+-    metrics->candidate_commands = candidates.size();
+-    metrics->scratch_bytes = candidates.capacity() * sizeof(uint32_t);
++    metrics->candidate_streams = cursor.stream_count();
++    metrics->candidate_linear_replay = cursor.uses_linear_replay() ? 1u : 0u;
++    metrics->scratch_bytes = sizeof(cursor) + sizeof(candidate_chunk);
+   }
+   if (query_result == VeloceSpatialQueryResult::kUseFullReplay) {
+     return VeloceUnifiedRenderResult::kNotEligible;
+   }
+ 
+   const auto commands = program->commands();
+-  for (uint32_t command_index : candidates) {
+-    CPDF_PageObject* object = holder->GetPageObjectByIndex(command_index);
+-    if (!object || command_index >= commands.size() ||
+-        !CommandMatchesObject(commands[command_index], *object) ||
+-        (commands[command_index].HasFlag(
+-             VeloceRenderCommandFlag::kDirectPath) &&
+-         !VeloceCanDirectDrawPath(*object))) {
+-      return VeloceUnifiedRenderResult::kNotEligible;
+-    }
+-  }
+-
+   const uint64_t replay_start = metrics ? MonotonicNanoseconds() : 0;
+-  for (uint32_t command_index : candidates) {
+-    if (status->ShouldCancelRender()) {
+-      return VeloceUnifiedRenderResult::kCancelled;
+-    }
+-    CPDF_PageObject* object = holder->GetPageObjectByIndex(command_index);
++  while (const size_t chunk_size = cursor.NextChunk(candidate_chunk)) {
+     if (metrics) {
+-      ++metrics->visited_commands;
+-    }
+-    if (!object->IsActive() || !RectIntersects(object->GetRect(), holder_clip)) {
+-      continue;
++      metrics->candidate_commands += chunk_size;
++      ++metrics->candidate_chunks;
+     }
+-    const VeloceRenderCommand& command = commands[command_index];
+-    if (command.HasFlag(VeloceRenderCommandFlag::kDirectPath)) {
+-      if (metrics) {
+-        ++metrics->direct_path_commands;
++    for (size_t chunk_index = 0; chunk_index < chunk_size; ++chunk_index) {
++      if (status->ShouldCancelRender()) {
++        return VeloceUnifiedRenderResult::kCancelled;
++      }
++      const uint32_t command_index = candidate_chunk[chunk_index];
++      if (command_index >= commands.size()) {
++        return VeloceUnifiedRenderResult::kCancelled;
+       }
+-      if (!status->RenderVeloceDirectPath(object->AsPath(),
+-                                          holder_to_device)) {
++      CPDF_PageObject* object = holder->GetPageObjectByIndex(command_index);
++      if (!object || !CommandMatchesObject(commands[command_index], *object)) {
++        // The cursor may already have produced pixels. A holder/program
++        // ownership violation must discard this render, never replay over it.
+         return VeloceUnifiedRenderResult::kCancelled;
+       }
+       if (metrics) {
+-        ++metrics->direct_path_dispatches;
++        ++metrics->visited_commands;
++      }
++      if (!object->IsActive() ||
++          !RectIntersects(object->GetRect(), holder_clip)) {
++        continue;
++      }
++      const VeloceRenderCommand& command = commands[command_index];
++      const bool direct_path =
++          command.HasFlag(VeloceRenderCommandFlag::kDirectPath) &&
++          VeloceCanDirectDrawPath(*object);
++      if (direct_path) {
++        if (metrics) {
++          ++metrics->direct_path_commands;
++        }
++        if (!status->RenderVeloceDirectPath(object->AsPath(),
++                                            holder_to_device)) {
++          return VeloceUnifiedRenderResult::kCancelled;
++        }
++        if (metrics) {
++          ++metrics->direct_path_dispatches;
++        }
++      } else {
++        status->RenderSingleObject(object, holder_to_device);
++      }
++      if (metrics) {
++        ++metrics->drawn_commands;
++        ++metrics->dispatch_count;
++      }
++      if (status->IsStopped() || status->ShouldCancelRender()) {
++        return VeloceUnifiedRenderResult::kCancelled;
+       }
+-    } else {
+-      status->RenderSingleObject(object, holder_to_device);
+-    }
+-    if (metrics) {
+-      ++metrics->drawn_commands;
+-      ++metrics->dispatch_count;
+-    }
+-    if (status->IsStopped() || status->ShouldCancelRender()) {
+-      return VeloceUnifiedRenderResult::kCancelled;
+     }
+   }
+   if (metrics) {
+diff --git a/core/fpdfapi/render/veloce_unified_render_backend.h b/core/fpdfapi/render/veloce_unified_render_backend.h
+index f18881d..ebaeca4 100644
+--- a/core/fpdfapi/render/veloce_unified_render_backend.h
++++ b/core/fpdfapi/render/veloce_unified_render_backend.h
+@@ -11,7 +11,7 @@ class CFX_Matrix;
+ class CPDF_PageObjectHolder;
+ class CPDF_RenderStatus;
+ 
+-inline constexpr char kVeloceUnifiedRenderBackendRevision[] = "r25-1-0085";
++inline constexpr char kVeloceUnifiedRenderBackendRevision[] = "r25-1-0086";
+ 
+ // Result contract for one complete holder request. Disabled and not-eligible
+ // results guarantee that no destination pixel was changed. A cancelled result
+@@ -38,6 +38,9 @@ struct VeloceUnifiedRenderMetrics {
+ 
+   size_t total_commands = 0;
+   size_t candidate_commands = 0;
++  size_t candidate_chunks = 0;
++  size_t candidate_streams = 0;
++  size_t candidate_linear_replay = 0;
+   size_t visited_commands = 0;
+   size_t drawn_commands = 0;
+   size_t dispatch_count = 0;
+@@ -56,10 +59,11 @@ struct VeloceUnifiedRenderMetrics {
+ // representation; PDFium page objects remain authoritative for fidelity and
+ // editing, and `status` owns the destination device.
+ 
+-// r25-1-0085 directly dispatches only fail-closed simple path commands while
+-// retaining canonical PDFium rendering for text and every unsupported path.
+-// Dense, stale, partial, and edited programs return before drawing. The legacy
+-// PathDL is never delegated.
++// r25-1-0086 streams painter-ordered candidates through fixed stack storage.
++// Dense queries use exact linear command order instead of a candidate cap or
++// allocation cliff. Direct dispatch remains fail-closed, while live state drift
++// selects canonical rendering for that command. The legacy PathDL is never
++// delegated.
+ VeloceUnifiedRenderResult VeloceTryRenderUnifiedProgram(
+     CPDF_RenderStatus* status,
+     const CPDF_PageObjectHolder* holder,
