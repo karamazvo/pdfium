@@ -264,6 +264,9 @@ Release workflows:
 | r25-1-0085 | `.github/workflows/pdfium-android-arm64-r25-1-0085-direct-path-dispatch.yml` | r25-1-0083 plus `0085`; 0084 was not emitted; excludes `0053..0074` and `0077..0078` | Adds a two-byte compiled command record and direct `ProcessPath()` dispatch only for the shared fail-closed simple-path predicate. Text and unsupported paths remain canonical, query output is capped at one million logical indices with allocator capacity metered, and PDFium remains the only rasterizer/pixel owner. |
 | r25-1-0086 | `.github/workflows/pdfium-android-arm64-r25-1-0086-streaming-candidate-cursor.yml` | r25-1-0085 plus `0086`; excludes `0053..0074` and `0077..0078` | Replaces the dynamic candidate vector and dense cap with one fixed-memory ordered posting cursor and fixed 4096-index replay chunks. Exact dense queries use linear command order; no index, cache, lock, scheduler, graphics-state copy, or pixel owner is added. |
 | r25-1-0087 | `.github/workflows/pdfium-android-arm64-r25-1-0087-exact-path-state-packets.yml` | r25-1-0086 plus `0087`; excludes `0053..0074` and `0077..0078` | Reuses exact live stroke state and bounded AGG scratch across consecutive proven commands while retaining separate geometry, matrix, rasterization, and destination composite for every path. |
+| r25-1-0088 | `.github/workflows/pdfium-android-arm64-r25-1-0088-render-program-cost-attribution.yml` | r25-1-0087 plus `0088`; excludes `0053..0074` and `0077..0078` | Adds bounded native cost attribution without changing rendering policy or pixels. |
+| r25-1-0089 | `.github/workflows/pdfium-android-arm64-r25-1-0089-exact-darken-spans.yml` | r25-1-0088 plus `0089`; excludes `0053..0074` and `0077..0078` | Replaces eligible per-object Darken temporary bitmaps with exact AGG coverage spans while preserving PDFium's blend equation and painter order. |
+| r25-1-0090 | `.github/workflows/pdfium-android-arm64-r25-1-0090-compact-bounds-filter.yml` | r25-1-0089 plus `0090`; excludes `0053..0074` and `0077..0078` | Filters conservative 8-byte command bounds inside the existing ordered cursor before object lookup. Full-page replay bypasses the filter and retained bounds are capped at 32 MiB. |
 
 Recent revisions:
 
@@ -296,6 +299,9 @@ Recent revisions:
 | r25-1-0085 | `0085-veloce-render-program-direct-path-dispatch.patch` | implemented, pending build | Compile and revalidate an exact direct-path flag, bypass generic object/transparency/type dispatch for that subset, retain PDFium path/color/device execution, and admit up to one million ordered candidates with bounded scratch. Revision 0084 was not emitted. |
 | r25-1-0086 | `0086-veloce-render-program-streaming-candidate-cursor.patch` | implemented, pending build | Stream the exact ordered candidate union through fixed stack storage, remove sort/vector growth and the one-million-candidate fallback cliff, and select exact linear replay when it is no more source work than posting merge. |
 | r25-1-0087 | `0087-veloce-render-program-exact-path-state-packets.patch` | implemented, pending build | Packet consecutive proven stroke-only commands by exact live state, cap packets at 256 commands/16384 points, and reuse AGG scratch without merging geometry or changing per-path compositing. |
+| r25-1-0088 | `0088-veloce-render-program-cost-attribution.patch` | implemented | Attribute compile, query, replay, candidate, dispatch, and retained-memory costs with one bounded native summary. |
+| r25-1-0089 | `0089-veloce-render-program-exact-darken-spans.patch` | implemented | Dispatch proven fill-only or stroke-only Darken objects directly from AGG coverage into PDFium's existing destination compositor. |
+| r25-1-0090 | `0090-veloce-render-program-compact-bounds-filter.patch` | implemented, pending build | Reject coarse-bin false candidates using bounded conservative command metadata before live holder lookup, without changing order or pixels. |
 
 Historical native HEAD before r48 (not the active line):
 
@@ -594,8 +600,9 @@ r25-1-0084: not emitted; do not reuse this revision
 r25-1-0085: fail-closed direct path dispatch through PDFium ProcessPath
 r25-1-0086: allocation-free ordered candidate cursor and exact dense linear mode
 r25-1-0087: interned consecutive path-state packets
-r25-1-0088: clip/image/Form/group/transparency completeness
-r25-1-0089: proof-gated blend kernels
+r25-1-0088: bounded native cost attribution
+r25-1-0089: proof-gated exact Darken coverage spans
+r25-1-0090: compact conservative bounds before object lookup
 ```
 
 These are revisions of one framework, not separate fast paths. Every revision

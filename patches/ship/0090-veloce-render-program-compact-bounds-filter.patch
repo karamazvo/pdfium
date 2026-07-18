@@ -1,0 +1,533 @@
+From 8ea31f74c592e81e3a87baefed5346483c099cac Mon Sep 17 00:00:00 2001
+From: "sh.chao" <sh.chao@gmail.com>
+Date: Sat, 18 Jul 2026 15:02:14 +0800
+Subject: [PATCH] r25-1-0090: cull compact command bounds before replay
+
+Extend the existing 32x32 holder-space index with one conservative 8-byte
+quantized bound per command. The bound is produced from the same PDFium page
+object rectangle already read while building the index, so compilation gains
+no second object scan. During tile replay, the ordered candidate cursor rejects
+coarse-bin false positives before live object lookup while preserving command
+order and all existing raster/composite behavior.
+
+Quantization rounds outward, invalid or unsupported bounds become full-holder
+bounds, structural mismatches abandon the index, and full-page queries disable
+the compact filter. Retained bounds memory is capped at 32 MiB. Remove the now
+redundant live rectangle test and report boundsRejected/compactBoundsBytes so
+device logs can distinguish index precision wins from genuinely dense tiles.
+
+---
+ core/fpdfapi/page/veloce_render_program.cpp   | 129 ++++++++++++++++--
+ core/fpdfapi/page/veloce_render_program.h     |  45 +++++-
+ .../render/veloce_unified_render_backend.cpp  |  32 +++--
+ .../render/veloce_unified_render_backend.h    |   9 +-
+ 4 files changed, 179 insertions(+), 36 deletions(-)
+
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index 79d869441..c29980e07 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -21,6 +21,7 @@ namespace {
+ constexpr size_t kMinSpatialIndexCommands = 4096;
+ constexpr size_t kMaxSpatialIndexPostings = 4u * 1024u * 1024u;
+ constexpr size_t kMaxAlwaysCandidateCommands = 1024u * 1024u;
++constexpr size_t kMaxCompactBoundsBytes = 32u * 1024u * 1024u;
+ constexpr uint32_t kMaxBinsPerCommand = 64;
+ 
+ uint64_t MonotonicNanoseconds() {
+@@ -98,6 +99,37 @@ bool GetBinRange(const CFX_FloatRect& bounds,
+   return true;
+ }
+ 
++uint16_t QuantizeCoordinate(float coordinate,
++                            float minimum,
++                            float span,
++                            bool round_up) {
++  constexpr double kQuantizedMaximum = UINT16_MAX;
++  const double scaled =
++      (static_cast<double>(coordinate) - minimum) * kQuantizedMaximum / span;
++  const double rounded = round_up ? std::ceil(scaled) : std::floor(scaled);
++  return static_cast<uint16_t>(
++      std::clamp(rounded, 0.0, kQuantizedMaximum));
++}
++
++VeloceQuantizedBounds QuantizeBounds(const CFX_FloatRect& holder_bounds,
++                                     CFX_FloatRect rect) {
++  rect.Normalize();
++  return {
++      QuantizeCoordinate(rect.left, holder_bounds.left, holder_bounds.Width(),
++                         /*round_up=*/false),
++      QuantizeCoordinate(rect.bottom, holder_bounds.bottom,
++                         holder_bounds.Height(), /*round_up=*/false),
++      QuantizeCoordinate(rect.right, holder_bounds.left,
++                         holder_bounds.Width(), /*round_up=*/true),
++      QuantizeCoordinate(rect.top, holder_bounds.bottom,
++                         holder_bounds.Height(), /*round_up=*/true),
++  };
++}
++
++VeloceQuantizedBounds FullQuantizedBounds() {
++  return {};
++}
++
+ }  // namespace
+ 
+ bool VeloceCanDirectDrawPath(const CPDF_PageObject& object) {
+@@ -161,10 +193,16 @@ class VeloceSpatialCandidateIndexBuilder final {
+   bool Append(uint32_t command_index,
+               VeloceRenderCommandKind kind,
+               const CPDF_PageObject& object) {
+-    // Path bounds already include stroke expansion. Other command families
+-    // remain always-replayed until their conservative bounds are proven by
+-    // the corresponding vertical executor revision.
+-    if (kind != VeloceRenderCommandKind::kPath) {
++    if (compact_bounds_.size() >=
++        kMaxCompactBoundsBytes / sizeof(VeloceQuantizedBounds)) {
++      return false;
++    }
++    // The unified executor currently admits only paths and text. Their page
++    // object bounds are the same conservative bounds previously checked live
++    // by the executor. Unsupported command families remain always-replayed.
++    if (kind != VeloceRenderCommandKind::kPath &&
++        kind != VeloceRenderCommandKind::kText) {
++      compact_bounds_.push_back(FullQuantizedBounds());
+       return AppendAlwaysCandidate(command_index);
+     }
+ 
+@@ -173,6 +211,16 @@ class VeloceSpatialCandidateIndexBuilder final {
+     if (!IsFiniteRect(rect) || rect.IsEmpty() || rect.left < bounds_.left ||
+         rect.right > bounds_.right || rect.bottom < bounds_.bottom ||
+         rect.top > bounds_.top) {
++      compact_bounds_.push_back(FullQuantizedBounds());
++      return AppendAlwaysCandidate(command_index);
++    }
++
++    compact_bounds_.push_back(QuantizeBounds(bounds_, rect));
++
++    // Text remains in the ordered always-candidate stream. The compact bounds
++    // filter rejects off-clip text before live object lookup without changing
++    // its painter position relative to paths.
++    if (kind == VeloceRenderCommandKind::kText) {
+       return AppendAlwaysCandidate(command_index);
+     }
+ 
+@@ -181,7 +229,7 @@ class VeloceSpatialCandidateIndexBuilder final {
+     uint32_t bottom = 0;
+     uint32_t top = 0;
+     if (!GetBinRange(bounds_, rect, &left, &right, &bottom, &top)) {
+-      return AppendAlwaysCandidate(command_index);
++      return false;
+     }
+     const uint32_t bin_count =
+         (right - left + 1u) * (top - bottom + 1u);
+@@ -204,6 +252,9 @@ class VeloceSpatialCandidateIndexBuilder final {
+ 
+   std::unique_ptr<const VeloceSpatialCandidateIndex> Finish(
+       uint32_t command_count) {
++    if (compact_bounds_.size() != command_count) {
++      return nullptr;
++    }
+     std::vector<uint32_t> bin_offsets;
+     bin_offsets.reserve(VeloceSpatialCandidateIndex::kBinCount + 1u);
+     std::vector<uint32_t> command_indices;
+@@ -216,7 +267,8 @@ class VeloceSpatialCandidateIndexBuilder final {
+     return std::unique_ptr<const VeloceSpatialCandidateIndex>(
+         new VeloceSpatialCandidateIndex(
+             bounds_, command_count, std::move(bin_offsets),
+-            std::move(command_indices), std::move(always_candidate_indices_)));
++            std::move(command_indices), std::move(always_candidate_indices_),
++            std::move(compact_bounds_)));
+   }
+ 
+  private:
+@@ -233,6 +285,7 @@ class VeloceSpatialCandidateIndexBuilder final {
+              VeloceSpatialCandidateIndex::kBinCount>
+       bins_;
+   std::vector<uint32_t> always_candidate_indices_;
++  std::vector<VeloceQuantizedBounds> compact_bounds_;
+   size_t posting_count_ = 0;
+ };
+ 
+@@ -241,12 +294,14 @@ VeloceSpatialCandidateIndex::VeloceSpatialCandidateIndex(
+     uint32_t command_count,
+     std::vector<uint32_t> bin_offsets,
+     std::vector<uint32_t> command_indices,
+-    std::vector<uint32_t> always_candidate_indices)
++    std::vector<uint32_t> always_candidate_indices,
++    std::vector<VeloceQuantizedBounds> compact_bounds)
+     : bounds_(bounds),
+       command_count_(command_count),
+       bin_offsets_(std::move(bin_offsets)),
+       command_indices_(std::move(command_indices)),
+-      always_candidate_indices_(std::move(always_candidate_indices)) {}
++      always_candidate_indices_(std::move(always_candidate_indices)),
++      compact_bounds_(std::move(compact_bounds)) {}
+ 
+ VeloceSpatialQueryResult VeloceSpatialCandidateIndex::Query(
+     const CFX_FloatRect& current_holder_bounds,
+@@ -288,6 +343,7 @@ VeloceSpatialQueryResult VeloceSpatialCandidateIndex::OpenCursor(
+   cursor->Reset();
+   if (bin_offsets_.size() != kBinCount + 1u || bin_offsets_.front() != 0u ||
+       bin_offsets_.back() != command_indices_.size() ||
++      compact_bounds_.size() != command_count_ ||
+       (!command_indices_.empty() &&
+        command_indices_.back() >= command_count_) ||
+       (!always_candidate_indices_.empty() &&
+@@ -312,6 +368,10 @@ VeloceSpatialQueryResult VeloceSpatialCandidateIndex::OpenCursor(
+   if (!IsFiniteRect(query) || query.IsEmpty()) {
+     return VeloceSpatialQueryResult::kUseFullReplay;
+   }
++  const bool use_bounds_filter = !query.Contains(bounds_);
++  const VeloceQuantizedBounds query_bounds =
++      use_bounds_filter ? QuantizeBounds(bounds_, query)
++                        : FullQuantizedBounds();
+ 
+   uint32_t left = 0;
+   uint32_t right = 0;
+@@ -337,11 +397,13 @@ VeloceSpatialQueryResult VeloceSpatialCandidateIndex::OpenCursor(
+   }
+ 
+   // Reading the immutable command array directly is exact and no more work
+-  // than merging this many raw postings. Live bounds still perform final
+-  // object-level rejection in the executor.
++  // than merging this many raw postings. Compact bounds perform final
++  // command-level rejection before live object lookup.
+   if (raw_posting_count >= command_count_) {
+     cursor->UseLinearReplay(command_count_, source_stream_count,
+                             raw_posting_count, queried_bin_count);
++    cursor->SetBoundsFilter(compact_bounds_.data(), compact_bounds_.size(),
++                            query_bounds, use_bounds_filter);
+     return command_count_ == 0 ? VeloceSpatialQueryResult::kEmpty
+                                : VeloceSpatialQueryResult::kCandidates;
+   }
+@@ -365,6 +427,8 @@ VeloceSpatialQueryResult VeloceSpatialCandidateIndex::OpenCursor(
+     }
+   }
+   cursor->queried_bin_count_ = queried_bin_count;
++  cursor->SetBoundsFilter(compact_bounds_.data(), compact_bounds_.size(),
++                          query_bounds, use_bounds_filter);
+   return cursor->heap_size_ == 0 ? VeloceSpatialQueryResult::kEmpty
+                                  : VeloceSpatialQueryResult::kCandidates;
+ }
+@@ -377,9 +441,14 @@ void VeloceSpatialCandidateCursor::Reset() {
+   source_stream_count_ = 0;
+   raw_candidate_count_ = 0;
+   queried_bin_count_ = 0;
++  bounds_rejected_count_ = 0;
+   heap_size_ = 0;
++  compact_bounds_ = nullptr;
++  compact_bounds_count_ = 0;
++  query_bounds_ = FullQuantizedBounds();
+   uses_linear_replay_ = false;
+   have_last_emitted_ = false;
++  bounds_filter_enabled_ = false;
+ }
+ 
+ void VeloceSpatialCandidateCursor::AddStream(const uint32_t* begin,
+@@ -407,6 +476,34 @@ void VeloceSpatialCandidateCursor::UseLinearReplay(
+   uses_linear_replay_ = true;
+ }
+ 
++void VeloceSpatialCandidateCursor::SetBoundsFilter(
++    const VeloceQuantizedBounds* compact_bounds,
++    size_t compact_bounds_count,
++    const VeloceQuantizedBounds& query_bounds,
++    bool enabled) {
++  compact_bounds_ = compact_bounds;
++  compact_bounds_count_ = compact_bounds_count;
++  query_bounds_ = query_bounds;
++  bounds_filter_enabled_ = enabled;
++}
++
++bool VeloceSpatialCandidateCursor::PassesBoundsFilter(
++    uint32_t command_index) {
++  if (!bounds_filter_enabled_) {
++    return true;
++  }
++  if (!compact_bounds_ || command_index >= compact_bounds_count_) {
++    // Structural validation occurs before opening the cursor. If ownership
++    // ever drifts, keep the command rather than risking a false negative.
++    return true;
++  }
++  if (compact_bounds_[command_index].Intersects(query_bounds_)) {
++    return true;
++  }
++  ++bounds_rejected_count_;
++  return false;
++}
++
+ bool VeloceSpatialCandidateCursor::ComesBefore(const HeapEntry& lhs,
+                                                const HeapEntry& rhs) {
+   return lhs.command_index < rhs.command_index ||
+@@ -465,7 +562,10 @@ size_t VeloceSpatialCandidateCursor::NextChunk(
+   size_t output_count = 0;
+   if (uses_linear_replay_) {
+     while (output_count < output.size() && linear_next_ < linear_end_) {
+-      output[output_count++] = linear_next_++;
++      const uint32_t command_index = linear_next_++;
++      if (PassesBoundsFilter(command_index)) {
++        output[output_count++] = command_index;
++      }
+     }
+     return output_count;
+   }
+@@ -477,7 +577,9 @@ size_t VeloceSpatialCandidateCursor::NextChunk(
+     }
+     last_emitted_ = entry.command_index;
+     have_last_emitted_ = true;
+-    output[output_count++] = entry.command_index;
++    if (PassesBoundsFilter(entry.command_index)) {
++      output[output_count++] = entry.command_index;
++    }
+   }
+   return output_count;
+ }
+@@ -485,7 +587,8 @@ size_t VeloceSpatialCandidateCursor::NextChunk(
+ size_t VeloceSpatialCandidateIndex::EstimatedBytes() const {
+   return sizeof(*this) + bin_offsets_.capacity() * sizeof(uint32_t) +
+          command_indices_.capacity() * sizeof(uint32_t) +
+-         always_candidate_indices_.capacity() * sizeof(uint32_t);
++         always_candidate_indices_.capacity() * sizeof(uint32_t) +
++         compact_bounds_.capacity() * sizeof(VeloceQuantizedBounds);
+ }
+ 
+ VeloceRenderProgram::VeloceRenderProgram(
+diff --git a/core/fpdfapi/page/veloce_render_program.h b/core/fpdfapi/page/veloce_render_program.h
+index 0ef50aef5..1e31b8642 100644
+--- a/core/fpdfapi/page/veloce_render_program.h
++++ b/core/fpdfapi/page/veloce_render_program.h
+@@ -48,6 +48,24 @@ struct VeloceRenderCommand {
+ 
+ static_assert(sizeof(VeloceRenderCommand) == 2);
+ 
++struct VeloceQuantizedBounds {
++  uint16_t left = 0;
++  uint16_t bottom = 0;
++  uint16_t right = UINT16_MAX;
++  uint16_t top = UINT16_MAX;
++
++  constexpr bool Intersects(const VeloceQuantizedBounds& other) const {
++    return left <= other.right && right >= other.left &&
++           bottom <= other.top && top >= other.bottom;
++  }
++};
++
++static_assert(sizeof(VeloceQuantizedBounds) == 8);
++static_assert(VeloceQuantizedBounds{0, 0, 10, 10}.Intersects(
++    VeloceQuantizedBounds{10, 10, 20, 20}));
++static_assert(!VeloceQuantizedBounds{0, 0, 9, 9}.Intersects(
++    VeloceQuantizedBounds{10, 10, 20, 20}));
++
+ // One shared fail-closed predicate is used both when compiling command flags
+ // and immediately before replay. A false result always selects canonical
+ // PDFium rendering.
+@@ -60,10 +78,11 @@ enum class VeloceSpatialQueryResult : uint8_t {
+   kUseFullReplay,
+ };
+ 
+-// Immutable holder-space lookup. Bin postings contain command indices only;
+-// exact graphics state and geometry remain owned by the live holder objects.
+-// Every posting stream is painter-ordered, and Query() restores strictly
+-// increasing command order while removing duplicates in caller-owned storage.
++// Immutable holder-space lookup. Bin postings contain command indices and an
++// 8-byte conservative bound rejects false candidates before object lookup;
++// exact graphics state and geometry remain owned by live holder objects. Every
++// posting stream is painter-ordered, and Query() restores strictly increasing
++// command order while removing duplicates in caller-owned storage.
+ class VeloceSpatialCandidateIndex final {
+  public:
+   static constexpr uint32_t kColumns = 32;
+@@ -92,6 +111,9 @@ class VeloceSpatialCandidateIndex final {
+   size_t always_candidate_count() const {
+     return always_candidate_indices_.size();
+   }
++  size_t compact_bounds_bytes() const {
++    return compact_bounds_.capacity() * sizeof(VeloceQuantizedBounds);
++  }
+   size_t EstimatedBytes() const;
+ 
+  private:
+@@ -102,13 +124,15 @@ class VeloceSpatialCandidateIndex final {
+       uint32_t command_count,
+       std::vector<uint32_t> bin_offsets,
+       std::vector<uint32_t> command_indices,
+-      std::vector<uint32_t> always_candidate_indices);
++      std::vector<uint32_t> always_candidate_indices,
++      std::vector<VeloceQuantizedBounds> compact_bounds);
+ 
+   const CFX_FloatRect bounds_;
+   const uint32_t command_count_;
+   const std::vector<uint32_t> bin_offsets_;
+   const std::vector<uint32_t> command_indices_;
+   const std::vector<uint32_t> always_candidate_indices_;
++  const std::vector<VeloceQuantizedBounds> compact_bounds_;
+ };
+ 
+ // Allocation-free ordered union of the immutable posting streams selected by
+@@ -131,6 +155,7 @@ class VeloceSpatialCandidateCursor final {
+   size_t stream_count() const { return source_stream_count_; }
+   size_t raw_candidate_count() const { return raw_candidate_count_; }
+   size_t queried_bin_count() const { return queried_bin_count_; }
++  size_t bounds_rejected_count() const { return bounds_rejected_count_; }
+   bool uses_linear_replay() const { return uses_linear_replay_; }
+ 
+  private:
+@@ -152,6 +177,11 @@ class VeloceSpatialCandidateCursor final {
+                        size_t source_stream_count,
+                        size_t raw_candidate_count,
+                        size_t queried_bin_count);
++  void SetBoundsFilter(const VeloceQuantizedBounds* compact_bounds,
++                       size_t compact_bounds_count,
++                       const VeloceQuantizedBounds& query_bounds,
++                       bool enabled);
++  bool PassesBoundsFilter(uint32_t command_index);
+   void PushHeap(HeapEntry entry);
+   HeapEntry PopHeap();
+   static bool ComesBefore(const HeapEntry& lhs, const HeapEntry& rhs);
+@@ -165,9 +195,14 @@ class VeloceSpatialCandidateCursor final {
+   size_t source_stream_count_ = 0;
+   size_t raw_candidate_count_ = 0;
+   size_t queried_bin_count_ = 0;
++  size_t bounds_rejected_count_ = 0;
+   size_t heap_size_ = 0;
++  const VeloceQuantizedBounds* compact_bounds_ = nullptr;
++  size_t compact_bounds_count_ = 0;
++  VeloceQuantizedBounds query_bounds_;
+   bool uses_linear_replay_ = false;
+   bool have_last_emitted_ = false;
++  bool bounds_filter_enabled_ = false;
+ };
+ 
+ // Immutable native rendering representation owned by one live page-object
+diff --git a/core/fpdfapi/render/veloce_unified_render_backend.cpp b/core/fpdfapi/render/veloce_unified_render_backend.cpp
+index bdee5e47e..e69267c18 100644
+--- a/core/fpdfapi/render/veloce_unified_render_backend.cpp
++++ b/core/fpdfapi/render/veloce_unified_render_backend.cpp
+@@ -41,14 +41,6 @@ bool CommandMatchesObject(const VeloceRenderCommand& command,
+          (command.kind == VeloceRenderCommandKind::kText && object.IsText());
+ }
+ 
+-bool RectIntersects(const CFX_FloatRect& object_rect,
+-                    const CFX_FloatRect& clip_rect) {
+-  return object_rect.left <= clip_rect.right &&
+-         object_rect.right >= clip_rect.left &&
+-         object_rect.bottom <= clip_rect.top &&
+-         object_rect.top >= clip_rect.bottom;
+-}
+-
+ class ScopedNanosecondTimer final {
+  public:
+   explicit ScopedNanosecondTimer(uint64_t* elapsed_ns)
+@@ -111,12 +103,13 @@ void LogMeasuredResult(const CPDF_PageObjectHolder* holder,
+       "revision=%s result=%s fallback=%s holder=%p totalMs=%llu "
+       "admittedLifetimeMs=%llu indexLifetimeMs=%llu queryUs=%llu replayMs=%llu "
+       "holderCommands=%zu commands=%zu paths=%zu texts=%zu postings=%zu "
+-      "bins=%zu streams=%zu linear=%zu candidates=%zu chunks=%zu "
++      "bins=%zu streams=%zu linear=%zu candidates=%zu boundsRejected=%zu "
++      "chunks=%zu "
+       "visited=%zu drawn=%zu rejected=%zu dispatches=%zu direct=%zu "
+       "directDarken=%zu darkenDispatches=%zu darkenCanonical=%zu "
+       "packetCommands=%zu packetDispatches=%zu stateFlushes=%zu "
+       "capacityFlushes=%zu maxPacket=%zu programBytes=%zu indexBytes=%zu "
+-      "indexPostings=%zu always=%zu scratchBytes=%zu",
++      "indexPostings=%zu compactBoundsBytes=%zu always=%zu scratchBytes=%zu",
+       kVeloceUnifiedRenderBackendRevision, ResultName(result),
+       FallbackName(metrics.fallback_reason), holder,
+       static_cast<unsigned long long>(metrics.total_ns / 1000000u),
+@@ -127,7 +120,8 @@ void LogMeasuredResult(const CPDF_PageObjectHolder* holder,
+       metrics.holder_commands, metrics.total_commands, metrics.path_commands,
+       metrics.text_commands, metrics.candidate_postings, metrics.queried_bins,
+       metrics.candidate_streams, metrics.candidate_linear_replay,
+-      metrics.candidate_commands, metrics.candidate_chunks,
++      metrics.candidate_commands, metrics.candidate_bounds_rejected,
++      metrics.candidate_chunks,
+       metrics.visited_commands, metrics.drawn_commands, rejected_commands,
+       metrics.dispatch_count, metrics.direct_path_commands,
+       metrics.direct_darken_commands, metrics.direct_darken_dispatches,
+@@ -136,7 +130,8 @@ void LogMeasuredResult(const CPDF_PageObjectHolder* holder,
+       metrics.path_packet_state_flushes,
+       metrics.path_packet_capacity_flushes, metrics.max_path_packet_commands,
+       metrics.program_bytes, metrics.index_bytes, metrics.index_postings,
+-      metrics.always_candidate_commands, metrics.scratch_bytes);
++      metrics.compact_bounds_bytes, metrics.always_candidate_commands,
++      metrics.scratch_bytes);
+ }
+ #endif
+ 
+@@ -206,6 +201,7 @@ VeloceUnifiedRenderResult VeloceTryRenderUnifiedProgram(
+   if (metrics) {
+     metrics->index_bytes = index->EstimatedBytes();
+     metrics->index_postings = index->posting_count();
++    metrics->compact_bounds_bytes = index->compact_bounds_bytes();
+     metrics->always_candidate_commands = index->always_candidate_count();
+   }
+ 
+@@ -258,7 +254,14 @@ VeloceUnifiedRenderResult VeloceTryRenderUnifiedProgram(
+     return rendered;
+   };
+   ScopedNanosecondTimer replay_timer(metrics ? &metrics->replay_ns : nullptr);
+-  while (const size_t chunk_size = cursor.NextChunk(candidate_chunk)) {
++  while (true) {
++    const size_t chunk_size = cursor.NextChunk(candidate_chunk);
++    if (metrics) {
++      metrics->candidate_bounds_rejected = cursor.bounds_rejected_count();
++    }
++    if (chunk_size == 0) {
++      break;
++    }
+     if (metrics) {
+       metrics->candidate_commands += chunk_size;
+       ++metrics->candidate_chunks;
+@@ -280,8 +283,7 @@ VeloceUnifiedRenderResult VeloceTryRenderUnifiedProgram(
+       if (metrics) {
+         ++metrics->visited_commands;
+       }
+-      if (!object->IsActive() ||
+-          !RectIntersects(object->GetRect(), holder_clip)) {
++      if (!object->IsActive()) {
+         continue;
+       }
+       const VeloceRenderCommand& command = commands[command_index];
+diff --git a/core/fpdfapi/render/veloce_unified_render_backend.h b/core/fpdfapi/render/veloce_unified_render_backend.h
+index d8c9d3c6a..171935c33 100644
+--- a/core/fpdfapi/render/veloce_unified_render_backend.h
++++ b/core/fpdfapi/render/veloce_unified_render_backend.h
+@@ -11,7 +11,7 @@ class CFX_Matrix;
+ class CPDF_PageObjectHolder;
+ class CPDF_RenderStatus;
+ 
+-inline constexpr char kVeloceUnifiedRenderBackendRevision[] = "r25-1-0089";
++inline constexpr char kVeloceUnifiedRenderBackendRevision[] = "r25-1-0090";
+ 
+ // Result contract for one complete holder request. Disabled and not-eligible
+ // results guarantee that no destination pixel was changed. A cancelled result
+@@ -59,6 +59,7 @@ struct VeloceUnifiedRenderMetrics {
+   size_t candidate_streams = 0;
+   size_t queried_bins = 0;
+   size_t candidate_linear_replay = 0;
++  size_t candidate_bounds_rejected = 0;
+   size_t visited_commands = 0;
+   size_t drawn_commands = 0;
+   size_t dispatch_count = 0;
+@@ -75,6 +76,7 @@ struct VeloceUnifiedRenderMetrics {
+   size_t program_bytes = 0;
+   size_t index_bytes = 0;
+   size_t index_postings = 0;
++  size_t compact_bounds_bytes = 0;
+   size_t always_candidate_commands = 0;
+   size_t cache_bytes = 0;
+   size_t scratch_bytes = 0;
+@@ -87,8 +89,9 @@ struct VeloceUnifiedRenderMetrics {
+ // representation; PDFium page objects remain authoritative for fidelity and
+ // editing, and `status` owns the destination device.
+ 
+-// r25-1-0089 adds exact per-coverage Darken dispatch for proven single-paint
+-// paths. It preserves one raster/composite operation per PDF object.
++// r25-1-0090 adds conservative compact command bounds to the existing ordered
++// candidate cursor. Culling occurs before live object lookup; rendering and
++// painter order remain unchanged.
+ VeloceUnifiedRenderResult VeloceTryRenderUnifiedProgram(
+     CPDF_RenderStatus* status,
+     const CPDF_PageObjectHolder* holder,
+-- 
+2.39.5 (Apple Git-154)

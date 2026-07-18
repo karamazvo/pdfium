@@ -116,8 +116,9 @@ stores a raw page-object pointer beyond holder lifetime.
 | `r25-1-0085` | Fail-closed compiled direct-path dispatch into PDFium's existing path renderer | Proven simple paths only |
 | `r25-1-0086` | Allocation-free ordered candidate cursor, fixed replay chunks, and exact dense linear mode | Exact ordered pixels |
 | `r25-1-0087` | Fixed exact consecutive stroke-state packets with reusable AGG scratch | Proven stroke state only; separate per-path pixels |
-| `r25-1-0088` | Clip/image/Form/group/transparency completeness | Proven commands only |
-| `r25-1-0089` | Proof-gated blend kernels | Exact eligible blends only |
+| `r25-1-0088` | Bounded native cost attribution | Telemetry only; pixels unchanged |
+| `r25-1-0089` | Proof-gated exact Darken coverage spans | Exact eligible blends only |
+| `r25-1-0090` | Conservative compact command bounds inside the ordered cursor | Candidate omission only; raster/composite behavior unchanged |
 
 Every revision extends the same data model and execution interface. A revision
 must not install a parallel backend to compensate for a missing command type.
