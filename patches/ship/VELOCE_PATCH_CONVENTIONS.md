@@ -267,6 +267,7 @@ Release workflows:
 | r25-1-0088 | `.github/workflows/pdfium-android-arm64-r25-1-0088-render-program-cost-attribution.yml` | r25-1-0087 plus `0088`; excludes `0053..0074` and `0077..0078` | Adds bounded native cost attribution without changing rendering policy or pixels. |
 | r25-1-0089 | `.github/workflows/pdfium-android-arm64-r25-1-0089-exact-darken-spans.yml` | r25-1-0088 plus `0089`; excludes `0053..0074` and `0077..0078` | Replaces eligible per-object Darken temporary bitmaps with exact AGG coverage spans while preserving PDFium's blend equation and painter order. |
 | r25-1-0090 | `.github/workflows/pdfium-android-arm64-r25-1-0090-compact-bounds-filter.yml` | r25-1-0089 plus `0090`; excludes `0053..0074` and `0077..0078` | Filters conservative 8-byte command bounds inside the existing ordered cursor before object lookup. Full-page replay bypasses the filter and retained bounds are capped at 32 MiB. |
+| r25-1-0091 | `.github/workflows/pdfium-android-arm64-r25-1-0091-clip-aware-darken-spans.yml` | r25-1-0090 plus `0091`; excludes `0053..0074` and `0077..0078` | Admits exact Darken spans through canonical object clips while retaining all other fail-closed eligibility checks and the existing PDFium pixel owner. |
 
 Recent revisions:
 
@@ -302,6 +303,7 @@ Recent revisions:
 | r25-1-0088 | `0088-veloce-render-program-cost-attribution.patch` | implemented | Attribute compile, query, replay, candidate, dispatch, and retained-memory costs with one bounded native summary. |
 | r25-1-0089 | `0089-veloce-render-program-exact-darken-spans.patch` | implemented | Dispatch proven fill-only or stroke-only Darken objects directly from AGG coverage into PDFium's existing destination compositor. |
 | r25-1-0090 | `0090-veloce-render-program-compact-bounds-filter.patch` | implemented, pending build | Reject coarse-bin false candidates using bounded conservative command metadata before live holder lookup, without changing order or pixels. |
+| r25-1-0091 | `0091-veloce-render-program-clip-aware-darken-spans.patch` | implemented, pending build | Remove the redundant clip-free Darken admission condition because the exact executor already performs canonical `ProcessClipPath()` before rasterization. |
 
 Historical native HEAD before r48 (not the active line):
 
@@ -603,6 +605,7 @@ r25-1-0087: interned consecutive path-state packets
 r25-1-0088: bounded native cost attribution
 r25-1-0089: proof-gated exact Darken coverage spans
 r25-1-0090: compact conservative bounds before object lookup
+r25-1-0091: clip-aware exact Darken spans through canonical clip state
 ```
 
 These are revisions of one framework, not separate fast paths. Every revision

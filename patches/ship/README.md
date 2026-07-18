@@ -119,6 +119,7 @@ these patches:
 | r25-1-0088 | `0088-veloce-render-program-cost-attribution.patch` | Adds one bounded Android telemetry line for holders with at least 4096 commands. Reports admitted/index lifetime, candidate-query and replay cost, postings, visited/drawn commands, dispatches, packet utilization, fallback reason, and retained memory without changing rendering policy or pixels. |
 | r25-1-0089 | `0089-veloce-render-program-exact-darken-spans.patch` | Adds a fail-closed direct Darken span executor for fill-only or stroke-only paths. Each PDF object keeps its own geometry, AGG rasterization, coverage, Darken composite, and painter-order position; the executor removes only the temporary BGRA transparency bitmap and its second pixel traversal. Object clips, patterns, soft masks, transfer functions, overprint, nested groups, printers, and mixed fill/stroke objects remain canonical. The path allocates no image-sized scratch memory and includes arithmetic equivalence tests across BGR, BGRX, and BGRA destinations. |
 | r25-1-0090 | `0090-veloce-render-program-compact-bounds-filter.patch` | Adds one outward-rounded 8-byte holder-space bound per indexed command and applies it inside the existing ordered cursor before live object lookup. It reuses the object rectangle already read during index construction, disables the extra comparison for full-page queries, preserves painter order and PDFium raster/composite behavior, and abandons the index on incomplete metadata. Bounds storage has a 32 MiB hard cap; logs add `boundsRejected` and `compactBoundsBytes`. |
+| r25-1-0091 | `0091-veloce-render-program-clip-aware-darken-spans.patch` | Removes the redundant clip-free admission condition from exact Darken paths. The existing direct executor installs each object's clip through canonical `ProcessClipPath()` before AGG rasterization; all shape, blend, transparency, overprint, pattern, group, printer, device, and live-object guards remain fail-closed. Adds no storage, scan, scheduler, lock, rasterizer, or pixel owner. |
 
 ## Why this directory exists
 
@@ -131,8 +132,8 @@ subset.
 ## How to apply
 
 The patch directory contains historical branches and must not be applied by
-blind numeric globbing. For `r25-1-0090`, apply the r25 rendering base through
-0031, then only 0051, 0075, 0076, 0079..0083, and 0085..0090:
+blind numeric globbing. For `r25-1-0091`, apply the r25 rendering base through
+0031, then only 0051, 0075, 0076, 0079..0083, and 0085..0091:
 
 ```bash
 git apply patches/ship/01-jpeg-downscale-on-decode.patch
@@ -151,9 +152,10 @@ git apply patches/ship/0087-veloce-render-program-exact-path-state-packets.patch
 git apply patches/ship/0088-veloce-render-program-cost-attribution.patch
 git apply patches/ship/0089-veloce-render-program-exact-darken-spans.patch
 git apply patches/ship/0090-veloce-render-program-compact-bounds-filter.patch
+git apply patches/ship/0091-veloce-render-program-clip-aware-darken-spans.patch
 ```
 
-Do not apply 0053..0074, 0077..0078, or an invented 0084 to an `r25-1-0090`
+Do not apply 0053..0074, 0077..0078, or an invented 0084 to an `r25-1-0091`
 build. The exact machine-checked list lives in the revision workflow.
 
 The following legacy list is retained for historical stacks only:
@@ -357,6 +359,12 @@ on sparse Q16 tiles. It stores outward-rounded 16-bit bounds while the existing
 index builder already visits each object, then filters inside the painter-ordered
 cursor before object lookup. Full-page replay short-circuits the filter, invalid
 bounds are always replayed, and retained compact bounds are capped at 32 MiB.
+Patch 0091 depends on 0090 and corrects exact-Darken admission for clipped
+objects. `RenderVeloceDirectDarkenPath()` already uses the same
+`ProcessClipPath()` transition as canonical `RenderSingleObject()`, so clip
+presence is not an unsupported rendering operation. The patch removes only the
+redundant clip-free predicate; every other eligibility check and per-object
+raster/composite operation remains unchanged.
 Patch 0053 can also be applied directly on the rel-260701 stable line after
 patch 0051. It is behavior-preserving and only inserts the `VeloceRenderPlan`
 facade above the existing r25 path-display-list backend.

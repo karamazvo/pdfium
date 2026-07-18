@@ -119,6 +119,7 @@ stores a raw page-object pointer beyond holder lifetime.
 | `r25-1-0088` | Bounded native cost attribution | Telemetry only; pixels unchanged |
 | `r25-1-0089` | Proof-gated exact Darken coverage spans | Exact eligible blends only |
 | `r25-1-0090` | Conservative compact command bounds inside the ordered cursor | Candidate omission only; raster/composite behavior unchanged |
+| `r25-1-0091` | Canonical object clips for exact Darken spans | Same clip state and blend pixels as canonical per-object replay |
 
 Every revision extends the same data model and execution interface. A revision
 must not install a parallel backend to compensate for a missing command type.

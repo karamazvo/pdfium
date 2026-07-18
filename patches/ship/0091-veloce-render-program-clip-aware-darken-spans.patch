@@ -1,0 +1,66 @@
+From 4d9f2a2b3cbfd02fba4fe1c1a310d3b7e57e0091 Mon Sep 17 00:00:00 2001
+From: "sh.chao" <sh.chao@gmail.com>
+Date: Sat, 18 Jul 2026 17:18:00 +0800
+Subject: [PATCH] r25-1-0091: admit exact Darken spans through canonical clips
+
+The exact Darken executor already installs every object's clip through
+CPDF_RenderStatus::ProcessClipPath(), the same state transition used by
+RenderSingleObject(). The compiled admission predicate nevertheless rejected
+every object with a clip, forcing clipped Darken path streams through canonical
+per-object transparency buffers.
+
+Remove only that redundant clip-free requirement. Keep path shape, blend,
+soft-mask, transfer-function, overprint, pattern, group, printer, device, and
+live-object validation unchanged. The direct executor continues to process the
+clip before rasterizing each object, preserves painter order, and allocates no
+new storage.
+
+This is a general equivalence correction for clipped exact-Darken paths; it
+does not identify documents or add another renderer, cache, scheduler, or
+pixel owner.
+---
+ core/fpdfapi/page/veloce_render_program.cpp         | 2 +-
+ core/fpdfapi/render/veloce_unified_render_backend.h | 8 ++++----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index c29980e07..870d3c091 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -159,7 +159,7 @@ bool VeloceCanDirectDrawPath(const CPDF_PageObject& object) {
+ 
+ bool VeloceCanDirectDrawDarkenPath(const CPDF_PageObject& object) {
+   const CPDF_PathObject* path = object.AsPath();
+-  if (!path || path->clip_path().HasRef() || !path->path().GetObject()) {
++  if (!path || !path->path().GetObject()) {
+     return false;
+   }
+   const bool has_fill = !path->has_no_filltype();
+diff --git a/core/fpdfapi/render/veloce_unified_render_backend.h b/core/fpdfapi/render/veloce_unified_render_backend.h
+index 171935c33..b750a1491 100644
+--- a/core/fpdfapi/render/veloce_unified_render_backend.h
++++ b/core/fpdfapi/render/veloce_unified_render_backend.h
+@@ -11,7 +11,7 @@ class CFX_Matrix;
+ class CPDF_PageObjectHolder;
+ class CPDF_RenderStatus;
+ 
+-inline constexpr char kVeloceUnifiedRenderBackendRevision[] = "r25-1-0090";
++inline constexpr char kVeloceUnifiedRenderBackendRevision[] = "r25-1-0091";
+ 
+ // Result contract for one complete holder request. Disabled and not-eligible
+ // results guarantee that no destination pixel was changed. A cancelled result
+@@ -89,9 +89,9 @@ struct VeloceUnifiedRenderMetrics {
+ // representation; PDFium page objects remain authoritative for fidelity and
+ // editing, and `status` owns the destination device.
+ 
+-// r25-1-0090 adds conservative compact command bounds to the existing ordered
+-// candidate cursor. Culling occurs before live object lookup; rendering and
+-// painter order remain unchanged.
++// r25-1-0091 admits exact Darken coverage spans through the same canonical
++// object-clip transition used by RenderSingleObject(). Every other Darken
++// eligibility guard and each object's painter-order position remain unchanged.
+ VeloceUnifiedRenderResult VeloceTryRenderUnifiedProgram(
+     CPDF_RenderStatus* status,
+     const CPDF_PageObjectHolder* holder,
+-- 
+2.39.5 (Apple Git-154)
