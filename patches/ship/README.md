@@ -122,6 +122,7 @@ these patches:
 | r25-1-0091 | `0091-veloce-render-program-clip-aware-darken-spans.patch` | Removes the redundant clip-free admission condition from exact Darken paths. The existing direct executor installs each object's clip through canonical `ProcessClipPath()` before AGG rasterization; all shape, blend, transparency, overprint, pattern, group, printer, device, and live-object guards remain fail-closed. Adds no storage, scan, scheduler, lock, rasterizer, or pixel owner. |
 | r25-2-0092 | `0092-veloce-render-program-generation2-packed-contract.patch` | Starts unified-backend generation 2 from `r25 + 0051 + 0075 + 0076`, excluding the complete r25-1 live-object executor chain. Replaces the provisional kind vector with versioned one-byte canonical bytecode and fixed summary counters recorded during the existing parser append. Stores no object pointer or duplicate index, keeps a 32 MiB logical ceiling, emits zero native commands, and disables legacy PathDL before work so canonical PDFium is the only pixel owner. |
 | r25-2-0093 | `0093-veloce-render-program-owned-opaque-line-shadow.patch` | Compiles exact two-point opaque stroke paths into self-owned shadow commands during the existing parser append. The first 4096 commands remain canonical and are not rescanned, so ordinary pages do no native eligibility or payload work. Copies endpoints; bitwise-interns matrices and complete dash/stroke state; uses fixed 4096-line chunks and hard command/table ceilings; and keeps every unsupported or over-budget object as an ordered canonical opcode. Adds large-holder coverage/memory/build telemetry and ownership/fallback tests. No render call site consumes the native data, so canonical PDFium remains the sole pixel owner. |
+| r25-2-0094 | `0094-veloce-render-program-visibility-scoped-line-shadow.patch` | Corrects the zero-coverage Q16 shadow model without enabling rendering. Replaces the blanket marked-content rejection with pointer-free ordered visibility-run ordinals for later canonical OCG evaluation. Stores source endpoints and translation-only matrix components exactly per line, avoiding the 16-bit unique-matrix cliff without changing matrix arithmetic; arbitrary matrices remain bitwise-interned. Adds first-failure telemetry and a 96 MiB retained-program ceiling. Format version 3 remains shadow-only, so canonical PDFium still owns every pixel. |
 
 ## Why this directory exists
 
@@ -134,8 +135,8 @@ subset.
 ## How to apply
 
 The patch directory contains historical branches and must not be applied by
-blind numeric globbing. For `r25-2-0093`, apply the r25 rendering base through
-0031, then only 0051, 0075, 0076, 0092, and 0093:
+blind numeric globbing. For `r25-2-0094`, apply the r25 rendering base through
+0031, then only 0051, 0075, 0076, and 0092 through 0094:
 
 ```bash
 git apply patches/ship/01-jpeg-downscale-on-decode.patch
@@ -145,10 +146,11 @@ git apply patches/ship/0075-veloce-render-program-v2-ownership-boundary.patch
 git apply patches/ship/0076-veloce-render-program-parser-command-order.patch
 git apply patches/ship/0092-veloce-render-program-generation2-packed-contract.patch
 git apply patches/ship/0093-veloce-render-program-owned-opaque-line-shadow.patch
+git apply patches/ship/0094-veloce-render-program-visibility-scoped-line-shadow.patch
 ```
 
 Do not apply `0053..0074`, `0077..0091`, or an invented 0084 to an
-`r25-2-0093` build. The machine-checked list lives in the 0093 workflow.
+`r25-2-0094` build. The machine-checked list lives in the 0094 workflow.
 
 For the historical `r25-1-0091` build, apply the r25 rendering base through
 0031, then only 0051, 0075, 0076, 0079..0083, and 0085..0091:
@@ -401,6 +403,15 @@ fills, transparency, transfer functions, overprint, patterns, invalid values,
 and budget overflow remain ordered canonical barriers. Chunk and table limits
 bound retained memory. The command is shadow-only, so this revision measures
 coverage and compile cost without taking pixel ownership from PDFium.
+Patch 0094 depends on 0093 and fixes the representation gaps proven by its
+first Q16 trace. Content marks become ordered visibility-run ordinals rather
+than a blanket rejection, while the sealed program retains no mark or page
+object pointer. Translation-only matrices keep exact source endpoints and
+translation components inline, avoiding unique-matrix-table exhaustion while
+preserving canonical matrix composition; arbitrary matrices remain interned.
+First-failure counters explain remaining fallback and a 96 MiB logical ceiling
+bounds retained program data. The format remains shadow-only and does not
+change pixels or re-enable either historical executor.
 Patch 0053 can also be applied directly on the rel-260701 stable line after
 patch 0051. It is behavior-preserving and only inserts the `VeloceRenderPlan`
 facade above the existing r25 path-display-list backend.

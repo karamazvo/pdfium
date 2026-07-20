@@ -1,7 +1,7 @@
 # r25-2 Unified RenderProgram Plan
 
 Date: 2026-07-20
-Current revision: `r25-2-0093`
+Current revision: `r25-2-0094`
 
 ## Decision
 
@@ -15,6 +15,12 @@ to 2.9 million live commands.
 Generation 2 therefore compiles an immutable renderer-ready program once from
 PDFium's resolved page model. PDFium objects remain the editing and fidelity
 source of truth; the derived program owns only rendering data.
+
+The first 0093 device trace established a failed coverage gate, not an
+executor result: Q16 recorded 3,165,420 commands and zero native lines because
+all candidate paths were inside marked-content scopes. Its raw streams also
+use many translation-only path matrices. 0094 corrects both representation
+gaps in shadow mode before bounds or execution are introduced.
 
 ## Baseline
 
@@ -45,6 +51,7 @@ holder-owned immutable RenderProgram
     +-- versioned packed bytecode
     +-- owned geometry arrays
     +-- interned immutable graphics states
+    +-- ordered optional-content visibility scopes
     +-- ordered clip/group/canonical barriers
     +-- conservative primitive/chunk bounds
     +-- bounded page-space index
@@ -69,10 +76,11 @@ scheduler, second bitmap, or UI-thread compilation.
 ## Invariants
 
 1. Program order is exact PDF painter order.
-2. Native commands own every scalar needed for replay; they do not call a live
-   page object to rediscover geometry or graphics state.
-3. Canonical barriers retain an implicit holder object ordinal and resolve it
-   only while the holder owns the immutable program.
+2. Native commands own every geometry and graphics-state scalar needed for
+   replay; they do not call a live page object to rediscover them.
+3. Canonical barriers and dynamic visibility scopes retain only holder object
+   ordinals. Visibility is resolved through PDFium's current canonical render
+   options, while the holder owns the immutable program.
 4. Mutation invalidates the complete program in O(1).
 5. Bounds are conservative. Unknown or overflowed bounds are never culled.
 6. Unsupported semantics remain ordered canonical barriers.
@@ -88,9 +96,11 @@ scheduler, second bitmap, or UI-thread compilation.
 | --- | --- | --- |
 | `r25-2-0092` | Versioned packed bytecode, canonical opcodes, fixed summary, holder ownership, legacy PathDL disabled | Canonical PDFium only |
 | `r25-2-0093` | Owned two-point opaque stroke geometry, exact interned path state/matrices, bounded chunk storage, shadow telemetry | Canonical PDFium only; native data is not executed |
-| `r25-2-0094` | Conservative primitive/chunk bounds and bounded page-space index | Exact visible native subset |
-| `r25-2-0095` | Bounded fill/stroke span executor and cancellation checkpoints | Exact opaque native commands |
-| `r25-2-0096` | Exact clip-mask-aware blend spans | Exact supported blend commands |
+| `r25-2-0094` | Pointer-free visibility runs, exact inline translation matrices, fail-closed rejection telemetry, 96 MiB retained-program ceiling | Canonical PDFium only; corrected native data remains shadow-only |
+| `r25-2-0095` | Conservative primitive/chunk bounds and bounded page-space index | Canonical PDFium only; exact visible native subset is measured |
+| `r25-2-0096` | Bounded opaque stroke executor and cancellation checkpoints | Exact opaque native commands |
+| `r25-2-0097` | Owned multi-segment opaque path chunks | Exact supported opaque paths |
+| `r25-2-0098` | Exact clip/group-aware blend spans | Exact supported blend commands |
 
 Revision numbers remain globally monotonic. Failed or superseded revisions are
 not renamed, deleted, amended after push, or reused.
@@ -111,7 +121,7 @@ not renamed, deleted, amended after push, or reused.
 - no generation-1 executor is compiled into the workflow stack.
 
 Expected performance is canonical r25 PDFium. `11.pdf` and Q16 are expected to
-be slower than successful experimental fast paths until 0093-0095 execute
+be slower than successful experimental fast paths until 0095-0096 execute
 owned geometry. The purpose of 0092 is to prove lifetime, format, memory, and
 pixel ownership before acceleration resumes.
 
@@ -136,10 +146,35 @@ pixel ownership before acceleration resumes.
 - legacy PathDL stays disabled and no render call site consumes native lines.
 
 Large holders emit one `VeloceRenderProgram2` line with `nativeOpaqueLines`,
-`canonicalPaths`, intern-table sizes, retained bytes, budget fallbacks, and
-`shadowBuildMs`. This build measures coverage and compile/memory cost only. It
-is not expected to improve rendering time until 0094 selects and 0095 executes
-an exact visible subset.
+`canonicalPaths`, intern-table sizes, retained bytes, budget fallbacks, and an
+elapsed shadow window. The Q16 result was `nativeOpaqueLines=0`, proving that
+the marked-content rejection made the primitive representation unusable for
+that class. This build measures coverage and compile/memory cost only.
+
+## 0094 Contract
+
+0094 fixes the failed representation gate without taking pixel ownership:
+
+- marked content is no longer treated as a generic rendering rejection;
+- exact content-mark identity changes produce ordered four-byte visibility-run
+  ordinals, with no retained page-object or mark pointer in the sealed program;
+- a future executor must resolve each run through PDFium's current canonical
+  optional-content check, so view/print/layer state remains dynamic;
+- source endpoints and translation components are stored separately, allowing
+  the exact source matrix to be reconstructed without changing floating-point
+  composition order or consuming one matrix-table slot per CAD line;
+- arbitrary affine matrices continue through bitwise-exact interning;
+- first-failure counters classify path/activity, paint, clip, geometry,
+  matrix, transparency, color, graph state, visibility, and budget rejection;
+- retained program data has a 96 MiB logical ceiling in addition to bytecode,
+  line, state, matrix, dash, visibility-run, and mark-count ceilings;
+- format version advances to 3, legacy PathDL remains disabled, and no render
+  call site consumes the shadow commands.
+
+The 0094 acceptance gate is nonzero Q16 native coverage without matrix-table
+exhaustion, bounded retained bytes, unchanged canonical pixels, and no material
+normal-page acquisition regression. Bounds/index work starts only after this
+gate passes.
 
 ## Proof Gates
 
