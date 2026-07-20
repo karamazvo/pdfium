@@ -1,0 +1,236 @@
+From 0a3f6d79c02376fa9b79e8aef4da2cab72d16f72 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Mon, 20 Jul 2026 11:30:00 +0800
+Subject: [PATCH] r25-2-0092: establish packed immutable RenderProgram contract
+
+Start unified-backend generation 2 from the r25 + 0051 + 0075-0076 correctness foundation. Do not carry the r25-1 live-object replay, candidate executor, packet, Darken, or compact-bounds runtime patches into this series.
+
+Replace the provisional command-kind vector with versioned one-byte canonical bytecode and fixed summary counters recorded during the existing parser append. Keep holder ownership, implicit object ordinals, a 32 MiB logical ceiling, zero native commands, and no raw page-object pointers or duplicate index array.
+
+Disable legacy PathDL before feature inspection, allocation, cache lookup, or drawing so canonical PDFium remains the sole pixel owner while later r25-2 revisions add owned geometry, state, bounds, and exact executors.
+---
+ core/fpdfapi/page/veloce_render_program.cpp   | 38 ++++++-----
+ core/fpdfapi/page/veloce_render_program.h     | 64 +++++++++++++------
+ .../render/veloce_path_display_list.cpp       |  3 +
+ .../fpdfapi/render/veloce_path_display_list.h |  6 ++
+ 4 files changed, 78 insertions(+), 33 deletions(-)
+
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index 2cb02f87a..e4f01744b 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -9,28 +9,33 @@
+
+ namespace {
+
+-VeloceRenderCommandKind ToRenderCommandKind(
+-    const CPDF_PageObject& object) {
++VeloceRenderOpcode ToCanonicalOpcode(const CPDF_PageObject& object) {
+   switch (object.GetType()) {
+     case CPDF_PageObject::Type::kPath:
+-      return VeloceRenderCommandKind::kPath;
++      return VeloceRenderOpcode::kCanonicalPath;
+     case CPDF_PageObject::Type::kText:
+-      return VeloceRenderCommandKind::kText;
++      return VeloceRenderOpcode::kCanonicalText;
+     case CPDF_PageObject::Type::kImage:
+-      return VeloceRenderCommandKind::kImage;
++      return VeloceRenderOpcode::kCanonicalImage;
+     case CPDF_PageObject::Type::kShading:
+-      return VeloceRenderCommandKind::kShading;
++      return VeloceRenderOpcode::kCanonicalShading;
+     case CPDF_PageObject::Type::kForm:
+-      return VeloceRenderCommandKind::kForm;
++      return VeloceRenderOpcode::kCanonicalForm;
+   }
+-  return VeloceRenderCommandKind::kUnsupported;
++  return VeloceRenderOpcode::kCanonicalUnsupported;
+ }
+
+ }  // namespace
+
+ VeloceRenderProgram::VeloceRenderProgram(
+-    std::vector<VeloceRenderCommandKind> command_kinds)
+-    : command_kinds_(std::move(command_kinds)) {}
++    std::vector<uint8_t> bytecode,
++    std::array<uint32_t, kVeloceRenderOpcodeCount> opcode_counts)
++    : header_{kVeloceRenderProgramFormatVersion,
++              static_cast<uint32_t>(bytecode.size()),
++              static_cast<uint32_t>(bytecode.size()),
++              0u},
++      bytecode_(std::move(bytecode)),
++      opcode_counts_(opcode_counts) {}
+
+ VeloceRenderProgramBuilder::VeloceRenderProgramBuilder() = default;
+ VeloceRenderProgramBuilder::~VeloceRenderProgramBuilder() = default;
+@@ -40,19 +45,22 @@ void VeloceRenderProgramBuilder::AppendPageObject(
+   if (exceeded_budget_) {
+     return;
+   }
+-  if (command_kinds_.size() >= kMaxCommandBytes) {
+-    std::vector<VeloceRenderCommandKind>().swap(command_kinds_);
++  if (bytecode_.size() >= kMaxProgramBytes) {
++    std::vector<uint8_t>().swap(bytecode_);
++    opcode_counts_.fill(0u);
+     exceeded_budget_ = true;
+     return;
+   }
+-  command_kinds_.push_back(ToRenderCommandKind(object));
++  const VeloceRenderOpcode opcode = ToCanonicalOpcode(object);
++  bytecode_.push_back(static_cast<uint8_t>(opcode));
++  ++opcode_counts_[static_cast<size_t>(opcode)];
+ }
+
+ std::unique_ptr<const VeloceRenderProgram>
+ VeloceRenderProgramBuilder::Finish() {
+-  if (exceeded_budget_ || command_kinds_.empty()) {
++  if (exceeded_budget_ || bytecode_.empty()) {
+     return nullptr;
+   }
+   return std::unique_ptr<const VeloceRenderProgram>(
+-      new VeloceRenderProgram(std::move(command_kinds_)));
++      new VeloceRenderProgram(std::move(bytecode_), opcode_counts_));
+ }
+diff --git a/core/fpdfapi/page/veloce_render_program.h b/core/fpdfapi/page/veloce_render_program.h
+index d5037cade..aa522b16a 100644
+--- a/core/fpdfapi/page/veloce_render_program.h
++++ b/core/fpdfapi/page/veloce_render_program.h
+@@ -7,6 +7,7 @@
+ #include <stddef.h>
+ #include <stdint.h>
+
++#include <array>
+ #include <memory>
+ #include <vector>
+
+@@ -14,20 +15,38 @@
+
+ class CPDF_PageObject;
+
+-enum class VeloceRenderCommandKind : uint8_t {
+-  kPath,
+-  kText,
+-  kImage,
+-  kShading,
+-  kForm,
+-  kUnsupported,
++inline constexpr uint32_t kVeloceRenderProgramFormatVersion = 2u;
++
++// Generation 2 is a sequential bytecode. Its initial opcodes are canonical
++// barriers: they preserve exact object order and identify the source object
++// kind, but they are not eligible for native execution. Later revisions add
++// self-owned native instructions without changing this canonical fallback
++// meaning.
++enum class VeloceRenderOpcode : uint8_t {
++  kCanonicalPath,
++  kCanonicalText,
++  kCanonicalImage,
++  kCanonicalShading,
++  kCanonicalForm,
++  kCanonicalUnsupported,
+ };
+
+-static_assert(sizeof(VeloceRenderCommandKind) == 1);
++static_assert(sizeof(VeloceRenderOpcode) == 1);
++inline constexpr size_t kVeloceRenderOpcodeCount =
++    static_cast<size_t>(VeloceRenderOpcode::kCanonicalUnsupported) + 1u;
++
++struct VeloceRenderProgramHeader {
++  uint32_t format_version;
++  uint32_t command_count;
++  uint32_t bytecode_bytes;
++  uint32_t native_command_count;
++};
++static_assert(sizeof(VeloceRenderProgramHeader) == 16u);
+
+ // Immutable native rendering representation owned by one live page-object
+ // holder. PDFium page objects remain authoritative for fidelity and editing.
+-//
++// The bytecode contains no page-object pointers. In format version 2, every
++// canonical opcode consumes one implicit holder object ordinal.
+ class VeloceRenderProgram final {
+  public:
+   ~VeloceRenderProgram() = default;
+@@ -35,21 +54,29 @@ class VeloceRenderProgram final {
+   VeloceRenderProgram(const VeloceRenderProgram&) = delete;
+   VeloceRenderProgram& operator=(const VeloceRenderProgram&) = delete;
+
+-  pdfium::span<const VeloceRenderCommandKind> commands() const {
+-    return command_kinds_;
++  const VeloceRenderProgramHeader& header() const { return header_; }
++  pdfium::span<const uint8_t> bytecode() const { return bytecode_; }
++  size_t command_count() const { return header_.command_count; }
++  size_t opcode_count(VeloceRenderOpcode opcode) const {
++    return opcode_counts_[static_cast<size_t>(opcode)];
++  }
++  bool has_native_commands() const {
++    return header_.native_command_count != 0u;
+   }
+   size_t EstimatedBytes() const {
+-    return sizeof(*this) +
+-           command_kinds_.capacity() * sizeof(VeloceRenderCommandKind);
++    return sizeof(*this) + bytecode_.capacity();
+   }
+
+  private:
+   friend class VeloceRenderProgramBuilder;
+
+-  explicit VeloceRenderProgram(
+-      std::vector<VeloceRenderCommandKind> command_kinds);
++  VeloceRenderProgram(
++      std::vector<uint8_t> bytecode,
++      std::array<uint32_t, kVeloceRenderOpcodeCount> opcode_counts);
+
+-  const std::vector<VeloceRenderCommandKind> command_kinds_;
++  const VeloceRenderProgramHeader header_;
++  const std::vector<uint8_t> bytecode_;
++  const std::array<uint32_t, kVeloceRenderOpcodeCount> opcode_counts_;
+ };
+
+ // Single-owner parser-time recorder. It records one byte per appended holder
+@@ -68,9 +95,10 @@ class VeloceRenderProgramBuilder final {
+   std::unique_ptr<const VeloceRenderProgram> Finish();
+
+  private:
+-  static constexpr size_t kMaxCommandBytes = 32u * 1024u * 1024u;
++  static constexpr size_t kMaxProgramBytes = 32u * 1024u * 1024u;
+
+-  std::vector<VeloceRenderCommandKind> command_kinds_;
++  std::vector<uint8_t> bytecode_;
++  std::array<uint32_t, kVeloceRenderOpcodeCount> opcode_counts_{};
+   bool exceeded_budget_ = false;
+ };
+
+diff --git a/core/fpdfapi/render/veloce_path_display_list.cpp b/core/fpdfapi/render/veloce_path_display_list.cpp
+index b1472ad76..701a430f8 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.cpp
++++ b/core/fpdfapi/render/veloce_path_display_list.cpp
+@@ -1010,6 +1010,9 @@ VelocePathDisplayListResult VeloceTryRenderPathDisplayListForHolder(
+     const CPDF_PageObjectHolder* holder,
+     const CFX_Matrix& holder_to_device,
+     VelocePathDisplayListHolderKind holder_kind) {
++  if (!kVeloceLegacyPathDisplayListEnabled) {
++    return VelocePathDisplayListResult::kNotEligible;
++  }
+   if (!status || !holder) {
+     return VelocePathDisplayListResult::kNotEligible;
+   }
+diff --git a/core/fpdfapi/render/veloce_path_display_list.h b/core/fpdfapi/render/veloce_path_display_list.h
+index e5a46595d..f5d251015 100644
+--- a/core/fpdfapi/render/veloce_path_display_list.h
++++ b/core/fpdfapi/render/veloce_path_display_list.h
+@@ -8,6 +8,12 @@ class CFX_Matrix;
+ class CPDF_PageObjectHolder;
+ class CPDF_RenderStatus;
+
++// Generation 2 has one future acceleration boundary: the holder-owned packed
++// RenderProgram. Keep the legacy executor compiled for patch-stack provenance,
++// but reject it before feature inspection, allocation, cache lookup, or pixel
++// modification.
++inline constexpr bool kVeloceLegacyPathDisplayListEnabled = false;
++
+ enum class VelocePathDisplayListResult {
+   kNotEligible,
+   kRendered,
+--
+2.39.5 (Apple Git-154)

@@ -120,6 +120,7 @@ these patches:
 | r25-1-0089 | `0089-veloce-render-program-exact-darken-spans.patch` | Adds a fail-closed direct Darken span executor for fill-only or stroke-only paths. Each PDF object keeps its own geometry, AGG rasterization, coverage, Darken composite, and painter-order position; the executor removes only the temporary BGRA transparency bitmap and its second pixel traversal. Object clips, patterns, soft masks, transfer functions, overprint, nested groups, printers, and mixed fill/stroke objects remain canonical. The path allocates no image-sized scratch memory and includes arithmetic equivalence tests across BGR, BGRX, and BGRA destinations. |
 | r25-1-0090 | `0090-veloce-render-program-compact-bounds-filter.patch` | Adds one outward-rounded 8-byte holder-space bound per indexed command and applies it inside the existing ordered cursor before live object lookup. It reuses the object rectangle already read during index construction, disables the extra comparison for full-page queries, preserves painter order and PDFium raster/composite behavior, and abandons the index on incomplete metadata. Bounds storage has a 32 MiB hard cap; logs add `boundsRejected` and `compactBoundsBytes`. |
 | r25-1-0091 | `0091-veloce-render-program-clip-aware-darken-spans.patch` | Removes the redundant clip-free admission condition from exact Darken paths. The existing direct executor installs each object's clip through canonical `ProcessClipPath()` before AGG rasterization; all shape, blend, transparency, overprint, pattern, group, printer, device, and live-object guards remain fail-closed. Adds no storage, scan, scheduler, lock, rasterizer, or pixel owner. |
+| r25-2-0092 | `0092-veloce-render-program-generation2-packed-contract.patch` | Starts unified-backend generation 2 from `r25 + 0051 + 0075 + 0076`, excluding the complete r25-1 live-object executor chain. Replaces the provisional kind vector with versioned one-byte canonical bytecode and fixed summary counters recorded during the existing parser append. Stores no object pointer or duplicate index, keeps a 32 MiB logical ceiling, emits zero native commands, and disables legacy PathDL before work so canonical PDFium is the only pixel owner. |
 
 ## Why this directory exists
 
@@ -132,7 +133,22 @@ subset.
 ## How to apply
 
 The patch directory contains historical branches and must not be applied by
-blind numeric globbing. For `r25-1-0091`, apply the r25 rendering base through
+blind numeric globbing. For `r25-2-0092`, apply the r25 rendering base through
+0031, then only 0051, 0075, 0076, and 0092:
+
+```bash
+git apply patches/ship/01-jpeg-downscale-on-decode.patch
+# Apply the documented r25 sequence through 0031, skipping deprecated 0027/0028.
+git apply patches/ship/0051-veloce-page-dimensions-no-parse.patch
+git apply patches/ship/0075-veloce-render-program-v2-ownership-boundary.patch
+git apply patches/ship/0076-veloce-render-program-parser-command-order.patch
+git apply patches/ship/0092-veloce-render-program-generation2-packed-contract.patch
+```
+
+Do not apply `0053..0074`, `0077..0091`, or an invented 0084 to an
+`r25-2-0092` build. The machine-checked list lives in the 0092 workflow.
+
+For the historical `r25-1-0091` build, apply the r25 rendering base through
 0031, then only 0051, 0075, 0076, 0079..0083, and 0085..0091:
 
 ```bash
@@ -363,8 +379,17 @@ Patch 0091 depends on 0090 and corrects exact-Darken admission for clipped
 objects. `RenderVeloceDirectDarkenPath()` already uses the same
 `ProcessClipPath()` transition as canonical `RenderSingleObject()`, so clip
 presence is not an unsupported rendering operation. The patch removes only the
-redundant clip-free predicate; every other eligibility check and per-object
-raster/composite operation remains unchanged.
+compile-time clip-free predicate. Device measurements later proved the AGG
+driver still rejected every resulting clip mask, so 0091 is the final
+generation-1 experiment rather than a completed performance mechanism.
+
+Patch 0092 starts generation 2 directly from 0076 and excludes 0079-0091. It
+defines a versioned packed bytecode whose initial opcodes are canonical ordered
+barriers. The fixed per-kind summary is populated during the same parser append
+and the holder remains the lifetime owner. Native command count is zero and the
+legacy PathDL entry is disabled before work, making this a canonical-pixel
+format/ownership baseline. Owned geometry, state, bounds, and native execution
+are intentionally deferred to the following r25-2 revisions.
 Patch 0053 can also be applied directly on the rel-260701 stable line after
 patch 0051. It is behavior-preserving and only inserts the `VeloceRenderPlan`
 facade above the existing r25 path-display-list backend.

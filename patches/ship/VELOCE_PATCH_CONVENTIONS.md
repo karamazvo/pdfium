@@ -1,22 +1,22 @@
 # PDFium Veloce Patch Conventions Handoff
 
-Date: 2026-07-16
+Date: 2026-07-20
 
-Current architecture and performance plan:
+Current generation-2 architecture and performance plan:
 
 ```text
-/Users/shchao/Code/xPDFSDK/android/meta/libs/pdfium/patches/ship/UNIFIED_RENDER_PROGRAM_BACKEND_PLAN_2026-07-16.md
+/Users/shchao/Code/xPDFSDK/android/meta/libs/pdfium/patches/ship/R25_2_UNIFIED_RENDER_PROGRAM_PLAN_2026-07-20.md
 ```
 
-The r25-0074 measurements proved that dispatch batching was not the dense-tile
-bottleneck. r25-0078 is now the frozen legacy-consumer reference build. The new
-native line is **r25-1**, unified-backend generation 1. It starts from the r25 +
-0051 correctness baseline and retains only the RenderProgram ownership/order
-foundation in 0075-0076. It deliberately excludes experimental RenderPlan v1
-patches 0053-0074 and the legacy path-display-list consumers 0077-0078.
+The r25-1-0091 measurements proved that live-object replay remains the dense
+tile bottleneck and that clipped Darken admission did not reach the direct AGG
+executor. The current native line is **r25-2**, unified-backend generation 2.
+It starts from the r25 + 0051 correctness baseline, retains only the ownership
+and parser-order foundation in 0075-0076, and deliberately excludes RenderPlan
+v1 patches 0053-0074 and generation-1 runtime patches 0079-0091.
 
-Global patch numbering remains monotonic for audit history. The first r25-1
-revision is `r25-1-0079`; no old or failed number is reused.
+Global patch numbering remains monotonic for audit history. The first r25-2
+revision is `r25-2-0092`; no old, failed, or skipped number is reused.
 
 Purpose: shared context for Codex and Claude when continuing the native PDFium
 Veloce performance patch stack. This document records the current worktree
