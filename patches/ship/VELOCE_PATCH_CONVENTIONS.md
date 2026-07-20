@@ -15,8 +15,8 @@ It starts from the r25 + 0051 correctness baseline, retains only the ownership
 and parser-order foundation in 0075-0076, and deliberately excludes RenderPlan
 v1 patches 0053-0074 and generation-1 runtime patches 0079-0091.
 
-Global patch numbering remains monotonic for audit history. The first r25-2
-revision is `r25-2-0092`; no old, failed, or skipped number is reused.
+Global patch numbering remains monotonic for audit history. The current r25-2
+revision is `r25-2-0093`; no old, failed, or skipped number is reused.
 
 Purpose: shared context for Codex and Claude when continuing the native PDFium
 Veloce performance patch stack. This document records the current worktree

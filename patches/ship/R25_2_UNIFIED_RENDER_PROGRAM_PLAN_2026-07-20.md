@@ -1,7 +1,7 @@
 # r25-2 Unified RenderProgram Plan
 
 Date: 2026-07-20
-Current revision: `r25-2-0092`
+Current revision: `r25-2-0093`
 
 ## Decision
 
@@ -87,7 +87,7 @@ scheduler, second bitmap, or UI-thread compilation.
 | Revision | Scope | Pixel behavior |
 | --- | --- | --- |
 | `r25-2-0092` | Versioned packed bytecode, canonical opcodes, fixed summary, holder ownership, legacy PathDL disabled | Canonical PDFium only |
-| `r25-2-0093` | Owned simple path geometry and interned exact opaque path state | Shadow validation first; canonical fallback |
+| `r25-2-0093` | Owned two-point opaque stroke geometry, exact interned path state/matrices, bounded chunk storage, shadow telemetry | Canonical PDFium only; native data is not executed |
 | `r25-2-0094` | Conservative primitive/chunk bounds and bounded page-space index | Exact visible native subset |
 | `r25-2-0095` | Bounded fill/stroke span executor and cancellation checkpoints | Exact opaque native commands |
 | `r25-2-0096` | Exact clip-mask-aware blend spans | Exact supported blend commands |
@@ -114,6 +114,32 @@ Expected performance is canonical r25 PDFium. `11.pdf` and Q16 are expected to
 be slower than successful experimental fast paths until 0093-0095 execute
 owned geometry. The purpose of 0092 is to prove lifetime, format, memory, and
 pixel ownership before acceleration resumes.
+
+## 0093 Contract
+
+0093 adds the first renderer-ready command without changing pixel ownership:
+
+- exact two-point, stroke-only, normal-blend paths may become
+  `kNativeOpaqueLineShadow` commands;
+- the first 4096 holder commands remain canonical; shadow compilation starts
+  only for the suffix of a large holder, without a prefix rescan, so ordinary
+  pages pay no native eligibility, hashing, or payload-allocation cost;
+- endpoints, object matrix, resolved source color, line width, miter, dash,
+  cap, join, and stroke-adjust state are copied during the existing parser
+  append; no second holder scan or page-object pointer is retained;
+- state and matrices use bitwise-exact hash interning with collision checks;
+- native lines use fixed 4096-command chunks and are capped at 3 Mi commands;
+  bytecode, state, matrix, and dash tables have independent hard ceilings;
+- clips, marked content, fills, transparency, transfer functions, overprint,
+  patterns, non-finite values, unsupported geometry, and capacity overflow
+  remain canonical path opcodes at the same painter-order position;
+- legacy PathDL stays disabled and no render call site consumes native lines.
+
+Large holders emit one `VeloceRenderProgram2` line with `nativeOpaqueLines`,
+`canonicalPaths`, intern-table sizes, retained bytes, budget fallbacks, and
+`shadowBuildMs`. This build measures coverage and compile/memory cost only. It
+is not expected to improve rendering time until 0094 selects and 0095 executes
+an exact visible subset.
 
 ## Proof Gates
 
