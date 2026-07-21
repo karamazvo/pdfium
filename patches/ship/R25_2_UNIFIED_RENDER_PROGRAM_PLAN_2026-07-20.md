@@ -2,7 +2,7 @@
 
 Date: 2026-07-20
 Updated: 2026-07-21 (Asia/Taipei)
-Current revision: `r25-2-0098`
+Current revision: `r25-2-0099`
 
 ## Decision
 
@@ -36,6 +36,13 @@ compiles 28,806 canonical paths because clip rejection masks its Darken blend
 state. 0098 expands the exact command vocabulary without changing that
 ordering model: normal-blend multi-segment strokes own their geometry, and all
 native strokes consume retained PDFium clip snapshots in ordered runs.
+
+0099 attacks the two remaining measured costs without adding a second
+pipeline. For Q16 tiles, bounded ordered command blocks can reject whole
+off-tile ranges before live object lookup. For `11.pdf`, owned opaque
+stroke-only Darken commands rasterize once and composite their coverage
+directly through PDFium's existing integer Darken compositor. Both operations
+preserve command order and fail closed to canonical replay.
 
 ## Baseline
 
@@ -96,7 +103,9 @@ scheduler, second bitmap, or UI-thread compilation.
 3. Canonical barriers and dynamic visibility scopes retain only holder object
    ordinals. Visibility is resolved through PDFium's current canonical render
    options, while the holder owns the immutable program.
-4. Mutation invalidates the complete program in O(1).
+4. Structural holder mutation invalidates the complete program in O(1);
+   attached-object mutation invalidates block culling by epoch and makes the
+   dirty command fall back canonically at its ordinal.
 5. Bounds are conservative. Unknown or overflowed bounds are never culled.
 6. Unsupported semantics remain ordered canonical barriers.
 7. A native executor either validates before its first pixel or does not run.
@@ -116,7 +125,7 @@ scheduler, second bitmap, or UI-thread compilation.
 | `r25-2-0096` | Format-5 single-owner ordered replay, bounded opaque-line executor, live dirty-object fallback, 64-command cancellation | Exact supported opaque lines plus canonical barriers, but initially reachable only from `RenderObjectList()` |
 | `r25-2-0097` | Shared fail-closed executor entry from ordinary and root progressive rendering | Android progressive root pages can execute the existing exact program |
 | `r25-2-0098` | Format-6 owned multi-segment stroke geometry, exact retained PDFium clip runs, bounded path-point storage | Exact supported normal-blend stroke paths and lines with arbitrary PDFium clip paths; unsupported semantics remain canonical |
-| `r25-2-0099` | Exact clip/group-aware blend spans | Exact supported blend commands |
+| `r25-2-0099` | Format-7 conservative 256-command block index, exact side-stream jumps, attached-object mutation epoch, and clip-aware direct Darken coverage | Off-tile ordered ranges avoid object work; supported opaque stroke-only Darken objects avoid temporary BGRA buffers; all unsupported or stale cases remain canonical |
 
 Revision numbers remain globally monotonic. Failed or superseded revisions are
 not renamed, deleted, amended after push, or reused.
@@ -356,6 +365,40 @@ execution. Q16 should retain roughly the same line coverage and memory shape,
 with only a small number of clip runs. The decisive 0098 log fields are
 `nativeOpaquePaths`, `clipRuns`, `ownedPathPoints`, `pathDraws`, and
 `pathBoundsCulled`.
+
+## 0099 Contract
+
+0099 combines two executor improvements because they remove independent costs
+from the same immutable ordered program:
+
+- the parser's existing append pass builds one conservative holder-space bound
+  for each consecutive 256-command suffix block;
+- every block records exact command, native-line, and native-path counts, so a
+  rejected block advances all streams without reordering or candidate storage;
+- unknown/empty/non-finite bounds fail open, stop-object rendering disables
+  block skipping, and an attached page-object mutation epoch mismatch disables
+  all stale block skips for that replay;
+- the first 4096 commands remain canonical and receive no block metadata;
+- `kNativeDarkenStrokePath` owns finite stroke-only geometry already proven to
+  use solid color, alpha 1, Darken, no soft mask/transfer/overprint, and exact
+  retained clip state;
+- AGG rasterizes each Darken object separately and passes its coverage and
+  current antialiased clip coverage directly to `CFX_ScanlineCompositor`;
+- group, isolated-group, type-3, printer, unsupported destination, changed live
+  semantics, or driver rejection falls back canonically at the same ordinal
+  before any direct destination mutation;
+- no image-sized scratch bitmap, candidate vector, cache, scheduler, lock, JNI
+  policy, or UI-thread work is added;
+- command blocks, owned geometry, clip runs, states, and indexes remain inside
+  the existing 96 MiB retained-program budget.
+
+Acceptance is based on removed work. Q16 tile logs should show nonzero
+`blocksSkipped` and `commandsSkipped`, with `commandsVisited + commandsSkipped`
+equal to the complete command count. `11.pdf` should show nonzero
+`nativeDarkenPaths` at compile and `darkenDraws` at replay; a high
+`darkenFallbacks` count means the runtime proof remains blocked and no speed
+claim is valid. `blocksCurrent=0` is a deliberate correctness fallback after
+attached-object mutation.
 
 ## Proof Gates
 
