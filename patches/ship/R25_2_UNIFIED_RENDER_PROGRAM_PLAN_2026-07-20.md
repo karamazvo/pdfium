@@ -1,7 +1,7 @@
 # r25-2 Unified RenderProgram Plan
 
 Date: 2026-07-20
-Current revision: `r25-2-0094`
+Current revision: `r25-2-0095`
 
 ## Decision
 
@@ -19,8 +19,14 @@ source of truth; the derived program owns only rendering data.
 The first 0093 device trace established a failed coverage gate, not an
 executor result: Q16 recorded 3,165,420 commands and zero native lines because
 all candidate paths were inside marked-content scopes. Its raw streams also
-use many translation-only path matrices. 0094 corrects both representation
-gaps in shadow mode before bounds or execution are introduced.
+use many translation-only path matrices. 0094 corrected both representation
+gaps: the device admitted 2,937,165 native lines, or 92.8% of path commands,
+through seven visibility runs and no matrix-table entries or budget fallback.
+
+0095 now measures how much of that renderer-ready stream is relevant to each
+real tile. It adds conservative bounds over ordered ranges rather than a
+per-line bounds array because the 0094 Q16 program already retains 82.54 MiB
+of its 96 MiB budget.
 
 ## Baseline
 
@@ -97,7 +103,7 @@ scheduler, second bitmap, or UI-thread compilation.
 | `r25-2-0092` | Versioned packed bytecode, canonical opcodes, fixed summary, holder ownership, legacy PathDL disabled | Canonical PDFium only |
 | `r25-2-0093` | Owned two-point opaque stroke geometry, exact interned path state/matrices, bounded chunk storage, shadow telemetry | Canonical PDFium only; native data is not executed |
 | `r25-2-0094` | Pointer-free visibility runs, exact inline translation matrices, fail-closed rejection telemetry, 96 MiB retained-program ceiling | Canonical PDFium only; corrected native data remains shadow-only |
-| `r25-2-0095` | Conservative primitive/chunk bounds and bounded page-space index | Canonical PDFium only; exact visible native subset is measured |
+| `r25-2-0095` | Conservative 64-line leaves, 64-leaf coarse ranges, allocation-free holder-clip query telemetry, actual-capacity budget gate | Canonical PDFium only; bounded visible candidates are measured |
 | `r25-2-0096` | Bounded opaque stroke executor and cancellation checkpoints | Exact opaque native commands |
 | `r25-2-0097` | Owned multi-segment opaque path chunks | Exact supported opaque paths |
 | `r25-2-0098` | Exact clip/group-aware blend spans | Exact supported blend commands |
@@ -175,6 +181,48 @@ The 0094 acceptance gate is nonzero Q16 native coverage without matrix-table
 exhaustion, bounded retained bytes, unchanged canonical pixels, and no material
 normal-page acquisition regression. Bounds/index work starts only after this
 gate passes.
+
+The 0094 device result passed that gate:
+
+- Q16 admitted `2,937,165 / 3,164,996` path commands (`92.8%`);
+- all admitted lines used seven pointer-free visibility runs and exact inline
+  translations, with one state, zero matrices, and zero budget fallback;
+- retained data was `82.54 MiB`, or `86%` of the hard ceiling;
+- acquisition was `10.07s` versus `9.99s` in 0092, a non-material `0.8%`
+  difference in one trace;
+- pixels and render time remained canonical by design;
+- 11.pdf admitted zero lines because all post-threshold candidates were
+  rejected by clip (`24,702`) or paint (`8`) semantics.
+
+## 0095 Contract
+
+0095 adds one conservative, bounded query structure without taking pixel
+ownership:
+
+- native line bounds reuse the parser-computed `CPDF_PageObject::GetRect()`;
+  no geometry, holder, or page-object rescan is added;
+- each 32-byte leaf covers 64 consecutive native lines and records its native
+  and command ranges in exact painter order;
+- each 28-byte coarse range covers 64 leaves, allowing 4,096 lines to be
+  rejected with one comparison when their union misses the tile;
+- non-finite or empty bounds mark a range unbounded and always candidate;
+- the inverse device clip already used by canonical `RenderObjectList()` is
+  queried without a candidate vector, sort, cache, lock, or second scheduler;
+- full-page clips containing the complete native bounds return all lines in
+  O(1);
+- actual retained vector capacity is checked against the same 96 MiB ceiling
+  before the program is installed;
+- Android telemetry reports candidates, culled lines, tested/rejected ranges,
+  fail-open state, retained index bytes, and query microseconds;
+- format version advances to 4, legacy PathDL remains disabled, and the
+  unchanged canonical object loop still paints every pixel.
+
+0095 is accepted only if representative sparse Q16 tiles reject substantial
+native work at low query cost, no query fails open unexpectedly, retained data
+stays below the existing ceiling, and canonical rendering remains unchanged.
+0096 must not execute this structure if ordered ranges remain effectively
+page-wide; that result would require a more selective compact index rather
+than enabling a weak executor.
 
 ## Proof Gates
 

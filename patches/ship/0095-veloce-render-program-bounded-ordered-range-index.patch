@@ -1,0 +1,627 @@
+From 3684ea36b482005b98f412bb7180310b99262a95 Mon Sep 17 00:00:00 2001
+From: "sh.chao" <sh.chao@gmail.com>
+Date: Tue, 21 Jul 2026 09:40:05 +0800
+Subject: [PATCH] r25-2-0095: add bounded ordered line range index
+
+Extend r25-2-0094 with conservative holder-space bounds over 64-line leaves and 64-leaf coarse ranges. Build the hierarchy during the existing parser append, retain command-range metadata for later ordered execution, and fail open for unknown bounds.
+
+Query the actual inverse-transformed device clip without allocating candidate storage and emit shadow-only culling telemetry. Enforce the 96 MiB ceiling against actual retained capacity and keep canonical PDFium as the sole pixel owner.
+---
+ core/fpdfapi/page/veloce_render_program.cpp   | 213 +++++++++++++++++-
+ core/fpdfapi/page/veloce_render_program.h     |  73 +++++-
+ .../page/veloce_render_program_unittest.cpp   |  63 ++++++
+ core/fpdfapi/render/cpdf_renderstatus.cpp     |  40 ++++
+ 4 files changed, 377 insertions(+), 12 deletions(-)
+
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index 9721e76b4..ab742747f 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -63,6 +63,25 @@ bool HasIdentityLinearPart(const CFX_Matrix& matrix) {
+          matrix.d == 1.0f;
+ }
+ 
++bool IsFiniteRect(const CFX_FloatRect& rect) {
++  return std::isfinite(rect.left) && std::isfinite(rect.bottom) &&
++         std::isfinite(rect.right) && std::isfinite(rect.top);
++}
++
++bool RectsIntersect(const CFX_FloatRect& lhs, const CFX_FloatRect& rhs) {
++  return lhs.left <= rhs.right && lhs.right >= rhs.left &&
++         lhs.bottom <= rhs.top && lhs.top >= rhs.bottom;
++}
++
++void UnionKnownBounds(const CFX_FloatRect& source,
++                      CFX_FloatRect* destination) {
++  if (destination->IsEmpty()) {
++    *destination = source;
++  } else {
++    destination->Union(source);
++  }
++}
++
+ uint64_t HashMatrix(const CFX_Matrix& matrix) {
+   uint64_t hash = kFnvOffsetBasis;
+   hash = HashWord(hash, FloatBits(matrix.a));
+@@ -182,7 +201,11 @@ VeloceRenderProgram::VeloceRenderProgram(
+     std::array<uint32_t, kVeloceNativeLineRejectReasonCount>
+         rejection_counts,
+     uint32_t visibility_scoped_line_count,
+-    uint32_t inline_translation_line_count)
++    uint32_t inline_translation_line_count,
++    std::vector<VeloceLineLeafRange> line_leaf_ranges,
++    std::vector<VeloceLineCoarseRange> line_coarse_ranges,
++    const CFX_FloatRect& native_line_bounds,
++    bool native_line_bounds_known)
+     : header_{kVeloceRenderProgramFormatVersion,
+               static_cast<uint32_t>(bytecode.size()),
+               static_cast<uint32_t>(bytecode.size()),
+@@ -196,7 +219,78 @@ VeloceRenderProgram::VeloceRenderProgram(
+       visibility_runs_(std::move(visibility_runs)),
+       rejection_counts_(rejection_counts),
+       visibility_scoped_line_count_(visibility_scoped_line_count),
+-      inline_translation_line_count_(inline_translation_line_count) {}
++      inline_translation_line_count_(inline_translation_line_count),
++      line_leaf_ranges_(std::move(line_leaf_ranges)),
++      line_coarse_ranges_(std::move(line_coarse_ranges)),
++      native_line_bounds_(native_line_bounds),
++      native_line_bounds_known_(native_line_bounds_known) {}
++
++VeloceLineQueryResult VeloceRenderProgram::QueryNativeLines(
++    const CFX_FloatRect& holder_clip) const {
++  VeloceLineQueryResult result;
++  const uint32_t native_line_count = header_.native_command_count;
++  if (native_line_count == 0u) {
++    return result;
++  }
++  if (!IsFiniteRect(holder_clip)) {
++    result.candidate_lines = native_line_count;
++    result.fail_open = true;
++    return result;
++  }
++  if (holder_clip.IsEmpty()) {
++    result.culled_lines = native_line_count;
++    return result;
++  }
++  if (native_line_bounds_known_ &&
++      holder_clip.Contains(native_line_bounds_)) {
++    result.candidate_lines = native_line_count;
++    result.full_bounds_hit = true;
++    return result;
++  }
++  if (line_leaf_ranges_.empty() || line_coarse_ranges_.empty()) {
++    result.candidate_lines = native_line_count;
++    result.fail_open = true;
++    return result;
++  }
++
++  for (const VeloceLineCoarseRange& coarse : line_coarse_ranges_) {
++    ++result.coarse_tested;
++    const bool coarse_unbounded =
++        (coarse.flags & kVeloceLineRangeUnbounded) != 0u;
++    if (!coarse_unbounded && !RectsIntersect(coarse.bounds, holder_clip)) {
++      ++result.coarse_rejected;
++      result.culled_lines += coarse.line_count;
++      continue;
++    }
++
++    const size_t first_leaf = coarse.first_leaf;
++    const size_t leaf_limit = first_leaf + coarse.leaf_count;
++    CHECK_LE(leaf_limit, line_leaf_ranges_.size());
++    for (size_t leaf_index = first_leaf; leaf_index < leaf_limit;
++         ++leaf_index) {
++      const VeloceLineLeafRange& leaf = line_leaf_ranges_[leaf_index];
++      ++result.leaves_tested;
++      const bool leaf_unbounded =
++          (leaf.flags & kVeloceLineRangeUnbounded) != 0u;
++      result.fail_open |= leaf_unbounded;
++      if (!leaf_unbounded && !RectsIntersect(leaf.bounds, holder_clip)) {
++        ++result.leaves_rejected;
++        result.culled_lines += leaf.line_count;
++      } else {
++        result.candidate_lines += leaf.line_count;
++      }
++    }
++  }
++  CHECK_EQ(static_cast<uint64_t>(result.candidate_lines) +
++               result.culled_lines,
++           native_line_count);
++  return result;
++}
++
++size_t VeloceRenderProgram::RangeIndexBytes() const {
++  return line_leaf_ranges_.capacity() * sizeof(VeloceLineLeafRange) +
++         line_coarse_ranges_.capacity() * sizeof(VeloceLineCoarseRange);
++}
+ 
+ size_t VeloceRenderProgram::EstimatedBytes() const {
+   return sizeof(*this) + bytecode_.capacity() +
+@@ -204,7 +298,8 @@ size_t VeloceRenderProgram::EstimatedBytes() const {
+          opaque_path_states_.capacity() * sizeof(VeloceOpaquePathState) +
+          path_matrices_.capacity() * sizeof(CFX_Matrix) +
+          dash_values_.capacity() * sizeof(float) +
+-         visibility_runs_.capacity() * sizeof(VeloceVisibilityRun);
++         visibility_runs_.capacity() * sizeof(VeloceVisibilityRun) +
++         RangeIndexBytes();
+ }
+ 
+ VeloceRenderProgramBuilder::VeloceRenderProgramBuilder() = default;
+@@ -241,14 +336,88 @@ void VeloceRenderProgramBuilder::RememberVisibilityScope(
+   has_previous_visibility_scope_ = true;
+ }
+ 
++void VeloceRenderProgramBuilder::AppendNativeLineBounds(
++    const CPDF_PageObject& object) {
++  const uint32_t line_index =
++      static_cast<uint32_t>(native_lines_.size() - 1u);
++  const uint32_t command_index = static_cast<uint32_t>(bytecode_.size());
++  if (pending_line_leaf_.line_count == 0u) {
++    pending_line_leaf_.first_line = line_index;
++    pending_line_leaf_.first_command = command_index;
++  }
++  ++pending_line_leaf_.line_count;
++  pending_line_leaf_.command_count =
++      command_index - pending_line_leaf_.first_command + 1u;
++
++  CFX_FloatRect bounds = object.GetRect();
++  bounds.Normalize();
++  const bool bounds_known = IsFiniteRect(bounds) && !bounds.IsEmpty();
++  if (bounds_known) {
++    UnionKnownBounds(bounds, &pending_line_leaf_.bounds);
++    if (!has_native_line_bounds_) {
++      native_line_bounds_ = bounds;
++      has_native_line_bounds_ = true;
++    } else {
++      native_line_bounds_.Union(bounds);
++    }
++  } else {
++    pending_line_leaf_.flags |= kVeloceLineRangeUnbounded;
++    native_line_bounds_known_ = false;
++  }
++
++  if (pending_line_leaf_.line_count == kLineLeafSize) {
++    SealPendingLineLeaf();
++  }
++}
++
++void VeloceRenderProgramBuilder::SealPendingLineLeaf() {
++  if (pending_line_leaf_.line_count == 0u) {
++    return;
++  }
++  const uint32_t leaf_index =
++      static_cast<uint32_t>(line_leaf_ranges_.size());
++  line_leaf_ranges_.push_back(pending_line_leaf_);
++
++  if (pending_coarse_range_.leaf_count == 0u) {
++    pending_coarse_range_.first_leaf = leaf_index;
++  }
++  ++pending_coarse_range_.leaf_count;
++  pending_coarse_range_.line_count += pending_line_leaf_.line_count;
++  if ((pending_line_leaf_.flags & kVeloceLineRangeUnbounded) != 0u) {
++    pending_coarse_range_.flags |= kVeloceLineRangeUnbounded;
++  }
++  if (!pending_line_leaf_.bounds.IsEmpty()) {
++    UnionKnownBounds(pending_line_leaf_.bounds,
++                     &pending_coarse_range_.bounds);
++  }
++  pending_line_leaf_ = VeloceLineLeafRange();
++
++  if (pending_coarse_range_.leaf_count == kCoarseLeafCount) {
++    SealPendingCoarseRange();
++  }
++}
++
++void VeloceRenderProgramBuilder::SealPendingCoarseRange() {
++  if (pending_coarse_range_.leaf_count == 0u) {
++    return;
++  }
++  line_coarse_ranges_.push_back(pending_coarse_range_);
++  pending_coarse_range_ = VeloceLineCoarseRange();
++}
++
+ bool VeloceRenderProgramBuilder::WouldExceedRetainedBudget(
+     bool needs_state,
+     bool needs_matrix,
+     size_t dash_count,
+     bool needs_visibility_run) const {
++  const size_t next_line_count = native_lines_.size() + 1u;
++  const size_t leaf_range_count =
++      (next_line_count + kLineLeafSize - 1u) / kLineLeafSize;
++  const size_t coarse_range_count =
++      (leaf_range_count + kCoarseLeafCount - 1u) / kCoarseLeafCount;
+   const size_t logical_bytes =
+       sizeof(VeloceRenderProgram) + bytecode_.size() + 1u +
+-      (native_lines_.size() + 1u) * sizeof(VeloceNativeLine) +
++      next_line_count * sizeof(VeloceNativeLine) +
+       (opaque_path_states_.size() + (needs_state ? 1u : 0u)) *
+           sizeof(VeloceOpaquePathState) +
+       (path_matrices_.size() + (needs_matrix ? 1u : 0u)) *
+@@ -256,7 +425,9 @@ bool VeloceRenderProgramBuilder::WouldExceedRetainedBudget(
+       (dash_values_.size() + (needs_state ? dash_count : 0u)) *
+           sizeof(float) +
+       (visibility_runs_.size() + (needs_visibility_run ? 1u : 0u)) *
+-          sizeof(VeloceVisibilityRun);
++          sizeof(VeloceVisibilityRun) +
++      leaf_range_count * sizeof(VeloceLineLeafRange) +
++      coarse_range_count * sizeof(VeloceLineCoarseRange);
+   return logical_bytes > kMaxRetainedProgramBytes;
+ }
+ 
+@@ -430,6 +601,7 @@ bool VeloceRenderProgramBuilder::TryAppendNativeOpaqueLine(
+   line.state_index = *state_index;
+   line.matrix_index = *matrix_index;
+   CHECK(native_lines_.Append(line, kMaxNativeLines));
++  AppendNativeLineBounds(object);
+   if (content_marks.CountItems() != 0u) {
+     ++visibility_scoped_line_count_;
+   }
+@@ -452,6 +624,10 @@ void VeloceRenderProgramBuilder::AppendPageObject(
+     std::vector<CFX_Matrix>().swap(path_matrices_);
+     std::vector<float>().swap(dash_values_);
+     std::vector<VeloceVisibilityRun>().swap(visibility_runs_);
++    std::vector<VeloceLineLeafRange>().swap(line_leaf_ranges_);
++    std::vector<VeloceLineCoarseRange>().swap(line_coarse_ranges_);
++    pending_line_leaf_ = VeloceLineLeafRange();
++    pending_coarse_range_ = VeloceLineCoarseRange();
+     std::vector<RetainPtr<const CPDF_ContentMarkItem>>().swap(
+         previous_visibility_marks_);
+     state_indices_.clear();
+@@ -477,6 +653,8 @@ VeloceRenderProgramBuilder::Finish() {
+   if (exceeded_budget_ || bytecode_.empty()) {
+     return nullptr;
+   }
++  SealPendingLineLeaf();
++  SealPendingCoarseRange();
+   const uint64_t build_millis = build_start_millis_ == 0u
+                                     ? 0u
+                                     : NowMillis() - build_start_millis_;
+@@ -486,15 +664,29 @@ VeloceRenderProgramBuilder::Finish() {
+           std::move(opaque_path_states_), std::move(path_matrices_),
+           std::move(dash_values_), std::move(visibility_runs_),
+           rejection_counts_, visibility_scoped_line_count_,
+-          inline_translation_line_count_));
++          inline_translation_line_count_, std::move(line_leaf_ranges_),
++          std::move(line_coarse_ranges_), native_line_bounds_,
++          native_line_bounds_known_ && has_native_line_bounds_));
++  if (program->EstimatedBytes() > kMaxRetainedProgramBytes) {
++#if BUILDFLAG(IS_ANDROID)
++    __android_log_print(
++        ANDROID_LOG_INFO, "VeloceRenderProgram2",
++        "revision=r25-2-0095 event=discard reason=actual_budget bytes=%zu "
++        "budgetBytes=%zu",
++        program->EstimatedBytes(), kMaxRetainedProgramBytes);
++#endif
++    return nullptr;
++  }
+ #if BUILDFLAG(IS_ANDROID)
+   if (program->command_count() >= 4096u) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-2-0094 mode=visibility_shadow commands=%zu "
++        "revision=r25-2-0095 event=compile mode=range_index_shadow "
++        "commands=%zu "
+         "nativeOpaqueLines=%zu canonicalPaths=%zu states=%zu matrices=%zu "
+         "dashValues=%zu visibilityRuns=%zu visibilityScopedLines=%u "
+-        "inlineTranslationLines=%u bytes=%zu nativeBudgetFallbacks=%u "
++        "inlineTranslationLines=%u leafRanges=%zu coarseRanges=%zu "
++        "indexBytes=%zu bytes=%zu nativeBudgetFallbacks=%u "
+         "rejectNotPath=%u rejectPaint=%u rejectClip=%u rejectGeometry=%u "
+         "rejectMatrix=%u rejectTransparency=%u rejectColor=%u "
+         "rejectGraph=%u rejectVisibility=%u rejectBudget=%u "
+@@ -504,7 +696,10 @@ VeloceRenderProgramBuilder::Finish() {
+         program->opaque_path_states().size(), program->path_matrices().size(),
+         program->dash_values().size(), program->visibility_runs().size(),
+         program->visibility_scoped_line_count(),
+-        program->inline_translation_line_count(), program->EstimatedBytes(),
++        program->inline_translation_line_count(),
++        program->line_leaf_ranges().size(),
++        program->line_coarse_ranges().size(), program->RangeIndexBytes(),
++        program->EstimatedBytes(),
+         native_budget_fallbacks_,
+         program->rejection_count(
+             VeloceNativeLineRejectReason::kNotActivePath),
+diff --git a/core/fpdfapi/page/veloce_render_program.h b/core/fpdfapi/page/veloce_render_program.h
+index dd89fad3c..a68c23691 100644
+--- a/core/fpdfapi/page/veloce_render_program.h
++++ b/core/fpdfapi/page/veloce_render_program.h
+@@ -20,7 +20,7 @@
+ class CPDF_ContentMarks;
+ class CPDF_PageObject;
+ 
+-inline constexpr uint32_t kVeloceRenderProgramFormatVersion = 3u;
++inline constexpr uint32_t kVeloceRenderProgramFormatVersion = 4u;
+ 
+ // Generation 2 is a sequential bytecode. Its initial opcodes are canonical
+ // barriers: they preserve exact object order and identify the source object
+@@ -94,6 +94,44 @@ struct VeloceVisibilityRun {
+ };
+ static_assert(sizeof(VeloceVisibilityRun) == 4u);
+ 
++inline constexpr uint16_t kVeloceLineRangeUnbounded = 1u << 0;
++
++// Native lines remain in exact painter order. Each leaf covers a bounded
++// consecutive line range and the bytecode interval containing that range.
++// Unknown bounds set kVeloceLineRangeUnbounded and therefore fail open.
++struct VeloceLineLeafRange {
++  CFX_FloatRect bounds;
++  uint32_t first_line = 0;
++  uint32_t first_command = 0;
++  uint32_t command_count = 0;
++  uint16_t line_count = 0;
++  uint16_t flags = 0;
++};
++static_assert(sizeof(VeloceLineLeafRange) == 32u);
++
++// A coarse range rejects 4096 consecutive native lines with one comparison
++// when their union is outside the query clip. Intersecting coarse ranges are
++// refined through their ordered leaves without allocating candidate storage.
++struct VeloceLineCoarseRange {
++  CFX_FloatRect bounds;
++  uint32_t first_leaf = 0;
++  uint32_t line_count = 0;
++  uint16_t leaf_count = 0;
++  uint16_t flags = 0;
++};
++static_assert(sizeof(VeloceLineCoarseRange) == 28u);
++
++struct VeloceLineQueryResult {
++  uint32_t candidate_lines = 0;
++  uint32_t culled_lines = 0;
++  uint32_t coarse_tested = 0;
++  uint32_t coarse_rejected = 0;
++  uint32_t leaves_tested = 0;
++  uint32_t leaves_rejected = 0;
++  bool full_bounds_hit = false;
++  bool fail_open = false;
++};
++
+ enum class VeloceNativeLineRejectReason : uint8_t {
+   kNotActivePath,
+   kPaintMode,
+@@ -140,7 +178,7 @@ class VeloceNativeLineStorage final {
+ 
+ // Immutable native rendering representation owned by one live page-object
+ // holder. PDFium page objects remain authoritative for fidelity and editing.
+-// The bytecode contains no page-object pointers. In format version 3, every
++// The bytecode contains no page-object pointers. In format version 4, every
+ // canonical opcode consumes one implicit holder object ordinal.
+ class VeloceRenderProgram final {
+  public:
+@@ -181,6 +219,15 @@ class VeloceRenderProgram final {
+   uint32_t inline_translation_line_count() const {
+     return inline_translation_line_count_;
+   }
++  pdfium::span<const VeloceLineLeafRange> line_leaf_ranges() const {
++    return line_leaf_ranges_;
++  }
++  pdfium::span<const VeloceLineCoarseRange> line_coarse_ranges() const {
++    return line_coarse_ranges_;
++  }
++  VeloceLineQueryResult QueryNativeLines(
++      const CFX_FloatRect& holder_clip) const;
++  size_t RangeIndexBytes() const;
+   size_t EstimatedBytes() const;
+ 
+  private:
+@@ -197,7 +244,11 @@ class VeloceRenderProgram final {
+       std::array<uint32_t, kVeloceNativeLineRejectReasonCount>
+           rejection_counts,
+       uint32_t visibility_scoped_line_count,
+-      uint32_t inline_translation_line_count);
++      uint32_t inline_translation_line_count,
++      std::vector<VeloceLineLeafRange> line_leaf_ranges,
++      std::vector<VeloceLineCoarseRange> line_coarse_ranges,
++      const CFX_FloatRect& native_line_bounds,
++      bool native_line_bounds_known);
+ 
+   const VeloceRenderProgramHeader header_;
+   const std::vector<uint8_t> bytecode_;
+@@ -211,6 +262,10 @@ class VeloceRenderProgram final {
+       rejection_counts_;
+   const uint32_t visibility_scoped_line_count_;
+   const uint32_t inline_translation_line_count_;
++  const std::vector<VeloceLineLeafRange> line_leaf_ranges_;
++  const std::vector<VeloceLineCoarseRange> line_coarse_ranges_;
++  const CFX_FloatRect native_line_bounds_;
++  const bool native_line_bounds_known_;
+ };
+ 
+ // Single-owner parser-time recorder. It records one byte per appended holder
+@@ -238,11 +293,16 @@ class VeloceRenderProgramBuilder final {
+   static constexpr size_t kMaxDashValues = 1024u * 1024u;
+   static constexpr size_t kMaxVisibilityRuns = 1024u * 1024u;
+   static constexpr size_t kMaxVisibilityMarks = 1024u;
++  static constexpr size_t kLineLeafSize = 64u;
++  static constexpr size_t kCoarseLeafCount = 64u;
+ 
+   bool TryAppendNativeOpaqueLine(const CPDF_PageObject& object);
+   bool Reject(VeloceNativeLineRejectReason reason);
+   bool HasSameVisibilityScope(const CPDF_ContentMarks& marks) const;
+   void RememberVisibilityScope(const CPDF_ContentMarks& marks);
++  void AppendNativeLineBounds(const CPDF_PageObject& object);
++  void SealPendingLineLeaf();
++  void SealPendingCoarseRange();
+   bool WouldExceedRetainedBudget(bool needs_state,
+                                  bool needs_matrix,
+                                  size_t dash_count,
+@@ -255,6 +315,13 @@ class VeloceRenderProgramBuilder final {
+   std::vector<CFX_Matrix> path_matrices_;
+   std::vector<float> dash_values_;
+   std::vector<VeloceVisibilityRun> visibility_runs_;
++  std::vector<VeloceLineLeafRange> line_leaf_ranges_;
++  std::vector<VeloceLineCoarseRange> line_coarse_ranges_;
++  VeloceLineLeafRange pending_line_leaf_;
++  VeloceLineCoarseRange pending_coarse_range_;
++  CFX_FloatRect native_line_bounds_;
++  bool native_line_bounds_known_ = true;
++  bool has_native_line_bounds_ = false;
+   std::vector<RetainPtr<const CPDF_ContentMarkItem>>
+       previous_visibility_marks_;
+   bool has_previous_visibility_scope_ = false;
+diff --git a/core/fpdfapi/page/veloce_render_program_unittest.cpp b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+index 62bb94106..c91598a15 100644
+--- a/core/fpdfapi/page/veloce_render_program_unittest.cpp
++++ b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+@@ -21,6 +21,7 @@ std::unique_ptr<CPDF_PathObject> MakeOpaqueLine(float start_x, float end_x) {
+   path->path().AppendPoint({end_x, 4.0f}, CFX_Path::Point::Type::kLine);
+   path->set_stroke(true);
+   path->set_no_filltype();
++  path->SetPathMatrix(CFX_Matrix());
+   return path;
+ }
+ 
+@@ -154,4 +155,66 @@ TEST(VeloceRenderProgramTest, EncodesTranslationOnlyMatricesExactly) {
+             program->native_line(1).matrix_index);
+ }
+ 
++TEST(VeloceRenderProgramTest, QueriesOrderedBoundedLineRangesWithoutAllocation) {
++  VeloceRenderProgramBuilder builder;
++  ReachNativeCompileThreshold(&builder);
++  for (size_t i = 0; i < 130u; ++i) {
++    const float start_x =
++        i < 64u ? static_cast<float>(i) : 1000.0f + static_cast<float>(i);
++    builder.AppendPageObject(*MakeOpaqueLine(start_x, start_x + 0.5f));
++  }
++  std::unique_ptr<const VeloceRenderProgram> program = builder.Finish();
++
++  ASSERT_TRUE(program);
++  EXPECT_EQ(130u, program->native_line_count());
++  ASSERT_EQ(3u, program->line_leaf_ranges().size());
++  ASSERT_EQ(1u, program->line_coarse_ranges().size());
++  EXPECT_EQ(0u, program->line_leaf_ranges()[0].first_line);
++  EXPECT_EQ(4096u, program->line_leaf_ranges()[0].first_command);
++  EXPECT_EQ(64u, program->line_leaf_ranges()[0].command_count);
++  EXPECT_EQ(64u, program->line_leaf_ranges()[0].line_count);
++  EXPECT_EQ(64u, program->line_leaf_ranges()[1].first_line);
++  EXPECT_EQ(4160u, program->line_leaf_ranges()[1].first_command);
++
++  const VeloceLineQueryResult sparse =
++      program->QueryNativeLines(CFX_FloatRect(-10.0f, 0.0f, 200.0f, 10.0f));
++  EXPECT_EQ(64u, sparse.candidate_lines);
++  EXPECT_EQ(66u, sparse.culled_lines);
++  EXPECT_EQ(1u, sparse.coarse_tested);
++  EXPECT_EQ(0u, sparse.coarse_rejected);
++  EXPECT_EQ(3u, sparse.leaves_tested);
++  EXPECT_EQ(2u, sparse.leaves_rejected);
++  EXPECT_FALSE(sparse.full_bounds_hit);
++  EXPECT_FALSE(sparse.fail_open);
++
++  const VeloceLineQueryResult full = program->QueryNativeLines(
++      CFX_FloatRect(-100.0f, -100.0f, 2000.0f, 100.0f));
++  EXPECT_EQ(130u, full.candidate_lines);
++  EXPECT_EQ(0u, full.culled_lines);
++  EXPECT_TRUE(full.full_bounds_hit);
++  EXPECT_EQ(0u, full.coarse_tested);
++
++  const VeloceLineQueryResult empty =
++      program->QueryNativeLines(CFX_FloatRect());
++  EXPECT_EQ(0u, empty.candidate_lines);
++  EXPECT_EQ(130u, empty.culled_lines);
++}
++
++TEST(VeloceRenderProgramTest, UnknownLineBoundsFailOpen) {
++  auto line = MakeOpaqueLine(1.0f, 3.0f);
++  line->SetRect(CFX_FloatRect());
++
++  VeloceRenderProgramBuilder builder;
++  ReachNativeCompileThreshold(&builder);
++  builder.AppendPageObject(*line);
++  std::unique_ptr<const VeloceRenderProgram> program = builder.Finish();
++
++  ASSERT_TRUE(program);
++  const VeloceLineQueryResult query =
++      program->QueryNativeLines(CFX_FloatRect(100.0f, 100.0f, 200.0f, 200.0f));
++  EXPECT_EQ(1u, query.candidate_lines);
++  EXPECT_EQ(0u, query.culled_lines);
++  EXPECT_TRUE(query.fail_open);
++}
++
+ }  // namespace
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index b59c9778c..5f69fa26f 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -7,6 +7,7 @@
+ #include "core/fpdfapi/render/cpdf_renderstatus.h"
+ 
+ #include <atomic>
++#include <chrono>
+ #include <stdint.h>
+ 
+ #include <algorithm>
+@@ -32,12 +33,14 @@
+ #include "core/fpdfapi/page/cpdf_page.h"
+ #include "core/fpdfapi/page/cpdf_pageimagecache.h"
+ #include "core/fpdfapi/page/cpdf_pageobject.h"
++#include "core/fpdfapi/page/cpdf_pageobjectholder.h"
+ #include "core/fpdfapi/page/cpdf_pathobject.h"
+ #include "core/fpdfapi/page/cpdf_shadingobject.h"
+ #include "core/fpdfapi/page/cpdf_shadingpattern.h"
+ #include "core/fpdfapi/page/cpdf_textobject.h"
+ #include "core/fpdfapi/page/cpdf_tilingpattern.h"
+ #include "core/fpdfapi/page/cpdf_transferfunc.h"
++#include "core/fpdfapi/page/veloce_render_program.h"
+ #include "core/fpdfapi/parser/cpdf_array.h"
+ #include "core/fpdfapi/parser/cpdf_document.h"
+ #include "core/fpdfapi/parser/cpdf_stream.h"
+@@ -79,6 +82,10 @@
+ #include "core/fxge/text_char_pos.h"
+ #include "core/fxge/text_glyph_pos.h"
+ 
++#if BUILDFLAG(IS_ANDROID)
++#include <android/log.h>
++#endif
++
+ #if BUILDFLAG(IS_WIN)
+ #include "core/fpdfapi/render/cpdf_scaledrenderbuffer.h"
+ #endif
+@@ -86,6 +93,9 @@
+ namespace {
+ 
+ constexpr int kRenderMaxRecursionDepth = 64;
++#if BUILDFLAG(IS_ANDROID)
++constexpr uint32_t kVeloceFeatureRenderProgramShadow = 0x00000001u;
++#endif
+ int g_CurrentRecursionDepth = 0;
+ std::atomic<bool> g_skip_rasterization{false};
+ 
+@@ -269,6 +279,36 @@ void CPDF_RenderStatus::RenderObjectList(
+ 
+   CFX_FloatRect clip_rect = mtObj2Device.GetInverse().TransformRect(
+       CFX_FloatRect(device_->GetClipBox()));
++#if BUILDFLAG(IS_ANDROID)
++  const VeloceRenderProgram* render_program =
++      pObjectHolder->GetVeloceRenderProgram();
++  if ((GetRenderFeatureFlags() & kVeloceFeatureRenderProgramShadow) != 0u &&
++      render_program && render_program->has_native_commands()) {
++    const auto query_start = std::chrono::steady_clock::now();
++    const VeloceLineQueryResult query =
++        render_program->QueryNativeLines(clip_rect);
++    const uint64_t query_micros = static_cast<uint64_t>(
++        std::chrono::duration_cast<std::chrono::microseconds>(
++            std::chrono::steady_clock::now() - query_start)
++            .count());
++    const double candidate_percent =
++        100.0 * query.candidate_lines / render_program->native_line_count();
++    __android_log_print(
++        ANDROID_LOG_INFO, "VeloceRenderProgram2",
++        "revision=r25-2-0095 event=query mode=range_index_shadow "
++        "holder=%s nativeLines=%zu candidateLines=%u culledLines=%u "
++        "candidatePct=%.2f coarseTested=%u coarseRejected=%u "
++        "leavesTested=%u leavesRejected=%u fullBounds=%u failOpen=%u "
++        "indexBytes=%zu queryUs=%llu",
++        is_context_layer_holder ? "root" : "nested",
++        render_program->native_line_count(), query.candidate_lines,
++        query.culled_lines, candidate_percent, query.coarse_tested,
++        query.coarse_rejected, query.leaves_tested,
++        query.leaves_rejected, query.full_bounds_hit ? 1u : 0u,
++        query.fail_open ? 1u : 0u, render_program->RangeIndexBytes(),
++        static_cast<unsigned long long>(query_micros));
++  }
++#endif
+   for (const auto& pCurObj : *pObjectHolder) {
+     if (ShouldCancelRender()) {
+       stopped_ = true;
+-- 
+2.39.5 (Apple Git-154)
+
