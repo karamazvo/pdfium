@@ -1,7 +1,7 @@
 # r25-2 Unified RenderProgram Plan
 
 Date: 2026-07-20
-Current revision: `r25-2-0096`
+Current revision: `r25-2-0097`
 
 ## Decision
 
@@ -104,9 +104,10 @@ scheduler, second bitmap, or UI-thread compilation.
 | `r25-2-0093` | Owned two-point opaque stroke geometry, exact interned path state/matrices, bounded chunk storage, shadow telemetry | Canonical PDFium only; native data is not executed |
 | `r25-2-0094` | Pointer-free visibility runs, exact inline translation matrices, fail-closed rejection telemetry, 96 MiB retained-program ceiling | Canonical PDFium only; corrected native data remains shadow-only |
 | `r25-2-0095` | Conservative 64-line leaves, 64-leaf coarse ranges, allocation-free holder-clip query telemetry, actual-capacity budget gate | Canonical PDFium only; bounded visible candidates are measured |
-| `r25-2-0096` | Format-5 single-owner ordered replay, bounded opaque-line executor, live dirty-object fallback, 64-command cancellation | Exact supported opaque lines plus canonical barriers |
-| `r25-2-0097` | Owned multi-segment opaque path chunks | Exact supported opaque paths |
-| `r25-2-0098` | Exact clip/group-aware blend spans | Exact supported blend commands |
+| `r25-2-0096` | Format-5 single-owner ordered replay, bounded opaque-line executor, live dirty-object fallback, 64-command cancellation | Exact supported opaque lines plus canonical barriers, but initially reachable only from `RenderObjectList()` |
+| `r25-2-0097` | Shared fail-closed executor entry from ordinary and root progressive rendering | Android progressive root pages can execute the existing exact program |
+| `r25-2-0098` | Owned multi-segment opaque path chunks | Exact supported opaque paths |
+| `r25-2-0099` | Exact clip/group-aware blend spans | Exact supported blend commands |
 
 Revision numbers remain globally monotonic. Failed or superseded revisions are
 not renamed, deleted, amended after push, or reused.
@@ -271,6 +272,46 @@ Expected scope:
 - 11.pdf remains canonical in 0096 because 0094 observed zero admitted native
   lines (`rejectClip=24702`, `rejectPaint=8`). Its blend/clip representation is
   a later proof task, not something 0096 guesses around.
+
+## 0097 Contract
+
+The first 0096 device run proved that representation and execution reachability
+must be measured separately:
+
+- Q16 compiled `3,165,420` ordered commands and `2,937,165` native lines in
+  `8.3s`, retaining `88.7 MB`;
+- the same log contained zero `event=replay` records despite the app supplying
+  feature flags `0x1`;
+- Android region and preview rendering enters
+  `CPDF_ProgressiveRenderer::Continue()`, whose root object loop calls
+  `ContinueSingleObject()` directly and does not call `RenderObjectList()`;
+- therefore 0096 paid program compile and retention cost but did not execute
+  the program for the measured root-page renders.
+
+0097 closes that architectural entry gap without creating another executor:
+
+- `CPDF_RenderStatus::TryRenderVeloceProgram()` is the single public,
+  fail-closed holder entry used by both ordinary and progressive rendering;
+- the existing private replay implementation remains the only program pixel
+  executor;
+- progressive rendering attempts the program exactly once when a layer starts,
+  after the disabled legacy PathDL entry and before canonical iteration;
+- rejection returns before pixels change and leaves the existing progressive
+  iterator untouched;
+- a rendered program consumes and finalizes the complete layer, so canonical
+  progressive replay cannot restart the same holder;
+- cancellation after replay starts marks the render status stopped, restores
+  the device state, and prevents partial output publication through the
+  existing caller contract;
+- no cache, bitmap, scheduler, candidate vector, lock, or UI-thread work is
+  introduced.
+
+Acceptance requires Q16 logs to contain both
+`revision=r25-2-0097 event=compile` and `event=replay`, with nonzero native
+draw/cull counts. Absence of replay remains an activation failure, regardless
+of elapsed-time variation. 11.pdf is not expected to improve in 0097 because
+its currently compiled program has no admitted native commands; clip/blend
+representation remains separate work.
 
 ## Proof Gates
 

@@ -1,0 +1,151 @@
+From 86404e6211ed3f3a7a3af969b682145cb6de2be9 Mon Sep 17 00:00:00 2001
+From: "sh.chao" <sh.chao@gmail.com>
+Date: Tue, 21 Jul 2026 11:21:50 +0800
+Subject: [PATCH] r25-2-0097: enter render program from progressive root
+
+Expose one fail-closed CPDF_RenderStatus program entry and call it once when CPDF_ProgressiveRenderer starts a root layer. A consumed replay owns and finalizes that layer; an ineligible program falls through before changing pixels.
+
+This connects Android FPDF_RenderPageBitmap_Start renders to the same ordered executor used by RenderObjectList without adding a second replay implementation, cache, bitmap, scheduler, or candidate allocation.
+---
+ core/fpdfapi/page/veloce_render_program.cpp   |  4 +--
+ .../render/cpdf_progressiverenderer.cpp       | 17 +++++++++++++
+ core/fpdfapi/render/cpdf_renderstatus.cpp     | 25 ++++++++++++++-----
+ core/fpdfapi/render/cpdf_renderstatus.h       | 15 ++++++++---
+ 4 files changed, 49 insertions(+), 12 deletions(-)
+
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index f69636f21..5d3173ed6 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -671,7 +671,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-2-0096 event=discard reason=actual_budget bytes=%zu "
++        "revision=r25-2-0097 event=discard reason=actual_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -681,7 +681,7 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->command_count() >= 4096u) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-2-0096 event=compile mode=ordered_native_lines "
++        "revision=r25-2-0097 event=compile mode=ordered_native_lines "
+         "commands=%zu "
+         "nativeOpaqueLines=%zu canonicalPaths=%zu states=%zu matrices=%zu "
+         "dashValues=%zu visibilityRuns=%zu visibilityScopedLines=%u "
+diff --git a/core/fpdfapi/render/cpdf_progressiverenderer.cpp b/core/fpdfapi/render/cpdf_progressiverenderer.cpp
+index 143378c3b..1f50d418a 100644
+--- a/core/fpdfapi/render/cpdf_progressiverenderer.cpp
++++ b/core/fpdfapi/render/cpdf_progressiverenderer.cpp
+@@ -85,6 +85,23 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
+         }
+         continue;
+       }
++      if (render_status_->TryRenderVeloceProgram(
++              current_layer_->GetObjectHolder(), current_layer_->GetMatrix(),
++              clip_rect_)) {
++        const bool stopped = render_status_->IsStopped();
++        render_status_.reset();
++        device_->RestoreState(false);
++        current_layer_ = nullptr;
++        if (stopped) {
++          status_ = kDone;
++          return;
++        }
++        layer_index_++;
++        if (pPause && pPause->NeedToPauseNow()) {
++          return;
++        }
++        continue;
++      }
+     }
+     CPDF_PageObjectHolder::const_iterator iter;
+     CPDF_PageObjectHolder::const_iterator iterEnd =
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 286b681d7..34cfaed55 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -254,6 +254,23 @@ uint32_t CPDF_RenderStatus::GetRenderFeatureFlags() const {
+ }
+ 
+ bool CPDF_RenderStatus::TryRenderVeloceProgram(
++    const CPDF_PageObjectHolder* holder,
++    const CFX_Matrix& holder_to_device,
++    const CFX_FloatRect& holder_clip) {
++#if BUILDFLAG(IS_ANDROID)
++  const VeloceRenderProgram* program =
++      holder ? holder->GetVeloceRenderProgram() : nullptr;
++  return (GetRenderFeatureFlags() & kVeloceFeatureRenderProgramExecutor) != 0u &&
++         ReplayVeloceProgram(holder, program, holder_to_device, holder_clip);
++#else
++  static_cast<void>(holder);
++  static_cast<void>(holder_to_device);
++  static_cast<void>(holder_clip);
++  return false;
++#endif
++}
++
++bool CPDF_RenderStatus::ReplayVeloceProgram(
+     const CPDF_PageObjectHolder* holder,
+     const VeloceRenderProgram* program,
+     const CFX_Matrix& holder_to_device,
+@@ -305,7 +322,7 @@ bool CPDF_RenderStatus::TryRenderVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-2-0096 event=replay mode=ordered_native_lines "
++        "revision=r25-2-0097 event=replay mode=ordered_native_lines "
+         "result=%s commands=%zu nativeLines=%zu canonicalDraws=%zu "
+         "nativeDraws=%zu dirtyFallbacks=%zu leafCulled=%zu "
+         "boundsCulled=%zu cancelChecks=%zu replayUs=%llu",
+@@ -522,11 +539,7 @@ void CPDF_RenderStatus::RenderObjectList(
+   CFX_FloatRect clip_rect = mtObj2Device.GetInverse().TransformRect(
+       CFX_FloatRect(device_->GetClipBox()));
+ #if BUILDFLAG(IS_ANDROID)
+-  const VeloceRenderProgram* render_program =
+-      pObjectHolder->GetVeloceRenderProgram();
+-  if ((GetRenderFeatureFlags() & kVeloceFeatureRenderProgramExecutor) != 0u &&
+-      TryRenderVeloceProgram(pObjectHolder, render_program, mtObj2Device,
+-                             clip_rect)) {
++  if (TryRenderVeloceProgram(pObjectHolder, mtObj2Device, clip_rect)) {
+     return;
+   }
+ #endif
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.h b/core/fpdfapi/render/cpdf_renderstatus.h
+index 80c7e21fe..480ec3bc6 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.h
++++ b/core/fpdfapi/render/cpdf_renderstatus.h
+@@ -107,6 +107,13 @@ class CPDF_RenderStatus {
+   bool ShouldCancelRender() const;
+   uint32_t GetRenderFeatureFlags() const;
+ 
++  // Attempts one exact ordered render-program replay for the holder. Returns
++  // true only when the program owns the complete holder render. False is
++  // returned before any destination pixel is changed.
++  bool TryRenderVeloceProgram(const CPDF_PageObjectHolder* holder,
++                              const CFX_Matrix& holder_to_device,
++                              const CFX_FloatRect& holder_clip);
++
+   RetainPtr<CPDF_TransferFunc> GetTransferFunc(
+       RetainPtr<const CPDF_Object> pObject) const;
+ 
+@@ -139,10 +146,10 @@ class CPDF_RenderStatus {
+   // Replays one immutable generation-2 program in exact holder order. A true
+   // result means this method owns the holder render, including cancellation.
+   // False is returned only before any destination pixel is changed.
+-  bool TryRenderVeloceProgram(const CPDF_PageObjectHolder* holder,
+-                              const VeloceRenderProgram* program,
+-                              const CFX_Matrix& holder_to_device,
+-                              const CFX_FloatRect& holder_clip);
++  bool ReplayVeloceProgram(const CPDF_PageObjectHolder* holder,
++                           const VeloceRenderProgram* program,
++                           const CFX_Matrix& holder_to_device,
++                           const CFX_FloatRect& holder_clip);
+   bool ProcessTransparency(CPDF_PageObject* PageObj,
+                            const CFX_Matrix& mtObj2Device);
+   void ProcessObjectNoClip(CPDF_PageObject* pObj,
+-- 
+2.39.5 (Apple Git-154)
+
