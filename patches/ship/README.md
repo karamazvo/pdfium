@@ -126,6 +126,7 @@ these patches:
 | r25-2-0095 | `0095-veloce-render-program-bounded-ordered-range-index.patch` | Adds a memory-bounded holder-space query hierarchy over the 0094 owned line stream without enabling native drawing. Reuses parser-computed object bounds while appending, seals 64-line leaves and 64-leaf coarse ranges in exact painter order, records command-range metadata, and treats unknown bounds as always candidate. Actual tile clips are queried without allocation, sorting, object lookup, cache, lock, or second scan; full-page clips short-circuit in O(1). Actual retained capacity remains capped at 96 MiB. Logs candidate/culling/query metrics while the unchanged canonical object loop remains the sole pixel owner. |
 | r25-2-0096 | `0096-veloce-render-program-bounded-ordered-line-executor.patch` | Promotes generation 2 to format 5 and real pixel execution. One `CPDF_RenderStatus` pass preserves exact holder order: canonical opcodes retain normal PDFium rendering while proven opaque two-point lines draw from owned geometry and exact state. Ordered leaves plus live bounds reject off-tile native rasterization; dirty objects fall back canonically in place; clip state, OCG visibility, render-option colors, cancellation, and draw failure behavior remain under PDFium. Reuses state and path storage, allocates no candidate list, creates no second bitmap or scheduler, and never restarts canonical rendering after native pixels are written. |
 | r25-2-0097 | `0097-veloce-render-program-progressive-root-entry.patch` | Connects the same fail-closed ordered executor to `CPDF_ProgressiveRenderer`, which owns Android `FPDF_RenderPageBitmap_Start()` root-page rendering. The progressive layer attempts the holder program once before its canonical object iterator; a consumed replay finalizes that layer, while rejection falls through before changing pixels. Both progressive and ordinary rendering share `CPDF_RenderStatus::TryRenderVeloceProgram()`. Adds no second executor, bitmap, cache, scheduler, candidate allocation, or rendering thread. |
+| r25-2-0098 | `0098-veloce-render-program-owned-clipped-stroke-paths.patch` | Advances the program to format 6 with an exact owned multi-segment, stroke-only path opcode and ordered retained `CPDF_ClipPath` runs. Clip snapshots use PDFium's copy-on-write semantic object and replay through canonical `ProcessClipPath()`; they are not reduced to rectangles or heuristics. Compact Q16 lines remain in the existing 28-byte chunked storage, while owned path points, path count, clip runs, and total retained bytes have hard ceilings. Canonical barriers preserve painter order, dirty objects fall back in place, and unsupported fill, pattern, transparency, soft-mask, transfer, and blend behavior stays canonical. This removes clip and geometry as eligibility blockers but deliberately does not accelerate `11.pdf` Darken yet; 0099 owns that exact blend proof. |
 
 ## Why this directory exists
 
@@ -138,8 +139,8 @@ subset.
 ## How to apply
 
 The patch directory contains historical branches and must not be applied by
-blind numeric globbing. For `r25-2-0097`, apply the r25 rendering base through
-0031, then only 0051, 0075, 0076, and 0092 through 0097:
+blind numeric globbing. For `r25-2-0098`, apply the r25 rendering base through
+0031, then only 0051, 0075, 0076, and 0092 through 0098:
 
 ```bash
 git apply patches/ship/01-jpeg-downscale-on-decode.patch
@@ -153,10 +154,11 @@ git apply patches/ship/0094-veloce-render-program-visibility-scoped-line-shadow.
 git apply patches/ship/0095-veloce-render-program-bounded-ordered-range-index.patch
 git apply patches/ship/0096-veloce-render-program-bounded-ordered-line-executor.patch
 git apply patches/ship/0097-veloce-render-program-progressive-root-entry.patch
+git apply patches/ship/0098-veloce-render-program-owned-clipped-stroke-paths.patch
 ```
 
 Do not apply `0053..0074`, `0077..0091`, or an invented 0084 to an
-`r25-2-0097` build. The machine-checked list lives in the 0097 workflow.
+`r25-2-0098` build. The machine-checked list lives in the 0098 workflow.
 
 For the historical `r25-1-0091` build, apply the r25 rendering base through
 0031, then only 0051, 0075, 0076, 0079..0083, and 0085..0091:

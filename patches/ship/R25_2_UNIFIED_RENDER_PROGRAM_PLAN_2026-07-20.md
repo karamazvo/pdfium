@@ -1,7 +1,8 @@
 # r25-2 Unified RenderProgram Plan
 
 Date: 2026-07-20
-Current revision: `r25-2-0097`
+Updated: 2026-07-21 (Asia/Taipei)
+Current revision: `r25-2-0098`
 
 ## Decision
 
@@ -27,6 +28,14 @@ through seven visibility runs and no matrix-table entries or budget fallback.
 real tile. It adds conservative bounds over ordered ranges rather than a
 per-line bounds array because the 0094 Q16 program already retains 82.54 MiB
 of its 96 MiB budget.
+
+0097 made the program reachable from Android's progressive root renderer. Its
+device results separated the next two bottlenecks: Q16 executes 2,937,165
+owned lines but still scans the 3,165,420-command stream, while `11.pdf`
+compiles 28,806 canonical paths because clip rejection masks its Darken blend
+state. 0098 expands the exact command vocabulary without changing that
+ordering model: normal-blend multi-segment strokes own their geometry, and all
+native strokes consume retained PDFium clip snapshots in ordered runs.
 
 ## Baseline
 
@@ -106,7 +115,7 @@ scheduler, second bitmap, or UI-thread compilation.
 | `r25-2-0095` | Conservative 64-line leaves, 64-leaf coarse ranges, allocation-free holder-clip query telemetry, actual-capacity budget gate | Canonical PDFium only; bounded visible candidates are measured |
 | `r25-2-0096` | Format-5 single-owner ordered replay, bounded opaque-line executor, live dirty-object fallback, 64-command cancellation | Exact supported opaque lines plus canonical barriers, but initially reachable only from `RenderObjectList()` |
 | `r25-2-0097` | Shared fail-closed executor entry from ordinary and root progressive rendering | Android progressive root pages can execute the existing exact program |
-| `r25-2-0098` | Owned multi-segment opaque path chunks | Exact supported opaque paths |
+| `r25-2-0098` | Format-6 owned multi-segment stroke geometry, exact retained PDFium clip runs, bounded path-point storage | Exact supported normal-blend stroke paths and lines with arbitrary PDFium clip paths; unsupported semantics remain canonical |
 | `r25-2-0099` | Exact clip/group-aware blend spans | Exact supported blend commands |
 
 Revision numbers remain globally monotonic. Failed or superseded revisions are
@@ -312,6 +321,41 @@ draw/cull counts. Absence of replay remains an activation failure, regardless
 of elapsed-time variation. 11.pdf is not expected to improve in 0097 because
 its currently compiled program has no admitted native commands; clip/blend
 representation remains separate work.
+
+## 0098 Contract
+
+0098 removes two representation blockers without weakening PDF semantics:
+
+- `kNativeOpaqueStrokePath` owns the complete `CFX_Path` point/type/close
+  sequence for finite, multi-segment, stroke-only, normal-blend paths;
+- the existing two-point line opcode and 28-byte chunked line storage remain
+  unchanged, so Q16 does not pay per-line path-object or clip-index inflation;
+- every native command is covered by an ordered `VeloceClipRun`; each run
+  retains PDFium's own copy-on-write `CPDF_ClipPath`, including path and text
+  clip semantics, rather than encoding a rectangle approximation;
+- replay installs a run through canonical `ProcessClipPath()` and reapplies it
+  after every canonical barrier, preserving the device clip stack and painter
+  order;
+- owned path bounds are conservative holder-space bounds. Unknown bounds fail
+  open; known off-tile paths skip rasterization without changing command
+  order;
+- path count, total owned path points, clip runs, bytecode, state tables,
+  line storage, and actual retained capacity are all bounded by the existing
+  96 MiB program ceiling and independent hard limits;
+- dirty objects render canonically at their original ordinal; optional-content
+  visibility and render-option color translation continue through live PDFium
+  state;
+- fill paths, mixed fill/stroke paint, patterns, alpha, soft masks, transfer
+  functions, overprint, non-normal blend modes, invalid geometry, and budget
+  overflow remain canonical barriers before native pixels are written.
+
+0098 is not the Darken optimization. On `11.pdf`, removing the earlier clip
+rejection is expected to expose `rejectTransparency` for the same objects;
+that is correct fail-closed behavior until 0099 proves exact clip-aware Darken
+execution. Q16 should retain roughly the same line coverage and memory shape,
+with only a small number of clip runs. The decisive 0098 log fields are
+`nativeOpaquePaths`, `clipRuns`, `ownedPathPoints`, `pathDraws`, and
+`pathBoundsCulled`.
 
 ## Proof Gates
 
