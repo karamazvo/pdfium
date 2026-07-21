@@ -1,7 +1,7 @@
 # r25-2 Unified RenderProgram Plan
 
 Date: 2026-07-20
-Current revision: `r25-2-0095`
+Current revision: `r25-2-0096`
 
 ## Decision
 
@@ -104,7 +104,7 @@ scheduler, second bitmap, or UI-thread compilation.
 | `r25-2-0093` | Owned two-point opaque stroke geometry, exact interned path state/matrices, bounded chunk storage, shadow telemetry | Canonical PDFium only; native data is not executed |
 | `r25-2-0094` | Pointer-free visibility runs, exact inline translation matrices, fail-closed rejection telemetry, 96 MiB retained-program ceiling | Canonical PDFium only; corrected native data remains shadow-only |
 | `r25-2-0095` | Conservative 64-line leaves, 64-leaf coarse ranges, allocation-free holder-clip query telemetry, actual-capacity budget gate | Canonical PDFium only; bounded visible candidates are measured |
-| `r25-2-0096` | Bounded opaque stroke executor and cancellation checkpoints | Exact opaque native commands |
+| `r25-2-0096` | Format-5 single-owner ordered replay, bounded opaque-line executor, live dirty-object fallback, 64-command cancellation | Exact supported opaque lines plus canonical barriers |
 | `r25-2-0097` | Owned multi-segment opaque path chunks | Exact supported opaque paths |
 | `r25-2-0098` | Exact clip/group-aware blend spans | Exact supported blend commands |
 
@@ -220,9 +220,57 @@ ownership:
 0095 is accepted only if representative sparse Q16 tiles reject substantial
 native work at low query cost, no query fails open unexpectedly, retained data
 stays below the existing ceiling, and canonical rendering remains unchanged.
-0096 must not execute this structure if ordered ranges remain effectively
-page-wide; that result would require a more selective compact index rather
-than enabling a weak executor.
+If ordered leaves remain effectively page-wide, 0096 still applies exact live
+object bounds before rasterization, preserving correctness and avoiding a
+second index. That result would block any claim that leaf culling is the main
+gain and would motivate a more selective compact index before native batching.
+
+## 0096 Contract
+
+0096 is the first generation-2 revision that changes pixel execution. It does
+not add another renderer or scheduler. `CPDF_RenderStatus` consumes the
+immutable program in the same holder call that previously ran the canonical
+object loop:
+
+- one bytecode pass preserves every PDF object ordinal and painter-order
+  barrier;
+- canonical opcodes still call `RenderSingleObject()` with live PDFium objects;
+- `kNativeOpaqueLine` reconstructs only previously proven two-point,
+  stroke-only, solid, opaque, normal-blend geometry from owned data;
+- the 0095 leaves and exact live object bounds reject native lines before AGG
+  rasterization, without a candidate vector or second scan;
+- matrix, width, dash, cap, join, miter, stroke adjustment, render-option color
+  translation, optional-content visibility, and device clip reset retain
+  PDFium semantics;
+- graph state, fill options, stroke color, and one two-point `CFX_Path` buffer
+  are reused across matching lines rather than rebuilt or allocated per draw;
+- a live dirty object is rendered canonically at its exact command position,
+  so PDFium page objects remain the editing source of truth;
+- cancellation is checked every 64 commands and after canonical or background
+  fallback work;
+- malformed holder/program preconditions return to the untouched canonical
+  loop before drawing; after execution starts, the holder is never restarted
+  through a second pixel owner;
+- the existing feature value `0x1` now names
+  `FPDFEX_FEATURE_RENDER_PROGRAM`; the old Form PathDL name remains an ABI
+  compatibility alias while legacy PathDL stays disabled.
+
+0096 deliberately retains one raster operation per native PDF line. Combining
+independent antialiased strokes can change overlap coverage, so batching is not
+part of this correctness milestone. Its real performance gain must come from
+off-tile raster rejection and removal of generic PDF object/transparency/path
+dispatch for supported visible lines.
+
+Expected scope:
+
+- Q16-like pages with high native coverage should log nonzero `nativeDraws`,
+  substantial `leafCulled + boundsCulled`, and materially lower replay time;
+- ordinary pages below the 4,096-command threshold remain wholly canonical;
+- mixed pages preserve canonical text, images, fills, forms, shading, clipped
+  paths, transparency, and unsupported geometry in the same ordered replay;
+- 11.pdf remains canonical in 0096 because 0094 observed zero admitted native
+  lines (`rejectClip=24702`, `rejectPaint=8`). Its blend/clip representation is
+  a later proof task, not something 0096 guesses around.
 
 ## Proof Gates
 

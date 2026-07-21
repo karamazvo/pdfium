@@ -1,0 +1,527 @@
+From 722713fb7b75079677b429f94a63f8059107af99 Mon Sep 17 00:00:00 2001
+From: "sh.chao" <sh.chao@gmail.com>
+Date: Tue, 21 Jul 2026 10:12:24 +0800
+Subject: [PATCH] r25-2-0096: execute bounded ordered native lines
+
+Promote generation-2 format 5 from shadow measurement to one pixel-owning holder replay. Preserve exact bytecode order: canonical commands stay in PDFium while proven opaque two-point strokes draw from immutable owned geometry and state.
+
+Cull native work with ordered holder-space leaves and exact live bounds, restore PDFium clip state at native boundaries, preserve live optional-content visibility and render-option color translation, fall back per dirty object, match canonical degenerate-matrix handling, and check cancellation every 64 commands. Reuse path and state storage without per-line candidate allocations or a second bitmap.
+---
+ core/fpdfapi/page/veloce_render_program.cpp   |   8 +-
+ core/fpdfapi/page/veloce_render_program.h     |  12 +-
+ .../page/veloce_render_program_unittest.cpp   |  32 +-
+ core/fpdfapi/render/cpdf_renderstatus.cpp     | 273 ++++++++++++++++--
+ core/fpdfapi/render/cpdf_renderstatus.h       |   8 +
+ public/fpdfex_render_callbacks.h              |  12 +-
+ 6 files changed, 303 insertions(+), 42 deletions(-)
+
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index ab742747f..f69636f21 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -642,7 +642,7 @@ void VeloceRenderProgramBuilder::AppendPageObject(
+   }
+   const VeloceRenderOpcode opcode =
+       compile_native && TryAppendNativeOpaqueLine(object)
+-          ? VeloceRenderOpcode::kNativeOpaqueLineShadow
++          ? VeloceRenderOpcode::kNativeOpaqueLine
+           : ToCanonicalOpcode(object);
+   bytecode_.push_back(static_cast<uint8_t>(opcode));
+   ++opcode_counts_[static_cast<size_t>(opcode)];
+@@ -671,7 +671,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-2-0095 event=discard reason=actual_budget bytes=%zu "
++        "revision=r25-2-0096 event=discard reason=actual_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -681,7 +681,7 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->command_count() >= 4096u) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-2-0095 event=compile mode=range_index_shadow "
++        "revision=r25-2-0096 event=compile mode=ordered_native_lines "
+         "commands=%zu "
+         "nativeOpaqueLines=%zu canonicalPaths=%zu states=%zu matrices=%zu "
+         "dashValues=%zu visibilityRuns=%zu visibilityScopedLines=%u "
+@@ -690,7 +690,7 @@ VeloceRenderProgramBuilder::Finish() {
+         "rejectNotPath=%u rejectPaint=%u rejectClip=%u rejectGeometry=%u "
+         "rejectMatrix=%u rejectTransparency=%u rejectColor=%u "
+         "rejectGraph=%u rejectVisibility=%u rejectBudget=%u "
+-        "shadowWindowMs=%llu",
++        "compileWindowMs=%llu",
+         program->command_count(), program->native_line_count(),
+         program->opcode_count(VeloceRenderOpcode::kCanonicalPath),
+         program->opaque_path_states().size(), program->path_matrices().size(),
+diff --git a/core/fpdfapi/page/veloce_render_program.h b/core/fpdfapi/page/veloce_render_program.h
+index a68c23691..37d2ded9c 100644
+--- a/core/fpdfapi/page/veloce_render_program.h
++++ b/core/fpdfapi/page/veloce_render_program.h
+@@ -20,7 +20,7 @@
+ class CPDF_ContentMarks;
+ class CPDF_PageObject;
+ 
+-inline constexpr uint32_t kVeloceRenderProgramFormatVersion = 4u;
++inline constexpr uint32_t kVeloceRenderProgramFormatVersion = 5u;
+ 
+ // Generation 2 is a sequential bytecode. Its initial opcodes are canonical
+ // barriers: they preserve exact object order and identify the source object
+@@ -34,14 +34,14 @@ enum class VeloceRenderOpcode : uint8_t {
+   kCanonicalShading,
+   kCanonicalForm,
+   kCanonicalUnsupported,
+-  // 0093 records a self-owned exact command but deliberately leaves pixel
+-  // ownership with canonical PDFium. 0094+ may execute it after validation.
+-  kNativeOpaqueLineShadow,
++  // Self-owned exact opaque line. Generation 2 revision 0096 executes this
++  // opcode in the same ordered stream as canonical commands.
++  kNativeOpaqueLine,
+ };
+ 
+ static_assert(sizeof(VeloceRenderOpcode) == 1);
+ inline constexpr size_t kVeloceRenderOpcodeCount =
+-    static_cast<size_t>(VeloceRenderOpcode::kNativeOpaqueLineShadow) + 1u;
++    static_cast<size_t>(VeloceRenderOpcode::kNativeOpaqueLine) + 1u;
+ 
+ struct VeloceRenderProgramHeader {
+   uint32_t format_version;
+@@ -178,7 +178,7 @@ class VeloceNativeLineStorage final {
+ 
+ // Immutable native rendering representation owned by one live page-object
+ // holder. PDFium page objects remain authoritative for fidelity and editing.
+-// The bytecode contains no page-object pointers. In format version 4, every
++// The bytecode contains no page-object pointers. In format version 5, every
+ // canonical opcode consumes one implicit holder object ordinal.
+ class VeloceRenderProgram final {
+  public:
+diff --git a/core/fpdfapi/page/veloce_render_program_unittest.cpp b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+index c91598a15..efd660289 100644
+--- a/core/fpdfapi/page/veloce_render_program_unittest.cpp
++++ b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+@@ -48,6 +48,8 @@ TEST(VeloceRenderProgramTest, OwnsLineGeometryAndInternsExactState) {
+ 
+   std::unique_ptr<const VeloceRenderProgram> program = builder.Finish();
+   ASSERT_TRUE(program);
++  EXPECT_EQ(kVeloceRenderProgramFormatVersion,
++            program->header().format_version);
+   EXPECT_EQ(4098u, program->command_count());
+   EXPECT_EQ(2u, program->native_line_count());
+   EXPECT_EQ(1u, program->opaque_path_states().size());
+@@ -57,7 +59,7 @@ TEST(VeloceRenderProgramTest, OwnsLineGeometryAndInternsExactState) {
+   EXPECT_EQ(1.0f, program->native_line(0).start.x);
+   EXPECT_EQ(3.0f, program->native_line(0).end.x);
+   EXPECT_EQ(0u, program->native_line(0).matrix_index);
+-  EXPECT_EQ(VeloceRenderOpcode::kNativeOpaqueLineShadow,
++  EXPECT_EQ(VeloceRenderOpcode::kNativeOpaqueLine,
+             static_cast<VeloceRenderOpcode>(program->bytecode()[4096]));
+ }
+ 
+@@ -217,4 +219,32 @@ TEST(VeloceRenderProgramTest, UnknownLineBoundsFailOpen) {
+   EXPECT_TRUE(query.fail_open);
+ }
+ 
++TEST(VeloceRenderProgramTest, PreservesNativeOrdinalsAcrossCanonicalBarrier) {
++  VeloceRenderProgramBuilder builder;
++  ReachNativeCompileThreshold(&builder);
++
++  auto first_line = MakeOpaqueLine(1.0f, 2.0f);
++  auto fill_barrier = MakeOpaqueLine(3.0f, 4.0f);
++  fill_barrier->set_winding_filltype();
++  auto second_line = MakeOpaqueLine(5.0f, 6.0f);
++  builder.AppendPageObject(*first_line);
++  builder.AppendPageObject(*fill_barrier);
++  builder.AppendPageObject(*second_line);
++
++  std::unique_ptr<const VeloceRenderProgram> program = builder.Finish();
++  ASSERT_TRUE(program);
++  ASSERT_EQ(4099u, program->bytecode().size());
++  EXPECT_EQ(static_cast<uint8_t>(VeloceRenderOpcode::kNativeOpaqueLine),
++            program->bytecode()[4096]);
++  EXPECT_EQ(static_cast<uint8_t>(VeloceRenderOpcode::kCanonicalPath),
++            program->bytecode()[4097]);
++  EXPECT_EQ(static_cast<uint8_t>(VeloceRenderOpcode::kNativeOpaqueLine),
++            program->bytecode()[4098]);
++  ASSERT_EQ(1u, program->line_leaf_ranges().size());
++  EXPECT_EQ(0u, program->line_leaf_ranges()[0].first_line);
++  EXPECT_EQ(4096u, program->line_leaf_ranges()[0].first_command);
++  EXPECT_EQ(3u, program->line_leaf_ranges()[0].command_count);
++  EXPECT_EQ(2u, program->line_leaf_ranges()[0].line_count);
++}
++
+ }  // namespace
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 5f69fa26f..286b681d7 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -8,9 +8,11 @@
+ 
+ #include <atomic>
+ #include <chrono>
++#include <cmath>
+ #include <stdint.h>
+ 
+ #include <algorithm>
++#include <limits>
+ #include <memory>
+ #include <numeric>
+ #include <set>
+@@ -75,6 +77,7 @@
+ #include "core/fxge/cfx_fillrenderoptions.h"
+ #include "core/fxge/cfx_gemodule.h"
+ #include "core/fxge/cfx_glyphbitmap.h"
++#include "core/fxge/cfx_graphstatedata.h"
+ #include "core/fxge/cfx_path.h"
+ #include "core/fxge/dib/cfx_dibitmap.h"
+ #include "core/fxge/fx_font.h"
+@@ -94,7 +97,7 @@ namespace {
+ 
+ constexpr int kRenderMaxRecursionDepth = 64;
+ #if BUILDFLAG(IS_ANDROID)
+-constexpr uint32_t kVeloceFeatureRenderProgramShadow = 0x00000001u;
++constexpr uint32_t kVeloceFeatureRenderProgramExecutor = 0x00000001u;
+ #endif
+ int g_CurrentRecursionDepth = 0;
+ std::atomic<bool> g_skip_rasterization{false};
+@@ -182,6 +185,33 @@ bool MissingStrokeColor(const CPDF_ColorState* pColorState) {
+   return !pColorState->HasRef() || pColorState->GetStrokeColor()->IsNull();
+ }
+ 
++bool VeloceRectsIntersect(const CFX_FloatRect& lhs,
++                          const CFX_FloatRect& rhs) {
++  return lhs.left <= rhs.right && lhs.right >= rhs.left &&
++         lhs.bottom <= rhs.top && lhs.top >= rhs.bottom;
++}
++
++bool IsFiniteVeloceRect(const CFX_FloatRect& rect) {
++  return std::isfinite(rect.left) && std::isfinite(rect.bottom) &&
++         std::isfinite(rect.right) && std::isfinite(rect.top);
++}
++
++CFX_GraphStateData BuildVeloceGraphState(
++    const VeloceOpaquePathState& source,
++    pdfium::span<const float> dash_values) {
++  CFX_GraphStateData result;
++  result.set_line_cap(
++      static_cast<CFX_GraphStateData::LineCap>(source.line_cap));
++  result.set_line_join(
++      static_cast<CFX_GraphStateData::LineJoin>(source.line_join));
++  result.set_miter_limit(source.miter_limit);
++  result.set_line_width(source.line_width);
++  result.set_dash_phase(source.dash_phase);
++  result.set_dash_array(
++      std::vector<float>(dash_values.begin(), dash_values.end()));
++  return result;
++}
++
+ bool Type3CharMissingFillColor(const CPDF_Type3Char* pChar,
+                                const CPDF_ColorState* pColorState) {
+   return pChar && (!pChar->colored() || MissingFillColor(pColorState));
+@@ -223,6 +253,218 @@ uint32_t CPDF_RenderStatus::GetRenderFeatureFlags() const {
+   return render_callbacks_ ? render_callbacks_->feature_flags : 0;
+ }
+ 
++bool CPDF_RenderStatus::TryRenderVeloceProgram(
++    const CPDF_PageObjectHolder* holder,
++    const VeloceRenderProgram* program,
++    const CFX_Matrix& holder_to_device,
++    const CFX_FloatRect& holder_clip) {
++  if (!holder || !program || !program->has_native_commands() ||
++      program->header().format_version != kVeloceRenderProgramFormatVersion ||
++      program->command_count() != holder->GetPageObjectCount() ||
++      !IsFiniteVeloceRect(holder_clip)) {
++    return false;
++  }
++  if (holder_clip.IsEmpty()) {
++    return true;
++  }
++
++  const pdfium::span<const uint8_t> bytecode = program->bytecode();
++  const pdfium::span<const VeloceLineLeafRange> leaves =
++      program->line_leaf_ranges();
++  if (bytecode.size() != holder->GetPageObjectCount() || leaves.empty() ||
++      leaves.front().first_line != 0u || leaves.front().line_count == 0u) {
++    return false;
++  }
++
++  const auto replay_start = std::chrono::steady_clock::now();
++  size_t command_count = 0;
++  size_t canonical_draws = 0;
++  size_t native_draws = 0;
++  size_t native_dirty_fallbacks = 0;
++  size_t native_leaf_culled = 0;
++  size_t native_bounds_culled = 0;
++  size_t cancellation_checks = 0;
++  uint32_t native_line_index = 0;
++  size_t leaf_index = 0;
++  uint32_t leaf_limit = leaves.front().line_count;
++  bool leaf_intersects =
++      (leaves.front().flags & kVeloceLineRangeUnbounded) != 0u ||
++      VeloceRectsIntersect(leaves.front().bounds, holder_clip);
++  bool native_clip_ready = false;
++  uint16_t current_state_index = std::numeric_limits<uint16_t>::max();
++  CFX_GraphStateData current_graph_state;
++  CFX_FillRenderOptions current_fill_options;
++  FX_ARGB current_stroke_argb = 0;
++  CFX_Path line_path;
++
++  auto log_result = [&](const char* result) {
++#if BUILDFLAG(IS_ANDROID)
++    const uint64_t replay_micros = static_cast<uint64_t>(
++        std::chrono::duration_cast<std::chrono::microseconds>(
++            std::chrono::steady_clock::now() - replay_start)
++            .count());
++    __android_log_print(
++        ANDROID_LOG_INFO, "VeloceRenderProgram2",
++        "revision=r25-2-0096 event=replay mode=ordered_native_lines "
++        "result=%s commands=%zu nativeLines=%zu canonicalDraws=%zu "
++        "nativeDraws=%zu dirtyFallbacks=%zu leafCulled=%zu "
++        "boundsCulled=%zu cancelChecks=%zu replayUs=%llu",
++        result, command_count, program->native_line_count(), canonical_draws,
++        native_draws, native_dirty_fallbacks, native_leaf_culled,
++        native_bounds_culled, cancellation_checks,
++        static_cast<unsigned long long>(replay_micros));
++#else
++    static_cast<void>(result);
++    static_cast<void>(replay_start);
++    static_cast<void>(command_count);
++    static_cast<void>(canonical_draws);
++    static_cast<void>(native_draws);
++    static_cast<void>(native_dirty_fallbacks);
++    static_cast<void>(native_leaf_culled);
++    static_cast<void>(native_bounds_culled);
++    static_cast<void>(cancellation_checks);
++#endif
++  };
++
++  for (size_t command_index = 0; command_index < bytecode.size();
++       ++command_index) {
++    ++command_count;
++    if ((command_index & 63u) == 0u) {
++      ++cancellation_checks;
++      if (ShouldCancelRender()) {
++        stopped_ = true;
++        log_result("cancelled");
++        return true;
++      }
++    }
++
++    CPDF_PageObject* object = holder->GetPageObjectByIndex(command_index);
++    CHECK(object);
++    if (object == stop_obj_) {
++      stopped_ = true;
++      log_result("stopped");
++      return true;
++    }
++
++    const auto opcode = static_cast<VeloceRenderOpcode>(bytecode[command_index]);
++    if (opcode != VeloceRenderOpcode::kNativeOpaqueLine) {
++      native_clip_ready = false;
++      if (!object->IsActive() ||
++          !VeloceRectsIntersect(object->GetRect(), holder_clip)) {
++        continue;
++      }
++      RenderSingleObject(object, holder_to_device);
++      ++canonical_draws;
++      if (stopped_) {
++        log_result("cancelled");
++        return true;
++      }
++      continue;
++    }
++
++    CHECK_LT(native_line_index, program->native_line_count());
++    while (native_line_index >= leaf_limit) {
++      ++leaf_index;
++      CHECK_LT(leaf_index, leaves.size());
++      CHECK_EQ(leaves[leaf_index].first_line, native_line_index);
++      leaf_limit = native_line_index + leaves[leaf_index].line_count;
++      leaf_intersects =
++          (leaves[leaf_index].flags & kVeloceLineRangeUnbounded) != 0u ||
++          VeloceRectsIntersect(leaves[leaf_index].bounds, holder_clip);
++    }
++
++    const VeloceNativeLine& line =
++        program->native_line(native_line_index++);
++    if (!object->IsActive()) {
++      continue;
++    }
++    if (object->IsDirty()) {
++      native_clip_ready = false;
++      if (VeloceRectsIntersect(object->GetRect(), holder_clip)) {
++        RenderSingleObject(object, holder_to_device);
++        ++native_dirty_fallbacks;
++      }
++      if (stopped_) {
++        log_result("cancelled");
++        return true;
++      }
++      continue;
++    }
++    if (!leaf_intersects) {
++      ++native_leaf_culled;
++      continue;
++    }
++    if (!VeloceRectsIntersect(object->GetRect(), holder_clip)) {
++      ++native_bounds_culled;
++      continue;
++    }
++
++    CPDF_PathObject* path_object = object->AsPath();
++    CHECK(path_object);
++    if (!options_.CheckPageObjectVisible(path_object)) {
++      continue;
++    }
++    if (!native_clip_ready) {
++      ProcessClipPath(path_object->clip_path(), holder_to_device);
++      native_clip_ready = true;
++    }
++
++    CHECK_LT(line.state_index, program->opaque_path_states().size());
++    const VeloceOpaquePathState& state =
++        program->opaque_path_states()[line.state_index];
++    if (current_state_index != line.state_index) {
++      CHECK_LE(static_cast<size_t>(state.dash_offset) + state.dash_count,
++               program->dash_values().size());
++      current_graph_state = BuildVeloceGraphState(
++          state, program->dash_values().subspan(state.dash_offset,
++                                                 state.dash_count));
++      current_fill_options = GetFillOptionsForDrawPathWithBlend(
++          options_.GetOptions(), path_object,
++          CFX_FillRenderOptions::FillType::kNoFill,
++          /*is_stroke=*/true, type3_char_);
++      current_stroke_argb = GetStrokeArgb(path_object);
++      current_state_index = line.state_index;
++    }
++
++    CFX_Matrix path_matrix;
++    if (line.matrix_index == kVeloceInlineTranslationMatrixIndex) {
++      path_matrix = CFX_Matrix(1.0f, 0.0f, 0.0f, 1.0f,
++                               line.translation_x, line.translation_y) *
++                    holder_to_device;
++    } else {
++      CHECK_LT(line.matrix_index, program->path_matrices().size());
++      path_matrix = program->path_matrices()[line.matrix_index] *
++                    holder_to_device;
++    }
++    if (!IsAvailableMatrix(path_matrix)) {
++      continue;
++    }
++
++    cur_obj_ = path_object;
++    line_path.Clear();
++    line_path.AppendLine(line.start, line.end);
++    if (!device_->DrawPath(line_path, &path_matrix, &current_graph_state,
++                           /*fill_color=*/0, current_stroke_argb,
++                           current_fill_options)) {
++      DrawObjWithBackground(path_object, holder_to_device);
++      if (stopped_) {
++        log_result("cancelled");
++        return true;
++      }
++    }
++    ++native_draws;
++  }
++
++  CHECK_EQ(native_line_index, program->native_line_count());
++  if (ShouldCancelRender()) {
++    stopped_ = true;
++    log_result("cancelled");
++    return true;
++  }
++  log_result("rendered");
++  return true;
++}
++
+ void CPDF_RenderStatus::Initialize(const CPDF_RenderStatus* pParentStatus,
+                                    const CPDF_GraphicStates* pInitialStates) {
+ #if BUILDFLAG(IS_WIN)
+@@ -282,31 +524,10 @@ void CPDF_RenderStatus::RenderObjectList(
+ #if BUILDFLAG(IS_ANDROID)
+   const VeloceRenderProgram* render_program =
+       pObjectHolder->GetVeloceRenderProgram();
+-  if ((GetRenderFeatureFlags() & kVeloceFeatureRenderProgramShadow) != 0u &&
+-      render_program && render_program->has_native_commands()) {
+-    const auto query_start = std::chrono::steady_clock::now();
+-    const VeloceLineQueryResult query =
+-        render_program->QueryNativeLines(clip_rect);
+-    const uint64_t query_micros = static_cast<uint64_t>(
+-        std::chrono::duration_cast<std::chrono::microseconds>(
+-            std::chrono::steady_clock::now() - query_start)
+-            .count());
+-    const double candidate_percent =
+-        100.0 * query.candidate_lines / render_program->native_line_count();
+-    __android_log_print(
+-        ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-2-0095 event=query mode=range_index_shadow "
+-        "holder=%s nativeLines=%zu candidateLines=%u culledLines=%u "
+-        "candidatePct=%.2f coarseTested=%u coarseRejected=%u "
+-        "leavesTested=%u leavesRejected=%u fullBounds=%u failOpen=%u "
+-        "indexBytes=%zu queryUs=%llu",
+-        is_context_layer_holder ? "root" : "nested",
+-        render_program->native_line_count(), query.candidate_lines,
+-        query.culled_lines, candidate_percent, query.coarse_tested,
+-        query.coarse_rejected, query.leaves_tested,
+-        query.leaves_rejected, query.full_bounds_hit ? 1u : 0u,
+-        query.fail_open ? 1u : 0u, render_program->RangeIndexBytes(),
+-        static_cast<unsigned long long>(query_micros));
++  if ((GetRenderFeatureFlags() & kVeloceFeatureRenderProgramExecutor) != 0u &&
++      TryRenderVeloceProgram(pObjectHolder, render_program, mtObj2Device,
++                             clip_rect)) {
++    return;
+   }
+ #endif
+   for (const auto& pCurObj : *pObjectHolder) {
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.h b/core/fpdfapi/render/cpdf_renderstatus.h
+index e94b8eddc..80c7e21fe 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.h
++++ b/core/fpdfapi/render/cpdf_renderstatus.h
+@@ -43,6 +43,7 @@ class CPDF_TransferFunc;
+ class CPDF_Type3Char;
+ class CPDF_Type3Font;
+ class PauseIndicatorIface;
++class VeloceRenderProgram;
+ struct VeloceRenderCallbacks;
+ 
+ class CPDF_RenderStatus {
+@@ -135,6 +136,13 @@ class CPDF_RenderStatus {
+       bool stroke);
+ 
+  private:
++  // Replays one immutable generation-2 program in exact holder order. A true
++  // result means this method owns the holder render, including cancellation.
++  // False is returned only before any destination pixel is changed.
++  bool TryRenderVeloceProgram(const CPDF_PageObjectHolder* holder,
++                              const VeloceRenderProgram* program,
++                              const CFX_Matrix& holder_to_device,
++                              const CFX_FloatRect& holder_clip);
+   bool ProcessTransparency(CPDF_PageObject* PageObj,
+                            const CFX_Matrix& mtObj2Device);
+   void ProcessObjectNoClip(CPDF_PageObject* pObj,
+diff --git a/public/fpdfex_render_callbacks.h b/public/fpdfex_render_callbacks.h
+index d1f1966e6..8fc1f2e31 100644
+--- a/public/fpdfex_render_callbacks.h
++++ b/public/fpdfex_render_callbacks.h
+@@ -17,11 +17,13 @@ typedef int (*FPDFEx_RenderCancelCheckFn)(void* user_data);
+ 
+ #define FPDFEX_FEATURE_NONE 0u
+ 
+-// Enables the experimental path-only Form XObject display-list fast path.
+-// When set, eligible path-only Forms may be compiled to an internal display
+-// list and replayed into the current render device. Unsupported content falls
+-// back to legacy PDFium rendering before drawing.
+-#define FPDFEX_FEATURE_PATH_DISPLAY_LIST_FORM 0x00000001u
++// Enables the ordered RenderProgram executor. Supported native commands and
++// canonical PDFium commands share one painter-ordered holder replay.
++#define FPDFEX_FEATURE_RENDER_PROGRAM 0x00000001u
++
++// Compatibility alias for existing JNI clients. The legacy path-display-list
++// implementation is disabled in generation 2.
++#define FPDFEX_FEATURE_PATH_DISPLAY_LIST_FORM FPDFEX_FEATURE_RENDER_PROGRAM
+ 
+ typedef struct FPDFEx_RenderCallbacks {
+   uint32_t struct_size;
+-- 
+2.39.5 (Apple Git-154)
+

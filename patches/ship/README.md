@@ -124,6 +124,7 @@ these patches:
 | r25-2-0093 | `0093-veloce-render-program-owned-opaque-line-shadow.patch` | Compiles exact two-point opaque stroke paths into self-owned shadow commands during the existing parser append. The first 4096 commands remain canonical and are not rescanned, so ordinary pages do no native eligibility or payload work. Copies endpoints; bitwise-interns matrices and complete dash/stroke state; uses fixed 4096-line chunks and hard command/table ceilings; and keeps every unsupported or over-budget object as an ordered canonical opcode. Adds large-holder coverage/memory/build telemetry and ownership/fallback tests. No render call site consumes the native data, so canonical PDFium remains the sole pixel owner. |
 | r25-2-0094 | `0094-veloce-render-program-visibility-scoped-line-shadow.patch` | Corrects the zero-coverage Q16 shadow model without enabling rendering. Replaces the blanket marked-content rejection with pointer-free ordered visibility-run ordinals for later canonical OCG evaluation. Stores source endpoints and translation-only matrix components exactly per line, avoiding the 16-bit unique-matrix cliff without changing matrix arithmetic; arbitrary matrices remain bitwise-interned. Adds first-failure telemetry and a 96 MiB retained-program ceiling. Format version 3 remains shadow-only, so canonical PDFium still owns every pixel. |
 | r25-2-0095 | `0095-veloce-render-program-bounded-ordered-range-index.patch` | Adds a memory-bounded holder-space query hierarchy over the 0094 owned line stream without enabling native drawing. Reuses parser-computed object bounds while appending, seals 64-line leaves and 64-leaf coarse ranges in exact painter order, records command-range metadata, and treats unknown bounds as always candidate. Actual tile clips are queried without allocation, sorting, object lookup, cache, lock, or second scan; full-page clips short-circuit in O(1). Actual retained capacity remains capped at 96 MiB. Logs candidate/culling/query metrics while the unchanged canonical object loop remains the sole pixel owner. |
+| r25-2-0096 | `0096-veloce-render-program-bounded-ordered-line-executor.patch` | Promotes generation 2 to format 5 and real pixel execution. One `CPDF_RenderStatus` pass preserves exact holder order: canonical opcodes retain normal PDFium rendering while proven opaque two-point lines draw from owned geometry and exact state. Ordered leaves plus live bounds reject off-tile native rasterization; dirty objects fall back canonically in place; clip state, OCG visibility, render-option colors, cancellation, and draw failure behavior remain under PDFium. Reuses state and path storage, allocates no candidate list, creates no second bitmap or scheduler, and never restarts canonical rendering after native pixels are written. |
 
 ## Why this directory exists
 
@@ -136,8 +137,8 @@ subset.
 ## How to apply
 
 The patch directory contains historical branches and must not be applied by
-blind numeric globbing. For `r25-2-0095`, apply the r25 rendering base through
-0031, then only 0051, 0075, 0076, and 0092 through 0095:
+blind numeric globbing. For `r25-2-0096`, apply the r25 rendering base through
+0031, then only 0051, 0075, 0076, and 0092 through 0096:
 
 ```bash
 git apply patches/ship/01-jpeg-downscale-on-decode.patch
@@ -149,10 +150,11 @@ git apply patches/ship/0092-veloce-render-program-generation2-packed-contract.pa
 git apply patches/ship/0093-veloce-render-program-owned-opaque-line-shadow.patch
 git apply patches/ship/0094-veloce-render-program-visibility-scoped-line-shadow.patch
 git apply patches/ship/0095-veloce-render-program-bounded-ordered-range-index.patch
+git apply patches/ship/0096-veloce-render-program-bounded-ordered-line-executor.patch
 ```
 
 Do not apply `0053..0074`, `0077..0091`, or an invented 0084 to an
-`r25-2-0095` build. The machine-checked list lives in the 0095 workflow.
+`r25-2-0096` build. The machine-checked list lives in the 0096 workflow.
 
 For the historical `r25-1-0091` build, apply the r25 rendering base through
 0031, then only 0051, 0075, 0076, 0079..0083, and 0085..0091:
