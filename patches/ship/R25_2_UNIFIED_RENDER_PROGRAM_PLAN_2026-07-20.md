@@ -2,7 +2,7 @@
 
 Date: 2026-07-20
 Updated: 2026-07-21 (Asia/Taipei)
-Current revision: `r25-2-0099`
+Current revision: `r25-2-0100`
 
 ## Decision
 
@@ -43,6 +43,24 @@ off-tile ranges before live object lookup. For `11.pdf`, owned opaque
 stroke-only Darken commands rasterize once and composite their coverage
 directly through PDFium's existing integer Darken compositor. Both operations
 preserve command order and fail closed to canonical replay.
+
+The 0099 device result proved that its representation and sparse culling work,
+but it did not pass the performance gate. On `11.pdf`, all 24,701 owned Darken
+paths fell back because the root page is an outer non-isolated transparency
+group, producing zero direct draws and 8.8-15 second replays. On Q16, sparse
+tiles skipped about 3.15 million commands and replayed in 2-20 ms, while one
+dense tile still independently dispatched and rasterized 2,653,167 visible
+lines in 7.49 seconds. That dense task then caused 9.5-11.2 seconds of
+single-lane queue delay for otherwise fast tiles.
+
+0100 removes those measured compile and executor costs. One exact
+previous-state entry bypasses repeated hashing and table probes in uniform CAD
+streams. A fixed 256-entry stack packet shares AGG renderer, scanline,
+path-storage, and rasterizer setup while keeping every line independently
+rasterized and composited in painter order. The outer group Darken path enters
+direct coverage only after an allocation-free scan proves the current clip
+backdrop is opaque; transparent destinations continue through canonical
+PDFium.
 
 ## Baseline
 
@@ -126,6 +144,7 @@ scheduler, second bitmap, or UI-thread compilation.
 | `r25-2-0097` | Shared fail-closed executor entry from ordinary and root progressive rendering | Android progressive root pages can execute the existing exact program |
 | `r25-2-0098` | Format-6 owned multi-segment stroke geometry, exact retained PDFium clip runs, bounded path-point storage | Exact supported normal-blend stroke paths and lines with arbitrary PDFium clip paths; unsupported semantics remain canonical |
 | `r25-2-0099` | Format-7 conservative 256-command block index, exact side-stream jumps, attached-object mutation epoch, and clip-aware direct Darken coverage | Off-tile ordered ranges avoid object work; supported opaque stroke-only Darken objects avoid temporary BGRA buffers; all unsupported or stale cases remain canonical |
+| `r25-2-0100` | Fixed 256-line ordered AGG packets and opaque-backdrop proof for outer non-isolated Darken | Lines retain independent raster/composite semantics while sharing setup; proven outer-group Darken avoids per-object temporary bitmaps; rejection remains canonical before pixels |
 
 Revision numbers remain globally monotonic. Failed or superseded revisions are
 not renamed, deleted, amended after push, or reused.
@@ -399,6 +418,53 @@ equal to the complete command count. `11.pdf` should show nonzero
 `darkenFallbacks` count means the runtime proof remains blocked and no speed
 claim is valid. `blocksCurrent=0` is a deliberate correctness fallback after
 attached-object mutation.
+
+The actual 0099 result failed the second gate and exposed the dense executor as
+the next dominant cost:
+
+- `11.pdf`: `nativeDarkenPaths=24701`, `darkenDraws=0`,
+  `darkenFallbacks=24701`, replay `8.807s` for preview and up to `15s` for
+  regions;
+- Q16 sparse tiles: about `3.15M` commands skipped and `2-20ms` replay;
+- Q16 dense tile: `2,653,167` lines drawn in `7.485s`, followed by seconds of
+  head-of-line delay for sparse tiles on the single PDF session lane.
+
+## 0100 Contract
+
+0100 changes execution rather than adding a new index or telemetry pass:
+
+- before hashing an eligible command's graphics state, the compiler compares
+  it with the immediately preceding interned state and reuses the exact index
+  on equality; this adds one optional scalar and no allocation, approximation,
+  or second pass;
+- consecutive eligible lines with identical exact state and clip are collected
+  into a fixed 256-entry stack packet; canonical commands, dirty objects, clip
+  or state changes, owned paths, Darken paths, capacity, and cancellation are
+  hard flush boundaries;
+- each packet entry owns its source endpoints and object-to-device matrix;
+  AGG still rasterizes and composites every line separately in original order,
+  so antialias overlap and painter-order pixels are unchanged;
+- the packet shares only immutable renderer configuration and bounded AGG
+  scratch, removing one `CFX_Path`, render-device dispatch, renderer, scanline,
+  path-storage, and rasterizer construction per line;
+- the driver validates the whole packet before its first pixel; unsupported
+  drivers return false and the executor canonically replays the same holder
+  ordinals in order;
+- an outer non-isolated group may use direct Darken only if one allocation-free
+  scan proves every destination pixel in the current clip has alpha 255;
+  non-group Darken remains exact, while transparent, isolated, nested, printer,
+  Type-3, changed-live-state, and unsupported-device cases remain canonical;
+- no command format change, page-sized cache, candidate allocation, second
+  bitmap, scheduler, lock, JNI/Kotlin policy, or UI-thread work is added.
+
+Device acceptance requires real dispatch, not just compilation:
+
+- Q16: `lineBatchCommands > 0`, `lineBatchDispatches` materially smaller than
+  `lineBatchCommands`, `maxLineBatch > 1`, and `lineBatchFallbacks=0` on AGG;
+- `11.pdf`: `darkenDraws > 0` and `darkenFallbacks` no longer approximately
+  equals `nativeDarkenPaths` on the normal opaque Android page target;
+- normal and transparent-output corpus pages remain pixel-identical to the
+  canonical baseline.
 
 ## Proof Gates
 

@@ -1,0 +1,683 @@
+From dc83db4c8639ed28ab1111b6478399470d33ead7 Mon Sep 17 00:00:00 2001
+From: "sh.chao" <sh.chao@gmail.com>
+Date: Tue, 21 Jul 2026 17:28:46 +0800
+Subject: [PATCH] Veloce r25-2-0100: batch owned lines and enter proven Darken
+
+Extend the r25-2-0099 format-7 executor without changing its immutable
+program representation or painter-order model.
+
+Reuse the immediately preceding exact graphics-state intern entry before
+hashing or probing the state table. Repeated CAD state therefore costs one
+exact comparison, with no new allocation or semantic approximation.
+
+Replace one CFX_Path construction, render-device dispatch, AGG renderer,
+scanline, path-storage, and rasterizer setup per owned two-point line with a
+fixed 256-entry stack packet. The AGG driver validates the complete packet
+before its first pixel, then rasterizes and composites every line separately
+in original order while reusing only immutable setup and bounded scratch.
+State, clip, canonical-command, path, Darken, capacity, and cancellation
+boundaries flush the packet. Driver rejection replays the same holder ordinals
+canonically before continuing.
+
+Permit direct Darken coverage in an outer non-isolated transparency group only
+after one allocation-free scan proves the current destination clip is fully
+opaque. In that context PDFium's temporary backdrop source-over followed by
+Darken is algebraically identical to direct Darken source-over. Transparent,
+isolated, nested, printer, Type-3, changed-live-state, and unsupported-device
+cases remain canonical at the same ordinal.
+
+This removes measured compilation and execution work without adding a
+page-sized cache, candidate allocation, scheduler, lock, JNI/Kotlin policy,
+UI-thread work, or second pixel owner.
+
+---
+ core/fpdfapi/page/veloce_render_program.cpp   |  33 +++-
+ core/fpdfapi/page/veloce_render_program.h     |   2 +
+ core/fpdfapi/render/cpdf_renderstatus.cpp     | 150 ++++++++++++++++--
+ core/fxge/agg/cfx_agg_devicedriver.cpp        |  85 ++++++++++
+ core/fxge/agg/cfx_agg_devicedriver.h          |   5 +
+ .../fxge/cfx_defaultrenderdevice_unittest.cpp |  39 +++++
+ core/fxge/cfx_renderdevice.cpp                |  17 ++
+ core/fxge/cfx_renderdevice.h                  |   5 +
+ core/fxge/renderdevicedriver_iface.cpp        |   8 +
+ core/fxge/renderdevicedriver_iface.h          |  17 ++
+ 10 files changed, 342 insertions(+), 19 deletions(-)
+
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index 9ef768903..d7206d2a9 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -634,18 +634,34 @@ bool VeloceRenderProgramBuilder::TryAppendNativeOpaqueStroke(
+         static_cast<uint8_t>(VeloceOpaquePathStateFlag::kStrokeAdjust);
+   }
+ 
+-  const uint64_t state_hash = HashOpaquePathState(candidate_state, dashes);
+   std::optional<uint16_t> state_index;
+-  const auto state_range = state_indices_.equal_range(state_hash);
+-  for (auto it = state_range.first; it != state_range.second; ++it) {
+-    const VeloceOpaquePathState& stored = opaque_path_states_[it->second];
++  if (last_opaque_state_index_.has_value()) {
++    CHECK_LT(*last_opaque_state_index_, opaque_path_states_.size());
++    const VeloceOpaquePathState& stored =
++        opaque_path_states_[*last_opaque_state_index_];
+     if (SameOpaquePathState(
+             stored,
+             pdfium::span(dash_values_).subspan(stored.dash_offset,
+                                                 stored.dash_count),
+             candidate_state, dashes)) {
+-      state_index = it->second;
+-      break;
++      state_index = *last_opaque_state_index_;
++    }
++  }
++
++  uint64_t state_hash = 0u;
++  if (!state_index.has_value()) {
++    state_hash = HashOpaquePathState(candidate_state, dashes);
++    const auto state_range = state_indices_.equal_range(state_hash);
++    for (auto it = state_range.first; it != state_range.second; ++it) {
++      const VeloceOpaquePathState& stored = opaque_path_states_[it->second];
++      if (SameOpaquePathState(
++              stored,
++              pdfium::span(dash_values_).subspan(stored.dash_offset,
++                                                  stored.dash_count),
++              candidate_state, dashes)) {
++        state_index = it->second;
++        break;
++      }
+     }
+   }
+ 
+@@ -702,6 +718,7 @@ bool VeloceRenderProgramBuilder::TryAppendNativeOpaqueStroke(
+     opaque_path_states_.push_back(candidate_state);
+     state_indices_.emplace(state_hash, *state_index);
+   }
++  last_opaque_state_index_ = *state_index;
+   if (needs_visibility_run) {
+     visibility_runs_.push_back(
+         {static_cast<uint32_t>(bytecode_.size())});
+@@ -826,7 +843,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-2-0099 event=discard reason=actual_budget bytes=%zu "
++        "revision=r25-2-0100 event=discard reason=actual_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -836,7 +853,7 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->command_count() >= 4096u) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-2-0099 event=compile mode=ordered_blocks_darken "
++        "revision=r25-2-0100 event=compile mode=ordered_line_batches_darken "
+         "commands=%zu "
+         "nativeOpaqueLines=%zu nativeOpaquePaths=%zu nativeDarkenPaths=%zu "
+         "canonicalPaths=%zu "
+diff --git a/core/fpdfapi/page/veloce_render_program.h b/core/fpdfapi/page/veloce_render_program.h
+index 1d53e3718..a1150f075 100644
+--- a/core/fpdfapi/page/veloce_render_program.h
++++ b/core/fpdfapi/page/veloce_render_program.h
+@@ -9,6 +9,7 @@
+ 
+ #include <array>
+ #include <memory>
++#include <optional>
+ #include <unordered_map>
+ #include <vector>
+ 
+@@ -412,6 +413,7 @@ class VeloceRenderProgramBuilder final {
+   bool has_previous_visibility_scope_ = false;
+   CPDF_ClipPath previous_clip_path_;
+   bool has_previous_clip_scope_ = false;
++  std::optional<uint16_t> last_opaque_state_index_;
+   std::unordered_multimap<uint64_t, uint16_t> state_indices_;
+   std::unordered_multimap<uint64_t, uint16_t> matrix_indices_;
+   std::array<uint32_t, kVeloceNativeLineRejectReasonCount> rejection_counts_{};
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 6db49c6a0..101fcc285 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -7,6 +7,7 @@
+ #include "core/fpdfapi/render/cpdf_renderstatus.h"
+ 
+ #include <atomic>
++#include <array>
+ #include <chrono>
+ #include <cmath>
+ #include <stdint.h>
+@@ -15,6 +16,7 @@
+ #include <limits>
+ #include <memory>
+ #include <numeric>
++#include <optional>
+ #include <set>
+ #include <utility>
+ #include <vector>
+@@ -82,6 +84,7 @@
+ #include "core/fxge/cfx_graphstatedata.h"
+ #include "core/fxge/cfx_path.h"
+ #include "core/fxge/dib/cfx_dibitmap.h"
++#include "core/fxge/dib/fx_dib.h"
+ #include "core/fxge/fx_font.h"
+ #include "core/fxge/renderdevicedriver_iface.h"
+ #include "core/fxge/text_char_pos.h"
+@@ -149,6 +152,33 @@ bool CanDirectDrawVeloceDarkenStroke(const CPDF_PathObject& path) {
+          !stroke->IsPattern();
+ }
+ 
++bool IsVeloceDeviceClipOpaque(const CFX_RenderDevice& device) {
++  RetainPtr<const CFX_DIBitmap> bitmap = device.GetBitmap();
++  if (!bitmap || bitmap->IsMaskFormat()) {
++    return false;
++  }
++  if (!bitmap->IsAlphaFormat()) {
++    return true;
++  }
++  if (bitmap->GetFormat() != FXDIB_Format::kBgra) {
++    return false;
++  }
++
++  FX_RECT clip = device.GetClipBox();
++  clip.Intersect(FX_RECT(0, 0, bitmap->GetWidth(), bitmap->GetHeight()));
++  for (int y = clip.top; y < clip.bottom; ++y) {
++    const auto scanline =
++        bitmap->GetScanlineAs<FX_BGRA_STRUCT<uint8_t>>(y).subspan(
++            static_cast<size_t>(clip.left),
++            static_cast<size_t>(clip.Width()));
++    if (std::ranges::any_of(
++            scanline, [](const auto& pixel) { return pixel.alpha != 255; })) {
++      return false;
++    }
++  }
++  return true;
++}
++
+ CFX_FillRenderOptions GetFillOptionsForDrawTextPath(
+     const CPDF_RenderOptions::Options& options,
+     const CPDF_TextObject* text_obj,
+@@ -371,6 +401,10 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+   size_t blocks_tested = 0;
+   size_t blocks_skipped = 0;
+   size_t commands_skipped = 0;
++  size_t line_batch_commands = 0;
++  size_t line_batch_dispatches = 0;
++  size_t line_batch_fallbacks = 0;
++  size_t max_line_batch = 0;
+   uint32_t native_line_index = 0;
+   uint32_t native_path_index = 0;
+   size_t leaf_index = 0;
+@@ -389,10 +423,50 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+   CFX_GraphStateData current_graph_state;
+   CFX_FillRenderOptions current_fill_options;
+   FX_ARGB current_stroke_argb = 0;
+-  CFX_Path line_path;
++  static constexpr size_t kMaxLineBatch = 256u;
++  std::array<CFX_StrokeLine, kMaxLineBatch> line_batch;
++  std::array<uint32_t, kMaxLineBatch> line_batch_commands_by_ordinal;
++  size_t line_batch_count = 0u;
++  std::optional<bool> opaque_darken_backdrop;
+   const bool command_blocks_current =
+       program->mutation_epoch() == GetVelocePageObjectMutationEpoch();
+ 
++  auto flush_line_batch = [&]() -> bool {
++    if (line_batch_count == 0u) {
++      return true;
++    }
++    const size_t flushed_count = line_batch_count;
++    if (device_->DrawStrokeLineBatch(
++            pdfium::span(line_batch).first(flushed_count),
++            &current_graph_state, current_stroke_argb,
++            current_fill_options)) {
++      native_draws += flushed_count;
++      line_batch_commands += flushed_count;
++      ++line_batch_dispatches;
++      max_line_batch = std::max(max_line_batch, flushed_count);
++      line_batch_count = 0u;
++      return true;
++    }
++
++    // Driver rejection is guaranteed to happen before its first pixel.
++    // Replay the same ordinals canonically and in order.
++    for (size_t i = 0; i < flushed_count; ++i) {
++      CPDF_PageObject* fallback_object =
++          holder->GetPageObjectByIndex(line_batch_commands_by_ordinal[i]);
++      CHECK(fallback_object);
++      RenderSingleObject(fallback_object, holder_to_device);
++      ++canonical_draws;
++      if (stopped_) {
++        line_batch_count = 0u;
++        return false;
++      }
++    }
++    ++line_batch_fallbacks;
++    line_batch_count = 0u;
++    native_clip_ready = false;
++    return true;
++  };
++
+   auto log_result = [&](const char* result) {
+ #if BUILDFLAG(IS_ANDROID)
+     const uint64_t replay_micros = static_cast<uint64_t>(
+@@ -401,12 +475,14 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-2-0099 event=replay mode=ordered_blocks_darken "
++        "revision=r25-2-0100 event=replay mode=ordered_line_batches_darken "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
+         "nativeLines=%zu nativePaths=%zu "
+         "clipRuns=%zu canonicalDraws=%zu nativeDraws=%zu pathDraws=%zu "
+         "darkenDraws=%zu darkenFallbacks=%zu blocksTested=%zu "
+         "blocksSkipped=%zu blocksCurrent=%d "
++        "lineBatchCommands=%zu lineBatchDispatches=%zu "
++        "lineBatchFallbacks=%zu maxLineBatch=%zu "
+         "dirtyFallbacks=%zu leafCulled=%zu boundsCulled=%zu "
+         "pathBoundsCulled=%zu cancelChecks=%zu replayUs=%llu",
+         result, command_count, commands_skipped, program->native_line_count(),
+@@ -414,6 +490,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+         canonical_draws, native_draws, native_path_draws,
+         native_darken_draws, native_darken_fallbacks, blocks_tested,
+         blocks_skipped, command_blocks_current ? 1 : 0,
++        line_batch_commands, line_batch_dispatches, line_batch_fallbacks,
++        max_line_batch,
+         native_dirty_fallbacks, native_leaf_culled, native_bounds_culled,
+         native_path_bounds_culled, cancellation_checks,
+         static_cast<unsigned long long>(replay_micros));
+@@ -435,6 +513,10 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     static_cast<void>(blocks_skipped);
+     static_cast<void>(commands_skipped);
+     static_cast<void>(command_blocks_current);
++    static_cast<void>(line_batch_commands);
++    static_cast<void>(line_batch_dispatches);
++    static_cast<void>(line_batch_fallbacks);
++    static_cast<void>(max_line_batch);
+ #endif
+   };
+ 
+@@ -489,6 +571,10 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     const bool is_native_darken =
+         opcode == VeloceRenderOpcode::kNativeDarkenStrokePath;
+     if (!is_native_line && !is_native_path && !is_native_darken) {
++      if (!flush_line_batch()) {
++        log_result("cancelled");
++        return true;
++      }
+       native_clip_ready = false;
+       if (!object->IsActive() ||
+           !VeloceRectsIntersect(object->GetRect(), holder_clip)) {
+@@ -535,6 +621,10 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+       continue;
+     }
+     if (object->IsDirty()) {
++      if (!flush_line_batch()) {
++        log_result("cancelled");
++        return true;
++      }
+       native_clip_ready = false;
+       if (VeloceRectsIntersect(object->GetRect(), holder_clip)) {
+         RenderSingleObject(object, holder_to_device);
+@@ -575,6 +665,10 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     }
+     if (!native_clip_ready ||
+         applied_clip_run_index != active_clip_run_index) {
++      if (!flush_line_batch()) {
++        log_result("cancelled");
++        return true;
++      }
+       ProcessClipPath(clip_runs[active_clip_run_index].clip_path,
+                       holder_to_device);
+       native_clip_ready = true;
+@@ -593,6 +687,10 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     const VeloceOpaquePathState& state =
+         program->opaque_path_states()[state_index];
+     if (current_state_index != state_index) {
++      if (!flush_line_batch()) {
++        log_result("cancelled");
++        return true;
++      }
+       CHECK_LE(static_cast<size_t>(state.dash_offset) + state.dash_count,
+                program->dash_values().size());
+       current_graph_state = BuildVeloceGraphState(
+@@ -622,17 +720,26 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     }
+ 
+     cur_obj_ = path_object;
+-    const CFX_Path* draw_path = nullptr;
+-    if (is_native_line) {
+-      line_path.Clear();
+-      line_path.AppendLine(line->start, line->end);
+-      draw_path = &line_path;
+-    } else {
+-      draw_path = &native_path->path;
+-    }
++    const CFX_Path* draw_path =
++        is_native_line ? nullptr : &native_path->path;
+     if (is_native_darken) {
++      if (!flush_line_batch()) {
++        log_result("cancelled");
++        return true;
++      }
++      // For an opaque backdrop, normal source-over into PDFium's temporary
++      // non-isolated group bitmap followed by Darken composition is exactly
++      // direct Darken source-over. Prove that precondition once per replay;
++      // transparent, isolated, and nested groups retain canonical handling.
++      bool direct_darken_context = !transparency_.IsGroup();
++      if (!direct_darken_context && !transparency_.IsIsolated() && !in_group_) {
++        if (!opaque_darken_backdrop.has_value()) {
++          opaque_darken_backdrop = IsVeloceDeviceClipOpaque(*device_);
++        }
++        direct_darken_context = *opaque_darken_backdrop;
++      }
+       const bool can_direct = CanDirectDrawVeloceDarkenStroke(*path_object) &&
+-                              !transparency_.IsGroup() &&
++                              direct_darken_context &&
+                               !transparency_.IsIsolated() && !in_group_ &&
+                               !IsPrint() && !type3_char_ &&
+                               device_->RenderCapBlendMode();
+@@ -657,6 +764,23 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+       ++command_index;
+       continue;
+     }
++    if (is_native_line) {
++      line_batch[line_batch_count] =
++          CFX_StrokeLine{line->start, line->end, path_matrix};
++      line_batch_commands_by_ordinal[line_batch_count] =
++          static_cast<uint32_t>(command_index);
++      ++line_batch_count;
++      ++command_index;
++      if (line_batch_count == line_batch.size() && !flush_line_batch()) {
++        log_result("cancelled");
++        return true;
++      }
++      continue;
++    }
++    if (!flush_line_batch()) {
++      log_result("cancelled");
++      return true;
++    }
+     if (!device_->DrawPath(*draw_path, &path_matrix, &current_graph_state,
+                            /*fill_color=*/0, current_stroke_argb,
+                            current_fill_options)) {
+@@ -673,6 +797,10 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     ++command_index;
+   }
+ 
++  if (!flush_line_batch()) {
++    log_result("cancelled");
++    return true;
++  }
+   CHECK_EQ(native_line_index, program->native_line_count());
+   CHECK_EQ(native_path_index, program->native_stroke_path_count());
+   if (ShouldCancelRender()) {
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.cpp b/core/fxge/agg/cfx_agg_devicedriver.cpp
+index 9aeebd26f..a0c82861a 100644
+--- a/core/fxge/agg/cfx_agg_devicedriver.cpp
++++ b/core/fxge/agg/cfx_agg_devicedriver.cpp
+@@ -1018,6 +1018,24 @@ agg::path_storage BuildAggPath(const CFX_Path& path,
+   return agg_path;
+ }
+ 
++void BuildAggStrokeLine(const CFX_StrokeLine& line,
++                        const CFX_Matrix* matrix,
++                        agg::path_storage* path) {
++  CFX_PointF start = line.start;
++  CFX_PointF end = line.end;
++  if (matrix) {
++    start = matrix->Transform(start);
++    end = matrix->Transform(end);
++  }
++  start = HardClip(start);
++  end = HardClip(end);
++  path->move_to(start.x, start.y);
++  if (line.start == line.end) {
++    end.x += 1;
++  }
++  path->line_to(end.x, end.y);
++}
++
+ }  // namespace
+ 
+ CFX_AggDeviceDriver::CFX_AggDeviceDriver(
+@@ -1297,6 +1315,73 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_Path& path,
+   return true;
+ }
+ 
++bool CFX_AggDeviceDriver::DrawStrokeLineBatch(
++    pdfium::span<const CFX_StrokeLine> lines,
++    const CFX_GraphStateData* pGraphState,
++    uint32_t stroke_color,
++    const CFX_FillRenderOptions& fill_options) {
++  if (lines.empty() || bitmap_->GetBuffer().empty()) {
++    return true;
++  }
++  if (!pGraphState || FXARGB_A(stroke_color) == 0 ||
++      fill_options.fill_type !=
++          CFX_FillRenderOptions::FillType::kNoFill) {
++    return false;
++  }
++
++  // Validate the complete packet before its first pixel. This keeps the
++  // caller's ordered canonical fallback safe.
++  if (!fill_options.zero_area) {
++    for (const CFX_StrokeLine& line : lines) {
++      const CFX_Matrix& matrix = line.object_to_device;
++      const float scale = std::max(fabs(matrix.a), fabs(matrix.b));
++      if (!std::isfinite(matrix.a) || !std::isfinite(matrix.b) ||
++          !std::isfinite(scale) || scale == 0.0f ||
++          !std::isfinite(matrix.c) || !std::isfinite(matrix.d) ||
++          !std::isfinite(matrix.e) || !std::isfinite(matrix.f)) {
++        return false;
++      }
++    }
++  }
++
++  fill_options_ = fill_options;
++  RetainPtr<CFX_DIBitmap> backdrop =
++      group_knockout_ ? backdrop_bitmap_ : nullptr;
++  CFX_AggRenderer renderer(bitmap_, backdrop, clip_rgn_.get(), stroke_color,
++                           fill_options.full_cover, rgb_byte_order_);
++  agg::scanline_u8 scanline;
++  agg::path_storage path_data;
++  agg::rasterizer_scanline_aa rasterizer;
++  rasterizer.clip_box(0.0f, 0.0f, static_cast<float>(GetPixelWidth()),
++                      static_cast<float>(GetPixelHeight()));
++
++  for (const CFX_StrokeLine& line : lines) {
++    path_data.remove_all();
++    rasterizer.reset();
++    if (fill_options.zero_area) {
++      BuildAggStrokeLine(line, &line.object_to_device, &path_data);
++      RasterizeStroke(&rasterizer, &path_data, nullptr, pGraphState, 1,
++                      fill_options.stroke_text_mode);
++    } else {
++      const CFX_Matrix& object_matrix = line.object_to_device;
++      CFX_Matrix matrix1;
++      CFX_Matrix matrix2;
++      matrix1.a = std::max(fabs(object_matrix.a), fabs(object_matrix.b));
++      matrix1.d = matrix1.a;
++      matrix2 = CFX_Matrix(
++          object_matrix.a / matrix1.a, object_matrix.b / matrix1.a,
++          object_matrix.c / matrix1.d, object_matrix.d / matrix1.d, 0, 0);
++      matrix1 = object_matrix * matrix2.GetInverse();
++      BuildAggStrokeLine(line, &matrix1, &path_data);
++      RasterizeStroke(&rasterizer, &path_data, &matrix2, pGraphState,
++                      matrix1.a, fill_options.stroke_text_mode);
++    }
++    agg::render_scanlines(rasterizer, scanline, renderer,
++                          fill_options.aliased_path);
++  }
++  return true;
++}
++
+ bool CFX_AggDeviceDriver::DrawPathWithBlend(
+     const CFX_Path& path,
+     const CFX_Matrix* pObject2Device,
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.h b/core/fxge/agg/cfx_agg_devicedriver.h
+index 4ac0af5ea..3b414c690 100644
+--- a/core/fxge/agg/cfx_agg_devicedriver.h
++++ b/core/fxge/agg/cfx_agg_devicedriver.h
+@@ -73,6 +73,11 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
+                          uint32_t stroke_color,
+                          const CFX_FillRenderOptions& fill_options,
+                          BlendMode blend_mode) override;
++  bool DrawStrokeLineBatch(
++      pdfium::span<const CFX_StrokeLine> lines,
++      const CFX_GraphStateData* pGraphState,
++      uint32_t stroke_color,
++      const CFX_FillRenderOptions& fill_options) override;
+   bool FillRect(const FX_RECT& rect, uint32_t fill_color) override;
+   FX_RECT GetClipBox() const override;
+   bool GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
+diff --git a/core/fxge/cfx_defaultrenderdevice_unittest.cpp b/core/fxge/cfx_defaultrenderdevice_unittest.cpp
+index c2a136940..99772e26d 100644
+--- a/core/fxge/cfx_defaultrenderdevice_unittest.cpp
++++ b/core/fxge/cfx_defaultrenderdevice_unittest.cpp
+@@ -4,6 +4,10 @@
+ 
+ #include "core/fxge/cfx_defaultrenderdevice.h"
+ 
++#include <algorithm>
++#include <array>
++#include <ranges>
++
+ #include "core/fxcrt/fx_coordinates.h"
+ #include "core/fxcrt/retain_ptr.h"
+ #include "core/fxge/cfx_fillrenderoptions.h"
+@@ -73,3 +77,38 @@ TEST(CFXDefaultRenderDeviceTest, GetClipBoxEmpty) {
+ 
+   EXPECT_TRUE(device.GetClipBox().IsEmpty());
+ }
++
++TEST(CFXDefaultRenderDeviceTest, StrokeLineBatchMatchesOrderedDrawPath) {
++  CFX_DefaultRenderDevice baseline;
++  CFX_DefaultRenderDevice batched;
++  ASSERT_TRUE(
++      baseline.Create(/*width=*/32, /*height=*/32, FXDIB_Format::kBgra));
++  ASSERT_TRUE(
++      batched.Create(/*width=*/32, /*height=*/32, FXDIB_Format::kBgra));
++  baseline.GetBitmap()->Clear(0xfff0e0d0);
++  batched.GetBitmap()->Clear(0xfff0e0d0);
++
++  const CFX_GraphStateData graphics_state;
++  const CFX_FillRenderOptions fill_options;
++  constexpr uint32_t kStrokeColor = 0xff204080;
++  const std::array<CFX_StrokeLine, 4> lines = {
++      CFX_StrokeLine{{2.25f, 3.5f}, {28.0f, 21.75f}, CFX_Matrix()},
++      CFX_StrokeLine{{3.0f, 22.0f}, {27.5f, 4.0f}, CFX_Matrix()},
++      CFX_StrokeLine{{4.0f, 12.0f},
++                     {25.0f, 12.0f},
++                     CFX_Matrix(1, 0, 0, 1, 0.25f, 0.5f)},
++      CFX_StrokeLine{{16.0f, 16.0f}, {16.0f, 16.0f}, CFX_Matrix()},
++  };
++
++  for (const CFX_StrokeLine& line : lines) {
++    CFX_Path path;
++    path.AppendLine(line.start, line.end);
++    ASSERT_TRUE(baseline.DrawPath(path, &line.object_to_device,
++                                  &graphics_state, /*fill_color=*/0,
++                                  kStrokeColor, fill_options));
++  }
++  ASSERT_TRUE(batched.DrawStrokeLineBatch(lines, &graphics_state,
++                                          kStrokeColor, fill_options));
++  EXPECT_TRUE(std::ranges::equal(baseline.GetBitmap()->GetBuffer(),
++                                 batched.GetBitmap()->GetBuffer()));
++}
+diff --git a/core/fxge/cfx_renderdevice.cpp b/core/fxge/cfx_renderdevice.cpp
+index 6dffd9e6e..34642608c 100644
+--- a/core/fxge/cfx_renderdevice.cpp
++++ b/core/fxge/cfx_renderdevice.cpp
+@@ -804,6 +804,23 @@ bool CFX_RenderDevice::DrawPathWithBlend(
+       fill_options, blend_mode);
+ }
+ 
++bool CFX_RenderDevice::DrawStrokeLineBatch(
++    pdfium::span<const CFX_StrokeLine> lines,
++    const CFX_GraphStateData* pGraphState,
++    uint32_t stroke_color,
++    const CFX_FillRenderOptions& fill_options) {
++  if (lines.empty()) {
++    return true;
++  }
++  if (!pGraphState || FXARGB_A(stroke_color) == 0 ||
++      fill_options.fill_type !=
++          CFX_FillRenderOptions::FillType::kNoFill) {
++    return false;
++  }
++  return device_driver_->DrawStrokeLineBatch(lines, pGraphState, stroke_color,
++                                              fill_options);
++}
++
+ // This can be removed once PDFium entirely relies on Skia
+ bool CFX_RenderDevice::DrawFillStrokePath(
+     const CFX_Path& path,
+diff --git a/core/fxge/cfx_renderdevice.h b/core/fxge/cfx_renderdevice.h
+index bbc62512c..b4dd8464d 100644
+--- a/core/fxge/cfx_renderdevice.h
++++ b/core/fxge/cfx_renderdevice.h
+@@ -98,6 +98,11 @@ class CFX_RenderDevice {
+                          uint32_t stroke_color,
+                          const CFX_FillRenderOptions& fill_options,
+                          BlendMode blend_mode);
++  bool DrawStrokeLineBatch(
++      pdfium::span<const CFX_StrokeLine> lines,
++      const CFX_GraphStateData* pGraphState,
++      uint32_t stroke_color,
++      const CFX_FillRenderOptions& fill_options);
+   bool FillRect(const FX_RECT& rect, uint32_t color);
+ 
+   RetainPtr<const CFX_DIBitmap> GetBackDrop() const;
+diff --git a/core/fxge/renderdevicedriver_iface.cpp b/core/fxge/renderdevicedriver_iface.cpp
+index 4596c5d8b..969c334db 100644
+--- a/core/fxge/renderdevicedriver_iface.cpp
++++ b/core/fxge/renderdevicedriver_iface.cpp
+@@ -25,6 +25,14 @@ bool RenderDeviceDriverIface::DrawPathWithBlend(
+   return false;
+ }
+ 
++bool RenderDeviceDriverIface::DrawStrokeLineBatch(
++    pdfium::span<const CFX_StrokeLine>,
++    const CFX_GraphStateData*,
++    uint32_t,
++    const CFX_FillRenderOptions&) {
++  return false;
++}
++
+ bool RenderDeviceDriverIface::RenderCapGetBits() const {
+   return false;
+ }
+diff --git a/core/fxge/renderdevicedriver_iface.h b/core/fxge/renderdevicedriver_iface.h
+index c42ccfee3..ffe268b0f 100644
+--- a/core/fxge/renderdevicedriver_iface.h
++++ b/core/fxge/renderdevicedriver_iface.h
+@@ -30,6 +30,15 @@ struct CFX_FillRenderOptions;
+ struct CFX_TextRenderOptions;
+ struct FX_RECT;
+ 
++// One independently rasterized stroke-only line. A batch preserves entry
++// order and per-entry antialias coverage; it only shares immutable driver
++// setup across entries.
++struct CFX_StrokeLine {
++  CFX_PointF start;
++  CFX_PointF end;
++  CFX_Matrix object_to_device;
++};
++
+ enum class DeviceType : bool {
+   kDisplay,
+ #if BUILDFLAG(IS_WIN)
+@@ -109,6 +118,14 @@ class RenderDeviceDriverIface {
+       uint32_t stroke_color,
+       const CFX_FillRenderOptions& fill_options,
+       BlendMode blend_mode);
++  // Returns false before changing any destination pixel when batching is not
++  // supported. A successful implementation must composite every line as a
++  // separate path in span order.
++  virtual bool DrawStrokeLineBatch(
++      pdfium::span<const CFX_StrokeLine> lines,
++      const CFX_GraphStateData* pGraphState,
++      uint32_t stroke_color,
++      const CFX_FillRenderOptions& fill_options);
+   virtual bool FillRect(const FX_RECT& rect, uint32_t fill_color);
+   virtual bool DrawCosmeticLine(const CFX_PointF& ptMoveTo,
+                                 const CFX_PointF& ptLineTo,

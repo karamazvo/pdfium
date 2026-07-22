@@ -128,6 +128,7 @@ these patches:
 | r25-2-0097 | `0097-veloce-render-program-progressive-root-entry.patch` | Connects the same fail-closed ordered executor to `CPDF_ProgressiveRenderer`, which owns Android `FPDF_RenderPageBitmap_Start()` root-page rendering. The progressive layer attempts the holder program once before its canonical object iterator; a consumed replay finalizes that layer, while rejection falls through before changing pixels. Both progressive and ordinary rendering share `CPDF_RenderStatus::TryRenderVeloceProgram()`. Adds no second executor, bitmap, cache, scheduler, candidate allocation, or rendering thread. |
 | r25-2-0098 | `0098-veloce-render-program-owned-clipped-stroke-paths.patch` | Advances the program to format 6 with an exact owned multi-segment, stroke-only path opcode and ordered retained `CPDF_ClipPath` runs. Clip snapshots use PDFium's copy-on-write semantic object and replay through canonical `ProcessClipPath()`; they are not reduced to rectangles or heuristics. Compact Q16 lines remain in the existing 28-byte chunked storage, while owned path points, path count, clip runs, and total retained bytes have hard ceilings. Canonical barriers preserve painter order, dirty objects fall back in place, and unsupported fill, pattern, transparency, soft-mask, transfer, and blend behavior stays canonical. This removes clip and geometry as eligibility blockers but deliberately does not accelerate `11.pdf` Darken yet; 0099 owns that exact blend proof. |
 | r25-2-0099 | `0099-veloce-render-program-ordered-block-skip-and-darken-spans.patch` | Advances to format 7 and combines two independent measured gains. Conservative 256-command holder-space blocks skip complete off-tile ordered ranges by advancing exact native side-stream counts; unknown bounds, stop-object requests, and attached-object mutation-epoch drift fail open. Opaque stroke-only Darken commands own geometry/state/clip data and send each object's AGG coverage directly to PDFium's existing Darken compositor, eliminating the temporary BGRA object bitmap and second pixel pass without merging objects. Unsupported groups, destinations, live semantics, or transparency fall back canonically at the same ordinal before mutation. The 4096-command ordinary-page prefix and 96 MiB retained cap remain unchanged. |
+| r25-2-0100 | `0100-veloce-render-program-ordered-line-batches-proven-outer-darken.patch` | Removes three costs measured in the 0099 device logs. An exact previous-state hot entry avoids repeated hashing/table probes in uniform CAD streams. Consecutive exact-state lines enter fixed 256-entry stack packets; AGG validates before pixels, then rasterizes and composites each line independently in order while reusing renderer, scanline, path-storage, and rasterizer setup. Unsupported drivers replay the same holder ordinals canonically. Outer non-isolated Darken enters direct coverage only after one allocation-free clip scan proves an opaque destination; transparent, isolated, nested, printer, Type-3, live-state drift, and unsupported-device cases remain canonical. Program format, memory ceiling, scheduling, JNI/Kotlin policy, and pixel ownership are unchanged. |
 
 ## Why this directory exists
 
@@ -140,8 +141,8 @@ subset.
 ## How to apply
 
 The patch directory contains historical branches and must not be applied by
-blind numeric globbing. For `r25-2-0099`, apply the r25 rendering base through
-0031, then only 0051, 0075, 0076, and 0092 through 0099:
+blind numeric globbing. For `r25-2-0100`, apply the r25 rendering base through
+0031, then only 0051, 0075, 0076, and 0092 through 0100:
 
 ```bash
 git apply patches/ship/01-jpeg-downscale-on-decode.patch
@@ -157,10 +158,11 @@ git apply patches/ship/0096-veloce-render-program-bounded-ordered-line-executor.
 git apply patches/ship/0097-veloce-render-program-progressive-root-entry.patch
 git apply patches/ship/0098-veloce-render-program-owned-clipped-stroke-paths.patch
 git apply patches/ship/0099-veloce-render-program-ordered-block-skip-and-darken-spans.patch
+git apply patches/ship/0100-veloce-render-program-ordered-line-batches-proven-outer-darken.patch
 ```
 
 Do not apply `0053..0074`, `0077..0091`, or an invented 0084 to an
-`r25-2-0099` build. The machine-checked list lives in the 0099 workflow.
+`r25-2-0100` build. The machine-checked list lives in the 0100 workflow.
 
 For the historical `r25-1-0091` build, apply the r25 rendering base through
 0031, then only 0051, 0075, 0076, 0079..0083, and 0085..0091:
