@@ -1,0 +1,285 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "sh.chao" <sh.chao@gmail.com>
+Date: Wed, 22 Jul 2026 19:30:00 +0800
+Subject: [PATCH] Veloce r25-3-0105: add ordered sparse replay cursor
+
+Make replay cost proportional to intersecting native work instead of the
+holder's total source-object count. Normalize the immutable source, native
+run, line-leaf, and path-block cursors at the top of each replay iteration,
+then jump exact nonintersecting contiguous line leaves in painter order.
+
+The jump unit is construction-validated: a leaf contains only consecutive
+native opaque-line commands and cannot cross a canonical object or another
+native opcode. Intersecting leaves and all canonical gaps retain the existing
+ordered executor and pixel behavior.
+
+Drive cancellation from bounded replay work units instead of skipped source
+ordinals. This preserves responsiveness without paying one cancellation or
+dispatch decision per culled command. Add structural tests for canonical and
+dense barrier boundaries plus replay metrics that expose actual jump count.
+---
+ core/fpdfapi/page/veloce_render_program.cpp        |  4 +-
+ .../page/veloce_render_program_unittest.cpp        | 38 +++++++++-
+ core/fpdfapi/render/cpdf_renderstatus.cpp          | 87 +++++++++++-----------
+ 3 files changed, 81 insertions(+), 48 deletions(-)
+
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index fc09223e4..638030560 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -1062,7 +1062,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0104 event=discard reason=invalid_or_budget bytes=%zu "
++        "revision=r25-3-0105 event=discard reason=invalid_or_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -1072,7 +1072,7 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->has_native_commands()) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0104 event=compile mode=sparse_owned_sidecar "
++        "revision=r25-3-0105 event=compile mode=sparse_owned_sidecar "
+         "commands=%zu "
+         "nativeOpaqueLines=%zu nativeOpaquePaths=%zu nativeDarkenPaths=%zu "
+         "canonicalPaths=%zu "
+diff --git a/core/fpdfapi/page/veloce_render_program_unittest.cpp b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+index f546b8555..8909f60ca 100644
+--- a/core/fpdfapi/page/veloce_render_program_unittest.cpp
++++ b/core/fpdfapi/page/veloce_render_program_unittest.cpp
+@@ -365,11 +365,43 @@ TEST(VeloceRenderProgramTest, PreservesNativeOrdinalsAcrossCanonicalBarrier) {
+   EXPECT_EQ(1u, program->native_runs()[1].command_count);
+   EXPECT_EQ(VeloceRenderOpcode::kNativeOpaqueLine,
+             program->native_runs()[1].opcode);
+-  ASSERT_EQ(1u, program->line_leaf_ranges().size());
++  ASSERT_EQ(2u, program->line_leaf_ranges().size());
+   EXPECT_EQ(0u, program->line_leaf_ranges()[0].first_line);
+   EXPECT_EQ(0u, program->line_leaf_ranges()[0].first_command);
+-  EXPECT_EQ(3u, program->line_leaf_ranges()[0].command_count);
+-  EXPECT_EQ(2u, program->line_leaf_ranges()[0].line_count);
++  EXPECT_EQ(1u, program->line_leaf_ranges()[0].command_count);
++  EXPECT_EQ(1u, program->line_leaf_ranges()[0].line_count);
++  EXPECT_EQ(1u, program->line_leaf_ranges()[1].first_line);
++  EXPECT_EQ(2u, program->line_leaf_ranges()[1].first_command);
++  EXPECT_EQ(1u, program->line_leaf_ranges()[1].command_count);
++  EXPECT_EQ(1u, program->line_leaf_ranges()[1].line_count);
++}
++
++TEST(VeloceRenderProgramTest, BuildsIndependentLeavesAcrossDenseBarriers) {
++  VeloceRenderProgramBuilder builder;
++  for (size_t i = 0; i < 130u; ++i) {
++    builder.AppendPageObject(
++        *MakeOpaqueLine(static_cast<float>(i), static_cast<float>(i + 1u)));
++    if (i + 1u < 130u) {
++      auto fill_barrier = MakeOpaqueLine(1000.0f + static_cast<float>(i),
++                                         1001.0f + static_cast<float>(i));
++      fill_barrier->set_alternate_filltype();
++      builder.AppendPageObject(*fill_barrier);
++    }
++  }
++
++  std::unique_ptr<const VeloceRenderProgram> program = builder.Finish();
++
++  ASSERT_TRUE(program);
++  ASSERT_EQ(130u, program->native_runs().size());
++  ASSERT_EQ(130u, program->line_leaf_ranges().size());
++  EXPECT_EQ(3u, program->line_coarse_ranges().size());
++  for (size_t i = 0; i < program->line_leaf_ranges().size(); ++i) {
++    const VeloceLineLeafRange& leaf = program->line_leaf_ranges()[i];
++    EXPECT_EQ(i, leaf.first_line);
++    EXPECT_EQ(i * 2u, leaf.first_command);
++    EXPECT_EQ(1u, leaf.command_count);
++    EXPECT_EQ(1u, leaf.line_count);
++  }
+ }
+ 
+ }  // namespace
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 91c867006..c9254b147 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -346,6 +346,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+   size_t native_darken_draws = 0;
+   size_t native_darken_fallbacks = 0;
+   size_t native_leaf_culled = 0;
++  size_t leaf_ranges_skipped = 0;
+   size_t native_path_bounds_culled = 0;
+   size_t native_object_lookups = 0;
+   size_t visibility_run_checks = 0;
+@@ -357,6 +358,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+   size_t line_batch_dispatches = 0;
+   size_t line_batch_fallbacks = 0;
+   size_t max_line_batch = 0;
++  size_t replay_work_units = 0;
+   uint32_t native_line_index = 0;
+   uint32_t native_path_index = 0;
+   size_t leaf_index = 0;
+@@ -439,7 +441,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0104 event=replay mode=sparse_owned_sidecar "
++        "revision=r25-3-0105 event=replay mode=ordered_sparse_cursor "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
+         "nativeLines=%zu nativePaths=%zu "
+         "clipRuns=%zu canonicalDraws=%zu nativeDraws=%zu pathDraws=%zu "
+@@ -447,18 +449,20 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+         "blocksSkipped=%zu sourceEpochCurrent=1 "
+         "lineBatchCommands=%zu lineBatchDispatches=%zu "
+         "lineBatchFallbacks=%zu maxLineBatch=%zu "
+-        "leafCulled=%zu pathBoundsCulled=%zu "
++        "leafCulled=%zu leafRangesSkipped=%zu pathBoundsCulled=%zu "
+         "nativeObjectLookups=%zu visibilityRunChecks=%zu "
+-        "darkenContextDirect=%d cancelChecks=%zu replayUs=%llu",
++        "darkenContextDirect=%d replayWorkUnits=%zu cancelChecks=%zu "
++        "replayUs=%llu",
+         result, command_count, commands_skipped, program->native_line_count(),
+         program->native_stroke_path_count(), program->clip_runs().size(),
+         canonical_draws, native_draws, native_path_draws,
+         native_darken_draws, native_darken_fallbacks, blocks_tested,
+         blocks_skipped,
+         line_batch_commands, line_batch_dispatches, line_batch_fallbacks,
+-        max_line_batch, native_leaf_culled, native_path_bounds_culled,
++        max_line_batch, native_leaf_culled, leaf_ranges_skipped,
++        native_path_bounds_culled,
+         native_object_lookups, visibility_run_checks,
+-        can_direct_darken ? 1 : 0, cancellation_checks,
++        can_direct_darken ? 1 : 0, replay_work_units, cancellation_checks,
+         static_cast<unsigned long long>(replay_micros));
+ #else
+     static_cast<void>(result);
+@@ -470,6 +474,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     static_cast<void>(native_darken_draws);
+     static_cast<void>(native_darken_fallbacks);
+     static_cast<void>(native_leaf_culled);
++    static_cast<void>(leaf_ranges_skipped);
+     static_cast<void>(native_path_bounds_culled);
+     static_cast<void>(native_object_lookups);
+     static_cast<void>(visibility_run_checks);
+@@ -482,6 +487,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     static_cast<void>(line_batch_dispatches);
+     static_cast<void>(line_batch_fallbacks);
+     static_cast<void>(max_line_batch);
++    static_cast<void>(replay_work_units);
+ #endif
+   };
+ 
+@@ -493,6 +499,33 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+                    native_runs[native_run_index].command_count) {
+       ++native_run_index;
+     }
++
++    while (leaf_index < leaves.size() && native_line_index >= leaf_limit) {
++      CHECK_EQ(native_line_index, leaf_limit);
++      ++leaf_index;
++      if (leaf_index < leaves.size()) {
++        CHECK_EQ(leaves[leaf_index].first_line, native_line_index);
++        leaf_limit = leaves[leaf_index].first_line +
++                     leaves[leaf_index].line_count;
++        leaf_intersects =
++            (leaves[leaf_index].flags & kVeloceLineRangeUnbounded) != 0u ||
++            VeloceRectsIntersect(leaves[leaf_index].bounds, holder_clip);
++      }
++    }
++    while (block_index < command_blocks.size() &&
++           command_index >= command_blocks[block_index].first_command +
++                                command_blocks[block_index].command_count) {
++      ++block_index;
++    }
++
++    if ((replay_work_units++ & 63u) == 0u) {
++      ++cancellation_checks;
++      if (ShouldCancelRender()) {
++        stopped_ = true;
++        log_result("cancelled");
++        return true;
++      }
++    }
+     if (leaf_index < leaves.size() &&
+         native_line_index == leaves[leaf_index].first_line &&
+         command_index == leaves[leaf_index].first_command &&
+@@ -502,24 +535,11 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+         log_result("cancelled");
+         return true;
+       }
+-      ++cancellation_checks;
+-      if (ShouldCancelRender()) {
+-        stopped_ = true;
+-        log_result("cancelled");
+-        return true;
+-      }
+       native_line_index += leaves[leaf_index].line_count;
+       native_leaf_culled += leaves[leaf_index].line_count;
++      ++leaf_ranges_skipped;
+       commands_skipped += leaves[leaf_index].command_count;
+       command_index += leaves[leaf_index].command_count;
+-      ++leaf_index;
+-      if (leaf_index < leaves.size()) {
+-        leaf_limit = leaves[leaf_index].first_line +
+-                     leaves[leaf_index].line_count;
+-        leaf_intersects =
+-            (leaves[leaf_index].flags & kVeloceLineRangeUnbounded) != 0u ||
+-            VeloceRectsIntersect(leaves[leaf_index].bounds, holder_clip);
+-      }
+       native_clip_ready = false;
+       continue;
+     }
+@@ -529,12 +549,6 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+       ++blocks_tested;
+       if ((block.flags & kVeloceCommandBlockUnbounded) == 0u &&
+           !VeloceRectsIntersect(block.bounds, holder_clip)) {
+-        ++cancellation_checks;
+-        if (ShouldCancelRender()) {
+-          stopped_ = true;
+-          log_result("cancelled");
+-          return true;
+-        }
+         native_line_index += block.native_line_count;
+         native_path_index += block.native_path_count;
+         commands_skipped += block.command_count;
+@@ -546,14 +560,6 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     }
+ 
+     ++command_count;
+-    if ((command_index & 63u) == 0u) {
+-      ++cancellation_checks;
+-      if (ShouldCancelRender()) {
+-        stopped_ = true;
+-        log_result("cancelled");
+-        return true;
+-      }
+-    }
+ 
+     const bool has_native_command =
+         native_run_index < native_runs.size() &&
+@@ -601,16 +607,9 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     const VeloceNativeStrokePath* native_path = nullptr;
+     if (is_native_line) {
+       CHECK_LT(native_line_index, program->native_line_count());
+-      while (native_line_index >= leaf_limit) {
+-        ++leaf_index;
+-        CHECK_LT(leaf_index, leaves.size());
+-        CHECK_EQ(leaves[leaf_index].first_line, leaf_limit);
+-        leaf_limit = leaves[leaf_index].first_line +
+-                     leaves[leaf_index].line_count;
+-        leaf_intersects =
+-            (leaves[leaf_index].flags & kVeloceLineRangeUnbounded) != 0u ||
+-            VeloceRectsIntersect(leaves[leaf_index].bounds, holder_clip);
+-      }
++      CHECK_LT(leaf_index, leaves.size());
++      CHECK_GE(native_line_index, leaves[leaf_index].first_line);
++      CHECK_LT(native_line_index, leaf_limit);
+       line = &program->native_line(native_line_index++);
+     } else {
+       CHECK_LT(native_path_index, program->native_stroke_path_count());
+@@ -802,6 +801,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+   }
+   CHECK_EQ(native_line_index, program->native_line_count());
+   CHECK_EQ(native_path_index, program->native_stroke_path_count());
++  CHECK_EQ(command_count + commands_skipped, program->command_count());
++  CHECK_GE(commands_skipped, native_leaf_culled);
+   if (ShouldCancelRender()) {
+     stopped_ = true;
+     log_result("cancelled");

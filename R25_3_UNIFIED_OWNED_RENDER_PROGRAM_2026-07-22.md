@@ -124,23 +124,134 @@ time; counters alone are not evidence of improvement.
 
 ## Remaining Cost, In Order
 
-0104 removes dense shadow metadata and avoids retaining anything for
-canonical-only holders. It does not lower Q16's canonical fill objects or
-eliminate the raster work for millions of visible lines.
+### 0104 Device Baseline
 
-1. **r25-3-0105: exact owned fill opcode.** Own simple solid fill geometry,
-   fill rule, color, matrix, clip, and visibility under fail-closed predicates.
-   Execute it at its source ordinal; never cross a painter-order barrier.
-2. **r25-3-0106: ordered AGG operation executor.** Send bounded consecutive
-   owned operations to one device executor while preserving operation raster
-   and composite order. Reuse AGG state and scratch across stroke/fill
-   boundaries without merging PDF objects.
-3. **r25-3-0107: holder-space hierarchy over all owned operations.** Extend
-   conservative blocks/leaves to exact fills and paths. Query visible tiles
-   without candidate allocation; unknown bounds stay visible.
+The 2026-07-22 device logs establish three different costs:
 
-These extend the same sidecar and executor. They do not add a page classifier,
-Kotlin preprocessing pass, second bitmap owner, or alternate renderer.
+- MedicineStudyNotes emits no `VeloceRenderProgram2` compile or replay event.
+  Canonical preview rendering averages 31 ms and reaches the first tile in
+  772 ms. This confirms that canonical-only holders do not retain or replay a
+  sidecar.
+- Q16 retains 94,664,340 bytes, including 195,219 line leaves and an
+  8,540,160-byte range index. The parse/lowering window is 9,973 ms; this
+  counter includes page parsing and is not a sidecar-only CPU measurement.
+  Full preview replay takes 4,413 ms and issues 167,337 line-batch dispatches.
+- Q16 sparse tiles identify roughly 2.94 million culled lines but still visit
+  roughly 3.16 million source ordinals and perform roughly 50,000 cancellation
+  checks. One poorly culled tile draws 2,744,723 lines and takes 5,872 ms,
+  delaying following visible work by more than six seconds.
+- 11.pdf retains 3,406,896 bytes, compiles during a 221 ms parse/lowering
+  window, reaches the first tile in 709 ms, and renders regions in 12-135 ms.
+  Direct Darken execution is active with zero Darken fallback. Its remaining
+  delay is request backlog: 360 tile admissions, 18 renders, queue depth 10,
+  and queue wait up to 916 ms.
+
+The Q16 sparse-tile counters expose a cursor contract bug. After a canonical
+gap, replay reaches the next line leaf before advancing the exhausted leaf
+cursor. The first line therefore enters the per-command path and the whole-leaf
+fast-forward opportunity is lost. The index identifies invisible work but the
+executor still walks it. This must be corrected before adding another index.
+
+### Locked Native Revisions
+
+1. **r25-3-0105: ordered sparse-cursor fast-forward.** Normalize native-run,
+   line-leaf, and path-block cursors before dispatching an ordinal. Jump a
+   nonintersecting contiguous leaf or block once, advance source and owned-data
+   cursors together, and check cancellation on a bounded replay-work cadence
+   rather than source-ordinal modulus. Add barrier-dense tests in which every
+   line leaf is separated by a canonical object. This changes traversal only;
+   it adds no allocation, cache, opcode, or pixel path.
+
+   Acceptance for completed sparse Q16 tiles:
+
+   ```text
+   commandsVisited + commandsSkipped == commands
+   commandsSkipped >= leafCulled
+   commandsVisited ~= canonical ordinals + visible native ordinals
+   cancelChecks scales with visited work and jumps, not 3.16M source objects
+   ```
+
+   The initial full-page preview is not expected to improve materially because
+   all page geometry is visible there.
+
+   **Implementation status (2026-07-22):** implemented in
+   `0105-veloce-render-program-ordered-sparse-cursor.patch`, with the
+   revision-first `r25-3-0105 ordered sparse cursor` build workflow. The patch
+   applies cleanly after 0104 and changes traversal only. Device acceptance is
+   pending. In the replay log, `leafRangesSkipped` must become nonzero for
+   sparse Q16 tiles, `commandsSkipped` must cover `leafCulled`, and
+   `replayWorkUnits`/`cancelChecks` must stop scaling with all 3.16 million
+   source ordinals.
+
+2. **r25-3-0106: complete ordered native operation executor.** Add the exact
+   owned solid-fill opcode and the bounded mixed stroke/fill AGG executor as one
+   change. Lower fill-only paths only when geometry, winding/even-odd rule,
+   color, alpha, blend, matrix, clip, and optional-content semantics map exactly
+   to the existing PDFium render device. Fill-and-stroke objects and unsupported
+   transparency remain canonical at the same ordinal. Reuse owned path/state
+   tables; do not introduce a fill-specific page route or scratch bitmap.
+
+   Execute consecutive exact lines, strokes, and fills through one fixed-
+   capacity mixed-operation packet. Preserve every operation's rasterization
+   and composite order while reusing graph state, clip state, rasterizer
+   storage, and device scratch. Cancellation occurs between bounded packets.
+   The packet is stack-bounded and cannot cross a canonical ordinal.
+
+   Acceptance for Q16 requires the current 220,968 `rejectPaint` objects to
+   become exact native fills when their semantics satisfy the predicates,
+   canonical draws to fall accordingly, and canonical/native pixel comparison
+   to remain exact across preview and tiles. Full preview must substantially
+   reduce the current 167,337 render-status/device dispatches and `replayUs`.
+   11.pdf region latency and normal canonical pages must not regress.
+
+3. **r25-3-0107: compact spatial ordinal program.** Compact exact line storage
+   and add the painter-order spatial ordinal index together, because the index
+   cannot fit responsibly while Q16 already retains 94,664,340 bytes. Move
+   state, clip, visibility, and matrix-mode identity from each line into exact
+   homogeneous line runs. Keep full-precision geometry and translations; use
+   separate exact record forms for translation-only and general affine lines.
+   Do not quantize drawing coordinates. The representation remains selected per
+   operation, not per page.
+
+   Build a bounded holder-space hierarchy independent of source locality using
+   conservative bounds. A render-local reusable candidate bitmap marks visible
+   owned ordinals; replay consumes set bits in source order. Unknown bounds fail
+   open. The index cannot reorder operations, cross canonical gaps, or allocate
+   per candidate.
+
+   Q16 retained bytes must move materially away from the 96 MiB ceiling before
+   the spatial index is admitted. Construction remains single-pass and bounded.
+   Acceptance requires candidate and visited work to track visible geometry, a
+   greater-than-50% reduction for the recorded 5,872 ms worst region, bounded
+   combined sidecar/scratch memory, and exact canonical pixel comparison.
+
+0105 remains separate because it repairs an already-shipped traversal invariant
+without changing the pixel path. Combining that correction with new fill
+semantics would make a correctness failure impossible to attribute. The former
+0106/0107 work shares one executor and is merged into 0106; the former
+0108/0109 work shares one memory budget and is merged into 0107.
+
+Each revision must ship a real behavioral change plus the counters needed to
+prove it. Telemetry-only builds are not part of this sequence. A revision does
+not advance until its patch applies cleanly, unit tests build, normal-page pixel
+tests pass, and its stated device counter moves in the expected direction.
+
+### Separate Android Scheduling Patch
+
+Native executor work and viewport admission remain separate concerns. After
+0105 establishes predictable native tile cost, the Android layer will use one
+immutable viewport generation to admit only current visible tiles, prioritize
+the anchor/zoom-center region, replace queued obsolete generations, and cancel
+obsolete running native work at existing cancellation boundaries. It will not
+clear valid prior-scale coverage before replacement tiles arrive.
+
+The scheduling proof is lower admitted work, bounded queue depth, and removal
+of the 11.pdf 916 ms queue wait. It must not change PDFium opcodes, page
+classification, bitmap ownership, or canonical/native pixel semantics.
+
+These revisions extend the same sidecar and executor. They do not add a page
+classifier, Kotlin preprocessing pass, second bitmap owner, or alternate
+renderer.
 
 ## Invariants
 
