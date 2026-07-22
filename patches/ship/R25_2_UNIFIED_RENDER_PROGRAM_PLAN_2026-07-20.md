@@ -2,7 +2,7 @@
 
 Date: 2026-07-20
 Updated: 2026-07-22 (Asia/Taipei)
-Current revision: `r25-2-0101`
+Current revision: `r25-2-0102`
 
 ## Decision
 
@@ -146,6 +146,7 @@ scheduler, second bitmap, or UI-thread compilation.
 | `r25-2-0099` | Format-7 conservative 256-command block index, exact side-stream jumps, attached-object mutation epoch, and clip-aware direct Darken coverage | Off-tile ordered ranges avoid object work; supported opaque stroke-only Darken objects avoid temporary BGRA buffers; all unsupported or stale cases remain canonical |
 | `r25-2-0100` | Fixed 256-line ordered AGG packets and opaque-backdrop proof for outer non-isolated Darken | Lines retain independent raster/composite semantics while sharing setup; proven outer-group Darken avoids per-object temporary bitmaps; rejection remains canonical before pixels |
 | `r25-2-0101` | Allocation-preserving AGG `path_storage` reset required by 0100 packets | Build correction only; the 0100 executor and pixel semantics are unchanged |
+| `r25-2-0102` | Exact generation-1 workflow exclusion guard and aligned Android markers | Verification correction only; format, executor, memory, and pixel semantics are unchanged |
 
 Revision numbers remain globally monotonic. Failed or superseded revisions are
 not renamed, deleted, amended after push, or reused.
@@ -482,6 +483,22 @@ vertex zero. This is constant-time, allocation-free, and matches the existing
 AGG container meaning of `remove_all()`. The RenderProgram format, packet
 boundaries, rasterization order, compositing, memory ceiling, and fallback
 rules do not change. Compile/discard/replay markers advance to 0101.
+
+## 0102 Verification Correction
+
+0101 completed the C++ build and all public API symbol checks. Its workflow
+then failed because the generation-1 exclusion guard searched for the generic
+substring `direct_darken`, which also matched the valid generation-2 local
+identifier `direct_darken_context`. This was a verification false positive,
+not a compiler or renderer failure.
+
+0102 keeps the exclusion invariant but names the actual generation-1 surface:
+`VeloceUnifiedRender`, `direct_darken_commands`,
+`direct_darken_dispatches`, `direct_darken_canonical`,
+`path_packet_commands`, and `candidate_linear_replay`. New generation-1 code
+still fails the build, while unrelated implementation identifiers do not.
+Compile/discard/replay markers advance to 0102. No RenderProgram format,
+execution, memory, fallback, or pixel behavior changes.
 
 ## Proof Gates
 

@@ -130,6 +130,7 @@ these patches:
 | r25-2-0099 | `0099-veloce-render-program-ordered-block-skip-and-darken-spans.patch` | Advances to format 7 and combines two independent measured gains. Conservative 256-command holder-space blocks skip complete off-tile ordered ranges by advancing exact native side-stream counts; unknown bounds, stop-object requests, and attached-object mutation-epoch drift fail open. Opaque stroke-only Darken commands own geometry/state/clip data and send each object's AGG coverage directly to PDFium's existing Darken compositor, eliminating the temporary BGRA object bitmap and second pixel pass without merging objects. Unsupported groups, destinations, live semantics, or transparency fall back canonically at the same ordinal before mutation. The 4096-command ordinary-page prefix and 96 MiB retained cap remain unchanged. |
 | r25-2-0100 | `0100-veloce-render-program-ordered-line-batches-proven-outer-darken.patch` | Removes three costs measured in the 0099 device logs. An exact previous-state hot entry avoids repeated hashing/table probes in uniform CAD streams. Consecutive exact-state lines enter fixed 256-entry stack packets; AGG validates before pixels, then rasterizes and composites each line independently in order while reusing renderer, scanline, path-storage, and rasterizer setup. Unsupported drivers replay the same holder ordinals canonically. Outer non-isolated Darken enters direct coverage only after one allocation-free clip scan proves an opaque destination; transparent, isolated, nested, printer, Type-3, live-state drift, and unsupported-device cases remain canonical. Program format, memory ceiling, scheduling, JNI/Kotlin policy, and pixel ownership are unchanged. |
 | r25-2-0101 | `0101-veloce-render-program-reusable-agg-path-reset.patch` | Build correction for 0100, whose workflow failed because this PDFium AGG fork does not expose `path_storage::remove_all()`. Adds that primitive by resetting only logical vertex and iterator state while retaining allocated coordinate/command blocks, preserving the bounded packet's scratch-reuse performance. Advances Android revision markers only; program format and pixel semantics are unchanged. |
+| r25-2-0102 | `0102-veloce-render-program-verification-safe-revision-markers.patch` | Verification correction after 0101 compiled successfully but its workflow rejected the valid generation-2 local name `direct_darken_context` through a broad substring match. The 0102 workflow rejects exact generation-1 interfaces and metric identifiers instead. This patch advances Android markers only; format, execution, memory, and pixel behavior are unchanged. |
 
 ## Why this directory exists
 
@@ -142,8 +143,8 @@ subset.
 ## How to apply
 
 The patch directory contains historical branches and must not be applied by
-blind numeric globbing. For `r25-2-0101`, apply the r25 rendering base through
-0031, then only 0051, 0075, 0076, and 0092 through 0101:
+blind numeric globbing. For `r25-2-0102`, apply the r25 rendering base through
+0031, then only 0051, 0075, 0076, and 0092 through 0102:
 
 ```bash
 git apply patches/ship/01-jpeg-downscale-on-decode.patch
@@ -161,10 +162,11 @@ git apply patches/ship/0098-veloce-render-program-owned-clipped-stroke-paths.pat
 git apply patches/ship/0099-veloce-render-program-ordered-block-skip-and-darken-spans.patch
 git apply patches/ship/0100-veloce-render-program-ordered-line-batches-proven-outer-darken.patch
 git apply patches/ship/0101-veloce-render-program-reusable-agg-path-reset.patch
+git apply patches/ship/0102-veloce-render-program-verification-safe-revision-markers.patch
 ```
 
 Do not apply `0053..0074`, `0077..0091`, or an invented 0084 to an
-`r25-2-0101` build. The machine-checked list lives in the 0101 workflow.
+`r25-2-0102` build. The machine-checked list lives in the 0102 workflow.
 
 For the historical `r25-1-0091` build, apply the r25 rendering base through
 0031, then only 0051, 0075, 0076, 0079..0083, and 0085..0091:
