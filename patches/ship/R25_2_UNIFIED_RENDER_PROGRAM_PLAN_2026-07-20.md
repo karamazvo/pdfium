@@ -1,8 +1,8 @@
 # r25-2 Unified RenderProgram Plan
 
 Date: 2026-07-20
-Updated: 2026-07-21 (Asia/Taipei)
-Current revision: `r25-2-0100`
+Updated: 2026-07-22 (Asia/Taipei)
+Current revision: `r25-2-0101`
 
 ## Decision
 
@@ -145,6 +145,7 @@ scheduler, second bitmap, or UI-thread compilation.
 | `r25-2-0098` | Format-6 owned multi-segment stroke geometry, exact retained PDFium clip runs, bounded path-point storage | Exact supported normal-blend stroke paths and lines with arbitrary PDFium clip paths; unsupported semantics remain canonical |
 | `r25-2-0099` | Format-7 conservative 256-command block index, exact side-stream jumps, attached-object mutation epoch, and clip-aware direct Darken coverage | Off-tile ordered ranges avoid object work; supported opaque stroke-only Darken objects avoid temporary BGRA buffers; all unsupported or stale cases remain canonical |
 | `r25-2-0100` | Fixed 256-line ordered AGG packets and opaque-backdrop proof for outer non-isolated Darken | Lines retain independent raster/composite semantics while sharing setup; proven outer-group Darken avoids per-object temporary bitmaps; rejection remains canonical before pixels |
+| `r25-2-0101` | Allocation-preserving AGG `path_storage` reset required by 0100 packets | Build correction only; the 0100 executor and pixel semantics are unchanged |
 
 Revision numbers remain globally monotonic. Failed or superseded revisions are
 not renamed, deleted, amended after push, or reused.
@@ -465,6 +466,22 @@ Device acceptance requires real dispatch, not just compilation:
   equals `nativeDarkenPaths` on the normal opaque Android page target;
 - normal and transparent-output corpus pages remain pixel-identical to the
   canonical baseline.
+
+## 0101 Build Correction
+
+0100 produced no artifact. Its Android build failed because PDFium's bundled
+AGG 2.3 `path_storage` does not provide the `remove_all()` method available on
+other AGG containers. Reconstructing `path_storage` for every line would have
+compiled but restored the repeated allocation/setup cost the packet executor
+is intended to remove.
+
+0101 adds the missing operation to the owning AGG type. It resets
+`m_total_vertices` and `m_iterator` while retaining the already allocated
+coordinate and command blocks. Subsequent lines overwrite those blocks from
+vertex zero. This is constant-time, allocation-free, and matches the existing
+AGG container meaning of `remove_all()`. The RenderProgram format, packet
+boundaries, rasterization order, compositing, memory ceiling, and fallback
+rules do not change. Compile/discard/replay markers advance to 0101.
 
 ## Proof Gates
 

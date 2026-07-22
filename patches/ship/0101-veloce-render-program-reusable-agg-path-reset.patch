@@ -1,0 +1,67 @@
+From b043ae3debbb74223c981e442ea7ca60aadba63a Mon Sep 17 00:00:00 2001
+From: "sh.chao" <sh.chao@gmail.com>
+Date: Wed, 22 Jul 2026 10:49:55 +0800
+Subject: [PATCH] Veloce r25-2-0101: add reusable AGG path reset
+
+Fix the r25-2-0100 Android compile failure without replacing the bounded line packet or reintroducing per-line path allocation.
+
+Expose path_storage::remove_all() in the bundled AGG fork. The operation retains allocated coordinate and command blocks while resetting only the logical vertex count and iterator, matching the packet executor's bounded scratch-reuse contract.
+
+Advance compile, discard, and replay revision markers to r25-2-0101. Pixel semantics and the generation-2 program format are unchanged.
+---
+ core/fpdfapi/page/veloce_render_program.cpp | 4 ++--
+ core/fpdfapi/render/cpdf_renderstatus.cpp   | 2 +-
+ third_party/agg23/agg_path_storage.h        | 5 +++++
+ 3 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index d7206d2a9..10d417a76 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -843,7 +843,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-2-0100 event=discard reason=actual_budget bytes=%zu "
++        "revision=r25-2-0101 event=discard reason=actual_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -853,7 +853,7 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->command_count() >= 4096u) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-2-0100 event=compile mode=ordered_line_batches_darken "
++        "revision=r25-2-0101 event=compile mode=ordered_line_batches_darken "
+         "commands=%zu "
+         "nativeOpaqueLines=%zu nativeOpaquePaths=%zu nativeDarkenPaths=%zu "
+         "canonicalPaths=%zu "
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 101fcc285..dab2bf3c0 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -475,7 +475,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-2-0100 event=replay mode=ordered_line_batches_darken "
++        "revision=r25-2-0101 event=replay mode=ordered_line_batches_darken "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
+         "nativeLines=%zu nativePaths=%zu "
+         "clipRuns=%zu canonicalDraws=%zu nativeDraws=%zu pathDraws=%zu "
+diff --git a/third_party/agg23/agg_path_storage.h b/third_party/agg23/agg_path_storage.h
+index 82148061a..1ea68b808 100644
+--- a/third_party/agg23/agg_path_storage.h
++++ b/third_party/agg23/agg_path_storage.h
+@@ -92,6 +92,11 @@ public:
+     {
+         return m_cmd_blocks[idx >> block_shift][idx & block_mask];
+     }
++    void remove_all()
++    {
++        m_total_vertices = 0;
++        m_iterator = 0;
++    }
+     unsigned getflag(unsigned idx) const
+     {
+         return m_cmd_blocks[idx >> block_shift][idx & block_mask] & path_flags_jr;
