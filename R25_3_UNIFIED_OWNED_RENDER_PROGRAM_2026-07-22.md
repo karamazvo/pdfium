@@ -204,6 +204,29 @@ executor still walks it. This must be corrected before adding another index.
    reduce the current 167,337 render-status/device dispatches and `replayUs`.
    11.pdf region latency and normal canonical pages must not regress.
 
+   **Implementation status (2026-07-23):** implemented as
+   `0106-veloce-render-program-ordered-mixed-fill-executor.patch`. The exact
+   fill representation is memory-proportional to semantic diversity rather
+   than object count: bitwise-identical geometry is interned once, while each
+   source fill owns a 16-byte color/rule/transform instance. Mixed holder-space
+   leaves contain consecutive exact lines and fills, so fill lowering removes
+   the former leaf-per-barrier index explosion instead of adding a second
+   index. The retained sidecar remains capped at 96 MiB.
+
+   Replay submits a fixed 256-entry stack packet to the PDFium render device.
+   AGG validates the complete packet before its first pixel, then rasterizes
+   and composites every operation independently in source order while reusing
+   path storage, rasterizer, scanline, clip, and paint setup. A canonical
+   ordinal, clip/visibility/state change, unsupported forced-color behavior,
+   unavailable matrix, or driver rejection is a hard ordered boundary and
+   falls back before that ordinal's first pixel. No filename, page class,
+   scratch bitmap, or Kotlin route is introduced.
+
+   Build proof must show format version 10, `nativeOpaqueFills` near the former
+   Q16 `rejectPaint` count, a small `fillGeometries` count, materially fewer
+   `leafRanges` and `lineBatchDispatches`, retained bytes below 100,663,296,
+   and exact canonical-vs-mixed pixel tests. Device acceptance remains pending.
+
 3. **r25-3-0107: compact spatial ordinal program.** Compact exact line storage
    and add the painter-order spatial ordinal index together, because the index
    cannot fit responsibly while Q16 already retains 94,664,340 bytes. Move
