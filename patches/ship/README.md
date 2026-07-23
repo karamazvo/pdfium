@@ -136,6 +136,7 @@ these patches:
 | r25-3-0105 | `0105-veloce-render-program-ordered-sparse-cursor.patch` | Repairs source/run/index cursor normalization so an off-tile exact leaf or path block is skipped once even after canonical barriers. Cancellation cadence follows visited work and jumps rather than every source ordinal. Pixel operations are unchanged. |
 | r25-3-0106 | `0106-veloce-render-program-ordered-mixed-fill-executor.patch` | Adds exact owned opaque fill lowering with interned geometry and 16-byte source-ordered instances. A fixed 256-entry mixed line/fill packet reuses PDFium AGG scratch while rasterizing and compositing every operation independently in painter order. Unsupported fill-and-stroke, forced color, transparency, matrix, clip, visibility, and driver cases remain canonical at the same ordinal. |
 | r25-3-0107 | `0107-veloce-render-program-compact-spatial-ordinal-program.patch` | Replaces duplicated per-line state/matrix fields and the source-local leaf/coarse index with 24-byte line records, 12-byte homogeneous state/matrix runs, and one bounded 32x32 holder-space command-ordinal index for exact lines/fills. A render-status-local reusable bitset selects candidates; replay consumes them in source order and jumps only inside the current native run. Unknown/broad bounds, index overflow, memory pressure, and full-page clips fail open to full ordered replay. |
+| r25-3-0108 | `0108-veloce-render-program-persistent-agg-ordered-context.patch` | Replaces per-packet AGG scratch construction with one explicitly owned render-local ordered-path context. The existing fixed 256-entry packets, source order, independent per-operation raster/composite behavior, clip/state boundaries, and cancellation cadence are unchanged. AGG reuses only logical scratch capacity across packets; unsupported, null, or foreign contexts return before packet pixels so canonical fallback remains valid. |
 
 ## Why this directory exists
 
@@ -148,8 +149,8 @@ subset.
 ## How to apply
 
 The patch directory contains historical branches and must not be applied by
-blind numeric globbing. For `r25-3-0107`, apply the r25 rendering base through
-0031, then only 0051, 0075, 0076, and 0092 through 0107:
+blind numeric globbing. For `r25-3-0108`, apply the r25 rendering base through
+0031, then only 0051, 0075, 0076, and 0092 through 0108:
 
 ```bash
 git apply patches/ship/01-jpeg-downscale-on-decode.patch
@@ -173,10 +174,11 @@ git apply patches/ship/0104-veloce-render-program-sparse-exact-sidecar.patch
 git apply patches/ship/0105-veloce-render-program-ordered-sparse-cursor.patch
 git apply patches/ship/0106-veloce-render-program-ordered-mixed-fill-executor.patch
 git apply patches/ship/0107-veloce-render-program-compact-spatial-ordinal-program.patch
+git apply patches/ship/0108-veloce-render-program-persistent-agg-ordered-context.patch
 ```
 
 Do not apply `0053..0074`, `0077..0091`, or an invented 0084 to an
-`r25-3-0107` build. The machine-checked list lives in the 0107 workflow.
+`r25-3-0108` build. The machine-checked list lives in the 0108 workflow.
 
 For the historical `r25-1-0091` build, apply the r25 rendering base through
 0031, then only 0051, 0075, 0076, 0079..0083, and 0085..0091:

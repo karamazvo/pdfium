@@ -1,0 +1,410 @@
+diff --git a/core/fpdfapi/page/veloce_render_program.cpp b/core/fpdfapi/page/veloce_render_program.cpp
+index 4c3f409..1a6fe3b 100644
+--- a/core/fpdfapi/page/veloce_render_program.cpp
++++ b/core/fpdfapi/page/veloce_render_program.cpp
+@@ -1484,7 +1484,7 @@ VeloceRenderProgramBuilder::Finish() {
+ #if BUILDFLAG(IS_ANDROID)
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0107 event=discard reason=invalid_or_budget bytes=%zu "
++        "revision=r25-3-0108 event=discard reason=invalid_or_budget bytes=%zu "
+         "budgetBytes=%zu",
+         program->EstimatedBytes(), kMaxRetainedProgramBytes);
+ #endif
+@@ -1494,7 +1494,7 @@ VeloceRenderProgramBuilder::Finish() {
+   if (program->has_native_commands()) {
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0107 event=compile "
++        "revision=r25-3-0108 event=compile "
+         "mode=compact_spatial_ordinal_program "
+         "commands=%zu "
+         "nativeOpaqueLines=%zu nativeOpaquePaths=%zu nativeDarkenPaths=%zu "
+diff --git a/core/fpdfapi/render/cpdf_renderstatus.cpp b/core/fpdfapi/render/cpdf_renderstatus.cpp
+index 8e16ffa..4147f90 100644
+--- a/core/fpdfapi/render/cpdf_renderstatus.cpp
++++ b/core/fpdfapi/render/cpdf_renderstatus.cpp
+@@ -416,6 +416,9 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+   std::array<CFX_OrderedPathDraw, kMaxLineBatch> line_batch;
+   std::array<uint32_t, kMaxLineBatch> line_batch_commands_by_ordinal;
+   size_t line_batch_count = 0u;
++  std::unique_ptr<RenderDeviceDriverIface::OrderedPathBatchContext>
++      ordered_path_context;
++  bool ordered_path_context_attempted = false;
+   bool direct_darken_context = !in_group_ && !transparency_.IsGroup();
+   if (!direct_darken_context && !in_group_ && transparency_.IsGroup() &&
+       !transparency_.IsIsolated() &&
+@@ -430,8 +433,13 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     if (line_batch_count == 0u) {
+       return true;
+     }
++    if (!ordered_path_context_attempted) {
++      ordered_path_context = device_->CreateOrderedPathBatchContext();
++      ordered_path_context_attempted = true;
++    }
+     const size_t flushed_count = line_batch_count;
+     if (device_->DrawOrderedPathBatch(
++            ordered_path_context.get(),
+             pdfium::span(line_batch).first(flushed_count),
+             &current_graph_state, current_stroke_argb,
+             current_fill_options)) {
+@@ -471,8 +479,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+             .count());
+     __android_log_print(
+         ANDROID_LOG_INFO, "VeloceRenderProgram2",
+-        "revision=r25-3-0107 event=replay "
+-        "mode=compact_spatial_ordinal_executor "
++        "revision=r25-3-0108 event=replay "
++        "mode=persistent_agg_ordered_executor "
+         "result=%s commandsVisited=%zu commandsSkipped=%zu "
+         "nativeLines=%zu nativePaths=%zu nativeFills=%zu "
+         "clipRuns=%zu canonicalDraws=%zu nativeDraws=%zu pathDraws=%zu "
+@@ -484,7 +492,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+         "spatialPostings=%u spatialCandidates=%u spatialCulled=%zu "
+         "pathBoundsCulled=%zu "
+         "nativeObjectLookups=%zu visibilityRunChecks=%zu "
+-        "darkenContextDirect=%d replayWorkUnits=%zu cancelChecks=%zu "
++        "orderedPathContext=%d darkenContextDirect=%d "
++        "replayWorkUnits=%zu cancelChecks=%zu "
+         "replayUs=%llu",
+         result, command_count, commands_skipped, program->native_line_count(),
+         program->native_stroke_path_count(), program->native_fill_path_count(),
+@@ -499,7 +508,8 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+         spatial_query.candidate_commands, spatial_commands_culled,
+         native_path_bounds_culled,
+         native_object_lookups, visibility_run_checks,
+-        can_direct_darken ? 1 : 0, replay_work_units, cancellation_checks,
++        ordered_path_context ? 1 : 0, can_direct_darken ? 1 : 0,
++        replay_work_units, cancellation_checks,
+         static_cast<unsigned long long>(replay_micros));
+ #else
+     static_cast<void>(result);
+@@ -519,6 +529,7 @@ bool CPDF_RenderStatus::ReplayVeloceProgram(
+     static_cast<void>(blocks_tested);
+     static_cast<void>(blocks_skipped);
+     static_cast<void>(commands_skipped);
++    static_cast<void>(ordered_path_context_attempted);
+     static_cast<void>(can_direct_darken);
+     static_cast<void>(line_batch_commands);
+     static_cast<void>(line_batch_dispatches);
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.cpp b/core/fxge/agg/cfx_agg_devicedriver.cpp
+index dd1fc09..5dad2a3 100644
+--- a/core/fxge/agg/cfx_agg_devicedriver.cpp
++++ b/core/fxge/agg/cfx_agg_devicedriver.cpp
+@@ -58,6 +58,22 @@ CFX_PointF HardClip(const CFX_PointF& pos) {
+                     std::clamp(pos.y, -kMaxPos, kMaxPos));
+ }
+
++class AggOrderedPathBatchContext final
++    : public RenderDeviceDriverIface::OrderedPathBatchContext {
++ public:
++  AggOrderedPathBatchContext(const RenderDeviceDriverIface* owner,
++                             int pixel_width,
++                             int pixel_height)
++      : OrderedPathBatchContext(owner) {
++    rasterizer.clip_box(0.0f, 0.0f, static_cast<float>(pixel_width),
++                        static_cast<float>(pixel_height));
++  }
++
++  agg::scanline_u8 scanline;
++  agg::path_storage path_data;
++  agg::rasterizer_scanline_aa rasterizer;
++};
++
+ template <typename T>
+ void DoAlphaMerge(T& pixel, int src_r, int src_g, int src_b, int src_alpha) {
+   pixel.red = AlphaMerge(pixel.red, src_r, src_alpha);
+@@ -1388,14 +1404,27 @@ bool CFX_AggDeviceDriver::DrawStrokeLineBatch(
+   return true;
+ }
+
++std::unique_ptr<RenderDeviceDriverIface::OrderedPathBatchContext>
++CFX_AggDeviceDriver::CreateOrderedPathBatchContext() {
++  if (bitmap_->GetBuffer().empty()) {
++    return nullptr;
++  }
++  return std::make_unique<AggOrderedPathBatchContext>(
++      this, GetPixelWidth(), GetPixelHeight());
++}
++
+ bool CFX_AggDeviceDriver::DrawOrderedPathBatch(
++    OrderedPathBatchContext* context,
+     pdfium::span<const CFX_OrderedPathDraw> draws,
+     const CFX_GraphStateData* stroke_state,
+     uint32_t stroke_color,
+     const CFX_FillRenderOptions& stroke_options) {
+-  if (draws.empty() || bitmap_->GetBuffer().empty()) {
++  if (draws.empty()) {
+     return true;
+   }
++  if (!context || !context->IsOwnedBy(this) || bitmap_->GetBuffer().empty()) {
++    return false;
++  }
+
+   bool has_line = false;
+   for (const CFX_OrderedPathDraw& draw : draws) {
+@@ -1434,39 +1463,43 @@ bool CFX_AggDeviceDriver::DrawOrderedPathBatch(
+
+   RetainPtr<CFX_DIBitmap> backdrop =
+       group_knockout_ ? backdrop_bitmap_ : nullptr;
+-  agg::scanline_u8 scanline;
+-  agg::path_storage path_data;
+-  agg::rasterizer_scanline_aa rasterizer;
+-  rasterizer.clip_box(0.0f, 0.0f, static_cast<float>(GetPixelWidth()),
+-                      static_cast<float>(GetPixelHeight()));
++  auto* agg_context = static_cast<AggOrderedPathBatchContext*>(context);
++  // A fresh rasterizer starts with nonzero fill. Restore that packet boundary
++  // state while retaining its allocated cell storage and clip box.
++  agg_context->rasterizer.filling_rule(agg::fill_non_zero);
+
+   for (const CFX_OrderedPathDraw& draw : draws) {
+-    path_data.remove_all();
+-    rasterizer.reset();
++    agg_context->path_data.remove_all();
++    agg_context->rasterizer.reset();
+     fill_options_ = draw.fill_options;
+     if (draw.path && draw.fill_options.fill_type !=
+                          CFX_FillRenderOptions::FillType::kNoFill) {
+-      BuildAggPathInto(*draw.path, &draw.object_to_device, &path_data);
+-      rasterizer.add_path(path_data);
+-      rasterizer.filling_rule(
++      BuildAggPathInto(*draw.path, &draw.object_to_device,
++                       &agg_context->path_data);
++      agg_context->rasterizer.add_path(agg_context->path_data);
++      agg_context->rasterizer.filling_rule(
+           GetAlternateOrWindingFillType(draw.fill_options));
+       CFX_AggRenderer renderer(bitmap_, nullptr, clip_rgn_.get(),
+                                draw.fill_color,
+                                draw.fill_options.full_cover, rgb_byte_order_);
+-      agg::render_scanlines(rasterizer, scanline, renderer,
++      agg::render_scanlines(agg_context->rasterizer, agg_context->scanline,
++                            renderer,
+                             draw.fill_options.aliased_path);
+       continue;
+     }
+
+     if (draw.fill_options.zero_area) {
+       if (draw.path) {
+-        BuildAggPathInto(*draw.path, &draw.object_to_device, &path_data);
++        BuildAggPathInto(*draw.path, &draw.object_to_device,
++                         &agg_context->path_data);
+       } else {
+         const CFX_StrokeLine line{draw.line_start, draw.line_end,
+                                   draw.object_to_device};
+-        BuildAggStrokeLine(line, &line.object_to_device, &path_data);
++        BuildAggStrokeLine(line, &line.object_to_device,
++                           &agg_context->path_data);
+       }
+-      RasterizeStroke(&rasterizer, &path_data, nullptr, stroke_state, 1,
++      RasterizeStroke(&agg_context->rasterizer, &agg_context->path_data,
++                      nullptr, stroke_state, 1,
+                       draw.fill_options.stroke_text_mode);
+     } else {
+       const CFX_Matrix& object_matrix = draw.object_to_device;
+@@ -1479,18 +1512,20 @@ bool CFX_AggDeviceDriver::DrawOrderedPathBatch(
+           object_matrix.c / matrix1.d, object_matrix.d / matrix1.d, 0, 0);
+       matrix1 = object_matrix * matrix2.GetInverse();
+       if (draw.path) {
+-        BuildAggPathInto(*draw.path, &matrix1, &path_data);
++        BuildAggPathInto(*draw.path, &matrix1, &agg_context->path_data);
+       } else {
+         const CFX_StrokeLine line{draw.line_start, draw.line_end,
+                                   draw.object_to_device};
+-        BuildAggStrokeLine(line, &matrix1, &path_data);
++        BuildAggStrokeLine(line, &matrix1, &agg_context->path_data);
+       }
+-      RasterizeStroke(&rasterizer, &path_data, &matrix2, stroke_state,
+-                      matrix1.a, draw.fill_options.stroke_text_mode);
++      RasterizeStroke(&agg_context->rasterizer, &agg_context->path_data,
++                      &matrix2, stroke_state, matrix1.a,
++                      draw.fill_options.stroke_text_mode);
+     }
+     CFX_AggRenderer renderer(bitmap_, backdrop, clip_rgn_.get(), stroke_color,
+                              draw.fill_options.full_cover, rgb_byte_order_);
+-    agg::render_scanlines(rasterizer, scanline, renderer,
++    agg::render_scanlines(agg_context->rasterizer, agg_context->scanline,
++                          renderer,
+                           draw.fill_options.aliased_path);
+   }
+   return true;
+diff --git a/core/fxge/agg/cfx_agg_devicedriver.h b/core/fxge/agg/cfx_agg_devicedriver.h
+index a7262e3..7808e5d 100644
+--- a/core/fxge/agg/cfx_agg_devicedriver.h
++++ b/core/fxge/agg/cfx_agg_devicedriver.h
+@@ -78,7 +78,10 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
+       const CFX_GraphStateData* pGraphState,
+       uint32_t stroke_color,
+       const CFX_FillRenderOptions& fill_options) override;
++  std::unique_ptr<OrderedPathBatchContext>
++  CreateOrderedPathBatchContext() override;
+   bool DrawOrderedPathBatch(
++      OrderedPathBatchContext* context,
+       pdfium::span<const CFX_OrderedPathDraw> draws,
+       const CFX_GraphStateData* stroke_state,
+       uint32_t stroke_color,
+diff --git a/core/fxge/cfx_defaultrenderdevice_unittest.cpp b/core/fxge/cfx_defaultrenderdevice_unittest.cpp
+index bb2fb44..121070a 100644
+--- a/core/fxge/cfx_defaultrenderdevice_unittest.cpp
++++ b/core/fxge/cfx_defaultrenderdevice_unittest.cpp
+@@ -116,12 +116,16 @@ TEST(CFXDefaultRenderDeviceTest, StrokeLineBatchMatchesOrderedDrawPath) {
+ TEST(CFXDefaultRenderDeviceTest, OrderedMixedPathBatchMatchesSourceOrder) {
+   CFX_DefaultRenderDevice baseline;
+   CFX_DefaultRenderDevice batched;
++  CFX_DefaultRenderDevice rejected;
+   ASSERT_TRUE(
+       baseline.Create(/*width=*/32, /*height=*/32, FXDIB_Format::kBgra));
+   ASSERT_TRUE(
+       batched.Create(/*width=*/32, /*height=*/32, FXDIB_Format::kBgra));
++  ASSERT_TRUE(
++      rejected.Create(/*width=*/32, /*height=*/32, FXDIB_Format::kBgra));
+   baseline.GetBitmap()->Clear(0xffffffff);
+   batched.GetBitmap()->Clear(0xffffffff);
++  rejected.GetBitmap()->Clear(0xffffffff);
+
+   constexpr uint32_t kStrokeColor = 0xff204080;
+   constexpr uint32_t kFillColor = 0xffe04020;
+@@ -148,6 +152,18 @@ TEST(CFXDefaultRenderDeviceTest, OrderedMixedPathBatchMatchesSourceOrder) {
+                           stroke_options},
+   };
+
++  auto context = batched.CreateOrderedPathBatchContext();
++  ASSERT_TRUE(context);
++  EXPECT_FALSE(rejected.DrawOrderedPathBatch(
++      /*context=*/nullptr, draws, &graphics_state, kStrokeColor,
++      stroke_options));
++  EXPECT_TRUE(std::ranges::equal(rejected.GetBitmap()->GetBuffer(),
++                                 batched.GetBitmap()->GetBuffer()));
++  EXPECT_FALSE(rejected.DrawOrderedPathBatch(
++      context.get(), draws, &graphics_state, kStrokeColor, stroke_options));
++  EXPECT_TRUE(std::ranges::equal(rejected.GetBitmap()->GetBuffer(),
++                                 batched.GetBitmap()->GetBuffer()));
++
+   for (const CFX_OrderedPathDraw& draw : draws) {
+     if (draw.path && draw.fill_options.fill_type !=
+                          CFX_FillRenderOptions::FillType::kNoFill) {
+@@ -167,7 +183,11 @@ TEST(CFXDefaultRenderDeviceTest, OrderedMixedPathBatchMatchesSourceOrder) {
+     }
+   }
+   ASSERT_TRUE(batched.DrawOrderedPathBatch(
+-      draws, &graphics_state, kStrokeColor, stroke_options));
++      context.get(), pdfium::span(draws).first(2u), &graphics_state,
++      kStrokeColor, stroke_options));
++  ASSERT_TRUE(batched.DrawOrderedPathBatch(
++      context.get(), pdfium::span(draws).subspan(2u), &graphics_state,
++      kStrokeColor, stroke_options));
+   EXPECT_TRUE(std::ranges::equal(baseline.GetBitmap()->GetBuffer(),
+                                  batched.GetBitmap()->GetBuffer()));
+ }
+diff --git a/core/fxge/cfx_renderdevice.cpp b/core/fxge/cfx_renderdevice.cpp
+index 2c291a1..1202bd7 100644
+--- a/core/fxge/cfx_renderdevice.cpp
++++ b/core/fxge/cfx_renderdevice.cpp
+@@ -821,7 +821,13 @@ bool CFX_RenderDevice::DrawStrokeLineBatch(
+                                               fill_options);
+ }
+
++std::unique_ptr<RenderDeviceDriverIface::OrderedPathBatchContext>
++CFX_RenderDevice::CreateOrderedPathBatchContext() {
++  return device_driver_->CreateOrderedPathBatchContext();
++}
++
+ bool CFX_RenderDevice::DrawOrderedPathBatch(
++    RenderDeviceDriverIface::OrderedPathBatchContext* context,
+     pdfium::span<const CFX_OrderedPathDraw> draws,
+     const CFX_GraphStateData* stroke_state,
+     uint32_t stroke_color,
+@@ -830,7 +836,7 @@ bool CFX_RenderDevice::DrawOrderedPathBatch(
+     return true;
+   }
+   return device_driver_->DrawOrderedPathBatch(
+-      draws, stroke_state, stroke_color, stroke_options);
++      context, draws, stroke_state, stroke_color, stroke_options);
+ }
+
+ // This can be removed once PDFium entirely relies on Skia
+diff --git a/core/fxge/cfx_renderdevice.h b/core/fxge/cfx_renderdevice.h
+index 34f36af..40dbac6 100644
+--- a/core/fxge/cfx_renderdevice.h
++++ b/core/fxge/cfx_renderdevice.h
+@@ -103,7 +103,10 @@ class CFX_RenderDevice {
+       const CFX_GraphStateData* pGraphState,
+       uint32_t stroke_color,
+       const CFX_FillRenderOptions& fill_options);
++  std::unique_ptr<RenderDeviceDriverIface::OrderedPathBatchContext>
++  CreateOrderedPathBatchContext();
+   bool DrawOrderedPathBatch(
++      RenderDeviceDriverIface::OrderedPathBatchContext* context,
+       pdfium::span<const CFX_OrderedPathDraw> draws,
+       const CFX_GraphStateData* stroke_state,
+       uint32_t stroke_color,
+diff --git a/core/fxge/renderdevicedriver_iface.cpp b/core/fxge/renderdevicedriver_iface.cpp
+index c806702..0c94784 100644
+--- a/core/fxge/renderdevicedriver_iface.cpp
++++ b/core/fxge/renderdevicedriver_iface.cpp
+@@ -13,6 +13,8 @@
+ #include "core/fxge/dib/cfx_dibitmap.h"
+
+ RenderDeviceDriverIface::~RenderDeviceDriverIface() = default;
++RenderDeviceDriverIface::OrderedPathBatchContext::~OrderedPathBatchContext() =
++    default;
+
+ bool RenderDeviceDriverIface::DrawPathWithBlend(
+     const CFX_Path&,
+@@ -33,7 +35,13 @@ bool RenderDeviceDriverIface::DrawStrokeLineBatch(
+   return false;
+ }
+
++std::unique_ptr<RenderDeviceDriverIface::OrderedPathBatchContext>
++RenderDeviceDriverIface::CreateOrderedPathBatchContext() {
++  return nullptr;
++}
++
+ bool RenderDeviceDriverIface::DrawOrderedPathBatch(
++    OrderedPathBatchContext*,
+     pdfium::span<const CFX_OrderedPathDraw>,
+     const CFX_GraphStateData*,
+     uint32_t,
+diff --git a/core/fxge/renderdevicedriver_iface.h b/core/fxge/renderdevicedriver_iface.h
+index 7dc18f7..a194997 100644
+--- a/core/fxge/renderdevicedriver_iface.h
++++ b/core/fxge/renderdevicedriver_iface.h
+@@ -61,6 +61,22 @@ enum class DeviceType : bool {
+
+ class RenderDeviceDriverIface {
+  public:
++  class OrderedPathBatchContext {
++   public:
++    virtual ~OrderedPathBatchContext();
++    bool IsOwnedBy(const RenderDeviceDriverIface* driver) const {
++      return owner_ == driver;
++    }
++
++   protected:
++    explicit OrderedPathBatchContext(
++        const RenderDeviceDriverIface* owner)
++        : owner_(owner) {}
++
++   private:
++    const RenderDeviceDriverIface* const owner_;
++  };
++
+   enum class Result {
+     kFailure,
+     kSuccess,
+@@ -139,7 +155,16 @@ class RenderDeviceDriverIface {
+       const CFX_GraphStateData* pGraphState,
+       uint32_t stroke_color,
+       const CFX_FillRenderOptions& fill_options);
++  // Creates render-local scratch for a sequence of ordered path packets.
++  // Returning null leaves the caller on canonical rendering. The context is
++  // owned by one synchronous render and must not be shared across threads.
++  virtual std::unique_ptr<OrderedPathBatchContext>
++  CreateOrderedPathBatchContext();
++  // `context` must come from this driver. Returning false must happen before
++  // changing a destination pixel for this packet, allowing ordered canonical
++  // fallback after earlier successful packets.
+   virtual bool DrawOrderedPathBatch(
++      OrderedPathBatchContext* context,
+       pdfium::span<const CFX_OrderedPathDraw> draws,
+       const CFX_GraphStateData* stroke_state,
+       uint32_t stroke_color,

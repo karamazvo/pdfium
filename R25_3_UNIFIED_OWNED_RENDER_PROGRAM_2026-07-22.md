@@ -1,7 +1,7 @@
 # r25-3 Unified Sparse RenderProgram
 
 **Locked:** 2026-07-22 (Asia/Taipei)
-**Updated through:** r25-3-0107 on 2026-07-23 (Asia/Taipei)
+**Updated through:** r25-3-0108 on 2026-07-23 (Asia/Taipei)
 
 ## Decision
 
@@ -287,6 +287,44 @@ executor still walks it. This must be corrected before adding another index.
    line/fill count and `commandsVisited` tracking visible candidates rather
    than all page commands. A full preview may still replay the full page
    because every page-space primitive is potentially visible.
+
+4. **r25-3-0108: persistent AGG ordered context.** The 0107 device run proved
+   that sparse Q16 tiles benefit from the ordinal index, while the full preview
+   still rasterizes 3,164,996 native operations through 12,464 fixed packets.
+   In 0107, each packet reconstructs AGG path storage, rasterizer, and scanline
+   scratch even though the destination, driver, and ordered replay are the
+   same.
+
+   0108 adds one generic `OrderedPathBatchContext` at the `CFX_RenderDevice`
+   boundary. It is created lazily at the first nonempty ordered packet, so
+   Darken-only `11.pdf` and canonical-only replay allocate nothing. AGG owns
+   the concrete context and initializes its clip box once. Every existing
+   256-operation mixed line/fill packet reuses the same logical path storage,
+   rasterizer, and scanline capacity. Packet validation still completes before
+   the packet's first pixel, and each operation is still rasterized and
+   composited independently. The patch does not merge geometry, enlarge
+   packets, move cancellation checkpoints, expose Veloce page types to `fxge`,
+   or retain scratch beyond one synchronous render.
+
+   Context ownership is explicit. A null context, a context created by another
+   driver, or an unsupported driver returns false before changing packet
+   pixels. `CPDF_RenderStatus` then replays those same ordinals canonically in
+   source order. The existing mixed-order pixel test now draws two packets
+   through one context and compares the result with canonical PDFium; it also
+   verifies that null and foreign contexts leave the bitmap unchanged.
+
+   Device proof must use:
+
+   ```text
+   revision=r25-3-0108 event=replay mode=persistent_agg_ordered_executor
+   orderedPathContext=1 lineBatchDispatches=... replayUs=...
+   ```
+
+   Q16 must retain the 0107 spatial-culling result while materially reducing
+   full-preview and dense-region `replayUs`. `11.pdf` Darken execution is
+   deliberately unchanged. Study Notes preview/region p90 must remain within
+   10 percent of 0107. Retained RenderProgram bytes are unchanged; AGG scratch
+   is bounded by the most complex operation seen in one active render.
 
 0105 remains separate because it repairs an already-shipped traversal invariant
 without changing the pixel path. Combining that correction with new fill
