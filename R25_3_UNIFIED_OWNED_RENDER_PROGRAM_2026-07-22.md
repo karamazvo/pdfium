@@ -1,6 +1,7 @@
 # r25-3 Unified Sparse RenderProgram
 
 **Locked:** 2026-07-22 (Asia/Taipei)
+**Updated through:** r25-3-0107 on 2026-07-23 (Asia/Taipei)
 
 ## Decision
 
@@ -231,10 +232,11 @@ executor still walks it. This must be corrected before adding another index.
    and add the painter-order spatial ordinal index together, because the index
    cannot fit responsibly while Q16 already retains 94,664,340 bytes. Move
    state, clip, visibility, and matrix-mode identity from each line into exact
-   homogeneous line runs. Keep full-precision geometry and translations; use
-   separate exact record forms for translation-only and general affine lines.
-   Do not quantize drawing coordinates. The representation remains selected per
-   operation, not per page.
+   homogeneous line runs. Keep full-precision geometry and translations in one
+   24-byte line record; a compact line run selects either the exact interned
+   affine matrix or the inline-translation sentinel. Do not quantize drawing
+   coordinates. The representation remains selected per operation, not per
+   page.
 
    Build a bounded holder-space hierarchy independent of source locality using
    conservative bounds. A render-local reusable candidate bitmap marks visible
@@ -248,11 +250,50 @@ executor still walks it. This must be corrected before adding another index.
    greater-than-50% reduction for the recorded 5,872 ms worst region, bounded
    combined sidecar/scratch memory, and exact canonical pixel comparison.
 
+   **Implementation status (2026-07-23):** implemented as
+   `0107-veloce-render-program-compact-spatial-ordinal-program.patch`, with the
+   revision-first `r25-3-0107 compact spatial ordinal program` workflow.
+   Format version 11 removes the former 28-byte per-line state/matrix indexes
+   and stores those identities in 12-byte homogeneous line runs. The old
+   source-local leaf/coarse index is removed rather than retained beside the
+   new structure.
+
+   Exact native line and fill ordinals are indexed once in a fixed 32x32 grid
+   over stable holder space. Sparse retained cells own ordered ordinal
+   postings. The grid builder is itself lazy until the first exact line or fill,
+   so canonical, rejected-path, and Darken-only holders do not pay its temporary
+   container cost. Unknown, out-of-holder, and broad bounds enter an
+   always-candidate stream; posting overflow or retained-memory pressure drops
+   the index and preserves full ordered replay. The retained program remains
+   under the existing 96 MiB cap.
+
+   Each render status reuses one command bitset bounded by the holder command
+   limit. A tile query marks candidates, then the normal source-order cursor
+   jumps only within the current homogeneous native line/fill run. Canonical
+   gaps, clip/visibility transitions, native path blocks, painter order, and
+   the destination bitmap are unchanged. Full-page clips short-circuit to full
+   replay without populating the bitset.
+
+   Device proof must use:
+
+   ```text
+   revision=r25-3-0107 event=compile mode=compact_spatial_ordinal_program
+   lineRuns=... spatialCells=... spatialPostings=...
+   revision=r25-3-0107 event=replay mode=compact_spatial_ordinal_executor
+   spatialCandidates=... spatialCulled=... commandsVisited=...
+   ```
+
+   Sparse Q16 tiles should show `spatialCulled` near the off-tile native
+   line/fill count and `commandsVisited` tracking visible candidates rather
+   than all page commands. A full preview may still replay the full page
+   because every page-space primitive is potentially visible.
+
 0105 remains separate because it repairs an already-shipped traversal invariant
 without changing the pixel path. Combining that correction with new fill
 semantics would make a correctness failure impossible to attribute. The former
-0106/0107 work shares one executor and is merged into 0106; the former
-0108/0109 work shares one memory budget and is merged into 0107.
+fill-lowering and mixed-executor tasks were merged into 0106. The
+former line-compaction and spatial-index tasks share one memory budget and were
+merged into 0107.
 
 Each revision must ship a real behavioral change plus the counters needed to
 prove it. Telemetry-only builds are not part of this sequence. A revision does
@@ -287,6 +328,7 @@ renderer.
   before program pixels; per-operation device rejection falls back before that
   operation's first pixel.
 - Fixed retained-memory ceilings and stack-bounded replay packets.
-- Holder-space indexes are built once and queried allocation-free.
+- Holder-space indexes are built once and queried with one bounded,
+  render-status-local reusable bitset.
 - No filename rule, count threshold, page classification, UI-thread rendering,
   worker pool, global render lock, or tile scheduler is introduced.

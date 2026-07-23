@@ -132,6 +132,10 @@ these patches:
 | r25-2-0101 | `0101-veloce-render-program-reusable-agg-path-reset.patch` | Build correction for 0100, whose workflow failed because this PDFium AGG fork does not expose `path_storage::remove_all()`. Adds that primitive by resetting only logical vertex and iterator state while retaining allocated coordinate/command blocks, preserving the bounded packet's scratch-reuse performance. Advances Android revision markers only; program format and pixel semantics are unchanged. |
 | r25-2-0102 | `0102-veloce-render-program-verification-safe-revision-markers.patch` | Verification correction after 0101 compiled successfully but its workflow rejected the valid generation-2 local name `direct_darken_context` through a broad substring match. The 0102 workflow rejects exact generation-1 interfaces and metric identifiers instead. This patch advances Android markers only; format, execution, memory, and pixel behavior are unchanged. |
 | r25-3-0103 | `0103-veloce-render-program-owned-unchanged-holder-replay.patch` | Starts generation 3 with one ordered program for every holder and no command-count routing threshold. Exact native compilation begins at command zero; canonical PDFium barriers remain in painter order. Replay validates the source mutation epoch once before pixels, resolves optional-content visibility once per recorded run, and draws native commands entirely from owned geometry/state/color/clip data. Live object access remains only at canonical barriers, visibility representatives, and exceptional device fallback. Top-level non-group pages correctly admit exact Darken commands despite PDFium's page-default isolated bit; true groups, nested contexts, printers, Type3, mutation drift, and unsupported drivers remain fail-closed. The existing 96 MiB cap remains and no per-object storage, bitmap, scheduler, lock, or UI-thread work is added. |
+| r25-3-0104 | `0104-veloce-render-program-sparse-exact-sidecar.patch` | Makes the generation-3 sidecar lazy and sparse. Non-path and rejected path objects remain implicit canonical gaps, so canonical-only holders retain no program. Exact native runs, clip/visibility runs, path blocks, and the 96 MiB budget are validated once when sealed. |
+| r25-3-0105 | `0105-veloce-render-program-ordered-sparse-cursor.patch` | Repairs source/run/index cursor normalization so an off-tile exact leaf or path block is skipped once even after canonical barriers. Cancellation cadence follows visited work and jumps rather than every source ordinal. Pixel operations are unchanged. |
+| r25-3-0106 | `0106-veloce-render-program-ordered-mixed-fill-executor.patch` | Adds exact owned opaque fill lowering with interned geometry and 16-byte source-ordered instances. A fixed 256-entry mixed line/fill packet reuses PDFium AGG scratch while rasterizing and compositing every operation independently in painter order. Unsupported fill-and-stroke, forced color, transparency, matrix, clip, visibility, and driver cases remain canonical at the same ordinal. |
+| r25-3-0107 | `0107-veloce-render-program-compact-spatial-ordinal-program.patch` | Replaces duplicated per-line state/matrix fields and the source-local leaf/coarse index with 24-byte line records, 12-byte homogeneous state/matrix runs, and one bounded 32x32 holder-space command-ordinal index for exact lines/fills. A render-status-local reusable bitset selects candidates; replay consumes them in source order and jumps only inside the current native run. Unknown/broad bounds, index overflow, memory pressure, and full-page clips fail open to full ordered replay. |
 
 ## Why this directory exists
 
@@ -144,8 +148,8 @@ subset.
 ## How to apply
 
 The patch directory contains historical branches and must not be applied by
-blind numeric globbing. For `r25-3-0103`, apply the r25 rendering base through
-0031, then only 0051, 0075, 0076, and 0092 through 0103:
+blind numeric globbing. For `r25-3-0107`, apply the r25 rendering base through
+0031, then only 0051, 0075, 0076, and 0092 through 0107:
 
 ```bash
 git apply patches/ship/01-jpeg-downscale-on-decode.patch
@@ -165,10 +169,14 @@ git apply patches/ship/0100-veloce-render-program-ordered-line-batches-proven-ou
 git apply patches/ship/0101-veloce-render-program-reusable-agg-path-reset.patch
 git apply patches/ship/0102-veloce-render-program-verification-safe-revision-markers.patch
 git apply patches/ship/0103-veloce-render-program-owned-unchanged-holder-replay.patch
+git apply patches/ship/0104-veloce-render-program-sparse-exact-sidecar.patch
+git apply patches/ship/0105-veloce-render-program-ordered-sparse-cursor.patch
+git apply patches/ship/0106-veloce-render-program-ordered-mixed-fill-executor.patch
+git apply patches/ship/0107-veloce-render-program-compact-spatial-ordinal-program.patch
 ```
 
 Do not apply `0053..0074`, `0077..0091`, or an invented 0084 to an
-`r25-3-0103` build. The machine-checked list lives in the 0103 workflow.
+`r25-3-0107` build. The machine-checked list lives in the 0107 workflow.
 
 For the historical `r25-1-0091` build, apply the r25 rendering base through
 0031, then only 0051, 0075, 0076, 0079..0083, and 0085..0091:
