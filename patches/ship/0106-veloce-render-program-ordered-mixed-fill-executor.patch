@@ -1303,7 +1303,7 @@ index c9254b147..dfdd2dabe 100644
    CHECK_GE(commands_skipped, native_leaf_culled);
    if (ShouldCancelRender()) {
 diff --git a/core/fxge/agg/cfx_agg_devicedriver.cpp b/core/fxge/agg/cfx_agg_devicedriver.cpp
-index a0c82861a..5197ccb58 100644
+index a0c82861a..dd1fc098c 100644
 --- a/core/fxge/agg/cfx_agg_devicedriver.cpp
 +++ b/core/fxge/agg/cfx_agg_devicedriver.cpp
 @@ -970,9 +970,9 @@ class RendererScanLineAaOffset {
@@ -1359,15 +1359,6 @@ index a0c82861a..5197ccb58 100644
    return agg_path;
  }
  
-@@ -1363,7 +1369,7 @@ bool CFX_AggDeviceDriver::DrawStrokeLineBatch(
-       RasterizeStroke(&rasterizer, &path_data, nullptr, pGraphState, 1,
-                       fill_options.stroke_text_mode);
-     } else {
--      const CFX_Matrix& object_matrix = line.object_to_device;
-+      const CFX_Matrix& object_matrix = draw.object_to_device;
-       CFX_Matrix matrix1;
-       CFX_Matrix matrix2;
-       matrix1.a = std::max(fabs(object_matrix.a), fabs(object_matrix.b));
 @@ -1382,6 +1388,114 @@ bool CFX_AggDeviceDriver::DrawStrokeLineBatch(
    return true;
  }
@@ -1453,7 +1444,7 @@ index a0c82861a..5197ccb58 100644
 +      RasterizeStroke(&rasterizer, &path_data, nullptr, stroke_state, 1,
 +                      draw.fill_options.stroke_text_mode);
 +    } else {
-+      const CFX_Matrix& object_matrix = line.object_to_device;
++      const CFX_Matrix& object_matrix = draw.object_to_device;
 +      CFX_Matrix matrix1;
 +      CFX_Matrix matrix2;
 +      matrix1.a = std::max(fabs(object_matrix.a), fabs(object_matrix.b));
